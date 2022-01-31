@@ -14,14 +14,7 @@ export const UmsoknirApiProvider: Provider<UmsoknirApi> = {
   useFactory: (
     xRoadConfig: ConfigType<typeof XRoadConfig>,
     config: ConfigType<typeof FishingLicenseClientConfig>,
-  ) =>
-    new UmsoknirApi(
-      FishingLicenseApiFactoryConfig(
-        config.xRoadServicePath,
-        xRoadConfig.xRoadBasePath,
-        xRoadConfig.xRoadClient,
-      ),
-    ),
+  ) => new UmsoknirApi(FishingLicenseApiFactoryConfig(xRoadConfig, config)),
 
   inject: [XRoadConfig.KEY, FishingLicenseClientConfig.KEY],
 }
