@@ -50,12 +50,14 @@ const appSystemForm = appSystemFormSetup({})
 const servicePortalApi = servicePortalApiSetup()
 const servicePortal = servicePortalSetup({})
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
+const rabBackend = rabBackendSetup()
 const api = apiSetup({
   appSystemApi,
   servicePortalApi,
   documentsService,
   icelandicNameRegistryBackend: nameRegistryBackend,
   servicesEndorsementApi: endorsement,
+  regulationsAdminBackend: rabBackend,
 })
 const web = webSetup({ api: api })
 const searchIndexer = searchIndexerSetup()
@@ -77,8 +79,6 @@ const adsBackend = adsBackendSetup()
 const adsApi = adsApiSetup({ adsBackend })
 const adsWeb = adsWebSetup({ adsApi })
 const githubActionsCache = githubActionsCacheSetup()
-
-const rabBackend = rabBackendSetup()
 
 const externalContractsTests = externalContractsTestsSetup()
 

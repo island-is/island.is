@@ -22,6 +22,7 @@ export const serviceSetup = (services: {
   icelandicNameRegistryBackend: ServiceBuilder<'icelandic-names-registry-backend'>
   documentsService: ServiceBuilder<'services-documents'>
   servicesEndorsementApi: ServiceBuilder<'services-endorsement-api'>
+  regulationsAdminBackend: ServiceBuilder<'regulations-admin-backend'>
 }): ServiceBuilder<'api'> => {
   return service('api')
     .namespace('islandis')
@@ -99,6 +100,9 @@ export const serviceSetup = (services: {
       ENDORSEMENT_SYSTEM_BASE_API_URL: ref(
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
       ),
+      REGULATIONS_ADMIN_URL: ref(
+        (h) => `http://${h.svc(services.regulationsAdminBackend)}/api`,
+      ),
       XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000',
       XROAD_PROPERTIES_TIMEOUT: '20000',
     })
@@ -113,7 +117,6 @@ export const serviceSetup = (services: {
         '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL_TEST',
       SYSLUMENN_HOST: '/k8s/api/SYSLUMENN_HOST',
       REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL',
-      REGULATIONS_ADMIN_URL: '/k8s/api/REGULATIONS_ADMIN_URL',
       SOFFIA_HOST_URL: '/k8s/api/SOFFIA_HOST_URL',
       CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN',
       ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL',

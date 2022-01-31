@@ -24,3 +24,4 @@ export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
     })
     .readiness('/liveness')
     .liveness('/liveness')
+    .grantNamespaces('islandis')
