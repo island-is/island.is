@@ -125,6 +125,10 @@ export const GET_CONTENT_SLUG = gql`
   query GetContentSlug($input: GetContentSlugInput!) {
     getContentSlug(input: $input) {
       id
+      title {
+        en
+        is
+      }
       slug {
         en
         is
