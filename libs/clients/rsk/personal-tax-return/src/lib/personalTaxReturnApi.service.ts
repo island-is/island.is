@@ -39,15 +39,18 @@ export class PersonalTaxReturnApi {
             return {
               success:
                 parsedResponse['s:Envelope']['s:Body'][0]
-                  .SaekjaPDFAfritFramtalsEinstaklingsResponse[0]['b:Tokst'],
+                  .SaekjaPDFAfritFramtalsEinstaklingsResponse[0]
+                  .SaekjaPDFAfritFramtalsEinstaklingsResult[0]['b:Tokst'][0],
               errorText:
                 parsedResponse['s:Envelope']['s:Body'][0]
-                  .SaekjaPDFAfritFramtalsEinstaklingsResponse[0]['b:Villubod'],
+                  .SaekjaPDFAfritFramtalsEinstaklingsResponse[0]
+                  .SaekjaPDFAfritFramtalsEinstaklingsResult[0]['b:Villubod'][0],
               content:
                 parsedResponse['s:Envelope']['s:Body'][0]
-                  .SaekjaPDFAfritFramtalsEinstaklingsResponse[0][
+                  .SaekjaPDFAfritFramtalsEinstaklingsResponse[0]
+                  .SaekjaPDFAfritFramtalsEinstaklingsResult[0][
                   'b:PDFAfritFramtals'
-                ],
+                ][0],
             }
           })
       })

@@ -25,6 +25,7 @@ import {
 } from '@island.is/financial-aid-web/osk/graphql'
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
+import { useFileUpload } from '../../../utils/hooks/useFileUpload'
 
 const ApplicationInfo = () => {
   const router = useRouter()
@@ -34,6 +35,8 @@ const ApplicationInfo = () => {
     setMunicipalityById,
     loadingMunicipality,
   } = useContext(AppContext)
+
+  const { createSignedUrl } = useFileUpload([])
 
   const [accept, setAccept] = useState(false)
   const [hasError, setHasError] = useState(false)
@@ -47,9 +50,17 @@ const ApplicationInfo = () => {
     { input: { ssn: string } }
   >(NationalRegistryUserQuery)
 
-  const personalTaxReturnQuery = useAsyncLazyQuery<{
-    personalTaxReturnForYearPdf: { personalTaxReturn: string }
-  }>(PersonalTaxReturnQuery)
+  const personalTaxReturnQuery = useAsyncLazyQuery<
+    {
+      personalTaxReturnForYearPdf: { personalTaxReturn: string }
+    },
+    {
+      input: {
+        uploadUrl: string
+        folder: string
+      }
+    }
+  >(PersonalTaxReturnQuery)
 
   const logOut = useLogOut()
 
@@ -66,9 +77,22 @@ const ApplicationInfo = () => {
     setError(false)
     setLoading(true)
 
-    const { data } = await personalTaxReturnQuery({})
+    const signedUrl = await createSignedUrl(
+      `Framtal_2809783969_${new Date().getFullYear()}.pdf`.normalize(),
+    )
 
-    console.log('her', data)
+    if (!signedUrl) {
+      setError(true)
+      setLoading(false)
+      return
+    }
+
+    const { data } = await personalTaxReturnQuery({
+      input: { uploadUrl: signedUrl.url, folder: signedUrl.key },
+    }).catch((err) => {
+      console.log(err)
+      return { data: undefined }
+    })
 
     // const { data } = await nationalRegistryQuery({
     //   input: { ssn: user?.nationalId },

@@ -236,5 +236,6 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     onRetry,
     uploadFiles,
     uploadStateFiles,
+    createSignedUrl,
   }
 }

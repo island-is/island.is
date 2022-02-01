@@ -10,9 +10,13 @@ export interface PdfResponse {
       {
         SaekjaPDFAfritFramtalsEinstaklingsResponse: [
           {
-            'b:Tokst': [boolean]
-            'b:Villubod': [string]
-            'b:PDFAfritFramtals': [string]
+            SaekjaPDFAfritFramtalsEinstaklingsResult: [
+              {
+                'b:Tokst': [boolean]
+                'b:Villubod': [string]
+                'b:PDFAfritFramtals': [string]
+              },
+            ]
           },
         ]
       },
