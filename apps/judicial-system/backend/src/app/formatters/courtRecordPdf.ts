@@ -174,60 +174,6 @@ function constructRestrictionCourtRecordPdf(
   setLineGap(doc, 3)
   addEmptyLines(doc, 2)
   setLineGap(doc, 16)
-  addMediumHeading(doc, formatMessage(ruling.rulingHeading))
-
-  if (shortVersion) {
-    doc.fontSize(baseFontSize)
-    setLineGap(doc, 1)
-    doc.text(formatMessage(ruling.rulingShortVersionPlaceholder), {
-      align: 'center',
-    })
-  } else {
-    setLineGap(doc, 1)
-    addNormalText(doc, formatMessage(ruling.courtDemandsHeading), 'Times-Bold')
-    addEmptyLines(doc)
-    addNormalJustifiedText(
-      doc,
-      theCase.prosecutorDemands ?? formatMessage(core.missing.demands),
-      'Times-Roman',
-    )
-    addEmptyLines(doc)
-    addNormalText(
-      doc,
-      formatMessage(ruling.courtCaseFactsHeading),
-      'Times-Bold',
-    )
-    addEmptyLines(doc)
-    addNormalJustifiedText(
-      doc,
-      theCase.courtCaseFacts ?? formatMessage(core.missing.caseFacts),
-      'Times-Roman',
-    )
-    addEmptyLines(doc)
-    addNormalText(
-      doc,
-      formatMessage(ruling.courtLegalArgumentsHeading),
-      'Times-Bold',
-    )
-    addEmptyLines(doc)
-    addNormalJustifiedText(
-      doc,
-      theCase.courtLegalArguments ?? formatMessage(core.missing.legalArguments),
-      'Times-Roman',
-    )
-    addEmptyLines(doc)
-    addNormalText(doc, formatMessage(ruling.conclusionHeading), 'Times-Bold')
-    addEmptyLines(doc)
-    addNormalJustifiedText(
-      doc,
-      theCase.ruling ?? formatMessage(core.missing.conclusion),
-      'Times-Roman',
-    )
-  }
-
-  setLineGap(doc, 3)
-  addEmptyLines(doc, 2)
-  setLineGap(doc, 16)
   addMediumHeading(doc, formatMessage(ruling.rulingTextHeading))
   setLineGap(doc, 1)
   addNormalJustifiedText(
@@ -459,60 +405,6 @@ function constructInvestigationCourtRecordPdf(
     theCase.litigationPresentations ??
       formatMessage(core.missing.litigationPresentations),
   )
-  setLineGap(doc, 3)
-  addEmptyLines(doc, 2)
-  setLineGap(doc, 16)
-  addMediumHeading(doc, formatMessage(ruling.rulingHeading))
-
-  if (shortVersion) {
-    doc.fontSize(baseFontSize)
-    setLineGap(doc, 1)
-    doc.text(formatMessage(ruling.rulingShortVersionPlaceholder), {
-      align: 'center',
-    })
-  } else {
-    setLineGap(doc, 1)
-    addNormalText(doc, formatMessage(ruling.courtDemandsHeading), 'Times-Bold')
-    addEmptyLines(doc)
-    addNormalJustifiedText(
-      doc,
-      theCase.prosecutorDemands ?? formatMessage(core.missing.demands),
-      'Times-Roman',
-    )
-    addEmptyLines(doc)
-    addNormalText(
-      doc,
-      formatMessage(ruling.courtCaseFactsHeading),
-      'Times-Bold',
-    )
-    addEmptyLines(doc)
-    addNormalJustifiedText(
-      doc,
-      theCase.courtCaseFacts ?? formatMessage(core.missing.caseFacts),
-      'Times-Roman',
-    )
-    addEmptyLines(doc)
-    addNormalText(
-      doc,
-      formatMessage(ruling.courtLegalArgumentsHeading),
-      'Times-Bold',
-    )
-    addEmptyLines(doc)
-    addNormalJustifiedText(
-      doc,
-      theCase.courtLegalArguments ?? formatMessage(core.missing.legalArguments),
-      'Times-Roman',
-    )
-    addEmptyLines(doc)
-    addNormalText(doc, formatMessage(ruling.conclusionHeading), 'Times-Bold')
-    addEmptyLines(doc)
-    addNormalJustifiedText(
-      doc,
-      theCase.ruling ?? formatMessage(core.missing.conclusion),
-      'Times-Roman',
-    )
-  }
-
   setLineGap(doc, 3)
   addEmptyLines(doc, 2)
   setLineGap(doc, 16)
