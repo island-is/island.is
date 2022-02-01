@@ -196,6 +196,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           {
             name: m.regulationAdminEdit,
             path: ServicePortalPath.RegulationsAdminEdit,
+            navHide: true,
           },
           // // Laterz...
           // {

@@ -1,4 +1,5 @@
 import {
+  DraftImpactId,
   DraftingStatus,
   DraftRegulationCancel,
   DraftRegulationChange,
@@ -6,6 +7,7 @@ import {
 } from '@island.is/regulations/admin'
 import {
   HTMLText,
+  LawChapter,
   LawChapterSlug,
   PlainText,
   RegName,
@@ -29,13 +31,18 @@ export type DraftField<Type, InputType extends string = ''> = {
   required?: boolean | MessageDescriptor
   dirty?: boolean
   error?: MessageDescriptor
-  hideError?: boolean
+  showError?: true
   type?: InputType
 }
 
-// TODO: Figure out how the Editor components lazy valueRef.current() getter fits into this
 export type HtmlDraftField = DraftField<HTMLText, 'html'> & {
+  // list of warnings from useHighAngstWarnings
   warnings: WarningList
+}
+
+export type DateDraftField = DraftField<Date | undefined, 'date'> & {
+  min?: Date
+  max?: Date
 }
 
 export type AppendixDraftForm = {
@@ -66,7 +73,6 @@ export type BodyDraftFields = {
   title: DraftField<PlainText, 'text'>
   text: HtmlDraftField
   appendixes: Array<AppendixDraftForm>
-  comments: HtmlDraftField
 }
 
 type DraftImpactBaseFields<
@@ -75,13 +81,16 @@ type DraftImpactBaseFields<
   // always prefilled on "create" - non-editable
   Pick<ImpactType, 'id' | 'type' | 'name'>
 > & {
-  date: DraftField<Date>
+  date: DateDraftField
   regTitle: string
   error?: MessageDescriptor | string
 }
 
 export type DraftChangeForm = DraftImpactBaseFields<DraftRegulationChange> &
-  BodyDraftFields
+  BodyDraftFields & {
+    /** A.k.a. „Athugsemdir ritstjóra“ */
+    comments: HtmlDraftField
+  }
 
 export type DraftCancelForm = DraftImpactBaseFields<DraftRegulationCancel>
 
@@ -93,11 +102,11 @@ export type RegDraftForm = BodyDraftFields & {
   id: RegulationDraftId
   readonly draftingStatus: DraftingStatus // non-editable except via saveStatus or propose actions
 
-  idealPublishDate: DraftField<Date | undefined>
-  effectiveDate: DraftField<Date | undefined>
+  idealPublishDate: DateDraftField
+  effectiveDate: DateDraftField
   lawChapters: DraftField<Array<LawChapterSlug>>
 
-  signatureDate: DraftField<Date | undefined>
+  signatureDate: DateDraftField
   ministry: DraftField<PlainText | undefined, 'text'>
   type: DraftField<RegulationType | undefined>
 
@@ -117,18 +126,55 @@ export type RegDraftForm = BodyDraftFields & {
   authors: DraftField<Array<Kennitala>>
 
   fastTrack: DraftField<boolean>
+
+  name: DraftField<PlainText | undefined, 'text'>
 }
+
+// ---------------------------------------------------------------------------
 
 export type DraftingState = {
+  /** Users split into "authors" and "editors" (with publishing privileges) */
   isEditor: boolean
+  /** Info about the currently active step in the editing UI */
   step: StepNav
+  /** The form containing the RegulationDraft and its impacts */
   draft: RegDraftForm
+  /** Static list of ministries, loaded on init */
   ministries: MinistryList
+  /** Static list of law chapters, loaded on init */
+  lawChapters: {
+    list: Array<LawChapter>
+    bySlug: Record<string, string>
+  }
+
+  /** true while saving the draft */
   saving?: boolean
-  shipping?: boolean
-  error?: Error
+  /** "Toastable" errror that occur during loading/saving/etc. */
+  error?: { message: MessageDescriptor | string; error?: Error }
+
+  /** The impact that's currently being edited */
+  activeImpact?: DraftImpactId
 }
 
+// -----------------------------
+
+export type RegDraftFormSimpleProps = Extract<
+  keyof RegDraftForm,
+  | 'title'
+  | 'text'
+  | 'idealPublishDate' // Needs to be checked and must never be in the past
+  | 'fastTrack'
+  | 'effectiveDate' // Need to be checked and must never be **before** `idealPublishDate`
+  | 'signatureDate' // Need to be checked and must never be **after* `idealPublishDate`
+  | 'signatureText'
+  | 'signedDocumentUrl'
+  | 'lawChapters'
+  | 'ministry'
+  | 'type'
+  | 'draftingNotes'
+  | 'authors'
+  | 'name'
+>
 // -----------------------------
 
 export type AppendixFieldNameValuePair = {
@@ -150,23 +196,6 @@ export type FieldNameValuePair = {
   }
 }[RegDraftFormSimpleProps]
 
-export type RegDraftFormSimpleProps = Extract<
-  keyof RegDraftForm,
-  | 'title'
-  | 'text'
-  | 'idealPublishDate' // This prop needs its own action that checks for working days and updates the `fastTrack` flag accordingly
-  | 'fastTrack'
-  | 'effectiveDate' // Need to be checked and must never be **before** `idealPublishDate`
-  | 'signatureDate' // Need to be checked and must never be **after* `idealPublishDate`
-  | 'signatureText'
-  | 'signedDocumentUrl'
-  // | 'lawChapters'
-  | 'ministry'
-  | 'type'
-  | 'draftingNotes'
-  | 'authors'
->
-
 export type Action =
   | {
       type: 'CHANGE_STEP'
@@ -177,20 +206,15 @@ export type Action =
     }
   | {
       type: 'SAVING_STATUS_DONE'
-      error?: Error
+      error?: DraftingState['error']
     }
   | {
       type: 'UPDATE_LAWCHAPTER_PROP'
       action?: 'add' | 'delete'
       value: LawChapterSlug
     }
-  | {
-      type: 'UPDATE_MULTIPLE_PROPS'
-      multiData: Partial<RegDraftForm>
-    }
   | ({
       type: 'UPDATE_PROP'
-      explicit?: boolean
     } & FieldNameValuePair)
   | {
       type: 'APPENDIX_ADD'
@@ -207,14 +231,17 @@ export type Action =
       type: 'APPENDIX_DELETE'
       idx: number
     }
-  // // TODO: Adapt for impact appendixes
+
+  // TODO: Implement appendix actions for DraftChanges
+  // TODO: Also Implement revocation action for DraftChange appendixes
   // | {
   //     type: 'APPENDIX_REVOKE'
   //     idx: number
   //     revoked: boolean
   //   }
   | {
-      type: 'SHIP'
+      type: 'SET_IMPACT'
+      impactId: DraftImpactId | undefined
     }
 
 export type ActionName = Action['type']

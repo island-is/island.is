@@ -3,29 +3,19 @@ import React, { useMemo } from 'react'
 import { Box, Inline, Option, Select, Tag } from '@island.is/island-ui/core'
 import { editorMsgs as msg } from '../messages'
 
-import { LawChapterSlug } from '@island.is/regulations'
+import { LawChapter, LawChapterSlug } from '@island.is/regulations'
 import { emptyOption, useLocale } from '../utils'
-import { useLawChaptersQuery } from '../utils/dataHooks'
+import { useDraftingState } from '../state/useDraftingState'
 
-const useLawChapters = (
+const useLawChapterOptions = (
+  lawChapters: Array<LawChapter>,
   activeChapters: ReadonlyArray<LawChapterSlug>,
   placeholder: string,
-) => {
-  const lawChapters = useLawChaptersQuery().data
-
-  const chaptersBySlug = useMemo(
-    () =>
-      (lawChapters || []).reduce<Record<string, string>>((map, ch) => {
-        map[ch.slug] = ch.name
-        return map
-      }, {}),
-    [lawChapters],
-  )
-
-  const lawChaptersOptions = useMemo(
+) =>
+  useMemo(
     () => [
-      emptyOption(placeholder),
-      ...(lawChapters || []).map(
+      emptyOption(placeholder, true),
+      ...lawChapters.map(
         (ch): Option => ({
           value: ch.slug,
           label: ch.name,
@@ -36,56 +26,56 @@ const useLawChapters = (
     [lawChapters, activeChapters, placeholder],
   )
 
-  return {
-    chaptersBySlug,
-    lawChaptersOptions,
-  }
-}
-
 // ---------------------------------------------------------------------------
 
-type LawChaptersSelectProps = {
-  activeChapters: ReadonlyArray<LawChapterSlug>
-  addChapter: (slug: LawChapterSlug) => void
-  removeChapter: (slug: LawChapterSlug) => void
-}
-
-export const LawChaptersSelect = (props: LawChaptersSelectProps) => {
+export const LawChaptersSelect = () => {
+  const { draft, lawChapters, actions } = useDraftingState()
   const t = useLocale().formatMessage
-  const { activeChapters, addChapter, removeChapter } = props
+  const chaptersField = draft.lawChapters
+  const activeChapters = chaptersField.value
 
-  const { chaptersBySlug, lawChaptersOptions } = useLawChapters(
+  const lawChaptersOptions = useLawChapterOptions(
+    lawChapters.list,
     activeChapters,
     t(msg.lawChapterPlaceholder),
   )
 
   return (
-    <>
+    <Box>
       <Select
         size="sm"
-        label={t(msg.lawChapter)}
+        label={t(msg.lawChapters)}
         name="addLawChapter"
         isSearchable
         value={lawChaptersOptions[0]}
         placeholder={'Lagakafli'}
         options={lawChaptersOptions}
         onChange={(option) =>
-          addChapter((option as Option).value as LawChapterSlug)
+          actions.updateLawChapterProp(
+            'add',
+            (option as Option).value as LawChapterSlug,
+          )
         }
         backgroundColor="blue"
+        hasError={chaptersField.showError && !!chaptersField.error}
+        errorMessage={t(chaptersField.error)}
       />
 
       {activeChapters.length > 0 && (
         <Box marginTop={2}>
           <Inline space={2}>
             {activeChapters.map((slug) => (
-              <Tag key={slug} onClick={() => removeChapter(slug)} removable>
-                {chaptersBySlug[slug]}
+              <Tag
+                key={slug}
+                onClick={() => actions.updateLawChapterProp('delete', slug)}
+                removable
+              >
+                {lawChapters.bySlug[slug]}
               </Tag>
             ))}
           </Inline>
         </Box>
       )}
-    </>
+    </Box>
   )
 }

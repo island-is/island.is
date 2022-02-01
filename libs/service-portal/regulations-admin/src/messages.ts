@@ -11,31 +11,36 @@ export const editorMsgs = defineMessages({
     defaultMessage: 'Skráning lýsigagna',
   },
   stepSignatureHeadline: {
-    id: 'ap.regulations-admin:draft-step_impact-headline',
+    id: 'ap.regulations-admin:draft-step_signature-headline',
     defaultMessage: 'Undirritun ráðherra',
   },
   stepSignatureIntro: {
-    id: 'ap.regulations-admin:draft-step3-intro',
+    id: 'ap.regulations-admin:draft-step_signature-intro',
     defaultMessage:
       'Hér hlaða upp eintaki af reglugerðinni með undirritun ráðherra. Það skjal verður að lokum framsent til Stjórnartíðinda.',
   },
   stepImpactHeadline: {
-    id: 'ap.regulations-admin:draft-step_impact-headline',
+    id: 'ap.regulations-admin:draft-step_impacts-headline',
     defaultMessage: 'Áhrif á aðrar reglugerðir',
   },
   stepImpactIntro: {
-    id: 'ap.regulations-admin:draft-step3-intro',
+    id: 'ap.regulations-admin:draft-step_impacts-intro',
     defaultMessage:
       'Hér er skráð hvaða reglugerðir falla brott og hvaða stofnreglugerðir taka efnislegum breytingum og texti þeirra uppfærður.',
   },
   stepReviewHeadline: {
     id: 'ap.regulations-admin:draft-step_review-headline',
-    defaultMessage: 'Staðfesting fyrir útgáfu í Stjórnartíðindum',
+    defaultMessage: 'Staðfesting fyrir útgáfu',
   },
   stepReviewIntro: {
     id: 'ap.regulations-admin:draft-step_review-intro',
     defaultMessage:
-      'Vinsamlega yfirfarið að allar skráðar upplýsingar séu réttar',
+      'Áður en reglugerð er gefin út í Stjórnartíðindum, og birt í reglugerðasafninu á vefnum, þarf að yfirfara að allar skráðar upplýsingar séu réttar',
+  },
+
+  name: {
+    id: 'ap.regulations-admin:draft-labels-name',
+    defaultMessage: 'Útgáfunúmer í Stjórnartíðindum',
   },
 
   title: {
@@ -48,6 +53,10 @@ export const editorMsgs = defineMessages({
     defaultMessage: 'Texti reglugerðar',
   },
 
+  appendixes: {
+    id: 'ap.regulations-admin:draft-appendixes-legend',
+    defaultMessage: 'Viðaukar',
+  },
   appendix_legend: {
     id: 'ap.regulations-admin:draft-appendix-legend',
     defaultMessage: 'Viðauki {idx}',
@@ -159,7 +168,7 @@ export const editorMsgs = defineMessages({
   },
   applyForFastTrack: {
     id: 'ap.regulations-admin:apply-for-fasttrack',
-    defaultMessage: 'Sækja um flýtimeðferð',
+    defaultMessage: 'Þarf flýtimeðferð',
   },
 
   ministry: {
@@ -171,7 +180,7 @@ export const editorMsgs = defineMessages({
     defaultMessage: 'Lesið úr undirritun reglugerðar',
   },
 
-  lawChapter: {
+  lawChapters: {
     id: 'ap.regulations-admin:draft-labels-lawchapter',
     defaultMessage: 'Kaflar í lagasasfni',
   },
@@ -236,7 +245,7 @@ export const editorMsgs = defineMessages({
   },
   signedDocumentLinkLong: {
     id: 'ap.regulations-admin:draft-labels-signeddocument-viewlong',
-    defaultMessage: 'Skoða undirritað skjal',
+    defaultMessage: 'Sækja undirritað skjal',
   },
 
   effectiveDate: {
@@ -273,78 +282,109 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-btn-change-add',
     defaultMessage: 'Ný texta-/ákvæðabreyting',
   },
+})
 
-  impactRegExplainer: {
+export const impactMsgs = defineMessages({
+  impactListTitle: {
+    id: 'ap.regulations-admin:impacts-list-title',
+    defaultMessage: 'Skráðar áhrifafærslur',
+  },
+  impactListTitleEmpty: {
+    id: 'ap.regulations-admin:impacts-list-title',
+    defaultMessage: 'Engar áhrifafærslur skráðar',
+  },
+  typeChange: {
+    id: 'ap.regulations-admin:impacts-type-change',
+    defaultMessage: 'Textabreyting',
+  },
+  typeCancellation: {
+    id: 'ap.regulations-admin:impacts-type-cancellation',
+    defaultMessage: 'Brottfelling',
+  },
+
+  impactListEditButton: {
+    id: 'ap.regulations-admin:impacts-list-editbutton',
+    defaultMessage: 'Skoða / breyta',
+  },
+
+  selfAffecting: {
+    id: 'ap.regulations-admin:draft-label-impact-selfaffecting',
+    defaultMessage: 'Hefur áhrif á sjálfa sig',
+  },
+
+  // ---------------------------------------------------------------------------
+
+  regExplainer: {
     id: 'ap.regulations-admin:draft-impactedreg-explainer',
     defaultMessage:
       'ATH: Einungis er hægt að breyta reglugerðum sem minnst er á með skýrum hætti í texta reglugerðarinnar.',
   },
-  impactRegExplainer_editLink: {
+  regExplainer_editLink: {
     id: 'ap.regulations-admin:draft-impactedreg-editlink',
     defaultMessage: 'Endurskoða textann',
   },
 
-  impactRegSelect: {
+  regSelect: {
     id: 'ap.regulations-admin:draft-label-impactedreg',
     defaultMessage: 'Reglugerð sem breytist',
   },
-  impactRegSelect_mentionedNotFound: {
+  regSelect_mentionedNotFound: {
     id: 'ap.regulations-admin:draft-opts-mentionednotfound',
     defaultMessage: 'er ekki reglugerð',
   },
-  impactRegSelect_placeholder: {
+  regSelect_mentionedRepealed: {
+    id: 'ap.regulations-admin:draft-opts-mentionedrepealed',
+    defaultMessage: 'brottfallin',
+  },
+  regSelect_placeholder: {
     id: 'ap.regulations-admin:draft-opts-impactedreg_placeholder',
     defaultMessage: 'Veldu reglugerð',
   },
-  impactEffectiveDate: {
+  effectiveDate: {
     id: 'ap.regulations-admin:draft-labels-impacteffectivedate',
     defaultMessage: 'Gildistaka breytinga',
   },
-  impactEffectiveDate_default: {
+  effectiveDate_default: {
     id: 'ap.regulations-admin:draft-opts-impacteffectivedate-default',
     defaultMessage: 'Tekur þegar gildi', // 'Á útgáfudegi'
   },
-  impactEffectiveDate_toosoon: {
+  effectiveDate_toosoon: {
     id: 'ap.regulations-admin:draft-opts-impacteffectivedate-toosoon',
     defaultMessage: 'Breytingar geta ekki tekið gildi á undan reglugerðinni', // 'Á útgáfudegi'
   },
 
-  chooseImpactType: {
+  chooseType: {
     id: 'ap.regulations-admin:draft-legend-impacttype',
     defaultMessage: 'Hvað viltu gera við reglugerðina?',
   },
-  chooseImpactType_cancel: {
+  chooseType_cancel: {
     id: 'ap.regulations-admin:draft-legend-impacttype-cancel',
     defaultMessage: 'Fella hana brott',
   },
-  chooseImpactType_change: {
+  chooseType_change: {
     id: 'ap.regulations-admin:draft-legend-impacttype-change',
     defaultMessage: 'Gera textabreytingar',
   },
-  chooseImpactType_or: {
+  chooseType_or: {
     id: 'ap.regulations-admin:draft-legend-impacttype-or',
     defaultMessage: 'eða',
   },
 
-  cancallation_save: {
+  saveButtonCancallation: {
     id: 'ap.regulations-admin:draft-btn-cancallation-save',
     defaultMessage: 'Vista brottfellingu',
   },
-  change_save: {
+  saveButtonChange: {
     id: 'ap.regulations-admin:draft-btn-change-save',
     defaultMessage: 'Vista brottfellingu',
   },
-  impact_cancel: {
+  cancelButton: {
     id: 'ap.regulations-admin:draft-btn-impact-cancel',
     defaultMessage: 'Hætta við',
   },
-  impact_remove: {
+  deleteButton: {
     id: 'ap.regulations-admin:draft-btn-impact-remove',
     defaultMessage: 'Eyða áhrifafærslu',
-  },
-  change_edit: {
-    id: 'ap.regulations-admin:draft-btn-change-edit',
-    defaultMessage: 'Breyta breytingafærslu',
   },
 
   cancelledRegulation: {
@@ -355,10 +395,6 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-label-changedregulation',
     defaultMessage: 'Stofnreglugerð sem breytist',
   },
-  impactDate: {
-    id: 'ap.regulations-admin:draft-label-impactdate',
-    defaultMessage: 'Gildistökudagur',
-  },
 
   changedTitle: {
     id: 'ap.regulations-admin:draft-label-changedtitle',
@@ -368,11 +404,6 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-legend-changedtitle',
     defaultMessage: 'Uppfærður texti reglugerðar',
   },
-
-  impactSelfAffecting: {
-    id: 'ap.regulations-admin:draft-label-impact-selfaffecting',
-    defaultMessage: 'Hefur áhrif á sjálfa sig',
-  },
 })
 
 export const errorMsgs = defineMessages({
@@ -380,9 +411,17 @@ export const errorMsgs = defineMessages({
     id: 'ap.regulations-admin:error-typefield-required',
     defaultMessage: 'Ekki hægt að greina tegund reglugerðar út frá titli',
   },
+  signedDocumentUrlRequired: {
+    id: 'ap.regulations-admin:error-signeddocurl-required',
+    defaultMessage: 'Það verður að hlaðaupp undirrituðu eintaki',
+  },
   fieldRequired: {
     id: 'ap.regulations-admin:error-field-required',
     defaultMessage: 'Þessi reitur má ekki vera tómur',
+  },
+  htmlWarnings: {
+    id: 'ap.regulations-admin:error-html-warnings',
+    defaultMessage: 'Villur í uppsetningu/innihaldi texta',
   },
   ministryUnknown: {
     id: 'ap.regulations-admin:error-ministry-unknown',
@@ -505,11 +544,11 @@ export const buttonsMsgs = defineMessages({
   },
   prepShipping: {
     id: 'ap.regulations-admin:btn-prepshipping',
-    defaultMessage: 'Hefja útgáfuferli',
+    defaultMessage: 'Undirbúa útgáfuferli',
   },
   publish: {
     id: 'ap.regulations-admin:btn-publish',
-    defaultMessage: 'Senda til útgáfu í stjórnartíðindum',
+    defaultMessage: 'Búið að senda til birtingar í stjórnartíðindum',
   },
   delete: {
     id: 'ap.regulations-admin:btn-delete',
@@ -526,5 +565,49 @@ export const buttonsMsgs = defineMessages({
   downloadDraftError: {
     id: 'ap.regulations-admin:error-downloaddraft',
     defaultMessage: 'Ekki var hægt að sækja PDF skrá',
+  },
+})
+
+export const reviewMessagse = defineMessages({
+  confirmBeforePublish: {
+    id: 'ap.regulations-admin:review-confirmmessage',
+    defaultMessage: 'Ég hef yfirfarið að reglugerðin sé rétt skráð',
+  },
+  warningsTitle: {
+    id: 'ap.regulations-admin:review-warnings-title',
+    defaultMessage: 'Eftirfarandi atriði þarf að laga:',
+  },
+  jumpToStepButton: {
+    id: 'ap.regulations-admin:review-jump-to-fix',
+    defaultMessage: 'Skoða',
+  },
+  downloadSignedDocument: {
+    id: 'ap.regulations-admin:review-download-signeddocument',
+    defaultMessage: 'Sækja undirritaða útgáfu',
+  },
+  downloadPDFVersion: {
+    id: 'ap.regulations-admin:review-download-pdfversion',
+    defaultMessage: 'Sækja PDF til birtingar',
+  },
+  copyTitle: {
+    id: 'ap.regulations-admin:review-copy-title',
+    defaultMessage: 'Afrita titil reglugerðarinnar',
+  },
+  copyHtml: {
+    id: 'ap.regulations-admin:review-copy-html',
+    defaultMessage: 'Afrita HTML reglugerðarinnar',
+  },
+  copySignatureDate: {
+    id: 'ap.regulations-admin:review-copy-signaturedate',
+    defaultMessage: 'Afrita undirritunardag',
+  },
+  copyIdealPublishDate: {
+    id: 'ap.regulations-admin:review-copy-idealpublishdate',
+    defaultMessage: 'Afrita óska útgáfudag',
+  },
+
+  impactsTitle: {
+    id: 'ap.regulations-admin:review-impacts-title',
+    defaultMessage: 'Áhrif á aðrar reglugerðir',
   },
 })

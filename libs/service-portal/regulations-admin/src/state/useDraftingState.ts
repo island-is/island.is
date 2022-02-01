@@ -6,11 +6,19 @@ import React, {
   ReactNode,
 } from 'react'
 import { useMutation, gql } from '@apollo/client'
-import { LawChapterSlug, MinistryList } from '@island.is/regulations'
+import {
+  LawChapter,
+  LawChapterSlug,
+  MinistryList,
+} from '@island.is/regulations'
 import { useHistory } from 'react-router-dom'
 import { Step } from '../types'
-import { getInputFieldsWithErrors, useLocale } from '../utils'
-import { DraftingStatus, RegulationDraft } from '@island.is/regulations/admin'
+import { useLocale } from '../utils'
+import {
+  DraftImpactId,
+  DraftingStatus,
+  RegulationDraft,
+} from '@island.is/regulations/admin'
 import {
   RegDraftForm,
   DraftingState,
@@ -20,10 +28,15 @@ import {
 } from './types'
 import { buttonsMsgs } from '../messages'
 import {} from '@island.is/regulations/web'
-import { toast } from '@island.is/island-ui/core'
 import { getEditUrl, getHomeUrl } from '../utils/routing'
 import { useEditDraftReducer, StateInputs } from './reducer'
 import { steps } from './makeFields'
+import {
+  isDraftErrorFree,
+  isDraftLocked,
+  isDraftPublishable,
+} from './validations'
+import { toast } from 'react-toastify'
 
 // ---------------------------------------------------------------------------
 
@@ -57,12 +70,29 @@ const useMakeDraftingState = (inputs: StateInputs) => {
   const [state, dispatch] = useEditDraftReducer(inputs)
 
   // NOTE: we assume that both input.draft nad input.ministries don't change
+  // so we don't have an effect hook that checks for them changing....
 
-  useEffect(
-    () => dispatch({ type: 'CHANGE_STEP', stepName: inputs.stepName }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [inputs.stepName],
-  )
+  const draftIsLocked = isDraftLocked(state.draft)
+
+  useEffect(() => {
+    if (draftIsLocked && inputs.stepName !== 'review') {
+      history.replace(getEditUrl('review'))
+    } else {
+      dispatch({ type: 'CHANGE_STEP', stepName: inputs.stepName })
+    }
+  }, [
+    inputs.stepName,
+    draftIsLocked,
+    history, // NOTE: Should be immutable
+    dispatch, // NOTE: Should be immutable
+  ])
+
+  useEffect(() => {
+    dispatch({ type: 'SET_IMPACT', impactId: inputs.activeImpact })
+  }, [
+    inputs.activeImpact,
+    dispatch, // NOTE: Should be immutable
+  ])
 
   const [deleteDraftRegulationMutation] = useMutation(
     DELETE_DRAFT_REGULATION_MUTATION,
@@ -88,7 +118,7 @@ const useMakeDraftingState = (inputs: StateInputs) => {
                 title: apx.title.value,
                 text: apx.text.value,
               })),
-              comments: draft.comments.value,
+              comments: '', // TODO: remove this field from the database. It's never used!
               ministry: draft.ministry.value,
               draftingNotes: draft.draftingNotes.value,
               idealPublishDate: draft.idealPublishDate?.value,
@@ -115,30 +145,29 @@ const useMakeDraftingState = (inputs: StateInputs) => {
         })
 
     const actions = {
-      goBack: prevStep ? () => actions.goToStep(prevStep) : undefined,
+      goBack: prevStep
+        ? () => {
+            actions.goToStep(prevStep)
+          }
+        : undefined,
 
-      goForward:
-        nextStep && (state.isEditor || nextStep !== 'review')
-          ? () => {
-              // BASICS
-              if (step.name === 'basics') {
-                const errorFields = getInputFieldsWithErrors(
-                  ['title', 'text'],
-                  draft,
-                )
-
-                if (errorFields) {
-                  dispatch({
-                    type: 'UPDATE_MULTIPLE_PROPS',
-                    multiData: errorFields,
-                  })
-                  return // Prevent the user going forward
-                }
-              }
-
-              actions.goToStep(nextStep)
+      goForward: nextStep
+        ? () => {
+            // BASICS – It's pointless (albeit harmless) to go forward if title and text are empty
+            if (
+              step.name === 'basics' &&
+              (draft.title.error || draft.text.error)
+            ) {
+              // trigger dirty=true on both title and text
+              !draft.title.dirty &&
+                actions.updateState('title', draft.title.value)
+              !draft.text.dirty && actions.updateState('text', draft.text.value)
+              return // Prevent the user going forward
             }
-          : undefined,
+
+            actions.goToStep(nextStep)
+          }
+        : undefined,
 
       goToStep: (stepName: Step) => {
         actions.saveStatus(true)
@@ -149,10 +178,9 @@ const useMakeDraftingState = (inputs: StateInputs) => {
       updateState: <Prop extends RegDraftFormSimpleProps>(
         name: Prop,
         value: RegDraftForm[Prop]['value'],
-        explicit?: boolean,
       ) => {
         // @ts-expect-error  (FML! FIXME: make this nicer)
-        dispatch({ type: 'UPDATE_PROP', name, value, explicit })
+        dispatch({ type: 'UPDATE_PROP', name, value })
       },
 
       setAppendixProp: <Prop extends AppendixFormSimpleProps>(
@@ -213,35 +241,85 @@ const useMakeDraftingState = (inputs: StateInputs) => {
       },
 
       saveStatus: (silent?: boolean) => {
+        if (isDraftLocked(draft)) {
+          return false
+        }
         dispatch({ type: 'SAVING_STATUS' })
         saveDraftStatus().then(({ success, error }) => {
-          if (error) {
-            toast.error(t(buttonsMsgs.saveFailure))
-            console.error(error)
-          } else if (!silent) {
+          if (success && !silent) {
             toast.success(t(buttonsMsgs.saveSuccess))
           }
-          dispatch({ type: 'SAVING_STATUS_DONE', error })
+          dispatch({
+            type: 'SAVING_STATUS_DONE',
+            error: error && { message: buttonsMsgs.saveFailure, error },
+          })
         })
       },
 
       propose: !state.isEditor
         ? () => {
+            if (isDraftLocked(draft)) {
+              return false
+            }
             dispatch({ type: 'SAVING_STATUS' })
             saveDraftStatus('proposal').then(({ success, error }) => {
               if (error) {
-                toast.error(t(buttonsMsgs.saveFailure))
-                console.error(error)
-                dispatch({ type: 'SAVING_STATUS_DONE', error })
+                dispatch({
+                  type: 'SAVING_STATUS_DONE',
+                  error: { message: buttonsMsgs.saveFailure, error },
+                })
               } else {
                 history.push(getHomeUrl())
               }
             })
           }
         : undefined,
+
+      ship:
+        state.isEditor &&
+        // only offer shipping from "review" step
+        state.step.name === 'review'
+          ? () => {
+              if (!isDraftErrorFree(state)) {
+                return false
+              }
+              dispatch({ type: 'SAVING_STATUS' })
+              saveDraftStatus('shipped').then(({ success, error }) => {
+                if (error) {
+                  dispatch({
+                    type: 'SAVING_STATUS_DONE',
+                    error: { message: buttonsMsgs.saveFailure, error },
+                  })
+                } else {
+                  history.push(getHomeUrl())
+                }
+              })
+            }
+          : undefined,
+
+      publish:
+        state.isEditor &&
+        // only offer publish from "review" step
+        state.step.name === 'review'
+          ? () => {
+              if (!isDraftPublishable(state)) {
+                return false
+              }
+              dispatch({ type: 'SAVING_STATUS' })
+              saveDraftStatus('published').then(({ success, error }) => {
+                if (error) {
+                  dispatch({
+                    type: 'SAVING_STATUS_DONE',
+                    error: { message: buttonsMsgs.saveFailure, error },
+                  })
+                } else {
+                  history.push(getHomeUrl())
+                }
+              })
+            }
+          : undefined,
     }
     return { ...state, actions }
-    // // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     state,
 
@@ -263,20 +341,26 @@ const RegDraftingContext = createContext(
   {} as DraftingState & { actions: RegDraftActions },
 )
 
-type RegDraftingProviderProps = {
-  regulationDraft: RegulationDraft
-  stepName: Step
-  ministries: MinistryList
+type RegDraftingProviderProps = StateInputs & {
   children: ReactNode
 }
 
 export const RegDraftingProvider = (props: RegDraftingProviderProps) => {
-  const { regulationDraft, ministries, stepName, children } = props
+  const {
+    regulationDraft,
+    activeImpact,
+    ministries,
+    lawChapters,
+    stepName,
+    children,
+  } = props
 
   return React.createElement(RegDraftingContext.Provider, {
     value: useMakeDraftingState({
       regulationDraft,
+      activeImpact,
       ministries,
+      lawChapters,
       stepName,
     }),
     children: children,

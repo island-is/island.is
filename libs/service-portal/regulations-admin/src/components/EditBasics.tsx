@@ -35,7 +35,7 @@ export const EditBasics = () => {
           name="title"
           defaultValue={draft.title.value}
           onBlur={(value) => updateState('title', value)}
-          error={t(draft.title.error)}
+          error={draft.title.showError && t(draft.title.error)}
           required={!!draft.title.required}
         />
         <Box marginTop={1} marginLeft={1}>
@@ -44,7 +44,6 @@ export const EditBasics = () => {
           </Text>
         </Box>
       </Box>
-
       <Box marginBottom={[6, 6, 8]}>
         <Accordion>
           <AccordionItem
@@ -59,11 +58,11 @@ export const EditBasics = () => {
                 draftId={draft.id}
                 value={text.value}
                 onChange={(value) => updateState('text', value)}
-                error={t(text.error)}
+                error={text.showError && t(text.error)}
               />
             </Box>
             <Box>
-              <Divider weight="regular" />
+              <Divider />
               {' '}
             </Box>
             <Box marginBottom={[4, 4, 6]}>

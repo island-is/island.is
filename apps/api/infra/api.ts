@@ -22,6 +22,7 @@ export const serviceSetup = (services: {
   icelandicNameRegistryBackend: ServiceBuilder<'icelandic-names-registry-backend'>
   documentsService: ServiceBuilder<'services-documents'>
   servicesEndorsementApi: ServiceBuilder<'services-endorsement-api'>
+  regulationsAdminBackend: ServiceBuilder<'regulations-admin-backend'>
 }): ServiceBuilder<'api'> => {
   return service('api')
     .namespace('islandis')
@@ -98,6 +99,9 @@ export const serviceSetup = (services: {
       },
       ENDORSEMENT_SYSTEM_BASE_API_URL: ref(
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
+      ),
+      REGULATIONS_ADMIN_URL: ref(
+        (h) => `http://${h.svc(services.regulationsAdminBackend)}/api`,
       ),
       XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000',
       XROAD_PROPERTIES_TIMEOUT: '20000',

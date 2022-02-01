@@ -9,18 +9,17 @@ import {
 } from '@island.is/island-ui/core'
 import { editorMsgs as msg } from '../messages'
 import { useLocale } from '../utils'
-import { LawChapterSlug } from '@island.is/regulations'
 import { LawChaptersSelect } from './LawChaptersSelect'
 import { useDraftingState } from '../state/useDraftingState'
 
 export const EditMeta = () => {
   const { formatMessage: t } = useLocale()
   const { draft, actions } = useDraftingState()
-  const { updateState, updateLawChapterProp } = actions
 
-  const type = draft.type.value
+  const type = draft.type
   const typeName =
-    type && t(type === 'amending' ? msg.type_amending : msg.type_base)
+    type.value &&
+    t(type.value === 'amending' ? msg.type_amending : msg.type_base)
 
   return (
     <>
@@ -34,6 +33,8 @@ export const EditMeta = () => {
               name="_type"
               size="sm"
               readOnly
+              hasError={type.showError && !!type.error}
+              errorMessage={t(type.error)}
             />
           </Box>
         </Column>
@@ -47,9 +48,11 @@ export const EditMeta = () => {
               minDate={draft.idealPublishDate.value || null}
               selected={draft.effectiveDate.value}
               handleChange={(date: Date) =>
-                updateState('effectiveDate', date, true)
+                actions.updateState('effectiveDate', date)
               }
-              hasError={!!draft.effectiveDate.error}
+              hasError={
+                draft.effectiveDate.showError && !!draft.effectiveDate.error
+              }
               errorMessage={t(draft.effectiveDate.error)}
               backgroundColor="blue"
             />
@@ -59,7 +62,7 @@ export const EditMeta = () => {
                 variant="text"
                 preTextIcon="close"
                 onClick={() => {
-                  updateState('effectiveDate', undefined)
+                  actions.updateState('effectiveDate', undefined)
                 }}
               >
                 {t(msg.effectiveDate_default)}
@@ -69,17 +72,7 @@ export const EditMeta = () => {
         </Column>
       </Columns>
 
-      <Box>
-        <LawChaptersSelect
-          activeChapters={draft.lawChapters.value}
-          addChapter={(slug: LawChapterSlug) =>
-            updateLawChapterProp('add', slug)
-          }
-          removeChapter={(slug: LawChapterSlug) =>
-            updateLawChapterProp('delete', slug)
-          }
-        />
-      </Box>
+      <LawChaptersSelect />
     </>
   )
 }

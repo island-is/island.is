@@ -1,185 +1,41 @@
-import * as s from './EditImpacts.css'
-
-import React, { useCallback, useMemo, useState } from 'react'
-import {
-  Box,
-  Button,
-  DatePicker,
-  Divider,
-  Inline,
-  Option,
-  Select,
-  Text,
-} from '@island.is/island-ui/core'
+import React from 'react'
+import { CreateImpact } from './impacts/CreateImpact'
 import { useDraftingState } from '../state/useDraftingState'
-import { editorMsgs as msg } from '../messages'
-import { useLocale } from '../utils'
-import { prettyName } from '@island.is/regulations'
-import { DraftImpactName } from '@island.is/regulations/admin'
-
-import { MessageDescriptor } from '@formatjs/intl'
-import { useRegulationListQuery } from '../utils/dataHooks'
-import { ImpactList } from './ImpactList'
-import { RegDraftForm } from '../state/types'
-
-// ---------------------------------------------------------------------------
-
-const today = new Date()
-
-// ---------------------------------------------------------------------------
-
-type SelRegOption = Option & { value?: DraftImpactName | '' }
-
-const useAffectedRegulations = (
-  mentioned: RegDraftForm['mentioned'],
-  notFoundText: string,
-  selfAffectingText: string,
-) => {
-  const { data, loading } = useRegulationListQuery(mentioned)
-
-  const mentionedOptions = useMemo(() => {
-    if (!data) {
-      return []
-    }
-    const options = mentioned.map(
-      (name): SelRegOption => {
-        const reg = data.find((r) => r.name === name)
-        if (reg) {
-          return {
-            value: name,
-            label: prettyName(name) + ' – ' + reg.title,
-          }
-        }
-        return {
-          disabled: true,
-          value: '',
-          label: prettyName(name) + ' ' + notFoundText,
-        }
-      },
-    )
-
-    options.push({
-      value: 'self',
-      label: selfAffectingText,
-    })
-
-    return options
-  }, [mentioned, data, loading, notFoundText, selfAffectingText])
-
-  return {
-    loading,
-    mentionedOptions,
-  }
-}
+import { EditCancellation } from './impacts/EditCancellation'
+import { EditChange } from './impacts/EditChange'
 
 // ---------------------------------------------------------------------------
 
 export const EditImpacts = () => {
-  const t = useLocale().formatMessage
-  const { draft, actions } = useDraftingState()
+  const { draft, activeImpact } = useDraftingState()
 
-  const { goToStep } = actions
+  /*
+    TODO: Fetch (when activeImpact is defined)
+    The target (base) regulation and its future
+    impacts (both incoming and outgoing)
 
-  const { mentionedOptions, loading } = useAffectedRegulations(
-    draft.mentioned,
-    t(msg.impactRegSelect_mentionedNotFound),
-    t(msg.impactSelfAffecting),
-  )
+    What we need to decide is how best to
+    fetch and keep updated all the different impacts,
+    how/where to group them by baseRegulation, etc. etc.
 
-  const [selRegOption, setSelRegOption] = useState<SelRegOption | undefined>()
+    DECIDE: if this should perhaps be fetched at the (root-)level
+    in EditApp (in "../screens/Edit.tsx") and injected into the
+    App-level state.
+  */
 
-  const minDate = draft.idealPublishDate.value || today
-  const [effectiveDate, setEffectiveDate] = useState<{
-    value?: Date | undefined
-    error?: string | MessageDescriptor
-  }>({})
+  // const baseRegulationInfo = useBaseRegulationQuery(impactId)
 
-  const handleSetEffectiveDate = useCallback(
-    (value: Date | undefined) => {
-      if (value && value < minDate) {
-        setEffectiveDate({ value, error: msg.impactEffectiveDate_toosoon })
-        return
-      }
-      setEffectiveDate({ value, error: undefined })
-    },
-    [minDate],
-  )
-
-  if (loading) {
-    return null
+  if (!activeImpact) {
+    return <CreateImpact />
   }
 
-  return (
-    <>
-      <Box marginBottom={3} className={s.explainerText}>
-        {t(msg.impactRegExplainer)}
-        {'    '}
-        <Button onClick={() => goToStep('basics')} variant="text" size="small">
-          {t(msg.impactRegExplainer_editLink)}
-        </Button>
-      </Box>
+  const impact = draft.impacts.find((i) => i.id === activeImpact)
 
-      <Box marginBottom={4}>
-        <Select
-          size="sm"
-          label={t(msg.impactRegSelect)}
-          name="reg"
-          placeholder={t(msg.impactRegSelect_placeholder)}
-          value={selRegOption}
-          options={mentionedOptions}
-          onChange={(option) => setSelRegOption(option as SelRegOption)}
-          backgroundColor="blue"
-        />
-      </Box>
-
-      {selRegOption && (
-        <Box marginBottom={[4, 4, 8]}>
-          <Box marginBottom={2}>
-            <Divider weight="regular" />
-            {' '}
-          </Box>
-          <Text variant="h4" as="h4" marginBottom={[2, 2, 3, 4]}>
-            {t(msg.chooseImpactType)}
-          </Text>
-          <Inline space={[2, 2, 3, 4]} align="center" alignY="center">
-            <Button variant="ghost" icon="document" iconType="outline">
-              {t(msg.chooseImpactType_change)}
-            </Button>
-            <span> {t(msg.chooseImpactType_or)} </span>
-            <Button variant="ghost" icon="fileTrayFull" iconType="outline">
-              {t(msg.chooseImpactType_cancel)}
-            </Button>
-          </Inline>
-        </Box>
-      )}
-
-      {/* {selRegOption && (
-        <Box marginBottom={4} width="half">
-          <DatePicker
-            size="sm"
-            label={t(msg.impactEffectiveDate)}
-            placeholderText={t(msg.impactEffectiveDate_default)}
-            minDate={minDate}
-            selected={effectiveDate.value}
-            handleChange={handleSetEffectiveDate}
-            hasError={!!effectiveDate.error}
-            errorMessage={t(effectiveDate.error)}
-            backgroundColor="blue"
-          />
-          {!!draft.effectiveDate.value && (
-            <Button
-              size="small"
-              variant="text"
-              preTextIcon="close"
-              onClick={() => handleSetEffectiveDate(undefined)}
-            >
-              {t(msg.effectiveDate_default)}
-            </Button>
-          )}
-        </Box>
-      )} */}
-
-      <ImpactList impacts={draft.impacts} />
-    </>
-  )
+  if (!impact) {
+    throw new Error('No matching impact found')
+  }
+  if (impact.type === 'repeal') {
+    return <EditCancellation cancellation={impact} />
+  }
+  return <EditChange change={impact} />
 }

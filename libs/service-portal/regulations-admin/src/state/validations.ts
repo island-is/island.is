@@ -8,11 +8,107 @@ import {
 } from '../utils/guessers'
 import {
   DraftField,
+  DraftImpactForm,
   DraftingState,
   HtmlDraftField,
   RegDraftForm,
   RegDraftFormSimpleProps,
 } from './types'
+
+const propMap: Record<RegDraftFormSimpleProps, true> = {
+  title: true,
+  text: true,
+  idealPublishDate: true,
+  fastTrack: true,
+  effectiveDate: true,
+  signatureDate: true,
+  signatureText: true,
+  signedDocumentUrl: true,
+  lawChapters: true,
+  ministry: true,
+  type: true,
+  draftingNotes: true,
+  authors: true,
+  name: true,
+}
+const draftRootProps = Object.keys(
+  propMap,
+) as ReadonlyArray<RegDraftFormSimpleProps>
+
+// ---------------------------------------------------------------------------
+
+export const validateImpact = (
+  state: DraftingState,
+  impact: DraftImpactForm,
+) => {
+  // TODO: perform more validations, such as date boundry checks, etc.
+  validateFieldValue(impact.date, true)
+  if (impact.type === 'repeal') {
+    return
+  }
+  validateFieldValue(impact.title, true)
+  validateFieldValue(impact.text, true)
+  impact.appendixes.forEach((appendix) => {
+    if (appendix.revoked) {
+      appendix.text.error = undefined
+      appendix.title.error = undefined
+    } else {
+      validateFieldValue(appendix.title, true)
+      validateFieldValue(appendix.text, true)
+    }
+  })
+  validateFieldValue(impact.comments, true)
+}
+
+// ---------------------------------------------------------------------------
+
+export const validateState = (state: DraftingState) => {
+  const { draft } = state
+
+  draftRootProps.forEach((key) => validateFieldValue(draft[key]))
+  draft.appendixes.forEach((appendix) => {
+    validateFieldValue(appendix.title)
+    validateFieldValue(appendix.text)
+  })
+  draft.impacts.forEach((impact) => validateImpact(state, impact))
+}
+// ---------------------------------------------------------------------------
+
+/**
+ * Simply travels the state very, very quickly and check for any already flagged errors
+ *
+ * Does not perform any new validations.
+ */
+export const isDraftErrorFree = (state: DraftingState): boolean => {
+  const { draft } = state
+
+  return (
+    !state.error &&
+    draftRootProps.every((key) => !draft[key].error) &&
+    draft.appendixes.every(({ title, text }) => !title.error && !text.error) &&
+    draft.impacts.every((impact) => {
+      if (impact.error || impact.date.error) return false
+      if (impact.type === 'repeal') return true
+
+      const { title, text, appendixes, comments } = impact
+      return (
+        !title.error &&
+        !text.error &&
+        appendixes.every(({ title, text }) => !title.error && !text.error) &&
+        !comments.error
+      )
+    })
+  )
+}
+
+// ---------------------------------------------------------------------------
+
+export const isDraftPublishable = (state: DraftingState): boolean =>
+  !!state.draft.name.value && isDraftErrorFree(state)
+
+// ---------------------------------------------------------------------------
+export const isDraftLocked = (draft: RegDraftForm): boolean =>
+  draft.draftingStatus === 'shipped' || draft.draftingStatus === 'published'
 
 // ---------------------------------------------------------------------------
 
@@ -20,24 +116,44 @@ const isHTMLField = (
   field: DraftField<unknown, string>,
 ): field is HtmlDraftField => field.type === 'html'
 
+const isEmpty = (value: unknown) =>
+  Array.isArray(value) ? value.length === 0 : !value
+
 // -------
+
+export const validateFieldValue = <T extends DraftField<unknown, string>>(
+  field: T,
+  isImpact?: boolean,
+) => {
+  field.error =
+    field.required && isEmpty(field.value)
+      ? field.required !== true
+        ? field.required
+        : errorMsgs.fieldRequired
+      : undefined
+  field.showError = field.dirty || undefined
+
+  if (isHTMLField(field)) {
+    field.warnings = makeHighAngstWarnings(field.value, isImpact)
+    const hasWarnings = field.warnings.length > 0 || undefined
+    field.error = hasWarnings ? errorMsgs.htmlWarnings : field.error
+    field.showError = hasWarnings || field.showError
+  }
+}
+
+// ---------------------------------------------------------------------------
 
 export const updateFieldValue = <T extends DraftField<unknown, string>>(
   field: T,
   newValue: T['value'],
-  explicit?: boolean,
+  isImpact?: boolean,
 ) => {
-  if (newValue !== field.value || explicit === true) {
-    field.value = newValue
-    field.dirty = true
+  // if (newValue !== field.value) {
+  field.value = newValue
+  field.dirty = true
 
-    if (isHTMLField(field)) {
-      field.warnings = makeHTMLWarnings(field.value, true)
-    }
-    field.error =
-      field.required && !field.value ? errorMsgs.fieldRequired : undefined
-    field.hideError = !field.dirty
-  }
+  validateFieldValue(field, isImpact)
+  // }
 }
 
 // ---------------------------------------------------------------------------
@@ -63,6 +179,9 @@ const updateImpacts = (
 ) => {
   const { impacts, mentioned, type } = draft
 
+  // Title should only be considered for "breytingareglugerðir" (type: `amending`)
+  // because we assume that Stofnreglugerð *title* will never mention another
+  // regulation that its changing. Prove us wrong!
   const checkedTitle = type.value === 'amending' ? title : ''
   const newMentions = findAffectedRegulationsInText(checkedTitle, text)
 
@@ -104,6 +223,9 @@ export const derivedUpdates: {
     const { type, text } = state.draft
     const derivedType = findRegulationType(newTitle)
     updateFieldValue(type, derivedType)
+    if (!newTitle) {
+      type.showError = undefined
+    }
     updateImpacts(state.draft, newTitle, text.value)
   },
 
@@ -144,13 +266,19 @@ export const derivedUpdates: {
     // TODO: Also match the derived ministry up with original draft author's
     // ministry connnection (i.e. their "place of work")
     // and issue a WARNING if the two ministry values don't match up.
-    const unknownMinistryError =
-      ministryName && !knownMinistry ? errorMsgs.ministryUnknown : undefined
-    draft.ministry.error = unknownMinistryError || draft.ministry.error
-    draft.ministry.hideError = !unknownMinistryError
+    const hasMinistryError = ministryName && !knownMinistry
+    const ministryError = hasMinistryError
+      ? errorMsgs.ministryUnknown
+      : undefined
+    draft.ministry.error = ministryError || draft.ministry.error
+    draft.ministry.showError = hasMinistryError || draft.ministry.showError
+  },
+
+  idealPublishDate: (state, newValue) => {
+    // FIXME: TODO: lower-boundry-check explicitly set impact dates.
   },
 }
 
 // ---------------------------------------------------------------------------
 
-export const makeHTMLWarnings = makeHighAngstWarnings
+export { makeHighAngstWarnings } from '@island.is/regulations-tools/useTextWarnings'

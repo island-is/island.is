@@ -44,9 +44,13 @@ const AppendixEditing = (props: AppendixEditingProps) => {
   const baseTitle = baseAppendix?.title
   const baseText = baseAppendix?.text
 
-  const [expanded, setExpanded] = useState(
-    () => !appendix.title.value && !appendix.text.value,
-  )
+  const [expanded, setExpanded] = useState(() => {
+    const { title, text } = appendix
+    // Start the appendix expanded if both fields are empty
+    // (i.e. newly added appendixes) or if either field has
+    // a serious error
+    return Boolean((!title.value && !text.value) || title.error || text.error)
+  })
 
   const defaultTitle = `Viðauki ${idx + 1}`
 

@@ -18,6 +18,18 @@ export const ShippedRegulations = () => {
     return null
   }
 
+  // DECIDE:
+  // We are currently loading both shipped (i.e. locked) drafts
+  // and published regulaions.
+  // Published regulations might never appear if they're Garbage-collected
+  // instantly.
+  //
+  // But if not, then showing them here (without an "edit" button)
+  // might be nice for UX — as feedback about recent results of your
+  // completed tasks.
+  //
+  // Food for thought.
+
   return (
     <Box marginTop={[4, 4, 8]}>
       <Text variant="h3" as="h2" marginBottom={[2, 2, 3]}>

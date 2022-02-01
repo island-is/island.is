@@ -9,7 +9,6 @@ import {
   RegulationType,
   Regulation,
   LawChapter,
-  Ministry,
   Appendix,
 } from './types'
 
@@ -82,14 +81,14 @@ export type ShippedSummary = Pick<
 
 // ---------------------------------------------------------------------------
 
-export type RegulationDraft = Pick<
-  Regulation,
-  'text' | 'appendixes' | 'comments'
-> & {
+export type RegulationDraft = {
   /** undefined signifies a new regulation draft */
   id: RegulationDraftId
   draftingStatus: DraftingStatus
   title: PlainText
+  text: Regulation['text']
+  appendixes: Regulation['appendixes']
+  comments: Regulation['comments']
   name?: RegName
   draftingNotes: HTMLText
   authors: ReadonlyArray<Author>
@@ -114,7 +113,7 @@ export type DraftRegulationCancel = {
   name: DraftImpactName
   regTitle: PlainText
   id: DraftRegulationCancelId
-  date: ISODate
+  date?: ISODate
 }
 
 // ---------------------------------------------------------------------------
@@ -124,7 +123,7 @@ export type DraftRegulationChange = {
   type: 'amend'
   name: DraftImpactName
   regTitle: PlainText
-  date: ISODate
+  date?: ISODate
   title: PlainText
 } & Pick<Regulation, 'text' | 'appendixes' | 'comments'>
 

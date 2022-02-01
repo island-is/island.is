@@ -67,11 +67,6 @@ export const EditorInput = (props: EditorInputProps) => {
 
   // add warnings at the top of the editor for longer content.
   const warningsAbove = props.warningsAbove ?? value.length > 1 * KB
-  console.log({
-    warningsAbove,
-    prop: props.warningsAbove,
-    length: value.length,
-  })
 
   return (
     <>
