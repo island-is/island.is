@@ -290,7 +290,8 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   }
 
   const getLicenseAddress = (license: OperatingLicense) => {
-    // In many cases, both the street and location fields contain the same value. To avoid repeating the info, we don't show the street value if it is the same as the location value.
+    // In many cases, both the street and location fields contain the same value. To avoid
+    // repeating the info, we don't show the street value if it is the same as the location value.
     const street = license.street === license.location ? '' : license.street
     let address = ''
     if (license.location) {
