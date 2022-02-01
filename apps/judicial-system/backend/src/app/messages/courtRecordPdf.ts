@@ -4,7 +4,7 @@ export const courtRecord = {
   title: defineMessage({
     id: 'judicial.system.backend:pdf.court_record.title',
     defaultMessage: 'Þingbók',
-    description: 'Notaður sem fyrirsögn á þingbók.',
+    description: 'Notaður sem titill á þingbók.',
   }),
   missingCourt: defineMessage({
     id: 'judicial.system.backend:pdf.court_record.missing_court',
@@ -15,7 +15,7 @@ export const courtRecord = {
     id: 'judicial.system.backend:pdf.court_record.case_number',
     defaultMessage: 'Mál nr. {caseNumber}',
     description:
-      'Notaður sem undirfyrirsögn á þingbók þar sem {caseNumber} er númer á máli. {caseNumber} er sjálfkrafa bætt við í kóða.',
+      'Notaður sem undirtitill á þingbók þar sem {caseNumber} er númer á máli. {caseNumber} er sjálfkrafa bætt við í kóða.',
   }),
   intro: defineMessage({
     id: 'judicial.system.backend:pdf.court_record.intro',

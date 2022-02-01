@@ -51,24 +51,19 @@ function constructRestrictionRulingPdf(
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
-  setTitle(doc, shortVersion ? 'Þingbók' : 'Úrskurður')
+  const title = formatMessage(ruling.title)
+
+  setTitle(doc, title)
   addCoatOfArms(doc)
   addEmptyLines(doc, 5)
   setLineGap(doc, 4)
   addLargeHeading(
     doc,
-    theCase.court?.name ?? formatMessage(core.missing.court),
+    theCase.court?.name ?? formatMessage(ruling.missingCourt),
     'Times-Roman',
   )
   setLineGap(doc, 2)
-  addMediumHeading(
-    doc,
-    formatMessage(
-      shortVersion
-        ? ruling.proceedingsHeadingShortVersion
-        : ruling.proceedingsHeading,
-    ),
-  )
+  addMediumHeading(doc, title)
   setLineGap(doc, 30)
   addMediumHeading(
     doc,
@@ -77,242 +72,60 @@ function constructRestrictionRulingPdf(
     }),
   )
   setLineGap(doc, 1)
-  addNormalJustifiedText(
+  addNormalText(
     doc,
-    formatMessage(ruling.intro, {
-      courtDate: formatDate(theCase.courtStartDate, 'PPP'),
-      judgeNameAndTitle: `${theCase.judge?.name ?? '?'} ${
-        theCase.judge?.title ?? '?'
-      }`,
-      courtLocation: theCase.courtLocation
-        ? ` ${lowercase(
-            theCase.courtLocation?.slice(theCase.courtLocation.length - 1) ===
-              '.'
-              ? theCase.courtLocation?.slice(0, -1)
-              : theCase.courtLocation,
-          )}`
-        : '',
-      caseNumber: theCase.courtCaseNumber,
-      startTime: formatDate(theCase.courtStartDate, 'p'),
-    }),
+    formatMessage(ruling.prosecutorDemandsHeading),
+    'Times-Bold',
   )
-
-  if (!theCase.isClosedCourtHidden) {
-    addEmptyLines(doc)
-    addNormalJustifiedText(doc, formatMessage(ruling.closedCourtAnnouncement))
-  }
-
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    `${formatMessage(ruling.prosecutorIs)} ${
-      theCase.prosecutor?.institution?.name ?? ruling.noDistrict
-    }.`,
-  )
-  addNormalJustifiedText(
-    doc,
-    `${formatMessage(ruling.defendantIs, {
-      suffix: theCase.defendants && theCase.defendants.length > 1 ? 'ar' : 'i',
-      isSuffix: theCase.defendants && theCase.defendants.length > 1 ? 'u' : '',
-    })}${
-      theCase.defendants?.reduce(
-        (acc, defendant, index) =>
-          `${acc}${
-            index === 0
-              ? ''
-              : index + 1 === theCase.defendants?.length
-              ? ', og'
-              : ','
-          } ${defendant.name ?? '-'}, kt. ${formatNationalId(
-            defendant.nationalId ?? '-',
-          )}`,
-        '',
-      ) ?? ` ${ruling.noDefendants}`
-    }.`,
-  )
-
-  if (theCase.courtAttendees?.trim()) {
-    addEmptyLines(doc)
-    addNormalText(doc, formatMessage(ruling.attendeesHeading), 'Times-Bold')
-    addEmptyLines(doc)
-    addNormalJustifiedText(doc, theCase.courtAttendees, 'Times-Roman')
-  }
-
-  addEmptyLines(doc)
-  addNormalText(doc, formatMessage(ruling.courtDocuments.heading), 'Times-Bold')
-  addEmptyLines(doc)
-  addNormalJustifiedText(
-    doc,
-    formatMessage(ruling.courtDocuments.request, {
-      caseTypes: formatRequestCaseType(theCase.type),
-    }),
+    theCase.prosecutorDemands ?? formatMessage(ruling.missingProsecutorDemands),
     'Times-Roman',
   )
-  addNormalJustifiedText(doc, formatMessage(ruling.courtDocuments.announcement))
-
-  theCase.courtDocuments?.forEach((courttDocument, index) =>
-    addNormalJustifiedText(
-      doc,
-      formatMessage(ruling.courtDocuments.other, {
-        documentName: courttDocument,
-        documentNumber: index + 2,
-      }),
-    ),
-  )
-
-  if (theCase.accusedBookings) {
-    addEmptyLines(doc)
-    addNormalJustifiedText(doc, theCase.accusedBookings)
-  }
-
+  addEmptyLines(doc)
+  addNormalText(doc, formatMessage(ruling.courtCaseFactsHeading), 'Times-Bold')
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    theCase.litigationPresentations ??
-      formatMessage(core.missing.litigationPresentations),
+    theCase.courtCaseFacts ?? formatMessage(ruling.missingCourtCaseFacts),
+    'Times-Roman',
+  )
+  addEmptyLines(doc)
+  addNormalText(
+    doc,
+    formatMessage(ruling.courtLegalArgumentsHeading),
+    'Times-Bold',
+  )
+  addEmptyLines(doc)
+  addNormalJustifiedText(
+    doc,
+    theCase.courtLegalArguments ??
+      formatMessage(ruling.missingCourtLegalArguments),
+    'Times-Roman',
+  )
+  addEmptyLines(doc)
+  addNormalText(doc, formatMessage(ruling.rulingHeading), 'Times-Bold')
+  addEmptyLines(doc)
+  addNormalJustifiedText(
+    doc,
+    theCase.ruling ?? formatMessage(ruling.missingRuling),
+    'Times-Roman',
   )
   setLineGap(doc, 3)
   addEmptyLines(doc, 2)
   setLineGap(doc, 16)
-  addMediumHeading(doc, formatMessage(ruling.rulingHeading))
-
-  if (shortVersion) {
-    doc.fontSize(baseFontSize)
-    setLineGap(doc, 1)
-    doc.text(formatMessage(ruling.rulingShortVersionPlaceholder), {
-      align: 'center',
-    })
-  } else {
-    setLineGap(doc, 1)
-    addNormalText(doc, formatMessage(ruling.courtDemandsHeading), 'Times-Bold')
-    addEmptyLines(doc)
-    addNormalJustifiedText(
-      doc,
-      theCase.prosecutorDemands ?? formatMessage(core.missing.demands),
-      'Times-Roman',
-    )
-    addEmptyLines(doc)
-    addNormalText(
-      doc,
-      formatMessage(ruling.courtCaseFactsHeading),
-      'Times-Bold',
-    )
-    addEmptyLines(doc)
-    addNormalJustifiedText(
-      doc,
-      theCase.courtCaseFacts ?? formatMessage(core.missing.caseFacts),
-      'Times-Roman',
-    )
-    addEmptyLines(doc)
-    addNormalText(
-      doc,
-      formatMessage(ruling.courtLegalArgumentsHeading),
-      'Times-Bold',
-    )
-    addEmptyLines(doc)
-    addNormalJustifiedText(
-      doc,
-      theCase.courtLegalArguments ?? formatMessage(core.missing.legalArguments),
-      'Times-Roman',
-    )
-    addEmptyLines(doc)
-    addNormalText(doc, formatMessage(ruling.conclusionHeading), 'Times-Bold')
-    addEmptyLines(doc)
-    addNormalJustifiedText(
-      doc,
-      theCase.ruling ?? formatMessage(core.missing.conclusion),
-      'Times-Roman',
-    )
-  }
-
-  setLineGap(doc, 3)
-  addEmptyLines(doc, 2)
-  setLineGap(doc, 16)
-  addMediumHeading(doc, formatMessage(ruling.rulingTextHeading))
+  addMediumHeading(doc, formatMessage(ruling.conclusionHeading))
   setLineGap(doc, 1)
   addNormalJustifiedText(
     doc,
-    theCase.conclusion ?? formatMessage(core.missing.rulingText),
+    theCase.conclusion ?? formatMessage(ruling.missingConclusion),
   )
   addEmptyLines(doc)
   addNormalCenteredText(
     doc,
-    theCase.judge?.name ?? formatMessage(core.missing.judge),
+    theCase.judge?.name ?? formatMessage(ruling.missingJudge),
     'Times-Bold',
-  )
-  addEmptyLines(doc, 2)
-  addNormalJustifiedText(
-    doc,
-    formatMessage(ruling.rulingTextIntro),
-    'Times-Roman',
-  )
-  addEmptyLines(doc)
-  addNormalJustifiedText(doc, formatMessage(ruling.appealDirections))
-
-  let prosecutorAppeal = formatAppeal(
-    theCase.prosecutorAppealDecision,
-    'Sækjandi',
-  )
-
-  if (prosecutorAppeal) {
-    prosecutorAppeal = `${prosecutorAppeal} ${
-      theCase.prosecutorAppealAnnouncement ?? ''
-    }`
-  } else {
-    prosecutorAppeal = theCase.prosecutorAppealAnnouncement ?? ''
-  }
-
-  if (prosecutorAppeal) {
-    addEmptyLines(doc)
-    addNormalJustifiedText(doc, prosecutorAppeal)
-  }
-
-  let accusedAppeal = formatAppeal(
-    theCase.accusedAppealDecision,
-    capitalize(
-      formatMessage(core.defendant, {
-        suffix:
-          theCase.defendants && theCase.defendants?.length > 1 ? 'ar' : 'i',
-      }),
-    ),
-  )
-
-  if (accusedAppeal) {
-    accusedAppeal = `${accusedAppeal} ${
-      theCase.accusedAppealAnnouncement ?? ''
-    }`
-  } else {
-    accusedAppeal = theCase.accusedAppealAnnouncement ?? ''
-  }
-
-  if (accusedAppeal) {
-    addEmptyLines(doc)
-    addNormalJustifiedText(doc, accusedAppeal)
-  }
-
-  if (theCase.endOfSessionBookings) {
-    addEmptyLines(doc)
-    addNormalJustifiedText(doc, theCase.endOfSessionBookings)
-  }
-
-  if (theCase.registrar) {
-    addEmptyLines(doc)
-    addNormalJustifiedText(
-      doc,
-      formatMessage(ruling.registrarWitness, {
-        registrarNameAndTitle: `${theCase.registrar.name} ${theCase.registrar.title}`,
-      }),
-    )
-  }
-
-  addEmptyLines(doc)
-  addNormalText(
-    doc,
-    theCase.courtEndTime
-      ? formatMessage(ruling.signOff, {
-          endTime: formatDate(theCase.courtEndTime, 'p'),
-        })
-      : formatMessage(ruling.inSession),
   )
   setPageNumbers(doc)
 
@@ -339,24 +152,19 @@ function constructInvestigationRulingPdf(
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
-  setTitle(doc, shortVersion ? 'Þingbók' : 'Úrskurður')
+  const title = formatMessage(ruling.title)
+
+  setTitle(doc, title)
   addCoatOfArms(doc)
   addEmptyLines(doc, 5)
   setLineGap(doc, 4)
   addLargeHeading(
     doc,
-    theCase.court?.name ?? formatMessage(core.missing.court),
+    theCase.court?.name ?? formatMessage(ruling.missingCourt),
     'Times-Roman',
   )
   setLineGap(doc, 2)
-  addMediumHeading(
-    doc,
-    formatMessage(
-      shortVersion
-        ? ruling.proceedingsHeadingShortVersion
-        : ruling.proceedingsHeading,
-    ),
-  )
+  addMediumHeading(doc, title)
   setLineGap(doc, 30)
   addMediumHeading(
     doc,
@@ -365,245 +173,60 @@ function constructInvestigationRulingPdf(
     }),
   )
   setLineGap(doc, 1)
-  addNormalJustifiedText(
+  addNormalText(
     doc,
-    formatMessage(ruling.intro, {
-      courtDate: formatDate(theCase.courtStartDate, 'PPP'),
-      judgeNameAndTitle: `${theCase.judge?.name ?? '?'} ${
-        theCase.judge?.title ?? '?'
-      }`,
-      courtLocation: theCase.courtLocation
-        ? ` ${lowercase(
-            theCase.courtLocation?.slice(theCase.courtLocation.length - 1) ===
-              '.'
-              ? theCase.courtLocation?.slice(0, -1)
-              : theCase.courtLocation,
-          )}`
-        : '',
-      caseNumber: theCase.courtCaseNumber,
-      startTime: formatDate(theCase.courtStartDate, 'p'),
-    }),
+    formatMessage(ruling.prosecutorDemandsHeading),
+    'Times-Bold',
   )
-
-  if (!theCase.isClosedCourtHidden) {
-    addEmptyLines(doc)
-    addNormalJustifiedText(doc, formatMessage(ruling.closedCourtAnnouncement))
-  }
-
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    `${formatMessage(ruling.prosecutorIs)} ${
-      theCase.prosecutor?.institution?.name ?? ruling.noDistrict
-    }.`,
-  )
-  addNormalJustifiedText(
-    doc,
-    `${formatMessage(ruling.defendantIs, {
-      suffix: theCase.defendants && theCase.defendants.length > 1 ? 'ar' : 'i',
-      isSuffix: theCase.defendants && theCase.defendants.length > 1 ? 'u' : '',
-    })}${
-      theCase.defendants?.reduce(
-        (acc, defendant, index) =>
-          `${acc}${
-            index === 0
-              ? ''
-              : index + 1 === theCase.defendants?.length
-              ? ', og'
-              : ','
-          } ${defendant.name ?? '-'}, kt. ${formatNationalId(
-            defendant.nationalId ?? '-',
-          )}`,
-        '',
-      ) ?? ` ${ruling.noDefendants}`
-    }.`,
-  )
-
-  if (theCase.courtAttendees?.trim()) {
-    addEmptyLines(doc)
-    addNormalText(doc, formatMessage(ruling.attendeesHeading), 'Times-Bold')
-    addEmptyLines(doc)
-    addNormalJustifiedText(doc, theCase.courtAttendees, 'Times-Roman')
-  }
-
-  addEmptyLines(doc)
-  addNormalText(doc, formatMessage(ruling.courtDocuments.heading), 'Times-Bold')
-  addEmptyLines(doc)
-  addNormalJustifiedText(
-    doc,
-    formatMessage(ruling.courtDocuments.request, {
-      caseTypes: formatRequestCaseType(theCase.type),
-    }),
+    theCase.prosecutorDemands ?? formatMessage(ruling.missingProsecutorDemands),
     'Times-Roman',
   )
-  addNormalJustifiedText(doc, formatMessage(ruling.courtDocuments.announcement))
-
-  theCase.courtDocuments?.forEach((courttDocument, index) =>
-    addNormalJustifiedText(
-      doc,
-      formatMessage(ruling.courtDocuments.other, {
-        documentName: courttDocument,
-        documentNumber: index + 2,
-      }),
-    ),
-  )
-
-  if (theCase.accusedBookings) {
-    addEmptyLines(doc)
-    addNormalJustifiedText(doc, theCase.accusedBookings)
-  }
-
+  addEmptyLines(doc)
+  addNormalText(doc, formatMessage(ruling.courtCaseFactsHeading), 'Times-Bold')
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    theCase.litigationPresentations ??
-      formatMessage(core.missing.litigationPresentations),
+    theCase.courtCaseFacts ?? formatMessage(ruling.missingCourtCaseFacts),
+    'Times-Roman',
+  )
+  addEmptyLines(doc)
+  addNormalText(
+    doc,
+    formatMessage(ruling.courtLegalArgumentsHeading),
+    'Times-Bold',
+  )
+  addEmptyLines(doc)
+  addNormalJustifiedText(
+    doc,
+    theCase.courtLegalArguments ??
+      formatMessage(ruling.missingCourtLegalArguments),
+    'Times-Roman',
+  )
+  addEmptyLines(doc)
+  addNormalText(doc, formatMessage(ruling.rulingHeading), 'Times-Bold')
+  addEmptyLines(doc)
+  addNormalJustifiedText(
+    doc,
+    theCase.ruling ?? formatMessage(ruling.missingRuling),
+    'Times-Roman',
   )
   setLineGap(doc, 3)
   addEmptyLines(doc, 2)
   setLineGap(doc, 16)
-  addMediumHeading(doc, formatMessage(ruling.rulingHeading))
-
-  if (shortVersion) {
-    doc.fontSize(baseFontSize)
-    setLineGap(doc, 1)
-    doc.text(formatMessage(ruling.rulingShortVersionPlaceholder), {
-      align: 'center',
-    })
-  } else {
-    setLineGap(doc, 1)
-    addNormalText(doc, formatMessage(ruling.courtDemandsHeading), 'Times-Bold')
-    addEmptyLines(doc)
-    addNormalJustifiedText(
-      doc,
-      theCase.prosecutorDemands ?? formatMessage(core.missing.demands),
-      'Times-Roman',
-    )
-    addEmptyLines(doc)
-    addNormalText(
-      doc,
-      formatMessage(ruling.courtCaseFactsHeading),
-      'Times-Bold',
-    )
-    addEmptyLines(doc)
-    addNormalJustifiedText(
-      doc,
-      theCase.courtCaseFacts ?? formatMessage(core.missing.caseFacts),
-      'Times-Roman',
-    )
-    addEmptyLines(doc)
-    addNormalText(
-      doc,
-      formatMessage(ruling.courtLegalArgumentsHeading),
-      'Times-Bold',
-    )
-    addEmptyLines(doc)
-    addNormalJustifiedText(
-      doc,
-      theCase.courtLegalArguments ?? formatMessage(core.missing.legalArguments),
-      'Times-Roman',
-    )
-    addEmptyLines(doc)
-    addNormalText(doc, formatMessage(ruling.conclusionHeading), 'Times-Bold')
-    addEmptyLines(doc)
-    addNormalJustifiedText(
-      doc,
-      theCase.ruling ?? formatMessage(core.missing.conclusion),
-      'Times-Roman',
-    )
-  }
-
-  setLineGap(doc, 3)
-  addEmptyLines(doc, 2)
-  setLineGap(doc, 16)
-  addMediumHeading(doc, formatMessage(ruling.rulingTextHeading))
+  addMediumHeading(doc, formatMessage(ruling.conclusionHeading))
   setLineGap(doc, 1)
   addNormalJustifiedText(
     doc,
-    theCase.conclusion ?? formatMessage(core.missing.rulingText),
+    theCase.conclusion ?? formatMessage(ruling.missingConclusion),
   )
   addEmptyLines(doc)
   addNormalCenteredText(
     doc,
-    theCase.judge?.name ?? formatMessage(core.missing.judge),
+    theCase.judge?.name ?? formatMessage(ruling.missingJudge),
     'Times-Bold',
-  )
-  addEmptyLines(doc, 2)
-  addNormalJustifiedText(
-    doc,
-    formatMessage(ruling.rulingTextIntro),
-    'Times-Roman',
-  )
-
-  if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
-    addEmptyLines(doc)
-    addNormalJustifiedText(doc, formatMessage(ruling.appealDirections))
-  }
-
-  let prosecutorAppeal = formatAppeal(
-    theCase.prosecutorAppealDecision,
-    'Sækjandi',
-  )
-
-  if (prosecutorAppeal) {
-    prosecutorAppeal = `${prosecutorAppeal} ${
-      theCase.prosecutorAppealAnnouncement ?? ''
-    }`
-  } else {
-    prosecutorAppeal = theCase.prosecutorAppealAnnouncement ?? ''
-  }
-
-  if (prosecutorAppeal) {
-    addEmptyLines(doc)
-    addNormalJustifiedText(doc, prosecutorAppeal)
-  }
-
-  let accusedAppeal = formatAppeal(
-    theCase.accusedAppealDecision,
-    capitalize(
-      formatMessage(core.defendant, {
-        suffix:
-          theCase.defendants && theCase.defendants?.length > 1 ? 'ar' : 'i',
-      }),
-    ),
-  )
-
-  if (accusedAppeal) {
-    accusedAppeal = `${accusedAppeal} ${
-      theCase.accusedAppealAnnouncement ?? ''
-    }`
-  } else {
-    accusedAppeal = theCase.accusedAppealAnnouncement ?? ''
-  }
-
-  if (accusedAppeal) {
-    addEmptyLines(doc)
-    addNormalJustifiedText(doc, accusedAppeal)
-  }
-
-  if (theCase.endOfSessionBookings) {
-    addEmptyLines(doc)
-    addNormalJustifiedText(doc, theCase.endOfSessionBookings)
-  }
-
-  if (theCase.registrar) {
-    addEmptyLines(doc)
-    addNormalJustifiedText(
-      doc,
-      formatMessage(ruling.registrarWitness, {
-        registrarNameAndTitle: `${theCase.registrar.name} ${theCase.registrar.title}`,
-      }),
-    )
-  }
-
-  addEmptyLines(doc)
-  addNormalText(
-    doc,
-    theCase.courtEndTime
-      ? formatMessage(ruling.signOff, {
-          endTime: formatDate(theCase.courtEndTime, 'p'),
-        })
-      : formatMessage(ruling.inSession),
   )
   setPageNumbers(doc)
 
