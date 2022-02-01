@@ -44,46 +44,28 @@ import {
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
 import SignedVerdictOverviewForm from './SignedVerdictOverviewForm'
 
+interface ModalControls {
+  open: boolean
+  title: string
+  text: ReactNode
+}
+
+interface DateTime {
+  value?: Date
+  isValid: boolean
+}
+
 export const SignedVerdictOverview: React.FC = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
-  const [shareCaseModal, setSharedCaseModal] = useState<{
-    open: boolean
-    title: string
-    text: ReactNode
-  }>()
+  // Date modification state
   const [isModifyingDates, setIsModifyingDates] = useState<boolean>(false)
-  const [modifiedValidToDate, setModifiedValidToDate] = useState<{
-    value?: Date
-    isValid: boolean
-  }>()
-  const [modifiedIsolationToDate, setModifiedIsolationToDate] = useState<{
-    value?: Date
-    isValid: boolean
-  }>()
-  const [
-    selectedSharingInstitutionId,
-    setSelectedSharingInstitutionId,
-  ] = useState<ValueType<ReactSelectOption>>()
-  const [
-    requestCourtRecordSignatureResponse,
-    setRequestCourtRecordSignatureResponse,
-  ] = useState<RequestSignatureResponse>()
-  const [
-    courtRecordSignatureConfirmationResponse,
-    setCourtRecordSignatureConfirmationResponse,
-  ] = useState<SignatureConfirmationResponse>()
+  const [modifiedValidToDate, setModifiedValidToDate] = useState<DateTime>()
   const [
     caseModifiedExplanation,
     setCaseModifiedExplanation,
@@ -101,9 +83,36 @@ export const SignedVerdictOverview: React.FC = () => {
     isolationToDateChanged,
     setIsolationToDateChanged,
   ] = useState<boolean>()
+  const [
+    modifiedIsolationToDate,
+    setModifiedIsolationToDate,
+  ] = useState<DateTime>()
 
-  const router = useRouter()
+  // Case sharing state
+  const [shareCaseModal, setSharedCaseModal] = useState<ModalControls>()
+  const [
+    selectedSharingInstitutionId,
+    setSelectedSharingInstitutionId,
+  ] = useState<ValueType<ReactSelectOption>>()
+
+  // Signature state
+  const [
+    requestCourtRecordSignatureResponse,
+    setRequestCourtRecordSignatureResponse,
+  ] = useState<RequestSignatureResponse>()
+  const [
+    courtRecordSignatureConfirmationResponse,
+    setCourtRecordSignatureConfirmationResponse,
+  ] = useState<SignatureConfirmationResponse>()
+
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
   const { user } = useContext(UserContext)
+  const router = useRouter()
   const { formatMessage } = useIntl()
   const {
     updateCase,
@@ -193,7 +202,7 @@ export const SignedVerdictOverview: React.FC = () => {
       })
   }
 
-  const handleNextButtonClick = async () => {
+  const handleCaseExtension = async () => {
     if (workingCase) {
       if (workingCase.childCase) {
         if (isRestrictionCase(workingCase.type)) {
@@ -224,7 +233,7 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
-  const getInfoText = (workingCase: Case): string | undefined => {
+  const getExtensionInfoText = (workingCase: Case): string | undefined => {
     if (user?.role !== UserRole.PROSECUTOR) {
       // Only prosecutors should see the explanation.
       return undefined
@@ -558,9 +567,9 @@ export const SignedVerdictOverview: React.FC = () => {
               ? 'farbann'
               : 'heimild'
           }`}
-          onNextButtonClick={() => handleNextButtonClick()}
+          onNextButtonClick={() => handleCaseExtension()}
           nextIsLoading={isExtendingCase}
-          infoBoxText={getInfoText(workingCase)}
+          infoBoxText={getExtensionInfoText(workingCase)}
         />
       </FormContentContainer>
       {shareCaseModal?.open && (
