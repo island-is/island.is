@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common'
+import { Injectable, Inject, OnApplicationBootstrap } from '@nestjs/common'
 import { InjectWorker, WorkerService } from '@island.is/message-queue'
 import { Message } from './dto/createNotification.dto'
 import type { Logger } from '@island.is/logging'
@@ -15,8 +15,10 @@ const notFoundHandler = (e: unknown) => {
   throw e
 }
 
+export const IS_RUNNING_AS_WORKER = Symbol('IS_NOTIFICATION_WORKER')
+
 @Injectable()
-export class NotificationsWorkerService {
+export class NotificationsWorkerService implements OnApplicationBootstrap {
   constructor(
     private notificationDispatch: NotificationDispatchService,
     private messageProcessor: MessageProcessorService,
@@ -25,12 +27,20 @@ export class NotificationsWorkerService {
     private worker: WorkerService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    @Inject(IS_RUNNING_AS_WORKER)
+    private isRunningAsWorker: boolean,
   ) {}
 
+  onApplicationBootstrap() {
+    if (this.isRunningAsWorker) {
+      this.run()
+    }
+  }
+
   async run() {
-    await this.worker.run(
-      async (message: Message): Promise<void> => {
-        this.logger.debug('Got message', message)
+    await this.worker.run<Message>(
+      async (message, job): Promise<void> => {
+        this.logger.debug(`Got message id=${job.id}`, message)
 
         const profile = await this.userProfileApi
           .userTokenControllerFindOneByNationalId({

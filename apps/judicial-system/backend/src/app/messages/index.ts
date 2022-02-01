@@ -1,4 +1,5 @@
 export { core } from './corePdf'
 export { restrictionRequest } from './requestPdf'
 export { ruling } from './rulingPdf'
+export { custodyNotice } from './custodyNotice'
 export { notificationMessages } from './notifications'

@@ -12,7 +12,7 @@ import {
   ResponsiveSpace,
   Pagination,
   CategoryCard,
-  TagProps,
+  Stack,
 } from '@island.is/island-ui/core'
 import { helperStyles, theme } from '@island.is/island-ui/theme'
 import {
@@ -29,7 +29,6 @@ import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_TAGS_QUERY,
 } from '../queries'
-import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useNamespace } from '@island.is/web/hooks'
 import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '../../units/errors'
@@ -136,32 +135,41 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   return (
     <>
       <HeadWithSocialSharing title={metaTitle} />
-      <SidebarLayout sidebarContent={null}>
-        <Box paddingBottom={[2, 2, 4]}>
-          <Breadcrumbs
-            items={[
-              {
-                title: 'Ísland.is',
-                href: '/',
-              },
-              {
-                title: n('organizations', 'Stofnanir'),
-              },
-            ]}
-            renderLink={(link) => {
-              return (
-                <NextLink {...linkResolver('homepage')} passHref>
-                  {link}
-                </NextLink>
-              )
-            }}
-          />
-        </Box>
+      <Box paddingTop={[2, 2, 2, 10]} paddingBottom={[4, 4, 4, 10]}>
+        <GridContainer>
+          <GridRow>
+            <GridColumn
+              offset={['0', '0', '0', '1/12']}
+              span={['12/12', '12/12', '12/12', '10/12']}
+            >
+              <Stack space={2}>
+                <Breadcrumbs
+                  items={[
+                    {
+                      title: 'Ísland.is',
+                      href: '/',
+                    },
+                    {
+                      title: n('organizations', 'Stofnanir'),
+                    },
+                  ]}
+                  renderLink={(link) => {
+                    return (
+                      <NextLink {...linkResolver('homepage')} passHref>
+                        {link}
+                      </NextLink>
+                    )
+                  }}
+                />
+                <Text variant="h1" as="h1">
+                  {n('stofnanirHeading', 'Stofnanir Íslenska Ríkisins')}
+                </Text>
+              </Stack>
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      </Box>
 
-        <Text variant="h1" as="h1" paddingBottom={2}>
-          {n('stofnanirHeading', 'Stofnanir Íslenska Ríkisins')}
-        </Text>
-      </SidebarLayout>
       <Box background="blue100" display="inlineBlock" width="full">
         <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
           <GridContainer id="organizations-list">

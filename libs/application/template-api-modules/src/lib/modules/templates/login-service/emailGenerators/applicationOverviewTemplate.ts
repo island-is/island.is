@@ -43,6 +43,13 @@ export const applicationOverviewTemplate = (
   )
 
   return dedent(`
+    <h3>${messages.terms.general.pageTitle.defaultMessage}</h3>
+    <p>
+      <b>${
+        messages.terms.labels.termsAgreementApprovalForOverview.defaultMessage
+      }</b> </br>
+      ${messages.terms.labels.yesLabel.defaultMessage}
+    </p>
     <h3>${messages.applicant.general.pageTitle.defaultMessage}</h3>
     <p>
       <b>${messages.applicant.labels.nameDescription.defaultMessage}</b> </br>
