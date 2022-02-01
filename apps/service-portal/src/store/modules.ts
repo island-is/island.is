@@ -16,6 +16,7 @@ import { educationStudentAssessmentModule } from '@island.is/service-portal/educ
 import { applicationsModule } from '@island.is/service-portal/applications'
 import { licensesModule } from '@island.is/service-portal/licenses'
 import { wipModule } from '@island.is/service-portal/wip'
+import { drivingLicenseModule } from '@island.is/service-portal/driving-license'
 
 /**
  * NOTE:
@@ -45,6 +46,7 @@ export type ModuleKeys =
   | 'licenses'
   | 'wip'
   | 'petitions'
+  | 'drivingLicense'
 
 export const featureFlaggedModules: ModuleKeys[] = [
   'accessControl',
@@ -72,4 +74,5 @@ export const modules: Record<ModuleKeys, ServicePortalModule> = {
   accessControl: accessControlModule,
   licenses: licensesModule,
   wip: wipModule,
+  drivingLicense: drivingLicenseModule,
 }

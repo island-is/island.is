@@ -4,8 +4,9 @@ import { gql, useQuery } from '@apollo/client'
 
 import { Query } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { Box, GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
+import { Box, Stack } from '@island.is/island-ui/core'
 import { Application, Eligibility } from './components'
+import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 
 const ELIGABLE_FOR_RENEWAL_AGE = 68
 const ELIGABLE_FOR_DRIVING_LICENSE_AGE = 16
@@ -19,18 +20,36 @@ const NationalRegistryUserQuery = gql`
   }
 `
 
-function DrivingLicense(): JSX.Element {
+const DrivingLicenseQuery = gql`
+  query DrivingLicenseQuery {
+    drivingLicense {
+      id
+      name
+      issued
+      expires
+      categories {
+        name
+        issued
+        expires
+      }
+    }
+  }
+`
+
+const DrivingLicense: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.driving-license')
   const { formatMessage } = useLocale()
 
-  const { data } = useQuery<Query>(NationalRegistryUserQuery)
-  const { nationalRegistryUser } = data || {}
+  const userData = useQuery<Query>(NationalRegistryUserQuery)
+  const licenceData = useQuery<Query>(DrivingLicenseQuery)
 
+  const { nationalRegistryUser } = userData.data || {}
+  const { name, issued, expires, categories } =
+    licenceData.data?.drivingLicense || {}
   return (
     <Box marginBottom={[6, 6, 10]}>
       <Stack space={[6, 6, 10]}>
         <Eligibility />
-
         {(nationalRegistryUser?.age || 0) >=
           ELIGABLE_FOR_DRIVING_LICENSE_AGE && (
           <Application

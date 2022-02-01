@@ -45,9 +45,18 @@ export class DrivingLicenseService {
   async getDrivingLicense(
     nationalId: User['nationalId'],
   ): Promise<DriversLicense | null> {
+    console.log('CAAALLLIIIING')
     try {
-      return await this.drivingLicenseApi.getCurrentLicense({ nationalId })
+      const data = await this.drivingLicenseApi.getCurrentLicense({
+        nationalId,
+      })
+      console.log(
+        '-------------------------------------------------------------',
+        data,
+      )
+      return data
     } catch (e) {
+      console.log('EEEEEEEEEEERRRRRRRRROOOOOOOOOOOR', e)
       return this.handleGetLicenseError(e)
     }
   }
