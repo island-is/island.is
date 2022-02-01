@@ -189,11 +189,8 @@ export class ApplicationService {
           model: AmountModel,
           as: 'amount',
           include: [{ model: DeductionFactorsModel, as: 'deductionFactors' }],
+          separate: true,
           order: [['created', 'DESC']],
-          // order: ['created'],
-          // attributes: [sequelize.fn('MAX', sequelize.col('modified'))],
-          // order: [Sequelize.fn('min', Sequelize.col('created'))],
-          // order: [sequelize.fn('max', sequelize.col('created'))],
         },
       ],
     })
