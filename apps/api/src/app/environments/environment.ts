@@ -122,7 +122,7 @@ const prodConfig = () => ({
   },
   fjarmalDomain: {
     xroadApiPath: process.env.XROAD_FINANCES_PATH,
-    ttl: parseInt(process.env.FJARMAL_TTL, 10) || 600,
+    ttl: parseInt(process.env.FJARMAL_TTL ?? '', 10) || 600,
   },
   pkpass: {
     apiKey: process.env.PKPASS_API_KEY,
@@ -273,7 +273,7 @@ const devConfig = () => ({
     xroadApiPath:
       process.env.XROAD_FINANCES_PATH ??
       'IS-DEV/GOV/10021/FJS-Public/financeIsland',
-    ttl: parseInt(process.env.FJARMAL_TTL, 10) || 600,
+    ttl: parseInt(process.env.FJARMAL_TTL ?? '', 10) || 600,
   },
   endorsementSystem: {
     baseApiUrl: 'http://localhost:4246',
