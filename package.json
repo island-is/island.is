@@ -148,7 +148,7 @@
     "escape-html": "1.0.3",
     "eslint-plugin-local-rules": "1.0.1",
     "express": "4.17.1",
-    "express-validator": "6.4.1",
+    "express-validator": "6.14.0",
     "faker": "5.5.3",
     "firebase-admin": "10.0.0",
     "folder-hash": "4.0.0",

@@ -15509,13 +15509,13 @@ expect@^26.6.2:
     jest-message-util "^26.6.2"
     jest-regex-util "^26.0.0"
 
-express-validator@6.4.1:
-  version "6.4.1"
-  resolved "https://registry.yarnpkg.com/express-validator/-/express-validator-6.4.1.tgz#6dbec50bee151d976430a8d199c9df058d753c78"
-  integrity sha512-9lVLCv9n735j6LjZwrINKhfv30ek1U4LVy/2jU1j4QotQ8A72Saw63wTu8/zXGZajP3scqf46PJxqquGF340Bg==
+express-validator@6.14.0:
+  version "6.14.0"
+  resolved "https://registry.yarnpkg.com/express-validator/-/express-validator-6.14.0.tgz#8ee7a32bf1ffcf2573db5f17c9cad279698e5d41"
+  integrity sha512-ZWHJfnRgePp3FKRSKMtnZVnD1s8ZchWD+jSl7UMseGIqhweCo1Z9916/xXBbJAa6PrA3pUZfkOvIsHZG4ZtIMw==
   dependencies:
-    lodash "^4.17.15"
-    validator "^12.1.0"
+    lodash "^4.17.21"
+    validator "^13.7.0"
 
 express@4.17.1, express@^4.16.3, express@^4.17.1:
   version "4.17.1"
@@ -29898,11 +29898,6 @@ validator@^10.11.0:
   version "10.11.0"
   resolved "https://registry.yarnpkg.com/validator/-/validator-10.11.0.tgz#003108ea6e9a9874d31ccc9e5006856ccd76b228"
   integrity sha512-X/p3UZerAIsbBfN/IwahhYaBbY68EN/UQBWHtsbXGT5bfrH/p4NQzUCG1kF/rtKaNpnJ7jAu6NGTdSNtyNIXMw==
-
-validator@^12.1.0:
-  version "12.2.0"
-  resolved "https://registry.yarnpkg.com/validator/-/validator-12.2.0.tgz#660d47e96267033fd070096c3b1a6f2db4380a0a"
-  integrity sha512-jJfE/DW6tIK1Ek8nCfNFqt8Wb3nzMoAbocBF6/Icgg1ZFSBpObdnwVY2jQj6qUqzhx5jc71fpvBWyLGO7Xl+nQ==
 
 validator@^13.7.0:
   version "13.7.0"
