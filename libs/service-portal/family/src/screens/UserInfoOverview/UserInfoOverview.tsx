@@ -14,6 +14,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { ServicePortalModuleComponent, m } from '@island.is/service-portal/core'
 import { FamilyMemberCard } from '../../components/FamilyMemberCard/FamilyMemberCard'
 import { FamilyMemberCardLoader } from '../../components/FamilyMemberCard/FamilyMemberCardLoader'
+import { NATIONAL_REGISTRY_CHILDREN } from '../../lib/queries/getNationalChildren'
 
 const NationalRegistryCurrentUserQuery = gql`
   query NationalRegistryCurrentUserQuery {
@@ -28,16 +29,6 @@ const NationalRegistryCurrentUserQuery = gql`
   }
 `
 
-const NationalRegistryChildrenQuery = gql`
-  query NationalRegistryChildrenQuery {
-    nationalRegistryChildren {
-      nationalId
-      displayName
-      fullName
-    }
-  }
-`
-
 const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
@@ -48,7 +39,7 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
   const { nationalRegistryUser } = data || {}
 
   const { data: childrenData, loading: childrenLoading } = useQuery<Query>(
-    NationalRegistryChildrenQuery,
+    NATIONAL_REGISTRY_CHILDREN,
   )
   const { nationalRegistryChildren } = childrenData || {}
 

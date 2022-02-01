@@ -81,14 +81,15 @@ judicial-system-api:
 judicial-system-backend:
   enabled: true
   env:
+    COMPLETED_CASE_OVERVIEW_URL: 'https://judicial-system.staging01.devland.is/krafa/yfirlit/'
     CONTENTFUL_HOST: 'cdn.contentful.com'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'judicial_system'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'judicial_system'
     DOKOBIT_URL: 'https://developers.dokobit.com'
     EMAIL_REGION: 'eu-west-1'
     NODE_OPTIONS: '--max-old-space-size=464'
-    OVERVIEW_URL: 'https://judicial-system.staging01.devland.is/krafa/yfirlit/'
     S3_BUCKET: 'island-is-staging-upload-judicial-system'
     S3_REGION: 'eu-west-1'
     S3_TIME_TO_LIVE_GET: '5'
@@ -127,6 +128,7 @@ judicial-system-backend:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'judicial_system'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'judicial_system'
       SERVERSIDE_FEATURES_ON: ''
     secrets:

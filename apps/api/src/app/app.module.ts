@@ -50,6 +50,7 @@ import { ProblemModule } from '@island.is/nest/problem'
 import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
+import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -258,6 +259,7 @@ const autoSchemaFile = environment.production
         SyslumennClientConfig,
         FeatureFlagConfig,
         XRoadConfig,
+        CompanyRegistryConfig,
       ],
     }),
   ],
