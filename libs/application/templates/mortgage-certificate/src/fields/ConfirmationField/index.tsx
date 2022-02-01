@@ -152,10 +152,10 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
           }}
         >
           <Text variant="small">
-            {formatText(m.vertificationDescription, application, formatMessage)}{' '}
+            {formatText(m.verificationDescription, application, formatMessage)}{' '}
             <Link
               href={formatText(
-                m.vertificationLinkUrl,
+                m.verificationLinkUrl,
                 application,
                 formatMessage,
               )}
