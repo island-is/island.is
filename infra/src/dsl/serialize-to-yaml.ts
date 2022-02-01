@@ -119,6 +119,7 @@ export const getDependantServices = (
 export const generateYamlForFeature = (
   uberChart: UberChart,
   habitat: Service[],
+  excludedServices: string[],
   ...services: Service[]
 ) => {
   const feature = uberChart.env.feature
@@ -127,7 +128,7 @@ export const generateYamlForFeature = (
       uberChart,
       habitat,
       ...services,
-    )
+    ).filter((s) => !excludedServices.includes(s.serviceDef.name))
     const namespace = `feature-${feature}`
     featureSpecificServices.forEach((s) => {
       s.serviceDef.namespace = namespace

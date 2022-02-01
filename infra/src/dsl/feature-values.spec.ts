@@ -46,12 +46,13 @@ describe('Feature-deployment support', () => {
   const values = generateYamlForFeature(
     chart,
     [apiService, dependencyA, dependencyB],
+    [dependencyA.name()],
     dependencyA,
   )
 
   it('dynamic service name generation', () => {
     expect(values.services.graphql.env).toEqual({
-      A: 'web-service-a',
+      A: 'web-service-a.A.svc.cluster.local',
       B: 'feature-web-service-b.islandis.svc.cluster.local',
       DB_USER: 'feature_feature_A_graphql',
       DB_NAME: 'feature_feature_A_graphql',
@@ -77,16 +78,11 @@ describe('Feature-deployment support', () => {
   })
 
   it('feature deployment namespaces', () => {
-    expect(Object.keys(values.services).sort()).toEqual([
-      'graphql',
-      'service-a',
-    ])
+    expect(Object.keys(values.services).sort()).toEqual(['graphql'])
     expect(values.services['graphql'].namespace).toEqual(
       `feature-${Dev.feature}`,
     )
-    expect(values.services['service-a'].namespace).toEqual(
-      `feature-${Dev.feature}`,
-    )
+    expect(values.services['service-a']).toBeUndefined()
   })
 
   it('feature deployment ingress', () => {
