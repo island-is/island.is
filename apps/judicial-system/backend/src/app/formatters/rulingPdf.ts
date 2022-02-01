@@ -2,24 +2,12 @@ import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
 
 import { FormatMessage } from '@island.is/cms-translations'
-import {
-  isRestrictionCase,
-  SessionArrangements,
-} from '@island.is/judicial-system/types'
-import {
-  capitalize,
-  formatDate,
-  lowercase,
-  formatAppeal,
-  formatRequestCaseType,
-  formatNationalId,
-} from '@island.is/judicial-system/formatters'
+import { isRestrictionCase } from '@island.is/judicial-system/types'
 
 import { environment } from '../../environments'
 import { Case } from '../modules/case/models'
-import { core, ruling } from '../messages'
+import { ruling } from '../messages'
 import {
-  baseFontSize,
   setPageNumbers,
   addCoatOfArms,
   addLargeHeading,
@@ -36,7 +24,6 @@ import { writeFile } from './writeFile'
 function constructRestrictionRulingPdf(
   theCase: Case,
   formatMessage: FormatMessage,
-  shortVersion: boolean,
 ): streamBuffers.WritableStreamBuffer {
   const doc = new PDFDocument({
     size: 'A4',
@@ -137,7 +124,6 @@ function constructRestrictionRulingPdf(
 function constructInvestigationRulingPdf(
   theCase: Case,
   formatMessage: FormatMessage,
-  shortVersion: boolean,
 ): streamBuffers.WritableStreamBuffer {
   const doc = new PDFDocument({
     size: 'A4',
@@ -238,19 +224,17 @@ function constructInvestigationRulingPdf(
 function constructRulingPdf(
   theCase: Case,
   formatMessage: FormatMessage,
-  shortVersion: boolean,
 ): streamBuffers.WritableStreamBuffer {
   return isRestrictionCase(theCase.type)
-    ? constructRestrictionRulingPdf(theCase, formatMessage, shortVersion)
-    : constructInvestigationRulingPdf(theCase, formatMessage, shortVersion)
+    ? constructRestrictionRulingPdf(theCase, formatMessage)
+    : constructInvestigationRulingPdf(theCase, formatMessage)
 }
 
 export async function getRulingPdfAsString(
   theCase: Case,
   formatMessage: FormatMessage,
-  shortVersion: boolean,
 ): Promise<string> {
-  const stream = constructRulingPdf(theCase, formatMessage, shortVersion)
+  const stream = constructRulingPdf(theCase, formatMessage)
 
   // wait for the writing to finish
   const pdf = await new Promise<string>(function (resolve) {
@@ -269,9 +253,8 @@ export async function getRulingPdfAsString(
 export async function getRulingPdfAsBuffer(
   theCase: Case,
   formatMessage: FormatMessage,
-  shortVersion: boolean,
 ): Promise<Buffer> {
-  const stream = constructRulingPdf(theCase, formatMessage, shortVersion)
+  const stream = constructRulingPdf(theCase, formatMessage)
 
   // wait for the writing to finish
   const pdf = await new Promise<Buffer>(function (resolve) {

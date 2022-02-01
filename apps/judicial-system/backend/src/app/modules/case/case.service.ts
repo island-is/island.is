@@ -539,7 +539,7 @@ export class CaseService {
       )
     }
 
-    return getRulingPdfAsBuffer(theCase, this.formatMessage, false)
+    return getRulingPdfAsBuffer(theCase, this.formatMessage)
   }
 
   async getCustodyPdf(theCase: Case): Promise<Buffer> {
@@ -623,7 +623,7 @@ export class CaseService {
       return { controlCode: '0000', documentToken: 'DEVELOPMENT' }
     }
 
-    const pdf = await getRulingPdfAsString(theCase, this.formatMessage, false)
+    const pdf = await getRulingPdfAsString(theCase, this.formatMessage)
 
     return this.signingService.requestSignature(
       theCase.judge?.mobileNumber ?? '',
