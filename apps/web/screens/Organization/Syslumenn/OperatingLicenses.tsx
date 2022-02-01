@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useRef, useReducer } from 'react'
 import { useApolloClient } from '@apollo/client/react'
 import {
-  AlertBanner,
+  AlertMessage,
   Box,
   Button,
   Input,
@@ -497,13 +497,13 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
         )
       })}
       {search.hasError && (
-        <AlertBanner
+        <AlertMessage
           title={n('operatingLicensesErrorTitle', 'Villa')}
-          description={n(
+          message={n(
             'operatingLicensesErrorDescription',
             'Villa kom upp við að sækja rekstrarleyfi.',
           )}
-          variant="error"
+          type="error"
         />
       )}
       <Box
