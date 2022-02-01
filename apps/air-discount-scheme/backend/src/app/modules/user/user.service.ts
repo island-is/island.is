@@ -6,38 +6,16 @@ import {
   NationalRegistryService,
   NationalRegistryUser,
 } from '../nationalRegistry'
-import {
-  AuthMiddleware,
-  AuthMiddlewareOptions,
-  User as AuthUser,
-} from '@island.is/auth-nest-tools'
-import {
-  EinstaklingarApi,
-  EinstaklingarGetForsjaRequest,
-} from '@island.is/clients/national-registry-v2'
-import environment from '../../../environments/environment'
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly flightService: FlightService,
     private readonly nationalRegistryService: NationalRegistryService,
-    private readonly nationalRegistryIndividualsApi: EinstaklingarApi,
   ) {}
 
-  async getRelations(authUser: AuthUser): Promise<string[]> {
-    const relations = await this.nationalRegistryIndividualsApi
-      .withMiddleware(
-        new AuthMiddleware(
-          authUser,
-          environment.nationalRegistry
-            .authMiddlewareOptions as AuthMiddlewareOptions,
-        ),
-      )
-      .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{
-        id: authUser.nationalId,
-      })
-    return relations
+  async getRelations(nationalId: string): Promise<string[]> {
+    return this.nationalRegistryService.getRelatedChildren(nationalId)
   }
 
   private async getFund(user: NationalRegistryUser): Promise<Fund> {

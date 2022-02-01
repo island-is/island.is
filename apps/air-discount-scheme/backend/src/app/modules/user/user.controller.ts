@@ -79,9 +79,9 @@ export class PrivateUserController {
         '[/relations] Request parameters do not correspond with user authentication.',
       )
     }
-    const relations: string[] = await this.userService.getRelations(authUser)
+    const relations = await this.userService.getRelations(params.nationalId)
     const users = (await Promise.all([
-      this.userService.getUserInfoByNationalId(authUser.nationalId),
+      this.userService.getUserInfoByNationalId(params.nationalId),
       ...relations.map((nationalId) =>
         this.userService.getUserInfoByNationalId(nationalId),
       ),
