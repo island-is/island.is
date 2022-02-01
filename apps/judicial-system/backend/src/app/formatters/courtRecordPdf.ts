@@ -17,9 +17,8 @@ import {
 
 import { environment } from '../../environments'
 import { Case } from '../modules/case/models'
-import { core, ruling } from '../messages'
+import { courtRecord } from '../messages'
 import {
-  baseFontSize,
   setPageNumbers,
   addCoatOfArms,
   addLargeHeading,
@@ -51,35 +50,30 @@ function constructRestrictionCourtRecordPdf(
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
-  setTitle(doc, shortVersion ? 'Þingbók' : 'Úrskurður')
+  const title = formatMessage(courtRecord.title)
+
+  setTitle(doc, title)
   addCoatOfArms(doc)
   addEmptyLines(doc, 5)
   setLineGap(doc, 4)
   addLargeHeading(
     doc,
-    theCase.court?.name ?? formatMessage(core.missing.court),
+    theCase.court?.name ?? formatMessage(courtRecord.missingCourt),
     'Times-Roman',
   )
   setLineGap(doc, 2)
-  addMediumHeading(
-    doc,
-    formatMessage(
-      shortVersion
-        ? ruling.proceedingsHeadingShortVersion
-        : ruling.proceedingsHeading,
-    ),
-  )
+  addMediumHeading(doc, title)
   setLineGap(doc, 30)
   addMediumHeading(
     doc,
-    formatMessage(ruling.caseNumber, {
+    formatMessage(courtRecord.caseNumber, {
       caseNumber: theCase.courtCaseNumber,
     }),
   )
   setLineGap(doc, 1)
   addNormalJustifiedText(
     doc,
-    formatMessage(ruling.intro, {
+    formatMessage(courtRecord.intro, {
       courtDate: formatDate(theCase.courtStartDate, 'PPP'),
       judgeNameAndTitle: `${theCase.judge?.name ?? '?'} ${
         theCase.judge?.title ?? '?'
@@ -99,19 +93,22 @@ function constructRestrictionCourtRecordPdf(
 
   if (!theCase.isClosedCourtHidden) {
     addEmptyLines(doc)
-    addNormalJustifiedText(doc, formatMessage(ruling.closedCourtAnnouncement))
+    addNormalJustifiedText(
+      doc,
+      formatMessage(courtRecord.closedCourtAnnouncement),
+    )
   }
 
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    `${formatMessage(ruling.prosecutorIs)} ${
-      theCase.prosecutor?.institution?.name ?? ruling.noDistrict
+    `${formatMessage(courtRecord.prosecutorIs)} ${
+      theCase.prosecutor?.institution?.name ?? courtRecord.missingDistrict
     }.`,
   )
   addNormalJustifiedText(
     doc,
-    `${formatMessage(ruling.defendantIs, {
+    `${formatMessage(courtRecord.defendantIs, {
       suffix: theCase.defendants && theCase.defendants.length > 1 ? 'ar' : 'i',
       isSuffix: theCase.defendants && theCase.defendants.length > 1 ? 'u' : '',
     })}${
@@ -127,33 +124,44 @@ function constructRestrictionCourtRecordPdf(
             defendant.nationalId ?? '-',
           )}`,
         '',
-      ) ?? ` ${ruling.noDefendants}`
+      ) ?? ` ${courtRecord.missingDefendants}`
     }.`,
   )
 
   if (theCase.courtAttendees?.trim()) {
     addEmptyLines(doc)
-    addNormalText(doc, formatMessage(ruling.attendeesHeading), 'Times-Bold')
+    addNormalText(
+      doc,
+      formatMessage(courtRecord.attendeesHeading),
+      'Times-Bold',
+    )
     addEmptyLines(doc)
     addNormalJustifiedText(doc, theCase.courtAttendees, 'Times-Roman')
   }
 
   addEmptyLines(doc)
-  addNormalText(doc, formatMessage(ruling.courtDocuments.heading), 'Times-Bold')
+  addNormalText(
+    doc,
+    formatMessage(courtRecord.courtDocuments.heading),
+    'Times-Bold',
+  )
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    formatMessage(ruling.courtDocuments.request, {
+    formatMessage(courtRecord.courtDocuments.request, {
       caseTypes: formatRequestCaseType(theCase.type),
     }),
     'Times-Roman',
   )
-  addNormalJustifiedText(doc, formatMessage(ruling.courtDocuments.announcement))
+  addNormalJustifiedText(
+    doc,
+    formatMessage(courtRecord.courtDocuments.announcement),
+  )
 
   theCase.courtDocuments?.forEach((courttDocument, index) =>
     addNormalJustifiedText(
       doc,
-      formatMessage(ruling.courtDocuments.other, {
+      formatMessage(courtRecord.courtDocuments.other, {
         documentName: courttDocument,
         documentNumber: index + 2,
       }),
@@ -169,35 +177,35 @@ function constructRestrictionCourtRecordPdf(
   addNormalJustifiedText(
     doc,
     theCase.litigationPresentations ??
-      formatMessage(core.missing.litigationPresentations),
+      formatMessage(courtRecord.missingLitigationPresentations),
   )
   setLineGap(doc, 3)
   addEmptyLines(doc, 2)
   setLineGap(doc, 16)
-  addMediumHeading(doc, formatMessage(ruling.rulingTextHeading))
+  addMediumHeading(doc, formatMessage(courtRecord.conclusionHeading))
   setLineGap(doc, 1)
   addNormalJustifiedText(
     doc,
-    theCase.conclusion ?? formatMessage(core.missing.rulingText),
+    theCase.conclusion ?? formatMessage(courtRecord.missingConclusion),
   )
   addEmptyLines(doc)
   addNormalCenteredText(
     doc,
-    theCase.judge?.name ?? formatMessage(core.missing.judge),
+    theCase.judge?.name ?? formatMessage(courtRecord.missingJudge),
     'Times-Bold',
   )
   addEmptyLines(doc, 2)
   addNormalJustifiedText(
     doc,
-    formatMessage(ruling.rulingTextIntro),
+    formatMessage(courtRecord.conclusionIntro),
     'Times-Roman',
   )
   addEmptyLines(doc)
-  addNormalJustifiedText(doc, formatMessage(ruling.appealDirections))
+  addNormalJustifiedText(doc, formatMessage(courtRecord.appealDirections))
 
   let prosecutorAppeal = formatAppeal(
     theCase.prosecutorAppealDecision,
-    'Sækjandi',
+    capitalize(formatMessage(courtRecord.prosecutor)),
   )
 
   if (prosecutorAppeal) {
@@ -216,7 +224,7 @@ function constructRestrictionCourtRecordPdf(
   let accusedAppeal = formatAppeal(
     theCase.accusedAppealDecision,
     capitalize(
-      formatMessage(core.defendant, {
+      formatMessage(courtRecord.defendant, {
         suffix:
           theCase.defendants && theCase.defendants?.length > 1 ? 'ar' : 'i',
       }),
@@ -245,7 +253,7 @@ function constructRestrictionCourtRecordPdf(
     addEmptyLines(doc)
     addNormalJustifiedText(
       doc,
-      formatMessage(ruling.registrarWitness, {
+      formatMessage(courtRecord.registrarWitness, {
         registrarNameAndTitle: `${theCase.registrar.name} ${theCase.registrar.title}`,
       }),
     )
@@ -255,10 +263,10 @@ function constructRestrictionCourtRecordPdf(
   addNormalText(
     doc,
     theCase.courtEndTime
-      ? formatMessage(ruling.signOff, {
+      ? formatMessage(courtRecord.signOff, {
           endTime: formatDate(theCase.courtEndTime, 'p'),
         })
-      : formatMessage(ruling.inSession),
+      : formatMessage(courtRecord.inSession),
   )
   setPageNumbers(doc)
 
@@ -285,35 +293,30 @@ function constructInvestigationCourtRecordPdf(
 
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
-  setTitle(doc, shortVersion ? 'Þingbók' : 'Úrskurður')
+  const title = formatMessage(courtRecord.title)
+
+  setTitle(doc, title)
   addCoatOfArms(doc)
   addEmptyLines(doc, 5)
   setLineGap(doc, 4)
   addLargeHeading(
     doc,
-    theCase.court?.name ?? formatMessage(core.missing.court),
+    theCase.court?.name ?? formatMessage(courtRecord.missingCourt),
     'Times-Roman',
   )
   setLineGap(doc, 2)
-  addMediumHeading(
-    doc,
-    formatMessage(
-      shortVersion
-        ? ruling.proceedingsHeadingShortVersion
-        : ruling.proceedingsHeading,
-    ),
-  )
+  addMediumHeading(doc, title)
   setLineGap(doc, 30)
   addMediumHeading(
     doc,
-    formatMessage(ruling.caseNumber, {
+    formatMessage(courtRecord.caseNumber, {
       caseNumber: theCase.courtCaseNumber,
     }),
   )
   setLineGap(doc, 1)
   addNormalJustifiedText(
     doc,
-    formatMessage(ruling.intro, {
+    formatMessage(courtRecord.intro, {
       courtDate: formatDate(theCase.courtStartDate, 'PPP'),
       judgeNameAndTitle: `${theCase.judge?.name ?? '?'} ${
         theCase.judge?.title ?? '?'
@@ -333,19 +336,22 @@ function constructInvestigationCourtRecordPdf(
 
   if (!theCase.isClosedCourtHidden) {
     addEmptyLines(doc)
-    addNormalJustifiedText(doc, formatMessage(ruling.closedCourtAnnouncement))
+    addNormalJustifiedText(
+      doc,
+      formatMessage(courtRecord.closedCourtAnnouncement),
+    )
   }
 
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    `${formatMessage(ruling.prosecutorIs)} ${
-      theCase.prosecutor?.institution?.name ?? ruling.noDistrict
+    `${formatMessage(courtRecord.prosecutorIs)} ${
+      theCase.prosecutor?.institution?.name ?? courtRecord.missingDistrict
     }.`,
   )
   addNormalJustifiedText(
     doc,
-    `${formatMessage(ruling.defendantIs, {
+    `${formatMessage(courtRecord.defendantIs, {
       suffix: theCase.defendants && theCase.defendants.length > 1 ? 'ar' : 'i',
       isSuffix: theCase.defendants && theCase.defendants.length > 1 ? 'u' : '',
     })}${
@@ -361,33 +367,44 @@ function constructInvestigationCourtRecordPdf(
             defendant.nationalId ?? '-',
           )}`,
         '',
-      ) ?? ` ${ruling.noDefendants}`
+      ) ?? ` ${courtRecord.missingDefendants}`
     }.`,
   )
 
   if (theCase.courtAttendees?.trim()) {
     addEmptyLines(doc)
-    addNormalText(doc, formatMessage(ruling.attendeesHeading), 'Times-Bold')
+    addNormalText(
+      doc,
+      formatMessage(courtRecord.attendeesHeading),
+      'Times-Bold',
+    )
     addEmptyLines(doc)
     addNormalJustifiedText(doc, theCase.courtAttendees, 'Times-Roman')
   }
 
   addEmptyLines(doc)
-  addNormalText(doc, formatMessage(ruling.courtDocuments.heading), 'Times-Bold')
+  addNormalText(
+    doc,
+    formatMessage(courtRecord.courtDocuments.heading),
+    'Times-Bold',
+  )
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    formatMessage(ruling.courtDocuments.request, {
+    formatMessage(courtRecord.courtDocuments.request, {
       caseTypes: formatRequestCaseType(theCase.type),
     }),
     'Times-Roman',
   )
-  addNormalJustifiedText(doc, formatMessage(ruling.courtDocuments.announcement))
+  addNormalJustifiedText(
+    doc,
+    formatMessage(courtRecord.courtDocuments.announcement),
+  )
 
   theCase.courtDocuments?.forEach((courttDocument, index) =>
     addNormalJustifiedText(
       doc,
-      formatMessage(ruling.courtDocuments.other, {
+      formatMessage(courtRecord.courtDocuments.other, {
         documentName: courttDocument,
         documentNumber: index + 2,
       }),
@@ -403,38 +420,38 @@ function constructInvestigationCourtRecordPdf(
   addNormalJustifiedText(
     doc,
     theCase.litigationPresentations ??
-      formatMessage(core.missing.litigationPresentations),
+      formatMessage(courtRecord.missingLitigationPresentations),
   )
   setLineGap(doc, 3)
   addEmptyLines(doc, 2)
   setLineGap(doc, 16)
-  addMediumHeading(doc, formatMessage(ruling.rulingTextHeading))
+  addMediumHeading(doc, formatMessage(courtRecord.conclusionHeading))
   setLineGap(doc, 1)
   addNormalJustifiedText(
     doc,
-    theCase.conclusion ?? formatMessage(core.missing.rulingText),
+    theCase.conclusion ?? formatMessage(courtRecord.missingConclusion),
   )
   addEmptyLines(doc)
   addNormalCenteredText(
     doc,
-    theCase.judge?.name ?? formatMessage(core.missing.judge),
+    theCase.judge?.name ?? formatMessage(courtRecord.missingJudge),
     'Times-Bold',
   )
   addEmptyLines(doc, 2)
   addNormalJustifiedText(
     doc,
-    formatMessage(ruling.rulingTextIntro),
+    formatMessage(courtRecord.conclusionIntro),
     'Times-Roman',
   )
 
   if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
     addEmptyLines(doc)
-    addNormalJustifiedText(doc, formatMessage(ruling.appealDirections))
+    addNormalJustifiedText(doc, formatMessage(courtRecord.appealDirections))
   }
 
   let prosecutorAppeal = formatAppeal(
     theCase.prosecutorAppealDecision,
-    'Sækjandi',
+    capitalize(formatMessage(courtRecord.prosecutor)),
   )
 
   if (prosecutorAppeal) {
@@ -453,7 +470,7 @@ function constructInvestigationCourtRecordPdf(
   let accusedAppeal = formatAppeal(
     theCase.accusedAppealDecision,
     capitalize(
-      formatMessage(core.defendant, {
+      formatMessage(courtRecord.defendant, {
         suffix:
           theCase.defendants && theCase.defendants?.length > 1 ? 'ar' : 'i',
       }),
@@ -482,7 +499,7 @@ function constructInvestigationCourtRecordPdf(
     addEmptyLines(doc)
     addNormalJustifiedText(
       doc,
-      formatMessage(ruling.registrarWitness, {
+      formatMessage(courtRecord.registrarWitness, {
         registrarNameAndTitle: `${theCase.registrar.name} ${theCase.registrar.title}`,
       }),
     )
@@ -492,10 +509,10 @@ function constructInvestigationCourtRecordPdf(
   addNormalText(
     doc,
     theCase.courtEndTime
-      ? formatMessage(ruling.signOff, {
+      ? formatMessage(courtRecord.signOff, {
           endTime: formatDate(theCase.courtEndTime, 'p'),
         })
-      : formatMessage(ruling.inSession),
+      : formatMessage(courtRecord.inSession),
   )
   setPageNumbers(doc)
 

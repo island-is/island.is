@@ -43,14 +43,14 @@ function constructRestrictionRequestPdf(
     bufferPages: true,
   })
 
+  const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
+
   const title = formatMessage(m.heading, {
     caseType:
       theCase.type === CaseType.CUSTODY
         ? formatMessage(core.caseType.custody)
         : formatMessage(core.caseType.travelBan),
   })
-
-  const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
   setTitle(doc, title)
   setLineGap(doc, 8)
@@ -204,11 +204,11 @@ function constructInvestigationRequestPdf(
     bufferPages: true,
   })
 
+  const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
+
   const title = formatMessage(m.heading, {
     caseType: formatMessage(core.caseType.investigate),
   })
-
-  const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
   setTitle(doc, title)
   setLineGap(doc, 8)
