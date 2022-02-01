@@ -2,7 +2,6 @@ import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
 
 import { FormatMessage } from '@island.is/cms-translations'
-import { isRestrictionCase } from '@island.is/judicial-system/types'
 
 import { environment } from '../../environments'
 import { Case } from '../modules/case/models'
@@ -21,213 +20,104 @@ import {
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
 
-function constructRestrictionRulingPdf(
-  theCase: Case,
-  formatMessage: FormatMessage,
-): streamBuffers.WritableStreamBuffer {
-  const doc = new PDFDocument({
-    size: 'A4',
-    margins: {
-      top: 70,
-      bottom: 70,
-      left: 70,
-      right: 70,
-    },
-    bufferPages: true,
-  })
-
-  const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
-
-  const title = formatMessage(ruling.title)
-
-  setTitle(doc, title)
-  addCoatOfArms(doc)
-  addEmptyLines(doc, 5)
-  setLineGap(doc, 4)
-  addLargeHeading(
-    doc,
-    theCase.court?.name ?? formatMessage(ruling.missingCourt),
-    'Times-Roman',
-  )
-  setLineGap(doc, 2)
-  addMediumHeading(doc, title)
-  setLineGap(doc, 30)
-  addMediumHeading(
-    doc,
-    formatMessage(ruling.caseNumber, {
-      caseNumber: theCase.courtCaseNumber,
-    }),
-  )
-  setLineGap(doc, 1)
-  addNormalText(
-    doc,
-    formatMessage(ruling.prosecutorDemandsHeading),
-    'Times-Bold',
-  )
-  addEmptyLines(doc)
-  addNormalJustifiedText(
-    doc,
-    theCase.prosecutorDemands ?? formatMessage(ruling.missingProsecutorDemands),
-    'Times-Roman',
-  )
-  addEmptyLines(doc)
-  addNormalText(doc, formatMessage(ruling.courtCaseFactsHeading), 'Times-Bold')
-  addEmptyLines(doc)
-  addNormalJustifiedText(
-    doc,
-    theCase.courtCaseFacts ?? formatMessage(ruling.missingCourtCaseFacts),
-    'Times-Roman',
-  )
-  addEmptyLines(doc)
-  addNormalText(
-    doc,
-    formatMessage(ruling.courtLegalArgumentsHeading),
-    'Times-Bold',
-  )
-  addEmptyLines(doc)
-  addNormalJustifiedText(
-    doc,
-    theCase.courtLegalArguments ??
-      formatMessage(ruling.missingCourtLegalArguments),
-    'Times-Roman',
-  )
-  addEmptyLines(doc)
-  addNormalText(doc, formatMessage(ruling.rulingHeading), 'Times-Bold')
-  addEmptyLines(doc)
-  addNormalJustifiedText(
-    doc,
-    theCase.ruling ?? formatMessage(ruling.missingRuling),
-    'Times-Roman',
-  )
-  setLineGap(doc, 3)
-  addEmptyLines(doc, 2)
-  setLineGap(doc, 16)
-  addMediumHeading(doc, formatMessage(ruling.conclusionHeading))
-  setLineGap(doc, 1)
-  addNormalJustifiedText(
-    doc,
-    theCase.conclusion ?? formatMessage(ruling.missingConclusion),
-  )
-  addEmptyLines(doc)
-  addNormalCenteredText(
-    doc,
-    theCase.judge?.name ?? formatMessage(ruling.missingJudge),
-    'Times-Bold',
-  )
-  setPageNumbers(doc)
-
-  doc.end()
-
-  return stream
-}
-
-function constructInvestigationRulingPdf(
-  theCase: Case,
-  formatMessage: FormatMessage,
-): streamBuffers.WritableStreamBuffer {
-  const doc = new PDFDocument({
-    size: 'A4',
-    margins: {
-      top: 70,
-      bottom: 70,
-      left: 70,
-      right: 70,
-    },
-    bufferPages: true,
-  })
-
-  const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
-
-  const title = formatMessage(ruling.title)
-
-  setTitle(doc, title)
-  addCoatOfArms(doc)
-  addEmptyLines(doc, 5)
-  setLineGap(doc, 4)
-  addLargeHeading(
-    doc,
-    theCase.court?.name ?? formatMessage(ruling.missingCourt),
-    'Times-Roman',
-  )
-  setLineGap(doc, 2)
-  addMediumHeading(doc, title)
-  setLineGap(doc, 30)
-  addMediumHeading(
-    doc,
-    formatMessage(ruling.caseNumber, {
-      caseNumber: theCase.courtCaseNumber,
-    }),
-  )
-  setLineGap(doc, 1)
-  addNormalText(
-    doc,
-    formatMessage(ruling.prosecutorDemandsHeading),
-    'Times-Bold',
-  )
-  addEmptyLines(doc)
-  addNormalJustifiedText(
-    doc,
-    theCase.prosecutorDemands ?? formatMessage(ruling.missingProsecutorDemands),
-    'Times-Roman',
-  )
-  addEmptyLines(doc)
-  addNormalText(doc, formatMessage(ruling.courtCaseFactsHeading), 'Times-Bold')
-  addEmptyLines(doc)
-  addNormalJustifiedText(
-    doc,
-    theCase.courtCaseFacts ?? formatMessage(ruling.missingCourtCaseFacts),
-    'Times-Roman',
-  )
-  addEmptyLines(doc)
-  addNormalText(
-    doc,
-    formatMessage(ruling.courtLegalArgumentsHeading),
-    'Times-Bold',
-  )
-  addEmptyLines(doc)
-  addNormalJustifiedText(
-    doc,
-    theCase.courtLegalArguments ??
-      formatMessage(ruling.missingCourtLegalArguments),
-    'Times-Roman',
-  )
-  addEmptyLines(doc)
-  addNormalText(doc, formatMessage(ruling.rulingHeading), 'Times-Bold')
-  addEmptyLines(doc)
-  addNormalJustifiedText(
-    doc,
-    theCase.ruling ?? formatMessage(ruling.missingRuling),
-    'Times-Roman',
-  )
-  setLineGap(doc, 3)
-  addEmptyLines(doc, 2)
-  setLineGap(doc, 16)
-  addMediumHeading(doc, formatMessage(ruling.conclusionHeading))
-  setLineGap(doc, 1)
-  addNormalJustifiedText(
-    doc,
-    theCase.conclusion ?? formatMessage(ruling.missingConclusion),
-  )
-  addEmptyLines(doc)
-  addNormalCenteredText(
-    doc,
-    theCase.judge?.name ?? formatMessage(ruling.missingJudge),
-    'Times-Bold',
-  )
-  setPageNumbers(doc)
-
-  doc.end()
-
-  return stream
-}
-
 function constructRulingPdf(
   theCase: Case,
   formatMessage: FormatMessage,
 ): streamBuffers.WritableStreamBuffer {
-  return isRestrictionCase(theCase.type)
-    ? constructRestrictionRulingPdf(theCase, formatMessage)
-    : constructInvestigationRulingPdf(theCase, formatMessage)
+  const doc = new PDFDocument({
+    size: 'A4',
+    margins: {
+      top: 70,
+      bottom: 70,
+      left: 70,
+      right: 70,
+    },
+    bufferPages: true,
+  })
+
+  const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
+
+  const title = formatMessage(ruling.title)
+
+  setTitle(doc, title)
+  addCoatOfArms(doc)
+  addEmptyLines(doc, 5)
+  setLineGap(doc, 4)
+  addLargeHeading(
+    doc,
+    theCase.court?.name ?? formatMessage(ruling.missingCourt),
+    'Times-Roman',
+  )
+  setLineGap(doc, 2)
+  addMediumHeading(doc, title)
+  setLineGap(doc, 30)
+  addMediumHeading(
+    doc,
+    formatMessage(ruling.caseNumber, {
+      caseNumber: theCase.courtCaseNumber,
+    }),
+  )
+  setLineGap(doc, 1)
+  addNormalText(
+    doc,
+    formatMessage(ruling.prosecutorDemandsHeading),
+    'Times-Bold',
+  )
+  addEmptyLines(doc)
+  addNormalJustifiedText(
+    doc,
+    theCase.prosecutorDemands ?? formatMessage(ruling.missingProsecutorDemands),
+    'Times-Roman',
+  )
+  addEmptyLines(doc)
+  addNormalText(doc, formatMessage(ruling.courtCaseFactsHeading), 'Times-Bold')
+  addEmptyLines(doc)
+  addNormalJustifiedText(
+    doc,
+    theCase.courtCaseFacts ?? formatMessage(ruling.missingCourtCaseFacts),
+    'Times-Roman',
+  )
+  addEmptyLines(doc)
+  addNormalText(
+    doc,
+    formatMessage(ruling.courtLegalArgumentsHeading),
+    'Times-Bold',
+  )
+  addEmptyLines(doc)
+  addNormalJustifiedText(
+    doc,
+    theCase.courtLegalArguments ??
+      formatMessage(ruling.missingCourtLegalArguments),
+    'Times-Roman',
+  )
+  addEmptyLines(doc)
+  addNormalText(doc, formatMessage(ruling.rulingHeading), 'Times-Bold')
+  addEmptyLines(doc)
+  addNormalJustifiedText(
+    doc,
+    theCase.ruling ?? formatMessage(ruling.missingRuling),
+    'Times-Roman',
+  )
+  setLineGap(doc, 3)
+  addEmptyLines(doc, 2)
+  setLineGap(doc, 16)
+  addMediumHeading(doc, formatMessage(ruling.conclusionHeading))
+  setLineGap(doc, 1)
+  addNormalJustifiedText(
+    doc,
+    theCase.conclusion ?? formatMessage(ruling.missingConclusion),
+  )
+  addEmptyLines(doc)
+  addNormalCenteredText(
+    doc,
+    theCase.judge?.name ?? formatMessage(ruling.missingJudge),
+    'Times-Bold',
+  )
+  setPageNumbers(doc)
+
+  doc.end()
+
+  return stream
 }
 
 export async function getRulingPdfAsString(
