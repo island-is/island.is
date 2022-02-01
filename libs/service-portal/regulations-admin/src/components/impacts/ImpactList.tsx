@@ -62,7 +62,7 @@ export const ImpactList = (props: ImpactListProps) => {
             return (
               <ActionCard
                 key={i}
-                date={formatDateFns(date.value)}
+                date={date.value && formatDateFns(date.value)}
                 heading={headingText}
                 tag={{
                   label: t(

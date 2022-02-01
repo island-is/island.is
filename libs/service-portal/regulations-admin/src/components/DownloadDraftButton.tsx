@@ -10,10 +10,7 @@ import * as s from './DownloadDraftButton.css'
 
 import { useLocale } from '../utils'
 import { buttonsMsgs } from '../messages'
-import type {
-  RegulationDraftId,
-  RegulationPdfDownload,
-} from '@island.is/regulations/admin'
+import type { RegulationDraftId } from '@island.is/regulations/admin'
 
 type Props = {
   regulationDraftId: RegulationDraftId
@@ -70,7 +67,7 @@ export function DownloadDraftButton({ userInfo, regulationDraftId }: Props) {
 
   useEffect(() => {
     if (called && data) {
-      const response = data.downloadRegulation as RegulationPdfDownload | null
+      const response = data.getDraftRegulationPdfDownload
       const url = response?.url
 
       if (url) {
