@@ -20,6 +20,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
   Query,
+  QueryGetAlertBannerArgs,
   QueryGetArticlesArgs,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
@@ -33,13 +34,12 @@ import {
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { lightThemes, OrganizationWrapper } from '@island.is/web/components'
+import { getThemeConfig, OrganizationWrapper } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import getConfig from 'next/config'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { useRouter } from 'next/router'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -72,14 +72,16 @@ const ServicesPage: Screen<ServicesPageProps> = ({
 
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
-  const Router = useRouter()
+
   useContentfulId(organizationPage.id)
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
-      active: primaryLink.url === `/s/${organizationPage.slug}/thjonusta`,
+      active:
+        primaryLink.url.includes(`${organizationPage.slug}/thjonusta`) ||
+        primaryLink.url.includes(`${organizationPage.slug}/services`),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
@@ -175,20 +177,20 @@ const ServicesPage: Screen<ServicesPageProps> = ({
             <Select
               backgroundColor="white"
               icon="chevronDown"
-              label="Þjónustuflokkur"
+              label={n('services', 'Þjónustuflokkur')}
               isSearchable
               name="category"
               value={
                 categories.find(
                   (x) => x.value === parameters.categories[0],
                 ) ?? {
-                  label: 'Allir þjónustuflokkar',
+                  label: n('allServices', 'Allir þjónustuflokkar'),
                   value: '',
                 }
               }
               options={[
                 {
-                  label: 'Allir þjónustuflokkar',
+                  label: n('allServices', 'Allir þjónustuflokkar'),
                   value: '',
                 },
                 ...categories,
@@ -328,8 +330,6 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     }
   }
 
-  const lightTheme = lightThemes.includes(getOrganizationPage.theme)
-
   return {
     organizationPage: getOrganizationPage,
     services: getArticles,
@@ -338,7 +338,7 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     groups,
     sort: (query.sort as string) ?? 'popular',
     showSearchInHeader: false,
-    ...(lightTheme ? {} : { darkTheme: true }),
+    ...getThemeConfig(getOrganizationPage.theme),
   }
 }
 

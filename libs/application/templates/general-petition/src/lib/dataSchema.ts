@@ -26,17 +26,28 @@ export const GeneralPetitionSchema = z.object({
       (p) => p.trim().length > 0,
       m.validationMessages.aboutList.defaultMessage as string,
     ),
-  dateTil: z
-    .string()
+  dates: z
+    .object({
+      dateFrom: z
+        .string()
+        .refine(
+          (p) => p.trim().length > 0,
+          m.validationMessages.selectDate.defaultMessage as string,
+        ),
+      dateTil: z
+        .string()
+        .refine(
+          (p) => p.trim().length > 0,
+          m.validationMessages.selectDate.defaultMessage as string,
+        ),
+    })
     .refine(
-      (p) => p.trim().length > 0,
-      m.validationMessages.date.defaultMessage as string,
-    ),
-  dateFrom: z
-    .string()
-    .refine(
-      (p) => p.trim().length > 0,
-      m.validationMessages.date.defaultMessage as string,
+      ({ dateFrom, dateTil }) =>
+        !dateFrom || !dateTil || new Date(dateFrom) <= new Date(dateTil),
+      {
+        message: m.validationMessages.tilBeforeFrom.defaultMessage as string,
+        path: ['dateTil'],
+      },
     ),
 })
 

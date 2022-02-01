@@ -1,7 +1,6 @@
 import { Module, DynamicModule, Type } from '@nestjs/common'
 import { InfraController } from './infra.controller'
 import { LoggingModule } from '@island.is/logging'
-import { ProblemModule } from '@island.is/nest/problem'
 
 interface InfraModuleOptions {
   appModule: Type<any>

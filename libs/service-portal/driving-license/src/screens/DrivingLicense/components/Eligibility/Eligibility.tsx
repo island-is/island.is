@@ -48,7 +48,7 @@ function Eligibility(): JSX.Element | null {
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
             <Stack space={2}>
-              <Text variant="h1" as="h1">
+              <Text variant="h3" as="h1">
                 {formatMessage({
                   id: 'sp.driving-license:title',
                   defaultMessage: 'Ökuréttindi',

@@ -7,7 +7,7 @@ import {
   SpouseEmailInput,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
-import { isEmailValid } from '@island.is/financial-aid/shared/lib'
+import { FamilyStatus, isEmailValid } from '@island.is/financial-aid/shared/lib'
 import { useRouter } from 'next/router'
 
 interface Props {
@@ -17,7 +17,7 @@ interface Props {
 
 const InRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
   const router = useRouter()
-  const { form } = useContext(FormContext)
+  const { form, updateForm } = useContext(FormContext)
 
   const [acceptData, setAcceptData] = useState(false)
 
@@ -36,6 +36,8 @@ const InRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
       setHasError(true)
       return
     }
+
+    updateForm({ ...form, familyStatus: FamilyStatus.MARRIED })
 
     router.push(nextUrl)
   }

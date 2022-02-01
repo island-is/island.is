@@ -49,13 +49,7 @@ export const UserInfoLine: FC<Props> = ({
   const { formatMessage } = useLocale()
 
   return (
-    <Box
-      position="relative"
-      paddingY={[2, 3]}
-      paddingX={[2, 4]}
-      border="standard"
-      borderRadius="large"
-    >
+    <Box position="relative" paddingY={2} paddingRight={4}>
       <GridRow align={['flexStart', 'center']}>
         <GridColumn order={1} span={labelColumnSpan}>
           <Box
@@ -64,7 +58,7 @@ export const UserInfoLine: FC<Props> = ({
             height="full"
             overflow="hidden"
           >
-            <Text variant="h5" as="h5" lineHeight="lg">
+            <Text variant="h5" as="span" lineHeight="lg">
               {formatMessage(label)}
             </Text>
           </Box>
@@ -83,7 +77,7 @@ export const UserInfoLine: FC<Props> = ({
             ) : renderContent ? (
               renderContent()
             ) : (
-              content
+              <Text variant="default">{content}</Text>
             )}
           </Box>
         </GridColumn>

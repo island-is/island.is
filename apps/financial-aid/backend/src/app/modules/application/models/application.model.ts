@@ -21,10 +21,10 @@ import {
   FamilyStatus,
 } from '@island.is/financial-aid/shared/lib'
 
-import { ApplicationEventModel } from '../../applicationEvent/models'
-import { ApplicationFileModel } from '../../file/models'
-import { StaffModel } from '../../staff'
-import { AmountModel } from '../../amount'
+import { ApplicationEventModel } from '../../applicationEvent/models/applicationEvent.model'
+import { ApplicationFileModel } from '../../file/models/file.model'
+import { StaffModel } from '../../staff/models/staff.model'
+import { AmountModel } from '../../amount/models/amount.model'
 
 @Table({
   tableName: 'applications',

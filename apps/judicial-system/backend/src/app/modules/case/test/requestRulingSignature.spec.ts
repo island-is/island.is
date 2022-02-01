@@ -31,16 +31,6 @@ describe('CaseController - Request ruling signature', () => {
     const { caseController } = await createTestingCaseModule()
 
     givenWhenThen = async (caseId: string, user: User, theCase: Case) => {
-      const res = {
-        status: function (code) {
-          this.statusCode = code
-          return this
-        },
-        send: function (message) {
-          this.message = message
-          return this
-        },
-      } as MockResponse
       const then = {} as Then
 
       try {
@@ -48,7 +38,6 @@ describe('CaseController - Request ruling signature', () => {
           caseId,
           user,
           theCase,
-          res,
         )) as MockResponse
       } catch (error) {
         then.error = error as Error
@@ -69,12 +58,8 @@ describe('CaseController - Request ruling signature', () => {
       then = await givenWhenThen(caseId, user, theCase)
     })
 
-    it('should initiate signing', () => {
-      expect(then.result.statusCode).toBe(201)
-    })
-
     it('should return a control code and a document token', () => {
-      expect(then.result.message).toEqual({
+      expect(then.result).toEqual({
         controlCode: '0000',
         documentToken: 'DEVELOPMENT',
       })

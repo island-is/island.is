@@ -83,7 +83,10 @@ export interface CacheConfig {
    */
   overrideCacheControl?:
     | string
-    | ((request: Request, response: Response) => string)
+    | ((
+        request: Request,
+        response: Response,
+      ) => undefined | string | Promise<undefined | string>)
 
   /**
    * Override cache control for post request methods. Defaults to false.

@@ -6,6 +6,7 @@ import { withTimeout } from './withTimeout'
 import { FetchAPI as NodeFetchAPI } from './nodeFetch'
 import { EnhancedFetchAPI } from './types'
 import { withAuth } from './withAuth'
+import { AutoAuthOptions, withAutoAuth } from './withAutoAuth'
 import { withErrors } from './withErrors'
 import { withCircuitBreaker } from './withCircuitBreaker'
 import {
@@ -28,6 +29,15 @@ export interface EnhancedFetchOptions {
   // Disable or configure circuit breaker.
   circuitBreaker?: boolean | CircuitBreaker.Options
 
+  // Automatically get access token.
+  autoAuth?: AutoAuthOptions
+
+  /**
+   * Specifies if user agent headers should be forwarded in the request (Real IP, User-Agent). Requires an Auth object
+   * to be passed to the fetch function.
+   */
+  forwardAuthUserAgent?: boolean
+
   // By default 400 responses are considered warnings and will not open the circuit.
   // This can be changed by passing `treat400ResponsesAsErrors: true`.
   // Either way they will be logged and thrown.
@@ -47,7 +57,7 @@ export interface EnhancedFetchOptions {
   clientCertificate?: ClientCertificateOptions
 }
 
-function buildFetch(fetch: NodeFetchAPI = nodeFetch) {
+function buildFetch(fetch: NodeFetchAPI) {
   const result = {
     fetch,
     wrap<T extends { fetch: NodeFetchAPI }>(
@@ -101,13 +111,16 @@ export const createEnhancedFetch = (
   const {
     name,
     logger = defaultLogger,
+    fetch = nodeFetch,
     timeout = 10000,
     logErrorResponseBody = false,
+    autoAuth,
+    forwardAuthUserAgent = true,
     clientCertificate,
     cache,
   } = options
   const treat400ResponsesAsErrors = options.treat400ResponsesAsErrors === true
-  const builder = buildFetch((options.fetch as unknown) as NodeFetchAPI)
+  const builder = buildFetch(fetch)
 
   if (cache) {
     builder.wrap(withCache, {
@@ -125,7 +138,17 @@ export const createEnhancedFetch = (
     builder.wrap(withTimeout, { timeout })
   }
 
-  builder.wrap(withAuth, {})
+  if (autoAuth) {
+    builder.wrap(withAutoAuth, {
+      name,
+      logger,
+      options: autoAuth,
+      rootFetch: fetch,
+      cache,
+    })
+  }
+
+  builder.wrap(withAuth, { forwardAuthUserAgent })
 
   builder.wrap(withErrors, {
     name,

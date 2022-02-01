@@ -21,10 +21,6 @@ import {
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import {
-  FormSettings,
-  useCaseFormHelper,
-} from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
 import { isOverviewStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import CaseFilesAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CaseFilesAccordionItem/CaseFilesAccordionItem'
@@ -117,10 +113,6 @@ const OverviewForm: React.FC<Props> = (props) => {
                 value: workingCase.policeCaseNumber,
               },
               {
-                title: 'Krafa stofnuð',
-                value: formatDate(workingCase.created, 'P'),
-              },
-              {
                 title: 'Embætti',
                 value: `${
                   workingCase.creatingProsecutor?.institution?.name ??
@@ -139,23 +131,20 @@ const OverviewForm: React.FC<Props> = (props) => {
               },
               {
                 title: 'Ákærandi',
-                value: `${workingCase.prosecutor?.name} ${workingCase.prosecutor?.title}`,
+                value: workingCase.prosecutor?.name,
               },
               {
                 title: 'Tegund kröfu',
                 value: capitalize(caseTypes[workingCase.type]),
               },
             ]}
-            accusedName={workingCase.accusedName}
-            accusedNationalId={workingCase.accusedNationalId}
-            accusedAddress={workingCase.accusedAddress}
+            defendants={workingCase.defendants ?? []}
             defender={{
               name: workingCase.defenderName ?? '',
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
               defenderIsSpokesperson: workingCase.defenderIsSpokesperson,
             }}
-            isInvestigationCase
           />
         </Box>
         {!workingCase.isMasked && (

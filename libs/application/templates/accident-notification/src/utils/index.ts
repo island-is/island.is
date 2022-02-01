@@ -81,6 +81,7 @@ export const returnMissingDocumentsList = (
     )
   }
 
+  // Only show this to applicant or assignee that is also the applicant
   if (
     whoIsTheNotificationFor === WhoIsTheNotificationForEnum.POWEROFATTORNEY &&
     !hasAttachment(answers.attachments?.powerOfAttorneyFile?.file)

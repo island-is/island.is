@@ -1,12 +1,17 @@
-import React, { createContext, FC } from 'react'
+import React, { createContext, FC, ReactNode } from 'react'
 import { Dialog, DialogDisclosure, useDialogState } from 'reakit/Dialog'
+import { usePopoverState, Popover, PopoverDisclosure } from 'reakit/Popover'
 import { Box } from '../Box/Box'
 import { Button } from '../Button/Button'
+import { Inline } from '../Inline/Inline'
 import { Stack } from '../Stack/Stack'
 import { Text } from '../Text/Text'
 import * as styles from './Filter.css'
 
 export interface FilterProps {
+  /** Label for the clear all button. Should be used for localization. */
+  labelClearAll: string
+
   /** Label for the clear button. Should be used for localization. */
   labelClear: string
 
@@ -25,11 +30,20 @@ export interface FilterProps {
   /** Number of search results to display on the show result button in mobile version*/
   resultCount?: number
 
-  /** Controls if the Filter renders as desktop like sidenavbar or mobile dialog */
-  isDialog?: boolean
+  /** Filter input component */
+  filterInput?: ReactNode
+
+  /** How the filter should be displayed */
+  variant?: 'popover' | 'dialog' | 'default'
+
+  /** Align popover button (and input if also applied) to the left or right */
+  align?: 'left' | 'right'
 
   /** Event handler for clear filter event. */
   onFilterClear: () => void
+
+  /** Swap input and filter button locations */
+  reverse?: boolean
 }
 
 /**
@@ -38,29 +52,97 @@ export interface FilterProps {
  * like the `isDialog` state with out bloating the childs props.
  */
 interface FilterContextValue {
-  isDialog: boolean
+  variant?: FilterProps['variant']
 }
 
 export const FilterContext = createContext<FilterContextValue>({
-  isDialog: false,
+  variant: undefined,
 })
 
 export const Filter: FC<FilterProps> = ({
+  labelClearAll = '',
   labelClear = '',
   labelOpen = '',
   labelClose = '',
   labelTitle = '',
   labelResult = '',
   resultCount = 0,
-  isDialog = false,
+  align,
+  variant = 'default',
+  filterInput,
   onFilterClear,
+  reverse,
   children,
 }) => {
   const dialog = useDialogState()
+  const popover = usePopoverState({
+    placement: 'bottom-start',
+    unstable_flip: true,
+    gutter: 8,
+  })
+
+  const hasFilterInput = !!filterInput
 
   return (
-    <FilterContext.Provider value={{ isDialog }}>
-      {isDialog ? (
+    <FilterContext.Provider value={{ variant }}>
+      {variant === 'popover' && (
+        <>
+          <Box
+            display="flex"
+            width="full"
+            justifyContent={align === 'right' ? 'flexEnd' : 'flexStart'}
+          >
+            <Inline space={2} reverse={reverse}>
+              <Box
+                component={PopoverDisclosure}
+                background="white"
+                display="inlineBlock"
+                borderRadius="large"
+                tabIndex={-1}
+                {...popover}
+              >
+                <Button as="span" variant="utility" icon="filter" fluid>
+                  {labelOpen}
+                </Button>
+              </Box>
+
+              {hasFilterInput && filterInput}
+            </Inline>
+          </Box>
+
+          <Box
+            component={Popover}
+            background="white"
+            borderRadius="large"
+            boxShadow="subtle"
+            className={styles.popoverContainer}
+            {...popover}
+          >
+            <Stack space={4} dividers={false}>
+              {children}
+            </Stack>
+
+            <Box
+              display="flex"
+              width="full"
+              paddingX={3}
+              paddingY={2}
+              justifyContent="center"
+              background="blue100"
+            >
+              <Button
+                icon="reload"
+                size="small"
+                variant="text"
+                onClick={onFilterClear}
+              >
+                {labelClearAll}
+              </Button>
+            </Box>
+          </Box>
+        </>
+      )}
+      {variant === 'dialog' && (
         <>
           <DialogDisclosure {...dialog} className={styles.dialogDisclosure}>
             <Box
@@ -119,6 +201,7 @@ export const Filter: FC<FilterProps> = ({
                 </Box>
 
                 <Stack space={4} dividers={false}>
+                  {hasFilterInput && filterInput}
                   {children}
                 </Stack>
               </Box>
@@ -146,9 +229,11 @@ export const Filter: FC<FilterProps> = ({
             </Box>
           </Dialog>
         </>
-      ) : (
+      )}
+      {variant === 'default' && (
         <>
           <Stack space={3} dividers={false}>
+            {hasFilterInput && filterInput}
             {children}
           </Stack>
 
@@ -159,7 +244,7 @@ export const Filter: FC<FilterProps> = ({
               variant="text"
               onClick={onFilterClear}
             >
-              {labelClear}
+              {labelClearAll}
             </Button>
           </Box>
         </>

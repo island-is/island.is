@@ -12,11 +12,13 @@ import {
   ColorSchemeContext,
   ColorSchemes,
 } from '@island.is/island-ui/core'
+import getConfig from 'next/config'
 import { NextComponentType, NextPageContext } from 'next'
 import { Screen, GetInitialPropsContext } from '../types'
 import Cookies from 'js-cookie'
 import * as Sentry from '@sentry/node'
 import { RewriteFrames } from '@sentry/integrations'
+import { userMonitoring } from '@island.is/user-monitoring'
 import { useRouter } from 'next/router'
 import {
   Header,
@@ -58,6 +60,8 @@ import { stringHash } from '@island.is/web/utils/stringHash'
 
 import Illustration from './Illustration'
 import * as styles from './main.css'
+
+const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
 const IS_MOCK =
   process.env.NODE_ENV !== 'production' && process.env.API_MOCKS === 'true'
@@ -111,6 +115,20 @@ if (environment.sentryDsn) {
         },
       }),
     ],
+  })
+}
+
+if (
+  publicRuntimeConfig.ddRumApplicationId &&
+  publicRuntimeConfig.ddRumClientToken &&
+  typeof window !== 'undefined'
+) {
+  userMonitoring.initDdRum({
+    service: 'islandis',
+    applicationId: publicRuntimeConfig.ddRumApplicationId,
+    clientToken: publicRuntimeConfig.ddRumClientToken,
+    env: publicRuntimeConfig.environment || 'local',
+    version: publicRuntimeConfig.appVersion || 'local',
   })
 }
 
@@ -204,7 +222,7 @@ const Layout: NextComponentType<
                 href={href}
                 as="font"
                 type="font/woff2"
-                crossOrigin="true"
+                crossOrigin="anonymous"
               />
             )
           })}
@@ -577,9 +595,7 @@ export const withMainLayout = <T,>(
     ])
 
     const themeConfig: Partial<LayoutProps> =
-      'darkTheme' in componentProps
-        ? { headerColorScheme: 'white', headerButtonColorScheme: 'negative' }
-        : {}
+      'themeConfig' in componentProps ? componentProps['themeConfig'] : {}
 
     return {
       layoutProps: { ...layoutProps, ...layoutConfig, ...themeConfig },

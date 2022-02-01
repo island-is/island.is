@@ -3,7 +3,6 @@ import {
   CanActivate,
   ExecutionContext,
   BadRequestException,
-  NotFoundException,
 } from '@nestjs/common'
 
 import { FileService } from '../file.service'
@@ -27,15 +26,7 @@ export class CaseFileExistsGuard implements CanActivate {
       throw new BadRequestException('Missing file id')
     }
 
-    const caseFile = await this.fileService.findById(fileId, caseId)
-
-    if (!caseFile) {
-      throw new NotFoundException(
-        `Case file ${fileId} of case ${caseId} does not exist`,
-      )
-    }
-
-    request.caseFile = caseFile
+    request.caseFile = await this.fileService.findById(fileId, caseId)
 
     return true
   }

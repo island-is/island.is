@@ -1,24 +1,25 @@
-import { ReadableStreamBuffer } from 'stream-buffers'
 import { Response } from 'express'
 
 import {
   Body,
   Controller,
   Get,
-  NotFoundException,
   Param,
   Post,
   Put,
   ForbiddenException,
   Query,
-  ConflictException,
   Res,
   Header,
   UseGuards,
   BadRequestException,
+  HttpException,
+  Inject,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import {
   DokobitError,
   SigningServiceResponse,
@@ -26,7 +27,6 @@ import {
 import { IntegratedCourts } from '@island.is/judicial-system/consts'
 import {
   CaseState,
-  CaseTransition,
   CaseType,
   isInvestigationCase,
   UserRole,
@@ -37,8 +37,6 @@ import {
   JwtAuthGuard,
   RolesRules,
   RolesGuard,
-  RolesRule,
-  RulesType,
   TokenGuard,
 } from '@island.is/judicial-system/auth'
 
@@ -57,6 +55,14 @@ import {
   CurrentCase,
 } from './guards'
 import {
+  judgeTransitionRule,
+  judgeUpdateRule,
+  prosecutorTransitionRule,
+  prosecutorUpdateRule,
+  registrarTransitionRule,
+  registrarUpdateRule,
+} from './guards/rolesRules'
+import {
   CreateCaseDto,
   InternalCreateCaseDto,
   TransitionCaseDto,
@@ -66,130 +72,6 @@ import { Case, SignatureConfirmationResponse } from './models'
 import { transitionCase } from './state'
 import { CaseService } from './case.service'
 
-// Allows prosecutors to update a specific set of fields
-const prosecutorUpdateRule = {
-  role: UserRole.PROSECUTOR,
-  type: RulesType.FIELD,
-  dtoFields: [
-    'type',
-    'description',
-    'policeCaseNumber',
-    'accusedNationalId',
-    'accusedName',
-    'accusedAddress',
-    'accusedGender',
-    'defenderName',
-    'defenderEmail',
-    'defenderPhoneNumber',
-    'sendRequestToDefender',
-    'isHeightenedSecurityLevel',
-    'courtId',
-    'leadInvestigator',
-    'arrestDate',
-    'requestedCourtDate',
-    'translator',
-    'requestedValidToDate',
-    'demands',
-    'lawsBroken',
-    'legalBasis',
-    'legalProvisions',
-    'requestedCustodyRestrictions',
-    'requestedOtherRestrictions',
-    'caseFacts',
-    'legalArguments',
-    'requestProsecutorOnlySession',
-    'prosecutorOnlySessionRequest',
-    'comments',
-    'caseFilesComments',
-    'prosecutorId',
-    'sharedWithProsecutorsOfficeId',
-  ],
-} as RolesRule
-
-const courtFields = [
-  'defenderName',
-  'defenderEmail',
-  'defenderPhoneNumber',
-  'defenderIsSpokesperson',
-  'courtCaseNumber',
-  'sessionArrangements',
-  'courtDate',
-  'courtLocation',
-  'courtRoom',
-  'courtStartDate',
-  'courtEndTime',
-  'isClosedCourtHidden',
-  'courtAttendees',
-  'prosecutorDemands',
-  'courtDocuments',
-  'accusedBookings',
-  'litigationPresentations',
-  'courtCaseFacts',
-  'courtLegalArguments',
-  'ruling',
-  'decision',
-  'validToDate',
-  'custodyRestrictions',
-  'otherRestrictions',
-  'isolationToDate',
-  'conclusion',
-  'accusedAppealDecision',
-  'accusedAppealAnnouncement',
-  'prosecutorAppealDecision',
-  'prosecutorAppealAnnouncement',
-  'accusedPostponedAppealDate',
-  'prosecutorPostponedAppealDate',
-  'judgeId',
-  'registrarId',
-]
-
-// Allows judges to update a specific set of fields
-const judgeUpdateRule = {
-  role: UserRole.JUDGE,
-  type: RulesType.FIELD,
-  dtoFields: courtFields,
-} as RolesRule
-
-// Allows registrars to update a specific set of fields
-const registrarUpdateRule = {
-  role: UserRole.REGISTRAR,
-  type: RulesType.FIELD,
-  dtoFields: courtFields,
-} as RolesRule
-
-// Allows prosecutors to open, submit and delete cases
-const prosecutorTransitionRule = {
-  role: UserRole.PROSECUTOR,
-  type: RulesType.FIELD_VALUES,
-  dtoField: 'transition',
-  dtoFieldValues: [
-    CaseTransition.OPEN,
-    CaseTransition.SUBMIT,
-    CaseTransition.DELETE,
-  ],
-} as RolesRule
-
-// Allows judges to receive, accept and reject cases
-const judgeTransitionRule = {
-  role: UserRole.JUDGE,
-  type: RulesType.FIELD_VALUES,
-  dtoField: 'transition',
-  dtoFieldValues: [
-    CaseTransition.RECEIVE,
-    CaseTransition.ACCEPT,
-    CaseTransition.REJECT,
-    CaseTransition.DISMISS,
-  ],
-} as RolesRule
-
-// Allows registrars to receive cases
-const registrarTransitionRule = {
-  role: UserRole.REGISTRAR,
-  type: RulesType.FIELD_VALUES,
-  dtoField: 'transition',
-  dtoFieldValues: [CaseTransition.RECEIVE],
-} as RolesRule
-
 @Controller('api')
 @ApiTags('cases')
 export class CaseController {
@@ -197,6 +79,7 @@ export class CaseController {
     private readonly caseService: CaseService,
     private readonly userService: UserService,
     private readonly eventService: EventService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   private async validateAssignedUser(
@@ -205,10 +88,6 @@ export class CaseController {
     institutionId: string | undefined,
   ) {
     const assignedUser = await this.userService.findById(assignedUserId)
-
-    if (!assignedUser) {
-      throw new NotFoundException(`User ${assignedUserId} does not exist`)
-    }
 
     if (assignedUser.role !== assignedUserRole) {
       throw new ForbiddenException(
@@ -228,14 +107,14 @@ export class CaseController {
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
   async internalCreate(
     @Body() caseToCreate: InternalCreateCaseDto,
-  ): Promise<Case | null> {
+  ): Promise<Case> {
+    this.logger.debug('Creating a new case')
+
     const createdCase = await this.caseService.internalCreate(caseToCreate)
 
-    const resCase = await this.caseService.findById(createdCase.id)
+    this.eventService.postEvent(CaseEvent.CREATE_XRD, createdCase as Case)
 
-    this.eventService.postEvent(CaseEvent.CREATE_XRD, resCase as Case)
-
-    return resCase
+    return createdCase
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -245,14 +124,14 @@ export class CaseController {
   async create(
     @CurrentHttpUser() user: User,
     @Body() caseToCreate: CreateCaseDto,
-  ): Promise<Case | null> {
+  ): Promise<Case> {
+    this.logger.debug('Creating a new case')
+
     const createdCase = await this.caseService.create(caseToCreate, user.id)
 
-    const resCase = await this.caseService.findById(createdCase.id)
+    this.eventService.postEvent(CaseEvent.CREATE, createdCase as Case)
 
-    this.eventService.postEvent(CaseEvent.CREATE, resCase as Case)
-
-    return resCase
+    return createdCase
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
@@ -265,6 +144,8 @@ export class CaseController {
     @CurrentCase() theCase: Case,
     @Body() caseToUpdate: UpdateCaseDto,
   ): Promise<Case | null> {
+    this.logger.debug(`Updating case ${caseId}`)
+
     // Make sure valid users are assigned to the case's roles
     if (caseToUpdate.prosecutorId) {
       await this.validateAssignedUser(
@@ -298,15 +179,10 @@ export class CaseController {
       )
     }
 
-    const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
+    const updatedCase = (await this.caseService.update(
       caseId,
       caseToUpdate,
-    )
-
-    if (numberOfAffectedRows === 0) {
-      // TODO: Find a more suitable exception to throw
-      throw new NotFoundException(`Case ${caseId} does not exist`)
-    }
+    )) as Case
 
     if (
       theCase.courtId &&
@@ -316,10 +192,10 @@ export class CaseController {
     ) {
       // TODO: Find a better place for this
       // No need to wait for the upload
-      this.caseService.uploadRequestPdfToCourt(caseId)
+      this.caseService.uploadRequestPdfToCourt(updatedCase)
     }
 
-    return this.caseService.findById(updatedCase.id)
+    return updatedCase
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
@@ -339,7 +215,9 @@ export class CaseController {
     @CurrentCase() theCase: Case,
     @Body() transition: TransitionCaseDto,
   ): Promise<Case | null> {
-    // Use existingCase.modified when client is ready to send last modified timestamp with all updates
+    this.logger.debug(`Transitioning case ${caseId}`)
+
+    // Use theCase.modified when client is ready to send last modified timestamp with all updates
     const state = transitionCase(transition.transition, theCase.state)
 
     // TODO: UpdateCaseDto does not contain state - create a new type for CaseService.update
@@ -349,25 +227,17 @@ export class CaseController {
       update.parentCaseId = null
     }
 
-    const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
+    const updatedCase = (await this.caseService.update(
       caseId,
       update as UpdateCaseDto,
-    )
-
-    if (numberOfAffectedRows === 0) {
-      throw new ConflictException(
-        `A more recent version exists of the case with id ${caseId}`,
-      )
-    }
-
-    const resCase = await this.caseService.findById(updatedCase.id)
+    )) as Case
 
     this.eventService.postEvent(
       (transition.transition as unknown) as CaseEvent,
-      resCase as Case,
+      updatedCase,
     )
 
-    return resCase
+    return updatedCase
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -379,6 +249,8 @@ export class CaseController {
     description: 'Gets all existing cases',
   })
   getAll(@CurrentHttpUser() user: User): Promise<Case[]> {
+    this.logger.debug('Getting all cases')
+
     return this.caseService.getAll(user)
   }
 
@@ -386,7 +258,9 @@ export class CaseController {
   @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
-  getById(@Param('caseId') _0: string, @CurrentCase() theCase: Case): Case {
+  getById(@Param('caseId') caseId: string, @CurrentCase() theCase: Case): Case {
+    this.logger.debug(`Getting case ${caseId} by id`)
+
     return theCase
   }
 
@@ -399,11 +273,15 @@ export class CaseController {
     description: 'Gets the request for an existing case as a pdf document',
   })
   async getRequestPdf(
-    @Param('caseId') _0: string,
+    @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
-  ) {
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting the request for case ${caseId} as a pdf document`,
+    )
+
     if (
       isInvestigationCase(theCase.type) &&
       ((user.role === UserRole.JUDGE && user.id !== theCase.judge?.id) ||
@@ -416,15 +294,7 @@ export class CaseController {
 
     const pdf = await this.caseService.getRequestPdf(theCase)
 
-    const stream = new ReadableStreamBuffer({
-      frequency: 10,
-      chunkSize: 2048,
-    })
-    stream.put(pdf, 'binary')
-
-    res.header('Content-length', pdf.length.toString())
-
-    return stream.pipe(res)
+    return res.end(pdf)
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
@@ -436,11 +306,15 @@ export class CaseController {
     description: 'Gets the court record for an existing case as a pdf document',
   })
   async getCourtRecordPdf(
-    @Param('caseId') _0: string,
+    @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
-  ) {
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting the court record for case ${caseId} as a pdf document`,
+    )
+
     if (
       isInvestigationCase(theCase.type) &&
       ((user.role === UserRole.JUDGE && user.id !== theCase.judge?.id) ||
@@ -453,15 +327,7 @@ export class CaseController {
 
     const pdf = await this.caseService.getCourtRecordPdf(theCase)
 
-    const stream = new ReadableStreamBuffer({
-      frequency: 10,
-      chunkSize: 2048,
-    })
-    stream.put(pdf, 'binary')
-
-    res.header('Content-length', pdf.length.toString())
-
-    return stream.pipe(res)
+    return res.end(pdf)
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
@@ -473,11 +339,13 @@ export class CaseController {
     description: 'Gets the ruling for an existing case as a pdf document',
   })
   async getRulingPdf(
-    @Param('caseId') _0: string,
+    @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
-  ) {
+  ): Promise<void> {
+    this.logger.debug(`Getting the ruling for case ${caseId} as a pdf document`)
+
     if (
       isInvestigationCase(theCase.type) &&
       ((user.role === UserRole.JUDGE && user.id !== theCase.judge?.id) ||
@@ -490,15 +358,7 @@ export class CaseController {
 
     const pdf = await this.caseService.getRulingPdf(theCase)
 
-    const stream = new ReadableStreamBuffer({
-      frequency: 10,
-      chunkSize: 2048,
-    })
-    stream.put(pdf, 'binary')
-
-    res.header('Content-length', pdf.length.toString())
-
-    return stream.pipe(res)
+    return res.end(pdf)
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
@@ -511,10 +371,14 @@ export class CaseController {
       'Gets custody notice for an existing custody case as a pdf document',
   })
   async getCustodyNoticePdf(
-    @Param('caseId') _0: string,
+    @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
-  ) {
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting the custody notice for case ${caseId} as a pdf document`,
+    )
+
     if (theCase.type !== CaseType.CUSTODY) {
       throw new BadRequestException(
         `Cannot generate a custody notice for ${theCase.type} cases`,
@@ -529,15 +393,7 @@ export class CaseController {
 
     const pdf = await this.caseService.getCustodyPdf(theCase)
 
-    const stream = new ReadableStreamBuffer({
-      frequency: 10,
-      chunkSize: 2048,
-    })
-    stream.put(pdf, 'binary')
-
-    res.header('Content-length', pdf.length.toString())
-
-    return stream.pipe(res)
+    return res.end(pdf)
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
@@ -548,33 +404,37 @@ export class CaseController {
     description: 'Requests a court record signature for an existing case',
   })
   async requestCourtRecordSignature(
-    @Param('caseId') _0: string,
+    @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
-    @Res() res: Response,
-  ) {
+  ): Promise<SigningServiceResponse> {
+    this.logger.debug(
+      `Requesting a signature for the court record of case ${caseId}`,
+    )
+
     if (user.id !== theCase.judgeId && user.id !== theCase.registrarId) {
       throw new ForbiddenException(
         'A court record must be signed by the assigned judge or registrar',
       )
     }
 
-    try {
-      const response = await this.caseService.requestCourtRecordSignature(
-        theCase,
-        user,
-      )
-      return res.status(201).send(response)
-    } catch (error) {
-      if (error instanceof DokobitError) {
-        return res.status(error.status).json({
-          code: error.code,
-          message: error.message,
-        })
-      }
+    return this.caseService
+      .requestCourtRecordSignature(theCase, user)
+      .catch((error) => {
+        if (error instanceof DokobitError) {
+          throw new HttpException(
+            {
+              statusCode: error.status,
+              message: `Failed to request a court record signature for case ${caseId}`,
+              code: error.code,
+              error: error.message,
+            },
+            error.status,
+          )
+        }
 
-      throw error
-    }
+        throw error
+      })
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
@@ -585,12 +445,16 @@ export class CaseController {
     description:
       'Confirms a previously requested court record signature for an existing case',
   })
-  async getCourtRecordSignatureConfirmation(
-    @Param('caseId') _0: string,
+  getCourtRecordSignatureConfirmation(
+    @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Query('documentToken') documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
+    this.logger.debug(
+      `Confirming a signature for the court record of case ${caseId}`,
+    )
+
     if (user.id !== theCase.judgeId && user.id !== theCase.registrarId) {
       throw new ForbiddenException(
         'A court record must be signed by the assigned judge or registrar',
@@ -612,30 +476,33 @@ export class CaseController {
     description: 'Requests a ruling signature for an existing case',
   })
   async requestRulingSignature(
-    @Param('caseId') _0: string,
+    @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
-    @Res() res: Response,
-  ) {
+  ): Promise<SigningServiceResponse> {
+    this.logger.debug(`Requesting a signature for the ruling of case ${caseId}`)
+
     if (user.id !== theCase.judgeId) {
       throw new ForbiddenException(
         'A ruling must be signed by the assigned judge',
       )
     }
 
-    try {
-      const response = await this.caseService.requestRulingSignature(theCase)
-      return res.status(201).send(response)
-    } catch (error) {
+    return this.caseService.requestRulingSignature(theCase).catch((error) => {
       if (error instanceof DokobitError) {
-        return res.status(error.status).json({
-          code: error.code,
-          message: error.message,
-        })
+        throw new HttpException(
+          {
+            statusCode: error.status,
+            message: `Failed to request a ruling signature for case ${caseId}`,
+            code: error.code,
+            error: error.message,
+          },
+          error.status,
+        )
       }
 
       throw error
-    }
+    })
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
@@ -646,12 +513,14 @@ export class CaseController {
     description:
       'Confirms a previously requested ruling signature for an existing case',
   })
-  async getRulingSignatureConfirmation(
-    @Param('caseId') _0: string,
+  getRulingSignatureConfirmation(
+    @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Query('documentToken') documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
+    this.logger.debug(`Confirming a signature for the ruling of case ${caseId}`)
+
     if (user.id !== theCase.judgeId) {
       throw new ForbiddenException(
         'A ruling must be signed by the assigned judge',
@@ -672,20 +541,20 @@ export class CaseController {
     description: 'Clones a new case based on an existing case',
   })
   async extend(
-    @Param('caseId') _0: string,
+    @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
-  ): Promise<Case | null> {
+  ): Promise<Case> {
+    this.logger.debug(`Extending case ${caseId}`)
+
     if (theCase.childCase) {
       return theCase.childCase
     }
 
     const extendedCase = await this.caseService.extend(theCase, user)
 
-    const resCase = await this.caseService.findById(extendedCase.id)
+    this.eventService.postEvent(CaseEvent.EXTEND, extendedCase as Case)
 
-    this.eventService.postEvent(CaseEvent.EXTEND, resCase as Case)
-
-    return resCase
+    return extendedCase
   }
 }

@@ -97,9 +97,10 @@ export class EventService {
         }),
       })
     } catch (error) {
+      // Tolerate failure, but log error
       this.logger.error(
         `Failed to post event ${event} for case ${theCase.id}`,
-        error,
+        { error },
       )
     }
   }

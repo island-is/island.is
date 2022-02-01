@@ -5,15 +5,14 @@ import { RolesGuard } from '../../../guards/roles.guard'
 import { StaffController } from '../staff.controller'
 
 describe('StaffController - Get guards', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
     guards = Reflect.getMetadata('__guards__', StaffController)
   })
 
-  it('should have two guards', () => {
-    expect(guards).toHaveLength(2)
+  it('should have three guards', () => {
+    expect(guards).toHaveLength(3)
   })
 
   describe('IdsUserGuard', () => {
@@ -23,7 +22,7 @@ describe('StaffController - Get guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have IdsUserGuard as quard 1', () => {
+    it('should have IdsUserGuard as guard 0', () => {
       expect(guard).toBeInstanceOf(IdsUserGuard)
     })
   })
@@ -35,7 +34,7 @@ describe('StaffController - Get guards', () => {
       guard = new guards[1]()
     })
 
-    it('should have RolesGuard as quard 2', () => {
+    it('should have RolesGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(RolesGuard)
     })
   })

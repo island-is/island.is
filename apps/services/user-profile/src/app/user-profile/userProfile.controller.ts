@@ -1,11 +1,11 @@
+import { UserProfileScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
-  IdsUserGuard,
   Scopes,
   ScopesGuard,
+  IdsUserGuard,
 } from '@island.is/auth-nest-tools'
-import { UserProfileScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   Body,
@@ -136,7 +136,7 @@ export class UserProfileController {
 
     const userProfile = await this.userProfileService.create(userProfileDto)
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'create',
       resources: userProfileDto.nationalId,
       meta: { fields: Object.keys(userProfileDto) },
@@ -206,7 +206,7 @@ export class UserProfileController {
       )
     }
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'update',
       resources: updatedUserProfile.nationalId,
       meta: { fields: updatedFields },
@@ -274,7 +274,7 @@ export class UserProfileController {
 
     return await this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'confirmEmail',
         resources: profile.nationalId,
       },
@@ -308,7 +308,7 @@ export class UserProfileController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'confirmSms',
         resources: nationalId,
       },
@@ -335,24 +335,6 @@ export class UserProfileController {
     await this.verificationService.createSmsVerification(createSmsVerification)
   }
 
-  // FINDALL token
-  @Audit()
-  @ApiOperation({
-    summary:
-      'NOTE: Returns a list of any user´s device tokens - Used by Notification workers - not exposed via GraphQL',
-  })
-  @ApiOkResponse({ type: [UserDeviceTokensDto] })
-  @Scopes(UserProfileScope.read)
-  @ApiSecurity('oauth2', [UserProfileScope.read])
-  @Get('userProfile/:nationalId/deviceToken')
-  async getDeviceTokens(
-    @Param('nationalId')
-    nationalId: string,
-  ): Promise<UserDeviceTokensDto[]> {
-    return await this.userProfileService.getDeviceTokens(nationalId)
-  }
-
-  // CREATE token
   @Audit()
   @ApiOperation({
     summary: 'Adds a device token for notifications for a user device ',
@@ -360,7 +342,7 @@ export class UserProfileController {
   @ApiOkResponse({ type: UserDeviceTokensDto })
   @Scopes(UserProfileScope.write)
   @ApiSecurity('oauth2', [UserProfileScope.write])
-  @Post('userProfile/:nationalId/deviceToken')
+  @Post('userProfile/:nationalId/device-tokens')
   async addDeviceToken(
     @Param('nationalId')
     nationalId: string,
@@ -375,7 +357,6 @@ export class UserProfileController {
     }
   }
 
-  // DELETE token
   @Audit()
   @ApiOperation({
     summary: 'Deletes a device token for a user device',
@@ -383,7 +364,7 @@ export class UserProfileController {
   @Scopes(UserProfileScope.write)
   @ApiSecurity('oauth2', [UserProfileScope.write])
   @ApiOkResponse({ type: DeleteTokenResponseDto })
-  @Delete('userProfile/:nationalId/deviceToken')
+  @Delete('userProfile/:nationalId/device-tokens')
   async deleteDeviceToken(
     @Param('nationalId')
     nationalId: string,

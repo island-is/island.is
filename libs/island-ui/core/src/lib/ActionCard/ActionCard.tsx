@@ -9,11 +9,12 @@ import {
   ProgressMeterVariant,
 } from '../ProgressMeter/ProgressMeter'
 import * as styles from './ActionCard.css'
-import { Icon } from '../IconRC/Icon'
+import { Hidden } from '../Hidden/Hidden'
 
 type ActionCardProps = {
   date?: string
   heading?: string
+  headingVariant?: 'h3' | 'h4'
   text?: string
   eyebrow?: string
   backgroundColor?: 'white' | 'blue' | 'red'
@@ -45,6 +46,7 @@ type ActionCardProps = {
     label?: string
     message?: string
   }
+  avatar?: boolean
 }
 
 const defaultCta = {
@@ -74,6 +76,7 @@ const defaultUnavailable = {
 export const ActionCard: React.FC<ActionCardProps> = ({
   date,
   heading,
+  headingVariant = 'h3',
   text,
   eyebrow,
   backgroundColor = 'white',
@@ -82,6 +85,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   tag: _tag,
   unavailable: _unavailable,
   progressMeter: _progressMeter,
+  avatar,
 }) => {
   const cta = { ...defaultCta, ..._cta }
   const progressMeter = { ...defaultProgressMeter, ..._progressMeter }
@@ -94,6 +98,29 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       ? 'red100'
       : 'blue100'
 
+  const renderAvatar = () => {
+    if (!avatar) {
+      return null
+    }
+
+    return heading ? (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        flexShrink={0}
+        marginRight={[2, 3]}
+        borderRadius="circle"
+        background="blue100"
+        className={styles.avatar}
+      >
+        <Text variant="h3" as="p" color="blue400">
+          {getTitleAbbreviation(heading)}
+        </Text>
+      </Box>
+    ) : null
+  }
+
   const renderDisabled = () => {
     const { label, message } = unavailable
 
@@ -105,6 +132,26 @@ export const ActionCard: React.FC<ActionCardProps> = ({
     )
   }
 
+  const renderEyebrow = () => {
+    if (!eyebrow) {
+      return null
+    }
+
+    return (
+      <Box
+        alignItems="center"
+        display="flex"
+        flexDirection="row"
+        justifyContent={eyebrow ? 'spaceBetween' : 'flexEnd'}
+        marginBottom={[0, 1]}
+      >
+        <Text variant="eyebrow" color="purple400">
+          {eyebrow}
+        </Text>
+        {renderTag()}
+      </Box>
+    )
+  }
   const renderDate = () => {
     if (!date) {
       return null
@@ -112,21 +159,17 @@ export const ActionCard: React.FC<ActionCardProps> = ({
 
     return (
       <Box
-        alignItems={['flexStart', 'center']}
+        alignItems="center"
         display="flex"
-        flexDirection={['column', 'row']}
-        justifyContent="spaceBetween"
-        marginBottom={1}
+        flexDirection="row"
+        justifyContent={date ? 'spaceBetween' : 'flexEnd'}
+        marginBottom={[0, 2]}
       >
         <Box display="flex" flexDirection="row" alignItems="center">
-          <Box marginRight="smallGutter">
-            <Icon size="small" icon="time" type="outline" color="blue400" />
-          </Box>
-
           <Text variant="small">{date}</Text>
         </Box>
 
-        {renderTag()}
+        {!eyebrow && renderTag()}
       </Box>
     )
   }
@@ -137,7 +180,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
     }
 
     return (
-      <Box paddingTop={[1, 1, 0]}>
+      <Box paddingTop={[0, 1, 0]}>
         <Tag outlined={tag.outlined} variant={tag.variant} disabled>
           {tag.label}
         </Tag>
@@ -151,42 +194,38 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       hasCTA && secondaryCta?.label && !progressMeter.active
 
     return (
-      <>
-        {!date && renderTag()}
-
-        {!!hasCTA && (
-          <Box
-            paddingTop={tag.label ? 'gutter' : 0}
-            display="flex"
-            justifyContent={['flexStart', 'flexEnd']}
-            alignItems="center"
-            flexDirection="row"
-          >
-            {hasSecondaryCTA && (
-              <Box paddingRight={4} paddingLeft={2}>
-                <Button
-                  variant="text"
-                  onClick={secondaryCta?.onClick}
-                  icon={'document'}
-                >
-                  {secondaryCta?.label}
-                </Button>
-              </Box>
-            )}
-            <Box>
+      !!hasCTA && (
+        <Box
+          paddingTop={tag.label ? 'gutter' : 0}
+          display="flex"
+          justifyContent={['flexStart', 'flexEnd']}
+          alignItems="center"
+          flexDirection="row"
+        >
+          {hasSecondaryCTA && (
+            <Box paddingRight={4} paddingLeft={2}>
               <Button
-                variant={cta.variant}
-                size="small"
-                onClick={cta.onClick}
-                disabled={cta.disabled}
-                icon={cta.icon}
+                variant="text"
+                onClick={secondaryCta?.onClick}
+                icon={'document'}
               >
-                {cta.label}
+                {secondaryCta?.label}
               </Button>
             </Box>
+          )}
+          <Box>
+            <Button
+              variant={cta.variant}
+              size="small"
+              onClick={cta.onClick}
+              disabled={cta.disabled}
+              icon={cta.icon}
+            >
+              {cta.label}
+            </Button>
           </Box>
-        )}
-      </>
+        </Box>
+      )
     )
   }
 
@@ -202,7 +241,6 @@ export const ActionCard: React.FC<ActionCardProps> = ({
         display="flex"
         alignItems={['flexStart', 'flexStart', alignWithDate]}
         flexDirection={['column', 'column', 'row']}
-        className={date ? styles.progressMeterWithDate : undefined}
       >
         <ProgressMeter
           variant={variant}
@@ -228,26 +266,49 @@ export const ActionCard: React.FC<ActionCardProps> = ({
     <Box
       display="flex"
       flexDirection="column"
-      borderColor={backgroundColor === 'red' ? 'red200' : 'blue200'}
+      borderColor={
+        backgroundColor === 'red'
+          ? 'red200'
+          : backgroundColor === 'blue'
+          ? 'blue100'
+          : 'blue200'
+      }
       borderRadius="large"
       borderWidth="standard"
       paddingX={[3, 3, 4]}
       paddingY={3}
       background={bgr}
     >
-      {renderDate()}
+      {renderEyebrow()}
 
+      {renderDate()}
       <Box
         alignItems={['flexStart', 'center']}
         display="flex"
         flexDirection={['column', 'row']}
       >
-        <Box>
-          <Text variant="eyebrow" color="purple400">
-            {eyebrow}
-          </Text>
-          <Text variant="h3">{heading}</Text>
-          <Text paddingTop={heading ? 1 : 0}>{text}</Text>
+        {renderAvatar()}
+        <Box flexDirection="row" width="full">
+          {heading && (
+            <Box
+              display="flex"
+              flexDirection="row"
+              justifyContent="spaceBetween"
+              alignItems="flexEnd"
+            >
+              <Text
+                variant={headingVariant}
+                color={backgroundColor === 'blue' ? 'blue600' : 'currentColor'}
+              >
+                {heading}
+              </Text>
+              <Hidden above="xs">
+                <Box>{!date && !eyebrow && renderTag()}</Box>
+              </Hidden>
+            </Box>
+          )}
+
+          {text && <Text paddingTop={heading ? 1 : 0}>{text}</Text>}
         </Box>
 
         <Box
@@ -255,9 +316,11 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           alignItems={['flexStart', 'flexEnd']}
           flexDirection="column"
           flexShrink={0}
-          marginTop={['gutter', 0]}
+          marginTop={[1, 0]}
           marginLeft={[0, 'auto']}
+          className={progressMeter.active && tag ? styles.tag : styles.button}
         >
+          <Hidden below="sm">{!date && !eyebrow && renderTag()}</Hidden>
           {unavailable.active ? renderDisabled() : renderDefault()}
         </Box>
       </Box>
@@ -265,4 +328,14 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       {progressMeter.active && renderProgressMeter()}
     </Box>
   )
+}
+
+const getTitleAbbreviation = (title: string) => {
+  const words = title.split(' ')
+  let initials = words[0].substring(0, 1).toUpperCase()
+
+  if (words.length > 1)
+    initials += words[words.length - 1].substring(0, 1).toUpperCase()
+
+  return initials
 }

@@ -70,6 +70,10 @@ Cypress.Commands.add('stubAPIResponses', () => {
   })
 })
 
+Cypress.Commands.add('login', () => {
+  cy.setCookie('judicial-system.csrf', 'test-csrf-token')
+})
+
 Cypress.Commands.add('getByTestid', (selector) => {
   return cy.get(`[data-testid=${selector}]`)
 })

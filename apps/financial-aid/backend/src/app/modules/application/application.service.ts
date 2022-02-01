@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common'
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { ApplicationModel, SpouseResponse } from './models'
@@ -18,6 +22,7 @@ import {
   Staff,
   FileType,
   getApplicantEmailDataFromEventType,
+  firstDateOfMonth,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import {
@@ -43,12 +48,6 @@ interface Recipient {
 
 const linkToStatusPage = (applicationId: string) => {
   return `${environment.oskBaseUrl}/stada/${applicationId}"`
-}
-
-const firstDateOfMonth = () => {
-  const date = new Date()
-
-  return new Date(date.getFullYear(), date.getMonth(), 1)
 }
 
 @Injectable()
@@ -242,7 +241,18 @@ export class ApplicationService {
     application: CreateApplicationDto,
     user: User,
   ): Promise<ApplicationModel> {
-    const appModel = await this.applicationModel.create(application)
+    const hasAppliedForPeriod = await this.getCurrentApplicationId(
+      user.nationalId,
+    )
+
+    if (hasAppliedForPeriod) {
+      throw new ForbiddenException('User or spouse has applied for period')
+    }
+
+    const appModel = await this.applicationModel.create({
+      nationalId: user.nationalId,
+      ...application,
+    })
 
     await this.applicationEventService.create({
       applicationId: appModel.id,
@@ -325,10 +335,7 @@ export class ApplicationService {
     id: string,
     update: UpdateApplicationDto,
     staff?: Staff,
-  ): Promise<{
-    numberOfAffectedRows: number
-    updatedApplication: ApplicationModel
-  }> {
+  ): Promise<ApplicationModel> {
     if (update.state && update.state === ApplicationState.NEW) {
       update.staffId = null
     }
@@ -340,6 +347,10 @@ export class ApplicationService {
       where: { id },
       returning: true,
     })
+
+    if (numberOfAffectedRows === 0) {
+      throw new NotFoundException(`Application ${id} does not exist`)
+    }
 
     await this.applicationEventService.create({
       applicationId: id,
@@ -375,7 +386,7 @@ export class ApplicationService {
       this.sendApplicationUpdateEmail(update, updatedApplication),
     ])
 
-    return { numberOfAffectedRows, updatedApplication }
+    return updatedApplication
   }
 
   private async sendApplicationUpdateEmail(
@@ -390,6 +401,7 @@ export class ApplicationService {
       const municipality = await this.municipalityService.findByMunicipalityId(
         updatedApplication.municipalityCode,
       )
+
       const emailData = getApplicantEmailDataFromEventType(
         update.event,
         linkToStatusPage(updatedApplication.id),

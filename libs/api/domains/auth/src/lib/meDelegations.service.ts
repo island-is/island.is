@@ -3,17 +3,17 @@ import { Injectable } from '@nestjs/common'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
   DelegationDTO,
-  UpdateDelegationScopeDTO,
-  MeDelegationsControllerFindAllDirectionEnum,
   MeDelegationsApi,
+  MeDelegationsControllerFindAllDirectionEnum,
   MeDelegationsControllerFindAllValidEnum,
+  MeDelegationsControllerFindOneValidEnum,
 } from '@island.is/clients/auth-public-api'
 
 import {
-  UpdateDelegationInput,
-  DeleteDelegationInput,
-  DelegationInput,
   CreateDelegationInput,
+  DelegationInput,
+  DeleteDelegationInput,
+  UpdateDelegationInput,
 } from './dto'
 import { DelegationByOtherUserInput } from './dto/delegationByOtherUser.input'
 
@@ -45,6 +45,7 @@ export class MeDelegationsService {
     const delegation = await this.delegationsApiWithAuth(user)
       .meDelegationsControllerFindOne({
         delegationId,
+        valid: MeDelegationsControllerFindOneValidEnum.IncludeFuture,
       })
       .catch(ignore404)
 

@@ -1,27 +1,32 @@
 import request from 'supertest'
 
-import { Delegation, DelegationScope } from '@island.is/auth-api-lib'
-import { TestApp } from '@island.is/testing/nest'
+import {
+  ApiScope,
+  Delegation,
+  DelegationDTO,
+  DelegationScope,
+} from '@island.is/auth-api-lib'
+import { AuthScope } from '@island.is/auth/scopes'
 import {
   createCurrentUser,
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
-import { AuthScope } from '@island.is/auth/scopes'
+import { TestApp } from '@island.is/testing/nest'
 
 import { createDelegation } from '../../../../test/fixtures'
 import {
+  Scopes,
   setupWithAuth,
   setupWithoutAuth,
   setupWithoutPermission,
 } from '../../../../test/setup'
-import { expectMatchingObject, getRequestMethod } from '../../../../test/utils'
 import { TestEndpointOptions } from '../../../../test/types'
+import { expectMatchingObject, getRequestMethod } from '../../../../test/utils'
 
 const today = new Date('2021-11-12')
-const scopes = ['@island.is/scope0', '@island.is/scope1']
 const user = createCurrentUser({
   nationalId: '1122334455',
-  scope: [AuthScope.actorDelegations, scopes[0]],
+  scope: [AuthScope.actorDelegations, Scopes[0].name],
 })
 const userName = 'Tester Tests'
 const nationalRegistryUser = createNationalRegistryUser({
@@ -37,6 +42,7 @@ describe('ActorDelegationsController', () => {
     let app: TestApp
     let server: request.SuperTest<request.Test>
     let delegationModel: typeof Delegation
+    let apiScopeModel: typeof ApiScope
 
     beforeAll(async () => {
       // TestApp setup with auth and database
@@ -44,12 +50,12 @@ describe('ActorDelegationsController', () => {
         user,
         userName,
         nationalRegistryUser,
-        scopes,
       })
       server = request(app.getHttpServer())
 
-      // Get reference on delegation and delegationScope models to seed DB
+      // Get reference on Delegation and ApiScope models to seed DB
       delegationModel = app.get<typeof Delegation>('DelegationRepository')
+      apiScopeModel = app.get<typeof ApiScope>('ApiScopeRepository')
     })
 
     afterAll(async () => {
@@ -76,13 +82,13 @@ describe('ActorDelegationsController', () => {
             createDelegation({
               fromNationalId: nationalRegistryUser.kennitala,
               toNationalId: user.nationalId,
-              scopes: [scopes[0]],
+              scopes: [Scopes[0].name],
               today,
             }),
             createDelegation({
               fromNationalId: nationalRegistryUser.kennitala,
               toNationalId: user.nationalId,
-              scopes: [scopes[1]],
+              scopes: [Scopes[1].name],
               today,
               expired: true,
             }),
@@ -115,6 +121,75 @@ describe('ActorDelegationsController', () => {
           detail:
             "'direction' can only be set to incoming for the /actor alias",
         })
+      })
+
+      it('should not return delegation when all the scopes are no longer allowed for delegation', async () => {
+        // Arrange
+        await delegationModel.create(
+          createDelegation({
+            fromNationalId: nationalRegistryUser.kennitala,
+            toNationalId: user.nationalId,
+            scopes: [Scopes[1].name],
+            today,
+          }),
+          {
+            include: [{ model: DelegationScope, as: 'delegationScopes' }],
+          },
+        )
+        // Disable the scope for delegation after it has been used in delegation
+        await apiScopeModel.update(
+          { allowExplicitDelegationGrant: false } as ApiScope,
+          { where: { name: Scopes[1].name } },
+        )
+        const expectedModels: DelegationDTO[] = []
+
+        // Act
+        const res = await server.get(`${path}${query}`)
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(0)
+        expectMatchingObject(res.body, expectedModels)
+
+        // Clean up
+        await apiScopeModel.update(
+          { allowExplicitDelegationGrant: true } as ApiScope,
+          { where: { name: Scopes[1].name } },
+        )
+      })
+
+      it('should not return scopes in delegation that are no longer allowed for delegation', async () => {
+        // Arrange
+        const model = (
+          await delegationModel.create(
+            createDelegation({
+              fromNationalId: nationalRegistryUser.kennitala,
+              toNationalId: user.nationalId,
+              scopes: [Scopes[0].name, Scopes[2].name],
+              today,
+            }),
+            {
+              include: [{ model: DelegationScope, as: 'delegationScopes' }],
+            },
+          )
+        ).toDTO()
+        const scope = model.scopes?.find(
+          ({ scopeName }) => scopeName === Scopes[0].name,
+        )
+        const expectedModels: DelegationDTO[] = [
+          {
+            ...model,
+            scopes: scope ? [scope] : undefined,
+          },
+        ]
+
+        // Act
+        const res = await server.get(`${path}${query}`)
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(1)
+        expectMatchingObject(res.body, expectedModels)
       })
     })
   })

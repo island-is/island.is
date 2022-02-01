@@ -1,0 +1,18 @@
+{
+  "data": {
+    "currentUser": {
+      "nationalId": "0101307789",
+      "name": "Gervimaður útlönd",
+      "phoneNumber": null,
+      "postalCode": null,
+      "spouse": {
+        "hasPartnerApplied": false,
+        "hasFiles": false,
+        "spouseName": "",
+        "__typename": "SpouseModel"
+      },
+      "currentApplicationId": null,
+      "__typename": "UserModel"
+    }
+  }
+}

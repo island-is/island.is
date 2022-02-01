@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # Service Portal Wip
 
 Use this library as a placeholder module for modules that are upcoming/work in progress.

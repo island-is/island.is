@@ -4,7 +4,7 @@ import { useWindowSize } from 'react-use'
 import { useMutation } from '@apollo/client'
 import gql from 'graphql-tag'
 
-import { Box, Stack, Button, Checkbox, Text } from '@island.is/island-ui/core'
+import { Box, Stack, Button, Text, toast } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 
 import { useI18n } from '@island.is/skilavottord-web/i18n'
@@ -12,12 +12,9 @@ import {
   ProcessPageLayout,
   CarDetailsBox,
 } from '@island.is/skilavottord-web/components'
-import { AUTH_URL } from '@island.is/skilavottord-web/auth/utils'
-import { formatDate, formatYear } from '@island.is/skilavottord-web/utils'
+import { formatYear } from '@island.is/skilavottord-web/utils'
 import { Mutation } from '@island.is/skilavottord-web/graphql/schema'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { ACCEPTED_TERMS_AND_CONDITION } from '@island.is/skilavottord-web/utils/consts'
-import { BASE_PATH } from '@island.is/skilavottord/consts'
 import { dateFormat } from '@island.is/shared/constants'
 
 const SkilavottordVehicleOwnerMutation = gql`
@@ -27,20 +24,8 @@ const SkilavottordVehicleOwnerMutation = gql`
 `
 
 const SkilavottordVehicleMutation = gql`
-  mutation skilavottordVehicleMutation(
-    $vinNumber: String!
-    $newRegDate: DateTime!
-    $color: String!
-    $type: String!
-    $permno: String!
-  ) {
-    createSkilavottordVehicle(
-      vinNumber: $vinNumber
-      newRegDate: $newRegDate
-      color: $color
-      type: $type
-      permno: $permno
-    )
+  mutation skilavottordVehicleMutation($permno: String!) {
+    createSkilavottordVehicle(permno: $permno)
   }
 `
 
@@ -50,7 +35,6 @@ interface PropTypes {
 
 const Confirm = ({ apolloState }: PropTypes) => {
   const { user } = useContext(UserContext)
-  const [checkbox, setCheckbox] = useState(false)
   const [isTablet, setIsTablet] = useState(false)
   const { width } = useWindowSize()
 
@@ -78,78 +62,52 @@ const Confirm = ({ apolloState }: PropTypes) => {
     setIsTablet(false)
   }, [width])
 
-  const [setVehicle] = useMutation<Mutation>(SkilavottordVehicleMutation, {
-    onCompleted() {
-      routeToAuthCheck()
-    },
-    onError() {
-      // Because we want to show error after checking authenication
-      routeToAuthCheck()
-    },
-  })
+  const [
+    createSkilavottordVehicle,
+    { loading: createSkilavottordVehicleLoading },
+  ] = useMutation<Mutation>(SkilavottordVehicleMutation)
+  const [
+    createSkilavottordVehicleOwner,
+    { loading: createSkilavottordVehicleOwnerLoading },
+  ] = useMutation<Mutation>(SkilavottordVehicleOwnerMutation)
 
-  const [setVehicleOwner] = useMutation<Mutation>(
-    SkilavottordVehicleOwnerMutation,
-    {
-      onCompleted() {
-        setVehicle({
-          variables: {
-            ...car,
-            newRegDate: formatDate(car.firstRegDate, dateFormat.is),
-          },
-        })
-      },
-      onError() {
-        // Because we want to show error after checking authenication
-        routeToAuthCheck()
-      },
-    },
-  )
+  const loading =
+    createSkilavottordVehicleLoading || createSkilavottordVehicleOwnerLoading
 
   const onCancel = () => {
-    router.replace({
-      pathname: routes.myCars,
-    })
+    router.push(`${routes.recycleVehicle.baseRoute}/${id}/recycle`)
   }
 
-  const onConfirm = () => {
-    setVehicleOwner({
+  const onConfirm = async () => {
+    const { errors } = await createSkilavottordVehicleOwner({
       variables: {
         name: user?.name,
       },
     })
-  }
+    if (errors && errors.length > 0) {
+      toast.error(errors.join('\n'))
+    }
 
-  const routeToAuthCheck = () => {
-    localStorage.setItem(ACCEPTED_TERMS_AND_CONDITION, (id || '').toString())
-    router.replace(
-      `${AUTH_URL['citizen']}/login?returnUrl=${BASE_PATH}${routes.recycleVehicle.baseRoute}/${id}/handover`,
-    )
+    await createSkilavottordVehicle({
+      variables: {
+        permno: id,
+      },
+    })
+    router.push(`${routes.recycleVehicle.baseRoute}/${id}/handover`)
   }
-
-  const checkboxLabel = (
-    <>
-      <Text fontWeight={!checkbox ? 'light' : 'medium'}>
-        {t.checkbox.label}{' '}
-        <a href="https://island.is/skilmalar-island-is">
-          {t.checkbox.linkLabel}
-        </a>
-      </Text>
-    </>
-  )
 
   return (
     <>
       {car && (
         <ProcessPageLayout
           processType={'citizen'}
-          activeSection={0}
+          activeSection={1}
           activeCar={id?.toString()}
         >
           <Stack space={4}>
             <Text variant="h1">{t.title}</Text>
             <Stack space={2}>
-              <Text variant="h3">{t.subTitles.confirm}</Text>
+              <Text variant="h3">{t.subTitles?.confirm}</Text>
               <Text>{t.info}</Text>
             </Stack>
             <Stack space={2}>
@@ -158,45 +116,39 @@ const Confirm = ({ apolloState }: PropTypes) => {
                 vehicleType={car.type}
                 modelYear={formatYear(car.firstRegDate, dateFormat.is)}
               />
-              <Box padding={4} background="blue100" borderRadius="large">
-                <Checkbox
-                  name="confirm"
-                  label={checkboxLabel.props.children}
-                  onChange={({ target }) => {
-                    setCheckbox(target.checked)
-                  }}
-                  checked={checkbox}
-                  disabled={!car.isRecyclable}
-                />
-              </Box>
             </Stack>
-            <Box
-              width="full"
-              display="inlineFlex"
-              justifyContent="spaceBetween"
-            >
-              {isTablet ? (
-                <Button
-                  variant="ghost"
-                  onClick={onCancel}
-                  circle
-                  size="large"
-                  icon="arrowBack"
-                />
-              ) : (
-                <Button variant="ghost" onClick={onCancel}>
-                  {t.buttons.cancel}
-                </Button>
-              )}
-              <Button
-                disabled={!checkbox}
-                icon="arrowForward"
-                onClick={() => onConfirm()}
-              >
-                {t.buttons.continue}
-              </Button>
-            </Box>
           </Stack>
+          <Box
+            marginTop={7}
+            paddingTop={4}
+            width="full"
+            display="inlineFlex"
+            justifyContent="spaceBetween"
+            borderTopWidth="standard"
+            borderColor="purple100"
+            borderStyle="solid"
+          >
+            {isTablet ? (
+              <Button
+                variant="ghost"
+                onClick={onCancel}
+                circle
+                size="large"
+                icon="arrowBack"
+              />
+            ) : (
+              <Button
+                variant="ghost"
+                onClick={onCancel}
+                preTextIcon="arrowBack"
+              >
+                {t.buttons.cancel}
+              </Button>
+            )}
+            <Button loading={loading} icon="arrowForward" onClick={onConfirm}>
+              {t.buttons.continue}
+            </Button>
+          </Box>
         </ProcessPageLayout>
       )}
     </>

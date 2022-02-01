@@ -15,7 +15,7 @@ import {
   FormFooter,
   PageLayout,
   BlueBox,
-  CaseNumbers,
+  CaseInfo,
   FormContentContainer,
   TimeInputField,
 } from '@island.is/judicial-system-web/src/components'
@@ -24,6 +24,7 @@ import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
+  Gender,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
@@ -34,27 +35,25 @@ import {
 import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
-  setCheckboxAndSendToServer,
   validateAndSetTime,
   validateAndSendTimeToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import CheckboxList from '@island.is/judicial-system-web/src/components/CheckboxList/CheckboxList'
-import {
-  alternativeTravelBanRestrictions,
-  restrictions,
-} from '@island.is/judicial-system-web/src/utils/Restrictions'
 import {
   capitalize,
-  formatAccusedByGender,
+  formatCustodyRestrictions,
   formatDate,
   formatNationalId,
-  NounCases,
+  formatTravelBanRestrictions,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isRulingStepTwoValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { rcRulingStepTwo as m } from '@island.is/judicial-system-web/messages'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import {
+  core,
+  rcRulingStepTwo as m,
+} from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 export const RulingStepTwo: React.FC = () => {
@@ -67,6 +66,8 @@ export const RulingStepTwo: React.FC = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
+  const { user } = useContext(UserContext)
+
   const [
     courtDocumentEndErrorMessage,
     setCourtDocumentEndErrorMessage,
@@ -87,96 +88,151 @@ export const RulingStepTwo: React.FC = () => {
         theCase.isolationToDate &&
         new Date(theCase.validToDate) > new Date(theCase.isolationToDate)
 
-      // Normally we always autofill if the target has a "falsy" value.
-      // However, if the target is optional, then it should not be autofilled after
-      // the autofilled value has been deleted (is the empty string).
-      if (
-        theCase.requestedOtherRestrictions &&
-        theCase.otherRestrictions !== ''
-      ) {
+      if (theCase.defendants && theCase.defendants.length > 0) {
+        const accusedSuffix =
+          theCase.defendants[0].gender === Gender.MALE ? 'i' : 'a'
+
         autofill(
-          'otherRestrictions',
-          theCase.requestedOtherRestrictions,
+          'conclusion',
+          theCase.decision === CaseDecision.DISMISSING
+            ? formatMessage(m.sections.conclusion.dismissingAutofill, {
+                genderedAccused: formatMessage(core.accused, {
+                  suffix: accusedSuffix,
+                }),
+                accusedName: theCase.defendants[0].name,
+                extensionSuffix:
+                  theCase.parentCase &&
+                  isAcceptingCaseDecision(theCase.parentCase.decision)
+                    ? ' áframhaldandi'
+                    : '',
+                caseType:
+                  theCase.type === CaseType.CUSTODY
+                    ? 'gæsluvarðhaldi'
+                    : 'farbanni',
+              })
+            : theCase.decision === CaseDecision.REJECTING
+            ? formatMessage(m.sections.conclusion.rejectingAutofill, {
+                genderedAccused: formatMessage(core.accused, {
+                  suffix: accusedSuffix,
+                }),
+                accusedName: theCase.defendants[0].name,
+                accusedNationalId: formatNationalId(
+                  theCase.defendants[0].nationalId ?? '',
+                ),
+                extensionSuffix:
+                  theCase.parentCase &&
+                  isAcceptingCaseDecision(theCase.parentCase.decision)
+                    ? ' áframhaldandi'
+                    : '',
+                caseType:
+                  theCase.type === CaseType.CUSTODY
+                    ? 'gæsluvarðhaldi'
+                    : 'farbanni',
+              })
+            : formatMessage(m.sections.conclusion.acceptingAutofill, {
+                genderedAccused: capitalize(
+                  formatMessage(core.accused, {
+                    suffix: accusedSuffix,
+                  }),
+                ),
+                accusedName: theCase.defendants[0].name,
+                accusedNationalId: formatNationalId(
+                  theCase.defendants[0].nationalId ?? '',
+                ),
+                caseTypeAndExtensionSuffix:
+                  theCase.decision === CaseDecision.ACCEPTING ||
+                  theCase.decision === CaseDecision.ACCEPTING_PARTIALLY
+                    ? `${
+                        theCase.parentCase &&
+                        isAcceptingCaseDecision(theCase.parentCase.decision)
+                          ? 'áframhaldandi '
+                          : ''
+                      }${
+                        theCase.type === CaseType.CUSTODY
+                          ? 'gæsluvarðhaldi'
+                          : 'farbanni'
+                      }`
+                    : // decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                      'farbanni',
+                validToDate: `${formatDate(theCase.validToDate, 'PPPPp')
+                  ?.replace('dagur,', 'dagsins')
+                  ?.replace(' kl.', ', kl.')}`,
+                isolationSuffix:
+                  isAcceptingCaseDecision(theCase.decision) &&
+                  workingCase.isCustodyIsolation
+                    ? ` ${capitalize(
+                        formatMessage(core.accused, {
+                          suffix: accusedSuffix,
+                        }),
+                      )} skal sæta einangrun ${
+                        isolationEndsBeforeValidToDate
+                          ? `ekki lengur en til ${formatDate(
+                              theCase.isolationToDate,
+                              'PPPPp',
+                            )
+                              ?.replace('dagur,', 'dagsins')
+                              ?.replace(' kl.', ', kl.')}.`
+                          : 'á meðan á gæsluvarðhaldinu stendur.'
+                      }`
+                    : '',
+              }),
           theCase,
         )
       }
 
-      autofill(
-        'conclusion',
-        theCase.decision === CaseDecision.DISMISSING
-          ? formatMessage(m.sections.conclusion.dismissingAutofill, {
-              genderedAccused: formatAccusedByGender(theCase.accusedGender),
-              accusedName: theCase.accusedName,
-              extensionSuffix:
-                theCase.parentCase &&
-                isAcceptingCaseDecision(theCase.parentCase.decision)
-                  ? ' áframhaldandi'
-                  : '',
-              caseType:
-                theCase.type === CaseType.CUSTODY
-                  ? 'gæsluvarðhaldi'
-                  : 'farbanni',
-            })
-          : theCase.decision === CaseDecision.REJECTING
-          ? formatMessage(m.sections.conclusion.rejectingAutofill, {
-              genderedAccused: formatAccusedByGender(theCase.accusedGender),
-              accusedName: theCase.accusedName,
-              accusedNationalId: formatNationalId(theCase.accusedNationalId),
-              extensionSuffix:
-                theCase.parentCase &&
-                isAcceptingCaseDecision(theCase.parentCase.decision)
-                  ? ' áframhaldandi'
-                  : '',
-              caseType:
-                theCase.type === CaseType.CUSTODY
-                  ? 'gæsluvarðhaldi'
-                  : 'farbanni',
-            })
-          : formatMessage(m.sections.conclusion.acceptingAutofill, {
-              genderedAccused: capitalize(
-                formatAccusedByGender(theCase.accusedGender),
-              ),
-              accusedName: theCase.accusedName,
-              accusedNationalId: formatNationalId(theCase.accusedNationalId),
-              caseTypeAndExtensionSuffix:
-                theCase.decision === CaseDecision.ACCEPTING ||
-                theCase.decision === CaseDecision.ACCEPTING_PARTIALLY
-                  ? `${
-                      theCase.parentCase &&
-                      isAcceptingCaseDecision(theCase.parentCase.decision)
-                        ? 'áframhaldandi '
-                        : ''
-                    }${
-                      theCase.type === CaseType.CUSTODY
-                        ? 'gæsluvarðhaldi'
-                        : 'farbanni'
-                    }`
-                  : // decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                    'farbanni',
-              validToDate: `${formatDate(theCase.validToDate, 'PPPPp')
-                ?.replace('dagur,', 'dagsins')
-                ?.replace(' kl.', ', kl.')}`,
-              isolationSuffix:
-                isAcceptingCaseDecision(theCase.decision) &&
-                theCase.custodyRestrictions?.includes(
-                  CaseCustodyRestrictions.ISOLATION,
+      if (
+        theCase.type === CaseType.CUSTODY &&
+        (isAcceptingCaseDecision(theCase.decision) ||
+          theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
+      ) {
+        autofill(
+          'endOfSessionBookings',
+          `${
+            isAcceptingCaseDecision(theCase.decision)
+              ? formatCustodyRestrictions(
+                  theCase.requestedCustodyRestrictions,
+                  theCase.isCustodyIsolation,
+                  true,
                 )
-                  ? ` ${capitalize(
-                      formatAccusedByGender(theCase.accusedGender),
-                    )} skal sæta einangrun ${
-                      isolationEndsBeforeValidToDate
-                        ? `ekki lengur en til ${formatDate(
-                            theCase.isolationToDate,
-                            'PPPPp',
-                          )
-                            ?.replace('dagur,', 'dagsins')
-                            ?.replace(' kl.', ', kl.')}.`
-                        : 'á meðan á gæsluvarðhaldinu stendur.'
-                    }`
-                  : '',
-            }),
-        theCase,
-      )
+              : formatTravelBanRestrictions(
+                  theCase.defendants && theCase.defendants.length > 0
+                    ? theCase.defendants[0].gender
+                    : undefined,
+                  [
+                    CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
+                    CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
+                  ],
+                )
+          }\n\n${formatMessage(m.sections.custodyRestrictions.disclaimer, {
+            caseType:
+              theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                ? 'farbannsins'
+                : 'gæsluvarðhaldsins',
+          })}`,
+          theCase,
+        )
+      } else if (
+        theCase.type === CaseType.TRAVEL_BAN &&
+        isAcceptingCaseDecision(theCase.decision)
+      ) {
+        const travelBanRestrictions = formatTravelBanRestrictions(
+          theCase.defendants && theCase.defendants.length > 0
+            ? theCase.defendants[0].gender
+            : undefined,
+          theCase.requestedCustodyRestrictions,
+          theCase.requestedOtherRestrictions,
+        )
+
+        autofill(
+          'endOfSessionBookings',
+          `${
+            travelBanRestrictions && `${travelBanRestrictions}\n\n`
+          }${formatMessage(m.sections.custodyRestrictions.disclaimer, {
+            caseType: 'farbannsins',
+          })}`,
+          theCase,
+        )
+      }
 
       setWorkingCase(theCase)
     }
@@ -193,13 +249,13 @@ export const RulingStepTwo: React.FC = () => {
       notFound={caseNotFound}
     >
       <FormContentContainer>
-        <Box marginBottom={10}>
+        <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(m.title)}
           </Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers workingCase={workingCase} />
+          <CaseInfo workingCase={workingCase} userRole={user?.role} />
         </Box>
         <Box component="section" marginBottom={8}>
           <Box marginBottom={6}>
@@ -249,207 +305,236 @@ export const RulingStepTwo: React.FC = () => {
               {formatMessage(m.sections.appealDecision.disclaimer)}
             </Text>
           </Box>
-          <Box marginBottom={3}>
-            <BlueBox>
-              <Box marginBottom={2}>
-                <Text as="h4" variant="h4">
-                  {formatMessage(m.sections.appealDecision.accusedTitle, {
-                    accused: formatAccusedByGender(
-                      workingCase.accusedGender,
-                      NounCases.GENITIVE,
-                    ),
-                  })}{' '}
-                  <Text as="span" color="red600" fontWeight="semiBold">
-                    *
+          {workingCase.defendants && workingCase.defendants.length > 0 && (
+            <Box marginBottom={3}>
+              <BlueBox>
+                <Box marginBottom={2}>
+                  <Text as="h4" variant="h4">
+                    {formatMessage(m.sections.appealDecision.accusedTitle, {
+                      accused: formatMessage(core.accused, {
+                        suffix:
+                          workingCase.defendants[0].gender === Gender.FEMALE
+                            ? 'u'
+                            : 'a',
+                      }),
+                    })}{' '}
+                    <Text as="span" color="red600" fontWeight="semiBold">
+                      *
+                    </Text>
                   </Text>
-                </Text>
-              </Box>
-              <Box marginBottom={2}>
-                <GridRow>
-                  <GridColumn span="6/12">
-                    <RadioButton
-                      name="accused-appeal-decision"
-                      id="accused-appeal"
-                      label={formatMessage(
-                        m.sections.appealDecision.accusedAppeal,
-                        {
-                          accused: capitalize(
-                            formatAccusedByGender(workingCase.accusedGender),
-                          ),
-                        },
-                      )}
-                      value={CaseAppealDecision.APPEAL}
-                      checked={
-                        workingCase.accusedAppealDecision ===
-                        CaseAppealDecision.APPEAL
-                      }
-                      onChange={() => {
-                        setWorkingCase({
-                          ...workingCase,
-                          accusedAppealDecision: CaseAppealDecision.APPEAL,
-                        })
+                </Box>
+                <Box marginBottom={2}>
+                  <GridRow>
+                    <GridColumn span="6/12">
+                      <RadioButton
+                        name="accused-appeal-decision"
+                        id="accused-appeal"
+                        label={formatMessage(
+                          m.sections.appealDecision.accusedAppeal,
+                          {
+                            accused: capitalize(
+                              formatMessage(core.accused, {
+                                suffix:
+                                  workingCase.defendants[0].gender ===
+                                  Gender.MALE
+                                    ? 'i'
+                                    : 'a',
+                              }),
+                            ),
+                          },
+                        )}
+                        value={CaseAppealDecision.APPEAL}
+                        checked={
+                          workingCase.accusedAppealDecision ===
+                          CaseAppealDecision.APPEAL
+                        }
+                        onChange={() => {
+                          setWorkingCase({
+                            ...workingCase,
+                            accusedAppealDecision: CaseAppealDecision.APPEAL,
+                          })
 
-                        updateCase(
-                          workingCase.id,
-                          parseString(
-                            'accusedAppealDecision',
-                            CaseAppealDecision.APPEAL,
-                          ),
-                        )
-                      }}
-                      large
-                      backgroundColor="white"
-                    />
-                  </GridColumn>
-                  <GridColumn span="6/12">
-                    <RadioButton
-                      name="accused-appeal-decision"
-                      id="accused-accept"
-                      label={formatMessage(
-                        m.sections.appealDecision.accusedAccept,
-                        {
-                          accused: capitalize(
-                            formatAccusedByGender(workingCase.accusedGender),
-                          ),
-                        },
-                      )}
-                      value={CaseAppealDecision.ACCEPT}
-                      checked={
-                        workingCase.accusedAppealDecision ===
-                        CaseAppealDecision.ACCEPT
-                      }
-                      onChange={() => {
-                        setWorkingCase({
-                          ...workingCase,
-                          accusedAppealDecision: CaseAppealDecision.ACCEPT,
-                        })
+                          updateCase(
+                            workingCase.id,
+                            parseString(
+                              'accusedAppealDecision',
+                              CaseAppealDecision.APPEAL,
+                            ),
+                          )
+                        }}
+                        large
+                        backgroundColor="white"
+                      />
+                    </GridColumn>
+                    <GridColumn span="6/12">
+                      <RadioButton
+                        name="accused-appeal-decision"
+                        id="accused-accept"
+                        label={formatMessage(
+                          m.sections.appealDecision.accusedAccept,
+                          {
+                            accused: capitalize(
+                              formatMessage(core.accused, {
+                                suffix:
+                                  workingCase.defendants[0].gender ===
+                                  Gender.MALE
+                                    ? 'i'
+                                    : 'a',
+                              }),
+                            ),
+                          },
+                        )}
+                        value={CaseAppealDecision.ACCEPT}
+                        checked={
+                          workingCase.accusedAppealDecision ===
+                          CaseAppealDecision.ACCEPT
+                        }
+                        onChange={() => {
+                          setWorkingCase({
+                            ...workingCase,
+                            accusedAppealDecision: CaseAppealDecision.ACCEPT,
+                          })
 
-                        updateCase(
-                          workingCase.id,
-                          parseString(
-                            'accusedAppealDecision',
-                            CaseAppealDecision.ACCEPT,
-                          ),
-                        )
-                      }}
-                      large
-                      backgroundColor="white"
-                    />
-                  </GridColumn>
-                </GridRow>
-              </Box>
-              <Box marginBottom={2}>
-                <GridRow>
-                  <GridColumn span="7/12">
-                    <RadioButton
-                      name="accused-appeal-decision"
-                      id="accused-postpone"
-                      label={formatMessage(
-                        m.sections.appealDecision.accusedPostpone,
-                        {
-                          accused: capitalize(
-                            formatAccusedByGender(workingCase.accusedGender),
-                          ),
-                        },
-                      )}
-                      value={CaseAppealDecision.POSTPONE}
-                      checked={
-                        workingCase.accusedAppealDecision ===
-                        CaseAppealDecision.POSTPONE
-                      }
-                      onChange={() => {
-                        setWorkingCase({
-                          ...workingCase,
-                          accusedAppealDecision: CaseAppealDecision.POSTPONE,
-                        })
+                          updateCase(
+                            workingCase.id,
+                            parseString(
+                              'accusedAppealDecision',
+                              CaseAppealDecision.ACCEPT,
+                            ),
+                          )
+                        }}
+                        large
+                        backgroundColor="white"
+                      />
+                    </GridColumn>
+                  </GridRow>
+                </Box>
+                <Box marginBottom={2}>
+                  <GridRow>
+                    <GridColumn span="7/12">
+                      <RadioButton
+                        name="accused-appeal-decision"
+                        id="accused-postpone"
+                        label={formatMessage(
+                          m.sections.appealDecision.accusedPostpone,
+                          {
+                            accused: capitalize(
+                              formatMessage(core.accused, {
+                                suffix:
+                                  workingCase.defendants[0].gender ===
+                                  Gender.MALE
+                                    ? 'i'
+                                    : 'a',
+                              }),
+                            ),
+                          },
+                        )}
+                        value={CaseAppealDecision.POSTPONE}
+                        checked={
+                          workingCase.accusedAppealDecision ===
+                          CaseAppealDecision.POSTPONE
+                        }
+                        onChange={() => {
+                          setWorkingCase({
+                            ...workingCase,
+                            accusedAppealDecision: CaseAppealDecision.POSTPONE,
+                          })
 
-                        updateCase(
-                          workingCase.id,
-                          parseString(
-                            'accusedAppealDecision',
-                            CaseAppealDecision.POSTPONE,
-                          ),
-                        )
-                      }}
-                      large
-                      backgroundColor="white"
-                    />
-                  </GridColumn>
-                  <GridColumn span="5/12">
-                    <RadioButton
-                      name="accused-appeal-decision"
-                      id="accused-not-applicable"
-                      label={formatMessage(
-                        m.sections.appealDecision.accusedNotApplicable,
-                      )}
-                      value={CaseAppealDecision.NOT_APPLICABLE}
-                      checked={
-                        workingCase.accusedAppealDecision ===
-                        CaseAppealDecision.NOT_APPLICABLE
-                      }
-                      onChange={() => {
-                        setWorkingCase({
-                          ...workingCase,
-                          accusedAppealDecision:
-                            CaseAppealDecision.NOT_APPLICABLE,
-                        })
+                          updateCase(
+                            workingCase.id,
+                            parseString(
+                              'accusedAppealDecision',
+                              CaseAppealDecision.POSTPONE,
+                            ),
+                          )
+                        }}
+                        large
+                        backgroundColor="white"
+                      />
+                    </GridColumn>
+                    <GridColumn span="5/12">
+                      <RadioButton
+                        name="accused-appeal-decision"
+                        id="accused-not-applicable"
+                        label={formatMessage(
+                          m.sections.appealDecision.accusedNotApplicable,
+                        )}
+                        value={CaseAppealDecision.NOT_APPLICABLE}
+                        checked={
+                          workingCase.accusedAppealDecision ===
+                          CaseAppealDecision.NOT_APPLICABLE
+                        }
+                        onChange={() => {
+                          setWorkingCase({
+                            ...workingCase,
+                            accusedAppealDecision:
+                              CaseAppealDecision.NOT_APPLICABLE,
+                          })
 
-                        updateCase(
-                          workingCase.id,
-                          parseString(
-                            'accusedAppealDecision',
-                            CaseAppealDecision.NOT_APPLICABLE,
-                          ),
-                        )
-                      }}
-                      large
-                      backgroundColor="white"
-                    />
-                  </GridColumn>
-                </GridRow>
-              </Box>
-              <Input
-                name="accusedAppealAnnouncement"
-                data-testid="accusedAppealAnnouncement"
-                label={formatMessage(
-                  m.sections.appealDecision.accusedAnnouncementLabel,
-                  {
-                    accused: formatAccusedByGender(
-                      workingCase.accusedGender,
-                      NounCases.GENITIVE,
-                    ),
-                  },
-                )}
-                value={workingCase.accusedAppealAnnouncement || ''}
-                placeholder={formatMessage(
-                  m.sections.appealDecision.accusedAnnouncementPlaceholder,
-                  {
-                    accused: formatAccusedByGender(workingCase.accusedGender),
-                  },
-                )}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'accusedAppealAnnouncement',
-                    event,
-                    [],
-                    workingCase,
-                    setWorkingCase,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'accusedAppealAnnouncement',
-                    event.target.value,
-                    [],
-                    workingCase,
-                    updateCase,
-                  )
-                }
-                textarea
-                rows={7}
-              />
-            </BlueBox>
-          </Box>
+                          updateCase(
+                            workingCase.id,
+                            parseString(
+                              'accusedAppealDecision',
+                              CaseAppealDecision.NOT_APPLICABLE,
+                            ),
+                          )
+                        }}
+                        large
+                        backgroundColor="white"
+                      />
+                    </GridColumn>
+                  </GridRow>
+                </Box>
+                <Input
+                  name="accusedAppealAnnouncement"
+                  data-testid="accusedAppealAnnouncement"
+                  label={formatMessage(
+                    m.sections.appealDecision.accusedAnnouncementLabel,
+                    {
+                      accused: formatMessage(core.accused, {
+                        suffix:
+                          workingCase.defendants[0].gender === Gender.FEMALE
+                            ? 'u'
+                            : 'a',
+                      }),
+                    },
+                  )}
+                  value={workingCase.accusedAppealAnnouncement || ''}
+                  placeholder={formatMessage(
+                    m.sections.appealDecision.accusedAnnouncementPlaceholder,
+                    {
+                      accused: formatMessage(core.accused, {
+                        suffix:
+                          workingCase.defendants[0].gender === Gender.MALE
+                            ? 'i'
+                            : 'a',
+                      }),
+                    },
+                  )}
+                  onChange={(event) =>
+                    removeTabsValidateAndSet(
+                      'accusedAppealAnnouncement',
+                      event,
+                      [],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }
+                  onBlur={(event) =>
+                    validateAndSendToServer(
+                      'accusedAppealAnnouncement',
+                      event.target.value,
+                      [],
+                      workingCase,
+                      updateCase,
+                    )
+                  }
+                  textarea
+                  rows={7}
+                />
+              </BlueBox>
+            </Box>
+          )}
           <Box marginBottom={5}>
             <BlueBox>
               <Box marginBottom={2}>
@@ -624,101 +709,44 @@ export const RulingStepTwo: React.FC = () => {
               </Box>
             </BlueBox>
           </Box>
-          {isAcceptingCaseDecision(workingCase.decision) &&
-            workingCase.type === CaseType.CUSTODY && (
-              <Box component="section" marginBottom={3}>
-                <Box marginBottom={3}>
-                  <Text as="h3" variant="h3">
-                    Tilhögun gæsluvarðhalds
-                  </Text>
-                </Box>
-                <BlueBox>
-                  <CheckboxList
-                    checkboxes={restrictions}
-                    selected={workingCase.custodyRestrictions}
-                    onChange={(id) =>
-                      setCheckboxAndSendToServer(
-                        'custodyRestrictions',
-                        id,
-                        workingCase,
-                        setWorkingCase,
-                        updateCase,
-                      )
-                    }
-                  />
-                </BlueBox>
-              </Box>
-            )}
-          {(workingCase.decision ===
-            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-            (workingCase.decision === CaseDecision.ACCEPTING &&
-              workingCase.type === CaseType.TRAVEL_BAN)) && (
-            <Box component="section" marginBottom={4}>
-              <Box marginBottom={3}>
-                <Text as="h3" variant="h3">
-                  Tilhögun farbanns
-                </Text>
-              </Box>
-              <BlueBox>
-                <Box marginBottom={3}>
-                  <CheckboxList
-                    checkboxes={alternativeTravelBanRestrictions}
-                    selected={workingCase.custodyRestrictions}
-                    onChange={(id) =>
-                      setCheckboxAndSendToServer(
-                        'custodyRestrictions',
-                        id,
-                        workingCase,
-                        setWorkingCase,
-                        updateCase,
-                      )
-                    }
-                  />
-                </Box>
-                <Input
-                  name="otherRestrictions"
-                  data-testid="otherRestrictions"
-                  label="Nánari útlistun eða aðrar takmarkanir"
-                  value={workingCase.otherRestrictions || ''}
-                  placeholder="Til dæmis hvernig tilkynningarskyldu sé háttað..."
-                  onChange={(event) =>
-                    removeTabsValidateAndSet(
-                      'otherRestrictions',
-                      event,
-                      [],
-                      workingCase,
-                      setWorkingCase,
-                    )
-                  }
-                  onBlur={(event) =>
-                    validateAndSendToServer(
-                      'otherRestrictions',
-                      event.target.value,
-                      [],
-                      workingCase,
-                      updateCase,
-                    )
-                  }
-                  rows={10}
-                  textarea
-                />
-              </BlueBox>
-            </Box>
-          )}
-          {(!workingCase.decision ||
-            isAcceptingCaseDecision(workingCase.decision) ||
-            workingCase.decision ===
-              CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) && (
-            <Text variant="h4" fontWeight="light">
-              {formatMessage(m.sections.custodyRestrictions.disclaimer, {
-                caseType:
-                  workingCase.type === CaseType.CUSTODY &&
-                  isAcceptingCaseDecision(workingCase.decision)
-                    ? 'gæsluvarðhaldsins'
-                    : 'farbannsins',
-              })}
+        </Box>
+        <Box component="section" marginBottom={5}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              {formatMessage(m.sections.endOfSessionBookings.title)}
             </Text>
-          )}
+          </Box>
+          <Box marginBottom={5}>
+            <Input
+              data-testid="endOfSessionBookings"
+              name="endOfSessionBookings"
+              label={formatMessage(m.sections.endOfSessionBookings.label)}
+              value={workingCase.endOfSessionBookings || ''}
+              placeholder={formatMessage(
+                m.sections.endOfSessionBookings.placeholder,
+              )}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'endOfSessionBookings',
+                  event,
+                  [],
+                  workingCase,
+                  setWorkingCase,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'endOfSessionBookings',
+                  event.target.value,
+                  [],
+                  workingCase,
+                  updateCase,
+                )
+              }
+              rows={16}
+              textarea
+            />
+          </Box>
         </Box>
         <Box marginBottom={10}>
           <Box marginBottom={2}>

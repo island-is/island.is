@@ -15,12 +15,18 @@ import {
   LoadingDots,
   UploadFile,
 } from '@island.is/island-ui/core'
-import { Case, CaseFile, CaseFileState } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseFile,
+  CaseFileState,
+  User,
+} from '@island.is/judicial-system/types'
 import {
   useCase,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
+  CaseInfo,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
@@ -38,6 +44,7 @@ interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   policeCaseFiles?: PoliceCaseFilesData
+  user?: User
 }
 
 interface PoliceCaseFile {
@@ -47,7 +54,7 @@ interface PoliceCaseFile {
 }
 
 export const StepFiveForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, policeCaseFiles } = props
+  const { workingCase, setWorkingCase, policeCaseFiles, user } = props
   const { formatMessage } = useIntl()
   const [policeCaseFileList, setPoliceCaseFileList] = useState<
     PoliceCaseFile[]
@@ -56,15 +63,15 @@ export const StepFiveForm: React.FC<Props> = (props) => {
   const [isUploading, setIsUploading] = useState<boolean>(false)
 
   const {
-    files,
     uploadErrorMessage,
     allFilesUploaded,
     uploadPoliceCaseFile,
     addFileToCase,
-    onChange,
     onRemove,
     onRetry,
-  } = useS3Upload(workingCase, setWorkingCase)
+    onChange,
+    files,
+  } = useS3Upload(workingCase)
   const { updateCase } = useCase()
 
   useEffect(() => {
@@ -159,6 +166,13 @@ export const StepFiveForm: React.FC<Props> = (props) => {
           <Text as="h1" variant="h1">
             {formatMessage(m.heading)}
           </Text>
+        </Box>
+        <Box marginBottom={7}>
+          <CaseInfo
+            workingCase={workingCase}
+            userRole={user?.role}
+            showAdditionalInfo
+          />
         </Box>
         <Box marginBottom={5}>
           <Box marginBottom={3}>

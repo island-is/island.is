@@ -11,14 +11,14 @@ import {
   UpdateRecyclingPartnerInput,
 } from './recyclingPartner.input'
 
-@Authorize({
-  throwOnUnAuthorized: false,
-  roles: [Role.developer, Role.recyclingCompany],
-})
+@Authorize()
 @Resolver(() => RecyclingPartnerModel)
 export class RecyclingPartnerResolver {
   constructor(private recyclingPartnerService: RecyclingPartnerService) {}
 
+  @Authorize({
+    roles: [Role.developer, Role.recyclingFund, Role.recyclingCompany],
+  })
   @Query(() => [RecyclingPartnerModel])
   async skilavottordAllRecyclingPartners(): Promise<RecyclingPartnerModel[]> {
     return this.recyclingPartnerService.findAll()
@@ -31,6 +31,9 @@ export class RecyclingPartnerResolver {
     return this.recyclingPartnerService.findAllActive()
   }
 
+  @Authorize({
+    roles: [Role.developer, Role.recyclingFund],
+  })
   @Query(() => RecyclingPartnerModel)
   async skilavottordRecyclingPartner(
     @Args('input', { type: () => RecyclingPartnerInput })
@@ -39,6 +42,9 @@ export class RecyclingPartnerResolver {
     return this.recyclingPartnerService.findOne(companyId)
   }
 
+  @Authorize({
+    roles: [Role.developer, Role.recyclingFund],
+  })
   @Mutation(() => RecyclingPartnerModel)
   async createSkilavottordRecyclingPartner(
     @Args('input', { type: () => CreateRecyclingPartnerInput })
@@ -57,6 +63,9 @@ export class RecyclingPartnerResolver {
     return this.recyclingPartnerService.create(input)
   }
 
+  @Authorize({
+    roles: [Role.developer, Role.recyclingFund],
+  })
   @Mutation(() => RecyclingPartnerModel)
   async updateSkilavottordRecyclingPartner(
     @Args('input', { type: () => UpdateRecyclingPartnerInput })

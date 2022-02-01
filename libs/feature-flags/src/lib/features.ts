@@ -6,4 +6,5 @@ export enum Features {
   customDelegations = 'isServicePortalAccessControlModuleEnabled',
   companyDelegations = 'identityserverCompanyDelegations',
   legalGuardianDelegations = 'identityserverLegalGuardianDelegations',
+  personalInformation = 'isServicePortalPersonalInformationModuleEnabled',
 }

@@ -5,13 +5,12 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Sequelize } from 'sequelize-typescript'
 import { UpdateStaffDto, CreateStaffDto } from './dto'
 import { Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 import { environment } from '../../../environments'
 
-import { StaffModel } from './models'
+import { StaffModel } from './models/staff.model'
 import { EmailService } from '@island.is/email-service'
 import { logger } from '@island.is/logging'
 import {
@@ -49,9 +48,10 @@ export class StaffService {
       where: {
         municipalityId,
       },
-      order: Sequelize.literal(
-        'CASE WHEN active = true THEN 0 ELSE 1 END, name ASC',
-      ),
+      order: [
+        ['active', 'DESC'],
+        ['name', 'ASC'],
+      ],
     })
   }
 
@@ -81,12 +81,12 @@ export class StaffService {
   ) {
     const contact = {
       from: {
-        name: user.name,
-        address: user.email,
+        name: 'Samband íslenskra sveitarfélaga',
+        address: environment.emailOptions.fromEmail,
       },
       replyTo: {
-        name: user.name,
-        address: user.email,
+        name: 'Samband íslenskra sveitarfélaga',
+        address: environment.emailOptions.replyToEmail,
       },
       to: input.email,
     }

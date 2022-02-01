@@ -1,5 +1,6 @@
 import { Application } from '@island.is/application/core'
 import { Config as DrivingLicenseApiConfig } from '@island.is/api/domains/driving-license'
+import { Config as CriminalRecordConfig } from '@island.is/api/domains/criminal-record'
 import { PaymentServiceOptions } from '@island.is/clients/payment'
 import { Message } from '@island.is/email-service'
 import { User } from '@island.is/auth-nest-tools'
@@ -9,6 +10,7 @@ import {
   PaymentScheduleType,
 } from '@island.is/api/schema'
 import { HealthInsuranceV2Options } from '@island.is/clients/health-insurance-v2'
+import { DataProtectionComplaintClientConfig } from '@island.is/clients/data-protection-complaint'
 
 export interface BaseTemplateAPIModuleConfig {
   xRoadBasePathWithEnv: string
@@ -22,11 +24,6 @@ export interface BaseTemplateAPIModuleConfig {
     }
   }
   baseApiUrl: string
-  syslumenn: {
-    url: string
-    username: string
-    password: string
-  }
   email: {
     sender: string
     address: string
@@ -37,6 +34,7 @@ export interface BaseTemplateAPIModuleConfig {
     password: string
   }
   drivingLicense: DrivingLicenseApiConfig
+  criminalRecord: CriminalRecordConfig
   attachmentBucket: string
   presignBucket: string
   paymentOptions: PaymentServiceOptions
@@ -45,6 +43,7 @@ export interface BaseTemplateAPIModuleConfig {
   }
   paymentScheduleConfig: PaymentScheduleServiceOptions
   healthInsuranceV2: HealthInsuranceV2Options
+  dataProtectionComplaint: DataProtectionComplaintClientConfig
 }
 
 export interface TemplateApiModuleActionProps {

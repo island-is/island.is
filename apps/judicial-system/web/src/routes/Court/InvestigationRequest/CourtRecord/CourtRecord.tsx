@@ -8,9 +8,13 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { icCourtRecord as m } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  icCourtRecord as m,
+} from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 
 import CourtRecordForm from './CourtRecordForm'
 
@@ -24,6 +28,7 @@ const CourtRecord = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
+  const { user } = useContext(UserContext)
 
   useEffect(() => {
     document.title = 'Þingbók - Réttarvörslugátt'
@@ -34,37 +39,40 @@ const CourtRecord = () => {
       const defaultCourtAttendees = (wc: Case): string => {
         let attendees = ''
 
-        if (
-          wc.prosecutor &&
-          wc.sessionArrangements !== SessionArrangements.REMOTE_SESSION
-        ) {
+        if (wc.prosecutor) {
           attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n`
         }
 
-        if (wc.sessionArrangements === SessionArrangements.ALL_PRESENT) {
-          if (wc.accusedName) {
-            attendees += `${wc.accusedName} varnaraðili`
+        if (wc.defendants && wc.defendants.length > 0) {
+          if (wc.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+            wc.defendants.forEach((defendant) => {
+              attendees += `${defendant.name} ${formatMessage(core.defendant, {
+                suffix: 'i',
+              })}\n`
+            })
+          } else {
+            if (wc.defendants.length > 1) {
+              attendees += `${formatMessage(
+                m.sections.courtAttendees.multipleDefendantNotPresentAutofill,
+              )}\n`
+            } else {
+              attendees += `${formatMessage(
+                m.sections.courtAttendees.defendantNotPresentAutofill,
+              )}\n`
+            }
           }
-        } else {
-          attendees += formatMessage(
-            m.sections.courtAttendees.defendantNotPresentAutofill,
-          )
         }
 
         if (
           wc.defenderName &&
-          wc.sessionArrangements !== SessionArrangements.REMOTE_SESSION &&
           wc.sessionArrangements !== SessionArrangements.PROSECUTOR_PRESENT
         ) {
-          attendees += `\n${wc.defenderName} skipaður ${
+          attendees += `${wc.defenderName} skipaður ${
             wc.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
-          } varnaraðila`
+          } ${formatMessage(core.defendant, { suffix: 'a' })}`
         }
 
-        if (
-          wc.translator &&
-          wc.sessionArrangements !== SessionArrangements.REMOTE_SESSION
-        ) {
+        if (wc.translator) {
           attendees += `\n${wc.translator} túlkur`
         }
 
@@ -95,14 +103,6 @@ const CourtRecord = () => {
 
       if (theCase.demands) {
         autofill('prosecutorDemands', theCase.demands, theCase)
-      }
-
-      if (theCase.sessionArrangements === SessionArrangements.REMOTE_SESSION) {
-        autofill(
-          'litigationPresentations',
-          formatMessage(m.sections.litigationPresentations.autofill),
-          theCase,
-        )
       }
 
       if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
@@ -168,6 +168,7 @@ const CourtRecord = () => {
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
         isLoading={isLoadingWorkingCase}
+        user={user}
       />
     </PageLayout>
   )

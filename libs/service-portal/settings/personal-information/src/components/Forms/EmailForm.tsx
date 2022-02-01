@@ -41,7 +41,7 @@ export const EmailForm: FC<Props> = ({
           name="email"
           rules={{
             required: {
-              value: true,
+              value: false,
               message: formatMessage({
                 id: 'sp.settings:email-required-message',
                 defaultMessage: 'Skylda er að fylla út netfang',

@@ -38,7 +38,7 @@ export const Item = ({
   const hasTags = Array.isArray(tags) && tags.length > 0
   const { format } = useDateUtils()
 
-  const formattedDate = format(new Date(date), 'do MMMM yyyy')
+  const formattedDate = date ? format(new Date(date), 'do MMMM yyyy') : ''
 
   return (
     <FocusableBox
@@ -54,8 +54,8 @@ export const Item = ({
       height="full"
       color="blue"
     >
-      <span className={styles.wrapper}>
-        <span className={styles.content}>
+      <div className={styles.wrapper}>
+        <div className={styles.content}>
           <Box flexGrow={1} height="full">
             <Stack space={2}>
               <Text as="span" variant="eyebrow">
@@ -78,7 +78,7 @@ export const Item = ({
               </Inline>
             </Box>
           )}
-        </span>
+        </div>
         <Box
           marginLeft={[0, 0, 0, 0, 2]}
           marginBottom={[2, 2, 2, 2, 0]}
@@ -97,7 +97,7 @@ export const Item = ({
             }}
           />
         </Box>
-      </span>
+      </div>
     </FocusableBox>
   )
 }

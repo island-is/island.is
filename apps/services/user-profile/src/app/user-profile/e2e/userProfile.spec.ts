@@ -1,5 +1,5 @@
 import { setup } from '../../../../test/setup'
-import request, { Response } from 'supertest'
+import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 import { EmailService } from '@island.is/email-service'
 import { EmailVerification } from '../emailVerification.model'
@@ -633,38 +633,25 @@ describe('User profile API', () => {
     })
   })
 
-  describe('/userProfile/{nationalId}/deviceToken', () => {
-    it('GET /userProfile/{nationalId}/deviceToken should return list of tokens', async () => {
-      // create one first
+  describe('/userProfile/{nationalId}/device-tokens', () => {
+    it('GET /userProfile/{nationalId}/device-tokens should 401 as admin:scope is needed and is IdsAuthGuard-ed', async () => {
       await request(app.getHttpServer())
-        .post(`/userProfile/${mockProfile.nationalId}/deviceToken`)
-        .send({
-          deviceToken: mockDeviceToken.deviceToken,
-        })
-        .expect(201)
-      // get it in a list
-      const response = await request(app.getHttpServer())
-        .get(`/userProfile/${mockProfile.nationalId}/deviceToken`)
-        .expect(200)
-      // Assert
-      expect(response.body.length).toBe(1)
-      expect(response.body[0].deviceToken).toBe(mockDeviceToken.deviceToken)
+        .get(`/userProfile/${mockProfile.nationalId}/device-tokens`)
+        .send()
+        .expect(401)
     })
 
-    it('GET /userProfile/{nationalId}/deviceToken should work with different nationalId', async () => {
-      // create one first
+    it('GET /userProfile/{nationalId}/notification-settings should 401 as admin:scope is needed and is IdsAuthGuard-ed', async () => {
       await request(app.getHttpServer())
-        .get(`/userProfile/0101302989/deviceToken`) // GERVIMAÐUR KT
-        .send({
-          deviceToken: mockDeviceToken.deviceToken,
-        })
-        .expect(200)
+        .get(`/userProfile/${mockProfile.nationalId}/notification-settings`)
+        .send()
+        .expect(401)
     })
 
-    it('POST /userProfile/{nationalId}/deviceToken should return 201 created', async () => {
+    it('POST /userProfile/{nationalId}/device-tokens should return 201 created', async () => {
       // create it
       const response = await request(app.getHttpServer())
-        .post(`/userProfile/${mockProfile.nationalId}/deviceToken`)
+        .post(`/userProfile/${mockProfile.nationalId}/device-tokens`)
         .send({
           deviceToken: mockDeviceToken.deviceToken,
         })
@@ -678,35 +665,35 @@ describe('User profile API', () => {
       )
     })
 
-    it('POST /userProfile/{nationalId}/deviceToken duplicate token should return 400 bad request', async () => {
+    it('POST /userProfile/{nationalId}/device-tokens duplicate token should return 400 bad request', async () => {
       // create it
       await request(app.getHttpServer())
-        .post(`/userProfile/${mockProfile.nationalId}/deviceToken`)
+        .post(`/userProfile/${mockProfile.nationalId}/device-tokens`)
         .send({
           deviceToken: mockDeviceToken.deviceToken,
         })
         .expect(201)
       // try to create same again
       await request(app.getHttpServer())
-        .post(`/userProfile/${mockProfile.nationalId}/deviceToken`)
+        .post(`/userProfile/${mockProfile.nationalId}/device-tokens`)
         .send({
           deviceToken: mockDeviceToken.deviceToken,
         })
         .expect(400)
     })
 
-    it('POST /userProfile/{nationalId}/deviceToken with missing payload should 400 bad request', async () => {
+    it('POST /userProfile/{nationalId}/device-tokens with missing payload should 400 bad request', async () => {
       // create it
       await request(app.getHttpServer())
-        .post(`/userProfile/${mockProfile.nationalId}/deviceToken`)
+        .post(`/userProfile/${mockProfile.nationalId}/device-tokens`)
         .send({})
         .expect(400)
     })
 
-    it('DELETE /userProfile/{nationalId}/deviceToken should remove row with 200', async () => {
+    it('DELETE /userProfile/{nationalId}/device-tokens should remove row with 200', async () => {
       // create one first ...
       await request(app.getHttpServer())
-        .post(`/userProfile/${mockProfile.nationalId}/deviceToken`)
+        .post(`/userProfile/${mockProfile.nationalId}/device-tokens`)
         .send({
           deviceToken: mockDeviceToken.deviceToken,
         })
@@ -714,7 +701,7 @@ describe('User profile API', () => {
 
       // ... so we can delete it
       const response = await request(app.getHttpServer())
-        .delete(`/userProfile/${mockProfile.nationalId}/deviceToken`)
+        .delete(`/userProfile/${mockProfile.nationalId}/device-tokens`)
         .send({
           deviceToken: mockDeviceToken.deviceToken,
         })

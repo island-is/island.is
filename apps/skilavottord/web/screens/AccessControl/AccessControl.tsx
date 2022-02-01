@@ -1,7 +1,6 @@
 import React, { FC, useContext, useState } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
-import startCase from 'lodash/startCase'
 import NextLink from 'next/link'
 import * as kennitala from 'kennitala'
 
@@ -27,7 +26,10 @@ import {
 } from '@island.is/skilavottord-web/auth/utils'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { NotFound } from '@island.is/skilavottord-web/components'
-import { filterInternalPartners } from '@island.is/skilavottord-web/utils'
+import {
+  filterInternalPartners,
+  getRoleTranslation,
+} from '@island.is/skilavottord-web/utils'
 import {
   AccessControl as AccessControlType,
   CreateAccessControlInput,
@@ -35,6 +37,7 @@ import {
   Query,
   Role,
   UpdateAccessControlInput,
+  AccessControlRole,
 } from '@island.is/skilavottord-web/graphql/schema'
 
 import {
@@ -166,6 +169,7 @@ const AccessControl: FC = () => {
 
   const {
     t: { accessControl: t, recyclingFundSidenav: sidenavText, routes },
+    activeLocale,
   } = useI18n()
 
   if (!user) {
@@ -182,12 +186,12 @@ const AccessControl: FC = () => {
     value: partner.companyId,
   }))
 
-  const roles = Object.keys(Role)
+  const roles = Object.keys(AccessControlRole)
     .filter((role) =>
       !isDeveloper(user?.role) ? role !== Role.developer : role,
     )
     .map((role) => ({
-      label: startCase(role),
+      label: getRoleTranslation(role as Role, activeLocale),
       value: role,
     }))
 
@@ -335,7 +339,12 @@ const AccessControl: FC = () => {
                   <Row key={item.nationalId}>
                     <Data>{kennitala.format(item.nationalId)}</Data>
                     <Data>{item.name}</Data>
-                    <Data>{startCase(item.role)}</Data>
+                    <Data>
+                      {getRoleTranslation(
+                        item.role as AccessControlRole & Role,
+                        activeLocale,
+                      )}
+                    </Data>
                     <Data>{item?.recyclingPartner?.companyName || '-'} </Data>
                     <Data>
                       <DropdownMenu

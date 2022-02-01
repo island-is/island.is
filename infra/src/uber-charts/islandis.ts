@@ -2,7 +2,10 @@ import { serviceSetup as apiSetup } from '../../../apps/api/infra/api'
 import { serviceSetup as webSetup } from '../../../apps/web/infra/web'
 import { serviceSetup as searchIndexerSetup } from '../../../apps/services/search-indexer/infra/search-indexer-service'
 
-import { serviceSetup as appSystemApiSetup } from '../../../apps/application-system/api/infra/application-system-api'
+import {
+  serviceSetup as appSystemApiSetup,
+  workerSetup as appSystemApiWorkerSetup,
+} from '../../../apps/application-system/api/infra/application-system-api'
 import { serviceSetup as appSystemFormSetup } from '../../../apps/application-system/form/infra/application-system-form'
 
 import { serviceSetup as servicePortalApiSetup } from '../../../apps/services/user-profile/infra/service-portal-api'
@@ -23,9 +26,16 @@ import { serviceSetup as downloadServiceSetup } from '../../../apps/download-ser
 import { serviceSetup as endorsementServiceSetup } from '../../../apps/services/endorsements/api/infra/endorsement-system-api'
 import { serviceSetup as githubActionsCacheSetup } from '../../../apps/github-actions-cache/infra/github-actions-cache'
 
+import {
+  userNotificationServiceSetup,
+  userNotificationWorkerSetup,
+} from '../../../apps/services/user-notification/infra/user-notification'
+
 import { serviceSetup as adsApiSetup } from '../../../apps/air-discount-scheme/api/infra/api'
 import { serviceSetup as adsWebSetup } from '../../../apps/air-discount-scheme/web/infra/web'
 import { serviceSetup as adsBackendSetup } from '../../../apps/air-discount-scheme/backend/infra/backend'
+
+import { serviceSetup as externalContractsTestsSetup } from '../../../apps/external-contracts-tests/infra/external-contracts-tests'
 
 import { EnvironmentServices } from '.././dsl/types/charts'
 
@@ -36,6 +46,7 @@ const appSystemApi = appSystemApiSetup({
   documentsService,
   servicesEndorsementApi: endorsement,
 })
+const appSystemApiWorker = appSystemApiWorkerSetup()
 const appSystemForm = appSystemFormSetup({})
 
 const servicePortalApi = servicePortalApiSetup()
@@ -61,10 +72,17 @@ const contentfulTranslationExtension = contentfulTranslationExtensionSetup()
 
 const downloadService = downloadServiceSetup()
 
+const userNotificationService = userNotificationServiceSetup()
+const userNotificationWorkerService = userNotificationWorkerSetup({
+  userProfileApi: servicePortalApi,
+})
+
 const adsBackend = adsBackendSetup()
 const adsApi = adsApiSetup({ adsBackend })
 const adsWeb = adsWebSetup({ adsApi })
 const githubActionsCache = githubActionsCacheSetup()
+
+const externalContractsTests = externalContractsTestsSetup()
 
 export const Services: EnvironmentServices = {
   prod: [
@@ -87,6 +105,7 @@ export const Services: EnvironmentServices = {
     adsWeb,
     adsBackend,
     adsApi,
+    appSystemApiWorker,
   ],
   staging: [
     appSystemApi,
@@ -108,6 +127,7 @@ export const Services: EnvironmentServices = {
     adsWeb,
     adsBackend,
     adsApi,
+    appSystemApiWorker,
   ],
   dev: [
     appSystemApi,
@@ -130,7 +150,18 @@ export const Services: EnvironmentServices = {
     adsBackend,
     adsApi,
     githubActionsCache,
+    userNotificationService,
+    userNotificationWorkerService,
+    externalContractsTests,
+    appSystemApiWorker,
   ],
 }
 
+// Services that are not included in any environment above but should be used in feature deployments
 export const FeatureDeploymentServices = []
+
+// Services that are included in some environment above but should be excluded from feature deployments
+export const ExcludedFeatureDeploymentServices = [
+  userNotificationService,
+  userNotificationWorkerService,
+]

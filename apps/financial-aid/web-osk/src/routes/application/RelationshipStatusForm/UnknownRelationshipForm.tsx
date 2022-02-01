@@ -56,7 +56,10 @@ const UnknownRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
       return
     }
 
-    if (isInputAndRadioValid(acceptData, form?.spouse)) {
+    if (
+      form.familyStatus === FamilyStatus.UNREGISTERED_COBAHITATION &&
+      isInputAndRadioValid(acceptData, form?.spouse)
+    ) {
       setHasError(true)
       return
     }
@@ -98,25 +101,29 @@ const UnknownRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
             setHasError(false)
           }}
         />
-        <div
-          className={cn({
-            [`${styles.infoContainer}`]: true,
-            [`${styles.showInfoContainer}`]:
-              FamilyStatus.UNREGISTERED_COBAHITATION === form?.familyStatus,
-          })}
-        >
-          <SpouseInfo
-            hasError={hasError}
-            acceptData={acceptData}
-            setAcceptData={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setHasError(false)
-              setAcceptData(event.target.checked)
-            }}
-            removeError={() => setHasError(false)}
-          />
-        </div>
+        {FamilyStatus.UNREGISTERED_COBAHITATION === form?.familyStatus && (
+          <div
+            data-testid="spouseInfo"
+            className={cn({
+              [`${styles.infoContainer}`]: true,
+              [`${styles.showInfoContainer}`]:
+                FamilyStatus.UNREGISTERED_COBAHITATION === form?.familyStatus,
+            })}
+          >
+            <SpouseInfo
+              hasError={hasError}
+              acceptData={acceptData}
+              setAcceptData={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setHasError(false)
+                setAcceptData(event.target.checked)
+              }}
+              removeError={() => setHasError(false)}
+            />
+          </div>
+        )}
 
         <div
+          data-testid="showErrorMessage"
           className={cn({
             [`errorMessage`]: true,
             [`showErrorMessage`]: hasError,

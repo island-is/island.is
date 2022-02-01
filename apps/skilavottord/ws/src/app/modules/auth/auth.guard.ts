@@ -1,42 +1,78 @@
+import {
+  Injectable,
+  Inject,
+  SetMetadata,
+  applyDecorators,
+  CanActivate,
+  ExecutionContext,
+  UseGuards,
+  forwardRef,
+} from '@nestjs/common'
 import { AuthenticationError } from 'apollo-server-express'
-import { ExecutionContext, UseGuards } from '@nestjs/common'
-import { GqlExecutionContext } from '@nestjs/graphql'
-import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host'
-import { AuthGuard } from '@nestjs/passport'
+import { decode } from 'jsonwebtoken'
 
-import { Role, AuthUser } from './auth.types'
+import { IdsUserGuard, getRequest } from '@island.is/auth-nest-tools'
+import type { GraphQLContext } from '@island.is/auth-nest-tools'
+
+import { AccessControlService } from '../accessControl'
+import { environment } from '../../../environments'
+
+import { User } from './user.model'
+import { RolesGuard } from './roles.guard'
+import { Role } from './user.model'
 
 type AuthorizeOptions = {
-  throwOnUnAuthorized?: boolean
   roles?: Role[]
 }
 
-class GraphQLAuthGuard extends AuthGuard('jwt') {
-  options: AuthorizeOptions
+@Injectable()
+export class AuthGuard implements CanActivate {
+  constructor(
+    @Inject(forwardRef(() => AccessControlService))
+    private accessControlService: AccessControlService,
+  ) {}
 
-  canActivate(context: ExecutionContext) {
-    const ctx = GqlExecutionContext.create(context)
-    const { req } = ctx.getContext()
-
-    req.authGuardOptions = this.options
-    return super.canActivate(new ExecutionContextHost([req]))
+  private async getUser(user: Partial<User>): Promise<User> {
+    const accessControl = await this.accessControlService.findOne(
+      user.nationalId,
+    )
+    if (accessControl) {
+      return { ...accessControl, ...user } as User
+    }
+    return { ...user, role: Role.citizen } as User
   }
 
-  handleRequest<TUser extends AuthUser>(err: Error, user: TUser): TUser {
-    const { throwOnUnAuthorized } = this.options
-    if (throwOnUnAuthorized && (err || !user)) {
-      throw new AuthenticationError((err && err.message) || 'Unauthorized')
+  private decodeSession(request: GraphQLContext['req']): Partial<User> {
+    const sessionToken = request.cookies
+      ? request.cookies[environment.auth.nextAuthCookieName]
+      : null
+
+    if (!sessionToken) {
+      throw new AuthenticationError('Invalid user')
     }
 
-    return user
+    const decodedToken = decode(sessionToken) as Partial<User>
+
+    return {
+      name: decodedToken.name,
+      nationalId: decodedToken.nationalId,
+    }
+  }
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request: GraphQLContext['req'] = getRequest(context)
+    const oidcUser = this.decodeSession(request)
+    const user = await this.getUser(oidcUser)
+    request['auth'] = { scope: [], authorization: '', client: '', ...user }
+    request['user'] = { scope: [], authorization: '', client: '', ...user }
+    return !!user
   }
 }
 
 export const Authorize = (
-  { throwOnUnAuthorized = true, roles }: AuthorizeOptions = {
-    throwOnUnAuthorized: true,
-    roles: [],
-  },
-): MethodDecorator & ClassDecorator => {
-  return UseGuards(new GraphQLAuthGuard({ throwOnUnAuthorized, roles }))
-}
+  { roles = [] }: AuthorizeOptions = { roles: [] },
+): MethodDecorator & ClassDecorator =>
+  applyDecorators(
+    SetMetadata('roles', roles),
+    UseGuards(IdsUserGuard, AuthGuard, RolesGuard),
+  )

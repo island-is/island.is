@@ -19,7 +19,12 @@ export default {
     'frontpage',
   ],
   nestedContentTypes: [
+    'alertBanner',
+    'organizationPage',
+    'organization',
     'subArticle',
+    'step',
+    'stepper',
     'processEntry',
     'embeddedVideo',
     'faqList',

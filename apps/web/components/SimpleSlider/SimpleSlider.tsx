@@ -185,7 +185,9 @@ export const SimpleSlider: FC<SimpleSliderProps> = ({
         <Box paddingBottom={4}>
           <Inline space={2}>
             {logo && <Logo width={24} iconOnly />}
-            <Text variant="h3">{title}</Text>
+            <Text as="h2" variant="h3">
+              {title}
+            </Text>
           </Inline>
         </Box>
       )}

@@ -11,7 +11,6 @@ import {
   NotFoundException,
   BadRequestException,
   ForbiddenException,
-  HttpStatus,
   Inject,
   forwardRef,
 } from '@nestjs/common'

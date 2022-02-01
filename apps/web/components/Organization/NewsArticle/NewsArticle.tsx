@@ -33,13 +33,17 @@ export const NewsArticle: React.FC<NewsArticleProps> = ({
   const { format } = useDateUtils()
   const n = useNamespace(namespace)
 
+  const formattedDate = newsItem.date
+    ? format(new Date(newsItem.date), 'do MMMM yyyy')
+    : ''
+
   return (
     <Box paddingBottom={[0, 0, 4]}>
       <Text variant="h1" as="h1" paddingBottom={2}>
         {newsItem.title}
       </Text>
       <Text variant="h4" as="p" paddingBottom={2} color="blue400">
-        {format(new Date(newsItem.date), 'do MMMM yyyy')}
+        {formattedDate}
       </Text>
       <Text variant="intro" as="p" paddingBottom={2}>
         {newsItem.intro}

@@ -88,7 +88,13 @@
     "api-domains-communications": {
       "tags": []
     },
+    "api-domains-company-registry": {
+      "tags": []
+    },
     "api-domains-content-search": {
+      "tags": []
+    },
+    "api-domains-criminal-record": {
       "tags": []
     },
     "api-domains-directorate-of-labour": {
@@ -124,9 +130,6 @@
     "api-domains-identity": {
       "tags": []
     },
-    "api-domains-islykill": {
-      "tags": []
-    },
     "api-domains-license-service": {
       "tags": []
     },
@@ -143,9 +146,6 @@
       "tags": []
     },
     "api-domains-regulations": {
-      "tags": []
-    },
-    "api-domains-rsk": {
       "tags": []
     },
     "api-domains-syslumenn": {
@@ -194,6 +194,9 @@
     "application-templates-complaints-to-althingi-ombudsman": {
       "tags": []
     },
+    "application-templates-criminal-record": {
+      "tags": []
+    },
     "application-templates-data-protection-complaint": {
       "tags": []
     },
@@ -221,22 +224,16 @@
     "application-templates-institution-collaboration": {
       "tags": []
     },
-    "application-templates-joint-custody-agreement": {
-      "tags": []
-    },
     "application-templates-login-service": {
       "tags": []
     },
-    "application-templates-meta-application": {
+    "application-templates-p-sign": {
       "tags": []
     },
     "application-templates-parental-leave": {
       "tags": []
     },
     "application-templates-passport": {
-      "tags": []
-    },
-    "application-templates-payable-dummy-template": {
       "tags": []
     },
     "application-templates-public-debt-payment-plan": {
@@ -283,6 +280,12 @@
       "tags": [],
       "implicitDependencies": ["services-auth-public-api"]
     },
+    "clients-criminal-record": {
+      "tags": []
+    },
+    "clients-data-protection-complaint": {
+      "tags": []
+    },
     "clients-document-provider": {
       "tags": []
     },
@@ -322,11 +325,21 @@
     "clients-regulations": {
       "tags": []
     },
+    "clients-rsk-company-registry": {
+      "tags": []
+    },
     "clients-rsk-v1": {
       "tags": []
     },
     "clients-rsk-v2": {
       "tags": []
+    },
+    "clients-syslumenn": {
+      "tags": []
+    },
+    "clients-user-profile": {
+      "tags": [],
+      "implicitDependencies": ["services-user-profile"]
     },
     "clients-vmst": {
       "tags": []
@@ -373,6 +386,9 @@
     "email-service": {
       "tags": []
     },
+    "external-contracts-tests": {
+      "tags": []
+    },
     "feature-flags": {
       "tags": []
     },
@@ -390,6 +406,10 @@
     },
     "financial-aid-web-osk": {
       "tags": []
+    },
+    "financial-aid-web-osk-e2e": {
+      "tags": [],
+      "implicitDependencies": ["financial-aid-web-osk"]
     },
     "financial-aid-web-veita": {
       "tags": []
@@ -528,6 +548,9 @@
     "nest-problem": {
       "tags": []
     },
+    "nest-swagger": {
+      "tags": []
+    },
     "nest-validators": {
       "tags": []
     },
@@ -622,9 +645,6 @@
     "service-portal-settings-access-control": {
       "tags": []
     },
-    "service-portal-settings-islykill": {
-      "tags": []
-    },
     "service-portal-settings-personal-information": {
       "tags": []
     },
@@ -646,13 +666,16 @@
     "services-endorsements-api": {
       "tags": []
     },
-    "services-notifications": {
-      "tags": []
-    },
     "services-personal-representative": {
       "tags": []
     },
+    "services-personal-representative-public": {
+      "tags": []
+    },
     "services-search-indexer": {
+      "tags": []
+    },
+    "services-user-notification": {
       "tags": []
     },
     "services-user-profile": {
@@ -677,6 +700,9 @@
       "tags": []
     },
     "shared-mocking": {
+      "tags": []
+    },
+    "shared-pii": {
       "tags": []
     },
     "shared-problem": {
@@ -717,6 +743,9 @@
       "tags": []
     },
     "testing-nest": {
+      "tags": []
+    },
+    "user-monitoring": {
       "tags": []
     },
     "web": {

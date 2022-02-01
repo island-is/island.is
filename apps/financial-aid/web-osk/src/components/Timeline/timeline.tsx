@@ -33,7 +33,7 @@ const Timeline = ({ state, modified, created }: Props) => {
     {
       name: 'Niðurstaða',
       text:
-        'Umsókn verður samþykkt eða synjuð og umsækjandi látinn vita um niðurstöðuna',
+        'Umsókn verður samþykkt eða henni synjað og umsækjandi látinn vita um niðurstöðuna',
       state: [ApplicationState.REJECTED, ApplicationState.APPROVED],
       date: format(new Date(modified), 'dd/MM/yyyy HH:MM'),
     },

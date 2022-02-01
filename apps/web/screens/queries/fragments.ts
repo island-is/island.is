@@ -266,21 +266,6 @@ export const slices = gql`
     errorMessage
   }
 
-  fragment LocationFields on Location {
-    __typename
-    id
-    title
-    subTitle
-    address
-    link {
-      text
-      url
-    }
-    background {
-      ...ImageFields
-    }
-  }
-
   fragment TellUsAStoryFields on TellUsAStory {
     __typename
     id
@@ -498,7 +483,6 @@ export const slices = gql`
     ...TabSectionFields
     ...TeamListFields
     ...ContactUsFields
-    ...LocationFields
     ...TellUsAStoryFields
     ...ConnectedComponentFields
     ...DistrictsFields
@@ -514,5 +498,14 @@ export const slices = gql`
   fragment AllSlices on Slice {
     ...BaseSlices
     ...FaqListFields
+  }
+`
+
+export const nestedOneColumnTextFields = gql`
+  fragment NestedOneColumnTextFields on OneColumnText {
+    ...OneColumnTextFields
+    content {
+      ...AllSlices
+    }
   }
 `

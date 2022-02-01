@@ -1,9 +1,11 @@
 import { Module, HttpModule, forwardRef } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { VehicleModule } from '../vehicle'
-import { RecyclingPartnerModule } from '../recyclingPartner'
-import { FjarsyslaModule } from '../fjarsysla'
+import { VehicleModule } from '../vehicle/vehicle.module'
+import { RecyclingPartnerModule } from '../recyclingPartner/recyclingPartner.module'
+import { SamgongustofaModule } from '../samgongustofa/samgongustofa.module'
+import { FjarsyslaModule } from '../fjarsysla/fjarsysla.module'
+
 import { RecyclingRequestModel } from './recyclingRequest.model'
 import { RecyclingRequestService } from './recyclingRequest.service'
 import { RecyclingRequestResolver } from './recyclingRequest.resolver'
@@ -15,6 +17,7 @@ import { RecyclingRequestResolver } from './recyclingRequest.resolver'
     SequelizeModule.forFeature([RecyclingRequestModel]),
     FjarsyslaModule,
     forwardRef(() => RecyclingPartnerModule),
+    forwardRef(() => SamgongustofaModule),
   ],
   providers: [RecyclingRequestResolver, RecyclingRequestService],
   exports: [RecyclingRequestService],

@@ -1,5 +1,13 @@
-import { setupWithAuth, setupWithoutAuth } from '../../../../../test/setup'
-import { errorExpectedStructure } from '../../../../../test/testHelpers'
+import {
+  setupWithAuth,
+  setupWithoutAuth,
+  setupWithoutScope,
+} from '../../../../../test/setup'
+import {
+  errorExpectedStructure,
+  getRequestMethod,
+} from '../../../../../test/testHelpers'
+import { TestEndpointOptions } from '../../../../../test/types'
 import request from 'supertest'
 import { TestApp } from '@island.is/testing/nest'
 import { PersonalRepresentativeRightType } from '@island.is/auth-api-lib/personal-representative'
@@ -9,7 +17,7 @@ import { AuthScope } from '@island.is/auth/scopes'
 const scopes = ['@island.is/scope0', '@island.is/scope1']
 const user = createCurrentUser({
   nationalId: '1122334455',
-  scope: [AuthScope.writePersonalRepresentative, scopes[0]],
+  scope: [AuthScope.adminPersonalRepresentative, scopes[0]],
 })
 
 const simpleRequestData = {
@@ -17,41 +25,77 @@ const simpleRequestData = {
   description: 'Description',
 }
 
-describe('RightTypesController - Without Auth', () => {
-  let app: TestApp
-  let server: request.SuperTest<request.Test>
+const path = '/v1/right-types'
 
-  beforeAll(async () => {
-    // TestApp setup with auth and database
-    app = await setupWithoutAuth()
-    server = request(app.getHttpServer())
-  })
+describe('RightTypesController - Without Scope and Auth', () => {
+  it.each`
+    method      | endpoint
+    ${'GET'}    | ${'/v1/right-types'}
+    ${'GET'}    | ${'/v1/right-types/1234'}
+    ${'POST'}   | ${'/v1/right-types'}
+    ${'PUT'}    | ${'/v1/right-types/1234'}
+    ${'DELETE'} | ${'/v1/right-types/1234'}
+  `(
+    '$method $endpoint should return 403 when user is without scope',
+    async ({ method, endpoint }: TestEndpointOptions) => {
+      // Arrange
+      const app = await setupWithoutScope()
+      const server = request(app.getHttpServer())
 
-  afterAll(async () => {
-    await app.cleanUp()
-  })
+      // Act
+      const res = await getRequestMethod(server, method)(endpoint)
 
-  it('POST /v1/right-types should fail and return 403 error if bearer is missing', async () => {
-    const response = await server
-      .post('/v1/right-types')
-      .send(simpleRequestData)
-      .expect(403)
+      // Assert
+      expect(res.status).toEqual(403)
+      expect(res.body).toMatchObject({
+        statusCode: 403,
+        error: 'Forbidden',
+        message: 'Forbidden resource',
+      })
 
-    expect(response.body).toMatchObject({
-      ...errorExpectedStructure,
-      statusCode: 403,
-    })
-  })
+      // CleanUp
+      app.cleanUp()
+    },
+  )
+
+  it.each`
+    method      | endpoint
+    ${'GET'}    | ${'/v1/right-types'}
+    ${'GET'}    | ${'/v1/right-types/1234'}
+    ${'POST'}   | ${'/v1/right-types'}
+    ${'PUT'}    | ${'/v1/right-types/1234'}
+    ${'DELETE'} | ${'/v1/right-types/1234'}
+  `(
+    '$method $endpoint should return 401 when user is unauthorized',
+    async ({ method, endpoint }: TestEndpointOptions) => {
+      // Arrange
+      const app = await setupWithoutAuth()
+      const server = request(app.getHttpServer())
+
+      // Act
+      const res = await getRequestMethod(server, method)(endpoint)
+      console.log(res.body)
+      // Assert
+      expect(res.status).toEqual(401)
+      expect(res.body).toMatchObject({
+        statusCode: 401,
+        message: 'Unauthorized',
+      })
+
+      // CleanUp
+      app.cleanUp()
+    },
+  )
 })
 
-describe('RightTypesController - With Auth', () => {
+describe('RightTypesController', () => {
   let app: TestApp
   let server: request.SuperTest<request.Test>
   let prRightTypeModel: typeof PersonalRepresentativeRightType
 
   beforeAll(async () => {
     // TestApp setup with auth and database
-    app = await setupWithAuth({ user, scopes })
+    app = await setupWithAuth({ user })
     server = request(app.getHttpServer())
     // Get reference on rightType models to seed DB
     prRightTypeModel = app.get<typeof PersonalRepresentativeRightType>(
@@ -75,14 +119,10 @@ describe('RightTypesController - With Auth', () => {
   describe('Create Right Type', () => {
     it('POST /v1/right-types should return error when data is invalid', async () => {
       const requestData = {
-        code: 'Code',
         description: 'Description',
         validFrom: '10-11-2021',
       }
-      const response = await server
-        .post('/v1/right-types')
-        .send(requestData)
-        .expect(400)
+      const response = await server.post(path).send(requestData).expect(400)
 
       expect(response.body).toMatchObject({
         ...errorExpectedStructure,
@@ -92,7 +132,7 @@ describe('RightTypesController - With Auth', () => {
 
     it('POST /v1/right-types should create a new entry', async () => {
       const response = await server
-        .post('/v1/right-types')
+        .post(path)
         .send(simpleRequestData)
         .expect(201)
       expect(response.body).toMatchObject(simpleRequestData)
@@ -101,7 +141,7 @@ describe('RightTypesController - With Auth', () => {
 
   describe('Update Right Type', () => {
     it('Put /v1/right-types should update right type with new description', async () => {
-      await server.post('/v1/right-types').send(simpleRequestData)
+      await server.post(path).send(simpleRequestData)
 
       const requestData = {
         ...simpleRequestData,
@@ -109,40 +149,66 @@ describe('RightTypesController - With Auth', () => {
       }
 
       const response = await server
-        .put(`/v1/right-types/${requestData.code}`)
+        .put(`${path}/${requestData.code}`)
         .send(requestData)
         .expect(200)
 
       expect(response.body).toMatchObject(requestData)
     })
+
+    it('Put /v1/right-types should fail with 400 on code descreptancy', async () => {
+      await server.post(path).send(simpleRequestData)
+
+      const requestData = {
+        code: 'NotSameAsBefore',
+        description: 'DescriptionUpdated',
+      }
+
+      await server
+        .put(`${path}/${simpleRequestData.code}`)
+        .send(requestData)
+        .expect(400)
+    })
   })
 
   describe('Get Right Type/s', () => {
-    it('Get /v1/right-types should return a list of right types', async () => {
-      await server.post('/v1/right-types').send(simpleRequestData)
+    it('Get /v1/right-types should return a specific right type', async () => {
+      await server.post(path).send(simpleRequestData)
+
       const response = await server
-        .get(`/v1/right-types/${simpleRequestData.code}`)
+        .get(`${path}/${simpleRequestData.code}`)
         .expect(200)
 
-      expect(response.body.code).toMatch(simpleRequestData.code)
-      expect(response.body.description).toMatch(simpleRequestData.description)
+      expect(response.body.code).toEqual(simpleRequestData.code)
+      expect(response.body.description).toEqual(simpleRequestData.description)
+    })
+
+    it('Get /v1/right-types should return right types', async () => {
+      await server.post(path).send(simpleRequestData)
+
+      const response = await server.get(path).expect(200)
+
+      expect(response.body.totalCount).toEqual(1)
+    })
+
+    it('Get /v1/right-types should not return anything for a code that does not exist', async () => {
+      await server.post(path).send(simpleRequestData)
+
+      await server.get(`${path}/xxx`).expect(404)
     })
   })
 
   describe('Delete/Remove Right Type', () => {
     it('Delete /v1/right-types mark right type as invalid', async () => {
-      await server.post('/v1/right-types').send(simpleRequestData)
-      await server
-        .delete(`/v1/right-types/${simpleRequestData.code}`)
-        .send()
-        .expect(200)
+      await server.post(path).send(simpleRequestData)
+      await server.delete(`${path}/${simpleRequestData.code}`).expect(204)
 
       const response = await request(app.getHttpServer()).get(
-        `/v1/right-types/${simpleRequestData.code}`,
+        `${path}/${simpleRequestData.code}`,
       )
 
-      expect(response.body.code).toMatch(simpleRequestData.code)
-      expect(response.body.description).toMatch(simpleRequestData.description)
+      expect(response.body.code).toEqual(simpleRequestData.code)
+      expect(response.body.description).toEqual(simpleRequestData.description)
       expect(response.body.validTo).not.toBeNull()
     })
   })

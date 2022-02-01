@@ -5,7 +5,7 @@ import { YesOrNo } from '../types'
 export const isFatalAccident = (formValue: FormValue) => {
   const wasTheAccidentFatal = getValueViaPath(
     formValue,
-    'wasTheAccidentFata',
+    'wasTheAccidentFatal',
   ) as YesOrNo
   return wasTheAccidentFatal === YES
 }

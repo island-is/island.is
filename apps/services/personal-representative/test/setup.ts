@@ -12,7 +12,6 @@ import { createCurrentUser } from '@island.is/testing/fixtures'
 
 interface SetupOptions {
   user: User
-  scopes: string[]
 }
 
 // needed for generic error validation
@@ -39,7 +38,6 @@ expect.extend({
 
 export const setupWithAuth = async ({
   user,
-  scopes,
 }: SetupOptions): Promise<TestApp> => {
   user.nationalId
   const app = await testServer<AppModule>({
@@ -48,7 +46,7 @@ export const setupWithAuth = async ({
       builder.overrideProvider(IdsUserGuard).useValue(
         new MockAuthGuard({
           nationalId: user.nationalId,
-          scope: scopes,
+          scope: user.scope,
         }),
       ),
     hooks: [
@@ -60,7 +58,7 @@ export const setupWithAuth = async ({
   return app
 }
 
-export const setupWithoutAuth = async (): Promise<TestApp> => {
+export const setupWithoutScope = async (): Promise<TestApp> => {
   const user = createCurrentUser()
   const app = await testServer<AppModule>({
     appModule: AppModule,
@@ -68,6 +66,15 @@ export const setupWithoutAuth = async (): Promise<TestApp> => {
       useAuth({ auth: user }),
       useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
     ],
+  })
+
+  return app
+}
+
+export const setupWithoutAuth = async (): Promise<TestApp> => {
+  const app = await testServer<AppModule>({
+    appModule: AppModule,
+    hooks: [useDatabase({ type: 'sqlite', provider: SequelizeConfigService })],
   })
 
   return app

@@ -1,4 +1,4 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 import {
   BelongsTo,
   Column,
@@ -9,8 +9,13 @@ import {
   Table,
 } from 'sequelize-typescript'
 
-import { Role } from '../auth'
 import { RecyclingPartnerModel } from '../recyclingPartner'
+import { Role } from '../auth'
+
+export const { citizen, ...AccessControlRole } = Role
+export type AccessControlRoleType = Exclude<Role, typeof Role.citizen>
+
+registerEnumType(AccessControlRole, { name: 'AccessControlRole' })
 
 @ObjectType('AccessControl')
 @Table({ tableName: 'access_control', timestamps: false })
@@ -30,11 +35,11 @@ export class AccessControlModel extends Model<AccessControlModel> {
   })
   name!: string
 
-  @Field(() => Role)
+  @Field(() => AccessControlRole)
   @Column({
     type: DataType.STRING,
   })
-  role!: Role
+  role!: AccessControlRoleType
 
   @ForeignKey(() => RecyclingPartnerModel)
   @Column({

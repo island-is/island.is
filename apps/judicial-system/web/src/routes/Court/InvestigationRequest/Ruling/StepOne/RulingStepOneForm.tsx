@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 
 import {
   CaseFileList,
-  CaseNumbers,
+  CaseInfo,
   Decision,
   FormContentContainer,
   FormFooter,
@@ -20,10 +20,6 @@ import {
 } from '@island.is/island-ui/core'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import {
-  FormSettings,
-  useCaseFormHelper,
-} from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -58,8 +54,8 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
             {formatMessage(m.title)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={5}>
-          <CaseNumbers workingCase={workingCase} />
+        <Box component="section" marginBottom={7}>
+          <CaseInfo workingCase={workingCase} userRole={user?.role} />
         </Box>
         <Box component="section" marginBottom={5}>
           <Accordion>
