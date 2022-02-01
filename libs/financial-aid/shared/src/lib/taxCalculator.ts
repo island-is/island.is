@@ -155,9 +155,7 @@ export const estimatedBreakDown = (
   ]
 }
 
-export const acceptedAmountBreakDown = (amounts: Amount[]): Calculations[] => {
-  const amount = amounts[0]
-
+export const acceptedAmountBreakDown = (amount: Amount): Calculations[] => {
   const isPos =
     calculatePersonalTaxAllowanceFromAmount(
       amount?.personalTaxCredit,

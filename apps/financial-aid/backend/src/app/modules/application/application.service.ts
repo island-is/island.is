@@ -184,13 +184,6 @@ export class ApplicationService {
           separate: true,
           order: [['created', 'DESC']],
         },
-        {
-          model: AmountModel,
-          as: 'amount',
-          include: [{ model: DeductionFactorsModel, as: 'deductionFactors' }],
-          separate: true,
-          order: [['created', 'DESC']],
-        },
       ],
     })
 
