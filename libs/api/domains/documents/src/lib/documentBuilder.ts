@@ -38,7 +38,7 @@ export class DocumentBuilder {
 
   private getTypeFilter(
     document: DocumentInfoDTO,
-  ): Partial<DocumentTypeFilter> {
+  ): Pick<DocumentTypeFilter, 'url' | 'fileType'> {
     const found = this.customDocuments.find(
       (x) =>
         document.subject.includes(x.subjectContains) &&
