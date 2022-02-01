@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import {
   Box,
   Stack,
@@ -13,15 +13,14 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { UserInfoLine, m } from '@island.is/service-portal/core'
 import { FamilyMemberCard } from '@island.is/service-portal/family'
-import { useUserProfileAndIslykill } from '@island.is/service-portal/graphql'
-import CreateWithEmail from '../../components/UserOnboardingModal/Islykill/CreateWithEmail'
+import { useUserProfile } from '@island.is/service-portal/graphql'
 import { parseNumber } from '../../utils/phoneHelper'
 
 const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
 
-  const { data: settings, loading } = useUserProfileAndIslykill()
+  const { data: settings, loading } = useUserProfile()
 
   return (
     <>
@@ -36,84 +35,83 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
       {loading && <SkeletonLoader width="100%" height={100} />}
       {!loading && (
         <Stack space={1}>
-          {settings && settings.noUserFound ? (
-            <CreateWithEmail />
-          ) : (
-            <>
-              <UserInfoLine
-                label={m.email}
-                labelColumnSpan={['8/12', '3/12']}
-                editColumnSpan={['1/1', '2/12']}
-                valueColumnSpan={['1/1', '7/12']}
-                content={settings?.email ?? ''}
-                editLink={{
-                  url: ServicePortalPath.SettingsPersonalInformationEditEmail,
-                }}
-              />
-              <Divider />
-              <UserInfoLine
-                label={m.telNumber}
-                labelColumnSpan={['8/12', '3/12']}
-                editColumnSpan={['1/1', '2/12']}
-                valueColumnSpan={['1/1', '7/12']}
-                content={settings?.mobile ? parseNumber(settings.mobile) : ''}
-                editLink={{
-                  url:
-                    ServicePortalPath.SettingsPersonalInformationEditPhoneNumber,
-                }}
-              />
-              <Divider />
-              <UserInfoLine
-                label={m.nudge}
-                labelColumnSpan={['8/12', '3/12']}
-                editColumnSpan={['1/1', '2/12']}
-                valueColumnSpan={['1/1', '7/12']}
-                content={
-                  settings?.canNudge
-                    ? formatMessage({
-                        id: 'sp.settings:nudge-active',
-                        defaultMessage: 'Hnipp virkt',
-                      })
-                    : formatMessage({
-                        id: 'sp.settings:nudge-inactive',
-                        defaultMessage: 'Hnipp óvirkt',
-                      })
-                }
-                editLink={{
-                  url: ServicePortalPath.SettingsPersonalInformationEditNudge,
-                }}
-              />
-              <Divider />
-              <UserInfoLine
-                label={m.language}
-                content={
-                  settings
-                    ? settings.locale === 'is'
-                      ? 'Íslenska'
-                      : settings.locale === 'en'
-                      ? 'English'
-                      : ''
-                    : ''
-                }
-                labelColumnSpan={['8/12', '3/12']}
-                editColumnSpan={['1/1', '2/12']}
-                valueColumnSpan={['1/1', '7/12']}
-                editLink={{
-                  url:
-                    ServicePortalPath.SettingsPersonalInformationEditLanguage,
-                }}
-              />
-              <Divider />
-              <UserInfoLine
-                label={m.bankAccountInfo}
-                labelColumnSpan={['8/12', '3/12']}
-                editColumnSpan={['1/1', '2/12']}
-                valueColumnSpan={['1/1', '7/12']}
-                content={settings?.bankInfo ?? ''}
-              />
-              <Divider />
-            </>
-          )}
+          <UserInfoLine
+            label={m.email}
+            labelColumnSpan={['8/12', '3/12']}
+            editColumnSpan={['1/1', '2/12']}
+            valueColumnSpan={['1/1', '7/12']}
+            content={settings?.email ?? ''}
+            editLink={{
+              url: ServicePortalPath.SettingsPersonalInformationEditEmail,
+            }}
+          />
+          <Divider />
+          <UserInfoLine
+            label={m.telNumber}
+            labelColumnSpan={['8/12', '3/12']}
+            editColumnSpan={['1/1', '2/12']}
+            valueColumnSpan={['1/1', '7/12']}
+            content={
+              settings?.mobilePhoneNumber
+                ? parseNumber(settings.mobilePhoneNumber)
+                : ''
+            }
+            editLink={{
+              url: ServicePortalPath.SettingsPersonalInformationEditPhoneNumber,
+            }}
+          />
+          <Divider />
+          <UserInfoLine
+            label={m.nudge}
+            labelColumnSpan={['8/12', '3/12']}
+            editColumnSpan={['1/1', '2/12']}
+            valueColumnSpan={['1/1', '7/12']}
+            content={
+              settings?.canNudge
+                ? formatMessage({
+                    id: 'sp.settings:nudge-active',
+                    defaultMessage: 'Hnipp virkt',
+                  })
+                : formatMessage({
+                    id: 'sp.settings:nudge-inactive',
+                    defaultMessage: 'Hnipp óvirkt',
+                  })
+            }
+            editLink={{
+              url: ServicePortalPath.SettingsPersonalInformationEditNudge,
+            }}
+          />
+          <Divider />
+          <UserInfoLine
+            label={m.language}
+            content={
+              settings
+                ? settings.locale === 'is'
+                  ? 'Íslenska'
+                  : settings.locale === 'en'
+                  ? 'English'
+                  : ''
+                : ''
+            }
+            labelColumnSpan={['8/12', '3/12']}
+            editColumnSpan={['1/1', '2/12']}
+            valueColumnSpan={['1/1', '7/12']}
+            editLink={{
+              url: ServicePortalPath.SettingsPersonalInformationEditLanguage,
+            }}
+          />
+          <Divider />
+          <UserInfoLine
+            label={m.bankAccountInfo}
+            labelColumnSpan={['8/12', '3/12']}
+            editColumnSpan={['1/1', '2/12']}
+            valueColumnSpan={['1/1', '7/12']}
+            content={settings?.bankInfo ?? ''}
+            editLink={{
+              url: ServicePortalPath.SettingsPersonalInformationEditBankInfo,
+            }}
+          />
+          <Divider />
         </Stack>
       )}
     </>

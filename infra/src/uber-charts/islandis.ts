@@ -2,7 +2,10 @@ import { serviceSetup as apiSetup } from '../../../apps/api/infra/api'
 import { serviceSetup as webSetup } from '../../../apps/web/infra/web'
 import { serviceSetup as searchIndexerSetup } from '../../../apps/services/search-indexer/infra/search-indexer-service'
 
-import { serviceSetup as appSystemApiSetup } from '../../../apps/application-system/api/infra/application-system-api'
+import {
+  serviceSetup as appSystemApiSetup,
+  workerSetup as appSystemApiWorkerSetup,
+} from '../../../apps/application-system/api/infra/application-system-api'
 import { serviceSetup as appSystemFormSetup } from '../../../apps/application-system/form/infra/application-system-form'
 
 import { serviceSetup as servicePortalApiSetup } from '../../../apps/services/user-profile/infra/service-portal-api'
@@ -43,6 +46,7 @@ const appSystemApi = appSystemApiSetup({
   documentsService,
   servicesEndorsementApi: endorsement,
 })
+const appSystemApiWorker = appSystemApiWorkerSetup()
 const appSystemForm = appSystemFormSetup({})
 
 const servicePortalApi = servicePortalApiSetup()
@@ -69,7 +73,9 @@ const contentfulTranslationExtension = contentfulTranslationExtensionSetup()
 const downloadService = downloadServiceSetup()
 
 const userNotificationService = userNotificationServiceSetup()
-const userNotificationWorkerService = userNotificationWorkerSetup()
+const userNotificationWorkerService = userNotificationWorkerSetup({
+  userProfileApi: servicePortalApi,
+})
 
 const adsBackend = adsBackendSetup()
 const adsApi = adsApiSetup({ adsBackend })
@@ -145,7 +151,15 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     externalContractsTests,
+    appSystemApiWorker,
   ],
 }
 
+// Services that are not included in any environment above but should be used in feature deployments
 export const FeatureDeploymentServices = []
+
+// Services that are included in some environment above but should be excluded from feature deployments
+export const ExcludedFeatureDeploymentServices = [
+  userNotificationService,
+  userNotificationWorkerService,
+]
