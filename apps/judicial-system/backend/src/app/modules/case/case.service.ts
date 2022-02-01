@@ -36,6 +36,8 @@ import {
   getRulingPdfAsBuffer,
   getCustodyNoticePdfAsBuffer,
   stripHtmlTags,
+  getCourtRecordPdfAsBuffer,
+  getCourtRecordPdfAsString,
 } from '../../formatters'
 import { notificationMessages as m } from '../../messages'
 import { FileService } from '../file/file.service'
@@ -522,7 +524,7 @@ export class CaseService {
       )
     }
 
-    return getRulingPdfAsBuffer(theCase, this.formatMessage, true)
+    return getCourtRecordPdfAsBuffer(theCase, this.formatMessage, true)
   }
 
   async getRulingPdf(theCase: Case): Promise<Buffer> {
@@ -553,7 +555,11 @@ export class CaseService {
       return { controlCode: '0000', documentToken: 'DEVELOPMENT' }
     }
 
-    const pdf = await getRulingPdfAsString(theCase, this.formatMessage, true)
+    const pdf = await getCourtRecordPdfAsString(
+      theCase,
+      this.formatMessage,
+      true,
+    )
 
     return this.signingService.requestSignature(
       user.mobileNumber ?? '',

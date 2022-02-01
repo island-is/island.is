@@ -38,8 +38,8 @@ import {
   getRequestPdfAsBuffer,
   getCustodyNoticePdfAsString,
   formatProsecutorReceivedByCourtSmsNotification,
-  getRulingPdfAsString,
   formatCourtResubmittedToCourtSmsNotification,
+  getCourtRecordPdfAsString,
 } from '../../formatters'
 import { Case } from '../case'
 import { CourtService } from '../court'
@@ -629,7 +629,7 @@ export class NotificationService {
       }
     }
 
-    const rulingPdf = await getRulingPdfAsString(
+    const rulingPdf = await getCourtRecordPdfAsString(
       theCase,
       this.formatMessage,
       true,

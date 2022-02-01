@@ -3,12 +3,12 @@ import { Response } from 'express'
 
 import { Logger } from '@island.is/logging'
 
-import { getRulingPdfAsBuffer } from '../../../formatters/rulingPdf'
+import { getCourtRecordPdfAsBuffer } from '../../../formatters/courtRecordPdf'
 import { Case } from '../models'
 import { createTestingCaseModule } from './createTestingCaseModule'
 import { AwsS3Service } from '../../aws-s3'
 
-jest.mock('../../../formatters/rulingPdf')
+jest.mock('../../../formatters/courtRecordPdf')
 
 interface Then {
   error: Error
@@ -117,7 +117,7 @@ describe('CaseController - Get court record pdf', () => {
     })
 
     it('should generate pdf', () => {
-      expect(getRulingPdfAsBuffer).toHaveBeenCalledWith(
+      expect(getCourtRecordPdfAsBuffer).toHaveBeenCalledWith(
         theCase,
         undefined, // TODO Mock IntlService
         true,
@@ -134,7 +134,7 @@ describe('CaseController - Get court record pdf', () => {
     beforeEach(async () => {
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
       mockGetObject.mockRejectedValueOnce(new Error('Some ignored error'))
-      const getMock = getRulingPdfAsBuffer as jest.Mock
+      const getMock = getCourtRecordPdfAsBuffer as jest.Mock
       getMock.mockResolvedValueOnce(pdf)
 
       await givenWhenThen(caseId, theCase, res)
@@ -154,7 +154,7 @@ describe('CaseController - Get court record pdf', () => {
     beforeEach(async () => {
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
       mockGetObject.mockRejectedValueOnce(new Error('Some ignored error'))
-      const getMock = getRulingPdfAsBuffer as jest.Mock
+      const getMock = getCourtRecordPdfAsBuffer as jest.Mock
       getMock.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseId, theCase, res)
