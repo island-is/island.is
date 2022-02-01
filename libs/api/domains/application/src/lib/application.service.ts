@@ -198,10 +198,7 @@ export class ApplicationService {
     })
   }
 
-  async attachmentPresignedURL(
-    input: AttachmentPresignedUrlInput,
-    auth: Auth,
-  ) {
+  async attachmentPresignedURL(input: AttachmentPresignedUrlInput, auth: Auth) {
     const { id, s3Key } = input
 
     return await this.applicationApiWithAuth(

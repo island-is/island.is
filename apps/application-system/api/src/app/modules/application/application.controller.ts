@@ -99,7 +99,6 @@ import { Application } from './application.model'
 import AmazonS3URI from 'amazon-s3-uri'
 import { Documentation } from '@island.is/nest/swagger'
 
-
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('applications')
 @ApiHeader({
@@ -976,7 +975,7 @@ export class ApplicationController {
       documentSigned: true,
     }
   }
-  
+
   @Scopes(ApplicationScope.read)
   @Get('applications/:id/:pdfType/presignedUrl')
   @ApiParam({
@@ -1011,12 +1010,12 @@ export class ApplicationController {
     return { url }
   }
 
-
   @Get('applications/:id/attachments/:s3Key/presigned-url')
   @Scopes(ApplicationScope.read)
   @Documentation({
     description: 'Gets a presigned url for attachments',
-    response: { status: 200, type: PresignedUrlResponseDto }, request: {
+    response: { status: 200, type: PresignedUrlResponseDto },
+    request: {
       query: {},
       params: {
         id: {
@@ -1029,7 +1028,7 @@ export class ApplicationController {
           description: 's3 key for attachment',
           required: true,
         },
-      }
+      },
     },
   })
   async getAttachmentPresignedURL(
