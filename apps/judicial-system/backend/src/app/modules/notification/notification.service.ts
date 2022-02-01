@@ -632,7 +632,6 @@ export class NotificationService {
     const rulingPdf = await getCourtRecordPdfAsString(
       theCase,
       this.formatMessage,
-      true,
     )
 
     const recipients = [

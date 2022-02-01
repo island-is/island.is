@@ -35,7 +35,6 @@ import { writeFile } from './writeFile'
 function constructRestrictionCourtRecordPdf(
   theCase: Case,
   formatMessage: FormatMessage,
-  shortVersion: boolean,
 ): streamBuffers.WritableStreamBuffer {
   const doc = new PDFDocument({
     size: 'A4',
@@ -278,7 +277,6 @@ function constructRestrictionCourtRecordPdf(
 function constructInvestigationCourtRecordPdf(
   theCase: Case,
   formatMessage: FormatMessage,
-  shortVersion: boolean,
 ): streamBuffers.WritableStreamBuffer {
   const doc = new PDFDocument({
     size: 'A4',
@@ -524,19 +522,17 @@ function constructInvestigationCourtRecordPdf(
 function constructCourtRecordPdf(
   theCase: Case,
   formatMessage: FormatMessage,
-  shortVersion: boolean,
 ): streamBuffers.WritableStreamBuffer {
   return isRestrictionCase(theCase.type)
-    ? constructRestrictionCourtRecordPdf(theCase, formatMessage, shortVersion)
-    : constructInvestigationCourtRecordPdf(theCase, formatMessage, shortVersion)
+    ? constructRestrictionCourtRecordPdf(theCase, formatMessage)
+    : constructInvestigationCourtRecordPdf(theCase, formatMessage)
 }
 
 export async function getCourtRecordPdfAsString(
   theCase: Case,
   formatMessage: FormatMessage,
-  shortVersion: boolean,
 ): Promise<string> {
-  const stream = constructCourtRecordPdf(theCase, formatMessage, shortVersion)
+  const stream = constructCourtRecordPdf(theCase, formatMessage)
 
   // wait for the writing to finish
   const pdf = await new Promise<string>(function (resolve) {
@@ -555,9 +551,8 @@ export async function getCourtRecordPdfAsString(
 export async function getCourtRecordPdfAsBuffer(
   theCase: Case,
   formatMessage: FormatMessage,
-  shortVersion: boolean,
 ): Promise<Buffer> {
-  const stream = constructCourtRecordPdf(theCase, formatMessage, shortVersion)
+  const stream = constructCourtRecordPdf(theCase, formatMessage)
 
   // wait for the writing to finish
   const pdf = await new Promise<Buffer>(function (resolve) {

@@ -120,7 +120,6 @@ describe('CaseController - Get court record pdf', () => {
       expect(getCourtRecordPdfAsBuffer).toHaveBeenCalledWith(
         theCase,
         undefined, // TODO Mock IntlService
-        true,
       )
     })
   })
