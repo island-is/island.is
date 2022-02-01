@@ -135,7 +135,7 @@ export const NationalRegistryUserQuery = gql`
 export const PersonalTaxReturnQuery = gql`
   query personalTaxReturnQuery {
     personalTaxReturnForYearPdf {
-      url
+      key
     }
   }
 `

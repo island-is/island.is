@@ -237,7 +237,7 @@ export interface ApplicationFilters {
 }
 
 export interface PersonalTaxReturn {
-  url: string
+  key: string
 }
 
 export interface Application {

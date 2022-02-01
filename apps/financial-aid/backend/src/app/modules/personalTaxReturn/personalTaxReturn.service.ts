@@ -16,14 +16,13 @@ export class PersonalTaxReturnService {
       year,
     )
 
-    const fileName = `Framtal_${nationalId}_${year}`
+    const fileName = `Framtal_${nationalId}_${year}.pdf`
 
     const presignedUrl = this.fileService.createSignedUrl(folder, fileName)
 
-    console.log('presignedUrl', presignedUrl)
-
     console.log('taxReturn success', taxReturn.success)
     console.log('taxReturn error text', taxReturn.errorText)
+    console.log('taxReturn content', taxReturn.content.substring(0, 200))
 
     const base64 = Base64.atob(taxReturn.content)
 

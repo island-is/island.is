@@ -16,6 +16,7 @@ import {
   NationalRegistryData,
   NavigationProps,
   Routes,
+  UploadFileType,
   useAsyncLazyQuery,
 } from '@island.is/financial-aid/shared/lib'
 
@@ -25,7 +26,7 @@ import {
 } from '@island.is/financial-aid-web/osk/graphql'
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
-import { useFileUpload } from '../../../utils/hooks/useFileUpload'
+import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
 const ApplicationInfo = () => {
   const router = useRouter()
@@ -35,6 +36,7 @@ const ApplicationInfo = () => {
     setMunicipalityById,
     loadingMunicipality,
   } = useContext(AppContext)
+  const { form, updateForm } = useContext(FormContext)
 
   const [accept, setAccept] = useState(false)
   const [hasError, setHasError] = useState(false)
@@ -49,7 +51,7 @@ const ApplicationInfo = () => {
   >(NationalRegistryUserQuery)
 
   const personalTaxReturnQuery = useAsyncLazyQuery<{
-    personalTaxReturnForYearPdf: { personalTaxReturn: string }
+    personalTaxReturnForYearPdf: { key: string }
   }>(PersonalTaxReturnQuery)
 
   const logOut = useLogOut()
@@ -67,36 +69,57 @@ const ApplicationInfo = () => {
     setError(false)
     setLoading(true)
 
-    const { data } = await personalTaxReturnQuery({}).catch((err) => {
-      console.log(err)
-      return { data: undefined }
+    const [
+      { data: nationalRegistryData },
+      { data: personalTaxReturnData },
+    ] = await Promise.all([
+      await nationalRegistryQuery({
+        input: { ssn: user?.nationalId },
+      }).catch(() => {
+        return { data: undefined }
+      }),
+      await personalTaxReturnQuery({}).catch((err) => {
+        return { data: undefined }
+      }),
+    ])
+
+    console.log('nationalRegistry', nationalRegistryData)
+    console.log('personalTaxReturn', personalTaxReturnData)
+
+    if (
+      !personalTaxReturnData ||
+      !nationalRegistryData ||
+      !nationalRegistryData.municipalityNationalRegistryUserV2.address
+    ) {
+      setError(true)
+      setLoading(false)
+      return
+    }
+
+    updateForm({
+      ...form,
+      ['taxReturnFiles']: [
+        { key: personalTaxReturnData.personalTaxReturnForYearPdf.key },
+      ],
     })
 
-    // const { data } = await nationalRegistryQuery({
-    //   input: { ssn: user?.nationalId },
-    // }).catch(() => {
-    //   return { data: undefined }
-    // })
+    setNationalRegistryData(
+      nationalRegistryData.municipalityNationalRegistryUserV2,
+    )
 
-    // if (!data || !data.municipalityNationalRegistryUserV2.address) {
-    //   setError(true)
-    //   setLoading(false)
-    //   return
-    // }
-
-    // setNationalRegistryData(data.municipalityNationalRegistryUserV2)
-
-    // await setMunicipalityById(
-    //   data.municipalityNationalRegistryUserV2.address.municipalityCode,
-    // ).then((municipality) => {
-    //   navigation.nextUrl && municipality && municipality.active
-    //     ? router.push(navigation?.nextUrl)
-    //     : router.push(
-    //         Routes.serviceCenter(
-    //           data.municipalityNationalRegistryUserV2.address.municipalityCode,
-    //         ),
-    //       )
-    // })
+    await setMunicipalityById(
+      nationalRegistryData.municipalityNationalRegistryUserV2.address
+        .municipalityCode,
+    ).then((municipality) => {
+      navigation.nextUrl && municipality && municipality.active
+        ? router.push(navigation?.nextUrl)
+        : router.push(
+            Routes.serviceCenter(
+              nationalRegistryData.municipalityNationalRegistryUserV2.address
+                .municipalityCode,
+            ),
+          )
+    })
   }
 
   return (
@@ -129,6 +152,20 @@ const ApplicationInfo = () => {
           Þjóðskrá Íslands
         </Text>
         <Text marginBottom={3}>Lögheimili, hjúskaparstaða</Text>
+
+        <Text as="h3" variant="h5" color="blue400">
+          Skatturinn
+        </Text>
+        <Text marginBottom={3}>
+          Afrit af skattframtali og upplýsingar um staðgreiðslu í
+          staðgreiðsluskrá.
+        </Text>
+
+        <Text marginBottom={3}>
+          Við þurfum að afla þessara gagna til að staðfesta hjá hvaða
+          sveitarfélagi þú eigir að sækja um fjárhagsaðstoð, einfalda umsóknar-
+          og vinnsluferlið og staðfesta réttleika upplýsinga.
+        </Text>
 
         <Text marginBottom={[4, 4, 5]}>
           Við þurfum að fá þig til að renna yfir nokkur atriði varðandi þína
