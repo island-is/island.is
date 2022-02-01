@@ -35,9 +35,7 @@ import { ConfirmationDtoResponse } from './dto/confirmationResponseDto'
 import { ConfirmEmailDto } from './dto/confirmEmailDto'
 import { ConfirmSmsDto } from './dto/confirmSmsDto'
 import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
-// import { CreateEmailVerificationDto } from './dto/CreateEmailVerificationDto'
-import { IsNotEmpty, IsString, IsEmail } from 'class-validator'
-import { ApiProperty } from '@nestjs/swagger'
+import { CreateEmailVerificationDto } from './dto/CreateEmailVerificationDto'
 import { CreateUserProfileDto } from './dto/createUserProfileDto'
 import { DeleteTokenResponseDto } from './dto/deleteTokenResponseDto'
 import { DeviceTokenDto } from './dto/deviceToken.dto'
@@ -47,19 +45,6 @@ import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 import { VerificationService } from './verification.service'
 import { DataStatus } from './types/dataStatusTypes'
-
-// TODO: Remove this DTO & use import.
-export class CreateEmailVerificationDto {
-  @IsNotEmpty()
-  @IsString()
-  @ApiProperty()
-  readonly nationalId!: string
-
-  @IsNotEmpty()
-  @IsEmail()
-  @ApiProperty()
-  readonly email!: string
-}
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('User Profile')
@@ -136,7 +121,6 @@ export class UserProfileController {
       userProfileDto = {
         ...userProfileDto,
         emailVerified: emailVerified,
-        // email: undefined,
       }
       if (emailVerified) {
         await this.verificationService.removeEmailVerification(
@@ -156,7 +140,6 @@ export class UserProfileController {
       userProfileDto = {
         ...userProfileDto,
         mobilePhoneNumberVerified: phoneVerified,
-        // mobilePhoneNumber: undefined,
       }
       if (phoneVerified) {
         await this.verificationService.removeSmsVerification(
@@ -218,7 +201,6 @@ export class UserProfileController {
       userProfileToUpdate = {
         ...userProfileToUpdate,
         mobilePhoneNumberVerified: phoneVerified,
-        // mobilePhoneNumber: undefined,
       }
 
       if (phoneVerified) {
@@ -239,7 +221,6 @@ export class UserProfileController {
       userProfileToUpdate = {
         ...userProfileToUpdate,
         emailVerified: mailVerified,
-        // email: undefined,
       }
 
       if (mailVerified) {
