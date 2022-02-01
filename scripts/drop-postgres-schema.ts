@@ -3,6 +3,7 @@ import { featureSpecificServiceDef } from '../infra/src/dsl/serialize-to-yaml'
 import { charts } from '../infra/src/uber-charts/all-charts'
 import { Client } from 'pg'
 import { SSM } from 'aws-sdk'
+import { branchNameToFeatureName } from './_common'
 
 const argv = yargs(process.argv.slice(2))
   .options({
@@ -24,14 +25,6 @@ const argv = yargs(process.argv.slice(2))
   .epilogue(
     `Drop DB schema for a feature deployment. You need to have your local DB proxy running`,
   )
-
-const branchNameToFeatureName = (branchName: string) => {
-  const result = Array.from(branchName.toLowerCase())
-    .filter((c) => c !== '/')
-    .map((c) => (c < 'a' || c > 'z' ? '-' : c))
-    .join('')
-  return result
-}
 
 void (async function () {
   const featureName = branchNameToFeatureName(argv.argv['feature-branch-name'])
