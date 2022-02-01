@@ -8,6 +8,7 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 
 import RulingStepTwoForm from './RulingStepTwoForm'
 
@@ -19,6 +20,7 @@ const RulingStepTwo = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
+  const { user } = useContext(UserContext)
 
   const { autofill } = useCase()
 
@@ -53,6 +55,7 @@ const RulingStepTwo = () => {
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
         isLoading={isLoadingWorkingCase}
+        user={user}
       />
     </PageLayout>
   )

@@ -57,9 +57,13 @@ export const LanguageToggler = ({
     } else {
       await getContentSlug(contentfulId).then((res) => {
         const slug = res.data?.getContentSlug?.slug
+        const title = res.data?.getContentSlug?.title
         const type = res.data?.getContentSlug?.type as LinkType
 
-        if (type && slug?.[otherLanguage]) {
+        // Some content models are set up such that a slug is generated from the title
+        // Unfortunately, Contentful generates slug for both locales which frequently
+        // results in bogus english content. Therefore we check whether the other language has a title as well.
+        if (type && slug?.[otherLanguage] && title?.[otherLanguage]) {
           return goToOtherLanguagePage(
             linkResolver(type, [slug[otherLanguage]], otherLanguage).href,
           )

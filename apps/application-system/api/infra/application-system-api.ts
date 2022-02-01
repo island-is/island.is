@@ -10,17 +10,52 @@ import {
   DataProtectionComplaint,
 } from '../../../../infra/src/dsl/xroad'
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { PostgresInfo } from '../../../../infra/src/dsl/types/input-types'
 
-const postgresInfo = {
+const postgresInfo: PostgresInfo = {
   passwordSecret: '/k8s/application-system/api/DB_PASSWORD',
+  name: 'application_system_api',
+  username: 'application_system_api',
 }
+
+const namespace = 'application-system'
+const serviceAccount = 'application-system-api'
+export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =>
+  service('application-system-api-worker')
+    .namespace(namespace)
+    .image('application-system-api')
+    .postgres(postgresInfo)
+    .serviceAccount('application-system-api-worker')
+    .env({
+      REDIS_URL_NODE_01: {
+        dev:
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        staging:
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        prod:
+          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+      },
+    })
+    .secrets({
+      SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST',
+      SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME',
+      SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD',
+    })
+    .args('main.js', '--job', 'worker')
+    .command('node')
+    .extraAttributes({
+      dev: { schedule: '*/30 * * * *' },
+      staging: { schedule: '*/30 * * * *' },
+      prod: { schedule: '*/30 * * * *' },
+    })
+
 export const serviceSetup = (services: {
   documentsService: ServiceBuilder<'services-documents'>
   servicesEndorsementApi: ServiceBuilder<'services-endorsement-api'>
 }): ServiceBuilder<'application-system-api'> =>
   service('application-system-api')
-    .namespace('application-system')
-    .serviceAccount('application-system-api')
+    .namespace(namespace)
+    .serviceAccount(serviceAccount)
     .env({
       EMAIL_REGION: 'eu-west-1',
       REDIS_URL_NODE_01: {

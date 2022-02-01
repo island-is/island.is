@@ -10,6 +10,7 @@ export const LIST_DOCUMENTS = gql`
       date
       fileType
       url
+      opened
     }
   }
 `

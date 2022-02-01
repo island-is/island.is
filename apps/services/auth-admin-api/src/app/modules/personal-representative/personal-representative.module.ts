@@ -2,13 +2,15 @@ import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { PersonalRepresentativeController } from './personal-representative.controller'
 import {
+  PersonalRepresentativeScopePermission,
+  PersonalRepresentativeScopePermissionService,
+} from '@island.is/auth-api-lib'
+import {
   PersonalRepresentative,
   PersonalRepresentativeRight,
   PersonalRepresentativeRightType,
   PersonalRepresentativeRightTypeService,
-  PersonalRepresentativeScopePermission,
-  PersonalRepresentativeScopePermissionService,
-} from '@island.is/auth-api-lib'
+} from '@island.is/auth-api-lib/personal-representative'
 
 @Module({
   imports: [

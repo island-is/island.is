@@ -1933,6 +1933,9 @@ export interface IOrganizationPageFields {
 
   /** External Links */
   externalLinks?: ILink[] | undefined
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {

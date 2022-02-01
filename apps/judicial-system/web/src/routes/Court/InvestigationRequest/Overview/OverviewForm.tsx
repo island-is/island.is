@@ -113,10 +113,6 @@ const OverviewForm: React.FC<Props> = (props) => {
                 value: workingCase.policeCaseNumber,
               },
               {
-                title: 'Krafa stofnuð',
-                value: formatDate(workingCase.created, 'P'),
-              },
-              {
                 title: 'Embætti',
                 value: `${
                   workingCase.creatingProsecutor?.institution?.name ??
@@ -135,16 +131,14 @@ const OverviewForm: React.FC<Props> = (props) => {
               },
               {
                 title: 'Ákærandi',
-                value: `${workingCase.prosecutor?.name} ${workingCase.prosecutor?.title}`,
+                value: workingCase.prosecutor?.name,
               },
               {
                 title: 'Tegund kröfu',
                 value: capitalize(caseTypes[workingCase.type]),
               },
             ]}
-            accusedName={workingCase.accusedName}
-            accusedNationalId={workingCase.accusedNationalId}
-            accusedAddress={workingCase.accusedAddress}
+            defendants={workingCase.defendants ?? []}
             defender={{
               name: workingCase.defenderName ?? '',
               email: workingCase.defenderEmail,

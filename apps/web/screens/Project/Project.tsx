@@ -19,13 +19,14 @@ import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { GET_PROJECT_PAGE_QUERY } from '@island.is/web/screens/queries/Project'
 import {
   DefaultProjectHeader,
-  LatestNewsSectionSlider,
   OrganizationSlice,
   Section,
   Stepper,
   EntryProjectHeader,
   HeadWithSocialSharing,
   ElectionProjectHeader,
+  OneColumnTextSlice,
+  NewsItems,
 } from '@island.is/web/components'
 import {
   Box,
@@ -44,6 +45,7 @@ import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { ProjectPage as ProjectPageSchema } from '@island.is/web/graphql/schema'
+import slugify from '@sindresorhus/slugify'
 
 const lightThemes = ['traveling-to-iceland', 'election']
 
@@ -177,22 +179,28 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
   const router = useRouter()
   useContentfulId(projectPage.id)
 
-  const subpage = projectPage.projectSubpages.find((x) => {
-    return x.slug === router.query.subSlug
-  })
+  const subpage = useMemo(
+    () =>
+      projectPage.projectSubpages.find((x) => {
+        return x.slug === router.query.subSlug
+      }),
+    [router.query.subSlug, projectPage.projectSubpages],
+  )
+
+  const baseRouterPath = router.asPath.split('?')[0].split('#')[0]
 
   const navigationList = useMemo(
     () =>
       assignNavigationActive(
         convertLinkGroupsToNavigationItems(projectPage.sidebarLinks),
-        router.asPath,
+        baseRouterPath,
       ),
-    [router.asPath, projectPage.sidebarLinks],
+    [baseRouterPath, projectPage.sidebarLinks],
   )
 
   const activeNavigationItemTitle = useMemo(
-    () => getActiveNavigationItemTitle(navigationList, router.asPath),
-    [router.asPath, navigationList],
+    () => getActiveNavigationItemTitle(navigationList, baseRouterPath),
+    [baseRouterPath, navigationList],
   )
 
   const navigationTitle = n('navigationTitle', 'Efnisyfirlit')
@@ -209,9 +217,22 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
   if (!subpage) content = projectPage?.content as SliceType[]
 
   useEffect(() => {
-    if (renderSlicesAsTabs && !!subpage && subpage?.slices?.length > 0)
-      setSelectedSliceTab(subpage.slices[0] as OneColumnText)
-  }, [router.asPath])
+    if (renderSlicesAsTabs && !!subpage && subpage?.slices?.length > 0) {
+      const [, anchorSlug] = router.asPath.split('#')
+      const slices = subpage.slices as OneColumnText[]
+
+      let slice = slices[0]
+
+      if (anchorSlug) {
+        const anchorSlice = slices.find((s) => anchorSlug === slugify(s.title))
+        if (anchorSlice) {
+          slice = anchorSlice
+        }
+      }
+
+      setSelectedSliceTab(slice)
+    }
+  }, [renderSlicesAsTabs, subpage, router.asPath])
 
   return (
     <>
@@ -263,27 +284,35 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
           </Box>
         </Hidden>
         {!!subpage && (
-          <>
+          <Box marginBottom={1}>
             <Text as="h1" variant="h1">
               {subpage.title}
             </Text>
             {subpage.content && richText(subpage.content as SliceType[])}
-          </>
+          </Box>
         )}
         {renderSlicesAsTabs && !!subpage && subpage.slices.length > 1 && (
-          <TableOfContents
-            tableOfContentsTitle="Undirkaflar"
-            headings={subpage.slices.map((slice) => ({
-              headingId: slice.id,
-              headingTitle: (slice as OneColumnText).title,
-            }))}
-            selectedHeadingId={selectedSliceTab?.id}
-            onClick={(id) =>
-              setSelectedSliceTab(
-                subpage.slices.find((s) => s.id === id) as OneColumnText,
-              )
-            }
-          />
+          <Box marginBottom={2}>
+            <TableOfContents
+              tableOfContentsTitle={n('tableOfContentsTitle', 'Undirkaflar')}
+              headings={subpage.slices.map((slice) => ({
+                headingId: slice.id,
+                headingTitle: (slice as OneColumnText).title,
+              }))}
+              selectedHeadingId={selectedSliceTab?.id}
+              onClick={(id) => {
+                const slice = subpage.slices.find(
+                  (s) => s.id === id,
+                ) as OneColumnText
+                router.push(
+                  `${baseRouterPath}#${slugify(slice.title)}`,
+                  undefined,
+                  { shallow: true },
+                )
+                setSelectedSliceTab(slice)
+              }}
+            />
+          </Box>
         )}
         {renderSlicesAsTabs && selectedSliceTab && (
           <Text paddingTop={4} as="h2" variant="h2">
@@ -300,15 +329,19 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
           />
         )}
         {!renderSlicesAsTabs &&
-          (subpage ?? projectPage).slices.map((slice) => (
-            <OrganizationSlice
-              key={slice.id}
-              slice={slice}
-              namespace={namespace}
-              fullWidth={true}
-              organizationPageSlug={projectPage.slug}
-            />
-          ))}
+          (subpage ?? projectPage).slices.map((slice) =>
+            slice.__typename === 'OneColumnText' ? (
+              <OneColumnTextSlice slice={slice} boxProps={{ marginTop: 8 }} />
+            ) : (
+              <OrganizationSlice
+                key={slice.id}
+                slice={slice}
+                namespace={namespace}
+                fullWidth={true}
+                organizationPageSlug={projectPage.slug}
+              />
+            ),
+          )}
       </ProjectWrapper>
       {!subpage && !!projectPage.newsTag && (
         <div style={{ overflow: 'hidden' }}>
@@ -318,9 +351,10 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
             background="purple100"
             aria-labelledby="latestNewsTitle"
           >
-            <LatestNewsSectionSlider
-              label={n('newsAndAnnouncements')}
-              readMoreText={n('seeMore')}
+            <NewsItems
+              heading={n('newsAndAnnouncements')}
+              headingTitle="news-items-title"
+              seeMoreText={n('seeMore')}
               items={news}
             />
           </Section>
