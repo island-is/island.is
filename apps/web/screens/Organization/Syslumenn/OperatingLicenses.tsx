@@ -141,7 +141,7 @@ const useSearch = (term: string, currentPageNumber: number): SearchState => {
     currentPageNumber: currentPageNumber,
     hasNextPage: false,
     totalCount: 0,
-    isLoadingFirstPage: false,
+    isLoadingFirstPage: true,
     isLoadingNextPage: false,
     hasError: false,
   })
