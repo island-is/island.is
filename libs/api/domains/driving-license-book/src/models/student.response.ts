@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { DrivingLicenseBook } from './drivingLicenseBook.response'
 
 @ObjectType()
 export class StudentResponse {
@@ -31,4 +32,16 @@ export class StudentResponse {
 
   @Field(() => [String], { nullable: true })
   bookLicenseCategories?: string[] | null
+}
+
+@ObjectType()
+export class StudentOverView extends StudentResponse{
+  @Field(() => [DrivingLicenseBook], {nullable: true})
+  books?: DrivingLicenseBook[] | null
+}
+
+@ObjectType()
+export class StudentOverViewResponse {
+  @Field(() => StudentOverView, {nullable: true})
+  data?: StudentOverView | null
 }

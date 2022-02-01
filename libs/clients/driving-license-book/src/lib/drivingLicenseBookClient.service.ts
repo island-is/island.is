@@ -38,7 +38,6 @@ export class DrivingLicenseBookClientService {
     const { token } = await api.apiAuthenticationAuthenticatePost({
       authenticateModel: config,
     })
-    console.log(token)
     if (token) {
       return api.withMiddleware(new AuthHeaderMiddleware(`Bearer ${token}`))
     } else {

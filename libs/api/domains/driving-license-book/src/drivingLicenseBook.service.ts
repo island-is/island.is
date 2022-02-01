@@ -1,7 +1,20 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { DrivingLicenseBookClientService } from '@island.is/clients/driving-license-book'
+import {
+  DrivingLicenseBookClientService,
+  StudentListGetResponse,
+  ApiStudentGetLicenseBookIdGetRequest,
+  DigitalBookGetResponse,
+  ApiTeacherGetPracticalDrivingLessonsBookIdGetRequest,
+  PracticalDrivingLessonGetResponse,
+  ApiStudentGetStudentOverviewSsnGetRequest,
+  StudentOverviewGetResponse,
+  ApiTeacherCreatePracticalDrivingLessonPostRequest,
+  PracticalDrivingLessonCreateResponse,
+  ApiTeacherUpdatePracticalDrivingLessonIdPutRequest,
+  ApiTeacherDeleteExemptionIdDeleteRequest,
+} from '@island.is/clients/driving-license-book'
 import { StudentListInput } from './dto/studentList.input'
 import { StudentListResponse } from './models/studentList.response'
 import {
@@ -19,22 +32,68 @@ export class DrivingLicenseBookService {
     private drivingLicenseBookClientService: DrivingLicenseBookClientService,
   ) {}
 
-  async apiWithAuth(auth: Auth) {
-    console.log('AUTH', auth.authorization)
+  async apiWithAuth() {
     return await this.drivingLicenseBookClientService.api()
   }
+  async createPracticalDrivingLesson(
+    input: ApiTeacherCreatePracticalDrivingLessonPostRequest,
+  ): Promise<PracticalDrivingLessonCreateResponse> {
+    const api = await this.apiWithAuth()
+    return await api.apiTeacherCreatePracticalDrivingLessonPost(input)
+  }
 
-  async getAllStudents(
-    user: User,
-    data: StudentListInput,
-  ): Promise<StudentListResponse> {
+  async updatePracticalDrivingLesson(
+    input: ApiTeacherUpdatePracticalDrivingLessonIdPutRequest,
+  ): Promise<{ success: boolean }> {
     try {
-      const api = await this.apiWithAuth(user)
-      console.log('API', api)
-      return await api.apiStudentGetStudentListGet(data)
+      const api = await this.apiWithAuth()
+      await api.apiTeacherUpdatePracticalDrivingLessonIdPut(input)
+      return { success: true }
     } catch (e) {
-      console.log(e)
-      throw e
+      return { success: false }
     }
   }
+
+  async deletePracticalDrivingLesson(
+    input: ApiTeacherDeleteExemptionIdDeleteRequest,
+  ) {
+    try {
+      const api = await this.apiWithAuth()
+      await api.apiTeacherDeletePracticalDrivingLessonIdDelete(input)
+      return { success: true }
+    } catch (e) {
+      return { success: false }
+    }
+  }
+
+  async getStudentList(
+    data: StudentListInput,
+  ): Promise<StudentListGetResponse> {
+    const api = await this.apiWithAuth()
+    return await api.apiStudentGetStudentListGet(data)
+  }
+
+  async getStudent(
+    data: ApiStudentGetStudentOverviewSsnGetRequest,
+  ): Promise<StudentOverviewGetResponse> {
+    const api = await this.apiWithAuth()
+    return await api.apiStudentGetStudentOverviewSsnGet(data)
+  }
+
+  // The following all show data available in the get student query so maybe not needed
+  async getLicenseBookId(
+    input: ApiStudentGetLicenseBookIdGetRequest,
+  ): Promise<DigitalBookGetResponse> {
+    const api = await this.apiWithAuth()
+    return await api.apiStudentGetLicenseBookIdGet(input)
+  }
+
+  async getPracticalDrivingLessonsBookId(
+    input: ApiTeacherGetPracticalDrivingLessonsBookIdGetRequest,
+  ): Promise<PracticalDrivingLessonGetResponse> {
+    const api = await this.apiWithAuth()
+    return await api.apiTeacherGetPracticalDrivingLessonsBookIdGet(input)
+  }
+
+  async getSchoolTestResultsBookId() {}
 }
