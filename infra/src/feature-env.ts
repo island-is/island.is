@@ -1,5 +1,7 @@
 import yargs from 'yargs'
+import { hideBin } from 'yargs/helpers'
 import AWS from 'aws-sdk'
+
 import {
   generateYamlForFeature,
   dumpYaml,
@@ -8,10 +10,13 @@ import {
 import { generateJobsForFeature } from './dsl/feature-jobs'
 import { UberChart } from './dsl/uber-chart'
 import { Envs } from './environments'
-import { Services, FeatureDeploymentServices } from './uber-charts/islandis'
+import {
+  Services,
+  FeatureDeploymentServices,
+  ExcludedFeatureDeploymentServices,
+} from './uber-charts/islandis'
 import { EnvironmentServices } from './dsl/types/charts'
 import { ServiceHelm } from './dsl/types/output-types'
-const { hideBin } = require('yargs/helpers')
 
 type ChartName = 'islandis'
 
@@ -59,15 +64,18 @@ const parseArguments = (argv: Arguments) => {
   const images = argv.images.split(',') // Docker images that have changed
   const env = 'dev'
   const chart = argv.chart as ChartName
-  const output = argv.output as string
 
   const ch = new UberChart({ ...Envs[env], feature: feature })
 
   const habitat = charts[chart][env]
+  const excludedFeatureDeploymentNames = ExcludedFeatureDeploymentServices.map(
+    (f) => f.serviceDef.name,
+  )
 
   const affectedServices = habitat
     .concat(FeatureDeploymentServices)
     .filter((h) => images?.includes(h.serviceDef.image ?? h.serviceDef.name))
+    .filter((h) => !excludedFeatureDeploymentNames.includes(h.serviceDef.name))
   return { ch, habitat, affectedServices }
 }
 
@@ -93,7 +101,7 @@ yargs(hideBin(process.argv))
   .command(
     'values',
     'get helm values file',
-    (yargs) => {},
+    () => {},
     async (argv: Arguments) => {
       const { ch, habitat, affectedServices } = parseArguments(argv)
       const featureYaml = generateYamlForFeature(
@@ -101,13 +109,13 @@ yargs(hideBin(process.argv))
         habitat,
         ...affectedServices,
       )
-      await writeToOutput(dumpYaml(featureYaml), argv.output)
+      await writeToOutput(dumpYaml(ch, featureYaml), argv.output)
     },
   )
   .command(
     'ingress-comment',
     'get helm values file',
-    (yargs) => {},
+    () => {},
     async (argv: Arguments) => {
       const { ch, habitat, affectedServices } = parseArguments(argv)
       const featureYaml = generateYamlForFeature(

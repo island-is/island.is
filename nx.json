@@ -88,6 +88,9 @@
     "api-domains-communications": {
       "tags": []
     },
+    "api-domains-company-registry": {
+      "tags": []
+    },
     "api-domains-content-search": {
       "tags": []
     },
@@ -127,9 +130,6 @@
     "api-domains-identity": {
       "tags": []
     },
-    "api-domains-islykill": {
-      "tags": []
-    },
     "api-domains-license-service": {
       "tags": []
     },
@@ -146,9 +146,6 @@
       "tags": []
     },
     "api-domains-regulations": {
-      "tags": []
-    },
-    "api-domains-rsk": {
       "tags": []
     },
     "api-domains-syslumenn": {
@@ -326,6 +323,9 @@
       "tags": []
     },
     "clients-regulations": {
+      "tags": []
+    },
+    "clients-rsk-company-registry": {
       "tags": []
     },
     "clients-rsk-v1": {
@@ -645,9 +645,6 @@
     "service-portal-settings-access-control": {
       "tags": []
     },
-    "service-portal-settings-islykill": {
-      "tags": []
-    },
     "service-portal-settings-personal-information": {
       "tags": []
     },
@@ -670,6 +667,9 @@
       "tags": []
     },
     "services-personal-representative": {
+      "tags": []
+    },
+    "services-personal-representative-public": {
       "tags": []
     },
     "services-search-indexer": {
