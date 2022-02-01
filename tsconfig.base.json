@@ -103,8 +103,14 @@
       "@island.is/api/domains/license-service": [
         "libs/api/domains/license-service/src/index.ts"
       ],
+      "@island.is/api/domains/mortgage-certificate": [
+        "libs/api/domains/mortgage-certificate/src/index.ts"
+      ],
       "@island.is/api/domains/national-registry": [
         "libs/api/domains/national-registry/src/index.ts"
+      ],
+      "@island.is/api/domains/national-registry-real-estate": [
+        "libs/api/domains/national-registry-real-estate/src/index.ts"
       ],
       "@island.is/api/domains/national-registry-x-road": [
         "libs/api/domains/national-registry-x-road/src/index.ts"
@@ -191,6 +197,9 @@
       "@island.is/application/templates/meta-application": [
         "libs/application/templates/meta-application/src/index.ts"
       ],
+      "@island.is/application/templates/mortgage-certificate": [
+        "libs/application/templates/mortgage-certificate/src/index.ts"
+      ],
       "@island.is/application/templates/p-sign": [
         "libs/application/templates/p-sign/src/index.ts"
       ],
@@ -249,6 +258,12 @@
         "libs/clients/middlewares/src/index.ts"
       ],
       "@island.is/clients/mms": ["libs/clients/mms/src/index.ts"],
+      "@island.is/clients/mortgage-certificate": [
+        "libs/clients/mortgage-certificate/src/index.ts"
+      ],
+      "@island.is/clients/national-registry-real-estate/v1": [
+        "libs/clients/national-registry-real-estate/v1/src/index.ts"
+      ],
       "@island.is/clients/national-registry-v1": [
         "libs/clients/national-registry/v1/src/index.ts"
       ],

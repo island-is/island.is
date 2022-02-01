@@ -114,6 +114,8 @@
 ## Libs
 
 - [API](libs/api/README.md)
+  - [API Domains Mortgage Certificate](libs/api/domains/mortgage-certificate/README.md)
+  - [API Domains National Registry Real Estate](libs/api/domains/national-registry-real-estate/README.md)
   - [Mocks](libs/api/mocks/README.md)
 - [API Catalogue](libs/api-catalogue/README.md)
   - [Elastic](libs/api-catalogue/elastic/README.md)
@@ -146,9 +148,12 @@
   - [Islykill](libs/clients/islykill/README.md)
   - [Enhanced Fetch](libs/clients/middlewares/README.md)
   - [MMS](libs/clients/mms/README.md)
+  - [Clients Mortgage Certificate](libs/clients/mortgage-certificate/README.md)
   - [National Registry](libs/clients/national-registry/README.md)
     - [V1](libs/clients/national-registry/v1/README.md)
     - [V2](libs/clients/national-registry/v2/README.md)
+  - [National Registry Real Estate Clients](libs/clients/national-registry-real-estate/README.md)
+    - [Clients National Registry Real Estate V1](libs/clients/national-registry-real-estate/v1/README.md)
   - [Ark](libs/clients/payment/README.md)
   - [Payment Schedule](libs/clients/payment-schedule/README.md)
   - [Regulations](libs/clients/regulations/README.md)

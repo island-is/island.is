@@ -1235,6 +1235,29 @@
         }
       }
     },
+    "api-domains-mortgage-certificate": {
+      "root": "libs/api/domains/mortgage-certificate",
+      "sourceRoot": "libs/api/domains/mortgage-certificate/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/api/domains/mortgage-certificate/**/*.ts"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/mortgage-certificate"],
+          "options": {
+            "jestConfig": "libs/api/domains/mortgage-certificate/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-national-registry": {
       "root": "libs/api/domains/national-registry",
       "sourceRoot": "libs/api/domains/national-registry/src",
@@ -1262,6 +1285,31 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/api/domains/national-registry"]
+        }
+      }
+    },
+    "api-domains-national-registry-real-estate": {
+      "root": "libs/api/domains/national-registry-real-estate",
+      "sourceRoot": "libs/api/domains/national-registry-real-estate/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/api/domains/national-registry-real-estate/**/*.ts"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/libs/api/domains/national-registry-real-estate"
+          ],
+          "options": {
+            "jestConfig": "libs/api/domains/national-registry-real-estate/jest.config.js",
+            "passWithNoTests": true
+          }
         }
       }
     },
@@ -2429,6 +2477,31 @@
         }
       }
     },
+    "application-templates-mortgage-certificate": {
+      "root": "libs/application/templates/mortgage-certificate",
+      "sourceRoot": "libs/application/templates/mortgage-certificate/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/application/templates/mortgage-certificate/**/*.ts"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/libs/application/templates/mortgage-certificate"
+          ],
+          "options": {
+            "jestConfig": "libs/application/templates/mortgage-certificate/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "application-templates-p-sign": {
       "root": "libs/application/templates/p-sign",
       "sourceRoot": "libs/application/templates/p-sign/src",
@@ -3277,6 +3350,66 @@
           "options": {
             "jestConfig": "libs/clients/mms/jest.config.js",
             "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "clients-mortgage-certificate": {
+      "root": "libs/clients/mortgage-certificate",
+      "sourceRoot": "libs/clients/mortgage-certificate/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/mortgage-certificate/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/mortgage-certificate"],
+          "options": {
+            "jestConfig": "libs/clients/mortgage-certificate/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "clients-national-registry-real-estate-v1": {
+      "root": "libs/clients/national-registry-real-estate/v1",
+      "sourceRoot": "libs/clients/national-registry-real-estate/v1/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/clients/national-registry-real-estate/v1/**/*.ts"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/national-registry-real-estate/v1"],
+          "options": {
+            "jestConfig": "libs/clients/national-registry-real-estate/v1/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "update-openapi-document": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10001/SKRA-Protected/getOpenAPI?serviceCode=Fasteignir-v1 -H 'Accept: application/json' > src/clientConfig.json"
+            ],
+            "parallel": false,
+            "cwd": "libs/clients/national-registry-real-estate/v1"
+          }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn openapi-generator -o libs/clients/national-registry-real-estate/v1/gen/fetch -i libs/clients/national-registry-real-estate/v1/src/clientConfig.json"
           }
         }
       }

@@ -42,6 +42,7 @@ import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
 import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
+import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 
@@ -246,6 +247,13 @@ const autoSchemaFile = environment.production
         xroadBaseUrl: environment.xroad.baseUrl,
         xroadClientId: environment.xroad.clientId,
         xroadPath: environment.criminalRecord.xroadPath,
+      },
+    }),
+    MortgageCertificateModule.register({
+      clientConfig: {
+        xroadBaseUrl: environment.xroad.baseUrl,
+        xroadClientId: environment.xroad.clientId,
+        xroadPath: environment.mortgageCertificate.xroadPath,
       },
     }),
     ConfigModule.forRoot({

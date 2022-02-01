@@ -103,6 +103,15 @@ const devConfig = {
       xRoadClientId: process.env.XROAD_CLIENT_ID,
       xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
     },
+    mortgageCertificate: {
+      clientConfig: {
+        xroadClientId:
+          process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
+        xroadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8081',
+        xroadPath:
+          process.env.XROAD_MORTGAGE_CERTIFICATE_PATH ?? 'r1/IS-DEV/GOV/TODOx',
+      },
+    },
   },
   application: {
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
@@ -211,6 +220,13 @@ const prodConfig = {
       XRoadProviderId: process.env.DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID,
       xRoadClientId: process.env.XROAD_CLIENT_ID,
       xRoadBaseUrl: process.env.XROAD_BASE_PATH,
+    },
+    mortgageCertificate: {
+      clientConfig: {
+        xroadClientId: process.env.XROAD_CLIENT_ID,
+        xroadBaseUrl: process.env.XROAD_BASE_PATH,
+        xroadPath: process.env.XROAD_MORTGAGE_CERTIFICATE_PATH,
+      },
     },
   },
   application: {

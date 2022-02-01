@@ -11,6 +11,7 @@ import {
 } from '@island.is/api/schema'
 import { HealthInsuranceV2Options } from '@island.is/clients/health-insurance-v2'
 import { DataProtectionComplaintClientConfig } from '@island.is/clients/data-protection-complaint'
+import { Config as MortgageCertificateConfig } from '@island.is/api/domains/mortgage-certificate'
 
 export interface BaseTemplateAPIModuleConfig {
   xRoadBasePathWithEnv: string
@@ -44,6 +45,7 @@ export interface BaseTemplateAPIModuleConfig {
   paymentScheduleConfig: PaymentScheduleServiceOptions
   healthInsuranceV2: HealthInsuranceV2Options
   dataProtectionComplaint: DataProtectionComplaintClientConfig
+  mortgageCertificate: MortgageCertificateConfig
 }
 
 export interface TemplateApiModuleActionProps {

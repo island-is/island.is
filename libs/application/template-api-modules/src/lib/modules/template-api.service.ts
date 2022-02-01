@@ -17,6 +17,7 @@ import {
   CriminalRecordSubmissionService,
   DataProtectionComplaintService,
   PSignSubmissionService,
+  MortgageCertificateSubmissionService,
 } from './templates'
 
 interface ApplicationApiAction {
@@ -53,6 +54,7 @@ export class TemplateAPIService {
     private readonly criminalRecordSubmissionService: CriminalRecordSubmissionService,
     private readonly dataProtectionComplaintService: DataProtectionComplaintService,
     private readonly pSignSubmissionService: PSignSubmissionService,
+    private readonly mortgageCertificateSubmissionService: MortgageCertificateSubmissionService,
   ) {}
 
   private async tryRunningActionOnService(
@@ -71,7 +73,8 @@ export class TemplateAPIService {
       | GeneralPetitionService
       | CriminalRecordSubmissionService
       | DataProtectionComplaintService
-      | PSignSubmissionService,
+      | PSignSubmissionService
+      | MortgageCertificateSubmissionService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
     // No index signature with a parameter of type 'string' was found on type
@@ -178,6 +181,11 @@ export class TemplateAPIService {
       case ApplicationTypes.P_SIGN:
         return this.tryRunningActionOnService(
           this.pSignSubmissionService,
+          action,
+        )
+      case ApplicationTypes.MORTGAGE_CERTIFICATE:
+        return this.tryRunningActionOnService(
+          this.mortgageCertificateSubmissionService,
           action,
         )
     }

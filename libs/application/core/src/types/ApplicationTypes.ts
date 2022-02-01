@@ -17,6 +17,7 @@ export enum ApplicationTypes {
   GENERAL_PETITION = 'GeneralPetitionService',
   P_SIGN = 'PSign',
   CRIMINAL_RECORD = 'CriminalRecord',
+  MORTGAGE_CERTIFICATE = 'MortgageCertificate',
 }
 
 export const ApplicationConfigurations = {
@@ -90,6 +91,10 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.CRIMINAL_RECORD]: {
     slug: 'sakavottord',
+    translation: 'cr.application',
+  },
+  [ApplicationTypes.MORTGAGE_CERTIFICATE]: {
+    slug: 'vedbokarvottord',
     translation: 'cr.application',
   },
 }
