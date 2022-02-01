@@ -1699,6 +1699,13 @@
           },
           "outputs": ["coverage/apps/application-system/api"]
         },
+        "worker": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "application-system-api:build",
+            "args": ["--job", "worker"]
+          }
+        },
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
@@ -3478,10 +3485,21 @@
             "passWithNoTests": true
           }
         },
+        "update-openapi-document": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "curl --location --request GET 'localhost:8080/r1/IS-DEV/GOV/10006/Skatturinn/ft-v1/openapi.json' --header 'X-Road-Client: IS-DEV/GOV/10000/island-is-client' > src/clientConfig.json",
+              "prettier --write src/clientConfig.json"
+            ],
+            "parallel": false,
+            "cwd": "libs/clients/rsk/company-registry"
+          }
+        },
         "schemas/external-openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn openapi-generator -o libs/clients/rsk/company-registry/src/lib/gen/fetch -i libs/clients/rsk/company-registry/src/openapi.yml"
+            "command": "yarn openapi-generator -o libs/clients/rsk/company-registry/src/lib/gen/fetch -i libs/clients/rsk/company-registry/src/clientConfig.json"
           }
         }
       }
@@ -6244,6 +6262,27 @@
           "outputs": ["coverage/libs/nest/problem"],
           "options": {
             "jestConfig": "libs/nest/problem/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "nest-sequelize": {
+      "root": "libs/nest/sequelize",
+      "sourceRoot": "libs/nest/sequelize/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/nest/sequelize/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/nest/sequelize"],
+          "options": {
+            "jestConfig": "libs/nest/sequelize/jest.config.js",
             "passWithNoTests": true
           }
         }

@@ -23,4 +23,5 @@ export interface FamilyChild {
   homeAddress?: string // Logheimili
   municipality?: string // Sveitarfelag
   postal?: string // Postaritun
+  fate?: string // Afdrif
 }
