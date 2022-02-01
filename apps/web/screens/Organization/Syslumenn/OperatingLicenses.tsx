@@ -395,9 +395,9 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
             >
               <Text variant="eyebrow" color="purple400" paddingTop={1}>
                 {operatingLicense.type2 ?? operatingLicense.type}
+                {operatingLicense.category && ` - ${operatingLicense.category}`}
                 {operatingLicense.restaurantType &&
                   ` (${operatingLicense.restaurantType})`}
-                {operatingLicense.category && ` - ${operatingLicense.category}`}
               </Text>
               <Box marginBottom={[2, 2, 2, 0]}>
                 <Tag disabled>{operatingLicense.issuedBy}</Tag>
