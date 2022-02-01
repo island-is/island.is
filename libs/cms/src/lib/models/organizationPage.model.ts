@@ -13,6 +13,7 @@ import {
   OrganizationTheme,
 } from './organizationTheme.model'
 import { GenericTag, mapGenericTag } from './genericTag.model'
+import { AlertBanner, mapAlertBanner } from './alertBanner.model'
 
 @ObjectType()
 export class OrganizationPage {
@@ -63,6 +64,9 @@ export class OrganizationPage {
 
   @Field(() => [Link], { nullable: true })
   externalLinks?: Array<Link>
+
+  @Field(() => AlertBanner, { nullable: true })
+  alertBanner?: AlertBanner
 }
 
 export const mapOrganizationPage = ({
@@ -89,4 +93,7 @@ export const mapOrganizationPage = ({
   footerItems: (fields.footerItems ?? []).map(mapFooterItem),
   sidebarCards: (fields.sidebarCards ?? []).map(mapSidebarCard),
   externalLinks: (fields.externalLinks ?? []).map(mapLink),
+  alertBanner: fields.alertBanner
+    ? mapAlertBanner(fields.alertBanner)
+    : undefined,
 })

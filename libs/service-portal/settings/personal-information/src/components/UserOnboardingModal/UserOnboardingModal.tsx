@@ -2,7 +2,6 @@ import { toast } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { defaultLanguage } from '@island.is/shared/constants'
-import { useMutation } from '@apollo/client'
 import {
   Modal,
   ServicePortalModuleComponent,
@@ -10,10 +9,7 @@ import {
 import {
   useCreateUserProfile,
   useUpdateUserProfile,
-  useCreateIslykillSettings,
   useUserProfile,
-  useUserProfileAndIslykill,
-  UPDATE_ISLYKILL_SETTINGS,
 } from '@island.is/service-portal/graphql'
 import React, { useState } from 'react'
 import { EmailFormData } from '../Forms/EmailForm'
@@ -23,7 +19,7 @@ import { OnboardingStepper } from './OnboardingStepper'
 import { EmailStep } from './Steps/EmailStep'
 import { FormSubmittedStep } from './Steps/FormSubmittedStep'
 import { LanguageStep } from './Steps/LanguageStep'
-import { PhoneStep } from './Islykill/PhoneStep'
+import { PhoneStep } from './Steps/PhoneStep'
 import { SubmitFormStep } from './Steps/SubmitFormStep'
 import {
   servicePortalCloseOnBoardingModal,
@@ -55,11 +51,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   const { createUserProfile } = useCreateUserProfile()
   const { updateUserProfile } = useUpdateUserProfile()
 
-  const { createIslykillSettings } = useCreateIslykillSettings()
-  const [updateIslykill] = useMutation(UPDATE_ISLYKILL_SETTINGS)
-
   const { data: userProfile } = useUserProfile()
-  const { data: settings } = useUserProfileAndIslykill()
 
   const { changeLanguage } = useNamespaces()
   const { pathname } = useLocation()
@@ -95,25 +87,14 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
       if (userProfile) {
         await updateUserProfile({
           locale,
+          email,
+          mobilePhoneNumber: `+354-${mobilePhoneNumber}`,
         })
       } else {
         await createUserProfile({
           locale,
-        })
-      }
-      if (settings?.noUserFound) {
-        await createIslykillSettings({
           email,
-          mobile: `+354-${mobilePhoneNumber}`,
-        })
-      } else {
-        await updateIslykill({
-          variables: {
-            input: {
-              email: email,
-              mobile: `+354-${mobilePhoneNumber}`,
-            },
-          },
+          mobilePhoneNumber: `+354-${mobilePhoneNumber}`,
         })
       }
       gotoStep('form-submitted')

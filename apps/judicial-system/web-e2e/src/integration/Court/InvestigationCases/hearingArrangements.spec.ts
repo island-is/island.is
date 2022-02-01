@@ -4,7 +4,6 @@ import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
 import {
   makeInvestigationCase,
   makeCourt,
-  makeJudge,
 } from '@island.is/judicial-system/formatters'
 
 import { intercept } from '../../../utils'

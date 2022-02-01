@@ -27,7 +27,6 @@ import {
 import { IntegratedCourts } from '@island.is/judicial-system/consts'
 import {
   CaseState,
-  CaseTransition,
   CaseType,
   isInvestigationCase,
   UserRole,
@@ -38,8 +37,6 @@ import {
   JwtAuthGuard,
   RolesRules,
   RolesGuard,
-  RolesRule,
-  RulesType,
   TokenGuard,
 } from '@island.is/judicial-system/auth'
 
@@ -58,6 +55,14 @@ import {
   CurrentCase,
 } from './guards'
 import {
+  judgeTransitionRule,
+  judgeUpdateRule,
+  prosecutorTransitionRule,
+  prosecutorUpdateRule,
+  registrarTransitionRule,
+  registrarUpdateRule,
+} from './guards/rolesRules'
+import {
   CreateCaseDto,
   InternalCreateCaseDto,
   TransitionCaseDto,
@@ -66,130 +71,6 @@ import {
 import { Case, SignatureConfirmationResponse } from './models'
 import { transitionCase } from './state'
 import { CaseService } from './case.service'
-
-// Allows prosecutors to update a specific set of fields
-const prosecutorUpdateRule = {
-  role: UserRole.PROSECUTOR,
-  type: RulesType.FIELD,
-  dtoFields: [
-    'type',
-    'description',
-    'policeCaseNumber',
-    'accusedNationalId',
-    'accusedName',
-    'accusedAddress',
-    'accusedGender',
-    'defenderName',
-    'defenderEmail',
-    'defenderPhoneNumber',
-    'sendRequestToDefender',
-    'isHeightenedSecurityLevel',
-    'courtId',
-    'leadInvestigator',
-    'arrestDate',
-    'requestedCourtDate',
-    'translator',
-    'requestedValidToDate',
-    'demands',
-    'lawsBroken',
-    'legalBasis',
-    'legalProvisions',
-    'requestedCustodyRestrictions',
-    'requestedOtherRestrictions',
-    'caseFacts',
-    'legalArguments',
-    'requestProsecutorOnlySession',
-    'prosecutorOnlySessionRequest',
-    'comments',
-    'caseFilesComments',
-    'prosecutorId',
-    'sharedWithProsecutorsOfficeId',
-  ],
-} as RolesRule
-
-const courtFields = [
-  'defenderName',
-  'defenderEmail',
-  'defenderPhoneNumber',
-  'defenderIsSpokesperson',
-  'courtCaseNumber',
-  'sessionArrangements',
-  'courtDate',
-  'courtLocation',
-  'courtRoom',
-  'courtStartDate',
-  'courtEndTime',
-  'isClosedCourtHidden',
-  'courtAttendees',
-  'prosecutorDemands',
-  'courtDocuments',
-  'accusedBookings',
-  'litigationPresentations',
-  'courtCaseFacts',
-  'courtLegalArguments',
-  'ruling',
-  'decision',
-  'validToDate',
-  'isCustodyIsolation',
-  'isolationToDate',
-  'conclusion',
-  'endOfSessionBookings',
-  'accusedAppealDecision',
-  'accusedAppealAnnouncement',
-  'prosecutorAppealDecision',
-  'prosecutorAppealAnnouncement',
-  'accusedPostponedAppealDate',
-  'prosecutorPostponedAppealDate',
-  'judgeId',
-  'registrarId',
-]
-
-// Allows judges to update a specific set of fields
-const judgeUpdateRule = {
-  role: UserRole.JUDGE,
-  type: RulesType.FIELD,
-  dtoFields: courtFields,
-} as RolesRule
-
-// Allows registrars to update a specific set of fields
-const registrarUpdateRule = {
-  role: UserRole.REGISTRAR,
-  type: RulesType.FIELD,
-  dtoFields: courtFields,
-} as RolesRule
-
-// Allows prosecutors to open, submit and delete cases
-const prosecutorTransitionRule = {
-  role: UserRole.PROSECUTOR,
-  type: RulesType.FIELD_VALUES,
-  dtoField: 'transition',
-  dtoFieldValues: [
-    CaseTransition.OPEN,
-    CaseTransition.SUBMIT,
-    CaseTransition.DELETE,
-  ],
-} as RolesRule
-
-// Allows judges to receive, accept and reject cases
-const judgeTransitionRule = {
-  role: UserRole.JUDGE,
-  type: RulesType.FIELD_VALUES,
-  dtoField: 'transition',
-  dtoFieldValues: [
-    CaseTransition.RECEIVE,
-    CaseTransition.ACCEPT,
-    CaseTransition.REJECT,
-    CaseTransition.DISMISS,
-  ],
-} as RolesRule
-
-// Allows registrars to receive cases
-const registrarTransitionRule = {
-  role: UserRole.REGISTRAR,
-  type: RulesType.FIELD_VALUES,
-  dtoField: 'transition',
-  dtoFieldValues: [CaseTransition.RECEIVE],
-} as RolesRule
 
 @Controller('api')
 @ApiTags('cases')
@@ -336,7 +217,7 @@ export class CaseController {
   ): Promise<Case | null> {
     this.logger.debug(`Transitioning case ${caseId}`)
 
-    // Use existingCase.modified when client is ready to send last modified timestamp with all updates
+    // Use theCase.modified when client is ready to send last modified timestamp with all updates
     const state = transitionCase(transition.transition, theCase.state)
 
     // TODO: UpdateCaseDto does not contain state - create a new type for CaseService.update
@@ -663,7 +544,7 @@ export class CaseController {
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
-  ): Promise<Case | null> {
+  ): Promise<Case> {
     this.logger.debug(`Extending case ${caseId}`)
 
     if (theCase.childCase) {

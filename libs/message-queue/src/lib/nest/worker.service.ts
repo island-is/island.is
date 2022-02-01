@@ -3,11 +3,11 @@ import { Injectable, OnModuleDestroy } from '@nestjs/common'
 import { Message } from '@aws-sdk/client-sqs'
 import type { Logger } from '@island.is/logging'
 import { QueueService } from './queue.service'
-import type { Queue } from './types'
+import type { Queue, Job } from './types'
 import { clamp } from './utils'
 import { ClientService } from './client.service'
 
-type MessageHandler<T> = (handler: T) => Promise<void>
+type MessageHandler<T> = (handler: T, job: Job) => Promise<void>
 
 // These limits are enforced by AWS, although we could possibly work around the
 // max limit by running multiple listeners simultaneously
@@ -78,7 +78,9 @@ export class WorkerService implements OnModuleDestroy {
     const results: boolean[] = await Promise.all(
       messages.map(async (msg) => {
         try {
-          await messageHandler(JSON.parse(msg.Body ?? ''))
+          assert(msg.MessageId, 'Unexpected empty message id')
+          const job: Job = { id: msg.MessageId }
+          await messageHandler(JSON.parse(msg.Body ?? ''), job)
           return true
         } catch (e) {
           this.logger.error(e)
