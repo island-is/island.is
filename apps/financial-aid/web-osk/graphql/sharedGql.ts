@@ -133,8 +133,8 @@ export const NationalRegistryUserQuery = gql`
 `
 
 export const PersonalTaxReturnQuery = gql`
-  query personalTaxReturnQuery($input: PersonalTaxReturnPdfInput!) {
-    personalTaxReturnForYearPdf(input: $input) {
+  query personalTaxReturnQuery {
+    personalTaxReturnForYearPdf {
       url
     }
   }

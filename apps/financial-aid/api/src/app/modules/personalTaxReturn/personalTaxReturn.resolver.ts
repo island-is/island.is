@@ -1,32 +1,22 @@
-import { CurrentUser, IdsUserGuard, User } from '@island.is/auth-nest-tools'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 import { Audit } from '@island.is/nest/audit'
-import { PersonalTaxReturnService } from './personalTaxReturn.service'
-import { Args, Query, Resolver } from '@nestjs/graphql'
-import { PersonalTaxReturnPdfInput } from './dto/personalTaxReturnPdf.input'
-import { PersonalTaxReturn } from './models/personalTaxReturnPdf.response'
+import { Context, Query, Resolver } from '@nestjs/graphql'
+import { PersonalTaxReturnResponse } from './models/personalTaxReturn.response'
+import BackendAPI from '../../../services/backend'
 
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/personal-tax-return' })
-@Resolver(() => PersonalTaxReturn)
+@Resolver(() => PersonalTaxReturnResponse)
 export class PersonalTaxReturnResolver {
-  constructor(private personalTaxReturnService: PersonalTaxReturnService) {}
-
-  @Query(() => PersonalTaxReturn, {
+  @Query(() => PersonalTaxReturnResponse, {
     nullable: true,
   })
   async personalTaxReturnForYearPdf(
-    @Args('input', { type: () => PersonalTaxReturnPdfInput })
-    input: PersonalTaxReturnPdfInput,
-    @CurrentUser() user: User,
-  ): Promise<PersonalTaxReturn> {
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<PersonalTaxReturnResponse> {
     console.log('personal tax return resolver')
-    const response = await this.personalTaxReturnService.personalTaxReturnPdf(
-      '2809783969',
-      '2020',
-      input.uploadUrl,
-      input.folder,
-    )
-    return { url: response }
+
+    return await backendApi.getPersonalTaxReturn()
   }
 }

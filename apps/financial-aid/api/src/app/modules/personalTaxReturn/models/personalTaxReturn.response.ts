@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class PersonalTaxReturn {
+export class PersonalTaxReturnResponse {
   @Field(() => String)
   url!: string
 }

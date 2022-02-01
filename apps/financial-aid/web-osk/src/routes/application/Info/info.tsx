@@ -36,8 +36,6 @@ const ApplicationInfo = () => {
     loadingMunicipality,
   } = useContext(AppContext)
 
-  const { createSignedUrl } = useFileUpload([])
-
   const [accept, setAccept] = useState(false)
   const [hasError, setHasError] = useState(false)
   const [error, setError] = useState(false)
@@ -50,17 +48,9 @@ const ApplicationInfo = () => {
     { input: { ssn: string } }
   >(NationalRegistryUserQuery)
 
-  const personalTaxReturnQuery = useAsyncLazyQuery<
-    {
-      personalTaxReturnForYearPdf: { personalTaxReturn: string }
-    },
-    {
-      input: {
-        uploadUrl: string
-        folder: string
-      }
-    }
-  >(PersonalTaxReturnQuery)
+  const personalTaxReturnQuery = useAsyncLazyQuery<{
+    personalTaxReturnForYearPdf: { personalTaxReturn: string }
+  }>(PersonalTaxReturnQuery)
 
   const logOut = useLogOut()
 
@@ -77,19 +67,7 @@ const ApplicationInfo = () => {
     setError(false)
     setLoading(true)
 
-    const signedUrl = await createSignedUrl(
-      `Framtal_2809783969_${new Date().getFullYear()}.pdf`.normalize(),
-    )
-
-    if (!signedUrl) {
-      setError(true)
-      setLoading(false)
-      return
-    }
-
-    const { data } = await personalTaxReturnQuery({
-      input: { uploadUrl: signedUrl.url, folder: signedUrl.key },
-    }).catch((err) => {
+    const { data } = await personalTaxReturnQuery({}).catch((err) => {
       console.log(err)
       return { data: undefined }
     })

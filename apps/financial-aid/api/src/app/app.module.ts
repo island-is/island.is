@@ -13,9 +13,8 @@ import {
   FileModule,
   StaffModule,
   PersonalTaxReturnModule,
+  MunicipalityNationalRegistryModule,
 } from './modules/'
-import { MunicipalityNationalRegistryModule } from './modules/municpalityNationalRegistryModule'
-import { PersonalTaxReturnConfig } from '@island.is/clients/rsk/personal-tax-return'
 
 const debug = !environment.production
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -45,11 +44,7 @@ const autoSchemaFile = environment.production
     PersonalTaxReturnModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [
-        XRoadConfig,
-        NationalRegistryClientConfig,
-        PersonalTaxReturnConfig,
-      ],
+      load: [XRoadConfig, NationalRegistryClientConfig],
     }),
   ],
 })

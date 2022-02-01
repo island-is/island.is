@@ -1,28 +1,33 @@
 import { Injectable } from '@nestjs/common'
 import { Base64 } from 'js-base64'
 import { PersonalTaxReturnApi } from '@island.is/clients/rsk/personal-tax-return'
+import { FileService } from '../file'
 
 @Injectable()
 export class PersonalTaxReturnService {
-  constructor(private personalTaxReturnApi: PersonalTaxReturnApi) {}
+  constructor(
+    private personalTaxReturnApi: PersonalTaxReturnApi,
+    private fileService: FileService,
+  ) {}
 
-  async personalTaxReturnPdf(
-    nationalId: string,
-    year: string,
-    uploadUrl: string,
-    folder: string,
-  ) {
+  async personalTaxReturnPdf(nationalId: string, year: string, folder: string) {
     const taxReturn = await this.personalTaxReturnApi.personalTaxReturnInPdf(
       nationalId,
       year,
     )
+
+    const fileName = `Framtal_${nationalId}_${year}`
+
+    const presignedUrl = this.fileService.createSignedUrl(folder, fileName)
+
+    console.log('presignedUrl', presignedUrl)
 
     console.log('taxReturn success', taxReturn.success)
     console.log('taxReturn error text', taxReturn.errorText)
 
     const base64 = Base64.atob(taxReturn.content)
 
-    await fetch(uploadUrl, {
+    await fetch(presignedUrl.url, {
       method: 'PUT',
       body: Buffer.from(base64, 'binary'),
       headers: {
@@ -32,6 +37,6 @@ export class PersonalTaxReturnService {
       },
     })
 
-    return taxReturn.content
+    return presignedUrl.key
   }
 }

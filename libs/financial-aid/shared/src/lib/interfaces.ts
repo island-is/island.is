@@ -236,6 +236,10 @@ export interface ApplicationFilters {
   MyCases: number
 }
 
+export interface PersonalTaxReturn {
+  url: string
+}
+
 export interface Application {
   id: string
   created: string
