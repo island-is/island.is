@@ -11,5 +11,4 @@ export class PracticalDrivingLessonsInput {
   @IsString()
   @IsOptional()
   id?: string
-
 }

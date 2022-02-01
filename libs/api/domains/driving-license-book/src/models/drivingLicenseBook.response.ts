@@ -37,7 +37,7 @@ export class DrivingLicenseBook {
 
   @Field(() => [Lesson], { nullable: true })
   teachersAndLessons?: Lesson[] | null
-  
+
   @Field(() => [DrivingSchoolExam], { nullable: true })
   drivingSchoolExams?: DrivingSchoolExam[] | null
 

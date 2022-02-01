@@ -6,5 +6,4 @@ export class StudentInput {
   @Field({ nullable: true })
   @IsString()
   ssn!: string
-
 }

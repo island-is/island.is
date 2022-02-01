@@ -3,7 +3,6 @@ import { Field, InputType } from '@nestjs/graphql'
 
 @InputType()
 export class UpdatePracticalDrivingLesson {
-
   @Field()
   @IsNumber()
   minutes!: number

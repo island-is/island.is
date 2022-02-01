@@ -6,5 +6,4 @@ export class LicenseBookIdInput {
   @Field({ nullable: true })
   @IsString()
   id!: string
-
 }
