@@ -250,7 +250,7 @@
     "stream-buffers": "3.0.2",
     "styled-components": "5.2.1",
     "supertest": "4.0.2",
-    "swagger-ui-express": "4.1.4",
+    "swagger-ui-express": "4.3.0",
     "testcontainers": "7.23.2",
     "timeout-signal": "1.1.0",
     "to-querystring": "1.1.1",
