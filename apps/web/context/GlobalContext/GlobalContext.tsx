@@ -7,9 +7,12 @@ export type NamespaceType = {
 
 export interface GlobalContextProps {
   globalNamespace: NamespaceType
-  contentfulId: string
+  pageContentfulId: string
+  subpageContentfulId?: string
+  subpageSlug?: string
   setGlobalNamespace: (ns: NamespaceType) => void
-  setContentfulId: (id: string) => void
+  setContentfulId: (pageId: string, subpageId?: string) => void
+  setSubpageSlug: (slug: string) => void
 }
 
 export interface GlobalContextProviderProps {
@@ -18,28 +21,41 @@ export interface GlobalContextProviderProps {
 
 export const GlobalContext = createContext<GlobalContextProps>({
   globalNamespace: {},
-  contentfulId: '',
+  pageContentfulId: '',
+  subpageContentfulId: '',
+  subpageSlug: '',
   setGlobalNamespace: () => null,
   setContentfulId: () => null,
+  setSubpageSlug: () => null,
 })
 
 export const GlobalContextProvider: FC<GlobalContextProviderProps> = ({
   namespace = {},
   children,
 }) => {
-  const setContentfulId = (id: string) => {
-    setState({ ...state, contentfulId: id })
+  const setContentfulId = (pageId: string, subpageId?: string) => {
+    setState({
+      ...state,
+      pageContentfulId: pageId,
+      subpageContentfulId: subpageId,
+    })
   }
 
   const setGlobalNamespace = (ns: NamespaceType) => {
     setState({ ...state, globalNamespace: ns })
   }
 
-  const initialState = {
+  const setSubpageSlug = (slug: string) => {
+    setState({ ...state, subpageSlug: slug })
+  }
+
+  const initialState: GlobalContextProps = {
     globalNamespace: namespace,
-    contentfulId: '',
+    pageContentfulId: '',
+    subpageContentfulId: '',
     setGlobalNamespace,
     setContentfulId,
+    setSubpageSlug,
   }
 
   const [state, setState] = useState(initialState)
