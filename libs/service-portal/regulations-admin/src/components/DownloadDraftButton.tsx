@@ -18,8 +18,11 @@ type Props = {
 }
 
 const DownloadRegulationDraftQuery = gql`
-  query downloadRegulation($input: DownloadRegulationInput!) {
-    downloadRegulation(input: $input)
+  query downloadRegulation($input: GetDraftRegulationPdfDownloadInput!) {
+    getDraftRegulationPdfDownload(input: $input) {
+      downloadService
+      url
+    }
   }
 `
 
@@ -53,7 +56,7 @@ export function DownloadDraftButton({ userInfo, regulationDraftId }: Props) {
   ] = useLazyQuery<Query>(DownloadRegulationDraftQuery, {
     variables: {
       input: {
-        regulationId: regulationDraftId,
+        draftId: regulationDraftId,
       },
     },
     fetchPolicy: 'no-cache',
