@@ -6,6 +6,8 @@ const schema = z.object({
   fetch: z.object({
     timeout: z.number().int(),
   }),
+  username: z.string(),
+  password: z.string(),
 })
 
 export const DrivingLicenseBookClientConfig = defineConfig({
@@ -20,6 +22,8 @@ export const DrivingLicenseBookClientConfig = defineConfig({
       fetch: {
         timeout: env.optionalJSON('XROAD_DRIVING_LICENSE_BOOK_TIMEOUT') ?? 10000,
       },
+      username: env.required('DRIVING_LICNESE_BOOK_USERNAME'),
+      password: env.required('DRIVING_LICNESE_BOOK_PASSWORD'),
     }
   },
 })

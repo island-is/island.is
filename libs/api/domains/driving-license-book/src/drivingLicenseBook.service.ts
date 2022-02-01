@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import {DrivingLicenseBookApi} from '@island.is/clients/driving-license-book'
+import { DrivingLicenseBookClientService} from '@island.is/clients/driving-license-book'
 import { StudentListInput } from './dto/studentList.input'
 import { StudentListResponse } from './models/studentList.response'
 import { Auth, AuthHeaderMiddleware, AuthMiddleware, User } from '@island.is/auth-nest-tools'
@@ -10,19 +10,19 @@ import { Auth, AuthHeaderMiddleware, AuthMiddleware, User } from '@island.is/aut
 export class DrivingLicenseBookService {
     constructor(
         @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-        private drivingLicenseBookApi: DrivingLicenseBookApi
+        private drivingLicenseBookClientService: DrivingLicenseBookClientService
     ) {}
 
-    apiWithAuth(auth: Auth) {
+    async apiWithAuth(auth: Auth) {
         console.log("AUTH", auth.authorization)
-       return this.drivingLicenseBookApi.withMiddleware(new AuthHeaderMiddleware(auth.authorization))
+       return await this.drivingLicenseBookClientService.api()
     }
 
     async getAllStudents( user: User, data: StudentListInput): Promise<StudentListResponse>{
         try {
-            const api = this.apiWithAuth(user)
+            const api = await this.apiWithAuth(user)
             console.log("API",api)
-            return await this.apiWithAuth(user).apiStudentGetStudentListGet(data)
+            return await api.apiStudentGetStudentListGet(data)
 
         } catch (e) {
             console.log(e)

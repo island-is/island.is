@@ -1,0 +1,47 @@
+import { Configuration, DrivingLicenseBookApi } from '../../gen/fetch'
+
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { ConfigType, XRoadConfig } from '@island.is/nest/config'
+
+import { DrivingLicenseBookClientConfig } from './drivinLicenseBookClient.config'
+import { Injectable, Inject } from '@nestjs/common'
+import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
+
+@Injectable()
+export class DrivingLicenseBookClientService {
+  constructor(
+    @Inject(DrivingLicenseBookClientConfig.KEY)
+    private clientConfig: ConfigType<typeof DrivingLicenseBookClientConfig>,
+    private xroadConfig: ConfigType<typeof XRoadConfig>,
+  ) {}
+
+  async api() {
+    const api = new DrivingLicenseBookApi(
+      new Configuration({
+        fetchApi: createEnhancedFetch({
+          name: 'clients-driving-license-book',
+          ...this.clientConfig.fetch,
+        }),
+        basePath: `${this.xroadConfig.xRoadBasePath}/r1/${this.clientConfig.xRoadServicePath}`,
+        headers: {
+          'X-Road-Client': this.xroadConfig.xRoadClient,
+        },
+      }),
+    )
+
+    const config = {
+      username: this.clientConfig.username,
+      password: this.clientConfig.password,
+    }
+
+    const { token } = await api.apiAuthenticationAuthenticatePost({
+      authenticateModel: config,
+    })
+    console.log(token)
+    if (token) {
+      return api.withMiddleware(new AuthHeaderMiddleware(`Bearer ${token}`))
+    } else {
+      throw new Error('Syslumenn client configuration and login went wrong')
+    }
+  }
+}
