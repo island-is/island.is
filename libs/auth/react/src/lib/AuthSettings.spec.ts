@@ -12,6 +12,7 @@ describe('mergeAuthSettings', () => {
       Object {
         "authority": "https://innskra.island.is",
         "baseUrl": "http://localhost",
+        "checkSessionPath": "/connect/sessioninfo",
         "client_id": "test-client",
         "loadUserInfo": true,
         "monitorSession": false,

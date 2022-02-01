@@ -31,7 +31,7 @@ export class ClientsDataProtectionComplaintModule {
       logger.error('DataProtectionClient XRoadProviderId not provided.')
     }
 
-    const basePath = `${config.xRoadBaseUrl}/r1/${config.XRoadProviderId}/islandis`
+    const basePath = `${config.xRoadBaseUrl}/r1/${config.XRoadProviderId}`
     const exportedApis = [
       DocumentApi,
       CaseApi,
@@ -39,7 +39,6 @@ export class ClientsDataProtectionComplaintModule {
       MemoApi,
       ClientsApi,
     ]
-
     return {
       module: ClientsDataProtectionComplaintModule,
       providers: [
@@ -54,12 +53,13 @@ export class ClientsDataProtectionComplaintModule {
               new Configuration({
                 fetchApi: createEnhancedFetch({
                   name: 'data-protection-complaint-client',
+                  logErrorResponseBody: true,
+                  timeout: 20000,
                 }),
                 basePath: basePath,
                 headers: {
-                  'X-Road-Client': config.XRoadProviderId,
+                  'X-Road-Client': config.xRoadClientId,
                   Accept: 'application/json',
-                  'Content-Type': 'application/json',
                 },
               }),
             )
@@ -73,12 +73,13 @@ export class ClientsDataProtectionComplaintModule {
               new Configuration({
                 fetchApi: createEnhancedFetch({
                   name: 'data-protection-complaint-client',
+                  logErrorResponseBody: true,
+                  timeout: 20000,
                 }),
                 basePath: basePath,
                 headers: {
-                  'X-Road-Client': config.XRoadProviderId,
+                  'X-Road-Client': config.xRoadClientId,
                   Accept: 'application/json',
-                  'Content-Type': 'application/json',
                 },
               }),
             )

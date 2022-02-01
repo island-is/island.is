@@ -64,11 +64,11 @@ export const ruling = {
     defaultMessage: 'Úrskurður',
     description: 'Notaður sem fyrirsögn á úrskurð.',
   }),
-  rulingShortVersionPlaceholder: {
+  rulingShortVersionPlaceholder: defineMessage({
     id: 'judicial.system.backend:pdf.ruling.short_version_placeholder',
     defaultMessage: '(...)',
     description: 'Notaður í stað úrskurðartexta í stuttu útgáfu úrskurðar.',
-  },
+  }),
   courtDemandsHeading: defineMessage({
     id: 'judicial.system.backend:pdf.ruling.court_demands_heading',
     defaultMessage: 'Krafa',
@@ -136,9 +136,29 @@ export const ruling = {
     description:
       'Notaður sem lokaorð þar sem {endTime} er lokatími þinghalds og er sjálfkrafa bætt við í kóða.',
   }),
-  inSession: {
+  inSession: defineMessage({
     id: 'judicial.system.backend:pdf.ruling.in_session',
     defaultMessage: 'Þinghaldi er ekki lokið.',
     description: 'Notaður sem lokaorð þegar þinghaldi er ekki lokið.',
-  },
+  }),
+  noDistrict: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.no_district',
+    defaultMessage: 'ekki skráður',
+    description: 'Notaður sem texti þegar embætti er ekki skráð',
+  }),
+  prosecutorIs: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.prosecutor_is',
+    defaultMessage: 'Sóknaraðili er',
+    description: 'Notað fyrir Sóknaraðili er ...',
+  }),
+  defendantIs: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.defendant_is',
+    defaultMessage: 'Varnaraðil{suffix} er{isSuffix}',
+    description: 'Notað fyrir Varnaraðili er ...',
+  }),
+  noDefendants: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.no_defendants',
+    defaultMessage: 'ekki skráður',
+    description: 'Notaður sem texti þegar varnaraðila vantar',
+  }),
 }

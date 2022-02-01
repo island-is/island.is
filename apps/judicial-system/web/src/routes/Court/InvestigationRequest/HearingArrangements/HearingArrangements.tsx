@@ -25,7 +25,7 @@ const HearingArrangements = () => {
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
 
-  const { autofill } = useCase()
+  const { autofill, autofillSessionArrangements } = useCase()
 
   const { data: users, loading: userLoading } = useQuery<UserData>(UsersQuery, {
     fetchPolicy: 'no-cache',
@@ -45,7 +45,7 @@ const HearingArrangements = () => {
       }
 
       if (theCase.defenderName) {
-        autofill(
+        autofillSessionArrangements(
           'sessionArrangements',
           SessionArrangements.ALL_PRESENT,
           theCase,
@@ -54,7 +54,13 @@ const HearingArrangements = () => {
 
       setWorkingCase(theCase)
     }
-  }, [autofill, isCaseUpToDate, setWorkingCase, workingCase])
+  }, [
+    autofill,
+    autofillSessionArrangements,
+    isCaseUpToDate,
+    setWorkingCase,
+    workingCase,
+  ])
 
   return (
     <PageLayout

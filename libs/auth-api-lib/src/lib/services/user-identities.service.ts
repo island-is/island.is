@@ -25,6 +25,7 @@ export class UserIdentitiesService {
     return this.userIdentityModel.findAndCountAll({
       include: [Claim],
       distinct: true,
+      useMaster: true,
     })
   }
 
@@ -58,6 +59,7 @@ export class UserIdentitiesService {
 
     return await this.userIdentityModel.findByPk(subjectId, {
       include: [Claim],
+      useMaster: true,
     })
   }
 
@@ -74,12 +76,14 @@ export class UserIdentitiesService {
           where: { type: 'nationalId', value: nationalId },
         },
       ],
+      useMaster: true,
     })
 
     if (linkedIdentity) {
       return await this.userIdentityModel.findAll({
         include: [Claim],
         where: { subjectId: linkedIdentity.map((c) => c.subjectId) },
+        useMaster: true,
       })
     }
 
@@ -106,6 +110,7 @@ export class UserIdentitiesService {
     return this.userIdentityModel.findOne({
       where: { providerName: provider, providerSubjectId: subjectId },
       include: [Claim],
+      useMaster: true,
     })
   }
 
@@ -143,6 +148,7 @@ export class UserIdentitiesService {
           actorSubjectId: actorSubjectId,
         },
         plain: true,
+        useMaster: true,
       },
     )
 
@@ -194,7 +200,9 @@ export class UserIdentitiesService {
       throw new BadRequestException('SubjectId must be provided')
     }
 
-    const sub = await this.userIdentityModel.findByPk(subjectId)
+    const sub = await this.userIdentityModel.findByPk(subjectId, {
+      useMaster: true,
+    })
     if (sub) {
       sub.active = active
 
