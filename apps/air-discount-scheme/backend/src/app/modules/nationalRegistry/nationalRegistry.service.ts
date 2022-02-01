@@ -210,12 +210,18 @@ export class NationalRegistryService {
     if (cacheValue) {
       return cacheValue.user
     }
-
     const response: {
       data: [NationalRegistryGeneralLookupResponse]
     } = await this.httpService
       .get(`${this.baseUrl}/general-lookup?ssn=${nationalId}`)
       .toPromise()
+
+    if (response && response.data[0].error) {
+      this.logger.error(
+        `National Registry general lookup failed for User<${nationalId}> due to: ${response.data[0].error}`,
+      )
+      return null
+    }
 
     const user = this.createNationalRegistryUser(response.data[0])
     if (user) {

@@ -57,6 +57,10 @@ export class UserResolver {
     return relations.reduce(
       (promise: Promise<FlightLeg[]>, relation: TUser) => {
         return promise.then(async (acc) => {
+          // This is incase national registry failed to get information about specific relation.
+          if (relation === null) {
+            return acc
+          }
           const flights: Flight[] = await backendApi.getUserFlights(
             relation.nationalId,
           )

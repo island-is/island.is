@@ -34,6 +34,10 @@ export class DiscountResolver {
     return relations.reduce(
       (promise: Promise<DiscountWithTUser[]>, relation: TUser) => {
         return promise.then(async (acc) => {
+          // This is incase national registry failed to get information about specific relation.
+          if (relation === null) {
+            return acc
+          }
           let discount: TDiscount = await backendApi.getDiscount(
             relation.nationalId,
           )
