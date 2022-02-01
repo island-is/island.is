@@ -97,6 +97,8 @@ import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { CurrentLocale } from './utils/currentLocale'
 import { Application } from './application.model'
 import AmazonS3URI from 'amazon-s3-uri'
+import { Documentation } from '@island.is/nest/swagger'
+
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('applications')
@@ -974,7 +976,7 @@ export class ApplicationController {
       documentSigned: true,
     }
   }
-
+  
   @Scopes(ApplicationScope.read)
   @Get('applications/:id/:pdfType/presignedUrl')
   @ApiParam({
@@ -1009,23 +1011,27 @@ export class ApplicationController {
     return { url }
   }
 
-  @Scopes(ApplicationScope.read)
+
   @Get('applications/:id/attachments/:s3Key/presigned-url')
-  @ApiParam({
-    name: 'id',
-    type: String,
-    required: true,
-    description: 'The id of the application which the file was created for.',
-    allowEmptyValue: false,
+  @Scopes(ApplicationScope.read)
+  @Documentation({
+    description: 'Gets a presigned url for attachments',
+    response: { status: 200, type: PresignedUrlResponseDto }, request: {
+      query: {},
+      params: {
+        id: {
+          type: 'string',
+          description: 'application id',
+          required: true,
+        },
+        s3Key: {
+          type: 'string',
+          description: 's3 key for attachment',
+          required: true,
+        },
+      }
+    },
   })
-  @ApiParam({
-    name: 's3Key',
-    type: String,
-    required: true,
-    description: 's3Key',
-    allowEmptyValue: false,
-  })
-  @ApiOkResponse({ type: PresignedUrlResponseDto })
   async getAttachmentPresignedURL(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Param('s3Key') s3Key: string,
