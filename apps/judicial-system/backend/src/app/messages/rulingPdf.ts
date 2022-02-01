@@ -76,6 +76,7 @@ export const ruling = {
     description: 'Notaður sem texti þegar dómari hefur ekki verið skráður.',
   }),
 
+  // TODO: Remove all messages below
   proceedingsHeading: defineMessage({
     id: 'judicial.system.backend:pdf.ruling.proceedings_heading',
     defaultMessage: 'Þingbók og úrskurður',
