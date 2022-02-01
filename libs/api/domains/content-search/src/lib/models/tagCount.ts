@@ -11,6 +11,6 @@ export class TagCount {
   @Field(() => Int)
   count: string
 
-  @Field()
-  type: string
+  @Field({ nullable: true })
+  type?: string = 'no type'
 }

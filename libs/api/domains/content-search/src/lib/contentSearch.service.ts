@@ -48,7 +48,6 @@ export class ContentSearchService {
           key: tagObject.key,
           count: tagObject.doc_count.toString(),
           value: tagObject.value.buckets?.[0]?.key ?? '', // value of tag is always the first value here we provide default value since value is optional
-          type: 'ok',
         }
       },
     )

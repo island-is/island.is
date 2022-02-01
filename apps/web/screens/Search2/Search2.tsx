@@ -127,6 +127,8 @@ const Search2: Screen<CategoryProps> = ({
       : (query.type as string) ?? '',
   )
   const [filter, setFilter] = useState<FilterOptions>({ ...initialFilter })
+  const [searchTags, setSearchTags] = useState<string>('')
+  const [searchContentTypes, setSearchContentTypes] = useState<string[]>([])
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
@@ -147,6 +149,20 @@ const Search2: Screen<CategoryProps> = ({
     category: query.category as string,
     type: query.type as string,
   }
+
+  const toggleSearchContentTypes = (type: string) => {
+    const arr = [...searchContentTypes]
+
+    if (arr.indexOf(type) < 0) {
+      arr.push(type)
+    } else {
+      arr.splice(searchContentTypes.indexOf(type), 1)
+    }
+
+    setSearchContentTypes(arr)
+  }
+
+  console.log('searchContentTypes', searchContentTypes)
 
   const getArticleCount = useMemo(
     () => () => {
@@ -356,14 +372,75 @@ const Search2: Screen<CategoryProps> = ({
 
   useEffect(() => {
     console.log('filter change', filter)
+
+    const strings = []
+
+    if (filter.thjonustuflokkar?.[0]) {
+      strings.push(`category,${filter.thjonustuflokkar?.[0]}`)
+    }
+
+    if (filter.opinberirAdilar?.[0]) {
+      strings.push(`organization,${filter.opinberirAdilar?.[0]}`)
+    }
+
+    setSearchTags(strings.join('|'))
   }, [filter])
+
+  useEffect(() => {
+    console.log('filter change', filter)
+
+    const strings = []
+
+    if (filter.thjonustuflokkar?.[0]) {
+      strings.push(`category,${filter.thjonustuflokkar?.[0]}`)
+    }
+
+    if (filter.opinberirAdilar?.[0]) {
+      strings.push(`organization,${filter.opinberirAdilar?.[0]}`)
+    }
+
+    setSearchTags(strings.join('|'))
+  }, [filter])
+
+  useEffect(() => {
+    if (searchTags) {
+      replace({
+        pathname,
+        query: {
+          q,
+          tags: searchTags,
+        },
+      }).then(() => {
+        window.scrollTo(0, 0)
+      })
+    }
+  }, [searchTags, replace])
+
+  useEffect(() => {
+    if (searchContentTypes) {
+      replace({
+        pathname,
+        query: {
+          q,
+          types: searchContentTypes,
+        },
+      }).then(() => {
+        window.scrollTo(0, 0)
+      })
+    }
+  }, [searchContentTypes, replace])
 
   const categories: CategoriesProps[] = [
     {
       id: 'thjonustuflokkar',
       label: 'Þjónustuflokkar',
       selected: filter.thjonustuflokkar,
+      singleOption: true,
       filters: [
+        {
+          label: 'Innflytjendamal',
+          value: 'innflytjendamal',
+        },
         {
           label: 'Menntun',
           value: 'menntun',
@@ -378,6 +455,7 @@ const Search2: Screen<CategoryProps> = ({
       id: 'opinberirAdilar',
       label: 'Opinberir aðilar',
       selected: filter.opinberirAdilar,
+      singleOption: true,
       filters: [
         {
           label: 'Syslumenn',
@@ -454,15 +532,11 @@ const Search2: Screen<CategoryProps> = ({
                         <Tag
                           key={index}
                           variant="blue"
-                          active={
-                            activeSearchType === key ||
-                            activeSearchType
-                              .split(',')
-                              .some((x) =>
-                                connectedTypes[key].includes(firstUpper(x)),
-                              )
-                          }
-                          onClick={() => setActiveSearchType(key)}
+                          active={searchContentTypes.includes(key)}
+                          onClick={() => {
+                            toggleSearchContentTypes(key)
+                            //setActiveSearchType(key)
+                          }}
                         >
                           {title}
                         </Tag>
@@ -470,10 +544,10 @@ const Search2: Screen<CategoryProps> = ({
                     {countResults.processEntryCount > 0 && (
                       <Tag
                         variant="blue"
-                        active={activeSearchType === 'ArticlesWithProcessEntry'}
-                        onClick={() =>
-                          setActiveSearchType('ArticlesWithProcessEntry')
-                        }
+                        // active={activeSearchType === 'ArticlesWithProcessEntry'}
+                        onClick={() => {
+                          // setActiveSearchType('ArticlesWithProcessEntry')
+                        }}
                       >
                         {n('processEntry', 'Umsókn')}
                       </Tag>
@@ -589,19 +663,42 @@ Search2.getInitialProps = async ({ apolloClient, locale, query }) => {
   const queryString = single(query.q) || ''
   const category = single(query.category) || ''
   const processentry = single(query.processentry) || ''
+  const organization = single(query.organization) || ''
   const type = single(query.type) || ''
+  const types = single(query.types) || ''
   const page = Number(single(query.page)) || 1
+
+  const tagsQuery = single(query.tags) || ''
 
   let tags = {}
   let countTag = {}
 
-  if (category) {
-    tags = { tags: [{ key: category, type: 'category' as SearchableTags }] }
-  } else if (processentry) {
-    tags = { tags: [{ key: 'true', type: 'processentry' as SearchableTags }] }
-  } else {
-    countTag = { countTag: 'category' as SearchableTags }
+  console.log('types', types)
+
+  if (tagsQuery) {
+    tags = {
+      tags: tagsQuery.split('|').map((x) => {
+        const arr = x.split(',')
+
+        return {
+          type: arr[0],
+          key: arr[1],
+        }
+      }),
+    }
   }
+
+  // if (category) {
+  //   tags = { tags: [{ key: category, type: 'category' as SearchableTags }] }
+  // } else if (processentry) {
+  //   tags = {
+  //     tags: [{ key: 'true', type: 'processentry' as SearchableTags }],
+  //   }
+  // } else if (organization) {
+  //   tags = { tags: [{ key: 'true', type: 'organization' as SearchableTags }] }
+  // } else {
+  //   countTag = { countTag: 'category' as SearchableTags }
+  // }
 
   const allTypes = [
     'webArticle' as SearchableContentTypes,
@@ -625,6 +722,17 @@ Search2.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 
   console.log('searching for type', types)
+
+  console.log({
+    language: locale as ContentLanguage,
+    queryString,
+    types,
+    ...tags,
+    ...countTag,
+    countTypes: true,
+    size: PERPAGE,
+    page,
+  })
 
   const [
     {
