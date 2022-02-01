@@ -3,7 +3,10 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { AmountModel } from './models'
 
-import { DeductionFactorsService } from '../deductionFactors'
+import {
+  DeductionFactorsModel,
+  DeductionFactorsService,
+} from '../deductionFactors'
 
 import { Sequelize } from 'sequelize'
 import { Amount } from '@island.is/financial-aid/shared/lib'
@@ -34,6 +37,16 @@ export class AmountService {
           })
           return amountResponse
         })
+    })
+  }
+
+  async findById(id: string): Promise<AmountModel> {
+    return this.amountModel.findOne({
+      where: {
+        applicationId: id,
+      },
+      order: [['created', 'DESC']],
+      include: [{ model: DeductionFactorsModel, as: 'deductionFactors' }],
     })
   }
 }

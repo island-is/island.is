@@ -187,6 +187,9 @@ export class ApplicationService {
       ],
     })
 
+    const amounts = await this.amountService.findById(id)
+    application?.setDataValue('amount', amounts)
+
     return application
   }
 
