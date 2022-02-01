@@ -33,6 +33,7 @@ export const actionHandlers: {
 
   UPDATE_PROP: (state, { name, value }) => {
     const field = state.draft[name]
+
     // @ts-expect-error  (Fuu)
     value = tidyUp[field.type || '_'](value)
 

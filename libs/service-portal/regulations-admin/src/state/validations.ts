@@ -159,6 +159,7 @@ export const updateFieldValue = <T extends DraftField<unknown, string>>(
 // ---------------------------------------------------------------------------
 
 export const tidyUp = {
+  date: (value: string) => value,
   text: (value: string) => value.trimLeft() as PlainText,
   html: (value: HTMLText) => value.trimLeft() as HTMLText,
   _: <T extends unknown>(value: T) => value,
