@@ -9,7 +9,7 @@ import * as styles from './Modal.css'
 interface ModalProps {
   title: string
   text: string | ReactNode
-  primaryButtonText: string
+  primaryButtonText?: string
   secondaryButtonText?: string
   handleClose?: () => void
   handleSecondaryButtonClick?: () => void
@@ -89,7 +89,7 @@ const Modal: React.FC<ModalProps> = ({
               </Button>
             </Box>
           )}
-          {primaryButtonText !== '' && (
+          {primaryButtonText && (
             <Button
               data-testid="modalPrimaryButton"
               onClick={handlePrimaryButtonClick}

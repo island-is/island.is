@@ -205,7 +205,7 @@ export const signedVerdictOverview = {
         id:
           'judicial.system.core:signed_verdict_overview.modify_dates_modal.success_text',
         defaultMessage:
-          'Gæsluvarðhald og einangrun til 10. desember 2021 kl 16:00. Tilkynning verður send á ábyrgðaraðila málsins hjá sækjanda. Ef gæsluvarðhaldsfangelsi hefur ekki verið upplýst og þörf er á því, þarf að gera það eftir hefðbundinni boðleið.',
+          '{modification}\nTilkynning verður send á ábyrgðaraðila málsins hjá sækjanda. Ef gæsluvarðhaldsfangelsi hefur ekki verið upplýst og þörf er á því, þarf að gera það eftir hefðbundinni boðleið.',
         description:
           'Notaður sem texti í "Lengd gæsluvarðhalds breytt" glugga á yfirlitsskjá afgreiddra mála.',
       },
@@ -222,6 +222,13 @@ export const signedVerdictOverview = {
         defaultMessage: 'Hætta við',
         description:
           'Notaður sem texti í hætta við takka í "Breyta lengd gæsluvarðhalds" glugga á yfirlitsskjá afgreiddra mála.',
+      },
+      secondaryButtonTextSuccess: {
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.secondary_button_text_success',
+        defaultMessage: 'Loka glugga',
+        description:
+          'Notaður sem texti í loka takka í "Lengd gæsluvarðhalds breytt" glugga á yfirlitsskjá afgreiddra mála.',
       },
       modifiedValidToDateLabel: {
         id:

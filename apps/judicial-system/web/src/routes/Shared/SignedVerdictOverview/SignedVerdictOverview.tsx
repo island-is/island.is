@@ -2,9 +2,10 @@ import React, { ReactNode, useContext, useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
-import formatISO from 'date-fns/formatISO'
 import { ValueType } from 'react-select/src/types'
 import { useIntl } from 'react-intl'
+import compareAsc from 'date-fns/compareAsc'
+import formatISO from 'date-fns/formatISO'
 
 import {
   CaseDecision,
@@ -95,6 +96,11 @@ export const SignedVerdictOverview: React.FC = () => {
     isCaseModificationConfirmed,
     setIsCaseModificationConfirmed,
   ] = useState<boolean>(false)
+  const [validToDateChanged, setValidToDateChanged] = useState<boolean>()
+  const [
+    isolationToDateChanged,
+    setIsolationToDateChanged,
+  ] = useState<boolean>()
 
   const router = useRouter()
   const { user } = useContext(UserContext)
@@ -256,6 +262,54 @@ export const SignedVerdictOverview: React.FC = () => {
     } else {
       return undefined
     }
+  }
+
+  const getModificationSuccessText = () => {
+    let modification = ''
+
+    const validToDateAndIsolationToDateAreTheSame =
+      modifiedValidToDate &&
+      modifiedValidToDate.value &&
+      workingCase.validToDate &&
+      modifiedIsolationToDate &&
+      modifiedIsolationToDate.value &&
+      workingCase.isolationToDate &&
+      compareAsc(modifiedValidToDate?.value, modifiedIsolationToDate?.value) ===
+        0
+
+    if (validToDateAndIsolationToDateAreTheSame) {
+      modification = `Gæsluvarðhald og einangrun til ${formatDate(
+        modifiedValidToDate?.value,
+        'PPPP',
+      )?.replace('dagur,', 'dagsins')} kl. ${formatDate(
+        modifiedValidToDate?.value,
+        TIME_FORMAT,
+      )}`
+    } else if (validToDateChanged || isolationToDateChanged) {
+      if (validToDateChanged) {
+        modification = `Gæsluvarðhald til ${formatDate(
+          modifiedValidToDate?.value,
+          'PPPP',
+        )?.replace('dagur,', 'dagsins')} kl. ${formatDate(
+          modifiedValidToDate?.value,
+          TIME_FORMAT,
+        )}. `
+      }
+
+      if (isolationToDateChanged) {
+        modification = `${modification}Einangrun til ${formatDate(
+          modifiedIsolationToDate?.value,
+          'PPPP',
+        )?.replace('dagur,', 'dagsins')} kl. ${formatDate(
+          modifiedIsolationToDate?.value,
+          TIME_FORMAT,
+        )}.`
+      }
+    }
+
+    return formatMessage(m.sections.modifyDatesModal.successText, {
+      modification,
+    })
   }
 
   const setAccusedAppealDate = (date?: Date) => {
@@ -434,12 +488,13 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
-  const isCaseModificationValid = () => {
+  const isCaseModificationInvalid = () => {
     return (
-      caseModifiedExplanation &&
-      caseModifiedExplanation.trim() &&
-      modifiedValidToDate?.isValid &&
-      modifiedIsolationToDate?.isValid
+      !caseModifiedExplanation ||
+      !caseModifiedExplanation.trim() ||
+      !modifiedValidToDate?.isValid ||
+      (workingCase.isCustodyIsolation && !modifiedIsolationToDate?.isValid) ||
+      (!validToDateChanged && !isolationToDateChanged)
     )
   }
 
@@ -532,7 +587,7 @@ export const SignedVerdictOverview: React.FC = () => {
                 primaryButtonText={formatMessage(
                   m.sections.modifyDatesModal.primaryButtonText,
                 )}
-                isPrimaryButtonDisabled={!isCaseModificationValid()}
+                isPrimaryButtonDisabled={isCaseModificationInvalid()}
                 handlePrimaryButtonClick={() => handleDateModification()}
                 secondaryButtonText={formatMessage(
                   m.sections.modifyDatesModal.secondaryButtonText,
@@ -599,6 +654,15 @@ export const SignedVerdictOverview: React.FC = () => {
                           value: value ?? modifiedValidToDate?.value,
                           isValid: valid,
                         })
+
+                        setValidToDateChanged(
+                          value !== undefined &&
+                            workingCase.validToDate !== undefined &&
+                            compareAsc(
+                              value,
+                              new Date(workingCase.validToDate),
+                            ) !== 0,
+                        )
                       }}
                       minDate={modifiedIsolationToDate?.value}
                       blueBox={false}
@@ -619,7 +683,17 @@ export const SignedVerdictOverview: React.FC = () => {
                               value: value ?? modifiedIsolationToDate?.value,
                               isValid: valid,
                             })
+
+                            setIsolationToDateChanged(
+                              value !== undefined &&
+                                workingCase.isolationToDate !== undefined &&
+                                compareAsc(
+                                  value,
+                                  new Date(workingCase.isolationToDate),
+                                ) !== 0,
+                            )
                           }}
+                          minDate={new Date()}
                           maxDate={modifiedValidToDate?.value}
                           blueBox={false}
                           required
@@ -640,11 +714,17 @@ export const SignedVerdictOverview: React.FC = () => {
             >
               <Modal
                 title={formatMessage(m.sections.modifyDatesModal.successTitle)}
-                text={formatMessage(m.sections.modifyDatesModal.successText)}
-                primaryButtonText={formatMessage(
-                  m.sections.modifyDatesModal.primaryButtonText,
+                text={getModificationSuccessText()}
+                secondaryButtonText={formatMessage(
+                  m.sections.modifyDatesModal.secondaryButtonTextSuccess,
                 )}
-                handlePrimaryButtonClick={() => setIsModifyingDates(false)}
+                handleSecondaryButtonClick={() => {
+                  setCaseModifiedExplanation(undefined)
+                  setValidToDateChanged(undefined)
+                  setIsolationToDateChanged(undefined)
+                  setIsModifyingDates(false)
+                  setIsCaseModificationConfirmed(false)
+                }}
               />
             </motion.div>
           ))}
