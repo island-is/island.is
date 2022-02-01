@@ -1,9 +1,10 @@
 import React, { useRef, useEffect, useState, FC, useMemo } from 'react'
+import { useLazyQuery } from '@apollo/client'
 import Head from 'next/head'
+import { useWindowSize } from 'react-use'
 import { NextRouter, useRouter } from 'next/router'
 import NextLink from 'next/link'
-import { Screen } from '../../types'
-import { SearchInput, Card, CardTagsProps } from '@island.is/web/components'
+import { theme } from '@island.is/island-ui/theme'
 import {
   Box,
   Text,
@@ -19,16 +20,15 @@ import {
   GridColumn,
   Tag,
 } from '@island.is/island-ui/core'
+import { SearchInput, Card, CardTagsProps } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespace } from '@island.is/web/hooks'
-import {
-  GET_NAMESPACE_QUERY,
-  GET_SEARCH_RESULTS_QUERY_DETAILED,
-  GET_SEARCH_COUNT_QUERY,
-  GET_SEARCH_RESULTS_TOTAL,
-} from '../queries'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { withMainLayout } from '@island.is/web/layouts/main'
+import { Image } from '@island.is/web/graphql/schema'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { plausibleCustomEvent } from '@island.is/web/hooks/usePlausible'
+import { Screen } from '../../types'
 import {
   GetSearchResultsDetailedQuery,
   GetSearchResultsNewsQuery,
@@ -48,10 +48,20 @@ import {
   OrganizationSubpage,
   Link as LinkItem,
 } from '../../graphql/schema'
-import { Image } from '@island.is/web/graphql/schema'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { useLazyQuery } from '@apollo/client'
-import { plausibleCustomEvent } from '@island.is/web/hooks/usePlausible'
+import {
+  GET_NAMESPACE_QUERY,
+  GET_SEARCH_RESULTS_QUERY_DETAILED,
+  GET_SEARCH_COUNT_QUERY,
+  GET_SEARCH_RESULTS_TOTAL,
+} from '../queries'
+
+import {
+  FilterMenu,
+  CategoriesProps,
+  FilterOptions,
+  FilterLabels,
+  initialFilter,
+} from './FilterMenu'
 
 const PERPAGE = 10
 
@@ -103,13 +113,27 @@ const Search2: Screen<CategoryProps> = ({
   countResults,
   namespace,
 }) => {
+  const { width } = useWindowSize()
+  const [isMobile, setIsMobile] = useState(false)
   const { activeLocale } = useI18n()
   const searchRef = useRef<HTMLInputElement | null>(null)
   const replace = useReplace()
   const { query } = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
-  const [activeSearchType, setActiveSearchType] = useState<string>('')
+  const [activeSearchType, setActiveSearchType] = useState<string>(
+    query.processentry === 'true'
+      ? 'ArticlesWithProcessEntry'
+      : (query.type as string) ?? '',
+  )
+  const [filter, setFilter] = useState<FilterOptions>({ ...initialFilter })
+
+  useEffect(() => {
+    if (width < theme.breakpoints.md) {
+      return setIsMobile(true)
+    }
+    setIsMobile(false)
+  }, [width])
 
   // Submit the search query to plausible
   if (q) {
@@ -201,7 +225,6 @@ const Search2: Screen<CategoryProps> = ({
     () => ({
       webArticle: n('webArticle', 'Greinar'),
       webSubArticle: n('webSubArticle', 'Undirgreinar'),
-      // webAdgerdirPage: n('webAdgerdirPage', 'Viðspyrna'),
       webLink: n('webLink', 'Tenglar'),
       webNews: n('webNews', 'Fréttir og tilkynningar'),
       webQNA: n('webQNA', 'Spurt og svarað'),
@@ -212,20 +235,6 @@ const Search2: Screen<CategoryProps> = ({
   )
 
   const pathname = linkResolver('search2').href
-
-  // const getCombinedCount = (type: string) => {
-  //   const types = connectedTypes[type] ?? []
-
-  //   return types.map(firstLower).reduce((total, key) => {
-  //     const item = countResults.typesCount.find((x) => key === x.key)
-
-  //     if (item) {
-  //       return total + item.count
-  //     }
-
-  //     return total
-  //   }, 0)
-  // }
 
   const tagsList = useMemo((): TagsList[] => {
     return [
@@ -283,7 +292,8 @@ const Search2: Screen<CategoryProps> = ({
 
   useEffect(() => {
     if (!activeSearchType) {
-      return false
+      console.log('no activeSearchType')
+      return null
     }
 
     let searchTypes = ''
@@ -292,7 +302,12 @@ const Search2: Screen<CategoryProps> = ({
       searchTypes = connectedTypes[activeSearchType].map(firstLower).join()
     }
 
-    console.log('here')
+    console.log(
+      'activeSearchType',
+      activeSearchType,
+      'searchTypes',
+      searchTypes,
+    )
 
     replace({
       pathname,
@@ -306,7 +321,20 @@ const Search2: Screen<CategoryProps> = ({
     }).then(() => {
       window.scrollTo(0, 0)
     })
-  }, [activeSearchType, pathname, q])
+  }, [activeSearchType, pathname, q, replace])
+
+  const refreshWithSearchQuery = () => {
+    setActiveSearchType('')
+
+    replace({
+      pathname,
+      query: {
+        q,
+      },
+    }).then(() => {
+      window.scrollTo(0, 0)
+    })
+  }
 
   const noUncategorized = (item) => {
     if (!item.category && filters.category === 'uncategorized') {
@@ -326,6 +354,43 @@ const Search2: Screen<CategoryProps> = ({
       ? (n('searchResult', 'leitarniðurstaða') as string).toLowerCase()
       : (n('searchResults', 'leitarniðurstöður') as string).toLowerCase()
 
+  useEffect(() => {
+    console.log('filter change', filter)
+  }, [filter])
+
+  const categories: CategoriesProps[] = [
+    {
+      id: 'thjonustuflokkar',
+      label: 'Þjónustuflokkar',
+      selected: filter.thjonustuflokkar,
+      filters: [
+        {
+          label: 'Menntun',
+          value: 'menntun',
+        },
+        {
+          label: 'Umhverfismál',
+          value: 'umhverfismal',
+        },
+      ],
+    },
+    {
+      id: 'opinberirAdilar',
+      label: 'Opinberir aðilar',
+      selected: filter.opinberirAdilar,
+      filters: [
+        {
+          label: 'Syslumenn',
+          value: 'syslumenn',
+        },
+        {
+          label: 'Stafrænt Ísland',
+          value: 'stafraent-island',
+        },
+      ],
+    },
+  ]
+
   return (
     <>
       <Head>
@@ -335,7 +400,7 @@ const Search2: Screen<CategoryProps> = ({
         <GridRow>
           <GridColumn
             span={['12/12', '12/12', '12/12', '8/12']}
-            offset={[0, 0, 0, '2/12']}
+            offset={[null, null, null, '2/12']}
           >
             <Stack space={[3, 3, 4]}>
               <Breadcrumbs
@@ -364,13 +429,21 @@ const Search2: Screen<CategoryProps> = ({
                 initialInputValue={q}
               />
               <Box width="full">
-                <Inline justifyContent="spaceBetween" space={1}>
+                <Inline
+                  justifyContent="spaceBetween"
+                  alignY="center"
+                  space={3}
+                  flexWrap="nowrap"
+                  collapseBelow="lg"
+                >
                   <Inline space={1}>
                     {countResults.total > 0 && (
                       <Tag
                         variant="blue"
                         active={!activeSearchType}
-                        onClick={() => setActiveSearchType('')}
+                        onClick={() =>
+                          activeSearchType !== '' && refreshWithSearchQuery()
+                        }
                       >
                         Sýna allt
                       </Tag>
@@ -381,7 +454,14 @@ const Search2: Screen<CategoryProps> = ({
                         <Tag
                           key={index}
                           variant="blue"
-                          active={activeSearchType === key}
+                          active={
+                            activeSearchType === key ||
+                            activeSearchType
+                              .split(',')
+                              .some((x) =>
+                                connectedTypes[key].includes(firstUpper(x)),
+                              )
+                          }
                           onClick={() => setActiveSearchType(key)}
                         >
                           {title}
@@ -399,7 +479,14 @@ const Search2: Screen<CategoryProps> = ({
                       </Tag>
                     )}
                   </Inline>
-                  <div>filter here</div>
+                  <FilterMenu
+                    {...filterLabels}
+                    categories={categories}
+                    filter={filter}
+                    setFilter={setFilter}
+                    align="right"
+                    variant={isMobile ? 'dialog' : 'popover'}
+                  />
                 </Inline>
               </Box>
 
@@ -437,7 +524,14 @@ const Search2: Screen<CategoryProps> = ({
               <Stack space={2}>
                 {filteredItems.map(
                   (
-                    { image, thumbnail, labels, parentTitle, ...rest },
+                    {
+                      typename,
+                      image,
+                      thumbnail,
+                      labels,
+                      parentTitle,
+                      ...rest
+                    },
                     index,
                   ) => {
                     const tags: Array<CardTagsProps> = []
@@ -562,7 +656,7 @@ Search2.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: {
           language: locale as ContentLanguage,
           queryString,
-          countTag: 'category' as SearchableTags,
+          countTag: ['category' as SearchableTags],
           types: allTypes,
           countTypes: true,
           countProcessEntry: true,
@@ -600,6 +694,7 @@ Search2.getInitialProps = async ({ apolloClient, locale, query }) => {
 }
 
 const firstLower = (t: string) => t.charAt(0).toLowerCase() + t.slice(1)
+const firstUpper = (t: string) => t.charAt(0).toUpperCase() + t.slice(1)
 
 const useReplace = (): NextRouter['replace'] => {
   const Router = useRouter()
@@ -661,6 +756,16 @@ const EnglishResultsLink: FC<EnglishResultsLinkProps> = ({ q }) => {
   }
 
   return null
+}
+
+const filterLabels: FilterLabels = {
+  labelClearAll: 'Hreinsa allar síur',
+  labelClear: 'Hreinsa síu',
+  labelOpen: 'Sía niðurstöður',
+  labelClose: 'Loka síu',
+  labelTitle: 'Sía mannanöfn',
+  labelResult: 'Sjá niðurstöður',
+  inputPlaceholder: 'Leita að nafni',
 }
 
 export default withMainLayout(Search2, { showSearchInHeader: false })
