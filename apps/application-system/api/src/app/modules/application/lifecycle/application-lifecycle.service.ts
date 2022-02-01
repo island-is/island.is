@@ -103,11 +103,6 @@ export class ApplicationLifeCycleService {
   private async pruneApplicationData() {
     for (const prune of this.processingApplications) {
       try {
-        this.logger.info(
-          `updating application with failed attachments: ${JSON.stringify(
-            prune.failedAttachments,
-          )}.`,
-        )
         const { updatedApplication } = await this.applicationService.update(
           prune.application.id,
           {

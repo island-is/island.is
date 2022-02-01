@@ -105,6 +105,7 @@ export const Services: EnvironmentServices = {
     adsWeb,
     adsBackend,
     adsApi,
+    appSystemApiWorker,
   ],
   staging: [
     appSystemApi,
@@ -126,6 +127,7 @@ export const Services: EnvironmentServices = {
     adsWeb,
     adsBackend,
     adsApi,
+    appSystemApiWorker,
   ],
   dev: [
     appSystemApi,
