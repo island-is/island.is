@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
+import useSWR from 'swr'
 
 import {
   Text,
@@ -40,6 +41,8 @@ interface Props {
   updateDefendantState: (defendantId: string, update: UpdateDefendant) => void
 }
 
+const fetcher = (url) => fetch(url).then((res) => res.json())
+
 export const StepOneForm: React.FC<Props> = (props) => {
   const {
     workingCase,
@@ -58,6 +61,9 @@ export const StepOneForm: React.FC<Props> = (props) => {
 
   const { updateDefendant } = useDefendants()
   const { updateCase } = useCase()
+  const { data, error } = useSWR('/api/nationalRegistry', fetcher)
+
+  console.log(data)
 
   const handleUpdateDefendant = async (
     defendantId: string,
