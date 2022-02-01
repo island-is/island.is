@@ -6,16 +6,6 @@ import {
   NationalRegistryService,
   NationalRegistryUser,
 } from '../nationalRegistry'
-// import {
-//   AuthMiddleware,
-//   AuthMiddlewareOptions,
-//   User as AuthUser,
-// } from '@island.is/auth-nest-tools'
-// import {
-//   EinstaklingarApi,
-//   EinstaklingarGetForsjaRequest,
-// } from '@island.is/clients/national-registry-v2'
-import environment from '../../../environments/environment'
 
 @Injectable()
 export class UserService {
