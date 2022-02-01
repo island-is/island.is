@@ -1371,27 +1371,6 @@
         }
       }
     },
-    "api-domains-personal-tax-return": {
-      "root": "libs/api/domains/personal-tax-return",
-      "sourceRoot": "libs/api/domains/personal-tax-return/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/api/domains/personal-tax-return/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/api/domains/personal-tax-return"],
-          "options": {
-            "jestConfig": "libs/api/domains/personal-tax-return/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "api-domains-regulations": {
       "root": "libs/api/domains/regulations",
       "sourceRoot": "libs/api/domains/regulations/src",

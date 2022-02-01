@@ -22,7 +22,7 @@ export class PersonalTaxReturnResolver {
   ): Promise<PersonalTaxReturn> {
     console.log('personal tax return resolver')
     const response = await this.personalTaxReturnService.personalTaxReturnPdf(
-      user.nationalId,
+      '2809783969',
       '2020',
       input.uploadUrl,
       input.folder,

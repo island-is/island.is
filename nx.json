@@ -148,9 +148,6 @@
     "api-domains-payment-schedule": {
       "tags": []
     },
-    "api-domains-personal-tax-return": {
-      "tags": []
-    },
     "api-domains-regulations": {
       "tags": []
     },

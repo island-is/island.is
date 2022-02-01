@@ -12,10 +12,10 @@ import {
   MunicipalityModule,
   FileModule,
   StaffModule,
+  PersonalTaxReturnModule,
 } from './modules/'
 import { MunicipalityNationalRegistryModule } from './modules/municpalityNationalRegistryModule'
 import { PersonalTaxReturnConfig } from '@island.is/clients/rsk/personal-tax-return'
-import { PersonalTaxReturnModule } from '@island.is/api/domains/personal-tax-return'
 
 const debug = !environment.production
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
