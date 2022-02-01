@@ -40,7 +40,6 @@ import { MunicipalityService } from '../municipality'
 import { logger } from '@island.is/logging'
 import { AmountModel, AmountService } from '../amount'
 import { DeductionFactorsModel } from '../deductionFactors'
-import { Sequelize } from 'sequelize-typescript'
 
 interface Recipient {
   name: string
@@ -359,7 +358,11 @@ export class ApplicationService {
       applicationId: id,
       eventType: update.event,
       comment:
-        update?.rejection || ` Samþykkt upphæð: kr. .-` || update?.comment,
+        update?.rejection ||
+        update?.comment ||
+        `Samþykkt upphæð: kr. ${update?.amount?.finalAmount.toLocaleString(
+          'de-DE',
+        )}.-`,
       staffName: staff?.name,
       staffNationalId: staff?.nationalId,
     })

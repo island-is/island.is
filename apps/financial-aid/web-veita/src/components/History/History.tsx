@@ -70,7 +70,8 @@ const History = ({
                 isVisable={
                   item.eventType === ApplicationEventType.FILEUPLOAD ||
                   item.eventType === ApplicationEventType.SPOUSEFILEUPLOAD ||
-                  item.eventType === ApplicationEventType.DATANEEDED
+                  item.eventType === ApplicationEventType.DATANEEDED ||
+                  item.eventType == ApplicationEventType.REJECTED
                 }
                 comment={item.comment}
               />
