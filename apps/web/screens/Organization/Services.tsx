@@ -20,6 +20,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
   Query,
+  QueryGetAlertBannerArgs,
   QueryGetArticlesArgs,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,

@@ -1108,12 +1108,13 @@ describe('formatDefenderRevokedEmailNotification', () => {
 describe('stripHtmlTags', () => {
   test('should strip html tags', () => {
     // Arrange
-    const html = 'bla<strong>blab</strong>la<br /><br />blabla'
+    const html =
+      'bla<strong>blab</strong>la<br /><br />blabla<a href="blablabla">blabla</a>'
 
     // Act
     const res = stripHtmlTags(html)
 
     // Assert
-    expect(res).toBe('blablabla\n\nblabla')
+    expect(res).toBe('blablabla\n\nblablablabla')
   })
 })
