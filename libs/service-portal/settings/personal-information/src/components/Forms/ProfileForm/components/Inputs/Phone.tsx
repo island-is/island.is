@@ -2,6 +2,7 @@ import React, { FC, useState, useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { m } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { msg } from '../../../../../lib/messages'
 import {
   Box,
   Button,
@@ -75,12 +76,6 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
   }, [telInternal])
 
   const handleSendTelVerification = async (data: { tel: string }) => {
-    const telError = formatMessage({
-      id: 'sp.settings:tel-service-error',
-      defaultMessage:
-        'Vandamál með farsímaþjónustu. Vinsamlegast reynið aftur síðar.',
-    })
-
     try {
       const telValue = data.tel ?? ''
 
@@ -94,20 +89,14 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
         setVerificationValid(false)
         setErrors({ ...formErrors, mobile: undefined })
       } else {
-        setErrors({ ...formErrors, mobile: telError })
+        setErrors({ ...formErrors, mobile: formatMessage(m.somethingWrong) })
       }
     } catch (err) {
-      setErrors({ ...formErrors, mobile: telError })
+      setErrors({ ...formErrors, mobile: formatMessage(m.somethingWrong) })
     }
   }
 
   const handleConfirmCode = async (data: { code: string }) => {
-    const telError = formatMessage({
-      id: 'sp.settings:tel-service-error',
-      defaultMessage:
-        'Vandamál með farsímaþjónustu. Vinsamlegast reynið aftur síðar.',
-    })
-
     try {
       const codeValue = data.code ?? ''
 
@@ -130,11 +119,11 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
         setErrors({ ...formErrors, code: undefined })
       } else {
         setVerifiCationLoading(false)
-        setErrors({ ...formErrors, code: telError })
+        setErrors({ ...formErrors, code: formatMessage(m.somethingWrong) })
       }
     } catch (err) {
       setVerifiCationLoading(false)
-      setErrors({ ...formErrors, code: telError })
+      setErrors({ ...formErrors, code: formatMessage(m.somethingWrong) })
     }
   }
 
@@ -147,7 +136,10 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
               <Column width="content">
                 <Box className={styles.countryCodeInput}>
                   <Input
-                    label="Landsnúmer"
+                    label={formatMessage({
+                      id: 'sp.settings:phone-country-code',
+                      defaultMessage: 'Landsnúmer',
+                    })}
                     name="country-code"
                     size="xs"
                     readOnly
@@ -170,26 +162,15 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
                   rules={{
                     minLength: {
                       value: 7,
-                      message: formatMessage({
-                        id: 'sp.settings:tel-required-length-msg',
-                        defaultMessage:
-                          'Símanúmer þarf að vera 7 tölustafir á lengd',
-                      }),
+                      message: formatMessage(msg.errorTelReqLength),
                     },
                     maxLength: {
                       value: 7,
-                      message: formatMessage({
-                        id: 'sp.settings:tel-required-length-msg',
-                        defaultMessage:
-                          'Símanúmer þarf að vera 7 tölustafir á lengd',
-                      }),
+                      message: formatMessage(msg.errorTelReqLength),
                     },
                     pattern: {
                       value: /^\d+$/,
-                      message: formatMessage({
-                        id: 'sp.settings:only-numbers-allowed',
-                        defaultMessage: 'Eingöngu tölustafir eru leyfðir',
-                      }),
+                      message: formatMessage(msg.errorOnlyNumbers),
                     },
                   }}
                   label={formatMessage(sharedMessages.phoneNumber)}
@@ -239,7 +220,7 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
                   variant="text"
                   size="small"
                 >
-                  Breyta
+                  {formatMessage(msg.buttonChange)}
                 </Button>
               </Box>
             </Column>

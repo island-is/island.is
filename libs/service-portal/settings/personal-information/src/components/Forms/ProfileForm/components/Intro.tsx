@@ -2,6 +2,7 @@ import React, { FC } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import { Text, Divider, Box } from '@island.is/island-ui/core'
+import { msg } from '../../../../lib/messages'
 
 interface Props {
   name: string
@@ -23,13 +24,7 @@ export const OnboardingIntro: FC<Props> = ({ name }) => {
       <Text variant="h2" as="h1" marginBottom={1}>
         {name}
       </Text>
-      <Text marginBottom={4}>
-        {formatMessage({
-          id: 'sp.settings:overlay-intro-text',
-          defaultMessage: `Vinsamlegast farðu vel yfir allar neðangreindarupplýsingar, gangtu í
-          skugga um að þær séu réttar og gerðu breytingar ef þörf krefur.`,
-        })}
-      </Text>
+      <Text marginBottom={4}>{formatMessage(msg.overlayIntro)}</Text>
       <Divider />
     </Box>
   )

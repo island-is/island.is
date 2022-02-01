@@ -10,6 +10,7 @@ import {
 import { m } from '@island.is/service-portal/core'
 import { useUpdateOrCreateUserProfile } from '@island.is/service-portal/graphql'
 import { stringifyBankData } from '../../../../../utils/bankInfoHelper'
+import { msg } from '../../../../../lib/messages'
 import { InputController } from '@island.is/shared/form-fields'
 import { useForm } from 'react-hook-form'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -59,7 +60,7 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
                   name="bank"
                   maxLength={4}
                   placeholder="0000"
-                  label="Banki"
+                  label={formatMessage(msg.inputBankLabel)}
                   defaultValue={bankInfo?.bank || ''}
                   error={errors.bank?.message || submitError}
                   required={false}
@@ -68,17 +69,11 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
                   rules={{
                     maxLength: {
                       value: 4,
-                      message: formatMessage({
-                        id: 'sp.settings:bankInfo-required-length-msg',
-                        defaultMessage: `Númer banka er í mesta lagi 4 stafir`,
-                      }),
+                      message: formatMessage(msg.errorBankInputMaxLength),
                     },
                     pattern: {
                       value: /^\d+$/,
-                      message: formatMessage({
-                        id: 'sp.settings:only-numbers-allowed',
-                        defaultMessage: 'Eingöngu tölustafir eru leyfðir',
-                      }),
+                      message: formatMessage(msg.errorOnlyNumbers),
                     },
                   }}
                 />
@@ -92,7 +87,7 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
                   name="l"
                   maxLength={2}
                   placeholder="00"
-                  label="Hb."
+                  label={formatMessage(msg.inputLedgerLabel)}
                   defaultValue={bankInfo?.l || ''}
                   error={errors.l?.message || submitError}
                   required={false}
@@ -101,17 +96,11 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
                   rules={{
                     maxLength: {
                       value: 2,
-                      message: formatMessage({
-                        id: 'sp.settings:bankInfo-hb-required-length-msg',
-                        defaultMessage: `Höfuðbók er í mesta lagi 2 stafir`,
-                      }),
+                      message: formatMessage(msg.errorLedgerInputMaxLength),
                     },
                     pattern: {
                       value: /^\d+$/,
-                      message: formatMessage({
-                        id: 'sp.settings:only-numbers-allowed',
-                        defaultMessage: 'Eingöngu tölustafir eru leyfðir',
-                      }),
+                      message: formatMessage(msg.errorOnlyNumbers),
                     },
                   }}
                 />
@@ -125,7 +114,7 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
                   name="account"
                   maxLength={6}
                   placeholder="000000"
-                  label="Reikningsnúmer"
+                  label={formatMessage(msg.inputAccountNrLabel)}
                   defaultValue={bankInfo?.account || ''}
                   error={errors.account?.message || submitError}
                   required={false}
@@ -134,17 +123,11 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
                   rules={{
                     maxLength: {
                       value: 6,
-                      message: formatMessage({
-                        id: 'sp.settings:bankInfo-account-required-length-msg',
-                        defaultMessage: `Reikningsnúmer er í mesta lagi 6 stafir.`,
-                      }),
+                      message: formatMessage(msg.errorAccountInputMaxLength),
                     },
                     pattern: {
                       value: /^\d+$/,
-                      message: formatMessage({
-                        id: 'sp.settings:only-numbers-allowed',
-                        defaultMessage: 'Eingöngu tölustafir eru leyfðir',
-                      }),
+                      message: formatMessage(msg.errorOnlyNumbers),
                     },
                   }}
                 />
@@ -162,7 +145,7 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
             {!loading && !inputSuccess && (
               <button type="submit">
                 <Button variant="text" size="small">
-                  Vista reikningsnúmer
+                  {formatMessage(msg.buttonAccountSave)}
                 </Button>
               </button>
             )}
@@ -182,7 +165,7 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
                 variant="text"
                 size="small"
               >
-                Breyta
+                {formatMessage(msg.buttonChange)}
               </Button>
             </Box>
           </Column>

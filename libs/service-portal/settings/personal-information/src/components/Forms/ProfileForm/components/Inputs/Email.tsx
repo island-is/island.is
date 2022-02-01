@@ -1,6 +1,7 @@
 import React, { FC, useState, useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { m } from '@island.is/service-portal/core'
+import { msg } from '../../../../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   Box,
@@ -206,7 +207,7 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
                   variant="text"
                   size="small"
                 >
-                  Breyta
+                  {formatMessage(msg.buttonChange)}
                 </Button>
               </Box>
             </Column>

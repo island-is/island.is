@@ -14,6 +14,7 @@ import { InputPhone } from './components/Inputs/Phone'
 import { DropModal } from './components/DropModal'
 import { BankInfoForm } from './components/Inputs/BankInfoForm'
 import { Nudge } from './components/Inputs/Nudge'
+import { msg } from '../../../lib/messages'
 import { DropModalType } from './types/form'
 import { bankInfoObject } from '../../../utils/bankInfoHelper'
 
@@ -85,15 +86,12 @@ export const ProfileForm: FC<Props> = ({
           <OnboardingIntro name={title || ''} />
           <InputSection
             title={formatMessage(m.email)}
-            text="Vinsamlega settu inn netfangið þitt. Við komum til með að senda á þig staðfestingar og tilkynningar."
+            text={formatMessage(msg.editEmailText)}
             loading={userLoading}
           >
             {!userLoading && (
               <InputEmail
-                buttonText={formatMessage({
-                  id: 'sp.settings:save-email',
-                  defaultMessage: 'Vista netfang',
-                })}
+                buttonText={formatMessage(msg.saveEmail)}
                 email={userProfile?.email || ''}
                 emailDirty={(isDirty) => setEmailDirty(isDirty)}
               />
@@ -101,15 +99,12 @@ export const ProfileForm: FC<Props> = ({
           </InputSection>
           <InputSection
             title={formatMessage(m.telNumber)}
-            text="Við komum til með að senda á þig staðfestingar og tilkynningar og því er gott að vera með rétt númer skráð. Endilega skráðu númerið þitt hér fyrir neðan og við sendum þér öryggiskóða til staðfestingar."
+            text={formatMessage(msg.editTelText)}
             loading={userLoading}
           >
             {!userLoading && (
               <InputPhone
-                buttonText={formatMessage({
-                  id: 'sp.settings:save-tel',
-                  defaultMessage: 'Vista símanúmer',
-                })}
+                buttonText={formatMessage(msg.saveTel)}
                 mobile={parseNumber(userProfile?.mobilePhoneNumber || '')}
                 telDirty={(isDirty) => setTelDirty(isDirty)}
               />
@@ -118,13 +113,7 @@ export const ProfileForm: FC<Props> = ({
           {showDetails && (
             <InputSection
               title={formatMessage(m.bankAccountInfo)}
-              text={formatMessage({
-                id: 'sp.settings:edit-bankInfo-description',
-                defaultMessage: `
-                  Hér getur þú gert breytingar á þeim bankareikningi
-                  sem þú vilt nota í kerfum island.is.
-                `,
-              })}
+              text={formatMessage(msg.editBankInfoText)}
               loading={userLoading}
             >
               {!userLoading && (
@@ -138,14 +127,7 @@ export const ProfileForm: FC<Props> = ({
             <InputSection
               title={formatMessage(m.nudge)}
               loading={userLoading}
-              text={formatMessage({
-                id: 'sp.settings:edit-nudge-description',
-                defaultMessage: `
-                    Hér getur þú gert breytingar á hnipp möguleikum. 
-                    Hnipp stillingar segja til um hvort þú viljir að Island.is láti 
-                    þig vita þegar eitthvað markvert gerist.
-                  `,
-              })}
+              text={formatMessage(msg.editNudgeText)}
             >
               {!userLoading && <Nudge canNudge={!!userProfile?.canNudge} />}
             </InputSection>

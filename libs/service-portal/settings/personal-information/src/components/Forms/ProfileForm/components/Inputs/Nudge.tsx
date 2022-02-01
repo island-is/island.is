@@ -4,14 +4,13 @@ import {
   Button,
   Columns,
   Column,
-  Input,
   Icon,
-  Text,
   LoadingDots,
   Checkbox,
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import { useUpdateOrCreateUserProfile } from '@island.is/service-portal/graphql'
+import { msg } from '../../../../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Controller, useForm } from 'react-hook-form'
 
@@ -56,6 +55,8 @@ export const Nudge: FC<Props> = ({ canNudge }) => {
                   id: 'sp.settings:nudge-checkbox-label',
                   defaultMessage: 'Virkja hnipp',
                 })}
+                hasError={!!submitError}
+                errorMessage={submitError}
                 checked={value}
               />
             )}
@@ -71,7 +72,7 @@ export const Nudge: FC<Props> = ({ canNudge }) => {
             {!loading && !inputSuccess && (
               <button type="submit">
                 <Button variant="text" size="small">
-                  Vista stillingar
+                  {formatMessage(msg.saveSettings)}
                 </Button>
               </button>
             )}
@@ -91,7 +92,7 @@ export const Nudge: FC<Props> = ({ canNudge }) => {
                 variant="text"
                 size="small"
               >
-                Breyta
+                {formatMessage(msg.buttonChange)}
               </Button>
             </Box>
           </Column>
