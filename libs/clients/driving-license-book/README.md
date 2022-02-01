@@ -17,7 +17,6 @@ The client is generated from a copy of the openApi document provided in x-road.
 yarn nx run clients-driving-license-book:update-openapi-document
 ```
 
-
 ### Regenerating the client:
 
 ```sh

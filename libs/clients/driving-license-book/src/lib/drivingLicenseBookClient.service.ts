@@ -3,7 +3,7 @@ import { Configuration, DrivingLicenseBookApi } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { ConfigType, XRoadConfig } from '@island.is/nest/config'
 
-import { DrivingLicenseBookClientConfig } from './drivinLicenseBookClient.config'
+import { DrivingLicenseBookClientConfig } from './drivingLicenseBookClient.config'
 import { Injectable, Inject } from '@nestjs/common'
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 
@@ -12,6 +12,7 @@ export class DrivingLicenseBookClientService {
   constructor(
     @Inject(DrivingLicenseBookClientConfig.KEY)
     private clientConfig: ConfigType<typeof DrivingLicenseBookClientConfig>,
+    @Inject(XRoadConfig.KEY)
     private xroadConfig: ConfigType<typeof XRoadConfig>,
   ) {}
 

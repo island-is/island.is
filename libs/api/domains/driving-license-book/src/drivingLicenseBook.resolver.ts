@@ -14,15 +14,19 @@ import { DrivingLicenseBookService } from './drivingLicenseBook.service'
 import { StudentListInput } from './dto/studentList.input'
 import { StudentListResponse } from './models/studentList.response'
 
-
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Resolver()
 export class DrivinLicenseBookResolver {
-    constructor( private readonly drivingLicenseBookService: DrivingLicenseBookService){}
+  constructor(
+    private readonly drivingLicenseBookService: DrivingLicenseBookService,
+  ) {}
 
-    @Query(() => StudentListResponse)
-    studentList(@CurrentUser() user: User, @Args('input') input: StudentListInput) {
-        console.log(user)
-        return this.drivingLicenseBookService.getAllStudents(user, input)
-    }
+  @Query(() => StudentListResponse)
+  studentList(
+    @CurrentUser() user: User,
+    @Args('input') input: StudentListInput,
+  ) {
+    console.log(user)
+    return this.drivingLicenseBookService.getAllStudents(user, input)
+  }
 }

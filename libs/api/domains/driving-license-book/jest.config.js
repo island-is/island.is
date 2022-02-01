@@ -9,7 +9,8 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../../coverage/libs/api/domains/driving-license-book',
+  coverageDirectory:
+    '../../../../coverage/libs/api/domains/driving-license-book',
   testEnvironment: 'jest-environment-node',
   displayName: 'api-domains-driving-license-book',
 }

@@ -2,7 +2,7 @@ import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { ConfigType, XRoadConfig } from '@island.is/nest/config'
 
 import { Configuration } from '../../gen/fetch'
-import { DrivingLicenseBookClientConfig } from './drivinLicenseBookClient.config'
+import { DrivingLicenseBookClientConfig } from './drivingLicenseBookClient.config'
 
 export const ApiConfiguration = {
   provide: 'DrivingLicenseBookClientApiConfiguration',

@@ -11,7 +11,7 @@ const schema = z.object({
 })
 
 export const DrivingLicenseBookClientConfig = defineConfig({
-  name: 'DrivingLicenseBookClient',
+  name: 'DrivingLicenseBookApi',
   schema,
   load(env) {
     return {
@@ -20,7 +20,8 @@ export const DrivingLicenseBookClientConfig = defineConfig({
         'IS-DEV/GOV/10017/Samgongustofa-Protected/Okunamsbok-V1',
       ),
       fetch: {
-        timeout: env.optionalJSON('XROAD_DRIVING_LICENSE_BOOK_TIMEOUT') ?? 10000,
+        timeout:
+          env.optionalJSON('XROAD_DRIVING_LICENSE_BOOK_TIMEOUT') ?? 10000,
       },
       username: env.required('DRIVING_LICNESE_BOOK_USERNAME'),
       password: env.required('DRIVING_LICNESE_BOOK_PASSWORD'),
