@@ -250,18 +250,28 @@ export const GET_OPERATING_LICENSES_QUERY = gql`
       }
       searchQuery
       results {
+        id
+        issuedBy
+        licenseNumber
         location
         name
         street
         postalCode
-        validFrom
-        validUntil
         type
-        category
-        issuedBy
+        type2
+        restaurantType
+        validFrom
+        validTo
         licenseHolder
         licenseResponsible
-        licenseNumber
+        category
+        outdoorLicense
+        alcoholWeekdayLicense
+        alcoholWeekendLicense
+        alcoholWeekdayOutdoorLicense
+        alcoholWeekendOutdoorLicense
+        maximumNumberOfGuests
+        numberOfDiningGuests
       }
     }
   }

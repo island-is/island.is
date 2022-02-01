@@ -97,12 +97,10 @@ export const mapOperatingLicense = (
   street: operatingLicense.gata,
   postalCode: operatingLicense.postnumer,
   type: operatingLicense.tegund,
-  validFrom: operatingLicense.gildirFra
-    ? operatingLicense.gildirFra.toLocaleString()
-    : '',
-  validUntil: operatingLicense.gildirTil
-    ? operatingLicense.gildirTil.toLocaleString()
-    : '',
+  type2: operatingLicense.tegund2,
+  restaurantType: operatingLicense.tegundVeitingastadar,
+  validFrom: operatingLicense.gildirFra,
+  validTo: operatingLicense.gildirTil,
   licenseHolder: operatingLicense.leyfishafi,
   licenseResponsible: operatingLicense.abyrgdarmadur,
   category: operatingLicense.flokkur,
@@ -113,6 +111,8 @@ export const mapOperatingLicense = (
     operatingLicense.afgrAfgengisVirkirdagarUtiveitingar,
   alcoholWeekendOutdoorLicense:
     operatingLicense.afgrAfgengisAdfaranottFridagaUtiveitingar,
+  maximumNumberOfGuests: operatingLicense.hamarksfjoldiGesta,
+  numberOfDiningGuests: operatingLicense.fjoldiGestaIVeitingum,
 })
 
 export const mapPaginationInfo = (

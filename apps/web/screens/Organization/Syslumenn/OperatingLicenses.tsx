@@ -5,11 +5,10 @@ import {
   AlertBanner,
   Box,
   Button,
-  GridColumn,
-  GridRow,
   Input,
   LoadingDots,
   NavigationItem,
+  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -184,7 +183,6 @@ const useSearch = (term: string, currentPageNumber: number): SearchState => {
           }) => {
             if (paginationInfo.pageNumber === 1) {
               // First page
-              console.log('Got first page', paginationInfo)
               dispatch({
                 type: SEARCH_REDUCER_ACTION_TYPES.SEARCH_SUCCESS_FIRST_PAGE,
                 results,
@@ -195,7 +193,6 @@ const useSearch = (term: string, currentPageNumber: number): SearchState => {
               })
             } else {
               // Next pages
-              console.log('Got next page', paginationInfo)
               dispatch({
                 type: SEARCH_REDUCER_ACTION_TYPES.SEARCH_SUCCESS_NEXT_PAGE,
                 results,
@@ -237,6 +234,7 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   const { linkResolver } = useLinkResolver()
   const Router = useRouter()
   const { format } = useDateUtils()
+  const DATE_FORMAT = n('operatingLicenseDateFormat', 'd. MMMM yyyy')
 
   const pageUrl = Router.pathname
 
@@ -267,8 +265,34 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   }
 
   const onLoadMore = () => {
-    console.log('Setting page number: ', currentPageNumber + 1)
     setCurrentPageNumber(currentPageNumber + 1)
+  }
+
+  const getLicenseValidPeriod = (license: OperatingLicense) => {
+    const validFrom = license.validFrom ? new Date(license.validFrom) : null
+    const validTo = license.validTo ? new Date(license.validTo) : null
+
+    if (validFrom && validTo) {
+      return `${format(validFrom, DATE_FORMAT)} - ${format(
+        validTo,
+        DATE_FORMAT,
+      )}`
+    }
+    if (validFrom) {
+      return `Frá ${format(validFrom, DATE_FORMAT)}`
+    }
+    if (validTo) {
+      return `Til ${format(validTo, DATE_FORMAT)}`
+    }
+    if (!validFrom && !validTo) {
+      return n('operatingLicenseValidPeriodIndefinite', 'Ótímabundið')
+    }
+  }
+
+  const getLicenseAddress = (license: OperatingLicense) => {
+    // In many cases, both the street and location fields contain the same value. To avoid repeating the info, we don't show the street value if it is the same as the location value.
+    const street = license.street === license.location ? '' : license.street
+    return `${license.location ?? ''} ${street}, ${license.postalCode ?? ''}`
   }
 
   return (
@@ -329,54 +353,127 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
             </Text>
           </Box>
         )}
-      {search.results.map((operatingLicense, index) => {
+      {search.results.map((operatingLicense) => {
         return (
           <Box
-            key={index}
+            key={operatingLicense.id}
             border="standard"
             borderRadius="large"
             marginY={2}
             paddingY={3}
             paddingX={4}
           >
-            <Text variant="h4" color="blue400" marginBottom={1}>
-              {operatingLicense.name
-                ? operatingLicense.name
-                : operatingLicense.location}
-            </Text>
-            <GridRow>
-              <GridColumn span={['12/12', '12/12', '12/12']}>
-                <Text>Leyfisnúmer: {operatingLicense.licenseNumber}</Text>
-                <Text>Staður: {operatingLicense.location}</Text>
-                <Text>Gata: {operatingLicense.street}</Text>
-                {operatingLicense.postalCode && (
-                  <Text>Póstnúmer: {operatingLicense.postalCode}</Text>
-                )}
-                {operatingLicense.validFrom && (
-                  <Text>
-                    Gildir frá{' '}
-                    {format(
-                      new Date(operatingLicense.validFrom),
-                      'd. MMMM yyyy',
-                    )}
-                  </Text>
-                )}
-                {operatingLicense.validUntil && (
-                  <Text>
-                    Gildir til{' '}
-                    {format(
-                      new Date(operatingLicense.validUntil),
-                      'd. MMMM yyyy',
-                    )}
-                  </Text>
-                )}
-                <Text>{operatingLicense.type}</Text>
-                <Text>{operatingLicense.category}</Text>
-                <Text>Útgefandi: {operatingLicense.issuedBy}</Text>
-                <Text>Leyfishafi: {operatingLicense.licenseHolder}</Text>
-                <Text>Ábyrgðarmaður: {operatingLicense.licenseResponsible}</Text>
-              </GridColumn>
-            </GridRow>
+            <Box
+              alignItems="flexStart"
+              display="flex"
+              flexDirection={[
+                'columnReverse',
+                'columnReverse',
+                'columnReverse',
+                'row',
+              ]}
+              justifyContent="spaceBetween"
+            >
+              <Text variant="eyebrow" color="purple400" paddingTop={1}>
+                {operatingLicense.type2 ?? operatingLicense.type}
+                {operatingLicense.restaurantType &&
+                  ` (${operatingLicense.restaurantType})`}
+                {operatingLicense.category && ` - ${operatingLicense.category}`}
+              </Text>
+              <Box marginBottom={[2, 2, 2, 0]}>
+                <Tag disabled>{operatingLicense.issuedBy}</Tag>
+              </Box>
+            </Box>
+            <Box>
+              <Text variant="h3">
+                {operatingLicense.name ?? operatingLicense.location}
+              </Text>
+              <Text paddingBottom={1}>
+                {getLicenseAddress(operatingLicense)}
+              </Text>
+
+              <Text paddingBottom={0}>
+                {n('operatingLicensesLicenseNumber', 'Leyfisnúmer')}:{' '}
+                {operatingLicense.licenseNumber}
+              </Text>
+              <Text paddingBottom={2}>
+                {n('operatingLicensesValidPeriod', 'Gildistími')}:{' '}
+                {getLicenseValidPeriod(operatingLicense)}
+              </Text>
+
+              <Text paddingBottom={0}>
+                {n('operatingLicensesLicenseHolder', 'Leyfishafi')}:{' '}
+                {operatingLicense.licenseHolder}
+              </Text>
+              <Text paddingBottom={2}>
+                {n('operatingLicensesLicenseResponsible', 'Ábyrgðarmaður')}:{' '}
+                {operatingLicense.licenseResponsible}
+              </Text>
+
+              {operatingLicense.outdoorLicense && (
+                <Text paddingBottom={0}>
+                  {n(
+                    'operatingLicensesOutdoorLicense',
+                    'Leyfi til útiveitinga',
+                  )}
+                  : {operatingLicense.outdoorLicense}
+                </Text>
+              )}
+              {operatingLicense.alcoholWeekdayLicense && (
+                <Text paddingBottom={0}>
+                  {n(
+                    'operatingLicensesAlcoholWeekdayLicense',
+                    'Afgreiðslutími áfengis virka daga',
+                  )}
+                  : {operatingLicense.alcoholWeekdayLicense}
+                </Text>
+              )}
+              {operatingLicense.alcoholWeekendLicense && (
+                <Text paddingBottom={0}>
+                  {n(
+                    'operatingLicensesAlcoholWeekendLicense',
+                    'Afgreiðslutími áfengis um helgar',
+                  )}
+                  : {operatingLicense.alcoholWeekendLicense}
+                </Text>
+              )}
+              {operatingLicense.alcoholWeekdayOutdoorLicense && (
+                <Text paddingBottom={0}>
+                  {n(
+                    'operatingLicensesAlcoholWeekdayOutdoorLicense',
+                    'Afgreiðslutími áfengis virka daga (útiveitingar)',
+                  )}
+                  : {operatingLicense.alcoholWeekdayOutdoorLicense}
+                </Text>
+              )}
+              {operatingLicense.alcoholWeekendOutdoorLicense && (
+                <Text paddingBottom={0}>
+                  {n(
+                    'operatingLicensesAlcoholWeekendOutdoorLicense',
+                    'Afgreiðslutími áfengis um helgar (útiveitingar)',
+                  )}
+                  : {operatingLicense.alcoholWeekendOutdoorLicense}
+                </Text>
+              )}
+              {operatingLicense.maximumNumberOfGuests > 0 && (
+                <Text paddingBottom={0}>
+                  {n(
+                    'operatingLicensesAlcoholMaximumNumberOfGuests',
+                    'Hámarksfjöldi gesta',
+                  )}
+                  : {operatingLicense.maximumNumberOfGuests}
+                </Text>
+              )}
+              {operatingLicense.numberOfDiningGuests > 0 && (
+                <Text paddingBottom={0}>
+                  {n(
+                    'operatingLicensesNumberOfDiningGuests',
+                    'Fjöldi gesta í veitingum',
+                  )}
+                  : {operatingLicense.numberOfDiningGuests}
+                </Text>
+              )}
+            </Box>
           </Box>
         )
       })}

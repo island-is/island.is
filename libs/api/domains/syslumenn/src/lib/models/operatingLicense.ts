@@ -26,10 +26,16 @@ export class OperatingLicense {
   type?: string
 
   @Field({ nullable: true })
-  validFrom?: string
+  type2?: string
 
   @Field({ nullable: true })
-  validUntil?: string
+  restaurantType?: string
+
+  @Field({ nullable: true })
+  validFrom?: Date
+
+  @Field({ nullable: true })
+  validTo?: Date
 
   @Field({ nullable: true })
   licenseHolder?: string
@@ -54,4 +60,10 @@ export class OperatingLicense {
 
   @Field({ nullable: true })
   alcoholWeekendOutdoorLicense?: string
+
+  @Field({ nullable: true })
+  maximumNumberOfGuests?: number
+
+  @Field({ nullable: true })
+  numberOfDiningGuests?: number
 }

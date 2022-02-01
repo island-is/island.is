@@ -42,8 +42,10 @@ export interface OperatingLicense {
   street?: string
   postalCode?: string
   type?: string
-  validFrom?: string
-  validUntil?: string
+  type2?: string
+  restaurantType?: string
+  validFrom?: Date
+  validTo?: Date
   licenseHolder?: string
   licenseResponsible?: string
   category?: string
@@ -52,6 +54,8 @@ export interface OperatingLicense {
   alcoholWeekendLicense?: string
   alcoholWeekdayOutdoorLicense?: string
   alcoholWeekendOutdoorLicense?: string
+  maximumNumberOfGuests?: number
+  numberOfDiningGuests?: number
 }
 
 /**
