@@ -278,13 +278,13 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
         DATE_FORMAT,
       )}`
     }
-    if (validFrom) {
-      return `Frá ${format(validFrom, DATE_FORMAT)}`
+    if (!validFrom && validTo) {
+      return `${n('operatingLicensesValidUntil', 'Til')} ${format(
+        validTo,
+        DATE_FORMAT,
+      )}`
     }
-    if (validTo) {
-      return `Til ${format(validTo, DATE_FORMAT)}`
-    }
-    if (!validFrom && !validTo) {
+    if (!validTo) {
       return n('operatingLicenseValidPeriodIndefinite', 'Ótímabundið')
     }
   }
