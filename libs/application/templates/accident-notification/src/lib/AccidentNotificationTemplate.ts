@@ -51,7 +51,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: application.general.name.defaultMessage,
-          progress: 0.2,
+          progress: 0.4,
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: false,
@@ -80,7 +80,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
         entry: 'assignUser',
         meta: {
           name: States.REVIEW,
-          progress: 0.6,
+          progress: 0.8,
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: false,
@@ -134,13 +134,14 @@ const AccidentNotificationTemplate: ApplicationTemplate<
       [States.REVIEW_ADD_ATTACHMENT]: {
         meta: {
           name: States.REVIEW_ADD_ATTACHMENT,
-          progress: 0.6,
+          progress: 0.8,
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: false,
           },
           onEntry: {
             apiModuleAction: ApiActions.addAttachment,
+            shouldPersistToExternalData: true,
           },
 
           roles: [

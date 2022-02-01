@@ -260,7 +260,7 @@ export const serializeService: SerializeMethod = (
             ...acc,
             [`${ingressName}-alb`]: ingress,
           }
-        } catch (e) {
+        } catch (e: any) {
           addToErrors([e.message])
           return acc
         }
@@ -307,11 +307,14 @@ export const resolveDbHost = (
         break
       }
       case 'success': {
-        return resolved.value
+        return { writer: resolved.value, reader: resolved.value }
       }
     }
   } else {
-    return uberChart.env.auroraHost
+    return {
+      writer: uberChart.env.auroraHost,
+      reader: uberChart.env.auroraReplica ?? uberChart.env.auroraHost,
+    }
   }
 }
 
@@ -372,7 +375,9 @@ function serializePostgres(
   env['DB_USER'] = postgres.username ?? postgresIdentifier(serviceDef.name)
   env['DB_NAME'] = postgres.name ?? postgresIdentifier(serviceDef.name)
   try {
-    env['DB_HOST'] = resolveDbHost(postgres, uberChart, service)
+    const { reader, writer } = resolveDbHost(postgres, uberChart, service)
+    env['DB_HOST'] = writer
+    env['DB_REPLICAS_HOST'] = reader
   } catch (e) {
     errors.push(
       `Could not resolve DB_HOST variable for service: ${serviceDef.name}`,

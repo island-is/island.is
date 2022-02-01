@@ -7,13 +7,17 @@ import parseISO from 'date-fns/parseISO'
 
 import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
 import { CaseState, UserRole } from '@island.is/judicial-system/types'
-import { insertAt } from '@island.is/judicial-system-web/src/utils/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   directionType,
+  sortableTableColumn,
   SortConfig,
 } from '@island.is/judicial-system-web/src/types'
-import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  caseTypes,
+  formatNationalId,
+} from '@island.is/judicial-system/formatters'
 import { core, requests } from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
 
@@ -46,35 +50,53 @@ const ActiveRequests: React.FC<Props> = (props) => {
       sortedCases.sort((a: Case, b: Case) => {
         // Credit: https://stackoverflow.com/a/51169
         return sortConfig.direction === 'ascending'
-          ? ('' + a[sortConfig.key]).localeCompare(
-              b[sortConfig.key]?.toString() ?? '',
+          ? (sortConfig.column === 'defendant' &&
+            a.defendants &&
+            a.defendants.length > 0
+              ? a.defendants[0].name || ''
+              : '' + a['created']
+            ).localeCompare(
+              sortConfig.column === 'defendant' &&
+                b.defendants &&
+                b.defendants.length > 0
+                ? b.defendants[0].name || ''
+                : '' + b['created'],
             )
-          : ('' + b[sortConfig.key]).localeCompare(
-              a[sortConfig.key]?.toString() ?? '',
+          : (sortConfig.column === 'defendant' &&
+            b.defendants &&
+            b.defendants.length > 0
+              ? b.defendants[0].name || ''
+              : '' + b['created']
+            ).localeCompare(
+              sortConfig.column === 'defendant' &&
+                a.defendants &&
+                a.defendants.length > 0
+                ? a.defendants[0].name || ''
+                : '' + a['created'],
             )
       })
     }
     return sortedCases
   }, [cases, sortConfig])
 
-  const requestSort = (key: keyof Case) => {
+  const requestSort = (column: sortableTableColumn) => {
     let d: directionType = 'ascending'
 
     if (
       sortConfig &&
-      sortConfig.key === key &&
+      sortConfig.column === column &&
       sortConfig.direction === 'ascending'
     ) {
       d = 'descending'
     }
-    setSortConfig({ key, direction: d })
+    setSortConfig({ column, direction: d })
   }
 
-  const getClassNamesFor = (name: keyof Case) => {
+  const getClassNamesFor = (name: sortableTableColumn) => {
     if (!sortConfig) {
       return
     }
-    return sortConfig.key === name ? sortConfig.direction : undefined
+    return sortConfig.column === name ? sortConfig.direction : undefined
   }
 
   return (
@@ -98,16 +120,18 @@ const ActiveRequests: React.FC<Props> = (props) => {
               display="flex"
               alignItems="center"
               className={styles.thButton}
-              onClick={() => requestSort('accusedName')}
+              onClick={() => requestSort('defendant')}
               data-testid="accusedNameSortButton"
             >
-              <Text fontWeight="regular">{formatMessage(core.accused)}</Text>
+              <Text fontWeight="regular">
+                {capitalize(formatMessage(core.defendant, { suffix: 'i' }))}
+              </Text>
               <Box
                 className={cn(styles.sortIcon, {
                   [styles.sortAccusedNameAsc]:
-                    getClassNamesFor('accusedName') === 'ascending',
+                    getClassNamesFor('defendant') === 'ascending',
                   [styles.sortAccusedNameDes]:
-                    getClassNamesFor('accusedName') === 'descending',
+                    getClassNamesFor('defendant') === 'descending',
                 })}
                 marginLeft={1}
                 component="span"
@@ -138,7 +162,7 @@ const ActiveRequests: React.FC<Props> = (props) => {
               display="flex"
               alignItems="center"
               className={styles.thButton}
-              onClick={() => requestSort('created')}
+              onClick={() => requestSort('createdAt')}
             >
               <Text fontWeight="regular">
                 {formatMessage(
@@ -148,9 +172,9 @@ const ActiveRequests: React.FC<Props> = (props) => {
               <Box
                 className={cn(styles.sortIcon, {
                   [styles.sortCreatedAsc]:
-                    getClassNamesFor('created') === 'ascending',
+                    getClassNamesFor('createdAt') === 'ascending',
                   [styles.sortCreatedDes]:
-                    getClassNamesFor('created') === 'descending',
+                    getClassNamesFor('createdAt') === 'descending',
                 })}
                 marginLeft={1}
                 component="span"
@@ -194,21 +218,32 @@ const ActiveRequests: React.FC<Props> = (props) => {
               )}
             </td>
             <td className={cn(styles.td, styles.largeColumn)}>
-              <Text>
-                <Box component="span" className={styles.blockColumn}>
-                  {c.accusedName || '-'}
-                </Box>
-              </Text>
-              <Text>
-                {c.accusedNationalId && (
-                  <Text as="span" variant="small" color="dark400">
-                    {`kt. ${
-                      insertAt(c.accusedNationalId.replace('-', ''), '-', 6) ||
-                      '-'
-                    }`}
+              {c.defendants && c.defendants.length > 0 ? (
+                <>
+                  <Text>
+                    <Box component="span" className={styles.blockColumn}>
+                      {c.defendants[0].name ?? '-'}
+                    </Box>
                   </Text>
-                )}
-              </Text>
+                  {c.defendants.length === 1 ? (
+                    <Text>
+                      <Text as="span" variant="small" color="dark400">
+                        {`kt. ${
+                          c.defendants[0].nationalId
+                            ? formatNationalId(c.defendants[0].nationalId)
+                            : '-'
+                        }`}
+                      </Text>
+                    </Text>
+                  ) : (
+                    <Text as="span" variant="small" color="dark400">
+                      {`+ ${c.defendants.length - 1}`}
+                    </Text>
+                  )}
+                </>
+              ) : (
+                <Text>-</Text>
+              )}
             </td>
             <td className={styles.td}>
               <Box component="span" display="flex" flexDirection="column">
