@@ -43,6 +43,7 @@ export interface ISLBorninMin {
   Logheimili?: string
   Sveitarfelag?: string
   Postaritun?: string
+  Afdrif?: string
 }
 
 interface ISLBorninMinAttributes {

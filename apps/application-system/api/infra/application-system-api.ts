@@ -45,8 +45,8 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
     .command('node')
     .extraAttributes({
       dev: { schedule: '*/30 * * * *' },
-      staging: { schedule: '0 * * * *' },
-      prod: { schedule: '0 * * * *' },
+      staging: { schedule: '*/30 * * * *' },
+      prod: { schedule: '*/30 * * * *' },
     })
 
 export const serviceSetup = (services: {

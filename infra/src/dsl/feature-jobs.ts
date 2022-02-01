@@ -47,7 +47,7 @@ export const generateJobsForFeature = (
             env: [
               {
                 name: 'PGHOST',
-                value: host,
+                value: host.writer,
               },
               {
                 name: 'PGDATABASE',
