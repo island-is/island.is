@@ -215,6 +215,10 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-labels-signeddocument-download',
     defaultMessage: 'Sækja PDF til undirritunar',
   },
+  signedDocumentDownloadFreshError: {
+    id: 'ap.regulations-admin:error-downloaddraft',
+    defaultMessage: 'Ekki var hægt að sækja PDF skrá',
+  },
   signedDocumentUpload: {
     id: 'ap.regulations-admin:draft-labels-signeddocument-upload',
     defaultMessage: 'Hlaða upp undirrituðu eintaki',
@@ -557,14 +561,6 @@ export const buttonsMsgs = defineMessages({
   confirmDelete: {
     id: 'ap.regulations-admin:btn-delete-confirm',
     defaultMessage: 'Þessu uppkasti að reglugerð verður eytt varanlega!',
-  },
-  downloadDraft: {
-    id: 'ap.regulations-admin:btn-downloaddraft',
-    defaultMessage: 'Sækja PDF',
-  },
-  downloadDraftError: {
-    id: 'ap.regulations-admin:error-downloaddraft',
-    defaultMessage: 'Ekki var hægt að sækja PDF skrá',
   },
 })
 

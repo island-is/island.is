@@ -31,6 +31,8 @@ import {
 } from '@island.is/regulations'
 import { produce } from 'immer'
 import { downloadUrl } from '../utils/files'
+import { DownloadDraftButton } from './DownloadDraftButton'
+import { useAuth } from '@island.is/auth/react'
 
 // ---------------------------------------------------------------------------
 
@@ -56,20 +58,6 @@ import { downloadUrl } from '../utils/files'
 //     }
 //   }, [ministry, ministries])
 // }
-
-// ---------------------------------------------------------------------------
-
-const fetchPDF = (draft: RegDraftForm) => {
-  new Promise<{ success: boolean }>((resolve) => {
-    const fileName = draft.title.value + '.pdf'
-    // import { downloadUrl } from '../utils/files'
-    // downloadUrl (...)
-    setTimeout(() => {
-      alert(`Save your file "${fileName}"`)
-      resolve({ success: true })
-    }, 500)
-  })
-}
 
 // ---------------------------------------------------------------------------
 
@@ -202,7 +190,6 @@ export const EditSignature = () => {
   const { formatMessage: t, formatDateFns } = useLocale()
   const { draft, actions } = useDraftingState()
   const { updateState } = actions
-
   const signedDocumentUrl = draft.signedDocumentUrl.value
 
   const {
@@ -221,13 +208,7 @@ export const EditSignature = () => {
   return (
     <Box marginBottom={6}>
       <Box marginBottom={4}>
-        <Button
-          onClick={() => fetchPDF(draft)}
-          icon="download"
-          // iconType="outline"
-        >
-          {t(msg.signedDocumentDownloadFresh)}
-        </Button>
+        <DownloadDraftButton draftId={draft.id} />
       </Box>
 
       <Box marginBottom={4}>

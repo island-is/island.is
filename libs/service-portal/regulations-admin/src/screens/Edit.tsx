@@ -1,15 +1,10 @@
-import React, { FC, Fragment, useEffect } from 'react'
+import React, { FC, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  DraftImpactId,
-  RegulationDraft,
-  RegulationDraftId,
-} from '@island.is/regulations/admin'
+import { DraftImpactId, RegulationDraftId } from '@island.is/regulations/admin'
 import { isUuid } from 'uuidv4'
 import { Step } from '../types'
-import { User } from 'oidc-client'
 
 import {
   RegDraftingProvider,
@@ -29,11 +24,10 @@ import { EditMeta } from '../components/EditMeta'
 import { EditSignature } from '../components/EditSignature'
 import { EditImpacts } from '../components/EditImpacts'
 import { EditReview } from '../components/EditReview'
-import { Box, SkeletonLoader, Text, toast } from '@island.is/island-ui/core'
+import { Box, Text, toast } from '@island.is/island-ui/core'
 import { SaveDeleteButtons } from '../components/SaveDeleteButtons'
 import { DraftingNotes } from '../components/DraftingNotes'
 import { ButtonBar } from '../components/ButtonBar'
-import { DownloadDraftButton } from '../components/DownloadDraftButton'
 
 // ---------------------------------------------------------------------------
 
@@ -94,13 +88,7 @@ const stepData: Record<
   },
 }
 
-const EditScreen = ({
-  userInfo,
-  regulationDraft,
-}: {
-  userInfo: User
-  regulationDraft: RegulationDraft
-}) => {
+const EditScreen = () => {
   const t = useLocale().formatMessage
   const state = useDraftingState()
   const step = stepData[state.step.name]
@@ -125,10 +113,7 @@ const EditScreen = ({
           </Text>
         )}
       </Box>
-      <DownloadDraftButton
-        userInfo={userInfo}
-        regulationDraftId={regulationDraft.id}
-      />
+
       <SaveDeleteButtons wrap />
       <step.Component />
       <DraftingNotes />
@@ -176,11 +161,7 @@ const EditApp: ServicePortalModuleComponent = ({ userInfo }) => {
       ministries={ministries.data}
       lawChapters={lawChapters.data}
     >
-      <EditScreen
-        key={draftId}
-        userInfo={userInfo}
-        regulationDraft={regulationDraft.data}
-      />
+      <EditScreen key={draftId} />
     </RegDraftingProvider>
   )
 }
