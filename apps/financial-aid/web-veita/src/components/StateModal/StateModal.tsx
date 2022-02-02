@@ -171,7 +171,9 @@ const StateModal = ({
                 applicationId,
                 selected,
                 undefined,
-                undefined,
+                `Samþykkt upphæð: kr. ${amount?.finalAmount.toLocaleString(
+                  'de-DE',
+                )}.-`,
                 amount,
               )
             }}

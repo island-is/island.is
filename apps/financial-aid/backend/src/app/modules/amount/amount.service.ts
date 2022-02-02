@@ -40,13 +40,4 @@ export class AmountService {
     })
   }
 
-  async findById(id: string): Promise<AmountModel> {
-    return this.amountModel.findOne({
-      where: {
-        applicationId: id,
-      },
-      order: [['created', 'DESC']],
-      include: [{ model: DeductionFactorsModel, as: 'deductionFactors' }],
-    })
-  }
 }

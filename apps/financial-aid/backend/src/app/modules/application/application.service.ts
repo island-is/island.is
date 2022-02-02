@@ -363,21 +363,15 @@ export class ApplicationService {
       eventType: update.event,
       comment:
         update?.rejection ||
-        update?.comment ||
-        `Samþykkt upphæð: kr. ${update?.amount?.finalAmount.toLocaleString(
-          'de-DE',
-        )}.-`,
+        update?.comment,
       staffName: staff?.name,
       staffNationalId: staff?.nationalId,
     })
 
     if (update.amount) {
-      await this.amountService.create(update.amount)
+      const amount = await this.amountService.create(update.amount)
+      updatedApplication?.setDataValue('amount', amount)
     }
-
-    const amount = this.amountService.findById(id).then((amountResolved) => {
-      updatedApplication?.setDataValue('amount', amountResolved)
-    })
 
     const events = this.applicationEventService
       .findById(id)
@@ -394,7 +388,6 @@ export class ApplicationService {
     await Promise.all([
       events,
       files,
-      amount,
       this.sendApplicationUpdateEmail(update, updatedApplication),
     ])
 
