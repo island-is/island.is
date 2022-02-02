@@ -363,6 +363,7 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           docker-registry: ${{ env.DOCKER_REGISTRY}}
+          dd-api-key: ${{ secrets.DD_API_KEY }}
 
   docker-build:
     needs:

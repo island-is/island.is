@@ -1,4 +1,4 @@
 #!/bin/bash
 set -euxo pipefail
 
-SERVERSIDE_FEATURES_ON=\"\" yarn run test "${APP}" --runInBand --codeCoverage
+SERVERSIDE_FEATURES_ON=\"\" DD_SERVICE="${APP}" DD_ENV="ci" yarn run test "${APP}" --runInBand --codeCoverage

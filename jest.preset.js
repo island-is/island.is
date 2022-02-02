@@ -2,6 +2,7 @@ const path = require('path')
 const nxPreset = require('@nrwl/jest/preset')
 
 const customResolver = path.join(__dirname, 'jest.resolver.js')
+const jestEnvironment = path.join(__dirname, 'jest.environment.js')
 
 module.exports = {
   ...nxPreset,
@@ -12,6 +13,7 @@ module.exports = {
   resolver: customResolver,
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageReporters: ['json'],
+  testEnvironment: jestEnvironment,
   collectCoverageFrom: [
     '**/*.{js,jsx,ts,tsx}',
     '!**/*.css.*',
