@@ -195,7 +195,9 @@ export class ApplicationService {
       ],
     })
 
-    application.setDataValue('amount', application.amount['0'])
+    if (application?.amount) {
+      application.setDataValue('amount', application.amount['0'])
+    }
 
     return application
   }
