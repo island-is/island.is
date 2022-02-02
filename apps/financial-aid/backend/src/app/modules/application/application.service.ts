@@ -196,7 +196,7 @@ export class ApplicationService {
       ],
     })
 
-    application.setDataValue('amount', application.amount["0"])
+    application.setDataValue('amount', application.amount['0'])
 
     return application
   }
@@ -361,9 +361,7 @@ export class ApplicationService {
     await this.applicationEventService.create({
       applicationId: id,
       eventType: update.event,
-      comment:
-        update?.rejection ||
-        update?.comment,
+      comment: update?.rejection || update?.comment,
       staffName: staff?.name,
       staffNationalId: staff?.nationalId,
     })

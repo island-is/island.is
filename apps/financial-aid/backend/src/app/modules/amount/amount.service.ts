@@ -3,10 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { AmountModel } from './models'
 
-import {
-  
-  DeductionFactorsService,
-} from '../deductionFactors'
+import { DeductionFactorsService } from '../deductionFactors'
 
 import { Sequelize } from 'sequelize'
 import { Amount } from '@island.is/financial-aid/shared/lib'
@@ -39,5 +36,4 @@ export class AmountService {
         })
     })
   }
-
 }
