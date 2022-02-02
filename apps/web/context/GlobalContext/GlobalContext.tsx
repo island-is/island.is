@@ -9,10 +9,10 @@ export interface GlobalContextProps {
   globalNamespace: NamespaceType
   pageContentfulId: string
   subpageContentfulId?: string
-  subpageSlug?: string
+  resolveLinkTypeLocally?: boolean
   setGlobalNamespace: (ns: NamespaceType) => void
   setContentfulId: (pageId: string, subpageId?: string) => void
-  setSubpageSlug: (slug: string) => void
+  setResolveLinkTypeLocally: (localResolution: boolean) => void
 }
 
 export interface GlobalContextProviderProps {
@@ -23,10 +23,10 @@ export const GlobalContext = createContext<GlobalContextProps>({
   globalNamespace: {},
   pageContentfulId: '',
   subpageContentfulId: '',
-  subpageSlug: '',
+  resolveLinkTypeLocally: false,
   setGlobalNamespace: () => null,
   setContentfulId: () => null,
-  setSubpageSlug: () => null,
+  setResolveLinkTypeLocally: () => null,
 })
 
 export const GlobalContextProvider: FC<GlobalContextProviderProps> = ({
@@ -34,19 +34,22 @@ export const GlobalContextProvider: FC<GlobalContextProviderProps> = ({
   children,
 }) => {
   const setContentfulId = (pageId: string, subpageId?: string) => {
-    setState({
-      ...state,
+    setState((prevState) => ({
+      ...prevState,
       pageContentfulId: pageId,
       subpageContentfulId: subpageId,
-    })
+    }))
   }
 
   const setGlobalNamespace = (ns: NamespaceType) => {
-    setState({ ...state, globalNamespace: ns })
+    setState((prevState) => ({ ...prevState, globalNamespace: ns }))
   }
 
-  const setSubpageSlug = (slug: string) => {
-    setState({ ...state, subpageSlug: slug })
+  const setResolveLinkTypeLocally = (localResolution: boolean) => {
+    setState((prevState) => ({
+      ...prevState,
+      resolveLinkTypeLocally: localResolution,
+    }))
   }
 
   const initialState: GlobalContextProps = {
@@ -55,7 +58,7 @@ export const GlobalContextProvider: FC<GlobalContextProviderProps> = ({
     subpageContentfulId: '',
     setGlobalNamespace,
     setContentfulId,
-    setSubpageSlug,
+    setResolveLinkTypeLocally,
   }
 
   const [state, setState] = useState(initialState)

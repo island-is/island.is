@@ -40,6 +40,7 @@ import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import getConfig from 'next/config'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import useSubpageSlug from '@island.is/web/hooks/useResolveLinkTypeLocally'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -74,6 +75,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
   const { linkResolver } = useLinkResolver()
 
   useContentfulId(organizationPage.id)
+  useSubpageSlug()
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
