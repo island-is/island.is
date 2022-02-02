@@ -95,6 +95,7 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
         setErrors({ ...formErrors, email: emailError })
       }
     } catch (err) {
+      console.error(`createEmailVerification error: ${err}`)
       setErrors({ ...formErrors, email: emailError })
     }
   }
@@ -131,6 +132,7 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
         setErrors({ ...formErrors, code: codeError })
       }
     } catch (err) {
+      console.error(`confirmEmailVerification error: ${err}`)
       setVerifiCationLoading(false)
       setErrors({ ...formErrors, code: codeError })
     }

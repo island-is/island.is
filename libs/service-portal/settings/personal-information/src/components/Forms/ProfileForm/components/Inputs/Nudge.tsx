@@ -34,6 +34,7 @@ export const Nudge: FC<Props> = ({ canNudge }) => {
         canNudge: data.canNudge,
       }).then(() => setInputSuccess(true))
     } catch (err) {
+      console.error(`updateOrCreateUserProfile error: ${err}`)
       setSubmitError(formatMessage(m.somethingWrong))
     }
   }

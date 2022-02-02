@@ -92,6 +92,7 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
         setErrors({ ...formErrors, mobile: formatMessage(m.somethingWrong) })
       }
     } catch (err) {
+      console.error(`createSmsVerification error: ${err}`)
       setErrors({ ...formErrors, mobile: formatMessage(m.somethingWrong) })
     }
   }
@@ -122,6 +123,7 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
         setErrors({ ...formErrors, code: formatMessage(m.somethingWrong) })
       }
     } catch (err) {
+      console.error(`confirmSmsVerification error: ${err}`)
       setVerifiCationLoading(false)
       setErrors({ ...formErrors, code: formatMessage(m.somethingWrong) })
     }

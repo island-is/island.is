@@ -43,6 +43,7 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
         setSubmitError(formatMessage(m.somethingWrong))
       }
     } catch (err) {
+      console.error(`updateOrCreateUserProfile error: ${err}`)
       setSubmitError(formatMessage(m.somethingWrong))
     }
   }
