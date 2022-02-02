@@ -19,7 +19,7 @@ const DataNeededModal = ({
 
   return (
     <InputModal
-      headline="Okkur vantar gögn til að klára að vinna úr umsókninni"
+      headline="Listaðu upp þau gögn sem vantar"
       onCancel={onCancel}
       onSubmit={() => {
         if (!comment) {
@@ -31,7 +31,7 @@ const DataNeededModal = ({
       submitButtonText="Senda á umsækjanda"
       isModalVisable={isModalVisable}
       hasError={hasError}
-      errorMessage="Þú þarft að senda lýsingu"
+      errorMessage="Þú þarft að gera grein fyrir hvaða gögn vanti í umsóknina"
     >
       <Box marginBottom={12}>
         <Input
