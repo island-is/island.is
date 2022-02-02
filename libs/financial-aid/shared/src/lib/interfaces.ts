@@ -238,6 +238,8 @@ export interface ApplicationFilters {
 
 export interface PersonalTaxReturn {
   key: string
+  name: string
+  size: number
 }
 
 export interface Application {

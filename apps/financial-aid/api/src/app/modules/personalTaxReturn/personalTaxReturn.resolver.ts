@@ -12,11 +12,9 @@ export class PersonalTaxReturnResolver {
   @Query(() => PersonalTaxReturnResponse, {
     nullable: true,
   })
-  async personalTaxReturnForYearPdf(
+  async municipalitiesPersonalTaxReturn(
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<PersonalTaxReturnResponse> {
-    console.log('personal tax return resolver')
-
     return await backendApi.getPersonalTaxReturn()
   }
 }

@@ -30,7 +30,7 @@ export class PersonalTaxReturnController {
     type: PersonalTaxReturnResponse,
     description: 'Fetches personal tax return and uploads it to s3',
   })
-  async createSignedUrlForId(
+  async municipalitiesPersonalTaxReturn(
     @Param('id') id: string,
     @CurrentUser() user: User,
   ): Promise<PersonalTaxReturnResponse> {

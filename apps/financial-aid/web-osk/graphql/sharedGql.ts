@@ -134,7 +134,7 @@ export const NationalRegistryUserQuery = gql`
 
 export const PersonalTaxReturnQuery = gql`
   query personalTaxReturnQuery {
-    personalTaxReturnForYearPdf {
+    municipalitiesPersonalTaxReturn {
       key
       name
       size
