@@ -129,8 +129,6 @@ export const ApplicantEmailTemplate = (emailData: ApplicantEmailData) => {
                             emailData.applicationLink
                           }" class="es-button es-button-1" target="_blank" style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#FFFFFF;font-size:18px;border-style:solid;border-color:#0061ff;border-width:18px 24px;display:inline-block;background:#31CB4B;border-radius:30px;font-family:'IBM Plex Sans', 'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-weight:normal;font-style:normal;line-height:22px;width:auto;text-align:center;background-color:#0061ff;border-top-left-radius:8px;border-top-right-radius:8px;border-bottom-right-radius:8px;border-bottom-left-radius:8px">${
     emailData.applicationLinkText
-      ? emailData.applicationLinkText
-      : 'Bæta við gögnum'
   }</a></span></td> 
                          </tr> 
                          <tr> 
