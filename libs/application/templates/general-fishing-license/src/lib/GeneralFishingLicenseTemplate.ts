@@ -11,13 +11,17 @@ import {
 import { States } from '../constants'
 import { GeneralFishingLicenseSchema } from './dataSchema'
 import { application } from './messages'
-import * as z from 'zod'
+import { ApiActions } from '../shared'
 
 enum Roles {
   APPLICANT = 'applicant',
 }
 
-type GeneralFishingLicenseEvent = { type: DefaultEvents.SUBMIT }
+type GeneralFishingLicenseEvent =
+  | { type: DefaultEvents.SUBMIT }
+  | { type: DefaultEvents.ABORT }
+  | { type: DefaultEvents.PAYMENT }
+  | { type: DefaultEvents.REJECT }
 
 const GeneralFishingLicenseTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -60,9 +64,50 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.SUBMITTED,
+          [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
+          [DefaultEvents.REJECT]: {
+            target: States.DECLINED,
           },
+        },
+      },
+      [States.PAYMENT]: {
+        meta: {
+          name: 'Payment state',
+          actionCard: {
+            description: application.labels.actionCardPayment,
+          },
+          progress: 0.9,
+          // Application is only suppose to live for an hour while building it, change later
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 3600 * 1000,
+          },
+          onEntry: {
+            apiModuleAction: ApiActions.createCharge,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/GeneralFishingLicensePaymentForm').then(
+                  (val) => val.GeneralFishingLicensePaymentForm,
+                ),
+              actions: [
+                { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
+                {
+                  event: DefaultEvents.ABORT,
+                  name: 'Hætta við',
+                  type: 'reject',
+                },
+              ],
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.SUBMITTED },
+          [DefaultEvents.ABORT]: { target: States.DRAFT },
         },
       },
       [States.SUBMITTED]: {
@@ -87,6 +132,30 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
             },
           ],
         },
+        type: 'final' as const,
+      },
+      [States.DECLINED]: {
+        meta: {
+          name: 'Declined',
+          progress: 1,
+          // Application is only suppose to live for an hour while building it, change later
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 3600 * 1000,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/GeneralFishingLicenseDeclinedForm').then(
+                  (val) => val.GeneralFishingLicenseDeclinedForm,
+                ),
+              read: 'all',
+            },
+          ],
+        },
+        type: 'final' as const,
       },
     },
   },

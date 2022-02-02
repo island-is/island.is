@@ -2,4 +2,5 @@ export {
   NationalRegistryProvider,
   UserProfileProvider,
 } from '@island.is/application/data-providers'
-export * from './generalFishingLicenseProvider'
+export * from './GeneralFishingLicenseProvider'
+export * from './FeeInfoProvider'

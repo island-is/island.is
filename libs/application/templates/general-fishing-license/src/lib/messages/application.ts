@@ -13,4 +13,12 @@ export const application = {
       description: 'Institution name',
     },
   }),
+  labels: defineMessages({
+    actionCardPayment: {
+      id: 'gfl.application:application.labels.actionCardPayment',
+      defaultMessage: 'Greiðslu vantar',
+      description:
+        'Description of application state/status when payment is pending',
+    },
+  }),
 }
