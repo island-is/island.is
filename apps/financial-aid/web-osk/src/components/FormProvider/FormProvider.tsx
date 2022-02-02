@@ -22,6 +22,7 @@ export interface Form {
   hasIncome?: boolean
   incomeFiles: UploadFile[]
   taxReturnFiles: UploadFile[]
+  taxReturnFromRskFile: UploadFile[]
   otherFiles: UploadFile[]
   usePersonalTaxCredit?: boolean
   bankNumber?: string

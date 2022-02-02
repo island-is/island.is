@@ -35,12 +35,11 @@ export class PersonalTaxReturnController {
     @CurrentUser() user: User,
   ): Promise<PersonalTaxReturnResponse> {
     console.log('personal tax return controller')
-    const response = await this.personalTaxReturnService.personalTaxReturnPdf(
-      user.nationalId,
+
+    return await this.personalTaxReturnService.personalTaxReturnPdf(
+      '2809783969',
       '2020',
       user.folder,
     )
-
-    return { key: response }
   }
 }

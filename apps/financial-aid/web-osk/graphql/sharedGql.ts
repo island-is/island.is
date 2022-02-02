@@ -136,6 +136,8 @@ export const PersonalTaxReturnQuery = gql`
   query personalTaxReturnQuery {
     personalTaxReturnForYearPdf {
       key
+      name
+      size
     }
   }
 `

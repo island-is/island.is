@@ -25,6 +25,7 @@ export class PersonalTaxReturnService {
     console.log('taxReturn content', taxReturn.content.substring(0, 200))
 
     const base64 = Base64.atob(taxReturn.content)
+    const size = base64.length
 
     await fetch(presignedUrl.url, {
       method: 'PUT',
@@ -32,10 +33,10 @@ export class PersonalTaxReturnService {
       headers: {
         'x-amz-acl': 'bucket-owner-full-control',
         'Content-Type': 'application/pdf',
-        'Content-Length': base64.length.toString(),
+        'Content-Length': size.toString(),
       },
     })
 
-    return presignedUrl.key
+    return { key: presignedUrl.key, name: fileName, size }
   }
 }

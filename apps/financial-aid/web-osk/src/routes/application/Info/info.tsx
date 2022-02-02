@@ -15,6 +15,7 @@ import {
   getNextPeriod,
   NationalRegistryData,
   NavigationProps,
+  PersonalTaxReturnData,
   Routes,
   UploadFileType,
   useAsyncLazyQuery,
@@ -51,7 +52,7 @@ const ApplicationInfo = () => {
   >(NationalRegistryUserQuery)
 
   const personalTaxReturnQuery = useAsyncLazyQuery<{
-    personalTaxReturnForYearPdf: { key: string }
+    personalTaxReturnForYearPdf: PersonalTaxReturnData
   }>(PersonalTaxReturnQuery)
 
   const logOut = useLogOut()
@@ -98,9 +99,7 @@ const ApplicationInfo = () => {
 
     updateForm({
       ...form,
-      ['taxReturnFiles']: [
-        { key: personalTaxReturnData.personalTaxReturnForYearPdf.key },
-      ],
+      taxReturnFromRskFile: [personalTaxReturnData.personalTaxReturnForYearPdf],
     })
 
     setNationalRegistryData(
