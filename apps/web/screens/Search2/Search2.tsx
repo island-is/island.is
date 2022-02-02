@@ -68,7 +68,6 @@ import {
   CategoriesProps,
   FilterOptions,
   FilterLabels,
-  initialFilter,
 } from './FilterMenu'
 
 const PERPAGE = 10
@@ -106,13 +105,16 @@ const connectedTypes: Partial<
     Array<SearchableContentTypes | string>
   >
 > = {
-  webArticle: ['WebArticle', 'WebSubArticle'],
+  webArticle: ['WebArticle', 'WebSubArticle', 'WebOrganizationSubpage'],
   webAdgerdirPage: ['WebAdgerdirPage'],
   webNews: ['WebNews'],
   webQNA: ['WebQna'],
   webLifeEventPage: ['WebLifeEventPage'],
   ArticlesWithProcessEntry: ['WebArticle'],
 }
+
+const stringToArray = (value: string | string[]) =>
+  Array.isArray(value) ? value : value?.length ? [value] : []
 
 const Search2: Screen<CategoryProps> = ({
   q,
@@ -123,16 +125,28 @@ const Search2: Screen<CategoryProps> = ({
 }) => {
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState(false)
+  const [allowSearch, setAllowSearch] = useState(false)
   const { activeLocale } = useI18n()
   const searchRef = useRef<HTMLInputElement | null>(null)
-  const replace = useReplace()
+  const push = usePush()
   const { query } = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const [filter, setFilter] = useState<FilterOptions>({
-    ...initialFilter,
+    category: stringToArray(query.category),
+    organization: stringToArray(query.organization),
   })
-  const [contentTypes, setContentTypes] = useState<SearchableContentTypes[]>([])
+  const [contentTypes, setContentTypes] = useState<SearchableContentTypes[]>(
+    stringToArray(query.type) as SearchableContentTypes[],
+  )
+  const [showProcessEntries, setShowProcessEntries] = useState<boolean>(
+    query.processentry === 'true',
+  )
+
+  console.log('query', query)
+  console.log('filter', filter)
+  console.log('contentTypes', contentTypes)
+  console.log('showProcessEntries', showProcessEntries)
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
@@ -172,8 +186,6 @@ const Search2: Screen<CategoryProps> = ({
 
     setContentTypes(arr)
   }
-
-  console.log('contentTypes', contentTypes)
 
   const getArticleCount = useMemo(
     () => () => {
@@ -317,52 +329,6 @@ const Search2: Screen<CategoryProps> = ({
     }),
   )
 
-  // useEffect(() => {
-  //   if (!activeSearchType) {
-  //     // console.log('no activeSearchType')
-  //     return null
-  //   }
-
-  //   let searchTypes = ''
-
-  //   if (Object.keys(connectedTypes).includes(activeSearchType)) {
-  //     searchTypes = connectedTypes[activeSearchType].map(firstLower).join()
-  //   }
-
-  //   // console.log(
-  //   //   'activeSearchType',
-  //   //   activeSearchType,
-  //   //   'searchTypes',
-  //   //   searchTypes,
-  //   // )
-
-  //   replace({
-  //     pathname,
-  //     query: {
-  //       q,
-  //       ...(searchTypes && { type: searchTypes }),
-  //       ...(activeSearchType === 'ArticlesWithProcessEntry' && {
-  //         processentry: true,
-  //       }),
-  //     },
-  //   }).then(() => {
-  //     window.scrollTo(0, 0)
-  //   })
-  // }, [activeSearchType, pathname, q, replace])
-
-  // const refreshWithSearchQuery = () => {
-  //   // setActiveSearchType('')
-
-  //   replace({
-  //     pathname,
-  //     query: {
-  //       q,
-  //     },
-  //   }).then(() => {
-  //     window.scrollTo(0, 0)
-  //   })
-  // }
-
   const noUncategorized = (item) => {
     if (!item.category && filters.category === 'uncategorized') {
       return true
@@ -382,22 +348,53 @@ const Search2: Screen<CategoryProps> = ({
       : (n('searchResults', 'leitarniðurstöður') as string).toLowerCase()
 
   useEffect(() => {
-    replace({
-      pathname,
-      query: {
-        q,
-        ...(filter.category.length && { category: filter.category }),
-        ...(filter.organization.length && {
-          organization: filter.organization,
-        }),
-        ...(contentTypes?.length && {
-          type: contentTypes,
-        }),
-      },
-    }).then(() => {
-      window.scrollTo(0, 0)
-    })
-  }, [contentTypes, filter.category, filter.organization, pathname, q, replace])
+    const currentContentType = contentTypes[0]
+
+    if (currentContentType !== 'webArticle') {
+      setShowProcessEntries(false)
+    }
+  }, [contentTypes])
+
+  useEffect(() => {
+    const currentContentType = contentTypes[0]
+
+    if (allowSearch) {
+      if (showProcessEntries && currentContentType !== 'webArticle') {
+        return setContentTypes(['webArticle' as SearchableContentTypes])
+      }
+
+      push({
+        pathname,
+        query: {
+          q,
+          ...(showProcessEntries && { processentry: 'true' }),
+          ...(filter.category.length && { category: filter.category }),
+          ...(filter.organization.length && {
+            organization: filter.organization,
+          }),
+          ...(contentTypes?.length && {
+            type: Object.prototype.hasOwnProperty.call(
+              connectedTypes,
+              currentContentType,
+            )
+              ? connectedTypes[currentContentType].map((x) => firstLower(x))
+              : contentTypes,
+          }),
+        },
+      }).then(() => {
+        window.scrollTo(0, 0)
+      })
+    }
+  }, [
+    allowSearch,
+    contentTypes,
+    filter.category,
+    filter.organization,
+    pathname,
+    q,
+    push,
+    showProcessEntries,
+  ])
 
   const categories: CategoriesProps[] = [
     {
@@ -465,7 +462,6 @@ const Search2: Screen<CategoryProps> = ({
                   )
                 }}
               />
-
               <SearchInput
                 id="search_input_search_page"
                 ref={searchRef}
@@ -488,7 +484,10 @@ const Search2: Screen<CategoryProps> = ({
                       <Tag
                         variant="blue"
                         active={!contentTypes.length}
-                        onClick={() => setContentTypes([])}
+                        onClick={() => {
+                          setContentTypes([])
+                          setAllowSearch(true)
+                        }}
                       >
                         Sýna allt
                       </Tag>
@@ -507,29 +506,30 @@ const Search2: Screen<CategoryProps> = ({
                               key as SearchableContentTypes,
                               true,
                             )
+                            setAllowSearch(true)
                           }}
                         >
                           {title}
                         </Tag>
                       ))}
-                    {/* {countResults.processEntryCount > 0 && (
+                    {countResults.processEntryCount > 0 && (
                       <Tag
                         variant="blue"
-                        // active={activeSearchType === 'ArticlesWithProcessEntry'}
+                        active={showProcessEntries}
                         onClick={() => {
-                          // setActiveSearchType('ArticlesWithProcessEntry')
+                          setShowProcessEntries(!showProcessEntries)
                         }}
                       >
                         {n('processEntry', 'Umsókn')}
                       </Tag>
-                    )} */}
+                    )}
                   </Inline>
                   <FilterMenu
                     {...filterLabels}
                     categories={categories}
                     filter={filter}
                     setFilter={setFilter}
-                    // onChange={refresh}
+                    onChange={() => setAllowSearch(true)}
                     align="right"
                     variant={isMobile ? 'dialog' : 'popover'}
                   />
@@ -637,39 +637,34 @@ Search2.getInitialProps = async ({ apolloClient, locale, query }) => {
   const category = query.category ?? ''
   const type = query.type ?? ''
   const organization = query.organization ?? ''
+  const processentry = query.processentry ?? ''
   const countTag = {}
 
   const tags: TagType[] = [
-    ...(Array.isArray(category)
-      ? category
-      : category.length
-      ? [category]
-      : []
-    ).map(
+    ...stringToArray(category).map(
       (key: string): TagType => ({
         type: 'category' as SearchableTags,
         key,
       }),
     ),
-    ...(Array.isArray(organization)
-      ? organization
-      : organization.length
-      ? [organization]
-      : []
-    ).map(
+    ...stringToArray(organization).map(
       (key: string): TagType => ({
         type: 'organization' as SearchableTags,
         key,
       }),
     ),
+    ...(processentry && [
+      {
+        type: 'processentry' as SearchableTags,
+        key: 'true',
+      },
+    ]),
   ]
 
-  const types: SearchableContentTypes[] = (Array.isArray(type)
-    ? type
-    : type.length
-    ? [type]
-    : []
-  ).map((x: SearchableContentTypes) => x)
+  console.log('ssr tags', tags)
+  const types: SearchableContentTypes[] = stringToArray(type).map(
+    (x: SearchableContentTypes) => x,
+  )
 
   const allTypes = [
     'webArticle' as SearchableContentTypes,
@@ -753,22 +748,21 @@ Search2.getInitialProps = async ({ apolloClient, locale, query }) => {
 }
 
 const firstLower = (t: string) => t.charAt(0).toLowerCase() + t.slice(1)
-const firstUpper = (t: string) => t.charAt(0).toUpperCase() + t.slice(1)
 
-const useReplace = (): NextRouter['replace'] => {
+const usePush = (): NextRouter['push'] => {
   const Router = useRouter()
   const routerRef = useRef(Router)
 
   routerRef.current = Router
 
-  const [{ replace }] = useState<Pick<NextRouter, 'replace'>>({
-    replace: (path) => {
-      console.log('replacing', path)
-      return routerRef.current.replace(path)
+  const [{ push }] = useState<Pick<NextRouter, 'push'>>({
+    push: (path) => {
+      console.log('pushing...', path)
+      return routerRef.current.push(path)
     },
   })
 
-  return replace
+  return push
 }
 
 interface EnglishResultsLinkProps {
