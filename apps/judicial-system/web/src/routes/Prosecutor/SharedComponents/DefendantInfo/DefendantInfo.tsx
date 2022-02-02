@@ -17,6 +17,7 @@ import {
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import useNationalRegistry from '@island.is/judicial-system-web/src/utils/hooks/useNationalRegistry'
+import { defendant as defendantMessages } from '@island.is/judicial-system-web/messages'
 
 import * as styles from './DefendantInfo.css'
 
@@ -38,6 +39,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
   const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>(
     '',
   )
+  const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
 
   const [
     accusedNameErrorMessage,
@@ -131,6 +133,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
           maskPlaceholder={null}
           value={defendant.nationalId ?? ''}
           onChange={(evt) => {
+            setNationalIdNotFound(false)
             removeErrorMessageIfValid(
               ['empty', 'national-id'] as Validation[],
               evt.target.value,
@@ -153,6 +156,8 @@ const DefendantInfo: React.FC<Props> = (props) => {
                 address: person.items[0].permanent_address.street.nominative,
               })
             } else {
+              setNationalIdNotFound(true)
+
               validateAndSetErrorMessage(
                 ['empty', 'national-id'],
                 evt.target.value,
@@ -174,6 +179,14 @@ const DefendantInfo: React.FC<Props> = (props) => {
             required
           />
         </InputMask>
+        {nationalIdNotFound && (
+          <Text color="red600" variant="eyebrow" marginTop={1}>
+            {formatMessage(
+              defendantMessages.sections.defendantInfo
+                .nationalIdNotFoundInNationalRegistry,
+            )}
+          </Text>
+        )}
       </Box>
       <Box marginBottom={2}>
         <Input

@@ -73,6 +73,13 @@ export const defendant = {
         description:
           'Notaður sem titill fyrir "upplýsingar um varnaraðila" hlutann á varnaraðila skrefi í rannsóknarheimildum.',
       }),
+      nationalIdNotFoundInNationalRegistry: defineMessage({
+        id:
+          'judicial.system.investigation_cases:defendant.national_id_not_found_in_national_registry',
+        defaultMessage: 'Ekki tókst að fletta upp kennitölu',
+        description:
+          'Notaður sem skilaboð um að kennitala varnaraðila hafi ekki fundist í þjóðskrá á varnaraðila skrefi í rannsóknarheimildum.',
+      }),
       addDefendantButtonText: defineMessage({
         id:
           'judicial.system.investigation_cases:defendant.defendant_info.add_defendant_button_text',
