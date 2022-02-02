@@ -53,7 +53,7 @@ describe('Feature-deployment support', () => {
 
   it('dynamic service name generation', () => {
     expect(values.services.graphql.env).toEqual({
-      A: 'web-service-a.A.svc.cluster.local',
+      A: 'web-service-a',
       B: 'feature-web-service-b.islandis.svc.cluster.local',
       DB_USER: 'feature_feature_A_graphql',
       DB_NAME: 'feature_feature_A_graphql',
@@ -80,11 +80,16 @@ describe('Feature-deployment support', () => {
   })
 
   it('feature deployment namespaces', () => {
-    expect(Object.keys(values.services).sort()).toEqual(['graphql'])
+    expect(Object.keys(values.services).sort()).toEqual([
+      'graphql',
+      'service-a',
+    ])
     expect(values.services['graphql'].namespace).toEqual(
       `feature-${Dev.feature}`,
     )
-    expect(values.services['service-a']).toBeUndefined()
+    expect(values.services['service-a'].namespace).toEqual(
+      `feature-${Dev.feature}`,
+    )
   })
 
   it('feature deployment ingress', () => {
