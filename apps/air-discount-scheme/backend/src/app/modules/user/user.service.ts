@@ -42,7 +42,7 @@ export class UserService {
         .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{
           id: authUser.nationalId,
         })
-    } catch (e: any) {
+    } catch (e) {
       this.logger.error(
         'NatReg xRoad forsja: ' + e.name + ' - ' + e.message + ' - ' + e.url,
       )

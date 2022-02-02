@@ -79,7 +79,7 @@ export class PrivateUserController {
         '[/relations] Request parameters do not correspond with user authentication.',
       )
     }
-    let relations: string[] = await this.userService.getRelations(authUser)
+    const relations: string[] = await this.userService.getRelations(authUser)
 
     // Adding User in beginning of array so order is correct.
     relations.unshift(authUser.nationalId)

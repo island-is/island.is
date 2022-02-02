@@ -204,7 +204,6 @@ export class NationalRegistryService {
         return testUser
       }
     }
-
     const cacheKey = this.getCacheKey(nationalId, 'user')
     const cacheValue = await this.cacheManager.get(cacheKey)
     if (cacheValue) {
