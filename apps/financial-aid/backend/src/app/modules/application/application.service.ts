@@ -23,7 +23,6 @@ import {
   FileType,
   getApplicantEmailDataFromEventType,
   firstDateOfMonth,
-  Amount,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import {
