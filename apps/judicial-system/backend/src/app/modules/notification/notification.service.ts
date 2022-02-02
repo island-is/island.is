@@ -360,7 +360,7 @@ export class NotificationService {
     theCase: Case,
   ): Promise<SendNotificationResponse> {
     // TODO: Ignore failed notifications
-    const notificaion = await this.notificationModel.findOne({
+    const notification = await this.notificationModel.findOne({
       where: {
         caseId: theCase.id,
         type: NotificationType.READY_FOR_COURT,
@@ -381,7 +381,7 @@ export class NotificationService {
       this.uploadRequestPdfToCourt(theCase)
     }
 
-    if (notificaion) {
+    if (notification) {
       if (theCase.courtCaseNumber) {
         promises.push(
           this.sendResubmittedToCourtSmsNotificationToCourt(theCase),
