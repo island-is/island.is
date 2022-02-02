@@ -4,8 +4,8 @@ class ValidationUtils {
 
   public static identifierPattern = /^[a-zA-Z0-9_.-]*$/
 
-  /** Grant type pattern. Lower case no numbers allowed. */
-  public static grantTypePattern = /^([a-z_.-]+[:]?)*[a-z]$/
+  /** Grant type pattern. Lower case no numbers allowed. Starting and ending with a normal letter. */
+  public static grantTypePattern = /^(?=[a-z])[a-z_:.-]+(?<=[a-z])$/
 
   /** Pattern that enforeces @domain.is or @domain2-_2.is */
   public static domainPattern = /@{1}[a-z0-9_-]*[.]?[a-z]*$/
