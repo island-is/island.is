@@ -59,11 +59,7 @@ export function toISODate(
       date = undefined
     }
   }
-  // TODO: Remove this silly `as Date` type coersion as soon as
-  // the "api" project turns on `strict: true`
-  // until then the `nx run api:schemas/build-graphql-schema` script
-  // explodes on this next line, unless we do this `as Date` faff.
-  return date ? ((date as Date).toISOString().substr(0, 10) as ISODate) : null
+  return date ? (date.toISOString().substr(0, 10) as ISODate) : null
 }
 
 // ---------------------------------------------------------------------------
