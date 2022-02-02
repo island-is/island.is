@@ -6,14 +6,14 @@ import {
 } from '@island.is/island-ui/core'
 
 export type FilterOptions = {
-  thjonustuflokkar: Array<string>
-  opinberirAdilar: Array<string>
+  category: Array<string>
+  organization: Array<string>
   refresh?: boolean
 }
 
 export const initialFilter: FilterOptions = {
-  thjonustuflokkar: [],
-  opinberirAdilar: [],
+  category: [],
+  organization: [],
   refresh: false,
 }
 
@@ -21,7 +21,6 @@ interface FilterMenuProps {
   categories: ReadonlyArray<CategoriesProps>
   filter: FilterOptions
   setFilter: Dispatch<SetStateAction<FilterOptions>>
-  // onChange: () => void
   children?: ReactNode
 }
 
@@ -67,9 +66,7 @@ export const FilterMenu = ({
     variant={variant}
     align={align}
     reverse
-    onFilterClear={() =>
-      setFilter({ thjonustuflokkar: [], opinberirAdilar: [], refresh: true })
-    }
+    onFilterClear={() => setFilter({ category: [], organization: [] })}
   >
     <FilterMultiChoice
       labelClear={labelClear}

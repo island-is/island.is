@@ -129,20 +129,10 @@ const Search2: Screen<CategoryProps> = ({
   const { query } = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
-  const [activeSearchType, setActiveSearchType] = useState<string>(
-    query.processentry === 'true'
-      ? 'ArticlesWithProcessEntry'
-      : (query.type as string) ?? '',
-  )
   const [filter, setFilter] = useState<FilterOptions>({
     ...initialFilter,
   })
-  const [searchTags, setSearchTags] = useState<string>(
-    getSearchTagsString(filter),
-  )
-  const [searchContentTypes, setSearchContentTypes] = useState<
-    string[] | undefined
-  >()
+  const [contentTypes, setContentTypes] = useState<SearchableContentTypes[]>([])
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
@@ -164,23 +154,26 @@ const Search2: Screen<CategoryProps> = ({
     type: query.type as string,
   }
 
-  const toggleSearchContentTypes = (type: string, single?: boolean) => {
-    const arr = [...searchContentTypes]
+  const toggleContentTypes = (
+    type: SearchableContentTypes,
+    single?: boolean,
+  ) => {
+    const arr = [...contentTypes]
 
     if (single) {
-      return setSearchContentTypes(arr.indexOf(type) >= 0 ? [] : [type])
+      return setContentTypes(arr.indexOf(type) >= 0 ? [] : [type])
     }
 
     if (arr.indexOf(type) < 0) {
       arr.push(type)
     } else {
-      arr.splice(searchContentTypes.indexOf(type), 1)
+      arr.splice(contentTypes.indexOf(type), 1)
     }
 
-    setSearchContentTypes(arr)
+    setContentTypes(arr)
   }
 
-  // console.log('searchContentTypes', searchContentTypes)
+  console.log('contentTypes', contentTypes)
 
   const getArticleCount = useMemo(
     () => () => {
@@ -357,18 +350,18 @@ const Search2: Screen<CategoryProps> = ({
   //   })
   // }, [activeSearchType, pathname, q, replace])
 
-  const refreshWithSearchQuery = () => {
-    // setActiveSearchType('')
+  // const refreshWithSearchQuery = () => {
+  //   // setActiveSearchType('')
 
-    replace({
-      pathname,
-      query: {
-        q,
-      },
-    }).then(() => {
-      window.scrollTo(0, 0)
-    })
-  }
+  //   replace({
+  //     pathname,
+  //     query: {
+  //       q,
+  //     },
+  //   }).then(() => {
+  //     window.scrollTo(0, 0)
+  //   })
+  // }
 
   const noUncategorized = (item) => {
     if (!item.category && filters.category === 'uncategorized') {
@@ -388,34 +381,29 @@ const Search2: Screen<CategoryProps> = ({
       ? (n('searchResult', 'leitarniðurstaða') as string).toLowerCase()
       : (n('searchResults', 'leitarniðurstöður') as string).toLowerCase()
 
-  const refresh = useCallback(() => {
-    console.log('refreshing...')
+  useEffect(() => {
     replace({
       pathname,
       query: {
         q,
-        ...(searchTags && { tags: searchTags }),
-        ...(searchContentTypes?.length && {
-          types: searchContentTypes.join(','),
+        ...(filter.category.length && { category: filter.category }),
+        ...(filter.organization.length && {
+          organization: filter.organization,
+        }),
+        ...(contentTypes?.length && {
+          type: contentTypes,
         }),
       },
     }).then(() => {
       window.scrollTo(0, 0)
     })
-  }, [pathname, q, replace, searchContentTypes, searchTags])
-
-  useEffect(() => {
-    if (filter.refresh) {
-      refresh()
-      setFilter({ ...filter, refresh: false })
-    }
-  }, [filter, filter.refresh, refresh])
+  }, [contentTypes, filter.category, filter.organization, pathname, q, replace])
 
   const categories: CategoriesProps[] = [
     {
-      id: 'thjonustuflokkar',
+      id: 'category',
       label: 'Þjónustuflokkar',
-      selected: filter.thjonustuflokkar,
+      selected: filter.category,
       singleOption: true,
       filters: [
         {
@@ -433,9 +421,9 @@ const Search2: Screen<CategoryProps> = ({
       ],
     },
     {
-      id: 'opinberirAdilar',
+      id: 'organization',
       label: 'Opinberir aðilar',
-      selected: filter.opinberirAdilar,
+      selected: filter.organization,
       singleOption: true,
       filters: [
         {
@@ -499,10 +487,8 @@ const Search2: Screen<CategoryProps> = ({
                     {countResults.total > 0 && (
                       <Tag
                         variant="blue"
-                        active={!activeSearchType}
-                        onClick={() =>
-                          activeSearchType !== '' && refreshWithSearchQuery()
-                        }
+                        active={!contentTypes.length}
+                        onClick={() => setContentTypes([])}
                       >
                         Sýna allt
                       </Tag>
@@ -513,16 +499,20 @@ const Search2: Screen<CategoryProps> = ({
                         <Tag
                           key={index}
                           variant="blue"
-                          // active={searchContentTypes.includes(key)}
+                          active={contentTypes.includes(
+                            key as SearchableContentTypes,
+                          )}
                           onClick={() => {
-                            toggleSearchContentTypes(key, true)
-                            //setActiveSearchType(key)
+                            toggleContentTypes(
+                              key as SearchableContentTypes,
+                              true,
+                            )
                           }}
                         >
                           {title}
                         </Tag>
                       ))}
-                    {countResults.processEntryCount > 0 && (
+                    {/* {countResults.processEntryCount > 0 && (
                       <Tag
                         variant="blue"
                         // active={activeSearchType === 'ArticlesWithProcessEntry'}
@@ -532,7 +522,7 @@ const Search2: Screen<CategoryProps> = ({
                       >
                         {n('processEntry', 'Umsókn')}
                       </Tag>
-                    )}
+                    )} */}
                   </Inline>
                   <FilterMenu
                     {...filterLabels}
@@ -676,7 +666,9 @@ Search2.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   const types: SearchableContentTypes[] = (Array.isArray(type)
     ? type
-    : [type]
+    : type.length
+    ? [type]
+    : []
   ).map((x: SearchableContentTypes) => x)
 
   const allTypes = [
@@ -777,34 +769,6 @@ const useReplace = (): NextRouter['replace'] => {
   })
 
   return replace
-}
-
-const getSearchTagsString = (filter: FilterOptions) => {
-  const arr = []
-
-  if (filter.thjonustuflokkar?.[0]) {
-    arr.push(`category,${filter.thjonustuflokkar?.[0]}`)
-  }
-
-  if (filter.opinberirAdilar?.[0]) {
-    arr.push(`organization,${filter.opinberirAdilar?.[0]}`)
-  }
-
-  return arr.join('|')
-}
-
-const getInitialFilter = (filter: FilterOptions) => {
-  const arr = []
-
-  if (filter.thjonustuflokkar?.[0]) {
-    arr.push(`category,${filter.thjonustuflokkar?.[0]}`)
-  }
-
-  if (filter.opinberirAdilar?.[0]) {
-    arr.push(`organization,${filter.opinberirAdilar?.[0]}`)
-  }
-
-  return arr.join('|')
 }
 
 interface EnglishResultsLinkProps {
