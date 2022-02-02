@@ -15,6 +15,8 @@ export type CreateUserProfileData = {
   canNudge?: boolean
   emailStatus?: string
   mobileStatus?: string
+  emailCode?: string
+  smsCode?: string
 }
 
 export const useCreateUserProfile = () => {
@@ -39,6 +41,8 @@ export const useCreateUserProfile = () => {
     if (data.canNudge !== undefined) input.canNudge = data.canNudge
     if (data.emailStatus) input.emailStatus = data.emailStatus
     if (data.mobileStatus) input.mobileStatus = data.mobileStatus
+    if (data.emailCode) input.emailCode = data.emailCode
+    if (data.smsCode) input.smsCode = data.smsCode
 
     return createUserProfileMutation({
       variables: {

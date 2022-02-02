@@ -8,6 +8,7 @@ import { SmsService } from '@island.is/nova-sms'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import { UserProfileScope } from '@island.is/auth/scopes'
 import { SMS_VERIFICATION_MAX_TRIES } from '../verification.service'
+import { DataStatus } from '../types/dataStatusTypes'
 
 jest.useFakeTimers('modern')
 
@@ -87,21 +88,22 @@ describe('User profile API', () => {
         })
         .expect(204)
 
+      const verification = await EmailVerification.findOne({
+        where: { nationalId: mockProfile.nationalId },
+      })
+
       const spy = jest
         .spyOn(emailService, 'sendEmail')
         .mockImplementation(() => Promise.resolve('user'))
       const response = await request(app.getHttpServer())
         .post('/userProfile')
-        .send(mockProfile)
+        .send({ ...mockProfile, emailCode: verification.hash })
         .expect(201)
       expect(spy).toHaveBeenCalled()
       expect(response.body.id).toBeTruthy()
 
-      const verification = await EmailVerification.findOne({
-        where: { nationalId: response.body.nationalId },
-      })
-
       // Assert
+      expect(response.body.emailStatus).toEqual(DataStatus.VERIFIED)
       expect(verification.nationalId).toEqual(mockProfile.nationalId)
       expect(response.body).toEqual(
         expect.objectContaining({ nationalId: verification.nationalId }),

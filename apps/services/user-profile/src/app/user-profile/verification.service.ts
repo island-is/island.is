@@ -103,10 +103,8 @@ export class VerificationService {
 
   async confirmEmail(
     confirmEmailDto: ConfirmEmailDto,
-    userProfile: UserProfile,
+    nationalId: string,
   ): Promise<ConfirmationDtoResponse> {
-    const { nationalId } = userProfile
-
     const verification = await this.emailVerificationModel.findOne({
       where: { nationalId },
     })

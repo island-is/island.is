@@ -39,7 +39,6 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
   } = useUpdateOrCreateUserProfile()
   const { formatMessage } = useLocale()
   const {
-    confirmEmailVerification,
     createEmailVerification,
     loading: codeLoading,
     createLoading,
@@ -108,29 +107,22 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
     })
 
     try {
-      const codeValue = data.code ?? ''
-
       setVerifiCationLoading(true)
-      const response = await confirmEmailVerification({
-        hash: codeValue,
-      })
 
-      if (response.data?.confirmEmailVerification?.confirmed) {
-        const formValues = getValues()
-        const emailValue = formValues?.email
-        if (emailValue === emailToVerify) {
-          await updateOrCreateUserProfile({
-            email: emailToVerify,
-          }).then(() => {
-            setVerifiCationLoading(false)
-            setVerificationValid(true)
-          })
-        }
-        setErrors({ ...formErrors, code: undefined })
-      } else {
-        setVerifiCationLoading(false)
-        setErrors({ ...formErrors, code: codeError })
+      const codeValue = data.code ?? ''
+      const formValues = getValues()
+      const emailValue = formValues?.email
+
+      if (emailValue === emailToVerify) {
+        await updateOrCreateUserProfile({
+          email: emailToVerify,
+          emailCode: codeValue,
+        }).then(() => {
+          setVerifiCationLoading(false)
+          setVerificationValid(true)
+        })
       }
+      setErrors({ ...formErrors, code: undefined })
     } catch (err) {
       console.error(`confirmEmailVerification error: ${err}`)
       setVerifiCationLoading(false)

@@ -40,6 +40,14 @@ export class CreateUserProfileInput {
   @IsEnum(DataStatus)
   mobileStatus?: DataStatus
 
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  emailCode?: string
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  smsCode?: string
+
   // Temporary merge with islyklar service
   @Field(() => Boolean, { nullable: true })
   @IsOptional()

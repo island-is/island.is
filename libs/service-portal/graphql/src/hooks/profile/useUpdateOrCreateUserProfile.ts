@@ -11,6 +11,8 @@ type UpdateUserProfileData = {
   bankInfo?: string
   emailStatus?: string
   mobileStatus?: string
+  emailCode?: string
+  smsCode?: string
 }
 
 export const useUpdateOrCreateUserProfile = () => {
@@ -45,6 +47,8 @@ export const useUpdateOrCreateUserProfile = () => {
       emailStatus: data?.emailStatus || userProfile?.emailStatus || undefined,
       mobileStatus:
         data?.mobileStatus || userProfile?.mobileStatus || undefined,
+      emailCode: data?.emailCode || undefined,
+      smsCode: data?.smsCode || undefined,
     }
 
     if (userProfile) {

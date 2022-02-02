@@ -42,7 +42,6 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
   } = useUpdateOrCreateUserProfile()
   const { formatMessage } = useLocale()
   const {
-    confirmSmsVerification,
     createSmsVerification,
     createLoading,
     confirmLoading,
@@ -99,29 +98,22 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
 
   const handleConfirmCode = async (data: { code: string }) => {
     try {
-      const codeValue = data.code ?? ''
-
       setVerifiCationLoading(true)
-      const response = await confirmSmsVerification({
-        code: codeValue,
-      })
 
-      if (response.data?.confirmSmsVerification?.confirmed) {
-        const formValues = getValues()
-        const telValue = formValues?.tel
-        if (telValue === telToVerify) {
-          await updateOrCreateUserProfile({
-            mobilePhoneNumber: `+354-${telToVerify}`,
-          }).then(() => {
-            setVerifiCationLoading(false)
-            setVerificationValid(true)
-          })
-        }
-        setErrors({ ...formErrors, code: undefined })
-      } else {
-        setVerifiCationLoading(false)
-        setErrors({ ...formErrors, code: formatMessage(m.somethingWrong) })
+      const codeValue = data.code ?? ''
+      const formValues = getValues()
+      const telValue = formValues?.tel
+
+      if (telValue === telToVerify) {
+        await updateOrCreateUserProfile({
+          mobilePhoneNumber: `+354-${telToVerify}`,
+          smsCode: codeValue,
+        }).then(() => {
+          setVerifiCationLoading(false)
+          setVerificationValid(true)
+        })
       }
+      setErrors({ ...formErrors, code: undefined })
     } catch (err) {
       console.error(`confirmSmsVerification error: ${err}`)
       setVerifiCationLoading(false)

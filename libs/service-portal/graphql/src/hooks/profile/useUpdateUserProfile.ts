@@ -17,6 +17,8 @@ export type UpdateUserProfileData = {
   bankInfo?: string
   emailStatus?: string
   mobileStatus?: string
+  emailCode?: string
+  smsCode?: string
 }
 
 export const useUpdateUserProfile = () => {
@@ -48,6 +50,8 @@ export const useUpdateUserProfile = () => {
     if (data.bankInfo) input.bankInfo = data.bankInfo
     if (data.emailStatus) input.emailStatus = data.emailStatus
     if (data.mobileStatus) input.mobileStatus = data.mobileStatus
+    if (data.emailCode) input.emailCode = data.emailCode
+    if (data.smsCode) input.smsCode = data.smsCode
 
     return updateUserProfileMutation({
       variables: {

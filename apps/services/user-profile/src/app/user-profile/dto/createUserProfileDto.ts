@@ -49,4 +49,14 @@ export class CreateUserProfileDto {
   @IsString()
   @IsEnum(DataStatus)
   readonly mobileStatus?: DataStatus
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly emailCode?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly smsCode?: string
 }
