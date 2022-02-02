@@ -292,12 +292,13 @@ export const getApplicantEmailDataFromEventType = (
 
     case ApplicationEventType.APPROVED:
       return {
-        subject: 'Umsóknin þín er samþykkt og áætlun er tilbúin',
+        subject: 'Umsóknin þín er samþykkt og lokaupphæð tilbúin',
         data: {
           title: 'Fjárhagsaðstoð Umsókn samþykkt',
           header: 'Umsóknin þín er samþykkt og áætlun er tilbúin',
-          content: `Umsóknin þín um fjárhagsaðstoð í ${getPeriod.month} er samþykkt en athugaðu að hún byggir á tekjum og öðrum þáttum sem kunna að koma upp í ${getPeriod.month} og getur því tekið breytingum.`,
-          applicationChange: 'Umsóknin er samþykkt og áætlun liggur fyrir',
+          applicationLinkText: 'Skoða lokaupphæð',
+          content: `Umsóknin þín um fjárhagsaðstoð í ${getPeriod.month} er samþykkt`,
+          applicationChange: 'Umsóknin er samþykkt',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,
           applicationLink,
