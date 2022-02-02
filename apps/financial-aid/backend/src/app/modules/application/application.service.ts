@@ -23,6 +23,7 @@ import {
   FileType,
   getApplicantEmailDataFromEventType,
   firstDateOfMonth,
+  Amount,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import {
@@ -184,11 +185,18 @@ export class ApplicationService {
           separate: true,
           order: [['created', 'DESC']],
         },
+        {
+          model: AmountModel,
+          as: 'amount',
+          include: [{ model: DeductionFactorsModel, as: 'deductionFactors' }],
+          separate: true,
+          order: [['created', 'DESC']],
+          limit: 1,
+        },
       ],
     })
 
-    const amounts = await this.amountService.findById(id)
-    application?.setDataValue('amount', amounts)
+    application.setDataValue('amount', application.amount["0"])
 
     return application
   }
