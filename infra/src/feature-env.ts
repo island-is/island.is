@@ -68,14 +68,10 @@ const parseArguments = (argv: Arguments) => {
   const ch = new UberChart({ ...Envs[env], feature: feature })
 
   const habitat = charts[chart][env]
-  const excludedFeatureDeploymentNames = ExcludedFeatureDeploymentServices.map(
-    (f) => f.serviceDef.name,
-  )
 
   const affectedServices = habitat
     .concat(FeatureDeploymentServices)
     .filter((h) => images?.includes(h.serviceDef.image ?? h.serviceDef.name))
-    .filter((h) => !excludedFeatureDeploymentNames.includes(h.serviceDef.name))
   return { ch, habitat, affectedServices }
 }
 
@@ -107,8 +103,8 @@ yargs(hideBin(process.argv))
       const featureYaml = generateYamlForFeature(
         ch,
         habitat,
-        ExcludedFeatureDeploymentServices.map((f) => f.serviceDef.name),
-        ...affectedServices,
+        affectedServices.slice(),
+        ExcludedFeatureDeploymentServices,
       )
       await writeToOutput(dumpYaml(ch, featureYaml), argv.output)
     },
@@ -122,8 +118,8 @@ yargs(hideBin(process.argv))
       const featureYaml = generateYamlForFeature(
         ch,
         habitat,
-        ExcludedFeatureDeploymentServices.map((f) => f.serviceDef.name),
-        ...affectedServices,
+        affectedServices.slice(),
+        ExcludedFeatureDeploymentServices,
       )
       await writeToOutput(buildComment(featureYaml.services), argv.output)
     },
