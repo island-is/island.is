@@ -12,11 +12,11 @@ import {
 import { Audit } from '@island.is/nest/audit'
 
 import { NationalRegistryRealEstateService } from './nationalRegistryRealEstate.service'
-import { NationalRegistryRealEstateRealEstate } from '../models/nationalRegistryRealEstateRealEstate.model'
+import { NationalRegistryRealEstateResult } from '../models/nationalRegistryRealEstateResult.model'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)
-//@Resolver(() => [NationalRegistryRealEstateRealEstate])
+//@Resolver(() => NationalRegistryRealEstateResult) //TODOx þarf?
 @Resolver()
 @Audit({ namespace: '@island.is/api/national-registry-real-estate' })
 export class NationalRegistryRealEstateResolver {
@@ -24,17 +24,19 @@ export class NationalRegistryRealEstateResolver {
     private nationalRegistryRealEstateService: NationalRegistryRealEstateService,
   ) {}
 
-  @Query(() => [NationalRegistryRealEstateRealEstate], {
-    name: 'nationalRegistryRealEstateRealEstate',
+  @Query(() => NationalRegistryRealEstateResult, {
+    name: 'nationalRegistryRealEstateResult',
     nullable: true,
   })
   @Audit()
-  async nationalRegistryRealEstateRealEstates(
+  async getNationalRegistryRealEstateResult(
     @CurrentUser() user: User,
-  ): Promise<NationalRegistryRealEstateRealEstate[] | undefined> {
-    return this.nationalRegistryRealEstateService.getRealEstates(
-      user,
-      user.nationalId,
-    )
+  ): Promise<NationalRegistryRealEstateResult | undefined> {
+    return {
+      realEstates: await this.nationalRegistryRealEstateService.getRealEstates(
+        user,
+        user.nationalId,
+      ),
+    }
   }
 }

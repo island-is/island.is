@@ -43,6 +43,18 @@ export const m = defineMessages({
     description:
       'Information from the National Registry will be used to prefill the data in the application',
   },
+  nationalRegistryRealEstateTitle: {
+    id: 'cr.application:nationalRegistryRealEstate.title',
+    defaultMessage: 'Fasteignaupplýsingar úr Þjóðskrá',
+    description: 'Real estate information from the National Registry',
+  },
+  nationalRegistryRealEstateSubTitle: {
+    id: 'cr.application:nationalRegistryRealEstate.subTitle',
+    defaultMessage:
+      'Til þess að auðvelda fyrir sækjum við fasteignaupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
+    description:
+      'Information from the National Registry will be used to prefill the data in the application',
+  },
   userProfileInformationTitle: {
     id: 'cr.application:userprofile.title',
     defaultMessage: 'Netfang og símanúmer úr þínum stillingum',

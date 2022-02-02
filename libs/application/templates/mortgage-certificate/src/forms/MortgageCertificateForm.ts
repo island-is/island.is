@@ -35,6 +35,12 @@ export const MortgageCertificateForm: Form = buildForm({
               subTitle: m.nationalRegistrySubTitle,
             }),
             buildDataProviderItem({
+              id: 'nationalRegistryRealEstate',
+              type: 'NationalRegistryProviderRealEstate',
+              title: m.nationalRegistryRealEstateTitle,
+              subTitle: m.nationalRegistryRealEstateSubTitle,
+            }),
+            buildDataProviderItem({
               id: 'userProfile',
               type: 'UserProfileProvider',
               title: m.userProfileInformationTitle,

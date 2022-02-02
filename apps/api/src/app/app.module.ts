@@ -31,18 +31,20 @@ import { FinanceModule } from '@island.is/api/domains/finance'
 import { AssetsModule } from '@island.is/api/domains/assets'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
+import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
 import { AssetsClientConfig } from '@island.is/clients/assets'
 import { AuthPublicApiClientConfig } from '@island.is/clients/auth-public-api'
-import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 import { AuditModule } from '@island.is/nest/audit'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
 import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
+import { NationalRegistryRealEstateModule } from '@island.is/api/domains/national-registry-real-estate'
+import { NationalRegistryRealEstateClientConfig } from '@island.is/clients/national-registry-real-estate/v1'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 
@@ -208,6 +210,7 @@ const autoSchemaFile = environment.production
     }),
     AssetsModule,
     NationalRegistryXRoadModule,
+    NationalRegistryRealEstateModule,
     ApiDomainsPaymentModule.register({
       xRoadProviderId: environment.paymentDomain.xRoadProviderId,
       xRoadBaseUrl: environment.paymentDomain.xRoadBaseUrl,
@@ -263,6 +266,7 @@ const autoSchemaFile = environment.production
         AuthPublicApiClientConfig,
         FeatureFlagConfig,
         NationalRegistryClientConfig,
+        NationalRegistryRealEstateClientConfig,
         SyslumennClientConfig,
         FeatureFlagConfig,
         XRoadConfig,
