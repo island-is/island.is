@@ -230,8 +230,6 @@ export class NotificationService {
       await this.courtService.createRequest(
         theCase.courtId,
         theCase.courtCaseNumber,
-        'Krafa',
-        'Krafa.pdf',
         streamId,
       )
     } catch (error) {
