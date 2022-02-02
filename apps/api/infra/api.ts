@@ -101,6 +101,7 @@ export const serviceSetup = (services: {
       ),
       XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000',
       XROAD_PROPERTIES_TIMEOUT: '20000',
+      SYSLUMENN_TIMEOUT: '30000',
     })
 
     .secrets({
