@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { AmountModel } from './models'
 
 import {
-  DeductionFactorsModel,
+  
   DeductionFactorsService,
 } from '../deductionFactors'
 
