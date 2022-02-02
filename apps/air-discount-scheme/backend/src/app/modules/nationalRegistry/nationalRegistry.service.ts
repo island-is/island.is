@@ -215,16 +215,13 @@ export class NationalRegistryService {
       .get(`${this.baseUrl}/general-lookup?ssn=${nationalId}`)
       .toPromise()
 
-    if (response && response.data[0].error) {
-      this.logger.error(
-        `National Registry general lookup failed for User<${nationalId}> due to: ${response.data[0].error}`,
-      )
-      return null
-    }
-
     const user = this.createNationalRegistryUser(response.data[0])
     if (user) {
       await this.cacheManager.set(cacheKey, { user }, { ttl: ONE_MONTH })
+    } else if (user === null) {
+      this.logger.error(
+        `National Registry general lookup failed for User<${nationalId}> due to: ${response.data[0].error}`,
+      )
     }
 
     return user

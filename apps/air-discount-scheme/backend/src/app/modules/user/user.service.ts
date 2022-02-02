@@ -28,7 +28,7 @@ export class UserService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
-  async getRelations(authUser: AuthUser): Promise<Array<string> | null> {
+  async getRelations(authUser: AuthUser): Promise<Array<string>> {
     let relations: string[] = []
     try {
       relations = await this.nationalRegistryIndividualsApi
@@ -43,10 +43,7 @@ export class UserService {
           id: authUser.nationalId,
         })
     } catch (e) {
-      this.logger.error(
-        'NatReg xRoad forsja: ' + e.name + ' - ' + e.message + ' - ' + e.url,
-      )
-      return null
+      this.logger.error(e)
     }
     return relations
   }
@@ -96,7 +93,7 @@ export class UserService {
 
   async getMultipleUsersByNationalIdArray(
     ids: string[],
-  ): Promise<Array<User> | null> {
+  ): Promise<Array<User | null>> {
     const allUsers = ids.map(
       async (nationalId) =>
         (this.getUserInfoByNationalId(nationalId) as unknown) as User,

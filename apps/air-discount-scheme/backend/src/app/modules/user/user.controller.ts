@@ -80,11 +80,6 @@ export class PrivateUserController {
       )
     }
     const relations = await this.userService.getRelations(authUser)
-    if (relations === null) {
-      throw new Error(
-        `NationalRegistry Forsja returns error for User<${authUser.nationalId}>`,
-      )
-    }
 
     // Adding User in beginning of array so order is correct.
     relations.unshift(authUser.nationalId)
@@ -92,11 +87,12 @@ export class PrivateUserController {
     const userAndRelatives = await this.userService.getMultipleUsersByNationalIdArray(
       relations,
     )
-    if (userAndRelatives === null) {
+
+    if (Array.isArray(userAndRelatives) && userAndRelatives[0] === null) {
       throw new Error(
         'Could not find NationalRegistry records of both User and relatives.',
       )
     }
-    return userAndRelatives
+    return userAndRelatives as Array<User>
   }
 }
