@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing'
 import { ConfigService } from '@nestjs/config'
 import {
-  Application,
+  ApplicationWithAttachments as Application,
   ApplicationStatus,
   ApplicationTypes,
 } from '@island.is/application/core'

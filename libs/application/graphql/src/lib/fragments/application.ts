@@ -16,7 +16,6 @@ export const ApplicationFragment = gql`
         variant
       }
     }
-    attachments
     typeId
     answers
     externalData
