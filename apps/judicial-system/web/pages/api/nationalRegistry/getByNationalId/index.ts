@@ -76,7 +76,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  console.log('ASDASDASDASD')
   const nationalId = (req.query.nationalId as string).replace('-', '')
   const people = await getByNationalId(nationalId)
   res.status(200).json(people)

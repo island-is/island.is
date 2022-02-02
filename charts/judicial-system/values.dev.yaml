@@ -213,6 +213,7 @@ judicial-system-web:
     min: 2
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    NATIONAL_REGISTRY_API_KEY: '/k8s/judicial-system/NATIONAL_REGISTRY_API_KEY'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
