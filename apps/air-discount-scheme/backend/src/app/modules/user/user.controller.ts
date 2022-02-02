@@ -83,16 +83,18 @@ export class PrivateUserController {
 
     // Adding User in beginning of array so order is correct.
     relations.unshift(authUser.nationalId)
-
     const userAndRelatives = await this.userService.getMultipleUsersByNationalIdArray(
       relations,
     )
 
-    if (Array.isArray(userAndRelatives) && userAndRelatives[0] === null) {
+    const returnUsers = userAndRelatives.filter(
+      (user) => user !== null,
+    ) as Array<User>
+    if (returnUsers.length === 0) {
       throw new Error(
-        'Could not find NationalRegistry records of both User and relatives.',
+        'Could not find NationalRegistry records of neither User or relatives.',
       )
     }
-    return userAndRelatives as Array<User>
+    return returnUsers
   }
 }
