@@ -19,6 +19,8 @@ decorator from `@nestjs/common`
 ## Usage
 
 ```typescript
+import { Documentation } from '@island.is/nest/swagger'
+
 @Documentation({
   description: 'This endpoint fetches a single animal',
   response: { status: 200, type: AnimalDTO }, request: {
