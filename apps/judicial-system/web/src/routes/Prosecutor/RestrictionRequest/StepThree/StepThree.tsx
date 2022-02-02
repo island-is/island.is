@@ -6,6 +6,7 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 
 import StepThreeForm from './StepThreeForm'
 
@@ -16,6 +17,7 @@ export const StepThree: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
+  const { user } = useContext(UserContext)
 
   useEffect(() => {
     document.title = 'Dómkröfur og lagagrundvöllur - Réttarvörslugátt'
@@ -34,6 +36,7 @@ export const StepThree: React.FC = () => {
       <StepThreeForm
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
+        user={user}
       />
     </PageLayout>
   )

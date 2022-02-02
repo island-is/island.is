@@ -252,8 +252,34 @@ export const CriminalRecord = new XroadConf({
   env: {
     XROAD_CRIMINAL_RECORD_PATH: {
       dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2',
-      staging: 'r1/IS/GOV/5309672079/Logreglan-Protected/Sakavottord-PDF-v1',
-      prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Sakavottord-PDF-v1',
+      staging: 'r1/IS/GOV/5309672079/Logreglan-Protected/Sakaskra-v1',
+      prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Sakaskra-v1',
     },
+  },
+})
+
+export const RskCompanyInfo = new XroadConf({
+  env: {
+    COMPANY_REGISTRY_XROAD_PROVIDER_ID: {
+      dev: 'IS-DEV/GOV/10006/Skatturinn/ft-v1',
+      staging: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1',
+      prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
+    },
+  },
+})
+
+export const DataProtectionComplaint = new XroadConf({
+  env: {
+    DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID: {
+      dev: 'IS-DEV/GOV/10026/gopro/kvortun-v1',
+      staging: 'IS-TEST/GOV/5608002820/gopro/kvortun-v1',
+      prod: 'IS/GOV/5608002820/gopro/kvortun-v1',
+    },
+  },
+  secrets: {
+    DATA_PROTECTION_COMPLAINT_API_USERNAME:
+      '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_USERNAME',
+    DATA_PROTECTION_COMPLAINT_API_PASSWORD:
+      '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_PASSWORD',
   },
 })

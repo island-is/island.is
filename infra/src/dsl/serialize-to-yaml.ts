@@ -66,9 +66,13 @@ export const generateYamlForEnv = (
   return renderValueFile(uberChart, ...services)
 }
 
-export const dumpYaml = (valueFile: ValueFile) => {
+export const dumpYaml = (ch: UberChart, valueFile: ValueFile) => {
   const { namespaces, services } = valueFile
-  return dump({ namespaces: { namespaces }, ...services }, dumpOpts)
+  const namespaceLabels = ch.env.feature ? { namespaceType: 'feature' } : {}
+  return dump(
+    { namespaces: { namespaces, labels: namespaceLabels }, ...services },
+    dumpOpts,
+  )
 }
 
 export const dumpJobYaml = (job: FeatureKubeJob) => dump(job, dumpOpts)
@@ -115,15 +119,17 @@ export const getDependantServices = (
 export const generateYamlForFeature = (
   uberChart: UberChart,
   habitat: Service[],
-  ...services: Service[]
+  services: Service[],
+  excludedServices: Service[] = [],
 ) => {
   const feature = uberChart.env.feature
   if (typeof feature !== 'undefined') {
+    const excludedServiceNames = excludedServices.map((f) => f.serviceDef.name)
     const featureSpecificServices = getDependantServices(
       uberChart,
       habitat,
       ...services,
-    )
+    ).filter((f) => !excludedServiceNames.includes(f.serviceDef.name))
     const namespace = `feature-${feature}`
     featureSpecificServices.forEach((s) => {
       s.serviceDef.namespace = namespace

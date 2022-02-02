@@ -8,6 +8,7 @@ import {
   LoadingDots,
   GridColumnProps,
   Tooltip,
+  ResponsiveSpace,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
@@ -34,6 +35,8 @@ interface Props {
   editLink?: EditLink
   title?: string
   tooltip?: string
+  paddingY?: ResponsiveSpace
+  paddingBottom?: ResponsiveSpace
 }
 
 export const UserInfoLine: FC<Props> = ({
@@ -47,6 +50,8 @@ export const UserInfoLine: FC<Props> = ({
   editLink,
   title,
   tooltip,
+  paddingY = 2,
+  paddingBottom,
 }) => {
   const trackExternalLinkClick = () => {
     servicePortalOutboundLink()
@@ -54,7 +59,12 @@ export const UserInfoLine: FC<Props> = ({
   const { formatMessage } = useLocale()
 
   return (
-    <Box position="relative" paddingY={1} paddingRight={4}>
+    <Box
+      position="relative"
+      paddingY={paddingY}
+      paddingBottom={paddingBottom}
+      paddingRight={4}
+    >
       {title && (
         <Text variant="eyebrow" paddingBottom={2}>
           {title}

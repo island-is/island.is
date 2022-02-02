@@ -45,7 +45,6 @@ const useApplication = () => {
         const { data } = await createApplicationMutation({
           variables: {
             input: {
-              nationalId: user?.nationalId,
               name: user?.name,
               phoneNumber: form?.phoneNumber,
               email: form?.emailAddress,

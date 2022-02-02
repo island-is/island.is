@@ -10,6 +10,7 @@ import {
   GridColumn,
   GridRow,
   LoadingDots,
+  GridContainer,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -23,32 +24,8 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Parents } from '../../components/Parents/Parents'
 import ChildRegistrationModal from './ChildRegistrationModal'
-import { format } from 'logform'
-
-const NationalRegistryChildrenQuery = gql`
-  query NationalRegistryChildrenQuery {
-    nationalRegistryChildren {
-      nationalId
-      fullName
-      displayName
-      genderDisplay
-      birthplace
-      parent1
-      nameParent1
-      parent2
-      nameParent2
-      custody1
-      custodyText1
-      nameCustody1
-      custody2
-      custodyText2
-      nameCustody2
-      homeAddress
-      religion
-      nationality
-    }
-  }
-`
+// import { format } from 'logform'
+import { NATIONAL_REGISTRY_CHILDREN } from '../../lib/queries/getNationalChildren'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -66,7 +43,7 @@ const FamilyMember: ServicePortalModuleComponent = ({ userInfo }) => {
   const { formatMessage } = useLocale()
 
   const { data, loading, error, called } = useQuery<Query>(
-    NationalRegistryChildrenQuery,
+    NATIONAL_REGISTRY_CHILDREN,
   )
   const { nationalRegistryChildren } = data || {}
 
@@ -229,6 +206,21 @@ const FamilyMember: ServicePortalModuleComponent = ({ userInfo }) => {
           loading={loading}
         />
         <Divider />
+        {person?.fate && (
+          <>
+            <UserInfoLine
+              label={formatMessage({
+                id: 'sp.family:fate',
+                defaultMessage: 'Afdrif',
+              })}
+              content={
+                error ? formatMessage(dataNotFoundMessage) : person?.fate || ''
+              }
+              loading={loading}
+            />
+            <Divider />
+          </>
+        )}
         <Box marginY={3} />
         <Parents
           title={formatMessage({
@@ -250,31 +242,37 @@ const FamilyMember: ServicePortalModuleComponent = ({ userInfo }) => {
           loading={loading}
         />
         <Divider />
-        <Parents
-          label={formatMessage({
-            id: 'sp.family:custody-parents',
-            defaultMessage: 'Forsjáraðilar',
-          })}
-          parent1={person?.nameCustody1}
-          parent2={person?.nameCustody2}
-          loading={loading}
-        />
-        <Parents
-          label={formatMessage(m.natreg)}
-          parent1={person?.custody1}
-          parent2={person?.custody2}
-          loading={loading}
-        />
-        <Parents
-          label={formatMessage({
-            id: 'sp.family:custody-status',
-            defaultMessage: 'Staða forsjár',
-          })}
-          parent1={person?.custodyText1}
-          parent2={person?.custodyText2}
-          loading={loading}
-        />
-        <Divider />
+        {!person?.fate && !error ? (
+          <>
+            <Parents
+              label={formatMessage({
+                id: 'sp.family:custody-parents',
+                defaultMessage: 'Forsjáraðilar',
+              })}
+              parent1={person?.nameCustody1}
+              parent2={person?.nameCustody2}
+              loading={loading}
+            />
+            <Parents
+              label={formatMessage(m.natreg)}
+              parent1={person?.custody1}
+              parent2={person?.custody2}
+              loading={loading}
+            />
+            <Parents
+              label={formatMessage({
+                id: 'sp.family:custody-status',
+                defaultMessage: 'Staða forsjár',
+              })}
+              parent1={person?.custodyText1}
+              parent2={person?.custodyText2}
+              loading={loading}
+            />
+            <Divider />
+          </>
+        ) : (
+          <Divider />
+        )}
       </Stack>
       {modalOpen ? (
         <ChildRegistrationModal

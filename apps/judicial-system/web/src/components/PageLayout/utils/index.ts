@@ -109,6 +109,12 @@ export const getSections = (
           workingCase || ({} as Case),
           activeSubSection,
         ),
-    getCourtSections(workingCase || ({} as Case), user, activeSubSection),
+    isRestrictionCase(workingCase?.type)
+      ? getCourtSections(workingCase || ({} as Case), user, activeSubSection)
+      : getInvestigationCaseCourtSections(
+          workingCase || ({} as Case),
+          user,
+          activeSubSection,
+        ),
   ]
 }

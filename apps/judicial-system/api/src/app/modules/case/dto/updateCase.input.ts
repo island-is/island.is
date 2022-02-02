@@ -7,7 +7,6 @@ import type {
   CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseDecision,
-  CaseGender,
   UpdateCase,
   CaseType,
   SessionArrangements,
@@ -30,22 +29,6 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly policeCaseNumber?: string
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly accusedNationalId?: string
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly accusedName?: string
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly accusedAddress?: string
-
-  @Allow()
-  @Field(() => String, { nullable: true })
-  readonly accusedGender?: CaseGender
 
   @Allow()
   @Field({ nullable: true })

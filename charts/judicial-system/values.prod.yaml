@@ -81,9 +81,11 @@ judicial-system-api:
 judicial-system-backend:
   enabled: true
   env:
+    COMPLETED_CASE_OVERVIEW_URL: 'https://rettarvorslugatt.island.is/krafa/yfirlit/'
     CONTENTFUL_HOST: 'cdn.contentful.com'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'judicial_system'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'judicial_system'
     DOKOBIT_URL: 'https://ws.dokobit.com'
     EMAIL_REGION: 'eu-west-1'
@@ -126,6 +128,7 @@ judicial-system-backend:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'judicial_system'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'judicial_system'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
@@ -262,5 +265,6 @@ judicial-system-xrd-api:
     create: true
     name: 'judicial-system-xrd-api'
 namespaces:
+  labels: {}
   namespaces:
     - 'judicial-system'
