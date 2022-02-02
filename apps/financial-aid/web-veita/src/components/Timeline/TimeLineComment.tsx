@@ -6,7 +6,7 @@ interface Props {
   comment?: string
 }
 
-const StaffComment = ({ isVisable, comment }: Props) => {
+const TimeLineComment = ({ isVisable, comment }: Props) => {
   if (!isVisable) {
     return null
   }
@@ -18,4 +18,4 @@ const StaffComment = ({ isVisable, comment }: Props) => {
   )
 }
 
-export default StaffComment
+export default TimeLineComment
