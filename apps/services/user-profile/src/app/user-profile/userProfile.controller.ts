@@ -77,19 +77,24 @@ export class UserProfileController {
     user: User,
   ): Promise<UserProfile> {
     if (nationalId != user.nationalId) {
+      console.error('request national Id and user national id do not match')
       throw new ForbiddenException()
     }
 
-    const userProfile = await this.userProfileService.findByNationalId(
-      nationalId,
-    )
-    if (!userProfile) {
-      throw new NotFoundException(
-        `A user profile with nationalId ${nationalId} does not exist`,
+    try {
+      const userProfile = await this.userProfileService.findByNationalId(
+        nationalId,
       )
-    }
+      if (!userProfile) {
+        throw new NotFoundException(
+          `A user profile with nationalId ${nationalId} does not exist`,
+        )
+      }
 
-    return userProfile
+      return userProfile
+    } catch (err) {
+      console.error('GET userprofile error: ', err)
+    }
   }
 
   @Scopes(UserProfileScope.write)
