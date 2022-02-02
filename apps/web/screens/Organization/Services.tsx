@@ -20,7 +20,6 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
   Query,
-  QueryGetAlertBannerArgs,
   QueryGetArticlesArgs,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
@@ -40,7 +39,7 @@ import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import getConfig from 'next/config'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import useSubpageSlug from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -75,7 +74,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
   const { linkResolver } = useLinkResolver()
 
   useContentfulId(organizationPage.id)
-  useSubpageSlug()
+  useLocalLinkTypeResolver()
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
