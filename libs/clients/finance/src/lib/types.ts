@@ -6,7 +6,6 @@ export type FinanceStatus = {
   costTotals: number
   statusTotals: number
   organizations: Array<any>
-  downloadServiceURL?: string
 }
 
 export type FinanceStatusDetails = {
@@ -67,7 +66,6 @@ export type DocumentTypes = {
 
 export type DocumentsListTypes = {
   documentsList: DocumentsListItemTypes[]
-  downloadServiceURL: string
 }
 
 export type DocumentsListItemTypes = {
