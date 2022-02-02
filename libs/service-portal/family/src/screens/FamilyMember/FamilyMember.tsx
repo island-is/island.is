@@ -21,23 +21,7 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Parents } from '../../components/Parents/Parents'
 
-const NationalRegistryChildrenQuery = gql`
-  query NationalRegistryChildrenQuery {
-    nationalRegistryChildren {
-      nationalId
-      fullName
-      displayName
-      genderDisplay
-      birthplace
-      custody1
-      custodyText1
-      nameCustody1
-      custody2
-      custodyText2
-      nameCustody2
-    }
-  }
-`
+import { NATIONAL_REGISTRY_CHILDREN } from '../../lib/queries/getNationalChildren'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -49,7 +33,7 @@ const FamilyMember: ServicePortalModuleComponent = () => {
   const { formatMessage } = useLocale()
 
   const { data, loading, error, called } = useQuery<Query>(
-    NationalRegistryChildrenQuery,
+    NATIONAL_REGISTRY_CHILDREN,
   )
   const { nationalRegistryChildren } = data || {}
 

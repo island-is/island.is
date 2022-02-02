@@ -83,7 +83,7 @@ const Overview: FC = () => {
     }
     const observer = new IntersectionObserver(
       (entries) => {
-        const { hasNextPage, endCursor } = pageInfo
+        const { hasNextPage, endCursor } = pageInfo || {}
         if (entries[0].isIntersecting && hasNextPage) {
           fetchMore({
             variables: { after: endCursor },
@@ -97,9 +97,12 @@ const Overview: FC = () => {
               return {
                 skilavottordRecyclingPartnerVehicles: {
                   ...newResults,
-                  items: [...prevResults?.items, ...newResults?.items],
+                  items: [
+                    ...prevResults?.items,
+                    ...(newResults?.items as Vehicle[]),
+                  ],
                 },
-              }
+              } as Query
             },
           })
         }

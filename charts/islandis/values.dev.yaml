@@ -58,6 +58,7 @@ air-discount-scheme-backend:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'air_discount_scheme_backend'
+    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     DB_USER: 'air_discount_scheme_backend'
     ENVIRONMENT: 'dev'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
@@ -109,6 +110,7 @@ air-discount-scheme-backend:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'air_discount_scheme_backend'
+      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'air_discount_scheme_backend'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -195,6 +197,7 @@ api:
     FILE_DOWNLOAD_BUCKET: 'island-is-dev-download-cache-api'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
     ICELANDIC_NAMES_REGISTRY_BACKEND_URL: 'http://web-icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local'
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api'
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
     NODE_OPTIONS: '--max-old-space-size=464'
     PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
@@ -285,6 +288,7 @@ api:
     DOCUMENT_PROVIDER_CLIENT_SECRET_TEST: '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET_TEST'
     DOCUMENT_PROVIDER_TOKEN_URL: '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL'
     DOCUMENT_PROVIDER_TOKEN_URL_TEST: '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL_TEST'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET'
     ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
     ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
     PAYMENT_SCHEDULE_PASSWORD: '/k8s/api/PAYMENT_SCHEDULE_PASSWORD'
@@ -338,6 +342,7 @@ application-system-api:
     DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10026/gopro/kvortun-v1'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'application_system_api'
+    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     DB_USER: 'application_system_api'
     EMAIL_REGION: 'eu-west-1'
     ENDORSEMENTS_API_BASE_PATH: 'http://web-endorsement-system-api.endorsement-system.svc.cluster.local'
@@ -404,6 +409,7 @@ application-system-api:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'application_system_api'
+      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'application_system_api'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -460,6 +466,58 @@ application-system-api:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/application-system-api'
     create: true
     name: 'application-system-api'
+application-system-api-worker:
+  args:
+    - 'main.js'
+    - '--job'
+    - 'worker'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'application_system_api'
+    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+    DB_USER: 'application_system_api'
+    REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379'
+    SERVERSIDE_FEATURES_ON: ''
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'islandis'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
+  namespace: 'application-system'
+  podSecurityContext:
+    fsGroup: 65534
+  replicaCount:
+    default: 2
+    max: 3
+    min: 2
+  schedule: '*/30 * * * *'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
+    SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST'
+    SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD'
+    SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/application-system-api-worker'
+    create: true
+    name: 'application-system-api-worker'
 application-system-form:
   enabled: true
   env:
@@ -540,6 +598,7 @@ contentful-translation-extension:
 download-service:
   enabled: true
   env:
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -577,6 +636,7 @@ download-service:
     min: 2
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/download-service/IDENTITY_SERVER_CLIENT_SECRET'
     POSTHOLF_BASE_PATH: '/k8s/documents/POSTHOLF_BASE_PATH'
     POSTHOLF_CLIENTID: '/k8s/documents/POSTHOLF_CLIENTID'
     POSTHOLF_CLIENT_SECRET: '/k8s/documents/POSTHOLF_CLIENT_SECRET'
@@ -594,6 +654,7 @@ endorsement-system-api:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_endorsements_api'
+    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     DB_USER: 'services_endorsements_api'
     EMAIL_FROM_ADDRESS: 'development@island.is'
     EMAIL_FROM_NAME: 'devland.is'
@@ -625,6 +686,7 @@ endorsement-system-api:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_endorsements_api'
+      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'services_endorsements_api'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -773,6 +835,7 @@ icelandic-names-registry-backend:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'icelandic_names_registry_backend'
+    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     DB_USER: 'icelandic_names_registry_backend'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -806,6 +869,7 @@ icelandic-names-registry-backend:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'icelandic_names_registry_backend'
+      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'icelandic_names_registry_backend'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -1033,6 +1097,7 @@ service-portal-api:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'service_portal_api'
+    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     DB_USER: 'service_portal_api'
     EMAIL_REGION: 'eu-west-1'
     NODE_OPTIONS: '--max-old-space-size=464'
@@ -1064,6 +1129,7 @@ service-portal-api:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'service_portal_api'
+      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'service_portal_api'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -1106,6 +1172,7 @@ services-documents:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_documents'
+    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     DB_USER: 'services_documents'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -1133,6 +1200,7 @@ services-documents:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_documents'
+      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'services_documents'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -1194,6 +1262,7 @@ skilavottord-ws:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'skilavottord'
+    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     DB_USER: 'skilavottord'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -1228,6 +1297,7 @@ skilavottord-ws:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'skilavottord'
+      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'skilavottord'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
