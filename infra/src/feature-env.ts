@@ -107,6 +107,7 @@ yargs(hideBin(process.argv))
       const featureYaml = generateYamlForFeature(
         ch,
         habitat,
+        ExcludedFeatureDeploymentServices.map((f) => f.serviceDef.name),
         ...affectedServices,
       )
       await writeToOutput(dumpYaml(ch, featureYaml), argv.output)
@@ -121,6 +122,7 @@ yargs(hideBin(process.argv))
       const featureYaml = generateYamlForFeature(
         ch,
         habitat,
+        ExcludedFeatureDeploymentServices.map((f) => f.serviceDef.name),
         ...affectedServices,
       )
       await writeToOutput(buildComment(featureYaml.services), argv.output)
