@@ -79,15 +79,19 @@ export class PrivateUserController {
         '[/relations] Request parameters do not correspond with user authentication.',
       )
     }
-    const relations: string[] = await this.userService.getRelations(authUser)
+    const relations = await this.userService.getRelations(authUser)
+    if (relations === null) {
+      throw new Error(
+        `NationalRegistry Forsja returns error for User<${authUser.nationalId}>`,
+      )
+    }
 
     // Adding User in beginning of array so order is correct.
     relations.unshift(authUser.nationalId)
 
-    const userAndRelatives = (await this.userService.getMultipleUsersByNationalIdArray(
+    const userAndRelatives = await this.userService.getMultipleUsersByNationalIdArray(
       relations,
-    )) as User[]
-
+    )
     if (userAndRelatives === null) {
       throw new Error(
         'Could not find NationalRegistry records of both User and relatives.',

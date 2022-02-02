@@ -8,7 +8,7 @@ import {
   NationalRegistryClientConfig,
 } from '@island.is/clients/national-registry-v2'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
-import { logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { LoggingModule } from '@island.is/logging'
 
 const user: User = {
   nationalId: '1326487905',
@@ -49,10 +49,6 @@ describe('UserService', () => {
             getUser: () => ({}),
           })),
         },
-        {
-          provide: LOGGER_PROVIDER,
-          useValue: logger,
-        },
       ],
       imports: [
         ConfigModule.forRoot({
@@ -60,6 +56,7 @@ describe('UserService', () => {
           load: [XRoadConfig, NationalRegistryClientConfig],
         }),
         NationalRegistryClientModule,
+        LoggingModule,
       ],
     }).compile()
 
