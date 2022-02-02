@@ -40,7 +40,8 @@ export class PersonalTaxReturnApi {
               success:
                 parsedResponse['s:Envelope']['s:Body'][0]
                   .SaekjaPDFAfritFramtalsEinstaklingsResponse[0]
-                  .SaekjaPDFAfritFramtalsEinstaklingsResult[0]['b:Tokst'][0],
+                  .SaekjaPDFAfritFramtalsEinstaklingsResult[0]['b:Tokst'][0] ===
+                'true',
               errorText:
                 parsedResponse['s:Envelope']['s:Body'][0]
                   .SaekjaPDFAfritFramtalsEinstaklingsResponse[0]

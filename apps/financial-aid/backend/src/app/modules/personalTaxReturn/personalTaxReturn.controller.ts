@@ -37,8 +37,7 @@ export class PersonalTaxReturnController {
     console.log('personal tax return controller')
 
     return await this.personalTaxReturnService.personalTaxReturnPdf(
-      '2809783969',
-      '2020',
+      user.nationalId,
       user.folder,
     )
   }

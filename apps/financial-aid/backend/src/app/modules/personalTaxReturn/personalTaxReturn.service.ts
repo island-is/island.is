@@ -10,11 +10,29 @@ export class PersonalTaxReturnService {
     private fileService: FileService,
   ) {}
 
-  async personalTaxReturnPdf(nationalId: string, year: string, folder: string) {
-    const taxReturn = await this.personalTaxReturnApi.personalTaxReturnInPdf(
-      nationalId,
-      year,
-    )
+  private async callPersonalTaxReturn(nationalId: string, year: number) {
+    return await this.personalTaxReturnApi
+      .personalTaxReturnInPdf(nationalId, year.toString())
+      .catch(() => {
+        return { success: false, errorText: '', content: '' }
+      })
+  }
+
+  async personalTaxReturnPdf(nationalId: string, folder: string) {
+    let year = new Date().getFullYear() - 1
+
+    let taxReturn = await this.callPersonalTaxReturn(nationalId, year)
+
+    console.log(typeof taxReturn.success, taxReturn.success)
+
+    if (taxReturn.success === false) {
+      year -= 1
+      taxReturn = await this.callPersonalTaxReturn(nationalId, year)
+    }
+
+    if (taxReturn.success === false) {
+      return undefined
+    }
 
     const fileName = `Framtal_${nationalId}_${year}.pdf`
 

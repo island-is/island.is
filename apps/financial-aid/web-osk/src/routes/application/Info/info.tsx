@@ -88,7 +88,6 @@ const ApplicationInfo = () => {
     console.log('personalTaxReturn', personalTaxReturnData)
 
     if (
-      !personalTaxReturnData ||
       !nationalRegistryData ||
       !nationalRegistryData.municipalityNationalRegistryUserV2.address
     ) {
@@ -99,7 +98,9 @@ const ApplicationInfo = () => {
 
     updateForm({
       ...form,
-      taxReturnFromRskFile: [personalTaxReturnData.personalTaxReturnForYearPdf],
+      taxReturnFromRskFile: [
+        personalTaxReturnData?.personalTaxReturnForYearPdf,
+      ],
     })
 
     setNationalRegistryData(
