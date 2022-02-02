@@ -45,7 +45,7 @@ import {
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import useResolveLinkTypeLocally from '@island.is/web/hooks/useResolveLinkTypeLocally'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 
 const PERPAGE = 10
 
@@ -77,7 +77,7 @@ const NewsList: Screen<NewsListProps> = ({
   const { getMonthByIndex } = useDateUtils()
   const n = useNamespace(namespace)
   useContentfulId(organizationPage.id)
-  useResolveLinkTypeLocally()
+  useLocalLinkTypeResolver()
 
   const currentNavItem =
     organizationPage.menuLinks.find(

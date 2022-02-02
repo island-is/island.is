@@ -1,7 +1,7 @@
 import { useEffect, useContext } from 'react'
 import { GlobalContext } from '../context'
 
-export const useResolveLinkTypeLocally = () => {
+export const useLocalLinkTypeResolver = () => {
   const { setResolveLinkTypeLocally } = useContext(GlobalContext)
 
   useEffect(() => {
@@ -10,4 +10,4 @@ export const useResolveLinkTypeLocally = () => {
   }, [])
 }
 
-export default useResolveLinkTypeLocally
+export default useLocalLinkTypeResolver
