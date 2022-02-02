@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { Base64 } from 'js-base64'
 import { PersonalTaxReturnApi } from '@island.is/clients/rsk/personal-tax-return'
 import { FileService } from '../file'
+import fetch from 'isomorphic-fetch'
 
 @Injectable()
 export class PersonalTaxReturnService {
@@ -18,12 +19,10 @@ export class PersonalTaxReturnService {
       })
   }
 
-  async personalTaxReturnPdf(nationalId: string, folder: string) {
+  async personalTaxReturn(nationalId: string, folder: string) {
     let year = new Date().getFullYear() - 1
 
     let taxReturn = await this.callPersonalTaxReturn(nationalId, year)
-
-    console.log(typeof taxReturn.success, taxReturn.success)
 
     if (taxReturn.success === false) {
       year -= 1
@@ -37,11 +36,6 @@ export class PersonalTaxReturnService {
     const fileName = `Framtal_${nationalId}_${year}.pdf`
 
     const presignedUrl = this.fileService.createSignedUrl(folder, fileName)
-
-    console.log('taxReturn success', taxReturn.success)
-    console.log('taxReturn error text', taxReturn.errorText)
-    console.log('taxReturn content', taxReturn.content.substring(0, 200))
-
     const base64 = Base64.atob(taxReturn.content)
     const size = base64.length
 

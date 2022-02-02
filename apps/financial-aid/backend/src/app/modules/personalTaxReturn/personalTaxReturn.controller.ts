@@ -31,12 +31,9 @@ export class PersonalTaxReturnController {
     description: 'Fetches personal tax return and uploads it to s3',
   })
   async municipalitiesPersonalTaxReturn(
-    @Param('id') id: string,
     @CurrentUser() user: User,
   ): Promise<PersonalTaxReturnResponse> {
-    console.log('personal tax return controller')
-
-    return await this.personalTaxReturnService.personalTaxReturnPdf(
+    return await this.personalTaxReturnService.personalTaxReturn(
       user.nationalId,
       user.folder,
     )
