@@ -17,5 +17,11 @@ export const drivingLicenseModule: ServicePortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.internal),
       render: () => lazy(() => import('./screens/DrivingLicense')),
     },
+    {
+      name: m.drivingLicense,
+      path: ServicePortalPath.DrivingLicenseDetail,
+      enabled: userInfo.scopes.includes(ApiScope.internal),
+      render: () => lazy(() => import('./screens/DrivingLicenseDetail')),
+    },
   ],
 }
