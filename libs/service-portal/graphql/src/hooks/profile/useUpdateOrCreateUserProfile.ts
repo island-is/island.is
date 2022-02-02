@@ -31,19 +31,15 @@ export const useUpdateOrCreateUserProfile = () => {
   const updateOrCreateUserProfile = async (data: UpdateUserProfileData) => {
     const profile = await refetch()
     const userProfile = profile.data?.getUserProfile
-    if (!userProfile)
-      throw new Error(
-        'User profile does not exist, one must be created before it can be updated',
-      )
 
     const input = {
-      email: data.email || userProfile.email || '',
-      locale: data.locale || (userProfile.locale as Locale),
+      email: data.email || userProfile?.email || '',
+      locale: data.locale || (userProfile?.locale as Locale),
       mobilePhoneNumber:
-        data.mobilePhoneNumber || userProfile.mobilePhoneNumber || '',
+        data.mobilePhoneNumber || userProfile?.mobilePhoneNumber || '',
       canNudge:
-        data.canNudge === undefined ? userProfile.canNudge : data.canNudge,
-      bankInfo: data.bankInfo || userProfile.bankInfo || '',
+        data.canNudge === undefined ? userProfile?.canNudge : data.canNudge,
+      bankInfo: data.bankInfo || userProfile?.bankInfo || '',
       emailStatus: data?.emailStatus || userProfile?.emailStatus || undefined,
       mobileStatus:
         data?.mobileStatus || userProfile?.mobileStatus || undefined,
