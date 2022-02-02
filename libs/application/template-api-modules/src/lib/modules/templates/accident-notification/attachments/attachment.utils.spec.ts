@@ -1,4 +1,3 @@
-import { attachmentStatusToAttachmentRequests } from './accident-notification.utils'
 import {
   additionalFilesFromReviewerRequest,
   additionalFilesRequest,
@@ -6,9 +5,11 @@ import {
   injuryCertificateRequest,
   policeReportRequest,
   powerOfAttorneyRequest,
-} from './config'
+} from '../config'
 
-describe('reportStatusToAttachmentRequests', () => {
+import { attachmentStatusToAttachmentRequests } from './attachment.utils'
+
+describe('Attachment helpers', () => {
   describe('Accident requests', () => {
     it('should return all request on empty  status', () => {
       const allRequests = allAttachmentRequestConfig.requests
