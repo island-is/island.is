@@ -1,52 +1,106 @@
-import { setupWithAuth, setupWithoutAuth } from '../../../../../test/setup'
-import { errorExpectedStructure } from '../../../../../test/testHelpers'
+import {
+  setupWithAuth,
+  setupWithoutAuth,
+  setupWithoutScope,
+} from '../../../../../test/setup'
+import {
+  errorExpectedStructure,
+  getRequestMethod,
+} from '../../../../../test/testHelpers'
+import { TestEndpointOptions } from '../../../../../test/types'
 import request from 'supertest'
 import { TestApp } from '@island.is/testing/nest'
 import {
   PersonalRepresentative,
   PersonalRepresentativeRight,
   PersonalRepresentativeDTO,
+  PersonalRepresentativeCreateDTO,
   PersonalRepresentativeRightType,
   PaginatedPersonalRepresentativeDto,
+  PersonalRepresentativeType,
 } from '@island.is/auth-api-lib/personal-representative'
 import { AuthScope } from '@island.is/auth/scopes'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 
 const user = createCurrentUser({
   nationalId: '1122334455',
-  scope: [AuthScope.writePersonalRepresentative],
+  scope: [AuthScope.adminPersonalRepresentative],
 })
 
-const simpleRequestData: PersonalRepresentativeDTO = {
+const simpleRequestData: PersonalRepresentativeCreateDTO = {
+  personalRepresentativeTypeCode: 'prTypeCode',
+  contractId: '1234',
+  externalUserId: 'externalUser',
   nationalIdPersonalRepresentative: '1234567890',
   nationalIdRepresentedPerson: '1234567891',
   rightCodes: [],
 }
 
+const personalRepresentativeType = {
+  code: 'prTypeCode',
+  name: 'prTypeName',
+  description: 'prTypeDescription',
+}
+
 const path = '/v1/personal-representatives'
 
-describe('PersonalRepresentativeController - Without Auth', () => {
-  let app: TestApp
-  let server: request.SuperTest<request.Test>
+describe('PersonalRepresentativeController - Without Scope and Auth', () => {
+  it.each`
+    method      | endpoint
+    ${'GET'}    | ${'/v1/personal-representatives'}
+    ${'GET'}    | ${'/v1/personal-representatives/1234'}
+    ${'POST'}   | ${'/v1/personal-representatives'}
+    ${'DELETE'} | ${'/v1/personal-representatives/1234'}
+  `(
+    '$method $endpoint should return 403 when user is without scope',
+    async ({ method, endpoint }: TestEndpointOptions) => {
+      // Arrange
+      const app = await setupWithoutScope()
+      const server = request(app.getHttpServer())
 
-  beforeAll(async () => {
-    // TestApp setup with auth and database
-    app = await setupWithoutAuth()
-    server = request(app.getHttpServer())
-  })
+      // Act
+      const res = await getRequestMethod(server, method)(endpoint)
 
-  afterAll(async () => {
-    await app.cleanUp()
-  })
+      // Assert
+      expect(res.status).toEqual(403)
+      expect(res.body).toMatchObject({
+        statusCode: 403,
+        error: 'Forbidden',
+        message: 'Forbidden resource',
+      })
 
-  it('POST /v1/personal-representatives should fail and return 403 error if bearer is missing', async () => {
-    const response = await server.post(path).send(simpleRequestData).expect(403)
+      // CleanUp
+      app.cleanUp()
+    },
+  )
 
-    expect(response.body).toMatchObject({
-      ...errorExpectedStructure,
-      statusCode: 403,
-    })
-  })
+  it.each`
+    method      | endpoint
+    ${'GET'}    | ${'/v1/personal-representatives'}
+    ${'GET'}    | ${'/v1/personal-representatives/1234'}
+    ${'POST'}   | ${'/v1/personal-representatives'}
+    ${'DELETE'} | ${'/v1/personal-representatives/1234'}
+  `(
+    '$method $endpoint should return 401 when user is unauthorized',
+    async ({ method, endpoint }: TestEndpointOptions) => {
+      // Arrange
+      const app = await setupWithoutAuth()
+      const server = request(app.getHttpServer())
+
+      // Act
+      const res = await getRequestMethod(server, method)(endpoint)
+      console.log(res.body)
+      // Assert
+      expect(res.status).toEqual(401)
+      expect(res.body).toMatchObject({
+        statusCode: 401,
+        message: 'Unauthorized',
+      })
+
+      // CleanUp
+      app.cleanUp()
+    },
+  )
 })
 
 describe('PersonalRepresentativeController', () => {
@@ -58,8 +112,9 @@ describe('PersonalRepresentativeController', () => {
   let app: TestApp
   let server: request.SuperTest<request.Test>
   let prRightTypeModel: typeof PersonalRepresentativeRightType
+  let prTypeModel: typeof PersonalRepresentativeType
   let prModel: typeof PersonalRepresentative
-  let prPermissionsModel: typeof PersonalRepresentativeRight
+  let prRightsModel: typeof PersonalRepresentativeRight
 
   beforeAll(async () => {
     // TestApp setup with auth and database
@@ -69,12 +124,15 @@ describe('PersonalRepresentativeController', () => {
     prRightTypeModel = app.get<typeof PersonalRepresentativeRightType>(
       'PersonalRepresentativeRightTypeRepository',
     )
+    prTypeModel = app.get<typeof PersonalRepresentativeType>(
+      'PersonalRepresentativeTypeRepository',
+    )
     // Get reference on personal representative models to seed DB
     prModel = app.get<typeof PersonalRepresentative>(
       'PersonalRepresentativeRepository',
     )
     // Get reference on personal representative right models to seed DB
-    prPermissionsModel = app.get<typeof PersonalRepresentativeRight>(
+    prRightsModel = app.get<typeof PersonalRepresentativeRight>(
       'PersonalRepresentativeRightRepository',
     )
   })
@@ -84,7 +142,7 @@ describe('PersonalRepresentativeController', () => {
   })
 
   beforeEach(async () => {
-    await prPermissionsModel.destroy({
+    await prRightsModel.destroy({
       where: {},
       cascade: true,
       truncate: true,
@@ -97,6 +155,12 @@ describe('PersonalRepresentativeController', () => {
       force: true,
     })
     await prRightTypeModel.destroy({
+      where: {},
+      cascade: true,
+      truncate: true,
+      force: true,
+    })
+    await prTypeModel.destroy({
       where: {},
       cascade: true,
       truncate: true,
@@ -121,16 +185,25 @@ describe('PersonalRepresentativeController', () => {
     it('POST /v1/personal-representatives should create a new entry', async () => {
       // Create right types
       await prRightTypeModel.bulkCreate(rightTypeList)
+      // Create type
+      await prTypeModel.create(personalRepresentativeType)
 
       // Test creating personal rep
       const requestData = {
         ...simpleRequestData,
         rightCodes: rightTypeList.map((rt) => rt.code),
+        personalRepresentativeTypeCode: personalRepresentativeType.code,
       }
 
       const response = await server.post(path).send(requestData).expect(201)
 
-      expect(response.body).toMatchObject(requestData)
+      const result = {
+        ...response.body,
+        rightCodes: response.body.rights.map(
+          (r: PersonalRepresentativeRightType) => r.code,
+        ),
+      }
+      expect(result).toMatchObject(requestData)
     })
   })
 
@@ -138,14 +211,21 @@ describe('PersonalRepresentativeController', () => {
     it('DELETE /v1/personal-representatives should delete personal rep', async () => {
       // Create right types
       await prRightTypeModel.bulkCreate(rightTypeList)
+      // Create type
+      await prTypeModel.create(personalRepresentativeType)
 
       // Creating personal rep
       const personalRep = await setupBasePersonalRep({
         ...simpleRequestData,
         rightCodes: rightTypeList.map((rt) => rt.code),
+        personalRepresentativeTypeCode: personalRepresentativeType.code,
       })
       // Test delete personal rep
-      await server.delete(`${path}/${personalRep.id}`).expect(200)
+      await server.delete(`${path}/${personalRep.id}`).expect(204)
+    })
+    it('DELETE /v1/personal-representatives should return NotFound when trying to delete non existing personal rep', async () => {
+      // Test delete personal rep
+      await server.delete(`${path}/notexisting`).expect(204)
     })
   })
 
@@ -153,25 +233,73 @@ describe('PersonalRepresentativeController', () => {
     it('Get v1/personal-representatives should get personal reps', async () => {
       // Create right types
       await prRightTypeModel.bulkCreate(rightTypeList)
+      // Create type
+      await prTypeModel.create(personalRepresentativeType)
 
       // Creating personal rep
       const personalRep = await setupBasePersonalRep({
         ...simpleRequestData,
         rightCodes: rightTypeList.map((rt) => rt.code),
+        personalRepresentativeTypeCode: personalRepresentativeType.code,
       })
 
       // Test get personal rep
-      const response = await server
-        .get(`${path}?includeInvalid=false&limit=1`)
-        .expect(200)
+      const response = await server.get(`${path}?&limit=1`).expect(200)
 
       const responseData: PaginatedPersonalRepresentativeDto = response.body
       expect(responseData.data[0]).toMatchObject(personalRep)
     })
   })
 
+  it('Get v1/personal-representatives should get a specific personal rep connection', async () => {
+    // Create right types
+    await prRightTypeModel.bulkCreate(rightTypeList)
+    // Create type
+    await prTypeModel.create(personalRepresentativeType)
+
+    // Creating personal rep
+    const personalRep = await setupBasePersonalRep({
+      ...simpleRequestData,
+      rightCodes: rightTypeList.map((rt) => rt.code),
+      personalRepresentativeTypeCode: personalRepresentativeType.code,
+    })
+
+    // Test get personal rep
+    console.log(personalRep)
+    const response = await server.get(`${path}/${personalRep.id}`).expect(200)
+    expect(response.body).toMatchObject(personalRep)
+  })
+
+  it('Get v1/personal-representatives should return notfound for a connection id that does not exist', async () => {
+    await server.get(`${path}/notexisting`).expect(404)
+  })
+
+  it('Get v1/personal-representatives should get all connections for a personal rep', async () => {
+    // Create right types
+    await prRightTypeModel.bulkCreate(rightTypeList)
+    // Create type
+    await prTypeModel.create(personalRepresentativeType)
+
+    // Creating personal rep
+    const personalRep = await setupBasePersonalRep({
+      ...simpleRequestData,
+      rightCodes: rightTypeList.map((rt) => rt.code),
+      personalRepresentativeTypeCode: personalRepresentativeType.code,
+    })
+
+    // Test get personal rep
+    const response = await server
+      .get(
+        `${path}?&personalRepresentativeId=${simpleRequestData.nationalIdPersonalRepresentative}`,
+      )
+      .expect(200)
+
+    const responseData: PaginatedPersonalRepresentativeDto = response.body
+    expect(responseData.data[0]).toMatchObject(personalRep)
+  })
+
   async function setupBasePersonalRep(
-    data: PersonalRepresentativeDTO,
+    data: PersonalRepresentativeCreateDTO,
   ): Promise<PersonalRepresentativeDTO> {
     const responseCreate = await server.post(path).send(data)
     return responseCreate.body

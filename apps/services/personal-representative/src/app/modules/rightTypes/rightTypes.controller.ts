@@ -5,9 +5,10 @@ import {
   PersonalRepresentativeRightTypeDTO,
   PersonalRepresentativeRightTypeService,
 } from '@island.is/auth-api-lib/personal-representative'
+import type { Auth } from '@island.is/auth-nest-tools'
 import {
-  CurrentUser,
-  IdsUserGuard,
+  CurrentAuth,
+  IdsAuthGuard,
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
@@ -25,22 +26,16 @@ import {
   Inject,
   Query,
 } from '@nestjs/common'
-import {
-  ApiOperation,
-  ApiCreatedResponse,
-  ApiOkResponse,
-  ApiTags,
-  ApiBearerAuth,
-} from '@nestjs/swagger'
-import { User } from '@island.is/auth-nest-tools'
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger'
+import { Documentation } from '@island.is/nest/swagger'
 import { environment } from '../../../environments'
 import { AuditService, Audit } from '@island.is/nest/audit'
 import { PaginationDto } from '@island.is/nest/pagination'
 
 const namespace = `${environment.audit.defaultNamespace}/right-types`
 
-@UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(AuthScope.writePersonalRepresentative)
+@UseGuards(IdsAuthGuard, ScopesGuard)
+@Scopes(AuthScope.adminPersonalRepresentative)
 @ApiBearerAuth()
 @ApiTags('Right Types')
 @Controller('v1/right-types')
@@ -53,28 +48,38 @@ export class RightTypesController {
   ) {}
 
   /** Gets all right types */
-  @ApiOperation({
-    summary: 'Get a list of all right types for personal representatives',
-  })
   @Get()
-  @ApiOkResponse({ type: PaginatedPersonalRepresentativeRightTypeDto })
+  @Documentation({
+    summary: 'Get a list of all right types for personal representatives',
+    response: {
+      status: 200,
+      type: PaginatedPersonalRepresentativeRightTypeDto,
+    },
+  })
   @Audit<PaginatedPersonalRepresentativeRightTypeDto>({
     resources: (pgData) => pgData.data.map((type) => type.code),
   })
   async getAll(
     @Query() query: PaginationDto,
   ): Promise<PaginatedPersonalRepresentativeRightTypeDto> {
-    const rightTypes = await this.rightTypesService.getMany(query)
-
-    return rightTypes
+    return this.rightTypesService.getMany(query)
   }
 
   /** Gets a right type by it's key */
-  @ApiOperation({
-    summary: 'Get a single right type by code',
-  })
   @Get(':code')
-  @ApiOkResponse({ type: PersonalRepresentativeRightType })
+  @Documentation({
+    summary: 'Get a single right type by code',
+    response: { status: 200, type: PersonalRepresentativeRightType },
+    request: {
+      params: {
+        code: {
+          required: true,
+          description: 'Unique code for a type',
+          type: String,
+        },
+      },
+    },
+  })
   @Audit<PersonalRepresentativeRightType>({
     resources: (type) => type.code,
   })
@@ -96,20 +101,29 @@ export class RightTypesController {
     return rightType
   }
   /** Removes a right type by it's code, by making it invalid */
-  @ApiOperation({
-    summary: 'Delete a single right type by code',
-  })
   @Delete(':code')
-  @ApiOkResponse()
+  @Documentation({
+    summary: 'Delete a single right type by code',
+    response: { status: 204 },
+    request: {
+      params: {
+        code: {
+          required: true,
+          description: 'Unique code for a type',
+          type: String,
+        },
+      },
+    },
+  })
   async removeAsync(
     @Param('code') code: string,
-    @CurrentUser() user: User,
-  ): Promise<number> {
+    @CurrentAuth() user: Auth,
+  ): Promise<void> {
     if (!code) {
-      throw new BadRequestException('Key needs to be provided')
+      throw new BadRequestException('Code needs to be provided')
     }
     // delete right type
-    return await this.auditService.auditPromise(
+    await this.auditService.auditPromise(
       {
         auth: user,
         action: 'deletePersonalRepresentativeRightType',
@@ -121,20 +135,17 @@ export class RightTypesController {
   }
 
   /** Creates a right type */
-  @ApiOperation({
-    summary: 'Create a right type',
-  })
   @Post()
-  @ApiCreatedResponse({ type: PersonalRepresentativeRightType })
-  @Audit<PersonalRepresentativeRightType>({
-    resources: (type) => type.code,
+  @Documentation({
+    summary: 'Create a right type',
+    response: { status: 201, type: PersonalRepresentativeRightType },
   })
   async create(
     @Body() rightType: PersonalRepresentativeRightTypeDTO,
-    @CurrentUser() user: User,
+    @CurrentAuth() user: Auth,
   ): Promise<PersonalRepresentativeRightType> {
     // Create a new right type
-    return await this.auditService.auditPromise(
+    return this.auditService.auditPromise(
       {
         auth: user,
         action: 'createPersonalRepresentativeRightType',
@@ -147,25 +158,27 @@ export class RightTypesController {
   }
 
   /** Updates a right type */
-  @ApiOperation({
-    summary: 'Update a right type by code',
-  })
   @Put(':code')
-  @ApiCreatedResponse({ type: PersonalRepresentativeRightType })
-  @Audit<PersonalRepresentativeRightType>({
-    resources: (type) => type.code,
+  @Documentation({
+    summary: 'Update a right type by code',
+    response: { status: 200, type: PersonalRepresentativeRightType },
+    request: {
+      params: {
+        code: {
+          required: true,
+          description: 'Unique code for a type',
+          type: String,
+        },
+      },
+    },
   })
   async update(
     @Param('code') code: string,
     @Body() rightType: PersonalRepresentativeRightTypeDTO,
-    @CurrentUser() user: User,
-  ): Promise<PersonalRepresentativeRightType> {
-    if (!code) {
-      throw new BadRequestException('Code must be provided')
-    }
-
+    @CurrentAuth() user: Auth,
+  ): Promise<PersonalRepresentativeRightType | null> {
     // Update right type
-    const result = await this.auditService.auditPromise(
+    return this.auditService.auditPromise(
       {
         auth: user,
         action: 'updatePersonalRepresentativeRightType',
@@ -175,11 +188,5 @@ export class RightTypesController {
       },
       this.rightTypesService.update(code, rightType),
     )
-
-    if (result == null) {
-      throw new NotFoundException("This particular right type doesn't exist")
-    }
-
-    return result
   }
 }

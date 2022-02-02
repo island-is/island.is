@@ -3,7 +3,7 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const container = style({
   position: 'relative',
-  overflow: 'hidden',
+  overflow: 'visible',
 })
 
 export const alphabetButton = style({
