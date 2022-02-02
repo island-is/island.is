@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing'
 import { createApplication } from '@island.is/testing/fixtures'
 import { ApplicationLifeCycleService } from '../application-lifecycle.service'
 import { ApplicationService } from '../../application.service'
-import { Application } from '@island.is/application/core'
+import { ApplicationWithAttachments as Application } from '@island.is/application/core'
 import { AwsService } from '../../files/aws.service'
 import {
   ApplicationConfig,
