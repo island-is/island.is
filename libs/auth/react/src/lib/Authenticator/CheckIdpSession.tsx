@@ -1,4 +1,10 @@
-import React, { SyntheticEvent, useCallback, useReducer, useState } from 'react'
+import React, {
+  SyntheticEvent,
+  useCallback,
+  useReducer,
+  useState,
+  useEffect,
+} from 'react'
 import { useHistory } from 'react-router-dom'
 
 import { getAuthSettings, getUserManager } from '../userManager'
@@ -108,7 +114,11 @@ export const CheckIdpSession = () => {
     // So we only trigger the signIn flow when we get definite response about expired session.
   }
 
-  window.addEventListener(messageEventName, messageHandler)
+  useEffect(() => {
+    window.addEventListener(messageEventName, messageHandler)
+
+    return () => window.removeEventListener(messageEventName, messageHandler)
+  }, [])
 
   return checkIdpSessionIframe
 }
