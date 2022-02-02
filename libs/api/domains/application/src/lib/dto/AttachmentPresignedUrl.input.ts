@@ -6,5 +6,5 @@ export class AttachmentPresignedUrlInput {
   id!: string
 
   @Field(() => String)
-  s3Key!: string
+  attachmentKey!: string
 }

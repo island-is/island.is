@@ -96,7 +96,6 @@ import {
 import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { CurrentLocale } from './utils/currentLocale'
 import { Application } from './application.model'
-import AmazonS3URI from 'amazon-s3-uri'
 import { Documentation } from '@island.is/nest/swagger'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -1010,7 +1009,7 @@ export class ApplicationController {
     return { url }
   }
 
-  @Get('applications/:id/attachments/:s3Key/presigned-url')
+  @Get('applications/:id/attachments/:attachmentKey/presigned-url')
   @Scopes(ApplicationScope.read)
   @Documentation({
     description: 'Gets a presigned url for attachments',
@@ -1023,9 +1022,9 @@ export class ApplicationController {
           description: 'application id',
           required: true,
         },
-        s3Key: {
+        attachmentKey: {
           type: 'string',
-          description: 's3 key for attachment',
+          description: 'key for attachment',
           required: true,
         },
       },
@@ -1033,7 +1032,7 @@ export class ApplicationController {
   })
   async getAttachmentPresignedURL(
     @Param('id', new ParseUUIDPipe()) id: string,
-    @Param('s3Key') s3Key: string,
+    @Param('attachmentKey') attachmentKey: string,
     @CurrentUser() user: User,
   ): Promise<PresignedUrlResponseDto> {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
@@ -1046,10 +1045,9 @@ export class ApplicationController {
     }
 
     try {
-      const str = s3Key as keyof typeof existingApplication.attachments
+      const str = attachmentKey as keyof typeof existingApplication.attachments
       const fileName = existingApplication.attachments[str]
-      const { bucket, key } = AmazonS3URI(fileName)
-      return await this.fileService.getAttachmentPresignedURL(bucket, key)
+      return await this.fileService.getAttachmentPresignedURL(fileName)
     } catch (error) {
       throw new NotFoundException('Attachment not found')
     }

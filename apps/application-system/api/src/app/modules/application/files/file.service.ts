@@ -20,6 +20,7 @@ import { CRCApplication } from '@island.is/application/templates/children-reside
 import type { ApplicationConfig } from '../application.configuration'
 import { APPLICATION_CONFIG } from '../application.configuration'
 import { generateResidenceChangePdf } from './pdfGenerators'
+import AmazonS3URI from 'amazon-s3-uri'
 
 @Injectable()
 export class FileService {
@@ -198,7 +199,8 @@ export class FileService {
     return bucket
   }
 
-  async getAttachmentPresignedURL(bucket: string, key: string) {
+  async getAttachmentPresignedURL(fileName: string) {
+    const { bucket, key } = AmazonS3URI(fileName)
     const url = await this.awsService.getPresignedUrl(bucket, key)
     return { url }
   }
