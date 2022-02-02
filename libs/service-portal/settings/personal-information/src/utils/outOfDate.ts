@@ -8,7 +8,7 @@ export const outOfDate = (getUserProfile: UserProfile) => {
   const dateNow = new Date(Date.now())
   const dateModified = new Date(modifiedProfileDate)
   const diffInMonths = differenceInMonths(dateNow, dateModified)
-  const diffOutOfDate = diffInMonths > 2
+  const diffOutOfDate = diffInMonths >= 3
   const outOfDateEmailMobile =
     (emptyMail && diffOutOfDate) || (emptyMobile && diffOutOfDate)
   return outOfDateEmailMobile
