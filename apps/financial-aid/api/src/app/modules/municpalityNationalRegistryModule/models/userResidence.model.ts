@@ -6,8 +6,8 @@ export class UserResidence {
   @Field(() => UserAddress)
   address!: UserAddress
 
-  @Field(() => String)
-  houseIdentificationCode!: string | null
+  @Field(() => String, { nullable: true })
+  houseIdentificationCode?: string | null
 
   @Field(() => String, { nullable: true })
   realEstateNumber?: string | null
