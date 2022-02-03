@@ -14,7 +14,6 @@ export const REGULATIONS_ADMIN_OPTIONS = 'REGULATIONS_ADMIN_OPTIONS'
 export interface RegulationsAdminOptions {
   baseApiUrl?: string
   regulationsApiUrl: string
-  downloadServiceUrl?: string
 }
 
 export class RegulationsAdminApi extends RESTDataSource {

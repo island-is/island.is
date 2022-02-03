@@ -1,6 +1,8 @@
 import graphqlTypeJson from 'graphql-type-json'
 import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
+import { DownloadServiceConfig } from '@island.is/nest/config'
+import type { ConfigType } from '@island.is/nest/config'
 import { RegulationsService } from '@island.is/clients/regulations'
 import { GetDraftRegulationInput } from './dto/getDraftRegulation.input'
 import { GetDraftRegulationPdfDownloadInput } from './dto/downloadRegulation.input'
@@ -19,7 +21,6 @@ import {
   RegulationsAdminOptions,
   REGULATIONS_ADMIN_OPTIONS,
 } from '../client/regulationsAdmin.api'
-import { RegulationPdfDownload } from '@island.is/regulations/admin'
 import { DraftRegulationPdfDownload } from './models/draftRegulationPdfDownload.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -30,6 +31,10 @@ export class RegulationsAdminResolver {
     private regulationsAdminApiService: RegulationsAdminApi,
     @Inject(REGULATIONS_ADMIN_OPTIONS)
     private readonly options: RegulationsAdminOptions,
+    @Inject(DownloadServiceConfig.KEY)
+    private readonly downloadServiceConfig: ConfigType<
+      typeof DownloadServiceConfig
+    >,
   ) {}
 
   // @Query(() => DraftRegulationModel, { nullable: true })
@@ -122,7 +127,7 @@ export class RegulationsAdminResolver {
   ): Promise<DraftRegulationPdfDownload | null> {
     // This is open to be extended with downloading published regulations as well
 
-    if (!this.options.downloadServiceUrl) {
+    if (!this.downloadServiceConfig.baseUrl) {
       console.warn('no downloadservice')
       return null
     }
@@ -139,7 +144,7 @@ export class RegulationsAdminResolver {
 
     return {
       downloadService: true,
-      url: `${this.options.downloadServiceUrl}/download/v1/regulation/draft/${input.draftId}`,
+      url: `${this.downloadServiceConfig.baseUrl}/download/v1/regulation/draft/${input.draftId}`,
     }
   }
 }

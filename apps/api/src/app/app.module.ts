@@ -206,7 +206,6 @@ const autoSchemaFile = environment.production
     RegulationsAdminModule.register({
       baseApiUrl: environment.regulationsAdmin.baseApiUrl,
       regulationsApiUrl: environment.regulationsAdmin.regulationsApiUrl,
-      downloadServiceUrl: environment.downloadService.baseUrl,
     }),
     FinanceModule,
     AssetsModule,
