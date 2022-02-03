@@ -950,6 +950,7 @@ regulations-admin-backend:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'regulations_admin_backend'
+    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     DB_USER: 'regulations_admin_backend'
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: ''
@@ -977,6 +978,7 @@ regulations-admin-backend:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'regulations_admin_backend'
+      DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'regulations_admin_backend'
       SERVERSIDE_FEATURES_ON: ''
     secrets:

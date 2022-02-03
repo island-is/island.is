@@ -835,6 +835,7 @@ regulations-admin-backend:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'regulations_admin_backend'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'regulations_admin_backend'
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -862,6 +863,7 @@ regulations-admin-backend:
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'regulations_admin_backend'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'regulations_admin_backend'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
