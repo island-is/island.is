@@ -38,7 +38,7 @@ const RejectModal = ({
         <Input
           label="Ástæða höfnunar"
           name="reasonForRejection"
-          placeholder="Umsókn þinn um fjárhagsaðstoð hefur verið hafnað…"
+          placeholder="Umsókn þinni um fjárhagsaðstoð hefur verið hafnað…"
           rows={4}
           value={comment}
           textarea
