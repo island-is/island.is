@@ -43,6 +43,7 @@ export const initialState = {
   submitted: false,
   incomeFiles: [],
   taxReturnFiles: [],
+  taxReturnFromRskFile: [],
   otherFiles: [],
 }
 
