@@ -17,7 +17,6 @@ import {
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import useNationalRegistry from '@island.is/judicial-system-web/src/utils/hooks/useNationalRegistry'
-import { defendant as defendantMessages } from '@island.is/judicial-system-web/messages'
 
 import * as styles from './DefendantInfo.css'
 
@@ -155,6 +154,10 @@ const DefendantInfo: React.FC<Props> = (props) => {
                 ),
                 address: person.items[0].permanent_address.street.nominative,
               })
+
+              setAccusedNameErrorMessage('')
+              setAccusedAddressErrorMessage('')
+              setNationalIdErrorMessage('')
             } else {
               setNationalIdNotFound(true)
 
@@ -181,10 +184,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
         </InputMask>
         {nationalIdNotFound && (
           <Text color="red600" variant="eyebrow" marginTop={1}>
-            {formatMessage(
-              defendantMessages.sections.defendantInfo
-                .nationalIdNotFoundInNationalRegistry,
-            )}
+            {formatMessage(core.nationalIdNotFoundInNationalRegistry)}
           </Text>
         )}
       </Box>
