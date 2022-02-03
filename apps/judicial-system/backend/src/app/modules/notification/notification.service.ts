@@ -22,6 +22,7 @@ import {
   SessionArrangements,
   User,
 } from '@island.is/judicial-system/types'
+import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../../environments'
 import {
@@ -673,11 +674,11 @@ export class NotificationService {
       courtCaseNumber: theCase.courtCaseNumber,
       linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
       linkEnd: '</a>',
-      validToDate: theCase.validToDate,
+      validToDate: formatDate(theCase.validToDate, 'PPPp'),
     })}${
       theCase.isCustodyIsolation
         ? this.formatMessage(notifications.modified.isolationHtml, {
-            isolationToDate: theCase.isolationToDate,
+            isolationToDate: formatDate(theCase.isolationToDate, 'PPPp'),
           })
         : ''
     }`
