@@ -1,5 +1,6 @@
 export { core } from './core'
 export { request } from './request'
 export { ruling } from './ruling'
+export { courtRecord } from './courtRecordPdf'
 export { custodyNotice } from './custodyNotice'
 export { notifications } from './notifications'

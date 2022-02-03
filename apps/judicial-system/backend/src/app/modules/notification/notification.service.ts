@@ -39,8 +39,8 @@ import {
   getRequestPdfAsBuffer,
   getCustodyNoticePdfAsString,
   formatProsecutorReceivedByCourtSmsNotification,
-  getRulingPdfAsString,
   formatCourtResubmittedToCourtSmsNotification,
+  getCourtRecordPdfAsString,
 } from '../../formatters'
 import { notifications, core } from '../../messages'
 import { Case } from '../case'
@@ -231,8 +231,6 @@ export class NotificationService {
       await this.courtService.createRequest(
         theCase.courtId,
         theCase.courtCaseNumber,
-        'Krafa',
-        'Krafa.pdf',
         streamId,
       )
     } catch (error) {
@@ -363,7 +361,7 @@ export class NotificationService {
     theCase: Case,
   ): Promise<SendNotificationResponse> {
     // TODO: Ignore failed notifications
-    const notificaion = await this.notificationModel.findOne({
+    const notification = await this.notificationModel.findOne({
       where: {
         caseId: theCase.id,
         type: NotificationType.READY_FOR_COURT,
@@ -384,7 +382,7 @@ export class NotificationService {
       this.uploadRequestPdfToCourt(theCase)
     }
 
-    if (notificaion) {
+    if (notification) {
       if (theCase.courtCaseNumber) {
         promises.push(
           this.sendResubmittedToCourtSmsNotificationToCourt(theCase),
@@ -630,10 +628,9 @@ export class NotificationService {
       }
     }
 
-    const rulingPdf = await getRulingPdfAsString(
+    const rulingPdf = await getCourtRecordPdfAsString(
       theCase,
       this.formatMessage,
-      true,
     )
 
     const recipients = [
