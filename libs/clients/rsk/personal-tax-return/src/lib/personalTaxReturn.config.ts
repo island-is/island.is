@@ -13,12 +13,12 @@ export const PersonalTaxReturnConfig = defineConfig({
   load(env) {
     return {
       agentNationalId: env.required(
-        'PERSONAL_TAX_RETURNS_AGENT_NATIONAL_ID',
+        'PERSONAL_TAX_RETURN_AGENT_NATIONAL_ID',
         '',
       ),
-      agentId: env.required('PERSONAL_TAX_RETURNS_AGENT_ID', ''),
+      agentId: env.required('PERSONAL_TAX_RETURN_AGENT_ID', ''),
       url: env.required(
-        'PERSONAL_TAX_RETURNS_URL',
+        'PERSONAL_TAX_RETURN_URL',
         'https://vefurp.rsk.is/ws/securep/UMS/WS/USStadgreidslaFramtalGogn.svc?singleWsdl',
       ),
     }
