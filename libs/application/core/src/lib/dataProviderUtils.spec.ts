@@ -27,7 +27,6 @@ const application: Application = {
   typeId: ApplicationTypes.EXAMPLE,
   modified: new Date(),
   created: new Date(),
-  attachments: {},
   answers: {},
   externalData: {},
   status: ApplicationStatus.IN_PROGRESS,
