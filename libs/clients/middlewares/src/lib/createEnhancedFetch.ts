@@ -3,6 +3,7 @@ import nodeFetch from 'node-fetch'
 import { Logger } from 'winston'
 import { logger as defaultLogger } from '@island.is/logging'
 import { withTimeout } from './withTimeout'
+import { withMetrics } from './withMetrics'
 import { FetchAPI as NodeFetchAPI } from './nodeFetch'
 import { EnhancedFetchAPI } from './types'
 import { withAuth } from './withAuth'
@@ -55,6 +56,9 @@ export interface EnhancedFetchOptions {
 
   // Certificate for auth
   clientCertificate?: ClientCertificateOptions
+
+  // Specifies whether to send custom metrics to datadog.
+  metrics?: boolean
 }
 
 function buildFetch(fetch: NodeFetchAPI) {
@@ -118,6 +122,7 @@ export const createEnhancedFetch = (
     forwardAuthUserAgent = true,
     clientCertificate,
     cache,
+    metrics = true,
   } = options
   const treat400ResponsesAsErrors = options.treat400ResponsesAsErrors === true
   const builder = buildFetch(fetch)
@@ -132,6 +137,10 @@ export const createEnhancedFetch = (
 
   if (clientCertificate) {
     builder.wrap(withClientCertificate, { clientCertificate })
+  }
+
+  if (metrics) {
+    builder.wrap(withMetrics, { name })
   }
 
   if (timeout !== false) {
