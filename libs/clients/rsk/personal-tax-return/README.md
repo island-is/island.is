@@ -1,4 +1,4 @@
-# Clients Rsk personal tax return
+# Clients RSK Personal Tax Return
 
 This is a client for personal tax return, currently providing access to one endpoints:
 
