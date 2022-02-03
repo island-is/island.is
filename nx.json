@@ -209,6 +209,9 @@
     "application-templates-driving-assessment-approval": {
       "tags": []
     },
+    "application-templates-driving-instructor-registrations": {
+      "tags": []
+    },
     "application-templates-driving-license": {
       "tags": []
     },
@@ -552,6 +555,9 @@
       "tags": []
     },
     "nest-problem": {
+      "tags": []
+    },
+    "nest-sequelize": {
       "tags": []
     },
     "nest-swagger": {
