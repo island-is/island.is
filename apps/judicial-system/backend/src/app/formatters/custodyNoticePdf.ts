@@ -18,7 +18,7 @@ import {
   addMediumText,
   addNormalText,
   setLineGap,
-  setPageNumbers,
+  addFooter,
   setTitle,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
@@ -169,7 +169,7 @@ function constructCustodyNoticePdf(
     }
   }
 
-  setPageNumbers(doc)
+  addFooter(doc)
 
   doc.end()
 

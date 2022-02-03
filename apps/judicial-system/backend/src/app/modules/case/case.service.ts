@@ -570,7 +570,7 @@ export class CaseService {
     return getRequestPdfAsBuffer(theCase, this.formatMessage)
   }
 
-  async getCourtRecordPdf(theCase: Case): Promise<Buffer> {
+  async getCourtRecordPdf(theCase: Case, user: TUser): Promise<Buffer> {
     try {
       return await this.awsS3Service.getObject(
         `generated/${theCase.id}/courtRecord.pdf`,
@@ -582,7 +582,7 @@ export class CaseService {
       )
     }
 
-    return getCourtRecordPdfAsBuffer(theCase, this.formatMessage)
+    return getCourtRecordPdfAsBuffer(theCase, user, this.formatMessage)
   }
 
   async getRulingPdf(theCase: Case): Promise<Buffer> {
