@@ -1,6 +1,6 @@
 import useSWR from 'swr'
 
-import { NationalRegistryResponse } from '@island.is/judicial-system-web/pages/api/nationalRegistry/getByNationalId'
+import { NationalRegistryResponse } from '@island.is/judicial-system-web/src/types'
 
 const useNationalRegistry = (nationalId?: string) => {
   const fetcher = (url: string) => fetch(url).then((res) => res.json())
