@@ -5,6 +5,7 @@ import React, {
   FC,
   useMemo,
   useCallback,
+  useReducer,
 } from 'react'
 import { useLazyQuery } from '@apollo/client'
 import Head from 'next/head'
@@ -53,6 +54,7 @@ import {
   OrganizationSubpage,
   Link as LinkItem,
 } from '@island.is/web/graphql/schema'
+import { ActionType, reducer, initialState } from './Search2.state'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { plausibleCustomEvent } from '@island.is/web/hooks/usePlausible'
 import { Screen } from '../../types'
@@ -117,7 +119,6 @@ const connectedTypes: Partial<
   webNews: ['WebNews'],
   webQNA: ['WebQna'],
   webLifeEventPage: ['WebLifeEventPage'],
-  ArticlesWithProcessEntry: ['WebArticle'],
 }
 
 const stringToArray = (value: string | string[]) =>
@@ -130,84 +131,33 @@ const Search2: Screen<CategoryProps> = ({
   countResults,
   namespace,
 }) => {
+  const { query } = useRouter()
+  const [state, dispatch] = useReducer(reducer, {
+    ...initialState,
+    query: {
+      q,
+      type: stringToArray(query.type) as SearchableContentTypes[],
+      category: stringToArray(query.category),
+      organization: stringToArray(query.organization),
+    },
+  })
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState(false)
-  const [tagCountResults, setTagCountResults] = useState<SidebarTagMap>()
-  const [allowSearch, setAllowSearch] = useState(false)
   const { activeLocale } = useI18n()
   const searchRef = useRef<HTMLInputElement | null>(null)
   const push = usePush()
-  const { query } = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const [filter, setFilter] = useState<FilterOptions>({
     category: stringToArray(query.category),
     organization: stringToArray(query.organization),
   })
-  const [contentTypes, setContentTypes] = useState<SearchableContentTypes[]>(
-    stringToArray(query.type) as SearchableContentTypes[],
-  )
-  const [showProcessEntries, setShowProcessEntries] = useState<boolean>(
-    query.processentry === 'true',
-  )
+  // const [contentTypes, setContentTypes] = useState<SearchableContentTypes[]>(
+  //   stringToArray(query.type) as SearchableContentTypes[],
+  // )
 
   console.log('query', query)
-  console.log('filter', filter)
-  console.log('contentTypes', contentTypes)
-  console.log('showProcessEntries', showProcessEntries)
-  console.log('countResults', countResults)
-
-  // useEffect(() => {
-  //   // we get the tag count manually since the total includes uncategorised data and the type count
-  //   let totalTagCount = 0
-
-  //   // create a map of sidebar tag data for easier lookup later
-
-  //     countResults.tagCounts.reduce(
-  //       (tagCountsList, { key, type, count, value: title }) => {
-  //         // in some rare cases a tag might be empty we skip counting and rendering it
-  //         if (key && title) {
-  //           totalTagCount = totalTagCount + total
-
-  //           tagList[key] = {
-  //             title,
-  //             total,
-  //           }
-  //         }
-
-  //         return tagList
-  //       },
-  //       {},
-  //     ),
-  //   )
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [countResults])
-
-  // console.log('tagCountResults', tagCountResults)
-
-  const serviceCategories =
-    tagCountResults &&
-    (Object.entries(tagCountResults) ?? []).reduce(
-      (all, [key, { title, total }]) => {
-        // const active = key === filter.category
-        const text = `${title} (${total})`
-
-        if (key === 'uncategorized') {
-          return all
-        }
-
-        all.push({
-          title: text,
-          href: `${linkResolver('search').href}?q=${q}&category=${key}`,
-          active: false,
-        })
-
-        return all
-      },
-      [],
-    )
-
-  console.log('serviceCategories', serviceCategories)
+  console.log('state', state)
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
@@ -229,24 +179,24 @@ const Search2: Screen<CategoryProps> = ({
     type: query.type as string,
   }
 
-  const toggleContentTypes = (
-    type: SearchableContentTypes,
-    single?: boolean,
-  ) => {
-    const arr = [...contentTypes]
+  // const toggleContentTypes = (
+  //   type: SearchableContentTypes,
+  //   single?: boolean,
+  // ) => {
+  //   const arr = [...contentTypes]
 
-    if (single) {
-      return setContentTypes(arr.indexOf(type) >= 0 ? [] : [type])
-    }
+  //   if (single) {
+  //     return setContentTypes(arr.indexOf(type) >= 0 ? [] : [type])
+  //   }
 
-    if (arr.indexOf(type) < 0) {
-      arr.push(type)
-    } else {
-      arr.splice(contentTypes.indexOf(type), 1)
-    }
+  //   if (arr.indexOf(type) < 0) {
+  //     arr.push(type)
+  //   } else {
+  //     arr.splice(contentTypes.indexOf(type), 1)
+  //   }
 
-    setContentTypes(arr)
-  }
+  //   setContentTypes(arr)
+  // }
 
   const getArticleCount = useMemo(
     () => () => {
@@ -334,7 +284,6 @@ const Search2: Screen<CategoryProps> = ({
       webNews: n('webNews', 'Fréttir og tilkynningar'),
       webQNA: n('webQNA', 'Spurt og svarað'),
       webLifeEventPage: n('webLifeEventPage', 'Lífsviðburðir'),
-      ArticlesWithProcessEntry: n('processEntry', 'Umsókn'),
     }),
     [n],
   )
@@ -414,53 +363,42 @@ const Search2: Screen<CategoryProps> = ({
       : (n('searchResults', 'leitarniðurstöður') as string).toLowerCase()
 
   useEffect(() => {
-    const currentContentType = contentTypes[0]
-
-    if (currentContentType !== 'webArticle') {
-      setShowProcessEntries(false)
+    if (state.searchLocked) {
+      console.log('not searching...', state)
+      return null
     }
-  }, [contentTypes])
 
-  useEffect(() => {
-    const currentContentType = contentTypes[0]
-
-    if (allowSearch) {
-      if (showProcessEntries && currentContentType !== 'webArticle') {
-        return setContentTypes(['webArticle' as SearchableContentTypes])
-      }
-
-      push({
-        pathname,
-        query: {
-          q,
-          ...(showProcessEntries && { processentry: 'true' }),
-          ...(filter.category.length && { category: filter.category }),
-          ...(filter.organization.length && {
-            organization: filter.organization,
-          }),
-          ...(contentTypes?.length && {
-            type: Object.prototype.hasOwnProperty.call(
-              connectedTypes,
-              currentContentType,
-            )
-              ? connectedTypes[currentContentType].map((x) => firstLower(x))
-              : contentTypes,
-          }),
-        },
-      }).then(() => {
-        window.scrollTo(0, 0)
-      })
+    const newQuery = {
+      ...state.query,
     }
-  }, [
-    allowSearch,
-    contentTypes,
-    filter.category,
-    filter.organization,
-    pathname,
-    q,
-    push,
-    showProcessEntries,
-  ])
+
+    if (newQuery.processentry === false) {
+      delete newQuery['processentry']
+    }
+
+    console.log('searching!!!', newQuery)
+
+    push({
+      pathname,
+      query: newQuery,
+    }).then(() => {
+      window.scrollTo(0, 0)
+    })
+  }, [state, pathname, q, push])
+
+  const getSearchParams = (contentType: string) => {
+    return {
+      ...(contentType && {
+        type: Object.prototype.hasOwnProperty.call(connectedTypes, contentType)
+          ? connectedTypes[contentType].map((x) => firstLower(x))
+          : contentType,
+      }),
+      ...(filter.category.length && { category: filter.category }),
+      ...(filter.organization.length && {
+        organization: filter.organization,
+      }),
+    }
+  }
 
   const categories: CategoriesProps[] = [
     {
@@ -537,10 +475,11 @@ const Search2: Screen<CategoryProps> = ({
                     {countResults.total > 0 && (
                       <Tag
                         variant="blue"
-                        active={!contentTypes.length}
+                        active={!query?.type?.length}
                         onClick={() => {
-                          setContentTypes([])
-                          setAllowSearch(true)
+                          dispatch({
+                            type: ActionType.RESET_SEARCH,
+                          })
                         }}
                       >
                         Sýna allt
@@ -552,15 +491,21 @@ const Search2: Screen<CategoryProps> = ({
                         <Tag
                           key={index}
                           variant="blue"
-                          active={contentTypes.includes(
-                            key as SearchableContentTypes,
-                          )}
+                          active={
+                            query?.processentry !== 'true' &&
+                            query?.type?.includes(key)
+                          }
                           onClick={() => {
-                            toggleContentTypes(
-                              key as SearchableContentTypes,
-                              true,
-                            )
-                            setAllowSearch(true)
+                            dispatch({
+                              type: ActionType.SET_PARAMS,
+                              payload: {
+                                query: {
+                                  processentry: false,
+                                  ...getSearchParams(key),
+                                },
+                                searchLocked: false,
+                              },
+                            })
                           }}
                         >
                           {title}
@@ -569,9 +514,18 @@ const Search2: Screen<CategoryProps> = ({
                     {countResults.processEntryCount > 0 && (
                       <Tag
                         variant="blue"
-                        active={showProcessEntries}
+                        active={query?.processentry === 'true'}
                         onClick={() => {
-                          setShowProcessEntries(!showProcessEntries)
+                          dispatch({
+                            type: ActionType.SET_PARAMS,
+                            payload: {
+                              query: {
+                                processentry: true,
+                                ...getSearchParams('webArticle'),
+                              },
+                              searchLocked: false,
+                            },
+                          })
                         }}
                       >
                         {n('processEntry', 'Umsókn')}
@@ -583,7 +537,6 @@ const Search2: Screen<CategoryProps> = ({
                     categories={categories}
                     filter={filter}
                     setFilter={setFilter}
-                    onChange={() => setAllowSearch(true)}
                     align="right"
                     variant={isMobile ? 'dialog' : 'popover'}
                   />
@@ -715,7 +668,6 @@ Search2.getInitialProps = async ({ apolloClient, locale, query }) => {
     ]),
   ]
 
-  console.log('ssr tags', tags)
   const types: SearchableContentTypes[] = stringToArray(type).map(
     (x: SearchableContentTypes) => x,
   )
@@ -730,19 +682,6 @@ Search2.getInitialProps = async ({ apolloClient, locale, query }) => {
     'webOrganizationSubpage' as SearchableContentTypes,
   ]
 
-  const theQuery = {
-    language: locale as ContentLanguage,
-    queryString,
-    types: types.length ? types : allTypes,
-    ...(tags.length && { tags }),
-    ...countTag,
-    countTypes: true,
-    size: PERPAGE,
-    page,
-  }
-
-  console.log('theQuery', theQuery)
-
   const [
     {
       data: { searchResults },
@@ -755,7 +694,16 @@ Search2.getInitialProps = async ({ apolloClient, locale, query }) => {
     apolloClient.query<GetSearchResultsDetailedQuery, QuerySearchResultsArgs>({
       query: GET_SEARCH_RESULTS_QUERY_DETAILED,
       variables: {
-        query: theQuery,
+        query: {
+          language: locale as ContentLanguage,
+          queryString,
+          types: types.length ? types : allTypes,
+          ...(tags.length && { tags }),
+          ...countTag,
+          countTypes: true,
+          size: PERPAGE,
+          page,
+        },
       },
     }),
     apolloClient.query<GetSearchResultsNewsQuery, QuerySearchResultsArgs>({
@@ -815,7 +763,6 @@ const usePush = (): NextRouter['push'] => {
 
   const [{ push }] = useState<Pick<NextRouter, 'push'>>({
     push: (path) => {
-      console.log('pushing...', path)
       return routerRef.current.push(path)
     },
   })
