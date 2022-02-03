@@ -101,14 +101,28 @@ export class UserProfileService {
       user,
     )
 
-    if (feature) {
-      await this.islyklarService
-        .createIslykillSettings(user.nationalId, {
-          email: input.email,
-          mobile: input.mobilePhoneNumber,
-          canNudge: input.canNudge,
-        }) // Current version does not return the newly created user in the response.
-        .catch(handleError)
+    if (feature && (input.email || input.mobilePhoneNumber)) {
+      const islyklarData = await this.islyklarService.getIslykillSettings(
+        user.nationalId,
+      )
+
+      if (islyklarData.nationalId) {
+        await this.islyklarService
+          .updateIslykillSettings(user.nationalId, {
+            email: input.email ?? islyklarData.email,
+            mobile: input.mobilePhoneNumber ?? islyklarData.mobile,
+            bankInfo: islyklarData.bankInfo,
+            canNudge: islyklarData.canNudge,
+          }) // Current version does not return the updated user in the response.
+          .catch(handleError)
+      } else {
+        await this.islyklarService
+          .createIslykillSettings(user.nationalId, {
+            email: input.email,
+            mobile: input.mobilePhoneNumber,
+          }) // Current version does not return the newly created user in the response.
+          .catch(handleError)
+      }
     } else {
       logger.info('User profile create is feature flagged for user')
     }
