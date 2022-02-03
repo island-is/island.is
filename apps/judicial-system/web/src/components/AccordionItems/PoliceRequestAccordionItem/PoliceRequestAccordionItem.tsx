@@ -8,6 +8,7 @@ import {
   formatDate,
   TIME_FORMAT,
   formatRequestCaseType,
+  formatNationalId,
 } from '@island.is/judicial-system/formatters'
 import { CaseType, isRestrictionCase } from '@island.is/judicial-system/types'
 import type {
@@ -52,7 +53,9 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
         workingCase.defendants.map((defendant, index) => (
           <Box key={index}>
             <Box marginBottom={1}>
-              <Text>Kennitala: {defendant.nationalId}</Text>
+              <Text>
+                Kennitala: {formatNationalId(defendant.nationalId ?? '')}
+              </Text>
             </Box>
             <Box marginBottom={1}>
               <Text>Fullt nafn: {defendant.name}</Text>

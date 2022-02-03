@@ -225,6 +225,7 @@ export interface ApplicantEmailData {
   applicationLink: string
   applicantEmail: string
   municipality: Municipality
+  applicationLinkText: string
 }
 
 export interface ApplicationFilters {

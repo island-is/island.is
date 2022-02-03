@@ -1,11 +1,5 @@
 import { FieldBaseProps, formatText } from '@island.is/application/core'
-import {
-  AlertMessage,
-  Box,
-  Button,
-  Link,
-  Text,
-} from '@island.is/island-ui/core'
+import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { MessageDescriptor } from 'react-intl'
@@ -16,6 +10,7 @@ type FieldAlertMessageProps = {
       links: {
         title: MessageDescriptor | string
         url: MessageDescriptor | string
+        isExternal: boolean
       }[]
     }
   }
@@ -46,16 +41,21 @@ export const FieldAlertMessage: FC<FieldBaseProps & FieldAlertMessageProps> = ({
               <Box display="flex" flexWrap="wrap" marginTop={2}>
                 {props.links.map((link, index) => (
                   <Box component="span" marginRight={2} key={index}>
-                    <Link href={formatMessage(link.url)}>
+                    <a
+                      href={formatMessage(link.url)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       <Button
                         variant="text"
-                        icon="open"
-                        iconType="outline"
+                        icon={link.isExternal ? 'open' : undefined}
+                        iconType={link.isExternal ? 'outline' : undefined}
                         size="small"
+                        as="span"
                       >
                         {formatMessage(link.title)}
                       </Button>
-                    </Link>
+                    </a>
                   </Box>
                 ))}
               </Box>

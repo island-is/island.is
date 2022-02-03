@@ -26,17 +26,17 @@ export const notificationMessages = {
     },
     prosecutorBodyS3: {
       id:
-        'judicial.system.backend:notifications.signed_ruling.prosecutor_body_s3',
+        'judicial.system.backend:notifications.signed_ruling.prosecutor_body_s3_v1',
       defaultMessage:
-        'Dómari hefur undirritað og staðfest úrskurð í máli {courtCaseNumber} hjá {courtName}. Úrskurðurinn með rafrænni undirritun dómara er aðgengilegur undir málinu í Réttarvörslugátt.',
+        'Dómari hefur undirritað og staðfest úrskurð í máli {courtCaseNumber} hjá {courtName}.<br /><br />Skjöl málsins eru aðengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
       description:
         'Notaður sem texti í pósti til sækjanda vegna undirritunar úrskúrðar ef tókst að vista úrskurð í AWS S3',
     },
     prosecutorBodyAttachment: {
       id:
-        'judicial.system.backend:notifications.signed_ruling.prosecutor_body_attachment',
+        'judicial.system.backend:notifications.signed_ruling.prosecutor_body_attachment_v1',
       defaultMessage:
-        '{courtName} hefur sent þér endurrit úr þingbók í máli {courtCaseNumber} ásamt úrskurði dómara í heild sinni í meðfylgjandi viðhengi.',
+        '{courtName} hefur sent þér endurrit úr þingbók í máli {courtCaseNumber} ásamt úrskurði dómara í heild sinni í meðfylgjandi viðhengi.<br /><br />Skjöl málsins eru aðengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
       description:
         'Notaður sem texti í pósti til sækjanda vegna undirritunar úrskúrðar ef ekki tókst að vista úrskurð í AWS S3',
     },
