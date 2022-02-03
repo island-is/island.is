@@ -93,6 +93,6 @@ export const core = defineMessages({
     id: 'judicial.system.core:national_id_not_found_in_national_registry',
     defaultMessage: 'Ekki tókst að fletta upp kennitölu',
     description:
-      'Notaður sem skilaboð um að kennitala varnaraðila hafi ekki fundist í þjóðskrá á varnaraðila skrefi í rannsóknarheimildum.',
+      'Notaður sem skilaboð um að kennitala varnaraðila hafi ekki fundist í þjóðskrá.',
   },
 })
