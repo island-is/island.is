@@ -204,13 +204,11 @@ export class NationalRegistryService {
         return testUser
       }
     }
-
     const cacheKey = this.getCacheKey(nationalId, 'user')
     const cacheValue = await this.cacheManager.get(cacheKey)
     if (cacheValue) {
       return cacheValue.user
     }
-
     const response: {
       data: [NationalRegistryGeneralLookupResponse]
     } = await this.httpService
@@ -220,6 +218,10 @@ export class NationalRegistryService {
     const user = this.createNationalRegistryUser(response.data[0])
     if (user) {
       await this.cacheManager.set(cacheKey, { user }, { ttl: ONE_MONTH })
+    } else if (user === null) {
+      this.logger.error(
+        `National Registry general lookup failed for User<${nationalId}> due to: ${response.data[0].error}`,
+      )
     }
 
     return user
