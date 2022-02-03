@@ -205,7 +205,7 @@ export const signedVerdictOverview = {
         id:
           'judicial.system.core:signed_verdict_overview.modify_dates_modal.success_text',
         defaultMessage:
-          '{modification}\nTilkynning verður send á ábyrgðaraðila málsins hjá sækjanda. Ef gæsluvarðhaldsfangelsi hefur ekki verið upplýst og þörf er á því, þarf að gera það eftir hefðbundinni boðleið.',
+          '{modification}\nTilkynning verður send á ábyrgðaraðila málsins hjá {courtOrProsecutor}. Ef gæsluvarðhaldsfangelsi hefur ekki verið upplýst og þörf er á því, þarf að gera það eftir hefðbundinni boðleið.',
         description:
           'Notaður sem texti í "Lengd gæsluvarðhalds breytt" glugga á yfirlitsskjá afgreiddra mála.',
       },
