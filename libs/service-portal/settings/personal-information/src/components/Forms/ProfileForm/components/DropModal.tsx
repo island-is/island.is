@@ -36,13 +36,13 @@ export const DropModal: FC<Props> = ({ onClose, onDrop, type }) => {
       <GridRow align="flexStart" alignItems="flexStart">
         <GridColumn span={['7/8', '5/8']}>
           <Text variant="h4" as="h2" marginBottom={1}>
-            {type === 'tel' && formatMessage(msg.dropModalTelTitle)}
-            {type === 'mail' && formatMessage(msg.dropModalEmailTitle)}
+            {type === 'mail' && formatMessage(msg.dropModalTelTitle)}
+            {type === 'tel' && formatMessage(msg.dropModalEmailTitle)}
             {type === 'all' && formatMessage(msg.dropModalAllTitle)}
           </Text>
           <Text>
-            {type === 'tel' && formatMessage(msg.dropModalTelText)}
-            {type === 'mail' && formatMessage(msg.dropModalEmailText)}
+            {type === 'mail' && formatMessage(msg.dropModalTelText)}
+            {type === 'tel' && formatMessage(msg.dropModalEmailText)}
             {type === 'all' && formatMessage(msg.dropModalAllText)}
           </Text>
         </GridColumn>

@@ -50,18 +50,21 @@ export class UserProfileService {
         false,
         user,
       )
+      if (!feature) {
+        return null
+      }
 
       return {
         nationalId: user.nationalId,
         emailVerified: false,
         mobilePhoneNumberVerified: false,
         documentNotifications: false,
-        ...(feature && {
-          mobilePhoneNumber: islyklarData?.mobile,
-          email: islyklarData?.email,
-          canNudge: islyklarData?.canNudge,
-          bankInfo: islyklarData?.bankInfo,
-        }),
+
+        // Islyklar data:
+        mobilePhoneNumber: islyklarData?.mobile,
+        email: islyklarData?.email,
+        canNudge: islyklarData?.canNudge,
+        bankInfo: islyklarData?.bankInfo,
       }
     } catch (error) {
       logger.error(JSON.stringify(error))
