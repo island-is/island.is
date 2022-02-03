@@ -167,6 +167,9 @@
       "@island.is/application/templates/driving-assessment-approval": [
         "libs/application/templates/driving-assessment-approval/src/index.ts"
       ],
+      "@island.is/application/templates/driving-instructor-registrations": [
+        "libs/application/templates/driving-instructor-registrations/src/index.ts"
+      ],
       "@island.is/application/templates/driving-license": [
         "libs/application/templates/driving-license/src/index.ts"
       ],
