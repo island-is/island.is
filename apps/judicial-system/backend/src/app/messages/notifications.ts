@@ -18,11 +18,19 @@ export const notificationMessages = {
       description:
         'Notaður sem titill í pósti til hagaðila vegna undirritunar úrskúrðar',
     },
-    attachment: {
-      id: 'judicial.system.backend:notifications.signed_ruling.attachment',
-      defaultMessage: 'Þingbók og úrskurður {courtCaseNumber}.pdf',
+    rulingAttachment: {
+      id:
+        'judicial.system.backend:notifications.signed_ruling.ruling_attachment',
+      defaultMessage: 'Úrskurður {courtCaseNumber}.pdf',
       description:
-        'Notaður sem nafn á viðhengi í pósti til hagaðila vegna undirritunar úrskúrðar',
+        'Notaður sem nafn á úrskurðarviðhengi í pósti til hagaðila vegna undirritunar úrskúrðar',
+    },
+    courtRecordAttachment: {
+      id:
+        'judicial.system.backend:notifications.signed_ruling.court_record_attachment',
+      defaultMessage: 'Þingbók {courtCaseNumber}.pdf',
+      description:
+        'Notaður sem nafn á þingbókarviðhengi í pósti til hagaðila vegna undirritunar úrskúrðar',
     },
     prosecutorBodyS3: {
       id:
