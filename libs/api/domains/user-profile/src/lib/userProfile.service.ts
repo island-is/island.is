@@ -96,7 +96,7 @@ export class UserProfileService {
       user,
     )
 
-    if (feature) {
+    if (feature && (input.email || input.mobilePhoneNumber)) {
       await this.islyklarService
         .createIslykillSettings(user.nationalId, {
           email: input.email,

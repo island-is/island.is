@@ -37,9 +37,15 @@ import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
 import { AssetsClientConfig } from '@island.is/clients/assets'
 import { AuthPublicApiClientConfig } from '@island.is/clients/auth-public-api'
+import { FinanceClientConfig } from '@island.is/clients/finance'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 import { AuditModule } from '@island.is/nest/audit'
-import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
+import {
+  ConfigModule,
+  DownloadServiceConfig,
+  IdsClientConfig,
+  XRoadConfig,
+} from '@island.is/nest/config'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
 import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
@@ -119,9 +125,6 @@ const autoSchemaFile = environment.production
         clientId: environment.documentService.clientId,
         clientSecret: environment.documentService.clientSecret,
         tokenUrl: environment.documentService.tokenUrl,
-      },
-      downloadServiceConfig: {
-        downloadServiceBaseUrl: environment.downloadService.baseUrl,
       },
     }),
     DocumentProviderModule.register({
@@ -205,13 +208,7 @@ const autoSchemaFile = environment.production
       regulationsApiUrl: environment.regulationsAdmin.regulationsApiUrl,
       downloadServiceUrl: environment.downloadService.baseUrl,
     }),
-    FinanceModule.register({
-      ttl: environment.fjarmalDomain.ttl,
-      downloadServiceBaseUrl: environment.downloadService.baseUrl,
-      xroadApiPath: environment.fjarmalDomain.xroadApiPath,
-      xroadBaseUrl: environment.xroad.baseUrl,
-      xroadClientId: environment.xroad.clientId,
-    }),
+    FinanceModule,
     AssetsModule,
     NationalRegistryXRoadModule,
     ApiDomainsPaymentModule.register({
@@ -260,7 +257,10 @@ const autoSchemaFile = environment.production
       load: [
         AssetsClientConfig,
         AuthPublicApiClientConfig,
+        DownloadServiceConfig,
         FeatureFlagConfig,
+        FinanceClientConfig,
+        IdsClientConfig,
         NationalRegistryClientConfig,
         SyslumennClientConfig,
         FeatureFlagConfig,

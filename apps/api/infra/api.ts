@@ -103,8 +103,10 @@ export const serviceSetup = (services: {
       REGULATIONS_ADMIN_URL: ref(
         (h) => `http://${h.svc(services.regulationsAdminBackend)}/api`,
       ),
+      IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api',
       XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000',
       XROAD_PROPERTIES_TIMEOUT: '20000',
+      SYSLUMENN_TIMEOUT: '30000',
     })
 
     .secrets({
@@ -151,6 +153,7 @@ export const serviceSetup = (services: {
       RSK_API_URL: '/k8s/shared/api/RSK_API_URL',
       ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
       ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
+      IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
     })
     .xroad(
       Base,
