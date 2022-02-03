@@ -59,6 +59,7 @@ export const userNotificationWorkerSetup = (services: {
         '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID',
       USER_NOTIFICATION_CLIENT_SECRET:
         '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET',
+      CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN',
     })
     .liveness('/liveness')
     .readiness('/liveness')
