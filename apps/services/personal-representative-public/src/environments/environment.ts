@@ -7,8 +7,7 @@ const devConfig = {
   auth: {
     audience: '@island.is/auth',
     issuer:
-      process.env.IDENTITY_SERVER_ISSUER_URL ??
-      'https://identity-server.dev01.devland.is',
+      process.env.IDS_ISSUER ?? 'https://identity-server.dev01.devland.is',
   },
 }
 
@@ -22,7 +21,7 @@ const prodConfig = {
   port: 3333,
   auth: {
     audience: '@island.is/auth',
-    issuer: process.env.IDENTITY_SERVER_ISSUER_URL ?? '',
+    issuer: process.env.IDS_ISSUER ?? '',
   },
 }
 
