@@ -2,6 +2,8 @@
   "platform": "node",
   "external": [
     "fsevents",
+    "color-convert",
+    "color-string",
     "@nestjs/microservices",
     "class-transformer",
     "cache-manager",
@@ -25,6 +27,8 @@
     "logform",
     "pg-native",
     "form-data",
+    "swagger-ui-dist",
+    "configcat-node",
     "@protobufjs/aspromise",
     "@protobufjs/base64",
     "@protobufjs/codegen",
