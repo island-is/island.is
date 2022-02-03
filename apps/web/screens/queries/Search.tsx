@@ -109,6 +109,7 @@ export const GET_SEARCH_COUNT_QUERY = gql`
         key
         value
         count
+        type
       }
       typesCount {
         key

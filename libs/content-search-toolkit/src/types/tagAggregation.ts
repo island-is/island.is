@@ -23,6 +23,14 @@ export interface TagAggregationResponse {
                 },
               ]
             }
+            type: {
+              buckets: [
+                {
+                  key: string
+                  doc_count: number
+                },
+              ]
+            }
           },
         ]
       }

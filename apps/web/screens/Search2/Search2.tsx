@@ -77,6 +77,13 @@ type SearchQueryFilters = {
   type: string
 }
 
+interface SidebarTagMap {
+  [key: string]: {
+    title: string
+    total: number
+  }
+}
+
 interface CategoryProps {
   q: string
   page: number
@@ -125,6 +132,7 @@ const Search2: Screen<CategoryProps> = ({
 }) => {
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState(false)
+  const [tagCountResults, setTagCountResults] = useState<SidebarTagMap>()
   const [allowSearch, setAllowSearch] = useState(false)
   const { activeLocale } = useI18n()
   const searchRef = useRef<HTMLInputElement | null>(null)
@@ -147,6 +155,59 @@ const Search2: Screen<CategoryProps> = ({
   console.log('filter', filter)
   console.log('contentTypes', contentTypes)
   console.log('showProcessEntries', showProcessEntries)
+  console.log('countResults', countResults)
+
+  // useEffect(() => {
+  //   // we get the tag count manually since the total includes uncategorised data and the type count
+  //   let totalTagCount = 0
+
+  //   // create a map of sidebar tag data for easier lookup later
+
+  //     countResults.tagCounts.reduce(
+  //       (tagCountsList, { key, type, count, value: title }) => {
+  //         // in some rare cases a tag might be empty we skip counting and rendering it
+  //         if (key && title) {
+  //           totalTagCount = totalTagCount + total
+
+  //           tagList[key] = {
+  //             title,
+  //             total,
+  //           }
+  //         }
+
+  //         return tagList
+  //       },
+  //       {},
+  //     ),
+  //   )
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [countResults])
+
+  // console.log('tagCountResults', tagCountResults)
+
+  const serviceCategories =
+    tagCountResults &&
+    (Object.entries(tagCountResults) ?? []).reduce(
+      (all, [key, { title, total }]) => {
+        // const active = key === filter.category
+        const text = `${title} (${total})`
+
+        if (key === 'uncategorized') {
+          return all
+        }
+
+        all.push({
+          title: text,
+          href: `${linkResolver('search').href}?q=${q}&category=${key}`,
+          active: false,
+        })
+
+        return all
+      },
+      [],
+    )
+
+  console.log('serviceCategories', serviceCategories)
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
@@ -198,6 +259,11 @@ const Search2: Screen<CategoryProps> = ({
       total +=
         (countResults?.typesCount ?? []).find((x) => x.key === 'webSubArticle')
           ?.count ?? 0
+
+      total +=
+        (countResults?.typesCount ?? []).find(
+          (x) => x.key === 'webOrganizationSubpage',
+        )?.count ?? 0
 
       if (query.processentry) {
         return total + (countResults?.processEntryCount ?? 0)
@@ -402,36 +468,24 @@ const Search2: Screen<CategoryProps> = ({
       label: 'Þjónustuflokkar',
       selected: filter.category,
       singleOption: true,
-      filters: [
-        {
-          label: 'Innflytjendamal',
-          value: 'innflytjendamal',
-        },
-        {
-          label: 'Menntun',
-          value: 'menntun',
-        },
-        {
-          label: 'Umhverfismál',
-          value: 'umhverfismal',
-        },
-      ],
+      filters: countResults.tagCounts
+        .filter((x) => x.type === 'category')
+        .map(({ key, value }) => ({
+          label: value,
+          value: key,
+        })),
     },
     {
       id: 'organization',
       label: 'Opinberir aðilar',
       selected: filter.organization,
       singleOption: true,
-      filters: [
-        {
-          label: 'Syslumenn',
-          value: 'syslumenn',
-        },
-        {
-          label: 'Stafrænt Ísland',
-          value: 'stafraent-island',
-        },
-      ],
+      filters: countResults.tagCounts
+        .filter((x) => x.type === 'organization')
+        .map(({ key, value }) => ({
+          label: value,
+          value: key,
+        })),
     },
   ]
 
@@ -710,7 +764,11 @@ Search2.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: {
           language: locale as ContentLanguage,
           queryString,
-          countTag: ['category' as SearchableTags],
+          countTag: [
+            'category' as SearchableTags,
+            'organization' as SearchableTags,
+            'processentry' as SearchableTags,
+          ],
           types: allTypes,
           countTypes: true,
           countProcessEntry: true,

@@ -48,6 +48,7 @@ export class ContentSearchService {
           key: tagObject.key,
           count: tagObject.doc_count.toString(),
           value: tagObject.value.buckets?.[0]?.key ?? '', // value of tag is always the first value here we provide default value since value is optional
+          type: tagObject.type.buckets?.[0]?.key ?? '',
         }
       },
     )
@@ -70,6 +71,7 @@ export class ContentSearchService {
       query,
     )
 
+    console.log('body', body.aggregations)
     return {
       total: body.hits.total.value,
       // we map data when it goes into the index we can return it without mapping it here

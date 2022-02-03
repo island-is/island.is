@@ -30,6 +30,12 @@ export const tagAggregationQueryFragment = (
                     size: 1, // we only need the one value
                   },
                 },
+                type: {
+                  terms: {
+                    field: 'tags.type',
+                    size: 1,
+                  },
+                },
               },
             },
           },
