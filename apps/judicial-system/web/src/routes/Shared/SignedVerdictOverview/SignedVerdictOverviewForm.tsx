@@ -136,7 +136,11 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
 
   const canModifyCaseDates = () => {
     return (
-      user?.role === UserRole.JUDGE && workingCase.type === CaseType.CUSTODY
+      user &&
+      [UserRole.JUDGE, UserRole.REGISTRAR, UserRole.PROSECUTOR].includes(
+        user.role,
+      ) &&
+      workingCase.type === CaseType.CUSTODY
     )
   }
 
