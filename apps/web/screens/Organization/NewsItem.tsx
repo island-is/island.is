@@ -28,6 +28,7 @@ import { useLinkResolver } from '../../hooks/useLinkResolver'
 
 import { CustomNextError } from '../../units/errors'
 import { useRouter } from 'next/router'
+import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
 
 interface NewsItemProps {
   newsItem: GetSingleNewsItemQuery['getSingleNews']
@@ -40,10 +41,11 @@ const NewsItem: Screen<NewsItemProps> = ({
   namespace,
   organizationPage,
 }) => {
-  useContentfulId(newsItem?.id)
   const Router = useRouter()
   const { linkResolver } = useLinkResolver()
   const n = useNamespace(namespace)
+  useContentfulId(organizationPage.id, newsItem?.id)
+  useLocalLinkTypeResolver()
 
   // We only display breadcrumbs and highlighted nav item if the news has the
   // primary news tag of the organization
