@@ -6,6 +6,5 @@ import { DrivingLicenseBookService } from './drivingLicenseBook.service'
 @Module({
   imports: [DrivingLicenseBookClientModule],
   providers: [DrivinLicenseBookResolver, DrivingLicenseBookService],
-  // exports: [DrivingLicenseBookService]
 })
 export class DrivingLicenseBookModule {}

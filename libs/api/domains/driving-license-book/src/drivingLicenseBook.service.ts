@@ -16,13 +16,9 @@ import {
   ApiTeacherDeleteExemptionIdDeleteRequest,
 } from '@island.is/clients/driving-license-book'
 import { StudentListInput } from './dto/studentList.input'
-import { StudentListResponse } from './models/studentList.response'
-import {
-  Auth,
-  AuthHeaderMiddleware,
-  AuthMiddleware,
-  User,
-} from '@island.is/auth-nest-tools'
+import { User } from '@island.is/auth-nest-tools'
+import { StudentListTeacherSsnResponse } from './models/studentsTeacherSsn.response'
+import { studentListTeacherSsn } from './mock/studentListTeacherSsn'
 
 @Injectable()
 export class DrivingLicenseBookService {
@@ -71,6 +67,13 @@ export class DrivingLicenseBookService {
   ): Promise<StudentListGetResponse> {
     const api = await this.apiWithAuth()
     return await api.apiStudentGetStudentListGet(data)
+  }
+
+  async getStudentListTeacherSsn(
+    user: User,
+  ): Promise<StudentListTeacherSsnResponse> {
+    // TODO: add request when ready and remove mock
+    return studentListTeacherSsn
   }
 
   async getStudent(
