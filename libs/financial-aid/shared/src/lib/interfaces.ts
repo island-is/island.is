@@ -318,12 +318,6 @@ export interface NationalRegistryData {
   }
 }
 
-export interface PersonalTaxReturnData {
-  key: string
-  size: number
-  name: string
-}
-
 export interface ServiceCenter {
   name: string
   number: number

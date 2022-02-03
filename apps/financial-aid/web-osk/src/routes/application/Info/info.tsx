@@ -15,9 +15,8 @@ import {
   getNextPeriod,
   NationalRegistryData,
   NavigationProps,
-  PersonalTaxReturnData,
+  PersonalTaxReturn,
   Routes,
-  UploadFileType,
   useAsyncLazyQuery,
 } from '@island.is/financial-aid/shared/lib'
 
@@ -52,7 +51,7 @@ const ApplicationInfo = () => {
   >(NationalRegistryUserQuery)
 
   const personalTaxReturnQuery = useAsyncLazyQuery<{
-    personalTaxReturnForYearPdf: PersonalTaxReturnData
+    personalTaxReturnForYearPdf: PersonalTaxReturn
   }>(PersonalTaxReturnQuery)
 
   const logOut = useLogOut()
@@ -71,8 +70,8 @@ const ApplicationInfo = () => {
     setLoading(true)
 
     const [
-      { data: nationalRegistryData },
-      { data: personalTaxReturnData },
+      { data: nationalRegistry },
+      { data: personalTaxReturn },
     ] = await Promise.all([
       await nationalRegistryQuery({
         input: { ssn: user?.nationalId },
@@ -84,12 +83,9 @@ const ApplicationInfo = () => {
       }),
     ])
 
-    console.log('nationalRegistry', nationalRegistryData)
-    console.log('personalTaxReturn', personalTaxReturnData)
-
     if (
-      !nationalRegistryData ||
-      !nationalRegistryData.municipalityNationalRegistryUserV2.address
+      !nationalRegistry ||
+      !nationalRegistry.municipalityNationalRegistryUserV2.address
     ) {
       setError(true)
       setLoading(false)
@@ -98,24 +94,20 @@ const ApplicationInfo = () => {
 
     updateForm({
       ...form,
-      taxReturnFromRskFile: [
-        personalTaxReturnData?.personalTaxReturnForYearPdf,
-      ],
+      taxReturnFromRskFile: [personalTaxReturn?.personalTaxReturnForYearPdf],
     })
 
-    setNationalRegistryData(
-      nationalRegistryData.municipalityNationalRegistryUserV2,
-    )
+    setNationalRegistryData(nationalRegistry.municipalityNationalRegistryUserV2)
 
     await setMunicipalityById(
-      nationalRegistryData.municipalityNationalRegistryUserV2.address
+      nationalRegistry.municipalityNationalRegistryUserV2.address
         .municipalityCode,
     ).then((municipality) => {
       navigation.nextUrl && municipality && municipality.active
         ? router.push(navigation?.nextUrl)
         : router.push(
             Routes.serviceCenter(
-              nationalRegistryData.municipalityNationalRegistryUserV2.address
+              nationalRegistry.municipalityNationalRegistryUserV2.address
                 .municipalityCode,
             ),
           )
