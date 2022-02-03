@@ -38,7 +38,7 @@ const DataNeededModal = ({
           label="Lýsing"
           name="Test5"
           value={comment}
-          placeholder="Skrifaðu skilaboð til umsækjanda"
+          placeholder="Til að klára umsóknina verður þú að senda okkur..."
           rows={4}
           textarea
           backgroundColor="blue"
