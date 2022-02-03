@@ -483,7 +483,9 @@ export const SignedVerdictOverview: React.FC = () => {
     }${capitalize(formatDate(now, 'PPPP', true) || '')} kl. ${formatDate(
       now,
       TIME_FORMAT,
-    )} - ${user?.name}<br/>Ástæða: ${reason}`
+    )} - ${user?.name} ${user?.title}, ${
+      user?.institution?.name
+    }<br/>Ástæða: ${reason}`
   }
 
   const handleCaseModifiedExplanationChange = (reason: string) => {

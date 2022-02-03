@@ -20,6 +20,7 @@ export const prosecutorUpdateRule = {
     'requestedCourtDate',
     'translator',
     'requestedValidToDate',
+    'validToDate',
     'demands',
     'lawsBroken',
     'legalBasis',
@@ -35,6 +36,7 @@ export const prosecutorUpdateRule = {
     'prosecutorId',
     'sharedWithProsecutorsOfficeId',
     'caseModifiedExplanation',
+    'isolationToDate',
   ],
 } as RolesRule
 
