@@ -1,5 +1,6 @@
 export { core } from './corePdf'
 export { restrictionRequest } from './requestPdf'
+export { courtRecord } from './courtRecordPdf'
 export { ruling } from './rulingPdf'
 export { custodyNotice } from './custodyNotice'
 export { notificationMessages } from './notifications'
