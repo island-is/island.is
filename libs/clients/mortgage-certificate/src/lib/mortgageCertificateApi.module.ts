@@ -4,7 +4,8 @@ import {
   EnhancedFetchOptions,
 } from '@island.is/clients/middlewares'
 import { MortgageCertificateApi } from './mortgageCertificateApi.service'
-// TODOx import { CrimeCertificateApi, Configuration } from '../../gen/fetch'
+// TODOx mortgateApi
+// import { CrimeCertificateApi, Configuration } from '../../gen/fetch'
 
 export interface MortgageCertificateApiConfig {
   xroadBaseUrl: string

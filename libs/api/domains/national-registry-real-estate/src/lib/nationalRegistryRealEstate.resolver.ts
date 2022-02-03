@@ -16,7 +16,6 @@ import { NationalRegistryRealEstateResult } from '../models/nationalRegistryReal
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)
-//@Resolver(() => NationalRegistryRealEstateResult) //TODOx þarf?
 @Resolver()
 @Audit({ namespace: '@island.is/api/national-registry-real-estate' })
 export class NationalRegistryRealEstateResolver {

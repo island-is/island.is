@@ -36,7 +36,7 @@ export const MortgageCertificateForm: Form = buildForm({
             }),
             buildDataProviderItem({
               id: 'nationalRegistryRealEstate',
-              type: 'NationalRegistryProviderRealEstate',
+              type: 'NationalRegistryRealEstateProvider',
               title: m.nationalRegistryRealEstateTitle,
               subTitle: m.nationalRegistryRealEstateSubTitle,
             }),

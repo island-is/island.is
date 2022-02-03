@@ -18,7 +18,6 @@ export class NationalRegistryRealEstateProvider extends BasicDataProvider {
         }
       }
     `
-
     return this.useGraphqlGateway<NationalRegistry>(query)
       .then(async (res: Response) => {
         const response = await res.json()
@@ -29,7 +28,6 @@ export class NationalRegistryRealEstateProvider extends BasicDataProvider {
           return this.handleError()
         }
 
-        console.log(response.data) //TODOx
         return Promise.resolve({
           ...response.data.nationalRegistryRealEstateResult,
         })

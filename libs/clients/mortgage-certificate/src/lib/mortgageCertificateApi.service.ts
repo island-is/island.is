@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { MortgageCertificate } from './mortgageCertificateApi.types'
-// TODOx import { CrimeCertificateApi } from '../../gen/fetch'
+// TODOx mortgateApi
+// import { CrimeCertificateApi } from '../../gen/fetch'
 
 @Injectable()
 export class MortgageCertificateApi {

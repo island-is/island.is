@@ -74,7 +74,7 @@ export class MortgageCertificateSubmissionService {
       applicantSsn,
     )
 
-    // TODOx
+    // TODOx mortgateApi
     // Call sýslumaður to get the document sealed before handing it over to the user
     // const sealedRecordResponse = await this.syslumennService.sealMortgageCertificate(
     //   record.contentBase64,

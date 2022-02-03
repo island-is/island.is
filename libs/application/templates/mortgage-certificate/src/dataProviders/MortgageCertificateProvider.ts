@@ -12,7 +12,7 @@ export class MortgageCertificateProvider extends BasicDataProvider {
   type = 'MortgageCertificateProvider'
 
   async provide(application: Application): Promise<unknown> {
-    //TODOx
+    //TODOx mortgateApi
     /*const query = `
     query MortgageCertificateValidation {
         mortgageCertificateValidation
