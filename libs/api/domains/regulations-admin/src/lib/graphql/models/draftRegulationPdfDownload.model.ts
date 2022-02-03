@@ -1,12 +1,13 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType({
-  description: 'Info about how to download the draft regulation PDF'
+  description: 'Info about how to download the draft regulation PDF',
 })
 export class DraftRegulationPdfDownload {
   @Field(() => String, {
     defaultValue: false,
-    description: 'Does the download go through the download service? If true needs special handling in client',
+    description:
+      'Does the download go through the download service? If true needs special handling in client',
   })
   downloadService!: boolean
 
