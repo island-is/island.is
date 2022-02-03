@@ -89,4 +89,9 @@ export const core = defineMessages({
     defaultMessage: 'Dómstóll',
     description: 'Notað fyrir orðið Dómstóll í öllum flæðum.',
   },
+  selectGender: {
+    id: 'judicial.system.core:select_gender',
+    defaultMessage: 'Veldu kyn',
+    description: 'Notað fyrir Veldu kyn í öllum flæðum',
+  },
 })

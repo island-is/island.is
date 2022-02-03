@@ -8,8 +8,18 @@ import {
   UpdateDefendant,
 } from '@island.is/judicial-system/types'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
-import { Box, Icon, Input, RadioButton, Text } from '@island.is/island-ui/core'
-import { core } from '@island.is/judicial-system-web/messages'
+import {
+  Box,
+  Checkbox,
+  Icon,
+  Input,
+  Select,
+  Text,
+} from '@island.is/island-ui/core'
+import {
+  defendant as defendantMessages,
+  core,
+} from '@island.is/judicial-system-web/messages'
 
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
@@ -17,7 +27,8 @@ import {
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 
-import * as styles from './DefendantInfo.css'
+import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { ValueType } from 'react-select'
 
 interface Props {
   defendant: Defendant
@@ -32,6 +43,12 @@ interface Props {
 const DefendantInfo: React.FC<Props> = (props) => {
   const { defendant, onDelete, onChange, updateDefendantState } = props
   const { formatMessage } = useIntl()
+
+  const genderOptions: ReactSelectOption[] = [
+    { label: formatMessage(core.male), value: Gender.MALE },
+    { label: formatMessage(core.female), value: Gender.FEMALE },
+    { label: formatMessage(core.otherGender), value: Gender.OTHER },
+  ]
 
   const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>(
     '',
@@ -65,55 +82,19 @@ const DefendantInfo: React.FC<Props> = (props) => {
           </button>
         )}
       </Box>
-      <Box marginBottom={2} className={styles.genderContainer}>
-        <Box className={styles.genderColumn}>
-          <RadioButton
-            name={`accusedGender${defendant.id}`}
-            id={`genderMale${defendant.id}`}
-            label={formatMessage(core.male)}
-            value={Gender.MALE}
-            checked={defendant.gender === Gender.MALE}
-            onChange={() => {
-              onChange(defendant.id, {
-                gender: Gender.MALE,
-              })
-            }}
-            large
-            backgroundColor="white"
-          />
-        </Box>
-        <Box className={styles.genderColumn}>
-          <RadioButton
-            name={`accusedGender${defendant.id}`}
-            id={`genderFemale${defendant.id}`}
-            label={formatMessage(core.female)}
-            value={Gender.FEMALE}
-            checked={defendant.gender === Gender.FEMALE}
-            onChange={() => {
-              onChange(defendant.id, {
-                gender: Gender.FEMALE,
-              })
-            }}
-            large
-            backgroundColor="white"
-          />
-        </Box>
-        <Box className={styles.genderColumn}>
-          <RadioButton
-            name={`accusedGender${defendant.id}`}
-            id={`genderOther${defendant.id}`}
-            label={formatMessage(core.otherGender)}
-            value={Gender.OTHER}
-            checked={defendant.gender === Gender.OTHER}
-            onChange={() => {
-              onChange(defendant.id, {
-                gender: Gender.OTHER,
-              })
-            }}
-            large
-            backgroundColor="white"
-          />
-        </Box>
+      <Box marginBottom={2}>
+        <Checkbox
+          label={formatMessage(
+            defendantMessages.sections.defendantInfo
+              .doesNotHaveIcelandicNationalId,
+          )}
+          tooltip={formatMessage(
+            defendantMessages.sections.defendantInfo
+              .doesNotHaveIcelandicNationalIdTooltip,
+          )}
+          filled
+          large
+        />
       </Box>
       <Box marginBottom={2}>
         <InputMask
@@ -188,41 +169,60 @@ const DefendantInfo: React.FC<Props> = (props) => {
           required
         />
       </Box>
-      <Input
-        data-testid="accusedAddress"
-        name="accusedAddress"
-        autoComplete="off"
-        label={formatMessage(core.addressOrResidence)}
-        placeholder={formatMessage(core.addressOrResidence)}
-        value={defendant.address ?? ''}
-        errorMessage={accusedAddressErrorMessage}
-        hasError={
-          Boolean(accusedAddressErrorMessage) &&
-          accusedAddressErrorMessage !== ''
-        }
-        onChange={(evt) => {
-          removeErrorMessageIfValid(
-            ['empty'] as Validation[],
-            evt.target.value,
-            accusedAddressErrorMessage,
-            setAccusedAddressErrorMessage,
-          )
+      <Box marginBottom={2}>
+        <Input
+          data-testid="accusedAddress"
+          name="accusedAddress"
+          autoComplete="off"
+          label={formatMessage(core.addressOrResidence)}
+          placeholder={formatMessage(core.addressOrResidence)}
+          value={defendant.address ?? ''}
+          errorMessage={accusedAddressErrorMessage}
+          hasError={
+            Boolean(accusedAddressErrorMessage) &&
+            accusedAddressErrorMessage !== ''
+          }
+          onChange={(evt) => {
+            removeErrorMessageIfValid(
+              ['empty'] as Validation[],
+              evt.target.value,
+              accusedAddressErrorMessage,
+              setAccusedAddressErrorMessage,
+            )
 
-          updateDefendantState(defendant.id, {
-            address: evt.target.value,
-          })
-        }}
-        onBlur={(evt) => {
-          validateAndSetErrorMessage(
-            ['empty'] as Validation[],
-            evt.target.value,
-            setAccusedAddressErrorMessage,
-          )
+            updateDefendantState(defendant.id, {
+              address: evt.target.value,
+            })
+          }}
+          onBlur={(evt) => {
+            validateAndSetErrorMessage(
+              ['empty'] as Validation[],
+              evt.target.value,
+              setAccusedAddressErrorMessage,
+            )
 
-          onChange(defendant.id, { address: evt.target.value })
-        }}
-        required
-      />
+            onChange(defendant.id, { address: evt.target.value })
+          }}
+          required
+        />
+      </Box>
+      <Box>
+        <Select
+          name="defendantGender"
+          placeholder={formatMessage(core.selectGender)}
+          options={genderOptions}
+          label={formatMessage(core.gender)}
+          value={genderOptions.find(
+            (option) => option.value === defendant.gender,
+          )}
+          onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+            onChange(defendant.id, {
+              gender: (selectedOption as ReactSelectOption).value as Gender,
+            })
+          }
+          required
+        />
+      </Box>
     </BlueBox>
   )
 }
