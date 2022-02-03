@@ -159,7 +159,7 @@ const Search2: Screen<CategoryProps> = ({
   console.log('query', query)
   console.log('state', state)
 
-  useEffect(() => {
+  useMemo(() => {
     if (width < theme.breakpoints.md) {
       return setIsMobile(true)
     }
@@ -370,6 +370,7 @@ const Search2: Screen<CategoryProps> = ({
 
     const newQuery = {
       ...state.query,
+      q,
     }
 
     if (newQuery.processentry === false) {
@@ -388,6 +389,7 @@ const Search2: Screen<CategoryProps> = ({
 
   const getSearchParams = (contentType: string) => {
     return {
+      q,
       ...(contentType && {
         type: Object.prototype.hasOwnProperty.call(connectedTypes, contentType)
           ? connectedTypes[contentType].map((x) => firstLower(x))
@@ -399,6 +401,24 @@ const Search2: Screen<CategoryProps> = ({
       }),
     }
   }
+
+  useMemo(() => {
+    if (filter.category.length || filter.organization) {
+      console.log('filter.category', filter.category)
+      console.log('filter.organization', filter.organization)
+
+      dispatch({
+        type: ActionType.SET_PARAMS,
+        payload: {
+          query: {
+            processentry: false,
+            ...getSearchParams(stringToArray(query.type)[0]),
+          },
+          searchLocked: false,
+        },
+      })
+    }
+  }, [filter.category, filter.organization])
 
   const categories: CategoriesProps[] = [
     {
