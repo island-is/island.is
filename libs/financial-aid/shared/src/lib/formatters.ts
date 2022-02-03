@@ -172,14 +172,6 @@ export const getActiveTypeForStatus: KeyMapping<ApplicationState, string> = {
   Approved: 'Approved',
 }
 
-export const isSpouseDataNeeded: KeyMapping<FamilyStatus, boolean> = {
-  NotCohabitation: false,
-  Cohabitation: true,
-  UnregisteredCohabitation: false,
-  Married: true,
-  MarriedNotLivingTogether: true,
-}
-
 export const showSpouseData: KeyMapping<FamilyStatus, boolean> = {
   Cohabitation: true,
   UnregisteredCohabitation: true,
@@ -248,8 +240,8 @@ export const getApplicantEmailDataFromEventType = (
         data: {
           title: 'Fjárhagsaðstoð Umsókn móttekin',
           header: `Umsókn þín fyrir ${getPeriod.month} er móttekin og er nú í vinnslu`,
-          content:
-            'Umsóknin verður afgreidd eins fljótt og auðið er. Þú færð annan tölvupóst þegar vinnsla klárast eða ef við þurfum einhver gögn beint frá þér.<br><br>Þú getur fylgst með stöðu umsóknar, sent inn spurningar, o.fl. í þeim dúr á stöðusíðu umsóknarinnar. Kíktu á hana með því að smella á hnappinn fyrir neðan.',
+          content: `Umsóknin verður afgreidd eins fljótt og hægt er. Þú færð annan tölvupóst þegar vinnsla klárast eða ef okkur vantar einhver gögn frá þér.<br><br>Þú getur fylgst með stöðu umsóknarinnar á <a href="${applicationLink}" target="_blank"> <b>stöðusíðu umsóknarinnar</b></a>.`,
+          applicationLinkText: 'Skoða stöðu umsóknar',
           applicationChange: 'Umsókn móttekin og í vinnslu',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,
@@ -265,7 +257,8 @@ export const getApplicantEmailDataFromEventType = (
         data: {
           title: 'Fjárhagsaðstoð Umsókn vantar gögn',
           header: `Okkur vantar gögn til að klára að vinna úr umsókninni`,
-          content: `Við þurfum að sjá <strong>${typeOfDataNeeded}</strong>. Smelltu á hnappinn til að heimsækja þína stöðusíðu þar sem þú getur sent okkur gögn.`,
+          content: `Til að klára umsóknina verður þú að senda okkur <strong>${typeOfDataNeeded}</strong>. Þú getur sent okkur gögnin á <a href="${applicationLink}" target="_blank">þinni stöðusíðu</a>`,
+          applicationLinkText: 'Bæta við gögnum',
           applicationChange: 'Umsóknin bíður eftir gögnum',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,
@@ -282,6 +275,7 @@ export const getApplicantEmailDataFromEventType = (
           title: 'Fjárhagsaðstoð Umsókn synjað',
           header: 'Umsókn þinni um aðstoð hefur verið synjað',
           content: `${rejectionComment}`,
+          applicationLinkText: 'Opna stöðusíðu',
           applicationChange: 'Umsókn synjað',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,
@@ -293,12 +287,13 @@ export const getApplicantEmailDataFromEventType = (
 
     case ApplicationEventType.APPROVED:
       return {
-        subject: 'Umsóknin þín er samþykkt og áætlun er tilbúin',
+        subject: 'Umsóknin þín er samþykkt og lokaupphæð tilbúin',
         data: {
           title: 'Fjárhagsaðstoð Umsókn samþykkt',
           header: 'Umsóknin þín er samþykkt og áætlun er tilbúin',
-          content: `Umsóknin þín um fjárhagsaðstoð í ${getPeriod.month} er samþykkt en athugaðu að hún byggir á tekjum og öðrum þáttum sem kunna að koma upp í ${getPeriod.month} og getur því tekið breytingum.`,
-          applicationChange: 'Umsóknin er samþykkt og áætlun liggur fyrir',
+          content: `Umsóknin þín um fjárhagsaðstoð í ${getPeriod.month} er samþykkt`,
+          applicationLinkText: 'Skoða lokaupphæð',
+          applicationChange: 'Umsóknin er samþykkt',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,
           applicationLink,
@@ -318,6 +313,7 @@ export const getApplicantEmailDataFromEventType = (
           } mánuð. Svo hægt sé að klára umsóknina þurfum við að fá þig til að hlaða upp tekju- og skattagögnum til að reikna út fjárhagsaðstoð til útgreiðslu í byrjun ${
             months[nextMonth(createdDate.getMonth())]
           }.`,
+          applicationLinkText: 'Bæta við gögnum',
           applicationChange: 'Umsókn bíður eftir gögnum frá maka',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,

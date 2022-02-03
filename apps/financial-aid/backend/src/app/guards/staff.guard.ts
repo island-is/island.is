@@ -18,16 +18,21 @@ export class StaffGuard implements CanActivate {
       return false
     }
 
-    const staffRolesRule = this.reflector.get<StaffRole[]>(
-      'staff-roles-rules',
-      context.getHandler(),
-    )
-
     const staff = await this.staffService.findByNationalId(user.nationalId)
+
+    if (!staff || staff.active === false) {
+      return false
+    }
+
+    const staffRolesRule =
+      this.reflector.get<StaffRole[]>(
+        'staff-roles-rules',
+        context.getHandler(),
+      ) ?? []
 
     const rule = staffRolesRule.some((r) => staff.roles.includes(r))
 
-    if (rule === false || staff.active === false) {
+    if (rule === false && staffRolesRule.length > 0) {
       return false
     }
 

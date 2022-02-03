@@ -19,6 +19,13 @@ import { AirlineUser, User } from './user.model'
 import { DiscountService } from '../discount'
 import { FlightService } from '../flight'
 import { AuthGuard } from '../common'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
+import type { User as AuthUser } from '@island.is/auth-nest-tools'
 
 @ApiTags('Users')
 @Controller('api/public')
@@ -52,6 +59,8 @@ export class PublicUserController {
   }
 }
 
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes('@vegagerdin.is/air-discount-scheme-scope')
 @Controller('api/private')
 export class PrivateUserController {
   constructor(
@@ -63,14 +72,29 @@ export class PrivateUserController {
   @ApiExcludeEndpoint()
   async getUserRelations(
     @Param() params: GetUserRelationsParams,
+    @CurrentUser() authUser: AuthUser,
   ): Promise<User[]> {
-    const relations = await this.userService.getRelations(params.nationalId)
-    const users = await Promise.all([
-      this.userService.getUserInfoByNationalId(params.nationalId),
-      ...relations.map((nationalId) =>
-        this.userService.getUserInfoByNationalId(nationalId),
-      ),
-    ])
-    return users.filter((user) => user) as User[]
+    if (params.nationalId !== authUser.nationalId) {
+      throw new BadRequestException(
+        '[/relations] Request parameters do not correspond with user authentication.',
+      )
+    }
+    const relations = await this.userService.getRelations(authUser)
+
+    // Adding User in beginning of array so order is correct.
+    relations.unshift(authUser.nationalId)
+    const userAndRelatives = await this.userService.getMultipleUsersByNationalIdArray(
+      relations,
+    )
+
+    const returnUsers = userAndRelatives.filter(
+      (user) => user !== null,
+    ) as Array<User>
+    if (returnUsers.length === 0) {
+      throw new Error(
+        'Could not find NationalRegistry records of neither User or relatives.',
+      )
+    }
+    return returnUsers
   }
 }

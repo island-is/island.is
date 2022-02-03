@@ -58,7 +58,7 @@ export const setupWithAuth = async ({
   return app
 }
 
-export const setupWithoutAuth = async (): Promise<TestApp> => {
+export const setupWithoutScope = async (): Promise<TestApp> => {
   const user = createCurrentUser()
   const app = await testServer<AppModule>({
     appModule: AppModule,
@@ -66,6 +66,15 @@ export const setupWithoutAuth = async (): Promise<TestApp> => {
       useAuth({ auth: user }),
       useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
     ],
+  })
+
+  return app
+}
+
+export const setupWithoutAuth = async (): Promise<TestApp> => {
+  const app = await testServer<AppModule>({
+    appModule: AppModule,
+    hooks: [useDatabase({ type: 'sqlite', provider: SequelizeConfigService })],
   })
 
   return app

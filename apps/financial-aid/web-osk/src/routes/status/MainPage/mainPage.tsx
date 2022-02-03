@@ -81,7 +81,7 @@ const MainPage = () => {
 
         {error && (
           <Text>
-            Umsókn ekki fundin eða einhvað fór úrskeiðis <br />
+            Umsókn ekki fundin eða eitthvað fór úrskeiðis <br />
             vinsamlegast reyndu síðar
           </Text>
         )}
