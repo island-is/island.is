@@ -40,7 +40,6 @@ const AllFiles = () => {
                     createSignedUrlMutation({
                       variables: { input: { fileName: file.name } },
                     }).then((response) => {
-                      console.log(response.data?.getSignedUrl.url)
                       window.open(response.data?.getSignedUrl.url, '_blank')
                     })
                   }
