@@ -13,6 +13,7 @@ import {
   CaseType,
   InstitutionType,
   isRestrictionCase,
+  NotificationType,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
   UserRole,
@@ -120,6 +121,7 @@ export const SignedVerdictOverview: React.FC = () => {
     isRequestingCourtRecordSignature,
     extendCase,
     isExtendingCase,
+    sendNotification,
   } = useCase()
 
   const [getCourtRecordSignatureConfirmation] = useLazyQuery(
@@ -441,27 +443,32 @@ export const SignedVerdictOverview: React.FC = () => {
       ? formatISO(modifiedIsolationToDate.value, { representation: 'complete' })
       : undefined
 
-    const update = {
-      validToDate: formattedValidToDate,
-      isolationToDate: formattedIsolationToDate,
-      caseModifiedExplanation: `${
-        workingCase.caseModifiedExplanation
-          ? workingCase.caseModifiedExplanation
-          : ''
-      }${createCaseModifiedExplanation(caseModifiedExplanation)}`,
-    }
-
     if (
       formattedValidToDate ||
       formattedIsolationToDate ||
       caseModifiedExplanation
     ) {
+      const update = {
+        validToDate: formattedValidToDate,
+        isolationToDate: formattedIsolationToDate,
+        caseModifiedExplanation: `${
+          workingCase.caseModifiedExplanation
+            ? workingCase.caseModifiedExplanation
+            : ''
+        }${createCaseModifiedExplanation(caseModifiedExplanation)}`,
+      }
+
       setWorkingCase({
         ...workingCase,
         ...update,
       })
 
-      await updateCase(workingCase.id, { ...update })
+      const updatedCase = await updateCase(workingCase.id, { ...update })
+
+      if (updatedCase) {
+        await sendNotification(workingCase.id, NotificationType.MODIFIED)
+      }
+
       setIsCaseModificationConfirmed(true)
     }
   }
