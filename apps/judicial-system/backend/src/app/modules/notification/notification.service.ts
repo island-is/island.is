@@ -20,7 +20,9 @@ import {
   isRestrictionCase,
   isInvestigationCase,
   SessionArrangements,
+  User,
 } from '@island.is/judicial-system/types'
+import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../../environments'
 import {
@@ -41,12 +43,12 @@ import {
   formatCourtResubmittedToCourtSmsNotification,
   getCourtRecordPdfAsString,
 } from '../../formatters'
+import { notifications, core } from '../../messages'
 import { Case } from '../case'
 import { CourtService } from '../court'
 import { CaseEvent, EventService } from '../event'
 import { SendNotificationDto } from './dto'
 import { Notification, SendNotificationResponse } from './models'
-import { notificationMessages, core } from '../../messages'
 
 interface Recipient {
   address?: string
@@ -121,7 +123,7 @@ export class NotificationService {
     }
   }
 
-  private getCourtMobileNumber(courtId?: string) {
+  private getCourtMobileNumbers(courtId?: string) {
     return (
       (courtId && environment.notifications.courtsMobileNumbers[courtId]) ??
       undefined
@@ -288,7 +290,7 @@ export class NotificationService {
       theCase.requestedCourtDate,
     )
 
-    return this.sendSms(smsText, this.getCourtMobileNumber(theCase.courtId))
+    return this.sendSms(smsText, this.getCourtMobileNumbers(theCase.courtId))
   }
 
   private async sendHeadsUpNotifications(
@@ -312,7 +314,7 @@ export class NotificationService {
       theCase.court?.name,
     )
 
-    return this.sendSms(smsText, this.getCourtMobileNumber(theCase.courtId))
+    return this.sendSms(smsText, this.getCourtMobileNumbers(theCase.courtId))
   }
 
   private sendResubmittedToCourtSmsNotificationToCourt(
@@ -322,7 +324,7 @@ export class NotificationService {
       theCase.courtCaseNumber,
     )
 
-    return this.sendSms(smsText, this.getCourtMobileNumber(theCase.courtId))
+    return this.sendSms(smsText, this.getCourtMobileNumbers(theCase.courtId))
   }
 
   private async sendReadyForCourtEmailNotificationToProsecutor(
@@ -340,7 +342,7 @@ export class NotificationService {
         : this.formatMessage(core.caseType.investigate)
 
     const html = this.formatMessage(
-      notificationMessages.readyForCourt.prosecutorHtml,
+      notifications.readyForCourt.prosecutorHtml,
       {
         caseType,
         courtName: court?.name,
@@ -656,6 +658,76 @@ export class NotificationService {
     )
   }
 
+  /* MODIFIED notifications */
+
+  private async sendModifiedNotifications(
+    theCase: Case,
+    user: User,
+  ): Promise<SendNotificationResponse> {
+    const subject = this.formatMessage(notifications.modified.subject, {
+      courtCaseNumber: theCase.courtCaseNumber,
+    })
+    const html = `${this.formatMessage(notifications.modified.html, {
+      actorInstitution: user.institution?.name,
+      actorName: user.name,
+      actorTitle: user.title,
+      courtCaseNumber: theCase.courtCaseNumber,
+      linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
+      linkEnd: '</a>',
+      validToDate: formatDate(theCase.validToDate, 'PPPp'),
+    })}${
+      theCase.isCustodyIsolation
+        ? this.formatMessage(notifications.modified.isolationHtml, {
+            isolationToDate: formatDate(theCase.isolationToDate, 'PPPp'),
+          })
+        : ''
+    }`
+
+    const recipients = [
+      await this.sendEmail(
+        subject,
+        html,
+        theCase.prosecutor?.name,
+        theCase.prosecutor?.email,
+      ),
+      await this.sendEmail(
+        subject,
+        html,
+        theCase.judge?.name,
+        theCase.judge?.email,
+      ),
+      await this.sendEmail(
+        subject,
+        html,
+        'Fangelsismálastofnun',
+        environment.notifications.prisonAdminEmail,
+      ),
+      await this.sendEmail(
+        subject,
+        html,
+        'Gæsluvarðhaldsfangelsi',
+        environment.notifications.prisonEmail,
+      ),
+    ]
+
+    if (theCase.registrar) {
+      recipients.push(
+        await this.sendEmail(
+          subject,
+          html,
+          theCase.registrar.name,
+          theCase.registrar.email,
+        ),
+      )
+    }
+
+    return this.recordNotification(
+      theCase.id,
+      NotificationType.MODIFIED,
+      recipients,
+    )
+  }
+
   /* REVOKED notifications */
 
   private sendRevokedSmsNotificationToCourt(theCase: Case): Promise<Recipient> {
@@ -666,7 +738,7 @@ export class NotificationService {
       theCase.courtDate,
     )
 
-    return this.sendSms(smsText, this.getCourtMobileNumber(theCase.courtId))
+    return this.sendSms(smsText, this.getCourtMobileNumbers(theCase.courtId))
   }
 
   private sendRevokedEmailNotificationToPrison(
@@ -733,7 +805,7 @@ export class NotificationService {
 
     const courtWasNotified = await this.existsRevokableNotification(
       theCase.id,
-      this.getCourtMobileNumber(theCase.courtId),
+      this.getCourtMobileNumbers(theCase.courtId),
     )
 
     if (courtWasNotified) {
@@ -787,6 +859,7 @@ export class NotificationService {
   sendCaseNotification(
     notification: SendNotificationDto,
     theCase: Case,
+    user: User,
   ): Promise<SendNotificationResponse> {
     switch (notification.type) {
       case NotificationType.HEADS_UP:
@@ -799,6 +872,8 @@ export class NotificationService {
         return this.sendCourtDateNotifications(theCase)
       case NotificationType.RULING:
         return this.sendRulingNotifications(theCase)
+      case NotificationType.MODIFIED:
+        return this.sendModifiedNotifications(theCase, user)
       case NotificationType.REVOKED:
         return this.sendRevokedNotifications(theCase)
     }

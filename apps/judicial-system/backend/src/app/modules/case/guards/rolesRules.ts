@@ -20,6 +20,7 @@ export const prosecutorUpdateRule = {
     'requestedCourtDate',
     'translator',
     'requestedValidToDate',
+    'validToDate',
     'demands',
     'lawsBroken',
     'legalBasis',
@@ -34,6 +35,8 @@ export const prosecutorUpdateRule = {
     'caseFilesComments',
     'prosecutorId',
     'sharedWithProsecutorsOfficeId',
+    'caseModifiedExplanation',
+    'isolationToDate',
   ],
 } as RolesRule
 
@@ -72,6 +75,7 @@ const courtFields = [
   'prosecutorPostponedAppealDate',
   'judgeId',
   'registrarId',
+  'caseModifiedExplanation',
 ]
 
 // Allows judges to update a specific set of fields

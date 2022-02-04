@@ -11,7 +11,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
-import { restrictionRequest as m, core } from '../messages'
+import { request as m, core } from '../messages'
 import { Case } from '../modules/case/models'
 import { formatLegalProvisions } from './formatters'
 import {
