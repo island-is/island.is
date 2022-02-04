@@ -389,6 +389,7 @@ const Search: Screen<CategoryProps> = ({
         <GridRow>
           <GridColumn
             span={['12/12', '12/12', '12/12', '8/12']}
+            paddingBottom={6}
             offset={[null, null, null, '2/12']}
           >
             <Stack space={[3, 3, 4]}>
@@ -422,7 +423,7 @@ const Search: Screen<CategoryProps> = ({
                   alignY="center"
                   space={3}
                   flexWrap="nowrap"
-                  collapseBelow="lg"
+                  collapseBelow="md"
                 >
                   <Inline space={1}>
                     {countResults.total > 0 && (
@@ -490,6 +491,7 @@ const Search: Screen<CategoryProps> = ({
                   <FilterMenu
                     {...filterLabels}
                     categories={categories}
+                    resultCount={totalSearchResults}
                     filter={{
                       category: state.query.category ?? [],
                       organization: state.query.organization ?? [],
@@ -595,7 +597,7 @@ const Search: Screen<CategoryProps> = ({
                   },
                 )}{' '}
                 {totalSearchResults > 0 && (
-                  <Box paddingY={6}>
+                  <Box paddingTop={6}>
                     <Pagination
                       page={page}
                       totalPages={totalPages}

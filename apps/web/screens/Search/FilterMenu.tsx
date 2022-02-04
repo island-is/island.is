@@ -15,6 +15,7 @@ interface FilterMenuProps {
   filter: FilterOptions
   setFilter: Dispatch<SetStateAction<FilterOptions>>
   children?: ReactNode
+  resultCount?: number
 }
 
 export type FilterLabels = Pick<
@@ -48,6 +49,7 @@ export const FilterMenu = ({
   labelResult = 'Sýna niðurstöður',
   variant,
   align,
+  resultCount = 0,
 }: FilterMenuProps & FilterLabels & Pick<FilterProps, 'variant' | 'align'>) => (
   <Filter
     labelClearAll={labelClearAll}
@@ -58,6 +60,7 @@ export const FilterMenu = ({
     labelResult={labelResult}
     variant={variant}
     align={align}
+    resultCount={resultCount}
     reverse
     onFilterClear={() => {
       setFilter({ category: [], organization: [] })
