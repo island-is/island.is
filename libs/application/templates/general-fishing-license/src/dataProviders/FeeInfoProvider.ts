@@ -5,9 +5,14 @@ import {
 } from '@island.is/application/core'
 import { PaymentCatalogProvider } from '@island.is/application/data-providers'
 
-const CHARGE_ITEM_CODES = ['FV501', 'FV502']
+// const CHARGE_ITEM_CODES = ['FV501', 'FV502']
 
-const FISKISTOFA_NATIONAL_ID = '6608922069'
+// const FISKISTOFA_NATIONAL_ID = '6608922069'
+
+// Using codes and national Id from Sýslumaður as temp to test this function
+const CHARGE_ITEM_CODES = ['AY110', 'AY114']
+
+const FISKISTOFA_NATIONAL_ID = '6509142520'
 
 export class FeeInfoProvider extends PaymentCatalogProvider {
   type = 'FeeInfoProvider'
@@ -15,6 +20,7 @@ export class FeeInfoProvider extends PaymentCatalogProvider {
   async provide(): Promise<PaymentCatalogItem[]> {
     const items =
       (await this.getCatalogForOrganization(FISKISTOFA_NATIONAL_ID)) || []
+
     return items.filter(({ chargeItemCode }) =>
       CHARGE_ITEM_CODES.includes(chargeItemCode),
     )
