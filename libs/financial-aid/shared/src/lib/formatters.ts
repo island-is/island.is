@@ -257,7 +257,7 @@ export const getApplicantEmailDataFromEventType = (
           'Þú þarft að skila gögnum svo hægt sé að klára að vinna umsóknina',
         data: {
           title: 'Fjárhagsaðstoð Umsókn vantar gögn',
-          header: `Okkur vantar gögn til að klára að vinna úr umsókninni`,
+          header: `Þú þarft að skila gögnum svo hægt sé að klára að vinna umsóknina`,
           content: `Til að klára umsóknina verður þú að senda okkur <strong>${typeOfDataNeeded}</strong>. Þú getur sent okkur gögnin á <a href="${applicationLink}" target="_blank">þinni stöðusíðu</a>`,
           applicationLinkText: 'Bæta við gögnum',
           applicationChange: 'Umsóknin bíður eftir gögnum',
@@ -277,7 +277,7 @@ export const getApplicantEmailDataFromEventType = (
           header: 'Umsókn þinni um aðstoð hefur verið hafnað',
           content: `Umsókn þinni um fjárhagsaðstoð í ${getPeriod.month} hefur verið hafnað <b>${rejectionComment}</b>. Þú getur kynnt þér <a href="${municipality.rulesHomepage}" target="_blank">reglur um fjárhagsaðstoð.</a>`,
           applicationLinkText: 'Opna stöðusíðu',
-          applicationChange: 'Umsókn synjað',
+          applicationChange: 'Umsókn hafnað',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,
           applicationLink,
@@ -291,7 +291,7 @@ export const getApplicantEmailDataFromEventType = (
         subject: 'Umsóknin þín er samþykkt og lokaupphæð tilbúin',
         data: {
           title: 'Fjárhagsaðstoð Umsókn samþykkt',
-          header: 'Umsóknin þín er samþykkt og áætlun er tilbúin',
+          header: 'Umsóknin þín er samþykkt og lokaupphæð er tilbúin',
           content: `Umsóknin þín um fjárhagsaðstoð í ${getPeriod.month} er samþykkt`,
           applicationLinkText: 'Skoða lokaupphæð',
           applicationChange: 'Umsóknin er samþykkt',
