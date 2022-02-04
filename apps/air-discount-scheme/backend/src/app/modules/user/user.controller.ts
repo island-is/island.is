@@ -88,14 +88,11 @@ export class PrivateUserController {
       relations,
     )
 
-    const returnUsers = userAndRelatives.filter(
-      (user) => user !== null,
-    ) as Array<User>
-    if (returnUsers.length === 0) {
+    if (!userAndRelatives || userAndRelatives.length === 0) {
       throw new Error(
         'Could not find NationalRegistry records of neither User or relatives.',
       )
     }
-    return returnUsers
+    return userAndRelatives
   }
 }
