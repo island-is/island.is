@@ -104,4 +104,9 @@ export const core = defineMessages({
     defaultMessage: 'Veldu ríkisfang',
     description: 'Notað fyrir Veldu ríkisfang í öllum flæðum',
   },
+  update: {
+    id: 'judicial.system.core:update',
+    defaultMessage: 'Uppfæra',
+    description: 'Notað fyrir orðið Uppfæra í öllum flæðum.',
+  },
 })

@@ -1,6 +1,6 @@
 import { defineMessage, defineMessages } from '@formatjs/intl'
 
-export const restrictionRequest = {
+export const request = {
   heading: defineMessage({
     id: 'judicial.system.backend:pdf.restriction_request.heading',
     defaultMessage: 'Krafa um {caseType}',
