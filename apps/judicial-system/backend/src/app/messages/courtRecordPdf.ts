@@ -145,4 +145,10 @@ export const courtRecord = {
     defaultMessage: 'Þinghaldi er ekki lokið.',
     description: 'Notaður sem lokaorð þegar þinghaldi er ekki lokið.',
   }),
+  smallPrint: defineMessage({
+    id: 'judicial.system.backend:pdf.court_record.small_print',
+    defaultMessage:
+      '{actorName} ({actorInstitution}) sótti þetta skjal í Réttarvörslugátt {date}.',
+    description: '',
+  }),
 }
