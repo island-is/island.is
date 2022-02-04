@@ -263,31 +263,45 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         <InfoCard
           data={[
             {
-              title: 'LÖKE málsnúmer',
+              title: formatMessage(core.policeCaseNumber),
               value: workingCase.policeCaseNumber,
             },
             {
-              title: 'Málsnúmer héraðsdóms',
+              title: formatMessage(core.courtCaseNumber),
               value: workingCase.courtCaseNumber,
             },
             {
-              title: 'Embætti',
+              title: formatMessage(core.prosecutor),
               value: `${
                 workingCase.creatingProsecutor?.institution?.name ??
                 'Ekki skráð'
               }`,
             },
-            { title: 'Dómstóll', value: workingCase.court?.name },
-            { title: 'Ákærandi', value: workingCase.prosecutor?.name },
-            { title: 'Dómari', value: workingCase.judge?.name },
+            {
+              title: formatMessage(core.court),
+              value: workingCase.court?.name,
+            },
+            {
+              title: formatMessage(core.prosecutorPerson),
+              value: workingCase.prosecutor?.name,
+            },
+            {
+              title: formatMessage(core.judge),
+              value: workingCase.judge?.name,
+            },
             ...(workingCase.registrar
-              ? [{ title: 'Dómritari', value: workingCase.registrar?.name }]
+              ? [
+                  {
+                    title: formatMessage(core.registrar),
+                    value: workingCase.registrar?.name,
+                  },
+                ]
               : []),
             // Conditionally add this field based on case type
             ...(isInvestigationCase(workingCase.type)
               ? [
                   {
-                    title: 'Tegund kröfu',
+                    title: formatMessage(core.caseType),
                     value: capitalize(caseTypes[workingCase.type]),
                   },
                 ]
