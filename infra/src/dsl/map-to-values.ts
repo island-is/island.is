@@ -73,6 +73,9 @@ export const serializeService: SerializeMethod = (
     },
     env: {
       SERVERSIDE_FEATURES_ON: uberChart.env.featuresOn.join(','),
+      NODE_OPTIONS: `--max-old-space-size=${
+        parseInt(serviceDef.resources.limits.memory, 10) - 48
+      }`,
     },
     secrets: {},
     healthCheck: {
@@ -99,8 +102,11 @@ export const serializeService: SerializeMethod = (
   }
 
   // resources
-  if (serviceDef.resources) {
-    result.resources = serviceDef.resources
+  result.resources = serviceDef.resources
+  if (serviceDef.env.NODE_OPTIONS) {
+    throw new Error(
+      'NODE_OPTIONS already set. At the moment of writing, there is no known use case for this, so this might need to be revisited in the future.',
+    )
   }
 
   // replicas
@@ -431,6 +437,16 @@ function serializeContainerRuns(
     let result: ContainerRunHelm = {
       command: [c.command],
       args: c.args,
+      resources: {
+        limits: {
+          memory: '256Mi',
+          cpu: '200m',
+        },
+        requests: {
+          memory: '128Mi',
+          cpu: '100m',
+        },
+      },
     }
     if (c.resources) {
       result.resources = c.resources
