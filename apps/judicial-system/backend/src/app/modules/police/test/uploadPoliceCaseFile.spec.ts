@@ -117,7 +117,9 @@ describe('PoliceController - Upload police case file', () => {
 
     it('should updload the file to ASW S3', () => {
       expect(then.result).toEqual({
-        key: expect.stringMatching(new RegExp(`^${caseId}/.{36}/test.txt$`)),
+        key: expect.stringMatching(
+          new RegExp(`^uploads/${caseId}/.{36}/test.txt$`),
+        ),
         size: 12,
       })
     })
