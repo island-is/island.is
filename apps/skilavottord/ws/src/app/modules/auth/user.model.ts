@@ -20,5 +20,6 @@ export class User {
   @Field(() => Role)
   role!: Role
 
+  @Field({ nullable: true })
   partnerId?: string
 }
