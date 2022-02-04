@@ -1,5 +1,5 @@
 import { Application } from '@island.is/application/core'
-import { transformApplicationToComplaintDto } from '../../data-protection-utils'
+import { transformApplicationToComplaintPDFdata } from '../../data-protection-utils'
 import { generateComplaintPdf } from '../../pdfGenerators/templates/complaintPdf'
 import { DocumentInfo } from '@island.is/clients/data-protection-complaint'
 import { Injectable } from '@nestjs/common'
@@ -10,7 +10,7 @@ export class PdfFileProvider {
     application: Application,
     filename: string,
   ): Promise<DocumentInfo[]> {
-    const dto = transformApplicationToComplaintDto(application)
+    const dto = transformApplicationToComplaintPDFdata(application)
     const buffer = await generateComplaintPdf(dto)
     const doc = {
       content: buffer.toString('base64'),

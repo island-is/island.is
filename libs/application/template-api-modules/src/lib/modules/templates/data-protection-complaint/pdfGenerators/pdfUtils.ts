@@ -78,3 +78,19 @@ export const addLogo = (doc: PDFKit.PDFDocument, logo: string) => {
     )
     .moveDown()
 }
+
+export const setPageHeader = (
+  doc: PDFKit.PDFDocument,
+  text: string,
+  weight = PdfConstants.NORMAL_FONT,
+  lineGap = PdfConstants.SMALL_LINE_GAP,
+) => {
+  doc
+    .font(weight)
+    .fontSize(PdfConstants.SMALL_FONT_SIZE)
+    .lineGap(lineGap)
+    .text(text, PdfConstants.HORIZONTAL_MARGIN, PdfConstants.VERTICAL_MARGIN, {
+      align: 'left',
+    })
+    .moveDown()
+}

@@ -17,12 +17,10 @@ export const ComplaintConfirmation: FC<FieldBaseProps> = ({
     application.id,
     pdfType,
   )
+
   return (
     <Box marginTop={3}>
       <Text>{formatMessage(confirmation.labels.bulletOne)}</Text>
-      <Box marginTop={[3, 5, 12]}>
-        <CompanyIllustration />
-      </Box>
       <Box marginTop={5}>
         <Button
           colorScheme="default"
@@ -38,6 +36,9 @@ export const ComplaintConfirmation: FC<FieldBaseProps> = ({
         >
           {formatMessage(confirmation.labels.pdfButton)}
         </Button>
+      </Box>
+      <Box marginTop={[3, 5, 12]}>
+        <CompanyIllustration />
       </Box>
     </Box>
   )

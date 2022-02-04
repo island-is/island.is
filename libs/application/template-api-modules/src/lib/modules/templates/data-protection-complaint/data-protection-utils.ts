@@ -186,10 +186,13 @@ export const toRequestMetadata = (
   ]
 }
 
-export const transformApplicationToComplaintDto = (
+export const transformApplicationToComplaintPDFdata = (
   application: Application,
 ): ComplaintPDF => {
   const answers = application.answers as DataProtectionComplaint
+  const timestamp =
+    new Date(application.externalData?.sendApplication?.date) ?? new Date()
+
   return {
     applicantInfo: {
       name: 'Applicant',
@@ -206,7 +209,7 @@ export const transformApplicationToComplaintDto = (
     attachments: [],
     description: extractAnswer(application.answers, 'complaint.description'),
     applicationPdf: '',
-    submitDate: application.externalData.sendApplication.date,
+    submitDate: timestamp,
   }
 }
 

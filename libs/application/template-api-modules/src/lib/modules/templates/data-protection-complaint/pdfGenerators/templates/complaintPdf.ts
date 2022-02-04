@@ -1,10 +1,21 @@
 import { ComplaintPDF } from '../../models'
 
 import { Application } from '@island.is/application/core'
-import { transformApplicationToComplaintDto } from '../../data-protection-utils'
+import { transformApplicationToComplaintPDFdata } from '../../data-protection-utils'
 import { generatePdf } from '../pdfGenerator'
-import { addHeader, addSubheader, addValue, formatSsn } from '../pdfUtils'
+import {
+  addHeader,
+  addLogo,
+  addSubheader,
+  addValue,
+  formatSsn,
+  setPageHeader,
+} from '../pdfUtils'
 import { PdfConstants } from '../constants'
+import { dataProtectionLogo } from '../assets/logo'
+import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
+import is from 'date-fns/locale/is'
 
 export async function generateComplaintPdf(
   complaint: ComplaintPDF,
@@ -15,7 +26,7 @@ export async function generateComplaintPdf(
 export async function generateComplaintPdfApplication(
   application: Application,
 ): Promise<Buffer> {
-  const dto = transformApplicationToComplaintDto(application)
+  const dto = transformApplicationToComplaintPDFdata(application)
   return await generatePdf<ComplaintPDF>(dto, dpcApplicationPdf)
 }
 
@@ -23,11 +34,21 @@ function dpcApplicationPdf(
   complaint: ComplaintPDF,
   doc: PDFKit.PDFDocument,
 ): void {
+  const timestamp = format(
+    parseISO(complaint.submitDate.toISOString()),
+    'd. MMMM y',
+    {
+      locale: is,
+    },
+  )
+  setPageHeader(doc, timestamp)
+  addLogo(doc, dataProtectionLogo)
+
   addHeader('Kvörtun til Persónuverndar', doc)
   addSubheader('Tengiliður', doc)
 
   addValue(
-    `${complaint.contactInfo.name}, ${formatSsn(
+    `${complaint.contactInfo.name}, kt. ${formatSsn(
       complaint.contactInfo.nationalId,
     )}`,
     doc,
@@ -39,78 +60,66 @@ function dpcApplicationPdf(
   )
 
   addValue(
-    `${complaint.contactInfo.phone}, ${complaint.contactInfo.email}`,
+    `s. ${complaint.contactInfo.phone}, ${complaint.contactInfo.email}`,
     doc,
     PdfConstants.NORMAL_FONT,
     PdfConstants.LARGE_LINE_GAP,
   )
 
-  /*addFormField(
-    doc,
-    'Umboð',
-    `${complaint.onBehalf}`,
-    PdfConstants.NORMAL_LINE_GAP,
-  )
-
-  if (complaint.agency) {
-    addSubHeader(doc, 'Umboðsaðilar')
-
+  if (complaint.agency?.persons?.length) {
+    addSubheader('Umboðsaðilar', doc)
     complaint.agency.persons.map((person) => {
-      addFormField(doc, 'Nafn', `${person.name}`)
-      addFormField(
+      addValue(
+        `${person.name} kt. ${person.nationalId}`,
         doc,
-        'Kennitala',
-        `${person.nationalId}`,
-        PdfConstants.NORMAL_LINE_GAP,
+        PdfConstants.NORMAL_FONT,
+        PdfConstants.LARGE_LINE_GAP,
       )
     })
-  }*/
-  /*
-  addSubHeader(doc, 'Aðilar sem er kvartað yfir')
-
-  complaint.targetsOfComplaint.map((target, i) => {
-    addFormField(doc, 'Nafn', `${target.name}`)
-    addFormField(doc, 'Kennitala', `${target.nationalId}`)
-    addFormField(doc, 'Heimilisfang', `${target.address}`)
-    if (target.operatesWithinEurope === 'yes') {
-      addFormField(doc, 'Starfrækt innann evrópu', 'já')
-      addFormField(
+  }
+  addSubheader(
+    'Upplýsingar um fyrirtæki, stofnun eða einstakling sem kvartað er yfir',
+    doc,
+  )
+  complaint.targetsOfComplaint.map((c, i) => {
+    const linegap =
+      i === complaint.targetsOfComplaint.length - 1
+        ? PdfConstants.LARGE_LINE_GAP
+        : PdfConstants.SMALL_LINE_GAP
+    addValue(
+      `${c.name}, kt. ${formatSsn(c.nationalId)}, ${c.address}`,
+      doc,
+      PdfConstants.NORMAL_FONT,
+      PdfConstants.NO_LINE_GAP,
+    )
+    if (c.operatesWithinEurope === 'yes') {
+      addValue(
+        `Starfsemi í landi ${c.countryOfOperation}`,
         doc,
-        'Starfsemi í landi',
-        `${target.countryOfOperation}`,
-        PdfConstants.NORMAL_LINE_GAP,
+        PdfConstants.NORMAL_FONT,
+        linegap,
       )
     } else {
-      addFormField(
+      addValue(
+        'Ekki vitað eða starfar ekki innan Evrópu',
         doc,
-        'Starfrækt innann evrópu',
-        'nei/veit ekki',
-        PdfConstants.NORMAL_LINE_GAP,
+        PdfConstants.NORMAL_FONT,
+        linegap,
       )
     }
-
-    addFormField(
-      doc,
-      'Starfrækt innann evrópu',
-      `${target.operatesWithinEurope === 'yes' ? 'já' : 'nei/veit ekki'}`,
-    )
-    addFormField(
-      doc,
-      'Starfsemi í landi',
-      `${target.countryOfOperation}`,
-      PdfConstants.NORMAL_LINE_GAP,
-    )
-  })*/
-  /*
-  addSubHeader(doc, 'Flokkun á atburði')
-  complaint.complaintCategories.map((category, i) => {
-    complaint.complaintCategories.length > i + 1
-      ? addText(doc, category)
-      : addText(doc, category, PdfConstants.NORMAL_LINE_GAP)
   })
 
-  addSubHeader(doc, 'Lýsing á atburði')
-  addText(doc, complaint.description)
-*/
+  addSubheader('Efni kvörtunar', doc)
+  const subjects = complaint.complaintCategories.map((c) => c).join(', ')
+
+  addValue(subjects, doc, PdfConstants.NORMAL_FONT, PdfConstants.LARGE_LINE_GAP)
+
+  addSubheader('Yfir hverju er kvartað í meginatriðum?', doc)
+  addValue(
+    complaint.description,
+    doc,
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.LARGE_LINE_GAP,
+  )
   doc.end()
 }
