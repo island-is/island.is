@@ -89,4 +89,9 @@ export const core = defineMessages({
     defaultMessage: 'Dómstóll',
     description: 'Notað fyrir orðið Dómstóll í öllum flæðum.',
   },
+  update: {
+    id: 'judicial.system.core:update',
+    defaultMessage: 'Uppfæra',
+    description: 'Notað fyrir orðið Uppfæra í öllum flæðum.',
+  },
 })
