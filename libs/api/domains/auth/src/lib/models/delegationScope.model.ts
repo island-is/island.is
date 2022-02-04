@@ -19,5 +19,5 @@ export class DelegationScope {
   displayName!: string
 
   @Field(() => Date, { nullable: true })
-  validTo?: Date | null
+  validTo?: Date
 }
