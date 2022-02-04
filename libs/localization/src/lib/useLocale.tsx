@@ -1,23 +1,38 @@
 import { useContext } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
+import { PrimitiveType, FormatXMLElementFn } from 'intl-messageformat'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import en from 'date-fns/locale/en-US'
 
 import { LocaleContext } from './LocaleContext'
 
+type FormatMessageValues = Record<
+  string,
+  PrimitiveType | FormatXMLElementFn<string, string>
+>
+
 export function useLocale() {
   const intl = useIntl()
   const { lang, changeLanguage } = useContext(LocaleContext)
 
+  function formatMessage(descriptor: undefined): undefined
   function formatMessage(
     descriptor: MessageDescriptor | string,
-    values?: any,
-  ): string {
-    if (!descriptor || typeof descriptor === 'string') {
-      return descriptor as string
-    }
+    values?: FormatMessageValues,
+  ): string
+  function formatMessage(
+    descriptor: MessageDescriptor | string | undefined,
+    values?: FormatMessageValues,
+  ): string | undefined
 
+  function formatMessage(
+    descriptor: MessageDescriptor | string | undefined,
+    values?: FormatMessageValues,
+  ): string | undefined {
+    if (!descriptor || typeof descriptor === 'string') {
+      return descriptor
+    }
     return intl.formatMessage(descriptor, values)
   }
 
