@@ -20,7 +20,7 @@ interface Option {
 export const ShipSelection: FC<FieldBaseProps> = ({ application, field }) => {
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
-  console.log(application)
+
   const registrationNumberValue = getValueViaPath(
     application.answers,
     'shipSelection.registrationNumber',
