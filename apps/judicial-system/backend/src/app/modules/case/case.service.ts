@@ -40,7 +40,7 @@ import {
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
 } from '../../formatters'
-import { notificationMessages as m } from '../../messages'
+import { notifications as m } from '../../messages'
 import { FileService } from '../file/file.service'
 import { DefendantService } from '../defendant/defendant.service'
 import { Defendant } from '../defendant/models/defendant.model'
