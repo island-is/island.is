@@ -1,20 +1,31 @@
 import { Injectable } from '@nestjs/common'
+// import {
+//   MortgageCertificateApi,
+//   MortgageCertificate,
+// } from '@island.is/clients/mortgage-certificate'
 import {
-  MortgageCertificateApi,
+  SyslumennService,
   MortgageCertificate,
-} from '@island.is/clients/mortgage-certificate'
+} from '@island.is/clients/syslumenn'
 
 @Injectable()
 export class MortgageCertificateService {
   constructor(
-    private readonly mortgageCertificateApi: MortgageCertificateApi,
+    // private readonly mortgageCertificateApi: MortgageCertificateApi,
+    private readonly syslumennService: SyslumennService,
   ) {}
 
-  async getMortgageCertificate(ssn: string): Promise<MortgageCertificate> {
-    return await this.mortgageCertificateApi.getMortgageCertificate(ssn)
+  async getMortgageCertificate(
+    realEstateNumber: string,
+  ): Promise<MortgageCertificate> {
+    return await this.syslumennService.getMortgageCertificate(realEstateNumber)
   }
 
-  async validateMortgageCertificate(ssn: string): Promise<Boolean> {
-    return await this.mortgageCertificateApi.validateMortgageCertificate(ssn)
+  async validateMortgageCertificate(
+    realEstateNumber: string,
+  ): Promise<Boolean> {
+    return await this.syslumennService.validateMortgageCertificate(
+      realEstateNumber,
+    )
   }
 }

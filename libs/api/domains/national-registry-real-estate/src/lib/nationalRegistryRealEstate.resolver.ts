@@ -12,7 +12,7 @@ import {
 import { Audit } from '@island.is/nest/audit'
 
 import { NationalRegistryRealEstateService } from './nationalRegistryRealEstate.service'
-import { NationalRegistryRealEstateResult } from '../models/nationalRegistryRealEstateResult.model'
+import { NationalRegistryRealEstateRealEstate } from '../models/nationalRegistryRealEstateRealEstate.model'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)
@@ -23,19 +23,14 @@ export class NationalRegistryRealEstateResolver {
     private nationalRegistryRealEstateService: NationalRegistryRealEstateService,
   ) {}
 
-  @Query(() => NationalRegistryRealEstateResult, {
-    name: 'nationalRegistryRealEstateResult',
+  @Query(() => [NationalRegistryRealEstateRealEstate], {
+    name: 'nationalRegistryMyRealEstates',
     nullable: true,
   })
   @Audit()
-  async getNationalRegistryRealEstateResult(
+  async getNationalRegistryMyRealEstates(
     @CurrentUser() user: User,
-  ): Promise<NationalRegistryRealEstateResult | undefined> {
-    return {
-      realEstates: await this.nationalRegistryRealEstateService.getRealEstates(
-        user,
-        user.nationalId,
-      ),
-    }
+  ): Promise<NationalRegistryRealEstateRealEstate[] | undefined> {
+    return await this.nationalRegistryRealEstateService.getMyRealEstates(user)
   }
 }

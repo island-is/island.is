@@ -2483,10 +2483,16 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "builder": "@nrwl/linter:eslint",
+          "builder": "@nrwl/linter:lint",
           "options": {
-            "lintFilePatterns": [
-              "libs/application/templates/mortgage-certificate/**/*.ts"
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/mortgage-certificate/tsconfig.lib.json",
+              "libs/application/templates/mortgage-certificate/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/mortgage-certificate/**/*"
             ]
           }
         },
@@ -2498,6 +2504,18 @@
           "options": {
             "jestConfig": "libs/application/templates/mortgage-certificate/jest.config.js",
             "passWithNoTests": true
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/mortgage-certificate/codegen.yml"
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/mortgage-certificate/src/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -3349,27 +3367,6 @@
           "outputs": ["coverage/libs/clients/mms"],
           "options": {
             "jestConfig": "libs/clients/mms/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
-    "clients-mortgage-certificate": {
-      "root": "libs/clients/mortgage-certificate",
-      "sourceRoot": "libs/clients/mortgage-certificate/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/clients/mortgage-certificate/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/clients/mortgage-certificate"],
-          "options": {
-            "jestConfig": "libs/clients/mortgage-certificate/jest.config.js",
             "passWithNoTests": true
           }
         }

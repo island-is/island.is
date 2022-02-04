@@ -10,11 +10,9 @@ export class NationalRegistryRealEstateProvider extends BasicDataProvider {
 
   async provide(): Promise<NationalRegistry> {
     const query = `
-      query GetNationalRegistryRealEstateResult {
-        nationalRegistryRealEstateResult {
-          realEstates {
-            realEstateNumber
-          }
+      query GetNationalRegistryMyRealEstates {
+        nationalRegistryMyRealEstates {
+          realEstateNumber
         }
       }
     `
@@ -29,7 +27,7 @@ export class NationalRegistryRealEstateProvider extends BasicDataProvider {
         }
 
         return Promise.resolve({
-          ...response.data.nationalRegistryRealEstateResult,
+          ...response.data.nationalRegistryMyRealEstates,
         })
       })
       .catch((error) => {

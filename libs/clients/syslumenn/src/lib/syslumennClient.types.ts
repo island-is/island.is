@@ -88,3 +88,7 @@ export enum PersonType {
   Child,
   CriminalRecordApplicant,
 }
+
+export interface MortgageCertificate {
+  contentBase64: string
+}

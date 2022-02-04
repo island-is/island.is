@@ -1,6 +1,5 @@
 import { Test } from '@nestjs/testing'
 import { MortgageCertificateService } from './mortgageCertificate.service'
-import { MortgageCertificateApiModule } from '@island.is/clients/mortgage-certificate'
 import {
   MOCK_NATIONAL_ID,
   MOCK_NATIONAL_ID_NOT_EXISTS,

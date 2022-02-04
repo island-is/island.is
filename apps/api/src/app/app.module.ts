@@ -252,13 +252,7 @@ const autoSchemaFile = environment.production
         xroadPath: environment.criminalRecord.xroadPath,
       },
     }),
-    MortgageCertificateModule.register({
-      clientConfig: {
-        xroadBaseUrl: environment.xroad.baseUrl,
-        xroadClientId: environment.xroad.clientId,
-        xroadPath: environment.mortgageCertificate.xroadPath,
-      },
-    }),
+    MortgageCertificateModule.register(),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [

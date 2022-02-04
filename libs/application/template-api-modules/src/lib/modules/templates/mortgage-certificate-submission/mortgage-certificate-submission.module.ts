@@ -14,7 +14,7 @@ export class MortgageCertificateSubmissionModule {
       module: MortgageCertificateSubmissionModule,
       imports: [
         SharedTemplateAPIModule.register(baseConfig),
-        MortgageCertificateModule.register(baseConfig.mortgageCertificate),
+        MortgageCertificateModule.register(),
         SyslumennClientModule,
       ],
       providers: [MortgageCertificateSubmissionService],

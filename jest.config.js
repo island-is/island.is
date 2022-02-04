@@ -133,7 +133,6 @@ module.exports = {
     '<rootDir>/libs/clients/middlewares',
     '<rootDir>/libs/clients/mms',
     '<rootDir>/libs/clients/mms',
-    '<rootDir>/libs/clients/mortgage-certificate',
     '<rootDir>/libs/clients/national-registry',
     '<rootDir>/libs/clients/payment',
     '<rootDir>/libs/clients/regulations',

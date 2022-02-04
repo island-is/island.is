@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { MortgageCertificateService } from '@island.is/api/domains/mortgage-certificate'
-import { MortgageCertificate } from '@island.is/clients/mortgage-certificate'
 import {
   SyslumennService,
   Person,
   Attachment,
   PersonType,
+  MortgageCertificate,
 } from '@island.is/clients/syslumenn'
 import { generateSyslumennNotificationEmail } from './emailGenerators/syslumennNotification'
 import { Application } from '@island.is/application/core'

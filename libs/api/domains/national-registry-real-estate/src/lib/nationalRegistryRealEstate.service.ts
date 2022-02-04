@@ -26,13 +26,12 @@ export class NationalRegistryRealEstateService {
     throw error
   }
 
-  async getRealEstates(
+  async getMyRealEstates(
     user: User,
-    nationalId: string,
   ): Promise<NationalRegistryRealEstateRealEstate[] | undefined> {
     const realEstate = await this.nationalRegistryRealEstateApiWithAuth(user)
       .fasteignirGetFasteignir({
-        kennitala: nationalId,
+        kennitala: user.nationalId,
         cursor: null,
         limit: null,
       })

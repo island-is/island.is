@@ -7,6 +7,7 @@ import {
   DataUploadResponse,
   Person,
   Attachment,
+  MortgageCertificate,
 } from './syslumennClient.types'
 import {
   mapSyslumennAuction,
@@ -18,7 +19,12 @@ import {
   constructUploadDataObject,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
-import { SyslumennApi, SvarSkeyti, Configuration } from '../../gen/fetch'
+import {
+  SyslumennApi,
+  SvarSkeyti,
+  Configuration,
+  TegundAndlags,
+} from '../../gen/fetch'
 import { SyslumennClientConfig } from './syslumennClient.config'
 import type { ConfigType } from '@island.is/nest/config'
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
@@ -168,5 +174,37 @@ export class SyslumennService {
     const { api } = await this.createApi()
     const response = await api.embaettiOgStarfsstodvarGetEmbaetti()
     return response.map(mapDistrictCommissionersAgenciesResponse)
+  }
+
+  async getMortgageCertificate(
+    realEstateNumber: string,
+  ): Promise<MortgageCertificate> {
+    const { id, api } = await this.createApi()
+
+    const contentBase64 =
+      (
+        await api.vedbandayfirlitPost({
+          skilabod: {
+            audkenni: id,
+            fastanumer: realEstateNumber,
+            tegundAndlags: TegundAndlags.NUMBER_0, // 0 = Real estate
+          },
+        })
+      ).vedbandayfirlitPDFSkra || ''
+
+    const certificate: MortgageCertificate = {
+      contentBase64: contentBase64,
+    }
+
+    return certificate
+  }
+
+  async validateMortgageCertificate(
+    realEstateNumber: string,
+  ): Promise<Boolean> {
+    // Note: this function will throw an error if something goes wrong
+    const certificate = await this.getMortgageCertificate(realEstateNumber)
+
+    return certificate.contentBase64.length !== 0
   }
 }

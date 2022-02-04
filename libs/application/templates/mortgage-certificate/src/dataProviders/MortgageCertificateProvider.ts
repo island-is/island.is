@@ -4,22 +4,20 @@ import {
   SuccessfulDataProviderResult,
   FailedDataProviderResult,
 } from '@island.is/application/core'
-import { info } from 'kennitala'
-import { m } from '../lib/messages'
-import { MessageDescriptor } from '@formatjs/intl'
 
 export class MortgageCertificateProvider extends BasicDataProvider {
   type = 'MortgageCertificateProvider'
 
-  async provide(application: Application): Promise<unknown> {
-    //TODOx mortgateApi
-    /*const query = `
-    query MortgageCertificateValidation {
-        mortgageCertificateValidation
+  async provide(): Promise<unknown> {
+    const query = `
+    query GetMortgageCertificateValidation($realEstateNumberInput: String!) {
+        mortgageCertificateValidation(realEstateNumber: $realEstateNumberInput)
       }
     `
 
-    return this.useGraphqlGateway(query).then(async (res: Response) => {
+    return this.useGraphqlGateway(query, {
+      realEstateNumberInput: 'TODOx',
+    }).then(async (res: Response) => {
       const response = await res.json()
 
       if (response.errors) {
@@ -34,9 +32,7 @@ export class MortgageCertificateProvider extends BasicDataProvider {
       }
 
       return Promise.resolve({ isValid: true })
-    })*/
-
-    return Promise.resolve()
+    })
   }
 
   onProvideError({ reason }: { reason: string }): FailedDataProviderResult {
