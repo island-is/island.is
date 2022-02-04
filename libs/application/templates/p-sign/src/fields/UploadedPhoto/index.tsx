@@ -10,8 +10,8 @@ interface UploadedPhotoProps {
 }
 
 export const PresignedUrlQuery = gql`
-  query getAttachmentPresignedURL($input: GetAttachmentPresignedUrlInput!) {
-    getAttachmentPresignedURL(input: $input) {
+  query attachmentPresignedURL($input: AttachmentPresignedUrlInput!) {
+    attachmentPresignedURL(input: $input) {
       url
     }
   }
@@ -29,12 +29,10 @@ const UploadedPhoto = ({ application }: UploadedPhotoProps) => {
     variables: {
       input: {
         id: application.id,
-        s3Key: attachmentKey,
+        attachmentKey: attachmentKey,
       },
     },
   })
-
-  const src = presignedUrl?.getAttachmentPresignedURL.url
 
   return (
     <Box style={{ width: '191px', height: '242px' }}>
@@ -42,7 +40,7 @@ const UploadedPhoto = ({ application }: UploadedPhotoProps) => {
         alt={
           formatText(m.qualityPhotoAltText, application, formatMessage) || ''
         }
-        src={src}
+        src={presignedUrl?.attachmentPresignedURL.url}
         id="uploadedimage"
       />
     </Box>
