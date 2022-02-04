@@ -75,7 +75,7 @@ export class CriminalRecordSubmissionService {
     )
 
     // Call sýslumaður to get the document sealed before handing it over to the user
-    const sealedRecordResponse = await this.syslumennService.sealCriminalRecord(
+    const sealedRecordResponse = await this.syslumennService.sealDocument(
       record.contentBase64,
     )
 

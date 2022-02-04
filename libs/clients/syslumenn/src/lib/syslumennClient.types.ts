@@ -87,6 +87,7 @@ export enum PersonType {
   CounterParty,
   Child,
   CriminalRecordApplicant,
+  MortgageCertificateApplicant,
 }
 
 export interface MortgageCertificate {

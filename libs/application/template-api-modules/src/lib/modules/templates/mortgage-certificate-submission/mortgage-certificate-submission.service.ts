@@ -74,73 +74,66 @@ export class MortgageCertificateSubmissionService {
       applicantSsn,
     )
 
-    // TODOx mortgateApi
     // Call sýslumaður to get the document sealed before handing it over to the user
-    // const sealedRecordResponse = await this.syslumennService.sealMortgageCertificate(
-    //   record.contentBase64,
-    // )
+    const sealedRecordResponse = await this.syslumennService.sealDocument(
+      record.contentBase64,
+    )
 
-    // if (!sealedRecordResponse?.skjal) {
-    //   throw new Error('Eitthvað fór úrskeiðis.')
-    // }
+    if (!sealedRecordResponse?.skjal) {
+      throw new Error('Eitthvað fór úrskeiðis.')
+    }
 
-    // const sealedRecord: MortgageCertificate = {
-    //   contentBase64: sealedRecordResponse.skjal,
-    // }
     const sealedRecord: MortgageCertificate = {
-      contentBase64: record.contentBase64,
+      contentBase64: sealedRecordResponse.skjal,
     }
 
     // Notify Sýslumaður that person has received the mortgage certificate
-    //await this.notifySyslumenn(application, sealedRecord)
+    await this.notifySyslumenn(application, sealedRecord)
 
     return sealedRecord
   }
 
-  // private async notifySyslumenn(
-  //   application: Application,
-  //   record: MortgageCertificate,
-  // ) {
-  //   const nationalRegistryData = application.externalData.nationalRegistry
-  //     ?.data as NationalRegistry
-  //   const userProfileData = application.externalData.userProfile
-  //     ?.data as UserProfile
+  private async notifySyslumenn(
+    application: Application,
+    record: MortgageCertificate,
+  ) {
+    const nationalRegistryData = application.externalData.nationalRegistry
+      ?.data as NationalRegistry
+    const userProfileData = application.externalData.userProfile
+      ?.data as UserProfile
 
-  //   const person: Person = {
-  //     name: nationalRegistryData?.fullName,
-  //     ssn: nationalRegistryData?.nationalId,
-  //     phoneNumber: userProfileData?.mobilePhoneNumber,
-  //     email: userProfileData?.email,
-  //     homeAddress: nationalRegistryData?.address.streetAddress,
-  //     postalCode: nationalRegistryData?.address.postalCode,
-  //     city: nationalRegistryData?.address.city,
-  //     signed: true,
-  //     type: PersonType.MortgageCertificateApplicant,
-  //   }
-  //   const persons: Person[] = [person]
+    const person: Person = {
+      name: nationalRegistryData?.fullName,
+      ssn: nationalRegistryData?.nationalId,
+      phoneNumber: userProfileData?.mobilePhoneNumber,
+      email: userProfileData?.email,
+      homeAddress: nationalRegistryData?.address.streetAddress,
+      postalCode: nationalRegistryData?.address.postalCode,
+      city: nationalRegistryData?.address.city,
+      signed: true,
+      type: PersonType.MortgageCertificateApplicant,
+    }
+    const persons: Person[] = [person]
 
-  //   const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
-  //   const attachment: Attachment = {
-  //     name: `vedbokarvottord_${nationalRegistryData?.nationalId}_${dateStr}.pdf`,
-  //     content: record.contentBase64,
-  //   }
+    const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
+    const attachment: Attachment = {
+      name: `vedbokarvottord_${nationalRegistryData?.nationalId}_${dateStr}.pdf`,
+      content: record.contentBase64,
+    }
 
-  //   const extraData: { [key: string]: string } = {}
+    const extraData: { [key: string]: string } = {}
 
-  //   const uploadDataName = 'Umsókn um veðbókarvottorð frá Ísland.is'
-  //   const uploadDataId = 'Vedbokarvottord2.0'
-  //   const syslumennEmail = 'vefur@syslumenn.is'
+    const uploadDataName = 'Umsókn um veðbókarvottorð frá Ísland.is'
+    const uploadDataId = 'Vedbokarvottord'
 
-  //   await this.syslumennService
-  //     .uploadData(persons, attachment, extraData, uploadDataName, uploadDataId)
-  //     .catch(async () => {
-  //       await this.sharedTemplateAPIService.sendEmailWithAttachment(
-  //         generateSyslumennNotificationEmail,
-  //         (application as unknown) as Application,
-  //         Buffer.from(record.contentBase64, 'base64').toString('binary'),
-  //         syslumennEmail,
-  //       )
-  //       return undefined
-  //     })
-  // }
+    await this.syslumennService
+      .uploadData(persons, attachment, extraData, uploadDataName, uploadDataId)
+      .catch(async () => {
+        await this.sharedTemplateAPIService.sendEmail(
+          generateSyslumennNotificationEmail,
+          (application as unknown) as Application,
+        )
+        return undefined
+      })
+  }
 }

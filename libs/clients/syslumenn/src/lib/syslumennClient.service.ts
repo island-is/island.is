@@ -107,14 +107,14 @@ export class SyslumennService {
     return (operatingLicenses ?? []).map(mapOperatingLicense)
   }
 
-  async sealCriminalRecord(criminalRecord: string): Promise<SvarSkeyti> {
+  async sealDocument(document: string): Promise<SvarSkeyti> {
     const { id, api } = await this.createApi()
     const explination = 'Rafrænt undirritað vottorð'
     return await api.innsiglunPost({
       skeyti: {
         audkenni: id,
         skyring: explination,
-        skjal: criminalRecord,
+        skjal: document,
       },
     })
   }
