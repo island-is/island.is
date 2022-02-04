@@ -14,6 +14,7 @@ import { useRouter } from 'next/router'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
 import {
+  FileType,
   getNextPeriod,
   NationalRegistryData,
   NavigationProps,
@@ -99,7 +100,12 @@ const ApplicantDataGathering = () => {
     updateForm({
       ...form,
       taxReturnFromRskFile: [
-        personalTaxReturn?.municipalitiesPersonalTaxReturn,
+        personalTaxReturn
+          ? {
+              ...personalTaxReturn.municipalitiesPersonalTaxReturn,
+              type: FileType.TAXRETURN,
+            }
+          : undefined,
       ],
     })
 
