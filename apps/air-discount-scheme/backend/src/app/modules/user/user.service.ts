@@ -98,6 +98,12 @@ export class UserService {
 
     const result = (await Promise.all(allUsers)).filter(Boolean) as Array<User>
 
+    if (!result || result.length === 0) {
+      throw new Error(
+        'Could not find NationalRegistry records of neither User or relatives.',
+      )
+    }
+
     return result
   }
 }

@@ -88,11 +88,6 @@ export class PrivateUserController {
       relations,
     )
 
-    if (!userAndRelatives || userAndRelatives.length === 0) {
-      throw new Error(
-        'Could not find NationalRegistry records of neither User or relatives.',
-      )
-    }
     return userAndRelatives
   }
 }
