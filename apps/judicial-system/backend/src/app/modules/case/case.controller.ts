@@ -302,6 +302,7 @@ export class CaseController {
   })
   async getCourtRecordPdf(
     @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
   ): Promise<void> {
@@ -309,7 +310,7 @@ export class CaseController {
       `Getting the court record for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.caseService.getCourtRecordPdf(theCase)
+    const pdf = await this.caseService.getCourtRecordPdf(theCase, user)
 
     res.end(pdf)
   }
