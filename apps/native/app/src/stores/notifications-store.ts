@@ -8,6 +8,9 @@ import create, { State } from 'zustand/vanilla'
 import { navigateToNotification } from '../lib/deep-linking'
 import { ComponentRegistry } from '../utils/component-registry'
 import { getRightButtons } from '../utils/get-main-root'
+import messaging from '@react-native-firebase/messaging';
+import { client } from '../graphql/client'
+import gql from 'graphql-tag'
 
 export interface Notification {
   id: string
@@ -24,8 +27,10 @@ export interface Notification {
 interface NotificationsStore extends State {
   items: Map<string, Notification>
   unreadCount: number
+  pushToken?: string;
   getNotifications(): Notification[]
   actions: {
+    syncToken(): Promise<void>;
     handleNotificationResponse(response: NotificationResponse): Notification
     setRead(notificationId: string): void
     setUnread(notificationId: string): void
@@ -119,10 +124,54 @@ export const notificationsStore = create<NotificationsStore>(
     (set, get) => ({
       items: new Map(),
       unreadCount: 0,
+      pushToken: undefined,
       getNotifications() {
         return [...get().items.values()].sort((a, b) => b.date - a.date)
       },
       actions: {
+        async syncToken() {
+          const token = await messaging().getToken();
+          const { pushToken } = get();
+          if (pushToken !== token) {
+            if (pushToken) {
+              // Attempt to remove old push token
+              try {
+                await client.mutate({
+                  mutation: gql`mutation deleteUserProfileDeviceToken($input:UserDeviceTokenInput!) {
+                    deleteUserProfileDeviceToken(input:$input)
+                  }`,
+                  variables: {
+                    input: {
+                      deviceToken: pushToken,
+                    }
+                  }
+                });
+              } catch (err) {
+                // noop
+                console.error('Error removing old push token', err);
+              }
+            }
+            // Register the new push token
+            try {
+              await client.mutate({
+                mutation: gql`mutation addUserProfileDeviceToken($input:UserDeviceTokenInput!) {
+                  addUserProfileDeviceToken(input:$input)
+                }`,
+                variables: {
+                  input: {
+                    deviceToken: token,
+                  }
+                }
+              }).then((res) => {
+                console.log('Registered push token', res);
+                // Update push token in store
+                set({ pushToken: token })
+              })
+            } catch (err) {
+              console.log('Failed to register push token', err);
+            }
+          }
+        },
         handleNotificationResponse(response: NotificationResponse) {
           const { items } = get()
           const {

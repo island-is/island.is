@@ -1,3 +1,4 @@
+import { useQuery } from '@apollo/client'
 import {
   Alert,
   TableViewAccessory,
@@ -8,6 +9,7 @@ import messaging from '@react-native-firebase/messaging'
 import {
   authenticateAsync
 } from 'expo-local-authentication'
+import gql from 'graphql-tag'
 import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
@@ -24,6 +26,7 @@ import CodePush, {
   LocalPackage
 } from '../../../../node_modules/react-native-code-push'
 import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
+import { client } from '../../graphql/client'
 import { showPicker } from '../../lib/show-picker'
 import { authStore } from '../../stores/auth-store'
 import {
@@ -88,6 +91,18 @@ export function TabSettings() {
     })
   }
 
+  const userProfile = useQuery(gql`
+    query {
+      getUserProfile {
+        nationalId
+        locale
+        documentNotifications
+      }
+    }
+  `, {
+    client,
+  });
+
   const onLanguagePress = () => {
     showPicker({
       type: 'radio',
@@ -141,7 +156,38 @@ export function TabSettings() {
           title={intl.formatMessage({
             id: 'settings.communication.newDocumentsNotifications',
           })}
-          accessory={<PreferencesSwitch name="notificationsNewDocuments" />}
+          accessory={
+            <Switch
+              onValueChange={(value) => {
+                client.mutate({
+                  mutation: gql`
+                    mutation updateProfile($input: UpdateUserProfileInput!) {
+                      updateProfile(input: $input) {
+                        nationalId
+                        locale
+                        documentNotifications
+                      }
+                    }
+                  `,
+                  variables: {
+                    input: {
+                      documentNotifications: value,
+                    }
+                  }
+                }).catch((err) => {
+                  console.log(JSON.stringify(err));
+                  alert(err.message)
+                })
+              }}
+              disabled={userProfile.loading || !userProfile.data}
+              value={userProfile.data?.getUserProfile?.documentNotifications}
+              thumbColor={Platform.select({ android: theme.color.dark100 })}
+              trackColor={{
+                false: theme.color.dark200,
+                true: theme.color.blue400,
+              }}
+            />
+          }
         />
         {/* <TableViewCell
           title={intl.formatMessage({

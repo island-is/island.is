@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client'
 import { TopLine } from '@island.is/island-ui-native'
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
   Animated, FlatList,
   Platform,
@@ -16,6 +16,7 @@ import {
 } from '../../graphql/queries/list-applications.query'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useThemedNavigationOptions } from '../../hooks/use-themed-navigation-options'
+import { notificationsStore } from '../../stores/notifications-store'
 import { useUiStore } from '../../stores/ui-store'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
@@ -101,6 +102,11 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const renderItem = useCallback(({ item }: any) => item.component, [])
   const keyExtractor = useCallback((item) => item.id, [])
   const scrollY = useRef(new Animated.Value(0)).current
+
+  useEffect(() => {
+    // Sync push tokens
+    notificationsStore.getState().actions.syncToken();
+  }, []);
 
   const refetch = async () => {
     setLoading(true)
