@@ -47,6 +47,8 @@ export class PersonalTaxReturnService {
         'Content-Type': 'application/pdf',
         'Content-Length': size.toString(),
       },
+    }).catch(() => {
+      return undefined
     })
 
     return { key: presignedUrl.key, name: fileName, size }

@@ -13,35 +13,6 @@ import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/
 
 import { NavigationProps } from '@island.is/financial-aid/shared/lib'
 
-const getContent = (fetchFailed: boolean) => {
-  return {
-    data: fetchFailed ? (
-      <Text marginBottom={2}>
-        Við þurfum að fá afrit af nýjasta <strong>skattframtali</strong> þínu og
-        staðfestingarskjal úr <strong>staðreiðsluskrá</strong> Skattsins.
-      </Text>
-    ) : (
-      <Text marginBottom={2}>
-        Við þurfum að fá afrit úr <strong>staðreiðsluskrá</strong> Skattsins.
-      </Text>
-    ),
-    reason: fetchFailed ? (
-      <Text marginBottom={[4, 4, 5]}>
-        Við þurfum að fá afrit af nýjasta skattframtali þínu. Skattframtal er
-        staðfesting á öllum þeim tekjum, eignum og skuldum sem þú áttir á
-        skattárinu sem leið og er nauðsynlegt fylgigagn fyrir úrvinnslu á
-        fjárhagsaðstoð.
-      </Text>
-    ) : (
-      <Text marginBottom={[4, 4, 5]}>
-        Staðgreiðsluskrá er staðfesting/yfirlit frá Skattinum um skattskyldar
-        tekjur umsækjanda á árinu. Það er nauðsynlegt fylgigagn fyrir úrvinnslu
-        umsóknar um fjárhagsaðstoð.
-      </Text>
-    ),
-  }
-}
-
 const TaxReturnForm = () => {
   const router = useRouter()
 
@@ -140,6 +111,35 @@ const TaxReturnForm = () => {
       />
     </>
   )
+}
+
+const getContent = (fetchFailed: boolean) => {
+  return {
+    data: fetchFailed ? (
+      <Text marginBottom={2}>
+        Við þurfum að fá afrit af nýjasta <strong>skattframtali</strong> þínu og
+        staðfestingarskjal úr <strong>staðreiðsluskrá</strong> Skattsins.
+      </Text>
+    ) : (
+      <Text marginBottom={2}>
+        Við þurfum að fá afrit úr <strong>staðreiðsluskrá</strong> Skattsins.
+      </Text>
+    ),
+    reason: fetchFailed ? (
+      <Text marginBottom={[4, 4, 5]}>
+        Við þurfum að fá afrit af nýjasta skattframtali þínu. Skattframtal er
+        staðfesting á öllum þeim tekjum, eignum og skuldum sem þú áttir á
+        skattárinu sem leið og er nauðsynlegt fylgigagn fyrir úrvinnslu á
+        fjárhagsaðstoð.
+      </Text>
+    ) : (
+      <Text marginBottom={[4, 4, 5]}>
+        Staðgreiðsluskrá er staðfesting/yfirlit frá Skattinum um skattskyldar
+        tekjur umsækjanda á árinu. Það er nauðsynlegt fylgigagn fyrir úrvinnslu
+        umsóknar um fjárhagsaðstoð.
+      </Text>
+    ),
+  }
 }
 
 export default TaxReturnForm

@@ -158,4 +158,71 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
       })
     })
   })
+
+  describe('Fetch fails', () => {
+    const user = { nationalId: '0', folder: '' } as User
+    let personalTaxReturnInPdf: jest.Mock
+    let createSignedUrl: jest.Mock
+    let mockFetch: jest.Mock
+    let then: Then
+    const content = Base64.btoa('bla')
+    const lastYear = new Date().getFullYear() - 1
+    const signedUrl = {
+      url: 'test',
+      key: 'key',
+    }
+
+    beforeEach(async () => {
+      personalTaxReturnInPdf = mockPersonalTaxReturnApi.personalTaxReturnInPdf as jest.Mock
+      personalTaxReturnInPdf.mockResolvedValueOnce({
+        success: true,
+        errorText: '',
+        content: content,
+      })
+
+      createSignedUrl = mockFileService.createSignedUrl as jest.Mock
+      createSignedUrl.mockReturnValueOnce(signedUrl)
+
+      mockFetch = fetch as jest.Mock
+      mockFetch.mockImplementationOnce(() => {
+        throw new Error('error')
+      })
+
+      then = await givenWhenThen(user)
+    })
+
+    it('should call personal tax return api once', () => {
+      expect(personalTaxReturnInPdf).toBeCalledTimes(1)
+    })
+
+    it('should call personal tax return api with last year', () => {
+      expect(personalTaxReturnInPdf).toHaveBeenCalledWith(
+        user.nationalId,
+        lastYear.toString(),
+      )
+    })
+
+    it('should call file service with correct params', () => {
+      expect(createSignedUrl).toHaveBeenCalledWith(
+        user.folder,
+        `Framtal_${user.nationalId}_${lastYear}.pdf`,
+      )
+    })
+
+    it('should call fetch with correct params', () => {
+      expect(fetch).toHaveBeenCalledWith(signedUrl.url, {
+        method: 'PUT',
+        body: Buffer.from(Base64.atob(content), 'binary'),
+        headers: {
+          'x-amz-acl': 'bucket-owner-full-control',
+          'Content-Type': 'application/pdf',
+          'Content-Length': Base64.atob(content).length.toString(),
+        },
+      })
+    })
+
+    it('should return undefined', () => {
+      expect(then.result).toBeUndefined()
+    })
+  })
 })
