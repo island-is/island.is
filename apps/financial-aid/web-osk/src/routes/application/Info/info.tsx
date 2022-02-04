@@ -51,7 +51,7 @@ const ApplicationInfo = () => {
   >(NationalRegistryUserQuery)
 
   const personalTaxReturnQuery = useAsyncLazyQuery<{
-    personalTaxReturnForYearPdf: PersonalTaxReturn
+    municipalitiesPersonalTaxReturn: PersonalTaxReturn
   }>(PersonalTaxReturnQuery)
 
   const logOut = useLogOut()
@@ -76,7 +76,9 @@ const ApplicationInfo = () => {
       await nationalRegistryQuery({
         input: { ssn: user?.nationalId },
       }).catch(() => {
-        return { data: undefined }
+        return {
+          data: undefined,
+        }
       }),
       await personalTaxReturnQuery({}).catch((err) => {
         return { data: undefined }
@@ -94,7 +96,9 @@ const ApplicationInfo = () => {
 
     updateForm({
       ...form,
-      taxReturnFromRskFile: [personalTaxReturn?.personalTaxReturnForYearPdf],
+      taxReturnFromRskFile: [
+        personalTaxReturn?.municipalitiesPersonalTaxReturn,
+      ],
     })
 
     setNationalRegistryData(nationalRegistry.municipalityNationalRegistryUserV2)

@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import * as styles from './summary.css'
 
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
-import { Routes } from '@island.is/financial-aid/shared/lib'
+import { encodeFilename, Routes } from '@island.is/financial-aid/shared/lib'
 import { useMutation } from '@apollo/client'
 import { CreateSignedUrlMutation } from '@island.is/financial-aid-web/osk/graphql'
 
@@ -38,7 +38,9 @@ const AllFiles = () => {
                 <a
                   onClick={() =>
                     createSignedUrlMutation({
-                      variables: { input: { fileName: file.name } },
+                      variables: {
+                        input: { fileName: encodeFilename(file.name) },
+                      },
                     }).then((response) => {
                       window.open(response.data?.getSignedUrl.url)
                     })
