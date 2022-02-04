@@ -59,6 +59,8 @@ export class UserProfileService {
         emailVerified: false,
         mobilePhoneNumberVerified: false,
         documentNotifications: false,
+        emailStatus: 'NOT_VERIFIED',
+        mobileStatus: 'NOT_VERIFIED',
 
         // Islyklar data:
         mobilePhoneNumber: islyklarData?.mobile,

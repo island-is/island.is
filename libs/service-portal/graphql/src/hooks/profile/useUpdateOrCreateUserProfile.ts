@@ -47,7 +47,7 @@ export const useUpdateOrCreateUserProfile = () => {
       smsCode: data?.smsCode || undefined,
     }
 
-    if (userProfile) {
+    if (userProfile?.modified) {
       await updateUserProfile(input)
     } else {
       await createUserProfile(input)
