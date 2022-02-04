@@ -48,6 +48,7 @@ export const reducer = (
           ...state.query,
           ...action.payload.query,
         },
+        searchLocked: false,
       }
     case ActionType.RESET_SEARCH:
       return {

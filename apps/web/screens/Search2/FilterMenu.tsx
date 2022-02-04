@@ -8,14 +8,12 @@ import {
 export type FilterOptions = {
   category: Array<string>
   organization: Array<string>
-  refresh?: boolean
 }
 
 interface FilterMenuProps {
   categories: ReadonlyArray<CategoriesProps>
   filter: FilterOptions
   setFilter: Dispatch<SetStateAction<FilterOptions>>
-  onChange?: () => void
   children?: ReactNode
 }
 
@@ -42,7 +40,6 @@ export const FilterMenu = ({
   categories,
   filter,
   setFilter,
-  onChange,
   labelClear = 'Hreinsa síu',
   labelClearAll = 'Hreinsa allar síur',
   labelOpen = 'Sía niðurstöður',
@@ -64,7 +61,6 @@ export const FilterMenu = ({
     reverse
     onFilterClear={() => {
       setFilter({ category: [], organization: [] })
-      onChange && onChange()
     }}
   >
     <FilterMultiChoice
@@ -74,17 +70,13 @@ export const FilterMenu = ({
         setFilter({
           ...filter,
           [event.categoryId]: event.selected,
-          refresh: true,
         })
-        onChange && onChange()
       }}
       onClear={(categoryId) => {
         setFilter({
           ...filter,
           [categoryId]: [],
-          refresh: true,
         })
-        onChange && onChange()
       }}
       singleExpand
     />

@@ -4,7 +4,6 @@ import React, {
   useState,
   FC,
   useMemo,
-  useCallback,
   useReducer,
 } from 'react'
 import { useLazyQuery } from '@apollo/client'
@@ -55,8 +54,7 @@ import {
   Link as LinkItem,
 } from '@island.is/web/graphql/schema'
 import { ActionType, reducer, initialState } from './Search2.state'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { plausibleCustomEvent } from '@island.is/web/hooks/usePlausible'
+import { useLinkResolver, usePlausible } from '@island.is/web/hooks'
 import { Screen } from '../../types'
 import {
   GET_NAMESPACE_QUERY,
@@ -65,25 +63,13 @@ import {
   GET_SEARCH_RESULTS_TOTAL,
 } from '../queries'
 
-import {
-  FilterMenu,
-  CategoriesProps,
-  FilterOptions,
-  FilterLabels,
-} from './FilterMenu'
+import { FilterMenu, CategoriesProps, FilterLabels } from './FilterMenu'
 
 const PERPAGE = 10
 
 type SearchQueryFilters = {
   category: string
   type: string
-}
-
-interface SidebarTagMap {
-  [key: string]: {
-    title: string
-    total: number
-  }
 }
 
 interface CategoryProps {
@@ -141,6 +127,10 @@ const Search2: Screen<CategoryProps> = ({
       organization: stringToArray(query.organization),
     },
   })
+  usePlausible('Search Query', {
+    query: (q ?? '').toLowerCase(),
+    source: 'Web',
+  })
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState(false)
   const { activeLocale } = useI18n()
@@ -148,14 +138,8 @@ const Search2: Screen<CategoryProps> = ({
   const push = usePush()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
-  const [filter, setFilter] = useState<FilterOptions>({
-    category: stringToArray(query.category),
-    organization: stringToArray(query.organization),
-  })
-  // const [contentTypes, setContentTypes] = useState<SearchableContentTypes[]>(
-  //   stringToArray(query.type) as SearchableContentTypes[],
-  // )
 
+  console.log('-----------')
   console.log('query', query)
   console.log('state', state)
 
@@ -166,37 +150,10 @@ const Search2: Screen<CategoryProps> = ({
     setIsMobile(false)
   }, [width])
 
-  // Submit the search query to plausible
-  if (q) {
-    plausibleCustomEvent('Search Query', {
-      query: q.toLowerCase(),
-      source: 'Web',
-    })
-  }
-
   const filters: SearchQueryFilters = {
     category: query.category as string,
     type: query.type as string,
   }
-
-  // const toggleContentTypes = (
-  //   type: SearchableContentTypes,
-  //   single?: boolean,
-  // ) => {
-  //   const arr = [...contentTypes]
-
-  //   if (single) {
-  //     return setContentTypes(arr.indexOf(type) >= 0 ? [] : [type])
-  //   }
-
-  //   if (arr.indexOf(type) < 0) {
-  //     arr.push(type)
-  //   } else {
-  //     arr.splice(contentTypes.indexOf(type), 1)
-  //   }
-
-  //   setContentTypes(arr)
-  // }
 
   const getArticleCount = useMemo(
     () => () => {
@@ -364,7 +321,6 @@ const Search2: Screen<CategoryProps> = ({
 
   useEffect(() => {
     if (state.searchLocked) {
-      console.log('not searching...', state)
       return null
     }
 
@@ -377,8 +333,7 @@ const Search2: Screen<CategoryProps> = ({
       delete newQuery['processentry']
     }
 
-    console.log('searching!!!', newQuery)
-
+    console.log('pushing...', newQuery)
     push({
       pathname,
       query: newQuery,
@@ -395,36 +350,18 @@ const Search2: Screen<CategoryProps> = ({
           ? connectedTypes[contentType].map((x) => firstLower(x))
           : contentType,
       }),
-      ...(filter.category.length && { category: filter.category }),
-      ...(filter.organization.length && {
-        organization: filter.organization,
+      ...(query.category?.length && { category: query.category }),
+      ...(query.organization?.length && {
+        organization: query.organization,
       }),
     }
   }
-
-  useMemo(() => {
-    if (filter.category.length || filter.organization) {
-      console.log('filter.category', filter.category)
-      console.log('filter.organization', filter.organization)
-
-      dispatch({
-        type: ActionType.SET_PARAMS,
-        payload: {
-          query: {
-            processentry: false,
-            ...getSearchParams(stringToArray(query.type)[0]),
-          },
-          searchLocked: false,
-        },
-      })
-    }
-  }, [filter.category, filter.organization])
 
   const categories: CategoriesProps[] = [
     {
       id: 'category',
       label: 'Þjónustuflokkar',
-      selected: filter.category,
+      selected: state.query.category,
       singleOption: true,
       filters: countResults.tagCounts
         .filter((x) => x.type === 'category')
@@ -436,7 +373,7 @@ const Search2: Screen<CategoryProps> = ({
     {
       id: 'organization',
       label: 'Opinberir aðilar',
-      selected: filter.organization,
+      selected: state.query.organization,
       singleOption: true,
       filters: countResults.tagCounts
         .filter((x) => x.type === 'organization')
@@ -522,6 +459,8 @@ const Search2: Screen<CategoryProps> = ({
                                 query: {
                                   processentry: false,
                                   ...getSearchParams(key),
+                                  category: [],
+                                  organization: [],
                                 },
                                 searchLocked: false,
                               },
@@ -555,13 +494,29 @@ const Search2: Screen<CategoryProps> = ({
                   <FilterMenu
                     {...filterLabels}
                     categories={categories}
-                    filter={filter}
-                    setFilter={setFilter}
+                    filter={{
+                      category: state.query.category ?? [],
+                      organization: state.query.organization ?? [],
+                    }}
+                    setFilter={(payload) =>
+                      dispatch({
+                        type: ActionType.SET_PARAMS,
+                        payload: {
+                          query: {
+                            ...getSearchParams('webArticle'),
+                            ...payload,
+                          },
+                        },
+                      })
+                    }
                     align="right"
                     variant={isMobile ? 'dialog' : 'popover'}
                   />
                 </Inline>
               </Box>
+
+              <pre>STATE: {JSON.stringify(state, null, 2)}</pre>
+              <pre>QUERY: {JSON.stringify(query, null, 2)}</pre>
 
               {nothingFound ? (
                 <>

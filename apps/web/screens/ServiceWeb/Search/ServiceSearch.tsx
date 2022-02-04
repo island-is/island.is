@@ -40,14 +40,13 @@ import {
   QueryGetOrganizationArgs,
   Query,
 } from '../../../graphql/schema'
-import { useLinkResolver } from '@island.is/web/hooks'
+import { useLinkResolver, usePlausible } from '@island.is/web/hooks'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import {
   ServiceWebSearchInput,
   ServiceWebModifySearchTerms,
 } from '@island.is/web/components'
 import { getSlugPart } from '../utils'
-import { plausibleCustomEvent } from '@island.is/web/hooks/usePlausible'
 
 const PERPAGE = 10
 
@@ -68,6 +67,10 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
 }) => {
   const Router = useRouter()
   const n = useNamespace(namespace)
+  usePlausible('Search Query', {
+    query: q.toLowerCase(),
+    source: 'Service Web',
+  })
   const { linkResolver } = useLinkResolver()
 
   const institutionSlug = getSlugPart(Router.asPath, 2)
@@ -89,14 +92,6 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
       labels: [item.category.title],
     }),
   )
-
-  // Submit the search query to plausible
-  if (q) {
-    plausibleCustomEvent('Search Query', {
-      query: q.toLowerCase(),
-      source: 'Service Web',
-    })
-  }
 
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
