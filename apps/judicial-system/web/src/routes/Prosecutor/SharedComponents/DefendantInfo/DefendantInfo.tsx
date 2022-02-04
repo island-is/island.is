@@ -11,9 +11,16 @@ import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import {
   Box,
   Checkbox,
+  Column,
+  ContentBlock,
+  GridColumn,
+  GridContainer,
+  GridRow,
   Icon,
+  Inline,
   Input,
   Select,
+  Stack,
   Text,
 } from '@island.is/island-ui/core'
 import {
@@ -206,23 +213,34 @@ const DefendantInfo: React.FC<Props> = (props) => {
           required
         />
       </Box>
-      <Box>
-        <Select
-          name="defendantGender"
-          placeholder={formatMessage(core.selectGender)}
-          options={genderOptions}
-          label={formatMessage(core.gender)}
-          value={genderOptions.find(
-            (option) => option.value === defendant.gender,
-          )}
-          onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-            onChange(defendant.id, {
-              gender: (selectedOption as ReactSelectOption).value as Gender,
-            })
-          }
-          required
-        />
-      </Box>
+      <GridContainer>
+        <GridRow>
+          <GridColumn span="6/12">
+            <Select
+              name="defendantGender"
+              placeholder={formatMessage(core.selectGender)}
+              options={genderOptions}
+              label={formatMessage(core.gender)}
+              value={genderOptions.find(
+                (option) => option.value === defendant.gender,
+              )}
+              onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+                onChange(defendant.id, {
+                  gender: (selectedOption as ReactSelectOption).value as Gender,
+                })
+              }
+              required
+            />
+          </GridColumn>
+          <GridColumn span="6/12">
+            <Input
+              name="defendantCitizenship"
+              label={formatMessage(core.citizenship)}
+              placeholder={formatMessage(core.selectCitizenship)}
+            />
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
     </BlueBox>
   )
 }

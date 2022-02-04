@@ -94,4 +94,14 @@ export const core = defineMessages({
     defaultMessage: 'Veldu kyn',
     description: 'Notað fyrir Veldu kyn í öllum flæðum',
   },
+  citizenship: {
+    id: 'judicial.system.core:citizenship',
+    defaultMessage: 'Ríkisfang',
+    description: 'Notað fyrir Ríkisfang í öllum flæðum',
+  },
+  selectCitizenship: {
+    id: 'judicial.system.core:select_citizenship',
+    defaultMessage: 'Veldu ríkisfang',
+    description: 'Notað fyrir Veldu ríkisfang í öllum flæðum',
+  },
 })
