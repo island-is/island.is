@@ -94,9 +94,8 @@ export class UserService {
   async getMultipleUsersByNationalIdArray(
     ids: string[],
   ): Promise<Array<User | null>> {
-    const allUsers = ids.map(
-      async (nationalId) =>
-        (this.getUserInfoByNationalId(nationalId) as unknown) as User,
+    const allUsers = ids.map(async (nationalId) =>
+      this.getUserInfoByNationalId(nationalId),
     )
 
     const result = await Promise.all(allUsers)
