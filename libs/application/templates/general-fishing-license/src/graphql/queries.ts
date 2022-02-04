@@ -39,7 +39,7 @@ export const queryFishingLicense = gql`
 `
 
 export const PAYMENT_STATUS = gql`
-  query status($applicationId: String!) {
+  query ApplicationPaymentStatus($applicationId: String!) {
     applicationPaymentStatus(applicationId: $applicationId) {
       fulfilled
     }
