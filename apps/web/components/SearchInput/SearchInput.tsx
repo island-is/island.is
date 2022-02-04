@@ -6,7 +6,6 @@ import React, {
   forwardRef,
   ReactElement,
   useReducer,
-  useMemo,
 } from 'react'
 import Downshift from 'downshift'
 import { useMeasure } from 'react-use'
@@ -186,7 +185,7 @@ const useSubmit = (locale: Locale, onRouting?: () => void) => {
     (item: SubmitType) => {
       Router.push({
         ...(item.type === 'query' && {
-          pathname: linkResolver('search2').href,
+          pathname: linkResolver('search').href,
           query: { q: item.string },
         }),
         ...(item.type === 'link' && {
@@ -248,11 +247,6 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     const onFocus = useCallback(() => {
       setHasFocus(true)
     }, [setHasFocus])
-
-    useMemo(() => {
-      console.log('setting initialInputValue', initialInputValue)
-      setSearchTerm(initialInputValue)
-    }, [initialInputValue])
 
     return (
       <Downshift<SubmitType>
