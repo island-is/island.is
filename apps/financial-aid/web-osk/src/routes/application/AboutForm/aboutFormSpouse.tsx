@@ -7,6 +7,7 @@ import {
   nextMonth,
 } from '@island.is/financial-aid/shared/lib'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
+import { PrivacyPolicyAccordion } from '../../../components'
 
 const AboutFormSpouse = () => {
   const { user } = useContext(AppContext)
@@ -27,6 +28,8 @@ const AboutFormSpouse = () => {
         <strong>tekju- og skattagögnum</strong> til að reikna út fjárhagsaðstoð
         til útgreiðslu í byrjun {months[nextMonth()]}.
       </Text>
+
+      <PrivacyPolicyAccordion municipalityHomePage={undefined} />
     </>
   )
 }
