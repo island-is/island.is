@@ -362,7 +362,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'caseFilesComments',
-                  event,
+                  event.target.value,
                   [],
                   workingCase,
                   setWorkingCase,

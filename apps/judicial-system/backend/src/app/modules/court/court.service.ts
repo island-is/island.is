@@ -9,16 +9,28 @@ export class CourtService {
   createRequest(
     courtId: string | undefined,
     courtCaseNumber: string | undefined,
-    subject: string,
-    fileName: string,
     streamId: string,
   ): Promise<string> {
     return this.courtClientService.createDocument(courtId ?? '', {
       caseNumber: courtCaseNumber ?? '',
-      subject,
-      fileName,
+      subject: 'Krafa',
+      fileName: 'Krafa.pdf',
       streamID: streamId,
       caseFolder: 'Krafa og greinargerð',
+    })
+  }
+
+  createRuling(
+    courtId: string | undefined,
+    courtCaseNumber: string | undefined,
+    streamId: string,
+  ): Promise<string> {
+    return this.courtClientService.createDocument(courtId ?? '', {
+      caseNumber: courtCaseNumber ?? '',
+      subject: 'Úrskurður',
+      fileName: 'Úrskurður.pdf',
+      streamID: streamId,
+      caseFolder: 'Dómar, úrskurðir og Þingbók',
     })
   }
 
@@ -45,8 +57,8 @@ export class CourtService {
   ): Promise<string> {
     return this.courtClientService.createThingbok(courtId ?? '', {
       caseNumber: courtCaseNumber ?? '',
-      subject: 'Þingbók og úrskurður',
-      fileName: 'Þingbók og úrskurður.pdf',
+      subject: 'Þingbók',
+      fileName: 'Þingbók.pdf',
       streamID: streamId,
     })
   }
