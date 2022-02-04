@@ -3,8 +3,10 @@ import streamBuffers from 'stream-buffers'
 
 import { FormatMessage } from '@island.is/cms-translations'
 import {
+  completedCaseStates,
   isRestrictionCase,
   SessionArrangements,
+  User,
 } from '@island.is/judicial-system/types'
 import {
   capitalize,
@@ -19,7 +21,7 @@ import { environment } from '../../environments'
 import { Case } from '../modules/case/models'
 import { courtRecord } from '../messages'
 import {
-  setPageNumbers,
+  addFooter,
   addCoatOfArms,
   addLargeHeading,
   addMediumHeading,
@@ -35,6 +37,7 @@ import { writeFile } from './writeFile'
 function constructRestrictionCourtRecordPdf(
   theCase: Case,
   formatMessage: FormatMessage,
+  user?: User,
 ): streamBuffers.WritableStreamBuffer {
   const doc = new PDFDocument({
     size: 'A4',
@@ -267,7 +270,16 @@ function constructRestrictionCourtRecordPdf(
         })
       : formatMessage(courtRecord.inSession),
   )
-  setPageNumbers(doc)
+  addFooter(
+    doc,
+    completedCaseStates.includes(theCase.state) && user
+      ? formatMessage(courtRecord.smallPrint, {
+          actorName: user.name,
+          actorInstitution: user.institution?.name,
+          date: formatDate(new Date(), 'PPPp'),
+        })
+      : undefined,
+  )
 
   doc.end()
 
@@ -277,6 +289,7 @@ function constructRestrictionCourtRecordPdf(
 function constructInvestigationCourtRecordPdf(
   theCase: Case,
   formatMessage: FormatMessage,
+  user?: User,
 ): streamBuffers.WritableStreamBuffer {
   const doc = new PDFDocument({
     size: 'A4',
@@ -512,7 +525,16 @@ function constructInvestigationCourtRecordPdf(
         })
       : formatMessage(courtRecord.inSession),
   )
-  setPageNumbers(doc)
+  addFooter(
+    doc,
+    completedCaseStates.includes(theCase.state) && user
+      ? formatMessage(courtRecord.smallPrint, {
+          actorName: user.name,
+          actorInstitution: user.institution?.name,
+          date: formatDate(new Date(), 'PPPp'),
+        })
+      : undefined,
+  )
 
   doc.end()
 
@@ -522,10 +544,11 @@ function constructInvestigationCourtRecordPdf(
 function constructCourtRecordPdf(
   theCase: Case,
   formatMessage: FormatMessage,
+  user?: User,
 ): streamBuffers.WritableStreamBuffer {
   return isRestrictionCase(theCase.type)
-    ? constructRestrictionCourtRecordPdf(theCase, formatMessage)
-    : constructInvestigationCourtRecordPdf(theCase, formatMessage)
+    ? constructRestrictionCourtRecordPdf(theCase, formatMessage, user)
+    : constructInvestigationCourtRecordPdf(theCase, formatMessage, user)
 }
 
 export async function getCourtRecordPdfAsString(
@@ -550,9 +573,10 @@ export async function getCourtRecordPdfAsString(
 
 export async function getCourtRecordPdfAsBuffer(
   theCase: Case,
+  user: User,
   formatMessage: FormatMessage,
 ): Promise<Buffer> {
-  const stream = constructCourtRecordPdf(theCase, formatMessage)
+  const stream = constructCourtRecordPdf(theCase, formatMessage, user)
 
   // wait for the writing to finish
   const pdf = await new Promise<Buffer>(function (resolve) {
