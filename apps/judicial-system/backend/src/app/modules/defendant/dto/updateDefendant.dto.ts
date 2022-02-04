@@ -1,10 +1,15 @@
-import { IsString, IsOptional } from 'class-validator'
+import { IsString, IsOptional, IsBoolean } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
 import { Gender } from '@island.is/judicial-system/types'
 
 export class UpdateDefendantDto {
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly noNationalId?: string
+
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
@@ -24,4 +29,9 @@ export class UpdateDefendantDto {
   @IsString()
   @ApiPropertyOptional()
   readonly address?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly citizenship?: string
 }
