@@ -1,11 +1,9 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common'
+import { Controller, Get, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import {
-  apiBasePath,
-  RolesRule,
-  User,
-} from '@island.is/financial-aid/shared/lib'
+import { apiBasePath, RolesRule } from '@island.is/financial-aid/shared/lib'
+
+import type { User } from '@island.is/financial-aid/shared/lib'
 
 import { RolesGuard } from '../../guards/roles.guard'
 import { CurrentUser, RolesRules } from '../../decorators'
