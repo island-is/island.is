@@ -9,7 +9,6 @@ import {
 } from '@island.is/application/core'
 import {
   InputFileUpload,
-  InputImageUpload,
   UploadFile,
   fileToObject,
 } from '@island.is/island-ui/core'
@@ -19,6 +18,7 @@ import {
   ADD_ATTACHMENT,
   DELETE_ATTACHMENT,
 } from '@island.is/application/graphql'
+import { InputImageUpload } from '@island.is/application/ui-components'
 
 import { uploadFileToS3 } from './utils'
 import { Action, ActionTypes } from './types'

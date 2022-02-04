@@ -2,16 +2,17 @@ import React, { useMemo } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
-
 import * as styles from './InputImageUpload.css'
 
-import { Box } from '../Box/Box'
-import { Text } from '../Text/Text'
-import { Button } from '../Button/Button'
+import {
+  Box,
+  Text,
+  Button,
+  Icon,
+  ProgressMeter,
+  IconMapType,
+} from '@island.is/island-ui/core'
 import { theme, Colors } from '@island.is/island-ui/theme'
-import { Icon } from '../IconRC/Icon'
-import { Icon as IconTypes } from '../IconRC/iconMap'
-import { ProgressMeter } from '../..'
 import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 
@@ -50,13 +51,13 @@ interface UploadedImageProps {
   onRetryClick?: (file: UploadImage) => void
   onOpenFile?: (file: UploadImage) => void
   defaultBackgroundColor?: Colors
-  doneIcon?: IconTypes
+  doneIcon?: IconMapType
   hideIcons?: boolean
 }
 
 export const PresignedUrlQuery = gql`
-  query getAttachmentPresignedURL($input: GetAttachmentPresignedUrlInput!) {
-    getAttachmentPresignedURL(input: $input) {
+  query attachmentPresignedURL($input: AttachmentPresignedUrlInput!) {
+    attachmentPresignedURL(input: $input) {
       url
     }
   }
@@ -75,7 +76,7 @@ export const UploadedImage = ({
     variables: {
       input: {
         id: applicationId,
-        s3Key: file.key,
+        attachmentKey: file.key,
       },
     },
     skip: !file.key,
@@ -156,7 +157,7 @@ export const UploadedImage = ({
           >
             {presignedUrl && file.status === 'done' && (
               <img
-                src={presignedUrl.getAttachmentPresignedURL?.url}
+                src={presignedUrl.attachmentPresignedURL?.url}
                 alt="mynd"
                 className={styles.image}
               />
@@ -208,8 +209,9 @@ export const UploadedImage = ({
           )}
         </Box>
       </Box>
-      {file.status !== 'error' && (
-        <ProgressMeter progress={file.status !== 'done' ? 0.15 : 1} />
+
+      {!!file.percent && file.percent < 100 && (
+        <ProgressMeter progress={file.percent / 100} />
       )}
     </Box>
   )
@@ -233,7 +235,7 @@ export interface InputImageUploadProps {
   onChange?: (files: File[]) => void
   errorMessage?: string
   defaultFileBackgroundColor?: Colors
-  doneIcon?: IconTypes
+  doneIcon?: IconMapType
   hideIcons?: boolean
 }
 

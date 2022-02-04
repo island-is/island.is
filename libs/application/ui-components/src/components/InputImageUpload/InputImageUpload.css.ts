@@ -1,6 +1,5 @@
 import { keyframes, style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
-import { errorMessage as inputErrorMessage } from '../Input/Input.mixins'
 
 export const container = style({
   border: `1px dashed ${theme.color.blue300}`,
@@ -41,8 +40,6 @@ export const uploadingIndicator = style({
   transition: 'width .25s ease',
 })
 
-export const errorMessage = style(inputErrorMessage)
-
 export const canOpenFiles = style({
   cursor: 'pointer',
 })
@@ -67,4 +64,11 @@ export const imageContainer = style({
   width: '64px',
   maxWidth: '64px',
   maxHeight: '64px',
+})
+
+export const errorMessage = style({
+  color: theme.color.red600,
+  fontWeight: theme.typography.medium,
+  fontSize: 14,
+  marginTop: theme.spacing[1],
 })
