@@ -76,7 +76,7 @@
     "@nestjs/passport": "7.1.0",
     "@nestjs/platform-express": "7.4.4",
     "@nestjs/sequelize": "0.1.0",
-    "@nestjs/swagger": "4.5.12",
+    "@nestjs/swagger": "4.8.2",
     "@nestjs/terminus": "7.0.1",
     "@rehooks/component-size": "1.0.3",
     "@sentry/browser": "6.9.0",
