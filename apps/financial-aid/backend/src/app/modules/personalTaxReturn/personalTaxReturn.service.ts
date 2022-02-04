@@ -15,7 +15,7 @@ export class PersonalTaxReturnService {
     return await this.personalTaxReturnApi
       .personalTaxReturnInPdf(nationalId, year.toString())
       .catch(() => {
-        return { success: false, errorText: '', content: '' }
+        return { success: false, content: '' }
       })
   }
 
