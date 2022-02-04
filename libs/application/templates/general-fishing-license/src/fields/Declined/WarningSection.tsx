@@ -6,7 +6,6 @@ import {
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
-import cn from 'classnames'
 import * as styles from './WarningSection.css'
 
 interface Step {
@@ -42,7 +41,10 @@ export const WarningSection: FC<WarningSectionProps> = ({
         alignItems="center"
         justifyContent="center"
         position="absolute"
-        className={cn(styles.sectionNumber, styles.sectionNumberRequiresAction)}
+        borderRadius="circle"
+        background="red600"
+        color="red600"
+        className={styles.sectionNumber}
       >
         <Icon color="white" size="small" icon="warning" />
       </Box>
