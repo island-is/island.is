@@ -65,13 +65,11 @@ export class ContentSearchService {
   }
 
   async find(query: SearcherInput): Promise<SearchResult> {
-    console.log('query', query)
     const { body } = await this.elasticService.search(
       this.getIndex(query.language),
       query,
     )
 
-    console.log('body', body.aggregations)
     return {
       total: body.hits.total.value,
       // we map data when it goes into the index we can return it without mapping it here

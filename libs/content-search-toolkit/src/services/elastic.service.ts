@@ -285,8 +285,6 @@ export class ElasticService {
   async search(index: string, query: SearchInput) {
     const requestBody = searchQuery(query)
 
-    console.log('requestBody', JSON.stringify(requestBody, null, 2))
-
     return this.findByQuery<
       SearchResponse<
         MappedData,
