@@ -508,6 +508,7 @@ export const ComplaintForm: Form = buildForm({
                 buildCheckboxField({
                   id: 'subjectOfComplaint.values',
                   title: '',
+                  doesNotRequireAnswer: true,
                   options: [
                     {
                       label: complaint.labels.subjectAuthorities,
@@ -565,6 +566,7 @@ export const ComplaintForm: Form = buildForm({
                   title: complaint.labels.subjectSomethingElse,
                   placeholder: complaint.labels.subjectSomethingElsePlaceholder,
                   backgroundColor: 'blue',
+                  doesNotRequireAnswer: true,
                   condition: (formValue) => {
                     const values =
                       ((formValue.subjectOfComplaint as FormValue)
