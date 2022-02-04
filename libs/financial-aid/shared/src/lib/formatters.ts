@@ -305,10 +305,10 @@ export const getApplicantEmailDataFromEventType = (
 
     case 'SPOUSE':
       return {
-        subject: `Þú þarft að skila inn gögnum fyrir umsókn maka þíns um fjárhagsaðstoð hjá ${municipality.name}`,
+        subject: `Þú þarft að skila inn gögnum fyrir umsókn maka þíns um fjárhagsaðstoð`,
         data: {
           title: 'Fjárhagsaðstoð Umsókn móttekin',
-          header: `Þú þarft að skila inn gögnum fyrir umsókn maka þíns um fjárhagsaðstoð hjá ${municipality.name}`,
+          header: `Þú þarft að skila inn gögnum fyrir umsókn maka þíns um fjárhagsaðstoð`,
           content: `Maki þinn hefur sótt um fjárhagsaðstoð fyrir ${getPeriod.month}. Til að við getum reiknað út fjárhagsaðstoðina og klárað umsóknina þarft þú að <a href="${applicationLink}" target="_blank">senda okkur tekju- og skattagögn.</a> `,
           applicationLinkText: 'Bæta við gögnum',
           applicationChange: 'Umsókn bíður eftir gögnum frá maka',
