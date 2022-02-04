@@ -253,7 +253,8 @@ export const getApplicantEmailDataFromEventType = (
 
     case ApplicationEventType.DATANEEDED:
       return {
-        subject: 'Okkur vantar gögn til að klára að vinna úr umsókninni',
+        subject:
+          'Þú þarft að skila gögnum svo hægt sé að klára að vinna umsóknina',
         data: {
           title: 'Fjárhagsaðstoð Umsókn vantar gögn',
           header: `Okkur vantar gögn til að klára að vinna úr umsókninni`,
@@ -308,11 +309,7 @@ export const getApplicantEmailDataFromEventType = (
         data: {
           title: 'Fjárhagsaðstoð Umsókn móttekin',
           header: `Þú þarft að skila inn gögnum fyrir umsókn maka þíns um fjárhagsaðstoð hjá ${municipality.name}`,
-          content: `Maki þinn hefur sótt um fjárhagsaðstoð fyrir ${
-            getPeriod.month
-          } mánuð. Svo hægt sé að klára umsóknina þurfum við að fá þig til að hlaða upp tekju- og skattagögnum til að reikna út fjárhagsaðstoð til útgreiðslu í byrjun ${
-            months[nextMonth(createdDate.getMonth())]
-          }.`,
+          content: `Maki þinn hefur sótt um fjárhagsaðstoð fyrir ${getPeriod.month}. Til að við getum reiknað út fjárhagsaðstoðina og klárað umsóknina þarft þú að <a href="${applicationLink}" target="_blank">senda okkur tekju- og skattagögn.</a> `,
           applicationLinkText: 'Bæta við gögnum',
           applicationChange: 'Umsókn bíður eftir gögnum frá maka',
           applicationMonth: getPeriod.month,
