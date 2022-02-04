@@ -98,10 +98,6 @@ const defendantsOrder: OrderItem = [
 
 @Injectable()
 export class CaseService {
-  private formatMessage: FormatMessage = () => {
-    throw new InternalServerErrorException('Format message not initialized')
-  }
-
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Case) private readonly caseModel: typeof Case,
@@ -112,13 +108,14 @@ export class CaseService {
     private readonly courtService: CourtService,
     private readonly signingService: SigningService,
     private readonly emailService: EmailService,
-    intlService: IntlService,
+    private readonly intlService: IntlService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-  ) {
-    intlService
+  ) {}
+
+  private formatMessage: () => Promise<FormatMessage> = async () =>
+    this.intlService
       .useIntl(['judicial.system.backend'], 'is')
-      .then((res) => (this.formatMessage = res.formatMessage))
-  }
+      .then((res) => res.formatMessage)
 
   private async uploadSignedRulingPdfToS3(
     theCase: Case,
@@ -249,6 +246,7 @@ export class CaseService {
   private async sendEmail(
     to: Recipient | Recipient[],
     body: string,
+    formatMessage: FormatMessage,
     courtCaseNumber?: string,
     attachments?: Attachment[],
   ) {
@@ -263,7 +261,7 @@ export class CaseService {
           address: environment.email.replyToEmail,
         },
         to,
-        subject: this.formatMessage(m.signedRuling.subject, {
+        subject: formatMessage(m.signedRuling.subject, {
           courtCaseNumber,
         }),
         text: stripHtmlTags(body),
@@ -278,6 +276,7 @@ export class CaseService {
   private async sendRulingAsSignedPdf(
     theCase: Case,
     signedRulingPdf: string,
+    formatMessage: FormatMessage,
   ): Promise<void> {
     let uploadedToS3 = false
     let uploadedToCourt = false
@@ -302,7 +301,7 @@ export class CaseService {
           },
         ),
         this.uploadCaseFilesPdfToCourt(theCase),
-        getCourtRecordPdfAsString(theCase, this.formatMessage)
+        getCourtRecordPdfAsString(theCase, formatMessage)
           .then((pdf) => {
             courtRecordPdf = pdf
             return this.uploadCourtRecordPdfToCourt(theCase, courtRecordPdf)
@@ -320,7 +319,7 @@ export class CaseService {
     await Promise.all(uploadPromises)
 
     const rulingAttachment = {
-      filename: this.formatMessage(m.signedRuling.rulingAttachment, {
+      filename: formatMessage(m.signedRuling.rulingAttachment, {
         courtCaseNumber: theCase.courtCaseNumber,
       }),
       content: signedRulingPdf,
@@ -334,18 +333,19 @@ export class CaseService {
           address: theCase.prosecutor?.email ?? '',
         },
         uploadedToS3
-          ? this.formatMessage(m.signedRuling.prosecutorBodyS3, {
+          ? formatMessage(m.signedRuling.prosecutorBodyS3, {
               courtCaseNumber: theCase.courtCaseNumber,
               courtName: theCase.court?.name?.replace('dómur', 'dómi'),
               linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
               linkEnd: '</a>',
             })
-          : this.formatMessage(m.signedRuling.prosecutorBodyAttachment, {
+          : formatMessage(m.signedRuling.prosecutorBodyAttachment, {
               courtName: theCase.court?.name,
               courtCaseNumber: theCase.courtCaseNumber,
               linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
               linkEnd: '</a>',
             }),
+        formatMessage,
         theCase.courtCaseNumber,
         uploadedToS3 ? undefined : [rulingAttachment],
       ),
@@ -368,7 +368,8 @@ export class CaseService {
       emailPromises.push(
         this.sendEmail(
           recipients,
-          this.formatMessage(m.signedRuling.courtBodyAttachment),
+          formatMessage(m.signedRuling.courtBodyAttachment),
+          formatMessage,
           theCase.courtCaseNumber,
           [rulingAttachment],
         ),
@@ -386,12 +387,9 @@ export class CaseService {
       const attachments = courtRecordPdf
         ? [
             {
-              filename: this.formatMessage(
-                m.signedRuling.courtRecordAttachment,
-                {
-                  courtCaseNumber: theCase.courtCaseNumber,
-                },
-              ),
+              filename: formatMessage(m.signedRuling.courtRecordAttachment, {
+                courtCaseNumber: theCase.courtCaseNumber,
+              }),
               content: courtRecordPdf,
               encoding: 'binary',
             },
@@ -405,10 +403,11 @@ export class CaseService {
             name: theCase.defenderName ?? '',
             address: theCase.defenderEmail,
           },
-          this.formatMessage(m.signedRuling.defenderBodyAttachment, {
+          formatMessage(m.signedRuling.defenderBodyAttachment, {
             courtName: theCase.court?.name,
             courtCaseNumber: theCase.courtCaseNumber,
           }),
+          formatMessage,
           theCase.courtCaseNumber,
           attachments,
         ),
@@ -567,7 +566,7 @@ export class CaseService {
   }
 
   async getRequestPdf(theCase: Case): Promise<Buffer> {
-    return getRequestPdfAsBuffer(theCase, this.formatMessage)
+    return getRequestPdfAsBuffer(theCase, await this.formatMessage())
   }
 
   async getCourtRecordPdf(theCase: Case, user: TUser): Promise<Buffer> {
@@ -582,7 +581,7 @@ export class CaseService {
       )
     }
 
-    return getCourtRecordPdfAsBuffer(theCase, user, this.formatMessage)
+    return getCourtRecordPdfAsBuffer(theCase, user, await this.formatMessage())
   }
 
   async getRulingPdf(theCase: Case): Promise<Buffer> {
@@ -597,11 +596,11 @@ export class CaseService {
       )
     }
 
-    return getRulingPdfAsBuffer(theCase, this.formatMessage)
+    return getRulingPdfAsBuffer(theCase, await this.formatMessage())
   }
 
   async getCustodyPdf(theCase: Case): Promise<Buffer> {
-    return getCustodyNoticePdfAsBuffer(theCase, this.formatMessage)
+    return getCustodyNoticePdfAsBuffer(theCase, await this.formatMessage())
   }
 
   async requestCourtRecordSignature(
@@ -613,7 +612,10 @@ export class CaseService {
       return { controlCode: '0000', documentToken: 'DEVELOPMENT' }
     }
 
-    const pdf = await getCourtRecordPdfAsString(theCase, this.formatMessage)
+    const pdf = await getCourtRecordPdfAsString(
+      theCase,
+      await this.formatMessage(),
+    )
 
     return this.signingService.requestSignature(
       user.mobileNumber ?? '',
@@ -681,7 +683,7 @@ export class CaseService {
       return { controlCode: '0000', documentToken: 'DEVELOPMENT' }
     }
 
-    const pdf = await getRulingPdfAsString(theCase, this.formatMessage)
+    const pdf = await getRulingPdfAsString(theCase, await this.formatMessage())
 
     return this.signingService.requestSignature(
       theCase.judge?.mobileNumber ?? '',
@@ -707,7 +709,11 @@ export class CaseService {
           documentToken,
         )
 
-        await this.sendRulingAsSignedPdf(theCase, signedPdf)
+        await this.sendRulingAsSignedPdf(
+          theCase,
+          signedPdf,
+          await this.formatMessage(),
+        )
       } catch (error) {
         if (error instanceof DokobitError) {
           return {
@@ -789,7 +795,7 @@ export class CaseService {
   async uploadRequestPdfToCourt(theCase: Case): Promise<void> {
     this.logger.debug(`Uploading request pdf to court for case ${theCase.id}`)
 
-    const pdf = await getRequestPdfAsBuffer(theCase, this.formatMessage)
+    const pdf = await getRequestPdfAsBuffer(theCase, await this.formatMessage())
 
     try {
       const streamId = await this.courtService.uploadStream(

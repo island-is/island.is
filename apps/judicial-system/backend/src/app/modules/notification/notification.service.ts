@@ -1,8 +1,4 @@
-import {
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { ICalendar } from 'datebook'
 
@@ -63,10 +59,6 @@ interface Attachment {
 
 @Injectable()
 export class NotificationService {
-  private formatMessage: FormatMessage = () => {
-    throw new InternalServerErrorException('Format message not initialized')
-  }
-
   constructor(
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
@@ -74,13 +66,14 @@ export class NotificationService {
     private readonly smsService: SmsService,
     private readonly emailService: EmailService,
     private readonly eventService: EventService,
-    intlService: IntlService,
+    private readonly intlService: IntlService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-  ) {
-    intlService
+  ) {}
+
+  private formatMessage: () => Promise<FormatMessage> = async () =>
+    this.intlService
       .useIntl(['judicial.system.backend'], 'is')
-      .then((res) => (this.formatMessage = res.formatMessage))
-  }
+      .then((res) => res.formatMessage)
 
   private async existsRevokableNotification(
     caseId: string,
@@ -219,8 +212,11 @@ export class NotificationService {
     }
   }
 
-  private async uploadRequestPdfToCourt(theCase: Case): Promise<void> {
-    const requestPdf = await getRequestPdfAsBuffer(theCase, this.formatMessage)
+  private async uploadRequestPdfToCourt(
+    theCase: Case,
+    formatMessage: FormatMessage,
+  ): Promise<void> {
+    const requestPdf = await getRequestPdfAsBuffer(theCase, formatMessage)
 
     try {
       const streamId = await this.courtService.uploadStream(
@@ -329,6 +325,7 @@ export class NotificationService {
 
   private async sendReadyForCourtEmailNotificationToProsecutor(
     theCase: Case,
+    formatMessage: FormatMessage,
   ): Promise<Recipient> {
     const { type, court, policeCaseNumber } = theCase
 
@@ -336,19 +333,16 @@ export class NotificationService {
 
     const caseType =
       type === CaseType.CUSTODY
-        ? this.formatMessage(core.caseType.custody)
+        ? formatMessage(core.caseType.custody)
         : type === CaseType.TRAVEL_BAN
-        ? this.formatMessage(core.caseType.travelBan)
-        : this.formatMessage(core.caseType.investigate)
+        ? formatMessage(core.caseType.travelBan)
+        : formatMessage(core.caseType.investigate)
 
-    const html = this.formatMessage(
-      notifications.readyForCourt.prosecutorHtml,
-      {
-        caseType,
-        courtName: court?.name,
-        policeCaseNumber,
-      },
-    )
+    const html = formatMessage(notifications.readyForCourt.prosecutorHtml, {
+      caseType,
+      courtName: court?.name,
+      policeCaseNumber,
+    })
 
     return this.sendEmail(
       subject,
@@ -360,6 +354,7 @@ export class NotificationService {
 
   private async sendReadyForCourtNotifications(
     theCase: Case,
+    formatMessage: FormatMessage,
   ): Promise<SendNotificationResponse> {
     // TODO: Ignore failed notifications
     const notification = await this.notificationModel.findOne({
@@ -370,7 +365,10 @@ export class NotificationService {
     })
 
     const promises: Promise<Recipient>[] = [
-      this.sendReadyForCourtEmailNotificationToProsecutor(theCase),
+      this.sendReadyForCourtEmailNotificationToProsecutor(
+        theCase,
+        formatMessage,
+      ),
     ]
 
     // TODO: Find a better place for this
@@ -380,7 +378,7 @@ export class NotificationService {
       theCase.courtCaseNumber
     ) {
       // No need to wait
-      this.uploadRequestPdfToCourt(theCase)
+      this.uploadRequestPdfToCourt(theCase, formatMessage)
     }
 
     if (notification) {
@@ -494,6 +492,7 @@ export class NotificationService {
 
   private async sendCourtDateEmailNotificationToDefender(
     theCase: Case,
+    formatMessage: FormatMessage,
   ): Promise<Recipient> {
     const subject = `Fyrirtaka í máli ${theCase.courtCaseNumber}`
     const html = formatDefenderCourtDateEmailNotification(
@@ -511,7 +510,7 @@ export class NotificationService {
     const attachments: Attachment[] = calendarInvite ? [calendarInvite] : []
 
     if (theCase.sendRequestToDefender) {
-      const pdf = await getRequestPdfAsString(theCase, this.formatMessage)
+      const pdf = await getRequestPdfAsString(theCase, formatMessage)
 
       attachments.push({
         filename: `${theCase.policeCaseNumber}.pdf`,
@@ -531,6 +530,7 @@ export class NotificationService {
 
   private async sendCourtDateNotifications(
     theCase: Case,
+    formatMessage: FormatMessage,
   ): Promise<SendNotificationResponse> {
     const promises: Promise<Recipient>[] = [
       this.sendCourtDateEmailNotificationToProsecutor(theCase),
@@ -544,7 +544,9 @@ export class NotificationService {
           theCase.defenderIsSpokesperson)) &&
       theCase.defenderEmail
     ) {
-      promises.push(this.sendCourtDateEmailNotificationToDefender(theCase))
+      promises.push(
+        this.sendCourtDateEmailNotificationToDefender(theCase, formatMessage),
+      )
     }
 
     if (theCase.type === CaseType.CUSTODY) {
@@ -571,12 +573,13 @@ export class NotificationService {
   private async sendRulingEmailNotificationToPrison(
     theCase: Case,
     rulingPdf: string,
+    formatMessage: FormatMessage,
   ): Promise<Recipient> {
     const subject = 'Úrskurður um gæsluvarðhald' // Always custody
     const html = formatPrisonRulingEmailNotification(theCase.rulingDate)
     const custodyNoticePdf = await getCustodyNoticePdfAsString(
       theCase,
-      this.formatMessage,
+      formatMessage,
     )
 
     const attachments = [
@@ -622,6 +625,7 @@ export class NotificationService {
 
   private async sendRulingNotifications(
     theCase: Case,
+    formatMessage: FormatMessage,
   ): Promise<SendNotificationResponse> {
     if (isInvestigationCase(theCase.type)) {
       return {
@@ -629,10 +633,7 @@ export class NotificationService {
       }
     }
 
-    const rulingPdf = await getCourtRecordPdfAsString(
-      theCase,
-      this.formatMessage,
-    )
+    const rulingPdf = await getCourtRecordPdfAsString(theCase, formatMessage)
 
     const recipients = [
       await this.sendRulingEmailNotificationToPrisonAdministration(
@@ -647,7 +648,11 @@ export class NotificationService {
         theCase.decision === CaseDecision.ACCEPTING_PARTIALLY)
     ) {
       recipients.concat(
-        await this.sendRulingEmailNotificationToPrison(theCase, rulingPdf),
+        await this.sendRulingEmailNotificationToPrison(
+          theCase,
+          rulingPdf,
+          formatMessage,
+        ),
       )
     }
 
@@ -663,11 +668,12 @@ export class NotificationService {
   private async sendModifiedNotifications(
     theCase: Case,
     user: User,
+    formatMessage: FormatMessage,
   ): Promise<SendNotificationResponse> {
-    const subject = this.formatMessage(notifications.modified.subject, {
+    const subject = formatMessage(notifications.modified.subject, {
       courtCaseNumber: theCase.courtCaseNumber,
     })
-    const html = `${this.formatMessage(notifications.modified.html, {
+    const html = `${formatMessage(notifications.modified.html, {
       actorInstitution: user.institution?.name,
       actorName: user.name,
       actorTitle: user.title,
@@ -677,7 +683,7 @@ export class NotificationService {
       validToDate: formatDate(theCase.validToDate, 'PPPp'),
     })}${
       theCase.isCustodyIsolation
-        ? this.formatMessage(notifications.modified.isolationHtml, {
+        ? formatMessage(notifications.modified.isolationHtml, {
             isolationToDate: formatDate(theCase.isolationToDate, 'PPPp'),
           })
         : ''
@@ -767,13 +773,14 @@ export class NotificationService {
 
   private sendRevokedEmailNotificationToDefender(
     theCase: Case,
+    formatMessage: FormatMessage,
   ): Promise<Recipient> {
     const caseType =
       theCase.type === CaseType.CUSTODY
-        ? this.formatMessage(core.caseType.custody)
+        ? formatMessage(core.caseType.custody)
         : theCase.type === CaseType.TRAVEL_BAN
-        ? this.formatMessage(core.caseType.travelBan)
-        : this.formatMessage(core.caseType.investigate)
+        ? formatMessage(core.caseType.travelBan)
+        : formatMessage(core.caseType.investigate)
 
     const subject = `Krafa um ${caseType} afturkölluð`
 
@@ -800,6 +807,7 @@ export class NotificationService {
 
   private async sendRevokedNotifications(
     theCase: Case,
+    formatMessage: FormatMessage,
   ): Promise<SendNotificationResponse> {
     const promises: Promise<Recipient>[] = []
 
@@ -829,7 +837,9 @@ export class NotificationService {
     )
 
     if (defenderWasNotified && theCase.defenderEmail) {
-      promises.push(this.sendRevokedEmailNotificationToDefender(theCase))
+      promises.push(
+        this.sendRevokedEmailNotificationToDefender(theCase, formatMessage),
+      )
     }
 
     const recipients = await Promise.all(promises)
@@ -856,26 +866,28 @@ export class NotificationService {
     })
   }
 
-  sendCaseNotification(
+  async sendCaseNotification(
     notification: SendNotificationDto,
     theCase: Case,
     user: User,
   ): Promise<SendNotificationResponse> {
+    const formatMessage = await this.formatMessage()
+
     switch (notification.type) {
       case NotificationType.HEADS_UP:
         return this.sendHeadsUpNotifications(theCase)
       case NotificationType.READY_FOR_COURT:
-        return this.sendReadyForCourtNotifications(theCase)
+        return this.sendReadyForCourtNotifications(theCase, formatMessage)
       case NotificationType.RECEIVED_BY_COURT:
         return this.sendReceivedByCourtNotifications(theCase)
       case NotificationType.COURT_DATE:
-        return this.sendCourtDateNotifications(theCase)
+        return this.sendCourtDateNotifications(theCase, formatMessage)
       case NotificationType.RULING:
-        return this.sendRulingNotifications(theCase)
+        return this.sendRulingNotifications(theCase, formatMessage)
       case NotificationType.MODIFIED:
-        return this.sendModifiedNotifications(theCase, user)
+        return this.sendModifiedNotifications(theCase, user, formatMessage)
       case NotificationType.REVOKED:
-        return this.sendRevokedNotifications(theCase)
+        return this.sendRevokedNotifications(theCase, formatMessage)
     }
   }
 }
