@@ -25,12 +25,7 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { IntegratedCourts } from '@island.is/judicial-system/consts'
-import {
-  CaseState,
-  CaseType,
-  isInvestigationCase,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
@@ -49,6 +44,7 @@ import {
 import { UserService } from '../user'
 import { CaseEvent, EventService } from '../event'
 import {
+  CaseCourtRestrictionGuard,
   CaseExistsGuard,
   CaseReadGuard,
   CaseWriteGuard,
@@ -140,7 +136,6 @@ export class CaseController {
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
     @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Body() caseToUpdate: UpdateCaseDto,
   ): Promise<Case | null> {
@@ -211,7 +206,6 @@ export class CaseController {
   })
   async transition(
     @Param('caseId') caseId: string,
-    @CurrentHttpUser() _0: User,
     @CurrentCase() theCase: Case,
     @Body() transition: TransitionCaseDto,
   ): Promise<Case | null> {
@@ -264,7 +258,13 @@ export class CaseController {
     return theCase
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    CaseReadGuard,
+    CaseCourtRestrictionGuard,
+  )
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('case/:caseId/request')
   @Header('Content-Type', 'application/pdf')
@@ -274,7 +274,6 @@ export class CaseController {
   })
   async getRequestPdf(
     @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
   ): Promise<void> {
@@ -282,22 +281,18 @@ export class CaseController {
       `Getting the request for case ${caseId} as a pdf document`,
     )
 
-    if (
-      isInvestigationCase(theCase.type) &&
-      ((user.role === UserRole.JUDGE && user.id !== theCase.judge?.id) ||
-        (user.role === UserRole.REGISTRAR && user.id !== theCase.registrar?.id))
-    ) {
-      throw new ForbiddenException(
-        'Only the assigned judge and registrar can get the request pdf for investigation cases',
-      )
-    }
-
     const pdf = await this.caseService.getRequestPdf(theCase)
 
-    return res.end(pdf)
+    res.end(pdf)
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    CaseReadGuard,
+    CaseCourtRestrictionGuard,
+  )
   @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('case/:caseId/courtRecord')
   @Header('Content-Type', 'application/pdf')
@@ -307,7 +302,6 @@ export class CaseController {
   })
   async getCourtRecordPdf(
     @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
   ): Promise<void> {
@@ -315,22 +309,18 @@ export class CaseController {
       `Getting the court record for case ${caseId} as a pdf document`,
     )
 
-    if (
-      isInvestigationCase(theCase.type) &&
-      ((user.role === UserRole.JUDGE && user.id !== theCase.judge?.id) ||
-        (user.role === UserRole.REGISTRAR && user.id !== theCase.registrar?.id))
-    ) {
-      throw new ForbiddenException(
-        'Only the assigned judge and registrar can get the court record pdf for investigation cases',
-      )
-    }
-
     const pdf = await this.caseService.getCourtRecordPdf(theCase)
 
-    return res.end(pdf)
+    res.end(pdf)
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    CaseReadGuard,
+    CaseCourtRestrictionGuard,
+  )
   @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('case/:caseId/ruling')
   @Header('Content-Type', 'application/pdf')
@@ -340,25 +330,14 @@ export class CaseController {
   })
   async getRulingPdf(
     @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
   ): Promise<void> {
     this.logger.debug(`Getting the ruling for case ${caseId} as a pdf document`)
 
-    if (
-      isInvestigationCase(theCase.type) &&
-      ((user.role === UserRole.JUDGE && user.id !== theCase.judge?.id) ||
-        (user.role === UserRole.REGISTRAR && user.id !== theCase.registrar?.id))
-    ) {
-      throw new ForbiddenException(
-        'Only the assigned judge and registrar can get the ruling pdf for investigation cases',
-      )
-    }
-
     const pdf = await this.caseService.getRulingPdf(theCase)
 
-    return res.end(pdf)
+    res.end(pdf)
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
@@ -393,7 +372,7 @@ export class CaseController {
 
     const pdf = await this.caseService.getCustodyPdf(theCase)
 
-    return res.end(pdf)
+    res.end(pdf)
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)

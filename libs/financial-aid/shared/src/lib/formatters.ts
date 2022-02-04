@@ -270,11 +270,11 @@ export const getApplicantEmailDataFromEventType = (
 
     case ApplicationEventType.REJECTED:
       return {
-        subject: 'Umsókn þinni um aðstoð hefur verið synjað',
+        subject: 'Umsókn þinni um aðstoð hefur verið hafnað',
         data: {
-          title: 'Fjárhagsaðstoð Umsókn synjað',
-          header: 'Umsókn þinni um aðstoð hefur verið synjað',
-          content: `${rejectionComment}`,
+          title: 'Fjárhagsaðstoð Umsókn hafnað',
+          header: 'Umsókn þinni um aðstoð hefur verið hafnað',
+          content: `Umsókn þinni um fjárhagsaðstoð í ${getPeriod.month} hefur verið hafnað <b>${rejectionComment}</b>. Þú getur kynnt þér <a href="${municipality.rulesHomepage}" target="_blank">reglur um fjárhagsaðstoð.</a>`,
           applicationLinkText: 'Opna stöðusíðu',
           applicationChange: 'Umsókn synjað',
           applicationMonth: getPeriod.month,
