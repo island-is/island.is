@@ -32,9 +32,7 @@ export class RegulationsAdminResolver {
     @Inject(REGULATIONS_ADMIN_OPTIONS)
     private readonly options: RegulationsAdminOptions,
     @Inject(DownloadServiceConfig.KEY)
-    private readonly downloadServiceConfig: ConfigType<
-      typeof DownloadServiceConfig
-    >,
+    private downloadServiceConfig: ConfigType<typeof DownloadServiceConfig>,
   ) {}
 
   // @Query(() => DraftRegulationModel, { nullable: true })

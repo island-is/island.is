@@ -6,6 +6,7 @@ import {
 } from './client'
 import { RegulationsAdminResolver } from './graphql/regulationsAdmin.resolver'
 import { RegulationsService } from '@island.is/clients/regulations'
+import { DownloadServiceConfig } from '@island.is/nest/config'
 
 @Module({})
 export class RegulationsAdminModule {
@@ -14,15 +15,19 @@ export class RegulationsAdminModule {
       module: RegulationsAdminModule,
       providers: [
         RegulationsAdminResolver,
+        RegulationsAdminApi,
         {
           provide: REGULATIONS_ADMIN_OPTIONS,
           useValue: config,
         },
-        RegulationsAdminApi,
         {
           provide: RegulationsService,
           useFactory: async () =>
             new RegulationsService({ url: config.regulationsApiUrl }),
+        },
+        {
+          provide: DownloadServiceConfig,
+          useValue: DownloadServiceConfig,
         },
       ],
       exports: [RegulationsService, RegulationsAdminApi],
