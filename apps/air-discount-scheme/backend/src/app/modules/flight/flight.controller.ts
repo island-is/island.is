@@ -213,7 +213,7 @@ export class PublicFlightController {
       )
     }
 
-    const meetsADSRequirements = this.flightService.isADSPostalCode(
+    const meetsADSRequirements = user.postalcode && this.flightService.isADSPostalCode(
       user.postalcode,
     )
     if (!meetsADSRequirements) {
