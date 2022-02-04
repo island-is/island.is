@@ -139,4 +139,9 @@ export const core = defineMessages({
     defaultMessage: 'Staðfestur fyrirtökutími',
     description: 'Notað fyrir orðið Staðfestur fyrirtökutími í öllum flæðum.',
   },
+  update: {
+    id: 'judicial.system.core:update',
+    defaultMessage: 'Uppfæra',
+    description: 'Notað fyrir orðið Uppfæra í öllum flæðum.',
+  },
 })
