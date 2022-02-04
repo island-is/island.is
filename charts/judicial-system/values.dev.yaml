@@ -21,6 +21,7 @@ judicial-system-api:
     BACKEND_URL: 'http://web-judicial-system-backend'
     CONTENTFUL_HOST: 'preview.contentful.com'
     HIDDEN_FEATURES: ''
+    NODE_OPTIONS: '--max-old-space-size=208'
     SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=judicial-system.dev'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
@@ -61,6 +62,13 @@ judicial-system-api:
     default: 2
     max: 3
     min: 2
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
   secrets:
     AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -125,6 +133,13 @@ judicial-system-backend:
           - 'db:migrate'
         command:
           - 'npx'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '100m'
+            memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'judicial_system'
@@ -183,6 +198,7 @@ judicial-system-web:
   env:
     API_URL: 'https://judicial-system.dev01.devland.is'
     INTERNAL_API_URL: 'http://web-judicial-system-api'
+    NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -211,6 +227,13 @@ judicial-system-web:
     default: 2
     max: 3
     min: 2
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   securityContext:
@@ -223,6 +246,7 @@ judicial-system-xrd-api:
     AUDIT_TRAIL_REGION: 'eu-west-1'
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     BACKEND_URL: 'http://web-judicial-system-backend'
+    NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -253,6 +277,13 @@ judicial-system-xrd-api:
     default: 2
     max: 3
     min: 2
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SECRET_TOKEN: '/k8s/judicial-system/SECRET_TOKEN'
