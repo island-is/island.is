@@ -68,6 +68,8 @@ const AppProvider = ({ children }: Props) => {
     setNationalRegistryData,
   } = useNationalRegistry()
 
+  console.log(isAuthenticated, user)
+
   return (
     <AppContext.Provider
       value={{

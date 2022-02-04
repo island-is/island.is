@@ -18,6 +18,7 @@ interface Props {
 
 const AppLayout = ({ children }: Props) => {
   const { isAuthenticated, user, loadingUser } = useContext(AppContext)
+  console.log({ loadingUser })
 
   useEffect(() => {
     document.title = 'Fjárhagsaðstoð'
