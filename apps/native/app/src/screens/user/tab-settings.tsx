@@ -190,7 +190,7 @@ export function TabSettings() {
             />
           }
         />
-        <TableViewCell
+        {/* <TableViewCell
           title={intl.formatMessage({
             id: 'settings.communication.appUpdatesNotifications',
           })}
@@ -203,7 +203,7 @@ export function TabSettings() {
           accessory={
             <PreferencesSwitch name="notificationsApplicationStatusUpdates" />
           }
-        />
+        /> */}
       </TableViewGroup>
       <TableViewGroup
         header={intl.formatMessage({
@@ -450,9 +450,6 @@ export function TabSettings() {
           onPress={() => {
             console.log(pushToken)
             RNAlert.prompt('token', 'yup', undefined, undefined, pushToken)
-          }}
-          onLongPress={() => {
-            Sentry.nativeCrash()
           }}
         >
           <TableViewCell title="Push Token" subtitle={pushToken} />
