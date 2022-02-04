@@ -57,7 +57,7 @@ export class UserService {
       user.nationalId,
     )
 
-    const meetsADSRequirements = this.flightService.isADSPostalCode(
+    const meetsADSRequirements = user.postalcode && this.flightService.isADSPostalCode(
       user.postalcode,
     )
 
