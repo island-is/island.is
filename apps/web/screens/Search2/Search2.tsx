@@ -128,14 +128,14 @@ const Search2: Screen<CategoryProps> = ({
     },
   })
   usePlausible('Search Query', {
-    query: (q ?? '').toLowerCase(),
+    query: (q ?? '').trim().toLowerCase(),
     source: 'Web',
   })
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState(false)
   const { activeLocale } = useI18n()
   const searchRef = useRef<HTMLInputElement | null>(null)
-  const push = usePush()
+  const routerReplace = useRouterReplace()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
@@ -333,14 +333,13 @@ const Search2: Screen<CategoryProps> = ({
       delete newQuery['processentry']
     }
 
-    console.log('pushing...', newQuery)
-    push({
+    routerReplace({
       pathname,
       query: newQuery,
     }).then(() => {
       window.scrollTo(0, 0)
     })
-  }, [state, pathname, q, push])
+  }, [state, pathname, q, routerReplace])
 
   const getSearchParams = (contentType: string) => {
     return {
@@ -515,8 +514,8 @@ const Search2: Screen<CategoryProps> = ({
                 </Inline>
               </Box>
 
-              <pre>STATE: {JSON.stringify(state, null, 2)}</pre>
-              <pre>QUERY: {JSON.stringify(query, null, 2)}</pre>
+              {/* <pre>STATE: {JSON.stringify(state, null, 2)}</pre>
+              <pre>QUERY: {JSON.stringify(query, null, 2)}</pre> */}
 
               {nothingFound ? (
                 <>
@@ -730,19 +729,19 @@ Search2.getInitialProps = async ({ apolloClient, locale, query }) => {
 
 const firstLower = (t: string) => t.charAt(0).toLowerCase() + t.slice(1)
 
-const usePush = (): NextRouter['push'] => {
+const useRouterReplace = (): NextRouter['replace'] => {
   const Router = useRouter()
   const routerRef = useRef(Router)
 
   routerRef.current = Router
 
-  const [{ push }] = useState<Pick<NextRouter, 'push'>>({
-    push: (path) => {
+  const [{ replace }] = useState<Pick<NextRouter, 'replace'>>({
+    replace: (path) => {
       return routerRef.current.push(path)
     },
   })
 
-  return push
+  return replace
 }
 
 interface EnglishResultsLinkProps {

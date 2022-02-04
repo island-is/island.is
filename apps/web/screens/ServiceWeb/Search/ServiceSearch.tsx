@@ -68,7 +68,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
   const Router = useRouter()
   const n = useNamespace(namespace)
   usePlausible('Search Query', {
-    query: q.toLowerCase(),
+    query: (q ?? '').trim().toLowerCase(),
     source: 'Service Web',
   })
   const { linkResolver } = useLinkResolver()

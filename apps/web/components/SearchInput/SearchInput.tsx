@@ -6,6 +6,7 @@ import React, {
   forwardRef,
   ReactElement,
   useReducer,
+  useMemo,
 } from 'react'
 import Downshift from 'downshift'
 import { useMeasure } from 'react-use'
@@ -247,6 +248,11 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     const onFocus = useCallback(() => {
       setHasFocus(true)
     }, [setHasFocus])
+
+    useMemo(() => {
+      console.log('setting initialInputValue', initialInputValue)
+      setSearchTerm(initialInputValue)
+    }, [initialInputValue])
 
     return (
       <Downshift<SubmitType>

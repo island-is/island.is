@@ -50,9 +50,8 @@ import {
   Link as LinkItem,
 } from '../../graphql/schema'
 import { Image } from '@island.is/web/graphql/schema'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useLinkResolver, usePlausible } from '@island.is/web/hooks'
 import { useLazyQuery } from '@apollo/client'
-import { plausibleCustomEvent } from '@island.is/web/hooks/usePlausible'
 
 const PERPAGE = 10
 
@@ -121,6 +120,10 @@ const Search: Screen<CategoryProps> = ({
   const searchRef = useRef<HTMLInputElement | null>(null)
   const replace = useReplace()
   const { query } = useRouter()
+  usePlausible('Search Query', {
+    query: (q ?? '').trim().toLowerCase(),
+    source: 'Web',
+  })
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const [activeSearchType, setActiveSearchType] = useState<string>('')
@@ -129,18 +132,6 @@ const Search: Screen<CategoryProps> = ({
     tags: {},
     types: {},
   })
-
-  // Submit the search query to plausible
-  if (q) {
-    plausibleCustomEvent('Search Query', {
-      query: q.toLowerCase(),
-      source: 'Web',
-    })
-  }
-
-  // console.log(searchResults, countResults)
-  // console.log('searchResults', searchResults)
-  // console.log('countResults', countResults)
 
   const filters: SearchQueryFilters = {
     category: query.category as string,
