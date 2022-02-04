@@ -7,7 +7,7 @@ import { environment } from '../../environments'
 import { Case } from '../modules/case/models'
 import { ruling } from '../messages'
 import {
-  setPageNumbers,
+  addFooter,
   addCoatOfArms,
   addLargeHeading,
   addMediumHeading,
@@ -113,7 +113,7 @@ function constructRulingPdf(
     theCase.judge?.name ?? formatMessage(ruling.missingJudge),
     'Times-Bold',
   )
-  setPageNumbers(doc)
+  addFooter(doc)
 
   doc.end()
 
