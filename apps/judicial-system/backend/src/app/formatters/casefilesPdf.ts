@@ -8,7 +8,7 @@ import {
   addLargeHeading,
   addNumberedList,
   setLineGap,
-  setPageNumbers,
+  addFooter,
   setTitle,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
@@ -40,7 +40,7 @@ function constructCasefilesPdf(
   )
   setLineGap(doc, 8)
   addNumberedList(doc, theCase.caseFiles?.map((file) => file.name) ?? [])
-  setPageNumbers(doc)
+  addFooter(doc)
 
   doc.end()
 
