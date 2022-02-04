@@ -67,7 +67,7 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
-            whenToPrune: 10 * 60000, //5 minutes
+            whenToPrune: 5 * 60000, //5 minutes
           },
           onEntry: {
             apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
