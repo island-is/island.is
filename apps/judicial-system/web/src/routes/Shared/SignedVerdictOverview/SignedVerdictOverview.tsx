@@ -122,6 +122,7 @@ export const SignedVerdictOverview: React.FC = () => {
     extendCase,
     isExtendingCase,
     sendNotification,
+    isSendingNotification,
   } = useCase()
 
   const [getCourtRecordSignatureConfirmation] = useLazyQuery(
@@ -460,16 +461,16 @@ export const SignedVerdictOverview: React.FC = () => {
         }${createCaseModifiedExplanation(caseModifiedExplanation)}`,
       }
 
-      setWorkingCase({
-        ...workingCase,
-        ...update,
-      })
-
       const updatedCase = await updateCase(workingCase.id, { ...update })
 
       if (updatedCase) {
         await sendNotification(workingCase.id, NotificationType.MODIFIED)
       }
+
+      setWorkingCase({
+        ...workingCase,
+        ...update,
+      })
 
       setIsCaseModificationConfirmed(true)
     }
@@ -609,6 +610,7 @@ export const SignedVerdictOverview: React.FC = () => {
                 )}
                 isPrimaryButtonDisabled={isCaseModificationInvalid()}
                 handlePrimaryButtonClick={() => handleDateModification()}
+                isPrimaryButtonLoading={isSendingNotification}
                 secondaryButtonText={formatMessage(
                   m.sections.modifyDatesModal.secondaryButtonText,
                 )}
