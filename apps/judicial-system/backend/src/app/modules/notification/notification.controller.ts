@@ -27,7 +27,6 @@ import {
   Case,
   CaseExistsGuard,
   CaseReadGuard,
-  CaseService,
   CaseWriteGuard,
   CurrentCase,
 } from '../case'
@@ -78,7 +77,6 @@ const registrarNotificationRule = {
 @ApiTags('notifications')
 export class NotificationController {
   constructor(
-    private readonly caseService: CaseService,
     private readonly notificationService: NotificationService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}

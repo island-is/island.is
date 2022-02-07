@@ -7,8 +7,8 @@ export type ContainerRunHelm = {
   command: string[]
   args?: string[]
   name?: string
-  resources?: {
-    limits?: {
+  resources: {
+    limits: {
       cpu: string
       memory: string
     }
