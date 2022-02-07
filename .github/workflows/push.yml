@@ -120,6 +120,7 @@ jobs:
       UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
       BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
       IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
+      POLICY_TAG: ${{steps.docker_tags.outputs.POLICY_TAG }}
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
     steps:
@@ -171,9 +172,15 @@ jobs:
           fi
           echo "Using SHA='$SHA' as docker tag sha"
           export DOCKER_TAG=${GITHUB_RUN_NUMBER}_${DOCKER_BRANCH_TAG}_${SHA:0:7}
+          export POLICY_TAG=${DOCKER_BRANCH_TAG}_${GITHUB_RUN_NUMBER}_${SHA:0:7}
+          
           echo "Docker tag will be ${DOCKER_TAG}"
           echo "::set-output name=DOCKER_TAG::${DOCKER_TAG}"
           echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
+
+          echo "Docker tag will be ${POLICY_TAG}"
+          echo "::set-output name=POLICY_TAG::${POLICY_TAG}"
+          echo "POLICY_TAG=$POLICY_TAG" >> $GITHUB_ENV
 
       - run: |
           if [[ "$GITHUB_HEAD_REF" == "" ]]; then
@@ -375,6 +382,7 @@ jobs:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
+      POLICY_TAG: ${{ needs.prepare.outputs.POLICY_TAG}}
       PUBLISH: true
     strategy:
       fail-fast: false
@@ -487,7 +495,7 @@ jobs:
       - name: Docker build image
         working-directory: infra
         run: |
-          ./scripts/build-docker-container.sh $DOCKER_TAG
+          ./scripts/build-docker-container.sh $DOCKER_TAG $POLICY_TAG
           echo "COMMENT<<EOF" >> $GITHUB_ENV
           docker run --rm ${DOCKER_REGISTRY}helm-config:$DOCKER_TAG ingress-comment --images=${{needs.prepare.outputs.IMAGES}} --chart=islandis --feature=$FEATURE_NAME >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
@@ -501,6 +509,14 @@ jobs:
           LAST_GOOD_BUILD_DOCKER_TAG: ${{ env.DOCKER_TAG }}
           DOCKER_TAG: latest
         run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
+
+      # - name: Retag lifecycle
+      #   if: env.GIT_BRANCH == 'main'
+      #   env:
+      #     UNAFFECTED: helm-config
+      #     LAST_GOOD_BUILD_DOCKER_TAG: ${{ env.DOCKER_TAG }}
+      #     DOCKER_TAG: ${{ env.POLICY_TAG }}
+      #   run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
 
       - name: Comment on PR
         if: needs.pre-checks.outputs.LABELED_FOR_DEPLOY == 'true'
