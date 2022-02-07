@@ -53,7 +53,7 @@ describe('FileController - Get case file signed url', () => {
   describe('AWS S3 existance check', () => {
     const caseId = uuid()
     const fileId = uuid()
-    const key = `${uuid()}/${uuid()}/test.txt`
+    const key = `uploads/${uuid()}/${uuid()}/test.txt`
     const caseFile = {
       id: fileId,
       state: CaseFileState.STORED_IN_RVG,
@@ -75,7 +75,7 @@ describe('FileController - Get case file signed url', () => {
   describe('AWS S3 get signed url', () => {
     const caseId = uuid()
     const fileId = uuid()
-    const key = `${uuid()}/${uuid()}/test.txt`
+    const key = `uploads/${uuid()}/${uuid()}/test.txt`
     const caseFile = {
       id: fileId,
       state: CaseFileState.STORED_IN_RVG,

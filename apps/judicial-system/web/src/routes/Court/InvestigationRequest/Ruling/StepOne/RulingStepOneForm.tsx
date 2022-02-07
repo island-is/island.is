@@ -93,7 +93,7 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'prosecutorDemands',
-                event,
+                event.target.value,
                 ['empty'],
                 workingCase,
                 setWorkingCase,
@@ -137,7 +137,7 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'courtCaseFacts',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -184,7 +184,7 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'courtLegalArguments',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,

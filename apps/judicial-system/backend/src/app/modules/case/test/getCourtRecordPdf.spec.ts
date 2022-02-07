@@ -2,6 +2,7 @@ import { uuid } from 'uuidv4'
 import { Response } from 'express'
 
 import { Logger } from '@island.is/logging'
+import { User } from '@island.is/judicial-system/types'
 
 import { getCourtRecordPdfAsBuffer } from '../../../formatters/courtRecordPdf'
 import { Case } from '../models'
@@ -16,6 +17,7 @@ interface Then {
 
 type GivenWhenThen = (
   caseId: string,
+  user: User,
   theCase: Case,
   res: Response,
 ) => Promise<Then>
@@ -34,11 +36,16 @@ describe('CaseController - Get court record pdf', () => {
     mockAwsS3Service = awsS3Service
     mockLogger = logger
 
-    givenWhenThen = async (caseId: string, theCase: Case, res: Response) => {
+    givenWhenThen = async (
+      caseId: string,
+      user: User,
+      theCase: Case,
+      res: Response,
+    ) => {
       const then = {} as Then
 
       try {
-        await caseController.getCourtRecordPdf(caseId, theCase, res)
+        await caseController.getCourtRecordPdf(caseId, user, theCase, res)
       } catch (error) {
         then.error = error as Error
       }
@@ -48,12 +55,13 @@ describe('CaseController - Get court record pdf', () => {
   })
 
   describe('AWS S3 lookup', () => {
+    const user = {} as User
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const res = {} as Response
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, theCase, res)
+      await givenWhenThen(caseId, user, theCase, res)
     })
 
     it('should lookup pdf', () => {
@@ -64,6 +72,7 @@ describe('CaseController - Get court record pdf', () => {
   })
 
   describe('AWS S3 pdf returned', () => {
+    const user = {} as User
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const res = ({ end: jest.fn() } as unknown) as Response
@@ -73,7 +82,7 @@ describe('CaseController - Get court record pdf', () => {
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
       mockGetObject.mockResolvedValueOnce(pdf)
 
-      await givenWhenThen(caseId, theCase, res)
+      await givenWhenThen(caseId, user, theCase, res)
     })
 
     it('should return pdf', () => {
@@ -82,6 +91,7 @@ describe('CaseController - Get court record pdf', () => {
   })
 
   describe('AWS S3 lookup fails', () => {
+    const user = {} as User
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const res = {} as Response
@@ -91,7 +101,7 @@ describe('CaseController - Get court record pdf', () => {
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
       mockGetObject.mockRejectedValueOnce(error)
 
-      await givenWhenThen(caseId, theCase, res)
+      await givenWhenThen(caseId, user, theCase, res)
     })
 
     it('should info log the failure', () => {
@@ -105,6 +115,7 @@ describe('CaseController - Get court record pdf', () => {
   })
 
   describe('pdf generated', () => {
+    const user = {} as User
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const res = {} as Response
@@ -113,18 +124,20 @@ describe('CaseController - Get court record pdf', () => {
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
       mockGetObject.mockRejectedValueOnce(new Error('Some ignored error'))
 
-      await givenWhenThen(caseId, theCase, res)
+      await givenWhenThen(caseId, user, theCase, res)
     })
 
     it('should generate pdf', () => {
       expect(getCourtRecordPdfAsBuffer).toHaveBeenCalledWith(
         theCase,
+        user,
         undefined, // TODO Mock IntlService
       )
     })
   })
 
   describe('generated pdf returned', () => {
+    const user = {} as User
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const res = ({ end: jest.fn() } as unknown) as Response
@@ -136,7 +149,7 @@ describe('CaseController - Get court record pdf', () => {
       const getMock = getCourtRecordPdfAsBuffer as jest.Mock
       getMock.mockResolvedValueOnce(pdf)
 
-      await givenWhenThen(caseId, theCase, res)
+      await givenWhenThen(caseId, user, theCase, res)
     })
 
     it('should return pdf', () => {
@@ -145,6 +158,7 @@ describe('CaseController - Get court record pdf', () => {
   })
 
   describe('pdf generation fails', () => {
+    const user = {} as User
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     let then: Then
@@ -156,7 +170,7 @@ describe('CaseController - Get court record pdf', () => {
       const getMock = getCourtRecordPdfAsBuffer as jest.Mock
       getMock.mockRejectedValueOnce(new Error('Some error'))
 
-      then = await givenWhenThen(caseId, theCase, res)
+      then = await givenWhenThen(caseId, user, theCase, res)
     })
 
     it('should throw Error', () => {

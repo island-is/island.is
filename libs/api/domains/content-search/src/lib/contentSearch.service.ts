@@ -24,9 +24,11 @@ export class ContentSearchService {
     return getElasticsearchIndex(lang)
   }
 
-  mapTagAggregations(aggregations: TagAggregationResponse): TagCount[] {
+  mapTagAggregations(
+    aggregations: TagAggregationResponse,
+  ): TagCount[] | undefined {
     if (!aggregations?.group) {
-      return null
+      return
     }
     return aggregations.group.filtered.count.buckets.map<TagCount>(
       (tagObject) => ({
@@ -37,9 +39,11 @@ export class ContentSearchService {
     )
   }
 
-  mapTypeAggregations(aggregations: TypeAggregationResponse): TypeCount[] {
+  mapTypeAggregations(
+    aggregations: TypeAggregationResponse,
+  ): TypeCount[] | undefined {
     if (!aggregations?.typeCount) {
-      return null
+      return
     }
     return aggregations.typeCount.buckets.map<TypeCount>((tagObject) => ({
       key: tagObject.key,
@@ -56,7 +60,9 @@ export class ContentSearchService {
     return {
       total: body.hits.total.value,
       // we map data when it goes into the index we can return it without mapping it here
-      items: body.hits.hits.map((item) => JSON.parse(item._source.response)),
+      items: body.hits.hits.map((item) =>
+        JSON.parse(item._source.response ?? '[]'),
+      ),
       tagCounts: this.mapTagAggregations(
         body.aggregations as TagAggregationResponse,
       ),
