@@ -1,8 +1,7 @@
 import simpleGit, { DefaultLogFields, ListLogLine, SimpleGit } from 'simple-git'
-import { writeFile, mkdtemp } from 'fs/promises'
+import { mkdtemp, writeFile } from 'fs/promises'
 import { join } from 'path'
 import { Simulate } from 'react-dom/test-utils'
-import change = Simulate.change
 
 let fileA: string
 let fileB: string
@@ -21,7 +20,6 @@ async function makeChange(
 
 interface GitActionStatus {}
 async function findBestGoodRef(
-  mergeCommitSha: string,
   commitScore: (services) => number,
   git: SimpleGit,
 ) {
@@ -30,9 +28,12 @@ async function findBestGoodRef(
   let filterOutBadCommits = (change) => {
     return change.message.indexOf('-bad') == -1
   }
+  let restOfCommits = lastChanges.all.filter(
+    (ch) => ch.hash != currentChange.hash,
+  )
 
   const calculateDistance = async (p: DefaultLogFields & ListLogLine) => {
-    const changes = await git.log({ from: currentChange.hash, to: p.hash })
+    const changes = await git.log({ from: restOfCommits[0].hash, to: p.hash })
     const changed = changes.all.flatMap((ch) =>
       ch.message
         .match(/\[(?<components>.*)\]/)
@@ -43,8 +44,7 @@ async function findBestGoodRef(
     return [...new Set(changed)]
   }
 
-  const goodCommits = lastChanges.all
-    .filter((ch) => ch.hash != currentChange.hash)
+  const goodCommits = restOfCommits
     .filter(filterOutBadCommits)
     .map((change, idx) =>
       (async () => ({
@@ -100,8 +100,8 @@ describe('Change detection', () => {
       const br = await git.checkoutLocalBranch('main')
       const rootSha = await makeChange(git, fileA, 'test', 'A-good-[a,b,c]')
       const commonSha = await makeChange(git, fileA, 'test1', 'B-good-[a]')
-      const forkSha = await makeChange(git, fileA, 'test2', 'C-bad-[b]')
-      const mainSha = await makeChange(git, fileA, 'test3', 'E-good-[a,c]')
+      const badSha = await makeChange(git, fileA, 'test2', 'C-bad-[b]')
+      const fixSha = await makeChange(git, fileA, 'test3', 'D-good-[a,c]')
       const mergeCommitSha = (await git.log({ maxCount: 1 })).latest.hash
       // const br2 = await git.raw('merge-base', fixSha, 'main')
       const commits = await git.raw(
@@ -111,12 +111,13 @@ describe('Change detection', () => {
         `${commonSha}~`,
       )
 
-      const sha = await findBestGoodRef(
-        mergeCommitSha,
-        (services) => services.length,
-        git,
+      expect(await findBestGoodRef((services) => services.length, git)).toBe(
+        commonSha,
       )
-      expect(sha).toBe(commonSha)
+      await makeChange(git, fileA, 'test44', 'E')
+      expect(await findBestGoodRef((services) => services.length, git)).toBe(
+        fixSha,
+      )
     })
   })
 })
