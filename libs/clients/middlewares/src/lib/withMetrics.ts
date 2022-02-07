@@ -1,39 +1,37 @@
-import { dogStatsD } from '@island.is/infra-metrics'
+import { DogStatsD } from '@island.is/infra-metrics'
 
 import { FetchAPI } from './nodeFetch'
 
 export interface MetricsMiddlewareOptions {
   fetch: FetchAPI
-  name: string
+  metricsClient: DogStatsD
 }
 
 export const withMetrics = ({
   fetch,
-  name,
+  metricsClient,
 }: MetricsMiddlewareOptions): FetchAPI => {
-  const client = dogStatsD({
-    prefix: `${name}.`,
-  })
   return async (input, init) => {
     try {
+      metricsClient.increment('requests')
       const response = await fetch(input, init)
-      client.increment('requests')
       if (response.status >= 200 && response.status < 300) {
-        client.increment('requests.2xx')
-        client.increment('requests.ok')
+        metricsClient.increment('requests.2xx')
+        metricsClient.increment('requests.ok')
       } else if (response.status >= 300 && response.status < 400) {
-        client.increment('requests.3xx')
-        client.increment('requests.ok')
+        metricsClient.increment('requests.3xx')
+        metricsClient.increment('requests.ok')
       } else if (response.status >= 400 && response.status < 500) {
-        client.increment('requests.4xx')
-        client.increment('requests.error')
+        metricsClient.increment('requests.4xx')
+        metricsClient.increment('requests.error')
       } else if (response.status >= 500 && response.status < 600) {
-        client.increment('requests.5xx')
-        client.increment('requests.error')
+        metricsClient.increment('requests.5xx')
+        metricsClient.increment('requests.error')
       }
       return response
     } catch (error) {
-      client.increment('requests.client_error')
+      metricsClient.increment('requests.network_error')
+      metricsClient.increment('requests.error')
       throw error
     }
   }
