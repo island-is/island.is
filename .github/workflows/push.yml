@@ -545,6 +545,7 @@ jobs:
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
       LAST_GOOD_BUILD_DOCKER_TAG: ${{ needs.prepare.outputs.LAST_GOOD_BUILD_DOCKER_TAG}}
       UNAFFECTED: ${{ needs.prepare.outputs.UNAFFECTED}}
+      POLICY_TAG: ${{ needs.prepare.outputs.POLICY_TAG}}
 
     steps:
       - name: Check prepare success
@@ -561,6 +562,9 @@ jobs:
       - name: Retag unaffected Docker images
         if: "!startsWith(env.GIT_BRANCH_DEPLOY, 'feature/')"
         run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
+      - name: Retag unaffected Docker images with lifecycle
+        if: "!startsWith(env.GIT_BRANCH_DEPLOY, 'feature/')"
+        run: ./scripts/ci/retag-lifecycle-policy.sh "$UNAFFECTED"
 
   deploy:
     runs-on: ubuntu-20.04
