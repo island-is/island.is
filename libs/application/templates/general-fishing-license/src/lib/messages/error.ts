@@ -23,7 +23,7 @@ export const error = defineMessages({
     description: 'Error message when a required file field has not been filled',
   },
   requiredRadioField: {
-    d: 'gfl.application:error.requiredRadioField',
+    id: 'gfl.application:error.requiredRadioField',
     defaultMessage: 'Skylda er að haka í einn af ofangreindum reitum',
     description:
       'Error message when a required field has not pressed a radio option',
