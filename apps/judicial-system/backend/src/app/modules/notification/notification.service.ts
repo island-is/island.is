@@ -229,16 +229,10 @@ export class NotificationService {
     const requestPdf = await getRequestPdfAsBuffer(theCase, this.formatMessage)
 
     try {
-      const streamId = await this.courtService.uploadStream(
-        theCase.courtId,
-        'Krafa.pdf',
-        'application/pdf',
-        requestPdf,
-      )
       await this.courtService.createRequest(
         theCase.courtId,
         theCase.courtCaseNumber,
-        streamId,
+        requestPdf,
       )
     } catch (error) {
       this.logger.error('Failed to upload request pdf to court', { error })

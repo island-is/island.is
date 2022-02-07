@@ -64,7 +64,8 @@ export class FileService {
 
   private async throttleUploadStream(
     file: CaseFile,
-    courtId: string | undefined,
+    courtId?: string,
+    courtCaseNumber?: string,
   ): Promise<string> {
     await this.throttle.catch((reason) => {
       this.logger.info('Previous upload failed', { reason })
@@ -76,8 +77,10 @@ export class FileService {
       writeFile(`${file.name}`, content)
     }
 
-    return this.courtService.uploadStream(
+    return this.courtService.createDocument(
       courtId,
+      courtCaseNumber,
+      file.name,
       file.name,
       file.type,
       content,
@@ -203,17 +206,9 @@ export class FileService {
       throw new NotFoundException(`File ${file.id} does not exists in AWS S3`)
     }
 
-    this.throttle = this.throttleUploadStream(file, courtId)
+    this.throttle = this.throttleUploadStream(file, courtId, courtCaseNumber)
 
-    const streamId = await this.throttle
-
-    const documentId = await this.courtService.createDocument(
-      courtId,
-      courtCaseNumber,
-      file.name,
-      file.name,
-      streamId,
-    )
+    const documentId = await this.throttle
 
     const s3Key = file.key
 
