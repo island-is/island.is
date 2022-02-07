@@ -236,6 +236,8 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
                 <Controller
                   control={control}
                   name="code"
+                  format="######"
+                  maxLength={6}
                   rules={{
                     required: {
                       value: true,

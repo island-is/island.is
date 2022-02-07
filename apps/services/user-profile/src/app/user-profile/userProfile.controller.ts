@@ -119,10 +119,7 @@ export class UserProfileController {
         { hash: userProfileDto.emailCode },
         user.nationalId,
       )
-      userProfileDto = {
-        ...userProfileDto,
-        emailVerified: emailVerified.confirmed,
-      }
+
       if (emailVerified.confirmed) {
         await this.verificationService.removeEmailVerification(
           userProfileDto.nationalId,
@@ -130,6 +127,7 @@ export class UserProfileController {
         userProfileDto = {
           ...userProfileDto,
           emailStatus: DataStatus.VERIFIED,
+          emailVerified: emailVerified.confirmed,
         }
       }
     }
@@ -139,10 +137,7 @@ export class UserProfileController {
         { code: userProfileDto.smsCode },
         user.nationalId,
       )
-      userProfileDto = {
-        ...userProfileDto,
-        mobilePhoneNumberVerified: phoneVerified.confirmed,
-      }
+
       if (phoneVerified.confirmed) {
         await this.verificationService.removeSmsVerification(
           userProfileDto.nationalId,
@@ -151,6 +146,7 @@ export class UserProfileController {
         userProfileDto = {
           ...userProfileDto,
           emailStatus: DataStatus.VERIFIED,
+          mobilePhoneNumberVerified: phoneVerified.confirmed,
         }
       }
     }
@@ -190,8 +186,10 @@ export class UserProfileController {
     const updatedFields = Object.keys(userProfileToUpdate)
     userProfileToUpdate = {
       ...userProfileToUpdate,
-      emailVerified: profile.emailVerified,
-      mobilePhoneNumberVerified: profile.mobilePhoneNumberVerified,
+      // emailVerified: profile.emailVerified,
+      // mobilePhoneNumberVerified: profile.mobilePhoneNumberVerified,
+      mobileStatus: DataStatus.NOT_VERIFIED,
+      emailStatus: DataStatus.NOT_VERIFIED,
     }
 
     if (userProfileToUpdate.mobilePhoneNumber) {
@@ -200,15 +198,11 @@ export class UserProfileController {
         user.nationalId,
       )
 
-      userProfileToUpdate = {
-        ...userProfileToUpdate,
-        mobilePhoneNumberVerified: phoneVerified.confirmed,
-      }
-
       if (phoneVerified.confirmed) {
         userProfileToUpdate = {
           ...userProfileToUpdate,
           mobileStatus: DataStatus.VERIFIED,
+          mobilePhoneNumberVerified: phoneVerified.confirmed,
         }
       }
     }
@@ -219,15 +213,11 @@ export class UserProfileController {
         user.nationalId,
       )
 
-      userProfileToUpdate = {
-        ...userProfileToUpdate,
-        emailVerified: emailVerified.confirmed,
-      }
-
       if (emailVerified.confirmed) {
         userProfileToUpdate = {
           ...userProfileToUpdate,
           emailStatus: DataStatus.VERIFIED,
+          emailVerified: emailVerified.confirmed,
         }
       }
     }

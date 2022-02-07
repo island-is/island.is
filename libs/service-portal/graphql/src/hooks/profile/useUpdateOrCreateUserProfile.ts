@@ -32,17 +32,29 @@ export const useUpdateOrCreateUserProfile = () => {
     const profile = await refetch()
     const userProfile = profile.data?.getUserProfile
 
+    // const input = {
+    //   email: data.email || userProfile?.email || '',
+    //   locale: data.locale || (userProfile?.locale as Locale),
+    //   mobilePhoneNumber:
+    //     data.mobilePhoneNumber || userProfile?.mobilePhoneNumber || '',
+    //   canNudge:
+    //     data.canNudge === undefined ? userProfile?.canNudge : data.canNudge,
+    //   bankInfo: data.bankInfo || userProfile?.bankInfo || '',
+    //   emailStatus: data?.emailStatus || userProfile?.emailStatus || undefined,
+    //   mobileStatus:
+    //     data?.mobileStatus || userProfile?.mobileStatus || undefined,
+    //   emailCode: data?.emailCode || undefined,
+    //   smsCode: data?.smsCode || undefined,
+    // }
+
     const input = {
-      email: data.email || userProfile?.email || '',
-      locale: data.locale || (userProfile?.locale as Locale),
-      mobilePhoneNumber:
-        data.mobilePhoneNumber || userProfile?.mobilePhoneNumber || '',
-      canNudge:
-        data.canNudge === undefined ? userProfile?.canNudge : data.canNudge,
-      bankInfo: data.bankInfo || userProfile?.bankInfo || '',
-      emailStatus: data?.emailStatus || userProfile?.emailStatus || undefined,
-      mobileStatus:
-        data?.mobileStatus || userProfile?.mobileStatus || undefined,
+      email: data.email,
+      locale: data.locale,
+      mobilePhoneNumber: data.mobilePhoneNumber,
+      canNudge: data.canNudge,
+      bankInfo: data.bankInfo,
+      emailStatus: data?.emailStatus,
+      mobileStatus: data?.mobileStatus,
       emailCode: data?.emailCode || undefined,
       smsCode: data?.smsCode || undefined,
     }

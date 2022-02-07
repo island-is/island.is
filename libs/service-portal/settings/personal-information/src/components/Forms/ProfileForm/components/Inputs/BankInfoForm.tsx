@@ -60,6 +60,7 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
                   id="bank"
                   name="bank"
                   maxLength={4}
+                  format="####"
                   placeholder="0000"
                   label={formatMessage(msg.inputBankLabel)}
                   defaultValue={bankInfo?.bank || ''}
@@ -87,6 +88,7 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
                   id="l"
                   name="l"
                   maxLength={2}
+                  format="##"
                   placeholder="00"
                   label={formatMessage(msg.inputLedgerLabel)}
                   defaultValue={bankInfo?.l || ''}
@@ -114,6 +116,7 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
                   id="account"
                   name="account"
                   maxLength={6}
+                  format="######"
                   placeholder="000000"
                   label={formatMessage(msg.inputAccountNrLabel)}
                   defaultValue={bankInfo?.account || ''}

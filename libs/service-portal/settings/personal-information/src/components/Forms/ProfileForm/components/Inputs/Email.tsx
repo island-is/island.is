@@ -221,32 +221,26 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
           <form onSubmit={handleSubmit(handleConfirmCode)}>
             <Columns alignY="center">
               <Column width="5/12">
-                <Controller
+                <InputController
                   control={control}
+                  id="code"
                   name="code"
+                  format="######"
+                  label={formatMessage(m.verificationCode)}
+                  placeholder={formatMessage(m.verificationCode)}
                   defaultValue=""
+                  error={errors.code?.message || formErrors.code}
+                  disabled={verificationValid}
+                  size="xs"
+                  onChange={(inp) => {
+                    setCodeInternal(inp.target.value)
+                  }}
                   rules={{
                     required: {
                       value: true,
                       message: formatMessage(m.verificationCodeRequired),
                     },
                   }}
-                  render={({ onChange, value, name }) => (
-                    <Input
-                      label={formatMessage(m.verificationCode)}
-                      placeholder={formatMessage(m.verificationCode)}
-                      name={name}
-                      value={value}
-                      hasError={errors.code || !!formErrors.code}
-                      errorMessage={errors.code?.message || formErrors.code}
-                      disabled={verificationValid}
-                      size="xs"
-                      onChange={(inp) => {
-                        onChange(inp.target.value)
-                        setCodeInternal(inp.target.value)
-                      }}
-                    />
-                  )}
                 />
               </Column>
               <Column width="content">

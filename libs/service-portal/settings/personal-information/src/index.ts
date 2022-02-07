@@ -46,6 +46,8 @@ export const personalInformationModule: ServicePortalModule = {
         query: USER_PROFILE,
       })
 
+      const profileExists = res.data?.getUserProfile?.modified
+      // const profileExists = res.data?.getUserProfile === null
       const dateDiffLate = res.data?.getUserProfile
         ? outOfDate(res.data.getUserProfile)
         : false
@@ -53,7 +55,7 @@ export const personalInformationModule: ServicePortalModule = {
       if (
         // true
         process.env.NODE_ENV !== 'development' &&
-        (res.data?.getUserProfile === null || dateDiffLate) &&
+        (!profileExists || dateDiffLate) &&
         userInfo.scopes.includes(UserProfileScope.write)
       )
         routes.push({

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
-import { ApolloError } from 'apollo-server-express'
+import { ApolloError, ForbiddenError } from 'apollo-server-express'
 import {
   ConfirmationDtoResponse,
   CreateUserProfileDto,
@@ -20,6 +20,7 @@ import { UserProfile } from './userProfile.model'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { IslykillService } from './islykill.service'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
+import { DataStatus } from './types/dataStatus.enum'
 
 // eslint-disable-next-line
 const handleError = (error: any) => {
@@ -123,6 +124,8 @@ export class UserProfileService {
       nationalId: user.nationalId,
       //temporary as schemas where not working properly
       locale: input.locale as string,
+      smsCode: input.smsCode,
+      emailCode: input.emailCode,
 
       /**
        *  Mobile and email will be within islykill service
@@ -183,6 +186,8 @@ export class UserProfileService {
       //temporary as schemas where not working properly
       locale: input.locale as string,
       documentNotifications: input.documentNotifications,
+      smsCode: input.smsCode,
+      emailCode: input.emailCode,
 
       /**
        *  Mobile and email will be within islykill service
@@ -203,16 +208,37 @@ export class UserProfileService {
       user,
     )
 
+    const updatedUserProfile = await this.userProfileApiWithAuth(user)
+      .userProfileControllerUpdate(request)
+      .catch(handleError)
+
     if (feature) {
       const islyklarData = await this.islyklarService.getIslykillSettings(
         user.nationalId,
       )
 
+      if (
+        (input.email &&
+          updatedUserProfile.emailStatus !== DataStatus.VERIFIED) ||
+        (input.mobilePhoneNumber &&
+          updatedUserProfile.mobileStatus !== DataStatus.VERIFIED)
+      ) {
+        throw new ForbiddenError('Updating value verification invalid')
+      }
+
       if (islyklarData.nationalId) {
         await this.islyklarService
           .updateIslykillSettings(user.nationalId, {
-            email: input.email ?? islyklarData.email,
-            mobile: input.mobilePhoneNumber ?? islyklarData.mobile,
+            email:
+              input.email &&
+              updatedUserProfile.emailStatus === DataStatus.VERIFIED
+                ? input.email
+                : islyklarData.email,
+            mobile:
+              input.mobilePhoneNumber &&
+              updatedUserProfile.mobileStatus === DataStatus.VERIFIED
+                ? input.mobilePhoneNumber
+                : islyklarData.mobile,
             canNudge: input.canNudge ?? islyklarData.canNudge,
             bankInfo: input.bankInfo ?? islyklarData.bankInfo,
           }) // Current version does not return the updated user in the response.
@@ -220,8 +246,16 @@ export class UserProfileService {
       } else {
         await this.islyklarService
           .createIslykillSettings(user.nationalId, {
-            email: input.email,
-            mobile: input.mobilePhoneNumber,
+            email:
+              input.email &&
+              updatedUserProfile.emailStatus === DataStatus.VERIFIED
+                ? input.email
+                : islyklarData.email,
+            mobile:
+              input.mobilePhoneNumber &&
+              updatedUserProfile.mobileStatus === DataStatus.VERIFIED
+                ? input.mobilePhoneNumber
+                : islyklarData.mobile,
           }) // Current version does not return the newly created user in the response.
           .catch(handleError)
       }
@@ -229,9 +263,7 @@ export class UserProfileService {
       logger.info('User profile update is feature flagged for user')
     }
 
-    return await this.userProfileApiWithAuth(user)
-      .userProfileControllerUpdate(request)
-      .catch(handleError)
+    return updatedUserProfile
   }
 
   async createSmsVerification(
