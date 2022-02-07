@@ -40,7 +40,7 @@ import {
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
 } from '../../formatters'
-import { notifications as m } from '../../messages'
+import { courtUpload, notifications as m } from '../../messages'
 import { FileService } from '../file/file.service'
 import { DefendantService } from '../defendant/defendant.service'
 import { Defendant } from '../defendant/models/defendant.model'
@@ -155,7 +155,9 @@ export class CaseService {
       await this.courtService.createRuling(
         theCase.courtId,
         theCase.courtCaseNumber,
-        'Úrskurður',
+        this.formatMessage(courtUpload.ruling, {
+          courtCaseNumber: theCase.courtCaseNumber,
+        }),
         buffer,
       )
 
@@ -184,7 +186,9 @@ export class CaseService {
       await this.courtService.createCourtRecord(
         theCase.courtId,
         theCase.courtCaseNumber,
-        'Þingbók',
+        this.formatMessage(courtUpload.courtRecord, {
+          courtCaseNumber: theCase.courtCaseNumber,
+        }),
         buffer,
       )
     } catch (error) {
