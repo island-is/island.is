@@ -144,7 +144,7 @@ export const StepFour: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'demands',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -193,7 +193,7 @@ export const StepFour: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'caseFacts',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -244,7 +244,7 @@ export const StepFour: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'legalArguments',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -289,7 +289,7 @@ export const StepFour: React.FC = () => {
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'comments',
-                    event,
+                    event.target.value,
                     [],
                     workingCase,
                     setWorkingCase,

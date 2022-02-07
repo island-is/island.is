@@ -14,9 +14,10 @@ import {
 import {
   Application,
   ApplicationState,
-  CreateAmount,
+  Amount,
   eventTypeFromApplicationState,
   HomeCircumstances,
+  FamilyStatus,
 } from '@island.is/financial-aid/shared/lib'
 import { useApplicationState } from '../../utils/useApplicationState'
 import StateModalContainer from './StateModalContainer'
@@ -29,7 +30,7 @@ interface Props {
   setApplication: React.Dispatch<React.SetStateAction<Application | undefined>>
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
   homeCircumstances: HomeCircumstances
-  spouseNationalId?: string
+  familyStatus: FamilyStatus
 }
 
 const StateModal = ({
@@ -40,7 +41,7 @@ const StateModal = ({
   setApplication,
   setIsLoading,
   homeCircumstances,
-  spouseNationalId,
+  familyStatus,
 }: Props) => {
   const [selected, setSelected] = useState<ApplicationState | undefined>()
 
@@ -51,7 +52,7 @@ const StateModal = ({
     state: ApplicationState,
     rejection?: string,
     comment?: string,
-    amount?: CreateAmount,
+    amount?: Amount,
   ) => {
     setIsLoading(true)
 
@@ -162,7 +163,7 @@ const StateModal = ({
           <AcceptModal
             isModalVisable={selected === ApplicationState.APPROVED}
             onCancel={onClickCancel}
-            onSaveApplication={(amount: CreateAmount) => {
+            onSaveApplication={(amount: Amount) => {
               if (!selected) {
                 return
               }
@@ -170,12 +171,14 @@ const StateModal = ({
                 applicationId,
                 selected,
                 undefined,
-                undefined,
+                `Samþykkt upphæð: kr. ${amount?.finalAmount.toLocaleString(
+                  'de-DE',
+                )}.-`,
                 amount,
               )
             }}
             homeCircumstances={homeCircumstances}
-            spouseNationalId={spouseNationalId}
+            familyStatus={familyStatus}
           />
 
           <RejectModal

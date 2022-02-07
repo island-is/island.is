@@ -32,7 +32,6 @@ const createMockApplication = (
   typeId: data.typeId || ApplicationTypes.EXAMPLE,
   modified: new Date(),
   created: new Date(),
-  attachments: {},
   answers: data.answers || {},
   externalData: data.externalData || {},
   status: ApplicationStatus.IN_PROGRESS,

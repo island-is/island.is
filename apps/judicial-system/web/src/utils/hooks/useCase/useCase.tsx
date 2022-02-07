@@ -12,7 +12,6 @@ import type {
   CaseTransition,
   RequestSignatureResponse,
   UpdateCase,
-  Defendant,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
@@ -79,10 +78,6 @@ interface RequestCourtRecordSignatureMutationResponse {
 
 interface ExtendCaseMutationResponse {
   extendCase: Case
-}
-
-interface CreateDefendantMutationResponse {
-  defendant: Defendant
 }
 
 const useCase = () => {
