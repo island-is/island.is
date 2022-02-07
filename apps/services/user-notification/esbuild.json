@@ -37,7 +37,9 @@
     "@protobufjs/utf8",
     "firebase-admin",
     "lru-cache",
-    "pseudomap"
+    "pseudomap",
+    "jsonwebtoken",
+    "buffer-equal-constant-time"
   ],
   "keepNames": true
 }
