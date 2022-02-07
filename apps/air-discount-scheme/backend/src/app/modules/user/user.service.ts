@@ -91,15 +91,18 @@ export class UserService {
     return this.getUserByNationalId<User>(nationalId, User)
   }
 
-  async getMultipleUsersByNationalIdArray(
-    ids: string[],
-  ): Promise<Array<User | null>> {
-    const allUsers = ids.map(
-      async (nationalId) =>
-        (this.getUserInfoByNationalId(nationalId) as unknown) as User,
+  async getMultipleUsersByNationalIdArray(ids: string[]): Promise<Array<User>> {
+    const allUsers = ids.map(async (nationalId) =>
+      this.getUserInfoByNationalId(nationalId),
     )
 
-    const result = await Promise.all(allUsers)
+    const result = (await Promise.all(allUsers)).filter(Boolean) as Array<User>
+
+    if (!result || result.length === 0) {
+      throw new Error(
+        'Could not find NationalRegistry records of neither User or relatives.',
+      )
+    }
 
     return result
   }
