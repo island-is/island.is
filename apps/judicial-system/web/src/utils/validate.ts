@@ -6,6 +6,7 @@ export type Validation =
   | 'time-format'
   | 'police-casenumber-format'
   | 'national-id'
+  | 'date-of-birth'
   | 'email-format'
   | 'phonenumber'
   | 'date-format'
@@ -45,6 +46,14 @@ export const getRegexByValidation = (validation: Validation) => {
         regex: new RegExp(/^\d{6}(-?\d{4})?$/g),
         errorMessage: 'Dæmi: 000000-0000',
       }
+    case 'date-of-birth': {
+      return {
+        regex: new RegExp(
+          /^(0[1-9]|[12][0-9]|3[01])[.](0[1-9]|1[012])[.](19|20)\d\d$/g,
+        ),
+        errorMessage: 'Dæmi: 00.00.0000',
+      }
+    }
     case 'email-format':
       return {
         regex: new RegExp(/^$|^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g),

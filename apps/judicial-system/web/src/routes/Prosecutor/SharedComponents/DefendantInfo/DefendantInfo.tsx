@@ -98,9 +98,13 @@ const DefendantInfo: React.FC<Props> = (props) => {
           onChange={() => {
             updateDefendantState(defendant.id, {
               noNationalId: !defendant.noNationalId,
+              nationalId: undefined,
             })
 
-            onChange(defendant.id, { noNationalId: !defendant.noNationalId })
+            onChange(defendant.id, {
+              noNationalId: !defendant.noNationalId,
+              nationalId: undefined,
+            })
           }}
           filled
           large
@@ -108,12 +112,14 @@ const DefendantInfo: React.FC<Props> = (props) => {
       </Box>
       <Box marginBottom={2}>
         <InputMask
-          mask="999999-9999"
+          mask={defendant.noNationalId ? '99.99.9999' : '999999-9999'}
           maskPlaceholder={null}
           value={defendant.nationalId ?? ''}
           onChange={(evt) => {
             removeErrorMessageIfValid(
-              ['empty', 'national-id'] as Validation[],
+              defendant.noNationalId
+                ? ['empty', 'date-of-birth']
+                : ['empty', 'national-id'],
               evt.target.value,
               nationalIdErrorMessage,
               setNationalIdErrorMessage,
@@ -125,7 +131,9 @@ const DefendantInfo: React.FC<Props> = (props) => {
           }}
           onBlur={(evt) => {
             validateAndSetErrorMessage(
-              ['empty', 'national-id'],
+              defendant.noNationalId
+                ? ['empty', 'date-of-birth']
+                : ['empty', 'national-id'],
               evt.target.value,
               setNationalIdErrorMessage,
             )
@@ -137,8 +145,14 @@ const DefendantInfo: React.FC<Props> = (props) => {
             data-testid="nationalId"
             name="accusedNationalId"
             autoComplete="off"
-            label={formatMessage(core.nationalId)}
-            placeholder={formatMessage(core.nationalId)}
+            label={formatMessage(
+              defendant.noNationalId ? core.dateOfBirth : core.nationalId,
+            )}
+            placeholder={formatMessage(
+              defendant.noNationalId
+                ? core.dateOfBirthPlaceholder
+                : core.nationalId,
+            )}
             errorMessage={nationalIdErrorMessage}
             hasError={nationalIdErrorMessage !== ''}
             required

@@ -26,6 +26,17 @@ export const core = defineMessages({
     defaultMessage: 'Kennitala',
     description: 'Notað fyrir orðið Kennitala í öllum flæðum.',
   },
+  dateOfBirth: {
+    id: 'judicial.system.core:date_of_birth',
+    defaultMessage: 'Fæðingardagur',
+    description: 'Notað fyrir orðið Fæðingardagur í öllum flæðum.',
+  },
+  dateOfBirthPlaceholder: {
+    id: 'judicial.system.core:date_of_birth.placeholder',
+    defaultMessage: 'dd.mm.áááá',
+    description:
+      'Notað sem skýritexti í Fæðingardagur textaboxi í öllum flæðum.',
+  },
   fullName: {
     id: 'judicial.system.core:full_name',
     defaultMessage: 'Fullt nafn',
