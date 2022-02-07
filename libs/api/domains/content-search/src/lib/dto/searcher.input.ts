@@ -14,17 +14,17 @@ import { SearchableTags } from '../enums/searchableTags'
 @InputType()
 export class Tag {
   @Field(() => SearchableTags)
-  type: SearchableTags
+  type!: SearchableTags
 
   @Field(() => String)
-  key: string
+  key!: string
 }
 
 @InputType()
 export class SearcherInput {
   @Field(() => String)
   @IsString()
-  queryString: string
+  queryString!: string
 
   @Field(() => [SearchableContentTypes], { nullable: true })
   @IsArray()
