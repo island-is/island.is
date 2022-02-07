@@ -130,9 +130,14 @@ export const ShipSelection: FC<FieldBaseProps> = ({
           >
             <ShipInformation ship={ship} />
             <Stack space={1} align="right">
-              {ship.fishingLicences.map((license) => (
-                <Tag variant="blue">{license}</Tag>
-              ))}
+              {ship.fishingLicences.map((license) => {
+                console.log(license)
+                return (
+                  <Tag variant="blue">
+                    {formatMessage(shipSelection.tags[license.code])}
+                  </Tag>
+                )
+              })}
             </Stack>
           </Box>
         )

@@ -21,7 +21,12 @@ export class FishingLicenceApiClientMock implements FishingLicenseClient {
         seaworthiness: { validTo: new Date('21 Aug 2022 00:12:00 GMT') },
         deprivations: [],
         features: '',
-        fishingLicences: ['Aflamark'],
+        fishingLicences: [
+          {
+            code: FishingLicenseCodeType.catchMark,
+            name: 'aflamark',
+          },
+        ],
       },
       {
         name: 'Skip tvö',
@@ -32,7 +37,16 @@ export class FishingLicenceApiClientMock implements FishingLicenseClient {
         seaworthiness: { validTo: new Date('23 Jan 2021 00:12:00 GMT') },
         deprivations: [],
         features: '',
-        fishingLicences: ['Krókaflamark', 'Sérleyfi 123'],
+        fishingLicences: [
+          {
+            code: FishingLicenseCodeType.catchMark,
+            name: 'aflamark',
+          },
+          {
+            code: FishingLicenseCodeType.hookCatchLimit,
+            name: 'krókaflamark',
+          },
+        ],
       },
       {
         name: 'Lítill bátur',
