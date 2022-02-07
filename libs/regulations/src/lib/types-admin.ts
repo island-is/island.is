@@ -7,12 +7,7 @@ import {
   DraftingStatus,
   RegulationDraftId,
 } from './types-admin-database'
-import {
-  Regulation,
-  RegulationLawChapter,
-  RegulationMinistry,
-} from './types-web'
-import { RegName, Kennitala } from './types'
+import { RegName, Kennitala, LawChapter, Ministry, Regulation } from './types'
 
 export type {
   DraftingStatus,
@@ -52,8 +47,8 @@ export type RegulationDraft = {
   /** 0 (zero) signifies a new regulation draft */
   id: RegulationDraftId | 0
   authors: ReadonlyArray<Author>
-  lawChapters: ReadonlyArray<RegulationLawChapter>
-  ministry?: RegulationMinistry
+  lawChapters: ReadonlyArray<LawChapter>
+  ministry?: Ministry
   impacts: ReadonlyArray<DraftRegulationCancel | DraftRegulationChange>
 } & Omit<DB_RegulationDraft, 'id' | 'ministryId' | 'text'> &
   Pick<Regulation, 'text' | 'appendixes' | 'comments'>
