@@ -61,7 +61,7 @@ describe('FileController - Upload case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const key = `${caseId}/${uuid()}/test.txt`
+    const key = `uploads/${caseId}/${uuid()}/test.txt`
     const caseFile = {
       id: fileId,
       state: CaseFileState.STORED_IN_RVG,
@@ -84,7 +84,7 @@ describe('FileController - Upload case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const key = `${caseId}/${uuid()}/test.txt`
+    const key = `uploads/${caseId}/${uuid()}/test.txt`
     const caseFile = {
       id: fileId,
       state: CaseFileState.STORED_IN_RVG,
@@ -216,7 +216,7 @@ describe('FileController - Upload case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const key = `${caseId}/${uuid()}/test.txt`
+    const key = `uploads/${caseId}/${uuid()}/test.txt`
     const caseFile = {
       id: fileId,
       state: CaseFileState.STORED_IN_RVG,
