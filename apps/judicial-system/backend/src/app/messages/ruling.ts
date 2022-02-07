@@ -1,6 +1,82 @@
 import { defineMessage, defineMessages } from '@formatjs/intl'
 
 export const ruling = {
+  title: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.title',
+    defaultMessage: 'Úrskurður',
+    description: 'Notaður sem titill á úrskurði.',
+  }),
+  missingCourt: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.missing_court',
+    defaultMessage: 'Dómstóll hefur ekki verið skráður',
+    description: 'Notaður sem texti þegar dómstóll hefur ekki verið skráður.',
+  }),
+  caseNumber: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.case_number',
+    defaultMessage: 'Mál nr. {caseNumber}',
+    description:
+      'Notað sem undirsögn á úrskurði þar sem {caseNumber} er númer á máli. {caseNumber} er sjálfkrafa bætt við í kóða.',
+  }),
+  prosecutorDemandsHeading: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.prosecutor_demands_heading',
+    defaultMessage: 'Krafa',
+    description:
+      'Notaður sem fyrirsögn á kröfu eins og hún er umorðuð af dómstól.',
+  }),
+  missingProsecutorDemands: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.missing_prosecutor_demands',
+    defaultMessage: 'Krafa hefur ekki verið skráð.',
+    description: 'Notaður sem texti þegar krafa hefur ekki verið skráð.',
+  }),
+  courtCaseFactsHeading: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.court_case_facts_heading',
+    defaultMessage: 'Greinargerð um málsatvik',
+    description:
+      'Notaður sem fyrirsögn á greinargerð um málsatvika eins og þau eru umorðuð af dómstól.',
+  }),
+  missingCourtCaseFacts: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.missing_court_case_facts',
+    defaultMessage: 'Málsatvik hafa ekki verið skráð.',
+    description: 'Notaður sem texti þegar málsatvik hafa ekki verið skráð.',
+  }),
+  courtLegalArgumentsHeading: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.court_legal_arguments_heading',
+    defaultMessage: 'Greinargerð um lagarök',
+    description:
+      'Notaður sem fyrirsögn á greinargerða um lagarök eins og þau eru umorðuð af dómstól.',
+  }),
+  missingCourtLegalArguments: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.missing_court_legal_arguments',
+    defaultMessage: 'Lagarök hafa ekki verið skráð.',
+    description: 'Notaður sem texti þegar lagarök hafa ekki verið skráð.',
+  }),
+  rulingHeading: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.ruling_heading_tmp', // TODO: remove _tmp
+    defaultMessage: 'Niðurstaða',
+    description: 'Notaður sem fyrirsögn á niðurstöðu.',
+  }),
+  missingRuling: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.missing_ruling',
+    defaultMessage: 'Niðurstaða hefur ekki verið skráð.',
+    description: 'Notaður sem texti þegar niðurstaða hefur ekki verið skráð.',
+  }),
+  conclusionHeading: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.conclusion_heading_tmp', // TODO: remove _tmp
+    defaultMessage: 'Úrskurðarorð',
+    description: 'Notaður sem fyrirsögn á úrskurðarorð.',
+  }),
+  missingConclusion: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.missing_conclusion',
+    defaultMessage: 'Úrskurðarorð hafa ekki verið skráð.',
+    description: 'Notaður sem texti þegar úrskurðarorð hafa ekki verið skráð.',
+  }),
+  missingJudge: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.missing_judge',
+    defaultMessage: 'Dómari hefur ekki verið skráður',
+    description: 'Notaður sem texti þegar dómari hefur ekki verið skráður.',
+  }),
+
+  // TODO: Remove all messages below
   proceedingsHeading: defineMessage({
     id: 'judicial.system.backend:pdf.ruling.proceedings_heading',
     defaultMessage: 'Þingbók og úrskurður',
@@ -10,11 +86,6 @@ export const ruling = {
     id: 'judicial.system.backend:pdf.ruling.proceedings_heading_short_version',
     defaultMessage: 'Þingbók',
     description: 'Notaður sem fyrirsögn á styttri útgáfu af þingbók.',
-  }),
-  caseNumber: defineMessage({
-    id: 'judicial.system.backend:pdf.ruling.case_number',
-    defaultMessage: 'Mál nr. {caseNumber}',
-    description: 'Notað sem undirsögn á þingbók fyrir númer á máli',
   }),
   intro: defineMessage({
     id: 'judicial.system.backend:pdf.ruling.into',
@@ -59,7 +130,7 @@ export const ruling = {
         'Notaður sem heiti á öðrum þingmerktum skjölum þar sem {documentName} er nafn skjals og {documentNumber} er númer skjals og er sjálfkrafa bætt við í kóða.',
     },
   }),
-  rulingHeading: defineMessage({
+  rulingHeading1: defineMessage({
     id: 'judicial.system.backend:pdf.ruling.ruling_heading',
     defaultMessage: 'Úrskurður',
     description: 'Notaður sem fyrirsögn á úrskurð.',
@@ -69,25 +140,7 @@ export const ruling = {
     defaultMessage: '(...)',
     description: 'Notaður í stað úrskurðartexta í stuttu útgáfu úrskurðar.',
   }),
-  courtDemandsHeading: defineMessage({
-    id: 'judicial.system.backend:pdf.ruling.court_demands_heading',
-    defaultMessage: 'Krafa',
-    description:
-      'Notaður sem fyrirsögn á kröfu eins og hún er umorðuð af dómstól.',
-  }),
-  courtCaseFactsHeading: defineMessage({
-    id: 'judicial.system.backend:pdf.ruling.court_case_facts_heading',
-    defaultMessage: 'Greinargerð um málsatvik',
-    description:
-      'Notaður sem fyrirsögn á greinargerð um málsatvika eins og þau eru umorðuð af dómstól.',
-  }),
-  courtLegalArgumentsHeading: defineMessage({
-    id: 'judicial.system.backend:pdf.ruling.court_legal_arguments_heading',
-    defaultMessage: 'Greinargerð um lagarök',
-    description:
-      'Notaður sem fyrirsögn á greinargerða um lagarök eins og þau eru umorðuð af dómstól.',
-  }),
-  conclusionHeading: defineMessage({
+  rulingHeading2: defineMessage({
     id: 'judicial.system.backend:pdf.ruling.conclusion_heading',
     defaultMessage: 'Niðurstaða',
     description: 'Notaður sem fyrirsögn á niðurstöðu.',
