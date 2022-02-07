@@ -6,7 +6,6 @@ import {
   FileType,
   HomeCircumstances,
   Municipality,
-  RolesRule,
   User,
 } from '@island.is/financial-aid/shared/lib'
 import { ForbiddenException } from '@nestjs/common'
@@ -73,9 +72,14 @@ describe('ApplicationController - Create', () => {
     let mockCreate: jest.Mock
     let mockFindOne: jest.Mock
 
+    const user: User = {
+      nationalId: '0000000000',
+      name: 'The User',
+    }
+
     const application: CreateApplicationDto = {
       state: ApplicationState.NEW,
-      name: 'Tester',
+      name: user.name,
       phoneNumber: '',
       email: 'Some mail',
       homeCircumstances: HomeCircumstances.UNKNOWN,
@@ -101,12 +105,6 @@ describe('ApplicationController - Create', () => {
       municipalityCode: '',
       streetName: '',
       homeCircumstancesCustom: '',
-    }
-    const user: User = {
-      nationalId: '0000000000',
-      name: 'The User',
-      folder: uuid(),
-      service: RolesRule.OSK,
     }
 
     beforeEach(async () => {
@@ -147,9 +145,14 @@ describe('ApplicationController - Create', () => {
 
     const id = uuid()
 
+    const user: User = {
+      nationalId: '0000000000',
+      name: 'The User',
+    }
+
     const application: CreateApplicationDto = {
       state: ApplicationState.NEW,
-      name: 'Tester',
+      name: user.name,
       phoneNumber: '',
       email: 'Some mail',
       homeCircumstances: HomeCircumstances.UNKNOWN,
@@ -175,12 +178,6 @@ describe('ApplicationController - Create', () => {
       streetName: '',
       homeCircumstancesCustom: '',
       employmentCustom: '',
-    }
-    const user: User = {
-      nationalId: '0000000000',
-      name: 'The User',
-      folder: uuid(),
-      service: RolesRule.OSK,
     }
 
     const municipality: Municipality = {
@@ -256,9 +253,14 @@ describe('ApplicationController - Create', () => {
 
     const id = uuid()
 
+    const user: User = {
+      nationalId: '0000000000',
+      name: 'The User',
+    }
+
     const application: CreateApplicationDto = {
       state: ApplicationState.NEW,
-      name: 'Tester',
+      name: user.name,
       phoneNumber: '',
       email: 'Some mail',
       homeCircumstances: HomeCircumstances.UNKNOWN,
@@ -284,12 +286,6 @@ describe('ApplicationController - Create', () => {
       streetName: '',
       homeCircumstancesCustom: '',
       employmentCustom: '',
-    }
-    const user: User = {
-      nationalId: '0000000000',
-      name: 'The User',
-      folder: uuid(),
-      service: RolesRule.OSK,
     }
 
     const municipality: Municipality = {
@@ -359,9 +355,14 @@ describe('ApplicationController - Create', () => {
 
     const id = uuid()
 
+    const user: User = {
+      nationalId: '0000000000',
+      name: 'The User',
+    }
+
     const application: CreateApplicationDto = {
       state: ApplicationState.NEW,
-      name: 'Tester',
+      name: user.name,
       phoneNumber: '',
       email: 'Some mail',
       homeCircumstances: HomeCircumstances.UNKNOWN,
@@ -390,12 +391,6 @@ describe('ApplicationController - Create', () => {
       streetName: '',
       homeCircumstancesCustom: '',
       employmentCustom: '',
-    }
-    const user: User = {
-      nationalId: '0000000000',
-      name: 'The User',
-      folder: uuid(),
-      service: RolesRule.OSK,
     }
 
     const appModel = {
@@ -437,9 +432,14 @@ describe('ApplicationController - Create', () => {
 
     const id = uuid()
 
+    const user: User = {
+      nationalId: '0000000000',
+      name: 'The User',
+    }
+
     const application: CreateApplicationDto = {
       state: ApplicationState.NEW,
-      name: 'Tester',
+      name: user.name,
       phoneNumber: '',
       email: 'Some mail',
       homeCircumstances: HomeCircumstances.UNKNOWN,
@@ -469,12 +469,6 @@ describe('ApplicationController - Create', () => {
       homeCircumstancesCustom: '',
       employmentCustom: '',
     }
-    const user: User = {
-      nationalId: '0000000000',
-      name: 'The User',
-      folder: uuid(),
-      service: RolesRule.OSK,
-    }
 
     const appModel = {
       id,
@@ -498,9 +492,14 @@ describe('ApplicationController - Create', () => {
   describe('database query fails', () => {
     let then: Then
 
+    const user: User = {
+      nationalId: '0000000000',
+      name: 'The User',
+    }
+
     const application: CreateApplicationDto = {
       state: ApplicationState.NEW,
-      name: 'Tester',
+      name: user.name,
       phoneNumber: '',
       email: 'Some mail',
       homeCircumstances: HomeCircumstances.UNKNOWN,
@@ -526,12 +525,6 @@ describe('ApplicationController - Create', () => {
       streetName: '',
       homeCircumstancesCustom: '',
       employmentCustom: '',
-    }
-    const user: User = {
-      nationalId: '0000000000',
-      name: 'The User',
-      folder: uuid(),
-      service: RolesRule.OSK,
     }
 
     beforeEach(async () => {
