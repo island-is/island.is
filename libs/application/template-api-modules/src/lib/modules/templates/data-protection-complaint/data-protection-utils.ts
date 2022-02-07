@@ -186,12 +186,12 @@ export const toRequestMetadata = (
   ]
 }
 
-export const transformApplicationToComplaintPDFdata = (
+export const applicationToComplaintPDF = (
   application: Application,
 ): ComplaintPDF => {
   const answers = application.answers as DataProtectionComplaint
-  const timestamp =
-    new Date(application.externalData?.sendApplication?.date) ?? new Date()
+  //const sendDate = application.externalData.sendApplication.date ?? null
+  const timestamp = new Date() //new Date(sendDate) ?? new Date()
 
   return {
     applicantInfo: {
@@ -200,15 +200,13 @@ export const transformApplicationToComplaintPDFdata = (
     },
     onBehalf: getAndFormatOnBehalf(application),
     agency: {
-      files: [],
       persons: getAgencies(answers),
     },
     contactInfo: getContactInfo(answers),
     targetsOfComplaint: getComplaintTargets(answers),
     complaintCategories: getAndFormatSubjectsOfComplaint(answers),
-    attachments: [],
+    somethingElse: answers.subjectOfComplaint.somethingElse ?? '',
     description: extractAnswer(application.answers, 'complaint.description'),
-    applicationPdf: '',
     submitDate: timestamp,
   }
 }

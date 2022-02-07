@@ -1,7 +1,7 @@
 import { ComplaintPDF } from '../../models'
 
 import { Application } from '@island.is/application/core'
-import { transformApplicationToComplaintPDFdata } from '../../data-protection-utils'
+import { applicationToComplaintPDF } from '../../data-protection-utils'
 import { generatePdf } from '../pdfGenerator'
 import {
   addHeader,
@@ -18,15 +18,9 @@ import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
 
 export async function generateComplaintPdf(
-  complaint: ComplaintPDF,
-): Promise<Buffer> {
-  return await generatePdf<ComplaintPDF>(complaint, dpcApplicationPdf)
-}
-
-export async function generateComplaintPdfApplication(
   application: Application,
 ): Promise<Buffer> {
-  const dto = transformApplicationToComplaintPDFdata(application)
+  const dto = applicationToComplaintPDF(application)
   return await generatePdf<ComplaintPDF>(dto, dpcApplicationPdf)
 }
 
@@ -45,6 +39,15 @@ function dpcApplicationPdf(
   addLogo(doc, dataProtectionLogo)
 
   addHeader('Kvörtun til Persónuverndar', doc)
+
+  addSubheader('Fyrir hvern er kvörtunin send', doc)
+  addValue(
+    complaint.onBehalf,
+    doc,
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.LARGE_LINE_GAP,
+  )
+
   addSubheader('Tengiliður', doc)
 
   addValue(
@@ -67,13 +70,17 @@ function dpcApplicationPdf(
   )
 
   if (complaint.agency?.persons?.length) {
-    addSubheader('Umboðsaðilar', doc)
-    complaint.agency.persons.map((person) => {
+    addSubheader('Kvartendur', doc)
+    complaint.agency.persons.map((person, i, persons) => {
+      const linegap =
+        i === persons.length - 1
+          ? PdfConstants.LARGE_LINE_GAP
+          : PdfConstants.SMALL_LINE_GAP
       addValue(
         `${person.name} kt. ${person.nationalId}`,
         doc,
         PdfConstants.NORMAL_FONT,
-        PdfConstants.LARGE_LINE_GAP,
+        linegap,
       )
     })
   }
@@ -94,7 +101,7 @@ function dpcApplicationPdf(
     )
     if (c.operatesWithinEurope === 'yes') {
       addValue(
-        `Starfsemi í landi ${c.countryOfOperation}`,
+        `Er með starfsemi innan Evrópu : ${c.countryOfOperation}`,
         doc,
         PdfConstants.NORMAL_FONT,
         linegap,
@@ -110,16 +117,34 @@ function dpcApplicationPdf(
   })
 
   addSubheader('Efni kvörtunar', doc)
-  const subjects = complaint.complaintCategories.map((c) => c).join(', ')
+  const subjects = complaint.complaintCategories
+    .map((c) => c)
+    .filter((x) => x !== '')
+    .join(', ')
 
-  addValue(subjects, doc, PdfConstants.NORMAL_FONT, PdfConstants.LARGE_LINE_GAP)
+  addValue(
+    subjects,
+    doc,
+    PdfConstants.NORMAL_FONT,
+    complaint.somethingElse
+      ? PdfConstants.SMALL_LINE_GAP
+      : PdfConstants.LARGE_LINE_GAP,
+  )
+  if (complaint.somethingElse) {
+    addValue(
+      complaint.somethingElse,
+      doc,
+      PdfConstants.NORMAL_FONT,
+      PdfConstants.LARGE_LINE_GAP,
+    )
+  }
 
   addSubheader('Yfir hverju er kvartað í meginatriðum?', doc)
   addValue(
     complaint.description,
     doc,
     PdfConstants.NORMAL_FONT,
-    PdfConstants.LARGE_LINE_GAP,
+    PdfConstants.NO_LINE_GAP,
   )
   doc.end()
 }

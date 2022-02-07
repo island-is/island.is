@@ -47,4 +47,3 @@ export { GeneralPetitionService } from './general-petition/general-petition.serv
 export { CriminalRecordSubmissionService } from './criminal-record-submission/criminal-record-submission.service'
 export { DataProtectionComplaintService } from './data-protection-complaint/data-protection-complaint.service'
 export { PSignSubmissionService } from './p-sign-submission/p-sign-submission.service'
-export { generateComplaintPdfApplication } from './data-protection-complaint/pdfGenerators/'

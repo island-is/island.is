@@ -21,8 +21,8 @@ import { CRCApplication } from '@island.is/application/templates/children-reside
 import type { ApplicationConfig } from '../application.configuration'
 import { APPLICATION_CONFIG } from '../application.configuration'
 import { generateResidenceChangePdf } from './pdfGenerators'
-import { generateComplaintPdfApplication } from '@island.is/application/template-api-modules'
-import { Application as ApplicationType } from '@island.is/application/core'
+import { generateComplaintPdf } from '@island.is/application/template-api-modules'
+import { Application as ApplicationCoreType } from '@island.is/application/core'
 
 @Injectable()
 export class FileService {
@@ -39,10 +39,10 @@ export class FileService {
     const fileName = `${BucketTypePrefix[pdfType]}/${application.id}.pdf`
     const bucket = this.getBucketName()
 
-    if ((await this.awsService.fileExists(bucket, fileName)) === false) {
-      const content = await this.createFile(application, pdfType)
-      await this.awsService.uploadFile(content, bucket, fileName)
-    }
+    // if ((await this.awsService.fileExists(bucket, fileName)) === false) {
+    const content = await this.createFile(application, pdfType)
+    await this.awsService.uploadFile(content, bucket, fileName)
+    // }
 
     return await this.awsService.getPresignedUrl(bucket, fileName)
   }
@@ -120,9 +120,7 @@ export class FileService {
         return await generateResidenceChangePdf(application as CRCApplication)
       }
       case PdfTypes.DATA_PROTECTION_COMPLAINT: {
-        return await generateComplaintPdfApplication(
-          application as ApplicationType,
-        )
+        return await generateComplaintPdf(application as ApplicationCoreType)
       }
     }
   }

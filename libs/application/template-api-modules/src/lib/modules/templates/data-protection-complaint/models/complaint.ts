@@ -10,15 +10,13 @@ export interface ComplaintPDF {
   }
   onBehalf: string //"myself | myself and others | others | stofnanir og felagsamtok",
   agency: {
-    files: string[]
     persons: Agency[]
   } | null
   contactInfo: ContactInfo
   targetsOfComplaint: TargetOfComplaint[]
   complaintCategories: string[]
+  somethingElse: string
   description: string
-  attachments: []
-  applicationPdf: string
   submitDate: Date
 }
 
