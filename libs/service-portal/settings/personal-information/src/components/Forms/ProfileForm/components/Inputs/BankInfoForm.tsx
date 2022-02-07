@@ -6,6 +6,7 @@ import {
   Column,
   Icon,
   LoadingDots,
+  InputError,
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import { useUpdateOrCreateUserProfile } from '@island.is/service-portal/graphql'
@@ -59,12 +60,10 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
                   control={control}
                   id="bank"
                   name="bank"
-                  maxLength={4}
                   format="####"
                   placeholder="0000"
                   label={formatMessage(msg.inputBankLabel)}
                   defaultValue={bankInfo?.bank || ''}
-                  error={errors.bank?.message || submitError}
                   required={false}
                   disabled={inputSuccess}
                   size="xs"
@@ -77,6 +76,10 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
                       value: /^\d+$/,
                       message: formatMessage(msg.errorOnlyNumbers),
                     },
+                    required: {
+                      value: true,
+                      message: formatMessage(m.bankInfoRequired),
+                    },
                   }}
                 />
               </Box>
@@ -87,12 +90,10 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
                   control={control}
                   id="l"
                   name="l"
-                  maxLength={2}
                   format="##"
                   placeholder="00"
                   label={formatMessage(msg.inputLedgerLabel)}
                   defaultValue={bankInfo?.l || ''}
-                  error={errors.l?.message || submitError}
                   required={false}
                   disabled={inputSuccess}
                   size="xs"
@@ -105,6 +106,10 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
                       value: /^\d+$/,
                       message: formatMessage(msg.errorOnlyNumbers),
                     },
+                    required: {
+                      value: true,
+                      message: formatMessage(m.bankInfoRequired),
+                    },
                   }}
                 />
               </Box>
@@ -115,12 +120,10 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
                   control={control}
                   id="account"
                   name="account"
-                  maxLength={6}
                   format="######"
                   placeholder="000000"
                   label={formatMessage(msg.inputAccountNrLabel)}
                   defaultValue={bankInfo?.account || ''}
-                  error={errors.account?.message || submitError}
                   required={false}
                   disabled={inputSuccess}
                   size="xs"
@@ -133,11 +136,33 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
                       value: /^\d+$/,
                       message: formatMessage(msg.errorOnlyNumbers),
                     },
+                    required: {
+                      value: true,
+                      message: formatMessage(m.bankInfoRequired),
+                    },
                   }}
                 />
               </Box>
             </Column>
           </Columns>
+          {submitError ||
+          errors.account?.message ||
+          errors.l?.message ||
+          errors.bank?.message ? (
+            <Columns>
+              <Column>
+                <InputError
+                  id="bank-info-error"
+                  errorMessage={
+                    submitError ||
+                    errors.account?.message ||
+                    errors.l?.message ||
+                    errors.bank?.message
+                  }
+                />
+              </Column>
+            </Columns>
+          ) : null}
         </Column>
         <Column width="3/12">
           <Box

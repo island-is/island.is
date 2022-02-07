@@ -556,6 +556,10 @@ export const m = defineMessages({
     id: 'service.portal:finish-later',
     defaultMessage: 'Klára seinna',
   },
+  bankInfoRequired: {
+    id: 'service.portal:bank-info-required',
+    defaultMessage: 'Skylda er að fylla inn alla reiti fyrir bankaupplýsingar',
+  },
   digitalIceland: {
     id: 'service.portal:digital-iceland',
     defaultMessage: 'Stafrænt Ísland',
