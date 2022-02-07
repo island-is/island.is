@@ -2,11 +2,12 @@ import { Provider } from '@nestjs/common'
 import { UmsoknirApi } from '../../gen/fetch'
 import {
   ConfigType,
+  IdsClientConfig,
   LazyDuringDevScope,
   XRoadConfig,
 } from '@island.is/nest/config'
-import { FishingLicenseClientConfig } from './fishing-license.config'
-import { FishingLicenseApiFactoryConfig } from './fishing-license-api-factory.config'
+import { FishingLicenseClientConfig } from './FishingLicenseClientConfig'
+import { FishingLicenseApiFactoryConfig } from './FishingLicenseApiFactoryConfig'
 
 export const UmsoknirApiProvider: Provider<UmsoknirApi> = {
   provide: UmsoknirApi,
@@ -14,7 +15,11 @@ export const UmsoknirApiProvider: Provider<UmsoknirApi> = {
   useFactory: (
     xRoadConfig: ConfigType<typeof XRoadConfig>,
     config: ConfigType<typeof FishingLicenseClientConfig>,
-  ) => new UmsoknirApi(FishingLicenseApiFactoryConfig(xRoadConfig, config)),
+    idsConfig: ConfigType<typeof IdsClientConfig>,
+  ) =>
+    new UmsoknirApi(
+      FishingLicenseApiFactoryConfig(xRoadConfig, config, idsConfig),
+    ),
 
   inject: [XRoadConfig.KEY, FishingLicenseClientConfig.KEY],
 }

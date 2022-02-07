@@ -2,11 +2,12 @@ import { Provider } from '@nestjs/common'
 import { SkipApi } from '../../gen/fetch'
 import {
   ConfigType,
+  IdsClientConfig,
   LazyDuringDevScope,
   XRoadConfig,
 } from '@island.is/nest/config'
-import { FishingLicenseClientConfig } from './fishing-license.config'
-import { FishingLicenseApiFactoryConfig } from './fishing-license-api-factory.config'
+import { FishingLicenseClientConfig } from './FishingLicenseClientConfig'
+import { FishingLicenseApiFactoryConfig } from './FishingLicenseApiFactoryConfig'
 
 export const SkipApiProvider: Provider<SkipApi> = {
   provide: SkipApi,
@@ -14,7 +15,9 @@ export const SkipApiProvider: Provider<SkipApi> = {
   useFactory: (
     xRoadConfig: ConfigType<typeof XRoadConfig>,
     config: ConfigType<typeof FishingLicenseClientConfig>,
-  ) => new SkipApi(FishingLicenseApiFactoryConfig(xRoadConfig, config)),
+    idsConfig: ConfigType<typeof IdsClientConfig>,
+  ) =>
+    new SkipApi(FishingLicenseApiFactoryConfig(xRoadConfig, config, idsConfig)),
 
   inject: [XRoadConfig.KEY, FishingLicenseClientConfig.KEY],
 }
