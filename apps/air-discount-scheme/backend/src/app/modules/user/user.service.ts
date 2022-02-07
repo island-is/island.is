@@ -91,12 +91,9 @@ export class UserService {
     return this.getUserByNationalId<User>(nationalId, User)
   }
 
-  async getMultipleUsersByNationalIdArray(
-    ids: string[],
-  ): Promise<Array<User>> {
-    const allUsers = ids.map(
-      async (nationalId) =>
-        this.getUserInfoByNationalId(nationalId),
+  async getMultipleUsersByNationalIdArray(ids: string[]): Promise<Array<User>> {
+    const allUsers = ids.map(async (nationalId) =>
+      this.getUserInfoByNationalId(nationalId),
     )
 
     const result = (await Promise.all(allUsers)).filter(Boolean) as Array<User>
