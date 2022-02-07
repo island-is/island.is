@@ -1,3 +1,3 @@
 export enum FishingLicenseScope {
-  main = '@fiskistofa/main',
+  fishingLicense = '@fiskistofa.is/fishing-license',
 }
