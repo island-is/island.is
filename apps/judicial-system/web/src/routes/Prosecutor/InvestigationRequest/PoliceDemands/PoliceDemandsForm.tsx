@@ -135,7 +135,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'demands',
-                event,
+                event.target.value,
                 ['empty'],
                 workingCase,
                 setWorkingCase,
@@ -179,7 +179,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'lawsBroken',
-                event,
+                event.target.value,
                 ['empty'],
                 workingCase,
                 setWorkingCase,
@@ -221,7 +221,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'legalBasis',
-                event,
+                event.target.value,
                 ['empty'],
                 workingCase,
                 setWorkingCase,
