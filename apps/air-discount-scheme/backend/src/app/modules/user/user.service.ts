@@ -16,8 +16,6 @@ import {
   EinstaklingarGetForsjaRequest,
 } from '@island.is/clients/national-registry-v2'
 import environment from '../../../environments/environment'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class UserService {
@@ -25,7 +23,6 @@ export class UserService {
     private readonly flightService: FlightService,
     private readonly nationalRegistryService: NationalRegistryService,
     private readonly nationalRegistryIndividualsApi: EinstaklingarApi,
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
   async getRelations(authUser: AuthUser): Promise<Array<string>> {
@@ -42,10 +39,9 @@ export class UserService {
         .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{
           id: authUser.nationalId,
         })
-    } catch (e) {
-      this.logger.error(e)
+    } finally {
+      return relations
     }
-    return relations
   }
 
   private async getFund(user: NationalRegistryUser): Promise<Fund> {
