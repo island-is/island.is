@@ -16,7 +16,6 @@ import {
   EinstaklingarGetForsjaRequest,
 } from '@island.is/clients/national-registry-v2'
 import environment from '../../../environments/environment'
-import e from 'express'
 
 @Injectable()
 export class UserService {
