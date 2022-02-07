@@ -1,11 +1,11 @@
 export interface DocumentInfoDTO {
-  id?: string
-  documentDate?: Date
-  senderKennitala?: string
+  id: string
+  documentDate: string
+  senderKennitala: string
   senderName?: string
-  subject?: string
+  subject: string
   categoryId?: string
-  opened?: boolean
+  opened: boolean
   withdrawn?: boolean
   withdrawnReason?: string
   minumumAuthenticationType?: string

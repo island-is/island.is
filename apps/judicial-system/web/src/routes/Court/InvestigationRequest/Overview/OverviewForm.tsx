@@ -109,11 +109,11 @@ const OverviewForm: React.FC<Props> = (props) => {
           <InfoCard
             data={[
               {
-                title: 'LÖKE málsnúmer',
+                title: formatMessage(core.policeCaseNumber),
                 value: workingCase.policeCaseNumber,
               },
               {
-                title: 'Embætti',
+                title: formatMessage(core.prosecutor),
                 value: `${
                   workingCase.creatingProsecutor?.institution?.name ??
                   'Ekki skráð'
@@ -130,11 +130,11 @@ const OverviewForm: React.FC<Props> = (props) => {
                 )}`,
               },
               {
-                title: 'Ákærandi',
+                title: formatMessage(core.prosecutorPerson),
                 value: workingCase.prosecutor?.name,
               },
               {
-                title: 'Tegund kröfu',
+                title: formatMessage(core.caseType),
                 value: capitalize(caseTypes[workingCase.type]),
               },
             ]}

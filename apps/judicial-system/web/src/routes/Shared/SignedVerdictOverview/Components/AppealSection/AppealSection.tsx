@@ -54,7 +54,7 @@ const AppealSection: React.FC<Props> = (props) => {
   return (
     <>
       <Box marginBottom={1}>
-        <Text variant="h3" as="h3">
+        <Text variant="h3" as="h2">
           Ákvörðun um kæru
         </Text>
       </Box>

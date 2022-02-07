@@ -253,4 +253,8 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly registrarId?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly caseModifiedExplanation?: string
 }
