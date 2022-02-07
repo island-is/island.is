@@ -1,4 +1,5 @@
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { Base, Client, NationalRegistry } from '../../../../infra/src/dsl/xroad'
 
 const postgresInfo = {
   passwordSecret: '/k8s/air-discount-scheme/backend/DB_PASSWORD',
@@ -23,6 +24,7 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
       VEGAGERDIN_IDS_CLIENTS_SECRET:
         '/k8s/air-discount-scheme-backend/VEGAGERDIN_IDS_CLIENTS_ADS_SECRET',
     })
+    .xroad(Base, Client, NationalRegistry)
     .env({
       ENVIRONMENT: {
         dev: 'dev',

@@ -56,6 +56,7 @@ describe('Feature-deployment support', () => {
       DB_USER: 'feature_feature_A_graphql',
       DB_NAME: 'feature_feature_A_graphql',
       DB_HOST: 'a',
+      NODE_OPTIONS: '--max-old-space-size=208',
       SERVERSIDE_FEATURES_ON: '',
     })
   })

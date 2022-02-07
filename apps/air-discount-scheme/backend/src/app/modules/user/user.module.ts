@@ -4,9 +4,15 @@ import { UserService } from './user.service'
 import { DiscountModule } from '../discount'
 import { FlightModule } from '../flight'
 import { NationalRegistryModule } from '../nationalRegistry'
+import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 
 @Module({
-  imports: [DiscountModule, FlightModule, NationalRegistryModule],
+  imports: [
+    DiscountModule,
+    FlightModule,
+    NationalRegistryModule,
+    NationalRegistryClientModule,
+  ],
   controllers: [PublicUserController, PrivateUserController],
   providers: [UserService],
 })
