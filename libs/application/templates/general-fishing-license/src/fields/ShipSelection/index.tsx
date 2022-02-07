@@ -1,4 +1,8 @@
-import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
+import {
+  FieldBaseProps,
+  getErrorViaPath,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { AlertMessage, Box, Text, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC, useState } from 'react'
@@ -17,7 +21,11 @@ interface Option {
   disabled?: boolean
 }
 
-export const ShipSelection: FC<FieldBaseProps> = ({ application, field }) => {
+export const ShipSelection: FC<FieldBaseProps> = ({
+  application,
+  field,
+  errors,
+}) => {
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
   const registrationNumberValue = getValueViaPath(
@@ -90,6 +98,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({ application, field }) => {
         id={`${field.id}.ship`}
         largeButtons
         backgroundColor="white"
+        error={errors && getErrorViaPath(errors, `${field.id}.ship`)}
         fullWidthLabel
         defaultValue={
           (getValueViaPath(application.answers, 'shipSelection') as string[]) ??
