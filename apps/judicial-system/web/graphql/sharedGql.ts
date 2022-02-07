@@ -12,10 +12,12 @@ export const CaseQuery = gql`
       policeCaseNumber
       defendants {
         id
+        noNationalId
         nationalId
         name
         gender
         address
+        citizenship
       }
       defenderName
       defenderEmail

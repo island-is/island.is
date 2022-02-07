@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
+import { ValueType } from 'react-select'
 
 import {
   Defendant,
@@ -11,31 +12,24 @@ import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import {
   Box,
   Checkbox,
-  Column,
-  ContentBlock,
   GridColumn,
   GridContainer,
   GridRow,
   Icon,
-  Inline,
   Input,
   Select,
-  Stack,
   Text,
 } from '@island.is/island-ui/core'
 import {
   defendant as defendantMessages,
   core,
 } from '@island.is/judicial-system-web/messages'
-
 import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import { ValueType } from 'react-select'
 
 interface Props {
   defendant: Defendant
@@ -91,6 +85,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
       </Box>
       <Box marginBottom={2}>
         <Checkbox
+          name="noNationalId"
           label={formatMessage(
             defendantMessages.sections.defendantInfo
               .doesNotHaveIcelandicNationalId,
@@ -99,6 +94,14 @@ const DefendantInfo: React.FC<Props> = (props) => {
             defendantMessages.sections.defendantInfo
               .doesNotHaveIcelandicNationalIdTooltip,
           )}
+          checked={defendant.noNationalId}
+          onChange={() => {
+            updateDefendantState(defendant.id, {
+              noNationalId: !defendant.noNationalId,
+            })
+
+            onChange(defendant.id, { noNationalId: !defendant.noNationalId })
+          }}
           filled
           large
         />
@@ -235,8 +238,18 @@ const DefendantInfo: React.FC<Props> = (props) => {
           <GridColumn span="6/12">
             <Input
               name="defendantCitizenship"
+              autoComplete="off"
               label={formatMessage(core.citizenship)}
               placeholder={formatMessage(core.selectCitizenship)}
+              value={defendant.citizenship ?? ''}
+              onChange={(evt) => {
+                updateDefendantState(defendant.id, {
+                  citizenship: evt.target.value,
+                })
+              }}
+              onBlur={(evt) => {
+                onChange(defendant.id, { citizenship: evt.target.value })
+              }}
             />
           </GridColumn>
         </GridRow>
