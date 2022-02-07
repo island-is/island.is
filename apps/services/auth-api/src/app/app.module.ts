@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { SequelizeConfigService } from '@island.is/auth-api-lib'
+import {
+  SequelizeConfigService,
+  DelegationConfig,
+} from '@island.is/auth-api-lib'
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
@@ -32,7 +35,12 @@ import { UserProfileModule } from './modules/user-profile/user-profile.module'
     UserProfileModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [XRoadConfig, NationalRegistryClientConfig, FeatureFlagConfig],
+      load: [
+        XRoadConfig,
+        NationalRegistryClientConfig,
+        FeatureFlagConfig,
+        DelegationConfig,
+      ],
     }),
   ],
 })

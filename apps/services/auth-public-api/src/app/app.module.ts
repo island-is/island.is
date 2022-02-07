@@ -1,4 +1,7 @@
-import { SequelizeConfigService } from '@island.is/auth-api-lib'
+import {
+  SequelizeConfigService,
+  DelegationConfig,
+} from '@island.is/auth-api-lib'
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
@@ -23,7 +26,12 @@ import { ResourcesModule } from './modules/resources/resources.module'
     ResourcesModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [XRoadConfig, NationalRegistryClientConfig, FeatureFlagConfig],
+      load: [
+        XRoadConfig,
+        NationalRegistryClientConfig,
+        FeatureFlagConfig,
+        DelegationConfig,
+      ],
     }),
   ],
 })
