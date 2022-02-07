@@ -68,9 +68,7 @@ const FileUpload = () => {
             input: {
               id: router.query.id,
               state: ApplicationState.INPROGRESS,
-              event: isSpouse
-                ? ApplicationEventType.SPOUSEFILEUPLOAD
-                : ApplicationEventType.FILEUPLOAD,
+              event: ApplicationEventType.FILEUPLOAD,
               comment: form.fileUploadComment,
             },
           },
