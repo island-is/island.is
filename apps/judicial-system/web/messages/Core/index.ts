@@ -94,6 +94,12 @@ export const core = defineMessages({
     defaultMessage: 'Dómstóll',
     description: 'Notað fyrir orðið Dómstóll í öllum flæðum.',
   },
+  nationalIdNotFoundInNationalRegistry: {
+    id: 'judicial.system.core:national_id_not_found_in_national_registry',
+    defaultMessage: 'Ekki tókst að fletta upp kennitölu',
+    description:
+      'Notaður sem skilaboð um að kennitala varnaraðila hafi ekki fundist í þjóðskrá.',
+  },
   judge: {
     id: 'judicial.system.core:judge',
     defaultMessage: 'Dómari',
