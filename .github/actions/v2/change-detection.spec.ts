@@ -78,7 +78,7 @@ describe('Change detection', () => {
     git = simpleGit(path, { baseDir: path })
     const r = await git.init()
   })
-  describe('linear change', () => {
+  describe('PR', () => {
     xit('should skip bad commit', async () => {
       const br = await git.checkoutLocalBranch('main')
       await makeChange(git, fileA, 'test1', 'A-good')
@@ -95,24 +95,34 @@ describe('Change detection', () => {
       expect(logs.total).toBe(5)
     })
   })
-  describe('PR', () => {
+  describe('Branch', () => {
     it('should skip bad commit', async () => {
       const br = await git.checkoutLocalBranch('main')
-      const rootSha = await makeChange(git, fileA, 'test', 'A-good-[a,b,c]')
-      const commonSha = await makeChange(git, fileA, 'test1', 'B-good-[a]')
+      const firstGoodSha = await makeChange(
+        git,
+        fileA,
+        'test',
+        'A-good-[a,b,c]',
+      )
+      const goodBeforeBadSha = await makeChange(
+        git,
+        fileA,
+        'test1',
+        'B-good-[a]',
+      )
       const badSha = await makeChange(git, fileA, 'test2', 'C-bad-[b]')
       const fixSha = await makeChange(git, fileA, 'test3', 'D-good-[a,c]')
-      const mergeCommitSha = (await git.log({ maxCount: 1 })).latest.hash
+      // const mergeCommitSha = (await git.log({ maxCount: 1 })).latest.hash
       // const br2 = await git.raw('merge-base', fixSha, 'main')
-      const commits = await git.raw(
-        'rev-list',
-        '--all',
-        mergeCommitSha,
-        `${commonSha}~`,
-      )
+      // const commits = await git.raw(
+      //   'rev-list',
+      //   '--all',
+      //   mergeCommitSha,
+      //   `${goodBeforeBadSha}~`,
+      // )
 
       expect(await findBestGoodRef((services) => services.length, git)).toBe(
-        commonSha,
+        goodBeforeBadSha,
       )
       await makeChange(git, fileA, 'test44', 'E')
       expect(await findBestGoodRef((services) => services.length, git)).toBe(
