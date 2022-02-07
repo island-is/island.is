@@ -6,25 +6,25 @@ import { DrivingLicenceTestResult } from './drivingLicenseTestResult.resopnse'
 @ObjectType()
 export class DrivingLicenseBook {
   @Field({ nullable: true })
-  id?: string | null
+  id?: string
 
   @Field({ nullable: true })
-  licenseCategory?: string | null
+  licenseCategory?: string
 
   @Field({ nullable: true })
-  createdOn?: string | null
+  createdOn?: string
 
   @Field({ nullable: true })
-  teacherSsn?: string | null
+  teacherSsn?: string
 
   @Field({ nullable: true })
-  teacherName?: string | null
+  teacherName?: string
 
   @Field({ nullable: true })
-  schoolSsn?: string | null
+  schoolSsn?: string
 
   @Field({ nullable: true })
-  schoolName?: string | null
+  schoolName?: string
 
   @Field({ nullable: true })
   isDigital?: boolean
@@ -36,11 +36,11 @@ export class DrivingLicenseBook {
   totalLessonCount?: number
 
   @Field(() => [Lesson], { nullable: true })
-  teachersAndLessons?: Lesson[] | null
+  teachersAndLessons?: Lesson[]
 
   @Field(() => [DrivingSchoolExam], { nullable: true })
-  drivingSchoolExams?: DrivingSchoolExam[] | null
+  drivingSchoolExams?: DrivingSchoolExam[]
 
   @Field(() => [DrivingLicenceTestResult], { nullable: true })
-  testResults?: DrivingLicenceTestResult[] | null
+  testResults?: DrivingLicenceTestResult[]
 }

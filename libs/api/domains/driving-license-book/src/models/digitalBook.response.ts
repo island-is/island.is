@@ -3,13 +3,13 @@ import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType()
 export class DigitalBook {
   @Field({ nullable: true })
-  id?: string | null
+  id?: string
 
   @Field({ nullable: true })
-  licenseCategory?: string | null
+  licenseCategory?: string
 
   @Field({ nullable: true })
-  createdOn?: string | null
+  createdOn?: string
 
   @Field({ nullable: true })
   status?: number
@@ -18,40 +18,40 @@ export class DigitalBook {
   isExpired?: boolean
 
   @Field({ nullable: true })
-  statusName?: string | null
+  statusName?: string
 
   @Field({ nullable: true })
-  studentSsn?: string | null
+  studentSsn?: string
 
   @Field({ nullable: true })
-  studentName?: string | null
+  studentName?: string
 
   @Field({ nullable: true })
-  studentZipCode?: number | null
+  studentZipCode?: number
 
   @Field({ nullable: true })
-  studentAddress?: string | null
+  studentAddress?: string
 
   @Field({ nullable: true })
-  studentEmail?: string | null
+  studentEmail?: string
 
   @Field({ nullable: true })
-  studentPrimaryPhoneNumber?: string | null
+  studentPrimaryPhoneNumber?: string
 
   @Field({ nullable: true })
-  studentSecondaryPhoneNumber?: string | null
+  studentSecondaryPhoneNumber?: string
 
   @Field({ nullable: true })
-  teacherSsn?: string | null
+  teacherSsn?: string
 
   @Field({ nullable: true })
-  teacherName?: string | null
+  teacherName?: string
 
   @Field({ nullable: true })
-  schoolSsn?: string | null
+  schoolSsn?: string
 
   @Field({ nullable: true })
-  schoolName?: string | null
+  schoolName?: string
 
   @Field({ nullable: true })
   isDigital?: boolean

@@ -22,7 +22,7 @@ export class CreatePracticalDrivingLesson {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
-  comments?: string | null
+  comments?: string
 }
 
 @InputType()

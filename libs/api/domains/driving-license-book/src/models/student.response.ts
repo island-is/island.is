@@ -4,44 +4,44 @@ import { DrivingLicenseBook } from './drivingLicenseBook.response'
 @ObjectType()
 export class StudentResponse {
   @Field({ nullable: true })
-  id?: string | null
+  id?: string
 
   @Field({ nullable: true })
-  ssn?: string | null
+  ssn?: string
 
   @Field({ nullable: true })
-  name?: string | null
+  name?: string
 
   @Field({ nullable: true })
-  zipCode?: number | null
+  zipCode?: number
 
   @Field({ nullable: true })
-  address?: string | null
+  address?: string
 
   @Field({ nullable: true })
-  email?: string | null
+  email?: string
 
   @Field({ nullable: true })
-  primaryPhoneNumber?: string | null
+  primaryPhoneNumber?: string
 
   @Field({ nullable: true })
-  secondaryPhoneNumber?: string | null
+  secondaryPhoneNumber?: string
 
   @Field({ nullable: true })
   active?: boolean
 
   @Field(() => [String], { nullable: true })
-  bookLicenseCategories?: string[] | null
+  bookLicenseCategories?: string[]
 }
 
 @ObjectType()
 export class StudentOverView extends StudentResponse {
   @Field(() => [DrivingLicenseBook], { nullable: true })
-  books?: DrivingLicenseBook[] | null
+  books?: DrivingLicenseBook[]
 }
 
 @ObjectType()
 export class StudentOverViewResponse {
   @Field(() => StudentOverView, { nullable: true })
-  data?: StudentOverView | null
+  data?: StudentOverView
 }

@@ -2,38 +2,38 @@ import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType()
 export class PracticalDrivingLesson {
   @Field({ nullable: true })
-  bookId?: string | null
+  bookId?: string
 
   @Field({ nullable: true })
-  id?: string | null
+  id?: string
 
   @Field({ nullable: true })
-  studentSsn?: string | null
+  studentSsn?: string
 
   @Field({ nullable: true })
-  studentName?: string | null
+  studentName?: string
 
   @Field({ nullable: true })
-  licenseCategory?: string | null
+  licenseCategory?: string
 
   @Field({ nullable: true })
-  teacherSsn?: string | null
+  teacherSsn?: string
 
   @Field({ nullable: true })
-  teacherName?: string | null
+  teacherName?: string
 
   @Field({ nullable: true })
   minutes?: number
 
   @Field({ nullable: true })
-  createdOn?: string | null
+  createdOn?: string
 
   @Field({ nullable: true })
-  comments?: string | null
+  comments?: string
 }
 
 @ObjectType()
 export class PracticalDrivingLessonsResponse {
   @Field(() => [PracticalDrivingLesson], { nullable: true })
-  data?: PracticalDrivingLesson[] | null
+  data?: PracticalDrivingLesson[]
 }

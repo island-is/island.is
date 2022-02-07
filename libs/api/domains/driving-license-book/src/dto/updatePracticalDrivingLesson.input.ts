@@ -14,7 +14,7 @@ export class UpdatePracticalDrivingLesson {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
-  comments?: string | null
+  comments?: string
 }
 
 @InputType()
