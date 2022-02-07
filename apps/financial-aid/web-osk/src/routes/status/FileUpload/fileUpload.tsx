@@ -59,34 +59,35 @@ const FileUpload = () => {
     setIsLoading(true)
 
     try {
-      await uploadStateFiles(
-        router.query.id as string,
-        isSpouse ? FileType.SPOUSEFILES : FileType.OTHER,
-      ).then(async () => {
-        await updateApplicationMutation({
-          variables: {
-            input: {
-              id: router.query.id,
-              state: ApplicationState.INPROGRESS,
-              event: ApplicationEventType.FILEUPLOAD,
-              comment: form.fileUploadComment,
+      await uploadStateFiles(router.query.id as string, FileType.OTHER).then(
+        async () => {
+          await updateApplicationMutation({
+            variables: {
+              input: {
+                id: router.query.id,
+                state: ApplicationState.INPROGRESS,
+                event: isSpouse
+                  ? ApplicationEventType.SPOUSEFILEUPLOAD
+                  : ApplicationEventType.FILEUPLOAD,
+                comment: form.fileUploadComment,
+              },
             },
-          },
-        }).then((results) => {
-          if (results.data?.updateApplication) {
-            updateApplication(results.data?.updateApplication)
-          }
-        })
+          }).then((results) => {
+            if (results.data?.updateApplication) {
+              updateApplication(results.data?.updateApplication)
+            }
+          })
 
-        updateForm({
-          ...form,
-          status: ApplicationState.INPROGRESS,
-        })
+          updateForm({
+            ...form,
+            status: ApplicationState.INPROGRESS,
+          })
 
-        router.push(
-          `${Routes.statusFileUploadSuccess(router.query.id as string)}`,
-        )
-      })
+          router.push(
+            `${Routes.statusFileUploadSuccess(router.query.id as string)}`,
+          )
+        },
+      )
     } catch (e) {
       router.push(
         `${Routes.statusFileUploadFailure(router.query.id as string)}`,
