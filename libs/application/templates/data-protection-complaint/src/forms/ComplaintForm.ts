@@ -518,7 +518,7 @@ export const ComplaintForm: Form = buildForm({
               space: 3,
               children: [
                 buildCustomField({
-                  component: 'ConditionallyRequiredInput',
+                  component: 'ReasonsForComplaint',
                   id: 'subjectOfComplaint.checkboxAndInput',
                   title: '',
                 }),

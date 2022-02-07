@@ -15,7 +15,7 @@ import {
 import { SubjectOfComplaint } from '../shared'
 import { complaint } from '../lib/messages'
 
-export const ConditionallyRequiredInput: FC<FieldBaseProps> = ({
+export const ReasonsForComplaint: FC<FieldBaseProps> = ({
   field,
   application,
   error,
