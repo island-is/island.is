@@ -122,4 +122,8 @@ export const msg = defineMessages({
     id: 'sp.settings:tel-required-length-msg',
     defaultMessage: 'Símanúmer þarf að vera 7 tölustafir á lengd',
   },
+  saveEmptyChange: {
+    id: 'sp.settings:save-empty',
+    defaultMessage: 'Vista tómt',
+  },
 })

@@ -17,6 +17,7 @@ import { InputController } from '@island.is/shared/form-fields'
 import {
   useVerifySms,
   useUpdateOrCreateUserProfile,
+  useDeleteIslykillValue,
 } from '@island.is/service-portal/graphql'
 import { sharedMessages } from '@island.is/shared/translations'
 import { parseNumber } from '../../../../../utils/phoneHelper'
@@ -40,6 +41,10 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
     updateOrCreateUserProfile,
     loading: saveLoading,
   } = useUpdateOrCreateUserProfile()
+  const {
+    deleteIslykillValue,
+    loading: deleteLoading,
+  } = useDeleteIslykillValue()
   const { formatMessage } = useLocale()
   const {
     createSmsVerification,
@@ -54,6 +59,7 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
   const [telVerifyCreated, setTelVerifyCreated] = useState(false)
   const [verificationValid, setVerificationValid] = useState(false)
   const [verifiCationLoading, setVerifiCationLoading] = useState(false)
+  const [deleteSuccess, setDeleteSuccess] = useState(false)
 
   const [formErrors, setErrors] = useState<FormErrors>({
     mobile: undefined,
@@ -125,9 +131,34 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
     }
   }
 
+  const saveEmptyChange = async () => {
+    const emailError = formatMessage({
+      id: 'sp.settings:email-service-error',
+      defaultMessage:
+        'Vandamál með tölvupóstþjónustu. Vinsamlegast reynið aftur síðar.',
+    })
+
+    try {
+      await deleteIslykillValue({
+        mobilePhoneNumber: true,
+      })
+
+      setVerificationValid(true)
+      setDeleteSuccess(true)
+      setErrors({ ...formErrors, code: undefined })
+    } catch (err) {
+      setVerifiCationLoading(false)
+      setErrors({ ...formErrors, code: emailError })
+    }
+  }
+
   return (
     <Box>
-      <form onSubmit={handleSubmit(handleSendTelVerification)}>
+      <form
+        onSubmit={handleSubmit(
+          telInternal ? handleSendTelVerification : saveEmptyChange,
+        )}
+      >
         <Columns collapseBelow="sm" alignY="center">
           <Column width="9/12">
             <Columns>
@@ -190,21 +221,20 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
               flexDirection="column"
               paddingTop={2}
             >
-              {!createLoading && (
-                <button
-                  type="submit"
-                  disabled={!telInternal || verificationValid}
-                >
+              {!createLoading && !deleteLoading && (
+                <button type="submit" disabled={verificationValid}>
                   <Button
                     variant="text"
-                    disabled={!telInternal || verificationValid}
+                    disabled={verificationValid}
                     size="small"
                   >
-                    {buttonText}
+                    {telInternal
+                      ? buttonText
+                      : formatMessage(msg.saveEmptyChange)}
                   </Button>
                 </button>
               )}
-              {createLoading && <LoadingDots />}
+              {(createLoading || deleteLoading) && <LoadingDots />}
             </Box>
           </Column>
         </Columns>
@@ -216,6 +246,7 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
                   onClick={() => {
                     setTelVerifyCreated(false)
                     setVerificationValid(false)
+                    setDeleteSuccess(false)
                   }}
                   variant="text"
                   size="small"
@@ -224,6 +255,18 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
                 </Button>
               </Box>
             </Column>
+            {deleteSuccess ? (
+              <Column width="content">
+                <Box
+                  marginLeft={3}
+                  display="flex"
+                  alignItems="flexStart"
+                  flexDirection="column"
+                >
+                  <Icon icon="checkmarkCircle" color="mint600" type="filled" />
+                </Box>
+              </Column>
+            ) : null}
           </Columns>
         )}
       </form>

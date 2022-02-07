@@ -10,12 +10,14 @@ import {
   UserProfileControllerCreateRequest,
   UserProfileControllerUpdateRequest,
 } from '@island.is/clients/user-profile'
+import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
 import { CreateUserProfileInput } from './dto/createUserProfileInput'
 import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
 import { CreateEmailVerificationInput } from './dto/createEmalVerificationInput'
 import { ConfirmSmsVerificationInput } from './dto/confirmSmsVerificationInput'
 import { ConfirmEmailVerificationInput } from './dto/confirmEmailVerificationInput'
+import { DeleteIslykillValueInput } from './dto/deleteIslykillValueInput'
 import { UserProfile } from './userProfile.model'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { IslykillService } from './islykill.service'
@@ -264,6 +266,35 @@ export class UserProfileService {
     }
 
     return updatedUserProfile
+  }
+
+  async deleteIslykillValue(
+    input: DeleteIslykillValueInput,
+    user: User,
+  ): Promise<DeleteIslykillSettings> {
+    const feature = await this.featureFlagService.getValue(
+      Features.personalInformation,
+      false,
+      user,
+    )
+    if (!feature) {
+      handleError('User profile update is feature flagged for user')
+    }
+    const islyklarData = await this.islyklarService.getIslykillSettings(
+      user.nationalId,
+    )
+    await this.islyklarService
+      .updateIslykillSettings(user.nationalId, {
+        email: input.email ? undefined : islyklarData.email,
+        mobile: input.mobilePhoneNumber ? undefined : islyklarData.mobile,
+        canNudge: islyklarData.canNudge,
+        bankInfo: islyklarData.bankInfo,
+      })
+      .catch(handleError)
+    return {
+      nationalId: user.nationalId,
+      valid: true,
+    }
   }
 
   async createSmsVerification(

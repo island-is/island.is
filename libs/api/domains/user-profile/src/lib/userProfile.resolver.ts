@@ -5,8 +5,10 @@ import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
 import { CreateEmailVerificationInput } from './dto/createEmalVerificationInput'
 import { CreateUserProfileInput } from './dto/createUserProfileInput'
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
+import { DeleteIslykillValueInput } from './dto/deleteIslykillValueInput'
 import { UserProfile } from './userProfile.model'
 import { ConfirmResponse, Response } from './response.model'
+import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
 import { UserProfileService } from './userProfile.service'
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -44,6 +46,14 @@ export class UserProfileResolver {
     @CurrentUser() user: User,
   ): Promise<UserProfile | null> {
     return this.userUserProfileService.updateUserProfile(input, user)
+  }
+
+  @Mutation(() => UserProfile, { nullable: true })
+  async deleteIslykillValue(
+    @Args('input') input: DeleteIslykillValueInput,
+    @CurrentUser() user: User,
+  ): Promise<DeleteIslykillSettings> {
+    return this.userUserProfileService.deleteIslykillValue(input, user)
   }
 
   @Mutation(() => Response, { nullable: true })

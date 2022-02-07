@@ -16,6 +16,7 @@ import { InputController } from '@island.is/shared/form-fields'
 import {
   useVerifyEmail,
   useUpdateOrCreateUserProfile,
+  useDeleteIslykillValue,
 } from '@island.is/service-portal/graphql'
 
 interface Props {
@@ -36,6 +37,10 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
     updateOrCreateUserProfile,
     loading: saveLoading,
   } = useUpdateOrCreateUserProfile()
+  const {
+    deleteIslykillValue,
+    loading: deleteLoading,
+  } = useDeleteIslykillValue()
   const { formatMessage } = useLocale()
   const {
     createEmailVerification,
@@ -50,6 +55,7 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
   const [emailVerifyCreated, setEmailVerifyCreated] = useState(false)
   const [verificationValid, setVerificationValid] = useState(false)
   const [verifiCationLoading, setVerifiCationLoading] = useState(false)
+  const [deleteSuccess, setDeleteSuccess] = useState(false)
 
   const [formErrors, setErrors] = useState<FormErrors>({
     email: undefined,
@@ -128,9 +134,34 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
     }
   }
 
+  const saveEmptyChange = async () => {
+    const emailError = formatMessage({
+      id: 'sp.settings:email-service-error',
+      defaultMessage:
+        'Vandamál með tölvupóstþjónustu. Vinsamlegast reynið aftur síðar.',
+    })
+
+    try {
+      await deleteIslykillValue({
+        email: true,
+      })
+
+      setVerificationValid(true)
+      setDeleteSuccess(true)
+      setErrors({ ...formErrors, code: undefined })
+    } catch (err) {
+      setVerifiCationLoading(false)
+      setErrors({ ...formErrors, code: emailError })
+    }
+  }
+
   return (
     <Box>
-      <form onSubmit={handleSubmit(handleSendEmailVerification)}>
+      <form
+        onSubmit={handleSubmit(
+          emailInternal ? handleSendEmailVerification : saveEmptyChange,
+        )}
+      >
         <Columns collapseBelow="sm" alignY="center">
           <Column width="9/12">
             <InputController
@@ -165,26 +196,25 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
               flexDirection="column"
               paddingTop={2}
             >
-              {!createLoading && (
-                <button
-                  type="submit"
-                  disabled={!emailInternal || verificationValid}
-                >
+              {!createLoading && !deleteLoading && (
+                <button type="submit" disabled={verificationValid}>
                   <Button
                     variant="text"
                     size="small"
-                    disabled={!emailInternal || verificationValid}
+                    disabled={verificationValid}
                   >
-                    {emailVerifyCreated
-                      ? formatMessage({
-                          id: 'sp.settings:resend',
-                          defaultMessage: 'Endursenda',
-                        })
-                      : buttonText}
+                    {emailInternal
+                      ? emailVerifyCreated
+                        ? formatMessage({
+                            id: 'sp.settings:resend',
+                            defaultMessage: 'Endursenda',
+                          })
+                        : buttonText
+                      : formatMessage(msg.saveEmptyChange)}
                   </Button>
                 </button>
               )}
-              {createLoading && <LoadingDots />}
+              {(createLoading || deleteLoading) && <LoadingDots />}
             </Box>
           </Column>
         </Columns>
@@ -196,6 +226,7 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
                   onClick={() => {
                     setEmailVerifyCreated(false)
                     setVerificationValid(false)
+                    setDeleteSuccess(false)
                   }}
                   variant="text"
                   size="small"
@@ -204,6 +235,18 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
                 </Button>
               </Box>
             </Column>
+            {deleteSuccess ? (
+              <Column width="content">
+                <Box
+                  marginLeft={3}
+                  display="flex"
+                  alignItems="flexStart"
+                  flexDirection="column"
+                >
+                  <Icon icon="checkmarkCircle" color="mint600" type="filled" />
+                </Box>
+              </Column>
+            ) : null}
           </Columns>
         )}
       </form>
