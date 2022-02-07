@@ -135,6 +135,7 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
           <Column width="9/12">
             <InputController
               control={control}
+              backgroundColor="blue"
               id="email"
               name="email"
               required={false}
@@ -221,6 +222,7 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
               <Column width="5/12">
                 <InputController
                   control={control}
+                  backgroundColor="blue"
                   id="code"
                   name="code"
                   format="######"

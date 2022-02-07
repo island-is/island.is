@@ -139,6 +139,7 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
                       defaultMessage: 'Landsnúmer',
                     })}
                     name="country-code"
+                    backgroundColor="blue"
                     size="xs"
                     readOnly
                     value="+354"
@@ -150,6 +151,7 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
                 <InputController
                   control={control}
                   id="tel"
+                  backgroundColor="blue"
                   name="tel"
                   type="tel"
                   format="### ####"
@@ -237,34 +239,27 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
           <form onSubmit={handleSubmit(handleConfirmCode)}>
             <Columns alignY="center">
               <Column width="5/12">
-                <Controller
+                <InputController
                   control={control}
+                  backgroundColor="blue"
+                  id="code"
                   name="code"
                   format="######"
-                  maxLength={6}
+                  label={formatMessage(m.verificationCode)}
+                  placeholder={formatMessage(m.verificationCode)}
+                  defaultValue=""
+                  error={errors.code?.message || formErrors.code}
+                  disabled={verificationValid}
+                  size="xs"
+                  onChange={(inp) => {
+                    setCodeInternal(inp.target.value)
+                  }}
                   rules={{
                     required: {
                       value: true,
                       message: formatMessage(m.verificationCodeRequired),
                     },
                   }}
-                  defaultValue=""
-                  render={({ onChange, value, name }) => (
-                    <Input
-                      label={formatMessage(m.verificationCode)}
-                      placeholder={formatMessage(m.verificationCode)}
-                      disabled={verificationValid}
-                      name={name}
-                      value={value}
-                      size="xs"
-                      hasError={errors.code || !!formErrors.code}
-                      errorMessage={errors.code?.message || formErrors.code}
-                      onChange={(inp) => {
-                        onChange(inp.target.value)
-                        setCodeInternal(inp.target.value)
-                      }}
-                    />
-                  )}
                 />
               </Column>
               <Column width="content">

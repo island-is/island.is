@@ -58,6 +58,7 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
               <Box className={styles.bank}>
                 <InputController
                   control={control}
+                  backgroundColor="blue"
                   id="bank"
                   name="bank"
                   format="####"
@@ -88,6 +89,7 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
               <Box className={styles.hb}>
                 <InputController
                   control={control}
+                  backgroundColor="blue"
                   id="l"
                   name="l"
                   format="##"
@@ -118,6 +120,7 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
               <Box className={styles.account}>
                 <InputController
                   control={control}
+                  backgroundColor="blue"
                   id="account"
                   name="account"
                   format="######"
