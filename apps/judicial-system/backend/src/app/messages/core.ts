@@ -12,6 +12,27 @@ export const core = {
     defaultMessage: 'varnaraðil{suffix}',
     description: 'Notað fyrir orðið varnaraðili.',
   }),
+  caseType: defineMessages({
+    custody: {
+      id: 'judicial.system.backend:pdf.core.case_type.custody',
+      defaultMessage: 'gæsluvarðhald',
+      description:
+        'Notaður sem texti fyrir týpu gæsluvarðhald á kröfu í kröfu PDF',
+    },
+    travelBan: {
+      id: 'judicial.system.backend:pdf.core.case_type.travel_ban',
+      defaultMessage: 'farbann',
+      description: 'Notaður sem texti fyrir týpu farbann á kröfu í kröfu PDF',
+    },
+    investigate: {
+      id: 'judicial.system.backend:pdf.core.case_type.investigate',
+      defaultMessage: 'rannsóknarheimild',
+      description:
+        'Notaður sem texti fyrir týpu rannsóknarheimild á kröfu í kröfu PDF',
+    },
+  }),
+
+  // TODO: remove all messages below
   missing: defineMessages({
     court: {
       id: 'judicial.system.backend:pdf.core.missing.court',
@@ -54,25 +75,6 @@ export const core = {
       id: 'judicial.system.backend:pdf.core.missing.judge',
       defaultMessage: 'Dómari hefur ekki verið skráður',
       description: 'Notaður sem texti þegar dómari hefur ekki verið skráður.',
-    },
-  }),
-  caseType: defineMessages({
-    custody: {
-      id: 'judicial.system.backend:pdf.core.case_type.custody',
-      defaultMessage: 'gæsluvarðhald',
-      description:
-        'Notaður sem texti fyrir týpu gæsluvarðhald á kröfu í kröfu PDF',
-    },
-    travelBan: {
-      id: 'judicial.system.backend:pdf.core.case_type.travel_ban',
-      defaultMessage: 'farbann',
-      description: 'Notaður sem texti fyrir týpu farbann á kröfu í kröfu PDF',
-    },
-    investigate: {
-      id: 'judicial.system.backend:pdf.core.case_type.investigate',
-      defaultMessage: 'rannsóknarheimild',
-      description:
-        'Notaður sem texti fyrir týpu rannsóknarheimild á kröfu í kröfu PDF',
     },
   }),
 }

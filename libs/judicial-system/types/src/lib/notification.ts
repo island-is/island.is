@@ -4,6 +4,7 @@ export enum NotificationType {
   RECEIVED_BY_COURT = 'RECEIVED_BY_COURT',
   COURT_DATE = 'COURT_DATE',
   RULING = 'RULING',
+  MODIFIED = 'MODIFIED',
   REVOKED = 'REVOKED',
 }
 
