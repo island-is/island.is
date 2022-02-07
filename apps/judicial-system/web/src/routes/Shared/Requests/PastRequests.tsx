@@ -77,16 +77,14 @@ const PastRequests: React.FC<Props> = (props) => {
               {row.row.original.defendants[0].name}
             </Box>
             {row.row.original.defendants.length === 1 ? (
-              <Text>
-                <Text as="span" variant="small" color="dark400">
-                  {`kt. ${
-                    row.row.original.defendants[0].nationalId
-                      ? formatNationalId(
-                          row.row.original.defendants[0].nationalId,
-                        )
-                      : '-'
-                  }`}
-                </Text>
+              <Text as="span" variant="small" color="dark400">
+                {`kt. ${
+                  row.row.original.defendants[0].nationalId
+                    ? formatNationalId(
+                        row.row.original.defendants[0].nationalId,
+                      )
+                    : '-'
+                }`}
               </Text>
             ) : (
               <Text as="span" variant="small" color="dark400">
