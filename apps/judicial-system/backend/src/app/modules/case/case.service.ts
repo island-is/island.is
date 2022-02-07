@@ -152,16 +152,11 @@ export class CaseService {
     const buffer = Buffer.from(pdf, 'binary')
 
     try {
-      const streamId = await this.courtService.uploadStream(
-        theCase.courtId,
-        'Úrskurður.pdf',
-        'application/pdf',
-        buffer,
-      )
       await this.courtService.createRuling(
         theCase.courtId,
         theCase.courtCaseNumber,
-        streamId,
+        'Úrskurður',
+        buffer,
       )
 
       return true
@@ -186,16 +181,11 @@ export class CaseService {
 
       const buffer = Buffer.from(pdf, 'binary')
 
-      const streamId = await this.courtService.uploadStream(
-        theCase.courtId,
-        'Þingbók.pdf',
-        'application/pdf',
-        buffer,
-      )
-      await this.courtService.createThingbok(
+      await this.courtService.createCourtRecord(
         theCase.courtId,
         theCase.courtCaseNumber,
-        streamId,
+        'Þingbók',
+        buffer,
       )
     } catch (error) {
       // Log and ignore this error. The court record can be uploaded manually.
@@ -223,18 +213,13 @@ export class CaseService {
 
         const buffer = Buffer.from(caseFilesPdf, 'binary')
 
-        const streamId = await this.courtService.uploadStream(
-          theCase.courtId,
-          'Rannsóknargögn.pdf',
-          'application/pdf',
-          buffer,
-        )
         await this.courtService.createDocument(
           theCase.courtId,
           theCase.courtCaseNumber,
           'Rannsóknargögn',
           'Rannsóknargögn.pdf',
-          streamId,
+          'application/pdf',
+          buffer,
         )
       }
     } catch (error) {
@@ -792,16 +777,10 @@ export class CaseService {
     const pdf = await getRequestPdfAsBuffer(theCase, this.formatMessage)
 
     try {
-      const streamId = await this.courtService.uploadStream(
-        theCase.courtId,
-        'Krafa.pdf',
-        'application/pdf',
-        pdf,
-      )
       await this.courtService.createRequest(
         theCase.courtId,
         theCase.courtCaseNumber,
-        streamId,
+        pdf,
       )
     } catch (error) {
       // Tolerate failure, but log error
