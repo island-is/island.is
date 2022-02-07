@@ -34,7 +34,7 @@ export class UserProfile {
   modified?: Date
 
   // Temporary merge with islyklar service
-  @Field(() => Boolean)
+  @Field(() => Boolean, { nullable: true })
   canNudge?: boolean
 
   @Field(() => String, { nullable: true })
