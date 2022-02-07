@@ -1,5 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { Deprivation } from './deprivation.model'
+import { FishingLicenseInfo } from './fishing-license-info.model'
 import { Seaworthiness } from './seaworthiness.model'
 
 @ObjectType()
@@ -20,6 +21,6 @@ export class Ship {
   seaworthiness!: Seaworthiness
   @Field(() => [Deprivation])
   deprivations!: Deprivation[]
-  @Field(() => [String])
-  fishingLicences!: string[]
+  @Field(() => [FishingLicenseInfo])
+  fishingLicences!: FishingLicenseInfo[]
 }

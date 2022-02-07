@@ -19,7 +19,7 @@ export type Ship = {
   homePort: string
   seaworthiness: Seaworthiness
   deprivations: Deprivation[]
-  fishingLicences: string[]
+  fishingLicences: FishingLicenseInfo[]
 }
 
 export type FishingLicence = {

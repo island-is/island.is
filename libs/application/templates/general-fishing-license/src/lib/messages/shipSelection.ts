@@ -71,5 +71,15 @@ export const shipSelection = {
       defaultMessage: 'Engin gild veiðileyfi fundust',
       description: 'No fishing license found tag',
     },
+    catchMark: {
+      id: 'gfl.application:shipSelection.tags.catchMark',
+      defaultMessage: 'Almennt veiðileyfi með aflamarki',
+      description: 'Catch mark tag',
+    },
+    hookCatchLimit: {
+      id: 'gfl.application:shipSelection.tags.hookCatchLimit',
+      defaultMessage: 'Almennt veiðileyfi með krókaafla',
+      description: 'Hook catch limit tag',
+    },
   }),
 }
