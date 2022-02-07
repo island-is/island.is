@@ -63,10 +63,6 @@ interface Attachment {
 
 @Injectable()
 export class NotificationService {
-  private formatMessage: FormatMessage = () => {
-    throw new InternalServerErrorException('Format message not initialized')
-  }
-
   constructor(
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
@@ -74,13 +70,23 @@ export class NotificationService {
     private readonly smsService: SmsService,
     private readonly emailService: EmailService,
     private readonly eventService: EventService,
-    intlService: IntlService,
+    private readonly intlService: IntlService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-  ) {
-    intlService
-      .useIntl(['judicial.system.backend'], 'is')
-      .then((res) => (this.formatMessage = res.formatMessage))
+  ) {}
+
+  private formatMessage: FormatMessage = () => {
+    throw new InternalServerErrorException('Format message not initialized')
   }
+
+  private refreshFormatMessage: () => Promise<void> = async () =>
+    this.intlService
+      .useIntl(['judicial.system.backend'], 'is')
+      .then((res) => {
+        this.formatMessage = res.formatMessage
+      })
+      .catch((reason) => {
+        this.logger.error('Unable to refresh format messages', { reason })
+      })
 
   private async existsRevokableNotification(
     caseId: string,
@@ -850,11 +856,13 @@ export class NotificationService {
     })
   }
 
-  sendCaseNotification(
+  async sendCaseNotification(
     notification: SendNotificationDto,
     theCase: Case,
     user: User,
   ): Promise<SendNotificationResponse> {
+    await this.refreshFormatMessage()
+
     switch (notification.type) {
       case NotificationType.HEADS_UP:
         return this.sendHeadsUpNotifications(theCase)

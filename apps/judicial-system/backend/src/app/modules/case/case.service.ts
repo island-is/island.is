@@ -98,10 +98,6 @@ const defendantsOrder: OrderItem = [
 
 @Injectable()
 export class CaseService {
-  private formatMessage: FormatMessage = () => {
-    throw new InternalServerErrorException('Format message not initialized')
-  }
-
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Case) private readonly caseModel: typeof Case,
@@ -112,13 +108,23 @@ export class CaseService {
     private readonly courtService: CourtService,
     private readonly signingService: SigningService,
     private readonly emailService: EmailService,
-    intlService: IntlService,
+    private readonly intlService: IntlService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-  ) {
-    intlService
-      .useIntl(['judicial.system.backend'], 'is')
-      .then((res) => (this.formatMessage = res.formatMessage))
+  ) {}
+
+  private formatMessage: FormatMessage = () => {
+    throw new InternalServerErrorException('Format message not initialized')
   }
+
+  private refreshFormatMessage: () => Promise<void> = async () =>
+    this.intlService
+      .useIntl(['judicial.system.backend'], 'is')
+      .then((res) => {
+        this.formatMessage = res.formatMessage
+      })
+      .catch((reason) => {
+        this.logger.error('Unable to refresh format messages', { reason })
+      })
 
   private async uploadSignedRulingPdfToS3(
     theCase: Case,
@@ -556,6 +562,8 @@ export class CaseService {
   }
 
   async getRequestPdf(theCase: Case): Promise<Buffer> {
+    await this.refreshFormatMessage()
+
     return getRequestPdfAsBuffer(theCase, this.formatMessage)
   }
 
@@ -570,6 +578,8 @@ export class CaseService {
         { error },
       )
     }
+
+    await this.refreshFormatMessage()
 
     return getCourtRecordPdfAsBuffer(theCase, user, this.formatMessage)
   }
@@ -586,10 +596,14 @@ export class CaseService {
       )
     }
 
+    await this.refreshFormatMessage()
+
     return getRulingPdfAsBuffer(theCase, this.formatMessage)
   }
 
   async getCustodyPdf(theCase: Case): Promise<Buffer> {
+    await this.refreshFormatMessage()
+
     return getCustodyNoticePdfAsBuffer(theCase, this.formatMessage)
   }
 
@@ -601,6 +615,8 @@ export class CaseService {
     if (!environment.production && !environment.signingOptions.accessToken) {
       return { controlCode: '0000', documentToken: 'DEVELOPMENT' }
     }
+
+    await this.refreshFormatMessage()
 
     const pdf = await getCourtRecordPdfAsString(theCase, this.formatMessage)
 
@@ -670,6 +686,8 @@ export class CaseService {
       return { controlCode: '0000', documentToken: 'DEVELOPMENT' }
     }
 
+    await this.refreshFormatMessage()
+
     const pdf = await getRulingPdfAsString(theCase, this.formatMessage)
 
     return this.signingService.requestSignature(
@@ -695,6 +713,8 @@ export class CaseService {
           'ruling.pdf',
           documentToken,
         )
+
+        await this.refreshFormatMessage()
 
         await this.sendRulingAsSignedPdf(theCase, signedPdf)
       } catch (error) {
@@ -777,6 +797,8 @@ export class CaseService {
 
   async uploadRequestPdfToCourt(theCase: Case): Promise<void> {
     this.logger.debug(`Uploading request pdf to court for case ${theCase.id}`)
+
+    await this.refreshFormatMessage()
 
     const pdf = await getRequestPdfAsBuffer(theCase, this.formatMessage)
 
