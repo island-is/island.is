@@ -50,8 +50,12 @@ export const Nudge: FC<Props> = ({ canNudge }) => {
             render={({ onChange, value }) => (
               <Checkbox
                 name="canNudge"
-                onChange={(e) => onChange(e.target.checked)}
-                disabled={inputSuccess}
+                onChange={(e) => {
+                  onChange(e.target.checked)
+                  if (inputSuccess) {
+                    setInputSuccess(false)
+                  }
+                }}
                 label={formatMessage({
                   id: 'sp.settings:nudge-checkbox-label',
                   defaultMessage: 'Virkja hnipp',
@@ -84,21 +88,6 @@ export const Nudge: FC<Props> = ({ canNudge }) => {
           </Box>
         </Column>
       </Columns>
-      {inputSuccess && (
-        <Columns alignY="center">
-          <Column>
-            <Box paddingTop={1}>
-              <Button
-                onClick={() => setInputSuccess(false)}
-                variant="text"
-                size="small"
-              >
-                {formatMessage(msg.buttonChange)}
-              </Button>
-            </Box>
-          </Column>
-        </Columns>
-      )}
     </form>
   )
 }

@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { m } from '@island.is/service-portal/core'
 import { msg } from '../../../../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -8,7 +8,6 @@ import {
   Button,
   Columns,
   Column,
-  Input,
   Icon,
   Text,
   LoadingDots,
@@ -102,8 +101,7 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
   const handleConfirmCode = async (data: { code: string }) => {
     const codeError = formatMessage({
       id: 'sp.settings:code-service-error',
-      defaultMessage:
-        'Vandamál með tölvupóstþjónustu. Vinsamlegast reynið aftur síðar.',
+      defaultMessage: 'Villa í staðfestingu kóða. Vinsamlegast reynið aftur.',
     })
 
     try {
@@ -214,7 +212,7 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
             {formatMessage({
               id: 'sp.settings:email-verify-code-sent',
               defaultMessage: `Öryggiskóði hefur verið sendur á netfangið þitt. Sláðu hann inn
-                  hér að neðan.`,
+                  hér að neðan. Athugaðu að pósturinn getur endað með ruslpóstinum.`,
             })}
           </Text>
 

@@ -97,6 +97,10 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
   }
 
   const handleConfirmCode = async (data: { code: string }) => {
+    const codeError = formatMessage({
+      id: 'sp.settings:code-service-error',
+      defaultMessage: 'Villa í staðfestingu kóða. Vinsamlegast reynið aftur.',
+    })
     try {
       setVerifiCationLoading(true)
 
@@ -117,7 +121,7 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
     } catch (err) {
       console.error(`confirmSmsVerification error: ${err}`)
       setVerifiCationLoading(false)
-      setErrors({ ...formErrors, code: formatMessage(m.somethingWrong) })
+      setErrors({ ...formErrors, code: codeError })
     }
   }
 
