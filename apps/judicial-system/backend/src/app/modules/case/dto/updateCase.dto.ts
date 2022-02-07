@@ -312,4 +312,9 @@ export class UpdateCaseDto {
   @IsUUID()
   @ApiPropertyOptional()
   readonly registrarId?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly caseModifiedExplanation?: string
 }

@@ -2,7 +2,9 @@ import CircuitBreaker from 'opossum'
 import nodeFetch from 'node-fetch'
 import { Logger } from 'winston'
 import { logger as defaultLogger } from '@island.is/logging'
+import { DogStatsD } from '@island.is/infra-metrics'
 import { withTimeout } from './withTimeout'
+import { withMetrics } from './withMetrics'
 import { FetchAPI as NodeFetchAPI } from './nodeFetch'
 import { EnhancedFetchAPI } from './types'
 import { withAuth } from './withAuth'
@@ -55,6 +57,9 @@ export interface EnhancedFetchOptions {
 
   // Certificate for auth
   clientCertificate?: ClientCertificateOptions
+
+  // The client used to send metrics.
+  metricsClient?: DogStatsD
 }
 
 function buildFetch(fetch: NodeFetchAPI) {
@@ -118,6 +123,7 @@ export const createEnhancedFetch = (
     forwardAuthUserAgent = true,
     clientCertificate,
     cache,
+    metricsClient = new DogStatsD({ prefix: `${options.name}.` }),
   } = options
   const treat400ResponsesAsErrors = options.treat400ResponsesAsErrors === true
   const builder = buildFetch(fetch)
@@ -132,6 +138,10 @@ export const createEnhancedFetch = (
 
   if (clientCertificate) {
     builder.wrap(withClientCertificate, { clientCertificate })
+  }
+
+  if (metricsClient) {
+    builder.wrap(withMetrics, { metricsClient })
   }
 
   if (timeout !== false) {

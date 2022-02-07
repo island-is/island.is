@@ -1,17 +1,22 @@
-import { AttachmentEmailTemplateGenerator } from '../../../../types'
+import { EmailTemplateGenerator } from '../../../../types'
+import { NationalRegistry } from '../types'
 
-export const generateSyslumennNotificationEmail: AttachmentEmailTemplateGenerator = (
+export const generateSyslumennNotificationEmail: EmailTemplateGenerator = (
   props,
-  fileContent,
-  recipientEmail,
 ) => {
   const {
     application,
     options: { email },
   } = props
+
+  const syslumennEmail = 'vefur@syslumenn.is'
+
+  const nationalRegistryData = application.externalData.nationalRegistry
+    ?.data as NationalRegistry
+
   const subject = 'Umsókn um sakavottorð'
   const body = `
-      Villa hefur komið upp í samskiptum milli island.is og sýslumanna.
+      Villa hefur komið upp í samskiptum milli island.is og sýslumanna, vegna kaupa á sakavottorði fyrir ${nationalRegistryData.nationalId}.
       `
 
   return {
@@ -22,7 +27,7 @@ export const generateSyslumennNotificationEmail: AttachmentEmailTemplateGenerato
     to: [
       {
         name: '',
-        address: recipientEmail,
+        address: syslumennEmail,
       },
     ],
     subject,
@@ -30,12 +35,5 @@ export const generateSyslumennNotificationEmail: AttachmentEmailTemplateGenerato
       .split('')
       .map((c) => (c === '\n' ? `<br />\n` : c))
       .join('')}</p>`,
-    attachments: [
-      {
-        filename: `${application.id}.pdf`,
-        content: fileContent,
-        encoding: 'binary',
-      },
-    ],
   }
 }

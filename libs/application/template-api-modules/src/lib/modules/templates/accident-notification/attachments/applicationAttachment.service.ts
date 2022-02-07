@@ -1,4 +1,7 @@
-import { Application, getValueViaPath } from '@island.is/application/core'
+import {
+  ApplicationWithAttachments as Application,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { S3Service } from './s3.service'
