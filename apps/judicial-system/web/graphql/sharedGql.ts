@@ -138,6 +138,7 @@ export const CaseQuery = gql`
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
       isMasked
+      caseModifiedExplanation
     }
   }
 `

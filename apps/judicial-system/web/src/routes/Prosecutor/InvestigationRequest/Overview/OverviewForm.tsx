@@ -58,7 +58,7 @@ const OverviewForm: React.FC<Props> = (props) => {
           <InfoCard
             data={[
               {
-                title: 'LÖKE málsnúmer',
+                title: formatMessage(core.policeCaseNumber),
                 value: workingCase.policeCaseNumber,
               },
               ...(workingCase.courtCaseNumber
@@ -70,11 +70,11 @@ const OverviewForm: React.FC<Props> = (props) => {
                   ]
                 : []),
               {
-                title: 'Dómstóll',
+                title: formatMessage(core.court),
                 value: workingCase.court?.name,
               },
               {
-                title: 'Embætti',
+                title: formatMessage(core.prosecutor),
                 value: `${
                   workingCase.creatingProsecutor?.institution?.name ??
                   'Ekki skráð'
@@ -83,7 +83,7 @@ const OverviewForm: React.FC<Props> = (props) => {
               ...(workingCase.judge
                 ? [
                     {
-                      title: 'Dómari',
+                      title: formatMessage(core.judge),
                       value: workingCase.judge.name,
                     },
                   ]
@@ -101,23 +101,23 @@ const OverviewForm: React.FC<Props> = (props) => {
               ...(workingCase.registrar
                 ? [
                     {
-                      title: 'Dómritari',
+                      title: formatMessage(core.registrar),
                       value: workingCase.registrar.name,
                     },
                   ]
                 : []),
               {
-                title: 'Ákærandi',
+                title: formatMessage(core.prosecutorPerson),
                 value: workingCase.prosecutor?.name,
               },
               {
-                title: 'Tegund kröfu',
+                title: formatMessage(core.caseType),
                 value: capitalize(caseTypes[workingCase.type]),
               },
               ...(workingCase.courtDate
                 ? [
                     {
-                      title: 'Staðfestur fyrirtökutími',
+                      title: formatMessage(core.confirmedCourtDate),
                       value: `${capitalize(
                         formatDate(workingCase.courtDate, 'PPPP', true) ?? '',
                       )} kl. ${formatDate(workingCase.courtDate, TIME_FORMAT)}`,
