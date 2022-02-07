@@ -16,6 +16,7 @@ import {
   EinstaklingarGetForsjaRequest,
 } from '@island.is/clients/national-registry-v2'
 import environment from '../../../environments/environment'
+import e from 'express'
 
 @Injectable()
 export class UserService {
@@ -26,21 +27,22 @@ export class UserService {
   ) {}
 
   async getRelations(authUser: AuthUser): Promise<Array<string>> {
-    let relations: string[] = []
-    try {
-      relations = await this.nationalRegistryIndividualsApi
-        .withMiddleware(
-          new AuthMiddleware(
-            authUser,
-            environment.nationalRegistry
-              .authMiddlewareOptions as AuthMiddlewareOptions,
-          ),
-        )
-        .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{
-          id: authUser.nationalId,
-        })
-    } finally {
-      return relations
+    const response: string[] = await this.nationalRegistryIndividualsApi
+      .withMiddleware(
+        new AuthMiddleware(
+          authUser,
+          environment.nationalRegistry
+            .authMiddlewareOptions as AuthMiddlewareOptions,
+        ),
+      )
+      .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{
+        id: authUser.nationalId,
+      })
+
+    if (Array.isArray(response)) {
+      return response
+    } else {
+      return []
     }
   }
 
