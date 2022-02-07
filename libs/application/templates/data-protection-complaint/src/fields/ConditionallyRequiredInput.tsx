@@ -47,10 +47,8 @@ export const ConditionallyRequiredInput: FC<FieldBaseProps> = ({
 
   const getValueConditionallyRequiredValue = () => {
     if (statefulCheckbox.includes('other')) {
-      console.log('returning statefulOtherReason', statefulOtherReason)
       return statefulOtherReason
     }
-    console.log('someValue')
     return 'someValue'
   }
 
@@ -126,6 +124,7 @@ export const ConditionallyRequiredInput: FC<FieldBaseProps> = ({
           <TextFormField
             application={application}
             error={error}
+            showFieldName={true}
             field={{
               ...field,
               type: FieldTypes.TEXT,
