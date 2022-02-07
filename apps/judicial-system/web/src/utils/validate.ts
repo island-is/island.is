@@ -102,7 +102,10 @@ export const isDefendantStepValidIC = (workingCase: Case) => {
       (defendant) =>
         !defendant.gender ||
         !validate(defendant.nationalId || '', 'empty').isValid ||
-        !validate(defendant.nationalId || '', 'national-id').isValid ||
+        !validate(
+          defendant.nationalId || '',
+          defendant.noNationalId ? 'date-of-birth' : 'national-id',
+        ).isValid ||
         !validate(defendant.name || '', 'empty').isValid ||
         !validate(defendant.address || '', 'empty').isValid,
     )

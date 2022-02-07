@@ -85,7 +85,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
       </Box>
       <Box marginBottom={2}>
         <Checkbox
-          name="noNationalId"
+          name={`noNationalId-${Math.random()}`}
           label={formatMessage(
             defendantMessages.sections.defendantInfo
               .doesNotHaveIcelandicNationalId,
