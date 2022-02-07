@@ -9,8 +9,6 @@ import { MessageDescriptor, useIntl } from 'react-intl'
 import * as m from './messages'
 import { Applicant, ApproveOptions } from './types'
 
-const { formatMessage } = useIntl()
-
 export const getMessageHomeCircumstances: KeyMapping<
   HomeCircumstances,
   MessageDescriptor
@@ -54,22 +52,6 @@ export const formatAddress = (applicant?: Applicant) =>
   applicant
     ? `${applicant.address.streetName}, ${applicant.address.postalCode} ${applicant.address.city}`
     : undefined
-
-export const formatHomeCircumstances = (circumstance: {
-  type: HomeCircumstances
-  custom?: string
-}) =>
-  circumstance.type === HomeCircumstances.OTHER
-    ? circumstance.custom
-    : formatMessage(getMessageHomeCircumstances[circumstance?.type])
-
-export const formatEmployment = (circumstance: {
-  type: Employment
-  custom?: string
-}) =>
-  circumstance.type === Employment.OTHER
-    ? circumstance.custom
-    : formatMessage(getMessageEmploymentStatus[circumstance?.type])
 
 export const formatBankInfo = (bankInfo: {
   bankNumber?: string

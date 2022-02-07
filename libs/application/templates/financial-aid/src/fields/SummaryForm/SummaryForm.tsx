@@ -11,19 +11,23 @@ import { useIntl } from 'react-intl'
 import { Controller, useFormContext } from 'react-hook-form'
 import * as m from '../../lib/messages'
 import { ApproveOptions, FAFieldBaseProps } from '../../lib/types'
-import { getNextPeriod } from '@island.is/financial-aid/shared/lib'
 import {
-  getMessageApproveOptions,
-  getMessageApproveOptionsForIncome,
-  formatAddress,
-  formatHomeCircumstances,
-  formatEmployment,
-  formatBankInfo,
-} from '../../lib/formatters'
+  Employment,
+  getNextPeriod,
+  HomeCircumstances,
+} from '@island.is/financial-aid/shared/lib'
 
 // import { Breakdown } from '@island.is/financial-aid/shared/components'
 import { routes } from '../../lib/constants'
 import { SummaryBlock, DescriptionText } from '../index'
+import {
+  formatAddress,
+  formatBankInfo,
+  getMessageApproveOptions,
+  getMessageApproveOptionsForIncome,
+  getMessageEmploymentStatus,
+  getMessageHomeCircumstances,
+} from '../../lib/formatters'
 
 const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -73,7 +77,9 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
               <Text fontWeight="semiBold">
                 {formatMessage(m.summaryForm.userInfo.name)}
               </Text>
-              <Text>{externalData?.nationalRegistry?.data?.fullName}</Text>
+              <Text>
+                {externalData?.nationalRegistry?.data?.applicant?.fullName}
+              </Text>
             </Box>
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
@@ -81,7 +87,9 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
               <Text fontWeight="semiBold">
                 {formatMessage(m.summaryForm.userInfo.nationalId)}
               </Text>
-              <Text>{externalData?.nationalRegistry?.data?.nationalId}</Text>
+              <Text>
+                {externalData?.nationalRegistry?.data?.applicant?.nationalId}
+              </Text>
             </Box>
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
@@ -89,7 +97,9 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
               <Text fontWeight="semiBold">
                 {formatMessage(m.summaryForm.userInfo.address)}
               </Text>
-              <Text>{formatAddress(externalData?.nationalRegistry?.data)}</Text>
+              <Text>
+                {formatAddress(externalData?.nationalRegistry?.data?.applicant)}
+              </Text>
             </Box>
           </GridColumn>
         </GridRow>
@@ -109,7 +119,15 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
           {formatMessage(m.homeCircumstancesForm.general.sectionTitle)}
         </Text>
 
-        <Text>{formatHomeCircumstances(answers?.homeCircumstances)}</Text>
+        {answers?.homeCircumstances && (
+          <Text>
+            {answers?.homeCircumstances.type === HomeCircumstances.OTHER
+              ? answers?.homeCircumstances?.custom
+              : formatMessage(
+                  getMessageHomeCircumstances[answers?.homeCircumstances?.type],
+                )}
+          </Text>
+        )}
       </SummaryBlock>
 
       <SummaryBlock editAction={() => goToScreen?.(routes.STUDENT)}>
@@ -131,7 +149,15 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
           {formatMessage(m.employmentForm.general.sectionTitle)}
         </Text>
 
-        <Text>{formatEmployment(answers?.employment)}</Text>
+        {answers?.employment && (
+          <Text>
+            {answers?.employment.type === Employment.OTHER
+              ? answers?.employment.custom
+              : formatMessage(
+                  getMessageEmploymentStatus[answers.employment?.type],
+                )}
+          </Text>
+        )}
       </SummaryBlock>
 
       <SummaryBlock editAction={() => goToScreen?.(routes.INCOME)}>
@@ -148,9 +174,13 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         <Text fontWeight="semiBold">
           {formatMessage(m.summaryForm.formInfo.personalTaxCreditTitle)}
         </Text>
-        <Text>
-          {formatMessage(getMessageApproveOptions[answers?.personalTaxCredit])}
-        </Text>
+        {answers?.personalTaxCredit && (
+          <Text>
+            {formatMessage(
+              getMessageApproveOptions[answers?.personalTaxCredit],
+            )}
+          </Text>
+        )}
       </SummaryBlock>
 
       <SummaryBlock editAction={() => goToScreen?.(routes.BANKINFO)}>
