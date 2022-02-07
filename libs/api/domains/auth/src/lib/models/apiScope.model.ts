@@ -16,8 +16,8 @@ export class ApiScope {
   displayName!: string
 
   @Field(() => ApiScopeGroup, { nullable: true })
-  group?: typeof ApiScopeGroup | null
+  group?: typeof ApiScopeGroup
 
   @Field(() => String, { nullable: true })
-  description?: string | null
+  description?: string
 }
