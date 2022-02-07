@@ -368,7 +368,7 @@ export const m = defineMessages({
   },
   licenses: {
     id: 'service.portal:licenses',
-    defaultMessage: 'Skilríki',
+    defaultMessage: 'Skírteini',
   },
   finance: {
     id: 'service.portal:finance',
