@@ -149,9 +149,6 @@ const prodConfig = () => ({
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
     basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
   },
-  mortgageCertificate: {
-    xroadPath: process.env.XROAD_MORTGAGE_CERTIFICATE_PATH,
-  },
 })
 const devConfig = () => ({
   production: false,
@@ -318,10 +315,6 @@ const devConfig = () => ({
     cert: process.env.ISLYKILL_CERT,
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
     basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
-  },
-  mortgageCertificate: {
-    xroadPath:
-      process.env.XROAD_MORTGAGE_CERTIFICATE_PATH ?? 'r1/IS-DEV/GOV/TODOx',
   },
 })
 export const getConfig =

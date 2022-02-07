@@ -1,8 +1,4 @@
 import { Injectable } from '@nestjs/common'
-// import {
-//   MortgageCertificateApi,
-//   MortgageCertificate,
-// } from '@island.is/clients/mortgage-certificate'
 import {
   SyslumennService,
   MortgageCertificate,
@@ -10,10 +6,7 @@ import {
 
 @Injectable()
 export class MortgageCertificateService {
-  constructor(
-    // private readonly mortgageCertificateApi: MortgageCertificateApi,
-    private readonly syslumennService: SyslumennService,
-  ) {}
+  constructor(private readonly syslumennService: SyslumennService) {}
 
   async getMortgageCertificate(
     realEstateNumber: string,

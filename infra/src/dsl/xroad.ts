@@ -283,13 +283,3 @@ export const DataProtectionComplaint = new XroadConf({
       '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_PASSWORD',
   },
 })
-
-export const MortgageCertificate = new XroadConf({
-  env: {
-    XROAD_MORTGAGE_CERTIFICATE_PATH: {
-      dev: 'r1/IS-DEV/GOV/TODOx',
-      staging: 'r1/IS-TEST/GOV/TODOx',
-      prod: 'r1/IS/GOV/TODOx',
-    },
-  },
-})

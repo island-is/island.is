@@ -155,5 +155,7 @@ function mapPersonEnum(e: PersonType) {
       return AdiliTegund.NUMBER_2
     case PersonType.CriminalRecordApplicant:
       return AdiliTegund.NUMBER_0
+    case PersonType.MortgageCertificateApplicant:
+      return AdiliTegund.NUMBER_0
   }
 }
