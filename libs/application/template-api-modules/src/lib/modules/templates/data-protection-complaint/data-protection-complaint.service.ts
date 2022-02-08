@@ -42,10 +42,11 @@ export class DataProtectionComplaintService {
         application,
         attachments,
       )
-
-      await this.caseApiWithAuth.createCase({
-        requestData: caseRequest,
-      })
+      if (complaintPdf.length > 0) {
+        await this.caseApiWithAuth.createCase({
+          requestData: caseRequest,
+        })
+      }
 
       return {
         pdfContent: complaintPdf[0].content,

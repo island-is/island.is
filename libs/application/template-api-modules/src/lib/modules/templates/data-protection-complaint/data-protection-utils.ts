@@ -190,8 +190,7 @@ export const applicationToComplaintPDF = (
   application: Application,
 ): ComplaintPDF => {
   const answers = application.answers as DataProtectionComplaint
-  //const sendDate = application.externalData.sendApplication.date ?? null
-  const timestamp = new Date() //new Date(sendDate) ?? new Date()
+  const timestamp = new Date()
 
   return {
     applicantInfo: {
