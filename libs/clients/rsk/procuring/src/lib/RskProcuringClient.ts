@@ -2,6 +2,8 @@ import { caching } from 'cache-manager'
 import redisStore from 'cache-manager-ioredis'
 import { Inject, Injectable } from '@nestjs/common'
 
+import type { Auth, User } from '@island.is/auth-nest-tools'
+import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import { createRedisCluster } from '@island.is/cache'
 import { XRoadConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
@@ -36,12 +38,24 @@ export class RskProcuringClient {
     this.detailedApi = new GetDetailedApi(configuration)
   }
 
-  getSimple(nationalId: string): Promise<ResponseSimple | null> {
-    return this.simpleApi.simple({ nationalId }).catch(this.handle404)
+  simpleApiWithAuth(auth: Auth) {
+    return this.simpleApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  getDetailed(nationalId: string): Promise<ResponseDetailed | null> {
-    return this.detailedApi.detailed({ nationalId }).catch(this.handle404)
+  detailedApiWithAuth(auth: Auth) {
+    return this.detailedApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  getSimple(user: User): Promise<ResponseSimple | null> {
+    return this.simpleApiWithAuth(user)
+      .simple({ nationalId: user.nationalId })
+      .catch(this.handle404)
+  }
+
+  getDetailed(user: User): Promise<ResponseDetailed | null> {
+    return this.detailedApiWithAuth(user)
+      .detailed({ nationalId: user.nationalId })
+      .catch(this.handle404)
   }
 
   private handle404(error: FetchError): null {
@@ -55,20 +69,23 @@ export class RskProcuringClient {
     return new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-rsk-procuring',
-        cache: {
-          cacheManager: caching({
-            store: redisStore,
-            ttl: 0,
-            redisInstance: createRedisCluster({
-              name: 'clients-rsk-procuring',
-              nodes: this.config.redis.nodes,
-              ssl: this.config.redis.ssl,
-              noPrefix: true,
-            }),
-          }),
-          shared: false,
-          overrideCacheControl: buildCacheControl({ maxAge: 60 * 10 }),
-        },
+        cache:
+          this.config.redis.nodes.length === 0
+            ? undefined
+            : {
+                cacheManager: caching({
+                  store: redisStore,
+                  ttl: 0,
+                  redisInstance: createRedisCluster({
+                    name: 'clients-rsk-procuring',
+                    nodes: this.config.redis.nodes,
+                    ssl: this.config.redis.ssl,
+                    noPrefix: true,
+                  }),
+                }),
+                shared: false,
+                overrideCacheControl: buildCacheControl({ maxAge: 60 * 10 }),
+              },
       }),
       basePath: `${this.xRoadConfig.xRoadBasePath}/r1/${this.config.xRoadServicePath}`,
       headers: {

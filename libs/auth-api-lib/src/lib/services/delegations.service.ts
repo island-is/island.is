@@ -382,7 +382,7 @@ export class DelegationsService {
         return []
       }
 
-      const person = await this.rskProcuringClient.getSimple(user.nationalId)
+      const person = await this.rskProcuringClient.getSimple(user)
 
       if (person && person.companies) {
         return person.companies.map(
