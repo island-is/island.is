@@ -564,8 +564,7 @@ jobs:
         run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
       - name: Retag unaffected Docker images with lifecycle
         if: "!startsWith(env.GIT_BRANCH_DEPLOY, 'feature/')"
-        run: ./scripts/ci/retag-lifecycle-policy.sh "$UNAFFECTED" #Retags feature images for lifecycle. 
-
+        run: DOCKER_TAG=feature-$POLICY_TAG ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
   deploy:
     runs-on: ubuntu-20.04
     if: always() && needs.retag-unaffected.result == 'success' && needs.helm-docker-build.result != 'failure'
