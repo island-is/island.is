@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { AirlineUser, User } from './user.model'
 import { Fund } from '@island.is/air-discount-scheme/types'
 import { FlightService } from '../flight'
@@ -16,8 +16,6 @@ import {
   EinstaklingarGetForsjaRequest,
 } from '@island.is/clients/national-registry-v2'
 import environment from '../../../environments/environment'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class UserService {
@@ -25,27 +23,26 @@ export class UserService {
     private readonly flightService: FlightService,
     private readonly nationalRegistryService: NationalRegistryService,
     private readonly nationalRegistryIndividualsApi: EinstaklingarApi,
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
   async getRelations(authUser: AuthUser): Promise<Array<string>> {
-    let relations: string[] = []
-    try {
-      relations = await this.nationalRegistryIndividualsApi
-        .withMiddleware(
-          new AuthMiddleware(
-            authUser,
-            environment.nationalRegistry
-              .authMiddlewareOptions as AuthMiddlewareOptions,
-          ),
-        )
-        .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{
-          id: authUser.nationalId,
-        })
-    } catch (e) {
-      this.logger.error(e)
+    const response: string[] = await this.nationalRegistryIndividualsApi
+      .withMiddleware(
+        new AuthMiddleware(
+          authUser,
+          environment.nationalRegistry
+            .authMiddlewareOptions as AuthMiddlewareOptions,
+        ),
+      )
+      .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{
+        id: authUser.nationalId,
+      })
+
+    if (Array.isArray(response)) {
+      return response
+    } else {
+      return []
     }
-    return relations
   }
 
   private async getFund(user: NationalRegistryUser): Promise<Fund> {
@@ -91,15 +88,18 @@ export class UserService {
     return this.getUserByNationalId<User>(nationalId, User)
   }
 
-  async getMultipleUsersByNationalIdArray(
-    ids: string[],
-  ): Promise<Array<User | null>> {
-    const allUsers = ids.map(
-      async (nationalId) =>
-        (this.getUserInfoByNationalId(nationalId) as unknown) as User,
+  async getMultipleUsersByNationalIdArray(ids: string[]): Promise<Array<User>> {
+    const allUsers = ids.map(async (nationalId) =>
+      this.getUserInfoByNationalId(nationalId),
     )
 
-    const result = await Promise.all(allUsers)
+    const result = (await Promise.all(allUsers)).filter(Boolean) as Array<User>
+
+    if (!result || result.length === 0) {
+      throw new Error(
+        'Could not find NationalRegistry records of neither User or relatives.',
+      )
+    }
 
     return result
   }

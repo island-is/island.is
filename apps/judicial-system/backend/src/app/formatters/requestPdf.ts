@@ -23,7 +23,7 @@ import {
   addMediumText,
   addNormalText,
   setLineGap,
-  setPageNumbers,
+  addFooter,
   setTitle,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
@@ -182,7 +182,7 @@ function constructRestrictionRequestPdf(
     }`,
     'Helvetica-Bold',
   )
-  setPageNumbers(doc)
+  addFooter(doc)
 
   doc.end()
 
@@ -371,7 +371,7 @@ function constructInvestigationRequestPdf(
     }`,
     'Helvetica-Bold',
   )
-  setPageNumbers(doc)
+  addFooter(doc)
 
   doc.end()
 
