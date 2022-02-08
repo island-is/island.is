@@ -1,4 +1,4 @@
-# clients-application
+# Clients Application
 
 This library was generated with [Nx](https://nx.dev).
 
