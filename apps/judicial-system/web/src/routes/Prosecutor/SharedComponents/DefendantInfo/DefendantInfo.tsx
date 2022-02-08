@@ -101,10 +101,6 @@ const DefendantInfo: React.FC<Props> = (props) => {
             defendantMessages.sections.defendantInfo
               .doesNotHaveIcelandicNationalId,
           )}
-          tooltip={formatMessage(
-            defendantMessages.sections.defendantInfo
-              .doesNotHaveIcelandicNationalIdTooltip,
-          )}
           checked={defendant.noNationalId}
           onChange={() => {
             updateDefendantState(defendant.id, {

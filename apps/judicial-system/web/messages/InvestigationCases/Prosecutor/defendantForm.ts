@@ -80,13 +80,6 @@ export const defendant = {
         description:
           'Notaður sem texti í "Varnaraðili er ekki með íslenska kennitölu" hak í "upplýsingar um varnaraðila" hlutanum á varnaraðila skrefi í rannsóknarheimildum.',
       }),
-      doesNotHaveIcelandicNationalIdTooltip: defineMessage({
-        id:
-          'judicial.system.investigation_cases:defendant.defendant_info.does_not_have_icelandic_national_id_tooltip',
-        defaultMessage: 'Varnaraðili er ekki með íslenska kennitölu',
-        description:
-          'Notaður sem texti í upplýsingasvæði við "Varnaraðili er ekki með íslenska kennitölu" hak í "upplýsingar um varnaraðila" hlutanum á varnaraðila skrefi í rannsóknarheimildum.',
-      }),
       addDefendantButtonText: defineMessage({
         id:
           'judicial.system.investigation_cases:defendant.defendant_info.add_defendant_button_text',
