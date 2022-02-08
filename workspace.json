@@ -993,6 +993,36 @@
         }
       }
     },
+    "api-domains-driving-license-book": {
+      "root": "libs/api/domains/driving-license-book",
+      "sourceRoot": "libs/api/domains/driving-license-book/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/api/domains/driving-license-book/tsconfig.lib.json",
+              "libs/api/domains/driving-license-book/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/driving-license-book/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/driving-license-book/jest.config.js",
+            "passWithNoTests": true
+          },
+          "outputs": ["coverage/libs/api/domains/driving-license-book"]
+        }
+      }
+    },
     "api-domains-education": {
       "root": "libs/api/domains/education",
       "sourceRoot": "libs/api/domains/education/src",
@@ -3194,6 +3224,47 @@
             "commands": [
               "yarn openapi-generator -o libs/clients/driving-license/gen/fetch/v1 -i libs/clients/driving-license/src/v1/clientConfig.json",
               "yarn openapi-generator -o libs/clients/driving-license/gen/fetch/v2 -i libs/clients/driving-license/src/v2/clientConfig.json"
+            ]
+          }
+        }
+      }
+    },
+    "clients-driving-license-book": {
+      "root": "libs/clients/driving-license-book",
+      "sourceRoot": "libs/clients/driving-license-book/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/driving-license-book/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/driving-license-book"],
+          "options": {
+            "jestConfig": "libs/clients/driving-license-book/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "update-openapi-document": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10017/Samgongustofa-Protected/getOpenAPI?serviceCode=Okunamsbok-V1 > src/clientConfig.json",
+              "jq '.paths[][].tags = [\"DrivingLicenseBook\"]' src/clientConfig.json > _.tmp && mv _.tmp src/clientConfig.json",
+              "jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json > _.tmp && mv _.tmp src/clientConfig.json"
+            ],
+            "parallel": false,
+            "cwd": "libs/clients/driving-license-book"
+          }
+        },
+        "schemas/external-openapi-generator": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn openapi-generator -o libs/clients/driving-license-book/gen/fetch -i libs/clients/driving-license-book/src/clientConfig.json"
             ]
           }
         }

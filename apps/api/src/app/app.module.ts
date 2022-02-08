@@ -6,6 +6,8 @@ import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/cms'
 import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
+import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
+import { DrivingLicenseBookModule } from '@island.is/api/domains/driving-license-book'
 import { EducationModule } from '@island.is/api/domains/education'
 import { ApplicationModule } from '@island.is/api/domains/application'
 import { DirectorateOfLabourModule } from '@island.is/api/domains/directorate-of-labour'
@@ -185,6 +187,7 @@ const autoSchemaFile = environment.production
     IdentityModule,
     AuthModule.register(environment.auth),
     SyslumennModule,
+    DrivingLicenseBookModule,
     CompanyRegistryModule.register({
       password: environment.rskDomain.password,
       url: environment.rskDomain.url,
@@ -260,6 +263,7 @@ const autoSchemaFile = environment.production
         FeatureFlagConfig,
         XRoadConfig,
         CompanyRegistryConfig,
+        DrivingLicenseBookClientConfig,
       ],
     }),
   ],

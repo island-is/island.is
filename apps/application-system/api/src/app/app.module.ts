@@ -4,6 +4,7 @@ import { ProblemModule } from '@island.is/nest/problem'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ApplicationModule } from './modules/application/application.module'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
+import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { ConfigModule } from '@island.is/nest/config'
 
 @Module({
@@ -15,7 +16,7 @@ import { ConfigModule } from '@island.is/nest/config'
     ProblemModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [SyslumennClientConfig],
+      load: [SyslumennClientConfig, DrivingLicenseBookClientConfig],
     }),
   ],
 })
