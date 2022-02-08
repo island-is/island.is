@@ -14,7 +14,6 @@ import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/
 
 import {
   FileType,
-  getNextPeriod,
   NavigationProps,
   PersonalTaxReturn,
   Routes,
@@ -85,7 +84,7 @@ const SpouseDataGathering = () => {
 
         <TaxDataGathering />
 
-        <AboutDataGathering nextMonth={getNextPeriod.month} />
+        <AboutDataGathering />
 
         <DataGatheringCheckbox
           accept={accept}

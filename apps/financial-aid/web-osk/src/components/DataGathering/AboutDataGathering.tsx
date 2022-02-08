@@ -1,11 +1,7 @@
 import React from 'react'
 import { Text } from '@island.is/island-ui/core'
-
-interface Props {
-  nextMonth: string
-}
-
-const AboutDataGathering = ({ nextMonth }: Props) => {
+import { getNextPeriod } from '@island.is/financial-aid/shared/lib'
+const AboutDataGathering = () => {
   return (
     <>
       <Text marginBottom={3}>
@@ -17,8 +13,8 @@ const AboutDataGathering = ({ nextMonth }: Props) => {
       <Text marginBottom={[4, 4, 5]}>
         Við þurfum að fá þig til að renna yfir nokkur atriði varðandi þína
         persónuhagi og fjármál til að reikna út fjárhagsaðstoð til útgreiðslu í
-        byrjun {nextMonth}. Í lok umsóknar getur þú sent hana inn eða eytt henni
-        og öllum tengdum gögnum.
+        byrjun {getNextPeriod.month}. Í lok umsóknar getur þú sent hana inn eða
+        eytt henni og öllum tengdum gögnum.
       </Text>
     </>
   )
