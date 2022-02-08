@@ -8,7 +8,7 @@ const useNationalRegistry = (nationalId?: string) => {
   const isMounted = useRef(false)
 
   const fetcher = (url: string) => fetch(url).then((res) => res.json())
-  console.log(shouldFetch, nationalId?.replace('-', '').length === 10)
+
   const { data, error } = useSWR<NationalRegistryResponse>(
     shouldFetch && nationalId?.replace('-', '').length === 10
       ? `/api/nationalRegistry/getByNationalId?nationalId=${nationalId}`
