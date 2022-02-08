@@ -25,7 +25,7 @@ export const DrivingLicense = ({
   const drivingLicenceImg =
     'https://images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg?w=100&h=100&fit=pad&bg=white&fm=png'
 
-  const expiresIn = getExpiresIn(currentDate, new Date(2022, 2, 11))
+  const expiresIn = getExpiresIn(currentDate, new Date(expireDate))
   return (
     <>
       <Box

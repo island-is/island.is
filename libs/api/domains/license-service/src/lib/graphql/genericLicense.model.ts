@@ -8,7 +8,6 @@ import {
   GenericUserLicenseFetchStatus,
   GenericLicenseProviderId,
   GenericUserLicensePkPassStatus,
-  GenericPkPassReturnType,
 } from '../licenceService.type'
 
 registerEnumType(GenericLicenseType, {
