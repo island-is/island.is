@@ -1,10 +1,6 @@
-import { SearchableTags } from '@island.is/api/schema'
 import { TagAggregationInput } from '../types'
 
-export const tagAggregationQueryFragment = (
-  tagTypes: SearchableTags[],
-  size = 20,
-) => ({
+export const tagAggregationQueryFragment = (tagTypes: string[], size = 20) => ({
   aggs: {
     group: {
       nested: {
