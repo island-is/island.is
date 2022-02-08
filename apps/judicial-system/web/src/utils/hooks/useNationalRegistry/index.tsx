@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import useSWR from 'swr'
 
 import { NationalRegistryResponse } from '@island.is/judicial-system-web/src/types'
@@ -16,8 +16,10 @@ const useNationalRegistry = (nationalId?: string) => {
     fetcher,
   )
 
-  useMemo(() => {
-    if (isMounted.current) {
+  useEffect(() => {
+    if (shouldFetch) {
+      return
+    } else if (isMounted.current) {
       setShouldFetch(true)
     } else {
       isMounted.current = true
