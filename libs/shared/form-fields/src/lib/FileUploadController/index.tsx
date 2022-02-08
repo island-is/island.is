@@ -100,10 +100,6 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
   const [state, dispatch] = useReducer(reducer, initialUploadFiles)
 
   useEffect(() => {
-    const onlyUploadedFiles = state.filter(
-      (f: UploadFile) => f.key && f.status === 'done',
-    )
-
     const uploadingFiles = state.filter(
       (f: UploadFile) => f.status === 'uploading',
     )
@@ -111,6 +107,10 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
     // If some files are still being uploaded, then no files are uploaded
     // This is done so data schema works for multiples
     if (uploadingFiles.length === 0) {
+      const onlyUploadedFiles = state.filter(
+        (f: UploadFile) => f.key && f.status === 'done',
+      )
+
       const uploadAnswer: UploadFileAnswer[] = onlyUploadedFiles.map(
         transformToAnswer,
       )
