@@ -70,7 +70,7 @@ const skilavottordWeb = skilavottordWebSetup({ api: skilavottordWs })
 const storybook = storybookSetup({})
 const contentfulTranslationExtension = contentfulTranslationExtensionSetup()
 
-const downloadService = downloadServiceSetup()
+const downloadService = downloadServiceSetup({ appSystemApi })
 
 const userNotificationService = userNotificationServiceSetup()
 const userNotificationWorkerService = userNotificationWorkerSetup({

@@ -569,6 +569,7 @@ application-system-form:
   enabled: true
   env:
     BASEPATH: '/umsoknir'
+    DOWNLOAD_SERVICE_BASE_PATH: 'https://api.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
@@ -662,6 +663,7 @@ contentful-translation-extension:
 download-service:
   enabled: true
   env:
+    APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
