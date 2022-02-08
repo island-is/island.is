@@ -1,4 +1,4 @@
-import { Case } from '@island.is/judicial-system/types'
+import { Case, Defendant } from '@island.is/judicial-system/types'
 import {
   makeCustodyCase,
   makeCourt,
@@ -11,8 +11,13 @@ describe('/krafa/stadfesta/:id', () => {
     const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
-      accusedName: 'Donald Duck',
-      accusedAddress: 'Batcave 1337',
+      defendants: [
+        {
+          name: 'Donald Duck',
+          address: 'Batcave 1337',
+          nationalId: '000000-0000',
+        } as Defendant,
+      ],
       requestedCourtDate: '2020-09-16T19:50:08.033Z',
       arrestDate: '2020-09-16T19:50:08.033Z',
       demands:

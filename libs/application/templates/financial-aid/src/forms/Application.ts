@@ -19,7 +19,7 @@ export const Application: Form = buildForm({
     buildSection({
       condition: (_, externalData) =>
         ((externalData as unknown) as ExternalData).nationalRegistry?.data
-          ?.spouse !== undefined,
+          .applicant?.spouse !== undefined,
       id: 'personalInterest',
       title: m.section.personalInterest,
       children: [
@@ -106,15 +106,36 @@ export const Application: Form = buildForm({
         }),
       ],
     }),
-    // This is here to be able to show submit button on former screen :( :( :(
     buildSection({
-      id: '',
-      title: '',
+      id: 'contactInfo',
+      title: m.contactInfo.general.sectionTitle,
       children: [
         buildCustomField({
-          id: '',
-          title: '',
-          component: '',
+          id: 'contactInfo',
+          title: m.contactInfo.general.pageTitle,
+          component: 'ContactInfo',
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'bankInfoForm',
+      title: m.bankInfoForm.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'bankInfoForm',
+          title: m.bankInfoForm.general.pageTitle,
+          component: 'BankInfoForm',
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'confirmation',
+      title: m.confirmation.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'confirmation',
+          title: m.confirmation.general.pageTitle,
+          component: 'Confirmation',
         }),
       ],
     }),

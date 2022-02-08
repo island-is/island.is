@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common'
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { ApplicationModel, SpouseResponse } from './models'
@@ -11,9 +15,7 @@ import {
   ApplicationFilters,
   ApplicationState,
   ApplicationStateUrl,
-  getEventTypesFromService,
   getStateFromUrl,
-  RolesRule,
   User,
   Staff,
   FileType,
@@ -157,7 +159,7 @@ export class ApplicationService {
 
   async findById(
     id: string,
-    service: RolesRule,
+    isEmployee: boolean,
   ): Promise<ApplicationModel | null> {
     const application = await this.applicationModel.findOne({
       where: { id },
@@ -169,7 +171,9 @@ export class ApplicationService {
           separate: true,
           where: {
             eventType: {
-              [Op.in]: getEventTypesFromService[service],
+              [Op.in]: isEmployee
+                ? Object.values(ApplicationEventType)
+                : [ApplicationEventType.DATANEEDED],
             },
           },
           order: [['created', 'DESC']],
@@ -237,7 +241,18 @@ export class ApplicationService {
     application: CreateApplicationDto,
     user: User,
   ): Promise<ApplicationModel> {
-    const appModel = await this.applicationModel.create(application)
+    const hasAppliedForPeriod = await this.getCurrentApplicationId(
+      user.nationalId,
+    )
+
+    if (hasAppliedForPeriod) {
+      throw new ForbiddenException('User or spouse has applied for period')
+    }
+
+    const appModel = await this.applicationModel.create({
+      nationalId: user.nationalId,
+      ...application,
+    })
 
     await this.applicationEventService.create({
       applicationId: appModel.id,
@@ -258,7 +273,7 @@ export class ApplicationService {
       await Promise.all(promises)
     }
 
-    await this.createApplicationEmails(application, appModel, user)
+    await this.createApplicationEmails(application, appModel)
 
     return appModel
   }
@@ -266,7 +281,6 @@ export class ApplicationService {
   private async createApplicationEmails(
     application: CreateApplicationDto,
     appModel: ApplicationModel,
-    user: User,
   ) {
     const municipality = await this.municipalityService.findByMunicipalityId(
       application.municipalityCode,
@@ -285,7 +299,7 @@ export class ApplicationService {
     emailPromises.push(
       this.sendEmail(
         {
-          name: user.name,
+          name: application.name,
           address: appModel.email,
         },
         emailData.subject,
@@ -320,10 +334,7 @@ export class ApplicationService {
     id: string,
     update: UpdateApplicationDto,
     staff?: Staff,
-  ): Promise<{
-    numberOfAffectedRows: number
-    updatedApplication: ApplicationModel
-  }> {
+  ): Promise<ApplicationModel> {
     if (update.state && update.state === ApplicationState.NEW) {
       update.staffId = null
     }
@@ -335,6 +346,10 @@ export class ApplicationService {
       where: { id },
       returning: true,
     })
+
+    if (numberOfAffectedRows === 0) {
+      throw new NotFoundException(`Application ${id} does not exist`)
+    }
 
     await this.applicationEventService.create({
       applicationId: id,
@@ -370,7 +385,7 @@ export class ApplicationService {
       this.sendApplicationUpdateEmail(update, updatedApplication),
     ])
 
-    return { numberOfAffectedRows, updatedApplication }
+    return updatedApplication
   }
 
   private async sendApplicationUpdateEmail(

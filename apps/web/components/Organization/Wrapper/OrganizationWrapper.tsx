@@ -44,6 +44,7 @@ import {
 import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
 import { useRouter } from 'next/router'
 import * as styles from './OrganizationWrapper.css'
+import { LayoutProps } from '@island.is/web/layouts/main'
 
 interface NavigationData {
   title: string
@@ -73,6 +74,28 @@ interface HeaderProps {
 
 export const lightThemes = ['digital_iceland', 'utlendingastofnun']
 export const footerEnabled = ['syslumenn']
+
+export const getThemeConfig = (
+  theme: string,
+): { themeConfig: Partial<LayoutProps> } => {
+  if (theme === 'sjukratryggingar')
+    return {
+      themeConfig: {
+        headerButtonColorScheme: 'blueberry',
+        headerColorScheme: 'blueberry',
+      },
+    }
+
+  const isLightTheme = lightThemes.includes(theme)
+  return !isLightTheme
+    ? {
+        themeConfig: {
+          headerColorScheme: 'white',
+          headerButtonColorScheme: 'negative',
+        },
+      }
+    : { themeConfig: {} }
+}
 
 const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   switch (organizationPage.theme) {

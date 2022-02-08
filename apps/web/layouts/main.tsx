@@ -119,14 +119,14 @@ if (environment.sentryDsn) {
 }
 
 if (
-  publicRuntimeConfig.applicationId &&
-  publicRuntimeConfig.clientToken &&
+  publicRuntimeConfig.ddRumApplicationId &&
+  publicRuntimeConfig.ddRumClientToken &&
   typeof window !== 'undefined'
 ) {
   userMonitoring.initDdRum({
     service: 'islandis',
-    applicationId: publicRuntimeConfig.applicationId,
-    clientToken: publicRuntimeConfig.clientToken,
+    applicationId: publicRuntimeConfig.ddRumApplicationId,
+    clientToken: publicRuntimeConfig.ddRumClientToken,
     env: publicRuntimeConfig.environment || 'local',
     version: publicRuntimeConfig.appVersion || 'local',
   })
@@ -595,9 +595,7 @@ export const withMainLayout = <T,>(
     ])
 
     const themeConfig: Partial<LayoutProps> =
-      'darkTheme' in componentProps
-        ? { headerColorScheme: 'white', headerButtonColorScheme: 'negative' }
-        : {}
+      'themeConfig' in componentProps ? componentProps['themeConfig'] : {}
 
     return {
       layoutProps: { ...layoutProps, ...layoutConfig, ...themeConfig },

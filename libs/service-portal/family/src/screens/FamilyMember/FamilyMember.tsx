@@ -19,20 +19,25 @@ import {
   m,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  natRegGenderMessageDescriptorRecord,
-  natRegMaritalStatusMessageDescriptorRecord,
-} from '../../helpers/localizationHelpers'
 
-const NationalRegistryFamilyQuery = gql`
-  query NationalRegistryFamilyQuery {
-    nationalRegistryFamily {
-      fullName
+const NationalRegistryChildrenQuery = gql`
+  query NationalRegistryChildrenQuery {
+    nationalRegistryChildren {
       nationalId
-      gender
+      fullName
+      displayName
+      genderDisplay
+      birthplace
+      custody1
+      custodyText1
+      nameCustody1
+      custody2
+      custodyText2
+      nameCustody2
     }
   }
 `
+
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
   defaultMessage: 'Gögn fundust ekki',
@@ -41,12 +46,16 @@ const dataNotFoundMessage = defineMessage({
 const FamilyMember: ServicePortalModuleComponent = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
-  const { data, loading, error } = useQuery<Query>(NationalRegistryFamilyQuery)
-  const { nationalRegistryFamily } = data || {}
+
+  const { data, loading, error, called } = useQuery<Query>(
+    NationalRegistryChildrenQuery,
+  )
+  const { nationalRegistryChildren } = data || {}
+
   const { nationalId }: { nationalId: string | undefined } = useParams()
 
   const person =
-    nationalRegistryFamily?.find((x) => x.nationalId === nationalId) || null
+    nationalRegistryChildren?.find((x) => x.nationalId === nationalId) || null
 
   if (!nationalId || error || (!loading && !person))
     return (
@@ -73,8 +82,14 @@ const FamilyMember: ServicePortalModuleComponent = () => {
       </Box>
       <Stack space={1}>
         <UserInfoLine
-          label={defineMessage(m.displayName)}
+          label={defineMessage(m.fullName)}
           content={person?.fullName || '...'}
+          loading={loading}
+        />
+        <Divider />
+        <UserInfoLine
+          label={defineMessage(m.displayName)}
+          content={person?.displayName || '...'}
           loading={loading}
         />
         <Divider />
@@ -89,11 +104,54 @@ const FamilyMember: ServicePortalModuleComponent = () => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : person?.gender
-              ? formatMessage(
-                  natRegGenderMessageDescriptorRecord[person.gender],
-                )
-              : ''
+              : person?.genderDisplay || ''
+          }
+          loading={loading}
+        />
+        <Divider />
+        <UserInfoLine
+          label={formatMessage({
+            id: 'sp.family:birthplace',
+            defaultMessage: 'Fæðingarstaður',
+          })}
+          content={
+            error
+              ? formatMessage(dataNotFoundMessage)
+              : person?.birthplace || ''
+          }
+          loading={loading}
+        />
+        <Divider />
+        <UserInfoLine
+          label={formatMessage({
+            id: 'sp.family:parents',
+            defaultMessage: 'Foreldrar',
+          })}
+          renderContent={() =>
+            error ? (
+              <span>{formatMessage(dataNotFoundMessage)}</span>
+            ) : (
+              <Box>
+                <Box marginBottom={2}>
+                  <Text fontWeight="semiBold" variant="small">
+                    {person?.custodyText1}
+                  </Text>
+                  <Text variant="small">{person?.nameCustody1} </Text>
+                  <Text variant="small">
+                    {person?.custody1 ? formatNationalId(person.custody1) : ''}{' '}
+                  </Text>
+                </Box>
+                <Box>
+                  <Text fontWeight="semiBold" variant="small">
+                    {person?.custodyText2}
+                  </Text>
+                  <Text variant="small">{person?.nameCustody2} </Text>
+                  <Text variant="small">
+                    {person?.custody2 ? formatNationalId(person.custody2) : ''}{' '}
+                  </Text>
+                </Box>
+              </Box>
+            )
           }
           loading={loading}
         />

@@ -14,37 +14,32 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { StaffService } from './staff.service'
 import { StaffModel } from './models'
-import {
-  apiBasePath,
-  RolesRule,
-  StaffRole,
-} from '@island.is/financial-aid/shared/lib'
+import { apiBasePath, StaffRole } from '@island.is/financial-aid/shared/lib'
 
 import type { Staff } from '@island.is/financial-aid/shared/lib'
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
-import { RolesGuard } from '../../guards/roles.guard'
-import { CurrentStaff, RolesRules } from '../../decorators'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { CurrentStaff } from '../../decorators/staff.decorator'
 import { StaffGuard } from '../../guards/staff.guard'
 import { StaffRolesRules } from '../../decorators/staffRole.decorator'
 import { UpdateStaffDto, CreateStaffDto } from './dto'
+import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
 
-@UseGuards(IdsUserGuard, RolesGuard)
-@RolesRules(RolesRule.VEITA)
+@UseGuards(IdsUserGuard, ScopesGuard, StaffGuard)
+@Scopes(MunicipalitiesFinancialAidScope.employee)
 @Controller(`${apiBasePath}/staff`)
 @ApiTags('staff')
 export class StaffController {
   constructor(private readonly staffService: StaffService) {}
 
-  @Get('nationalId/:nationalId')
+  @Get('nationalId')
   @ApiOkResponse({
     type: StaffModel,
     description: 'Gets staff by nationalId',
   })
   async getStaffByNationalId(
-    @Param('nationalId') nationalId: string,
+    @CurrentStaff() staff: StaffModel,
   ): Promise<StaffModel> {
-    const staff = await this.staffService.findByNationalId(nationalId)
-    if (staff === null || staff.active === false) {
+    if (!staff || staff.active === false) {
       throw new ForbiddenException('Staff not found or is not active')
     }
     return staff
@@ -63,7 +58,6 @@ export class StaffController {
     return staff
   }
 
-  @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.ADMIN)
   @Get('municipality')
   @ApiOkResponse({
@@ -97,7 +91,6 @@ export class StaffController {
     return updatedStaff
   }
 
-  @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.ADMIN)
   @Post('')
   @ApiOkResponse({
@@ -120,7 +113,6 @@ export class StaffController {
     )
   }
 
-  @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.SUPERADMIN)
   @Get('municipality/:municipalityId')
   @ApiOkResponse({
@@ -133,7 +125,6 @@ export class StaffController {
     return await this.staffService.numberOfUsersForMunicipality(municipalityId)
   }
 
-  @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.SUPERADMIN)
   @Get('users/:municipalityId')
   @ApiOkResponse({
@@ -146,7 +137,6 @@ export class StaffController {
     return this.staffService.getUsers(municipalityId)
   }
 
-  @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.SUPERADMIN)
   @Get('supervisors')
   @ApiOkResponse({

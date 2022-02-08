@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   TeachingRightsStatus,
@@ -13,8 +13,11 @@ import {
   QualityPhotoResult,
   DrivingLicenseApplicationType,
   NewTemporaryDrivingLicenseInput,
+  ApplicationEligibilityRequirement,
 } from './drivingLicense.type'
 import {
+  CanApplyErrorCodeBFull,
+  CanApplyErrorCodeBTemporary,
   DriversLicense,
   DrivingAssessment,
   DrivingLicenseApi,
@@ -26,23 +29,45 @@ import {
 } from './util/constants'
 import sortTeachers from './util/sortTeachers'
 import { StudentAssessment } from '..'
+import { FetchError } from '@island.is/clients/middlewares'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 @Injectable()
 export class DrivingLicenseService {
-  constructor(private readonly drivingLicenseApi: DrivingLicenseApi) {}
+  constructor(
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    private readonly drivingLicenseApi: DrivingLicenseApi,
+  ) {}
 
-  getDrivingLicense(
+  async getDrivingLicense(
     nationalId: User['nationalId'],
   ): Promise<DriversLicense | null> {
-    return this.drivingLicenseApi.getCurrentLicense({ nationalId })
+    try {
+      return await this.drivingLicenseApi.getCurrentLicense({ nationalId })
+    } catch (e) {
+      return this.handleGetLicenseError(e)
+    }
+  }
+
+  private handleGetLicenseError(e: unknown) {
+    // The goal of this is to basically normalize the known semi-error responses
+    // so both those who are not found and those who have invalid/expired licenses will return nothing
+    if (e instanceof Error && e.name === 'FetchError') {
+      const err = (e as unknown) as FetchError
+
+      if ([400, 404].includes(err.status)) {
+        return null
+      }
+    }
+
+    throw e
   }
 
   async getStudentInformation(
     nationalId: string,
   ): Promise<StudentInformation | null> {
-    const drivingLicense = await this.drivingLicenseApi.getCurrentLicense({
-      nationalId,
-    })
+    const drivingLicense = await this.getDrivingLicense(nationalId)
 
     if (!drivingLicense) {
       return null
@@ -107,34 +132,34 @@ export class DrivingLicenseService {
 
     const canApply = await this.canApplyFor(nationalId, type)
 
-    const requirements = []
-
-    if (type === 'B-full') {
-      requirements.push(
-        {
-          key: RequirementKey.drivingAssessmentMissing,
-          requirementMet:
-            (assessmentResult?.created?.getTime() ?? 0) >
-            Date.now() - DRIVING_ASSESSMENT_MAX_AGE,
-        },
-        {
-          key: RequirementKey.drivingSchoolMissing,
-          requirementMet: hasFinishedSchool,
-        },
-      )
-    } else if (type === 'B-temp') {
-      requirements.push({
-        key: RequirementKey.localResidency,
-        requirementMet: true,
-      })
-    } else {
-      throw new Error('unknown type')
-    }
-
-    requirements.push({
-      key: RequirementKey.deniedByService,
-      requirementMet: canApply,
-    })
+    const requirements: ApplicationEligibilityRequirement[] = [
+      ...(type === 'B-full'
+        ? [
+            {
+              key: RequirementKey.drivingAssessmentMissing,
+              requirementMet:
+                (assessmentResult?.created?.getTime() ?? 0) >
+                Date.now() - DRIVING_ASSESSMENT_MAX_AGE,
+            },
+            {
+              key: RequirementKey.drivingSchoolMissing,
+              requirementMet: hasFinishedSchool,
+            },
+          ]
+        : []),
+      ...(type === 'B-temp'
+        ? [
+            {
+              key: RequirementKey.localResidency,
+              requirementMet: true,
+            },
+          ]
+        : []),
+      {
+        key: this.canApplyErrorCodeToRequirementKey(canApply.errorCode),
+        requirementMet: canApply.result,
+      },
+    ]
 
     // only eligible if we dont find an unmet requirement
     const isEligible = !requirements.find(
@@ -144,6 +169,40 @@ export class DrivingLicenseService {
     return {
       requirements,
       isEligible,
+    }
+  }
+
+  private canApplyErrorCodeToRequirementKey(
+    errorCode?: CanApplyErrorCodeBFull | CanApplyErrorCodeBTemporary,
+  ): RequirementKey {
+    if (errorCode === undefined) {
+      return RequirementKey.deniedByService
+    }
+
+    switch (errorCode) {
+      case 'HAS_DEPRIVATION':
+        return RequirementKey.hasDeprivation
+      case 'HAS_NO_PHOTO':
+        return RequirementKey.hasNoPhoto
+      case 'HAS_NO_SIGNATURE':
+        return RequirementKey.hasNoSignature
+      case 'HAS_POINTS':
+        return RequirementKey.hasPoints
+      case 'NO_LICENSE_FOUND':
+        return RequirementKey.noLicenseFound
+      case 'NO_TEMP_LICENSE':
+        return RequirementKey.noTempLicense
+      case 'PERSON_NOT_17_YEARS_OLD':
+        return RequirementKey.personNot17YearsOld
+      case 'PERSON_NOT_FOUND_IN_NATIONAL_REGISTRY':
+        return RequirementKey.personNotFoundInNationalRegistry
+      default:
+        this.logger.warn(
+          '[api-domains-driving-license] unhandled can apply error code',
+          errorCode,
+        )
+
+        return RequirementKey.deniedByService
     }
   }
 
@@ -219,22 +278,32 @@ export class DrivingLicenseService {
     }
   }
 
+  async getQualityPhotoUri(
+    nationalId: User['nationalId'],
+  ): Promise<string | null> {
+    const image = await this.drivingLicenseApi.getQualityPhoto({
+      nationalId,
+    })
+    const qualityPhoto =
+      image?.data && image?.data.length > 0
+        ? `data:image/jpeg;base64,${image?.data.substr(
+            1,
+            image.data.length - 2,
+          )}`
+        : null
+
+    return qualityPhoto
+  }
+
   async getQualityPhoto(
     nationalId: User['nationalId'],
   ): Promise<QualityPhotoResult> {
     const hasQualityPhoto = await this.drivingLicenseApi.getHasQualityPhoto({
       nationalId,
     })
-    const image = hasQualityPhoto
-      ? await this.drivingLicenseApi.getQualityPhoto({
-          nationalId,
-        })
-      : null
 
     return {
-      success: hasQualityPhoto,
-      qualityPhoto: image?.data ?? null,
-      errorMessage: null,
+      hasQualityPhoto,
     }
   }
 

@@ -10,7 +10,7 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (nationalId: string) => Promise<Then>
+type GivenWhenThen = (staff: StaffModel) => Promise<Then>
 
 describe('StaffController - Get staff by national id', () => {
   let mockStaffModel: typeof StaffModel
@@ -21,11 +21,11 @@ describe('StaffController - Get staff by national id', () => {
 
     mockStaffModel = staffModel
 
-    givenWhenThen = async (nationalId: string): Promise<Then> => {
+    givenWhenThen = async (staff: StaffModel): Promise<Then> => {
       const then = {} as Then
 
       await staffController
-        .getStaffByNationalId(nationalId)
+        .getStaffByNationalId(staff)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -33,43 +33,12 @@ describe('StaffController - Get staff by national id', () => {
     }
   })
 
-  describe('database query', () => {
-    const nationalId = '0000000000'
-    let mockFindByNationalId: jest.Mock
-
-    beforeEach(async () => {
-      mockFindByNationalId = mockStaffModel.findOne as jest.Mock
-
-      await givenWhenThen(nationalId)
-    })
-
-    it('should request staff by national id from the database', () => {
-      expect(mockFindByNationalId).toHaveBeenCalledWith({
-        where: {
-          nationalId,
-        },
-      })
-    })
-  })
-
   describe('staff not active', () => {
-    const nationalId = '0000000000'
-    const staff = {
-      id: uuid(),
-      name: 'Staff Tester',
-      nationalId,
-      municipalityId: '0',
-      municipalityName: 'Someplace',
-      roles: [StaffRole.EMPLOYEE],
-      active: false,
-    } as StaffModel
+    const staff = { nationalId: '0000000000', active: false } as StaffModel
     let then: Then
 
     beforeEach(async () => {
-      const mockFindByNationalId = mockStaffModel.findOne as jest.Mock
-      mockFindByNationalId.mockResolvedValueOnce(staff)
-
-      then = await givenWhenThen(nationalId)
+      then = await givenWhenThen(staff)
     })
 
     it('should throw forbidden exception', () => {
@@ -78,15 +47,11 @@ describe('StaffController - Get staff by national id', () => {
   })
 
   describe('staff not found', () => {
-    const nationalId = '0000000000'
-    const staff = null
+    const staff = undefined as StaffModel
     let then: Then
 
     beforeEach(async () => {
-      const mockFindByNationalId = mockStaffModel.findOne as jest.Mock
-      mockFindByNationalId.mockResolvedValueOnce(staff)
-
-      then = await givenWhenThen(nationalId)
+      then = await givenWhenThen(staff)
     })
 
     it('should throw forbidden exception', () => {
@@ -95,11 +60,10 @@ describe('StaffController - Get staff by national id', () => {
   })
 
   describe('staff found', () => {
-    const nationalId = '0000000000'
     const staff = {
       id: uuid(),
       name: 'Staff Tester',
-      nationalId,
+      nationalId: '0000000000',
       municipalityId: '0',
       municipalityName: 'Someplace',
       roles: [StaffRole.EMPLOYEE],
@@ -108,31 +72,11 @@ describe('StaffController - Get staff by national id', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockFindByNationalId = mockStaffModel.findOne as jest.Mock
-      mockFindByNationalId.mockResolvedValueOnce(staff)
-
-      then = await givenWhenThen(nationalId)
+      then = await givenWhenThen(staff)
     })
 
     it('should return staff', () => {
       expect(then.result).toEqual(staff)
-    })
-  })
-
-  describe('database query fails', () => {
-    const nationalId = '0000000000'
-    let then: Then
-
-    beforeEach(async () => {
-      const mockFindByNationalId = mockStaffModel.findOne as jest.Mock
-      mockFindByNationalId.mockRejectedValueOnce(new Error('Some error'))
-
-      then = await givenWhenThen(nationalId)
-    })
-
-    it('should throw error', () => {
-      expect(then.error).toBeInstanceOf(Error)
-      expect(then.error.message).toBe('Some error')
     })
   })
 })

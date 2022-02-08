@@ -1,4 +1,5 @@
 import { EmailService } from '@island.is/email-service'
+import each from 'jest-each'
 import {
   ApplicationEventType,
   ApplicationState,
@@ -6,10 +7,8 @@ import {
   FamilyStatus,
   HomeCircumstances,
   Municipality,
-  RolesRule,
-  User,
 } from '@island.is/financial-aid/shared/lib'
-import { NotFoundException } from '@nestjs/common'
+import { ForbiddenException, NotFoundException } from '@nestjs/common'
 import { uuid } from 'uuidv4'
 import { AmountService } from '../../amount'
 import { ApplicationEventService } from '../../applicationEvent/applicationEvent.service'
@@ -19,6 +18,8 @@ import { StaffService } from '../../staff/staff.service'
 import { UpdateApplicationDto } from '../dto'
 import { ApplicationModel } from '../models/application.model'
 import { createTestingApplicationModule } from './createTestingApplicationModule'
+import type { User } from '@island.is/auth-nest-tools'
+import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
 
 interface Then {
   result: ApplicationModel
@@ -31,7 +32,7 @@ type GivenWhenThen = (
   user: User,
 ) => Promise<Then>
 
-describe.only('ApplicationController - Update', () => {
+describe('ApplicationController - Update', () => {
   let givenWhenThen: GivenWhenThen
   let mockApplicationModel: typeof ApplicationModel
   let mockStaffService: StaffService
@@ -83,14 +84,12 @@ describe.only('ApplicationController - Update', () => {
     const id = uuid()
     const applicationUpdate: UpdateApplicationDto = {
       state: ApplicationState.NEW,
-      event: ApplicationEventType.NEW,
+      event: ApplicationEventType.FILEUPLOAD,
     }
-    const user: User = {
+    const user = {
       nationalId: '0000000000',
-      name: 'The User',
-      folder: uuid(),
-      service: RolesRule.OSK,
-    }
+      scope: [MunicipalitiesFinancialAidScope.applicant],
+    } as User
 
     beforeEach(async () => {
       mockUpdate = mockApplicationModel.update as jest.Mock
@@ -114,20 +113,21 @@ describe.only('ApplicationController - Update', () => {
     let then: Then
 
     const id = uuid()
+
     const applicationUpdate: UpdateApplicationDto = {
-      state: ApplicationState.NEW,
-      event: ApplicationEventType.NEW,
+      state: ApplicationState.INPROGRESS,
+      event: ApplicationEventType.FILEUPLOAD,
     }
+
     const user: User = {
       nationalId: '0000000000',
-      name: 'The User',
-      folder: uuid(),
-      service: RolesRule.OSK,
-    }
+      scope: [MunicipalitiesFinancialAidScope.applicant],
+    } as User
+
     const application = {
       id,
       nationalId: user.nationalId,
-      name: user.name,
+      name: 'Name',
       homeCircumstances: HomeCircumstances.UNKNOWN,
       employment: Employment.WORKING,
       student: false,
@@ -197,18 +197,16 @@ describe.only('ApplicationController - Update', () => {
     const id = uuid()
     const applicationUpdate: UpdateApplicationDto = {
       state: ApplicationState.NEW,
-      event: ApplicationEventType.NEW,
+      event: ApplicationEventType.USERCOMMENT,
     }
-    const user: User = {
+    const user = {
       nationalId: '0000000000',
-      name: 'The User',
-      folder: uuid(),
-      service: RolesRule.OSK,
-    }
+      scope: [MunicipalitiesFinancialAidScope.applicant],
+    } as User
 
     beforeEach(async () => {
       const mockUpdate = mockApplicationModel.update as jest.Mock
-      mockUpdate.mockReturnValueOnce([0, [undefined]])
+      mockUpdate.mockReturnValueOnce([0, [undefined as ApplicationModel]])
 
       then = await givenWhenThen(id, applicationUpdate, user)
     })
@@ -222,7 +220,195 @@ describe.only('ApplicationController - Update', () => {
     })
   })
 
-  describe.only('staff update', () => {
+  describe('Applicant sending events', () => {
+    const id = uuid()
+
+    const user = {
+      nationalId: '0000000000',
+      scope: [MunicipalitiesFinancialAidScope.applicant],
+    } as User
+
+    const application = {
+      id,
+      nationalId: user.nationalId,
+      name: 'name',
+      homeCircumstances: HomeCircumstances.UNKNOWN,
+      employment: Employment.WORKING,
+      student: false,
+      usePersonalTaxCredit: false,
+      hasIncome: false,
+      state: ApplicationState.INPROGRESS,
+      files: [],
+      familyStatus: FamilyStatus.COHABITATION,
+      municipalityCode: '1',
+      setDataValue: jest.fn,
+    }
+
+    beforeEach(async () => {
+      const mockUpdate = mockApplicationModel.update as jest.Mock
+      mockUpdate.mockReturnValueOnce([1, [application]])
+      const eventFindById = mockApplicationEventService.findById as jest.Mock
+      eventFindById.mockReturnValueOnce(Promise.resolve([]))
+      const getApplicationFiles = mockFileService.getAllApplicationFiles as jest.Mock
+      getApplicationFiles.mockReturnValueOnce(Promise.resolve([]))
+    })
+
+    describe('Allowed events', () => {
+      let then: Then
+      each`
+        event
+        ${ApplicationEventType.SPOUSEFILEUPLOAD}
+        ${ApplicationEventType.FILEUPLOAD}
+        ${ApplicationEventType.USERCOMMENT}
+      `.describe('$event', ({ event }) => {
+        beforeEach(async () => {
+          then = await givenWhenThen(
+            id,
+            { state: ApplicationState.INPROGRESS, event: event },
+            user,
+          )
+        })
+
+        it('should not throw exception', () => {
+          expect(then.error).toBeUndefined()
+        })
+
+        it('should return updated application', () => {
+          expect(then.result).toEqual(application)
+        })
+      })
+
+      describe('Forbidden events', () => {
+        let then: Then
+        each`
+        event
+        ${ApplicationEventType.REJECTED}
+        ${ApplicationEventType.APPROVED}
+        ${ApplicationEventType.STAFFCOMMENT}
+        ${ApplicationEventType.ASSIGNCASE}
+        ${ApplicationEventType.NEW}
+        ${ApplicationEventType.INPROGRESS}
+      `.describe('$event', ({ event }) => {
+          beforeEach(async () => {
+            then = await givenWhenThen(
+              id,
+              { state: ApplicationState.INPROGRESS, event: event },
+              user,
+            )
+          })
+
+          it('should throw forbidden exception', () => {
+            expect(then.error).toBeInstanceOf(ForbiddenException)
+          })
+        })
+      })
+    })
+  })
+
+  describe('Staff sending events', () => {
+    const id = uuid()
+
+    const staff: User = {
+      nationalId: '0000000000',
+      scope: [MunicipalitiesFinancialAidScope.employee],
+    } as User
+
+    const application = {
+      id,
+      nationalId: '0000000001',
+      name: 'The user',
+      created: new Date(),
+      email: 'some email',
+      homeCircumstances: HomeCircumstances.UNKNOWN,
+      employment: Employment.WORKING,
+      student: false,
+      usePersonalTaxCredit: false,
+      hasIncome: false,
+      state: ApplicationState.NEW,
+      files: [],
+      familyStatus: FamilyStatus.COHABITATION,
+      municipalityCode: '1',
+      setDataValue: jest.fn,
+    }
+    const municipality: Municipality = {
+      id: '',
+      name: 'Sveitarfélag',
+      homepage: 'homepage',
+      rulesHomepage: 'rulesHomepage',
+      active: false,
+      municipalityId: '',
+      individualAid: undefined,
+      cohabitationAid: undefined,
+    }
+
+    beforeEach(async () => {
+      const mockUpdate = mockApplicationModel.update as jest.Mock
+      mockUpdate.mockReturnValueOnce([1, [application]])
+      const eventFindById = mockApplicationEventService.findById as jest.Mock
+      eventFindById.mockReturnValueOnce(Promise.resolve([]))
+      const getApplicationFiles = mockFileService.getAllApplicationFiles as jest.Mock
+      getApplicationFiles.mockReturnValueOnce(Promise.resolve([]))
+      const findStaffByNationalId = mockStaffService.findByNationalId as jest.Mock
+      findStaffByNationalId.mockReturnValueOnce(Promise.resolve(staff))
+      const findByMunicipalityId = mockMunicipalityService.findByMunicipalityId as jest.Mock
+      findByMunicipalityId.mockReturnValueOnce(Promise.resolve(municipality))
+      const sendEmail = mockEmailService.sendEmail as jest.Mock
+      sendEmail.mockReturnValueOnce(Promise.resolve())
+    })
+
+    describe('Forbidden events', () => {
+      let then: Then
+      each`
+        event
+        ${ApplicationEventType.SPOUSEFILEUPLOAD}
+        ${ApplicationEventType.FILEUPLOAD}
+        ${ApplicationEventType.USERCOMMENT}
+      `.describe('$event', ({ event }) => {
+        beforeEach(async () => {
+          then = await givenWhenThen(
+            id,
+            { state: ApplicationState.INPROGRESS, event: event },
+            staff,
+          )
+        })
+
+        it('should throw forbidden exception', () => {
+          expect(then.error).toBeInstanceOf(ForbiddenException)
+        })
+      })
+
+      describe('Allowed events', () => {
+        let then: Then
+        each`
+        event
+        ${ApplicationEventType.REJECTED}
+        ${ApplicationEventType.APPROVED}
+        ${ApplicationEventType.STAFFCOMMENT}
+        ${ApplicationEventType.ASSIGNCASE}
+        ${ApplicationEventType.NEW}
+        ${ApplicationEventType.INPROGRESS}
+      `.describe('$event', ({ event }) => {
+          beforeEach(async () => {
+            then = await givenWhenThen(
+              id,
+              { state: ApplicationState.INPROGRESS, event: event },
+              staff,
+            )
+          })
+
+          it('should not throw exception', () => {
+            expect(then.error).toBeUndefined()
+          })
+
+          it('should return updated application', () => {
+            expect(then.result).toEqual(application)
+          })
+        })
+      })
+    })
+  })
+
+  describe('staff update', () => {
     let then: Then
 
     const id = uuid()
@@ -233,10 +419,9 @@ describe.only('ApplicationController - Update', () => {
     }
     const staff: User = {
       nationalId: '0000000000',
-      name: 'The Staff',
-      folder: undefined,
-      service: RolesRule.VEITA,
-    }
+      scope: [MunicipalitiesFinancialAidScope.employee],
+    } as User
+
     const application = {
       id,
       nationalId: '0000000001',
@@ -293,7 +478,6 @@ describe.only('ApplicationController - Update', () => {
         applicationId: id,
         eventType: applicationUpdate.event,
         comment: applicationUpdate.comment,
-        staffName: staff.name,
         staffNationalId: staff.nationalId,
       })
     })
@@ -312,7 +496,7 @@ describe.only('ApplicationController - Update', () => {
       )
     })
 
-    it.only('should call email service with correct value', () => {
+    it('should call email service with correct value', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith({
         from: {
           name: 'Samband íslenskra sveitarfélaga',
@@ -339,14 +523,12 @@ describe.only('ApplicationController - Update', () => {
     const id = uuid()
     const applicationUpdate: UpdateApplicationDto = {
       state: ApplicationState.NEW,
-      event: ApplicationEventType.NEW,
+      event: ApplicationEventType.FILEUPLOAD,
     }
     const user: User = {
       nationalId: '0000000000',
-      name: 'The User',
-      folder: uuid(),
-      service: RolesRule.OSK,
-    }
+      scope: [MunicipalitiesFinancialAidScope.applicant],
+    } as User
 
     beforeEach(async () => {
       const mockUpdate = mockApplicationModel.update as jest.Mock

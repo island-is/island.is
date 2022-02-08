@@ -4,7 +4,7 @@ import {
   Employment,
   HomeCircumstances,
 } from '@island.is/financial-aid/shared/lib'
-import { isValidEmail } from './utils'
+import { isValidEmail, isValidPhone } from './utils'
 import { ApproveOptions } from './types'
 
 const FileSchema = z.object({
@@ -79,11 +79,24 @@ export const dataSchema = z.object({
       params: error.validation.inputErrorMessage,
       path: ['custom'],
     }),
+  bankInfoForm: z.object({
+    bankNumber: z.string().optional(),
+    ledger: z.string().optional(),
+    accountNumber: z.string().optional(),
+  }),
   personalTaxCreditForm: z
     .enum([ApproveOptions.Yes, ApproveOptions.No])
     .refine((v) => v, {
       params: error.validation.radioErrorMessage,
     }),
+  contactInfo: z.object({
+    email: z.string().refine((v) => isValidEmail(v), {
+      params: error.validation.email,
+    }),
+    phone: z.string().refine((v) => isValidPhone(v), {
+      params: error.validation.phone,
+    }),
+  }),
 })
 
 export type answersSchema = z.infer<typeof dataSchema>
