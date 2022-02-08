@@ -120,6 +120,9 @@ export const DataProtectionComplaintSchema = z.object({
   subjectOfComplaint: z.object({
     values: z.array(z.string()).optional(),
     somethingElse: z.string().optional(),
+    somethingElseValue: z.string().refine((x) => x.trim().length > 0, {
+      params: error.required,
+    }),
   }),
   complaint: z.object({
     description: z
