@@ -5,7 +5,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import { createRedisCluster } from '@island.is/cache'
-import { XRoadConfig } from '@island.is/nest/config'
+import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
 import {
   buildCacheControl,
@@ -88,9 +88,15 @@ export class RskProcuringClient {
                 shared: false,
                 overrideCacheControl: buildCacheControl({ maxAge: 60 * 10 }),
               },
-        autoAuth: !this.idsClientConfig.isConfigured ? undefined : {
-          clientId:
-        }
+        autoAuth: !this.idsClientConfig.isConfigured
+          ? undefined
+          : {
+              mode: 'tokenExchange',
+              issuer: this.idsClientConfig.issuer,
+              clientId: this.idsClientConfig.clientId,
+              clientSecret: this.idsClientConfig.clientSecret,
+              scope: this.config.tokenExchangeScope,
+            },
       }),
       basePath: `${this.xRoadConfig.xRoadBasePath}/r1/${this.config.xRoadServicePath}`,
       headers: {
