@@ -43,12 +43,12 @@ describe('/krafa/rannsoknarheimild/stadfesta/:id', () => {
       `${defenderName}, ${defenderEmail}, s. ${defenderPhoneNumber}`,
     )
     cy.getByTestid('infoCard').contains('007-2021-202000') // Police case number
-    cy.getByTestid('infoCard').contains('16.09.2020') // Created
     cy.getByTestid('infoCard').contains('Lögreglan á Höfuðborgarsvæðinu') // Institution
+    cy.getByTestid('infoCard').contains('Héraðsdómur Reykjavíkur') // Court
     cy.getByTestid('infoCard').contains(
       'Sunnud. 20. september 2020 eftir kl. 19:50',
     ) // Requested court date
-    cy.getByTestid('infoCard').contains('Áki Ákærandi aðstoðarsaksóknari') // Prosecutor
+    cy.getByTestid('infoCard').contains('Áki Ákærandi') // Prosecutor
     cy.getByTestid('infoCard').contains('Upplýsingar um vefnotkun') // Type
   })
 

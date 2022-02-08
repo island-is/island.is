@@ -5,7 +5,8 @@ air-discount-scheme-api:
     BACKEND_URL: 'http://web-air-discount-scheme-backend'
     CONTENTFUL_HOST: 'cdn.contentful.com'
     ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
-    SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=ads.staging'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -27,10 +28,10 @@ air-discount-scheme-api:
       hosts:
         - host: 'loftbru.staging01.devland.is'
           paths:
-            - '/api'
+            - '/api/graphql'
         - host: 'loftbru-cf.staging01.devland.is'
           paths:
-            - '/api'
+            - '/api/graphql'
   namespace: 'air-discount-scheme'
   podSecurityContext:
     fsGroup: 65534
@@ -38,6 +39,13 @@ air-discount-scheme-api:
     default: 2
     max: 3
     min: 2
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
   secrets:
     ADMINS: '/k8s/air-discount-scheme/api/ADMINS'
     AUTH_JWT_SECRET: '/k8s/air-discount-scheme/api/AUTH_JWT_SECRET'
@@ -58,10 +66,22 @@ air-discount-scheme-backend:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'air_discount_scheme_backend'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'air_discount_scheme_backend'
     ENVIRONMENT: 'staging'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    NODE_OPTIONS: '--max-old-space-size=208'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379'
     SERVERSIDE_FEATURES_ON: ''
+    XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
+    XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
+    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
+    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
+    XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   grantNamespaces: []
   grantNamespacesEnabled: false
   healthCheck:
@@ -96,9 +116,17 @@ air-discount-scheme-backend:
           - 'db:migrate'
         command:
           - 'npx'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '100m'
+            memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'air_discount_scheme_backend'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'air_discount_scheme_backend'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -108,6 +136,13 @@ air-discount-scheme-backend:
     default: 2
     max: 3
     min: 2
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
@@ -118,6 +153,7 @@ air-discount-scheme-backend:
     NATIONAL_REGISTRY_USERNAME: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_USERNAME'
     NORLANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/NORLANDAIR_API_KEY'
     SENTRY_DSN: '/k8s/air-discount-scheme-backend/SENTRY_DSN'
+    VEGAGERDIN_IDS_CLIENTS_SECRET: '/k8s/air-discount-scheme-backend/VEGAGERDIN_IDS_CLIENTS_ADS_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -125,6 +161,9 @@ air-discount-scheme-web:
   enabled: true
   env:
     API_URL: 'http://web-air-discount-scheme-api'
+    IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.staging01.devland.is'
+    NEXTAUTH_URL: 'https://loftbru.staging01.devland.is'
+    NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -156,8 +195,16 @@ air-discount-scheme-web:
     default: 2
     max: 3
     min: 2
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    IDENTITY_SERVER_SECRET: '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET'
     SENTRY_DSN: '/k8s/air-discount-scheme-api/SENTRY_DSN'
   securityContext:
     allowPrivilegeEscalation: false
@@ -172,6 +219,7 @@ api:
   env:
     APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
     AUTH_PUBLIC_API_URL: 'https://identity-server.staging01.devland.is/api'
+    COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1'
     CONTACT_US_EMAIL: 'island@island.is'
     CONTENTFUL_HOST: 'cdn.contentful.com'
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.staging01.devland.is'
@@ -180,6 +228,7 @@ api:
     FILE_DOWNLOAD_BUCKET: 'island-is-staging-download-cache-api'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-staging-upload-api'
     ICELANDIC_NAMES_REGISTRY_BACKEND_URL: 'http://web-icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local'
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api'
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
     NODE_OPTIONS: '--max-old-space-size=464'
     PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
@@ -187,11 +236,12 @@ api:
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
     SERVICE_USER_PROFILE_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
+    SYSLUMENN_TIMEOUT: '30000'
     TELL_US_A_STORY_EMAIL: 'sogur@island.is'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
-    XROAD_CRIMINAL_RECORD_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Sakavottord-PDF-v1'
+    XROAD_CRIMINAL_RECORD_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Sakaskra-v1'
     XROAD_DRIVING_LICENSE_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v1'
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2'
     XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
@@ -207,6 +257,7 @@ api:
     XROAD_PAYMENT_PROVIDER_ID: 'IS-TEST/GOV/10021/FJS-DEV-Public'
     XROAD_PROPERTIES_API_PATH: '/SKRA-Protected/Fasteignir-v1'
     XROAD_PROPERTIES_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Fasteignir-v1'
+    XROAD_PROPERTIES_TIMEOUT: '20000'
     XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
@@ -267,6 +318,7 @@ api:
     DOCUMENT_PROVIDER_CLIENT_SECRET_TEST: '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET_TEST'
     DOCUMENT_PROVIDER_TOKEN_URL: '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL'
     DOCUMENT_PROVIDER_TOKEN_URL_TEST: '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL_TEST'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET'
     ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
     ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
     PAYMENT_SCHEDULE_PASSWORD: '/k8s/api/PAYMENT_SCHEDULE_PASSWORD'
@@ -317,8 +369,10 @@ application-system-api:
     APPLICATION_ATTACHMENT_BUCKET: 'island-is-staging-storage-application-system'
     CLIENT_LOCATION_ORIGIN: 'https://beta.staging01.devland.is/umsoknir'
     CONTENTFUL_HOST: 'cdn.contentful.com'
+    DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5608002820/gopro/kvortun-v1'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'application_system_api'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'application_system_api'
     EMAIL_REGION: 'eu-west-1'
     ENDORSEMENTS_API_BASE_PATH: 'http://web-endorsement-system-api.endorsement-system.svc.cluster.local'
@@ -327,6 +381,7 @@ application-system-api:
     FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'gunnar.ingi@fjr.is'
     FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_NAME: 'Gunnar Ingi'
     GRAPHQL_API_URL: 'http://web-api.islandis.svc.cluster.local'
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system'
     INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'gunnar.ingi@fjr.is'
     INSTITUTION_APPLICATION_RECIPIENT_NAME: 'Gunnar Ingi'
     LOGIN_SERVICE_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'gunnar.ingi@fjr.is'
@@ -340,7 +395,7 @@ application-system-api:
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
-    XROAD_CRIMINAL_RECORD_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Sakavottord-PDF-v1'
+    XROAD_CRIMINAL_RECORD_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Sakaskra-v1'
     XROAD_DRIVING_LICENSE_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v1'
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2'
     XROAD_HEALTH_INSURANCE_ID: 'IS-TEST/GOV/4804080550/SJUKRA-Protected'
@@ -382,9 +437,17 @@ application-system-api:
           - 'db:migrate'
         command:
           - 'npx'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '100m'
+            memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'application_system_api'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'application_system_api'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -408,6 +471,8 @@ application-system-api:
     AUTH_JWT_SECRET: '/k8s/application-system/api/AUTH_JWT_SECRET'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
+    DATA_PROTECTION_COMPLAINT_API_PASSWORD: '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_PASSWORD'
+    DATA_PROTECTION_COMPLAINT_API_USERNAME: '/k8s/xroad/client/DATA_PROTECTION_COMPLAINT_API_USERNAME'
     DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
     DOCUMENT_PROVIDER_ONBOARDING_REVIEWER: '/k8s/application-system/api/DOCUMENT_PROVIDER_ONBOARDING_REVIEWER'
     DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN'
@@ -416,6 +481,7 @@ application-system-api:
     EMAIL_FROM_NAME: '/k8s/application-system/api/EMAIL_FROM_NAME'
     EMAIL_REPLY_TO: '/k8s/application-system/api/EMAIL_REPLY_TO'
     EMAIL_REPLY_TO_NAME: '/k8s/application-system/api/EMAIL_REPLY_TO_NAME'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET'
     NOVA_PASSWORD: '/k8s/application-system/api/NOVA_PASSWORD'
     NOVA_URL: '/k8s/application-system-api/NOVA_URL'
     PAYMENT_SCHEDULE_PASSWORD: '/k8s/api/PAYMENT_SCHEDULE_PASSWORD'
@@ -439,10 +505,71 @@ application-system-api:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/application-system-api'
     create: true
     name: 'application-system-api'
+application-system-api-worker:
+  args:
+    - 'main.js'
+    - '--job'
+    - 'worker'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'application_system_api'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_USER: 'application_system_api'
+    NODE_OPTIONS: '--max-old-space-size=208'
+    REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379'
+    SERVERSIDE_FEATURES_ON: ''
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'islandis'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
+  namespace: 'application-system'
+  podSecurityContext:
+    fsGroup: 65534
+  replicaCount:
+    default: 2
+    max: 3
+    min: 2
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
+  schedule: '*/30 * * * *'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
+    SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST'
+    SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD'
+    SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/application-system-api-worker'
+    create: true
+    name: 'application-system-api-worker'
 application-system-form:
   enabled: true
   env:
     BASEPATH: '/umsoknir'
+    NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
   grantNamespaces:
@@ -474,6 +601,13 @@ application-system-form:
     default: 2
     max: 3
     min: 2
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -483,6 +617,7 @@ application-system-form:
 contentful-translation-extension:
   enabled: true
   env:
+    NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -512,6 +647,13 @@ contentful-translation-extension:
     default: 2
     max: 3
     min: 2
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   securityContext:
@@ -520,6 +662,8 @@ contentful-translation-extension:
 download-service:
   enabled: true
   env:
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service'
+    NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
@@ -556,8 +700,16 @@ download-service:
     default: 2
     max: 3
     min: 2
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/download-service/IDENTITY_SERVER_CLIENT_SECRET'
     POSTHOLF_BASE_PATH: '/k8s/documents/POSTHOLF_BASE_PATH'
     POSTHOLF_CLIENTID: '/k8s/documents/POSTHOLF_CLIENTID'
     POSTHOLF_CLIENT_SECRET: '/k8s/documents/POSTHOLF_CLIENT_SECRET'
@@ -575,10 +727,12 @@ endorsement-system-api:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_endorsements_api'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_endorsements_api'
     EMAIL_FROM_ADDRESS: 'development@island.is'
     EMAIL_FROM_NAME: 'devland.is'
     EMAIL_REGION: 'eu-west-1'
+    NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'islandis'
@@ -603,9 +757,17 @@ endorsement-system-api:
         command:
           - 'npx'
         name: 'migrations'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '100m'
+            memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_endorsements_api'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'services_endorsements_api'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -617,6 +779,13 @@ endorsement-system-api:
     default: 2
     max: 3
     min: 2
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
@@ -649,7 +818,9 @@ icelandic-names-registry-backend:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'icelandic_names_registry_backend'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'icelandic_names_registry_backend'
+    NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'islandis'
@@ -673,15 +844,30 @@ icelandic-names-registry-backend:
         command:
           - 'npx'
         name: 'migrations'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '100m'
+            memory: '128Mi'
       - args:
           - 'sequelize-cli'
           - 'db:seed:all'
         command:
           - 'npx'
         name: 'seeds'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '100m'
+            memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'icelandic_names_registry_backend'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'icelandic_names_registry_backend'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -691,6 +877,13 @@ icelandic-names-registry-backend:
     default: 2
     max: 3
     min: 2
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
   secrets:
     ALLOWED_NATIONAL_IDS: '/k8s/icelandic-names-registry-backend/ALLOWED_NATIONAL_IDS'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -701,6 +894,7 @@ icelandic-names-registry-backend:
 island-ui-storybook:
   enabled: true
   env:
+    NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -730,12 +924,20 @@ island-ui-storybook:
     default: 2
     max: 3
     min: 2
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
 namespaces:
+  labels: {}
   namespaces:
     - 'application-system'
     - 'service-portal'
@@ -750,7 +952,6 @@ namespaces:
     - 'icelandic-names-registry'
     - 'endorsement-system'
     - 'air-discount-scheme'
-    - 'user-notification'
 search-indexer-service:
   enabled: true
   env:
@@ -864,11 +1065,13 @@ service-portal:
   enabled: true
   env:
     BASEPATH: '/minarsidur'
+    NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'islandis'
+    - 'user-notification'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -895,6 +1098,13 @@ service-portal:
     default: 2
     max: 3
     min: 2
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -906,6 +1116,7 @@ service-portal-api:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'service_portal_api'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'service_portal_api'
     EMAIL_REGION: 'eu-west-1'
     NODE_OPTIONS: '--max-old-space-size=464'
@@ -914,6 +1125,7 @@ service-portal-api:
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'islandis'
+    - 'user-notification'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -933,9 +1145,17 @@ service-portal-api:
           - 'db:migrate'
         command:
           - 'npx'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '100m'
+            memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'service_portal_api'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'service_portal_api'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -978,7 +1198,9 @@ services-documents:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_documents'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_documents'
+    NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'islandis'
@@ -1002,9 +1224,17 @@ services-documents:
           - 'db:migrate'
         command:
           - 'npx'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '100m'
+            memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_documents'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'services_documents'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -1014,6 +1244,13 @@ services-documents:
     default: 2
     max: 3
     min: 2
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-documents/DB_PASSWORD'
@@ -1024,6 +1261,7 @@ skilavottord-web:
   enabled: true
   env:
     API_URL: 'http://web-skilavottord-ws'
+    NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -1052,6 +1290,13 @@ skilavottord-web:
     default: 2
     max: 3
     min: 2
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/skilavottord/web/IDENTITY_SERVER_CLIENT_SECRET'
@@ -1066,7 +1311,9 @@ skilavottord-ws:
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'skilavottord'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'skilavottord'
+    NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -1097,9 +1344,17 @@ skilavottord-ws:
           - 'db:migrate'
         command:
           - 'npx'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '100m'
+            memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'skilavottord'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'skilavottord'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -1109,6 +1364,13 @@ skilavottord-ws:
     default: 2
     max: 3
     min: 2
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
@@ -1126,97 +1388,6 @@ skilavottord-ws:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-user-notification:
-  args:
-    - 'main.js'
-  command:
-    - 'node'
-  enabled: true
-  env:
-    DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
-    MAIN_QUEUE_NAME: 'user-notification'
-    SERVERSIDE_FEATURES_ON: ''
-  grantNamespaces:
-    - 'nginx-ingress-internal'
-  grantNamespacesEnabled: true
-  healthCheck:
-    liveness:
-      initialDelaySeconds: 3
-      path: '/liveness'
-      timeoutSeconds: 3
-    readiness:
-      initialDelaySeconds: 3
-      path: '/liveness'
-      timeoutSeconds: 3
-  image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
-  ingress:
-    primary-alb:
-      annotations:
-        kubernetes.io/ingress.class: 'nginx-internal-alb'
-      hosts:
-        - host: 'user-notification-xrd.internal.staging01.devland.is'
-          paths:
-            - '/'
-  namespace: 'user-notification'
-  podSecurityContext:
-    fsGroup: 65534
-  replicaCount:
-    default: 2
-    max: 3
-    min: 2
-  secrets:
-    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-  securityContext:
-    allowPrivilegeEscalation: false
-    privileged: false
-  serviceAccount:
-    annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/user-notification'
-    create: true
-    name: 'user-notification'
-user-notification-worker:
-  args:
-    - 'main.js'
-    - '--job=worker'
-  command:
-    - 'node'
-  enabled: true
-  env:
-    DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
-    MAIN_QUEUE_NAME: 'user-notification'
-    SERVERSIDE_FEATURES_ON: ''
-  grantNamespaces:
-    - 'nginx-ingress-internal'
-  grantNamespacesEnabled: true
-  healthCheck:
-    liveness:
-      initialDelaySeconds: 3
-      path: '/'
-      timeoutSeconds: 3
-    readiness:
-      initialDelaySeconds: 3
-      path: '/'
-      timeoutSeconds: 3
-  image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
-  namespace: 'user-notification'
-  podSecurityContext:
-    fsGroup: 65534
-  replicaCount:
-    default: 2
-    max: 3
-    min: 2
-  secrets:
-    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-  securityContext:
-    allowPrivilegeEscalation: false
-    privileged: false
-  serviceAccount:
-    annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/user-notification-worker'
-    create: true
-    name: 'user-notification-worker'
 web:
   basicAuth: '/k8s/web/basic_auth'
   enabled: true
@@ -1281,6 +1452,7 @@ xroad-collector:
   enabled: true
   env:
     ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
+    NODE_OPTIONS: '--max-old-space-size=208'
     NODE_TLS_REJECT_UNAUTHORIZED: '0'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
@@ -1308,6 +1480,13 @@ xroad-collector:
     default: 2
     max: 3
     min: 2
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
   schedule: '0 2 * * *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'

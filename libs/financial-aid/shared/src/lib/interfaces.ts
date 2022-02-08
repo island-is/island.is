@@ -186,7 +186,6 @@ export interface CreateApplicationFile {
 }
 
 export interface CreateApplication {
-  nationalId: string
   name: string
   phoneNumber?: string
   email: string
@@ -226,6 +225,7 @@ export interface ApplicantEmailData {
   applicationLink: string
   applicantEmail: string
   municipality: Municipality
+  applicationLinkText: string
 }
 
 export interface ApplicationFilters {

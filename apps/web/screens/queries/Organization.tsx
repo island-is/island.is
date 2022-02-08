@@ -9,6 +9,10 @@ export const GET_ORGANIZATIONS_QUERY = gql`
         slug
         title
         description
+        logo {
+          title
+          url
+        }
         link
         tag {
           id
@@ -46,6 +50,19 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       slug
       title
       description
+      alertBanner {
+        showAlertBanner
+        bannerVariant
+        title
+        description
+        linkTitle
+        link {
+          slug
+          type
+        }
+        isDismissable
+        dismissedForDays
+      }
       menuLinks {
         primaryLink {
           text
@@ -123,6 +140,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
 export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
   query GetOrganizationSubpage($input: GetOrganizationSubpageInput!) {
     getOrganizationSubpage(input: $input) {
+      id
       title
       slug
       description {
@@ -210,6 +228,7 @@ export const GET_SYSLUMENN_AUCTIONS_QUERY = gql`
       auctionTime
       petitioners
       respondent
+      auctionTakesPlaceAt
     }
   }
 `

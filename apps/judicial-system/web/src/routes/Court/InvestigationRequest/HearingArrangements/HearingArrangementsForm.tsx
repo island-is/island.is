@@ -15,7 +15,7 @@ import {
 } from '@island.is/island-ui/core'
 import {
   BlueBox,
-  CaseNumbers,
+  CaseInfo,
   DateTime,
   FormContentContainer,
   FormFooter,
@@ -31,7 +31,7 @@ import {
   UserData,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  newSetAndSendDateToServer,
+  setAndSendDateToServer,
   removeTabsValidateAndSet,
   setAndSendToServer,
   validateAndSendToServer,
@@ -142,7 +142,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers workingCase={workingCase} />
+          <CaseInfo workingCase={workingCase} userRole={user.role} />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
@@ -287,7 +287,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                   selectedDate={workingCase.courtDate}
                   minDate={new Date()}
                   onChange={(date: Date | undefined, valid: boolean) => {
-                    newSetAndSendDateToServer(
+                    setAndSendDateToServer(
                       'courtDate',
                       date,
                       valid,
@@ -310,7 +310,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'courtRoom',
-                    event,
+                    event.target.value,
                     [],
                     workingCase,
                     setWorkingCase,

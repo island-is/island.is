@@ -8,6 +8,7 @@ import {
   formatDate,
   TIME_FORMAT,
   formatRequestCaseType,
+  formatNationalId,
 } from '@island.is/judicial-system/formatters'
 import { CaseType, isRestrictionCase } from '@island.is/judicial-system/types'
 import type {
@@ -38,21 +39,33 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
         caseType: formatRequestCaseType(workingCase.type),
       })}
       labelVariant="h3"
+      labelUse="h2"
     >
       <Box marginBottom={2}>
         <Text variant="h4" as="h4">
-          {formatMessage(core.accused)}
+          {capitalize(
+            formatMessage(core.defendant, {
+              suffix: (workingCase.defendants ?? []).length > 1 ? 'ar' : 'i',
+            }),
+          )}
         </Text>
       </Box>
-      <Box marginBottom={1}>
-        <Text>Kennitala: {workingCase.accusedNationalId}</Text>
-      </Box>
-      <Box marginBottom={1}>
-        <Text>Fullt nafn: {workingCase.accusedName}</Text>
-      </Box>
-      <Box marginBottom={3}>
-        <Text>Lögheimili: {workingCase.accusedAddress}</Text>
-      </Box>
+      {workingCase.defendants &&
+        workingCase.defendants.map((defendant, index) => (
+          <Box key={index}>
+            <Box marginBottom={1}>
+              <Text>
+                Kennitala: {formatNationalId(defendant.nationalId ?? '')}
+              </Text>
+            </Box>
+            <Box marginBottom={1}>
+              <Text>Fullt nafn: {defendant.name}</Text>
+            </Box>
+            <Box marginBottom={3}>
+              <Text>Lögheimili: {defendant.address}</Text>
+            </Box>
+          </Box>
+        ))}
       {workingCase.arrestDate && (
         <AccordionListItem title="Tími handtöku">
           <Text>

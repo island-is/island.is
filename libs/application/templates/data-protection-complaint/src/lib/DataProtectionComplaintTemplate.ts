@@ -11,6 +11,7 @@ import {
 import { DataProtectionComplaintSchema } from './dataSchema'
 import { application } from './messages'
 import { Roles, TEMPLATE_API_ACTIONS } from '../shared'
+import { States } from '../constants'
 
 type DataProtectionComplaintEvent = { type: DefaultEvents.SUBMIT }
 
@@ -23,14 +24,19 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
   name: application.name,
   institution: application.institutionName,
   dataSchema: DataProtectionComplaintSchema,
+  readyForProduction: true,
   stateMachineConfig: {
     initial: 'draft',
     states: {
-      draft: {
+      [States.DRAFT]: {
         meta: {
           name: application.name.defaultMessage,
           progress: 0.5,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 5 * 60000, //5 minutes
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -47,15 +53,22 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: {
-            target: 'inReview',
+            target: States.IN_REVIEW,
           },
         },
       },
-      inReview: {
+      [States.IN_REVIEW]: {
         meta: {
           name: 'In Review',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: { label: application.submittedTag, variant: 'blueberry' },
+          },
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 5 * 60000, //5 minutes
+          },
           onEntry: {
             apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
           },
@@ -63,8 +76,8 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ComplaintForm').then((module) =>
-                  Promise.resolve(module.ComplaintForm),
+                import('../forms/ComplaintFormInReview').then((module) =>
+                  Promise.resolve(module.ComplaintFormInReview),
                 ),
               write: 'all',
             },

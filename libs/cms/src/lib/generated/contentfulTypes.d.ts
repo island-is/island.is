@@ -1278,6 +1278,40 @@ export interface ILinkUrl extends Entry<ILinkUrlFields> {
   }
 }
 
+export interface ILocationFields {
+  /** Title */
+  title: string
+
+  /** subTitle */
+  subTitle?: string | undefined
+
+  /** Address */
+  address?: string | undefined
+
+  /** Link */
+  link?: ILink | undefined
+
+  /** Background */
+  background: Asset
+}
+
+export interface ILocation extends Entry<ILocationFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'location'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ILogoListSliceFields {
   /** Title */
   title?: string | undefined
@@ -1899,6 +1933,9 @@ export interface IOrganizationPageFields {
 
   /** External Links */
   externalLinks?: ILink[] | undefined
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
@@ -2450,6 +2487,9 @@ export interface IStepFields {
   /** Slug */
   slug: string
 
+  /** Step Type */
+  stepType?: 'Question - Radio' | 'Question - Dropdown' | 'Answer' | undefined
+
   /** Subtitle */
   subtitle?: Document | undefined
 
@@ -2461,6 +2501,9 @@ export interface IStepFields {
 
   /** Options */
   options?: Record<string, any> | undefined
+
+  /** Config */
+  config?: Record<string, any> | undefined
 }
 
 /** Step for stepper */
@@ -2677,6 +2720,9 @@ export interface ISupportCategoryFields {
 
   /** Organization */
   organization: IOrganization
+
+  /** Importance */
+  importance?: number | undefined
 }
 
 /** Category for the helpdesk questions, used for grouping QNAs */
@@ -3391,6 +3437,7 @@ export type CONTENT_TYPE =
   | 'linkGroup'
   | 'linkList'
   | 'linkUrl'
+  | 'location'
   | 'logoListSlice'
   | 'mailingListSignup'
   | 'menu'

@@ -106,7 +106,7 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
                   setCreateCourtCaseSuccess(false)
                   removeTabsValidateAndSet(
                     'courtCaseNumber',
-                    event,
+                    event.target.value,
                     ['empty'],
                     workingCase,
                     setWorkingCase,

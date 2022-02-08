@@ -2,31 +2,19 @@ import request from 'supertest'
 import { INestApplication, Injectable } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { NotificationsController } from '../notifications.controller'
-import { CONFIG_PROVIDER } from '../../../../constants'
 import { NotificationsWorkerService } from '../notificationsWorker.service'
-import { Message, MessageTypes } from '../dto/createNotification.dto'
+import { Message } from '../dto/createNotification.dto'
 import { LoggingModule } from '@island.is/logging'
+import { environment } from '../../../../environments/environment'
 import {
   getQueueServiceToken,
   QueueModule,
   QueueService,
 } from '@island.is/message-queue'
 import { InjectWorker, WorkerService } from '@island.is/message-queue'
+import { MessageTypes } from '../types'
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
-
-const environment = {
-  mainQueueName: 'test-main',
-  deadLetterQueueName: 'test-failure',
-  sqsConfig: {
-    endpoint: process.env.SQS_ENDPOINT,
-    region: 'eu-west-1',
-    credentials: {
-      accessKeyId: 'testing',
-      secretAccessKey: 'testing',
-    },
-  },
-}
 
 const waitForDelivery = async (
   worker: WorkerMock,
@@ -68,13 +56,7 @@ describe('Notifications API', () => {
         }),
       ],
       controllers: [NotificationsController],
-      providers: [
-        {
-          provide: CONFIG_PROVIDER,
-          useValue: environment,
-        },
-        NotificationsWorkerService,
-      ],
+      providers: [NotificationsWorkerService],
     })
       .overrideProvider(NotificationsWorkerService)
       .useClass(WorkerMock)

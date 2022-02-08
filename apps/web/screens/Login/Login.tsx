@@ -7,11 +7,8 @@ import {
   Link,
   Text,
   Icon,
-  BulletList,
-  Bullet,
   ContentBlock,
   Button,
-  Tag,
   Hidden,
 } from '@island.is/island-ui/core'
 import { SvgLogin } from '@island.is/web/components'
@@ -30,32 +27,6 @@ interface LoginProps {
 
 const LoginPage: Screen<LoginProps> = ({ namespace }) => {
   const n = useNamespace(namespace)
-
-  const oldListItems: string[] = n('gomluSidurList', [
-    'Sjá Pósthólf',
-    'Þínar Upplýsingar',
-    'Fjármál',
-    'Starfsleyfi kennara',
-    'Samræmd könnunarpróf',
-  ])
-
-  const newListItems: string[] = n('nyjuSidurList', [
-    'Sjá Pósthólf',
-    'Þínar Upplýsingar',
-    'Fjármál',
-    'Starfsleyfi kennara',
-    'Samræmd könnunarpróf',
-  ])
-
-  const newListItemsArray = Array.isArray(newListItems) ? newListItems : []
-  const oldListItemsArray = Array.isArray(oldListItems) ? oldListItems : []
-
-  const oldHalf = Math.ceil(oldListItemsArray.length / 2)
-  const oldFirstHalf = oldListItemsArray.slice(0, oldHalf)
-  const oldSecondHalf = oldListItemsArray.slice(
-    oldHalf,
-    oldListItemsArray.length,
-  )
 
   const minarsidurLink = '/minarsidur/postholf'
 
@@ -88,7 +59,6 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
               span={['12/12', '12/12', '6/12']}
               paddingBottom={[3, 3, 4]}
             >
-              <Tag disabled>{n('nyjuSidurTag', 'Beta útgáfa')}</Tag>
               <Text as="h2" variant="h1" marginBottom="p3" marginTop="p1">
                 {n('nyjuSidurTitle', 'Ný útgáfa af mínum síðum á island.is')}
               </Text>
@@ -118,7 +88,7 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
                   newTab
                   className={styles.link}
                 >
-                  {n('gomluSidurLink', 'Fara á gömlu mínar síður')}{' '}
+                  {n('gomluSidurLink', 'Fara á gömlu mínar síður')}
                   <Icon icon="open" type="outline" />
                 </Link>
               </div>
@@ -136,60 +106,6 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
                   <SvgLogin />
                 </Box>
               </Hidden>
-            </GridColumn>
-            <GridColumn
-              span={['12/12', '12/12', '5/12']}
-              paddingBottom={[3, 3, 4]}
-            >
-              <Box flexDirection="column" display="flex">
-                {newListItemsArray.length > 0 ? (
-                  <Box marginTop={[1, 0]}>
-                    <Text as="h3" variant="h3" marginBottom="p3">
-                      {n('nyjuSidurListTitle', 'Á nýjum mínum síðum')}
-                    </Text>
-                    <BulletList type="ul">
-                      {newListItemsArray.map((li) => (
-                        <Bullet key={li}>{li}</Bullet>
-                      ))}
-                    </BulletList>
-                  </Box>
-                ) : null}
-              </Box>
-            </GridColumn>
-            <GridColumn
-              span={['12/12', '12/12', '7/12']}
-              paddingBottom={[3, 3, 4]}
-            >
-              <Box flexDirection="column" display="flex">
-                {oldListItemsArray.length > 0 ? (
-                  <Box marginTop={[1, 0]}>
-                    <Text as="h3" variant="h3" marginBottom="p3">
-                      {n('gomluSidurListTitle', 'Á gömlu mínum síðum')}
-                    </Text>
-                    <GridContainer>
-                      <GridRow>
-                        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-                          <BulletList type="ul">
-                            {oldFirstHalf.map((li) => (
-                              <Bullet key={li}>{li}</Bullet>
-                            ))}
-                          </BulletList>
-                        </GridColumn>
-                        <GridColumn
-                          paddingTop={[1, 1, 1, 0]}
-                          span={['12/12', '12/12', '12/12', '7/12']}
-                        >
-                          <BulletList type="ul">
-                            {oldSecondHalf.map((li) => (
-                              <Bullet key={li}>{li}</Bullet>
-                            ))}
-                          </BulletList>
-                        </GridColumn>
-                      </GridRow>
-                    </GridContainer>
-                  </Box>
-                ) : null}
-              </Box>
             </GridColumn>
           </GridRow>
         </GridContainer>

@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Checkbox, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   BlueBox,
+  CaseInfo,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
@@ -16,6 +17,7 @@ import { icReportForm } from '@island.is/judicial-system-web/messages'
 import { isPoliceReportStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 
 interface Props {
   workingCase: Case
@@ -28,6 +30,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
 
   const { formatMessage } = useIntl()
   const { updateCase, autofill } = useCase()
+  const { user } = useContext(UserContext)
 
   const [caseFactsEM, setCaseFactsEM] = useState<string>('')
   const [legalArgumentsEM, setLegalArgumentsEM] = useState<string>('')
@@ -53,6 +56,13 @@ const PoliceReportForm: React.FC<Props> = (props) => {
           <Text as="h1" variant="h1">
             {formatMessage(icReportForm.heading)}
           </Text>
+        </Box>
+        <Box component="section" marginBottom={7}>
+          <CaseInfo
+            workingCase={workingCase}
+            userRole={user?.role}
+            showAdditionalInfo
+          />
         </Box>
         <Box marginBottom={5}>
           <BlueBox>
@@ -81,7 +91,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'caseFacts',
-                event,
+                event.target.value,
                 ['empty'],
                 workingCase,
                 setWorkingCase,
@@ -129,7 +139,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'legalArguments',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -188,7 +198,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'prosecutorOnlySessionRequest',
-                    event,
+                    event.target.value,
                     [],
                     workingCase,
                     setWorkingCase,
@@ -227,7 +237,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'comments',
-                  event,
+                  event.target.value,
                   [],
                   workingCase,
                   setWorkingCase,

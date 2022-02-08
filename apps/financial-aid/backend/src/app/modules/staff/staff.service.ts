@@ -10,7 +10,7 @@ import { Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 import { environment } from '../../../environments'
 
-import { StaffModel } from './models'
+import { StaffModel } from './models/staff.model'
 import { EmailService } from '@island.is/email-service'
 import { logger } from '@island.is/logging'
 import {
@@ -154,7 +154,7 @@ export class StaffService {
         roles: input.roles,
         active: true,
         municipalityName: municipality.municipalityName,
-        municipalityHomepage: municipality.municipalityHomepage,
+        municipalityHomepage: municipality?.municipalityHomepage,
       },
       { transaction: t },
     )

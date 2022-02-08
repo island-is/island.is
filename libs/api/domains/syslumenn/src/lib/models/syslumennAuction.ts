@@ -34,4 +34,7 @@ export class SyslumennAuction {
 
   @Field({ nullable: true })
   respondent?: string
+
+  @Field({ nullable: true })
+  auctionTakesPlaceAt?: string
 }

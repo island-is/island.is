@@ -27,10 +27,10 @@ import {
   LanguageFormOption,
 } from '../../components/Forms/LanguageForm'
 
-export const EditLanguage: ServicePortalModuleComponent = ({ userInfo }) => {
+export const EditLanguage: ServicePortalModuleComponent = () => {
   useNamespaces('sp.settings')
   const [language, setLanguage] = useState<LanguageFormOption | null>(null)
-  const { data: userProfile } = useUserProfile()
+  const { data: settings } = useUserProfile()
   const [status, setStatus] = useState<'passive' | 'success' | 'error'>(
     'passive',
   )
@@ -39,13 +39,13 @@ export const EditLanguage: ServicePortalModuleComponent = ({ userInfo }) => {
   const { updateUserProfile } = useUpdateUserProfile()
 
   useEffect(() => {
-    if (!userProfile || !userProfile.locale) return
-    if (userProfile.locale.length > 0)
+    if (!settings || !settings.locale) return
+    if (settings.locale.length > 0)
       setLanguage({
-        value: userProfile.locale as Locale,
-        label: userProfile.locale === 'is' ? 'Íslenska' : 'English',
+        value: settings.locale as Locale,
+        label: settings.locale === 'is' ? 'Íslenska' : 'English',
       })
-  }, [userProfile])
+  }, [settings])
 
   const submitFormData = async (formData: LanguageFormData) => {
     if (formData.language === null) {
@@ -57,9 +57,13 @@ export const EditLanguage: ServicePortalModuleComponent = ({ userInfo }) => {
 
     try {
       // Update the profile if it exists, otherwise create one
-      if (userProfile) {
+      if (settings) {
         await updateUserProfile({
           locale: formData.language.value,
+          canNudge: settings.canNudge ?? undefined,
+          mobilePhoneNumber: settings.mobilePhoneNumber ?? undefined,
+          email: settings.email ?? undefined,
+          bankInfo: settings.bankInfo ?? undefined,
         })
       } else {
         await createUserProfile({

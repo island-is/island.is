@@ -10,6 +10,7 @@ export interface SyslumennAuction {
   auctionTime: string
   petitioners: string
   respondent: string
+  auctionTakesPlaceAt: string
 }
 
 export interface DataUploadResponse {

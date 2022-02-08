@@ -8,17 +8,21 @@ import {
   CallHandler,
 } from '@nestjs/common'
 
+import { User } from '@island.is/judicial-system/types'
+
 import { Case } from '../models'
 import { transformCase } from './case.transformer'
-import { maskCase } from './case.mask'
+import { maskCaseByUser } from './case.mask'
 
 @Injectable()
 export class CasesInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<Case[]> {
+    const user: User = context.getArgByIndex(2)?.req?.user
+
     return next.handle().pipe(
       map((cases: Case[]) => {
         return cases.map((retCase) => {
-          return maskCase(transformCase(retCase))
+          return maskCaseByUser(transformCase(retCase), user)
         })
       }),
     )
