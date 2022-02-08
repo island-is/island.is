@@ -1,15 +1,24 @@
+import { caching } from 'cache-manager'
+import redisStore from 'cache-manager-ioredis'
 import { Inject, Injectable } from '@nestjs/common'
-import { Configuration, GetDetailedApi, GetSimpleApi } from '../../gen/fetch'
-import { RskProcuringClientConfig } from './RskProcuringClientConfig'
+
+import { createRedisCluster } from '@island.is/cache'
 import { XRoadConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
 import {
   buildCacheControl,
   createEnhancedFetch,
+  FetchError,
 } from '@island.is/clients/middlewares'
-import { caching } from 'cache-manager'
-import redisStore from 'cache-manager-ioredis'
-import { createRedisCluster } from '@island.is/cache'
+
+import {
+  Configuration,
+  GetDetailedApi,
+  GetSimpleApi,
+  ResponseDetailed,
+  ResponseSimple,
+} from '../../gen/fetch'
+import { RskProcuringClientConfig } from './RskProcuringClientConfig'
 
 @Injectable()
 export class RskProcuringClient {
@@ -27,12 +36,19 @@ export class RskProcuringClient {
     this.detailedApi = new GetDetailedApi(configuration)
   }
 
-  getSimple(nationalId: string) {
-    return this.simpleApi.simple({ nationalId })
+  getSimple(nationalId: string): Promise<ResponseSimple | null> {
+    return this.simpleApi.simple({ nationalId }).catch(this.handle404)
   }
 
-  getDetailed(nationalId: string) {
-    return this.detailedApi.detailed({ nationalId })
+  getDetailed(nationalId: string): Promise<ResponseDetailed | null> {
+    return this.detailedApi.detailed({ nationalId }).catch(this.handle404)
+  }
+
+  private handle404(error: FetchError) {
+    if (error.name === 'FetchError' && error.status === 404) {
+      return null
+    }
+    throw error
   }
 
   private getConfiguration() {

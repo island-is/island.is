@@ -382,16 +382,15 @@ export class DelegationsService {
         return []
       }
 
-      const response = await this.rskProcuringClient.getSimple(user.nationalId)
-      const person = response.result?.[0]
+      const person = await this.rskProcuringClient.getSimple(user.nationalId)
 
-      if (person && person.prokura) {
-        return person.prokura.map(
+      if (person && person.companies) {
+        return person.companies.map(
           (p) =>
             <DelegationDTO>{
               toNationalId: user.nationalId,
-              fromNationalId: p.kennitala,
-              fromName: p.heiti,
+              fromNationalId: p.nationalId,
+              fromName: p.name,
               type: DelegationType.ProcurationHolder,
               provider: DelegationProvider.CompanyRegistry,
             },
