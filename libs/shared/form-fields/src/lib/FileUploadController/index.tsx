@@ -18,6 +18,7 @@ import {
   ADD_ATTACHMENT,
   DELETE_ATTACHMENT,
 } from '@island.is/application/graphql'
+import { InputImageUpload } from '@island.is/application/ui-components'
 
 import { uploadFileToS3 } from './utils'
 import { Action, ActionTypes } from './types'
@@ -72,6 +73,7 @@ interface FileUploadControllerProps {
   readonly multiple?: boolean
   readonly accept?: string
   readonly maxSize?: number
+  readonly forImageUpload?: boolean
 }
 
 export const FileUploadController: FC<FileUploadControllerProps> = ({
@@ -84,6 +86,7 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
   multiple,
   accept,
   maxSize,
+  forImageUpload,
 }) => {
   const { formatMessage } = useLocale()
   const { clearErrors, setValue } = useFormContext()
@@ -230,12 +233,17 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
     setUploadError(undefined)
   }
 
+  const FileUploadComponent = forImageUpload
+    ? InputImageUpload
+    : InputFileUpload
+
   return (
     <Controller
       name={id}
       defaultValue={initialUploadFiles}
       render={() => (
-        <InputFileUpload
+        <FileUploadComponent
+          applicationId={application.id}
           fileList={state}
           header={header}
           description={description}
