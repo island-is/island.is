@@ -59,6 +59,7 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           onEntry: {
             apiModuleAction: TEMPLATE_API_ACTIONS.sendApplication,
+            shouldPersistToExternalData: true,
           },
           roles: [
             {

@@ -26,8 +26,12 @@ export class DataProtectionComplaintService {
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
     try {
+      const complaintPdf = await this.pdfFileProvider.getFiles(
+        application,
+        'kvörtun',
+      )
       const attachments = [
-        ...(await this.pdfFileProvider.getFiles(application, 'kvörtun')),
+        ...complaintPdf,
         ...(await this.applicationAttachmentProvider.getFiles(
           ['complaint.documents', 'commissions.documents'],
           application,
@@ -38,10 +42,14 @@ export class DataProtectionComplaintService {
         application,
         attachments,
       )
-      /*
-      const newCase = await this.caseApiWithAuth.createCase({
+
+      await this.caseApiWithAuth.createCase({
         requestData: caseRequest,
-      })*/
+      })
+
+      return {
+        pdfContent: complaintPdf[0].content,
+      }
     } catch (error) {
       this.logger.error('Error submitting', error)
 

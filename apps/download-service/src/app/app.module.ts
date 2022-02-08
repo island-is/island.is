@@ -6,12 +6,19 @@ import { DocumentsClientModule } from '@island.is/clients/documents'
 import { FinanceModule } from '@island.is/api/domains/finance'
 import { environment } from '../environments'
 import { AuthModule } from '@island.is/auth-nest-tools'
+import { ApplicationController } from './modules/application/application.controller'
+import {
+  ApplicationClientConfig,
+  ApplicationClientModule,
+} from '@island.is/clients/application'
+import { ConfigModule } from '@nestjs/config'
 
 @Module({
   controllers: [
     DocumentController,
     DocumentsInfraController,
     FinanceDocumentController,
+    ApplicationController,
   ],
   imports: [
     AuthModule.register(environment.auth),
@@ -27,6 +34,11 @@ import { AuthModule } from '@island.is/auth-nest-tools'
       xroadClientId: environment.xroad.clientId,
       ttl: environment.fjarmalDomain.ttl,
       downloadServiceBaseUrl: '',
+    }),
+    ApplicationClientModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [ApplicationClientConfig],
     }),
   ],
   providers: [],

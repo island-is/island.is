@@ -1,10 +1,17 @@
-import { service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
+import { ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
 import { Base, Client, Finance } from '../../../infra/src/dsl/xroad'
 
-export const serviceSetup = (): ServiceBuilder<'download-service'> =>
+export const serviceSetup = (services: {
+  appSystemApi: ServiceBuilder<'application-system-api'>
+}): ServiceBuilder<'download-service'> =>
   service('download-service')
     .image('download-service')
     .namespace('download-service')
+    .env({
+      APPLICATION_SYSTEM_API_URL: ref(
+        (h) => `http://${h.svc(services.appSystemApi)}`,
+      ),
+    })
     .secrets({
       POSTHOLF_CLIENTID: '/k8s/documents/POSTHOLF_CLIENTID',
       POSTHOLF_CLIENT_SECRET: '/k8s/documents/POSTHOLF_CLIENT_SECRET',

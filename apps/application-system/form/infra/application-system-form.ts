@@ -12,6 +12,11 @@ export const serviceSetup = (services: {}): ServiceBuilder<'application-system-f
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      DOWNLOAD_SERVICE_BASE_PATH: {
+        prod: 'https://api.island.is',
+        dev: 'https://api.dev01.devland.is',
+        staging: 'https://api.staging01.devland.is',
+      },
     })
     .secrets({
       SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY',
