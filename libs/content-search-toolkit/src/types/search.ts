@@ -1,4 +1,3 @@
-import { SearchableTags } from '@island.is/api/schema'
 import { elasticTagField } from './shared'
 
 export interface SearchInput {
@@ -7,7 +6,7 @@ export interface SearchInput {
   page?: number
   types?: string[]
   tags?: Omit<elasticTagField, 'value'>[]
-  countTag?: SearchableTags[]
+  countTag?: string[]
   countTypes?: boolean
   countProcessEntry?: boolean
 }
