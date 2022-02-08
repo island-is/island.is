@@ -8,11 +8,17 @@ export const serviceSetup = (services: {
     .image('download-service')
     .namespace('download-service')
     .env({
+<<<<<<< HEAD
       APPLICATION_SYSTEM_API_URL: ref(
         (h) => `http://${h.svc(services.appSystemApi)}`,
       ),
+=======
+      IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service',
+>>>>>>> f02f9917186a78db9df393488429abcc16e73a45
     })
     .secrets({
+      IDENTITY_SERVER_CLIENT_SECRET:
+        '/k8s/download-service/IDENTITY_SERVER_CLIENT_SECRET',
       POSTHOLF_CLIENTID: '/k8s/documents/POSTHOLF_CLIENTID',
       POSTHOLF_CLIENT_SECRET: '/k8s/documents/POSTHOLF_CLIENT_SECRET',
       POSTHOLF_TOKEN_URL: '/k8s/documents/POSTHOLF_TOKEN_URL',

@@ -130,9 +130,6 @@
     "api-domains-identity": {
       "tags": []
     },
-    "api-domains-islykill": {
-      "tags": []
-    },
     "api-domains-license-service": {
       "tags": []
     },
@@ -554,6 +551,9 @@
     "nest-problem": {
       "tags": []
     },
+    "nest-sequelize": {
+      "tags": []
+    },
     "nest-swagger": {
       "tags": []
     },
@@ -649,9 +649,6 @@
       "tags": []
     },
     "service-portal-settings-access-control": {
-      "tags": []
-    },
-    "service-portal-settings-islykill": {
       "tags": []
     },
     "service-portal-settings-personal-information": {

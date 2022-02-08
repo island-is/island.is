@@ -1,24 +1,24 @@
 import React from 'react'
 import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
+import { useIntl } from 'react-intl'
 
 import {
   capitalize,
-  formatAccusedByGender,
   formatAppeal,
   formatDate,
-  NounCases,
   TIME_FORMAT,
   formatRequestCaseType,
 } from '@island.is/judicial-system/formatters'
 import {
+  Gender,
   isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
-import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import { closedCourt, core } from '@island.is/judicial-system-web/messages'
-import { useIntl } from 'react-intl'
 import { courtRecordAccordion as m } from '@island.is/judicial-system-web/messages/Core/courtRecordAccordion'
+import type { Case } from '@island.is/judicial-system/types'
+
+import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 
 interface Props {
   workingCase: Case
@@ -34,16 +34,22 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
 
   const accusedAppeal = formatAppeal(
     workingCase.accusedAppealDecision,
-    isRestrictionCase(workingCase.type)
-      ? capitalize(formatAccusedByGender(workingCase.accusedGender))
-      : 'Varnaraðili',
-    isRestrictionCase(workingCase.type) ? workingCase.accusedGender : undefined,
+    capitalize(
+      formatMessage(core.defendant, {
+        suffix:
+          workingCase.defendants && workingCase.defendants?.length > 1
+            ? 'ar'
+            : 'i',
+      }),
+    ),
   )
+
   return (
     <AccordionItem
       id="courtRecordAccordionItem"
       label="Þingbók"
       labelVariant="h3"
+      labelUse="h2"
     >
       <AccordionListItem
         title={formatMessage(m.sections.timeAndLocation.title)}
@@ -107,11 +113,15 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         <AccordionListItem
           title={formatMessage(m.sections.accusedBookings.title, {
             accusedType: isRestrictionCase(workingCase.type)
-              ? formatAccusedByGender(
-                  workingCase.accusedGender,
-                  NounCases.ACCUSATIVE,
-                )
-              : 'varnaraðila',
+              ? formatMessage(core.accused, {
+                  suffix:
+                    workingCase.defendants &&
+                    workingCase.defendants.length > 0 &&
+                    workingCase.defendants[0].gender === Gender.FEMALE
+                      ? 'u'
+                      : 'a',
+                })
+              : formatMessage(core.defendant, { suffix: 'a' }),
           })}
           breakSpaces
         >

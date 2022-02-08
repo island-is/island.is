@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common'
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { ApplicationModel, SpouseResponse } from './models'
@@ -184,9 +188,16 @@ export class ApplicationService {
           model: AmountModel,
           as: 'amount',
           include: [{ model: DeductionFactorsModel, as: 'deductionFactors' }],
+          separate: true,
+          order: [['created', 'DESC']],
+          limit: 1,
         },
       ],
     })
+
+    if (application?.amount) {
+      application.setDataValue('amount', application.amount['0'])
+    }
 
     return application
   }
@@ -237,6 +248,14 @@ export class ApplicationService {
     application: CreateApplicationDto,
     user: User,
   ): Promise<ApplicationModel> {
+    const hasAppliedForPeriod = await this.getCurrentApplicationId(
+      user.nationalId,
+    )
+
+    if (hasAppliedForPeriod) {
+      throw new ForbiddenException('User or spouse has applied for period')
+    }
+
     const appModel = await this.applicationModel.create({
       nationalId: user.nationalId,
       ...application,
@@ -323,10 +342,7 @@ export class ApplicationService {
     id: string,
     update: UpdateApplicationDto,
     staff?: Staff,
-  ): Promise<{
-    numberOfAffectedRows: number
-    updatedApplication: ApplicationModel
-  }> {
+  ): Promise<ApplicationModel> {
     if (update.state && update.state === ApplicationState.NEW) {
       update.staffId = null
     }
@@ -339,13 +355,14 @@ export class ApplicationService {
       returning: true,
     })
 
+    if (numberOfAffectedRows === 0) {
+      throw new NotFoundException(`Application ${id} does not exist`)
+    }
+
     await this.applicationEventService.create({
       applicationId: id,
       eventType: update.event,
-      comment:
-        update?.rejection ||
-        update?.amount?.finalAmount.toLocaleString('de-DE') ||
-        update?.comment,
+      comment: update?.rejection || update?.comment,
       staffName: staff?.name,
       staffNationalId: staff?.nationalId,
     })
@@ -373,7 +390,7 @@ export class ApplicationService {
       this.sendApplicationUpdateEmail(update, updatedApplication),
     ])
 
-    return { numberOfAffectedRows, updatedApplication }
+    return updatedApplication
   }
 
   private async sendApplicationUpdateEmail(

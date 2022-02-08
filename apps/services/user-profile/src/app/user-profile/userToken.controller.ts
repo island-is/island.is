@@ -14,7 +14,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 
-import { UserDeviceTokensDto } from './dto/userDeviceTokens.dto'
+import { UserDeviceTokenDto } from './dto/userDeviceToken.dto'
 import { UserProfileService } from './userProfile.service'
 import { UserProfile } from './userProfile.model'
 
@@ -26,14 +26,14 @@ export class UserTokenController {
   @ApiOperation({
     summary: 'admin access - returns a list of user device tokens',
   })
-  @ApiOkResponse({ type: [UserDeviceTokensDto] })
+  @ApiOkResponse({ type: [UserDeviceTokenDto] })
   @Scopes(UserProfileScope.admin)
   @ApiSecurity('oauth2', [UserProfileScope.admin])
   @Get('userProfile/:nationalId/device-tokens')
   async getDeviceTokens(
     @Param('nationalId')
     nationalId: string,
-  ): Promise<UserDeviceTokensDto[]> {
+  ): Promise<UserDeviceTokenDto[]> {
     return await this.userProfileService.getDeviceTokens(nationalId)
   }
 

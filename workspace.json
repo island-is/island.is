@@ -1214,27 +1214,6 @@
         }
       }
     },
-    "api-domains-islykill": {
-      "root": "libs/api/domains/islykill",
-      "sourceRoot": "libs/api/domains/islykill/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/api/domains/islykill/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/api/domains/islykill"],
-          "options": {
-            "jestConfig": "libs/api/domains/islykill/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "api-domains-license-service": {
       "root": "libs/api/domains/license-service",
       "sourceRoot": "libs/api/domains/license-service/src",
@@ -1698,6 +1677,13 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/apps/application-system/api"]
+        },
+        "worker": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "application-system-api:build",
+            "args": ["--job", "worker"]
+          }
         },
         "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
@@ -3506,10 +3492,21 @@
             "passWithNoTests": true
           }
         },
+        "update-openapi-document": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "curl --location --request GET 'localhost:8080/r1/IS-DEV/GOV/10006/Skatturinn/ft-v1/openapi.json' --header 'X-Road-Client: IS-DEV/GOV/10000/island-is-client' > src/clientConfig.json",
+              "prettier --write src/clientConfig.json"
+            ],
+            "parallel": false,
+            "cwd": "libs/clients/rsk/company-registry"
+          }
+        },
         "schemas/external-openapi-generator": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "command": "yarn openapi-generator -o libs/clients/rsk/company-registry/src/lib/gen/fetch -i libs/clients/rsk/company-registry/src/openapi.yml"
+            "command": "yarn openapi-generator -o libs/clients/rsk/company-registry/src/lib/gen/fetch -i libs/clients/rsk/company-registry/src/clientConfig.json"
           }
         }
       }
@@ -6277,6 +6274,27 @@
         }
       }
     },
+    "nest-sequelize": {
+      "root": "libs/nest/sequelize",
+      "sourceRoot": "libs/nest/sequelize/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/nest/sequelize/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/nest/sequelize"],
+          "options": {
+            "jestConfig": "libs/nest/sequelize/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "nest-swagger": {
       "root": "libs/nest/swagger",
       "sourceRoot": "libs/nest/swagger/src",
@@ -7464,29 +7482,6 @@
           "outputs": ["coverage/libs/service-portal/settings/access-control"],
           "options": {
             "jestConfig": "libs/service-portal/settings/access-control/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
-    "service-portal-settings-islykill": {
-      "root": "libs/service-portal/settings/islykill",
-      "sourceRoot": "libs/service-portal/settings/islykill/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": [
-              "libs/service-portal/settings/islykill/**/*.{ts,tsx,js,jsx}"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/service-portal/settings/islykill"],
-          "options": {
-            "jestConfig": "libs/service-portal/settings/islykill/jest.config.js",
             "passWithNoTests": true
           }
         }

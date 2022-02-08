@@ -1,10 +1,11 @@
 import { FieldBaseProps } from '@island.is/application/core'
 import { useAuth } from '@island.is/auth/react'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text, Link } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { confirmation } from '../../lib/messages/confirmation'
 import { CompanyIllustration } from '../Illustrations/CompanyIllustration'
+import * as styles from './ComplaintConfirmation.css'
 
 export const ComplaintConfirmation: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -46,7 +47,6 @@ export const ComplaintConfirmation: FC<FieldBaseProps> = ({ application }) => {
 
   return (
     <Box marginTop={3}>
-      <Text>{formatMessage(confirmation.labels.bulletOne)}</Text>
       <Box marginTop={5}>
         <Button
           colorScheme="default"
@@ -58,9 +58,20 @@ export const ComplaintConfirmation: FC<FieldBaseProps> = ({ application }) => {
           type="button"
           variant="ghost"
         >
-          {formatMessage(confirmation.labels.pdfButton)}
+          {formatMessage(confirmation.labels.linkName)}
         </Button>
       </Box>
+      <Text>
+        {formatMessage(confirmation.labels.description, {
+          link: (
+            <Link href={formatMessage(confirmation.labels.link)} newTab>
+              <span className={styles.link}>
+                {formatMessage(confirmation.labels.linkName)}
+              </span>
+            </Link>
+          ),
+        })}
+      </Text>
       <Box marginTop={[3, 5, 12]}>
         <CompanyIllustration />
       </Box>

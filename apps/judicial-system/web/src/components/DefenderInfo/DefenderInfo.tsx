@@ -31,7 +31,7 @@ import { useCase } from '../../utils/hooks'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
-  setAndSendToServer as setAndSendDefenderTypeToServer,
+  setAndSendToServer,
 } from '../../utils/formHelper'
 import { UserContext } from '../UserProvider/UserProvider'
 
@@ -40,11 +40,10 @@ import * as styles from './DefenderInfo.css'
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
-  setAndSendToServer?: (element: HTMLInputElement) => Promise<void>
 }
 
 const DefenderInfo: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, setAndSendToServer } = props
+  const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
   const { updateCase } = useCase()
   const { user } = useContext(UserContext)
@@ -213,7 +212,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
                 label="Verjandi"
                 checked={workingCase.defenderIsSpokesperson === false}
                 onChange={() => {
-                  setAndSendDefenderTypeToServer(
+                  setAndSendToServer(
                     'defenderIsSpokesperson',
                     false,
                     workingCase,
@@ -230,7 +229,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
                 label="Talsmaður"
                 checked={workingCase.defenderIsSpokesperson === true}
                 onChange={() => {
-                  setAndSendDefenderTypeToServer(
+                  setAndSendToServer(
                     'defenderIsSpokesperson',
                     true,
                     workingCase,
@@ -293,7 +292,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'defenderEmail',
-                event,
+                event.target.value,
                 ['email-format'],
                 workingCase,
                 setWorkingCase,
@@ -321,7 +320,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'defenderPhoneNumber',
-                event,
+                event.target.value,
                 ['phonenumber'],
                 workingCase,
                 setWorkingCase,
@@ -360,7 +359,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
             />
           </InputMask>
         </Box>
-        {user?.role === UserRole.PROSECUTOR && setAndSendToServer && (
+        {user?.role === UserRole.PROSECUTOR && (
           <Checkbox
             name="sendRequestToDefender"
             label={formatMessage(
@@ -384,7 +383,15 @@ const DefenderInfo: React.FC<Props> = (props) => {
                   )
             }
             checked={workingCase.sendRequestToDefender}
-            onChange={(event) => setAndSendToServer(event.target)}
+            onChange={(event) => {
+              setAndSendToServer(
+                'sendRequestToDefender',
+                event.target.checked,
+                workingCase,
+                setWorkingCase,
+                updateCase,
+              )
+            }}
             large
             filled
           />

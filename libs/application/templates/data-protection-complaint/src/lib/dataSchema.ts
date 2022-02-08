@@ -53,16 +53,16 @@ export const DataProtectionComplaintSchema = z.object({
   }),
   approveExternalData: z.boolean().refine((p) => p),
   inCourtProceedings: z.enum([YES, NO]).refine((p) => p === NO, {
-    message: error.inCourtProceedings.defaultMessage,
+    params: error.inCourtProceedings,
   }),
   concernsMediaCoverage: z.enum([YES, NO]).refine((p) => p === NO, {
-    message: error.concernsMediaCoverage.defaultMessage,
+    params: error.concernsMediaCoverage,
   }),
   concernsBanMarking: z.enum([YES, NO]).refine((p) => p === NO, {
-    message: error.concernsBanMarking.defaultMessage,
+    params: error.concernsBanMarking,
   }),
   concernsLibel: z.enum([YES, NO]).refine((p) => p === NO, {
-    message: error.concernsLibel.defaultMessage,
+    params: error.concernsLibel,
   }),
   concernsPersonalDataConflict: z.enum([YES, NO]),
   info: z.object({
@@ -112,12 +112,7 @@ export const DataProtectionComplaintSchema = z.object({
     z.object({
       name: z.string().refine((x) => !!x, { params: error.required }),
       address: z.string().refine((x) => !!x, { params: error.required }),
-      nationalId: z
-        .string()
-        .nonempty(error.required.defaultMessage)
-        .refine((x) => (x ? kennitala.isValid(x) : false), {
-          params: error.nationalId,
-        }),
+      nationalId: z.string().optional(),
       operatesWithinEurope: z.enum([YES, NO]),
       countryOfOperation: z.string().optional(),
     }),
@@ -125,11 +120,14 @@ export const DataProtectionComplaintSchema = z.object({
   subjectOfComplaint: z.object({
     values: z.array(z.string()).optional(),
     somethingElse: z.string().optional(),
+    somethingElseValue: z.string().refine((x) => x.trim().length > 0, {
+      params: error.required,
+    }),
   }),
   complaint: z.object({
     description: z
       .string()
-      .nonempty(error.required.defaultMessage)
+      .nonempty()
       .refine((x) => !!x, { params: error.required })
       .refine((x) => x?.split(' ').filter((item) => item).length <= 500, {
         params: error.wordCountReached,

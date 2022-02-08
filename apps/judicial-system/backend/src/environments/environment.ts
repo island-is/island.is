@@ -67,6 +67,9 @@ const devConfig = {
   events: {
     url: process.env.EVENT_URL,
   },
+  deepLinks: {
+    completedCaseOverviewUrl: 'http://localhost:4200/krafa/yfirlit/',
+  },
 }
 
 if (process.env.NODE_ENV === 'production') {
@@ -160,6 +163,9 @@ if (process.env.NODE_ENV === 'production') {
   if (!process.env.XROAD_COURTS_CREDENTIALS) {
     throw new Error('Missing XROAD_COURTS_CREDENTIALS environment.')
   }
+  if (!process.env.COMPLETED_CASE_OVERVIEW_URL) {
+    throw new Error('Missing COMPLETED_CASE_OVERVIEW_URL environment.')
+  }
 }
 
 const prodConfig = {
@@ -227,6 +233,9 @@ const prodConfig = {
   },
   events: {
     url: process.env.EVENT_URL,
+  },
+  deepLinks: {
+    completedCaseOverviewUrl: process.env.COMPLETED_CASE_OVERVIEW_URL,
   },
 }
 

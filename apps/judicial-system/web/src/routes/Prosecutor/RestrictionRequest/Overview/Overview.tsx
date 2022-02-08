@@ -18,6 +18,7 @@ import {
   PdfButton,
   FormContentContainer,
   CaseFileList,
+  CaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import {
   TIME_FORMAT,
@@ -110,7 +111,7 @@ export const Overview: React.FC = () => {
       notFound={caseNotFound}
     >
       <FormContentContainer>
-        <Box marginBottom={10}>
+        <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(rcOverview.heading, {
               caseType: `${workingCase.parentCase ? 'framlengingu á ' : ''}${
@@ -121,24 +122,47 @@ export const Overview: React.FC = () => {
             })}
           </Text>
         </Box>
+        <Box component="section" marginBottom={7}>
+          <CaseInfo
+            workingCase={workingCase}
+            userRole={user?.role}
+            showAdditionalInfo
+          />
+        </Box>
         <Box component="section" marginBottom={5}>
           <InfoCard
             data={[
               {
-                title: 'LÖKE málsnúmer',
+                title: formatMessage(core.policeCaseNumber),
                 value: workingCase.policeCaseNumber,
               },
+              ...(workingCase.courtCaseNumber
+                ? [
+                    {
+                      title: formatMessage(core.courtCaseNumber),
+                      value: workingCase.courtCaseNumber,
+                    },
+                  ]
+                : []),
               {
-                title: 'Dómstóll',
+                title: formatMessage(core.court),
                 value: workingCase.court?.name,
               },
               {
-                title: 'Embætti',
+                title: formatMessage(core.prosecutor),
                 value: `${
                   workingCase.creatingProsecutor?.institution?.name ??
                   'Ekki skráð'
                 }`,
               },
+              ...(workingCase.judge
+                ? [
+                    {
+                      title: formatMessage(core.judge),
+                      value: workingCase.judge.name,
+                    },
+                  ]
+                : []),
               {
                 title: formatMessage(requestCourtDate.heading),
                 value: `${capitalize(
@@ -149,15 +173,26 @@ export const Overview: React.FC = () => {
                   TIME_FORMAT,
                 )}`,
               },
-              { title: 'Ákærandi', value: workingCase.prosecutor?.name },
+              ...(workingCase.registrar
+                ? [
+                    {
+                      title: formatMessage(core.registrar),
+                      value: workingCase.registrar.name,
+                    },
+                  ]
+                : []),
+              {
+                title: formatMessage(core.prosecutorPerson),
+                value: workingCase.prosecutor?.name,
+              },
               {
                 title: workingCase.parentCase
                   ? `${
                       workingCase.type === CaseType.CUSTODY
-                        ? 'Fyrri gæsla'
-                        : 'Fyrra farbann'
+                        ? formatMessage(core.pastCustody)
+                        : formatMessage(core.pastTravelBan)
                     }`
-                  : 'Tími handtöku',
+                  : formatMessage(core.arrestDate),
                 value: workingCase.parentCase
                   ? `${capitalize(
                       formatDate(
@@ -175,10 +210,18 @@ export const Overview: React.FC = () => {
                     )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`
                   : 'Var ekki skráður',
               },
+              ...(workingCase.courtDate
+                ? [
+                    {
+                      title: formatMessage(core.confirmedCourtDate),
+                      value: `${capitalize(
+                        formatDate(workingCase.courtDate, 'PPPP', true) ?? '',
+                      )} kl. ${formatDate(workingCase.courtDate, TIME_FORMAT)}`,
+                    },
+                  ]
+                : []),
             ]}
-            accusedName={workingCase.accusedName}
-            accusedNationalId={workingCase.accusedNationalId}
-            accusedAddress={workingCase.accusedAddress}
+            defendants={workingCase.defendants ?? []}
             defender={{
               name: workingCase.defenderName ?? '',
               email: workingCase.defenderEmail,
