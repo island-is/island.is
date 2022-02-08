@@ -554,8 +554,7 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
                           : 'The state with the same slug does not have this transaction'
                         : 'There is no state with the same slug'
 
-                      const hasError =
-                        !stateWithSameSlug || !optionTransitionIsValid
+                      const hasError = !optionTransitionIsValid
                       const id = `${headings[3].headingId}-${i}-option-${j}`
 
                       const stateSaysWeHaveAnError =
@@ -564,15 +563,7 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
                       if (hasError && !stateSaysWeHaveAnError) {
                         setErrors((errors) =>
                           errors.concat({
-                            message: `has a ${
-                              !stateWithSameSlug ? 'slug' : ''
-                            }${
-                              !optionTransitionIsValid
-                                ? `${
-                                    !stateWithSameSlug ? ' and ' : ''
-                                  }transition`
-                                : ''
-                            } error`,
+                            message: `has a transition error`,
                             messageId: id,
                             fieldName: 'Step with title',
                             fieldValue: step.title,
@@ -595,13 +586,7 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
                           id={id}
                         >
                           <Field name="Label" value={o.label} />
-                          <Field
-                            name="Slug"
-                            value={o.slug}
-                            symbol={
-                              stateWithSameSlug ? SUCCESS_SYMBOL : ERROR_SYMBOL
-                            }
-                          />
+                          <Field name="Slug" value={o.slug} />
                           <Field
                             name="Transition"
                             value={o.transition}
