@@ -44,7 +44,7 @@ export class RskProcuringClient {
     return this.detailedApi.detailed({ nationalId }).catch(this.handle404)
   }
 
-  private handle404(error: FetchError) {
+  private handle404(error: FetchError): null {
     if (error.name === 'FetchError' && error.status === 404) {
       return null
     }
