@@ -30,6 +30,7 @@ import {
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import useNationalRegistry from '@island.is/judicial-system-web/src/utils/hooks/useNationalRegistry'
 
 interface Props {
   defendant: Defendant
@@ -44,6 +45,7 @@ interface Props {
 const DefendantInfo: React.FC<Props> = (props) => {
   const { defendant, onDelete, onChange, updateDefendantState } = props
   const { formatMessage } = useIntl()
+  const { person, error } = useNationalRegistry(defendant.nationalId)
 
   const genderOptions: ReactSelectOption[] = [
     { label: formatMessage(core.male), value: Gender.MALE },
@@ -54,6 +56,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
   const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>(
     '',
   )
+  const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
 
   const [
     accusedNameErrorMessage,
@@ -64,6 +67,14 @@ const DefendantInfo: React.FC<Props> = (props) => {
     accusedAddressErrorMessage,
     setAccusedAddressErrorMessage,
   ] = useState<string>('')
+
+  const mapNationalRegistryGenderToGender = (gender: string) => {
+    return gender === 'male'
+      ? Gender.MALE
+      : gender === 'female'
+      ? Gender.FEMALE
+      : Gender.OTHER
+  }
 
   return (
     <BlueBox>
@@ -116,6 +127,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
           maskPlaceholder={null}
           value={defendant.nationalId ?? ''}
           onChange={(evt) => {
+            setNationalIdNotFound(false)
             removeErrorMessageIfValid(
               defendant.noNationalId
                 ? ['empty', 'date-of-birth']
@@ -129,16 +141,33 @@ const DefendantInfo: React.FC<Props> = (props) => {
               nationalId: evt.target.value,
             })
           }}
-          onBlur={(evt) => {
-            validateAndSetErrorMessage(
-              defendant.noNationalId
-                ? ['empty', 'date-of-birth']
-                : ['empty', 'national-id'],
-              evt.target.value,
-              setNationalIdErrorMessage,
-            )
+          onBlur={async (evt) => {
+            if (person && person.items.length === 1 && !error) {
+              onChange(defendant.id, {
+                nationalId: evt.target.value,
+                name: person.items[0].name,
+                gender: mapNationalRegistryGenderToGender(
+                  person.items[0].gender,
+                ),
+                address: person.items[0].permanent_address.street.nominative,
+              })
 
-            onChange(defendant.id, { nationalId: evt.target.value })
+              setAccusedNameErrorMessage('')
+              setAccusedAddressErrorMessage('')
+              setNationalIdErrorMessage('')
+            } else {
+              setNationalIdNotFound(true)
+
+              validateAndSetErrorMessage(
+                defendant.noNationalId
+                  ? ['empty', 'date-of-birth']
+                  : ['empty', 'national-id'],
+                evt.target.value,
+                setNationalIdErrorMessage,
+              )
+
+              onChange(defendant.id, { nationalId: evt.target.value })
+            }
           }}
         >
           <Input
@@ -158,6 +187,11 @@ const DefendantInfo: React.FC<Props> = (props) => {
             required
           />
         </InputMask>
+        {nationalIdNotFound && (
+          <Text color="red600" variant="eyebrow" marginTop={1}>
+            {formatMessage(core.nationalIdNotFoundInNationalRegistry)}
+          </Text>
+        )}
       </Box>
       <Box marginBottom={2}>
         <Input

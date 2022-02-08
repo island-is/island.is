@@ -120,6 +120,12 @@ export const core = defineMessages({
     defaultMessage: 'Veldu ríkisfang',
     description: 'Notað fyrir Veldu ríkisfang í öllum flæðum',
   },
+  nationalIdNotFoundInNationalRegistry: {
+    id: 'judicial.system.core:national_id_not_found_in_national_registry',
+    defaultMessage: 'Ekki tókst að fletta upp kennitölu',
+    description:
+      'Notaður sem skilaboð um að kennitala varnaraðila hafi ekki fundist í þjóðskrá.',
+  },
   judge: {
     id: 'judicial.system.core:judge',
     defaultMessage: 'Dómari',
