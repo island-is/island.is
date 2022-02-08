@@ -239,24 +239,32 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
               </Text>
             </Box>
 
-            {data?.rettindi.map((item) => {
-              return (
-                <ExpandableLine
-                  key={item.id}
-                  licenseIssued={licenseIssuedText}
-                  licenseExpire={licenseExpireText}
-                  issuedDate={toDate(
-                    new Date(item.utgafuDags).getTime().toString(),
-                  )}
-                  expireDate={toDate(
-                    new Date(item.gildirTil).getTime().toString(),
-                  )}
-                  category={item.nr}
-                >
-                  {ReactHtmlParser(mapCategory(item.nr).text ?? '')}
-                </ExpandableLine>
-              )
-            })}
+            {data?.rettindi.map(
+              (item: {
+                id: React.Key | null | undefined
+                utgafuDags: string | number | Date
+                gildirTil: string | number | Date
+                nr: string | undefined
+              }) => {
+                return (
+                  <ExpandableLine
+                    key={item.id}
+                    licenseIssued={licenseIssuedText}
+                    licenseExpire={licenseExpireText}
+                    issuedDate={toDate(
+                      new Date(item.utgafuDags).getTime().toString(),
+                    )}
+                    expireDate={toDate(
+                      new Date(item.gildirTil).getTime().toString(),
+                    )}
+                    category={item.nr}
+                  >
+                    {item.nr &&
+                      ReactHtmlParser(mapCategory(item.nr).text ?? '')}
+                  </ExpandableLine>
+                )
+              },
+            )}
           </Stack>
           {modalOpen && (
             <QRCodeModal
