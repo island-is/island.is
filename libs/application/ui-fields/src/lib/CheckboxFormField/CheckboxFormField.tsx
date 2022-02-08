@@ -37,7 +37,7 @@ export const CheckboxFormField: FC<Props> = ({
     strong,
     backgroundColor,
     width,
-    onSelect = () => undefined,
+    onSelect,
   } = field
   const { formatMessage } = useLocale()
 
