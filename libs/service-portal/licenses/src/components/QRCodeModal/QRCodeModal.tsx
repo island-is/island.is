@@ -17,6 +17,7 @@ interface Props {
   id: string
   onCloseModal: () => void
   toggleClose?: boolean
+  expires?: string
 }
 
 type PkPassProps = {
@@ -28,6 +29,7 @@ const PkPass = ({ licenseType }: PkPassProps) => {
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
   const [generatePkPass, { loading }] = useMutation(CREATE_PK_PASS)
+  const { formatMessage } = useLocale()
 
   useEffect(() => {
     const getCode = async () => {
@@ -38,7 +40,6 @@ const PkPass = ({ licenseType }: PkPassProps) => {
       if (!response.errors) {
         setPkpassQRCode(response?.data?.generatePkPass?.pkpassQRCode ?? null)
       }
-      response && console.log(response)
     }
     getCode()
     console.log(pkpassQRCode)
@@ -47,19 +48,27 @@ const PkPass = ({ licenseType }: PkPassProps) => {
   return (
     <>
       {loading && <SkeletonLoader width="100%" height={158} />}
-      {/* {pkpassQRCode && <p>{pkpassQRCode}</p>} */}
       {pkpassQRCode && (
-        <>
-          {/* <img src={pkpassQRCode} alt="QR Code for driving license" /> */}
-          <a href={pkpassQRCode}>
-            <Button>SÆKJA QR KÓÐA - TEMP</Button>
-          </a>
-        </>
+        <Box>
+          <img
+            src={pkpassQRCode}
+            alt={formatMessage({
+              id: 'sp.driving-license:QR-code-alt-text',
+              defaultMessage: 'QR code for driving license',
+            })}
+            className={styles.code}
+          />
+        </Box>
       )}
     </>
   )
 }
-export const QRCodeModal: FC<Props> = ({ id, toggleClose, onCloseModal }) => {
+export const QRCodeModal: FC<Props> = ({
+  id,
+  toggleClose,
+  expires,
+  onCloseModal,
+}) => {
   const { formatMessage } = useLocale()
   return (
     <ModalBase
@@ -73,7 +82,8 @@ export const QRCodeModal: FC<Props> = ({ id, toggleClose, onCloseModal }) => {
         background="white"
         padding={3}
         display="flex"
-        flexDirection="row"
+        alignItems={['center', 'flexStart']}
+        flexDirection={['columnReverse', 'row']}
         justifyContent="spaceBetween"
       >
         <Box className={styles.closeButton}>
@@ -86,11 +96,6 @@ export const QRCodeModal: FC<Props> = ({ id, toggleClose, onCloseModal }) => {
           />
         </Box>
         <Box className={styles.code} marginRight={3}>
-          {/* <img
-            className={styles.code}
-            alt="qr-code"
-            src="assets/images/qrcode-temp.png"
-          /> */}
           <PkPass licenseType="DriversLicense" />
         </Box>
         <Box marginRight={7} marginY={2}>
@@ -99,7 +104,7 @@ export const QRCodeModal: FC<Props> = ({ id, toggleClose, onCloseModal }) => {
               id: 'sp.driving-license:valid-until',
               defaultMessage: 'Í gildi til ',
             })}
-            24.02.2022
+            {expires}
           </Tag>
           <Box marginY={1}>
             <Text variant="h3">

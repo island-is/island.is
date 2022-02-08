@@ -81,3 +81,21 @@ export const icon = style({
     md: {},
   }),
 })
+
+export const flexGrow = style({
+  flex: 1,
+  '@media': {
+    [`screen and (min-width: 1200px)`]: {
+      flex: 'none',
+    },
+  },
+})
+
+export const flexShrink = style({
+  flex: 0,
+  '@media': {
+    [`screen and (min-width: 1200px)`]: {
+      flex: 'none',
+    },
+  },
+})
