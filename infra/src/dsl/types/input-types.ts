@@ -71,7 +71,7 @@ export type ServiceDefinition = {
   args?: string[]
   extraAttributes?: ExtraValues
   image?: string
-  resources?: Resources
+  resources: Resources
   replicaCount?: ReplicaCount
   securityContext: {
     privileged: boolean
@@ -90,7 +90,7 @@ export interface Ingress {
   extraAnnotations?: { [name in OpsEnv]: { [idx: string]: string | null } }
 }
 export type Resources = {
-  limits?: {
+  limits: {
     cpu: string
     memory: string
   }

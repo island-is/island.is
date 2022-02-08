@@ -102,6 +102,7 @@ export const serviceSetup = (services: {
         staging: 'Gunnar Ingi',
         prod: 'Stafrænt Ísland',
       },
+      IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system',
       FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_EMAIL_ADDRESS: {
         dev: 'gunnar.ingi@fjr.is',
         staging: 'gunnar.ingi@fjr.is',
@@ -156,6 +157,8 @@ export const serviceSetup = (services: {
       EMAIL_FROM_NAME: '/k8s/application-system/api/EMAIL_FROM_NAME',
       EMAIL_REPLY_TO: '/k8s/application-system/api/EMAIL_REPLY_TO',
       EMAIL_REPLY_TO_NAME: '/k8s/application-system/api/EMAIL_REPLY_TO_NAME',
+      IDENTITY_SERVER_CLIENT_SECRET:
+        '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET',
       DOCUMENT_PROVIDER_ONBOARDING_REVIEWER:
         '/k8s/application-system/api/DOCUMENT_PROVIDER_ONBOARDING_REVIEWER',
       SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME',
