@@ -5,7 +5,6 @@ import {
   BadRequestException,
   RequestTimeoutException,
   InternalServerErrorException,
-  NotImplementedException,
 } from '@nestjs/common'
 import { PdfTypes } from '@island.is/application/core'
 import { Application } from './../application.model'
@@ -21,8 +20,7 @@ import { CRCApplication } from '@island.is/application/templates/children-reside
 import type { ApplicationConfig } from '../application.configuration'
 import { APPLICATION_CONFIG } from '../application.configuration'
 import { generateResidenceChangePdf } from './pdfGenerators'
-import { generateComplaintPdf } from '@island.is/application/template-api-modules'
-import { Application as ApplicationCoreType } from '@island.is/application/core'
+import AmazonS3URI from 'amazon-s3-uri'
 
 @Injectable()
 export class FileService {
@@ -39,10 +37,10 @@ export class FileService {
     const fileName = `${BucketTypePrefix[pdfType]}/${application.id}.pdf`
     const bucket = this.getBucketName()
 
-    // if ((await this.awsService.fileExists(bucket, fileName)) === false) {
-    const content = await this.createFile(application, pdfType)
-    await this.awsService.uploadFile(content, bucket, fileName)
-    // }
+    if ((await this.awsService.fileExists(bucket, fileName)) === false) {
+      const content = await this.createFile(application, pdfType)
+      await this.awsService.uploadFile(content, bucket, fileName)
+    }
 
     return await this.awsService.getPresignedUrl(bucket, fileName)
   }
@@ -119,9 +117,6 @@ export class FileService {
       case PdfTypes.CHILDREN_RESIDENCE_CHANGE: {
         return await generateResidenceChangePdf(application as CRCApplication)
       }
-      case PdfTypes.DATA_PROTECTION_COMPLAINT: {
-        return await generateComplaintPdf(application as ApplicationCoreType)
-      }
     }
   }
 
@@ -181,9 +176,6 @@ export class FileService {
           name,
         }
       }
-      case PdfTypes.DATA_PROTECTION_COMPLAINT: {
-        throw new NotImplementedException()
-      }
     }
   }
 
@@ -205,5 +197,11 @@ export class FileService {
     }
 
     return bucket
+  }
+
+  async getAttachmentPresignedURL(fileName: string) {
+    const { bucket, key } = AmazonS3URI(fileName)
+    const url = await this.awsService.getPresignedUrl(bucket, key)
+    return { url }
   }
 }
