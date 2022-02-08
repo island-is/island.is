@@ -3,12 +3,12 @@ import {
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
-import { NationalRegistry } from '@island.is/application/templates/family-matters-core/types'
+import { NationalRegistryRealEstate } from '../types/schema'
 
 export class NationalRegistryRealEstateProvider extends BasicDataProvider {
   readonly type = 'NationalRegistryRealEstate'
 
-  async provide(): Promise<NationalRegistry> {
+  async provide(): Promise<NationalRegistryRealEstate> {
     const query = `
       query GetNationalRegistryMyRealEstates {
         nationalRegistryMyRealEstates {
@@ -16,7 +16,7 @@ export class NationalRegistryRealEstateProvider extends BasicDataProvider {
         }
       }
     `
-    return this.useGraphqlGateway<NationalRegistry>(query)
+    return this.useGraphqlGateway<NationalRegistryRealEstate>(query)
       .then(async (res: Response) => {
         const response = await res.json()
         if (response.errors) {
@@ -45,7 +45,9 @@ export class NationalRegistryRealEstateProvider extends BasicDataProvider {
       data: result,
     }
   }
-  onProvideSuccess(result: NationalRegistry): SuccessfulDataProviderResult {
+  onProvideSuccess(
+    result: NationalRegistryRealEstate,
+  ): SuccessfulDataProviderResult {
     return { date: new Date(), status: 'success', data: result }
   }
 }

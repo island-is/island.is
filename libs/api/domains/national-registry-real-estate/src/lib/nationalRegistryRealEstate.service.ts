@@ -4,7 +4,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { FasteignirApi } from '@island.is/clients/national-registry-real-estate/v1'
 import { FetchError } from '@island.is/clients/middlewares'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { NationalRegistryRealEstateRealEstate } from '../models/nationalRegistryRealEstateRealEstate.model'
+import { NationalRegistryRealEstate } from '../models/nationalRegistryRealEstate.model'
 
 export class NationalRegistryRealEstateService {
   constructor(
@@ -28,8 +28,8 @@ export class NationalRegistryRealEstateService {
 
   async getMyRealEstates(
     user: User,
-  ): Promise<NationalRegistryRealEstateRealEstate[] | undefined> {
-    const realEstate = await this.nationalRegistryRealEstateApiWithAuth(user)
+  ): Promise<NationalRegistryRealEstate[] | undefined> {
+    const result = await this.nationalRegistryRealEstateApiWithAuth(user)
       .fasteignirGetFasteignir({
         kennitala: user.nationalId,
         cursor: null,
@@ -37,10 +37,32 @@ export class NationalRegistryRealEstateService {
       })
       .catch(this.handle404)
 
-    return realEstate?.fasteignir?.map((fasteign) => {
+    return result?.fasteignir?.map((fasteign) => {
       return {
         realEstateNumber: fasteign.fasteignanumer,
       }
     })
+  }
+
+  async getRealEstateByNumber(
+    user: User,
+    realEstateNumber: string,
+  ): Promise<NationalRegistryRealEstate | undefined> {
+    const result = await this.nationalRegistryRealEstateApiWithAuth(user)
+      .fasteignirGetFasteign({
+        fasteignanumer: realEstateNumber,
+      })
+      .catch(this.handle404)
+
+    return (
+      result && {
+        realEstateNumber: result.fasteignanumer,
+        defaultAddress: result.sjalfgefidStadfang && {
+          streetName: result.sjalfgefidStadfang.birting,
+          postalCode: result.sjalfgefidStadfang.postnumer,
+          city: result.sjalfgefidStadfang.sveitarfelagBirting,
+        },
+      }
+    )
   }
 }
