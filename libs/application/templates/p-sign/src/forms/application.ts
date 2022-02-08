@@ -1,13 +1,11 @@
 import {
   buildForm,
   buildSection,
-  buildTextField,
   Form,
   FormModes,
   buildExternalDataProvider,
   buildDataProviderItem,
   buildMultiField,
-  buildDateField,
   Application,
   buildCustomField,
   buildRadioField,
@@ -19,11 +17,12 @@ import {
   buildSubmitField,
   DefaultEvents,
   buildFileUploadField,
+  buildTextField,
+  buildDateField,
   getValueViaPath,
 } from '@island.is/application/core'
 import type { User } from '@island.is/api/domains/national-registry'
 import { format as formatNationalId } from 'kennitala'
-import { QualityPhotoData } from '../types'
 import {
   NationalRegistryUser,
   UserProfile,
@@ -33,6 +32,7 @@ import { m } from '../lib/messages'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import { HasQualityPhotoData } from '../fields/QualityPhoto/hooks/useQualityPhoto'
+import { UPLOAD_ACCEPT } from '../lib/constants'
 
 export const getApplication = (): Form => {
   return buildForm({
@@ -233,6 +233,9 @@ export const getApplication = (): Form => {
                 uploadHeader: m.qualityPhotoFileUploadTitle,
                 uploadDescription: m.qualityPhotoFileUploadDescription,
                 uploadButtonLabel: m.qualityPhotoUploadButtonLabel,
+                forImageUpload: true,
+                uploadMultiple: false,
+                uploadAccept: UPLOAD_ACCEPT,
                 condition: (answers: FormValue) =>
                   answers.qualityPhoto === 'no',
               }),
@@ -264,6 +267,9 @@ export const getApplication = (): Form => {
                 uploadHeader: m.qualityPhotoFileUploadTitle,
                 uploadDescription: m.qualityPhotoFileUploadDescription,
                 uploadButtonLabel: m.qualityPhotoUploadButtonLabel,
+                forImageUpload: true,
+                uploadMultiple: false,
+                uploadAccept: UPLOAD_ACCEPT,
               }),
             ],
           }),
@@ -386,14 +392,10 @@ export const getApplication = (): Form => {
                 width: 'half',
                 value: '',
               }),
-              buildKeyValueField({
-                label: '',
-                value: ({ answers }) => {
-                  return (answers.attachments as Array<{
-                    key: string
-                    name: string
-                  }>)[0].name
-                },
+              buildCustomField({
+                id: 'uploadedPhoto',
+                title: '',
+                component: 'UploadedPhoto',
                 condition: (answers) =>
                   answers.qualityPhoto === 'no' || !answers.qualityPhoto,
               }),
