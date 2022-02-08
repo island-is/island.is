@@ -35,7 +35,7 @@ const UnknownRelationshipForm = ({ errors, application }: FAFieldBaseProps) => {
         ? formatMessage(error.validation.email)
         : undefined,
   }
-  const spouseNationlId = {
+  const spouseNationalId = {
     id: 'relationshipStatus.spouseNationalId',
     error:
       errors.relationshipStatus !== undefined &&
@@ -92,15 +92,15 @@ const UnknownRelationshipForm = ({ errors, application }: FAFieldBaseProps) => {
       >
         <Box marginBottom={[2, 2, 3]}>
           <InputController
-            id={spouseNationlId.id}
-            name={spouseNationlId.id}
+            id={spouseNationalId.id}
+            name={spouseNationalId.id}
             backgroundColor="blue"
             placeholder={formatMessage(
-              unknownRelationship.inputs.spouseNationlIdPlaceholder,
+              unknownRelationship.inputs.spouseNationalIdPlaceholder,
             )}
-            label={formatMessage(unknownRelationship.inputs.spouseNationlId)}
-            error={spouseNationlId.error}
-            defaultValue={getValues(spouseNationlId.id)}
+            label={formatMessage(unknownRelationship.inputs.spouseNationalId)}
+            error={spouseNationalId.error}
+            defaultValue={getValues(spouseNationalId.id)}
             onChange={() => {
               clearErrors(errorIdForSpouse)
             }}

@@ -17,7 +17,6 @@ import {
   HomeCircumstances,
 } from '@island.is/financial-aid/shared/lib'
 
-// import { Breakdown } from '@island.is/financial-aid/shared/components'
 import { routes } from '../../lib/constants'
 import { SummaryBlock, DescriptionText } from '../index'
 import {
@@ -62,9 +61,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         <DescriptionText text={m.summaryForm.general.description} />
       </Box>
 
-      <Box>
-        {/* TODO skoða með Rikka, fæ filelist villu, <Breakdown calculations={[]} /> */}
-      </Box>
+      <Box>{/* TODO Breakdown */}</Box>
 
       <Box marginTop={2}>
         <DescriptionText text={m.summaryForm.general.calculationsOverview} />

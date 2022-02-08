@@ -51,15 +51,15 @@ export const unknownRelationship = {
     },
   }),
   inputs: defineMessages({
-    spouseNationlId: {
+    spouseNationalId: {
       id:
-        'fa.application:section.personalInterest.inRelationship.inputs.spouseNationlId',
+        'fa.application:section.personalInterest.inRelationship.inputs.spouseNationalId',
       defaultMessage: 'Kennitala maka',
       description: 'Spouse national id input label',
     },
-    spouseNationlIdPlaceholder: {
+    spouseNationalIdPlaceholder: {
       id:
-        'fa.application:section.personalInterest.inRelationship.inputs.spouseNationlIdPlaceholder',
+        'fa.application:section.personalInterest.inRelationship.inputs.spouseNationalIdPlaceholder',
       defaultMessage: 'Sláðu inn netfang maka',
       description: 'Spouse national id input placeholder',
     },

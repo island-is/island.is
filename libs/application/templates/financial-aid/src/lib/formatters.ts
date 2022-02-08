@@ -4,7 +4,7 @@ import {
   KeyMapping,
 } from '@island.is/financial-aid/shared/lib'
 
-import { MessageDescriptor, useIntl } from 'react-intl'
+import { MessageDescriptor } from 'react-intl'
 
 import * as m from './messages'
 import { Applicant, ApproveOptions } from './types'
