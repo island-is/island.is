@@ -92,7 +92,7 @@ export const QRCodeModal: FC<Props> = ({
             colorScheme="negative"
             icon="close"
             onClick={onCloseModal}
-            size="large"
+            size="medium"
           />
         </Box>
         <Box className={styles.code} marginRight={3}>
