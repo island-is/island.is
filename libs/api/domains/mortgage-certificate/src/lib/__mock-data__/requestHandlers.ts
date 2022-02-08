@@ -1,21 +1,32 @@
 import { rest } from 'msw'
 
-export const MOCK_NATIONAL_ID = '0101304929'
-export const MOCK_NATIONAL_ID_NOT_EXISTS = '0000000000'
+export const MOCK_REAL_ESTATE_NUMBER = 'F2240968'
+export const MOCK_REAL_ESTATE_NUMBER_NOT_EXISTS = 'F12345678'
 
 const url = (path: string) => {
   return new URL(path, 'http://localhost').toString()
 }
 
 export const requestHandlers = [
-  rest.get(url('/v2/api/pdf/v1/Create/Personal/:personId'), (req, res, ctx) => {
-    //TODOx test
-    if (req.params.personId === MOCK_NATIONAL_ID) {
-      return res(ctx.status(200), ctx.text('ok'))
-    } else if (req.params.personId === MOCK_NATIONAL_ID_NOT_EXISTS) {
+  rest.post(url('/v1/Innskraning'), (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({ accessToken: '123', audkenni: '123' }),
+    )
+  }),
+  rest.post(url('/v1/Vedbandayfirlit'), (req, res, ctx) => {
+    var { fastanumer } = req.body as {
+      fastanumer?: string
+    }
+    if (fastanumer === MOCK_REAL_ESTATE_NUMBER) {
+      return res(
+        ctx.status(200),
+        ctx.json({ vedbandayfirlitPDFSkra: 'somecontent' }),
+      )
+    } else if (fastanumer === MOCK_REAL_ESTATE_NUMBER_NOT_EXISTS) {
       return res(ctx.status(500), ctx.text('Internal Server Error'))
     } else {
-      return res(ctx.status(200), ctx.text(''))
+      return res(ctx.status(200), ctx.json({ vedbandayfirlitPDFSkra: '' }))
     }
   }),
 ]
