@@ -40,7 +40,7 @@ import { CreateUserProfileDto } from './dto/createUserProfileDto'
 import { DeleteTokenResponseDto } from './dto/deleteTokenResponseDto'
 import { DeviceTokenDto } from './dto/deviceToken.dto'
 import { UpdateUserProfileDto } from './dto/updateUserProfileDto'
-import { UserDeviceTokensDto } from './dto/userDeviceTokens.dto'
+import { UserDeviceTokenDto } from './dto/userDeviceToken.dto'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 import { VerificationService } from './verification.service'
@@ -387,7 +387,7 @@ export class UserProfileController {
   @ApiOperation({
     summary: 'Adds a device token for notifications for a user device ',
   })
-  @ApiOkResponse({ type: UserDeviceTokensDto })
+  @ApiOkResponse({ type: UserDeviceTokenDto })
   @Scopes(UserProfileScope.write)
   @ApiSecurity('oauth2', [UserProfileScope.write])
   @Post('userProfile/:nationalId/device-tokens')
@@ -396,12 +396,11 @@ export class UserProfileController {
     nationalId: string,
     @CurrentUser() user: User,
     @Body() body: DeviceTokenDto,
-  ): Promise<UserDeviceTokensDto> {
+  ): Promise<UserDeviceTokenDto> {
     if (nationalId != user.nationalId) {
       throw new BadRequestException()
     } else {
-      body.nationalId = user.nationalId
-      return await this.userProfileService.addDeviceToken(body)
+      return await this.userProfileService.addDeviceToken(body, user)
     }
   }
 

@@ -6,7 +6,7 @@ import { Type } from 'class-transformer'
 const EXAMPLE_TOKEN =
   'f4XghAZSRs6L-RNWRo9-Mw:APA91bFGgAc-0rhMgeHCDvkMJBH_nU4dApG6qqATliEbPs9xXf5n7EJ7FiAjJ6NNCHMBKdqHMdLrkaFHxuShzTwmZquyCjchuVMwAGmlwdXY8vZWnVqvMVItYn5lfIH-mR7Q9FvnNlhv'
 
-export class UserDeviceTokensDto {
+export class UserDeviceTokenDto {
   @ApiProperty({
     required: true,
     example: 'b3f99e48-57e6-4d30-a933-1304dad40c62',
