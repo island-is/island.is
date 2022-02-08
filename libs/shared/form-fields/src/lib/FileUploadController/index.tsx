@@ -101,11 +101,19 @@ export const FileUploadController: FC<FileUploadControllerProps> = ({
       (f: UploadFile) => f.key && f.status === 'done',
     )
 
-    const uploadAnswer: UploadFileAnswer[] = onlyUploadedFiles.map(
-      transformToAnswer,
+    const uploadingFiles = state.filter(
+      (f: UploadFile) => f.status === 'uploading',
     )
 
-    setValue(id, uploadAnswer)
+    // If some files are still being uploaded, then no files are uploaded
+    // This is done so data schema works for multiples
+    if (uploadingFiles.length === 0) {
+      const uploadAnswer: UploadFileAnswer[] = onlyUploadedFiles.map(
+        transformToAnswer,
+      )
+
+      setValue(id, uploadAnswer)
+    }
   }, [state, id, setValue])
 
   const uploadFileFlow = async (file: UploadFile) => {
