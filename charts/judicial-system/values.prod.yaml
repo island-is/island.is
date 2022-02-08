@@ -54,7 +54,10 @@ judicial-system-api:
       hosts:
         - host: 'rettarvorslugatt.island.is'
           paths:
-            - '/api'
+            - '/api/graphql'
+            - '/api/auth'
+            - '/api/case'
+            - '/api/feature'
   namespace: 'judicial-system'
   podSecurityContext:
     fsGroup: 65534
