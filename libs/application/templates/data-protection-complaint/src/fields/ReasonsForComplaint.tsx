@@ -1,5 +1,5 @@
 import { Box, Text } from '@island.is/island-ui/core'
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useState } from 'react'
 import {
   FieldBaseProps,
   FieldComponents,
@@ -20,7 +20,7 @@ export const ReasonsForComplaint: FC<FieldBaseProps> = ({
   application,
   error,
 }) => {
-  const { register, errors, setValue, unregister } = useFormContext()
+  const { register, errors, setValue } = useFormContext()
   const [statefulOtherReason, setStatefulOtherReason] = useState(
     getValueViaPath(application.answers, 'otherReason' || '') as string,
   )
@@ -30,16 +30,12 @@ export const ReasonsForComplaint: FC<FieldBaseProps> = ({
       'subjectOfComplaint.values',
     ) as string[]) || [],
   )
-  const renderHiddenOtherReasonInput = statefulCheckbox.includes('other')
-
-  useEffect(() => {
-    if (!renderHiddenOtherReasonInput) {
-      unregister('subjectOfComplaint.somethingElse')
-      setValue('subjectOfComplaint.somethingElse', undefined)
-    }
-  }, [renderHiddenOtherReasonInput, unregister, setValue])
 
   const onSelect = (selected: string[]) => {
+    // Clear input value if other is deselected
+    if (statefulCheckbox.includes('other') && !selected.includes('other')) {
+      setValue('subjectOfComplaint.somethingElse', '')
+    }
     setStatefulCheckbox(selected)
   }
 
@@ -47,6 +43,13 @@ export const ReasonsForComplaint: FC<FieldBaseProps> = ({
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setStatefulOtherReason(e.target.value)
+  }
+
+  const getValueConditionallyRequiredValue = () => {
+    if (statefulCheckbox.includes('other')) {
+      return statefulOtherReason
+    }
+    return 'someValue'
   }
 
   return (
@@ -116,7 +119,7 @@ export const ReasonsForComplaint: FC<FieldBaseProps> = ({
           large: true,
         }}
       />
-      {renderHiddenOtherReasonInput && (
+      {statefulCheckbox.includes('other') ? (
         <>
           <TextFormField
             application={application}
@@ -151,15 +154,15 @@ export const ReasonsForComplaint: FC<FieldBaseProps> = ({
                 </Text>
               </Box>
             )}
-          <input
-            type="hidden"
-            ref={register}
-            id="subjectOfComplaint.somethingElseValue"
-            name="subjectOfComplaint.somethingElseValue"
-            value={statefulOtherReason}
-          />
         </>
-      )}
+      ) : null}
+      <input
+        type="hidden"
+        ref={register({ required: true })}
+        id="subjectOfComplaint.somethingElseValue"
+        name="subjectOfComplaint.somethingElseValue"
+        value={getValueConditionallyRequiredValue() || ''}
+      />
     </div>
   )
 }
