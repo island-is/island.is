@@ -27,24 +27,24 @@ Then choose the environment of your choice. Likely to be `island-is-development0
 ```md
 CLI default client Region [eu-west-1]: <Press Enter>
 CLI default output format [json]: <Press Enter>
-CLI profile name [AWSPowerUserAccess-X]: <Custom name (e.g. dev)> or <Press Enter>
+CLI profile name [AWSPowerUserAccess-X]: <Custom name (e.g. islandis-dev)> or <Press Enter>
 ```
 
-This step will add the new profile to your `~/.aws/config` file. If you choose `dev` as profile's name, you will see `[profile dev]` in there.
+This step will add the new profile to your `~/.aws/config` file. If you choose `islandis-dev` as profile's name, you will see `[profile islandis-dev]` in there.
 
 - Ready to use
 
 You can now pass your profile to the `get-secrets` script.
 
 ```bash
-AWS_PROFILE=<profile-name> yarn get-secrets <project-name> # e.g. profile-name -> dev as seen above
+AWS_PROFILE=<profile-name> yarn get-secrets <project-name> # e.g. profile-name -> islandis-dev as seen above
 ```
 
 {% hint style="info" %}
 **Refresh your profile:** The SSO credentials only lasts 8 hours, after which AWS commands start failing. You can run the following command to renew your SSO credentials.
 
 ```bash
-aws sso login --profile <profile-name> # e.g. profile-name -> dev as seen above
+aws sso login --profile <profile-name> # e.g. profile-name -> islandis-dev as seen above
 ```
 
 It will open the browser, go to your AWS account to log in and will refresh your credentials and you are ready to use the AWS commands again.
@@ -175,16 +175,15 @@ It's recommended to use `SecureString` in most cases. However, if you need to ad
 {% hint style="info" %}
 Note that this command only creates the secret in one AWS account at a time (eg `island-is-development01`). To create a secret in all environments, you need to run it with each corresponding AWS account configured, by going through the steps in [Using AWS session](#using-aws-session) multiple times.
 
-To make this easier we recommend configuring SSO for each AWS account using a different AWS profile (dev, staging, prod). Then you can create a secret in all environments like this:
+To make this easier we recommend configuring SSO for each AWS account using a different AWS profile (islandis-dev, islandis-staging, islandis-prod). Then you can create a secret in all environments like this:
 
 ```bash
-aws sso login --profile dev
-aws sso login --profile staging
-aws sso login --profile prod
+# If your SSO session is expired, it's enough to login with any one profile since they share the same SSO session.
+AWS_PROFILE=islandis-dev aws sso login
 
-AWS_PROFILE=dev yarn create-secret
-AWS_PROFILE=staging yarn create-secret
-AWS_PROFILE=prod yarn create-secret
+AWS_PROFILE=islandis-dev yarn create-secret
+AWS_PROFILE=islandis-staging yarn create-secret
+AWS_PROFILE=islandis-prod yarn create-secret
 ```
 
 {% endhint %}
@@ -197,9 +196,7 @@ Only alphanumeric characters, `/` and `-` are allowed. The length of the _secret
 
 Environment variables that should not be tracked but needed locally should be added to the `.env.secret` file. _(**NOTE:** Each variable must be prefixed with `export ` for direnv to pick them up.)_
 
-Additionally, if that same variable is also stored in AWS Parameter Store, the secret can be labeled with the `dev` label from `History` -> `Attach labels`.
-
-All secrets labeled with the `dev` label can be fetched using `yarn get-secrets <project>`.
+Additionally, you can fetch secrets configured in a project's infra DSL from the `island-is-development01` AWS Parameter Store. Just run `yarn get-secrets <project>` and they'll be loaded into your `.env.secret` file.
 
 ## Environment variables with static websites
 
