@@ -6,72 +6,99 @@ import { CourtClientService } from '@island.is/judicial-system/court-client'
 export class CourtService {
   constructor(private readonly courtClientService: CourtClientService) {}
 
-  createRequest(
+  private uploadStream(
     courtId: string | undefined,
-    courtCaseNumber: string | undefined,
-    streamId: string,
-  ): Promise<string> {
-    return this.courtClientService.createDocument(courtId ?? '', {
-      caseNumber: courtCaseNumber ?? '',
-      subject: 'Krafa',
-      fileName: 'Krafa.pdf',
-      streamID: streamId,
-      caseFolder: 'Krafa og greinargerð',
-    })
-  }
-
-  createRuling(
-    courtId: string | undefined,
-    courtCaseNumber: string | undefined,
-    streamId: string,
-  ): Promise<string> {
-    return this.courtClientService.createDocument(courtId ?? '', {
-      caseNumber: courtCaseNumber ?? '',
-      subject: 'Úrskurður',
-      fileName: 'Úrskurður.pdf',
-      streamID: streamId,
-      caseFolder: 'Dómar, úrskurðir og Þingbók',
-    })
-  }
-
-  createDocument(
-    courtId: string | undefined,
-    courtCaseNumber: string | undefined,
-    subject: string,
     fileName: string,
-    streamId: string,
-  ): Promise<string> {
-    return this.courtClientService.createDocument(courtId ?? '', {
-      caseNumber: courtCaseNumber ?? '',
-      subject,
-      fileName,
-      streamID: streamId,
-      caseFolder: 'Gögn málsins',
-    })
-  }
-
-  createThingbok(
-    courtId: string | undefined,
-    courtCaseNumber: string | undefined,
-    streamId: string,
-  ): Promise<string> {
-    return this.courtClientService.createThingbok(courtId ?? '', {
-      caseNumber: courtCaseNumber ?? '',
-      subject: 'Þingbók',
-      fileName: 'Þingbók.pdf',
-      streamID: streamId,
-    })
-  }
-
-  uploadStream(
-    courtId: string | undefined,
-    filename: string,
     contentType: string,
     content: Buffer,
   ): Promise<string> {
     return this.courtClientService.uploadStream(courtId ?? '', {
       value: content,
-      options: { filename, contentType },
+      options: { filename: fileName, contentType },
     })
+  }
+
+  async createRequest(
+    courtId: string | undefined,
+    courtCaseNumber: string | undefined,
+    content: Buffer,
+  ): Promise<string> {
+    return this.uploadStream(
+      courtId,
+      'Krafa.pdf',
+      'application/pdf',
+      content,
+    ).then((streamId) =>
+      this.courtClientService.createDocument(courtId ?? '', {
+        caseNumber: courtCaseNumber ?? '',
+        subject: 'Krafa',
+        fileName: 'Krafa.pdf',
+        streamID: streamId,
+        caseFolder: 'Krafa og greinargerð',
+      }),
+    )
+  }
+
+  async createCourtRecord(
+    courtId: string | undefined,
+    courtCaseNumber: string | undefined,
+    fileName: string,
+    content: Buffer,
+  ): Promise<string> {
+    return this.uploadStream(
+      courtId,
+      `${fileName}.pdf`,
+      'application/pdf',
+      content,
+    ).then((streamId) =>
+      this.courtClientService.createThingbok(courtId ?? '', {
+        caseNumber: courtCaseNumber ?? '',
+        subject: fileName,
+        fileName: `${fileName}.pdf`,
+        streamID: streamId,
+      }),
+    )
+  }
+
+  async createRuling(
+    courtId: string | undefined,
+    courtCaseNumber: string | undefined,
+    fileName: string,
+    content: Buffer,
+  ): Promise<string> {
+    return this.uploadStream(
+      courtId,
+      `${fileName}.pdf`,
+      'application/pdf',
+      content,
+    ).then((streamId) =>
+      this.courtClientService.createDocument(courtId ?? '', {
+        caseNumber: courtCaseNumber ?? '',
+        subject: fileName,
+        fileName: `${fileName}.pdf`,
+        streamID: streamId,
+        caseFolder: 'Dómar, úrskurðir og Þingbók',
+      }),
+    )
+  }
+
+  async createDocument(
+    courtId: string | undefined,
+    courtCaseNumber: string | undefined,
+    subject: string,
+    fileName: string,
+    fileType: string,
+    content: Buffer,
+  ): Promise<string> {
+    return this.uploadStream(courtId, fileName, fileType, content).then(
+      (streamId) =>
+        this.courtClientService.createDocument(courtId ?? '', {
+          caseNumber: courtCaseNumber ?? '',
+          subject,
+          fileName,
+          streamID: streamId,
+          caseFolder: 'Gögn málsins',
+        }),
+    )
   }
 }

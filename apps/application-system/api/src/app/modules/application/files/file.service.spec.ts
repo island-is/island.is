@@ -6,7 +6,7 @@ import * as pdf from './pdfGenerators'
 import { Application } from './../application.model'
 import { ApplicationTypes, PdfTypes } from '@island.is/application/core'
 import { LoggingModule } from '@island.is/logging'
-import { NotFoundException, BadRequestException } from '@nestjs/common'
+import { NotFoundException } from '@nestjs/common'
 import {
   APPLICATION_CONFIG,
   ApplicationConfig,
