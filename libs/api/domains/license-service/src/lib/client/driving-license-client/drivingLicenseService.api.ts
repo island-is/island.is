@@ -294,7 +294,7 @@ export class GenericDrivingLicenseApi
   async getPkPassQRCode(
     nationalId: User['nationalId'],
   ): Promise<string | null> {
-    return this.getPkPassUrlByNationalId(nationalId)
+    return this.getPkPassQRCodeByNationalId(nationalId)
   }
 
   /**
