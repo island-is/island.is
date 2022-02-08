@@ -22,7 +22,7 @@ SSO start URL [None]: https://island-is.awsapps.com/start
 SSO Region [None]: eu-west-1
 ```
 
-Then choose the environnement of your choice. Likely to be `island-is-development01`. You will be prompted for the following:
+Then choose the environment of your choice. Likely to be `island-is-development01`. You will be prompted for the following:
 
 ```md
 CLI default client Region [eu-west-1]: <Press Enter>
@@ -44,7 +44,7 @@ AWS_PROFILE=<profile-name> yarn get-secrets <project-name> # e.g. profile-name -
 **Refresh your profile:** The SSO credentials only lasts 8 hours, after which AWS commands start failing. You can run the following command to renew your SSO credentials.
 
 ```bash
-aws configure sso --profile <profile-name> # e.g. profile-name -> dev as seen above
+aws sso login --profile <profile-name> # e.g. profile-name -> dev as seen above
 ```
 
 It will open the browser, go to your AWS account to log in and will refresh your credentials and you are ready to use the AWS commands again.
@@ -131,6 +131,14 @@ An error occurred (ExpiredTokenException) when calling the GetParametersByPath o
 
 You can run the following command and will be prompted for input.
 
+**With SSO**
+
+```bash
+AWS_PROFILE=<profile-name> create-secret
+```
+
+**Without SSO**
+
 ```bash
 yarn create-secret
 ```
@@ -162,6 +170,23 @@ Are you sure [Y/n]? # [enter] to confirm
 
 {% hint style="info" %}
 It's recommended to use `SecureString` in most cases. However, if you need to add an email address, or an email sender's name to the secrets, you can just use a `String`.
+{% endhint %}
+
+{% hint style="info" %}
+Note that this command only creates the secret in one AWS account at a time (eg `island-is-development01`). To create a secret in all environments, you need to run it with each corresponding AWS account configured, by going through the steps in [Using AWS session](#using-aws-session) multiple times.
+
+To make this easier we recommend configuring SSO for each AWS account using a different AWS profile (dev, staging, prod). Then you can create a secret in all environments like this:
+
+```bash
+aws sso login --profile dev
+aws sso login --profile staging
+aws sso login --profile prod
+
+AWS_PROFILE=dev yarn create-secret
+AWS_PROFILE=staging yarn create-secret
+AWS_PROFILE=prod yarn create-secret
+```
+
 {% endhint %}
 
 {% hint style="warning" %}
