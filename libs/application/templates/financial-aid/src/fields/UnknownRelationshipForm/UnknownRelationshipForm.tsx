@@ -40,7 +40,7 @@ const UnknownRelationshipForm = ({ errors, application }: FAFieldBaseProps) => {
     error:
       errors.relationshipStatus !== undefined &&
       !isValidNationalId(getValues('relationshipStatus.spouseNationalId'))
-        ? formatMessage(error.validation.nationlId)
+        ? formatMessage(error.validation.nationalId)
         : undefined,
   }
   const spouseApproveTerms = {

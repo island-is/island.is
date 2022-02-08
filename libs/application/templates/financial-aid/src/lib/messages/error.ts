@@ -28,7 +28,7 @@ export const error = {
       description: 'Error message when phone is invalid or not present',
     },
     nationalId: {
-      id: 'fa.application:error.nationlId',
+      id: 'fa.application:error.nationalId',
       defaultMessage: 'Athugaðu hvort kennitala sé rétt slegin inn',
       description: 'Error message when national id is invalid or not present',
     },
