@@ -75,7 +75,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
                 {formatMessage(m.summaryForm.userInfo.name)}
               </Text>
               <Text>
-                {externalData?.nationalRegistry?.data?.applicant?.fullName}
+                {externalData.nationalRegistry.data?.applicant?.fullName}
               </Text>
             </Box>
           </GridColumn>
@@ -85,7 +85,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
                 {formatMessage(m.summaryForm.userInfo.nationalId)}
               </Text>
               <Text>
-                {externalData?.nationalRegistry?.data?.applicant?.nationalId}
+                {externalData?.nationalRegistry.data?.applicant?.nationalId}
               </Text>
             </Box>
           </GridColumn>
@@ -95,7 +95,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
                 {formatMessage(m.summaryForm.userInfo.address)}
               </Text>
               <Text>
-                {formatAddress(externalData?.nationalRegistry?.data?.applicant)}
+                {formatAddress(externalData.nationalRegistry.data?.applicant)}
               </Text>
             </Box>
           </GridColumn>

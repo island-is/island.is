@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl'
 import * as styles from '../Shared.css'
 
 interface Props {
-  editAction?(): void
+  editAction?: () => void
   children: ReactNode
 }
 
