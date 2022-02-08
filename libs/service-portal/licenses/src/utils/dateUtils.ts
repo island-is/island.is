@@ -1,6 +1,8 @@
 import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
 
+const MS_PER_DAY = 24 * 60 * 60 * 1000
+
 export function daysInMonth(month: number, year: number) {
   return new Date(year, month, 0).getDate()
 }
@@ -11,14 +13,15 @@ export const toDate = (seconds: string) => {
 }
 
 export const getDaysBetween = (currentDate: Date, date: Date) => {
-  return (date.getTime() - currentDate.getTime()) / 86400000
+  return (date.getTime() - currentDate.getTime()) / MS_PER_DAY
 }
 
 export const getMonthsBetween = (currentDate: Date, date: Date) => {
-  return (
-    (date.getTime() - currentDate.getTime()) /
-    (86400000 * daysInMonth(date.getMonth(), date.getFullYear()))
-  )
+  let months
+  months = (date.getFullYear() - currentDate.getFullYear()) * 12
+  months -= currentDate.getMonth()
+  months += date.getMonth()
+  return months <= 0 ? 0 : months
 }
 
 export const getYearsBetween = (currentDate: Date, date: Date) => {
