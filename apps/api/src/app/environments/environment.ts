@@ -67,9 +67,6 @@ const prodConfig = () => ({
     clientSecret: process.env.POSTHOLF_CLIENT_SECRET ?? '',
     tokenUrl: process.env.POSTHOLF_TOKEN_URL ?? '',
   },
-  downloadService: {
-    baseUrl: process.env.DOWNLOAD_SERVICE_BASE_PATH,
-  },
   documentProviderService: {
     test: {
       basePath: process.env.DOCUMENT_PROVIDER_BASE_PATH_TEST,
@@ -96,6 +93,11 @@ const prodConfig = () => ({
     password: process.env.RSK_API_PASSWORD,
     url: process.env.RSK_API_URL,
   },
+  rskCompanyInfo: {
+    xRoadBaseUrl: process.env.XROAD_BASE_PATH,
+    xRoadProviderId: process.env.COMPANY_REGISTRY_XROAD_PROVIDER_ID,
+    xRoadClientId: process.env.XROAD_CLIENT_ID,
+  },
   icelandicNamesRegistry: {
     backendUrl: process.env.ICELANDIC_NAMES_REGISTRY_BACKEND_URL,
   },
@@ -114,10 +116,6 @@ const prodConfig = () => ({
     callbackBaseUrl: process.env.XROAD_PAYMENT_BASE_CALLBACK_URL,
     callbackAdditionUrl: process.env.XROAD_PAYMENT_ADDITION_CALLBACK_URL,
     arkBaseUrl: process.env.ARK_BASE_URL,
-  },
-  fjarmalDomain: {
-    xroadApiPath: process.env.XROAD_FINANCES_PATH,
-    ttl: parseInt(process.env.FJARMAL_TTL, 10) || 600,
   },
   pkpass: {
     apiKey: process.env.PKPASS_API_KEY,
@@ -219,9 +217,6 @@ const devConfig = () => ({
     clientSecret: process.env.POSTHOLF_CLIENT_SECRET ?? '',
     tokenUrl: process.env.POSTHOLF_TOKEN_URL ?? '',
   },
-  downloadService: {
-    baseUrl: 'http://localhost:3377',
-  },
   documentProviderService: {
     documentsServiceBasePath: 'http://localhost:3369',
     documentProviderAdmins: process.env.DOCUMENT_PROVIDER_ADMINS ?? '',
@@ -250,6 +245,12 @@ const devConfig = () => ({
     url: 'https://thjonusta-s.rsk.is/api',
     password: process.env.RSK_API_PASSWORD,
   },
+  rskCompanyInfo: {
+    xRoadBaseUrl: process.env.XROAD_BASE_PATH,
+    xRoadProviderId: process.env.COMPANY_REGISTRY_XROAD_PROVIDER_ID,
+    xRoadClientId: process.env.XROAD_CLIENT_ID,
+    apiPath: process.env.COMPANY_REGISTRY_XROAD_API_PATH,
+  },
   icelandicNamesRegistry: {
     backendUrl: 'http://localhost:4239',
   },
@@ -257,12 +258,6 @@ const devConfig = () => ({
     url:
       process.env.REGULATIONS_API_URL ??
       'https://reglugerdir-api.herokuapp.com/api/v1',
-  },
-  fjarmalDomain: {
-    xroadApiPath:
-      process.env.XROAD_FINANCES_PATH ??
-      'IS-DEV/GOV/10021/FJS-Public/financeIsland',
-    ttl: parseInt(process.env.FJARMAL_TTL, 10) || 600,
   },
   endorsementSystem: {
     baseApiUrl: 'http://localhost:4246',

@@ -413,6 +413,15 @@ export const colors = {
       theme.color.dark200,
       theme.color.blue100,
     ),
+    blueberry: utilityColors(
+      theme.color.blueberry600,
+      theme.color.blueberry600,
+      theme.color.blueberry600,
+      theme.color.blueberry600,
+      theme.color.dark200,
+      theme.color.blue100,
+      2,
+    ),
     primary: primaryColors(
       theme.color.blue400,
       theme.color.white,
@@ -483,7 +492,7 @@ export const icon = style({
       marginLeft: 0,
       marginRight: 0,
     },
-    [`${size.small} &, ${variants.utility} &, ${size.textSmall} &, ${circleSizes.small} &`]: {
+    [`${size.small} &`]: {
       width: 16,
       height: 16,
       ...themeUtils.responsiveStyle({
@@ -492,6 +501,10 @@ export const icon = style({
           height: 20,
         },
       }),
+    },
+    [`${variants.utility} &, ${size.textSmall} &, ${circleSizes.small} &`]: {
+      width: 16,
+      height: 16,
     },
     [`${variants.text}:not(${size.textSmall}) &`]: {
       marginBottom: -5,

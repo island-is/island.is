@@ -21,6 +21,9 @@ export class ProjectSubpage {
   @Field(() => [SliceUnion], { nullable: true })
   content?: Array<typeof SliceUnion>
 
+  @Field(() => Boolean)
+  renderSlicesAsTabs: boolean | undefined
+
   @Field(() => [SliceUnion])
   slices!: Array<typeof SliceUnion | null>
 }
@@ -35,5 +38,6 @@ export const mapProjectSubpage = ({
   content: fields.content
     ? mapDocument(fields.content, sys.id + ':content')
     : [],
+  renderSlicesAsTabs: fields.renderSlicesAsTabs ?? false,
   slices: (fields.slices ?? []).map(safelyMapSliceUnion),
 })

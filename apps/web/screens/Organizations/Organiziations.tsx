@@ -11,6 +11,8 @@ import {
   GridRow,
   ResponsiveSpace,
   Pagination,
+  CategoryCard,
+  Stack,
 } from '@island.is/island-ui/core'
 import { helperStyles, theme } from '@island.is/island-ui/theme'
 import {
@@ -21,13 +23,12 @@ import {
   QueryGetOrganizationArgs,
 } from '@island.is/api/schema'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { Card, HeadWithSocialSharing } from '@island.is/web/components'
+import { HeadWithSocialSharing } from '@island.is/web/components'
 import {
   GET_ORGANIZATIONS_QUERY,
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_TAGS_QUERY,
 } from '../queries'
-import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useNamespace } from '@island.is/web/hooks'
 import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '../../units/errors'
@@ -134,32 +135,41 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   return (
     <>
       <HeadWithSocialSharing title={metaTitle} />
-      <SidebarLayout sidebarContent={null}>
-        <Box paddingBottom={[2, 2, 4]}>
-          <Breadcrumbs
-            items={[
-              {
-                title: 'Ísland.is',
-                href: '/',
-              },
-              {
-                title: n('organizations', 'Stofnanir'),
-              },
-            ]}
-            renderLink={(link) => {
-              return (
-                <NextLink {...linkResolver('homepage')} passHref>
-                  {link}
-                </NextLink>
-              )
-            }}
-          />
-        </Box>
+      <Box paddingTop={[2, 2, 2, 10]} paddingBottom={[4, 4, 4, 10]}>
+        <GridContainer>
+          <GridRow>
+            <GridColumn
+              offset={['0', '0', '0', '1/12']}
+              span={['12/12', '12/12', '12/12', '10/12']}
+            >
+              <Stack space={2}>
+                <Breadcrumbs
+                  items={[
+                    {
+                      title: 'Ísland.is',
+                      href: '/',
+                    },
+                    {
+                      title: n('organizations', 'Stofnanir'),
+                    },
+                  ]}
+                  renderLink={(link) => {
+                    return (
+                      <NextLink {...linkResolver('homepage')} passHref>
+                        {link}
+                      </NextLink>
+                    )
+                  }}
+                />
+                <Text variant="h1" as="h1">
+                  {n('stofnanirHeading', 'Stofnanir Íslenska Ríkisins')}
+                </Text>
+              </Stack>
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      </Box>
 
-        <Text variant="h1" as="h1" paddingBottom={2}>
-          {n('stofnanirHeading', 'Stofnanir Íslenska Ríkisins')}
-        </Text>
-      </SidebarLayout>
       <Box background="blue100" display="inlineBlock" width="full">
         <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
           <GridContainer id="organizations-list">
@@ -176,33 +186,42 @@ const OrganizationPage: Screen<OrganizationProps> = ({
               />
             </Box>
             <GridRow>
-              {visibleItems.map(({ title, description, tag, link }, index) => {
-                const tags =
-                  (tag &&
+              {visibleItems.map(
+                ({ title, description, tag, link, logo }, index) => {
+                  const tags =
+                    tag &&
                     tag.map((x) => ({
                       title: x.title,
-                      tagProps: {
-                        outlined: true,
-                      },
-                    }))) ||
-                  []
+                      label: x.title,
+                    }))
 
-                return (
-                  <GridColumn
-                    key={index}
-                    span={['12/12', '6/12', '6/12', '4/12']}
-                    paddingBottom={verticalSpacing}
-                  >
-                    <Card
-                      link={{ href: link }}
+                  return (
+                    <GridColumn
                       key={index}
-                      description={description}
-                      title={title}
-                      tags={tags}
-                    />
-                  </GridColumn>
-                )
-              })}
+                      span={['12/12', '6/12', '6/12', '4/12']}
+                      paddingBottom={verticalSpacing}
+                    >
+                      <CategoryCard
+                        href={link}
+                        key={index}
+                        text={description}
+                        heading={title}
+                        hyphenate
+                        {...(tags?.length && { tags })}
+                        tagOptions={{
+                          hyphenate: true,
+                          textLeft: true,
+                        }}
+                        {...(logo?.url && {
+                          src: logo.url,
+                          alt: logo.title,
+                          autoStack: true,
+                        })}
+                      />
+                    </GridColumn>
+                  )
+                },
+              )}
             </GridRow>
             {totalPages > 1 && (
               <GridRow>

@@ -1,4 +1,6 @@
-# Regulations
+<!-- gitbook-navigation: "Regulations" -->
+
+# Regulations Client
 
 This library serves as a client for endpoints accessible to us from regulations api
 

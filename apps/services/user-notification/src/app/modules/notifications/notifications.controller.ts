@@ -1,3 +1,4 @@
+import { Inject } from '@nestjs/common'
 import {
   Controller,
   Post,
@@ -13,6 +14,8 @@ import {
 } from '@nestjs/swagger'
 import { validate, ValidationError } from 'class-validator'
 import { Request } from 'express'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   NewDocumentMessage,
   Message,
@@ -53,7 +56,10 @@ const validateMessage = async (body: Request['body']): Promise<Message> => {
 @Controller('notifications')
 @ApiExtraModels(NewDocumentMessage)
 export class NotificationsController {
-  constructor(@InjectQueue('notifications') private queue: QueueService) {}
+  constructor(
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
+    @InjectQueue('notifications') private queue: QueueService,
+  ) {}
 
   @Post()
   @ApiBody({
@@ -69,6 +75,7 @@ export class NotificationsController {
   ): Promise<CreateNotificationResponse> {
     const message = await validateMessage(req.body)
     const id = await this.queue.add(message)
+    this.logger.info('Message queued', { messageId: id, message })
     return { id }
   }
 }
