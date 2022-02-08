@@ -132,6 +132,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
           maskPlaceholder={null}
           value={defendant.nationalId ?? ''}
           onChange={(evt) => {
+            setNationalIdErrorMessage('')
             setNationalIdNotFound(false)
             removeErrorMessageIfValid(
               ['empty', 'national-id'] as Validation[],
@@ -145,7 +146,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
             })
           }}
           onBlur={async (evt) => {
-            if (person && person.items.length === 1 && !error) {
+            if (person?.items?.length === 1 && !error) {
               onChange(defendant.id, {
                 nationalId: evt.target.value,
                 name: person.items[0].name,
@@ -182,7 +183,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
             required
           />
         </InputMask>
-        {nationalIdNotFound && (
+        {defendant.nationalId?.length === 11 && nationalIdNotFound && (
           <Text color="red600" variant="eyebrow" marginTop={1}>
             {formatMessage(core.nationalIdNotFoundInNationalRegistry)}
           </Text>
