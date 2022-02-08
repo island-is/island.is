@@ -7,7 +7,7 @@ import {
   nextMonth,
 } from '@island.is/financial-aid/shared/lib'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
-import { PrivacyPolicyAccordion } from '../../../components'
+import { PrivacyPolicyAccordion } from '@island.is/financial-aid-web/osk/src/components'
 
 const AboutFormSpouse = () => {
   const { user } = useContext(AppContext)
