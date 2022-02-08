@@ -32,6 +32,8 @@ export class RskProcuringClient {
     private readonly config: ConfigType<typeof RskProcuringClientConfig>,
     @Inject(XRoadConfig.KEY)
     private readonly xRoadConfig: ConfigType<typeof XRoadConfig>,
+    @Inject(IdsClientConfig.KEY)
+    private readonly idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) {
     const configuration = this.getConfiguration()
     this.simpleApi = new GetSimpleApi(configuration)
@@ -86,6 +88,9 @@ export class RskProcuringClient {
                 shared: false,
                 overrideCacheControl: buildCacheControl({ maxAge: 60 * 10 }),
               },
+        autoAuth: !this.idsClientConfig.isConfigured ? undefined : {
+          clientId:
+        }
       }),
       basePath: `${this.xRoadConfig.xRoadBasePath}/r1/${this.config.xRoadServicePath}`,
       headers: {
