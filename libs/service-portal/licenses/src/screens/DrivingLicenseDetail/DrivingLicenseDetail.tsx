@@ -271,6 +271,9 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
               id="qr-code-modal"
               toggleClose={modalOpen}
               onCloseModal={toggleModal}
+              expires={toDate(
+                loading ? '' : new Date(data.gildirTil).getTime().toString(),
+              )}
             />
           )}
         </>
