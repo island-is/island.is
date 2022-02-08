@@ -119,6 +119,7 @@ export const SignedVerdictOverview: React.FC = () => {
   const { formatMessage } = useIntl()
   const {
     updateCase,
+    isUpdatingCase,
     requestCourtRecordSignature,
     isRequestingCourtRecordSignature,
     extendCase,
@@ -649,7 +650,7 @@ export const SignedVerdictOverview: React.FC = () => {
                 )}
                 isPrimaryButtonDisabled={isCaseModificationInvalid()}
                 handlePrimaryButtonClick={() => handleDateModification()}
-                isPrimaryButtonLoading={isSendingNotification}
+                isPrimaryButtonLoading={isSendingNotification || isUpdatingCase}
                 secondaryButtonText={formatMessage(
                   m.sections.modifyDatesModal.secondaryButtonText,
                 )}
