@@ -6,7 +6,7 @@ import {
 } from '@island.is/service-portal/constants'
 
 export const sidebar = style({
-  position: 'absolute',
+  position: 'fixed',
   top: 0,
   left: 0,
   zIndex: 10,
