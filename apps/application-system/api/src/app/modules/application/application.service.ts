@@ -9,7 +9,6 @@ import {
 
 import { Application } from './application.model'
 import { CreateApplicationDto } from './dto/createApplication.dto'
-import { UpdateApplicationDto } from './dto/updateApplication.dto'
 
 import { ApplicationLifecycle } from './types'
 
