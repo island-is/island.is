@@ -95,12 +95,12 @@ export const dataSchema = z.object({
       params: error.validation.inputErrorMessage,
       path: ['custom'],
     }),
-  bankInfoForm: z.object({
+  bankInfo: z.object({
     bankNumber: z.string().optional(),
     ledger: z.string().optional(),
     accountNumber: z.string().optional(),
   }),
-  personalTaxCreditForm: z
+  personalTaxCredit: z
     .enum([ApproveOptions.Yes, ApproveOptions.No])
     .refine((v) => v, {
       params: error.validation.radioErrorMessage,
