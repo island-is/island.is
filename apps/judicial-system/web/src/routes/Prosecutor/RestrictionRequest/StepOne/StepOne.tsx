@@ -47,6 +47,7 @@ export const StepOne: React.FC = () => {
           address: theCase.defendants[0].address,
           nationalId: theCase.defendants[0].nationalId,
           noNationalId: theCase.defendants[0].noNationalId,
+          citizenship: theCase.defendants[0].citizenship,
         })
       }
 
