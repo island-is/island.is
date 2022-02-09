@@ -13,7 +13,7 @@ describe('/krafa/ny/gaesluvardhald', () => {
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
-  it('should require the accused gender be selected', () => {
+  it.only('should require the accused gender be selected', () => {
     cy.getByTestid('policeCaseNumber').type('00000000000')
     cy.getByTestid('select-type')
       .type('Krufning')
@@ -23,7 +23,8 @@ describe('/krafa/ny/gaesluvardhald', () => {
     cy.getByTestid('accusedName').type('Donald Duck')
     cy.getByTestid('accusedAddress').type('Batcave 1337')
     cy.getByTestid('continueButton').should('be.disabled')
-    cy.contains('Karl').click()
+    cy.getByTestid('select-defendantGender').click()
+    cy.get('#react-select-defendantGender-option-0').click()
     cy.getByTestid('continueButton').should('not.be.disabled')
   })
 
@@ -55,7 +56,8 @@ describe('/krafa/ny/gaesluvardhald', () => {
     cy.getByTestid('nationalId').type('0000000000')
     cy.getByTestid('accusedName').type('Donald Duck')
     cy.getByTestid('accusedAddress').type('Batcave 1337')
-    cy.contains('Karl').click()
+    cy.getByTestid('select-defendantGender').click()
+    cy.get('#react-select-defendantGender-option-0').click()
     cy.getByTestid('continueButton').should('not.be.disabled')
     cy.getByTestid('defenderEmail').type('ill formed email address')
     cy.getByTestid('continueButton').should('be.disabled')
