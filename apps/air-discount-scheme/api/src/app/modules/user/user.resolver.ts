@@ -78,6 +78,6 @@ export class UserResolver {
         })
       },
       Promise.resolve([]),
-    ) as Promise<TFlightLeg[]>
+    )
   }
 }
