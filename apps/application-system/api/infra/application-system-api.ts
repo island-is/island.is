@@ -58,6 +58,11 @@ export const serviceSetup = (services: {
     .serviceAccount(serviceAccount)
     .env({
       EMAIL_REGION: 'eu-west-1',
+      IDENTITY_SERVER_ISSUER_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
       REDIS_URL_NODE_01: {
         dev:
           'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',

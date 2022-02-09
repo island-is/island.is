@@ -325,7 +325,9 @@ export const SignedVerdictOverview: React.FC = () => {
     return formatMessage(m.sections.modifyDatesModal.successText, {
       modification,
       courtOrProsecutor:
-        user?.role === UserRole.PROSECUTOR ? 'héraðsdómstól' : 'sækjanda',
+        user?.role === UserRole.PROSECUTOR
+          ? 'héraðsdómstól'
+          : 'saksóknaraembætti',
     })
   }
 

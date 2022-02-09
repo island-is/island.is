@@ -570,7 +570,7 @@ export class NotificationService {
 
   private async sendRulingEmailNotificationToPrison(
     theCase: Case,
-    rulingPdf: string,
+    courtRecordPdf: string,
   ): Promise<Recipient> {
     const subject = 'Úrskurður um gæsluvarðhald' // Always custody
     const html = formatPrisonRulingEmailNotification(theCase.rulingDate)
@@ -586,8 +586,11 @@ export class NotificationService {
         encoding: 'binary',
       },
       {
-        filename: `Þingbók án úrskurðar ${theCase.courtCaseNumber}.pdf`,
-        content: rulingPdf,
+        filename: this.formatMessage(
+          notifications.signedRuling.courtRecordAttachment,
+          { courtCaseNumber: theCase.courtCaseNumber },
+        ),
+        content: courtRecordPdf,
         encoding: 'binary',
       },
     ]
@@ -603,7 +606,7 @@ export class NotificationService {
 
   private async sendRulingEmailNotificationToPrisonAdministration(
     theCase: Case,
-    rulingPdf: string,
+    courtRecordPdf: string,
   ): Promise<Recipient> {
     return this.sendEmail(
       theCase.courtCaseNumber ?? '',
@@ -612,8 +615,11 @@ export class NotificationService {
       environment.notifications.prisonAdminEmail,
       [
         {
-          filename: `Þingbók án úrskurðar ${theCase.courtCaseNumber}.pdf`,
-          content: rulingPdf,
+          filename: this.formatMessage(
+            notifications.signedRuling.courtRecordAttachment,
+            { courtCaseNumber: theCase.courtCaseNumber },
+          ),
+          content: courtRecordPdf,
           encoding: 'binary',
         },
       ],
@@ -629,7 +635,7 @@ export class NotificationService {
       }
     }
 
-    const rulingPdf = await getCourtRecordPdfAsString(
+    const courtRecordPdf = await getCourtRecordPdfAsString(
       theCase,
       this.formatMessage,
     )
@@ -637,7 +643,7 @@ export class NotificationService {
     const recipients = [
       await this.sendRulingEmailNotificationToPrisonAdministration(
         theCase,
-        rulingPdf,
+        courtRecordPdf,
       ),
     ]
 
@@ -647,7 +653,7 @@ export class NotificationService {
         theCase.decision === CaseDecision.ACCEPTING_PARTIALLY)
     ) {
       recipients.concat(
-        await this.sendRulingEmailNotificationToPrison(theCase, rulingPdf),
+        await this.sendRulingEmailNotificationToPrison(theCase, courtRecordPdf),
       )
     }
 
@@ -667,20 +673,27 @@ export class NotificationService {
     const subject = this.formatMessage(notifications.modified.subject, {
       courtCaseNumber: theCase.courtCaseNumber,
     })
-    const html = `${this.formatMessage(notifications.modified.html, {
-      actorInstitution: user.institution?.name,
-      actorName: user.name,
-      actorTitle: user.title,
-      courtCaseNumber: theCase.courtCaseNumber,
-      linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
-      linkEnd: '</a>',
-      validToDate: formatDate(theCase.validToDate, 'PPPp'),
-    })}${
+    const html = `${
       theCase.isCustodyIsolation
         ? this.formatMessage(notifications.modified.isolationHtml, {
+            actorInstitution: user.institution?.name,
+            actorName: user.name,
+            actorTitle: user.title,
+            courtCaseNumber: theCase.courtCaseNumber,
+            linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
+            linkEnd: '</a>',
+            validToDate: formatDate(theCase.validToDate, 'PPPp'),
             isolationToDate: formatDate(theCase.isolationToDate, 'PPPp'),
           })
-        : ''
+        : this.formatMessage(notifications.modified.html, {
+            actorInstitution: user.institution?.name,
+            actorName: user.name,
+            actorTitle: user.title,
+            courtCaseNumber: theCase.courtCaseNumber,
+            linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
+            linkEnd: '</a>',
+            validToDate: formatDate(theCase.validToDate, 'PPPp'),
+          })
     }`
 
     const recipients = [
