@@ -2762,6 +2762,9 @@ export interface ISupportQnaFields {
 
   /** Organization */
   organization: IOrganization
+
+  /** Importance */
+  importance?: number | undefined
 }
 
 /** Helpdesk support questions and answer */
@@ -2792,6 +2795,9 @@ export interface ISupportSubCategoryFields {
 
   /** slug */
   slug: string
+
+  /** Importance */
+  importance?: number | undefined
 }
 
 export interface ISupportSubCategory extends Entry<ISupportSubCategoryFields> {
