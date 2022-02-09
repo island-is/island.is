@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 import { InputModal } from '@island.is/financial-aid-web/veita/src/components'
 import { Text, Box } from '@island.is/island-ui/core'
-import cn from 'classnames'
 import * as styles from './ModalTypes.css'
 
 interface Props {
@@ -16,19 +15,18 @@ const RejectModal = ({
   onSaveApplication,
   isModalVisable,
 }: Props) => {
-  const [comment, setComment] = useState<string>()
+  const ref = useRef<HTMLDivElement>(null)
   const [hasError, setHasError] = useState(false)
 
+  const setErrorFalse = () => {
+    setHasError(false)
+  }
+
   useEffect(() => {
-    if (hasError) {
-      const reasonForRejection = document.getElementById('reasonForRejection')
-      reasonForRejection?.addEventListener('input', () => {
-        setHasError(false)
-      })
+    if (hasError && ref && ref.current) {
+      ref.current?.addEventListener('input', setErrorFalse)
       return () => {
-        document.removeEventListener('input', () => {
-          setHasError(false)
-        })
+        ref.current?.removeEventListener('input', setErrorFalse)
       }
     }
   }, [hasError])
@@ -38,11 +36,11 @@ const RejectModal = ({
       headline="Skrifaðu ástæðu synjunar"
       onCancel={onCancel}
       onSubmit={() => {
-        if (!comment) {
+        if (!ref.current?.textContent) {
           setHasError(true)
           return
         }
-        onSaveApplication(comment)
+        onSaveApplication(ref.current.textContent)
       }}
       submitButtonText="Synja og senda á umsækjanda"
       isModalVisable={isModalVisable}
@@ -53,12 +51,10 @@ const RejectModal = ({
         <Text variant="intro">
           Umsókn þinni um fjárhagsaðstoð í ágúst hefur verið synjað{' '}
           <span
-            id="reasonForRejection"
+            ref={ref}
             contentEditable="true"
             className={styles.rejectionEditable}
-          >
-            {comment}
-          </span>{' '}
+          />
           . Þú getur kynnt þér nánar reglur um fjárhagsaðstoð.
         </Text>
       </Box>
