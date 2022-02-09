@@ -186,8 +186,6 @@ export class UserProfileController {
     const updatedFields = Object.keys(userProfileToUpdate)
     userProfileToUpdate = {
       ...userProfileToUpdate,
-      // emailVerified: profile.emailVerified,
-      // mobilePhoneNumberVerified: profile.mobilePhoneNumberVerified,
       mobileStatus: DataStatus.NOT_VERIFIED,
       emailStatus: DataStatus.NOT_VERIFIED,
     }

@@ -47,7 +47,6 @@ export const personalInformationModule: ServicePortalModule = {
       })
 
       const profileExists = res.data?.getUserProfile?.modified
-      // const profileExists = res.data?.getUserProfile === null
       const dateDiffLate = res.data?.getUserProfile
         ? outOfDate(res.data.getUserProfile)
         : false
