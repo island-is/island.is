@@ -154,7 +154,7 @@ export class StaffService {
         roles: input.roles,
         active: true,
         municipalityName: municipality.municipalityName,
-        municipalityHomepage: municipality.municipalityHomepage,
+        municipalityHomepage: municipality?.municipalityHomepage,
       },
       { transaction: t },
     )

@@ -245,8 +245,8 @@ const devConfig = () => ({
     password: process.env.SYSLUMENN_PASSWORD ?? '',
   },
   rskDomain: {
-    username: 'rf_api_island.is',
-    url: 'https://thjonusta-s.rsk.is/api',
+    url: process.env.RSK_URL,
+    username: process.env.RSK_USERNAME,
     password: process.env.RSK_API_PASSWORD,
   },
   rskCompanyInfo: {

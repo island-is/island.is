@@ -172,7 +172,6 @@ export interface Case {
   childCase?: Case
   notifications?: Notification[]
   caseFiles?: CaseFile[]
-  isMasked?: boolean
   caseModifiedExplanation?: string
 }
 
