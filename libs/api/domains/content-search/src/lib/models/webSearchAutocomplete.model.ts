@@ -3,8 +3,8 @@ import { Field, Int, ObjectType } from '@nestjs/graphql'
 @ObjectType()
 export class WebSearchAutocomplete {
   @Field(() => Int)
-  total: number
+  total!: number
 
   @Field(() => [String])
-  completions: string[]
+  completions!: string[]
 }
