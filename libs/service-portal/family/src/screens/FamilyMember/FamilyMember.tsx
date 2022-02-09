@@ -9,6 +9,7 @@ import {
   Divider,
   GridColumn,
   GridRow,
+  GridContainer,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -21,24 +22,7 @@ import {
   ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-
-const NationalRegistryChildrenQuery = gql`
-  query NationalRegistryChildrenQuery {
-    nationalRegistryChildren {
-      nationalId
-      fullName
-      displayName
-      genderDisplay
-      birthplace
-      custody1
-      custodyText1
-      nameCustody1
-      custody2
-      custodyText2
-      nameCustody2
-    }
-  }
-`
+import { NATIONAL_REGISTRY_CHILDREN } from '../../lib/queries/getNationalChildren'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -54,7 +38,7 @@ const FamilyMember: ServicePortalModuleComponent = () => {
   )
 
   const { data, loading, error, called } = useQuery<Query>(
-    NationalRegistryChildrenQuery,
+    NATIONAL_REGISTRY_CHILDREN,
   )
   const { nationalRegistryChildren } = data || {}
 
@@ -128,40 +112,203 @@ const FamilyMember: ServicePortalModuleComponent = () => {
           loading={loading}
         />
         <Divider />
-        <UserInfoLine
-          label={formatMessage({
-            id: 'sp.family:parents',
-            defaultMessage: 'Foreldrar',
-          })}
-          renderContent={() =>
-            error ? (
-              <span>{formatMessage(dataNotFoundMessage)}</span>
+        {person?.fate && (
+          <>
+            <UserInfoLine
+              label={formatMessage({
+                id: 'sp.family:fate',
+                defaultMessage: 'Afdrif',
+              })}
+              content={
+                error ? formatMessage(dataNotFoundMessage) : person?.fate || ''
+              }
+              loading={loading}
+            />
+            <Divider />
+          </>
+        )}
+        <Box marginTop={5}>
+          <Box paddingBottom={4}>
+            <Text variant="eyebrow">
+              {formatMessage({
+                id: 'sp.family:parents-custody',
+                defaultMessage: 'Forsjá & foreldrar',
+              })}
+            </Text>
+            {error ? (
+              formatMessage(dataNotFoundMessage)
             ) : (
-              <Box>
-                <Box marginBottom={2}>
-                  <Text fontWeight="semiBold" variant="small">
-                    {person?.custodyText1}
-                  </Text>
-                  <Text variant="small">{person?.nameCustody1} </Text>
-                  <Text variant="small">
-                    {person?.custody1 ? formatNationalId(person.custody1) : ''}{' '}
-                  </Text>
-                </Box>
-                <Box>
-                  <Text fontWeight="semiBold" variant="small">
-                    {person?.custodyText2}
-                  </Text>
-                  <Text variant="small">{person?.nameCustody2} </Text>
-                  <Text variant="small">
-                    {person?.custody2 ? formatNationalId(person.custody2) : ''}{' '}
-                  </Text>
-                </Box>
+              <>
+                <UserInfoLine
+                  label={formatMessage({
+                    id: 'sp.family:parents',
+                    defaultMessage: 'Foreldrar',
+                  })}
+                  valueColumnSpan={['1/1', '8/12']}
+                  renderContent={() => (
+                    <GridContainer>
+                      <GridRow>
+                        <GridColumn span={['12/12', '6/12']}>
+                          {person?.nameParent1 ? (
+                            <Text variant="default">{person?.nameParent1}</Text>
+                          ) : (
+                            ''
+                          )}
+                        </GridColumn>
+                        <GridColumn span={['12/12', '6/12']}>
+                          {person?.nameParent2 ? (
+                            <Text variant="default">{person?.nameParent2}</Text>
+                          ) : (
+                            ''
+                          )}
+                        </GridColumn>
+                      </GridRow>
+                    </GridContainer>
+                  )}
+                  loading={loading}
+                />
+                <UserInfoLine
+                  label={defineMessage(m.natreg)}
+                  valueColumnSpan={['1/1', '8/12']}
+                  paddingY={0}
+                  renderContent={() => (
+                    <GridContainer>
+                      <GridRow>
+                        <GridColumn span={['12/12', '6/12']}>
+                          {person?.parent1 ? (
+                            <Text variant="default">
+                              {formatNationalId(person?.parent1)}
+                            </Text>
+                          ) : (
+                            ''
+                          )}
+                        </GridColumn>
+                        <GridColumn span={['12/12', '6/12']}>
+                          {person?.parent2 ? (
+                            <Text variant="default">
+                              {formatNationalId(person?.parent2)}
+                            </Text>
+                          ) : (
+                            ''
+                          )}
+                        </GridColumn>
+                      </GridRow>
+                    </GridContainer>
+                  )}
+                  loading={loading}
+                />
+              </>
+            )}
+          </Box>
+          <Divider />
+
+          {!person?.fate && !error ? (
+            <>
+              <Box paddingTop={2} paddingBottom={4}>
+                <UserInfoLine
+                  label={formatMessage({
+                    id: 'sp.family:custody',
+                    defaultMessage: 'Forsjáraðilar',
+                  })}
+                  valueColumnSpan={['1/1', '8/12']}
+                  renderContent={() => (
+                    <GridContainer>
+                      <GridRow>
+                        <GridColumn span={['12/12', '6/12']}>
+                          {person?.nameCustody1 ? (
+                            <Text variant="default">
+                              {person?.nameCustody1}
+                            </Text>
+                          ) : (
+                            ''
+                          )}
+                        </GridColumn>
+                        <GridColumn span={['12/12', '6/12']}>
+                          {person?.nameCustody2 ? (
+                            <Text variant="default">
+                              {person?.nameCustody2}
+                            </Text>
+                          ) : (
+                            ''
+                          )}
+                        </GridColumn>
+                      </GridRow>
+                    </GridContainer>
+                  )}
+                  loading={loading}
+                />
+                <UserInfoLine
+                  label={defineMessage(m.natreg)}
+                  valueColumnSpan={['1/1', '8/12']}
+                  paddingY={0}
+                  paddingBottom={2}
+                  renderContent={() => (
+                    <GridContainer>
+                      <GridRow>
+                        <GridColumn span={['12/12', '6/12']}>
+                          {person?.custody1 ? (
+                            <Text variant="default">
+                              {formatNationalId(person.custody1)}
+                            </Text>
+                          ) : (
+                            ''
+                          )}
+                        </GridColumn>
+                        <GridColumn span={['12/12', '6/12']}>
+                          {person?.custody2 ? (
+                            <Text variant="default">
+                              {formatNationalId(person.custody2)}
+                            </Text>
+                          ) : (
+                            ''
+                          )}
+                        </GridColumn>
+                      </GridRow>
+                    </GridContainer>
+                  )}
+                  loading={loading}
+                />
+                <UserInfoLine
+                  label={formatMessage({
+                    id: 'sp.family:custody-status',
+                    defaultMessage: 'Staða forsjár',
+                  })}
+                  valueColumnSpan={['1/1', '8/12']}
+                  paddingY={0}
+                  paddingBottom={2}
+                  renderContent={() => (
+                    <GridContainer>
+                      <GridRow>
+                        <GridColumn span={['12/12', '6/12']}>
+                          {person?.custodyText1 ? (
+                            <Text variant="default">
+                              {person?.custodyText1}
+                            </Text>
+                          ) : (
+                            ''
+                          )}
+                        </GridColumn>
+                        <GridColumn span={['12/12', '6/12']}>
+                          {person?.custodyText2 ? (
+                            <Text variant="default">
+                              {person?.custodyText2}
+                            </Text>
+                          ) : (
+                            ''
+                          )}
+                        </GridColumn>
+                      </GridRow>
+                    </GridContainer>
+                  )}
+                  loading={loading}
+                />
               </Box>
-            )
-          }
-          loading={loading}
-        />
-        <Divider />
+              <Divider />
+            </>
+          ) : (
+            <Divider />
+          )}
+        </Box>
       </Stack>
     </>
   )

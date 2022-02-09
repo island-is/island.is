@@ -25,8 +25,8 @@ export class UserService {
     private readonly nationalRegistryIndividualsApi: EinstaklingarApi,
   ) {}
 
-  async getRelations(authUser: AuthUser): Promise<string[]> {
-    const relations = await this.nationalRegistryIndividualsApi
+  async getRelations(authUser: AuthUser): Promise<Array<string>> {
+    const response: string[] = await this.nationalRegistryIndividualsApi
       .withMiddleware(
         new AuthMiddleware(
           authUser,
@@ -37,7 +37,12 @@ export class UserService {
       .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{
         id: authUser.nationalId,
       })
-    return relations
+
+    if (Array.isArray(response)) {
+      return response
+    } else {
+      return []
+    }
   }
 
   private async getFund(user: NationalRegistryUser): Promise<Fund> {
@@ -81,5 +86,21 @@ export class UserService {
 
   async getUserInfoByNationalId(nationalId: string): Promise<User | null> {
     return this.getUserByNationalId<User>(nationalId, User)
+  }
+
+  async getMultipleUsersByNationalIdArray(ids: string[]): Promise<Array<User>> {
+    const allUsers = ids.map(async (nationalId) =>
+      this.getUserInfoByNationalId(nationalId),
+    )
+
+    const result = (await Promise.all(allUsers)).filter(Boolean) as Array<User>
+
+    if (!result || result.length === 0) {
+      throw new Error(
+        'Could not find NationalRegistry records of neither User or relatives.',
+      )
+    }
+
+    return result
   }
 }
