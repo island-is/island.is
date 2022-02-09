@@ -8,7 +8,7 @@ module.exports = {
           'defendant',
           'no_national_id',
           {
-            type: Sequelize.STRING,
+            type: Sequelize.BOOLEAN,
             allowNull: true,
           },
           { transaction: t },
