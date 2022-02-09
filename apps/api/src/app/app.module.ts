@@ -50,7 +50,7 @@ import { ProblemModule } from '@island.is/nest/problem'
 import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
-import { FishingLicenseModule } from '@island.is/api/domains/fishing-licence'
+import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 
 const debug = process.env.NODE_ENV === 'development'

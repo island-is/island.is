@@ -1132,9 +1132,9 @@
         }
       }
     },
-    "api-domains-fishing-licence": {
-      "root": "libs/api/domains/fishing-licence",
-      "sourceRoot": "libs/api/domains/fishing-licence/src",
+    "api-domains-fishing-license": {
+      "root": "libs/api/domains/fishing-license",
+      "sourceRoot": "libs/api/domains/fishing-license/src",
       "projectType": "library",
       "architect": {
         "lint": {
@@ -1142,20 +1142,20 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "libs/api/domains/fishing-licence/tsconfig.lib.json",
-              "libs/api/domains/fishing-licence/tsconfig.spec.json"
+              "libs/api/domains/fishing-license/tsconfig.lib.json",
+              "libs/api/domains/fishing-license/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**",
-              "!libs/api/domains/fishing-licence/**/*"
+              "!libs/api/domains/fishing-license/**/*"
             ]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/api/domains/fishing-licence"],
+          "outputs": ["coverage/libs/api/domains/fishing-license"],
           "options": {
-            "jestConfig": "libs/api/domains/fishing-licence/jest.config.js",
+            "jestConfig": "libs/api/domains/fishing-license/jest.config.js",
             "passWithNoTests": true
           }
         }

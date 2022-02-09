@@ -85,8 +85,8 @@
       "@island.is/api/domains/finance": [
         "libs/api/domains/finance/src/index.ts"
       ],
-      "@island.is/api/domains/fishing-licence": [
-        "libs/api/domains/fishing-licence/src/index.ts"
+      "@island.is/api/domains/fishing-license": [
+        "libs/api/domains/fishing-license/src/index.ts"
       ],
       "@island.is/api/domains/health-insurance": [
         "libs/api/domains/health-insurance/src/index.ts"
