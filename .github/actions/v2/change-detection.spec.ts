@@ -22,6 +22,7 @@ async function makeChangeWithContent(
   const commit = await git.commit(message, [path])
   return commit.commit
 }
+
 async function makeChange(
   git: SimpleGit,
   path: string,
@@ -47,22 +48,27 @@ describe('Change detection', () => {
     const r = await git.init()
   })
   describe('PR', () => {
-    it('should use last good commit when no PR runs available', async () => {
+    let mainGoodBeforeBadSha: string
+    let forkSha: string
+    let fixFailSha1: string
+    let rootSha: string
+    beforeEach(async () => {
       const br = await git.checkoutLocalBranch('main')
-      const rootSha = await makeChange(git, fileA, 'A-good-[a,b,c]')
-      const mainGoodBeforeBadSha = await makeChange(git, fileA, 'B-good-[a]')
-      const forkSha = await makeChange(git, fileA, 'C-bad-[a]')
+      rootSha = await makeChange(git, fileA, 'A-good-[a,b,c]')
+      mainGoodBeforeBadSha = await makeChange(git, fileA, 'B-good-[a]')
+      forkSha = await makeChange(git, fileA, 'C-bad-[a]')
       await git.checkoutBranch('fix2', 'main')
       const fix2Sha = await makeChange(git, fileA, 'C1-bad-[a]')
       await git.checkoutBranch('fix', 'main')
       const fixFailSha = await makeChange(git, fileB, 'D-bad-[a]')
-      const fixFailSha1 = await makeChange(git, fileB, 'D2-good-[a]')
+      fixFailSha1 = await makeChange(git, fileB, 'D2-good-[a]')
       const fixFailSha2 = await makeChange(git, fileB, 'D3-bad-[a]')
       const fixGoodSha = await makeChange(git, fileB, 'E-good-[a]')
       await git.checkout('main')
       const mainSha = await makeChange(git, fileA, 'D1-good-[b]')
       const merge = await git.mergeFromTo('fix', 'main')
-
+    })
+    it('should use last good commit when no PR runs available', async () => {
       const githubApi = Substitute.for<GitActionStatus>()
       githubApi.getPRRuns(100).resolves([])
       githubApi.getBranchBuilds('main').resolves([])
@@ -80,8 +86,6 @@ describe('Change detection', () => {
         100,
       )
       expect(actual).toBe(mainGoodBeforeBadSha)
-
-      // expect(logs.total).toBe(5)
     })
   })
   describe('Branch', () => {
