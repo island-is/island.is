@@ -71,18 +71,12 @@ describe('PublicUserController', () => {
         .spyOn(userService, 'getAirlineUserInfoByNationalId')
         .mockImplementation(() => Promise.resolve(airlineUser))
 
-      const result = await publicUserController.getUserByDiscountCode(
-        {
-          discountCode,
-        },
-        auth,
-      )
+      const result = await publicUserController.getUserByDiscountCode({
+        discountCode,
+      })
 
       expect(getDiscountByDiscountCodeSpy).toHaveBeenCalledWith(discountCode)
-      expect(getAirlineUserInfoByNationalIdSpy).toHaveBeenCalledWith(
-        nationalId,
-        auth,
-      )
+      expect(getAirlineUserInfoByNationalIdSpy).toHaveBeenCalledWith(nationalId)
       expect(result).toBe(airlineUser)
     })
 
@@ -99,7 +93,7 @@ describe('PublicUserController', () => {
         .mockImplementation(() => Promise.resolve(null))
 
       try {
-        await publicUserController.getUserByDiscountCode({ discountCode }, auth)
+        await publicUserController.getUserByDiscountCode({ discountCode })
         expect('This should not happen').toEqual('')
       } catch (e) {
         expect(e.response).toEqual({

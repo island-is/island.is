@@ -41,7 +41,6 @@ export class PublicUserController {
   @ApiOkResponse({ type: AirlineUser })
   async getUserByDiscountCode(
     @Param() params: GetUserByDiscountCodeParams,
-    @CurrentUser() authUser: AuthUser,
   ): Promise<AirlineUser> {
     const discount = await this.discountService.getDiscountByDiscountCode(
       params.discountCode,
@@ -52,7 +51,6 @@ export class PublicUserController {
 
     const user = await this.userService.getAirlineUserInfoByNationalId(
       discount.nationalId,
-      authUser,
     )
     if (!user) {
       throw new NotFoundException(`User<${discount.nationalId}> not found`)
