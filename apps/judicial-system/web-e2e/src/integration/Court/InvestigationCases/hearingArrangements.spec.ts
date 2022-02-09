@@ -89,7 +89,6 @@ describe('/domur/rannsoknarheimild/fyrirtaka/:id', () => {
       court: makeCourt(),
       state: CaseState.RECEIVED,
       type: CaseType.INTERNET_USAGE,
-      isMasked: true,
     }
 
     cy.visit('/domur/rannsoknarheimild/fyrirtaka/test_id_stadfest')
