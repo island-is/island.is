@@ -66,6 +66,7 @@ interface BranchWorkflow {
 
 export interface GitActionStatus {
   getPRRuns(prID: number): Promise<WorkflowInfo[]>
+  getBranchBuilds(branch: string): Promise<BranchWorkflow[]>
 }
 
 export async function findBestGoodRefPR(
@@ -73,7 +74,9 @@ export async function findBestGoodRefPR(
   git: SimpleGit,
   githubApi: GitActionStatus,
   prID: number,
-) {
+): Promise<string | 'rebuild'> {
+  const headBranch = 'HEAD'
+  const baseBranch = 'main'
   const lastChanges = await git.log({ maxCount: 10 })
   const currentChange = lastChanges.latest
 
@@ -89,6 +92,16 @@ export async function findBestGoodRefPR(
     )
       .split('\n')
       .filter((s) => s.length > 0)
-    return commits[0]
+      .map((c) => c.substr(0, 7))
+    const baseGoodBuilds = await githubApi.getBranchBuilds(baseBranch)
+    const headGoodBuilds = await githubApi.getBranchBuilds(headBranch)
+
+    for (const commit of commits) {
+      if (baseGoodBuilds.filter((b) => commit === b.head_commit).length > 0)
+        return commit
+      if (headGoodBuilds.filter((b) => commit === b.head_commit).length > 0)
+        return commit
+    }
+    return 'rebuild'
   }
 }

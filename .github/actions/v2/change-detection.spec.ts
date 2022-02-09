@@ -47,7 +47,7 @@ describe('Change detection', () => {
     const r = await git.init()
   })
   describe('PR', () => {
-    it('should skip bad commit', async () => {
+    it('should use last good commit', async () => {
       const br = await git.checkoutLocalBranch('main')
       const rootSha = await makeChange(git, fileA, 'A-good-[a,b,c]')
       const mainGoodBeforeBadSha = await makeChange(git, fileA, 'B-good-[a]')
@@ -56,28 +56,19 @@ describe('Change detection', () => {
       const fix2Sha = await makeChange(git, fileA, 'C1-bad-[a]')
       await git.checkoutBranch('fix', 'main')
       const fixFailSha = await makeChange(git, fileB, 'D-bad-[a]')
-      const fixFailSha1 = await makeChange(git, fileB, 'D2-bad-[a]')
+      const fixFailSha1 = await makeChange(git, fileB, 'D2-good-[a]')
       const fixFailSha2 = await makeChange(git, fileB, 'D3-bad-[a]')
       const fixGoodSha = await makeChange(git, fileB, 'E-good-[a]')
       await git.checkout('main')
       const mainSha = await makeChange(git, fileA, 'D1-good-[b]')
       const merge = await git.mergeFromTo('fix', 'main')
-      const logs = (await git.log({ maxCount: 1 })).latest.hash
-
-      const br2 = await git.raw('merge-base', 'main', 'fix')
-      const commits = (
-        await git.raw(
-          'rev-list',
-          // '--all',
-          '--date-order',
-          'HEAD~1',
-          `${br2.trim()}`,
-        )
-      ).split('\n')
-      expect(commits.includes(fix2Sha)).toBeFalsy()
 
       const githubApi = Substitute.for<GitActionStatus>()
       githubApi.getPRRuns(100).resolves([])
+      githubApi.getBranchBuilds('main').resolves([])
+      githubApi
+        .getBranchBuilds('HEAD')
+        .resolves([{ head_commit: fixGoodSha }, { head_commit: fixFailSha1 }])
 
       let actual = await findBestGoodRefPR(
         (services) => services.length,
@@ -85,7 +76,7 @@ describe('Change detection', () => {
         githubApi,
         100,
       )
-      expect(actual).toBe(mainSha)
+      expect(actual).toBe(fixGoodSha)
 
       // expect(logs.total).toBe(5)
     })
