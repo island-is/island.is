@@ -58,14 +58,16 @@ describe('View Case File Guard', () => {
 
   each`
     role | state
+    ${UserRole.REGISTRAR} | ${CaseState.SUBMITTED}
+    ${UserRole.REGISTRAR} | ${CaseState.RECEIVED}
     ${UserRole.REGISTRAR} | ${CaseState.ACCEPTED}
     ${UserRole.REGISTRAR} | ${CaseState.REJECTED}
     ${UserRole.REGISTRAR} | ${CaseState.DISMISSED}
-    ${UserRole.REGISTRAR} | ${CaseState.RECEIVED}
+    ${UserRole.JUDGE} | ${CaseState.SUBMITTED}
+    ${UserRole.JUDGE} | ${CaseState.RECEIVED}
     ${UserRole.JUDGE} | ${CaseState.ACCEPTED}
     ${UserRole.JUDGE} | ${CaseState.REJECTED}
     ${UserRole.JUDGE} | ${CaseState.DISMISSED}
-    ${UserRole.JUDGE} | ${CaseState.RECEIVED}
   `.describe(
     'registrars and judges can view case files of completed cases',
     ({ role, state }) => {
@@ -89,10 +91,8 @@ describe('View Case File Guard', () => {
     role | state
     ${UserRole.REGISTRAR} | ${CaseState.NEW}
     ${UserRole.REGISTRAR} | ${CaseState.DRAFT}
-    ${UserRole.REGISTRAR} | ${CaseState.SUBMITTED}
     ${UserRole.JUDGE} | ${CaseState.NEW}
     ${UserRole.JUDGE} | ${CaseState.DRAFT}
-    ${UserRole.JUDGE} | ${CaseState.SUBMITTED}
   `.describe(
     'registrars and judges can not view case files of unreceived cases',
     ({ role, state }) => {
