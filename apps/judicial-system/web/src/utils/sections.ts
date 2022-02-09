@@ -54,7 +54,7 @@ export const getCustodyAndTravelBanProsecutorSection = (
     children: [
       {
         type: 'SUB_SECTION',
-        name: 'Sakborningur',
+        name: 'Varnaraðili',
         href: `${Constants.STEP_ONE_ROUTE}/${id}`,
       },
       {
