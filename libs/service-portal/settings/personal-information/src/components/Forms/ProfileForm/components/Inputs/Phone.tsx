@@ -321,14 +321,15 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
                         type="filled"
                       />
                     ) : (
-                      <Button
-                        type="submit"
-                        variant="text"
-                        size="small"
-                        disabled={!codeInternal}
-                      >
-                        {formatMessage(m.confirmCode)}
-                      </Button>
+                      <button type="submit" disabled={!codeInternal}>
+                        <Button
+                          variant="text"
+                          size="small"
+                          disabled={!codeInternal}
+                        >
+                          {formatMessage(m.confirmCode)}
+                        </Button>
+                      </button>
                     ))}
                   {verificationLoading && <LoadingDots />}
                 </Box>
