@@ -75,6 +75,10 @@ export type ServicePortalRoute = {
    */
   enabled?: boolean
   /**
+   * Hides navigation item from navigation
+   */
+  navHide?: boolean
+  /**
    * The render value of this component
    */
   render?: (props: ServicePortalModuleProps) => ServicePortalModuleRenderValue
