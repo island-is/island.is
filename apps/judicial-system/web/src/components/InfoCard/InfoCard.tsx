@@ -50,6 +50,9 @@ const InfoCard: React.FC<Props> = (props) => {
                 {defendant.address && (
                   <Text as="span">{`, ${defendant.address}`}</Text>
                 )}
+                {defendant.citizenship && (
+                  <Text as="span">{`, ${defendant.citizenship}`}</Text>
+                )}
               </Text>
             ))}
           </Box>
