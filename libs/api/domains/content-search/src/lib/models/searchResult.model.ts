@@ -32,10 +32,10 @@ const Items = createUnionType({
 @ObjectType()
 export class SearchResult {
   @Field(() => Int)
-  total: number
+  total!: number
 
   @Field(() => [Items])
-  items: Array<typeof Items>
+  items!: Array<typeof Items>
 
   @Field(() => [TagCount], { nullable: true })
   tagCounts?: TagCount[]

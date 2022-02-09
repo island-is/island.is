@@ -14,11 +14,7 @@ import {
   Select,
 } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
-import { useShortState } from '@island.is/regulations'
-import {
-  RegulationLawChapterTree,
-  RegulationMinistry,
-} from '@island.is/regulations/web'
+import { useShortState, LawChapterTree, Ministry } from '@island.is/regulations'
 import { RegulationHomeTexts } from './RegulationTexts.types'
 import { OptionTypeBase, ValueType } from 'react-select'
 import { RegulationSearchFilters, RegulationSearchKey } from './regulationUtils'
@@ -96,8 +92,8 @@ const cleanQuery = (
 export type RegulationsSearchSectionProps = {
   searchFilters: RegulationSearchFilters
   years: ReadonlyArray<number>
-  ministries: ReadonlyArray<RegulationMinistry>
-  lawChapters: Readonly<RegulationLawChapterTree>
+  ministries: ReadonlyArray<Ministry>
+  lawChapters: Readonly<LawChapterTree>
   texts: RegulationHomeTexts
   page?: number
   anchorRef: React.RefObject<HTMLDivElement>

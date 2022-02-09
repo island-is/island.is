@@ -5,5 +5,5 @@ import { IsString } from 'class-validator'
 export class GetDocumentInput {
   @Field()
   @IsString()
-  id: string
+  id!: string
 }
