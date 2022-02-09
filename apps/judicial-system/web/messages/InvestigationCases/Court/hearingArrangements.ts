@@ -2,6 +2,13 @@ import { defineMessage, defineMessages } from 'react-intl'
 
 // Strings for court officials
 export const icHearingArrangements = {
+  requestProsecutorOnlySession: defineMessage({
+    id:
+      'judicial.system.investigation_cases:hearing_arrangements.request_prosecutor_only_session',
+    defaultMessage: 'Beiðni um dómþing að varnaraðila fjarstöddum',
+    description:
+      'Notaður sem texti fyrir beiðni um dómþing að varnaraðila fjarstöddum á fyrirtöku skrefi í rannsóknarheimildum.',
+  }),
   comments: {
     title: defineMessage({
       id:
