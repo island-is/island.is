@@ -1,6 +1,6 @@
 export interface TagAggregationInput {
   documentTypes: string[]
-  tagType: string
+  tagTypes: string[]
   size?: number
 }
 
@@ -14,6 +14,14 @@ export interface TagAggregationResponse {
             key: string
             doc_count: number
             value: {
+              buckets: [
+                {
+                  key: string
+                  doc_count: number
+                },
+              ]
+            }
+            type: {
               buckets: [
                 {
                   key: string

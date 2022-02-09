@@ -14,7 +14,7 @@ import {
   FormSettings,
   useCaseFormHelper,
 } from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { setAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { icRequestedHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import type {
@@ -132,7 +132,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
           <RequestCourtDate
             workingCase={workingCase}
             onChange={(date: Date | undefined, valid: boolean) =>
-              newSetAndSendDateToServer(
+              setAndSendDateToServer(
                 'requestedCourtDate',
                 date,
                 valid,

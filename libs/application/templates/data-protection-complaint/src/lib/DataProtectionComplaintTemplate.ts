@@ -11,6 +11,7 @@ import {
 import { DataProtectionComplaintSchema } from './dataSchema'
 import { application } from './messages'
 import { Roles, TEMPLATE_API_ACTIONS } from '../shared'
+import { States } from '../constants'
 
 type DataProtectionComplaintEvent = { type: DefaultEvents.SUBMIT }
 
@@ -27,7 +28,7 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
   stateMachineConfig: {
     initial: 'draft',
     states: {
-      draft: {
+      [States.DRAFT]: {
         meta: {
           name: application.name.defaultMessage,
           progress: 0.5,
@@ -52,14 +53,17 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: {
-            target: 'inReview',
+            target: States.IN_REVIEW,
           },
         },
       },
-      inReview: {
+      [States.IN_REVIEW]: {
         meta: {
           name: 'In Review',
           progress: 1,
+          actionCard: {
+            tag: { label: application.submittedTag, variant: 'blueberry' },
+          },
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
@@ -72,8 +76,8 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ComplaintForm').then((module) =>
-                  Promise.resolve(module.ComplaintForm),
+                import('../forms/ComplaintFormInReview').then((module) =>
+                  Promise.resolve(module.ComplaintFormInReview),
                 ),
               write: 'all',
             },

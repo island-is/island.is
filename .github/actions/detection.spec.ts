@@ -1,18 +1,19 @@
-import { findLastGoodBuild, WorkflowQueries } from './detection'
 import {
   ActionsListWorkflowRunsForRepoResponseData,
-  ActionsListJobsForWorkflowRunResponseData,
-} from '@octokit/types'
+  findLastGoodBuild,
+  WorkflowQueries,
+} from './detection'
 import { Substitute, Arg } from '@fluffy-spoon/substitute'
+import { response as workflowsBranchJobsCompleted } from './branchWorkflowJobsCompleted'
+import { response as workflowsBase } from './baseWorkflows'
+import { response as workflowsBranch } from './branchWorkflows'
+import { response as workflowsBranchJobsSkipped } from './branchWorkflowJobsSkipped'
+import { response as workflowsMain } from './mainWorkflows'
 
 describe('Discovering last successful build', () => {
   it('should find it on the same branch', async () => {
     const workflowQueried = Substitute.for<WorkflowQueries>()
-    workflowQueried
-      .getData('new-br')
-      .resolves(
-        (workflowsBranch as unknown) as ActionsListWorkflowRunsForRepoResponseData,
-      )
+    workflowQueried.getData('new-br').resolves(workflowsBranch)
     workflowQueried
       .getJobs(
         'GET https://api.github.com/repos/andesorg/actions-tests/actions/runs/136263499/jobs',
@@ -32,11 +33,7 @@ describe('Discovering last successful build', () => {
   })
   it('should not find it on the same branch if success was skipped', async () => {
     const workflowQueried = Substitute.for<WorkflowQueries>()
-    workflowQueried
-      .getData('new-br')
-      .resolves(
-        (workflowsBranch as unknown) as ActionsListWorkflowRunsForRepoResponseData,
-      )
+    workflowQueried.getData('new-br').resolves(workflowsBranch)
     workflowQueried
       .getJobs(
         'GET https://api.github.com/repos/andesorg/actions-tests/actions/runs/136263499/jobs',
@@ -53,11 +50,7 @@ describe('Discovering last successful build', () => {
 
   it('should find it on baseBranch if branch has no successful runs', async () => {
     const workflowQueried = Substitute.for<WorkflowQueries>()
-    workflowQueried
-      .getData('baseBranch')
-      .resolves(
-        (workflowsBase as unknown) as ActionsListWorkflowRunsForRepoResponseData,
-      )
+    workflowQueried.getData('baseBranch').resolves(workflowsBase)
     workflowQueried
       .getData('new-br')
       .resolves({ total_count: 0, workflow_runs: [] })
@@ -82,11 +75,7 @@ describe('Discovering last successful build', () => {
     workflowQueried
       .getData('baseBranch')
       .resolves({ total_count: 0, workflow_runs: [] })
-    workflowQueried
-      .getData('main')
-      .resolves(
-        (workflowsMain as unknown) as ActionsListWorkflowRunsForRepoResponseData,
-      )
+    workflowQueried.getData('main').resolves(workflowsMain)
     const lastGoodBuild = await findLastGoodBuild(
       shasBranch,
       'new-br',
@@ -137,9 +126,3 @@ const shasBranch = [
   '188ddd4db84a84753d16ab9441706fa5724b33de',
   'b39fb602059ec0f873623249e9a72e2740686a28',
 ]
-
-import * as workflowsBase from './baseWorkflows.json'
-import * as workflowsBranch from './branchWorkflows.json'
-import * as workflowsBranchJobsCompleted from './branchWorkflowJobsCompleted.json'
-import * as workflowsBranchJobsSkipped from './branchWorkflowJobsSkipped.json'
-import * as workflowsMain from './mainWorkflows.json'
