@@ -40,6 +40,7 @@ export const GET_SUPPORT_QNAS_IN_CATEGORY = gql`
         title
         description
         slug
+        importance
       }
       category {
         title

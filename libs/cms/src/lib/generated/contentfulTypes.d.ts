@@ -2792,6 +2792,9 @@ export interface ISupportSubCategoryFields {
 
   /** slug */
   slug: string
+
+  /** Importance */
+  importance?: number | undefined
 }
 
 export interface ISupportSubCategory extends Entry<ISupportSubCategoryFields> {

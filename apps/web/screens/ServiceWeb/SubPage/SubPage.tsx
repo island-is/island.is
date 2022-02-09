@@ -9,6 +9,7 @@ import {
   QueryGetNamespaceArgs,
   QueryGetOrganizationArgs,
   QueryGetSupportQnAsInCategoryArgs,
+  SupportQna,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
@@ -38,6 +39,7 @@ import { getSlugPart } from '../utils'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import groupBy from 'lodash/groupBy'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { Dictionary } from 'lodash'
 
 interface SubPageProps {
   organization?: Organization
@@ -69,6 +71,10 @@ const SubPage: Screen<SubPageProps> = ({
   const supportQNAsBySubCategory = groupBy(
     supportQNAs,
     (supportQNA) => supportQNA.subCategory.title,
+  )
+
+  const sortedSupportSubCategoryTitles = getSortedSupportSubCategoryTitles(
+    supportQNAsBySubCategory,
   )
 
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
@@ -198,42 +204,40 @@ const SubPage: Screen<SubPageProps> = ({
 
                     <ContentBlock>
                       <Box paddingY={[1, 2]} marginTop={6}>
-                        {Object.keys(supportQNAsBySubCategory).map(
-                          (subcat, key) => {
-                            const subCategoryDescription =
-                              supportQNAsBySubCategory[subcat][0].subCategory
-                                .description ?? ''
-                            return (
-                              <Box marginBottom={3} key={key}>
-                                <AccordionCard
-                                  id="id_1"
-                                  label={subcat}
-                                  visibleContent={
-                                    <Text>{subCategoryDescription}</Text>
-                                  }
-                                >
-                                  <Box marginTop={3}>
-                                    <Stack space={2}>
-                                      {supportQNAsBySubCategory[subcat].map(
-                                        ({ title, slug }, index) => {
-                                          return (
-                                            <Box key={index}>
-                                              <TopicCard
-                                                href={`/thjonustuvefur/${organizationSlug}/${categorySlug}?&q=${slug}`}
-                                              >
-                                                {title}
-                                              </TopicCard>
-                                            </Box>
-                                          )
-                                        },
-                                      )}
-                                    </Stack>
-                                  </Box>
-                                </AccordionCard>
-                              </Box>
-                            )
-                          },
-                        )}
+                        {sortedSupportSubCategoryTitles.map((subcat, key) => {
+                          const subCategoryDescription =
+                            supportQNAsBySubCategory[subcat][0].subCategory
+                              .description ?? ''
+                          return (
+                            <Box marginBottom={3} key={key}>
+                              <AccordionCard
+                                id="id_1"
+                                label={subcat}
+                                visibleContent={
+                                  <Text>{subCategoryDescription}</Text>
+                                }
+                              >
+                                <Box marginTop={3}>
+                                  <Stack space={2}>
+                                    {supportQNAsBySubCategory[subcat].map(
+                                      ({ title, slug }, index) => {
+                                        return (
+                                          <Box key={index}>
+                                            <TopicCard
+                                              href={`/thjonustuvefur/${organizationSlug}/${categorySlug}?&q=${slug}`}
+                                            >
+                                              {title}
+                                            </TopicCard>
+                                          </Box>
+                                        )
+                                      },
+                                    )}
+                                  </Stack>
+                                </Box>
+                              </AccordionCard>
+                            </Box>
+                          )
+                        })}
                       </Box>
                     </ContentBlock>
                   </GridColumn>
@@ -302,6 +306,27 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     supportQNAs: supportQNAs?.data?.getSupportQNAsInCategory,
     questionSlug,
   }
+}
+
+const getSortedSupportSubCategoryTitles = (
+  supportQNAsBySubCategory: Dictionary<SupportQna[]>,
+) => {
+  const titles = Object.keys(supportQNAsBySubCategory)
+
+  titles.sort((a, b) => {
+    const subCategoryA = supportQNAsBySubCategory[a]
+    const subCategoryB = supportQNAsBySubCategory[b]
+
+    if (subCategoryA.length === 0) return 1
+    if (subCategoryB.length === 0) return -1
+
+    return (
+      subCategoryB[0].subCategory?.importance -
+      subCategoryA[0].subCategory?.importance
+    )
+  })
+
+  return titles
 }
 
 export default withMainLayout(SubPage, {
