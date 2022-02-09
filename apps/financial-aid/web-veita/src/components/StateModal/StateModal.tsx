@@ -88,7 +88,7 @@ const StateModal = ({
   const stateNeedInput = [
     {
       state: ApplicationState.REJECTED,
-      modalHeader: 'Hafna umsókn',
+      modalHeader: 'Synja umsókn',
     },
     {
       state: ApplicationState.APPROVED,

@@ -43,7 +43,7 @@ export const getState: KeyMapping<ApplicationState, string> = {
   New: 'Ný umsókn',
   DataNeeded: 'Vantar gögn',
   InProgress: 'Í vinnslu',
-  Rejected: 'Hafnað',
+  Rejected: 'Synjað',
   Approved: 'Samþykkt',
 }
 
