@@ -96,11 +96,8 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
 
-  const pageTitle = `${n('search', 'Leit')} - ${n(
-    'serviceWeb',
-    'Þjónustuvefur',
-  )} Ísland.is`
-  const headerTitle = `${n('serviceWeb', 'Þjónustuvefur')} Ísland.is`
+  const pageTitle = `${n('search', 'Leit')} - ${n('assistance', 'Aðstoð')}`
+  const headerTitle = `${n('assistance', 'Aðstoð')}`
 
   return (
     <ServiceWebWrapper
@@ -122,7 +119,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                   <Breadcrumbs
                     items={[
                       {
-                        title: n('serviceWeb', 'Þjónustuvefur'),
+                        title: n('assistance', 'Aðstoð'),
                         href: linkResolver('helpdesk').href,
                       },
                       {
@@ -165,7 +162,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                             type="button"
                             variant="text"
                           >
-                            {n('serviceWeb', 'Þjónustuvefur')}
+                            {n('assistance', 'Aðstoð')}
                           </Button>
                         </a>
                       </Text>

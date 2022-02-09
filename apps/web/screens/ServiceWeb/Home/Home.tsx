@@ -60,7 +60,7 @@ const Home: Screen<HomeProps> = ({
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
   const logoUrl = organization?.logo?.url ?? ''
   const searchTitle = n('canWeAssist', 'Getum við aðstoðað?')
-  const pageTitle = `${n('serviceWeb', 'Þjónustuvefur')} Ísland.is`
+  const pageTitle = `${n('assistance', 'Aðstoð')}`
 
   const hasContent = !!supportCategories?.length
 
@@ -106,7 +106,7 @@ const Home: Screen<HomeProps> = ({
                           description={description}
                           link={
                             {
-                              href: `/thjonustuvefur/${organization.slug}/${slug}`,
+                              href: `/adstod/${organization.slug}/${slug}`,
                             } as LinkResolverResponse
                           }
                         />

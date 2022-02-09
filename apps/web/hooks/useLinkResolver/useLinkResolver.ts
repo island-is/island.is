@@ -159,16 +159,16 @@ export const routesTemplate = {
     en: '/en/[slug]',
   },
   helpdesk: {
-    is: '/thjonustuvefur',
-    en: '/en/helpdesk',
+    is: '/adstod',
+    en: '/en/help',
   },
   helpdeskcategory: {
-    is: '/thjonustuvefur/[organizationSlug]/[categorySlug]',
-    en: '/en/helpdesk/[organizationSlug]/[categorySlug]',
+    is: '/adstod/[organizationSlug]/[categorySlug]',
+    en: '/en/help/[organizationSlug]/[categorySlug]',
   },
   helpdesksearch: {
-    is: '/thjonustuvefur/leit',
-    en: '/en/helpdesk/search',
+    is: '/adstod/leit',
+    en: '/en/help/search',
   },
   homepage: {
     is: '/',

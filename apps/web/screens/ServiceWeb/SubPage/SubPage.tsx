@@ -78,7 +78,7 @@ const SubPage: Screen<SubPageProps> = ({
   )
 
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
-  const pageTitle = `${n('serviceWeb', 'Þjónustuvefur')} Ísland.is`
+  const pageTitle = `${n('assistance', 'Aðstoð')}`
 
   const mobileBackButtonText = questionSlug
     ? `${organizationTitle}: ${categoryTitle}`
@@ -111,7 +111,7 @@ const SubPage: Screen<SubPageProps> = ({
                       <Breadcrumbs
                         items={[
                           {
-                            title: n('serviceWeb', 'Þjónustuvefur'),
+                            title: n('assistance', 'Aðstoð'),
                             typename: 'helpdesk',
                             href: linkResolver('helpdesk').href,
                           },
@@ -231,7 +231,7 @@ const SubPage: Screen<SubPageProps> = ({
                                         return (
                                           <Box key={index}>
                                             <TopicCard
-                                              href={`/thjonustuvefur/${organizationSlug}/${categorySlug}?&q=${slug}`}
+                                              href={`/adstod/${organizationSlug}/${categorySlug}?&q=${slug}`}
                                             >
                                               {title}
                                             </TopicCard>

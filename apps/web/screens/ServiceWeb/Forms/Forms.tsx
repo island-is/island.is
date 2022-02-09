@@ -89,7 +89,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
   }, [error])
 
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
-  const pageTitle = `${n('serviceWeb', 'Þjónustuvefur')} Ísland.is`
+  const pageTitle = `${n('assistance', 'Aðstoð')}`
 
   return (
     <ServiceWebWrapper
@@ -114,7 +114,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                       <Breadcrumbs
                         items={[
                           {
-                            title: n('serviceWeb', 'Þjónustuvefur'),
+                            title: n('assistance', 'Aðstoð'),
                             typename: 'helpdesk',
                             href: linkResolver('helpdesk').href,
                           },
@@ -165,7 +165,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                                 type="button"
                                 variant="text"
                               >
-                                {n('serviceWeb', 'Þjónustuvefur')}
+                                {n('assistance', 'Aðstoð')}
                               </Button>
                             </a>
                           </Text>
