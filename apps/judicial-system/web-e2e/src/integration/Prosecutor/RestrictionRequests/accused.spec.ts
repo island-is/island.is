@@ -25,12 +25,22 @@ describe('/krafa/ny/gaesluvardhald', () => {
     cy.getByTestid('continueButton').should('not.be.disabled')
   })
 
-  it('should require a valid accused national id', () => {
+  it('should require a valid accused national id if the user has a national id', () => {
     cy.getByTestid('nationalId').type('0').blur()
     cy.getByTestid('inputErrorMessage').contains('Dæmi: 000000-0000')
     cy.getByTestid('nationalId').clear().blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('nationalId').clear().type('0000000000')
+    cy.getByTestid('inputErrorMessage').should('not.exist')
+  })
+
+  it('should require a valid accused date of birth if the user does not have a national id', () => {
+    cy.get('[type="checkbox"]').check()
+    cy.getByTestid('nationalId').type('0').blur()
+    cy.getByTestid('inputErrorMessage').contains('Dæmi: 00.00.0000')
+    cy.getByTestid('nationalId').clear().blur()
+    cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
+    cy.getByTestid('nationalId').clear().type('01.01.2000')
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
