@@ -25,12 +25,12 @@ import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
+import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 import { defendant as m } from '@island.is/judicial-system-web/messages'
 import * as constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
-import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 
 interface Props {
   workingCase: Case

@@ -687,18 +687,6 @@ export class NotificationService {
       await this.sendEmail(
         subject,
         html,
-        theCase.prosecutor?.name,
-        theCase.prosecutor?.email,
-      ),
-      await this.sendEmail(
-        subject,
-        html,
-        theCase.judge?.name,
-        theCase.judge?.email,
-      ),
-      await this.sendEmail(
-        subject,
-        html,
         'Fangelsismálastofnun',
         environment.notifications.prisonAdminEmail,
       ),
@@ -710,7 +698,29 @@ export class NotificationService {
       ),
     ]
 
-    if (theCase.registrar) {
+    if (user.id !== theCase.prosecutorId) {
+      recipients.push(
+        await this.sendEmail(
+          subject,
+          html,
+          theCase.prosecutor?.name,
+          theCase.prosecutor?.email,
+        ),
+      )
+    }
+
+    if (user.id !== theCase.judgeId) {
+      recipients.push(
+        await this.sendEmail(
+          subject,
+          html,
+          theCase.judge?.name,
+          theCase.judge?.email,
+        ),
+      )
+    }
+
+    if (theCase.registrar && user.id !== theCase.registrarId) {
       recipients.push(
         await this.sendEmail(
           subject,
