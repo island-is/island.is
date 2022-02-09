@@ -22,5 +22,5 @@ export class Ship {
   @Field(() => [Deprivation])
   deprivations!: Deprivation[]
   @Field(() => [FishingLicenseInfo])
-  fishingLicences!: FishingLicenseInfo[]
+  fishingLicenses!: FishingLicenseInfo[]
 }

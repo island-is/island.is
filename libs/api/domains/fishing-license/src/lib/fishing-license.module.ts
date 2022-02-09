@@ -1,5 +1,5 @@
 import {
-  FishingLicenceApiClientMock,
+  FishingLicenseApiClientMock,
   FishingLicenseClientModule,
   FISHING_LICENSE_CLIENT,
 } from '@island.is/clients/fishing-license'
@@ -15,7 +15,7 @@ import { FishingLicenseResolver } from '../graphql/fishing-license.resolver'
     FishingLicenseResolver,
     {
       provide: FISHING_LICENSE_CLIENT,
-      useClass: FishingLicenceApiClientMock,
+      useClass: FishingLicenseApiClientMock,
     },
   ],
 })

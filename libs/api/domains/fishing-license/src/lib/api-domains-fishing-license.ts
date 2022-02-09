@@ -1,3 +1,3 @@
-export function apiDomainsFishingLicence(): string {
-  return 'api-domains-fishing-licence'
+export function apiDomainsFishingLicense(): string {
+  return 'api-domains-fishing-license'
 }

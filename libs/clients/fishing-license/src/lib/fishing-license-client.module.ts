@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 import {
-  FishingLicenceApiClientMock,
+  FishingLicenseApiClientMock,
   FISHING_LICENSE_CLIENT,
 } from './fishing-license-client.mock'
 
@@ -8,7 +8,7 @@ import {
   imports: [],
   controllers: [],
   providers: [
-    { provide: FISHING_LICENSE_CLIENT, useClass: FishingLicenceApiClientMock },
+    { provide: FISHING_LICENSE_CLIENT, useClass: FishingLicenseApiClientMock },
   ],
 })
 export class FishingLicenseClientModule {}

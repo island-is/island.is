@@ -1,7 +1,7 @@
-import { apiDomainsFishingLicence } from './api-domains-fishing-licence'
+import { apiDomainsFishingLicense } from './api-domains-fishing-license'
 
 describe('apiDomainsFishingLicence', () => {
   it('should work', () => {
-    expect(apiDomainsFishingLicence()).toEqual('api-domains-fishing-licence')
+    expect(apiDomainsFishingLicense()).toEqual('api-domains-fishing-licene')
   })
 })
