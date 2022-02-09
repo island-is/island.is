@@ -36,7 +36,7 @@ export const msg = defineMessages({
   },
   overlayIntro: {
     id: 'sp.settings:overlay-intro-text',
-    defaultMessage: `Vinsamlegast farðu vel yfir allar neðangreindarupplýsingar, gangtu í
+    defaultMessage: `Vinsamlegast farðu vel yfir allar neðangreindar upplýsingar, gakktu í
     skugga um að þær séu réttar og gerðu breytingar ef þörf krefur.`,
   },
   dropModalAllTitle: {

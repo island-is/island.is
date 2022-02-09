@@ -58,7 +58,7 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
 
   const [telVerifyCreated, setTelVerifyCreated] = useState(false)
   const [verificationValid, setVerificationValid] = useState(false)
-  const [verifiCationLoading, setVerifiCationLoading] = useState(false)
+  const [verificationLoading, setVerificationLoading] = useState(false)
   const [deleteSuccess, setDeleteSuccess] = useState(false)
 
   const [formErrors, setErrors] = useState<FormErrors>({
@@ -108,7 +108,7 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
       defaultMessage: 'Villa í staðfestingu kóða. Vinsamlegast reynið aftur.',
     })
     try {
-      setVerifiCationLoading(true)
+      setVerificationLoading(true)
 
       const codeValue = data.code ?? ''
       const formValues = getValues()
@@ -119,14 +119,14 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
           mobilePhoneNumber: `+354-${telToVerify}`,
           smsCode: codeValue,
         }).then(() => {
-          setVerifiCationLoading(false)
+          setVerificationLoading(false)
           setVerificationValid(true)
         })
       }
       setErrors({ ...formErrors, code: undefined })
     } catch (err) {
       console.error(`confirmSmsVerification error: ${err}`)
-      setVerifiCationLoading(false)
+      setVerificationLoading(false)
       setErrors({ ...formErrors, code: codeError })
     }
   }
@@ -147,7 +147,7 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
       setDeleteSuccess(true)
       setErrors({ ...formErrors, code: undefined })
     } catch (err) {
-      setVerifiCationLoading(false)
+      setVerificationLoading(false)
       setErrors({ ...formErrors, code: emailError })
     }
   }
@@ -313,7 +313,7 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
                   flexDirection="column"
                   paddingTop={2}
                 >
-                  {!verifiCationLoading &&
+                  {!verificationLoading &&
                     (verificationValid ? (
                       <Icon
                         icon="checkmarkCircle"
@@ -321,17 +321,16 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
                         type="filled"
                       />
                     ) : (
-                      <button type="submit" disabled={!codeInternal}>
-                        <Button
-                          variant="text"
-                          size="small"
-                          disabled={!codeInternal}
-                        >
-                          {formatMessage(m.confirmCode)}
-                        </Button>
-                      </button>
+                      <Button
+                        type="submit"
+                        variant="text"
+                        size="small"
+                        disabled={!codeInternal}
+                      >
+                        {formatMessage(m.confirmCode)}
+                      </Button>
                     ))}
-                  {verifiCationLoading && <LoadingDots />}
+                  {verificationLoading && <LoadingDots />}
                 </Box>
               </Column>
             </Columns>

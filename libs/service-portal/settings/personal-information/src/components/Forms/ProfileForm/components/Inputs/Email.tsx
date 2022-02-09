@@ -54,7 +54,7 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
 
   const [emailVerifyCreated, setEmailVerifyCreated] = useState(false)
   const [verificationValid, setVerificationValid] = useState(false)
-  const [verifiCationLoading, setVerifiCationLoading] = useState(false)
+  const [verificationLoading, setVerificationLoading] = useState(false)
   const [deleteSuccess, setDeleteSuccess] = useState(false)
 
   const [formErrors, setErrors] = useState<FormErrors>({
@@ -111,7 +111,7 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
     })
 
     try {
-      setVerifiCationLoading(true)
+      setVerificationLoading(true)
 
       const codeValue = data.code ?? ''
       const formValues = getValues()
@@ -122,14 +122,14 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
           email: emailToVerify,
           emailCode: codeValue,
         }).then(() => {
-          setVerifiCationLoading(false)
+          setVerificationLoading(false)
           setVerificationValid(true)
         })
       }
       setErrors({ ...formErrors, code: undefined })
     } catch (err) {
       console.error(`confirmEmailVerification error: ${err}`)
-      setVerifiCationLoading(false)
+      setVerificationLoading(false)
       setErrors({ ...formErrors, code: codeError })
     }
   }
@@ -150,7 +150,7 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
       setDeleteSuccess(true)
       setErrors({ ...formErrors, code: undefined })
     } catch (err) {
-      setVerifiCationLoading(false)
+      setVerificationLoading(false)
       setErrors({ ...formErrors, code: emailError })
     }
   }
@@ -294,7 +294,7 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
                   flexDirection="column"
                   paddingTop={2}
                 >
-                  {!verifiCationLoading &&
+                  {!verificationLoading &&
                     (verificationValid ? (
                       <Icon
                         icon="checkmarkCircle"
@@ -312,7 +312,7 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
                         </Button>
                       </button>
                     ))}
-                  {verifiCationLoading && <LoadingDots />}
+                  {verificationLoading && <LoadingDots />}
                 </Box>
               </Column>
             </Columns>
