@@ -152,5 +152,12 @@ export enum ReviewSectionState {
 export interface SubmittedApplicationData {
   data?: {
     documentId: number
+    sentDocuments: string[]
+  }
+}
+
+export interface ReviewAddAttachmentData {
+  data?: {
+    sentDocuments: string[]
   }
 }

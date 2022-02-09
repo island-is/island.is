@@ -31,7 +31,7 @@ import {
   UserData,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  newSetAndSendDateToServer,
+  setAndSendDateToServer,
   removeTabsValidateAndSet,
   setAndSendToServer,
   validateAndSendToServer,
@@ -127,6 +127,16 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
   return (
     <>
       <FormContentContainer>
+        {workingCase.requestProsecutorOnlySession &&
+          workingCase.prosecutorOnlySessionRequest && (
+            <Box marginBottom={workingCase.comments ? 2 : 5}>
+              <AlertMessage
+                type="warning"
+                title={formatMessage(m.requestProsecutorOnlySession)}
+                message={workingCase.prosecutorOnlySessionRequest}
+              />
+            </Box>
+          )}
         {workingCase.comments && (
           <Box marginBottom={5}>
             <AlertMessage
@@ -287,7 +297,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                   selectedDate={workingCase.courtDate}
                   minDate={new Date()}
                   onChange={(date: Date | undefined, valid: boolean) => {
-                    newSetAndSendDateToServer(
+                    setAndSendDateToServer(
                       'courtDate',
                       date,
                       valid,
@@ -310,7 +320,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'courtRoom',
-                    event,
+                    event.target.value,
                     [],
                     workingCase,
                     setWorkingCase,

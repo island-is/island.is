@@ -5,9 +5,15 @@ import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { environment } from '../../../environments/environment'
 import { QueueModule } from '@island.is/message-queue'
 import { NotificationsController } from './notifications.controller'
-import { NotificationsWorkerService } from './notificationsWorker.service'
+import {
+  IS_RUNNING_AS_WORKER,
+  NotificationsWorkerService,
+} from './notificationsWorker.service'
 import { NotificationDispatchService } from './notificationDispatch.service'
-import { MessageProcessorService } from './messageProcessor.service'
+import {
+  APP_PROTOCOL,
+  MessageProcessorService,
+} from './messageProcessor.service'
 import { FIREBASE_PROVIDER } from '../../../constants'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import * as userProfile from '@island.is/clients/user-profile'
@@ -59,6 +65,14 @@ import * as userProfile from '@island.is/clients/user-profile'
             }),
           }),
         ),
+    },
+    {
+      provide: IS_RUNNING_AS_WORKER,
+      useValue: environment.isWorker,
+    },
+    {
+      provide: APP_PROTOCOL,
+      useValue: environment.appProtocol,
     },
   ],
 })
