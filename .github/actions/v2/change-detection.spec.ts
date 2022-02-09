@@ -47,7 +47,7 @@ describe('Change detection', () => {
     const r = await git.init()
   })
   describe('PR', () => {
-    it('should use last good commit', async () => {
+    it('should use last good commit when no PR runs available', async () => {
       const br = await git.checkoutLocalBranch('main')
       const rootSha = await makeChange(git, fileA, 'A-good-[a,b,c]')
       const mainGoodBeforeBadSha = await makeChange(git, fileA, 'B-good-[a]')
@@ -68,7 +68,10 @@ describe('Change detection', () => {
       githubApi.getBranchBuilds('main').resolves([])
       githubApi
         .getBranchBuilds('HEAD')
-        .resolves([{ head_commit: fixGoodSha }, { head_commit: fixFailSha1 }])
+        .resolves([
+          { head_commit: mainGoodBeforeBadSha },
+          { head_commit: rootSha },
+        ])
 
       let actual = await findBestGoodRefPR(
         (services) => services.length,
@@ -76,7 +79,7 @@ describe('Change detection', () => {
         githubApi,
         100,
       )
-      expect(actual).toBe(fixGoodSha)
+      expect(actual).toBe(mainGoodBeforeBadSha)
 
       // expect(logs.total).toBe(5)
     })
