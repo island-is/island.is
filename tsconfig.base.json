@@ -247,8 +247,8 @@
         "libs/clients/driving-license/src/index.ts"
       ],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
-      "@island.is/clients/fishing-licence": [
-        "libs/clients/fishing-licence/src/index.ts"
+      "@island.is/clients/fishing-license": [
+        "libs/clients/fishing-license/src/index.ts"
       ],
       "@island.is/clients/health-insurance-v2": [
         "libs/clients/health-insurance-v2/src/index.ts"

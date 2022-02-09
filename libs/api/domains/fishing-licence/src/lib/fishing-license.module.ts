@@ -2,7 +2,7 @@ import {
   FishingLicenceApiClientMock,
   FishingLicenseClientModule,
   FISHING_LICENSE_CLIENT,
-} from '@island.is/clients/fishing-licence'
+} from '@island.is/clients/fishing-license'
 import { Module } from '@nestjs/common'
 import { FishingLicenseService } from './fishing-license.service'
 import { FishingLicenseResolver } from '../graphql/fishing-license.resolver'

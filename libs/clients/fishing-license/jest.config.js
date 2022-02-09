@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'clients-fishing-licence',
+  displayName: 'clients-fishing-license',
   preset: '../../../jest.preset.js',
   globals: {
     'ts-jest': {
@@ -10,5 +10,5 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/clients/fishing-licence',
+  coverageDirectory: '../../../coverage/libs/clients/fishing-license',
 }
