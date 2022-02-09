@@ -114,7 +114,7 @@
 ## Libs
 
 - [API](libs/api/README.md)
-    - [API Domains Fishing Licence](libs/api/domains/fishing-licence/README.md)
+    - [API Domains Fishing License](libs/api/domains/fishing-license/README.md)
   - [Mocks](libs/api/mocks/README.md)
 - [API Catalogue](libs/api-catalogue/README.md)
   - [Elastic](libs/api-catalogue/elastic/README.md)
@@ -144,7 +144,7 @@
   - [Documents](libs/clients/documents/README.md)
   - [Driving License](libs/clients/driving-license/README.md)
   - [Finance](libs/clients/finance/README.md)
-  - [Clients Fishing Licence](libs/clients/fishing-licence/README.md)
+  - [Clients Fishing License](libs/clients/fishing-license/README.md)
   - [Health Insurance](libs/clients/health-insurance-v2/README.md)
   - [Islykill](libs/clients/islykill/README.md)
   - [Enhanced Fetch](libs/clients/middlewares/README.md)
