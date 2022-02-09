@@ -34,48 +34,48 @@ export class DrivinLicenseBookResolver {
   ) {}
 
   @Query(() => StudentListResponse)
-  studentList(@Args('input') input: StudentListInput) {
+  drivingBookStudentList(@Args('input') input: StudentListInput) {
     return this.drivingLicenseBookService.getStudentList(input)
   }
 
   @Query(() => StudentListTeacherSsnResponse)
-  studentListTeacherSsn(@CurrentUser() user: User) {
+  drivingBookStudentListByTeacherSsn(@CurrentUser() user: User) {
     return this.drivingLicenseBookService.getStudentListTeacherSsn(user)
   }
 
   @Query(() => StudentOverViewResponse)
-  student(@Args('input') input: StudentInput) {
+  drivingBookStudent(@Args('input') input: StudentInput) {
     return this.drivingLicenseBookService.getStudent(input)
   }
 
   @Query(() => DigitalBookResponse)
-  licenseBook(@Args('input') input: LicenseBookIdInput) {
+  drivingBookDigitalBook(@Args('input') input: LicenseBookIdInput) {
     return this.drivingLicenseBookService.getLicenseBookId(input)
   }
 
   @Query(() => PracticalDrivingLessonsResponse)
-  practicalDrivingLessons(@Args('input') input: PracticalDrivingLessonsInput) {
+  drivingBookPracticalDrivingLessons(@Args('input') input: PracticalDrivingLessonsInput) {
     return this.drivingLicenseBookService.getPracticalDrivingLessonsBookId(
       input,
     )
   }
 
   @Mutation(() => CreatePracticalDrivingLessonResponse)
-  createPracticalDrivingLesson(
+  drivingBookCreatePracticalDrivingLesson(
     @Args('input') input: CreatePracticalDrivingLessonInput,
   ) {
     return this.drivingLicenseBookService.createPracticalDrivingLesson(input)
   }
 
   @Mutation(() => SuccessResponse)
-  updatePracticalDrivingLesson(
+  drivingBookUpdatePracticalDrivingLesson(
     @Args('input') input: UpdatePracticalDrivingLessonInput,
   ) {
     return this.drivingLicenseBookService.updatePracticalDrivingLesson(input)
   }
 
   @Mutation(() => SuccessResponse)
-  deletePracticalDrivingLesson(
+  drivingBookDeletePracticalDrivingLesson(
     @Args('input') input: DeletePracticalDrivingLessonInput,
   ) {
     return this.drivingLicenseBookService.deletePracticalDrivingLesson(input)
