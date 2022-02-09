@@ -8,7 +8,7 @@ export class CreateDefendantDto {
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional()
-  readonly noNationalId?: string
+  readonly noNationalId?: boolean
 
   @IsOptional()
   @IsString()
