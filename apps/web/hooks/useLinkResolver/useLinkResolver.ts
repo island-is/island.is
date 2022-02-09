@@ -69,6 +69,14 @@ export const routesTemplate = {
     is: '/s/stafraent-island/vefthjonustur',
     en: '',
   },
+  organizationnews: {
+    is: '/s/[organization]/frett/[slug]',
+    en: '/en/o/[organization]/news/[slug]',
+  },
+  organizationnewsoverview: {
+    is: '/s/[organization]/frett',
+    en: '/en/o/[organization]/news',
+  },
   organizationsubpage: {
     is: '/s/[slug]/[subSlug]',
     en: '/en/o/[slug]/[subSlug]',
@@ -105,14 +113,7 @@ export const routesTemplate = {
     is: '/lifsvidburdir/[slug]',
     en: '/en/life-events/[slug]',
   },
-  organizationnews: {
-    is: '/s/[organization]/frett/[slug]',
-    en: '/en/o/[organization]/news/[slug]',
-  },
-  organizationnewsoverview: {
-    is: '/s/[organization]/frett',
-    en: '/en/o/[organization]/news',
-  },
+
   adgerdirpage: {
     is: '/covid-adgerdir/[slug]',
     en: '/en/covid-operations/[slug]',
