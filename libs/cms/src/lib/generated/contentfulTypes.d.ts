@@ -2762,6 +2762,9 @@ export interface ISupportQnaFields {
 
   /** Organization */
   organization: IOrganization
+
+  /** Importance */
+  importance?: number | undefined
 }
 
 /** Helpdesk support questions and answer */

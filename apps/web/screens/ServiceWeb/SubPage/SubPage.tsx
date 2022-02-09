@@ -207,7 +207,14 @@ const SubPage: Screen<SubPageProps> = ({
                         {sortedSupportSubCategoryTitles.map((subcat, key) => {
                           const subCategoryDescription =
                             supportQNAsBySubCategory[subcat][0].subCategory
-                              .description ?? ''
+                              ?.description ?? ''
+
+                          const subCategorySupportQNAs =
+                            supportQNAsBySubCategory[subcat]
+                          subCategorySupportQNAs.sort(
+                            (a, b) => b?.importance - a?.importance,
+                          )
+
                           return (
                             <Box marginBottom={3} key={key}>
                               <AccordionCard
@@ -219,7 +226,7 @@ const SubPage: Screen<SubPageProps> = ({
                               >
                                 <Box marginTop={3}>
                                   <Stack space={2}>
-                                    {supportQNAsBySubCategory[subcat].map(
+                                    {subCategorySupportQNAs.map(
                                       ({ title, slug }, index) => {
                                         return (
                                           <Box key={index}>
