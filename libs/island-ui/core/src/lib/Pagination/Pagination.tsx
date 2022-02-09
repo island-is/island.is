@@ -107,7 +107,7 @@ export const Pagination: FC<PaginationProps> = ({
             {renderLink(
               thisPage,
               cn(styles.link, { [styles.linkCurrent]: thisPage === page }),
-              <>{thisPage}</>,
+              thisPage,
             )}
           </Fragment>
         ))}
