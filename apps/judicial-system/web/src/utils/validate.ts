@@ -11,6 +11,23 @@ export type Validation =
   | 'phonenumber'
   | 'date-format'
 
+const someDefendantIsInvalid = (workingCase: Case) => {
+  return (
+    workingCase.defendants &&
+    workingCase.defendants.some(
+      (defendant) =>
+        !defendant.gender ||
+        !validate(defendant.nationalId || '', 'empty').isValid ||
+        !validate(
+          defendant.nationalId || '',
+          defendant.noNationalId ? 'date-of-birth' : 'national-id',
+        ).isValid ||
+        !validate(defendant.name || '', 'empty').isValid ||
+        !validate(defendant.address || '', 'empty').isValid,
+    )
+  )
+}
+
 export const validate = (value: string, validation: Validation) => {
   if (!value && validation === 'empty') {
     return { isValid: false, errorMessage: 'Reitur má ekki vera tómur' }
@@ -80,10 +97,7 @@ export const isAccusedStepValidRC = (workingCase: Case) => {
       .isValid &&
     workingCase.defendants &&
     workingCase.defendants.length > 0 &&
-    workingCase.defendants[0].gender &&
-    validate(workingCase.defendants[0].nationalId || '', 'empty').isValid &&
-    validate(workingCase.defendants[0].nationalId || '', 'national-id')
-      .isValid &&
+    !someDefendantIsInvalid(workingCase) &&
     validate(workingCase.defendants[0].name || '', 'empty').isValid &&
     validate(workingCase.defendants[0].address || '', 'empty').isValid &&
     (workingCase.type === CaseType.CUSTODY
@@ -96,20 +110,6 @@ export const isAccusedStepValidRC = (workingCase: Case) => {
 }
 
 export const isDefendantStepValidIC = (workingCase: Case) => {
-  const someDefendantIsInvalid =
-    workingCase.defendants &&
-    workingCase.defendants.some(
-      (defendant) =>
-        !defendant.gender ||
-        !validate(defendant.nationalId || '', 'empty').isValid ||
-        !validate(
-          defendant.nationalId || '',
-          defendant.noNationalId ? 'date-of-birth' : 'national-id',
-        ).isValid ||
-        !validate(defendant.name || '', 'empty').isValid ||
-        !validate(defendant.address || '', 'empty').isValid,
-    )
-
   return (
     validate(workingCase.policeCaseNumber, 'empty').isValid &&
     validate(workingCase.policeCaseNumber, 'police-casenumber-format')
@@ -117,7 +117,7 @@ export const isDefendantStepValidIC = (workingCase: Case) => {
     workingCase.type &&
     workingCase.defendants &&
     workingCase.defendants.length > 0 &&
-    !someDefendantIsInvalid &&
+    !someDefendantIsInvalid(workingCase) &&
     validate(workingCase.defenderEmail || '', 'email-format').isValid &&
     validate(workingCase.defenderPhoneNumber || '', 'phonenumber').isValid
   )
