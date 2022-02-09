@@ -10,7 +10,6 @@ export class Lesson {
   @Field({ nullable: true })
   lessonTime?: number
 
-  
   @Field({ nullable: true })
   teacherSsn?: string
   

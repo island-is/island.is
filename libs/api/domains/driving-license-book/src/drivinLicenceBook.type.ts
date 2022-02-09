@@ -22,3 +22,5 @@ export interface ActorStudent {
   active?: boolean
   bookLicenseCategories: string[] | null
 }
+
+export const LICENSE_CATEGORY = "B"

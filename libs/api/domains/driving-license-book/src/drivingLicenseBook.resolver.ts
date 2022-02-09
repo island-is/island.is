@@ -25,6 +25,8 @@ import { SuccessResponse } from './models/success.response'
 import { UpdatePracticalDrivingLessonInput } from './dto/updatePracticalDrivingLesson.input'
 import { DeletePracticalDrivingLessonInput } from './dto/deletePracticalDrivingLesson.input'
 import { StudentListTeacherSsnResponse } from './models/studentsTeacherSsn.response'
+import { ActiveBookIdInput } from './dto/activeBookId.input'
+import { ActiveBookIdResponse } from './models/activeBookId.response'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -46,6 +48,11 @@ export class DrivinLicenseBookResolver {
   @Query(() => StudentOverViewResponse)
   drivingBookStudent(@Args('input') input: StudentInput) {
     return this.drivingLicenseBookService.getStudent(input)
+  }
+
+  @Query(() => ActiveBookIdResponse)
+  drivingBookActiveBookId(@Args('input') input: ActiveBookIdInput) {
+    return this.drivingLicenseBookService.getActiveBookId(input)
   }
 
   @Query(() => DigitalBookResponse)

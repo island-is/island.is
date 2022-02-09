@@ -36,8 +36,8 @@ export class StudentResponse {
 
 @ObjectType()
 export class StudentOverView extends StudentResponse {
-  @Field(() => [DrivingLicenseBook], { nullable: true })
-  books?: DrivingLicenseBook[]
+  @Field(() => DrivingLicenseBook, { nullable: true })
+  book?: DrivingLicenseBook
 }
 
 @ObjectType()

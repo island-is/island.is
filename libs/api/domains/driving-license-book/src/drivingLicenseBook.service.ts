@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import {
@@ -14,11 +14,17 @@ import {
   PracticalDrivingLessonCreateResponse,
   ApiTeacherUpdatePracticalDrivingLessonIdPutRequest,
   ApiTeacherDeleteExemptionIdDeleteRequest,
+  ApiStudentGetStudentActiveBookIdSsnGetRequest,
+  StudentBookIdGetResponse,
+  BookOverview,
 } from '@island.is/clients/driving-license-book'
 import { StudentListInput } from './dto/studentList.input'
 import { User } from '@island.is/auth-nest-tools'
 import { StudentListTeacherSsnResponse } from './models/studentsTeacherSsn.response'
 import { studentListTeacherSsn } from './mock/studentListTeacherSsn'
+import { StudentOverViewResponse } from './models/student.response'
+import { DrivingLicenseBook } from './models/drivingLicenseBook.response'
+import { LICENSE_CATEGORY } from './drivinLicenceBook.type'
 
 @Injectable()
 export class DrivingLicenseBookService {
@@ -77,10 +83,22 @@ export class DrivingLicenseBookService {
   }
 
   async getStudent(
-    data: ApiStudentGetStudentOverviewSsnGetRequest,
-  ): Promise<StudentOverviewGetResponse> {
+    input: ApiStudentGetStudentOverviewSsnGetRequest,
+  ): Promise<StudentOverViewResponse> {
     const api = await this.apiWithAuth()
-    return await api.apiStudentGetStudentOverviewSsnGet(data)
+    const { data } = await api.apiStudentGetStudentOverviewSsnGet(input)
+    if (data?.books && data?.ssn) {
+      const bookId = await this.getActiveBookId({
+        ssn: data?.ssn,
+        licenseCategory: LICENSE_CATEGORY,
+      })
+      const book = data?.books.filter(
+        (b) => b.id === bookId.data?.bookId,
+      )[0] as DrivingLicenseBook
+      return { data: { ...data, book}} as StudentOverViewResponse
+    }
+
+    throw new NotFoundException()
   }
 
   // The following all show data available in the get student query so maybe not needed
@@ -98,5 +116,10 @@ export class DrivingLicenseBookService {
     return await api.apiTeacherGetPracticalDrivingLessonsBookIdGet(input)
   }
 
-  async getSchoolTestResultsBookId() {}
+  async getActiveBookId(
+    input: ApiStudentGetStudentActiveBookIdSsnGetRequest,
+  ): Promise<StudentBookIdGetResponse> {
+    const api = await this.apiWithAuth()
+    return await api.apiStudentGetStudentActiveBookIdSsnGet(input)
+  }
 }
