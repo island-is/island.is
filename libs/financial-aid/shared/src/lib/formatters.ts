@@ -309,7 +309,7 @@ export const getApplicantEmailDataFromEventType = (
         data: {
           title: 'Fjárhagsaðstoð Umsókn móttekin',
           header: `Þú þarft að skila inn gögnum fyrir umsókn maka þíns um fjárhagsaðstoð`,
-          content: `Maki þinn hefur sótt um fjárhagsaðstoð fyrir ${getPeriod.month}. Til að við getum reiknað út fjárhagsaðstoðina og klárað umsóknina þarft þú að <a href="${applicationLink}" target="_blank">senda okkur tekju- og skattagögn.</a> `,
+          content: `Maki þinn hefur sótt um fjárhagsaðstoð fyrir ${getPeriod.month}. Svo hægt sé að reikna út fjárhagsaðstoðina og klára umsóknina þarft þú að <a href="${applicationLink}" target="_blank">senda okkur tekju- og skattagögn.</a>`,
           applicationLinkText: 'Bæta við gögnum',
           applicationChange: 'Umsókn bíður eftir gögnum frá maka',
           applicationMonth: getPeriod.month,
