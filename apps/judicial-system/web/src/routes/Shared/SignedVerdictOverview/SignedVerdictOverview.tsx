@@ -6,6 +6,8 @@ import { ValueType } from 'react-select/src/types'
 import { useIntl } from 'react-intl'
 import compareAsc from 'date-fns/compareAsc'
 import formatISO from 'date-fns/formatISO'
+import differenceInMilliseconds from 'date-fns/differenceInMilliseconds'
+import subMilliseconds from 'date-fns/subMilliseconds'
 
 import {
   CaseDecision,
@@ -117,11 +119,13 @@ export const SignedVerdictOverview: React.FC = () => {
   const { formatMessage } = useIntl()
   const {
     updateCase,
+    isUpdatingCase,
     requestCourtRecordSignature,
     isRequestingCourtRecordSignature,
     extendCase,
     isExtendingCase,
     sendNotification,
+    isSendingNotification,
   } = useCase()
 
   const [getCourtRecordSignatureConfirmation] = useLazyQuery(
@@ -436,20 +440,57 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
+  const handleValidToDateModification = (
+    value: Date | undefined,
+    valid: boolean,
+  ) => {
+    if (value && workingCase.isolationToDate) {
+      const validToDateIsBeforeIsolationToDate =
+        compareAsc(value, new Date(workingCase.isolationToDate)) === -1
+
+      const validToIsolationToDiff = validToDateIsBeforeIsolationToDate
+        ? differenceInMilliseconds(value, new Date(workingCase.isolationToDate))
+        : 0
+
+      if (validToDateIsBeforeIsolationToDate) {
+        setModifiedIsolationToDate({
+          value: subMilliseconds(value, Math.abs(validToIsolationToDiff)),
+          isValid: valid,
+        })
+
+        setIsolationToDateChanged(true)
+      }
+    }
+
+    setModifiedValidToDate({
+      value: value ?? modifiedValidToDate?.value,
+      isValid: valid,
+    })
+
+    setValidToDateChanged(
+      value !== undefined &&
+        workingCase.validToDate !== undefined &&
+        compareAsc(value, new Date(workingCase.validToDate)) !== 0,
+    )
+  }
+
   const handleDateModification = async () => {
-    const formattedValidToDate = modifiedValidToDate?.value
-      ? formatISO(modifiedValidToDate.value, { representation: 'complete' })
-      : undefined
+    if (!caseModifiedExplanation) {
+      return
+    }
 
-    const formattedIsolationToDate = modifiedIsolationToDate?.value
-      ? formatISO(modifiedIsolationToDate.value, { representation: 'complete' })
-      : undefined
+    if (modifiedValidToDate?.value && modifiedIsolationToDate?.value) {
+      const formattedValidToDate = formatISO(modifiedValidToDate.value, {
+        representation: 'complete',
+      })
 
-    if (
-      formattedValidToDate ||
-      formattedIsolationToDate ||
-      caseModifiedExplanation
-    ) {
+      const formattedIsolationToDate = formatISO(
+        modifiedIsolationToDate.value,
+        {
+          representation: 'complete',
+        },
+      )
+
       const update = {
         validToDate: formattedValidToDate,
         isolationToDate: formattedIsolationToDate,
@@ -460,16 +501,16 @@ export const SignedVerdictOverview: React.FC = () => {
         }${createCaseModifiedExplanation(caseModifiedExplanation)}`,
       }
 
-      setWorkingCase({
-        ...workingCase,
-        ...update,
-      })
-
       const updatedCase = await updateCase(workingCase.id, { ...update })
 
       if (updatedCase) {
         await sendNotification(workingCase.id, NotificationType.MODIFIED)
       }
+
+      setWorkingCase({
+        ...workingCase,
+        ...update,
+      })
 
       setIsCaseModificationConfirmed(true)
     }
@@ -609,6 +650,7 @@ export const SignedVerdictOverview: React.FC = () => {
                 )}
                 isPrimaryButtonDisabled={isCaseModificationInvalid()}
                 handlePrimaryButtonClick={() => handleDateModification()}
+                isPrimaryButtonLoading={isSendingNotification || isUpdatingCase}
                 secondaryButtonText={formatMessage(
                   m.sections.modifyDatesModal.secondaryButtonText,
                 )}
@@ -670,21 +712,13 @@ export const SignedVerdictOverview: React.FC = () => {
                       )}
                       selectedDate={modifiedValidToDate?.value}
                       onChange={(value, valid) => {
-                        setModifiedValidToDate({
-                          value: value ?? modifiedValidToDate?.value,
-                          isValid: valid,
-                        })
-
-                        setValidToDateChanged(
-                          value !== undefined &&
-                            workingCase.validToDate !== undefined &&
-                            compareAsc(
-                              value,
-                              new Date(workingCase.validToDate),
-                            ) !== 0,
-                        )
+                        handleValidToDateModification(value, valid)
                       }}
-                      minDate={modifiedIsolationToDate?.value}
+                      minDate={
+                        workingCase.rulingDate
+                          ? new Date(workingCase.rulingDate)
+                          : undefined
+                      }
                       blueBox={false}
                       required
                     />
@@ -713,7 +747,11 @@ export const SignedVerdictOverview: React.FC = () => {
                                 ) !== 0,
                             )
                           }}
-                          minDate={new Date()}
+                          minDate={
+                            workingCase.rulingDate
+                              ? new Date(workingCase.rulingDate)
+                              : undefined
+                          }
                           maxDate={modifiedValidToDate?.value}
                           blueBox={false}
                           required
