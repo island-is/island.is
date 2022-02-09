@@ -15,7 +15,7 @@ const RejectModal = ({
   onSaveApplication,
   isModalVisable,
 }: Props) => {
-  const ref = useRef<HTMLDivElement>(null)
+  const ref = useRef<HTMLSpanElement>(null)
   const [hasError, setHasError] = useState(false)
 
   const setErrorFalse = () => {
@@ -23,11 +23,11 @@ const RejectModal = ({
   }
 
   useEffect(() => {
-    if (hasError && ref && ref.current) {
+    if (hasError) {
       ref.current?.addEventListener('input', setErrorFalse)
-      return () => {
-        ref.current?.removeEventListener('input', setErrorFalse)
-      }
+    }
+    return () => {
+      ref.current?.removeEventListener('input', setErrorFalse)
     }
   }, [hasError])
 
