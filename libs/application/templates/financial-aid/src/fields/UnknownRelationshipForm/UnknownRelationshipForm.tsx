@@ -15,6 +15,14 @@ import * as styles from '../Shared.css'
 import cn from 'classnames'
 import { isValidEmail, isValidNationalId } from '../../lib/utils'
 
+const emailValidationCheck = (errors: any, values: string) => {
+  const { formatMessage } = useIntl()
+  if (errors !== undefined && !isValidEmail(values)) {
+    return formatMessage(error.validation.email)
+  }
+  return undefined
+}
+
 const UnknownRelationshipForm = ({ errors, application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { answers } = application
@@ -29,11 +37,14 @@ const UnknownRelationshipForm = ({ errors, application }: FAFieldBaseProps) => {
 
   const spouseEmail = {
     id: 'relationshipStatus.spouseEmail',
-    error:
-      errors.relationshipStatus !== undefined &&
-      !isValidEmail(getValues('relationshipStatus.spouseEmail'))
-        ? formatMessage(error.validation.email)
-        : undefined,
+    error: emailValidationCheck(
+      errors.relationshipStatus,
+      getValues('relationshipStatus.spouseEmail'),
+    ),
+    // errors.relationshipStatus !== undefined &&
+    // !isValidEmail(getValues('relationshipStatus.spouseEmail'))
+    //   ? formatMessage(error.validation.email)
+    //   : undefined,
   }
   const spouseNationalId = {
     id: 'relationshipStatus.spouseNationalId',
@@ -143,3 +154,6 @@ const UnknownRelationshipForm = ({ errors, application }: FAFieldBaseProps) => {
 }
 
 export default UnknownRelationshipForm
+function getValues(arg0: string): string {
+  throw new Error('Function not implemented.')
+}
