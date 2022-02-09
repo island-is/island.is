@@ -15,6 +15,7 @@ import * as styles from './DocumentLine.css'
 import { User } from 'oidc-client'
 import cn from 'classnames'
 import { m } from '@island.is/service-portal/core'
+import { getAccessToken } from '@island.is/auth/react'
 interface Props {
   documentLine: Document
   userInfo: User
@@ -24,6 +25,7 @@ interface Props {
 const DocumentLine: FC<Props> = ({ documentLine, userInfo, img }) => {
   const { formatMessage } = useLocale()
   const onClickHandler = () => {
+    getAccessToken()
     // Create form elements
     const form = document.createElement('form')
     const documentIdInput = document.createElement('input')
@@ -90,7 +92,7 @@ const DocumentLine: FC<Props> = ({ documentLine, userInfo, img }) => {
               />
             )}
             {documentLine.fileType === 'url' && documentLine.url ? (
-              <Link href={documentLine.url}>
+              <Link href={documentLine.url} onClick={getAccessToken}>
                 <button
                   className={cn(
                     styles.button,
