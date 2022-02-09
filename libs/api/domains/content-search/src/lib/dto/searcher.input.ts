@@ -51,13 +51,18 @@ export class SearcherInput {
   @IsOptional()
   tags?: Tag[]
 
-  @Field(() => SearchableTags, { nullable: true })
-  @IsEnum(SearchableTags)
+  @Field(() => [SearchableTags], { nullable: true })
+  @IsArray()
   @IsOptional()
-  countTag?: SearchableTags
+  countTag?: SearchableTags[] = Object.values(SearchableTags)
 
   @Field(() => Boolean, { nullable: true })
   @IsBoolean()
   @IsOptional()
   countTypes?: boolean = false
+
+  @Field(() => Boolean, { nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  countProcessEntry?: boolean = false
 }
