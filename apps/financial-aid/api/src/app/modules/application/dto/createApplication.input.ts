@@ -16,10 +16,6 @@ import { CreateApplicationFileInput } from '../../file/dto'
 export class CreateApplicationInput implements CreateApplication {
   @Allow()
   @Field()
-  readonly nationalId!: string
-
-  @Allow()
-  @Field()
   readonly name!: string
 
   @Allow()

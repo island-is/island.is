@@ -11,7 +11,9 @@ import {
   Amount,
   calculateAcceptedAidFinalAmount,
   calculateTaxOfAmount,
+  FamilyStatus,
   HomeCircumstances,
+  showSpouseData,
 } from '@island.is/financial-aid/shared/lib'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
 import cn from 'classnames'
@@ -24,7 +26,7 @@ interface Props {
   onSaveApplication: (amount: Amount) => void
   isModalVisable: boolean
   homeCircumstances: HomeCircumstances
-  spouseNationalId?: string
+  familyStatus: FamilyStatus
 }
 
 interface calculationsState {
@@ -43,7 +45,7 @@ const AcceptModal = ({
   onSaveApplication,
   isModalVisable,
   homeCircumstances,
-  spouseNationalId,
+  familyStatus,
 }: Props) => {
   const router = useRouter()
 
@@ -55,7 +57,7 @@ const AcceptModal = ({
     if (municipality && homeCircumstances) {
       return aidCalculator(
         homeCircumstances,
-        spouseNationalId
+        showSpouseData[familyStatus]
           ? municipality.cohabitationAid
           : municipality.individualAid,
       )

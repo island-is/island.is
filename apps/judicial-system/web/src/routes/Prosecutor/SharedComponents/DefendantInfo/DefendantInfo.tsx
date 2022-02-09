@@ -2,33 +2,43 @@ import React, { useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 
-import { CaseGender } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
-import { BlueBox } from '@island.is/judicial-system-web/src/components'
-import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
-import { core } from '@island.is/judicial-system-web/messages'
 import {
-  removeTabsValidateAndSet,
-  setAndSendToServer,
-  validateAndSendToServer,
+  Defendant,
+  Gender,
+  UpdateDefendant,
+} from '@island.is/judicial-system/types'
+import { BlueBox } from '@island.is/judicial-system-web/src/components'
+import { Box, Icon, Input, RadioButton, Text } from '@island.is/island-ui/core'
+import { core } from '@island.is/judicial-system-web/messages'
+
+import { Validation } from '@island.is/judicial-system-web/src/utils/validate'
+import {
+  removeErrorMessageIfValid,
+  validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import useNationalRegistry from '@island.is/judicial-system-web/src/utils/hooks/useNationalRegistry'
 
 import * as styles from './DefendantInfo.css'
 
 interface Props {
-  workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  defendant: Defendant
+  onChange: (
+    defendantId: string,
+    updatedDefendant: UpdateDefendant,
+  ) => Promise<void>
+  updateDefendantState: (defendantId: string, update: UpdateDefendant) => void
+  onDelete?: (defendant: Defendant) => Promise<void>
 }
 
 const DefendantInfo: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase } = props
-  const { updateCase } = useCase()
+  const { defendant, onDelete, onChange, updateDefendantState } = props
   const { formatMessage } = useIntl()
+  const { person, error } = useNationalRegistry(defendant.nationalId)
 
   const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>(
     '',
   )
+  const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
 
   const [
     accusedNameErrorMessage,
@@ -40,73 +50,77 @@ const DefendantInfo: React.FC<Props> = (props) => {
     setAccusedAddressErrorMessage,
   ] = useState<string>('')
 
+  const mapNationalRegistryGenderToGender = (gender: string) => {
+    return gender === 'male'
+      ? Gender.MALE
+      : gender === 'female'
+      ? Gender.FEMALE
+      : Gender.OTHER
+  }
+
   return (
     <BlueBox>
-      <Box marginBottom={2}>
+      <Box marginBottom={2} display="flex" justifyContent="spaceBetween">
         <Text as="h4" variant="h4">
           {formatMessage(core.gender)}{' '}
           <Text as="span" color="red600" fontWeight="semiBold">
             *
           </Text>
         </Text>
+        {onDelete && (
+          <button
+            onClick={() => onDelete(defendant)}
+            aria-label="Remove defendant"
+          >
+            <Icon icon="close" color="blue400" />
+          </button>
+        )}
       </Box>
       <Box marginBottom={2} className={styles.genderContainer}>
         <Box className={styles.genderColumn}>
           <RadioButton
-            name="accusedGender"
-            id="genderMale"
+            name={`accusedGender${defendant.id}`}
+            id={`genderMale${defendant.id}`}
             label={formatMessage(core.male)}
-            value={CaseGender.MALE}
-            checked={workingCase.accusedGender === CaseGender.MALE}
-            onChange={() =>
-              setAndSendToServer(
-                'accusedGender',
-                CaseGender.MALE,
-                workingCase,
-                setWorkingCase,
-                updateCase,
-              )
-            }
+            value={Gender.MALE}
+            checked={defendant.gender === Gender.MALE}
+            onChange={() => {
+              onChange(defendant.id, {
+                gender: Gender.MALE,
+              })
+            }}
             large
             backgroundColor="white"
           />
         </Box>
         <Box className={styles.genderColumn}>
           <RadioButton
-            name="accusedGender"
-            id="genderFemale"
+            name={`accusedGender${defendant.id}`}
+            id={`genderFemale${defendant.id}`}
             label={formatMessage(core.female)}
-            value={CaseGender.FEMALE}
-            checked={workingCase.accusedGender === CaseGender.FEMALE}
-            onChange={() =>
-              setAndSendToServer(
-                'accusedGender',
-                CaseGender.FEMALE,
-                workingCase,
-                setWorkingCase,
-                updateCase,
-              )
-            }
+            value={Gender.FEMALE}
+            checked={defendant.gender === Gender.FEMALE}
+            onChange={() => {
+              onChange(defendant.id, {
+                gender: Gender.FEMALE,
+              })
+            }}
             large
             backgroundColor="white"
           />
         </Box>
         <Box className={styles.genderColumn}>
           <RadioButton
-            name="accusedGender"
-            id="genderOther"
+            name={`accusedGender${defendant.id}`}
+            id={`genderOther${defendant.id}`}
             label={formatMessage(core.otherGender)}
-            value={CaseGender.OTHER}
-            checked={workingCase.accusedGender === CaseGender.OTHER}
-            onChange={() =>
-              setAndSendToServer(
-                'accusedGender',
-                CaseGender.OTHER,
-                workingCase,
-                setWorkingCase,
-                updateCase,
-              )
-            }
+            value={Gender.OTHER}
+            checked={defendant.gender === Gender.OTHER}
+            onChange={() => {
+              onChange(defendant.id, {
+                gender: Gender.OTHER,
+              })
+            }}
             large
             backgroundColor="white"
           />
@@ -116,28 +130,47 @@ const DefendantInfo: React.FC<Props> = (props) => {
         <InputMask
           mask="999999-9999"
           maskPlaceholder={null}
-          value={workingCase.accusedNationalId || ''}
-          onChange={(event) =>
-            removeTabsValidateAndSet(
-              'accusedNationalId',
-              event,
-              ['empty', 'national-id'],
-              workingCase,
-              setWorkingCase,
+          value={defendant.nationalId ?? ''}
+          onChange={(evt) => {
+            setNationalIdErrorMessage('')
+            setNationalIdNotFound(false)
+            removeErrorMessageIfValid(
+              ['empty', 'national-id'] as Validation[],
+              evt.target.value,
               nationalIdErrorMessage,
               setNationalIdErrorMessage,
             )
-          }
-          onBlur={(event) =>
-            validateAndSendToServer(
-              'accusedNationalId',
-              event.target.value,
-              ['empty', 'national-id'],
-              workingCase,
-              updateCase,
-              setNationalIdErrorMessage,
-            )
-          }
+
+            updateDefendantState(defendant.id, {
+              nationalId: evt.target.value,
+            })
+          }}
+          onBlur={async (evt) => {
+            if (person?.items?.length === 1 && !error) {
+              onChange(defendant.id, {
+                nationalId: evt.target.value,
+                name: person.items[0].name,
+                gender: mapNationalRegistryGenderToGender(
+                  person.items[0].gender,
+                ),
+                address: person.items[0].permanent_address.street.nominative,
+              })
+
+              setAccusedNameErrorMessage('')
+              setAccusedAddressErrorMessage('')
+              setNationalIdErrorMessage('')
+            } else {
+              setNationalIdNotFound(true)
+
+              validateAndSetErrorMessage(
+                ['empty', 'national-id'],
+                evt.target.value,
+                setNationalIdErrorMessage,
+              )
+
+              onChange(defendant.id, { nationalId: evt.target.value })
+            }
+          }}
         >
           <Input
             data-testid="nationalId"
@@ -150,6 +183,11 @@ const DefendantInfo: React.FC<Props> = (props) => {
             required
           />
         </InputMask>
+        {defendant.nationalId?.length === 11 && nationalIdNotFound && (
+          <Text color="red600" variant="eyebrow" marginTop={1}>
+            {formatMessage(core.nationalIdNotFoundInNationalRegistry)}
+          </Text>
+        )}
       </Box>
       <Box marginBottom={2}>
         <Input
@@ -158,30 +196,30 @@ const DefendantInfo: React.FC<Props> = (props) => {
           autoComplete="off"
           label={formatMessage(core.fullName)}
           placeholder={formatMessage(core.fullName)}
-          value={workingCase.accusedName || ''}
+          value={defendant.name ?? ''}
           errorMessage={accusedNameErrorMessage}
           hasError={accusedNameErrorMessage !== ''}
-          onChange={(event) =>
-            removeTabsValidateAndSet(
-              'accusedName',
-              event,
-              ['empty'],
-              workingCase,
-              setWorkingCase,
+          onChange={(evt) => {
+            removeErrorMessageIfValid(
+              ['empty'] as Validation[],
+              evt.target.value,
               accusedNameErrorMessage,
               setAccusedNameErrorMessage,
             )
-          }
-          onBlur={(event) =>
-            validateAndSendToServer(
-              'accusedName',
-              event.target.value,
-              ['empty'],
-              workingCase,
-              updateCase,
+
+            updateDefendantState(defendant.id, {
+              name: evt.target.value,
+            })
+          }}
+          onBlur={(evt) => {
+            validateAndSetErrorMessage(
+              ['empty'] as Validation[],
+              evt.target.value,
               setAccusedNameErrorMessage,
             )
-          }
+
+            onChange(defendant.id, { name: evt.target.value })
+          }}
           required
         />
       </Box>
@@ -191,33 +229,33 @@ const DefendantInfo: React.FC<Props> = (props) => {
         autoComplete="off"
         label={formatMessage(core.addressOrResidence)}
         placeholder={formatMessage(core.addressOrResidence)}
-        value={workingCase.accusedAddress || ''}
+        value={defendant.address ?? ''}
         errorMessage={accusedAddressErrorMessage}
         hasError={
           Boolean(accusedAddressErrorMessage) &&
           accusedAddressErrorMessage !== ''
         }
-        onChange={(event) =>
-          removeTabsValidateAndSet(
-            'accusedAddress',
-            event,
-            ['empty'],
-            workingCase,
-            setWorkingCase,
+        onChange={(evt) => {
+          removeErrorMessageIfValid(
+            ['empty'] as Validation[],
+            evt.target.value,
             accusedAddressErrorMessage,
             setAccusedAddressErrorMessage,
           )
-        }
-        onBlur={(event) =>
-          validateAndSendToServer(
-            'accusedAddress',
-            event.target.value,
-            ['empty'],
-            workingCase,
-            updateCase,
+
+          updateDefendantState(defendant.id, {
+            address: evt.target.value,
+          })
+        }}
+        onBlur={(evt) => {
+          validateAndSetErrorMessage(
+            ['empty'] as Validation[],
+            evt.target.value,
             setAccusedAddressErrorMessage,
           )
-        }
+
+          onChange(defendant.id, { address: evt.target.value })
+        }}
         required
       />
     </BlueBox>

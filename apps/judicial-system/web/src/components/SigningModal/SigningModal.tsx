@@ -162,11 +162,11 @@ const SigningModal: React.FC<SigningModalProps> = ({
       }
       handlePrimaryButtonClick={() => {
         window.open(Constants.FEEDBACK_FORM_URL, '_blank')
-        router.push(Constants.REQUEST_LIST_ROUTE)
+        router.push(`${Constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`)
       }}
       handleSecondaryButtonClick={async () => {
         if (rulingSignatureConfirmationResponse?.documentSigned === true) {
-          router.push(Constants.REQUEST_LIST_ROUTE)
+          router.push(`${Constants.SIGNED_VERDICT_OVERVIEW}/${workingCase.id}`)
         } else {
           setModalVisible(false)
         }

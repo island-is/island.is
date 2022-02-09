@@ -1,4 +1,7 @@
-import { Application, getValueViaPath } from '@island.is/application/core'
+import {
+  ApplicationWithAttachments as Application,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { S3 } from 'aws-sdk'
 import AmazonS3URI from 'amazon-s3-uri'
 import { logger } from '@island.is/logging'
@@ -32,7 +35,7 @@ export class AttachmentS3Service {
         key: string
         name: string
       }>
-
+      if (!answers) continue
       const list = await this.toDocumentDataList(
         answers,
         attachmentAnswerKeys[i],

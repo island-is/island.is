@@ -28,7 +28,7 @@ import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
-  lightThemes,
+  getThemeConfig,
   OrganizationSlice,
   OrganizationWrapper,
   SliceDropdown,
@@ -59,7 +59,8 @@ const SubPage: Screen<SubPageProps> = ({
 
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
-  useContentfulId(organizationPage.id)
+
+  useContentfulId(organizationPage.id, subpage.id)
 
   const pageUrl = `${organizationPage.slug}/${subpage.slug}`
   const parentSubpageUrl = `${organizationPage.slug}/${subpage.parentSubpage}`
@@ -238,14 +239,12 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Organization subpage not found')
   }
 
-  const lightTheme = lightThemes.includes(getOrganizationPage.theme)
-
   return {
     organizationPage: getOrganizationPage,
     subpage: getOrganizationSubpage,
     namespace,
     showSearchInHeader: false,
-    ...(lightTheme ? {} : { darkTheme: true }),
+    ...getThemeConfig(getOrganizationPage.theme),
   }
 }
 

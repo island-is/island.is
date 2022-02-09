@@ -16,7 +16,7 @@ import { MunicipalityModel } from './models'
 
 import { apiBasePath, StaffRole } from '@island.is/financial-aid/shared/lib'
 import type { Staff } from '@island.is/financial-aid/shared/lib'
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { StaffGuard } from '../../guards/staff.guard'
 import { StaffRolesRules } from '../../decorators/staffRole.decorator'
 import { CurrentStaff, CurrentUser } from '../../decorators'
@@ -26,6 +26,7 @@ import {
   CreateMunicipalityDto,
 } from './dto'
 import { CreateStaffDto } from '../staff/dto'
+import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
 
 @UseGuards(IdsUserGuard)
 @Controller(`${apiBasePath}/municipality`)
@@ -33,6 +34,8 @@ import { CreateStaffDto } from '../staff/dto'
 export class MunicipalityController {
   constructor(private readonly municipalityService: MunicipalityService) {}
 
+  @UseGuards(ScopesGuard)
+  @Scopes(MunicipalitiesFinancialAidScope.read)
   @Get(':id')
   @ApiOkResponse({
     type: MunicipalityModel,

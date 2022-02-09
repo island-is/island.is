@@ -40,7 +40,7 @@ import {
   QueryGetOrganizationArgs,
   Query,
 } from '../../../graphql/schema'
-import { useLinkResolver } from '@island.is/web/hooks'
+import { useLinkResolver, usePlausible } from '@island.is/web/hooks'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import {
   ServiceWebSearchInput,
@@ -67,6 +67,10 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
 }) => {
   const Router = useRouter()
   const n = useNamespace(namespace)
+  usePlausible('Search Query', {
+    query: (q ?? '').trim().toLowerCase(),
+    source: 'Service Web',
+  })
   const { linkResolver } = useLinkResolver()
 
   const institutionSlug = getSlugPart(Router.asPath, 2)
@@ -92,13 +96,11 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
 
-  const pageTitle = `${n('search', 'Leit')} | ${n(
+  const pageTitle = `${n('search', 'Leit')} - ${n(
     'serviceWeb',
     'Þjónustuvefur',
   )} Ísland.is`
-  const headerTitle = institutionSlug
-    ? organization.serviceWebTitle ?? pageTitle
-    : pageTitle
+  const headerTitle = `${n('serviceWeb', 'Þjónustuvefur')} Ísland.is`
 
   return (
     <ServiceWebWrapper

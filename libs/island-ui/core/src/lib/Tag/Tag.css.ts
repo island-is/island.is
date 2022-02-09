@@ -50,8 +50,8 @@ export const variants = styleVariants({
     backgroundColor: theme.color.red100,
   },
   mint: {
-    color: theme.color.mint600,
-    backgroundColor: theme.color.mint100,
+    color: theme.color.mint800,
+    backgroundColor: theme.color.mint200,
   },
   rose: {
     color: theme.color.roseTinted400,
@@ -103,6 +103,10 @@ export const outlined = style({
       borderColor: theme.color.dark200,
       color: theme.color.dark400,
     },
+    [`&${variants.mint}`]: {
+      borderColor: theme.color.mint200,
+      color: theme.color.mint800,
+    },
   },
 })
 
@@ -113,8 +117,8 @@ export const active = style({
       color: theme.color.red600,
     },
     [`&${variants.blue}`]: {
-      backgroundColor: theme.color.white,
-      color: theme.color.blue400,
+      backgroundColor: theme.color.blue400,
+      color: theme.color.white,
     },
     [`&${variants.blueberry}`]: {
       backgroundColor: theme.color.white,

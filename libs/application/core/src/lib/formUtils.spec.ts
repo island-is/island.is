@@ -123,7 +123,6 @@ describe('formatText', () => {
     answers: { someAnswer: 'awesome' },
     assignees: [],
     applicant: '',
-    attachments: {},
     created: new Date(),
     externalData: {},
     id: '',

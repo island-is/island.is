@@ -214,6 +214,7 @@ const CustomHeader = ({
         type="button"
         onClick={decreaseMonth}
         className={styles.decreaseButton}
+        aria-label="Previous month"
       >
         <Icon icon="chevronBack" type="outline" color="blue400" />
       </button>
@@ -224,6 +225,7 @@ const CustomHeader = ({
           </Text>
         </VisuallyHidden>
         <select
+          aria-label="Select month"
           className={styles.headerSelect}
           value={month}
           onChange={({ target: { value } }) =>
@@ -263,6 +265,7 @@ const CustomHeader = ({
         type="button"
         onClick={increaseMonth}
         className={styles.increaseButton}
+        aria-label="Next month"
       >
         <Icon icon="chevronForward" type="outline" color="blue400" />
       </button>

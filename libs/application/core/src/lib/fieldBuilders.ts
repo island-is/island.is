@@ -230,6 +230,7 @@ export function buildFileUploadField(
     uploadMultiple,
     uploadAccept,
     maxSize,
+    forImageUpload,
   } = data
   return {
     ...extractCommonFields(data),
@@ -241,6 +242,7 @@ export function buildFileUploadField(
     uploadMultiple,
     uploadAccept,
     maxSize,
+    forImageUpload,
     type: FieldTypes.FILEUPLOAD,
     component: FieldComponents.FILEUPLOAD,
   }

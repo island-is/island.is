@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 
 import {
   CaseFileList,
-  CaseNumbers,
+  CaseInfo,
   Decision,
   FormContentContainer,
   FormFooter,
@@ -54,8 +54,8 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
             {formatMessage(m.title)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={5}>
-          <CaseNumbers workingCase={workingCase} />
+        <Box component="section" marginBottom={7}>
+          <CaseInfo workingCase={workingCase} userRole={user?.role} />
         </Box>
         <Box component="section" marginBottom={5}>
           <Accordion>
@@ -93,7 +93,7 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'prosecutorDemands',
-                event,
+                event.target.value,
                 ['empty'],
                 workingCase,
                 setWorkingCase,
@@ -137,7 +137,7 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'courtCaseFacts',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -184,7 +184,7 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'courtLegalArguments',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,

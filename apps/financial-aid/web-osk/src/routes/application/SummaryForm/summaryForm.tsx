@@ -120,7 +120,7 @@ const SummaryForm = () => {
         setIsLoading(false)
         setFormError({
           status: true,
-          message: 'Obbobbob einhvað fór úrskeiðis',
+          message: 'Obbobbob eitthvað fór úrskeiðis',
         })
 
         const findErrorInFormInfo = formInfoOverview.find(

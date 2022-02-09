@@ -5,9 +5,11 @@ import { Envs } from '../environments'
 import { ChartName, ChartNames, charts } from '../uber-charts/all-charts'
 
 export const renderEnv = (env: OpsEnv, chartName: ChartName) => {
+  let uberChart = new UberChart(Envs[env])
   process.stdout.write(
     dumpYaml(
-      generateYamlForEnv(new UberChart(Envs[env]), ...charts[chartName][env]),
+      uberChart,
+      generateYamlForEnv(uberChart, ...charts[chartName][env]),
     ),
   )
 }
