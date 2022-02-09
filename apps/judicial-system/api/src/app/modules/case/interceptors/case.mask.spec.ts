@@ -105,6 +105,7 @@ function createCase(type: CaseType): Case {
         name: '-',
         address: '-',
         gender: Gender.FEMALE,
+        noNationalId: false,
       },
     ],
     court: {
@@ -188,6 +189,7 @@ function maskedCase(theCase: Case) {
       created: defendant.created,
       modified: defendant.modified,
       nationalId: defendant.nationalId,
+      noNationalId: defendant.noNationalId,
       name: defendant.name,
     })),
     defenderName: theCase.defenderName,
