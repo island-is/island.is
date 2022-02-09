@@ -114,12 +114,20 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
             extractStringsFromObject(subArticle.body),
           )
           searchableContent.push(parentContent)
+
+          const hasMainProcessEntry =
+            mapped.processEntry?.processTitle &&
+            mapped.processEntry?.processLink
+
+          const processEntryCount =
+            (hasMainProcessEntry ? 1 : 0) + numberOfProcessEntries(mapped.body)
+
           return {
             _id: mapped.id,
             title: mapped.title,
             content: searchableContent.join(' '), // includes all searchable content in parent and children
             contentWordCount: parentContent.split(/\s+/).length,
-            processEntryCount: numberOfProcessEntries(mapped.body),
+            processEntryCount,
             ...numberOfLinks(mapped.body),
             type: 'webArticle',
             termPool: createTerms([
@@ -140,8 +148,8 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
                 type: 'category',
               },
               {
-                key: entry.fields?.processEntry ? 'true' : 'false',
-                value: entry.fields?.processEntry ? 'Yes' : 'No',
+                key: processEntryCount > 0 ? 'true' : 'false',
+                value: processEntryCount > 0 ? 'Yes' : 'No',
                 type: 'processentry',
               },
               ...(mapped.otherCategories ?? []).map((x) => ({

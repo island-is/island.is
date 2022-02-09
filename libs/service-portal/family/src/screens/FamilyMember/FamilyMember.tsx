@@ -1,4 +1,5 @@
 import React from 'react'
+import { PlausiblePageviewDetail } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import { useQuery, gql } from '@apollo/client'
@@ -17,6 +18,7 @@ import {
   ServicePortalModuleComponent,
   UserInfoLine,
   m,
+  ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Parents } from '../../components/Parents/Parents'
@@ -31,6 +33,10 @@ const dataNotFoundMessage = defineMessage({
 const FamilyMember: ServicePortalModuleComponent = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
+
+  PlausiblePageviewDetail(
+    ServicePortalPath.FamilyMember.replace(':nationalId', 'child'),
+  )
 
   const { data, loading, error, called } = useQuery<Query>(
     NATIONAL_REGISTRY_CHILDREN,
