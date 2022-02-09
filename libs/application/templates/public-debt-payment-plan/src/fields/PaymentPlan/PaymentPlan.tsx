@@ -199,19 +199,27 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
         <Text variant="small" fontWeight="semiBold">
           {formatMessage(paymentPlan.labels.sliderDescriptor, {
             count,
-            monthlyPayments: HtmlParser(
-              `<span class="${styles.valueLabel}">${formatIsk(
-                monthlyPayments,
-              )}</span>`,
+            monthlyPayments: (
+              <>
+                {HtmlParser(
+                  `<span class="${styles.valueLabel}">${formatIsk(
+                    monthlyPayments,
+                  )}</span>`,
+                )}
+              </>
             ),
             monthsAmount:
               count === 0 || count === 1
                 ? distributionData.payments.length
                 : distributionData.payments.length - 1,
-            lastMonthsPayment: HtmlParser(
-              `<span class="${styles.valueLabel}">${formatIsk(
-                lastMonthsPayment,
-              )}</span>`,
+            lastMonthsPayment: (
+              <>
+                {HtmlParser(
+                  `<span class="${styles.valueLabel}">${formatIsk(
+                    lastMonthsPayment,
+                  )}</span>`,
+                )}
+              </>
             ),
             lastMonth: distributionData.payments.length,
           })}
