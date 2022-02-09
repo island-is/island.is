@@ -20,6 +20,7 @@ function maskCase(theCase: Case): Case {
         created: defendant.created,
         modified: defendant.modified,
         nationalId: defendant.nationalId,
+        noNationalId: defendant.noNationalId,
         name: defendant.name,
       })),
       defenderName: theCase.defenderName,
