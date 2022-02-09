@@ -345,7 +345,9 @@ const Layout: NextComponentType<
             )}
             <Footer
               topLinks={footerUpperInfo}
-              topLinksContact={footerUpperContact}
+              {...(activeLocale === 'is'
+                ? { linkToHelpWeb: linkResolver('helpdesk').href }
+                : { topLinksContact: footerUpperContact })}
               bottomLinks={footerLowerMenu}
               middleLinks={footerMiddleMenu}
               bottomLinksTitle={t.siteExternalTitle}
@@ -471,6 +473,7 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
       })
       .then((res) => res.data.getGroupedMenu),
   ])
+
   const alertBannerId = `alert-${stringHash(JSON.stringify(alertBanner))}`
   const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
 
