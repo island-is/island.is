@@ -18,7 +18,7 @@ import {
   addMediumText,
   addNormalText,
   setLineGap,
-  setPageNumbers,
+  addFooter,
   setTitle,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
@@ -67,13 +67,25 @@ function constructCustodyNoticePdf(
   )
   addNormalText(
     doc,
-    `kt. ${formatNationalId(
+    `${
       theCase.defendants &&
-        theCase.defendants.length > 0 &&
-        theCase.defendants[0].nationalId
+      theCase.defendants.length > 0 &&
+      theCase.defendants[0].noNationalId
+        ? 'fd.'
+        : 'kt.'
+    } ${
+      theCase.defendants &&
+      theCase.defendants.length > 0 &&
+      theCase.defendants[0].noNationalId
         ? theCase.defendants[0].nationalId
-        : 'ekki skráð',
-    )}`,
+        : formatNationalId(
+            theCase.defendants &&
+              theCase.defendants.length > 0 &&
+              theCase.defendants[0].nationalId
+              ? theCase.defendants[0].nationalId
+              : 'ekki skráð',
+          )
+    }`,
     'Helvetica',
   )
   addNormalText(
@@ -169,7 +181,7 @@ function constructCustodyNoticePdf(
     }
   }
 
-  setPageNumbers(doc)
+  addFooter(doc)
 
   doc.end()
 

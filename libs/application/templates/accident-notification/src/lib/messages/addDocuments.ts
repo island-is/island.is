@@ -51,8 +51,8 @@ export const addDocuments = {
     },
     submitButtonLabel: {
       id: 'an.application:addDocuments.general.submitButtonLabel',
-      defaultMessage: 'Senda inn skjöl',
-      description: 'Submit button label',
+      defaultMessage: 'Halda áfram',
+      description: 'Attachments in review button label',
     },
   }),
   injuryCertificate: defineMessages({

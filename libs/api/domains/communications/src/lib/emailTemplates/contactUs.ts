@@ -6,7 +6,7 @@ import { environment } from '../environments/environment'
 export const getTemplate = (input: ContactUsInput): SendMailOptions => ({
   from: {
     name: 'Island.is communications',
-    address: environment.emailOptions.sendFrom,
+    address: environment.emailOptions.sendFrom!,
   },
   replyTo: {
     name: input.name,
@@ -15,7 +15,7 @@ export const getTemplate = (input: ContactUsInput): SendMailOptions => ({
   to: [
     {
       name: 'Island.is þjónustuborð',
-      address: environment.emailOptions.contactUsDestination,
+      address: environment.emailOptions.contactUsDestination!,
     },
   ],
   subject: `Contact us: ${input.name}`,
@@ -23,7 +23,7 @@ export const getTemplate = (input: ContactUsInput): SendMailOptions => ({
     Contact us:
     Subject: ${input.subject}
     Message: ${input.message}
-    
+
     Name: ${input.name}
     Email: ${input.email}
     Phone: ${input.phone}

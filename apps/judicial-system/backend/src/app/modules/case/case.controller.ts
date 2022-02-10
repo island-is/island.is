@@ -44,7 +44,6 @@ import {
 import { UserService } from '../user'
 import { CaseEvent, EventService } from '../event'
 import {
-  CaseCourtRestrictionGuard,
   CaseExistsGuard,
   CaseReadGuard,
   CaseWriteGuard,
@@ -258,13 +257,7 @@ export class CaseController {
     return theCase
   }
 
-  @UseGuards(
-    JwtAuthGuard,
-    RolesGuard,
-    CaseExistsGuard,
-    CaseReadGuard,
-    CaseCourtRestrictionGuard,
-  )
+  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('case/:caseId/request')
   @Header('Content-Type', 'application/pdf')
@@ -286,13 +279,7 @@ export class CaseController {
     res.end(pdf)
   }
 
-  @UseGuards(
-    JwtAuthGuard,
-    RolesGuard,
-    CaseExistsGuard,
-    CaseReadGuard,
-    CaseCourtRestrictionGuard,
-  )
+  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
   @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('case/:caseId/courtRecord')
   @Header('Content-Type', 'application/pdf')
@@ -302,6 +289,7 @@ export class CaseController {
   })
   async getCourtRecordPdf(
     @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
   ): Promise<void> {
@@ -309,18 +297,12 @@ export class CaseController {
       `Getting the court record for case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.caseService.getCourtRecordPdf(theCase)
+    const pdf = await this.caseService.getCourtRecordPdf(theCase, user)
 
     res.end(pdf)
   }
 
-  @UseGuards(
-    JwtAuthGuard,
-    RolesGuard,
-    CaseExistsGuard,
-    CaseReadGuard,
-    CaseCourtRestrictionGuard,
-  )
+  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
   @RolesRules(prosecutorRule, judgeRule, registrarRule, staffRule)
   @Get('case/:caseId/ruling')
   @Header('Content-Type', 'application/pdf')

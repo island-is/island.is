@@ -11,7 +11,6 @@ export function transformCase(theCase: Case): Case {
     requestProsecutorOnlySession: theCase.requestProsecutorOnlySession ?? false,
     isClosedCourtHidden: theCase.isClosedCourtHidden ?? false,
     isHeightenedSecurityLevel: theCase.isHeightenedSecurityLevel ?? false,
-    isMasked: theCase.isMasked ?? false,
     isValidToDateInThePast: theCase.validToDate
       ? Date.now() > new Date(theCase.validToDate).getTime()
       : theCase.isValidToDateInThePast,

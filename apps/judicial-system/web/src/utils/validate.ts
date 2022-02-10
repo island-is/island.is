@@ -6,9 +6,27 @@ export type Validation =
   | 'time-format'
   | 'police-casenumber-format'
   | 'national-id'
+  | 'date-of-birth'
   | 'email-format'
   | 'phonenumber'
   | 'date-format'
+
+const someDefendantIsInvalid = (workingCase: Case) => {
+  return (
+    workingCase.defendants &&
+    workingCase.defendants.some(
+      (defendant) =>
+        !defendant.gender ||
+        !validate(defendant.nationalId || '', 'empty').isValid ||
+        !validate(
+          defendant.nationalId || '',
+          defendant.noNationalId ? 'date-of-birth' : 'national-id',
+        ).isValid ||
+        !validate(defendant.name || '', 'empty').isValid ||
+        !validate(defendant.address || '', 'empty').isValid,
+    )
+  )
+}
 
 export const validate = (value: string, validation: Validation) => {
   if (!value && validation === 'empty') {
@@ -45,6 +63,14 @@ export const getRegexByValidation = (validation: Validation) => {
         regex: new RegExp(/^\d{6}(-?\d{4})?$/g),
         errorMessage: 'Dæmi: 000000-0000',
       }
+    case 'date-of-birth': {
+      return {
+        regex: new RegExp(
+          /^(0[1-9]|[12][0-9]|3[01])[.](0[1-9]|1[012])[.](19|20)\d\d$/g,
+        ),
+        errorMessage: 'Dæmi: 00.00.0000',
+      }
+    }
     case 'email-format':
       return {
         regex: new RegExp(/^$|^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g),
@@ -71,10 +97,7 @@ export const isAccusedStepValidRC = (workingCase: Case) => {
       .isValid &&
     workingCase.defendants &&
     workingCase.defendants.length > 0 &&
-    workingCase.defendants[0].gender &&
-    validate(workingCase.defendants[0].nationalId || '', 'empty').isValid &&
-    validate(workingCase.defendants[0].nationalId || '', 'national-id')
-      .isValid &&
+    !someDefendantIsInvalid(workingCase) &&
     validate(workingCase.defendants[0].name || '', 'empty').isValid &&
     validate(workingCase.defendants[0].address || '', 'empty').isValid &&
     (workingCase.type === CaseType.CUSTODY
@@ -87,17 +110,6 @@ export const isAccusedStepValidRC = (workingCase: Case) => {
 }
 
 export const isDefendantStepValidIC = (workingCase: Case) => {
-  const someDefendantIsInvalid =
-    workingCase.defendants &&
-    workingCase.defendants.some(
-      (defendant) =>
-        !defendant.gender ||
-        !validate(defendant.nationalId || '', 'empty').isValid ||
-        !validate(defendant.nationalId || '', 'national-id').isValid ||
-        !validate(defendant.name || '', 'empty').isValid ||
-        !validate(defendant.address || '', 'empty').isValid,
-    )
-
   return (
     validate(workingCase.policeCaseNumber, 'empty').isValid &&
     validate(workingCase.policeCaseNumber, 'police-casenumber-format')
@@ -105,7 +117,7 @@ export const isDefendantStepValidIC = (workingCase: Case) => {
     workingCase.type &&
     workingCase.defendants &&
     workingCase.defendants.length > 0 &&
-    !someDefendantIsInvalid &&
+    !someDefendantIsInvalid(workingCase) &&
     validate(workingCase.defenderEmail || '', 'email-format').isValid &&
     validate(workingCase.defenderPhoneNumber || '', 'phonenumber').isValid
   )

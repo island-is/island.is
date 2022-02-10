@@ -6,5 +6,5 @@ export class IsHealthInsuredInput {
   @Field({ nullable: true })
   @IsDate()
   @IsOptional()
-  date?: Date | null
+  date?: Date
 }

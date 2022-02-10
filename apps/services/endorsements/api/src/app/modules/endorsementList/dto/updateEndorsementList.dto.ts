@@ -7,7 +7,7 @@ export class UpdateEndorsementListDto {
   @IsString()
   title!: string
 
-  @ApiProperty({ type: String, nullable: true })
+  @ApiProperty({ type: String, nullable: true, required: false })
   @IsOptional()
   @IsString()
   description = ''

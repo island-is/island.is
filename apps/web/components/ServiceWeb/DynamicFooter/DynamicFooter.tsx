@@ -32,7 +32,7 @@ export const DynamicFooter = ({
   ) : (
     <ServiceWebFooter
       title={organization.title}
-      logoSrc={organization.logo.url}
+      logoSrc={organization.logo?.url}
       phone={organization.phone}
       contactLink={contactLink}
     />
