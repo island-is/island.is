@@ -154,6 +154,7 @@
   - [Regulations](libs/clients/regulations/README.md)
   - [RSK](libs/clients/rsk/README.md)
     - [Clients Company Registry](libs/clients/rsk/company-registry/README.md)
+    - [Clients RSK Personal Tax Return](libs/clients/rsk/personal-tax-return/README.md)
     - [Procuring](libs/clients/rsk/procuring/README.md)
     - [V1](libs/clients/rsk/v1/README.md)
   - [Syslumenn](libs/clients/syslumenn/README.md)

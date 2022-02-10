@@ -127,6 +127,16 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
   return (
     <>
       <FormContentContainer>
+        {workingCase.requestProsecutorOnlySession &&
+          workingCase.prosecutorOnlySessionRequest && (
+            <Box marginBottom={workingCase.comments ? 2 : 5}>
+              <AlertMessage
+                type="warning"
+                title={formatMessage(m.requestProsecutorOnlySession)}
+                message={workingCase.prosecutorOnlySessionRequest}
+              />
+            </Box>
+          )}
         {workingCase.comments && (
           <Box marginBottom={5}>
             <AlertMessage
