@@ -68,7 +68,7 @@ describe('ApplicationController - Spouse', () => {
     const expected: SpouseResponse = {
       hasPartnerApplied: false,
       hasFiles: false,
-      spouseName: '',
+      applicantName: '',
     }
 
     beforeEach(async () => {
@@ -89,14 +89,14 @@ describe('ApplicationController - Spouse', () => {
     const spouse: SpouseResponse = {
       hasPartnerApplied: true,
       hasFiles: true,
-      spouseName: 'Name',
+      applicantName: 'Name',
     }
 
     beforeEach(async () => {
       const mockSpouse = mockApplicationModel.findOne as jest.Mock
       mockSpouse.mockReturnValueOnce({
         id: uuid(),
-        name: spouse.spouseName,
+        name: spouse.applicantName,
       } as ApplicationModel)
       const mockFiles = mockFileService.getApplicationFilesByType as jest.Mock
       mockFiles.mockReturnValueOnce({} as ApplicationFileModel)
@@ -115,14 +115,14 @@ describe('ApplicationController - Spouse', () => {
     const spouse: SpouseResponse = {
       hasPartnerApplied: true,
       hasFiles: false,
-      spouseName: 'Name',
+      applicantName: 'Name',
     }
 
     beforeEach(async () => {
       const mockSpouse = mockApplicationModel.findOne as jest.Mock
       mockSpouse.mockReturnValueOnce({
         id: uuid(),
-        name: spouse.spouseName,
+        name: spouse.applicantName,
       } as ApplicationModel)
       const mockFiles = mockFileService.getApplicationFilesByType as jest.Mock
       mockFiles.mockReturnValueOnce(undefined)
