@@ -94,7 +94,6 @@ describe('UserService', () => {
 
       const result = await userService.getAirlineUserInfoByNationalId(
         user.nationalId,
-        auth,
       )
 
       expect(getUserSpy).toHaveBeenCalledWith(user.nationalId)

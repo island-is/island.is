@@ -53,7 +53,7 @@ export class UserService {
 
   private async getFund(
     user: NationalRegistryUser,
-    auth: AuthUser,
+    auth?: AuthUser,
   ): Promise<Fund> {
     const {
       used,
@@ -62,10 +62,16 @@ export class UserService {
     } = await this.flightService.countThisYearsFlightLegsByNationalId(
       user.nationalId,
     )
-    const meetsADSRequirements = await this.individualMeetsADSRequirements(
-      user,
-      auth,
-    )
+
+    let meetsADSRequirements = false
+    if (auth) {
+      meetsADSRequirements = await this.individualMeetsADSRequirements(
+        user,
+        auth,
+      )
+    } else {
+      meetsADSRequirements = this.flightService.isADSPostalCode(user.postalcode)
+    }
 
     return {
       credit: meetsADSRequirements ? unused : 0,
@@ -118,8 +124,8 @@ export class UserService {
 
   private async getUserByNationalId<T>(
     nationalId: string,
-    auth: AuthUser,
     model: new (user: NationalRegistryUser, fund: Fund) => T,
+    auth?: AuthUser,
   ): Promise<T | null> {
     const user = await this.nationalRegistryService.getUser(nationalId)
     if (!user) {
@@ -131,16 +137,15 @@ export class UserService {
 
   async getAirlineUserInfoByNationalId(
     nationalId: string,
-    auth: AuthUser,
   ): Promise<AirlineUser | null> {
-    return this.getUserByNationalId<AirlineUser>(nationalId, auth, AirlineUser)
+    return this.getUserByNationalId<AirlineUser>(nationalId, AirlineUser)
   }
 
   async getUserInfoByNationalId(
     nationalId: string,
     auth: AuthUser,
   ): Promise<User | null> {
-    return this.getUserByNationalId<User>(nationalId, auth, User)
+    return this.getUserByNationalId<User>(nationalId, User, auth)
   }
 
   async getMultipleUsersByNationalIdArray(

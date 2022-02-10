@@ -4,7 +4,6 @@ import { AirlineUser } from '../../user.model'
 import { PublicUserController } from '../../user.controller'
 import { UserService } from '../../user.service'
 import { DiscountService, Discount } from '../../../discount'
-import type { User as AuthUser } from '@island.is/auth-nest-tools'
 
 const airlineUser: AirlineUser = {
   nationalId: '1326487905',
@@ -17,13 +16,6 @@ const airlineUser: AirlineUser = {
     used: 0,
     total: 4,
   },
-}
-
-const auth: AuthUser = {
-  nationalId: '1326487905',
-  scope: ['@vegagerdin.is/air-discount-scheme-scope'],
-  authorization: '',
-  client: '',
 }
 
 describe('PublicUserController', () => {
@@ -71,12 +63,9 @@ describe('PublicUserController', () => {
         .spyOn(userService, 'getAirlineUserInfoByNationalId')
         .mockImplementation(() => Promise.resolve(airlineUser))
 
-      const result = await publicUserController.getUserByDiscountCode(
-        {
-          discountCode,
-        },
-        auth,
-      )
+      const result = await publicUserController.getUserByDiscountCode({
+        discountCode,
+      })
 
       expect(getDiscountByDiscountCodeSpy).toHaveBeenCalledWith(discountCode)
       expect(getAirlineUserInfoByNationalIdSpy).toHaveBeenCalledWith(nationalId)
@@ -96,7 +85,7 @@ describe('PublicUserController', () => {
         .mockImplementation(() => Promise.resolve(null))
 
       try {
-        await publicUserController.getUserByDiscountCode({ discountCode }, auth)
+        await publicUserController.getUserByDiscountCode({ discountCode })
         expect('This should not happen').toEqual('')
       } catch (e) {
         expect(e.response).toEqual({
