@@ -260,4 +260,9 @@ export const m = defineMessages({
     defaultMessage: 'Reyna aftur',
     description: '',
   },
+  selectRealEstateTitle: {
+    id: 'cr.application:selectRealEstate.title',
+    defaultMessage: 'Val á fasteign',
+    description: 'Real estate selection',
+  },
 })

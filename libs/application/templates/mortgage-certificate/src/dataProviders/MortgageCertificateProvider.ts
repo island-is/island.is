@@ -1,5 +1,3 @@
-//TODOx á þetta að vera í provider? á að tjékka eftir að það er búið að velja fasteign en áður en þú borgar
-
 import {
   BasicDataProvider,
   Application,

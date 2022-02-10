@@ -34,23 +34,18 @@ export const MortgageCertificateForm: Form = buildForm({
               title: m.nationalRegistryTitle,
               subTitle: m.nationalRegistrySubTitle,
             }),
-            buildDataProviderItem({
-              id: 'nationalRegistryRealEstate',
-              type: 'NationalRegistryRealEstateProvider',
-              title: m.nationalRegistryRealEstateTitle,
-              subTitle: m.nationalRegistryRealEstateSubTitle,
-            }),
+            //TODOx enable when NationalRegistryRealEstate works
+            // buildDataProviderItem({
+            //   id: 'nationalRegistryRealEstate',
+            //   type: 'NationalRegistryRealEstateProvider',
+            //   title: m.nationalRegistryRealEstateTitle,
+            //   subTitle: m.nationalRegistryRealEstateSubTitle,
+            // }),
             buildDataProviderItem({
               id: 'userProfile',
               type: 'UserProfileProvider',
               title: m.userProfileInformationTitle,
               subTitle: m.userProfileInformationSubTitle,
-            }),
-            buildDataProviderItem({
-              id: 'mortgageCertificate',
-              type: 'MortgageCertificateProvider',
-              title: m.mortgageCertificateInformationTitle,
-              subTitle: m.mortgageCertificateInformationSubTitle,
             }),
             buildDataProviderItem({
               id: 'payment',
@@ -59,6 +54,37 @@ export const MortgageCertificateForm: Form = buildForm({
             }),
           ],
         }),
+      ],
+    }),
+    buildSection({
+      id: 'selectRealEstate',
+      title: m.selectRealEstateTitle,
+      children: [
+        buildMultiField({
+          id: 'selectRealEstate.info',
+          title: m.selectRealEstateTitle,
+          space: 1,
+          children: [
+            buildDescriptionField({
+              id: 'testDescription',
+              title: '',
+              description: 'Hello World!',
+            }),
+          ],
+        }),
+        // buildExternalDataProvider({
+        //   id: 'approveExternalData2',
+        //   title: '',
+        //   subTitle: '',
+        //   checkboxLabel: '',
+        //   dataProviders: [
+        //     buildDataProviderItem({
+        //       id: 'mortgageCertificate',
+        //       type: 'MortgageCertificateProvider',
+        //       title: '',
+        //     }),
+        //   ],
+        // }),
       ],
     }),
     buildSection({
