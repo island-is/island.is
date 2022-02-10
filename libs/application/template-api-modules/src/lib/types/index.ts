@@ -40,7 +40,6 @@ export interface BaseTemplateAPIModuleConfig {
   criminalRecord: CriminalRecordConfig
   attachmentBucket: string
   presignBucket: string
-  uploadBucket: string
   paymentOptions: PaymentServiceOptions
   generalPetition: {
     endorsementsApiBasePath: string

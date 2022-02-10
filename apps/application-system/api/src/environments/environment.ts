@@ -59,7 +59,6 @@ const devConfig = {
     },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
-    uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
     paymentOptions: {
       arkBaseUrl: process.env.ARK_BASE_URL,
       xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8081',
@@ -163,7 +162,6 @@ const prodConfig = {
     },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
-    uploadBucket: process.env.FILE_STORAGE_UPLOAD_BUCKET,
     drivingLicense: {
       clientConfig: {
         secret: process.env.XROAD_DRIVING_LICENSE_SECRET,
