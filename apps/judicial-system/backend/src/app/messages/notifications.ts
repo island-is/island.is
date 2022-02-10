@@ -74,15 +74,16 @@ export const notifications = {
     html: {
       id: 'judicial.system.backend:notifications.modified.html',
       defaultMessage:
-        '{actorInstitution}, {actorName} {actorTitle}, hefur uppfært lengd gæslu/einangrunar í máli {courtCaseNumber}. Sjá {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.<br /><br />Lok gæslu: {validToDate}.',
+        '{actorInstitution}, {actorName} {actorTitle}, hefur uppfært lengd gæslu í máli {courtCaseNumber}. Sjá {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.<br /><br />Lok gæslu: {validToDate}.',
       description:
-        'Notaður sem texti í tölvupósti vegna breytingar á lengd gæslu/einangrunar.',
+        'Notaður sem texti í tölvupósti vegna breytingar á lengd gæslu þar sem ekki var úrskurðað í einangrun.',
     },
     isolationHtml: {
       id: 'judicial.system.backend:notifications.modified.isolation_html',
-      defaultMessage: '<br /><br />Lok einangrunar: {isolationToDate}.',
+      defaultMessage:
+        '{actorInstitution}, {actorName} {actorTitle}, hefur uppfært lengd gæslu/einangrunar í máli {courtCaseNumber}. Sjá {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.<br /><br />Lok gæslu: {validToDate}.<br /><br />Lok einangrunar: {isolationToDate}.',
       description:
-        'Notaður sem viðbótartexti í tölvupósti vegna breytingar á lengd gæslu/einangrunar ef úrskurðað var í einangrun.',
+        'Notaður sem texti í tölvupósti vegna breytingar á lengd gæslu/einangrunar þar sem úrskurðað var í einangrun.',
     },
   }),
 }

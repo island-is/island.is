@@ -37,9 +37,9 @@ export const rcReportForm = {
           'Notaður sem skýritexti í textaboxi fyrir "dómkröfur" á greinargerðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
       autofill: {
-        id: 'judicial.system.restriction_cases:report_form.demands.autofill',
+        id: 'judicial.system.restriction_cases:report_form.demands.autofillv1',
         defaultMessage:
-          'Þess er krafist að {accusedName}, kt. {accusedNationalId}, sæti{extensionSuffix} {caseType} með úrskurði {court}, til {requestedValidToDate}{isolationSuffix}.',
+          'Þess er krafist að {accusedName}{accusedNationalId}sæti{extensionSuffix} {caseType} með úrskurði {court}, til {requestedValidToDate}{isolationSuffix}.',
         description:
           'Notaður sem sjálfgefinn texti í textaboxi fyrir "dómkröfur" á greinargerðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
