@@ -39,7 +39,10 @@ import { getSlugPart } from '../utils'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import groupBy from 'lodash/groupBy'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
-import { Dictionary } from 'lodash'
+
+export interface Dictionary<T> {
+  [index: string]: T
+}
 
 interface SubPageProps {
   organization?: Organization
