@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
@@ -76,6 +76,25 @@ const DefendantInfo: React.FC<Props> = (props) => {
       : Gender.OTHER
   }
 
+  useEffect(() => {
+    if (error || person?.items.length === 0) {
+      setNationalIdNotFound(true)
+      return
+    }
+
+    if (person && person.items.length > 0) {
+      setAccusedNameErrorMessage('')
+      setAccusedAddressErrorMessage('')
+      setNationalIdErrorMessage('')
+
+      onChange(defendant.id, {
+        name: person.items[0].name,
+        gender: mapNationalRegistryGenderToGender(person.items[0].gender),
+        address: person.items[0].permanent_address.street.nominative,
+      })
+    }
+  }, [person])
+
   return (
     <BlueBox>
       <Box marginBottom={2} display="flex" justifyContent="flexEnd">
@@ -133,32 +152,15 @@ const DefendantInfo: React.FC<Props> = (props) => {
             })
           }}
           onBlur={async (evt) => {
-            if (person?.items?.length === 1 && !error) {
-              onChange(defendant.id, {
-                nationalId: evt.target.value,
-                name: person.items[0].name,
-                gender: mapNationalRegistryGenderToGender(
-                  person.items[0].gender,
-                ),
-                address: person.items[0].permanent_address.street.nominative,
-              })
+            validateAndSetErrorMessage(
+              defendant.noNationalId
+                ? ['empty', 'date-of-birth']
+                : ['empty', 'national-id'],
+              evt.target.value,
+              setNationalIdErrorMessage,
+            )
 
-              setAccusedNameErrorMessage('')
-              setAccusedAddressErrorMessage('')
-              setNationalIdErrorMessage('')
-            } else {
-              setNationalIdNotFound(true)
-
-              validateAndSetErrorMessage(
-                defendant.noNationalId
-                  ? ['empty', 'date-of-birth']
-                  : ['empty', 'national-id'],
-                evt.target.value,
-                setNationalIdErrorMessage,
-              )
-
-              onChange(defendant.id, { nationalId: evt.target.value })
-            }
+            onChange(defendant.id, { nationalId: evt.target.value })
           }}
         >
           <Input
