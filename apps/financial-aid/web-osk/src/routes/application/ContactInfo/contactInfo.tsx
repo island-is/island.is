@@ -47,7 +47,10 @@ const ContactInfo = () => {
   }
 
   useEffect(() => {
-    updateForm({ ...form, emailAddress: form.emailAddress || user?.spouse?.applicantSpouseEmail })
+    updateForm({
+      ...form,
+      emailAddress: form.emailAddress || user?.spouse?.applicantSpouseEmail,
+    })
   }, [])
 
   return (
