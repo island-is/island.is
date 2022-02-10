@@ -52,7 +52,7 @@ export const Wrapper: FC<WrapperProps> = ({
     textMode: 'dark',
   })
   const [textMode, setTextMode] = useState<TextModes>('light')
-  const showSearchSection = searchTitle && logoUrl && organizationTitle
+  const showSearchSection = searchTitle && organizationTitle
 
   useEffect(() => {
     if (institutionSlug in config) {
