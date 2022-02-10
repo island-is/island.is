@@ -8,16 +8,24 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import { Table as T } from '@island.is/island-ui/core'
-import { STUDENTS } from '../mock'
 import { PAGE_SIZE, pages, paginate } from './pagination'
 import ViewStudent from '../ViewStudent/index'
 import { Application } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import FindStudentModal from '../FindStudentModal/index'
+import { useQuery } from '@apollo/client'
+import { InstructorsStudentsQuery } from '../../graphql/queries'
 
 interface Data {
   application: Application
+}
+
+interface Student {
+  id: string
+  name: string
+  ssn: string
+  totalLessonCount: number
 }
 
 const StudentsOverview = ({ application }: Data) => {
@@ -26,7 +34,11 @@ const StudentsOverview = ({ application }: Data) => {
   /* table pagination */
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
-  const [pageStudents, setPageStudents] = useState(STUDENTS ?? [])
+  const { data, loading } = useQuery(InstructorsStudentsQuery)
+
+  const [pageStudents, setPageStudents] = useState(
+    data ? (data.studentListTeacherSsn.data as Array<Student>) : [],
+  )
 
   /* table view */
   const [showTable, setShowTable] = useState(true)
@@ -43,21 +55,21 @@ const StudentsOverview = ({ application }: Data) => {
 
   const filter = (searchTerm: string) => {
     if (searchTerm.length) {
-      const filteredList = STUDENTS?.filter(
-        (student) =>
+      const filteredList = data.studentListTeacherSsn.data?.filter(
+        (student: Student) =>
           student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          student.kt.includes(searchTerm),
+          student.ssn.includes(searchTerm),
       )
 
       handlePagination(1, filteredList)
     } else {
-      handlePagination(1, STUDENTS)
+      handlePagination(1, data?.studentListTeacherSsn.data)
     }
   }
 
   useEffect(() => {
     filter(searchTerm)
-  }, [STUDENTS, searchTerm])
+  }, [data?.studentListTeacherSsn?.data, searchTerm])
 
   return (
     <Box marginBottom={10}>
@@ -97,27 +109,28 @@ const StudentsOverview = ({ application }: Data) => {
               </T.Row>
             </T.Head>
             <T.Body>
-              {pageStudents.map((student, key) => {
-                return (
-                  <T.Row key={key}>
-                    <T.Data>{student.name}</T.Data>
-                    <T.Data>{student.kt}</T.Data>
-                    <T.Data>{student.hours}</T.Data>
-                    <T.Data>
-                      <Button
-                        variant="text"
-                        size="small"
-                        onClick={() => {
-                          setStudentId(student.kt)
-                          setShowTable(false)
-                        }}
-                      >
-                        {formatMessage(m.studentsOverviewRegisterHoursButton)}
-                      </Button>
-                    </T.Data>
-                  </T.Row>
-                )
-              })}
+              {pageStudents &&
+                pageStudents.map((student, key) => {
+                  return (
+                    <T.Row key={key}>
+                      <T.Data>{student.name}</T.Data>
+                      <T.Data>{student.ssn}</T.Data>
+                      <T.Data>{student.totalLessonCount}</T.Data>
+                      <T.Data>
+                        <Button
+                          variant="text"
+                          size="small"
+                          onClick={() => {
+                            setStudentId(student.ssn)
+                            setShowTable(false)
+                          }}
+                        >
+                          {formatMessage(m.studentsOverviewRegisterHoursButton)}
+                        </Button>
+                      </T.Data>
+                    </T.Row>
+                  )
+                })}
             </T.Body>
           </T.Table>
           {pageStudents && pageStudents.length ? (
@@ -141,11 +154,7 @@ const StudentsOverview = ({ application }: Data) => {
           )}
         </Stack>
       ) : (
-        <ViewStudent
-          application={application}
-          studentId={studentId}
-          setShowTable={setShowTable}
-        />
+        <ViewStudent studentSsn={studentId} setShowTable={setShowTable} />
       )}
     </Box>
   )

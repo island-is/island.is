@@ -49,8 +49,13 @@ const FindStudentModal = ({
           className={styles.modalStyle}
         >
           <Box padding={10} style={{ background: 'white' }}>
-            <Text>{formatMessage(m.studentsOverviewOtherStudentIdInput)}</Text>
-            <Box marginY={3}>
+            <Text variant="h1">
+              {formatMessage(m.studentsOverviewOtherStudentIdModalTitle)}
+            </Text>
+            <Text variant="default" marginTop={2}>
+              {formatMessage(m.studentsOverviewOtherStudentIdModalDescription)}
+            </Text>
+            <Box marginTop={5} marginBottom={7}>
               <Input
                 type="number"
                 label={formatMessage(m.studentsOverviewOtherStudentInputLabel)}
@@ -62,15 +67,26 @@ const FindStudentModal = ({
                 }}
               />
             </Box>
-            <Button
-              variant="text"
-              onClick={() => {
-                viewStudent()
-                setIsModalOpen(false)
-              }}
-            >
-              {formatMessage(m.studentsOverviewRegisterHoursButton)}
-            </Button>
+            <Box display={'flex'} justifyContent={'spaceBetween'}>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  viewStudent()
+                  setIsModalOpen(false)
+                }}
+              >
+                {formatMessage(m.studentsOverviewRegisterHoursCancelButton)}
+              </Button>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  viewStudent()
+                  setIsModalOpen(false)
+                }}
+              >
+                {formatMessage(m.studentsOverviewRegisterHoursButton)}
+              </Button>
+            </Box>
           </Box>
         </ModalBase>
       </Box>

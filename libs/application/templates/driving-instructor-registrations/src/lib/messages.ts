@@ -66,25 +66,35 @@ export const m = defineMessages({
     defaultMessage: 'Kennslustundir',
     description: 'Table header 3',
   },
+  studentsOverviewRegisterHoursCancelButton: {
+    id: 'dir.application:studentsOverviewRegisterHoursCancelButton',
+    defaultMessage: 'Hætta við',
+    description: 'Cancel button',
+  },
   studentsOverviewRegisterHoursButton: {
     id: 'dir.application:studentsOverviewRegisterHoursButton',
     defaultMessage: 'Skrá ökutíma',
-    description: 'Table button',
+    description: 'Register button',
   },
-  studentsOverviewOtherStudentIdInput: {
-    id: 'dir.application:studentsOverviewOtherStudentIdInput',
+  studentsOverviewOtherStudentIdModalTitle: {
+    id: 'dir.application:studentsOverviewOtherStudentIdModalTitle',
+    defaultMessage: 'Upplýsingar um ökunema',
+    description: 'Modal title',
+  },
+  studentsOverviewOtherStudentIdModalDescription: {
+    id: 'dir.application:studentsOverviewOtherStudentIdDecription',
     defaultMessage: 'Sláðu inn kennitölu nemanda',
-    description: 'Input id',
+    description: 'Modal description',
   },
   studentsOverviewOtherStudentInputLabel: {
-    id: 'dir.application:studentsOverviewOtherStudentInputLabel',
+    id: 'dir.application:studentsOverviewOtherStudentIdModalDecription',
     defaultMessage: 'Kennitala umsækjanda',
     description: 'Input id',
   },
   studentsOverviewNoStudentFound: {
     id: 'dir.application:studentsOverviewNoStudentFound',
     defaultMessage: 'Enginn nemandi fannst',
-    description: 'Input id',
+    description: 'No students',
   },
 
   /* View Single Student Section */
