@@ -194,7 +194,7 @@ export class VerificationService {
   }
 
   async sendConfirmationEmail(verification: EmailVerification) {
-    const resetLink = `${environment.email.servicePortalBaseUrl}/stillingar/personuupplysingar/stadfesta-netfang/${verification.hash}`
+    const resetLink = `${environment.email.servicePortalBaseUrl}/stillingar/minar-stillingar/stadfesta-netfang/${verification.hash}`
     try {
       await this.emailService.sendEmail({
         from: {
