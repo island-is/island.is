@@ -81,7 +81,10 @@ const SubPage: Screen<SubPageProps> = ({
   )
 
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
-  const pageTitle = `${n('assistance', 'Aðstoð')}`
+  const pageTitle = `${categoryTitle ? categoryTitle + ' | ' : ''}${n(
+    'assistanceForIslandIs',
+    'Aðstoð fyrir Ísland.is',
+  )}`
 
   const mobileBackButtonText = questionSlug
     ? `${organizationTitle}: ${categoryTitle}`
@@ -94,7 +97,7 @@ const SubPage: Screen<SubPageProps> = ({
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
-      headerTitle={pageTitle}
+      headerTitle={n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')}
       institutionSlug={institutionSlug}
       organization={organization}
       organizationTitle={organizationTitle}
@@ -114,7 +117,10 @@ const SubPage: Screen<SubPageProps> = ({
                       <Breadcrumbs
                         items={[
                           {
-                            title: n('assistance', 'Aðstoð'),
+                            title: n(
+                              'assistanceForIslandIs',
+                              'Aðstoð fyrir Ísland.is',
+                            ),
                             typename: 'serviceweb',
                             href: linkResolver('serviceweb').href,
                           },
