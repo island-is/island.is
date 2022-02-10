@@ -15,7 +15,6 @@ import { Application } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import FindStudentModal from '../FindStudentModal/index'
-import { useStudentsOverview } from './hooks/useStudentOverview'
 
 interface Data {
   application: Application
@@ -23,11 +22,11 @@ interface Data {
 
 const StudentsOverview = ({ application }: Data) => {
   const { formatMessage } = useLocale()
-  const { studentList, loading, error } = useStudentsOverview()
+
   /* table pagination */
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
-  const [pageStudents, setPageStudents] = useState(studentList ?? [])
+  const [pageStudents, setPageStudents] = useState(STUDENTS ?? [])
 
   /* table view */
   const [showTable, setShowTable] = useState(true)
@@ -44,21 +43,21 @@ const StudentsOverview = ({ application }: Data) => {
 
   const filter = (searchTerm: string) => {
     if (searchTerm.length) {
-      const filteredList = studentList?.filter(
+      const filteredList = STUDENTS?.filter(
         (student) =>
           student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          student.ssn.includes(searchTerm),
+          student.kt.includes(searchTerm),
       )
 
       handlePagination(1, filteredList)
     } else {
-      handlePagination(1, studentList)
+      handlePagination(1, STUDENTS)
     }
   }
 
   useEffect(() => {
     filter(searchTerm)
-  }, [studentList, searchTerm])
+  }, [STUDENTS, searchTerm])
 
   return (
     <Box marginBottom={10}>
@@ -102,14 +101,14 @@ const StudentsOverview = ({ application }: Data) => {
                 return (
                   <T.Row key={key}>
                     <T.Data>{student.name}</T.Data>
-                    <T.Data>{student.ssn}</T.Data>
-                    <T.Data>{student.totalLessonCount}</T.Data>
+                    <T.Data>{student.kt}</T.Data>
+                    <T.Data>{student.hours}</T.Data>
                     <T.Data>
                       <Button
                         variant="text"
                         size="small"
                         onClick={() => {
-                          setStudentId(student.ssn)
+                          setStudentId(student.kt)
                           setShowTable(false)
                         }}
                       >
