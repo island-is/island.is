@@ -77,14 +77,11 @@ export class ApplicationService {
         )
       : false
 
-    const applicantName = application ? application.name : ''
-    const applicantSpouseEmail = application ? application.spouseEmail : ''
-
     return {
       hasPartnerApplied: Boolean(application),
       hasFiles: Boolean(files),
-      applicantName: applicantName,
-      applicantSpouseEmail: applicantSpouseEmail,
+      applicantName: application ? application.name : '',
+      applicantSpouseEmail: application ? application.spouseEmail : '',
     }
   }
 
