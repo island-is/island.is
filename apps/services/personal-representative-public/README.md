@@ -36,21 +36,25 @@ The PublicAPI is only accessible through X-Road security servers and only to mac
 
 ### Scope
 
-_@island.is/auth/personal-representative-public\_
+```
+@island.is/auth/personal-representative-public
+```
 
 ### X-Road setup
 
 [X-Road information](https://docs.devland.is/technical-overview/x-road/x-road-system-requirements)
 
 Urls for X-Road setup are as follows
-⋅⋅\* Dev: [https://personal-representative-public-xrd.internal.dev01.devland.is/-json](https://personal-representative-public-xrd.internal.dev01.devland.is/-json)
-⋅⋅\* Staging: [https://personal-representative-public-xrd.internal.staging01.devland.is/-json](https://personal-representative-public-xrd.internal.staging01.devland.is/-json)
-⋅⋅\* Production: [https://personal-representative-public-xrd.internal.innskra.island.is/-json](https://personal-representative-public-xrd.internal.innskra.island.is/-json)
+
+- Dev: [https://personal-representative-public-xrd.internal.dev01.devland.is/-json](https://personal-representative-public-xrd.internal.dev01.devland.is/-json)
+- Staging: [https://personal-representative-public-xrd.internal.staging01.devland.is/-json](https://personal-representative-public-xrd.internal.staging01.devland.is/-json)
+- Production: [https://personal-representative-public-xrd.internal.innskra.island.is/-json](https://personal-representative-public-xrd.internal.innskra.island.is/-json)
 
 ### OpenAPI URL
 
 OpenAPI documentation and demoing at
-[https://personal-representative-public-xrd.dev01.devland.is/](https://personal-representative-public-xrd.dev01.devland.is/)
+
+- [https://personal-representative-public-xrd.dev01.devland.is/](https://personal-representative-public-xrd.dev01.devland.is/)
 
 ## Development
 
@@ -97,7 +101,7 @@ yarn start services-personal-representative-public
 
 ### Project owner
 
-Réttindagæsla velferðarráðuneytisins
+- Réttindagæsla velferðarráðuneytisins
 
 ### Code owners and maintainers
 

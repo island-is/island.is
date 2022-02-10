@@ -42,7 +42,9 @@ For the foreseeable future the only system with access would be the Personal Rep
 
 ### Scope
 
-_@island.is/auth/personal-representative-admin\_
+```
+@island.is/auth/personal-representative-admin
+```
 
 ### X-Road setup
 
@@ -57,7 +59,8 @@ _@island.is/auth/personal-representative-admin\_
 ### OpenAPI URL##
 
 OpenAPI documentation and demoing at
-[https://personal-representative-xrd.dev01.devland.is/](https://personal-representative-xrd.dev01.devland.is/)
+
+- [https://personal-representative-xrd.dev01.devland.is/](https://personal-representative-xrd.dev01.devland.is/)
 
 ### Service provider usage
 
@@ -67,7 +70,7 @@ They can use the connection information through two ways.
 
 - Setting up X-Road and use the [PublicAPI](https://docs.devland.is/apps/services/personal-representative-public)
 - Use [Digital Iceland’s](https://www.notion.so/Identity-Server-Integration-afde614a247e4b9da4731b2ace1115cd) new login option and setting it up for Personal Representative usage.
-  -- This requires mapping rights to scope for service provider's client
+  - This requires mapping rights to scope for service provider's client
 
 ## Development
 
@@ -114,7 +117,7 @@ yarn start services-personal-representative
 
 ### Project owner
 
-Réttindagæsla velferðarráðuneytisins
+- Réttindagæsla velferðarráðuneytisins
 
 ### Code owners and maintainers
 
