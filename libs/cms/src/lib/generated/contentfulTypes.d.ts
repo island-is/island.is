@@ -676,6 +676,9 @@ export interface IFooterItemFields {
 
   /** Content */
   content?: Document | undefined
+
+  /** Service web content */
+  serviceWebContent?: Document | undefined
 }
 
 export interface IFooterItem extends Entry<IFooterItemFields> {
