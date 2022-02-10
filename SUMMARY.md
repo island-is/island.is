@@ -114,7 +114,7 @@
 ## Libs
 
 - [API](libs/api/README.md)
-    - [API Domains Fishing Licence](libs/api/domains/fishing-licence/README.md)
+  - [API Domains Fishing Licence](libs/api/domains/fishing-licence/README.md)
   - [Mocks](libs/api/mocks/README.md)
 - [API Catalogue](libs/api-catalogue/README.md)
   - [Elastic](libs/api-catalogue/elastic/README.md)
