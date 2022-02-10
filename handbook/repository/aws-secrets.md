@@ -50,6 +50,46 @@ aws sso login --profile <profile-name> # e.g. profile-name -> islandis-dev as se
 It will open the browser, go to your AWS account to log in and will refresh your credentials and you are ready to use the AWS commands again.
 {% endhint %}
 
+{% hint style="info" %}
+**Pre-configured AWS profiles:** Feel free to copy and paste these to your `~/.aws/config` file:
+
+```
+[profile islandis-dev]
+sso_start_url = https://island-is.awsapps.com/start
+sso_account_id = 013313053092
+sso_role_name = AWSPowerUserAccess
+sso_region = eu-west-1
+region = eu-west-1
+
+[profile islandis-staging]
+sso_start_url = https://island-is.awsapps.com/start
+sso_account_id = 261174024191
+sso_role_name = Secret_Service
+sso_region = eu-west-1
+region = eu-west-1
+
+[profile islandis-prod]
+sso_start_url = https://island-is.awsapps.com/start
+sso_account_id = 251502586493
+sso_role_name = Secret_Service
+sso_region = eu-west-1
+region = eu-west-1
+```
+{% endhint %}
+
+{% hint style="info" %}
+**AWS Vault:** You can use [AWS Vault](https://github.com/99designs/aws-vault) to store and access AWS credentials in your operating system's secure keystore. When requesting credentials from an expired SSO session, it will automatically open a browser window for you to log in again. 
+
+Just follow its [installation instructions](https://github.com/99designs/aws-vault#installing) and configure your `~/.aws/credentials` file like this:
+
+```
+[islandis-dev]
+credential_process = aws-vault exec islandis-dev --json
+
+# ... do the same thing for your other profiles.
+```
+{% endhint %}
+
 ### Using AWS session
 
 This method is more manual where you will need to export environments variables or change a file by yourself.
@@ -178,7 +218,7 @@ Note that this command only creates the secret in one AWS account at a time (eg 
 To make this easier we recommend configuring SSO for each AWS account using a different AWS profile (islandis-dev, islandis-staging, islandis-prod). Then you can create a secret in all environments like this:
 
 ```bash
-# If your SSO session is expired, it's enough to login with any one profile since they share the same SSO session.
+# If your SSO session is expired and you're not using AWS Vault, you can log into any one profile since they all share the same SSO session.
 AWS_PROFILE=islandis-dev aws sso login
 
 AWS_PROFILE=islandis-dev yarn create-secret
