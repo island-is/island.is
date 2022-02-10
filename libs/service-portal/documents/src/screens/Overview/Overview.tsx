@@ -199,125 +199,129 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
           </Column>
         </Columns>
         <Box marginTop={[1, 1, 2, 2, 6]}>
-          <GridRow alignItems="flexEnd">
-            <GridColumn paddingBottom={[1, 0]} span={['1/1', '3/8']}>
-              <Box height="full">
-                <Input
-                  icon="search"
-                  backgroundColor="blue"
-                  size="xs"
-                  value={filterValue.searchQuery}
-                  onChange={(ev) => handleSearchChange(ev.target.value)}
-                  name="rafraen-skjol-leit"
-                  label={formatMessage(m.searchLabel)}
-                  placeholder={formatMessage(m.searchPlaceholder)}
-                />
-              </Box>
-            </GridColumn>
-            <GridColumn span={['1/1', '3/8']}>
-              <Hidden below="sm">
-                <Select
-                  name="categories"
-                  backgroundColor="blue"
-                  size="xs"
-                  defaultValue={categories[0]}
-                  options={categories}
-                  value={filterValue.activeCategory}
-                  onChange={handleCategoryChange}
-                  label={formatMessage({
-                    id: 'sp.documents:institution-label',
-                    defaultMessage: 'Stofnun',
-                  })}
-                />
-              </Hidden>
-            </GridColumn>
-            <GridColumn span="2/8">
-              <Hidden below="sm">
-                <Button
-                  variant="ghost"
-                  fluid
-                  icon={isDateRangeOpen ? 'close' : 'filter'}
-                  iconType="outline"
-                  size="small"
-                  onClick={handleDateRangeButtonClick}
-                >
-                  {formatMessage({
-                    id: 'sp.documents:select-range',
-                    defaultMessage: 'Tímabil',
-                  })}
-                </Button>
-              </Hidden>
-            </GridColumn>
-          </GridRow>
-          <Hidden below="sm">
-            <AnimateHeight duration={400} height={isDateRangeOpen ? 'auto' : 0}>
-              <Box marginTop={[1, 3]}>
-                <GridRow>
-                  <GridColumn
-                    paddingBottom={[1, 0]}
-                    span={['1/1', '4/8', '3/8']}
+          <Hidden print>
+            <GridRow alignItems="flexEnd">
+              <GridColumn paddingBottom={[1, 0]} span={['1/1', '3/8']}>
+                <Box height="full">
+                  <Input
+                    icon="search"
+                    backgroundColor="blue"
+                    size="xs"
+                    value={filterValue.searchQuery}
+                    onChange={(ev) => handleSearchChange(ev.target.value)}
+                    name="rafraen-skjol-leit"
+                    label={formatMessage(m.searchLabel)}
+                    placeholder={formatMessage(m.searchPlaceholder)}
+                  />
+                </Box>
+              </GridColumn>
+              <GridColumn span={['1/1', '3/8']}>
+                <Hidden below="sm">
+                  <Select
+                    name="categories"
+                    backgroundColor="blue"
+                    size="xs"
+                    defaultValue={categories[0]}
+                    options={categories}
+                    value={filterValue.activeCategory}
+                    onChange={handleCategoryChange}
+                    label={formatMessage({
+                      id: 'sp.documents:institution-label',
+                      defaultMessage: 'Stofnun',
+                    })}
+                  />
+                </Hidden>
+              </GridColumn>
+              <GridColumn span="2/8">
+                <Hidden below="sm">
+                  <Button
+                    variant="ghost"
+                    fluid
+                    icon={isDateRangeOpen ? 'close' : 'filter'}
+                    iconType="outline"
+                    size="small"
+                    onClick={handleDateRangeButtonClick}
                   >
-                    <DatePicker
-                      label={formatMessage({
-                        id: 'sp.documents:datepicker-dateFrom-label',
-                        defaultMessage: 'Dagsetning frá',
-                      })}
-                      placeholderText={formatMessage({
-                        id: 'sp.documents:datepicker-dateFrom-placeholder',
-                        defaultMessage: 'Veldu dagsetningu',
-                      })}
-                      locale="is"
-                      backgroundColor="blue"
-                      size="xs"
-                      selected={filterValue.dateFrom}
-                      handleChange={handleDateFromInput}
-                    />
-                  </GridColumn>
-                  <GridColumn span={['1/1', '4/8', '3/8']}>
-                    <DatePicker
-                      label={formatMessage({
-                        id: 'sp.documents:datepicker-dateTo-label',
-                        defaultMessage: 'Dagsetning til',
-                      })}
-                      placeholderText={formatMessage({
-                        id: 'sp.documents:datepicker-dateTo-placeholder',
-                        defaultMessage: 'Veldu dagsetningu',
-                      })}
-                      locale="is"
-                      backgroundColor="blue"
-                      size="xs"
-                      selected={filterValue.dateTo}
-                      handleChange={handleDateToInput}
-                      minDate={filterValue.dateFrom || undefined}
-                    />
-                  </GridColumn>
-                </GridRow>
-              </Box>
-            </AnimateHeight>
-          </Hidden>
-
-          {hasActiveFilters() && (
-            <Box marginTop={4}>
-              <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="spaceBetween"
-              >
-                <Text variant="h5" as="h3">{`${
-                  filteredDocuments.length
-                } ${formatMessage(documentsFoundText())}`}</Text>
-                <div>
-                  <Button variant="text" onClick={handleClearFilters}>
                     {formatMessage({
-                      id: 'sp.documents:clear-filters',
-                      defaultMessage: 'Hreinsa filter',
+                      id: 'sp.documents:select-range',
+                      defaultMessage: 'Tímabil',
                     })}
                   </Button>
-                </div>
-              </Box>
-            </Box>
-          )}
+                </Hidden>
+              </GridColumn>
+            </GridRow>
+            <Hidden below="sm">
+              <AnimateHeight
+                duration={400}
+                height={isDateRangeOpen ? 'auto' : 0}
+              >
+                <Box marginTop={[1, 3]}>
+                  <GridRow>
+                    <GridColumn
+                      paddingBottom={[1, 0]}
+                      span={['1/1', '4/8', '3/8']}
+                    >
+                      <DatePicker
+                        label={formatMessage({
+                          id: 'sp.documents:datepicker-dateFrom-label',
+                          defaultMessage: 'Dagsetning frá',
+                        })}
+                        placeholderText={formatMessage({
+                          id: 'sp.documents:datepicker-dateFrom-placeholder',
+                          defaultMessage: 'Veldu dagsetningu',
+                        })}
+                        locale="is"
+                        backgroundColor="blue"
+                        size="xs"
+                        selected={filterValue.dateFrom}
+                        handleChange={handleDateFromInput}
+                      />
+                    </GridColumn>
+                    <GridColumn span={['1/1', '4/8', '3/8']}>
+                      <DatePicker
+                        label={formatMessage({
+                          id: 'sp.documents:datepicker-dateTo-label',
+                          defaultMessage: 'Dagsetning til',
+                        })}
+                        placeholderText={formatMessage({
+                          id: 'sp.documents:datepicker-dateTo-placeholder',
+                          defaultMessage: 'Veldu dagsetningu',
+                        })}
+                        locale="is"
+                        backgroundColor="blue"
+                        size="xs"
+                        selected={filterValue.dateTo}
+                        handleChange={handleDateToInput}
+                        minDate={filterValue.dateFrom || undefined}
+                      />
+                    </GridColumn>
+                  </GridRow>
+                </Box>
+              </AnimateHeight>
+            </Hidden>
 
+            {hasActiveFilters() && (
+              <Box marginTop={4}>
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="spaceBetween"
+                >
+                  <Text variant="h5" as="h3">{`${
+                    filteredDocuments.length
+                  } ${formatMessage(documentsFoundText())}`}</Text>
+                  <div>
+                    <Button variant="text" onClick={handleClearFilters}>
+                      {formatMessage({
+                        id: 'sp.documents:clear-filters',
+                        defaultMessage: 'Hreinsa filter',
+                      })}
+                    </Button>
+                  </div>
+                </Box>
+              </Box>
+            )}
+          </Hidden>
           <Box marginTop={[0, 4]}>
             <Hidden below="sm">
               <Box
@@ -386,7 +390,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 </Text>
               </Box>
             )}
-            <Box>
+            <Box marginTop={[2, 0]}>
               {filteredDocuments
                 ?.slice(pagedDocuments.from, pagedDocuments.to)
                 .map((document, index) => (
@@ -403,7 +407,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 ))}
             </Box>
           </Box>
-
           {filteredDocuments && filteredDocuments.length > pageSize && (
             <Box marginTop={4}>
               <Pagination
