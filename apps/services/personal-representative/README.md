@@ -14,11 +14,10 @@ The API allows for maintenance of right types, personal representative types (cu
 
 ### Example of connections
 
-| Personal representative | Represented person | Rights                                             |
-| ----------------------- | ------------------ | -------------------------------------------------- |
-| 1122334459              | 1223455569         | health-data, personal-data, limited-financial-data |
-| 1020304059              | 0203050569         | limited-health-data                                |
-|                         |                    |                                                    |
+| **Personal representative** | **Represented person** | **Rights**                                         |
+| --------------------------- | ---------------------- | -------------------------------------------------- |
+| 1122334459                  | 1223455569             | health-data, personal-data, limited-financial-data |
+| 1020304059                  | 0203050569             | limited-health-data                                |
 
 ### JSON expample of connection
 
@@ -43,7 +42,7 @@ For the foreseeable future the only system with access would be the Personal Rep
 
 ### Scope
 
-_ @island.is/auth/personal-representative-admin _
+_@island.is/auth/personal-representative-admin\_
 
 ### X-Road setup
 
