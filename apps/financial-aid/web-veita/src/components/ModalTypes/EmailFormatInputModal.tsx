@@ -11,8 +11,8 @@ interface Props {
   headline: string
   submitButtonText: string
   errorMessage: string
-  textBeforeInput: string
-  textAfterInput: string
+  prefixText: string
+  postfixText: string
 }
 
 const EmailFormatInputModal = ({
@@ -22,8 +22,8 @@ const EmailFormatInputModal = ({
   headline,
   submitButtonText,
   errorMessage,
-  textBeforeInput,
-  textAfterInput,
+  prefixText,
+  postfixText,
 }: Props) => {
   const ref = useRef<HTMLSpanElement>(null)
   const [hasError, setHasError] = useState(false)
@@ -59,7 +59,7 @@ const EmailFormatInputModal = ({
     >
       <Box marginBottom={[5, 5, 10]}>
         <Text variant="intro">
-          {textBeforeInput}
+          {prefixText}
           {` `}
           <span
             ref={ref}
@@ -67,7 +67,7 @@ const EmailFormatInputModal = ({
             className={styles.rejectionEditable}
           />
           .{` `}
-          {textAfterInput}
+          {postfixText}
         </Text>
       </Box>
     </InputModal>

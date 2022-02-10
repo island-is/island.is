@@ -163,8 +163,8 @@ const StateModal = ({
             headline="Skrifaðu hvaða gögn vantar"
             submitButtonText="Senda á umsækjanda"
             errorMessage="Þú þarft að gera grein fyrir hvaða gögn vanti í umsóknina"
-            textBeforeInput="Til að klára umsóknina verður þú að senda okkur"
-            textAfterInput="Þú getur kynnt þér nánar reglur um fjárhagsaðstoð."
+            prefixText="Til að klára umsóknina verður þú að senda okkur"
+            postfixText="Þú getur kynnt þér nánar reglur um fjárhagsaðstoð."
           />
 
           <AcceptModal
@@ -200,10 +200,10 @@ const StateModal = ({
             headline="Skrifaðu ástæðu synjunar"
             submitButtonText="Synja og senda á umsækjanda"
             errorMessage="Þú þarft að greina frá ástæðu synjunar"
-            textBeforeInput={`Umsókn þinni um fjárhagsaðstoð í ${getMonth(
+            prefixText={`Umsókn þinni um fjárhagsaðstoð í ${getMonth(
               new Date(applicationCreated).getMonth(),
             )} hefur verið synjað`}
-            textAfterInput="Þú getur kynnt þér nánar reglur um fjárhagsaðstoð."
+            postfixText="Þú getur kynnt þér nánar reglur um fjárhagsaðstoð."
           />
         </AnimateSharedLayout>
       </Box>
