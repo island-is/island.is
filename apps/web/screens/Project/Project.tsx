@@ -19,7 +19,6 @@ import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { GET_PROJECT_PAGE_QUERY } from '@island.is/web/screens/queries/Project'
 import {
   DefaultProjectHeader,
-  LatestNewsSectionSlider,
   OrganizationSlice,
   Section,
   Stepper,
@@ -27,6 +26,7 @@ import {
   HeadWithSocialSharing,
   ElectionProjectHeader,
   OneColumnTextSlice,
+  NewsItems,
 } from '@island.is/web/components'
 import {
   Box,
@@ -177,7 +177,6 @@ const assignNavigationActive = (
 const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
   const n = useNamespace(namespace)
   const router = useRouter()
-  useContentfulId(projectPage.id)
 
   const subpage = useMemo(
     () =>
@@ -186,6 +185,8 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
       }),
     [router.query.subSlug, projectPage.projectSubpages],
   )
+
+  useContentfulId(projectPage.id, subpage?.id)
 
   const baseRouterPath = router.asPath.split('?')[0].split('#')[0]
 
@@ -351,9 +352,10 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
             background="purple100"
             aria-labelledby="latestNewsTitle"
           >
-            <LatestNewsSectionSlider
-              label={n('newsAndAnnouncements')}
-              readMoreText={n('seeMore')}
+            <NewsItems
+              heading={n('newsAndAnnouncements')}
+              headingTitle="news-items-title"
+              seeMoreText={n('seeMore')}
               items={news}
             />
           </Section>

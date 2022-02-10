@@ -67,11 +67,11 @@ export const ComplaintForm: Form = buildForm({
     }),
     buildSection({
       id: 'delimitation',
-      title: section.delimitation.defaultMessage,
+      title: section.delimitation,
       children: [
         buildSubSection({
           id: 'authoritiesSection',
-          title: section.authorities.defaultMessage,
+          title: section.authorities,
           children: [
             buildMultiField({
               id: 'inCourtProceedingsFields',
@@ -109,7 +109,7 @@ export const ComplaintForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'mediaSection',
-          title: section.media.defaultMessage,
+          title: section.media,
           children: [
             buildMultiField({
               id: 'concernsMediaCoverageFields',
@@ -153,7 +153,7 @@ export const ComplaintForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'banMarkingSection',
-          title: section.banMarking.defaultMessage,
+          title: section.banMarking,
           children: [
             buildMultiField({
               id: 'concernsBanMarkingFields',
@@ -196,7 +196,7 @@ export const ComplaintForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'libelSection',
-          title: section.libel.defaultMessage,
+          title: section.libel,
           children: [
             buildMultiField({
               id: 'concernsLibelFields',
@@ -288,7 +288,7 @@ export const ComplaintForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'applicant',
-          title: section.applicant.defaultMessage,
+          title: section.applicant,
           condition: (formValue) => {
             const onBehalf = (formValue.info as FormValue)?.onBehalf
             return (
@@ -391,7 +391,7 @@ export const ComplaintForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'organizationOrInstitution',
-          title: section.organizationOrInstitution.defaultMessage,
+          title: section.organizationOrInstitution,
           condition: (formValue) =>
             (formValue.info as FormValue)?.onBehalf ===
             OnBehalf.ORGANIZATION_OR_INSTITUTION,
@@ -458,7 +458,7 @@ export const ComplaintForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'commissions',
-          title: section.commissions.defaultMessage,
+          title: section.commissions,
           condition: (formValue) => {
             const onBehalf = (formValue.info as FormValue)?.onBehalf
             return (
@@ -501,7 +501,7 @@ export const ComplaintForm: Form = buildForm({
     }),
     buildSection({
       id: 'complaint',
-      title: section.complaint.defaultMessage,
+      title: section.complaint,
       children: [
         buildCustomField({
           id: 'complainees',
@@ -517,72 +517,10 @@ export const ComplaintForm: Form = buildForm({
               description: complaint.general.subjectOfComplaintPageDescription,
               space: 3,
               children: [
-                buildCheckboxField({
-                  id: 'subjectOfComplaint.values',
+                buildCustomField({
+                  component: 'ReasonsForComplaint',
+                  id: 'subjectOfComplaint.checkboxAndInput',
                   title: '',
-                  options: [
-                    {
-                      label: complaint.labels.subjectAuthorities,
-                      value: SubjectOfComplaint.WITH_AUTHORITIES,
-                    },
-                    {
-                      label: complaint.labels.subjectLackOfEducation,
-                      value: SubjectOfComplaint.LACK_OF_EDUCATION,
-                    },
-                    {
-                      label: complaint.labels.subjectSocialMedia,
-                      value: SubjectOfComplaint.SOCIAL_MEDIA,
-                    },
-                    {
-                      label: complaint.labels.subjectRequestForAccess,
-                      value: SubjectOfComplaint.REQUEST_FOR_ACCESS,
-                    },
-                    {
-                      label: complaint.labels.subjectRightOfObjection,
-                      value: SubjectOfComplaint.RIGHTS_OF_OBJECTION,
-                    },
-                    {
-                      label: complaint.labels.subjectEmail,
-                      value: SubjectOfComplaint.EMAIL,
-                    },
-                    {
-                      label: complaint.labels.subjectNationalId,
-                      value: SubjectOfComplaint.NATIONAL_ID,
-                    },
-                    {
-                      label: complaint.labels.subjectEmailInWorkplace,
-                      value: SubjectOfComplaint.EMAIL_IN_WORKPLACE,
-                    },
-                    {
-                      label: complaint.labels.subjectUnauthorizedPublication,
-                      value: SubjectOfComplaint.UNAUTHORIZED_PUBLICATION,
-                    },
-                    {
-                      label: complaint.labels.subjectVanskilaskra,
-                      value: SubjectOfComplaint.VANSKILASKRA,
-                    },
-                    {
-                      label: complaint.labels.subjectVideoRecording,
-                      value: SubjectOfComplaint.VIDEO_RECORDINGS,
-                    },
-                    {
-                      label: complaint.labels.subjectOtherOther,
-                      value: SubjectOfComplaint.OTHER,
-                    },
-                  ],
-                  large: true,
-                }),
-                buildTextField({
-                  id: 'subjectOfComplaint.somethingElse',
-                  title: complaint.labels.subjectSomethingElse,
-                  placeholder: complaint.labels.subjectSomethingElsePlaceholder,
-                  backgroundColor: 'blue',
-                  condition: (formValue) => {
-                    const values =
-                      ((formValue.subjectOfComplaint as FormValue)
-                        ?.values as string[]) || []
-                    return values.includes('other')
-                  },
                 }),
               ],
             }),

@@ -7,9 +7,12 @@ export type NamespaceType = {
 
 export interface GlobalContextProps {
   globalNamespace: NamespaceType
-  contentfulId: string
+  pageContentfulId: string
+  subpageContentfulId?: string
+  resolveLinkTypeLocally?: boolean
   setGlobalNamespace: (ns: NamespaceType) => void
-  setContentfulId: (id: string) => void
+  setContentfulId: (pageId: string, subpageId?: string) => void
+  setResolveLinkTypeLocally: (localResolution: boolean) => void
 }
 
 export interface GlobalContextProviderProps {
@@ -18,28 +21,44 @@ export interface GlobalContextProviderProps {
 
 export const GlobalContext = createContext<GlobalContextProps>({
   globalNamespace: {},
-  contentfulId: '',
+  pageContentfulId: '',
+  subpageContentfulId: '',
+  resolveLinkTypeLocally: false,
   setGlobalNamespace: () => null,
   setContentfulId: () => null,
+  setResolveLinkTypeLocally: () => null,
 })
 
 export const GlobalContextProvider: FC<GlobalContextProviderProps> = ({
   namespace = {},
   children,
 }) => {
-  const setContentfulId = (id: string) => {
-    setState({ ...state, contentfulId: id })
+  const setContentfulId = (pageId: string, subpageId?: string) => {
+    setState((prevState) => ({
+      ...prevState,
+      pageContentfulId: pageId,
+      subpageContentfulId: subpageId,
+    }))
   }
 
   const setGlobalNamespace = (ns: NamespaceType) => {
-    setState({ ...state, globalNamespace: ns })
+    setState((prevState) => ({ ...prevState, globalNamespace: ns }))
   }
 
-  const initialState = {
+  const setResolveLinkTypeLocally = (localResolution: boolean) => {
+    setState((prevState) => ({
+      ...prevState,
+      resolveLinkTypeLocally: localResolution,
+    }))
+  }
+
+  const initialState: GlobalContextProps = {
     globalNamespace: namespace,
-    contentfulId: '',
+    pageContentfulId: '',
+    subpageContentfulId: '',
     setGlobalNamespace,
     setContentfulId,
+    setResolveLinkTypeLocally,
   }
 
   const [state, setState] = useState(initialState)

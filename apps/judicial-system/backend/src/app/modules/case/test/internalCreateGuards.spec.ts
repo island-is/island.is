@@ -15,7 +15,7 @@ describe('CaseController - Internal create guards', () => {
     )
   })
 
-  it('should have four guards', () => {
+  it('should have one guard', () => {
     expect(guards).toHaveLength(1)
   })
 

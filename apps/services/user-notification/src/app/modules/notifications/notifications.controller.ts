@@ -75,7 +75,7 @@ export class NotificationsController {
   ): Promise<CreateNotificationResponse> {
     const message = await validateMessage(req.body)
     const id = await this.queue.add(message)
-    this.logger.debug(`Added message ${id} to queue`)
+    this.logger.info('Message queued', { messageId: id, ...message })
     return { id }
   }
 }
