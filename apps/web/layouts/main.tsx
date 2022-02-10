@@ -55,6 +55,7 @@ import {
   LinkType,
   useLinkResolver,
   linkResolver as LinkResolver,
+  pathIsRoute,
 } from '../hooks/useLinkResolver'
 import { stringHash } from '@island.is/web/utils/stringHash'
 
@@ -210,8 +211,10 @@ const Layout: NextComponentType<
     '/fonts/ibm-plex-sans-v7-latin-600.woff2',
   ]
 
+  const isServiceWeb = pathIsRoute(asPath, 'serviceweb')
+
   return (
-    <GlobalContextProvider namespace={namespace}>
+    <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
       <Page component="div">
         <Head>
           {preloadedFonts.map((href, index) => {
@@ -346,7 +349,7 @@ const Layout: NextComponentType<
             <Footer
               topLinks={footerUpperInfo}
               {...(activeLocale === 'is'
-                ? { linkToHelpWeb: linkResolver('helpdesk').href }
+                ? { linkToHelpWeb: linkResolver('serviceweb').href }
                 : { topLinksContact: footerUpperContact })}
               bottomLinks={footerLowerMenu}
               middleLinks={footerMiddleMenu}

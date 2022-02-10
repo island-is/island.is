@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import { defaultLanguage } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
-import { I18nContext } from '../../i18n/I18n'
+import { I18nContext, isLocale } from '../../i18n/I18n'
 
 export interface LinkResolverResponse {
   href: string
@@ -158,15 +158,19 @@ export const routesTemplate = {
     is: '/[slug]',
     en: '/en/[slug]',
   },
-  helpdesk: {
+  serviceweb: {
     is: '/adstod',
     en: '/en/help',
   },
-  helpdeskcategory: {
+  serviceweborganization: {
+    is: '/adstod/[slug]',
+    en: '/en/help/[slug]',
+  },
+  servicewebcategory: {
     is: '/adstod/[organizationSlug]/[categorySlug]',
     en: '/en/help/[organizationSlug]/[categorySlug]',
   },
-  helpdesksearch: {
+  servicewebsearch: {
     is: '/adstod/leit',
     en: '/en/help/search',
   },
@@ -203,6 +207,20 @@ export const extractSlugsByRouteTemplate = (
   return pathParts.filter((_, index) => {
     return templateParts[index]?.startsWith('[') ?? false
   })
+}
+
+/** Check if path is of link type */
+export const pathIsRoute = (path: string, linkType: LinkType) => {
+  const segments = path.split('/').filter((x) => x)
+
+  const localeSegment = isLocale(segments[0]) ? segments[0] : ''
+  const firstSegment = (localeSegment ? segments[1] : segments[0]) ?? ''
+
+  const current = `/${
+    localeSegment ? localeSegment + '/' : ''
+  }${firstSegment}`.replace(/\/$/, '')
+
+  return current === linkResolver(linkType).href
 }
 
 /*

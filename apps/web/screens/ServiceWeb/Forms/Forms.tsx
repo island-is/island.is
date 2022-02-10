@@ -115,14 +115,14 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                         items={[
                           {
                             title: n('assistance', 'Aðstoð'),
-                            typename: 'helpdesk',
-                            href: linkResolver('helpdesk').href,
+                            typename: 'serviceweb',
+                            href: linkResolver('serviceweb').href,
                           },
                           {
                             title: organization.title,
-                            typename: 'helpdesk',
+                            typename: 'serviceweb',
                             href: `${
-                              linkResolver('helpdesk').href
+                              linkResolver('serviceweb').href
                             }/${institutionSlug}`,
                           },
                           {
@@ -157,7 +157,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                           }}
                         >
                           <Text truncate>
-                            <a href={linkResolver('helpdesk').href}>
+                            <a href={linkResolver('serviceweb').href}>
                               <Button
                                 preTextIcon="arrowBack"
                                 preTextIconType="filled"

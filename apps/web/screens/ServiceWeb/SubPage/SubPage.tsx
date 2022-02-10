@@ -85,7 +85,7 @@ const SubPage: Screen<SubPageProps> = ({
     : `${organizationTitle}`
 
   const mobileBackButtonLink = `${
-    linkResolver('helpdesk').href
+    linkResolver('serviceweb').href
   }/${organizationSlug}${questionSlug ? `/${categorySlug}` : ''}`
 
   return (
@@ -112,23 +112,23 @@ const SubPage: Screen<SubPageProps> = ({
                         items={[
                           {
                             title: n('assistance', 'Aðstoð'),
-                            typename: 'helpdesk',
-                            href: linkResolver('helpdesk').href,
+                            typename: 'serviceweb',
+                            href: linkResolver('serviceweb').href,
                           },
                           {
                             title: organization.title,
-                            typename: 'helpdesk',
+                            typename: 'serviceweb',
                             href: `${
-                              linkResolver('helpdesk').href
+                              linkResolver('serviceweb').href
                             }/${organizationSlug}`,
                           },
                           {
                             title: `${categoryTitle}`,
-                            typename: 'helpdesk',
+                            typename: 'serviceweb',
                             isTag: true,
                             ...(questionSlug && {
                               href: `${
-                                linkResolver('helpdesk').href
+                                linkResolver('serviceweb').href
                               }/${organizationSlug}/${categorySlug}`,
                             }),
                           },

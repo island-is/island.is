@@ -82,7 +82,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
       description: item.organization?.description,
       link: {
         href:
-          linkResolver('helpdeskcategory', [
+          linkResolver('servicewebcategory', [
             item.organization.slug,
             item.category.slug,
           ]).href + `?&q=${item.slug}`,
@@ -120,7 +120,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                     items={[
                       {
                         title: n('assistance', 'Aðstoð'),
-                        href: linkResolver('helpdesk').href,
+                        href: linkResolver('serviceweb').href,
                       },
                       {
                         title: n('search', 'Leit'),
@@ -154,7 +154,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                       }}
                     >
                       <Text truncate>
-                        <a href={linkResolver('helpdesk').href}>
+                        <a href={linkResolver('serviceweb').href}>
                           <Button
                             preTextIcon="arrowBack"
                             preTextIconType="filled"
@@ -250,7 +250,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                   renderLink={(page, className, children) => (
                     <Link
                       href={{
-                        pathname: linkResolver('helpdesksearch').href,
+                        pathname: linkResolver('servicewebsearch').href,
                         query: { ...Router.query, page },
                       }}
                     >
