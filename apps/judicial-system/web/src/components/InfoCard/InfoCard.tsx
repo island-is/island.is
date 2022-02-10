@@ -47,11 +47,9 @@ const InfoCard: React.FC<Props> = (props) => {
                     ? defendant.nationalId
                     : formatNationalId(defendant.nationalId ?? '')
                 }`}
+                {defendant.citizenship && ` (${defendant.citizenship})`}
                 {defendant.address && (
                   <Text as="span">{`, ${defendant.address}`}</Text>
-                )}
-                {defendant.citizenship && (
-                  <Text as="span">{`, ${defendant.citizenship}`}</Text>
                 )}
               </Text>
             ))}
