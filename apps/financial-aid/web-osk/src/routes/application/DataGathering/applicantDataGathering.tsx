@@ -1,29 +1,36 @@
 import React, { useContext, useState } from 'react'
-import { Text, Icon, Box, Checkbox } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
 
 import {
+  AboutDataGathering,
   ContentContainer,
+  DataGatheringCheckbox,
   Footer,
-  Logo,
+  TaxDataGathering,
+  DataGatheringHeader,
 } from '@island.is/financial-aid-web/osk/src/components'
-import * as styles from './info.css'
 import { useRouter } from 'next/router'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
 import {
-  getNextPeriod,
+  FileType,
   NationalRegistryData,
   NavigationProps,
+  PersonalTaxReturn,
   Routes,
   useAsyncLazyQuery,
 } from '@island.is/financial-aid/shared/lib'
 
-import { NationalRegistryUserQuery } from '@island.is/financial-aid-web/osk/graphql'
+import {
+  NationalRegistryUserQuery,
+  PersonalTaxReturnQuery,
+} from '@island.is/financial-aid-web/osk/graphql'
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
+import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
-const ApplicationInfo = () => {
+const ApplicantDataGathering = () => {
   const router = useRouter()
   const {
     user,
@@ -31,6 +38,7 @@ const ApplicationInfo = () => {
     setMunicipalityById,
     loadingMunicipality,
   } = useContext(AppContext)
+  const { form, updateForm } = useContext(FormContext)
 
   const [accept, setAccept] = useState(false)
   const [hasError, setHasError] = useState(false)
@@ -43,6 +51,10 @@ const ApplicationInfo = () => {
     },
     { input: { ssn: string } }
   >(NationalRegistryUserQuery)
+
+  const personalTaxReturnQuery = useAsyncLazyQuery<{
+    municipalitiesPersonalTaxReturn: PersonalTaxReturn
+  }>(PersonalTaxReturnQuery)
 
   const logOut = useLogOut()
 
@@ -59,28 +71,55 @@ const ApplicationInfo = () => {
     setError(false)
     setLoading(true)
 
-    const { data } = await nationalRegistryQuery({
-      input: { ssn: user?.nationalId },
-    }).catch(() => {
-      return { data: undefined }
-    })
+    const [
+      { data: nationalRegistry },
+      { data: personalTaxReturn },
+    ] = await Promise.all([
+      await nationalRegistryQuery({
+        input: { ssn: user?.nationalId },
+      }).catch(() => {
+        return {
+          data: undefined,
+        }
+      }),
+      await personalTaxReturnQuery({}).catch(() => {
+        return { data: undefined }
+      }),
+    ])
 
-    if (!data || !data.municipalityNationalRegistryUserV2.address) {
+    if (
+      !nationalRegistry ||
+      !nationalRegistry.municipalityNationalRegistryUserV2.address
+    ) {
       setError(true)
       setLoading(false)
       return
     }
 
-    setNationalRegistryData(data.municipalityNationalRegistryUserV2)
+    updateForm({
+      ...form,
+      taxReturnFromRskFile: [
+        personalTaxReturn
+          ? {
+              ...personalTaxReturn.municipalitiesPersonalTaxReturn,
+              type: FileType.TAXRETURN,
+            }
+          : undefined,
+      ],
+    })
+
+    setNationalRegistryData(nationalRegistry.municipalityNationalRegistryUserV2)
 
     await setMunicipalityById(
-      data.municipalityNationalRegistryUserV2.address.municipalityCode,
+      nationalRegistry.municipalityNationalRegistryUserV2.address
+        .municipalityCode,
     ).then((municipality) => {
       navigation.nextUrl && municipality && municipality.active
         ? router.push(navigation?.nextUrl)
         : router.push(
             Routes.serviceCenter(
-              data.municipalityNationalRegistryUserV2.address.municipalityCode,
+              nationalRegistry.municipalityNationalRegistryUserV2.address
+                .municipalityCode,
             ),
           )
     })
@@ -89,22 +128,7 @@ const ApplicationInfo = () => {
   return (
     <>
       <ContentContainer>
-        <Text as="h1" variant="h2" marginBottom={[3, 3, 5]}>
-          Gagnaöflun
-        </Text>
-
-        <Box className={styles.textIconContainer} marginBottom={3}>
-          <Icon
-            color="blue400"
-            icon="fileTrayFull"
-            size="large"
-            type="outline"
-          />
-
-          <Text as="h2" variant="h4">
-            Eftirfarandi gögn verða sótt rafrænt með þínu samþykki.
-          </Text>
-        </Box>
+        <DataGatheringHeader />
 
         <Text marginBottom={3}>
           Við þurfum að afla gagna frá eftirfarandi opinberum aðilum til að
@@ -117,44 +141,17 @@ const ApplicationInfo = () => {
         </Text>
         <Text marginBottom={3}>Lögheimili, hjúskaparstaða</Text>
 
-        <Text marginBottom={[4, 4, 5]}>
-          Við þurfum að fá þig til að renna yfir nokkur atriði varðandi þína
-          persónuhagi og fjármál til að reikna út fjárhagsaðstoð til útgreiðslu
-          í byrjun {getNextPeriod.month}. Í lok umsóknar getur þú sent hana inn
-          eða eytt henni og öllum tengdum gögnum.
-        </Text>
+        <TaxDataGathering />
 
-        <Box marginBottom={[5, 5, 10]} cursor="pointer">
-          <Checkbox
-            name={'accept'}
-            backgroundColor="blue"
-            label="Ég skil að ofangreindra gagna verður aflað í umsóknar- og staðfestingarferlinu"
-            large
-            checked={accept}
-            onChange={(event) => {
-              setHasError(false)
+        <AboutDataGathering />
 
-              setAccept(event.target.checked)
-            }}
-            hasError={hasError}
-            errorMessage={'Þú þarft að samþykkja gagnaöflun'}
-          />
-
-          {error && (
-            <Text color="red600" fontWeight="semiBold" variant="small">
-              Eitthvað fór úrskeiðis, vinsamlegast reynið aftur síðar
-            </Text>
-          )}
-        </Box>
-
-        <Box
-          className={styles.logoContainer}
-          alignItems="center"
-          justifyContent="center"
-          marginBottom={5}
-        >
-          <Logo className={styles.logo} />
-        </Box>
+        <DataGatheringCheckbox
+          accept={accept}
+          setHasError={setHasError}
+          setAccept={setAccept}
+          hasError={hasError}
+          error={error}
+        />
       </ContentContainer>
       <Footer
         onPrevButtonClick={() => logOut()}
@@ -169,4 +166,4 @@ const ApplicationInfo = () => {
   )
 }
 
-export default ApplicationInfo
+export default ApplicantDataGathering

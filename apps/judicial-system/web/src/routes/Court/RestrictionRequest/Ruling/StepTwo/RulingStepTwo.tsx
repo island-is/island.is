@@ -116,9 +116,11 @@ export const RulingStepTwo: React.FC = () => {
                   suffix: accusedSuffix,
                 }),
                 accusedName: theCase.defendants[0].name,
-                accusedNationalId: formatNationalId(
-                  theCase.defendants[0].nationalId ?? '',
-                ),
+                accusedNationalId: theCase.defendants[0].noNationalId
+                  ? ', '
+                  : `, kt. ${formatNationalId(
+                      theCase.defendants[0].nationalId ?? '',
+                    )}, `,
                 extensionSuffix:
                   theCase.parentCase &&
                   isAcceptingCaseDecision(theCase.parentCase.decision)
@@ -136,9 +138,11 @@ export const RulingStepTwo: React.FC = () => {
                   }),
                 ),
                 accusedName: theCase.defendants[0].name,
-                accusedNationalId: formatNationalId(
-                  theCase.defendants[0].nationalId ?? '',
-                ),
+                accusedNationalId: theCase.defendants[0].noNationalId
+                  ? ', '
+                  : `, kt. ${formatNationalId(
+                      theCase.defendants[0].nationalId ?? '',
+                    )}, `,
                 caseTypeAndExtensionSuffix:
                   theCase.decision === CaseDecision.ACCEPTING ||
                   theCase.decision === CaseDecision.ACCEPTING_PARTIALLY
