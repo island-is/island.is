@@ -1,7 +1,7 @@
-import React, { FC, useCallback } from 'react'
+import React, { FC } from 'react'
 import { Document } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
-import { Text, Box, GridRow, GridColumn } from '@island.is/island-ui/core'
+import { Text, Box, GridRow, GridColumn, Link } from '@island.is/island-ui/core'
 import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
 import * as styles from './DocumentLine.css'
@@ -18,16 +18,14 @@ interface Props {
 const DocumentLine: FC<Props> = ({ documentLine, userInfo, img }) => {
   const { formatMessage } = useLocale()
 
-  const refreshToken = async (url: string) => {
-    await getAccessToken().then(() => window.open(url))
-  }
-
-  const onClickHandler = () => {
+  const onClickHandler = async () => {
     // Create form elements
-    refreshToken(documentLine.url)
     const form = document.createElement('form')
     const documentIdInput = document.createElement('input')
     const tokenInput = document.createElement('input')
+
+    const token = await getAccessToken()
+    if (!token) return
 
     form.appendChild(documentIdInput)
     form.appendChild(tokenInput)
@@ -46,7 +44,7 @@ const DocumentLine: FC<Props> = ({ documentLine, userInfo, img }) => {
     // National Id values
     tokenInput.type = 'hidden'
     tokenInput.name = '__accessToken'
-    tokenInput.value = userInfo.access_token
+    tokenInput.value = token
 
     document.body.appendChild(form)
     form.submit()
@@ -90,15 +88,16 @@ const DocumentLine: FC<Props> = ({ documentLine, userInfo, img }) => {
               />
             )}
             {documentLine.fileType === 'url' && documentLine.url ? (
-              <button
-                onClick={() => refreshToken(documentLine.url)}
-                className={cn(
-                  styles.button,
-                  !documentLine.opened && styles.unopened,
-                )}
-              >
-                {documentLine.subject}
-              </button>
+              <Link href={documentLine.url}>
+                <button
+                  className={cn(
+                    styles.button,
+                    !documentLine.opened && styles.unopened,
+                  )}
+                >
+                  {documentLine.subject}
+                </button>
+              </Link>
             ) : (
               <button
                 className={cn(
