@@ -61,16 +61,17 @@ const availableLineHeights = {
   md: 1.5,
   lg: 1.75,
   xl: 2,
+  xxl: 2.25,
 }
 
 const availableFontSizes = {
-  xxs: { xs: 12, md: 14 },
-  xs: { xs: 14, md: 16 },
-  sm: { xs: 16, md: 18 },
-  md: { xs: 18, md: 20 },
-  lg: { xs: 20, md: 24 },
-  xl: { xs: 26, md: 34 },
-  xxl: { xs: 32, md: 42 },
+  xxs: { xs: 12, md: 14, xl: 16 },
+  xs: { xs: 14, md: 16, xl: 18 },
+  sm: { xs: 16, md: 18, xl: 20 },
+  md: { xs: 18, md: 20, xl: 22 },
+  lg: { xs: 20, md: 24, xl: 26 },
+  xl: { xs: 26, md: 34, xl: 42 },
+  xxl: { xs: 32, md: 42, xl: 52 },
 }
 
 const lineHeightMap = {
@@ -79,6 +80,7 @@ const lineHeightMap = {
   md: availableLineHeights.md,
   lg: availableLineHeights.lg,
   xl: availableLineHeights.xl,
+  xxl: availableLineHeights.xxl,
 }
 
 const defaultFontWeightsMap: defaultFontWeights = {
