@@ -4,7 +4,7 @@ import { ValueType } from 'react-select/src/types'
 
 import type { Case, Institution, User } from '@island.is/judicial-system/types'
 import { Box, Input, Text, Checkbox } from '@island.is/island-ui/core'
-import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { setAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -12,6 +12,7 @@ import {
   FormContentContainer,
   FormFooter,
   BlueBox,
+  CaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import { rcRequestedHearingArrangements } from '@island.is/judicial-system-web/messages'
 import { useCaseFormHelper } from '@island.is/judicial-system-web/src/utils/useFormHelper'
@@ -61,6 +62,9 @@ const StepTwoForm: React.FC<Props> = (props) => {
           <Text as="h1" variant="h1">
             {formatMessage(rcRequestedHearingArrangements.heading)}
           </Text>
+        </Box>
+        <Box component="section" marginBottom={7}>
+          <CaseInfo workingCase={workingCase} />
         </Box>
         <Box component="section" marginBottom={5}>
           <BlueBox>
@@ -115,7 +119,7 @@ const StepTwoForm: React.FC<Props> = (props) => {
               maxDate={new Date()}
               selectedDate={workingCase.arrestDate}
               onChange={(date: Date | undefined, valid: boolean) => {
-                newSetAndSendDateToServer(
+                setAndSendDateToServer(
                   'arrestDate',
                   date,
                   valid,
@@ -131,7 +135,7 @@ const StepTwoForm: React.FC<Props> = (props) => {
           <RequestCourtDate
             workingCase={workingCase}
             onChange={(date: Date | undefined, valid: boolean) =>
-              newSetAndSendDateToServer(
+              setAndSendDateToServer(
                 'requestedCourtDate',
                 date,
                 valid,

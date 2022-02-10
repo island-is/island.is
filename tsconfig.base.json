@@ -73,6 +73,9 @@
       "@island.is/api/domains/driving-license": [
         "libs/api/domains/driving-license/src/index.ts"
       ],
+      "@island.is/api/domains/driving-license-book": [
+        "libs/api/domains/driving-license-book/src/index.ts"
+      ],
       "@island.is/api/domains/education": [
         "libs/api/domains/education/src/index.ts"
       ],
@@ -243,6 +246,9 @@
       "@island.is/clients/driving-license": [
         "libs/clients/driving-license/src/index.ts"
       ],
+      "@island.is/clients/driving-license-book": [
+        "libs/clients/driving-license-book/src/index.ts"
+      ],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
       "@island.is/clients/health-insurance-v2": [
         "libs/clients/health-insurance-v2/src/index.ts"
@@ -365,6 +371,7 @@
       "@island.is/nest/feature-flags": ["libs/nest/feature-flags/src/index.ts"],
       "@island.is/nest/pagination": ["libs/nest/pagination/src/index.ts"],
       "@island.is/nest/problem": ["libs/nest/problem/src/index.ts"],
+      "@island.is/nest/sequelize": ["libs/nest/sequelize/src/index.ts"],
       "@island.is/nest/swagger": ["libs/nest/swagger/src/index.ts"],
       "@island.is/nest/validators": ["libs/nest/validators/src/index.ts"],
       "@island.is/next-ids-auth": ["libs/next-ids-auth/src/index.ts"],

@@ -8,7 +8,10 @@ import {
   DataUploadResponse,
 } from '@island.is/clients/syslumenn'
 import { NationalRegistry } from './types'
-import { Application, getValueViaPath } from '@island.is/application/core'
+import {
+  ApplicationWithAttachments as Application,
+  getValueViaPath,
+} from '@island.is/application/core'
 import AmazonS3URI from 'amazon-s3-uri'
 import { S3 } from 'aws-sdk'
 import { SharedTemplateApiService } from '../../shared'
@@ -144,7 +147,6 @@ export class PSignSubmissionService {
       })
       .promise()
     const fileContent = file.Body as Buffer
-
-    return fileContent?.toString('base64') || ''
+    return `data:image/jpeg;base64,${fileContent?.toString('base64')}` || ''
   }
 }

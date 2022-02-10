@@ -9,7 +9,7 @@ import {
   ForeignKey,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
-import { PersonalRepresentativeRightType } from './personal-representative-right-type.model'
+import { PersonalRepresentativeRightType } from '../../personal-representative/entities/models/personal-representative-right-type.model'
 import { ApiScope } from './api-scope.model'
 
 @Table({

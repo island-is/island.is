@@ -7,18 +7,14 @@ import {
   FormFooter,
   CourtDocuments,
   PageLayout,
-  CaseNumbers,
+  CaseInfo,
   BlueBox,
   FormContentContainer,
   DateTime,
   HideableText,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  caseTypes,
-  formatAccusedByGender,
-  NounCases,
-} from '@island.is/judicial-system/formatters'
-import { CaseType } from '@island.is/judicial-system/types'
+import { caseTypes } from '@island.is/judicial-system/formatters'
+import { CaseType, Gender } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import {
   JudgeSubsections,
@@ -28,15 +24,17 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
   setAndSendToServer,
-  newSetAndSendDateToServer,
+  setAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   rcCourtRecord as m,
   closedCourt,
+  core,
 } from '@island.is/judicial-system-web/messages'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import { isCourtRecordStepValidRC } from '../../../../utils/validate'
@@ -49,6 +47,8 @@ export const CourtRecord: React.FC = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
+  const { user } = useContext(UserContext)
+
   const [courtLocationErrorMessage, setCourtLocationMessage] = useState('')
   const [
     litigationPresentationsErrorMessage,
@@ -70,18 +70,30 @@ export const CourtRecord: React.FC = () => {
       const defaultCourtAttendees = (wc: Case): string => {
         let attendees = ''
 
-        if (wc.prosecutor && wc.accusedName) {
-          attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n${
-            wc.accusedName
-          } ${formatAccusedByGender(wc?.accusedGender)}`
+        if (wc.prosecutor) {
+          attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}`
+        }
+
+        if (wc.defendants && wc.defendants.length > 0) {
+          attendees += `\n${wc.defendants[0].name} ${formatMessage(
+            core.accused,
+            {
+              suffix: wc.defendants[0].gender === Gender.MALE ? 'i' : 'a',
+            },
+          )}`
         }
 
         if (wc.defenderName) {
-          attendees += `\n${
-            wc.defenderName
-          } skipaður verjandi ${formatAccusedByGender(
-            wc?.accusedGender,
-            NounCases.GENITIVE,
+          attendees += `\n${wc.defenderName} skipaður verjandi ${formatMessage(
+            core.accused,
+            {
+              suffix:
+                wc.defendants &&
+                wc.defendants.length > 0 &&
+                wc.defendants[0].gender === Gender.FEMALE
+                  ? 'u'
+                  : 'a',
+            },
           )}`
         }
 
@@ -117,15 +129,15 @@ export const CourtRecord: React.FC = () => {
       if (theCase.type === CaseType.CUSTODY) {
         autofill(
           'litigationPresentations',
-          `Sækjandi ítrekar kröfu um gæsluvarðhald, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi ${formatAccusedByGender(
-            theCase.accusedGender,
-            NounCases.GENITIVE,
-          )} ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að ${formatAccusedByGender(
-            theCase.accusedGender,
-            NounCases.DATIVE,
-          )} verði gert að sæta farbanni í stað gæsluvarðhalds, en til þrautavara að gæsluvarðhaldi verði markaður skemmri tími en krafist er og að ${formatAccusedByGender(
-            theCase.accusedGender,
-            NounCases.DATIVE,
+          `Sækjandi ítrekar kröfu um gæsluvarðhald, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi ${formatMessage(
+            core.accused,
+            { suffix: 'a' },
+          )} ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að ${formatMessage(
+            core.accused,
+            { suffix: 'i' },
+          )} verði gert að sæta farbanni í stað gæsluvarðhalds, en til þrautavara að gæsluvarðhaldi verði markaður skemmri tími en krafist er og að ${formatMessage(
+            core.accused,
+            { suffix: 'a' },
           )} verði ekki gert að sæta einangrun á meðan á gæsluvarðhaldi stendur. Verjandinn reifar og rökstyður mótmælin og leggur málið í úrskurð með venjulegum fyrirvara.`,
           theCase,
         )
@@ -174,13 +186,13 @@ export const CourtRecord: React.FC = () => {
       notFound={caseNotFound}
     >
       <FormContentContainer>
-        <Box marginBottom={10}>
+        <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             Þingbók
           </Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers workingCase={workingCase} />
+          <CaseInfo workingCase={workingCase} userRole={user?.role} />
         </Box>
         <Box component="section" marginBottom={3}>
           <BlueBox>
@@ -192,7 +204,7 @@ export const CourtRecord: React.FC = () => {
                 maxDate={new Date()}
                 selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
-                  newSetAndSendDateToServer(
+                  setAndSendDateToServer(
                     'courtStartDate',
                     date,
                     valid,
@@ -215,7 +227,7 @@ export const CourtRecord: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'courtLocation',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -266,7 +278,7 @@ export const CourtRecord: React.FC = () => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'courtAttendees',
-                event,
+                event.target.value,
                 ['empty'],
                 workingCase,
                 setWorkingCase,
@@ -300,14 +312,19 @@ export const CourtRecord: React.FC = () => {
             workingCase={workingCase}
           />
         </Box>
+
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
               {`${formatMessage(m.sections.accusedBookings.title, {
-                genderedAccused: formatAccusedByGender(
-                  workingCase.accusedGender,
-                  NounCases.GENITIVE,
-                ),
+                genderedAccused: formatMessage(core.accused, {
+                  suffix:
+                    workingCase.defendants &&
+                    workingCase.defendants.length > 0 &&
+                    workingCase.defendants[0].gender === Gender.FEMALE
+                      ? 'u'
+                      : 'a',
+                }),
               })} `}
               <Tooltip
                 text={formatMessage(m.sections.accusedBookings.tooltip)}
@@ -318,17 +335,21 @@ export const CourtRecord: React.FC = () => {
             data-testid="accusedBookings"
             name="accusedBookings"
             label={formatMessage(m.sections.accusedBookings.label, {
-              genderedAccused: formatAccusedByGender(
-                workingCase.accusedGender,
-                NounCases.GENITIVE,
-              ),
+              genderedAccused: formatMessage(core.accused, {
+                suffix:
+                  workingCase.defendants &&
+                  workingCase.defendants.length > 0 &&
+                  workingCase.defendants[0].gender === Gender.FEMALE
+                    ? 'u'
+                    : 'a',
+              }),
             })}
             value={workingCase.accusedBookings || ''}
             placeholder={formatMessage(m.sections.accusedBookings.placeholder)}
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'accusedBookings',
-                event,
+                event.target.value,
                 [],
                 workingCase,
                 setWorkingCase,
@@ -363,7 +384,7 @@ export const CourtRecord: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'litigationPresentations',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,

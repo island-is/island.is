@@ -101,8 +101,20 @@ export const delimitation = {
       id:
         'dpac.application:section.delimitation.labels.agreementDescriptionBulletEight',
       defaultMessage:
-        'Ítarlegri upplýsingar um vinnslu persónuupplýsinga hjá Persónuvernd má nálgast í persónuverndarstefnu stofnunarinnar.',
+        'Ítarlegri upplýsingar um vinnslu persónuupplýsinga hjá Persónuvernd má nálgast í {link}.',
       description: 'Agreement description bullet Eight',
+    },
+    agreementDescriptionlink: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionlink',
+      defaultMessage: 'https://www.personuvernd.is/upplysingar-um-thig/',
+      description: 'Agreement description link',
+    },
+    agreementDescriptionlinkName: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionlinkName',
+      defaultMessage: 'persónuverndarstefnu stofnunarinnar',
+      description: 'Agreement description link name',
     },
   }),
   links: defineMessages({

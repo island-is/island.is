@@ -1,7 +1,7 @@
 import React, { Children } from 'react'
 import flattenChildren from 'react-keyed-flatten-children'
 import { Box } from '../Box/Box'
-import { ResponsiveSpace } from '../Box/useBoxStyles'
+import { ResponsiveSpace, UseBoxStylesProps } from '../Box/useBoxStyles'
 import {
   useNegativeMarginLeft,
   useNegativeMarginTop,
@@ -15,12 +15,14 @@ import {
 export interface InlineProps extends CollapsibleAlignmentProps {
   space?: ResponsiveSpace
   flexWrap?: 'wrap' | 'nowrap'
+  justifyContent?: UseBoxStylesProps['justifyContent']
   children: ReactNodeNoStrings
 }
 
 export const Inline = ({
   space = 'none',
   flexWrap = 'wrap',
+  justifyContent,
   align,
   alignY,
   collapseBelow,
@@ -47,6 +49,7 @@ export const Inline = ({
         className={negativeMarginLeft}
         flexWrap={flexWrap}
         {...collapsibleAlignmentProps}
+        {...(justifyContent && { justifyContent })}
       >
         {Children.map(orderChildren(flattenChildren(children)), (child) =>
           child !== null && child !== undefined ? (
