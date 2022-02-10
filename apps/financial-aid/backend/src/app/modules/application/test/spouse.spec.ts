@@ -99,7 +99,7 @@ describe('ApplicationController - Spouse', () => {
       mockSpouse.mockReturnValueOnce({
         id: uuid(),
         name: spouse.applicantName,
-        email: spouse.applicantSpouseEmail
+        spouseEmail: spouse.applicantSpouseEmail
       } as ApplicationModel)
       const mockFiles = mockFileService.getApplicationFilesByType as jest.Mock
       mockFiles.mockReturnValueOnce({} as ApplicationFileModel)
@@ -127,7 +127,7 @@ describe('ApplicationController - Spouse', () => {
       mockSpouse.mockReturnValueOnce({
         id: uuid(),
         name: spouse.applicantName,
-        email: spouse.applicantSpouseEmail
+        spouseEmail: spouse.applicantSpouseEmail
       } as ApplicationModel)
       const mockFiles = mockFileService.getApplicationFilesByType as jest.Mock
       mockFiles.mockReturnValueOnce(undefined)
