@@ -69,7 +69,7 @@ describe('ApplicationController - Spouse', () => {
       hasPartnerApplied: false,
       hasFiles: false,
       applicantName: '',
-      applicantSpouseEmail: ''
+      applicantSpouseEmail: '',
     }
 
     beforeEach(async () => {
@@ -91,7 +91,7 @@ describe('ApplicationController - Spouse', () => {
       hasPartnerApplied: true,
       hasFiles: true,
       applicantName: 'Name',
-      applicantSpouseEmail: 'test@test.is'
+      applicantSpouseEmail: 'test@test.is',
     }
 
     beforeEach(async () => {
@@ -99,7 +99,7 @@ describe('ApplicationController - Spouse', () => {
       mockSpouse.mockReturnValueOnce({
         id: uuid(),
         name: spouse.applicantName,
-        email: spouse.applicantSpouseEmail
+        email: spouse.applicantSpouseEmail,
       } as ApplicationModel)
       const mockFiles = mockFileService.getApplicationFilesByType as jest.Mock
       mockFiles.mockReturnValueOnce({} as ApplicationFileModel)
@@ -119,7 +119,7 @@ describe('ApplicationController - Spouse', () => {
       hasPartnerApplied: true,
       hasFiles: false,
       applicantName: 'Name',
-      applicantSpouseEmail: 'test@test.is'
+      applicantSpouseEmail: 'test@test.is',
     }
 
     beforeEach(async () => {

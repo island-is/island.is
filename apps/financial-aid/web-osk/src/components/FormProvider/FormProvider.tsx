@@ -34,6 +34,7 @@ export interface Form {
   ledger?: string
   accountNumber?: string
   emailAddress?: string
+  emailEdited: boolean
   interview?: boolean
   submitted: boolean
   section?: Array<string>
@@ -50,6 +51,7 @@ export const initialState = {
   taxReturnFiles: [],
   taxReturnFromRskFile: [],
   otherFiles: [],
+  emailEdited: false
 }
 
 interface FormProvider {
@@ -89,6 +91,7 @@ const FormProvider = ({ children }: Props) => {
       incomeFiles: [],
       taxReturnFiles: [],
       otherFiles: [],
+      emailEdited: false
     })
   }
 
