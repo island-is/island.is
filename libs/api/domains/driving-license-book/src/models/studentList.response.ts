@@ -4,8 +4,8 @@ import { StudentResponse } from './student.response'
 @ObjectType()
 export class StudentListResponse {
   @Field(() => [StudentResponse], { nullable: true })
-  data?: StudentResponse[] | null
+  data?: StudentResponse[]
 
   @Field({ nullable: true })
-  nextCursor?: string | null
+  nextCursor?: string
 }

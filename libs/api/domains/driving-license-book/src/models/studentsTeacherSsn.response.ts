@@ -3,23 +3,23 @@ import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType()
 export class StudentListTeacherSsnResponse {
   @Field(() => [Student], { nullable: true })
-  data?: Student[] | null
+  data?: Student[]
 
   @Field({ nullable: true })
-  nextCursor?: string | null
+  nextCursor?: string
 }
 
 @ObjectType()
 export class Student {
   @Field({ nullable: true })
-  id?: string | null
+  id?: string
 
   @Field({ nullable: true })
-  ssn?: string | null
+  ssn?: string
 
   @Field({ nullable: true })
-  name?: string | null
+  name?: string
 
   @Field({ nullable: true })
-  totalLessonCount?: number | null
+  totalLessonCount?: number
 }

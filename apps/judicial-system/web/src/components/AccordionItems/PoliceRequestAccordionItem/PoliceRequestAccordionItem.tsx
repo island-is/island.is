@@ -39,6 +39,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
         caseType: formatRequestCaseType(workingCase.type),
       })}
       labelVariant="h3"
+      labelUse="h2"
     >
       <Box marginBottom={2}>
         <Text variant="h4" as="h4">
