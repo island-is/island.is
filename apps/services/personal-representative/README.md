@@ -4,6 +4,71 @@
 
 A service that is responsible for storing and maintaining personal representatives and their rights to act on behalf of the represented person
 
+## Context
+
+The purpose of the Personal Representative Database and the Service API is to allow the protection of rights agency of the Ministry of Social Affairs to define rights for personal representatives and maintain a list of personal representative connections along with rights list.
+
+This allows for digital services to give access to the personal representative on behalf of their clients according to the rights list in their connection.
+
+The API allows for maintenance of right types, personal representative types (currently only one type) and as stated before the connections between a personal representative and the represented person.
+
+### Example of connections
+
+| Personal representative | Represented person | Rights                                             |
+| ----------------------- | ------------------ | -------------------------------------------------- |
+| 1122334459              | 1223455569         | health-data, personal-data, limited-financial-data |
+| 1020304059              | 0203050569         | limited-health-data                                |
+
+### JSON expample of connection
+
+```json
+{
+  "id": "guid",
+  "personalRepresentativeTypeCode": "personal_representative_for_disabled_person",
+  "contractId": "99",
+  "externalUserId": "usernameA",
+  "nationalIdPersonalRepresentative": "0123456789",
+  "nationalIdRepresentedPerson": "0123456789",
+  "validTo": "2022-02-04T11:26:25.159Z",
+  "rightCodes": ["health-data", "finance-data"]
+}
+```
+
+## Access
+
+The ServiceAPI is only accessible through X-Road security servers and only to machine clients with specific scope
+
+For the foreseeable future the only system with access would be the Personal Representative Contract System serviced by Spektra for the protection of rights agency
+
+### Scope
+
+_@island.is/auth/personal-representative-admin\_
+
+### X-Road setup
+
+[X-Road information](https://docs.devland.is/technical-overview/x-road/x-road-system-requirements)
+
+#### Urls for X-Road setup are as follows
+
+⋅⋅\* Dev: [https://personal-representative-xrd.internal.dev01.devland.is/-json](https://personal-representative-xrd.internal.dev01.devland.is/-json)
+⋅⋅\* Staging: [https://personal-representative-xrd.internal.staging01.devland.is/-json](https://personal-representative-xrd.internal.staging01.devland.is/-json)
+⋅⋅\* Production: [https://personal-representative-xrd.internal.innskra.island.is/-json](https://personal-representative-xrd.internal.innskra.island.is/-json)
+
+### OpenAPI URL##
+
+OpenAPI documentation and demoing at
+[https://personal-representative-xrd.dev01.devland.is/](https://personal-representative-xrd.dev01.devland.is/)
+
+### Service provider usage
+
+Digital service providers do not get access to the service API.
+
+They can use the connection information through two ways.
+
+[PublicAPI](https://www.notion.so/PublicAPI-f1e15901fa6940a4a51b4b9c0dd5cc5a) or by using [Digital Iceland’s](https://www.notion.so/Identity-Server-Integration-afde614a247e4b9da4731b2ace1115cd) new login option and setting it up for Personal Representative usage.
+
+## Development
+
 ### Initial setup
 
 We are using the same service library and database as auth-api and therefore this step by step represents that
@@ -31,7 +96,7 @@ Api open api specs will now be accessible at
 http://localhost:3376
 ```
 
-## Testing
+### Testing
 
 You can run tests for this service locally by running:
 
@@ -39,12 +104,16 @@ You can run tests for this service locally by running:
 yarn test services-personal-representative
 ```
 
-## Getting started
+### Getting started
 
 ```bash
 yarn start services-personal-representative
 ```
 
-## Code owners and maintainers
+### Project owner
+
+Réttindagæsla velferðarráðuneytisins
+
+### Code owners and maintainers
 
 - [Programm](https://github.com/orgs/island-is/teams/programm/members)
