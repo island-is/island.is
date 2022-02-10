@@ -2,10 +2,10 @@ import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
 import { PdfConstants } from './constants'
 
-type generatePdfBody<T> = (dto: T, doc: PDFKit.PDFDocument) => void
+type generatePdfBody<T> = (template: T, doc: PDFKit.PDFDocument) => void
 
 export async function generatePdf<T>(
-  dto: T,
+  template: T,
   generatePdfBody: generatePdfBody<T>,
 ): Promise<Buffer> {
   const doc = new PDFDocument({
@@ -18,7 +18,7 @@ export async function generatePdf<T>(
   })
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
-  generatePdfBody(dto, doc)
+  generatePdfBody(template, doc)
 
   const pdfBuffer = await new Promise<Buffer>(function (resolve) {
     stream.on('finish', () => {

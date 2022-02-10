@@ -17,16 +17,22 @@ import {
   PAYMENT_STATUS_QUERY,
   PaymentChargeData,
   PaymentStatusData,
+  ADD_ATTACHMENT_MUTATION,
 } from './shared.queries'
+import { S3 } from 'aws-sdk'
+import { uuid } from 'uuidv4'
 
 @Injectable()
 export class SharedTemplateApiService {
+  private readonly s3: S3
   constructor(
     @Inject(EmailService)
     private readonly emailService: EmailService,
     @Inject(ConfigService)
     private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
-  ) {}
+  ) {
+    this.s3 = new S3()
+  }
 
   async sendEmail(
     templateGenerator: EmailTemplateGenerator,
@@ -204,5 +210,62 @@ export class SharedTemplateApiService {
       .then(({ data }) => {
         return data?.applicationPaymentStatus
       })
+  }
+
+  async addAttachment(
+    authorization: string,
+    applicationId: string,
+    fileName: string,
+    buffer: Buffer,
+    uploadParameters?: {
+      ContentType?: string
+      ContentDisposition?: string
+      ContentEncoding?: string
+    },
+  ): Promise<string> {
+    const uploadBucket = getConfigValue(
+      this.configService,
+      'uploadBucket',
+    ) as string
+
+    const uploadParams = {
+      Bucket: uploadBucket,
+      Key: fileName,
+      Body: buffer,
+      ...uploadParameters,
+    }
+
+    const { Location: url } = await this.s3.upload(uploadParams).promise()
+    const fileId = uuid()
+    const key = `${fileId}-${fileName}`
+
+    await this.makeGraphqlQuery<Application>(
+      authorization,
+      ADD_ATTACHMENT_MUTATION,
+      {
+        input: {
+          id: applicationId,
+          key,
+          url,
+        },
+      },
+    )
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('graphql query failed')
+        }
+
+        return res
+      })
+      .then((res) => res.json())
+      .then(({ errors, data }) => {
+        if (errors && errors.length) {
+          throw new Error('Update attachment failed')
+        }
+
+        return data
+      })
+
+    return key
   }
 }

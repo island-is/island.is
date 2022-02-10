@@ -34,3 +34,9 @@ export enum OnBehalf {
   OTHERS = 'others',
   ORGANIZATION_OR_INSTITUTION = 'organizationOrInsititution',
 }
+
+export interface SubmittedApplicationData {
+  data?: {
+    applicationPdfKey: string
+  }
+}
