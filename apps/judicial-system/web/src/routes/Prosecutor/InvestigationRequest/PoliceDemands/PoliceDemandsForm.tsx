@@ -85,9 +85,13 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
                 accusedName: workingCase.defendants
                   .map(
                     (defendant) =>
-                      `${defendant.name} kt. ${formatNationalId(
-                        defendant.nationalId ?? '',
-                      )}`,
+                      `${defendant.name} ${
+                        defendant.noNationalId ? 'fd.' : 'kt.'
+                      } ${
+                        defendant.noNationalId
+                          ? defendant.nationalId
+                          : formatNationalId(defendant.nationalId ?? '')
+                      }`,
                   )
                   .toString()
                   .replace(/,/g, ', '),

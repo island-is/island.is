@@ -66,9 +66,11 @@ export const StepFour: React.FC = () => {
           'demands',
           `${formatMessage(rcReportForm.sections.demands.autofill, {
             accusedName: theCase.defendants[0].name,
-            accusedNationalId: formatNationalId(
-              theCase.defendants[0].nationalId ?? '',
-            ),
+            accusedNationalId: theCase.defendants[0].noNationalId
+              ? ' '
+              : `, kt. ${formatNationalId(
+                  theCase.defendants[0].nationalId ?? '',
+                )}, `,
             extensionSuffix:
               theCase.parentCase &&
               isAcceptingCaseDecision(theCase.parentCase.decision)

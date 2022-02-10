@@ -37,6 +37,12 @@ export const request = {
       defaultMessage: 'Kennitala:',
       description: 'Notaður sem texti fyrir kennitölu í kröfu PDF',
     },
+    dateOfBirth: {
+      id:
+        'judicial.system.backend:pdf.restriction_request.base_info.date_of_birth',
+      defaultMessage: 'Fæðingardagur:',
+      description: 'Notaður sem texti fyrir fæðingardag í kröfu PDF',
+    },
     fullName: {
       id: 'judicial.system.backend:pdf.restriction_request.base_info.full_name',
       defaultMessage: 'Fullt nafn:',
