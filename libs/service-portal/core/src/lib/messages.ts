@@ -518,7 +518,7 @@ export const m = defineMessages({
   },
   personalInformation: {
     id: 'service.portal:personalInformation',
-    defaultMessage: 'Persónuupplýsingar',
+    defaultMessage: 'Mínar stillingar',
   },
   language: {
     id: 'service.portal:language',

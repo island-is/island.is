@@ -37,6 +37,9 @@ export const GET_ARTICLE_QUERY = gql`
           content {
             ...HtmlFields
           }
+          serviceWebContent {
+            ...HtmlFields
+          }
           link {
             text
             url

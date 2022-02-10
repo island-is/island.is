@@ -117,7 +117,7 @@ export const RulingStepTwo: React.FC = () => {
                 }),
                 accusedName: theCase.defendants[0].name,
                 accusedNationalId: theCase.defendants[0].noNationalId
-                  ? ' '
+                  ? ', '
                   : `, kt. ${formatNationalId(
                       theCase.defendants[0].nationalId ?? '',
                     )}, `,
@@ -139,7 +139,7 @@ export const RulingStepTwo: React.FC = () => {
                 ),
                 accusedName: theCase.defendants[0].name,
                 accusedNationalId: theCase.defendants[0].noNationalId
-                  ? ' '
+                  ? ', '
                   : `, kt. ${formatNationalId(
                       theCase.defendants[0].nationalId ?? '',
                     )}, `,
