@@ -39,7 +39,10 @@ import { getSlugPart } from '../utils'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import groupBy from 'lodash/groupBy'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
-import { Dictionary } from 'lodash'
+
+export interface Dictionary<T> {
+  [index: string]: T
+}
 
 interface SubPageProps {
   organization?: Organization
@@ -78,20 +81,23 @@ const SubPage: Screen<SubPageProps> = ({
   )
 
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
-  const pageTitle = `${n('serviceWeb', 'Þjónustuvefur')} Ísland.is`
+  const pageTitle = `${categoryTitle ? categoryTitle + ' | ' : ''}${n(
+    'assistanceForIslandIs',
+    'Aðstoð fyrir Ísland.is',
+  )}`
 
   const mobileBackButtonText = questionSlug
     ? `${organizationTitle}: ${categoryTitle}`
     : `${organizationTitle}`
 
   const mobileBackButtonLink = `${
-    linkResolver('helpdesk').href
+    linkResolver('serviceweb').href
   }/${organizationSlug}${questionSlug ? `/${categorySlug}` : ''}`
 
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
-      headerTitle={pageTitle}
+      headerTitle={n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')}
       institutionSlug={institutionSlug}
       organization={organization}
       organizationTitle={organizationTitle}
@@ -111,24 +117,27 @@ const SubPage: Screen<SubPageProps> = ({
                       <Breadcrumbs
                         items={[
                           {
-                            title: n('serviceWeb', 'Þjónustuvefur'),
-                            typename: 'helpdesk',
-                            href: linkResolver('helpdesk').href,
+                            title: n(
+                              'assistanceForIslandIs',
+                              'Aðstoð fyrir Ísland.is',
+                            ),
+                            typename: 'serviceweb',
+                            href: linkResolver('serviceweb').href,
                           },
                           {
                             title: organization.title,
-                            typename: 'helpdesk',
+                            typename: 'serviceweb',
                             href: `${
-                              linkResolver('helpdesk').href
+                              linkResolver('serviceweb').href
                             }/${organizationSlug}`,
                           },
                           {
                             title: `${categoryTitle}`,
-                            typename: 'helpdesk',
+                            typename: 'serviceweb',
                             isTag: true,
                             ...(questionSlug && {
                               href: `${
-                                linkResolver('helpdesk').href
+                                linkResolver('serviceweb').href
                               }/${organizationSlug}/${categorySlug}`,
                             }),
                           },
@@ -231,7 +240,7 @@ const SubPage: Screen<SubPageProps> = ({
                                         return (
                                           <Box key={index}>
                                             <TopicCard
-                                              href={`/thjonustuvefur/${organizationSlug}/${categorySlug}?&q=${slug}`}
+                                              href={`/adstod/${organizationSlug}/${categorySlug}?&q=${slug}`}
                                             >
                                               {title}
                                             </TopicCard>
