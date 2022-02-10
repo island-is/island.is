@@ -65,7 +65,9 @@ Digital service providers do not get access to the service API.
 
 They can use the connection information through two ways.
 
-[PublicAPI](https://www.notion.so/PublicAPI-f1e15901fa6940a4a51b4b9c0dd5cc5a) or by using [Digital Iceland’s](https://www.notion.so/Identity-Server-Integration-afde614a247e4b9da4731b2ace1115cd) new login option and setting it up for Personal Representative usage.
+⋅⋅\* Setting up X-Road and use the [PublicAPI](https://docs.devland.is/apps/services/personal-representative-public)
+⋅⋅\* Use [Digital Iceland’s](https://www.notion.so/Identity-Server-Integration-afde614a247e4b9da4731b2ace1115cd) new login option and setting it up for Personal Representative usage.
+⋅⋅\*\* This requires mapping rights to scope for service provider's client
 
 ## Development
 
