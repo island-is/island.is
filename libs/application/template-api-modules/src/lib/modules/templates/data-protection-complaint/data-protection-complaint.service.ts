@@ -41,8 +41,6 @@ export class DataProtectionComplaintService {
         'kvörtun.pdf',
         complaintPdf.fileBuffer,
         {
-          ContentEncoding: 'base64',
-          ContentDisposition: 'inline',
           ContentType: 'application/pdf',
         },
       )
