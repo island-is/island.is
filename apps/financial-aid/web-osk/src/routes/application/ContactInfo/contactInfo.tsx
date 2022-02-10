@@ -47,9 +47,7 @@ const ContactInfo = () => {
   }
 
   useEffect(() => {
-    if (user?.spouse?.applicantSpouseEmail && (!form.emailEdited || form.emailAddress === '')) {
-      updateForm({ ...form, emailAddress: user?.spouse?.applicantSpouseEmail, emailEdited: true })
-    }
+    updateForm({ ...form, emailAddress: form.emailAddress || user?.spouse?.applicantSpouseEmail })
   }, [])
 
   return (
@@ -74,7 +72,7 @@ const ContactInfo = () => {
             value={form?.emailAddress}
             onChange={(event) => {
               setHasError(false)
-              updateForm({ ...form, emailAddress: event.target.value, emailEdited: true })
+              updateForm({ ...form, emailAddress: event.target.value })
             }}
             backgroundColor="blue"
             errorMessage="Athugaðu hvort netfang sé rétt slegið inn"
