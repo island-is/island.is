@@ -12,7 +12,9 @@
   "paths": {
     "/v1/skip/{skipaskrarnumer}/veidileyfi": {
       "get": {
-        "tags": ["Skip"],
+        "tags": [
+          "Skip"
+        ],
         "summary": "Sækir lista af veiðileyfum skips sem skip þarf ekki annað veiðileyfi til að sækja um.",
         "parameters": [
           {
@@ -94,7 +96,9 @@
     },
     "/v1/umsoknir/{umsoknid}": {
       "get": {
-        "tags": ["Umsoknir"],
+        "tags": [
+          "Umsoknir"
+        ],
         "summary": "Sækir veiðileyfi umsókn.",
         "parameters": [
           {
@@ -196,7 +200,9 @@
     },
     "/v1/umsoknir": {
       "post": {
-        "tags": ["Umsoknir"],
+        "tags": [
+          "Umsoknir"
+        ],
         "summary": "Býr til veiðileyfi umsókn.",
         "requestBody": {
           "description": "Object á veiðileyfi umsókn",
@@ -307,7 +313,9 @@
     },
     "/v1/utgerdir/{kennitala}/skip": {
       "get": {
-        "tags": ["Utgerdir"],
+        "tags": [
+          "Utgerdir"
+        ],
         "summary": "Sækir lista af skipum eftir kennitölu útgerðaraðila.",
         "parameters": [
           {
@@ -454,7 +462,7 @@
             "nullable": true
           }
         },
-        "additionalProperties": {}
+        "additionalProperties": false
       },
       "Skip": {
         "type": "object",
