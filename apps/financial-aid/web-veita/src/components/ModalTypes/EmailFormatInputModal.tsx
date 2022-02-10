@@ -59,13 +59,15 @@ const EmailFormatInputModal = ({
     >
       <Box marginBottom={[5, 5, 10]}>
         <Text variant="intro">
-          {`${textBeforeInput} `}
+          {textBeforeInput}
+          {` `}
           <span
             ref={ref}
             contentEditable="true"
             className={styles.rejectionEditable}
           />
-          .{` ${textAfterInput}`}
+          .{` `}
+          {textAfterInput}
         </Text>
       </Box>
     </InputModal>
