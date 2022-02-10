@@ -14,10 +14,10 @@ The service providers are required to use secure logins and only query by logged
 
 ### Example of connections
 
-| Personal representative | Represented person | Rights                                             |
-| ----------------------- | ------------------ | -------------------------------------------------- |
-| 1122334459              | 1223455569         | health-data, personal-data, limited-financial-data |
-| 1020304059              | 0203050569         | limited-health-data                                |
+| **Personal representative** | **Represented person** | **Rights**                                         |
+| --------------------------- | ---------------------- | -------------------------------------------------- |
+| 1122334459                  | 1223455569             | health-data, personal-data, limited-financial-data |
+| 1020304059                  | 0203050569             | limited-health-data                                |
 
 ### JSON expample of connection
 
