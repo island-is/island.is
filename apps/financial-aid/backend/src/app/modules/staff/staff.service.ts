@@ -154,7 +154,7 @@ export class StaffService {
         { transaction: t },
       )
       .catch(() => {
-        throw new BadRequestException('Creating staff went wrong')
+        throw new BadRequestException('Cannot create staff')
       })
 
     await this.sendEmail(
