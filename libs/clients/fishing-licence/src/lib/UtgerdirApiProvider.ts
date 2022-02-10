@@ -1,5 +1,5 @@
 import { Provider } from '@nestjs/common'
-import { UtgerdirApi } from '../../gen/fetch'
+import { UtgerdirApi } from './gen/fetch'
 import {
   ConfigType,
   IdsClientConfig,

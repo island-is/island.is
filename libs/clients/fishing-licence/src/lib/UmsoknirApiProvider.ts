@@ -1,5 +1,5 @@
 import { Provider } from '@nestjs/common'
-import { UmsoknirApi } from '../../gen/fetch'
+import { UmsoknirApi } from './gen/fetch'
 import {
   ConfigType,
   IdsClientConfig,

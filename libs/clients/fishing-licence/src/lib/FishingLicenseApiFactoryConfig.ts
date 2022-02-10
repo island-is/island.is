@@ -4,8 +4,8 @@ import {
   IdsClientConfig,
   XRoadConfig,
 } from '@island.is/nest/config'
-import { Configuration } from '../../gen/fetch'
 import { FishingLicenseClientConfig } from './FishingLicenseClientConfig'
+import { Configuration } from './gen/fetch'
 
 export const FishingLicenseApiFactoryConfig = (
   xRoadConfig: ConfigType<typeof XRoadConfig>,

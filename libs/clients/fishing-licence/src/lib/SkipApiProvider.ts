@@ -1,5 +1,5 @@
 import { Provider } from '@nestjs/common'
-import { SkipApi } from '../../gen/fetch'
+import { SkipApi } from './gen/fetch'
 import {
   ConfigType,
   IdsClientConfig,
