@@ -18,6 +18,7 @@ The API allows for maintenance of right types, personal representative types (cu
 | ----------------------- | ------------------ | -------------------------------------------------- |
 | 1122334459              | 1223455569         | health-data, personal-data, limited-financial-data |
 | 1020304059              | 0203050569         | limited-health-data                                |
+|                         |                    |                                                    |
 
 ### JSON expample of connection
 
@@ -42,7 +43,7 @@ For the foreseeable future the only system with access would be the Personal Rep
 
 ### Scope
 
-_@island.is/auth/personal-representative-admin\_
+_ @island.is/auth/personal-representative-admin _
 
 ### X-Road setup
 
@@ -50,9 +51,9 @@ _@island.is/auth/personal-representative-admin\_
 
 #### Urls for X-Road setup are as follows
 
-⋅⋅\* Dev: [https://personal-representative-xrd.internal.dev01.devland.is/-json](https://personal-representative-xrd.internal.dev01.devland.is/-json)
-⋅⋅\* Staging: [https://personal-representative-xrd.internal.staging01.devland.is/-json](https://personal-representative-xrd.internal.staging01.devland.is/-json)
-⋅⋅\* Production: [https://personal-representative-xrd.internal.innskra.island.is/-json](https://personal-representative-xrd.internal.innskra.island.is/-json)
+- Dev: [https://personal-representative-xrd.internal.dev01.devland.is/-json](https://personal-representative-xrd.internal.dev01.devland.is/-json)
+- Staging: [https://personal-representative-xrd.internal.staging01.devland.is/-json](https://personal-representative-xrd.internal.staging01.devland.is/-json)
+- Production: [https://personal-representative-xrd.internal.innskra.island.is/-json](https://personal-representative-xrd.internal.innskra.island.is/-json)
 
 ### OpenAPI URL##
 
@@ -65,9 +66,9 @@ Digital service providers do not get access to the service API.
 
 They can use the connection information through two ways.
 
-⋅⋅\* Setting up X-Road and use the [PublicAPI](https://docs.devland.is/apps/services/personal-representative-public)
-⋅⋅\* Use [Digital Iceland’s](https://www.notion.so/Identity-Server-Integration-afde614a247e4b9da4731b2ace1115cd) new login option and setting it up for Personal Representative usage.
-⋅⋅\*\* This requires mapping rights to scope for service provider's client
+- Setting up X-Road and use the [PublicAPI](https://docs.devland.is/apps/services/personal-representative-public)
+- Use [Digital Iceland’s](https://www.notion.so/Identity-Server-Integration-afde614a247e4b9da4731b2ace1115cd) new login option and setting it up for Personal Representative usage.
+  -- This requires mapping rights to scope for service provider's client
 
 ## Development
 
