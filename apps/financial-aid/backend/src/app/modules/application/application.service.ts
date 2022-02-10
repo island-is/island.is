@@ -72,9 +72,9 @@ export class ApplicationService {
 
     const files = application
       ? await this.fileService.getApplicationFilesByType(
-        application.id,
-        FileType.SPOUSEFILES,
-      )
+          application.id,
+          FileType.SPOUSEFILES,
+        )
       : false
 
     return {
@@ -145,14 +145,14 @@ export class ApplicationService {
       where:
         stateUrl === ApplicationStateUrl.MYCASES
           ? {
-            state: { [Op.in]: getStateFromUrl[stateUrl] },
-            staffId,
-            municipalityCode,
-          }
+              state: { [Op.in]: getStateFromUrl[stateUrl] },
+              staffId,
+              municipalityCode,
+            }
           : {
-            state: { [Op.in]: getStateFromUrl[stateUrl] },
-            municipalityCode,
-          },
+              state: { [Op.in]: getStateFromUrl[stateUrl] },
+              municipalityCode,
+            },
       order: [['modified', 'DESC']],
       include: [{ model: StaffModel, as: 'staff' }],
     })
