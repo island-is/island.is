@@ -9,30 +9,13 @@
       "email": "xroad@skattur.is"
     },
     "version": "1.0.0",
-    "x-category": [
-      "personal",
-      "official"
-    ],
-    "x-pricing": [
-      "free"
-    ],
+    "x-category": ["personal", "official"],
+    "x-pricing": ["free"],
     "x-links": [
-      [
-        "documentation",
-        "https://api.skattur.is/prokura/xroad/docs"
-      ],
-      [
-        "responsibleParty",
-        "mailto:xroad@skattur.is"
-      ],
-      [
-        "bugReport",
-        "https://api.skattur.is/prokura/bugs"
-      ],
-      [
-        "featureRequest",
-        "https://api.skattur.is/prokura/features"
-      ]
+      ["documentation", "https://api.skattur.is/prokura/xroad/docs"],
+      ["responsibleParty", "mailto:xroad@skattur.is"],
+      ["bugReport", "https://api.skattur.is/prokura/bugs"],
+      ["featureRequest", "https://api.skattur.is/prokura/features"]
     ]
   },
   "servers": [
@@ -55,9 +38,7 @@
         "summary": "Service Information",
         "description": "Information about service.",
         "operationId": "responseInfo",
-        "tags": [
-          "Service Information"
-        ],
+        "tags": ["Service Information"],
         "responses": {
           "200": {
             "description": "200 OK",
@@ -87,9 +68,7 @@
         "summary": "Simple repsonse",
         "description": "Information about relationship between a person and legal entities from company registry",
         "operationId": "simple",
-        "tags": [
-          "Get Simple"
-        ],
+        "tags": ["Get Simple"],
         "parameters": [
           {
             "name": "nationalId",
@@ -184,9 +163,7 @@
         "summary": "Detailed response",
         "description": "Detailed information about relationship between a person and legal entities from company registry",
         "operationId": "detailed",
-        "tags": [
-          "Get Detailed"
-        ],
+        "tags": ["Get Detailed"],
         "parameters": [
           {
             "name": "nationalId",
@@ -286,12 +263,7 @@
           "key": "5",
           "value": "Prókúruhafi"
         },
-        "required": [
-          "type",
-          "system",
-          "key",
-          "value"
-        ],
+        "required": ["type", "system", "key", "value"],
         "properties": {
           "type": {
             "type": "string"
@@ -313,10 +285,7 @@
           "nationalId": "4208160300",
           "name": "Badmintonfélag Gulla ehf."
         },
-        "required": [
-          "nationalId",
-          "name"
-        ],
+        "required": ["nationalId", "name"],
         "properties": {
           "nationalId": {
             "type": "string",
@@ -341,10 +310,7 @@
             }
           ]
         },
-        "required": [
-          "nationalId",
-          "name"
-        ],
+        "required": ["nationalId", "name"],
         "properties": {
           "nationalId": {
             "type": "string",
@@ -409,10 +375,7 @@
             }
           ]
         },
-        "required": [
-          "nationalId",
-          "name"
-        ],
+        "required": ["nationalId", "name"],
         "properties": {
           "nationalId": {
             "type": "string",
@@ -565,10 +528,7 @@
             }
           ]
         },
-        "required": [
-          "nationalId",
-          "name"
-        ],
+        "required": ["nationalId", "name"],
         "properties": {
           "nationalId": {
             "type": "string",
@@ -638,11 +598,7 @@
           "detail": "nationalId is too short. Please include 10 digit nationalId in URI string.",
           "instance": "/:nationalId"
         },
-        "required": [
-          "type",
-          "title",
-          "status"
-        ],
+        "required": ["type", "title", "status"],
         "properties": {
           "type": {
             "type": "string"
