@@ -149,6 +149,9 @@ export const GET_SERVICE_WEB_ORGANIZATION = gql`
         content {
           ...HtmlFields
         }
+        serviceWebContent {
+          ...HtmlFields
+        }
         link {
           text
           url

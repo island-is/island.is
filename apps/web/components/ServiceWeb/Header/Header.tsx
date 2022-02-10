@@ -50,7 +50,7 @@ export const Header = ({ title = '', hideSearch, textMode }: HeaderProps) => {
                           <Link href="/">
                             <Hidden above="md">
                               <Logo
-                                id="helpdesk-logo-1"
+                                id="serviceweb-logo-1"
                                 width={40}
                                 iconOnly
                                 solid={!dark}
@@ -75,7 +75,7 @@ export const Header = ({ title = '', hideSearch, textMode }: HeaderProps) => {
                               })}
                             >
                               <NextLink
-                                href={`${linkResolver('helpdesk').href}${
+                                href={`${linkResolver('serviceweb').href}${
                                   institutionSlug ? '/' + institutionSlug : ''
                                 }`}
                               >
