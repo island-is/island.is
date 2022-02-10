@@ -139,7 +139,7 @@ export class StaffService {
     t?: Transaction,
     isFirstStaffForMunicipality: boolean = false,
   ): Promise<StaffModel> {
-    const newStaff = await this.staffModel
+    const staff = await this.staffModel
       .create(
         {
           nationalId: input.nationalId,
@@ -164,7 +164,7 @@ export class StaffService {
       isFirstStaffForMunicipality,
     )
 
-    return newStaff
+    return staff
   }
 
   async numberOfUsersForMunicipality(municipalityId: string): Promise<number> {

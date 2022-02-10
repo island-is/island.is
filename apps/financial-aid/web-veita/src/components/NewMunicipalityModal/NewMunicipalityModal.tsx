@@ -49,9 +49,7 @@ const NewMunicipalityModal = ({
     hasSubmitError: false,
   })
 
-  const [errorMessage, setErrorMessage] = useState<string>(
-    'Eitthvað fór úrskeiðis, vinsamlega reynið aftur síðar',
-  )
+  const [errorMessage, setErrorMessage] = useState<string>()
 
   const areRequiredFieldsFilled =
     !state.serviceCenter.label ||
@@ -86,7 +84,9 @@ const NewMunicipalityModal = ({
       })
     } catch (error) {
       if (error.graphQLErrors[0]?.extensions?.response?.status === 400) {
-        setErrorMessage('Misstókst að búa til stjórnanda, kennitala í notkun')
+        setErrorMessage(
+          'Misstókst að búa til stjórnanda, mögulega er kennitala í notkun',
+        )
       } else {
         setErrorMessage('Eitthvað fór úrskeiðis, vinsamlega reynið aftur síðar')
       }
