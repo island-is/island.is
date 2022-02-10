@@ -57,12 +57,13 @@ export const UserDropdown = ({
   const isDelegationCompany = false
 
   const { value: showPersonalInfo } = useFeatureFlag(
-    'isServicePortalPersonalInformationModuleEnabled',
+    Features.personalInformation,
     false,
   )
 
   const showDelegations =
     useFeatureFlag(Features.delegationsEnabled, false).value || Boolean(actor)
+
   const { data, error, loading } = useActorDelegationsQuery({
     skip: !showDelegations,
   })
@@ -155,7 +156,7 @@ export const UserDropdown = ({
           )}
           {/* End of user delegations */}
           {/* User settings */}
-          {!isDelegation && showPersonalInfo && (
+          {!isDelegation && (showPersonalInfo || showDelegations) && (
             <>
               <UserProfileInfo onClick={() => onClose()} />
               <Divider />
