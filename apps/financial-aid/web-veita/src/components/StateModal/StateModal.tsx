@@ -148,7 +148,6 @@ const StateModal = ({
               saveOrNextWindow(stateOption)
             }}
           />
-
           <DataNeededModal
             isModalVisable={selected === ApplicationState.DATANEEDED}
             onCancel={onClickCancel}
@@ -159,7 +158,6 @@ const StateModal = ({
               saveStateApplication(applicationId, selected, undefined, comment)
             }}
           />
-
           <AcceptModal
             isModalVisable={selected === ApplicationState.APPROVED}
             onCancel={onClickCancel}
@@ -180,7 +178,7 @@ const StateModal = ({
             homeCircumstances={homeCircumstances}
             familyStatus={familyStatus}
           />
-
+          asdasd
           <RejectModal
             isModalVisable={selected === ApplicationState.REJECTED}
             onCancel={onClickCancel}
