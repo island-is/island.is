@@ -85,7 +85,7 @@ const NewMunicipalityModal = ({
         onMunicipalityCreated()
       })
     } catch (error) {
-      if (error.graphQLErrors[0].extensions.response.status === 400) {
+      if (error.graphQLErrors[0]?.extensions?.response?.status === 400) {
         setErrorMessage('Misstókst að búa til stjórnanda, kennitala í notkun')
       } else {
         setErrorMessage('Eitthvað fór úrskeiðis, vinsamlega reynið aftur síðar')
