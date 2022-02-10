@@ -78,13 +78,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
 
   return (
     <BlueBox>
-      <Box marginBottom={2} display="flex" justifyContent="spaceBetween">
-        <Text as="h4" variant="h4">
-          {formatMessage(core.gender)}{' '}
-          <Text as="span" color="red600" fontWeight="semiBold">
-            *
-          </Text>
-        </Text>
+      <Box marginBottom={2} display="flex" justifyContent="flexEnd">
         {onDelete && (
           <button
             onClick={() => onDelete(defendant)}
