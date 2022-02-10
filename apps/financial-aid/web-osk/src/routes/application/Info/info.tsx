@@ -15,13 +15,18 @@ import {
   getNextPeriod,
   NationalRegistryData,
   NavigationProps,
+  PersonalTaxReturn,
   Routes,
   useAsyncLazyQuery,
 } from '@island.is/financial-aid/shared/lib'
 
-import { NationalRegistryUserQuery } from '@island.is/financial-aid-web/osk/graphql'
+import {
+  NationalRegistryUserQuery,
+  PersonalTaxReturnQuery,
+} from '@island.is/financial-aid-web/osk/graphql'
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
+import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
 const ApplicationInfo = () => {
   const router = useRouter()
@@ -31,6 +36,7 @@ const ApplicationInfo = () => {
     setMunicipalityById,
     loadingMunicipality,
   } = useContext(AppContext)
+  const { form, updateForm } = useContext(FormContext)
 
   const [accept, setAccept] = useState(false)
   const [hasError, setHasError] = useState(false)
@@ -43,6 +49,10 @@ const ApplicationInfo = () => {
     },
     { input: { ssn: string } }
   >(NationalRegistryUserQuery)
+
+  const personalTaxReturnQuery = useAsyncLazyQuery<{
+    municipalitiesPersonalTaxReturn: PersonalTaxReturn
+  }>(PersonalTaxReturnQuery)
 
   const logOut = useLogOut()
 
@@ -59,28 +69,50 @@ const ApplicationInfo = () => {
     setError(false)
     setLoading(true)
 
-    const { data } = await nationalRegistryQuery({
-      input: { ssn: user?.nationalId },
-    }).catch(() => {
-      return { data: undefined }
-    })
+    const [
+      { data: nationalRegistry },
+      { data: personalTaxReturn },
+    ] = await Promise.all([
+      await nationalRegistryQuery({
+        input: { ssn: user?.nationalId },
+      }).catch(() => {
+        return {
+          data: undefined,
+        }
+      }),
+      await personalTaxReturnQuery({}).catch((err) => {
+        return { data: undefined }
+      }),
+    ])
 
-    if (!data || !data.municipalityNationalRegistryUserV2.address) {
+    if (
+      !nationalRegistry ||
+      !nationalRegistry.municipalityNationalRegistryUserV2.address
+    ) {
       setError(true)
       setLoading(false)
       return
     }
 
-    setNationalRegistryData(data.municipalityNationalRegistryUserV2)
+    updateForm({
+      ...form,
+      taxReturnFromRskFile: [
+        personalTaxReturn?.municipalitiesPersonalTaxReturn,
+      ],
+    })
+
+    setNationalRegistryData(nationalRegistry.municipalityNationalRegistryUserV2)
 
     await setMunicipalityById(
-      data.municipalityNationalRegistryUserV2.address.municipalityCode,
+      nationalRegistry.municipalityNationalRegistryUserV2.address
+        .municipalityCode,
     ).then((municipality) => {
       navigation.nextUrl && municipality && municipality.active
         ? router.push(navigation?.nextUrl)
         : router.push(
             Routes.serviceCenter(
-              data.municipalityNationalRegistryUserV2.address.municipalityCode,
+              nationalRegistry.municipalityNationalRegistryUserV2.address
+                .municipalityCode,
             ),
           )
     })
@@ -116,6 +148,20 @@ const ApplicationInfo = () => {
           Þjóðskrá Íslands
         </Text>
         <Text marginBottom={3}>Lögheimili, hjúskaparstaða</Text>
+
+        <Text as="h3" variant="h5" color="blue400">
+          Skatturinn
+        </Text>
+        <Text marginBottom={3}>
+          Afrit af skattframtali og upplýsingar um staðgreiðslu í
+          staðgreiðsluskrá.
+        </Text>
+
+        <Text marginBottom={3}>
+          Við þurfum að afla þessara gagna til að staðfesta hjá hvaða
+          sveitarfélagi þú eigir að sækja um fjárhagsaðstoð, einfalda umsóknar-
+          og vinnsluferlið og staðfesta réttleika upplýsinga.
+        </Text>
 
         <Text marginBottom={[4, 4, 5]}>
           Við þurfum að fá þig til að renna yfir nokkur atriði varðandi þína
