@@ -65,13 +65,13 @@ const availableLineHeights = {
 }
 
 const availableFontSizes = {
-  xxs: { xs: 12, md: 14, xl: 16 },
-  xs: { xs: 14, md: 16, xl: 18 },
-  sm: { xs: 16, md: 18, xl: 20 },
-  md: { xs: 18, md: 20, xl: 22 },
-  lg: { xs: 20, md: 24, xl: 26 },
-  xl: { xs: 26, md: 34, xl: 42 },
-  xxl: { xs: 32, md: 42, xl: 52 },
+  xxs: { xs: 12, md: 14, xxl: 16 },
+  xs: { xs: 14, md: 16, xxl: 18 },
+  sm: { xs: 16, md: 18, xxl: 20 },
+  md: { xs: 18, md: 20, xxl: 22 },
+  lg: { xs: 20, md: 24, xxl: 26 },
+  xl: { xs: 26, md: 34, xxl: 42 },
+  xxl: { xs: 32, md: 42, xxl: 52 },
 }
 
 const lineHeightMap = {

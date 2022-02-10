@@ -5,7 +5,7 @@ import { theme } from '@island.is/island-ui/theme'
 export const root = style({
   boxSizing: 'border-box',
   margin: '0 auto',
-  maxWidth: theme.breakpoints.xxl,
+  maxWidth: theme.breakpoints.xl,
   paddingLeft: theme.grid.gutter.mobile * 2,
   paddingRight: theme.grid.gutter.mobile * 2,
   width: '100%',
@@ -16,7 +16,6 @@ export const root = style({
       paddingRight: 0,
     },
   },
-
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       paddingLeft: theme.grid.gutter.desktop * 2,
@@ -27,6 +26,9 @@ export const root = style({
           paddingRight: 0,
         },
       },
+    },
+    [`screen and (min-width: ${theme.breakpoints.xxl}px)`]: {
+      maxWidth: theme.breakpoints.xxl,
     },
   },
 })
