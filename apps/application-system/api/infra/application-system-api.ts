@@ -27,6 +27,12 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
     .postgres(postgresInfo)
     .serviceAccount('application-system-api-worker')
     .env({
+      IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system',
+      IDENTITY_SERVER_ISSUER_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
       REDIS_URL_NODE_01: {
         dev:
           'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
@@ -37,6 +43,8 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
       },
     })
     .secrets({
+      IDENTITY_SERVER_CLIENT_SECRET:
+        '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET',
       SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST',
       SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME',
       SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD',
