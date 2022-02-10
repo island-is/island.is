@@ -8,13 +8,12 @@ import { useRouter } from 'next/router'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
 import { NavigationProps } from '@island.is/financial-aid/shared/lib'
-import {
-  AboutFormApplicant,
-  AboutFormSpouse,
-} from '@island.is/financial-aid-web/osk/src/routes/application/AboutForm'
-import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
-const AboutForm = () => {
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
+import SpouseDataGathering from './spouseDataGathering'
+import ApplicantDataGathering from './applicantDataGathering'
+
+const DataGathering = () => {
   const router = useRouter()
   const { user } = useContext(AppContext)
 
@@ -23,18 +22,14 @@ const AboutForm = () => {
   ) as NavigationProps
 
   return (
-    <>
-      <ContentContainer>
-        {user?.spouse?.hasPartnerApplied ? (
-          <AboutFormSpouse />
-        ) : (
-          <AboutFormApplicant />
-        )}
-      </ContentContainer>
-
-      <Footer previousUrl={navigation?.prevUrl} nextUrl={navigation?.nextUrl} />
-    </>
+    <ContentContainer>
+      {user?.spouse?.hasPartnerApplied ? (
+        <SpouseDataGathering />
+      ) : (
+        <ApplicantDataGathering />
+      )}
+    </ContentContainer>
   )
 }
 
-export default AboutForm
+export default DataGathering
