@@ -45,6 +45,13 @@ export class Defendant extends Model<Defendant> {
   caseId!: string
 
   @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  noNationalId?: boolean
+
+  @Column({
     type: DataType.STRING,
     allowNull: true,
   })
@@ -71,4 +78,10 @@ export class Defendant extends Model<Defendant> {
   })
   @ApiProperty()
   address?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  citizenship?: string
 }
