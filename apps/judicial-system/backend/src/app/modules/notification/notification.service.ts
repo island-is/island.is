@@ -809,6 +809,9 @@ export class NotificationService {
       theCase.defendants && theCase.defendants.length > 0
         ? theCase.defendants[0].name
         : undefined,
+      theCase.defendants && theCase.defendants.length > 0
+        ? theCase.defendants[0].noNationalId
+        : undefined,
       theCase.court?.name,
       theCase.courtDate,
     )
