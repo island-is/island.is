@@ -36,6 +36,8 @@ async function makeChange(
   )
 }
 
+const baseBranch = 'main'
+const headBranch = 'fix'
 describe('Change detection', () => {
   jest.setTimeout(60000)
   let git: SimpleGit
@@ -52,26 +54,29 @@ describe('Change detection', () => {
     let forkSha: string
     let fixFailSha1: string
     let rootSha: string
+    let fixGoodSha: string
     beforeEach(async () => {
-      const br = await git.checkoutLocalBranch('main')
+      const br = await git.checkoutLocalBranch(baseBranch)
       rootSha = await makeChange(git, fileA, 'A-good-[a,b,c]')
       mainGoodBeforeBadSha = await makeChange(git, fileA, 'B-good-[a]')
       forkSha = await makeChange(git, fileA, 'C-bad-[a]')
-      await git.checkoutBranch('fix2', 'main')
+      await git.checkoutBranch('fix2', baseBranch)
       const fix2Sha = await makeChange(git, fileA, 'C1-bad-[a]')
-      await git.checkoutBranch('fix', 'main')
+      await git.checkoutBranch(headBranch, baseBranch)
+
       const fixFailSha = await makeChange(git, fileB, 'D-bad-[a]')
       fixFailSha1 = await makeChange(git, fileB, 'D2-good-[a]')
       const fixFailSha2 = await makeChange(git, fileB, 'D3-bad-[a]')
-      const fixGoodSha = await makeChange(git, fileB, 'E-good-[a]')
-      await git.checkout('main')
+      fixGoodSha = await makeChange(git, fileB, 'E-good-[a]')
+
+      await git.checkout(baseBranch)
       const mainSha = await makeChange(git, fileA, 'D1-good-[b]')
-      const merge = await git.mergeFromTo('fix', 'main')
+      const merge = await git.mergeFromTo(headBranch, baseBranch)
     })
     it('should use last good commit when no PR runs available', async () => {
       const githubApi = Substitute.for<GitActionStatus>()
       githubApi.getPRRuns(100).resolves([])
-      githubApi.getBranchBuilds('main').resolves([])
+      githubApi.getBranchBuilds(baseBranch).resolves([])
       githubApi
         .getBranchBuilds('HEAD')
         .resolves([
@@ -84,13 +89,32 @@ describe('Change detection', () => {
         git,
         githubApi,
         100,
+        headBranch,
+        baseBranch,
       )
       expect(actual).toBe(mainGoodBeforeBadSha)
+    })
+
+    it('should use last good PR when available', async () => {
+      const githubApi = Substitute.for<GitActionStatus>()
+      githubApi
+        .getPRRuns(100)
+        .resolves([{ head_commit: fixFailSha1, base_commit: forkSha }])
+
+      let actual = await findBestGoodRefPR(
+        (services) => services.length,
+        git,
+        githubApi,
+        100,
+        headBranch,
+        baseBranch,
+      )
+      expect(actual).toBe('123')
     })
   })
   describe('Branch', () => {
     it('should skip bad commit', async () => {
-      const br = await git.checkoutLocalBranch('main')
+      const br = await git.checkoutLocalBranch(baseBranch)
       const firstGoodSha = await makeChange(git, fileA, 'A-good-[a,b,c]')
       const goodBeforeBadSha = await makeChange(git, fileA, 'B-good-[a]')
       const badSha = await makeChange(git, fileA, 'C-bad-[b]')

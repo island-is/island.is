@@ -7,6 +7,19 @@ const calculateDistance = async (
   p: DefaultLogFields & ListLogLine,
 ) => {
   const changes = await git.log({ from: currentSha, to: p.hash })
+  const tree = await git.raw(
+    'log',
+    '--graph',
+    '--pretty=oneline',
+    '--abbrev-commit',
+  )
+  const commits = (
+    await git.raw('rev-list', '--date-order', `${currentSha}`, `${p.hash}`)
+  )
+    .split('\n')
+    .filter((s) => s.length > 0)
+    .map((c) => c.substr(0, 7))
+
   const changed = changes.all.flatMap((ch) =>
     ch.message
       .match(/-\[(?<components>.*)\]$/)
@@ -53,8 +66,6 @@ export async function findBestGoodRefBranch(
   return goodScoredCommits[0].change.hash.substr(0, 7)
 }
 
-interface WorkflowInfo {}
-
 interface PRWorkflow {
   head_commit: string
   base_commit: string
@@ -65,7 +76,7 @@ interface BranchWorkflow {
 }
 
 export interface GitActionStatus {
-  getPRRuns(prID: number): Promise<WorkflowInfo[]>
+  getPRRuns(prID: number): Promise<PRWorkflow[]>
   getBranchBuilds(branch: string): Promise<BranchWorkflow[]>
 }
 
@@ -74,15 +85,28 @@ export async function findBestGoodRefPR(
   git: SimpleGit,
   githubApi: GitActionStatus,
   prID: number,
+  headBranch: string,
+  baseBranch,
 ): Promise<string | 'rebuild'> {
-  const headBranch = 'HEAD'
-  const baseBranch = 'main'
   const lastChanges = await git.log({ maxCount: 10 })
   const currentChange = lastChanges.latest
 
   const runs = await githubApi.getPRRuns(prID)
   if (runs.length > 0) {
-    throw new Error('not implemented')
+    const previousRuns = await githubApi.getPRRuns(prID)
+    for (const previousRun of previousRuns) {
+      const tempBranch = `${headBranch}-${Math.round(Math.random() * 1000)}`
+      await git.checkoutBranch(tempBranch, previousRun.base_commit)
+      await git.merge({ [`${previousRun.head_commit}`]: null })
+      const lastMerge = await git.log({ maxCount: 1 })
+      const lastMergeCommit = lastChanges.latest
+      const distance = await calculateDistance(
+        git,
+        currentChange.hash,
+        lastMergeCommit,
+      )
+      return lastMergeCommit.hash
+    }
   } else {
     // no pr runs
     const br2 = await git.raw('merge-base', 'main', 'HEAD')
