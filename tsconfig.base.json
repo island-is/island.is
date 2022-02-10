@@ -265,6 +265,9 @@
       "@island.is/clients/rsk/company-registry": [
         "libs/clients/rsk/company-registry/src/index.ts"
       ],
+      "@island.is/clients/rsk/personal-tax-return": [
+        "libs/clients/rsk/personal-tax-return/src/index.ts"
+      ],
       "@island.is/clients/rsk/v1": ["libs/clients/rsk/v1/src/index.ts"],
       "@island.is/clients/rsk/v2": ["libs/clients/rsk/v2/src/index.ts"],
       "@island.is/clients/syslumenn": ["libs/clients/syslumenn/src/index.ts"],
