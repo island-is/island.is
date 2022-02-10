@@ -1,14 +1,7 @@
-import React, { FC } from 'react'
+import React, { FC, useCallback } from 'react'
 import { Document } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
-import {
-  Text,
-  Box,
-  GridRow,
-  GridColumn,
-  Link,
-  Hidden,
-} from '@island.is/island-ui/core'
+import { Text, Box, GridRow, GridColumn } from '@island.is/island-ui/core'
 import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
 import * as styles from './DocumentLine.css'
@@ -24,9 +17,14 @@ interface Props {
 
 const DocumentLine: FC<Props> = ({ documentLine, userInfo, img }) => {
   const { formatMessage } = useLocale()
+
+  const refreshToken = async (url: string) => {
+    await getAccessToken().then(() => window.open(url))
+  }
+
   const onClickHandler = () => {
-    getAccessToken()
     // Create form elements
+    refreshToken(documentLine.url)
     const form = document.createElement('form')
     const documentIdInput = document.createElement('input')
     const tokenInput = document.createElement('input')
@@ -92,16 +90,15 @@ const DocumentLine: FC<Props> = ({ documentLine, userInfo, img }) => {
               />
             )}
             {documentLine.fileType === 'url' && documentLine.url ? (
-              <Link href={documentLine.url} onClick={getAccessToken}>
-                <button
-                  className={cn(
-                    styles.button,
-                    !documentLine.opened && styles.unopened,
-                  )}
-                >
-                  {documentLine.subject}
-                </button>
-              </Link>
+              <button
+                onClick={() => refreshToken(documentLine.url)}
+                className={cn(
+                  styles.button,
+                  !documentLine.opened && styles.unopened,
+                )}
+              >
+                {documentLine.subject}
+              </button>
             ) : (
               <button
                 className={cn(
