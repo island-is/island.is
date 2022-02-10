@@ -217,7 +217,6 @@ export class SharedTemplateApiService {
     applicationId: string,
     fileName: string,
     buffer: Buffer,
-    application: Application,
     uploadParameters?: {
       ContentType?: string
       ContentDisposition?: string
