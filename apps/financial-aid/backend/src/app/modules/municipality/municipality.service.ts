@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { MunicipalityModel } from './models'
@@ -131,9 +131,9 @@ export class MunicipalityService {
           ),
         ])
       })
-    } catch (err) {
+    } catch {
       this.logger.error('Error while updating municipality')
-      throw err
+      throw new NotFoundException(`Error while updating municipality`)
     }
 
     return await this.findByMunicipalityId(municipalityId)
