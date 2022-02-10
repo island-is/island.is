@@ -6,15 +6,16 @@ export class Lesson {
 
   @Field({ nullable: true })
   registerDate?: string
-  
+
   @Field({ nullable: true })
   lessonTime?: number
 
   @Field({ nullable: true })
   teacherSsn?: string
-  
+
   @Field({ nullable: true })
   teacherName?: string
-  
+
   @Field({ nullable: true })
-  comments?: string}
+  comments?: string
+}

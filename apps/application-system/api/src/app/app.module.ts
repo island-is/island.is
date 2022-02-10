@@ -13,7 +13,6 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ApplicationModule } from './modules/application/application.module'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 
-
 @Module({
   imports: [
     SequelizeModule.forRootAsync({
@@ -23,7 +22,12 @@ import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-licen
     ProblemModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [IdsClientConfig, SyslumennClientConfig, XRoadConfig, DrivingLicenseBookClientConfig],
+      load: [
+        IdsClientConfig,
+        SyslumennClientConfig,
+        XRoadConfig,
+        DrivingLicenseBookClientConfig,
+      ],
     }),
   ],
 })

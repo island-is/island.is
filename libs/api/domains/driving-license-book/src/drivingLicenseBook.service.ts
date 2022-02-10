@@ -69,16 +69,15 @@ export class DrivingLicenseBookService {
   }
 
   async getStudentList(
-    data: StudentListInput,
+    input: StudentListInput,
   ): Promise<StudentListGetResponse> {
     const api = await this.apiWithAuth()
-    return await api.apiStudentGetStudentListGet(data)
+    return await api.apiStudentGetStudentListGet(input)
   }
 
   async getStudentListTeacherSsn(
     user: User,
   ): Promise<StudentListTeacherSsnResponse> {
-    // TODO: add request when ready and remove mock
     return studentListTeacherSsn
   }
 
@@ -95,7 +94,7 @@ export class DrivingLicenseBookService {
       const book = data?.books.filter(
         (b) => b.id === bookId.data?.bookId,
       )[0] as DrivingLicenseBook
-      return { data: { ...data, book}} as StudentOverViewResponse
+      return { data: { ...data, book } } as StudentOverViewResponse
     }
 
     throw new NotFoundException()

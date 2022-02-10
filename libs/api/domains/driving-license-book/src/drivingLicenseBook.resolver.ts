@@ -61,7 +61,9 @@ export class DrivinLicenseBookResolver {
   }
 
   @Query(() => PracticalDrivingLessonsResponse)
-  drivingBookPracticalDrivingLessons(@Args('input') input: PracticalDrivingLessonsInput) {
+  drivingBookPracticalDrivingLessons(
+    @Args('input') input: PracticalDrivingLessonsInput,
+  ) {
     return this.drivingLicenseBookService.getPracticalDrivingLessonsBookId(
       input,
     )

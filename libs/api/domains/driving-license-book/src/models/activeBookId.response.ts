@@ -3,7 +3,6 @@ import { Field, ObjectType } from '@nestjs/graphql'
 export class BookId {
   @Field({ nullable: true })
   bookId?: string
-
 }
 
 @ObjectType()

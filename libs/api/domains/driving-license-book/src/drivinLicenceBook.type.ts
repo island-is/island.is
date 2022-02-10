@@ -23,4 +23,4 @@ export interface ActorStudent {
   bookLicenseCategories: string[] | null
 }
 
-export const LICENSE_CATEGORY = "B"
+export const LICENSE_CATEGORY = 'B'
