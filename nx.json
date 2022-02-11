@@ -328,10 +328,13 @@
     "clients-rsk-company-registry": {
       "tags": []
     },
-    "clients-rsk-v1": {
+    "clients-rsk-personal-tax-return": {
       "tags": []
     },
-    "clients-rsk-v2": {
+    "clients-rsk-procuring": {
+      "tags": []
+    },
+    "clients-rsk-v1": {
       "tags": []
     },
     "clients-syslumenn": {
@@ -597,9 +600,6 @@
       "tags": []
     },
     "service-portal-documents": {
-      "tags": []
-    },
-    "service-portal-driving-license": {
       "tags": []
     },
     "service-portal-e2e": {
