@@ -45,20 +45,23 @@ export const SjukratryggingarHeader: React.FC<HeaderProps> = ({
               )
             }
           >
-            <Hidden above="sm">
-              <Link
-                href={
-                  linkResolver('organizationpage', [organizationPage.slug]).href
-                }
-                className={styles.iconCircle}
-              >
-                <img
-                  src={organizationPage.organization.logo.url}
-                  className={styles.headerLogo}
-                  alt=""
-                />
-              </Link>
-            </Hidden>
+            {!!organizationPage.organization.logo && (
+              <Hidden above="sm">
+                <Link
+                  href={
+                    linkResolver('organizationpage', [organizationPage.slug])
+                      .href
+                  }
+                  className={styles.iconCircle}
+                >
+                  <img
+                    src={organizationPage.organization.logo.url}
+                    className={styles.headerLogo}
+                    alt=""
+                  />
+                </Link>
+              </Hidden>
+            )}
             <Box
               marginTop={[2, 2, 0]}
               textAlign={['center', 'center', 'center']}

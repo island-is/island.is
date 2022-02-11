@@ -258,6 +258,45 @@ export class GenericDrivingLicenseApi
     return this.getPkPassUrlByNationalId(nationalId)
   }
 
+  async getPkPassQRCodeByNationalId(
+    nationalId: string,
+  ): Promise<string | null> {
+    const licenses = await this.requestFromXroadApi(nationalId)
+
+    if (!licenses) {
+      this.logger.warn('Missing licenses, null from x-road', {
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
+
+    const license = licenses[0]
+
+    if (!license) {
+      this.logger.warn(
+        'Missing license, unable to generate pkpass for drivers license',
+        { category: LOG_CATEGORY },
+      )
+      return null
+    }
+
+    if (!GenericDrivingLicenseApi.licenseIsValidForPkpass(license)) {
+      this.logger.info('License is not valid for pkpass generation', {
+        category: LOG_CATEGORY,
+      })
+    }
+
+    const payload = this.drivingLicenseToPkpassPayload(license)
+
+    return this.pkpassClient.getPkPassQRCode(payload)
+  }
+
+  async getPkPassQRCode(
+    nationalId: User['nationalId'],
+  ): Promise<string | null> {
+    return this.getPkPassQRCodeByNationalId(nationalId)
+  }
+
   /**
    * Fetch drivers license data from RLS through x-road.
    *

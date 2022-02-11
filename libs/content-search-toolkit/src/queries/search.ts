@@ -2,16 +2,21 @@ import { SearchInput } from '../types'
 import { tagAggregationQueryFragment } from './tagAggregation'
 import { TagQuery, tagQuery } from './tagQuery'
 import { typeAggregationQuery } from './typeAggregation'
+import { processAggregationQuery } from './processAggregation'
 
-export const searchQuery = ({
-  queryString,
-  size = 10,
-  page = 1,
-  types = [],
-  tags = [],
-  countTag = '',
-  countTypes = false,
-}: SearchInput) => {
+export const searchQuery = (
+  {
+    queryString,
+    size = 10,
+    page = 1,
+    types = [],
+    tags = [],
+    countTag = [],
+    countTypes = false,
+    countProcessEntry = false,
+  }: SearchInput,
+  aggregate = true,
+) => {
   const should = []
   const must: TagQuery[] = []
   let minimumShouldMatch = 1
@@ -50,14 +55,23 @@ export const searchQuery = ({
 
   const aggregation = { aggs: {} }
 
-  if (countTag) {
-    // set the tag aggregation as the only aggregation
-    aggregation.aggs = tagAggregationQueryFragment(countTag).aggs
-  }
+  if (aggregate) {
+    if (countTag) {
+      // set the tag aggregation as the only aggregation
+      aggregation.aggs = tagAggregationQueryFragment(countTag).aggs
+    }
 
-  if (countTypes) {
-    // add tag aggregation, handle if there is already an existing aggregation
-    aggregation.aggs = { ...aggregation.aggs, ...typeAggregationQuery().aggs }
+    if (countTypes) {
+      // add tag aggregation, handle if there is already an existing aggregation
+      aggregation.aggs = { ...aggregation.aggs, ...typeAggregationQuery().aggs }
+    }
+
+    if (countProcessEntry) {
+      aggregation.aggs = {
+        ...aggregation.aggs,
+        ...processAggregationQuery().aggs,
+      }
+    }
   }
 
   return {

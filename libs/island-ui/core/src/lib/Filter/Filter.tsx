@@ -101,7 +101,7 @@ export const Filter: FC<FilterProps> = ({
                 tabIndex={-1}
                 {...popover}
               >
-                <Button as="span" variant="utility" icon="filter" fluid>
+                <Button as="span" variant="utility" icon="filter" fluid nowrap>
                   {labelOpen}
                 </Button>
               </Box>
@@ -148,6 +148,8 @@ export const Filter: FC<FilterProps> = ({
             <Box
               display="flex"
               justifyContent="spaceBetween"
+              border="standard"
+              borderColor="blue200"
               background="white"
               padding={2}
               borderRadius="large"
@@ -162,7 +164,8 @@ export const Filter: FC<FilterProps> = ({
                 icon="menu"
                 iconType="outline"
                 title={labelOpen}
-              ></Button>
+                unfocusable
+              />
             </Box>
           </DialogDisclosure>
           <Dialog {...dialog}>
@@ -197,7 +200,7 @@ export const Filter: FC<FilterProps> = ({
                     iconType="outline"
                     onClick={dialog.hide}
                     title={labelClose}
-                  ></Button>
+                  />
                 </Box>
 
                 <Stack space={4} dividers={false}>
