@@ -6,13 +6,19 @@ import {
 } from './client'
 import { RegulationsAdminResolver } from './graphql/regulationsAdmin.resolver'
 import { RegulationsService } from '@island.is/clients/regulations'
-import { DownloadServiceConfig } from '@island.is/nest/config'
+import { ConfigModule, DownloadServiceConfig } from '@island.is/nest/config'
 
 @Module({})
 export class RegulationsAdminModule {
   static register(config: RegulationsAdminOptions): DynamicModule {
     return {
       module: RegulationsAdminModule,
+      imports: [
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [DownloadServiceConfig],
+        }),
+      ],
       providers: [
         RegulationsAdminResolver,
         RegulationsAdminApi,
@@ -24,10 +30,6 @@ export class RegulationsAdminModule {
           provide: RegulationsService,
           useFactory: async () =>
             new RegulationsService({ url: config.regulationsApiUrl }),
-        },
-        {
-          provide: DownloadServiceConfig,
-          useExisting: DownloadServiceConfig.KEY,
         },
       ],
       exports: [RegulationsService, RegulationsAdminApi],
