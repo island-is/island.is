@@ -3,13 +3,15 @@ import { defineMessages } from 'react-intl'
 export const sections = {
   custodyAndTravelBanProsecutorSection: defineMessages({
     custodyTitle: {
-      id: 'sections.custody_and_travel_ban_prosecutor_section.custody_title',
+      id:
+        'judicial-system.core:sections.custody_and_travel_ban_prosecutor_section.custody_title',
       defaultMessage: 'Krafa um gæsluvarðhald',
       description:
         'Notaður sem titill í hliðarstiku í gæsluvarðhaldsmálum hjá sækjendum',
     },
     travelBanTitle: {
-      id: 'sections.custody_and_travel_ban_prosecutor_section.custody_title',
+      id:
+        'judicial-system.core:sections.custody_and_travel_ban_prosecutor_section.custody_title',
       defaultMessage: 'Krafa um farbann',
       description:
         'Notaður sem titill í hliðarstiku í farbannsmálum hjá sækjendum',
@@ -52,7 +54,8 @@ export const sections = {
   }),
   investigationCaseProsecutorSection: defineMessages({
     title: {
-      id: 'sections.investigation_case_prosecutor_section.title',
+      id:
+        'judicial-system.core:sections.investigation_case_prosecutor_section.title',
       defaultMessage: 'Krafa um rannsóknarheimild',
       description:
         'Notaður sem titill í hliðarstiku í rannsóknarheimildum hjá sækjendum',
@@ -95,7 +98,8 @@ export const sections = {
   }),
   investigationCaseCourtSection: defineMessages({
     title: {
-      id: 'sections.investigation_case_court_section.title',
+      id:
+        'judicial-system.core:sections.investigation_case_court_section.title',
       defaultMessage: 'Úrskurður Héraðsdóms',
       description:
         'Notaður sem titill í hliðarstiku í rannsóknarheimildum hjá héraðsdómum',
@@ -110,9 +114,9 @@ export const sections = {
     hearingArrangements: {
       id:
         'judicial.system.core:sections.investigation_case_court_section.hearingArrangements',
-      defaultMessage: 'Fyrirtökutími',
+      defaultMessage: 'Fyrirtaka',
       description:
-        'Notaður sem texti fyrir Fyrirtökutími skref í hliðarstiku í rannsóknarheimildum hjá héraðsdómum',
+        'Notaður sem texti fyrir Fyrirtaka skref í hliðarstiku í rannsóknarheimildum hjá héraðsdómum',
     },
     courtRecord: {
       id:
@@ -145,7 +149,7 @@ export const sections = {
   }),
   courtSection: defineMessages({
     title: {
-      id: 'sections.court_section.title',
+      id: 'judicial-system.core:sections.court_section.title',
       defaultMessage: 'Úrskurður Héraðsdóms',
       description:
         'Notaður sem titill í hliðarstiku í gæslu- og farbannsmálum hjá héraðsdómum',
@@ -158,9 +162,9 @@ export const sections = {
     },
     hearingArrangements: {
       id: 'judicial.system.core:sections.court_section.hearingArrangements',
-      defaultMessage: 'Fyrirtökutími',
+      defaultMessage: 'Fyrirtaka',
       description:
-        'Notaður sem texti fyrir Fyrirtökutími skref í hliðarstiku í gæslu- og farbannsmálum hjá héraðsdómum',
+        'Notaður sem texti fyrir Fyrirtaka skref í hliðarstiku í gæslu- og farbannsmálum hjá héraðsdómum',
     },
     courtRecord: {
       id: 'judicial.system.core:sections.court_section.court_record',
@@ -189,7 +193,7 @@ export const sections = {
   }),
   extensionSection: defineMessages({
     title: {
-      id: 'sections.extension_section.title',
+      id: 'judicial-system.core:sections.extension_section.title',
       defaultMessage: 'Krafa um framlengingu',
       description:
         'Notaður sem titill í hliðarstiku í framlengingdum gæslu- og farbannsmálum',
@@ -228,7 +232,8 @@ export const sections = {
   }),
   investigationCaseExtensionSection: defineMessages({
     title: {
-      id: 'sections.investigation_case_extension_section.title',
+      id:
+        'judicial-system.core:sections.investigation_case_extension_section.title',
       defaultMessage: 'Krafa um framlengingu',
       description:
         'Notaður sem titill í hliðarstiku í framlengingdum rannsóknarheimildum',
