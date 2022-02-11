@@ -39,9 +39,6 @@ const filterNavigationTree = (
   // Maps the enabled status to the nav item if provided
   item.enabled = routeItem?.enabled
 
-  console.log(item.navHide)
-  console.log(routeItem?.navHide)
-
   // Hides item from navigation
   item.navHide = routeItem?.navHide ?? item.navHide
 
