@@ -1,6 +1,9 @@
 import * as z from 'zod'
 
+import { AuthScope } from '@island.is/auth/scopes'
 import { defineConfig } from '@island.is/nest/config'
+
+import { DelegationType } from '../entities/dto/delegation.dto'
 
 const schema = z.object({
   // Configures special rules affecting when specific scopes can be granted to other
@@ -20,7 +23,7 @@ const schema = z.object({
       // In all cases, the active user still needs to have this scope and the
       // `delegation:write` scope in their access token.
       onlyForDelegationType: z.array(
-        z.enum(['Self', 'ProcurationHolder', 'LegalGuardian', 'Custom']),
+        z.enum(['Self', ...Object.values(DelegationType)]),
       ),
     }),
   ),
@@ -32,7 +35,7 @@ export const DelegationConfig = defineConfig({
   load: (env) => ({
     customScopeRules: env.optionalJSON('DELEGATION_CUSTOM_SCOPE_RULES') ?? [
       {
-        scopeName: '@island.is/auth/delegations:write',
+        scopeName: AuthScope.writeDelegations,
         onlyForDelegationType: ['ProcurationHolder'],
       },
     ],
