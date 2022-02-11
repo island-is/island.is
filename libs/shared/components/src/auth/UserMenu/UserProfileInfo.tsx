@@ -30,7 +30,7 @@ export const UserProfileInfo = ({ onClick }: { onClick: () => void }) => {
         <Box>
           <UserDropdownItem
             text={formatMessage(m.personalInformation)}
-            link={`${baseUrl}/personuupplysingar`}
+            link={`${baseUrl}/minar-stillingar`}
             icon={{ type: 'outline', icon: 'person' }}
             onClick={() => onClick()}
           />

@@ -83,9 +83,9 @@ export class PrivateUserController {
       authUser.nationalId,
       ...(await this.userService.getRelations(authUser)),
     ]
-
     const userAndRelatives = await this.userService.getMultipleUsersByNationalIdArray(
       relations,
+      authUser,
     )
 
     return userAndRelatives
