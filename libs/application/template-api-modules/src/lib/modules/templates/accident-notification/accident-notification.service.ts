@@ -112,15 +112,21 @@ export class AccidentNotificationService {
       const attachmentStatus = getApplicationAttachmentStatus(application)
       const requests = attachmentStatusToAttachmentRequests(attachmentStatus)
 
+      console.log('Requests: ', requests)
+
       const attachments = await this.attachmentProvider.getFiles(
         requests,
         application,
       )
 
+      console.log('Attachments: ', attachments)
+
       const newAttachments = filterOutAlreadySentDocuments(
         attachments,
         application,
       )
+
+      console.log('New attachments: ', newAttachments)
 
       const documentId = getApplicationDocumentId(application)
 

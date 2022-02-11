@@ -664,7 +664,7 @@ export const aboutTheAccidentSection = buildSection({
           title: attachments.general.heading,
           children: [
             buildFileUploadField({
-              id: 'attachments.injuryCertificateFile.file',
+              id: 'injuryCertificateFile.file',
               title: attachments.general.heading,
               uploadAccept: UPLOAD_ACCEPT,
               uploadHeader: injuredPersonInformation.upload.uploadHeader,
@@ -744,7 +744,7 @@ export const aboutTheAccidentSection = buildSection({
             formValue.fatalAccidentUploadDeathCertificateNow === YES,
           children: [
             buildFileUploadField({
-              id: 'attachments.deathCertificateFile.file',
+              id: 'deathCertificateFile.file',
               title: attachments.general.uploadHeader,
               uploadAccept: UPLOAD_ACCEPT,
               uploadHeader: attachments.general.uploadHeader,
@@ -796,7 +796,7 @@ export const aboutTheAccidentSection = buildSection({
             AttachmentsEnum.ADDITIONALNOW,
           children: [
             buildFileUploadField({
-              id: 'attachments.additionalFiles.file',
+              id: 'additionalFiles.file',
               title: attachments.general.heading,
               uploadAccept: UPLOAD_ACCEPT,
               uploadHeader: addDocuments.general.uploadHeader,

@@ -128,34 +128,46 @@ export const AccidentNotificationSchema = z.object({
       AttachmentsEnum.ADDITIONALLATER,
     ]),
   }),
-
+  injuryCertificateFile: z.object({
+    file: z
+      .array(FileSchema)
+      .refine((v) => v.length > 0, { params: error.requiredFile }),
+  }),
+  deathCertificateFile: z.object({
+    file: z
+      .array(FileSchema)
+      .refine((v) => v.length > 0, { params: error.requiredFile }),
+  }),
+  powerOfAttorneyFile: z.object({
+    file: z
+      .array(FileSchema)
+      .refine((v) => v.length > 0, { params: error.requiredFile }),
+  }),
+  additionalFiles: z.object({
+    file: z
+      .array(FileSchema)
+      .refine((v) => v.length > 0, { params: error.requiredFile }),
+  }),
+  // For review progress
   attachments: z.object({
     injuryCertificateFile: z
       .object({
-        file: z
-          .array(FileSchema)
-          .refine((v) => v.length > 0, { params: error.requiredFile }),
+        file: z.array(FileSchema),
       })
       .optional(),
     deathCertificateFile: z
       .object({
-        file: z
-          .array(FileSchema)
-          .refine((v) => v.length > 0, { params: error.requiredFile }),
+        file: z.array(FileSchema),
       })
       .optional(),
     powerOfAttorneyFile: z
       .object({
-        file: z
-          .array(FileSchema)
-          .refine((v) => v.length > 0, { params: error.requiredFile }),
+        file: z.array(FileSchema),
       })
       .optional(),
     additionalFiles: z
       .object({
-        file: z
-          .array(FileSchema)
-          .refine((v) => v.length > 0, { params: error.requiredFile }),
+        file: z.array(FileSchema),
       })
       .optional(),
     additionalFilesFromReviewer: z

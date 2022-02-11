@@ -28,13 +28,21 @@ const hasAttachment = (attachment: FileType[] | undefined) =>
 
 export const getAttachmentTitles = (answers: AccidentNotification) => {
   const deathCertificateFile =
-    answers.attachments?.deathCertificateFile?.file || undefined
+    answers.deathCertificateFile?.file ||
+    answers.attachments?.deathCertificateFile?.file ||
+    undefined
   const injuryCertificateFile =
-    answers.attachments?.injuryCertificateFile?.file || undefined
+    answers.injuryCertificateFile?.file ||
+    answers.attachments?.injuryCertificateFile?.file ||
+    undefined
   const powerOfAttorneyFile =
-    answers.attachments?.powerOfAttorneyFile?.file || undefined
+    answers.powerOfAttorneyFile?.file ||
+    answers.attachments?.powerOfAttorneyFile?.file ||
+    undefined
   const additionalFiles =
-    answers.attachments?.additionalFiles?.file || undefined
+    answers.additionalFiles?.file ||
+    answers.attachments?.additionalFiles?.file ||
+    undefined
   const additionalFilesFromReviewer =
     answers.attachments?.additionalFilesFromReviewer?.file || undefined
 
@@ -74,7 +82,7 @@ export const returnMissingDocumentsList = (
 
   if (
     injuryCertificate?.answer === AttachmentsEnum.SENDCERTIFICATELATER &&
-    !hasAttachment(answers.attachments?.injuryCertificateFile?.file)
+    !hasAttachment(answers.injuryCertificateFile?.file)
   ) {
     missingDocuments.push(
       formatMessage(attachments.documentNames.injuryCertificate),
@@ -84,7 +92,7 @@ export const returnMissingDocumentsList = (
   // Only show this to applicant or assignee that is also the applicant
   if (
     whoIsTheNotificationFor === WhoIsTheNotificationForEnum.POWEROFATTORNEY &&
-    !hasAttachment(answers.attachments?.powerOfAttorneyFile?.file)
+    !hasAttachment(answers.powerOfAttorneyFile?.file)
   ) {
     missingDocuments.push(
       formatMessage(attachments.documentNames.powerOfAttorneyDocument),
@@ -93,7 +101,7 @@ export const returnMissingDocumentsList = (
 
   if (
     wasTheAccidentFatal === YES &&
-    !hasAttachment(answers.attachments?.deathCertificateFile?.file)
+    !hasAttachment(answers.deathCertificateFile?.file)
   ) {
     missingDocuments.push(
       formatMessage(attachments.documentNames.deathCertificate),

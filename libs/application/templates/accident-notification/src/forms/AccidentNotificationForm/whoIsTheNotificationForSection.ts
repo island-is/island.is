@@ -243,7 +243,7 @@ export const whoIsTheNotificationForSection = buildSection({
               title: '',
             }),
             buildFileUploadField({
-              id: 'attachments.powerOfAttorneyFile.file',
+              id: 'powerOfAttorneyFile.file',
               title: '',
               introduction: '',
               uploadAccept: UPLOAD_ACCEPT,

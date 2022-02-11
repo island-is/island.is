@@ -3,9 +3,8 @@ import {
   getValueViaPath,
   MessageFormatter,
 } from '@island.is/application/core'
-import { AttachmentsEnum, FileType, WhoIsTheNotificationForEnum } from '..'
+import { FileType, WhoIsTheNotificationForEnum } from '..'
 import { YES } from '../constants'
-import { AccidentNotification } from '../lib/dataSchema'
 import { attachments } from '../lib/messages'
 import {
   AccidentNotificationAttachmentStatus,
@@ -45,16 +44,15 @@ export const hasReceivedPoliceReport = (answers: FormValue) => {
 export const hasReceivedInjuryCertificateOrAddedToAnswers = (
   answers: FormValue,
 ) => {
+  console.log(answers)
   const injuryCertificateFile = getValueViaPath(
     answers,
     'attachments.injuryCertificateFile.file',
     {},
   ) as FileType[]
 
-  return (
-    hasReceivedInjuryCertificate(answers) ||
-    hasAttachment(injuryCertificateFile)
-  )
+  return hasReceivedInjuryCertificate(answers) // ||
+  // hasAttachment(injuryCertificateFile)
 }
 
 export const hasReceivedProxyDocumentOrAddedToAnswers = (
@@ -142,54 +140,4 @@ export const getErrorMessageForMissingDocuments = (
   }
 
   return missingDocuments.join(', ')
-}
-
-export const hasMissingInjuryCertificate = (answers: FormValue) => {
-  const injuryCertificate = getValueViaPath(
-    answers,
-    'injuryCertificate.answer',
-  ) as AttachmentsEnum
-  return injuryCertificate === AttachmentsEnum.SENDCERTIFICATELATER
-}
-
-export const hasMissingDeathCertificate = (answers: FormValue) => {
-  const wasTheAccidentFatal = getValueViaPath(
-    answers,
-    'wasTheAccidentFatal',
-  ) as YesOrNo
-  return wasTheAccidentFatal === YES
-}
-
-export const hasMissingPowerOfAttorneyFile = (answers: FormValue): boolean => {
-  const whoIsTheNotificationFor = getValueViaPath(
-    answers,
-    'whoIsTheNotificationFor.answer',
-  ) as WhoIsTheNotificationForEnum
-  return whoIsTheNotificationFor === WhoIsTheNotificationForEnum.POWEROFATTORNEY
-}
-
-export const hasMissingDocuments = (answers: FormValue) => {
-  const injuryCertificateFile = getValueViaPath(
-    answers,
-    'attachments.injuryCertificateFile.file',
-  ) as FileType[]
-
-  const deathCertificateFile = getValueViaPath(
-    answers,
-    'attachments.deathCertificateFile.file',
-  ) as FileType[]
-
-  const powerOfAttorneyFile = getValueViaPath(
-    answers,
-    'attachments.powerOfAttorneyFile.file',
-  ) as FileType[]
-
-  return (
-    (hasMissingInjuryCertificate(answers) &&
-      !hasAttachment(injuryCertificateFile)) ||
-    (hasMissingDeathCertificate(answers) &&
-      !hasAttachment(deathCertificateFile)) ||
-    (hasMissingPowerOfAttorneyFile(answers) &&
-      !hasAttachment(powerOfAttorneyFile))
-  )
 }
