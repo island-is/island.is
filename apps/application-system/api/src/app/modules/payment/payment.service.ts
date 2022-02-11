@@ -92,11 +92,15 @@ export class PaymentService {
       returnUrl: callbackUrl,
       requestID: payment.id,
     }
-
-    const result = await this.paymentApi.createCharge(charge)
-    return {
-      ...result,
-      paymentUrl: this.makePaymentUrl(result.user4),
+    try {
+      const result = await this.paymentApi.createCharge(charge)
+      return {
+        ...result,
+        paymentUrl: this.makePaymentUrl(result.user4),
+      }
+    } catch (e) {
+      console.log('Error from payment service: ', e)
+      throw e
     }
   }
 
