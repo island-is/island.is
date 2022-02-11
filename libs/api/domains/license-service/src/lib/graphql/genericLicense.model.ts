@@ -109,6 +109,8 @@ export class GenericUserLicense {
 export class GenericPkPass {
   @Field(() => String)
   pkpassUrl!: string
+  @Field(() => String)
+  pkpassQRCode!: string
 }
 
 @ObjectType()

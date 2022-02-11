@@ -170,7 +170,6 @@ module.exports = {
     '<rootDir>/libs/service-portal/core',
     '<rootDir>/libs/service-portal/document-provider',
     '<rootDir>/libs/service-portal/documents',
-    '<rootDir>/libs/service-portal/driving-license',
     '<rootDir>/libs/service-portal/education',
     '<rootDir>/libs/service-portal/eligibility',
     '<rootDir>/libs/service-portal/family',
