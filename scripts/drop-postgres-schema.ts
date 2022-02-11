@@ -72,13 +72,7 @@ void (async function () {
       console.log(`Connected to database`)
       await client.query(
         // Query to drop all tables taken from here - https://tableplus.com/blog/2018/04/postgresql-how-to-drop-all-tables.html
-        'DO $$ DECLARE\n' +
-          '    r RECORD;\n' +
-          'BEGIN\n' +
-          '    FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = current_schema()) LOOP\n' +
-          "        EXECUTE 'DROP TABLE IF EXISTS ' || quote_ident(r.tablename) || ' CASCADE';\n" +
-          '    END LOOP;\n' +
-          'END $$;',
+        `drop owned by ${targetService.serviceDef.postgres.username}`,
       )
       console.log(`Done`)
       await client.end()
