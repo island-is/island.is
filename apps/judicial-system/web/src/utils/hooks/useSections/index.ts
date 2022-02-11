@@ -8,6 +8,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import { caseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
+import { sections } from '@island.is/judicial-system-web/messages/Core/sections'
 import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -64,10 +65,11 @@ const useSections = () => {
     const { type, id } = workingCase
 
     return {
-      name:
+      name: formatMessage(
         type === CaseType.CUSTODY
-          ? 'Krafa um gæsluvarðhald'
-          : 'Krafa um farbann',
+          ? sections.custodyAndTravelBanProsecutorSection.custodyTitle
+          : sections.custodyAndTravelBanProsecutorSection.travelBanTitle,
+      ),
       children: [
         {
           type: 'SUB_SECTION',
@@ -76,7 +78,9 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: 'Óskir um fyrirtöku',
+          name: formatMessage(
+            sections.custodyAndTravelBanProsecutorSection.hearingArrangements,
+          ),
           href:
             (activeSubSection && activeSubSection > 1) ||
             isAccusedStepValidRC(workingCase)
@@ -85,7 +89,9 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: 'Dómkröfur og lagagrundvöllur',
+          name: formatMessage(
+            sections.custodyAndTravelBanProsecutorSection.policeDemands,
+          ),
           href:
             (activeSubSection && activeSubSection > 2) ||
             (isAccusedStepValidRC(workingCase) &&
@@ -95,7 +101,9 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: 'Greinargerð',
+          name: formatMessage(
+            sections.custodyAndTravelBanProsecutorSection.policeReport,
+          ),
           href:
             (activeSubSection && activeSubSection > 3) ||
             (isAccusedStepValidRC(workingCase) &&
@@ -106,7 +114,9 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: 'Rannsóknargögn',
+          name: formatMessage(
+            sections.custodyAndTravelBanProsecutorSection.caseFiles,
+          ),
           href:
             (activeSubSection && activeSubSection > 4) ||
             (isAccusedStepValidRC(workingCase) &&
@@ -118,7 +128,9 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: 'Yfirlit kröfu',
+          name: formatMessage(
+            sections.custodyAndTravelBanProsecutorSection.overview,
+          ),
           href:
             isAccusedStepValidRC(workingCase) &&
             isHearingArrangementsStepValidRC(workingCase) &&
@@ -130,6 +142,7 @@ const useSections = () => {
       ],
     }
   }
+
   const getInvestigationCaseProsecutorSection = (
     workingCase: Case,
     activeSubSection?: number,
@@ -137,16 +150,18 @@ const useSections = () => {
     const { id } = workingCase
 
     return {
-      name: 'Krafa um rannsóknarheimild',
+      name: formatMessage(sections.investigationCaseProsecutorSection.title),
       children: [
         {
           type: 'SUB_SECTION',
-          name: 'Varnaraðili',
+          name: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
           href: `${Constants.IC_DEFENDANT_ROUTE}/${id}`,
         },
         {
           type: 'SUB_SECTION',
-          name: 'Óskir um fyrirtöku',
+          name: formatMessage(
+            sections.investigationCaseProsecutorSection.hearingArrangements,
+          ),
           href:
             (activeSubSection && activeSubSection > 1) ||
             isDefendantStepValidIC(workingCase)
@@ -155,7 +170,9 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: 'Dómkröfur og lagagrundvöllur',
+          name: formatMessage(
+            sections.investigationCaseProsecutorSection.policeDemands,
+          ),
           href:
             (activeSubSection && activeSubSection > 2) ||
             (isDefendantStepValidIC(workingCase) &&
@@ -165,7 +182,9 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: 'Greinargerð',
+          name: formatMessage(
+            sections.investigationCaseProsecutorSection.policeReport,
+          ),
           href:
             (activeSubSection && activeSubSection > 3) ||
             (isDefendantStepValidIC(workingCase) &&
@@ -176,7 +195,9 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: 'Rannsóknargögn',
+          name: formatMessage(
+            sections.investigationCaseProsecutorSection.caseFiles,
+          ),
           href:
             (activeSubSection && activeSubSection > 4) ||
             (isDefendantStepValidIC(workingCase) &&
@@ -187,7 +208,9 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: 'Yfirlit kröfu',
+          name: formatMessage(
+            sections.investigationCaseProsecutorSection.overview,
+          ),
           href:
             isDefendantStepValidIC(workingCase) &&
             isHearingArrangementsStepValidIC(workingCase) &&
@@ -207,16 +230,18 @@ const useSections = () => {
     const { id } = workingCase
 
     return {
-      name: 'Úrskurður Héraðsdóms',
+      name: formatMessage(sections.investigationCaseCourtSection.title),
       children: [
         {
           type: 'SUB_SECTION',
-          name: 'Yfirlit kröfu',
+          name: formatMessage(sections.investigationCaseCourtSection.overview),
           href: `${Constants.IC_OVERVIEW_ROUTE}/${id}`,
         },
         {
           type: 'SUB_SECTION',
-          name: 'Fyrirtökutími',
+          name: formatMessage(
+            sections.investigationCaseCourtSection.hearingArrangements,
+          ),
           href:
             (activeSubSection && activeSubSection > 1) ||
             isOverviewStepValidIC(workingCase)
@@ -225,7 +250,9 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: 'Þingbók',
+          name: formatMessage(
+            sections.investigationCaseCourtSection.courtRecord,
+          ),
           href:
             (activeSubSection && activeSubSection > 2) ||
             (hasCourtPermission(workingCase, user) &&
@@ -236,7 +263,9 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: 'Úrskurður',
+          name: formatMessage(
+            sections.investigationCaseCourtSection.rulingStepOne,
+          ),
           href:
             (activeSubSection && activeSubSection > 3) ||
             (hasCourtPermission(workingCase, user) &&
@@ -248,7 +277,9 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: 'Úrskurðarorð',
+          name: formatMessage(
+            sections.investigationCaseCourtSection.rulingStepTwo,
+          ),
           href:
             (activeSubSection && activeSubSection > 4) ||
             (hasCourtPermission(workingCase, user) &&
@@ -261,7 +292,9 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: 'Yfirlit úrskurðar',
+          name: formatMessage(
+            sections.investigationCaseCourtSection.conclusion,
+          ),
           href:
             hasCourtPermission(workingCase, user) &&
             isOverviewStepValidIC(workingCase) &&
@@ -435,7 +468,7 @@ const useSections = () => {
       children: [
         {
           type: 'SUB_SECTION',
-          name: 'Varnaraðili',
+          name: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
           href: `${Constants.IC_DEFENDANT_ROUTE}/${id}`,
         },
         {
