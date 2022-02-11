@@ -17,7 +17,8 @@ describe('/krafa/ny/gaesluvardhald', () => {
     cy.getByTestid('policeCaseNumber').type('00000000000')
     cy.getByTestid('nationalId').type('0000000000')
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1000)
+    cy.wait(2000)
+    cy.getByTestid('nationalId').blur()
     cy.getByTestid('accusedName').type('Donald Duck')
     cy.getByTestid('accusedAddress').type('Batcave 1337')
     cy.getByTestid('leadInvestigator').type('John Doe')
@@ -64,7 +65,8 @@ describe('/krafa/ny/gaesluvardhald', () => {
     cy.getByTestid('policeCaseNumber').type('00000000000')
     cy.getByTestid('nationalId').type('0000000000')
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1000)
+    cy.wait(2000)
+    cy.getByTestid('nationalId').blur()
     cy.getByTestid('accusedName').type('Donald Duck')
     cy.getByTestid('accusedAddress').type('Batcave 1337')
     cy.getByTestid('select-defendantGender').click()
