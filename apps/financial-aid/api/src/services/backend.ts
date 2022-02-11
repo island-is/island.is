@@ -20,6 +20,7 @@ import {
   Staff,
   CreateStaff,
   CreateMunicipality,
+  PersonalTaxReturn,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
@@ -163,6 +164,10 @@ class BackendAPI extends RESTDataSource {
 
   getNumberOfStaffForMunicipality(municipalityId: string): Promise<number> {
     return this.get(`staff/municipality/${municipalityId}`)
+  }
+
+  getPersonalTaxReturn(): Promise<PersonalTaxReturn> {
+    return this.get('personalTaxReturn')
   }
 }
 

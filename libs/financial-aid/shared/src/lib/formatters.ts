@@ -271,13 +271,13 @@ export const getApplicantEmailDataFromEventType = (
 
     case ApplicationEventType.REJECTED:
       return {
-        subject: 'Umsókn þinni um aðstoð hefur verið hafnað',
+        subject: 'Umsókn þinni um aðstoð hefur verið synjað',
         data: {
-          title: 'Fjárhagsaðstoð Umsókn hafnað',
-          header: 'Umsókn þinni um aðstoð hefur verið hafnað',
-          content: `Umsókn þinni um fjárhagsaðstoð í ${getPeriod.month} hefur verið hafnað <b>${rejectionComment}</b>. Þú getur kynnt þér <a href="${municipality.rulesHomepage}" target="_blank">reglur um fjárhagsaðstoð.</a>`,
+          title: 'Fjárhagsaðstoð Umsókn synjað',
+          header: 'Umsókn þinni um aðstoð hefur verið synjað',
+          content: `Umsókn þinni um fjárhagsaðstoð í ${getPeriod.month} hefur verið synjað <b>${rejectionComment}</b>. Þú getur kynnt þér nánar <a href="${municipality.rulesHomepage}" target="_blank">reglur um fjárhagsaðstoð.</a>`,
           applicationLinkText: 'Opna stöðusíðu',
-          applicationChange: 'Umsókn hafnað',
+          applicationChange: 'Umsókn synjað',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,
           applicationLink,
@@ -309,7 +309,7 @@ export const getApplicantEmailDataFromEventType = (
         data: {
           title: 'Fjárhagsaðstoð Umsókn móttekin',
           header: `Þú þarft að skila inn gögnum fyrir umsókn maka þíns um fjárhagsaðstoð`,
-          content: `Maki þinn hefur sótt um fjárhagsaðstoð fyrir ${getPeriod.month}. Til að við getum reiknað út fjárhagsaðstoðina og klárað umsóknina þarft þú að <a href="${applicationLink}" target="_blank">senda okkur tekju- og skattagögn.</a> `,
+          content: `Maki þinn hefur sótt um fjárhagsaðstoð fyrir ${getPeriod.month}. Svo hægt sé að reikna út fjárhagsaðstoðina og klára umsóknina þarft þú að <a href="${applicationLink}" target="_blank">senda okkur tekju- og skattagögn.</a>`,
           applicationLinkText: 'Bæta við gögnum',
           applicationChange: 'Umsókn bíður eftir gögnum frá maka',
           applicationMonth: getPeriod.month,
