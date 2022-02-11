@@ -20,7 +20,7 @@ import {
   RegulationsAdminApi,
   RegulationsAdminOptions,
   REGULATIONS_ADMIN_OPTIONS,
-} from '../client/regulationsAdmin.api'
+} from '../client'
 import { DraftRegulationPdfDownload } from './models/draftRegulationPdfDownload.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
