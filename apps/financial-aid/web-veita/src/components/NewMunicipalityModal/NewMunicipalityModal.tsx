@@ -85,7 +85,7 @@ const NewMunicipalityModal = ({
     } catch (error) {
       if (error.graphQLErrors[0]?.extensions?.response?.status === 400) {
         setErrorMessage(
-          'Misstókst að búa til stjórnanda, mögulega er kennitala í notkun',
+          'Mistókst að búa til stjórnanda, mögulega er kennitala í notkun',
         )
       } else {
         setErrorMessage('Eitthvað fór úrskeiðis, vinsamlega reynið aftur síðar')
