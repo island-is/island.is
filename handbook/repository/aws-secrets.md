@@ -75,10 +75,11 @@ sso_role_name = Secret_Service
 sso_region = eu-west-1
 region = eu-west-1
 ```
+
 {% endhint %}
 
 {% hint style="info" %}
-**AWS Vault:** You can use [AWS Vault](https://github.com/99designs/aws-vault) to store and access AWS credentials in your operating system's secure keystore. When requesting credentials from an expired SSO session, it will automatically open a browser window for you to log in again. 
+**AWS Vault:** You can use [AWS Vault](https://github.com/99designs/aws-vault) to store and access AWS credentials in your operating system's secure keystore. When requesting credentials from an expired SSO session, it will automatically open a browser window for you to log in again.
 
 Just follow its [installation instructions](https://github.com/99designs/aws-vault#installing) and configure your `~/.aws/credentials` file like this:
 
@@ -88,6 +89,7 @@ credential_process = aws-vault exec islandis-dev --json
 
 # ... do the same thing for your other profiles.
 ```
+
 {% endhint %}
 
 ### Using AWS session
