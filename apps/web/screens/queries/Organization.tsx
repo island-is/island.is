@@ -91,6 +91,9 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
           content {
             ...HtmlFields
           }
+          serviceWebContent {
+            ...HtmlFields
+          }
           link {
             text
             url

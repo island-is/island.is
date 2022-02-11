@@ -25,7 +25,7 @@ import {
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
-import { RskApi } from '@island.is/clients/rsk/v2'
+import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
@@ -44,7 +44,6 @@ import type {
   EinstaklingarGetEinstaklingurRequest,
   EinstaklingarGetForsjaRequest,
 } from '@island.is/clients/national-registry-v2'
-import type { CompaniesResponse } from '@island.is/clients/rsk/v2'
 import type { Logger } from '@island.is/logging'
 export const DELEGATIONS_AUTH_CONFIG = 'DELEGATIONS_AUTH_CONFIG'
 
@@ -59,7 +58,7 @@ export class DelegationsService {
     private authConfig: AuthConfig,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private rskApi: RskApi,
+    private rskProcuringClient: RskProcuringClient,
     private personApi: EinstaklingarApi,
     private delegationScopeService: DelegationScopeService,
     private featureFlagService: FeatureFlagService,
@@ -369,7 +368,7 @@ export class DelegationsService {
 
   /**
    * Finds all companies that the user is procuration holder from CompanyRegistry
-   * @param toNationalId
+   * @param user.nationalId
    * @returns
    */
   private async findAllCompaniesIncoming(user: User): Promise<DelegationDTO[]> {
@@ -383,27 +382,19 @@ export class DelegationsService {
         return []
       }
 
-      const response: CompaniesResponse = await this.rskApi.apicompanyregistrymembersKennitalacompaniesGET1(
-        { kennitala: user.nationalId },
-      )
+      const person = await this.rskProcuringClient.getSimple(user)
 
-      if (response?.memberCompanies) {
-        const companies = response.memberCompanies.filter(
-          (m) => m.erProkuruhafi == '1',
+      if (person && person.companies) {
+        return person.companies.map(
+          (p) =>
+            <DelegationDTO>{
+              toNationalId: user.nationalId,
+              fromNationalId: p.nationalId,
+              fromName: p.name,
+              type: DelegationType.ProcurationHolder,
+              provider: DelegationProvider.CompanyRegistry,
+            },
         )
-
-        if (companies.length > 0) {
-          return companies.map(
-            (p) =>
-              <DelegationDTO>{
-                toNationalId: user.nationalId,
-                fromNationalId: p.kennitala,
-                fromName: p.nafn,
-                type: DelegationType.ProcurationHolder,
-                provider: DelegationProvider.CompanyRegistry,
-              },
-          )
-        }
       }
     } catch (error) {
       this.logger.error('Error in findAllCompanies', error)
