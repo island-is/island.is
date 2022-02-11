@@ -2,7 +2,6 @@ import * as z from 'zod'
 
 import { AuthScope } from '@island.is/auth/scopes'
 import { defineConfig } from '@island.is/nest/config'
-
 import { DelegationType } from '../entities/dto/delegation.dto'
 
 const schema = z.object({
@@ -23,7 +22,11 @@ const schema = z.object({
       // In all cases, the active user still needs to have this scope and the
       // `delegation:write` scope in their access token.
       onlyForDelegationType: z.array(
-        z.enum(['Self', ...Object.values(DelegationType)]),
+        z
+          .string()
+          .refine((val) =>
+            ['Self', ...Object.values(DelegationType)].includes(val),
+          ),
       ),
     }),
   ),
