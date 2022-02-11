@@ -103,7 +103,12 @@ export default ({ type, provider, skipTruncate = false }: UseDatabase) => ({
 
     return () => {
       if (sequelize?.options.dialect === Dialect.Postgres) {
-        return sequelize.close()
+        // Sequelize uses Bluebird promises but
+        // expected return type is ES6 Promise.
+        const promise = new Promise<void>((resolve) =>
+          sequelize.close().then(resolve),
+        )
+        return promise
       }
     }
   },

@@ -63,7 +63,7 @@ export const setupWithAuth = async ({
   scopes = Scopes,
 }: SetupOptions): Promise<TestApp> => {
   // Setup app with authentication and database
-  const app = await testServer<AppModule>({
+  const app = await testServer({
     appModule: AppModule,
     override: (builder: TestingModuleBuilder) =>
       builder
@@ -96,7 +96,7 @@ export const setupWithAuth = async ({
 }
 
 export const setupWithoutAuth = async (): Promise<TestApp> => {
-  const app = await testServer<AppModule>({
+  const app = await testServer({
     appModule: AppModule,
     hooks: [useDatabase({ type: 'sqlite', provider: SequelizeConfigService })],
   })
@@ -106,7 +106,7 @@ export const setupWithoutAuth = async (): Promise<TestApp> => {
 
 export const setupWithoutPermission = async (): Promise<TestApp> => {
   const user = createCurrentUser()
-  const app = await testServer<AppModule>({
+  const app = await testServer({
     appModule: AppModule,
     hooks: [
       useAuth({ auth: user }),
