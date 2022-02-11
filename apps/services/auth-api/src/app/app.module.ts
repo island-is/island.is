@@ -2,9 +2,14 @@ import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { SequelizeConfigService } from '@island.is/auth-api-lib'
 import { AuthModule } from '@island.is/auth-nest-tools'
-import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
+import {
+  ConfigModule,
+  IdsClientConfig,
+  XRoadConfig,
+} from '@island.is/nest/config'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
+import { RskProcuringClientConfig } from '@island.is/clients/rsk/procuring'
 
 import { ClientsModule } from './modules/clients/clients.module'
 import { GrantsModule } from './modules/grants/grants.module'
@@ -32,7 +37,13 @@ import { UserProfileModule } from './modules/user-profile/user-profile.module'
     UserProfileModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [XRoadConfig, NationalRegistryClientConfig, FeatureFlagConfig],
+      load: [
+        FeatureFlagConfig,
+        IdsClientConfig,
+        NationalRegistryClientConfig,
+        RskProcuringClientConfig,
+        XRoadConfig,
+      ],
     }),
   ],
 })
