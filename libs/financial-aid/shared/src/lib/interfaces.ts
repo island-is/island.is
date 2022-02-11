@@ -237,6 +237,12 @@ export interface ApplicationFilters {
   MyCases: number
 }
 
+export interface PersonalTaxReturn {
+  key: string
+  name: string
+  size: number
+}
+
 export interface Application {
   id: string
   created: string
