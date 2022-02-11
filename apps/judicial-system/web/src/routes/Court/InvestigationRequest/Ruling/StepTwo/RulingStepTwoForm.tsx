@@ -75,7 +75,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'conclusion',
-                event,
+                event.target.value,
                 [],
                 workingCase,
                 setWorkingCase,
@@ -272,7 +272,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                   onChange={(event) =>
                     removeTabsValidateAndSet(
                       'accusedAppealAnnouncement',
-                      event,
+                      event.target.value,
                       [],
                       workingCase,
                       setWorkingCase,
@@ -446,7 +446,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                   onChange={(event) =>
                     removeTabsValidateAndSet(
                       'prosecutorAppealAnnouncement',
-                      event,
+                      event.target.value,
                       [],
                       workingCase,
                       setWorkingCase,
@@ -486,7 +486,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'endOfSessionBookings',
-                  event,
+                  event.target.value,
                   [],
                   workingCase,
                   setWorkingCase,

@@ -25,6 +25,7 @@ runs:
       shell: bash
       env:
         DOCKER_REGISTRY: ${{ inputs.docker-registry }}
+        NODE_OPTIONS: --max-old-space-size=4096
 
     - name: Install codecov uploader
       run: |

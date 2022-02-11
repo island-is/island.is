@@ -49,6 +49,7 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
       id="courtRecordAccordionItem"
       label="Þingbók"
       labelVariant="h3"
+      labelUse="h2"
     >
       <AccordionListItem
         title={formatMessage(m.sections.timeAndLocation.title)}

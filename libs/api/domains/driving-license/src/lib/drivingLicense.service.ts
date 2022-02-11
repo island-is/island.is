@@ -33,6 +33,8 @@ import { FetchError } from '@island.is/clients/middlewares'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 
+const LOGTAG = '[api-domains-driving-license]'
+
 @Injectable()
 export class DrivingLicenseService {
   constructor(
@@ -44,7 +46,9 @@ export class DrivingLicenseService {
     nationalId: User['nationalId'],
   ): Promise<DriversLicense | null> {
     try {
-      return await this.drivingLicenseApi.getCurrentLicense({ nationalId })
+      return await this.drivingLicenseApi.getCurrentLicense({
+        nationalId,
+      })
     } catch (e) {
       return this.handleGetLicenseError(e)
     }
@@ -67,7 +71,15 @@ export class DrivingLicenseService {
   async getStudentInformation(
     nationalId: string,
   ): Promise<StudentInformation | null> {
-    const drivingLicense = await this.getDrivingLicense(nationalId)
+    let licenses
+    try {
+      licenses = await this.drivingLicenseApi.getAllLicenses({ nationalId })
+    } catch (e) {
+      this.logger.error(`${LOGTAG} Error fetching student information`, e)
+      return this.handleGetLicenseError(e)
+    }
+
+    const [drivingLicense] = licenses
 
     if (!drivingLicense) {
       return null
@@ -197,10 +209,7 @@ export class DrivingLicenseService {
       case 'PERSON_NOT_FOUND_IN_NATIONAL_REGISTRY':
         return RequirementKey.personNotFoundInNationalRegistry
       default:
-        this.logger.warn(
-          '[api-domains-driving-license] unhandled can apply error code',
-          errorCode,
-        )
+        this.logger.warn(`${LOGTAG} unhandled can apply error code`, errorCode)
 
         return RequirementKey.deniedByService
     }
