@@ -3,7 +3,6 @@ import { Box, Text, GridRow, GridColumn } from '@island.is/island-ui/core'
 import { FAFieldBaseProps } from '../../lib/types'
 import { useIntl } from 'react-intl'
 import { bankInfoForm } from '../../lib/messages'
-import * as styles from '../Shared.css'
 import { InputController } from '@island.is/shared/form-fields'
 
 const BankInfoForm = ({ field, application }: FAFieldBaseProps) => {
@@ -26,7 +25,7 @@ const BankInfoForm = ({ field, application }: FAFieldBaseProps) => {
             <InputController
               id={bankNumberId}
               name={bankNumberId}
-              defaultValue={answers?.bankInfoForm?.bankNumber}
+              defaultValue={answers?.bankInfo?.bankNumber}
               label={formatMessage(bankInfoForm.inputsLabels.bankNumber)}
               format="####"
               backgroundColor="blue"
@@ -39,7 +38,7 @@ const BankInfoForm = ({ field, application }: FAFieldBaseProps) => {
             <InputController
               id={ledgerId}
               name={ledgerId}
-              defaultValue={answers?.bankInfoForm?.ledger}
+              defaultValue={answers?.bankInfo?.ledger}
               label={formatMessage(bankInfoForm.inputsLabels.ledger)}
               format="##"
               backgroundColor="blue"
@@ -51,7 +50,7 @@ const BankInfoForm = ({ field, application }: FAFieldBaseProps) => {
             <InputController
               id={accountNumberId}
               name={accountNumberId}
-              defaultValue={answers?.bankInfoForm?.accountNumber}
+              defaultValue={answers?.bankInfo?.accountNumber}
               label={formatMessage(bankInfoForm.inputsLabels.accountNumber)}
               format="######"
               backgroundColor="blue"

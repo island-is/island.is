@@ -33,12 +33,15 @@ export const dataSchema = z.object({
     .refine(
       (v) =>
         v.unregisteredCohabitation === ApproveOptions.Yes
-          ? isValidEmail(v.spouseEmail || '') ||
-            isValidNationalId(v.spouseNationalId || '') ||
-            (v.spouseApproveTerms && v.spouseApproveTerms.length === 1)
+          ? v.spouseEmail &&
+            isValidEmail(v.spouseEmail) &&
+            v.spouseNationalId &&
+            isValidNationalId(v.spouseNationalId) &&
+            v.spouseApproveTerms &&
+            v.spouseApproveTerms.length === 1
           : true,
       {
-        //More detailed error messages are in the UnknownRelationshipForm componenet
+        //More detailed error messages are in the UnknownRelationshipForm component
         params: error.validation.email,
       },
     ),
