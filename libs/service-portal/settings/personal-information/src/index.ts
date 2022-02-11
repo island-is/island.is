@@ -1,4 +1,5 @@
 import { Query } from '@island.is/api/schema'
+import differenceInMonths from 'date-fns/differenceInMonths'
 import { UserProfileScope } from '@island.is/auth/scopes'
 import {
   ServicePortalModule,
@@ -8,9 +9,9 @@ import {
   m,
 } from '@island.is/service-portal/core'
 import { USER_PROFILE } from '@island.is/service-portal/graphql'
+import { outOfDate } from '../src/utils/outOfDate'
 
 import { lazy } from 'react'
-import { defineMessage } from 'react-intl'
 import * as Sentry from '@sentry/react'
 
 export const personalInformationModule: ServicePortalModule = {
@@ -25,57 +26,10 @@ export const personalInformationModule: ServicePortalModule = {
         render: () => lazy(() => import('./screens/UserProfile/UserProfile')),
       },
       {
-        name: defineMessage({
-          id: 'sp.settings:edit-phone-number',
-          defaultMessage: 'Breyta símanúmeri',
-        }),
-        path: ServicePortalPath.SettingsPersonalInformationEditPhoneNumber,
-        enabled: userInfo.scopes.includes(UserProfileScope.write),
-        render: () =>
-          lazy(() => import('./screens/EditPhoneNumber/EditPhoneNumber')),
-      },
-      {
-        name: defineMessage({
-          id: 'sp.settings:edit-email',
-          defaultMessage: 'Breyta netfangi',
-        }),
-        path: ServicePortalPath.SettingsPersonalInformationEditEmail,
-        enabled: userInfo.scopes.includes(UserProfileScope.write),
-        render: () => lazy(() => import('./screens/EditEmail/EditEmail')),
-      },
-      {
-        name: defineMessage({
-          id: 'sp.settings:edit-language',
-          defaultMessage: 'Breyta tungumáli',
-        }),
-        path: ServicePortalPath.SettingsPersonalInformationEditLanguage,
-        enabled: userInfo.scopes.includes(UserProfileScope.write),
-        render: () => lazy(() => import('./screens/EditLanguage/EditLanguage')),
-      },
-      {
         name: m.messages,
         path: ServicePortalPath.MessagesRoot,
         enabled: userInfo.scopes.includes(UserProfileScope.write),
         render: () => lazy(() => import('./screens/Messages/Messages')),
-      },
-      {
-        name: defineMessage({
-          id: 'sp.settings:edit-nudge',
-          defaultMessage: 'Breyta Hnippi',
-        }),
-        path: ServicePortalPath.SettingsPersonalInformationEditNudge,
-        enabled: userInfo.scopes.includes(UserProfileScope.write),
-        render: () => lazy(() => import('./screens/EditNudge/EditNudge')),
-      },
-      {
-        name: defineMessage({
-          id: 'sp.settings:email-confirmation',
-          defaultMessage: 'Staðfesta netfang',
-        }),
-        path: ServicePortalPath.SettingsPersonalInformationEmailConfirmation,
-        enabled: userInfo.scopes.includes(UserProfileScope.write),
-        render: () =>
-          lazy(() => import('./screens/EmailConfirmation/EmailConfirmation')),
       },
     ]
 
@@ -92,10 +46,15 @@ export const personalInformationModule: ServicePortalModule = {
         query: USER_PROFILE,
       })
 
-      // If the user profile is empty, we render the onboarding modal
+      const profileExists = res.data?.getUserProfile?.modified
+      const dateDiffLate = res.data?.getUserProfile
+        ? outOfDate(res.data.getUserProfile)
+        : false
+      // If the user profile is empty or has not been modified for 3 months, we render the onboarding modal
       if (
+        // true
         process.env.NODE_ENV !== 'development' &&
-        res.data?.getUserProfile === null &&
+        (!profileExists || dateDiffLate) &&
         userInfo.scopes.includes(UserProfileScope.write)
       )
         routes.push({

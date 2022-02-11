@@ -29,8 +29,12 @@ export function buildDataProviders(
 ): BasicDataProvider[] {
   const providers: BasicDataProvider[] = []
   externalDataDTO.dataProviders.forEach(({ type }) => {
-    const Provider = templateDataProviders[type]
-    if (Provider) {
+    const providerExists =
+      Object.prototype.hasOwnProperty.call(templateDataProviders, type) &&
+      typeof templateDataProviders[type] === 'function'
+
+    if (providerExists) {
+      const Provider = templateDataProviders[type]
       providers.push(
         new Provider({
           baseApiUrl: environment.baseApiUrl,

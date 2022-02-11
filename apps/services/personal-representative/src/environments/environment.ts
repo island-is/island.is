@@ -7,8 +7,7 @@ const devConfig = {
   auth: {
     audience: '@island.is/auth',
     issuer:
-      process.env.IDENTITY_SERVER_ISSUER_URL ??
-      'https://identity-server.dev01.devland.is',
+      process.env.IDS_ISSUER ?? 'https://identity-server.dev01.devland.is',
   },
 }
 
@@ -19,10 +18,10 @@ const prodConfig = {
     groupName: process.env.AUDIT_GROUP_NAME,
     serviceName: 'services-personal-representative',
   },
-  port: 3336,
+  port: 3333,
   auth: {
     audience: '@island.is/auth',
-    issuer: process.env.IDENTITY_SERVER_ISSUER_URL ?? '',
+    issuer: process.env.IDS_ISSUER ?? '',
   },
 }
 

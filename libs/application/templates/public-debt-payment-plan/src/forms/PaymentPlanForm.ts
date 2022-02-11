@@ -283,7 +283,7 @@ export const PaymentPlanForm: Form = buildForm({
               component: 'EmployerInfoDescription',
             }),
             buildCustomField({
-              id: 'correctedNationalId',
+              id: 'correctedEmployer',
               title: '',
               component: 'EmployerIdField',
             }),

@@ -10,10 +10,15 @@ export const CaseQuery = gql`
       description
       state
       policeCaseNumber
-      accusedNationalId
-      accusedName
-      accusedAddress
-      accusedGender
+      defendants {
+        id
+        noNationalId
+        nationalId
+        name
+        gender
+        address
+        citizenship
+      }
       defenderName
       defenderEmail
       defenderPhoneNumber
@@ -134,7 +139,7 @@ export const CaseQuery = gql`
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
-      isMasked
+      caseModifiedExplanation
     }
   }
 `

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   TeachingRightsStatus,
@@ -13,8 +13,11 @@ import {
   QualityPhotoResult,
   DrivingLicenseApplicationType,
   NewTemporaryDrivingLicenseInput,
+  ApplicationEligibilityRequirement,
 } from './drivingLicense.type'
 import {
+  CanApplyErrorCodeBFull,
+  CanApplyErrorCodeBTemporary,
   DriversLicense,
   DrivingAssessment,
   DrivingLicenseApi,
@@ -27,16 +30,25 @@ import {
 import sortTeachers from './util/sortTeachers'
 import { StudentAssessment } from '..'
 import { FetchError } from '@island.is/clients/middlewares'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+
+const LOGTAG = '[api-domains-driving-license]'
 
 @Injectable()
 export class DrivingLicenseService {
-  constructor(private readonly drivingLicenseApi: DrivingLicenseApi) {}
+  constructor(
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    private readonly drivingLicenseApi: DrivingLicenseApi,
+  ) {}
 
   async getDrivingLicense(
     nationalId: User['nationalId'],
   ): Promise<DriversLicense | null> {
     try {
-      return await this.drivingLicenseApi.getCurrentLicense({ nationalId })
+      return await this.drivingLicenseApi.getCurrentLicense({
+        nationalId,
+      })
     } catch (e) {
       return this.handleGetLicenseError(e)
     }
@@ -59,7 +71,15 @@ export class DrivingLicenseService {
   async getStudentInformation(
     nationalId: string,
   ): Promise<StudentInformation | null> {
-    const drivingLicense = await this.getDrivingLicense(nationalId)
+    let licenses
+    try {
+      licenses = await this.drivingLicenseApi.getAllLicenses({ nationalId })
+    } catch (e) {
+      this.logger.error(`${LOGTAG} Error fetching student information`, e)
+      return this.handleGetLicenseError(e)
+    }
+
+    const [drivingLicense] = licenses
 
     if (!drivingLicense) {
       return null
@@ -124,34 +144,34 @@ export class DrivingLicenseService {
 
     const canApply = await this.canApplyFor(nationalId, type)
 
-    const requirements = []
-
-    if (type === 'B-full') {
-      requirements.push(
-        {
-          key: RequirementKey.drivingAssessmentMissing,
-          requirementMet:
-            (assessmentResult?.created?.getTime() ?? 0) >
-            Date.now() - DRIVING_ASSESSMENT_MAX_AGE,
-        },
-        {
-          key: RequirementKey.drivingSchoolMissing,
-          requirementMet: hasFinishedSchool,
-        },
-      )
-    } else if (type === 'B-temp') {
-      requirements.push({
-        key: RequirementKey.localResidency,
-        requirementMet: true,
-      })
-    } else {
-      throw new Error('unknown type')
-    }
-
-    requirements.push({
-      key: RequirementKey.deniedByService,
-      requirementMet: canApply,
-    })
+    const requirements: ApplicationEligibilityRequirement[] = [
+      ...(type === 'B-full'
+        ? [
+            {
+              key: RequirementKey.drivingAssessmentMissing,
+              requirementMet:
+                (assessmentResult?.created?.getTime() ?? 0) >
+                Date.now() - DRIVING_ASSESSMENT_MAX_AGE,
+            },
+            {
+              key: RequirementKey.drivingSchoolMissing,
+              requirementMet: hasFinishedSchool,
+            },
+          ]
+        : []),
+      ...(type === 'B-temp'
+        ? [
+            {
+              key: RequirementKey.localResidency,
+              requirementMet: true,
+            },
+          ]
+        : []),
+      {
+        key: this.canApplyErrorCodeToRequirementKey(canApply.errorCode),
+        requirementMet: canApply.result,
+      },
+    ]
 
     // only eligible if we dont find an unmet requirement
     const isEligible = !requirements.find(
@@ -161,6 +181,37 @@ export class DrivingLicenseService {
     return {
       requirements,
       isEligible,
+    }
+  }
+
+  private canApplyErrorCodeToRequirementKey(
+    errorCode?: CanApplyErrorCodeBFull | CanApplyErrorCodeBTemporary,
+  ): RequirementKey {
+    if (errorCode === undefined) {
+      return RequirementKey.deniedByService
+    }
+
+    switch (errorCode) {
+      case 'HAS_DEPRIVATION':
+        return RequirementKey.hasDeprivation
+      case 'HAS_NO_PHOTO':
+        return RequirementKey.hasNoPhoto
+      case 'HAS_NO_SIGNATURE':
+        return RequirementKey.hasNoSignature
+      case 'HAS_POINTS':
+        return RequirementKey.hasPoints
+      case 'NO_LICENSE_FOUND':
+        return RequirementKey.noLicenseFound
+      case 'NO_TEMP_LICENSE':
+        return RequirementKey.noTempLicense
+      case 'PERSON_NOT_17_YEARS_OLD':
+        return RequirementKey.personNot17YearsOld
+      case 'PERSON_NOT_FOUND_IN_NATIONAL_REGISTRY':
+        return RequirementKey.personNotFoundInNationalRegistry
+      default:
+        this.logger.warn(`${LOGTAG} unhandled can apply error code`, errorCode)
+
+        return RequirementKey.deniedByService
     }
   }
 

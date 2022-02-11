@@ -1,5 +1,4 @@
 // TODO: Add tests
-
 import { Case, CaseType } from '@island.is/judicial-system/types'
 
 export type Validation =
@@ -7,9 +6,27 @@ export type Validation =
   | 'time-format'
   | 'police-casenumber-format'
   | 'national-id'
+  | 'date-of-birth'
   | 'email-format'
   | 'phonenumber'
   | 'date-format'
+
+const someDefendantIsInvalid = (workingCase: Case) => {
+  return (
+    workingCase.defendants &&
+    workingCase.defendants.some(
+      (defendant) =>
+        !defendant.gender ||
+        !validate(defendant.nationalId || '', 'empty').isValid ||
+        !validate(
+          defendant.nationalId || '',
+          defendant.noNationalId ? 'date-of-birth' : 'national-id',
+        ).isValid ||
+        !validate(defendant.name || '', 'empty').isValid ||
+        !validate(defendant.address || '', 'empty').isValid,
+    )
+  )
+}
 
 export const validate = (value: string, validation: Validation) => {
   if (!value && validation === 'empty') {
@@ -46,6 +63,14 @@ export const getRegexByValidation = (validation: Validation) => {
         regex: new RegExp(/^\d{6}(-?\d{4})?$/g),
         errorMessage: 'Dæmi: 000000-0000',
       }
+    case 'date-of-birth': {
+      return {
+        regex: new RegExp(
+          /^(0[1-9]|[12][0-9]|3[01])[.](0[1-9]|1[012])[.](19|20)\d\d$/g,
+        ),
+        errorMessage: 'Dæmi: 00.00.0000',
+      }
+    }
     case 'email-format':
       return {
         regex: new RegExp(/^$|^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g),
@@ -70,10 +95,11 @@ export const isAccusedStepValidRC = (workingCase: Case) => {
     validate(workingCase.policeCaseNumber, 'empty').isValid &&
     validate(workingCase.policeCaseNumber, 'police-casenumber-format')
       .isValid &&
-    workingCase.accusedGender &&
-    validate(workingCase.accusedNationalId, 'empty').isValid &&
-    validate(workingCase.accusedNationalId, 'national-id').isValid &&
-    validate(workingCase.accusedName || '', 'empty').isValid &&
+    workingCase.defendants &&
+    workingCase.defendants.length > 0 &&
+    !someDefendantIsInvalid(workingCase) &&
+    validate(workingCase.defendants[0].name || '', 'empty').isValid &&
+    validate(workingCase.defendants[0].address || '', 'empty').isValid &&
     (workingCase.type === CaseType.CUSTODY
       ? validate(workingCase.defenderEmail || '', 'email-format').isValid &&
         validate(workingCase.defenderPhoneNumber || '', 'phonenumber')
@@ -89,11 +115,9 @@ export const isDefendantStepValidIC = (workingCase: Case) => {
     validate(workingCase.policeCaseNumber, 'police-casenumber-format')
       .isValid &&
     workingCase.type &&
-    workingCase.accusedGender &&
-    validate(workingCase.accusedNationalId, 'empty').isValid &&
-    validate(workingCase.accusedNationalId, 'national-id').isValid &&
-    validate(workingCase.accusedName || '', 'empty').isValid &&
-    validate(workingCase.accusedAddress || '', 'empty').isValid &&
+    workingCase.defendants &&
+    workingCase.defendants.length > 0 &&
+    !someDefendantIsInvalid(workingCase) &&
     validate(workingCase.defenderEmail || '', 'email-format').isValid &&
     validate(workingCase.defenderPhoneNumber || '', 'phonenumber').isValid
   )

@@ -1,4 +1,7 @@
-import { Application, getValueViaPath } from '@island.is/application/core'
+import {
+  ApplicationWithAttachments as Application,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { S3 } from 'aws-sdk'
 import AmazonS3URI from 'amazon-s3-uri'
 import { logger } from '@island.is/logging'

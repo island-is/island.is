@@ -25,21 +25,13 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { IntegratedCourts } from '@island.is/judicial-system/consts'
-import {
-  CaseState,
-  CaseTransition,
-  CaseType,
-  isInvestigationCase,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
   JwtAuthGuard,
   RolesRules,
   RolesGuard,
-  RolesRule,
-  RulesType,
   TokenGuard,
 } from '@island.is/judicial-system/auth'
 
@@ -58,6 +50,14 @@ import {
   CurrentCase,
 } from './guards'
 import {
+  judgeTransitionRule,
+  judgeUpdateRule,
+  prosecutorTransitionRule,
+  prosecutorUpdateRule,
+  registrarTransitionRule,
+  registrarUpdateRule,
+} from './guards/rolesRules'
+import {
   CreateCaseDto,
   InternalCreateCaseDto,
   TransitionCaseDto,
@@ -66,130 +66,6 @@ import {
 import { Case, SignatureConfirmationResponse } from './models'
 import { transitionCase } from './state'
 import { CaseService } from './case.service'
-
-// Allows prosecutors to update a specific set of fields
-const prosecutorUpdateRule = {
-  role: UserRole.PROSECUTOR,
-  type: RulesType.FIELD,
-  dtoFields: [
-    'type',
-    'description',
-    'policeCaseNumber',
-    'accusedNationalId',
-    'accusedName',
-    'accusedAddress',
-    'accusedGender',
-    'defenderName',
-    'defenderEmail',
-    'defenderPhoneNumber',
-    'sendRequestToDefender',
-    'isHeightenedSecurityLevel',
-    'courtId',
-    'leadInvestigator',
-    'arrestDate',
-    'requestedCourtDate',
-    'translator',
-    'requestedValidToDate',
-    'demands',
-    'lawsBroken',
-    'legalBasis',
-    'legalProvisions',
-    'requestedCustodyRestrictions',
-    'requestedOtherRestrictions',
-    'caseFacts',
-    'legalArguments',
-    'requestProsecutorOnlySession',
-    'prosecutorOnlySessionRequest',
-    'comments',
-    'caseFilesComments',
-    'prosecutorId',
-    'sharedWithProsecutorsOfficeId',
-  ],
-} as RolesRule
-
-const courtFields = [
-  'defenderName',
-  'defenderEmail',
-  'defenderPhoneNumber',
-  'defenderIsSpokesperson',
-  'courtCaseNumber',
-  'sessionArrangements',
-  'courtDate',
-  'courtLocation',
-  'courtRoom',
-  'courtStartDate',
-  'courtEndTime',
-  'isClosedCourtHidden',
-  'courtAttendees',
-  'prosecutorDemands',
-  'courtDocuments',
-  'accusedBookings',
-  'litigationPresentations',
-  'courtCaseFacts',
-  'courtLegalArguments',
-  'ruling',
-  'decision',
-  'validToDate',
-  'isCustodyIsolation',
-  'isolationToDate',
-  'conclusion',
-  'endOfSessionBookings',
-  'accusedAppealDecision',
-  'accusedAppealAnnouncement',
-  'prosecutorAppealDecision',
-  'prosecutorAppealAnnouncement',
-  'accusedPostponedAppealDate',
-  'prosecutorPostponedAppealDate',
-  'judgeId',
-  'registrarId',
-]
-
-// Allows judges to update a specific set of fields
-const judgeUpdateRule = {
-  role: UserRole.JUDGE,
-  type: RulesType.FIELD,
-  dtoFields: courtFields,
-} as RolesRule
-
-// Allows registrars to update a specific set of fields
-const registrarUpdateRule = {
-  role: UserRole.REGISTRAR,
-  type: RulesType.FIELD,
-  dtoFields: courtFields,
-} as RolesRule
-
-// Allows prosecutors to open, submit and delete cases
-const prosecutorTransitionRule = {
-  role: UserRole.PROSECUTOR,
-  type: RulesType.FIELD_VALUES,
-  dtoField: 'transition',
-  dtoFieldValues: [
-    CaseTransition.OPEN,
-    CaseTransition.SUBMIT,
-    CaseTransition.DELETE,
-  ],
-} as RolesRule
-
-// Allows judges to receive, accept and reject cases
-const judgeTransitionRule = {
-  role: UserRole.JUDGE,
-  type: RulesType.FIELD_VALUES,
-  dtoField: 'transition',
-  dtoFieldValues: [
-    CaseTransition.RECEIVE,
-    CaseTransition.ACCEPT,
-    CaseTransition.REJECT,
-    CaseTransition.DISMISS,
-  ],
-} as RolesRule
-
-// Allows registrars to receive cases
-const registrarTransitionRule = {
-  role: UserRole.REGISTRAR,
-  type: RulesType.FIELD_VALUES,
-  dtoField: 'transition',
-  dtoFieldValues: [CaseTransition.RECEIVE],
-} as RolesRule
 
 @Controller('api')
 @ApiTags('cases')
@@ -259,7 +135,6 @@ export class CaseController {
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
     @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Body() caseToUpdate: UpdateCaseDto,
   ): Promise<Case | null> {
@@ -330,13 +205,12 @@ export class CaseController {
   })
   async transition(
     @Param('caseId') caseId: string,
-    @CurrentHttpUser() _0: User,
     @CurrentCase() theCase: Case,
     @Body() transition: TransitionCaseDto,
   ): Promise<Case | null> {
     this.logger.debug(`Transitioning case ${caseId}`)
 
-    // Use existingCase.modified when client is ready to send last modified timestamp with all updates
+    // Use theCase.modified when client is ready to send last modified timestamp with all updates
     const state = transitionCase(transition.transition, theCase.state)
 
     // TODO: UpdateCaseDto does not contain state - create a new type for CaseService.update
@@ -393,7 +267,6 @@ export class CaseController {
   })
   async getRequestPdf(
     @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
   ): Promise<void> {
@@ -401,19 +274,9 @@ export class CaseController {
       `Getting the request for case ${caseId} as a pdf document`,
     )
 
-    if (
-      isInvestigationCase(theCase.type) &&
-      ((user.role === UserRole.JUDGE && user.id !== theCase.judge?.id) ||
-        (user.role === UserRole.REGISTRAR && user.id !== theCase.registrar?.id))
-    ) {
-      throw new ForbiddenException(
-        'Only the assigned judge and registrar can get the request pdf for investigation cases',
-      )
-    }
-
     const pdf = await this.caseService.getRequestPdf(theCase)
 
-    return res.end(pdf)
+    res.end(pdf)
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
@@ -434,19 +297,9 @@ export class CaseController {
       `Getting the court record for case ${caseId} as a pdf document`,
     )
 
-    if (
-      isInvestigationCase(theCase.type) &&
-      ((user.role === UserRole.JUDGE && user.id !== theCase.judge?.id) ||
-        (user.role === UserRole.REGISTRAR && user.id !== theCase.registrar?.id))
-    ) {
-      throw new ForbiddenException(
-        'Only the assigned judge and registrar can get the court record pdf for investigation cases',
-      )
-    }
+    const pdf = await this.caseService.getCourtRecordPdf(theCase, user)
 
-    const pdf = await this.caseService.getCourtRecordPdf(theCase)
-
-    return res.end(pdf)
+    res.end(pdf)
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
@@ -459,25 +312,14 @@ export class CaseController {
   })
   async getRulingPdf(
     @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
   ): Promise<void> {
     this.logger.debug(`Getting the ruling for case ${caseId} as a pdf document`)
 
-    if (
-      isInvestigationCase(theCase.type) &&
-      ((user.role === UserRole.JUDGE && user.id !== theCase.judge?.id) ||
-        (user.role === UserRole.REGISTRAR && user.id !== theCase.registrar?.id))
-    ) {
-      throw new ForbiddenException(
-        'Only the assigned judge and registrar can get the ruling pdf for investigation cases',
-      )
-    }
-
     const pdf = await this.caseService.getRulingPdf(theCase)
 
-    return res.end(pdf)
+    res.end(pdf)
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseReadGuard)
@@ -512,7 +354,7 @@ export class CaseController {
 
     const pdf = await this.caseService.getCustodyPdf(theCase)
 
-    return res.end(pdf)
+    res.end(pdf)
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
@@ -663,7 +505,7 @@ export class CaseController {
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
-  ): Promise<Case | null> {
+  ): Promise<Case> {
     this.logger.debug(`Extending case ${caseId}`)
 
     if (theCase.childCase) {

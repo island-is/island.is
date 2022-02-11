@@ -6,13 +6,14 @@ import { AuditModule } from '@island.is/nest/audit'
 
 import {
   ApplicationModule,
-  MunicipalityModule,
-  ApplicationEventModule,
   FileModule,
   StaffModule,
+  MunicipalityModule,
+  ApplicationEventModule,
   AidModule,
   AmountModule,
   DeductionFactorsModule,
+  PersonalTaxReturnModule,
 } from './modules'
 
 import { SequelizeConfigService } from './sequelizeConfig.service'
@@ -31,6 +32,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     FileModule,
     ApplicationEventModule,
     AidModule,
+    PersonalTaxReturnModule,
     AuditModule.forRoot(environment.audit),
   ],
 })

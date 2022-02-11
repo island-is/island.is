@@ -41,11 +41,16 @@ const useApplication = () => {
         const files = formatFiles(form.taxReturnFiles, FileType.TAXRETURN)
           .concat(formatFiles(form.incomeFiles, FileType.INCOME))
           .concat(formatFiles(form.otherFiles, FileType.OTHER))
+          .concat(
+            formatFiles(
+              form.taxReturnFromRskFile,
+              form.taxReturnFromRskFile[0].type,
+            ),
+          )
 
         const { data } = await createApplicationMutation({
           variables: {
             input: {
-              nationalId: user?.nationalId,
               name: user?.name,
               phoneNumber: form?.phoneNumber,
               email: form?.emailAddress,

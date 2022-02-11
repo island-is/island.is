@@ -12,6 +12,11 @@ export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
         prod: 'https://island.is/minarsidur',
       },
       EMAIL_REGION: 'eu-west-1',
+      IDENTITY_SERVER_ISSUER_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
     })
     .secrets({
       SENTRY_DSN: '/k8s/service-portal/SENTRY_DSN',
@@ -34,4 +39,4 @@ export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
       requests: { cpu: '100m', memory: '256Mi' },
     })
     .postgres({ passwordSecret: '/k8s/service-portal/api/DB_PASSWORD' })
-    .grantNamespaces('nginx-ingress-external', 'islandis')
+    .grantNamespaces('nginx-ingress-external', 'islandis', 'user-notification')

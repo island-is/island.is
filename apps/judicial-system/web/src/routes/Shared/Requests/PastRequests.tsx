@@ -8,6 +8,7 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
+  Defendant,
   isInvestigationCase,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -17,9 +18,9 @@ import {
   capitalize,
   caseTypes,
   formatDate,
+  formatNationalId,
 } from '@island.is/judicial-system/formatters'
 import { Table } from '@island.is/judicial-system-web/src/components'
-import { insertAt } from '@island.is/judicial-system-web/src/utils/formatters'
 import { core, requests } from '@island.is/judicial-system-web/messages'
 
 import { getAppealDate, mapCaseStateToTagVariant } from './utils'
@@ -64,24 +65,38 @@ const PastRequests: React.FC<Props> = (props) => {
       },
     },
     {
-      Header: formatMessage(core.accused),
+      Header: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
       accessor: 'accusedName' as keyof Case,
       Cell: (row: {
-        row: { original: { accusedName: string; accusedNationalId: string } }
+        row: { original: { accusedName: string; defendants: Defendant[] } }
       }) => {
-        return (
+        const theCase = row.row.original
+
+        return theCase.defendants && theCase.defendants.length > 0 ? (
           <>
             <Box component="span" display="block">
-              {row.row.original.accusedName}
+              {theCase.defendants[0].name}
             </Box>
-            <Text as="span" variant="small">
-              {`kt. ${insertAt(
-                row.row.original.accusedNationalId.replace('-', ''),
-                '-',
-                6,
-              )}`}
-            </Text>
+            {theCase.defendants.length === 1 ? (
+              <Text>
+                <Text as="span" variant="small" color="dark400">
+                  {`${theCase.defendants[0].noNationalId ? 'fd.' : 'kt.'} ${
+                    theCase.defendants[0].nationalId
+                      ? theCase.defendants[0].noNationalId
+                        ? theCase.defendants[0].nationalId
+                        : formatNationalId(theCase.defendants[0].nationalId)
+                      : '-'
+                  }`}
+                </Text>
+              </Text>
+            ) : (
+              <Text as="span" variant="small" color="dark400">
+                {`+ ${theCase.defendants.length - 1}`}
+              </Text>
+            )}
           </>
+        ) : (
+          <Text>-</Text>
         )
       },
     },

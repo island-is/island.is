@@ -130,9 +130,6 @@
     "api-domains-identity": {
       "tags": []
     },
-    "api-domains-islykill": {
-      "tags": []
-    },
     "api-domains-license-service": {
       "tags": []
     },
@@ -331,10 +328,13 @@
     "clients-rsk-company-registry": {
       "tags": []
     },
-    "clients-rsk-v1": {
+    "clients-rsk-personal-tax-return": {
       "tags": []
     },
-    "clients-rsk-v2": {
+    "clients-rsk-procuring": {
+      "tags": []
+    },
+    "clients-rsk-v1": {
       "tags": []
     },
     "clients-syslumenn": {
@@ -551,6 +551,9 @@
     "nest-problem": {
       "tags": []
     },
+    "nest-sequelize": {
+      "tags": []
+    },
     "nest-swagger": {
       "tags": []
     },
@@ -599,9 +602,6 @@
     "service-portal-documents": {
       "tags": []
     },
-    "service-portal-driving-license": {
-      "tags": []
-    },
     "service-portal-e2e": {
       "tags": [],
       "implicitDependencies": ["service-portal"]
@@ -646,9 +646,6 @@
       "tags": []
     },
     "service-portal-settings-access-control": {
-      "tags": []
-    },
-    "service-portal-settings-islykill": {
       "tags": []
     },
     "service-portal-settings-personal-information": {

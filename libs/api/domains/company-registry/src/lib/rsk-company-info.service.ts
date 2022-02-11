@@ -1,6 +1,9 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { RskCompany } from './models/rskCompany.model'
-import { CompanyApi } from '@island.is/clients/rsk/company-registry'
+import {
+  GetCompanyApi,
+  SearchCompanyRegistryApi,
+} from '@island.is/clients/rsk/company-registry'
 import { RskCompanyFormOfOperation } from './models/rskCompanyFormOfOperation.model'
 import { RskCompanyVat } from './models/rskCompanyVat.model'
 import { RskCompanyAddress } from './models/rskCompanyAddress.model'
@@ -14,7 +17,8 @@ import type { Logger } from '@island.is/logging'
 @Injectable()
 export class RskCompanyInfoService {
   constructor(
-    private rskCompanyInfoApi: CompanyApi,
+    private rskCompanyInfoApi: GetCompanyApi,
+    private companyRegistrySearchApi: SearchCompanyRegistryApi,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -23,8 +27,8 @@ export class RskCompanyInfoService {
     nationalId: string,
   ): Promise<RskCompany> {
     this.logger.debug(`Service getting company by nationalId ${nationalId}`)
-    const company = await this.rskCompanyInfoApi.v1FyrirtaekjaskraSsidGet({
-      ssid: nationalId,
+    const company = await this.rskCompanyInfoApi.getCompany({
+      nationalId,
     })
     this.logger.debug(`Company in service ${company.toString()}`)
     return {
@@ -34,15 +38,14 @@ export class RskCompanyInfoService {
       status: company.stada,
       companyInfo: {
         formOfOperation:
-          company.rekstrarform?.map((item) => {
+          company.companyType?.map((item) => {
             return {
               type: item.tegund,
               name: item.heiti,
-              suffix: item.vidskeyti,
             } as RskCompanyFormOfOperation
           }) ?? [],
         address:
-          company.heimilisfang?.map((item) => {
+          company.responseAddress?.map((item) => {
             return {
               streetAddress: item.heimilisfang1,
               streetAddress2: item.heimilisfang2,
@@ -69,7 +72,7 @@ export class RskCompanyInfoService {
               dateOfDeregistration: item.afskraning
                 ? new Date(item.afskraning)
                 : undefined,
-              classification: item.flokkun?.map(
+              classification: item.categoryInfo?.map(
                 (classification) =>
                   ({
                     type: classification.gerd,
@@ -93,13 +96,11 @@ export class RskCompanyInfoService {
     cursor?: string,
   ): Promise<RskCompanySearchItems | null> {
     const offset = cursor ? decodeBase64(cursor) : '0'
-    const searchResults = await this.rskCompanyInfoApi.v1FyrirtaekjaskraSearchSearchStringGet(
-      {
-        searchString: searchTerm,
-        limit: limit.toString(),
-        offset: decodeBase64(offset),
-      },
-    )
+    const searchResults = await this.companyRegistrySearchApi.searchCompanies({
+      searchString: searchTerm,
+      fetchSize: limit,
+      fetchOffset: +decodeBase64(offset) ?? 0,
+    })
     if (
       !searchResults.items ||
       !searchResults?.count ||

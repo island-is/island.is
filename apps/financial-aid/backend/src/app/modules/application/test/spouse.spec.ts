@@ -1,3 +1,4 @@
+import { User } from '@island.is/auth-nest-tools'
 import { firstDateOfMonth } from '@island.is/financial-aid/shared/lib'
 import { Op } from 'sequelize'
 import { uuid } from 'uuidv4'
@@ -12,7 +13,7 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (spouseNationalId: string) => Promise<Then>
+type GivenWhenThen = (user: User) => Promise<Then>
 
 describe('ApplicationController - Spouse', () => {
   let givenWhenThen: GivenWhenThen
@@ -29,11 +30,11 @@ describe('ApplicationController - Spouse', () => {
     mockApplicationModel = applicationModel
     mockFileService = fileService
 
-    givenWhenThen = async (spouseNationalId: string): Promise<Then> => {
+    givenWhenThen = async (user: User): Promise<Then> => {
       const then = {} as Then
 
       await applicationController
-        .spouse(spouseNationalId)
+        .spouse(user)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -42,19 +43,19 @@ describe('ApplicationController - Spouse', () => {
   })
 
   describe('database query', () => {
-    const spouseNationalId = '0000000000'
+    const user = { nationalId: '0000000000' } as User
     let mockSpouse: jest.Mock
 
     beforeEach(async () => {
       mockSpouse = mockApplicationModel.findOne as jest.Mock
 
-      await givenWhenThen(spouseNationalId)
+      await givenWhenThen(user)
     })
 
     it('should request spouse by spouse national id from the database', () => {
       expect(mockSpouse).toHaveBeenCalledWith({
         where: {
-          spouseNationalId,
+          spouseNationalId: user.nationalId,
           created: { [Op.gte]: firstDateOfMonth() },
         },
       })
@@ -63,7 +64,7 @@ describe('ApplicationController - Spouse', () => {
 
   describe('not found', () => {
     let then: Then
-    const spouseNationalId = '0000000000'
+    const user = { nationalId: '0000000000' } as User
     const expected: SpouseResponse = {
       hasPartnerApplied: false,
       hasFiles: false,
@@ -74,7 +75,7 @@ describe('ApplicationController - Spouse', () => {
       const mockSpouse = mockApplicationModel.findOne as jest.Mock
       mockSpouse.mockReturnValueOnce(null)
 
-      then = await givenWhenThen(spouseNationalId)
+      then = await givenWhenThen(user)
     })
 
     it('should return default spouse object', () => {
@@ -84,7 +85,7 @@ describe('ApplicationController - Spouse', () => {
 
   describe('found', () => {
     let then: Then
-    const spouseNationalId = '0000000000'
+    const user = { nationalId: '0000000000' } as User
     const spouse: SpouseResponse = {
       hasPartnerApplied: true,
       hasFiles: true,
@@ -100,7 +101,7 @@ describe('ApplicationController - Spouse', () => {
       const mockFiles = mockFileService.getApplicationFilesByType as jest.Mock
       mockFiles.mockReturnValueOnce({} as ApplicationFileModel)
 
-      then = await givenWhenThen(spouseNationalId)
+      then = await givenWhenThen(user)
     })
 
     it('should return spouse', () => {
@@ -110,7 +111,7 @@ describe('ApplicationController - Spouse', () => {
 
   describe('found with no files', () => {
     let then: Then
-    const spouseNationalId = '0000000000'
+    const user = { nationalId: '0000000000' } as User
     const spouse: SpouseResponse = {
       hasPartnerApplied: true,
       hasFiles: false,
@@ -126,7 +127,7 @@ describe('ApplicationController - Spouse', () => {
       const mockFiles = mockFileService.getApplicationFilesByType as jest.Mock
       mockFiles.mockReturnValueOnce(undefined)
 
-      then = await givenWhenThen(spouseNationalId)
+      then = await givenWhenThen(user)
     })
 
     it('should return expected spouse', () => {
@@ -136,13 +137,13 @@ describe('ApplicationController - Spouse', () => {
 
   describe('database query fails', () => {
     let then: Then
-    const spouseNationalId = '0000000000'
+    const user = { nationalId: '0000000000' } as User
 
     beforeEach(async () => {
       const mockSpouse = mockApplicationModel.findOne as jest.Mock
       mockSpouse.mockRejectedValueOnce(new Error('Some error'))
 
-      then = await givenWhenThen(spouseNationalId)
+      then = await givenWhenThen(user)
     })
 
     it('should throw error', () => {
