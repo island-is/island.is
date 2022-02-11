@@ -49,13 +49,16 @@ export const GeneralFishingLicenseSchema = z.object({
     phoneNumber: z.string().optional(),
   }),
   shipSelection: z.object({
-    ship: z.enum(['0', '1', '2', '3', '4', '5']),
+    ship: z.enum(['0', '1', '2', '3', '4', '5']).refine((x) => x, {
+      params: error.requiredRadioField,
+    }),
     registrationNumber: z.string(),
   }),
-  fishingLicense: z.enum([
-    FishingLicenseEnum.HOOKCATCHLIMIT,
-    FishingLicenseEnum.CATCHLIMIT,
-  ]),
+  fishingLicense: z
+    .enum([FishingLicenseEnum.HOOKCATCHLIMIT, FishingLicenseEnum.CATCHLIMIT])
+    .refine((x) => x, {
+      params: error.requiredRadioField,
+    }),
 })
 
 export type GeneralFishingLicense = z.TypeOf<typeof GeneralFishingLicenseSchema>

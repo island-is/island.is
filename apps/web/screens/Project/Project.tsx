@@ -177,7 +177,6 @@ const assignNavigationActive = (
 const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
   const n = useNamespace(namespace)
   const router = useRouter()
-  useContentfulId(projectPage.id)
 
   const subpage = useMemo(
     () =>
@@ -186,6 +185,8 @@ const ProjectPage: Screen<PageProps> = ({ projectPage, news, namespace }) => {
       }),
     [router.query.subSlug, projectPage.projectSubpages],
   )
+
+  useContentfulId(projectPage.id, subpage?.id)
 
   const baseRouterPath = router.asPath.split('?')[0].split('#')[0]
 

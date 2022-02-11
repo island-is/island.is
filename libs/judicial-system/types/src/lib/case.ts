@@ -173,6 +173,7 @@ export interface Case {
   notifications?: Notification[]
   caseFiles?: CaseFile[]
   isMasked?: boolean
+  caseModifiedExplanation?: string
 }
 
 export interface CreateCase {
@@ -246,6 +247,7 @@ export interface UpdateCase {
   prosecutorPostponedAppealDate?: string
   registrarId?: string
   judgeId?: string
+  caseModifiedExplanation?: string
 }
 
 export interface TransitionCase {

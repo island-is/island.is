@@ -1,4 +1,8 @@
-import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
+import {
+  FieldBaseProps,
+  getErrorViaPath,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { AlertMessage, Box, Text, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC, useState } from 'react'
@@ -17,7 +21,11 @@ interface Option {
   disabled?: boolean
 }
 
-export const ShipSelection: FC<FieldBaseProps> = ({ application, field }) => {
+export const ShipSelection: FC<FieldBaseProps> = ({
+  application,
+  field,
+  errors,
+}) => {
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
 
@@ -91,6 +99,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({ application, field }) => {
         id={`${field.id}.ship`}
         largeButtons
         backgroundColor="white"
+        error={errors && getErrorViaPath(errors, `${field.id}.ship`)}
         fullWidthLabel
         defaultValue={
           (getValueViaPath(application.answers, 'shipSelection') as string[]) ??
@@ -122,9 +131,14 @@ export const ShipSelection: FC<FieldBaseProps> = ({ application, field }) => {
           >
             <ShipInformation ship={ship} />
             <Stack space={1} align="right">
-              {ship.fishingLicences.map((license) => (
-                <Tag variant="blue">{license}</Tag>
-              ))}
+              {ship.fishingLicences.map((license) => {
+                console.log(license)
+                return (
+                  <Tag variant="blue">
+                    {formatMessage(shipSelection.tags[license.code])}
+                  </Tag>
+                )
+              })}
             </Stack>
           </Box>
         )

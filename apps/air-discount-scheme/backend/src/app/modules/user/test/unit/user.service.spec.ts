@@ -1,12 +1,13 @@
 import { Test } from '@nestjs/testing'
-
 import { User } from '../../user.model'
 import { UserService } from '../../user.service'
 import { FlightService } from '../../../flight'
 import { NationalRegistryService } from '../../../nationalRegistry'
-import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
+import {
+  NationalRegistryClientModule,
+  NationalRegistryClientConfig,
+} from '@island.is/clients/national-registry-v2'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
-import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 
 const user: User = {
   nationalId: '1326487905',
