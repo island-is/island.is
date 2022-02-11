@@ -2,6 +2,10 @@ import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
 
 import { FormatMessage } from '@island.is/cms-translations'
+import {
+  formatDate,
+  formatNationalId,
+} from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
 import { Case } from '../modules/case/models'
@@ -49,7 +53,7 @@ function constructRulingPdf(
     'Times-Roman',
   )
   setLineGap(doc, 2)
-  addMediumHeading(doc, title)
+  addMediumHeading(doc, `${title} ${formatDate(theCase.rulingDate, 'PPP')}`)
   setLineGap(doc, 30)
   addMediumHeading(
     doc,
@@ -58,6 +62,45 @@ function constructRulingPdf(
     }),
   )
   setLineGap(doc, 1)
+  addNormalJustifiedText(
+    doc,
+    formatMessage(ruling.intro, {
+      courtStartDate: formatDate(theCase.courtStartDate, 'PPP'),
+    }),
+  )
+  addEmptyLines(doc)
+  addNormalJustifiedText(
+    doc,
+    `${formatMessage(ruling.prosecutorIs)} ${
+      theCase.prosecutor?.institution?.name ?? ruling.missingDistrict
+    }.`,
+  )
+  addNormalJustifiedText(
+    doc,
+    `${formatMessage(ruling.defendantIs, {
+      suffix: theCase.defendants && theCase.defendants.length > 1 ? 'ar' : 'i',
+      isSuffix: theCase.defendants && theCase.defendants.length > 1 ? 'u' : '',
+    })}${
+      theCase.defendants?.reduce(
+        (acc, defendant, index) =>
+          `${acc}${
+            index === 0
+              ? ''
+              : index + 1 === theCase.defendants?.length
+              ? ' og'
+              : ','
+          } ${defendant.name ?? '-'}, ${
+            defendant.noNationalId ? 'fd.' : 'kt.'
+          } ${
+            defendant.noNationalId
+              ? defendant.nationalId
+              : formatNationalId(defendant.nationalId ?? '-')
+          }`,
+        '',
+      ) ?? ` ${ruling.missingDefendants}`
+    }.`,
+  )
+  addEmptyLines(doc)
   addNormalText(
     doc,
     formatMessage(ruling.prosecutorDemandsHeading),
