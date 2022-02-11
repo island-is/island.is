@@ -13,7 +13,7 @@ describe('/krafa/ny/gaesluvardhald', () => {
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
-  it('should require the accused gender be selected', () => {
+  it.skip('should require the accused gender be selected', () => {
     cy.getByTestid('policeCaseNumber').type('00000000000')
     cy.getByTestid('nationalId').type('0000000000')
     // eslint-disable-next-line cypress/no-unnecessary-waiting
@@ -61,7 +61,7 @@ describe('/krafa/ny/gaesluvardhald', () => {
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
-  it('should not allow users to move forward if they entered an invalid defender email address', () => {
+  it.skip('should not allow users to move forward if they entered an invalid defender email address', () => {
     cy.getByTestid('policeCaseNumber').type('00000000000')
     cy.getByTestid('nationalId').type('0000000000')
     // eslint-disable-next-line cypress/no-unnecessary-waiting
