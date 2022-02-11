@@ -34,4 +34,9 @@ export const ApiConfiguration = {
         'X-Road-Client': xRoadConfig.xRoadClient,
       },
     }),
+  inject: [
+    XRoadConfig.KEY,
+    FishingLicenseClientConfig.KEY,
+    IdsClientConfig.KEY,
+  ],
 }
