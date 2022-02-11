@@ -73,7 +73,9 @@ const FileList = ({ className, files }: Props) => {
                 )} KB`}</Text>
                 {'created' in item && (
                   <div className={styles.date}>
-                    <Text variant="small">{format(new Date(item.created), 'dd.MM.y  · kk:mm')}</Text>
+                    <Text variant="small">
+                      {format(new Date(item.created), 'dd.MM.y  · kk:mm')}
+                    </Text>
                   </div>
                 )}
               </div>
