@@ -19,7 +19,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useDraftingState } from '../state/useDraftingState'
 import { editorMsgs as msg } from '../messages'
-import { getMinPublishDate, useLocale } from '../utils'
+import { getMinPublishDate } from '../utils'
 
 import { RegDraftForm } from '../state/types'
 import { EditorInput } from './EditorInput'
@@ -33,6 +33,7 @@ import { produce } from 'immer'
 import { downloadUrl } from '../utils/files'
 import { DownloadDraftButton } from './DownloadDraftButton'
 import { useAuth } from '@island.is/auth/react'
+import { useLocale } from '@island.is/localization'
 
 // ---------------------------------------------------------------------------
 
@@ -311,7 +312,9 @@ export const EditSignature = () => {
               onChange={(text) => updateState('signatureText', text)}
               required={!!draft.signatureText.required}
               error={
-                draft.signatureText.showError && t(draft.signatureText.error)
+                draft.signatureText.showError &&
+                draft.signatureText.error &&
+                t(draft.signatureText.error)
               }
             />
           </Box>
@@ -331,7 +334,9 @@ export const EditSignature = () => {
                   hasError={
                     draft.signatureDate.showError && !!draft.signatureDate.error
                   }
-                  errorMessage={t(draft.signatureDate.error)}
+                  errorMessage={
+                    draft.signatureDate.error && t(draft.signatureDate.error)
+                  }
                   name="_signatureDate"
                   size="sm"
                   readOnly
@@ -347,7 +352,7 @@ export const EditSignature = () => {
                   value={draft.ministry.value || ''}
                   placeholder={t(msg.ministryPlaceholder)}
                   hasError={!!draft.ministry.error && draft.ministry.showError}
-                  errorMessage={t(draft.ministry.error)}
+                  errorMessage={draft.ministry.error && t(draft.ministry.error)}
                   name="_rn"
                   size="sm"
                   readOnly
@@ -375,7 +380,10 @@ export const EditSignature = () => {
                   draft.idealPublishDate.showError &&
                   !!draft.idealPublishDate.error
                 }
-                errorMessage={t(draft.idealPublishDate.error)}
+                errorMessage={
+                  draft.idealPublishDate.error &&
+                  t(draft.idealPublishDate.error)
+                }
                 backgroundColor="blue"
               />
               {/* Request fastTrack */}

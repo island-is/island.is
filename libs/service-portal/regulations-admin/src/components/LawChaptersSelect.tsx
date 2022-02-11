@@ -4,8 +4,9 @@ import { Box, Inline, Option, Select, Tag } from '@island.is/island-ui/core'
 import { editorMsgs as msg } from '../messages'
 
 import { LawChapter, LawChapterSlug } from '@island.is/regulations'
-import { emptyOption, useLocale } from '../utils'
+import { emptyOption } from '../utils'
 import { useDraftingState } from '../state/useDraftingState'
+import { useLocale } from '@island.is/localization'
 
 const useLawChapterOptions = (
   lawChapters: Array<LawChapter>,
@@ -58,7 +59,7 @@ export const LawChaptersSelect = () => {
         }
         backgroundColor="blue"
         hasError={chaptersField.showError && !!chaptersField.error}
-        errorMessage={t(chaptersField.error)}
+        errorMessage={chaptersField.error && t(chaptersField.error)}
       />
 
       {activeChapters.length > 0 && (
