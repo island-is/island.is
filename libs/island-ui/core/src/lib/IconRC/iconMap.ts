@@ -62,6 +62,7 @@ export type Icon =
   | 'save'
   | 'bookmark'
   | 'share'
+  | 'QRCode'
 
 export default {
   filled: {
@@ -127,6 +128,7 @@ export default {
     save: 'Save',
     bookmark: 'Bookmark',
     share: 'Share',
+    QRCode: 'QRCodeOutline',
   },
   outline: {
     accessibility: 'AccessibilityOutline',
@@ -191,5 +193,6 @@ export default {
     save: 'SaveOutline',
     bookmark: 'BookmarkOutline',
     share: 'ShareOutline',
+    QRCode: 'QRCodeOutline',
   },
 }

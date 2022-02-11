@@ -92,10 +92,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             name: m.parentalLeave,
             path: ServicePortalPath.ParentalLeave,
           },
-          {
-            name: m.drivingLicense,
-            path: ServicePortalPath.DrivingLicense,
-          },
         ],
       },
       // Menntun
@@ -162,15 +158,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: {
           type: 'outline',
           icon: 'fileTrayFull',
-        },
-      },
-
-      {
-        name: m.licenses,
-        path: ServicePortalPath.LicensesRoot,
-        icon: {
-          type: 'outline',
-          icon: 'business',
         },
       },
 
@@ -284,6 +271,23 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           {
             name: m.language,
             path: ServicePortalPath.SettingsPersonalInformationEditLanguage,
+          },
+        ],
+      },
+      // Mín skírteini
+      {
+        name: m.licenses,
+        path: ServicePortalPath.LicensesRoot,
+
+        icon: {
+          type: 'outline',
+          icon: 'wallet',
+        },
+        children: [
+          {
+            navHide: true,
+            name: m.drivingLicense,
+            path: ServicePortalPath.LicensesDrivingDetail,
           },
         ],
       },

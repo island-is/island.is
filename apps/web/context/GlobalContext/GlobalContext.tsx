@@ -7,6 +7,7 @@ export type NamespaceType = {
 
 export interface GlobalContextProps {
   globalNamespace: NamespaceType
+  isServiceWeb?: boolean
   pageContentfulId: string
   subpageContentfulId?: string
   resolveLinkTypeLocally?: boolean
@@ -17,6 +18,7 @@ export interface GlobalContextProps {
 
 export interface GlobalContextProviderProps {
   namespace?: NamespaceType
+  isServiceWeb?: boolean
 }
 
 export const GlobalContext = createContext<GlobalContextProps>({
@@ -31,6 +33,7 @@ export const GlobalContext = createContext<GlobalContextProps>({
 
 export const GlobalContextProvider: FC<GlobalContextProviderProps> = ({
   namespace = {},
+  isServiceWeb = false,
   children,
 }) => {
   const setContentfulId = (pageId: string, subpageId?: string) => {
@@ -54,6 +57,7 @@ export const GlobalContextProvider: FC<GlobalContextProviderProps> = ({
 
   const initialState: GlobalContextProps = {
     globalNamespace: namespace,
+    isServiceWeb,
     pageContentfulId: '',
     subpageContentfulId: '',
     setGlobalNamespace,
