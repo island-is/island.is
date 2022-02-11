@@ -21,11 +21,11 @@ import { AppModule } from '../src/app/app.module'
 import { User } from '@island.is/auth-nest-tools'
 import {
   createMockEinstaklingurApi,
-  RskApiMock,
+  RskProcuringClientMock,
   FeatureFlagServiceMock,
 } from './mocks'
 import { createApiScope } from './fixtures'
-import { RskApi } from '@island.is/clients/rsk/v2'
+import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 
 export interface ScopeSetupOptions {
@@ -69,8 +69,8 @@ export const setupWithAuth = async ({
       builder
         .overrideProvider(EinstaklingarApi)
         .useValue(createMockEinstaklingurApi(nationalRegistryUser))
-        .overrideProvider(RskApi)
-        .useValue(RskApiMock)
+        .overrideProvider(RskProcuringClient)
+        .useValue(RskProcuringClientMock)
         .overrideProvider(FeatureFlagService)
         .useValue(FeatureFlagServiceMock),
     hooks: [

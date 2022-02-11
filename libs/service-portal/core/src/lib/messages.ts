@@ -415,6 +415,10 @@ export const m = defineMessages({
     id: 'service.portal:settings',
     defaultMessage: 'Stillingar',
   },
+  mySettings: {
+    id: 'service.portal:my-settings',
+    defaultMessage: 'Mínar stillingar',
+  },
   delegation: {
     id: 'service.portal:delegation',
     defaultMessage: 'Mín réttindi',
@@ -527,7 +531,7 @@ export const m = defineMessages({
   },
   personalInformation: {
     id: 'service.portal:personalInformation',
-    defaultMessage: 'Persónuupplýsingar',
+    defaultMessage: 'Mínar stillingar',
   },
   language: {
     id: 'service.portal:language',

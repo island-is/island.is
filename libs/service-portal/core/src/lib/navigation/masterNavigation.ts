@@ -216,7 +216,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       // Stillingar - hidden from nav
       {
         name: m.settings,
-        path: ServicePortalPath.SettingsRoot,
         navHide: true,
         children: [
           {
@@ -232,7 +231,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.SettingsAccessControlAccess,
           },
           {
-            name: m.personalInformation,
+            name: m.mySettings,
             path: ServicePortalPath.SettingsPersonalInformation,
           },
           {

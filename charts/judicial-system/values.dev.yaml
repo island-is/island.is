@@ -2,7 +2,6 @@ global:
   env:
     AUDIT_GROUP_NAME: '/island-is/audit-log'
     AWS_REGION: 'eu-west-1'
-    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     PORT: '3333'
     name: 'dev'
   image:

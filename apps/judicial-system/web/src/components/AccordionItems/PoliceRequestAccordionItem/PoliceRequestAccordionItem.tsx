@@ -55,11 +55,19 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
           <Box key={index}>
             <Box marginBottom={1}>
               <Text>
-                Kennitala: {formatNationalId(defendant.nationalId ?? '')}
+                {`${formatMessage(
+                  defendant.noNationalId ? core.dateOfBirth : core.nationalId,
+                )}: ${
+                  defendant.noNationalId
+                    ? defendant.nationalId
+                    : formatNationalId(defendant.nationalId ?? '')
+                }`}
               </Text>
             </Box>
             <Box marginBottom={1}>
-              <Text>Fullt nafn: {defendant.name}</Text>
+              <Text>{`${formatMessage(core.fullName)}: ${
+                defendant.name
+              }`}</Text>
             </Box>
             <Box marginBottom={3}>
               <Text>Lögheimili: {defendant.address}</Text>
