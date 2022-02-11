@@ -82,14 +82,14 @@ export enum ServicePortalPath {
   // My licenses
   MyLicensesRoot = '/min-rettindi',
   ParentalLeave = '/min-rettindi/faedingarorlof',
-  DrivingLicense = '/min-rettindi/okuskirteini',
 
   // Icelandic Names Registry
   IcelandicNamesRegistryRoot = '/mannanafnaskra',
 
   // Licenses service
-  LicensesRoot = '/min-gogn/skilriki',
-
+  LicensesRoot = '/skirteini',
+  LicensesDriving = '/skirteini/okuskirteini',
+  LicensesDrivingDetail = '/skirteini/okuskirteini/:id',
   // DocumentProvider
   // Temporary change to the value of DocumentProviderRoot; skjalaveita -> skjalaveitur. In the first
   // release there will only be a limited number of features and this change creates a better UX in
