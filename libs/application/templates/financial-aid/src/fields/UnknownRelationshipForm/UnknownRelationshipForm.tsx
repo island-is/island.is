@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
-import { ApproveOptions, FAFieldBaseProps } from '../../lib/types'
-import { useIntl } from 'react-intl'
+import { ApproveOptions, ErrorSchema, FAFieldBaseProps } from '../../lib/types'
+import { MessageDescriptor, useIntl } from 'react-intl'
 import { unknownRelationship, error } from '../../lib/messages'
 import DescriptionText from '../DescriptionText/DescriptionText'
 import { useFormContext } from 'react-hook-form'
@@ -15,12 +15,62 @@ import * as styles from '../Shared.css'
 import cn from 'classnames'
 import { isValidEmail, isValidNationalId } from '../../lib/utils'
 
-const emailValidationCheck = (errors: any, values: string) => {
+const emailValidationCheck = (errors: ErrorSchema, values: string) => {
   const { formatMessage } = useIntl()
-  if (errors !== undefined && !isValidEmail(values)) {
+  if (errors.relationshipStatus !== undefined && !isValidEmail(values)) {
     return formatMessage(error.validation.email)
   }
   return undefined
+}
+
+const nationalIdValidationCheck = (errors: ErrorSchema, values: string) => {
+  const { formatMessage } = useIntl()
+  if (errors.relationshipStatus !== undefined && !isValidNationalId(values)) {
+    return formatMessage(error.validation.nationalId)
+  }
+  return undefined
+}
+
+const approveValidationCheck = (errors: ErrorSchema, values: string) => {
+  const { formatMessage } = useIntl()
+  if (errors.relationshipStatus !== undefined && values?.length !== 1) {
+    return formatMessage(error.validation.approveSpouse)
+  }
+  return undefined
+}
+
+export type validationType = 'email' | 'nationalId' | 'approveItems'
+
+const validationCheck = (errors: ErrorSchema, type: validationType) => {
+  const { formatMessage } = useIntl()
+  const { getValues } = useFormContext()
+  const errorIdForSpouse = 'relationshipStatus'
+
+  switch (type) {
+    case 'email':
+      return {
+        validation: !isValidEmail(getValues(`${errorIdForSpouse}.spouseEmail`)),
+        message: error.validation.email,
+      }
+    case 'nationalId':
+      return {
+        validation: !isValidNationalId(
+          getValues(`${errorIdForSpouse}.spouseNationalId`),
+        ),
+        message: error.validation.nationalId,
+      }
+    case 'approveItems':
+      return {
+        validation:
+          getValues(`${errorIdForSpouse}.spouseNationalId`)?.length !== 1,
+        message: error.validation.nationalId,
+      }
+  }
+
+  // if (errors.relationshipStatus !== undefined && validation) {
+  //   return formatMessage(message)
+  // }
+  // return undefined
 }
 
 const UnknownRelationshipForm = ({ errors, application }: FAFieldBaseProps) => {
@@ -32,35 +82,31 @@ const UnknownRelationshipForm = ({ errors, application }: FAFieldBaseProps) => {
     id: 'relationshipStatus.unregisteredCohabitation',
     error: errors?.relationshipStatus?.unregisteredCohabitation,
   }
-
   const errorIdForSpouse = 'relationshipStatus'
 
   const spouseEmail = {
     id: 'relationshipStatus.spouseEmail',
-    error: emailValidationCheck(
-      errors.relationshipStatus,
-      getValues('relationshipStatus.spouseEmail'),
-    ),
-    // errors.relationshipStatus !== undefined &&
-    // !isValidEmail(getValues('relationshipStatus.spouseEmail'))
-    //   ? formatMessage(error.validation.email)
-    //   : undefined,
+    // error: emailValidationCheck(
+    //   errors,
+    //   getValues('relationshipStatus.spouseEmail'),
+    // ),
+
+    error: validationCheck(errors, 'email'),
   }
   const spouseNationalId = {
     id: 'relationshipStatus.spouseNationalId',
-    error:
-      errors.relationshipStatus !== undefined &&
-      !isValidNationalId(getValues('relationshipStatus.spouseNationalId'))
-        ? formatMessage(error.validation.nationalId)
-        : undefined,
+    error: nationalIdValidationCheck(
+      errors,
+      getValues('relationshipStatus.spouseNationalId'),
+    ),
   }
+
   const spouseApproveTerms = {
     id: 'relationshipStatus.spouseApproveTerms',
-    error:
-      errors.relationshipStatus !== undefined &&
-      getValues('relationshipStatus.spouseApproveTerms')?.length !== 1
-        ? formatMessage(error.validation.approveSpouse)
-        : undefined,
+    error: approveValidationCheck(
+      errors,
+      getValues('relationshipStatus.spouseApproveTerms'),
+    ),
   }
 
   return (
