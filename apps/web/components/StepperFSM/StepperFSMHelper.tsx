@@ -23,7 +23,7 @@ import {
 import { useI18n } from '@island.is/web/i18n'
 import * as styles from './StepperFSMHelper.css'
 import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
-import { STEPPER_HELPER_ENABLED } from './StepperFSM'
+import { STEPPER_HELPER_ENABLED_KEY } from './StepperFSM'
 
 const SUCCESS_SYMBOL = '✔️'
 const ERROR_SYMBOL = '❌'
@@ -171,7 +171,7 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
   const [isHidden, setIsHidden] = useState(false)
 
   useEffect(() => {
-    const value = localStorage.getItem(STEPPER_HELPER_ENABLED)
+    const value = localStorage.getItem(STEPPER_HELPER_ENABLED_KEY)
     if (value) {
       const shouldBeHidden = !JSON.parse(value)
       if (shouldBeHidden !== isHidden) setIsHidden(shouldBeHidden)
@@ -218,7 +218,7 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
         <Box marginBottom={2}>
           <Button
             onClick={() => {
-              localStorage.setItem(STEPPER_HELPER_ENABLED, 'false')
+              localStorage.setItem(STEPPER_HELPER_ENABLED_KEY, 'false')
               setIsHidden(true)
             }}
             variant="text"

@@ -31,11 +31,14 @@ import { richText, SliceType } from '@island.is/island-ui/contentful'
 import { useI18n } from '@island.is/web/i18n'
 import { ValueType } from 'react-select'
 import { ParsedUrlQuery } from 'querystring'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 const ANSWER_DELIMITER = ','
-export const STEPPER_HELPER_ENABLED = 'show-stepper-config-helper'
-// TODO: Configure feature flag for helper.
-const FEATURE_FLAG_STEPPER_HELPER_ENABLED = true
+export const STEPPER_HELPER_ENABLED_KEY = 'show-stepper-config-helper'
+
+// TODO: test
+const STEPPER_HELPER_ENABLED =
+  isRunningOnEnvironment('dev') || isRunningOnEnvironment('local')
 
 interface StepperProps {
   stepper: Stepper
@@ -164,11 +167,9 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
 
   useEffect(() => {
     const hasSeenHelperBefore = JSON.parse(
-      localStorage.getItem(STEPPER_HELPER_ENABLED) ?? 'false',
+      localStorage.getItem(STEPPER_HELPER_ENABLED_KEY) ?? 'false',
     )
-    setShowStepperConfigHelper(
-      FEATURE_FLAG_STEPPER_HELPER_ENABLED && hasSeenHelperBefore,
-    )
+    setShowStepperConfigHelper(STEPPER_HELPER_ENABLED && hasSeenHelperBefore)
   }, [])
 
   const isOnFirstStep = stepperMachine.initialState.value === currentState.value
