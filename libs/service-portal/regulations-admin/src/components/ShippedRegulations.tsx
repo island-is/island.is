@@ -3,7 +3,7 @@ import React from 'react'
 import { Box, Stack, Text, TopicCard } from '@island.is/island-ui/core'
 import { homeMessages, statusMsgs } from '../messages'
 import { prettyName } from '@island.is/regulations'
-import { useLocale } from '../utils'
+import { useLocale } from '@island.is/localization'
 import { useShippedRegulationsQuery } from '../utils/dataHooks'
 
 export const ShippedRegulations = () => {

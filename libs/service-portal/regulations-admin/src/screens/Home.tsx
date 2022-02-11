@@ -7,7 +7,7 @@ import { useNamespaces } from '@island.is/localization'
 import { TaskList } from '../components/TaskList'
 import { ShippedRegulations } from '../components/ShippedRegulations'
 import { homeMessages as msg } from '../messages'
-import { useLocale } from '../utils'
+import { useLocale } from '@island.is/localization'
 import { useCreateRegulationDraft } from '../utils/dataHooks'
 
 const Home = () => {

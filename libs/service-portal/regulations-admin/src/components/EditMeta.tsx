@@ -8,7 +8,7 @@ import {
   Input,
 } from '@island.is/island-ui/core'
 import { editorMsgs as msg } from '../messages'
-import { useLocale } from '../utils'
+import { useLocale } from '@island.is/localization'
 import { LawChaptersSelect } from './LawChaptersSelect'
 import { useDraftingState } from '../state/useDraftingState'
 
@@ -34,7 +34,7 @@ export const EditMeta = () => {
               size="sm"
               readOnly
               hasError={type.showError && !!type.error}
-              errorMessage={t(type.error)}
+              errorMessage={type.error && t(type.error)}
             />
           </Box>
         </Column>
@@ -53,7 +53,9 @@ export const EditMeta = () => {
               hasError={
                 draft.effectiveDate.showError && !!draft.effectiveDate.error
               }
-              errorMessage={t(draft.effectiveDate.error)}
+              errorMessage={
+                draft.effectiveDate.error && t(draft.effectiveDate.error)
+              }
               backgroundColor="blue"
             />
             {!!draft.effectiveDate.value && (

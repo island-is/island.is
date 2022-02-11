@@ -8,10 +8,11 @@ import {
 } from '@island.is/island-ui/core'
 import { homeMessages as msg, statusMsgs } from '../messages'
 import { ISODate, toISODate } from '@island.is/regulations'
-import { workingDaysUntil, useLocale } from '../utils'
+import { workingDaysUntil } from '../utils'
 import { useHistory } from 'react-router'
 import { getEditUrl } from '../utils/routing'
 import { useRegulationTaskListQuery } from '../utils/dataHooks'
+import { useLocale } from '@island.is/localization'
 
 export const TaskList = () => {
   const { formatMessage, formatDateFns } = useLocale()

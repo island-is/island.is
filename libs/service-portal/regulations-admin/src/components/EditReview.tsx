@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Box, Button, Checkbox, Divider } from '@island.is/island-ui/core'
 import { buttonsMsgs, reviewMessagse } from '../messages'
-import { useLocale } from '../utils'
+import { useLocale } from '@island.is/localization'
 import { useDraftingState } from '../state/useDraftingState'
 import { EditReviewWarnings, useCollectMessages } from './EditReviewWarnings'
 import { EditReviewOverview } from './EditReviewOverview'

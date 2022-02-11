@@ -13,7 +13,7 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import { MagicTextarea } from './MagicTextarea'
-import { useLocale } from '../utils'
+import { useLocale } from '@island.is/localization'
 import { AppendixDraftForm } from '../state/types'
 import { RegDraftActions } from '../state/useDraftingState'
 
@@ -111,7 +111,7 @@ const AppendixEditing = (props: AppendixEditingProps) => {
               }}
               onFocus={handleFocus}
               required={!!title.required}
-              error={t(title.error)}
+              error={title.error && t(title.error)}
             />
             {baseTitle != null && title.value !== baseTitle && (
               <MiniDiff older={baseTitle || ''} newer={title.value} />
@@ -128,7 +128,7 @@ const AppendixEditing = (props: AppendixEditingProps) => {
               draftId={draftId}
               isImpact={isImpact}
               required={!!text.required}
-              error={t(text.error)}
+              error={text.error && t(text.error)}
             />
           </Box>
           <div className={s.appendixTools}>

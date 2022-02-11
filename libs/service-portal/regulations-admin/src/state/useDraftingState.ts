@@ -13,7 +13,7 @@ import {
 } from '@island.is/regulations'
 import { useHistory } from 'react-router-dom'
 import { Step } from '../types'
-import { useLocale } from '../utils'
+import { useLocale } from '@island.is/localization'
 import {
   DraftImpactId,
   DraftingStatus,

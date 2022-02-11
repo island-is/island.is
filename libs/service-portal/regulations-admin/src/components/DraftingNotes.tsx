@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
 import { EditorInput } from './EditorInput'
 import { editorMsgs as msg } from '../messages'
-import { useLocale } from '../utils'
+import { useLocale } from '@island.is/localization'
 import { useDraftingState } from '../state/useDraftingState'
 
 export const DraftingNotes = () => {

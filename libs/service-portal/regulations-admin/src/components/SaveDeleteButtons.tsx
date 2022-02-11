@@ -2,7 +2,7 @@ import * as s from './SaveDeleteButtons.css'
 import { Box, Button } from '@island.is/island-ui/core'
 import React from 'react'
 import { buttonsMsgs as msg } from '../messages'
-import { useLocale } from '../utils'
+import { useLocale } from '@island.is/localization'
 import { RegDraftForm } from '../state/types'
 import { useDraftingState } from '../state/useDraftingState'
 

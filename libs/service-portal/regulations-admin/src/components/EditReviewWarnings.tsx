@@ -6,7 +6,7 @@ import { editorMsgs, reviewMessagse } from '../messages'
 import { DraftingState } from '../state/types'
 import { isDraftErrorFree } from '../state/validations'
 import { Step } from '../types'
-import { useLocale } from '../utils'
+import { useLocale } from '@island.is/localization'
 import { getEditUrl } from '../utils/routing'
 import { appendix } from './Appendixes.css'
 

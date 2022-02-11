@@ -8,7 +8,7 @@ import {
 } from '@island.is/island-ui/core'
 import { EditorInput } from './EditorInput'
 import { editorMsgs as msg } from '../messages'
-import { useLocale } from '../utils'
+import { useLocale } from '@island.is/localization'
 import { Appendixes } from './Appendixes'
 import { MagicTextarea } from './MagicTextarea'
 import { useDraftingState } from '../state/useDraftingState'
@@ -35,7 +35,9 @@ export const EditBasics = () => {
           name="title"
           defaultValue={draft.title.value}
           onBlur={(value) => updateState('title', value)}
-          error={draft.title.showError && t(draft.title.error)}
+          error={
+            draft.title.showError && draft.title.error && t(draft.title.error)
+          }
           required={!!draft.title.required}
         />
         <Box marginTop={1} marginLeft={1}>
@@ -58,7 +60,7 @@ export const EditBasics = () => {
                 draftId={draft.id}
                 value={text.value}
                 onChange={(value) => updateState('text', value)}
-                error={text.showError && t(text.error)}
+                error={text.showError && text.error && t(text.error)}
               />
             </Box>
             <Box>

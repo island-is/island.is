@@ -4,7 +4,7 @@ import { Query } from '@island.is/api/schema'
 
 import { Button, toast } from '@island.is/island-ui/core'
 
-import { useLocale } from '../utils'
+import { useLocale } from '@island.is/localization'
 import { editorMsgs } from '../messages'
 import type { RegulationDraftId } from '@island.is/regulations/admin'
 import { useAuth } from '@island.is/auth/react'

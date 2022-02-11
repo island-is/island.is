@@ -1,4 +1,3 @@
-import { useLocale as _useLocale } from '@island.is/localization'
 import { getHolidays } from 'fridagar'
 import { ISODate, toISODate } from '@island.is/regulations'
 import { startOfDay, addDays } from 'date-fns/esm'
@@ -8,45 +7,6 @@ import { RegDraftFormSimpleProps, RegDraftForm } from '../state/types'
 import { Option } from '@island.is/island-ui/core'
 import { MessageDescriptor, useIntl } from 'react-intl'
 import { errorMsgs } from '../messages'
-
-type FormatMessageValues = Parameters<
-  ReturnType<typeof useIntl>['formatMessage']
->[1]
-
-export const useLocale = () => {
-  const data = _useLocale()
-
-  /*
-   * Improve/correct the type signature of `useLocale`'s `.formatMessage` function.
-   *
-   * This removes the "any" type on the `values` parameter, and expliclty allows
-   * undefined to be passed (and returned) — as opposed to relying the side-effects
-   * of TypeScript's `strict:false` mode, like the original function does.
-   */
-  const dodgyFormatMessage = data.formatMessage
-
-  function formatMessage(descriptor: undefined): undefined
-  function formatMessage(
-    descriptor: MessageDescriptor | string,
-    values?: FormatMessageValues,
-  ): string
-  function formatMessage(
-    descriptor: MessageDescriptor | string | undefined,
-    values?: FormatMessageValues,
-  ): string | undefined
-
-  function formatMessage(
-    descriptor: MessageDescriptor | string | undefined,
-    values?: FormatMessageValues,
-  ): string | undefined {
-    if (!descriptor) return descriptor
-    return dodgyFormatMessage(descriptor, values)
-  }
-
-  return { ...data, formatMessage }
-}
-
-export type MessageFormatter = ReturnType<typeof useLocale>['formatMessage']
 
 // ---------------------------------------------------------------------------
 

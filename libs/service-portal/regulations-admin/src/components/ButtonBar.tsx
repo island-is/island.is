@@ -3,7 +3,7 @@ import * as s from './ButtonBar.css'
 import React from 'react'
 import { Box, Button } from '@island.is/island-ui/core'
 import { buttonsMsgs as msg } from '../messages'
-import { useLocale } from '../utils'
+import { useLocale } from '@island.is/localization'
 import { useDraftingState } from '../state/useDraftingState'
 // import { SaveDeleteButtons } from './SaveDeleteButtons'
 
