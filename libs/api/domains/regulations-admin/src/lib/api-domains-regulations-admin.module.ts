@@ -27,7 +27,7 @@ export class RegulationsAdminModule {
         },
         {
           provide: DownloadServiceConfig,
-          useValue: DownloadServiceConfig,
+          useExisting: DownloadServiceConfig.KEY,
         },
       ],
       exports: [RegulationsService, RegulationsAdminApi],
