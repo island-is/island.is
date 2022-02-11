@@ -114,25 +114,27 @@ export const richText: RichText = (
   opt = { renderNode: {}, renderMark: {}, renderComponent: {} },
   locale = 'is',
 ) => {
-  const options = {
-    renderText: (text) => {
-      return text.split('\n').reduce((children, textSegment, index) => {
-        return [...children, index > 0 && <br key={index} />, textSegment]
-      }, [])
-    },
-    renderNode: { ...defaultRenderNode, ...opt.renderNode },
-    renderMark: { ...defaultRenderMark, ...opt.renderMark },
+  const options = (nodeIndex?: number) => {
+    return {
+      renderText: (text) => {
+        return text.split('\n').reduce((children, textSegment, index) => {
+          return [...children, index > 0 && <br key={index} />, textSegment]
+        }, [])
+      },
+      renderNode: { ...defaultRenderNode(nodeIndex), ...opt.renderNode },
+      renderMark: { ...defaultRenderMark, ...opt.renderMark },
+    }
   }
   const renderComponent = {
     ...defaultRenderComponent,
     ...opt.renderComponent,
     locale,
   }
-  return documents.map((slice) => {
+  return documents.map((slice, index) => {
     if (slice.__typename === 'Html') {
       return (
         <Fragment key={slice.id}>
-          {documentToReactComponents(slice.document, options)}
+          {documentToReactComponents(slice.document, { ...options(index) })}
         </Fragment>
       )
     }
@@ -141,7 +143,7 @@ export const richText: RichText = (
         key={slice.id}
         id={slice.id}
         marginBottom={[5, 5, 5, 6]}
-        marginTop={[5, 5, 5, 6]}
+        marginTop={index === 0 ? 0 : [5, 5, 5, 6]}
       >
         {renderComponent[slice.__typename]?.(slice, locale)}
       </Box>

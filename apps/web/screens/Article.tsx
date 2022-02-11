@@ -20,7 +20,6 @@ import {
   TableOfContents,
   Button,
   Tag,
-  LinkContext,
 } from '@island.is/island-ui/core'
 import {
   HeadWithSocialSharing,

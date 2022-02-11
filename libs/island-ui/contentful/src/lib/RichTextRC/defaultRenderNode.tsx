@@ -22,6 +22,12 @@ const componentMargins: {
   marginTop: ResponsiveSpace
 } = { marginBottom: [5, 5, 5, 6], marginTop: [5, 5, 5, 6] }
 
+// Remove top spacing on first items to prevent excessive white space
+const removeTopSpacing: {
+  paddingTop: ResponsiveSpace
+  marginTop: ResponsiveSpace
+} = { paddingTop: [0, 0, 0, 0], marginTop: [0, 0, 0, 0] }
+
 // Searches render node children recursively for the text
 const getInnerText = (node: any): string => {
   if (typeof node === 'string') {
@@ -52,119 +58,149 @@ const getInnerText = (node: any): string => {
 
   return ''
 }
-export const defaultRenderNode: RenderNode = {
-  [BLOCKS.HEADING_1]: (_node, children) => (
-    <Box
-      id={slugify(getInnerText(children))}
-      component="h1"
-      className={getTextStyles({ variant: 'h1' }) + ' ' + styles.heading}
-      {...defaultHeaderMargins}
-    >
-      {children}
-    </Box>
-  ),
-  [BLOCKS.HEADING_2]: (_node, children) => (
-    <Box
-      id={slugify(getInnerText(children))}
-      component="h2"
-      className={getTextStyles({ variant: 'h2' }) + ' ' + styles.heading}
-      {...defaultHeaderMargins}
-    >
-      {children}
-    </Box>
-  ),
-  [BLOCKS.HEADING_3]: (_node, children) => (
-    <Box
-      id={slugify(getInnerText(children))}
-      component="h3"
-      className={getTextStyles({ variant: 'h3' }) + ' ' + styles.heading}
-      {...defaultHeaderMargins}
-    >
-      {children}
-    </Box>
-  ),
-  [BLOCKS.HEADING_4]: (_node, children) => (
-    <Box
-      id={slugify(getInnerText(children))}
-      component="h4"
-      className={getTextStyles({ variant: 'h4' }) + ' ' + styles.heading}
-      {...defaultHeaderMargins}
-    >
-      {children}
-    </Box>
-  ),
-  [BLOCKS.HEADING_5]: (_node, children) => (
-    <Box
-      component="h5"
-      className={getTextStyles({ variant: 'h5' }) + ' ' + styles.heading}
-      {...defaultHeaderMargins}
-    >
-      {children}
-    </Box>
-  ),
-  [BLOCKS.HEADING_6]: (_node, children) => (
-    <Box
-      component="p"
-      className={getTextStyles({ variant: 'intro' }) + ' ' + styles.heading}
-      marginTop={4}
-      marginBottom={2}
-    >
-      {children}
-    </Box>
-  ),
-  [BLOCKS.PARAGRAPH]: (_node, children) => (
-    <Box component="p" className={getTextStyles({}) + ' ' + styles.paragraph}>
-      {children}
-    </Box>
-  ),
-  [BLOCKS.OL_LIST]: (_node, children) => (
-    <Box component="ol" className={styles.orderedList}>
-      {children}
-    </Box>
-  ),
-  [BLOCKS.UL_LIST]: (_node, children) => (
-    <Box component="ul" className={styles.unorderedList}>
-      {children}
-    </Box>
-  ),
-  [BLOCKS.LIST_ITEM]: (_node, children) => (
-    <Box component="li" className={styles.listItem}>
-      {children}
-    </Box>
-  ),
-  [BLOCKS.QUOTE]: (_node, children) => (
-    <Box {...componentMargins}>
-      <Blockquote>{children}</Blockquote>
-    </Box>
-  ),
-  [BLOCKS.HR]: () => (
-    <Box {...componentMargins}>
-      <hr />
-    </Box>
-  ),
-  [INLINES.HYPERLINK]: (node, children) => (
-    <Hyperlink href={node.data.uri}>{children}</Hyperlink>
-  ),
-  [INLINES.ASSET_HYPERLINK]: (node, children) => {
-    const asset = (node.data.target as unknown) as Asset
-    return asset.fields.file?.url ? (
-      <Hyperlink href={asset.fields.file.url}>{children}</Hyperlink>
-    ) : null
-  },
-  [INLINES.ENTRY_HYPERLINK]: (node, children) => {
-    const entry = node.data.target
-    const type = entry?.sys?.contentType?.sys?.id
-    switch (type) {
-      case 'article':
-        return entry.fields.slug ? (
-          <Hyperlink href={`/${entry.fields.slug}`}>{children}</Hyperlink>
-        ) : null
-      case 'subArticle':
-        return entry.fields.url ? (
-          <Hyperlink href={entry.fields.url}>{children}</Hyperlink>
-        ) : null
-      default:
-        return null
-    }
-  },
+export const defaultRenderNode = (nodeIndex?: number): RenderNode => {
+  const shouldRemoveTopSpacing = {
+    ...(nodeIndex === 0 && { ...removeTopSpacing }),
+  }
+
+  return {
+    [BLOCKS.HEADING_1]: (_node, children) => (
+      <Box
+        id={slugify(getInnerText(children))}
+        component="h1"
+        className={getTextStyles({ variant: 'h1' }) + ' ' + styles.heading}
+        {...defaultHeaderMargins}
+        {...shouldRemoveTopSpacing}
+      >
+        {children}
+      </Box>
+    ),
+    [BLOCKS.HEADING_2]: (_node, children) => (
+      <Box
+        id={slugify(getInnerText(children))}
+        component="h2"
+        className={getTextStyles({ variant: 'h2' }) + ' ' + styles.heading}
+        {...defaultHeaderMargins}
+        {...shouldRemoveTopSpacing}
+      >
+        {children}
+      </Box>
+    ),
+    [BLOCKS.HEADING_3]: (_node, children) => (
+      <Box
+        id={slugify(getInnerText(children))}
+        component="h3"
+        className={getTextStyles({ variant: 'h3' }) + ' ' + styles.heading}
+        {...defaultHeaderMargins}
+        {...shouldRemoveTopSpacing}
+      >
+        {children}
+      </Box>
+    ),
+    [BLOCKS.HEADING_4]: (_node, children) => (
+      <Box
+        id={slugify(getInnerText(children))}
+        component="h4"
+        className={getTextStyles({ variant: 'h4' }) + ' ' + styles.heading}
+        {...defaultHeaderMargins}
+        {...shouldRemoveTopSpacing}
+      >
+        {children}
+      </Box>
+    ),
+    [BLOCKS.HEADING_5]: (_node, children) => (
+      <Box
+        component="h5"
+        className={getTextStyles({ variant: 'h5' }) + ' ' + styles.heading}
+        {...defaultHeaderMargins}
+        {...shouldRemoveTopSpacing}
+      >
+        {children}
+      </Box>
+    ),
+    [BLOCKS.HEADING_6]: (_node, children) => (
+      <Box
+        component="p"
+        className={getTextStyles({ variant: 'intro' }) + ' ' + styles.heading}
+        marginTop={4}
+        marginBottom={2}
+        {...shouldRemoveTopSpacing}
+      >
+        {children}
+      </Box>
+    ),
+    [BLOCKS.PARAGRAPH]: (_node, children) => (
+      <Box
+        component="p"
+        className={getTextStyles({}) + ' ' + styles.paragraph}
+        {...shouldRemoveTopSpacing}
+      >
+        {children}
+      </Box>
+    ),
+    [BLOCKS.OL_LIST]: (_node, children) => (
+      <Box
+        component="ol"
+        className={styles.orderedList}
+        {...shouldRemoveTopSpacing}
+      >
+        {children}
+      </Box>
+    ),
+    [BLOCKS.UL_LIST]: (_node, children) => (
+      <Box
+        component="ul"
+        className={styles.unorderedList}
+        {...shouldRemoveTopSpacing}
+      >
+        {children}
+      </Box>
+    ),
+    [BLOCKS.LIST_ITEM]: (_node, children) => (
+      <Box
+        component="li"
+        className={styles.listItem}
+        {...shouldRemoveTopSpacing}
+      >
+        {children}
+      </Box>
+    ),
+    [BLOCKS.QUOTE]: (_node, children) => {
+      return (
+        <Box {...componentMargins} {...shouldRemoveTopSpacing}>
+          <Blockquote>{children}</Blockquote>
+        </Box>
+      )
+    },
+    [BLOCKS.HR]: () => (
+      <Box {...componentMargins} {...shouldRemoveTopSpacing}>
+        <hr />
+      </Box>
+    ),
+    [INLINES.HYPERLINK]: (node, children) => (
+      <Hyperlink href={node.data.uri}>{children}</Hyperlink>
+    ),
+    [INLINES.ASSET_HYPERLINK]: (node, children) => {
+      const asset = (node.data.target as unknown) as Asset
+      return asset.fields.file?.url ? (
+        <Hyperlink href={asset.fields.file.url}>{children}</Hyperlink>
+      ) : null
+    },
+    [INLINES.ENTRY_HYPERLINK]: (node, children) => {
+      const entry = node.data.target
+      const type = entry?.sys?.contentType?.sys?.id
+      switch (type) {
+        case 'article':
+          return entry.fields.slug ? (
+            <Hyperlink href={`/${entry.fields.slug}`}>{children}</Hyperlink>
+          ) : null
+        case 'subArticle':
+          return entry.fields.url ? (
+            <Hyperlink href={entry.fields.url}>{children}</Hyperlink>
+          ) : null
+        default:
+          return null
+      }
+    },
+  }
 }
