@@ -101,14 +101,10 @@ export default ({ type, provider, skipTruncate = false }: UseDatabase) => ({
 
     await sequelize.sync({ logging: false, force: true })
 
-    return () => {
+    return async () => {
       if (sequelize?.options.dialect === Dialect.Postgres) {
-        // Sequelize uses Bluebird promises but
-        // expected return type is ES6 Promise.
-        const promise = new Promise<void>((resolve) =>
-          sequelize.close().then(resolve),
-        )
-        return promise
+        // need to return await due to a Bluebird promise
+        return await sequelize.close()
       }
     }
   },
