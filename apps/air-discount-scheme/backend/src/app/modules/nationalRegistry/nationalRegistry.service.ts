@@ -223,7 +223,6 @@ export class NationalRegistryService {
         `National Registry general lookup failed for User<${nationalId}> due to: ${response.data[0].error}`,
       )
     }
-
     return user
   }
 
