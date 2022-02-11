@@ -19,7 +19,9 @@ describe('/krafa/ny/gaesluvardhald', () => {
       .type('Krufning')
       .get('.island-select__option')
       .click()
-    cy.getByTestid('nationalId').type('0000000000').blur()
+    cy.getByTestid('nationalId').type('0000000000')
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000)
     cy.getByTestid('accusedName').type('Donald Duck')
     cy.getByTestid('accusedAddress').type('Batcave 1337')
     cy.getByTestid('continueButton').should('be.disabled')
@@ -63,7 +65,9 @@ describe('/krafa/ny/gaesluvardhald', () => {
 
   it('should not allow users to move forward if they entered an invalid defender email address or an invalid defender phonenumber', () => {
     cy.getByTestid('policeCaseNumber').type('00000000000')
-    cy.getByTestid('nationalId').type('0000000000').blur()
+    cy.getByTestid('nationalId').type('0000000000')
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000)
     cy.getByTestid('accusedName').type('Donald Duck')
     cy.getByTestid('accusedAddress').type('Batcave 1337')
     cy.getByTestid('select-defendantGender').click()
