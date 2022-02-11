@@ -12,12 +12,11 @@ import {
 } from '@island.is/auth-api-lib'
 import { AuthConfig } from '@island.is/auth-nest-tools'
 import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
-import { RskModule } from '@island.is/clients/rsk/v2'
+import { RskProcuringClientModule } from '@island.is/clients/rsk/procuring'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 import { environment } from '../../../environments'
 import { DelegationsController } from './delegations.controller'
-import { RskConfig } from './rsk.config'
 
 const delegationAuthConfig: AuthConfig = environment.auth
 
@@ -29,7 +28,7 @@ const delegationAuthConfig: AuthConfig = environment.auth
       ApiScope,
       IdentityResource,
     ]),
-    RskModule.register(RskConfig),
+    RskProcuringClientModule,
     NationalRegistryClientModule,
     FeatureFlagModule,
   ],
