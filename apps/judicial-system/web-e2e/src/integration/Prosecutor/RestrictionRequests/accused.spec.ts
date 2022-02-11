@@ -15,7 +15,7 @@ describe('/krafa/ny/gaesluvardhald', () => {
 
   it('should require the accused gender be selected', () => {
     cy.getByTestid('policeCaseNumber').type('00000000000')
-    cy.getByTestid('nationalId').type('0000000000')
+    cy.getByTestid('nationalId').type('0000000000').blur()
     cy.getByTestid('accusedName').type('Donald Duck')
     cy.getByTestid('accusedAddress').type('Batcave 1337')
     cy.getByTestid('leadInvestigator').type('John Doe')
@@ -60,7 +60,7 @@ describe('/krafa/ny/gaesluvardhald', () => {
 
   it('should not allow users to move forward if they entered an invalid defender email address', () => {
     cy.getByTestid('policeCaseNumber').type('00000000000')
-    cy.getByTestid('nationalId').type('0000000000')
+    cy.getByTestid('nationalId').type('0000000000').blur()
     cy.getByTestid('accusedName').type('Donald Duck')
     cy.getByTestid('accusedAddress').type('Batcave 1337')
     cy.getByTestid('select-defendantGender').click()
