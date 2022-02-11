@@ -30,7 +30,10 @@ const UserProfile: ServicePortalModuleComponent = ({ userInfo }) => {
         </Text>
       </Box>
       <Box marginBottom={[2, 3]}>
-        <FamilyMemberCard title={userInfo.profile.name || ''} />
+        <FamilyMemberCard
+          title={userInfo.profile.name || ''}
+          currentUser={false}
+        />
       </Box>
       {loading && <SkeletonLoader width="100%" height={100} />}
       {!loading && (

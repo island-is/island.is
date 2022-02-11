@@ -453,7 +453,7 @@
     {
       "name": "Árni Gestsson",
       "practice": "Mörkin lögmannsstofa hf.",
-      "email": "arni@law.is",
+      "email": "",
       "phoneNr": "4144100"
     },
     {
@@ -2501,6 +2501,12 @@
       "practice": "LOGOS lögmannsþjónusta",
       "email": "halldorbrynjar@logos.is",
       "phoneNr": "5400318"
+    },
+    {
+      "name": "Halldór Heiðar Hallsson",
+      "practice": "",
+      "email": "halldor@lmsr.is",
+      "phoneNr": "8656224"
     },
     {
       "name": "Halldór Hrannar Halldórsson",
