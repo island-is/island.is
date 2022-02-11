@@ -99,4 +99,7 @@ export class DraftRegulationModel {
 
   @Field(() => String)
   type!: RegulationType
+
+  @Field(() => Boolean, { nullable: true })
+  fastTrack?: boolean
 }

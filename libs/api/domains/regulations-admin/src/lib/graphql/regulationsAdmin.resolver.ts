@@ -47,7 +47,7 @@ export class RegulationsAdminResolver {
     )
   }
 
-  // @Query(() => [DraftRegulationModel])
+  // @Query(() => [DraftRegulationSummaryModel])
   @Query(() => graphqlTypeJson)
   async getShippedRegulations(@CurrentUser() { authorization }: User) {
     return await this.regulationsAdminApiService.getShippedRegulations(
@@ -55,7 +55,7 @@ export class RegulationsAdminResolver {
     )
   }
 
-  // @Query(() => [DraftRegulationModel])
+  // @Query(() => [DraftRegulationSummaryModel])
   @Query(() => graphqlTypeJson)
   async getDraftRegulations(@CurrentUser() user: User) {
     return await this.regulationsAdminApiService.getDraftRegulations(
@@ -63,7 +63,6 @@ export class RegulationsAdminResolver {
     )
   }
 
-  // @Mutation(() => CreateDraftRegulationModel)
   @Mutation(() => graphqlTypeJson)
   async createDraftRegulation(
     @CurrentUser() { authorization }: User,
@@ -71,7 +70,6 @@ export class RegulationsAdminResolver {
     return this.regulationsAdminApiService.create(authorization ?? '')
   }
 
-  // @Mutation(() => CreateDraftRegulationModel)
   @Mutation(() => graphqlTypeJson)
   async updateDraftRegulationById(
     @Args('input') input: EditDraftRegulationInput,
@@ -99,22 +97,20 @@ export class RegulationsAdminResolver {
     }
   }
 
-  // @Query(() => [RegulationOptionList])
   @Query(() => graphqlTypeJson)
   async getRegulationOptionList(
     @Args('input') input: GetRegulationOptionListInput,
-    @CurrentUser() { authorization }: User,
   ) {
     return await this.regulationsService.getRegulationOptionList(input.names)
   }
 
   @Query(() => graphqlTypeJson)
-  async getDraftRegulationsMinistries(@CurrentUser() { authorization }: User) {
+  async getDraftRegulationsMinistries() {
     return await this.regulationsService.getRegulationsMinistries()
   }
 
   @Query(() => graphqlTypeJson)
-  async getDraftRegulationsLawChapters(@CurrentUser() { authorization }: User) {
+  async getDraftRegulationsLawChapters() {
     return await this.regulationsService.getRegulationsLawChapters(false)
   }
 

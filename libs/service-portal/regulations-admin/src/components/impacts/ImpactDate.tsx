@@ -2,7 +2,7 @@ import React from 'react'
 import { Box, Button, DatePicker } from '@island.is/island-ui/core'
 import { impactMsgs } from '../../messages'
 import { DraftImpactForm } from '../../state/types'
-import { useLocale } from '../../utils'
+import { useLocale } from '@island.is/localization'
 
 const today = new Date()
 
@@ -31,7 +31,7 @@ export const ImpactDate = (props: ImpactDateProps) => {
         selected={date.value}
         handleChange={onChange}
         hasError={!!date.error}
-        errorMessage={t(date.error)}
+        errorMessage={date.error && t(date.error)}
         backgroundColor="blue"
       />
       {!!date.value && (
