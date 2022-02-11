@@ -9,6 +9,7 @@ if (!env.NODE_ENV || env.NODE_ENV === 'development') {
     SQS_ENDPOINT: 'http://localhost:4566',
     SQS_ACCESS_KEY: 'testing',
     SQS_SECRET_ACCESS_KEY: 'testing',
+    USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.dev',
     ...env,
   }
 }
@@ -24,6 +25,8 @@ export const environment = {
   userProfileServiceBasePath: required('SERVICE_USER_PROFILE_BASEPATH'),
   notificationsClientId: required('USER_NOTIFICATION_CLIENT_ID'),
   notificationsClientSecret: required('USER_NOTIFICATION_CLIENT_SECRET'),
+
+  appProtocol: required('USER_NOTIFICATION_APP_PROTOCOL'),
 
   isWorker: job === 'worker',
 

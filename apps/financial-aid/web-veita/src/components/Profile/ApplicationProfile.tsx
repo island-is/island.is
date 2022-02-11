@@ -205,6 +205,7 @@ const ApplicationProfile = ({
           homeCircumstances={application.homeCircumstances}
           familyStatus={application.familyStatus}
           setIsLoading={setIsLoading}
+          applicationCreated={application.created}
         />
       )}
 

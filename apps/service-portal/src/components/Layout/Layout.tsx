@@ -21,6 +21,7 @@ import { useNamespaces } from '@island.is/localization'
 import { useStore } from '../../store/stateProvider'
 import { RemoveScroll } from 'react-remove-scroll'
 import { getLayout } from './helpers'
+import cn from 'classnames'
 
 const Layout: FC = ({ children }) => {
   useRoutes()
@@ -44,13 +45,21 @@ const Layout: FC = ({ children }) => {
       <Hidden below="md">
         <Sidebar />
       </Hidden>
-      <Box overflow="hidden" className={styles.layoutWrapper} paddingBottom={7}>
+      <Box
+        overflow="hidden"
+        className={cn(
+          styles.layoutWrapper,
+          sidebarState === 'closed' && styles.layoutWrapperWide,
+        )}
+        paddingBottom={7}
+      >
         <Box as="main">
           <GridContainer>
             <GridRow>
               <GridColumn
-                span={getLayout(pathname, sidebarState).span}
-                offset={getLayout(pathname, sidebarState).offset}
+                span={'12/12'}
+                // span={getLayout(pathname, sidebarState).span}
+                // offset={getLayout(pathname, sidebarState).offset}
                 className={styles.layoutGrid}
               >
                 <ContentBreadcrumbs />

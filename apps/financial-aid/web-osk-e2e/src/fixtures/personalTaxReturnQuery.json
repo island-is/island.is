@@ -1,0 +1,10 @@
+{
+  "data": {
+    "municipalitiesPersonalTaxReturn": {
+      "key": "key",
+      "name": "name",
+      "size": 10,
+      "__typename": "PersonalTaxReturnResponse"
+    }
+  }
+}
