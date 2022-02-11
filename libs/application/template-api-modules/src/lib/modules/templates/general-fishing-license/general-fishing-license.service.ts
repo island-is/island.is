@@ -14,7 +14,7 @@ export class GeneralFishingLicenseService {
   }: TemplateApiModuleActionProps) {
     // Create real charge
 
-    const chargeItemCode = 'FV501'
+    const chargeItemCode = 'FV601'
 
     const response = await this.sharedTemplateAPIService.createCharge(
       auth.authorization,

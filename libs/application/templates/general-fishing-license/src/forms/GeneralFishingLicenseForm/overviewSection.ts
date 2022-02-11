@@ -26,9 +26,10 @@ export const overviewSection = buildSection({
         buildSubmitField({
           id: 'overview.submit',
           title: '',
+          refetchApplicationAfterSubmit: true,
           actions: [
             {
-              event: DefaultEvents.SUBMIT,
+              event: DefaultEvents.PAYMENT,
               name: overview.labels.submit,
               type: 'primary',
             },
