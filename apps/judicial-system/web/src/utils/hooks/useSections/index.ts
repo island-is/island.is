@@ -317,16 +317,16 @@ const useSections = () => {
     const { id } = workingCase
 
     return {
-      name: 'Úrskurður Héraðsdóms',
+      name: formatMessage(sections.courtSection.title),
       children: [
         {
           type: 'SUB_SECTION',
-          name: 'Yfirlit kröfu',
+          name: formatMessage(sections.courtSection.overview),
           href: `${Constants.COURT_SINGLE_REQUEST_BASE_ROUTE}/${id}`,
         },
         {
           type: 'SUB_SECTION',
-          name: 'Fyrirtökutími',
+          name: formatMessage(sections.courtSection.hearingArrangements),
           href:
             (activeSubSection && activeSubSection > 1) ||
             isOverviewStepValidRC(workingCase)
@@ -335,7 +335,7 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: 'Þingbók',
+          name: formatMessage(sections.courtSection.courtRecord),
           href:
             (activeSubSection && activeSubSection > 2) ||
             (hasCourtPermission(workingCase, user) &&
@@ -346,7 +346,7 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: 'Úrskurður',
+          name: formatMessage(sections.courtSection.rulingStepOne),
           href:
             (activeSubSection && activeSubSection > 3) ||
             (hasCourtPermission(workingCase, user) &&
@@ -358,7 +358,7 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: 'Úrskurðarorð',
+          name: formatMessage(sections.courtSection.rulingStepTwo),
           href:
             (activeSubSection && activeSubSection > 4) ||
             (hasCourtPermission(workingCase, user) &&
@@ -371,7 +371,7 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: 'Yfirlit úrskurðar',
+          name: formatMessage(sections.courtSection.conclusion),
           href:
             hasCourtPermission(workingCase, user) &&
             isOverviewStepValidRC(workingCase) &&
@@ -393,16 +393,16 @@ const useSections = () => {
     const { id } = workingCase
 
     return {
-      name: 'Krafa um framlengingu',
+      name: formatMessage(sections.extensionSection.title),
       children: [
         {
           type: 'SUB_SECTION',
-          name: 'Sakborningur',
+          name: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
           href: `${Constants.STEP_ONE_ROUTE}/${id}`,
         },
         {
           type: 'SUB_SECTION',
-          name: 'Óskir um fyrirtöku',
+          name: formatMessage(sections.extensionSection.hearingArrangements),
           href:
             (activeSubSection && activeSubSection > 1) ||
             isAccusedStepValidRC(workingCase)
@@ -411,7 +411,7 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: 'Dómkröfur og lagagrundvöllur',
+          name: formatMessage(sections.extensionSection.policeDemands),
           href:
             (activeSubSection && activeSubSection > 2) ||
             (isAccusedStepValidRC(workingCase) &&
@@ -421,7 +421,7 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: 'Greinargerð',
+          name: formatMessage(sections.extensionSection.policeReport),
           href:
             (activeSubSection && activeSubSection > 3) ||
             (isAccusedStepValidRC(workingCase) &&
@@ -432,7 +432,7 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: 'Rannsóknargögn',
+          name: formatMessage(sections.extensionSection.caseFiles),
           href:
             (activeSubSection && activeSubSection > 4) ||
             (isAccusedStepValidRC(workingCase) &&
@@ -444,7 +444,7 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: 'Yfirlit kröfu',
+          name: formatMessage(sections.extensionSection.overview),
           href:
             isAccusedStepValidRC(workingCase) &&
             isHearingArrangementsStepValidRC(workingCase) &&
@@ -464,7 +464,7 @@ const useSections = () => {
     const { id } = workingCase
 
     return {
-      name: 'Krafa um framlengingu',
+      name: formatMessage(sections.investigationCaseExtensionSection.title),
       children: [
         {
           type: 'SUB_SECTION',
@@ -473,7 +473,9 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: 'Óskir um fyrirtöku',
+          name: formatMessage(
+            sections.investigationCaseExtensionSection.hearingArrangements,
+          ),
           href:
             (activeSubSection && activeSubSection > 1) ||
             isDefendantStepValidIC(workingCase)
@@ -482,7 +484,9 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: 'Dómkröfur og lagagrundvöllur',
+          name: formatMessage(
+            sections.investigationCaseExtensionSection.policeDemands,
+          ),
           href:
             (activeSubSection && activeSubSection > 2) ||
             (isDefendantStepValidIC(workingCase) &&
@@ -492,7 +496,9 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: 'Greinargerð',
+          name: formatMessage(
+            sections.investigationCaseExtensionSection.policeReport,
+          ),
           href:
             (activeSubSection && activeSubSection > 3) ||
             (isDefendantStepValidIC(workingCase) &&
@@ -503,7 +509,9 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: 'Rannsóknargögn',
+          name: formatMessage(
+            sections.investigationCaseExtensionSection.caseFiles,
+          ),
           href:
             (activeSubSection && activeSubSection > 4) ||
             (isDefendantStepValidIC(workingCase) &&
@@ -515,7 +523,9 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: 'Yfirlit kröfu',
+          name: formatMessage(
+            sections.investigationCaseExtensionSection.overview,
+          ),
           href:
             isDefendantStepValidIC(workingCase) &&
             isHearingArrangementsStepValidIC(workingCase) &&
