@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useMemo, useState } from 'react'
 import { FieldErrors, FieldValues } from 'react-hook-form/dist/types/form'
 import parseISO from 'date-fns/parseISO'
 import { useFormContext } from 'react-hook-form'
@@ -44,7 +44,6 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
   const { rawPeriods } = getApplicationAnswers(application.answers)
   const currentIndex = extractRepeaterIndexFromField(field)
   const currentPeriod = rawPeriods[currentIndex]
-  const [options, setOptions] = useState<SelectOption<string>[]>([])
   const [selectedValue, setSelectedValue] = useState(currentPeriod.ratio)
   const [canChooseRemainingDays, setCanChooseRemainingDays] = useState(false)
   const [maxPercentageValue, setMaxPercentageValue] = useState<string>()
@@ -61,7 +60,7 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
     error = errors?.[fieldId]
   }
 
-  useEffect(() => {
+  const options: SelectOption<string>[] = useMemo(() => {
     const start = parseISO(currentPeriod.startDate)
     const end = parseISO(currentPeriod.endDate)
 
@@ -77,7 +76,7 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
         type: 'error',
         message: formatMessage(errorMessages.periodsRatioImpossible),
       })
-      return
+      return []
     }
 
     const minPercentage = Math.round(rawMinPercentage * 100)
@@ -88,7 +87,7 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
         type: 'error',
         message: formatMessage(errorMessages.periodsRatioCalculationImpossible),
       })
-      return
+      return []
     }
 
     const options = new Array(maxPercentage - minPercentage + 1)
@@ -121,7 +120,7 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
       })
     }
 
-    setOptions(options)
+    return options
   }, [])
 
   const onSelect = (option: SelectOption) => {
