@@ -50,7 +50,7 @@ export class PaymentService {
       .catch(handleError)
   }
 
-  private makePaymentUrl(docNum: string): string {
+  public makePaymentUrl(docNum: string): string {
     return `${this.paymentConfig.arkBaseUrl}/quickpay/pay?doc_num=${docNum}`
   }
 
@@ -94,6 +94,7 @@ export class PaymentService {
     }
 
     const result = await this.paymentApi.createCharge(charge)
+
     return {
       ...result,
       paymentUrl: this.makePaymentUrl(result.user4),
