@@ -10,6 +10,7 @@ import {
   EmailTemplateGenerator,
   AssignmentEmailTemplateGenerator,
   AttachmentEmailTemplateGenerator,
+  BaseTemplateApiApplicationService,
 } from '../../types'
 import { createAssignToken, getConfigValue } from './shared.utils'
 import {
@@ -17,7 +18,6 @@ import {
   PAYMENT_STATUS_QUERY,
   PaymentChargeData,
   PaymentStatusData,
-  ADD_ATTACHMENT_MUTATION,
 } from './shared.queries'
 import { S3 } from 'aws-sdk'
 import { uuid } from 'uuidv4'
@@ -30,6 +30,8 @@ export class SharedTemplateApiService {
     private readonly emailService: EmailService,
     @Inject(ConfigService)
     private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
+    @Inject(BaseTemplateApiApplicationService)
+    private readonly applicationService: BaseTemplateApiApplicationService,
   ) {
     this.s3 = new S3()
   }
@@ -213,7 +215,6 @@ export class SharedTemplateApiService {
   }
 
   async addAttachment(
-    authorization: string,
     applicationId: string,
     fileName: string,
     buffer: Buffer,
@@ -239,32 +240,11 @@ export class SharedTemplateApiService {
     const fileId = uuid()
     const key = `${fileId}-${fileName}`
 
-    await this.makeGraphqlQuery<Application>(
-      authorization,
-      ADD_ATTACHMENT_MUTATION,
-      {
-        input: {
-          id: applicationId,
-          key,
-          url,
-        },
-      },
+    await this.applicationService.saveAttachmentToApplicaton(
+      applicationId,
+      key,
+      url,
     )
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error('graphql query failed')
-        }
-
-        return res
-      })
-      .then((res) => res.json())
-      .then(({ errors, data }) => {
-        if (errors && errors.length) {
-          throw new Error('Update attachment failed')
-        }
-
-        return data
-      })
 
     return key
   }

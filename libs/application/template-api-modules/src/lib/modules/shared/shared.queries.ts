@@ -22,11 +22,3 @@ export const PAYMENT_STATUS_QUERY = `
 export interface PaymentStatusData {
   applicationPaymentStatus: { fulfilled: boolean }
 }
-
-export const ADD_ATTACHMENT_MUTATION = `
-  mutation($input: AddAttachmentInput!) {
-    addAttachment(input: $input) {
-      id
-    }
-  }
-`

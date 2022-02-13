@@ -26,7 +26,7 @@ export class DataProtectionComplaintService {
     return this.caseApi.withMiddleware(this.tokenMiddleware)
   }
 
-  async sendApplication({ application, auth }: TemplateApiModuleActionProps) {
+  async sendApplication({ application }: TemplateApiModuleActionProps) {
     try {
       const complaintPdf = await this.pdfFileProvider.getApplicationPdf(
         application,
@@ -36,7 +36,6 @@ export class DataProtectionComplaintService {
       if (!complaintPdf?.content) throw new Error('No pdf content')
 
       const key = await this.sharedService.addAttachment(
-        auth.authorization,
         application.id,
         'kvörtun.pdf',
         complaintPdf.fileBuffer,

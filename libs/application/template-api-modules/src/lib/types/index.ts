@@ -14,6 +14,7 @@ import {
 } from '@island.is/api/schema'
 import { HealthInsuranceV2Options } from '@island.is/clients/health-insurance-v2'
 import { DataProtectionComplaintClientConfig } from '@island.is/clients/data-protection-complaint'
+import { Injectable, Type } from '@nestjs/common'
 
 export interface BaseTemplateAPIModuleConfig {
   xRoadBasePathWithEnv: string
@@ -47,6 +48,7 @@ export interface BaseTemplateAPIModuleConfig {
   paymentScheduleConfig: PaymentScheduleServiceOptions
   healthInsuranceV2: HealthInsuranceV2Options
   dataProtectionComplaint: DataProtectionComplaintClientConfig
+  applicationService: Type<BaseTemplateApiApplicationService>
 }
 
 export interface TemplateApiModuleActionProps {
@@ -110,4 +112,13 @@ export enum PublicDebtPaymentScheduleType {
   OverpaidBenefits = 'OverpaidBenefits',
   Wagedection = 'Wagedection',
   OtherFees = 'OtherFees',
+}
+
+@Injectable()
+export abstract class BaseTemplateApiApplicationService {
+  abstract saveAttachmentToApplicaton(
+    applicationId: string,
+    key: string,
+    url: string,
+  ): Promise<void>
 }
