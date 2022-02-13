@@ -8,10 +8,7 @@ import { PaymentServiceOptions } from '@island.is/clients/payment'
 import { Message } from '@island.is/email-service'
 import { User } from '@island.is/auth-nest-tools'
 import { PaymentScheduleServiceOptions } from '@island.is/clients/payment-schedule'
-import {
-  PaymentScheduleCharge,
-  PaymentScheduleType,
-} from '@island.is/api/schema'
+import { PaymentScheduleCharge } from '@island.is/api/schema'
 import { HealthInsuranceV2Options } from '@island.is/clients/health-insurance-v2'
 import { DataProtectionComplaintClientConfig } from '@island.is/clients/data-protection-complaint'
 import { Injectable, Type } from '@nestjs/common'
