@@ -32,6 +32,9 @@ export class SupportQNA {
 
   @Field(() => SupportSubCategory, { nullable: true })
   subCategory!: SupportSubCategory | null
+
+  @Field()
+  importance!: number
 }
 
 export const mapSupportQNA = ({ fields, sys }: ISupportQna): SupportQNA => ({
@@ -46,4 +49,5 @@ export const mapSupportQNA = ({ fields, sys }: ISupportQna): SupportQNA => ({
   subCategory: fields.subCategory
     ? mapSupportSubCategory(fields.subCategory)
     : null,
+  importance: fields.importance ?? 0,
 })

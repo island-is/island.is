@@ -55,6 +55,7 @@ import {
   LinkType,
   useLinkResolver,
   linkResolver as LinkResolver,
+  pathIsRoute,
 } from '../hooks/useLinkResolver'
 import { stringHash } from '@island.is/web/utils/stringHash'
 
@@ -210,8 +211,10 @@ const Layout: NextComponentType<
     '/fonts/ibm-plex-sans-v7-latin-600.woff2',
   ]
 
+  const isServiceWeb = pathIsRoute(asPath, 'serviceweb')
+
   return (
-    <GlobalContextProvider namespace={namespace}>
+    <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
       <Page component="div">
         <Head>
           {preloadedFonts.map((href, index) => {
@@ -345,7 +348,9 @@ const Layout: NextComponentType<
             )}
             <Footer
               topLinks={footerUpperInfo}
-              topLinksContact={footerUpperContact}
+              {...(activeLocale === 'is'
+                ? { linkToHelpWeb: linkResolver('serviceweb').href }
+                : { topLinksContact: footerUpperContact })}
               bottomLinks={footerLowerMenu}
               middleLinks={footerMiddleMenu}
               bottomLinksTitle={t.siteExternalTitle}
@@ -471,6 +476,7 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
       })
       .then((res) => res.data.getGroupedMenu),
   ])
+
   const alertBannerId = `alert-${stringHash(JSON.stringify(alertBanner))}`
   const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
 

@@ -46,6 +46,8 @@ const useDefendants = () => {
           address: defendant.address,
           nationalId: defendant.nationalId?.replace('-', ''),
           gender: defendant.gender,
+          citizenship: defendant.citizenship,
+          noNationalId: defendant.noNationalId,
         },
       },
     })
@@ -67,10 +69,7 @@ const useDefendants = () => {
         input: {
           caseId,
           defendantId,
-          name: updateDefendant.name,
-          address: updateDefendant.address,
-          nationalId: updateDefendant.nationalId?.replace('-', ''),
-          gender: updateDefendant.gender,
+          ...updateDefendant,
         },
       },
     })

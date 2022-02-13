@@ -1,4 +1,5 @@
 import request from 'supertest'
+import { getModelToken } from '@nestjs/sequelize'
 
 import {
   ApiScope,
@@ -54,8 +55,8 @@ describe('ActorDelegationsController', () => {
       server = request(app.getHttpServer())
 
       // Get reference on Delegation and ApiScope models to seed DB
-      delegationModel = app.get<typeof Delegation>('DelegationRepository')
-      apiScopeModel = app.get<typeof ApiScope>('ApiScopeRepository')
+      delegationModel = app.get<typeof Delegation>(getModelToken(Delegation))
+      apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
     })
 
     afterAll(async () => {

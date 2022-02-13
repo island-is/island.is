@@ -46,7 +46,7 @@ function prosecutorsOfficeMustMatchUserInstitution(role: UserRole): boolean {
   return role === UserRole.PROSECUTOR
 }
 
-function courtMustMatchUserIInstitution(role: UserRole): boolean {
+function courtMustMatchUserInstitution(role: UserRole): boolean {
   return role === UserRole.REGISTRAR || role === UserRole.JUDGE
 }
 
@@ -128,7 +128,7 @@ function isCourtCaseHiddenFromUser(
   courtId?: string,
 ): boolean {
   return (
-    courtMustMatchUserIInstitution(user.role) &&
+    courtMustMatchUserInstitution(user.role) &&
     Boolean(courtId) &&
     courtId !== user.institution?.id &&
     (forUpdate ||

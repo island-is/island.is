@@ -40,7 +40,7 @@ const filterNavigationTree = (
   item.enabled = routeItem?.enabled
 
   // Hides item from navigation
-  item.navHide = routeItem?.navHide
+  item.navHide = routeItem?.navHide ?? item.navHide
 
   return included || onlyDescendantsIncluded
 }
