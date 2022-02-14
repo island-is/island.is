@@ -16,6 +16,7 @@ import { useLocale } from '@island.is/localization'
 import FindStudentModal from '../FindStudentModal/index'
 import { useQuery } from '@apollo/client'
 import { InstructorsStudentsQuery } from '../../graphql/queries'
+import * as styles from '../style.css'
 
 interface Data {
   application: Application
@@ -37,7 +38,9 @@ const StudentsOverview = ({ application }: Data) => {
   const { data, loading } = useQuery(InstructorsStudentsQuery)
 
   const [pageStudents, setPageStudents] = useState(
-    data ? (data.studentListTeacherSsn.data as Array<Student>) : [],
+    data
+      ? (data.drivingBookStudentListByTeacherSsn.data as Array<Student>)
+      : [],
   )
 
   /* table view */
@@ -55,7 +58,7 @@ const StudentsOverview = ({ application }: Data) => {
 
   const filter = (searchTerm: string) => {
     if (searchTerm.length) {
-      const filteredList = data.studentListTeacherSsn.data?.filter(
+      const filteredList = data.drivingBookStudentListByTeacherSsn.data?.filter(
         (student: Student) =>
           student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           student.ssn.includes(searchTerm),
@@ -63,20 +66,23 @@ const StudentsOverview = ({ application }: Data) => {
 
       handlePagination(1, filteredList)
     } else {
-      handlePagination(1, data?.studentListTeacherSsn.data)
+      handlePagination(1, data?.drivingBookStudentListByTeacherSsn.data)
     }
   }
 
   useEffect(() => {
     filter(searchTerm)
-  }, [data?.studentListTeacherSsn?.data, searchTerm])
+  }, [data?.drivingBookStudentListByTeacherSsn?.data, searchTerm])
 
   return (
     <Box marginBottom={10}>
       {showTable ? (
         <Stack space={5}>
-          <Box display={'flex'} justifyContent={'spaceBetween'}>
-            <Box width="half">
+          <Box
+            display={['block', 'flex', 'flex']}
+            justifyContent={'spaceBetween'}
+          >
+            <Box width="half" className={styles.mobileWidth}>
               <Input
                 name="searchbar"
                 placeholder={formatMessage(m.studentsOverviewSearchPlaceholder)}

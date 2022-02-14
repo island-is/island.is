@@ -1,13 +1,13 @@
 import gql from 'graphql-tag'
 
 export const ViewSingleStudentQuery = gql`
-  query student($input: StudentInput!) {
-    student(input: $input) {
+  query drivingBookStudent($input: StudentInput!) {
+    drivingBookStudent(input: $input) {
       data {
         id
         name
         ssn
-        books {
+        book {
           id
           isDigital
           totalLessonTime
@@ -35,8 +35,8 @@ export const ViewSingleStudentQuery = gql`
 `
 
 export const InstructorsStudentsQuery = gql`
-  query studentListTeacherSsn {
-    studentListTeacherSsn {
+  query drivingBookStudentListByTeacherSsn {
+    drivingBookStudentListByTeacherSsn {
       data {
         id
         name

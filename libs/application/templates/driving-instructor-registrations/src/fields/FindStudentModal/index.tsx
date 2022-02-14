@@ -26,12 +26,14 @@ const FindStudentModal = ({
 
   return (
     <Box
+      marginTop={[3, 0, 0]}
       width="half"
       display={'flex'}
       justifyContent={'flexEnd'}
       alignItems={'flexEnd'}
+      className={styles.mobileWidth}
     >
-      <Box display={'flex'} justifyContent={'center'}>
+      <Box display={'flex'} justifyContent={['flexEnd', 'center', 'center']}>
         <ModalBase
           isVisible={isModalOpen}
           baseId="myDialog"
@@ -71,7 +73,6 @@ const FindStudentModal = ({
               <Button
                 variant="ghost"
                 onClick={() => {
-                  viewStudent()
                   setIsModalOpen(false)
                 }}
               >

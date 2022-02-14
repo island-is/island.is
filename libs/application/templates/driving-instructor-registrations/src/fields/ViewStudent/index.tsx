@@ -35,16 +35,18 @@ interface Props {
 const ViewStudent = ({ studentSsn, setShowTable }: Props) => {
   const { formatMessage } = useLocale()
 
-  const { data, loading, refetch: refetchStudent } = useQuery(
-    ViewSingleStudentQuery,
-    {
-      variables: {
-        input: {
-          ssn: studentSsn,
-        },
+  const {
+    data,
+    loading: loadingStudentsBook,
+    refetch: refetchStudent,
+  } = useQuery(ViewSingleStudentQuery, {
+    variables: {
+      input: {
+        ssn: studentSsn,
       },
     },
-  )
+  })
+
   const [
     registerLesson,
     { data: registrationId, loading: loadingRegistration },
@@ -66,17 +68,14 @@ const ViewStudent = ({ studentSsn, setShowTable }: Props) => {
   >(undefined)
   const [dateError, setDateError] = useState(false)
   const [student, setStudent] = useState<undefined | StudentOverView>(
-    data ? data.student.data : {},
+    data ? data.drivingBookStudent.data : {},
   )
 
-  const studentRegistrations = student?.books
-    ? (student?.books[0].teachersAndLessons as Array<Lesson>)
-    : []
-
-  console.log(student)
+  const studentRegistrations = student?.book
+    ?.teachersAndLessons as Array<Lesson>
 
   useEffect(() => {
-    setStudent(data ? data.student.data : {})
+    setStudent(data ? data.drivingBookStudent.data : {})
   }, [data])
 
   const goBack = useCallback(() => {
@@ -85,23 +84,20 @@ const ViewStudent = ({ studentSsn, setShowTable }: Props) => {
 
   const resetFields = () => {
     setEditingRegistration(undefined)
-    setNewRegId(undefined)
-
     setDate('')
     setMinutes(30)
-
     refetchStudent()
   }
 
   const saveChanges = async () => {
-    const success = await registerLesson({
+    const res = await registerLesson({
       variables: {
         input: {
           practicalDrivingLessonCreateRequestBody: {
             createdOn: date,
             teacherSsn: '1003602259',
             minutes: minutes,
-            bookId: student?.books ? student?.books[0].id : '',
+            bookId: student?.book?.id,
             comments: 'TEST',
           },
         },
@@ -110,14 +106,17 @@ const ViewStudent = ({ studentSsn, setShowTable }: Props) => {
       toast.error('Ekki tókst að skrá ökutíma')
     })
 
-    if (success) {
+    if (res) {
+      setNewRegId(
+        res.data.drivingBookCreatePracticalDrivingLesson.data.id.toUpperCase(),
+      )
       resetFields()
       toast.success('Skráning tókst')
     }
   }
 
   const editChanges = async () => {
-    const success = await registerLesson({
+    const res = await editLesson({
       variables: {
         input: {
           id: editingRegistration?.id?.toLowerCase(),
@@ -132,7 +131,8 @@ const ViewStudent = ({ studentSsn, setShowTable }: Props) => {
       toast.error('Ekki tókst að breyta ökutíma')
     })
 
-    if (success) {
+    if (res && res.data.drivingBookUpdatePracticalDrivingLesson.success) {
+      setNewRegId(editingRegistration?.id?.toUpperCase())
       resetFields()
       toast.success('Breyting tókst')
     }
@@ -150,7 +150,7 @@ const ViewStudent = ({ studentSsn, setShowTable }: Props) => {
       toast.error('Ekki tókst að eyða skráningu')
     })
 
-    if (res && res.data.deletePracticalDrivingLesson.success) {
+    if (res && res.data.drivingBookDeletePracticalDrivingLesson.success) {
       resetFields()
       toast.success('Skráningu hefur verið eytt')
     }
@@ -160,7 +160,10 @@ const ViewStudent = ({ studentSsn, setShowTable }: Props) => {
     <Box>
       {student && Object.entries(student).length > 0 ? (
         <Stack space={5}>
-          <Box display={'flex'} justifyContent={'spaceBetween'}>
+          <Box
+            display={['block', 'flex', 'flex']}
+            justifyContent={'spaceBetween'}
+          >
             <Box display={'block'}>
               <Text variant="h4">{formatMessage(m.viewStudentName)}</Text>
               <Text variant="default">{student.name}</Text>
@@ -170,33 +173,48 @@ const ViewStudent = ({ studentSsn, setShowTable }: Props) => {
               <Text variant="default">{student.ssn}</Text>
             </Box>
             <Box display={'block'}>
-              <Text variant="h4">{formatMessage(m.viewStudentCompleteHours)}</Text>
-              <Text variant="default">{student.books ? student.books[0]?.totalLessonCount : 0}</Text>
+              <Text variant="h4">
+                {formatMessage(m.viewStudentCompleteHours)}
+              </Text>
+              <Text variant="default">
+                {student.book?.totalLessonCount ?? 0}
+              </Text>
             </Box>
           </Box>
-          <Box display={'flex'} justifyContent={'spaceBetween'}>
+          <Box
+            display={['none', 'flex', 'flex']}
+            justifyContent={'spaceBetween'}
+          >
             <Box display={'block'}>
               <Text variant="h4">
                 {formatMessage(m.viewStudentCompleteSchools)}
               </Text>
-              {student.books && student.books[0]?.drivingSchoolExams?.map((school, key) => {
+              {student.book?.drivingSchoolExams?.map((school, key) => {
                 return (
-                  <Text key={key} variant="default">{school.schoolTypeName}</Text>
+                  <Text key={key} variant="default">
+                    {school.schoolTypeName}
+                  </Text>
                 )
               })}
             </Box>
             <Box display={'block'}>
-              <Text variant="h4">{formatMessage(m.viewStudentExamsComplete)}</Text>
-              {student.books && student.books[0]?.testResults?.map((test, key) => {
+              <Text variant="h4">
+                {formatMessage(m.viewStudentExamsComplete)}
+              </Text>
+              {student.book?.testResults?.map((test, key) => {
                 return (
-                  <Text key={key} variant="default">{test.testTypeName}</Text>
+                  <Text key={key} variant="default">
+                    {test.testTypeName}
+                  </Text>
                 )
               })}
             </Box>
           </Box>
-    
+
           <Box>
-            <Text variant="h4">{formatMessage(m.viewStudentRegisterMinutes)}</Text>
+            <Text variant="h4">
+              {formatMessage(m.viewStudentRegisterMinutes)}
+            </Text>
             <Box marginTop={2}>
               <Box display="flex" justifyContent="spaceBetween">
                 {minutesOfDriving.map((item, index) => {
@@ -217,7 +235,7 @@ const ViewStudent = ({ studentSsn, setShowTable }: Props) => {
                 })}
                 <Box style={{ width: '200px' }}>
                   <Input
-                    label={formatMessage(m.viewStudentSelectDateLabel)}
+                    label={'Slá inn mínútur'}
                     type="number"
                     name="mínútur"
                     placeholder="0"
@@ -229,7 +247,7 @@ const ViewStudent = ({ studentSsn, setShowTable }: Props) => {
               </Box>
             </Box>
           </Box>
-    
+
           <Box display="flex" justifyContent="spaceBetween">
             <Box display="flex">
               <DatePicker
@@ -241,14 +259,18 @@ const ViewStudent = ({ studentSsn, setShowTable }: Props) => {
                 }}
                 label={formatMessage(m.viewStudentSelectDateLabel)}
                 locale="is"
-                placeholderText={formatMessage(m.viewStudentSelectDatePlaceholder)}
+                placeholderText={formatMessage(
+                  m.viewStudentSelectDatePlaceholder,
+                )}
                 required
                 selected={date ? new Date(date) : null}
               />
-    
+
               <Box marginLeft={3} display="flex">
                 <Button
-                  loading={loadingRegistration}
+                  loading={
+                    loadingRegistration || loadingEdition || loadingStudentsBook
+                  }
                   onClick={() =>
                     date !== ''
                       ? !editingRegistration
@@ -263,7 +285,7 @@ const ViewStudent = ({ studentSsn, setShowTable }: Props) => {
                 </Button>
               </Box>
             </Box>
-    
+
             {editingRegistration && (
               <Box>
                 <Button
@@ -278,7 +300,7 @@ const ViewStudent = ({ studentSsn, setShowTable }: Props) => {
               </Box>
             )}
           </Box>
-    
+
           <Box>
             <T.Table>
               <T.Head>
@@ -297,7 +319,7 @@ const ViewStudent = ({ studentSsn, setShowTable }: Props) => {
               </T.Head>
               <T.Body>
                 {student &&
-                  studentRegistrations.map((entry: any, key: number) => {
+                  studentRegistrations?.map((entry: any, key: number) => {
                     const bgr = cn({
                       [`${styles.successBackground}`]:
                         !!newRegId && entry.id === newRegId,
@@ -307,7 +329,7 @@ const ViewStudent = ({ studentSsn, setShowTable }: Props) => {
                       [`${styles.transparentBackground}`]:
                         !editingRegistration && !newRegId,
                     })
-    
+
                     return (
                       <T.Row key={key}>
                         <T.Data box={{ className: bgr }}>
@@ -316,7 +338,9 @@ const ViewStudent = ({ studentSsn, setShowTable }: Props) => {
                         <T.Data box={{ className: bgr }}>
                           {entry.teacherName}
                         </T.Data>
-                        <T.Data box={{ className: bgr }}>{entry.lessonTime}</T.Data>
+                        <T.Data box={{ className: bgr }}>
+                          {entry.lessonTime}
+                        </T.Data>
                         <T.Data box={{ className: bgr }}>
                           <Box display={'flex'}>
                             <Button
@@ -324,6 +348,7 @@ const ViewStudent = ({ studentSsn, setShowTable }: Props) => {
                               size="small"
                               onClick={() => {
                                 setEditingRegistration(entry)
+                                setNewRegId(undefined)
                                 setMinutes(entry.lessonTime)
                                 setDate(entry.registerDate)
                               }}
@@ -346,7 +371,7 @@ const ViewStudent = ({ studentSsn, setShowTable }: Props) => {
               </T.Body>
             </T.Table>
           </Box>
-    
+
           <Box marginY={5}>
             <Button variant="ghost" preTextIcon="arrowBack" onClick={goBack}>
               {formatMessage(m.viewStudentGoBackToOverviewButton)}

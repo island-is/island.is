@@ -12,14 +12,14 @@ const bgr = keyframes({
 })
 
 export const showSuccessIcon = style({
-  animation: `7s ${icon}`,
+  animation: `10s ${icon}`,
   opacity: 0,
   position: 'absolute',
   right: -25,
 })
 
 export const successBackground = style({
-  animation: `7s ${bgr}`,
+  animation: `10s ${bgr}`,
 })
 
 export const editingBackground = style({
@@ -35,4 +35,13 @@ export const modalStyle = style({
   justifyContent: 'center',
   position: 'absolute',
   top: '35%',
+})
+
+export const mobileWidth = style({
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {
+      width: '100%',
+      display: 'block',
+    },
+  },
 })

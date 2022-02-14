@@ -17,7 +17,7 @@ const Skeleton = () => {
       </>
       <SkeletonLoader height={90} width="100%" borderRadius="large" />
       <SkeletonLoader height={70} width="60%" borderRadius="large" />
-      <SkeletonLoader height={300} width="100%" borderRadius="large"/>
+      <SkeletonLoader height={300} width="100%" borderRadius="large" />
     </Stack>
   )
 }
