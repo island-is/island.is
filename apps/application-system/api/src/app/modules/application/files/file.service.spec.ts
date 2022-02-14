@@ -119,7 +119,7 @@ describe('FileService', () => {
 
     jest
       .spyOn(awsService, 'uploadFile')
-      .mockImplementation(() => Promise.resolve())
+      .mockImplementation(() => Promise.resolve('url'))
 
     jest
       .spyOn(awsService, 'getPresignedUrl')
@@ -158,6 +158,11 @@ describe('FileService', () => {
       Buffer.from('buffer'),
       bucket,
       fileName,
+      {
+        ContentEncoding: 'base64',
+        ContentDisposition: 'inline',
+        ContentType: 'application/pdf',
+      },
     )
 
     expect(awsService.getPresignedUrl).toHaveBeenCalledWith(bucket, fileName)
