@@ -74,15 +74,6 @@ export const CourtRecord: React.FC = () => {
           attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}`
         }
 
-        if (wc.defendants && wc.defendants.length > 0) {
-          attendees += `\n${wc.defendants[0].name} ${formatMessage(
-            core.accused,
-            {
-              suffix: wc.defendants[0].gender === Gender.MALE ? 'i' : 'a',
-            },
-          )}`
-        }
-
         if (wc.defenderName) {
           attendees += `\n${wc.defenderName} skipaður verjandi ${formatMessage(
             core.accused,
@@ -99,6 +90,15 @@ export const CourtRecord: React.FC = () => {
 
         if (wc.translator) {
           attendees += `\n${wc.translator} túlkur`
+        }
+
+        if (wc.defendants && wc.defendants.length > 0) {
+          attendees += `\n${wc.defendants[0].name} ${formatMessage(
+            core.accused,
+            {
+              suffix: wc.defendants[0].gender === Gender.MALE ? 'i' : 'a',
+            },
+          )}`
         }
 
         return attendees

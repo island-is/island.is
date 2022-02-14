@@ -40,40 +40,43 @@ const CourtRecord = () => {
         let attendees = ''
 
         if (wc.prosecutor) {
-          attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n`
-        }
-
-        if (wc.defendants && wc.defendants.length > 0) {
-          if (wc.sessionArrangements === SessionArrangements.ALL_PRESENT) {
-            wc.defendants.forEach((defendant) => {
-              attendees += `${defendant.name} ${formatMessage(core.defendant, {
-                suffix: 'i',
-              })}\n`
-            })
-          } else {
-            if (wc.defendants.length > 1) {
-              attendees += `${formatMessage(
-                m.sections.courtAttendees.multipleDefendantNotPresentAutofill,
-              )}\n`
-            } else {
-              attendees += `${formatMessage(
-                m.sections.courtAttendees.defendantNotPresentAutofill,
-              )}\n`
-            }
-          }
+          attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}`
         }
 
         if (
           wc.defenderName &&
           wc.sessionArrangements !== SessionArrangements.PROSECUTOR_PRESENT
         ) {
-          attendees += `${wc.defenderName} skipaður ${
+          attendees += `\n${wc.defenderName} skipaður ${
             wc.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
-          } ${formatMessage(core.defendant, { suffix: 'a' })}`
+          } ${formatMessage(core.defendant, { suffix: 'a' })}\n`
         }
 
         if (wc.translator) {
           attendees += `\n${wc.translator} túlkur`
+        }
+
+        if (wc.defendants && wc.defendants.length > 0) {
+          if (wc.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+            wc.defendants.forEach((defendant) => {
+              attendees += `\n${defendant.name} ${formatMessage(
+                core.defendant,
+                {
+                  suffix: 'i',
+                },
+              )}`
+            })
+          } else {
+            if (wc.defendants.length > 1) {
+              attendees += `\n${formatMessage(
+                m.sections.courtAttendees.multipleDefendantNotPresentAutofill,
+              )}`
+            } else {
+              attendees += `\n${formatMessage(
+                m.sections.courtAttendees.defendantNotPresentAutofill,
+              )}`
+            }
+          }
         }
 
         return attendees
