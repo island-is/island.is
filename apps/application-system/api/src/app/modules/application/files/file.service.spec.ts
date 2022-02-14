@@ -158,6 +158,11 @@ describe('FileService', () => {
       Buffer.from('buffer'),
       bucket,
       fileName,
+      {
+        ContentEncoding: 'base64',
+        ContentDisposition: 'inline',
+        ContentType: 'application/pdf',
+      },
     )
 
     expect(awsService.getPresignedUrl).toHaveBeenCalledWith(bucket, fileName)
