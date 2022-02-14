@@ -33,7 +33,7 @@ export class FishingLicenseResolver {
     @Args('registrationNumber', { type: () => Number })
     registrationNumber: number,
   ) {
-    return await this.fishingLicenseService.getFishingLicences(
+    return await this.fishingLicenseService.getFishingLicenses(
       registrationNumber,
     )
   }

@@ -19,16 +19,16 @@ export type Ship = {
   homePort: string
   seaworthiness: Seaworthiness
   deprivations: Deprivation[]
-  fishingLicences: FishingLicenseInfo[]
+  fishingLicenses: FishingLicenseInfo[]
 }
 
-export type FishingLicence = {
+export type FishingLicense = {
   fishingLicenseInfo: FishingLicenseInfo
   answer: boolean //todo should this be named answer
-  reasons: FishingLicenceReason[]
+  reasons: FishingLicenseReason[]
 }
 
-export type FishingLicenceReason = {
+export type FishingLicenseReason = {
   description: string
   directions: string // leidbeiningar?
 }

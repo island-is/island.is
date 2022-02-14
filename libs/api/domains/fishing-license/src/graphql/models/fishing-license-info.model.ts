@@ -1,4 +1,4 @@
-import { FishingLicenseCodeType } from '@island.is/clients/fishing-licence'
+import { FishingLicenseCodeType } from '@island.is/clients/fishing-license'
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
 
 registerEnumType(FishingLicenseCodeType, {

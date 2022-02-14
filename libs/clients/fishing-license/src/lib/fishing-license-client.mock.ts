@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common'
-import { FishingLicence, FishingLicenseCodeType, Ship } from './types'
+import { FishingLicense, FishingLicenseCodeType, Ship } from './types'
 
 export interface FishingLicenseClient {
   getShips: (nationalId: string) => Ship[]
-  getFishingLicenses: (registrationNubmer: number) => FishingLicence[]
+  getFishingLicenses: (registrationNumber: number) => FishingLicense[]
 }
 
 export const FISHING_LICENSE_CLIENT = 'FishingLicenseClient'
 
 @Injectable()
-export class FishingLicenceApiClientMock implements FishingLicenseClient {
+export class FishingLicenseApiClientMock implements FishingLicenseClient {
   getShips(nationalId: string): Ship[] {
     return [
       {
@@ -21,7 +21,7 @@ export class FishingLicenceApiClientMock implements FishingLicenseClient {
         seaworthiness: { validTo: new Date('21 Aug 2022 00:12:00 GMT') },
         deprivations: [],
         features: '',
-        fishingLicences: [
+        fishingLicenses: [
           {
             code: FishingLicenseCodeType.catchMark,
             name: 'aflamark',
@@ -37,7 +37,7 @@ export class FishingLicenceApiClientMock implements FishingLicenseClient {
         seaworthiness: { validTo: new Date('23 Jan 2021 00:12:00 GMT') },
         deprivations: [],
         features: '',
-        fishingLicences: [
+        fishingLicenses: [
           {
             code: FishingLicenseCodeType.catchMark,
             name: 'aflamark',
@@ -57,12 +57,12 @@ export class FishingLicenceApiClientMock implements FishingLicenseClient {
         seaworthiness: { validTo: new Date('23 Feb 2022 00:12:00 GMT') },
         deprivations: [],
         features: '',
-        fishingLicences: [],
+        fishingLicenses: [],
       },
     ]
   }
 
-  getFishingLicenses(registrationNumber: number): FishingLicence[] {
+  getFishingLicenses(registrationNumber: number): FishingLicense[] {
     return [
       {
         answer: true,

@@ -45,7 +45,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({
   const shipOptions = (ships: Ship[]) => {
     const options = [] as Option[]
     for (const [index, ship] of ships.entries()) {
-      if (ship.fishingLicences.length !== 0) {
+      if (ship.fishingLicenses.length !== 0) {
         continue
       }
       if (ship.deprivations.length > 0) return undefined
@@ -114,7 +114,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({
         {formatMessage(shipSelection.labels.withFishingLicenseTitle)}
       </Text>
       {ships.map((ship: Ship, index: number) => {
-        if (ship.fishingLicences.length === 0) {
+        if (ship.fishingLicenses.length === 0) {
           return null
         }
         return (
@@ -130,7 +130,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({
           >
             <ShipInformation ship={ship} />
             <Stack space={1} align="right">
-              {ship.fishingLicences.map((license) => {
+              {ship.fishingLicenses.map((license) => {
                 console.log(license)
                 return (
                   <Tag variant="blue">
