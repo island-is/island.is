@@ -221,6 +221,7 @@ api:
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-prod-upload-api'
     ICELANDIC_NAMES_REGISTRY_BACKEND_URL: 'http://web-icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api'
+    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
     NODE_OPTIONS: '--max-old-space-size=464'
     PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: 'IS/GOV/5402697509/FJS-Public'
@@ -376,6 +377,7 @@ application-system-api:
     FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_NAME: 'Stafrænt Ísland'
     GRAPHQL_API_URL: 'http://web-api.islandis.svc.cluster.local'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system'
+    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'island@island.is'
     INSTITUTION_APPLICATION_RECIPIENT_NAME: 'Stafrænt Ísland'
     LOGIN_SERVICE_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'island@island.is'
@@ -512,6 +514,8 @@ application-system-api-worker:
     DB_NAME: 'application_system_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'application_system_api'
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system'
+    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -548,6 +552,7 @@ application-system-api-worker:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET'
     SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST'
     SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME'
@@ -658,6 +663,7 @@ download-service:
   enabled: true
   env:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service'
+    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
@@ -726,6 +732,7 @@ endorsement-system-api:
     EMAIL_FROM_ADDRESS: 'noreply@island.is'
     EMAIL_FROM_NAME: 'island.is'
     EMAIL_REGION: 'eu-west-1'
+    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
@@ -799,7 +806,6 @@ global:
   env:
     AUDIT_GROUP_NAME: '/island-is/audit-log'
     AWS_REGION: 'eu-west-1'
-    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     PORT: '3333'
     name: 'prod'
   image:
@@ -814,6 +820,7 @@ icelandic-names-registry-backend:
     DB_NAME: 'icelandic_names_registry_backend'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'icelandic_names_registry_backend'
+    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
@@ -1114,6 +1121,7 @@ service-portal-api:
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'service_portal_api'
     EMAIL_REGION: 'eu-west-1'
+    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SERVICE_PORTAL_BASE_URL: 'https://island.is/minarsidur'
@@ -1195,6 +1203,7 @@ services-documents:
     DB_NAME: 'services_documents'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_documents'
+    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
@@ -1311,6 +1320,7 @@ skilavottord-ws:
     DB_NAME: 'skilavottord'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'skilavottord'
+    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
@@ -1378,7 +1388,6 @@ skilavottord-ws:
     FJARSYSLA_REST_PASS: '/k8s/skilavottord/FJARSYSLA_REST_PASS'
     FJARSYSLA_REST_URL: '/k8s/skilavottord-ws/FJARSYSLA_REST_URL'
     FJARSYSLA_REST_USER: '/k8s/skilavottord/FJARSYSLA_REST_USER'
-    IDENTITY_SERVER_ISSUER_URL: '/k8s/skilavottord/ws/IDENTITY_SERVER_ISSUER_URL'
     SAMGONGUSTOFA_REST_AUTH_URL: '/k8s/skilavottord-ws/SAMGONGUSTOFA_REST_AUTH_URL'
     SAMGONGUSTOFA_REST_DEREG_URL: '/k8s/skilavottord-ws/SAMGONGUSTOFA_REST_DEREG_URL'
     SAMGONGUSTOFA_REST_PASS: '/k8s/skilavottord/SAMGONGUSTOFA_REST_PASS'

@@ -490,7 +490,7 @@ export const StandardForm = ({
                         <Text key={index} variant="small" color="blue600">
                           <a
                             href={`${
-                              linkResolver('helpdesk').href
+                              linkResolver('serviceweb').href
                             }/${organizationSlug}/${categorySlug}?q=${slug}`}
                           >
                             {title}
