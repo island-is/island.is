@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useContext } from 'react'
-import { Box } from '@island.is/island-ui/core'
+import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
 
 import * as styles from './Profile.css'
 
@@ -24,6 +24,7 @@ import {
   CommentSection,
   ApplicationHeader,
   FilesListWithHeaderContainer,
+  TaxBreakdown,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 import {
@@ -123,6 +124,25 @@ const ApplicationProfile = ({
 
   const applicantMoreInfo = getApplicantMoreInfo(application)
 
+  const test = [
+    {
+      title: 'Samtals heildarlaun',
+      content: 'kr.',
+    },
+    {
+      title: 'Meðaltal',
+      content: 'kr',
+    },
+    {
+      title: 'Persónuafsláttur',
+      content: 'kr',
+    },
+    {
+      title: 'Samtals staðgreiðsla',
+      content: 'kr',
+    },
+  ]
+
   const nationalRegistryInfo = getNationalRegistryInfo(application)
 
   const modalInfo = getAidAmountModalInfo(
@@ -167,6 +187,37 @@ const ApplicationProfile = ({
             className={`contentUp delay-75`}
           />
         )}
+
+        <ProfileUnit
+          heading="Upplýsingar um staðgreiðslu"
+          info={test}
+          className={`contentUp delay-100`}
+        />
+
+        <Box
+          className={styles.widthFull}
+          marginBottom={7}
+          width="full"
+          background="purple100"
+          paddingRight={3}
+          borderRadius="standard"
+        >
+          <Accordion dividerOnBottom={false} dividerOnTop={false} space={4}>
+            <AccordionItem
+              id="tax_breakdown"
+              label={
+                <Box paddingX={3}>
+                  <Text fontWeight="semiBold">Sundurliðun</Text>
+                </Box>
+              }
+              iconVariant="sidebar"
+            >
+              <Box paddingX={3} paddingY={1}>
+                <TaxBreakdown />
+              </Box>
+            </AccordionItem>
+          </Accordion>
+        </Box>
 
         <ProfileUnit
           heading="Umsóknarferli"

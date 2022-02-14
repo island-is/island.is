@@ -1,0 +1,42 @@
+import { style, globalStyle } from '@vanilla-extract/css'
+import { theme } from '@island.is/island-ui/theme'
+
+export const tableContainer = style({
+  width: '100%',
+  backgroundColor: theme.color.white,
+  borderRadius: theme.spacing[1],
+})
+
+globalStyle(`${tableContainer} th, td`, {
+  paddingRight: theme.spacing[3],
+  paddingLeft: theme.spacing[3],
+  paddingTop: theme.spacing[2],
+  paddingBottom: theme.spacing[2],
+})
+
+globalStyle(
+  `${tableContainer} tr:last-child td, ${tableContainer} tr:nth-last-child(2) td`,
+  {
+    paddingTop: theme.spacing[1],
+    paddingBottom: theme.spacing[1],
+  },
+)
+
+globalStyle(
+  `${tableContainer} tr:nth-last-child(4), ${tableContainer} tr:first-child`,
+  {
+    boxShadow: 'inset 0px -1px 0px #CCDFFF',
+  },
+)
+
+export const headlineContainer = style({
+  backgroundColor: theme.color.blue100,
+  fontSize: '12px',
+  color: '#66668A',
+  fontWeight: 600,
+})
+
+globalStyle(`${headlineContainer} td`, {
+  paddingTop: theme.spacing[1],
+  paddingBottom: theme.spacing[1],
+})
