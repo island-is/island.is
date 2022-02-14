@@ -1,5 +1,21 @@
 import { YES, NO } from './constants'
 
+export interface PersonInformation {
+  fullName: string
+  genderCode: string
+  children: {
+    nationalId: string
+    fullName: string
+    otherParent: {
+      nationalId: string
+    }
+  }[]
+  spouse?: {
+    nationalId?: string
+    name?: string
+  }
+}
+
 export type YesOrNo = typeof NO | typeof YES
 
 export interface Period {
@@ -8,6 +24,7 @@ export interface Period {
   ratio: string
   firstPeriodStart?: string
   useLength?: YesOrNo
+  daysToUse?: string
   rawIndex?: number
 }
 

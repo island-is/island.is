@@ -1,19 +1,19 @@
 import { decode } from 'jsonwebtoken'
-import { GenericObject } from 'next-auth/_utils'
+
 import { AuthSession, AuthUser } from './types'
 import { checkExpiry, refreshAccessToken } from './utils'
 
 export const signIn = (
   user: AuthUser,
-  account: GenericObject,
-  profile: GenericObject,
+  account: Record<string, unknown>,
+  profile: Record<string, unknown>,
   identityServerId: string,
 ) => {
   if (account.provider === identityServerId) {
-    user.nationalId = profile.nationalId
-    user.accessToken = account.accessToken
-    user.refreshToken = account.refreshToken
-    user.idToken = account.idToken
+    user.nationalId = profile.nationalId as string
+    user.accessToken = account.accessToken as string
+    user.refreshToken = account.refreshToken as string
+    user.idToken = account.idToken as string
     return true
   }
 
@@ -21,16 +21,21 @@ export const signIn = (
 }
 
 export const jwt = async (
-  token: GenericObject,
+  token: Record<string, unknown>,
   clientId: string,
   idsSecret?: string,
   nextUrl?: string,
   idsServerDomain?: string,
 ) => {
-  if (checkExpiry(token.accessToken, token.isRefreshTokenExpired)) {
+  if (
+    checkExpiry(
+      token.accessToken as string,
+      token.isRefreshTokenExpired as boolean,
+    )
+  ) {
     try {
       const [accessToken, refreshToken] = await refreshAccessToken(
-        token.refreshToken,
+        token.refreshToken as string,
         clientId,
         idsSecret,
         nextUrl,

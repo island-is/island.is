@@ -82,9 +82,10 @@ export const OtherParentApproval: Form = buildForm({
               width: 'half',
               condition: (answers) =>
                 getApplicationAnswers(answers).isRequestingRights === YES,
-              // TODO: update when requested days are no longer a binary choice
-              // defaultValue: (application: Application) => getApplicationAnswers(application.answers).requestDays
-              value: '45',
+              value: (application: Application) =>
+                getApplicationAnswers(
+                  application.answers,
+                ).requestDays.toString(),
             }),
             buildKeyValueField({
               label: otherParentApprovalFormMessages.labelPersonalDiscount,

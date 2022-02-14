@@ -9,7 +9,7 @@ export const overview = defineMessages({
   description: {
     id: `pdpp.application:application.overview.description`,
     defaultMessage:
-      'Vinsamlega farið yfir niðurstöður umsóknar um greiðsluáætlun áður en umsóknin er staðfest.',
+      'Vinsamlegast farið yfir umsóknina áður en hún er staðfest.',
     description: 'Overview description',
   },
   name: {
@@ -54,7 +54,7 @@ export const overview = defineMessages({
   },
   monthlyPayments: {
     id: `pdpp.application:application.overview.monthlyPayments`,
-    defaultMessage: 'Mánaðarlegar greiðslur',
+    defaultMessage: 'Heildargreiðslur á mánuði',
     description: 'Overview monthly payments',
   },
   accordionItemLabel: {
@@ -75,7 +75,7 @@ export const overview = defineMessages({
   infoBoxSummary: {
     id: `pdpp.application:application.overview.infoBoxSummary`,
     defaultMessage:
-      'Staðfesting á greiðsluáætlun rýfur fyrningu á þeim sköttum gjöldum sem eru í greiðsluáætlun, sbr. 1. mgr. 12. gr. laga um innheimtu opinberra skatta og gjalda, nr. 150/2019. Hafir þú athugasemdir við niðurstöður umsóknarinnar er þér bent á að hafa samband við innheimtumann í þínu umdæmi. ',
+      'Staðfesting á greiðsluáætlun rýfur fyrningu á þeim sköttum og gjöldum sem eru í greiðsluáætlun, sbr. 1. mgr. 12. gr. laga um innheimtu opinberra skatta og gjalda, nr. 150/2019. Hafir þú athugasemdir við niðurstöður umsóknarinnar er þér bent á að hafa samband við innheimtumann í þínu umdæmi. ',
     description: 'Overview info box summary at bottom of the screen',
   },
   submitButton: {

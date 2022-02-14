@@ -24,6 +24,8 @@ export const ApplicationQuery = gql`
       familyStatus
       spouseNationalId
       spouseName
+      spouseEmail
+      spousePhoneNumber
       city
       streetName
       postalCode
@@ -37,12 +39,13 @@ export const ApplicationQuery = gql`
       }
       state
       formComment
+      spouseFormComment
       studentCustom
-      amount
       rejection
       staff {
         name
         municipalityId
+        nationalId
       }
       applicationEvents {
         id
@@ -52,6 +55,33 @@ export const ApplicationQuery = gql`
         created
         staffName
         staffNationalId
+      }
+      amount {
+        aidAmount
+        income
+        personalTaxCredit
+        spousePersonalTaxCredit
+        tax
+        finalAmount
+        deductionFactors {
+          description
+          amount
+        }
+      }
+    }
+  }
+`
+
+export const ApplicationSearchQuery = gql`
+  query ApplicationSearchQuery($input: ApplicationSearchInput!) {
+    applicationSearch(input: $input) {
+      id
+      nationalId
+      created
+      name
+      state
+      files {
+        id
       }
     }
   }
@@ -152,7 +182,6 @@ export const ApplicationEventMutation = gql`
       state
       formComment
       studentCustom
-      amount
       rejection
       staff {
         name
@@ -185,7 +214,10 @@ export const CurrentUserQuery = gql`
         phoneNumber
         roles
         active
+        nickname
         municipalityHomepage
+        email
+        usePseudoName
       }
     }
   }
@@ -223,7 +255,7 @@ export const UpdateApplicationMutation = gql`
       state
       formComment
       studentCustom
-      amount
+      spouseNationalId
       rejection
       applicationEvents {
         id
@@ -238,6 +270,196 @@ export const UpdateApplicationMutation = gql`
         name
         municipalityId
       }
+      amount {
+        aidAmount
+        income
+        personalTaxCredit
+        spousePersonalTaxCredit
+        tax
+        finalAmount
+        deductionFactors {
+          description
+          amount
+        }
+      }
+    }
+  }
+`
+
+export const StaffForMunicipalityQuery = gql`
+  query staffForMunicipality {
+    users {
+      id
+      nationalId
+      name
+      roles
+      active
+    }
+  }
+`
+
+export const StaffQuery = gql`
+  query getStaff($input: StaffInput!) {
+    user(input: $input) {
+      id
+      nationalId
+      name
+      roles
+      active
+      nickname
+      email
+    }
+  }
+`
+
+export const StaffMutation = gql`
+  mutation StaffMutation($input: CreateStaffInput!) {
+    createStaff(input: $input) {
+      id
+    }
+  }
+`
+
+export const MunicipalityActivityMutation = gql`
+  mutation MunicipalityActivityMutation($input: MunicipalityActivityInput!) {
+    municipalityActivity(input: $input) {
+      id
+      active
+    }
+  }
+`
+
+export const MunicipalityMutation = gql`
+  mutation MunicipalityMutation($input: CreateMunicipalityInput!) {
+    createMunicipality(input: $input) {
+      id
+    }
+  }
+`
+
+export const UpdateMunicipalityMutation = gql`
+  mutation UpdateMunicipalityMutation($input: UpdateMunicipalityInput!) {
+    updateMunicipality(input: $input) {
+      id
+      name
+      homepage
+      active
+      municipalityId
+      email
+      rulesHomepage
+      individualAid {
+        ownPlace
+        registeredRenting
+        unregisteredRenting
+        livesWithParents
+        unknown
+        withOthers
+        type
+      }
+      cohabitationAid {
+        ownPlace
+        registeredRenting
+        unregisteredRenting
+        livesWithParents
+        unknown
+        withOthers
+        type
+      }
+    }
+  }
+`
+export const UpdateStaffMutation = gql`
+  mutation UpdateStaffMutation($input: UpdateStaffInput!) {
+    updateStaff(input: $input) {
+      id
+      nationalId
+      name
+      municipalityId
+      phoneNumber
+      roles
+      active
+      nickname
+      municipalityHomepage
+      email
+      usePseudoName
+    }
+  }
+`
+
+export const MunicipalitiesQuery = gql`
+  query getMunicipalities {
+    municipalities {
+      id
+      name
+      active
+      numberOfUsers
+      municipalityId
+    }
+  }
+`
+
+export const MunicipalityQuery = gql`
+  query getMunicipality($input: MunicipalityQueryInput!) {
+    municipality(input: $input) {
+      id
+      name
+      active
+      rulesHomepage
+      homepage
+      municipalityId
+      email
+      adminUsers {
+        name
+        nationalId
+        email
+        active
+        id
+      }
+      individualAid {
+        ownPlace
+        registeredRenting
+        unregisteredRenting
+        livesWithParents
+        unknown
+        withOthers
+        type
+      }
+      cohabitationAid {
+        ownPlace
+        registeredRenting
+        unregisteredRenting
+        livesWithParents
+        unknown
+        withOthers
+        type
+      }
+    }
+  }
+`
+
+export const AdminUsersQuery = gql`
+  query getAdminUsers($input: MunicipalityQueryInput!) {
+    municipality(input: $input) {
+      municipalityId
+      adminUsers {
+        name
+        nationalId
+        email
+        active
+        id
+      }
+    }
+  }
+`
+
+export const SupervisorsQuery = gql`
+  query supervisorsQuery {
+    supervisors {
+      id
+      nationalId
+      name
+      roles
+      active
     }
   }
 `

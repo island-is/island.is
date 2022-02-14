@@ -19,13 +19,13 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Rafraen skjol
       {
-        heading: m.service,
         name: m.documents,
         path: ServicePortalPath.ElectronicDocumentsRoot,
         icon: {
           type: 'outline',
           icon: 'reader',
         },
+        subscribesTo: 'documents',
       },
 
       // Umsoknir
@@ -40,7 +40,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Min Gogn
       {
-        heading: m.myInfo,
         name: m.userInfo,
         path: ServicePortalPath.MyInfoRoot,
         icon: {
@@ -80,7 +79,21 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           icon: 'receipt',
         },
       },
-
+      // Mín réttindi
+      {
+        name: m.delegation,
+        path: ServicePortalPath.MyLicensesRoot,
+        icon: {
+          type: 'outline',
+          icon: 'receipt',
+        },
+        children: [
+          {
+            name: m.parentalLeave,
+            path: ServicePortalPath.ParentalLeave,
+          },
+        ],
+      },
       // Menntun
       {
         name: m.education,
@@ -90,7 +103,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           icon: 'school',
         },
       },
-
       {
         name: m.documentProvider,
         path: ServicePortalPath.DocumentProviderRoot,
@@ -149,12 +161,13 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
       },
 
+      // Fasteignir
       {
-        name: m.licenses,
-        path: ServicePortalPath.LicensesRoot,
+        name: m.realEstate,
+        path: ServicePortalPath.AssetsRoot,
         icon: {
           type: 'outline',
-          icon: 'business',
+          icon: 'home',
         },
       },
 
@@ -200,67 +213,59 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           icon: 'car',
         },
       },
-    ],
-  },
-
-  {
-    name: m.actions,
-    children: [
-      // Fasteignir
-      {
-        heading: m.comingSoon,
-        name: m.realEstate,
-        path: ServicePortalPath.AssetsRoot,
-        systemRoute: true,
-        icon: {
-          type: 'outline',
-          icon: 'home',
-        },
-      },
-
-      // Stillingar
+      // Stillingar - hidden from nav
       {
         name: m.settings,
-        path: ServicePortalPath.SettingsRoot,
-        systemRoute: true,
-        icon: {
-          type: 'outline',
-          icon: 'settings',
-        },
+        navHide: true,
         children: [
           {
             name: m.accessControl,
             path: ServicePortalPath.SettingsAccessControl,
-            children: [
-              {
-                name: m.accessControlGrant,
-                path: ServicePortalPath.SettingsAccessControlGrant,
-              },
-              {
-                name: m.accessControlAccess,
-                path: ServicePortalPath.SettingsAccessControlAccess,
-              },
-            ],
+          },
+          {
+            name: m.accessControlGrant,
+            path: ServicePortalPath.SettingsAccessControlGrant,
+          },
+          {
+            name: m.accessControlAccess,
+            path: ServicePortalPath.SettingsAccessControlAccess,
+          },
+          {
+            name: m.mySettings,
+            path: ServicePortalPath.SettingsPersonalInformation,
+          },
+          {
+            name: m.email,
+            path: ServicePortalPath.SettingsPersonalInformationEditEmail,
+          },
+          {
+            name: m.phone,
+            path: ServicePortalPath.SettingsPersonalInformationEditPhoneNumber,
+          },
+          {
+            name: m.nudge,
+            path: ServicePortalPath.SettingsPersonalInformationEditNudge,
+          },
+          {
+            name: m.language,
+            path: ServicePortalPath.SettingsPersonalInformationEditLanguage,
           },
         ],
       },
-
-      // Mín réttindi
+      // Mín skírteini
       {
-        name: m.delegation,
-        path: ServicePortalPath.MyLicensesRoot,
+        name: m.licenses,
+        path: ServicePortalPath.LicensesRoot,
+
         icon: {
           type: 'outline',
-          icon: 'receipt',
+          icon: 'wallet',
         },
         children: [
           {
-            name: m.parentalLeave,
-            path: ServicePortalPath.ParentalLeave,
-          },
-          {
+            navHide: true,
             name: m.drivingLicense,
-            path: ServicePortalPath.DrivingLicense,
+            path: ServicePortalPath.LicensesDrivingDetail,
           },
         ],
       },

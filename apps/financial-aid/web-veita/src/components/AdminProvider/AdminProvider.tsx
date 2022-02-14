@@ -35,12 +35,12 @@ const AdminProvider = ({ children }: PageProps) => {
   })
   const loggedInUser: User = data?.currentUser
 
-  const { municipality, setMunicipality } = useMunicipality()
+  const { municipality, setMunicipalityById } = useMunicipality()
 
   useEffect(() => {
     if (loggedInUser && !admin && loggedInUser.staff) {
       setAdmin(loggedInUser)
-      setMunicipality(loggedInUser.staff.municipalityId)
+      setMunicipalityById(loggedInUser.staff.municipalityId)
       setIsAuthenticated(true)
     }
   }, [setAdmin, loggedInUser, admin])
@@ -57,7 +57,12 @@ const AdminProvider = ({ children }: PageProps) => {
 
   return (
     <AdminContext.Provider
-      value={{ isAuthenticated, admin, setAdmin, municipality }}
+      value={{
+        isAuthenticated,
+        admin,
+        setAdmin,
+        municipality,
+      }}
     >
       {children}
     </AdminContext.Provider>

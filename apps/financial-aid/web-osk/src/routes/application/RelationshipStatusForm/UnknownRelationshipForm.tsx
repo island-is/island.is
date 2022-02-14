@@ -8,8 +8,8 @@ import {
 } from '@island.is/financial-aid-web/osk/src/components'
 import {
   FamilyStatus,
+  FormSpouse,
   isEmailValid,
-  Spouse,
 } from '@island.is/financial-aid/shared/lib'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import * as styles from './relationshipStatusForm.css'
@@ -32,7 +32,7 @@ const UnknownRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
   const options = [
     {
       label: 'Nei, ég er ekki í sambúð',
-      value: FamilyStatus.UNKNOWN,
+      value: FamilyStatus.NOT_COHABITATION,
     },
     {
       label: 'Já, ég er í óstaðfestri sambúð',
@@ -40,7 +40,7 @@ const UnknownRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
     },
   ]
 
-  const isInputAndRadioValid = (acceptData: boolean, spouse?: Spouse) => {
+  const isInputAndRadioValid = (acceptData: boolean, spouse?: FormSpouse) => {
     return (
       !acceptData ||
       !spouse?.email ||
@@ -51,17 +51,13 @@ const UnknownRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
   }
 
   const errorCheck = () => {
-    if (
-      form?.familyStatus === undefined ||
-      !nextUrl ||
-      form?.familyStatus === FamilyStatus.NOT_INFORMED
-    ) {
+    if (form?.familyStatus === undefined || !nextUrl) {
       setHasError(true)
       return
     }
 
     if (
-      form?.familyStatus === FamilyStatus.UNREGISTERED_COBAHITATION &&
+      form.familyStatus === FamilyStatus.UNREGISTERED_COBAHITATION &&
       isInputAndRadioValid(acceptData, form?.spouse)
     ) {
       setHasError(true)
@@ -95,7 +91,7 @@ const UnknownRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
         </Text>
         <RadioButtonContainer
           options={options}
-          error={hasError}
+          error={hasError && form.familyStatus === undefined}
           isChecked={(value: FamilyStatus) => {
             return value === form?.familyStatus
           }}
@@ -105,25 +101,29 @@ const UnknownRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
             setHasError(false)
           }}
         />
-        <div
-          className={cn({
-            [`${styles.infoContainer}`]: true,
-            [`${styles.showInfoContainer}`]:
-              FamilyStatus.UNREGISTERED_COBAHITATION === form?.familyStatus,
-          })}
-        >
-          <SpouseInfo
-            hasError={hasError}
-            acceptData={acceptData}
-            setAcceptData={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setHasError(false)
-              setAcceptData(event.target.checked)
-            }}
-            removeError={() => setHasError(false)}
-          />
-        </div>
+        {FamilyStatus.UNREGISTERED_COBAHITATION === form?.familyStatus && (
+          <div
+            data-testid="spouseInfo"
+            className={cn({
+              [`${styles.infoContainer}`]: true,
+              [`${styles.showInfoContainer}`]:
+                FamilyStatus.UNREGISTERED_COBAHITATION === form?.familyStatus,
+            })}
+          >
+            <SpouseInfo
+              hasError={hasError}
+              acceptData={acceptData}
+              setAcceptData={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setHasError(false)
+                setAcceptData(event.target.checked)
+              }}
+              removeError={() => setHasError(false)}
+            />
+          </div>
+        )}
 
         <div
+          data-testid="showErrorMessage"
           className={cn({
             [`errorMessage`]: true,
             [`showErrorMessage`]: hasError,

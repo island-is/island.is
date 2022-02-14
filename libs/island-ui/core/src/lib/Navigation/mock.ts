@@ -1,110 +1,119 @@
 export const categories = [
   {
     title: 'Fjölskylda og velferð',
-    href: '/fjolskylda-og-velferd',
+    href: '#',
   },
   {
     title: 'Eldri borgarar',
-    href: '/eldri-borgarar',
+    href: '#',
     active: true,
   },
   {
     title: 'Bætur',
-    href: '/baetur',
+    href: '#',
   },
   {
     title: 'Málefni fatlaðra',
-    href: '/malefni-fatladra',
+    href: '#',
   },
   {
     title: 'Menntun',
-    href: '/menntun',
+    href: '#',
   },
   {
     title: 'Vegabréf, ferðalög og búseta erlendis',
-    href: '/vegabref-ferdalog-og-buseta-erlendis',
+    href: '#',
   },
   {
     title: 'Innflytjendur',
-    href: '/innflytjendur',
+    href: '#',
   },
   {
     title: 'Umhverfismál',
-    href: '/umhverfismal',
+    href: '#',
   },
   {
     title: 'Húsnæðismál',
-    href: '/husnaedismal',
+    href: '#',
   },
   {
     title: 'Samfélag og réttindi',
-    href: '/samfelag-og-rettindi',
+    href: '#',
   },
   {
     title: 'Dómstólar og réttarfar',
-    href: '/domstolar-og-rettarfar',
+    href: '#',
   },
   {
     title: 'Fjármál og skattar',
-    href: '/fjarmal-og-skattar',
+    href: '#',
   },
 ]
 
 export const pages = [
   {
     title: 'Hér er tengill á síðu',
-    href: '/her-er-tengill-a-sidu',
+    href: '#',
   },
   {
     title: 'Þessi tengill er virkur og með undirsíðum sem opnast',
-    href: '/thessi-tengill-er-virkur-og-med-undirsidum-sem-opnast',
+    href: '#',
     active: true,
     items: [
       {
         title: 'Hér er undirsíða',
-        href: '/her-er-undirsida',
+        href: '#',
       },
       {
         title: 'Hér er virk undirsíða',
-        href: '/her-er-virk-undirsida',
+        href: '#',
         active: true,
       },
       {
         title: 'Margt sniðugt að skoða',
-        href: '/margt-snidugt-ad-skoda',
+        href: '#',
       },
       {
         title: 'Meira sniðugt',
-        href: '/meira-snidugt',
+        href: '#',
       },
     ],
   },
   {
     title: 'Stakur tengill',
-    href: '/stakur-tengill',
+    href: '#',
   },
   {
     title: 'Annar tengill með undirsíðum',
-    href: '/annar-tengill-med-undirsidum',
+    href: '#',
     items: [
       {
         title: 'Undirsíða 1',
-        href: '/undirsida 1',
+        href: '#',
         items: [
           {
             title: 'Undir undirsíða 1',
-            href: '/undir-undirsida-1',
+            href: '#',
           },
           {
             title: 'Undir undirsíða 2',
-            href: '/undir-undirsida-2',
+            href: '#',
           },
         ],
       },
       {
         title: 'Undirsíða 2',
-        href: '/undirsida 2',
+        href: '#',
       },
     ],
+  },
+]
+
+export const pagesWithAccordion = [
+  {
+    title: 'Tengill sem opnast með takka',
+    href: '#',
+    accordion: true,
+    items: categories,
   },
 ]

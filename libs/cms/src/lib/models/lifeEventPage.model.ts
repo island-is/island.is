@@ -1,12 +1,8 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-import {
-  ILifeEventPage,
-  ILifeEventPageFields,
-} from '../generated/contentfulTypes'
+import { ILifeEventPage } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
-import { Entry } from 'contentful'
 
 @ObjectType()
 export class LifeEventPage {
@@ -15,6 +11,9 @@ export class LifeEventPage {
 
   @Field()
   title!: string
+
+  @Field(() => String, { nullable: true })
+  shortTitle?: string | null
 
   @Field()
   slug!: string
@@ -27,6 +26,9 @@ export class LifeEventPage {
 
   @Field(() => Image, { nullable: true })
   thumbnail?: Image | null
+
+  @Field(() => Image, { nullable: true })
+  tinyThumbnail?: Image | null
 
   @Field(() => [SliceUnion])
   content!: Array<typeof SliceUnion>
@@ -41,10 +43,12 @@ export const mapLifeEventPage = ({
 }: ILifeEventPage): LifeEventPage => ({
   id: sys.id,
   title: fields.title ?? '',
+  shortTitle: fields.shortTitle ?? '',
   slug: fields.slug ?? '',
   intro: fields.intro ?? '',
   image: fields.image ? mapImage(fields.image) : null,
   thumbnail: fields.thumbnail ? mapImage(fields.thumbnail) : null,
+  tinyThumbnail: fields.tinyThumbnail ? mapImage(fields.tinyThumbnail) : null,
   content: fields?.content
     ? mapDocument(fields.content, sys.id + ':content')
     : [],

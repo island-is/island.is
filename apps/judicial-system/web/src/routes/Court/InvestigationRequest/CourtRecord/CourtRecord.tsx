@@ -1,80 +1,92 @@
-import React, { useEffect, useState } from 'react'
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
+import React, { useContext, useEffect } from 'react'
+import { useIntl } from 'react-intl'
+
+import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import { SessionArrangements } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
 import {
-  CaseData,
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { useQuery } from '@apollo/client'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
-import { useRouter } from 'next/router'
-import CourtRecordForm from './CourtRecordForm'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { icCourtRecord as m } from '@island.is/judicial-system-web/messages'
-import { useIntl } from 'react-intl'
+import {
+  core,
+  icCourtRecord as m,
+} from '@island.is/judicial-system-web/messages'
+import type { Case } from '@island.is/judicial-system/types'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+
+import CourtRecordForm from './CourtRecordForm'
 
 const CourtRecord = () => {
-  const [workingCase, setWorkingCase] = useState<Case>()
   const { autofill } = useCase()
   const { formatMessage } = useIntl()
-
-  const router = useRouter()
-  const id = router.query.id
-
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+    isCaseUpToDate,
+  } = useContext(FormContext)
+  const { user } = useContext(UserContext)
 
   useEffect(() => {
     document.title = 'Þingbók - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
-    const defaultCourtAttendees = (wc: Case): string => {
-      let attendees = ''
+    if (isCaseUpToDate) {
+      const defaultCourtAttendees = (wc: Case): string => {
+        let attendees = ''
 
-      if (
-        wc.prosecutor &&
-        wc.sessionArrangements !== SessionArrangements.REMOTE_SESSION
-      ) {
-        attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n`
-      }
-
-      if (wc.sessionArrangements === SessionArrangements.ALL_PRESENT) {
-        if (wc.accusedName) {
-          attendees += `${wc.accusedName} varnaraðili`
+        if (wc.prosecutor) {
+          attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}`
         }
-      } else {
-        attendees +=
-          'Varnaraðili var ekki viðstaddur sbr. 104. gr. laga 88/2008 um meðferð sakamála.'
+
+        if (
+          wc.defenderName &&
+          wc.sessionArrangements !== SessionArrangements.PROSECUTOR_PRESENT
+        ) {
+          attendees += `\n${wc.defenderName} skipaður ${
+            wc.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
+          } ${formatMessage(core.defendant, { suffix: 'a' })}\n`
+        }
+
+        if (wc.translator) {
+          attendees += `\n${wc.translator} túlkur`
+        }
+
+        if (wc.defendants && wc.defendants.length > 0) {
+          if (wc.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+            wc.defendants.forEach((defendant) => {
+              attendees += `\n${defendant.name} ${formatMessage(
+                core.defendant,
+                {
+                  suffix: 'i',
+                },
+              )}`
+            })
+          } else {
+            if (wc.defendants.length > 1) {
+              attendees += `\n${formatMessage(
+                m.sections.courtAttendees.multipleDefendantNotPresentAutofill,
+              )}`
+            } else {
+              attendees += `\n${formatMessage(
+                m.sections.courtAttendees.defendantNotPresentAutofill,
+              )}`
+            }
+          }
+        }
+
+        return attendees
       }
 
-      if (
-        wc.defenderName &&
-        wc.sessionArrangements !== SessionArrangements.REMOTE_SESSION
-      ) {
-        attendees += `\n${wc.defenderName} skipaður ${
-          wc.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
-        } varnaraðila`
+      const theCase = workingCase
+
+      if (theCase.courtDate) {
+        autofill('courtStartDate', theCase.courtDate, theCase)
       }
-
-      if (
-        wc.translator &&
-        wc.sessionArrangements !== SessionArrangements.REMOTE_SESSION
-      ) {
-        attendees += `\n${wc.translator} túlkur`
-      }
-
-      return attendees
-    }
-
-    if (!workingCase && data?.case) {
-      const theCase = data.case
-
-      autofill('courtStartDate', new Date().toString(), theCase)
 
       if (theCase.court) {
         autofill(
@@ -96,51 +108,71 @@ const CourtRecord = () => {
         autofill('prosecutorDemands', theCase.demands, theCase)
       }
 
-      if (theCase.sessionArrangements === SessionArrangements.REMOTE_SESSION) {
-        autofill(
-          'litigationPresentations',
-          formatMessage(m.sections.litigationPresentations.autofill),
-          theCase,
-        )
+      if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+        let autofillAccusedBookings = ''
+
+        if (theCase.defenderName) {
+          autofillAccusedBookings += `${formatMessage(
+            m.sections.accusedBookings.autofillDefender,
+            {
+              defender: theCase.defenderName,
+            },
+          )}\n\n`
+        }
+
+        if (theCase.translator) {
+          autofillAccusedBookings += `${formatMessage(
+            m.sections.accusedBookings.autofillTranslator,
+            {
+              translator: theCase.translator,
+            },
+          )}\n\n`
+        }
+
+        autofillAccusedBookings += `${formatMessage(
+          m.sections.accusedBookings.autofillRightToRemainSilent,
+        )}\n\n${formatMessage(
+          m.sections.accusedBookings.autofillCourtDocumentOne,
+        )}\n\n${formatMessage(m.sections.accusedBookings.autofillAccusedPlea)}`
+
+        autofill('accusedBookings', autofillAccusedBookings, theCase)
       }
 
-      if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+      if (
+        theCase.sessionArrangements ===
+          SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
+        theCase.defenderIsSpokesperson &&
+        theCase.defenderName
+      ) {
         autofill(
           'accusedBookings',
-          `${formatMessage(
-            m.sections.accusedBookings.autofillRightToRemainSilent,
-          )}\n\n${formatMessage(
-            m.sections.accusedBookings.autofillCourtDocumentOne,
-          )}\n\n${formatMessage(
-            m.sections.accusedBookings.autofillAccusedPlea,
-          )}`,
+          formatMessage(m.sections.accusedBookings.autofillSpokeperson, {
+            spokesperson: theCase.defenderName,
+          }),
           theCase,
         )
       }
 
-      setWorkingCase(data.case)
+      setWorkingCase(workingCase)
     }
-  }, [workingCase, setWorkingCase, data, autofill, formatMessage])
+  }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])
 
   return (
     <PageLayout
+      workingCase={workingCase}
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.COURT_RECORD}
-      isLoading={loading}
-      notFound={data?.case === undefined}
-      parentCaseDecision={workingCase?.parentCase?.decision}
-      caseType={workingCase?.type}
-      caseId={workingCase?.id}
+      isLoading={isLoadingWorkingCase}
+      notFound={caseNotFound}
     >
-      {workingCase && (
-        <CourtRecordForm
-          workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
-          isLoading={loading}
-        />
-      )}
+      <CourtRecordForm
+        workingCase={workingCase}
+        setWorkingCase={setWorkingCase}
+        isLoading={isLoadingWorkingCase}
+        user={user}
+      />
     </PageLayout>
   )
 }

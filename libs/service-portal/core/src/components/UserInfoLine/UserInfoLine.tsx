@@ -7,6 +7,8 @@ import {
   GridColumn,
   LoadingDots,
   GridColumnProps,
+  Tooltip,
+  ResponsiveSpace,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
@@ -16,6 +18,12 @@ import { sharedMessages } from '@island.is/shared/translations'
 
 import * as styles from './UserInfoLine.css'
 
+export type EditLink = {
+  external?: boolean
+  url: string
+  title?: MessageDescriptor
+}
+
 interface Props {
   label: MessageDescriptor | string
   content?: string | JSX.Element
@@ -24,11 +32,12 @@ interface Props {
   labelColumnSpan?: GridColumnProps['span']
   valueColumnSpan?: GridColumnProps['span']
   editColumnSpan?: GridColumnProps['span']
-  editLink?: {
-    external?: boolean
-    url: string
-    title?: MessageDescriptor
-  }
+  editLink?: EditLink
+  title?: string
+  titlePadding?: ResponsiveSpace
+  tooltip?: string
+  paddingY?: ResponsiveSpace
+  paddingBottom?: ResponsiveSpace
 }
 
 export const UserInfoLine: FC<Props> = ({
@@ -40,6 +49,11 @@ export const UserInfoLine: FC<Props> = ({
   editColumnSpan = ['1/1', '3/12'],
   loading,
   editLink,
+  title,
+  titlePadding = 2,
+  tooltip,
+  paddingY = 2,
+  paddingBottom,
 }) => {
   const trackExternalLinkClick = () => {
     servicePortalOutboundLink()
@@ -49,12 +63,17 @@ export const UserInfoLine: FC<Props> = ({
   return (
     <Box
       position="relative"
-      paddingY={[2, 3]}
-      paddingX={[2, 4]}
-      border="standard"
-      borderRadius="large"
+      paddingY={paddingY}
+      paddingBottom={paddingBottom}
+      paddingRight={4}
     >
-      <GridRow align={['flexStart', 'center']}>
+      {title && (
+        <Text variant="eyebrow" paddingBottom={titlePadding}>
+          {title}
+        </Text>
+      )}
+
+      <GridRow align="flexStart">
         <GridColumn order={1} span={labelColumnSpan}>
           <Box
             display="flex"
@@ -62,8 +81,8 @@ export const UserInfoLine: FC<Props> = ({
             height="full"
             overflow="hidden"
           >
-            <Text variant="h5" as="h5" lineHeight="lg">
-              {formatMessage(label)}
+            <Text variant="h5" as="span" lineHeight="lg">
+              {formatMessage(label)} {tooltip && <Tooltip text={tooltip} />}
             </Text>
           </Box>
         </GridColumn>
@@ -81,7 +100,7 @@ export const UserInfoLine: FC<Props> = ({
             ) : renderContent ? (
               renderContent()
             ) : (
-              content
+              <Text variant="default">{content}</Text>
             )}
           </Box>
         </GridColumn>

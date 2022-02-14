@@ -15,7 +15,7 @@ import {
   getValueViaPath,
   Option,
 } from '@island.is/application/core'
-import { FamilyMember } from '@island.is/api/domains/national-registry'
+import type { FamilyMember } from '@island.is/api/domains/national-registry'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import { TimelinePeriod } from '../fields/components/Timeline/Timeline'
@@ -26,6 +26,7 @@ import {
   SPOUSE,
   StartDateOptions,
   ParentalRelations,
+  TransferRightsOption,
 } from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
 import { PregnancyStatusAndRightsResults } from '../dataProviders/Children/Children'
@@ -37,8 +38,7 @@ import {
   ChildInformation,
   ChildrenAndExistingApplications,
 } from '../dataProviders/Children/types'
-import { YesOrNo, Period } from '../types'
-import { maxDaysToGiveOrReceive } from '../config'
+import { YesOrNo, Period, PersonInformation } from '../types'
 
 export function getExpectedDateOfBirth(
   application: Application,
@@ -53,20 +53,6 @@ export function getExpectedDateOfBirth(
   }
 
   return selectedChild.expectedDateOfBirth
-}
-
-export function getNameAndIdOfSpouse(
-  familyMembers?: FamilyMember[],
-): [string?, string?] {
-  const spouse = familyMembers?.find(
-    (member) => member.familyRelation === SPOUSE,
-  )
-
-  if (!spouse) {
-    return [undefined, undefined]
-  }
-
-  return [spouse.fullName, spouse.nationalId]
 }
 
 // TODO: Once we have the data, add the otherParentPeriods here.
@@ -214,7 +200,7 @@ export const getAvailablePersonalRightsInMonths = (application: Application) =>
 export const getAvailableRightsInMonths = (application: Application) =>
   daysToMonths(getAvailableRightsInDays(application))
 
-export const getSpouse = (application: Application): FamilyMember | null => {
+export const getSpouseDeprecated = (application: Application) => {
   const family = getValueViaPath(
     application.externalData,
     'family.data',
@@ -225,9 +211,32 @@ export const getSpouse = (application: Application): FamilyMember | null => {
     return null
   }
 
-  const spouse = family.find((member) => member.familyRelation === SPOUSE)
+  return family.find((member) => member.familyRelation === SPOUSE)
+}
 
-  return spouse ?? null
+export const getSpouse = (
+  application: Application,
+): PersonInformation['spouse'] | null => {
+  const person = getValueViaPath(
+    application.externalData,
+    'person.data',
+    null,
+  ) as PersonInformation | null
+
+  if (person?.spouse?.nationalId) {
+    return person.spouse
+  }
+
+  const spouse = getSpouseDeprecated(application)
+
+  if (spouse) {
+    return {
+      name: spouse.fullName,
+      nationalId: spouse.nationalId,
+    }
+  }
+
+  return null
 }
 
 export const getOtherParentOptions = (application: Application) => {
@@ -250,7 +259,7 @@ export const getOtherParentOptions = (application: Application) => {
       label: {
         ...parentalLeaveFormMessages.shared.otherParentSpouse,
         values: {
-          spouseName: spouse.fullName,
+          spouseName: spouse.name,
           spouseId: spouse.nationalId,
         },
       },
@@ -317,10 +326,7 @@ export const getPeriodIndex = (field?: Field) => {
   return parseInt(id.substring(id.indexOf('[') + 1, id.indexOf(']')), 10)
 }
 
-const getOrFallback = (
-  condition: YesOrNo,
-  value: number | undefined = maxDaysToGiveOrReceive,
-) => {
+const getOrFallback = (condition: YesOrNo, value: number | undefined = 0) => {
   if (condition === YES) {
     return value
   }
@@ -348,10 +354,6 @@ export function getApplicationExternalData(
     [],
   ) as ChildrenAndExistingApplications['existingApplications']
 
-  const familyMembers = getValueViaPath(externalData, 'family.data', null) as
-    | FamilyMember[]
-    | null
-
   const userEmail = getValueViaPath(
     externalData,
     'userProfile.data.email',
@@ -362,11 +364,23 @@ export function getApplicationExternalData(
     'userProfile.data.mobilePhoneNumber',
   ) as string
 
+  const applicantGenderCode = getValueViaPath(
+    externalData,
+    'person.data.genderCode',
+  )
+
+  const applicantName = getValueViaPath(
+    externalData,
+    'person.data.fullName',
+    '',
+  ) as string
+
   return {
+    applicantName,
+    applicantGenderCode,
     dataProvider,
     children,
     existingApplications,
-    familyMembers,
     userEmail,
     userPhoneNumber,
   }
@@ -465,10 +479,18 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const selectedChild = getValueViaPath(answers, 'selectedChild') as string
 
-  const isRequestingRights = getValueViaPath(
+  const transferRights = getValueViaPath(
     answers,
-    'requestRights.isRequestingRights',
-  ) as YesOrNo
+    'transferRights',
+  ) as TransferRightsOption
+
+  const isRequestingRights =
+    transferRights === TransferRightsOption.REQUEST
+      ? YES
+      : (getValueViaPath(
+          answers,
+          'requestRights.isRequestingRights',
+        ) as YesOrNo)
 
   const requestValue = getValueViaPath(answers, 'requestRights.requestDays') as
     | number
@@ -476,10 +498,10 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const requestDays = getOrFallback(isRequestingRights, requestValue)
 
-  const isGivingRights = getValueViaPath(
-    answers,
-    'giveRights.isGivingRights',
-  ) as YesOrNo
+  const isGivingRights =
+    transferRights === TransferRightsOption.GIVE
+      ? YES
+      : (getValueViaPath(answers, 'giveRights.isGivingRights') as YesOrNo)
 
   const giveValue = getValueViaPath(answers, 'giveRights.giveDays') as
     | number
@@ -523,10 +545,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
     employerNationalRegistryId,
     shareInformationWithOtherParent,
     selectedChild,
+    transferRights,
     isRequestingRights,
-    requestDays,
+    requestDays: Number(requestDays),
     isGivingRights,
-    giveDays,
+    giveDays: Number(giveDays),
     applicantEmail,
     applicantPhoneNumber,
     periods,
@@ -537,15 +560,23 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
 export const requiresOtherParentApproval = (
   answers: Application['answers'],
+  externalData: Application['externalData'],
 ) => {
   const applicationAnswers = getApplicationAnswers(answers)
+  const selectedChild = getSelectedChild(answers, externalData)
 
   const {
     isRequestingRights,
     usePersonalAllowanceFromSpouse,
   } = applicationAnswers
 
-  return isRequestingRights === YES || usePersonalAllowanceFromSpouse === YES
+  const needsApprovalForRequestingRights =
+    selectedChild?.parentalRelation === ParentalRelations.primary
+
+  return (
+    (isRequestingRights === YES && needsApprovalForRequestingRights) ||
+    usePersonalAllowanceFromSpouse === YES
+  )
 }
 
 export const otherParentApprovalDescription = (
@@ -581,33 +612,52 @@ export const allowOtherParent = (answers: Application['answers']) => {
   )
 }
 
-export const getOtherParentId = (application: Application): string | null => {
-  const { familyMembers } = getApplicationExternalData(application.externalData)
+export const getOtherParentId = (
+  application: Application,
+): string | undefined => {
   const { otherParent, otherParentId } = getApplicationAnswers(
     application.answers,
   )
 
   if (otherParent === SPOUSE) {
-    if (familyMembers === null) {
-      throw new Error(
-        'transformApplicationToParentalLeaveDTO: Cannot find spouse. Missing data for family members.',
-      )
-    }
+    const spouse = getSpouse(application)
 
-    const spouse = familyMembers.find(
-      (member) => member.familyRelation === SPOUSE,
-    )
-
-    if (!spouse) {
-      throw new Error(
-        'transformApplicationToParentalLeaveDTO: Cannot find spouse. No family member with this relation.',
-      )
+    if (!spouse || !spouse.nationalId) {
+      return undefined
     }
 
     return spouse.nationalId
   }
 
   return otherParentId
+}
+
+export const getOtherParentName = (
+  application: Application,
+): string | undefined => {
+  const { otherParent, otherParentName } = getApplicationAnswers(
+    application.answers,
+  )
+
+  if (otherParent === SPOUSE) {
+    const spouse = getSpouse(application)
+
+    if (!spouse || !spouse.name) {
+      return undefined
+    }
+
+    return spouse.name
+  }
+
+  return otherParentName
+}
+
+export const applicantIsMale = (application: Application): boolean => {
+  const { applicantGenderCode } = getApplicationExternalData(
+    application.externalData,
+  )
+
+  return applicantGenderCode === '1'
 }
 
 interface IncompletePeriod {
@@ -660,7 +710,9 @@ export const calculateDaysUsedByPeriods = (periods: Period[]) =>
       const end = parseISO(period.endDate)
       const percentage = Number(period.ratio) / 100
 
-      const calculatedLength = calculatePeriodLength(start, end, percentage)
+      const calculatedLength = period.daysToUse
+        ? Number(period.daysToUse)
+        : calculatePeriodLength(start, end, percentage)
 
       return total + calculatedLength
     }, 0),

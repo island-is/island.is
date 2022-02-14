@@ -1,19 +1,18 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+
+import { Accordion, Box, Button, Text } from '@island.is/island-ui/core'
 import {
-  CaseFileList,
   FormContentContainer,
   FormFooter,
   InfoCard,
   PdfButton,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import {
   CaseState,
   CaseTransition,
   NotificationType,
 } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   capitalize,
@@ -21,25 +20,26 @@ import {
   formatDate,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import * as styles from './Overview.css'
-import {
-  FormSettings,
-  useCaseFormHelper,
-} from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
+import { isOverviewStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import CaseFilesAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CaseFilesAccordionItem/CaseFilesAccordionItem'
+import type { Case } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
+import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
 import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
+import * as styles from './Overview.css'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
+  isCaseUpToDate: boolean
 }
 
 const OverviewForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading } = props
+  const { workingCase, setWorkingCase, isLoading, isCaseUpToDate } = props
   const [courtCaseNumberEM, setCourtCaseNumberEM] = useState<string>('')
   const [createCourtCaseSuccess, setCreateCourtCaseSuccess] = useState<boolean>(
     false,
@@ -55,18 +55,6 @@ const OverviewForm: React.FC<Props> = (props) => {
     sendNotification,
   } = useCase()
   const { formatMessage } = useIntl()
-
-  const validations: FormSettings = {
-    courtCaseNumber: {
-      validations: ['empty'],
-    },
-  }
-
-  const { isValid } = useCaseFormHelper(
-    workingCase,
-    setWorkingCase,
-    validations,
-  )
 
   const receiveCase = async (workingCase: Case, courtCaseNumber: string) => {
     if (workingCase.state === CaseState.SUBMITTED && !isTransitioningCase) {
@@ -117,19 +105,15 @@ const OverviewForm: React.FC<Props> = (props) => {
             receiveCase={receiveCase}
           />
         </Box>
-        <Box component="section" marginBottom={workingCase.isMasked ? 10 : 5}>
+        <Box component="section" marginBottom={5}>
           <InfoCard
             data={[
               {
-                title: 'LÖKE málsnúmer',
+                title: formatMessage(core.policeCaseNumber),
                 value: workingCase.policeCaseNumber,
               },
               {
-                title: 'Krafa stofnuð',
-                value: formatDate(workingCase.created, 'P'),
-              },
-              {
-                title: 'Embætti',
+                title: formatMessage(core.prosecutor),
                 value: `${
                   workingCase.creatingProsecutor?.institution?.name ??
                   'Ekki skráð'
@@ -146,187 +130,177 @@ const OverviewForm: React.FC<Props> = (props) => {
                 )}`,
               },
               {
-                title: 'Ákærandi',
-                value: `${workingCase.prosecutor?.name} ${workingCase.prosecutor?.title}`,
+                title: formatMessage(core.prosecutorPerson),
+                value: workingCase.prosecutor?.name,
               },
               {
-                title: 'Tegund kröfu',
+                title: formatMessage(core.caseType),
                 value: capitalize(caseTypes[workingCase.type]),
               },
             ]}
-            accusedName={workingCase.accusedName}
-            accusedNationalId={workingCase.accusedNationalId}
-            accusedAddress={workingCase.accusedAddress}
+            defendants={workingCase.defendants ?? []}
             defender={{
               name: workingCase.defenderName ?? '',
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
               defenderIsSpokesperson: workingCase.defenderIsSpokesperson,
             }}
-            isInvestigationCase
           />
         </Box>
-        {!workingCase.isMasked && (
-          <>
-            {workingCase.description && (
-              <Box marginBottom={5}>
-                <Box marginBottom={2}>
-                  <Text as="h3" variant="h3">
-                    Efni kröfu
-                  </Text>
-                </Box>
-                <Text>{workingCase.description}</Text>
-              </Box>
-            )}
-            <Box marginBottom={5} data-testid="demands">
+        <>
+          {workingCase.description && (
+            <Box marginBottom={5}>
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
-                  Dómkröfur
+                  Efni kröfu
                 </Text>
               </Box>
-              <Text>{workingCase.demands}</Text>
+              <Text>{workingCase.description}</Text>
             </Box>
-            <Box className={styles.infoSection}>
-              <Box marginBottom={5}>
-                <Box marginBottom={2}>
-                  <Text as="h3" variant="h3">
-                    Lagaákvæði sem brot varða við
-                  </Text>
-                </Box>
-                <Text>{workingCase.lawsBroken}</Text>
-              </Box>
-              <Box marginBottom={5}>
-                <Box marginBottom={2}>
-                  <Text as="h3" variant="h3">
-                    Lagaákvæði sem krafan er byggð á
-                  </Text>
-                </Box>
-                <Text>{workingCase.legalBasis}</Text>
-              </Box>
+          )}
+          <Box marginBottom={5} data-testid="demands">
+            <Box marginBottom={2}>
+              <Text as="h3" variant="h3">
+                Dómkröfur
+              </Text>
             </Box>
-            {(workingCase.caseFacts || workingCase.legalArguments) && (
-              <div className={styles.infoSection}>
-                <Box marginBottom={1}>
-                  <Text variant="h3" as="h2">
-                    Greinargerð um málsatvik og lagarök
-                  </Text>
-                </Box>
-                {workingCase.caseFacts && (
-                  <Box marginBottom={2}>
-                    <Box marginBottom={2}>
-                      <Text variant="eyebrow" color="blue400">
-                        Málsatvik
-                      </Text>
-                    </Box>
-                    <Text>
-                      <span className={styles.breakSpaces}>
-                        {workingCase.caseFacts}
-                      </span>
-                    </Text>
-                  </Box>
-                )}
-                {workingCase.legalArguments && (
-                  <Box marginBottom={2}>
-                    <Box marginBottom={2}>
-                      <Text variant="eyebrow" color="blue400">
-                        Lagarök
-                      </Text>
-                    </Box>
-                    <Text>
-                      <span className={styles.breakSpaces}>
-                        {workingCase.legalArguments}
-                      </span>
-                    </Text>
-                  </Box>
-                )}
-              </div>
-            )}
-            {(workingCase.comments || workingCase.caseFilesComments) && (
-              <div className={styles.infoSection}>
-                <Box marginBottom={2}>
-                  <Text variant="h3" as="h2">
-                    Athugasemdir
-                  </Text>
-                </Box>
-                {workingCase.comments && (
-                  <Box marginBottom={workingCase.caseFilesComments ? 3 : 0}>
-                    <Box marginBottom={1}>
-                      <Text variant="h4" as="h3" color="blue400">
-                        Athugasemdir vegna málsmeðferðar
-                      </Text>
-                    </Box>
-                    <Text>
-                      <span className={styles.breakSpaces}>
-                        {workingCase.comments}
-                      </span>
-                    </Text>
-                  </Box>
-                )}
-                {workingCase.caseFilesComments && (
-                  <>
-                    <Box marginBottom={1}>
-                      <Text variant="h4" as="h3" color="blue400">
-                        Athugasemdir vegna rannsóknargagna
-                      </Text>
-                    </Box>
-                    <Text>
-                      <span className={styles.breakSpaces}>
-                        {workingCase.caseFilesComments}
-                      </span>
-                    </Text>
-                  </>
-                )}
-              </div>
-            )}
+            <Text>{workingCase.demands}</Text>
+          </Box>
+          <Box className={styles.infoSection}>
+            <Box marginBottom={5}>
+              <Box marginBottom={2}>
+                <Text as="h3" variant="h3">
+                  Lagaákvæði sem brot varða við
+                </Text>
+              </Box>
+              <Text>{workingCase.lawsBroken}</Text>
+            </Box>
+            <Box marginBottom={5}>
+              <Box marginBottom={2}>
+                <Text as="h3" variant="h3">
+                  Lagaákvæði sem krafan er byggð á
+                </Text>
+              </Box>
+              <Text>{workingCase.legalBasis}</Text>
+            </Box>
+          </Box>
+          {(workingCase.caseFacts || workingCase.legalArguments) && (
             <div className={styles.infoSection}>
               <Box marginBottom={1}>
-                <Text as="h2" variant="h3">
-                  {`Rannsóknargögn (${
-                    workingCase.caseFiles ? workingCase.caseFiles.length : 0
-                  })`}
+                <Text variant="h3" as="h2">
+                  Greinargerð um málsatvik og lagarök
                 </Text>
               </Box>
-              <CaseFileList
-                caseId={workingCase.id}
-                files={workingCase.caseFiles ?? []}
-                canOpenFiles={
-                  workingCase.judge !== null &&
-                  workingCase.judge?.id === user?.id
-                }
-              />
+              {workingCase.caseFacts && (
+                <Box marginBottom={2}>
+                  <Box marginBottom={2}>
+                    <Text variant="eyebrow" color="blue400">
+                      Málsatvik
+                    </Text>
+                  </Box>
+                  <Text>
+                    <span className={styles.breakSpaces}>
+                      {workingCase.caseFacts}
+                    </span>
+                  </Text>
+                </Box>
+              )}
+              {workingCase.legalArguments && (
+                <Box marginBottom={2}>
+                  <Box marginBottom={2}>
+                    <Text variant="eyebrow" color="blue400">
+                      Lagarök
+                    </Text>
+                  </Box>
+                  <Text>
+                    <span className={styles.breakSpaces}>
+                      {workingCase.legalArguments}
+                    </span>
+                  </Text>
+                </Box>
+              )}
             </div>
-            <Box marginBottom={10}>
-              <Box marginBottom={3}>
-                <PdfButton
-                  caseId={workingCase.id}
-                  title={formatMessage(core.pdfButtonRequest)}
-                  pdfType="request"
-                />
+          )}
+          {(workingCase.comments || workingCase.caseFilesComments) && (
+            <div className={styles.infoSection}>
+              <Box marginBottom={2}>
+                <Text variant="h3" as="h2">
+                  Athugasemdir
+                </Text>
               </Box>
-              <Button
-                variant="ghost"
-                icon="pencil"
-                size="small"
-                onClick={() => setIsDraftingConclusion(true)}
-              >
-                Skrifa drög að niðurstöðu
-              </Button>
+              {workingCase.comments && (
+                <Box marginBottom={workingCase.caseFilesComments ? 3 : 0}>
+                  <Box marginBottom={1}>
+                    <Text variant="h4" as="h3" color="blue400">
+                      Athugasemdir vegna málsmeðferðar
+                    </Text>
+                  </Box>
+                  <Text>
+                    <span className={styles.breakSpaces}>
+                      {workingCase.comments}
+                    </span>
+                  </Text>
+                </Box>
+              )}
+              {workingCase.caseFilesComments && (
+                <>
+                  <Box marginBottom={1}>
+                    <Text variant="h4" as="h3" color="blue400">
+                      Athugasemdir vegna rannsóknargagna
+                    </Text>
+                  </Box>
+                  <Text>
+                    <span className={styles.breakSpaces}>
+                      {workingCase.caseFilesComments}
+                    </span>
+                  </Text>
+                </>
+              )}
+            </div>
+          )}
+          {user && (
+            <Box marginBottom={5}>
+              <Accordion>
+                <CaseFilesAccordionItem
+                  workingCase={workingCase}
+                  setWorkingCase={setWorkingCase}
+                  user={user}
+                />
+              </Accordion>
             </Box>
-            <DraftConclusionModal
-              workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
-              isDraftingConclusion={isDraftingConclusion}
-              setIsDraftingConclusion={setIsDraftingConclusion}
-            />
-          </>
-        )}
+          )}
+          <Box marginBottom={10}>
+            <Box marginBottom={3}>
+              <PdfButton
+                caseId={workingCase.id}
+                title={formatMessage(core.pdfButtonRequest)}
+                pdfType="request"
+              />
+            </Box>
+            <Button
+              variant="ghost"
+              icon="pencil"
+              size="small"
+              onClick={() => setIsDraftingConclusion(true)}
+            >
+              Skrifa drög að niðurstöðu
+            </Button>
+          </Box>
+          <DraftConclusionModal
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+            isCaseUpToDate={isCaseUpToDate}
+            isDraftingConclusion={isDraftingConclusion}
+            setIsDraftingConclusion={setIsDraftingConclusion}
+          />
+        </>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={Constants.REQUEST_LIST_ROUTE}
           nextIsLoading={isLoading}
           nextUrl={`${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!isValid}
+          nextIsDisabled={!isOverviewStepValidIC(workingCase)}
         />
       </FormContentContainer>
     </>

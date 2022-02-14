@@ -1,13 +1,22 @@
 import yargs from 'yargs'
+import { hideBin } from 'yargs/helpers'
 import AWS from 'aws-sdk'
-import { generateYamlForFeature, dumpYaml } from './dsl/serialize-to-yaml'
+
+import {
+  generateYamlForFeature,
+  dumpYaml,
+  dumpJobYaml,
+} from './dsl/serialize-to-yaml'
 import { generateJobsForFeature } from './dsl/feature-jobs'
 import { UberChart } from './dsl/uber-chart'
 import { Envs } from './environments'
-import { Services, FeatureDeploymentServices } from './uber-charts/islandis'
+import {
+  Services,
+  FeatureDeploymentServices,
+  ExcludedFeatureDeploymentServices,
+} from './uber-charts/islandis'
 import { EnvironmentServices } from './dsl/types/charts'
 import { ServiceHelm } from './dsl/types/output-types'
-const { hideBin } = require('yargs/helpers')
 
 type ChartName = 'islandis'
 
@@ -55,7 +64,6 @@ const parseArguments = (argv: Arguments) => {
   const images = argv.images.split(',') // Docker images that have changed
   const env = 'dev'
   const chart = argv.chart as ChartName
-  const output = argv.output as string
 
   const ch = new UberChart({ ...Envs[env], feature: feature })
 
@@ -89,29 +97,31 @@ yargs(hideBin(process.argv))
   .command(
     'values',
     'get helm values file',
-    (yargs) => {},
+    () => {},
     async (argv: Arguments) => {
       const { ch, habitat, affectedServices } = parseArguments(argv)
       const featureYaml = generateYamlForFeature(
         ch,
         habitat,
-        ...affectedServices,
+        affectedServices.slice(),
+        ExcludedFeatureDeploymentServices,
       )
-      await writeToOutput(dumpYaml(featureYaml), argv.output)
+      await writeToOutput(dumpYaml(ch, featureYaml), argv.output)
     },
   )
   .command(
     'ingress-comment',
     'get helm values file',
-    (yargs) => {},
+    () => {},
     async (argv: Arguments) => {
       const { ch, habitat, affectedServices } = parseArguments(argv)
       const featureYaml = generateYamlForFeature(
         ch,
         habitat,
-        ...affectedServices,
+        affectedServices.slice(),
+        ExcludedFeatureDeploymentServices,
       )
-      await writeToOutput(buildComment(featureYaml), argv.output)
+      await writeToOutput(buildComment(featureYaml.services), argv.output)
     },
   )
   .command(
@@ -132,7 +142,7 @@ yargs(hideBin(process.argv))
         argv.jobImage!,
         ...affectedServices,
       )
-      await writeToOutput(dumpYaml(featureYaml), argv.output)
+      await writeToOutput(dumpJobYaml(featureYaml), argv.output)
     },
   )
   .options({

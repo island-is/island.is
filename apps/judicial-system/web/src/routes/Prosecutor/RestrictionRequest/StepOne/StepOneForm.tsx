@@ -1,100 +1,74 @@
 import React, { useState } from 'react'
-import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 
 import {
   Text,
   Input,
   Box,
-  Checkbox,
   Tooltip,
   AlertMessage,
 } from '@island.is/island-ui/core'
 import {
-  BlueBox,
   FormContentContainer,
   FormFooter,
-} from '@island.is/judicial-system-web/src/shared-components'
-
-import { CaseState, CaseType } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
-
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+} from '@island.is/judicial-system-web/src/components'
 import {
-  FormSettings,
-  useCaseFormHelper,
-} from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import { accused } from '@island.is/judicial-system-web/messages'
+  CaseState,
+  CaseType,
+  UpdateDefendant,
+} from '@island.is/judicial-system/types'
+import { isAccusedStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
+import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
+import { accused as m } from '@island.is/judicial-system-web/messages'
+import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
+import type { Case } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
 import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
+import {
+  validateAndSendToServer,
+  validateAndSet,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   loading: boolean
   handleNextButtonClick: (theCase: Case) => void
+  updateDefendantState: (defendantId: string, update: UpdateDefendant) => void
 }
 
 export const StepOneForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, loading, handleNextButtonClick } = props
+  const {
+    workingCase,
+    setWorkingCase,
+    loading,
+    handleNextButtonClick,
+    updateDefendantState,
+  } = props
 
   const { formatMessage } = useIntl()
-
-  const [
-    defenderEmailErrorMessage,
-    setDefenderEmailErrorMessage,
-  ] = useState<string>('')
-
-  const [
-    defenderPhoneNumberErrorMessage,
-    setDefenderPhoneNumberErrorMessage,
-  ] = useState<string>('')
 
   const [
     leadInvestigatorErrorMessage,
     setLeadInvestigatorErrorMessage,
   ] = useState<string>('')
 
-  const validations: FormSettings = {
-    policeCaseNumber: {
-      validations: ['empty', 'police-casenumber-format'],
-    },
-    accusedGender: {
-      validations: ['empty'],
-    },
-    accusedNationalId: {
-      validations: ['empty', 'national-id'],
-    },
-    accusedName: {
-      validations: ['empty'],
-    },
-    accusedAddress: {
-      validations: ['empty'],
-    },
-    defenderEmail: {
-      validations: ['email-format'],
-      errorMessage: defenderEmailErrorMessage,
-      setErrorMessage: setDefenderEmailErrorMessage,
-    },
-    defenderPhoneNumber: {
-      validations: ['phonenumber'],
-      errorMessage: defenderPhoneNumberErrorMessage,
-      setErrorMessage: setDefenderPhoneNumberErrorMessage,
-    },
-    sendRequestToDefender: {},
-    leadInvestigator: {
-      validations: workingCase.type === CaseType.CUSTODY ? ['empty'] : [],
-      errorMessage: leadInvestigatorErrorMessage,
-      setErrorMessage: setLeadInvestigatorErrorMessage,
-    },
-  }
+  const { updateDefendant } = useDefendants()
+  const { updateCase } = useCase()
 
-  const {
-    isValid,
-    setField,
-    validateAndSendToServer,
-    setAndSendToServer,
-  } = useCaseFormHelper(workingCase, setWorkingCase, validations)
+  const handleUpdateDefendant = async (
+    defendantId: string,
+    updatedDefendant: UpdateDefendant,
+  ) => {
+    updateDefendantState(defendantId, updatedDefendant)
+
+    if (defendantId) {
+      updateDefendant(workingCase.id, defendantId, updatedDefendant)
+    }
+  }
 
   return (
     <>
@@ -102,15 +76,15 @@ export const StepOneForm: React.FC<Props> = (props) => {
         {workingCase.state === CaseState.RECEIVED && (
           <Box marginBottom={5}>
             <AlertMessage
-              title={formatMessage(accused.receivedAlert.title)}
-              message={formatMessage(accused.receivedAlert.message)}
+              title={formatMessage(m.receivedAlert.title)}
+              message={formatMessage(m.receivedAlert.message)}
               type="warning"
             />
           </Box>
         )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            {formatMessage(accused.heading)}
+            {formatMessage(m.heading)}
           </Text>
         </Box>
         <Box component="section" marginBottom={5}>
@@ -119,102 +93,25 @@ export const StepOneForm: React.FC<Props> = (props) => {
             setWorkingCase={setWorkingCase}
           />
         </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              {formatMessage(accused.sections.accusedInfo.heading)}
-            </Text>
+        {workingCase.defendants && (
+          <Box component="section" marginBottom={5}>
+            <Box marginBottom={2}>
+              <Text as="h3" variant="h3">
+                {formatMessage(m.sections.accusedInfo.heading)}
+              </Text>
+            </Box>
+            <DefendantInfo
+              defendant={workingCase.defendants[0]}
+              onChange={handleUpdateDefendant}
+              updateDefendantState={updateDefendantState}
+            />
           </Box>
-          <DefendantInfo
+        )}
+        <Box component="section" marginBottom={7}>
+          <DefenderInfo
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
           />
-        </Box>
-        <Box component="section" marginBottom={7}>
-          <Box
-            display="flex"
-            justifyContent="spaceBetween"
-            alignItems="baseline"
-            marginBottom={2}
-          >
-            <Text as="h3" variant="h3">
-              {formatMessage(accused.sections.defenderInfo.heading)}
-            </Text>
-          </Box>
-          <BlueBox>
-            <Box marginBottom={2}>
-              <Input
-                data-testid="defenderName"
-                name="defenderName"
-                autoComplete="off"
-                label={formatMessage(accused.sections.defenderInfo.name.label)}
-                placeholder={formatMessage(
-                  accused.sections.defenderInfo.name.placeholder,
-                )}
-                defaultValue={workingCase.defenderName}
-                onChange={(event) => setField(event.target)}
-                onBlur={(event) => validateAndSendToServer(event.target)}
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <Input
-                data-testid="defenderEmail"
-                name="defenderEmail"
-                autoComplete="off"
-                label={formatMessage(accused.sections.defenderInfo.email.label)}
-                placeholder={formatMessage(
-                  accused.sections.defenderInfo.email.placeholder,
-                )}
-                defaultValue={workingCase.defenderEmail}
-                errorMessage={defenderEmailErrorMessage}
-                hasError={defenderEmailErrorMessage !== ''}
-                onChange={(event) => setField(event.target)}
-                onBlur={(event) => validateAndSendToServer(event.target)}
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <InputMask
-                mask="999-9999"
-                maskPlaceholder={null}
-                onChange={(event) => setField(event.target)}
-                onBlur={(event) => validateAndSendToServer(event.target)}
-              >
-                <Input
-                  data-testid="defenderPhoneNumber"
-                  name="defenderPhoneNumber"
-                  autoComplete="off"
-                  label={formatMessage(
-                    accused.sections.defenderInfo.phoneNumber.label,
-                  )}
-                  placeholder={formatMessage(
-                    accused.sections.defenderInfo.phoneNumber.placeholder,
-                  )}
-                  defaultValue={workingCase.defenderPhoneNumber}
-                  errorMessage={defenderPhoneNumberErrorMessage}
-                  hasError={defenderPhoneNumberErrorMessage !== ''}
-                />
-              </InputMask>
-            </Box>
-            <Checkbox
-              name="sendRequestToDefender"
-              label={formatMessage(
-                accused.sections.defenderInfo.sendRequest.label,
-              )}
-              tooltip={formatMessage(
-                accused.sections.defenderInfo.sendRequest.tooltip,
-                {
-                  caseType:
-                    workingCase.type === CaseType.CUSTODY
-                      ? 'gæsluvarðhaldskröfuna'
-                      : 'farbannskröfuna',
-                },
-              )}
-              checked={workingCase.sendRequestToDefender}
-              onChange={(event) => setAndSendToServer(event.target)}
-              large
-              backgroundColor="white"
-            />
-          </BlueBox>
         </Box>
         {workingCase.type === CaseType.CUSTODY && (
           <Box component="section" marginBottom={10}>
@@ -225,11 +122,9 @@ export const StepOneForm: React.FC<Props> = (props) => {
               marginBottom={2}
             >
               <Text as="h3" variant="h3">
-                {formatMessage(accused.sections.leadInvestigator.heading)}{' '}
+                {formatMessage(m.sections.leadInvestigator.heading)}{' '}
                 <Tooltip
-                  text={formatMessage(
-                    accused.sections.leadInvestigator.tooltip,
-                  )}
+                  text={formatMessage(m.sections.leadInvestigator.tooltip)}
                 />
               </Text>
             </Box>
@@ -238,15 +133,34 @@ export const StepOneForm: React.FC<Props> = (props) => {
                 data-testid="leadInvestigator"
                 name="leadInvestigator"
                 autoComplete="off"
-                label={formatMessage(accused.sections.leadInvestigator.label)}
+                label={formatMessage(m.sections.leadInvestigator.label)}
                 placeholder={formatMessage(
-                  accused.sections.leadInvestigator.placeholder,
+                  m.sections.leadInvestigator.placeholder,
                 )}
-                defaultValue={workingCase.leadInvestigator}
+                value={workingCase.leadInvestigator || ''}
                 errorMessage={leadInvestigatorErrorMessage}
                 hasError={leadInvestigatorErrorMessage !== ''}
-                onChange={(event) => setField(event.target)}
-                onBlur={(event) => validateAndSendToServer(event.target)}
+                onChange={(evt) => {
+                  validateAndSet(
+                    'leadInvestigator',
+                    evt.target.value,
+                    ['empty'],
+                    workingCase,
+                    setWorkingCase,
+                    leadInvestigatorErrorMessage,
+                    setLeadInvestigatorErrorMessage,
+                  )
+                }}
+                onBlur={(evt) =>
+                  validateAndSendToServer(
+                    'leadInvestigator',
+                    evt.target.value,
+                    ['empty'],
+                    workingCase,
+                    updateCase,
+                    setLeadInvestigatorErrorMessage,
+                  )
+                }
                 required
               />
             </Box>
@@ -260,7 +174,7 @@ export const StepOneForm: React.FC<Props> = (props) => {
             await handleNextButtonClick(workingCase)
           }
           nextIsLoading={loading}
-          nextIsDisabled={!isValid}
+          nextIsDisabled={!isAccusedStepValidRC(workingCase)}
           nextButtonText={
             workingCase.id === '' ? 'Stofna kröfu' : 'Halda áfram'
           }

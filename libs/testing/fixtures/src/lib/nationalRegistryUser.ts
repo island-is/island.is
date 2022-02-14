@@ -1,8 +1,8 @@
 import * as faker from 'faker'
 
-import { Einstaklingsupplysingar } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryClientPerson } from '@island.is/shared/types'
 
-const createRandomNationalRegistryUser = (): Einstaklingsupplysingar => {
+const createRandomNationalRegistryUser = (): NationalRegistryClientPerson => {
   const [firstName, middleName, lastName] = [
     faker.name.firstName(),
     faker.name.middleName(),
@@ -36,8 +36,8 @@ const createRandomNationalRegistryUser = (): Einstaklingsupplysingar => {
 }
 
 export const createNationalRegistryUser = (
-  user: Einstaklingsupplysingar = createRandomNationalRegistryUser(),
-): Einstaklingsupplysingar => {
+  user: Partial<NationalRegistryClientPerson> = createRandomNationalRegistryUser(),
+): NationalRegistryClientPerson => {
   const fallback = createRandomNationalRegistryUser()
 
   const {

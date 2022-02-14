@@ -5,8 +5,7 @@ import React from 'react'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { useRegulationLinkResolver } from './regulationUtils'
-import { RegulationMaybeDiff } from '@island.is/regulations/web'
-import { ISODate } from '@hugsmidjan/regulations-editor/types'
+import { ISODate, RegulationMaybeDiff } from '@island.is/regulations'
 import cl from 'classnames'
 
 export type DiffModeToggleProps = {
@@ -22,7 +21,7 @@ export const DiffModeToggle = (props: DiffModeToggleProps) => {
   const { regulation } = props
   const {
     timelineDate,
-    effectiveDate,
+    publishedDate,
     lastAmendDate,
     showingDiff,
     history,
@@ -33,7 +32,7 @@ export const DiffModeToggle = (props: DiffModeToggleProps) => {
   if (!firstEvent || firstEvent.effect !== 'amend') {
     return null
   }
-  const isDiffable = timelineDate !== effectiveDate
+  const isDiffable = timelineDate !== publishedDate
 
   const diffView = !!showingDiff
   const showSecondaryButton =
@@ -74,7 +73,7 @@ export const DiffModeToggle = (props: DiffModeToggleProps) => {
               color="blue400"
               underline="small"
             >
-              {txt('showDiff_fromLast')}
+              <a rel="nofollow">{txt('showDiff_fromLast')}</a>
             </Link>
           ) : (
             <Link
@@ -89,7 +88,7 @@ export const DiffModeToggle = (props: DiffModeToggleProps) => {
               color="blue400"
               underline="small"
             >
-              {txt('showDiff_fromOriginal')}
+              <a rel="nofollow">{txt('showDiff_fromOriginal')}</a>
             </Link>
           )}
         </div>

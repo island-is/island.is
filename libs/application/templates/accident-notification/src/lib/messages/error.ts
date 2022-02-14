@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const error = defineMessages({
+  invalidValue: {
+    id: 'an.application:error.invalidValue',
+    defaultMessage: 'Ógilt gildi.',
+    description: 'Error message when a value is invalid.',
+  },
   required: {
     id: 'an.application:error.required',
     defaultMessage: 'Skylda er að fylla út reitinn',

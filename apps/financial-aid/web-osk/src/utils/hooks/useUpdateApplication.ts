@@ -4,7 +4,6 @@ import { useMutation } from '@apollo/client'
 import { ApplicationMutation } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
 import {
-  ApplicationState,
   FileType,
   Application,
   ApplicationEventType,
@@ -12,8 +11,11 @@ import {
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
 import { useFileUpload } from './useFileUpload'
+import { AppContext } from '../../components/AppProvider/AppProvider'
 
 const useUpdateApplication = () => {
+  const { user } = useContext(AppContext)
+
   const { form } = useContext(FormContext)
   const { uploadFiles } = useFileUpload(form.otherFiles)
 
@@ -34,10 +36,11 @@ const useUpdateApplication = () => {
         variables: {
           input: {
             id: applicationId,
-            state: ApplicationState.INPROGRESS,
-            event: ApplicationEventType.FILEUPLOAD,
+            event: ApplicationEventType.SPOUSEFILEUPLOAD,
             spouseEmail: form.emailAddress,
             spousePhoneNumber: form.phoneNumber,
+            spouseName: user?.name,
+            spouseFormComment: form.formComment,
           },
         },
       })

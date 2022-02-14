@@ -27,11 +27,11 @@ const IncomeForm = () => {
   const incomeOptions = [
     {
       label: 'Já, ég hef fengið tekjur',
-      value: 0,
+      value: 1,
     },
     {
       label: 'Nei, engar tekjur',
-      value: 1,
+      value: 0,
     },
   ]
   const errorCheck = () => {
@@ -67,16 +67,19 @@ const IncomeForm = () => {
           }}
         />
 
-        <div
-          className={cn({
-            [`errorMessage`]: true,
-            [`showErrorMessage`]: error && form?.hasIncome === undefined,
-          })}
-        >
-          <Text color="red600" fontWeight="semiBold" variant="small">
-            Þú þarft að velja einn valmöguleika
-          </Text>
-        </div>
+        {error && form?.hasIncome === undefined && (
+          <div
+            data-testid="noOptionSelectedErrorMessage"
+            className={cn({
+              [`errorMessage`]: true,
+              [`showErrorMessage`]: error && form?.hasIncome === undefined,
+            })}
+          >
+            <Text color="red600" fontWeight="semiBold" variant="small">
+              Þú þarft að velja einn valmöguleika
+            </Text>
+          </div>
+        )}
 
         <Text as="h2" variant="h3" marginBottom={2} marginTop={[3, 3, 5]}>
           Dæmi um tekjur

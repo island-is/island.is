@@ -3,16 +3,14 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { Endorsement } from './models/endorsement.model'
 import { EndorsementController } from './endorsement.controller'
 import { EndorsementService } from './endorsement.service'
-import { EndorsementMetadataModule } from '../endorsementMetadata/endorsementMetadata.module'
 import { EndorsementList } from '../endorsementList/endorsementList.model'
-import { EndorsementValidatorModule } from '../endorsementValidator/endorsementValidator.module'
 import { EndorsementListService } from '../endorsementList/endorsementList.service'
-import { EmailModule } from '@island.is/email-service'
 import { environment } from '../../../environments'
 import {
   NationalRegistryApi,
   NationalRegistryConfig,
 } from '@island.is/clients/national-registry-v1'
+import { EmailModule } from '@island.is/email-service'
 
 export interface Config {
   nationalRegistry: NationalRegistryConfig
@@ -21,12 +19,7 @@ export interface Config {
 @Module({
   imports: [
     SequelizeModule.forFeature([Endorsement, EndorsementList]),
-    EndorsementMetadataModule,
-    EndorsementValidatorModule,
-    EmailModule.register({
-      useTestAccount: true,
-      useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
-    }),
+    EmailModule.register(environment.emailOptions),
   ],
   controllers: [EndorsementController],
   providers: [
@@ -35,9 +28,8 @@ export interface Config {
     {
       provide: NationalRegistryApi,
       useFactory: async () =>
-        await NationalRegistryApi.instanciateClass(
-          environment.metadataProvider
-            .nationalRegistry as NationalRegistryConfig,
+        await NationalRegistryApi.instantiateClass(
+          environment.nationalRegistry,
         ),
     },
   ],

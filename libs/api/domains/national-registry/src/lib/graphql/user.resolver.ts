@@ -2,11 +2,13 @@ import { UseGuards } from '@nestjs/common'
 import { Resolver, Query, ResolveField, Parent } from '@nestjs/graphql'
 import * as kennitala from 'kennitala'
 
+import { ApiScope } from '@island.is/auth/scopes'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
   ScopesGuard,
   CurrentUser,
+  Scopes,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 
@@ -15,6 +17,7 @@ import { NationalRegistryService } from '../nationalRegistry.service'
 import { User } from '../types'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(ApiScope.meDetails)
 @Resolver(() => NationalRegistryUser)
 @Audit({ namespace: '@island.is/api/national-registry' })
 export class UserResolver {

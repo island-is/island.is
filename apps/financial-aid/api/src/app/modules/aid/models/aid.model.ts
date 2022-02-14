@@ -20,6 +20,9 @@ export class AidModel implements Aid {
   readonly unknown!: number
 
   @Field()
+  readonly withOthers!: number
+
+  @Field()
   readonly municipalityId!: string
 
   @Field(() => String)

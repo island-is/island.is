@@ -94,6 +94,9 @@ The following components and their props are available:
   component: 'Heading',
   context: {
     copy: 'A mind-blowing heading',
+    align: 'left' | 'center' | 'right'
+    small: false
+    eyebrow: 'A tiny bit of text displayed above the heading'
   },
 }
 ```
@@ -105,6 +108,9 @@ The following components and their props are available:
   component: 'Copy',
   context: {
     copy: 'Some beautiful lorem ipsum',
+    align: 'left' | 'center' | 'right'
+    small: false
+    eyebrow: 'A tiny bit of text displayed above the heading'
   },
 }
 ```
@@ -118,6 +124,29 @@ The following components and their props are available:
     copy: 'Button copy',
     href: 'Button url',
   },
+}
+```
+
+- Subtitle
+
+```typescript
+{
+  component: 'Subtitle'
+  context: {
+    copy: 'Some text - esp. suited for application-related emails'
+    application: 'Name of an application'
+  }
+}
+```
+
+- Bulleted list
+
+```typescript
+{
+  component: 'List'
+  context: {
+    items: ['Item 1', 'Item 2']
+  }
 }
 ```
 

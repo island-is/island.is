@@ -1,5 +1,4 @@
 import React, { ReactNode } from 'react'
-import { SkeletonLoader, Box } from '@island.is/island-ui/core'
 
 interface Props {
   isLoading: boolean

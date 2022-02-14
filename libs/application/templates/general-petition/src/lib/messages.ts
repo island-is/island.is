@@ -249,18 +249,23 @@ export const m: MessageDir = {
       description: 'Error message for terms and conditions',
     },
     listName: {
-      id: 'gpt.application:validationmessages.party.name',
+      id: 'gpt.application:validationmessages.listName',
       defaultMessage: 'Vinsamlegast veldu nafn á listann',
       description: 'Error message if list name is empty',
     },
     aboutList: {
-      id: 'gpt.application:validationmessages.party.name',
+      id: 'gpt.application:validationmessages.aboutList',
       defaultMessage: 'Vinsamlegast veldu lýsingu á listann',
       description: 'Error message if list decription is empty',
     },
-    date: {
-      id: 'gpt.application:validationmessages.party.name',
+    selectDate: {
+      id: 'gpt.application:validationmessages.selectDate',
       defaultMessage: 'Vinsamlegast veldu dagsetningu',
+      description: 'Error message if date is empty',
+    },
+    tilBeforeFrom: {
+      id: 'gpt.application:validationmessages.tilBeforeFrom',
+      defaultMessage: 'Lokadagsetning má ekki vera á undan upphafsdagsetningu',
       description: 'Error message if date is empty',
     },
   }),
@@ -302,7 +307,7 @@ export const m: MessageDir = {
     agreeTermsLabel: {
       id: 'gpt.application:endorsement.form.agree.label',
       defaultMessage:
-        'Ég hef kynnt mér ofangreint málefni og samþykki uppflettingu úr Þjóðskrá',
+        'Ég hef kynnt mér ofangreint málefni og samþykki uppflettingu í Þjóðskrá',
       description: 'Label for terms and conditions',
     },
     allowNameLabel: {
@@ -326,6 +331,16 @@ export const m: MessageDir = {
       defaultMessage:
         'Ekki tókst að setja nafn þitt á lista. Vinsamlegast reyndu aftur síðar',
       description: 'Error message for error on endorse',
+    },
+    openTil: {
+      id: 'sp.petitions:open-til',
+      defaultMessage: 'Meðmælendalistinn er opinn til:',
+      description: 'List is open til',
+    },
+    listOwner: {
+      id: 'sp.petitions:list-owner',
+      defaultMessage: 'Ábyrgðarmaður:',
+      description: 'List owner',
     },
   }),
   endorsementDisclaimer: defineMessages({

@@ -63,6 +63,7 @@ export type RegulationsSidebarLinkProps = Pick<LinkProps, 'href'> & {
   /** Additional class-name for the link */
   className?: string
   children: NonNullable<ReactNode>
+  rel?: string
 }
 
 export const RegulationsSidebarLink = (props: RegulationsSidebarLinkProps) => (
@@ -74,6 +75,7 @@ export const RegulationsSidebarLink = (props: RegulationsSidebarLinkProps) => (
         props.current && styles.sidebarLinkCurrent,
       )}
       aria-label={props['aria-label']}
+      rel={props.rel}
     >
       {props.children}
     </a>

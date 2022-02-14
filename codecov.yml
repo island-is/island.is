@@ -1,4 +1,5 @@
-comment: false
+comment:
+  layout: "reach, diff, flags"
 coverage:
   status:
     project: false

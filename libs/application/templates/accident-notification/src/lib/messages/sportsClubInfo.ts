@@ -26,7 +26,7 @@ export const sportsClubInfo = {
     },
     title: {
       id: 'an.application:sportsClubInfo.employee.title',
-      defaultMessage: 'Þiggur þú greiðslur frá íþróttafélaginu?',
+      defaultMessage: 'Þiggur hinn slasaði greiðslur frá íþróttafélaginu?',
       description: `Title of sports club employee section.`,
     },
   }),
@@ -35,6 +35,12 @@ export const sportsClubInfo = {
       id: 'an.application:sportsClubInfo.labels.descriptionField',
       defaultMessage: 'Upplýsingar um forsvarsmann íþróttafélags',
       description: `Information about the sports club's representative`,
+    },
+    subDescription: {
+      id: 'an.application:sportsClubInfo.labels.subDescription',
+      defaultMessage:
+        'Athugaðu að forsvarsmaður er sá aðili sem fer yfir tilkynninguna fyrir hönd íþróttafélags.',
+      description: `Sub description about the sports club's representative`,
     },
     nationalId: {
       id: 'an.application:sportsClubInfo.labels.nationalId',

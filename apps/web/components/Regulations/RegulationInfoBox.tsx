@@ -4,7 +4,7 @@ import * as s from './RegulationInfoBox.css'
 import React, { useState } from 'react'
 import { Button, Hidden, Link, Text } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
-import { RegulationMaybeDiff } from '@island.is/regulations/web'
+import { RegulationMaybeDiff } from '@island.is/regulations'
 import {
   RegulationsSidebarBox,
   RegulationsSidebarLink,
@@ -43,6 +43,9 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
       }, 2000)
     })
   }
+
+  const nonCurrent: true | undefined =
+    !!regulation.timelineDate || !!regulation.showingDiff || undefined
 
   return (
     <RegulationsSidebarBox
@@ -90,6 +93,13 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
           </span>
         </Text>
       )}
+      <Text marginBottom={2}>
+        <strong>{txt('infoboxPublishedDate')}:</strong>
+        <br />
+        <span className={RSBStyles.smallText}>
+          {formatDate(regulation.publishedDate)}
+        </span>
+      </Text>
 
       {regulation.repealedDate ? (
         <Text marginBottom={3}>
@@ -123,7 +133,9 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
             size="small"
             variant="text"
           >
-            <Link href={regulation.pdfVersion}>{txt('downloadPdf')}</Link>
+            <Link href={regulation.pdfVersion}>
+              <a rel={nonCurrent && 'nofollow'}>{txt('downloadPdf')}</a>
+            </Link>
           </Button>
         </Text>
 

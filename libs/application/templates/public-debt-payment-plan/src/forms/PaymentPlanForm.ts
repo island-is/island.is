@@ -34,6 +34,7 @@ import {
   paymentPlanIndexKeyMapper,
   PublicDebtPaymentPlan,
 } from '../types'
+import { betaTestSection } from './BetaTestSection'
 
 // Builds a payment plan step that exists of two custom fields:
 // The overview step detailing a list of all payment plans and their status
@@ -70,6 +71,7 @@ export const PaymentPlanForm: Form = buildForm({
   mode: FormModes.APPLYING,
   logo: Logo,
   children: [
+    betaTestSection,
     buildSection({
       id: 'externalData',
       title: section.externalData,
@@ -121,6 +123,7 @@ export const PaymentPlanForm: Form = buildForm({
               id: 'prerequisitesErrorModal',
               component: 'PrerequisitesErrorModal',
               title: '',
+              doesNotRequireAnswer: true,
             }),
           ],
           condition: (_formValue, externalData) => {
@@ -238,11 +241,13 @@ export const PaymentPlanForm: Form = buildForm({
             buildCustomField({
               id: 'employerInfoDescription',
               title: '',
+              doesNotRequireAnswer: true,
               component: 'EmployerInfoDescription',
             }),
             buildCustomField({
               id: 'employerInfo',
               title: '',
+              doesNotRequireAnswer: true,
               component: 'EmployerInfo',
             }),
             buildRadioField({
@@ -274,34 +279,53 @@ export const PaymentPlanForm: Form = buildForm({
             buildCustomField({
               id: 'employerInfoDescription',
               title: '',
+              doesNotRequireAnswer: true,
               component: 'EmployerInfoDescription',
             }),
             buildCustomField({
-              id: 'employerCustomId',
+              id: 'correctedEmployer',
               title: '',
               component: 'EmployerIdField',
             }),
           ],
         }),
+      ],
+      condition: (_formValue, externalData) => {
+        const debts = (externalData as PaymentPlanExternalData)
+          ?.paymentPlanPrerequisites?.data?.debts
+
+        return debts?.find((x) => x.type === 'Wagedection') !== undefined
+      },
+    }),
+    buildSection({
+      id: 'disposableIncomeSection',
+      title: section.disposableIncome,
+      children: [
         buildCustomField({
           id: 'disposableIncome',
           title: employer.general.disposableIncomePageTitle,
           description: employer.general.disposableIncomePageDescription,
+          doesNotRequireAnswer: true,
           component: 'DisposableIncome',
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'deptOverview',
+      title: section.deptOverview,
+      children: [
+        buildCustomField({
+          id: `payment-plan-list`,
+          title: paymentPlan.general.pageTitle,
+          doesNotRequireAnswer: true,
+          component: 'PaymentPlanList',
         }),
       ],
     }),
     buildSection({
       id: 'paymentPlanSection',
       title: section.paymentPlan,
-      children: [
-        buildCustomField({
-          id: `payment-plan-list`,
-          title: paymentPlan.general.pageTitle,
-          component: 'PaymentPlanList',
-        }),
-        ...buildPaymentPlanSteps(),
-      ],
+      children: [...buildPaymentPlanSteps()],
     }),
     buildSection({
       id: 'overview',
@@ -315,6 +339,7 @@ export const PaymentPlanForm: Form = buildForm({
             buildCustomField({
               id: 'overviewScreen',
               title: '',
+              doesNotRequireAnswer: true,
               component: 'Overview',
             }),
             buildSubmitField({

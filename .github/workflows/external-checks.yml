@@ -48,6 +48,9 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
       - name: Run gitbook format
         run: node ./scripts/gitbook.js
       - name: Check if the git repo is dirty

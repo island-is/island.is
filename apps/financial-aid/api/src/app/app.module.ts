@@ -1,7 +1,8 @@
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
-import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
+import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
+import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 
 import { environment } from '../environments'
 import { BackendAPI } from '../services'
@@ -10,6 +11,9 @@ import {
   ApplicationModule,
   MunicipalityModule,
   FileModule,
+  StaffModule,
+  PersonalTaxReturnModule,
+  MunicipalityNationalRegistryModule,
 } from './modules/'
 
 const debug = !environment.production
@@ -35,8 +39,13 @@ const autoSchemaFile = environment.production
     ApplicationModule,
     MunicipalityModule,
     FileModule,
-    NationalRegistryXRoadModule.register(environment.nationalRegistryXRoad),
+    MunicipalityNationalRegistryModule,
+    StaffModule,
+    PersonalTaxReturnModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [XRoadConfig, NationalRegistryClientConfig],
+    }),
   ],
-  providers: [BackendAPI],
 })
 export class AppModule {}

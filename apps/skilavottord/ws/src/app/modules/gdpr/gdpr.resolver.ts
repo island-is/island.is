@@ -1,37 +1,32 @@
-import { Inject } from '@nestjs/common'
 import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
-import { GdprService } from './gdpr.service'
-import { GdprModel } from './model/gdpr.model'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Authorize } from '../auth'
 
+import { Authorize, CurrentUser, User } from '../auth'
+
+import { GdprService } from './gdpr.service'
+import { GdprModel } from './gdpr.model'
+
+@Authorize()
 @Resolver(() => GdprModel)
 export class GdprResolver {
-  constructor(
-    @Inject(GdprService) private gdprService: GdprService,
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
-  ) {}
+  constructor(private gdprService: GdprService) {}
 
-  @Authorize({ throwOnUnAuthorized: false })
-  @Mutation((returns) => Boolean)
+  @Mutation((_) => Boolean)
   async createSkilavottordGdpr(
-    @Args('nationalId') nationalId: string,
+    @CurrentUser() user: User,
     @Args('gdprStatus') gdprStatus: string,
   ): Promise<boolean> {
-    await this.gdprService.createGdpr(nationalId, gdprStatus)
+    await this.gdprService.createGdpr(user.nationalId, gdprStatus)
     return true
   }
 
-  @Query(() => GdprModel)
-  async skilavottordGdpr(@Args('nationalId') nid: string): Promise<GdprModel> {
-    return await this.gdprService.findByNationalId(nid)
+  @Query(() => GdprModel, { nullable: true })
+  async skilavottordGdpr(@CurrentUser() user: User): Promise<GdprModel> {
+    return await this.gdprService.findByNationalId(user.nationalId)
   }
 
   @Query(() => [GdprModel])
   async skilavottordAllGdprs(): Promise<GdprModel[]> {
     const res = this.gdprService.findAll()
-    this.logger.info('getAllGdrps responce:' + JSON.stringify(res, null, 2))
     return res
   }
 }

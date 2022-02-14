@@ -5,7 +5,11 @@ import {
   CreateSignedUrlMutation,
   ApplicationFilesMutation,
 } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
-import { FileType, SignedUrl } from '@island.is/financial-aid/shared/lib'
+import {
+  encodeFilename,
+  FileType,
+  SignedUrl,
+} from '@island.is/financial-aid/shared/lib'
 
 export const useFileUpload = (formFiles: UploadFile[]) => {
   const [files, _setFiles] = useState<UploadFile[]>([])
@@ -71,13 +75,11 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
   const createSignedUrl = async (
     filename: string,
   ): Promise<SignedUrl | undefined> => {
-    const validEncodedFileName = encodeURI(filename.replace(/ +/g, '_'))
-
     let signedUrl: SignedUrl | undefined = undefined
 
     try {
       const { data: presignedUrlData } = await createSignedUrlMutation({
-        variables: { input: { fileName: validEncodedFileName } },
+        variables: { input: { fileName: encodeFilename(filename) } },
       })
 
       signedUrl = presignedUrlData?.getSignedUrl
@@ -88,7 +90,7 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     return signedUrl
   }
 
-  const formatFiles = async (
+  const formatFiles = (
     allFiles: UploadFile[],
     applicationId: string,
     type: FileType,

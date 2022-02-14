@@ -20,7 +20,7 @@ export class ApplicationGuard implements CanActivate {
     }
 
     const application = await this.applicationService.findById(
-      request.params.id,
+      request.params.id || request.body.applicationId,
       user.service,
     )
 
@@ -31,7 +31,10 @@ export class ApplicationGuard implements CanActivate {
         return false
       }
     } else if (user.service === RolesRule.OSK) {
-      if (application.nationalId !== user.nationalId) {
+      if (
+        application.nationalId !== user.nationalId &&
+        user.nationalId !== application.spouseNationalId
+      ) {
         return false
       }
     } else {

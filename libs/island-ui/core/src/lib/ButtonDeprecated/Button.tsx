@@ -8,6 +8,7 @@ import { ColorSchemeContext } from '../context'
 
 import * as styles from './Button.css'
 import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
+import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 
 export type ButtonSize = 'small' | 'medium' | 'large'
 export type ButtonVariant = 'normal' | 'ghost' | 'redGhost' | 'text' | 'menu'
@@ -41,8 +42,6 @@ export interface ButtonProps {
   rounded?: boolean
   id?: string
 }
-
-const isLinkExternal = (href: string): boolean => href.indexOf('://') > 0
 
 export const Button = forwardRef<
   HTMLAnchorElement & HTMLButtonElement,
@@ -87,7 +86,7 @@ export const Button = forwardRef<
     )
 
     icon = loading ? 'loading' : icon
-    const isExternal = !!(href && isLinkExternal(href))
+    const isExternal = !!(href && shouldLinkOpenInNewWindow(href))
     const isMenuButton = variant === 'menu'
     const hasLeftContent = !!(leftImage || leftIcon)
     const showRightIcon = !!(icon || isExternal || loading)

@@ -29,11 +29,6 @@ export const mainInfo = style({
 
 export const contactInfo = style({
   gridColumn: 'span 3',
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
-      gridColumn: 'span 4',
-    },
-  },
 })
 
 export const filesButtons = style({

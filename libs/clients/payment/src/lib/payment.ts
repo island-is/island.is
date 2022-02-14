@@ -22,6 +22,7 @@ export class PaymentAPI extends RESTDataSource {
   }
 
   willSendRequest(request: RequestOptions) {
+    this.memoizedResults.clear()
     request.headers.set('Content-Type', 'application/json')
     request.headers.set('X-Road-Client', this.options.xRoadClientId)
     request.headers.set(

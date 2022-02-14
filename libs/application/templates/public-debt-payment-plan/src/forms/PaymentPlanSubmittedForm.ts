@@ -13,7 +13,7 @@ export const PaymentPlanSubmittedForm: Form = buildForm({
   mode: FormModes.PENDING,
   children: [
     buildSection({
-      id: 'stepOne',
+      id: 'confirmation',
       title: section.confirmation,
       children: [
         buildCustomField({

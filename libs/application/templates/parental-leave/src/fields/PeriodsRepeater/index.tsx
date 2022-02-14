@@ -11,6 +11,10 @@ import {
   ContentBlock,
   AlertMessage,
 } from '@island.is/island-ui/core'
+import {
+  findProblemInApolloError,
+  ProblemType,
+} from '@island.is/shared/problem'
 import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
 
@@ -108,12 +112,24 @@ const PeriodsRepeater: FC<ScreenProps> = ({
 
         return [true, null]
       } catch (e) {
-        return [
-          false,
-          (e as Error)?.message ||
+        const problem = findProblemInApolloError(e as any)
+
+        if (problem && problem.type === ProblemType.VALIDATION_FAILED) {
+          const message =
+            (problem.fields?.periods as string) ??
+            problem.detail ??
             formatMessage(
               parentalLeaveFormMessages.errorMessages.periodsUnexpectedError,
-            ),
+            )
+
+          return [false, message]
+        }
+
+        return [
+          false,
+          formatMessage(
+            parentalLeaveFormMessages.errorMessages.periodsUnexpectedError,
+          ),
         ]
       }
     })
@@ -206,17 +222,19 @@ const PeriodsRepeater: FC<ScreenProps> = ({
           </Inline>
         </Box>
       )}
-      {editable && hasAddedPeriods && canAddAnotherPeriod && (
-        <FieldDescription
-          description={formatMessage(
-            parentalLeaveFormMessages.leavePlan.usage,
-            {
-              alreadyUsed: daysAlreadyUsed,
-              rights: rights,
-            },
-          )}
-        />
-      )}
+      {editable &&
+        hasAddedPeriods &&
+        (canAddAnotherPeriod || remainingRights < 0) && (
+          <FieldDescription
+            description={formatMessage(
+              parentalLeaveFormMessages.leavePlan.usage,
+              {
+                alreadyUsed: daysAlreadyUsed,
+                rights: rights,
+              },
+            )}
+          />
+        )}
       {!!error && (
         <Box marginTop={3}>
           <ContentBlock>

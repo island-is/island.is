@@ -1,4 +1,4 @@
-import React, { useState, useRef, useLayoutEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { useIntersection } from 'react-use'
 import cn from 'classnames'
 import { BoxProps, Box } from '@island.is/island-ui/core'
@@ -34,7 +34,7 @@ type ExtraProps = UseThumbnailProps | ThumbnailColorProps
 const useImageLoader = (url: string, shouldLoad?: boolean): boolean => {
   const [loaded, setLoaded] = useState(false)
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (shouldLoad) {
       const img = new window.Image(100)
       img.onload = img.onerror = () => {
@@ -85,7 +85,7 @@ export const BackgroundImage = ({
       }
     : {}
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!shouldLoad && intersection?.isIntersecting) {
       setShouldLoad(true)
     }

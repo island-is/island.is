@@ -36,10 +36,12 @@ export const GET_SUPPORT_QNAS_IN_CATEGORY = gql`
       id
       title
       slug
+      importance
       subCategory {
         title
         description
         slug
+        importance
       }
       category {
         title
@@ -72,6 +74,7 @@ export const GET_SUPPORT_CATEGORIES = gql`
       organization {
         slug
       }
+      importance
     }
   }
 `
@@ -88,21 +91,7 @@ export const GET_SUPPORT_CATEGORIES_IN_ORGANIZATION = gql`
       organization {
         slug
       }
-    }
-  }
-`
-
-export const GET_SUPPORT_FORM_IN_ORGANIZATION = gql`
-  query GET_SUPPORT_FORM_IN_ORGANIZATION(
-    $input: GetSupportFormInOrganizationInput!
-  ) {
-    getSupportFormInOrganization(input: $input) {
-      id
-      category
-      form
-      organization {
-        slug
-      }
+      importance
     }
   }
 `
@@ -160,6 +149,9 @@ export const GET_SERVICE_WEB_ORGANIZATION = gql`
         content {
           ...HtmlFields
         }
+        serviceWebContent {
+          ...HtmlFields
+        }
         link {
           text
           url
@@ -167,6 +159,8 @@ export const GET_SERVICE_WEB_ORGANIZATION = gql`
       }
       phone
       email
+      serviceWebTitle
+      serviceWebEnabled
     }
   }
 `

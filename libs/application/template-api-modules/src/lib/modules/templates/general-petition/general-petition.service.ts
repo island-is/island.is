@@ -8,54 +8,22 @@ import {
   EndorsementMetadataDtoFieldEnum,
   EndorsementListTagsEnum,
 } from './gen/fetch/endorsements'
+import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
+import { getValueViaPath } from '@island.is/application/core'
 
 const CREATE_ENDORSEMENT_LIST_QUERY = `
-  mutation EndorsementSystemCreatePartyLetterEndorsementList($input: CreateEndorsementListDto!) {
+  mutation EndorsementSystemCreateEndorsementList($input: CreateEndorsementListDto!) {
     endorsementSystemCreateEndorsementList(input: $input) {
       id
     }
   }
 `
 
-/**
- * We proxy the auth header to the subsystem where it is resolved.
- */
-interface FetchParams {
-  url: string
-  init: RequestInit
-}
-
-interface RequestContext {
-  init: RequestInit
-}
-
-interface Middleware {
-  pre?(context: RequestContext): Promise<FetchParams | void>
-}
-class ForwardAuthHeaderMiddleware implements Middleware {
-  constructor(private bearerToken: string) {}
-
-  async pre(context: RequestContext) {
-    context.init.headers = Object.assign({}, context.init.headers, {
-      authorization: this.bearerToken,
-    })
+interface EndorsementListData {
+  endorsementSystemCreateEndorsementList: {
+    id: string
   }
 }
-
-type ErrorResponse = {
-  errors: {
-    message: string
-  }
-}
-type EndorsementListResponse =
-  | {
-      data: {
-        endorsementSystemCreateEndorsementList: {
-          id: string
-        }
-      }
-    }
-  | ErrorResponse
 
 @Injectable()
 export class GeneralPetitionService {
@@ -67,7 +35,7 @@ export class GeneralPetitionService {
 
   endorsementListApiWithAuth(token: string) {
     return this.endorsementListApi.withMiddleware(
-      new ForwardAuthHeaderMiddleware(token),
+      new AuthHeaderMiddleware(token),
     )
   }
 
@@ -75,44 +43,47 @@ export class GeneralPetitionService {
     application,
     auth,
   }: TemplateApiModuleActionProps) {
-    const endorsementList: EndorsementListResponse = await this.sharedTemplateAPIService
-      .makeGraphqlQuery(auth.authorization, CREATE_ENDORSEMENT_LIST_QUERY, {
-        input: {
-          title: application.answers.listName,
-          description: application.answers.aboutList,
-          endorsementMetadata: [
-            { field: EndorsementMetadataDtoFieldEnum.address },
-            { field: EndorsementMetadataDtoFieldEnum.fullName },
-          ],
-          tags: [EndorsementListTagsEnum.generalPetition],
-          validationRules: [
-            {
-              type: 'minAge',
-              value: {
-                age: 18,
-              },
+    const { dateFrom, dateTil } = getValueViaPath(
+      application.answers,
+      'dates',
+    ) as { dateFrom: string; dateTil: string }
+    const endorsementListResponse = await this.sharedTemplateAPIService
+      .makeGraphqlQuery<EndorsementListData>(
+        auth.authorization,
+        CREATE_ENDORSEMENT_LIST_QUERY,
+        {
+          input: {
+            title: application.answers.listName,
+            description: application.answers.aboutList,
+            endorsementMetadata: [
+              { field: EndorsementMetadataDtoFieldEnum.fullName },
+            ],
+            tags: [EndorsementListTagsEnum.generalPetition],
+            meta: {
+              // to be able to link back to this application
+              applicationTypeId: application.typeId,
+              applicationId: application.id,
             },
-          ],
-          meta: {
-            // to be able to link back to this application
-            applicationTypeId: application.typeId,
-            applicationId: application.id,
+            closedDate: dateTil,
+            openedDate: dateFrom,
+            adminLock: false,
           },
-          closedDate: application.answers.dateTil,
-          openedDate: application.answers.dateFrom,
-          adminLock: false,
         },
-      })
+      )
       .then((response) => response.json())
 
-    if ('errors' in endorsementList) {
-      this.logger.error('Failed to create endorsement list', endorsementList)
+    if ('errors' in endorsementListResponse) {
+      this.logger.error(
+        'Failed to create endorsement list',
+        endorsementListResponse,
+      )
       throw new Error('Failed to create endorsement list')
     }
 
     // This gets written to externalData under the key createEndorsementList
     return {
-      id: endorsementList.data.endorsementSystemCreateEndorsementList.id,
+      id:
+        endorsementListResponse.data?.endorsementSystemCreateEndorsementList.id,
     }
   }
 }

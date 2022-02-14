@@ -9,7 +9,6 @@ import {
   EndorsementListControllerCreateRequest,
   EndorsementListControllerUpdateRequest,
   EndorsementListControllerFindOneRequest,
-  EndorsementControllerBulkCreateRequest,
   EndorsementControllerFindAllRequest,
   EndorsementControllerFindByAuthRequest,
   EndorsementListControllerFindByTagsRequest,
@@ -20,7 +19,7 @@ import {
   EndorsementListControllerOpenRequest,
   EndorsementListControllerLockRequest,
   EndorsementListControllerUnlockRequest,
-  EndorsementControllerEmailEndorsementsPDFRequest,
+  EndorsementListControllerEmailEndorsementsPDFRequest,
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
@@ -87,15 +86,6 @@ export class EndorsementSystemService {
       .catch(this.handleError.bind(this))
   }
 
-  async endorsementControllerBulkCreate(
-    input: EndorsementControllerBulkCreateRequest,
-    auth: Auth,
-  ) {
-    return await this.endorsementApiWithAuth(auth)
-      .endorsementControllerBulkCreate(input)
-      .catch(this.handleError.bind(this))
-  }
-
   async endorsementControllerDelete(
     input: EndorsementControllerDeleteRequest,
     auth: Auth,
@@ -106,11 +96,12 @@ export class EndorsementSystemService {
     return Boolean(result)
   }
 
-  // Auth removed - Tags
+  // Auth - Tags
   async endorsementListControllerFindLists(
     input: EndorsementListControllerFindByTagsRequest,
+    auth: Auth,
   ) {
-    return await this.endorsementListApi
+    return await this.endorsementListApiWithAuth(auth)
       .endorsementListControllerFindByTags(input)
       .catch(this.handleError.bind(this))
   }
@@ -220,12 +211,12 @@ export class EndorsementSystemService {
       .catch(this.handleError.bind(this))
   }
 
-  async endorsementControllerSendPdfEmail(
-    endorsementList: EndorsementControllerEmailEndorsementsPDFRequest,
+  async endorsementListControllerSendPdfEmail(
+    endorsementList: EndorsementListControllerEmailEndorsementsPDFRequest,
     auth: Auth,
   ) {
-    return await this.endorsementApiWithAuth(auth)
-      .endorsementControllerEmailEndorsementsPDF(endorsementList)
+    return await this.endorsementListApiWithAuth(auth)
+      .endorsementListControllerEmailEndorsementsPDF(endorsementList)
       .catch(this.handleError.bind(this))
   }
 }

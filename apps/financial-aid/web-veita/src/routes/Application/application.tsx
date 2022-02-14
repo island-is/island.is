@@ -10,7 +10,7 @@ import { Application } from '@island.is/financial-aid/shared/lib'
 import {
   ApplicationSkeleton,
   LoadingContainer,
-  ApplicationNotFound,
+  ProfileNotFound,
   ApplicationProfile,
 } from '@island.is/financial-aid-web/veita/src/components'
 
@@ -28,6 +28,7 @@ const UserApplication = () => {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
+
   const [application, setApplication] = useState<Application>()
 
   useEffect(() => {
@@ -48,7 +49,7 @@ const UserApplication = () => {
           setIsLoading={setIsLoading}
         />
       ) : (
-        <ApplicationNotFound />
+        <ProfileNotFound backButtonHref="/nymal" />
       )}
     </LoadingContainer>
   )

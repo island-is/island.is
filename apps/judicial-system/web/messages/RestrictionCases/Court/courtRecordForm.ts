@@ -55,6 +55,22 @@ export const rcCourtRecord = {
         description:
           'Sjálfgefinn texti í "Afstaða kærða og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
+      autofillDefender: {
+        id:
+          'judicial.system.restriction_cases:court_record.accused_bookings.autofill_defender',
+        defaultMessage:
+          '{defender} lögmaður er skipaður verjandi sakbornings að hans ósk.',
+        description:
+          'Sjálfgefinn texti í "Afstaða kærða og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      autofillTranslator: {
+        id:
+          'judicial.system.restriction_cases:court_record.accused_bookings.autofill_translator',
+        defaultMessage:
+          '{translator} túlkar fyrir sakborning það sem fram fer í þinghaldinu.',
+        description:
+          'Sjálfgefinn texti í "Afstaða kærða og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
     }),
     courtLocation: defineMessages({
       label: {

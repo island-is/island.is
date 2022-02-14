@@ -4,10 +4,13 @@ import { Injectable } from '@nestjs/common'
 import { Entry } from 'contentful'
 import isCircular from 'is-circular'
 import { ISubArticle } from '../../generated/contentfulTypes'
-import { Link } from '../../models/link.model'
 import { mapSubArticle } from '../../models/subArticle.model'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
-import { createTerms, extractStringsFromObject } from './utils'
+import {
+  createTerms,
+  extractStringsFromObject,
+  removeEntryHyperlinkFields,
+} from './utils'
 
 @Injectable()
 export class SubArticleSyncService implements CmsSyncProvider<ISubArticle> {
@@ -50,6 +53,12 @@ export class SubArticleSyncService implements CmsSyncProvider<ISubArticle> {
               parent: processedArticle,
             },
           }
+          // An entry hyperlink does not need the extra content present in
+          // the entry hyperlink associated fields
+          // We remove them from the reference itself on nodeType `entry-hyperlink`
+          if (processedEntry.fields?.content) {
+            removeEntryHyperlinkFields(processedEntry.fields.content)
+          }
 
           if (!isCircular(processedEntry)) {
             processedEntries.push(processedEntry)
@@ -79,6 +88,13 @@ export class SubArticleSyncService implements CmsSyncProvider<ISubArticle> {
             response: JSON.stringify({ ...mapped, typename: 'SubArticle' }),
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),
+            tags: [
+              {
+                key: entry.fields?.parent?.fields?.category?.fields?.slug ?? '',
+                value: entry.fields?.parent?.fields?.category?.fields?.title,
+                type: 'category',
+              },
+            ],
           }
         } catch (error) {
           logger.warn('Failed to import subarticle', { error: error.message })

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
+import { ProblemModule } from '@island.is/nest/problem'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../environments'
@@ -15,6 +16,7 @@ import {
   PoliceModule,
   AwsS3Module,
 } from './modules'
+import { DefendantModule } from './modules/defendant/defendant.module'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 
 @Module({
@@ -35,6 +37,8 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     EventModule,
     PoliceModule,
     AwsS3Module,
+    ProblemModule.forRoot({ logAllErrors: true }),
+    DefendantModule,
   ],
 })
 export class AppModule {}

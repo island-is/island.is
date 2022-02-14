@@ -20,16 +20,6 @@ export const m: MessageDir = {
       defaultMessage: 'Mínar skráningar',
       description: 'Section title for your endorsements',
     },
-    availablePartyApplicationEndorsements: {
-      id: 'sp.endorsements:available-endorsements',
-      defaultMessage: 'Framboðslistar sem þú getur stutt í þínu kjördæmi',
-      description: 'Section title for available endorsements in your area',
-    },
-    availablePartyLetterEndorsements: {
-      id: 'sp.endorsements:available-party-letter-endorsements',
-      defaultMessage: 'Listabókstafir sem þú getur mælt með',
-      description: 'Section title for available endorsements in your area',
-    },
     actionCardButtonEndorse: {
       id: 'sp.endorsements:endorse-button',
       defaultMessage: 'Mæla með',
@@ -70,6 +60,21 @@ export const m: MessageDir = {
         'Lokaða meðmælendalista sem þú hefur mælt með, ekki er hægt að afskrá sig af lokuðum lista.',
       description: 'Petitions intro text bullet',
     },
+    bullet1Admin: {
+      id: 'sp.petitions:intro-bullet1-admin',
+      defaultMessage: 'Opna meðmælendalista',
+      description: 'Petitions intro text bullet',
+    },
+    bullet2Admin: {
+      id: 'sp.petitions:intro-bullet2-admin',
+      defaultMessage: 'Lokaða meðmælendalista',
+      description: 'Petitions intro text bullet',
+    },
+    bullet3Admin: {
+      id: 'sp.petitions:intro-bullet2-admin',
+      defaultMessage: 'Læsta meðmælendalista',
+      description: 'Petitions intro text bullet',
+    },
     petitionListsIown: {
       id: 'sp.petitions:petition-lists-i-own',
       defaultMessage: 'Listar stofnaðir af mér',
@@ -84,6 +89,11 @@ export const m: MessageDir = {
       id: 'sp.petitions:petition-lists-closed',
       defaultMessage: 'Lokaðir listar',
       description: 'Section title for closed petition lists',
+    },
+    petitionListsLocked: {
+      id: 'sp.petitions:petition-lists-locked',
+      defaultMessage: 'Læstir listar',
+      description: 'Section title for locked petition lists',
     },
     petitionListsSignedByMe: {
       id: 'sp.petitions:petition-lists-signed-by-me',
@@ -114,12 +124,12 @@ export const m: MessageDir = {
   viewPetition: defineMessages({
     numberSigned: {
       id: 'sp.petitions:number-signed',
-      defaultMessage: 'Fjöldi skráðir',
+      defaultMessage: 'Fjöldi skráðir:',
       description: 'Number of petitions signed',
     },
     openTil: {
       id: 'sp.petitions:open-til',
-      defaultMessage: 'Meðmælendalistinn er opinn:',
+      defaultMessage: 'Meðmælendalistinn er opinn til:',
       description: 'List is open til',
     },
     listOwner: {
@@ -147,14 +157,29 @@ export const m: MessageDir = {
       defaultMessage: 'Ertu viss um að vilja loka lista?',
       description: 'Dialog prompt title',
     },
+    dialogPromptLockListTitle: {
+      id: 'sp.petitions:dialog-prompt-lock',
+      defaultMessage: 'Ertu viss um að vilja læsa lista?',
+      description: 'Dialog prompt title',
+    },
     dialogPromptOpenListTitle: {
       id: 'sp.petitions:dialog-prompt-open',
       defaultMessage: 'Ertu viss um að vilja opna lista?',
       description: 'Dialog prompt title',
     },
+    dialogPromptUpdateListTitle: {
+      id: 'sp.petitions:dialog-prompt-update',
+      defaultMessage: 'Ertu viss um að vilja uppfæra lista?',
+      description: 'Dialog prompt title',
+    },
     closeListButton: {
       id: 'sp.petitions:close-list',
       defaultMessage: 'Loka lista',
+      description: 'Button label',
+    },
+    lockListButton: {
+      id: 'sp.petitions:lock-list',
+      defaultMessage: 'Læsa lista',
       description: 'Button label',
     },
     updateListButton: {
@@ -192,6 +217,16 @@ export const m: MessageDir = {
       defaultMessage: 'Ekki tókst að loka lista',
       description: 'Toast error message',
     },
+    toastErrorLockList: {
+      id: 'sp.petitions:toast-error-message-lock',
+      defaultMessage: 'Ekki tókst að læsa lista',
+      description: 'Toast error message',
+    },
+    toastErrorSendList: {
+      id: 'sp.petitions:toast-error-send-list',
+      defaultMessage: 'Ekki tókst að senda lista á netfang',
+      description: 'Toast error message',
+    },
     toastSuccess: {
       id: 'sp.petitions:toast-success-message',
       defaultMessage: 'Nafn þitt er ekki lengur á þessum lista',
@@ -202,9 +237,19 @@ export const m: MessageDir = {
       defaultMessage: 'Tókst að loka lista',
       description: 'Toast success message',
     },
+    toastSuccessLockList: {
+      id: 'sp.petitions:toast-success-message-lock-list',
+      defaultMessage: 'Tókst að læsa lista',
+      description: 'Toast success message',
+    },
     toastSuccessOpenList: {
       id: 'sp.petitions:toast-success-message-open-list',
       defaultMessage: 'Tókst að opna/uppfæra lista',
+      description: 'Toast success message',
+    },
+    toastSuccessSendList: {
+      id: 'sp.petitions:toast-send-list',
+      defaultMessage: 'Listinn sendur á ',
       description: 'Toast success message',
     },
     closeListDescription: {
@@ -270,6 +315,21 @@ export const m: MessageDir = {
       id: 'sp.petitions:send-list',
       defaultMessage: 'Senda lista',
       description: 'Button title',
+    },
+    sendListTitle: {
+      id: 'sp.petitions:send-list-title',
+      defaultMessage: 'Senda lista á netfang',
+      description: 'Title',
+    },
+    sendListPlaceholder: {
+      id: 'sp.petitions:send-list-placeholder',
+      defaultMessage: 'Sláðu inn netfang',
+      description: 'Input placeholder',
+    },
+    noPetitionsText: {
+      id: 'sp.petitions:no-petitions',
+      defaultMessage: 'Engin meðmæli komin enn',
+      description: 'No petitions text',
     },
   }),
 }

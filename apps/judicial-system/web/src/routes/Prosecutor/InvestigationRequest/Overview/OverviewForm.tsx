@@ -6,21 +6,26 @@ import { CaseState } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import {
   CaseFileList,
+  CaseInfo,
   FormContentContainer,
   FormFooter,
   InfoCard,
   PdfButton,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import {
   capitalize,
   caseTypes,
   formatDate,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
-
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import {
+  core,
+  requestCourtDate,
+  icOverview,
+} from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
 import * as styles from './Overview.css'
 
 interface Props {
@@ -39,27 +44,50 @@ const OverviewForm: React.FC<Props> = (props) => {
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            Yfirlit kröfu um rannsóknarheimild
+            {formatMessage(icOverview.heading)}
           </Text>
+        </Box>
+        <Box component="section" marginBottom={7}>
+          <CaseInfo
+            workingCase={workingCase}
+            userRole={user?.role}
+            showAdditionalInfo
+          />
         </Box>
         <Box component="section" marginBottom={5}>
           <InfoCard
             data={[
               {
-                title: 'LÖKE málsnúmer',
+                title: formatMessage(core.policeCaseNumber),
                 value: workingCase.policeCaseNumber,
               },
+              ...(workingCase.courtCaseNumber
+                ? [
+                    {
+                      title: 'Málsnúmer héraðsdóms',
+                      value: workingCase.courtCaseNumber,
+                    },
+                  ]
+                : []),
               {
-                title: 'Krafa stofnuð',
-                value: formatDate(workingCase.created, 'P'),
+                title: formatMessage(core.court),
+                value: workingCase.court?.name,
               },
               {
-                title: 'Embætti',
+                title: formatMessage(core.prosecutor),
                 value: `${
                   workingCase.creatingProsecutor?.institution?.name ??
                   'Ekki skráð'
                 }`,
               },
+              ...(workingCase.judge
+                ? [
+                    {
+                      title: formatMessage(core.judge),
+                      value: workingCase.judge.name,
+                    },
+                  ]
+                : []),
               {
                 title: formatMessage(requestCourtDate.heading),
                 value: `${capitalize(
@@ -70,25 +98,40 @@ const OverviewForm: React.FC<Props> = (props) => {
                   TIME_FORMAT,
                 )}`,
               },
+              ...(workingCase.registrar
+                ? [
+                    {
+                      title: formatMessage(core.registrar),
+                      value: workingCase.registrar.name,
+                    },
+                  ]
+                : []),
               {
-                title: 'Ákærandi',
-                value: `${workingCase.prosecutor?.name} ${workingCase.prosecutor?.title}`,
+                title: formatMessage(core.prosecutorPerson),
+                value: workingCase.prosecutor?.name,
               },
               {
-                title: 'Tegund kröfu',
+                title: formatMessage(core.caseType),
                 value: capitalize(caseTypes[workingCase.type]),
               },
+              ...(workingCase.courtDate
+                ? [
+                    {
+                      title: formatMessage(core.confirmedCourtDate),
+                      value: `${capitalize(
+                        formatDate(workingCase.courtDate, 'PPPP', true) ?? '',
+                      )} kl. ${formatDate(workingCase.courtDate, TIME_FORMAT)}`,
+                    },
+                  ]
+                : []),
             ]}
-            accusedName={workingCase.accusedName}
-            accusedNationalId={workingCase.accusedNationalId}
-            accusedAddress={workingCase.accusedAddress}
+            defendants={workingCase.defendants ?? []}
             defender={{
               name: workingCase.defenderName ?? '',
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
               defenderIsSpokesperson: workingCase.defenderIsSpokesperson,
             }}
-            isInvestigationCase
           />
         </Box>
         {workingCase.description && (
@@ -113,7 +156,7 @@ const OverviewForm: React.FC<Props> = (props) => {
           <Accordion>
             <AccordionItem
               labelVariant="h3"
-              id="id_2"
+              id="id_1"
               label="Lagaákvæði sem brot varða við"
             >
               <Text>

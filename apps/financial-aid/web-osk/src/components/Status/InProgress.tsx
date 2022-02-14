@@ -16,9 +16,10 @@ import { useRouter } from 'next/router'
 
 interface Props {
   application: Application
+  isApplicant?: boolean
 }
 
-const InProgress = ({ application }: Props) => {
+const InProgress = ({ application, isApplicant = true }: Props) => {
   const router = useRouter()
 
   if (
@@ -27,11 +28,17 @@ const InProgress = ({ application }: Props) => {
   ) {
     return null
   }
+
+  const header = () => {
+    return application.state === ApplicationState.NEW
+      ? 'Umsókn móttekin'
+      : `Umsókn í vinnslu til útgreiðslu í ${getNextPeriod.month} ${getNextPeriod.year}`
+  }
+
   return (
     <>
       <Text as="h2" variant="h3" color="blue400" marginBottom={[4, 4, 5]}>
-        Umsókn {getState[application.state].toLowerCase()} til útgreiðslu í{' '}
-        {getNextPeriod.month} {` `} {getNextPeriod.year}
+        {header()}
       </Text>
 
       {application.state === ApplicationState.DATANEEDED && (
@@ -50,21 +57,22 @@ const InProgress = ({ application }: Props) => {
           />
         </Box>
       )}
-
-      <Estimation
-        homeCircumstances={application.homeCircumstances}
-        usePersonalTaxCredit={application?.usePersonalTaxCredit}
-        aboutText={
-          <Text marginBottom={[2, 2, 3]}>
-            Athugaðu að þessi útreikningur er{' '}
-            <span className={styles.taxReturn}>
-              eingöngu til viðmiðunar og getur tekið breytingum.
-            </span>{' '}
-            Þú færð skilaboð þegar frekari útreikningur liggur fyrir. Umsóknin
-            verður afgreidd eins fljótt og auðið er.
-          </Text>
-        }
-      />
+      {isApplicant && (
+        <Estimation
+          homeCircumstances={application.homeCircumstances}
+          usePersonalTaxCredit={application?.usePersonalTaxCredit}
+          aboutText={
+            <Text marginBottom={[2, 2, 3]}>
+              Athugaðu að þessi útreikningur er{' '}
+              <span className={styles.taxReturn}>
+                eingöngu til viðmiðunar og getur tekið breytingum.
+              </span>{' '}
+              Þú færð skilaboð þegar frekari útreikningur liggur fyrir. Umsóknin
+              verður afgreidd eins fljótt og auðið er.
+            </Text>
+          }
+        />
+      )}
     </>
   )
 }

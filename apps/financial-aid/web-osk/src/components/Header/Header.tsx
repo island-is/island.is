@@ -25,8 +25,8 @@ const Header = () => {
         <Box display="flex" height="full" alignItems="center">
           <Link
             href={
-              user?.currentApplication
-                ? Routes.statusPage(user?.currentApplication as string)
+              user?.currentApplicationId
+                ? Routes.statusPage(user?.currentApplicationId as string)
                 : Routes.application
             }
             data-testid="link-to-home"
@@ -48,7 +48,6 @@ const Header = () => {
           </Link>
 
           <Box
-            display="flex"
             height="full"
             flexDirection="column"
             justifyContent="center"

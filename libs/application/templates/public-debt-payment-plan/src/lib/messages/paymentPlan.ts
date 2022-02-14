@@ -16,7 +16,7 @@ export const paymentPlan = {
     },
     paymentPlanDescription: {
       id: `pdpp.application:section.paymentPlan.paymentPlanDescription`,
-      defaultMessage: 'Vinsamlegast veldu greiðslutímabil',
+      defaultMessage: 'Vinsamlegast veldu greiðsludreifingu',
       description: 'Payment plan page description',
     },
     wageDeductionInfoPageTitle: {

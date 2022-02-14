@@ -16,10 +16,6 @@ import { CreateApplicationFileInput } from '../../file/dto'
 export class CreateApplicationInput implements CreateApplication {
   @Allow()
   @Field()
-  readonly nationalId!: string
-
-  @Allow()
-  @Field()
   readonly name!: string
 
   @Allow()
@@ -90,9 +86,11 @@ export class CreateApplicationInput implements CreateApplication {
   @Field(() => [CreateApplicationFileInput])
   readonly files!: CreateApplicationFileInput[]
 
+  @Allow()
   @Field({ nullable: true })
   readonly amount?: number
 
+  @Allow()
   @Field({ nullable: true })
   readonly spouseName?: string
 

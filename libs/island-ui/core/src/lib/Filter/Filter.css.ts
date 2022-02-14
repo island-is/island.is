@@ -8,3 +8,10 @@ export const dialogContainer = style({
   zIndex: 10000,
   overflowY: 'scroll',
 })
+
+export const popoverContainer = style({
+  zIndex: 100,
+  maxWidth: 360,
+  width: '100%',
+  overflowY: 'scroll',
+})

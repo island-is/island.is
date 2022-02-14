@@ -38,6 +38,7 @@ export class MunicipalityModel extends Model<Municipality> {
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    unique: true,
   })
   @ApiProperty()
   municipalityId: string
@@ -45,6 +46,7 @@ export class MunicipalityModel extends Model<Municipality> {
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
+    defaultValue: false,
   })
   @ApiProperty()
   active: boolean
@@ -54,7 +56,7 @@ export class MunicipalityModel extends Model<Municipality> {
     allowNull: true,
   })
   @ApiProperty()
-  homepage: string
+  homepage?: string
 
   @ForeignKey(() => AidModel)
   @Column({
@@ -93,5 +95,12 @@ export class MunicipalityModel extends Model<Municipality> {
     allowNull: true,
   })
   @ApiProperty()
-  email: string
+  email?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  rulesHomepage?: string
 }

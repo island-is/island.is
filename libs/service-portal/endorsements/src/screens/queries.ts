@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 import {
   EndorsementList,
-  Endorsement,
+  ExistsEndorsementResponse,
   PaginatedEndorsementResponse,
   PaginatedEndorsementListResponse,
 } from '../types/schema'
@@ -21,10 +21,10 @@ interface SinglePetition {
   endorsementSystemGetSingleEndorsementList?: EndorsementList
 }
 interface SinglePetitionEndorsements {
-  endorsementSystemGetGeneralPetitionEndorsements?: PaginatedEndorsementResponse
+  endorsementSystemGetEndorsements?: PaginatedEndorsementResponse
 }
 interface SingleEndorsement {
-  endorsementSystemGetSingleEndorsement?: Endorsement
+  endorsementSystemGetSingleEndorsement?: ExistsEndorsementResponse
 }
 
 const GetSingleEndorsement = gql`
@@ -32,8 +32,7 @@ const GetSingleEndorsement = gql`
     $input: FindEndorsementListInput!
   ) {
     endorsementSystemGetSingleEndorsement(input: $input) {
-      id
-      endorser
+      hasEndorsed
     }
   }
 `
@@ -61,7 +60,6 @@ const GetListsUserSigned = gql`
         }
         meta {
           fullName
-          address
         }
         created
         modified
@@ -88,6 +86,7 @@ const GetAllEndorsementsLists = gql`
         description
         closedDate
         openedDate
+        adminLock
       }
     }
   }
@@ -109,11 +108,9 @@ export const GetSinglePetitionList = gql`
   }
 `
 
-const GetGeneralPetitionListEndorsements = gql`
-  query endorsementSystemGetGeneralPetitionEndorsements(
-    $input: PaginatedEndorsementInput!
-  ) {
-    endorsementSystemGetGeneralPetitionEndorsements(input: $input) {
+const GetEndorsements = gql`
+  query endorsementSystemGetEndorsements($input: PaginatedEndorsementInput!) {
+    endorsementSystemGetEndorsements(input: $input) {
       totalCount
       data {
         id
@@ -144,6 +141,14 @@ export const EndorseList = gql`
       }
       created
       modified
+    }
+  }
+`
+
+export const SendEmailPdf = gql`
+  mutation Mutants($input: sendPdfEmailInput!) {
+    endorsementSystemsendPdfEmail(input: $input) {
+      success
     }
   }
 `
@@ -222,7 +227,7 @@ export const useGetAllPetitionLists = () => {
       variables: {
         input: {
           tags: 'generalPetition',
-          limit: 20,
+          limit: 1000,
         },
       },
       pollInterval: 20000,
@@ -238,7 +243,7 @@ export const useGetListsUserSigned = () => {
     {
       variables: {
         input: {
-          limit: 20,
+          limit: 1000,
         },
       },
       pollInterval: 20000,
@@ -254,7 +259,7 @@ export const useListsUserOwns = () => {
       variables: {
         input: {
           tags: 'generalPetition',
-          limit: 20,
+          limit: 1000,
         },
       },
       pollInterval: 20000,
@@ -291,23 +296,24 @@ export const useGetSingleEndorsement = (listId: string) => {
       pollInterval: 20000,
     },
   )
-  return endorsement
+  return endorsement?.endorsementSystemGetSingleEndorsement?.hasEndorsed
 }
 
 export const useGetSinglePetitionEndorsements = (listId: string) => {
   const {
     data: endorsements,
     refetch: refetchSinglePetitionEndorsements,
-  } = useQuery<SinglePetitionEndorsements>(GetGeneralPetitionListEndorsements, {
+  } = useQuery<SinglePetitionEndorsements>(GetEndorsements, {
     variables: {
       input: {
         listId: listId,
+        limit: 1000,
       },
     },
     pollInterval: 20000,
   })
 
   const petitionEndorsements =
-    endorsements?.endorsementSystemGetGeneralPetitionEndorsements ?? []
+    endorsements?.endorsementSystemGetEndorsements ?? []
   return { petitionEndorsements, refetchSinglePetitionEndorsements }
 }

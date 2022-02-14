@@ -9,7 +9,7 @@ export class EndorsementListOpen {
   @Field()
   title!: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   description!: string | null
 
   @Field(() => [EndorsementListOpenTagsEnum], { nullable: true })
@@ -20,4 +20,7 @@ export class EndorsementListOpen {
 
   @Field(() => Date)
   openedDate!: Date
+
+  @Field(() => Boolean)
+  adminLock!: boolean
 }

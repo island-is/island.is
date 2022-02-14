@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import cn from 'classnames'
 import { useIntl } from 'react-intl'
+import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
+
 import {
   Text,
   Box,
@@ -10,31 +12,33 @@ import {
   Tooltip,
   Checkbox,
   LoadingDots,
-  Icon,
   Button,
   UploadFile,
 } from '@island.is/island-ui/core'
 import { Case, CaseFile, CaseFileState } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   useCase,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
+  CaseInfo,
   FormContentContainer,
   FormFooter,
-} from '@island.is/judicial-system-web/src/shared-components'
-import { icCaseFiles as m } from '@island.is/judicial-system-web/messages'
+} from '@island.is/judicial-system-web/src/components'
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
-import MarkdownWrapper from '@island.is/judicial-system-web/src/shared-components/MarkdownWrapper/MarkdownWrapper'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
+import { icCaseFiles as m } from '@island.is/judicial-system-web/messages'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
+import { PoliceCaseFilesMessageBox } from '../../SharedComponents/PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
 import { PoliceCaseFilesData } from './CaseFiles'
-import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
 import * as styles from './CaseFiles.css'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
   policeCaseFiles?: PoliceCaseFilesData
 }
@@ -47,11 +51,13 @@ interface PoliceCaseFile {
 
 const CaseFilesForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading, policeCaseFiles } = props
+
   const [policeCaseFileList, setPoliceCaseFileList] = useState<
     PoliceCaseFile[]
   >([])
   const [checkAllChecked, setCheckAllChecked] = useState<boolean>(false)
   const [isUploading, setIsUploading] = useState<boolean>(false)
+
   const {
     files,
     uploadErrorMessage,
@@ -64,6 +70,7 @@ const CaseFilesForm: React.FC<Props> = (props) => {
   } = useS3Upload(workingCase)
   const { formatMessage } = useIntl()
   const { updateCase } = useCase()
+  const { user } = useContext(UserContext)
 
   useEffect(() => {
     if (policeCaseFiles) {
@@ -143,6 +150,7 @@ const CaseFilesForm: React.FC<Props> = (props) => {
 
       if (index === filesToUpload.length - 1) {
         setIsUploading(false)
+        setCheckAllChecked(false)
       }
     })
 
@@ -156,6 +164,13 @@ const CaseFilesForm: React.FC<Props> = (props) => {
           <Text as="h1" variant="h1">
             {formatMessage(m.heading)}
           </Text>
+        </Box>
+        <Box component="section" marginBottom={7}>
+          <CaseInfo
+            workingCase={workingCase}
+            userRole={user?.role}
+            showAdditionalInfo
+          />
         </Box>
         <Box marginBottom={5}>
           <Box marginBottom={3}>
@@ -178,24 +193,61 @@ const CaseFilesForm: React.FC<Props> = (props) => {
         <Box marginBottom={5}>
           <AnimateSharedLayout>
             <motion.div layout className={styles.policeCaseFilesContainer}>
-              {policeCaseFileList.length > 0 ? (
-                <motion.ul layout>
-                  <motion.li
-                    layout
-                    className={cn(styles.policeCaseFile, {
-                      [styles.selectAllPoliceCaseFiles]: true,
-                    })}
+              <motion.ul layout>
+                <motion.li
+                  layout
+                  className={cn(styles.policeCaseFile, {
+                    [styles.selectAllPoliceCaseFiles]: true,
+                  })}
+                >
+                  <Checkbox
+                    name="selectAllPoliceCaseFiles"
+                    label={formatMessage(
+                      m.sections.policeCaseFiles.selectAllLabel,
+                    )}
+                    checked={checkAllChecked}
+                    onChange={(evt) => toggleCheckbox(evt, true)}
+                    disabled={isUploading || policeCaseFileList.length === 0}
+                    strong
+                  />
+                </motion.li>
+                {policeCaseFiles?.isLoading ? (
+                  <Box
+                    textAlign="center"
+                    paddingY={2}
+                    paddingX={3}
+                    marginBottom={2}
                   >
-                    <Checkbox
-                      name="selectAllPoliceCaseFiles"
-                      label={formatMessage(
-                        m.sections.policeCaseFiles.selectAllLabel,
+                    <LoadingDots />
+                  </Box>
+                ) : policeCaseFiles?.hasError ? (
+                  policeCaseFiles?.errorMessage &&
+                  policeCaseFiles?.errorMessage.indexOf('404') > -1 ? (
+                    <PoliceCaseFilesMessageBox
+                      icon="warning"
+                      iconColor="yellow400"
+                      message={formatMessage(
+                        m.sections.policeCaseFiles.caseNotFoundInLOKEMessage,
                       )}
-                      checked={checkAllChecked}
-                      onChange={(evt) => toggleCheckbox(evt, true)}
-                      strong
                     />
-                  </motion.li>
+                  ) : (
+                    <PoliceCaseFilesMessageBox
+                      icon="close"
+                      iconColor="red400"
+                      message={formatMessage(
+                        m.sections.policeCaseFiles.errorMessage,
+                      )}
+                    />
+                  )
+                ) : policeCaseFiles?.files.length === 0 ? (
+                  <PoliceCaseFilesMessageBox
+                    icon="warning"
+                    iconColor="yellow400"
+                    message={formatMessage(
+                      m.sections.policeCaseFiles.noFilesFoundInLOKEMessage,
+                    )}
+                  />
+                ) : policeCaseFileList.length > 0 ? (
                   <AnimatePresence>
                     {policeCaseFileList.map((listItem) => {
                       return (
@@ -235,32 +287,16 @@ const CaseFilesForm: React.FC<Props> = (props) => {
                       )
                     })}
                   </AnimatePresence>
-                </motion.ul>
-              ) : policeCaseFiles?.isLoading ? (
-                <Box textAlign="center">
-                  <LoadingDots />
-                </Box>
-              ) : policeCaseFiles?.hasError ? (
-                <Box display="flex" alignItems="center" paddingY={3}>
-                  <Box display="flex" marginRight={2}>
-                    <Icon icon="close" color="red400" />
-                  </Box>
-                  <Text variant="h5">
-                    {formatMessage(m.sections.policeCaseFiles.errorMessage)}
-                  </Text>
-                </Box>
-              ) : (
-                <Box display="flex" alignItems="center" paddingY={3}>
-                  <Box display="flex" marginRight={2}>
-                    <Icon icon="checkmark" color="blue400" />
-                  </Box>
-                  <Text variant="h5">
-                    {formatMessage(
+                ) : (
+                  <PoliceCaseFilesMessageBox
+                    icon="checkmark"
+                    iconColor="blue400"
+                    message={formatMessage(
                       m.sections.policeCaseFiles.allFilesUploadedMessage,
                     )}
-                  </Text>
-                </Box>
-              )}
+                  />
+                )}
+              </motion.ul>
             </motion.div>
             <motion.div layout className={styles.uploadToRVGButtonContainer}>
               <Button
@@ -308,11 +344,11 @@ const CaseFilesForm: React.FC<Props> = (props) => {
               name="caseFilesComments"
               label={formatMessage(m.sections.comments.label)}
               placeholder={formatMessage(m.sections.comments.placeholder)}
-              defaultValue={workingCase?.caseFilesComments}
+              value={workingCase.caseFilesComments || ''}
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'caseFilesComments',
-                  event,
+                  event.target.value,
                   [],
                   workingCase,
                   setWorkingCase,
@@ -334,7 +370,7 @@ const CaseFilesForm: React.FC<Props> = (props) => {
         <FormFooter
           previousUrl={`${Constants.IC_POLICE_REPORT_ROUTE}/${workingCase.id}`}
           nextUrl={`${Constants.IC_POLICE_CONFIRMATION_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!allFilesUploaded}
+          nextIsDisabled={!allFilesUploaded || isUploading}
           nextIsLoading={isLoading}
         />
       </FormContentContainer>

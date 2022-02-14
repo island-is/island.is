@@ -1,9 +1,13 @@
 import { DynamicModule } from '@nestjs/common'
 import { SharedTemplateAPIModule } from '../../shared'
 import { BaseTemplateAPIModuleConfig } from '../../../types'
-import { FileStorageModule } from '@island.is/file-storage'
 import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
 import { AccidentNotificationService } from './accident-notification.service'
+import { HealthInsuranceV2Client } from '@island.is/clients/health-insurance-v2'
+import { ApplicationAttachmentService } from './attachments/applicationAttachment.service'
+import { AccidentNotificationAttachmentProvider } from './attachments/applicationAttachmentProvider'
+import { S3 } from 'aws-sdk'
+import { S3Service } from './attachments/s3.service'
 
 const applicationRecipientName =
   process.env.ACCIDENT_NOTIFICATION_APPLICATION_RECIPIENT_NAME ?? ''
@@ -22,7 +26,7 @@ export class AccidentNotificationModule {
       module: AccidentNotificationModule,
       imports: [
         SharedTemplateAPIModule.register(config),
-        FileStorageModule.register({}),
+        HealthInsuranceV2Client.register(config.healthInsuranceV2),
       ],
       providers: [
         {
@@ -35,6 +39,13 @@ export class AccidentNotificationModule {
           },
         },
         AccidentNotificationService,
+        ApplicationAttachmentService,
+        AccidentNotificationAttachmentProvider,
+        S3Service,
+        {
+          provide: S3,
+          useValue: new S3(),
+        },
       ],
       exports: [AccidentNotificationService],
     }

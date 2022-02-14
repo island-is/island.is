@@ -3,7 +3,10 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
 import { Op, Sequelize, WhereOptions } from 'sequelize'
+
+import { DelegationConfig } from '../config/DelegationConfig'
 import { IdentityResource } from '../entities/models/identity-resource.model'
 import { ApiScope } from '../entities/models/api-scope.model'
 import { ApiResource } from '../entities/models/api-resource.model'
@@ -26,6 +29,7 @@ import { uuid } from 'uuidv4'
 import { Domain } from '../entities/models/domain.model'
 import { PagedRowsDto } from '../entities/dto/paged-rows.dto'
 import { DomainDTO } from '../entities/dto/domain.dto'
+import type { User } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class ResourcesService {
@@ -52,16 +56,17 @@ export class ResourcesService {
     private apiResourceSecret: typeof ApiResourceSecret,
     @InjectModel(ApiResourceScope)
     private apiResourceScope: typeof ApiResourceScope,
+    @Inject(DelegationConfig.KEY)
+    private delegationConfig: ConfigType<typeof DelegationConfig>,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    @Inject(Sequelize)
-    private sequelize: Sequelize,
   ) {}
 
   /** Get's all identity resources and total count of rows */
   async findAndCountAllIdentityResources(
     page: number,
     count: number,
+    includeArchived: boolean,
   ): Promise<{
     rows: IdentityResource[]
     count: number
@@ -73,11 +78,17 @@ export class ResourcesService {
       offset: offset,
       include: [IdentityResourceUserClaim],
       distinct: true,
+      where: includeArchived ? {} : { archived: null },
     })
   }
 
   /** Finds Api resources with searchString and returns with paging */
-  async findApiResources(searchString: string, page: number, count: number) {
+  async findApiResources(
+    searchString: string,
+    page: number,
+    count: number,
+    includeArchived: boolean,
+  ) {
     if (!searchString) {
       throw new BadRequestException('Search String must be provided')
     }
@@ -85,9 +96,19 @@ export class ResourcesService {
     searchString = searchString.trim()
 
     if (isNaN(+searchString)) {
-      return this.findApiResourcesByName(searchString, page, count)
+      return this.findApiResourcesByName(
+        searchString,
+        page,
+        count,
+        includeArchived,
+      )
     } else {
-      return this.findApiResourcesByNationalId(searchString, page, count)
+      return this.findApiResourcesByNationalId(
+        searchString,
+        page,
+        count,
+        includeArchived,
+      )
     }
   }
 
@@ -101,6 +122,7 @@ export class ResourcesService {
     searchString: string,
     page: number,
     count: number,
+    includeArchived: boolean,
   ) {
     if (!searchString) {
       throw new BadRequestException('Search String must be provided')
@@ -108,7 +130,9 @@ export class ResourcesService {
     page--
     const offset = page * count
     return this.apiResourceModel.findAndCountAll({
-      where: { nationalId: searchString },
+      where: includeArchived
+        ? { nationalId: searchString }
+        : { nationalId: searchString, archived: null },
       limit: count,
       offset: offset,
       include: [ApiResourceUserClaim, ApiResourceScope, ApiResourceSecret],
@@ -121,6 +145,7 @@ export class ResourcesService {
     searchString: string,
     page: number,
     count: number,
+    includeArchived: boolean,
   ) {
     if (!searchString) {
       throw new BadRequestException('Search String must be provided')
@@ -128,7 +153,9 @@ export class ResourcesService {
     page--
     const offset = page * count
     return this.apiResourceModel.findAndCountAll({
-      where: { name: searchString },
+      where: includeArchived
+        ? { name: searchString }
+        : { name: searchString, archived: null },
       limit: count,
       offset: offset,
       include: [ApiResourceUserClaim, ApiResourceScope, ApiResourceSecret],
@@ -140,6 +167,7 @@ export class ResourcesService {
   async findAndCountAllApiResources(
     page: number,
     count: number,
+    includeArchived: boolean,
   ): Promise<{
     rows: ApiResource[]
     count: number
@@ -151,6 +179,7 @@ export class ResourcesService {
       offset: offset,
       include: [ApiResourceUserClaim, ApiResourceScope, ApiResourceSecret],
       distinct: true,
+      where: includeArchived ? {} : { archived: null },
     })
   }
 
@@ -158,6 +187,7 @@ export class ResourcesService {
   async findAndCountAllApiScopes(
     page: number,
     count: number,
+    includeArchived: boolean,
   ): Promise<{
     rows: ApiScope[]
     count: number
@@ -169,6 +199,7 @@ export class ResourcesService {
       offset: offset,
       include: [ApiScopeUserClaim, ApiScopeGroup],
       distinct: true,
+      where: includeArchived ? {} : { archived: null },
     })
   }
 
@@ -180,6 +211,7 @@ export class ResourcesService {
         name: {
           [Op.not]: '@island.is/auth/admin:root',
         },
+        archived: null,
       },
       include: [ApiScopeGroup],
     })
@@ -347,12 +379,13 @@ export class ResourcesService {
   }
 
   /** Filters out scopes that don't have delegation grant and are access controlled */
-  async findAllowedDelegationApiScopeListForUser(scopes: string[]) {
-    this.logger.debug(`Finding allowed api scopes for scopes ${scopes}`)
+  async findAllowedDelegationApiScopeListForUser(scope: string[], user: User) {
+    this.logger.debug(`Finding allowed api scopes for scopes ${scope}`)
+    const filteredScope = this.filterScopeForCustomDelegation(scope, user)
     return this.apiScopeModel.findAll({
       where: {
         name: {
-          [Op.in]: scopes,
+          [Op.in]: filteredScope,
         },
         allowExplicitDelegationGrant: true,
       },
@@ -360,34 +393,31 @@ export class ResourcesService {
     })
   }
 
-  /** Filters out Identity Resources that don't have delegation grant and are access controlled */
-  async findAllowedDelegationIdentityResourceListForUser(
-    identityResources: string[],
-  ) {
-    this.logger.debug(
-      `Finding allowed Identity Resources for identity resources: ${identityResources}`,
-    )
-    return this.identityResourceModel.findAll({
+  /** Returns the count of scopes that are allowed for delegations */
+  async countAllowedDelegationApiScopesForUser(scope: string[], user: User) {
+    const filteredScope = this.filterScopeForCustomDelegation(scope, user)
+    return this.apiScopeModel.count({
       where: {
         name: {
-          [Op.in]: identityResources,
+          [Op.in]: filteredScope,
         },
         allowExplicitDelegationGrant: true,
-        alsoForDelegatedUser: false,
       },
     })
   }
 
-  /** Gets Api scopes with Explicit Delegation Grant */
-  async findIdentityResourcesWithExplicitDelegationGrant(): Promise<
-    IdentityResource[]
-  > {
-    this.logger.debug(
-      `Finding identity resources with Explicit Delegation Grant`,
-    )
-
-    return this.identityResourceModel.findAll({
-      where: { allowExplicitDelegationGrant: true },
+  private filterScopeForCustomDelegation(scope: string[], user: User) {
+    const delegationType = user.actor?.delegationType ?? 'Self'
+    return scope.filter((scopeName) => {
+      for (const rule of this.delegationConfig.customScopeRules) {
+        if (
+          rule.scopeName === scopeName &&
+          rule.onlyForDelegationType.includes(delegationType) === false
+        ) {
+          return false
+        }
+      }
+      return true
     })
   }
 

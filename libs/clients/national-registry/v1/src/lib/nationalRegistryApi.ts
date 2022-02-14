@@ -1,12 +1,16 @@
 import { InternalServerErrorException, NotFoundException } from '@nestjs/common'
 import Soap from 'soap'
 
+import isEmpty from 'lodash/isEmpty'
+import isObject from 'lodash/isObject'
 import type { User } from '@island.is/auth-nest-tools'
 import { logger } from '@island.is/logging'
 import {
   GetViewISLFjolskyldanDto,
   GetViewISLEinstaklingurDto,
+  GetViewISLBorninMinDto,
   ISLFjolskyldan,
+  ISLBorninMin,
   ISLEinstaklingur,
 } from './dto'
 import { SoapClient } from './soapClient'
@@ -23,7 +27,7 @@ export class NationalRegistryApi {
   private readonly clientUser: string
   private readonly clientPassword: string
 
-  static async instanciateClass(config: NationalRegistryConfig) {
+  static async instantiateClass(config: NationalRegistryConfig) {
     return new NationalRegistryApi(
       await SoapClient.generateClient(config.baseSoapUrl, config.host),
       config.password,
@@ -85,6 +89,33 @@ export class NationalRegistryApi {
     return Array.isArray(response.table.diffgram.DocumentElement.ISLFjolskyldan)
       ? response.table.diffgram.DocumentElement.ISLFjolskyldan
       : [response.table.diffgram.DocumentElement.ISLFjolskyldan]
+  }
+
+  public async getMyChildren(nationalId: string): Promise<ISLBorninMin[]> {
+    const borninMinResponse: GetViewISLBorninMinDto = await this.signal(
+      'GetViewISLBorninMin',
+      {
+        Kennitala: nationalId,
+      },
+    )
+
+    if (isObject(borninMinResponse) && isEmpty(borninMinResponse)) {
+      /**
+       * User with no children will recieve an empty object
+       * Returning an empty array instead.
+       */
+      return []
+    }
+
+    if (!borninMinResponse) {
+      throw new NotFoundException(
+        `children for nationalId ${nationalId} not found`,
+      )
+    }
+
+    const documentData =
+      borninMinResponse?.table?.diffgram?.DocumentElement?.ISLBorninMin
+    return Array.isArray(documentData) ? documentData : [documentData]
   }
 
   private async signal(

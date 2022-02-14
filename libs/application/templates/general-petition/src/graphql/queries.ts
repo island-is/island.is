@@ -16,6 +16,10 @@ export const GetSingleEndorsementList = gql`
       meta
       title
       description
+      ownerName
+      closedDate
+      openedDate
+      adminLock
     }
   }
 `
@@ -49,8 +53,7 @@ export const GetSingleEndorsement = gql`
     $input: FindEndorsementListInput!
   ) {
     endorsementSystemGetSingleEndorsement(input: $input) {
-      id
-      endorser
+      hasEndorsed
     }
   }
 `

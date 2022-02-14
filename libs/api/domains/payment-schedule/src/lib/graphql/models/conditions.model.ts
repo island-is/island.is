@@ -56,6 +56,6 @@ export class PaymentScheduleConditions {
   @Field(() => Number)
   minWagePayment!: number
 
-  @Field(() => Number)
-  percent!: number
+  @Field(() => String)
+  percent!: string
 }

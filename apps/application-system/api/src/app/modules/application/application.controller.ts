@@ -27,7 +27,7 @@ import {
   ApiQuery,
 } from '@nestjs/swagger'
 import {
-  Application as BaseApplication,
+  ApplicationWithAttachments as BaseApplication,
   callDataProviders,
   ApplicationTypes,
   FormValue,
@@ -96,6 +96,7 @@ import {
 import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { CurrentLocale } from './utils/currentLocale'
 import { Application } from './application.model'
+import { Documentation } from '@island.is/nest/swagger'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('applications')
@@ -282,7 +283,7 @@ export class ApplicationController {
     )
 
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'create',
       resources: updatedApplication.id,
       meta: { type: application.typeId },
@@ -425,7 +426,7 @@ export class ApplicationController {
     )
 
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'update',
       resources: updatedApplication.id,
       meta: { fields: Object.keys(newAnswers) },
@@ -492,7 +493,7 @@ export class ApplicationController {
     }
 
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'updateExternalData',
       resources: updatedApplication.id,
       meta: { providers: externalDataDto },
@@ -574,12 +575,14 @@ export class ApplicationController {
     )
 
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'submitApplication',
       resources: existingApplication.id,
       meta: {
         event: updateApplicationStateDto.event,
-        fields: Object.keys(permittedAnswers).length,
+        before: existingApplication.state,
+        after: updatedApplication.state,
+        fields: Object.keys(permittedAnswers),
       },
     })
 
@@ -810,7 +813,7 @@ export class ApplicationController {
     })
 
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'addAttachment',
       resources: updatedApplication.id,
       meta: {
@@ -851,7 +854,7 @@ export class ApplicationController {
     )
 
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'deleteAttachment',
       resources: updatedApplication.id,
       meta: {
@@ -887,7 +890,7 @@ export class ApplicationController {
     )
 
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'generatePdf',
       resources: existingApplication.id,
       meta: { type: input.type },
@@ -925,7 +928,7 @@ export class ApplicationController {
     )
 
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'requestFileSignature',
       resources: existingApplication.id,
       meta: { type: input.type },
@@ -961,7 +964,7 @@ export class ApplicationController {
     )
 
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'uploadSignedFile',
       resources: existingApplication.id,
       meta: { type: input.type },
@@ -997,12 +1000,56 @@ export class ApplicationController {
     )
 
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'getPresignedUrl',
       resources: existingApplication.id,
       meta: { type },
     })
 
     return { url }
+  }
+
+  @Get('applications/:id/attachments/:attachmentKey/presigned-url')
+  @Scopes(ApplicationScope.read)
+  @Documentation({
+    description: 'Gets a presigned url for attachments',
+    response: { status: 200, type: PresignedUrlResponseDto },
+    request: {
+      query: {},
+      params: {
+        id: {
+          type: 'string',
+          description: 'application id',
+          required: true,
+        },
+        attachmentKey: {
+          type: 'string',
+          description: 'key for attachment',
+          required: true,
+        },
+      },
+    },
+  })
+  async getAttachmentPresignedURL(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('attachmentKey') attachmentKey: string,
+    @CurrentUser() user: User,
+  ): Promise<PresignedUrlResponseDto> {
+    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+      id,
+      user.nationalId,
+    )
+
+    if (!existingApplication.attachments) {
+      throw new NotFoundException('Attachments not found')
+    }
+
+    try {
+      const str = attachmentKey as keyof typeof existingApplication.attachments
+      const fileName = existingApplication.attachments[str]
+      return await this.fileService.getAttachmentPresignedURL(fileName)
+    } catch (error) {
+      throw new NotFoundException('Attachment not found')
+    }
   }
 }

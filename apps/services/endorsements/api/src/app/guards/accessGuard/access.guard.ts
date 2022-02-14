@@ -9,7 +9,6 @@ import {
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { AccessGroup } from './access.enum'
 import { ACCESS_GROUP_KEY } from './access.decorator'
-import { environment } from '../../../environments'
 import { EndorsementListService } from '../../modules/endorsementList/endorsementList.service'
 import type { Logger } from '@island.is/logging'
 
@@ -42,37 +41,21 @@ export class AccessGuard implements CanActivate {
     // try to pass access check for any defined access group
     for (const group of accessGroups) {
       switch (group) {
-        case AccessGroup.DMR: {
-          if (
-            environment.accessGroups.DMR.split(',').includes(
-              request.auth.nationalId,
-            )
-          ) {
-            return true
-          }
-          break
-        }
         case AccessGroup.Owner: {
           const listId = request.params?.listId
           if (listId) {
             const endorsementList = await this.endorsementListService.findSingleList(
               listId,
-              request.auth.nationalId,
+              request.auth,
+            )
+            // admin has all the same rights as owner
+            const isAdmin = await this.endorsementListService.hasAdminScope(
+              request.auth,
             )
 
-            if (endorsementList?.owner === request.auth.nationalId) {
+            if (endorsementList?.owner === request.auth.nationalId || isAdmin) {
               return true
             }
-          }
-          break
-        }
-        case AccessGroup.Admin: {
-          if (
-            environment.accessGroups.Admin.split(',').includes(
-              request.auth.nationalId,
-            )
-          ) {
-            return true
           }
           break
         }

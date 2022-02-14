@@ -1,7 +1,6 @@
 import { lazy } from 'react'
-import { defineMessage } from 'react-intl'
-import * as Sentry from '@sentry/react'
 
+import { ApiScope } from '@island.is/auth/scopes'
 import {
   ServicePortalModule,
   ServicePortalPath,
@@ -11,10 +10,11 @@ import {
 export const eligibilityModule: ServicePortalModule = {
   name: 'Mín réttindi',
   widgets: () => [],
-  routes: () => [
+  routes: ({ userInfo }) => [
     {
       name: m.eligibility,
       path: ServicePortalPath.MyLicensesRoot,
+      enabled: userInfo.scopes.includes(ApiScope.internal),
       render: () => lazy(() => import('./screens/Eligibility')),
     },
   ],

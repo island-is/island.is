@@ -12,6 +12,7 @@ import ApiScopeUserClaimsForm from '../../../components/Resource/forms/ApiScopeU
 import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav'
 import LocalizationUtils from '../../../utils/localization.utils'
 import ApiScopeResourceForm from './../../../components/Resource/forms/ApiScopeResourceForm'
+import ApiScopePersonalRepresentativePermissionsForm from '../../../components/Resource/forms/ApiScopePersonalRepresentativePermissionsForm'
 
 const Index: React.FC = () => {
   const { query } = useRouter()
@@ -128,6 +129,24 @@ const Index: React.FC = () => {
               apiScope={apiScope}
               handleSave={handleNext}
               handleCancel={handleBack}
+            />
+          </ApiScopeStepNav>
+        </ContentWrapper>
+      )
+    }
+
+    case ApiScopeStep.PersonalRepresentativePermissions: {
+      return (
+        <ContentWrapper>
+          <ResourcesTabsNav />
+          <ApiScopeStepNav
+            activeStep={step}
+            handleStepChange={handleStepChange}
+          >
+            <ApiScopePersonalRepresentativePermissionsForm
+              apiScopeName={apiScope.name}
+              handleNext={handleNext}
+              handleBack={handleBack}
             />
           </ApiScopeStepNav>
         </ContentWrapper>

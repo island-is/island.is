@@ -3,47 +3,49 @@ import { useRouter } from 'next/router'
 import { useWindowSize } from 'react-use'
 import { useMutation, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
-import { useI18n } from '@island.is/skilavottord-web/i18n'
+
 import {
   Box,
   Stack,
   Text,
   Button,
-  LoadingIcon,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+
+import { useI18n } from '@island.is/skilavottord-web/i18n'
 import {
   ProcessPageLayout,
   Modal,
   OutlinedError,
 } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import CompanyList from './components/CompanyList'
-import * as styles from './Handover.css'
 import { ACCEPTED_TERMS_AND_CONDITION } from '@island.is/skilavottord-web/utils/consts'
 import {
-  Car,
-  RecyclingRequestMutation,
+  VehicleInformation,
+  Mutation,
   RecyclingRequestTypes,
-} from '@island.is/skilavottord-web/types'
+  Query,
+  RequestErrors,
+} from '@island.is/skilavottord-web/graphql/schema'
+import CompanyList from './components/CompanyList'
+import * as styles from './Handover.css'
 
-const skilavottordVehiclesQuery = gql`
-  query skilavottordVehiclesQuery($nationalId: String!) {
-    skilavottordVehicles(nationalId: $nationalId) {
+const SkilavottordVehiclesQuery = gql`
+  query skilavottordVehiclesQuery {
+    skilavottordVehicles {
       permno
       status
     }
   }
 `
 
-const skilavottordRecyclingRequestMutation = gql`
+const SkilavottordRecyclingRequestMutation = gql`
   mutation skilavottordRecyclingRequestMutation(
-    $nameOfRequestor: String
     $permno: String!
-    $requestType: String!
+    $requestType: RecyclingRequestTypes!
   ) {
     createSkilavottordRecyclingRequest(
-      nameOfRequestor: $nameOfRequestor
       permno: $permno
       requestType: $requestType
     ) {
@@ -73,28 +75,23 @@ const Handover: FC = () => {
   const router = useRouter()
   const { id } = router.query
 
-  const nationalId = user?.nationalId
-  const { data, loading, error } = useQuery(skilavottordVehiclesQuery, {
-    variables: { nationalId },
-    skip: !nationalId,
-  })
+  const { data, loading, error } = useQuery<Query>(SkilavottordVehiclesQuery)
 
   const cars = data?.skilavottordVehicles || []
-  const activeCar = cars.filter((car: Car) => car.permno === id)[0]
+  const activeCar = cars.filter(
+    (car: VehicleInformation) => car.permno === id,
+  )[0]
 
   const [
     setRecyclingRequest,
     { data: mutationData, error: mutationError, loading: mutationLoading },
-  ] = useMutation<RecyclingRequestMutation>(
-    skilavottordRecyclingRequestMutation,
-    {
-      onError() {
-        return mutationError
-      },
+  ] = useMutation<Mutation>(SkilavottordRecyclingRequestMutation, {
+    onError() {
+      return mutationError
     },
-  )
+  })
 
-  const mutationResponse = mutationData?.createSkilavottordRecyclingRequest
+  const mutationResponse = mutationData?.createSkilavottordRecyclingRequest as RequestErrors
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
@@ -113,14 +110,14 @@ const Handover: FC = () => {
         case 'inUse':
         case 'cancelled':
           if (
-            localStorage.getItem(ACCEPTED_TERMS_AND_CONDITION) === id.toString()
+            localStorage.getItem(ACCEPTED_TERMS_AND_CONDITION) ===
+            id?.toString()
           ) {
-            setRequestType('pendingRecycle')
+            setRequestType(RecyclingRequestTypes.pendingRecycle)
             setRecyclingRequest({
               variables: {
                 permno: id,
-                nameOfRequestor: user?.name,
-                requestType: 'pendingRecycle',
+                requestType: RecyclingRequestTypes.pendingRecycle,
               },
             })
           } else {
@@ -145,18 +142,20 @@ const Handover: FC = () => {
   }
 
   const onConfirmCancellation = () => {
-    setRequestType('cancelled')
+    setRequestType(RecyclingRequestTypes.cancelled)
     setRecyclingRequest({
       variables: {
         permno: id,
-        nameOfRequestor: user?.name,
-        requestType: 'cancelled',
+        requestType: RecyclingRequestTypes.cancelled,
       },
     }).then(({ data }) => {
       // setRecyclingRequest is completed with no mutationErrors
       // errors are returned in mutationResponse.message,
       // we must therefore double check for errors in this way before closing modal and routing home
-      if (!data?.createSkilavottordRecyclingRequest?.message) {
+      // current implementation assumes that request can be either RequestErrors or RequestStatus and only
+      // RequestErrors has message property and because of that we are asserting it below
+      const request = data?.createSkilavottordRecyclingRequest as RequestErrors
+      if (!request.message) {
         setModal(false)
         routeHome()
       }
@@ -168,7 +167,7 @@ const Handover: FC = () => {
   }
 
   if (
-    (requestType !== 'cancelled' &&
+    (requestType !== RecyclingRequestTypes.cancelled &&
       (mutationError || mutationLoading || mutationResponse?.message)) ||
     error ||
     isInvalidCar ||
@@ -177,14 +176,14 @@ const Handover: FC = () => {
     return (
       <ProcessPageLayout
         processType={'citizen'}
-        activeSection={1}
-        activeCar={id.toString()}
+        activeSection={2}
+        activeCar={id?.toString()}
       >
         {mutationLoading || loading ? (
           <Box textAlign="center">
             <Stack space={4}>
               <Text variant="h1">{t.titles.loading}</Text>
-              <LoadingIcon size={50} />
+              <LoadingDots large />
             </Stack>
           </Box>
         ) : (
@@ -211,8 +210,8 @@ const Handover: FC = () => {
   return (
     <ProcessPageLayout
       processType={'citizen'}
-      activeSection={1}
-      activeCar={id.toString()}
+      activeSection={2}
+      activeCar={id?.toString()}
     >
       <Stack space={6}>
         <Stack space={2}>
@@ -227,31 +226,40 @@ const Handover: FC = () => {
           <Text variant="h3">{t.subTitles.companies}</Text>
           <CompanyList />
         </Stack>
-        <Box display="flex" justifyContent="spaceBetween" flexWrap="wrap">
-          {isMobile ? (
-            <Box paddingBottom={4} className={styles.cancelButtonContainer}>
-              <Button
-                onClick={onCancelRecycling}
-                variant="text"
-                colorScheme="destructive"
-              >
-                {t.buttons.cancel}
-              </Button>
-            </Box>
-          ) : (
+      </Stack>
+      <Box
+        display="flex"
+        justifyContent="spaceBetween"
+        flexWrap="wrap"
+        marginTop={4}
+        paddingTop={4}
+        borderTopWidth="standard"
+        borderColor="purple100"
+        borderStyle="solid"
+      >
+        {isMobile ? (
+          <Box paddingBottom={4} className={styles.cancelButtonContainer}>
             <Button
               onClick={onCancelRecycling}
-              variant="ghost"
+              variant="text"
               colorScheme="destructive"
             >
               {t.buttons.cancel}
             </Button>
-          )}
-          <Button onClick={routeHome} fluid={isMobile}>
-            {t.buttons.close}
+          </Box>
+        ) : (
+          <Button
+            onClick={onCancelRecycling}
+            variant="ghost"
+            colorScheme="destructive"
+          >
+            {t.buttons.cancel}
           </Button>
-        </Box>
-      </Stack>
+        )}
+        <Button onClick={routeHome} fluid={isMobile}>
+          {t.buttons.close}
+        </Button>
+      </Box>
       <Modal
         show={showModal}
         onContinue={onConfirmCancellation}

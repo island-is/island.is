@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common'
 import { UserProfileService } from '@island.is/auth-api-lib'
-import { NationalRegistryModule } from '@island.is/clients/national-registry-v2'
-import { NationalRegistryConfig } from './national-registry.config'
+import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 import { UserProfileController } from './user-profile.controller'
 
 @Module({
-  imports: [NationalRegistryModule.register(NationalRegistryConfig)],
+  imports: [NationalRegistryClientModule],
   controllers: [UserProfileController],
   providers: [UserProfileService],
 })

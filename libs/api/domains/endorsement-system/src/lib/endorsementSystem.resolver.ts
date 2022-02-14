@@ -16,8 +16,8 @@ import { FindEndorsementListInput } from './dto/findEndorsementList.input'
 import { CreateEndorsementInput } from './dto/createEndorsement.input'
 import { EndorsementList } from './models/endorsementList.model'
 import { CreateEndorsementListDto } from './dto/createEndorsementList.input'
-import { BulkEndorseListInput } from './dto/bulkEndorseList.input'
 import { EndorsementBulkCreate } from './models/endorsementBulkCreate.model'
+import { ExistsEndorsementResponse } from './dto/existsEndorsement.response'
 import {
   UpdateEndorsementListInput,
   UpdateEndorsementListDto,
@@ -46,11 +46,11 @@ export class EndorsementSystemResolver {
   }
 
   // GET /endorsement-list/{listId}/endorsement/exists
-  @Query(() => Endorsement, { nullable: true })
+  @Query(() => ExistsEndorsementResponse)
   async endorsementSystemGetSingleEndorsement(
     @Args('input') input: FindEndorsementListInput,
     @CurrentUser() user: User,
-  ): Promise<Endorsement> {
+  ): Promise<ExistsEndorsementResponse> {
     return await this.endorsementSystemService.endorsementControllerFindByAuth(
       input,
       user,
@@ -81,21 +81,6 @@ export class EndorsementSystemResolver {
     )
   }
 
-  // POST /endorsement-list/{listId}/endorsement/bulk
-  @Mutation(() => EndorsementBulkCreate)
-  async endorsementSystemBulkEndorseList(
-    @Args('input') { listId, nationalIds }: BulkEndorseListInput,
-    @CurrentUser() user: User,
-  ): Promise<EndorsementBulkCreate> {
-    return await this.endorsementSystemService.endorsementControllerBulkCreate(
-      {
-        listId,
-        bulkEndorsementDto: { nationalIds },
-      },
-      user,
-    )
-  }
-
   // DELETE /endorsement-list/{listId}/endorsement
   @Mutation(() => Boolean)
   async endorsementSystemUnendorseList(
@@ -110,12 +95,13 @@ export class EndorsementSystemResolver {
 
   // GET /endorsement-list ... by tags
   @Query(() => PaginatedEndorsementListResponse)
-  @BypassAuth()
   async endorsementSystemFindEndorsementLists(
     @Args('input') input: PaginatedEndorsementListInput,
+    @CurrentUser() user: User,
   ): Promise<PaginatedEndorsementListResponse> {
     return await this.endorsementSystemService.endorsementListControllerFindLists(
       input,
+      user,
     )
   }
 
@@ -268,7 +254,7 @@ export class EndorsementSystemResolver {
     @Args('input') input: sendPdfEmailInput,
     @CurrentUser() user: User,
   ): Promise<{ success: boolean }> {
-    return await this.endorsementSystemService.endorsementControllerSendPdfEmail(
+    return await this.endorsementSystemService.endorsementListControllerSendPdfEmail(
       input,
       user,
     )

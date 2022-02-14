@@ -3,6 +3,12 @@ import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
 
 // Strings for select court component
 export const restrictions = defineMessages({
+  [CaseCustodyRestrictions.NECESSITIES]: {
+    id: 'judicial.system.core:restrictions.NECESSITIES',
+    defaultMessage:
+      'Gæsluföngum er heimilt að útvega sér sjálfir og taka við fæði og öðrum persónulegum nauðsynjum, þar á meðal fatnaði.',
+    description: 'A - Eigin nauðsynjar',
+  },
   [CaseCustodyRestrictions.ISOLATION]: {
     id: 'judicial.system.core:restrictions.ISOLATION',
     defaultMessage:
@@ -26,6 +32,12 @@ export const restrictions = defineMessages({
     defaultMessage:
       'Gæslufangar mega lesa dagblöð og bækur, svo og fylgjast með hljóðvarpi og sjónvarpi. Þó getur sá sem rannsókn stýrir takmarkað aðgang gæslufanga að fjölmiðlum ef nauðsyn ber til í þágu rannsóknar.',
     description: 'E - Fjölmiðlabann',
+  },
+  [CaseCustodyRestrictions.WORKBAN]: {
+    id: 'judicial.system.core:restrictions.WORKBAN',
+    defaultMessage:
+      'Gæsluföngum er, eftir því sem unnt er, heimilt að útvega sér vinnu meðan á gæsluvarðhaldi stendur.',
+    description: 'F - Vinnubann',
   },
   [CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION]: {
     id:

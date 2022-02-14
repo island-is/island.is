@@ -34,6 +34,19 @@ export interface Staff {
   municipalityName: string
   phoneNumber?: string
   municipalityHomepage?: string
+  nickname?: string
+  email?: string
+  usePseudoName?: boolean
+}
+
+export interface UpdateStaff {
+  name?: string
+  nationalId?: string
+  roles?: StaffRole[]
+  active?: boolean
+  nickname?: string
+  email?: string
+  usePseudoName?: boolean
 }
 
 export interface Aid {
@@ -42,9 +55,27 @@ export interface Aid {
   unregisteredRenting: number
   livesWithParents: number
   unknown: number
+  withOthers: number
   municipalityId: string
   type: AidType
 }
+
+export interface Amount {
+  applicationId?: string
+  aidAmount: number
+  income?: number
+  personalTaxCredit: number
+  spousePersonalTaxCredit?: number
+  tax: number
+  finalAmount: number
+  deductionFactors?: DeductionFactors[]
+}
+
+export interface DeductionFactors {
+  amount?: number
+  description?: string
+}
+
 export interface NavigationProps {
   activeSectionIndex: number
   activeSubSectionIndex?: number
@@ -52,10 +83,9 @@ export interface NavigationProps {
   nextUrl: string | undefined
 }
 
-export interface Spouse {
+export interface FormSpouse {
   nationalId?: string
   name?: string
-  maritalStatus?: string
   email?: string
 }
 
@@ -65,10 +95,10 @@ export interface User {
   phoneNumber?: string
   folder: string
   service: RolesRule
-  currentApplication?: string
-  isSpouse?: boolean
-  staff?: Staff
+  currentApplicationId?: string
   spouse?: Spouse
+  staff?: Staff
+  formSpouse?: FormSpouse
   address?: Address
 }
 
@@ -80,14 +110,16 @@ export interface Address {
 }
 
 export interface UpdateApplication {
-  state: ApplicationState
+  state?: ApplicationState
   event: ApplicationEventType
-  amount?: number
   rejection?: string
   comment?: string
   staffId?: string
   spousePhoneNumber?: string
   spouseEmail?: string
+  spouseName?: string
+  spouseFormComment?: string
+  amount?: Amount
 }
 
 export interface UpdateApplicationTable {
@@ -122,6 +154,18 @@ export interface Municipality {
   cohabitationAid: Aid
   homepage?: string
   email?: string
+  rulesHomepage?: string
+  numberOfUsers?: number
+  adminUsers?: Staff[]
+}
+
+export interface UpdateMunicipalityActivity {
+  active: boolean
+}
+
+export interface CreateMunicipality {
+  name: string
+  municipalityId: string
 }
 
 export interface ApplicationFile {
@@ -142,7 +186,6 @@ export interface CreateApplicationFile {
 }
 
 export interface CreateApplication {
-  nationalId: string
   name: string
   phoneNumber?: string
   email: string
@@ -164,11 +207,25 @@ export interface CreateApplication {
   amount?: number
   spouseNationalId?: string
   spouseEmail?: string
+  spouseName?: string
   familyStatus: FamilyStatus
   streetName?: string
   postalCode?: string
   city?: string
   municipalityCode?: string
+}
+
+export interface ApplicantEmailData {
+  header: string
+  content: string
+  title: string
+  applicationChange: string
+  applicationMonth: string
+  applicationYear: number
+  applicationLink: string
+  applicantEmail: string
+  municipality: Municipality
+  applicationLinkText: string
 }
 
 export interface ApplicationFilters {
@@ -178,6 +235,12 @@ export interface ApplicationFilters {
   Rejected: number
   Approved: number
   MyCases: number
+}
+
+export interface PersonalTaxReturn {
+  key: string
+  name: string
+  size: number
 }
 
 export interface Application {
@@ -201,13 +264,14 @@ export interface Application {
   homeCircumstancesCustom?: string
   studentCustom?: string
   formComment?: string
+  spouseFormComment?: string
   state: ApplicationState
   files?: ApplicationFile[]
-  amount?: number
   comment?: string
   rejection?: string
   staff?: Staff
   applicationEvents?: ApplicationEvent[]
+  amount?: Amount
   spouseNationalId?: string
   spouseEmail?: string
   spousePhoneNumber?: string
@@ -223,8 +287,10 @@ export interface GetSignedUrlForId {
   id: string
 }
 
-export interface HasSpouseApplied {
-  HasApplied: boolean
+export interface Spouse {
+  hasPartnerApplied: boolean
+  hasFiles: boolean
+  spouseName?: string
 }
 
 export interface UpdateApplicationTableResponseType {
@@ -246,7 +312,7 @@ export interface NationalRegistryData {
     city: string
     municipalityCode: string
   }
-  spouse: {
+  spouse?: {
     nationalId?: string
     maritalStatus?: string
     name?: string
@@ -262,4 +328,29 @@ export interface ServiceCenter {
   postalCodes: number[]
   active?: boolean
   link?: string
+}
+
+export interface TableHeadersProps {
+  filterBy?: string
+  title: string
+}
+
+export interface CreateStaff {
+  name: string
+  email: string
+  nationalId: string
+  roles: StaffRole[]
+  municipalityName?: string
+  municipalityId?: string
+}
+
+export interface CreateStaffMunicipality {
+  municipalityId: string
+  municipalityName: string
+  municipalityHomepage?: string
+}
+
+export interface Calculations {
+  title: string
+  calculation: string
 }

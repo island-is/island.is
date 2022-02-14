@@ -11,9 +11,8 @@ export const info = {
     },
     pageDescription: {
       id: `pdpp.application:section.info.description`,
-      defaultMessage: `Innheimtumaður þarf eftirfarandi upplýsingar til þess
-      að hægt sé að hafa samband við þig á meðan málið er til meðferðar og
-      upplýsa þig um niðurstöðu þess, og til þess að tryggja örugga persónugreiningu. `,
+      defaultMessage: `Innheimtumaður þarf eftirfarandi upplýsingar til þess að hægt sé að hafa samband við þig á
+       meðan málið er til meðferðar og upplýsa þig um niðurstöðuna.`,
       description: 'Info page description',
     },
   }),

@@ -45,17 +45,15 @@ const ProdEnvironment: FC<FieldBaseProps> = ({ error, application }) => {
   const [createProvider, { loading }] = useMutation(createProviderMutation)
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
-  const nationalId = getValueViaPath(
+  const nationalId = getValueViaPath<string>(
     application.answers,
     'applicant.nationalId',
-    undefined,
-  ) as string
+  )
 
-  const clientName = getValueViaPath(
+  const clientName = getValueViaPath<string>(
     application.answers,
     'applicant.name',
-    undefined,
-  ) as string
+  )
 
   const onCreateProvider = async () => {
     setProdEnvironmentErrorError(null)

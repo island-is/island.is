@@ -10,7 +10,7 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import { Form } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { UploadFile } from '@island.is/island-ui/core'
-import { AppContext } from '../../components/AppProvider/AppProvider'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const useApplication = () => {
   const [
@@ -41,11 +41,16 @@ const useApplication = () => {
         const files = formatFiles(form.taxReturnFiles, FileType.TAXRETURN)
           .concat(formatFiles(form.incomeFiles, FileType.INCOME))
           .concat(formatFiles(form.otherFiles, FileType.OTHER))
+          .concat(
+            formatFiles(
+              form.taxReturnFromRskFile,
+              form.taxReturnFromRskFile[0].type,
+            ),
+          )
 
         const { data } = await createApplicationMutation({
           variables: {
             input: {
-              nationalId: user?.nationalId,
               name: user?.name,
               phoneNumber: form?.phoneNumber,
               email: form?.emailAddress,
@@ -65,9 +70,10 @@ const useApplication = () => {
               state: ApplicationState.NEW,
               files: files,
               spouseNationalId:
-                nationalRegistryData?.spouse.nationalId ??
+                nationalRegistryData?.spouse?.nationalId ??
                 form?.spouse?.nationalId,
               spouseEmail: form?.spouse?.email,
+              spouseName: nationalRegistryData?.spouse?.name,
               familyStatus: form?.familyStatus,
               streetName: nationalRegistryData?.address.streetName,
               postalCode: nationalRegistryData?.address.postalCode,

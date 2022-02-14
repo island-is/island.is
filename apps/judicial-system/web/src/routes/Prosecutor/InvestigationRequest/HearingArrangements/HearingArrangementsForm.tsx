@@ -1,39 +1,45 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
+
+import {
+  BlueBox,
+  CaseInfo,
+  FormContentContainer,
+  FormFooter,
+} from '@island.is/judicial-system-web/src/components'
+import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
+import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import {
+  removeTabsValidateAndSet,
+  setAndSendDateToServer,
+  setAndSendToServer,
+  validateAndSendToServer,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
+import { icRequestedHearingArrangements as m } from '@island.is/judicial-system-web/messages'
+import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import type {
   Case,
   Institution,
   UpdateCase,
   User,
 } from '@island.is/judicial-system/types'
-import {
-  BlueBox,
-  FormContentContainer,
-  FormFooter,
-} from '@island.is/judicial-system-web/src/shared-components'
-import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
-import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
-import {
-  FormSettings,
-  useCaseFormHelper,
-} from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
-import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
-import { icRequestedHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
+import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
+import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
+import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   user: User
   prosecutors: ReactSelectOption[]
   courts: Institution[]
   isLoading: boolean
   onNextButtonClick: () => Promise<void>
   onProsecutorChange: (selectedOption: ValueType<ReactSelectOption>) => boolean
+  onCourtChange: (courtId: string) => boolean
   updateCase: (id: string, updateCase: UpdateCase) => Promise<Case | undefined>
 }
 
@@ -47,29 +53,11 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
     isLoading,
     onNextButtonClick,
     onProsecutorChange,
+    onCourtChange,
     updateCase,
   } = props
 
   const { formatMessage } = useIntl()
-
-  const validations: FormSettings = {
-    requestedCourtDate: {
-      validations: ['empty'],
-    },
-    prosecutor: {
-      validations: ['empty'],
-    },
-  }
-  const [, setRequestedCourtDateIsValid] = useState<boolean>(
-    workingCase.requestedCourtDate !== null,
-  )
-  const [selectedCourt, setSelectedCourt] = useState<string>()
-  const {
-    isValid,
-    setField,
-    validateAndSendToServer,
-    setAndSendToServer,
-  } = useCaseFormHelper(workingCase, setWorkingCase, validations)
 
   return (
     <>
@@ -78,6 +66,9 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
           <Text as="h1" variant="h1">
             {formatMessage(m.heading)}
           </Text>
+        </Box>
+        <Box component="section" marginBottom={7}>
+          <CaseInfo workingCase={workingCase} userRole={user.role} />
         </Box>
         {prosecutors && (
           <Box component="section" marginBottom={5}>
@@ -107,7 +98,15 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
                           .prosecutorId)
                 }
                 checked={workingCase.isHeightenedSecurityLevel}
-                onChange={(event) => setAndSendToServer(event.target)}
+                onChange={(event) =>
+                  setAndSendToServer(
+                    'isHeightenedSecurityLevel',
+                    event.target.checked,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }
                 large
                 filled
               />
@@ -118,9 +117,8 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
           <Box component="section" marginBottom={5}>
             <SelectCourt
               workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
-              setSelectedCourt={setSelectedCourt}
               courts={courts}
+              onChange={onCourtChange}
             />
           </Box>
         )}
@@ -128,13 +126,12 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
           <RequestCourtDate
             workingCase={workingCase}
             onChange={(date: Date | undefined, valid: boolean) =>
-              newSetAndSendDateToServer(
+              setAndSendDateToServer(
                 'requestedCourtDate',
                 date,
                 valid,
                 workingCase,
                 setWorkingCase,
-                setRequestedCourtDateIsValid,
                 updateCase,
               )
             }
@@ -152,9 +149,25 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
             autoComplete="off"
             label={formatMessage(m.sections.translator.label)}
             placeholder={formatMessage(m.sections.translator.placeholder)}
-            defaultValue={workingCase.translator}
-            onChange={(event) => setField(event.target)}
-            onBlur={(event) => validateAndSendToServer(event.target)}
+            value={workingCase.translator || ''}
+            onChange={(event) =>
+              removeTabsValidateAndSet(
+                'translator',
+                event.target.value,
+                [],
+                workingCase,
+                setWorkingCase,
+              )
+            }
+            onBlur={(event) =>
+              validateAndSendToServer(
+                'traslator',
+                event.target.value,
+                [],
+                workingCase,
+                updateCase,
+              )
+            }
           />
         </Box>
       </FormContentContainer>
@@ -162,7 +175,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
         <FormFooter
           previousUrl={`${Constants.IC_DEFENDANT_ROUTE}/${workingCase.id}`}
           onNextButtonClick={async () => await onNextButtonClick()}
-          nextIsDisabled={!isValid || (!workingCase.court && !selectedCourt)}
+          nextIsDisabled={!isHearingArrangementsStepValidIC(workingCase)}
           nextIsLoading={isLoading}
         />
       </FormContentContainer>

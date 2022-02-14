@@ -18,6 +18,11 @@ export const accidentType = {
       description:
         'Please select the category of accident that best describes the situation of the accident.',
     },
+    subsectionTitle: {
+      id: 'an.application:accidentType.subsectionTitle',
+      defaultMessage: `Aðstæður slyss`,
+      description: 'AccidentType subsection title.',
+    },
   }),
   labels: defineMessages({
     homeActivities: {
@@ -31,17 +36,17 @@ export const accidentType = {
       description: 'Work',
     },
     rescueWork: {
-      id: 'an.application:accidentType.labels.work',
+      id: 'an.application:accidentType.labels.rescueWork',
       defaultMessage: 'Björgunarstörf',
       description: 'Rescue Work',
     },
     studies: {
-      id: 'an.application:accidentType.labels.work',
+      id: 'an.application:accidentType.labels.studies',
       defaultMessage: 'Nám',
       description: 'Studies',
     },
     sports: {
-      id: 'an.application:accidentType.labels.work',
+      id: 'an.application:accidentType.labels.sport',
       defaultMessage: 'Íþróttaiðkun',
       description: 'Sport activites',
     },

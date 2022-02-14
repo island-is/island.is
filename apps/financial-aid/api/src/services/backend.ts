@@ -15,12 +15,19 @@ import {
   apiBasePath,
   ApplicationStateUrl,
   UpdateApplicationTableResponseType,
+  UpdateStaff,
+  UpdateMunicipalityActivity,
+  Staff,
+  CreateStaff,
+  CreateMunicipality,
+  PersonalTaxReturn,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
 import { CreateApplicationFilesInput } from '../app/modules/file/dto'
-import { StaffModel } from '../app/modules/staff'
-import { HasSpouseAppliedModel } from '../app/modules/user/HasSpouseApplied.model'
+import { CreateStaffInput } from '../app/modules/staff'
+import { SpouseModel } from '../app/modules/user'
+import { UpdateMunicipalityInput } from '../app/modules/municipality/dto'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
@@ -39,12 +46,43 @@ class BackendAPI extends RESTDataSource {
     return this.get(`application/id/${id}`)
   }
 
+  searchForApplication(nationalId: string): Promise<Application[]> {
+    return this.get(`application/find/${nationalId}`)
+  }
+
   getApplicationFilters(): Promise<ApplicationFilters> {
     return this.get('application/filters')
   }
 
   getMunicipality(id: string): Promise<Municipality> {
     return this.get(`municipality/${id}`)
+  }
+
+  getMunicipalities(): Promise<Municipality[]> {
+    return this.get(`municipality`)
+  }
+
+  createMunicipality(
+    createMunicipality: CreateMunicipality,
+    createAdmin: CreateStaff,
+  ): Promise<Municipality> {
+    return this.post('municipality', {
+      municipalityInput: createMunicipality,
+      adminInput: createAdmin,
+    })
+  }
+
+  updateMunicipality(
+    updateMunicipality: UpdateMunicipalityInput,
+  ): Promise<Municipality> {
+    return this.put('municipality', updateMunicipality)
+  }
+
+  updateMunicipalityActivity(
+    id: string,
+    updateMunicipality: UpdateMunicipalityActivity,
+  ): Promise<Municipality> {
+    return this.put(`municipality/activity/${id}`, updateMunicipality)
   }
 
   createApplication(
@@ -88,16 +126,48 @@ class BackendAPI extends RESTDataSource {
     return this.post('file', createApplicationFiles)
   }
 
-  getCurrentApplication(nationalId: string): Promise<string | undefined> {
-    return this.get(`application/nationalId/${nationalId}`)
+  getCurrentApplicationId(): Promise<string | undefined> {
+    return this.get('application/nationalId')
   }
 
-  isSpouse(spouseNationalId: string): Promise<HasSpouseAppliedModel> {
-    return this.get(`application/spouse/${spouseNationalId}`)
+  getSpouse(): Promise<SpouseModel> {
+    return this.get('application/spouse')
   }
 
-  getStaff(nationalId: string): Promise<StaffModel> {
-    return this.get(`staff/${nationalId}`)
+  getStaff(): Promise<Staff> {
+    return this.get('staff/nationalId')
+  }
+
+  getStaffById(id: string): Promise<Staff> {
+    return this.get(`staff/id/${id}`)
+  }
+
+  getAdminUsers(municipalityId: string): Promise<Staff[]> {
+    return this.get(`staff/users/${municipalityId}`)
+  }
+
+  getSupervisors(): Promise<Staff[]> {
+    return this.get('staff/supervisors')
+  }
+
+  updateStaff(id: string, updateStaff: UpdateStaff): Promise<Staff> {
+    return this.put(`staff/id/${id}`, updateStaff)
+  }
+
+  getStaffForMunicipality(): Promise<Staff[]> {
+    return this.get('staff/municipality')
+  }
+
+  createStaff(createStaff: CreateStaffInput): Promise<Staff> {
+    return this.post('staff', createStaff)
+  }
+
+  getNumberOfStaffForMunicipality(municipalityId: string): Promise<number> {
+    return this.get(`staff/municipality/${municipalityId}`)
+  }
+
+  getPersonalTaxReturn(): Promise<PersonalTaxReturn> {
+    return this.get('personalTaxReturn')
   }
 }
 

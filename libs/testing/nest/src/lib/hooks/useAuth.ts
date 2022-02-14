@@ -1,31 +1,21 @@
 import { TestingModuleBuilder } from '@nestjs/testing/testing-module.builder'
-import { ExecutionContext } from '@nestjs/common'
 
 import {
   IdsAuthGuard,
   IdsUserGuard,
-  ScopesGuard,
-  getRequest,
-  User,
+  Auth,
+  MockAuthGuard,
 } from '@island.is/auth-nest-tools'
 
 interface UseAuth {
-  currentUser: User
+  auth: Auth
 }
 
-export default ({ currentUser }: UseAuth) => ({
+export default ({ auth }: UseAuth) => ({
   override: (builder: TestingModuleBuilder) =>
     builder
       .overrideGuard(IdsAuthGuard)
-      .useValue({ canActivate: () => true })
+      .useValue(new MockAuthGuard(auth))
       .overrideGuard(IdsUserGuard)
-      .useValue({
-        canActivate: (context: ExecutionContext) => {
-          const request = getRequest(context)
-          request.user = currentUser
-          return true
-        },
-      })
-      .overrideGuard(ScopesGuard)
-      .useValue({ canActivate: () => true }),
+      .useValue(new MockAuthGuard(auth)),
 })

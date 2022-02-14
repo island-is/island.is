@@ -10,10 +10,17 @@ export {
   formatPrisonRevokedEmailNotification,
   formatDefenderRevokedEmailNotification,
   stripHtmlTags,
-  formatCustodyIsolation,
+  formatCourtResubmittedToCourtSmsNotification,
 } from './formatters'
 export { getRequestPdfAsString, getRequestPdfAsBuffer } from './requestPdf'
-export { getRulingPdfAsString } from './rulingPdf'
+export {
+  getCourtRecordPdfAsString,
+  getCourtRecordPdfAsBuffer,
+} from './courtRecordPdf'
+export { getRulingPdfAsString, getRulingPdfAsBuffer } from './rulingPdf'
 export { getCasefilesPdfAsString } from './casefilesPdf'
-export { getCustodyNoticePdfAsString } from './custodyNoticePdf'
+export {
+  getCustodyNoticePdfAsString,
+  getCustodyNoticePdfAsBuffer,
+} from './custodyNoticePdf'
 export { writeFile } from './writeFile'

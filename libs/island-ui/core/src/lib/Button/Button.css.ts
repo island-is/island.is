@@ -19,7 +19,7 @@ const buttonBase = {
     boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
   },
   ':disabled': {
-    cursor: 'normal',
+    cursor: 'default',
   },
 }
 
@@ -34,7 +34,7 @@ const textBase = {
     boxShadow: `inset 0 -1px 0 0 ${theme.color.dark400}`,
   },
   ':disabled': {
-    cursor: 'normal',
+    cursor: 'default',
   },
   selectors: {
     // text button uses span instead of button and data active is used to emulate button active, span is used to make text button inline, because button element will default to inline-block if you use display: inline
@@ -120,6 +120,17 @@ export const size = styleVariants({
       },
     }),
   },
+  medium: {
+    fontSize: 14,
+    lineHeight: 1.25,
+    height: 48,
+    ...themeUtils.responsiveStyle({
+      md: {
+        fontSize: 16,
+        lineHeight: '16px',
+      },
+    }),
+  },
 })
 
 export const padding = styleVariants({
@@ -134,6 +145,9 @@ export const padding = styleVariants({
         padding: '18px 24px',
       },
     }),
+  },
+  medium: {
+    padding: theme.spacing[2],
   },
   small: {
     padding: '10px 16px',
@@ -170,6 +184,10 @@ export const circleSizes = styleVariants({
   small: {
     width: 24,
     height: 24,
+  },
+  medium: {
+    width: 48,
+    height: 48,
   },
   large: {
     width: 48,
@@ -395,6 +413,15 @@ export const colors = {
       theme.color.dark200,
       theme.color.blue100,
     ),
+    blueberry: utilityColors(
+      theme.color.blueberry600,
+      theme.color.blueberry600,
+      theme.color.blueberry600,
+      theme.color.blueberry600,
+      theme.color.dark200,
+      theme.color.blue100,
+      2,
+    ),
     primary: primaryColors(
       theme.color.blue400,
       theme.color.white,
@@ -465,7 +492,17 @@ export const icon = style({
       marginLeft: 0,
       marginRight: 0,
     },
-    [`${size.small} &, ${variants.utility} &, ${size.textSmall} &, ${circleSizes.small} &`]: {
+    [`${size.small} &`]: {
+      width: 16,
+      height: 16,
+      ...themeUtils.responsiveStyle({
+        md: {
+          width: 20,
+          height: 20,
+        },
+      }),
+    },
+    [`${variants.utility} &, ${size.textSmall} &, ${circleSizes.small} &`]: {
       width: 16,
       height: 16,
     },
@@ -545,4 +582,12 @@ export const loadingDot = style({
     },
   },
   animation: `${dotAnimation} 1.4s forwards cubic-bezier(0.59, 0.01, 0.39, 1) infinite`,
+})
+
+export const truncate = style({
+  display: 'inline-block',
+  maxWidth: '100%',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
 })

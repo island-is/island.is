@@ -51,6 +51,15 @@ const IdentityQuery = gql`
 `
 
 function GrantAccess() {
+  const noUserFoundToast = () => {
+    toast.error(
+      formatMessage({
+        id: 'service.portal.settings.accessControl:grant-identity-error',
+        defaultMessage: 'Enginn notandi fannst með þessa kennitölu.',
+      }),
+    )
+  }
+
   const [name, setName] = useState('')
   const { handleSubmit, control, errors, watch, reset } = useForm({
     mode: 'onChange',
@@ -64,13 +73,11 @@ function GrantAccess() {
   const [getIdentity, { data, loading: queryLoading }] = useLazyQuery<Query>(
     IdentityQuery,
     {
-      onError: (error) => {
-        toast.error(
-          formatMessage({
-            id: 'service.portal.settings.accessControl:grant-identity-error',
-            defaultMessage: 'Enginn notandi fannst með þessa kennitölu.',
-          }),
-        )
+      onError: noUserFoundToast,
+      onCompleted: (data) => {
+        if (!data.identity) {
+          noUserFoundToast()
+        }
       },
     },
   )
@@ -108,7 +115,7 @@ function GrantAccess() {
       })
       if (data) {
         history.push(
-          `${ServicePortalPath.SettingsAccessControl}/${data.createAuthDelegation.to.nationalId}`,
+          `${ServicePortalPath.SettingsAccessControl}/${data.createAuthDelegation.id}`,
         )
       }
     } catch (error) {
@@ -148,7 +155,7 @@ function GrantAccess() {
               })}
             </Text>
           </GridColumn>
-          <GridColumn span={['12/12', '12/12', '8/12']} paddingBottom={4}>
+          <GridColumn span={['12/12', '12/12', '8/12']}>
             <div className={styles.inputWrapper}>
               {name && (
                 <Input
@@ -161,9 +168,14 @@ function GrantAccess() {
                     defaultMessage: 'Aðgangshafi',
                   })}
                   disabled
+                  size="md"
                 />
               )}
-              <Box display={name ? 'none' : 'block'} aria-live="assertive">
+              <Box
+                display={name ? 'none' : 'block'}
+                aria-live="assertive"
+                marginBottom={[1, 1, 0]}
+              >
                 <InputController
                   control={control}
                   id="toNationalId"
@@ -204,6 +216,7 @@ function GrantAccess() {
                   onChange={(value) => {
                     requestDelegation(value)
                   }}
+                  size="md"
                 />
               </Box>
               {queryLoading ? (

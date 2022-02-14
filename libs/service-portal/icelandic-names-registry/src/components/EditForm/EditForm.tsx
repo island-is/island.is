@@ -122,8 +122,8 @@ const EditForm: React.FC<PropTypes> = ({
         >
           <GridContainer position="none">
             <GridRow>
-              <GridColumn span={'12/12'} paddingBottom={6}>
-                <Text variant="h1">
+              <GridColumn span="12/12" paddingBottom={6}>
+                <Text variant="h3" as="h1">
                   {!isUpdating
                     ? 'Skráning íslensks nafns'
                     : 'Breyta íslensku nafni'}
@@ -132,7 +132,7 @@ const EditForm: React.FC<PropTypes> = ({
             </GridRow>
 
             <GridRow>
-              <GridColumn span={'12/12'} paddingBottom={spacing}>
+              <GridColumn span="12/12" paddingBottom={spacing}>
                 <Controller
                   name="icelandicName"
                   control={control}
@@ -142,7 +142,7 @@ const EditForm: React.FC<PropTypes> = ({
                         name={name}
                         label="Nafn"
                         placeholder="Nafn"
-                        size="md"
+                        size="xs"
                         value={value ?? ''}
                         errorMessage={errors?.icelandicName?.message}
                         backgroundColor="blue"
@@ -175,7 +175,7 @@ const EditForm: React.FC<PropTypes> = ({
                         onChange={(option) =>
                           onChange(String((option as Option).value))
                         }
-                        size="sm"
+                        size="xs"
                         hasError={Boolean(errors?.type?.message)}
                         errorMessage={errors?.type?.message}
                         backgroundColor="blue"
@@ -205,7 +205,7 @@ const EditForm: React.FC<PropTypes> = ({
                         onChange={(option) =>
                           onChange(String((option as Option).value))
                         }
-                        size="sm"
+                        size="xs"
                         hasError={Boolean(errors?.status?.message)}
                         errorMessage={errors?.status?.message}
                         backgroundColor="blue"
@@ -219,7 +219,7 @@ const EditForm: React.FC<PropTypes> = ({
             </GridRow>
 
             <GridRow marginTop={3}>
-              <GridColumn span={'12/12'} paddingBottom={spacing}>
+              <GridColumn span="12/12" paddingBottom={spacing}>
                 <Controller
                   name="description"
                   render={({ onChange, value, name }) => {
@@ -227,7 +227,7 @@ const EditForm: React.FC<PropTypes> = ({
                       <Input
                         name={name}
                         label="Skýring"
-                        size="sm"
+                        size="xs"
                         backgroundColor="blue"
                         value={value ?? ''}
                         onChange={(e) => onChange(e.target.value)}
@@ -241,7 +241,7 @@ const EditForm: React.FC<PropTypes> = ({
             </GridRow>
 
             <GridRow marginTop={3}>
-              <GridColumn span={'12/12'} paddingBottom={spacing}>
+              <GridColumn span="12/12" paddingBottom={spacing}>
                 <Controller
                   name="url"
                   render={({ onChange, value, name }) => {
@@ -250,7 +250,7 @@ const EditForm: React.FC<PropTypes> = ({
                         name={name}
                         label="Vefslóð á úrskurð"
                         placeholder="Vefslóð á úrskurð mannanafnanefndar"
-                        size="sm"
+                        size="xs"
                         value={value ?? ''}
                         onChange={(e) => onChange(e.target.value)}
                         errorMessage={errors?.url?.message ?? ''}
@@ -262,7 +262,7 @@ const EditForm: React.FC<PropTypes> = ({
                 />
               </GridColumn>
 
-              <GridColumn span={'6/12'} paddingBottom={spacing}>
+              <GridColumn span="6/12" paddingBottom={spacing}>
                 <Controller
                   name="verdict"
                   render={({ onChange, value, name }) => {
@@ -271,7 +271,7 @@ const EditForm: React.FC<PropTypes> = ({
                         name={name}
                         label="Dags. úrskurðar"
                         placeholder="t.d. 23.08.2014"
-                        size="sm"
+                        size="xs"
                         value={value ?? ''}
                         onChange={(e) => onChange(e.target.value)}
                         errorMessage={errors?.verdict?.message ?? ''}
@@ -285,7 +285,7 @@ const EditForm: React.FC<PropTypes> = ({
             </GridRow>
 
             <GridRow marginTop={3}>
-              <GridColumn span={'12/12'} paddingBottom={spacing}>
+              <GridColumn span="12/12" paddingBottom={spacing}>
                 <Controller
                   name="visible"
                   control={control}
@@ -325,7 +325,7 @@ const EditForm: React.FC<PropTypes> = ({
         >
           <GridContainer position="none">
             <GridRow>
-              <GridColumn span={'6/12'} paddingBottom={3}>
+              <GridColumn span="6/12" paddingBottom={3}>
                 <Box>
                   <Button
                     onClick={() => {
@@ -340,7 +340,7 @@ const EditForm: React.FC<PropTypes> = ({
                   </Button>
                 </Box>
               </GridColumn>
-              <GridColumn span={'6/12'} paddingBottom={3}>
+              <GridColumn span="6/12" paddingBottom={3}>
                 <Box display="flex" justifyContent="flexEnd" width="full">
                   <Button
                     type="submit"

@@ -1,10 +1,30 @@
-import { FieldBaseProps } from '@island.is/application/core'
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import { gql, useMutation } from '@apollo/client'
+import {
+  PaymentScheduleConditions,
+  PaymentScheduleDebts,
+} from '@island.is/api/schema'
+import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Link,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React from 'react'
+import * as Sentry from '@sentry/react'
+import kennitala from 'kennitala'
+import React, { useEffect } from 'react'
 import { employer } from '../../lib/messages'
 import { formatIsk } from '../../lib/paymentPlanUtils'
-import { PaymentPlanExternalData } from '../../types'
+
+const updateCurrentEmployerMutation = gql`
+  mutation UpdateCurrentEmployer($input: UpdateCurrentEmployerInput!) {
+    updateCurrentEmployer(input: $input) {
+      success
+    }
+  }
+`
 
 const InfoBox = ({ title, text }: { title: string | number; text: string }) => (
   <Box
@@ -27,17 +47,53 @@ const InfoBox = ({ title, text }: { title: string | number; text: string }) => (
 
 export const DisposableIncome = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
-  const externalData = application.externalData as PaymentPlanExternalData
-  const conditions =
-    externalData.paymentPlanPrerequisites?.data?.conditions || null
+  const [updateCurrentEmployer] = useMutation(updateCurrentEmployerMutation)
+
+  const correctedNationalId = getValueViaPath(
+    application.answers,
+    'correctedEmployer.nationalId',
+    '',
+  ) as string
+  const conditions = getValueViaPath(
+    application.externalData,
+    'paymentPlanPrerequisites.data.conditions',
+  ) as PaymentScheduleConditions
+  const debts = getValueViaPath(
+    application.externalData,
+    'paymentPlanPrerequisites.data.debts',
+  ) as PaymentScheduleDebts[]
+
+  const updateEmployer = async () => {
+    const results = await updateCurrentEmployer({
+      variables: {
+        input: {
+          employerNationalId: kennitala.clean(correctedNationalId),
+        },
+      },
+    })
+
+    if (!results.data) {
+      Sentry.captureException(results.errors)
+    }
+  }
+
+  useEffect(() => {
+    if (correctedNationalId && kennitala.isValid(correctedNationalId)) {
+      updateEmployer()
+    }
+  }, [correctedNationalId])
 
   return (
     <Box>
       <Text marginBottom={3}>
-        {formatMessage(employer.general.pageDescription)}
+        {`${formatMessage(employer.general.pageDescription)} `}
+        <Link href={`${formatMessage(employer.general.taxHomePageUrl)}`} newTab>
+          <Button variant="text" icon="open" iconType="outline">
+            {formatMessage(employer.labels.taxHomePage)}
+          </Button>
+        </Link>
       </Text>
       <Box marginBottom={[3, 3, 5]}>
-        {/* TODO: Handle null values? */}
         <InfoBox
           title={`${
             conditions?.disposableIncome.toLocaleString('is-IS') || 0
@@ -53,22 +109,23 @@ export const DisposableIncome = ({ application }: FieldBaseProps) => {
           percent: `${conditions?.percent}%`,
         })}
       </Text>
-      {/* TODO: Handle null values? */}
       <InfoBox
         title={`${conditions?.minPayment.toLocaleString('is-IS') || 0} kr.`}
         text={formatMessage(employer.labels.yourMinimumPayment)}
       />
-      {!!conditions?.minWagePayment && (
-        <Box marginTop={3}>
-          <AlertMessage
-            type="info"
-            title={formatMessage(employer.labels.alertTitle)}
-            message={formatMessage(employer.labels.alertMessage, {
-              minPayment: formatIsk(conditions?.minWagePayment),
-            })}
-          />
-        </Box>
-      )}
+      {!!conditions?.minWagePayment &&
+        conditions?.minPayment < conditions?.minWagePayment &&
+        debts?.find((x) => x.type === 'Wagedection') !== undefined && (
+          <Box marginTop={3}>
+            <AlertMessage
+              type="info"
+              title={formatMessage(employer.labels.alertTitle)}
+              message={formatMessage(employer.labels.alertMessage, {
+                minPayment: formatIsk(conditions?.minWagePayment),
+              })}
+            />
+          </Box>
+        )}
     </Box>
   )
 }

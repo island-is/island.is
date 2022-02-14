@@ -18,8 +18,6 @@ const AboutForm = () => {
   const router = useRouter()
   const { user } = useContext(AppContext)
 
-  const { nationalRegistryData } = useContext(AppContext)
-
   const navigation: NavigationProps = useFormNavigation(
     router.pathname,
   ) as NavigationProps
@@ -27,7 +25,11 @@ const AboutForm = () => {
   return (
     <>
       <ContentContainer>
-        {user?.isSpouse ? <AboutFormSpouse /> : <AboutFormApplicant />}
+        {user?.spouse?.hasPartnerApplied ? (
+          <AboutFormSpouse />
+        ) : (
+          <AboutFormApplicant />
+        )}
       </ContentContainer>
 
       <Footer previousUrl={navigation?.prevUrl} nextUrl={navigation?.nextUrl} />

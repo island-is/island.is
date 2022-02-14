@@ -1,4 +1,5 @@
 import React, { FC, ReactNode } from 'react'
+import { BrowserRouter as Router } from 'react-router-dom'
 import {
   render,
   screen,
@@ -11,10 +12,15 @@ import '@testing-library/jest-dom'
 import { MockedProvider } from '@apollo/client/testing'
 import { LocaleProvider, LocaleContext } from '@island.is/localization'
 import { MockedAuthenticator, MockUser } from '@island.is/auth/react'
-import { Features, MockedFeatureFlagProvider } from '@island.is/feature-flags'
+import {
+  Features,
+  MockedFeatureFlagProvider,
+} from '@island.is/react/feature-flags'
 import { UserMenu } from './UserMenu'
 import { ACTOR_DELEGATIONS } from './actorDelegations.graphql'
 import { ActorDelegationsQuery } from '../../../gen/graphql'
+import { USER_PROFILE } from './userProfile.graphql'
+import { GetUserProfileQuery } from '../../../gen/graphql'
 
 const delegation = {
   name: 'Phil',
@@ -35,12 +41,27 @@ const mocks = [
       } as ActorDelegationsQuery,
     },
   },
+  {
+    request: {
+      query: USER_PROFILE,
+    },
+    result: {
+      data: {
+        getIslykillSettings: {
+          email: 'test@test.is',
+          mobile: '0000000',
+        },
+      } as GetUserProfileQuery,
+    },
+  },
 ]
 
 const wrapper: FC = ({ children }) => (
   <MockedFeatureFlagProvider flags={[Features.delegationsEnabled]}>
     <MockedProvider mocks={mocks} addTypename={false}>
-      <LocaleProvider skipPolyfills>{children}</LocaleProvider>
+      <Router>
+        <LocaleProvider skipPolyfills>{children}</LocaleProvider>
+      </Router>
     </MockedProvider>
   </MockedFeatureFlagProvider>
 )
@@ -48,7 +69,7 @@ const wrapper: FC = ({ children }) => (
 async function openMenu() {
   // Open user dropdown and wait for a few promise updates.
   await act(async () => {
-    fireEvent.click(screen.getByRole('button', { name: /útskráning/i }))
+    fireEvent.click(screen.getAllByRole('button', { name: /útskráning/i })[0])
   })
   return screen.getByRole('dialog', { name: /útskráning/i })
 }
@@ -94,7 +115,7 @@ describe('UserMenu', () => {
     })
 
     // Assert
-    const button = screen.getByRole('button', { name: /útskráning/i })
+    const button = screen.getAllByRole('button', { name: /útskráning/i })[0]
     expect(button).toHaveTextContent('John')
   })
 
@@ -110,9 +131,9 @@ describe('UserMenu', () => {
     })
 
     // Assert
-    const button = screen.getByRole('button', { name: /útskráning/i })
-    expect(button).toHaveTextContent('Anna')
-    expect(button).toHaveTextContent('John')
+    const button = screen.getAllByRole('button', { name: /útskráning/i })
+    expect(button[0]).toHaveTextContent('John')
+    expect(button[1]).toHaveTextContent('Anna')
   })
 
   it('can open and close user menu', async () => {
@@ -145,11 +166,11 @@ describe('UserMenu', () => {
     expect(signOut).toHaveBeenCalled()
   })
 
-  it('can switch languages', async () => {
+  it('can switch languages using selectbox', async () => {
     // Arrange
     renderAuthenticated(
       <>
-        <UserMenu />
+        <UserMenu showDropdownLanguage />
         <LocaleContext.Consumer>
           {({ lang }) => <span>Current: {lang}</span>}
         </LocaleContext.Consumer>
@@ -167,6 +188,27 @@ describe('UserMenu', () => {
       { button: 1 },
     )
     fireEvent.click(screen.getByText('English'))
+
+    // Assert
+    expect(screen.getByText(/Current/)).toHaveTextContent('Current: en')
+  })
+
+  it('can switch languages using button', async () => {
+    // Arrange
+    renderAuthenticated(
+      <>
+        <UserMenu fullscreen />
+        <LocaleContext.Consumer>
+          {({ lang }) => <span>Current: {lang}</span>}
+        </LocaleContext.Consumer>
+      </>,
+      { user: {} },
+    )
+    const languageSelector = screen.getByTestId('language-switcher-button')
+    expect(languageSelector).not.toBeNull()
+    expect(screen.getByText(/Current/)).toHaveTextContent('Current: is')
+    // Act
+    fireEvent.click(screen.getByText('EN'))
 
     // Assert
     expect(screen.getByText(/Current/)).toHaveTextContent('Current: en')

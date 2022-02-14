@@ -20,7 +20,7 @@ const HasApplied = () => {
       <Button
         onClick={() => {
           router.push(
-            `${Routes.statusPage(user?.currentApplication as string)}`,
+            `${Routes.statusPage(user?.currentApplicationId as string)}`,
           )
         }}
       >

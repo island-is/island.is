@@ -1,4 +1,6 @@
-# Parental Leave
+<!-- gitbook-ignore -->
+
+# Parental Leave Application Template
 
 ## Description
 

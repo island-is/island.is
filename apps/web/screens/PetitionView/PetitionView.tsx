@@ -14,6 +14,8 @@ import { PAGE_SIZE, pages, paginate } from './pagination'
 import format from 'date-fns/format'
 import { useRouter } from 'next/router'
 import { useGetPetitionList, useGetPetitionListEndorsements } from './queries'
+import { useNamespace } from '@island.is/web/hooks'
+import Skeleton from './Skeleton'
 
 const formatDate = (date: string) => {
   try {
@@ -23,17 +25,18 @@ const formatDate = (date: string) => {
   }
 }
 
-const PetitionView = () => {
+const PetitionView = (namespace) => {
+  const n = useNamespace(namespace)
   const router = useRouter()
 
-  const list = useGetPetitionList(router.query.slug as string)
+  const { list, loading } = useGetPetitionList(router.query.slug as string)
   const listEndorsements = useGetPetitionListEndorsements(
     router.query.slug as string,
   )
 
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
-  const [pagePetitions, setPetitions] = useState(listEndorsements.data)
+  const [pagePetitions, setPetitions] = useState(listEndorsements.data ?? [])
 
   const getBaseUrl = () => {
     const isLocalhost = window?.location.origin.includes('localhost')
@@ -60,104 +63,133 @@ const PetitionView = () => {
   }
 
   useEffect(() => {
-    handlePagination(1, listEndorsements.data)
-    setPetitions(listEndorsements.data)
-  }, [listEndorsements])
+    setPetitions(listEndorsements.data ?? [])
+    handlePagination(1, listEndorsements.data ?? [])
+  }, [listEndorsements.data])
 
   return (
     <Box marginTop={5} marginBottom={5}>
-      <GridContainer>
-        <GridRow>
-          <GridColumn span="10/12" offset="1/12">
-            <GridRow>
-              <GridColumn>
-                <Text variant="h2" marginBottom={3}>
-                  {list.title}
-                </Text>
-                <Text variant="default" marginBottom={3}>
-                  {list.description}
-                </Text>
-              </GridColumn>
-            </GridRow>
-            <GridRow>
-              <GridColumn span={['12/12', '4/12', '4/12']}>
-                <Text variant="h4">Meðmælendalistinn er opinn til:</Text>
-                <Text variant="default">{formatDate(list.closedDate)}</Text>
-              </GridColumn>
-              <GridColumn span={['12/12', '4/12', '4/12']}>
-                <Text variant="h4">Ábyrgðarmaður:</Text>
-                <Text variant="default">{list.ownerName}</Text>
-              </GridColumn>
-              <GridColumn span={['12/12', '4/12', '4/12']}>
-                <Text variant="h4">Fjöldi skráðir:</Text>
-                <Text variant="default">{listEndorsements.totalCount}</Text>
-              </GridColumn>
-            </GridRow>
-            <GridRow marginTop={5}>
-              <GridColumn span={['12/12', '6/12', '6/12']}>
-                <Button
-                  variant="primary"
-                  icon="arrowForward"
-                  onClick={() =>
-                    window?.open(
-                      `${getBaseUrl()}/medmaelendalisti/${
-                        list.meta.applicationId
-                      }`,
-                    )
-                  }
-                >
-                  Setja nafn mitt á þennan lista
-                </Button>
-              </GridColumn>
-            </GridRow>
-            <GridRow marginTop={5} marginBottom={5}>
-              <GridColumn span={['12/12', '12/12', '12/12']}>
-                <T.Table>
-                  <T.Head>
-                    <T.Row>
-                      <T.HeadData>Dags skráð</T.HeadData>
-                      <T.HeadData>Nafn</T.HeadData>
-                    </T.Row>
-                  </T.Head>
-                  <T.Body>
-                    {pagePetitions?.map((petition) => {
-                      return (
-                        <T.Row key={petition.id}>
-                          <T.Data>{formatDate(list.created)}</T.Data>
-                          <T.Data>
-                            {petition.meta.fullName
-                              ? petition.meta.fullName
-                              : 'Nafn ótilgreint'}
-                          </T.Data>
-                        </T.Row>
-                      )
-                    })}
-                  </T.Body>
-                </T.Table>
-              </GridColumn>
-            </GridRow>
-            {!!list.signedPetitions?.length && (
-              <Box marginY={3}>
-                <Pagination
-                  page={page}
-                  totalPages={totalPages}
-                  renderLink={(page, className, children) => (
-                    <Box
-                      cursor="pointer"
-                      className={className}
+      {loading ? (
+        <GridContainer>
+          <GridRow>
+            <GridColumn span={'10/12'} offset="1/12">
+              <Skeleton />
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      ) : (
+        <GridContainer>
+          <GridRow>
+            {list.closedDate && new Date() <= new Date(list.closedDate) ? (
+              <GridColumn span="10/12" offset="1/12">
+                <GridRow>
+                  <GridColumn>
+                    <Text variant="h2" marginBottom={3}>
+                      {list.title}
+                    </Text>
+                    <Text variant="default" marginBottom={3}>
+                      {list.description}
+                    </Text>
+                  </GridColumn>
+                </GridRow>
+                <GridRow>
+                  <GridColumn span={['12/12', '4/12', '4/12']}>
+                    <Text variant="h4">
+                      {n('listIsOpenTil', 'Meðmælendalistinn er opinn til:')}
+                    </Text>
+                    <Text variant="default">{formatDate(list.closedDate)}</Text>
+                  </GridColumn>
+                  <GridColumn span={['12/12', '4/12', '4/12']}>
+                    <Text variant="h4">{n('listOwner', 'Ábyrgðarmaður:')}</Text>
+                    <Text variant="default">{list.ownerName}</Text>
+                  </GridColumn>
+                  <GridColumn span={['12/12', '4/12', '4/12']}>
+                    <Text variant="h4">
+                      {n('signedPetitions', 'Fjöldi skráðir:')}
+                    </Text>
+                    <Text variant="default">{listEndorsements.totalCount}</Text>
+                  </GridColumn>
+                </GridRow>
+                <GridRow marginTop={5}>
+                  <GridColumn span={['12/12', '6/12', '6/12']}>
+                    <Button
+                      variant="primary"
+                      icon="arrowForward"
                       onClick={() =>
-                        handlePagination(page, list.signedPetitions)
+                        window?.open(
+                          `${getBaseUrl()}/medmaelendalisti/${
+                            list.meta.applicationId
+                          }`,
+                        )
                       }
                     >
-                      {children}
-                    </Box>
-                  )}
-                />
-              </Box>
+                      {n(
+                        'putMyNameOnThatList',
+                        'Setja nafn mitt á þennan lista',
+                      )}
+                    </Button>
+                  </GridColumn>
+                </GridRow>
+                <GridRow marginTop={5} marginBottom={5}>
+                  <GridColumn span={'12/12'}>
+                    <T.Table>
+                      <T.Head>
+                        <T.Row>
+                          <T.HeadData>
+                            {n('signedDate', 'Dags skráð')}
+                          </T.HeadData>
+                          <T.HeadData>{n('name', 'Nafn')}</T.HeadData>
+                        </T.Row>
+                      </T.Head>
+                      <T.Body>
+                        {pagePetitions?.map((petition) => {
+                          return (
+                            <T.Row key={petition.id}>
+                              <T.Data>{formatDate(list.created)}</T.Data>
+                              <T.Data>
+                                {petition.meta.fullName
+                                  ? petition.meta.fullName
+                                  : 'Nafn ótilgreint'}
+                              </T.Data>
+                            </T.Row>
+                          )
+                        })}
+                      </T.Body>
+                    </T.Table>
+                  </GridColumn>
+                </GridRow>
+                {pagePetitions && pagePetitions.length ? (
+                  <Box marginY={3}>
+                    <Pagination
+                      page={page}
+                      totalPages={totalPages}
+                      renderLink={(page, className, children) => (
+                        <Box
+                          cursor="pointer"
+                          className={className}
+                          onClick={() =>
+                            handlePagination(page, listEndorsements.data)
+                          }
+                        >
+                          {children}
+                        </Box>
+                      )}
+                    />
+                  </Box>
+                ) : (
+                  <Text>{n('noPetitions', 'Engin meðmæli komin')}</Text>
+                )}
+              </GridColumn>
+            ) : (
+              <GridColumn span="10/12" offset="1/12">
+                <Text marginY={7} variant="h3">
+                  {n('listIsClosed', 'Meðmælendalistinn er lokaður')}
+                </Text>
+              </GridColumn>
             )}
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
+          </GridRow>
+        </GridContainer>
+      )}
     </Box>
   )
 }

@@ -19,6 +19,18 @@ export const inReview = {
         'A button to view application located in application state screen',
     },
   }),
+  alertMessage: defineMessages({
+    reviewApproved: {
+      id: 'an.application:inReview.alertMessage.reviewApproved',
+      defaultMessage: 'Tilkynning hefur verið samþykkt.',
+      description: 'Application has been approved',
+    },
+    reviewRejected: {
+      id: 'an.application:inReview.alertMessage.reviewRejected',
+      defaultMessage: 'Tilkynning hefur verið andmælt.',
+      description: 'Application has been rejected',
+    },
+  }),
   tags: defineMessages({
     missing: {
       id: 'an.application:inReview.tags.missingDocuments',
@@ -58,6 +70,17 @@ export const inReview = {
         'Slysatilkynning hefur verið send til Sjúkratryggingar Íslands',
       description: 'Summary for application section in review',
     },
+    documentIdAlertTitle: {
+      id: 'an.application:inReview.application.documentIdAlertTitle',
+      defaultMessage: 'Skjalanúmer',
+      description: 'Document Id',
+    },
+    documentIdAlertMessage: {
+      id: 'an.application:inReview.application.documentIdAlertMessage',
+      defaultMessage:
+        'Skjalanúmer fyrir tilkynninguna hjá Sjúkratryggingum Íslands:',
+      description: 'Document id description text',
+    },
   }),
   documents: defineMessages({
     title: {
@@ -89,17 +112,30 @@ export const inReview = {
         'Ef slysið átti sér stað á vinnustað/skóla/stofnun/íþróttafélagi þá þarf forsvarsmaður þess að yfirfara og staðfesta upplýsingar í tilkynningu.',
       description: 'Summary for representative section in review',
     },
+    titleDone: {
+      id: 'an.application:inReview.action.representative.titleDone',
+      defaultMessage: 'Forsvarsmaður fer yfir tilkynningu',
+      description:
+        'Title for action message in representative section when completed by reviewer',
+    },
+    summaryDone: {
+      id: 'an.application:inReview.action.representative.summaryDone',
+      defaultMessage:
+        'Svo hægt er að greiða út bætur fyrir slysið þarf þriðji aðilli að staðfesta að upplýsingar eru réttar.',
+      description:
+        'Description for action message in representative section when done',
+    },
   }),
   sjukratrygging: defineMessages({
     title: {
       id: 'an.application:inReview.sjukratrygging.title',
-      defaultMessage: 'Afstaða til bótastöðu',
+      defaultMessage: 'Afstaða til bótaskyldu',
       description: 'Title for sjukratrygging section in review',
     },
     summary: {
       id: 'an.application:inReview.sjukratrygging.summary',
       defaultMessage:
-        'Þegar öll nauðsynleg gögn hafa borist, fer Sjúkratryggingar Íslands yfir umsókn og er þá afstaða tekin til bótaskyldu.',
+        'Þegar öll nauðsynleg gögn hafa borist, fara Sjúkratryggingar Íslands yfir umsókn og er þá afstaða tekin til bótaskyldu.',
       description: 'Summary for sjukratrygging section in review',
     },
   }),
@@ -139,7 +175,7 @@ export const inReview = {
       description: {
         id: 'an.application:inReview.action.representative.description',
         defaultMessage:
-          'Það er nauðsynlegt að forsvarsmaður fari yfir tilkynningu áður en Sjúkratryggingar Íslands getur tekið afstöðu til bótaskyldu.',
+          'Það er nauðsynlegt að forsvarsmaður eða hinn slasaði fari yfir tilkynningu áður en Sjúkratryggingar Íslands getur tekið afstöðu til bótaskyldu.',
         description: 'Description for action message in representative section',
       },
       actionButtonTitle: {
@@ -165,6 +201,11 @@ export const inReview = {
       id: 'an.application:inReview.buttons.sendAttachmentsButton',
       defaultMessage: 'Senda fylgiskjöl',
       description: 'Review send attachments button',
+    },
+    goToOverview: {
+      id: 'an.application:inReview.buttons.goToOverview',
+      defaultMessage: 'Skoða yfirlit',
+      description: 'Go to overview button',
     },
   }),
   confirmationModal: {

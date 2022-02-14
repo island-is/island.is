@@ -26,13 +26,13 @@ export const StatisticBox: FC<Props> = ({ name, value }) => {
     <Box padding={2} border="standard" borderRadius="large">
       <Box>
         <Box>
-          <Text variant={'eyebrow'}>{name}</Text>
+          <Text variant="eyebrow">{name}</Text>
         </Box>
         <Inline alignY="bottom" space={1}>
           <Text variant="h2" as="h2">
             {displayValue}
           </Text>
-          <Text variant={'eyebrow'}>{displayText}</Text>
+          <Text variant="eyebrow">{displayText}</Text>
         </Inline>
       </Box>
     </Box>

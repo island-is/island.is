@@ -35,6 +35,7 @@ export class StaffModel extends Model<Staff> {
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    unique: true,
   })
   @ApiProperty()
   nationalId: string
@@ -69,6 +70,14 @@ export class StaffModel extends Model<Staff> {
   active: boolean
 
   @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty()
+  usePseudoName: boolean
+
+  @Column({
     type: DataType.STRING,
     allowNull: true,
   })
@@ -89,4 +98,18 @@ export class StaffModel extends Model<Staff> {
   })
   @ApiProperty()
   municipalityHomepage: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  nickname: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  email: string
 }

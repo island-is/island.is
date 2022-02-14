@@ -1,49 +1,48 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
+
 import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   BlueBox,
-  CaseNumbers,
+  CaseInfo,
   CourtDocuments,
   DateTime,
   FormContentContainer,
   FormFooter,
   HideableText,
-} from '@island.is/judicial-system-web/src/shared-components'
-import { Case, SessionArrangements } from '@island.is/judicial-system/types'
+} from '@island.is/judicial-system-web/src/components'
 import {
-  newSetAndSendDateToServer,
+  Case,
+  SessionArrangements,
+  User,
+} from '@island.is/judicial-system/types'
+import {
+  setAndSendDateToServer,
   removeTabsValidateAndSet,
   setAndSendToServer,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
-import {
-  FormSettings,
-  useCaseFormHelper,
-} from '@island.is/judicial-system-web/src/utils/useFormHelper'
+import { formatRequestCaseType } from '@island.is/judicial-system/formatters'
 import {
   closedCourt,
   icCourtRecord as m,
+  core,
 } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
+import { isCourtRecordStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
+  user?: User
 }
 
 const CourtRecordForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading } = props
-  const [
-    courtRecordStartDateIsValid,
-    setCourtRecordStartDateIsValid,
-  ] = useState(true)
+  const { workingCase, setWorkingCase, isLoading, user } = props
   const [courtLocationEM, setCourtLocationEM] = useState('')
-  const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState('')
   const [
     litigationPresentationsErrorMessage,
     setLitigationPresentationsMessage,
@@ -52,23 +51,12 @@ const CourtRecordForm: React.FC<Props> = (props) => {
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
 
-  const validations: FormSettings = {
-    courtLocation: {
-      validations: ['empty'],
-    },
-    prosecutorDemands: {
-      validations: ['empty'],
-    },
-    litigationPresentations: {
-      validations: ['empty'],
-    },
-  }
-
-  const { isValid } = useCaseFormHelper(
-    workingCase,
-    setWorkingCase,
-    validations,
-  )
+  const displayAccusedBookings =
+    workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
+    (workingCase.sessionArrangements ===
+      SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
+      workingCase.defenderIsSpokesperson &&
+      workingCase.defenderName)
 
   return (
     <>
@@ -79,7 +67,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers workingCase={workingCase} />
+          <CaseInfo workingCase={workingCase} userRole={user?.role} />
         </Box>
         <Box component="section" marginBottom={3}>
           <BlueBox>
@@ -89,19 +77,14 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                 datepickerLabel="Dagsetning þinghalds"
                 timeLabel="Þinghald hófst (kk:mm)"
                 maxDate={new Date()}
-                selectedDate={
-                  workingCase.courtStartDate
-                    ? new Date(workingCase.courtStartDate)
-                    : new Date()
-                }
+                selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
-                  newSetAndSendDateToServer(
+                  setAndSendDateToServer(
                     'courtStartDate',
                     date,
                     valid,
                     workingCase,
                     setWorkingCase,
-                    setCourtRecordStartDateIsValid,
                     updateCase,
                   )
                 }}
@@ -114,12 +97,12 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               name="courtLocation"
               tooltip={formatMessage(m.sections.courtLocation.tooltip)}
               label={formatMessage(m.sections.courtLocation.label)}
-              defaultValue={workingCase.courtLocation}
+              value={workingCase.courtLocation || ''}
               placeholder={formatMessage(m.sections.courtLocation.placeholder)}
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'courtLocation',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -161,77 +144,44 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               tooltip={formatMessage(closedCourt.tooltip)}
             />
           </Box>
-          <Box marginBottom={3}>
-            <Input
-              data-testid="courtAttendees"
-              name="courtAttendees"
-              label="Mættir eru"
-              defaultValue={workingCase.courtAttendees}
-              placeholder="Skrifa hér..."
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'courtAttendees',
-                  event,
-                  [],
-                  workingCase,
-                  setWorkingCase,
-                )
-              }
-              onBlur={(event) =>
-                updateCase(
-                  workingCase.id,
-                  parseString('courtAttendees', event.target.value),
-                )
-              }
-              textarea
-              rows={7}
-            />
-          </Box>
           <Input
-            data-testid="prosecutorDemands"
-            name="prosecutorDemands"
-            label="Krafa"
-            defaultValue={workingCase.prosecutorDemands}
-            placeholder="Hvað hafði ákæruvaldið að segja?"
+            data-testid="courtAttendees"
+            name="courtAttendees"
+            label="Mættir eru"
+            value={workingCase.courtAttendees || ''}
+            placeholder="Skrifa hér..."
             onChange={(event) =>
               removeTabsValidateAndSet(
-                'prosecutorDemands',
-                event,
-                ['empty'],
+                'courtAttendees',
+                event.target.value,
+                [],
                 workingCase,
                 setWorkingCase,
-                prosecutorDemandsEM,
-                setProsecutorDemandsEM,
               )
             }
             onBlur={(event) =>
-              validateAndSendToServer(
-                'prosecutorDemands',
-                event.target.value,
-                ['empty'],
-                workingCase,
-                updateCase,
-                setProsecutorDemandsEM,
+              updateCase(
+                workingCase.id,
+                parseString('courtAttendees', event.target.value),
               )
             }
-            errorMessage={prosecutorDemandsEM}
-            hasError={prosecutorDemandsEM !== ''}
             textarea
             rows={7}
-            required
           />
         </Box>
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Dómskjöl
+              {formatMessage(m.sections.courtDocuments.header)}
             </Text>
           </Box>
           <CourtDocuments
-            title={`Krafa - ${capitalize(caseTypes[workingCase.type])}`}
-            tagText="Þingmerkt nr. 1"
+            title={formatMessage(core.requestCaseType, {
+              caseType: formatRequestCaseType(workingCase.type),
+            })}
+            tagText={formatMessage(m.sections.courtDocuments.tag)}
             tagVariant="darkerBlue"
-            text="Rannsóknargögn málsins liggja frammi."
+            text={formatMessage(m.sections.courtDocuments.text)}
             caseId={workingCase.id}
             selectedCourtDocuments={workingCase.courtDocuments ?? []}
             onUpdateCase={updateCase}
@@ -239,8 +189,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             workingCase={workingCase}
           />
         </Box>
-        {workingCase.sessionArrangements ===
-          SessionArrangements.ALL_PRESENT && (
+        {displayAccusedBookings && (
           <Box component="section" marginBottom={8}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
@@ -254,14 +203,14 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               data-testid="accusedBookings"
               name="accusedBookings"
               label={formatMessage(m.sections.accusedBookings.label)}
-              defaultValue={workingCase.accusedBookings}
+              value={workingCase.accusedBookings || ''}
               placeholder={formatMessage(
                 m.sections.accusedBookings.placeholder,
               )}
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'accusedBookings',
-                  event,
+                  event.target.value,
                   [],
                   workingCase,
                   setWorkingCase,
@@ -277,7 +226,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                 )
               }
               textarea
-              rows={7}
+              rows={16}
             />
           </Box>
         )}
@@ -292,12 +241,12 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               data-testid="litigationPresentations"
               name="litigationPresentations"
               label="Málflutningur og aðrar bókanir"
-              defaultValue={workingCase.litigationPresentations}
+              value={workingCase.litigationPresentations || ''}
               placeholder="Málflutningsræður og annað sem fram kom í þinghaldi er skráð hér..."
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'litigationPresentations',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -318,7 +267,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               errorMessage={litigationPresentationsErrorMessage}
               hasError={litigationPresentationsErrorMessage !== ''}
               textarea
-              rows={7}
+              rows={16}
               required
             />
           </Box>
@@ -329,7 +278,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
           previousUrl={`${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoading}
           nextUrl={`${Constants.IC_RULING_STEP_ONE_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!isValid || !courtRecordStartDateIsValid}
+          nextIsDisabled={!isCourtRecordStepValidIC(workingCase)}
         />
       </FormContentContainer>
     </>

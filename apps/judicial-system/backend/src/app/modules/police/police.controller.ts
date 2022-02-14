@@ -1,6 +1,17 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Param,
+  Post,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import {
   JwtAuthGuard,
   RolesGuard,
@@ -8,26 +19,48 @@ import {
 } from '@island.is/judicial-system/auth'
 
 import { prosecutorRule } from '../../guards'
-import { CaseExistsGuard, CaseNotCompletedGuard } from '../case'
+import {
+  Case,
+  CaseExistsGuard,
+  CaseReadGuard,
+  CaseNotCompletedGuard,
+  CaseOriginalAncestorInterceptor,
+  CurrentCase,
+} from '../case'
 import { UploadPoliceCaseFileDto } from './dto'
 import { PoliceCaseFile, UploadPoliceCaseFileResponse } from './models'
 import { PoliceService } from './police.service'
 
-@UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseNotCompletedGuard)
+@UseGuards(
+  JwtAuthGuard,
+  RolesGuard,
+  CaseExistsGuard,
+  CaseReadGuard,
+  CaseNotCompletedGuard,
+)
 @Controller('api/case/:caseId')
 @ApiTags('police files')
 export class PoliceController {
-  constructor(private readonly policeService: PoliceService) {}
+  constructor(
+    private readonly policeService: PoliceService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   @RolesRules(prosecutorRule)
+  @UseInterceptors(CaseOriginalAncestorInterceptor)
   @Get('policeFiles')
   @ApiOkResponse({
     type: PoliceCaseFile,
     isArray: true,
     description: 'Gets all police files for a case',
   })
-  getAll(@Param('caseId') caseId: string): Promise<PoliceCaseFile[]> {
-    return this.policeService.getAllPoliceCaseFiles(caseId)
+  getAll(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+  ): Promise<PoliceCaseFile[]> {
+    this.logger.debug(`Getting all police files for case ${caseId}`)
+
+    return this.policeService.getAllPoliceCaseFiles(theCase.id)
   }
 
   @RolesRules(prosecutorRule)
@@ -40,6 +73,10 @@ export class PoliceController {
     @Param('caseId') caseId: string,
     @Body() uploadPoliceCaseFile: UploadPoliceCaseFileDto,
   ): Promise<UploadPoliceCaseFileResponse> {
+    this.logger.debug(
+      `Uploading police file ${uploadPoliceCaseFile.id} of case ${caseId} to AWS S3`,
+    )
+
     return this.policeService.uploadPoliceCaseFile(caseId, uploadPoliceCaseFile)
   }
 }

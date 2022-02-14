@@ -36,6 +36,16 @@ export interface AuthSettings extends Omit<UserManagerSettings, 'scope'> {
    * Allow to pass the scope as an array.
    */
   scope?: string[]
+
+  /**
+   * Which URL to send the user to after switching users.
+   */
+  switchUserRedirectUrl?: string
+
+  /**
+   * Wich PATH on the AUTHORITY to use for checking the session expiry.
+   */
+  checkSessionPath?: string
 }
 
 export const mergeAuthSettings = (settings: AuthSettings) => {
@@ -52,6 +62,7 @@ export const mergeAuthSettings = (settings: AuthSettings) => {
     redirectPath,
     redirectPathSilent,
     authority: 'https://innskra.island.is',
+    checkSessionPath: '/connect/sessioninfo',
     silent_redirect_uri: `${baseUrl}${redirectPathSilent}`,
     redirect_uri: `${baseUrl}${redirectPath}`,
     post_logout_redirect_uri: baseUrl,

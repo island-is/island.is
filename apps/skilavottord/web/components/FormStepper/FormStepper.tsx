@@ -31,9 +31,8 @@ export const FormStepper = ({
     <Box padding={[0, 0, 0, 3, 4]}>
       <Stack space={4}>
         <Box>
-          <Text variant="h3">{title}</Text>
-          <Text variant="intro">{activeCar}</Text>
-          <Text variant="intro">
+          <Text variant="h3">{activeCar || title}</Text>
+          <Text color="purple600">
             {activeSection < sections.length
               ? `${t.step} ${activeSection + 1} ${t.outOf} ${sections.length}`
               : completedText}

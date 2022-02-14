@@ -1,4 +1,3 @@
-import round from 'lodash/round'
 import differenceInMonths from 'date-fns/differenceInMonths'
 import differenceInCalendarMonths from 'date-fns/differenceInCalendarMonths'
 import differenceInDays from 'date-fns/differenceInDays'
@@ -11,6 +10,7 @@ import {
   ParentalLeaveEntitlement,
   ParentalLeavePeriod,
 } from '@island.is/api/domains/directorate-of-labour'
+import { errorMessages } from './messages'
 
 // VMST rule for the number of days in each month of the year
 export const DAYS_IN_MONTH = 30
@@ -95,10 +95,15 @@ export const calculateExistingNumberOfDays = (periods: ParentalLeavePeriod[]) =>
     .reduce((acc, cur) => {
       const from = new Date(cur.from)
       const to = new Date(cur.to)
-      const days = calculateNumberOfDaysForOnePeriod(from, to)
-      const daysWithRatio = Math.round((days * cur.ratio) / 100)
 
-      return acc + daysWithRatio
+      if (cur.ratio.toString().startsWith('D')) {
+        const [, rawDays] = cur.ratio.toString().split('D')[1]
+
+        return acc + Number(rawDays)
+      }
+      const ratio = Number(cur.ratio)
+
+      return acc + calculatePeriodLength(from, to, ratio / 100)
     }, 0)
 
 /**
@@ -151,11 +156,11 @@ export const calculatePeriodLength = (
   percentage = 1,
 ) => {
   if (end < start) {
-    throw new Error('calculateDaysForStartEnd: end date < start date')
+    throw errorMessages.periodsEndDateBeforeStartDate
   }
 
   if (start === end) {
-    throw new Error('calculateDaysForStartEnd: start date equals end date')
+    throw errorMessages.periodsEndDateMinimumPeriod
   }
 
   let currentDate = start

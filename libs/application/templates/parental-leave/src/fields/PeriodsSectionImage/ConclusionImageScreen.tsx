@@ -27,7 +27,9 @@ const ConclusionSectionImage: FC<FieldBaseProps> = ({ application }) => {
     )
   }
 
-  if (requiresOtherParentApproval(application.answers)) {
+  if (
+    requiresOtherParentApproval(application.answers, application.externalData)
+  ) {
     steps.unshift(
       otherParentApprovalDescription(application.answers, formatMessage),
     )

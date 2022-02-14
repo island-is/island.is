@@ -30,4 +30,9 @@ export class EndorsementListOpen {
     nullable: false,
   })
   openedDate!: Date
+
+  @ApiProperty({
+    nullable: false,
+  })
+  adminLock!: boolean
 }

@@ -31,6 +31,10 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
             title
             slug
           }
+          processEntry {
+            id
+            processTitle
+          }
           subArticles {
             title
             slug
@@ -84,9 +88,15 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           parent {
             id
             title
+            category {
+              id
+              slug
+              title
+            }
           }
         }
       }
+      processEntryCount
     }
   }
 `
@@ -99,11 +109,13 @@ export const GET_SEARCH_COUNT_QUERY = gql`
         key
         value
         count
+        type
       }
       typesCount {
         key
         count
       }
+      processEntryCount
     }
   }
 `
@@ -150,6 +162,13 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           title
           slug
           intro
+          body {
+            ... on ProcessEntry {
+              __typename
+              processTitle
+              processLink
+            }
+          }
           processEntry {
             id
           }
@@ -175,6 +194,10 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           subArticles {
             title
             slug
+          }
+          processEntry {
+            id
+            processTitle
           }
         }
 
@@ -237,6 +260,11 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
               description
               slug
             }
+            category {
+              id
+              slug
+              title
+            }
           }
         }
         ... on OrganizationSubpage {
@@ -244,6 +272,19 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           title
           url
           intro
+          organizationPage {
+            organization {
+              title
+            }
+          }
+        }
+
+        ... on Link {
+          id
+          title: text
+          slug: url
+          intro
+          labels
         }
       }
       tagCounts {
@@ -255,6 +296,7 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
         key
         count
       }
+      processEntryCount
     }
   }
 `

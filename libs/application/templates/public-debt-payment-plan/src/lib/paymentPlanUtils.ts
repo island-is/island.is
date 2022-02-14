@@ -1,6 +1,7 @@
 import {
   GetScheduleDistributionInput,
   PaymentScheduleConditions,
+  PaymentScheduleDebts,
   PaymentScheduleDistribution,
 } from '@island.is/api/schema'
 import { ExternalData } from '@island.is/application/core'
@@ -14,6 +15,9 @@ export const prerequisitesFailed = (data: ExternalData) => {
     | PaymentScheduleConditions
     | undefined
 
+  const debts = (data as PaymentPlanExternalData).paymentPlanPrerequisites?.data
+    ?.debts as PaymentScheduleDebts[]
+
   if (!prerequisites) return true
 
   return (
@@ -25,7 +29,8 @@ export const prerequisitesFailed = (data: ExternalData) => {
     !prerequisites.withholdingTaxReturns ||
     !prerequisites.wageReturns ||
     prerequisites.collectionActions ||
-    !prerequisites.doNotOwe
+    !prerequisites.doNotOwe ||
+    debts?.length === 0
   )
 }
 

@@ -7,6 +7,29 @@ export const icRulingStepOne = {
     description: 'Notaður sem titill á úrskurðar skrefi í rannsóknarheimildum.',
   }),
   sections: {
+    prosecutorDemands: defineMessages({
+      title: {
+        id:
+          'judicial.system.investigation_cases:ruling_step_one.prosecutor_demands.title',
+        defaultMessage: 'Dómkröfur',
+        description:
+          'Notaður sem titill fyrir "dómkröfur" hlutann á úrskurðar skrefi í rannsóknarheimildum.',
+      },
+      label: {
+        id:
+          'judicial.system.investigation_cases:ruling_step_one.prosecutor_demands.label',
+        defaultMessage: 'Krafa lögreglu',
+        description:
+          'Notaður sem titill fyrir í "Krafa lögreglu" textaboxi á úrskurðar skrefi í rannsóknarheimildum.',
+      },
+      placeholder: {
+        id:
+          'judicial.system.investigation_cases:ruling_step_one.prosecutor_demands.placeholder',
+        defaultMessage: 'Hvað hafði ákæruvaldið að segja?',
+        description:
+          'Notaður sem skýritexti fyrir í "Hvað hafði ákæruvaldið að segja?" textabox á úrskurðar skrefi í rannsóknarheimildum.',
+      },
+    }),
     courtCaseFacts: defineMessages({
       title: {
         id:
@@ -78,6 +101,27 @@ export const icRulingStepOne = {
         defaultMessage: 'Úrskurður',
         description:
           'Notaður sem titill fyrir "Úrskurður" hlutann á úrskurðar skrefi í rannsóknarheimildum.',
+      },
+      acceptLabel: {
+        id:
+          'judicial.system.investigation_cases:ruling_step_one.decision.accept_label',
+        defaultMessage: 'Krafa samþykkt',
+        description:
+          'Notaður sem texti við radio takka með vali um að samþykkja rannsóknarheimild á úrskurðar skrefi í rannsóknarheimildum.',
+      },
+      rejectLabel: {
+        id:
+          'judicial.system.investigation_cases:ruling_step_one.decision.reject_label',
+        defaultMessage: 'Kröfu hafnað',
+        description:
+          'Notaður sem texti við radio takka með vali um að hafna rannsóknarheimild á úrskurðar skrefi í rannsóknarheimildum.',
+      },
+      partiallyAcceptLabel: {
+        id:
+          'judicial.system.investigation_cases:ruling_step_one.decision.partially_accept_label',
+        defaultMessage: 'Krafa tekin til greina að hluta',
+        description:
+          'Notaður sem texti við radio takka með vali um að samþykkja rannsóknarheimild að hluta á úrskurðar skrefi í rannsóknarheimildum.',
       },
       dismissLabel: {
         id:

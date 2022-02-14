@@ -148,6 +148,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Stéttarfélag (valfrjálst)',
       description: 'Union (optional)',
     },
+    asyncSelectSearchableHint: {
+      id: 'application.system:placeholder.searchable.hint',
+      defaultMessage: 'Skrifaðu hér til að leita',
+      description: 'Let user know they can search by typing',
+    },
     privatePensionFund: {
       id: 'pl.application:payment.information.privatePensionFund',
       defaultMessage: 'Séreignarsjóður',
@@ -276,6 +281,33 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:range.endDate',
       defaultMessage: 'Lokadagur þinn er:',
       description: 'Your end day is:',
+    },
+    transferRightsTitle: {
+      id: 'pl.application:transferRights.title',
+      defaultMessage: 'Tilfærsla réttinda',
+      description: 'Transferal of rights',
+    },
+    transferRightsDescription: {
+      id: 'pl.application:transferRights.description',
+      defaultMessage:
+        'Hægt er að færa allt að 45 daga á milli foreldra. Athugaðu að ef þú óskar eftir dögum þá þarf hitt foreldrið að samþykkja það.',
+      description:
+        'You can transfer up to {days} between parents. Note that if you choose to request days then the other parent will need to approve it.',
+    },
+    transferRightsNone: {
+      id: 'pl.application:transferRights.option.none',
+      defaultMessage: 'Ég vil ekki færa daga',
+      description: 'I do not want to transfer days',
+    },
+    transferRightsRequest: {
+      id: 'pl.application:transferRights.option.request',
+      defaultMessage: 'Ég vil óska eftir dögum frá hinu foreldrinu',
+      description: 'I want to request days from the other parent',
+    },
+    transferRightsGive: {
+      id: 'pl.application:transferRights.option.give',
+      defaultMessage: 'Ég vil færa daga yfir á hitt foreldrið',
+      description: 'I want to give days to the other parent',
     },
     rightsTotalSmallPrint: {
       id: 'pl.application:months.total.smallprint',
@@ -415,6 +447,16 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:expectedDateOfBirth.subtitle',
       defaultMessage: 'Staðfesting á að það sé yfir höfuð barn á leiðinni',
       description: 'Confirmation on date of birth',
+    },
+    salaryInformationTitle: {
+      id: 'pl.application:permission.salaryInformation.title',
+      defaultMessage: 'Upplýsingar um laun',
+      description: 'Salary information',
+    },
+    salaryInformationSubTitle: {
+      id: 'pl.application:permission.salaryInformation.subtitle',
+      defaultMessage: 'Sóttar til Skattsins.',
+      description: 'Salary information will be fetched from the tax office.',
     },
     salaryTitle: {
       id: 'pl.application:salary.title',
@@ -604,6 +646,16 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:applicant.phoneNumber',
       defaultMessage: 'Símanúmer',
       description: 'Phone number',
+    },
+    fullName: {
+      id: 'pl.application:applicant.fullName',
+      defaultMessage: 'Nafn',
+      description: 'Name',
+    },
+    nationalId: {
+      id: 'pl.application:applicant.nationalId',
+      defaultMessage: 'Kennitala',
+      description: 'National id',
     },
   }),
 
@@ -866,6 +918,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage:
         'Fyrir svona langt tímabil fást greiðslur að hlutfalli af hámarksréttindum þínum: ',
       description: 'For this length of time you will get payments up to',
+    },
+    fullyUsedRatio: {
+      id: 'pl.application:duration.ratio.fullyUse',
+      defaultMessage: 'Full nýting (tæp {maxPercentage}%)',
+      description: 'Fully use rights {percentage}',
     },
   }),
 
@@ -1565,7 +1622,7 @@ export const errorMessages = defineMessages({
       'Copy for when user has not chosen how to end a period (length or specific date)',
   },
   periodsEndDateDefinitionInvalid: {
-    id: 'pl.application:answerValidators.periodsEndDateDefinitionMissing',
+    id: 'pl.application:answerValidators.periodsEndDateDefinitionInvalid',
     defaultMessage: 'Ógild skilgreining á endalokum tímabils.',
     description:
       'Copy for when user has chosen how to end a period but it was an invalid choice',

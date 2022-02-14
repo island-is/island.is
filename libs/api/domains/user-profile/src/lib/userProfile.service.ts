@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
-import { ApolloError } from 'apollo-server-express'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
+import { ApolloError, ForbiddenError } from 'apollo-server-express'
 import {
   ConfirmationDtoResponse,
   CreateUserProfileDto,
@@ -8,14 +9,20 @@ import {
   UserProfileApi,
   UserProfileControllerCreateRequest,
   UserProfileControllerUpdateRequest,
-} from '../../gen/fetch'
+} from '@island.is/clients/user-profile'
+import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
 import { CreateUserProfileInput } from './dto/createUserProfileInput'
 import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
+import { CreateEmailVerificationInput } from './dto/createEmalVerificationInput'
 import { ConfirmSmsVerificationInput } from './dto/confirmSmsVerificationInput'
 import { ConfirmEmailVerificationInput } from './dto/confirmEmailVerificationInput'
+import { DeleteIslykillValueInput } from './dto/deleteIslykillValueInput'
 import { UserProfile } from './userProfile.model'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { IslykillService } from './islykill.service'
+import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
+import { DataStatus } from './types/dataStatus.enum'
 
 // eslint-disable-next-line
 const handleError = (error: any) => {
@@ -25,10 +32,49 @@ const handleError = (error: any) => {
 
 @Injectable()
 export class UserProfileService {
-  constructor(private userProfileApi: UserProfileApi) {}
+  constructor(
+    private userProfileApi: UserProfileApi,
+    private readonly islyklarService: IslykillService,
+    private readonly featureFlagService: FeatureFlagService,
+  ) {}
 
   userProfileApiWithAuth(auth: Auth) {
     return this.userProfileApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  async getIslykillProfile(user: User) {
+    try {
+      const islyklarData = await this.islyklarService.getIslykillSettings(
+        user.nationalId,
+      )
+
+      const feature = await this.featureFlagService.getValue(
+        Features.personalInformation,
+        false,
+        user,
+      )
+      if (!feature) {
+        return null
+      }
+
+      return {
+        nationalId: user.nationalId,
+        emailVerified: false,
+        mobilePhoneNumberVerified: false,
+        documentNotifications: false,
+        emailStatus: DataStatus.NOT_VERIFIED,
+        mobileStatus: DataStatus.NOT_VERIFIED,
+
+        // Islyklar data:
+        mobilePhoneNumber: islyklarData?.mobile,
+        email: islyklarData?.email,
+        canNudge: islyklarData?.canNudge,
+        bankInfo: islyklarData?.bankInfo,
+      }
+    } catch (error) {
+      logger.error(JSON.stringify(error))
+      return null
+    }
   }
 
   async getUserProfile(user: User) {
@@ -38,9 +84,36 @@ export class UserProfileService {
       ).userProfileControllerFindOneByNationalId({
         nationalId: user.nationalId,
       })
-      return profile
+
+      const islyklarData = await this.islyklarService.getIslykillSettings(
+        user.nationalId,
+      )
+
+      const feature = await this.featureFlagService.getValue(
+        Features.personalInformation,
+        false,
+        user,
+      )
+
+      return {
+        ...profile,
+
+        // Temporary solution while we still run the old user profile service.
+        ...(feature && {
+          mobilePhoneNumber: islyklarData?.mobile,
+          email: islyklarData?.email,
+          canNudge: islyklarData?.canNudge,
+          bankInfo: islyklarData?.bankInfo,
+        }),
+      }
     } catch (error) {
-      if (error.status === 404) return null
+      if (error.status === 404) {
+        /**
+         * Even if userProfileApiWithAuth does not exist.
+         * Islykill data might exist for the user, so we need to get that, with default values in the userprofile data.
+         */
+        return await this.getIslykillProfile(user)
+      }
       handleError(error)
     }
   }
@@ -53,15 +126,58 @@ export class UserProfileService {
       nationalId: user.nationalId,
       //temporary as schemas where not working properly
       locale: input.locale as string,
+      smsCode: input.smsCode,
+      emailCode: input.emailCode,
+
+      /**
+       *  Mobile and email will be within islykill service
+       *  Only here for verification purposes in userProfile.controller.
+       *  Will be removed in controller before saving to db
+       */
       mobilePhoneNumber: input.mobilePhoneNumber,
       email: input.email,
     }
     const request: UserProfileControllerCreateRequest = {
       createUserProfileDto: createUserDto,
     }
-    return await this.userProfileApiWithAuth(user)
+
+    const feature = await this.featureFlagService.getValue(
+      Features.personalInformation,
+      false,
+      user,
+    )
+
+    if (feature && (input.email || input.mobilePhoneNumber)) {
+      const islyklarData = await this.islyklarService.getIslykillSettings(
+        user.nationalId,
+      )
+
+      if (islyklarData.nationalId) {
+        await this.islyklarService
+          .updateIslykillSettings(user.nationalId, {
+            email: input.email ?? islyklarData.email,
+            mobile: input.mobilePhoneNumber ?? islyklarData.mobile,
+            bankInfo: islyklarData.bankInfo,
+            canNudge: islyklarData.canNudge,
+          }) // Current version does not return the updated user in the response.
+          .catch(handleError)
+      } else {
+        await this.islyklarService
+          .createIslykillSettings(user.nationalId, {
+            email: input.email,
+            mobile: input.mobilePhoneNumber,
+          }) // Current version does not return the newly created user in the response.
+          .catch(handleError)
+      }
+    } else {
+      logger.info('User profile create is feature flagged for user')
+    }
+
+    const userProfileResponse = await this.userProfileApiWithAuth(user)
       .userProfileControllerCreate(request)
       .catch(handleError)
+
+    return userProfileResponse
   }
 
   async updateUserProfile(
@@ -71,6 +187,15 @@ export class UserProfileService {
     const updateUserDto: UpdateUserProfileDto = {
       //temporary as schemas where not working properly
       locale: input.locale as string,
+      documentNotifications: input.documentNotifications,
+      smsCode: input.smsCode,
+      emailCode: input.emailCode,
+
+      /**
+       *  Mobile and email will be within islykill service
+       *  Only here for verification purposes in userProfile.controller.
+       *  Will be removed in controller before saving to db
+       */
       mobilePhoneNumber: input.mobilePhoneNumber,
       email: input.email,
     }
@@ -78,9 +203,98 @@ export class UserProfileService {
       nationalId: user.nationalId,
       updateUserProfileDto: updateUserDto,
     }
-    return await this.userProfileApiWithAuth(user)
+
+    const feature = await this.featureFlagService.getValue(
+      Features.personalInformation,
+      false,
+      user,
+    )
+
+    const updatedUserProfile = await this.userProfileApiWithAuth(user)
       .userProfileControllerUpdate(request)
       .catch(handleError)
+
+    if (feature) {
+      const islyklarData = await this.islyklarService.getIslykillSettings(
+        user.nationalId,
+      )
+
+      if (
+        (input.email &&
+          updatedUserProfile.emailStatus !== DataStatus.VERIFIED) ||
+        (input.mobilePhoneNumber &&
+          updatedUserProfile.mobileStatus !== DataStatus.VERIFIED)
+      ) {
+        throw new ForbiddenError('Updating value verification invalid')
+      }
+
+      if (islyklarData.nationalId) {
+        await this.islyklarService
+          .updateIslykillSettings(user.nationalId, {
+            email:
+              input.email &&
+              updatedUserProfile.emailStatus === DataStatus.VERIFIED
+                ? input.email
+                : islyklarData.email,
+            mobile:
+              input.mobilePhoneNumber &&
+              updatedUserProfile.mobileStatus === DataStatus.VERIFIED
+                ? input.mobilePhoneNumber
+                : islyklarData.mobile,
+            canNudge: input.canNudge ?? islyklarData.canNudge,
+            bankInfo: input.bankInfo ?? islyklarData.bankInfo,
+          }) // Current version does not return the updated user in the response.
+          .catch(handleError)
+      } else {
+        await this.islyklarService
+          .createIslykillSettings(user.nationalId, {
+            email:
+              input.email &&
+              updatedUserProfile.emailStatus === DataStatus.VERIFIED
+                ? input.email
+                : islyklarData.email,
+            mobile:
+              input.mobilePhoneNumber &&
+              updatedUserProfile.mobileStatus === DataStatus.VERIFIED
+                ? input.mobilePhoneNumber
+                : islyklarData.mobile,
+          }) // Current version does not return the newly created user in the response.
+          .catch(handleError)
+      }
+    } else {
+      logger.info('User profile update is feature flagged for user')
+    }
+
+    return updatedUserProfile
+  }
+
+  async deleteIslykillValue(
+    input: DeleteIslykillValueInput,
+    user: User,
+  ): Promise<DeleteIslykillSettings> {
+    const feature = await this.featureFlagService.getValue(
+      Features.personalInformation,
+      false,
+      user,
+    )
+    if (!feature) {
+      handleError('User profile update is feature flagged for user')
+    }
+    const islyklarData = await this.islyklarService.getIslykillSettings(
+      user.nationalId,
+    )
+    await this.islyklarService
+      .updateIslykillSettings(user.nationalId, {
+        email: input.email ? undefined : islyklarData.email,
+        mobile: input.mobilePhoneNumber ? undefined : islyklarData.mobile,
+        canNudge: islyklarData.canNudge,
+        bankInfo: islyklarData.bankInfo,
+      })
+      .catch(handleError)
+    return {
+      nationalId: user.nationalId,
+      valid: true,
+    }
   }
 
   async createSmsVerification(
@@ -90,6 +304,18 @@ export class UserProfileService {
     const createSmsVerificationDto = { nationalId: user.nationalId, ...input }
     await this.userProfileApiWithAuth(user)
       .userProfileControllerCreateSmsVerification({ createSmsVerificationDto })
+      .catch(handleError)
+  }
+
+  async createEmailVerification(
+    input: CreateEmailVerificationInput,
+    user: User,
+  ): Promise<void> {
+    const createEmailVerificationDto = { nationalId: user.nationalId, ...input }
+    await this.userProfileApiWithAuth(user)
+      .userProfileControllerCreateEmailVerification({
+        createEmailVerificationDto,
+      })
       .catch(handleError)
   }
 
@@ -123,6 +349,24 @@ export class UserProfileService {
       .userProfileControllerConfirmEmail({
         nationalId: user.nationalId,
         confirmEmailDto,
+      })
+      .catch(handleError)
+  }
+
+  async addDeviceToken(input: UserDeviceTokenInput, user: User) {
+    return await this.userProfileApiWithAuth(user)
+      .userProfileControllerAddDeviceToken({
+        nationalId: user.nationalId,
+        deviceTokenDto: input,
+      })
+      .catch(handleError)
+  }
+
+  async deleteDeviceToken(input: UserDeviceTokenInput, user: User) {
+    return await this.userProfileApiWithAuth(user)
+      .userProfileControllerDeleteDeviceToken({
+        nationalId: user.nationalId,
+        deviceTokenDto: input,
       })
       .catch(handleError)
   }

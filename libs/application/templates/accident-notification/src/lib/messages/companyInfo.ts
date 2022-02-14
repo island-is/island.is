@@ -15,7 +15,7 @@ export const companyInfo = {
     description: {
       id: 'an.application:companyInfo.general.description',
       defaultMessage:
-        'Vinsamlegast fylltu út upplýsingar um atvinnurekanda sem slasaði starfaði hjá þegar slysið átti sér stað.',
+        'Vinsamlegast fylltu út upplýsingar um atvinnurekanda sem hinn slasaði starfaði hjá þegar slysið átti sér stað.',
       description: `Please fill in the details of the employer with whom the injured person was working at the time of the accident.`,
     },
   }),
@@ -25,6 +25,12 @@ export const companyInfo = {
       defaultMessage: 'Upplýsingar um forsvarsmann fyrirtækisins',
       description: `Information about the company's representative`,
     },
+    subDescription: {
+      id: 'an.application:companyInfo.labels.subDescription',
+      defaultMessage:
+        'Athugaðu að forsvarsmaður er sá aðili sem fer yfir tilkynninguna fyrir hönd fyrirtæisins.',
+      description: `Sub description about the company's representative`,
+    },
     nationalId: {
       id: 'an.application:companyInfo.labels.nationalId',
       defaultMessage: 'Kennitala atvinnurekanda',
@@ -32,8 +38,8 @@ export const companyInfo = {
     },
     name: {
       id: 'an.application:companyInfo.labels.name',
-      defaultMessage: 'Fullt nafn',
-      description: 'Full name',
+      defaultMessage: 'Heiti vinnuveitanda',
+      description: 'Label of field for name of employeer',
     },
     email: {
       id: 'an.application:companyInfo.labels.email',

@@ -266,7 +266,8 @@ export class Children extends BasicDataProvider {
     customTemplateFindQuery: CustomTemplateFindQuery,
   ): Promise<ChildrenAndExistingApplications> {
     const useMockData =
-      getValueViaPath(application.answers, 'mock.useMockData', NO) === YES
+      getValueViaPath<string>(application.answers, 'mock.useMockData', NO) ===
+      YES
     const shouldUseMockData = useMockData && !isRunningOnProduction
 
     if (shouldUseMockData) {

@@ -5,6 +5,7 @@ import { PaymentAPI } from './payment'
 import { Base64 } from 'js-base64'
 import type { Catalog } from './payment.type'
 import { PAYMENT_OPTIONS } from './payment.type'
+import { ChargeItemCode } from '@island.is/shared/constants'
 
 // MOCK START
 enum expectedResult {
@@ -31,7 +32,7 @@ const createCatalogResponse = (
             {
               performingOrgID: '6509142520',
               chargeType: 'AY1',
-              chargeItemCode: 'AY101',
+              chargeItemCode: ChargeItemCode.CRIMINAL_RECORD,
               chargeItemName: 'Sakarvottorð',
               priceAmount: 2500,
             },
@@ -91,7 +92,7 @@ describe('getCatalog', () => {
           {
             performingOrgID: '6509142520',
             chargeType: 'AY1',
-            chargeItemCode: 'AY101',
+            chargeItemCode: ChargeItemCode.CRIMINAL_RECORD,
             chargeItemName: 'Sakarvottorð',
             priceAmount: 2500,
           },

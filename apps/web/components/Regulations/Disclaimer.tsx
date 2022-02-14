@@ -8,7 +8,7 @@ const parseSimpleMarkdown = (content: string) =>
     .trim()
     .split(/\n\n+/)
     .map((text, p) => (
-      <p className={s.disclaimerParagraph}>
+      <p key={p} className={s.disclaimerParagraph}>
         {text
           .trim()
           .split(/\n/)

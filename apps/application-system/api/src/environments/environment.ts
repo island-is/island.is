@@ -31,11 +31,6 @@ const devConfig = {
     jwtSecret: 'supersecret',
     xRoadBasePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
     baseApiUrl: 'http://localhost:4444',
-    syslumenn: {
-      url: 'https://api.syslumenn.is/dev',
-      username: process.env.SYSLUMENN_USERNAME,
-      password: process.env.SYSLUMENN_PASSWORD,
-    },
     smsOptions: {
       url: 'https://smsapi.devnova.is',
       username: 'IslandIs_User_Development',
@@ -43,13 +38,23 @@ const devConfig = {
     },
     drivingLicense: {
       clientConfig: {
-        secret: process.env.DRIVING_LICENSE_SECRET,
+        secret: process.env.XROAD_DRIVING_LICENSE_SECRET,
         xroadClientId: 'IS-DEV/GOV/10000/island-is-client',
         xroadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8081',
         xroadPathV1:
           'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1',
         xroadPathV2:
           'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2',
+      },
+    },
+    criminalRecord: {
+      clientConfig: {
+        xroadClientId:
+          process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
+        xroadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8081',
+        xroadPath:
+          process.env.XROAD_CRIMINAL_RECORD_PATH ??
+          'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2',
       },
     },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
@@ -60,41 +65,43 @@ const devConfig = {
       xRoadClientId:
         process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
       xRoadProviderId:
-        process.env.PAYMENT_XROAD_PROVIDER_ID ?? 'IS-DEV/GOV/10021/FJS-Public',
-      callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL ?? '/',
+        process.env.XROAD_PAYMENT_PROVIDER_ID ?? 'IS-DEV/GOV/10021/FJS-Public',
+      callbackAdditionUrl:
+        process.env.XROAD_PAYMENT_ADDITION_CALLBACK_URL ?? '/',
       callbackBaseUrl:
-        process.env.PAYMENT_BASE_CALLBACK_URL ??
+        process.env.XROAD_PAYMENT_BASE_CALLBACK_URL ??
         'https://localhost:3333/applications/',
-      username: process.env.PAYMENT_USER,
-      password: process.env.PAYMENT_PASSWORD,
-    },
-    partyLetter: {
-      partyLetterRegistryApiBasePath: 'http://localhost:4251',
-      endorsementsApiBasePath: 'http://localhost:4246',
-      defaultClosedDate: new Date(
-        process.env.PARTY_ENDORSEMENTLISTS_DEFAULT_CLOSED_DATE ||
-          '2021-09-15T00:00:00.000Z',
-      ),
+      username: process.env.XROAD_PAYMENT_USER,
+      password: process.env.XROAD_PAYMENT_PASSWORD,
     },
     generalPetition: {
       endorsementsApiBasePath: 'http://localhost:4246',
     },
-    partyApplication: {
-      defaultClosedDate: new Date(
-        process.env.PARTY_ENDORSEMENTLISTS_DEFAULT_CLOSED_DATE ||
-          '2021-09-15T00:00:00.000Z',
-      ),
-      endorsementsApiBasePath: 'http://localhost:4246',
-      options: {
-        adminEmails: {
-          partyApplicationRvkSouth: 's@kogk.is',
-          partyApplicationRvkNorth: 's@kogk.is',
-          partyApplicationSouthWest: 's@kogk.is',
-          partyApplicationNorthWest: 's@kogk.is',
-          partyApplicationNorth: 's@kogk.is',
-          partyApplicationSouth: 's@kogk.is',
-        },
-      },
+    paymentScheduleConfig: {
+      xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
+      xRoadProviderId:
+        process.env.PAYMENT_SCHEDULE_XROAD_PROVIDER_ID ??
+        'IS-DEV/GOV/10021/FJS-Public',
+      xRoadClientId: process.env.XROAD_CLIENT_ID,
+      username: process.env.PAYMENT_SCHEDULE_USER,
+      password: process.env.PAYMENT_SCHEDULE_PASSWORD,
+    },
+    healthInsuranceV2: {
+      xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
+      xRoadProviderId:
+        process.env.XROAD_HEALTH_INSURANCE_ID ??
+        'IS-DEV/GOV/10007/SJUKRA-Protected',
+      xRoadClientId:
+        process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
+      username: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME ?? '',
+      password: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD ?? '',
+    },
+    dataProtectionComplaint: {
+      password: process.env.DATA_PROTECTION_COMPLAINT_API_PASSWORD,
+      username: process.env.DATA_PROTECTION_COMPLAINT_API_USERNAME,
+      XRoadProviderId: process.env.DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID,
+      xRoadClientId: process.env.XROAD_CLIENT_ID,
+      xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
     },
   },
   application: {
@@ -148,11 +155,6 @@ const prodConfig = {
     jwtSecret: process.env.AUTH_JWT_SECRET,
     xRoadBasePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
     baseApiUrl: process.env.GRAPHQL_API_URL,
-    syslumenn: {
-      url: process.env.SYSLUMENN_HOST,
-      username: process.env.SYSLUMENN_USERNAME,
-      password: process.env.SYSLUMENN_PASSWORD,
-    },
     smsOptions: {
       url: process.env.NOVA_URL,
       username: process.env.NOVA_USERNAME,
@@ -162,57 +164,53 @@ const prodConfig = {
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
     drivingLicense: {
       clientConfig: {
-        secret: process.env.DRIVING_LICENSE_SECRET,
+        secret: process.env.XROAD_DRIVING_LICENSE_SECRET,
         xroadClientId: process.env.XROAD_CLIENT_ID,
         xroadBaseUrl: process.env.XROAD_BASE_PATH,
-        xroadPathV1: process.env.DRIVING_LICENSE_XROAD_PATH,
-        xroadPathV2: process.env.DRIVING_LICENSE_XROAD_PATH_V2,
+        xroadPathV1: process.env.XROAD_DRIVING_LICENSE_PATH,
+        xroadPathV2: process.env.XROAD_DRIVING_LICENSE_PATH,
+      },
+    },
+    criminalRecord: {
+      clientConfig: {
+        xroadClientId: process.env.XROAD_CLIENT_ID,
+        xroadBaseUrl: process.env.XROAD_BASE_PATH,
+        xroadPath: process.env.XROAD_CRIMINAL_RECORD_PATH,
       },
     },
     paymentOptions: {
       arkBaseUrl: process.env.ARK_BASE_URL,
       xRoadBaseUrl: process.env.XROAD_BASE_PATH,
       xRoadClientId: process.env.XROAD_CLIENT_ID,
-      xRoadProviderId: process.env.PAYMENT_XROAD_PROVIDER_ID,
-      callbackAdditionUrl: process.env.PAYMENT_ADDITION_CALLBACK_URL,
-      callbackBaseUrl: process.env.PAYMENT_BASE_CALLBACK_URL,
-      username: process.env.PAYMENT_USER,
-      password: process.env.PAYMENT_PASSWORD,
-    },
-    partyLetter: {
-      partyLetterRegistryApiBasePath:
-        process.env.PARTY_LETTER_REGISTRY_API_BASE_PATH,
-      endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
-      defaultClosedDate: new Date(
-        process.env.PARTY_ENDORSEMENTLISTS_DEFAULT_CLOSED_DATE ||
-          '2021-09-15T00:00:00.000Z',
-      ),
+      xRoadProviderId: process.env.XROAD_PAYMENT_PROVIDER_ID,
+      callbackAdditionUrl: process.env.XROAD_PAYMENT_ADDITION_CALLBACK_URL,
+      callbackBaseUrl: process.env.XROAD_PAYMENT_BASE_CALLBACK_URL,
+      username: process.env.XROAD_PAYMENT_USER,
+      password: process.env.XROAD_PAYMENT_PASSWORD,
     },
     generalPetition: {
       endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
     },
-    partyApplication: {
-      defaultClosedDate: new Date(
-        process.env.PARTY_ENDORSEMENTLISTS_DEFAULT_CLOSED_DATE ||
-          '2021-09-15T00:00:00.000Z',
-      ),
-      endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
-      options: {
-        adminEmails: {
-          partyApplicationRvkSouth:
-            process.env.PARTY_APPLICATION_RVK_SOUTH_ADMIN_EMAIL,
-          partyApplicationRvkNorth:
-            process.env.PARTY_APPLICATION_RVK_NORTH_ADMIN_EMAIL,
-          partyApplicationSouthWest:
-            process.env.PARTY_APPLICATION_SOUTH_WEST_ADMIN_EMAIL,
-          partyApplicationNorthWest:
-            process.env.PARTY_APPLICATION_NORTH_WEST_ADMIN_EMAIL,
-          partyApplicationNorth:
-            process.env.PARTY_APPLICATION_NORTH_ADMIN_EMAIL,
-          partyApplicationSouth:
-            process.env.PARTY_APPLICATION_SOUTH_ADMIN_EMAIL,
-        },
-      },
+    paymentScheduleConfig: {
+      xRoadBaseUrl: process.env.XROAD_BASE_PATH,
+      xRoadProviderId: process.env.PAYMENT_SCHEDULE_XROAD_PROVIDER_ID,
+      xRoadClientId: process.env.XROAD_CLIENT_ID,
+      username: process.env.PAYMENT_SCHEDULE_USER,
+      password: process.env.PAYMENT_SCHEDULE_PASSWORD,
+    },
+    healthInsuranceV2: {
+      xRoadBaseUrl: process.env.XROAD_BASE_PATH,
+      xRoadProviderId: process.env.XROAD_HEALTH_INSURANCE_ID,
+      xRoadClientId: process.env.XROAD_CLIENT_ID,
+      username: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME,
+      password: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD,
+    },
+    dataProtectionComplaint: {
+      password: process.env.DATA_PROTECTION_COMPLAINT_API_PASSWORD,
+      username: process.env.DATA_PROTECTION_COMPLAINT_API_USERNAME,
+      XRoadProviderId: process.env.DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID,
+      xRoadClientId: process.env.XROAD_CLIENT_ID,
+      xRoadBaseUrl: process.env.XROAD_BASE_PATH,
     },
   },
   application: {

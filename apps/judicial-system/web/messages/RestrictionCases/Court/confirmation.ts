@@ -53,6 +53,15 @@ export const rcConfirmation = {
           'Notaður sem texti í "áfram" takkanum á staðfesingar skrefi í gæslu- og farbannsmálum þegar verið er að samþykkja kröfu',
       },
     }),
+    acceptingPartially: defineMessages({
+      continueButtonText: {
+        id:
+          'judicial.system.restriction_cases:confirmation.footer.accepting_partially.continue_button_text',
+        defaultMessage: 'Staðfesta og undirrita úrskurð',
+        description:
+          'Notaður sem texti í "áfram" takkanum á staðfesingar skrefi í gæslu- og farbannsmálum þegar verið er að samþykkja kröfu að hluta',
+      },
+    }),
     rejecting: defineMessages({
       continueButtonText: {
         id:

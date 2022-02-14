@@ -85,6 +85,30 @@ export const answerValidators: Record<string, AnswerValidator> = {
       return undefined
     }
 
+    let daysUsedByPeriods, rights
+
+    try {
+      daysUsedByPeriods = calculateDaysUsedByPeriods(periods)
+      rights = getAvailableRightsInDays(application)
+    } catch (e) {
+      return {
+        path: 'periods',
+        message: e,
+        values: {},
+      }
+    }
+
+    if (daysUsedByPeriods > rights) {
+      return {
+        path: 'periods',
+        message: errorMessages.periodsExceedRights,
+        values: {
+          daysUsedByPeriods,
+          rights,
+        },
+      }
+    }
+
     const latestPeriodIndex = periods.length - 1
     const latestPeriod = periods[latestPeriodIndex]
     const expectedDateOfBirth = getExpectedDateOfBirth(application)
@@ -146,8 +170,6 @@ export const answerValidators: Record<string, AnswerValidator> = {
       }
     }
 
-    // TODO: best to make requests to VMST to calculate period length again
-    // based on start, end + ratio in the case of a handcrafted update request
     const daysUsedByPeriods = calculateDaysUsedByPeriods(periods)
     const rights = getAvailableRightsInDays(application)
 

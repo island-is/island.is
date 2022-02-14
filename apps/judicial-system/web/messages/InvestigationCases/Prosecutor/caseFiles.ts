@@ -60,6 +60,20 @@ export const icCaseFiles = {
         description:
           'Notaður sem texti fyrir "Velja allt" valmöguleikann í LÖKE gagnapakkanum á rannsóknargagna skrefi í rannsóknarheimildum.',
       },
+      caseNotFoundInLOKEMessage: {
+        id:
+          'judicial.system.investigation_cases:case_files.police_case_files.case_not_found_in_loke_message',
+        defaultMessage: 'Þessi krafa var ekki stofnuð í gegnum LÖKE',
+        description:
+          'Notaður sem villuskilaboð í LÖKE gagnapakkanum á rannsóknargagna skrefi í rannsóknarheimildum.',
+      },
+      noFilesFoundInLOKEMessage: {
+        id:
+          'judicial.system.investigation_cases:case_files.police_case_files.no_files_found_in_loke_message',
+        defaultMessage: 'Engin skjöl fundust fyrir kröfuna í LÖKE',
+        description:
+          'Notaður sem villuskilaboð í LÖKE gagnapakkanum á rannsóknargagna skrefi í rannsóknarheimildum.',
+      },
       errorMessage: {
         id:
           'judicial.system.investigation_cases:case_files.police_case_files.error_message',

@@ -6,9 +6,10 @@ import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 import { ApolloProvider } from '@apollo/client'
 import { QueryGetTranslationsArgs, Query } from '@island.is/api/schema'
 import { LocaleProvider, GET_TRANSLATIONS } from '@island.is/localization'
-import { UserProvider, Header, FeatureProvider } from '../src/shared-components'
+import { UserProvider, Header, FeatureProvider } from '../src/components'
 import { client } from '../graphql'
 import { withHealthchecks } from '../units/Healthchecks/withHealthchecks'
+import FormProvider from '../src/components/FormProvider/FormProvider'
 
 const getTranslationStrings = ({
   apolloClient,
@@ -69,7 +70,9 @@ class JudicialSystemApplication extends App<Props> {
             <LocaleProvider locale="is" messages={translations || {}}>
               <>
                 <Header />
-                <Component {...pageProps} />
+                <FormProvider>
+                  <Component {...pageProps} />
+                </FormProvider>
                 <style jsx global>{`
                   @font-face {
                     font-family: 'IBM Plex Sans';

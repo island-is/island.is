@@ -1,6 +1,6 @@
 import { lazy } from 'react'
-import { defineMessage } from 'react-intl'
 
+import { ApiScope } from '@island.is/auth/scopes'
 import {
   ServicePortalModule,
   ServicePortalPath,
@@ -10,10 +10,11 @@ import {
 export const educationStudentAssessmentModule: ServicePortalModule = {
   name: 'Samræmd könnunarpróf',
   widgets: () => [],
-  routes: () => [
+  routes: ({ userInfo }) => [
     {
       name: m.educationStudentAssessment,
       path: ServicePortalPath.EducationStudentAssessment,
+      enabled: userInfo.scopes.includes(ApiScope.education),
       render: () => lazy(() => import('./screens/EducationStudentAssessment')),
     },
   ],

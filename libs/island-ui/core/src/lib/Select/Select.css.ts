@@ -116,6 +116,7 @@ export const placeholderSizes = styleVariants(inputMixins.inputSizes)
 export const input = style(inputMixins.input, 'input')
 export const inputSize = styleVariants(
   {
+    xs: wrapMedia(inputMixins.inputSizes.xs, `${wrapper} &`),
     sm: wrapMedia(inputMixins.inputSizes.sm, `${wrapper} &`),
     md: wrapMedia(inputMixins.inputSizes.md, `${wrapper} &`),
   },
@@ -131,7 +132,9 @@ globalStyle(`${wrapper} ${input} input:focus`, inputMixins.inputFocus)
 export const errorMessage = style(inputMixins.errorMessage)
 export const hasError = style({})
 
-export const containerDisabled = style({})
+export const containerDisabled = style({
+  backgroundColor: 'transparent',
+})
 export const container = style({}, 'container')
 export const containerSizes = styleVariants(inputMixins.containerSizes)
 
@@ -180,22 +183,36 @@ globalStyle(`${wrapper}  .island-select__menu-list`, {
 })
 
 export const icon = style({
-  width: 24,
-  height: 24,
+  width: theme.spacing[3],
+  height: theme.spacing[3],
   ...themeUtils.responsiveStyle({
     md: {
-      width: 32,
-      height: 32,
+      width: theme.spacing[4],
+      height: theme.spacing[4],
     },
   }),
 })
+
+export const iconExtraSmall = style({
+  ...themeUtils.responsiveStyle({
+    md: {
+      width: theme.spacing[3],
+      height: theme.spacing[3],
+    },
+  }),
+})
+
 export const label = style({
   ...inputMixins.label,
   selectors: {
     [`${hasError} &`]: inputMixins.labelErrorState,
   },
 })
+export const labelDisabled = style({
+  opacity: 0.5,
+})
 export const labelSizes = styleVariants({
+  xs: inputMixins.labelSizes.xs,
   sm: inputMixins.labelSizes.sm,
   md: inputMixins.labelSizes.md,
 })
@@ -210,6 +227,7 @@ export const singleValue = style(
 )
 export const singleValueSizes = styleVariants(
   {
+    xs: wrapMedia(inputMixins.inputSizes.xs, `${wrapper} &`),
     sm: wrapMedia(inputMixins.inputSizes.sm, `${wrapper} &`),
     md: wrapMedia(inputMixins.inputSizes.md, `${wrapper} &`),
   },
@@ -217,11 +235,12 @@ export const singleValueSizes = styleVariants(
 )
 export const indicatorsContainer = style(
   {
+    cursor: 'pointer',
     selectors: {
       [`${wrapper} &`]: {
         height: '100%',
         position: 'absolute',
-        right: 32,
+        right: theme.spacing[4],
         top: 0,
         bottom: 0,
         display: 'flex',
@@ -233,6 +252,15 @@ export const indicatorsContainer = style(
   },
   'indicatorsContainer',
 )
+
+export const indicatorsContainerExtraSmall = style({
+  selectors: {
+    [`${wrapper} &`]: {
+      right: 20,
+    },
+  },
+})
+
 export const dropdownIndicator = style(
   {
     cursor: 'pointer',
@@ -283,13 +311,33 @@ export const option = style({
   },
 })
 
+export const optionDescription = style({
+  paddingTop: theme.spacing[1],
+})
+
+export const optionDescriptionTruncated = style({
+  overflow: 'hidden',
+  display: '-webkit-box',
+  WebkitLineClamp: 2,
+  WebkitBoxOrient: 'vertical',
+})
+
 export const optionSizes = styleVariants({
+  xs: wrapMedia(inputMixins.inputSizes.xs, `${wrapper} &`),
   sm: wrapMedia(inputMixins.inputSizes.sm, `${wrapper} &`),
   md: wrapMedia(inputMixins.inputSizes.md, `${wrapper} &`),
 })
 
+export const optionDescriptionSizes = styleVariants({
+  xs: wrapMedia(inputMixins.optionDescriptionSizes.xs, `${wrapper} &`),
+  sm: wrapMedia(inputMixins.optionDescriptionSizes.sm, `${wrapper} &`),
+  md: wrapMedia(inputMixins.optionDescriptionSizes.md, `${wrapper} &`),
+})
+
+export const dontRotateIconOnOpen = style({})
+
 globalStyle(
-  `${wrapper} .island-select__control${container}.island-select__control--menu-is-open ${indicatorsContainer}`,
+  `${wrapper} .island-select__control${container}.island-select__control--menu-is-open ${indicatorsContainer}:not(${dontRotateIconOnOpen})`,
   {
     transform: 'rotateX(180deg)',
   },

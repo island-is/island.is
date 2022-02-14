@@ -3,6 +3,7 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { Municipality } from '@island.is/financial-aid/shared/lib'
 
 import { AidModel } from '../../aid'
+import { StaffModel } from '../../staff/models'
 
 @ObjectType()
 export class MunicipalityModel implements Municipality {
@@ -15,7 +16,7 @@ export class MunicipalityModel implements Municipality {
   @Field()
   readonly active!: boolean
 
-  @Field()
+  @Field({ nullable: true })
   readonly homepage?: string
 
   @Field()
@@ -27,6 +28,15 @@ export class MunicipalityModel implements Municipality {
   @Field()
   readonly cohabitationAid!: AidModel
 
-  @Field()
+  @Field({ nullable: true })
   readonly email?: string
+
+  @Field({ nullable: true })
+  readonly rulesHomepage?: string
+
+  @Field({ nullable: true })
+  readonly numberOfUsers?: number
+
+  @Field(() => [StaffModel], { nullable: true })
+  readonly adminUsers?: StaffModel[]
 }

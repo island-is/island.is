@@ -16,7 +16,7 @@ import Logo from '../assets/Logo'
 
 export const PetitionApplicationForm: Form = buildForm({
   id: 'PetitionApplicationForm',
-  title: 'Undirskriftarlistar',
+  title: 'Meðmælendalistar',
   logo: Logo,
   mode: FormModes.APPLYING,
   children: [
@@ -65,14 +65,14 @@ export const PetitionApplicationForm: Form = buildForm({
               defaultValue: () => '',
             }),
             buildDateField({
-              id: 'dateFrom',
+              id: 'dates.dateFrom',
               title: m.information.dateTitle,
               placeholder: m.information.dateFromPlaceholder,
               width: 'half',
               backgroundColor: 'white',
             }),
             buildDateField({
-              id: 'dateTil',
+              id: 'dates.dateTil',
               title: m.information.dateTitle,
               placeholder: m.information.dateToPlaceholder,
               width: 'half',

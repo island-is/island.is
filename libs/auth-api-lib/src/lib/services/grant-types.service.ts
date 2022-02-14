@@ -23,6 +23,7 @@ export class GrantTypeService {
   async findAndCountAll(
     page: number,
     count: number,
+    includeArchived: boolean,
   ): Promise<{
     rows: GrantType[]
     count: number
@@ -32,6 +33,7 @@ export class GrantTypeService {
     return this.grantTypeModel.findAndCountAll({
       limit: count,
       offset: offset,
+      where: includeArchived ? {} : { archived: null },
     })
   }
 
@@ -40,6 +42,7 @@ export class GrantTypeService {
     searchString: string,
     page: number,
     count: number,
+    includeArchived: boolean,
   ): Promise<{
     rows: GrantType[]
     count: number
@@ -49,7 +52,9 @@ export class GrantTypeService {
     return this.grantTypeModel.findAndCountAll({
       limit: count,
       offset: offset,
-      where: { name: searchString },
+      where: includeArchived
+        ? { name: searchString }
+        : { name: searchString, archived: null },
     })
   }
 

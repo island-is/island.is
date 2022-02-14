@@ -23,17 +23,6 @@ describe('findByTagsEndorsementList', () => {
       message: ['each value in tags must be a valid enum value'],
     })
   })
-  it(`GET /endorsement-list?tags should return 200 and empty list when no data exists for given tags`, async () => {
-    const app = await getAuthenticatedApp({
-      nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
-    })
-    const response = await request(app.getHttpServer())
-      .get(`/endorsement-list?tags=${EndorsementTag.PARTY_LETTER_2021}`)
-      .send()
-      .expect(200)
-    expect(response.body.data).toStrictEqual([])
-  })
   it(`GET /endorsement-list?tags should return 200 and a list`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
@@ -53,7 +42,7 @@ describe('findByTagsEndorsementList', () => {
   it(`GET /endorsement-list/general-petition-lists should return 200 and 2 lists`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
+      scope: [],
     })
     const response = await request(app.getHttpServer())
       .get(`/endorsement-list/general-petition-lists?limit=5`)

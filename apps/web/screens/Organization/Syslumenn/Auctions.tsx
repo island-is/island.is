@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react'
 import {
   Box,
-  LoadingIcon,
   NavigationItem,
   Option,
   Select,
@@ -16,6 +15,7 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -23,7 +23,7 @@ import {
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
-  QueryGetSyslumennAuctionsArgs,
+  SyslumennAuction,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
@@ -381,6 +381,16 @@ const LOT_TYPES_OPTIONS: LotTypeOption[] = [
   },
 ]
 
+const sameDay = (d1: Date, d2: Date) => {
+  if (!d1 && !d2) return true
+  if (!d1 || !d2) return false
+  return (
+    d1.getDate() === d2.getDate() &&
+    d1.getFullYear() === d2.getFullYear() &&
+    d1.getMonth() === d2.getMonth()
+  )
+}
+
 const Auctions: Screen<AuctionsProps> = ({
   organizationPage,
   syslumennAuctions,
@@ -452,14 +462,7 @@ const Auctions: Screen<AuctionsProps> = ({
 
   const [showCount, setShowCount] = useState(10)
 
-  const { loading, error, data } = useQuery<
-    Query,
-    QueryGetSyslumennAuctionsArgs
-  >(GET_SYSLUMENN_AUCTIONS_QUERY, {
-    variables: {
-      input: {},
-    },
-  })
+  const { loading, error, data } = useQuery<Query>(GET_SYSLUMENN_AUCTIONS_QUERY)
 
   useEffect(() => {
     const hashString = window.location.hash.replace('#', '')
@@ -475,6 +478,9 @@ const Auctions: Screen<AuctionsProps> = ({
   }, [Router, setOfficeLocation])
 
   const filteredAuctions = syslumennAuctions.filter((auction) => {
+    const auctionDate = auction.auctionDate
+      ? new Date(auction.auctionDate)
+      : null
     return (
       // Filter by office
       (officeLocation.office
@@ -498,9 +504,7 @@ const Auctions: Screen<AuctionsProps> = ({
         ? auction.auctionType !== lotTypeOption.excludeAuctionType
         : true) &&
       // Filter by Date
-      (date
-        ? auction.auctionDate.startsWith(format(date, 'yyyy-MM-dd'))
-        : true) &&
+      (date ? sameDay(date, auctionDate) : true) &&
       // Filter by search query
       (auction.lotName?.toLowerCase().includes(query) ||
         auction.lotId?.toLowerCase().includes(query) ||
@@ -513,6 +517,124 @@ const Auctions: Screen<AuctionsProps> = ({
           auction.petitioners?.toLowerCase().includes(query)))
     )
   })
+
+  /**
+   * The following code handles special cases in order to display certain information for
+   * certain Auctions, information that should be handed from the external Syslumenn API
+   * but has not been implemented yet. To accomplish this, we utilize Contentful to store
+   * keywords to identify certain Auctions.
+   */
+  const vakaAuctionKeywords = (n(
+    'auctionVakaAuctionKeywords',
+    '',
+  ) as string).split(';')
+  const capitalAreaOffice = n(
+    'auctionCapitalAreaOffice',
+    'Sýslumaðurinn á höfuðborgarsvæðinu',
+  ) as string
+  const auctionContainsVakaKeyword = (auction: SyslumennAuction) => {
+    return vakaAuctionKeywords.some((keyword) => {
+      return (
+        keyword &&
+        (auction.lotId === keyword ||
+          auction.lotName.includes(keyword) ||
+          auction.lotItems.includes(keyword))
+      )
+    })
+  }
+  const auctionAtVaka = (auction: SyslumennAuction) => {
+    return (
+      auction.office.toLowerCase() === capitalAreaOffice.toLowerCase() &&
+      (auction.lotType === LOT_TYPES.VEHICLE ||
+        auctionContainsVakaKeyword(auction))
+    )
+  }
+  const renderWhereAuctionTakesPlaceAndExtraInfo = (
+    auction: SyslumennAuction,
+  ) => {
+    if (auctionAtVaka(auction)) {
+      return (
+        <div>
+          <Text paddingBottom={1}>
+            {n('auctionTakesPlaceAt', 'Staðsetning uppboðs')}:{' '}
+            {auction.auctionTakesPlaceAt ??
+              n(
+                'auctionTakesPlaceAtVaka',
+                'Uppboð verður haldið í aðstöðu Vöku hf., Héðinsgötu 1 - 3.',
+              )}
+          </Text>
+          <Text variant="small">
+            {n(
+              'auctionRequiresNegativeTestResult',
+              'Allir, fæddir 2015 og fyrr, þurfa að framvísa neikvæðri niðurstöðu úr hraðprófi (antigen) sem má ekki vera eldra en 48 klst.',
+            )}
+          </Text>
+          <Text variant="small">
+            {n('auctionRequiresFaceMask', 'Grímuskylda er á uppboðinu.')}
+          </Text>
+          <Text variant="small">
+            {n(
+              'auctionPaymentInfo',
+              'Hvorki ávísanir né kreditkort eru tekin gild sem greiðsla einungis debetkort eða peningar. Greiðsla við hamarshögg.',
+            )}
+          </Text>
+        </div>
+      )
+    } else if (
+      auction.lotId &&
+      auction.lotType === LOT_TYPES.REAL_ESTATE &&
+      auction.auctionType === AUCTION_TYPES.CONTINUATION
+    ) {
+      return (
+        <Text paddingBottom={1}>
+          {n(
+            'auctionRealEstateAuctionContinuationLocation',
+            'Framhald uppboðs fasteignarinnar verður háð á fasteigninni sjálfri.',
+          )}
+        </Text>
+      )
+    } else {
+      return (
+        auction.auctionTakesPlaceAt && (
+          <Text paddingBottom={1}>
+            {n('auctionTakesPlaceAt', 'Staðsetning uppboðs')}:{' '}
+            {auction.auctionTakesPlaceAt}
+          </Text>
+        )
+      )
+    }
+  }
+
+  const renderRespondents = (
+    auction: SyslumennAuction,
+    auctionRespondents: string[],
+  ) => {
+    if (!auctionRespondents) return null
+
+    if (auction.lotType === LOT_TYPES.REAL_ESTATE) {
+      return (
+        <Text paddingTop={2} paddingBottom={1}>
+          {auctionRespondents.length > 1
+            ? n('auctionRealEstateRespondentsPlural', 'Þinglýstir eigendur')
+            : n('auctionRealEstateRespondentsSingle', 'Þinglýstur eigandi')}
+          : {auctionRespondents.join(', ')}
+        </Text>
+      )
+    }
+
+    if (auction.lotType === LOT_TYPES.SHIP) {
+      return (
+        <Text paddingTop={2} paddingBottom={1}>
+          {auctionRespondents.length > 1
+            ? n('auctionShipRespondentsPlural', 'Gerðarþolar')
+            : n('auctionShipRespondentsSingle', 'Gerðarþoli')}
+          : {auctionRespondents.join(', ')}
+        </Text>
+      )
+    }
+
+    return null
+  }
 
   return (
     <OrganizationWrapper
@@ -638,7 +760,7 @@ const Auctions: Screen<AuctionsProps> = ({
       >
         {loading && (
           <Box display="flex" marginTop={4} justifyContent="center">
-            <LoadingIcon size={48} />
+            <LoadingDots />
           </Box>
         )}
         {(error || !filteredAuctions.length) && !loading && (
@@ -703,40 +825,6 @@ const Auctions: Screen<AuctionsProps> = ({
                       />
                     )}
 
-                  {/* Real Estate auction location info */}
-                  {auction.lotId &&
-                    auction.lotType === LOT_TYPES.REAL_ESTATE &&
-                    auction.auctionType === AUCTION_TYPES.CONTINUATION && (
-                      <Text paddingBottom={1}>
-                        {n(
-                          'auctionRealEstateAuctionContinuationLocation',
-                          'Framhald uppboðs fasteignarinnar verður háð á fasteigninni sjálfri.',
-                        )}
-                      </Text>
-                    )}
-
-                  {/* Real Estate respondents */}
-                  {auctionRespondents &&
-                    auction.lotType === LOT_TYPES.REAL_ESTATE && (
-                      <Text paddingTop={2} paddingBottom={1}>
-                        {auctionRespondents.length > 1
-                          ? 'Þinglýstir eigendur'
-                          : 'Þinglýstur eigandi'}
-                        : {auctionRespondents.join(', ')}
-                      </Text>
-                    )}
-
-                  {/* Real Estate petitioners */}
-                  {auctionPetitioners &&
-                    auction.lotType === LOT_TYPES.REAL_ESTATE && (
-                      <Text paddingBottom={1}>
-                        {auctionPetitioners.length > 1
-                          ? 'Gerðarbeiðendur'
-                          : 'Gerðarbeiðandi'}
-                        : {auctionPetitioners.join(', ')}
-                      </Text>
-                    )}
-
                   {/* Vehicle link */}
                   {auction.lotId && auction.lotType === LOT_TYPES.VEHICLE && (
                     <LotLink
@@ -766,6 +854,24 @@ const Auctions: Screen<AuctionsProps> = ({
                       href={`https://www.samgongustofa.is/siglingar/skrar-og-utgafa/skipaskra/uppfletting?sq=${auction.lotId}`}
                     />
                   )}
+
+                  {/* Auction extra info */}
+                  {renderWhereAuctionTakesPlaceAndExtraInfo(auction)}
+
+                  {/* Respondents */}
+                  {renderRespondents(auction, auctionRespondents)}
+
+                  {/* Petitioners */}
+                  {auctionPetitioners &&
+                    (auction.lotType === LOT_TYPES.REAL_ESTATE ||
+                      auction.lotType === LOT_TYPES.SHIP) && (
+                      <Text paddingBottom={1}>
+                        {auctionPetitioners.length > 1
+                          ? n('auctionPetitionersPlural', 'Gerðarbeiðendur')
+                          : n('auctionPetitionersSingle', 'Gerðarbeiðandi')}
+                        : {auctionPetitioners.join(', ')}
+                      </Text>
+                    )}
 
                   <Box
                     alignItems="flexEnd"
@@ -837,7 +943,6 @@ const LotLink = ({
         <a
           style={{
             color: theme.color.blue400,
-            textDecoration: 'underline',
           }}
           href={href}
           rel="noopener noreferrer"
@@ -873,11 +978,8 @@ Auctions.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryGetSyslumennAuctionsArgs>({
+    apolloClient.query<Query>({
       query: GET_SYSLUMENN_AUCTIONS_QUERY,
-      variables: {
-        input: {},
-      },
     }),
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({

@@ -3,14 +3,16 @@ import { FieldBaseProps } from '@island.is/application/core'
 import { Text, Box, Button, Input, toast } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { GeneralPetition } from '../../lib/dataSchema'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { useMutation, useQuery } from '@apollo/client'
 import EndorsementApproved from '../EndorsementApproved'
 import { useHasEndorsed } from '../../hooks/useHasEndorsed'
+import { useGetSinglePetitionList } from '../../hooks/useGetSinglePetitionList'
 import { GetFullName } from '../../graphql/queries'
 import { EndorseList } from '../../graphql/mutations'
-import { useIsClosed } from '../../hooks/useIsEndorsementClosed'
+import format from 'date-fns/format'
+import { EndorsementList } from '../../types/schema'
+import Skeleton from './Skeleton'
 
 const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
@@ -22,15 +24,13 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
   const [allowName, setAllowName] = useState(true)
   const [hasEndorsed, setHasEndorsed] = useState(false)
 
+  const { petitionData } = useGetSinglePetitionList(endorsementListId)
+  const petition = petitionData as EndorsementList
+
   const endorsedBefore = useHasEndorsed(endorsementListId)
-  const isClosed = useIsClosed(endorsementListId)
+  const isClosed = new Date() >= new Date(petition.closedDate)
   const [createEndorsement, { loading: submitLoad }] = useMutation(EndorseList)
   const { data: userData } = useQuery(GetFullName)
-
-  const answers = application.answers as GeneralPetition
-  const listOwner = (application.externalData.nationalRegistry?.data as {
-    fullName?: string
-  })?.fullName
 
   const onEndorse = async () => {
     const success = await createEndorsement({
@@ -57,58 +57,76 @@ const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {
         <EndorsementApproved />
       ) : (
         <Box>
-          <Box marginBottom={2}>
-            <Text variant="h2">{answers.listName}</Text>
-            <Text>{answers.aboutList}</Text>
-          </Box>
-          <Box marginBottom={3}>
-            <Text variant="h4">Meðmælendalistinn er opinn:</Text>
-            <Text variant="default">{answers.dateTil}</Text>
-          </Box>
-          <Box marginBottom={3}>
-            <Text variant="h4">Ábyrgðarmaður:</Text>
-            <Text variant="default">{listOwner}</Text>
-          </Box>
-          <Box display="flex" marginBottom={10}>
-            <Box width="half">
-              <Input
-                label={formatMessage(m.endorsementForm.nameInput)}
-                name={formatMessage(m.endorsementForm.nameInput)}
-                value={userData?.nationalRegistryUser?.fullName}
-                backgroundColor="blue"
-              />
-            </Box>
-            <Box marginTop={3} marginLeft={4}>
+          {Object.entries(petition).length > 0 ? (
+            <>
+              <Box marginBottom={2}>
+                <Text variant="h2" marginBottom={1}>
+                  {petition?.title}
+                </Text>
+                <Text variant="default" marginBottom={3}>
+                  {petition?.description}
+                </Text>
+              </Box>
+              <Box marginBottom={3}>
+                <Text variant="h4">
+                  {formatMessage(m.endorsementForm.openTil)}
+                </Text>
+                {petition && petition.closedDate && (
+                  <Text variant="default">
+                    {format(new Date(petition.closedDate), 'dd.MM.yyyy')}
+                  </Text>
+                )}
+              </Box>
+              <Box marginBottom={3}>
+                <Text variant="h4">
+                  {formatMessage(m.endorsementForm.listOwner)}
+                </Text>
+                <Text variant="default">{petition.ownerName}</Text>
+              </Box>
+              <Box display="flex" marginBottom={10}>
+                <Box width="half">
+                  <Input
+                    label={formatMessage(m.endorsementForm.nameInput)}
+                    name={formatMessage(m.endorsementForm.nameInput)}
+                    value={userData?.nationalRegistryUser?.fullName}
+                    backgroundColor="blue"
+                  />
+                </Box>
+                <Box marginTop={3} marginLeft={4}>
+                  <CheckboxController
+                    id="allowName"
+                    name="allowName"
+                    large={false}
+                    defaultValue={[]}
+                    onSelect={() => setAllowName(!allowName)}
+                    options={[
+                      {
+                        value: 'allow',
+                        label: formatMessage(m.endorsementForm.allowNameLabel),
+                      },
+                    ]}
+                  />
+                </Box>
+              </Box>
               <CheckboxController
-                id="allowName"
-                name="allowName"
-                large={false}
+                id="terms"
+                name="terms"
+                large={true}
+                backgroundColor="blue"
                 defaultValue={[]}
-                onSelect={() => setAllowName(!allowName)}
+                disabled={isClosed}
+                onSelect={() => setAgreed(!agreed)}
                 options={[
                   {
-                    value: 'allow',
-                    label: formatMessage(m.endorsementForm.allowNameLabel),
+                    value: 'agree',
+                    label: formatMessage(m.endorsementForm.agreeTermsLabel),
                   },
                 ]}
               />
-            </Box>
-          </Box>
-          <CheckboxController
-            id="terms"
-            name="terms"
-            large={true}
-            backgroundColor="blue"
-            defaultValue={[]}
-            disabled={isClosed}
-            onSelect={() => setAgreed(!agreed)}
-            options={[
-              {
-                value: 'agree',
-                label: formatMessage(m.endorsementForm.agreeTermsLabel),
-              },
-            ]}
-          />
+            </>
+          ) : (
+            <Skeleton />
+          )}
           {isClosed && (
             <Text variant="eyebrow" color="red400">
               {formatMessage(m.endorsementForm.isClosedMessage)}

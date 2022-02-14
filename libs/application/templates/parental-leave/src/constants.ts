@@ -23,6 +23,12 @@ export enum StartDateOptions {
   SPECIFIC_DATE = 'specificDate',
 }
 
+export enum TransferRightsOption {
+  NONE = 'NONE',
+  REQUEST = 'REQUEST',
+  GIVE = 'GIVE',
+}
+
 export enum States {
   PREREQUISITES = 'prerequisites',
 

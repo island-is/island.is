@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { DatePicker } from '@island.is/island-ui/core'
 import {
   Box,
   Button,
   Input,
   Stack,
   DialogPrompt,
-  Text,
   toast,
   AlertMessage,
+  DatePicker,
 } from '@island.is/island-ui/core'
 import { useLocation } from 'react-router-dom'
 import {
@@ -16,12 +15,14 @@ import {
   LockList,
   UnlockList,
   UpdateList,
+  useGetSinglePetitionEndorsements,
 } from '../queries'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import PetitionsTable from '../PetitionsTable'
 import { EndorsementList } from '../../types/schema'
 import { useMutation } from '@apollo/client'
+import Skeleton from './Skeleton'
 
 const ViewPetitionAdmin = () => {
   const { formatMessage } = useLocale()
@@ -30,6 +31,9 @@ const ViewPetitionAdmin = () => {
     location.state?.listId,
   )
   const petition = petitionData as EndorsementList
+  const { petitionEndorsements } = useGetSinglePetitionEndorsements(
+    location.state?.listId,
+  )
 
   const [title, setTitle] = useState(petition?.title)
   const [description, setDescription] = useState(petition?.description)
@@ -69,11 +73,11 @@ const ViewPetitionAdmin = () => {
         },
       },
     }).catch(() => {
-      toast.error(formatMessage(m.viewPetition.toastErrorCloseList))
+      toast.error(formatMessage(m.viewPetition.toastErrorLockList))
     })
 
     if (success) {
-      toast.success(formatMessage(m.viewPetition.toastSuccessCloseList))
+      toast.success(formatMessage(m.viewPetition.toastSuccessLockList))
     }
   }
 
@@ -117,7 +121,7 @@ const ViewPetitionAdmin = () => {
 
   return (
     <Box>
-      {Object.entries(petition).length !== 0 && (
+      {Object.entries(petition).length !== 0 ? (
         <Stack space={3}>
           {petition.adminLock && (
             <AlertMessage
@@ -133,8 +137,10 @@ const ViewPetitionAdmin = () => {
               setTitle(e.target.value)
             }}
             label={formatMessage(m.viewPetition.listTitleHeader)}
+            size="xs"
           />
           <Input
+            size="xs"
             name={description as string}
             value={description ?? ''}
             onChange={(e) => {
@@ -144,30 +150,33 @@ const ViewPetitionAdmin = () => {
             textarea
             rows={10}
           />
-          {petition?.closedDate && petition?.openedDate && (
+          {closedDate && openedDate && (
             <Box display={['block', 'flex']} justifyContent="spaceBetween">
               <Box width="half" marginRight={[0, 2]}>
                 <DatePicker
-                  selected={new Date(petition?.openedDate)}
-                  handleChange={(date: Date) => setOpenedDate(date)}
+                  selected={new Date(openedDate)}
+                  handleChange={(date) => setOpenedDate(date)}
                   label="Tímabil frá"
                   locale="is"
                   placeholderText="Veldu dagsetningu"
+                  size="xs"
                 />
               </Box>
               <Box width="half" marginLeft={[0, 2]} marginTop={[2, 0]}>
                 <DatePicker
-                  selected={new Date(petition?.closedDate)}
-                  handleChange={(date: Date) => setClosedDate(date)}
+                  selected={new Date(closedDate)}
+                  handleChange={(date) => setClosedDate(date)}
                   label="Tímabil til"
                   locale="is"
                   placeholderText="Veldu dagsetningu"
+                  size="xs"
                 />
               </Box>
             </Box>
           )}
 
           <Input
+            size="xs"
             backgroundColor="blue"
             disabled
             name={petition?.ownerName ?? ''}
@@ -184,9 +193,9 @@ const ViewPetitionAdmin = () => {
             {!petition.adminLock ? (
               <DialogPrompt
                 baseId="demo_dialog"
-                title={formatMessage(m.viewPetition.dialogPromptCloseListTitle)}
+                title={formatMessage(m.viewPetition.dialogPromptLockListTitle)}
                 ariaLabel={formatMessage(
-                  m.viewPetition.dialogPromptCloseListTitle,
+                  m.viewPetition.dialogPromptLockListTitle,
                 )}
                 disclosureElement={
                   <Button
@@ -194,7 +203,7 @@ const ViewPetitionAdmin = () => {
                     iconType="outline"
                     colorScheme="destructive"
                   >
-                    {formatMessage(m.viewPetition.closeListButton)}
+                    {formatMessage(m.viewPetition.LockListButton)}
                   </Button>
                 }
                 onConfirm={() => onLockList()}
@@ -226,22 +235,35 @@ const ViewPetitionAdmin = () => {
                 )}
               />
             )}
-            <Button
-              icon="checkmark"
-              iconType="outline"
-              onClick={() => onUpdateList()}
-            >
-              {formatMessage(m.viewPetition.updateListButton)}
-            </Button>
+            <DialogPrompt
+              baseId="demo_dialog"
+              title={formatMessage(m.viewPetition.dialogPromptUpdateListTitle)}
+              ariaLabel={formatMessage(
+                m.viewPetition.dialogPromptUpdateListTitle,
+              )}
+              disclosureElement={
+                <Button icon="checkmark" iconType="outline">
+                  {formatMessage(m.viewPetition.updateListButton)}
+                </Button>
+              }
+              onConfirm={() => onUpdateList()}
+              buttonTextConfirm={formatMessage(
+                m.viewPetition.dialogPromptConfirm,
+              )}
+              buttonTextCancel={formatMessage(
+                m.viewPetition.dialogPromptCancel,
+              )}
+            />
           </Box>
 
-          <Box>
-            <Text variant="h3">
-              {formatMessage(m.viewPetition.enorsementsTableTitle)}
-            </Text>
-            <PetitionsTable />
-          </Box>
+          <PetitionsTable
+            petitions={petitionEndorsements}
+            listId={location.state?.listId}
+            isViewTypeEdit={true}
+          />
         </Stack>
+      ) : (
+        <Skeleton />
       )}
     </Box>
   )

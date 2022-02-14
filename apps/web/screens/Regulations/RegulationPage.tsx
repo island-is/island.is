@@ -1,12 +1,12 @@
 import {
-  buildRegulationApiPath,
   ISODate,
+  prettyName,
   RegQueryName,
+  Regulation,
+  RegulationDiff,
+  RegulationRedirect,
 } from '@island.is/regulations'
 import {
-  Regulation,
-  RegulationRedirect,
-  RegulationDiff,
   RegulationOriginalDates,
   RegulationViewTypes,
 } from '@island.is/regulations/web'
@@ -26,6 +26,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import { GET_REGULATION_QUERY } from '../queries'
 import { Text } from '@island.is/island-ui/core'
+import { HeadWithSocialSharing } from '@island.is/web/components'
 
 // ---------------------------------------------------------------------------
 
@@ -33,6 +34,7 @@ type RegulationPageProps =
   | {
       regulation: Regulation | RegulationDiff | RegulationRedirect
       texts: RegulationPageTexts
+      nonCurrent: boolean
       urlDate?: ISODate
     }
   | { redirect: string }
@@ -49,16 +51,28 @@ const RegulationPage: Screen<RegulationPageProps> = (props) => {
     )
   }
 
-  const { regulation, texts, urlDate } = props
+  const { regulation, texts, nonCurrent, urlDate } = props
 
-  return 'redirectUrl' in regulation ? (
-    <RegulationRedirectMessage texts={texts} regulation={regulation} />
-  ) : (
-    <RegulationDisplay
-      texts={texts}
-      regulation={regulation}
-      urlDate={urlDate}
-    />
+  const title = prettyName(regulation.name) + ' – ' + regulation.title
+  const robotsDirective =
+    'redirectUrl' in regulation ? 'noindex' : nonCurrent && 'noindex, nofollow'
+
+  return (
+    <>
+      <HeadWithSocialSharing title={title} description=" ">
+        {robotsDirective && <meta name="robots" content={robotsDirective} />}
+      </HeadWithSocialSharing>
+
+      {'redirectUrl' in regulation ? (
+        <RegulationRedirectMessage texts={texts} regulation={regulation} />
+      ) : (
+        <RegulationDisplay
+          texts={texts}
+          regulation={regulation}
+          urlDate={urlDate}
+        />
+      )}
+    </>
   )
 }
 
@@ -159,6 +173,7 @@ RegulationPage.getInitialProps = async ({
   locale,
   query,
   res,
+  asPath,
 }) => {
   const params = query.params as Partial<Array<string>>
   const isPdf = params[params.length - 1] === 'pdf'
@@ -190,6 +205,19 @@ RegulationPage.getInitialProps = async ({
     throw new CustomNextError(404)
   }
 
+  if (name !== p.name) {
+    const nameRe = new RegExp(`/nr/${p.name}(?:/|$)`)
+    const currentUrl = asPath || '/reglugerdir'
+    const redirectUrl = currentUrl.replace(nameRe, `/nr/${name}/`)
+    if (res) {
+      res.writeHead(301, { Location: redirectUrl })
+      res.end()
+    }
+    return {
+      redirect: redirectUrl,
+    }
+  }
+
   const [texts, regulation] = await Promise.all([
     getUiTexts<RegulationPageTexts>(apolloClient, locale, 'Regulations_Viewer'),
     apolloClient
@@ -219,19 +247,31 @@ RegulationPage.getInitialProps = async ({
     throw new CustomNextError(404, 'Þessi reglugerð finnst ekki!')
   }
 
+  const nonCurrent = viewType !== RegulationViewTypes.current
+
+  if (res && nonCurrent) {
+    //  !('redirectUrl' in regulation) && (regulation.timelineDate || regulation.showingDiff)
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow')
+  }
+
   if (isPdf) {
-    if ('redirectUrl' in regulation) {
+    const pdfUrl =
+      'redirectUrl' in regulation
+        ? regulation.originalDoc
+        : regulation.pdfVersion
+
+    if (!pdfUrl) {
       throw new CustomNextError(
         404,
         'Þessi reglugerð á ekki PDF útgáfu (ennþá)',
       )
     }
     if (res) {
-      res.writeHead(302, { Location: regulation.pdfVersion })
+      res.writeHead(307, { Location: pdfUrl })
       res.end()
     }
     return {
-      redirect: regulation.pdfVersion,
+      redirect: pdfUrl,
     }
   }
 
@@ -251,6 +291,7 @@ RegulationPage.getInitialProps = async ({
     regulation,
     texts,
     urlDate,
+    nonCurrent,
   }
 }
 

@@ -1,7 +1,7 @@
 import set from 'lodash/set'
 
 import {
-  Application,
+  ApplicationWithAttachments as Application,
   ApplicationStatus,
   ApplicationTypes,
 } from '@island.is/application/core'
@@ -18,6 +18,7 @@ import {
   getPensionFund,
   getPrivatePensionFundRatio,
   getRightsCode,
+  getRatio,
 } from './parental-leave.utils'
 import { apiConstants } from './constants'
 
@@ -264,13 +265,13 @@ describe('getRightsCode', () => {
         primaryParentNationalRegistryId,
       ),
     ])
-    set(base, 'externalData.family.data', [
-      {
+    set(base, 'externalData.person.data', {
+      spouse: {
         fullName: 'Spouse Spousson',
         nationalId: primaryParentNationalRegistryId,
         familyRelation: 'spouse',
       },
-    ])
+    })
     set(base, 'answers.selectedChild', '0')
     set(base, 'answers.employer.isSelfEmployed', 'no')
 
@@ -286,13 +287,13 @@ describe('getRightsCode', () => {
     set(base, 'externalData.children.data.children', [
       createExternalDataChild(false, '2022-03-01'),
     ])
-    set(base, 'externalData.family.data', [
-      {
+    set(base, 'externalData.person.data', {
+      spouse: {
         fullName: 'Spouse Spousson',
         nationalId: primaryParentNationalRegistryId,
         familyRelation: 'spouse',
       },
-    ])
+    })
     set(base, 'answers.selectedChild', '0')
     set(base, 'answers.employer.isSelfEmployed', 'yes')
 
@@ -333,4 +334,78 @@ describe('getRightsCode', () => {
   })
   // TODO:
   // it('should return FO-FL-L-GR-SJ for secondary parent that is both self employed and employed with custody', () => {})
+
+  it('should look at genderCode when creating rights code for other parent and return FO if applicant is not male', () => {
+    const primaryParentNationalRegistryId = '1111111119'
+    const base = createApplicationBase()
+
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(
+        false,
+        '2022-03-01',
+        primaryParentNationalRegistryId,
+      ),
+    ])
+    set(base, 'externalData.person.data', {
+      spouse: {
+        fullName: 'Spouse Spousson',
+        nationalId: primaryParentNationalRegistryId,
+        familyRelation: 'spouse',
+      },
+      genderCode: '0',
+    })
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.employer.isSelfEmployed', 'no')
+
+    const expected = 'FO-L-GR'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+
+  it('should look at genderCode when creating rights code for other parent and return F if applicant is male', () => {
+    const primaryParentNationalRegistryId = '1111111119'
+    const base = createApplicationBase()
+
+    set(base, 'externalData.children.data.children', [
+      createExternalDataChild(
+        false,
+        '2022-03-01',
+        primaryParentNationalRegistryId,
+      ),
+    ])
+    set(base, 'externalData.person.data', {
+      spouse: {
+        fullName: 'Spouse Spousson',
+        nationalId: primaryParentNationalRegistryId,
+        familyRelation: 'spouse',
+      },
+      genderCode: '1',
+    })
+    set(base, 'answers.selectedChild', '0')
+    set(base, 'answers.employer.isSelfEmployed', 'no')
+
+    const expected = 'F-L-GR'
+    const result = getRightsCode(base)
+
+    expect(result).toBe(expected)
+  })
+})
+
+describe('getRatio', () => {
+  it('should return ratio when shouldUseLength=false', () => {
+    for (let i = 0; i <= 100; i += 1) {
+      const ratio = i.toString()
+
+      expect(getRatio(ratio, '', false)).toBe(ratio)
+    }
+  })
+
+  it('should use length prefixed with a D when shouldUseLength=true', () => {
+    for (let i = 0; i < 225; i += 1) {
+      const length = i.toString()
+
+      expect(getRatio('', length, true)).toBe(`D${length}`)
+    }
+  })
 })

@@ -13,7 +13,7 @@ switch (process.env.NODE_ENV) {
     config = databaseConfig.development
 }
 
-const databaseUri = `postgres://${config.username}:${config.password}@${config.host}:5432/${config.database}`
+const databaseUri = `postgres://${config.username}:${config.password}@${config.host}:${config.port}/${config.database}`
 
 export default new Sequelize(databaseUri, {
   define: {

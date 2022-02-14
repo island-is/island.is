@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useWindowSize } from 'react-use'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { SubpageLayout } from '@island.is/web/screens/Layouts/Layouts'
@@ -11,14 +12,14 @@ import {
   Box,
   Button,
   GridContainer,
-  LoadingIcon,
   Navigation,
   Link,
+  LoadingDots,
+  ColorSchemeContext,
 } from '@island.is/island-ui/core'
 
 import {
   ServiceList,
-  SubpageDetailsContent,
   SubpageMainContent,
   RichText,
   ApiCatalogueFilter,
@@ -54,6 +55,7 @@ import {
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { theme } from '@island.is/island-ui/theme'
 
 const { publicRuntimeConfig } = getConfig()
 const LIMIT = 20
@@ -73,6 +75,9 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   filterContent,
   navigationLinks,
 }) => {
+  const { width } = useWindowSize()
+  const [isMobile, setIsMobile] = useState(false)
+
   /* DISABLE FROM WEB WHILE WIP */
   const { disableApiCatalog: disablePage } = publicRuntimeConfig
 
@@ -86,6 +91,13 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
   const nn = useNamespace(navigationLinks)
 
   const { linkResolver } = useLinkResolver()
+
+  useEffect(() => {
+    if (width < theme.breakpoints.md) {
+      return setIsMobile(true)
+    }
+    setIsMobile(false)
+  }, [width])
 
   const onLoadMore = () => {
     if (data?.getApiCatalogue.pageInfo?.nextCursor === null) {
@@ -325,61 +337,14 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
         </SidebarLayout>
       }
       details={
-        <SubpageDetailsContent
-          header={
-            <Text variant="h4" color="blue600">
-              {sn('title')}
-            </Text>
-          }
-          content={
-            <SidebarLayout
-              paddingTop={[3, 3, 5]}
-              paddingBottom={[0, 0, 6]}
-              sidebarContent={
-                <Box paddingRight={[0, 0, 3]}>
-                  <ApiCatalogueFilter
-                    labelClear={fn('clear')}
-                    labelOpen={fn('openFilterButton')}
-                    labelClose={fn('closeFilter')}
-                    labelResult={fn('mobileResult')}
-                    labelTitle={fn('mobileTitle')}
-                    resultCount={data?.getApiCatalogue?.services?.length ?? 0}
-                    onFilterClear={() =>
-                      setParameters({
-                        query: '',
-                        pricing: [],
-                        data: [],
-                        type: [],
-                        access: [],
-                      })
-                    }
-                    inputPlaceholder={fn('search')}
-                    inputValue={parameters.query}
-                    onInputChange={(value) =>
-                      setParameters({ ...parameters, query: value })
-                    }
-                    labelCategoryClear={fn('clearCategory')}
-                    onCategoryChange={({ categoryId, selected }) => {
-                      setParameters({
-                        ...parameters,
-                        [categoryId]: selected,
-                      })
-                    }}
-                    onCategoryClear={(categoryId) =>
-                      setParameters({
-                        ...parameters,
-                        [categoryId]: [],
-                      })
-                    }
-                    categories={filterCategories}
-                  />
-                </Box>
-              }
-            >
-              <Box display={['block', 'block', 'none']} paddingBottom={4}>
-                {/* <ApiCatalogueFilter isDialog={true} /> */}
+        <Box background="blue100" display="inlineBlock" width="full">
+          <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
+            <GridContainer id="service-list">
+              <Box marginBottom={[3, 3, 6]}>
                 <ApiCatalogueFilter
-                  isDialog={true}
+                  variant={isMobile ? 'dialog' : 'popover'}
+                  align="right"
+                  labelClearAll={fn('clearAll')}
                   labelClear={fn('clear')}
                   labelOpen={fn('openFilterButton')}
                   labelClose={fn('closeFilter')}
@@ -416,13 +381,12 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                   categories={filterCategories}
                 />
               </Box>
-
               {(error || data?.getApiCatalogue?.services.length < 1) && (
                 <GridContainer>
                   {error ? (
                     <Text>{sn('errorHeading')}</Text>
                   ) : loading ? (
-                    <LoadingIcon animate color="blue400" size={32} />
+                    <LoadingDots />
                   ) : (
                     <Text>{sn('notFound')}</Text>
                   )}
@@ -438,25 +402,21 @@ const ApiCatalogue: Screen<ApiCatalogueProps> = ({
                   {data?.getApiCatalogue?.pageInfo?.nextCursor != null && (
                     <Box display="flex" justifyContent="center">
                       <Button onClick={() => onLoadMore()} variant="ghost">
-                        {!loading ? (
-                          sn('fmButton')
-                        ) : (
-                          <LoadingIcon animate color="blue400" size={16} />
-                        )}
+                        {!loading ? sn('fmButton') : <LoadingDots single />}
                       </Button>
                     </Box>
                   )}
                 </GridContainer>
               )}
-            </SidebarLayout>
-          }
-        />
+            </GridContainer>
+          </ColorSchemeContext.Provider>
+        </Box>
       }
     />
   )
 }
 
-ApiCatalogue.getInitialProps = async ({ apolloClient, locale, query }) => {
+ApiCatalogue.getInitialProps = async ({ apolloClient, locale }) => {
   const [
     {
       data: { getSubpageHeader: subpageHeader },

@@ -4,7 +4,6 @@ import { FileUploadResult } from '@island.is/financial-aid-web/osk/src/component
 import { Text } from '@island.is/island-ui/core'
 import { Routes } from '@island.is/financial-aid/shared/lib'
 
-import * as styles from './fileUpload.css'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const FileUploadFailure = () => {
@@ -24,7 +23,7 @@ const FileUploadFailure = () => {
       <Text marginTop={5}>
         Þú getur reynt aftur síðar eða sent gögnin með tölvupósti á{' '}
         <a href={`mailto: ${municipality?.email}`}>
-          <span className={styles.link}>{municipality?.email}</span>
+          <span className="linkInText">{municipality?.email}</span>
         </a>
         . Gættu þess að láta kennitölu þína fylgja með gögnunum ef þú sendir þau
         með tölvupósti.

@@ -62,11 +62,16 @@ module.exports = {
         '@island.is/application/graphql': rootDir(
           '../../../application/graphql/src',
         ),
+        '@island.is/application/ui-components': rootDir(
+          '../../../application/ui-components/src',
+        ),
         '@island.is/auth/react': rootDir('../../../auth/react/src'),
         '@island.is/shared/constants': rootDir('../../../shared/constants/src'),
         '@island.is/shared/form-fields': rootDir(
           '../../../shared/form-fields/src',
         ),
+        '@island.is/shared/problem': rootDir('../../../shared/problem/src'),
+        '@island.is/shared/utils': rootDir('../../../shared/utils/src'),
         '@island.is/localization': rootDir('../../../localization/src'),
       },
     }

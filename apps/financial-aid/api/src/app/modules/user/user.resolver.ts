@@ -1,9 +1,9 @@
-import { Context, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { Context, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { User } from '@island.is/financial-aid/shared/lib'
+import type { Staff, User } from '@island.is/financial-aid/shared/lib'
 
 import { UserModel } from './user.model'
 
@@ -11,6 +11,7 @@ import { StaffModel } from '../staff/models'
 import { CurrentUser } from '../decorators'
 import { BackendAPI } from '../../../services'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { SpouseModel } from './spouseModel.model'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => UserModel)
@@ -37,32 +38,28 @@ export class UserResolver {
     return user as UserModel
   }
 
-  @ResolveField('isSpouse', () => Boolean)
-  async isSpouse(
-    @Parent() user: User,
+  @ResolveField('spouse', () => SpouseModel)
+  async spouse(
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<Boolean> {
-    const isSpouse = await backendApi.isSpouse(user.nationalId)
-    return isSpouse.HasApplied
+  ): Promise<SpouseModel> {
+    return await backendApi.getSpouse()
   }
 
-  @ResolveField('currentApplication', () => String)
-  async currentApplication(
-    @Parent() user: User,
+  @ResolveField('currentApplicationId', () => String)
+  async currentApplicationId(
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<string | undefined> {
     this.logger.debug('Getting current application for nationalId')
     return await this.handleNotFoundException(() =>
-      backendApi.getCurrentApplication(user.nationalId),
+      backendApi.getCurrentApplicationId(),
     )
   }
 
   @ResolveField('staff', () => StaffModel, { name: 'staff', nullable: true })
   async staff(
-    @Parent() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
-  ): Promise<StaffModel | undefined> {
+  ): Promise<Staff | undefined> {
     this.logger.debug('Getting staff for nationalId')
-    return await backendApi.getStaff(user.nationalId)
+    return await backendApi.getStaff()
   }
 }

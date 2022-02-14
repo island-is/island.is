@@ -9,3 +9,7 @@ export const widthAlmostFull = style({
     },
   },
 })
+
+export const widthFull = style({
+  gridColumn: '1/-1',
+})

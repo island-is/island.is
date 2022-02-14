@@ -1,12 +1,9 @@
 import React, { useContext } from 'react'
 import { Text, BulletList, Bullet, Box, Link } from '@island.is/island-ui/core'
 
-import {
-  currentMonth,
-  months,
-  nextMonth,
-} from '@island.is/financial-aid/shared/lib'
+import { currentMonth } from '@island.is/financial-aid/shared/lib'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
+import { PrivacyPolicyAccordion } from '@island.is/financial-aid-web/osk/src/components'
 
 const AboutFormApplicant = () => {
   const { municipality } = useContext(AppContext)
@@ -14,13 +11,12 @@ const AboutFormApplicant = () => {
   return (
     <>
       <Text as="h1" variant="h2" marginBottom={2}>
-        Varðandi rétt til fjárhagsaðstoðar
+        Upplýsingar varðandi umsóknina
       </Text>
 
       <Text variant="h3" fontWeight="light" marginBottom={3}>
-        Þú ert að sækja um{' '}
-        <strong>fjárhagsaðstoð hjá {municipality?.name}</strong> fyrir{' '}
-        {months[nextMonth]}. Áður en þú heldur áfram er gott að hafa
+        Þú ert að sækja um fjárhagsaðstoð hjá þínu sveitarfélagi fyrir{' '}
+        {currentMonth()} mánuð. Áður en þú heldur áfram er gott að hafa
         eftirfarandi í huga:
       </Text>
 
@@ -86,6 +82,11 @@ const AboutFormApplicant = () => {
           </Bullet>
         </BulletList>
       </Box>
+      <Text as="h2" variant="h3" marginBottom={2}>
+        Vinnsla persónuupplýsinga
+      </Text>
+
+      <PrivacyPolicyAccordion municipalityHomePage={municipality?.homepage} />
     </>
   )
 }

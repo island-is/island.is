@@ -12,10 +12,17 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { GetDocumentDto } from './dto/getDocument.dto'
 import { Response } from 'express'
 import { DocumentClient } from '@island.is/clients/documents'
+import { DocumentsScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
-import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 
-@UseGuards(IdsUserGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(DocumentsScope.main)
 @ApiTags('documents')
 @Controller('electronic-documents')
 export class DocumentController {

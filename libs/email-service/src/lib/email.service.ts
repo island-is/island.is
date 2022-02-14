@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer'
 import { SES } from 'aws-sdk'
+
 import { Inject } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'

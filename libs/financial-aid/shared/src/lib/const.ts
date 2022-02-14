@@ -1,21 +1,43 @@
+const formRoutes = '/umsokn/'
+
 export const Routes = {
   application: '/umsokn',
-  spouseApplication: '/umsokn/rettur',
+  form: {
+    info: `${formRoutes}rettur`,
+    relationship: `${formRoutes}hjuskaparstada`,
+    homeCircumstances: `${formRoutes}buseta`,
+    student: `${formRoutes}nam`,
+    incomeFiles: `${formRoutes}gogn`,
+    taxReturnFiles: `${formRoutes}skattagogn`,
+    hasIncome: `${formRoutes}tekjur`,
+    employment: `${formRoutes}atvinna`,
+    usePersonalTaxCredit: `${formRoutes}personuafslattur`,
+    bankInfo: `${formRoutes}bankaupplysingar`,
+    contactInfo: `${formRoutes}samskipti`,
+    summary: `${formRoutes}yfirlit`,
+    spouseSummary: `${formRoutes}yfirlit-maki`,
+    conformation: `${formRoutes}stadfesting`,
+  },
+  settings: {
+    search: '/leit',
+    settings: '/stillingar',
+    municipality: '/sveitarfelagsstillingar',
+    municipalities: '/sveitarfelog',
+    supervisors: '/umsjonaradilar',
+    users: `/notendur`,
+  },
   status: '/stada',
   statusPage: (id: string) => `/stada/${id}`,
   statusFileUpload: (id: string) => `/stada/${id}/gogn`,
   statusFileUploadSuccess: (id: string) => `/stada/${id}/gogn/send`,
   statusFileUploadFailure: (id: string) => `/stada/${id}/gogn/villa`,
-  apiLoginRouteForFake: (id: string) =>
-    id
-      ? `/api/auth/login?applicationId=${id}&nationalId=`
-      : '/api/auth/login?nationalId=',
-  apiLoginRouteForRealUsers: (id: string) =>
-    id ? `/api/auth/login?applicationId=${id}` : '/api/auth/login',
   filesPage: (hasIncome?: boolean) =>
-    `/umsokn/${hasIncome ? 'skattagogn' : 'gogn'}`,
+    `${formRoutes}${hasIncome ? 'skattagogn' : 'gogn'}`,
   newCases: '/nymal',
   serviceCenter: (id: string) => `/midstod/${id}`,
+  userProfile: (id: string) => `/notendur/${id}`,
+  municipalityProfile: (id: string) => `/sveitarfelog/${id}`,
+  applicationProfile: (id: string) => `/umsokn/${id}`,
 }
 
 export const months = [
@@ -37,12 +59,14 @@ export const getMonth = (month: number) => {
   return months[month]
 }
 
-export const nextMonth = (new Date().getMonth() + 1) % 12
+export const nextMonth = (month?: number) => {
+  return (month ?? new Date().getMonth() + 1) % 12
+}
 
 export const getNextPeriod = {
-  month: getMonth(nextMonth),
+  month: getMonth(nextMonth()),
   year:
-    nextMonth === 0 ? new Date().getFullYear() + 1 : new Date().getFullYear(),
+    nextMonth() === 0 ? new Date().getFullYear() + 1 : new Date().getFullYear(),
 }
 
 export const apiBasePath = 'api/financial-aid'

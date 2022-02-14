@@ -168,7 +168,7 @@ input[type='number'] {
   margin-left: 8px;
 }
 
-.logOutButtonHover:hover > svg {
+.navBarButtonHover:hover > svg {
   transform: translate3d(5px, 0px, 0px);
 }
 

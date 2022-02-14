@@ -75,7 +75,7 @@ export const largeColumn = style({
   },
 })
 
-export const accusedName = style({
+export const blockColumn = style({
   display: 'block',
   overflow: 'hidden',
   textOverflow: 'ellipsis',

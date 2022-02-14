@@ -30,7 +30,7 @@ registerEnumType(DelegationType, { name: 'AuthDelegationType' })
   },
 })
 export abstract class Delegation {
-  @Field(() => ID)
+  @Field(() => ID, { nullable: true })
   id?: string
 
   @Field(() => Identity)
