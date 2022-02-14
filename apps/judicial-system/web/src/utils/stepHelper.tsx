@@ -66,3 +66,30 @@ export const getAppealEndDate = (rulingDate: string) => {
   const appealEndDate = addDays(rulingDateToDate, 3)
   return formatDate(appealEndDate, 'PPPp')
 }
+
+export const getTextareaRows = (
+  minRows: number,
+  maxRows: number,
+  text?: string,
+) => {
+  if (!text) {
+    return minRows
+  }
+
+  const nrOfCharsPerLine = 72
+  const maxText = maxRows * nrOfCharsPerLine
+  const minText = minRows * nrOfCharsPerLine
+
+  const textLength = text.replace(/\s/g, '').length
+  const variableRows = Math.ceil(text.split(' ').length / 12)
+
+  return textLength > maxText
+    ? maxRows
+    : textLength > minText
+    ? variableRows <= minRows
+      ? minRows
+      : variableRows >= maxRows
+      ? maxRows
+      : variableRows
+    : minRows
+}

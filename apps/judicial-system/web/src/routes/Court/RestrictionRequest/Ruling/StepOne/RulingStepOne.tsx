@@ -50,6 +50,7 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { capitalize } from '@island.is/judicial-system/formatters'
+import { getTextareaRows } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 export const RulingStepOne: React.FC = () => {
   const {
@@ -253,7 +254,7 @@ export const RulingStepOne: React.FC = () => {
               errorMessage={courtCaseFactsErrorMessage}
               hasError={courtCaseFactsErrorMessage !== ''}
               textarea
-              rows={16}
+              rows={getTextareaRows(16, 25, workingCase.courtCaseFacts)}
               required
             />
           </Box>
@@ -300,7 +301,7 @@ export const RulingStepOne: React.FC = () => {
               errorMessage={courtLegalArgumentsErrorMessage}
               hasError={courtLegalArgumentsErrorMessage !== ''}
               textarea
-              rows={16}
+              rows={getTextareaRows(16, 25, workingCase.courtLegalArguments)}
               required
             />
           </Box>

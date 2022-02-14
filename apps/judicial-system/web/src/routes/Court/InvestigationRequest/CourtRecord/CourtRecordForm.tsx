@@ -31,6 +31,7 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { isCourtRecordStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import { getTextareaRows } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 interface Props {
@@ -226,7 +227,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                 )
               }
               textarea
-              rows={16}
+              rows={getTextareaRows(16, 25, workingCase.accusedBookings)}
             />
           </Box>
         )}
@@ -267,7 +268,11 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               errorMessage={litigationPresentationsErrorMessage}
               hasError={litigationPresentationsErrorMessage !== ''}
               textarea
-              rows={16}
+              rows={getTextareaRows(
+                16,
+                25,
+                workingCase.litigationPresentations,
+              )}
               required
             />
           </Box>

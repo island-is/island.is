@@ -35,6 +35,7 @@ import {
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import { getTextareaRows } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import { isCourtRecordStepValidRC } from '../../../../utils/validate'
@@ -365,7 +366,7 @@ export const CourtRecord: React.FC = () => {
               )
             }
             textarea
-            rows={16}
+            rows={getTextareaRows(16, 25, workingCase.accusedBookings)}
           />
         </Box>
         <Box component="section" marginBottom={8}>
@@ -405,7 +406,11 @@ export const CourtRecord: React.FC = () => {
               errorMessage={litigationPresentationsErrorMessage}
               hasError={litigationPresentationsErrorMessage !== ''}
               textarea
-              rows={16}
+              rows={getTextareaRows(
+                16,
+                25,
+                workingCase.litigationPresentations,
+              )}
               required
             />
           </Box>
