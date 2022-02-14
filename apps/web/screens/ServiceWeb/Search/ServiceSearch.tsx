@@ -82,7 +82,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
       description: item.organization?.description,
       link: {
         href:
-          linkResolver('helpdeskcategory', [
+          linkResolver('servicewebcategory', [
             item.organization.slug,
             item.category.slug,
           ]).href + `?&q=${item.slug}`,
@@ -93,14 +93,11 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
     }),
   )
 
+  const headerTitle = n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
 
-  const pageTitle = `${n('search', 'Leit')} - ${n(
-    'serviceWeb',
-    'Þjónustuvefur',
-  )} Ísland.is`
-  const headerTitle = `${n('serviceWeb', 'Þjónustuvefur')} Ísland.is`
+  const pageTitle = `${n('search', 'Leit')} | ${headerTitle}`
 
   return (
     <ServiceWebWrapper
@@ -122,8 +119,11 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                   <Breadcrumbs
                     items={[
                       {
-                        title: n('serviceWeb', 'Þjónustuvefur'),
-                        href: linkResolver('helpdesk').href,
+                        title: n(
+                          'assistanceForIslandIs',
+                          'Aðstoð fyrir Ísland.is',
+                        ),
+                        href: linkResolver('serviceweb').href,
                       },
                       {
                         title: n('search', 'Leit'),
@@ -157,7 +157,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                       }}
                     >
                       <Text truncate>
-                        <a href={linkResolver('helpdesk').href}>
+                        <a href={linkResolver('serviceweb').href}>
                           <Button
                             preTextIcon="arrowBack"
                             preTextIconType="filled"
@@ -165,7 +165,10 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                             type="button"
                             variant="text"
                           >
-                            {n('serviceWeb', 'Þjónustuvefur')}
+                            {n(
+                              'assistanceForIslandIs',
+                              'Aðstoð fyrir Ísland.is',
+                            )}
                           </Button>
                         </a>
                       </Text>
@@ -253,7 +256,7 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
                   renderLink={(page, className, children) => (
                     <Link
                       href={{
-                        pathname: linkResolver('helpdesksearch').href,
+                        pathname: linkResolver('servicewebsearch').href,
                         query: { ...Router.query, page },
                       }}
                     >

@@ -352,16 +352,6 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           onNextButtonClick={handleNextButtonClick}
           nextIsLoading={isLoading}
           nextIsDisabled={!isCourtHearingArrangementsStepValidIC(workingCase)}
-          hideNextButton={
-            user.id !== workingCase.judge?.id &&
-            user.id !== workingCase.registrar?.id
-          }
-          infoBoxText={
-            user.id !== workingCase.judge?.id &&
-            user.id !== workingCase.registrar?.id
-              ? formatMessage(m.footer.infoPanelForRestrictedAccess)
-              : undefined
-          }
         />
       </FormContentContainer>
       {modalVisible && (
