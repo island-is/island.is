@@ -128,6 +128,8 @@ export const Services: EnvironmentServices = {
     adsBackend,
     adsApi,
     appSystemApiWorker,
+    userNotificationService,
+    userNotificationWorkerService,
   ],
   dev: [
     appSystemApi,
