@@ -39,6 +39,7 @@ export const TextFormField: FC<Props> = ({
     rows,
     required,
     maxLength,
+    onChange = () => undefined,
   } = field
   const { clearErrors } = useFormContext()
   const { formatMessage } = useLocale()
@@ -67,10 +68,11 @@ export const TextFormField: FC<Props> = ({
           }
           autoFocus={autoFocus}
           error={error}
-          onChange={() => {
+          onChange={(e) => {
             if (error) {
               clearErrors(id)
             }
+            onChange(e)
           }}
           maxLength={maxLength}
           textarea={variant === 'textarea'}

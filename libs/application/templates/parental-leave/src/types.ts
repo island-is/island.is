@@ -24,6 +24,7 @@ export interface Period {
   ratio: string
   firstPeriodStart?: string
   useLength?: YesOrNo
+  daysToUse?: string
   rawIndex?: number
 }
 

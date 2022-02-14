@@ -26,6 +26,17 @@ export const core = defineMessages({
     defaultMessage: 'Kennitala',
     description: 'Notað fyrir orðið Kennitala í öllum flæðum.',
   },
+  dateOfBirth: {
+    id: 'judicial.system.core:date_of_birth',
+    defaultMessage: 'Fæðingardagur',
+    description: 'Notað fyrir orðið Fæðingardagur í öllum flæðum.',
+  },
+  dateOfBirthPlaceholder: {
+    id: 'judicial.system.core:date_of_birth.placeholder',
+    defaultMessage: 'dd.mm.áááá',
+    description:
+      'Notað sem skýritexti í Fæðingardagur textaboxi í öllum flæðum.',
+  },
   fullName: {
     id: 'judicial.system.core:full_name',
     defaultMessage: 'Fullt nafn',
@@ -93,6 +104,27 @@ export const core = defineMessages({
     id: 'judicial.system.core:court',
     defaultMessage: 'Dómstóll',
     description: 'Notað fyrir orðið Dómstóll í öllum flæðum.',
+  },
+  selectGender: {
+    id: 'judicial.system.core:select_gender',
+    defaultMessage: 'Veldu kyn',
+    description: 'Notað fyrir Veldu kyn í öllum flæðum',
+  },
+  citizenship: {
+    id: 'judicial.system.core:citizenship',
+    defaultMessage: 'Ríkisfang',
+    description: 'Notað fyrir Ríkisfang í öllum flæðum',
+  },
+  selectCitizenship: {
+    id: 'judicial.system.core:select_citizenship',
+    defaultMessage: 'Veldu ríkisfang',
+    description: 'Notað fyrir Veldu ríkisfang í öllum flæðum',
+  },
+  nationalIdNotFoundInNationalRegistry: {
+    id: 'judicial.system.core:national_id_not_found_in_national_registry',
+    defaultMessage: 'Ekki tókst að fletta upp kennitölu',
+    description:
+      'Notaður sem skilaboð um að kennitala varnaraðila hafi ekki fundist í þjóðskrá.',
   },
   judge: {
     id: 'judicial.system.core:judge',
