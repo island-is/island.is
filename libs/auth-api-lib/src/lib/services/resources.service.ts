@@ -3,7 +3,10 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
 import { Op, Sequelize, WhereOptions } from 'sequelize'
+
+import { DelegationConfig } from '../config/DelegationConfig'
 import { IdentityResource } from '../entities/models/identity-resource.model'
 import { ApiScope } from '../entities/models/api-scope.model'
 import { ApiResource } from '../entities/models/api-resource.model'
@@ -26,6 +29,7 @@ import { uuid } from 'uuidv4'
 import { Domain } from '../entities/models/domain.model'
 import { PagedRowsDto } from '../entities/dto/paged-rows.dto'
 import { DomainDTO } from '../entities/dto/domain.dto'
+import type { User } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class ResourcesService {
@@ -52,6 +56,8 @@ export class ResourcesService {
     private apiResourceSecret: typeof ApiResourceSecret,
     @InjectModel(ApiResourceScope)
     private apiResourceScope: typeof ApiResourceScope,
+    @Inject(DelegationConfig.KEY)
+    private delegationConfig: ConfigType<typeof DelegationConfig>,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -373,12 +379,13 @@ export class ResourcesService {
   }
 
   /** Filters out scopes that don't have delegation grant and are access controlled */
-  async findAllowedDelegationApiScopeListForUser(scopes: string[]) {
-    this.logger.debug(`Finding allowed api scopes for scopes ${scopes}`)
+  async findAllowedDelegationApiScopeListForUser(scope: string[], user: User) {
+    this.logger.debug(`Finding allowed api scopes for scopes ${scope}`)
+    const filteredScope = this.filterScopeForCustomDelegation(scope, user)
     return this.apiScopeModel.findAll({
       where: {
         name: {
-          [Op.in]: scopes,
+          [Op.in]: filteredScope,
         },
         allowExplicitDelegationGrant: true,
       },
@@ -387,14 +394,30 @@ export class ResourcesService {
   }
 
   /** Returns the count of scopes that are allowed for delegations */
-  async countAllowedDelegationApiScopesForUser(scopes: string[]) {
+  async countAllowedDelegationApiScopesForUser(scope: string[], user: User) {
+    const filteredScope = this.filterScopeForCustomDelegation(scope, user)
     return this.apiScopeModel.count({
       where: {
         name: {
-          [Op.in]: scopes,
+          [Op.in]: filteredScope,
         },
         allowExplicitDelegationGrant: true,
       },
+    })
+  }
+
+  private filterScopeForCustomDelegation(scope: string[], user: User) {
+    const delegationType = user.actor?.delegationType ?? 'Self'
+    return scope.filter((scopeName) => {
+      for (const rule of this.delegationConfig.customScopeRules) {
+        if (
+          rule.scopeName === scopeName &&
+          rule.onlyForDelegationType.includes(delegationType) === false
+        ) {
+          return false
+        }
+      }
+      return true
     })
   }
 

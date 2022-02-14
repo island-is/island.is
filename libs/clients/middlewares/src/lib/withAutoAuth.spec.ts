@@ -283,7 +283,11 @@ describe('EnhancedFetch#withAutoAuth', () => {
     it('should request token exchange if requestActorToken and delegation', async () => {
       // Arrange
       const auth = createCurrentUser({ scope })
-      auth.actor = { nationalId: auth.nationalId, scope: [] }
+      auth.actor = {
+        nationalId: auth.nationalId,
+        delegationType: 'Custom',
+        scope: [],
+      }
       env = setupTestEnv({
         autoAuth: {
           ...autoAuth,
