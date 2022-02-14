@@ -1,7 +1,7 @@
 export { core } from './core'
 export { request } from './request'
 export { ruling } from './ruling'
-export { courtRecord } from './courtRecordPdf'
+export { courtRecord } from './courtRecord'
 export { custodyNotice } from './custodyNotice'
 export { notifications } from './notifications'
 export { courtUpload } from './courtUpload'
