@@ -5,7 +5,6 @@ import { useMutation } from '@apollo/client'
 import { isEmailValid, StaffRole } from '@island.is/financial-aid/shared/lib'
 
 import { serviceCenters } from '@island.is/financial-aid/shared/data'
-import cn from 'classnames'
 import { MunicipalityMutation } from '@island.is/financial-aid-web/veita/graphql'
 
 interface Props {
@@ -50,6 +49,8 @@ const NewMunicipalityModal = ({
     hasSubmitError: false,
   })
 
+  const [errorMessage, setErrorMessage] = useState<string>()
+
   const areRequiredFieldsFilled =
     !state.serviceCenter.label ||
     !state.serviceCenter.value ||
@@ -81,7 +82,15 @@ const NewMunicipalityModal = ({
       }).then(() => {
         onMunicipalityCreated()
       })
-    } catch (e) {
+    } catch (error) {
+      if (error.graphQLErrors[0]?.extensions?.response?.status === 400) {
+        setErrorMessage(
+          'Mistókst að búa til stjórnanda, mögulega er kennitala í notkun',
+        )
+      } else {
+        setErrorMessage('Eitthvað fór úrskeiðis, vinsamlega reynið aftur síðar')
+      }
+
       setState({ ...state, hasSubmitError: true })
     }
   }
@@ -92,7 +101,7 @@ const NewMunicipalityModal = ({
       setIsVisible={setIsVisible}
       header={'Nýtt sveitarfélag'}
       hasError={state.hasSubmitError}
-      errorMessage={'Eitthvað fór úrskeiðis, vinsamlega reynið aftur síðar'}
+      errorMessage={errorMessage}
       submitButtonText={'Stofna sveitarfélag'}
       onSubmit={submit}
     >

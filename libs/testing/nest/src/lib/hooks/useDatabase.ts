@@ -101,9 +101,10 @@ export default ({ type, provider, skipTruncate = false }: UseDatabase) => ({
 
     await sequelize.sync({ logging: false, force: true })
 
-    return () => {
+    return async () => {
       if (sequelize?.options.dialect === Dialect.Postgres) {
-        return sequelize.close()
+        // need to return await due to a Bluebird promise
+        return await sequelize.close()
       }
     }
   },
