@@ -4,7 +4,7 @@ import {
   Employment,
   HomeCircumstances,
 } from '@island.is/financial-aid/shared/lib'
-import { isValidEmail, isValidPhone } from './utils'
+import { isValidEmail, isValidNationalId, isValidPhone } from './utils'
 import { ApproveOptions } from './types'
 
 export const dataSchema = z.object({
@@ -19,6 +19,32 @@ export const dataSchema = z.object({
       params: error.validation.approveSpouse,
     }),
   }),
+  relationshipStatus: z
+    .object({
+      unregisteredCohabitation: z
+        .enum([ApproveOptions.Yes, ApproveOptions.No])
+        .refine((v) => v, {
+          params: error.validation.radioErrorMessage,
+        }),
+      spouseEmail: z.string().optional(),
+      spouseNationalId: z.string().optional(),
+      spouseApproveTerms: z.array(z.string()).optional(),
+    })
+    .refine(
+      (v) =>
+        v.unregisteredCohabitation === ApproveOptions.Yes
+          ? v.spouseEmail &&
+            isValidEmail(v.spouseEmail) &&
+            v.spouseNationalId &&
+            isValidNationalId(v.spouseNationalId) &&
+            v.spouseApproveTerms &&
+            v.spouseApproveTerms.length === 1
+          : true,
+      {
+        //More detailed error messages are in the UnknownRelationshipForm component
+        params: error.validation.email,
+      },
+    ),
   student: z
     .object({
       isStudent: z
@@ -72,16 +98,17 @@ export const dataSchema = z.object({
       params: error.validation.inputErrorMessage,
       path: ['custom'],
     }),
-  bankInfoForm: z.object({
+  bankInfo: z.object({
     bankNumber: z.string().optional(),
     ledger: z.string().optional(),
     accountNumber: z.string().optional(),
   }),
-  personalTaxCreditForm: z
+  personalTaxCredit: z
     .enum([ApproveOptions.Yes, ApproveOptions.No])
     .refine((v) => v, {
       params: error.validation.radioErrorMessage,
     }),
+  formComment: z.string().optional(),
   contactInfo: z.object({
     email: z.string().refine((v) => isValidEmail(v), {
       params: error.validation.email,
