@@ -8,10 +8,6 @@ import {
 
 @Module({
   exports: exportedApis,
-  providers: [
-    { provide: FISHING_LICENSE_CLIENT, useClass: FishingLicenseApiClientMock },
-    ApiConfiguration,
-    ...exportedApis,
-  ],
+  providers: [ApiConfiguration, ...exportedApis],
 })
 export class FishingLicenseClientModule {}
