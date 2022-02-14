@@ -79,6 +79,6 @@ if (process.env.INIT_SCHEMA === 'true') {
     ApplicationAccessService,
     ApplicationLifeCycleService,
   ],
-  exports: [ApplicationService],
+  exports: [ApplicationService, APPLICATION_CONFIG, AwsService],
 })
 export class ApplicationModule {}

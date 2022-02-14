@@ -36,7 +36,7 @@ export class DataProtectionComplaintService {
       if (!complaintPdf?.content) throw new Error('No pdf content')
 
       const key = await this.sharedService.addAttachment(
-        application.id,
+        application,
         'kvörtun.pdf',
         complaintPdf.fileBuffer,
         {

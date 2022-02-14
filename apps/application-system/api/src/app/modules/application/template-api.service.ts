@@ -1,34 +1,54 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { ApplicationService } from './application.service'
-
+import { ApplicationWithAttachments } from '@island.is/application/core'
 import { BaseTemplateApiApplicationService } from '@island.is/application/template-api-modules'
+import { uuid } from 'uuidv4'
+import { AwsService } from './files'
+import {
+  ApplicationConfig,
+  APPLICATION_CONFIG,
+} from './application.configuration'
 
 @Injectable()
 export class TemplateApiApplicationService extends BaseTemplateApiApplicationService {
-  constructor(private readonly applicationService: ApplicationService) {
+  constructor(
+    private readonly applicationService: ApplicationService,
+    private readonly awsService: AwsService,
+    @Inject(APPLICATION_CONFIG)
+    private readonly config: ApplicationConfig,
+  ) {
     super()
   }
 
   async saveAttachmentToApplicaton(
-    applicationId: string,
-    key: string,
-    url: string,
-  ): Promise<void> {
-    const existingApplication = await this.applicationService.findOneById(
-      applicationId,
+    application: ApplicationWithAttachments,
+    fileName: string,
+    buffer: Buffer,
+    uploadParameters?: {
+      ContentType?: string
+      ContentDisposition?: string
+      ContentEncoding?: string
+    },
+  ): Promise<string> {
+    const uploadBucket = this.config.attachmentBucket
+    if (!uploadBucket) throw new Error('No attachment bucket configured')
+
+    const fileId = uuid()
+    const key = `${application.id}/${fileId}-${fileName}`
+    const url = await this.awsService.uploadFile(
+      buffer,
+      uploadBucket,
+      key,
+      uploadParameters,
     )
 
-    if (!existingApplication) {
-      throw new NotFoundException(
-        `An application with the id ${applicationId} does not exist`,
-      )
-    }
-
-    await this.applicationService.update(existingApplication.id, {
+    await this.applicationService.update(application.id, {
       attachments: {
-        ...existingApplication.attachments,
+        ...application.attachments,
         [key]: url,
       },
     })
+
+    return key
   }
 }

@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config'
 import { EmailService } from '@island.is/email-service'
 import {
   Application,
+  ApplicationWithAttachments,
   GraphqlGatewayResponse,
 } from '@island.is/application/core'
 import {
@@ -20,7 +21,6 @@ import {
   PaymentStatusData,
 } from './shared.queries'
 import { S3 } from 'aws-sdk'
-import { uuid } from 'uuidv4'
 
 @Injectable()
 export class SharedTemplateApiService {
@@ -215,7 +215,7 @@ export class SharedTemplateApiService {
   }
 
   async addAttachment(
-    applicationId: string,
+    application: ApplicationWithAttachments,
     fileName: string,
     buffer: Buffer,
     uploadParameters?: {
@@ -224,28 +224,11 @@ export class SharedTemplateApiService {
       ContentEncoding?: string
     },
   ): Promise<string> {
-    const uploadBucket = getConfigValue(
-      this.configService,
-      'attachmentBucket',
-    ) as string
-
-    const uploadParams = {
-      Bucket: uploadBucket,
-      Key: fileName,
-      Body: buffer,
-      ...uploadParameters,
-    }
-
-    const { Location: url } = await this.s3.upload(uploadParams).promise()
-    const fileId = uuid()
-    const key = `${fileId}-${fileName}`
-
-    await this.applicationService.saveAttachmentToApplicaton(
-      applicationId,
-      key,
-      url,
+    return this.applicationService.saveAttachmentToApplicaton(
+      application,
+      fileName,
+      buffer,
+      uploadParameters,
     )
-
-    return key
   }
 }
