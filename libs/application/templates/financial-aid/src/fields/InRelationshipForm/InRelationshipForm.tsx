@@ -22,7 +22,7 @@ const InRelationshipForm = ({ errors, application }: FAFieldBaseProps) => {
 
   return (
     <div>
-      <Text variant="intro" marginBottom={[2, 2, 3]}>
+      <Text variant="intro" marginBottom={[2, 2, 3]} marginTop={2}>
         {formatMessage(inRelationship.general.intro)}
       </Text>
       <Box marginBottom={[3, 3, 4]}>

@@ -37,6 +37,11 @@ export const section = defineMessages({
     defaultMessage: 'Persónuhagir',
     description: 'Personal interest section',
   },
+  finances: {
+    id: 'fa.application:section.finances',
+    defaultMessage: 'Fjármál',
+    description: 'Finance section',
+  },
 })
 
 export const approveOptions = defineMessages({
