@@ -9,6 +9,9 @@ export const USER_PROFILE = gql`
       email
       canNudge
       bankInfo
+      emailStatus
+      mobileStatus
+      modified
     }
   }
 `
