@@ -1138,17 +1138,9 @@
       "projectType": "library",
       "architect": {
         "lint": {
-          "builder": "@nrwl/linter:lint",
+          "builder": "@nrwl/linter:eslint",
           "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/api/domains/fishing-license/tsconfig.lib.json",
-              "libs/api/domains/fishing-license/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/api/domains/fishing-license/**/*"
-            ]
+            "lintFilePatterns": ["libs/api/domains/fishing-license/**/*.ts"]
           }
         },
         "test": {
@@ -3245,15 +3237,7 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/clients/fishing-license/tsconfig.lib.json",
-              "libs/clients/fishing-license/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/clients/fishing-license/**/*"
-            ]
+            "lintFilePatterns": ["libs/clients/fishing-license/**/*.ts"]
           }
         },
         "test": {
