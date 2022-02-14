@@ -168,7 +168,7 @@ export class MeDelegationsController {
     @CurrentUser() user: User,
     @Body() delegation: CreateDelegationDTO,
   ): Promise<DelegationDTO | null> {
-    if (!(await this.validateScopesAccess(user.scope, delegation.scopes))) {
+    if (!(await this.validateScopesAccess(user, delegation.scopes))) {
       throw new BadRequestException(
         'User does not have access to the requested scopes.',
       )
@@ -210,7 +210,7 @@ export class MeDelegationsController {
     @Body() delegation: UpdateDelegationDTO,
     @Param('delegationId') delegationId: string,
   ): Promise<DelegationDTO | null> {
-    if (!(await this.validateScopesAccess(user.scope, delegation.scopes))) {
+    if (!(await this.validateScopesAccess(user, delegation.scopes))) {
       throw new BadRequestException(
         'User does not have access to the requested scopes.',
       )
@@ -257,18 +257,19 @@ export class MeDelegationsController {
 
   /**
    * Validates that the delegation scopes belong to user and are valid for delegation
-   * @param userScopes user scopes from the currently authenticated user
+   * @param user user scopes from the currently authenticated user
    * @param requestedScopes requested scopes from a delegation
    * @returns
    */
   private async validateScopesAccess(
-    userScopes: string[],
+    user: User,
     requestedScopes?: UpdateDelegationScopeDTO[],
   ): Promise<boolean> {
     if (!requestedScopes || requestedScopes.length === 0) {
       return true
     }
 
+    const userScopes = user.scope
     for (const scope of requestedScopes) {
       // Delegation scopes need to be associated with the user scopes
       if (!userScopes.includes(scope.name)) {
@@ -280,6 +281,7 @@ export class MeDelegationsController {
     const scopes = requestedScopes.map((scope) => scope.name)
     const allowedApiScopesCount = await this.resourcesService.countAllowedDelegationApiScopesForUser(
       scopes,
+      user,
     )
     return requestedScopes.length === allowedApiScopesCount
   }
