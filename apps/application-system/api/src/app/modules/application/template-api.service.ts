@@ -4,10 +4,8 @@ import { ApplicationWithAttachments } from '@island.is/application/core'
 import { BaseTemplateApiApplicationService } from '@island.is/application/template-api-modules'
 import { uuid } from 'uuidv4'
 import { AwsService } from './files'
-import {
-  ApplicationConfig,
-  APPLICATION_CONFIG,
-} from './application.configuration'
+import type { ApplicationConfig } from './application.configuration'
+import { APPLICATION_CONFIG } from './application.configuration'
 
 @Injectable()
 export class TemplateApiApplicationService extends BaseTemplateApiApplicationService {
