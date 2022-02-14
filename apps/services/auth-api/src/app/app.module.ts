@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { SequelizeConfigService } from '@island.is/auth-api-lib'
+import {
+  SequelizeConfigService,
+  DelegationConfig,
+} from '@island.is/auth-api-lib'
 import { AuthModule } from '@island.is/auth-nest-tools'
 import {
   ConfigModule,
@@ -38,6 +41,7 @@ import { UserProfileModule } from './modules/user-profile/user-profile.module'
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
+        DelegationConfig,
         FeatureFlagConfig,
         IdsClientConfig,
         NationalRegistryClientConfig,
