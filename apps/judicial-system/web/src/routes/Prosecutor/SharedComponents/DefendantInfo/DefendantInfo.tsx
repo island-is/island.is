@@ -90,7 +90,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
       onChange(defendant.id, {
         name: person.items[0].name,
         gender: mapNationalRegistryGenderToGender(person.items[0].gender),
-        address: person.items[0].permanent_address.street.nominative,
+        address: person.items[0].permanent_address.street?.nominative,
       })
     }
   }, [person])

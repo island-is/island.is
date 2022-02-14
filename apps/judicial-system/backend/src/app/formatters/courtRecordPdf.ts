@@ -120,7 +120,7 @@ function constructRestrictionCourtRecordPdf(
             index === 0
               ? ''
               : index + 1 === theCase.defendants?.length
-              ? ', og'
+              ? ' og'
               : ','
           } ${defendant.name ?? '-'}, ${
             defendant.noNationalId ? 'fd.' : 'kt.'
