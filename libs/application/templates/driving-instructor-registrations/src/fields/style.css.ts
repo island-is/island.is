@@ -45,3 +45,11 @@ export const mobileWidth = style({
     },
   },
 })
+
+export const hideRow = style({
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {
+      display: 'none',
+    },
+  },
+})

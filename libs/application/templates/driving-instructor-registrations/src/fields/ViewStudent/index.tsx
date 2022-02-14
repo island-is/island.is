@@ -3,12 +3,14 @@ import {
   Button,
   Text,
   Box,
-  Stack,
   RadioButton,
   Input,
   DatePicker,
   Icon,
   toast,
+  GridContainer,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import { Table as T } from '@island.is/island-ui/core'
 import { minutesOfDriving } from '../../shared/constants'
@@ -157,35 +159,30 @@ const ViewStudent = ({ studentSsn, setShowTable }: Props) => {
   }
 
   return (
-    <Box>
+    <GridContainer>
       {student && Object.entries(student).length > 0 ? (
-        <Stack space={5}>
-          <Box
-            display={['block', 'flex', 'flex']}
-            justifyContent={'spaceBetween'}
-          >
-            <Box display={'block'}>
+        <>
+          <GridRow marginBottom={3}>
+            <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
               <Text variant="h4">{formatMessage(m.viewStudentName)}</Text>
               <Text variant="default">{student.name}</Text>
-            </Box>
-            <Box display={'block'}>
+            </GridColumn>
+            <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
               <Text variant="h4">{formatMessage(m.viewStudentNationalId)}</Text>
               <Text variant="default">{student.ssn}</Text>
-            </Box>
-            <Box display={'block'}>
+            </GridColumn>
+            <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
               <Text variant="h4">
                 {formatMessage(m.viewStudentCompleteHours)}
               </Text>
               <Text variant="default">
                 {student.book?.totalLessonCount ?? 0}
               </Text>
-            </Box>
-          </Box>
-          <Box
-            display={['none', 'flex', 'flex']}
-            justifyContent={'spaceBetween'}
-          >
-            <Box display={'block'}>
+            </GridColumn>
+          </GridRow>
+
+          <GridRow marginBottom={5} className={styles.hideRow}>
+            <GridColumn span={['12/12', '6/12']}>
               <Text variant="h4">
                 {formatMessage(m.viewStudentCompleteSchools)}
               </Text>
@@ -196,8 +193,8 @@ const ViewStudent = ({ studentSsn, setShowTable }: Props) => {
                   </Text>
                 )
               })}
-            </Box>
-            <Box display={'block'}>
+            </GridColumn>
+            <GridColumn span={['12/12', '6/12']}>
               <Text variant="h4">
                 {formatMessage(m.viewStudentExamsComplete)}
               </Text>
@@ -208,49 +205,65 @@ const ViewStudent = ({ studentSsn, setShowTable }: Props) => {
                   </Text>
                 )
               })}
-            </Box>
-          </Box>
+            </GridColumn>
+          </GridRow>
 
-          <Box>
-            <Text variant="h4">
-              {formatMessage(m.viewStudentRegisterMinutes)}
-            </Text>
-            <Box marginTop={2}>
-              <Box display="flex" justifyContent="spaceBetween">
-                {minutesOfDriving.map((item, index) => {
-                  return (
-                    <Box key={'radioButton-' + index}>
-                      <RadioButton
-                        name={'options-' + index}
-                        label={item.label}
-                        value={item.value}
-                        checked={item.value === minutes}
-                        onChange={() => {
-                          setMinutes(item.value)
-                        }}
-                        large
-                      />
-                    </Box>
-                  )
-                })}
-                <Box style={{ width: '200px' }}>
-                  <Input
-                    label={'Slá inn mínútur'}
-                    type="number"
-                    name="mínútur"
-                    placeholder="0"
-                    onChange={(input) => {
-                      setMinutes(Number.parseInt(input.target.value, 10))
+          <GridRow marginBottom={5}>
+            <GridColumn span={'12/12'} paddingBottom={2}>
+              <Text variant="h4">
+                {formatMessage(m.viewStudentRegisterMinutes)}
+              </Text>
+            </GridColumn>
+
+            {minutesOfDriving.map((item, index) => {
+              return (
+                <GridColumn
+                  key={'radioButton-' + index}
+                  span={['6/12', '2/12']}
+                  paddingBottom={[3, 0]}
+                >
+                  <RadioButton
+                    name={'options-' + index}
+                    label={item.label}
+                    value={item.value}
+                    checked={item.value === minutes}
+                    onChange={() => {
+                      setMinutes(item.value)
                     }}
+                    large
                   />
-                </Box>
-              </Box>
-            </Box>
-          </Box>
+                </GridColumn>
+              )
+            })}
+            <GridColumn span={['12/12', '3/12']}>
+              <Input
+                label={'Slá inn mínútur'}
+                type="number"
+                name="mínútur"
+                value={
+                  minutes === 30 ||
+                  minutes === 45 ||
+                  minutes === 60 ||
+                  minutes === 90
+                    ? ''
+                    : minutes
+                }
+                placeholder="0"
+                onChange={(input) => {
+                  setMinutes(Number.parseInt(input.target.value, 10))
+                }}
+              />
+            </GridColumn>
+          </GridRow>
 
-          <Box display="flex" justifyContent="spaceBetween">
-            <Box display="flex">
+          <GridRow marginBottom={5}>
+            <GridColumn
+              span={['12/12', '5/12']}
+              paddingBottom={[3, 0]}
+              paddingTop={[3, 0]}
+            >
               <DatePicker
+                size="sm"
                 hasError={dateError}
                 errorMessage="Veldu dagsetningu"
                 handleChange={(date) => {
@@ -265,123 +278,140 @@ const ViewStudent = ({ studentSsn, setShowTable }: Props) => {
                 required
                 selected={date ? new Date(date) : null}
               />
+            </GridColumn>
+            <GridColumn span={['12/12', '2/12']} paddingBottom={[3, 0]}>
+              <Button
+                fluid
+                loading={
+                  loadingRegistration || loadingEdition || loadingStudentsBook
+                }
+                onClick={() =>
+                  date !== ''
+                    ? !editingRegistration
+                      ? saveChanges()
+                      : editChanges()
+                    : setDateError(true)
+                }
+              >
+                {!editingRegistration
+                  ? formatMessage(m.viewStudentSelectRegisterButton)
+                  : 'Breyta'}
+              </Button>
+            </GridColumn>
+            <GridColumn>
+              {editingRegistration && (
+                <Box>
+                  <Button
+                    loading={loadingDeletion}
+                    colorScheme="destructive"
+                    variant="text"
+                    icon="trash"
+                    onClick={() => deleteRegistration(editingRegistration.id)}
+                  >
+                    {formatMessage(m.viewStudentDeleteRegistration)}
+                  </Button>
+                </Box>
+              )}
+            </GridColumn>
+          </GridRow>
 
-              <Box marginLeft={3} display="flex">
-                <Button
-                  loading={
-                    loadingRegistration || loadingEdition || loadingStudentsBook
-                  }
-                  onClick={() =>
-                    date !== ''
-                      ? !editingRegistration
-                        ? saveChanges()
-                        : editChanges()
-                      : setDateError(true)
-                  }
-                >
-                  {!editingRegistration
-                    ? formatMessage(m.viewStudentSelectRegisterButton)
-                    : 'Breyta'}
-                </Button>
-              </Box>
-            </Box>
+          <GridRow marginBottom={5}>
+            <GridColumn span={'12/12'} paddingBottom={2}>
+              <Text variant="h4">{'Fyrri skráningar ökunema'}</Text>
+            </GridColumn>
+            <GridColumn span={'12/12'}>
+              <T.Table>
+                <T.Head>
+                  <T.Row>
+                    <T.HeadData>
+                      {formatMessage(m.viewStudentTableHeaderCol1)}
+                    </T.HeadData>
+                    <T.HeadData>
+                      {formatMessage(m.viewStudentTableHeaderCol2)}
+                    </T.HeadData>
+                    <T.HeadData>
+                      {formatMessage(m.viewStudentTableHeaderCol3)}
+                    </T.HeadData>
+                    <T.HeadData></T.HeadData>
+                  </T.Row>
+                </T.Head>
+                <T.Body>
+                  {student &&
+                    studentRegistrations
+                      ?.map((entry: any, key: number) => {
+                        const bgr = cn({
+                          [`${styles.successBackground}`]:
+                            !!newRegId && entry.id === newRegId,
+                          [`${styles.editingBackground}`]:
+                            !!editingRegistration &&
+                            entry.id === editingRegistration.id,
+                          [`${styles.transparentBackground}`]:
+                            !editingRegistration && !newRegId,
+                        })
 
-            {editingRegistration && (
-              <Box>
-                <Button
-                  loading={loadingDeletion}
-                  colorScheme="destructive"
-                  variant="text"
-                  icon="trash"
-                  onClick={() => deleteRegistration(editingRegistration.id)}
-                >
-                  {formatMessage(m.viewStudentDeleteRegistration)}
-                </Button>
-              </Box>
-            )}
-          </Box>
-
-          <Box>
-            <T.Table>
-              <T.Head>
-                <T.Row>
-                  <T.HeadData>
-                    {formatMessage(m.viewStudentTableHeaderCol1)}
-                  </T.HeadData>
-                  <T.HeadData>
-                    {formatMessage(m.viewStudentTableHeaderCol2)}
-                  </T.HeadData>
-                  <T.HeadData>
-                    {formatMessage(m.viewStudentTableHeaderCol3)}
-                  </T.HeadData>
-                  <T.HeadData></T.HeadData>
-                </T.Row>
-              </T.Head>
-              <T.Body>
-                {student &&
-                  studentRegistrations?.map((entry: any, key: number) => {
-                    const bgr = cn({
-                      [`${styles.successBackground}`]:
-                        !!newRegId && entry.id === newRegId,
-                      [`${styles.editingBackground}`]:
-                        !!editingRegistration &&
-                        entry.id === editingRegistration.id,
-                      [`${styles.transparentBackground}`]:
-                        !editingRegistration && !newRegId,
-                    })
-
-                    return (
-                      <T.Row key={key}>
-                        <T.Data box={{ className: bgr }}>
-                          {format(new Date(entry.registerDate), 'dd.MM.yyyy')}
-                        </T.Data>
-                        <T.Data box={{ className: bgr }}>
-                          {entry.teacherName}
-                        </T.Data>
-                        <T.Data box={{ className: bgr }}>
-                          {entry.lessonTime}
-                        </T.Data>
-                        <T.Data box={{ className: bgr }}>
-                          <Box display={'flex'}>
-                            <Button
-                              variant="text"
-                              size="small"
-                              onClick={() => {
-                                setEditingRegistration(entry)
-                                setNewRegId(undefined)
-                                setMinutes(entry.lessonTime)
-                                setDate(entry.registerDate)
-                              }}
-                            >
-                              {formatMessage(m.viewStudentEditRegistration)}
-                            </Button>
-                            {newRegId && entry.id === newRegId && (
-                              <Box
-                                paddingLeft={3}
-                                className={styles.showSuccessIcon}
-                              >
-                                <Icon icon="checkmarkCircle" color="mint400" />
+                        return (
+                          <T.Row key={key}>
+                            <T.Data box={{ className: bgr }}>
+                              {format(
+                                new Date(entry.registerDate),
+                                'dd.MM.yyyy',
+                              )}
+                            </T.Data>
+                            <T.Data box={{ className: bgr }}>
+                              {entry.teacherName}
+                            </T.Data>
+                            <T.Data box={{ className: bgr }}>
+                              {entry.lessonTime}
+                            </T.Data>
+                            <T.Data box={{ className: bgr }}>
+                              <Box display={'flex'}>
+                                <Button
+                                  variant="text"
+                                  size="small"
+                                  onClick={() => {
+                                    console.log(entry)
+                                    setEditingRegistration(entry)
+                                    setNewRegId(undefined)
+                                    setMinutes(entry.lessonTime)
+                                    setDate(entry.registerDate)
+                                  }}
+                                >
+                                  {formatMessage(m.viewStudentEditRegistration)}
+                                </Button>
+                                {newRegId && entry.id === newRegId && (
+                                  <Box
+                                    paddingLeft={3}
+                                    className={styles.showSuccessIcon}
+                                  >
+                                    <Icon
+                                      icon="checkmarkCircle"
+                                      color="mint400"
+                                    />
+                                  </Box>
+                                )}
                               </Box>
-                            )}
-                          </Box>
-                        </T.Data>
-                      </T.Row>
-                    )
-                  })}
-              </T.Body>
-            </T.Table>
-          </Box>
+                            </T.Data>
+                          </T.Row>
+                        )
+                      })
+                      .reverse()}
+                </T.Body>
+              </T.Table>
+            </GridColumn>
+          </GridRow>
 
-          <Box marginY={5}>
-            <Button variant="ghost" preTextIcon="arrowBack" onClick={goBack}>
-              {formatMessage(m.viewStudentGoBackToOverviewButton)}
-            </Button>
-          </Box>
-        </Stack>
+          <GridRow>
+            <GridColumn>
+              <Button variant="ghost" preTextIcon="arrowBack" onClick={goBack}>
+                {formatMessage(m.viewStudentGoBackToOverviewButton)}
+              </Button>
+            </GridColumn>
+          </GridRow>
+        </>
       ) : (
         <Skeleton />
       )}
-    </Box>
+    </GridContainer>
   )
 }
 
