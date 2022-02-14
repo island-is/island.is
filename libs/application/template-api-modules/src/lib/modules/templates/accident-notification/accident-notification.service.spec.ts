@@ -8,7 +8,10 @@ import {
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { EmailService } from '@island.is/email-service'
 import { SharedTemplateApiService } from '../../shared'
-import { TemplateApiModuleActionProps } from '../../../types'
+import {
+  BaseTemplateApiApplicationService,
+  TemplateApiModuleActionProps,
+} from '../../../types'
 import { AccidentNotificationService } from './accident-notification.service'
 import { AccidentNotificationAttachmentProvider } from './attachments/applicationAttachmentProvider'
 import { ApplicationAttachmentService } from './attachments/applicationAttachment.service'
@@ -130,6 +133,10 @@ describe('AccidentNotificationService', () => {
           useClass: jest.fn(() => ({
             getFilecontentAsBase64: jest.fn(),
           })),
+        },
+        {
+          provide: BaseTemplateApiApplicationService,
+          useValue: {},
         },
         {
           provide: ACCIDENT_NOTIFICATION_CONFIG,

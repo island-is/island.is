@@ -18,7 +18,10 @@ import {
 import { EmailService } from '@island.is/email-service'
 
 import { SharedTemplateApiService } from '../../shared'
-import { TemplateApiModuleActionProps } from '../../../types'
+import {
+  BaseTemplateApiApplicationService,
+  TemplateApiModuleActionProps,
+} from '../../../types'
 import {
   APPLICATION_ATTACHMENT_BUCKET,
   ParentalLeaveService,
@@ -141,6 +144,10 @@ describe('ParentalLeaveService', () => {
         {
           provide: EmailService,
           useClass: MockEmailService,
+        },
+        {
+          provide: BaseTemplateApiApplicationService,
+          useValue: {},
         },
         SharedTemplateApiService,
         {
