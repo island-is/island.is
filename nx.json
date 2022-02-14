@@ -121,7 +121,7 @@
     "api-domains-finance": {
       "tags": []
     },
-    "api-domains-fishing-licence": {
+    "api-domains-fishing-license": {
       "tags": []
     },
     "api-domains-health-insurance": {
@@ -304,7 +304,7 @@
     "clients-finance": {
       "tags": []
     },
-    "clients-fishing-licence": {
+    "clients-fishing-license": {
       "tags": []
     },
     "clients-health-insurance-v2": {

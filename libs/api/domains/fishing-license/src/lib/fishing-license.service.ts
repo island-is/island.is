@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import {
   FISHING_LICENSE_CLIENT,
   FishingLicenseClient,
-} from '@island.is/clients/fishing-licence'
+} from '@island.is/clients/fishing-license'
 
 @Injectable()
 export class FishingLicenseService {
@@ -15,7 +15,7 @@ export class FishingLicenseService {
     return this.fishingLicenseApi.getShips(nationalId)
   }
 
-  async getFishingLicences(shipRegistationNumber: number) {
+  async getFishingLicenses(shipRegistationNumber: number) {
     return this.fishingLicenseApi.getFishingLicenses(shipRegistationNumber)
   }
 
