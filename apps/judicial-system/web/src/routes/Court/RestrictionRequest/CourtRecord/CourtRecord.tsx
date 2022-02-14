@@ -366,7 +366,6 @@ export const CourtRecord: React.FC = () => {
             }
             textarea
             rows={16}
-            autoExpand={{ on: true }}
           />
         </Box>
         <Box component="section" marginBottom={8}>
