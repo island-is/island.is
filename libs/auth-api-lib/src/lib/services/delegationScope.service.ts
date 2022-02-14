@@ -11,6 +11,12 @@ import { Op } from 'sequelize'
 import { ApiScope } from '../entities/models/api-scope.model'
 import { IdentityResource } from '../entities/models/identity-resource.model'
 import startOfDay from 'date-fns/startOfDay'
+import {
+  PersonalRepresentative,
+  PersonalRepresentativeRight,
+  PersonalRepresentativeRightType,
+  PersonalRepresentativeScopePermission,
+} from '../personal-representative'
 
 @Injectable()
 export class DelegationScopeService {
@@ -142,6 +148,63 @@ export class DelegationScopeService {
       ...apiScopes.map((s) => s.name),
       ...identityResources.map((s) => s.name),
     ]
+  }
+
+  async findPersonalRepresentativeScopes(
+    toNationalId: string,
+    fromNationalId: string,
+  ): Promise<string[]> {
+    const apiScopes = await this.apiScopeModel.findAll({
+      where: {
+        enabled: true,
+        grantToPersonalRepresentatives: true,
+        alsoForDelegatedUser: false,
+      },
+      include: [
+        {
+          model: PersonalRepresentativeScopePermission,
+          required: true,
+          include: [
+            {
+              model: PersonalRepresentativeRightType,
+              required: true,
+              where: {
+                validFrom: {
+                  [Op.or]: { [Op.eq]: null, [Op.lt]: new Date() },
+                },
+                validTo: {
+                  [Op.or]: { [Op.eq]: null, [Op.gt]: new Date() },
+                },
+              },
+              include: [
+                {
+                  model: PersonalRepresentativeRight,
+                  required: true,
+                  include: [
+                    {
+                      model: PersonalRepresentative,
+                      required: true,
+                      where: {
+                        [Op.and]: [
+                          {
+                            nationalIdPersonalRepresentative: toNationalId,
+                          },
+                          {
+                            nationalIdRepresentedPerson: fromNationalId,
+                          },
+                        ],
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    })
+
+    return apiScopes.map((s) => s.name)
   }
 
   async findAllAutomaticScopes(): Promise<string[]> {
