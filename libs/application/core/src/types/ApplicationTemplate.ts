@@ -21,6 +21,7 @@ export interface ApplicationTemplate<
   readonly name: StaticText
   readonly institution?: StaticText
   readonly translationNamespaces?: string[]
+  readonly allowedDelegations?: string[]
   readonly dataSchema: Schema
   readonly stateMachineConfig: MachineConfig<
     TContext,

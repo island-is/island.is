@@ -1,10 +1,11 @@
 import React, { FC, useEffect } from 'react'
-import { useMutation } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { useParams, useHistory } from 'react-router-dom'
 import isEmpty from 'lodash/isEmpty'
 import {
   CREATE_APPLICATION,
   APPLICATION_APPLICATIONS,
+  ACTOR_DELEGATIONS
 } from '@island.is/application/graphql'
 import {
   Text,
@@ -21,6 +22,7 @@ import {
   useLocale,
   useLocalizedQuery,
 } from '@island.is/localization'
+import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 
 import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
 
@@ -29,6 +31,20 @@ export const Applications: FC = () => {
   const history = useHistory()
   const { formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)
+  var getDelegations = false
+
+  useEffect(() => {
+    async function checkDelegations() {
+      if (type) {
+        const {allowedDelegations} = await getApplicationTemplateByTypeId(type)
+        if(allowedDelegations){
+          console.log(allowedDelegations)
+          getDelegations = true
+        }
+      }
+    }
+    checkDelegations()
+  }, [type])
 
   useApplicationNamespaces(type)
 
@@ -42,6 +58,10 @@ export const Applications: FC = () => {
     },
   )
 
+  const {data:delegations, error: delegationError} = useQuery(ACTOR_DELEGATIONS, { skip: !getDelegations})
+
+  console.log(delegations)
+  
   const [createApplicationMutation, { error: createError }] = useMutation(
     CREATE_APPLICATION,
     {
