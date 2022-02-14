@@ -10,7 +10,6 @@ import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '../../utils/formHelper'
-import { getTextareaRows } from '../../utils/stepHelper'
 
 interface Props {
   workingCase: Case
@@ -83,7 +82,7 @@ const RulingInput: React.FC<Props> = (props) => {
         )
       }
       textarea
-      rows={rows ?? getTextareaRows(16, 25, workingCase.ruling)}
+      rows={rows ?? 16}
     />
   )
 }

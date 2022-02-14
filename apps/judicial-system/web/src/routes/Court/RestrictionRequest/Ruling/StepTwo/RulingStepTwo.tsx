@@ -50,7 +50,6 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isRulingStepTwoValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import { getTextareaRows } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
   core,
   rcRulingStepTwo as m,
@@ -748,7 +747,7 @@ export const RulingStepTwo: React.FC = () => {
                   updateCase,
                 )
               }
-              rows={getTextareaRows(16, 25, workingCase.endOfSessionBookings)}
+              rows={16}
               textarea
             />
           </Box>

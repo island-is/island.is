@@ -28,7 +28,6 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isRulingStepOneValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { icRulingStepOne as m } from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
-import { getTextareaRows } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 interface Props {
   workingCase: Case
@@ -159,7 +158,7 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
               errorMessage={courtCaseFactsEM}
               hasError={courtCaseFactsEM !== ''}
               textarea
-              rows={getTextareaRows(16, 25, workingCase.courtCaseFacts)}
+              rows={16}
               required
             />
           </Box>
@@ -206,7 +205,7 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
               errorMessage={courtLegalArgumentsEM}
               hasError={courtLegalArgumentsEM !== ''}
               textarea
-              rows={getTextareaRows(16, 25, workingCase.courtLegalArguments)}
+              rows={16}
               required
             />
           </Box>

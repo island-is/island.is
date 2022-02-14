@@ -32,7 +32,6 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { icRulingStepTwo as m } from '@island.is/judicial-system-web/messages'
-import { getTextareaRows } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { isRulingStepTwoValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -502,7 +501,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                   updateCase,
                 )
               }
-              rows={getTextareaRows(16, 25, workingCase.endOfSessionBookings)}
+              rows={16}
               textarea
             />
           </Box>
