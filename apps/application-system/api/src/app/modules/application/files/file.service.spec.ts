@@ -119,7 +119,7 @@ describe('FileService', () => {
 
     jest
       .spyOn(awsService, 'uploadFile')
-      .mockImplementation(() => Promise.resolve())
+      .mockImplementation(() => Promise.resolve('url'))
 
     jest
       .spyOn(awsService, 'getPresignedUrl')

@@ -34,21 +34,22 @@ export class TemplateApiApplicationService extends BaseTemplateApiApplicationSer
     if (!uploadBucket) throw new Error('No attachment bucket configured')
 
     const fileId = uuid()
-    const key = `${application.id}/${fileId}-${fileName}`
+    const attachmentKey = `${fileId}-${fileName}`
+    const s3key = `${application.id}/${attachmentKey}`
     const url = await this.awsService.uploadFile(
       buffer,
       uploadBucket,
-      key,
+      s3key,
       uploadParameters,
     )
 
     await this.applicationService.update(application.id, {
       attachments: {
         ...application.attachments,
-        [key]: url,
+        [attachmentKey]: url,
       },
     })
 
-    return key
+    return attachmentKey
   }
 }
