@@ -52,6 +52,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       authorization: request.headers.authorization ?? '',
       actor: actor && {
         nationalId: actor.nationalId,
+        delegationType: actor.delegationType,
         scope: this.parseScopes(actor.scope),
       },
       act: payload.act,
