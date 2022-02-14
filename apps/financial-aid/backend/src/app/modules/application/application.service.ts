@@ -81,7 +81,7 @@ export class ApplicationService {
       hasPartnerApplied: Boolean(application),
       hasFiles: Boolean(files),
       applicantName: application ? application.name : '',
-      applicantSpouseEmail: application ? application.spouseEmail : '',
+      applicantSpouseEmail: application?.spouseEmail ?? '',
     }
   }
 

@@ -8,8 +8,8 @@ export class SpouseResponse {
   hasFiles: boolean
 
   @ApiProperty()
-  applicantName?: string
+  applicantName: string
 
   @ApiProperty()
-  applicantSpouseEmail?: string
+  applicantSpouseEmail: string
 }

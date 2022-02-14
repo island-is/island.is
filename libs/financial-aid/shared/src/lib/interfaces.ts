@@ -290,8 +290,8 @@ export interface GetSignedUrlForId {
 export interface Spouse {
   hasPartnerApplied: boolean
   hasFiles: boolean
-  applicantName?: string
-  applicantSpouseEmail?: string
+  applicantName: string
+  applicantSpouseEmail: string
 }
 
 export interface UpdateApplicationTableResponseType {
