@@ -123,6 +123,7 @@ export const PaymentPlanForm: Form = buildForm({
               id: 'prerequisitesErrorModal',
               component: 'PrerequisitesErrorModal',
               title: '',
+              doesNotRequireAnswer: true,
             }),
           ],
           condition: (_formValue, externalData) => {
@@ -240,11 +241,13 @@ export const PaymentPlanForm: Form = buildForm({
             buildCustomField({
               id: 'employerInfoDescription',
               title: '',
+              doesNotRequireAnswer: true,
               component: 'EmployerInfoDescription',
             }),
             buildCustomField({
               id: 'employerInfo',
               title: '',
+              doesNotRequireAnswer: true,
               component: 'EmployerInfo',
             }),
             buildRadioField({
@@ -276,10 +279,11 @@ export const PaymentPlanForm: Form = buildForm({
             buildCustomField({
               id: 'employerInfoDescription',
               title: '',
+              doesNotRequireAnswer: true,
               component: 'EmployerInfoDescription',
             }),
             buildCustomField({
-              id: 'employerCustomId',
+              id: 'correctedEmployer',
               title: '',
               component: 'EmployerIdField',
             }),
@@ -301,6 +305,7 @@ export const PaymentPlanForm: Form = buildForm({
           id: 'disposableIncome',
           title: employer.general.disposableIncomePageTitle,
           description: employer.general.disposableIncomePageDescription,
+          doesNotRequireAnswer: true,
           component: 'DisposableIncome',
         }),
       ],
@@ -312,6 +317,7 @@ export const PaymentPlanForm: Form = buildForm({
         buildCustomField({
           id: `payment-plan-list`,
           title: paymentPlan.general.pageTitle,
+          doesNotRequireAnswer: true,
           component: 'PaymentPlanList',
         }),
       ],
@@ -333,6 +339,7 @@ export const PaymentPlanForm: Form = buildForm({
             buildCustomField({
               id: 'overviewScreen',
               title: '',
+              doesNotRequireAnswer: true,
               component: 'Overview',
             }),
             buildSubmitField({

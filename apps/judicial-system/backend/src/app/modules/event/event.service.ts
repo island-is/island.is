@@ -56,9 +56,9 @@ export class EventService {
         return
       }
 
-      const typeText = `${capitalize(caseTypes[theCase.type])}${
-        theCase.description ? ` - _${theCase.description}_` : ''
-      }`
+      const typeText = `${capitalize(caseTypes[theCase.type])} ${
+        theCase.description ? `- _${theCase.description}_ ` : ''
+      }*${theCase.id}*`
       const prosecutionText = `${
         theCase.prosecutor?.institution
           ? `${theCase.prosecutor?.institution?.name} `
@@ -97,9 +97,10 @@ export class EventService {
         }),
       })
     } catch (error) {
+      // Tolerate failure, but log error
       this.logger.error(
         `Failed to post event ${event} for case ${theCase.id}`,
-        error,
+        { error },
       )
     }
   }

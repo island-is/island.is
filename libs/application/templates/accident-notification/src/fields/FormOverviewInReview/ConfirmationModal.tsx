@@ -17,6 +17,7 @@ type ConfirmationModalProps = {
   buttonColorScheme?: 'default' | 'destructive'
   defaultEvent: DefaultEvents
   application: Application
+  comment?: string
   refetch?: () => void
 }
 
@@ -29,6 +30,7 @@ export const ConfirmationModal: FC<ConfirmationModalProps> = ({
   buttonColorScheme = 'default',
   defaultEvent,
   application,
+  comment = '',
   refetch,
 }) => {
   const { formatMessage } = useLocale()
@@ -47,7 +49,10 @@ export const ConfirmationModal: FC<ConfirmationModalProps> = ({
         input: {
           id: application.id,
           event: defaultEvent,
-          answers: application.answers,
+          answers: {
+            ...application.answers,
+            reviewComment: comment,
+          },
         },
       },
     })

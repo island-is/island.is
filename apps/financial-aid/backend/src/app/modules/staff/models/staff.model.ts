@@ -35,6 +35,7 @@ export class StaffModel extends Model<Staff> {
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    unique: true,
   })
   @ApiProperty()
   nationalId: string
@@ -67,6 +68,14 @@ export class StaffModel extends Model<Staff> {
   })
   @ApiProperty()
   active: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty()
+  usePseudoName: boolean
 
   @Column({
     type: DataType.STRING,

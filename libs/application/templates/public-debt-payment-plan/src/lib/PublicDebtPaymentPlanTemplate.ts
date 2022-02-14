@@ -37,6 +37,7 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
   type: ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN,
   name: application.name,
   institution: application.institutionName,
+  readyForProduction: true,
   translationNamespaces: [
     ApplicationConfigurations.PublicDebtPaymentPlan.translation,
   ],
@@ -112,6 +113,15 @@ const PublicDebtPaymentPlanTemplate: ApplicationTemplate<
             shouldBePruned: true,
             whenToPrune: 3600 * 1000,
           },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/PaymentPlanSubmittedForm').then((module) =>
+                  Promise.resolve(module.PaymentPlanSubmittedForm),
+                ),
+            },
+          ],
         },
       },
     },

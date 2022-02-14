@@ -318,6 +318,30 @@ export const regulationContentStyling = (wrapper: string) => {
     fontWeight: typography.headingsFontWeight,
   })
 
+  styleRegulation('.subchapter__title', {
+    marginTop: '2em',
+    textAlign: 'center',
+    fontSize: '1em',
+    fontWeight: typography.regular,
+    lineHeight: '2em',
+    '@media': { print: { lineHeight: 'inherit' } },
+  })
+  styleRegulation(
+    `
+    .subchapter__title:first-child,
+    .section__title + .subchapter__title,
+    .chapter__title + .subchapter__title
+    `,
+    {
+      marginTop: '0',
+    },
+  )
+  styleRegulation('.subchapter__name', {
+    display: 'block',
+    fontStyle: 'inherit',
+    fontWeight: typography.headingsFontWeight,
+  })
+
   styleRegulation('.article__title', {
     marginTop: '2em',
     textAlign: 'center',
@@ -334,7 +358,8 @@ export const regulationContentStyling = (wrapper: string) => {
     `
     .article__title:first-child,
     .section__title + .article__title,
-    .chapter__title + .article__title
+    .chapter__title + .article__title,
+    .subchapter__title + .article__title
     `,
     {
       marginTop: '0',

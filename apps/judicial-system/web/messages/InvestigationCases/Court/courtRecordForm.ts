@@ -5,11 +5,19 @@ export const icCourtRecord = {
     courtAttendees: defineMessages({
       defendantNotPresentAutofill: {
         id:
-          'judicial.system.investigation_cases:court_record.court_attendees.defendant_not_present_autofill',
+          'judicial.system.investigation_cases:court_record.court_attendees.defendant_not_present_autofill_v1',
         defaultMessage:
           'Varnaraðili er ekki viðstaddur sbr. 104. gr. laga 88/2008 um meðferð sakamála.',
         description:
           'Notaður sem sjálfgefinn texti í "Mættir eru" textaboxi á þingbókar skrefi í rannsóknarheimildum',
+      },
+      multipleDefendantNotPresentAutofill: {
+        id:
+          'judicial.system.investigation_cases:court_record.court_attendees.multiple_defendant_not_present_autofill',
+        defaultMessage:
+          'Varnaraðilar eru ekki viðstaddir sbr. 104. gr. laga 88/2008 um meðferð sakamála.',
+        description:
+          'Notaður sem sjálfgefinn texti í "Mættir eru" textaboxi á þingbókar skrefi í rannsóknarheimildum þegar það eru margir varnaraðilar',
       },
     }),
     accusedBookings: defineMessages({
@@ -88,16 +96,6 @@ export const icCourtRecord = {
           'Í dóminn er mætt/ur {spokesperson} lögmaður sem dómari skipar nú til að gæta hagsmuna þess aðila sem krafan beinist að. Hann/hún hefur undirritað heit skv. 2. mgr. 84. gr. laga númer 88/2008 um meðferð sakamála.',
         description:
           'Sjálfgefinn texti í "Afstaða kærða og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-    }),
-    litigationPresentations: defineMessages({
-      autofill: {
-        id:
-          'judicial.system.investigation_cases:court_record.litigation_presentations.autofill',
-        defaultMessage:
-          'Málflutningur var skriflegur og gögn send dómara rafrænt.',
-        description:
-          'Notaður sem sjálfgefinn texti í "Málflutningur" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
       },
     }),
     courtLocation: defineMessages({

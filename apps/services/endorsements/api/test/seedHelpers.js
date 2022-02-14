@@ -12,7 +12,6 @@ module.exports = {
     endorsement_meta: '{}', // default empty array in postgres
     endorsement_metadata: '[]', // default empty array in postgres
     tags: tags ?? '{}', // default empty array in postgres
-    validation_rules: '[]',
     meta: '{}',
     owner: faker.phone.phoneNumber('##########'),
     created: new Date(),

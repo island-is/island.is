@@ -1,8 +1,12 @@
-import { Controller, Get, Param } from '@nestjs/common'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { ApiScope } from '@island.is/auth/scopes'
+import { Controller, Get, Param, UseGuards } from '@nestjs/common'
 import { ApiHeader, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { DocumentProviderService } from '../document-provider.service'
 import { Changelog } from '../models/changelog.model'
 
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(ApiScope.internal)
 @ApiTags('changelogs')
 @ApiHeader({
   name: 'authorization',

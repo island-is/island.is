@@ -1,35 +1,32 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import { Table as T } from '@island.is/island-ui/core'
+import { User } from 'oidc-client'
 import {
   FinanceStatusOrganizationType,
   FinanceStatusDetailsType,
 } from '../../screens/FinanceStatus/FinanceStatusData.types'
-import {
-  Box,
-  Text,
-  Columns,
-  Column,
-  Button,
-  LoadingDots,
-} from '@island.is/island-ui/core'
+import { Box, Text, Columns, Column, Button } from '@island.is/island-ui/core'
 import { exportGjoldSundurlidunFile } from '../../utils/filesGjoldSundurlidun'
 import amountFormat from '../../utils/amountFormat'
+import { formSubmit } from '../../utils/documentFormSubmission'
 import { useLocale } from '@island.is/localization'
-import { showPdfDocument } from '@island.is/service-portal/graphql'
 import { m } from '@island.is/service-portal/core'
 import cn from 'classnames'
 import * as styles from './FinanceStatusDetailTable.css'
-
+import { tableStyles } from '@island.is/service-portal/core'
 interface Props {
   organization: FinanceStatusOrganizationType
   financeStatusDetails: FinanceStatusDetailsType
+  downloadURL: string
+  userInfo: User
 }
 
 const FinanceStatusDetailTable: FC<Props> = ({
   organization,
   financeStatusDetails,
+  downloadURL,
+  userInfo,
 }) => {
-  const { showPdf, loadingPDF, fetchingPdfId } = showPdfDocument()
   const { formatMessage } = useLocale()
 
   const headerArray = [
@@ -58,8 +55,9 @@ const FinanceStatusDetailTable: FC<Props> = ({
                 }}
                 key={i}
                 text={{ truncate: true }}
+                style={tableStyles}
               >
-                <Text fontWeight="semiBold" variant="small">
+                <Text variant="medium" fontWeight="semiBold">
                   {item.value}
                 </Text>
               </T.HeadData>
@@ -88,29 +86,32 @@ const FinanceStatusDetailTable: FC<Props> = ({
                       position: 'relative',
                     }}
                     key={ii}
+                    style={tableStyles}
                   >
                     <Button
-                      size="small"
                       variant="text"
-                      onClick={() => showPdf(row.documentID as string)}
-                      disabled={loadingPDF && fetchingPdfId === row.documentID}
+                      onClick={() =>
+                        formSubmit(
+                          `${downloadURL}${row.documentID}`,
+                          userInfo.access_token,
+                        )
+                      }
                     >
                       {item.value}
-                      {loadingPDF && fetchingPdfId === row.documentID && (
-                        <span className={styles.loadingDot}>
-                          <LoadingDots single />
-                        </span>
-                      )}
                     </Button>
                   </T.Data>
                 ) : (
-                  <T.Data box={{ paddingRight: 2, paddingLeft: 2 }} key={ii}>
+                  <T.Data
+                    box={{ paddingRight: 2, paddingLeft: 2 }}
+                    key={ii}
+                    style={tableStyles}
+                  >
                     <div
                       className={cn(styles.td, {
                         [styles.alignTd]: item.align,
                       })}
                     >
-                      <Text variant="small">{item.value}</Text>
+                      <Text variant="medium">{item.value}</Text>
                     </div>
                   </T.Data>
                 ),
@@ -122,7 +123,7 @@ const FinanceStatusDetailTable: FC<Props> = ({
       <Box paddingX={2} paddingTop={2} background="blue100">
         <Columns>
           <Column width="content">
-            <Text fontWeight="semiBold" variant="small">
+            <Text fontWeight="semiBold" variant="medium">
               {formatMessage(m.contactInfo)}
             </Text>
           </Column>
@@ -130,7 +131,7 @@ const FinanceStatusDetailTable: FC<Props> = ({
         <Box>
           {organization.homepage && (
             <Box display="inlineBlock" marginRight={2}>
-              <Text variant="small" as="span">
+              <Text variant="medium" as="span">
                 {formatMessage(m.website)}:
               </Text>{' '}
               <a
@@ -138,7 +139,7 @@ const FinanceStatusDetailTable: FC<Props> = ({
                 rel="noreferrer noopener"
                 target="_blank"
               >
-                <Text color="blue400" variant="small" as="span">
+                <Text variant="medium" color="blue400" as="span">
                   {organization.homepage}
                 </Text>
               </a>
@@ -146,7 +147,7 @@ const FinanceStatusDetailTable: FC<Props> = ({
           )}
           {organization.email && (
             <Box display="inlineBlock" marginRight={2}>
-              <Text variant="small" as="span">
+              <Text variant="medium" as="span">
                 {formatMessage(m.email)}:
               </Text>{' '}
               <a
@@ -154,7 +155,7 @@ const FinanceStatusDetailTable: FC<Props> = ({
                 rel="noreferrer noopener"
                 target="_blank"
               >
-                <Text color="blue400" variant="small" as="span">
+                <Text variant="medium" color="blue400" as="span">
                   {organization.email}
                 </Text>
               </a>
@@ -162,7 +163,7 @@ const FinanceStatusDetailTable: FC<Props> = ({
           )}
           {organization.phone && (
             <Box display="inlineBlock">
-              <Text variant="small" as="span">
+              <Text variant="medium" as="span">
                 {formatMessage(m.phone)}:
               </Text>{' '}
               <a
@@ -170,7 +171,7 @@ const FinanceStatusDetailTable: FC<Props> = ({
                 rel="noreferrer noopener"
                 target="_blank"
               >
-                <Text color="blue400" variant="small" as="span">
+                <Text variant="medium" color="blue400" as="span">
                   {organization.phone}
                 </Text>
               </a>

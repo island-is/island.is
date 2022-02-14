@@ -1,6 +1,15 @@
 import { keyframes, style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
+export const unopenedWrapper = style({
+  backgroundColor: 'unset',
+  ...themeUtils.responsiveStyle({
+    sm: {
+      backgroundColor: '#FBFBFC',
+    },
+  }),
+})
+
 export const modalButtonWrapper = style({
   ...themeUtils.responsiveStyle({
     sm: {
@@ -13,23 +22,16 @@ export const modalButtonWrapper = style({
 })
 
 export const line = style({
-  ...themeUtils.responsiveStyle({
-    sm: {
-      borderBottom: `1px solid ${theme.color.blue200}`,
-    },
-  }),
+  fontSize: theme.typography.baseFontSize,
+  borderBottom: `1px solid ${theme.color.blue100}`,
 })
 
 export const button = style({
   color: theme.color.blue400,
-  fontWeight: theme.typography.semiBold,
-  lineHeight: theme.typography.baseLineHeight,
+  fontSize: 16,
+  fontWeight: theme.typography.regular,
+  lineHeight: 1.5,
   textAlign: 'left',
-  ...themeUtils.responsiveStyle({
-    sm: {
-      fontWeight: theme.typography.regular,
-    },
-  }),
   ':hover': {
     textDecoration: 'underline',
   },
@@ -38,30 +40,28 @@ export const button = style({
   },
 })
 
+export const unopened = style({
+  fontWeight: theme.typography.semiBold,
+})
+
 export const sender = style({
-  fontWeight: theme.typography.regular,
-  fontSize: 12,
+  fontWeight: theme.typography.light,
+  fontSize: 14,
   ...themeUtils.responsiveStyle({
-    sm: {
-      fontWeight: theme.typography.light,
-      fontSize: 18,
+    md: {
+      fontWeight: theme.typography.regular,
+      fontSize: theme.typography.baseFontSize,
     },
   }),
 })
 
 export const date = style({
-  fontWeight: theme.typography.regular,
-  fontSize: 12,
-  color: theme.color.dark300,
   ...themeUtils.responsiveStyle({
     sm: {
       paddingBottom: 0,
       color: theme.color.dark400,
       fontWeight: theme.typography.light,
       fontSize: 16,
-    },
-    md: {
-      fontSize: 18,
     },
   }),
 })

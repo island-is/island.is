@@ -15,14 +15,14 @@ import {
 
 const mapStatus = (statusId: number) => {
   switch (statusId) {
-    case 0:
-      return StatusTypes.ACCEPTED
     case 1:
-      return StatusTypes.REFUSED
-    case 2:
       return StatusTypes.INPROGRESS
-    case 3:
+    case 2:
       return StatusTypes.INPROGRESSWAITINGFORDOCUMENT
+    case 3:
+      return StatusTypes.ACCEPTED
+    case 4:
+      return StatusTypes.REFUSED
     default:
       break
   }

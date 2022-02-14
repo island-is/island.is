@@ -1,7 +1,10 @@
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useMemo } from 'react'
+import { useRouter } from 'next/router'
+import NextLink from 'next/link'
+import getConfig from 'next/config'
+import { LayoutProps } from '@island.is/web/layouts/main'
 import {
   Image,
-  LinkGroup,
   Organization,
   OrganizationPage,
 } from '@island.is/web/graphql/schema'
@@ -19,8 +22,9 @@ import {
   ProfileCard,
   Stack,
   Text,
+  Button,
+  Inline,
 } from '@island.is/island-ui/core'
-import NextLink from 'next/link'
 import {
   ChatPanel,
   HeadWithSocialSharing,
@@ -35,13 +39,13 @@ import {
 } from './Themes/SjukratryggingarTheme'
 import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
 import { DefaultHeader } from './Themes/DefaultTheme'
-import getConfig from 'next/config'
 import {
   UtlendingastofnunFooter,
   UtlendingastofnunHeader,
 } from './Themes/UtlendingastofnunTheme'
 import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
-import { useRouter } from 'next/router'
+import { OrganizationAlert } from '../OrganizationAlert/OrganizationAlert'
+
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -63,6 +67,7 @@ interface WrapperProps {
   stickySidebar?: boolean
   minimal?: boolean
   showSecondaryMenu?: boolean
+  showExternalLinks?: boolean
 }
 
 interface HeaderProps {
@@ -71,6 +76,28 @@ interface HeaderProps {
 
 export const lightThemes = ['digital_iceland', 'utlendingastofnun']
 export const footerEnabled = ['syslumenn']
+
+export const getThemeConfig = (
+  theme: string,
+): { themeConfig: Partial<LayoutProps> } => {
+  if (theme === 'sjukratryggingar')
+    return {
+      themeConfig: {
+        headerButtonColorScheme: 'blueberry',
+        headerColorScheme: 'blueberry',
+      },
+    }
+
+  const isLightTheme = lightThemes.includes(theme)
+  return !isLightTheme
+    ? {
+        themeConfig: {
+          headerColorScheme: 'white',
+          headerButtonColorScheme: 'negative',
+        },
+      }
+    : { themeConfig: {} }
+}
 
 const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   switch (organizationPage.theme) {
@@ -85,6 +112,40 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
+}
+
+interface ExternalLinksProps {
+  organizationPage: OrganizationPage
+}
+
+export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
+  organizationPage,
+}) => {
+  if (organizationPage.externalLinks) {
+    return (
+      <Box
+        display={['none', 'none', 'flex', 'flex']}
+        justifyContent="flexEnd"
+        marginBottom={4}
+      >
+        <Inline space={2}>
+          {organizationPage.externalLinks.map((link, index) => (
+            <Link href={link.url} key={'organization-external-link-' + index}>
+              <Button
+                colorScheme="light"
+                icon="open"
+                iconType="outline"
+                size="small"
+              >
+                {link.text}
+              </Button>
+            </Link>
+          ))}
+        </Inline>
+      </Box>
+    )
+  }
+  return null
 }
 
 interface FooterProps {
@@ -188,6 +249,22 @@ const SecondaryMenu = ({
   </Box>
 )
 
+const getActiveNavigationItemTitle = (
+  navigationItems: NavigationItem[],
+  clientUrl: string,
+) => {
+  for (const item of navigationItems) {
+    if (clientUrl === item.href) {
+      return item.title
+    }
+    for (const childItem of item.items) {
+      if (clientUrl === childItem.href) {
+        return childItem.title
+      }
+    }
+  }
+}
+
 export const OrganizationWrapper: React.FC<WrapperProps> = ({
   pageTitle,
   pageDescription,
@@ -202,15 +279,21 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   children,
   minimal = false,
   showSecondaryMenu = true,
+  showExternalLinks = false,
 }) => {
-  const Router = useRouter()
+  const router = useRouter()
 
   const secondaryNavList: NavigationItem[] =
     organizationPage.secondaryMenu?.childrenLinks.map(({ text, url }) => ({
       title: text,
       href: url,
-      active: Router.asPath === url,
+      active: router.asPath === url,
     })) ?? []
+
+  const activeNavigationItemTitle = useMemo(
+    () => getActiveNavigationItemTitle(navigationData.items, router.asPath),
+    [navigationData.items, router.asPath],
+  )
 
   const metaTitleSuffix =
     pageTitle !== organizationPage.title ? ` | ${organizationPage.title}` : ''
@@ -229,6 +312,13 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
       />
       <OrganizationHeader organizationPage={organizationPage} />
       <Main>
+        {organizationPage.alertBanner && (
+          <OrganizationAlert
+            alertBanner={organizationPage.alertBanner}
+            centered={true}
+            marginTop={10}
+          />
+        )}
         {!minimal && (
           <SidebarLayout
             paddingTop={[2, 2, 9]}
@@ -241,7 +331,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                   baseId="pageNav"
                   items={navigationData.items}
                   title={navigationData.title}
-                  activeItemTitle={navigationData.activeItemTitle}
+                  activeItemTitle={activeNavigationItemTitle}
                   renderLink={(link, item) => {
                     return item?.href ? (
                       <NextLink href={item?.href}>{link}</NextLink>
@@ -281,7 +371,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                     isMenuDialog={true}
                     items={navigationData.items}
                     title={navigationData.title}
-                    activeItemTitle={navigationData.activeItemTitle}
+                    activeItemTitle={activeNavigationItemTitle}
                     renderLink={(link, item) => {
                       return item?.href ? (
                         <NextLink href={item?.href}>{link}</NextLink>
@@ -329,6 +419,12 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                       }}
                     />
                   )}
+                  {showExternalLinks && (
+                    <OrganizationExternalLinks
+                      organizationPage={organizationPage}
+                    />
+                  )}
+
                   {pageDescription && (
                     <Box paddingTop={[2, 2, breadcrumbItems ? 5 : 0]}>
                       <Text variant="default">{pageDescription}</Text>

@@ -148,6 +148,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Stéttarfélag (valfrjálst)',
       description: 'Union (optional)',
     },
+    asyncSelectSearchableHint: {
+      id: 'application.system:placeholder.searchable.hint',
+      defaultMessage: 'Skrifaðu hér til að leita',
+      description: 'Let user know they can search by typing',
+    },
     privatePensionFund: {
       id: 'pl.application:payment.information.privatePensionFund',
       defaultMessage: 'Séreignarsjóður',
@@ -641,6 +646,16 @@ export const parentalLeaveFormMessages: MessageDir = {
       id: 'pl.application:applicant.phoneNumber',
       defaultMessage: 'Símanúmer',
       description: 'Phone number',
+    },
+    fullName: {
+      id: 'pl.application:applicant.fullName',
+      defaultMessage: 'Nafn',
+      description: 'Name',
+    },
+    nationalId: {
+      id: 'pl.application:applicant.nationalId',
+      defaultMessage: 'Kennitala',
+      description: 'National id',
     },
   }),
 

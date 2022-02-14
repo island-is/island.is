@@ -26,6 +26,10 @@ import type {
   PoliceCaseFile,
   UploadPoliceCaseFileResponse,
   UploadPoliceCaseFile,
+  CreateDefendant,
+  Defendant,
+  UpdateDefendant,
+  DeleteDefendantResponse,
 } from '@island.is/judicial-system/types'
 
 import { environment } from '../environments'
@@ -79,15 +83,30 @@ class BackendAPI extends RESTDataSource {
     return this.put(`case/${id}/state`, transitionCase)
   }
 
-  requestSignature(id: string): Promise<RequestSignatureResponse> {
-    return this.post(`case/${id}/signature`)
+  requestCourtRecordSignature(id: string): Promise<RequestSignatureResponse> {
+    return this.post(`case/${id}/courtRecord/signature`)
   }
 
-  getSignatureConfirmation(
+  getCourtRecordSignatureConfirmation(
     id: string,
     documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
-    return this.get(`case/${id}/signature?documentToken=${documentToken}`)
+    return this.get(
+      `case/${id}/courtRecord/signature?documentToken=${documentToken}`,
+    )
+  }
+
+  requestRulingSignature(id: string): Promise<RequestSignatureResponse> {
+    return this.post(`case/${id}/ruling/signature`)
+  }
+
+  getRulingSignatureConfirmation(
+    id: string,
+    documentToken: string,
+  ): Promise<SignatureConfirmationResponse> {
+    return this.get(
+      `case/${id}/ruling/signature?documentToken=${documentToken}`,
+    )
   }
 
   sendNotification(
@@ -144,6 +163,28 @@ class BackendAPI extends RESTDataSource {
     uploadPoliceCaseFile: UploadPoliceCaseFile,
   ): Promise<UploadPoliceCaseFileResponse> {
     return this.post(`case/${caseId}/policeFile`, uploadPoliceCaseFile)
+  }
+
+  createDefendant(
+    caseId: string,
+    createDefendant: CreateDefendant,
+  ): Promise<Defendant> {
+    return this.post(`case/${caseId}/defendant`, createDefendant)
+  }
+
+  updateDefendant(
+    caseId: string,
+    defendantId: string,
+    updateDefendant: UpdateDefendant,
+  ): Promise<Defendant> {
+    return this.put(`case/${caseId}/defendant/${defendantId}`, updateDefendant)
+  }
+
+  deleteDefendant(
+    caseId: string,
+    defendantId: string,
+  ): Promise<DeleteDefendantResponse> {
+    return this.delete(`case/${caseId}/defendant/${defendantId}`)
   }
 }
 

@@ -4,15 +4,7 @@ import {
   CaseState,
   CaseType,
   isInvestigationCase,
-  isRestrictionCase,
 } from '@island.is/judicial-system/types'
-import {
-  getCourtSections,
-  getCustodyAndTravelBanProsecutorSection,
-  getExtenstionSections,
-  getInvestigationCaseCourtSections,
-  getInvestigationCaseProsecutorSection,
-} from '@island.is/judicial-system-web/src/utils/sections'
 
 interface TranslationStrings {
   dismissedTitle: string
@@ -70,36 +62,4 @@ export const caseResult = (
   } else {
     return 'Niðurstaða'
   }
-}
-
-export const getSections = (
-  translationStrings: TranslationStrings,
-  workingCase?: Case,
-  activeSubSection?: number,
-) => {
-  return [
-    isRestrictionCase(workingCase?.type)
-      ? getCustodyAndTravelBanProsecutorSection(
-          workingCase || ({} as Case),
-          activeSubSection,
-        )
-      : getInvestigationCaseProsecutorSection(
-          workingCase || ({} as Case),
-          activeSubSection,
-        ),
-    isRestrictionCase(workingCase?.type)
-      ? getCourtSections(workingCase || ({} as Case), activeSubSection)
-      : getInvestigationCaseCourtSections(
-          workingCase || ({} as Case),
-          activeSubSection,
-        ),
-    {
-      name: caseResult(
-        { dismissedTitle: translationStrings.dismissedTitle },
-        workingCase,
-      ),
-    },
-    getExtenstionSections(workingCase || ({} as Case), activeSubSection),
-    getCourtSections(workingCase || ({} as Case), activeSubSection),
-  ]
 }

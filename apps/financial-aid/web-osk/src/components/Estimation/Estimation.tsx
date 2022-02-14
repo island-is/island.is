@@ -1,19 +1,17 @@
 import React, { ReactNode, useContext, useMemo } from 'react'
-import { Text, Box, Divider } from '@island.is/island-ui/core'
+import { Text, Box } from '@island.is/island-ui/core'
 
 import {
   aidCalculator,
-  calculateAidFinalAmount,
-  calculatePersonalTaxAllowanceUsed,
-  calculateTaxOfAmount,
   HomeCircumstances,
   getNextPeriod,
   MartialStatusType,
   martialStatusTypeFromMartialCode,
+  estimatedBreakDown,
 } from '@island.is/financial-aid/shared/lib'
 
-import format from 'date-fns/format'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
+import { Breakdown } from '@island.is/financial-aid/shared/components'
 
 interface Props {
   aboutText: ReactNode
@@ -26,8 +24,6 @@ const Estimation = ({
   homeCircumstances,
   usePersonalTaxCredit,
 }: Props) => {
-  const currentYear = format(new Date(), 'yyyy')
-
   const { municipality, nationalRegistryData } = useContext(AppContext)
 
   const aidAmount = useMemo(() => {
@@ -35,48 +31,13 @@ const Estimation = ({
       return aidCalculator(
         homeCircumstances,
         martialStatusTypeFromMartialCode(
-          nationalRegistryData?.spouse.maritalStatus,
+          nationalRegistryData?.spouse?.maritalStatus,
         ) === MartialStatusType.SINGLE
           ? municipality.individualAid
           : municipality.cohabitationAid,
       )
     }
   }, [municipality])
-
-  const calculations = aidAmount
-    ? [
-        {
-          title: 'Grunnupphæð',
-          calculation: `${aidAmount?.toLocaleString('de-DE')} kr.`,
-        },
-        {
-          title: 'Skattur',
-          calculation: `- 
-      ${calculateTaxOfAmount(aidAmount, currentYear).toLocaleString(
-        'de-DE',
-      )} kr.`,
-        },
-        {
-          title: 'Persónuafsláttur',
-          calculation: `+  
-      ${calculatePersonalTaxAllowanceUsed(
-        aidAmount,
-        Boolean(usePersonalTaxCredit),
-        currentYear,
-      ).toLocaleString('de-DE')} kr.`,
-        },
-        {
-          title: 'Áætluð aðstoð (hámark)',
-          calculation: `${
-            calculateAidFinalAmount(
-              aidAmount,
-              Boolean(usePersonalTaxCredit),
-              currentYear,
-            ).toLocaleString('de-DE') + ' kr.'
-          }`,
-        },
-      ]
-    : []
 
   return (
     <>
@@ -94,31 +55,9 @@ const Estimation = ({
 
       {aboutText}
 
-      {municipality && (
-        <>
-          {calculations.map((item, index) => {
-            return (
-              <span key={`calculations-` + index}>
-                <Divider />
-                <Box
-                  display="flex"
-                  justifyContent="spaceBetween"
-                  alignItems="center"
-                  padding={2}
-                  background={
-                    index === calculations.length - 1 ? 'blue100' : 'white'
-                  }
-                >
-                  <Text variant="small">{item.title}</Text>
-                  <Text>{item.calculation}</Text>
-                </Box>
-              </span>
-            )
-          })}
-
-          <Divider />
-        </>
-      )}
+      <Breakdown
+        calculations={estimatedBreakDown(aidAmount, usePersonalTaxCredit)}
+      />
     </>
   )
 }

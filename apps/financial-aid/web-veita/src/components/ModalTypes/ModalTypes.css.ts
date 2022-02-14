@@ -23,3 +23,29 @@ export const statusOptions = style({
     },
   },
 })
+
+export const deductionFactor = style({
+  display: 'grid',
+  gridTemplateColumns: 'auto auto max-content',
+  columnGap: theme.spacing[3],
+  alignItems: 'center',
+  marginBottom: theme.spacing[2],
+})
+
+export const rejectionEditable = style({
+  display: 'inline-block',
+  borderBottom: '2px solid',
+  minWidth: '269px',
+  borderColor: theme.color.blue300,
+  fontSize: '20px',
+  lineHeight: 1.5,
+  fontWeight: 600,
+  ':focus': {
+    outline: 'none',
+  },
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      fontSize: theme.spacing[3],
+    },
+  },
+})

@@ -39,12 +39,13 @@ export const attachments = {
     },
     uploadDescription: {
       id: 'an.application:attachments.uploadDescription',
-      defaultMessage: 'Tekið er við skjölum með endingunum: .pdf, .docx, .rtf',
+      defaultMessage:
+        'Tekið er við skjölum með endingunum: .pdf, .docx, .rtf, .jpg, .jpeg, .png, .heic',
       description: 'Definition of upload description',
     },
     uploadHeader: {
       id: 'an.application:attachments.uploadHeader',
-      defaultMessage: 'Dragðu viðhengi hingað til að hlaða upp',
+      defaultMessage: 'Dragðu viðhengi hingað til að hlaða því upp',
       description: 'Definition of upload header',
     },
     uploadButtonLabel: {
@@ -116,10 +117,18 @@ export const attachments = {
       defaultMessage: 'Umboð',
       description: 'Name of power of attorney document for in review',
     },
-    additionalDocuments: {
-      id: 'an.application:attachments.documentNames.additionalDocuments',
-      defaultMessage: 'Auka fylgiskjöl',
-      description: 'Name of additional attachments for in review',
+    additionalDocumentsFromApplicant: {
+      id:
+        'an.application:attachments.documentNames.additionalDocumentsFromApplicant',
+      defaultMessage: 'Auka fylgiskjöl frá umsækjanda',
+      description:
+        'Name of additional attachments for in review from applicant',
+    },
+    additionalDocumentsFromReviewer: {
+      id:
+        'an.application:attachments.documentNames.additionalDocumentsFromReviewer',
+      defaultMessage: 'Auka fylgiskjöl frá forsvarsmanni',
+      description: 'Name of additional attachments for in review from reviewer',
     },
   }),
 }

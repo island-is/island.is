@@ -1,3 +1,4 @@
+import type { Defendant } from './defendant'
 import type { Institution } from './institution'
 import type { Notification } from './notification'
 import type { CaseFile } from './file'
@@ -17,8 +18,17 @@ export enum CaseType {
   BODY_SEARCH = 'BODY_SEARCH',
   INTERNET_USAGE = 'INTERNET_USAGE',
   RESTRAINING_ORDER = 'RESTRAINING_ORDER',
+  ELECTRONIC_DATA_DISCOVERY_INVESTIGATION = 'ELECTRONIC_DATA_DISCOVERY_INVESTIGATION',
   OTHER = 'OTHER',
 }
+
+export const caseTypesWithMultipleDefendants = [
+  CaseType.SEARCH_WARRANT,
+  CaseType.BANKING_SECRECY_WAIVER,
+  CaseType.SOUND_RECORDING_EQUIPMENT,
+  CaseType.PHONE_TAPPING,
+  CaseType.TRACKING_EQUIPMENT,
+]
 
 export enum CaseState {
   NEW = 'NEW',
@@ -71,12 +81,6 @@ export enum CaseAppealDecision {
   NOT_APPLICABLE = 'NOT_APPLICABLE',
 }
 
-export enum CaseGender {
-  MALE = 'MALE',
-  FEMALE = 'FEMALE',
-  OTHER = 'OTHER',
-}
-
 export enum CaseDecision {
   ACCEPTING = 'ACCEPTING',
   REJECTING = 'REJECTING',
@@ -89,7 +93,6 @@ export enum SessionArrangements {
   ALL_PRESENT = 'ALL_PRESENT',
   ALL_PRESENT_SPOKESPERSON = 'ALL_PRESENT_SPOKESPERSON',
   PROSECUTOR_PRESENT = 'PROSECUTOR_PRESENT',
-  REMOTE_SESSION = 'REMOTE_SESSION',
 }
 
 export interface Case {
@@ -100,10 +103,7 @@ export interface Case {
   description?: string
   state: CaseState
   policeCaseNumber: string
-  accusedNationalId: string
-  accusedName?: string
-  accusedAddress?: string
-  accusedGender?: CaseGender
+  defendants?: Defendant[]
   defenderName?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
@@ -150,10 +150,10 @@ export interface Case {
   decision?: CaseDecision
   validToDate?: string
   isValidToDateInThePast?: boolean
-  custodyRestrictions?: CaseCustodyRestrictions[]
-  otherRestrictions?: string
+  isCustodyIsolation?: boolean
   isolationToDate?: string
   conclusion?: string
+  endOfSessionBookings?: string
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
@@ -163,24 +163,22 @@ export interface Case {
   isAppealDeadlineExpired?: boolean
   isAppealGracePeriodExpired?: boolean
   rulingDate?: string
+  initialRulingDate?: string
   registrar?: User
   judge?: User
+  courtRecordSignatory?: User
+  courtRecordSignatureDate?: string
   parentCase?: Case
   childCase?: Case
   notifications?: Notification[]
   caseFiles?: CaseFile[]
-  isMasked?: boolean
-  initialRulingDate?: string
+  caseModifiedExplanation?: string
 }
 
 export interface CreateCase {
   type: CaseType
   description?: string
   policeCaseNumber: string
-  accusedNationalId: string
-  accusedName?: string
-  accusedAddress?: string
-  accusedGender?: CaseGender
   defenderName?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
@@ -193,10 +191,6 @@ export interface UpdateCase {
   type?: string
   description?: string
   policeCaseNumber?: string
-  accusedNationalId?: string
-  accusedName?: string
-  accusedAddress?: string
-  accusedGender?: CaseGender
   defenderName?: string
   defenderEmail?: string
   defenderPhoneNumber?: string
@@ -240,10 +234,10 @@ export interface UpdateCase {
   ruling?: string
   decision?: CaseDecision
   validToDate?: string
-  custodyRestrictions?: CaseCustodyRestrictions[]
-  otherRestrictions?: string
+  isCustodyIsolation?: boolean
   isolationToDate?: string
   conclusion?: string
+  endOfSessionBookings?: string
   accusedAppealDecision?: CaseAppealDecision
   accusedAppealAnnouncement?: string
   prosecutorAppealDecision?: CaseAppealDecision
@@ -252,6 +246,7 @@ export interface UpdateCase {
   prosecutorPostponedAppealDate?: string
   registrarId?: string
   judgeId?: string
+  caseModifiedExplanation?: string
 }
 
 export interface TransitionCase {
@@ -290,6 +285,7 @@ export const investigationCases = [
   CaseType.BODY_SEARCH,
   CaseType.INTERNET_USAGE,
   CaseType.RESTRAINING_ORDER,
+  CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
   CaseType.OTHER,
 ]
 
@@ -303,6 +299,10 @@ export function isInvestigationCase(type?: CaseType): boolean {
 
 export function isAcceptingCaseDecision(decision?: CaseDecision): boolean {
   return Boolean(decision && acceptedCaseDecisions.includes(decision))
+}
+
+export function isCaseTypeWithMultipleDefendantsSupport(caseType: CaseType) {
+  return caseTypesWithMultipleDefendants.includes(caseType)
 }
 
 export const completedCaseStates = [

@@ -1,3 +1,5 @@
+<!-- gitbook-ignore -->
+
 # Application Templates Parental Leave
 
 This application template is handling request for parental leave. It handles connections with external API, like Vinnumálastofnun or Þjóðskrá to get the information needed to create an application.

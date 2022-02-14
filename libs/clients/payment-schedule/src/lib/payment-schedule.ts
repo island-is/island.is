@@ -31,14 +31,9 @@ export class PaymentScheduleAPI extends RESTDataSource {
   }
 
   willSendRequest(request: RequestOptions) {
+    this.memoizedResults.clear()
     request.headers.set('Content-Type', 'application/json')
     request.headers.set('X-Road-Client', this.options.xRoadClientId)
-    request.headers.set(
-      'Authorization',
-      `Basic ${Base64.encode(
-        `${this.options.username}:${this.options.password}`,
-      )}`,
-    )
   }
 
   async getConditions(nationalId: string): Promise<Conditions> {

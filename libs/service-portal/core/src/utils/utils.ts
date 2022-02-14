@@ -21,3 +21,43 @@ export const formatNationalId = (nationalId: string): string => {
     return nationalId
   }
 }
+
+export const tableStyles = {
+  paddingTop: '16px',
+  paddingBottom: '16px',
+}
+type DrivingLicenseSuspended = {
+  /* ANY because response was null */
+  dagsFra?: any
+  dagsTil?: any
+  skirteiniGlatad?: any
+  tegundSviptingarHeiti?: any
+  tegundSviptinar?: any
+  skirteiniUrGildi?: any
+  endurupptakaSkirteinis?: any
+}
+
+type DrivingLicenseCategoryType = {
+  id: number
+  nr: string
+  utgafuDags: string
+  gildirTil: string
+  aths: string
+}
+
+export type DrivingLicenseType = {
+  id: number
+  nafn: string
+  kennitala: string
+  faedingarstadur: string
+  faedingarStadurHeiti: string
+  utgafuDagsetning: string
+  gildirTil: string
+  nrUtgafustadur: string
+  nafnUtgafustadur: string
+  rettindi: Array<DrivingLicenseCategoryType>
+  athugasemdir?: []
+  mynd: string
+  undirskrift: string
+  svipting: Array<DrivingLicenseSuspended>
+}

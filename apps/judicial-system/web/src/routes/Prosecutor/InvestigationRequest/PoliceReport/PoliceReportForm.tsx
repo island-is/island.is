@@ -1,53 +1,45 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+
 import { Box, Checkbox, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   BlueBox,
+  CaseInfo,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
-import type { Case } from '@island.is/judicial-system/types'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { icReportForm } from '@island.is/judicial-system-web/messages'
-import {
-  FormSettings,
-  useCaseFormHelper,
-} from '@island.is/judicial-system-web/src/utils/useFormHelper'
+import { isPoliceReportStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
 }
 
 const PoliceReportForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading } = props
-  const validations: FormSettings = {
-    caseFacts: {
-      validations: ['empty'],
-    },
-    legalArguments: {
-      validations: ['empty'],
-    },
-  }
+
   const { formatMessage } = useIntl()
   const { updateCase, autofill } = useCase()
+  const { user } = useContext(UserContext)
+
   const [caseFactsEM, setCaseFactsEM] = useState<string>('')
   const [legalArgumentsEM, setLegalArgumentsEM] = useState<string>('')
-  const { isValid } = useCaseFormHelper(
-    workingCase,
-    setWorkingCase,
-    validations,
-  )
-  const defaultProsecutorOnlySessionRequest = formatMessage(
-    icReportForm.prosecutorOnly.input.defaultValue,
-  )
+
   useEffect(() => {
+    const defaultProsecutorOnlySessionRequest = formatMessage(
+      icReportForm.prosecutorOnly.input.defaultValue,
+    )
+
     if (workingCase.requestProsecutorOnlySession) {
       autofill(
         'prosecutorOnlySessionRequest',
@@ -55,7 +47,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
         workingCase,
       )
     }
-  }, [autofill, workingCase, defaultProsecutorOnlySessionRequest])
+  }, [autofill, formatMessage, workingCase])
 
   return (
     <>
@@ -64,6 +56,13 @@ const PoliceReportForm: React.FC<Props> = (props) => {
           <Text as="h1" variant="h1">
             {formatMessage(icReportForm.heading)}
           </Text>
+        </Box>
+        <Box component="section" marginBottom={7}>
+          <CaseInfo
+            workingCase={workingCase}
+            userRole={user?.role}
+            showAdditionalInfo
+          />
         </Box>
         <Box marginBottom={5}>
           <BlueBox>
@@ -88,11 +87,11 @@ const PoliceReportForm: React.FC<Props> = (props) => {
             placeholder={formatMessage(icReportForm.caseFacts.placeholder)}
             errorMessage={caseFactsEM}
             hasError={caseFactsEM !== ''}
-            defaultValue={workingCase?.caseFacts}
+            value={workingCase.caseFacts || ''}
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'caseFacts',
-                event,
+                event.target.value,
                 ['empty'],
                 workingCase,
                 setWorkingCase,
@@ -134,13 +133,13 @@ const PoliceReportForm: React.FC<Props> = (props) => {
               placeholder={formatMessage(
                 icReportForm.legalArguments.placeholder,
               )}
-              defaultValue={workingCase?.legalArguments}
+              value={workingCase.legalArguments || ''}
               errorMessage={legalArgumentsEM}
               hasError={legalArgumentsEM !== ''}
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'legalArguments',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -195,11 +194,11 @@ const PoliceReportForm: React.FC<Props> = (props) => {
                   icReportForm.prosecutorOnly.input.placeholder,
                 )}
                 disabled={workingCase.requestProsecutorOnlySession === false}
-                defaultValue={workingCase.prosecutorOnlySessionRequest}
+                value={workingCase.prosecutorOnlySessionRequest || ''}
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'prosecutorOnlySessionRequest',
-                    event,
+                    event.target.value,
                     [],
                     workingCase,
                     setWorkingCase,
@@ -234,11 +233,11 @@ const PoliceReportForm: React.FC<Props> = (props) => {
               name="comments"
               label={formatMessage(icReportForm.comments.label)}
               placeholder={formatMessage(icReportForm.comments.placeholder)}
-              defaultValue={workingCase?.comments}
+              value={workingCase.comments || ''}
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'comments',
-                  event,
+                  event.target.value,
                   [],
                   workingCase,
                   setWorkingCase,
@@ -263,7 +262,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
         <FormFooter
           previousUrl={`${Constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
           nextUrl={`${Constants.IC_CASE_FILES_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!isValid}
+          nextIsDisabled={!isPoliceReportStepValidIC(workingCase)}
           nextIsLoading={isLoading}
         />
       </FormContentContainer>

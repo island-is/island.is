@@ -12,6 +12,10 @@ export class UpdateStaffInput implements UpdateStaff {
 
   @Allow()
   @Field({ nullable: true })
+  readonly name?: string
+
+  @Allow()
+  @Field({ nullable: true })
   readonly active?: boolean
 
   @Allow()
@@ -29,4 +33,8 @@ export class UpdateStaffInput implements UpdateStaff {
   @Allow()
   @Field({ nullable: true })
   readonly email?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly usePseudoName?: boolean
 }

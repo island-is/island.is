@@ -21,7 +21,7 @@ describe('PaymentScheduleResolver', () => {
         {
           provide: PaymentScheduleService,
           useFactory: () => ({
-            getConditions: jest.fn((nationalId: string) => ({
+            getConditions: jest.fn((user: User) => ({
               maxDebtAmount: 100000,
               totalDebtAmount: 10000,
               minPayment: 0,
@@ -39,9 +39,9 @@ describe('PaymentScheduleResolver', () => {
               wageReturns: false,
               alimony: 12000,
             })),
-            getDebts: jest.fn((nationalId: string) => [
+            getDebts: jest.fn((user: User) => [
               {
-                nationalId: nationalId,
+                nationalId: user.nationalId,
                 type: 'SR',
                 paymentSchedule: 'string',
                 organization: 'string',
@@ -59,7 +59,7 @@ describe('PaymentScheduleResolver', () => {
                 ],
               },
             ]),
-            getCurrentEmployer: jest.fn((nationalId: string) => ({
+            getCurrentEmployer: jest.fn((user: User) => ({
               employerNationalId: '0987654321',
               employerName: 'island.is',
             })),
@@ -78,7 +78,7 @@ describe('PaymentScheduleResolver', () => {
                 maxCountMonth: 12,
               }),
             ),
-            getPaymentDistribution: jest.fn((nationalId: string) => ({
+            getPaymentDistribution: jest.fn((user: User) => ({
               nationalId: '1234567890',
               scheduleType: ScheduleType.FinesAndLegalCost,
               payments: [
@@ -128,7 +128,7 @@ describe('PaymentScheduleResolver', () => {
   })
 
   describe('debts', () => {
-    it('should get debs', async () => {
+    it('should get debts', async () => {
       const debts = await resolver.debts(mockedUser)
       expect(debts).toEqual([
         {

@@ -1,9 +1,9 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import type { Case } from '@island.is/judicial-system/types'
+
 import {
   CaseFileList,
-  CaseNumbers,
+  CaseInfo,
   Decision,
   FormContentContainer,
   FormFooter,
@@ -21,25 +21,23 @@ import {
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
-  FormSettings,
-  useCaseFormHelper,
-} from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { icRulingStepOne as m } from '@island.is/judicial-system-web/messages'
 import { isRulingStepOneValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import { icRulingStepOne as m } from '@island.is/judicial-system-web/messages'
+import type { Case } from '@island.is/judicial-system/types'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
+  isCaseUpToDate: boolean
 }
 
 const RulingStepOneForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading } = props
+  const { workingCase, setWorkingCase, isLoading, isCaseUpToDate } = props
   const { user } = useContext(UserContext)
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
@@ -47,20 +45,6 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
   const [courtCaseFactsEM, setCourtCaseFactsEM] = useState<string>('')
   const [courtLegalArgumentsEM, setCourtLegalArgumentsEM] = useState<string>('')
   const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState('')
-
-  const validations: FormSettings = {
-    ruling: {
-      validations: ['empty'],
-    },
-    courtCaseFacts: {
-      validations: ['empty'],
-    },
-    courtLegalArguments: {
-      validations: ['empty'],
-    },
-  }
-
-  useCaseFormHelper(workingCase, setWorkingCase, validations)
 
   return (
     <>
@@ -70,8 +54,8 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
             {formatMessage(m.title)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={5}>
-          <CaseNumbers workingCase={workingCase} />
+        <Box component="section" marginBottom={7}>
+          <CaseInfo workingCase={workingCase} userRole={user?.role} />
         </Box>
         <Box component="section" marginBottom={5}>
           <Accordion>
@@ -85,8 +69,10 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
                 caseId={workingCase.id}
                 files={workingCase.caseFiles ?? []}
                 canOpenFiles={
-                  workingCase.judge !== null &&
-                  workingCase.judge?.id === user?.id
+                  (workingCase.judge !== null &&
+                    workingCase.judge?.id === user?.id) ||
+                  (workingCase.registrar !== null &&
+                    workingCase.registrar?.id === user?.id)
                 }
               />
             </AccordionItem>
@@ -102,12 +88,12 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
             data-testid="prosecutorDemands"
             name="prosecutorDemands"
             label={formatMessage(m.sections.prosecutorDemands.label)}
-            defaultValue={workingCase.prosecutorDemands}
+            value={workingCase.prosecutorDemands || ''}
             placeholder={formatMessage(m.sections.prosecutorDemands.label)}
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'prosecutorDemands',
-                event,
+                event.target.value,
                 ['empty'],
                 workingCase,
                 setWorkingCase,
@@ -146,12 +132,12 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
               data-testid="courtCaseFacts"
               name="courtCaseFacts"
               label={formatMessage(m.sections.courtCaseFacts.label)}
-              defaultValue={workingCase.courtCaseFacts}
+              value={workingCase.courtCaseFacts || ''}
               placeholder={formatMessage(m.sections.courtCaseFacts.placeholder)}
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'courtCaseFacts',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -191,14 +177,14 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
               data-testid="courtLegalArguments"
               name="courtLegalArguments"
               label={formatMessage(m.sections.courtLegalArguments.label)}
-              defaultValue={workingCase.courtLegalArguments}
+              value={workingCase.courtLegalArguments || ''}
               placeholder={formatMessage(
                 m.sections.courtLegalArguments.placeholder,
               )}
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'courtLegalArguments',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -255,6 +241,7 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
           <RulingInput
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
+            isCaseUpToDate={isCaseUpToDate}
             isRequired
           />
         </Box>

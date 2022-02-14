@@ -4,12 +4,12 @@ import { ScopeType } from '@island.is/clients/auth-public-api'
 
 @InputType('AuthDelegationScopeInput')
 export class DelegationScopeInput {
-  @Field((_) => String)
+  @Field(() => String)
   name!: string
 
-  @Field((_) => ScopeType)
+  @Field(() => ScopeType)
   type!: ScopeType
 
-  @Field((_) => Date, { nullable: true })
+  @Field(() => Date, { nullable: true })
   validTo?: Date
 }

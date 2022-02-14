@@ -42,7 +42,7 @@ describe('PoliceController - Get all', () => {
       await givenWhenThen(uuid(), theCsae)
     })
 
-    it('should request police files for the correct case', () =>
+    it('should request police files for the correct case', () => {
       expect(fetch).toHaveBeenCalledWith(
         expect.stringMatching(
           new RegExp(
@@ -50,7 +50,8 @@ describe('PoliceController - Get all', () => {
           ),
         ),
         expect.anything(),
-      ))
+      )
+    })
   })
 
   describe('police files found', () => {

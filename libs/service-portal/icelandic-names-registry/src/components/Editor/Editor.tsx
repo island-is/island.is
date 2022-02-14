@@ -212,7 +212,7 @@ const Editor = () => {
           ref={inputRef}
           label={formatMessage(m.searchName)}
           placeholder={formatMessage(m.searchForNameOrPartOfName)}
-          size="md"
+          size="xs"
           onChange={(e) => {
             setInputValue(e.target.value)
           }}

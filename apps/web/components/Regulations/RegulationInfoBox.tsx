@@ -4,7 +4,7 @@ import * as s from './RegulationInfoBox.css'
 import React, { useState } from 'react'
 import { Button, Hidden, Link, Text } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
-import { RegulationMaybeDiff } from '@island.is/regulations/web'
+import { RegulationMaybeDiff } from '@island.is/regulations'
 import {
   RegulationsSidebarBox,
   RegulationsSidebarLink,
@@ -93,6 +93,13 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
           </span>
         </Text>
       )}
+      <Text marginBottom={2}>
+        <strong>{txt('infoboxPublishedDate')}:</strong>
+        <br />
+        <span className={RSBStyles.smallText}>
+          {formatDate(regulation.publishedDate)}
+        </span>
+      </Text>
 
       {regulation.repealedDate ? (
         <Text marginBottom={3}>

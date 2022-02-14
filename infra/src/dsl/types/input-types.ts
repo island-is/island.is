@@ -12,8 +12,6 @@ export type Hash = { [name: string]: Hash | string }
 export type ValueSource = string | ((e: Context) => string)
 export type ValueType = MissingSettingType | ValueSource
 
-export type RolloutStrategy = 'RollingUpdate' | 'Recreate'
-
 export type PostgresInfo = {
   host?: {
     [idx in OpsEnv]: ValueType
@@ -73,7 +71,7 @@ export type ServiceDefinition = {
   args?: string[]
   extraAttributes?: ExtraValues
   image?: string
-  resources?: Resources
+  resources: Resources
   replicaCount?: ReplicaCount
   securityContext: {
     privileged: boolean
@@ -81,7 +79,6 @@ export type ServiceDefinition = {
   }
   xroadConfig: XroadConfig[]
   files: MountedFile[]
-  rolloutStrategy?: RolloutStrategy
 }
 
 export interface Ingress {
@@ -93,7 +90,7 @@ export interface Ingress {
   extraAnnotations?: { [name in OpsEnv]: { [idx: string]: string | null } }
 }
 export type Resources = {
-  limits?: {
+  limits: {
     cpu: string
     memory: string
   }

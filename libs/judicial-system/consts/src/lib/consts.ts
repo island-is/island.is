@@ -61,6 +61,10 @@ export const ICaseTypes = [
         value: CaseType.INTERNET_USAGE,
       },
       {
+        label: 'Rannsókn á rafrænum gögnum',
+        value: CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
+      },
+      {
         label: 'Annað',
         value: CaseType.OTHER,
       },

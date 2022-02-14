@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Button, Text, Box } from '@island.is/island-ui/core'
 
 import { getState, ApplicationState } from '@island.is/financial-aid/shared/lib'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 interface Props {
   state: ApplicationState
@@ -20,10 +21,13 @@ const Rejected = ({
     return null
   }
 
+  const { municipality } = useContext(AppContext)
+
   return (
     <>
       <Text as="h2" variant="h3" color="red400" marginBottom={[4, 4, 5]}>
-        Umsókn {getState[state].toLowerCase()}
+        Umsókn þinni um fjárhagsaðstoð hefur verið{' '}
+        {getState[state].toLowerCase()}
       </Text>
 
       {isApplicant && (
@@ -52,12 +56,15 @@ const Rejected = ({
           </Text>
 
           <Text>
-            Ef þú telur að niðurstaðan sé röng átt þú rétt á að áfrýja innan
-            fjögurra vikna frá niðurstöðu. Smelltu á hnappinn hér fyrir neðan og
-            gerðu grein fyrir þínum rökum. Áfrýjunarnefnd þíns sveitarfélags mun
-            taka málið fyrir. Ákvörðun áfrýjunarnefndar er hægt að skjóta til
-            úrskurðarnefndar velferðarmála, innan þriggja mánaða sbr. 5.gr. laga
-            nr. 85/2015
+            Bent skal á að unnt er að skjóta ákvörðun þessari til
+            áfrýjunarnefndar þíns sveitarfélags. Skal það gert skriflega og
+            innan fjögurra vikna. Fyrir frekari upplýsingar um málskot hafðu
+            samband með tölvupósti á netfangið{' '}
+            <a href={`mailto:${municipality?.email}`} rel="noreferrer noopener">
+              {municipality?.email}
+            </a>
+            .  Ákvörðun ráðsins má síðan skjóta til úrskurðarnefndar
+            velferðarmála, Katrínartúni 2, 105 Reykjavík innan þriggja mánaða.
           </Text>
         </>
       )}

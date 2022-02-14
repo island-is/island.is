@@ -28,9 +28,6 @@ export class PaymentScheduleClientModule {
                   'Content-Type': 'application/json',
                   Accept: 'application/json',
                   'X-Road-Client': options.xRoadClientId,
-                  Authorization: `Basic ${Base64.encode(
-                    `${options.username}:${options.password}`,
-                  )}`,
                 },
               }),
             ),

@@ -16,19 +16,21 @@ export enum ServicePortalPath {
 
   SettingsAccessControl = '/stillingar/adgangsstyring',
   SettingsAccessControlGrant = '/stillingar/adgangsstyring/veita',
-  SettingsAccessControlAccess = '/stillingar/adgangsstyring/:nationalId(\\d+)',
-  SettingsPersonalInformation = '/stillingar/personuupplysingar',
-  SettingsPersonalInformationEditPhoneNumber = '/stillingar/personuupplysingar/breyta-simanumeri',
-  SettingsPersonalInformationEditEmail = '/stillingar/personuupplysingar/breyta-netfangi',
-  SettingsPersonalInformationEditLanguage = '/stillingar/personuupplysingar/breyta-tungumali',
-  SettingsPersonalInformationEditNudge = '/stillingar/personuupplysingar/breyta-hnippi',
-  SettingsPersonalInformationEmailConfirmation = '/stillingar/personuupplysingar/stadfesta-netfang/:hash',
+  SettingsAccessControlAccess = '/stillingar/adgangsstyring/:delegationId',
+  SettingsPersonalInformation = '/stillingar/minar-stillingar',
+  SettingsPersonalInformationEditPhoneNumber = '/stillingar/minar-stillingar/breyta-simanumeri',
+  SettingsPersonalInformationEditEmail = '/stillingar/minar-stillingar/breyta-netfangi',
+  SettingsPersonalInformationEditLanguage = '/stillingar/minar-stillingar/breyta-tungumali',
+  SettingsPersonalInformationEditNudge = '/stillingar/minar-stillingar/breyta-hnippi',
+  SettingsPersonalInformationEditBankInfo = '/stillingar/minar-stillingar/reikningsnumer',
+  SettingsPersonalInformationEmailConfirmation = '/stillingar/minar-stillingar/stadfesta-netfang/:hash',
   SettingsExternal = 'https://minarsidur.island.is/minar-sidur/minn-adgangur/stillingar/',
   SettingsIslykill = '/stillingar/islykill',
 
   // Family
   FamilyRoot = '/min-gogn/fjolskyldan',
   FamilyMember = '/min-gogn/fjolskyldan/:nationalId',
+  Spouse = '/min-gogn/fjolskyldan/maki/:nationalId',
   MyInfoRoot = '/min-gogn',
   UserInfo = '/min-gogn/minar-upplysingar',
   Endorsements = '/min-gogn/medmaeli',
@@ -71,6 +73,7 @@ export enum ServicePortalPath {
 
   // Assets
   AssetsRoot = '/fasteignir',
+  AssetsRealEstateDetail = '/fasteignir/:id',
   AssetsVehicles = '/okutaeki',
 
   // Messages
@@ -79,14 +82,14 @@ export enum ServicePortalPath {
   // My licenses
   MyLicensesRoot = '/min-rettindi',
   ParentalLeave = '/min-rettindi/faedingarorlof',
-  DrivingLicense = '/min-rettindi/okuskirteini',
 
   // Icelandic Names Registry
   IcelandicNamesRegistryRoot = '/mannanafnaskra',
 
   // Licenses service
-  LicensesRoot = '/min-gogn/skilriki',
-
+  LicensesRoot = '/skirteini',
+  LicensesDriving = '/skirteini/okuskirteini',
+  LicensesDrivingDetail = '/skirteini/okuskirteini/:id',
   // DocumentProvider
   // Temporary change to the value of DocumentProviderRoot; skjalaveita -> skjalaveitur. In the first
   // release there will only be a limited number of features and this change creates a better UX in

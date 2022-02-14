@@ -176,7 +176,13 @@ export class SharedTemplateApiService {
           throw new Error('Creating the payment charge failed')
         }
 
-        return data?.applicationPaymentCharge
+        if (!data?.applicationPaymentCharge) {
+          throw new Error(
+            'no graphql error, but payment object was not returned',
+          )
+        }
+
+        return data.applicationPaymentCharge
       })
   }
 

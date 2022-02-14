@@ -6,6 +6,7 @@ import { ApiScopeDTO } from '../entities/dtos/api-scope-dto'
 import { ApiScopeGroupDTO } from '../entities/dtos/api-scope-group.dto'
 import { DomainDTO } from '../entities/dtos/domain.dto'
 import IdentityResourceDTO from '../entities/dtos/identity-resource.dto'
+import { PersonalRepresentativeScopePermissionDTO } from '../entities/dtos/personal-representative-scope-permission.dto'
 import { UserClaimDTO } from '../entities/dtos/user-claim-dto'
 import { ApiResourceScope } from '../entities/models/api-resource-scope.model'
 import { ApiResourceSecret } from '../entities/models/api-resource-secret.model'
@@ -18,6 +19,8 @@ import { Domain } from '../entities/models/domain.model'
 import { IdentityResourceUserClaim } from '../entities/models/identity-resource-user-claim.model'
 import { IdentityResource } from '../entities/models/identity-resource.model'
 import { PagedRowsDTO } from '../entities/models/paged-rows.dto'
+import { PaginatedPersonalRepresentativeRightType } from '../entities/models/personal-representative-permission-type.model'
+import { ScopePermission } from '../entities/models/personal-representative-scope-permission.model'
 import { BaseService } from './BaseService'
 
 export class ResourcesService extends BaseService {
@@ -199,7 +202,9 @@ export class ResourcesService extends BaseService {
     count: number
   } | null> {
     return BaseService.GET(
-      `api-resources?searchString=${searchString}&page=${page}&count=${count}`,
+      `api-resources?searchString=${encodeURIComponent(
+        searchString,
+      )}&page=${page}&count=${count}`,
     )
   }
 
@@ -367,12 +372,12 @@ export class ResourcesService extends BaseService {
     group: ApiScopeGroupDTO,
     id: string,
   ): Promise<[number, ApiScopeGroup[]] | null> {
-    return BaseService.PUT(`api-scope-group/${id}`, group)
+    return BaseService.PUT(`api-scope-group/${encodeURIComponent(id)}`, group)
   }
 
   /** Delete ApiScopeGroup */
   static async deleteApiScopeGroup(id: string): Promise<number | null> {
-    return BaseService.DELETE(`api-scope-group/${id}`)
+    return BaseService.DELETE(`api-scope-group/${encodeURIComponent(id)}`)
   }
 
   /** Returns a ApiScopeGroup by Id */
@@ -395,7 +400,9 @@ export class ResourcesService extends BaseService {
   > {
     if (page && count) {
       return BaseService.GET(
-        `api-scope-group?searchString=${searchString}&page=${page}&count=${count}`,
+        `api-scope-group?searchString=${encodeURIComponent(
+          searchString,
+        )}&page=${page}&count=${count}`,
       )
     }
     return BaseService.GET(`api-scope-group`)
@@ -411,13 +418,15 @@ export class ResourcesService extends BaseService {
     count: number | null = null,
   ): Promise<Domain[] | PagedRowsDTO<Domain>> {
     return BaseService.GET(
-      `domain?searchString=${searchString}&page=${page}&count=${count}`,
+      `domain?searchString=${encodeURIComponent(
+        searchString,
+      )}&page=${page}&count=${count}`,
     )
   }
 
   /** Gets domain by it's name */
   static async getDomain(name: string): Promise<Domain> {
-    return BaseService.GET(`domain/${name}`)
+    return BaseService.GET(`domain/${encodeURIComponent(name)}`)
   }
 
   /** Creates a new Domain */
@@ -430,13 +439,38 @@ export class ResourcesService extends BaseService {
     domain: DomainDTO,
     name: string,
   ): Promise<[number, Domain[]]> {
-    return BaseService.PUT(`domain/${name}`, domain)
+    return BaseService.PUT(`domain/${encodeURIComponent(name)}`, domain)
   }
 
   /** Delete Domain */
   static async deleteDomain(name: string): Promise<number> {
-    return BaseService.DELETE(`domain/${name}`)
+    return BaseService.DELETE(`domain/${encodeURIComponent(name)}`)
   }
 
   // #endregion Domain
+
+  static async getPersonalRepresentativePermissionTypes(): Promise<PaginatedPersonalRepresentativeRightType> {
+    return BaseService.GET('personal-representative/permission-types')
+  }
+
+  static async getPersonalRepresentativeScopePermissions(
+    apiScopeName: string,
+  ): Promise<ScopePermission[]> {
+    return BaseService.GET(
+      `personal-representative/permissions?apiScopeName=${apiScopeName}`,
+    )
+  }
+
+  static async createPersonalRepresentativeScopePermission(
+    scopePermission: PersonalRepresentativeScopePermissionDTO,
+  ) {
+    return await BaseService.POST(
+      'personal-representative/permissions',
+      scopePermission,
+    )
+  }
+
+  static async deletePersonalRepresentativeScopePermission(id: string) {
+    return BaseService.DELETE(`personal-representative/permissions/${id}`)
+  }
 }

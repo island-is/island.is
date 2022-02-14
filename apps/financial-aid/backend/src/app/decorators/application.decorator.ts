@@ -15,7 +15,7 @@ export const CurrentApplication = createParamDecorator(
 
     if (!application) {
       logger.warn(
-        'No user staff found. Did you forget to add IdsUserGuard or ApplicationGuard?',
+        'No application found. Did you forget to add IdsUserGuard or ApplicationGuard?',
       )
       throw new UnauthorizedException()
     }

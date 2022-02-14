@@ -1,5 +1,4 @@
-import React, { ReactNode, useContext } from 'react'
-import { useIntl } from 'react-intl'
+import React, { ReactNode, useContext, useEffect } from 'react'
 
 import {
   Box,
@@ -9,15 +8,14 @@ import {
   FormStepper,
   AlertBanner,
 } from '@island.is/island-ui/core'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { CaseType, UserRole, Case } from '@island.is/judicial-system/types'
 import { Sections } from '@island.is/judicial-system-web/src/types'
-import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import { UserContext } from '../UserProvider/UserProvider'
 import Logo from '../Logo/Logo'
-import Loading from '../Loading/Loading'
-import { getSections } from './utils'
+import Skeleton from '../Skeleton/Skeleton'
+import useSections from '../../utils/hooks/useSections'
 import * as styles from './PageLayout.css'
 
 interface PageProps {
@@ -41,14 +39,36 @@ const PageLayout: React.FC<PageProps> = ({
   showSidepanel = true,
 }) => {
   const { user } = useContext(UserContext)
-  const { formatMessage } = useIntl()
-  const sections = getSections(
-    { dismissedTitle: formatMessage(signedVerdictOverview.dismissedTitle) },
-    workingCase,
-    activeSubSection,
-  )
+  const { getSections } = useSections()
 
-  return children ? (
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
+  return isLoading ? (
+    <Skeleton />
+  ) : notFound ? (
+    <AlertBanner
+      title={
+        user?.role === UserRole.ADMIN
+          ? 'Notandi fannst ekki'
+          : 'Mál fannst ekki'
+      }
+      description={
+        user?.role === UserRole.ADMIN
+          ? 'Vinsamlegast reynið aftur með því að opna notandann aftur frá yfirlitssíðunni'
+          : 'Vinsamlegast reynið aftur með því að opna málið aftur frá yfirlitssíðunni'
+      }
+      variant="error"
+      link={{
+        href:
+          user?.role === UserRole.ADMIN
+            ? Constants.USER_LIST_ROUTE
+            : Constants.REQUEST_LIST_ROUTE,
+        title: 'Fara á yfirlitssíðu',
+      }}
+    />
+  ) : children ? (
     <Box
       paddingY={[3, 3, 3, 6]}
       background="purple100"
@@ -78,8 +98,12 @@ const PageLayout: React.FC<PageProps> = ({
                     sections={
                       activeSection === Sections.EXTENSION ||
                       activeSection === Sections.JUDGE_EXTENSION
-                        ? sections
-                        : sections.filter((_, index) => index <= 2)
+                        ? getSections(workingCase, activeSubSection, user)
+                        : getSections(
+                            workingCase,
+                            activeSubSection,
+                            user,
+                          ).filter((_, index) => index <= 2)
                     }
                     formName={
                       workingCase?.type === CaseType.CUSTODY
@@ -98,31 +122,6 @@ const PageLayout: React.FC<PageProps> = ({
         </GridRow>
       </GridContainer>
     </Box>
-  ) : isLoading ? (
-    <Box className={styles.loadingWrapper}>
-      <Loading />
-    </Box>
-  ) : notFound ? (
-    <AlertBanner
-      title={
-        user?.role === UserRole.ADMIN
-          ? 'Notandi fannst ekki'
-          : 'Mál fannst ekki'
-      }
-      description={
-        user?.role === UserRole.ADMIN
-          ? 'Vinsamlegast reynið aftur með því að opna notandann aftur frá yfirlitssíðunni'
-          : 'Vinsamlegast reynið aftur með því að opna málið aftur frá yfirlitssíðunni'
-      }
-      variant="error"
-      link={{
-        href:
-          user?.role === UserRole.ADMIN
-            ? Constants.USER_LIST_ROUTE
-            : Constants.REQUEST_LIST_ROUTE,
-        title: 'Fara á yfirlitssíðu',
-      }}
-    />
   ) : null
 }
 

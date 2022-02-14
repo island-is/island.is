@@ -16,11 +16,17 @@ import { MunicipalityModel } from './models'
 
 import { apiBasePath, StaffRole } from '@island.is/financial-aid/shared/lib'
 import type { Staff } from '@island.is/financial-aid/shared/lib'
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { StaffGuard } from '../../guards/staff.guard'
 import { StaffRolesRules } from '../../decorators/staffRole.decorator'
-import { CurrentStaff } from '../../decorators'
-import { CreateMunicipalityDto, UpdateMunicipalityDto } from './dto'
+import { CurrentStaff, CurrentUser } from '../../decorators'
+import {
+  MunicipalityActivityDto,
+  UpdateMunicipalityDto,
+  CreateMunicipalityDto,
+} from './dto'
+import { CreateStaffDto } from '../staff/dto'
+import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
 
 @UseGuards(IdsUserGuard)
 @Controller(`${apiBasePath}/municipality`)
@@ -28,6 +34,8 @@ import { CreateMunicipalityDto, UpdateMunicipalityDto } from './dto'
 export class MunicipalityController {
   constructor(private readonly municipalityService: MunicipalityService) {}
 
+  @UseGuards(ScopesGuard)
+  @Scopes(MunicipalitiesFinancialAidScope.read)
   @Get(':id')
   @ApiOkResponse({
     type: MunicipalityModel,
@@ -43,13 +51,26 @@ export class MunicipalityController {
     return municipality
   }
 
+  @UseGuards(StaffGuard)
+  @StaffRolesRules(StaffRole.SUPERADMIN)
   @Post('')
   @ApiCreatedResponse({
     type: MunicipalityModel,
     description: 'Creates a new municipality',
   })
-  create(@Body() input: CreateMunicipalityDto): Promise<MunicipalityModel> {
-    return this.municipalityService.create(input)
+  create(
+    @CurrentUser() staff: Staff,
+    @Body()
+    input: {
+      municipalityInput: CreateMunicipalityDto
+      adminInput: CreateStaffDto
+    },
+  ): Promise<MunicipalityModel> {
+    return this.municipalityService.create(
+      input.municipalityInput,
+      input.adminInput,
+      staff,
+    )
   }
 
   @UseGuards(StaffGuard)
@@ -78,5 +99,28 @@ export class MunicipalityController {
       staff.municipalityId,
       input,
     )
+  }
+
+  @Put('activity/:id')
+  @UseGuards(StaffGuard)
+  @StaffRolesRules(StaffRole.SUPERADMIN)
+  @ApiOkResponse({
+    type: MunicipalityModel,
+    description: 'Updates activity for municipality',
+  })
+  async updateMunicipalityActivity(
+    @Param('id') id: string,
+    @Body() municipalityToUpdate: MunicipalityActivityDto,
+  ): Promise<MunicipalityModel> {
+    const {
+      numberOfAffectedRows,
+      updatedMunicipality,
+    } = await this.municipalityService.update(id, municipalityToUpdate)
+
+    if (numberOfAffectedRows === 0) {
+      throw new NotFoundException(`Municipality ${id} does not exist`)
+    }
+
+    return updatedMunicipality
   }
 }

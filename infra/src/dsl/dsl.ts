@@ -12,9 +12,9 @@ import {
   HealthProbe,
   Features,
   Secrets,
+  ValueType,
   XroadConfig,
   MountedFile,
-  RolloutStrategy,
 } from './types/input-types'
 
 export class ServiceBuilder<ServiceType> implements Service {
@@ -65,6 +65,16 @@ export class ServiceBuilder<ServiceType> implements Service {
       securityContext: {
         privileged: false,
         allowPrivilegeEscalation: false,
+      },
+      resources: {
+        limits: {
+          memory: '256Mi',
+          cpu: '200m',
+        },
+        requests: {
+          memory: '128Mi',
+          cpu: '100m',
+        },
       },
       xroadConfig: [],
       files: [],
@@ -144,15 +154,6 @@ export class ServiceBuilder<ServiceType> implements Service {
   }
 
   /**
-   * Ability to override the default rollout strategy of the environment
-   * @param strategy: RollingUpdate or Recreate
-   */
-  rolloutStrategy(strategy: RolloutStrategy) {
-    this.serviceDef.rolloutStrategy = strategy
-    return this
-  }
-
-  /**
    * To perform maintenance before deploying the main service(database migrations, etc.), create an `initContainer` (optional). It maps to a Pod specification for an [initContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/).
    * @param ic initContainer definitions
    */
@@ -195,18 +196,6 @@ export class ServiceBuilder<ServiceType> implements Service {
 
   resources(res: Resources) {
     this.serviceDef.resources = res
-    if (res.limits && res.limits.memory) {
-      if (this.serviceDef.env.NODE_OPTIONS) {
-        throw new Error(
-          'NODE_OPTIONS already set. At the moment of writing, there is no known use case for this, so this might need to be revisited in the future.',
-        )
-      }
-      this.env({
-        NODE_OPTIONS: `--max-old-space-size=${
-          parseInt(res.limits.memory, 10) - 48
-        }`,
-      })
-    }
     return this
   }
 
@@ -267,3 +256,5 @@ export const service = <Service extends string>(
 ): ServiceBuilder<Service> => {
   return new ServiceBuilder(name)
 }
+
+export const json = (value: unknown): ValueType => JSON.stringify(value)

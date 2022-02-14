@@ -3,14 +3,14 @@ import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType()
 export class NationalRegistryAddress {
   @Field(() => String)
-  streetName?: string
+  streetName!: string
 
   @Field(() => String, { nullable: true })
-  postalCode?: string
+  postalCode?: string | null
 
-  @Field(() => String)
-  city?: string
+  @Field(() => String, { nullable: true })
+  city?: string | null
 
-  @Field(() => String)
-  municipalityCode?: string
+  @Field(() => String, { nullable: true })
+  municipalityCode?: string | null
 }

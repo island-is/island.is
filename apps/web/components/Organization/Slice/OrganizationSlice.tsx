@@ -83,7 +83,7 @@ const fullWidthSlices = [
 ]
 const slicesWithContainer = ['LatestNewsSlice']
 
-const renderSlice = (slice, namespace, organizationPageSlug, fullWidth) => {
+const renderSlice = (slice, namespace, organizationPageSlug) => {
   switch (slice.__typename) {
     case 'HeadingSlice':
       return <HeadingSlice slice={slice} />
@@ -118,7 +118,6 @@ const renderSlice = (slice, namespace, organizationPageSlug, fullWidth) => {
         <LatestNewsSlice
           slice={slice}
           organizationPageSlug={organizationPageSlug}
-          fullWidth={fullWidth}
         />
       )
     case 'MailingListSignupSlice':
@@ -150,11 +149,11 @@ export const OrganizationSlice = ({
               : ['0', '0', '1/9']
           }
         >
-          {renderSlice(slice, namespace, organizationPageSlug, fullWidth)}
+          {renderSlice(slice, namespace, organizationPageSlug)}
         </GridColumn>
       </GridRow>
     </GridContainer>
   ) : (
-    renderSlice(slice, namespace, organizationPageSlug, fullWidth)
+    renderSlice(slice, namespace, organizationPageSlug)
   )
 }

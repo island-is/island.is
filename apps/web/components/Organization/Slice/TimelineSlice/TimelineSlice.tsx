@@ -182,6 +182,9 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
       )
       .filter((x) => x > 0)
 
+    if (futureMonths.length === 0) {
+      return 0
+    }
     return Math.min(...futureMonths)
   })
 

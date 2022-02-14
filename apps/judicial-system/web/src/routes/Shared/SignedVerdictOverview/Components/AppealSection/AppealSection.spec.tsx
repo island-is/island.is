@@ -1,13 +1,15 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import AppealSection from './AppealSection'
+import { LocaleProvider } from '@island.is/localization'
+import { MockedProvider } from '@apollo/client/testing'
+
 import {
   CaseAppealDecision,
   CaseState,
   CaseType,
 } from '@island.is/judicial-system/types'
-import { LocaleProvider } from '@island.is/localization'
-import { MockedProvider } from '@apollo/client/testing'
+
+import AppealSection from './AppealSection'
 
 describe('Appeal section component', () => {
   const baseWorkingCase = {
@@ -17,7 +19,7 @@ describe('Appeal section component', () => {
     type: CaseType.CUSTODY,
     state: CaseState.ACCEPTED,
     policeCaseNumber: '000',
-    accusedNationalId: '000000-0000',
+    defendants: [{ nationalId: '000000-0000' }],
   }
 
   test('should say when a case is no longer appealable if either the prosecutors or judges appeal decision is to postpone', async () => {

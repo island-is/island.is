@@ -18,16 +18,16 @@ import {
   SkeletonLoader,
   Pagination,
   Input,
-  LoadingDots,
   Hidden,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import { DocumentsListItemTypes } from './DocumentScreen.types'
 import amountFormat from '../../utils/amountFormat'
-import { showPdfDocument } from '@island.is/service-portal/graphql'
 import { billsFilter } from '../../utils/simpleFilter'
-import * as styles from './DocumentScreen.css'
+import { formSubmit } from '../../utils/documentFormSubmission'
+import { User } from 'oidc-client'
+import { tableStyles } from '@island.is/service-portal/core'
 
 const ITEMS_ON_PAGE = 20
 
@@ -36,11 +36,13 @@ interface Props {
   intro: string
   listPath: string
   defaultDateRangeMonths?: number
+  userInfo: User
 }
 
 const getFinanceDocumentsListQuery = gql`
   query getFinanceDocumentsListQuery($input: GetDocumentsListInput!) {
     getDocumentsList(input: $input) {
+      downloadServiceURL
       documentsList {
         id
         date
@@ -59,8 +61,8 @@ const DocumentScreen: FC<Props> = ({
   intro,
   listPath,
   defaultDateRangeMonths = 3,
+  userInfo,
 }) => {
-  const { showPdf, loadingPDF, fetchingPdfId } = showPdfDocument()
   const { formatMessage } = useLocale()
 
   const [page, setPage] = useState(1)
@@ -107,27 +109,59 @@ const DocumentScreen: FC<Props> = ({
   return (
     <Box marginBottom={[6, 6, 10]}>
       <Stack space={2}>
-        <Text variant="h1" as="h1">
+        <Text variant="h3" as="h1">
           {title}
         </Text>
-        <Columns collapseBelow="sm">
-          <Column width="8/12">
-            <Text variant="intro">{intro}</Text>
-          </Column>
-        </Columns>
+        <GridRow>
+          <GridColumn span={['12/12', '8/12']}>
+            <Text variant="default">{intro}</Text>
+          </GridColumn>
+          <Box display="flex" marginLeft="auto" marginTop={1}>
+            <GridColumn>
+              <Button
+                colorScheme="default"
+                icon="print"
+                iconType="filled"
+                onClick={() => window.print()}
+                preTextIconType="filled"
+                size="default"
+                type="button"
+                variant="utility"
+              >
+                {formatMessage(m.print)}
+              </Button>
+            </GridColumn>
+          </Box>
+        </GridRow>
         <Hidden print={true}>
           <Box marginTop={[1, 1, 2, 2, 5]}>
             <GridRow>
               <GridColumn
-                span={['1/1', '6/12', '6/12', '6/12', '4/12']}
-                order={[2, 2, 2, 2, 0]}
+                span={['1/1', '8/12', '6/12', '6/12', '4/12']}
+                order={[3, 3, 3, 3, 0]}
+                paddingTop={[2, 2, 2, 2, 0]}
+              >
+                <Input
+                  backgroundColor="blue"
+                  label={formatMessage(m.searchLabel)}
+                  name="Search"
+                  icon="search"
+                  placeholder={formatMessage(m.searchPlaceholder)}
+                  size="xs"
+                  onChange={(e) => setQ(e.target.value)}
+                  value={q}
+                />
+              </GridColumn>
+              <GridColumn
+                span={['1/1', '8/12', '6/12', '6/12', '4/12']}
+                order={[1, 1, 1, 1, 1]}
               >
                 <DatePicker
                   backgroundColor="blue"
                   handleChange={(d) => setFromDate(d)}
                   icon="calendar"
                   iconType="outline"
-                  size="sm"
+                  size="xs"
                   label={formatMessage(m.dateFrom)}
                   selected={fromDate}
                   locale="is"
@@ -135,52 +169,23 @@ const DocumentScreen: FC<Props> = ({
                 />
               </GridColumn>
               <GridColumn
-                paddingTop={[2, 0]}
-                span={['1/1', '6/12', '6/12', '6/12', '4/12']}
-                order={[3, 3, 3, 3, 0]}
+                span={['1/1', '8/12', '6/12', '6/12', '4/12']}
+                paddingTop={[2, 2, 0, 0, 0]}
+                order={[2, 2, 2, 2, 2]}
               >
                 <DatePicker
                   backgroundColor="blue"
                   handleChange={(d) => setToDate(d)}
                   icon="calendar"
                   iconType="outline"
-                  size="sm"
+                  size="xs"
                   label={formatMessage(m.dateTo)}
                   selected={toDate}
                   locale="is"
                   placeholderText={formatMessage(m.chooseDate)}
                 />
               </GridColumn>
-              <GridColumn
-                paddingTop={[2, 0]}
-                paddingBottom={2}
-                span={['1/1', '12/12', '12/12', '12/12', '4/12']}
-                order={[1, 1, 1, 1, 3]}
-              >
-                <Button
-                  colorScheme="default"
-                  icon="print"
-                  iconType="filled"
-                  onClick={() => window.print()}
-                  preTextIconType="filled"
-                  size="default"
-                  type="button"
-                  variant="utility"
-                >
-                  {formatMessage(m.print)}
-                </Button>
-              </GridColumn>
             </GridRow>
-            <Box marginTop={3}>
-              <Input
-                label="Leit"
-                name="Search"
-                placeholder={formatMessage(m.searchPlaceholder)}
-                size="sm"
-                onChange={(e) => setQ(e.target.value)}
-                value={q}
-              />
-            </Box>
           </Box>
         </Hidden>
         <Box marginTop={2}>
@@ -211,24 +216,28 @@ const DocumentScreen: FC<Props> = ({
             <T.Table>
               <T.Head>
                 <T.Row>
-                  <T.HeadData>
-                    <Text variant="eyebrow">{formatMessage(m.date)}</Text>
+                  <T.HeadData style={tableStyles}>
+                    <Text variant="medium" fontWeight="semiBold">
+                      {formatMessage(m.date)}
+                    </Text>
                   </T.HeadData>
-                  <T.HeadData>
-                    <Text variant="eyebrow">
+                  <T.HeadData style={tableStyles}>
+                    <Text variant="medium" fontWeight="semiBold">
                       {formatMessage(m.transactionType)}
                     </Text>
                   </T.HeadData>
-                  <T.HeadData>
-                    <Text variant="eyebrow">
+                  <T.HeadData style={tableStyles}>
+                    <Text variant="medium" fontWeight="semiBold">
                       {formatMessage(m.performingOrganization)}
                     </Text>
                   </T.HeadData>
-                  <T.HeadData box={{ textAlign: 'right' }}>
-                    <Text variant="eyebrow">{formatMessage(m.amount)}</Text>
+                  <T.HeadData box={{ textAlign: 'right' }} style={tableStyles}>
+                    <Text variant="medium" fontWeight="semiBold">
+                      {formatMessage(m.amount)}
+                    </Text>
                   </T.HeadData>
-                  <T.HeadData>
-                    <Text variant="eyebrow">
+                  <T.HeadData style={tableStyles}>
+                    <Text variant="medium" fontWeight="semiBold">
                       {formatMessage(m.explanationNote)}
                     </Text>
                   </T.HeadData>
@@ -239,29 +248,39 @@ const DocumentScreen: FC<Props> = ({
                   .slice(ITEMS_ON_PAGE * (page - 1), ITEMS_ON_PAGE * page)
                   .map((listItem) => (
                     <T.Row key={listItem.id}>
-                      <T.Data>
-                        {format(new Date(listItem.date), dateFormat.is)}
+                      <T.Data style={tableStyles}>
+                        <Text variant="medium">
+                          {format(new Date(listItem.date), dateFormat.is)}
+                        </Text>
                       </T.Data>
-                      <T.Data box={{ position: 'relative' }}>
+                      <T.Data
+                        box={{ position: 'relative' }}
+                        style={tableStyles}
+                      >
                         <Button
-                          size="small"
                           variant="text"
-                          onClick={() => showPdf(listItem.id)}
-                          disabled={loadingPDF && fetchingPdfId === listItem.id}
+                          size="medium"
+                          onClick={() =>
+                            formSubmit(
+                              `${data?.getDocumentsList?.downloadServiceURL}${listItem.id}`,
+                              userInfo.access_token,
+                            )
+                          }
                         >
                           {listItem.type}
-                          {loadingPDF && fetchingPdfId === listItem.id && (
-                            <span className={styles.loadingDot}>
-                              <LoadingDots single />
-                            </span>
-                          )}
                         </Button>
                       </T.Data>
-                      <T.Data>{listItem.sender}</T.Data>
-                      <T.Data box={{ textAlign: 'right' }}>
-                        {amountFormat(listItem.amount)}
+                      <T.Data style={tableStyles}>
+                        <Text variant="medium">{listItem.sender}</Text>
                       </T.Data>
-                      <T.Data>{listItem.note}</T.Data>
+                      <T.Data box={{ textAlign: 'right' }} style={tableStyles}>
+                        <Text variant="medium">
+                          {amountFormat(listItem.amount)}
+                        </Text>
+                      </T.Data>
+                      <T.Data style={tableStyles}>
+                        <Text variant="medium">{listItem.note}</Text>
+                      </T.Data>
                     </T.Row>
                   ))}
               </T.Body>

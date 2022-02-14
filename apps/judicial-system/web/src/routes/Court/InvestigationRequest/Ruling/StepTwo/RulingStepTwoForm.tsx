@@ -1,16 +1,17 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
+
 import {
   CaseAppealDecision,
   SessionArrangements,
+  User,
 } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   FormContentContainer,
   FormFooter,
   TimeInputField,
-  CaseNumbers,
+  CaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Box,
@@ -30,18 +31,20 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { icRulingStepTwo as m } from '@island.is/judicial-system-web/messages'
 import { isRulingStepTwoValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import type { Case } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
+  user?: User
 }
 
 const RulingStepTwoForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading } = props
+  const { workingCase, setWorkingCase, isLoading, user } = props
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
   const [courtDocumentEndEM, setCourtDocumentEndEM] = useState<string>('')
@@ -55,7 +58,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers workingCase={workingCase} />
+          <CaseInfo workingCase={workingCase} userRole={user?.role} />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
@@ -68,11 +71,11 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
             name="conclusion"
             label={formatMessage(m.sections.conclusion.label)}
             placeholder={formatMessage(m.sections.conclusion.placeholder)}
-            defaultValue={workingCase.conclusion}
+            value={workingCase.conclusion || ''}
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'conclusion',
-                event,
+                event.target.value,
                 [],
                 workingCase,
                 setWorkingCase,
@@ -106,178 +109,190 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
               </Text>
             </Box>
           )}
-          <Box marginBottom={3}>
-            <BlueBox>
-              <Box marginBottom={2}>
-                <Text as="h4" variant="h4">
-                  {formatMessage(m.sections.appealDecision.accusedTitle)}{' '}
-                  <Text as="span" color="red600" fontWeight="semiBold">
-                    *
+          {workingCase.defendants && workingCase.defendants.length > 0 && (
+            <Box marginBottom={3}>
+              <BlueBox>
+                <Box marginBottom={2}>
+                  <Text as="h4" variant="h4">
+                    {formatMessage(m.sections.appealDecision.accusedTitle)}{' '}
+                    <Text as="span" color="red600" fontWeight="semiBold">
+                      *
+                    </Text>
                   </Text>
-                </Text>
-              </Box>
-              <Box marginBottom={2}>
-                <GridRow>
-                  <GridColumn span="6/12">
-                    <RadioButton
-                      name="accused-appeal-decision"
-                      id="accused-appeal"
-                      label={formatMessage(
-                        m.sections.appealDecision.accusedAppeal,
-                      )}
-                      value={CaseAppealDecision.APPEAL}
-                      checked={
-                        workingCase.accusedAppealDecision ===
-                        CaseAppealDecision.APPEAL
-                      }
-                      onChange={() => {
-                        setWorkingCase({
-                          ...workingCase,
-                          accusedAppealDecision: CaseAppealDecision.APPEAL,
-                        })
+                </Box>
+                <Box marginBottom={2}>
+                  <GridRow>
+                    <GridColumn span="6/12">
+                      <RadioButton
+                        name="accused-appeal-decision"
+                        id="accused-appeal"
+                        label={formatMessage(
+                          workingCase.defendants.length > 1
+                            ? m.sections.appealDecision.multipleAccusedAppeal
+                            : m.sections.appealDecision.accusedAppeal,
+                        )}
+                        value={CaseAppealDecision.APPEAL}
+                        checked={
+                          workingCase.accusedAppealDecision ===
+                          CaseAppealDecision.APPEAL
+                        }
+                        onChange={() => {
+                          setWorkingCase({
+                            ...workingCase,
+                            accusedAppealDecision: CaseAppealDecision.APPEAL,
+                          })
 
-                        updateCase(
-                          workingCase.id,
-                          parseString(
-                            'accusedAppealDecision',
-                            CaseAppealDecision.APPEAL,
-                          ),
-                        )
-                      }}
-                      large
-                      backgroundColor="white"
-                    />
-                  </GridColumn>
-                  <GridColumn span="6/12">
-                    <RadioButton
-                      name="accused-appeal-decision"
-                      id="accused-accept"
-                      label={formatMessage(
-                        m.sections.appealDecision.accusedAccept,
-                      )}
-                      value={CaseAppealDecision.ACCEPT}
-                      checked={
-                        workingCase.accusedAppealDecision ===
-                        CaseAppealDecision.ACCEPT
-                      }
-                      onChange={() => {
-                        setWorkingCase({
-                          ...workingCase,
-                          accusedAppealDecision: CaseAppealDecision.ACCEPT,
-                        })
+                          updateCase(
+                            workingCase.id,
+                            parseString(
+                              'accusedAppealDecision',
+                              CaseAppealDecision.APPEAL,
+                            ),
+                          )
+                        }}
+                        large
+                        backgroundColor="white"
+                      />
+                    </GridColumn>
+                    <GridColumn span="6/12">
+                      <RadioButton
+                        name="accused-appeal-decision"
+                        id="accused-accept"
+                        label={formatMessage(
+                          workingCase.defendants.length > 1
+                            ? m.sections.appealDecision.multipleAccusedAccept
+                            : m.sections.appealDecision.accusedAccept,
+                        )}
+                        value={CaseAppealDecision.ACCEPT}
+                        checked={
+                          workingCase.accusedAppealDecision ===
+                          CaseAppealDecision.ACCEPT
+                        }
+                        onChange={() => {
+                          setWorkingCase({
+                            ...workingCase,
+                            accusedAppealDecision: CaseAppealDecision.ACCEPT,
+                          })
 
-                        updateCase(
-                          workingCase.id,
-                          parseString(
-                            'accusedAppealDecision',
-                            CaseAppealDecision.ACCEPT,
-                          ),
-                        )
-                      }}
-                      large
-                      backgroundColor="white"
-                    />
-                  </GridColumn>
-                </GridRow>
-              </Box>
-              <Box marginBottom={2}>
-                <GridRow>
-                  <GridColumn span="7/12">
-                    <RadioButton
-                      name="accused-appeal-decision"
-                      id="accused-postpone"
-                      label={formatMessage(
-                        m.sections.appealDecision.accusedPostpone,
-                      )}
-                      value={CaseAppealDecision.POSTPONE}
-                      checked={
-                        workingCase.accusedAppealDecision ===
-                        CaseAppealDecision.POSTPONE
-                      }
-                      onChange={() => {
-                        setWorkingCase({
-                          ...workingCase,
-                          accusedAppealDecision: CaseAppealDecision.POSTPONE,
-                        })
+                          updateCase(
+                            workingCase.id,
+                            parseString(
+                              'accusedAppealDecision',
+                              CaseAppealDecision.ACCEPT,
+                            ),
+                          )
+                        }}
+                        large
+                        backgroundColor="white"
+                      />
+                    </GridColumn>
+                  </GridRow>
+                </Box>
+                <Box marginBottom={2}>
+                  <GridRow>
+                    <GridColumn span="7/12">
+                      <RadioButton
+                        name="accused-appeal-decision"
+                        id="accused-postpone"
+                        label={formatMessage(
+                          workingCase.defendants.length > 1
+                            ? m.sections.appealDecision.multipleAccusedPostpone
+                            : m.sections.appealDecision.accusedPostpone,
+                        )}
+                        value={CaseAppealDecision.POSTPONE}
+                        checked={
+                          workingCase.accusedAppealDecision ===
+                          CaseAppealDecision.POSTPONE
+                        }
+                        onChange={() => {
+                          setWorkingCase({
+                            ...workingCase,
+                            accusedAppealDecision: CaseAppealDecision.POSTPONE,
+                          })
 
-                        updateCase(
-                          workingCase.id,
-                          parseString(
-                            'accusedAppealDecision',
-                            CaseAppealDecision.POSTPONE,
-                          ),
-                        )
-                      }}
-                      large
-                      backgroundColor="white"
-                    />
-                  </GridColumn>
-                  <GridColumn span="5/12">
-                    <RadioButton
-                      name="accused-appeal-decision"
-                      id="accused-not-applicable"
-                      label={formatMessage(
-                        m.sections.appealDecision.accusedNotApplicable,
-                      )}
-                      value={CaseAppealDecision.NOT_APPLICABLE}
-                      checked={
-                        workingCase.accusedAppealDecision ===
-                        CaseAppealDecision.NOT_APPLICABLE
-                      }
-                      onChange={() => {
-                        setWorkingCase({
-                          ...workingCase,
-                          accusedAppealDecision:
-                            CaseAppealDecision.NOT_APPLICABLE,
-                        })
+                          updateCase(
+                            workingCase.id,
+                            parseString(
+                              'accusedAppealDecision',
+                              CaseAppealDecision.POSTPONE,
+                            ),
+                          )
+                        }}
+                        large
+                        backgroundColor="white"
+                      />
+                    </GridColumn>
+                    <GridColumn span="5/12">
+                      <RadioButton
+                        name="accused-appeal-decision"
+                        id="accused-not-applicable"
+                        label={formatMessage(
+                          m.sections.appealDecision.accusedNotApplicable,
+                        )}
+                        value={CaseAppealDecision.NOT_APPLICABLE}
+                        checked={
+                          workingCase.accusedAppealDecision ===
+                          CaseAppealDecision.NOT_APPLICABLE
+                        }
+                        onChange={() => {
+                          setWorkingCase({
+                            ...workingCase,
+                            accusedAppealDecision:
+                              CaseAppealDecision.NOT_APPLICABLE,
+                          })
 
-                        updateCase(
-                          workingCase.id,
-                          parseString(
-                            'accusedAppealDecision',
-                            CaseAppealDecision.NOT_APPLICABLE,
-                          ),
-                        )
-                      }}
-                      large
-                      backgroundColor="white"
-                    />
-                  </GridColumn>
-                </GridRow>
-              </Box>
-              <Input
-                name="accusedAppealAnnouncement"
-                data-testid="accusedAppealAnnouncement"
-                label={formatMessage(
-                  m.sections.appealDecision.accusedAnnouncementLabel,
-                )}
-                defaultValue={workingCase.accusedAppealAnnouncement}
-                placeholder={formatMessage(
-                  m.sections.appealDecision.accusedAnnouncementPlaceholder,
-                )}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'accusedAppealAnnouncement',
-                    event,
-                    [],
-                    workingCase,
-                    setWorkingCase,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'accusedAppealAnnouncement',
-                    event.target.value,
-                    [],
-                    workingCase,
-                    updateCase,
-                  )
-                }
-                textarea
-                rows={7}
-              />
-            </BlueBox>
-          </Box>
+                          updateCase(
+                            workingCase.id,
+                            parseString(
+                              'accusedAppealDecision',
+                              CaseAppealDecision.NOT_APPLICABLE,
+                            ),
+                          )
+                        }}
+                        large
+                        backgroundColor="white"
+                      />
+                    </GridColumn>
+                  </GridRow>
+                </Box>
+                <Input
+                  name="accusedAppealAnnouncement"
+                  data-testid="accusedAppealAnnouncement"
+                  label={formatMessage(
+                    m.sections.appealDecision.accusedAnnouncementLabel,
+                  )}
+                  value={workingCase.accusedAppealAnnouncement || ''}
+                  placeholder={formatMessage(
+                    workingCase.defendants.length > 1
+                      ? m.sections.appealDecision
+                          .multipleAccusedAnnouncementPlaceholder
+                      : m.sections.appealDecision
+                          .accusedAnnouncementPlaceholder,
+                  )}
+                  onChange={(event) =>
+                    removeTabsValidateAndSet(
+                      'accusedAppealAnnouncement',
+                      event.target.value,
+                      [],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }
+                  onBlur={(event) =>
+                    validateAndSendToServer(
+                      'accusedAppealAnnouncement',
+                      event.target.value,
+                      [],
+                      workingCase,
+                      updateCase,
+                    )
+                  }
+                  textarea
+                  rows={7}
+                />
+              </BlueBox>
+            </Box>
+          )}
           <Box marginBottom={5}>
             <BlueBox>
               <Box marginBottom={2}>
@@ -359,11 +374,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                       name="prosecutor-appeal-decision"
                       id="prosecutor-postpone"
                       label={formatMessage(
-                        workingCase.sessionArrangements ===
-                          SessionArrangements.REMOTE_SESSION
-                          ? m.sections.appealDecision
-                              .prosecutorPostponeInRemoteSession
-                          : m.sections.appealDecision.prosecutorPostpone,
+                        m.sections.appealDecision.prosecutorPostpone,
                       )}
                       value={CaseAppealDecision.POSTPONE}
                       checked={
@@ -428,14 +439,14 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                   label={formatMessage(
                     m.sections.appealDecision.prosecutorAnnouncementLabel,
                   )}
-                  defaultValue={workingCase.prosecutorAppealAnnouncement}
+                  value={workingCase.prosecutorAppealAnnouncement || ''}
                   placeholder={formatMessage(
                     m.sections.appealDecision.prosecutorAnnouncementPlaceholder,
                   )}
                   onChange={(event) =>
                     removeTabsValidateAndSet(
                       'prosecutorAppealAnnouncement',
-                      event,
+                      event.target.value,
                       [],
                       workingCase,
                       setWorkingCase,
@@ -455,6 +466,44 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                 />
               </Box>
             </BlueBox>
+          </Box>
+        </Box>
+        <Box component="section" marginBottom={5}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              {formatMessage(m.sections.endOfSessionBookings.title)}
+            </Text>
+          </Box>
+          <Box marginBottom={5}>
+            <Input
+              data-testid="endOfSessionBookings"
+              name="endOfSessionBookings"
+              label={formatMessage(m.sections.endOfSessionBookings.label)}
+              value={workingCase.endOfSessionBookings || ''}
+              placeholder={formatMessage(
+                m.sections.endOfSessionBookings.placeholder,
+              )}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'endOfSessionBookings',
+                  event.target.value,
+                  [],
+                  workingCase,
+                  setWorkingCase,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'endOfSessionBookings',
+                  event.target.value,
+                  [],
+                  workingCase,
+                  updateCase,
+                )
+              }
+              rows={16}
+              textarea
+            />
           </Box>
         </Box>
         <Box marginBottom={10}>

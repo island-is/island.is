@@ -1,0 +1,22 @@
+{
+  "data": {
+    "municipalityNationalRegistryUserV2": {
+      "nationalId": "0101307789",
+      "fullName": "Gervimaður útlönd",
+      "address": {
+        "streetName": "Engihjalli 3",
+        "postalCode": "200",
+        "city": "Kópavogur",
+        "municipalityCode": "1000",
+        "__typename": "UserAddress"
+      },
+      "spouse": {
+        "nationalId": "",
+        "maritalStatus": "4",
+        "name": "",
+        "__typename": "UserSpouse"
+      },
+      "__typename": "Person"
+    }
+  }
+}

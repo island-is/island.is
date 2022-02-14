@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import cn from 'classnames'
 import { useIntl } from 'react-intl'
+import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
+
 import {
   Text,
   Box,
@@ -14,27 +16,29 @@ import {
   UploadFile,
 } from '@island.is/island-ui/core'
 import { Case, CaseFile, CaseFileState } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   useCase,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
+  CaseInfo,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
-import { icCaseFiles as m } from '@island.is/judicial-system-web/messages'
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
-import { PoliceCaseFilesData } from './CaseFiles'
-import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
-import * as styles from './CaseFiles.css'
+import { icCaseFiles as m } from '@island.is/judicial-system-web/messages'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
 import { PoliceCaseFilesMessageBox } from '../../SharedComponents/PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
+import { PoliceCaseFilesData } from './CaseFiles'
+import * as styles from './CaseFiles.css'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
   policeCaseFiles?: PoliceCaseFilesData
 }
@@ -47,11 +51,13 @@ interface PoliceCaseFile {
 
 const CaseFilesForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading, policeCaseFiles } = props
+
   const [policeCaseFileList, setPoliceCaseFileList] = useState<
     PoliceCaseFile[]
   >([])
   const [checkAllChecked, setCheckAllChecked] = useState<boolean>(false)
   const [isUploading, setIsUploading] = useState<boolean>(false)
+
   const {
     files,
     uploadErrorMessage,
@@ -64,6 +70,7 @@ const CaseFilesForm: React.FC<Props> = (props) => {
   } = useS3Upload(workingCase)
   const { formatMessage } = useIntl()
   const { updateCase } = useCase()
+  const { user } = useContext(UserContext)
 
   useEffect(() => {
     if (policeCaseFiles) {
@@ -157,6 +164,13 @@ const CaseFilesForm: React.FC<Props> = (props) => {
           <Text as="h1" variant="h1">
             {formatMessage(m.heading)}
           </Text>
+        </Box>
+        <Box component="section" marginBottom={7}>
+          <CaseInfo
+            workingCase={workingCase}
+            userRole={user?.role}
+            showAdditionalInfo
+          />
         </Box>
         <Box marginBottom={5}>
           <Box marginBottom={3}>
@@ -330,11 +344,11 @@ const CaseFilesForm: React.FC<Props> = (props) => {
               name="caseFilesComments"
               label={formatMessage(m.sections.comments.label)}
               placeholder={formatMessage(m.sections.comments.placeholder)}
-              defaultValue={workingCase?.caseFilesComments}
+              value={workingCase.caseFilesComments || ''}
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'caseFilesComments',
-                  event,
+                  event.target.value,
                   [],
                   workingCase,
                   setWorkingCase,

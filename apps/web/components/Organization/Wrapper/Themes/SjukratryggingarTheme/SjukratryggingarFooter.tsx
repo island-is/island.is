@@ -5,7 +5,6 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Link,
   Text,
 } from '@island.is/island-ui/core'
 import * as styles from './SjukratryggingarFooter.css'
@@ -32,55 +31,78 @@ export const SjukratryggingarFooter: React.FC<FooterProps> = ({
               display="flex"
               flexDirection="row"
               alignItems="center"
-              paddingBottom={5}
-              marginBottom={5}
-              borderColor="blueberry300"
+              paddingBottom={4}
+              marginBottom={4}
+              borderColor="dark400"
               borderBottomWidth="standard"
             >
-              {!!logo && (
-                <Box marginRight={4}>
-                  <img src={logo} alt="" className={styles.logoStyle} />
-                </Box>
-              )}
-              <div id="organizationFooterTitle">
-                <Text variant="h2" color="white">
-                  {title}
-                </Text>
-              </div>
+              <Box marginRight={4}>
+                <img
+                  src="/assets/sjukratryggingar_logo.png"
+                  alt=""
+                  className={styles.logoStyle}
+                />
+              </Box>
             </Box>
             <GridRow>
-              {footerItems.map((item, index) => (
-                <GridColumn key={index} span={['12/12', '12/12', '4/12']}>
-                  <Box marginBottom={5}>
+              {footerItems.slice(0, 4).map((item, index) => (
+                <GridColumn
+                  span={['12/12', '12/12', '6/12', '3/12']}
+                  key={`footer-main-row-column-${index}`}
+                >
+                  <Box>
                     <Box marginBottom={2}>
-                      {item.link ? (
-                        <Link
-                          href={item.link.url}
-                          underline="small"
-                          underlineVisibility="always"
-                          color="white"
-                        >
-                          {item.title}
-                        </Link>
-                      ) : (
-                        <Text color="white" fontWeight="semiBold">
-                          {item.title}
-                        </Text>
-                      )}
+                      {richText(item.content as SliceType[])}
                     </Box>
-                    {richText(item.content as SliceType[], {
-                      renderNode: {
-                        [BLOCKS.PARAGRAPH]: (_node, children) => (
-                          <Text color="white" paddingBottom={2}>
-                            {children}
-                          </Text>
-                        ),
-                      },
-                    })}
                   </Box>
                 </GridColumn>
               ))}
             </GridRow>
+          </Box>
+          <Box
+            display="flex"
+            flexDirection="row"
+            alignItems="center"
+            paddingTop={4}
+            paddingBottom={4}
+            borderColor="dark400"
+            borderTopWidth="standard"
+          >
+            <GridContainer>
+              <GridRow>
+                <GridColumn
+                  span={['12/12', '12/12', '6/12', '3/12']}
+                  className={styles.footerSecondRow}
+                >
+                  <img src="/assets/sjukratryggingar_norraent_samstarf.png" />
+                </GridColumn>
+                <GridColumn
+                  span={['12/12', '12/12', '6/12', '3/12']}
+                  className={styles.footerSecondRow}
+                >
+                  <img src="/assets/sjukratryggingar_heilbrigdisraduneytid.png" />
+                </GridColumn>
+                {footerItems.slice(4, 6).map((item, index) => (
+                  <GridColumn
+                    span={['12/12', '12/12', '6/12', '3/12']}
+                    className={styles.footerSecondRow}
+                    key={`footer-secondary-row-column-${index}`}
+                  >
+                    <Box>
+                      {richText(item.content as SliceType[], {
+                        renderNode: {
+                          [BLOCKS.PARAGRAPH]: (_node, children) => (
+                            <Text variant="small" color="dark400" marginY={1}>
+                              {children}
+                            </Text>
+                          ),
+                        },
+                      })}
+                    </Box>
+                  </GridColumn>
+                ))}
+              </GridRow>
+            </GridContainer>
           </Box>
         </GridContainer>
       </Box>

@@ -3,7 +3,6 @@ import { GraphQLModule } from '@nestjs/graphql'
 import { CmsModule } from '@island.is/cms'
 
 import {
-  AuthModule,
   UserModule,
   DiscountModule,
   FlightModule,
@@ -11,6 +10,7 @@ import {
 } from './modules'
 import { BackendAPI } from '../services'
 import { environment } from '../environments'
+import { AuthModule } from '@island.is/auth-nest-tools'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -28,13 +28,12 @@ const autoSchemaFile = environment.production
       context: ({ req }) => ({ req }),
       dataSources: () => ({ backendApi: new BackendAPI() }),
     }),
-    AuthModule,
+    AuthModule.register(environment.identityServerAuth),
     UserModule,
     DiscountModule,
     FlightModule,
     FlightLegModule,
     CmsModule,
   ],
-  providers: [BackendAPI],
 })
 export class AppModule {}

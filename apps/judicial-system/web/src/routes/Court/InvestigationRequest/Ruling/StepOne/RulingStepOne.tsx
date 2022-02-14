@@ -1,47 +1,43 @@
-import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client'
+import React, { useContext, useEffect } from 'react'
+
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
-import type { Case } from '@island.is/judicial-system/types'
 import {
-  CaseData,
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+
 import RulingStepOneForm from './RulingStepOneForm'
 
 const RulingStepOne = () => {
-  const [workingCase, setWorkingCase] = useState<Case>()
-
-  const router = useRouter()
-  const id = router.query.id
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+    isCaseUpToDate,
+  } = useContext(FormContext)
 
   const { autofill } = useCase()
-
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
 
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
-    if (!workingCase && data?.case) {
-      if (data.case.caseFacts) {
-        autofill('courtCaseFacts', data.case.caseFacts, data.case)
+    if (isCaseUpToDate) {
+      if (workingCase.caseFacts) {
+        autofill('courtCaseFacts', workingCase.caseFacts, workingCase)
       }
 
-      if (data.case.legalArguments) {
-        autofill('courtLegalArguments', data.case.legalArguments, data.case)
+      if (workingCase.legalArguments) {
+        autofill('courtLegalArguments', workingCase.legalArguments, workingCase)
       }
 
-      setWorkingCase(data.case)
+      setWorkingCase(workingCase)
     }
-  }, [workingCase, setWorkingCase, data, autofill])
+  }, [autofill, isCaseUpToDate, setWorkingCase, workingCase])
 
   return (
     <PageLayout
@@ -50,16 +46,15 @@ const RulingStepOne = () => {
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.RULING_STEP_ONE}
-      isLoading={loading}
-      notFound={data?.case === undefined}
+      isLoading={isLoadingWorkingCase}
+      notFound={caseNotFound}
     >
-      {workingCase && (
-        <RulingStepOneForm
-          workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
-          isLoading={loading}
-        />
-      )}
+      <RulingStepOneForm
+        workingCase={workingCase}
+        setWorkingCase={setWorkingCase}
+        isLoading={isLoadingWorkingCase}
+        isCaseUpToDate={isCaseUpToDate}
+      />
     </PageLayout>
   )
 }

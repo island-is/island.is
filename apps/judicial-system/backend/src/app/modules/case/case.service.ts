@@ -1,17 +1,19 @@
-import { Includeable } from 'sequelize/types'
+import { Includeable, OrderItem, Transaction } from 'sequelize/types'
+import { Sequelize } from 'sequelize-typescript'
+import { Attachment } from 'nodemailer/lib/mailer'
 
 import {
-  ForbiddenException,
+  BadRequestException,
   Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
+import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
-import { IntlService } from '@island.is/cms-translations'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import {
   DokobitError,
   SigningService,
@@ -22,23 +24,32 @@ import { IntegratedCourts } from '@island.is/judicial-system/consts'
 import {
   isRestrictionCase,
   SessionArrangements,
+  UserRole,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import {
   getRequestPdfAsBuffer,
-  getRequestPdfAsString,
   getRulingPdfAsString,
   getCasefilesPdfAsString,
   writeFile,
-  getCustodyNoticePdfAsString,
+  getRulingPdfAsBuffer,
+  getCustodyNoticePdfAsBuffer,
+  stripHtmlTags,
+  getCourtRecordPdfAsBuffer,
+  getCourtRecordPdfAsString,
 } from '../../formatters'
+import { courtUpload, notifications as m } from '../../messages'
+import { FileService } from '../file/file.service'
+import { DefendantService } from '../defendant/defendant.service'
+import { Defendant } from '../defendant/models/defendant.model'
 import { Institution } from '../institution'
-import { User } from '../user'
+import { User, UserService } from '../user'
+import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
-import { CreateCaseDto, UpdateCaseDto } from './dto'
-import { getCasesQueryFilter, isCaseBlockedFromUser } from './filters'
+import { CreateCaseDto, InternalCreateCaseDto, UpdateCaseDto } from './dto'
+import { getCasesQueryFilter } from './filters'
 import { Case, SignatureConfirmationResponse } from './models'
 
 interface Recipient {
@@ -46,11 +57,9 @@ interface Recipient {
   address: string
 }
 
-const standardIncludes: Includeable[] = [
-  {
-    model: Institution,
-    as: 'court',
-  },
+const includes: Includeable[] = [
+  { model: Defendant, as: 'defendants' },
+  { model: Institution, as: 'court' },
   {
     model: User,
     as: 'creatingProsecutor',
@@ -72,99 +81,171 @@ const standardIncludes: Includeable[] = [
     as: 'registrar',
     include: [{ model: Institution, as: 'institution' }],
   },
+  {
+    model: User,
+    as: 'courtRecordSignatory',
+    include: [{ model: Institution, as: 'institution' }],
+  },
   { model: Case, as: 'parentCase' },
   { model: Case, as: 'childCase' },
+]
+
+const defendantsOrder: OrderItem = [
+  { model: Defendant, as: 'defendants' },
+  'created',
+  'ASC',
 ]
 
 @Injectable()
 export class CaseService {
   constructor(
-    @InjectModel(Case)
-    private readonly caseModel: typeof Case,
+    @InjectConnection() private readonly sequelize: Sequelize,
+    @InjectModel(Case) private readonly caseModel: typeof Case,
+    private readonly defendantService: DefendantService,
+    private readonly userService: UserService,
+    private readonly fileService: FileService,
+    private readonly awsS3Service: AwsS3Service,
     private readonly courtService: CourtService,
     private readonly signingService: SigningService,
     private readonly emailService: EmailService,
     private readonly intlService: IntlService,
-    @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private async uploadSignedRulingPdfToCourt(
-    existingCase: Case,
+  private formatMessage: FormatMessage = () => {
+    throw new InternalServerErrorException('Format message not initialized')
+  }
+
+  private refreshFormatMessage: () => Promise<void> = async () =>
+    this.intlService
+      .useIntl(['judicial.system.backend'], 'is')
+      .then((res) => {
+        this.formatMessage = res.formatMessage
+      })
+      .catch((reason) => {
+        this.logger.error('Unable to refresh format messages', { reason })
+      })
+
+  private async uploadSignedRulingPdfToS3(
+    theCase: Case,
     pdf: string,
   ): Promise<boolean> {
-    // TODO: Find a better place for this
-    try {
-      if (existingCase.caseFiles && existingCase.caseFiles.length > 0) {
-        this.logger.debug(
-          `Uploading case files overview pdf to court for case ${existingCase.id}`,
+    return this.awsS3Service
+      .putObject(`generated/${theCase.id}/ruling.pdf`, pdf)
+      .then(() => true)
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to upload signed ruling pdf to AWS S3 for case ${theCase.id}`,
+          { reason },
         )
 
-        const caseFilesPdf = await getCasefilesPdfAsString(existingCase)
+        return false
+      })
+  }
 
-        if (!environment.production) {
-          writeFile(`${existingCase.id}-case-files.pdf`, caseFilesPdf)
-        }
-
-        const buffer = Buffer.from(caseFilesPdf, 'binary')
-
-        const streamId = await this.courtService.uploadStream(
-          existingCase.courtId,
-          'Rannsóknargögn.pdf',
-          'application/pdf',
-          buffer,
-        )
-        await this.courtService.createDocument(
-          existingCase.courtId,
-          existingCase.courtCaseNumber,
-          'Rannsóknargögn',
-          'Rannsóknargögn.pdf',
-          streamId,
-        )
-      }
-    } catch (error) {
-      // Log and ignore this error. The overview is not that critical.
-      this.logger.error(
-        `Failed to upload case files overview pdf to court for case ${existingCase.id}`,
-        error,
-      )
-    }
-
+  private async uploadSignedRulingPdfToCourt(
+    theCase: Case,
+    pdf: string,
+  ): Promise<boolean> {
     this.logger.debug(
-      `Uploading signed ruling pdf to court for case ${existingCase.id}`,
+      `Uploading signed ruling pdf to court for case ${theCase.id}`,
     )
+
+    if (!environment.production) {
+      writeFile(`${theCase.id}-ruling-signed.pdf`, pdf)
+    }
 
     const buffer = Buffer.from(pdf, 'binary')
 
     try {
-      const streamId = await this.courtService.uploadStream(
-        existingCase.courtId,
-        'Þingbók og úrskurður.pdf',
-        'application/pdf',
+      await this.courtService.createRuling(
+        theCase.courtId,
+        theCase.courtCaseNumber,
+        this.formatMessage(courtUpload.ruling, {
+          courtCaseNumber: theCase.courtCaseNumber,
+        }),
         buffer,
-      )
-      await this.courtService.createThingbok(
-        existingCase.courtId,
-        existingCase.courtCaseNumber,
-        streamId,
       )
 
       return true
     } catch (error) {
       this.logger.error(
-        `Failed to upload signed ruling pdf to court for case ${existingCase.id}`,
-        error,
+        `Failed to upload signed ruling pdf to court for case ${theCase.id}`,
+        { error },
       )
 
       return false
     }
   }
 
+  private async uploadCourtRecordPdfToCourt(theCase: Case, pdf: string) {
+    try {
+      this.logger.debug(
+        `Uploading court record pdf to court for case ${theCase.id}`,
+      )
+      if (!environment.production) {
+        writeFile(`${theCase.id}-court-record.pdf`, pdf)
+      }
+
+      const buffer = Buffer.from(pdf, 'binary')
+
+      await this.courtService.createCourtRecord(
+        theCase.courtId,
+        theCase.courtCaseNumber,
+        this.formatMessage(courtUpload.courtRecord, {
+          courtCaseNumber: theCase.courtCaseNumber,
+        }),
+        buffer,
+      )
+    } catch (error) {
+      // Log and ignore this error. The court record can be uploaded manually.
+      this.logger.error(
+        `Failed to upload court record pdf to court for case ${theCase.id}`,
+        { error },
+      )
+    }
+  }
+
+  private async uploadCaseFilesPdfToCourt(theCase: Case) {
+    try {
+      theCase.caseFiles = await this.fileService.getAllCaseFiles(theCase.id)
+
+      if (theCase.caseFiles && theCase.caseFiles.length > 0) {
+        this.logger.debug(
+          `Uploading case files overview pdf to court for case ${theCase.id}`,
+        )
+
+        const caseFilesPdf = await getCasefilesPdfAsString(theCase)
+
+        if (!environment.production) {
+          writeFile(`${theCase.id}-case-files.pdf`, caseFilesPdf)
+        }
+
+        const buffer = Buffer.from(caseFilesPdf, 'binary')
+
+        await this.courtService.createDocument(
+          theCase.courtId,
+          theCase.courtCaseNumber,
+          'Rannsóknargögn',
+          'Rannsóknargögn.pdf',
+          'application/pdf',
+          buffer,
+        )
+      }
+    } catch (error) {
+      // Log and ignore this error. The overview is not that critical.
+      this.logger.error(
+        `Failed to upload case files overview pdf to court for case ${theCase.id}`,
+        { error },
+      )
+    }
+  }
+
   private async sendEmail(
     to: Recipient | Recipient[],
-    courtCaseNumber: string | undefined,
-    signedRulingPdf: string,
     body: string,
+    courtCaseNumber?: string,
+    attachments?: Attachment[],
   ) {
     try {
       await this.emailService.sendEmail({
@@ -177,105 +258,196 @@ export class CaseService {
           address: environment.email.replyToEmail,
         },
         to,
-        subject: `Úrskurður í máli ${courtCaseNumber}`,
-        text: body,
+        subject: this.formatMessage(m.signedRuling.subject, {
+          courtCaseNumber,
+        }),
+        text: stripHtmlTags(body),
         html: body,
-        attachments: [
-          {
-            filename: `Þingbók og úrskurður ${courtCaseNumber}.pdf`,
-            content: signedRulingPdf,
-            encoding: 'binary',
-          },
-        ],
+        attachments,
       })
     } catch (error) {
-      this.logger.error('Failed to send email', error)
+      this.logger.error('Failed to send email', { error })
     }
   }
 
   private async sendRulingAsSignedPdf(
-    existingCase: Case,
+    theCase: Case,
     signedRulingPdf: string,
   ): Promise<void> {
-    if (!environment.production) {
-      writeFile(`${existingCase.id}-ruling-signed.pdf`, signedRulingPdf)
+    let uploadedToS3 = false
+    let uploadedToCourt = false
+
+    const uploadPromises = [
+      this.uploadSignedRulingPdfToS3(theCase, signedRulingPdf).then((res) => {
+        uploadedToS3 = res
+      }),
+    ]
+
+    let courtRecordPdf = undefined
+
+    if (
+      theCase.courtId &&
+      theCase.courtCaseNumber &&
+      IntegratedCourts.includes(theCase.courtId)
+    ) {
+      uploadPromises.push(
+        this.uploadSignedRulingPdfToCourt(theCase, signedRulingPdf).then(
+          (res) => {
+            uploadedToCourt = res
+          },
+        ),
+        this.uploadCaseFilesPdfToCourt(theCase),
+        getCourtRecordPdfAsString(theCase, this.formatMessage)
+          .then((pdf) => {
+            courtRecordPdf = pdf
+            return this.uploadCourtRecordPdfToCourt(theCase, courtRecordPdf)
+          })
+          .catch((reason) => {
+            // Log and ignore this error. The court record can be uploaded manually.
+            this.logger.error(
+              `Failed to generate court record pdf for case ${theCase.id}`,
+              { reason },
+            )
+          }),
+      )
     }
 
-    const uploaded =
-      existingCase.courtId &&
-      existingCase.courtCaseNumber &&
-      IntegratedCourts.includes(existingCase.courtId)
-        ? await this.uploadSignedRulingPdfToCourt(existingCase, signedRulingPdf)
-        : false
+    await Promise.all(uploadPromises)
 
-    const promises = [
+    const rulingAttachment = {
+      filename: this.formatMessage(m.signedRuling.rulingAttachment, {
+        courtCaseNumber: theCase.courtCaseNumber,
+      }),
+      content: signedRulingPdf,
+      encoding: 'binary',
+    }
+
+    const emailPromises = [
       this.sendEmail(
         {
-          name: existingCase.prosecutor?.name ?? '',
-          address: existingCase.prosecutor?.email ?? '',
+          name: theCase.prosecutor?.name ?? '',
+          address: theCase.prosecutor?.email ?? '',
         },
-        existingCase.courtCaseNumber,
-        signedRulingPdf,
-        `${existingCase.court?.name} hefur sent þér endurrit úr þingbók í máli ${existingCase.courtCaseNumber} ásamt úrskurði dómara í heild sinni í meðfylgjandi viðhengi.`,
+        uploadedToS3
+          ? this.formatMessage(m.signedRuling.prosecutorBodyS3, {
+              courtCaseNumber: theCase.courtCaseNumber,
+              courtName: theCase.court?.name?.replace('dómur', 'dómi'),
+              linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
+              linkEnd: '</a>',
+            })
+          : this.formatMessage(m.signedRuling.prosecutorBodyAttachment, {
+              courtName: theCase.court?.name,
+              courtCaseNumber: theCase.courtCaseNumber,
+              linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
+              linkEnd: '</a>',
+            }),
+        theCase.courtCaseNumber,
+        uploadedToS3 ? undefined : [rulingAttachment],
       ),
     ]
 
-    if (!uploaded) {
-      promises.push(
+    if (!uploadedToCourt) {
+      const recipients = [
+        {
+          name: theCase.judge?.name ?? '',
+          address: theCase.judge?.email ?? '',
+        },
+      ]
+      if (theCase.registrar) {
+        recipients.push({
+          name: theCase.registrar?.name ?? '',
+          address: theCase.registrar?.email ?? '',
+        })
+      }
+
+      emailPromises.push(
         this.sendEmail(
-          [
-            {
-              name: existingCase.registrar?.name ?? '',
-              address: existingCase.registrar?.email ?? '',
-            },
-            {
-              name: existingCase.judge?.name ?? '',
-              address: existingCase.judge?.email ?? '',
-            },
-          ],
-          existingCase.courtCaseNumber,
-          signedRulingPdf,
-          'Ekki tókst að vista meðfylgjandi skjal í Auði.',
+          recipients,
+          this.formatMessage(m.signedRuling.courtBodyAttachment),
+          theCase.courtCaseNumber,
+          [rulingAttachment],
         ),
       )
     }
 
     if (
-      existingCase.defenderEmail &&
-      (isRestrictionCase(existingCase.type) ||
-        existingCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
-        (existingCase.sessionArrangements ===
+      theCase.defenderEmail &&
+      (isRestrictionCase(theCase.type) ||
+        theCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
+        (theCase.sessionArrangements ===
           SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
-          existingCase.defenderIsSpokesperson))
+          theCase.defenderIsSpokesperson))
     ) {
-      promises.push(
+      const attachments = courtRecordPdf
+        ? [
+            {
+              filename: this.formatMessage(
+                m.signedRuling.courtRecordAttachment,
+                {
+                  courtCaseNumber: theCase.courtCaseNumber,
+                },
+              ),
+              content: courtRecordPdf,
+              encoding: 'binary',
+            },
+            rulingAttachment,
+          ]
+        : [rulingAttachment]
+
+      emailPromises.push(
         this.sendEmail(
           {
-            name: existingCase.defenderName ?? '',
-            address: existingCase.defenderEmail,
+            name: theCase.defenderName ?? '',
+            address: theCase.defenderEmail,
           },
-          existingCase.courtCaseNumber,
-          signedRulingPdf,
-          `${existingCase.court?.name} hefur sent þér endurrit úr þingbók í máli ${existingCase.courtCaseNumber} ásamt úrskurði dómara í heild sinni í meðfylgjandi viðhengi.`,
+          this.formatMessage(m.signedRuling.defenderBodyAttachment, {
+            courtName: theCase.court?.name,
+            courtCaseNumber: theCase.courtCaseNumber,
+          }),
+          theCase.courtCaseNumber,
+          attachments,
         ),
       )
     }
 
-    await Promise.all(promises)
+    await Promise.all(emailPromises)
   }
 
-  async findById(
-    id: string,
-    additionalIncludes: Includeable[] = [],
-  ): Promise<Case | null> {
-    this.logger.debug(`Finding case ${id}`)
+  private async createCase(
+    caseToCreate: CreateCaseDto,
+    prosecutorId?: string,
+    transaction?: Transaction,
+  ): Promise<string> {
+    const theCase = await (transaction
+      ? this.caseModel.create(
+          {
+            ...caseToCreate,
+            creatingProsecutorId: prosecutorId,
+            prosecutorId,
+          },
+          { transaction },
+        )
+      : this.caseModel.create({
+          ...caseToCreate,
+          creatingProsecutorId: prosecutorId,
+          prosecutorId,
+        }))
 
-    const include = standardIncludes.concat(additionalIncludes)
+    return theCase.id
+  }
 
-    return this.caseModel.findOne({
-      where: { id },
-      include,
+  async findById(caseId: string): Promise<Case> {
+    const theCase = await this.caseModel.findOne({
+      include: includes,
+      order: [defendantsOrder],
+      where: { id: caseId },
     })
+
+    if (!theCase) {
+      throw new NotFoundException(`Case ${caseId} does not exist`)
+    }
+
+    return theCase
   }
 
   async findOriginalAncestor(theCase: Case): Promise<Case> {
@@ -299,142 +471,240 @@ export class CaseService {
   }
 
   async getAll(user: TUser): Promise<Case[]> {
-    this.logger.debug('Getting all cases')
-
     return this.caseModel.findAll({
-      order: [['created', 'DESC']],
+      include: includes,
+      order: [['created', 'DESC'], defendantsOrder],
       where: getCasesQueryFilter(user),
-      include: standardIncludes,
     })
   }
 
-  async findByIdAndUser(
-    id: string,
-    user: TUser,
-    forUpdate = true,
-    additionalIncludes: Includeable[] = [],
-  ): Promise<Case> {
-    const existingCase = await this.findById(id, additionalIncludes)
+  async internalCreate(caseToCreate: InternalCreateCaseDto): Promise<Case> {
+    let prosecutorId: string | undefined
 
-    if (!existingCase) {
-      throw new NotFoundException(`Case ${id} does not exist`)
-    }
-
-    if (isCaseBlockedFromUser(existingCase, user, forUpdate)) {
-      throw new ForbiddenException(
-        `User ${user.id} does not have${
-          forUpdate ? ' update' : ' read'
-        } access to case ${id}`,
+    if (caseToCreate.prosecutorNationalId) {
+      const prosecutor = await this.userService.findByNationalId(
+        caseToCreate.prosecutorNationalId,
       )
+
+      if (!prosecutor || prosecutor.role !== UserRole.PROSECUTOR) {
+        throw new BadRequestException(
+          `User ${prosecutor.id} is not registered as a prosecutor`,
+        )
+      }
+
+      prosecutorId = prosecutor.id
     }
 
-    return existingCase
+    return this.sequelize
+      .transaction(async (transaction) => {
+        const caseId = await this.createCase(
+          caseToCreate,
+          prosecutorId,
+          transaction,
+        )
+
+        await this.defendantService.create(
+          caseId,
+          {
+            nationalId: caseToCreate.accusedNationalId,
+            name: caseToCreate.accusedName,
+            gender: caseToCreate.accusedGender,
+            address: caseToCreate.accusedAddress,
+          },
+          transaction,
+        )
+
+        return caseId
+      })
+      .then((caseId) => this.findById(caseId))
   }
 
-  async create(caseToCreate: CreateCaseDto, user?: TUser): Promise<Case> {
-    this.logger.debug('Creating a new case')
+  async create(
+    caseToCreate: CreateCaseDto,
+    prosecutorId?: string,
+  ): Promise<Case> {
+    return this.sequelize
+      .transaction(async (transaction) => {
+        const caseId = await this.createCase(
+          caseToCreate,
+          prosecutorId,
+          transaction,
+        )
 
-    return this.caseModel.create({
-      ...caseToCreate,
-      creatingProsecutorId: user?.id,
-      prosecutorId: user?.id,
-    })
+        await this.defendantService.create(caseId, {}, transaction)
+
+        return caseId
+      })
+      .then((caseId) => this.findById(caseId))
   }
 
   async update(
-    id: string,
+    caseId: string,
     update: UpdateCaseDto,
-  ): Promise<{ numberOfAffectedRows: number; updatedCase: Case }> {
-    this.logger.debug(`Updating case ${id}`)
+    returnUpdatedCase = true,
+  ): Promise<Case | undefined> {
+    const [numberOfAffectedRows] = await this.caseModel.update(update, {
+      where: { id: caseId },
+    })
 
-    const [numberOfAffectedRows, [updatedCase]] = await this.caseModel.update(
-      update,
-      {
-        where: { id },
-        returning: true,
-      },
-    )
+    if (numberOfAffectedRows > 1) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case ${caseId}`,
+      )
+    } else if (numberOfAffectedRows < 1) {
+      throw new InternalServerErrorException(`Could not update case ${caseId}`)
+    }
 
-    return { numberOfAffectedRows, updatedCase }
+    if (returnUpdatedCase) {
+      return this.findById(caseId)
+    }
   }
 
-  async getRequestPdf(existingCase: Case): Promise<string> {
-    this.logger.debug(
-      `Getting the request for case ${existingCase.id} as a pdf document`,
-    )
+  async getRequestPdf(theCase: Case): Promise<Buffer> {
+    await this.refreshFormatMessage()
 
-    const intl = await this.intlService.useIntl(
-      ['judicial.system.backend'],
-      'is',
-    )
-
-    return getRequestPdfAsString(existingCase, intl.formatMessage)
+    return getRequestPdfAsBuffer(theCase, this.formatMessage)
   }
 
-  async getRulingPdf(
-    existingCase: Case,
-    shortversion = false,
-  ): Promise<string> {
-    this.logger.debug(
-      `Getting the ruling for case ${existingCase.id} as a pdf document`,
-    )
+  async getCourtRecordPdf(theCase: Case, user: TUser): Promise<Buffer> {
+    try {
+      return await this.awsS3Service.getObject(
+        `generated/${theCase.id}/courtRecord.pdf`,
+      )
+    } catch (error) {
+      this.logger.info(
+        `The court record for case ${theCase.id} was not found in AWS S3`,
+        { error },
+      )
+    }
 
-    const intl = await this.intlService.useIntl(
-      ['judicial.system.backend'],
-      'is',
-    )
+    await this.refreshFormatMessage()
 
-    return getRulingPdfAsString(existingCase, intl.formatMessage, shortversion)
+    return getCourtRecordPdfAsBuffer(theCase, user, this.formatMessage)
   }
 
-  async getCustodyPdf(existingCase: Case): Promise<string> {
-    this.logger.debug(
-      `Getting the custody notice for case ${existingCase.id} as a pdf document`,
-    )
+  async getRulingPdf(theCase: Case): Promise<Buffer> {
+    try {
+      return await this.awsS3Service.getObject(
+        `generated/${theCase.id}/ruling.pdf`,
+      )
+    } catch (error) {
+      this.logger.info(
+        `The ruling for case ${theCase.id} was not found in AWS S3`,
+        { error },
+      )
+    }
 
-    return getCustodyNoticePdfAsString(existingCase)
+    await this.refreshFormatMessage()
+
+    return getRulingPdfAsBuffer(theCase, this.formatMessage)
   }
 
-  async requestSignature(existingCase: Case): Promise<SigningServiceResponse> {
-    this.logger.debug(
-      `Requesting signature of ruling for case ${existingCase.id}`,
+  async getCustodyPdf(theCase: Case): Promise<Buffer> {
+    await this.refreshFormatMessage()
+
+    return getCustodyNoticePdfAsBuffer(theCase, this.formatMessage)
+  }
+
+  async requestCourtRecordSignature(
+    theCase: Case,
+    user: TUser,
+  ): Promise<SigningServiceResponse> {
+    // Development without signing service access token
+    if (!environment.production && !environment.signingOptions.accessToken) {
+      return { controlCode: '0000', documentToken: 'DEVELOPMENT' }
+    }
+
+    await this.refreshFormatMessage()
+
+    const pdf = await getCourtRecordPdfAsString(theCase, this.formatMessage)
+
+    return this.signingService.requestSignature(
+      user.mobileNumber ?? '',
+      'Undirrita skjal - Öryggistala',
+      user.name ?? '',
+      'Ísland',
+      'courtRecord.pdf',
+      pdf,
     )
+  }
+
+  async getCourtRecordSignatureConfirmation(
+    theCase: Case,
+    user: TUser,
+    documentToken: string,
+  ): Promise<SignatureConfirmationResponse> {
+    // This method should be called immediately after requestCourtRecordSignature
 
     // Production, or development with signing service access token
     if (environment.production || environment.signingOptions.accessToken) {
-      const intl = await this.intlService.useIntl(
-        ['judicial.system.backend'],
-        'is',
-      )
+      try {
+        const courtRecordPdf = await this.signingService.getSignedDocument(
+          'courtRecord.pdf',
+          documentToken,
+        )
 
-      const pdf = await getRulingPdfAsString(existingCase, intl.formatMessage)
+        this.awsS3Service
+          .putObject(`generated/${theCase.id}/courtRecord.pdf`, courtRecordPdf)
+          .catch((reason) => {
+            // Tolerate failure, but log error
+            this.logger.error(
+              `Failed to upload signed court record pdf to AWS S3 for case ${theCase.id}`,
+              { reason },
+            )
+          })
+      } catch (error) {
+        if (error instanceof DokobitError) {
+          return {
+            documentSigned: false,
+            code: error.code,
+            message: error.message,
+          }
+        }
 
-      return this.signingService.requestSignature(
-        existingCase.judge?.mobileNumber ?? '',
-        'Undirrita skjal - Öryggistala',
-        existingCase.judge?.name ?? '',
-        'Ísland',
-        'ruling.pdf',
-        pdf,
-      )
+        throw error
+      }
     }
 
-    // Development without signing service access token
-    return {
-      controlCode: '0000',
-      documentToken: 'DEVELOPMENT',
-    }
-  }
-
-  async getSignatureConfirmation(
-    existingCase: Case,
-    documentToken: string,
-  ): Promise<SignatureConfirmationResponse> {
-    this.logger.debug(
-      `Confirming signature of ruling for case ${existingCase.id}`,
+    // TODO: UpdateCaseDto does not contain courtRecordSignatoryId and courtRecordSignatureDate - create a new type for CaseService.update
+    await this.update(
+      theCase.id,
+      {
+        courtRecordSignatoryId: user.id,
+        courtRecordSignatureDate: new Date(),
+      } as UpdateCaseDto,
+      false,
     )
 
-    // This method should be called immediately after requestSignature
+    return { documentSigned: true }
+  }
+
+  async requestRulingSignature(theCase: Case): Promise<SigningServiceResponse> {
+    // Development without signing service access token
+    if (!environment.production && !environment.signingOptions.accessToken) {
+      return { controlCode: '0000', documentToken: 'DEVELOPMENT' }
+    }
+
+    await this.refreshFormatMessage()
+
+    const pdf = await getRulingPdfAsString(theCase, this.formatMessage)
+
+    return this.signingService.requestSignature(
+      theCase.judge?.mobileNumber ?? '',
+      'Undirrita skjal - Öryggistala',
+      theCase.judge?.name ?? '',
+      'Ísland',
+      'ruling.pdf',
+      pdf,
+    )
+  }
+
+  async getRulingSignatureConfirmation(
+    theCase: Case,
+    documentToken: string,
+  ): Promise<SignatureConfirmationResponse> {
+    // This method should be called immediately after requestRulingSignature
 
     // Production, or development with signing service access token
     if (environment.production || environment.signingOptions.accessToken) {
@@ -444,7 +714,9 @@ export class CaseService {
           documentToken,
         )
 
-        await this.sendRulingAsSignedPdf(existingCase, signedPdf)
+        await this.refreshFormatMessage()
+
+        await this.sendRulingAsSignedPdf(theCase, signedPdf)
       } catch (error) {
         if (error instanceof DokobitError) {
           return {
@@ -459,78 +731,88 @@ export class CaseService {
     }
 
     // TODO: UpdateCaseDto does not contain rulingDate - create a new type for CaseService.update
-    await this.update(existingCase.id, {
-      rulingDate: new Date(),
-    } as UpdateCaseDto)
+    await this.update(
+      theCase.id,
+      {
+        rulingDate: new Date(),
+      } as UpdateCaseDto,
+      false,
+    )
 
     return {
       documentSigned: true,
     }
   }
 
-  async extend(existingCase: Case, user: TUser): Promise<Case> {
-    this.logger.debug(`Extending case ${existingCase.id}`)
+  async extend(theCase: Case, user: TUser): Promise<Case> {
+    return this.sequelize
+      .transaction(async (transaction) => {
+        const caseId = await this.createCase(
+          {
+            type: theCase.type,
+            description: theCase.description,
+            policeCaseNumber: theCase.policeCaseNumber,
+            defenderName: theCase.defenderName,
+            defenderEmail: theCase.defenderEmail,
+            defenderPhoneNumber: theCase.defenderPhoneNumber,
+            leadInvestigator: theCase.leadInvestigator,
+            courtId: theCase.courtId,
+            translator: theCase.translator,
+            lawsBroken: theCase.lawsBroken,
+            legalBasis: theCase.legalBasis,
+            legalProvisions: theCase.legalProvisions,
+            requestedCustodyRestrictions: theCase.requestedCustodyRestrictions,
+            caseFacts: theCase.caseFacts,
+            legalArguments: theCase.legalArguments,
+            requestProsecutorOnlySession: theCase.requestProsecutorOnlySession,
+            prosecutorOnlySessionRequest: theCase.prosecutorOnlySessionRequest,
+            parentCaseId: theCase.id,
+            initialRulingDate: theCase.initialRulingDate ?? theCase.rulingDate,
+          } as CreateCaseDto,
+          user.id,
+          transaction,
+        )
 
-    return this.caseModel.create({
-      type: existingCase.type,
-      policeCaseNumber: existingCase.policeCaseNumber,
-      description: existingCase.description,
-      accusedNationalId: existingCase.accusedNationalId,
-      accusedName: existingCase.accusedName,
-      accusedAddress: existingCase.accusedAddress,
-      accusedGender: existingCase.accusedGender,
-      defenderName: existingCase.defenderName,
-      defenderEmail: existingCase.defenderEmail,
-      defenderPhoneNumber: existingCase.defenderPhoneNumber,
-      leadInvestigator: existingCase.leadInvestigator,
-      courtId: existingCase.courtId,
-      translator: existingCase.translator,
-      lawsBroken: existingCase.lawsBroken,
-      legalBasis: existingCase.legalBasis,
-      legalProvisions: existingCase.legalProvisions,
-      requestedCustodyRestrictions: existingCase.requestedCustodyRestrictions,
-      caseFacts: existingCase.caseFacts,
-      legalArguments: existingCase.legalArguments,
-      requestProsecutorOnlySession: existingCase.requestProsecutorOnlySession,
-      prosecutorOnlySessionRequest: existingCase.prosecutorOnlySessionRequest,
-      creatingProsecutorId: user.id,
-      prosecutorId: user.id,
-      parentCaseId: existingCase.id,
-      initialRulingDate:
-        existingCase.initialRulingDate ?? existingCase.rulingDate,
-    })
+        if (theCase.defendants && theCase.defendants?.length > 0) {
+          await Promise.all(
+            theCase.defendants?.map((defendant) =>
+              this.defendantService.create(
+                caseId,
+                {
+                  nationalId: defendant.nationalId,
+                  name: defendant.name,
+                  gender: defendant.gender,
+                  address: defendant.address,
+                },
+                transaction,
+              ),
+            ),
+          )
+        }
+
+        return caseId
+      })
+      .then((caseId) => this.findById(caseId))
   }
 
-  async uploadRequestPdfToCourt(id: string): Promise<void> {
-    this.logger.debug(`Uploading request pdf to court for case ${id}`)
+  async uploadRequestPdfToCourt(theCase: Case): Promise<void> {
+    this.logger.debug(`Uploading request pdf to court for case ${theCase.id}`)
 
-    const existingCase = (await this.findById(id)) as Case
+    await this.refreshFormatMessage()
 
-    const intl = await this.intlService.useIntl(
-      ['judicial.system.backend'],
-      'is',
-    )
-
-    const pdf = await getRequestPdfAsBuffer(existingCase, intl.formatMessage)
+    const pdf = await getRequestPdfAsBuffer(theCase, this.formatMessage)
 
     try {
-      const streamId = await this.courtService.uploadStream(
-        existingCase.courtId,
-        'Krafa.pdf',
-        'application/pdf',
+      await this.courtService.createRequest(
+        theCase.courtId,
+        theCase.courtCaseNumber,
         pdf,
       )
-      await this.courtService.createRequest(
-        existingCase.courtId,
-        existingCase.courtCaseNumber,
-        'Krafa',
-        'Krafa.pdf',
-        streamId,
-      )
     } catch (error) {
+      // Tolerate failure, but log error
       this.logger.error(
-        `Failed to upload request pdf to court for case ${id}`,
-        error,
+        `Failed to upload request pdf to court for case ${theCase.id}`,
+        { error },
       )
     }
   }

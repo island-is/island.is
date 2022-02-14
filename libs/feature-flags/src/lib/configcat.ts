@@ -32,6 +32,10 @@ export class Client implements FeatureFlagClient {
     }
   }
 
+  dispose() {
+    this.configcat.dispose()
+  }
+
   async getValue(
     key: string,
     defaultValue: boolean | string,

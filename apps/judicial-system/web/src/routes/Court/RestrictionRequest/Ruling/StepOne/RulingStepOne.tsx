@@ -1,9 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
+
 import {
   Accordion,
   AccordionItem,
   Box,
+  Checkbox,
   Input,
   Text,
   Tooltip,
@@ -13,7 +16,7 @@ import {
   PageLayout,
   PoliceRequestAccordionItem,
   BlueBox,
-  CaseNumbers,
+  CaseInfo,
   FormContentContainer,
   CaseFileList,
   Decision,
@@ -23,40 +26,40 @@ import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
+  Gender,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import {
-  parseArray,
-  parseString,
-} from '@island.is/judicial-system-web/src/utils/formatters'
 import { isRulingStepOneValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import { useQuery } from '@apollo/client'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
-  CaseData,
   JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  setCheckboxAndSendToServer,
-  newSetAndSendDateToServer,
+  setAndSendDateToServer,
   removeTabsValidateAndSet,
   validateAndSendToServer,
+  setAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { isolation } from '@island.is/judicial-system-web/src/utils/Restrictions'
-import CheckboxList from '@island.is/judicial-system-web/src/components/CheckboxList/CheckboxList'
-import { useRouter } from 'next/router'
-import DateTime from '@island.is/judicial-system-web/src/components/DateTime/DateTime'
+import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import { rcRulingStepOne as m } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  rcRulingStepOne as m,
+} from '@island.is/judicial-system-web/messages'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { capitalize } from '@island.is/judicial-system/formatters'
 
 export const RulingStepOne: React.FC = () => {
-  const [workingCase, setWorkingCase] = useState<Case>()
-  const [, setValidToDateIsValid] = useState<boolean>(true)
-  const [, setIsolationToIsValid] = useState<boolean>(true)
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+    isCaseUpToDate,
+  } = useContext(FormContext)
+
   const [
     courtCaseFactsErrorMessage,
     setCourtCaseFactsErrorMessage,
@@ -73,35 +76,16 @@ export const RulingStepOne: React.FC = () => {
   const id = router.query.id
 
   const { user } = useContext(UserContext)
-  const { updateCase, autofill } = useCase()
+  const { updateCase, autofill, autofillBoolean } = useCase()
   const { formatMessage } = useIntl()
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
 
   useEffect(() => {
     document.title = 'Úrskurður - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
-    if (!workingCase && data?.case) {
-      let theCase = data.case
-
-      if (!theCase.custodyRestrictions) {
-        theCase = {
-          ...theCase,
-          custodyRestrictions: theCase.requestedCustodyRestrictions,
-        }
-
-        updateCase(
-          theCase.id,
-          parseArray(
-            'custodyRestrictions',
-            theCase.requestedCustodyRestrictions ?? [],
-          ),
-        )
-      }
+    if (isCaseUpToDate) {
+      const theCase = workingCase
 
       if (theCase.demands) {
         autofill('prosecutorDemands', theCase.demands, theCase)
@@ -109,6 +93,19 @@ export const RulingStepOne: React.FC = () => {
 
       if (theCase.requestedValidToDate) {
         autofill('validToDate', theCase.requestedValidToDate, theCase)
+      }
+
+      if (theCase.type === CaseType.CUSTODY) {
+        autofillBoolean(
+          'isCustodyIsolation',
+          theCase.requestedCustodyRestrictions &&
+            theCase.requestedCustodyRestrictions.includes(
+              CaseCustodyRestrictions.ISOLATION,
+            )
+            ? true
+            : false,
+          theCase,
+        )
       }
 
       if (theCase.validToDate) {
@@ -125,7 +122,14 @@ export const RulingStepOne: React.FC = () => {
 
       setWorkingCase(theCase)
     }
-  }, [workingCase, setWorkingCase, data, updateCase, autofill])
+  }, [
+    autofill,
+    autofillBoolean,
+    isCaseUpToDate,
+    setWorkingCase,
+    updateCase,
+    workingCase,
+  ])
 
   return (
     <PageLayout
@@ -134,363 +138,357 @@ export const RulingStepOne: React.FC = () => {
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.RULING_STEP_ONE}
-      isLoading={loading}
-      notFound={data?.case === undefined}
+      isLoading={isLoadingWorkingCase}
+      notFound={caseNotFound}
     >
-      {workingCase ? (
-        <>
-          <FormContentContainer>
-            <Box marginBottom={7}>
-              <Text as="h1" variant="h1">
-                {formatMessage(m.title)}
+      <FormContentContainer>
+        <Box marginBottom={7}>
+          <Text as="h1" variant="h1">
+            {formatMessage(m.title)}
+          </Text>
+        </Box>
+        <Box component="section" marginBottom={7}>
+          <CaseInfo workingCase={workingCase} userRole={user?.role} />
+        </Box>
+        <Box component="section" marginBottom={5}>
+          <Accordion>
+            <PoliceRequestAccordionItem workingCase={workingCase} />
+            <AccordionItem
+              id="caseFileList"
+              label={`Rannsóknargögn (${workingCase.caseFiles?.length ?? 0})`}
+              labelVariant="h3"
+            >
+              <CaseFileList
+                caseId={workingCase.id}
+                files={workingCase.caseFiles ?? []}
+                canOpenFiles={
+                  (workingCase.judge !== null &&
+                    workingCase.judge?.id === user?.id) ||
+                  (workingCase.registrar !== null &&
+                    workingCase.registrar?.id === user?.id)
+                }
+              />
+            </AccordionItem>
+          </Accordion>
+        </Box>
+        <Box component="section" marginBottom={5}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              {formatMessage(m.sections.prosecutorDemands.title)}
+            </Text>
+          </Box>
+          <Input
+            data-testid="prosecutorDemands"
+            name="prosecutorDemands"
+            label={formatMessage(m.sections.prosecutorDemands.label)}
+            value={workingCase.prosecutorDemands || ''}
+            placeholder={formatMessage(
+              m.sections.prosecutorDemands.placeholder,
+            )}
+            onChange={(event) =>
+              removeTabsValidateAndSet(
+                'prosecutorDemands',
+                event.target.value,
+                ['empty'],
+                workingCase,
+                setWorkingCase,
+                prosecutorDemandsErrorMessage,
+                setProsecutorDemandsMessage,
+              )
+            }
+            onBlur={(event) =>
+              validateAndSendToServer(
+                'prosecutorDemands',
+                event.target.value,
+                ['empty'],
+                workingCase,
+                updateCase,
+                setProsecutorDemandsMessage,
+              )
+            }
+            errorMessage={prosecutorDemandsErrorMessage}
+            hasError={prosecutorDemandsErrorMessage !== ''}
+            textarea
+            rows={7}
+            required
+          />
+        </Box>
+        <Box component="section" marginBottom={5}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              {`${formatMessage(m.sections.courtCaseFacts.title)} `}
+              <Tooltip
+                text={formatMessage(m.sections.courtCaseFacts.tooltip)}
+              />
+            </Text>
+          </Box>
+          <Box marginBottom={5}>
+            <Input
+              data-testid="courtCaseFacts"
+              name="courtCaseFacts"
+              label={formatMessage(m.sections.courtCaseFacts.label)}
+              value={workingCase.courtCaseFacts || ''}
+              placeholder={formatMessage(m.sections.courtCaseFacts.placeholder)}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'courtCaseFacts',
+                  event.target.value,
+                  ['empty'],
+                  workingCase,
+                  setWorkingCase,
+                  courtCaseFactsErrorMessage,
+                  setCourtCaseFactsErrorMessage,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'courtCaseFacts',
+                  event.target.value,
+                  ['empty'],
+                  workingCase,
+                  updateCase,
+                  setCourtCaseFactsErrorMessage,
+                )
+              }
+              errorMessage={courtCaseFactsErrorMessage}
+              hasError={courtCaseFactsErrorMessage !== ''}
+              textarea
+              rows={16}
+              required
+            />
+          </Box>
+        </Box>
+        <Box component="section" marginBottom={5}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              {`${formatMessage(m.sections.courtLegalArguments.title)} `}
+              <Tooltip
+                text={formatMessage(m.sections.courtLegalArguments.tooltip)}
+              />
+            </Text>
+          </Box>
+          <Box marginBottom={5}>
+            <Input
+              data-testid="courtLegalArguments"
+              name="courtLegalArguments"
+              label={formatMessage(m.sections.courtLegalArguments.label)}
+              value={workingCase.courtLegalArguments || ''}
+              placeholder={formatMessage(
+                m.sections.courtLegalArguments.placeholder,
+              )}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'courtLegalArguments',
+                  event.target.value,
+                  ['empty'],
+                  workingCase,
+                  setWorkingCase,
+                  courtLegalArgumentsErrorMessage,
+                  setCourtLegalArgumentsErrorMessage,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'courtLegalArguments',
+                  event.target.value,
+                  ['empty'],
+                  workingCase,
+                  updateCase,
+                  setCourtLegalArgumentsErrorMessage,
+                )
+              }
+              errorMessage={courtLegalArgumentsErrorMessage}
+              hasError={courtLegalArgumentsErrorMessage !== ''}
+              textarea
+              rows={16}
+              required
+            />
+          </Box>
+        </Box>
+        <Box component="section" marginBottom={5}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              {`${formatMessage(m.sections.decision.title)} `}
+              <Text as="span" fontWeight="semiBold" color="red600">
+                *
               </Text>
-            </Box>
-            <Box component="section" marginBottom={5}>
-              <CaseNumbers workingCase={workingCase} />
-            </Box>
-            <Box component="section" marginBottom={5}>
-              <Accordion>
-                <PoliceRequestAccordionItem workingCase={workingCase} />
-                <AccordionItem
-                  id="caseFileList"
-                  label={`Rannsóknargögn (${
-                    workingCase.caseFiles?.length ?? 0
-                  })`}
-                  labelVariant="h3"
-                >
-                  <CaseFileList
-                    caseId={workingCase.id}
-                    files={workingCase.caseFiles ?? []}
-                    canOpenFiles={
-                      workingCase.judge !== null &&
-                      workingCase.judge?.id === user?.id
-                    }
-                  />
-                </AccordionItem>
-              </Accordion>
-            </Box>
-            <Box component="section" marginBottom={5}>
-              <Box marginBottom={3}>
+            </Text>
+          </Box>
+          <Box marginBottom={5}>
+            <Decision
+              workingCase={workingCase}
+              setWorkingCase={setWorkingCase}
+              acceptedLabelText={formatMessage(
+                m.sections.decision.acceptLabel,
+                {
+                  caseType:
+                    workingCase.type === CaseType.CUSTODY
+                      ? 'gæsluvarðhald'
+                      : 'farbann',
+                },
+              )}
+              rejectedLabelText={formatMessage(
+                m.sections.decision.rejectLabel,
+                {
+                  caseType:
+                    workingCase.type === CaseType.CUSTODY
+                      ? 'gæsluvarðhald'
+                      : 'farbann',
+                },
+              )}
+              partiallyAcceptedLabelText={formatMessage(
+                m.sections.decision.partiallyAcceptLabel,
+              )}
+              dismissLabelText={formatMessage(
+                m.sections.decision.dismissLabel,
+                {
+                  caseType:
+                    workingCase.type === CaseType.CUSTODY
+                      ? 'gæsluvarðhald'
+                      : 'farbann',
+                },
+              )}
+              acceptingAlternativeTravelBanLabelText={formatMessage(
+                m.sections.decision.acceptingAlternativeTravelBanLabel,
+              )}
+            />
+          </Box>
+        </Box>
+        <Box component="section" marginBottom={8}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              {formatMessage(m.sections.ruling.title)}
+            </Text>
+          </Box>
+          <RulingInput
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+            isCaseUpToDate={isCaseUpToDate}
+            isRequired
+          />
+        </Box>
+        {workingCase.decision &&
+          workingCase.decision !== CaseDecision.REJECTING &&
+          workingCase.decision !== CaseDecision.DISMISSING && (
+            <Box
+              component="section"
+              marginBottom={7}
+              data-testid="caseDecisionSection"
+            >
+              <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
-                  {formatMessage(m.sections.prosecutorDemands.title)}
+                  {workingCase.type === CaseType.CUSTODY &&
+                  isAcceptingCaseDecision(workingCase.decision)
+                    ? 'Gæsluvarðhald'
+                    : 'Farbann'}
                 </Text>
               </Box>
-              <Input
-                data-testid="prosecutorDemands"
-                name="prosecutorDemands"
-                label={formatMessage(m.sections.prosecutorDemands.label)}
-                defaultValue={workingCase.prosecutorDemands}
-                placeholder={formatMessage(
-                  m.sections.prosecutorDemands.placeholder,
-                )}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'prosecutorDemands',
-                    event,
-                    ['empty'],
+              <DateTime
+                name="validToDate"
+                datepickerLabel={
+                  workingCase.type === CaseType.CUSTODY &&
+                  isAcceptingCaseDecision(workingCase.decision)
+                    ? 'Gæsluvarðhald til'
+                    : 'Farbann til'
+                }
+                selectedDate={workingCase.validToDate}
+                minDate={new Date()}
+                onChange={(date: Date | undefined, valid: boolean) => {
+                  setAndSendDateToServer(
+                    'validToDate',
+                    date,
+                    valid,
                     workingCase,
                     setWorkingCase,
-                    prosecutorDemandsErrorMessage,
-                    setProsecutorDemandsMessage,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'prosecutorDemands',
-                    event.target.value,
-                    ['empty'],
-                    workingCase,
                     updateCase,
-                    setProsecutorDemandsMessage,
                   )
-                }
-                errorMessage={prosecutorDemandsErrorMessage}
-                hasError={prosecutorDemandsErrorMessage !== ''}
-                textarea
-                rows={7}
+                }}
                 required
               />
             </Box>
-            <Box component="section" marginBottom={5}>
-              <Box marginBottom={3}>
-                <Text as="h3" variant="h3">
-                  {`${formatMessage(m.sections.courtCaseFacts.title)} `}
-                  <Tooltip
-                    text={formatMessage(m.sections.courtCaseFacts.tooltip)}
-                  />
-                </Text>
-              </Box>
-              <Box marginBottom={5}>
-                <Input
-                  data-testid="courtCaseFacts"
-                  name="courtCaseFacts"
-                  label={formatMessage(m.sections.courtCaseFacts.label)}
-                  defaultValue={workingCase.courtCaseFacts}
-                  placeholder={formatMessage(
-                    m.sections.courtCaseFacts.placeholder,
-                  )}
-                  onChange={(event) =>
-                    removeTabsValidateAndSet(
-                      'courtCaseFacts',
-                      event,
-                      ['empty'],
-                      workingCase,
-                      setWorkingCase,
-                      courtCaseFactsErrorMessage,
-                      setCourtCaseFactsErrorMessage,
-                    )
-                  }
-                  onBlur={(event) =>
-                    validateAndSendToServer(
-                      'courtCaseFacts',
-                      event.target.value,
-                      ['empty'],
-                      workingCase,
-                      updateCase,
-                      setCourtCaseFactsErrorMessage,
-                    )
-                  }
-                  errorMessage={courtCaseFactsErrorMessage}
-                  hasError={courtCaseFactsErrorMessage !== ''}
-                  textarea
-                  rows={16}
-                  required
-                />
-              </Box>
-            </Box>
-            <Box component="section" marginBottom={5}>
-              <Box marginBottom={3}>
-                <Text as="h3" variant="h3">
-                  {`${formatMessage(m.sections.courtLegalArguments.title)} `}
-                  <Tooltip
-                    text={formatMessage(m.sections.courtLegalArguments.tooltip)}
-                  />
-                </Text>
-              </Box>
-              <Box marginBottom={5}>
-                <Input
-                  data-testid="courtLegalArguments"
-                  name="courtLegalArguments"
-                  label={formatMessage(m.sections.courtLegalArguments.label)}
-                  defaultValue={workingCase.courtLegalArguments}
-                  placeholder={formatMessage(
-                    m.sections.courtLegalArguments.placeholder,
-                  )}
-                  onChange={(event) =>
-                    removeTabsValidateAndSet(
-                      'courtLegalArguments',
-                      event,
-                      ['empty'],
-                      workingCase,
-                      setWorkingCase,
-                      courtLegalArgumentsErrorMessage,
-                      setCourtLegalArgumentsErrorMessage,
-                    )
-                  }
-                  onBlur={(event) =>
-                    validateAndSendToServer(
-                      'courtLegalArguments',
-                      event.target.value,
-                      ['empty'],
-                      workingCase,
-                      updateCase,
-                      setCourtLegalArgumentsErrorMessage,
-                    )
-                  }
-                  errorMessage={courtLegalArgumentsErrorMessage}
-                  hasError={courtLegalArgumentsErrorMessage !== ''}
-                  textarea
-                  rows={16}
-                  required
-                />
-              </Box>
-            </Box>
-            <Box component="section" marginBottom={5}>
-              <Box marginBottom={3}>
-                <Text as="h3" variant="h3">
-                  {`${formatMessage(m.sections.decision.title)} `}
-                  <Text as="span" fontWeight="semiBold" color="red600">
-                    *
-                  </Text>
-                </Text>
-              </Box>
-              <Box marginBottom={5}>
-                <Decision
-                  workingCase={workingCase}
-                  setWorkingCase={setWorkingCase}
-                  acceptedLabelText={formatMessage(
-                    m.sections.decision.acceptLabel,
-                    {
-                      caseType:
-                        workingCase.type === CaseType.CUSTODY
-                          ? 'gæsluvarðhald'
-                          : 'farbann',
-                    },
-                  )}
-                  rejectedLabelText={formatMessage(
-                    m.sections.decision.rejectLabel,
-                    {
-                      caseType:
-                        workingCase.type === CaseType.CUSTODY
-                          ? 'gæsluvarðhald'
-                          : 'farbann',
-                    },
-                  )}
-                  partiallyAcceptedLabelText={formatMessage(
-                    m.sections.decision.partiallyAcceptLabel,
-                  )}
-                  dismissLabelText={formatMessage(
-                    m.sections.decision.dismissLabel,
-                    {
-                      caseType:
-                        workingCase.type === CaseType.CUSTODY
-                          ? 'gæsluvarðhald'
-                          : 'farbann',
-                    },
-                  )}
-                  acceptingAlternativeTravelBanLabelText={formatMessage(
-                    m.sections.decision.acceptingAlternativeTravelBanLabel,
-                  )}
-                />
-              </Box>
-            </Box>
+          )}
+        {workingCase.type === CaseType.CUSTODY &&
+          isAcceptingCaseDecision(workingCase.decision) && (
             <Box component="section" marginBottom={8}>
-              <Box marginBottom={3}>
+              <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
-                  {formatMessage(m.sections.ruling.title)}
+                  {formatMessage(m.sections.custodyRestrictions.title)}
                 </Text>
               </Box>
-              <RulingInput
-                workingCase={workingCase}
-                setWorkingCase={setWorkingCase}
-                isRequired
-              />
-            </Box>
-            {workingCase.decision &&
-              workingCase.decision !== CaseDecision.REJECTING &&
-              workingCase.decision !== CaseDecision.DISMISSING && (
-                <Box
-                  component="section"
-                  marginBottom={7}
-                  data-testid="caseDecisionSection"
-                >
-                  <Box marginBottom={2}>
-                    <Text as="h3" variant="h3">
-                      {workingCase.type === CaseType.CUSTODY &&
-                      isAcceptingCaseDecision(workingCase.decision)
-                        ? 'Gæsluvarðhald'
-                        : 'Farbann'}
-                    </Text>
-                  </Box>
-                  <DateTime
-                    name="validToDate"
-                    datepickerLabel={
-                      workingCase.type === CaseType.CUSTODY &&
-                      isAcceptingCaseDecision(workingCase.decision)
-                        ? 'Gæsluvarðhald til'
-                        : 'Farbann til'
-                    }
-                    selectedDate={
-                      workingCase.validToDate
-                        ? new Date(workingCase.validToDate)
-                        : undefined
-                    }
-                    minDate={new Date()}
-                    onChange={(date: Date | undefined, valid: boolean) => {
-                      newSetAndSendDateToServer(
-                        'validToDate',
-                        date,
-                        valid,
+              <BlueBox>
+                <Box marginBottom={3}>
+                  <Checkbox
+                    name="isCustodyIsolation"
+                    label={capitalize(
+                      formatMessage(m.sections.custodyRestrictions.isolation, {
+                        genderedAccused: formatMessage(core.accused, {
+                          suffix:
+                            workingCase.defendants &&
+                            workingCase.defendants.length > 0 &&
+                            workingCase.defendants[0].gender === Gender.MALE
+                              ? 'i'
+                              : 'a',
+                        }),
+                      }),
+                    )}
+                    checked={workingCase.isCustodyIsolation}
+                    onChange={() => {
+                      setAndSendToServer(
+                        'isCustodyIsolation',
+                        !workingCase.isCustodyIsolation,
                         workingCase,
                         setWorkingCase,
-                        setValidToDateIsValid,
                         updateCase,
                       )
                     }}
-                    required
+                    filled
+                    large
                   />
                 </Box>
-              )}
-            {workingCase.type === CaseType.CUSTODY &&
-              isAcceptingCaseDecision(workingCase.decision) && (
-                <Box component="section" marginBottom={8}>
-                  <Box marginBottom={2}>
-                    <Text as="h3" variant="h3">
-                      {formatMessage(m.sections.custodyRestrictions.title)}
-                    </Text>
-                  </Box>
-                  <BlueBox>
-                    <Box marginBottom={3}>
-                      <CheckboxList
-                        checkboxes={isolation(workingCase.accusedGender)}
-                        selected={workingCase.custodyRestrictions}
-                        onChange={(id) =>
-                          setCheckboxAndSendToServer(
-                            'custodyRestrictions',
-                            id,
-                            workingCase,
-                            setWorkingCase,
-                            updateCase,
-                          )
-                        }
-                        fullWidth
-                      />
-                    </Box>
-                    <DateTime
-                      name="isolationToDate"
-                      datepickerLabel="Einangrun til"
-                      disabled={
-                        !workingCase.custodyRestrictions?.includes(
-                          CaseCustodyRestrictions.ISOLATION,
-                        )
-                      }
-                      selectedDate={
-                        workingCase.isolationToDate
-                          ? new Date(workingCase.isolationToDate)
-                          : workingCase.validToDate
-                          ? new Date(workingCase.validToDate)
-                          : undefined
-                      }
-                      // Isolation can never be set in the past.
-                      minDate={new Date()}
-                      maxDate={
-                        workingCase.validToDate
-                          ? new Date(workingCase.validToDate)
-                          : undefined
-                      }
-                      onChange={(date: Date | undefined, valid: boolean) => {
-                        newSetAndSendDateToServer(
-                          'isolationToDate',
-                          date,
-                          valid,
-                          workingCase,
-                          setWorkingCase,
-                          setIsolationToIsValid,
-                          updateCase,
-                        )
-                      }}
-                      blueBox={false}
-                      backgroundColor={
-                        workingCase.custodyRestrictions?.includes(
-                          CaseCustodyRestrictions.ISOLATION,
-                        )
-                          ? 'white'
-                          : 'blue'
-                      }
-                    />
-                  </BlueBox>
-                </Box>
-              )}
-          </FormContentContainer>
-          <FormContentContainer isFooter>
-            <FormFooter
-              previousUrl={`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`}
-              nextUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${id}`}
-              nextIsDisabled={!isRulingStepOneValidRC(workingCase)}
-            />
-          </FormContentContainer>
-        </>
-      ) : null}
+                <DateTime
+                  name="isolationToDate"
+                  datepickerLabel="Einangrun til"
+                  disabled={!workingCase.isCustodyIsolation}
+                  selectedDate={
+                    workingCase.isolationToDate
+                      ? workingCase.isolationToDate
+                      : workingCase.validToDate
+                      ? workingCase.validToDate
+                      : undefined
+                  }
+                  // Isolation can never be set in the past.
+                  minDate={new Date()}
+                  maxDate={
+                    workingCase.validToDate
+                      ? new Date(workingCase.validToDate)
+                      : undefined
+                  }
+                  onChange={(date: Date | undefined, valid: boolean) => {
+                    setAndSendDateToServer(
+                      'isolationToDate',
+                      date,
+                      valid,
+                      workingCase,
+                      setWorkingCase,
+                      updateCase,
+                    )
+                  }}
+                  blueBox={false}
+                  backgroundColor={
+                    workingCase.isCustodyIsolation ? 'white' : 'blue'
+                  }
+                />
+              </BlueBox>
+            </Box>
+          )}
+      </FormContentContainer>
+      <FormContentContainer isFooter>
+        <FormFooter
+          previousUrl={`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`}
+          nextUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${id}`}
+          nextIsDisabled={!isRulingStepOneValidRC(workingCase)}
+        />
+      </FormContentContainer>
     </PageLayout>
   )
 }

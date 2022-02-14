@@ -61,8 +61,8 @@ export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
           </Box>
         )}
         {slice.type === 'CTA' &&
-          slice.accordionItems.map((item) => (
-            <Box>
+          slice.accordionItems.map((item, index) => (
+            <Box marginTop={index ? 4 : 0} key={item.id}>
               <ActionCard
                 heading={item.title}
                 text={

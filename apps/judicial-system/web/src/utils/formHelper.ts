@@ -14,20 +14,15 @@ import { validate, Validation } from './validate'
 
 export const removeTabsValidateAndSet = (
   field: string,
-  evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  value: string,
   validations: Validation[],
   theCase: Case,
-  setCase: (value: React.SetStateAction<Case | undefined>) => void,
+  setCase: (value: React.SetStateAction<Case>) => void,
   errorMessage?: string,
   setErrorMessage?: (value: React.SetStateAction<string>) => void,
 ) => {
-  let value: string
-
-  if (evt.target.value.includes('\t')) {
-    value = replaceTabs(evt.target.value)
-    evt.target.value = value
-  } else {
-    value = evt.target.value
+  if (value.includes('\t')) {
+    value = replaceTabs(value)
   }
 
   validateAndSet(
@@ -41,22 +36,46 @@ export const removeTabsValidateAndSet = (
   )
 }
 
-export const validateAndSet = (
-  field: string,
-  value: string,
+export const removeErrorMessageIfValid = (
   validations: Validation[],
-  theCase: Case,
-  setCase: (value: React.SetStateAction<Case | undefined>) => void,
+  value: string,
   errorMessage?: string,
-  setErrorMessage?: (value: React.SetStateAction<string>) => void,
+  errorMessageSetter?: (value: React.SetStateAction<string>) => void,
 ) => {
   const isValid = !validations.some(
     (validation) => validate(value, validation).isValid === false,
   )
 
-  if (errorMessage !== '' && setErrorMessage && isValid) {
-    setErrorMessage('')
+  if (errorMessage !== '' && errorMessageSetter && isValid) {
+    errorMessageSetter('')
   }
+}
+
+export const validateAndSetErrorMessage = (
+  validations: Validation[],
+  value: string,
+  errorMessageSetter?: (value: React.SetStateAction<string>) => void,
+) => {
+  const error = validations
+    .map((v) => validate(value, v))
+    .find((v) => v.isValid === false)
+
+  if (error && errorMessageSetter) {
+    errorMessageSetter(error.errorMessage)
+    return
+  }
+}
+
+export const validateAndSet = (
+  field: string,
+  value: string,
+  validations: Validation[],
+  theCase: Case,
+  setCase: (value: React.SetStateAction<Case>) => void,
+  errorMessage?: string,
+  setErrorMessage?: (value: React.SetStateAction<string>) => void,
+) => {
+  removeErrorMessageIfValid(validations, value, errorMessage, setErrorMessage)
 
   setCase({
     ...theCase,
@@ -70,7 +89,7 @@ export const validateAndSetTime = (
   time: string,
   validations: Validation[],
   theCase: Case,
-  setCase: (value: React.SetStateAction<Case | undefined>) => void,
+  setCase: (value: React.SetStateAction<Case>) => void,
   errorMessage?: string,
   setErrorMessage?: (value: React.SetStateAction<string>) => void,
   setTime?: (value: React.SetStateAction<string | undefined>) => void,
@@ -102,57 +121,12 @@ export const validateAndSetTime = (
 
 export const setAndSendDateToServer = (
   field: string,
-  currentValue: string | undefined,
-  date: Date | null,
-  theCase: Case,
-  required: boolean,
-  setCase: (value: React.SetStateAction<Case | undefined>) => void,
-  updateCase: (id: string, updateCase: UpdateCase) => void,
-  setErrorMessage?: (value: React.SetStateAction<string>) => void,
-) => {
-  if (required && date === null && setErrorMessage) {
-    setErrorMessage('Reitur má ekki vera tómur')
-  }
-
-  let formattedDate = null
-
-  if (date !== null) {
-    if (setErrorMessage) {
-      setErrorMessage('')
-    }
-
-    const currentRepresentation = currentValue?.includes('T')
-      ? 'complete'
-      : 'date'
-
-    formattedDate = formatISO(date, {
-      representation: currentRepresentation,
-    })
-  }
-
-  setCase({
-    ...theCase,
-    [field]: formattedDate,
-  })
-
-  if (theCase.id !== '') {
-    updateCase(theCase.id, {
-      [field]: formattedDate,
-    })
-  }
-}
-
-export const newSetAndSendDateToServer = (
-  field: string,
   date: Date | undefined,
   isValid: boolean,
   theCase: Case,
-  setCase: (value: React.SetStateAction<Case | undefined>) => void,
-  setIsValid: (value: React.SetStateAction<boolean>) => void,
+  setCase: (value: React.SetStateAction<Case>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
-  setIsValid(isValid)
-
   if (!isValid) {
     return
   }
@@ -185,14 +159,7 @@ export const validateAndSendToServer = (
   updateCase: (id: string, updateCase: UpdateCase) => void,
   setErrorMessage?: (value: React.SetStateAction<string>) => void,
 ) => {
-  const error = validations
-    .map((v) => validate(value, v))
-    .find((v) => v.isValid === false)
-
-  if (error && setErrorMessage) {
-    setErrorMessage(error.errorMessage)
-    return
-  }
+  validateAndSetErrorMessage(validations, value, setErrorMessage)
 
   if (theCase.id !== '') {
     updateCase(theCase.id, parseString(field, value))
@@ -230,9 +197,9 @@ export const validateAndSendTimeToServer = (
 
 export const setAndSendToServer = (
   field: string,
-  value: string | boolean | null,
+  value: string | boolean | undefined,
   theCase: Case,
-  setCase: (value: React.SetStateAction<Case | undefined>) => void,
+  setCase: (value: React.SetStateAction<Case>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
   let stringValue = ''
@@ -257,7 +224,7 @@ export const setCheckboxAndSendToServer = (
   field: string,
   value: string,
   theCase: Case,
-  setCase: (value: React.SetStateAction<Case | undefined>) => void,
+  setCase: (value: React.SetStateAction<Case>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
   const checks = theCase[field as keyof Case]

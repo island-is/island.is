@@ -5,7 +5,7 @@ import set from 'lodash/set'
 import addDays from 'date-fns/addDays'
 
 import {
-  Application,
+  ApplicationWithAttachments as Application,
   ApplicationStatus,
   ApplicationTypes,
 } from '@island.is/application/core'

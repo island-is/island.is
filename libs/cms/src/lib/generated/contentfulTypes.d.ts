@@ -676,6 +676,9 @@ export interface IFooterItemFields {
 
   /** Content */
   content?: Document | undefined
+
+  /** Service web content */
+  serviceWebContent?: Document | undefined
 }
 
 export interface IFooterItem extends Entry<IFooterItemFields> {
@@ -702,8 +705,20 @@ export interface IFrontpageFields {
   /** Heading */
   heading?: string | undefined
 
+  /** Alternative text for image/video */
+  imageAlternativeText?: string | undefined
+
+  /** Videos */
+  videos?: Asset[] | undefined
+
   /** Image */
   image?: Asset | undefined
+
+  /** Videos (mobile) */
+  videosMobile?: Asset[] | undefined
+
+  /** Image (mobile) */
+  imageMobile?: Asset | undefined
 
   /** Featured */
   featured?: IFeatured[] | undefined
@@ -716,6 +731,9 @@ export interface IFrontpageFields {
 
   /** Namespace */
   namespace: IUiConfiguration
+
+  /** New links */
+  linkList?: ILinkList | undefined
 
   /** Page Identifier */
   pageIdentifier: string
@@ -1127,11 +1145,11 @@ export interface ILinkFields {
   /** Text */
   text: string
 
+  /** date */
+  date?: string | undefined
+
   /** URL */
   url: string
-
-  /** Linked page (deprecated) */
-  linkedPage?: ILinkedPage | undefined
 
   /** Link reference */
   linkReference?: IArticle | IArticleCategory | ILinkUrl | INews | undefined
@@ -1813,6 +1831,12 @@ export interface IOrganizationFields {
 
   /** Email */
   email?: string | undefined
+
+  /** Titill á þjónustuvef */
+  serviceWebTitle?: string | undefined
+
+  /** Birta á þjónustuvef */
+  serviceWebEnabled?: boolean | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -1909,6 +1933,12 @@ export interface IOrganizationPageFields {
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
+
+  /** External Links */
+  externalLinks?: ILink[] | undefined
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
@@ -2132,7 +2162,7 @@ export interface IProjectPageFields {
   sidebar: boolean
 
   /** Sidebar Links */
-  sidebarLinks?: ILink[] | undefined
+  sidebarLinks?: ILinkGroup[] | undefined
 
   /** Subtitle */
   subtitle?: string | undefined
@@ -2195,8 +2225,11 @@ export interface IProjectSubpageFields {
   /** Content */
   content?: Document | undefined
 
+  /** Render slices as tabs */
+  renderSlicesAsTabs?: boolean | undefined
+
   /** Slices */
-  slices?: (IAccordionSlice | IOneColumnText | ITwoColumnText)[] | undefined
+  slices?: IOneColumnText[] | undefined
 }
 
 export interface IProjectSubpage extends Entry<IProjectSubpageFields> {
@@ -2457,6 +2490,9 @@ export interface IStepFields {
   /** Slug */
   slug: string
 
+  /** Step Type */
+  stepType?: 'Question - Radio' | 'Question - Dropdown' | 'Answer' | undefined
+
   /** Subtitle */
   subtitle?: Document | undefined
 
@@ -2468,6 +2504,9 @@ export interface IStepFields {
 
   /** Options */
   options?: Record<string, any> | undefined
+
+  /** Config */
+  config?: Record<string, any> | undefined
 }
 
 /** Step for stepper */
@@ -2495,6 +2534,9 @@ export interface IStepperFields {
 
   /** Steps */
   steps?: IStep[] | undefined
+
+  /** Config */
+  config?: Record<string, any> | undefined
 }
 
 /** Used for asking users questions and returning an answer. */
@@ -2611,6 +2653,9 @@ export interface ISubArticleFields {
 
   /** Slug(old) */
   slug?: string | undefined
+
+  /** Stepper */
+  stepper?: IStepper | undefined
 }
 
 /** A sub article that's a part of another main article */
@@ -2678,6 +2723,9 @@ export interface ISupportCategoryFields {
 
   /** Organization */
   organization: IOrganization
+
+  /** Importance */
+  importance?: number | undefined
 }
 
 /** Category for the helpdesk questions, used for grouping QNAs */
@@ -2692,34 +2740,6 @@ export interface ISupportCategory extends Entry<ISupportCategoryFields> {
     contentType: {
       sys: {
         id: 'supportCategory'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface ISupportFormFields {
-  /** Category */
-  category: string
-
-  /** Organization */
-  organization: IOrganization
-
-  /** Form */
-  form?: Record<string, any> | undefined
-}
-
-export interface ISupportForm extends Entry<ISupportFormFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'supportForm'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2745,6 +2765,9 @@ export interface ISupportQnaFields {
 
   /** Organization */
   organization: IOrganization
+
+  /** Importance */
+  importance?: number | undefined
 }
 
 /** Helpdesk support questions and answer */
@@ -2775,6 +2798,9 @@ export interface ISupportSubCategoryFields {
 
   /** slug */
   slug: string
+
+  /** Importance */
+  importance?: number | undefined
 }
 
 export interface ISupportSubCategory extends Entry<ISupportSubCategoryFields> {
@@ -3458,7 +3484,6 @@ export type CONTENT_TYPE =
   | 'subArticle'
   | 'subpageHeader'
   | 'supportCategory'
-  | 'supportForm'
   | 'supportQNA'
   | 'supportSubCategory'
   | 'tabContent'

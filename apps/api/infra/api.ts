@@ -9,7 +9,10 @@ import {
   Labor,
   NationalRegistry,
   Payment,
+  Properties,
   PaymentSchedule,
+  CriminalRecord,
+  RskCompanyInfo,
 } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
 
@@ -19,8 +22,6 @@ export const serviceSetup = (services: {
   icelandicNameRegistryBackend: ServiceBuilder<'icelandic-names-registry-backend'>
   documentsService: ServiceBuilder<'services-documents'>
   servicesEndorsementApi: ServiceBuilder<'services-endorsement-api'>
-  servicesTemporaryVoterRegistryApi: ServiceBuilder<'services-temporary-voter-registry-api'>
-  servicesPartyLetterRegistryApi: ServiceBuilder<'services-party-letter-registry-api'>
 }): ServiceBuilder<'api'> => {
   return service('api')
     .namespace('islandis')
@@ -98,12 +99,15 @@ export const serviceSetup = (services: {
       ENDORSEMENT_SYSTEM_BASE_API_URL: ref(
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
       ),
-      TEMPORARY_VOTER_REGISTRY_BASE_API_URL: ref(
-        (h) => `http://${h.svc(services.servicesTemporaryVoterRegistryApi)}`,
-      ),
-      PARTY_LETTER_REGISTRY_BASE_API_URL: ref(
-        (h) => `http://${h.svc(services.servicesPartyLetterRegistryApi)}`,
-      ),
+      IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api',
+      XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000',
+      XROAD_PROPERTIES_TIMEOUT: '20000',
+      SYSLUMENN_TIMEOUT: '30000',
+      IDENTITY_SERVER_ISSUER_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
     })
 
     .secrets({
@@ -149,6 +153,8 @@ export const serviceSetup = (services: {
       RSK_API_PASSWORD: '/k8s/shared/api/RSK_API_PASSWORD',
       RSK_API_URL: '/k8s/shared/api/RSK_API_URL',
       ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
+      ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
+      IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
     })
     .xroad(
       Base,
@@ -160,7 +166,10 @@ export const serviceSetup = (services: {
       Finance,
       Education,
       NationalRegistry,
+      Properties,
       PaymentSchedule,
+      CriminalRecord,
+      RskCompanyInfo,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

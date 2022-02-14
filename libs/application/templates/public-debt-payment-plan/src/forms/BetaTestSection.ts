@@ -11,6 +11,7 @@ export const betaTestSection = buildSection({
         id: 'betaTest.section.textField',
         title: betaTest.title,
         component: 'DescriptionWithLink',
+        doesNotRequireAnswer: true,
       },
       {
         descriptionFirstPart: betaTest.descriptionFirstPart,

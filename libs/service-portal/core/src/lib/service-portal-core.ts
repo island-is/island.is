@@ -30,6 +30,10 @@ export interface ServicePortalNavigationItem {
    * Indicates if the user has access to the navigation item
    */
   enabled?: boolean
+  /**
+   * Subscribes to - get updates from badge context
+   */
+  subscribesTo?: 'documents'
 }
 
 /**
@@ -70,6 +74,10 @@ export type ServicePortalRoute = {
    * Indicates if the user has access to the route
    */
   enabled?: boolean
+  /**
+   * Hides navigation item from navigation
+   */
+  navHide?: boolean
   /**
    * The render value of this component
    */

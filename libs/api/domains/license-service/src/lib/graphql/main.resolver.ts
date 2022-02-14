@@ -1,3 +1,4 @@
+import { ApiScope } from '@island.is/auth/scopes'
 import {
   Args,
   Query,
@@ -12,6 +13,7 @@ import {
   IdsUserGuard,
   ScopesGuard,
   CurrentUser,
+  Scopes,
 } from '@island.is/auth-nest-tools'
 import { IsBoolean, IsArray, IsOptional } from 'class-validator'
 import type { Locale } from '@island.is/shared/types'
@@ -72,6 +74,7 @@ export class VerifyPkPassInput {
 }
 
 @UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(ApiScope.internal)
 @Resolver()
 export class MainResolver {
   constructor(private readonly licenseServiceService: LicenseServiceService) {}
@@ -119,15 +122,16 @@ export class MainResolver {
     locale: Locale = 'is',
     @Args('input') input: GeneratePkPassInput,
   ): Promise<GenericPkPass> {
-    const pkpassUrl = await this.licenseServiceService.generatePkPass(
+    const {
+      pkpassUrl,
+      pkpassQRCode,
+    } = await this.licenseServiceService.generatePkPass(
       user.nationalId,
       locale,
       input.licenseType,
     )
 
-    return {
-      pkpassUrl,
-    }
+    return { pkpassUrl, pkpassQRCode }
   }
 
   @Mutation(() => GenericPkPassVerification)

@@ -2,16 +2,33 @@ import { generateYamlForEnv } from '../dsl/serialize-to-yaml'
 import { UberChart } from '../dsl/uber-chart'
 import { Envs } from '../environments'
 import { charts } from '../uber-charts/all-charts'
-import { SSM } from 'aws-sdk'
-import { GetParametersByPathResult } from 'aws-sdk/clients/ssm'
+import { SSM } from '@aws-sdk/client-ssm'
 
 const API_INITIALIZATION_OPTIONS = {
   region: 'eu-west-1',
-  maxRetries: 10,
-  retryDelayOptions: { base: 200 },
+  maxAttempts: 10,
 }
 
+const EXCLUDED_ENVIRONMENT_NAMES = [
+  'DB_PASSWORD',
+  'NOVA_USERNAME',
+  'NOVA_PASSWORD',
+]
+
 const client = new SSM(API_INITIALIZATION_OPTIONS)
+
+export const renderSecretsCommand = async (service: string) => {
+  renderSecrets(service).catch((error) => {
+    if (error.name === 'CredentialsProviderError') {
+      console.error(
+        'Could not load AWS credentials from any providers. Did you forget to configure environment variables, aws profile or run `aws sso login`?',
+      )
+    } else {
+      console.error(error)
+    }
+    process.exit(1)
+  })
+}
 
 export const renderSecrets = async (service: string) => {
   const urls: string[] = []
@@ -20,41 +37,44 @@ export const renderSecrets = async (service: string) => {
     (chart) => generateYamlForEnv(uberChart, ...chart.dev).services,
   )
 
-  const allDevParamNames = await getAllDevParams()
-
-  services.forEach((svc) => {
-    Object.entries(svc).forEach(([serviceName, config]) => {
-      if (serviceName == service) {
-        Object.entries(config.secrets).forEach(([envName, ssmName]) => {
-          if (allDevParamNames[ssmName]) {
-            console.log(`export ${envName}=${allDevParamNames[ssmName]}`)
+  const secretRequests: [string, string][] = services
+    .map((svc) => {
+      return Object.entries(svc)
+        .map(([serviceName, config]) => {
+          if (serviceName == service) {
+            return Object.entries(config.secrets)
           }
+          return []
         })
-      }
+        .reduce((p, c) => p.concat(c), [])
     })
+    .reduce((p, c) => p.concat(c), [])
+    .filter(([envName]) => !EXCLUDED_ENVIRONMENT_NAMES.includes(envName))
+
+  const values = await getParams(secretRequests.map(([_, ssmName]) => ssmName))
+
+  secretRequests.forEach(([envName, ssmName]) => {
+    console.log(`export ${envName}=${values[ssmName]}`)
   })
 }
 
-const getAllDevParams = async (): Promise<{ [name: string]: string }> => {
-  const names: { [name: string]: string } = {}
-  let nextToken
-  do {
-    const response: GetParametersByPathResult = await client
-      .getParametersByPath({
-        NextToken: nextToken,
-        MaxResults: 10,
-        ParameterFilters: [{ Key: 'Label', Values: ['dev'], Option: 'Equals' }],
-        Path: '/k8s',
-        Recursive: true,
-        WithDecryption: true,
-      })
-      .promise()
-    nextToken = response.NextToken
-    response.Parameters?.forEach((param) => {
-      if (param.Name) {
-        names[param.Name] = param.Value!
-      }
-    })
-  } while (nextToken)
-  return names
+const getParams = async (
+  ssmNames: string[],
+): Promise<{ [name: string]: string }> => {
+  const chunks = ssmNames.reduce((all: string[][], one: string, i: number) => {
+    const ch = Math.floor(i / 10)
+    all[ch] = ([] as string[]).concat(all[ch] || [], one)
+    return all
+  }, [])
+
+  const allParams = await Promise.all(
+    chunks.map((Names) =>
+      client.getParameters({ Names, WithDecryption: true }),
+    ),
+  )
+  return allParams
+    .map(({ Parameters }) =>
+      Object.fromEntries(Parameters!.map((p) => [p.Name, p.Value])),
+    )
+    .reduce((p, c) => ({ ...p, ...c }), {})
 }

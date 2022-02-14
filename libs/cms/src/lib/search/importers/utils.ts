@@ -95,3 +95,23 @@ export const numberOfLinks = (contentList: object[]) => {
 
 export const numberOfProcessEntries = (contentList: any[]) =>
   getProcessEntries(contentList).length
+
+const pruneEntryHyperlink = (node: any) => {
+  if (node?.data?.target?.fields) {
+    for (const field of Object.keys(node.data.target.fields)) {
+      if (field !== 'slug' && field !== 'url') {
+        delete node.data.target.fields[field]
+      }
+    }
+  }
+}
+
+export const removeEntryHyperlinkFields = (node: any) => {
+  if (node?.nodeType === 'entry-hyperlink') {
+    pruneEntryHyperlink(node)
+  } else if (node?.content && node.content.length > 0) {
+    for (const contentNode of node.content) {
+      removeEntryHyperlinkFields(contentNode)
+    }
+  }
+}

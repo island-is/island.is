@@ -1,44 +1,27 @@
-import React, { useEffect, useState } from 'react'
-import type { Case } from '@island.is/judicial-system/types'
+import React, { useContext, useEffect } from 'react'
+
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
-import { useQuery } from '@apollo/client'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import {
-  CaseData,
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { useRouter } from 'next/router'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+
 import StepThreeForm from './StepThreeForm'
 
 export const StepThree: React.FC = () => {
-  const [workingCase, setWorkingCase] = useState<Case>()
-  const router = useRouter()
-  const id = router.query.id
-
-  const [
-    requestedValidToDateIsValid,
-    setRequestedValidToDateIsValid,
-  ] = useState(false)
-
-  const { data, loading } = useQuery<CaseData>(CaseQuery, {
-    variables: { input: { id: id } },
-    fetchPolicy: 'no-cache',
-  })
-
-  const resCase = data?.case
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+  } = useContext(FormContext)
+  const { user } = useContext(UserContext)
 
   useEffect(() => {
     document.title = 'Dómkröfur og lagagrundvöllur - Réttarvörslugátt'
   }, [])
-
-  useEffect(() => {
-    if (!workingCase && resCase) {
-      setRequestedValidToDateIsValid(resCase.requestedValidToDate != null)
-
-      setWorkingCase(resCase)
-    }
-  }, [workingCase, setWorkingCase, resCase])
 
   return (
     <PageLayout
@@ -47,17 +30,14 @@ export const StepThree: React.FC = () => {
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
       activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_THREE}
-      isLoading={loading}
-      notFound={data?.case === undefined}
+      isLoading={isLoadingWorkingCase}
+      notFound={caseNotFound}
     >
-      {workingCase ? (
-        <StepThreeForm
-          workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
-          requestedValidToDateIsValid={requestedValidToDateIsValid}
-          setRequestedValidToDateIsValid={setRequestedValidToDateIsValid}
-        />
-      ) : null}
+      <StepThreeForm
+        workingCase={workingCase}
+        setWorkingCase={setWorkingCase}
+        user={user}
+      />
     </PageLayout>
   )
 }

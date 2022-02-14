@@ -1,6 +1,5 @@
 import React, { useContext } from 'react'
 import { Box, Input, Text } from '@island.is/island-ui/core'
-import { useRouter } from 'next/router'
 
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 

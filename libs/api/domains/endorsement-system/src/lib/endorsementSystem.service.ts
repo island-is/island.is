@@ -9,7 +9,6 @@ import {
   EndorsementListControllerCreateRequest,
   EndorsementListControllerUpdateRequest,
   EndorsementListControllerFindOneRequest,
-  EndorsementControllerBulkCreateRequest,
   EndorsementControllerFindAllRequest,
   EndorsementControllerFindByAuthRequest,
   EndorsementListControllerFindByTagsRequest,
@@ -84,15 +83,6 @@ export class EndorsementSystemService {
   ) {
     return await this.endorsementApiWithAuth(auth)
       .endorsementControllerCreate(input)
-      .catch(this.handleError.bind(this))
-  }
-
-  async endorsementControllerBulkCreate(
-    input: EndorsementControllerBulkCreateRequest,
-    auth: Auth,
-  ) {
-    return await this.endorsementApiWithAuth(auth)
-      .endorsementControllerBulkCreate(input)
       .catch(this.handleError.bind(this))
   }
 

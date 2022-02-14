@@ -1,34 +1,40 @@
-import React, { useState } from 'react'
-import InputMask from 'react-input-mask'
+import React from 'react'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select/src/types'
-import { Box, Checkbox, Input, Select, Text } from '@island.is/island-ui/core'
+import { AnimatePresence, motion } from 'framer-motion'
+import { uuid } from 'uuidv4'
+
+import { Box, Button, Input, Select, Text } from '@island.is/island-ui/core'
 import {
   BlueBox,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
 import { ICaseTypes } from '@island.is/judicial-system/consts'
-import { CaseType } from '@island.is/judicial-system/types'
+import {
+  CaseType,
+  Defendant,
+  isCaseTypeWithMultipleDefendantsSupport,
+  UpdateDefendant,
+} from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import {
-  FormSettings,
-  useCaseFormHelper,
-} from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
-import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
 import { theme } from '@island.is/island-ui/theme'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
+import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
+import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
+import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 import { defendant as m } from '@island.is/judicial-system-web/messages'
 import * as constants from '@island.is/judicial-system-web/src/utils/constants'
-import { setAndSendToServer as setSelectAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { AnimatePresence, motion } from 'framer-motion'
+
+import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
+import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   handleNextButtonClick: (theCase: Case) => void
   isLoading: boolean
 }
@@ -41,45 +47,85 @@ const DefendantForm: React.FC<Props> = (props) => {
     isLoading,
   } = props
 
-  const [
-    defenderEmailErrorMessage,
-    setDefenderEmailErrorMessage,
-  ] = useState<string>('')
+  const { updateCase } = useCase()
+  const { createDefendant, deleteDefendant, updateDefendant } = useDefendants()
+  const { formatMessage } = useIntl()
 
-  const [
-    defenderPhoneNumberErrorMessage,
-    setDefenderPhoneNumberErrorMessage,
-  ] = useState<string>('')
+  const updateDefendantState = (
+    defendantId: string,
+    update: UpdateDefendant,
+  ) => {
+    if (workingCase.defendants) {
+      const indexOfDefendantToUpdate = workingCase.defendants.findIndex(
+        (defendant) => defendant.id === defendantId,
+      )
 
-  const validations: FormSettings = {
-    policeCaseNumber: {
-      validations: ['empty', 'police-casenumber-format'],
-    },
-    type: {
-      validations: ['empty'],
-    },
-    accusedGender: {
-      validations: ['empty'],
-    },
-    accusedNationalId: {
-      validations: ['empty', 'national-id'],
-    },
-    accusedName: {
-      validations: ['empty'],
-    },
-    accusedAddress: {
-      validations: ['empty'],
-    },
+      const newDefendants = [...workingCase.defendants]
+
+      newDefendants[indexOfDefendantToUpdate] = {
+        ...newDefendants[indexOfDefendantToUpdate],
+        ...update,
+      }
+
+      setWorkingCase({ ...workingCase, defendants: newDefendants })
+    }
   }
 
-  const { updateCase } = useCase()
-  const { formatMessage } = useIntl()
-  const {
-    isValid,
-    setField,
-    validateAndSendToServer,
-    setAndSendToServer,
-  } = useCaseFormHelper(workingCase, setWorkingCase, validations)
+  const handleUpdateDefendant = async (
+    defendantId: string,
+    updatedDefendant: UpdateDefendant,
+  ) => {
+    updateDefendantState(defendantId, updatedDefendant)
+
+    if (workingCase.id) {
+      updateDefendant(workingCase.id, defendantId, updatedDefendant)
+    }
+  }
+
+  const handleDeleteDefendant = async (defendant: Defendant) => {
+    if (workingCase.defendants && workingCase.defendants.length > 1) {
+      if (workingCase.id) {
+        const { data } = await deleteDefendant(workingCase.id, defendant.id)
+
+        if (data?.deleteDefendant.deleted && workingCase.defendants) {
+          removeDefendantFromState(defendant)
+        } else {
+          // TODO: handle error
+        }
+      } else {
+        removeDefendantFromState(defendant)
+      }
+    }
+  }
+
+  const removeDefendantFromState = (defendant: Defendant) => {
+    if (workingCase.defendants && workingCase.defendants?.length > 1) {
+      setWorkingCase({
+        ...workingCase,
+        defendants: [...workingCase.defendants].filter(
+          (d) => d.id !== defendant.id,
+        ),
+      })
+    }
+  }
+
+  const createEmptyDefendant = (defendantId?: string) => {
+    if (workingCase.defendants) {
+      setWorkingCase({
+        ...workingCase,
+        defendants: [
+          ...workingCase.defendants,
+          {
+            gender: undefined,
+            name: '',
+            nationalId: '',
+            address: '',
+            id: defendantId || uuid(),
+          } as Defendant,
+        ],
+      })
+    }
+  }
 
   return (
     <>
@@ -112,7 +158,7 @@ const DefendantForm: React.FC<Props> = (props) => {
                     m.sections.investigationType.type.placeholder,
                   )}
                   onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-                    setSelectAndSendToServer(
+                    setAndSendToServer(
                       'type',
                       (selectedOption as ReactSelectOption).value as string,
                       workingCase,
@@ -120,7 +166,7 @@ const DefendantForm: React.FC<Props> = (props) => {
                       updateCase,
                     )
                   }
-                  defaultValue={
+                  value={
                     workingCase?.id
                       ? {
                           value: CaseType[workingCase.type],
@@ -150,12 +196,23 @@ const DefendantForm: React.FC<Props> = (props) => {
                 placeholder={formatMessage(
                   m.sections.investigationType.description.placeholder,
                 )}
-                defaultValue={workingCase.description}
+                value={workingCase.description || ''}
                 autoComplete="off"
-                onChange={(event) => {
-                  setField(event.target)
+                onChange={(evt) => {
+                  setWorkingCase({
+                    ...workingCase,
+                    description: evt.target.value,
+                  })
                 }}
-                onBlur={(event) => validateAndSendToServer(event.target)}
+                onBlur={(evt) =>
+                  setAndSendToServer(
+                    'description',
+                    evt.target.value,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }
               />
             </BlueBox>
           </Box>
@@ -165,10 +222,64 @@ const DefendantForm: React.FC<Props> = (props) => {
                 {formatMessage(m.sections.defendantInfo.heading)}
               </Text>
             </Box>
-            <DefendantInfo
-              workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
-            />
+            <AnimatePresence>
+              {workingCase.defendants &&
+                workingCase.defendants.map((defendant, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                  >
+                    <Box
+                      marginBottom={
+                        index - 1 === workingCase.defendants?.length ? 0 : 3
+                      }
+                    >
+                      <DefendantInfo
+                        defendant={defendant}
+                        onDelete={index > 0 ? handleDeleteDefendant : undefined}
+                        onChange={handleUpdateDefendant}
+                        updateDefendantState={updateDefendantState}
+                      />
+                    </Box>
+                  </motion.div>
+                ))}
+            </AnimatePresence>
+            {isCaseTypeWithMultipleDefendantsSupport(workingCase.type) && (
+              <Box display="flex" justifyContent="flexEnd" marginTop={3}>
+                <Button
+                  variant="ghost"
+                  icon="add"
+                  onClick={async () => {
+                    if (workingCase.id) {
+                      const { data } = await createDefendant(workingCase.id, {
+                        gender: undefined,
+                        name: '',
+                        address: '',
+                        nationalId: '',
+                      })
+                      createEmptyDefendant(data?.createDefendant.id)
+                    } else {
+                      createEmptyDefendant()
+                    }
+
+                    window.scrollTo(0, document.body.scrollHeight)
+                  }}
+                  disabled={workingCase.defendants?.some(
+                    (defendant) =>
+                      !defendant.gender ||
+                      !defendant.name ||
+                      !defendant.address ||
+                      !defendant.nationalId,
+                  )}
+                >
+                  {formatMessage(
+                    m.sections.defendantInfo.addDefendantButtonText,
+                  )}
+                </Button>
+              </Box>
+            )}
           </Box>
           <AnimatePresence>
             {[
@@ -181,84 +292,10 @@ const DefendantForm: React.FC<Props> = (props) => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
               >
-                <Box
-                  display="flex"
-                  justifyContent="spaceBetween"
-                  alignItems="baseline"
-                  marginBottom={2}
-                >
-                  <Text as="h3" variant="h3">
-                    {formatMessage(m.sections.defenderInfo.heading)}
-                  </Text>
-                </Box>
-                <BlueBox>
-                  <Box marginBottom={2}>
-                    <Input
-                      data-testid="defenderName"
-                      name="defenderName"
-                      autoComplete="off"
-                      label={formatMessage(m.sections.defenderInfo.name.label)}
-                      placeholder={formatMessage(
-                        m.sections.defenderInfo.name.placeholder,
-                      )}
-                      defaultValue={workingCase.defenderName}
-                      onChange={(event) => setField(event.target)}
-                      onBlur={(event) => validateAndSendToServer(event.target)}
-                    />
-                  </Box>
-                  <Box marginBottom={2}>
-                    <Input
-                      data-testid="defenderEmail"
-                      name="defenderEmail"
-                      autoComplete="off"
-                      label={formatMessage(m.sections.defenderInfo.email.label)}
-                      placeholder={formatMessage(
-                        m.sections.defenderInfo.email.placeholder,
-                      )}
-                      defaultValue={workingCase.defenderEmail}
-                      errorMessage={defenderEmailErrorMessage}
-                      hasError={defenderEmailErrorMessage !== ''}
-                      onChange={(event) => setField(event.target)}
-                      onBlur={(event) => validateAndSendToServer(event.target)}
-                    />
-                  </Box>
-                  <Box marginBottom={2}>
-                    <InputMask
-                      mask="999-9999"
-                      maskPlaceholder={null}
-                      onChange={(event) => setField(event.target)}
-                      onBlur={(event) => validateAndSendToServer(event.target)}
-                    >
-                      <Input
-                        data-testid="defenderPhoneNumber"
-                        name="defenderPhoneNumber"
-                        autoComplete="off"
-                        label={formatMessage(
-                          m.sections.defenderInfo.phoneNumber.label,
-                        )}
-                        placeholder={formatMessage(
-                          m.sections.defenderInfo.phoneNumber.placeholder,
-                        )}
-                        defaultValue={workingCase.defenderPhoneNumber}
-                        errorMessage={defenderPhoneNumberErrorMessage}
-                        hasError={defenderPhoneNumberErrorMessage !== ''}
-                      />
-                    </InputMask>
-                  </Box>
-                  <Checkbox
-                    name="sendRequestToDefender"
-                    label={formatMessage(
-                      m.sections.defenderInfo.sendRequest.label,
-                    )}
-                    tooltip={formatMessage(
-                      m.sections.defenderInfo.sendRequest.tooltip,
-                    )}
-                    checked={workingCase.sendRequestToDefender}
-                    onChange={(event) => setAndSendToServer(event.target)}
-                    large
-                    filled
-                  />
-                </BlueBox>
+                <DefenderInfo
+                  workingCase={workingCase}
+                  setWorkingCase={setWorkingCase}
+                />
               </motion.section>
             )}
           </AnimatePresence>
@@ -268,7 +305,7 @@ const DefendantForm: React.FC<Props> = (props) => {
         <FormFooter
           previousUrl={`${constants.REQUEST_LIST_ROUTE}`}
           onNextButtonClick={() => handleNextButtonClick(workingCase)}
-          nextIsDisabled={!isValid}
+          nextIsDisabled={!isDefendantStepValidIC(workingCase)}
           nextIsLoading={isLoading}
           nextButtonText={
             workingCase.id === '' ? 'Stofna kröfu' : 'Halda áfram'

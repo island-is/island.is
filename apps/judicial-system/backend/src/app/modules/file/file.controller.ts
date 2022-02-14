@@ -3,12 +3,15 @@ import {
   Controller,
   Delete,
   Get,
+  Inject,
   Param,
   Post,
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import {
   JwtAuthGuard,
   RolesGuard,
@@ -18,11 +21,12 @@ import {
 import { judgeRule, prosecutorRule, registrarRule } from '../../guards'
 import {
   Case,
-  CaseExistsForUpdateGuard,
   CaseNotCompletedGuard,
   CurrentCase,
   CaseExistsGuard,
-  CaseCompletedGuard,
+  CaseReadGuard,
+  CaseReceivedGuard,
+  CaseWriteGuard,
 } from '../case'
 import {
   CaseFileExistsGuard,
@@ -43,10 +47,13 @@ import { FileService } from './file.service'
 @Controller('api/case/:caseId')
 @ApiTags('files')
 export class FileController {
-  constructor(private readonly fileService: FileService) {}
+  constructor(
+    private readonly fileService: FileService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
 
+  @UseGuards(CaseExistsGuard, CaseWriteGuard, CaseNotCompletedGuard)
   @RolesRules(prosecutorRule)
-  @UseGuards(CaseExistsForUpdateGuard, CaseNotCompletedGuard)
   @Post('file/url')
   @ApiCreatedResponse({
     type: PresignedPost,
@@ -56,11 +63,13 @@ export class FileController {
     @Param('caseId') caseId: string,
     @Body() createPresignedPost: CreatePresignedPostDto,
   ): Promise<PresignedPost> {
+    this.logger.debug(`Creating a presigned post for case ${caseId}`)
+
     return this.fileService.createPresignedPost(caseId, createPresignedPost)
   }
 
+  @UseGuards(CaseExistsGuard, CaseWriteGuard, CaseNotCompletedGuard)
   @RolesRules(prosecutorRule)
-  @UseGuards(CaseExistsForUpdateGuard, CaseNotCompletedGuard)
   @Post('file')
   @ApiCreatedResponse({
     type: CaseFile,
@@ -70,11 +79,13 @@ export class FileController {
     @Param('caseId') caseId: string,
     @Body() createFile: CreateFileDto,
   ): Promise<CaseFile> {
+    this.logger.debug(`Creating a file for case ${caseId}`)
+
     return this.fileService.createCaseFile(caseId, createFile)
   }
 
+  @UseGuards(CaseExistsGuard, CaseReadGuard)
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
-  @UseGuards(CaseExistsGuard)
   @Get('files')
   @ApiOkResponse({
     type: CaseFile,
@@ -82,56 +93,77 @@ export class FileController {
     description: 'Gets all existing case file',
   })
   getAllCaseFiles(@Param('caseId') caseId: string): Promise<CaseFile[]> {
+    this.logger.debug(`Getting all files for case ${caseId}`)
+
     return this.fileService.getAllCaseFiles(caseId)
   }
 
-  @RolesRules(prosecutorRule)
   @UseGuards(
-    CaseExistsForUpdateGuard,
-    CaseNotCompletedGuard,
+    CaseExistsGuard,
+    CaseReadGuard,
+    ViewCaseFileGuard,
     CaseFileExistsGuard,
   )
-  @Delete('file/:fileId')
-  @ApiOkResponse({
-    type: DeleteFileResponse,
-    description: 'Deletes a case file',
-  })
-  deleteCaseFile(
-    @Param('caseId') _0: string,
-    @Param('fileId') _1: string,
-    @CurrentCaseFile() caseFile: CaseFile,
-  ): Promise<DeleteFileResponse> {
-    return this.fileService.deleteCaseFile(caseFile)
-  }
-
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
-  @UseGuards(CaseExistsGuard, ViewCaseFileGuard, CaseFileExistsGuard)
   @Get('file/:fileId/url')
   @ApiOkResponse({
     type: PresignedPost,
     description: 'Gets a signed url for a case file',
   })
   getCaseFileSignedUrl(
-    @Param('caseId') _0: string,
-    @Param('fileId') _1: string,
+    @Param('caseId') caseId: string,
+    @Param('fileId') fileId: string,
     @CurrentCaseFile() caseFile: CaseFile,
   ): Promise<SignedUrl> {
+    this.logger.debug(
+      `Getting a signed url for file ${fileId} of case ${caseId}`,
+    )
+
     return this.fileService.getCaseFileSignedUrl(caseFile)
   }
 
+  @UseGuards(
+    CaseExistsGuard,
+    CaseWriteGuard,
+    CaseNotCompletedGuard,
+    CaseFileExistsGuard,
+  )
+  @RolesRules(prosecutorRule)
+  @Delete('file/:fileId')
+  @ApiOkResponse({
+    type: DeleteFileResponse,
+    description: 'Deletes a case file',
+  })
+  deleteCaseFile(
+    @Param('caseId') caseId: string,
+    @Param('fileId') fileId: string,
+    @CurrentCaseFile() caseFile: CaseFile,
+  ): Promise<DeleteFileResponse> {
+    this.logger.debug(`Deleting file ${fileId} of case ${caseId}`)
+
+    return this.fileService.deleteCaseFile(caseFile)
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    CaseWriteGuard,
+    CaseReceivedGuard,
+    CaseFileExistsGuard,
+  )
   @RolesRules(judgeRule, registrarRule)
-  @UseGuards(CaseExistsForUpdateGuard, CaseCompletedGuard, CaseFileExistsGuard)
   @Post('file/:fileId/court')
   @ApiOkResponse({
     type: UploadFileToCourtResponse,
     description: 'Uploads a case file to court',
   })
   uploadCaseFileToCourt(
-    @Param('caseId') _0: string,
-    @Param('fileId') _1: string,
+    @Param('caseId') caseId: string,
+    @Param('fileId') fileId: string,
     @CurrentCase() theCase: Case,
     @CurrentCaseFile() caseFile: CaseFile,
   ): Promise<UploadFileToCourtResponse> {
+    this.logger.debug(`Uploading file ${fileId} of case ${caseId} to court`)
+
     return this.fileService.uploadCaseFileToCourt(
       theCase.courtId,
       theCase.courtCaseNumber,

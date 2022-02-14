@@ -25,27 +25,20 @@ const useMyApplication = () => {
     loading === false &&
     error === undefined
   ) {
-    try {
-      getApplication({
-        variables: {
-          input: { id: router.query.id as string },
-        },
-      })
+    getApplication({
+      variables: {
+        input: { id: router.query.id as string },
+      },
+    })
 
-      if (data) {
-        updateApplication(data.application)
-      }
-    } catch {
-      return {
-        myApplication,
-        error,
-        loading,
-      }
+    if (data) {
+      updateApplication(data.application)
     }
   }
 
   return {
     myApplication,
+    updateApplication,
     error,
     loading,
   }

@@ -30,7 +30,12 @@ export const authMiddleware = async (
     if (type.toLowerCase() !== 'bearer') {
       return error(res, 'Only bearer token allowed', 401)
     }
-    logger.debug('jwtToken', jwt.decode(token))
+    try {
+      const jwtToken = jwt.decode(token)
+      logger.debug('jwtToken', jwtToken)
+    } catch (e) {
+      logger.warn(`Error decoding token ${token}`, e)
+    }
     const successKey = signingKeys.find((sk) => {
       try {
         const publicKey = sk.getPublicKey()

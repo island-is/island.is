@@ -247,8 +247,8 @@ export const PrerequisitesForm: Form = buildForm({
                       .userProfileInformationSubTitle,
                 }),
                 buildDataProviderItem({
-                  id: 'family',
-                  type: 'FamilyInformationProvider',
+                  id: 'person',
+                  type: 'PersonInformationProvider',
                   title:
                     parentalLeaveFormMessages.shared.familyInformationTitle,
                   subTitle:

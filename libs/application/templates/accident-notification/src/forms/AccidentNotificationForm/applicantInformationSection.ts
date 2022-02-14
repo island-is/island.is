@@ -77,6 +77,7 @@ export const applicantInformationSection = buildSection({
           variant: 'email',
           required: true,
           defaultValue: '',
+          maxLength: 100,
         }),
         buildTextField({
           id: 'applicant.phoneNumber',

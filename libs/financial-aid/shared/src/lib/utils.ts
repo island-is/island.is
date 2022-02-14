@@ -8,8 +8,17 @@ export const getFileType = (fileName: string) => {
   return fileName?.substring(fileName.lastIndexOf('.') + 1)
 }
 
+export const encodeFilename = (filename: string) =>
+  encodeURI(filename.replace(/ +/g, '_'))
+
 export const getFileSizeInKilo = (file: { size?: number }) => {
   return Math.floor(file.size ? file.size / 1000 : 0)
+}
+
+export const firstDateOfMonth = () => {
+  const date = new Date()
+
+  return new Date(date.getFullYear(), date.getMonth(), 1)
 }
 
 export const currentMonth = () => {
@@ -31,7 +40,14 @@ export const formatNationalId = (nationalId: string) =>
   insertAt(nationalId.replace('-', ''), '-', 6) || '-'
 
 export const sanitizeNationalId = (nationalId: string) =>
-  nationalId.replace(/[^0-9]/g, '')
+  nationalId?.replace(/[^0-9]/g, '')
+
+export const isNationalIdValid = (nationalId: string): boolean => {
+  return (
+    sanitizeNationalId(nationalId).length === 10 &&
+    isNaN(Number(sanitizeNationalId(nationalId))) === false
+  )
+}
 
 export const isEmailValid = (emailAddress?: string) => {
   if (emailAddress) {

@@ -30,6 +30,7 @@ export * from './lib/entities/models/delegation.model'
 export * from './lib/entities/models/delegation-scope.model'
 export * from './lib/entities/models/api-scope-group.model'
 export * from './lib/entities/models/domain.model'
+export * from './lib/entities/models/personal-representative-scope-permission.model'
 
 // DTO's
 export * from './lib/entities/dto/api-scopes.dto'
@@ -59,11 +60,13 @@ export * from './lib/entities/dto/user-claim.dto'
 export * from './lib/entities/dto/api-scope-user.dto'
 export * from './lib/entities/dto/api-scope-user-access.dto'
 export * from './lib/entities/dto/api-scope-user-update.dto'
+export * from './lib/entities/dto/delegation-scope.dto'
 export * from './lib/entities/dto/delegation.dto'
 export * from './lib/entities/dto/api-scope-group.dto'
 export * from './lib/entities/dto/paged-rows.dto'
 export * from './lib/entities/dto/domain.dto'
 export * from './lib/entities/dto/individual-info.dto'
+export * from './lib/entities/dto/personal-representative-scope-permission.dto'
 
 // Services
 export * from './lib/services/clients.service'
@@ -77,8 +80,14 @@ export * from './lib/services/sequelizeConfig.service'
 export * from './lib/services/idp-provider.service'
 export * from './lib/services/translation.service'
 export * from './lib/services/delegations.service'
-export * from './lib/services/delegation-scope.service'
+export * from './lib/services/delegationScope.service'
 export * from './lib/services/user-profile.service'
+export * from './lib/services/personal-representative-scope-permission.service'
+
+// Types
+export * from './lib/types/delegationDirection'
+export * from './lib/types/delegationValidity'
 
 // Config
 //export * as DbConfig from './lib/config/sequelize.config.js'
+export * from './lib/config/DelegationConfig'

@@ -1,9 +1,10 @@
-import { FormValue } from '@island.is/application/core'
+import { FormValue, getValueViaPath } from '@island.is/application/core'
 import { StudiesAccidentTypeEnum } from '../types'
 
 export const isInternshipStudiesAccident = (formValue: FormValue) => {
-  const studiesAccidentType = (formValue as {
-    studiesAccident: { type: StudiesAccidentTypeEnum }
-  })?.studiesAccident?.type
+  const studiesAccidentType = getValueViaPath(
+    formValue,
+    'studiesAccident.type',
+  ) as StudiesAccidentTypeEnum
   return studiesAccidentType === StudiesAccidentTypeEnum.INTERNSHIP
 }

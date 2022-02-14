@@ -57,7 +57,12 @@ const AdminProvider = ({ children }: PageProps) => {
 
   return (
     <AdminContext.Provider
-      value={{ isAuthenticated, admin, setAdmin, municipality }}
+      value={{
+        isAuthenticated,
+        admin,
+        setAdmin,
+        municipality,
+      }}
     >
       {children}
     </AdminContext.Provider>

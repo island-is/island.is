@@ -87,6 +87,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
                 }}
                 render={({ onChange, value, name }) => (
                   <Input
+                    size="xs"
                     name={name}
                     value={value}
                     onChange={onChange}
@@ -122,6 +123,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
               }}
               render={({ onChange, value, name }) => (
                 <Input
+                  size="xs"
                   name={name}
                   value={value}
                   onChange={onChange}
@@ -156,6 +158,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
               }}
               render={({ onChange, value, name }) => (
                 <Input
+                  size="xs"
                   name={name}
                   value={value}
                   onChange={onChange}
@@ -202,6 +205,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
               }}
               render={({ onChange, value, name }) => (
                 <Input
+                  size="xs"
                   name={name}
                   value={value}
                   onChange={onChange}
@@ -232,6 +236,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
               }}
               render={({ onChange, value, name }) => (
                 <Input
+                  size="xs"
                   name={name}
                   value={value}
                   onChange={onChange}
@@ -258,6 +263,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
               }}
               render={({ onChange, value, name }) => (
                 <Input
+                  size="xs"
                   name={name}
                   value={value}
                   onChange={onChange}
@@ -291,6 +297,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
               }}
               render={({ onChange, value, name }) => (
                 <Input
+                  size="xs"
                   name={name}
                   value={value}
                   onChange={onChange}
@@ -325,6 +332,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
               }}
               render={({ onChange, value, name }) => (
                 <Input
+                  size="xs"
                   name={name}
                   value={value}
                   onChange={onChange}
@@ -373,6 +381,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
               }}
               render={({ onChange, value, name }) => (
                 <Input
+                  size="xs"
                   name={name}
                   value={value}
                   onChange={onChange}
@@ -412,6 +421,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
               }}
               render={({ onChange, value, name }) => (
                 <Input
+                  size="xs"
                   name={name}
                   value={value}
                   onChange={onChange}
@@ -448,6 +458,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
               }}
               render={({ onChange, value, name }) => (
                 <Input
+                  size="xs"
                   name={name}
                   value={value}
                   onChange={onChange}
@@ -496,6 +507,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
               }}
               render={({ onChange, value, name }) => (
                 <Input
+                  size="xs"
                   name={name}
                   value={value}
                   onChange={onChange}
@@ -537,6 +549,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
               }}
               render={({ onChange, value, name }) => (
                 <Input
+                  size="xs"
                   name={name}
                   value={value}
                   onChange={onChange}
@@ -585,6 +598,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
               }}
               render={({ onChange, value, name }) => (
                 <Input
+                  size="xs"
                   name={name}
                   value={value}
                   onChange={onChange}

@@ -9,6 +9,7 @@ export class ApiScopeDTO {
     this.emphasize = false
     this.grantToLegalGuardians = false
     this.grantToProcuringHolders = false
+    this.grantToPersonalRepresentatives = false
     this.allowExplicitDelegationGrant = false
     this.automaticDelegationGrant = false
     this.alsoForDelegatedUser = false
@@ -25,6 +26,7 @@ export class ApiScopeDTO {
   emphasize: boolean
   grantToLegalGuardians: boolean
   grantToProcuringHolders: boolean
+  grantToPersonalRepresentatives: boolean
   allowExplicitDelegationGrant: boolean
   automaticDelegationGrant: boolean
   alsoForDelegatedUser: boolean

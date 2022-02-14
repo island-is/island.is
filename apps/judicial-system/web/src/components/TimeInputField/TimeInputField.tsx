@@ -3,6 +3,7 @@ import InputMask from 'react-input-mask'
 
 interface Props {
   disabled?: boolean
+  value?: string
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void
   onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
@@ -26,6 +27,7 @@ const TimeInputField: React.FC<Props> = (props: PropsWithChildren<Props>) => {
       onBlur={props.onBlur}
       onFocus={props.onFocus}
       onChange={props.onChange}
+      value={props.value}
     >
       {props.children}
     </InputMask>

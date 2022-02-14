@@ -36,6 +36,7 @@ import {
   SupportQna,
 } from '@island.is/web/graphql/schema'
 import { ModifySearchTerms } from '../../SearchInput/SearchInput'
+import orderBy from 'lodash/orderBy'
 
 type FormState = {
   message: string
@@ -101,7 +102,7 @@ type CategoryId =
    */
   | '7LkzuYSzqwM7k8fJyeRbm6'
 
-const labels = {
+const labels: Record<string, string> = {
   syslumadur: 'Sýslumannsembætti',
   nafn: 'Nafn',
   email: 'Tölvupóstfang',
@@ -120,6 +121,14 @@ const labels = {
   erindi: 'Erindi',
   vidfangsefni: 'Viðfangsefni',
 }
+
+// these should be skipped in the message itself
+const skippedLabelsInMessage: Array<keyof typeof labels> = [
+  'nafn',
+  'vidfangsefni',
+  'email',
+  'erindi',
+]
 
 interface BasicInputProps {
   name: keyof typeof labels
@@ -349,18 +358,29 @@ export const StandardForm = ({
   const submitWithMessage = async () => {
     const values = getValues()
 
-    let message = Object.keys(labels).reduce((message, k) => {
-      const label = labels[k]
-      const value = values[k]
+    let message = ''
 
-      if (label && value) {
-        message += `${label}:\n${value}\n\n`
-      }
+    if (categoryLabel) {
+      message = `Málaflokkur:\n${categoryLabel}\n\n`
+    }
 
-      return message
-    }, '')
+    message = Object.keys(labels)
+      .filter((k) => !skippedLabelsInMessage.includes(k))
+      .reduce((message, k) => {
+        const label = labels[k]
+        const value = values[k]
 
-    message = `Málaflokkur:\n${categoryLabel}\n\n${message}`
+        if (label && value) {
+          message += `${label}:\n${value}\n\n`
+        }
+
+        return message
+      }, message)
+
+    // append the comment separately
+    if (values?.erindi) {
+      message = `${message}\n\n${values.erindi}`
+    }
 
     return onSubmit({
       email: values.email,
@@ -390,7 +410,7 @@ export const StandardForm = ({
                 setCategoryLabel(label as string)
                 setCategoryId(value as string)
               }}
-              options={supportCategories.map((x) => ({
+              options={orderBy(supportCategories, 'title', 'asc').map((x) => ({
                 label: x.title,
                 value: x.id,
               }))}
@@ -470,7 +490,7 @@ export const StandardForm = ({
                         <Text key={index} variant="small" color="blue600">
                           <a
                             href={`${
-                              linkResolver('helpdesk').href
+                              linkResolver('serviceweb').href
                             }/${organizationSlug}/${categorySlug}?q=${slug}`}
                           >
                             {title}

@@ -1,8 +1,8 @@
-import { service } from './dsl'
+import { service, json } from './dsl'
 import { UberChart } from './uber-chart'
 import { MissingSetting } from './types/input-types'
 import { serializeService } from './map-to-values'
-import { SerializeErrors } from './types/output-types'
+import { SerializeErrors, SerializeSuccess } from './types/output-types'
 import { EnvironmentConfig } from './types/charts'
 
 const Staging: EnvironmentConfig = {
@@ -85,5 +85,18 @@ describe('Env variable', () => {
     expect(() => sut.secrets({ B: 'C' })).toThrow(
       /Trying to set same environment variable multiple times/,
     )
+  })
+
+  it('Should support json encoded variables', () => {
+    const value = [{ value: 5 }]
+    const sut = service('api').env({
+      A: json(value),
+    })
+    const serviceDef = serializeService(
+      sut,
+      new UberChart(Staging),
+    ) as SerializeSuccess
+
+    expect(serviceDef.serviceDef.env.A).toEqual(JSON.stringify(value))
   })
 })

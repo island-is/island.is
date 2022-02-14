@@ -15,5 +15,6 @@ bootstrap({
   name: 'services-user-profile',
   interceptors: [new SentryInterceptor()],
   openApi,
+  swaggerPath: '',
   port: environment.port,
 })

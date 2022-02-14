@@ -8,6 +8,7 @@ import {
   createApplication,
   createCurrentUser,
 } from '@island.is/testing/fixtures'
+import { faker } from '@island.is/shared/mocking'
 
 import { generateDrivingLicenseSubmittedEmail } from './drivingLicenseSubmittedEmail'
 import { EmailComplete, EmailHeader, EmailRequirements } from './EmailUi'
@@ -26,6 +27,7 @@ const application = createApplication({
       a: 'no',
       b: 'yes',
     },
+    email: faker.internet.email(),
   },
   applicant: user.nationalId,
   assignees: [],
@@ -77,7 +79,7 @@ describe('driving license submission', () => {
         answers: {
           ...application.answers,
           willBringQualityPhoto: 'no',
-          juristictionId: 1,
+          juristiction: 1,
           healthDeclaration: {
             a: 'yes',
             b: 'no',

@@ -5,8 +5,9 @@ import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-import
 import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
-  CaseGender,
+  Gender,
   CaseType,
+  isRestrictionCase,
 } from '@island.is/judicial-system/types'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
@@ -65,12 +66,12 @@ export const formatNationalId = (nationalId: string): string => {
 }
 
 export const laws = {
-  _95_1_A: 'a-lið 1. mgr. 95. gr.',
-  _95_1_B: 'b-lið 1. mgr. 95. gr.',
-  _95_1_C: 'c-lið 1. mgr. 95. gr.',
-  _95_1_D: 'd-lið 1. mgr. 95. gr.',
-  _95_2: '2. mgr. 95. gr.',
-  _99_1_B: 'b-lið 1. mgr. 99. gr.',
+  _95_1_A: 'a-lið 1. mgr. 95. gr. sml.',
+  _95_1_B: 'b-lið 1. mgr. 95. gr. sml.',
+  _95_1_C: 'c-lið 1. mgr. 95. gr. sml.',
+  _95_1_D: 'd-lið 1. mgr. 95. gr. sml.',
+  _95_2: '2. mgr. 95. gr. sml.',
+  _99_1_B: 'b-lið 1. mgr. 99. gr. sml.',
   _100_1: '1. mgr. 100. gr. sml.',
 }
 
@@ -88,6 +89,7 @@ export const caseTypes = {
   BODY_SEARCH: 'leit og líkamsrannsókn',
   INTERNET_USAGE: 'upplýsingar um vefnotkun',
   RESTRAINING_ORDER: 'nálgunarbann',
+  ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'rannsókn á rafrænum gögnum',
   OTHER: 'annað',
 }
 
@@ -133,38 +135,11 @@ export const getShortRestrictionByValue = (value: CaseCustodyRestrictions) => {
   }
 }
 
-export enum NounCases {
-  NOMINATIVE, // Nefnifall
-  ACCUSATIVE, // Þolfall
-  DATIVE, // Þágufall
-  GENITIVE, // Eignarfall
-}
-
-export function formatAccusedByGender(
-  accusedGender?: CaseGender,
-  nounCase: NounCases = NounCases.NOMINATIVE,
-  isInvestigationCase?: boolean,
-) {
-  if (isInvestigationCase) {
-    return nounCase === NounCases.NOMINATIVE ? 'varnaraðili' : 'varnaraðila'
-  } else {
-    switch (accusedGender) {
-      case CaseGender.MALE:
-        return nounCase === NounCases.NOMINATIVE ? 'kærði' : 'kærða'
-      case CaseGender.FEMALE:
-        return nounCase === NounCases.NOMINATIVE ? 'kærða' : 'kærðu'
-      case CaseGender.OTHER:
-      default:
-        return 'kærða'
-    }
-  }
-}
-
-// Formats the restrictions set by the judge
+// Formats prefilled restrictions
 // Note that only the predetermined list of restrictions is relevant here
 export function formatCustodyRestrictions(
-  accusedGender?: CaseGender,
-  custodyRestrictions?: CaseCustodyRestrictions[],
+  requestedCustodyRestrictions?: CaseCustodyRestrictions[],
+  isCustodyIsolation?: boolean,
   isRuling?: boolean,
 ): string {
   const caseCustodyRestrictions = [
@@ -196,7 +171,9 @@ export function formatCustodyRestrictions(
   ]
 
   const relevantCustodyRestrictions = caseCustodyRestrictions
-    ?.filter((restriction) => custodyRestrictions?.includes(restriction.type))
+    .filter((restriction) =>
+      requestedCustodyRestrictions?.includes(restriction.type),
+    )
     .sort((a, b) => {
       return a.id > b.id ? 1 : -1
     })
@@ -205,7 +182,7 @@ export function formatCustodyRestrictions(
     !(relevantCustodyRestrictions && relevantCustodyRestrictions.length > 0)
   ) {
     return !isRuling
-      ? custodyRestrictions?.includes(CaseCustodyRestrictions.ISOLATION)
+      ? isCustodyIsolation
         ? 'Sækjandi tekur fram að gæsluvarðhaldið verði án annarra takmarkana.'
         : 'Sækjandi tekur fram að gæsluvarðhaldið verði án takmarkana.'
       : ''
@@ -242,13 +219,13 @@ export function formatCustodyRestrictions(
     : `Sækjandi tekur fram að gæsluvarðhaldið verði með ${filteredCustodyRestrictionsAsString}skv. 99. gr. laga nr. 88/2008.`
 }
 
-// Fromats the restrictions set by the judge when choosing alternative travle ban
-export const formatAlternativeTravelBanRestrictions = (
-  accusedGender?: CaseGender,
-  custodyRestrictions?: CaseCustodyRestrictions[],
-  otherRestrictions?: string,
+// Fromats the prefilled restrictions for travel ban
+export const formatTravelBanRestrictions = (
+  accusedGender?: Gender,
+  requestedCustodyRestrictions?: CaseCustodyRestrictions[],
+  requestedOtherRestrictions?: string,
 ): string => {
-  const relevantCustodyRestrictions = custodyRestrictions?.filter(
+  const relevantCustodyRestrictions = requestedCustodyRestrictions?.filter(
     (restriction) =>
       [
         CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
@@ -258,17 +235,15 @@ export const formatAlternativeTravelBanRestrictions = (
 
   const hasTravelBanRestrictions =
     relevantCustodyRestrictions && relevantCustodyRestrictions?.length > 0
-  const hasOtherRestrictions = otherRestrictions && otherRestrictions.length > 0
+  const hasOtherRestrictions =
+    requestedOtherRestrictions && requestedOtherRestrictions.length > 0
 
   // No restrictions
   if (!hasTravelBanRestrictions && !hasOtherRestrictions) {
     return ''
   }
 
-  const accusedGenderText = formatAccusedByGender(
-    accusedGender,
-    NounCases.DATIVE,
-  )
+  const accusedGenderText = accusedGender === Gender.MALE ? 'kærða' : 'kærðu'
 
   const travelBanRestrictionsText = hasTravelBanRestrictions
     ? `Sækjandi tekur fram að farbannið verði með takmörkunum.${
@@ -289,7 +264,9 @@ export const formatAlternativeTravelBanRestrictions = (
   const paragraphBreak =
     hasTravelBanRestrictions && hasOtherRestrictions ? '\n' : ''
 
-  const otherRestrictionsText = hasOtherRestrictions ? otherRestrictions : ''
+  const otherRestrictionsText = hasOtherRestrictions
+    ? requestedOtherRestrictions
+    : ''
 
   return `${travelBanRestrictionsText}${paragraphBreak}${otherRestrictionsText}`
 }
@@ -331,51 +308,49 @@ export const formatRequestedCustodyRestrictions = (
   return `${requestedCustodyRestrictionsText}${paragraphBreak}${requestedOtherRestrictionsText}`
 }
 
-export function formatGender(gender?: CaseGender): string {
+export function formatGender(gender?: Gender): string {
   switch (gender) {
-    case CaseGender.MALE:
+    case Gender.MALE:
       return 'Karl'
-    case CaseGender.FEMALE:
+    case Gender.FEMALE:
       return 'Kona'
-    case CaseGender.OTHER:
+    case Gender.OTHER:
     default:
       return 'Kynsegin/Annað'
-  }
-}
-
-export function formatGenderPronouns(gender?: CaseGender): string {
-  switch (gender) {
-    case CaseGender.MALE:
-      return 'hann'
-    case CaseGender.FEMALE:
-      return 'hún'
-    case CaseGender.OTHER:
-    default:
-      return 'hán'
   }
 }
 
 export function formatAppeal(
   appealDecision: CaseAppealDecision | undefined,
   stakeholder: string,
-  stakeholderGender: CaseGender = CaseGender.MALE,
 ): string {
-  const stakeholderGenderText = formatGenderPronouns(stakeholderGender)
+  const isMultipleDefendants = stakeholder.slice(-2) === 'ar'
 
   switch (appealDecision) {
     case CaseAppealDecision.APPEAL:
-      return `${stakeholder} lýsir því yfir að ${stakeholderGenderText} kæri úrskurðinn til Landsréttar.`
+      return `${stakeholder} ${
+        isMultipleDefendants ? 'lýsa' : 'lýsir'
+      } því yfir að ${
+        isMultipleDefendants ? 'þeir' : 'hann'
+      } kæri úrskurðinn til Landsréttar.`
     case CaseAppealDecision.ACCEPT:
-      return `${stakeholder} unir úrskurðinum.`
+      return `${stakeholder} ${
+        isMultipleDefendants ? 'una' : 'unir'
+      } úrskurðinum.`
     case CaseAppealDecision.POSTPONE:
-      return `${stakeholder} lýsir því yfir að ${stakeholderGenderText} taki sér lögbundinn kærufrest.`
+      return `${stakeholder} ${
+        isMultipleDefendants ? 'lýsa' : 'lýsir'
+      } því yfir að ${
+        isMultipleDefendants ? 'þeir' : 'hann'
+      } taki sér lögbundinn kærufrest.`
     default:
       return ''
   }
 }
 
 export function formatRequestCaseType(type: CaseType): string {
-  return type === CaseType.RESTRAINING_ORDER ||
+  return isRestrictionCase(type) ||
+    type === CaseType.RESTRAINING_ORDER ||
     type === CaseType.PSYCHIATRIC_EXAMINATION
     ? caseTypes[type]
     : 'rannsóknarheimild'

@@ -360,7 +360,6 @@ const MobileButton = ({ title, colorScheme }: MobileButtonProps) => {
         style={{ top: '50%', transform: 'translateY(-50%)' }}
       >
         <FocusableBox
-          component="button"
           aria-controls={`OpenNavigationDialog`}
           background={colorSchemeColors[colorScheme]['dividerColor']}
           className={styles.dropdownIcon}

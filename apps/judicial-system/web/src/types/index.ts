@@ -40,8 +40,10 @@ export enum LoginErrorCodes {
 }
 
 export type directionType = 'ascending' | 'descending'
+export type sortableTableColumn = 'defendant' | 'createdAt'
+
 export interface SortConfig {
-  key: keyof Case
+  column: sortableTableColumn
   direction: directionType
 }
 
@@ -51,4 +53,61 @@ export interface CaseData {
 
 export interface UserData {
   users: User[]
+}
+
+interface NationalRegistryPerson {
+  age: number
+  age_year_end: number
+  banned: boolean
+  family_kennitala: string
+  gender: string
+  kennitala: string
+  legal_residence: {
+    code: string
+    municipality: string
+    country: {
+      code: string
+      country: {
+        code: string
+        name: {
+          en: string
+          is: string
+        }
+      }
+      type: string
+      municipality: string
+    }
+  }
+  marital_status: {
+    type: string
+    code: string
+    description: {
+      en: string
+      is: string
+    }
+  }
+  name: string
+  partner_kennitala: string
+  permanent_address: {
+    street?: { dative: string; nominative: string }
+    postal_code?: number
+    town?: { dative: string; nominative: string }
+    country: { code: string; name: { en: string; is: string }; type: string }
+    municipality: string
+  }
+  proxy_kennitala: string
+  see_also: { search: string }
+  type: string
+}
+
+interface NationalRegistryMeta {
+  api_version: number
+  first_item: number
+  last_item: number
+  total_items: number
+}
+
+export interface NationalRegistryResponse {
+  items: NationalRegistryPerson[]
+  meta: NationalRegistryMeta
 }

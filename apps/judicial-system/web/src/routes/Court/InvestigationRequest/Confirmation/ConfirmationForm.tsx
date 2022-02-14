@@ -1,9 +1,10 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
+
 import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import {
   BlueBox,
-  CaseNumbers,
+  CaseInfo,
   CourtRecordAccordionItem,
   FormContentContainer,
   FormFooter,
@@ -12,14 +13,14 @@ import {
   RulingAccordionItem,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseDecision } from '@island.is/judicial-system/types'
-import type { Case, User } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   core,
   icConfirmation as m,
 } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
+import type { Case, User } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 interface Props {
   workingCase: Case
@@ -53,7 +54,7 @@ const Confirmation: React.FC<Props> = (props) => {
           )}`}</Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers workingCase={workingCase} />
+          <CaseInfo workingCase={workingCase} userRole={user.role} />
         </Box>
         <Box marginBottom={9}>
           <Accordion>
@@ -85,14 +86,14 @@ const Confirmation: React.FC<Props> = (props) => {
           <PdfButton
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRuling)}
-            pdfType="ruling?shortVersion=false"
+            pdfType="ruling"
           />
         </Box>
         <Box marginBottom={15}>
           <PdfButton
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRulingShortVersion)}
-            pdfType="ruling?shortVersion=true"
+            pdfType="courtRecord"
           />
         </Box>
       </FormContentContainer>

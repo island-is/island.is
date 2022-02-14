@@ -1,5 +1,6 @@
 import React, { FC } from 'react'
 import NextLink from 'next/link'
+import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 import {
   IconDeprecated as Icon,
   Typography,
@@ -14,9 +15,6 @@ interface LinkProps {
   variant?: TypographyProps['variant']
   as?: TypographyProps['as']
 }
-
-const isLinkExternal = (href: string): boolean =>
-  typeof href === 'string' && href.indexOf('://') !== -1
 
 export const Link: FC<LinkProps> = ({
   href,
@@ -38,7 +36,7 @@ export const Link: FC<LinkProps> = ({
 
   return (
     <Typography links {...props}>
-      {isLinkExternal(href) ? (
+      {shouldLinkOpenInNewWindow(href) ? (
         <a
           href={href}
           className={styles.link}

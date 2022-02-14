@@ -10,7 +10,6 @@ import {
 import { Type } from 'class-transformer'
 import graphqlTypeJson from 'graphql-type-json'
 import { EndorsementListDtoTagsEnum } from '../../../gen/fetch'
-import { ValidationRuleInput } from './validationRule.input'
 import { MetadataInput } from './metadata.input'
 
 registerEnumType(EndorsementListDtoTagsEnum, {
@@ -26,7 +25,7 @@ export class CreateEndorsementListDto {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  description!: string | null
+  description?: string
 
   @Field(() => [MetadataInput])
   @ValidateNested({ each: true })
@@ -36,11 +35,6 @@ export class CreateEndorsementListDto {
   @Field(() => [EndorsementListDtoTagsEnum])
   @IsEnum(EndorsementListDtoTagsEnum, { each: true })
   tags!: EndorsementListDtoTagsEnum[]
-
-  @Field(() => [ValidationRuleInput])
-  @ValidateNested({ each: true })
-  @Type(() => ValidationRuleInput)
-  validationRules!: ValidationRuleInput[]
 
   @Field(() => graphqlTypeJson, { nullable: true })
   @IsOptional()

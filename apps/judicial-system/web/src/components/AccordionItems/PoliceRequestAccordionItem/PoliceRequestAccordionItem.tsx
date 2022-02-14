@@ -7,15 +7,19 @@ import {
   formatRequestedCustodyRestrictions,
   formatDate,
   TIME_FORMAT,
-  laws,
   formatRequestCaseType,
+  formatNationalId,
 } from '@island.is/judicial-system/formatters'
 import { CaseType, isRestrictionCase } from '@island.is/judicial-system/types'
 import type {
   Case,
   CaseLegalProvisions,
 } from '@island.is/judicial-system/types'
-import { requestCourtDate, core } from '@island.is/judicial-system-web/messages'
+import {
+  requestCourtDate,
+  core,
+  laws,
+} from '@island.is/judicial-system-web/messages'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import * as styles from './PoliceRequestAccordionItem.css'
@@ -35,21 +39,41 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
         caseType: formatRequestCaseType(workingCase.type),
       })}
       labelVariant="h3"
+      labelUse="h2"
     >
       <Box marginBottom={2}>
         <Text variant="h4" as="h4">
-          Grunnupplýsingar
+          {capitalize(
+            formatMessage(core.defendant, {
+              suffix: (workingCase.defendants ?? []).length > 1 ? 'ar' : 'i',
+            }),
+          )}
         </Text>
       </Box>
-      <Box marginBottom={1}>
-        <Text>Kennitala: {workingCase.accusedNationalId}</Text>
-      </Box>
-      <Box marginBottom={1}>
-        <Text>Fullt nafn: {workingCase.accusedName}</Text>
-      </Box>
-      <Box marginBottom={3}>
-        <Text>Lögheimili: {workingCase.accusedAddress}</Text>
-      </Box>
+      {workingCase.defendants &&
+        workingCase.defendants.map((defendant, index) => (
+          <Box key={index}>
+            <Box marginBottom={1}>
+              <Text>
+                {`${formatMessage(
+                  defendant.noNationalId ? core.dateOfBirth : core.nationalId,
+                )}: ${
+                  defendant.noNationalId
+                    ? defendant.nationalId
+                    : formatNationalId(defendant.nationalId ?? '')
+                }`}
+              </Text>
+            </Box>
+            <Box marginBottom={1}>
+              <Text>{`${formatMessage(core.fullName)}: ${
+                defendant.name
+              }`}</Text>
+            </Box>
+            <Box marginBottom={3}>
+              <Text>Lögheimili: {defendant.address}</Text>
+            </Box>
+          </Box>
+        ))}
       {workingCase.arrestDate && (
         <AccordionListItem title="Tími handtöku">
           <Text>
@@ -85,7 +109,7 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
                 (legalProvision: CaseLegalProvisions, index) => {
                   return (
                     <div key={index}>
-                      <Text>{laws[legalProvision]}</Text>
+                      <Text>{formatMessage(laws[legalProvision].title)}</Text>
                     </div>
                   )
                 },

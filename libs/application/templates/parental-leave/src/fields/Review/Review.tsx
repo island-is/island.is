@@ -27,12 +27,15 @@ import {
   getOtherParentOptions,
   getSelectedChild,
   requiresOtherParentApproval,
+  getApplicationExternalData,
+  getOtherParentId,
+  getOtherParentName,
 } from '../../lib/parentalLeaveUtils'
 // TODO: Bring back payment calculation info, once we have an api
 // import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 // import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { YES, NO, MANUAL, ParentalRelations } from '../../constants'
+import { YES, NO, MANUAL, SPOUSE, ParentalRelations } from '../../constants'
 import { YesOrNo } from '../../types'
 import { SummaryTimeline } from '../components/SummaryTimeline/SummaryTimeline'
 import { SummaryRights } from '../Rights/SummaryRights'
@@ -68,9 +71,7 @@ export const Review: FC<ReviewScreenProps> = ({
       applicantEmail,
       applicantPhoneNumber,
       otherParent,
-      otherParentName,
       otherParentEmail,
-      otherParentId,
       pensionFund,
       union,
       usePrivatePensionFund,
@@ -88,6 +89,11 @@ export const Review: FC<ReviewScreenProps> = ({
     },
     setStateful,
   ] = useStatefulAnswers(application)
+
+  const otherParentName = getOtherParentName(application)
+  const otherParentId = getOtherParentId(application)
+
+  const { applicantName } = getApplicationExternalData(application.externalData)
   const selectedChild = getSelectedChild(
     application.answers,
     application.externalData,
@@ -100,6 +106,8 @@ export const Review: FC<ReviewScreenProps> = ({
       buildFieldOptions(getOtherParentOptions(application), application, field),
     [application],
   )
+
+  const hasSelectedOtherParent = otherParent !== NO
 
   const otherParentWillApprove = requiresOtherParentApproval(
     application.answers,
@@ -161,6 +169,27 @@ export const Review: FC<ReviewScreenProps> = ({
         }
         triggerValidation
       >
+        {applicantName !== '' && (
+          <GridRow marginBottom={3}>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <DataValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.applicant.fullName,
+                )}
+                value={applicantName}
+              />
+            </GridColumn>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <DataValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.applicant.nationalId,
+                )}
+                value={application.applicant}
+              />
+            </GridColumn>
+          </GridRow>
+        )}
+
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <DataValue
@@ -184,107 +213,7 @@ export const Review: FC<ReviewScreenProps> = ({
 
       <ReviewGroup
         isEditable={editable && isPrimaryParent}
-        canCloseEdit={groupHasNoErrors([
-          'otherParent',
-          'otherParentName',
-          'otherParentId',
-          'otherParentEmail',
-        ])}
-        editChildren={
-          <>
-            <Label marginBottom={3}>
-              {formatMessage(parentalLeaveFormMessages.shared.otherParentTitle)}
-            </Label>
-
-            <RadioController
-              id="otherParent"
-              name="otherParent"
-              defaultValue={otherParent}
-              options={otherParentOptions.map((option) => ({
-                ...option,
-                label: formatAndParseAsHTML(
-                  option.label,
-                  application,
-                  formatMessage,
-                ),
-              }))}
-              onSelect={(s: string) => {
-                setStateful((prev) => ({
-                  ...prev,
-                  otherParent: s as ValidOtherParentAnswer,
-                }))
-              }}
-              error={hasError('otherParent')}
-            />
-
-            {otherParent === MANUAL && (
-              <>
-                <GridRow>
-                  <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-                    <InputController
-                      id="otherParentName"
-                      name="otherParentName"
-                      defaultValue={otherParentName}
-                      label={formatMessage(
-                        parentalLeaveFormMessages.shared.otherParentName,
-                      )}
-                      onChange={(e) =>
-                        setStateful((prev) => ({
-                          ...prev,
-                          otherParentName: e.target.value,
-                        }))
-                      }
-                      error={hasError('otherParentName')}
-                    />
-                  </GridColumn>
-
-                  <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-                    <InputController
-                      id="otherParentId"
-                      name="otherParentId"
-                      defaultValue={otherParentId}
-                      format="######-####"
-                      placeholder="000000-0000"
-                      label={formatMessage(
-                        parentalLeaveFormMessages.shared.otherParentID,
-                      )}
-                      onChange={(e) =>
-                        setStateful((prev) => ({
-                          ...prev,
-                          otherParentId: e.target.value?.replace('-', ''),
-                        }))
-                      }
-                      error={hasError('otherParentId')}
-                    />
-                  </GridColumn>
-                </GridRow>
-
-                {otherParentWillApprove && (
-                  <Box paddingTop={2}>
-                    <InputController
-                      id="otherParentEmail"
-                      name="otherParentEmail"
-                      defaultValue={otherParentEmail}
-                      type="email"
-                      label={formatMessage(
-                        parentalLeaveFormMessages.shared
-                          .otherParentEmailSubSection,
-                      )}
-                      onChange={(e) =>
-                        setStateful((prev) => ({
-                          ...prev,
-                          otherParentEmail: e.target.value,
-                        }))
-                      }
-                      error={hasError('otherParentEmail')}
-                    />
-                  </Box>
-                )}
-              </>
-            )}
-          </>
-        }
-        triggerValidation
+        editAction={() => goToScreen?.('otherParent')}
       >
         {otherParent === NO && (
           <RadioValue
@@ -293,6 +222,27 @@ export const Review: FC<ReviewScreenProps> = ({
             )}
             value={otherParent}
           />
+        )}
+
+        {otherParent === SPOUSE && (
+          <GridRow>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <DataValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.shared.otherParentName,
+                )}
+                value={otherParentName}
+              />
+            </GridColumn>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <DataValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.shared.otherParentID,
+                )}
+                value={otherParentId}
+              />
+            </GridColumn>
+          </GridRow>
         )}
 
         {otherParent === MANUAL && (
@@ -320,6 +270,18 @@ export const Review: FC<ReviewScreenProps> = ({
                   parentalLeaveFormMessages.shared.otherParentID,
                 )}
                 value={otherParentId}
+              />
+            </GridColumn>
+          </GridRow>
+        )}
+        {otherParentWillApprove && (
+          <GridRow marginTop={3}>
+            <GridColumn>
+              <DataValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.shared.otherParentEmailSubSection,
+                )}
+                value={otherParentEmail}
               />
             </GridColumn>
           </GridRow>
@@ -710,119 +672,10 @@ export const Review: FC<ReviewScreenProps> = ({
         </ReviewGroup>
       )}
 
-      {isPrimaryParent && (
+      {isPrimaryParent && hasSelectedOtherParent && (
         <ReviewGroup
           isEditable={editable}
-          canCloseEdit={groupHasNoErrors([
-            'usePersonalAllowanceFromSpouse',
-            'personalAllowance.useAsMuchAsPossibleFromSpouse',
-            'personalAllowanceFromSpouse.usage',
-          ])}
-          editChildren={
-            <>
-              <Label marginBottom={2}>
-                {formatMessage(
-                  parentalLeaveFormMessages.personalAllowance.spouseTitle,
-                )}
-              </Label>
-
-              <RadioController
-                id="usePersonalAllowanceFromSpouse"
-                name="usePersonalAllowanceFromSpouse"
-                defaultValue={usePersonalAllowanceFromSpouse}
-                split="1/2"
-                options={[
-                  {
-                    label: formatMessage(
-                      parentalLeaveFormMessages.shared.yesOptionLabel,
-                    ),
-                    value: YES,
-                  },
-                  {
-                    label: formatMessage(
-                      parentalLeaveFormMessages.shared.noOptionLabel,
-                    ),
-                    value: NO,
-                  },
-                ]}
-                onSelect={(s: string) => {
-                  setStateful((prev) => ({
-                    ...prev,
-                    usePersonalAllowanceFromSpouse: s as YesOrNo,
-                  }))
-                }}
-                error={hasError('usePersonalAllowanceFromSpouse')}
-              />
-
-              {usePersonalAllowanceFromSpouse === YES && (
-                <>
-                  <Label marginTop={2} marginBottom={2}>
-                    {formatMessage(
-                      parentalLeaveFormMessages.personalAllowance
-                        .useAsMuchAsPossibleFromSpouse,
-                    )}
-                  </Label>
-
-                  <RadioController
-                    id="personalAllowance.useAsMuchAsPossibleFromSpouse"
-                    name="personalAllowance.useAsMuchAsPossibleFromSpouse"
-                    defaultValue={spouseUseAsMuchAsPossible}
-                    split="1/2"
-                    options={[
-                      {
-                        label: formatMessage(
-                          parentalLeaveFormMessages.shared.yesOptionLabel,
-                        ),
-                        value: YES,
-                      },
-                      {
-                        label: formatMessage(
-                          parentalLeaveFormMessages.shared.noOptionLabel,
-                        ),
-                        value: NO,
-                      },
-                    ]}
-                    onSelect={(s: string) => {
-                      setStateful((prev) => ({
-                        ...prev,
-                        spouseUseAsMuchAsPossible: s as YesOrNo,
-                      }))
-                    }}
-                    error={hasError(
-                      'personalAllowance.useAsMuchAsPossibleFromSpouse',
-                    )}
-                  />
-                </>
-              )}
-
-              {spouseUseAsMuchAsPossible === NO && (
-                <>
-                  <Label marginTop={2} marginBottom={2}>
-                    {formatMessage(
-                      parentalLeaveFormMessages.personalAllowance.manual,
-                    )}
-                  </Label>
-
-                  <InputController
-                    id="personalAllowanceFromSpouse.usage"
-                    name="personalAllowanceFromSpouse.usage"
-                    suffix="%"
-                    placeholder="0%"
-                    type="number"
-                    defaultValue={spouseUsage}
-                    onChange={(e) =>
-                      setStateful((prev) => ({
-                        ...prev,
-                        spouseUsage: e.target.value?.replace('%', ''),
-                      }))
-                    }
-                    error={hasError('personalAllowanceFromSpouse.usage')}
-                  />
-                </>
-              )}
-            </>
-          }
-          triggerValidation
+          editAction={() => goToScreen?.('usePersonalAllowanceFromSpouse')}
         >
           <GridRow marginBottom={2}>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
@@ -865,62 +718,7 @@ export const Review: FC<ReviewScreenProps> = ({
 
       <ReviewGroup
         isEditable={editable}
-        canCloseEdit={groupHasNoErrors([
-          'employer.isSelfEmployed',
-          'employer.email',
-        ])}
-        editChildren={
-          <>
-            <Label marginBottom={3}>
-              {formatMessage(parentalLeaveFormMessages.selfEmployed.title)}
-            </Label>
-
-            <RadioController
-              id="employer.isSelfEmployed"
-              name="employer.isSelfEmployed"
-              defaultValue={isSelfEmployed}
-              split="1/2"
-              options={[
-                {
-                  label: formatMessage(
-                    parentalLeaveFormMessages.shared.yesOptionLabel,
-                  ),
-                  value: YES,
-                },
-                {
-                  label: formatMessage(
-                    parentalLeaveFormMessages.shared.noOptionLabel,
-                  ),
-                  value: NO,
-                },
-              ]}
-              onSelect={(s: string) =>
-                setStateful((prev) => ({
-                  ...prev,
-                  isSelfEmployed: s as YesOrNo,
-                }))
-              }
-              error={hasError('employer.isSelfEmployed')}
-            />
-
-            {isSelfEmployed === NO && (
-              <InputController
-                id="employer.email"
-                name="employer.email"
-                label={formatMessage(parentalLeaveFormMessages.employer.email)}
-                defaultValue={employerEmail}
-                onChange={(e) =>
-                  setStateful((prev) => ({
-                    ...prev,
-                    employerEmail: e.target.value,
-                  }))
-                }
-                error={hasError('employer.email')}
-              />
-            )}
-          </>
-        }
-        triggerValidation
+        editAction={() => goToScreen?.('employer.isSelfEmployed')}
       >
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>

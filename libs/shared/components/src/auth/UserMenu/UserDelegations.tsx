@@ -1,34 +1,28 @@
-import React, { FC } from 'react'
+import React from 'react'
 import {
   Stack,
   Text,
-  TopicCard,
   SkeletonLoader,
+  Divider,
+  Box,
 } from '@island.is/island-ui/core'
 import { User } from '@island.is/shared/types'
 import { useLocale } from '@island.is/localization'
-import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 import { userMessages } from '@island.is/shared/translations'
+import { ActorDelegationsQuery } from '../../../gen/graphql'
+import { UserTopicCard } from './UserTopicCard'
+import { QueryResult } from '@apollo/client'
 import * as styles from './UserMenu.css'
-import { useActorDelegationsQuery } from '../../../gen/graphql'
-
 interface UserDelegationsProps {
   user: User
   onSwitchUser: (nationalId: string) => void
+  data: QueryResult<ActorDelegationsQuery>
 }
 
 interface Delegation {
   nationalId: string
   name: string
   isCurrent: boolean
-}
-
-const List: FC = ({ children }) => {
-  return (
-    <div className={styles.delegationsList}>
-      <Stack space={2}>{children}</Stack>
-    </div>
-  )
 }
 
 const getInitialDelegations = (user: User): Delegation[] => {
@@ -46,72 +40,75 @@ const getInitialDelegations = (user: User): Delegation[] => {
 
 export const UserDelegations = ({
   user,
+  data,
   onSwitchUser,
 }: UserDelegationsProps) => {
   const { formatMessage } = useLocale()
   const actor = user.profile.actor
-  const showDelegations =
-    useFeatureFlag(Features.delegationsEnabled, false).value || Boolean(actor)
-  const { data, error, loading } = useActorDelegationsQuery({
-    skip: !showDelegations,
-  })
   const currentNationalId = user.profile.nationalId as string
   const delegations = getInitialDelegations(user)
 
-  if (data) {
+  if (data.data) {
     delegations.push(
-      ...data.authActorDelegations
+      ...data.data.authActorDelegations
         .map((delegation) => ({
-          nationalId: delegation.from.nationalId,
-          name: delegation.from.name,
+          nationalId: delegation.from?.nationalId ?? '',
+          name: delegation.from?.name ?? '',
           isCurrent: false,
         }))
-        .filter(({ nationalId }) => nationalId !== currentNationalId),
+        .filter(
+          ({ nationalId }) => nationalId && nationalId !== currentNationalId,
+        ),
     )
-  }
-
-  // No data.
-  if (delegations.length === 0 && !loading && !error) {
-    return null
   }
 
   const onClickDelegation = (delegation: Delegation) => {
     onSwitchUser(delegation.nationalId)
   }
-
   return (
     <>
-      <hr className={styles.hr} />
-      <Text variant="h5" as="h5" marginBottom={2}>
+      <Text variant="small" marginBottom={1} paddingTop={[1, 3]}>
         {formatMessage(userMessages.delegationList)}
       </Text>
-      <List>
-        {delegations.map((delegation) => (
-          <TopicCard
-            key={delegation.nationalId}
-            size="small"
-            tag={
-              delegation.isCurrent
-                ? formatMessage(userMessages.selectedDelegation)
-                : undefined
-            }
-            onClick={
-              delegation.isCurrent
-                ? undefined
-                : () => onClickDelegation(delegation)
-            }
-          >
-            {delegation.name || delegation.nationalId}
-          </TopicCard>
-        ))}
-        {loading ? (
-          <SkeletonLoader display="block" height={59} borderRadius="large" />
-        ) : error ? (
-          <Text color="red400">
-            {formatMessage(userMessages.delegationError)}
-          </Text>
-        ) : null}
-      </List>
+      <Box className={styles.userDelegationWrapper}>
+        <Stack space={1}>
+          {!!actor && (
+            <UserTopicCard
+              colorScheme={'purple'}
+              onClick={() => onSwitchUser(actor?.nationalId)}
+            >
+              {actor?.name}
+            </UserTopicCard>
+          )}
+          {delegations
+            .filter(
+              (delegation) => delegation.nationalId !== user.profile.nationalId,
+            )
+            .map((delegation) => (
+              <UserTopicCard
+                key={delegation.nationalId}
+                colorScheme="blue"
+                onClick={
+                  delegation.isCurrent
+                    ? undefined
+                    : () => onClickDelegation(delegation)
+                }
+              >
+                {delegation.name || delegation.nationalId}
+              </UserTopicCard>
+            ))}
+          {data.loading ? (
+            <SkeletonLoader display="block" height={59} borderRadius="large" />
+          ) : data.error ? (
+            <Text color="red400">
+              {formatMessage(userMessages.delegationError)}
+            </Text>
+          ) : null}
+        </Stack>
+      </Box>
+      <Box paddingTop={3}>
+        <Divider />
+      </Box>
     </>
   )
 }

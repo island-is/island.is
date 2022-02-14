@@ -8,8 +8,8 @@ import {
 } from '@island.is/financial-aid-web/osk/src/components'
 import {
   FamilyStatus,
+  FormSpouse,
   isEmailValid,
-  Spouse,
 } from '@island.is/financial-aid/shared/lib'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import * as styles from './relationshipStatusForm.css'
@@ -40,7 +40,7 @@ const UnknownRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
     },
   ]
 
-  const isInputAndRadioValid = (acceptData: boolean, spouse?: Spouse) => {
+  const isInputAndRadioValid = (acceptData: boolean, spouse?: FormSpouse) => {
     return (
       !acceptData ||
       !spouse?.email ||
@@ -57,7 +57,7 @@ const UnknownRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
     }
 
     if (
-      form?.familyStatus === FamilyStatus.UNREGISTERED_COBAHITATION &&
+      form.familyStatus === FamilyStatus.UNREGISTERED_COBAHITATION &&
       isInputAndRadioValid(acceptData, form?.spouse)
     ) {
       setHasError(true)
@@ -101,25 +101,29 @@ const UnknownRelationshipForm = ({ previousUrl, nextUrl }: Props) => {
             setHasError(false)
           }}
         />
-        <div
-          className={cn({
-            [`${styles.infoContainer}`]: true,
-            [`${styles.showInfoContainer}`]:
-              FamilyStatus.UNREGISTERED_COBAHITATION === form?.familyStatus,
-          })}
-        >
-          <SpouseInfo
-            hasError={hasError}
-            acceptData={acceptData}
-            setAcceptData={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setHasError(false)
-              setAcceptData(event.target.checked)
-            }}
-            removeError={() => setHasError(false)}
-          />
-        </div>
+        {FamilyStatus.UNREGISTERED_COBAHITATION === form?.familyStatus && (
+          <div
+            data-testid="spouseInfo"
+            className={cn({
+              [`${styles.infoContainer}`]: true,
+              [`${styles.showInfoContainer}`]:
+                FamilyStatus.UNREGISTERED_COBAHITATION === form?.familyStatus,
+            })}
+          >
+            <SpouseInfo
+              hasError={hasError}
+              acceptData={acceptData}
+              setAcceptData={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setHasError(false)
+                setAcceptData(event.target.checked)
+              }}
+              removeError={() => setHasError(false)}
+            />
+          </div>
+        )}
 
         <div
+          data-testid="showErrorMessage"
           className={cn({
             [`errorMessage`]: true,
             [`showErrorMessage`]: hasError,

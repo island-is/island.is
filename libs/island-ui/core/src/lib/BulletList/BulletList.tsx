@@ -14,7 +14,7 @@ const BulletListContext = createContext<BulletListContextValue>({
   type: 'ul',
 })
 
-export const Bullet: FC<{}> = ({ children }) => {
+export const Bullet: FC = ({ children }) => {
   const { type } = useContext(BulletListContext)
 
   return (
@@ -29,7 +29,7 @@ export const Bullet: FC<{}> = ({ children }) => {
             {type === 'ul' && <span className={styles.icon} />}
           </span>
         </Box>
-        <Box>{children}</Box>
+        <Box className={styles.content}>{children}</Box>
       </Box>
     </Text>
   )

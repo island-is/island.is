@@ -1,5 +1,4 @@
 import { Module, DynamicModule } from '@nestjs/common'
-import fetch from 'isomorphic-fetch'
 import { ApplicationResolver } from './application.resolver'
 import { ApplicationService } from './application.service'
 import { ApplicationsApi, PaymentsApi, Configuration } from '../../gen/fetch'
@@ -24,6 +23,7 @@ export class ApplicationModule {
               new Configuration({
                 fetchApi: createEnhancedFetch({
                   name: 'ApplicationModule.applicationsApi',
+                  timeout: 60000,
                 }),
                 basePath: config.baseApiUrl,
               }),

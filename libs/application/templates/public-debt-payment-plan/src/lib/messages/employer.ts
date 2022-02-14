@@ -41,12 +41,12 @@ export const employer = {
     },
     employerIsCorrect: {
       id: `pdpp.application:application.employer.labels.employerIsCorrect`,
-      defaultMessage: 'Er minn vinnuveitandi',
+      defaultMessage: 'Er minn launagreiðandi',
       description: 'Employer is correct label',
     },
     employerIsNotCorrect: {
       id: `pdpp.application:application.employer.labels.employerIsNotCorrect`,
-      defaultMessage: 'Er ekki minn vinnuveitandi',
+      defaultMessage: 'Er ekki minn launagreiðandi',
       description: 'Employer is not correct label',
     },
     employerNationalIdLabel: {
@@ -57,7 +57,7 @@ export const employer = {
     },
     employerNationalId: {
       id: `pdpp.application:application.employer.labels.employerNationalId`,
-      defaultMessage: 'Sláðu inn kennitölu atvinnurekanda',
+      defaultMessage: 'Sláðu inn kennitölu launagreiðanda',
       description: 'Employer national id',
     },
     employerNationalIdPlaceholder: {

@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { Controller, useFormContext } from 'react-hook-form'
 import Markdown from 'markdown-to-jsx'
@@ -51,26 +51,42 @@ const ItemHeader: React.FC<{ title: StaticText; subTitle?: StaticText }> = ({
   )
 }
 
+const isTranslationObject = (reason?: StaticText) => {
+  if (typeof reason !== 'object') {
+    return false
+  }
+
+  return reason.id !== undefined
+}
+
 const ProviderItem: FC<{
   dataProviderResult: DataProviderResult
   provider: DataProviderItem
-}> = ({ dataProviderResult = {}, provider }) => {
+  suppressProviderError: boolean
+}> = ({ dataProviderResult = {}, provider, suppressProviderError }) => {
   const { title, subTitle } = provider
   const { formatMessage } = useLocale()
+
+  const showError =
+    provider.type &&
+    dataProviderResult?.status === 'failure' &&
+    !suppressProviderError
 
   return (
     <Box marginBottom={3}>
       <ItemHeader title={title} subTitle={subTitle} />
 
-      {provider.type && dataProviderResult?.status === 'failure' && (
+      {showError && (
         <Box marginTop={2}>
           <AlertMessage
             type="error"
             title={formatMessage(coreErrorMessages.errorDataProvider)}
             message={
-              typeof dataProviderResult?.reason === 'object'
-                ? formatMessage(dataProviderResult?.reason)
-                : dataProviderResult?.reason
+              isTranslationObject(dataProviderResult?.reason)
+                ? formatMessage(dataProviderResult.reason!)
+                : typeof dataProviderResult?.reason === 'string'
+                ? dataProviderResult.reason
+                : formatMessage(coreErrorMessages.failedDataProvider)
             }
           />
         </Box>
@@ -137,6 +153,8 @@ const FormExternalDataProvider: FC<{
   } = externalDataProvider
   const relevantDataProviders = dataProviders.filter((p) => p.type)
 
+  const [suppressProviderErrors, setSuppressProviderErrors] = useState(true)
+
   // If id is undefined then the error won't be attached to the field with id
   const error = getValueViaPath(errors, id ?? '', undefined) as
     | string
@@ -157,6 +175,7 @@ const FormExternalDataProvider: FC<{
             locale,
           },
         })
+        setSuppressProviderErrors(false)
 
         if (
           response.data &&
@@ -200,6 +219,7 @@ const FormExternalDataProvider: FC<{
           <ProviderItem
             provider={provider}
             key={provider.id}
+            suppressProviderError={suppressProviderErrors}
             dataProviderResult={externalData[provider.id]}
           />
         ))}

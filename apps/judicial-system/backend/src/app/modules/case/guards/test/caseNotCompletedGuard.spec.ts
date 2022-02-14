@@ -73,7 +73,7 @@ describe('Case Not Completed Guard', () => {
       then = givenWhenThen()
     })
 
-    it('should activate', () => {
+    it('should throw ForbiddenException', () => {
       expect(then.error).toBeInstanceOf(ForbiddenException)
       expect(then.error.message).toBe('Forbidden for completed cases')
     })
@@ -88,7 +88,7 @@ describe('Case Not Completed Guard', () => {
       then = givenWhenThen()
     })
 
-    it('should activate', () => {
+    it('should throw InternalServerErrorException', () => {
       expect(then.error).toBeInstanceOf(InternalServerErrorException)
       expect(then.error.message).toBe('Missing case')
     })

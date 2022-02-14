@@ -1,0 +1,34 @@
+{
+  "data": {
+    "municipality": {
+      "id": "4b9ce8bc-cf57-44f7-832a-a764f742028b",
+      "name": "Hafnarfj0rður",
+      "homepage": null,
+      "active": true,
+      "municipalityId": "1400",
+      "email": null,
+      "rulesHomepage": null,
+      "individualAid": {
+        "ownPlace": 0,
+        "registeredRenting": 0,
+        "unregisteredRenting": 0,
+        "livesWithParents": 0,
+        "unknown": 0,
+        "withOthers": 0,
+        "type": "Individual",
+        "__typename": "AidModel"
+      },
+      "cohabitationAid": {
+        "ownPlace": 0,
+        "registeredRenting": 0,
+        "unregisteredRenting": 0,
+        "livesWithParents": 0,
+        "unknown": 0,
+        "withOthers": 0,
+        "type": "Cohabitation",
+        "__typename": "AidModel"
+      },
+      "__typename": "MunicipalityModel"
+    }
+  }
+}

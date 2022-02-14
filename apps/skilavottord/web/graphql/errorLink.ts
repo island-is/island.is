@@ -1,26 +1,31 @@
-import { ApolloError, ServerError } from '@apollo/client'
 import { onError, ErrorResponse } from '@apollo/client/link/error'
-import Router from 'next/router'
+import { signIn, signOut } from 'next-auth/client'
 
-import { NotificationService, api } from '../services'
+import { toast } from '@island.is/island-ui/core'
 
 export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
   if (networkError) {
-    return NotificationService.onNetworkError(networkError as ServerError)
+    toast.error(networkError.message)
+    return
   }
 
   if (graphQLErrors) {
-    graphQLErrors.forEach((err) => {
-      switch (err.extensions?.code) {
-        case 'UNAUTHENTICATED':
-          return api.logout().then(() => Router.reload())
-        case 'FORBIDDEN':
-          return Router.push('/404')
-        default:
-          return NotificationService.onGraphQLError({
-            graphQLErrors,
-          } as ApolloError)
+    const errorCodes = graphQLErrors.map((err) => err.extensions?.code)
+    const errorMessage = graphQLErrors.map((err) => err.message)
+    if (
+      errorCodes.includes('UNAUTHENTICATED') ||
+      errorMessage.includes('Unauthorized')
+    ) {
+      if (typeof window !== 'undefined') {
+        signIn('identity-server', {
+          callbackUrl: window.location.href,
+        })
       }
-    })
+      return
+    } else if (errorCodes.includes('FORBIDDEN')) {
+      return
+    }
+
+    toast.error(graphQLErrors.map((error) => error.message).join('\n'))
   }
 })

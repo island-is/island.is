@@ -1,67 +1,84 @@
+import React from 'react'
+import { useIntl } from 'react-intl'
+
 import { Box, Text } from '@island.is/island-ui/core'
-import { formatNationalId } from '@island.is/judicial-system/formatters'
-import React, { PropsWithChildren } from 'react'
+import { Defendant } from '@island.is/judicial-system/types'
+import {
+  capitalize,
+  formatNationalId,
+} from '@island.is/judicial-system/formatters'
+import { core } from '@island.is/judicial-system-web/messages'
+
 import * as styles from './InfoCard.css'
 
 interface Props {
   data: Array<{ title: string; value?: string }>
-  accusedName?: string
-  accusedNationalId?: string
-  accusedAddress?: string
+  defendants?: Defendant[]
   defender?: {
     name: string
     email?: string
     phoneNumber?: string
     defenderIsSpokesperson?: boolean
   }
-  isInvestigationCase?: boolean
 }
 
-const InfoCard: React.FC<Props> = (props: PropsWithChildren<Props>) => {
+const InfoCard: React.FC<Props> = (props) => {
+  const { data, defendants, defender } = props
+  const { formatMessage } = useIntl()
+
   return (
     <Box className={styles.infoCardContainer} data-testid="infoCard">
-      <Text variant="h4">
-        {props.isInvestigationCase ? 'Varnaraðili' : 'Sakborningur'}
-      </Text>
-      <Box className={styles.infoCardTitleContainer}>
-        <Box marginBottom={4}>
-          <Text fontWeight="semiBold">
-            {props.accusedName}
-            <Text as="span">{`, `}</Text>
-            {`kt. ${formatNationalId(props.accusedNationalId ?? '')}`}
-            {props.accusedAddress && (
-              <Text as="span">{`, ${props.accusedAddress}`}</Text>
+      {defendants && (
+        <>
+          <Text variant="h4">
+            {capitalize(
+              formatMessage(core.defendant, {
+                suffix: defendants.length > 1 ? 'ar' : 'i',
+              }),
             )}
           </Text>
-        </Box>
-        <Box>
-          <Text variant="h4">
-            {props.defender?.defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'}
-          </Text>
-          {props.defender?.name ? (
-            <Box display="flex">
-              <Text>
-                {`${props.defender.name}${
-                  props.defender.email ? `, ${props.defender.email}` : ''
-                }${
-                  props.defender.phoneNumber
-                    ? `, s. ${props.defender.phoneNumber}`
-                    : ''
+          <Box marginBottom={4}>
+            {defendants.map((defendant, index) => (
+              <Text fontWeight="semiBold" key={index}>
+                {defendant.name}
+                <Text as="span">{`, `}</Text>
+                {`${defendant.noNationalId ? 'fd.' : 'kt.'} ${
+                  defendant.noNationalId
+                    ? defendant.nationalId
+                    : formatNationalId(defendant.nationalId ?? '')
                 }`}
+                {defendant.citizenship && ` (${defendant.citizenship})`}
+                {defendant.address && (
+                  <Text as="span">{`, ${defendant.address}`}</Text>
+                )}
               </Text>
-            </Box>
-          ) : (
-            <Text>Hefur ekki verið skráður</Text>
-          )}
-        </Box>
+            ))}
+          </Box>
+        </>
+      )}
+      <Box className={styles.infoCardTitleContainer}>
+        <Text variant="h4">
+          {defender?.defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'}
+        </Text>
+        {defender?.name ? (
+          <Box display="flex">
+            <Text>
+              {`${defender.name}${defender.email ? `, ${defender.email}` : ''}${
+                defender.phoneNumber ? `, s. ${defender.phoneNumber}` : ''
+              }`}
+            </Text>
+          </Box>
+        ) : (
+          <Text>Hefur ekki verið skráður</Text>
+        )}
       </Box>
       <Box className={styles.infoCardDataContainer}>
-        {props.data.map((dataItem, index) => (
+        {data.map((dataItem, index) => (
           <Box
             data-testid={`infoCardDataContainer${index}`}
             className={styles.infoCardData}
             // Should be applied to every element except the last two
-            marginBottom={index < props.data.length - 2 ? 3 : 0}
+            marginBottom={index < data.length - 2 ? 3 : 0}
             key={index}
           >
             <Text variant="h4">{dataItem.title}</Text>

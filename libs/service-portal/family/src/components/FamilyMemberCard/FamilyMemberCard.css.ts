@@ -6,8 +6,8 @@ export const avatar = style({
   height: 50,
   ...themeUtils.responsiveStyle({
     sm: {
-      width: 76,
-      height: 76,
+      width: 66,
+      height: 66,
     },
   }),
 })
