@@ -1,5 +1,6 @@
 import request from 'supertest'
 import addDays from 'date-fns/addDays'
+import { getModelToken } from '@nestjs/sequelize'
 
 import {
   ApiScope,
@@ -10,6 +11,7 @@ import {
   DelegationValidity,
   ScopeType,
 } from '@island.is/auth-api-lib'
+import { AuthDelegationType } from '@island.is/auth-nest-tools'
 import { TestApp } from '@island.is/testing/nest'
 import {
   createCurrentUser,
@@ -36,6 +38,7 @@ const user = createCurrentUser({
     AuthScope.readDelegations,
     AuthScope.writeDelegations,
     Scopes[0].name,
+    Scopes[3].name,
   ],
 })
 const userName = 'Tester Tests'
@@ -138,8 +141,8 @@ describe('MeDelegationsController', () => {
       server = request(app.getHttpServer())
 
       // Get reference on delegation and apiScope models to seed DB
-      delegationModel = app.get<typeof Delegation>('DelegationRepository')
-      apiScopeModel = app.get<typeof ApiScope>('ApiScopeRepository')
+      delegationModel = app.get<typeof Delegation>(getModelToken(Delegation))
+      apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
     })
 
     afterAll(async () => {
@@ -777,7 +780,7 @@ describe('MeDelegationsController', () => {
       })
     })
 
-    describe('PUT /me/delegations', () => {
+    describe('PUT /me/delegations/:id', () => {
       it('should return 200 OK for valid update', async () => {
         // Arrange
         const expectedValidTo = addDays(today, 2)
@@ -1059,6 +1062,108 @@ describe('MeDelegationsController', () => {
       })
     })
   })
+
+  interface DelegationEachType {
+    delegationType: string
+    shouldWork: boolean
+  }
+  describe.each`
+    delegationType         | shouldWork
+    ${'None'}              | ${false}
+    ${'ProcurationHolder'} | ${true}
+    ${'Custom'}            | ${false}
+  `(
+    'with auth (delegation=$delegationType)',
+    ({ delegationType, shouldWork }: DelegationEachType) => {
+      const workOrFail = shouldWork ? 'work' : 'fail'
+      let app: TestApp
+      let server: request.SuperTest<request.Test>
+
+      beforeAll(async () => {
+        // TestApp setup with auth and database
+        const testUser =
+          delegationType === 'None'
+            ? user
+            : {
+                ...user,
+                actor: {
+                  nationalId: user.nationalId,
+                  delegationType: delegationType as AuthDelegationType,
+                  scope: [],
+                },
+              }
+        app = await setupWithAuth({
+          user: testUser,
+          userName,
+          nationalRegistryUser,
+        })
+        server = request(app.getHttpServer())
+      })
+
+      afterAll(async () => {
+        await app.cleanUp()
+      })
+
+      beforeEach(async () => {
+        await app.get<typeof Delegation>(getModelToken(Delegation)).destroy({
+          where: {},
+          cascade: true,
+          truncate: true,
+          force: true,
+        })
+      })
+
+      it(`POST /me/delegations should ${workOrFail} when scope has a special delegation rule`, async () => {
+        // Arrange
+        const model = {
+          toNationalId: nationalRegistryUser.kennitala,
+          scopes: [
+            {
+              name: Scopes[3].name,
+              type: ScopeType.ApiScope,
+              validTo: addDays(today, 1),
+            },
+          ],
+        }
+        // Act
+        const res = await server.post(path).send(model)
+
+        // Assert
+        expect(res.status).toEqual(shouldWork ? 201 : 400)
+      })
+
+      it(`PUT /me/delegations/:id should ${workOrFail} when scope has a special delegation rule`, async () => {
+        // Arrange
+        const expectedValidTo = addDays(today, 2)
+        const createModel = {
+          toNationalId: nationalRegistryUser.kennitala,
+          scopes: [
+            {
+              name: Scopes[0].name,
+              type: ScopeType.ApiScope,
+              validTo: addDays(today, 1),
+            },
+          ],
+        }
+        const delegation = (await server.post(path).send(createModel))
+          .body as DelegationDTO
+        const model = {
+          scopes: [
+            {
+              name: Scopes[3].name,
+              type: ScopeType.ApiScope,
+              validTo: expectedValidTo,
+            },
+          ],
+        }
+        // Act
+        const res = await server.put(`${path}/${delegation.id}`).send(model)
+
+        // Assert
+        expect(res.status).toEqual(shouldWork ? 200 : 400)
+      })
+    },
+  )
 
   describe('without auth and permissions', () => {
     it.each`

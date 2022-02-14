@@ -1,20 +1,14 @@
 import React, { FC } from 'react'
 import { Document } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
-import {
-  Text,
-  Box,
-  GridRow,
-  GridColumn,
-  Link,
-  Hidden,
-} from '@island.is/island-ui/core'
+import { Text, Box, GridRow, GridColumn, Link } from '@island.is/island-ui/core'
 import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
 import * as styles from './DocumentLine.css'
 import { User } from 'oidc-client'
 import cn from 'classnames'
 import { m } from '@island.is/service-portal/core'
+import { getAccessToken } from '@island.is/auth/react'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 
@@ -29,11 +23,14 @@ const DocumentLine: FC<Props> = ({ documentLine, userInfo, img }) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.sm
 
-  const onClickHandler = () => {
+  const onClickHandler = async () => {
     // Create form elements
     const form = document.createElement('form')
     const documentIdInput = document.createElement('input')
     const tokenInput = document.createElement('input')
+
+    const token = await getAccessToken()
+    if (!token) return
 
     form.appendChild(documentIdInput)
     form.appendChild(tokenInput)
@@ -52,7 +49,7 @@ const DocumentLine: FC<Props> = ({ documentLine, userInfo, img }) => {
     // National Id values
     tokenInput.type = 'hidden'
     tokenInput.name = '__accessToken'
-    tokenInput.value = userInfo.access_token
+    tokenInput.value = token
 
     document.body.appendChild(form)
     form.submit()
