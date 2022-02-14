@@ -18,7 +18,7 @@ import { isValidEmail, isValidNationalId } from '../../lib/utils'
 type validationType = 'email' | 'nationalId' | 'approveItems'
 const errorIdForSpouse = 'relationshipStatus'
 
-const validationCheck = (errors: ErrorSchema, type: validationType) => {
+const ValidationCheck = (errors: ErrorSchema, type: validationType) => {
   const { formatMessage } = useIntl()
   const { getValues } = useFormContext()
   switch (type) {
@@ -52,16 +52,16 @@ const UnknownRelationshipForm = ({ errors, application }: FAFieldBaseProps) => {
 
   const spouseEmail = {
     id: 'relationshipStatus.spouseEmail',
-    error: validationCheck(errors, 'email'),
+    error: ValidationCheck(errors, 'email'),
   }
   const spouseNationalId = {
     id: 'relationshipStatus.spouseNationalId',
-    error: validationCheck(errors, 'nationalId'),
+    error: ValidationCheck(errors, 'nationalId'),
   }
 
   const spouseApproveTerms = {
     id: 'relationshipStatus.spouseApproveTerms',
-    error: validationCheck(errors, 'approveItems'),
+    error: ValidationCheck(errors, 'approveItems'),
   }
 
   return (
