@@ -34,7 +34,7 @@ export interface ContactInfo {
 export interface TargetOfComplaint {
   name: string
   address: string
-  nationalId: string
+  nationalId?: string
   operatesWithinEurope: typeof YES | typeof NO
   countryOfOperation: string
 }
