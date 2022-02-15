@@ -24,37 +24,15 @@ const calculateDistance = async (
 export async function findBestGoodRefBranch(
   commitScore: (services) => number,
   git: SimpleGit,
-) {
-  const lastChanges = await git.log({ maxCount: 10 })
-  const currentChange = lastChanges.latest
-  let filterOutBadCommits = (change) => {
-    return change.message.indexOf('-bad') == -1
-  }
+  githubApi: GitActionStatus,
+  branch: string,
+  baseBranch: string,
+): Promise<string | 'rebuild'> {
+  const commits = await githubApi.getBranchBuilds(branch)
+  if (commits.length > 0) return commits[0].head_commit
+  const baseCommits = await githubApi.getBranchBuilds(baseBranch)
 
-  const goodCommits = lastChanges.all
-    .filter((ch) => ch.hash != currentChange.hash)
-    .filter(filterOutBadCommits)
-    .map((change, idx) =>
-      (async () => ({
-        change: change,
-        idx,
-        distance: commitScore(
-          await calculateDistance(git, currentChange.hash, change),
-        ),
-      }))(),
-    )
-  const goodScoredCommits = await Promise.all(goodCommits)
-  goodScoredCommits.sort((a, b) =>
-    a.distance == b.distance
-      ? a.idx > b.idx
-        ? 1
-        : -1
-      : a.distance > b.distance
-      ? 1
-      : -1,
-  )
-
-  return goodScoredCommits[0].change.hash.substr(0, 7)
+  return baseCommits.length > 0 ? baseCommits[0].head_commit : 'rebuild'
 }
 
 interface PRWorkflow {
@@ -79,7 +57,7 @@ export async function findBestGoodRefPR(
   headBranch: string,
   baseBranch,
 ): Promise<string | 'rebuild'> {
-  const lastChanges = await git.log({ maxCount: 10 })
+  const lastChanges = await git.log({ maxCount: 1 })
   const currentChange = lastChanges.latest
 
   const runs = await githubApi.getPRRuns(prID)

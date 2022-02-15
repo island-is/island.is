@@ -159,20 +159,58 @@ describe('Change detection', () => {
     })
   })
   describe('Branch', () => {
-    it('should skip bad commit', async () => {
+    it('should take base branch commits if no good on this branch', async () => {
       const br = await git.checkoutLocalBranch(baseBranch)
       const firstGoodSha = await makeChange(git, 'a', 'A-good')
       const goodBeforeBadSha = await makeChange(git, 'a', 'B-good')
       const badSha = await makeChange(git, 'a', 'C-bad')
       const fixSha = await makeChange(git, 'a', 'D-good')
 
+      let githubApi = Substitute.for<GitActionStatus>()
+      githubApi
+        .getBranchBuilds(baseBranch)
+        .resolves([{ head_commit: goodBeforeBadSha }])
+      githubApi.getBranchBuilds(headBranch).resolves([])
+
       expect(
-        await findBestGoodRefBranch((services) => services.length, git),
+        await findBestGoodRefBranch(
+          (services) => services.length,
+          git,
+          githubApi,
+          headBranch,
+          baseBranch,
+        ),
       ).toBe(goodBeforeBadSha)
-      await makeChange(git, 'a', 'E')
+    })
+    it('should trigger a full rebuild if no good commits found', async () => {
+      let githubApi = Substitute.for<GitActionStatus>()
+      githubApi.getBranchBuilds(baseBranch).resolves([])
+
       expect(
-        await findBestGoodRefBranch((services) => services.length, git),
-      ).toBe(fixSha)
+        await findBestGoodRefBranch(
+          (services) => services.length,
+          git,
+          githubApi,
+          baseBranch,
+          baseBranch,
+        ),
+      ).toBe('rebuild')
+    })
+    it('should take last commit', async () => {
+      let githubApi = Substitute.for<GitActionStatus>()
+      githubApi
+        .getBranchBuilds(baseBranch)
+        .resolves([{ head_commit: '1111' }, { head_commit: '2222' }])
+
+      expect(
+        await findBestGoodRefBranch(
+          (services) => services.length,
+          git,
+          githubApi,
+          baseBranch,
+          baseBranch,
+        ),
+      ).toBe('1111')
     })
   })
   describe('Pending', () => {
