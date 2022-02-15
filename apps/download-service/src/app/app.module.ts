@@ -16,7 +16,11 @@ import { DocumentController } from './modules/documents/document.controller'
 import { DocumentsInfraController } from './modules/infra/documentsInfra.controller'
 import { FinanceDocumentController } from './modules/finance-documents/document.controller'
 import { RegulationDocumentsController } from './modules/regulation-documents/regulation-documents.controller'
-import { RegulationsAdminModule } from '@island.is/api/domains/regulations-admin'
+import {
+  RegulationsAdminClientConfig,
+  RegulationsAdminClientModule,
+} from '@island.is/clients/regulations-admin'
+import { RegulationsService } from '@island.is/clients/regulations'
 import { environment } from '../environments'
 
 @Module({
@@ -35,15 +39,25 @@ import { environment } from '../environments'
       tokenUrl: environment.documentService.tokenUrl,
     }),
     FinanceClientModule,
+    RegulationsAdminClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [FinanceClientConfig, IdsClientConfig, XRoadConfig],
-    }),
-    RegulationsAdminModule.register({
-      baseApiUrl: environment.regulationsAdmin.baseApiUrl,
-      regulationsApiUrl: environment.regulationsAdmin.regulationsApiUrl,
+      load: [
+        FinanceClientConfig,
+        RegulationsAdminClientConfig,
+        IdsClientConfig,
+        XRoadConfig,
+      ],
     }),
   ],
-  providers: [],
+  providers: [
+    {
+      provide: RegulationsService,
+      useFactory: async () =>
+        new RegulationsService({
+          url: environment.regulationsAdmin.regulationsApiUrl,
+        }),
+    },
+  ],
 })
 export class AppModule {}

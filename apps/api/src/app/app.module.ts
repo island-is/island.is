@@ -28,6 +28,7 @@ import { CompanyRegistryModule } from '@island.is/api/domains/company-registry'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { RegulationsAdminModule } from '@island.is/api/domains/regulations-admin'
+import { RegulationsAdminClientConfig } from '@island.is/clients/regulations-admin'
 import { FinanceModule } from '@island.is/api/domains/finance'
 import { AssetsModule } from '@island.is/api/domains/assets'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
@@ -255,6 +256,7 @@ const autoSchemaFile = environment.production
         DownloadServiceConfig,
         FeatureFlagConfig,
         FinanceClientConfig,
+        RegulationsAdminClientConfig,
         IdsClientConfig,
         NationalRegistryClientConfig,
         SyslumennClientConfig,

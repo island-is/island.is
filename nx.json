@@ -328,6 +328,9 @@
     "clients-regulations": {
       "tags": []
     },
+    "clients-regulations-admin": {
+      "tags": []
+    },
     "clients-rsk-company-registry": {
       "tags": []
     },

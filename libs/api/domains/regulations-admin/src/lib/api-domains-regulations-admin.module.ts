@@ -1,31 +1,22 @@
 import { DynamicModule, Module } from '@nestjs/common'
-import {
-  RegulationsAdminApi,
-  RegulationsAdminOptions,
-  REGULATIONS_ADMIN_OPTIONS,
-} from './client'
+import { RegulationsAdminApi } from './client'
 import { RegulationsAdminResolver } from './graphql/regulationsAdmin.resolver'
 import { RegulationsService } from '@island.is/clients/regulations'
-import { ConfigModule, DownloadServiceConfig } from '@island.is/nest/config'
+import { RegulationsAdminClientModule } from '@island.is/clients/regulations-admin'
 
+export interface RegulationsAdminOptions {
+  baseApiUrl?: string
+  regulationsApiUrl: string
+}
 @Module({})
 export class RegulationsAdminModule {
   static register(config: RegulationsAdminOptions): DynamicModule {
     return {
       module: RegulationsAdminModule,
-      imports: [
-        ConfigModule.forRoot({
-          isGlobal: true,
-          load: [DownloadServiceConfig],
-        }),
-      ],
+      imports: [RegulationsAdminClientModule],
       providers: [
         RegulationsAdminResolver,
         RegulationsAdminApi,
-        {
-          provide: REGULATIONS_ADMIN_OPTIONS,
-          useValue: config,
-        },
         {
           provide: RegulationsService,
           useFactory: async () =>

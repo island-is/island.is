@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
-import { RegulationsAdminApi } from '@island.is/api/domains/regulations-admin'
+import { RegulationsAdminClientService } from '@island.is/clients/regulations-admin'
 import { RegulationsService } from '@island.is/clients/regulations'
 import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
@@ -33,8 +33,8 @@ export class RegulationDocumentsController {
   constructor(
     @Inject(RegulationsService)
     private readonly regulationService: RegulationsService,
-    @Inject(RegulationsAdminApi)
-    private regulationsAdminApiService: RegulationsAdminApi,
+    @Inject(RegulationsAdminClientService)
+    private regulationsAdminClientService: RegulationsAdminClientService,
   ) {}
 
   @Post('/draft/:regulationId')
@@ -51,7 +51,7 @@ export class RegulationDocumentsController {
   ) {
     let draftRegulation: RegulationDraft | null = null
     try {
-      draftRegulation = await this.regulationsAdminApiService.getDraftRegulation(
+      draftRegulation = await this.regulationsAdminClientService.getDraftRegulation(
         regulationId,
         `Bearer ${resource.__accessToken}`,
       )

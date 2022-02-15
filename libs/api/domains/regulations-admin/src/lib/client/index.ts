@@ -1,5 +1,1 @@
-export {
-  RegulationsAdminApi,
-  RegulationsAdminOptions,
-  REGULATIONS_ADMIN_OPTIONS,
-} from './regulationsAdmin.api'
+export { RegulationsAdminApi } from './regulationsAdmin.api'

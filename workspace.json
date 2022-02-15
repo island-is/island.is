@@ -9401,6 +9401,27 @@
           }
         }
       }
+    },
+    "clients-regulations-admin": {
+      "root": "libs/clients/regulations-admin",
+      "sourceRoot": "libs/clients/regulations-admin/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/clients/regulations-admin/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/clients/regulations-admin"],
+          "options": {
+            "jestConfig": "libs/clients/regulations-admin/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   }
 }

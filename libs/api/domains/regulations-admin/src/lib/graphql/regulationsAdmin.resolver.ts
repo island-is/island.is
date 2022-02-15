@@ -1,8 +1,7 @@
 import graphqlTypeJson from 'graphql-type-json'
 import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
+import { ConfigType, DownloadServiceConfig } from '@island.is/nest/config'
 import { Inject, UseGuards } from '@nestjs/common'
-import { DownloadServiceConfig } from '@island.is/nest/config'
-import type { ConfigType } from '@island.is/nest/config'
 import { RegulationsService } from '@island.is/clients/regulations'
 import { GetDraftRegulationInput } from './dto/getDraftRegulation.input'
 import { GetDraftRegulationPdfDownloadInput } from './dto/downloadRegulation.input'
@@ -16,11 +15,8 @@ import {
   ScopesGuard,
   CurrentUser,
 } from '@island.is/auth-nest-tools'
-import {
-  RegulationsAdminApi,
-  RegulationsAdminOptions,
-  REGULATIONS_ADMIN_OPTIONS,
-} from '../client'
+import { RegulationsAdminApi } from '../client'
+import { RegulationsAdminClientService } from '@island.is/clients/regulations-admin'
 import { DraftRegulationPdfDownload } from './models/draftRegulationPdfDownload.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -29,8 +25,7 @@ export class RegulationsAdminResolver {
   constructor(
     private regulationsService: RegulationsService,
     private regulationsAdminApiService: RegulationsAdminApi,
-    @Inject(REGULATIONS_ADMIN_OPTIONS)
-    private readonly options: RegulationsAdminOptions,
+    private regulationsAdminClientService: RegulationsAdminClientService,
     @Inject(DownloadServiceConfig.KEY)
     private downloadServiceConfig: ConfigType<typeof DownloadServiceConfig>,
   ) {}
@@ -41,7 +36,7 @@ export class RegulationsAdminResolver {
     @Args('input') input: GetDraftRegulationInput,
     @CurrentUser() user: User,
   ) {
-    return await this.regulationsAdminApiService.getDraftRegulation(
+    return await this.regulationsAdminClientService.getDraftRegulation(
       input.draftId,
       user.authorization,
     )
@@ -50,7 +45,7 @@ export class RegulationsAdminResolver {
   // @Query(() => [DraftRegulationSummaryModel])
   @Query(() => graphqlTypeJson)
   async getShippedRegulations(@CurrentUser() { authorization }: User) {
-    return await this.regulationsAdminApiService.getShippedRegulations(
+    return await this.regulationsAdminClientService.getShippedRegulations(
       authorization,
     )
   }
@@ -58,7 +53,7 @@ export class RegulationsAdminResolver {
   // @Query(() => [DraftRegulationSummaryModel])
   @Query(() => graphqlTypeJson)
   async getDraftRegulations(@CurrentUser() user: User) {
-    return await this.regulationsAdminApiService.getDraftRegulations(
+    return await this.regulationsAdminClientService.getDraftRegulations(
       user.authorization,
     )
   }
@@ -127,7 +122,7 @@ export class RegulationsAdminResolver {
     }
 
     // FIXME: Find out a more lightweight way of checking if a `draftId` is valid.
-    const draftRegulation = await this.regulationsAdminApiService.getDraftRegulation(
+    const draftRegulation = await this.regulationsAdminClientService.getDraftRegulation(
       input.draftId,
       authorization,
     )
