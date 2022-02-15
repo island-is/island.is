@@ -439,8 +439,8 @@ components:
           type: string
           minLength: 1
         ratio:
-          type: number
-          format: float
+          type: string
+          minLength: 1
         approved:
           type: boolean
         paid:

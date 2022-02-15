@@ -63,14 +63,6 @@ export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
       {answers.commissions && <Commissions answers={answers} />}
       <Complainees answers={answers} />
       <Complaint answers={answers} />
-      <Button
-        variant="ghost"
-        icon="open"
-        iconType="outline"
-        onClick={onPrintClick}
-      >
-        {formatMessage(externalData.labels.printButtonLabel)}
-      </Button>
     </Box>
   )
 }

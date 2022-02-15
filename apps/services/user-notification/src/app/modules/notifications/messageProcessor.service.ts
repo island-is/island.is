@@ -46,7 +46,7 @@ export class MessageProcessorService {
           title: t.formatMessage(title, formatArgs),
           body: t.formatMessage(body, formatArgs),
           category: 'NEW_DOCUMENT',
-          appURI: `${this.appProtocol}://document/${message.documentId}`,
+          appURI: `${this.appProtocol}://inbox/${message.documentId}`,
         }
       }
     }
