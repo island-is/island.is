@@ -26,6 +26,30 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
     UpdateMunicipalityMutation,
   )
   const { setMunicipality } = useMunicipality()
+  const aidErrorMessage = 'Grunnupphæð getur ekki verið 0'
+
+  const isAidInvalid = () => {
+    return (
+      state.individualAid.ownPlace === 0 ||
+      state.individualAid.registeredRenting === 0 ||
+      state.individualAid.unregisteredRenting === 0 ||
+      state.individualAid.withOthers === 0 ||
+      state.individualAid.livesWithParents === 0 ||
+      state.individualAid.unknown === 0 ||
+      state.cohabitationAid.ownPlace === 0 ||
+      state.cohabitationAid.registeredRenting === 0 ||
+      state.cohabitationAid.unregisteredRenting === 0 ||
+      state.cohabitationAid.withOthers === 0 ||
+      state.cohabitationAid.livesWithParents === 0 ||
+      state.cohabitationAid.unknown === 0
+    )
+  }
+
+  const saveHandler = () => {
+    if (!isAidInvalid()) {
+      updateMunicipality()
+    }
+  }
 
   const updateMunicipality = async () => {
     await updateMunicipalityMutation({
@@ -140,6 +164,8 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
           id="individualsOwnPlace"
           maximumInputLength={maxAmountLength}
           value={state.individualAid.ownPlace.toString()}
+          hasError={state.individualAid.ownPlace === 0}
+          errorMessage={aidErrorMessage}
           onUpdate={(value) =>
             setState({
               ...state,
@@ -158,6 +184,8 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
           id="individualsRegisteredRenting"
           maximumInputLength={maxAmountLength}
           value={state.individualAid.registeredRenting.toString()}
+          hasError={state.individualAid.registeredRenting === 0}
+          errorMessage={aidErrorMessage}
           onUpdate={(value) =>
             setState({
               ...state,
@@ -176,6 +204,8 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
           id="individualsUnregisteredRenting"
           maximumInputLength={maxAmountLength}
           value={state.individualAid.unregisteredRenting.toString()}
+          hasError={state.individualAid.unregisteredRenting === 0}
+          errorMessage={aidErrorMessage}
           onUpdate={(value) =>
             setState({
               ...state,
@@ -194,6 +224,8 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
           id="individualsWithOthers"
           maximumInputLength={maxAmountLength}
           value={state.individualAid.withOthers.toString()}
+          hasError={state.individualAid.withOthers === 0}
+          errorMessage={aidErrorMessage}
           onUpdate={(value) =>
             setState({
               ...state,
@@ -212,6 +244,8 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
           id="individualsWithParents"
           maximumInputLength={maxAmountLength}
           value={state.individualAid.livesWithParents.toString()}
+          hasError={state.individualAid.livesWithParents === 0}
+          errorMessage={aidErrorMessage}
           onUpdate={(value) =>
             setState({
               ...state,
@@ -230,6 +264,8 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
           id="individualsOther"
           maximumInputLength={maxAmountLength}
           value={state.individualAid.unknown.toString()}
+          hasError={state.individualAid.unknown === 0}
+          errorMessage={aidErrorMessage}
           onUpdate={(value) =>
             setState({
               ...state,
@@ -251,6 +287,8 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
           id="cohabitationOwnPlace"
           maximumInputLength={maxAmountLength}
           value={state.cohabitationAid.ownPlace.toString()}
+          hasError={state.cohabitationAid.ownPlace === 0}
+          errorMessage={aidErrorMessage}
           onUpdate={(value) =>
             setState({
               ...state,
@@ -269,6 +307,8 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
           id="cohabitationRegisteredRenting"
           maximumInputLength={maxAmountLength}
           value={state.cohabitationAid.registeredRenting.toString()}
+          hasError={state.cohabitationAid.registeredRenting === 0}
+          errorMessage={aidErrorMessage}
           onUpdate={(value) =>
             setState({
               ...state,
@@ -287,6 +327,8 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
           id="cohabitationUnregisteredRenting"
           maximumInputLength={maxAmountLength}
           value={state.cohabitationAid.unregisteredRenting.toString()}
+          hasError={state.cohabitationAid.unregisteredRenting === 0}
+          errorMessage={aidErrorMessage}
           onUpdate={(value) =>
             setState({
               ...state,
@@ -305,6 +347,8 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
           id="cohabitationWithOthers"
           maximumInputLength={maxAmountLength}
           value={state.cohabitationAid.withOthers.toString()}
+          hasError={state.cohabitationAid.withOthers === 0}
+          errorMessage={aidErrorMessage}
           onUpdate={(value) =>
             setState({
               ...state,
@@ -323,6 +367,8 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
           id="cohabitationWithParents"
           maximumInputLength={maxAmountLength}
           value={state.cohabitationAid.livesWithParents.toString()}
+          hasError={state.cohabitationAid.livesWithParents === 0}
+          errorMessage={aidErrorMessage}
           onUpdate={(value) =>
             setState({
               ...state,
@@ -341,6 +387,8 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
           id="cohabitationOther"
           maximumInputLength={maxAmountLength}
           value={state.cohabitationAid.unknown.toString()}
+          hasError={state.cohabitationAid.unknown === 0}
+          errorMessage={aidErrorMessage}
           onUpdate={(value) =>
             setState({
               ...state,
@@ -353,7 +401,7 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
         />
       </Box>
       <Box display="flex" justifyContent="flexEnd">
-        <Button loading={loading} onClick={updateMunicipality} icon="checkmark">
+        <Button loading={loading} onClick={saveHandler} icon="checkmark">
           Vista stillingar
         </Button>
       </Box>
