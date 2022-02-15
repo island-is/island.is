@@ -1,4 +1,4 @@
-import { DefaultLogFields, ListLogLine, SimpleGit } from 'simple-git'
+import simpleGit, { DefaultLogFields, ListLogLine, SimpleGit } from 'simple-git'
 
 const calculateDistance = async (
   git: SimpleGit,
@@ -85,27 +85,24 @@ export async function findBestGoodRefPR(
   const runs = await githubApi.getPRRuns(prID)
   if (runs.length > 0) {
     const previousRuns = await githubApi.getPRRuns(prID)
-    const distances = await Promise.all(
-      previousRuns.map(async (previousRun) => {
-        const tempBranch = `${headBranch}-${Math.round(
-          Math.random() * 1000000,
-        )}`
-        await git.checkoutBranch(tempBranch, previousRun.base_commit)
-        await git.merge({ [`${previousRun.head_commit}`]: null })
-        const lastMerge = await git.log({ maxCount: 1 })
-        const lastMergeCommit = lastChanges.latest
-        const distance = await calculateDistance(
-          git,
-          currentChange.hash,
-          lastMergeCommit,
-        )
-        return {
-          distance: commitScore(distance),
-          hash: previousRun.head_commit,
-        }
-      }),
-    )
-    distances.sort((a, b) => (a.distance > b.distance ? -1 : 1))
+    const distances: { distance: number; hash: string }[] = []
+    for (const previousRun of previousRuns) {
+      const tempBranch = `${headBranch}-${Math.round(Math.random() * 1000000)}`
+      await git.checkoutBranch(tempBranch, previousRun.base_commit)
+      await git.merge({ [previousRun.head_commit]: null })
+      const lastMerge = await git.log({ maxCount: 1 })
+      const lastMergeCommit = lastMerge.latest
+      const distance = await calculateDistance(
+        git,
+        currentChange.hash,
+        lastMergeCommit,
+      )
+      distances.push({
+        distance: commitScore(distance),
+        hash: previousRun.head_commit,
+      })
+    }
+    distances.sort((a, b) => (a.distance > b.distance ? 1 : -1))
     return distances[0].hash
   } else {
     // no pr runs

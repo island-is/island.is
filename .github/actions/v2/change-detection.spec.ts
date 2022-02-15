@@ -8,7 +8,7 @@ import {
 } from './change-detection'
 import { Substitute, Arg } from '@fluffy-spoon/substitute'
 import { existsSync, mkdir, mkdirSync } from 'fs'
-import { isArray, promisify } from 'util'
+import { promisify } from 'util'
 
 let fileA: string
 let fileB: string
@@ -92,7 +92,7 @@ describe('Change detection', () => {
 
       const fixFailSha = await makeChange(git, 'b', 'D-bad')
       fixFailSha1 = await makeChange(git, 'b', 'D2-good')
-      const fixFailSha2 = await makeChange(git, 'c', 'D3-bad')
+      const fixFailSha2 = await makeChange(git, 'c', 'D3-good')
       fixGoodSha = await makeChange(git, 'b', 'E-good')
 
       await git.checkout(baseBranch)
@@ -123,9 +123,10 @@ describe('Change detection', () => {
 
     it('should use last good PR when available', async () => {
       const githubApi = Substitute.for<GitActionStatus>()
-      githubApi
-        .getPRRuns(100)
-        .resolves([{ head_commit: fixFailSha1, base_commit: forkSha }])
+      githubApi.getPRRuns(100).resolves([
+        { head_commit: fixGoodSha, base_commit: forkSha },
+        { head_commit: fixFailSha1, base_commit: forkSha },
+      ])
 
       let actual = await findBestGoodRefPR(
         (services) => services.length,
@@ -135,7 +136,7 @@ describe('Change detection', () => {
         headBranch,
         baseBranch,
       )
-      expect(actual).toBe(fixFailSha1)
+      expect(actual).toBe(fixGoodSha)
     })
   })
   describe('Branch', () => {
