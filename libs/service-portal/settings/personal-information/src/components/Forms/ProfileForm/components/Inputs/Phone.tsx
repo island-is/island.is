@@ -73,7 +73,10 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
   }, [mobile])
 
   useEffect(() => {
-    if (mobile === telInternal || telInternal === telToVerify) {
+    if (
+      telInternal &&
+      (mobile === telInternal || telInternal === telToVerify)
+    ) {
       telDirty(false)
     } else {
       telDirty(true)
