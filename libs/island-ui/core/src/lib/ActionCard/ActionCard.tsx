@@ -180,11 +180,9 @@ export const ActionCard: React.FC<ActionCardProps> = ({
     }
 
     return (
-      <Box paddingTop={[0, 1, 0]}>
-        <Tag outlined={tag.outlined} variant={tag.variant} disabled>
-          {tag.label}
-        </Tag>
-      </Box>
+      <Tag outlined={tag.outlined} variant={tag.variant} disabled>
+        {tag.label}
+      </Tag>
     )
   }
 
@@ -294,7 +292,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
               display="flex"
               flexDirection="row"
               justifyContent="spaceBetween"
-              alignItems="flexEnd"
+              alignItems={['flexStart', 'flexStart', 'flexEnd']}
             >
               <Text
                 variant={headingVariant}

@@ -120,11 +120,15 @@ function constructRestrictionCourtRecordPdf(
             index === 0
               ? ''
               : index + 1 === theCase.defendants?.length
-              ? ', og'
+              ? ' og'
               : ','
-          } ${defendant.name ?? '-'}, kt. ${formatNationalId(
-            defendant.nationalId ?? '-',
-          )}`,
+          } ${defendant.name ?? '-'}, ${
+            defendant.noNationalId ? 'fd.' : 'kt.'
+          } ${
+            defendant.noNationalId
+              ? defendant.nationalId
+              : formatNationalId(defendant.nationalId ?? '-')
+          }`,
         '',
       ) ?? ` ${courtRecord.missingDefendants}`
     }.`,
@@ -374,9 +378,13 @@ function constructInvestigationCourtRecordPdf(
               : index + 1 === theCase.defendants?.length
               ? ', og'
               : ','
-          } ${defendant.name ?? '-'}, kt. ${formatNationalId(
-            defendant.nationalId ?? '-',
-          )}`,
+          } ${defendant.name ?? '-'}, ${
+            defendant.noNationalId ? 'fd.' : 'kt.'
+          } ${
+            defendant.noNationalId
+              ? defendant.nationalId
+              : formatNationalId(defendant.nationalId ?? '-')
+          }`,
         '',
       ) ?? ` ${courtRecord.missingDefendants}`
     }.`,
