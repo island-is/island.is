@@ -9,10 +9,6 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import { UploadFile } from '@island.is/island-ui/core'
 
-export interface RskUploadFile extends UploadFile {
-  type: FileType
-}
-
 export interface Form {
   applicationId?: string
   customAddress?: boolean
@@ -27,7 +23,7 @@ export interface Form {
   hasIncome?: boolean
   incomeFiles: UploadFile[]
   taxReturnFiles: UploadFile[]
-  taxReturnFromRskFile: RskUploadFile[]
+  taxReturnFromRskFile: UploadFile[]
   otherFiles: UploadFile[]
   usePersonalTaxCredit?: boolean
   bankNumber?: string
