@@ -13,12 +13,6 @@ export const request = {
     description: 'Notaður sem texti þegar embætti er ekki skráð',
   }),
   baseInfo: defineMessages({
-    heading: {
-      id: 'judicial.system.backend:pdf.restriction_request.base_info.heading',
-      defaultMessage: 'Grunnupplýsingar',
-      description:
-        'Notaður sem texti fyrir titill fyrir grunnupplýsingar í kröfu PDF',
-    },
     court: {
       id: 'judicial.system.backend:pdf.restriction_request.base_info.court',
       defaultMessage: 'Dómstóll:',
