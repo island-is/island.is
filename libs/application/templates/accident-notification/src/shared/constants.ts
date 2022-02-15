@@ -23,7 +23,6 @@ export const accidentLocationLabelMapper = (
     | RescueWorkAccidentLocationEnum
     | StudiesAccidentLocationEnum,
 ): number | undefined => {
-  console.log(`the value: ${value}`)
   switch (value) {
     case GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE:
       return 0
