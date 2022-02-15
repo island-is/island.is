@@ -23,6 +23,7 @@ import {
   AsyncSelectField,
   RecordObject,
   Field,
+  PaymentPendingField,
 } from '../types/Fields'
 import { CallToAction } from '../types/StateMachine'
 import { FormText, FormTextArray } from '../types/Form'
@@ -216,6 +217,19 @@ export function buildCustomField(
     type: FieldTypes.CUSTOM,
     component,
     props: props ?? {},
+  }
+}
+
+export function buildPaymentPendingField(
+  data: Omit<PaymentPendingField, 'type' | 'component' | 'children'>,
+): PaymentPendingField {
+  const { autoSubmitAction } = data
+  return {
+    ...extractCommonFields(data),
+    autoSubmitAction,
+    children: undefined,
+    type: FieldTypes.PAYMENT_PENDING,
+    component: FieldComponents.PAYMENT_PENDING,
   }
 }
 

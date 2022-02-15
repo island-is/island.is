@@ -76,6 +76,7 @@ export enum FieldTypes {
   DIVIDER = 'DIVIDER',
   KEY_VALUE = 'KEY_VALUE',
   ASYNC_SELECT = 'ASYNC_SELECT',
+  PAYMENT_PENDING = 'PAYMENT_PENDING',
 }
 
 export enum FieldComponents {
@@ -90,6 +91,7 @@ export enum FieldComponents {
   KEY_VALUE = 'KeyValueFormField',
   SUBMIT = 'SubmitFormField',
   ASYNC_SELECT = 'AsyncSelectFormField',
+  PAYMENT_PENDING = 'PaymentPendingField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -182,6 +184,12 @@ export interface FileUploadField extends BaseField {
   readonly forImageUpload?: boolean
 }
 
+export interface PaymentPendingField extends BaseField {
+  readonly type: FieldTypes.PAYMENT_PENDING
+  component: FieldComponents.PAYMENT_PENDING
+  readonly autoSubmitAction?: CallToAction[]
+}
+
 export interface SubmitField extends BaseField {
   readonly type: FieldTypes.SUBMIT
   component: FieldComponents.SUBMIT
@@ -203,22 +211,23 @@ export interface KeyValueField extends BaseField {
   component: FieldComponents.KEY_VALUE
 }
 
-export interface CustomField<PropTypes = RecordObject> extends BaseField {
+export interface CustomField extends BaseField {
   readonly type: FieldTypes.CUSTOM
   readonly component: string
-  props?: PropTypes
+  props?: RecordObject
   childInputIds?: string[]
 }
 
-export type Field<PropTypes = RecordObject> =
+export type Field =
   | CheckboxField
-  | CustomField<PropTypes>
+  | CustomField
   | DateField
   | DescriptionField
   | RadioField
   | SelectField
   | TextField
   | FileUploadField
+  | PaymentPendingField
   | KeyValueField
   | DividerField
   | SubmitField

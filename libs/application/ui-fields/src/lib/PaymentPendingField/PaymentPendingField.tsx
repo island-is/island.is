@@ -7,21 +7,6 @@ import {
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useSubmitApplication, usePaymentStatus, useMsg } from './hooks'
 import { getRedirectUrl, isComingFromRedirect } from './util'
-import { MessageDescriptor } from 'react-intl'
-
-interface TemplateProps {
-  errorMessages: {
-    submitTitle: MessageDescriptor
-    submitMessage: MessageDescriptor
-    submitRetryButtonCaption: MessageDescriptor
-    statusTitle: MessageDescriptor
-  }
-  messages: {
-    pollingTitle: MessageDescriptor
-  }
-}
-
-export type Props = FieldBaseProps<TemplateProps>
 
 export const PaymentPending: FC<Props> = (props) => {
   return <PollingForPayment {...props} />
@@ -43,12 +28,6 @@ const PollingForPayment: FC<Props> = ({
 
   const shouldRedirect = !isComingFromRedirect() && paymentStatus.paymentUrl
 
-  console.log({
-    shouldRedirect,
-    isComingFromRedirect: isComingFromRedirect(),
-    paymentStatus,
-  })
-
   const [submitApplication, { error: submitError }] = useSubmitApplication({
     application,
     refetch,
@@ -65,7 +44,6 @@ const PollingForPayment: FC<Props> = ({
       return
     }
 
-    console.log('halting all polling!!!!!')
     stopPolling()
 
     submitApplication()
