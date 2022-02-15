@@ -15,13 +15,17 @@ let fileB: string
 
 async function makeChangeWithContent(
   git: SimpleGit,
-  path: string,
+  changeset: { path: string; content: string }[],
   message: string,
-  content: string,
 ): Promise<string> {
-  await writeFile(path, content)
-  await git.add(path)
-  const commit = await git.commit(message, [path])
+  for (const change of changeset) {
+    await writeFile(change.path, change.content)
+    await git.add(change.path)
+  }
+  const commit = await git.commit(
+    message,
+    changeset.map((c) => c.path),
+  )
   return commit.commit
 }
 
@@ -38,7 +42,7 @@ describe('Change detection', () => {
     git: SimpleGit,
     component: Component | Component[],
     message: string,
-  ) => Promise<string[]>
+  ) => Promise<string>
   beforeEach(async () => {
     path = await mkdtemp(`${__dirname}/test-data/repo`)
     fileA = join(path, 'A.txt')
@@ -49,7 +53,7 @@ describe('Change detection', () => {
       git: SimpleGit,
       component: Component | Component[],
       message: string,
-    ): Promise<string[]> => {
+    ): Promise<string> => {
       if (!Array.isArray(component)) {
         component = [component]
       }
@@ -60,24 +64,22 @@ describe('Change detection', () => {
           await mkdirAsync(compPath)
         }
       }
-      return await Promise.all(
-        component.map(async (comp) =>
-          makeChangeWithContent(
-            git,
-            `${join(path, comp)}/${Math.random().toLocaleString()}.txt`,
-            message,
-            Math.random().toLocaleString(),
-          ),
-        ),
+      return await makeChangeWithContent(
+        git,
+        component.map((c) => ({
+          path: `${join(path, c)}/${Math.random().toLocaleString()}.txt`,
+          content: Math.random().toLocaleString(),
+        })),
+        message,
       )
     }
   })
   describe('PR', () => {
-    let mainGoodBeforeBadSha: string[]
-    let forkSha: string[]
-    let fixFailSha1: string[]
-    let rootSha: string[]
-    let fixGoodSha: string[]
+    let mainGoodBeforeBadSha: string
+    let forkSha: string
+    let fixFailSha1: string
+    let rootSha: string
+    let fixGoodSha: string
     beforeEach(async () => {
       const br = await git.checkoutLocalBranch(baseBranch)
       rootSha = await makeChange(git, 'a', 'A-good')
@@ -97,23 +99,14 @@ describe('Change detection', () => {
       const merge = await git.mergeFromTo(headBranch, baseBranch)
     })
     it('should use last good commit when no PR runs available', async () => {
-      const br2 = await git.raw('merge-base', baseBranch, headBranch)
-      // return br2.trim()
-      const commits = (
-        await git.raw('rev-list', '--date-order', 'HEAD~1', `${br2.trim()}`)
-      )
-        .split('\n')
-        .filter((s) => s.length > 0)
-        .map((c) => c.substr(0, 7))
-
       const githubApi = Substitute.for<GitActionStatus>()
       githubApi.getPRRuns(100).resolves([])
       githubApi.getBranchBuilds(baseBranch).resolves([])
       githubApi
         .getBranchBuilds(headBranch)
         .resolves([
-          { head_commit: mainGoodBeforeBadSha[0] },
-          { head_commit: rootSha[0] },
+          { head_commit: mainGoodBeforeBadSha },
+          { head_commit: rootSha },
         ])
 
       let actual = await findBestGoodRefPR(
@@ -124,7 +117,7 @@ describe('Change detection', () => {
         headBranch,
         baseBranch,
       )
-      expect(actual).toBe(mainGoodBeforeBadSha[0])
+      expect(actual).toBe(mainGoodBeforeBadSha)
     })
 
     it('should use last good PR when available', async () => {
