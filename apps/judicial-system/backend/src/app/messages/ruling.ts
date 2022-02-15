@@ -17,6 +17,32 @@ export const ruling = {
     description:
       'Notað sem undirsögn á úrskurði þar sem {caseNumber} er númer á máli. {caseNumber} er sjálfkrafa bætt við í kóða.',
   }),
+  intro: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.intro',
+    defaultMessage:
+      'Mál þetta var þingfest og tekið til úrskurðar {courtStartDate}',
+    description: 'Notaður sem upphafstexti í úrskurði.',
+  }),
+  prosecutorIs: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.prosecutor_is',
+    defaultMessage: 'Sóknaraðili er',
+    description: 'Notað fyrir Sóknaraðili er ...',
+  }),
+  missingDistrict: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.missing_district',
+    defaultMessage: 'ekki skráður',
+    description: 'Notaður sem texti þegar embætti er ekki skráð',
+  }),
+  defendantIs: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.defendant_is',
+    defaultMessage: 'Varnaraðil{suffix} er{isSuffix}',
+    description: 'Notað fyrir Varnaraðili er ...',
+  }),
+  missingDefendants: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.missing_defendants',
+    defaultMessage: 'ekki skráður',
+    description: 'Notaður sem texti þegar varnaraðila vantar',
+  }),
   prosecutorDemandsHeading: defineMessage({
     id: 'judicial.system.backend:pdf.ruling.prosecutor_demands_heading',
     defaultMessage: 'Krafa',
@@ -87,7 +113,7 @@ export const ruling = {
     defaultMessage: 'Þingbók',
     description: 'Notaður sem fyrirsögn á styttri útgáfu af þingbók.',
   }),
-  intro: defineMessage({
+  xintro: defineMessage({
     id: 'judicial.system.backend:pdf.ruling.into',
     defaultMessage:
       'Þann {courtDate} heldur {judgeNameAndTitle} dómþing{courtLocation}. Fyrir er tekið mál nr. {caseNumber}. Þinghald hefst kl. {startTime}.',
@@ -198,16 +224,6 @@ export const ruling = {
     id: 'judicial.system.backend:pdf.ruling.no_district',
     defaultMessage: 'ekki skráður',
     description: 'Notaður sem texti þegar embætti er ekki skráð',
-  }),
-  prosecutorIs: defineMessage({
-    id: 'judicial.system.backend:pdf.ruling.prosecutor_is',
-    defaultMessage: 'Sóknaraðili er',
-    description: 'Notað fyrir Sóknaraðili er ...',
-  }),
-  defendantIs: defineMessage({
-    id: 'judicial.system.backend:pdf.ruling.defendant_is',
-    defaultMessage: 'Varnaraðil{suffix} er{isSuffix}',
-    description: 'Notað fyrir Varnaraðili er ...',
   }),
   noDefendants: defineMessage({
     id: 'judicial.system.backend:pdf.ruling.no_defendants',
