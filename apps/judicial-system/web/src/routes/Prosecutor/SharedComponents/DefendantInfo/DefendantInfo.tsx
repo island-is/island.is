@@ -74,8 +74,11 @@ const DefendantInfo: React.FC<Props> = (props) => {
     setAccusedAddressErrorMessage,
   ] = useState<string>('')
 
-  const [isBusinessNationalId, setIsBusinessNationalId] = useState<boolean>(
-    isBusiness(defendant.nationalId),
+  const [
+    shouldShowGenderAndCitizenship,
+    setShouldShowGenderAndCitizenship,
+  ] = useState<boolean>(
+    !!defendant.nationalId && !isBusiness(defendant.nationalId),
   )
 
   const mapNationalRegistryGenderToGender = (gender: string) => {
@@ -96,7 +99,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
       setAccusedNameErrorMessage('')
       setAccusedAddressErrorMessage('')
       setNationalIdErrorMessage('')
-      setIsBusinessNationalId(false)
+      setShouldShowGenderAndCitizenship(true)
 
       onChange(defendant.id, {
         name: personData.items[0].name,
@@ -116,7 +119,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
       setAccusedNameErrorMessage('')
       setAccusedAddressErrorMessage('')
       setNationalIdErrorMessage('')
-      setIsBusinessNationalId(true)
+      setShouldShowGenderAndCitizenship(false)
 
       onChange(defendant.id, {
         name: businessData.items[0].full_name,
@@ -289,7 +292,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
           required
         />
       </Box>
-      {!isBusinessNationalId && (
+      {shouldShowGenderAndCitizenship && (
         <GridContainer>
           <GridRow>
             <GridColumn span="6/12">
