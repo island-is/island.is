@@ -25,6 +25,8 @@ import { FinanceDocumentModel } from './models/financeDocument.model'
 import { CustomerTapsControlModel } from './models/customerTapsControl.model'
 import { DocumentsListModel } from './models/documentsList.model'
 import { CustomerRecords } from './models/customerRecords.model'
+import { PaymentScheduleModel } from './models/paymentSchedule.model'
+import { DebtStatusModel } from './models/debtStatus.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.financeOverview)
@@ -144,5 +146,18 @@ export class FinanceResolver {
   @Audit()
   async getCustomerTapControl(@CurrentUser() user: User) {
     return this.financeService.getCustomerTapControl(user.nationalId, user)
+  }
+
+  @Query(() => PaymentScheduleModel, { nullable: true })
+  @Audit()
+  async getPaymentSchedule(@CurrentUser() user: User) {
+    return this.financeService.getPaymentSchedules(user.nationalId, user)
+  }
+
+  @Query(() => DebtStatusModel, { nullable: true })
+  @Audit()
+  async getDebtStatus(@CurrentUser() user: User) {
+    console.log('AAAAAAAA', user)
+    return this.financeService.getDebtStatus(user.nationalId, user)
   }
 }

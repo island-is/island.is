@@ -3,10 +3,12 @@ import isEmpty from 'lodash/isEmpty'
 import {
   CustomerChargeType,
   CustomerRecords,
+  DebtStatusType,
   DocumentsListTypes,
   DocumentTypes,
   FinanceStatus,
   FinanceStatusDetails,
+  PaymentScheduleType,
   TapsControlTypes,
 } from './types'
 import {
@@ -168,5 +170,23 @@ export class FinanceClientService {
       { nationalID },
       auth,
     )
+  }
+
+  async getPaymentSchedules(
+    nationalID: string,
+    auth: Auth,
+  ): Promise<PaymentScheduleType | null> {
+    return this.get<PaymentScheduleType>(
+      `/myPaymentSchedules`,
+      { nationalID },
+      auth,
+    )
+  }
+
+  async getDebtStatus(
+    nationalID: string,
+    auth: Auth,
+  ): Promise<DebtStatusType | null> {
+    return this.get<DebtStatusType>(`/myDebtStatus`, { nationalID }, auth)
   }
 }
