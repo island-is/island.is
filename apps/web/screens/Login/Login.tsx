@@ -60,12 +60,18 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
               paddingBottom={[3, 3, 4]}
             >
               <Text as="h2" variant="h1" marginBottom="p3" marginTop="p1">
-                {n('nyjuSidurTitle', 'Ný útgáfa af mínum síðum á island.is')}
+                {n('nyjuSidurTitle', 'Mínar síður Ísland.is')}
               </Text>
               <Text as="p" variant="default" marginBottom="p5">
                 {n(
                   'nyjuSidurText',
-                  'Ný útgáfa minna síðna á ísland.is. Hér er um að ræða beta útgáfu að nýjum mínum síðum, ekki eru allir möguleikar sem eru á gömlu mínum síðum í boði hér ennþá.',
+                  'Gefnar hafa verið út nýjar Mínar síður sem eru hannaðar með þarfir notanda að leiðarljósi og aukið öryggi í innskráningu. Þessi nýja útgáfa er fyrsta skrefið í átt að betri þjónustu og aðgengi notenda að gögnum frá hinu opinbera.',
+                )}
+              </Text>
+              <Text as="p" variant="default" marginBottom={5}>
+                {n(
+                  'nyjuSidurSubText',
+                  'Eldri útgáfa af Mínum síðum er enn aðgengileg fyrir notendur Íslykils.',
                 )}
               </Text>
               <div>
@@ -75,21 +81,17 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
                   href={minarsidurLink}
                   onClick={trackAndNavigateNew}
                 >
-                  <Button as="span">
-                    {n('nyjuSidurLink', 'Fara á nýju mínar síður')}
-                  </Button>
+                  <Button as="span">{n('nyjuSidurLink', 'Innskráning')}</Button>
                 </a>
                 <Link
                   href="//minarsidur.island.is/"
                   color="blue400"
-                  underline="normal"
-                  underlineVisibility="always"
                   onClick={() => webLoginButtonSelect('Old')}
                   newTab
-                  className={styles.link}
                 >
-                  {n('gomluSidurLink', 'Fara á gömlu mínar síður')}
-                  <Icon icon="open" type="outline" />
+                  <Button variant="text" icon="open" iconType="outline">
+                    {n('gomluSidurLink', 'Innskráning með Íslykli')}
+                  </Button>
                 </Link>
               </div>
             </GridColumn>

@@ -6,10 +6,9 @@ interface UseDragOptions {
   onDragMove?: (delta: number) => void
 }
 
-const isMouseEvent = <T extends HTMLElement>(
-  event: React.MouseEvent<T, MouseEvent> | React.TouchEvent<T>,
-): event is React.MouseEvent<T, MouseEvent> => {
-  return event.nativeEvent instanceof MouseEvent
+interface PointerInfo {
+  id: number
+  startX: number
 }
 
 export const useDrag = ({
@@ -17,53 +16,67 @@ export const useDrag = ({
   onDragEnd,
   onDragMove,
 }: UseDragOptions) => {
-  const start = useRef(0)
+  const pointerInfo = useRef<PointerInfo | null>(null)
 
-  const handleDragMove = (event: MouseEvent | TouchEvent) => {
-    const x =
-      event instanceof MouseEvent ? event.clientX : event.targetTouches[0].pageX
-    const deltaX = x - start.current
-
-    if (onDragMove) {
-      onDragMove(deltaX)
+  const handleDragStart = (event: React.PointerEvent<HTMLElement>) => {
+    if (event.button !== 0) {
+      return
     }
-  }
+    event.preventDefault()
 
-  const handleDragEnd = (event: MouseEvent | TouchEvent) => {
-    document.removeEventListener('mouseup', handleDragEnd)
-    document.removeEventListener('touchend', handleDragEnd)
-    document.removeEventListener('mousemove', handleDragMove)
-    document.removeEventListener('touchmove', handleDragMove)
+    pointerInfo.current = { id: event.pointerId, startX: event.clientX }
 
-    const x =
-      event instanceof MouseEvent ? event.clientX : event.targetTouches[0].pageX
-    const deltaX = x - start.current
-
-    if (onDragEnd) {
-      onDragEnd(deltaX)
-    }
-  }
-
-  const handleDragStart = (
-    event:
-      | React.MouseEvent<HTMLElement, MouseEvent>
-      | React.TouchEvent<HTMLElement>,
-  ) => {
-    start.current = isMouseEvent(event)
-      ? event.clientX
-      : event.targetTouches[0].pageX
-    document.addEventListener('mousemove', handleDragMove)
-    document.addEventListener('touchmove', handleDragMove)
-    document.addEventListener('mouseup', handleDragEnd)
-    document.addEventListener('touchend', handleDragEnd)
+    event.currentTarget.setPointerCapture(event.pointerId)
+    event.currentTarget.addEventListener('pointermove', handleDragMove)
+    event.currentTarget.addEventListener('pointerup', handleDragEnd)
+    event.currentTarget.addEventListener('pointercancel', handleDragEnd)
 
     if (onDragStart) {
       onDragStart()
     }
   }
 
+  const handleDragMove = (event: PointerEvent) => {
+    if (
+      pointerInfo.current === null ||
+      pointerInfo.current?.id !== event.pointerId
+    ) {
+      return
+    }
+    event.preventDefault()
+
+    const deltaX = event.clientX - pointerInfo.current.startX
+
+    if (onDragMove) {
+      onDragMove(deltaX)
+    }
+  }
+
+  const handleDragEnd = (event: PointerEvent) => {
+    if (
+      event.button !== 0 ||
+      pointerInfo.current === null ||
+      pointerInfo.current?.id !== event.pointerId
+    ) {
+      return
+    }
+    event.preventDefault()
+
+    const deltaX = event.clientX - pointerInfo.current.startX
+    pointerInfo.current = null
+
+    if (event.currentTarget && event.currentTarget instanceof HTMLElement) {
+      event.currentTarget.removeEventListener('pointermove', handleDragMove)
+      event.currentTarget.removeEventListener('pointerup', handleDragEnd)
+      event.currentTarget.removeEventListener('pointercancel', handleDragEnd)
+    }
+
+    if (onDragEnd) {
+      onDragEnd(deltaX)
+    }
+  }
+
   return {
-    onMouseDown: handleDragStart,
-    onTouchStart: handleDragStart,
+    onPointerDown: handleDragStart,
   }
 }

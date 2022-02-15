@@ -104,6 +104,7 @@ const Slider = ({
   const thumbStyle = {
     transform: `translateX(${dragX.current == null ? x : dragX.current}px)`,
     transition: isDragging ? 'none' : '',
+    touchAction: 'none',
   }
   const remainderStyle = {
     left: `${dragX.current == null ? x : dragX.current}px`,
