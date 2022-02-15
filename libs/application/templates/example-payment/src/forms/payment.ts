@@ -4,7 +4,7 @@ import {
   buildSection,
   Form,
   FormModes,
-  buildCustomField,
+  buildPaymentPendingField,
 } from '@island.is/application/core'
 
 export const payment: Form = buildForm({
@@ -17,25 +17,10 @@ export const payment: Form = buildForm({
       id: 'awaitingPayment',
       title: m.m.paymentConfirmation,
       children: [
-        buildCustomField(
-          {
-            component: 'PaymentPending',
-            id: 'paymentPendingField',
-            title: '',
-          },
-          {
-            errorMessages: {
-              submitTitle: m.paymentScreen.submitTitle,
-              submitMessage: m.paymentScreen.submitMessage,
-              submitRetryButtonCaption:
-                m.paymentScreen.submitRetryButtonCaption,
-              statusTitle: m.paymentScreen.statusTitle,
-            },
-            messages: {
-              pollingTitle: m.paymentScreen.pollingMessage,
-            },
-          },
-        ),
+        buildPaymentPendingField({
+          id: 'paymentPendingField',
+          title: '',
+        }),
       ],
     }),
   ],

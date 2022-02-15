@@ -138,11 +138,11 @@ export type DataProviderPermissionItem = Omit<
   DataProviderItem,
   'type' | 'source' | 'parameters'
 >
-export interface FieldBaseProps<PropType = RecordObject> {
+export interface FieldBaseProps {
   autoFocus?: boolean
   error?: string
   errors?: RecordObject
-  field: Field<PropType>
+  field: Field
   application: Application
   showFieldName?: boolean
   goToScreen?: (id: string) => void
