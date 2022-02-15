@@ -89,12 +89,15 @@ function dpcApplicationPdf(
     doc,
   )
   complaint.targetsOfComplaint.map((c, i) => {
+    const nationalIdLine = c?.nationalId
+      ? `kt. ${formatSsn(c.nationalId)},`
+      : ''
     const linegap =
       i === complaint.targetsOfComplaint.length - 1
         ? PdfConstants.LARGE_LINE_GAP
         : PdfConstants.SMALL_LINE_GAP
     addValue(
-      `${c.name}, kt. ${formatSsn(c.nationalId)}, ${c.address}`,
+      `${c.name}, ${nationalIdLine}${c.address}`,
       doc,
       PdfConstants.NORMAL_FONT,
       PdfConstants.NO_LINE_GAP,
