@@ -8,7 +8,7 @@ import {
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { EmailService } from '@island.is/email-service'
 import { SharedTemplateApiService } from '../../shared'
-import { TemplateApiModuleActionProps } from '../../../types'
+import { BaseTemplateApiApplicationService } from '../../../types'
 import { AccidentNotificationService } from './accident-notification.service'
 import { AccidentNotificationAttachmentProvider } from './attachments/applicationAttachmentProvider'
 import { ApplicationAttachmentService } from './attachments/applicationAttachment.service'
@@ -132,6 +132,10 @@ describe('AccidentNotificationService', () => {
           })),
         },
         {
+          provide: BaseTemplateApiApplicationService,
+          useValue: {},
+        },
+        {
           provide: ACCIDENT_NOTIFICATION_CONFIG,
           useValue: {
             applicationRecipientName: '',
@@ -184,7 +188,7 @@ describe('AccidentNotificationService', () => {
         Unknown: false, //assuming will always be false
       })
 
-      const props: TemplateApiModuleActionProps = {
+      const props = {
         application,
         auth: user,
       }

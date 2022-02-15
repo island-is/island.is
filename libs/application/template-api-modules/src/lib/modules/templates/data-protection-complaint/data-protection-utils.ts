@@ -1,7 +1,7 @@
 import get from 'lodash/get'
 import {
   Agency,
-  ComplaintDto,
+  ComplaintPDF,
   ContactInfo,
   ContactRole,
   TargetOfComplaint,
@@ -186,10 +186,12 @@ export const toRequestMetadata = (
   ]
 }
 
-export const transformApplicationToComplaintDto = (
+export const applicationToComplaintPDF = (
   application: Application,
-): ComplaintDto => {
+): ComplaintPDF => {
   const answers = application.answers as DataProtectionComplaint
+  const timestamp = new Date()
+
   return {
     applicantInfo: {
       name: 'Applicant',
@@ -197,15 +199,14 @@ export const transformApplicationToComplaintDto = (
     },
     onBehalf: getAndFormatOnBehalf(application),
     agency: {
-      files: [],
       persons: getAgencies(answers),
     },
     contactInfo: getContactInfo(answers),
     targetsOfComplaint: getComplaintTargets(answers),
     complaintCategories: getAndFormatSubjectsOfComplaint(answers),
-    attachments: [],
+    somethingElse: answers.subjectOfComplaint.somethingElse ?? '',
     description: extractAnswer(application.answers, 'complaint.description'),
-    applicationPdf: '',
+    submitDate: timestamp,
   }
 }
 
