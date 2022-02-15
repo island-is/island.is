@@ -108,7 +108,7 @@ const StudentsOverview = ({ application }: Data) => {
                 <T.HeadData>
                   {formatMessage(m.studentsOverviewTableHeaderCol2)}
                 </T.HeadData>
-                <T.HeadData>
+                <T.HeadData box={{ textAlign: 'center' }}>
                   {formatMessage(m.studentsOverviewTableHeaderCol3)}
                 </T.HeadData>
                 <T.HeadData></T.HeadData>
@@ -121,7 +121,9 @@ const StudentsOverview = ({ application }: Data) => {
                     <T.Row key={key}>
                       <T.Data>{student.name}</T.Data>
                       <T.Data>{student.ssn}</T.Data>
-                      <T.Data>{student.totalLessonCount}</T.Data>
+                      <T.Data box={{ textAlign: 'center' }}>
+                        {student.totalLessonCount}
+                      </T.Data>
                       <T.Data>
                         <Button
                           variant="text"
@@ -160,7 +162,11 @@ const StudentsOverview = ({ application }: Data) => {
           )}
         </Stack>
       ) : (
-        <ViewStudent studentSsn={studentId} setShowTable={setShowTable} />
+        <ViewStudent
+          application={application}
+          studentSsn={studentId}
+          setShowTable={setShowTable}
+        />
       )}
     </Box>
   )

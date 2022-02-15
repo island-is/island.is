@@ -19,10 +19,13 @@ const FindStudentModal = ({
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [findStudentById, setFindStudentById] = useState('')
 
-  const viewStudent = useCallback(() => {
-    setShowTable(false)
-    setStudentId(findStudentById)
-  }, [setShowTable, setStudentId])
+  const viewStudent = useCallback(
+    (id) => {
+      setShowTable(false)
+      setStudentId(id)
+    },
+    [setShowTable, setStudentId],
+  )
 
   return (
     <Box
@@ -64,7 +67,7 @@ const FindStudentModal = ({
                 name="search_student"
                 backgroundColor="blue"
                 size="sm"
-                onBlur={(v) => {
+                onChange={(v) => {
                   setFindStudentById(v.target.value)
                 }}
               />
@@ -81,7 +84,7 @@ const FindStudentModal = ({
               <Button
                 variant="primary"
                 onClick={() => {
-                  viewStudent()
+                  viewStudent(findStudentById)
                   setIsModalOpen(false)
                 }}
               >

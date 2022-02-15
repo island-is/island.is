@@ -28,13 +28,15 @@ import {
   EditDrivingLesson,
 } from '../../graphql/mutations'
 import Skeleton from './Skeleton'
+import { Application } from '@island.is/application/core'
 
 interface Props {
+  application: Application
   studentSsn: string
   setShowTable: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const ViewStudent = ({ studentSsn, setShowTable }: Props) => {
+const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
   const { formatMessage } = useLocale()
 
   const {
@@ -72,6 +74,10 @@ const ViewStudent = ({ studentSsn, setShowTable }: Props) => {
   const [student, setStudent] = useState<undefined | StudentOverView>(
     data ? data.drivingBookStudent.data : {},
   )
+
+  const userNationalId = (application.externalData.nationalRegistry?.data as {
+    nationalId?: string
+  })?.nationalId
 
   const studentRegistrations = student?.book
     ?.teachersAndLessons as Array<Lesson>
@@ -240,13 +246,20 @@ const ViewStudent = ({ studentSsn, setShowTable }: Props) => {
                 label={'Slá inn mínútur'}
                 type="number"
                 name="mínútur"
-                value={(minutes === 30 || minutes === 45 || minutes === 60 || minutes === 90) ? '' : minutes}
+                value={
+                  minutes === 30 ||
+                  minutes === 45 ||
+                  minutes === 60 ||
+                  minutes === 90
+                    ? ''
+                    : minutes
+                }
                 placeholder="0"
                 onChange={(input) => {
                   setMinutes(Number.parseInt(input.target.value, 10))
                 }}
                 hasError={minutes > 1000}
-                errorMessage='Max mínútufjöldi er 1000'
+                errorMessage="Max mínútufjöldi er 1000"
               />
             </GridColumn>
           </GridRow>
@@ -324,7 +337,7 @@ const ViewStudent = ({ studentSsn, setShowTable }: Props) => {
                     <T.HeadData>
                       {formatMessage(m.viewStudentTableHeaderCol2)}
                     </T.HeadData>
-                    <T.HeadData>
+                    <T.HeadData box={{ textAlign: 'center' }}>
                       {formatMessage(m.viewStudentTableHeaderCol3)}
                     </T.HeadData>
                     <T.HeadData></T.HeadData>
@@ -332,59 +345,70 @@ const ViewStudent = ({ studentSsn, setShowTable }: Props) => {
                 </T.Head>
                 <T.Body>
                   {student &&
-                    studentRegistrations?.map((entry: any, key: number) => {
-                      const bgr = cn({
-                        [`${styles.successBackground}`]:
-                          !!newRegId && entry.id === newRegId,
-                        [`${styles.editingBackground}`]:
-                          !!editingRegistration &&
-                          entry.id === editingRegistration.id,
-                        [`${styles.transparentBackground}`]:
-                          !editingRegistration && !newRegId,
-                      })
+                    studentRegistrations
+                      ?.map((entry: any, key: number) => {
+                        const bgr = cn({
+                          [`${styles.successBackground}`]:
+                            !!newRegId && entry.id === newRegId,
+                          [`${styles.editingBackground}`]:
+                            !!editingRegistration &&
+                            entry.id === editingRegistration.id,
+                          [`${styles.transparentBackground}`]:
+                            !editingRegistration && !newRegId,
+                        })
 
-                      return (
-                        <T.Row key={key}>
-                          <T.Data box={{ className: bgr }}>
-                            {format(new Date(entry.registerDate), 'dd.MM.yyyy')}
-                          </T.Data>
-                          <T.Data box={{ className: bgr }}>
-                            {entry.teacherName}
-                          </T.Data>
-                          <T.Data box={{ className: bgr }}>
-                            {entry.lessonTime}
-                          </T.Data>
-                          <T.Data box={{ className: bgr }}>
-                            <Box display={'flex'}>
-                              <Button
-                                variant="text"
-                                size="small"
-                                onClick={() => {
-                                  console.log(entry)
-                                  setEditingRegistration(entry)
-                                  setNewRegId(undefined)
-                                  setMinutes(entry.lessonTime)
-                                  setDate(entry.registerDate)
-                                }}
-                              >
-                                {formatMessage(m.viewStudentEditRegistration)}
-                              </Button>
-                              {newRegId && entry.id === newRegId && (
-                                <Box
-                                  paddingLeft={3}
-                                  className={styles.showSuccessIcon}
-                                >
-                                  <Icon
-                                    icon="checkmarkCircle"
-                                    color="mint400"
-                                  />
+                        return (
+                          <T.Row key={key}>
+                            <T.Data box={{ className: bgr }}>
+                              {format(
+                                new Date(entry.registerDate),
+                                'dd.MM.yyyy',
+                              )}
+                            </T.Data>
+                            <T.Data box={{ className: bgr }}>
+                              {entry.teacherName}
+                            </T.Data>
+                            <T.Data
+                              box={{ className: bgr, textAlign: 'center' }}
+                            >
+                              {entry.lessonTime}
+                            </T.Data>
+                            <T.Data box={{ className: bgr }}>
+                              {entry.teacherSsn === '1003602259' && (
+                                <Box display={'flex'}>
+                                  <Button
+                                    variant="text"
+                                    size="small"
+                                    onClick={() => {
+                                      console.log(entry)
+                                      setEditingRegistration(entry)
+                                      setNewRegId(undefined)
+                                      setMinutes(entry.lessonTime)
+                                      setDate(entry.registerDate)
+                                    }}
+                                  >
+                                    {formatMessage(
+                                      m.viewStudentEditRegistration,
+                                    )}
+                                  </Button>
+                                  {newRegId && entry.id === newRegId && (
+                                    <Box
+                                      paddingLeft={3}
+                                      className={styles.showSuccessIcon}
+                                    >
+                                      <Icon
+                                        icon="checkmarkCircle"
+                                        color="mint400"
+                                      />
+                                    </Box>
+                                  )}
                                 </Box>
                               )}
-                            </Box>
-                          </T.Data>
-                        </T.Row>
-                      )
-                    }).reverse()}
+                            </T.Data>
+                          </T.Row>
+                        )
+                      })
+                      .reverse()}
                 </T.Body>
               </T.Table>
             </GridColumn>
