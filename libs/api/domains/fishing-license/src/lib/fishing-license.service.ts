@@ -16,9 +16,6 @@ export class FishingLicenseService {
   ) {}
 
   async getShips(nationalId: string, auth: Auth) {
-    console.log('get ships')
-    console.log('auth', auth)
-    console.log('nationalid', nationalId)
     const ships = await this.utgerdirApi
       .withMiddleware(new AuthMiddleware(auth, { forwardUserInfo: true }))
       .v1UtgerdirKennitalaSkipGet({ kennitala: nationalId })

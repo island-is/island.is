@@ -25,7 +25,6 @@ export class FishingLicenseResolver {
   })
   @Audit()
   async shipQuery(@CurrentUser() user: User): Promise<Ship[]> {
-    console.log('getting shipss')
     return await this.fishingLicenseService.getShips(user.nationalId, user)
   }
 
