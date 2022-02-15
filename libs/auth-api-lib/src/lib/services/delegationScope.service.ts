@@ -110,6 +110,7 @@ export class DelegationScopeService {
 
   async findAllProcurationScopes(): Promise<string[]> {
     const apiScopes = await this.apiScopeModel.findAll({
+      attributes: ['name'],
       where: {
         grantToProcuringHolders: true,
         alsoForDelegatedUser: false,
@@ -117,6 +118,7 @@ export class DelegationScopeService {
     })
 
     const identityResources = await this.identityResourceModel.findAll({
+      attributes: ['name'],
       where: {
         grantToProcuringHolders: true,
         alsoForDelegatedUser: false,
@@ -131,6 +133,7 @@ export class DelegationScopeService {
 
   async findAllLegalGuardianScopes(): Promise<string[]> {
     const apiScopes = await this.apiScopeModel.findAll({
+      attributes: ['name'],
       where: {
         grantToLegalGuardians: true,
         alsoForDelegatedUser: false,
@@ -138,6 +141,7 @@ export class DelegationScopeService {
     })
 
     const identityResources = await this.identityResourceModel.findAll({
+      attributes: ['name'],
       where: {
         grantToLegalGuardians: true,
         alsoForDelegatedUser: false,
@@ -155,6 +159,7 @@ export class DelegationScopeService {
     fromNationalId: string,
   ): Promise<string[]> {
     const apiScopes = await this.apiScopeModel.findAll({
+      attributes: ['name'],
       where: {
         enabled: true,
         grantToPersonalRepresentatives: true,
@@ -185,14 +190,8 @@ export class DelegationScopeService {
                       model: PersonalRepresentative,
                       required: true,
                       where: {
-                        [Op.and]: [
-                          {
-                            nationalIdPersonalRepresentative: toNationalId,
-                          },
-                          {
-                            nationalIdRepresentedPerson: fromNationalId,
-                          },
-                        ],
+                        nationalIdPersonalRepresentative: toNationalId,
+                        nationalIdRepresentedPerson: fromNationalId,
                       },
                     },
                   ],
@@ -209,12 +208,14 @@ export class DelegationScopeService {
 
   async findAllAutomaticScopes(): Promise<string[]> {
     const apiScopes = await this.apiScopeModel.findAll({
+      attributes: ['name'],
       where: {
         automaticDelegationGrant: true,
       },
     })
 
     const identityResources = await this.identityResourceModel.findAll({
+      attributes: ['name'],
       where: {
         automaticDelegationGrant: true,
       },

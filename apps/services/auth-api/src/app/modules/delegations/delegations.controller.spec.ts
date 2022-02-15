@@ -135,21 +135,24 @@ describe('DelegationsController', () => {
         [0, 1, 1],
         [1, 1, 1],
       ])(
-        'and given user has %d active clients with valid rights, %d active clients with outdate rights and %d active clients with unactivated',
+        'and given user has %d active representees with valid rights, %d active representees with outdate rights and %d active representees with unactivated',
         (valid: number, outdated: number, unactivated: number) => {
           let einstaklingarApiSpy: jest.SpyInstance
-          const validClients: NameIdTuple[] = []
-          const outdatedClients: NameIdTuple[] = []
-          const unactivatedClients: NameIdTuple[] = []
+          const validRepresentedPersons: NameIdTuple[] = []
+          const outdatedRepresentedPersons: NameIdTuple[] = []
+          const unactivatedRepresentedPersons: NameIdTuple[] = []
 
           beforeAll(async () => {
             for (let i = 0; i < valid; i++) {
-              const client: NameIdTuple = [getFakeName(), getFakeNationalId()]
+              const representedPerson: NameIdTuple = [
+                getFakeName(),
+                getFakeNationalId(),
+              ]
               const relationship = getPersonalRepresentativeRelationship(
                 userKennitala,
-                client[1],
+                representedPerson[1],
               )
-              validClients.push(client)
+              validRepresentedPersons.push(representedPerson)
               await prModel.create(relationship)
               await prRightsModel.create(
                 getPersonalRepresentativeRights('valid1', relationship.id),
@@ -157,12 +160,15 @@ describe('DelegationsController', () => {
             }
 
             for (let i = 0; i < outdated; i++) {
-              const client: NameIdTuple = [getFakeName(), getFakeNationalId()]
+              const representedPerson: NameIdTuple = [
+                getFakeName(),
+                getFakeNationalId(),
+              ]
               const relationship = getPersonalRepresentativeRelationship(
                 userKennitala,
-                client[1],
+                representedPerson[1],
               )
-              outdatedClients.push(client)
+              outdatedRepresentedPersons.push(representedPerson)
               await prModel.create(relationship)
               await prRightsModel.create(
                 getPersonalRepresentativeRights('outdated', relationship.id),
@@ -170,12 +176,15 @@ describe('DelegationsController', () => {
             }
 
             for (let i = 0; i < unactivated; i++) {
-              const client: NameIdTuple = [getFakeName(), getFakeNationalId()]
+              const representedPerson: NameIdTuple = [
+                getFakeName(),
+                getFakeNationalId(),
+              ]
               const relationship = getPersonalRepresentativeRelationship(
                 userKennitala,
-                client[1],
+                representedPerson[1],
               )
-              unactivatedClients.push(client)
+              unactivatedRepresentedPersons.push(representedPerson)
               await prModel.create(relationship)
               await prRightsModel.create(
                 getPersonalRepresentativeRights('unactivated', relationship.id),
@@ -183,13 +192,13 @@ describe('DelegationsController', () => {
             }
 
             const nationalRegistryUsers = [
-              ...validClients.map(([nafn, kennitala]) =>
+              ...validRepresentedPersons.map(([nafn, kennitala]) =>
                 createNationalRegistryUser({ nafn, kennitala }),
               ),
-              ...outdatedClients.map(([nafn, kennitala]) =>
+              ...outdatedRepresentedPersons.map(([nafn, kennitala]) =>
                 createNationalRegistryUser({ nafn, kennitala }),
               ),
-              ...unactivatedClients.map(([nafn, kennitala]) =>
+              ...unactivatedRepresentedPersons.map(([nafn, kennitala]) =>
                 createNationalRegistryUser({ nafn, kennitala }),
               ),
             ]
@@ -246,29 +255,31 @@ describe('DelegationsController', () => {
               ).toBeTruthy()
             })
 
-            it('should only have the nationalId of the valid clients', () => {
+            it('should only have the nationalId of the valid representees', () => {
               expect(body.map((d) => d.fromNationalId).sort()).toEqual(
-                validClients.map(([_, id]) => id).sort(),
+                validRepresentedPersons.map(([_, id]) => id).sort(),
               )
             })
 
             it(`should only have ${
               valid === 1 ? 'name' : 'names'
-            } of the valid ${valid === 1 ? 'client' : 'clients'}`, () => {
+            } of the valid represented ${
+              valid === 1 ? 'person' : 'persons'
+            }`, () => {
               expect(body.map((d) => d.fromName).sort()).toEqual(
-                validClients.map(([name, _]) => name).sort(),
+                validRepresentedPersons.map(([name, _]) => name).sort(),
               )
             })
 
             it(`should have fetched the ${
               valid === 1 ? 'name' : 'names'
-            }  of the valid ${
-              valid === 1 ? 'client' : 'clients'
+            }  of the valid represented ${
+              valid === 1 ? 'person' : 'persons'
             } from einstaklingarApi`, () => {
               expect(einstaklingarApiSpy).toHaveBeenCalledTimes(valid)
             })
 
-            it('should have types of represented person', () => {
+            it('should have the delegation type claims of PersonalRepresentative', () => {
               expect(
                 body.every(
                   (d) => d.type === DelegationType.PersonalRepresentative,
@@ -329,14 +340,14 @@ describe('DelegationsController', () => {
           [['unactivated'], []],
           [['outdated'], []],
         ])(
-          'and given user is representing clients with rights %p',
+          'and given user is representing persons with rights %p',
           (rights, expected) => {
-            const clientKennitala = getFakeNationalId()
+            const representeeKennitala = getFakeNationalId()
 
             beforeAll(async () => {
               const relationship = getPersonalRepresentativeRelationship(
                 userKennitala,
-                clientKennitala,
+                representeeKennitala,
               )
 
               await prModel.create(relationship)
@@ -369,7 +380,7 @@ describe('DelegationsController', () => {
 
               beforeAll(async () => {
                 response = await server.get(`${path}`).query({
-                  fromNationalId: clientKennitala,
+                  fromNationalId: representeeKennitala,
                   delegationType: DelegationType.PersonalRepresentative,
                 })
                 body = response.body

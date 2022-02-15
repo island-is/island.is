@@ -425,13 +425,10 @@ export class DelegationsService {
 
       const toDelegationDTO = (
         name: string,
-        delegation: Pick<
-          PersonalRepresentativeDTO,
-          'nationalIdPersonalRepresentative' | 'nationalIdRepresentedPerson'
-        >,
+        representative: PersonalRepresentativeDTO,
       ): DelegationDTO => ({
-        toNationalId: delegation.nationalIdPersonalRepresentative,
-        fromNationalId: delegation.nationalIdRepresentedPerson,
+        toNationalId: representative.nationalIdPersonalRepresentative,
+        fromNationalId: representative.nationalIdRepresentedPerson,
         fromName: name,
         type: DelegationType.PersonalRepresentative,
         provider: DelegationProvider.PersonalRepresentativeRegistry,
@@ -442,15 +439,15 @@ export class DelegationsService {
         false,
       )
 
-      const resultPromises = rp.map(async (delegation) =>
+      const resultPromises = rp.map(async (representative) =>
         this.personApi
           .withMiddleware(new AuthMiddleware(user, authMiddlewareOptions))
           .einstaklingarGetEinstaklingur(<EinstaklingarGetEinstaklingurRequest>{
-            id: delegation.nationalIdRepresentedPerson,
+            id: representative.nationalIdRepresentedPerson,
           })
           .then(
-            ({ nafn }) => toDelegationDTO(nafn, delegation),
-            () => toDelegationDTO('Óþekkt nafn', delegation),
+            ({ nafn }) => toDelegationDTO(nafn, representative),
+            () => toDelegationDTO('Óþekkt nafn', representative),
           ),
       )
 
