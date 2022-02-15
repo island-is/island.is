@@ -81,6 +81,8 @@ describe('Change detection', () => {
     let fixFailSha1: string
     let rootSha: string
     let fixGoodSha: string
+    let mainSha1: string
+    let mainSha2: string
     beforeEach(async () => {
       const br = await git.checkoutLocalBranch(baseBranch)
       rootSha = await makeChange(git, 'a', 'A-good')
@@ -88,16 +90,17 @@ describe('Change detection', () => {
       forkSha = await makeChange(git, 'a', 'C-bad')
       await git.checkoutBranch('fix2', baseBranch)
       const fix2Sha = await makeChange(git, 'a', 'C1-bad')
-      await git.checkoutBranch(headBranch, baseBranch)
 
+      await git.checkoutBranch(headBranch, baseBranch)
       const fixFailSha = await makeChange(git, 'b', 'D-bad')
       fixFailSha1 = await makeChange(git, 'b', 'D2-good')
       const fixFailSha2 = await makeChange(git, 'c', 'D3-good')
-      fixGoodSha = await makeChange(git, 'b', 'E-good')
 
+      fixGoodSha = await makeChange(git, 'b', 'E-good')
       await git.checkout(baseBranch)
-      const mainSha = await makeChange(git, 'a', 'D1-good')
-      const merge = await git.mergeFromTo(headBranch, baseBranch)
+      mainSha1 = await makeChange(git, 'd', 'D1-good')
+      mainSha2 = await makeChange(git, 'e', 'D2-good')
+      await git.mergeFromTo(headBranch, baseBranch)
     })
     it('should use last good commit when no PR runs available', async () => {
       const githubApi = Substitute.for<GitActionStatus>()
@@ -125,7 +128,7 @@ describe('Change detection', () => {
       const githubApi = Substitute.for<GitActionStatus>()
       const PR = 100
       githubApi.getPRRuns(PR).resolves([
-        { head_commit: fixGoodSha, base_commit: forkSha },
+        { head_commit: fixGoodSha, base_commit: mainSha1 },
         { head_commit: fixFailSha1, base_commit: forkSha },
       ])
 
