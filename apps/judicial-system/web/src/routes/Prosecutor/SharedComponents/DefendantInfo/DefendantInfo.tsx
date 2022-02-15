@@ -121,6 +121,8 @@ const DefendantInfo: React.FC<Props> = (props) => {
       onChange(defendant.id, {
         name: businessData.items[0].full_name,
         address: businessData.items[0].legal_address.street?.nominative,
+        gender: undefined,
+        citizenship: undefined,
       })
     }
   }, [businessData])
