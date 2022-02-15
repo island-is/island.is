@@ -31,6 +31,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import useNationalRegistry from '@island.is/judicial-system-web/src/utils/hooks/useNationalRegistry'
+import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 interface Props {
   defendant: Defendant
@@ -45,7 +46,12 @@ interface Props {
 const DefendantInfo: React.FC<Props> = (props) => {
   const { defendant, onDelete, onChange, updateDefendantState } = props
   const { formatMessage } = useIntl()
-  const { person, error } = useNationalRegistry(defendant.nationalId)
+  const {
+    personData,
+    businessData,
+    personError,
+    businessError,
+  } = useNationalRegistry(defendant.nationalId)
 
   const genderOptions: ReactSelectOption[] = [
     { label: formatMessage(core.male), value: Gender.MALE },
@@ -68,6 +74,10 @@ const DefendantInfo: React.FC<Props> = (props) => {
     setAccusedAddressErrorMessage,
   ] = useState<string>('')
 
+  const [isBusinessNationalId, setIsBusinessNationalId] = useState<boolean>(
+    isBusiness(defendant.nationalId),
+  )
+
   const mapNationalRegistryGenderToGender = (gender: string) => {
     return gender === 'male'
       ? Gender.MALE
@@ -77,23 +87,43 @@ const DefendantInfo: React.FC<Props> = (props) => {
   }
 
   useEffect(() => {
-    if (error || person?.items.length === 0) {
+    if (personError || personData?.items.length === 0) {
       setNationalIdNotFound(true)
       return
     }
 
-    if (person && person.items.length > 0) {
+    if (personData && personData.items.length > 0) {
       setAccusedNameErrorMessage('')
       setAccusedAddressErrorMessage('')
       setNationalIdErrorMessage('')
+      setIsBusinessNationalId(false)
 
       onChange(defendant.id, {
-        name: person.items[0].name,
-        gender: mapNationalRegistryGenderToGender(person.items[0].gender),
-        address: person.items[0].permanent_address.street?.nominative,
+        name: personData.items[0].name,
+        gender: mapNationalRegistryGenderToGender(personData.items[0].gender),
+        address: personData.items[0].permanent_address.street?.nominative,
       })
     }
-  }, [person])
+  }, [personData])
+
+  useEffect(() => {
+    if (businessError || businessData?.items.length === 0) {
+      setNationalIdNotFound(true)
+      return
+    }
+
+    if (businessData && businessData.items.length > 0) {
+      setAccusedNameErrorMessage('')
+      setAccusedAddressErrorMessage('')
+      setNationalIdErrorMessage('')
+      setIsBusinessNationalId(true)
+
+      onChange(defendant.id, {
+        name: businessData.items[0].full_name,
+        address: businessData.items[0].legal_address.street?.nominative,
+      })
+    }
+  }, [businessData])
 
   return (
     <BlueBox>
@@ -257,44 +287,47 @@ const DefendantInfo: React.FC<Props> = (props) => {
           required
         />
       </Box>
-      <GridContainer>
-        <GridRow>
-          <GridColumn span="6/12">
-            <Select
-              name="defendantGender"
-              placeholder={formatMessage(core.selectGender)}
-              options={genderOptions}
-              label={formatMessage(core.gender)}
-              value={genderOptions.find(
-                (option) => option.value === defendant.gender,
-              )}
-              onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-                onChange(defendant.id, {
-                  gender: (selectedOption as ReactSelectOption).value as Gender,
-                })
-              }
-              required
-            />
-          </GridColumn>
-          <GridColumn span="6/12">
-            <Input
-              name="defendantCitizenship"
-              autoComplete="off"
-              label={formatMessage(core.citizenship)}
-              placeholder={formatMessage(core.selectCitizenship)}
-              value={defendant.citizenship ?? ''}
-              onChange={(evt) => {
-                updateDefendantState(defendant.id, {
-                  citizenship: evt.target.value,
-                })
-              }}
-              onBlur={(evt) => {
-                onChange(defendant.id, { citizenship: evt.target.value })
-              }}
-            />
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
+      {!isBusinessNationalId && (
+        <GridContainer>
+          <GridRow>
+            <GridColumn span="6/12">
+              <Select
+                name="defendantGender"
+                placeholder={formatMessage(core.selectGender)}
+                options={genderOptions}
+                label={formatMessage(core.gender)}
+                value={genderOptions.find(
+                  (option) => option.value === defendant.gender,
+                )}
+                onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+                  onChange(defendant.id, {
+                    gender: (selectedOption as ReactSelectOption)
+                      .value as Gender,
+                  })
+                }
+                required
+              />
+            </GridColumn>
+            <GridColumn span="6/12">
+              <Input
+                name="defendantCitizenship"
+                autoComplete="off"
+                label={formatMessage(core.citizenship)}
+                placeholder={formatMessage(core.selectCitizenship)}
+                value={defendant.citizenship ?? ''}
+                onChange={(evt) => {
+                  updateDefendantState(defendant.id, {
+                    citizenship: evt.target.value,
+                  })
+                }}
+                onBlur={(evt) => {
+                  onChange(defendant.id, { citizenship: evt.target.value })
+                }}
+              />
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      )}
     </BlueBox>
   )
 }
