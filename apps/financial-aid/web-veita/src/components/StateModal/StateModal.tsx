@@ -166,7 +166,6 @@ const StateModal = ({
             prefixText="Til að klára umsóknina verður þú að senda okkur"
             postfixText="Þú getur kynnt þér nánar reglur um fjárhagsaðstoð."
           />
-
           <AcceptModal
             isModalVisable={selected === ApplicationState.APPROVED}
             onCancel={onClickCancel}

@@ -31,6 +31,7 @@ export class ScopesController {
   ): Promise<ApiScope[]> {
     return this.resourcesService.findAllowedDelegationApiScopeListForUser(
       user.scope,
+      user,
     )
   }
 }

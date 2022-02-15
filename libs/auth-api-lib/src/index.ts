@@ -90,3 +90,4 @@ export * from './lib/types/delegationValidity'
 
 // Config
 //export * as DbConfig from './lib/config/sequelize.config.js'
+export * from './lib/config/DelegationConfig'
