@@ -73,7 +73,7 @@ const HearingArrangements = () => {
   }, [])
 
   useEffect(() => {
-    if (userData && workingCase) {
+    if (userData?.users && workingCase) {
       setProsecutors(
         userData.users
           .filter(
