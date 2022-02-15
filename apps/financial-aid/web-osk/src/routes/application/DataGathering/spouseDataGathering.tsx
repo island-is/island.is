@@ -14,8 +14,6 @@ import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/
 
 import {
   DirectTaxPayments,
-  FileType,
-  getNextPeriod,
   NavigationProps,
   PersonalTaxReturn,
   Routes,
@@ -63,17 +61,16 @@ const SpouseDataGathering = () => {
       },
     )
 
-    updateForm({
-      ...form,
-      taxReturnFromRskFile: [
-        personalTaxReturn
-          ? {
-              ...personalTaxReturn.municipalitiesPersonalTaxReturn,
-              type: FileType.SPOUSEFILES,
-            }
-          : undefined,
-      ],
-    })
+    if (personalTaxReturn) {
+      updateForm({
+        ...form,
+        taxReturnFromRskFile: [
+          {
+            ...personalTaxReturn.municipalitiesPersonalTaxReturn,
+          },
+        ],
+      })
+    }
 
     setLoading(false)
 
@@ -87,7 +84,7 @@ const SpouseDataGathering = () => {
 
         <TaxDataGathering />
 
-        <AboutDataGathering nextMonth={getNextPeriod.month} />
+        <AboutDataGathering />
 
         <DataGatheringCheckbox
           accept={accept}

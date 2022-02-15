@@ -79,22 +79,15 @@ export class PrivateUserController {
         '[/relations] Request parameters do not correspond with user authentication.',
       )
     }
-    const relations = await this.userService.getRelations(authUser)
-
-    // Adding User in beginning of array so order is correct.
-    relations.unshift(authUser.nationalId)
+    const relations = [
+      authUser.nationalId,
+      ...(await this.userService.getRelations(authUser)),
+    ]
     const userAndRelatives = await this.userService.getMultipleUsersByNationalIdArray(
       relations,
+      authUser,
     )
 
-    const returnUsers = userAndRelatives.filter(
-      (user) => user !== null,
-    ) as Array<User>
-    if (returnUsers.length === 0) {
-      throw new Error(
-        'Could not find NationalRegistry records of neither User or relatives.',
-      )
-    }
-    return returnUsers
+    return userAndRelatives
   }
 }

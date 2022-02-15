@@ -9,36 +9,15 @@ describe('GraphQL Middlewares', () => {
   const createContext = (
     fieldName: string,
     extensions: MiddlewareContext['info']['parentType']['extensions'],
-  ): MiddlewareContext => ({
-    info: {
-      fieldName,
-      parentType: {
-        extensions,
-        name: 'test',
-        description: 'test',
-        astNode: undefined,
-        isTypeOf: undefined,
-        extensionASTNodes: [],
-        getFields: () => null,
-        getInterfaces: () => null,
-        toConfig: undefined,
-        toJSON: undefined,
-        inspect: undefined,
+  ) =>
+    ({
+      info: {
+        fieldName,
+        parentType: {
+          extensions,
+        },
       },
-      fieldNodes: null,
-      returnType: null,
-      path: null,
-      schema: null,
-      fragments: null,
-      cacheControl: null,
-      rootValue: null,
-      operation: null,
-      variableValues: null,
-    },
-    source: null,
-    args: null,
-    context: null,
-  })
+    } as MiddlewareContext)
 
   describe('filterFields', () => {
     it('should not mask out when no extensions is defined', () => {
@@ -68,7 +47,7 @@ describe('GraphQL Middlewares', () => {
       const validFields = ['a', 'c']
       const extensions = {
         filterFields: {
-          condition: (_) => true,
+          condition: () => true,
           fields: validFields,
         },
       }
@@ -87,7 +66,7 @@ describe('GraphQL Middlewares', () => {
       const validFields = ['a', 'c']
       const extensions = {
         filterFields: {
-          condition: (_) => false,
+          condition: () => false,
           fields: validFields,
         },
       }

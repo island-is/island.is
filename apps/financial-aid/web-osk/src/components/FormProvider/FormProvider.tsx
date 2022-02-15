@@ -5,13 +5,8 @@ import {
   Employment,
   FamilyStatus,
   FormSpouse,
-  FileType,
 } from '@island.is/financial-aid/shared/lib'
 import { UploadFile } from '@island.is/island-ui/core'
-
-export interface RskUploadFile extends UploadFile {
-  type: FileType
-}
 
 export interface Form {
   applicationId?: string
@@ -27,7 +22,7 @@ export interface Form {
   hasIncome?: boolean
   incomeFiles: UploadFile[]
   taxReturnFiles: UploadFile[]
-  taxReturnFromRskFile: RskUploadFile[]
+  taxReturnFromRskFile: UploadFile[]
   otherFiles: UploadFile[]
   usePersonalTaxCredit?: boolean
   bankNumber?: string
@@ -89,6 +84,7 @@ const FormProvider = ({ children }: Props) => {
       incomeFiles: [],
       taxReturnFiles: [],
       otherFiles: [],
+      taxReturnFromRskFile: [],
     })
   }
 

@@ -1,5 +1,6 @@
 import { coatOfArms } from './coatOfArms'
 
+export const smallFontSize = 9
 export const baseFontSize = 11
 export const mediumFontSize = 14
 export const mediumPlusFontSize = 16
@@ -52,7 +53,7 @@ export function setTitle(doc: PDFKit.PDFDocument, title: string) {
   }
 }
 
-export function setPageNumbers(doc: PDFKit.PDFDocument) {
+export function addFooter(doc: PDFKit.PDFDocument, smallPrint?: string) {
   const pages = doc.bufferedPageRange()
   for (let i = 0; i < pages.count; i++) {
     doc.switchToPage(i)
@@ -63,6 +64,14 @@ export function setPageNumbers(doc: PDFKit.PDFDocument) {
     doc.text(`${i + 1}`, 0, doc.page.height - (oldMargins.bottom * 2) / 3, {
       align: 'center',
     })
+
+    if (smallPrint) {
+      doc
+        .fontSize(smallFontSize)
+        .text(smallPrint, 0, doc.page.height - (oldMargins.bottom * 5) / 12, {
+          align: 'center',
+        })
+    }
 
     // Reset margins
     doc.page.margins = oldMargins
