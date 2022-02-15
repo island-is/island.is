@@ -9,7 +9,7 @@ import {
   ToastContainer,
 } from '@island.is/island-ui/core'
 
-import { Municipality } from '@island.is/financial-aid/shared/lib'
+import { Municipality, scrollToId } from '@island.is/financial-aid/shared/lib'
 import { useMutation } from '@apollo/client'
 import { UpdateMunicipalityMutation } from '@island.is/financial-aid-web/veita/graphql'
 import omit from 'lodash/omit'
@@ -28,14 +28,19 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
   const { setMunicipality } = useMunicipality()
   const aidErrorMessage = 'Grunnupphæð getur ekki verið 0'
 
-  const isAidInvalid = () => {
+  const checkIndividualAidErrors = () => {
     return (
       state.individualAid.ownPlace === 0 ||
       state.individualAid.registeredRenting === 0 ||
       state.individualAid.unregisteredRenting === 0 ||
       state.individualAid.withOthers === 0 ||
       state.individualAid.livesWithParents === 0 ||
-      state.individualAid.unknown === 0 ||
+      state.individualAid.unknown === 0
+    )
+  }
+
+  const checkCohabitationAidErrors = () => {
+    return (
       state.cohabitationAid.ownPlace === 0 ||
       state.cohabitationAid.registeredRenting === 0 ||
       state.cohabitationAid.unregisteredRenting === 0 ||
@@ -46,7 +51,14 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
   }
 
   const saveHandler = () => {
-    if (!isAidInvalid()) {
+    const isIndividualAidInvalid = checkIndividualAidErrors()
+    const isCohabitationAidInvalid = checkCohabitationAidErrors()
+
+    if (isIndividualAidInvalid) {
+      scrollToId('individualAidHeading')
+    } else if (isCohabitationAidInvalid) {
+      scrollToId('cohabitationAidHeading')
+    } else {
       updateMunicipality()
     }
   }
@@ -154,7 +166,7 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
         Ef vísað er til þess að upplýsingar megi finna á vef sveitarfélagsins er
         notanda bent á þessa slóð.
       </Text>
-      <Text as="h3" variant="h3" marginBottom={[1, 1, 3]} color="dark300">
+      <Text id="individualAidHeading" as="h3" variant="h3" marginBottom={[1, 1, 3]} color="dark300">
         Einstaklingar
       </Text>
       <Box marginBottom={[1, 1, 3]}>
@@ -277,7 +289,7 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
           }
         />
       </Box>
-      <Text as="h3" variant="h3" marginBottom={[1, 1, 3]} color="dark300">
+      <Text id="cohabitationAidHeading" as="h3" variant="h3" marginBottom={[1, 1, 3]} color="dark300">
         Hjón/sambúð
       </Text>
       <Box marginBottom={[1, 1, 3]}>
