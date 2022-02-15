@@ -1,4 +1,4 @@
-import { defineMessage, defineMessages } from '@formatjs/intl'
+import { defineMessage } from '@formatjs/intl'
 
 export const ruling = {
   title: defineMessage({
