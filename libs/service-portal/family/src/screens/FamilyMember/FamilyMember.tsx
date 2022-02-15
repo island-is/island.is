@@ -38,9 +38,7 @@ const FamilyMember: ServicePortalModuleComponent = () => {
     ServicePortalPath.FamilyMember.replace(':nationalId', 'child'),
   )
 
-  const { data, loading, error, called } = useQuery<Query>(
-    NATIONAL_REGISTRY_CHILDREN,
-  )
+  const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_CHILDREN)
   const { nationalRegistryChildren } = data || {}
 
   const { nationalId }: { nationalId: string | undefined } = useParams()
@@ -105,19 +103,6 @@ const FamilyMember: ServicePortalModuleComponent = () => {
               : person?.birthplace || ''
           }
           loading={loading}
-        />
-        <Divider />
-        <UserInfoLine
-          label={formatMessage(m.familyNumber)}
-          content={
-            error ? formatMessage(dataNotFoundMessage) : person?.postal || ''
-          }
-          loading={loading}
-          tooltip={formatMessage({
-            id: 'sp.family:family-number-tooltip',
-            defaultMessage:
-              'Fjölskyldunúmer er samtenging á milli einstaklinga á lögheimili, en veitir ekki upplýsingar um hverjir eru foreldrar barns eða forsjáraðilar.',
-          })}
         />
         <Divider />
         <UserInfoLine

@@ -19,6 +19,9 @@ export const NATIONAL_REGISTRY_CHILDREN = gql`
       parent2
       nameParent2
       fate
+      religion
+      homeAddress
+      nationality
     }
   }
 `
