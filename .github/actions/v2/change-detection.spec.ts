@@ -123,7 +123,8 @@ describe('Change detection', () => {
 
     it('should use last good PR when available', async () => {
       const githubApi = Substitute.for<GitActionStatus>()
-      githubApi.getPRRuns(100).resolves([
+      const PR = 100
+      githubApi.getPRRuns(PR).resolves([
         { head_commit: fixGoodSha, base_commit: forkSha },
         { head_commit: fixFailSha1, base_commit: forkSha },
       ])
@@ -132,7 +133,7 @@ describe('Change detection', () => {
         (services) => services.length,
         git,
         githubApi,
-        100,
+        PR,
         headBranch,
         baseBranch,
       )
