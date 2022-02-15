@@ -142,6 +142,21 @@ describe('Change detection', () => {
       )
       expect(actual).toBe(fixGoodSha)
     })
+    it('should rebuild from the ground up when no good changes', async () => {
+      const githubApi = Substitute.for<GitActionStatus>()
+      const PR = 100
+      githubApi.getPRRuns(PR).resolves([])
+
+      let actual = await findBestGoodRefPR(
+        (services) => services.length,
+        git,
+        githubApi,
+        PR,
+        headBranch,
+        baseBranch,
+      )
+      expect(actual).toBe('rebuild')
+    })
   })
   describe('Branch', () => {
     it('should skip bad commit', async () => {
@@ -150,14 +165,6 @@ describe('Change detection', () => {
       const goodBeforeBadSha = await makeChange(git, 'a', 'B-good')
       const badSha = await makeChange(git, 'a', 'C-bad')
       const fixSha = await makeChange(git, 'a', 'D-good')
-      // const mergeCommitSha = (await git.log({ maxCount: 1 })).latest.hash
-      // const br2 = await git.raw('merge-base', fixSha, 'main')
-      // const commits = await git.raw(
-      //   'rev-list',
-      //   '--all',
-      //   mergeCommitSha,
-      //   `${goodBeforeBadSha}~`,
-      // )
 
       expect(
         await findBestGoodRefBranch((services) => services.length, git),
