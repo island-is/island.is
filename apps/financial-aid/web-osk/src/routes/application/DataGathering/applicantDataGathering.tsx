@@ -14,7 +14,9 @@ import { useRouter } from 'next/router'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
 import {
+  DirectTaxPayments,
   FileType,
+  getNextPeriod,
   NationalRegistryData,
   NavigationProps,
   PersonalTaxReturn,
@@ -24,7 +26,7 @@ import {
 
 import {
   NationalRegistryUserQuery,
-  PersonalTaxReturnQuery,
+  GatherTaxDataQuery,
 } from '@island.is/financial-aid-web/osk/graphql'
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
@@ -52,9 +54,10 @@ const ApplicantDataGathering = () => {
     { input: { ssn: string } }
   >(NationalRegistryUserQuery)
 
-  const personalTaxReturnQuery = useAsyncLazyQuery<{
+  const gatherTaxDataQuery = useAsyncLazyQuery<{
     municipalitiesPersonalTaxReturn: PersonalTaxReturn
-  }>(PersonalTaxReturnQuery)
+    municipalitiesDirectTaxPayments: DirectTaxPayments
+  }>(GatherTaxDataQuery)
 
   const logOut = useLogOut()
 
@@ -71,21 +74,13 @@ const ApplicantDataGathering = () => {
     setError(false)
     setLoading(true)
 
-    const [
-      { data: nationalRegistry },
-      { data: personalTaxReturn },
-    ] = await Promise.all([
-      await nationalRegistryQuery({
-        input: { ssn: user?.nationalId },
-      }).catch(() => {
-        return {
-          data: undefined,
-        }
-      }),
-      await personalTaxReturnQuery({}).catch(() => {
-        return { data: undefined }
-      }),
-    ])
+    const { data: nationalRegistry } = await nationalRegistryQuery({
+      input: { ssn: user?.nationalId },
+    }).catch(() => {
+      return {
+        data: undefined,
+      }
+    })
 
     if (
       !nationalRegistry ||
@@ -96,31 +91,49 @@ const ApplicantDataGathering = () => {
       return
     }
 
-    if (personalTaxReturn) {
-      updateForm({
-        ...form,
-        taxReturnFromRskFile: [
-          {
-            ...personalTaxReturn.municipalitiesPersonalTaxReturn,
-          },
-        ],
-      })
-    }
-
     setNationalRegistryData(nationalRegistry.municipalityNationalRegistryUserV2)
 
     await setMunicipalityById(
       nationalRegistry.municipalityNationalRegistryUserV2.address
         .municipalityCode,
-    ).then((municipality) => {
-      navigation.nextUrl && municipality && municipality.active
-        ? router.push(navigation?.nextUrl)
-        : router.push(
-            Routes.serviceCenter(
-              nationalRegistry.municipalityNationalRegistryUserV2.address
-                .municipalityCode,
-            ),
-          )
+    ).then(async (municipality) => {
+      if (navigation.nextUrl && municipality && municipality.active) {
+        const { data: taxes } = await gatherTaxDataQuery({}).catch((e) => {
+          return {
+            data: {
+              municipalitiesPersonalTaxReturn: undefined,
+              municipalitiesDirectTaxPayments: {
+                directTaxPayments: [],
+                success: false,
+              },
+            },
+          }
+        })
+
+        if (taxes) {
+          updateForm({
+            ...form,
+            taxReturnFromRskFile: [
+              taxes?.municipalitiesPersonalTaxReturn
+                ? {
+                    ...taxes.municipalitiesPersonalTaxReturn,
+                    type: FileType.TAXRETURN,
+                  }
+                : undefined,
+            ],
+            taxDirectPayments: taxes?.municipalitiesDirectTaxPayments,
+          })
+        }
+
+        router.push(navigation?.nextUrl)
+      } else {
+        router.push(
+          Routes.serviceCenter(
+            nationalRegistry.municipalityNationalRegistryUserV2.address
+              .municipalityCode,
+          ),
+        )
+      }
     })
   }
 
