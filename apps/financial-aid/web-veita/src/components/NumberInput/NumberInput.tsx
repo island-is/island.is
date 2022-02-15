@@ -22,7 +22,7 @@ export default function NumberInput({
   placeholder,
   value,
   hasError = false,
-  errorMessage
+  errorMessage,
 }: Props) {
   const sanitizeNumber = (n: string) => n.replace(/[^\d]/g, '')
   const formatNumber = (n?: string) =>

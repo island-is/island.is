@@ -174,7 +174,13 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
         Ef vísað er til þess að upplýsingar megi finna á vef sveitarfélagsins er
         notanda bent á þessa slóð.
       </Text>
-      <Text id="individualAidHeading" as="h3" variant="h3" marginBottom={[1, 1, 3]} color="dark300">
+      <Text
+        id="individualAidHeading"
+        as="h3"
+        variant="h3"
+        marginBottom={[1, 1, 3]}
+        color="dark300"
+      >
         Einstaklingar
       </Text>
       <Box marginBottom={[1, 1, 3]}>
@@ -194,7 +200,8 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
                   ...state.individualAid,
                   ownPlace: value,
                 },
-              }))
+              }),
+            )
           }
         />
       </Box>
@@ -215,7 +222,8 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
                   ...state.individualAid,
                   registeredRenting: value,
                 },
-              }))
+              }),
+            )
           }
         />
       </Box>
@@ -226,7 +234,9 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
           id="individualsUnregisteredRenting"
           maximumInputLength={maxAmountLength}
           value={state.individualAid.unregisteredRenting.toString()}
-          hasError={hasAidError && state.individualAid.unregisteredRenting === 0}
+          hasError={
+            hasAidError && state.individualAid.unregisteredRenting === 0
+          }
           errorMessage={aidErrorMessage}
           onUpdate={(value) =>
             aidChangeHandler(() =>
@@ -236,7 +246,8 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
                   ...state.individualAid,
                   unregisteredRenting: value,
                 },
-              }))
+              }),
+            )
           }
         />
       </Box>
@@ -257,7 +268,8 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
                   ...state.individualAid,
                   withOthers: value,
                 },
-              }))
+              }),
+            )
           }
         />
       </Box>
@@ -278,7 +290,8 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
                   ...state.individualAid,
                   livesWithParents: value,
                 },
-              }))
+              }),
+            )
           }
         />
       </Box>
@@ -299,11 +312,18 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
                   ...state.individualAid,
                   unknown: value,
                 },
-              }))
+              }),
+            )
           }
         />
       </Box>
-      <Text id="cohabitationAidHeading" as="h3" variant="h3" marginBottom={[1, 1, 3]} color="dark300">
+      <Text
+        id="cohabitationAidHeading"
+        as="h3"
+        variant="h3"
+        marginBottom={[1, 1, 3]}
+        color="dark300"
+      >
         Hjón/sambúð
       </Text>
       <Box marginBottom={[1, 1, 3]}>
@@ -323,7 +343,8 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
                   ...state.cohabitationAid,
                   ownPlace: value,
                 },
-              }))
+              }),
+            )
           }
         />
       </Box>
@@ -334,7 +355,9 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
           id="cohabitationRegisteredRenting"
           maximumInputLength={maxAmountLength}
           value={state.cohabitationAid.registeredRenting.toString()}
-          hasError={hasAidError && state.cohabitationAid.registeredRenting === 0}
+          hasError={
+            hasAidError && state.cohabitationAid.registeredRenting === 0
+          }
           errorMessage={aidErrorMessage}
           onUpdate={(value) =>
             aidChangeHandler(() =>
@@ -344,7 +367,8 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
                   ...state.cohabitationAid,
                   registeredRenting: value,
                 },
-              }))
+              }),
+            )
           }
         />
       </Box>
@@ -355,7 +379,9 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
           id="cohabitationUnregisteredRenting"
           maximumInputLength={maxAmountLength}
           value={state.cohabitationAid.unregisteredRenting.toString()}
-          hasError={hasAidError && state.cohabitationAid.unregisteredRenting === 0}
+          hasError={
+            hasAidError && state.cohabitationAid.unregisteredRenting === 0
+          }
           errorMessage={aidErrorMessage}
           onUpdate={(value) =>
             aidChangeHandler(() =>
@@ -365,7 +391,8 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
                   ...state.cohabitationAid,
                   unregisteredRenting: value,
                 },
-              }))
+              }),
+            )
           }
         />
       </Box>
@@ -386,7 +413,8 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
                   ...state.cohabitationAid,
                   withOthers: value,
                 },
-              }))
+              }),
+            )
           }
         />
       </Box>
@@ -407,7 +435,8 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
                   ...state.cohabitationAid,
                   livesWithParents: value,
                 },
-              }))
+              }),
+            )
           }
         />
       </Box>
@@ -428,7 +457,8 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
                   ...state.cohabitationAid,
                   unknown: value,
                 },
-              }))
+              }),
+            )
           }
         />
       </Box>
