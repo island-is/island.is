@@ -114,6 +114,7 @@ const Home: Screen<HomeProps> = ({ categories, news, page }) => {
           <NewLinks
             heading={n('newsTickerHeading')}
             seeMoreText={n('newsTickerSeeMore')}
+            showMoreButton
             items={(page.linkList?.links ?? [])
               .filter((x) => x.date)
               .map(({ date, text, url }) => {
