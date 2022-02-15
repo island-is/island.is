@@ -255,7 +255,7 @@ export const getTemplate = (
     },
     to: [
       {
-        name: 'Þjónustuvefur',
+        name: 'Ísland.is aðstoð',
         address: toAddress,
       },
     ],

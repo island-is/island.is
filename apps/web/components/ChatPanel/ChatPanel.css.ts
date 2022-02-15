@@ -1,5 +1,11 @@
 import { style } from '@vanilla-extract/css'
-import { blue200, blue400, theme, themeUtils } from '@island.is/island-ui/theme'
+import {
+  blue200,
+  blue400,
+  mint400,
+  theme,
+  themeUtils,
+} from '@island.is/island-ui/theme'
 
 export const root = style({
   display: 'flex',
@@ -36,6 +42,7 @@ export const message = style({
   bottom: 0,
   right: 0,
   maxWidth: 220,
+  outline: 0,
   padding: 8,
   ...themeUtils.responsiveStyle({
     md: {
@@ -43,7 +50,12 @@ export const message = style({
     },
   }),
   textAlign: 'center',
-  transition: 'bottom 0.3s ease',
+  transition: 'bottom 0.3s ease, transform 0.3s ease',
+  transform: 'translateY(0)',
+  ':focus': {
+    outline: 0,
+    transform: 'translateY(-10px)',
+  },
 })
 
 export const messagePushUp = style({
@@ -61,9 +73,20 @@ export const messageArrow = style({
   right: 44,
   width: 0,
   height: 0,
+  zIndex: 0,
   borderLeft: '10px solid transparent',
   borderRight: '10px solid transparent',
   borderTop: `10px solid ${blue200}`,
+  transition: 'all 150ms ease',
+  selectors: {
+    [`${message}:focus &`]: {
+      bottom: -13,
+      right: 41,
+      borderLeft: '13px solid transparent',
+      borderRight: '13px solid transparent',
+      borderTop: `13px solid ${mint400}`,
+    },
+  },
 })
 
 export const messageArrowBorder = style({
@@ -72,6 +95,7 @@ export const messageArrowBorder = style({
   right: 44,
   width: 0,
   height: 0,
+  zIndex: 1,
   borderLeft: '10px solid transparent',
   borderRight: '10px solid transparent',
   borderTop: `10px solid ${blue400}`,

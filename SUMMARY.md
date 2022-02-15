@@ -114,7 +114,6 @@
 ## Libs
 
 - [API](libs/api/README.md)
-    - [API Domains Fishing Licence](libs/api/domains/fishing-licence/README.md)
   - [Mocks](libs/api/mocks/README.md)
 - [API Catalogue](libs/api-catalogue/README.md)
   - [Elastic](libs/api-catalogue/elastic/README.md)
@@ -144,7 +143,7 @@
   - [Documents](libs/clients/documents/README.md)
   - [Driving License](libs/clients/driving-license/README.md)
   - [Finance](libs/clients/finance/README.md)
-  - [Clients Fishing Licence](libs/clients/fishing-licence/README.md)
+  - [Clients Fishing License](libs/clients/fishing-license/README.md)
   - [Health Insurance](libs/clients/health-insurance-v2/README.md)
   - [Islykill](libs/clients/islykill/README.md)
   - [Enhanced Fetch](libs/clients/middlewares/README.md)
@@ -157,8 +156,9 @@
   - [Regulations](libs/clients/regulations/README.md)
   - [RSK](libs/clients/rsk/README.md)
     - [Clients Company Registry](libs/clients/rsk/company-registry/README.md)
+    - [Clients RSK Personal Tax Return](libs/clients/rsk/personal-tax-return/README.md)
+    - [Procuring](libs/clients/rsk/procuring/README.md)
     - [V1](libs/clients/rsk/v1/README.md)
-    - [V2](libs/clients/rsk/v2/README.md)
   - [Syslumenn](libs/clients/syslumenn/README.md)
   - [User Profile](libs/clients/user-profile/README.md)
   - [VMST](libs/clients/vmst/README.md)

@@ -206,6 +206,7 @@ export const UploadedFile = ({
 }
 
 export interface InputFileUploadProps {
+  applicationId?: string
   name?: string
   showFileSize?: boolean
   id?: string
