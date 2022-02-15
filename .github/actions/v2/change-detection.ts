@@ -1,33 +1,24 @@
 import { DefaultLogFields, ListLogLine, SimpleGit } from 'simple-git'
-import { Workflows } from '@contentful/forma-36-react-components/dist/components/Icon/svg'
 
 const calculateDistance = async (
   git: SimpleGit,
   currentSha: string,
   p: DefaultLogFields & ListLogLine,
 ) => {
-  const changes = await git.log({ from: currentSha, to: p.hash })
-  const tree = await git.raw(
-    'log',
-    '--graph',
-    '--pretty=oneline',
-    '--abbrev-commit',
-  )
-  const commits = (
-    await git.raw('rev-list', '--date-order', `${currentSha}`, `${p.hash}`)
-  )
-    .split('\n')
-    .filter((s) => s.length > 0)
-    .map((c) => c.substr(0, 7))
-
-  const changed = changes.all.flatMap((ch) =>
-    ch.message
-      .match(/-\[(?<components>.*)\]$/)
-      .groups['components'].split(',')
-      .map((s) => s.trim()),
-  )
-  // @ts-ignore
-  return [...new Set(changed)]
+  const diffNames = await git.diff({
+    '--name-status': null,
+    [currentSha]: null,
+    [p.hash]: null,
+  })
+  return [
+    // @ts-ignore
+    ...new Set(
+      diffNames
+        .split('\n')
+        .map((l) => l.replace('D\t', '').trim().split('/')[0])
+        .filter((s) => s.length > 0),
+    ),
+  ]
 }
 
 export async function findBestGoodRefBranch(
@@ -109,7 +100,7 @@ export async function findBestGoodRefPR(
     }
   } else {
     // no pr runs
-    const br2 = await git.raw('merge-base', 'main', 'HEAD')
+    const br2 = await git.raw('merge-base', baseBranch, headBranch)
     // return br2.trim()
     const commits = (
       await git.raw('rev-list', '--date-order', 'HEAD~1', `${br2.trim()}`)

@@ -7,6 +7,8 @@ import {
   GitActionStatus,
 } from './change-detection'
 import { Substitute, Arg } from '@fluffy-spoon/substitute'
+import { existsSync, mkdir, mkdirSync } from 'fs'
+import { isArray, promisify } from 'util'
 
 let fileA: string
 let fileB: string
@@ -23,65 +25,95 @@ async function makeChangeWithContent(
   return commit.commit
 }
 
-async function makeChange(
-  git: SimpleGit,
-  path: string,
-  message: string,
-): Promise<string> {
-  return makeChangeWithContent(
-    git,
-    path,
-    message,
-    Math.random().toLocaleString(),
-  )
-}
+const mkdirAsync = promisify(mkdir)
 
 const baseBranch = 'main'
 const headBranch = 'fix'
+type Component = 'a' | 'b' | 'c' | 'd' | 'e'
 describe('Change detection', () => {
   jest.setTimeout(60000)
   let git: SimpleGit
   let path: string
+  let makeChange: (
+    git: SimpleGit,
+    component: Component | Component[],
+    message: string,
+  ) => Promise<string[]>
   beforeEach(async () => {
     path = await mkdtemp(`${__dirname}/test-data/repo`)
     fileA = join(path, 'A.txt')
     fileB = join(path, 'B.txt')
     git = simpleGit(path, { baseDir: path })
     const r = await git.init()
+    makeChange = async (
+      git: SimpleGit,
+      component: Component | Component[],
+      message: string,
+    ): Promise<string[]> => {
+      if (!Array.isArray(component)) {
+        component = [component]
+      }
+
+      for (const componentElement of component) {
+        let compPath = join(path, componentElement)
+        if (!existsSync(compPath)) {
+          await mkdirAsync(compPath)
+        }
+      }
+      return await Promise.all(
+        component.map(async (comp) =>
+          makeChangeWithContent(
+            git,
+            `${join(path, comp)}/${Math.random().toLocaleString()}.txt`,
+            message,
+            Math.random().toLocaleString(),
+          ),
+        ),
+      )
+    }
   })
   describe('PR', () => {
-    let mainGoodBeforeBadSha: string
-    let forkSha: string
-    let fixFailSha1: string
-    let rootSha: string
-    let fixGoodSha: string
+    let mainGoodBeforeBadSha: string[]
+    let forkSha: string[]
+    let fixFailSha1: string[]
+    let rootSha: string[]
+    let fixGoodSha: string[]
     beforeEach(async () => {
       const br = await git.checkoutLocalBranch(baseBranch)
-      rootSha = await makeChange(git, fileA, 'A-good-[a,b,c]')
-      mainGoodBeforeBadSha = await makeChange(git, fileA, 'B-good-[a]')
-      forkSha = await makeChange(git, fileA, 'C-bad-[a]')
+      rootSha = await makeChange(git, 'a', 'A-good')
+      mainGoodBeforeBadSha = await makeChange(git, 'a', 'B-good')
+      forkSha = await makeChange(git, 'a', 'C-bad')
       await git.checkoutBranch('fix2', baseBranch)
-      const fix2Sha = await makeChange(git, fileA, 'C1-bad-[a]')
+      const fix2Sha = await makeChange(git, 'a', 'C1-bad')
       await git.checkoutBranch(headBranch, baseBranch)
 
-      const fixFailSha = await makeChange(git, fileB, 'D-bad-[a]')
-      fixFailSha1 = await makeChange(git, fileB, 'D2-good-[a]')
-      const fixFailSha2 = await makeChange(git, fileB, 'D3-bad-[a]')
-      fixGoodSha = await makeChange(git, fileB, 'E-good-[a]')
+      const fixFailSha = await makeChange(git, 'b', 'D-bad')
+      fixFailSha1 = await makeChange(git, 'b', 'D2-good')
+      const fixFailSha2 = await makeChange(git, 'b', 'D3-bad')
+      fixGoodSha = await makeChange(git, 'b', 'E-good')
 
       await git.checkout(baseBranch)
-      const mainSha = await makeChange(git, fileA, 'D1-good-[b]')
+      const mainSha = await makeChange(git, 'a', 'D1-good')
       const merge = await git.mergeFromTo(headBranch, baseBranch)
     })
     it('should use last good commit when no PR runs available', async () => {
+      const br2 = await git.raw('merge-base', baseBranch, headBranch)
+      // return br2.trim()
+      const commits = (
+        await git.raw('rev-list', '--date-order', 'HEAD~1', `${br2.trim()}`)
+      )
+        .split('\n')
+        .filter((s) => s.length > 0)
+        .map((c) => c.substr(0, 7))
+
       const githubApi = Substitute.for<GitActionStatus>()
       githubApi.getPRRuns(100).resolves([])
       githubApi.getBranchBuilds(baseBranch).resolves([])
       githubApi
-        .getBranchBuilds('HEAD')
+        .getBranchBuilds(headBranch)
         .resolves([
-          { head_commit: mainGoodBeforeBadSha },
-          { head_commit: rootSha },
+          { head_commit: mainGoodBeforeBadSha[0] },
+          { head_commit: rootSha[0] },
         ])
 
       let actual = await findBestGoodRefPR(
@@ -92,14 +124,14 @@ describe('Change detection', () => {
         headBranch,
         baseBranch,
       )
-      expect(actual).toBe(mainGoodBeforeBadSha)
+      expect(actual).toBe(mainGoodBeforeBadSha[0])
     })
 
     it('should use last good PR when available', async () => {
       const githubApi = Substitute.for<GitActionStatus>()
       githubApi
         .getPRRuns(100)
-        .resolves([{ head_commit: fixFailSha1, base_commit: forkSha }])
+        .resolves([{ head_commit: fixFailSha1[0], base_commit: forkSha[0] }])
 
       let actual = await findBestGoodRefPR(
         (services) => services.length,
@@ -115,10 +147,10 @@ describe('Change detection', () => {
   describe('Branch', () => {
     it('should skip bad commit', async () => {
       const br = await git.checkoutLocalBranch(baseBranch)
-      const firstGoodSha = await makeChange(git, fileA, 'A-good-[a,b,c]')
-      const goodBeforeBadSha = await makeChange(git, fileA, 'B-good-[a]')
-      const badSha = await makeChange(git, fileA, 'C-bad-[b]')
-      const fixSha = await makeChange(git, fileA, 'D-good-[a,c]')
+      const firstGoodSha = await makeChange(git, 'a', 'A-good')
+      const goodBeforeBadSha = await makeChange(git, 'a', 'B-good')
+      const badSha = await makeChange(git, 'a', 'C-bad')
+      const fixSha = await makeChange(git, 'a', 'D-good')
       // const mergeCommitSha = (await git.log({ maxCount: 1 })).latest.hash
       // const br2 = await git.raw('merge-base', fixSha, 'main')
       // const commits = await git.raw(
@@ -131,7 +163,7 @@ describe('Change detection', () => {
       expect(
         await findBestGoodRefBranch((services) => services.length, git),
       ).toBe(goodBeforeBadSha)
-      await makeChange(git, fileA, 'E-[a]')
+      await makeChange(git, 'a', 'E')
       expect(
         await findBestGoodRefBranch((services) => services.length, git),
       ).toBe(fixSha)
