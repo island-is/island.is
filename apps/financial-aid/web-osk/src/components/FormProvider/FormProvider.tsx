@@ -85,6 +85,7 @@ const FormProvider = ({ children }: Props) => {
       incomeFiles: [],
       taxReturnFiles: [],
       otherFiles: [],
+      taxReturnFromRskFile: [],
     })
   }
 
