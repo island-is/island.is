@@ -19,6 +19,27 @@ export class PersonalTaxReturnService {
       })
   }
 
+  async directTaxPayments(nationalId: string) {
+    const directTaxPayments = await this.personalTaxReturnApi.directTaxPayments(
+      nationalId,
+      this.createPeriod(3),
+      this.createPeriod(1),
+    )
+
+    return {
+      directTaxPayments: directTaxPayments.salaryBreakdown.map((salary) => {
+        return {
+          totalSalary: salary.salaryTotal,
+          payerNationalId: salary.payerNationalId,
+          personalAllowance: salary.personalAllowance,
+          withheldAtSource: salary.salaryWithheldAtSource,
+          month: salary.period,
+        }
+      }),
+      success: directTaxPayments.success,
+    }
+  }
+
   async personalTaxReturn(nationalId: string, folder: string) {
     let year = new Date().getFullYear() - 1
 
@@ -52,5 +73,14 @@ export class PersonalTaxReturnService {
     })
 
     return { key: presignedUrl.key, name: fileName, size }
+  }
+
+  private createPeriod(pastMonth: number) {
+    const date = new Date()
+    date.setMonth(date.getMonth() - pastMonth)
+    return {
+      year: date.getFullYear().toString(),
+      month: (date.getMonth() + 1).toString(),
+    }
   }
 }

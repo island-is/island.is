@@ -243,6 +243,19 @@ export interface PersonalTaxReturn {
   size: number
 }
 
+export interface DirectTaxPayments {
+  directTaxPayments: DirectTaxPayment[]
+  success: boolean
+}
+
+interface DirectTaxPayment {
+  totalSalary: number
+  payerNationalId: number
+  personalAllowance: number
+  withheldAtSource: number
+  month: number
+}
+
 export interface Application {
   id: string
   created: string

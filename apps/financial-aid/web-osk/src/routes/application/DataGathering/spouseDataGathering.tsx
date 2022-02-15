@@ -13,6 +13,7 @@ import { useRouter } from 'next/router'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
 import {
+  DirectTaxPayments,
   FileType,
   getNextPeriod,
   NavigationProps,
@@ -21,7 +22,7 @@ import {
   useAsyncLazyQuery,
 } from '@island.is/financial-aid/shared/lib'
 
-import { PersonalTaxReturnQuery } from '@island.is/financial-aid-web/osk/graphql'
+import { GatherTaxDataQuery } from '@island.is/financial-aid-web/osk/graphql'
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
@@ -36,9 +37,10 @@ const SpouseDataGathering = () => {
   const [error, setError] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const personalTaxReturnQuery = useAsyncLazyQuery<{
+  const gatherTaxDataQuery = useAsyncLazyQuery<{
     municipalitiesPersonalTaxReturn: PersonalTaxReturn
-  }>(PersonalTaxReturnQuery)
+    municipalitiesDirectTaxPayments: DirectTaxPayments
+  }>(GatherTaxDataQuery)
 
   const logOut = useLogOut()
 
@@ -55,7 +57,7 @@ const SpouseDataGathering = () => {
     setError(false)
     setLoading(true)
 
-    const { data: personalTaxReturn } = await personalTaxReturnQuery({}).catch(
+    const { data: personalTaxReturn } = await gatherTaxDataQuery({}).catch(
       () => {
         return { data: undefined }
       },
