@@ -143,10 +143,20 @@ export const m = defineMessages({
     defaultMessage: 'Veldu dagsetningu',
     description: 'Datepicker placeholder',
   },
-  viewStudentSelectRegisterButton: {
-    id: 'dir.application:viewStudentSelectRegisterButton',
+  viewStudentRegisterButton: {
+    id: 'dir.application:viewStudentRegisterButton',
     defaultMessage: 'Vista',
     description: 'Register button',
+  },
+  viewStudentEditButton: {
+    id: 'dir.application:viewStudentEditButton',
+    defaultMessage: 'Breyta',
+    description: 'Edit button',
+  },
+  viewStudentRegistrationTableTitle: {
+    id: 'dir.application:viewStudentRegistrationTableTitle',
+    defaultMessage: 'Fyrri skráningar ökunema',
+    description: 'Table title',
   },
   viewStudentDeleteRegistration: {
     id: 'dir.application:viewStudentDeleteRegistration',
@@ -177,5 +187,50 @@ export const m = defineMessages({
     id: 'dir.application:viewStudentGoBackToOverviewButton',
     defaultMessage: 'Til baka',
     description: 'Go back button',
+  },
+  viewStudentInputMinutesLabel: {
+    id: 'dir.application:viewStudentInputMinutesLabel',
+    defaultMessage: 'Slá inn mínútur',
+    description: 'Input field label',
+  },
+  errorOnInputMinutes: {
+    id: 'dir.application:errorOnInputMinutes',
+    defaultMessage: 'Max mínútufjöldi er 1000',
+    description: 'Error on input minutes',
+  },
+  errorOnMissingDate: {
+    id: 'dir.application:errorOnMissingDate',
+    defaultMessage: 'Veldu dagsetningu',
+    description: 'Error on missing date',
+  },
+  errorOnRegisterLesson: {
+    id: 'dir.application:errorOnRegisterLesson',
+    defaultMessage: 'Ekki tókst að skrá ökutíma. Vínsamlegast reyndu aftur.',
+    description: 'Error on register lesson',
+  },
+  errorOnEditLesson: {
+    id: 'dir.application:errorOnEditLesson',
+    defaultMessage: 'Ekki tókst að breyta ökutíma. Vínsamlegast reyndu aftur.',
+    description: 'Error on edit lesson',
+  },
+  errorOnDeleteLesson: {
+    id: 'dir.application:errorOnDeleteLesson',
+    defaultMessage: 'Ekki tókst að eyða skráningu. Vínsamlegast reyndu aftur.',
+    description: 'Error on delete lesson',
+  },
+  successOnRegisterLesson: {
+    id: 'dir.application:successOnRegisterLesson',
+    defaultMessage: 'Skráning tókst!',
+    description: 'Error on register lesson',
+  },
+  successOnEditLesson: {
+    id: 'dir.application:successOnEditLesson',
+    defaultMessage: 'Breyting tókst!',
+    description: 'Success message on edit lesson',
+  },
+  successOnDeleteLesson: {
+    id: 'dir.application:successOnDeleteLesson',
+    defaultMessage: 'Tókst að eyða út skráningu!',
+    description: 'Success message on delete lesson',
   },
 })

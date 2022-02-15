@@ -40,7 +40,7 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
   const { formatMessage } = useLocale()
 
   const {
-    data,
+    data: studentDataResponse,
     loading: loadingStudentsBook,
     refetch: refetchStudent,
   } = useQuery(ViewSingleStudentQuery, {
@@ -51,18 +51,15 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
     },
   })
 
-  const [
-    registerLesson,
-    { data: registrationId, loading: loadingRegistration },
-  ] = useMutation(RegisterDrivingLesson)
-  const [
-    deleteLesson,
-    { data: deleteSuccess, loading: loadingDeletion },
-  ] = useMutation(DeleteDrivingLesson)
-  const [
-    editLesson,
-    { data: editSuccess, loading: loadingEdition },
-  ] = useMutation(EditDrivingLesson)
+  const [registerLesson, { loading: loadingRegistration }] = useMutation(
+    RegisterDrivingLesson,
+  )
+  const [deleteLesson, { loading: loadingDeletion }] = useMutation(
+    DeleteDrivingLesson,
+  )
+  const [editLesson, { loading: loadingEdition }] = useMutation(
+    EditDrivingLesson,
+  )
 
   const [minutes, setMinutes] = useState(30)
   const [date, setDate] = useState<string>('')
@@ -72,7 +69,7 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
   >(undefined)
   const [dateError, setDateError] = useState(false)
   const [student, setStudent] = useState<undefined | StudentOverView>(
-    data ? data.drivingBookStudent.data : {},
+    studentDataResponse ? studentDataResponse.drivingBookStudent.data : {},
   )
 
   const userNationalId = (application.externalData.nationalRegistry?.data as {
@@ -83,8 +80,10 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
     ?.teachersAndLessons as Array<Lesson>
 
   useEffect(() => {
-    setStudent(data ? data.drivingBookStudent.data : {})
-  }, [data])
+    setStudent(
+      studentDataResponse ? studentDataResponse.drivingBookStudent.data : {},
+    )
+  }, [studentDataResponse])
 
   const goBack = useCallback(() => {
     setShowTable(true)
@@ -111,7 +110,7 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
         },
       },
     }).catch(() => {
-      toast.error('Ekki tókst að skrá ökutíma')
+      toast.error(formatMessage(m.errorOnRegisterLesson))
     })
 
     if (res) {
@@ -119,7 +118,7 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
         res.data.drivingBookCreatePracticalDrivingLesson.data.id.toUpperCase(),
       )
       resetFields()
-      toast.success('Skráning tókst')
+      toast.success(formatMessage(m.successOnRegisterLesson))
     }
   }
 
@@ -136,13 +135,13 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
         },
       },
     }).catch(() => {
-      toast.error('Ekki tókst að breyta ökutíma')
+      toast.error(formatMessage(m.errorOnEditLesson))
     })
 
     if (res && res.data.drivingBookUpdatePracticalDrivingLesson.success) {
       setNewRegId(editingRegistration?.id?.toUpperCase())
       resetFields()
-      toast.success('Breyting tókst')
+      toast.success(formatMessage(m.successOnEditLesson))
     }
   }
 
@@ -155,12 +154,12 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
         },
       },
     }).catch(() => {
-      toast.error('Ekki tókst að eyða skráningu')
+      toast.success(formatMessage(m.errorOnDeleteLesson))
     })
 
     if (res && res.data.drivingBookDeletePracticalDrivingLesson.success) {
       resetFields()
-      toast.success('Skráningu hefur verið eytt')
+      toast.success(formatMessage(m.successOnDeleteLesson))
     }
   }
 
@@ -243,7 +242,7 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
             })}
             <GridColumn span={['12/12', '3/12']}>
               <Input
-                label={'Slá inn mínútur'}
+                label={formatMessage(m.viewStudentInputMinutesLabel)}
                 type="number"
                 name="mínútur"
                 value={
@@ -259,7 +258,7 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
                   setMinutes(Number.parseInt(input.target.value, 10))
                 }}
                 hasError={minutes > 1000}
-                errorMessage="Max mínútufjöldi er 1000"
+                errorMessage={formatMessage(m.errorOnInputMinutes)}
               />
             </GridColumn>
           </GridRow>
@@ -273,7 +272,7 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
               <DatePicker
                 size="sm"
                 hasError={dateError}
-                errorMessage="Veldu dagsetningu"
+                errorMessage={formatMessage(m.errorOnMissingDate)}
                 handleChange={(date) => {
                   setDate(format(date, 'yyyy-MM-dd'))
                   setDateError(false)
@@ -302,8 +301,8 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
                 }
               >
                 {!editingRegistration
-                  ? formatMessage(m.viewStudentSelectRegisterButton)
-                  : 'Breyta'}
+                  ? formatMessage(m.viewStudentRegisterButton)
+                  : formatMessage(m.viewStudentEditButton)}
               </Button>
             </GridColumn>
             <GridColumn>
@@ -325,7 +324,9 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
 
           <GridRow marginBottom={5}>
             <GridColumn span={'12/12'} paddingBottom={2}>
-              <Text variant="h4">{'Fyrri skráningar ökunema'}</Text>
+              <Text variant="h4">
+                {formatMessage(m.viewStudentRegistrationTableTitle)}
+              </Text>
             </GridColumn>
             <GridColumn span={'12/12'}>
               <T.Table>
@@ -380,7 +381,6 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
                                     variant="text"
                                     size="small"
                                     onClick={() => {
-                                      console.log(entry)
                                       setEditingRegistration(entry)
                                       setNewRegId(undefined)
                                       setMinutes(entry.lessonTime)
