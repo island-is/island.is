@@ -17,7 +17,7 @@ export const queryShips = `
         explanation
       }
       features
-      fishingLicences  {
+      fishingLicenses  {
         code
         name
       }
