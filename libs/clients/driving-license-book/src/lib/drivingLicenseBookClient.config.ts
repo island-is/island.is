@@ -1,4 +1,4 @@
-import { defineConfig } from '../../../../nest/config/src/lib/defineConfig'
+import { defineConfig } from '@island.is/nest/config'
 import * as z from 'zod'
 
 const schema = z.object({

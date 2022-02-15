@@ -307,17 +307,15 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
             </GridColumn>
             <GridColumn>
               {editingRegistration && (
-                <Box>
-                  <Button
-                    loading={loadingDeletion}
-                    colorScheme="destructive"
-                    variant="text"
-                    icon="trash"
-                    onClick={() => deleteRegistration(editingRegistration.id)}
-                  >
-                    {formatMessage(m.viewStudentDeleteRegistration)}
-                  </Button>
-                </Box>
+                <Button
+                  loading={loadingDeletion}
+                  colorScheme="destructive"
+                  variant="text"
+                  icon="trash"
+                  onClick={() => deleteRegistration(editingRegistration.id)}
+                >
+                  {formatMessage(m.viewStudentDeleteRegistration)}
+                </Button>
               )}
             </GridColumn>
           </GridRow>
@@ -380,8 +378,16 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
                                   <Button
                                     variant="text"
                                     size="small"
+                                    icon={
+                                      editingRegistration &&
+                                      editingRegistration.id === entry.id
+                                        ? 'close'
+                                        : undefined
+                                    }
                                     onClick={() => {
-                                      setEditingRegistration(entry)
+                                      setEditingRegistration(
+                                        editingRegistration ? undefined : entry,
+                                      )
                                       setNewRegId(undefined)
                                       setMinutes(entry.lessonTime)
                                       setDate(entry.registerDate)
