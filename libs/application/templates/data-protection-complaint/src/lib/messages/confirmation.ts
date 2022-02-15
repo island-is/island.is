@@ -25,5 +25,10 @@ export const confirmation = {
       defaultMessage: `https://www.personuvernd.is/efst-a-baugi/malsmedferdartimi-hja-personuvernd`,
       description: 'Link inside description',
     },
+    pdfLink: {
+      id: 'dpac.application:section.overview.labels.pdfLink',
+      defaultMessage: `Hlaða niður kvörtun á PDF`,
+      description: 'Link inside description',
+    },
   }),
 }

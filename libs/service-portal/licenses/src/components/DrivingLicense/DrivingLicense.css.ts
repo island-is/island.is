@@ -99,3 +99,7 @@ export const flexShrink = style({
     },
   },
 })
+
+export const categoryContainer = style({
+  width: 120,
+})
