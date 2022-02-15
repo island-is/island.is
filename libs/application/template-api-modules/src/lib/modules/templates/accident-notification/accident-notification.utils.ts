@@ -5,6 +5,7 @@ import {
   AccidentTypeEnum,
   CompanyInfo,
   FishermanWorkplaceAccidentShipLocationEnum,
+  GeneralWorkplaceAccidentLocationEnum,
   RepresentativeInfo,
   StudiesAccidentTypeEnum,
   SubmittedApplicationData,
@@ -13,6 +14,11 @@ import {
   Applicant,
   YesOrNo,
   utils,
+  FishermanWorkplaceAccidentLocationEnum,
+  ProfessionalAthleteAccidentLocationEnum,
+  AgricultureAccidentLocationEnum,
+  RescueWorkAccidentLocationEnum,
+  StudiesAccidentLocationEnum,
 } from '@island.is/application/templates/accident-notification'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { join } from 'path'
@@ -115,6 +121,53 @@ const whoIsTheNotificationForToId = (
       return 3
     case WhoIsTheNotificationForEnum.CHILDINCUSTODY:
       return 4
+  }
+}
+
+const accidentLocationToId = (
+  value:
+    | GeneralWorkplaceAccidentLocationEnum
+    | FishermanWorkplaceAccidentLocationEnum
+    | ProfessionalAthleteAccidentLocationEnum
+    | AgricultureAccidentLocationEnum
+    | RescueWorkAccidentLocationEnum
+    | StudiesAccidentLocationEnum,
+): number => {
+  switch (value) {
+    case GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE:
+      return 0
+    case GeneralWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE:
+      return 1
+    case GeneralWorkplaceAccidentLocationEnum.OTHER:
+      return 2
+    case FishermanWorkplaceAccidentLocationEnum.ONTHESHIP:
+      return 0
+    case FishermanWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE:
+      return 1
+    case FishermanWorkplaceAccidentLocationEnum.OTHER:
+      return 2
+    case ProfessionalAthleteAccidentLocationEnum.SPORTCLUBSFACILITES:
+      return 0
+    case ProfessionalAthleteAccidentLocationEnum.TOORFROMTHESPORTCLUBSFACILITES:
+      return 1
+    case ProfessionalAthleteAccidentLocationEnum.OTHER:
+      return 2
+    case AgricultureAccidentLocationEnum.ATTHEWORKPLACE:
+      return 0
+    case AgricultureAccidentLocationEnum.TOORFROMTHEWORKPLACE:
+      return 1
+    case AgricultureAccidentLocationEnum.OTHER:
+      return 2
+    case RescueWorkAccidentLocationEnum.DURINGRESCUE:
+      return 0
+    case RescueWorkAccidentLocationEnum.TOORFROMRESCUE:
+      return 1
+    case RescueWorkAccidentLocationEnum.OTHER:
+      return 2
+    case StudiesAccidentLocationEnum.ATTHESCHOOL:
+      return 0
+    case StudiesAccidentLocationEnum.OTHER:
+      return 2
   }
 }
 
