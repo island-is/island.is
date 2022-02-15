@@ -23,6 +23,8 @@ export class GeneralFishingLicenseService {
       chargeItemCode,
     )
 
+    console.log(response)
+
     if (!response.paymentUrl) {
       throw new Error('paymentUrl missing in response')
     }
