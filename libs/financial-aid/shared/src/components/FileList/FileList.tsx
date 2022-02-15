@@ -2,7 +2,7 @@ import React from 'react'
 import { Text, Box, UploadFile } from '@island.is/island-ui/core'
 import * as styles from './FileList.css'
 import cn from 'classnames'
-import { format } from 'date-fns'
+import format from 'date-fns/format'
 import {
   ApplicationFile,
   getFileSizeInKilo,
