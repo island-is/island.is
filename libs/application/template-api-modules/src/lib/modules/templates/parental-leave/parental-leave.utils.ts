@@ -196,7 +196,7 @@ export const answerToPeriodsDTO = (answers: AnswerPeriod[]) => {
     periods = answers.map((period) => ({
       from: period.startDate,
       to: period.endDate,
-      ratio: Number(period.ratio),
+      ratio: period.ratio,
       approved: false,
       paid: false,
       rightsCodePeriod: null,
@@ -267,3 +267,9 @@ export const pathToAsset = (file: string) => {
 
   return join(__dirname, `./parental-leave-assets/${file}`)
 }
+
+export const getRatio = (
+  ratio: string,
+  length: string,
+  shouldUseLength: boolean,
+) => (shouldUseLength ? `D${length}` : `${ratio}`)
