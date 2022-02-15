@@ -97,7 +97,7 @@ export const gatherContacts = (
   const complainees = getComplaintTargets(answers).map(
     (target: TargetOfComplaint, index: number) => {
       return {
-        type: getContactType(target.nationalId),
+        type: getContactType(target?.nationalId ?? ''),
         name: target.name,
         address: target.address,
         idnumber: target.nationalId,
