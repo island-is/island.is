@@ -25,17 +25,21 @@ export class AwsService {
     content: Buffer,
     bucket: string,
     fileName: string,
-  ): Promise<void> {
+    uploadParameters?: {
+      ContentType?: string
+      ContentDisposition?: string
+      ContentEncoding?: string
+    },
+  ): Promise<string> {
     const uploadParams = {
       Bucket: bucket,
       Key: fileName,
-      ContentEncoding: 'base64',
-      ContentDisposition: 'inline',
-      ContentType: 'application/pdf',
       Body: content,
+      ...uploadParameters,
     }
 
-    await this.s3.upload(uploadParams).promise()
+    const { Location: url } = await this.s3.upload(uploadParams).promise()
+    return url
   }
 
   async getPresignedUrl(bucket: string, fileName: string): Promise<string> {

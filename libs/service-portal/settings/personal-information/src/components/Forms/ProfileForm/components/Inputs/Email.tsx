@@ -69,7 +69,10 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
   }, [email])
 
   useEffect(() => {
-    if (email === emailInternal || emailInternal === emailToVerify) {
+    if (
+      emailInternal &&
+      (email === emailInternal || emailInternal === emailToVerify)
+    ) {
       emailDirty(false)
     } else {
       emailDirty(true)

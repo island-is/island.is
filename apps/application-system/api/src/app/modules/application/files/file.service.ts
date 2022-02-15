@@ -39,7 +39,11 @@ export class FileService {
 
     if ((await this.awsService.fileExists(bucket, fileName)) === false) {
       const content = await this.createFile(application, pdfType)
-      await this.awsService.uploadFile(content, bucket, fileName)
+      await this.awsService.uploadFile(content, bucket, fileName, {
+        ContentEncoding: 'base64',
+        ContentDisposition: 'inline',
+        ContentType: 'application/pdf',
+      })
     }
 
     return await this.awsService.getPresignedUrl(bucket, fileName)
