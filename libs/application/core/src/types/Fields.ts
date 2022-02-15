@@ -203,16 +203,16 @@ export interface KeyValueField extends BaseField {
   component: FieldComponents.KEY_VALUE
 }
 
-export interface CustomField extends BaseField {
+export interface CustomField<PropTypes = RecordObject> extends BaseField {
   readonly type: FieldTypes.CUSTOM
   readonly component: string
-  props?: RecordObject
+  props?: PropTypes
   childInputIds?: string[]
 }
 
-export type Field =
+export type Field<PropTypes = RecordObject> =
   | CheckboxField
-  | CustomField
+  | CustomField<PropTypes>
   | DateField
   | DescriptionField
   | RadioField

@@ -1,4 +1,4 @@
-import { m } from '../lib/messages'
+import * as m from '../lib/messages'
 import {
   buildForm,
   buildSection,
@@ -15,13 +15,27 @@ export const payment: Form = buildForm({
   children: [
     buildSection({
       id: 'awaitingPayment',
-      title: m.paymentConfirmation,
+      title: m.m.paymentConfirmation,
       children: [
-        buildCustomField({
-          component: 'PaymentPending',
-          id: 'paymentPendingField',
-          title: '',
-        }),
+        buildCustomField(
+          {
+            component: 'PaymentPending',
+            id: 'paymentPendingField',
+            title: '',
+          },
+          {
+            errorMessages: {
+              submitTitle: m.paymentScreen.submitTitle,
+              submitMessage: m.paymentScreen.submitMessage,
+              submitRetryButtonCaption:
+                m.paymentScreen.submitRetryButtonCaption,
+              statusTitle: m.paymentScreen.statusTitle,
+            },
+            messages: {
+              pollingTitle: m.paymentScreen.pollingMessage,
+            },
+          },
+        ),
       ],
     }),
   ],

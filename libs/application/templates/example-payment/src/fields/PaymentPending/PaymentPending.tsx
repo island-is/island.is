@@ -1,18 +1,27 @@
 import React, { FC, useEffect } from 'react'
-import { DefaultEvents, FieldBaseProps } from '@island.is/application/core'
+import {
+  CustomField,
+  DefaultEvents,
+  FieldBaseProps,
+} from '@island.is/application/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useSubmitApplication, usePaymentStatus, useMsg } from './hooks'
 import { getRedirectUrl, isComingFromRedirect } from './util'
 import { MessageDescriptor } from 'react-intl'
 
-export interface Props extends FieldBaseProps {
+interface TemplateProps {
   errorMessages: {
-    [key in string]: MessageDescriptor
+    submitTitle: MessageDescriptor
+    submitMessage: MessageDescriptor
+    submitRetryButtonCaption: MessageDescriptor
+    statusTitle: MessageDescriptor
   }
   messages: {
-    [key in string]: MessageDescriptor
+    pollingTitle: MessageDescriptor
   }
 }
+
+export type Props = FieldBaseProps<TemplateProps>
 
 export const PaymentPending: FC<Props> = (props) => {
   return <PollingForPayment {...props} />
@@ -22,16 +31,23 @@ const PollingForPayment: FC<Props> = ({
   error,
   application,
   refetch,
-  errorMessages,
-  messages,
+  field,
 }) => {
   const msg = useMsg(application)
+
+  const templateProps = (field as CustomField<TemplateProps>).props
 
   const { paymentStatus, stopPolling, pollingError } = usePaymentStatus(
     application.id,
   )
 
   const shouldRedirect = !isComingFromRedirect() && paymentStatus.paymentUrl
+
+  console.log({
+    shouldRedirect,
+    isComingFromRedirect: isComingFromRedirect(),
+    paymentStatus,
+  })
 
   const [submitApplication, { error: submitError }] = useSubmitApplication({
     application,
@@ -49,10 +65,18 @@ const PollingForPayment: FC<Props> = ({
       return
     }
 
+    console.log('halting all polling!!!!!')
     stopPolling()
 
     submitApplication()
   }, [submitApplication, paymentStatus, stopPolling, shouldRedirect])
+
+  if (!templateProps) {
+    console.warn('this component requires specific props for messages')
+    return null
+  }
+
+  const { errorMessages, messages } = templateProps
 
   if (pollingError || error) {
     return <Text>{msg(errorMessages.statusTitle)}</Text>
