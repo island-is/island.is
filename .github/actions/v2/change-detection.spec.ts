@@ -74,6 +74,7 @@ describe('Change detection', () => {
       )
     }
   })
+
   describe('PR', () => {
     let mainGoodBeforeBadSha: string
     let forkSha: string
@@ -91,7 +92,7 @@ describe('Change detection', () => {
 
       const fixFailSha = await makeChange(git, 'b', 'D-bad')
       fixFailSha1 = await makeChange(git, 'b', 'D2-good')
-      const fixFailSha2 = await makeChange(git, 'b', 'D3-bad')
+      const fixFailSha2 = await makeChange(git, 'c', 'D3-bad')
       fixGoodSha = await makeChange(git, 'b', 'E-good')
 
       await git.checkout(baseBranch)
@@ -124,7 +125,7 @@ describe('Change detection', () => {
       const githubApi = Substitute.for<GitActionStatus>()
       githubApi
         .getPRRuns(100)
-        .resolves([{ head_commit: fixFailSha1[0], base_commit: forkSha[0] }])
+        .resolves([{ head_commit: fixFailSha1, base_commit: forkSha }])
 
       let actual = await findBestGoodRefPR(
         (services) => services.length,
@@ -134,7 +135,7 @@ describe('Change detection', () => {
         headBranch,
         baseBranch,
       )
-      expect(actual).toBe('123')
+      expect(actual).toBe(fixFailSha1)
     })
   })
   describe('Branch', () => {
