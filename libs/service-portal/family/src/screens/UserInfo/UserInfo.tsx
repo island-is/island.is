@@ -1,6 +1,6 @@
 import React from 'react'
 import { defineMessage } from 'react-intl'
-import { useQuery, gql } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 
 import { Query } from '@island.is/api/schema'
 import {
@@ -22,26 +22,7 @@ import {
   natRegGenderMessageDescriptorRecord,
   natRegMaritalStatusMessageDescriptorRecord,
 } from '../../helpers/localizationHelpers'
-
-const NationalRegistryUserQuery = gql`
-  query NationalRegistryUserQuery {
-    nationalRegistryUser {
-      nationalId
-      maritalStatus
-      religion
-      legalResidence
-      birthPlace
-      banMarking {
-        banMarked
-      }
-      gender
-      citizenship {
-        code
-        name
-      }
-    }
-  }
-`
+import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -51,7 +32,7 @@ const dataNotFoundMessage = defineMessage({
 const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
-  const { data, loading, error } = useQuery<Query>(NationalRegistryUserQuery)
+  const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_USER)
   const { nationalRegistryUser } = data || {}
   return (
     <>

@@ -24,7 +24,6 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Parents } from '../../components/Parents/Parents'
 import ChildRegistrationModal from './ChildRegistrationModal'
-// import { format } from 'logform'
 import { NATIONAL_REGISTRY_CHILDREN } from '../../lib/queries/getNationalChildren'
 
 const dataNotFoundMessage = defineMessage({
@@ -76,18 +75,6 @@ const FamilyMember: ServicePortalModuleComponent = ({ userInfo }) => {
                 <Text variant="h3" as="h1">
                   {person?.fullName || ''}
                 </Text>
-                {!isChild && (
-                  <Button
-                    variant="text"
-                    size="small"
-                    onClick={() => setModalOpen(true)}
-                  >
-                    {formatMessage({
-                      id: 'sp.family:child-registration-button',
-                      defaultMessage: 'Gera athugasemd við skráningu',
-                    })}
-                  </Button>
-                )}
                 <Text>
                   {formatMessage({
                     id: 'sp.family:data-info-child',

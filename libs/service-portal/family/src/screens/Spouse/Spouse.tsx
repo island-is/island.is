@@ -1,7 +1,7 @@
 import React from 'react'
 import { defineMessage } from 'react-intl'
 import { useParams } from 'react-router-dom'
-import { useQuery, gql } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import {
   Box,
@@ -19,20 +19,8 @@ import {
   UserInfoLine,
   m,
 } from '@island.is/service-portal/core'
+import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
 import { useLocale, useNamespaces } from '@island.is/localization'
-
-const NationalRegistryCurrentUserQuery = gql`
-  query NationalRegistryCurrentUserQuery {
-    nationalRegistryUser {
-      nationalId
-      spouse {
-        name
-        nationalId
-        cohabitant
-      }
-    }
-  }
-`
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -48,9 +36,7 @@ const FamilyMember: ServicePortalModuleComponent = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
 
-  const { data, loading, error, called } = useQuery<Query>(
-    NationalRegistryCurrentUserQuery,
-  )
+  const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_USER)
   const { nationalRegistryUser } = data || {}
 
   const { nationalId }: { nationalId: string | undefined } = useParams()
