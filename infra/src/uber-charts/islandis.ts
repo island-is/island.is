@@ -111,6 +111,8 @@ export const Services: EnvironmentServices = {
     adsApi,
     rabBackend,
     appSystemApiWorker,
+    userNotificationService,
+    userNotificationWorkerService,
   ],
   staging: [
     appSystemApi,
@@ -134,6 +136,8 @@ export const Services: EnvironmentServices = {
     adsApi,
     rabBackend,
     appSystemApiWorker,
+    userNotificationService,
+    userNotificationWorkerService,
   ],
   dev: [
     appSystemApi,
