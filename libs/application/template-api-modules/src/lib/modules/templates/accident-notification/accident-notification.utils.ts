@@ -5,7 +5,6 @@ import {
   AccidentTypeEnum,
   CompanyInfo,
   FishermanWorkplaceAccidentShipLocationEnum,
-  GeneralWorkplaceAccidentLocationEnum,
   RepresentativeInfo,
   StudiesAccidentTypeEnum,
   SubmittedApplicationData,
@@ -14,11 +13,6 @@ import {
   Applicant,
   YesOrNo,
   utils,
-  FishermanWorkplaceAccidentLocationEnum,
-  ProfessionalAthleteAccidentLocationEnum,
-  AgricultureAccidentLocationEnum,
-  RescueWorkAccidentLocationEnum,
-  StudiesAccidentLocationEnum,
 } from '@island.is/application/templates/accident-notification'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { join } from 'path'
@@ -124,53 +118,6 @@ const whoIsTheNotificationForToId = (
   }
 }
 
-const accidentLocationToId = (
-  value:
-    | GeneralWorkplaceAccidentLocationEnum
-    | FishermanWorkplaceAccidentLocationEnum
-    | ProfessionalAthleteAccidentLocationEnum
-    | AgricultureAccidentLocationEnum
-    | RescueWorkAccidentLocationEnum
-    | StudiesAccidentLocationEnum,
-): number => {
-  switch (value) {
-    case GeneralWorkplaceAccidentLocationEnum.ATTHEWORKPLACE:
-      return 0
-    case GeneralWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE:
-      return 1
-    case GeneralWorkplaceAccidentLocationEnum.OTHER:
-      return 2
-    case FishermanWorkplaceAccidentLocationEnum.ONTHESHIP:
-      return 0
-    case FishermanWorkplaceAccidentLocationEnum.TOORFROMTHEWORKPLACE:
-      return 1
-    case FishermanWorkplaceAccidentLocationEnum.OTHER:
-      return 2
-    case ProfessionalAthleteAccidentLocationEnum.SPORTCLUBSFACILITES:
-      return 0
-    case ProfessionalAthleteAccidentLocationEnum.TOORFROMTHESPORTCLUBSFACILITES:
-      return 1
-    case ProfessionalAthleteAccidentLocationEnum.OTHER:
-      return 2
-    case AgricultureAccidentLocationEnum.ATTHEWORKPLACE:
-      return 0
-    case AgricultureAccidentLocationEnum.TOORFROMTHEWORKPLACE:
-      return 1
-    case AgricultureAccidentLocationEnum.OTHER:
-      return 2
-    case RescueWorkAccidentLocationEnum.DURINGRESCUE:
-      return 0
-    case RescueWorkAccidentLocationEnum.TOORFROMRESCUE:
-      return 1
-    case RescueWorkAccidentLocationEnum.OTHER:
-      return 2
-    case StudiesAccidentLocationEnum.ATTHESCHOOL:
-      return 0
-    case StudiesAccidentLocationEnum.OTHER:
-      return 2
-  }
-}
-
 const injuredPerson = (
   answers: AccidentNotificationAnswers,
 ): TilkynnandiOrSlasadi => {
@@ -229,13 +176,13 @@ const accident = (answers: AccidentNotificationAnswers): Slys => {
       (getValueViaPath(answers, 'locationAndPurpose?.location') as string) ??
       '',
     lysingerindis: (getValueViaPath(answers, 'accidentLocation') as string)
-      ? accidentLocationLabelMapper[
+      ? accidentLocationLabelMapper(
           getValueViaPath(
             answers,
             'accidentLocation.answer',
-          ) as keyof typeof accidentLocationLabelMapper
-        ]
-      : '',
+          ) as keyof typeof accidentLocationLabelMapper,
+        )
+      : undefined,
   }
 
   switch (
