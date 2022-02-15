@@ -4,7 +4,7 @@ import {
   ExecutionContext,
   CallHandler,
 } from '@nestjs/common'
-import { classToPlain, plainToClass } from 'class-transformer'
+import { instanceToPlain, plainToInstance } from 'class-transformer'
 import { map } from 'rxjs/operators'
 import { Observable } from 'rxjs'
 import {
@@ -63,7 +63,7 @@ export class ApplicationSerializer
     const namespaces = await getApplicationTranslationNamespaces(application)
     const intl = await this.intlService.useIntl(namespaces, locale)
 
-    const dto = plainToClass(ApplicationResponseDto, {
+    const dto = plainToInstance(ApplicationResponseDto, {
       ...application,
       ...helper.getReadableAnswersAndExternalData(
         template.mapUserToRole(nationalId, application) ?? '',
@@ -88,6 +88,6 @@ export class ApplicationSerializer
         : null,
       progress: helper.getApplicationProgress(),
     })
-    return classToPlain(dto)
+    return instanceToPlain(dto)
   }
 }

@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config'
 import { EmailService } from '@island.is/email-service'
 import {
   Application,
+  ApplicationWithAttachments,
   GraphqlGatewayResponse,
 } from '@island.is/application/core'
 import {
@@ -10,6 +11,7 @@ import {
   EmailTemplateGenerator,
   AssignmentEmailTemplateGenerator,
   AttachmentEmailTemplateGenerator,
+  BaseTemplateApiApplicationService,
 } from '../../types'
 import { createAssignToken, getConfigValue } from './shared.utils'
 import {
@@ -18,15 +20,21 @@ import {
   PaymentChargeData,
   PaymentStatusData,
 } from './shared.queries'
+import { S3 } from 'aws-sdk'
 
 @Injectable()
 export class SharedTemplateApiService {
+  private readonly s3: S3
   constructor(
     @Inject(EmailService)
     private readonly emailService: EmailService,
     @Inject(ConfigService)
     private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
-  ) {}
+    @Inject(BaseTemplateApiApplicationService)
+    private readonly applicationService: BaseTemplateApiApplicationService,
+  ) {
+    this.s3 = new S3()
+  }
 
   async sendEmail(
     templateGenerator: EmailTemplateGenerator,
@@ -204,5 +212,23 @@ export class SharedTemplateApiService {
       .then(({ data }) => {
         return data?.applicationPaymentStatus
       })
+  }
+
+  async addAttachment(
+    application: ApplicationWithAttachments,
+    fileName: string,
+    buffer: Buffer,
+    uploadParameters?: {
+      ContentType?: string
+      ContentDisposition?: string
+      ContentEncoding?: string
+    },
+  ): Promise<string> {
+    return this.applicationService.saveAttachmentToApplicaton(
+      application,
+      fileName,
+      buffer,
+      uploadParameters,
+    )
   }
 }

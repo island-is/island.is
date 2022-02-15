@@ -4,19 +4,19 @@ import { IsString } from 'class-validator'
 
 @ObjectType()
 export class ExternalLinks implements IExternalLinks {
-  @Field((type) => String)
+  @Field()
   @IsString()
   responsibleParty!: string
 
-  @Field((type) => String)
+  @Field({ nullable: true })
   @IsString()
-  documentation?: string | undefined
+  documentation?: string
 
-  @Field((type) => String)
+  @Field({ nullable: true })
   @IsString()
-  bugReport?: string | undefined
+  bugReport?: string
 
-  @Field((type) => String)
+  @Field({ nullable: true })
   @IsString()
-  featureRequest?: string | undefined
+  featureRequest?: string
 }

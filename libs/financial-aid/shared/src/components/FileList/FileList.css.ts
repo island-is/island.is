@@ -42,3 +42,7 @@ export const name = style({
   gridColumn: 'span 2',
   overflow: 'hidden',
 })
+
+export const date = style({
+  whiteSpace: 'nowrap',
+})

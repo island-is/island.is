@@ -1,9 +1,14 @@
 import { Test } from '@nestjs/testing'
-
 import { User } from '../../user.model'
 import { UserService } from '../../user.service'
 import { FlightService } from '../../../flight'
 import { NationalRegistryService } from '../../../nationalRegistry'
+import {
+  NationalRegistryClientModule,
+  NationalRegistryClientConfig,
+} from '@island.is/clients/national-registry-v2'
+import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
+import type { User as AuthUser } from '@island.is/auth-nest-tools'
 
 const user: User = {
   nationalId: '1326487905',
@@ -19,6 +24,13 @@ const user: User = {
     used: 2,
     total: 2,
   },
+}
+
+const auth: AuthUser = {
+  nationalId: '1326487905',
+  scope: ['@vegagerdin.is/air-discount-scheme-scope'],
+  authorization: '',
+  client: '',
 }
 
 describe('UserService', () => {
@@ -44,6 +56,13 @@ describe('UserService', () => {
             getUser: () => ({}),
           })),
         },
+      ],
+      imports: [
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [XRoadConfig, NationalRegistryClientConfig],
+        }),
+        NationalRegistryClientModule,
       ],
     }).compile()
 
@@ -112,7 +131,10 @@ describe('UserService', () => {
         .spyOn(flightService, 'isADSPostalCode')
         .mockImplementation(() => isValidPostalCode)
 
-      const result = await userService.getUserInfoByNationalId(user.nationalId)
+      const result = await userService.getUserInfoByNationalId(
+        user.nationalId,
+        auth,
+      )
 
       expect(getUserSpy).toHaveBeenCalledWith(user.nationalId)
       expect(countThisYearsFlightLegsByNationalIdSpy).toHaveBeenCalledWith(
@@ -140,7 +162,10 @@ describe('UserService', () => {
         .spyOn(flightService, 'isADSPostalCode')
         .mockImplementation(() => isValidPostalCode)
 
-      const result = await userService.getUserInfoByNationalId(user.nationalId)
+      const result = await userService.getUserInfoByNationalId(
+        user.nationalId,
+        auth,
+      )
 
       expect(getUserSpy).toHaveBeenCalledWith(user.nationalId)
       expect(countThisYearsFlightLegsByNationalIdSpy).toHaveBeenCalledWith(
@@ -161,7 +186,10 @@ describe('UserService', () => {
         .spyOn(nationalRegistryService, 'getUser')
         .mockImplementation(() => Promise.resolve(null))
 
-      const result = await userService.getUserInfoByNationalId(user.nationalId)
+      const result = await userService.getUserInfoByNationalId(
+        user.nationalId,
+        auth,
+      )
 
       expect(getUserSpy).toHaveBeenCalledWith(user.nationalId)
       expect(result).toBe(null)

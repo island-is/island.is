@@ -3,11 +3,11 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 @ObjectType()
 export class StudentAssessment {
   @Field({ nullable: true })
-  studentNationalId!: string | null
+  studentNationalId?: string
 
   @Field({ nullable: true })
-  teacherNationalId!: string | null
+  teacherNationalId?: string
 
   @Field({ nullable: true })
-  teacherName!: string | null
+  teacherName?: string
 }

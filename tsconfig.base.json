@@ -277,8 +277,13 @@
       "@island.is/clients/rsk/company-registry": [
         "libs/clients/rsk/company-registry/src/index.ts"
       ],
+      "@island.is/clients/rsk/personal-tax-return": [
+        "libs/clients/rsk/personal-tax-return/src/index.ts"
+      ],
+      "@island.is/clients/rsk/procuring": [
+        "libs/clients/rsk/procuring/src/index.ts"
+      ],
       "@island.is/clients/rsk/v1": ["libs/clients/rsk/v1/src/index.ts"],
-      "@island.is/clients/rsk/v2": ["libs/clients/rsk/v2/src/index.ts"],
       "@island.is/clients/syslumenn": ["libs/clients/syslumenn/src/index.ts"],
       "@island.is/clients/user-profile": [
         "libs/clients/user-profile/src/index.ts"
@@ -374,6 +379,7 @@
       "@island.is/nest/feature-flags": ["libs/nest/feature-flags/src/index.ts"],
       "@island.is/nest/pagination": ["libs/nest/pagination/src/index.ts"],
       "@island.is/nest/problem": ["libs/nest/problem/src/index.ts"],
+      "@island.is/nest/sequelize": ["libs/nest/sequelize/src/index.ts"],
       "@island.is/nest/swagger": ["libs/nest/swagger/src/index.ts"],
       "@island.is/nest/validators": ["libs/nest/validators/src/index.ts"],
       "@island.is/next-ids-auth": ["libs/next-ids-auth/src/index.ts"],
@@ -401,9 +407,6 @@
       ],
       "@island.is/service-portal/documents": [
         "libs/service-portal/documents/src/index.ts"
-      ],
-      "@island.is/service-portal/driving-license": [
-        "libs/service-portal/driving-license/src/index.ts"
       ],
       "@island.is/service-portal/education": [
         "libs/service-portal/education/src/index.ts"

@@ -10,7 +10,7 @@ import {
   PersonType,
 } from '@island.is/clients/syslumenn'
 import { generateSyslumennNotificationEmail } from './emailGenerators/syslumennNotification'
-import { Application } from '@island.is/application/core'
+import { ApplicationWithAttachments as Application } from '@island.is/application/core'
 import { NationalRegistry, UserProfile } from './types'
 import { ChargeItemCode } from '@island.is/shared/constants'
 
@@ -125,16 +125,13 @@ export class CriminalRecordSubmissionService {
 
     const uploadDataName = 'Umsókn um sakavottorð frá Ísland.is'
     const uploadDataId = 'Sakavottord2.0'
-    const syslumennEmail = 'vefur@syslumenn.is'
 
     await this.syslumennService
       .uploadData(persons, attachment, extraData, uploadDataName, uploadDataId)
       .catch(async () => {
-        await this.sharedTemplateAPIService.sendEmailWithAttachment(
+        await this.sharedTemplateAPIService.sendEmail(
           generateSyslumennNotificationEmail,
           (application as unknown) as Application,
-          Buffer.from(record.contentBase64, 'base64').toString('binary'),
-          syslumennEmail,
         )
         return undefined
       })
