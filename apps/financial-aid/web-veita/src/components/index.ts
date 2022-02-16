@@ -47,3 +47,4 @@ export { default as SuperAdminSideNavItems } from './SuperAdminSideNavItems/Supe
 export { default as NewMunicipalityModal } from './NewMunicipalityModal/NewMunicipalityModal'
 export { default as MunicipalityProfile } from './Profile/MunicipalityProfile'
 export { default as TaxBreakdown } from './TaxBreakdown/TaxBreakdown'
+export { default as ProfileUnitCollapsible } from './ProfileUnitCollapsible/ProfileUnitCollapsible'

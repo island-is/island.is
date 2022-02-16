@@ -24,7 +24,7 @@ import {
   CommentSection,
   ApplicationHeader,
   FilesListWithHeaderContainer,
-  TaxBreakdown,
+  ProfileUnitCollapsible,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 import {
@@ -192,32 +192,13 @@ const ApplicationProfile = ({
           heading="Upplýsingar um staðgreiðslu"
           info={test}
           className={`contentUp delay-100`}
-        />
-
-        <Box
-          className={styles.widthFull}
-          marginBottom={7}
-          width="full"
-          background="purple100"
-          paddingRight={3}
-          borderRadius="standard"
+          collapsible={true}
         >
-          <Accordion dividerOnBottom={false} dividerOnTop={false} space={4}>
-            <AccordionItem
-              id="tax_breakdown"
-              label={
-                <Box paddingX={3}>
-                  <Text fontWeight="semiBold">Sundurliðun</Text>
-                </Box>
-              }
-              iconVariant="sidebar"
-            >
-              <Box paddingX={3} paddingY={1}>
-                <TaxBreakdown />
-              </Box>
-            </AccordionItem>
-          </Accordion>
-        </Box>
+          <Box marginBottom={3}>lsadlals</Box>
+          <Box marginBottom={3}>lsadlals</Box>
+          <Box marginBottom={3}>lsadlals</Box>
+          <Box marginBottom={3}>lsadlals</Box>
+        </ProfileUnit>
 
         <ProfileUnit
           heading="Umsóknarferli"

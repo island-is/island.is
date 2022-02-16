@@ -180,3 +180,11 @@ input[type='number'] {
 .showErrorMessage {
   opacity: 1;
 }
+
+.rotateButton button {
+  transition: transform 150ms ease;
+}
+
+.rotate button {
+  transform: rotate(180deg);
+}

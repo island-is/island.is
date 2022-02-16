@@ -1,8 +1,9 @@
-import React from 'react'
-import { Text, Box, Link } from '@island.is/island-ui/core'
+import React, { ReactNode, useState } from 'react'
+import { Text, Box, Link, Button } from '@island.is/island-ui/core'
 
 import * as styles from './ProfileUnit.css'
 import cn from 'classnames'
+import AnimateHeight from 'react-animate-height'
 
 interface Props {
   heading: string
@@ -14,25 +15,63 @@ interface Props {
     other?: string
   }[]
   className?: string
+  collapsible?: boolean
+  children?: ReactNode
 }
 
-const ProfileUnit = ({ heading, info, className }: Props) => {
+const ProfileUnit = ({
+  heading,
+  info,
+  className,
+  collapsible = false,
+  children,
+}: Props) => {
+  const [toggle, setToggle] = useState<boolean>(false)
+
   return (
     <>
-      {' '}
-      <Box
-        className={cn({
-          [`${styles.headings} `]: true,
-          [`${className}`]: true,
-        })}
-        marginBottom={[2, 2, 3]}
-        borderBottomWidth="standard"
-        borderColor="dark200"
-      >
-        <Text as="h2" variant="h3" color="dark300" marginBottom={1}>
-          {heading}
-        </Text>
-      </Box>
+      {collapsible ? (
+        <button
+          className={cn({
+            [`${styles.toggleButton} rotateButton`]: true,
+            [`rotate `]: toggle,
+          })}
+          onClick={() => setToggle(!toggle)}
+        >
+          <Box
+            display="flex"
+            justifyContent="spaceBetween"
+            borderBottomWidth="standard"
+            borderColor="dark200"
+          >
+            <Text as="h2" variant="h4" color="dark300" marginBottom={1}>
+              Upplýsingar um staðgreiðslu
+            </Text>
+            <Button
+              circle
+              icon={'chevronUp'}
+              size="small"
+              variant="ghost"
+              unfocusable={true}
+            />
+          </Box>
+        </button>
+      ) : (
+        <Box
+          className={cn({
+            [`${styles.headings} `]: true,
+            [`${className}`]: true,
+          })}
+          marginBottom={[2, 2, 3]}
+          borderBottomWidth="standard"
+          borderColor="dark200"
+        >
+          <Text as="h2" variant="h3" color="dark300" marginBottom={1}>
+            {heading}
+          </Text>
+        </Box>
+      )}
+
       <div
         className={cn({
           [`${styles.container} hideScrollBar`]: true,
@@ -76,6 +115,12 @@ const ProfileUnit = ({ heading, info, className }: Props) => {
           )
         })}
       </div>
+
+      {collapsible && (
+        <AnimateHeight duration={300} height={toggle ? 'auto' : 0}>
+          {children}
+        </AnimateHeight>
+      )}
     </>
   )
 }
