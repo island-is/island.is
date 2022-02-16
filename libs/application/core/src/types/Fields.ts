@@ -184,12 +184,6 @@ export interface FileUploadField extends BaseField {
   readonly forImageUpload?: boolean
 }
 
-export interface PaymentPendingField extends BaseField {
-  readonly type: FieldTypes.PAYMENT_PENDING
-  component: FieldComponents.PAYMENT_PENDING
-  readonly autoSubmitAction?: CallToAction[]
-}
-
 export interface SubmitField extends BaseField {
   readonly type: FieldTypes.SUBMIT
   component: FieldComponents.SUBMIT
@@ -227,7 +221,6 @@ export type Field =
   | SelectField
   | TextField
   | FileUploadField
-  | PaymentPendingField
   | KeyValueField
   | DividerField
   | SubmitField
