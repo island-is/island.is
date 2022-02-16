@@ -135,6 +135,7 @@ module.exports = {
     '<rootDir>/libs/clients/national-registry',
     '<rootDir>/libs/clients/payment',
     '<rootDir>/libs/clients/regulations',
+    '<rootDir>/libs/clients/regulations-admin',
     '<rootDir>/libs/clients/rsk-company-info',
     '<rootDir>/libs/clients/vmst',
     '<rootDir>/libs/clients/zendesk',
@@ -200,6 +201,5 @@ module.exports = {
     '<rootDir>/libs/testing/containers',
     '<rootDir>/libs/testing/fixtures',
     '<rootDir>/libs/testing/nest',
-    '<rootDir>/libs/clients/regulations-admin',
   ],
 }
