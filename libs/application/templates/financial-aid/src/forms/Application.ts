@@ -1,6 +1,5 @@
 import {
   buildCustomField,
-  buildFileUploadField,
   buildForm,
   buildSection,
   buildSubSection,
@@ -103,9 +102,20 @@ export const Application: Form = buildForm({
           title: m.incomeFilesForm.general.sectionTitle,
           children: [
             buildCustomField({
-              id: routes.PERSONALTAXCREDIT,
+              id: routes.INCOMEFILES,
               title: m.incomeFilesForm.general.pageTitle,
               component: 'IncomeFilesForm',
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'taxReturnFilesForm',
+          title: m.taxReturnForm.general.sectionTitle,
+          children: [
+            buildCustomField({
+              id: routes.TAXRETURNFILES,
+              title: m.taxReturnForm.general.pageTitle,
+              component: 'TaxReturnFilesForm',
             }),
           ],
         }),

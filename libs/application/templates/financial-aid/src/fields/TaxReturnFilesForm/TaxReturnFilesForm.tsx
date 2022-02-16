@@ -1,12 +1,12 @@
 import React, { useContext } from 'react'
 
-import { Text, UploadFile } from '@island.is/island-ui/core'
-import { incomeFilesForm } from '../../lib/messages'
+import { Text, UploadFile, Box } from '@island.is/island-ui/core'
+import { taxReturnForm } from '../../lib/messages'
 
 import { FAFieldBaseProps } from '../..'
 import { useIntl } from 'react-intl'
 import { useFormContext } from 'react-hook-form'
-import { Files } from '..'
+import { DescriptionText, Files } from '..'
 
 const TaxReturnFilesForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -16,14 +16,28 @@ const TaxReturnFilesForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 
   return (
     <>
-      <Text marginTop={2} marginBottom={[3, 3, 5]}>
-        {formatMessage(incomeFilesForm.general.description)}
-      </Text>
+      {/* TODO alertbox */}
+      <Box marginBottom={[3, 3, 5]}>
+        <DescriptionText text={taxReturnForm.general.description} />
+      </Box>
+
       <Files
         fileKey="taxReturnFiles"
         uploadFiles={taxReturnFiles}
         folderId={id}
       />
+      <Text as="h2" variant="h3" marginBottom={2}>
+        {formatMessage(taxReturnForm.instructions.findTaxReturnTitle)}
+      </Text>
+      <DescriptionText text={taxReturnForm.instructions.findTaxReturn} />
+
+      <Text as="h2" variant="h3" marginBottom={2}>
+        {formatMessage(taxReturnForm.instructions.findDirectTaxPaymentsTitle)}
+      </Text>
+
+      <Text marginBottom={[3, 3, 10]}>
+        {formatMessage(taxReturnForm.instructions.findDirectTaxPayments)}
+      </Text>
     </>
   )
 }

@@ -7,12 +7,6 @@ import {
 import { isValidEmail, isValidNationalId, isValidPhone } from './utils'
 import { ApproveOptions } from './types'
 
-const FileSchema = z.object({
-  name: z.string(),
-  key: z.string(),
-  url: z.string().optional(),
-})
-
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v, {
     params: error.validation.dataGathering,
@@ -86,7 +80,6 @@ export const dataSchema = z.object({
   income: z.enum([ApproveOptions.Yes, ApproveOptions.No]).refine((v) => v, {
     params: error.validation.radioErrorMessage,
   }),
-  incomeFiles: z.array(FileSchema).optional(),
   employment: z
     .object({
       type: z
