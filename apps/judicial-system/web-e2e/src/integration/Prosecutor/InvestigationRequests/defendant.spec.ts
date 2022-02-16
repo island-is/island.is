@@ -60,7 +60,7 @@ describe('/krafa/ny/gaesluvardhald', () => {
     cy.get('#defendantCitizenship').should('not.be.disabled')
   })
 
-  it.only('should autofill name, address and gender after getting person by national id in national registry', () => {
+  it('should autofill name, address and gender after getting person by national id in national registry', () => {
     cy.getByTestid('nationalId').type('1111111111')
     cy.wait('@getPersonByNationalId')
     cy.getByTestid('accusedAddress').should('have.value', 'Jokersway 90')
