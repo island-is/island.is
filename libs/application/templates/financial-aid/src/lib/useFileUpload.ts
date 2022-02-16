@@ -21,7 +21,7 @@ const ApplicationFilesMutation = gql`
   }
 `
 
-export const useFileUpload = (formFiles: UploadFile[]) => {
+export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
   const [files, _setFiles] = useState<UploadFile[]>([])
   const filesRef = useRef<UploadFile[]>(files)
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string>()
@@ -66,10 +66,7 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
     }
 
     newUploadFiles.forEach(async (file) => {
-      console.log('skref 1', file, file.name.normalize())
       const signedUrl = await createSignedUrl(file.name.normalize())
-
-      console.log('skref 2', signedUrl)
 
       if (signedUrl) {
         file.key = signedUrl.key
@@ -92,14 +89,12 @@ export const useFileUpload = (formFiles: UploadFile[]) => {
 
     let signedUrl: SignedUrl | undefined = undefined
 
-    console.log(validEncodedFileName, filename, signedUrl, 'Helo')
-
     try {
       const { data: presignedUrlData } = await createSignedUrlMutation({
         variables: {
           input: {
             fileName: validEncodedFileName,
-            // folder: '57fe9758-5196-49be-a98a-bec46b151f06',
+            folder: folderId,
           },
         },
       })

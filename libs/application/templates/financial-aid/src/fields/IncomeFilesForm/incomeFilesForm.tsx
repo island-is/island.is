@@ -10,9 +10,7 @@ import { Files } from '..'
 
 const IncomeFilesForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
-  const { answers, externalData } = application
-
-  const { setValue } = useFormContext()
+  const { id } = application
 
   const incomeFiles: UploadFile[] = []
 
@@ -21,7 +19,7 @@ const IncomeFilesForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       <Text marginTop={2} marginBottom={[3, 3, 5]}>
         {formatMessage(incomeFilesForm.general.description)}
       </Text>
-      <Files fileKey="incomeFiles" uploadFiles={incomeFiles} />
+      <Files fileKey="incomeFiles" uploadFiles={incomeFiles} folderId={id} />
     </>
   )
 }

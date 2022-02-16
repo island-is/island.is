@@ -10,10 +10,11 @@ import { UploadFileType } from '../../lib/types'
 interface Props {
   uploadFiles: UploadFile[]
   fileKey: UploadFileType
+  folderId: string
   hasError?: boolean
 }
 
-const Files = ({ uploadFiles, fileKey, hasError = false }: Props) => {
+const Files = ({ uploadFiles, fileKey, folderId, hasError = false }: Props) => {
   const { formatMessage } = useIntl()
 
   const {
@@ -22,7 +23,7 @@ const Files = ({ uploadFiles, fileKey, hasError = false }: Props) => {
     onChange,
     onRemove,
     onRetry,
-  } = useFileUpload(uploadFiles)
+  } = useFileUpload(uploadFiles, folderId)
 
   const stringifyFile = (file: UploadFile) => {
     return {
