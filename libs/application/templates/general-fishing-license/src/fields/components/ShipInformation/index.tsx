@@ -56,7 +56,7 @@ export const ShipInformation: FC<ShipInformationProps> = ({
       >
         {name}
       </Text>
-      {registrationNumber && (
+      {!!registrationNumber && (
         <ValueLine
           label={formatMessage(shipSelection.labels.shipNumber)}
           value={registrationNumber.toString()}
@@ -64,7 +64,7 @@ export const ShipInformation: FC<ShipInformationProps> = ({
           color={isExpired ? 'grey' : 'black'}
         />
       )}
-      {grossTons && (
+      {!!grossTons && (
         <ValueLine
           label={formatMessage(shipSelection.labels.grossTonn)}
           value={grossTons.toString()}
@@ -72,7 +72,7 @@ export const ShipInformation: FC<ShipInformationProps> = ({
           color={isExpired ? 'grey' : 'black'}
         />
       )}
-      {length && (
+      {!!length && (
         <ValueLine
           label={formatMessage(shipSelection.labels.length)}
           value={`${length.toString()} ${formatMessage(
@@ -82,7 +82,7 @@ export const ShipInformation: FC<ShipInformationProps> = ({
           color={isExpired ? 'grey' : 'black'}
         />
       )}
-      {homePort && (
+      {!!homePort && (
         <ValueLine
           label={formatMessage(shipSelection.labels.homePort)}
           value={homePort}
@@ -90,7 +90,7 @@ export const ShipInformation: FC<ShipInformationProps> = ({
           color={isExpired ? 'grey' : 'black'}
         />
       )}
-      {seaworthiness && !isExpired && (
+      {!!seaworthiness && !isExpired && (
         <ValueLine
           label={formatMessage(shipSelection.labels.seaworthiness)}
           value={formatMessage(seaworthinessLabelValue, {

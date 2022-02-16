@@ -5,9 +5,9 @@ import {
 } from '@island.is/application/core'
 import { PaymentCatalogProvider } from '@island.is/application/data-providers'
 
-// const FISKISTOFA_NATIONAL_ID = '6608922069'
+const FISKISTOFA_NATIONAL_ID = '6608922069'
 
-const FISKISTOFA_NATIONAL_ID = '6509142520'
+// const FISKISTOFA_NATIONAL_ID = '6509142520'
 
 export class FeeInfoProvider extends PaymentCatalogProvider {
   type = 'FeeInfoProvider'

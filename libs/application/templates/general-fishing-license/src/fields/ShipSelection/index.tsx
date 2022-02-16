@@ -29,6 +29,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({
   console.log(application)
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
+  const [showTitle, setShowTitle] = useState<boolean>(false)
 
   const registrationNumberValue = getValueViaPath(
     application.answers,
@@ -112,13 +113,17 @@ export const ShipSelection: FC<FieldBaseProps> = ({
         }}
         options={shipOptions(ships)}
       />
-      <Text variant="h4" paddingY={3}>
-        {formatMessage(shipSelection.labels.withFishingLicenseTitle)}
-      </Text>
+      {showTitle && (
+        <Text variant="h4" paddingY={3}>
+          {formatMessage(shipSelection.labels.withFishingLicenseTitle)}
+        </Text>
+      )}
+
       {ships.map((ship: Ship, index: number) => {
         if (ship.fishingLicenses.length === 0) {
           return null
         }
+        setShowTitle(true)
         return (
           <Box
             border="standard"

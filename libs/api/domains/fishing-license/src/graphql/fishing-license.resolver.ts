@@ -15,7 +15,7 @@ import { FishingLicense } from './models/fishing-license.model'
 import { FishingLicenseService } from '../lib/fishing-license.service'
 
 @UseGuards(IdsUserGuard, IdsAuthGuard, ScopesGuard)
-@Resolver()
+// @Resolver()
 export class FishingLicenseResolver {
   constructor(private fishingLicenseService: FishingLicenseService) {}
 
@@ -23,13 +23,13 @@ export class FishingLicenseResolver {
     name: 'ships',
     nullable: true,
   })
-  @Audit()
+  // @Audit()
   async shipQuery(@CurrentUser() user: User): Promise<Ship[]> {
-    return await this.fishingLicenseService.getShips(user.nationalId, user)
+    return await this.fishingLicenseService.getShips('1406655769', user)
   }
 
   @Query(() => [FishingLicense], { name: 'fishingLicenses' })
-  @Audit()
+  // @Audit()
   async fishingLicensesQuery(
     @Args('registrationNumber', { type: () => Number })
     registrationNumber: number,
