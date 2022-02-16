@@ -27,12 +27,12 @@ export const getInstructorRegistrations = (): Form => {
             subTitle: m.dataCollectionSubtitle,
             checkboxLabel: m.dataCollectionCheckboxLabel,
             dataProviders: [
-              /*buildDataProviderItem({
+              buildDataProviderItem({
                 id: 'teachingRights',
                 type: 'TeachingRightsProvider',
                 title: m.dataCollectionTeachersRightsTitle,
                 subTitle: m.dataCollectionTeachersRightsSubtitle,
-              }),*/
+              }),
               buildDataProviderItem({
                 id: 'nationalRegistry',
                 type: 'NationalRegistryProvider',

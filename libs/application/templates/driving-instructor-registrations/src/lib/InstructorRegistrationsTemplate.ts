@@ -20,7 +20,7 @@ const InstructorRegistrationsTemplate: ApplicationTemplate<
   type: ApplicationTypes.DRIVING_INSTRUCTOR_REGISTRATIONS,
   name: 'Skráningar Ökukennara',
   dataSchema: dataSchema,
-  readyForProduction: true,
+  readyForProduction: false,
   stateMachineConfig: {
     initial: States.REGISTRY,
     states: {
