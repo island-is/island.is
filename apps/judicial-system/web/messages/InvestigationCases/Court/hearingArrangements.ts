@@ -111,8 +111,8 @@ export const icHearingArrangements = {
     defender: defineMessages({
       title: {
         id:
-          'judicial.system.investigation_cases:hearing_arrangements.defender.title',
-        defaultMessage: 'Verjandi/talsmaður',
+          'judicial.system.investigation_cases:hearing_arrangements.defender.title_v1',
+        defaultMessage: '{defenderType}',
         description:
           'Notaður sem titill fyrir "Verjandi/talsmaður" hlutann á fyrirtöku skrefi í rannsóknarheimildum.',
       },
