@@ -12,14 +12,11 @@ import {
   RegulationType,
   URLString,
 } from '@island.is/regulations'
-// FIXME: causes build error in github runner (error: No matching export in "libs/regulations/src/sub/admin.ts" for import "RegulationDraftId")
-import { DraftingStatus } from '@island.is/regulations/admin'
 
 export class UpdateDraftRegulationDto {
   @IsString()
   @ApiProperty()
   readonly draftingStatus!: string
-  // readonly draftingStatus!: DraftingStatus
 
   @IsOptional()
   @IsString()

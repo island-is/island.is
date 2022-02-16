@@ -18,8 +18,6 @@ import {
   PlainText,
   Appendix,
 } from '@island.is/regulations'
-// FIXME: causes build error in github runner (error: No matching export in "libs/regulations/src/sub/admin.ts" for import "RegulationDraftId")
-import { DraftingStatus, RegulationDraftId } from '@island.is/regulations/admin'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { DraftRegulationChangeModel } from '../draft_regulation_change'
@@ -37,7 +35,6 @@ export class DraftRegulationModel extends Model<DraftRegulationModel> {
   })
   @ApiProperty()
   id!: string
-  // id!: RegulationDraftId
 
   @Column({
     type: DataType.ENUM,
@@ -46,7 +43,6 @@ export class DraftRegulationModel extends Model<DraftRegulationModel> {
   })
   @ApiProperty()
   drafting_status!: string
-  // drafting_status!: DraftingStatus
 
   @Column({
     type: DataType.STRING,

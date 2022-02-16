@@ -1,12 +1,9 @@
 import {
-  BelongsTo,
   Column,
-  CreatedAt,
   DataType,
   ForeignKey,
   Model,
   Table,
-  UpdatedAt,
 } from 'sequelize-typescript'
 
 import { ApiProperty } from '@nestjs/swagger'
@@ -20,8 +17,6 @@ import {
   PlainText,
   RegName,
 } from '@island.is/regulations'
-// FIXME: causes build error in github runner (error: No matching export in "libs/regulations/src/sub/admin.ts" for import "RegulationDraftId")
-import { RegulationDraftId } from '@island.is/regulations/admin'
 
 @Table({
   tableName: 'draft_regulation_change',
@@ -42,7 +37,6 @@ export class DraftRegulationChangeModel extends Model<DraftRegulationChangeModel
   })
   @ApiProperty()
   changing_id!: string
-  // changing_id!: RegulationDraftId
 
   @Column({
     type: DataType.STRING,
