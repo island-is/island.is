@@ -49,6 +49,7 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
         ssn: studentSsn,
       },
     },
+    notifyOnNetworkStatusChange: true,
   })
 
   const [registerLesson, { loading: loadingRegistration }] = useMutation(
@@ -89,11 +90,18 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
     setShowTable(true)
   }, [setShowTable])
 
-  const resetFields = () => {
-    setEditingRegistration(undefined)
-    setDate('')
-    setMinutes(30)
-    refetchStudent()
+  const resetFields = (message?: string) => {
+    refetchStudent().then(() => {
+      message === 'edit'
+        ? toast.success(formatMessage(m.successOnEditLesson)) :
+      message === 'delete'
+        ? toast.success(formatMessage(m.successOnDeleteLesson)) :
+        toast.success(formatMessage(m.successOnRegisterLesson))
+
+      setEditingRegistration(undefined)
+      setDate('')
+      setMinutes(30)
+    })
   }
 
   const saveChanges = async () => {
@@ -105,7 +113,7 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
             teacherSsn: '1003602259',
             minutes: minutes,
             bookId: student?.book?.id,
-            comments: 'TEST',
+            comments: '',
           },
         },
       },
@@ -118,7 +126,6 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
         res.data.drivingBookCreatePracticalDrivingLesson.data.id.toUpperCase(),
       )
       resetFields()
-      toast.success(formatMessage(m.successOnRegisterLesson))
     }
   }
 
@@ -140,8 +147,7 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
 
     if (res && res.data.drivingBookUpdatePracticalDrivingLesson.success) {
       setNewRegId(editingRegistration?.id?.toUpperCase())
-      resetFields()
-      toast.success(formatMessage(m.successOnEditLesson))
+      resetFields('edit')
     }
   }
 
@@ -158,8 +164,7 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
     })
 
     if (res && res.data.drivingBookDeletePracticalDrivingLesson.success) {
-      resetFields()
-      toast.success(formatMessage(m.successOnDeleteLesson))
+      resetFields('delete')
     }
   }
 
@@ -308,7 +313,7 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
             <GridColumn>
               {editingRegistration && (
                 <Button
-                  loading={loadingDeletion}
+                  loading={loadingDeletion || loadingStudentsBook}
                   colorScheme="destructive"
                   variant="text"
                   icon="trash"
@@ -348,7 +353,9 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
                       ?.map((entry: any, key: number) => {
                         const bgr = cn({
                           [`${styles.successBackground}`]:
-                            !!newRegId && entry.id === newRegId,
+                            !!newRegId &&
+                            entry.id === newRegId &&
+                            !loadingStudentsBook,
                           [`${styles.editingBackground}`]:
                             !!editingRegistration &&
                             entry.id === editingRegistration.id,
@@ -397,17 +404,19 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
                                       m.viewStudentEditRegistration,
                                     )}
                                   </Button>
-                                  {newRegId && entry.id === newRegId && (
-                                    <Box
-                                      paddingLeft={3}
-                                      className={styles.showSuccessIcon}
-                                    >
-                                      <Icon
-                                        icon="checkmarkCircle"
-                                        color="mint400"
-                                      />
-                                    </Box>
-                                  )}
+                                  {newRegId &&
+                                    entry.id === newRegId &&
+                                    !loadingStudentsBook && (
+                                      <Box
+                                        paddingLeft={3}
+                                        className={styles.showSuccessIcon}
+                                      >
+                                        <Icon
+                                          icon="checkmarkCircle"
+                                          color="mint400"
+                                        />
+                                      </Box>
+                                    )}
                                 </Box>
                               )}
                             </T.Data>
