@@ -8,7 +8,7 @@ import {
 } from '@island.is/application/core'
 
 export const payment: Form = buildForm({
-  id: 'DrivingLicenseApplicationPaymentForm',
+  id: 'ExamplePaymentPaymentForm',
   title: '',
   mode: FormModes.APPLYING,
   renderLastScreenButton: false,

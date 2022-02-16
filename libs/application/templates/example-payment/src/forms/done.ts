@@ -1,6 +1,5 @@
 import {
   buildForm,
-  buildCustomField,
   Form,
   FormModes,
   buildSection,
@@ -9,7 +8,7 @@ import {
 import * as m from '../lib/messages'
 
 export const done: Form = buildForm({
-  id: 'done',
+  id: 'ExamplePaymentDoneForm',
   title: 'Umsókn móttekin',
   mode: FormModes.APPLYING,
   children: [
