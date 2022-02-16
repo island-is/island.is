@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useContext } from 'react'
-import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 
 import * as styles from './Profile.css'
 

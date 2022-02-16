@@ -34,6 +34,7 @@ const ProfileUnit = ({
         <button
           className={cn({
             [`${styles.toggleButton} rotateButton`]: true,
+            [`${className}`]: className,
             [`rotate `]: toggle,
           })}
           onClick={() => setToggle(!toggle)}
@@ -60,7 +61,7 @@ const ProfileUnit = ({
         <Box
           className={cn({
             [`${styles.headings} `]: true,
-            [`${className}`]: true,
+            [`${className}`]: className,
           })}
           marginBottom={[2, 2, 3]}
           borderBottomWidth="standard"
