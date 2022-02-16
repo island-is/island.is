@@ -13,15 +13,14 @@ describe('/krafa/ny/gaesluvardhald', () => {
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
-  it.skip('should require the accused gender be selected', () => {
+  it('should require the accused gender be selected', () => {
     cy.getByTestid('policeCaseNumber').type('00000000000')
     cy.getByTestid('select-type')
       .type('Krufning')
       .get('.island-select__option')
       .click()
     cy.getByTestid('nationalId').type('0000000000')
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(2000)
+    cy.wait('@getPersonByNationalId')
     cy.getByTestid('nationalId').blur()
     cy.getByTestid('accusedName').type('Donald Duck')
     cy.getByTestid('accusedAddress').type('Batcave 1337')
@@ -37,7 +36,36 @@ describe('/krafa/ny/gaesluvardhald', () => {
     cy.getByTestid('nationalId').clear().blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('nationalId').clear().type('0000000000')
+    cy.wait('@getPersonByNationalId')
     cy.getByTestid('inputErrorMessage').should('not.exist')
+  })
+
+  it('should have a disabled gender and citizenship if the defendant has a business national id', () => {
+    cy.getByTestid('nationalId').type('5555555555')
+    cy.wait('@getBusinessesByNationalId')
+    cy.get('#defendantGender').should(
+      'have.class',
+      'island-select--is-disabled',
+    )
+    cy.get('#defendantCitizenship').should('be.disabled')
+  })
+
+  it('should not have a disabled gender and citizenship if the defendant has a person national id', () => {
+    cy.getByTestid('nationalId').type('1111111111')
+    cy.wait('@getPersonByNationalId')
+    cy.get('#defendantGender').should(
+      'not.have.class',
+      'island-select--is-disabled',
+    )
+    cy.get('#defendantCitizenship').should('not.be.disabled')
+  })
+
+  it.only('should autofill name, address and gender after getting person by national id in national registry', () => {
+    cy.getByTestid('nationalId').type('1111111111')
+    cy.wait('@getPersonByNationalId')
+    cy.getByTestid('accusedAddress').should('have.value', 'Jokersway 90')
+    cy.getByTestid('accusedName').should('have.value', 'The Joker')
+    cy.getByTestid('select-defendantGender').should('contain', 'Karl')
   })
 
   it('should require a valid accused date of birth if the user does not have a national id', () => {
@@ -64,11 +92,10 @@ describe('/krafa/ny/gaesluvardhald', () => {
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
-  it.skip('should not allow users to move forward if they entered an invalid defender email address or an invalid defender phonenumber', () => {
+  it('should not allow users to move forward if they entered an invalid defender email address or an invalid defender phonenumber', () => {
     cy.getByTestid('policeCaseNumber').type('00000000000')
     cy.getByTestid('nationalId').type('0000000000')
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(2000)
+    cy.wait('@getPersonByNationalId')
     cy.getByTestid('nationalId').blur()
     cy.getByTestid('accusedName').type('Donald Duck')
     cy.getByTestid('accusedAddress').type('Batcave 1337')
