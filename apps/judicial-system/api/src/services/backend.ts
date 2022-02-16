@@ -43,6 +43,7 @@ class BackendAPI extends DataSource<{ req: Request }> {
 
   initialize(config: DataSourceConfig<{ req: Request }>): void {
     this.headers = {
+      'Content-Type': 'application/json',
       authorization: config.context.req.headers.authorization as string,
       cookie: config.context.req.headers.cookie as string,
     }
