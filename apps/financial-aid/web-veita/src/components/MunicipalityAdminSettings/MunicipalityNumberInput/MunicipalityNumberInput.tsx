@@ -6,24 +6,18 @@ interface Props {
   id: string
   aid: number
   prefix: string
-  hasAidError: boolean
-  updateHandler: (value: number) => void
+  error: boolean
+  update: (value: number) => void
 }
 
-const MunicipalityAdminInput = ({
-  id,
-  aid,
-  prefix,
-  hasAidError,
-  updateHandler,
-}: Props) => {
-  const label: KeyMapping<string, string> = {
-    [AidName.OWNPLACE]: 'Eigið húsnæði',
-    [AidName.REGISTEREDRENTING]: 'Leiga með þinglýstan leigusamning',
-    [AidName.UNREGISTEREDRENTING]: 'Leiga með óþinglýstan leigusamning',
-    [AidName.WITHOTHERS]: 'Býr eða leigir hjá öðrum án þinglýsts leigusamnings',
-    [AidName.LIVESWITHPARENTS]: 'Býr hjá foreldrum',
-    [AidName.UNKNOWN]: 'Annað',
+const MunicipalityAdminInput = ({ id, aid, prefix, error, update }: Props) => {
+  const label: KeyMapping<AidName, string> = {
+    ownPlace: 'Eigið húsnæði',
+    registeredRenting: 'Leiga með þinglýstan leigusamning',
+    unregisteredRenting: 'Leiga með óþinglýstan leigusamning',
+    withOthers: 'Býr eða leigir hjá öðrum án þinglýsts leigusamnings',
+    livesWithParents: 'Býr hjá foreldrum',
+    unknown: 'Annað',
   }
 
   return (
@@ -31,12 +25,12 @@ const MunicipalityAdminInput = ({
       <NumberInput
         id={`input${prefix}${id}`}
         name={`${prefix}${id}`}
-        label={label[id]}
+        label={label[id as AidName]}
         maximumInputLength={6}
         value={aid.toString()}
-        hasError={hasAidError && aid === 0}
+        hasError={error && aid === 0}
         errorMessage={'Grunnupphæð getur ekki verið 0'}
-        onUpdate={(value) => updateHandler(value)}
+        onUpdate={(value) => update(value)}
       />
     </Box>
   )

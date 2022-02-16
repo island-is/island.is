@@ -37,18 +37,18 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
   const aidNames = Object.values(AidName).map(String)
 
   const errorCheck = (aid: Aid, prefix: string) => {
-    for (const a of Object.entries(aid)) {
-      if (aidNames.includes(a[0]) && a[1] === 0) {
-        setHasAidError(() => true)
-        scrollToId(`${prefix}${a[0]}`)
-        return true
-      }
+    const firstErrorAid = Object.entries(aid).find(a => aidNames.includes(a[0]) && a[1] === 0)
+
+    if (firstErrorAid === undefined) {
+      return false
     }
 
-    return false
+    setHasAidError(true)
+    scrollToId(`${prefix}${firstErrorAid[0]}`)
+    return true
   }
 
-  const saveHandler = () => {
+  const submit = () => {
     if (
       errorCheck(state.individualAid, INDIVIDUAL) ||
       errorCheck(state.cohabitationAid, COHABITATION)
@@ -177,8 +177,8 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
               id={aid[0]}
               aid={aid[1]}
               prefix={INDIVIDUAL}
-              hasAidError={hasAidError}
-              updateHandler={(value) =>
+              error={hasAidError}
+              update={(value) =>
                 aidChangeHandler(() =>
                   setState({
                     ...state,
@@ -203,8 +203,8 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
               id={aid[0]}
               aid={aid[1]}
               prefix={COHABITATION}
-              hasAidError={hasAidError}
-              updateHandler={(value) =>
+              error={hasAidError}
+              update={(value) =>
                 aidChangeHandler(() =>
                   setState({
                     ...state,
@@ -219,7 +219,7 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
           ),
       )}
       <Box display="flex" justifyContent="flexEnd">
-        <Button loading={loading} onClick={saveHandler} icon="checkmark">
+        <Button loading={loading} onClick={submit} icon="checkmark">
           Vista stillingar
         </Button>
       </Box>
