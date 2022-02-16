@@ -1,4 +1,4 @@
-import React, { useState, useRef, forwardRef } from 'react'
+import React, { useState, useRef, forwardRef, useLayoutEffect } from 'react'
 import cn from 'classnames'
 
 import * as styles from './Input.css'
@@ -78,6 +78,7 @@ export const Input = forwardRef(
       iconType = 'filled',
       size = 'md',
       fixedFocusState,
+      autoExpand,
       ...inputProps
     } = props
     const [hasFocus, setHasFocus] = useState(false)
@@ -97,6 +98,29 @@ export const Input = forwardRef(
     const containerBackground = Array.isArray(backgroundColor)
       ? backgroundColor.map(mapBlue)
       : mapBlue(backgroundColor as InputBackgroundColor)
+
+    useLayoutEffect(() => {
+      const input = inputRef.current
+
+      if (autoExpand?.on && input) {
+        const handler = () => {
+          input.style.height = 'auto'
+          // The +1 here prevents a scrollbar from appearing in the textarea
+          input.style.height = `${input.scrollHeight + 1}px`
+          input.style.maxHeight = autoExpand.maxHeight
+            ? `${autoExpand.maxHeight}px`
+            : `${window.innerHeight - 50}px`
+        }
+
+        handler()
+
+        input.addEventListener('input', handler, false)
+
+        return function cleanup() {
+          input.removeEventListener('input', handler)
+        }
+      }
+    }, [autoExpand?.maxHeight, autoExpand?.on, inputRef])
 
     return (
       <div>
