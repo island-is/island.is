@@ -89,7 +89,9 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
             name="prosecutorDemands"
             label={formatMessage(m.sections.prosecutorDemands.label)}
             value={workingCase.prosecutorDemands || ''}
-            placeholder={formatMessage(m.sections.prosecutorDemands.label)}
+            placeholder={formatMessage(
+              m.sections.prosecutorDemands.placeholder,
+            )}
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'prosecutorDemands',
