@@ -8,7 +8,7 @@ import {
   ShippedSummary,
 } from '@island.is/regulations/admin'
 import { RegulationsAdminClientConfig } from './RegulationsAdminClientConfig'
-import { ConfigType } from '@island.is/nest/config'
+import { ConfigType } from '@nestjs/config'
 
 export class RegulationsAdminClientService extends RESTDataSource {
   constructor(

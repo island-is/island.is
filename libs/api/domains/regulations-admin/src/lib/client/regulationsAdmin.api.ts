@@ -3,7 +3,7 @@ import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
 import { EditDraftBody } from '../graphql/dto/editDraftRegulation.input'
 import { RegulationsAdminClientConfig } from '@island.is/clients/regulations-admin'
-import { ConfigType } from '@island.is/nest/config'
+import { ConfigType } from '@nestjs/config'
 
 export class RegulationsAdminApi extends RESTDataSource {
   constructor(

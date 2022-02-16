@@ -1,6 +1,6 @@
 import graphqlTypeJson from 'graphql-type-json'
 import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
-import { ConfigType, DownloadServiceConfig } from '@island.is/nest/config'
+import { DownloadServiceConfig } from '@island.is/nest/config'
 import { Inject, UseGuards } from '@nestjs/common'
 import { RegulationsService } from '@island.is/clients/regulations'
 import { GetDraftRegulationInput } from './dto/getDraftRegulation.input'
@@ -18,6 +18,7 @@ import {
 import { RegulationsAdminApi } from '../client'
 import { RegulationsAdminClientService } from '@island.is/clients/regulations-admin'
 import { DraftRegulationPdfDownload } from './models/draftRegulationPdfDownload.model'
+import { ConfigType } from '@nestjs/config'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
