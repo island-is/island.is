@@ -22,8 +22,11 @@ export class DraftRegulationCancelService {
 
   async create(
     draftRegulationcancelToCreate: CreateDraftRegulationCancelDto,
-  ): Promise<DraftRegulationCancelModel> {
+  ): Promise<DraftRegulationCancelModel | null> {
     this.logger.debug('Creating a new DraftRegulationcancel')
+
+    // TODO: fetch target regulation from backend and get changing_id and regTitle
+    // if its not available we need to fetch it from the regulations api and save it to drafts
 
     return await this.draftRegulationCancelModel.create(
       draftRegulationcancelToCreate,

@@ -7,7 +7,7 @@ export class DraftRegulationCancelModel {
   id!: string
 
   @Field(() => String)
-  changing_id!: string
+  changingId!: string
 
   @Field(() => String)
   regulation!: RegName

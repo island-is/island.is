@@ -142,7 +142,7 @@ export class RegulationsAdminResolver {
   }
 
   @Mutation(() => DraftRegulationCancelModel)
-  async createRegulationCancel(
+  async createDraftRegulationCancel(
     @Args('input') input: CreateDraftRegulationCancelInput,
     @CurrentUser() { authorization }: User,
   ): Promise<any> {

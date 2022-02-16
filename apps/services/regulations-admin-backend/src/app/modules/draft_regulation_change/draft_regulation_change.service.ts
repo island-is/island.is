@@ -25,6 +25,9 @@ export class DraftRegulationChangeService {
   ): Promise<DraftRegulationChangeModel> {
     this.logger.debug('Creating a new DraftRegulationChange')
 
+    // TODO: fetch target regulation from backend and get changing_id and regTitle
+    // if its not available we need to fetch it from the regulations api and save it to drafts
+
     return this.draftRegulationChangeModel.create(draftRegulationChangeToCreate)
   }
 

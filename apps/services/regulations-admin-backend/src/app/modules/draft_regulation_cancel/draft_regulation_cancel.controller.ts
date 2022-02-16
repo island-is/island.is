@@ -52,7 +52,10 @@ export class DraftRegulationCancelController {
     @Body()
     draftRegulationCancelToCreate: CreateDraftRegulationCancelDto,
     @CurrentUser() user: User,
-  ): Promise<DraftRegulationCancelModel> {
+  ): Promise<DraftRegulationCancelModel | null> {
+    if (!draftRegulationCancelToCreate.date) {
+      return null
+    }
     return await this.draftRegulationCancelService.create(
       draftRegulationCancelToCreate,
     )
@@ -71,7 +74,12 @@ export class DraftRegulationCancelController {
     @Param('id') id: string,
     @Body() draftRegulationCancelToUpdate: UpdateDraftRegulationCancelDto,
     @CurrentUser() user: User,
-  ): Promise<DraftRegulationCancelModel> {
+  ): Promise<DraftRegulationCancelModel | null> {
+    if (!draftRegulationCancelToUpdate.date) {
+      await this.draftRegulationCancelService.delete(id)
+      return null
+    }
+
     const {
       numberOfAffectedRows,
       updatedDraftRegulationCancel,

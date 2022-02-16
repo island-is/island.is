@@ -9,21 +9,31 @@ import { nameToSlug, RegName } from '@island.is/regulations'
 
 type EditCancellationProp = {
   cancellation: DraftCancelForm
-  closeModal: () => void
+  closeModal: (updateImpacts?: boolean) => void
 }
 
 const CREATE_DRAFT_REGULATION_CANCEL_IMPACT = gql`
   mutation CreateDraftRegulationCancel(
     $input: CreateDraftRegulationCancelInput!
   ) {
-    createDraftRegulationCancel(input: $input)
+    createDraftRegulationCancel(input: $input) {
+      id
+      changingId
+      regulation
+      date
+    }
   }
 `
 const UPDATE_DRAFT_REGULATION_CANCEL_IMPACT = gql`
   mutation UpdateDraftRegulationCancel(
     $input: UpdateDraftRegulationCancelInput!
   ) {
-    updateDraftRegulationCancel(input: $input)
+    updateDraftRegulationCancel(input: $input) {
+      id
+      changingId
+      regulation
+      date
+    }
   }
 `
 
@@ -49,7 +59,10 @@ export const EditCancellation = (props: EditCancellationProp) => {
     if (!cancellation.id) {
       createDraftRegulationCancelImpact({
         variables: {
-          input: activeCancellation,
+          input: {
+            date: activeCancellation.date,
+            regulation: activeCancellation.name,
+          },
         },
       })
         .then((res) => {
@@ -64,7 +77,10 @@ export const EditCancellation = (props: EditCancellationProp) => {
     } else {
       updateDraftRegulationCancelImpact({
         variables: {
-          input: activeCancellation,
+          input: {
+            id: activeCancellation.id,
+            date: activeCancellation.date,
+          },
         },
       })
         .then((res) => {
@@ -77,7 +93,7 @@ export const EditCancellation = (props: EditCancellationProp) => {
           return { success: false, error: error as Error }
         })
     }
-    closeModal()
+    closeModal(true)
   }
 
   return (
@@ -86,7 +102,8 @@ export const EditCancellation = (props: EditCancellationProp) => {
       isVisible={true}
       initialVisibility={true}
       className={s.cancelModal}
-      hideOnClickOutside={false} // setting this to true disables re-opening the modal
+      hideOnClickOutside={false} // FIXME: setting this to true disables re-opening the modal
+      hideOnEsc={false} // FIXME: setting this to true disables re-opening the modal
       removeOnClose
     >
       <Box padding={4}>
@@ -109,7 +126,7 @@ export const EditCancellation = (props: EditCancellationProp) => {
           impact={cancellation}
           onChange={(newDate) => changeCancelDate(newDate)}
         />
-        <Button onClick={closeModal} variant="text">
+        <Button onClick={() => closeModal()} variant="text">
           Til baka
         </Button>
         <Button onClick={saveCancellation} variant="text">
