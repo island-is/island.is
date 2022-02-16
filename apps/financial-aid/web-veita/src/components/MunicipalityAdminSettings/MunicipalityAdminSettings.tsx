@@ -8,7 +8,12 @@ import {
   ToastContainer,
 } from '@island.is/island-ui/core'
 
-import { Aid, AidName, Municipality, scrollToId } from '@island.is/financial-aid/shared/lib'
+import {
+  Aid,
+  AidName,
+  Municipality,
+  scrollToId,
+} from '@island.is/financial-aid/shared/lib'
 import { useMutation } from '@apollo/client'
 import { UpdateMunicipalityMutation } from '@island.is/financial-aid-web/veita/graphql'
 import omit from 'lodash/omit'
@@ -44,7 +49,10 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
   }
 
   const saveHandler = () => {
-    if (errorCheck(state.individualAid, INDIVIDUAL) || errorCheck(state.cohabitationAid, COHABITATION)) {
+    if (
+      errorCheck(state.individualAid, INDIVIDUAL) ||
+      errorCheck(state.cohabitationAid, COHABITATION)
+    ) {
       return
     }
     updateMunicipality()
@@ -158,43 +166,57 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
         Ef vísað er til þess að upplýsingar megi finna á vef sveitarfélagsins er
         notanda bent á þessa slóð.
       </Text>
-      <Text
-        as="h3"
-        variant="h3"
-        marginBottom={[1, 1, 3]}
-        color="dark300"
-      >
+      <Text as="h3" variant="h3" marginBottom={[1, 1, 3]} color="dark300">
         Einstaklingar
       </Text>
-      {Object.entries(state.individualAid).map(aid => aidNames.includes(aid[0]) && <MunicipalityAdminInput key={`${INDIVIDUAL}${aid[0]}`} id={aid[0]} aid={aid[1]} prefix={INDIVIDUAL} hasAidError={hasAidError} updateHandler={(value) =>
-        aidChangeHandler(() =>
-          setState({
-            ...state,
-            individualAid: {
-              ...state.individualAid,
-              [aid[0]]: value,
-            },
-          }),
-        )} />
+      {Object.entries(state.individualAid).map(
+        (aid) =>
+          aidNames.includes(aid[0]) && (
+            <MunicipalityAdminInput
+              key={`${INDIVIDUAL}${aid[0]}`}
+              id={aid[0]}
+              aid={aid[1]}
+              prefix={INDIVIDUAL}
+              hasAidError={hasAidError}
+              updateHandler={(value) =>
+                aidChangeHandler(() =>
+                  setState({
+                    ...state,
+                    individualAid: {
+                      ...state.individualAid,
+                      [aid[0]]: value,
+                    },
+                  }),
+                )
+              }
+            />
+          ),
       )}
-      <Text
-        as="h3"
-        variant="h3"
-        marginBottom={[1, 1, 3]}
-        color="dark300"
-      >
+      <Text as="h3" variant="h3" marginBottom={[1, 1, 3]} color="dark300">
         Hjón/sambúð
       </Text>
-      {Object.entries(state.cohabitationAid).map(aid => aidNames.includes(aid[0]) && <MunicipalityAdminInput key={`${COHABITATION}${aid[0]}`} id={aid[0]} aid={aid[1]} prefix={COHABITATION} hasAidError={hasAidError} updateHandler={(value) =>
-        aidChangeHandler(() =>
-          setState({
-            ...state,
-            cohabitationAid: {
-              ...state.cohabitationAid,
-              [aid[0]]: value,
-            },
-          }),
-        )} />
+      {Object.entries(state.cohabitationAid).map(
+        (aid) =>
+          aidNames.includes(aid[0]) && (
+            <MunicipalityAdminInput
+              key={`${COHABITATION}${aid[0]}`}
+              id={aid[0]}
+              aid={aid[1]}
+              prefix={COHABITATION}
+              hasAidError={hasAidError}
+              updateHandler={(value) =>
+                aidChangeHandler(() =>
+                  setState({
+                    ...state,
+                    cohabitationAid: {
+                      ...state.cohabitationAid,
+                      [aid[0]]: value,
+                    },
+                  }),
+                )
+              }
+            />
+          ),
       )}
       <Box display="flex" justifyContent="flexEnd">
         <Button loading={loading} onClick={saveHandler} icon="checkmark">
