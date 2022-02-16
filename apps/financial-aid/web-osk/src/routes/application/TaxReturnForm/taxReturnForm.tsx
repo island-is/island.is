@@ -28,8 +28,7 @@ const TaxReturnForm = () => {
     }
   }
 
-  const taxReturnFetchFailed =
-    form.taxReturnFromRskFile.length === 0 || !form.taxReturnFromRskFile[0]
+  const taxReturnFetchFailed = form.taxReturnFromRskFile.length === 0
 
   const content = getContent(taxReturnFetchFailed)
 
