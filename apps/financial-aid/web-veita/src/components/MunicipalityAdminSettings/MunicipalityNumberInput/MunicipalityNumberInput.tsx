@@ -17,7 +17,7 @@ const MunicipalityAdminInput = ({
   hasAidError,
   updateHandler,
 }: Props) => {
-  const getLabel: KeyMapping<string, string> = {
+  const label: KeyMapping<string, string> = {
     [AidName.OWNPLACE]: 'Eigið húsnæði',
     [AidName.REGISTEREDRENTING]: 'Leiga með þinglýstan leigusamning',
     [AidName.UNREGISTEREDRENTING]: 'Leiga með óþinglýstan leigusamning',
@@ -31,7 +31,7 @@ const MunicipalityAdminInput = ({
       <NumberInput
         id={`input${prefix}${id}`}
         name={`${prefix}${id}`}
-        label={getLabel[id]}
+        label={label[id]}
         maximumInputLength={6}
         value={aid.toString()}
         hasError={hasAidError && aid === 0}
