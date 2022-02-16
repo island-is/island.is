@@ -13,7 +13,7 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import type { User } from '@island.is/judicial-system/types'
 
-import { BackendAPI } from '../../../services'
+import { BackendAPI } from '../../data-sources/backend'
 import { Institution } from './institution.model'
 
 @UseGuards(JwtGraphQlAuthGuard)

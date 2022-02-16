@@ -13,9 +13,9 @@ import {
   JwtGraphQlAuthGuard,
 } from '@island.is/judicial-system/auth'
 
-import { BackendAPI } from '../../../services'
-import { Case } from '../case'
-import { CreateCourtCaseInput } from './dto'
+import { BackendAPI } from '../../data-sources/backend'
+import { Case } from '../case/models/case.model'
+import { CreateCourtCaseInput } from './dto/createCourtCase.input'
 import { CourtService } from './court.service'
 
 @UseGuards(JwtGraphQlAuthGuard)

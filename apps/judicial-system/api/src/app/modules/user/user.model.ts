@@ -2,7 +2,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 import type { UserRole, User as TUser } from '@island.is/judicial-system/types'
 
-import { Institution } from '../institution'
+import { Institution } from '../institution/institution.model'
 
 @ObjectType()
 export class User implements TUser {
