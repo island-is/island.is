@@ -53,7 +53,10 @@ function constructRulingPdf(
     'Times-Roman',
   )
   setLineGap(doc, 2)
-  addMediumHeading(doc, `${title} ${formatDate(theCase.rulingDate, 'PPP')}`)
+  addMediumHeading(
+    doc,
+    `${title} ${formatDate(theCase.rulingDate ?? new Date(), 'PPP')}`,
+  )
   setLineGap(doc, 30)
   addMediumHeading(
     doc,

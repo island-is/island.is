@@ -1,5 +1,7 @@
 // TODO: Add tests
-import { Case, CaseType } from '@island.is/judicial-system/types'
+import { Case, CaseType, User } from '@island.is/judicial-system/types'
+
+import { isBusiness } from './stepHelper'
 
 export type Validation =
   | 'empty'
@@ -16,7 +18,7 @@ const someDefendantIsInvalid = (workingCase: Case) => {
     workingCase.defendants &&
     workingCase.defendants.some(
       (defendant) =>
-        !defendant.gender ||
+        (!isBusiness(defendant.nationalId) && !defendant.gender) ||
         !validate(defendant.nationalId || '', 'empty').isValid ||
         !validate(
           defendant.nationalId || '',
@@ -251,5 +253,18 @@ export const isRulingStepTwoValidIC = (workingCase: Case) => {
     workingCase.prosecutorAppealDecision &&
     validate(workingCase.conclusion || '', 'empty').isValid &&
     validate(workingCase.courtEndTime || '', 'date-format').isValid
+  )
+}
+
+export const isAdminUserFormValid = (user: User) => {
+  return (
+    validate(user.name, 'empty').isValid &&
+    validate(user.nationalId, 'empty').isValid &&
+    validate(user.nationalId, 'national-id').isValid &&
+    user.institution &&
+    validate(user.title, 'empty').isValid &&
+    validate(user.mobileNumber, 'empty').isValid &&
+    validate(user.email, 'empty').isValid &&
+    validate(user.email, 'email-format').isValid
   )
 }
