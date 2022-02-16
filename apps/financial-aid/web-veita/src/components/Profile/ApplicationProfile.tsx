@@ -14,6 +14,8 @@ import {
   getAidAmountModalInfo,
 } from '@island.is/financial-aid/shared/lib'
 
+import { TaxBreakdown } from '@island.is/financial-aid/shared/components'
+
 import format from 'date-fns/format'
 
 import {
@@ -173,6 +175,7 @@ const ApplicationProfile = ({
           info={applicantMoreInfo}
           className={`contentUp delay-100`}
         />
+        <TaxBreakdown />
 
         <ProfileUnit
           heading="Þjóðskrá"
