@@ -19,6 +19,9 @@ import { RegulationsAdminApi } from '../client'
 import { RegulationsAdminClientService } from '@island.is/clients/regulations-admin'
 import { DraftRegulationPdfDownload } from './models/draftRegulationPdfDownload.model'
 import { ConfigType } from '@nestjs/config'
+import { UpdateDraftRegulationCancelInput } from './dto/updateDraftRegulationCancelInput.input'
+import { CreateDraftRegulationCancelInput } from './dto/createDraftRegulationCancelInput.input'
+import { DraftRegulationCancelModel } from './models/draftRegulationCancel.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -136,5 +139,27 @@ export class RegulationsAdminResolver {
       downloadService: true,
       url: `${this.downloadServiceConfig.baseUrl}/download/v1/regulation/draft/${input.draftId}`,
     }
+  }
+
+  @Mutation(() => DraftRegulationCancelModel)
+  async createRegulationCancel(
+    @Args('input') input: CreateDraftRegulationCancelInput,
+    @CurrentUser() { authorization }: User,
+  ): Promise<any> {
+    return this.regulationsAdminApiService.createDraftRegulationCancel(
+      input,
+      authorization ?? '',
+    )
+  }
+
+  @Mutation(() => DraftRegulationCancelModel)
+  async updateDraftRegulationCancel(
+    @Args('input') input: UpdateDraftRegulationCancelInput,
+    @CurrentUser() { authorization }: User,
+  ): Promise<any> {
+    return this.regulationsAdminApiService.updateDraftRegulationCancel(
+      input,
+      authorization ?? '',
+    )
   }
 }

@@ -6,6 +6,7 @@ import { ImpactDate } from './ImpactDate'
 
 type EditChangeProp = {
   change: DraftChangeForm
+  closeModal: () => void
 }
 
 export const EditChange = (props: EditChangeProp) => {

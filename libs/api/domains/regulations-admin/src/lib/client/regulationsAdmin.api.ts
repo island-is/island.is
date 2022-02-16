@@ -4,6 +4,8 @@ import { DataSourceConfig } from 'apollo-datasource'
 import { EditDraftBody } from '../graphql/dto/editDraftRegulation.input'
 import { RegulationsAdminClientConfig } from '@island.is/clients/regulations-admin'
 import { ConfigType } from '@nestjs/config'
+import { CreateDraftRegulationCancelInput } from '../graphql/dto/createDraftRegulationCancelInput.input'
+import { UpdateDraftRegulationCancelInput } from '../graphql/dto/updateDraftRegulationCancelInput.input'
 
 export class RegulationsAdminApi extends RESTDataSource {
   constructor(
@@ -38,5 +40,27 @@ export class RegulationsAdminApi extends RESTDataSource {
     return this.delete(`/draft_regulation/${draftId}`, undefined, {
       headers: { authorization },
     })
+  }
+
+  createDraftRegulationCancel(
+    input: CreateDraftRegulationCancelInput,
+    authorization: string,
+  ): Promise<any> {
+    return this.put(`/draft_regulation_cancel/`, input, {
+      headers: { authorization },
+    })
+  }
+
+  updateDraftRegulationCancel(
+    input: UpdateDraftRegulationCancelInput,
+    authorization: string,
+  ): Promise<any> {
+    return this.put(
+      `/draft_regulation_cancel/${input.id}`,
+      { date: input.date },
+      {
+        headers: { authorization },
+      },
+    )
   }
 }
