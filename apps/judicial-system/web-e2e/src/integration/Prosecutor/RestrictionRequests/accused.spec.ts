@@ -13,20 +13,6 @@ describe('/krafa/ny/gaesluvardhald', () => {
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
-  it.skip('should require the accused gender be selected', () => {
-    cy.getByTestid('policeCaseNumber').type('00000000000')
-    cy.getByTestid('nationalId').type('0000000000')
-    cy.wait('@getPersonByNationalId')
-    cy.getByTestid('nationalId').blur()
-    cy.getByTestid('accusedName').type('Donald Duck')
-    cy.getByTestid('accusedAddress').type('Batcave 1337')
-    cy.getByTestid('leadInvestigator').type('John Doe')
-    cy.getByTestid('continueButton').should('be.disabled')
-    cy.getByTestid('select-defendantGender').click()
-    cy.get('#react-select-defendantGender-option-0').click()
-    cy.getByTestid('continueButton').should('not.be.disabled')
-  })
-
   it('should require a valid accused national id if the user has a national id', () => {
     cy.getByTestid('nationalId').type('0').blur()
     cy.getByTestid('inputErrorMessage').contains('Dæmi: 000000-0000')
