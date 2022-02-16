@@ -14,14 +14,6 @@ globalStyle(`${tableContainer} th, td`, {
   paddingBottom: theme.spacing[2],
 })
 
-// globalStyle(
-//   `${tableContainer} tr:last-child td, ${tableContainer} tr:nth-last-child(2) td`,
-//   {
-//     paddingTop: theme.spacing[1],
-//     paddingBottom: theme.spacing[1],
-//   },
-// )
-
 globalStyle(`${tableContainer} tr:first-child`, {
   boxShadow: 'inset 0px -1px 0px #CCDFFF',
 })
