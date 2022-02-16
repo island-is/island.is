@@ -76,20 +76,4 @@ describe('/domur/krafa/fyrirtokutimi/:id', () => {
     cy.getByTestid('modalSecondaryButton').click()
     cy.url().should('include', '/domur/thingbok/test_id_stadfest')
   })
-
-  it.skip('should hide the next button and show a info panel instead if the case is an investigation case and the current user does not have access to continue', () => {
-    const caseData = makeCustodyCase()
-    const caseDataAddition: Case = {
-      ...caseData,
-      court: makeCourt(),
-      state: CaseState.RECEIVED,
-      type: CaseType.INTERNET_USAGE,
-    }
-
-    cy.visit('/domur/rannsoknarheimild/fyrirtaka/test_id_stadfest')
-    intercept(caseDataAddition)
-
-    cy.getByTestid('infobox').should('exist')
-    cy.getByTestid('continueButton').should('not.exist')
-  })
 })
