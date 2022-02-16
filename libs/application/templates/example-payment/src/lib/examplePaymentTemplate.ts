@@ -21,7 +21,7 @@ const template: ApplicationTemplate<
   name: m.applicationTitle,
   institution: m.institution,
   dataSchema,
-  readyForProduction: true,
+  readyForProduction: false,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
