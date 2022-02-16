@@ -5,29 +5,25 @@ import TaxBreakdownItem from './TaxBreakdownItem'
 import * as styles from './TaxBreakdown.css'
 
 const TaxBreakdown = () => {
+  const tableHeaders = [
+    'Fyrirtæki',
+    'Heildarlaun',
+    'Persónuafsláttur',
+    'Staðgreiðsla',
+  ]
+
   return (
     <table className={styles.tableContainer}>
       <tr>
-        <th>
-          <Text variant="small" fontWeight="semiBold">
-            Fyrirtæki
-          </Text>
-        </th>
-        <th>
-          <Text variant="small" fontWeight="semiBold">
-            Heildarlaun
-          </Text>
-        </th>
-        <th>
-          <Text variant="small" fontWeight="semiBold">
-            Persónuafsláttur
-          </Text>
-        </th>
-        <th>
-          <Text variant="small" fontWeight="semiBold">
-            Staðgreiðsla
-          </Text>
-        </th>
+        {tableHeaders.map((headers) => {
+          return (
+            <th>
+              <Text variant="small" fontWeight="semiBold">
+                {headers}
+              </Text>
+            </th>
+          )
+        })}
       </tr>
       <TaxBreakdownItem
         headline="Janúar 2022"
