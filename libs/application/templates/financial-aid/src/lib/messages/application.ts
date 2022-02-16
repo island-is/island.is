@@ -66,7 +66,7 @@ export const input = defineMessages({
   },
 })
 
-export const files = defineMessages({
+export const filesText = defineMessages({
   header: {
     id: 'fa.application:section.files.header',
     defaultMessage: 'Dragðu gögn hingað',

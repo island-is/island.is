@@ -75,3 +75,5 @@ export interface InputTypes {
   id: string
   error?: string
 }
+
+export type UploadFileType = 'otherFiles' | 'incomeFiles' | 'taxReturnFiles'

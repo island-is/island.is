@@ -102,14 +102,10 @@ export const Application: Form = buildForm({
           id: 'incomeFiles',
           title: m.incomeFilesForm.general.sectionTitle,
           children: [
-            buildFileUploadField({
-              id: 'incomeFiles',
-              title: m.incomeFilesForm.general.sectionTitle,
-              introduction: m.incomeFilesForm.general.description,
-              maxSize: 10000000, // 10 MB
-              uploadHeader: m.files.header,
-              uploadDescription: m.files.description,
-              uploadButtonLabel: m.files.buttonLabel,
+            buildCustomField({
+              id: routes.PERSONALTAXCREDIT,
+              title: m.incomeFilesForm.general.pageTitle,
+              component: 'IncomeFilesForm',
             }),
           ],
         }),
