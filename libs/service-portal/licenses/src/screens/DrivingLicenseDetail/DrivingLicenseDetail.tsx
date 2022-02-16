@@ -44,7 +44,6 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
   })
 
   const toggleModal = () => {
-    console.log('toggleModal', !modalOpen)
     setModalOpen(!modalOpen)
   }
 
