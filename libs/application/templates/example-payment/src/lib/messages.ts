@@ -57,6 +57,16 @@ export const draft = defineMessages({
 })
 
 export const step = defineMessages({
+  externalDataTitle: {
+    id: 'ep.application:step.externalData',
+    defaultMessage: 'Forsendur',
+    description: 'Title for payment external data section',
+  },
+  info: {
+    id: 'ep.application:step.info',
+    defaultMessage: 'Umsókn',
+    description: 'Title for application section',
+  },
   paymentTitle: {
     id: 'ep.application:step.paymentTitle',
     defaultMessage: 'Greiðsla',

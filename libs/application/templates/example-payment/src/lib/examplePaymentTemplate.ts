@@ -5,6 +5,7 @@ import {
   ApplicationStateSchema,
   DefaultStateLifeCycle,
   DefaultEvents,
+  EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { ApiActions } from '../shared'
 import { Events, States, Roles } from './constants'
@@ -28,11 +29,7 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Draft',
           progress: 0.4,
-          lifecycle: {
-            shouldBeListed: false,
-            shouldBePruned: true,
-            whenToPrune: 282828,
-          }, // TOOD: Ephemeral state lifecycle
+          lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,

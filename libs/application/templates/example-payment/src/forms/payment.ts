@@ -14,15 +14,30 @@ export const payment: Form = buildForm({
   renderLastScreenButton: false,
   children: [
     buildSection({
+      id: 'externalData',
+      title: m.draft.externalDataTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'info',
+      title: m.draft.informationTitle,
+      children: [],
+    }),
+    buildSection({
       id: 'awaitingPayment',
       title: m.m.paymentConfirmation,
       children: [
         buildCustomField({
-          component: 'PaymentPending',
+          component: 'PaymentPendingScreen',
           id: 'paymentPendingField',
           title: '',
         }),
       ],
+    }),
+    buildSection({
+      id: 'confirm',
+      title: m.step.confirmTitle,
+      children: [],
     }),
   ],
 })
