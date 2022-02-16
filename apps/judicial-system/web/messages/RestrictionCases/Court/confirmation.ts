@@ -2,16 +2,6 @@ import { defineMessages } from 'react-intl'
 
 export const rcConfirmation = {
   sections: {
-    custodyRestrictions: defineMessages({
-      disclaimer: {
-        id:
-          'judicial.system.restriction_cases:confirmation.custody_restrictions.disclaimer',
-        defaultMessage:
-          'Dómari bendir sakborningi/umboðsaðila á að honum sé heimilt að bera atriði er lúta að framkvæmd {caseType} undir dómara.',
-        description:
-          'Notaður sem upplýsingatexti í upplýsingasvæði við "greinargerð um lagarök" titlinn á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
-    }),
     conclusion: defineMessages({
       title: {
         id: 'judicial.system.restriction_cases:confirmation.conclusion.title',
