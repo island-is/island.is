@@ -65,22 +65,8 @@ export class DraftRegulationService {
 
     const drafts: DraftSummary[] = []
     for await (const draft of draftRegulations) {
-      const authors: Author[] = []
+      const authors = await this.getAuthorsInfo(draft.authors)
 
-      if (draft.authors) {
-        for await (const nationalId of draft.authors) {
-          try {
-            const author = await this.getAuthorInfo(nationalId)
-            author && authors.push(author)
-          } catch (e) {
-            // Fallback to nationalId if fetching name fails
-            authors.push({
-              authorId: nationalId,
-              name: nationalId,
-            })
-          }
-        }
-      }
       drafts.push({
         id: draft.id as RegulationDraftId,
         draftingStatus: draft.drafting_status as 'draft' | 'proposal',
@@ -140,20 +126,7 @@ export class DraftRegulationService {
         ))) ||
       undefined
 
-    const authors: Author[] = []
-    draftRegulation?.authors?.forEach(async (nationalId) => {
-      try {
-        const author = await this.getAuthorInfo(nationalId)
-
-        author && authors.push(author)
-      } catch (e) {
-        // Fallback to nationalId if fetching name fails
-        authors.push({
-          authorId: nationalId,
-          name: nationalId,
-        })
-      }
-    })
+    const authors = await this.getAuthorsInfo(draftRegulation.authors)
 
     const impactNames =
       draftRegulation.changes?.map((change) => change.regulation) ?? []
@@ -295,24 +268,39 @@ export class DraftRegulationService {
     })
   }
 
-  async getAuthorInfo(kt: Kennitala): Promise<Author | null> {
-    if (kennitala.isCompany(kt)) {
-      return null
-    }
-
-    let author = await this.draftAuthorService.get(kt)
-
-    if (!author) {
-      const person = await this.nationalRegistryApi.getUser(kt)
-      if (person) {
-        author = {
-          name: person.Fulltnafn,
-          authorId: kt as Kennitala,
-        }
-        await this.draftAuthorService.create(author)
+  async getAuthorsInfo(nationalIds: Kennitala[]): Promise<Author[]> {
+    const authors: Author[] = []
+    for await (const nationalId of nationalIds) {
+      if (kennitala.isCompany(nationalId)) {
+        continue
       }
+      let author = await this.draftAuthorService.get(nationalId)
+
+      if (!author) {
+        try {
+          const person = await this.nationalRegistryApi.getUser(nationalId)
+          if (person) {
+            author = {
+              name: person.Fulltnafn,
+              authorId: nationalId,
+            }
+            await this.draftAuthorService.create(author)
+          }
+        } catch (e) {
+          this.logger.debug(`Unable to create author: ${e}`)
+        }
+      }
+
+      authors.push(
+        author
+          ? author
+          : {
+              authorId: nationalId,
+              name: nationalId,
+            },
+      )
     }
 
-    return author
+    return authors
   }
 }
