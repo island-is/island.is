@@ -1,9 +1,7 @@
 import {
   buildExternalDataProvider,
   buildDataProviderItem,
-  buildSubSection,
   buildMultiField,
-  buildSelectField,
   buildRadioField,
   buildSubmitField,
   DefaultEvents,
@@ -18,7 +16,7 @@ import * as m from '../lib/messages'
 import { chargeItemCodeRadioOptions } from '../lib/utils/chargeItemCodeRadioOptions'
 
 export const draft: Form = buildForm({
-  id: 'DrivingLicenseApplicationDraftForm',
+  id: 'ExamplePaymentDraftForm',
   title: m.m.applicationTitle,
   mode: FormModes.APPLYING,
   renderLastScreenButton: true,
