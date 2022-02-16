@@ -1,4 +1,4 @@
-import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
+import { Case, CaseState } from '@island.is/judicial-system/types'
 import {
   makeCustodyCase,
   makeCourt,
@@ -8,17 +8,8 @@ import { intercept } from '../../../utils'
 
 describe('/domur/krafa/fyrirtokutimi/:id', () => {
   beforeEach(() => {
-    const caseData = makeCustodyCase()
-    const caseDataAddition: Case = {
-      ...caseData,
-      court: makeCourt(),
-      requestedCourtDate: '2020-09-16T19:50:08.033Z',
-      state: CaseState.RECEIVED,
-    }
-
     cy.stubAPIResponses()
-
-    intercept(caseDataAddition)
+    cy.visit('/domur/fyrirtokutimi/test_id_stadfest')
   })
 
   it('should display case comments', () => {
@@ -29,7 +20,6 @@ describe('/domur/krafa/fyrirtokutimi/:id', () => {
       comments: comment,
     }
 
-    cy.visit('/domur/fyrirtokutimi/test_id_stadfest')
     intercept(caseDataAddition)
 
     cy.contains(comment)
@@ -44,7 +34,6 @@ describe('/domur/krafa/fyrirtokutimi/:id', () => {
       state: CaseState.RECEIVED,
     }
 
-    cy.visit('/domur/fyrirtokutimi/test_id_stadfest')
     intercept(caseDataAddition)
 
     cy.getByTestid('select-judge').click()
@@ -65,7 +54,6 @@ describe('/domur/krafa/fyrirtokutimi/:id', () => {
       state: CaseState.RECEIVED,
     }
 
-    cy.visit('/domur/fyrirtokutimi/test_id_stadfest')
     intercept(caseDataAddition)
 
     cy.getByTestid('continueButton').should('be.disabled')
@@ -75,21 +63,5 @@ describe('/domur/krafa/fyrirtokutimi/:id', () => {
     cy.getByTestid('continueButton').click()
     cy.getByTestid('modalSecondaryButton').click()
     cy.url().should('include', '/domur/thingbok/test_id_stadfest')
-  })
-
-  it.skip('should hide the next button and show a info panel instead if the case is an investigation case and the current user does not have access to continue', () => {
-    const caseData = makeCustodyCase()
-    const caseDataAddition: Case = {
-      ...caseData,
-      court: makeCourt(),
-      state: CaseState.RECEIVED,
-      type: CaseType.INTERNET_USAGE,
-    }
-
-    cy.visit('/domur/rannsoknarheimild/fyrirtaka/test_id_stadfest')
-    intercept(caseDataAddition)
-
-    cy.getByTestid('infobox').should('exist')
-    cy.getByTestid('continueButton').should('not.exist')
   })
 })

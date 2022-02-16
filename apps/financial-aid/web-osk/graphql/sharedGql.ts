@@ -35,7 +35,8 @@ export const CurrentUserQuery = gql`
       spouse {
         hasPartnerApplied
         hasFiles
-        spouseName
+        applicantName
+        applicantSpouseEmail
       }
       currentApplicationId
     }
