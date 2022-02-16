@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
 import { useParams, useHistory } from 'react-router-dom'
 import isEmpty from 'lodash/isEmpty'
@@ -26,25 +26,45 @@ import { getApplicationTemplateByTypeId } from '@island.is/application/template-
 
 import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
 
+type Delegation  = {
+  type: string,
+  from: {
+    nationalId: string,
+    name: string,
+  }
+}
+
 export const Applications: FC = () => {
   const { slug } = useParams<{ slug: string }>()
   const history = useHistory()
   const { formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)
-  var getDelegations = false
+  const [allowedDelegations, setAllowedDelegations] = useState<string[]>()
+  const [actorDelegations, setActorDelegations] = useState<Delegation[]>()
 
   useEffect(() => {
     async function checkDelegations() {
       if (type) {
-        const {allowedDelegations} = await getApplicationTemplateByTypeId(type)
-        if(allowedDelegations){
-          console.log(allowedDelegations)
-          getDelegations = true
+        const template= await getApplicationTemplateByTypeId(type)
+        if(template.allowedDelegations){
+          setAllowedDelegations(template.allowedDelegations)
         }
       }
     }
     checkDelegations()
   }, [type])
+
+  const {data:delegations, error: delegationError} = useQuery(ACTOR_DELEGATIONS, { skip: !allowedDelegations})
+
+  useEffect(() => {
+    if(delegations && allowedDelegations) {
+      console.log(allowedDelegations)
+      console.log(delegations.authActorDelegations)
+      const del: Delegation[] = delegations.authActorDelegations.filter((delegation: Delegation) =>  allowedDelegations.includes(delegation.type))
+      setActorDelegations(del)
+      console.log("actor del", actorDelegations)
+    }
+  },[delegations, allowedDelegations])
 
   useApplicationNamespaces(type)
 
@@ -58,9 +78,7 @@ export const Applications: FC = () => {
     },
   )
 
-  const {data:delegations, error: delegationError} = useQuery(ACTOR_DELEGATIONS, { skip: !getDelegations})
 
-  console.log(delegations)
   
   const [createApplicationMutation, { error: createError }] = useMutation(
     CREATE_APPLICATION,
@@ -110,6 +128,32 @@ export const Applications: FC = () => {
           type,
         })}
       />
+    )
+  }
+
+  if (actorDelegations) {
+    return (
+      <Page>
+      <GridContainer>
+          <Box>
+            <Box marginTop={5} marginBottom={5}>
+              <Text variant="h1">
+                Þessi umsókn styður umboð.
+              </Text>
+            </Box>
+            <Box
+              marginTop={5}
+              marginBottom={5}
+              display="flex"
+              justifyContent="flexEnd"
+            >
+              <Button onClick={createApplication}>
+                {formatMessage(coreMessages.newApplication)}
+              </Button>
+            </Box>
+          </Box>
+      </GridContainer>
+    </Page>
     )
   }
 
