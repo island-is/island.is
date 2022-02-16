@@ -1,11 +1,12 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
 import { useParams, useHistory } from 'react-router-dom'
+import { useAuth } from '@island.is/auth/react'
 import isEmpty from 'lodash/isEmpty'
 import {
   CREATE_APPLICATION,
   APPLICATION_APPLICATIONS,
-  ACTOR_DELEGATIONS
+  ACTOR_DELEGATIONS,
 } from '@island.is/application/graphql'
 import {
   Text,
@@ -26,11 +27,11 @@ import { getApplicationTemplateByTypeId } from '@island.is/application/template-
 
 import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
 
-type Delegation  = {
-  type: string,
+type Delegation = {
+  type: string
   from: {
-    nationalId: string,
-    name: string,
+    nationalId: string
+    name: string
   }
 }
 
@@ -40,13 +41,16 @@ export const Applications: FC = () => {
   const { formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)
   const [allowedDelegations, setAllowedDelegations] = useState<string[]>()
-  const [actorDelegations, setActorDelegations] = useState<Delegation[]>()
+  // const [actorDelegations, setActorDelegations] = useState<Delegation[]>()
 
+  const {  switchUser } = useAuth()
+
+  // Check if template supports delegations
   useEffect(() => {
     async function checkDelegations() {
       if (type) {
-        const template= await getApplicationTemplateByTypeId(type)
-        if(template.allowedDelegations){
+        const template = await getApplicationTemplateByTypeId(type)
+        if (template.allowedDelegations) {
           setAllowedDelegations(template.allowedDelegations)
         }
       }
@@ -54,17 +58,25 @@ export const Applications: FC = () => {
     checkDelegations()
   }, [type])
 
-  const {data:delegations, error: delegationError} = useQuery(ACTOR_DELEGATIONS, { skip: !allowedDelegations})
+  // Only check if user has delegations if the template supports delegations
+  const {
+    data: delegations,
+    error: delegationError,
+  } = useQuery(ACTOR_DELEGATIONS, { skip: !allowedDelegations })
 
-  useEffect(() => {
-    if(delegations && allowedDelegations) {
-      console.log(allowedDelegations)
-      console.log(delegations.authActorDelegations)
-      const del: Delegation[] = delegations.authActorDelegations.filter((delegation: Delegation) =>  allowedDelegations.includes(delegation.type))
-      setActorDelegations(del)
-      console.log("actor del", actorDelegations)
-    }
-  },[delegations, allowedDelegations])
+  // Check if user has the delegations of the delegation types the application supports
+  // useEffect(() => {
+  //   if (delegations && allowedDelegations && !actorDelegations) {
+  //     console.log(allowedDelegations)
+  //     console.log(delegations.authActorDelegations)
+  //     const del: Delegation[] = delegations.authActorDelegations.filter(
+  //       (delegation: Delegation) =>
+  //         allowedDelegations.includes(delegation.type),
+  //     )
+  //     setActorDelegations(del)
+  //     console.log('actor del', actorDelegations, typeof del, del)
+  //   }
+  // }, [delegations, allowedDelegations])
 
   useApplicationNamespaces(type)
 
@@ -78,8 +90,6 @@ export const Applications: FC = () => {
     },
   )
 
-
-  
   const [createApplicationMutation, { error: createError }] = useMutation(
     CREATE_APPLICATION,
     {
@@ -131,29 +141,35 @@ export const Applications: FC = () => {
     )
   }
 
-  if (actorDelegations) {
+  if (delegations && allowedDelegations) {
     return (
       <Page>
-      <GridContainer>
+        <GridContainer>
           <Box>
             <Box marginTop={5} marginBottom={5}>
-              <Text variant="h1">
-                Þessi umsókn styður umboð.
-              </Text>
+              <Text variant="h1">Þessi umsókn styður umboð.</Text>
             </Box>
-            <Box
-              marginTop={5}
-              marginBottom={5}
-              display="flex"
-              justifyContent="flexEnd"
-            >
-              <Button onClick={createApplication}>
-                {formatMessage(coreMessages.newApplication)}
-              </Button>
-            </Box>
+            {delegations.authActorDelegations.map((delegation: Delegation) => {
+              if (allowedDelegations.includes(delegation.type)) {
+                return (
+                  <Box
+                    marginTop={5}
+                    marginBottom={5}
+                    display="flex"
+                    justifyContent="flexEnd"
+                    key={delegation.from.nationalId}
+                  >
+                    <Text variant="h1">{delegation.from.name}</Text>
+                    <Button onClick={() =>switchUser(delegation.from.nationalId)}>
+                      {formatMessage(coreMessages.newApplication)}
+                    </Button>
+                  </Box>
+                )
+              }
+            })}
           </Box>
-      </GridContainer>
-    </Page>
+        </GridContainer>
+      </Page>
     )
   }
 
