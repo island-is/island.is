@@ -100,3 +100,12 @@ export enum AmountModal {
   ESTIMATED = 'Estimated',
   PROVIDED = 'Provided',
 }
+
+export enum AidName {
+  OWNPLACE = 'ownPlace',
+  REGISTEREDRENTING = 'registeredRenting',
+  UNREGISTEREDRENTING = 'unregisteredRenting',
+  WITHOTHERS = 'withOthers',
+  LIVESWITHPARENTS = 'livesWithParents',
+  UNKNOWN = 'unknown',
+}

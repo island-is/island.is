@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { NumberInput } from '@island.is/financial-aid-web/veita/src/components'
 import {
   Text,
   Box,
@@ -9,61 +8,46 @@ import {
   ToastContainer,
 } from '@island.is/island-ui/core'
 
-import { Municipality, scrollToId } from '@island.is/financial-aid/shared/lib'
+import { Aid, AidName, Municipality, scrollToId } from '@island.is/financial-aid/shared/lib'
 import { useMutation } from '@apollo/client'
 import { UpdateMunicipalityMutation } from '@island.is/financial-aid-web/veita/graphql'
 import omit from 'lodash/omit'
 import { useMunicipality } from '@island.is/financial-aid/shared/components'
+import MunicipalityAdminInput from './MunicipalityNumberInput/MunicipalityNumberInput'
 
 interface Props {
   municipality: Municipality
 }
 
 const MunicipalityAdminSettings = ({ municipality }: Props) => {
-  const maxAmountLength = 6
   const [state, setState] = useState(municipality)
   const [hasAidError, setHasAidError] = useState(false)
   const [updateMunicipalityMutation, { loading }] = useMutation(
     UpdateMunicipalityMutation,
   )
   const { setMunicipality } = useMunicipality()
-  const aidErrorMessage = 'Grunnupphæð getur ekki verið 0'
 
-  const checkIndividualAidErrors = () => {
-    return (
-      state.individualAid.ownPlace === 0 ||
-      state.individualAid.registeredRenting === 0 ||
-      state.individualAid.unregisteredRenting === 0 ||
-      state.individualAid.withOthers === 0 ||
-      state.individualAid.livesWithParents === 0 ||
-      state.individualAid.unknown === 0
-    )
-  }
+  const INDIVIDUAL = 'individual'
+  const COHABITATION = 'cohabitation'
+  const aidNames = Object.values(AidName).map(String)
 
-  const checkCohabitationAidErrors = () => {
-    return (
-      state.cohabitationAid.ownPlace === 0 ||
-      state.cohabitationAid.registeredRenting === 0 ||
-      state.cohabitationAid.unregisteredRenting === 0 ||
-      state.cohabitationAid.withOthers === 0 ||
-      state.cohabitationAid.livesWithParents === 0 ||
-      state.cohabitationAid.unknown === 0
-    )
+  const errorCheck = (aid: Aid, prefix: string) => {
+    for (const a of Object.entries(aid)) {
+      if (aidNames.includes(a[0]) && a[1] === 0) {
+        setHasAidError(() => true)
+        scrollToId(`${prefix}${a[0]}`)
+        return true
+      }
+    }
+
+    return false
   }
 
   const saveHandler = () => {
-    const isIndividualAidInvalid = checkIndividualAidErrors()
-    const isCohabitationAidInvalid = checkCohabitationAidErrors()
-
-    if (isIndividualAidInvalid) {
-      scrollToId('individualAidHeading')
-      setHasAidError(true)
-    } else if (isCohabitationAidInvalid) {
-      setHasAidError(true)
-      scrollToId('cohabitationAidHeading')
-    } else {
-      updateMunicipality()
+    if (errorCheck(state.individualAid, INDIVIDUAL) || errorCheck(state.cohabitationAid, COHABITATION)) {
+      return
     }
+    updateMunicipality()
   }
 
   const aidChangeHandler = (update: () => any) => {
@@ -175,7 +159,6 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
         notanda bent á þessa slóð.
       </Text>
       <Text
-        id="individualAidHeading"
         as="h3"
         variant="h3"
         marginBottom={[1, 1, 3]}
@@ -183,142 +166,18 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
       >
         Einstaklingar
       </Text>
-      <Box marginBottom={[1, 1, 3]}>
-        <NumberInput
-          label="Eigið húsnæði"
-          name="individualsOwnPlace"
-          id="individualsOwnPlace"
-          maximumInputLength={maxAmountLength}
-          value={state.individualAid.ownPlace.toString()}
-          hasError={hasAidError && state.individualAid.ownPlace === 0}
-          errorMessage={aidErrorMessage}
-          onUpdate={(value) =>
-            aidChangeHandler(() =>
-              setState({
-                ...state,
-                individualAid: {
-                  ...state.individualAid,
-                  ownPlace: value,
-                },
-              }),
-            )
-          }
-        />
-      </Box>
-      <Box marginBottom={[1, 1, 3]}>
-        <NumberInput
-          label="Leiga með þinglýstan leigusamning"
-          name="individualsRegisteredRenting"
-          id="individualsRegisteredRenting"
-          maximumInputLength={maxAmountLength}
-          value={state.individualAid.registeredRenting.toString()}
-          hasError={hasAidError && state.individualAid.registeredRenting === 0}
-          errorMessage={aidErrorMessage}
-          onUpdate={(value) =>
-            aidChangeHandler(() =>
-              setState({
-                ...state,
-                individualAid: {
-                  ...state.individualAid,
-                  registeredRenting: value,
-                },
-              }),
-            )
-          }
-        />
-      </Box>
-      <Box marginBottom={[1, 1, 3]}>
-        <NumberInput
-          label="Leiga með óþinglýstan leigusamning"
-          name="individualsUnregisteredRenting"
-          id="individualsUnregisteredRenting"
-          maximumInputLength={maxAmountLength}
-          value={state.individualAid.unregisteredRenting.toString()}
-          hasError={
-            hasAidError && state.individualAid.unregisteredRenting === 0
-          }
-          errorMessage={aidErrorMessage}
-          onUpdate={(value) =>
-            aidChangeHandler(() =>
-              setState({
-                ...state,
-                individualAid: {
-                  ...state.individualAid,
-                  unregisteredRenting: value,
-                },
-              }),
-            )
-          }
-        />
-      </Box>
-      <Box marginBottom={[1, 1, 3]}>
-        <NumberInput
-          label="Býr eða leigir hjá öðrum án þinglýsts leigusamnings"
-          name="individualsWithOthers"
-          id="individualsWithOthers"
-          maximumInputLength={maxAmountLength}
-          value={state.individualAid.withOthers.toString()}
-          hasError={hasAidError && state.individualAid.withOthers === 0}
-          errorMessage={aidErrorMessage}
-          onUpdate={(value) =>
-            aidChangeHandler(() =>
-              setState({
-                ...state,
-                individualAid: {
-                  ...state.individualAid,
-                  withOthers: value,
-                },
-              }),
-            )
-          }
-        />
-      </Box>
-      <Box marginBottom={[1, 1, 3]}>
-        <NumberInput
-          label="Býr hjá foreldrum"
-          name="individualsWithParents"
-          id="individualsWithParents"
-          maximumInputLength={maxAmountLength}
-          value={state.individualAid.livesWithParents.toString()}
-          hasError={hasAidError && state.individualAid.livesWithParents === 0}
-          errorMessage={aidErrorMessage}
-          onUpdate={(value) =>
-            aidChangeHandler(() =>
-              setState({
-                ...state,
-                individualAid: {
-                  ...state.individualAid,
-                  livesWithParents: value,
-                },
-              }),
-            )
-          }
-        />
-      </Box>
-      <Box marginBottom={[1, 1, 3]}>
-        <NumberInput
-          label="Annað"
-          name="individualsOther"
-          id="individualsOther"
-          maximumInputLength={maxAmountLength}
-          value={state.individualAid.unknown.toString()}
-          hasError={hasAidError && state.individualAid.unknown === 0}
-          errorMessage={aidErrorMessage}
-          onUpdate={(value) =>
-            aidChangeHandler(() =>
-              setState({
-                ...state,
-                individualAid: {
-                  ...state.individualAid,
-                  unknown: value,
-                },
-              }),
-            )
-          }
-        />
-      </Box>
+      {Object.entries(state.individualAid).map(aid => aidNames.includes(aid[0]) && <MunicipalityAdminInput key={`${INDIVIDUAL}${aid[0]}`} id={aid[0]} aid={aid[1]} prefix={INDIVIDUAL} hasAidError={hasAidError} updateHandler={(value) =>
+        aidChangeHandler(() =>
+          setState({
+            ...state,
+            individualAid: {
+              ...state.individualAid,
+              [aid[0]]: value,
+            },
+          }),
+        )} />
+      )}
       <Text
-        id="cohabitationAidHeading"
         as="h3"
         variant="h3"
         marginBottom={[1, 1, 3]}
@@ -326,142 +185,17 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
       >
         Hjón/sambúð
       </Text>
-      <Box marginBottom={[1, 1, 3]}>
-        <NumberInput
-          label="Eigið húsnæði"
-          name="cohabitationOwnPlace"
-          id="cohabitationOwnPlace"
-          maximumInputLength={maxAmountLength}
-          value={state.cohabitationAid.ownPlace.toString()}
-          hasError={hasAidError && state.cohabitationAid.ownPlace === 0}
-          errorMessage={aidErrorMessage}
-          onUpdate={(value) =>
-            aidChangeHandler(() =>
-              setState({
-                ...state,
-                cohabitationAid: {
-                  ...state.cohabitationAid,
-                  ownPlace: value,
-                },
-              }),
-            )
-          }
-        />
-      </Box>
-      <Box marginBottom={[1, 1, 3]}>
-        <NumberInput
-          label="Leiga með þinglýstan leigusamning"
-          name="cohabitationRegisteredRenting"
-          id="cohabitationRegisteredRenting"
-          maximumInputLength={maxAmountLength}
-          value={state.cohabitationAid.registeredRenting.toString()}
-          hasError={
-            hasAidError && state.cohabitationAid.registeredRenting === 0
-          }
-          errorMessage={aidErrorMessage}
-          onUpdate={(value) =>
-            aidChangeHandler(() =>
-              setState({
-                ...state,
-                cohabitationAid: {
-                  ...state.cohabitationAid,
-                  registeredRenting: value,
-                },
-              }),
-            )
-          }
-        />
-      </Box>
-      <Box marginBottom={[1, 1, 3]}>
-        <NumberInput
-          label="Leiga með óþinglýstan leigusamning"
-          name="cohabitationUnregisteredRenting"
-          id="cohabitationUnregisteredRenting"
-          maximumInputLength={maxAmountLength}
-          value={state.cohabitationAid.unregisteredRenting.toString()}
-          hasError={
-            hasAidError && state.cohabitationAid.unregisteredRenting === 0
-          }
-          errorMessage={aidErrorMessage}
-          onUpdate={(value) =>
-            aidChangeHandler(() =>
-              setState({
-                ...state,
-                cohabitationAid: {
-                  ...state.cohabitationAid,
-                  unregisteredRenting: value,
-                },
-              }),
-            )
-          }
-        />
-      </Box>
-      <Box marginBottom={[1, 1, 3]}>
-        <NumberInput
-          label="Býr eða leigir hjá öðrum án þinglýsts leigusamnings"
-          name="cohabitationWithOthers"
-          id="cohabitationWithOthers"
-          maximumInputLength={maxAmountLength}
-          value={state.cohabitationAid.withOthers.toString()}
-          hasError={hasAidError && state.cohabitationAid.withOthers === 0}
-          errorMessage={aidErrorMessage}
-          onUpdate={(value) =>
-            aidChangeHandler(() =>
-              setState({
-                ...state,
-                cohabitationAid: {
-                  ...state.cohabitationAid,
-                  withOthers: value,
-                },
-              }),
-            )
-          }
-        />
-      </Box>
-      <Box marginBottom={[1, 1, 3]}>
-        <NumberInput
-          label="Býr hjá foreldrum"
-          name="cohabitationWithParents"
-          id="cohabitationWithParents"
-          maximumInputLength={maxAmountLength}
-          value={state.cohabitationAid.livesWithParents.toString()}
-          hasError={hasAidError && state.cohabitationAid.livesWithParents === 0}
-          errorMessage={aidErrorMessage}
-          onUpdate={(value) =>
-            aidChangeHandler(() =>
-              setState({
-                ...state,
-                cohabitationAid: {
-                  ...state.cohabitationAid,
-                  livesWithParents: value,
-                },
-              }),
-            )
-          }
-        />
-      </Box>
-      <Box marginBottom={[2, 2, 5]}>
-        <NumberInput
-          label="Annað"
-          name="cohabitationOther"
-          id="cohabitationOther"
-          maximumInputLength={maxAmountLength}
-          value={state.cohabitationAid.unknown.toString()}
-          hasError={hasAidError && state.cohabitationAid.unknown === 0}
-          errorMessage={aidErrorMessage}
-          onUpdate={(value) =>
-            aidChangeHandler(() =>
-              setState({
-                ...state,
-                cohabitationAid: {
-                  ...state.cohabitationAid,
-                  unknown: value,
-                },
-              }),
-            )
-          }
-        />
-      </Box>
+      {Object.entries(state.cohabitationAid).map(aid => aidNames.includes(aid[0]) && <MunicipalityAdminInput key={`${COHABITATION}${aid[0]}`} id={aid[0]} aid={aid[1]} prefix={COHABITATION} hasAidError={hasAidError} updateHandler={(value) =>
+        aidChangeHandler(() =>
+          setState({
+            ...state,
+            cohabitationAid: {
+              ...state.cohabitationAid,
+              [aid[0]]: value,
+            },
+          }),
+        )} />
+      )}
       <Box display="flex" justifyContent="flexEnd">
         <Button loading={loading} onClick={saveHandler} icon="checkmark">
           Vista stillingar
