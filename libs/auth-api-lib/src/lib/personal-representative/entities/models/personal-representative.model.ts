@@ -20,11 +20,9 @@ import { PersonalRepresentativePublicDTO } from '../dto/personal-representative-
   tableName: 'personal_representative',
   indexes: [
     {
-      using: 'hash',
       fields: ['national_id_personal_representative'],
     },
     {
-      using: 'hash',
       fields: ['national_id_represented_person'],
     },
   ],

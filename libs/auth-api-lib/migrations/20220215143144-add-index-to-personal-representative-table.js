@@ -5,11 +5,9 @@ module.exports = {
     return Promise.all([
       queryInterface.addIndex('personal_representative', {
         fields: ['national_id_personal_representative'],
-        using: 'hash',
       }),
       queryInterface.addIndex('personal_representative', {
         fields: ['national_id_represented_person'],
-        using: 'hash',
       }),
     ])
   },
