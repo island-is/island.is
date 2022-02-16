@@ -292,6 +292,7 @@ export const CourtRecord: React.FC = () => {
             }
             textarea
             rows={7}
+            autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
         <Box component="section" marginBottom={8}>
@@ -365,6 +366,7 @@ export const CourtRecord: React.FC = () => {
             }
             textarea
             rows={16}
+            autoExpand={{ on: true, maxHeight: 600 }}
           />
         </Box>
         <Box component="section" marginBottom={8}>
@@ -405,6 +407,7 @@ export const CourtRecord: React.FC = () => {
               hasError={litigationPresentationsErrorMessage !== ''}
               textarea
               rows={16}
+              autoExpand={{ on: true, maxHeight: 600 }}
               required
             />
           </Box>
