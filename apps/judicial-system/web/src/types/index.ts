@@ -89,9 +89,9 @@ interface NationalRegistryPerson {
   name: string
   partner_kennitala: string
   permanent_address: {
-    street: { dative: string; nominative: string }
-    postal_code: number
-    town: { dative: string; nominative: string }
+    street?: { dative: string; nominative: string }
+    postal_code?: number
+    town?: { dative: string; nominative: string }
     country: { code: string; name: { en: string; is: string }; type: string }
     municipality: string
   }

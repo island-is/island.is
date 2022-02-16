@@ -11,10 +11,11 @@ import {
 import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import {
-  FormSettings,
-  useCaseFormHelper,
-} from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import { setAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
+  removeTabsValidateAndSet,
+  setAndSendDateToServer,
+  setAndSendToServer,
+  validateAndSendToServer,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 import { icRequestedHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import type {
@@ -58,21 +59,6 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
 
   const { formatMessage } = useIntl()
 
-  const validations: FormSettings = {
-    requestedCourtDate: {
-      validations: ['empty'],
-    },
-    prosecutor: {
-      validations: ['empty'],
-    },
-  }
-
-  const {
-    setField,
-    validateAndSendToServer,
-    setAndSendToServer,
-  } = useCaseFormHelper(workingCase, setWorkingCase, validations)
-
   return (
     <>
       <FormContentContainer>
@@ -112,7 +98,15 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
                           .prosecutorId)
                 }
                 checked={workingCase.isHeightenedSecurityLevel}
-                onChange={(event) => setAndSendToServer(event.target)}
+                onChange={(event) =>
+                  setAndSendToServer(
+                    'isHeightenedSecurityLevel',
+                    event.target.checked,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }
                 large
                 filled
               />
@@ -156,8 +150,24 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
             label={formatMessage(m.sections.translator.label)}
             placeholder={formatMessage(m.sections.translator.placeholder)}
             value={workingCase.translator || ''}
-            onChange={(event) => setField(event.target)}
-            onBlur={(event) => validateAndSendToServer(event.target)}
+            onChange={(event) =>
+              removeTabsValidateAndSet(
+                'translator',
+                event.target.value,
+                [],
+                workingCase,
+                setWorkingCase,
+              )
+            }
+            onBlur={(event) =>
+              validateAndSendToServer(
+                'traslator',
+                event.target.value,
+                [],
+                workingCase,
+                updateCase,
+              )
+            }
           />
         </Box>
       </FormContentContainer>
