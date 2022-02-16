@@ -13,10 +13,12 @@ import { DraftRegulationCancelModel } from '../draft_regulation_cancel'
 import { Op } from 'sequelize'
 import { DraftRegulationCancelService } from '../draft_regulation_cancel/draft_regulation_cancel.service'
 import { DraftRegulationChangeService } from '../draft_regulation_change/draft_regulation_change.service'
+import { DraftAuthorService } from '../draft_author/draft_author.service'
 import {
   Author,
   DraftingStatus,
   DraftRegulationCancel,
+  DraftRegulationCancelId,
   DraftRegulationChange,
   DraftRegulationChangeId,
   DraftSummary,
@@ -35,6 +37,7 @@ export class DraftRegulationService {
     private readonly draftRegulationModel: typeof DraftRegulationModel,
     private readonly draftRegulationCancelService: DraftRegulationCancelService,
     private readonly draftRegulationChangeService: DraftRegulationChangeService,
+    private readonly draftAuthorService: DraftAuthorService,
     private readonly regulationsService: RegulationsService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
@@ -68,7 +71,6 @@ export class DraftRegulationService {
         for await (const nationalId of draft.authors) {
           try {
             const author = await this.getAuthorInfo(nationalId)
-
             author && authors.push(author)
           } catch (e) {
             // Fallback to nationalId if fetching name fails
@@ -181,7 +183,7 @@ export class DraftRegulationService {
     })
     if (draftRegulation.cancel) {
       impacts.push({
-        id: draftRegulation.cancel.id,
+        id: draftRegulation.cancel.id as DraftRegulationCancelId,
         type: 'repeal',
         date: draftRegulation.cancel.date,
         // About the cancelled reglugerð
@@ -293,20 +295,24 @@ export class DraftRegulationService {
     })
   }
 
-  async getAuthorInfo(kt: string): Promise<Author | null> {
+  async getAuthorInfo(kt: Kennitala): Promise<Author | null> {
     if (kennitala.isCompany(kt)) {
       return null
     }
 
-    const person = await this.nationalRegistryApi.getUser(kt)
+    let author = await this.draftAuthorService.get(kt)
 
-    if (!person) {
-      return null
+    if (!author) {
+      const person = await this.nationalRegistryApi.getUser(kt)
+      if (person) {
+        author = {
+          name: person.Fulltnafn,
+          authorId: kt as Kennitala,
+        }
+        await this.draftAuthorService.create(author)
+      }
     }
 
-    return {
-      name: person.Fulltnafn,
-      authorId: kt as Kennitala,
-    }
+    return author
   }
 }

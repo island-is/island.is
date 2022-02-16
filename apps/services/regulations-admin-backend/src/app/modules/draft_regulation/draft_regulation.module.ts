@@ -9,10 +9,12 @@ import { DraftRegulationChangeModule } from '../draft_regulation_change'
 import { DraftRegulationCancelModule } from '../draft_regulation_cancel'
 import { RegulationsService } from '@island.is/clients/regulations'
 import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
+import { DraftAuthorModule } from '../draft_author'
 
 @Module({
   imports: [
     SequelizeModule.forFeature([DraftRegulationModel]),
+    DraftAuthorModule,
     DraftRegulationChangeModule,
     DraftRegulationCancelModule,
   ],

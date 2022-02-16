@@ -18,14 +18,14 @@ import { RegulationDraftId } from '@island.is/regulations/admin'
   tableName: 'draft_regulation_cancel',
 })
 export class DraftRegulationCancelModel extends Model<DraftRegulationCancelModel> {
-  // @Column({
-  //   type: DataType.UUID,
-  //   primaryKey: true,
-  //   allowNull: false,
-  //   defaultValue: DataType.UUIDV4,
-  // })
-  // @ApiProperty()
-  // id!: string
+  @Column({
+    type: DataType.UUID,
+    primaryKey: true,
+    allowNull: false,
+    defaultValue: DataType.UUIDV4,
+  })
+  @ApiProperty()
+  id!: string
 
   @ForeignKey(() => DraftRegulationModel)
   @Column({
