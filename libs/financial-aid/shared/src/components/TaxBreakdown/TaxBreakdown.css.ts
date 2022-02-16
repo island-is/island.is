@@ -4,7 +4,7 @@ import { theme } from '@island.is/island-ui/theme'
 export const tableContainer = style({
   width: '100%',
   backgroundColor: theme.color.white,
-  border: '1px solid #CCDFFF',
+  border: `1px solid ${theme.color.blue200}`,
 })
 
 globalStyle(`${tableContainer} th, td`, {
@@ -15,7 +15,7 @@ globalStyle(`${tableContainer} th, td`, {
 })
 
 globalStyle(`${tableContainer} tr:first-child`, {
-  boxShadow: 'inset 0px -1px 0px #CCDFFF',
+  boxShadow: `inset 0px -1px 0px ${theme.color.blue200}`,
 })
 
 export const headlineContainer = style({
