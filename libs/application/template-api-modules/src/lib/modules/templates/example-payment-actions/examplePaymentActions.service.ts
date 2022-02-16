@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { getValueViaPath } from '@island.is/application/core'
-import { PaymentCatalogItem } from '@island.is/api/schema'
+import { Item } from '@island.is/clients/payment'
 
 @Injectable()
 export class ExamplePaymentActionsService {
@@ -17,9 +17,10 @@ export class ExamplePaymentActionsService {
     // This is where you'd pick and validate that you are going to create a charge for a
     // particular charge item code. Note that creating these charges creates an actual "krafa"
     // with FJS
-    const chargeItemCode = getValueViaPath<
-      PaymentCatalogItem['chargeItemCode']
-    >(answers, 'userSelectedChargeItemCode')
+    const chargeItemCode = getValueViaPath<Item['chargeItemCode']>(
+      answers,
+      'userSelectedChargeItemCode',
+    )
 
     if (!chargeItemCode) {
       throw new Error('No selected charge item code')
