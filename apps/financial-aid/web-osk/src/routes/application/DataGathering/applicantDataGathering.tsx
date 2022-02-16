@@ -96,17 +96,16 @@ const ApplicantDataGathering = () => {
       return
     }
 
-    updateForm({
-      ...form,
-      taxReturnFromRskFile: [
-        personalTaxReturn
-          ? {
-              ...personalTaxReturn.municipalitiesPersonalTaxReturn,
-              type: FileType.TAXRETURN,
-            }
-          : undefined,
-      ],
-    })
+    if (personalTaxReturn) {
+      updateForm({
+        ...form,
+        taxReturnFromRskFile: [
+          {
+            ...personalTaxReturn.municipalitiesPersonalTaxReturn,
+          },
+        ],
+      })
+    }
 
     setNationalRegistryData(nationalRegistry.municipalityNationalRegistryUserV2)
 
