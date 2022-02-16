@@ -1,4 +1,4 @@
-import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
+import { Case, CaseState } from '@island.is/judicial-system/types'
 import {
   makeCustodyCase,
   makeCourt,
@@ -8,17 +8,8 @@ import { intercept } from '../../../utils'
 
 describe('/domur/krafa/fyrirtokutimi/:id', () => {
   beforeEach(() => {
-    const caseData = makeCustodyCase()
-    const caseDataAddition: Case = {
-      ...caseData,
-      court: makeCourt(),
-      requestedCourtDate: '2020-09-16T19:50:08.033Z',
-      state: CaseState.RECEIVED,
-    }
-
     cy.stubAPIResponses()
-
-    intercept(caseDataAddition)
+    cy.visit('/domur/fyrirtokutimi/test_id_stadfest')
   })
 
   it('should display case comments', () => {
@@ -29,7 +20,6 @@ describe('/domur/krafa/fyrirtokutimi/:id', () => {
       comments: comment,
     }
 
-    cy.visit('/domur/fyrirtokutimi/test_id_stadfest')
     intercept(caseDataAddition)
 
     cy.contains(comment)
@@ -44,7 +34,6 @@ describe('/domur/krafa/fyrirtokutimi/:id', () => {
       state: CaseState.RECEIVED,
     }
 
-    cy.visit('/domur/fyrirtokutimi/test_id_stadfest')
     intercept(caseDataAddition)
 
     cy.getByTestid('select-judge').click()
@@ -65,7 +54,6 @@ describe('/domur/krafa/fyrirtokutimi/:id', () => {
       state: CaseState.RECEIVED,
     }
 
-    cy.visit('/domur/fyrirtokutimi/test_id_stadfest')
     intercept(caseDataAddition)
 
     cy.getByTestid('continueButton').should('be.disabled')
