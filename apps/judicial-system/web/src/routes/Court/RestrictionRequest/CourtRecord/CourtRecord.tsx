@@ -312,7 +312,6 @@ export const CourtRecord: React.FC = () => {
             workingCase={workingCase}
           />
         </Box>
-
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">

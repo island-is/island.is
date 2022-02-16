@@ -1,12 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 
-import { NationalRegistryResponse } from '@island.is/judicial-system-web/src/types'
+import { NationalRegistryResponseBusiness } from '@island.is/judicial-system-web/src/types'
 
-async function getByNationalId(
+async function getBusinessesByNationalId(
   nationalId: string,
-): Promise<NationalRegistryResponse> {
+): Promise<NationalRegistryResponseBusiness> {
   const response = await fetch(
-    `https://api.ja.is/skra/v1/people?kennitala=${nationalId}`,
+    `https://api.ja.is/skra/v1/businesses?kennitala=${nationalId}`,
     {
       headers: {
         Authorization: process.env.NATIONAL_REGISTRY_API_KEY || '',
@@ -22,6 +22,7 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   const nationalId = (req.query.nationalId as string).replace('-', '')
-  const people = await getByNationalId(nationalId)
-  res.status(200).json(people)
+
+  const businesses = await getBusinessesByNationalId(nationalId)
+  res.status(200).json(businesses)
 }
