@@ -75,10 +75,10 @@ const DefendantInfo: React.FC<Props> = (props) => {
   ] = useState<string>('')
 
   const [
-    shouldShowGenderAndCitizenship,
-    setShouldShowGenderAndCitizenship,
+    isGenderAndCitizenshipDisabled,
+    setIsGenderAndCitizenshipDisabled,
   ] = useState<boolean>(
-    !!defendant.nationalId && !isBusiness(defendant.nationalId),
+    !!defendant.nationalId && isBusiness(defendant.nationalId),
   )
 
   const mapNationalRegistryGenderToGender = (gender: string) => {
@@ -99,7 +99,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
       setAccusedNameErrorMessage('')
       setAccusedAddressErrorMessage('')
       setNationalIdErrorMessage('')
-      setShouldShowGenderAndCitizenship(true)
+      setIsGenderAndCitizenshipDisabled(false)
 
       onChange(defendant.id, {
         name: personData.items[0].name,
@@ -119,7 +119,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
       setAccusedNameErrorMessage('')
       setAccusedAddressErrorMessage('')
       setNationalIdErrorMessage('')
-      setShouldShowGenderAndCitizenship(false)
+      setIsGenderAndCitizenshipDisabled(true)
 
       onChange(defendant.id, {
         name: businessData.items[0].full_name,
@@ -292,47 +292,46 @@ const DefendantInfo: React.FC<Props> = (props) => {
           required
         />
       </Box>
-      {shouldShowGenderAndCitizenship && (
-        <GridContainer>
-          <GridRow>
-            <GridColumn span="6/12">
-              <Select
-                name="defendantGender"
-                placeholder={formatMessage(core.selectGender)}
-                options={genderOptions}
-                label={formatMessage(core.gender)}
-                value={genderOptions.find(
-                  (option) => option.value === defendant.gender,
-                )}
-                onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-                  onChange(defendant.id, {
-                    gender: (selectedOption as ReactSelectOption)
-                      .value as Gender,
-                  })
-                }
-                required
-              />
-            </GridColumn>
-            <GridColumn span="6/12">
-              <Input
-                name="defendantCitizenship"
-                autoComplete="off"
-                label={formatMessage(core.citizenship)}
-                placeholder={formatMessage(core.selectCitizenship)}
-                value={defendant.citizenship ?? ''}
-                onChange={(evt) => {
-                  updateDefendantState(defendant.id, {
-                    citizenship: evt.target.value,
-                  })
-                }}
-                onBlur={(evt) => {
-                  onChange(defendant.id, { citizenship: evt.target.value })
-                }}
-              />
-            </GridColumn>
-          </GridRow>
-        </GridContainer>
-      )}
+      <GridContainer>
+        <GridRow>
+          <GridColumn span="6/12">
+            <Select
+              name="defendantGender"
+              placeholder={formatMessage(core.selectGender)}
+              options={genderOptions}
+              label={formatMessage(core.gender)}
+              value={genderOptions.find(
+                (option) => option.value === defendant.gender,
+              )}
+              onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+                onChange(defendant.id, {
+                  gender: (selectedOption as ReactSelectOption).value as Gender,
+                })
+              }
+              disabled={isGenderAndCitizenshipDisabled}
+              required
+            />
+          </GridColumn>
+          <GridColumn span="6/12">
+            <Input
+              name="defendantCitizenship"
+              autoComplete="off"
+              label={formatMessage(core.citizenship)}
+              placeholder={formatMessage(core.selectCitizenship)}
+              value={defendant.citizenship ?? ''}
+              onChange={(evt) => {
+                updateDefendantState(defendant.id, {
+                  citizenship: evt.target.value,
+                })
+              }}
+              onBlur={(evt) => {
+                onChange(defendant.id, { citizenship: evt.target.value })
+              }}
+              disabled={isGenderAndCitizenshipDisabled}
+            />
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
     </BlueBox>
   )
 }

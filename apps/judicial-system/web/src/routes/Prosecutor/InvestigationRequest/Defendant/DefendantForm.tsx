@@ -117,11 +117,12 @@ const DefendantForm: React.FC<Props> = (props) => {
         defendants: [
           ...workingCase.defendants,
           {
+            id: defendantId || uuid(),
             gender: undefined,
             name: '',
             nationalId: '',
             address: '',
-            id: defendantId || uuid(),
+            citizenship: '',
           } as Defendant,
         ],
       })
