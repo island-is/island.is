@@ -1,1 +1,1 @@
-export { PaymentPending } from './PaymentPending'
+export { PaymentPendingScreen } from './PaymentPendingScreen'

@@ -68,32 +68,3 @@ export const step = defineMessages({
     description: 'Title for confirm step',
   },
 })
-
-export const paymentScreen = defineMessages({
-  submitTitle: {
-    id: 'ep.application:paymentScreen.submitTitle',
-    defaultMessage: 'Sending umsóknar mistókst',
-    description: '',
-  },
-  submitMessage: {
-    id: 'ep.application:paymentScreen.submitMessage',
-    defaultMessage:
-      'Villa kom upp við að senda umsóknina. Vinsamlegast reyndu aftur.',
-    description: '',
-  },
-  submitRetryButtonCaption: {
-    id: 'ep.application:paymentScreen.retryCaption',
-    defaultMessage: 'Reyna aftur',
-    description: '',
-  },
-  statusTitle: {
-    id: 'ep.application:paymentScreen.statusTitle',
-    defaultMessage: 'Tókst ekki að sækja stöðu greiðslu',
-    description: '',
-  },
-  pollingMessage: {
-    id: 'ep.application:paymentScreen.pollingMessage',
-    defaultMessage: 'Bíð staðfestingar frá greiðsluveitu',
-    description: '',
-  },
-})
