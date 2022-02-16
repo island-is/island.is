@@ -159,7 +159,7 @@ export const m = defineMessages({
   },
   contactInfo: {
     id: 'service.portal:contact-info',
-    defaultMessage: 'Tengiliða upplýsingar',
+    defaultMessage: 'Tengiliðaupplýsingar',
   },
   website: {
     id: 'service.portal:website',
@@ -187,7 +187,7 @@ export const m = defineMessages({
   },
   somethingWrong: {
     id: 'service.portal:something-went-wrong',
-    defaultMessage: 'eitthvað fór úrskeiðis',
+    defaultMessage: 'Eitthvað fór úrskeiðis',
   },
   fetching: {
     id: 'service.portal:fetching',
@@ -211,15 +211,15 @@ export const m = defineMessages({
   },
   maleGreeting: {
     id: 'service.portal:welcome-male',
-    defaultMessage: 'Velkominn á mínar síður á island.is',
+    defaultMessage: 'Velkominn á mínar síður á Ísland.is',
   },
   femaleGreeting: {
     id: 'service.portal:welcome-female',
-    defaultMessage: 'Velkomin á mínar síður á island.is',
+    defaultMessage: 'Velkomin á mínar síður á Ísland.is',
   },
   nonBinaryGreeting: {
     id: 'service.portal:welcome-nonbinary',
-    defaultMessage: 'Velkomið á mínar síður á island.is',
+    defaultMessage: 'Velkomið á mínar síður á Ísland.is',
   },
   eveningGreeting: {
     defaultMessage: 'Góða kvöldið,',
@@ -233,7 +233,7 @@ export const m = defineMessages({
   },
   greetingIntro: {
     defaultMessage:
-      'Síðan er í þróun með þarfir notanda að leiðarljósi. Ef þú finnur ekki þá þjónustu sem var á eldri Mínum síðum getur þú fundið þær upplýsingar á Eldri útgáfa.',
+      'Síðan er í þróun með þarfir notanda að leiðarljósi. Ef þú finnur ekki þá þjónustu sem var á eldri Mínum síðum getur þú fundið þær upplýsingar á eldri útgáfu.',
     id: 'service.portal:greeting-intro',
   },
   olderVersion: {
@@ -268,7 +268,7 @@ export const m = defineMessages({
   },
   goToIslandIs: {
     id: 'service.portal:go-to-island-is',
-    defaultMessage: 'Fara á ytrivef island.is',
+    defaultMessage: 'Fara á ytrivef Ísland.is',
   },
   incomingServicesFooterMobile: {
     id: 'service.portal:incoming-services-footer-mobile',
@@ -384,7 +384,7 @@ export const m = defineMessages({
   },
   financeBills: {
     id: 'service.portal:finance-bills',
-    defaultMessage: 'Greiðsluseðlar og Greiðslukvittanir',
+    defaultMessage: 'Greiðsluseðlar og -kvittanir',
   },
   financeEmployeeClaims: {
     id: 'service.portal:finance-employee-claims',
@@ -634,5 +634,17 @@ export const m = defineMessages({
   altText: {
     id: 'service.portal:alt-text',
     defaultMessage: 'Skrautmynd fyrir',
+  },
+  startPage: {
+    id: 'service.portal:start-page',
+    defaultMessage: 'upphafssíðu',
+  },
+  licenseNavTitle: {
+    id: 'service.portal:license-title',
+    defaultMessage: 'Skírteini',
+  },
+  yourLicenses: {
+    id: 'service.portal:your-licenses',
+    defaultMessage: 'Þín skírteini',
   },
 })

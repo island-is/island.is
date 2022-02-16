@@ -66,7 +66,7 @@ export const FamilyMemberCard: FC<Props> = ({
         familyRelation === undefined
           ? undefined
           : {
-              label: familyRelationLabel.defaultMessage,
+              label: formatMessage(familyRelationLabel),
               variant: 'purple',
             }
       }
