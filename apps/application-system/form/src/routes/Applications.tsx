@@ -1,12 +1,10 @@
 import React, { FC, useEffect, useState } from 'react'
-import { useMutation, useQuery } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import { useParams, useHistory } from 'react-router-dom'
-import { useAuth } from '@island.is/auth/react'
 import isEmpty from 'lodash/isEmpty'
 import {
   CREATE_APPLICATION,
   APPLICATION_APPLICATIONS,
-  ACTOR_DELEGATIONS,
 } from '@island.is/application/graphql'
 import {
   Text,
@@ -23,60 +21,16 @@ import {
   useLocale,
   useLocalizedQuery,
 } from '@island.is/localization'
-import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 
 import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
-
-type Delegation = {
-  type: string
-  from: {
-    nationalId: string
-    name: string
-  }
-}
+import {DelegationsScreen} from '../components/DelegationsScreen/DelegationsScreen'
 
 export const Applications: FC = () => {
   const { slug } = useParams<{ slug: string }>()
   const history = useHistory()
   const { formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)
-  const [allowedDelegations, setAllowedDelegations] = useState<string[]>()
-  // const [actorDelegations, setActorDelegations] = useState<Delegation[]>()
-
-  const {  switchUser } = useAuth()
-
-  // Check if template supports delegations
-  useEffect(() => {
-    async function checkDelegations() {
-      if (type) {
-        const template = await getApplicationTemplateByTypeId(type)
-        if (template.allowedDelegations) {
-          setAllowedDelegations(template.allowedDelegations)
-        }
-      }
-    }
-    checkDelegations()
-  }, [type])
-
-  // Only check if user has delegations if the template supports delegations
-  const {
-    data: delegations,
-    error: delegationError,
-  } = useQuery(ACTOR_DELEGATIONS, { skip: !allowedDelegations })
-
-  // Check if user has the delegations of the delegation types the application supports
-  // useEffect(() => {
-  //   if (delegations && allowedDelegations && !actorDelegations) {
-  //     console.log(allowedDelegations)
-  //     console.log(delegations.authActorDelegations)
-  //     const del: Delegation[] = delegations.authActorDelegations.filter(
-  //       (delegation: Delegation) =>
-  //         allowedDelegations.includes(delegation.type),
-  //     )
-  //     setActorDelegations(del)
-  //     console.log('actor del', actorDelegations, typeof del, del)
-  //   }
-  // }, [delegations, allowedDelegations])
+  const [delegationsChecked, setDelegationsChecked] = useState(false)
 
   useApplicationNamespaces(type)
 
@@ -141,37 +95,9 @@ export const Applications: FC = () => {
     )
   }
 
-  if (delegations && allowedDelegations) {
-    return (
-      <Page>
-        <GridContainer>
-          <Box>
-            <Box marginTop={5} marginBottom={5}>
-              <Text variant="h1">Þessi umsókn styður umboð.</Text>
-            </Box>
-            {delegations.authActorDelegations.map((delegation: Delegation) => {
-              if (allowedDelegations.includes(delegation.type)) {
-                return (
-                  <Box
-                    marginTop={5}
-                    marginBottom={5}
-                    display="flex"
-                    justifyContent="flexEnd"
-                    key={delegation.from.nationalId}
-                  >
-                    <Text variant="h1">{delegation.from.name}</Text>
-                    <Button onClick={() =>switchUser(delegation.from.nationalId)}>
-                      {formatMessage(coreMessages.newApplication)}
-                    </Button>
-                  </Box>
-                )
-              }
-            })}
-          </Box>
-        </GridContainer>
-      </Page>
-    )
-  }
+  // if (delegationsChecked && type) {
+  //   return <DelegationsScreen type={type} checked={setDelegationsChecked}/>
+  // }
 
   return (
     <Page>
