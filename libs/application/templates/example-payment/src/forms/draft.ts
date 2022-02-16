@@ -26,24 +26,18 @@ export const draft: Form = buildForm({
   children: [
     buildSection({
       id: 'externalData',
-      title: m.draft.externalDataTitle,
+      title: m.step.externalDataTitle,
       children: [
-        buildSubSection({
-          id: 'externalData',
+        buildExternalDataProvider({
           title: m.draft.externalDataTitle,
-          children: [
-            buildExternalDataProvider({
-              title: m.draft.externalDataTitle,
-              id: 'approveExternalData',
-              subTitle: m.draft.externalDataTitle,
-              checkboxLabel: m.draft.externalDataTitle,
-              dataProviders: [
-                buildDataProviderItem({
-                  id: 'feeInfo',
-                  type: 'FeeInfoProvider',
-                  title: m.draft.feeInfo,
-                }),
-              ],
+          id: 'approveExternalData',
+          subTitle: m.draft.externalDataTitle,
+          checkboxLabel: m.draft.externalDataTitle,
+          dataProviders: [
+            buildDataProviderItem({
+              id: 'feeInfo',
+              type: 'FeeInfoProvider',
+              title: m.draft.feeInfo,
             }),
           ],
         }),
@@ -51,36 +45,30 @@ export const draft: Form = buildForm({
     }),
     buildSection({
       id: 'info',
-      title: m.draft.informationTitle,
+      title: m.step.info,
       children: [
-        buildSubSection({
-          id: 'infoStep',
+        buildMultiField({
+          id: 'info',
           title: m.draft.informationTitle,
+          space: 1,
           children: [
-            buildMultiField({
-              id: 'info',
-              title: m.draft.informationTitle,
-              space: 1,
-              children: [
-                buildSubmitField({
-                  id: 'submit',
-                  placement: 'footer',
-                  title: m.m.payUp,
-                  refetchApplicationAfterSubmit: true,
-                  actions: [
-                    {
-                      event: DefaultEvents.PAYMENT,
-                      name: m.m.payUp,
-                      type: 'primary',
-                    },
-                  ],
-                }),
-                buildRadioField({
-                  id: 'userSelectedChargeItemCode',
-                  title: m.draft.selectFieldTitle,
-                  options: chargeItemCodeRadioOptions,
-                }),
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: m.m.payUp,
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: DefaultEvents.PAYMENT,
+                  name: m.m.payUp,
+                  type: 'primary',
+                },
               ],
+            }),
+            buildRadioField({
+              id: 'userSelectedChargeItemCode',
+              title: m.draft.selectFieldTitle,
+              options: chargeItemCodeRadioOptions,
             }),
           ],
         }),
