@@ -15,27 +15,6 @@ const baseBranch = 'main'
 const headBranch = 'fix'
 type Component = 'a' | 'b' | 'c' | 'd' | 'e'
 
-async function calculateDistance(
-  git: SimpleGit,
-  currentSha: string,
-  p: DefaultLogFields & ListLogLine,
-): Promise<string[]> {
-  const diffNames = await git.diff({
-    '--name-status': null,
-    [currentSha]: null,
-    [p.hash]: null,
-  })
-  return [
-    // @ts-ignore
-    ...new Set(
-      diffNames
-        .split('\n')
-        .map((l) => l.replace('D\t', '').trim().split('/')[0])
-        .filter((s) => s.length > 0),
-    ),
-  ]
-}
-
 describe('Change detection', () => {
   jest.setTimeout(60000)
   let git: SimpleGit
@@ -199,6 +178,27 @@ describe('Change detection', () => {
     it.todo('PR workflow uses PR workflow when available')
   })
 })
+
+async function calculateDistance(
+  git: SimpleGit,
+  currentSha: string,
+  p: DefaultLogFields & ListLogLine,
+): Promise<string[]> {
+  const diffNames = await git.diff({
+    '--name-status': null,
+    [currentSha]: null,
+    [p.hash]: null,
+  })
+  return [
+    // @ts-ignore
+    ...new Set(
+      diffNames
+        .split('\n')
+        .map((l) => l.replace('D\t', '').trim().split('/')[0])
+        .filter((s) => s.length > 0),
+    ),
+  ]
+}
 
 const mkdirAsync = promisify(mkdir)
 
