@@ -7,9 +7,13 @@ import { CmsTranslationsModule } from '@island.is/cms-translations'
 
 import { environment } from '../../../environments'
 import { DefendantModule } from '../defendant/defendant.module'
-import { UserModule, FileModule, CourtModule } from '../index'
-import { AwsS3Module } from '../aws-s3'
-import { EventModule } from '../event'
+import {
+  UserModule,
+  FileModule,
+  CourtModule,
+  AwsS3Module,
+  EventModule,
+} from '../index'
 import { Case } from './models'
 import { CaseController } from './case.controller'
 import { CaseService } from './case.service'
@@ -18,13 +22,13 @@ import { CaseService } from './case.service'
   imports: [
     SigningModule.register(environment.signingOptions),
     EmailModule.register(environment.emailOptions),
+    CmsTranslationsModule,
     forwardRef(() => DefendantModule),
     forwardRef(() => UserModule),
     forwardRef(() => FileModule),
     forwardRef(() => CourtModule),
-    AwsS3Module,
-    EventModule,
-    CmsTranslationsModule,
+    forwardRef(() => AwsS3Module),
+    forwardRef(() => EventModule),
     SequelizeModule.forFeature([Case]),
   ],
   providers: [CaseService],

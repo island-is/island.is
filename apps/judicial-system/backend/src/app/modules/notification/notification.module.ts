@@ -6,9 +6,8 @@ import { EmailModule } from '@island.is/email-service'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 
 import { environment } from '../../../environments'
-import { UserModule, CourtModule } from '../index'
+import { UserModule, CourtModule, EventModule } from '../index'
 import { CaseModule } from '../case'
-import { EventModule } from '../event'
 import { Notification } from './models'
 import { NotificationService } from './notification.service'
 import { NotificationController } from './notification.controller'
@@ -17,12 +16,12 @@ import { NotificationController } from './notification.controller'
   imports: [
     EmailModule.register(environment.emailOptions),
     SmsModule.register(environment.smsOptions),
+    CmsTranslationsModule,
     forwardRef(() => CaseModule),
     forwardRef(() => UserModule),
     forwardRef(() => CourtModule),
+    forwardRef(() => EventModule),
     SequelizeModule.forFeature([Notification]),
-    CmsTranslationsModule,
-    EventModule,
   ],
   controllers: [NotificationController],
   providers: [NotificationService],

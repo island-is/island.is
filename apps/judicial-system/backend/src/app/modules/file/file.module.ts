@@ -1,8 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { CourtModule } from '../index'
-import { AwsS3Module } from '../aws-s3'
+import { CourtModule, AwsS3Module } from '../index'
 import { CaseModule } from '../case'
 import { CaseFile } from './models'
 import { FileService } from './file.service'
@@ -12,7 +11,7 @@ import { FileController } from './file.controller'
   imports: [
     forwardRef(() => CaseModule),
     forwardRef(() => CourtModule),
-    AwsS3Module,
+    forwardRef(() => AwsS3Module),
     SequelizeModule.forFeature([CaseFile]),
   ],
   controllers: [FileController],
