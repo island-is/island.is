@@ -202,16 +202,13 @@ export const setAndSendToServer = (
   setCase: (value: React.SetStateAction<Case>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
-  let stringValue = ''
-
   setCase({
     ...theCase,
     [field]: value,
   })
   if (theCase.id !== '') {
     if (typeof value === 'string') {
-      stringValue = value
-      return updateCase(theCase.id, parseString(field, stringValue))
+      return updateCase(theCase.id, parseString(field, value))
     } else if (typeof value === 'boolean') {
       return updateCase(theCase.id, parseBoolean(field, value))
     } else {
