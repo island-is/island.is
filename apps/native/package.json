@@ -13,6 +13,8 @@
     "detox:test:ios": "yarn detox:test -c ios"
   },
   "dependencies": {
+    "@datadog/mobile-react-native": "1.0.0-rc4",
+    "@datadog/mobile-react-native-navigation": "1.0.0-rc4",
     "@fidm/x509": "1.2.1",
     "@formatjs/intl-datetimeformat": "4.2.4",
     "@formatjs/intl-getcanonicallocales": "1.7.3",

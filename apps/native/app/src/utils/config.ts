@@ -10,6 +10,7 @@ export interface Config {
   }
   apiEndpoint: string
   bundleId: string
+  datadogClientToken: string
   sentryDsn: string
   constants: any
   env: typeof env
@@ -48,6 +49,7 @@ export const config: Config = {
       ios: env.BUNDLE_ID_IOS,
       android: env.BUNDLE_ID_ANDROID,
     }) || 'is.island.app',
+  datadogClientToken: env.DATADOG_CLIENT_TOKEN,
   sentryDsn: env.SENTRY_DSN,
   constants: ConstantsRest,
   env,

@@ -1302,6 +1302,16 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
+"@datadog/mobile-react-native-navigation@1.0.0-rc4":
+  version "1.0.0-rc4"
+  resolved "https://registry.yarnpkg.com/@datadog/mobile-react-native-navigation/-/mobile-react-native-navigation-1.0.0-rc4.tgz#09bb58b0d6df6057fccc2e501450ff73c1886994"
+  integrity sha512-zXV3KD1bFyYwYQ3P+BYuG31jAQGjw6iMbhLQbuy+csu7kM4XejAY90Ft3/wOeo5eCbkEipO/KNBzmAUtY0isnw==
+
+"@datadog/mobile-react-native@1.0.0-rc4":
+  version "1.0.0-rc4"
+  resolved "https://registry.yarnpkg.com/@datadog/mobile-react-native/-/mobile-react-native-1.0.0-rc4.tgz#a3adbb7307073429a8bc8feddcd987e382618f9c"
+  integrity sha512-EMQ+cTFBHuVbb4SWkTkveBevWrBYClQddr+JL/MW5ZqKTPOQk5QANOPaeONLY69znX03j+EeRIk/YgxxZPJ02A==
+
 "@emotion/is-prop-valid@^0.8.8":
   version "0.8.8"
   resolved "https://registry.yarnpkg.com/@emotion/is-prop-valid/-/is-prop-valid-0.8.8.tgz#db28b1c4368a259b60a97311d6a952d4fd01ac1a"

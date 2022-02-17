@@ -38,11 +38,24 @@ import '@formatjs/intl-relativetimeformat/locale-data/is'
 import { setupQuickActions } from '../quick-actions'
 import { ReactNativeNavigationInstrumentation } from '../../lib/react-native-navigation-instrumentation';
 import { Navigation } from 'react-native-navigation'
+import { DdSdkReactNative, DdSdkReactNativeConfiguration } from '@datadog/mobile-react-native';
 
 if (__DEV__) {
   perf().setPerformanceCollectionEnabled(false)
   require('../devtools/index')
 } else {
+
+  // initialize datadog rum
+  const ddconfig = new DdSdkReactNativeConfiguration(
+    config.datadogClientToken,
+    "<ENVIRONMENT_NAME>",
+    "2736367a-a841-492d-adef-6f5a509d6ec2",
+    true, // track User interactions (e.g.: Tap on buttons. You can use 'accessibilityLabel' element property to give tap action the name, otherwise element type will be reported)
+    true, // track XHR Resources
+    true // track Errors
+)
+  DdSdkReactNative.initialize(ddconfig)
+
   const instrumentation = new ReactNativeNavigationInstrumentation(Navigation);
 
   // initialize sentry
