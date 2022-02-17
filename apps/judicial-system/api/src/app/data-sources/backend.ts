@@ -35,10 +35,10 @@ import type {
   DeleteDefendantResponse,
 } from '@island.is/judicial-system/types'
 
-import { environment } from '../environments'
+import { environment } from '../../environments'
 
 @Injectable()
-class BackendAPI extends DataSource<{ req: Request }> {
+export class BackendAPI extends DataSource<{ req: Request }> {
   private headers!: { [key: string]: string }
 
   initialize(config: DataSourceConfig<{ req: Request }>): void {
