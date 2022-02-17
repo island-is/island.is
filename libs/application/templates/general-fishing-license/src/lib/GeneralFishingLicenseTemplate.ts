@@ -8,25 +8,15 @@ import {
   ApplicationTypes,
   DefaultEvents,
 } from '@island.is/application/core'
-import { States } from '../constants'
+import { Events, States, Roles } from '../constants'
 import { GeneralFishingLicenseSchema } from './dataSchema'
 import { application } from './messages'
 import { ApiActions } from '../shared'
 
-enum Roles {
-  APPLICANT = 'applicant',
-}
-
-type GeneralFishingLicenseEvent =
-  | { type: DefaultEvents.SUBMIT }
-  | { type: DefaultEvents.ABORT }
-  | { type: DefaultEvents.PAYMENT }
-  | { type: DefaultEvents.REJECT }
-
 const GeneralFishingLicenseTemplate: ApplicationTemplate<
   ApplicationContext,
-  ApplicationStateSchema<GeneralFishingLicenseEvent>,
-  GeneralFishingLicenseEvent
+  ApplicationStateSchema<Events>,
+  Events
 > = {
   type: ApplicationTypes.GENERAL_FISHING_LICENSE,
   name: application.general.name,
@@ -57,9 +47,14 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
                   Promise.resolve(val.GeneralFishingLicenseForm),
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                {
+                  event: DefaultEvents.PAYMENT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
               ],
               write: 'all',
+              read: 'all',
             },
           ],
         },
@@ -129,6 +124,7 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
                 ).then((val) =>
                   Promise.resolve(val.GeneralFishingLicenseSubmittedForm),
                 ),
+              read: 'all',
             },
           ],
         },

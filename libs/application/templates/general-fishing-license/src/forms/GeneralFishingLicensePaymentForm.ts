@@ -5,7 +5,15 @@ import {
   FormModes,
   buildCustomField,
 } from '@island.is/application/core'
-import { payment } from '../lib/messages'
+import {
+  applicantInformation,
+  conclusion,
+  externalData,
+  fishingLicense,
+  overview,
+  payment,
+  shipSelection,
+} from '../lib/messages'
 
 export const GeneralFishingLicensePaymentForm: Form = buildForm({
   id: 'GeneralFishingLicensePaymentForm',
@@ -13,6 +21,31 @@ export const GeneralFishingLicensePaymentForm: Form = buildForm({
   mode: FormModes.APPLYING,
   renderLastScreenButton: false,
   children: [
+    buildSection({
+      id: 'ExternalDataSection',
+      title: externalData.dataProvider.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'applicantInformationSection',
+      title: applicantInformation.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'shipSelectionSection',
+      title: shipSelection.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'fishingLicenseSection',
+      title: fishingLicense.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'overviewSection',
+      title: overview.general.sectionTitle,
+      children: [],
+    }),
     buildSection({
       id: 'awaitingPayment',
       title: payment.general.sectionTitle,
@@ -23,6 +56,11 @@ export const GeneralFishingLicensePaymentForm: Form = buildForm({
           title: '',
         }),
       ],
+    }),
+    buildSection({
+      id: 'conclusionSection',
+      title: conclusion.general.sectionTitle,
+      children: [],
     }),
   ],
 })

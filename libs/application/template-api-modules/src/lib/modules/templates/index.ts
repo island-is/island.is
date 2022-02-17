@@ -14,6 +14,7 @@ import { CriminalRecordSubmissionModule } from './criminal-record-submission/cri
 import { GeneralFishingLicenseModule } from './general-fishing-license/general-fishing-license.module'
 import { DataProtectionComplaintModule } from './data-protection-complaint/data-protection-complaint.module'
 import { PSignSubmissionModule } from './p-sign-submission/p-sign-submission.module'
+import { ExamplePaymentActionsModule } from './example-payment-actions/examplePaymentActions.module'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -32,6 +33,7 @@ export const modules = [
   GeneralFishingLicenseModule,
   DataProtectionComplaintModule,
   PSignSubmissionModule,
+  ExamplePaymentActionsModule,
 ]
 
 export { ReferenceTemplateService } from './reference-template/reference-template.service'
@@ -50,3 +52,4 @@ export { CriminalRecordSubmissionService } from './criminal-record-submission/cr
 export { GeneralFishingLicenseService } from './general-fishing-license/general-fishing-license.service'
 export { DataProtectionComplaintService } from './data-protection-complaint/data-protection-complaint.service'
 export { PSignSubmissionService } from './p-sign-submission/p-sign-submission.service'
+export { ExamplePaymentActionsService } from './example-payment-actions/examplePaymentActions.service'

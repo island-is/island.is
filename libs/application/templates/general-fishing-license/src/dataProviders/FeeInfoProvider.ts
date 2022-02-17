@@ -4,6 +4,7 @@ import {
   FailedDataProviderResult,
 } from '@island.is/application/core'
 import { PaymentCatalogProvider } from '@island.is/application/data-providers'
+import { error } from '../lib/messages'
 
 const FISKISTOFA_NATIONAL_ID = '6608922069'
 
@@ -22,7 +23,7 @@ export class FeeInfoProvider extends PaymentCatalogProvider {
   onProvideError(result: string): FailedDataProviderResult {
     return {
       date: new Date(),
-      reason: 'reason',
+      reason: error.feeProviderError,
       status: 'failure',
       data: result,
     }

@@ -24,7 +24,7 @@ export const overviewSection = buildSection({
           component: 'Overview',
         }),
         buildSubmitField({
-          id: 'overview.submit',
+          id: 'submit',
           title: '',
           refetchApplicationAfterSubmit: true,
           actions: [
