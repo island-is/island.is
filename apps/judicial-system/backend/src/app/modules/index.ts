@@ -1,4 +1,4 @@
-export { CaseModule } from './case'
+export { CaseModule } from './case/case.module'
 export { DefendantModule } from './defendant/defendant.module'
 export { UserModule } from './user/user.module'
 export { InstitutionModule } from './institution/institution.module'
