@@ -10,18 +10,19 @@ const today = new Date()
 
 export type ImpactDateProps = {
   impact: DraftImpactForm
+  size?: 'full' | 'half'
   onChange: (newValue: Date | undefined) => void
 }
 
 export const ImpactDate = (props: ImpactDateProps) => {
-  const { impact, onChange } = props
+  const { impact, onChange, size = 'half' } = props
 
   const date = impact.date
 
   const t = useLocale().formatMessage
 
   return (
-    <Box marginBottom={4} width="half">
+    <Box marginBottom={4} width={size}>
       <DatePicker
         size="sm"
         locale="is"

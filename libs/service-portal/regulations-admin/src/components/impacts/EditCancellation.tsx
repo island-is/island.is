@@ -1,10 +1,21 @@
 import * as s from './Impacts.css'
 import { useMutation, gql } from '@apollo/client'
-import { Text, Box, Button, ModalBase } from '@island.is/island-ui/core'
+import {
+  Text,
+  Box,
+  Button,
+  ModalBase,
+  Tag,
+  GridContainer,
+  GridColumn,
+  GridRow,
+  Divider,
+} from '@island.is/island-ui/core'
 import React, { useState } from 'react'
 import { DraftCancelForm, RegDraftForm } from '../../state/types'
 // import { useDraftingState } from '../../state/useDraftingState'
 import { ImpactDate } from './ImpactDate'
+import { ModalHeader } from './ModalHeader'
 import { nameToSlug, RegName, toISODate } from '@island.is/regulations'
 
 type EditCancellationProp = {
@@ -110,37 +121,135 @@ export const EditCancellation = (props: EditCancellationProp) => {
       hideOnEsc={false} // FIXME: setting this to true disables re-opening the modal
       removeOnClose
     >
-      <Box padding={4}>
-        <Text variant="h3" as="h3" marginBottom={[2, 2, 3, 4]}>
-          Fella brott {cancellation.name}
-        </Text>
-        <Button variant="text">
-          <a
-            href={
-              'https://island.is/reglugerdir/nr/' +
-              nameToSlug(cancellation.name as RegName)
-            }
-            target="_blank"
-            rel="noreferrer"
-          >
-            Skoða breytingasögu reglugerðar
-          </a>
-        </Button>
-        <ImpactDate
-          impact={cancellation}
-          onChange={(newDate) => changeCancelDate(newDate)}
-        />
-        <Button onClick={() => closeModal()} variant="text">
-          Til baka
-        </Button>
-        <Button onClick={saveCancellation} variant="text">
-          Vista brottfellingu
-        </Button>
+      <Box padding={[3, 3, 3, 6]}>
+        <ModalHeader closeModal={closeModal} />
+        <GridContainer>
+          <GridRow>
+            <GridColumn
+              span={['12/12', '12/12', '12/12', '6/12']}
+              offset={['0', '0', '0', '2/12']}
+            >
+              <Box paddingY={4}>
+                <Box
+                  display="flex"
+                  flexDirection="row"
+                  alignItems="center"
+                  marginBottom={3}
+                >
+                  <Box marginRight={2}>
+                    <Tag>Brottfelling reglugerðar</Tag>
+                  </Box>
+                  {/* FIXME: get type from service? */}
+                  <Tag>Stofnreglugerð</Tag>
+                </Box>
+                <Text variant="h3" as="h3" marginBottom={[2, 2, 3, 4]}>
+                  Fella á brott {cancellation.regTitle}
+                </Text>
+                <Box marginBottom={[2, 2, 3, 4]}>
+                  <Button variant="text" size="small" icon="arrowForward">
+                    <a
+                      href={
+                        'https://island.is/reglugerdir/nr/' +
+                        nameToSlug(cancellation.name as RegName)
+                      }
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Skoða breytingasögu reglugerðar
+                    </a>
+                  </Button>
+                </Box>
+                <ImpactDate
+                  impact={cancellation}
+                  size="full"
+                  onChange={(newDate) => changeCancelDate(newDate)}
+                />
+              </Box>
+            </GridColumn>
+            <GridColumn
+              span={['12/12', '12/12', '12/12', '3/12']}
+              offset={['0', '0', '0', '1/12']}
+            >
+              <Box
+                background="blueberry100"
+                paddingY={3}
+                paddingX={4}
+                marginTop={10}
+              >
+                <Text variant="h4" color="blueberry600" marginBottom={3}>
+                  Breytingasaga reglugerðar
+                </Text>
+                <Divider />
+                <Text
+                  variant="h5"
+                  color="blueberry600"
+                  paddingTop={3}
+                  marginBottom={3}
+                >
+                  Nýjasta útgáfan
+                </Text>
+                <Text variant="eyebrow" marginBottom={2}>
+                  Væntanlegar breytingar:
+                </Text>
+                <Text variant="h5" color="blueberry600">
+                  380/2020
+                </Text>
+                <Text variant="small" color="blueberry600" marginBottom={2}>
+                  Breytt af 99/2022
+                </Text>
+                <Text variant="eyebrow" marginBottom={2}>
+                  Gildandi breytingar:
+                </Text>
+                <Text variant="h5" color="blueberry600">
+                  449/2019
+                </Text>
+                <Text variant="small" color="blueberry600" marginBottom={2}>
+                  Reglugerð um breytingu á regluggerð nr. 830/2011 um
+                  ökuskírteini.
+                </Text>
+                <Text variant="h5" color="blueberry600">
+                  322/2019
+                </Text>
+                <Text variant="small" color="blueberry600" marginBottom={2}>
+                  Reglugerð um breytingu á regluggerð nr. 830/2011 um
+                  ökuskírteini.
+                </Text>
+              </Box>
+            </GridColumn>
+          </GridRow>
+          <GridRow>
+            <GridColumn
+              span={['12/12', '12/12', '12/12', '8/12']}
+              offset={['0', '0', '0', '2/12']}
+            >
+              <Box paddingY={5}>
+                <Divider />
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="spaceBetween"
+                alignItems="center"
+              >
+                <Button
+                  onClick={() => closeModal()}
+                  variant="text"
+                  size="small"
+                  preTextIcon="arrowBack"
+                >
+                  Til baka
+                </Button>
+                <Button
+                  onClick={saveCancellation}
+                  size="small"
+                  icon="arrowForward"
+                >
+                  Vista brottfellingu
+                </Button>
+              </Box>
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
       </Box>
     </ModalBase>
   )
 }
-
-/*
-
-*/
