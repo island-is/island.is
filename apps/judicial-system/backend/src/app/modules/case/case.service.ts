@@ -51,7 +51,7 @@ import { CourtService } from '../court'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
-import { getCasesQueryFilter } from './filters'
+import { getCasesQueryFilter } from './filters/case.filters'
 import { Case, SignatureConfirmationResponse } from './models'
 
 interface Recipient {
