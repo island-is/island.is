@@ -295,6 +295,7 @@ export const RulingStepTwo: React.FC = () => {
               textarea
               required
               rows={7}
+              autoExpand={{ on: true, maxHeight: 300 }}
             />
           </Box>
         </Box>
@@ -535,6 +536,7 @@ export const RulingStepTwo: React.FC = () => {
                   }
                   textarea
                   rows={7}
+                  autoExpand={{ on: true, maxHeight: 300 }}
                 />
               </BlueBox>
             </Box>
@@ -709,6 +711,7 @@ export const RulingStepTwo: React.FC = () => {
                   }
                   textarea
                   rows={7}
+                  autoExpand={{ on: true, maxHeight: 300 }}
                 />
               </Box>
             </BlueBox>
@@ -748,6 +751,7 @@ export const RulingStepTwo: React.FC = () => {
                 )
               }
               rows={16}
+              autoExpand={{ on: true, maxHeight: 600 }}
               textarea
             />
           </Box>

@@ -42,6 +42,7 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
           'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
       },
     })
+    .xroad(Base, Client)
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET',

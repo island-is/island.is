@@ -111,6 +111,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
             }
             required
             rows={14}
+            autoExpand={{ on: true, maxHeight: 600 }}
             textarea
           />
         </Box>
@@ -160,6 +161,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
               required
               textarea
               rows={14}
+              autoExpand={{ on: true, maxHeight: 600 }}
             />
           </Box>
           <Box component="section" marginBottom={5}>
@@ -215,6 +217,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
                 }
                 textarea
                 rows={7}
+                autoExpand={{ on: true, maxHeight: 300 }}
               />
             </BlueBox>
           </Box>
@@ -254,6 +257,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
               }
               textarea
               rows={7}
+              autoExpand={{ on: true, maxHeight: 300 }}
             />
           </Box>
         </Box>
