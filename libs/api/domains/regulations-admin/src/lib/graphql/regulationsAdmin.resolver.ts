@@ -22,6 +22,9 @@ import { ConfigType } from '@nestjs/config'
 import { UpdateDraftRegulationCancelInput } from './dto/updateDraftRegulationCancel.input'
 import { CreateDraftRegulationCancelInput } from './dto/createDraftRegulationCancel.input'
 import { DraftRegulationCancelModel } from './models/draftRegulationCancel.model'
+import { RegulationViewTypes } from '@island.is/regulations/web'
+import { GetCurrentRegulationFromApiInput } from './dto/getCurrentRegulationFromApi.input'
+import { nameToSlug } from '@island.is/regulations'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -94,6 +97,16 @@ export class RegulationsAdminResolver {
     return {
       id: input.draftId,
     }
+  }
+
+  @Query(() => graphqlTypeJson)
+  getCurrentRegulationFromApi(
+    @Args('input') input: GetCurrentRegulationFromApiInput,
+  ): Promise<any> {
+    return this.regulationsService.getRegulation(
+      RegulationViewTypes.current,
+      nameToSlug(input.regulation),
+    )
   }
 
   @Query(() => graphqlTypeJson)

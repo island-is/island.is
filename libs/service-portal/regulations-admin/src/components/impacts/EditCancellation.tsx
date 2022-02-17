@@ -11,12 +11,19 @@ import {
   GridRow,
   Divider,
 } from '@island.is/island-ui/core'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { DraftCancelForm, RegDraftForm } from '../../state/types'
 // import { useDraftingState } from '../../state/useDraftingState'
 import { ImpactDate } from './ImpactDate'
 import { ModalHeader } from './ModalHeader'
-import { nameToSlug, RegName, toISODate } from '@island.is/regulations'
+import {
+  ISODate,
+  nameToSlug,
+  RegName,
+  RegulationHistoryItem,
+  toISODate,
+} from '@island.is/regulations'
+import { useGetCurrentRegulationFromApiQuery } from '../../utils/dataHooks'
 
 type EditCancellationProp = {
   draft: RegDraftForm
@@ -51,9 +58,33 @@ const UPDATE_DRAFT_REGULATION_CANCEL_IMPACT = gql`
   }
 `
 
+type Effects = Record<'past' | 'future', Array<RegulationHistoryItem>>
 export const EditCancellation = (props: EditCancellationProp) => {
   const { draft, cancellation, closeModal } = props
   const [activeCancellation, setActiveCancellation] = useState(cancellation)
+  const today = new Date().toISOString().substr(0, 10) as ISODate
+
+  const {
+    data: regulation,
+    loading /* , error */,
+  } = useGetCurrentRegulationFromApiQuery(activeCancellation.name)
+
+  const { effects } = useMemo(() => {
+    const effects = regulation?.history.reduce<Effects>(
+      (obj, item, i) => {
+        const arr = item.date > today ? obj.future : obj.past
+        arr.push(item)
+        return obj
+      },
+      { past: [], future: [] },
+    )
+
+    console.log({ effects })
+
+    return {
+      effects,
+    }
+  }, [regulation, today])
 
   const [createDraftRegulationCancelImpact] = useMutation(
     CREATE_DRAFT_REGULATION_CANCEL_IMPACT,
@@ -186,34 +217,42 @@ export const EditCancellation = (props: EditCancellationProp) => {
                   paddingTop={3}
                   marginBottom={3}
                 >
-                  Nýjasta útgáfan
+                  <a
+                    href={`https://island.is/reglugerdir/nr/${nameToSlug(
+                      activeCancellation.name as RegName,
+                    )}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Nýjasta útgáfan
+                  </a>
                 </Text>
-                <Text variant="eyebrow" marginBottom={2}>
-                  Væntanlegar breytingar:
-                </Text>
-                <Text variant="h5" color="blueberry600">
-                  380/2020
-                </Text>
-                <Text variant="small" color="blueberry600" marginBottom={2}>
-                  Breytt af 99/2022
-                </Text>
-                <Text variant="eyebrow" marginBottom={2}>
-                  Gildandi breytingar:
-                </Text>
-                <Text variant="h5" color="blueberry600">
-                  449/2019
-                </Text>
-                <Text variant="small" color="blueberry600" marginBottom={2}>
-                  Reglugerð um breytingu á regluggerð nr. 830/2011 um
-                  ökuskírteini.
-                </Text>
-                <Text variant="h5" color="blueberry600">
-                  322/2019
-                </Text>
-                <Text variant="small" color="blueberry600" marginBottom={2}>
-                  Reglugerð um breytingu á regluggerð nr. 830/2011 um
-                  ökuskírteini.
-                </Text>
+                {effects?.past && effects.past.length > 0 ? (
+                  <>
+                    <Text variant="eyebrow" marginBottom={2}>
+                      Væntanlegar breytingar:
+                    </Text>
+                    {effects?.past.map((effect) => (
+                      <Text variant="h5" color="blueberry600" marginBottom={2}>
+                        {effect.date}
+                        <br />
+                        <a
+                          href={`https://island.is/reglugerdir/nr/${nameToSlug(
+                            activeCancellation.name as RegName,
+                          )}/d/${effect.date}/diff`}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {effect.name}
+                        </a>
+                      </Text>
+                    ))}
+                  </>
+                ) : (
+                  <Text variant="h5" marginBottom={2}>
+                    Engar breytingar framundan
+                  </Text>
+                )}
               </Box>
             </GridColumn>
           </GridRow>

@@ -9,6 +9,7 @@ import {
   MinistryList,
   PlainText,
   RegName,
+  Regulation,
   RegulationOptionList,
 } from '@island.is/regulations'
 import { ShippedSummary, DraftSummary } from '@island.is/regulations/admin'
@@ -240,6 +241,37 @@ export const useRegulationListQuery = (
   }
   return {
     data: data.getRegulationOptionList as RegulationOptionList,
+  }
+}
+
+// ---------------------------------------------------------------------------
+
+const GetCurrentRegulationFromApiQuery = gql`
+  query GetCurrentRegulationFromApi($input: GetCurrentRegulationFromApiInput!) {
+    getCurrentRegulationFromApi(input: $input)
+  }
+`
+
+export const useGetCurrentRegulationFromApiQuery = (
+  regulation: RegName | DraftImpactName,
+): QueryResult<Regulation> => {
+  const { loading, error, data } = useQuery<Query>(
+    GetCurrentRegulationFromApiQuery,
+    {
+      variables: { input: { regulation } },
+    },
+  )
+
+  if (loading) {
+    return { loading }
+  }
+  if (!data) {
+    return {
+      error: error || new Error(`Error fetching regulation`),
+    }
+  }
+  return {
+    data: data.getCurrentRegulationFromApi as Regulation,
   }
 }
 
