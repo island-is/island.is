@@ -123,8 +123,8 @@ export const useCourtUpload = (
         } catch (error) {
           if (
             error instanceof ApolloError &&
-            (error as ApolloError).graphQLErrors[0].extensions?.response
-              .status === 404
+            (error as ApolloError).graphQLErrors[0].extensions?.code ===
+              'https://httpstatuses.com/404'
           ) {
             setFileUploadStatus(file, 'broken', CaseFileState.BOKEN_LINK)
           } else {

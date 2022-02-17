@@ -13,8 +13,10 @@ import {
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
 
-import { BackendAPI } from '../../../services'
-import { CreateUserInput, UpdateUserInput, UserQueryInput } from './dto'
+import { BackendAPI } from '../../data-sources/backend'
+import { CreateUserInput } from './dto/createUser.input'
+import { UpdateUserInput } from './dto/updateUser.input'
+import { UserQueryInput } from './dto/user.input'
 import { User } from './user.model'
 
 @UseGuards(JwtGraphQlAuthGuard)
