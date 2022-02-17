@@ -200,22 +200,23 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
               paddingTop={2}
             >
               {!createLoading && !deleteLoading && (
-                <button type="submit" disabled={verificationValid}>
-                  <Button
-                    variant="text"
-                    size="small"
-                    disabled={verificationValid}
-                  >
-                    {emailInternal
-                      ? emailVerifyCreated
-                        ? formatMessage({
-                            id: 'sp.settings:resend',
-                            defaultMessage: 'Endursenda',
-                          })
-                        : buttonText
-                      : formatMessage(msg.saveEmptyChange)}
-                  </Button>
-                </button>
+                <Button
+                  variant="text"
+                  size="small"
+                  disabled={verificationValid}
+                  onClick={() =>
+                    handleSendEmailVerification({ email: getValues().email })
+                  }
+                >
+                  {emailInternal
+                    ? emailVerifyCreated
+                      ? formatMessage({
+                          id: 'sp.settings:resend',
+                          defaultMessage: 'Endursenda',
+                        })
+                      : buttonText
+                    : formatMessage(msg.saveEmptyChange)}
+                </Button>
               )}
               {(createLoading || deleteLoading) && <LoadingDots />}
             </Box>
