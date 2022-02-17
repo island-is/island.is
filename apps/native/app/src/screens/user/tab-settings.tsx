@@ -6,7 +6,6 @@ import {
   TableViewGroup
 } from '@island.is/island-ui-native'
 import messaging from '@react-native-firebase/messaging'
-import * as Sentry from '@sentry/react-native'
 import {
   authenticateAsync
 } from 'expo-local-authentication'
