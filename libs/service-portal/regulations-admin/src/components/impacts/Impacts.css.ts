@@ -4,9 +4,16 @@ export const explainerText = style({})
 
 export const cancelModal = style({
   backgroundColor: 'white',
-  width: '100%',
-  height: '100%',
+  width: 'calc(100% - 40px)',
+  height: 'calc(100% - 40px)',
   overflowY: 'auto',
+  margin: 20,
 })
 
-export const changeModal = style({})
+export const changeModal = style({
+  backgroundColor: 'white',
+  width: 'calc(100% - 40px)',
+  height: 'calc(100% - 40px)',
+  overflowY: 'auto',
+  margin: 20,
+})

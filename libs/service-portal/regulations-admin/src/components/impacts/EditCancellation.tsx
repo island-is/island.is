@@ -81,8 +81,6 @@ export const EditCancellation = (props: EditCancellationProp) => {
       { past: [], future: [] },
     )
 
-    console.log({ effects })
-
     return {
       effects,
     }
@@ -170,13 +168,15 @@ export const EditCancellation = (props: EditCancellationProp) => {
                   marginBottom={3}
                 >
                   <Box marginRight={2}>
-                    <Tag>Brottfelling reglugerðar</Tag>
+                    <Tag disabled>Brottfelling reglugerðar</Tag>
                   </Box>
-                  <Tag>
-                    {regulation?.type === 'base'
-                      ? 'Stofnreglugerð'
-                      : 'Breytingareglugerð'}
-                  </Tag>
+                  {regulation?.type && (
+                    <Tag disabled>
+                      {regulation?.type === 'base'
+                        ? 'Stofnreglugerð'
+                        : 'Breytingareglugerð'}
+                    </Tag>
+                  )}
                 </Box>
                 <Text variant="h3" as="h3" marginBottom={[2, 2, 3, 4]}>
                   Fella á brott {cancellation.regTitle}
