@@ -61,7 +61,7 @@ import { TransitionCaseDto } from './dto/transitionCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
-import { transitionCase } from './state'
+import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
 
 @Controller('api')
