@@ -2,35 +2,15 @@ import simpleGit, { SimpleGit } from 'simple-git'
 import { mkdtemp, writeFile } from 'fs/promises'
 import { join } from 'path'
 import { findBestGoodRefBranch, findBestGoodRefPR } from './change-detection'
-import { Substitute, Arg } from '@fluffy-spoon/substitute'
-import { existsSync, mkdir, mkdirSync } from 'fs'
+import { Substitute } from '@fluffy-spoon/substitute'
+import { existsSync, mkdir } from 'fs'
 import { promisify } from 'util'
 import { GitActionStatus } from './git-action-status'
-
-let fileA: string
-let fileB: string
-
-async function makeChangeWithContent(
-  git: SimpleGit,
-  changeset: { path: string; content: string }[],
-  message: string,
-): Promise<string> {
-  for (const change of changeset) {
-    await writeFile(change.path, change.content)
-    await git.add(change.path)
-  }
-  const commit = await git.commit(
-    message,
-    changeset.map((c) => c.path),
-  )
-  return commit.commit
-}
-
-const mkdirAsync = promisify(mkdir)
 
 const baseBranch = 'main'
 const headBranch = 'fix'
 type Component = 'a' | 'b' | 'c' | 'd' | 'e'
+
 describe('Change detection', () => {
   jest.setTimeout(60000)
   let git: SimpleGit
@@ -42,8 +22,6 @@ describe('Change detection', () => {
   ) => Promise<string>
   beforeEach(async () => {
     path = await mkdtemp(`${__dirname}/test-data/repo`)
-    fileA = join(path, 'A.txt')
-    fileB = join(path, 'B.txt')
     git = simpleGit(path, { baseDir: path })
     const r = await git.init()
     makeChange = async (
@@ -51,24 +29,7 @@ describe('Change detection', () => {
       component: Component | Component[],
       message: string,
     ): Promise<string> => {
-      if (!Array.isArray(component)) {
-        component = [component]
-      }
-
-      for (const componentElement of component) {
-        let compPath = join(path, componentElement)
-        if (!existsSync(compPath)) {
-          await mkdirAsync(compPath)
-        }
-      }
-      return await makeChangeWithContent(
-        git,
-        component.map((c) => ({
-          path: `${join(path, c)}/${Math.random().toLocaleString()}.txt`,
-          content: Math.random().toLocaleString(),
-        })),
-        message,
-      )
+      return await makeChangeGlobal(component, path, git, message)
     }
   })
 
@@ -215,3 +176,47 @@ describe('Change detection', () => {
     it.todo('PR workflow uses PR workflow when available')
   })
 })
+
+const mkdirAsync = promisify(mkdir)
+
+async function makeChangeWithContent(
+  git: SimpleGit,
+  changeset: { path: string; content: string }[],
+  message: string,
+): Promise<string> {
+  for (const change of changeset) {
+    await writeFile(change.path, change.content)
+    await git.add(change.path)
+  }
+  const commit = await git.commit(
+    message,
+    changeset.map((c) => c.path),
+  )
+  return commit.commit
+}
+
+async function makeChangeGlobal(
+  component: 'a' | 'b' | 'c' | 'd' | 'e' | Component[],
+  path: string,
+  git: SimpleGit,
+  message: string,
+) {
+  if (!Array.isArray(component)) {
+    component = [component]
+  }
+
+  for (const componentElement of component) {
+    let compPath = join(path, componentElement)
+    if (!existsSync(compPath)) {
+      await mkdirAsync(compPath)
+    }
+  }
+  return await makeChangeWithContent(
+    git,
+    component.map((c) => ({
+      path: `${join(path, c)}/${Math.random().toLocaleString()}.txt`,
+      content: Math.random().toLocaleString(),
+    })),
+    message,
+  )
+}
