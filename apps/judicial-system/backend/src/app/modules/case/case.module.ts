@@ -6,8 +6,8 @@ import { EmailModule } from '@island.is/email-service'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 
 import { environment } from '../../../environments'
-import { DefendantModule } from '../defendant/defendant.module'
 import {
+  DefendantModule,
   UserModule,
   FileModule,
   CourtModule,
