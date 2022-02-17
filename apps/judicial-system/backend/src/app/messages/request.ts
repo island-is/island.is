@@ -13,23 +13,10 @@ export const request = {
     description: 'Notaður sem texti þegar embætti er ekki skráð',
   }),
   baseInfo: defineMessages({
-    heading: {
-      id: 'judicial.system.backend:pdf.restriction_request.base_info.heading',
-      defaultMessage: 'Grunnupplýsingar',
-      description:
-        'Notaður sem texti fyrir titill fyrir grunnupplýsingar í kröfu PDF',
-    },
     court: {
       id: 'judicial.system.backend:pdf.restriction_request.base_info.court',
       defaultMessage: 'Dómstóll:',
       description: 'Notaður sem texti fyrir dómstól í kröfu PDF',
-    },
-    restrictions: {
-      id:
-        'judicial.system.backend:pdf.restriction_request.base_info.restrictions',
-      defaultMessage: 'Takmarkanir og tilhögun',
-      description:
-        'Notaður sem texti fyrir takmarkanir og tilhögun í kröfu PDF',
     },
     nationalId: {
       id:
@@ -47,11 +34,6 @@ export const request = {
       id: 'judicial.system.backend:pdf.restriction_request.base_info.full_name',
       defaultMessage: 'Fullt nafn:',
       description: 'Notaður sem texti fyrir fullt nafn í kröfu PDF',
-    },
-    gender: {
-      id: 'judicial.system.backend:pdf.restriction_request.base_info.gender',
-      defaultMessage: 'Kyn:',
-      description: 'Notaður sem texti fyrir kyn í kröfu PDF',
     },
     address: {
       id: 'judicial.system.backend:pdf.restriction_request.base_info.address',
@@ -121,17 +103,6 @@ export const request = {
       description:
         'Notaður sem texti þegar engin lagaákvæði eru skráðar í kröfu PDF',
     },
-  }),
-  courtClaim: defineMessage({
-    id: 'judicial.system.backend:pdf.restriction_request.court_claim',
-    defaultMessage: 'Dómkröfur',
-    description: 'Notaður sem texti fyrir dómkröfur í kröfu PDF',
-  }),
-  restrictions: defineMessage({
-    id: 'judicial.system.backend:pdf.restriction_request.restrictions',
-    defaultMessage: 'Takmarkanir og tilhögun {caseType}',
-    description:
-      'Notaður sem texti fyrir takmarkanir og tilhögun í kröfu PDF þar sem {caseType} mála týpan.',
   }),
   requestProsecutorOnlySession: defineMessage({
     id:
