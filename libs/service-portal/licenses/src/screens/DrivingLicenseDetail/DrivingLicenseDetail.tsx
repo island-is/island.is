@@ -259,7 +259,7 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
                     category={item.nr}
                   >
                     {item.nr &&
-                      ReactHtmlParser(mapCategory(item.nr).text ?? '')}
+                      ReactHtmlParser(mapCategory(item.nr.trim()).text ?? '')}
                   </ExpandableLine>
                 )
               },
