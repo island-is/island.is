@@ -48,9 +48,10 @@ export function handleNotificationResponse(response: NotificationResponse) {
   // handle notification
   const id = response.notification.request.identifier
   const content = response.notification.request.content as NotificationContent
+  const link = notification?.data?.url;
 
   if (response.actionIdentifier === DEFAULT_ACTION_IDENTIFIER) {
-    navigateToNotification({ id })
+    navigateToNotification({ id, link })
   } else {
     const category = notificationCategories.find(
       ({ categoryIdentifier }) =>

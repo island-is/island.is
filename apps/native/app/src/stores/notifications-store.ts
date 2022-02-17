@@ -155,7 +155,11 @@ export const notificationsStore = create<NotificationsStore>(
             try {
               await client.mutate({
                 mutation: gql`mutation addUserProfileDeviceToken($input:UserDeviceTokenInput!) {
-                  addUserProfileDeviceToken(input:$input)
+                  addUserProfileDeviceToken(input:$input) {
+                    id
+                    nationalId
+                    deviceToken
+                  }
                 }`,
                 variables: {
                   input: {
