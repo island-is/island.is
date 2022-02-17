@@ -17,7 +17,7 @@ export function TabPersonalInfo() {
   const authStore = useAuthStore()
   const intl = useIntl()
   const { dismiss, dismissed } = usePreferencesStore()
-  const natRegRes = useQuery(NATION_REGISTRY_USER_QUERY, { client })
+  const natRegRes = useQuery(NATION_REGISTRY_USER_QUERY, { client, fetchPolicy: 'cache-first' })
   const natRegData = natRegRes?.data?.nationalRegistryUser || {}
   const errorNatReg = !!natRegRes.error
   const loadingNatReg = natRegRes.loading
