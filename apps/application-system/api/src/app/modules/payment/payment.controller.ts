@@ -66,6 +66,8 @@ export class PaymentController {
       payload.chargeItemCode,
     )
 
+    console.log('CHARGE ITEM FROM CREATE CHARGE: ', chargeItem)
+
     const paymentDto: Pick<
       BasePayment,
       'application_id' | 'fulfilled' | 'amount' | 'definition' | 'expires_at'
@@ -85,7 +87,11 @@ export class PaymentController {
 
     const payment = await this.paymentModel.create(paymentDto)
 
+    console.log('PAYMENT: ', payment)
+
     const chargeResult = await this.paymentService.createCharge(payment, user)
+
+    console.log('CHARGE RESULT: ', chargeResult)
 
     this.auditService.audit({
       auth: user,

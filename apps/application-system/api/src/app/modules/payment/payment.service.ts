@@ -69,6 +69,7 @@ export class PaymentService {
     const parsedDefinition = JSON.parse(
       (payment.definition as unknown) as string,
     )
+    console.log('USER: ', user)
     const charge: Charge = {
       // TODO: this needs to be unique, but can only handle 22 or 23 chars
       // should probably be an id or token from the DB charge once implemented
@@ -92,9 +93,9 @@ export class PaymentService {
       returnUrl: callbackUrl,
       requestID: payment.id,
     }
-
+    console.log('HELLO FRIEND')
     const result = await this.paymentApi.createCharge(charge)
-
+    console.log('RESULT: ', result)
     return {
       ...result,
       paymentUrl: this.makePaymentUrl(result.user4),

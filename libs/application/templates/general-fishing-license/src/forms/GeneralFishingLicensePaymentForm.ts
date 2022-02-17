@@ -51,7 +51,7 @@ export const GeneralFishingLicensePaymentForm: Form = buildForm({
       title: payment.general.sectionTitle,
       children: [
         buildCustomField({
-          component: 'PaymentPending',
+          component: 'PaymentPendingScreen',
           id: 'paymentPendingField',
           title: '',
         }),

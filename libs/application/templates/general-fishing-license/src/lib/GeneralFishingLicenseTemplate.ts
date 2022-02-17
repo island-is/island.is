@@ -42,10 +42,10 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/GeneralFishingLicenseForm/index').then((val) =>
-                  Promise.resolve(val.GeneralFishingLicenseForm),
-                ),
+              formLoader: async () =>
+                await import(
+                  '../forms/GeneralFishingLicenseForm/index'
+                ).then((val) => Promise.resolve(val.GeneralFishingLicenseForm)),
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,
@@ -114,6 +114,9 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: 3600 * 1000,
+          },
+          onEntry: {
+            apiModuleAction: ApiActions.submitApplication,
           },
           roles: [
             {

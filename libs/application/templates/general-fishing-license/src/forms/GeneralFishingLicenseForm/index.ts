@@ -10,7 +10,6 @@ import { Logo } from '../../assets'
 import { shipSelectionSection } from './shipSelectionSection'
 import { fishingLicenseSection } from './fishingLicenseSection'
 import { overviewSection } from './overviewSection'
-import { conclusionSection } from './conclusionSection'
 import { conclusion, payment } from '../../lib/messages'
 
 export const GeneralFishingLicenseForm: Form = buildForm({
@@ -18,6 +17,8 @@ export const GeneralFishingLicenseForm: Form = buildForm({
   title: '',
   logo: Logo,
   mode: FormModes.APPLYING,
+  renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
   children: [
     externalDataSection,
     applicantInformationSection,
