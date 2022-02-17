@@ -130,15 +130,17 @@ export class DraftRegulationService {
 
     const impactNames =
       draftRegulation.changes?.map((change) => change.regulation) ?? []
-    if (draftRegulation.cancel) {
-      impactNames.push(draftRegulation.cancel.regulation)
-    }
+    draftRegulation.cancels?.forEach(async (cancel) => {
+      impactNames.push(cancel.regulation)
+    })
+
     const impactOptions = await this.regulationsService.getRegulationOptionList(
       impactNames,
     )
 
     const impacts: (DraftRegulationCancel | DraftRegulationChange)[] = []
     draftRegulation.changes?.forEach(async (change) => {
+      impactNames.push(change.regulation)
       impacts.push({
         id: change.id as DraftRegulationChangeId,
         type: 'amend',
@@ -154,19 +156,19 @@ export class DraftRegulationService {
           '', // helpful for human-readable display in the UI
       })
     })
-    if (draftRegulation.cancel) {
+    draftRegulation.cancels?.forEach(async (cancel) => {
+      impactNames.push(cancel.regulation)
       impacts.push({
-        id: draftRegulation.cancel.id as DraftRegulationCancelId,
+        id: cancel.id as DraftRegulationCancelId,
         type: 'repeal',
-        date: draftRegulation.cancel.date,
+        date: cancel.date,
         // About the cancelled reglugerð
-        name: draftRegulation.cancel.regulation, // primary-key reference to the reglugerð
+        name: cancel.regulation, // primary-key reference to the reglugerð
         regTitle:
-          impactOptions.find(
-            (opt) => opt.name === draftRegulation.cancel?.regulation,
-          )?.title ?? '', // helpful for human-readable display in the UI
+          impactOptions.find((opt) => opt.name === cancel?.regulation)?.title ??
+          '', // helpful for human-readable display in the UI
       })
-    }
+    })
 
     return {
       id: draftRegulation.id as RegulationDraftId,

@@ -47,11 +47,17 @@ export class DraftRegulationCancelService {
   ): Promise<DraftRegulationCancel> {
     this.logger.debug('Creating a new DraftRegulationcancel')
 
-    const ucreatedDraftRegulationCancel = await this.draftRegulationCancelModel.create(
-      draftRegulationcancelToCreate,
+    const updateData: Partial<DraftRegulationCancelModel> = {
+      changing_id: draftRegulationcancelToCreate.changingId,
+      regulation: draftRegulationcancelToCreate.regulation,
+      date: draftRegulationcancelToCreate.date,
+    }
+
+    const createdDraftRegulationCancel = await this.draftRegulationCancelModel.create(
+      updateData,
     )
 
-    return await this.transformCancel(ucreatedDraftRegulationCancel)
+    return await this.transformCancel(createdDraftRegulationCancel)
   }
 
   async update(
