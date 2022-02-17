@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
 import { AirlineUser, User } from './user.model'
 import { Fund } from '@island.is/air-discount-scheme/types'
 import { FlightService } from '../flight'
@@ -20,13 +20,22 @@ import environment from '../../../environments/environment'
 import * as kennitala from 'kennitala'
 import { FetchError } from '@island.is/clients/middlewares'
 
+export const ONE_WEEK = 604800 // seconds
+export const CACHE_KEY = 'userService'
+const MAX_AGE_LIMIT = 18
+
 @Injectable()
 export class UserService {
   constructor(
     private readonly flightService: FlightService,
     private readonly nationalRegistryService: NationalRegistryService,
     private readonly nationalRegistryIndividualsApi: EinstaklingarApi,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
   ) {}
+
+  private getCacheKey(nationalId: string, suffix: 'custodians'): string {
+    return `${CACHE_KEY}_${nationalId}_${suffix}`
+  }
 
   personApiWithAuth(authUser: AuthUser) {
     return this.nationalRegistryIndividualsApi.withMiddleware(
@@ -62,15 +71,50 @@ export class UserService {
     } = await this.flightService.countThisYearsFlightLegsByNationalId(
       user.nationalId,
     )
-
     let meetsADSRequirements = false
-    if (auth) {
-      meetsADSRequirements = await this.individualMeetsADSRequirements(
-        user,
-        auth,
-      )
-    } else {
+
+    // Is user adult ?
+    if (kennitala.info(user.nationalId).age >= MAX_AGE_LIMIT) {
       meetsADSRequirements = this.flightService.isADSPostalCode(user.postalcode)
+    } else {
+      // User is a minor
+      const cacheKey = this.getCacheKey(user.nationalId, 'custodians')
+      const cacheValue = await this.cacheManager.get(cacheKey)
+      let custodians = undefined
+
+      if (cacheValue) {
+        custodians = cacheValue.custodians
+      } else if (auth) {
+        // User(child) doesn't live in ADS-postalcodes but is under 18 years
+        custodians = await this.personApiWithAuth(auth)
+          .einstaklingarGetForsjaForeldri(<
+            EinstaklingarGetForsjaForeldriRequest
+          >{
+            id: auth.nationalId,
+            barn: user.nationalId,
+          })
+          .catch(this.handle404)
+
+        await this.cacheManager.set(cacheKey, { custodians }, { ttl: ONE_WEEK })
+      }
+
+      if (custodians) {
+        for (const custodian of custodians) {
+          const personCustodian = await this.nationalRegistryService.getUser(
+            custodian,
+          )
+          if (
+            personCustodian &&
+            this.flightService.isADSPostalCode(personCustodian.postalcode)
+          ) {
+            meetsADSRequirements = true
+          }
+        }
+      } else {
+        meetsADSRequirements = this.flightService.isADSPostalCode(
+          user.postalcode,
+        )
+      }
     }
 
     return {
@@ -78,48 +122,6 @@ export class UserService {
       used: used,
       total,
     }
-  }
-
-  private async individualMeetsADSRequirements(
-    user: NationalRegistryUser,
-    auth: AuthUser,
-  ): Promise<boolean> {
-    if (this.flightService.isADSPostalCode(user.postalcode)) {
-      return true
-    }
-
-    // Not valid if child is over 18 || We already checked user postal code so we avoid calling forsjaForeldri with same kennitala
-    if (
-      kennitala.info(user.nationalId).age >= 18 ||
-      user.nationalId === auth.nationalId
-    ) {
-      return false
-    }
-
-    // User(child) doesn't live in ADS-postalcodes but is under 18 years
-    const custodians = await this.personApiWithAuth(auth)
-      .einstaklingarGetForsjaForeldri(<EinstaklingarGetForsjaForeldriRequest>{
-        id: auth.nationalId,
-        barn: user.nationalId,
-      })
-      .catch(this.handle404)
-
-    if (custodians === undefined) {
-      return false
-    }
-
-    for (const custodian of custodians) {
-      const personCustodian = await this.nationalRegistryService.getUser(
-        custodian,
-      )
-      if (
-        personCustodian &&
-        this.flightService.isADSPostalCode(personCustodian.postalcode)
-      ) {
-        return true
-      }
-    }
-    return false
   }
 
   private async getUserByNationalId<T>(
