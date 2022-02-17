@@ -25,8 +25,8 @@ import {
   JwtGraphQlAuthGuard,
 } from '@island.is/judicial-system/auth'
 
-import { BackendAPI } from '../../data-sources/backend'
-import { CaseFile } from '../file/models/file.model'
+import { BackendApi } from '../../data-sources'
+import { CaseFile } from '../file'
 import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CasesInterceptor } from './interceptors/cases.interceptor'
 import { CreateCaseInput } from './dto/createCase.input'
@@ -56,7 +56,7 @@ export class CaseResolver {
   @UseInterceptors(CasesInterceptor)
   cases(
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<Case[]> {
     this.logger.debug('Getting all cases')
 
@@ -74,7 +74,7 @@ export class CaseResolver {
     @Args('input', { type: () => CaseQueryInput })
     input: CaseQueryInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<Case> {
     this.logger.debug(`Getting case ${input.id}`)
 
@@ -92,7 +92,7 @@ export class CaseResolver {
     @Args('input', { type: () => CreateCaseInput })
     input: CreateCaseInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<Case> {
     this.logger.debug('Creating a new case')
 
@@ -110,7 +110,7 @@ export class CaseResolver {
     @Args('input', { type: () => UpdateCaseInput })
     input: UpdateCaseInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<Case> {
     const { id, ...updateCase } = input
 
@@ -130,7 +130,7 @@ export class CaseResolver {
     @Args('input', { type: () => TransitionCaseInput })
     input: TransitionCaseInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<Case> {
     const { id, ...transitionCase } = input
 
@@ -149,7 +149,7 @@ export class CaseResolver {
     @Args('input', { type: () => RequestSignatureInput })
     input: RequestSignatureInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<RequestSignatureResponse> {
     this.logger.debug(
       `Requesting signature of court record for case ${input.caseId}`,
@@ -168,7 +168,7 @@ export class CaseResolver {
     @Args('input', { type: () => SignatureConfirmationQueryInput })
     input: SignatureConfirmationQueryInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<SignatureConfirmationResponse> {
     const { caseId, documentToken } = input
 
@@ -187,7 +187,7 @@ export class CaseResolver {
     @Args('input', { type: () => RequestSignatureInput })
     input: RequestSignatureInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<RequestSignatureResponse> {
     this.logger.debug(`Requesting signature of ruling for case ${input.caseId}`)
 
@@ -204,7 +204,7 @@ export class CaseResolver {
     @Args('input', { type: () => SignatureConfirmationQueryInput })
     input: SignatureConfirmationQueryInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<SignatureConfirmationResponse> {
     const { caseId, documentToken } = input
 
@@ -223,7 +223,7 @@ export class CaseResolver {
     @Args('input', { type: () => SendNotificationInput })
     input: SendNotificationInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<SendNotificationResponse> {
     const { caseId, ...sendNotification } = input
 
@@ -243,7 +243,7 @@ export class CaseResolver {
     @Args('input', { type: () => ExtendCaseInput })
     input: ExtendCaseInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<Case> {
     this.logger.debug(`Extending case ${input.id}`)
 
@@ -258,7 +258,7 @@ export class CaseResolver {
   @ResolveField(() => [Notification])
   async notifications(
     @Parent() theCase: Case,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<Notification[]> {
     const { id } = theCase
 
@@ -270,7 +270,7 @@ export class CaseResolver {
   @ResolveField(() => [CaseFile])
   async caseFiles(
     @Parent() theCase: Case,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<CaseFile[]> {
     const { id } = theCase
 

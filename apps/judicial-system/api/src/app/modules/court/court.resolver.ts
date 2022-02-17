@@ -13,8 +13,8 @@ import {
   JwtGraphQlAuthGuard,
 } from '@island.is/judicial-system/auth'
 
-import { BackendAPI } from '../../data-sources/backend'
-import { Case } from '../case/models/case.model'
+import { BackendApi } from '../../data-sources'
+import { Case } from '../case'
 import { CreateCourtCaseInput } from './dto/createCourtCase.input'
 import { CourtService } from './court.service'
 
@@ -29,7 +29,7 @@ export class CourtResolver {
   ) {}
 
   private async createAndUpdate(
-    backendApi: BackendAPI,
+    backendApi: BackendApi,
     caseId: string,
     courtId: string,
     type: CaseType,
@@ -53,7 +53,7 @@ export class CourtResolver {
     @Args('input', { type: () => CreateCourtCaseInput })
     input: CreateCourtCaseInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<Case> {
     const { caseId, courtId, type, policeCaseNumber, isExtension } = input
 
