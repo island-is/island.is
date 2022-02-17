@@ -1,7 +1,7 @@
 export { CaseModule } from './case'
 export { InstitutionModule } from './institution/institution.module'
 export { UserModule } from './user/user.module'
-export { NotificationModule } from './notification'
+export { NotificationModule } from './notification/notification.module'
 export { FileModule } from './file'
 export { CourtModule } from './court'
 export { EventModule } from './event'
