@@ -1,5 +1,7 @@
 import * as s from './Impacts.css'
 import { useMutation, gql } from '@apollo/client'
+import { format } from 'date-fns' // eslint-disable-line no-restricted-imports
+import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
 import {
   Text,
   Box,
@@ -170,8 +172,11 @@ export const EditCancellation = (props: EditCancellationProp) => {
                   <Box marginRight={2}>
                     <Tag>Brottfelling reglugerðar</Tag>
                   </Box>
-                  {/* FIXME: get type from service? */}
-                  <Tag>Stofnreglugerð</Tag>
+                  <Tag>
+                    {regulation?.type === 'base'
+                      ? 'Stofnreglugerð'
+                      : 'Breytingareglugerð'}
+                  </Tag>
                 </Box>
                 <Text variant="h3" as="h3" marginBottom={[2, 2, 3, 4]}>
                   Fella á brott {cancellation.regTitle}
@@ -221,31 +226,42 @@ export const EditCancellation = (props: EditCancellationProp) => {
                     href={`https://island.is/reglugerdir/nr/${nameToSlug(
                       activeCancellation.name as RegName,
                     )}`}
+                    // 'FIXME: target="_blank" is not working here?
                     target="_blank"
                     rel="noreferrer"
                   >
                     Nýjasta útgáfan
                   </a>
                 </Text>
-                {effects?.past && effects.past.length > 0 ? (
+                {effects?.future && effects.future.length > 0 ? (
                   <>
                     <Text variant="eyebrow" marginBottom={2}>
                       Væntanlegar breytingar:
                     </Text>
-                    {effects?.past.map((effect) => (
-                      <Text variant="h5" color="blueberry600" marginBottom={2}>
-                        {effect.date}
-                        <br />
-                        <a
-                          href={`https://island.is/reglugerdir/nr/${nameToSlug(
-                            activeCancellation.name as RegName,
-                          )}/d/${effect.date}/diff`}
-                          target="_blank"
-                          rel="noreferrer"
+                    {effects?.future.map((effect) => (
+                      <>
+                        <Text variant="h5" color="blueberry600">
+                          {format(new Date(effect.date), 'd. MMM yyyy', {
+                            locale: is,
+                          })}
+                        </Text>
+                        <Text
+                          variant="small"
+                          color="blueberry600"
+                          marginBottom={2}
                         >
-                          {effect.name}
-                        </a>
-                      </Text>
+                          <a
+                            href={`https://island.is/reglugerdir/nr/${nameToSlug(
+                              activeCancellation.name as RegName,
+                            )}/d/${effect.date}/diff`}
+                            // 'FIXME: target="_blank" is not working here?
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            Breytt af {effect.name}
+                          </a>
+                        </Text>
+                      </>
                     ))}
                   </>
                 ) : (
