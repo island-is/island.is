@@ -17,7 +17,7 @@ import {
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  newSetAndSendDateToServer,
+  setAndSendDateToServer,
   removeTabsValidateAndSet,
   setCheckboxAndSendToServer,
   validateAndSendToServer,
@@ -103,7 +103,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
                 minDate={new Date()}
                 selectedDate={workingCase.requestedValidToDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
-                  newSetAndSendDateToServer(
+                  setAndSendDateToServer(
                     'requestedValidToDate',
                     date,
                     valid,
@@ -166,7 +166,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'lawsBroken',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -187,6 +187,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
               required
               textarea
               rows={7}
+              autoExpand={{ on: true, maxHeight: 300 }}
             />
           </Box>
         )}
@@ -232,7 +233,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'legalBasis',
-                  event,
+                  event.target.value,
                   [],
                   workingCase,
                   setWorkingCase,
@@ -249,6 +250,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
               }
               textarea
               rows={7}
+              autoExpand={{ on: true, maxHeight: 300 }}
             />
           </BlueBox>
         </Box>
@@ -337,7 +339,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'requestedOtherRestrictions',
-                    event,
+                    event.target.value,
                     [],
                     workingCase,
                     setWorkingCase,
@@ -353,6 +355,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
                   )
                 }
                 rows={10}
+                autoExpand={{ on: true, maxHeight: 500 }}
                 textarea
               />
             </BlueBox>

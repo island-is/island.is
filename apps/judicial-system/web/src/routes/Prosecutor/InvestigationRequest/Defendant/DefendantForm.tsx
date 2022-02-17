@@ -25,12 +25,13 @@ import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
+import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
+import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { defendant as m } from '@island.is/judicial-system-web/messages'
 import * as constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
-import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 
 interface Props {
   workingCase: Case
@@ -116,11 +117,12 @@ const DefendantForm: React.FC<Props> = (props) => {
         defendants: [
           ...workingCase.defendants,
           {
+            id: defendantId || uuid(),
             gender: undefined,
             name: '',
             nationalId: '',
             address: '',
-            id: defendantId || uuid(),
+            citizenship: '',
           } as Defendant,
         ],
       })
@@ -258,6 +260,7 @@ const DefendantForm: React.FC<Props> = (props) => {
                         name: '',
                         address: '',
                         nationalId: '',
+                        citizenship: '',
                       })
                       createEmptyDefendant(data?.createDefendant.id)
                     } else {
@@ -268,7 +271,8 @@ const DefendantForm: React.FC<Props> = (props) => {
                   }}
                   disabled={workingCase.defendants?.some(
                     (defendant) =>
-                      !defendant.gender ||
+                      (!isBusiness(defendant.nationalId) &&
+                        !defendant.gender) ||
                       !defendant.name ||
                       !defendant.address ||
                       !defendant.nationalId,

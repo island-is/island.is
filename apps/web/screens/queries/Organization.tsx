@@ -91,6 +91,9 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
           content {
             ...HtmlFields
           }
+          serviceWebContent {
+            ...HtmlFields
+          }
           link {
             text
             url
@@ -140,6 +143,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
 export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
   query GetOrganizationSubpage($input: GetOrganizationSubpageInput!) {
     getOrganizationSubpage(input: $input) {
+      id
       title
       slug
       description {

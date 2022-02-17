@@ -25,26 +25,23 @@ import {
   JwtGraphQlAuthGuard,
 } from '@island.is/judicial-system/auth'
 
-import { BackendAPI } from '../../../services'
-import { CaseFile } from '../file'
-import { CaseInterceptor, CasesInterceptor } from './interceptors'
-import {
-  CreateCaseInput,
-  UpdateCaseInput,
-  TransitionCaseInput,
-  SendNotificationInput,
-  RequestSignatureInput,
-  SignatureConfirmationQueryInput,
-  CaseQueryInput,
-  ExtendCaseInput,
-} from './dto'
-import {
-  Case,
-  Notification,
-  RequestSignatureResponse,
-  SendNotificationResponse,
-  SignatureConfirmationResponse,
-} from './models'
+import { BackendAPI } from '../../data-sources/backend'
+import { CaseFile } from '../file/models/file.model'
+import { CaseInterceptor } from './interceptors/case.interceptor'
+import { CasesInterceptor } from './interceptors/cases.interceptor'
+import { CreateCaseInput } from './dto/createCase.input'
+import { UpdateCaseInput } from './dto/updateCase.input'
+import { TransitionCaseInput } from './dto/transitionCase.input'
+import { SendNotificationInput } from './dto/sendNotification.input'
+import { RequestSignatureInput } from './dto/requestSignature.input'
+import { SignatureConfirmationQueryInput } from './dto/signatureConfirmation.input'
+import { CaseQueryInput } from './dto/case.input'
+import { ExtendCaseInput } from './dto/extendCase.input'
+import { Case } from './models/case.model'
+import { Notification } from './models/notification.model'
+import { RequestSignatureResponse } from './models/requestSignature.response'
+import { SendNotificationResponse } from './models/sendNotification.response'
+import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver(() => Case)

@@ -16,42 +16,6 @@ export const signedVerdictOverview = {
     description:
       'Notaður sem upplýsingatexti sem útskýrir að sækjandi kærði úrskurðinn í þinghaldi á yfirlitsskjá afgreiddra mála.',
   }),
-  allFilesUploadedToCourtText: defineMessage({
-    id:
-      'judicial.system.core:signed_verdict_overview.all_files_uploaded_to_court_text',
-    defaultMessage: 'Gögn hafa verið vistuð í Auði',
-    description:
-      'Notaður sem upplýsingatexti sem útskýrir að tekist hafi að vista öll gögn í Auði á yfirlitsskjá afgreiddra mála.',
-  }),
-  someFilesUploadedToCourtText: defineMessage({
-    id:
-      'judicial.system.core:signed_verdict_overview.some_files_uploaded_to_court_text',
-    defaultMessage: 'Ekki tókst að vista öll gögn í Auði',
-    description:
-      'Notaður sem upplýsingatexti sem útskýrir að ekki hafi tekist að vista öll gögn í Auði á yfirlitsskjá afgreiddra mála.',
-  }),
-  uploadToCourtButtonText: defineMessage({
-    id:
-      'judicial.system.core:signed_verdict_overview.upload_to_court_button_text',
-    defaultMessage: 'Vista gögn í Auði',
-    description:
-      'Notaður sem texti í "Hlaða upp gögnum í Auði" takkanum á yfirlitsskjá afgreiddra mála.',
-  }),
-  retryUploadToCourtButtonText: defineMessage({
-    id:
-      'judicial.system.core:signed_verdict_overview.retry_upload_to_court_button_text',
-    defaultMessage: 'Reyna aftur',
-    description:
-      'Notaður sem texti í "Hlaða upp gögnum í Auði" takkanum á yfirlitsskjá afgreiddra mála ef ekki tókst að hlaða upp öllum skjölunum.',
-  }),
-  uploadToCourtAllBrokenText: defineMessage({
-    id:
-      'judicial.system.core:signed_verdict_overview.upload_to_court_all_broken_text',
-    defaultMessage:
-      'Ofangreind rannsóknargögn eru ekki lengur aðgengileg í Réttarvörslugátt.',
-    description:
-      'Notaður sem upplýsingatexti sem útskýrir að rannsóknargögn eru ekki aðgengileg í Réttarvörslugátt.',
-  }),
   dismissedTitle: defineMessage({
     id: 'judicial.system.core:signed_verdict_overview.dismissed_title',
     defaultMessage: 'Kröfu vísað frá',
@@ -154,6 +118,104 @@ export const signedVerdictOverview = {
         defaultMessage: 'Loka glugga',
         description:
           'Notaður sem texti fyrir "loka hnappi" í "undirritun þingbókar" skrefi á yfirlitsskjá afgreiddra mála.',
+      },
+    }),
+    modifyDatesModal: defineMessages({
+      title: {
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.title',
+        defaultMessage: 'Breyting á lengd gæsluvarðhalds',
+        description:
+          'Notaður sem titill í "Breyting á lengd gæsluvarðhalds" glugga á yfirlitsskjá afgreiddra mála.',
+      },
+      successTitle: {
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.success_title',
+        defaultMessage: 'Lengd gæsluvarðhalds breytt',
+        description:
+          'Notaður sem titill í "Lengd gæsluvarðhalds breytt" glugga á yfirlitsskjá afgreiddra mála þegar breyting á lengd gæsluvarðhalds hefur verið geymd.',
+      },
+      reasonForChangeTitle: {
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.reason_for_change_title',
+        defaultMessage: 'Ástæða breytingar',
+        description:
+          'Notaður sem titill fyrir "Ástæða breytingar" hlutann í "Breyting á lengd gæsluvarðhalds" glugga.',
+      },
+      reasonForChangeLabel: {
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.reason_for_change_label',
+        defaultMessage: 'Ástæða breytingar',
+        description:
+          'Notaður sem titill í "Ástæða breytingar" textaboxi í "Breyting á lengd gæsluvarðhalds" glugga.',
+      },
+      reasonForChangePlaceholder: {
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.reason_for_change_placeholder',
+        defaultMessage:
+          'Bóka þarf ástæðu fyrir breytingu á skráðri lengd gæsluvarðhalds.',
+        description:
+          'Notaður sem skýritexti í "Ástæða breytingar" textaboxi í "Breyting á lengd gæsluvarðhalds" glugga.',
+      },
+      text: {
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.text',
+        defaultMessage:
+          'Hafi gæsluvarðhaldi eða einangrun verið aflétt, kæra til Landsréttar leitt til breytingar eða leiðrétta þarf ranga skráningu, er hægt að uppfæra lengd gæsluvarðhalds. Sýnilegt verður hver gerði leiðréttinguna, hvenær og af hvaða ástæðu.',
+        description:
+          'Notaður sem texti í "Breyting á lengd gæsluvarðhalds" glugga á yfirlitsskjá afgreiddra mála.',
+      },
+      successText: {
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.success_text',
+        defaultMessage:
+          '{modification}\nTilkynning verður send á ábyrgðaraðila málsins hjá {courtOrProsecutor}. Ef gæsluvarðhaldsfangelsi hefur ekki verið upplýst og þörf er á því, þarf að gera það eftir hefðbundinni boðleið.',
+        description:
+          'Notaður sem texti í "Lengd gæsluvarðhalds breytt" glugga á yfirlitsskjá afgreiddra mála.',
+      },
+      primaryButtonText: {
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.primary_button_text',
+        defaultMessage: 'Staðfesta',
+        description:
+          'Notaður sem texti í staðfesta takka í "Breyta lengd gæsluvarðhalds" glugga á yfirlitsskjá afgreiddra mála.',
+      },
+      secondaryButtonText: {
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.secondary_button_text',
+        defaultMessage: 'Hætta við',
+        description:
+          'Notaður sem texti í hætta við takka í "Breyta lengd gæsluvarðhalds" glugga á yfirlitsskjá afgreiddra mála.',
+      },
+      secondaryButtonTextSuccess: {
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.secondary_button_text_success',
+        defaultMessage: 'Loka glugga',
+        description:
+          'Notaður sem texti í loka takka í "Lengd gæsluvarðhalds breytt" glugga á yfirlitsskjá afgreiddra mála.',
+      },
+      modifiedValidToDateLabel: {
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.modified_valid_to_date_label',
+        defaultMessage: 'Gæsluvarðhald til',
+        description:
+          'Notaður sem texti í "Gæsluvarðhald til" í  "Breyting á lengd gæsluvarðhalds" glugga á yfirlitsskjá afgreiddra mála.',
+      },
+      modifiedIsolationToDateLabel: {
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_modal.modified_isolation_to_date_label',
+        defaultMessage: 'Einangrun til',
+        description:
+          'Notaður sem texti í "Einangrun til" í  "Breyting á lengd gæsluvarðhalds" glugga á yfirlitsskjá afgreiddra mála.',
+      },
+    }),
+    modifyDatesInfo: defineMessages({
+      title: {
+        id:
+          'judicial.system.core:signed_verdict_overview.modify_dates_info.title',
+        defaultMessage: 'Lengd gæslu uppfærð',
+        description:
+          'Notaður sem titill í upplýsingaboxi um uppfærða lengd gæslu á yfirlitsskjá afgreiddra mála.',
       },
     }),
   },

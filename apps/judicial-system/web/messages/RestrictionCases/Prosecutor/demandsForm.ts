@@ -15,19 +15,6 @@ export const rcDemands = {
         description:
           'Notaður sem titill fyrir "dómkröfur" hlutann á lagagrundvöllur og dómkröfur skrefi í gæsluvarðhalds- og farbannsmálum.',
       }),
-      label: defineMessage({
-        id: 'judicial.system.restriction_cases:police_demands.demands.label',
-        defaultMessage: 'Krafa lögreglu',
-        description:
-          'Notaður sem titill í "dómkröfur" textaboxi á lagagrundvöllur og dómkröfur skrefi í gæsluvarðhalds- og farbannsmálum.',
-      }),
-      placeholder: defineMessage({
-        id:
-          'judicial.system.restriction_cases:police_demands.demands.placeholder',
-        defaultMessage: 'Krafa ákæranda',
-        description:
-          'Notaður sem skýritexti í "dómkröfur" textaboxi á lagagrundvöllur og dómkröfur skrefi í gæsluvarðhalds- og farbannsmálum.',
-      }),
       isolation: defineMessage({
         id:
           'judicial.system.restriction_cases:police_demands.demands.isolation',

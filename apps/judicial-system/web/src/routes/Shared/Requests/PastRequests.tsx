@@ -70,27 +70,28 @@ const PastRequests: React.FC<Props> = (props) => {
       Cell: (row: {
         row: { original: { accusedName: string; defendants: Defendant[] } }
       }) => {
-        return row.row.original.defendants &&
-          row.row.original.defendants.length > 0 ? (
+        const theCase = row.row.original
+
+        return theCase.defendants && theCase.defendants.length > 0 ? (
           <>
             <Box component="span" display="block">
-              {row.row.original.defendants[0].name}
+              {theCase.defendants[0].name}
             </Box>
-            {row.row.original.defendants.length === 1 ? (
+            {theCase.defendants.length === 1 ? (
               <Text>
                 <Text as="span" variant="small" color="dark400">
-                  {`kt. ${
-                    row.row.original.defendants[0].nationalId
-                      ? formatNationalId(
-                          row.row.original.defendants[0].nationalId,
-                        )
+                  {`${theCase.defendants[0].noNationalId ? 'fd.' : 'kt.'} ${
+                    theCase.defendants[0].nationalId
+                      ? theCase.defendants[0].noNationalId
+                        ? theCase.defendants[0].nationalId
+                        : formatNationalId(theCase.defendants[0].nationalId)
                       : '-'
                   }`}
                 </Text>
               </Text>
             ) : (
               <Text as="span" variant="small" color="dark400">
-                {`+ ${row.row.original.defendants.length - 1}`}
+                {`+ ${theCase.defendants.length - 1}`}
               </Text>
             )}
           </>

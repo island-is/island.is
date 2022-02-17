@@ -362,7 +362,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'caseFilesComments',
-                  event,
+                  event.target.value,
                   [],
                   workingCase,
                   setWorkingCase,
@@ -376,6 +376,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
               }
               textarea
               rows={7}
+              autoExpand={{ on: true, maxHeight: 300 }}
             />
           </Box>
         </Box>
