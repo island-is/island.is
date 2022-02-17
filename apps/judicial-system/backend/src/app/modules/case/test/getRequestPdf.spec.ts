@@ -1,7 +1,7 @@
 import { uuid } from 'uuidv4'
 import { Response } from 'express'
 
-import { getRequestPdfAsBuffer } from '../../../formatters/requestPdf'
+import { getRequestPdfAsBuffer } from '../../../formatters'
 import { Case } from '../models/case.model'
 import { createTestingCaseModule } from './createTestingCaseModule'
 

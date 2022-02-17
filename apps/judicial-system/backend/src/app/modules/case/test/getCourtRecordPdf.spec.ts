@@ -4,10 +4,10 @@ import { Response } from 'express'
 import { Logger } from '@island.is/logging'
 import { User } from '@island.is/judicial-system/types'
 
-import { getCourtRecordPdfAsBuffer } from '../../../formatters/courtRecordPdf'
-import { Case } from '../models/case.model'
+import { getCourtRecordPdfAsBuffer } from '../../../formatters'
 import { createTestingCaseModule } from './createTestingCaseModule'
 import { AwsS3Service } from '../../aws-s3'
+import { Case } from '../models/case.model'
 
 jest.mock('../../../formatters/courtRecordPdf')
 
