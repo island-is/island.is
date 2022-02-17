@@ -18,6 +18,15 @@ globalStyle(`${tableContainer} tr:first-child`, {
   boxShadow: `inset 0px -1px 0px ${theme.color.blue200}`,
 })
 
+export const tableHeaders = style({
+  display: 'none',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      display: ' table-row',
+    },
+  },
+})
+
 export const headlineContainer = style({
   backgroundColor: theme.color.blue100,
   fontSize: '12px',
@@ -28,4 +37,13 @@ export const headlineContainer = style({
 globalStyle(`${headlineContainer} td`, {
   paddingTop: theme.spacing[1],
   paddingBottom: theme.spacing[1],
+})
+
+export const information = style({
+  display: 'grid',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      display: ' table-row',
+    },
+  },
 })
