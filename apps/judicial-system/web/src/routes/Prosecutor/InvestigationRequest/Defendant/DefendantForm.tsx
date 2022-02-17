@@ -4,7 +4,14 @@ import { ValueType } from 'react-select/src/types'
 import { AnimatePresence, motion } from 'framer-motion'
 import { uuid } from 'uuidv4'
 
-import { Box, Button, Input, Select, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Input,
+  Select,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import {
   BlueBox,
   FormContentContainer,
@@ -76,26 +83,34 @@ const DefendantForm: React.FC<Props> = (props) => {
     defendantId: string,
     updatedDefendant: UpdateDefendant,
   ) => {
-    updateDefendantState(defendantId, updatedDefendant)
+    try {
+      updateDefendantState(defendantId, updatedDefendant)
 
-    if (workingCase.id) {
-      updateDefendant(workingCase.id, defendantId, updatedDefendant)
+      if (workingCase.id) {
+        updateDefendant(workingCase.id, defendantId, updatedDefendant)
+      }
+    } catch (error) {
+      toast.error('Upp kom villa við að uppfæra varnaraðila')
     }
   }
 
   const handleDeleteDefendant = async (defendant: Defendant) => {
-    if (workingCase.defendants && workingCase.defendants.length > 1) {
-      if (workingCase.id) {
-        const { data } = await deleteDefendant(workingCase.id, defendant.id)
+    try {
+      if (workingCase.defendants && workingCase.defendants.length > 1) {
+        if (workingCase.id) {
+          const { data } = await deleteDefendant(workingCase.id, defendant.id)
 
-        if (data?.deleteDefendant.deleted && workingCase.defendants) {
-          removeDefendantFromState(defendant)
+          if (data?.deleteDefendant.deleted && workingCase.defendants) {
+            removeDefendantFromState(defendant)
+          } else {
+            // TODO: handle error
+          }
         } else {
-          // TODO: handle error
+          removeDefendantFromState(defendant)
         }
-      } else {
-        removeDefendantFromState(defendant)
       }
+    } catch (error) {
+      toast.error('Villa kom upp við að eyða varnaraðila')
     }
   }
 
@@ -107,6 +122,27 @@ const DefendantForm: React.FC<Props> = (props) => {
           (d) => d.id !== defendant.id,
         ),
       })
+    }
+  }
+
+  const handleCreateDefendantClick = async () => {
+    try {
+      if (workingCase.id) {
+        const { data } = await createDefendant(workingCase.id, {
+          gender: undefined,
+          name: '',
+          address: '',
+          nationalId: '',
+          citizenship: '',
+        })
+        createEmptyDefendant(data?.createDefendant.id)
+      } else {
+        createEmptyDefendant()
+      }
+
+      window.scrollTo(0, document.body.scrollHeight)
+    } catch (error) {
+      toast.error('Villa kom upp við að stofna nýjan varnaraðila')
     }
   }
 
@@ -253,22 +289,7 @@ const DefendantForm: React.FC<Props> = (props) => {
                 <Button
                   variant="ghost"
                   icon="add"
-                  onClick={async () => {
-                    if (workingCase.id) {
-                      const { data } = await createDefendant(workingCase.id, {
-                        gender: undefined,
-                        name: '',
-                        address: '',
-                        nationalId: '',
-                        citizenship: '',
-                      })
-                      createEmptyDefendant(data?.createDefendant.id)
-                    } else {
-                      createEmptyDefendant()
-                    }
-
-                    window.scrollTo(0, document.body.scrollHeight)
-                  }}
+                  onClick={handleCreateDefendantClick}
                   disabled={workingCase.defendants?.some(
                     (defendant) =>
                       (!isBusiness(defendant.nationalId) &&

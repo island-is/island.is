@@ -23,6 +23,7 @@ import { TransitionCaseMutation } from './transitionCaseGql'
 import { RequestRulingSignatureMutation } from './requestRulingSignatureGql'
 import { RequestCourtRecordSignatureMutation } from './requestCourtRecordSignatureGql'
 import { ExtendCaseMutation } from './extendCaseGql'
+import { toast } from '@island.is/island-ui/core'
 
 type autofillProperties = Pick<
   Case,
@@ -120,26 +121,30 @@ const useCase = () => {
 
   const createCase = useMemo(
     () => async (theCase: Case): Promise<Case | undefined> => {
-      if (isCreatingCase === false) {
-        const { data } = await createCaseMutation({
-          variables: {
-            input: {
-              type: theCase.type,
-              policeCaseNumber: theCase.policeCaseNumber,
-              defenderName: theCase.defenderName,
-              defenderEmail: theCase.defenderEmail,
-              defenderPhoneNumber: theCase.defenderPhoneNumber,
-              sendRequestToDefender: theCase.sendRequestToDefender,
-              leadInvestigator: theCase.leadInvestigator,
-              courtId: theCase.court?.id,
-              description: theCase.description,
+      try {
+        if (isCreatingCase === false) {
+          const { data } = await createCaseMutation({
+            variables: {
+              input: {
+                type: theCase.type,
+                policeCaseNumber: theCase.policeCaseNumber,
+                defenderName: theCase.defenderName,
+                defenderEmail: theCase.defenderEmail,
+                defenderPhoneNumber: theCase.defenderPhoneNumber,
+                sendRequestToDefender: theCase.sendRequestToDefender,
+                leadInvestigator: theCase.leadInvestigator,
+                courtId: theCase.court?.id,
+                description: theCase.description,
+              },
             },
-          },
-        })
+          })
 
-        if (data) {
-          return data.createCase
+          if (data) {
+            return data.createCase
+          }
         }
+      } catch (error) {
+        toast.error('Villa kom upp við stofnun máls')
       }
     },
     [createCaseMutation, isCreatingCase],
@@ -153,8 +158,8 @@ const useCase = () => {
         React.SetStateAction<string>
       >,
     ): Promise<string> => {
-      if (isCreatingCourtCase === false) {
-        try {
+      try {
+        if (isCreatingCourtCase === false) {
           const { data, errors } = await createCourtCaseMutation({
             variables: {
               input: {
@@ -177,12 +182,12 @@ const useCase = () => {
 
             return data.createCourtCase.courtCaseNumber
           }
-        } catch (error) {
-          // Catch all so we can set an eror message
-          setCourtCaseNumberErrorMessage(
-            'Ekki tókst að stofna nýtt mál, reyndu aftur eða sláðu inn málsnúmer',
-          )
         }
+      } catch (error) {
+        // Catch all so we can set an eror message
+        setCourtCaseNumberErrorMessage(
+          'Ekki tókst að stofna nýtt mál, reyndu aftur eða sláðu inn málsnúmer',
+        )
       }
 
       return ''
@@ -192,18 +197,20 @@ const useCase = () => {
 
   const updateCase = useMemo(
     () => async (id: string, updateCase: UpdateCase) => {
-      // Only update if id has been set
-      if (!id) {
-        return
+      try {
+        // Only update if id has been set
+        if (!id) {
+          return
+        }
+
+        const { data } = await updateCaseMutation({
+          variables: { input: { id, ...updateCase } },
+        })
+
+        return data?.updateCase
+      } catch (error) {
+        toast.error('Villa kom upp við að uppfæra kröfu')
       }
-
-      const { data } = await updateCaseMutation({
-        variables: { input: { id, ...updateCase } },
-      })
-
-      // TODO: Handle errors
-
-      return data?.updateCase
     },
     [updateCaseMutation],
   )
@@ -237,6 +244,7 @@ const useCase = () => {
 
         return true
       } catch (e) {
+        toast.error('Villa kom upp við að uppfæra stöðu kröfu')
         return false
       }
     },
@@ -260,6 +268,7 @@ const useCase = () => {
 
         return Boolean(data?.sendNotification?.notificationSent)
       } catch (e) {
+        toast.error('Villa kom upp við að senda tilkynningu')
         return false
       }
     },
@@ -268,33 +277,45 @@ const useCase = () => {
 
   const requestRulingSignature = useMemo(
     () => async (id: string) => {
-      const { data } = await requestRulingSignatureMutation({
-        variables: { input: { caseId: id } },
-      })
+      try {
+        const { data } = await requestRulingSignatureMutation({
+          variables: { input: { caseId: id } },
+        })
 
-      return data?.requestRulingSignature
+        return data?.requestRulingSignature
+      } catch (error) {
+        toast.error('Villa kom upp við undirskrift')
+      }
     },
     [requestRulingSignatureMutation],
   )
 
   const requestCourtRecordSignature = useMemo(
     () => async (id: string) => {
-      const { data } = await requestCourtRecordSignatureMutation({
-        variables: { input: { caseId: id } },
-      })
+      try {
+        const { data } = await requestCourtRecordSignatureMutation({
+          variables: { input: { caseId: id } },
+        })
 
-      return data?.requestCourtRecordSignature
+        return data?.requestCourtRecordSignature
+      } catch (error) {
+        toast.error('Villa kom upp við undirskrift')
+      }
     },
     [requestCourtRecordSignatureMutation],
   )
 
   const extendCase = useMemo(
     () => async (id: string) => {
-      const { data } = await extendCaseMutation({
-        variables: { input: { id } },
-      })
+      try {
+        const { data } = await extendCaseMutation({
+          variables: { input: { id } },
+        })
 
-      return data?.extendCase
+        return data?.extendCase
+      } catch (error) {
+        toast.error('Villa kom upp við að framlengja mál')
+      }
     },
     [extendCaseMutation],
   )

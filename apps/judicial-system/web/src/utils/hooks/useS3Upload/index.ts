@@ -49,36 +49,50 @@ export const useS3Upload = (workingCase: Case) => {
     id: string,
     name: string,
   ): Promise<UploadPoliceCaseFileResponse> => {
-    const {
-      data: uploadPoliceCaseFileData,
-    } = await uploadPoliceCaseFileMutation({
-      variables: {
-        input: {
-          caseId: workingCase.id,
-          id: id,
-          name: name,
+    try {
+      const {
+        data: uploadPoliceCaseFileData,
+      } = await uploadPoliceCaseFileMutation({
+        variables: {
+          input: {
+            caseId: workingCase.id,
+            id: id,
+            name: name,
+          },
         },
-      },
-    })
+      })
 
-    return uploadPoliceCaseFileData?.uploadPoliceCaseFile
+      return uploadPoliceCaseFileData?.uploadPoliceCaseFile
+    } catch (error) {
+      setUploadErrorMessage(
+        'Upp kom óvænt kerfisvilla. Vinsamlegast reynið aftur.',
+      )
+      return { key: '', size: -1 }
+    }
   }
 
   const createPresignedPost = async (
     filename: string,
     type: string,
   ): Promise<PresignedPost> => {
-    const { data: presignedPostData } = await createPresignedPostMutation({
-      variables: {
-        input: {
-          caseId: workingCase.id,
-          fileName: filename,
-          type,
+    try {
+      const { data: presignedPostData } = await createPresignedPostMutation({
+        variables: {
+          input: {
+            caseId: workingCase.id,
+            fileName: filename,
+            type,
+          },
         },
-      },
-    })
+      })
 
-    return presignedPostData?.createPresignedPost
+      return presignedPostData?.createPresignedPost
+    } catch (error) {
+      setUploadErrorMessage(
+        'Upp kom óvænt kerfisvilla. Vinsamlegast reynið aftur.',
+      )
+      return { url: '', fields: {} }
+    }
   }
 
   const createFormData = (

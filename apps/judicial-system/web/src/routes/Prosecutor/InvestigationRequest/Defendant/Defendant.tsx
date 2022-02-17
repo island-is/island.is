@@ -13,6 +13,7 @@ import type { Case } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import DefendantForm from './DefendantForm'
+import { toast } from 'react-toastify'
 
 const Defendant = () => {
   const router = useRouter()
@@ -31,48 +32,53 @@ const Defendant = () => {
   }, [])
 
   const handleNextButtonClick = async (theCase: Case) => {
-    if (!theCase.id) {
-      const createdCase = await createCase(theCase)
+    try {
+      if (!theCase.id) {
+        const createdCase = await createCase(theCase)
 
-      if (createdCase) {
-        workingCase.defendants?.forEach(async (defendant, index) => {
-          if (
-            index === 0 &&
-            createdCase.defendants &&
-            createdCase.defendants.length > 0
-          ) {
-            await updateDefendant(
-              createdCase.id,
-              createdCase.defendants[0].id,
-              {
+        if (createdCase) {
+          workingCase.defendants?.forEach(async (defendant, index) => {
+            if (
+              index === 0 &&
+              createdCase.defendants &&
+              createdCase.defendants.length > 0
+            ) {
+              await updateDefendant(
+                createdCase.id,
+                createdCase.defendants[0].id,
+                {
+                  gender: defendant.gender,
+                  name: defendant.name,
+                  address: defendant.address,
+                  nationalId: defendant.nationalId,
+                  noNationalId: defendant.noNationalId,
+                  citizenship: defendant.citizenship,
+                },
+              )
+            } else {
+              await createDefendant(createdCase.id, {
                 gender: defendant.gender,
                 name: defendant.name,
                 address: defendant.address,
                 nationalId: defendant.nationalId,
                 noNationalId: defendant.noNationalId,
                 citizenship: defendant.citizenship,
-              },
-            )
-          } else {
-            await createDefendant(createdCase.id, {
-              gender: defendant.gender,
-              name: defendant.name,
-              address: defendant.address,
-              nationalId: defendant.nationalId,
-              noNationalId: defendant.noNationalId,
-              citizenship: defendant.citizenship,
-            })
-          }
-        })
-        router.push(
-          `${constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${createdCase.id}`,
-        )
+              })
+            }
+          })
+          router.push(
+            `${constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${createdCase.id}`,
+          )
+        } else {
+          // TODO handle error
+          return
+        }
       } else {
-        // TODO handle error
-        return
+        router.push(`${constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${theCase.id}`)
       }
-    } else {
-      router.push(`${constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${theCase.id}`)
+    } catch (error) {
+      // TODO: Do we want to be more spesific here?
+      toast.error('Villa kom upp. Vinsamlegast reyndu aftur.')
     }
   }
 

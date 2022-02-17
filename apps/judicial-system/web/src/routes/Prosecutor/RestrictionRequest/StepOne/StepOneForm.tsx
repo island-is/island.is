@@ -7,6 +7,7 @@ import {
   Box,
   Tooltip,
   AlertMessage,
+  toast,
 } from '@island.is/island-ui/core'
 import {
   FormContentContainer,
@@ -63,10 +64,14 @@ export const StepOneForm: React.FC<Props> = (props) => {
     defendantId: string,
     updatedDefendant: UpdateDefendant,
   ) => {
-    updateDefendantState(defendantId, updatedDefendant)
+    try {
+      updateDefendantState(defendantId, updatedDefendant)
 
-    if (defendantId) {
-      updateDefendant(workingCase.id, defendantId, updatedDefendant)
+      if (defendantId) {
+        updateDefendant(workingCase.id, defendantId, updatedDefendant)
+      }
+    } catch (error) {
+      toast.error('Upp kom villa við að uppfæra varnaraðila')
     }
   }
 
