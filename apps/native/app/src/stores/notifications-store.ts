@@ -55,11 +55,12 @@ export const notificationCategories = [
       {
         identifier: 'ACTION_OPEN_DOCUMENT',
         buttonTitle: 'Opna skjal',
-        onPress: ({ id, data }: Notification, componentId?: string) =>
-          navigateToNotification(
-            { id, link: `/inbox/${data.documentId}` },
+        onPress: ({ id, data }: Notification, componentId?: string) => {
+          return navigateToNotification(
+            { id, link: data.url },
             componentId,
-          ),
+          );
+        }
       },
       {
         identifier: 'ACTION_MARK_AS_READ',
@@ -116,6 +117,13 @@ export function actionsForNotification(
         onPress: () => action.onPress(notification, componentId),
       }))
   }
+  if (notification.data.url) {
+    return [{
+      text: 'Opna viðhengi',
+      onPress: () => navigateToNotification({ id: notification.id, link: notification.data.url }, componentId),
+    }];
+  }
+
   return []
 }
 
