@@ -1,4 +1,5 @@
-import simpleGit, { DefaultLogFields, ListLogLine, SimpleGit } from 'simple-git'
+import { DefaultLogFields, ListLogLine, SimpleGit } from 'simple-git'
+import { GitActionStatus } from './git-action-status'
 
 const calculateDistance = async (
   git: SimpleGit,
@@ -33,20 +34,6 @@ export async function findBestGoodRefBranch(
   const baseCommits = await githubApi.getBranchBuilds(baseBranch)
 
   return baseCommits.length > 0 ? baseCommits[0].head_commit : 'rebuild'
-}
-
-interface PRWorkflow {
-  head_commit: string
-  base_commit: string
-}
-
-interface BranchWorkflow {
-  head_commit: string
-}
-
-export interface GitActionStatus {
-  getPRRuns(prID: number): Promise<PRWorkflow[]>
-  getBranchBuilds(branch: string): Promise<BranchWorkflow[]>
 }
 
 export async function findBestGoodRefPR(

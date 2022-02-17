@@ -1,14 +1,11 @@
 import simpleGit, { SimpleGit } from 'simple-git'
 import { mkdtemp, writeFile } from 'fs/promises'
 import { join } from 'path'
-import {
-  findBestGoodRefBranch,
-  findBestGoodRefPR,
-  GitActionStatus,
-} from './change-detection'
+import { findBestGoodRefBranch, findBestGoodRefPR } from './change-detection'
 import { Substitute, Arg } from '@fluffy-spoon/substitute'
 import { existsSync, mkdir, mkdirSync } from 'fs'
 import { promisify } from 'util'
+import { GitActionStatus } from './git-action-status'
 
 let fileA: string
 let fileB: string
