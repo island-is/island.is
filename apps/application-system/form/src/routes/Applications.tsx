@@ -21,6 +21,8 @@ import {
   useLocale,
   useLocalizedQuery,
 } from '@island.is/localization'
+import { ApplicationTypes } from '@island.is/application/core'
+import { useAuth } from '@island.is/auth/react'
 
 import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
 import {DelegationsScreen} from '../components/DelegationsScreen/DelegationsScreen'
@@ -30,6 +32,8 @@ export const Applications: FC = () => {
   const history = useHistory()
   const { formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)
+  const { userInfo: user } = useAuth()
+
   const [delegationsChecked, setDelegationsChecked] = useState(false)
 
   useApplicationNamespaces(type)
@@ -69,6 +73,8 @@ export const Applications: FC = () => {
     }
   }, [type, data])
 
+  console.log(delegationsChecked)
+
   if (loading) {
     return <ApplicationLoading />
   }
@@ -95,9 +101,9 @@ export const Applications: FC = () => {
     )
   }
 
-  // if (delegationsChecked && type) {
-  //   return <DelegationsScreen type={type} checked={setDelegationsChecked}/>
-  // }
+  if (!delegationsChecked && type) {
+    return <DelegationsScreen type={type} setDelegationsChecked={setDelegationsChecked} delegationsChecked/>
+  }
 
   return (
     <Page>
