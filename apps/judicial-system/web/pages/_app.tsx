@@ -10,6 +10,7 @@ import { UserProvider, Header, FeatureProvider } from '../src/components'
 import { client } from '../graphql'
 import { withHealthchecks } from '../units/Healthchecks/withHealthchecks'
 import FormProvider from '../src/components/FormProvider/FormProvider'
+import Toast from '../src/components/Toast'
 
 const getTranslationStrings = ({
   apolloClient,
@@ -72,6 +73,7 @@ class JudicialSystemApplication extends App<Props> {
                 <Header />
                 <FormProvider>
                   <Component {...pageProps} />
+                  <Toast />
                 </FormProvider>
                 <style jsx global>{`
                   @font-face {

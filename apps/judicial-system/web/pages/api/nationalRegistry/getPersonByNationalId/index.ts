@@ -9,7 +9,7 @@ async function getPersonByNationalId(
     `https://api.ja.is/skra/v1/people?kennitala=${nationalId}`,
     {
       headers: {
-        Authorization: process.env.NATIONAL_REGISTRY_API_KEY || '',
+        Authorization: process.env.NATIONAL_REGISTRY_API_KEY + 'EYDA' || '',
       },
     },
   )

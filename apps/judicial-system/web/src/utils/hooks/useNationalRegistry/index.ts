@@ -8,6 +8,7 @@ import {
 
 import { validate } from '../../validate'
 import { isBusiness } from '../../stepHelper'
+import { NotificationService } from '@island.is/judicial-system-web/src/services'
 
 const useNationalRegistry = (nationalId?: string) => {
   const [shouldFetch, setShouldFetch] = useState<boolean>(false)
@@ -48,6 +49,20 @@ const useNationalRegistry = (nationalId?: string) => {
       isMounted.current = true
     }
   }, [nationalId])
+
+  useEffect(() => {
+    console.log('personData', personData)
+    console.log('businessData', businessData)
+    if (
+      (personData && personData.error) ||
+      (businessData && businessData.error)
+    ) {
+      NotificationService.error({
+        title: 'Villa í uppflettingu í Þjóðskrá',
+        text: 'Upp kom villa við að sækja gögn úr Þjóðskrá',
+      })
+    }
+  }, [personData, businessData])
 
   return {
     personData,
