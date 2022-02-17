@@ -98,7 +98,7 @@ const ApplicantDataGathering = () => {
         .municipalityCode,
     ).then(async (municipality) => {
       if (navigation.nextUrl && municipality && municipality.active) {
-        const { data: taxes } = await gatherTaxDataQuery({}).catch((e) => {
+        const { data: taxes } = await gatherTaxDataQuery({}).catch(() => {
           return {
             data: {
               municipalitiesPersonalTaxReturn: undefined,
@@ -113,15 +113,15 @@ const ApplicantDataGathering = () => {
         if (taxes) {
           updateForm({
             ...form,
-            taxReturnFromRskFile: [
-              taxes?.municipalitiesPersonalTaxReturn
-                ? {
+            taxReturnFromRskFile: taxes?.municipalitiesPersonalTaxReturn
+              ? [
+                  {
                     ...taxes.municipalitiesPersonalTaxReturn,
                     type: FileType.TAXRETURN,
-                  }
-                : undefined,
-            ],
-            taxDirectPayments: taxes?.municipalitiesDirectTaxPayments,
+                  },
+                ]
+              : [],
+            directTaxPayments: taxes?.municipalitiesDirectTaxPayments,
           })
         }
 

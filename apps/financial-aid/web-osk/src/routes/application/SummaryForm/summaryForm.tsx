@@ -116,7 +116,7 @@ const SummaryForm = () => {
           router.push(navigation.nextUrl)
         }
       })
-      .catch((e) => {
+      .catch(() => {
         setIsLoading(false)
         setFormError({
           status: true,

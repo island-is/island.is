@@ -20,22 +20,22 @@ module.exports = {
             },
             allowNull: false,
           },
-          totalSalary: {
+          total_salary: {
             type: Sequelize.INTEGER,
           },
-          payerNationalId: {
+          payer_national_id: {
+            type: Sequelize.STRING,
+          },
+          personal_allowance: {
             type: Sequelize.INTEGER,
           },
-          personalAllowance: {
-            type: Sequelize.INTEGER,
-          },
-          withheldAtSource: {
+          withheld_at_source: {
             type: Sequelize.INTEGER,
           },
           month: {
             type: Sequelize.INTEGER,
           },
-          userType: {
+          user_type: {
             type: Sequelize.ENUM('Applicant', 'Spouse'),
             allowNull: false,
           },

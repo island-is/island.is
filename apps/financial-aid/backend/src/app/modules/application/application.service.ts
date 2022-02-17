@@ -263,55 +263,18 @@ export class ApplicationService {
       ...application,
     })
 
-    // const applicationEventPromise = this.applicationEventService.create({
-    //   applicationId: appModel.id,
-    //   eventType: ApplicationEventType[appModel.state.toUpperCase()],
-    // })
-
-    // const emailPromise = this.createApplicationEmails(
-    //   application,
-    //   appModel,
-    //   user,
-    // )
-
-    // let filesPromises: Promise<ApplicationFileModel>[]
-
-    // if (application.files) {
-    //   filesPromises = application.files.map((f) => {
-    //     return this.fileService.createFile({
-    //       applicationId: appModel.id,
-    //       name: f.name,
-    //       key: f.key,
-    //       size: f.size,
-    //       type: f.type,
-    //     })
-    //   })
-    // }
-
-    // let directTaxPaymentsPromises: Promise<DirectTaxPaymentModel>[]
-
-    // if (application.directTaxPayments) {
-    //   directTaxPaymentsPromises = application.directTaxPayments.map((d) => {
-    //     return this.directTaxPaymentService.create({
-    //       applicationId: appModel.id,
-    //       userType: UserType.APPLICANT,
-    //       ...d,
-    //     })
-    //   })
-    // }
-
     console.log('direct tax payments', application.directTaxPayments)
     console.log('files', application.files)
 
     await Promise.all([
-      application.directTaxPayments.map((d) => {
+      application.directTaxPayments?.map((d) => {
         return this.directTaxPaymentService.create({
           applicationId: appModel.id,
           userType: UserType.APPLICANT,
           ...d,
         })
       }),
-      application.files.map((f) => {
+      application.files?.map((f) => {
         return this.fileService.createFile({
           applicationId: appModel.id,
           name: f.name,

@@ -74,7 +74,8 @@ const useApplication = () => {
               postalCode: nationalRegistryData?.address.postalCode,
               city: nationalRegistryData?.address.city,
               municipalityCode: nationalRegistryData?.address.municipalityCode,
-              directTaxPayments: form?.directTaxPayments,
+              directTaxPayments:
+                form?.directTaxPayments?.directTaxPayments ?? [],
             },
           },
         })
@@ -90,7 +91,6 @@ const useApplication = () => {
 
   return {
     createApplication,
-    isCreatingApplication,
   }
 }
 
