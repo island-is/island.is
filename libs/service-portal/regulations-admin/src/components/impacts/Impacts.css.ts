@@ -24,3 +24,5 @@ export const cancelModal = style({
     },
   }),
 })
+
+export const changeModal = style({})

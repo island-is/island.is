@@ -53,7 +53,7 @@ export const EditCancellation = (props: EditCancellationProp) => {
 
   const changeCancelDate = (newDate: Date | undefined) => {
     setActiveCancellation({
-      ...cancellation,
+      ...activeCancellation,
       date: { value: newDate },
     })
   }
