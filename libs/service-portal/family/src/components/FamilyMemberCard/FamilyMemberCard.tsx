@@ -58,6 +58,7 @@ export const FamilyMemberCard: FC<Props> = ({
     <ActionCard
       avatar
       heading={title}
+      headingVariant="h4"
       text={
         nationalId &&
         `${formatMessage(m.natreg)}: ${formatNationalId(nationalId)}`
