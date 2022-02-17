@@ -100,3 +100,8 @@ export enum AmountModal {
   ESTIMATED = 'Estimated',
   PROVIDED = 'Provided',
 }
+
+export enum UserType {
+  APPLICANT = 'Applicant',
+  SPOUSE = 'Spouse',
+}

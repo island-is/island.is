@@ -13,7 +13,7 @@ export class PersonalTaxReturnService {
 
   private async callPersonalTaxReturn(nationalId: string, year: number) {
     return await this.personalTaxReturnApi
-      .personalTaxReturnInPdf(nationalId, year.toString())
+      .personalTaxReturnInPdf(nationalId, year)
       .catch(() => {
         return { success: false, content: '' }
       })
@@ -79,8 +79,8 @@ export class PersonalTaxReturnService {
     const date = new Date()
     date.setMonth(date.getMonth() - pastMonth)
     return {
-      year: date.getFullYear().toString(),
-      month: (date.getMonth() + 1).toString(),
+      year: date.getFullYear(),
+      month: date.getMonth() + 1,
     }
   }
 }

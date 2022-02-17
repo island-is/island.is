@@ -25,6 +25,7 @@ import { ApplicationEventModel } from '../../applicationEvent/models/application
 import { ApplicationFileModel } from '../../file/models/file.model'
 import { StaffModel } from '../../staff/models/staff.model'
 import { AmountModel } from '../../amount/models/amount.model'
+import { DirectTaxPaymentModel } from '../../directTaxPayment/models'
 
 @Table({
   tableName: 'applications',
@@ -278,4 +279,8 @@ export class ApplicationModel extends Model<Application> {
   })
   @ApiProperty()
   municipalityCode: string
+
+  @HasMany(() => DirectTaxPaymentModel, 'applicationId')
+  @ApiProperty({ type: DirectTaxPaymentModel, nullable: true })
+  directTaxPayments?: DirectTaxPaymentModel
 }

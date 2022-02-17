@@ -3,7 +3,7 @@ import { ConfigType } from '@nestjs/config'
 import { PersonalTaxReturnConfig } from './personalTaxReturn.config'
 import * as xml2js from 'xml2js'
 import { directTaxPaymentRequest, pdfRequest } from './requests'
-import { period } from './utils'
+import { Period } from './utils'
 import { DirectTaxPaymentDto, PdfDto } from './dto'
 import { DirectTaxPaymentResponse, PdfResponse } from './responses'
 import {
@@ -22,7 +22,7 @@ export class PersonalTaxReturnApi {
 
   async personalTaxReturnInPdf(
     nationalId: string,
-    year: string,
+    year: number,
   ): Promise<PdfDto> {
     const headers = { Accept: 'gzip', 'Content-Type': 'application/soap+xml' }
 
@@ -33,7 +33,7 @@ export class PersonalTaxReturnApi {
           this.config.agentNationalId,
           this.config.agentId,
           nationalId,
-          '2020',
+          2020,
         ),
         { headers },
       )
@@ -53,8 +53,8 @@ export class PersonalTaxReturnApi {
 
   async directTaxPayments(
     nationalId: string,
-    from: period,
-    to: period,
+    from: Period,
+    to: Period,
   ): Promise<DirectTaxPaymentDto> {
     const headers = { 'Content-Type': 'application/soap+xml' }
 
@@ -65,8 +65,8 @@ export class PersonalTaxReturnApi {
           this.config.agentNationalId,
           this.config.agentId,
           nationalId,
-          { year: '2020', month: '01' },
-          { year: '2020', month: '03' },
+          { year: 2020, month: 1 },
+          { year: 2020, month: 3 },
         ),
         { headers },
       )

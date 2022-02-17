@@ -248,7 +248,7 @@ export interface DirectTaxPayments {
   success: boolean
 }
 
-interface DirectTaxPayment {
+export interface DirectTaxPayment {
   totalSalary: number
   payerNationalId: number
   personalAllowance: number
