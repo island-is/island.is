@@ -272,7 +272,7 @@ export const PaymentPlanForm: Form = buildForm({
             return (
               debts?.find((x) => x.type === 'Wagedection') !== undefined &&
               (_formValue as PublicDebtPaymentPlan).employer?.isCorrectInfo ===
-                NO
+              NO
             )
           },
           children: [
@@ -285,7 +285,7 @@ export const PaymentPlanForm: Form = buildForm({
             buildCustomField({
               id: 'correctedEmployer',
               title: '',
-              component: 'EmployerIdField',
+              component: 'CompanySearch',
             }),
           ],
         }),

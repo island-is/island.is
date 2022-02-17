@@ -96,7 +96,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
         onInputValueChange={onInputValueChange}
         onOuterClick={(ctx) => {
           ctx.clearItems()
-          ctx.setState({ inputValue })
+          ctx.setState({ inputValue: inputValue || '' })
           ctx.closeMenu()
         }}
         onStateChange={(changes, ctx) => {
@@ -104,7 +104,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
             case Downshift.stateChangeTypes.unknown:
             case Downshift.stateChangeTypes.mouseUp:
             case Downshift.stateChangeTypes.blurInput:
-              ctx.setState({ inputValue })
+              ctx.setState({ inputValue: inputValue || '' })
           }
         }}
         itemToString={(item: AsyncSearchOption | null) =>
@@ -193,11 +193,11 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
                 onBlur,
                 ...(onSubmit
                   ? {
-                      onClick: () => {
-                        closeMenuOnSubmit && closeMenu()
-                        onSubmit && onSubmit(inputValue || '', null)
-                      },
-                    }
+                    onClick: () => {
+                      closeMenuOnSubmit && closeMenu()
+                      onSubmit && onSubmit(inputValue || '', null)
+                    },
+                  }
                   : getToggleButtonProps()),
               }}
               label={label}
