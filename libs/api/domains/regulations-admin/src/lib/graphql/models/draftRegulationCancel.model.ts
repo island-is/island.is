@@ -1,17 +1,20 @@
-import { ISODate, RegName, PlainText } from '@island.is/regulations'
+import { ISODate, RegName } from '@island.is/regulations'
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class DraftRegulationCancelModel {
-  @Field()
+  @Field(() => String, { nullable: true })
+  type!: string
+
+  @Field(() => String, { nullable: true })
   id!: string
 
-  @Field()
-  changingId!: string
+  @Field(() => String, { nullable: true })
+  name!: RegName
 
-  @Field(() => String)
-  regulation!: RegName
+  @Field(() => String, { nullable: true })
+  regTitle!: string
 
-  @Field(() => Date)
+  @Field(() => String, { nullable: true })
   date!: ISODate
 }

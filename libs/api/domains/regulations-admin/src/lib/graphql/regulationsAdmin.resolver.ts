@@ -145,8 +145,8 @@ export class RegulationsAdminResolver {
   async createDraftRegulationCancel(
     @Args('input') input: CreateDraftRegulationCancelInput,
     @CurrentUser() { authorization }: User,
-  ): Promise<any> {
-    return this.regulationsAdminApiService.createDraftRegulationCancel(
+  ): Promise<DraftRegulationCancelModel> {
+    return await this.regulationsAdminApiService.createDraftRegulationCancel(
       input,
       authorization ?? '',
     )
@@ -156,8 +156,8 @@ export class RegulationsAdminResolver {
   async updateDraftRegulationCancel(
     @Args('input') input: UpdateDraftRegulationCancelInput,
     @CurrentUser() { authorization }: User,
-  ): Promise<any> {
-    return this.regulationsAdminApiService.updateDraftRegulationCancel(
+  ): Promise<DraftRegulationCancelModel> {
+    return await this.regulationsAdminApiService.updateDraftRegulationCancel(
       input,
       authorization ?? '',
     )

@@ -6,6 +6,7 @@ import { RegulationsAdminClientConfig } from '@island.is/clients/regulations-adm
 import { ConfigType } from '@nestjs/config'
 import { CreateDraftRegulationCancelInput } from '../graphql/dto/createDraftRegulationCancelInput.input'
 import { UpdateDraftRegulationCancelInput } from '../graphql/dto/updateDraftRegulationCancelInput.input'
+import { DraftRegulationCancelModel } from '../graphql/models/draftRegulationCancel.model'
 
 export class RegulationsAdminApi extends RESTDataSource {
   constructor(
@@ -45,8 +46,8 @@ export class RegulationsAdminApi extends RESTDataSource {
   createDraftRegulationCancel(
     input: CreateDraftRegulationCancelInput,
     authorization: string,
-  ): Promise<any> {
-    return this.put(`/draft_regulation_cancel/`, input, {
+  ): Promise<DraftRegulationCancelModel> {
+    return this.post(`/draft_regulation_cancel/`, input, {
       headers: { authorization },
     })
   }
@@ -54,7 +55,7 @@ export class RegulationsAdminApi extends RESTDataSource {
   updateDraftRegulationCancel(
     input: UpdateDraftRegulationCancelInput,
     authorization: string,
-  ): Promise<any> {
+  ): Promise<DraftRegulationCancelModel> {
     return this.put(
       `/draft_regulation_cancel/${input.id}`,
       { date: input.date },

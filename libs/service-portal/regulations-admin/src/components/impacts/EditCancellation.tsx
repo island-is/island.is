@@ -5,7 +5,7 @@ import React, { useState } from 'react'
 import { DraftCancelForm, RegDraftForm } from '../../state/types'
 // import { useDraftingState } from '../../state/useDraftingState'
 import { ImpactDate } from './ImpactDate'
-import { nameToSlug, RegName } from '@island.is/regulations'
+import { nameToSlug, RegName, toISODate } from '@island.is/regulations'
 
 type EditCancellationProp = {
   draft: RegDraftForm
@@ -18,9 +18,10 @@ const CREATE_DRAFT_REGULATION_CANCEL_IMPACT = gql`
     $input: CreateDraftRegulationCancelInput!
   ) {
     createDraftRegulationCancel(input: $input) {
+      type
       id
-      changingId
-      regulation
+      name
+      regTitle
       date
     }
   }
@@ -30,9 +31,10 @@ const UPDATE_DRAFT_REGULATION_CANCEL_IMPACT = gql`
     $input: UpdateDraftRegulationCancelInput!
   ) {
     updateDraftRegulationCancel(input: $input) {
+      type
       id
-      changingId
-      regulation
+      name
+      regTitle
       date
     }
   }
@@ -61,7 +63,7 @@ export const EditCancellation = (props: EditCancellationProp) => {
       createDraftRegulationCancelImpact({
         variables: {
           input: {
-            date: activeCancellation.date.value,
+            date: toISODate(activeCancellation.date.value),
             changingId: draft.id,
             regulation: activeCancellation.name,
           },
@@ -81,7 +83,7 @@ export const EditCancellation = (props: EditCancellationProp) => {
         variables: {
           input: {
             id: activeCancellation.id,
-            date: activeCancellation.date,
+            date: toISODate(activeCancellation.date.value),
           },
         },
       })

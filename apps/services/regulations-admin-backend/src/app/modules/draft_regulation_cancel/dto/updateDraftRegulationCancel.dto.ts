@@ -1,10 +1,11 @@
-import { IsDate, IsOptional } from 'class-validator'
+import { IsOptional, IsString } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
+import { ISODate } from '@island.is/regulations'
 
 export class UpdateDraftRegulationCancelDto {
+  @IsString()
   @IsOptional()
-  @IsDate()
   @ApiProperty()
-  date?: Date
+  date?: ISODate
 }

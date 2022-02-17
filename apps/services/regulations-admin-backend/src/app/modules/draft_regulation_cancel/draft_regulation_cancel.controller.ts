@@ -29,6 +29,8 @@ import { DraftRegulationCancelService } from './draft_regulation_cancel.service'
 import { environment } from '../../../environments'
 const namespace = `${environment.audit.defaultNamespace}/draft_regulation_cancel`
 
+import { DraftRegulationCancel } from '@island.is/regulations/admin'
+
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Controller('api')
 @ApiTags('draft_regulation_cancel')
@@ -51,10 +53,7 @@ export class DraftRegulationCancelController {
   async create(
     @Body() draftRegulationCancelToCreate: CreateDraftRegulationCancelDto,
     @CurrentUser() user: User,
-  ): Promise<DraftRegulationCancelModel | null> {
-    if (!draftRegulationCancelToCreate.date) {
-      return null
-    }
+  ): Promise<DraftRegulationCancel> {
     return await this.draftRegulationCancelService.create(
       draftRegulationCancelToCreate,
     )
@@ -73,15 +72,15 @@ export class DraftRegulationCancelController {
     @Param('id') id: string,
     @Body() draftRegulationCancelToUpdate: UpdateDraftRegulationCancelDto,
     @CurrentUser() user: User,
-  ): Promise<DraftRegulationCancelModel | null> {
+  ): Promise<DraftRegulationCancel> {
     if (!draftRegulationCancelToUpdate.date) {
       await this.draftRegulationCancelService.delete(id)
-      return null
+      throw new NotFoundException(`DraftRegulationCancel ${id} was deleted`)
     }
 
     const {
       numberOfAffectedRows,
-      updatedDraftRegulationCancel,
+      draftRegulationCancel,
     } = await this.draftRegulationCancelService.update(
       id,
       draftRegulationCancelToUpdate,
@@ -91,7 +90,7 @@ export class DraftRegulationCancelController {
       throw new NotFoundException(`DraftRegulationCancel ${id} does not exist`)
     }
 
-    return updatedDraftRegulationCancel
+    return draftRegulationCancel
   }
 
   @Scopes('@island.is/regulations:create')
