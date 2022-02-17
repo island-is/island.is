@@ -91,7 +91,7 @@ export function TabSettings() {
     })
   }
 
-  const userProfile = useQuery(gql`
+  const userProfileQuery = gql`
     query {
       getUserProfile {
         nationalId
@@ -99,7 +99,9 @@ export function TabSettings() {
         documentNotifications
       }
     }
-  `, {
+  `
+
+  const userProfile = useQuery(userProfileQuery, {
     client,
   });
 
@@ -169,6 +171,15 @@ export function TabSettings() {
                       }
                     }
                   `,
+                  update(cache, { data: { updateProfile } }) {
+                    cache.modify({
+                      fields: {
+                        getUserProfile: (existing) => {
+                          return { ...existing, ...updateProfile };
+                        },
+                      }
+                    });
+                  },
                   variables: {
                     input: {
                       documentNotifications: value,
@@ -179,7 +190,7 @@ export function TabSettings() {
                   alert(err.message)
                 })
               }}
-              disabled={userProfile.loading || !userProfile.data}
+              disabled={userProfile.loading && !userProfile.data}
               value={userProfile.data?.getUserProfile?.documentNotifications}
               thumbColor={Platform.select({ android: theme.color.dark100 })}
               trackColor={{

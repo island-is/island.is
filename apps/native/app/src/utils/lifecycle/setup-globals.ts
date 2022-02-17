@@ -35,14 +35,14 @@ import '@formatjs/intl-relativetimeformat/locale-data/en'
 import '@formatjs/intl-relativetimeformat/locale-data/is'
 import { setupQuickActions } from '../quick-actions'
 import { Navigation } from 'react-native-navigation'
-import { DdSdkReactNative, DdSdkReactNativeConfiguration, DdRum } from '@datadog/mobile-react-native';
+import { DdSdkReactNative, DdSdkReactNativeConfiguration, DdRum, DdLogs } from '@datadog/mobile-react-native';
 
 if (__DEV__) {
   perf().setPerformanceCollectionEnabled(false)
   require('../devtools/index')
 } else {
 
-  // initialize datadog rum
+  // datadog rum config
   const ddconfig = new DdSdkReactNativeConfiguration(
     config.datadogClientToken,
     "production",
@@ -50,8 +50,15 @@ if (__DEV__) {
     true, // track User interactions (e.g.: Tap on buttons. You can use 'accessibilityLabel' element property to give tap action the name, otherwise element type will be reported)
     true, // track XHR Resources
     true // track Errors
-)
-  DdSdkReactNative.initialize(ddconfig)
+  )
+
+  ddconfig.nativeCrashReportEnabled = true;
+  ddconfig.nativeViewTracking = true;
+  ddconfig.site = "EU";
+  ddconfig.serviceName = 'mobile-app';
+
+  // initialize datadog rum
+  DdSdkReactNative.initialize(ddconfig);
 
   Navigation.events().registerComponentWillAppearListener(({ componentId, componentName }) => {
     // Start a view with a unique view identifier, a custom view url, and an object to attach additional attributes to the view
