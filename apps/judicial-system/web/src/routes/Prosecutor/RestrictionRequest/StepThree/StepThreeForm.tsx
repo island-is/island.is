@@ -187,6 +187,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
               required
               textarea
               rows={7}
+              autoExpand={{ on: true, maxHeight: 300 }}
             />
           </Box>
         )}
@@ -249,6 +250,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
               }
               textarea
               rows={7}
+              autoExpand={{ on: true, maxHeight: 300 }}
             />
           </BlueBox>
         </Box>
@@ -353,6 +355,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
                   )
                 }
                 rows={10}
+                autoExpand={{ on: true, maxHeight: 500 }}
                 textarea
               />
             </BlueBox>

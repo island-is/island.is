@@ -14,7 +14,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
-import { BackendAPI } from '../../../services'
+import { BackendAPI } from '../../data-sources/backend'
 import { CreateDefendantInput } from './dto/createDefendant.input'
 import { UpdateDefendantInput } from './dto/updateDefendant.input'
 import { DeleteDefendantInput } from './dto/deleteDefendant.input'
