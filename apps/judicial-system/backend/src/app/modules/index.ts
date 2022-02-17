@@ -1,6 +1,6 @@
+export { CaseModule } from './case'
 export { InstitutionModule } from './institution/institution.module'
 export { UserModule } from './user/user.module'
-export { CaseModule } from './case'
 export { NotificationModule } from './notification'
 export { FileModule } from './file'
 export { CourtModule } from './court'

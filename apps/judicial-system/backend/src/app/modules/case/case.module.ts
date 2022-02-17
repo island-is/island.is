@@ -21,7 +21,7 @@ import { CaseService } from './case.service'
     SigningModule.register(environment.signingOptions),
     EmailModule.register(environment.emailOptions),
     forwardRef(() => DefendantModule),
-    UserModule,
+    forwardRef(() => UserModule),
     forwardRef(() => FileModule),
     AwsS3Module,
     CourtModule,
