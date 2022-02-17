@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/react-native'
 import { Base64 } from 'js-base64'
 import { Navigation, Options, OptionsModalPresentationStyle } from 'react-native-navigation'
 import { addRoute, addScheme } from '../../lib/deep-linking'
@@ -179,11 +178,9 @@ export function setupRoutes() {
   addRoute('/e2e/cookie/:cookie', ({ cookie }: any) => {
     const decodedCookie = Base64.decode(cookie)
     authStore.setState({ cookies: decodedCookie })
-    Sentry.init({ enabled: false })
   })
 
   addRoute('/e2e/disable-applock', () => {
     preferencesStore.setState({ dev__useLockScreen: false })
-    Sentry.init({ enabled: false })
   })
 }

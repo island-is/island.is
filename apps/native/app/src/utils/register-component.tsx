@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/react-native'
 import React from 'react'
 import {
   Navigation,
@@ -12,7 +11,6 @@ export function registerComponent(
   name: string,
   Component: NavigationFunctionComponent<any>,
 ) {
-  const SentryComponent = Sentry.wrap(Component)
   Navigation.registerComponent(
     name,
     () => (props) => {
@@ -20,7 +18,7 @@ export function registerComponent(
         <I18nProvider>
           <NavigationProvider value={{ componentId: props.componentId }}>
             <ThemeProvider>
-              <SentryComponent {...props} />
+              <Component {...props} />
             </ThemeProvider>
           </NavigationProvider>
         </I18nProvider>

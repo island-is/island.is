@@ -16,7 +16,7 @@ import com.reactnativenavigation.react.NavigationReactNativeHost;
 import com.reactnativeultimateconfig.UltimateConfigPackage;
 import com.reactnativeultimateconfig.UltimateConfigModule;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
-import io.sentry.react.RNSentryPackage;
+import com.datadog.reactnative.DdSdkReactNativePackage;
 import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
 import io.invertase.firebase.messaging.ReactNativeFirebaseMessagingPackage;
 import io.invertase.firebase.perf.ReactNativeFirebasePerfPackage;
@@ -71,7 +71,7 @@ public class MainApplication extends NavigationApplication {
           packages.add(new RNAppAuthPackage());
           packages.add(new RNCWebViewPackage());
           packages.add(new UltimateConfigPackage());
-          packages.add(new RNSentryPackage());
+          packages.add(new DdSdkReactNativePackage());
           packages.add(new ReactNativeFirebaseAppPackage());
           packages.add(new ReactNativeFirebaseMessagingPackage());
           packages.add(new ReactNativeFirebasePerfPackage());

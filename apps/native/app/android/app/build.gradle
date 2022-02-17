@@ -85,7 +85,6 @@ project.ext.react = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
-apply from: "../../../node_modules/@sentry/react-native/sentry.gradle"
 apply from: "../../../node_modules/react-native-code-push/android/codepush.gradle"
 apply from: '../../../node_modules/react-native-unimodules/gradle.groovy'
 apply from: "../../../node_modules/react-native-ultimate-config/android/rnuc.gradle"
@@ -233,7 +232,7 @@ dependencies {
     implementation project(':react-native-navigation')
     implementation project(':react-native-ultimate-config')
     implementation project(':react-native-web-view')
-    implementation project(':react-native-sentry')
+    implementation project(':react-native-datadog')
     implementation project(':react-native-custom-tabs')
     implementation project(':react-native-randombytes')
     implementation project(':react-native-pdf')
