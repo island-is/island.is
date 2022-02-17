@@ -350,7 +350,7 @@ const MobileButton = ({ title, colorScheme }: MobileButtonProps) => {
         variant="h5"
         color={colorSchemeColors[colorScheme]['activeColor']}
       >
-        {title} asd
+        {title}
       </Text>
 
       <Box

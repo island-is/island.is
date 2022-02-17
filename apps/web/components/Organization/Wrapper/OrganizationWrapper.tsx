@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useMemo, useState } from 'react'
+import React, { ReactNode, useMemo } from 'react'
 import { useWindowSize } from 'react-use'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
@@ -17,7 +17,6 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Hidden,
   Link,
   Navigation,
   NavigationItem,
@@ -282,16 +281,9 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   showSecondaryMenu = true,
   showExternalLinks = false,
 }) => {
-  const { width } = useWindowSize()
-  const [isMobile, setIsMobile] = useState(false)
   const router = useRouter()
-
-  useEffect(() => {
-    if (width < theme.breakpoints.md) {
-      return setIsMobile(true)
-    }
-    setIsMobile(false)
-  }, [width])
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
 
   const secondaryNavList: NavigationItem[] =
     organizationPage.secondaryMenu?.childrenLinks.map(({ text, url }) => ({
