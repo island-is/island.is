@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import useSWR from 'swr'
 
 import {
@@ -6,12 +7,15 @@ import {
   NationalRegistryResponsePerson,
 } from '@island.is/judicial-system-web/src/types'
 import { toast } from '@island.is/island-ui/core'
+import { errors } from '@island.is/judicial-system-web/messages'
 
 import { validate } from '../../validate'
 import { isBusiness } from '../../stepHelper'
 
 const useNationalRegistry = (nationalId?: string) => {
+  const { formatMessage } = useIntl()
   const [shouldFetch, setShouldFetch] = useState<boolean>(false)
+
   const isMounted = useRef(false)
   const { isValid: isValidNationalId } = validate(
     nationalId ?? '',
@@ -57,9 +61,9 @@ const useNationalRegistry = (nationalId?: string) => {
       (businessData && businessData.error) ||
       businessError
     ) {
-      toast.error('Villa kom upp við að sækja gögn frá Þjóðskrá')
+      toast.error(formatMessage(errors.nationalRegistry))
     }
-  }, [personData, businessData, personError, businessError])
+  }, [personData, businessData, personError, businessError, formatMessage])
 
   return {
     personData,

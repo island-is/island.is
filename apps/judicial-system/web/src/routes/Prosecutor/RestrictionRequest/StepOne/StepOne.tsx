@@ -1,5 +1,6 @@
 import React, { useEffect, useContext } from 'react'
 import { useRouter } from 'next/router'
+import { useIntl } from 'react-intl'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import {
@@ -11,6 +12,7 @@ import {
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { errors } from '@island.is/judicial-system-web/messages'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 import { toast } from '@island.is/island-ui/core'
 import type { Case, UpdateDefendant } from '@island.is/judicial-system/types'
@@ -20,6 +22,7 @@ import { StepOneForm } from './StepOneForm'
 
 export const StepOne: React.FC = () => {
   const router = useRouter()
+  const { formatMessage } = useIntl()
 
   const {
     workingCase,
@@ -59,7 +62,7 @@ export const StepOne: React.FC = () => {
       }
     } catch (error) {
       // TODO: Do we want to be more specific here?
-      toast.error('Upp kom óvænt villa')
+      toast.error(formatMessage(errors.general))
     }
   }
 

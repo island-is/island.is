@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useMutation } from '@apollo/client'
+import { useIntl } from 'react-intl'
 
 import {
   parseString,
@@ -14,6 +15,8 @@ import type {
   UpdateCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
+import { toast } from '@island.is/island-ui/core'
+import { errors } from '@island.is/judicial-system-web/messages'
 
 import { CreateCaseMutation } from './createCaseGql'
 import { CreateCourtCaseMutation } from './createCourtCaseGql'
@@ -23,7 +26,6 @@ import { TransitionCaseMutation } from './transitionCaseGql'
 import { RequestRulingSignatureMutation } from './requestRulingSignatureGql'
 import { RequestCourtRecordSignatureMutation } from './requestCourtRecordSignatureGql'
 import { ExtendCaseMutation } from './extendCaseGql'
-import { toast } from '@island.is/island-ui/core'
 
 type autofillProperties = Pick<
   Case,
@@ -82,6 +84,7 @@ interface ExtendCaseMutationResponse {
 }
 
 const useCase = () => {
+  const { formatMessage } = useIntl()
   const [
     createCaseMutation,
     { loading: isCreatingCase },
@@ -144,7 +147,7 @@ const useCase = () => {
           }
         }
       } catch (error) {
-        toast.error('Villa kom upp við stofnun máls')
+        toast.error(formatMessage(errors.createCase))
       }
     },
     [createCaseMutation, isCreatingCase],
@@ -209,10 +212,10 @@ const useCase = () => {
 
         return data?.updateCase
       } catch (error) {
-        toast.error('Villa kom upp við að uppfæra kröfu')
+        toast.error(formatMessage(errors.updateCase))
       }
     },
-    [updateCaseMutation],
+    [formatMessage, updateCaseMutation],
   )
 
   const transitionCase = useMemo(
@@ -244,11 +247,11 @@ const useCase = () => {
 
         return true
       } catch (e) {
-        toast.error('Villa kom upp við að uppfæra stöðu kröfu')
+        toast.error(formatMessage(errors.transitionCase))
         return false
       }
     },
-    [transitionCaseMutation],
+    [formatMessage, transitionCaseMutation],
   )
 
   const sendNotification = useMemo(
@@ -268,11 +271,11 @@ const useCase = () => {
 
         return Boolean(data?.sendNotification?.notificationSent)
       } catch (e) {
-        toast.error('Villa kom upp við að senda tilkynningu')
+        toast.error(formatMessage(errors.sendNotification))
         return false
       }
     },
-    [sendNotificationMutation],
+    [formatMessage, sendNotificationMutation],
   )
 
   const requestRulingSignature = useMemo(
@@ -284,10 +287,10 @@ const useCase = () => {
 
         return data?.requestRulingSignature
       } catch (error) {
-        toast.error('Villa kom upp við undirskrift')
+        toast.error(formatMessage(errors.requestRulingSignature))
       }
     },
-    [requestRulingSignatureMutation],
+    [formatMessage, requestRulingSignatureMutation],
   )
 
   const requestCourtRecordSignature = useMemo(
@@ -299,10 +302,10 @@ const useCase = () => {
 
         return data?.requestCourtRecordSignature
       } catch (error) {
-        toast.error('Villa kom upp við undirskrift')
+        toast.error(formatMessage(errors.requestCourtRecordSignature))
       }
     },
-    [requestCourtRecordSignatureMutation],
+    [formatMessage, requestCourtRecordSignatureMutation],
   )
 
   const extendCase = useMemo(
@@ -314,10 +317,10 @@ const useCase = () => {
 
         return data?.extendCase
       } catch (error) {
-        toast.error('Villa kom upp við að framlengja mál')
+        toast.error(formatMessage(errors.extendCase))
       }
     },
-    [extendCaseMutation],
+    [extendCaseMutation, formatMessage],
   )
 
   const autofill = useMemo(

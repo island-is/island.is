@@ -34,7 +34,7 @@ import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils
 import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { defendant as m } from '@island.is/judicial-system-web/messages'
+import { defendant as m, errors } from '@island.is/judicial-system-web/messages'
 import * as constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
@@ -90,7 +90,7 @@ const DefendantForm: React.FC<Props> = (props) => {
         updateDefendant(workingCase.id, defendantId, updatedDefendant)
       }
     } catch (error) {
-      toast.error('Upp kom villa við að uppfæra varnaraðila')
+      toast.error(formatMessage(errors.updateDefendant))
     }
   }
 
@@ -110,7 +110,7 @@ const DefendantForm: React.FC<Props> = (props) => {
         }
       }
     } catch (error) {
-      toast.error('Villa kom upp við að eyða varnaraðila')
+      toast.error(formatMessage(errors.deleteDefendant))
     }
   }
 
@@ -142,7 +142,7 @@ const DefendantForm: React.FC<Props> = (props) => {
 
       window.scrollTo(0, document.body.scrollHeight)
     } catch (error) {
-      toast.error('Villa kom upp við að stofna nýjan varnaraðila')
+      toast.error(formatMessage(errors.createDefendant))
     }
   }
 
