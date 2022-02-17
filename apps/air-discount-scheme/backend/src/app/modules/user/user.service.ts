@@ -90,11 +90,10 @@ export class UserService {
     )
     let meetsADSRequirements = false
 
-    // Is user adult ?
-    if (kennitala.info(user.nationalId).age >= MAX_AGE_LIMIT) {
-      meetsADSRequirements = this.flightService.isADSPostalCode(user.postalcode)
-    } else {
-      // User is a minor
+    if (this.flightService.isADSPostalCode(user.postalcode)) {
+      meetsADSRequirements = true
+    } else if (kennitala.info(user.nationalId).age < MAX_AGE_LIMIT) {
+      // NationalId is a minor and doesn't live in ADS postal codes.
       const cacheKey = this.getCacheKey(user.nationalId, 'custodians')
       const cacheValue = await this.cacheManager.get(cacheKey)
       let custodians = undefined
@@ -111,6 +110,7 @@ export class UserService {
         await this.cacheManager.set(cacheKey, { custodians }, { ttl: ONE_WEEK })
       }
 
+      // Check child custodians if they have valid ADS postal code.
       if (custodians) {
         for (const custodian of custodians) {
           const personCustodian = await this.nationalRegistryService.getUser(
@@ -123,11 +123,6 @@ export class UserService {
             meetsADSRequirements = true
           }
         }
-      } else {
-        // If no cache and no auth/custodians then just a default postal code check.
-        meetsADSRequirements = this.flightService.isADSPostalCode(
-          user.postalcode,
-        )
       }
     }
 
