@@ -25,7 +25,7 @@ import { ApplicationTypes } from '@island.is/application/core'
 import { useAuth } from '@island.is/auth/react'
 
 import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
-import {DelegationsScreen} from '../components/DelegationsScreen/DelegationsScreen'
+import { DelegationsScreen } from '../components/DelegationsScreen/DelegationsScreen'
 
 export const Applications: FC = () => {
   const { slug } = useParams<{ slug: string }>()
@@ -102,7 +102,13 @@ export const Applications: FC = () => {
   }
 
   if (!delegationsChecked && type) {
-    return <DelegationsScreen type={type} setDelegationsChecked={setDelegationsChecked} delegationsChecked/>
+    return (
+      <DelegationsScreen
+        type={type}
+        setDelegationsChecked={setDelegationsChecked}
+        delegationsChecked
+      />
+    )
   }
 
   return (

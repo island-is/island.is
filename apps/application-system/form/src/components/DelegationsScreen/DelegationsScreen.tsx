@@ -1,5 +1,11 @@
 import * as styles from './DelegationsScreen.css'
-import React, { Dispatch, SetStateAction, useEffect, useState, useCallback } from 'react'
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useState,
+  useCallback,
+} from 'react'
 import { useQuery } from '@apollo/client'
 import { useAuth } from '@island.is/auth/react'
 import { ACTOR_DELEGATIONS } from '@island.is/application/graphql'
@@ -31,7 +37,7 @@ interface DelegationsScreenProps {
 export const DelegationsScreen = ({
   type,
   setDelegationsChecked,
-  delegationsChecked
+  delegationsChecked,
 }: DelegationsScreenProps) => {
   const { formatMessage } = useLocale()
   const [allowedDelegations, setAllowedDelegations] = useState<string[]>()
@@ -60,21 +66,20 @@ export const DelegationsScreen = ({
     error: delegationError,
   } = useQuery(ACTOR_DELEGATIONS, { skip: !allowedDelegations })
 
- // Check if user has the delegations of the delegation types the application supports
+  // Check if user has the delegations of the delegation types the application supports
   useEffect(() => {
     if (delegations && allowedDelegations) {
       console.log(allowedDelegations)
       console.log(delegations.authActorDelegations)
       const del: Delegation[] = delegations.authActorDelegations.map(
         (delegation: Delegation) => {
-
-          if(allowedDelegations.includes(delegation.type)) {
-            if(delegation.from.nationalId === user?.profile.nationalId) {
+          if (allowedDelegations.includes(delegation.type)) {
+            if (delegation.from.nationalId === user?.profile.nationalId) {
               setDelegationsChecked(false)
             }
             return delegation
           }
-        }
+        },
       )
       console.log(del)
     }
@@ -87,8 +92,7 @@ export const DelegationsScreen = ({
   const handleClick = (nationalId?: string) => {
     if (nationalId) switchUser(nationalId)
     setDelegations()
-    console.log("hi", delegationsChecked)
-
+    console.log('hi', delegationsChecked)
   }
 
   if (delegations && user) {
@@ -105,8 +109,22 @@ export const DelegationsScreen = ({
               display="flex"
               justifyContent="flexEnd"
             >
-              <Text variant="h1">{user.profile.actor? user.profile.actor.name : user.profile.name}</Text>
-              <Button onClick={() => handleClick(user.profile.actor ? user.profile.actor.nationalId : undefined)}>Skipta um notenda</Button>
+              <Text variant="h1">
+                {user.profile.actor
+                  ? user.profile.actor.name
+                  : user.profile.name}
+              </Text>
+              <Button
+                onClick={() =>
+                  handleClick(
+                    user.profile.actor
+                      ? user.profile.actor.nationalId
+                      : undefined,
+                  )
+                }
+              >
+                Skipta um notenda
+              </Button>
             </Box>
             {delegations.authActorDelegations.map((delegation: Delegation) => {
               if (
@@ -123,7 +141,13 @@ export const DelegationsScreen = ({
                   >
                     <Text variant="h1">{delegation.from.name}</Text>
                     <Button
-                      onClick={() => handleClick(user.profile.nationalId != delegation.from.nationalId? delegation.from.nationalId : undefined)}
+                      onClick={() =>
+                        handleClick(
+                          user.profile.nationalId != delegation.from.nationalId
+                            ? delegation.from.nationalId
+                            : undefined,
+                        )
+                      }
                     >
                       Skipta um notenda
                     </Button>
