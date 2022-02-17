@@ -34,6 +34,10 @@ export class TeachingRightsProvider extends BasicDataProvider {
       const drivingLicenseTeachingRights =
         response.data.drivingLicenseTeachingRights
 
+      if (process.env.NODE_ENV === 'development') {
+        return Promise.resolve({})
+      }
+
       if (drivingLicenseTeachingRights.hasTeachingRights) {
         return Promise.resolve(drivingLicenseTeachingRights)
       } else {

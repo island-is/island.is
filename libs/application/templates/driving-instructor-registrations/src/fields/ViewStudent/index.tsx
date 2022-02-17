@@ -110,7 +110,7 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
         input: {
           practicalDrivingLessonCreateRequestBody: {
             createdOn: date,
-            teacherSsn: '1003602259',
+            teacherSsn: userNationalId,
             minutes: minutes,
             bookId: student?.book?.id,
             comments: '',
@@ -380,7 +380,7 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
                               {entry.lessonTime}
                             </T.Data>
                             <T.Data box={{ className: bgr }}>
-                              {entry.teacherSsn === '1003602259' && (
+                              {entry.teacherSsn === userNationalId && (
                                 <Box display={'flex'}>
                                   <Button
                                     variant="text"

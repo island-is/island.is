@@ -115,7 +115,7 @@ const StudentsOverview = ({ application }: Data) => {
               </T.Row>
             </T.Head>
             <T.Body>
-              {pageStudents &&
+              {pageStudents && pageStudents.length ? (
                 pageStudents.map((student, key) => {
                   return (
                     <T.Row key={key}>
@@ -138,10 +138,13 @@ const StudentsOverview = ({ application }: Data) => {
                       </T.Data>
                     </T.Row>
                   )
-                })}
+                }
+              )) : (
+                <Text marginY={2}>{formatMessage(m.studentsOverviewNoStudentFound)}</Text>
+              )}
             </T.Body>
           </T.Table>
-          {pageStudents && pageStudents.length ? (
+          {pageStudents && !!pageStudents.length && 
             <Pagination
               page={page}
               totalPages={totalPages}
@@ -157,9 +160,7 @@ const StudentsOverview = ({ application }: Data) => {
                 </Box>
               )}
             />
-          ) : (
-            <Text>{formatMessage(m.studentsOverviewNoStudentFound)}</Text>
-          )}
+          }
         </Stack>
       ) : (
         <ViewStudent

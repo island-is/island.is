@@ -18,7 +18,7 @@ const InstructorRegistrationsTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.DRIVING_INSTRUCTOR_REGISTRATIONS,
-  name: 'Skráningar Ökukennara',
+  name: m.applicationTitle,
   dataSchema: dataSchema,
   readyForProduction: false,
   stateMachineConfig: {
