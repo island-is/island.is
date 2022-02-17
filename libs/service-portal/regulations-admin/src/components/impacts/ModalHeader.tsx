@@ -19,14 +19,13 @@ export const ModalHeader = (props: ModalHeaderProps) => {
       flexDirection="row"
       alignItems="center"
       justifyContent="spaceBetween"
-      marginX={6}
     >
       <FocusableBox component="div">
-        <Hidden above="md">
-          <Logo width={40} iconOnly />
+        <Hidden above="sm">
+          <Logo width={40} iconOnly id="modal-header-logo-small" />
         </Hidden>
-        <Hidden below="lg">
-          <Logo width={160} />
+        <Hidden below="md">
+          <Logo width={160} id="modal-header-logo" />
         </Hidden>
       </FocusableBox>
       <Box display="flex" flexDirection="row" alignItems="center">

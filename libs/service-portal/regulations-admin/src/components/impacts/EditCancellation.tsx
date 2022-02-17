@@ -119,11 +119,14 @@ export const EditCancellation = (props: EditCancellationProp) => {
       hideOnEsc={false} // FIXME: setting this to true disables re-opening the modal
       removeOnClose
     >
-      <Box paddingY={6}>
+      <Box padding={[3, 3, 3, 6]}>
         <ModalHeader closeModal={closeModal} />
         <GridContainer>
           <GridRow>
-            <GridColumn span="6/12" offset="2/12">
+            <GridColumn
+              span={['12/12', '12/12', '12/12', '6/12']}
+              offset={['0', '0', '0', '2/12']}
+            >
               <Box paddingY={4}>
                 <Box
                   display="flex"
@@ -161,7 +164,10 @@ export const EditCancellation = (props: EditCancellationProp) => {
                 />
               </Box>
             </GridColumn>
-            <GridColumn span="3/12" offset="1/12">
+            <GridColumn
+              span={['12/12', '12/12', '12/12', '3/12']}
+              offset={['0', '0', '0', '1/12']}
+            >
               <Box
                 background="blueberry100"
                 paddingY={3}
@@ -210,7 +216,10 @@ export const EditCancellation = (props: EditCancellationProp) => {
             </GridColumn>
           </GridRow>
           <GridRow>
-            <GridColumn span="8/12" offset="2/12">
+            <GridColumn
+              span={['12/12', '12/12', '12/12', '8/12']}
+              offset={['0', '0', '0', '2/12']}
+            >
               <Box paddingY={5}>
                 <Divider />
               </Box>
