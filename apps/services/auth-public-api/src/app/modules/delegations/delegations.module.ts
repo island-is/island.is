@@ -36,6 +36,7 @@ import {
   PersonalRepresentativeRightType,
   PersonalRepresentativeScopePermission,
   PersonalRepresentativeService,
+  PersonalRepresentativeType,
 } from '@island.is/auth-api-lib/personal-representative'
 
 const delegationAuthConfig: AuthConfig = environment.auth
@@ -58,6 +59,7 @@ const delegationAuthConfig: AuthConfig = environment.auth
       Delegation,
       DelegationScope,
       PersonalRepresentative,
+      PersonalRepresentativeType,
       PersonalRepresentativeRight,
       PersonalRepresentativeRightType,
       PersonalRepresentativeScopePermission,
