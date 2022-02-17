@@ -159,6 +159,17 @@ const TEST_USERS: NationalRegistryUser[] = [
     postalcode: 540,
     city: 'Blönduós',
   },
+  {
+    // Gervibarn Utlond
+    nationalId: '1111111119',
+    firstName: 'Sól',
+    middleName: 'Rún',
+    lastName: 'Útlandadóttir',
+    gender: 'kvk',
+    address: 'Urðarbraut 1',
+    postalcode: 540,
+    city: 'Blönduós',
+  },
 ]
 
 @Injectable()

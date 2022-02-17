@@ -20,8 +20,8 @@ import environment from '../../../environments/environment'
 import * as kennitala from 'kennitala'
 import { FetchError } from '@island.is/clients/middlewares'
 
-export const ONE_WEEK = 604800 // seconds
-export const CACHE_KEY = 'userService'
+const ONE_WEEK = 604800 // seconds
+const CACHE_KEY = 'userService'
 const MAX_AGE_LIMIT = 18
 
 @Injectable()
@@ -60,6 +60,23 @@ export class UserService {
     return response
   }
 
+  async getCustodians(
+    auth: AuthUser,
+    childNationalId: string,
+  ): Promise<Array<string>> {
+    const response = await this.personApiWithAuth(auth)
+      .einstaklingarGetForsjaForeldri(<EinstaklingarGetForsjaForeldriRequest>{
+        id: auth.nationalId,
+        barn: childNationalId,
+      })
+      .catch(this.handle404)
+
+    if (response === undefined) {
+      return []
+    }
+    return response
+  }
+
   private async getFund(
     user: NationalRegistryUser,
     auth?: AuthUser,
@@ -83,18 +100,14 @@ export class UserService {
       let custodians = undefined
 
       if (cacheValue) {
+        // We need cache incase we come here from publicApi without auth
         custodians = cacheValue.custodians
       } else if (auth) {
-        // User(child) doesn't live in ADS-postalcodes but is under 18 years
-        custodians = await this.personApiWithAuth(auth)
-          .einstaklingarGetForsjaForeldri(<
-            EinstaklingarGetForsjaForeldriRequest
-          >{
-            id: auth.nationalId,
-            barn: user.nationalId,
-          })
-          .catch(this.handle404)
-
+        // We have access to auth if a user is logged in
+        custodians = [
+          auth.nationalId,
+          ...(await this.getCustodians(auth, user.nationalId)),
+        ]
         await this.cacheManager.set(cacheKey, { custodians }, { ttl: ONE_WEEK })
       }
 
@@ -111,6 +124,7 @@ export class UserService {
           }
         }
       } else {
+        // If no cache and no auth/custodians then just a default postal code check.
         meetsADSRequirements = this.flightService.isADSPostalCode(
           user.postalcode,
         )
