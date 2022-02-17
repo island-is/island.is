@@ -13,7 +13,7 @@ import { createTestingCaseModule } from './createTestingCaseModule'
 import { DefendantService, Defendant } from '../../defendant'
 import { User } from '../../user'
 import { Institution } from '../../institution'
-import { Case } from '../models'
+import { Case } from '../models/case.model'
 
 interface Then {
   result: Case

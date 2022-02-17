@@ -14,7 +14,7 @@ import {
   AwsS3Module,
   EventModule,
 } from '../index'
-import { Case } from './models'
+import { Case } from './models/case.model'
 import { CaseController } from './case.controller'
 import { CaseService } from './case.service'
 

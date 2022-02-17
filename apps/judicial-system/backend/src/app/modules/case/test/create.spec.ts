@@ -9,7 +9,7 @@ import { User } from '../../user'
 import { Institution } from '../../institution'
 import { Defendant } from '../../defendant/models/defendant.model'
 import { CreateCaseDto } from '../dto/createCase.dto'
-import { Case } from '../models'
+import { Case } from '../models/case.model'
 
 interface Then {
   result: Case

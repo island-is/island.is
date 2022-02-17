@@ -16,7 +16,7 @@ import { UserService } from '../../user'
 import { FileService } from '../../file'
 import { AwsS3Service } from '../../aws-s3'
 import { DefendantService } from '../../defendant/defendant.service'
-import { Case } from '../models'
+import { Case } from '../models/case.model'
 import { CaseService } from '../case.service'
 import { CaseController } from '../case.controller'
 
