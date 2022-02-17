@@ -57,12 +57,10 @@ import {
   registrarTransitionRule,
   registrarUpdateRule,
 } from './guards/rolesRules'
-import {
-  CreateCaseDto,
-  InternalCreateCaseDto,
-  TransitionCaseDto,
-  UpdateCaseDto,
-} from './dto'
+import { CreateCaseDto } from './dto/createCase.dto'
+import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
+import { TransitionCaseDto } from './dto/transitionCase.dto'
+import { UpdateCaseDto } from './dto/updateCase.dto'
 import { Case, SignatureConfirmationResponse } from './models'
 import { transitionCase } from './state'
 import { CaseService } from './case.service'

@@ -10,7 +10,7 @@ import { User, UserService } from '../../user'
 import { Institution } from '../../institution'
 import { DefendantService } from '../../defendant/defendant.service'
 import { Defendant } from '../../defendant/models/defendant.model'
-import { InternalCreateCaseDto } from '../dto'
+import { InternalCreateCaseDto } from '../dto/internalCreateCase.dto'
 import { Case } from '../models'
 
 interface Then {

@@ -8,7 +8,7 @@ import { DefendantService } from '../../defendant/defendant.service'
 import { User } from '../../user'
 import { Institution } from '../../institution'
 import { Defendant } from '../../defendant/models/defendant.model'
-import { CreateCaseDto } from '../dto'
+import { CreateCaseDto } from '../dto/createCase.dto'
 import { Case } from '../models'
 
 interface Then {
