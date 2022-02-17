@@ -19,8 +19,8 @@ import { RegulationsAdminApi } from '../client'
 import { RegulationsAdminClientService } from '@island.is/clients/regulations-admin'
 import { DraftRegulationPdfDownload } from './models/draftRegulationPdfDownload.model'
 import { ConfigType } from '@nestjs/config'
-import { UpdateDraftRegulationCancelInput } from './dto/updateDraftRegulationCancelInput.input'
-import { CreateDraftRegulationCancelInput } from './dto/createDraftRegulationCancelInput.input'
+import { UpdateDraftRegulationCancelInput } from './dto/updateDraftRegulationCancel.input'
+import { CreateDraftRegulationCancelInput } from './dto/createDraftRegulationCancel.input'
 import { DraftRegulationCancelModel } from './models/draftRegulationCancel.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -145,8 +145,8 @@ export class RegulationsAdminResolver {
   async createDraftRegulationCancel(
     @Args('input') input: CreateDraftRegulationCancelInput,
     @CurrentUser() { authorization }: User,
-  ): Promise<any> {
-    return this.regulationsAdminApiService.createDraftRegulationCancel(
+  ): Promise<DraftRegulationCancelModel> {
+    return await this.regulationsAdminApiService.createDraftRegulationCancel(
       input,
       authorization ?? '',
     )
@@ -156,8 +156,8 @@ export class RegulationsAdminResolver {
   async updateDraftRegulationCancel(
     @Args('input') input: UpdateDraftRegulationCancelInput,
     @CurrentUser() { authorization }: User,
-  ): Promise<any> {
-    return this.regulationsAdminApiService.updateDraftRegulationCancel(
+  ): Promise<DraftRegulationCancelModel> {
+    return await this.regulationsAdminApiService.updateDraftRegulationCancel(
       input,
       authorization ?? '',
     )

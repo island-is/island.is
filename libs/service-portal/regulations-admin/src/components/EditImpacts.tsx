@@ -210,7 +210,7 @@ export const EditImpacts = () => {
         </Box>
       )}
 
-      <ImpactList impacts={draft.impacts} />
+      <ImpactList draft={draft} impacts={draft.impacts} />
     </>
   )
 }

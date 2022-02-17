@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   ActionCard,
   AlertMessage,
@@ -8,26 +8,34 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { prettyName } from '@island.is/regulations'
+import { prettyName, toISODate } from '@island.is/regulations'
 import { useHistory } from 'react-router'
-import { getImpactUrl } from '../../utils/routing'
+// import { getImpactUrl } from '../../utils/routing'
 import { impactMsgs } from '../../messages'
-import { DraftImpactForm } from '../../state/types'
+import { DraftImpactForm, RegDraftForm } from '../../state/types'
+import { EditCancellation } from './EditCancellation'
+import { EditChange } from './EditChange'
+import {
+  makeDraftCancellationForm,
+  makeDraftChangeForm,
+} from '../../state/makeFields'
 
 // ---------------------------------------------------------------------------
 
 export type ImpactListProps = {
+  draft: RegDraftForm
   impacts: ReadonlyArray<DraftImpactForm>
   title?: string | JSX.Element
   titleEmpty?: string | JSX.Element
 }
 
 export const ImpactList = (props: ImpactListProps) => {
-  const { impacts, title, titleEmpty } = props
+  const { draft, impacts, title, titleEmpty } = props
 
-  const history = useHistory()
   const { formatMessage, formatDateFns } = useLocale()
   const t = formatMessage
+
+  const [chooseType, setChooseType] = useState<DraftImpactForm | undefined>()
 
   return (
     <>
@@ -48,6 +56,8 @@ export const ImpactList = (props: ImpactListProps) => {
 
           {impacts.map((impact, i) => {
             const { id, name, regTitle, error, type, date } = impact
+            console.log({ impact })
+
             const isChange = type === 'amend'
             const headingText =
               name === 'self'
@@ -77,7 +87,7 @@ export const ImpactList = (props: ImpactListProps) => {
                   label: formatMessage(impactMsgs.impactListEditButton),
                   variant: 'ghost',
                   onClick: () => {
-                    history.push(getImpactUrl(id))
+                    setChooseType(impact)
                   },
                 }}
                 text={
@@ -90,6 +100,40 @@ export const ImpactList = (props: ImpactListProps) => {
               />
             )
           })}
+
+          {chooseType?.type === 'repeal' && (
+            <EditCancellation
+              draft={draft}
+              cancellation={makeDraftCancellationForm({
+                type: 'repeal',
+                id: chooseType.id,
+                name: chooseType.name,
+                regTitle: chooseType.regTitle,
+                date: toISODate(chooseType.date.value) ?? undefined,
+              })}
+              closeModal={() => setChooseType(undefined)}
+            />
+          )}
+
+          {chooseType?.type === 'amend' && (
+            <EditChange
+              draft={draft}
+              change={makeDraftChangeForm({
+                type: 'amend',
+                id: chooseType.id,
+                name: chooseType.name,
+                regTitle: chooseType.regTitle,
+                title: chooseType.title.value,
+                text: chooseType.text.value,
+                appendixes: chooseType.appendixes.map((apx) => ({
+                  title: apx.title.value,
+                  text: apx.text.value,
+                })),
+                comments: '',
+              })}
+              closeModal={() => setChooseType(undefined)}
+            />
+          )}
         </Stack>
       )}
     </>

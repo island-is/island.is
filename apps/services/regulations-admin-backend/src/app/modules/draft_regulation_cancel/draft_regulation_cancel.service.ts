@@ -10,24 +10,54 @@ import {
   UpdateDraftRegulationCancelDto,
 } from './dto'
 import { DraftRegulationCancelModel } from './draft_regulation_cancel.model'
+import { RegulationsService } from '@island.is/clients/regulations'
+import { DraftRegulationCancel } from '@island.is/regulations/admin'
+import { RegulationViewTypes } from '@island.is/regulations/web'
+import { nameToSlug } from '@island.is/regulations'
 
 @Injectable()
 export class DraftRegulationCancelService {
   constructor(
     @InjectModel(DraftRegulationCancelModel)
     private readonly draftRegulationCancelModel: typeof DraftRegulationCancelModel,
+    private readonly regulationsService: RegulationsService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
 
+  async transformCancel(draftRegulationcancel: DraftRegulationCancelModel) {
+    const regulation = await this.regulationsService.getRegulation(
+      RegulationViewTypes.current,
+      nameToSlug(draftRegulationcancel.regulation),
+    )
+
+    const draftRegulationCancel: DraftRegulationCancel = {
+      type: 'repeal',
+      name: draftRegulationcancel.regulation,
+      regTitle: regulation?.title ?? '',
+      id: draftRegulationcancel.id,
+      date: draftRegulationcancel.date,
+    }
+
+    return draftRegulationCancel
+  }
+
   async create(
     draftRegulationcancelToCreate: CreateDraftRegulationCancelDto,
-  ): Promise<DraftRegulationCancelModel | null> {
+  ): Promise<DraftRegulationCancel> {
     this.logger.debug('Creating a new DraftRegulationcancel')
 
-    return await this.draftRegulationCancelModel.create(
-      draftRegulationcancelToCreate,
+    const updateData: Partial<DraftRegulationCancelModel> = {
+      changing_id: draftRegulationcancelToCreate.changingId,
+      regulation: draftRegulationcancelToCreate.regulation,
+      date: draftRegulationcancelToCreate.date,
+    }
+
+    const createdDraftRegulationCancel = await this.draftRegulationCancelModel.create(
+      updateData,
     )
+
+    return await this.transformCancel(createdDraftRegulationCancel)
   }
 
   async update(
@@ -35,7 +65,7 @@ export class DraftRegulationCancelService {
     update: UpdateDraftRegulationCancelDto,
   ): Promise<{
     numberOfAffectedRows: number
-    updatedDraftRegulationCancel: DraftRegulationCancelModel
+    draftRegulationCancel: DraftRegulationCancel
   }> {
     this.logger.debug(`Updating DraftRegulationCancel ${id}`)
 
@@ -47,7 +77,11 @@ export class DraftRegulationCancelService {
       returning: true,
     })
 
-    return { numberOfAffectedRows, updatedDraftRegulationCancel }
+    const draftRegulationCancel = await this.transformCancel(
+      updatedDraftRegulationCancel,
+    )
+
+    return { numberOfAffectedRows, draftRegulationCancel }
   }
 
   async delete(id: string): Promise<number> {

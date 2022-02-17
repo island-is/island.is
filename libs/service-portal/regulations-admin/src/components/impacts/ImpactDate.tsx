@@ -25,11 +25,12 @@ export const ImpactDate = (props: ImpactDateProps) => {
     <Box marginBottom={4} width={size}>
       <DatePicker
         size="sm"
+        locale="is"
         label={t(impactMsgs.effectiveDate)}
         placeholderText={t(impactMsgs.effectiveDate_default)}
         minDate={date.min || today}
         maxDate={date.max}
-        selected={date.value}
+        selected={date.value || today}
         handleChange={onChange}
         hasError={!!date.error}
         errorMessage={date.error && t(date.error)}

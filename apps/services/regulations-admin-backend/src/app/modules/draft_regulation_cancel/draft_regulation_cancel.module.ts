@@ -1,13 +1,24 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
+import { RegulationsService } from '@island.is/clients/regulations'
+
 import { DraftRegulationCancelService } from './draft_regulation_cancel.service'
 import { DraftRegulationCancelController } from './draft_regulation_cancel.controller'
 import { DraftRegulationCancelModel } from './draft_regulation_cancel.model'
 
+import { environment } from '../../../environments'
+
 @Module({
   imports: [SequelizeModule.forFeature([DraftRegulationCancelModel])],
-  providers: [DraftRegulationCancelService],
+  providers: [
+    DraftRegulationCancelService,
+    {
+      provide: RegulationsService,
+      useFactory: async () =>
+        new RegulationsService({ url: environment.regulationsApiUrl }),
+    },
+  ],
   controllers: [DraftRegulationCancelController],
   exports: [DraftRegulationCancelService],
 })

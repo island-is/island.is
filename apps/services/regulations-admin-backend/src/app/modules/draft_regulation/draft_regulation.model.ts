@@ -150,7 +150,7 @@ export class DraftRegulationModel extends Model<DraftRegulationModel> {
   @ApiPropertyOptional({ type: [DraftRegulationChangeModel] })
   changes?: DraftRegulationChangeModel[]
 
-  @HasOne(() => DraftRegulationCancelModel)
-  @ApiPropertyOptional({ type: DraftRegulationCancelModel })
-  cancel?: DraftRegulationCancelModel
+  @HasMany(() => DraftRegulationCancelModel)
+  @ApiPropertyOptional({ type: [DraftRegulationCancelModel] })
+  cancels?: DraftRegulationCancelModel[]
 }

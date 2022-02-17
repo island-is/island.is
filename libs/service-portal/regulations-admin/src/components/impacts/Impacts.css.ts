@@ -8,3 +8,5 @@ export const cancelModal = style({
   height: '100%',
   overflowY: 'auto',
 })
+
+export const changeModal = style({})

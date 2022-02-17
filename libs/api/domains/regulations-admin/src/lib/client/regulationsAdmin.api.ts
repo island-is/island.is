@@ -4,8 +4,12 @@ import { DataSourceConfig } from 'apollo-datasource'
 import { EditDraftBody } from '../graphql/dto/editDraftRegulation.input'
 import { RegulationsAdminClientConfig } from '@island.is/clients/regulations-admin'
 import { ConfigType } from '@nestjs/config'
-import { CreateDraftRegulationCancelInput } from '../graphql/dto/createDraftRegulationCancelInput.input'
-import { UpdateDraftRegulationCancelInput } from '../graphql/dto/updateDraftRegulationCancelInput.input'
+import { CreateDraftRegulationCancelInput } from '../graphql/dto/createDraftRegulationCancel.input'
+import { UpdateDraftRegulationCancelInput } from '../graphql/dto/updateDraftRegulationCancel.input'
+import { DraftRegulationCancelModel } from '../graphql/models/draftRegulationCancel.model'
+import { CreateDraftRegulationChangeInput } from '../graphql/dto/createDraftRegulationChange.input'
+import { DraftRegulationChangeModel } from '../graphql/models/draftRegulationChange.model'
+import { UpdateDraftRegulationChangeInput } from '../graphql/dto/updateDraftRegulationChange.input'
 
 export class RegulationsAdminApi extends RESTDataSource {
   constructor(
@@ -45,22 +49,38 @@ export class RegulationsAdminApi extends RESTDataSource {
   createDraftRegulationCancel(
     input: CreateDraftRegulationCancelInput,
     authorization: string,
-  ): Promise<any> {
-    return this.put(`/draft_regulation_cancel/`, input, {
+  ): Promise<DraftRegulationCancelModel> {
+    return this.post(`/draft_regulation_cancel/`, input, {
       headers: { authorization },
     })
   }
 
   updateDraftRegulationCancel(
-    input: UpdateDraftRegulationCancelInput,
+    update: UpdateDraftRegulationCancelInput,
     authorization: string,
-  ): Promise<any> {
-    return this.put(
-      `/draft_regulation_cancel/${input.id}`,
-      { date: input.date },
-      {
-        headers: { authorization },
-      },
-    )
+  ): Promise<DraftRegulationCancelModel> {
+    const { id, ...input } = update
+    return this.put(`/draft_regulation_cancel/${id}`, input, {
+      headers: { authorization },
+    })
+  }
+
+  createDraftRegulationChange(
+    input: CreateDraftRegulationChangeInput,
+    authorization: string,
+  ): Promise<DraftRegulationChangeModel> {
+    return this.post(`/draft_regulation_change/`, input, {
+      headers: { authorization },
+    })
+  }
+
+  updateDraftRegulationChange(
+    update: UpdateDraftRegulationChangeInput,
+    authorization: string,
+  ): Promise<DraftRegulationChangeModel> {
+    const { id, ...input } = update
+    return this.put(`/draft_regulation_change/${id}`, input, {
+      headers: { authorization },
+    })
   }
 }
