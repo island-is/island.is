@@ -19,8 +19,8 @@ import { RegulationsAdminApi } from '../client'
 import { RegulationsAdminClientService } from '@island.is/clients/regulations-admin'
 import { DraftRegulationPdfDownload } from './models/draftRegulationPdfDownload.model'
 import { ConfigType } from '@nestjs/config'
-import { UpdateDraftRegulationCancelInput } from './dto/updateDraftRegulationCancelInput.input'
-import { CreateDraftRegulationCancelInput } from './dto/createDraftRegulationCancelInput.input'
+import { UpdateDraftRegulationCancelInput } from './dto/updateDraftRegulationCancel.input'
+import { CreateDraftRegulationCancelInput } from './dto/createDraftRegulationCancel.input'
 import { DraftRegulationCancelModel } from './models/draftRegulationCancel.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)

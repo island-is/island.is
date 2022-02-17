@@ -6,7 +6,7 @@ import { Appendix, HTMLText } from '@island.is/regulations'
 export class CreateDraftRegulationChangeDto {
   @IsUUID()
   @ApiProperty()
-  readonly changing_id!: string
+  readonly changingId!: string
 
   @IsString()
   @ApiProperty()
