@@ -9,11 +9,11 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { toast } from '@island.is/island-ui/core'
 import type { Case } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import DefendantForm from './DefendantForm'
-import { toast } from 'react-toastify'
 
 const Defendant = () => {
   const router = useRouter()
