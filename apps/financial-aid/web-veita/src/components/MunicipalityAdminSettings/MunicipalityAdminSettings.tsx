@@ -37,7 +37,9 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
   const aidNames = Object.values(AidName).map(String)
 
   const errorCheck = (aid: Aid, prefix: string) => {
-    const firstErrorAid = Object.entries(aid).find(a => aidNames.includes(a[0]) && a[1] === 0)
+    const firstErrorAid = Object.entries(aid).find(
+      (a) => aidNames.includes(a[0]) && a[1] <= 0,
+    )
 
     if (firstErrorAid === undefined) {
       return false
@@ -58,7 +60,7 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
     updateMunicipality()
   }
 
-  const aidChangeHandler = (update: () => any) => {
+  const aidChangeHandler = (update: () => void) => {
     setHasAidError(false)
     update()
   }
