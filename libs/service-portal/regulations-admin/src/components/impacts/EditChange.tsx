@@ -1,17 +1,16 @@
 import { Box } from '@island.is/island-ui/core'
 import React from 'react'
-import { DraftChangeForm } from '../../state/types'
-import { useDraftingState } from '../../state/useDraftingState'
+import { DraftChangeForm, RegDraftForm } from '../../state/types'
 import { ImpactDate } from './ImpactDate'
 
 type EditChangeProp = {
+  draft: RegDraftForm
   change: DraftChangeForm
   closeModal: () => void
 }
 
 export const EditChange = (props: EditChangeProp) => {
-  const { change } = props
-  const { draft, actions } = useDraftingState()
+  const { draft, change } = props
 
   return (
     <Box>

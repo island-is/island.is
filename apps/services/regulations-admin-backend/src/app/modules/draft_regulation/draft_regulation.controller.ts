@@ -49,8 +49,7 @@ export class DraftRegulationController {
     resources: (DraftRegulation) => DraftRegulation.id,
   })
   async create(
-    @Body()
-    draftRegulationToCreate: CreateDraftRegulationDto,
+    @Body() draftRegulationToCreate: CreateDraftRegulationDto,
     @CurrentUser() user: User,
   ): Promise<DraftRegulationModel> {
     return await this.draftRegulationService.create(

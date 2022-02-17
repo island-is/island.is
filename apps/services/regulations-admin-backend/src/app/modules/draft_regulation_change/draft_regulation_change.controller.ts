@@ -49,8 +49,7 @@ export class DraftRegulationChangeController {
     resources: (DraftRegulationChange) => DraftRegulationChange.id,
   })
   create(
-    @Body()
-    draftRegulationChangeToCreate: CreateDraftRegulationChangeDto,
+    @Body() draftRegulationChangeToCreate: CreateDraftRegulationChangeDto,
     @CurrentUser() user: User,
   ): Promise<DraftRegulationChangeModel> {
     return this.draftRegulationChangeService.create(

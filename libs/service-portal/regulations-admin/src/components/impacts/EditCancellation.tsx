@@ -2,12 +2,13 @@ import * as s from './Impacts.css'
 import { useMutation, gql } from '@apollo/client'
 import { Text, Box, Button, ModalBase } from '@island.is/island-ui/core'
 import React, { useState } from 'react'
-import { DraftCancelForm } from '../../state/types'
+import { DraftCancelForm, RegDraftForm } from '../../state/types'
 // import { useDraftingState } from '../../state/useDraftingState'
 import { ImpactDate } from './ImpactDate'
 import { nameToSlug, RegName } from '@island.is/regulations'
 
 type EditCancellationProp = {
+  draft: RegDraftForm
   cancellation: DraftCancelForm
   closeModal: (updateImpacts?: boolean) => void
 }
@@ -38,7 +39,7 @@ const UPDATE_DRAFT_REGULATION_CANCEL_IMPACT = gql`
 `
 
 export const EditCancellation = (props: EditCancellationProp) => {
-  const { cancellation, closeModal } = props
+  const { draft, cancellation, closeModal } = props
   const [activeCancellation, setActiveCancellation] = useState(cancellation)
 
   const [createDraftRegulationCancelImpact] = useMutation(
@@ -60,7 +61,8 @@ export const EditCancellation = (props: EditCancellationProp) => {
       createDraftRegulationCancelImpact({
         variables: {
           input: {
-            date: activeCancellation.date,
+            date: activeCancellation.date.value,
+            changingId: draft.id,
             regulation: activeCancellation.name,
           },
         },

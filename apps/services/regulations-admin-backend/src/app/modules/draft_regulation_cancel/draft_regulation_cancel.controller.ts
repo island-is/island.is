@@ -49,8 +49,7 @@ export class DraftRegulationCancelController {
     resources: (DraftRegulationCancel) => DraftRegulationCancel.id,
   })
   async create(
-    @Body()
-    draftRegulationCancelToCreate: CreateDraftRegulationCancelDto,
+    @Body() draftRegulationCancelToCreate: CreateDraftRegulationCancelDto,
     @CurrentUser() user: User,
   ): Promise<DraftRegulationCancelModel | null> {
     if (!draftRegulationCancelToCreate.date) {

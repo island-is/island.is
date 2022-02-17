@@ -176,6 +176,7 @@ export const EditImpacts = () => {
 
           {chooseType === 'cancel' && (
             <EditCancellation
+              draft={draft}
               cancellation={makeDraftCancellationForm({
                 type: 'repeal',
                 id: '' as DraftRegulationCancelId, // no ID available at this stage
@@ -189,6 +190,7 @@ export const EditImpacts = () => {
 
           {chooseType === 'change' && (
             <EditChange
+              draft={draft}
               change={makeDraftChangeForm({
                 type: 'amend',
                 id: '' as DraftRegulationChangeId, // no ID available at this stage
