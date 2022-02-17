@@ -42,7 +42,7 @@ import { PersonalRepresentativeService } from '../personal-representative'
 import type { PersonalRepresentativeDTO } from '../personal-representative/entities/dto/personal-representative.dto'
 import { DelegationValidity } from '../types/delegationValidity'
 import { DelegationScopeService } from './delegationScope.service'
-
+import { ClientAllowedScope } from '../entities/models/client-allowed-scope.model'
 export const DELEGATIONS_AUTH_CONFIG = 'DELEGATIONS_AUTH_CONFIG'
 
 @Injectable()
@@ -52,6 +52,8 @@ export class DelegationsService {
   constructor(
     @InjectModel(Delegation)
     private delegationModel: typeof Delegation,
+    @InjectModel(ClientAllowedScope)
+    private clientAllowedScopeModel: typeof ClientAllowedScope,
     @Inject(DELEGATIONS_AUTH_CONFIG)
     private authConfig: AuthConfig,
     @Inject(LOGGER_PROVIDER)
@@ -499,7 +501,32 @@ export class DelegationsService {
       ],
     })
 
-    return result.map((d) => d.toDTO())
+    const clientAllowedScopes = (
+      await this.clientAllowedScopeModel.findAll({
+        where: {
+          clientId: user.client,
+        },
+      })
+    ).map((s) => s.scopeName)
+
+    return result
+      .filter((d) =>
+        d.delegationScopes?.some(
+          (s) =>
+            (s.scopeName && clientAllowedScopes.includes(s.scopeName)) ||
+            (s.identityResourceName &&
+              clientAllowedScopes.includes(s.identityResourceName)),
+        ),
+      )
+      .map((d) => {
+        const dto = d.toDTO()
+
+        dto.scopes = dto.scopes?.filter((s) =>
+          clientAllowedScopes.includes(s.scopeName),
+        )
+
+        return dto
+      })
   }
 
   /**

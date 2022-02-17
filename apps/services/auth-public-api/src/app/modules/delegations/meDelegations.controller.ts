@@ -41,7 +41,6 @@ import {
   Features,
   FeatureFlag,
 } from '@island.is/nest/feature-flags'
-import { HttpProblemResponse } from '@island.is/nest/problem'
 
 import { environment } from '../../../environments'
 

@@ -1,5 +1,5 @@
-import request from 'supertest'
 import { getModelToken } from '@nestjs/sequelize'
+import request from 'supertest'
 
 import {
   ApiScope,
@@ -15,7 +15,7 @@ import {
 } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
 
-import { createDelegation } from '../../../../test/fixtures'
+import { createClient, createDelegation } from '../../../../test/fixtures'
 import {
   Scopes,
   setupWithAuth,
@@ -32,9 +32,11 @@ import {
 } from '@island.is/auth-api-lib/personal-representative'
 
 const today = new Date('2021-11-12')
+const client = createClient({ clientId: '@island.is/webapp' })
 const user = createCurrentUser({
   nationalId: '1122334455',
   scope: [AuthScope.actorDelegations, Scopes[0].name],
+  client: client.clientId,
 })
 const userName = 'Tester Tests'
 const nationalRegistryUser = createNationalRegistryUser({
@@ -58,6 +60,10 @@ describe('ActorDelegationsController', () => {
         user,
         userName,
         nationalRegistryUser,
+        client: {
+          props: client,
+          scopes: Scopes.slice(0, 4).map((s) => s.name),
+        },
       })
       server = request(app.getHttpServer())
 
@@ -106,6 +112,40 @@ describe('ActorDelegationsController', () => {
           },
         )
         const expectedModel = models[0].toDTO()
+
+        // Act
+        const res = await server.get(`${path}${query}`)
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(1)
+        expectMatchingObject(res.body[0], expectedModel)
+      })
+
+      it('returns only delegations with scopes the client has access to', async () => {
+        // Arrange
+        const models = await delegationModel.bulkCreate(
+          [
+            createDelegation({
+              fromNationalId: nationalRegistryUser.kennitala,
+              toNationalId: user.nationalId,
+              scopes: [Scopes[0].name, Scopes[4].name],
+              today,
+            }),
+          ],
+          {
+            include: [{ model: DelegationScope, as: 'delegationScopes' }],
+          },
+        )
+        const completeModel = models[0].toDTO()
+        // The expected model should not contain the scope from the other org
+        const expectedModel: DelegationDTO = {
+          ...completeModel,
+          scopes: [
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            completeModel.scopes!.find((s) => s.scopeName === Scopes[0].name)!,
+          ],
+        }
 
         // Act
         const res = await server.get(`${path}${query}`)
