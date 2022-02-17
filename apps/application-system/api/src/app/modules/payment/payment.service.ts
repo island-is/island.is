@@ -44,7 +44,7 @@ export class PaymentService {
     return this.paymentModel
       .findOne({
         where: {
-          [Op.and]: [{ application_id: applicationId }],
+          application_id: applicationId,
         },
       })
       .catch(handleError)
