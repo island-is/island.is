@@ -1,20 +1,46 @@
-import simpleGit, { SimpleGit } from 'simple-git'
+import simpleGit, { DefaultLogFields, ListLogLine, SimpleGit } from 'simple-git'
 import { mkdtemp, writeFile } from 'fs/promises'
 import { join } from 'path'
 import { findBestGoodRefBranch, findBestGoodRefPR } from './change-detection'
-import { Substitute } from '@fluffy-spoon/substitute'
+import { Arg, Substitute, SubstituteOf } from '@fluffy-spoon/substitute'
 import { existsSync, mkdir } from 'fs'
 import { promisify } from 'util'
-import { GitActionStatus } from './git-action-status'
+import {
+  BranchWorkflow,
+  GitActionStatus,
+  PRWorkflow,
+} from './git-action-status'
 
 const baseBranch = 'main'
 const headBranch = 'fix'
 type Component = 'a' | 'b' | 'c' | 'd' | 'e'
 
+async function calculateDistance(
+  git: SimpleGit,
+  currentSha: string,
+  p: DefaultLogFields & ListLogLine,
+): Promise<string[]> {
+  const diffNames = await git.diff({
+    '--name-status': null,
+    [currentSha]: null,
+    [p.hash]: null,
+  })
+  return [
+    // @ts-ignore
+    ...new Set(
+      diffNames
+        .split('\n')
+        .map((l) => l.replace('D\t', '').trim().split('/')[0])
+        .filter((s) => s.length > 0),
+    ),
+  ]
+}
+
 describe('Change detection', () => {
   jest.setTimeout(60000)
   let git: SimpleGit
   let path: string
+  let githubApi: SubstituteOf<GitActionStatus>
   let makeChange: (
     git: SimpleGit,
     component: Component | Component[],
@@ -24,6 +50,9 @@ describe('Change detection', () => {
     path = await mkdtemp(`${__dirname}/test-data/repo`)
     git = simpleGit(path, { baseDir: path })
     const r = await git.init()
+    githubApi = Substitute.for<GitActionStatus>()
+    githubApi.calculateDistance(Arg.all()).mimicks(calculateDistance)
+
     makeChange = async (
       git: SimpleGit,
       component: Component | Component[],
@@ -61,7 +90,6 @@ describe('Change detection', () => {
       await git.mergeFromTo(headBranch, baseBranch)
     })
     it('should use last good commit when no PR runs available', async () => {
-      const githubApi = Substitute.for<GitActionStatus>()
       githubApi.getPRRuns(100).resolves([])
       githubApi.getBranchBuilds(baseBranch).resolves([])
       githubApi
@@ -83,7 +111,6 @@ describe('Change detection', () => {
     })
 
     it('should use last good PR when available', async () => {
-      const githubApi = Substitute.for<GitActionStatus>()
       const PR = 100
       githubApi.getPRRuns(PR).resolves([
         { head_commit: fixGoodSha, base_commit: mainSha1 },
@@ -101,7 +128,6 @@ describe('Change detection', () => {
       expect(actual).toBe(fixGoodSha)
     })
     it('should rebuild from the ground up when no good changes', async () => {
-      const githubApi = Substitute.for<GitActionStatus>()
       const PR = 100
       githubApi.getPRRuns(PR).resolves([])
 
@@ -124,7 +150,6 @@ describe('Change detection', () => {
       const badSha = await makeChange(git, 'a', 'C-bad')
       const fixSha = await makeChange(git, 'a', 'D-good')
 
-      let githubApi = Substitute.for<GitActionStatus>()
       githubApi
         .getBranchBuilds(baseBranch)
         .resolves([{ head_commit: goodBeforeBadSha }])
@@ -141,7 +166,6 @@ describe('Change detection', () => {
       ).toBe(goodBeforeBadSha)
     })
     it('should trigger a full rebuild if no good commits found', async () => {
-      let githubApi = Substitute.for<GitActionStatus>()
       githubApi.getBranchBuilds(baseBranch).resolves([])
 
       expect(
@@ -155,7 +179,6 @@ describe('Change detection', () => {
       ).toBe('rebuild')
     })
     it('should take last commit', async () => {
-      let githubApi = Substitute.for<GitActionStatus>()
       githubApi
         .getBranchBuilds(baseBranch)
         .resolves([{ head_commit: '1111' }, { head_commit: '2222' }])

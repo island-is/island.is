@@ -1,27 +1,6 @@
 import { DefaultLogFields, ListLogLine, SimpleGit } from 'simple-git'
 import { GitActionStatus } from './git-action-status'
 
-const calculateDistance = async (
-  git: SimpleGit,
-  currentSha: string,
-  p: DefaultLogFields & ListLogLine,
-) => {
-  const diffNames = await git.diff({
-    '--name-status': null,
-    [currentSha]: null,
-    [p.hash]: null,
-  })
-  return [
-    // @ts-ignore
-    ...new Set(
-      diffNames
-        .split('\n')
-        .map((l) => l.replace('D\t', '').trim().split('/')[0])
-        .filter((s) => s.length > 0),
-    ),
-  ]
-}
-
 export async function findBestGoodRefBranch(
   commitScore: (services) => number,
   git: SimpleGit,
@@ -57,7 +36,7 @@ export async function findBestGoodRefPR(
       await git.merge({ [previousRun.head_commit]: null })
       const lastMerge = await git.log({ maxCount: 1 })
       const lastMergeCommit = lastMerge.latest
-      const distance = await calculateDistance(
+      const distance = await githubApi.calculateDistance(
         git,
         currentChange.hash,
         lastMergeCommit,

@@ -16,5 +16,5 @@ export interface GitActionStatus {
     git: SimpleGit,
     currentSha: string,
     p: DefaultLogFields & ListLogLine,
-  ): string[]
+  ): Promise<string[]>
 }
