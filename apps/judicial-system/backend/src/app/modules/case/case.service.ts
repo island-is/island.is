@@ -41,9 +41,8 @@ import {
   getCourtRecordPdfAsString,
 } from '../../formatters'
 import { courtUpload, notifications as m } from '../../messages'
-import { FileService } from '../file/file.service'
-import { DefendantService } from '../defendant/defendant.service'
-import { Defendant } from '../defendant/models/defendant.model'
+import { FileService } from '../file'
+import { DefendantService, Defendant } from '../defendant'
 import { Institution } from '../institution'
 import { User, UserService } from '../user'
 import { AwsS3Service } from '../aws-s3'
