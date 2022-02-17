@@ -49,8 +49,6 @@ export class ExamplePaymentActionsService {
       application.id,
     )
 
-    console.log({ paymentStatus })
-
     if (paymentStatus?.fulfilled !== true) {
       throw new Error('trying to submit an application that has not been paid')
     }
