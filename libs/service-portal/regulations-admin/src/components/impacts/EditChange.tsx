@@ -59,8 +59,6 @@ export const EditChange = (props: EditChangeProp) => {
     UPDATE_DRAFT_REGULATION_CHANGE,
   )
 
-  console.log({ change })
-
   const changeDate = (newDate: Date | undefined) => {
     setActiveChange({
       ...activeChange,
@@ -69,13 +67,19 @@ export const EditChange = (props: EditChangeProp) => {
   }
 
   const saveChange = () => {
-    if (!change.id) {
+    if (!activeChange.id) {
       createDraftRegulationChange({
         variables: {
           input: {
-            date: toISODate(activeChange.date.value),
             changingId: draft.id,
             regulation: activeChange.name,
+            title: activeChange.title,
+            text: activeChange.title,
+            appendixes: activeChange.appendixes.map((apx) => ({
+              title: apx.title.value,
+              text: apx.text.value,
+            })),
+            date: toISODate(activeChange.date.value),
           },
         },
       })
@@ -93,6 +97,12 @@ export const EditChange = (props: EditChangeProp) => {
         variables: {
           input: {
             id: activeChange.id,
+            title: activeChange.title,
+            text: activeChange.title,
+            appendixes: activeChange.appendixes.map((apx) => ({
+              title: apx.title.value,
+              text: apx.text.value,
+            })),
             date: toISODate(activeChange.date.value),
           },
         },
