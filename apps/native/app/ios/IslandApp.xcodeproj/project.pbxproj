@@ -209,7 +209,6 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				893B5FFF7116DA9B086AED9A /* [CP] Embed Pods Frameworks */,
 				D9A3B37E5C84A3A08E4C342C /* [CP] Copy Pods Resources */,
-				B25E4BE206914F4BB7B3ABCC /* Upload Debug Symbols to Sentry */,
 			);
 			buildRules = (
 			);
@@ -296,7 +295,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\nexport EXTRA_PACKAGER_ARGS=\"--entry-file apps/native/app/src/main.tsx --sourcemap-output $DERIVED_FILE_DIR/main.jsbundle.map\"\nexport ENTRY_FILE='src/main.tsx'\nexport SENTRY_PROPERTIES=./sentry.properties\nexport PROJECT_ROOT=\"$(cd \"$(pwd)/..\";pwd)\"\n\n../../node_modules/@sentry/cli/bin/sentry-cli react-native xcode \\\n../node_modules/react-native/scripts/react-native-xcode.sh\n\n";
+			shellScript = "export NODE_BINARY=node\nexport EXTRA_PACKAGER_ARGS=\"--entry-file apps/native/app/src/main.tsx --sourcemap-output $DERIVED_FILE_DIR/main.jsbundle.map\"\nexport ENTRY_FILE='src/main.tsx'\nexport PROJECT_ROOT=\"$(cd \"$(pwd)/..\";pwd)\"\n\n../node_modules/react-native/scripts/react-native-xcode.sh\n\n";
 		};
 		08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -341,20 +340,6 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-IslandApp/Pods-IslandApp-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
-		};
-		B25E4BE206914F4BB7B3ABCC /* Upload Debug Symbols to Sentry */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Upload Debug Symbols to Sentry";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "export SENTRY_PROPERTIES=sentry.properties\n../../node_modules/@sentry/cli/bin/sentry-cli upload-dsym\n";
 		};
 		D9A3B37E5C84A3A08E4C342C /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -540,7 +525,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
-					"\"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)\"",
+					/usr/lib/swift,
 					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -596,7 +581,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
-					"\"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)\"",
+					/usr/lib/swift,
 					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;

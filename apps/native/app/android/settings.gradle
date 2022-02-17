@@ -40,8 +40,8 @@ project(':react-native-ultimate-config').projectDir = new File(rootProject.proje
 include ':react-native-web-view'
 project(':react-native-web-view').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-webview/android')
 
-include ':react-native-sentry'
-project(':react-native-sentry').projectDir = new File(rootProject.projectDir, '../../node_modules/@sentry/react-native/android')
+include ':react-native-datadog'
+project(':react-native-datadog').projectDir = new File(rootProject.projectDir, '../../node_modules/@datadog/mobile-react-native/android')
 
 include ':react-native-custom-tabs'
 project(':react-native-custom-tabs').projectDir = new File(rootProject.projectDir, '../../node_modules/react-native-custom-tabs/android')

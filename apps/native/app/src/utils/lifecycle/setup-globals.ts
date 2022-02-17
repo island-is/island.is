@@ -1,6 +1,4 @@
 import '../shim';
-
-import * as Sentry from '@sentry/react-native'
 import { LogBox, Settings } from 'react-native'
 import { Platform } from 'react-native'
 import KeyboardManager from 'react-native-keyboard-manager'
@@ -36,27 +34,33 @@ import '@formatjs/intl-relativetimeformat/polyfill'
 import '@formatjs/intl-relativetimeformat/locale-data/en'
 import '@formatjs/intl-relativetimeformat/locale-data/is'
 import { setupQuickActions } from '../quick-actions'
-import { ReactNativeNavigationInstrumentation } from '../../lib/react-native-navigation-instrumentation';
 import { Navigation } from 'react-native-navigation'
+import { DdSdkReactNative, DdSdkReactNativeConfiguration, DdRum } from '@datadog/mobile-react-native';
 
 if (__DEV__) {
   perf().setPerformanceCollectionEnabled(false)
   require('../devtools/index')
 } else {
-  const instrumentation = new ReactNativeNavigationInstrumentation(Navigation);
 
-  // initialize sentry
-  Sentry.init({
-    dsn: config.sentryDsn,
-    integrations: [
-      new Sentry.ReactNativeTracing({
-        tracingOrigins: ["localhost", "*.devland.is", "island.is", /^\//],
-        routingInstrumentation: instrumentation,
-        enableAppStartTracking: true,
-        enableNativeFramesTracking: true,
-      }),
-    ],
-    tracesSampleRate: 0.2
+  // initialize datadog rum
+  const ddconfig = new DdSdkReactNativeConfiguration(
+    config.datadogClientToken,
+    "production",
+    "2736367a-a841-492d-adef-6f5a509d6ec2",
+    true, // track User interactions (e.g.: Tap on buttons. You can use 'accessibilityLabel' element property to give tap action the name, otherwise element type will be reported)
+    true, // track XHR Resources
+    true // track Errors
+)
+  DdSdkReactNative.initialize(ddconfig)
+
+  Navigation.events().registerComponentWillAppearListener(({ componentId, componentName }) => {
+    // Start a view with a unique view identifier, a custom view url, and an object to attach additional attributes to the view
+    DdRum.startView(componentId, componentName);
+  })
+
+  Navigation.events().registerComponentDidDisappearListener(({componentId}) => {
+    // Stops a previously started view with the same unique view identifier, and an object to attach additional attributes to the view
+    DdRum.stopView(componentId);
   })
 
   // enable performance metrics collection
