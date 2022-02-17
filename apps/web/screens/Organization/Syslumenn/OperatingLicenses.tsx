@@ -37,7 +37,7 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 // TODO: Find an appropriate debounce timer
 const DEBOUNCE_TIMER = 400
-// TODO: Find an appropriate page size.
+// TODO: Find an appropriate page size for operating licenses.
 const PAGE_SIZE = 10
 
 type SearchState = {
