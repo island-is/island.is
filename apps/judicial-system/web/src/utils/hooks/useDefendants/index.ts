@@ -48,7 +48,6 @@ const useDefendants = () => {
           gender: defendant.gender,
           citizenship: defendant.citizenship,
           noNationalId: defendant.noNationalId,
-          bla: 'ble',
         },
       },
     })
