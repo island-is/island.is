@@ -7,7 +7,7 @@ import { CmsTranslationsModule } from '@island.is/cms-translations'
 
 import { environment } from '../../../environments'
 import { DefendantModule } from '../defendant/defendant.module'
-import { UserModule } from '../user'
+import { UserModule } from '../index'
 import { FileModule } from '../file'
 import { AwsS3Module } from '../aws-s3'
 import { CourtModule } from '../court'

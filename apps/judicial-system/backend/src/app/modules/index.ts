@@ -1,5 +1,5 @@
-export { InstitutionModule } from './institution'
-export { UserModule } from './user'
+export { InstitutionModule } from './institution/institution.module'
+export { UserModule } from './user/user.module'
 export { CaseModule } from './case'
 export { NotificationModule } from './notification'
 export { FileModule } from './file'

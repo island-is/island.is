@@ -6,7 +6,7 @@ import { EmailModule } from '@island.is/email-service'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 
 import { environment } from '../../../environments'
-import { UserModule } from '../user'
+import { UserModule } from '../index'
 import { CaseModule } from '../case'
 import { CourtModule } from '../court'
 import { EventModule } from '../event'
