@@ -31,10 +31,11 @@ export const getEditUrl: GetEditUrlFn = (
 export const getHomeUrl = () => ServicePortalPath.RegulationsAdminRoot
 
 // ---------------------------------------------------------------------------
-
+/*
 export const getImpactUrl = (
   impactId: DraftImpactId,
   draftId?: RegulationDraftId,
 ) =>
   (draftId ? generatePath(RegulationsAdminEdit, { draftId }) : '') +
   `impacts?impact=${encodeURI(impactId)}`
+*/
