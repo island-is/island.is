@@ -24,7 +24,6 @@ import {
   CommentSection,
   ApplicationHeader,
   FilesListWithHeaderContainer,
-  ProfileUnitCollapsible,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 import {
@@ -180,14 +179,6 @@ const ApplicationProfile = ({
           className={`contentUp delay-75`}
         />
 
-        {showSpouseData[application.familyStatus] && (
-          <ProfileUnit
-            heading="Maki"
-            info={applicantSpouse}
-            className={`contentUp delay-75`}
-          />
-        )}
-
         <ProfileUnit
           heading="Upplýsingar um staðgreiðslu"
           info={test}
@@ -200,19 +191,32 @@ const ApplicationProfile = ({
           <Box marginBottom={3}>lsadlals</Box>
         </ProfileUnit>
 
+        {showSpouseData[application.familyStatus] && (
+          <ProfileUnit
+            heading="Maki"
+            info={applicantSpouse}
+            className={`contentUp delay-75`}
+            collapsible={true}
+          />
+        )}
+
         <ProfileUnit
           heading="Umsóknarferli"
           info={applicantMoreInfo}
           className={`contentUp delay-100`}
+          collapsible={true}
         />
 
         <ProfileUnit
           heading="Þjóðskrá"
           info={nationalRegistryInfo}
           className={`contentUp delay-100`}
+          collapsible={true}
         />
 
-        <FilesListWithHeaderContainer applicationFiles={application.files} />
+        {application.files && (
+          <FilesListWithHeaderContainer applicationFiles={application.files} />
+        )}
 
         <CommentSection
           className={`contentUp delay-125 ${styles.widthAlmostFull}`}

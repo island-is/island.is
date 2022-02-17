@@ -1,9 +1,10 @@
 import React, { ReactNode, useState } from 'react'
-import { Text, Box, Link, Button } from '@island.is/island-ui/core'
+import { Text, Box, Icon } from '@island.is/island-ui/core'
 
 import * as styles from './ProfileUnit.css'
 import cn from 'classnames'
 import AnimateHeight from 'react-animate-height'
+import Unit from './Unit'
 
 interface Props {
   heading: string
@@ -26,102 +27,81 @@ const ProfileUnit = ({
   collapsible = false,
   children,
 }: Props) => {
-  const [toggle, setToggle] = useState<boolean>(false)
+  const [toggle, setToggle] = useState<boolean>(true)
 
-  return (
-    <>
-      {collapsible ? (
+  if (collapsible) {
+    return (
+      <>
         <button
           className={cn({
-            [`${styles.toggleButton} rotateButton`]: true,
+            [`${styles.toggleButton}`]: true,
             [`${className}`]: className,
-            [`rotate `]: toggle,
           })}
           onClick={() => setToggle(!toggle)}
         >
-          <Box
-            display="flex"
-            justifyContent="spaceBetween"
-            borderBottomWidth="standard"
-            borderColor="dark200"
-          >
-            <Text as="h2" variant="h4" color="dark300" marginBottom={1}>
-              Upplýsingar um staðgreiðslu
-            </Text>
-            <Button
-              circle
-              icon={'chevronUp'}
-              size="small"
-              variant="ghost"
-              unfocusable={true}
-            />
+          <Box className={styles.toggleWrapper}>
+            <Box
+              background="purple100"
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              className={cn({
+                [`${styles.iconContainer}`]: true,
+                [`${styles.rotate}`]: toggle,
+              })}
+            >
+              <Icon icon={'chevronUp'} color="purple400" />
+            </Box>
+            <Box
+              display="flex"
+              borderBottomWidth="standard"
+              borderColor="dark200"
+              width="full"
+            >
+              <Text as="h2" variant="h3" color="dark300" marginBottom={1}>
+                {heading}
+              </Text>
+            </Box>
           </Box>
         </button>
-      ) : (
-        <Box
+        <AnimateHeight
+          duration={250}
+          height={toggle ? 'auto' : 0}
           className={cn({
-            [`${styles.headings} `]: true,
+            [`${styles.fullWidth} ${styles.animatedHeight}`]: true,
             [`${className}`]: className,
           })}
-          marginBottom={[2, 2, 3]}
-          borderBottomWidth="standard"
-          borderColor="dark200"
         >
-          <Text as="h2" variant="h3" color="dark300" marginBottom={1}>
-            {heading}
-          </Text>
-        </Box>
-      )}
-
-      <div
-        className={cn({
-          [`${styles.container} hideScrollBar`]: true,
-          [`${className}`]: true,
-        })}
-      >
-        {info.map((item, index) => {
-          return (
-            <Box key={'profile-' + index}>
-              <Text variant="eyebrow" marginBottom={1}>
-                {item.title}
-              </Text>
-
-              {item.link && (
-                <Link href={item.link} color="blue400" onClick={item.onclick}>
-                  {item.content}
-                </Link>
-              )}
-
-              {item.onclick && (
-                <button onClick={item.onclick} className={styles.button}>
-                  {item.content}
-                </button>
-              )}
-
-              {!item.link && !item.onclick && <Text>{item.content}</Text>}
-
-              {item.other && (
-                <Box
-                  background="blue100"
-                  borderRadius="large"
-                  padding={2}
-                  marginTop={1}
-                >
-                  <Text variant="small">
-                    „<em>{item.other}</em>“
-                  </Text>
-                </Box>
-              )}
-            </Box>
-          )
-        })}
-      </div>
-
-      {collapsible && (
-        <AnimateHeight duration={300} height={toggle ? 'auto' : 0}>
-          {children}
+          <Unit info={info} />
+          {children && children}
         </AnimateHeight>
-      )}
+        <Box
+          marginBottom={3}
+          className={cn({
+            [`${styles.fullWidth} `]: true,
+          })}
+        />
+      </>
+    )
+  }
+  return (
+    <>
+      <Box
+        className={cn({
+          [`${styles.fullWidth} `]: true,
+          [`${className}`]: className,
+        })}
+        marginBottom={[2, 2, 3]}
+        borderBottomWidth="standard"
+        borderColor="dark200"
+      >
+        <Text as="h2" variant="h3" color="dark300" marginBottom={1}>
+          {heading}
+        </Text>
+      </Box>
+      <Unit info={info} className={className} />
+
+      {children && children}
     </>
   )
 }

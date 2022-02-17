@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { style, globalStyle } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const container = style({
@@ -13,14 +13,44 @@ export const container = style({
   overflowX: 'scroll',
 })
 
-export const headings = style({
+export const fullWidth = style({
   gridColumn: '1/-1',
+})
+
+export const animatedHeight = style({
+  marginTop: theme.spacing[4],
 })
 
 export const toggleButton = style({
   gridColumn: '1/-1',
   display: 'block',
-  marginBottom: theme.spacing[4],
+  position: 'relative',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      marginLeft: -theme.spacing[7],
+    },
+  },
+})
+
+export const toggleWrapper = style({
+  display: 'grid',
+  gridTemplateColumns: '32px auto',
+  columnGap: theme.spacing[3],
+})
+
+export const iconContainer = style({
+  width: theme.spacing[4],
+  height: theme.spacing[4],
+  borderRadius: theme.spacing[1],
+  transition: 'transform 150ms ease, background-color 200ms ease',
+})
+
+globalStyle(`${toggleButton}:hover ${iconContainer}`, {
+  backgroundColor: theme.color.purple200,
+})
+
+export const rotate = style({
+  transform: 'rotate(180deg)',
 })
 
 export const button = style({
