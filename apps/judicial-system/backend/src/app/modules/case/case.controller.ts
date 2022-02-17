@@ -43,12 +43,10 @@ import {
 } from '../../guards'
 import { UserService } from '../user'
 import { CaseEvent, EventService } from '../event'
-import {
-  CaseExistsGuard,
-  CaseReadGuard,
-  CaseWriteGuard,
-  CurrentCase,
-} from './guards'
+import { CaseExistsGuard } from './guards/caseExists.guard'
+import { CaseReadGuard } from './guards/caseRead.guard'
+import { CaseWriteGuard } from './guards/caseWrite.guard'
+import { CurrentCase } from './guards/case.decorator'
 import {
   judgeTransitionRule,
   judgeUpdateRule,
