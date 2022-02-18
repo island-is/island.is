@@ -27,14 +27,14 @@ import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
 
 import { environment } from '../src/environments'
-import { AppModule } from '../src/app'
+import { AppModule } from '../src/app/app.module'
 import { Institution } from '../src/app/modules/institution'
 import { User } from '../src/app/modules/user'
 import { Case } from '../src/app/modules/case'
 import {
   Notification,
   SendNotificationResponse,
-} from '../src/app/modules/notification/models'
+} from '../src/app/modules/notification'
 
 interface CUser extends TUser {
   institutionId: string
