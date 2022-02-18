@@ -8,7 +8,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { prettyName, toISODate } from '@island.is/regulations'
+import { prettyName, RegName, toISODate } from '@island.is/regulations'
 import { impactMsgs } from '../../messages'
 import { DraftImpactForm, RegDraftForm } from '../../state/types'
 import { EditCancellation } from './EditCancellation'
@@ -33,8 +33,24 @@ export type ImpactListProps = {
   titleEmpty?: string | JSX.Element
 }
 
+type GroupedImpacts = Record<string, DraftImpactForm[]>
+
 export const ImpactList = (props: ImpactListProps) => {
   const { draft, impacts, title, titleEmpty } = props
+
+  const groupedImpacts: GroupedImpacts = {}
+  const sortedImpacts = [...impacts].sort((a, b) =>
+    (a.date.value as Date).getTime() >= (b.date.value as Date).getTime()
+      ? 1
+      : 0,
+  )
+
+  sortedImpacts.forEach((imp) => {
+    if (!groupedImpacts[imp.name]) {
+      groupedImpacts[imp.name] = []
+    }
+    groupedImpacts[imp.name].push(imp)
+  })
 
   const { formatMessage, formatDateFns } = useLocale()
   const t = formatMessage
@@ -97,7 +113,7 @@ export const ImpactList = (props: ImpactListProps) => {
         {' '}
       </Box>
 
-      {!impacts.length ? (
+      {!Object.keys(groupedImpacts).length ? (
         <Text variant="h3" as="h3">
           {titleEmpty || t(impactMsgs.impactListTitleEmpty)}
         </Text>
@@ -107,56 +123,73 @@ export const ImpactList = (props: ImpactListProps) => {
             {title || t(impactMsgs.impactListTitle)}
           </Text>
 
-          {impacts.map((impact, i) => {
-            const { id, name, regTitle, error, type, date } = impact
-
-            const isChange = type === 'amend'
-            const headingText =
-              name === 'self'
-                ? t(impactMsgs.selfAffecting)
-                : `${prettyName(name)} – ${regTitle}`
-            const errorMessage = !error
-              ? undefined
-              : typeof error === 'string'
-              ? error
-              : t(error)
-
+          {Object.keys(groupedImpacts).map((impGrp, i) => {
+            const impactGroup = groupedImpacts[impGrp]
             return (
-              <ActionCard
-                key={i}
-                date={date.value && formatDateFns(date.value, 'd. MMM yyyy')}
-                heading={headingText}
-                tag={{
-                  label: t(
-                    isChange
-                      ? impactMsgs.typeChange
-                      : impactMsgs.typeCancellation,
-                  ),
-                  variant: isChange ? 'blueberry' : 'red',
-                }}
-                cta={{
-                  icon: undefined,
-                  label: formatMessage(impactMsgs.impactListEditButton),
-                  variant: 'ghost',
-                  onClick: () => {
-                    setChooseType(impact)
-                  },
-                }}
-                secondaryCta={{
-                  icon: 'trash',
-                  label: formatMessage(impactMsgs.impactListDeleteButton),
-                  onClick: () => {
-                    deleteImpact(impact)
-                  },
-                }}
-                text={
-                  errorMessage &&
-                  (((
-                    <AlertMessage type="error" title={errorMessage} />
-                  ) as unknown) as string)
-                }
-                // backgroundColor={error ? 'red' : undefined}
-              />
+              <>
+                <Text variant="h4" as="h4" marginTop={i === 0 ? 0 : 5}>
+                  Breytingar á{' '}
+                  {impGrp === 'self'
+                    ? 'sjálfri sér'
+                    : `${prettyName(impactGroup[0].name as RegName)}`}
+                </Text>
+                {impactGroup.map((impact, idx) => {
+                  const { id, name, regTitle, error, type, date } = impact
+
+                  const isChange = type === 'amend'
+                  const headingText =
+                    name === 'self'
+                      ? t(impactMsgs.selfAffecting)
+                      : `${prettyName(name)} – ${regTitle}`
+                  const errorMessage = !error
+                    ? undefined
+                    : typeof error === 'string'
+                    ? error
+                    : t(error)
+
+                  return (
+                    <ActionCard
+                      key={idx}
+                      date={
+                        date.value && formatDateFns(date.value, 'd. MMM yyyy')
+                      }
+                      heading={headingText}
+                      tag={{
+                        label: t(
+                          isChange
+                            ? impactMsgs.typeChange
+                            : impactMsgs.typeCancellation,
+                        ),
+                        variant: isChange ? 'blueberry' : 'red',
+                      }}
+                      cta={{
+                        icon: undefined,
+                        label: formatMessage(impactMsgs.impactListEditButton),
+                        variant: 'ghost',
+                        disabled: idx !== impactGroup.length - 1,
+                        onClick: () => {
+                          setChooseType(impact)
+                        },
+                      }}
+                      secondaryCta={{
+                        icon: 'trash',
+                        label: formatMessage(impactMsgs.impactListDeleteButton),
+                        disabled: idx !== impactGroup.length - 1,
+                        onClick: () => {
+                          deleteImpact(impact)
+                        },
+                      }}
+                      text={
+                        errorMessage &&
+                        (((
+                          <AlertMessage type="error" title={errorMessage} />
+                        ) as unknown) as string)
+                      }
+                      // backgroundColor={error ? 'red' : undefined}
+                    />
+                  )
+                })}
+              </>
             )
           })}
 
