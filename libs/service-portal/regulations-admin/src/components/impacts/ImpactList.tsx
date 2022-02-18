@@ -22,6 +22,7 @@ import {
   DELETE_DRAFT_REGULATION_CANCEL,
   DELETE_DRAFT_REGULATION_CHANGE,
 } from './impactQueries'
+import ConfirmModal from '../ConfirmModal/ConfirmModal'
 
 // ---------------------------------------------------------------------------
 
@@ -194,6 +195,19 @@ export const ImpactList = (props: ImpactListProps) => {
               closeModal={closeModal}
             />
           )}
+
+          {/*<ConfirmModal
+            isVisible={isConfirmationVisible}
+            message={`${formatMessage(impactMsgs.deleteConfirmation)}`}
+            onConfirm={onConfirmDelete}
+            onVisibilityChange={(visibility: boolean) => {
+              if (!visibility) {
+                onClear()
+              }
+
+              setIsConfirmationVisible(visibility)
+            }}
+          />*/}
         </Stack>
       )}
     </>
