@@ -3,7 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType({
   description: 'Info about how to download the draft regulation PDF',
 })
-export class DraftRegulationPdfDownload {
+export class DraftRegulationPdfDownloadModel {
   @Field(() => String, {
     defaultValue: false,
     description:

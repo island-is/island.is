@@ -3,12 +3,6 @@ import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import { Inject, UseGuards } from '@nestjs/common'
 import { RegulationsService } from '@island.is/clients/regulations'
-import { GetDraftRegulationInput } from './dto/getDraftRegulation.input'
-import { GetDraftRegulationPdfDownloadInput } from './dto/downloadRegulation.input'
-import { DeleteDraftRegulationInput } from './dto/deleteDraftRegulation.input'
-import { EditDraftRegulationInput } from './dto/editDraftRegulation.input'
-import { GetRegulationOptionListInput } from './dto/getRegulationOptionList.input'
-import { DeleteDraftRegulationModel } from './models/deleteDraftRegulation.model'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -17,14 +11,29 @@ import {
 } from '@island.is/auth-nest-tools'
 import { RegulationsAdminApi } from '../client'
 import { RegulationsAdminClientService } from '@island.is/clients/regulations-admin'
-import { DraftRegulationPdfDownload } from './models/draftRegulationPdfDownload.model'
 import { ConfigType } from '@nestjs/config'
-import { UpdateDraftRegulationCancelInput } from './dto/updateDraftRegulationCancel.input'
-import { CreateDraftRegulationCancelInput } from './dto/createDraftRegulationCancel.input'
-import { DraftRegulationCancelModel } from './models/draftRegulationCancel.model'
 import { RegulationViewTypes } from '@island.is/regulations/web'
-import { GetCurrentRegulationFromApiInput } from './dto/getCurrentRegulationFromApi.input'
 import { nameToSlug } from '@island.is/regulations'
+import {
+  CreateDraftRegulationCancelInput,
+  DeleteDraftRegulationInput,
+  EditDraftRegulationInput,
+  GetCurrentRegulationFromApiInput,
+  GetDraftRegulationInput,
+  GetDraftRegulationPdfDownloadInput,
+  GetRegulationOptionListInput,
+  UpdateDraftRegulationCancelInput,
+  DeleteDraftRegulationCancelInput,
+  DeleteDraftRegulationChangeInput,
+  UpdateDraftRegulationChangeInput,
+  CreateDraftRegulationChangeInput,
+} from './dto'
+import {
+  DeleteDraftRegulationModel,
+  DraftRegulationCancelModel,
+  DraftRegulationChangeModel,
+  DraftRegulationPdfDownloadModel,
+} from './models'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -69,7 +78,7 @@ export class RegulationsAdminResolver {
   async createDraftRegulation(
     @CurrentUser() { authorization }: User,
   ): Promise<any> {
-    return this.regulationsAdminApiService.create(authorization ?? '')
+    return this.regulationsAdminApiService.create(authorization)
   }
 
   @Mutation(() => graphqlTypeJson)
@@ -80,7 +89,7 @@ export class RegulationsAdminResolver {
     return this.regulationsAdminApiService.updateById(
       input.id,
       input.body,
-      authorization ?? '',
+      authorization,
     )
   }
 
@@ -91,7 +100,7 @@ export class RegulationsAdminResolver {
   ): Promise<any> {
     await this.regulationsAdminApiService.deleteById(
       input.draftId,
-      authorization ?? '',
+      authorization,
     )
 
     return {
@@ -126,11 +135,11 @@ export class RegulationsAdminResolver {
     return await this.regulationsService.getRegulationsLawChapters(false)
   }
 
-  @Query(() => DraftRegulationPdfDownload)
+  @Query(() => DraftRegulationPdfDownloadModel)
   async getDraftRegulationPdfDownload(
     @Args('input') input: GetDraftRegulationPdfDownloadInput,
     @CurrentUser() { authorization }: User,
-  ): Promise<DraftRegulationPdfDownload | null> {
+  ): Promise<DraftRegulationPdfDownloadModel | null> {
     // This is open to be extended with downloading published regulations as well
 
     if (!this.downloadServiceConfig.baseUrl) {
@@ -161,7 +170,7 @@ export class RegulationsAdminResolver {
   ): Promise<DraftRegulationCancelModel> {
     return await this.regulationsAdminApiService.createDraftRegulationCancel(
       input,
-      authorization ?? '',
+      authorization,
     )
   }
 
@@ -172,7 +181,59 @@ export class RegulationsAdminResolver {
   ): Promise<DraftRegulationCancelModel> {
     return await this.regulationsAdminApiService.updateDraftRegulationCancel(
       input,
-      authorization ?? '',
+      authorization,
     )
+  }
+
+  @Mutation(() => DraftRegulationCancelModel)
+  async deleteDraftRegulationCancel(
+    @Args('input') input: DeleteDraftRegulationCancelInput,
+    @CurrentUser() { authorization }: User,
+  ): Promise<any> {
+    await this.regulationsAdminApiService.deleteDraftRegulationCancel(
+      input,
+      authorization,
+    )
+
+    return {
+      id: input.id,
+    }
+  }
+
+  @Mutation(() => DraftRegulationChangeModel)
+  async createDraftRegulationChange(
+    @Args('input') input: CreateDraftRegulationChangeInput,
+    @CurrentUser() { authorization }: User,
+  ): Promise<DraftRegulationChangeModel> {
+    return await this.regulationsAdminApiService.createDraftRegulationChange(
+      input,
+      authorization,
+    )
+  }
+
+  @Mutation(() => DraftRegulationChangeModel)
+  async updateDraftRegulationChange(
+    @Args('input') input: UpdateDraftRegulationChangeInput,
+    @CurrentUser() { authorization }: User,
+  ): Promise<DraftRegulationChangeModel> {
+    return await this.regulationsAdminApiService.updateDraftRegulationChange(
+      input,
+      authorization,
+    )
+  }
+
+  @Mutation(() => DraftRegulationChangeModel)
+  async deleteDraftRegulationChange(
+    @Args('input') input: DeleteDraftRegulationChangeInput,
+    @CurrentUser() { authorization }: User,
+  ): Promise<any> {
+    await this.regulationsAdminApiService.deleteDraftRegulationChange(
+      input,
+      authorization,
+    )
+
+    return {
+      id: input.id,
+    }
   }
 }
