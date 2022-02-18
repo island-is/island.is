@@ -60,7 +60,7 @@ const CommentSection = ({ className, setApplication }: Props) => {
           size="small"
           iconType="outline"
           onClick={() => {
-            setShowInput(!showInput)
+            setShowInput((showInput) => !showInput)
           }}
         >
           {showInput ? 'Loka' : 'Skrifa athugasemd'}

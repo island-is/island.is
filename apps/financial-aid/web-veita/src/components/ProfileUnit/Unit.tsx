@@ -1,8 +1,40 @@
-import React, { ReactNode, useState } from 'react'
-import { Text, Box, Link, Button, Icon } from '@island.is/island-ui/core'
+import React from 'react'
+import { Text, Box, Link } from '@island.is/island-ui/core'
 
 import * as styles from './ProfileUnit.css'
 import cn from 'classnames'
+
+const LinkItem = (link?: string, onclick?: () => void, content?: string) => {
+  return (
+    link && (
+      <Link href={link} color="blue400" onClick={onclick}>
+        {content}
+      </Link>
+    )
+  )
+}
+
+const ButtonItem = (onclick?: () => void, content?: string) => {
+  return (
+    onclick && (
+      <button onClick={onclick} className={styles.button}>
+        {content}
+      </button>
+    )
+  )
+}
+
+const OtherItem = (other?: string) => {
+  return (
+    other && (
+      <Box background="blue100" borderRadius="large" padding={2} marginTop={1}>
+        <Text variant="small">
+          „<em>{other}</em>“
+        </Text>
+      </Box>
+    )
+  )
+}
 
 interface Props {
   info: {
@@ -24,38 +56,15 @@ const Unit = ({ info, className }: Props) => {
       })}
     >
       {info.map((item, index) => {
+        const content = getContent(item)
+
         return (
           <Box key={'profile-' + index}>
             <Text variant="eyebrow" marginBottom={1}>
               {item.title}
             </Text>
 
-            {item.link && (
-              <Link href={item.link} color="blue400" onClick={item.onclick}>
-                {item.content}
-              </Link>
-            )}
-
-            {item.onclick && (
-              <button onClick={item.onclick} className={styles.button}>
-                {item.content}
-              </button>
-            )}
-
-            {!item.link && !item.onclick && <Text>{item.content}</Text>}
-
-            {item.other && (
-              <Box
-                background="blue100"
-                borderRadius="large"
-                padding={2}
-                marginTop={1}
-              >
-                <Text variant="small">
-                  „<em>{item.other}</em>“
-                </Text>
-              </Box>
-            )}
+            {content}
           </Box>
         )
       })}
@@ -64,3 +73,26 @@ const Unit = ({ info, className }: Props) => {
 }
 
 export default Unit
+
+const getContent = (item: {
+  title: string
+  content?: string
+  link?: string
+  onclick?: () => void
+  other?: string
+}) => {
+  const { content, link, onclick, other } = item
+  switch (true) {
+    case Boolean(link):
+      return LinkItem(link, onclick, content)
+    case Boolean(onclick):
+      return ButtonItem(onclick, content)
+    default:
+      return (
+        <>
+          <Text>{content}</Text>
+          {other && OtherItem(other)}
+        </>
+      )
+  }
+}

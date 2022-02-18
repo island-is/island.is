@@ -17,6 +17,7 @@ import {
 import format from 'date-fns/format'
 
 import {
+  CollapsibleProfileUnit,
   ProfileUnit,
   StateModal,
   AidAmountModal,
@@ -160,34 +161,24 @@ const ApplicationProfile = ({
           className={`contentUp delay-75`}
         />
 
-        <ProfileUnit
-          heading="Upplýsingar um staðgreiðslu"
-          info={test}
-          className={`contentUp delay-100`}
-          collapsible={true}
-        />
-
         {showSpouseData[application.familyStatus] && (
-          <ProfileUnit
+          <CollapsibleProfileUnit
             heading="Maki"
             info={applicantSpouse}
             className={`contentUp delay-75`}
-            collapsible={true}
           />
         )}
 
-        <ProfileUnit
+        <CollapsibleProfileUnit
           heading="Umsóknarferli"
           info={applicantMoreInfo}
           className={`contentUp delay-100`}
-          collapsible={true}
         />
 
-        <ProfileUnit
+        <CollapsibleProfileUnit
           heading="Þjóðskrá"
           info={nationalRegistryInfo}
           className={`contentUp delay-100`}
-          collapsible={true}
         />
 
         {application.files && (
