@@ -93,10 +93,10 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
   const resetFields = (message?: string) => {
     refetchStudent().then(() => {
       message === 'edit'
-        ? toast.success(formatMessage(m.successOnEditLesson)) :
-      message === 'delete'
-        ? toast.success(formatMessage(m.successOnDeleteLesson)) :
-        toast.success(formatMessage(m.successOnRegisterLesson))
+        ? toast.success(formatMessage(m.successOnEditLesson))
+        : message === 'delete'
+        ? toast.success(formatMessage(m.successOnDeleteLesson))
+        : toast.success(formatMessage(m.successOnRegisterLesson))
 
       setEditingRegistration(undefined)
       setDate('')

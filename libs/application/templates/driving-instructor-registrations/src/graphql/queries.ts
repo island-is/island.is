@@ -46,3 +46,15 @@ export const InstructorsStudentsQuery = gql`
     }
   }
 `
+
+export const FindStudentQuery = gql`
+  query drivingBookStudentList($input: StudentListInput!) {
+    drivingBookStudentList(input: $input) {
+      data {
+        id
+        name
+        ssn
+      }
+    }
+  }
+`

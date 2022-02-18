@@ -1,9 +1,11 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { Box, ModalBase, Button, Text, Input } from '@island.is/island-ui/core'
 import { Application } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import * as styles from '../style.css'
+import { FindStudentQuery } from '../../graphql/queries'
+import { useQuery } from '@apollo/client'
 
 interface FindStudentsModalProps {
   application?: Application
@@ -17,15 +19,44 @@ const FindStudentModal = ({
 }: FindStudentsModalProps) => {
   const { formatMessage } = useLocale()
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [findStudentById, setFindStudentById] = useState('')
+  const [studentSsn, setStudentSsn] = useState('')
+  const [studentNotFoundError, setStudentNotFoundError] = useState(false)
+  const [isSearching, setIsSearching] = useState(false)
+
+  const { data: findStudent, loading: findingStudent } = useQuery(
+    FindStudentQuery,
+    {
+      variables: {
+        input: {
+          key: studentSsn,
+        },
+      },
+      notifyOnNetworkStatusChange: true,
+      skip: !isSearching,
+    },
+  )
 
   const viewStudent = useCallback(
     (id) => {
       setShowTable(false)
       setStudentId(id)
     },
+
     [setShowTable, setStudentId],
   )
+
+  useEffect(() => {
+    if (isSearching && findStudent) {
+      if (findStudent.drivingBookStudentList.data.length) {
+        viewStudent(studentSsn)
+        setIsModalOpen(false)
+      } else {
+        setStudentNotFoundError(true)
+      }
+
+      setIsSearching(false)
+    }
+  }, [isSearching, findStudent])
 
   return (
     <Box
@@ -67,8 +98,10 @@ const FindStudentModal = ({
                 name="search_student"
                 backgroundColor="blue"
                 size="sm"
+                hasError={studentNotFoundError}
+                errorMessage="Enginn nemandi skráður á eftirfarandi kennitölu"
                 onChange={(v) => {
-                  setFindStudentById(v.target.value)
+                  setStudentSsn(v.target.value)
                 }}
               />
             </Box>
@@ -83,9 +116,9 @@ const FindStudentModal = ({
               </Button>
               <Button
                 variant="primary"
+                loading={findingStudent}
                 onClick={() => {
-                  viewStudent(findStudentById)
-                  setIsModalOpen(false)
+                  setIsSearching(true)
                 }}
               >
                 {formatMessage(m.studentsOverviewRegisterHoursButton)}

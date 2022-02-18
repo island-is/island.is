@@ -138,13 +138,15 @@ const StudentsOverview = ({ application }: Data) => {
                       </T.Data>
                     </T.Row>
                   )
-                }
-              )) : (
-                <Text marginY={2}>{formatMessage(m.studentsOverviewNoStudentFound)}</Text>
+                })
+              ) : (
+                <Text marginY={2}>
+                  {formatMessage(m.studentsOverviewNoStudentFound)}
+                </Text>
               )}
             </T.Body>
           </T.Table>
-          {pageStudents && !!pageStudents.length && 
+          {pageStudents && !!pageStudents.length && (
             <Pagination
               page={page}
               totalPages={totalPages}
@@ -160,7 +162,7 @@ const StudentsOverview = ({ application }: Data) => {
                 </Box>
               )}
             />
-          }
+          )}
         </Stack>
       ) : (
         <ViewStudent
