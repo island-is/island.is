@@ -9,8 +9,8 @@ import type { User } from '@island.is/judicial-system/types'
 import { AuditTrailModule } from '@island.is/judicial-system/audit-trail'
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 
-import { BackendAPI } from '../../../services'
 import { environment } from '../../../environments'
+import { BackendAPI } from '../../data-sources/backend'
 import { CourtResolver } from './court.resolver'
 import { CourtService } from './court.service'
 

@@ -453,7 +453,7 @@
     {
       "name": "Árni Gestsson",
       "practice": "Mörkin lögmannsstofa hf.",
-      "email": "arni@law.is",
+      "email": "",
       "phoneNr": "4144100"
     },
     {
@@ -2180,9 +2180,9 @@
     },
     {
       "name": "Guðmundur Ómar Hafsteinsson",
-      "practice": "Lögmannsstofan Fortis ehf.",
-      "email": "gudmundur@fortis.is",
-      "phoneNr": "5205800"
+      "practice": "Novum lögfræðiþjónusta",
+      "email": "gudmundur@novum.is",
+      "phoneNr": "5551550"
     },
     {
       "name": "Guðmundur Siemsen",
@@ -2501,6 +2501,12 @@
       "practice": "LOGOS lögmannsþjónusta",
       "email": "halldorbrynjar@logos.is",
       "phoneNr": "5400318"
+    },
+    {
+      "name": "Halldór Heiðar Hallsson",
+      "practice": "",
+      "email": "halldor@lmsr.is",
+      "phoneNr": "8656224"
     },
     {
       "name": "Halldór Hrannar Halldórsson",
@@ -3543,7 +3549,7 @@
     {
       "name": "Jóhannes Már Sigurðarson",
       "practice": "Lögfræðistofa Norðurlands",
-      "email": "johannes@lfs.is",
+      "email": "lfs@lfs.is",
       "phoneNr": "6990015"
     },
     {
@@ -4484,9 +4490,9 @@
     },
     {
       "name": "Ólafur Björnsson",
-      "practice": "Lögmenn Suðurlandi",
-      "email": "oli@log.is",
-      "phoneNr": "4802900"
+      "practice": "Lögmannsstofa Ólafs Björnssonar",
+      "email": "oli@olafur.is",
+      "phoneNr": "8943209"
     },
     {
       "name": "Ólafur Egilsson",
@@ -5618,9 +5624,9 @@
     },
     {
       "name": "Steinunn Pálmadóttir",
-      "practice": "Samtök iðnaðarins",
-      "email": "steinunn@si.is",
-      "phoneNr": "5910100"
+      "practice": "Landsvirkjun",
+      "email": "steinunn.palmadottir@landsvirkjun.is",
+      "phoneNr": "5159000"
     },
     {
       "name": "Styrmir Gunnarsson",

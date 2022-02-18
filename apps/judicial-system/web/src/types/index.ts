@@ -89,15 +89,90 @@ interface NationalRegistryPerson {
   name: string
   partner_kennitala: string
   permanent_address: {
-    street: { dative: string; nominative: string }
-    postal_code: number
-    town: { dative: string; nominative: string }
+    street?: { dative: string; nominative: string }
+    postal_code?: number
+    town?: { dative: string; nominative: string }
     country: { code: string; name: { en: string; is: string }; type: string }
     municipality: string
   }
   proxy_kennitala: string
   see_also: { search: string }
   type: string
+}
+
+interface NationalRegistryBusiness {
+  type: string
+  kennitala: string
+  full_name: string
+  short_name: string
+  alt_foreign_name?: string
+  is_company: boolean
+  business_type: {
+    code: string
+    name: {
+      is: string
+      en: string
+    }
+  }
+  business_activity?: string
+  parent_company_kennitala?: string
+  director: string
+  legal_address: {
+    street: {
+      nominative: string
+      dative: string
+    }
+    postal_code: number
+    town: {
+      nominative: string
+      dative: string
+    }
+    country: {
+      code: string
+      name: {
+        is: string
+        en: string
+      }
+    }
+    municipality: string
+    coordinates: {
+      longitude: number
+      latitude: number
+      x_isn93: number
+      y_isn93: number
+    }
+  }
+  postal_address: {
+    street: {
+      nominative: string
+      dative: string
+    }
+    postal_code: number
+    town: {
+      nominative: string
+      dative: string
+    }
+    country: {
+      code: string
+      name: {
+        is: string
+        en: string
+      }
+    }
+    municipality: string
+    coordinates: {
+      longitude: number
+      latitude: number
+      x_isn93: number
+      y_isn93: number
+    }
+  }
+  international_address?: string
+  receiver?: string
+  currency: string
+  share_capital: number
+  remarks?: string
+  banned: boolean
 }
 
 interface NationalRegistryMeta {
@@ -107,7 +182,12 @@ interface NationalRegistryMeta {
   total_items: number
 }
 
-export interface NationalRegistryResponse {
+export interface NationalRegistryResponsePerson {
   items: NationalRegistryPerson[]
+  meta: NationalRegistryMeta
+}
+
+export interface NationalRegistryResponseBusiness {
+  items: NationalRegistryBusiness[]
   meta: NationalRegistryMeta
 }

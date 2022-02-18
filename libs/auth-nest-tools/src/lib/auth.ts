@@ -1,4 +1,6 @@
-import { JwtAct } from './jwt.payload'
+import { JwtAct, JwtDelegationType } from './jwt.payload'
+
+export type AuthDelegationType = JwtDelegationType
 
 export interface Auth {
   nationalId?: string
@@ -7,6 +9,7 @@ export interface Auth {
   client: string
   actor?: {
     nationalId: string
+    delegationType: AuthDelegationType
     scope: string[]
   }
   act?: JwtAct

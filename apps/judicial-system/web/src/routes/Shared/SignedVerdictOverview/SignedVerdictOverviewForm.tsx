@@ -259,7 +259,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           />
         </Box>
       )}
-      <Box marginBottom={workingCase.isMasked ? 15 : 6}>
+      <Box marginBottom={6}>
         <InfoCard
           data={[
             {
@@ -289,20 +289,20 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               title: formatMessage(core.judge),
               value: workingCase.judge?.name,
             },
-            ...(workingCase.registrar
-              ? [
-                  {
-                    title: formatMessage(core.registrar),
-                    value: workingCase.registrar?.name,
-                  },
-                ]
-              : []),
             // Conditionally add this field based on case type
             ...(isInvestigationCase(workingCase.type)
               ? [
                   {
                     title: formatMessage(core.caseType),
                     value: capitalize(caseTypes[workingCase.type]),
+                  },
+                ]
+              : []),
+            ...(workingCase.registrar
+              ? [
+                  {
+                    title: formatMessage(core.registrar),
+                    value: workingCase.registrar?.name,
                   },
                 ]
               : []),
@@ -321,8 +321,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE ||
         workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) &&
         (user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR) &&
-        user?.institution?.type !== InstitutionType.HIGH_COURT &&
-        !workingCase.isMasked && (
+        user?.institution?.type !== InstitutionType.HIGH_COURT && (
           <Box marginBottom={7}>
             <AppealSection
               workingCase={workingCase}
@@ -333,7 +332,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             />
           </Box>
         )}
-      {user?.role !== UserRole.STAFF && !workingCase.isMasked && (
+      {user?.role !== UserRole.STAFF && (
         <>
           <Box marginBottom={5} data-testid="accordionItems">
             <Accordion>
@@ -370,71 +369,69 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           </Box>
         </>
       )}
-      {!workingCase.isMasked && (
-        <Box marginBottom={10}>
-          <Text as="h2" variant="h3" marginBottom={5}>
-            {formatMessage(m.caseDocuments)}
-          </Text>
-          <Box marginBottom={2}>
-            <Stack space={2} dividers>
-              {user?.role !== UserRole.STAFF && (
-                <PdfRow
-                  caseId={workingCase.id}
-                  title={formatMessage(core.pdfButtonRequest)}
-                  pdfType="request"
-                />
-              )}
-              {workingCase.type === CaseType.CUSTODY &&
-                workingCase.state === CaseState.ACCEPTED &&
-                isAcceptingCaseDecision(workingCase.decision) && (
-                  <PdfRow
-                    caseId={workingCase.id}
-                    title={formatMessage(core.pdfButtonCustodyNotice)}
-                    pdfType="custodyNotice"
-                  />
-                )}
+      <Box marginBottom={10}>
+        <Text as="h2" variant="h3" marginBottom={5}>
+          {formatMessage(m.caseDocuments)}
+        </Text>
+        <Box marginBottom={2}>
+          <Stack space={2} dividers>
+            {user?.role !== UserRole.STAFF && (
               <PdfRow
                 caseId={workingCase.id}
-                title={formatMessage(core.pdfButtonRulingShortVersion)}
-                pdfType="courtRecord"
-              >
-                {workingCase.courtRecordSignatory ? (
-                  <SignedDocument
-                    signatory={workingCase.courtRecordSignatory.name}
-                    signingDate={workingCase.courtRecordSignatureDate}
-                  />
-                ) : user?.role === UserRole.JUDGE ||
-                  user?.role === UserRole.REGISTRAR ? (
-                  <Button
-                    loading={isRequestingCourtRecordSignature}
-                    onClick={(event) => {
-                      event.stopPropagation()
-                      handleRequestCourtRecordSignature()
-                    }}
-                  >
-                    {formatMessage(m.signButton)}
-                  </Button>
-                ) : (
-                  <Text>{formatMessage(m.unsignedDocument)}</Text>
-                )}
-              </PdfRow>
-              {user?.role !== UserRole.STAFF && (
+                title={formatMessage(core.pdfButtonRequest)}
+                pdfType="request"
+              />
+            )}
+            {workingCase.type === CaseType.CUSTODY &&
+              workingCase.state === CaseState.ACCEPTED &&
+              isAcceptingCaseDecision(workingCase.decision) && (
                 <PdfRow
                   caseId={workingCase.id}
-                  title={formatMessage(core.pdfButtonRuling)}
-                  pdfType="ruling"
-                >
-                  <SignedDocument
-                    signatory={workingCase.judge?.name}
-                    signingDate={workingCase.rulingDate}
-                  />
-                </PdfRow>
+                  title={formatMessage(core.pdfButtonCustodyNotice)}
+                  pdfType="custodyNotice"
+                />
               )}
-            </Stack>
-          </Box>
-          <Divider />
+            <PdfRow
+              caseId={workingCase.id}
+              title={formatMessage(core.pdfButtonRulingShortVersion)}
+              pdfType="courtRecord"
+            >
+              {workingCase.courtRecordSignatory ? (
+                <SignedDocument
+                  signatory={workingCase.courtRecordSignatory.name}
+                  signingDate={workingCase.courtRecordSignatureDate}
+                />
+              ) : user?.role === UserRole.JUDGE ||
+                user?.role === UserRole.REGISTRAR ? (
+                <Button
+                  loading={isRequestingCourtRecordSignature}
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    handleRequestCourtRecordSignature()
+                  }}
+                >
+                  {formatMessage(m.signButton)}
+                </Button>
+              ) : (
+                <Text>{formatMessage(m.unsignedDocument)}</Text>
+              )}
+            </PdfRow>
+            {user?.role !== UserRole.STAFF && (
+              <PdfRow
+                caseId={workingCase.id}
+                title={formatMessage(core.pdfButtonRuling)}
+                pdfType="ruling"
+              >
+                <SignedDocument
+                  signatory={workingCase.judge?.name}
+                  signingDate={workingCase.rulingDate}
+                />
+              </PdfRow>
+            )}
+          </Stack>
         </Box>
-      )}
+        <Divider />
+      </Box>
       {user?.role === UserRole.PROSECUTOR &&
         user.institution?.id === workingCase.prosecutor?.institution?.id &&
         isRestrictionCase(workingCase.type) && (

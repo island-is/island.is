@@ -67,13 +67,25 @@ function constructCustodyNoticePdf(
   )
   addNormalText(
     doc,
-    `kt. ${formatNationalId(
+    `${
       theCase.defendants &&
-        theCase.defendants.length > 0 &&
-        theCase.defendants[0].nationalId
+      theCase.defendants.length > 0 &&
+      theCase.defendants[0].noNationalId
+        ? 'fd.'
+        : 'kt.'
+    } ${
+      theCase.defendants &&
+      theCase.defendants.length > 0 &&
+      theCase.defendants[0].noNationalId
         ? theCase.defendants[0].nationalId
-        : 'ekki skráð',
-    )}`,
+        : formatNationalId(
+            theCase.defendants &&
+              theCase.defendants.length > 0 &&
+              theCase.defendants[0].nationalId
+              ? theCase.defendants[0].nationalId
+              : 'ekki skráð',
+          )
+    }`,
     'Helvetica',
   )
   addNormalText(

@@ -237,6 +237,12 @@ export interface ApplicationFilters {
   MyCases: number
 }
 
+export interface PersonalTaxReturn {
+  key: string
+  name: string
+  size: number
+}
+
 export interface Application {
   id: string
   created: string
@@ -284,7 +290,8 @@ export interface GetSignedUrlForId {
 export interface Spouse {
   hasPartnerApplied: boolean
   hasFiles: boolean
-  spouseName?: string
+  applicantName: string
+  applicantSpouseEmail: string
 }
 
 export interface UpdateApplicationTableResponseType {
