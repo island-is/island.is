@@ -121,7 +121,7 @@ export const ImpactList = (props: ImpactListProps) => {
                   },
                 }}
                 secondaryCta={{
-                  icon: undefined,
+                  icon: 'trash',
                   label: formatMessage(impactMsgs.impactListDeleteButton),
                   onClick: () => {
                     deleteImpact(impact)
