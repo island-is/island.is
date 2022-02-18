@@ -1,13 +1,8 @@
 import * as s from './Impacts.css'
 import { useMutation, gql } from '@apollo/client'
-import { format } from 'date-fns' // eslint-disable-line no-restricted-imports
-import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
 import {
-  Text,
   Box,
   Button,
-  ModalBase,
-  Tag,
   GridContainer,
   GridColumn,
   GridRow,
@@ -16,16 +11,12 @@ import {
 import React, { useMemo, useState } from 'react'
 import { DraftCancelForm, RegDraftForm } from '../../state/types'
 // import { useDraftingState } from '../../state/useDraftingState'
-import { ImpactDate } from './ImpactDate'
-import { ModalHeader } from './ModalHeader'
-import {
-  ISODate,
-  nameToSlug,
-  RegName,
-  RegulationHistoryItem,
-  toISODate,
-} from '@island.is/regulations'
+import { ISODate, toISODate } from '@island.is/regulations'
 import { useGetCurrentRegulationFromApiQuery } from '../../utils/dataHooks'
+import { Effects } from '../../types'
+import { ImpactChangesContainer } from './ImpactChangesContainer'
+import { LayoverModal } from './LayoverModal'
+import { ImpactModalTitle } from './ImpactModalTitle'
 
 type EditCancellationProp = {
   draft: RegDraftForm
@@ -60,7 +51,6 @@ const UPDATE_DRAFT_REGULATION_CANCEL_IMPACT = gql`
   }
 `
 
-type Effects = Record<'past' | 'future', Array<RegulationHistoryItem>>
 export const EditCancellation = (props: EditCancellationProp) => {
   const { draft, cancellation, closeModal } = props
   const [activeCancellation, setActiveCancellation] = useState(cancellation)
@@ -143,168 +133,74 @@ export const EditCancellation = (props: EditCancellationProp) => {
   }
 
   return (
-    <ModalBase
-      baseId="EditCancellationModal"
-      isVisible={true}
-      initialVisibility={true}
-      className={s.cancelModal}
-      hideOnClickOutside={false} // FIXME: setting this to true disables re-opening the modal
-      hideOnEsc={false} // FIXME: setting this to true disables re-opening the modal
-      removeOnClose
-    >
-      <Box padding={[3, 3, 3, 6]}>
-        <ModalHeader closeModal={closeModal} />
-        <GridContainer>
-          <GridRow>
-            <GridColumn
-              span={['12/12', '12/12', '12/12', '6/12']}
-              offset={['0', '0', '0', '2/12']}
+    <LayoverModal closeModal={closeModal} id="EditCancelationModal">
+      <GridContainer>
+        <GridRow>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '6/12']}
+            offset={['0', '0', '0', '2/12']}
+          >
+            <ImpactModalTitle
+              impact={cancellation}
+              name={activeCancellation.name}
+              title={activeCancellation.regTitle}
+              type={'cancel'}
+              tag={
+                regulation?.type && {
+                  first: 'Brottfelling reglugerðar',
+                  second:
+                    regulation?.type === 'base'
+                      ? 'Stofnreglugerð'
+                      : 'Breytingareglugerð',
+                }
+              }
+              onChangeDate={changeCancelDate}
+            />
+          </GridColumn>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '3/12']}
+            offset={['0', '0', '0', '1/12']}
+          >
+            {effects?.future && (
+              <ImpactChangesContainer
+                effects={effects}
+                activeCancellation={activeCancellation}
+              />
+            )}
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '8/12']}
+            offset={['0', '0', '0', '2/12']}
+          >
+            <Box paddingY={5}>
+              <Divider />
+            </Box>
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="center"
             >
-              <Box paddingY={4}>
-                <Box
-                  display="flex"
-                  flexDirection="row"
-                  alignItems="center"
-                  marginBottom={3}
-                >
-                  <Box marginRight={2}>
-                    <Tag disabled>Brottfelling reglugerðar</Tag>
-                  </Box>
-                  {regulation?.type && (
-                    <Tag disabled>
-                      {regulation?.type === 'base'
-                        ? 'Stofnreglugerð'
-                        : 'Breytingareglugerð'}
-                    </Tag>
-                  )}
-                </Box>
-                <Text variant="h3" as="h3" marginBottom={[2, 2, 3, 4]}>
-                  Fella á brott {cancellation.regTitle}
-                </Text>
-                <Box marginBottom={[2, 2, 3, 4]}>
-                  <Button variant="text" size="small" icon="arrowForward">
-                    <a
-                      href={
-                        'https://island.is/reglugerdir/nr/' +
-                        nameToSlug(cancellation.name as RegName)
-                      }
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Skoða breytingasögu reglugerðar
-                    </a>
-                  </Button>
-                </Box>
-                <ImpactDate
-                  impact={cancellation}
-                  size="full"
-                  onChange={(newDate) => changeCancelDate(newDate)}
-                />
-              </Box>
-            </GridColumn>
-            <GridColumn
-              span={['12/12', '12/12', '12/12', '3/12']}
-              offset={['0', '0', '0', '1/12']}
-            >
-              <Box
-                background="blueberry100"
-                paddingY={3}
-                paddingX={4}
-                marginTop={10}
+              <Button
+                onClick={() => closeModal()}
+                variant="text"
+                size="small"
+                preTextIcon="arrowBack"
               >
-                <Text variant="h4" color="blueberry600" marginBottom={3}>
-                  Breytingasaga reglugerðar
-                </Text>
-                <Divider />
-                <Text
-                  variant="h5"
-                  color="blueberry600"
-                  paddingTop={3}
-                  marginBottom={3}
-                >
-                  <a
-                    href={`https://island.is/reglugerdir/nr/${nameToSlug(
-                      activeCancellation.name as RegName,
-                    )}`}
-                    // 'FIXME: target="_blank" is not working here?
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Nýjasta útgáfan
-                  </a>
-                </Text>
-                {effects?.future && effects.future.length > 0 ? (
-                  <>
-                    <Text variant="eyebrow" marginBottom={2}>
-                      Væntanlegar breytingar:
-                    </Text>
-                    {effects?.future.map((effect) => (
-                      <>
-                        <Text variant="h5" color="blueberry600">
-                          {format(new Date(effect.date), 'd. MMM yyyy', {
-                            locale: is,
-                          })}
-                        </Text>
-                        <Text
-                          variant="small"
-                          color="blueberry600"
-                          marginBottom={2}
-                        >
-                          <a
-                            href={`https://island.is/reglugerdir/nr/${nameToSlug(
-                              activeCancellation.name as RegName,
-                            )}/d/${effect.date}/diff`}
-                            // 'FIXME: target="_blank" is not working here?
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            Breytt af {effect.name}
-                          </a>
-                        </Text>
-                      </>
-                    ))}
-                  </>
-                ) : (
-                  <Text variant="h5" marginBottom={2}>
-                    Engar breytingar framundan
-                  </Text>
-                )}
-              </Box>
-            </GridColumn>
-          </GridRow>
-          <GridRow>
-            <GridColumn
-              span={['12/12', '12/12', '12/12', '8/12']}
-              offset={['0', '0', '0', '2/12']}
-            >
-              <Box paddingY={5}>
-                <Divider />
-              </Box>
-              <Box
-                display="flex"
-                justifyContent="spaceBetween"
-                alignItems="center"
+                Til baka
+              </Button>
+              <Button
+                onClick={saveCancellation}
+                size="small"
+                icon="arrowForward"
               >
-                <Button
-                  onClick={() => closeModal()}
-                  variant="text"
-                  size="small"
-                  preTextIcon="arrowBack"
-                >
-                  Til baka
-                </Button>
-                <Button
-                  onClick={saveCancellation}
-                  size="small"
-                  icon="arrowForward"
-                >
-                  Vista brottfellingu
-                </Button>
-              </Box>
-            </GridColumn>
-          </GridRow>
-        </GridContainer>
-      </Box>
-    </ModalBase>
+                Vista brottfellingu
+              </Button>
+            </Box>
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
+    </LayoverModal>
   )
 }

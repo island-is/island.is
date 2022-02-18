@@ -1,11 +1,21 @@
 import * as s from './Impacts.css'
 import { useMutation, gql } from '@apollo/client'
-import { Text, Box, Button, ModalBase } from '@island.is/island-ui/core'
+import {
+  Button,
+  Box,
+  Divider,
+  GridContainer,
+  GridRow,
+  GridColumn,
+} from '@island.is/island-ui/core'
 import React, { useState } from 'react'
 import { DraftChangeForm, RegDraftForm } from '../../state/types'
 // import { useDraftingState } from '../../state/useDraftingState'
 import { ImpactDate } from './ImpactDate'
-import { nameToSlug, RegName, toISODate } from '@island.is/regulations'
+import { toISODate } from '@island.is/regulations'
+import { LayoverModal } from './LayoverModal'
+import { ImpactModalTitle } from './ImpactModalTitle'
+import { useGetCurrentRegulationFromApiQuery } from '../../utils/dataHooks'
 
 type EditChangeProp = {
   draft: RegDraftForm
@@ -58,6 +68,11 @@ export const EditChange = (props: EditChangeProp) => {
   const [updateDraftRegulationChange] = useMutation(
     UPDATE_DRAFT_REGULATION_CHANGE,
   )
+
+  const {
+    data: regulation,
+    loading /* , error */,
+  } = useGetCurrentRegulationFromApiQuery(change.name)
 
   const changeDate = (newDate: Date | undefined) => {
     setActiveChange({
@@ -121,42 +136,58 @@ export const EditChange = (props: EditChangeProp) => {
   }
 
   return (
-    <ModalBase
-      baseId="EditChangeModal"
-      isVisible={true}
-      initialVisibility={true}
-      className={s.changeModal}
-      hideOnClickOutside={false} // FIXME: setting this to true disables re-opening the modal
-      hideOnEsc={false} // FIXME: setting this to true disables re-opening the modal
-      removeOnClose
-    >
-      <Box padding={4}>
-        <Text variant="h3" as="h3" marginBottom={[2, 2, 3, 4]}>
-          Textabreyting á {change.regTitle}
-        </Text>
-        <Button variant="text">
-          <a
-            href={
-              'https://island.is/reglugerdir/nr/' +
-              nameToSlug(change.name as RegName)
-            }
-            target="_blank"
-            rel="noreferrer"
+    <LayoverModal closeModal={closeModal} id="EditChangeModal">
+      <GridContainer>
+        <GridRow>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '8/12']}
+            offset={['0', '0', '0', '2/12']}
           >
-            Skoða breytingasögu reglugerðar
-          </a>
-        </Button>
-        <ImpactDate
-          impact={change}
-          onChange={(newDate) => changeDate(newDate)}
-        />
-        <Button onClick={() => closeModal()} variant="text">
-          Til baka
-        </Button>
-        <Button onClick={saveChange} variant="text">
-          Vista breytingu
-        </Button>
-      </Box>
-    </ModalBase>
+            <ImpactModalTitle
+              type="edit"
+              title={change.regTitle}
+              name={change.name}
+              impact={change}
+              onChangeDate={changeDate}
+              tag={
+                regulation?.type && {
+                  second:
+                    regulation?.type === 'base'
+                      ? 'Stofnreglugerð'
+                      : 'Breytingareglugerð',
+                }
+              }
+            />
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '8/12']}
+            offset={['0', '0', '0', '2/12']}
+          >
+            <Box paddingY={5}>
+              <Divider />
+            </Box>
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="center"
+            >
+              <Button
+                onClick={() => closeModal()}
+                variant="text"
+                size="small"
+                preTextIcon="arrowBack"
+              >
+                Til baka
+              </Button>
+              <Button onClick={saveChange} size="small" icon="arrowForward">
+                Vista textabreytingu
+              </Button>
+            </Box>
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
+    </LayoverModal>
   )
 }
