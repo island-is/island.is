@@ -1,4 +1,4 @@
-import { DefaultLogFields, ListLogLine, SimpleGit } from 'simple-git'
+import { SimpleGit } from 'simple-git'
 import { GitActionStatus } from './git-action-status'
 
 export async function findBestGoodRefBranch(
@@ -37,9 +37,8 @@ export async function findBestGoodRefPR(
 
   const runs = await githubApi.getPRRuns(prID)
   if (runs.length > 0) {
-    const previousRuns = await githubApi.getPRRuns(prID)
     const distances: { distance: number; hash: string }[] = []
-    for (const previousRun of previousRuns) {
+    for (const previousRun of runs) {
       const tempBranch = `${headBranch}-${Math.round(Math.random() * 1000000)}`
       await git.checkoutBranch(tempBranch, previousRun.base_commit)
       await git.merge({ [previousRun.head_commit]: null })

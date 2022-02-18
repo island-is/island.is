@@ -25,10 +25,11 @@ const octokit = new Octokit(
 const repository = process.env.GITHUB_REPOSITORY || '/'
 const [owner, repo] = repository.split('/')
 const workflow_file_name = 'push.yml'
+const pr_file_name = 'pullrequest.yml'
 export type ActionsListJobsForWorkflowRunResponseData = Endpoints['GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs']['response']['data']
 
 class GitHubWorkflowQueries {
-  async getData(
+  async getPushBuildInfo(
     branch: string,
     commits: string[],
   ): Promise<string | 'not found'> {
@@ -62,9 +63,48 @@ class GitHubWorkflowQueries {
         jobs_url,
       }))
       .sort((a, b) => b.run_number - a.run_number)
+
     for (const run of sorted) {
       const jobs = await this.getJobs(`GET ${run.jobs_url}`)
-      if (filterSkippedSuccessBuilds(jobs)) {
+      if (
+        filterSkippedSuccessBuilds(jobs, 'push-success', 'Announce success')
+      ) {
+        return run.sha
+      }
+    }
+    return 'not found'
+  }
+  async getPullRequestBuildInfo(branch: string): Promise<string | 'not found'> {
+    const runsIterator = octokit.paginate.iterator(
+      'GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs',
+      {
+        owner,
+        repo,
+        branch,
+        workflow_id: pr_file_name,
+        event: 'pull_request',
+        status: 'success',
+      },
+    )
+
+    const runs: ActionsListWorkflowRunsForRepoResponseData['workflow_runs'] = []
+    for await (const workflow_runs of runsIterator) {
+      runs.push(...workflow_runs.data)
+      if (runs.length > 40) break
+    }
+
+    let sorted = runs
+      .map(({ run_number, head_sha, head_branch, jobs_url }) => ({
+        run_number,
+        sha: head_sha,
+        branch: head_branch,
+        jobs_url,
+      }))
+      .sort((a, b) => b.run_number - a.run_number)
+
+    for (const run of sorted) {
+      const jobs = await this.getJobs(`GET ${run.jobs_url}`)
+      if (filterSkippedSuccessBuilds(jobs, 'success', 'Announce success')) {
         return run.sha
       }
     }
@@ -80,13 +120,15 @@ class GitHubWorkflowQueries {
 
 const filterSkippedSuccessBuilds = (
   run: ActionsListJobsForWorkflowRunResponseData,
+  jobName: string,
+  stepName: string,
 ): boolean => {
   const { jobs } = run
-  const successJob = jobs.find((job) => job.name === 'push-success')
+  const successJob = jobs.find((job) => job.name === jobName)
   if (successJob) {
     const { steps } = successJob
     const announceSuccessStep =
-      steps && steps.find((step) => step.name === 'Announce success')
+      steps && steps.find((step) => step.name === stepName)
     return announceSuccessStep && announceSuccessStep.conclusion === 'success'
   }
   return false
@@ -114,7 +156,10 @@ export class LocalRunner implements GitActionStatus {
     branch: string,
     commits: string[],
   ): Promise<BranchWorkflow[]> {
-    const d = await new GitHubWorkflowQueries().getData(branch, commits)
+    const d = await new GitHubWorkflowQueries().getPushBuildInfo(
+      branch,
+      commits,
+    )
     if (d === 'not found') {
       return Promise.resolve([])
     } else {
@@ -122,7 +167,14 @@ export class LocalRunner implements GitActionStatus {
     }
   }
 
-  getPRRuns(prID: number): Promise<PRWorkflow[]> {
-    return Promise.resolve([])
+  async getPRRuns(prID: number): Promise<PRWorkflow[]> {
+    const d = await new GitHubWorkflowQueries().getPullRequestBuildInfo(
+      `infra/new-ci-change-detector`,
+    )
+    if (d === 'not found') {
+      return Promise.resolve([])
+    } else {
+      return Promise.resolve([{ head_commit: '', base_commit: '' }])
+    }
   }
 }
