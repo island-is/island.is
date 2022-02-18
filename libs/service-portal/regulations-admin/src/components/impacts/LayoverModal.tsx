@@ -20,8 +20,9 @@ export const LayoverModal = (props: LayoverModalProps) => {
       isVisible={true}
       initialVisibility={true}
       className={s.cancelModal}
-      hideOnClickOutside={false} // FIXME: setting this to true disables re-opening the modal
-      hideOnEsc={false} // FIXME: setting this to true disables re-opening the modal
+      hideOnClickOutside={false}
+      // Setting this to true breaks the edit functionality, custom esc click is handled in EditImpacts
+      hideOnEsc={false}
       removeOnClose
     >
       <Box padding={[3, 3, 3, 6]}>
