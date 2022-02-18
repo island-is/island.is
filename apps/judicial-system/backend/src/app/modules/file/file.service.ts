@@ -19,13 +19,11 @@ import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
-import {
-  PresignedPost,
-  CaseFile,
-  DeleteFileResponse,
-  SignedUrl,
-  UploadFileToCourtResponse,
-} from './models'
+import { PresignedPost } from './models/presignedPost.model'
+import { CaseFile } from './models/file.model'
+import { DeleteFileResponse } from './models/deleteFile.response'
+import { SignedUrl } from './models/signedUrl.model'
+import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 
 // Files are stored in AWS S3 under a key which has the following format:
 // uploads/<uuid>/<uuid>/<filename>
