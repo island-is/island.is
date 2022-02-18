@@ -140,7 +140,9 @@ const StudentsOverview = ({ application }: Data) => {
                 })
               ) : (
                 <T.Row>
-                  <T.Data>{formatMessage(m.studentsOverviewNoStudentFound)}</T.Data>
+                  <T.Data>
+                    {formatMessage(m.studentsOverviewNoStudentFound)}
+                  </T.Data>
                   <T.Data></T.Data>
                   <T.Data></T.Data>
                   <T.Data></T.Data>
