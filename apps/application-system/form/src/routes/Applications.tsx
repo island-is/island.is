@@ -34,7 +34,7 @@ export const Applications: FC = () => {
   const type = getTypeFromSlug(slug)
   const { userInfo: user } = useAuth()
 
-  const [delegationsChecked, setDelegationsChecked] = useState(false)
+  const [delegationsChecked, setDelegationsChecked] = useState(false)//(user ? !!user.profile.actor : false)
 
   useApplicationNamespaces(type)
 
@@ -73,7 +73,6 @@ export const Applications: FC = () => {
     }
   }, [type, data])
 
-  console.log(delegationsChecked)
 
   if (loading) {
     return <ApplicationLoading />

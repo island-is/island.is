@@ -41,7 +41,7 @@ export const DelegationsScreen = ({
 }: DelegationsScreenProps) => {
   const { formatMessage } = useLocale()
   const [allowedDelegations, setAllowedDelegations] = useState<string[]>()
-  // const [actorDelegations, setActorDelegations] = useState<Delegation[]>()
+  const [actorDelegations, setActorDelegations] = useState<Delegation[]>()
 
   const { switchUser, userInfo: user } = useAuth()
 
@@ -53,6 +53,7 @@ export const DelegationsScreen = ({
         if (template.allowedDelegations) {
           setAllowedDelegations(template.allowedDelegations)
         } else {
+          if(user?.profile.actor ) switchUser(user?.profile.actor.nationalId)
           setDelegationsChecked(true)
         }
       }
@@ -69,30 +70,22 @@ export const DelegationsScreen = ({
   // Check if user has the delegations of the delegation types the application supports
   useEffect(() => {
     if (delegations && allowedDelegations) {
-      console.log(allowedDelegations)
-      console.log(delegations.authActorDelegations)
       const del: Delegation[] = delegations.authActorDelegations.map(
         (delegation: Delegation) => {
           if (allowedDelegations.includes(delegation.type)) {
             if (delegation.from.nationalId === user?.profile.nationalId) {
-              setDelegationsChecked(false)
+              setDelegationsChecked(true)
             }
             return delegation
           }
         },
       )
-      console.log(del)
     }
   }, [delegations, allowedDelegations])
 
-  const setDelegations = useCallback(() => {
-    setDelegationsChecked(true)
-  }, [setDelegationsChecked])
-
   const handleClick = (nationalId?: string) => {
     if (nationalId) switchUser(nationalId)
-    setDelegations()
-    console.log('hi', delegationsChecked)
+    else setDelegationsChecked(true)
   }
 
   if (delegations && user) {
