@@ -7,7 +7,7 @@ import { CmsTranslationsModule } from '@island.is/cms-translations'
 
 import { environment } from '../../../environments'
 import { CaseModule, UserModule, CourtModule, EventModule } from '../index'
-import { Notification } from './models'
+import { Notification } from './models/notification.model'
 import { NotificationService } from './notification.service'
 import { NotificationController } from './notification.controller'
 

@@ -34,7 +34,7 @@ import { Case } from '../src/app/modules/case'
 import {
   Notification,
   SendNotificationResponse,
-} from '../src/app/modules/notification/models'
+} from '../src/app/modules/notification'
 
 interface CUser extends TUser {
   institutionId: string
