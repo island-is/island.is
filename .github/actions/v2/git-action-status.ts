@@ -16,6 +16,6 @@ export interface GitActionStatus {
   calculateDistance(
     git: SimpleGit,
     currentSha: string,
-    p: DefaultLogFields & ListLogLine,
+    p: string,
   ): Promise<string[]>
 }

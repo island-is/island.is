@@ -14,6 +14,8 @@ import {
   WorkflowQueries,
 } from '../detection'
 import { Endpoints } from '@octokit/types'
+import { join } from 'path'
+
 const octokit = new Octokit(
   // For local development
   {
@@ -94,12 +96,16 @@ export class LocalRunner implements GitActionStatus {
   calculateDistance(
     git: SimpleGit,
     currentSha: string,
-    p: DefaultLogFields & ListLogLine,
+    olderSha: string,
   ): Promise<string[]> {
     const target = 'docker-express'
+    let monorepoRoot = join(__dirname, '..', '..', '..')
     const printAffected = execSync(
-      `nx print-affected --target="${target}" --select=tasks.target.project --head=${currentSha} --base=${p.hash}`,
-      { stdio: 'inherit', encoding: 'utf-8' },
+      `fnm exec npx nx print-affected --target="${target}" --select=tasks.target.project --head=${currentSha} --base=${olderSha}`,
+      {
+        encoding: 'utf-8',
+        cwd: monorepoRoot,
+      },
     )
     return Promise.resolve(printAffected.split(' ').map((s) => s.trim()))
   }

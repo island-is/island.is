@@ -48,7 +48,7 @@ export async function findBestGoodRefPR(
       const distance = await githubApi.calculateDistance(
         git,
         currentChange.hash,
-        lastMergeCommit,
+        lastMergeCommit.hash,
       )
       distances.push({
         distance: commitScore(distance),

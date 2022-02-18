@@ -3,12 +3,18 @@ import { findBestGoodRefBranch } from './change-detection'
 import simpleGit from 'simple-git'
 ;(async () => {
   const runner = new LocalRunner()
+  let git = simpleGit({ baseDir: `${__dirname}/../../..` })
   const rev = await findBestGoodRefBranch(
     (s) => s.length,
-    simpleGit({ baseDir: `${__dirname}/../../..` }),
+    git,
     runner,
     `infra/new-ci-change-detector`,
     'main',
   )
-  console.log(rev)
+  if (rev === 'rebuild') {
+    console.log(`Full rebuild needed`)
+  } else {
+    const distance = await runner.calculateDistance(git, 'HEAD', rev)
+    console.log(rev)
+  }
 })()

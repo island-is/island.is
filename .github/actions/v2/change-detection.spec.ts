@@ -191,12 +191,12 @@ describe('Change detection', () => {
 async function calculateDistance(
   git: SimpleGit,
   currentSha: string,
-  p: DefaultLogFields & ListLogLine,
+  olderSha: string,
 ): Promise<string[]> {
   const diffNames = await git.diff({
     '--name-status': null,
     [currentSha]: null,
-    [p.hash]: null,
+    [olderSha]: null,
   })
   return [
     // @ts-ignore
