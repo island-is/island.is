@@ -28,11 +28,9 @@ import {
   CaseReceivedGuard,
   CaseWriteGuard,
 } from '../case'
-import {
-  CaseFileExistsGuard,
-  CurrentCaseFile,
-  ViewCaseFileGuard,
-} from './guards'
+import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
+import { CurrentCaseFile } from './guards/caseFile.decorator'
+import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import {
