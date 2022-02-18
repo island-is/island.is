@@ -42,6 +42,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
       hideOnClickOutside={false}
       initialVisibility={true}
       className={styles.dialog}
+      modalLabel="Onboarding"
     >
       <GridContainer>
         <GridRow marginBottom={4}>
