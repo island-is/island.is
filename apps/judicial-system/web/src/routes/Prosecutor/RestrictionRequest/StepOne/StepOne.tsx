@@ -35,33 +35,31 @@ export const StepOne: React.FC = () => {
   const { loading: institutionLoading } = useInstitution()
 
   const handleNextButtonClick = async (theCase: Case) => {
-    try {
-      if (!theCase.id) {
-        const createdCase = await createCase(theCase)
+    if (!theCase.id) {
+      const createdCase = await createCase(theCase)
 
-        if (
-          createdCase &&
-          createdCase.defendants &&
-          createdCase.defendants.length > 0 &&
-          theCase.defendants &&
-          theCase.defendants.length > 0
-        ) {
-          await updateDefendant(createdCase.id, createdCase.defendants[0].id, {
-            gender: theCase.defendants[0].gender,
-            name: theCase.defendants[0].name,
-            address: theCase.defendants[0].address,
-            nationalId: theCase.defendants[0].nationalId,
-            noNationalId: theCase.defendants[0].noNationalId,
-            citizenship: theCase.defendants[0].citizenship,
-          })
+      if (
+        createdCase &&
+        createdCase.defendants &&
+        createdCase.defendants.length > 0 &&
+        theCase.defendants &&
+        theCase.defendants.length > 0
+      ) {
+        await updateDefendant(createdCase.id, createdCase.defendants[0].id, {
+          gender: theCase.defendants[0].gender,
+          name: theCase.defendants[0].name,
+          address: theCase.defendants[0].address,
+          nationalId: theCase.defendants[0].nationalId,
+          noNationalId: theCase.defendants[0].noNationalId,
+          citizenship: theCase.defendants[0].citizenship,
+        }).catch(() => {
+          toast.error(formatMessage(errors.updateDefendant))
+        })
 
-          router.push(`${Constants.STEP_TWO_ROUTE}/${createdCase.id}`)
-        }
-      } else {
-        router.push(`${Constants.STEP_TWO_ROUTE}/${theCase.id}`)
+        router.push(`${Constants.STEP_TWO_ROUTE}/${createdCase.id}`)
       }
-    } catch (error) {
-      toast.error(formatMessage(errors.general))
+    } else {
+      router.push(`${Constants.STEP_TWO_ROUTE}/${theCase.id}`)
     }
   }
 

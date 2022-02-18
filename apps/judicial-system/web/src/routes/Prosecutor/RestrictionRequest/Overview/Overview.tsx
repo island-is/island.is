@@ -70,37 +70,35 @@ export const Overview: React.FC = () => {
       return
     }
 
-    try {
-      const shouldSubmitCase = workingCase.state === CaseState.DRAFT
+    const shouldSubmitCase = workingCase.state === CaseState.DRAFT
 
-      const caseSubmitted = shouldSubmitCase
-        ? await transitionCase(
-            workingCase,
-            CaseTransition.SUBMIT,
-            setWorkingCase,
-          )
-        : workingCase.state !== CaseState.NEW
+    const caseSubmitted = shouldSubmitCase
+      ? await transitionCase(
+          workingCase,
+          CaseTransition.SUBMIT,
+          setWorkingCase,
+        ).catch(() => {
+          toast.error(formatMessage(errors.transitionCase))
+        })
+      : workingCase.state !== CaseState.NEW
 
-      const notificationSent = caseSubmitted
-        ? await sendNotification(
-            workingCase.id,
-            NotificationType.READY_FOR_COURT,
-          )
-        : false
+    const notificationSent = caseSubmitted
+      ? await sendNotification(
+          workingCase.id,
+          NotificationType.READY_FOR_COURT,
+        ).catch(() => {
+          toast.error(formatMessage(errors.sendNotification))
+        })
+      : false
 
-      // An SMS should have been sent
-      if (notificationSent) {
-        setModalText(formatMessage(rcOverview.sections.modal.notificationSent))
-      } else {
-        setModalText(
-          formatMessage(rcOverview.sections.modal.notificationNotSent),
-        )
-      }
-
-      setModalVisible(true)
-    } catch (e) {
-      toast.error(formatMessage(errors.general))
+    // An SMS should have been sent
+    if (notificationSent) {
+      setModalText(formatMessage(rcOverview.sections.modal.notificationSent))
+    } else {
+      setModalText(formatMessage(rcOverview.sections.modal.notificationNotSent))
     }
+
+    setModalVisible(true)
   }
 
   useEffect(() => {
