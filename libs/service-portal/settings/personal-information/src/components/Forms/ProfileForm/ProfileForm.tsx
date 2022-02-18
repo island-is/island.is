@@ -6,6 +6,7 @@ import { parseNumber } from '../../../utils/phoneHelper'
 import {
   useUserProfile,
   useUpdateOrCreateUserProfile,
+  useDeleteIslykillValue,
 } from '@island.is/service-portal/graphql'
 import { OnboardingIntro } from './components/Intro'
 import { InputSection } from './components/InputSection'
@@ -15,7 +16,7 @@ import { DropModal } from './components/DropModal'
 import { BankInfoForm } from './components/Inputs/BankInfoForm'
 import { Nudge } from './components/Inputs/Nudge'
 import { msg } from '../../../lib/messages'
-import { DropModalType } from './types/form'
+import { DropModalType, DataStatus } from './types/form'
 import { bankInfoObject } from '../../../utils/bankInfoHelper'
 
 interface Props {
@@ -38,8 +39,9 @@ export const ProfileForm: FC<Props> = ({
   const [emailDirty, setEmailDirty] = useState(true)
   const [showDropModal, setShowDropModal] = useState<DropModalType>()
   const { updateOrCreateUserProfile } = useUpdateOrCreateUserProfile()
+  const { deleteIslykillValue } = useDeleteIslykillValue()
 
-  const { data: userProfile, loading: userLoading } = useUserProfile()
+  const { data: userProfile, loading: userLoading, refetch } = useUserProfile()
 
   const { formatMessage } = useLocale()
 
@@ -52,29 +54,77 @@ export const ProfileForm: FC<Props> = ({
       if (showDropModal) {
         setShowDropModal(showDropModal)
       } else {
-        if (emailDirty || telDirty) {
-          submitEmptyStatus({ email: emailDirty, tel: telDirty }).then(() =>
-            onCloseOverlay(),
-          )
-        } else {
-          onCloseOverlay()
-        }
+        migratedUserUpdate()
       }
     }
   }, [canDrop])
 
-  const submitEmptyStatus = async (emptyStatus: {
-    email: boolean
-    tel: boolean
-  }) => {
-    if (emptyStatus.email || emptyStatus.tel) {
-      try {
-        await updateOrCreateUserProfile({
-          ...(emptyStatus.email && { emailStatus: 'EMPTY' }),
-          ...(emptyStatus.tel && { mobileStatus: 'EMPTY' }),
-        })
-      } catch {
-        // do nothing
+  const migratedUserUpdate = async () => {
+    if (onCloseOverlay) {
+      const refetchUserProfile = await refetch()
+      const userProfileData = refetchUserProfile?.data?.getUserProfile
+      const hasModification = userProfileData?.modified
+
+      const hasEmailNoVerification =
+        userProfileData?.emailStatus === DataStatus.NOT_VERIFIED &&
+        userProfile?.email
+      const hasTelNoVerification =
+        userProfileData?.mobileStatus === DataStatus.NOT_VERIFIED &&
+        userProfile?.mobilePhoneNumber
+
+      // If user is migrating. Then process migration, else close modal without action.
+      if (
+        (hasEmailNoVerification || hasTelNoVerification) &&
+        !hasModification
+      ) {
+        try {
+          /**
+           * If email is present in data, but has status of 'NOT_VERIFIED',
+           * And the user has no modification date in the userprofile data,
+           * This implies a MIGRATED user. Therefore set the status to 'VERIFIED',
+           * After asking the user to verify the data themselves.
+           */
+          await updateOrCreateUserProfile({
+            ...(hasEmailNoVerification && { emailStatus: DataStatus.VERIFIED }),
+            ...(hasTelNoVerification && { mobileStatus: DataStatus.VERIFIED }),
+          }).then(() => onCloseOverlay())
+        } catch {
+          // do nothing
+          onCloseOverlay()
+        }
+      } else {
+        console.log('JUST CLOSE IT MIGRATE')
+        onCloseOverlay()
+      }
+    }
+  }
+
+  const submitEmptyEmailAndTel = async () => {
+    if (onCloseOverlay) {
+      const refetchUserProfile = await refetch()
+      const userProfileData = refetchUserProfile?.data?.getUserProfile
+      const hasModification = userProfileData?.modified
+
+      const emptyProfile = userProfileData === null || !hasModification
+      if (emptyProfile && emailDirty && telDirty) {
+        /**
+         * If the user has no email or tel data, and the inputs are empty,
+         * We will save the email and mobilePhoneNumber as undefined
+         * With a status of 'EMPTY'. This implies empty values by the user's choice.
+         * After asking the user to verify that they are updating their profile with empty fields.
+         */
+        try {
+          await deleteIslykillValue({
+            email: true,
+            mobilePhoneNumber: true,
+          }).then(() => onCloseOverlay())
+        } catch {
+          // do nothing
+          onCloseOverlay()
+        }
+      } else {
+        console.log('JUST CLOSE IT EMPTY')
+        onCloseOverlay()
       }
     }
   }
@@ -135,7 +185,7 @@ export const ProfileForm: FC<Props> = ({
           {showDropModal && onCloseOverlay && (
             <DropModal
               type={showDropModal}
-              onDrop={onCloseOverlay}
+              onDrop={submitEmptyEmailAndTel}
               onClose={() => {
                 onCloseDropModal && onCloseDropModal()
                 setShowDropModal(undefined)

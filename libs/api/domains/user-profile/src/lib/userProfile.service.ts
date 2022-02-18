@@ -283,14 +283,55 @@ export class UserProfileService {
     const islyklarData = await this.islyklarService.getIslykillSettings(
       user.nationalId,
     )
-    await this.islyklarService
-      .updateIslykillSettings(user.nationalId, {
-        email: input.email ? undefined : islyklarData.email,
-        mobile: input.mobilePhoneNumber ? undefined : islyklarData.mobile,
-        canNudge: islyklarData.canNudge,
-        bankInfo: islyklarData.bankInfo,
-      })
-      .catch(handleError)
+    if (islyklarData.nationalId) {
+      await this.islyklarService
+        .updateIslykillSettings(user.nationalId, {
+          email: input.email ? undefined : islyklarData.email,
+          mobile: input.mobilePhoneNumber ? undefined : islyklarData.mobile,
+          canNudge: islyklarData.canNudge,
+          bankInfo: islyklarData.bankInfo,
+        })
+        .catch(handleError)
+    } else {
+      await this.islyklarService
+        .createIslykillSettings(user.nationalId, {
+          email: undefined,
+          mobile: undefined,
+        })
+        .catch(handleError)
+    }
+
+    const profile = await this.userProfileApiWithAuth(
+      user,
+    ).userProfileControllerFindOneByNationalId({
+      nationalId: user.nationalId,
+    })
+
+    const profileUpdate = {
+      emailStatus: input.email ? DataStatus.EMPTY : DataStatus.NOT_VERIFIED,
+      mobileStatus: input.mobilePhoneNumber
+        ? DataStatus.EMPTY
+        : DataStatus.NOT_VERIFIED,
+    }
+
+    if (profile.nationalId) {
+      await this.userProfileApiWithAuth(user)
+        .userProfileControllerUpdate({
+          nationalId: user.nationalId,
+          updateUserProfileDto: profileUpdate,
+        })
+        .catch(handleError)
+    } else {
+      await this.userProfileApiWithAuth(user)
+        .userProfileControllerCreate({
+          createUserProfileDto: {
+            ...profileUpdate,
+            nationalId: user.nationalId,
+          },
+        })
+        .catch(handleError)
+    }
+
     return {
       nationalId: user.nationalId,
       valid: true,
