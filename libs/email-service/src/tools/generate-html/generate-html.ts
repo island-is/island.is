@@ -17,19 +17,22 @@ async function generate() {
     body: example,
   })
 
-  let replacedHtml = ''
+  let replacedHtml = html
 
   attachments.forEach((attachment) => {
-    replacedHtml = html.replace(
+    replacedHtml = replacedHtml.replace(
       `"cid:${attachment.cid}"`,
       `data:image/jpg;${attachment.encoding},${attachment.content}`,
     )
   })
 
-  await writeFile(join(__dirname, 'output/output.html'), replacedHtml, {
+  const output = join(__dirname, 'output/output.html')
+
+  await writeFile(output, replacedHtml, {
     encoding: 'utf-8',
   })
 
+  console.log(`File generated: ${output}`)
   process.exit(0)
 }
 
