@@ -67,12 +67,10 @@ describe('Change detection', () => {
     it('should use last good commit when no PR runs available', async () => {
       githubApi.getPRRuns(headBranch).resolves([])
       githubApi.getBranchBuilds(baseBranch, Arg.any()).resolves([])
-      githubApi
-        .getBranchBuilds(headBranch, Arg.any())
-        .resolves([
-          { head_commit: mainGoodBeforeBadSha },
-          { head_commit: rootSha },
-        ])
+      githubApi.getBranchBuilds(headBranch, Arg.any()).resolves([
+        { head_commit: mainGoodBeforeBadSha, run_nr: 2 },
+        { head_commit: rootSha, run_nr: 1 },
+      ])
 
       let actual = await findBestGoodRefPR(
         (services) => services.length,
@@ -86,8 +84,8 @@ describe('Change detection', () => {
 
     it('should use last good PR when available', async () => {
       githubApi.getPRRuns(headBranch).resolves([
-        { head_commit: fixGoodSha, base_commit: mainSha1 },
-        { head_commit: fixFailSha1, base_commit: forkSha },
+        { head_commit: fixGoodSha, base_commit: mainSha1, run_nr: 2 },
+        { head_commit: fixFailSha1, base_commit: forkSha, run_nr: 1 },
       ])
 
       let actual = await findBestGoodRefPR(
@@ -132,10 +130,10 @@ describe('Change detection', () => {
     it('should prefer head branch commits over base branch ones', async () => {
       githubApi
         .getBranchBuilds(baseBranch, Arg.any())
-        .resolves([{ head_commit: goodBeforeBadSha }])
+        .resolves([{ head_commit: goodBeforeBadSha, run_nr: 1 }])
       githubApi
         .getBranchBuilds(headBranch, Arg.any())
-        .resolves([{ head_commit: hotfix1 }])
+        .resolves([{ head_commit: hotfix1, run_nr: 2 }])
 
       expect(
         await findBestGoodRefBranch(
@@ -150,7 +148,7 @@ describe('Change detection', () => {
     it('should take base branch commits if no good on this branch', async () => {
       githubApi
         .getBranchBuilds(baseBranch, Arg.any())
-        .resolves([{ head_commit: goodBeforeBadSha }])
+        .resolves([{ head_commit: goodBeforeBadSha, run_nr: 1 }])
       githubApi.getBranchBuilds(headBranch, Arg.any()).resolves([])
 
       expect(

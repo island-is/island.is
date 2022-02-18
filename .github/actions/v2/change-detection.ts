@@ -36,7 +36,7 @@ export async function findBestGoodRefPR(
 
   const runs = await githubApi.getPRRuns(headBranch)
   if (runs.length > 0) {
-    const distances: { distance: number; hash: string }[] = []
+    const distances: { distance: number; hash: string; run_nr: number }[] = []
     try {
       for (const previousRun of runs) {
         const tempBranch = `${headBranch}-${Math.round(
@@ -54,6 +54,7 @@ export async function findBestGoodRefPR(
         distances.push({
           distance: commitScore(distance),
           hash: previousRun.head_commit,
+          run_nr: previousRun.run_nr,
         })
       }
     } finally {

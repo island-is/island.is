@@ -3,10 +3,12 @@ import { SimpleGit } from 'simple-git'
 export interface PRWorkflow {
   head_commit: string
   base_commit: string
+  run_nr: number
 }
 
 export interface BranchWorkflow {
   head_commit: string
+  run_nr: number
 }
 
 export interface GitActionStatus {
