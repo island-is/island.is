@@ -1,6 +1,8 @@
 // TODO: Add tests
 import { Case, CaseType, User } from '@island.is/judicial-system/types'
 
+import { isBusiness } from './stepHelper'
+
 export type Validation =
   | 'empty'
   | 'time-format'
@@ -16,7 +18,7 @@ const someDefendantIsInvalid = (workingCase: Case) => {
     workingCase.defendants &&
     workingCase.defendants.some(
       (defendant) =>
-        !defendant.gender ||
+        (!isBusiness(defendant.nationalId) && !defendant.gender) ||
         !validate(defendant.nationalId || '', 'empty').isValid ||
         !validate(
           defendant.nationalId || '',
