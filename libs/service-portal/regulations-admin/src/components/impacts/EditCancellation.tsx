@@ -17,39 +17,17 @@ import { Effects } from '../../types'
 import { ImpactChangesContainer } from './ImpactChangesContainer'
 import { LayoverModal } from './LayoverModal'
 import { ImpactModalTitle } from './ImpactModalTitle'
+import { date } from 'zod'
+import {
+  CREATE_DRAFT_REGULATION_CANCEL,
+  UPDATE_DRAFT_REGULATION_CANCEL,
+} from './impactQueries'
 
 type EditCancellationProp = {
   draft: RegDraftForm
   cancellation: DraftCancelForm
   closeModal: (updateImpacts?: boolean) => void
 }
-
-const CREATE_DRAFT_REGULATION_CANCEL_IMPACT = gql`
-  mutation CreateDraftRegulationCancel(
-    $input: CreateDraftRegulationCancelInput!
-  ) {
-    createDraftRegulationCancel(input: $input) {
-      type
-      id
-      name
-      regTitle
-      date
-    }
-  }
-`
-const UPDATE_DRAFT_REGULATION_CANCEL_IMPACT = gql`
-  mutation UpdateDraftRegulationCancel(
-    $input: UpdateDraftRegulationCancelInput!
-  ) {
-    updateDraftRegulationCancel(input: $input) {
-      type
-      id
-      name
-      regTitle
-      date
-    }
-  }
-`
 
 export const EditCancellation = (props: EditCancellationProp) => {
   const { draft, cancellation, closeModal } = props
@@ -76,11 +54,11 @@ export const EditCancellation = (props: EditCancellationProp) => {
     }
   }, [regulation, today])
 
-  const [createDraftRegulationCancelImpact] = useMutation(
-    CREATE_DRAFT_REGULATION_CANCEL_IMPACT,
+  const [createDraftRegulationCancel] = useMutation(
+    CREATE_DRAFT_REGULATION_CANCEL,
   )
-  const [updateDraftRegulationCancelImpact] = useMutation(
-    UPDATE_DRAFT_REGULATION_CANCEL_IMPACT,
+  const [updateDraftRegulationCancel] = useMutation(
+    UPDATE_DRAFT_REGULATION_CANCEL,
   )
 
   const changeCancelDate = (newDate: Date | undefined) => {
@@ -92,10 +70,10 @@ export const EditCancellation = (props: EditCancellationProp) => {
 
   const saveCancellation = () => {
     if (!cancellation.id) {
-      createDraftRegulationCancelImpact({
+      createDraftRegulationCancel({
         variables: {
           input: {
-            date: toISODate(activeCancellation.date.value),
+            date: toISODate(activeCancellation.date.value || today),
             changingId: draft.id,
             regulation: activeCancellation.name,
           },
@@ -111,11 +89,11 @@ export const EditCancellation = (props: EditCancellationProp) => {
           return { success: false, error: error as Error }
         })
     } else {
-      updateDraftRegulationCancelImpact({
+      updateDraftRegulationCancel({
         variables: {
           input: {
             id: activeCancellation.id,
-            date: toISODate(activeCancellation.date.value),
+            date: toISODate(activeCancellation.date.value || today),
           },
         },
       })

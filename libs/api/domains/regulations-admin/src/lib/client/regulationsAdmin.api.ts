@@ -4,12 +4,16 @@ import { DataSourceConfig } from 'apollo-datasource'
 import { EditDraftBody } from '../graphql/dto/editDraftRegulation.input'
 import { RegulationsAdminClientConfig } from '@island.is/clients/regulations-admin'
 import { ConfigType } from '@nestjs/config'
-import { CreateDraftRegulationCancelInput } from '../graphql/dto/createDraftRegulationCancel.input'
-import { UpdateDraftRegulationCancelInput } from '../graphql/dto/updateDraftRegulationCancel.input'
 import { DraftRegulationCancelModel } from '../graphql/models/draftRegulationCancel.model'
-import { CreateDraftRegulationChangeInput } from '../graphql/dto/createDraftRegulationChange.input'
 import { DraftRegulationChangeModel } from '../graphql/models/draftRegulationChange.model'
-import { UpdateDraftRegulationChangeInput } from '../graphql/dto/updateDraftRegulationChange.input'
+import {
+  CreateDraftRegulationCancelInput,
+  UpdateDraftRegulationCancelInput,
+  DeleteDraftRegulationCancelInput,
+  DeleteDraftRegulationChangeInput,
+  UpdateDraftRegulationChangeInput,
+  CreateDraftRegulationChangeInput,
+} from '../graphql/dto'
 
 export class RegulationsAdminApi extends RESTDataSource {
   constructor(
@@ -65,6 +69,15 @@ export class RegulationsAdminApi extends RESTDataSource {
     })
   }
 
+  deleteDraftRegulationCancel(
+    input: DeleteDraftRegulationCancelInput,
+    authorization: string,
+  ): Promise<any> {
+    return this.delete(`/draft_regulation_cancel/${input.id}`, undefined, {
+      headers: { authorization },
+    })
+  }
+
   createDraftRegulationChange(
     input: CreateDraftRegulationChangeInput,
     authorization: string,
@@ -80,6 +93,15 @@ export class RegulationsAdminApi extends RESTDataSource {
   ): Promise<DraftRegulationChangeModel> {
     const { id, ...input } = update
     return this.put(`/draft_regulation_change/${id}`, input, {
+      headers: { authorization },
+    })
+  }
+
+  deleteDraftRegulationChange(
+    input: DeleteDraftRegulationChangeInput,
+    authorization: string,
+  ): Promise<any> {
+    return this.delete(`/draft_regulation_change/${input.id}`, undefined, {
       headers: { authorization },
     })
   }

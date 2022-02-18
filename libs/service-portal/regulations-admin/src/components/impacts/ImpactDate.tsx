@@ -30,7 +30,7 @@ export const ImpactDate = (props: ImpactDateProps) => {
         placeholderText={t(impactMsgs.effectiveDate_default)}
         minDate={date.min || today}
         maxDate={date.max}
-        selected={date.value || today}
+        selected={date.value}
         handleChange={onChange}
         hasError={!!date.error}
         errorMessage={date.error && t(date.error)}

@@ -1,6 +1,14 @@
-import { HTMLText, ISODate, RegName } from '@island.is/regulations'
+import { HTMLText, ISODate, PlainText, RegName } from '@island.is/regulations'
 import { Field, ObjectType } from '@nestjs/graphql'
-import { Appendix } from './draftRegulation.model'
+
+@ObjectType()
+class ChangeAppendix {
+  @Field(() => String, { nullable: true })
+  title!: PlainText
+
+  @Field(() => String, { nullable: true })
+  text!: HTMLText
+}
 
 @ObjectType()
 export class DraftRegulationChangeModel {
@@ -22,6 +30,6 @@ export class DraftRegulationChangeModel {
   @Field(() => String, { nullable: true })
   text?: HTMLText
 
-  @Field(() => [Appendix], { nullable: true })
-  appendixes!: Appendix[]
+  @Field(() => [ChangeAppendix], { nullable: true })
+  appendixes!: ChangeAppendix[]
 }

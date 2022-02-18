@@ -1,6 +1,14 @@
 import { HTMLText, ISODate, PlainText, RegName } from '@island.is/regulations'
 import { Field, InputType } from '@nestjs/graphql'
-import { Appendix } from './editDraftRegulation.input'
+
+@InputType()
+class UpdateChangeAppendixInput {
+  @Field(() => String, { nullable: true })
+  title!: PlainText
+
+  @Field(() => String, { nullable: true })
+  text!: HTMLText
+}
 
 @InputType()
 export class UpdateDraftRegulationChangeInput {
@@ -10,8 +18,8 @@ export class UpdateDraftRegulationChangeInput {
   @Field(() => String, { nullable: true })
   text!: HTMLText
 
-  @Field(() => [Appendix], { nullable: true })
-  appendixes?: Appendix[]
+  @Field(() => [UpdateChangeAppendixInput], { nullable: true })
+  appendixes?: UpdateChangeAppendixInput[]
 
   @Field(() => String, { nullable: true })
   title!: PlainText

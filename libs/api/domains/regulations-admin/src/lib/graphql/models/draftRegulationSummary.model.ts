@@ -1,8 +1,18 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { DraftingStatus } from '@island.is/regulations/admin'
 import { PlainText } from '@island.is/regulations'
-import { RegulationAuthor } from './draftRegulation.model'
-// import { ISODate } from '@island.is/regulations'
+
+@ObjectType()
+class RegulationSummaryAuthor {
+  @Field()
+  authorId?: string
+
+  @Field()
+  name?: string
+
+  @Field()
+  email?: string
+}
 
 @ObjectType()
 export class DraftRegulationSummaryModel {
@@ -12,8 +22,8 @@ export class DraftRegulationSummaryModel {
   @Field(() => String)
   draftingStatus!: DraftingStatus
 
-  @Field(() => [RegulationAuthor])
-  authors!: RegulationAuthor[]
+  @Field(() => [RegulationSummaryAuthor])
+  authors!: RegulationSummaryAuthor[]
 
   @Field(() => String, { nullable: true })
   title!: PlainText

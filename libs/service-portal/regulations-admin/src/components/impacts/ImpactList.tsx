@@ -9,8 +9,6 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { prettyName, toISODate } from '@island.is/regulations'
-import { useHistory } from 'react-router'
-// import { getImpactUrl } from '../../utils/routing'
 import { impactMsgs } from '../../messages'
 import { DraftImpactForm, RegDraftForm } from '../../state/types'
 import { EditCancellation } from './EditCancellation'
@@ -19,6 +17,11 @@ import {
   makeDraftCancellationForm,
   makeDraftChangeForm,
 } from '../../state/makeFields'
+import { useMutation } from '@apollo/client'
+import {
+  DELETE_DRAFT_REGULATION_CANCEL,
+  DELETE_DRAFT_REGULATION_CHANGE,
+} from './impactQueries'
 
 // ---------------------------------------------------------------------------
 
@@ -36,6 +39,33 @@ export const ImpactList = (props: ImpactListProps) => {
   const t = formatMessage
 
   const [chooseType, setChooseType] = useState<DraftImpactForm | undefined>()
+
+  const [deleteDraftRegulationCancel] = useMutation(
+    DELETE_DRAFT_REGULATION_CANCEL,
+  )
+  const [deleteDraftRegulationChange] = useMutation(
+    DELETE_DRAFT_REGULATION_CHANGE,
+  )
+
+  const deleteImpact = (impact: DraftImpactForm) => {
+    if (impact.type === 'amend') {
+      deleteDraftRegulationChange({
+        variables: {
+          input: {
+            id: impact.id,
+          },
+        },
+      })
+    } else {
+      deleteDraftRegulationCancel({
+        variables: {
+          input: {
+            id: impact.id,
+          },
+        },
+      })
+    }
+  }
 
   return (
     <>
@@ -88,6 +118,13 @@ export const ImpactList = (props: ImpactListProps) => {
                   variant: 'ghost',
                   onClick: () => {
                     setChooseType(impact)
+                  },
+                }}
+                secondaryCta={{
+                  icon: 'trash',
+                  label: formatMessage(impactMsgs.impactListDeleteButton),
+                  onClick: () => {
+                    deleteImpact(impact)
                   },
                 }}
                 text={
