@@ -1,4 +1,4 @@
-import simpleGit, { DefaultLogFields, ListLogLine, SimpleGit } from 'simple-git'
+import simpleGit, { SimpleGit } from 'simple-git'
 import { mkdtemp, writeFile } from 'fs/promises'
 import { join } from 'path'
 import { findBestGoodRefBranch, findBestGoodRefPR } from './change-detection'
@@ -65,7 +65,7 @@ describe('Change detection', () => {
       await git.mergeFromTo(headBranch, baseBranch)
     })
     it('should use last good commit when no PR runs available', async () => {
-      githubApi.getPRRuns(100).resolves([])
+      githubApi.getPRRuns(headBranch).resolves([])
       githubApi.getBranchBuilds(baseBranch, Arg.any()).resolves([])
       githubApi
         .getBranchBuilds(headBranch, Arg.any())
@@ -78,7 +78,6 @@ describe('Change detection', () => {
         (services) => services.length,
         git,
         githubApi,
-        100,
         headBranch,
         baseBranch,
       )
@@ -86,8 +85,7 @@ describe('Change detection', () => {
     })
 
     it('should use last good PR when available', async () => {
-      const PR = 100
-      githubApi.getPRRuns(PR).resolves([
+      githubApi.getPRRuns(headBranch).resolves([
         { head_commit: fixGoodSha, base_commit: mainSha1 },
         { head_commit: fixFailSha1, base_commit: forkSha },
       ])
@@ -96,21 +94,18 @@ describe('Change detection', () => {
         (services) => services.length,
         git,
         githubApi,
-        PR,
         headBranch,
         baseBranch,
       )
       expect(actual).toBe(fixGoodSha)
     })
     it('should rebuild from the ground up when no good changes', async () => {
-      const PR = 100
-      githubApi.getPRRuns(PR).resolves([])
+      githubApi.getPRRuns(headBranch).resolves([])
 
       let actual = await findBestGoodRefPR(
         (services) => services.length,
         git,
         githubApi,
-        PR,
         headBranch,
         baseBranch,
       )

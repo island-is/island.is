@@ -1,4 +1,4 @@
-import { DefaultLogFields, ListLogLine, SimpleGit } from 'simple-git'
+import { SimpleGit } from 'simple-git'
 import {
   BranchWorkflow,
   GitActionStatus,
@@ -8,11 +8,7 @@ import { execSync } from 'child_process'
 // import { Octokit } from '@octokit/action'
 import { Octokit } from '@octokit/rest'
 
-import {
-  ActionsListWorkflowRunsForRepoResponseData,
-  SuccessWorkflowsForBranch,
-  WorkflowQueries,
-} from '../detection'
+import { ActionsListWorkflowRunsForRepoResponseData } from '../detection'
 import { Endpoints } from '@octokit/types'
 import { join } from 'path'
 
@@ -175,10 +171,8 @@ export class LocalRunner implements GitActionStatus {
     }
   }
 
-  async getPRRuns(prID: number): Promise<PRWorkflow[]> {
-    const d = await new GitHubWorkflowQueries().getPullRequestBuildInfo(
-      `infra/new-ci-change-detector`,
-    )
+  async getPRRuns(branch: string): Promise<PRWorkflow[]> {
+    const d = await new GitHubWorkflowQueries().getPullRequestBuildInfo(branch)
     if (d === 'not found') {
       return Promise.resolve([])
     } else {

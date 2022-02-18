@@ -1,4 +1,4 @@
-import { DefaultLogFields, ListLogLine, SimpleGit } from 'simple-git'
+import { SimpleGit } from 'simple-git'
 
 export interface PRWorkflow {
   head_commit: string
@@ -10,12 +10,11 @@ export interface BranchWorkflow {
 }
 
 export interface GitActionStatus {
-  getPRRuns(prID: number): Promise<PRWorkflow[]>
-
+  getPRRuns(branch: string): Promise<PRWorkflow[]>
   getBranchBuilds(branch: string, commits: string[]): Promise<BranchWorkflow[]>
   calculateDistance(
     git: SimpleGit,
     currentSha: string,
-    p: string,
+    bashSha: string,
   ): Promise<string[]>
 }

@@ -1,5 +1,5 @@
 import { LocalRunner } from './ci-io'
-import { findBestGoodRefBranch, findBestGoodRefPR } from './change-detection'
+import { findBestGoodRefPR } from './change-detection'
 import simpleGit from 'simple-git'
 ;(async () => {
   const runner = new LocalRunner()
@@ -8,7 +8,6 @@ import simpleGit from 'simple-git'
     (s) => s.length,
     git,
     runner,
-    100,
     `infra/new-ci-change-detector`,
     'main',
   )

@@ -28,14 +28,13 @@ export async function findBestGoodRefPR(
   commitScore: (services) => number,
   git: SimpleGit,
   githubApi: GitActionStatus,
-  prID: number,
   headBranch: string,
   baseBranch: string,
 ): Promise<string | 'rebuild'> {
   const lastChanges = await git.log({ maxCount: 1 })
   const currentChange = lastChanges.latest
 
-  const runs = await githubApi.getPRRuns(prID)
+  const runs = await githubApi.getPRRuns(headBranch)
   if (runs.length > 0) {
     const distances: { distance: number; hash: string }[] = []
     try {
