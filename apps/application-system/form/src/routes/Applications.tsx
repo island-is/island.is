@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useMutation } from '@apollo/client'
-import { useParams, useHistory } from 'react-router-dom'
+import { useParams, useHistory, useLocation } from 'react-router-dom'
 import isEmpty from 'lodash/isEmpty'
 import {
   CREATE_APPLICATION,
@@ -21,9 +21,6 @@ import {
   useLocale,
   useLocalizedQuery,
 } from '@island.is/localization'
-import { ApplicationTypes } from '@island.is/application/core'
-import { useAuth } from '@island.is/auth/react'
-
 import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
 import { DelegationsScreen } from '../components/DelegationsScreen/DelegationsScreen'
 
@@ -32,9 +29,15 @@ export const Applications: FC = () => {
   const history = useHistory()
   const { formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)
-  const { userInfo: user } = useAuth()
 
-  const [delegationsChecked, setDelegationsChecked] = useState(false)//(user ? !!user.profile.actor : false)
+  function useQuery() {
+    const { search } = useLocation()
+    return React.useMemo(() => new URLSearchParams(search), [search])
+  }
+
+  let query = useQuery()
+
+  const [delegationsChecked, setDelegationsChecked] = useState(!!query.get('delegationChecked'))
 
   useApplicationNamespaces(type)
 
@@ -68,11 +71,10 @@ export const Applications: FC = () => {
   }
 
   useEffect(() => {
-    if (type && data && isEmpty(data.applicationApplications)) {
+    if (type && data && isEmpty(data.applicationApplications) && delegationsChecked) {
       createApplication()
     }
-  }, [type, data])
-
+  }, [type, data, delegationsChecked])
 
   if (loading) {
     return <ApplicationLoading />
@@ -105,7 +107,7 @@ export const Applications: FC = () => {
       <DelegationsScreen
         type={type}
         setDelegationsChecked={setDelegationsChecked}
-        delegationsChecked
+        slug={slug}
       />
     )
   }
