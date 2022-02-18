@@ -74,7 +74,9 @@ class GitHubWorkflowQueries {
     }
     return 'not found'
   }
-  async getPullRequestBuildInfo(branch: string): Promise<string | 'not found'> {
+  async getPullRequestBuildInfo(
+    branch: string,
+  ): Promise<{ headSha: string; baseSha: string } | 'not found'> {
     const runsIterator = octokit.paginate.iterator(
       'GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs',
       {
@@ -94,18 +96,24 @@ class GitHubWorkflowQueries {
     }
 
     let sorted = runs
-      .map(({ run_number, head_sha, head_branch, jobs_url }) => ({
-        run_number,
-        sha: head_sha,
-        branch: head_branch,
-        jobs_url,
-      }))
+      .map(
+        ({ run_number, head_sha, head_branch, jobs_url, pull_requests }) => ({
+          run_number,
+          sha: head_sha,
+          branch: head_branch,
+          jobs_url,
+          pull_requests,
+        }),
+      )
       .sort((a, b) => b.run_number - a.run_number)
 
     for (const run of sorted) {
       const jobs = await this.getJobs(`GET ${run.jobs_url}`)
       if (filterSkippedSuccessBuilds(jobs, 'success', 'Announce success')) {
-        return run.sha
+        return {
+          headSha: run.pull_requests[0].head.sha,
+          baseSha: run.pull_requests[0].base.sha,
+        }
       }
     }
     return 'not found'
@@ -174,7 +182,9 @@ export class LocalRunner implements GitActionStatus {
     if (d === 'not found') {
       return Promise.resolve([])
     } else {
-      return Promise.resolve([{ head_commit: '', base_commit: '' }])
+      return Promise.resolve([
+        { head_commit: d.headSha, base_commit: d.baseSha },
+      ])
     }
   }
 }
