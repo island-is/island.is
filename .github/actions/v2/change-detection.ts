@@ -40,10 +40,12 @@ export async function findBestGoodRefPR(
     const distances: { distance: number; hash: string }[] = []
     try {
       for (const previousRun of runs) {
-        const tempBranch = `${headBranch}-${Math.round(Math.random() * 1000000)}`
+        const tempBranch = `${headBranch}-${Math.round(
+          Math.random() * 1000000,
+        )}`
         await git.checkoutBranch(tempBranch, previousRun.base_commit)
-        await git.merge({[previousRun.head_commit]: null})
-        const lastMerge = await git.log({maxCount: 1})
+        await git.merge({ [previousRun.head_commit]: null })
+        const lastMerge = await git.log({ maxCount: 1 })
         const lastMergeCommit = lastMerge.latest
         const distance = await githubApi.calculateDistance(
           git,
