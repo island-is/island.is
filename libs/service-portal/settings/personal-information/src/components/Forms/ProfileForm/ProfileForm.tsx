@@ -93,7 +93,6 @@ export const ProfileForm: FC<Props> = ({
           onCloseOverlay()
         }
       } else {
-        console.log('JUST CLOSE IT MIGRATE')
         onCloseOverlay()
       }
     }
@@ -123,7 +122,6 @@ export const ProfileForm: FC<Props> = ({
           onCloseOverlay()
         }
       } else {
-        console.log('JUST CLOSE IT EMPTY')
         onCloseOverlay()
       }
     }
