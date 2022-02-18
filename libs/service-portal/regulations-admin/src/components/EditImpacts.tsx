@@ -118,6 +118,13 @@ export const EditImpacts = () => {
     'cancel' | 'change' | undefined
   >()
 
+  const closeModal = (reload?: boolean) => {
+    setChooseType(undefined)
+    if (reload) {
+      document.location.reload()
+    }
+  }
+
   const escClick = useCallback((e) => {
     if (e.key === 'Escape') {
       setChooseType(undefined)
@@ -198,7 +205,7 @@ export const EditImpacts = () => {
                 regTitle: selRegOption.label,
                 date: undefined,
               })}
-              closeModal={() => setChooseType(undefined)}
+              closeModal={closeModal}
             />
           )}
 
@@ -218,7 +225,7 @@ export const EditImpacts = () => {
                 })),
                 comments: '',
               })}
-              closeModal={() => setChooseType(undefined)}
+              closeModal={closeModal}
             />
           )}
         </Box>

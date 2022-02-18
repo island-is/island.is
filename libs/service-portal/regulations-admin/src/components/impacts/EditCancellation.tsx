@@ -25,7 +25,7 @@ import {
 type EditCancellationProp = {
   draft: RegDraftForm
   cancellation: DraftCancelForm
-  closeModal: (updateImpacts?: boolean) => void
+  closeModal: (reload?: boolean) => void
 }
 
 export const EditCancellation = (props: EditCancellationProp) => {
@@ -67,9 +67,9 @@ export const EditCancellation = (props: EditCancellationProp) => {
     })
   }
 
-  const saveCancellation = () => {
+  const saveCancellation = async () => {
     if (!cancellation.id) {
-      createDraftRegulationCancel({
+      await createDraftRegulationCancel({
         variables: {
           input: {
             date: toISODate(activeCancellation.date.value || today),
@@ -88,7 +88,7 @@ export const EditCancellation = (props: EditCancellationProp) => {
           return { success: false, error: error as Error }
         })
     } else {
-      updateDraftRegulationCancel({
+      await updateDraftRegulationCancel({
         variables: {
           input: {
             id: activeCancellation.id,

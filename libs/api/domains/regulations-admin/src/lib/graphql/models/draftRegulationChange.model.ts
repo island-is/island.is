@@ -25,6 +25,9 @@ export class DraftRegulationChangeModel {
   title!: string
 
   @Field(() => String, { nullable: true })
+  regTitle!: string
+
+  @Field(() => String, { nullable: true })
   date!: ISODate
 
   @Field(() => String, { nullable: true })

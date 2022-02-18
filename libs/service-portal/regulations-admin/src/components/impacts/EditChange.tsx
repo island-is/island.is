@@ -48,15 +48,15 @@ export const EditChange = (props: EditChangeProp) => {
     })
   }
 
-  const saveChange = () => {
+  const saveChange = async () => {
     if (!activeChange.id) {
-      createDraftRegulationChange({
+      await createDraftRegulationChange({
         variables: {
           input: {
             changingId: draft.id,
             regulation: activeChange.name,
-            title: activeChange.title,
-            text: activeChange.title,
+            title: activeChange.title.value,
+            text: activeChange.text.value,
             appendixes: activeChange.appendixes.map((apx) => ({
               title: apx.title.value,
               text: apx.text.value,
@@ -75,12 +75,12 @@ export const EditChange = (props: EditChangeProp) => {
           return { success: false, error: error as Error }
         })
     } else {
-      updateDraftRegulationChange({
+      await updateDraftRegulationChange({
         variables: {
           input: {
             id: activeChange.id,
-            title: activeChange.title,
-            text: activeChange.title,
+            title: activeChange.title.value,
+            text: activeChange.text.value,
             appendixes: activeChange.appendixes.map((apx) => ({
               title: apx.title.value,
               text: apx.text.value,
@@ -99,6 +99,7 @@ export const EditChange = (props: EditChangeProp) => {
           return { success: false, error: error as Error }
         })
     }
+
     closeModal(true)
   }
 

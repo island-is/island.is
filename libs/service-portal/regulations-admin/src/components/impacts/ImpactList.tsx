@@ -61,23 +61,33 @@ export const ImpactList = (props: ImpactListProps) => {
     }
   }, [escClick])
 
-  const deleteImpact = (impact: DraftImpactForm) => {
-    if (impact.type === 'amend') {
-      deleteDraftRegulationChange({
-        variables: {
-          input: {
-            id: impact.id,
+  const closeModal = (reload?: boolean) => {
+    setChooseType(undefined)
+    if (reload) {
+      document.location.reload()
+    }
+  }
+
+  const deleteImpact = async (impact: DraftImpactForm) => {
+    if (window.confirm(t(impactMsgs.deleteConfirmation))) {
+      if (impact.type === 'amend') {
+        await deleteDraftRegulationChange({
+          variables: {
+            input: {
+              id: impact.id,
+            },
           },
-        },
-      })
-    } else {
-      deleteDraftRegulationCancel({
-        variables: {
-          input: {
-            id: impact.id,
+        })
+      } else {
+        await deleteDraftRegulationCancel({
+          variables: {
+            input: {
+              id: impact.id,
+            },
           },
-        },
-      })
+        })
+      }
+      document.location.reload()
     }
   }
 
@@ -115,7 +125,7 @@ export const ImpactList = (props: ImpactListProps) => {
             return (
               <ActionCard
                 key={i}
-                date={date.value && formatDateFns(date.value)}
+                date={date.value && formatDateFns(date.value, 'd. MMM yyyy')}
                 heading={headingText}
                 tag={{
                   label: t(
@@ -161,7 +171,7 @@ export const ImpactList = (props: ImpactListProps) => {
                 regTitle: chooseType.regTitle,
                 date: toISODate(chooseType.date.value) ?? undefined,
               })}
-              closeModal={() => setChooseType(undefined)}
+              closeModal={closeModal}
             />
           )}
 
@@ -181,7 +191,7 @@ export const ImpactList = (props: ImpactListProps) => {
                 })),
                 comments: '',
               })}
-              closeModal={() => setChooseType(undefined)}
+              closeModal={closeModal}
             />
           )}
         </Stack>
