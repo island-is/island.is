@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   ActionCard,
   AlertMessage,
@@ -46,6 +46,20 @@ export const ImpactList = (props: ImpactListProps) => {
   const [deleteDraftRegulationChange] = useMutation(
     DELETE_DRAFT_REGULATION_CHANGE,
   )
+
+  const escClick = useCallback((e) => {
+    if (e.key === 'Escape') {
+      setChooseType(undefined)
+    }
+  }, [])
+
+  useEffect(() => {
+    document.addEventListener('keydown', escClick, false)
+
+    return () => {
+      document.removeEventListener('keydown', escClick, false)
+    }
+  }, [escClick])
 
   const deleteImpact = (impact: DraftImpactForm) => {
     if (impact.type === 'amend') {

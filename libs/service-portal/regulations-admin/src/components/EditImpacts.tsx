@@ -1,6 +1,6 @@
 import * as s from './impacts/Impacts.css'
 
-import React, { useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { useDraftingState } from '../state/useDraftingState'
 import { impactMsgs } from '../messages'
@@ -117,6 +117,20 @@ export const EditImpacts = () => {
   const [chooseType, setChooseType] = useState<
     'cancel' | 'change' | undefined
   >()
+
+  const escClick = useCallback((e) => {
+    if (e.key === 'Escape') {
+      setChooseType(undefined)
+    }
+  }, [])
+
+  useEffect(() => {
+    document.addEventListener('keydown', escClick, false)
+
+    return () => {
+      document.removeEventListener('keydown', escClick, false)
+    }
+  }, [escClick])
 
   if (loading) {
     return null

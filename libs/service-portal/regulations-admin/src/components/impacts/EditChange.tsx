@@ -95,8 +95,9 @@ export const EditChange = (props: EditChangeProp) => {
       isVisible={true}
       initialVisibility={true}
       className={s.changeModal}
-      hideOnClickOutside={false} // FIXME: setting this to true disables re-opening the modal
-      hideOnEsc={false} // FIXME: setting this to true disables re-opening the modal
+      hideOnClickOutside={false}
+      // Setting this to true breaks the edit functionality, custom esc click is handled in EditImpacts
+      hideOnEsc={false}
       removeOnClose
     >
       <Box padding={4}>
