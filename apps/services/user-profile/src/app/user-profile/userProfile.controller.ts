@@ -1,4 +1,5 @@
 import { UserProfileScope } from '@island.is/auth/scopes'
+import omit from 'lodash/omit'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
@@ -130,6 +131,7 @@ export class UserProfileController {
           emailVerified: emailVerified.confirmed,
         }
       }
+      userProfileDto = omit(userProfileDto, 'email')
     }
 
     if (userProfileDto.mobilePhoneNumber) {
@@ -149,6 +151,7 @@ export class UserProfileController {
           mobilePhoneNumberVerified: phoneVerified.confirmed,
         }
       }
+      userProfileDto = omit(userProfileDto, 'mobilePhoneNumber')
     }
 
     const userProfile = await this.userProfileService.create(userProfileDto)
@@ -182,13 +185,7 @@ export class UserProfileController {
   ): Promise<UserProfile> {
     // findOneByNationalId must be first as it implictly checks if the
     // route param matches the authenticated user.
-    const profile = await this.findOneByNationalId(nationalId, user)
     const updatedFields = Object.keys(userProfileToUpdate)
-    userProfileToUpdate = {
-      ...userProfileToUpdate,
-      mobileStatus: DataStatus.NOT_VERIFIED,
-      emailStatus: DataStatus.NOT_VERIFIED,
-    }
 
     if (userProfileToUpdate.mobilePhoneNumber) {
       const phoneVerified = await this.verificationService.confirmSms(
@@ -203,6 +200,7 @@ export class UserProfileController {
           mobilePhoneNumberVerified: phoneVerified.confirmed,
         }
       }
+      userProfileToUpdate = omit(userProfileToUpdate, 'mobilePhoneNumber')
     }
 
     if (userProfileToUpdate.email) {
@@ -218,6 +216,7 @@ export class UserProfileController {
           emailVerified: emailVerified.confirmed,
         }
       }
+      userProfileToUpdate = omit(userProfileToUpdate, 'email')
     }
 
     const {
