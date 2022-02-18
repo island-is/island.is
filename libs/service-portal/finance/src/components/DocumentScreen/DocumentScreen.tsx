@@ -263,7 +263,6 @@ const DocumentScreen: FC<Props> = ({
                           onClick={() =>
                             formSubmit(
                               `${data?.getDocumentsList?.downloadServiceURL}${listItem.id}`,
-                              userInfo.access_token,
                             )
                           }
                         >

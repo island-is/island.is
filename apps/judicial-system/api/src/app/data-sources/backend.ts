@@ -1,7 +1,10 @@
-import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
+import { Request } from 'express'
+
+import { DataSource, DataSourceConfig } from 'apollo-datasource'
 
 import { Injectable } from '@nestjs/common'
 
+import { ProblemError } from '@island.is/nest/problem'
 import type {
   Case,
   CreateCase,
@@ -32,15 +35,62 @@ import type {
   DeleteDefendantResponse,
 } from '@island.is/judicial-system/types'
 
-import { environment } from '../environments'
+import { environment } from '../../environments'
 
 @Injectable()
-class BackendAPI extends RESTDataSource {
-  baseURL = `${environment.backend.url}/api`
+export class BackendAPI extends DataSource<{ req: Request }> {
+  private headers!: { [key: string]: string }
 
-  willSendRequest(req: RequestOptions) {
-    req.headers.set('authorization', this.context.req.headers.authorization)
-    req.headers.set('cookie', this.context.req.headers.cookie)
+  initialize(config: DataSourceConfig<{ req: Request }>): void {
+    this.headers = {
+      'Content-Type': 'application/json',
+      authorization: config.context.req.headers.authorization as string,
+      cookie: config.context.req.headers.cookie as string,
+    }
+  }
+
+  private async callBackend<TResult>(
+    route: string,
+    options: RequestInit,
+  ): Promise<TResult> {
+    return fetch(`${environment.backend.url}/api/${route}`, options).then(
+      async (res) => {
+        if (res.ok) {
+          return res.json()
+        }
+
+        const error = await res.text()
+
+        throw new ProblemError(JSON.parse(error))
+      },
+    )
+  }
+
+  private get<TResult>(route: string): Promise<TResult> {
+    return this.callBackend<TResult>(route, { headers: this.headers })
+  }
+
+  private post<TBody, TResult>(route: string, body?: TBody): Promise<TResult> {
+    return this.callBackend<TResult>(route, {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: this.headers,
+    })
+  }
+
+  private put<TBody, TResult>(route: string, body: TBody): Promise<TResult> {
+    return this.callBackend<TResult>(route, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+      headers: this.headers,
+    })
+  }
+
+  private delete<TResult>(route: string): Promise<TResult> {
+    return this.callBackend<TResult>(route, {
+      method: 'DELETE',
+      headers: this.headers,
+    })
   }
 
   getInstitutions(): Promise<Institution[]> {
