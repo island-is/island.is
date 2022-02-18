@@ -218,6 +218,7 @@ export const Navigation: FC<NavigationProps> = ({
             {...menu}
             className={styles.menuBtn}
             onClick={() => menu.show}
+            aria-label={title}
           >
             <MobileButton
               title={activeItemTitle ?? title}

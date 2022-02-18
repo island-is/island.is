@@ -1,4 +1,4 @@
-import React, { ReactNode, useMemo } from 'react'
+import React, { ReactNode, useEffect, useState, useMemo } from 'react'
 import { useWindowSize } from 'react-use'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
@@ -283,7 +283,9 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
 }) => {
   const router = useRouter()
   const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
+  const [isMobile, setIsMobile] = useState<boolean | undefined>()
+
+  useEffect(() => setIsMobile(width < theme.breakpoints.md), [width])
 
   const secondaryNavList: NavigationItem[] =
     organizationPage.secondaryMenu?.childrenLinks.map(({ text, url }) => ({
@@ -368,7 +370,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
             <Box className={styles.menuStyle}>
               <Box marginY={2}>
                 <Navigation
-                  baseId="pageNav"
+                  baseId="pageNavMobile"
                   isMenuDialog={true}
                   items={navigationData.items}
                   title={navigationData.title}
@@ -385,8 +387,8 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
               {organizationPage.secondaryMenu && (
                 <Box marginY={2}>
                   <Navigation
+                    baseId="secondaryNav"
                     colorScheme="purple"
-                    baseId="secondarynav"
                     isMenuDialog={true}
                     title={organizationPage.secondaryMenu.name}
                     items={secondaryNavList}
@@ -425,7 +427,6 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                     organizationPage={organizationPage}
                   />
                 )}
-
                 {pageDescription && (
                   <Box paddingTop={[2, 2, breadcrumbItems ? 5 : 0]}>
                     <Text variant="default">{pageDescription}</Text>
