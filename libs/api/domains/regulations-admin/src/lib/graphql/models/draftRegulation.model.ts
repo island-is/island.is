@@ -30,7 +30,7 @@ export class Ministry {
 }
 
 @ObjectType()
-export class Appendix {
+class Appendix {
   @Field(() => String, { nullable: true })
   title!: PlainText
 
@@ -39,7 +39,7 @@ export class Appendix {
 }
 
 @ObjectType()
-export class RegulationAuthor {
+class RegulationAuthor {
   @Field()
   authorId?: string
 

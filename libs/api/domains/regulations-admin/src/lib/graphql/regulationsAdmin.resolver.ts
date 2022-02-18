@@ -185,7 +185,7 @@ export class RegulationsAdminResolver {
     )
   }
 
-  @Mutation(() => DraftRegulationCancelModel)
+  @Mutation(() => graphqlTypeJson)
   async deleteDraftRegulationCancel(
     @Args('input') input: DeleteDraftRegulationCancelInput,
     @CurrentUser() { authorization }: User,
@@ -222,7 +222,7 @@ export class RegulationsAdminResolver {
     )
   }
 
-  @Mutation(() => DraftRegulationChangeModel)
+  @Mutation(() => graphqlTypeJson)
   async deleteDraftRegulationChange(
     @Args('input') input: DeleteDraftRegulationChangeInput,
     @CurrentUser() { authorization }: User,

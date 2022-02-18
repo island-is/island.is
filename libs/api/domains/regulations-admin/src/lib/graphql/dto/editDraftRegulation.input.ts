@@ -10,7 +10,7 @@ import {
 import { Field, InputType } from '@nestjs/graphql'
 
 @InputType()
-export class Appendix {
+class AppendixInput {
   @Field(() => String, { nullable: true })
   title!: PlainText
 
@@ -29,8 +29,8 @@ export class EditDraftBody {
   @Field(() => String, { nullable: true })
   comments?: HTMLText
 
-  @Field(() => [Appendix], { nullable: true })
-  appendixes?: Appendix[]
+  @Field(() => [AppendixInput], { nullable: true })
+  appendixes?: AppendixInput[]
 
   @Field(() => String, { nullable: true })
   name?: RegName
