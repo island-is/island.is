@@ -41,14 +41,19 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
           bankInfo: bankData,
         }).then(() => setInputSuccess(true))
       } else {
-        setSubmitError(formatMessage(m.somethingWrong))
+        setSubmitError(formatMessage(msg.errorBankInfoService))
       }
     } catch (err) {
       console.error(`updateOrCreateUserProfile error: ${err}`)
-      setSubmitError(formatMessage(m.somethingWrong))
+      setSubmitError(formatMessage(msg.errorBankInfoService))
     }
   }
 
+  const bankInfoError =
+    errors.account?.message ||
+    errors.l?.message ||
+    errors.bank?.message ||
+    submitError
   return (
     <form onSubmit={handleSubmit(submitFormData)}>
       <Columns collapseBelow="sm" alignY="center">
@@ -68,6 +73,8 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
                   required={false}
                   disabled={inputSuccess}
                   size="xs"
+                  error={errors.bank?.message || submitError ? '' : undefined}
+                  onChange={() => setSubmitError(undefined)}
                   rules={{
                     maxLength: {
                       value: 4,
@@ -99,6 +106,8 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
                   required={false}
                   disabled={inputSuccess}
                   size="xs"
+                  error={errors.l?.message || submitError ? '' : undefined}
+                  onChange={() => setSubmitError(undefined)}
                   rules={{
                     maxLength: {
                       value: 2,
@@ -130,6 +139,10 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
                   required={false}
                   disabled={inputSuccess}
                   size="xs"
+                  error={
+                    errors.account?.message || submitError ? '' : undefined
+                  }
+                  onChange={() => setSubmitError(undefined)}
                   rules={{
                     maxLength: {
                       value: 6,
@@ -148,21 +161,10 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
               </Box>
             </Column>
           </Columns>
-          {submitError ||
-          errors.account?.message ||
-          errors.l?.message ||
-          errors.bank?.message ? (
+          {bankInfoError ? (
             <Columns>
               <Column>
-                <InputError
-                  id="bank-info-error"
-                  errorMessage={
-                    submitError ||
-                    errors.account?.message ||
-                    errors.l?.message ||
-                    errors.bank?.message
-                  }
-                />
+                <InputError id="bank-info-error" errorMessage={bankInfoError} />
               </Column>
             </Columns>
           ) : null}

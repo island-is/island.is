@@ -94,6 +94,10 @@ export const msg = defineMessages({
     id: 'sp.settings:bankInfo-account-required-length-msg',
     defaultMessage: `Reikningsnúmer er í mesta lagi 6 stafir.`,
   },
+  errorBankInfoService: {
+    id: 'sp.settings:bankInfo-service',
+    defaultMessage: `Villa við að vista þennan reikning á þína kennitölu`,
+  },
   inputBankLabel: {
     id: 'sp.settings:bankInfo-input-bank',
     defaultMessage: `Banki`,

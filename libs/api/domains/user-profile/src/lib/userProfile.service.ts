@@ -147,16 +147,33 @@ export class UserProfileService {
       user,
     )
 
+    const userProfileResponse = await this.userProfileApiWithAuth(user)
+      .userProfileControllerCreate(request)
+      .catch(handleError)
+
     if (feature && (input.email || input.mobilePhoneNumber)) {
       const islyklarData = await this.islyklarService.getIslykillSettings(
         user.nationalId,
       )
 
+      const emailVerified =
+        userProfileResponse.emailStatus === DataStatus.VERIFIED
+      const mobileVerified =
+        userProfileResponse.mobileStatus === DataStatus.VERIFIED
+      if (
+        (input.email && !emailVerified) ||
+        (input.mobilePhoneNumber && !mobileVerified)
+      ) {
+        throw new ForbiddenError('Updating value verification invalid')
+      }
+
       if (islyklarData.nationalId) {
         await this.islyklarService
           .updateIslykillSettings(user.nationalId, {
-            email: input.email ?? islyklarData.email,
-            mobile: input.mobilePhoneNumber ?? islyklarData.mobile,
+            email: emailVerified ? input.email : islyklarData.email,
+            mobile: mobileVerified
+              ? input.mobilePhoneNumber
+              : islyklarData.mobile,
             bankInfo: islyklarData.bankInfo,
             canNudge: islyklarData.canNudge,
           }) // Current version does not return the updated user in the response.
@@ -164,18 +181,14 @@ export class UserProfileService {
       } else {
         await this.islyklarService
           .createIslykillSettings(user.nationalId, {
-            email: input.email,
-            mobile: input.mobilePhoneNumber,
+            email: emailVerified ? input.email : undefined,
+            mobile: mobileVerified ? input.mobilePhoneNumber : undefined,
           }) // Current version does not return the newly created user in the response.
           .catch(handleError)
       }
     } else {
       logger.info('User profile create is feature flagged for user')
     }
-
-    const userProfileResponse = await this.userProfileApiWithAuth(user)
-      .userProfileControllerCreate(request)
-      .catch(handleError)
 
     return userProfileResponse
   }
@@ -219,11 +232,13 @@ export class UserProfileService {
         user.nationalId,
       )
 
+      const emailVerified =
+        updatedUserProfile.emailStatus === DataStatus.VERIFIED
+      const mobileVerified =
+        updatedUserProfile.mobileStatus === DataStatus.VERIFIED
       if (
-        (input.email &&
-          updatedUserProfile.emailStatus !== DataStatus.VERIFIED) ||
-        (input.mobilePhoneNumber &&
-          updatedUserProfile.mobileStatus !== DataStatus.VERIFIED)
+        (input.email && !emailVerified) ||
+        (input.mobilePhoneNumber && !mobileVerified)
       ) {
         throw new ForbiddenError('Updating value verification invalid')
       }
@@ -232,13 +247,9 @@ export class UserProfileService {
         await this.islyklarService
           .updateIslykillSettings(user.nationalId, {
             email:
-              input.email &&
-              updatedUserProfile.emailStatus === DataStatus.VERIFIED
-                ? input.email
-                : islyklarData.email,
+              input.email && emailVerified ? input.email : islyklarData.email,
             mobile:
-              input.mobilePhoneNumber &&
-              updatedUserProfile.mobileStatus === DataStatus.VERIFIED
+              input.mobilePhoneNumber && mobileVerified
                 ? input.mobilePhoneNumber
                 : islyklarData.mobile,
             canNudge: input.canNudge ?? islyklarData.canNudge,
@@ -249,13 +260,9 @@ export class UserProfileService {
         await this.islyklarService
           .createIslykillSettings(user.nationalId, {
             email:
-              input.email &&
-              updatedUserProfile.emailStatus === DataStatus.VERIFIED
-                ? input.email
-                : islyklarData.email,
+              input.email && emailVerified ? input.email : islyklarData.email,
             mobile:
-              input.mobilePhoneNumber &&
-              updatedUserProfile.mobileStatus === DataStatus.VERIFIED
+              input.mobilePhoneNumber && mobileVerified
                 ? input.mobilePhoneNumber
                 : islyklarData.mobile,
           }) // Current version does not return the newly created user in the response.

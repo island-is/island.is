@@ -20,7 +20,7 @@ import {
   useDeleteIslykillValue,
 } from '@island.is/service-portal/graphql'
 import { sharedMessages } from '@island.is/shared/translations'
-import { parseNumber } from '../../../../../utils/phoneHelper'
+import { parseNumber, parseFullNumber } from '../../../../../utils/phoneHelper'
 import * as styles from './Phone.css'
 
 interface Props {
@@ -210,7 +210,7 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
                   label={formatMessage(sharedMessages.phoneNumber)}
                   placeholder={formatMessage(sharedMessages.phoneNumber)}
                   onChange={(inp) =>
-                    setTelInternal(parseNumber(inp.target.value || ''))
+                    setTelInternal(parseFullNumber(inp.target.value || ''))
                   }
                   error={errors.tel?.message || formErrors.mobile}
                 />
