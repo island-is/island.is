@@ -28,4 +28,7 @@ export class CreateDraftRegulationChangeInput {
 
   @Field(() => String, { nullable: true })
   date!: ISODate
+
+  @Field(() => String, { nullable: true })
+  comments!: HTMLText
 }

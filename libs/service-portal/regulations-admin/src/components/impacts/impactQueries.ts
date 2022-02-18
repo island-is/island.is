@@ -53,6 +53,7 @@ export const CREATE_DRAFT_REGULATION_CHANGE = gql`
         title
         text
       }
+      comments
     }
   }
 `
@@ -72,6 +73,7 @@ export const UPDATE_DRAFT_REGULATION_CHANGE = gql`
         title
         text
       }
+      comments
     }
   }
 `

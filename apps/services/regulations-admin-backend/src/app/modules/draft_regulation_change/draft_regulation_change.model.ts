@@ -66,11 +66,11 @@ export class DraftRegulationChangeModel extends Model<DraftRegulationChangeModel
     type: DataType.ARRAY(DataType.JSONB),
   })
   @ApiProperty()
-  appendixes?: Appendix[]
+  appendixes!: Appendix[]
 
   @Column({
     type: DataType.TEXT,
   })
   @ApiProperty()
-  comments?: HTMLText
+  comments!: HTMLText
 }
