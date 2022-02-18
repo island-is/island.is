@@ -70,7 +70,7 @@ export interface AlertBannerProps {
     title: string
   }
   /**
-   * Fires when banner gets dismissed, usefull for keeping track in storage that the user has dismissed the banner if we don't want it to show up again on page reload
+   * Fires when banner gets dismissed, useful for keeping track in storage that the user has dismissed the banner if we don't want it to show up again on page reload
    */
   onDismiss?: () => void
 }

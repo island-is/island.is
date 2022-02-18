@@ -44,7 +44,6 @@ import {
   UtlendingastofnunHeader,
 } from './Themes/UtlendingastofnunTheme'
 import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
-import { OrganizationAlert } from '../OrganizationAlert/OrganizationAlert'
 
 import * as styles from './OrganizationWrapper.css'
 
@@ -312,13 +311,6 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
       />
       <OrganizationHeader organizationPage={organizationPage} />
       <Main>
-        {organizationPage.alertBanner && (
-          <OrganizationAlert
-            alertBanner={organizationPage.alertBanner}
-            centered={true}
-            marginTop={10}
-          />
-        )}
         {!minimal && (
           <SidebarLayout
             paddingTop={[2, 2, 9]}
