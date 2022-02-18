@@ -210,6 +210,7 @@ export const RulingStepOne: React.FC = () => {
             hasError={prosecutorDemandsErrorMessage !== ''}
             textarea
             rows={7}
+            autoExpand={{ on: true, maxHeight: 300 }}
             required
           />
         </Box>
@@ -254,6 +255,7 @@ export const RulingStepOne: React.FC = () => {
               hasError={courtCaseFactsErrorMessage !== ''}
               textarea
               rows={16}
+              autoExpand={{ on: true, maxHeight: 600 }}
               required
             />
           </Box>
@@ -301,6 +303,7 @@ export const RulingStepOne: React.FC = () => {
               hasError={courtLegalArgumentsErrorMessage !== ''}
               textarea
               rows={16}
+              autoExpand={{ on: true, maxHeight: 600 }}
               required
             />
           </Box>

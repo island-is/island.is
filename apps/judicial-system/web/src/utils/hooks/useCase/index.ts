@@ -201,7 +201,7 @@ const useCase = () => {
         variables: { input: { id, ...updateCase } },
       })
 
-      // TODO: Handle errors and
+      // TODO: Handle errors
 
       return data?.updateCase
     },

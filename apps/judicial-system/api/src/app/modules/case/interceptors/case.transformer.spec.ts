@@ -1,6 +1,6 @@
 import each from 'jest-each'
 
-import { Case } from '../models'
+import { Case } from '../models/case.model'
 import { transformCase } from './case.transformer'
 
 describe('transformCase', () => {

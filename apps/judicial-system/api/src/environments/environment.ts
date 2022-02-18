@@ -1,4 +1,4 @@
-import { CourtClientServiceOptions } from '@island.is/judicial-system/court-client'
+import type { CourtClientServiceOptions } from '@island.is/judicial-system/court-client'
 
 const devConfig = {
   production: false,
