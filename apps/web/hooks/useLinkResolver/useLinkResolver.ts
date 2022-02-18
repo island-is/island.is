@@ -57,6 +57,10 @@ export const routesTemplate = {
     is: '/s/[slug]/thjonusta',
     en: '/en/o/[slug]/services',
   },
+  organizationpublishedmaterial: {
+    is: '/s/[slug]/utgefid-efni',
+    en: '/en/o/[slug]/published-material',
+  },
   auctions: {
     is: '/s/syslumenn/uppbod',
     en: '',
