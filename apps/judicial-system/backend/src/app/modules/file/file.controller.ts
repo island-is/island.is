@@ -33,7 +33,8 @@ import {
   CurrentCaseFile,
   ViewCaseFileGuard,
 } from './guards'
-import { CreateFileDto, CreatePresignedPostDto } from './dto'
+import { CreateFileDto } from './dto/createFile.dto'
+import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import {
   PresignedPost,
   CaseFile,

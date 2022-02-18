@@ -2,7 +2,7 @@ import { uuid } from 'uuidv4'
 
 import { BadRequestException } from '@nestjs/common'
 
-import { CreateFileDto } from '../dto'
+import { CreateFileDto } from '../dto/createFile.dto'
 import { CaseFile } from '../models'
 import { createTestingFileModule } from './createTestingFileModule'
 

@@ -17,7 +17,8 @@ import { environment } from '../../../environments'
 import { writeFile } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
-import { CreateFileDto, CreatePresignedPostDto } from './dto'
+import { CreateFileDto } from './dto/createFile.dto'
+import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import {
   PresignedPost,
   CaseFile,
