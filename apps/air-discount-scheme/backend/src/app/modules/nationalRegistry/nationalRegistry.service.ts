@@ -159,6 +159,28 @@ const TEST_USERS: NationalRegistryUser[] = [
     postalcode: 540,
     city: 'Blönduós',
   },
+  {
+    // Gervimaður Útlönd
+    nationalId: '0101307789',
+    firstName: 'Gervimaður',
+    middleName: 'Útlönd',
+    lastName: 'Doe',
+    gender: 'kk',
+    address: 'Vallargata 1',
+    postalcode: 900,
+    city: 'Vestmannaeyjar',
+  },
+  {
+    // Gervibarn Útlönd
+    nationalId: '1111111119',
+    firstName: 'Sól',
+    middleName: 'Rún',
+    lastName: 'Útlandadóttir',
+    gender: 'kvk',
+    address: 'Urðarbraut 1',
+    postalcode: 210,
+    city: 'Garðabær',
+  },
 ]
 
 @Injectable()
