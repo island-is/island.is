@@ -42,16 +42,20 @@ export class FinanceDocumentController {
     @Body() resource: GetFinanceDocumentDto,
     @Res() res: Response,
   ) {
+    const authUser: User = {
+      ...user,
+      authorization: `Bearer ${resource.__accessToken}`,
+    }
     const documentResponse = resource.annualDoc
       ? await this.financeService.getAnnualStatusDocument(
           user.nationalId,
           pdfId,
-          user,
+          authUser,
         )
       : await this.financeService.getFinanceDocument(
           user.nationalId,
           pdfId,
-          user,
+          authUser,
         )
 
     const documentBase64 = documentResponse?.docment?.document
