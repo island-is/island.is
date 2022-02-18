@@ -6,6 +6,8 @@ import {
   Get,
   ParseUUIDPipe,
   Body,
+  NotFoundException,
+  InternalServerErrorException,
 } from '@nestjs/common'
 
 import {
@@ -92,6 +94,18 @@ export class PaymentController {
       meta: { applicationId: paymentDto.application_id, id: payment.id },
     })
 
+    await this.paymentModel.update(
+      {
+        user4: chargeResult.user4,
+      },
+      {
+        where: {
+          id: payment.id,
+          application_id: applicationId,
+        },
+      },
+    )
+
     return {
       id: payment.id,
       paymentUrl: chargeResult.paymentUrl,
@@ -114,10 +128,23 @@ export class PaymentController {
       applicationId,
     )
 
+    if (!payment) {
+      throw new NotFoundException(
+        `payment object was not found for application id ${applicationId}`,
+      )
+    }
+
+    if (!payment.user4) {
+      throw new InternalServerErrorException(
+        `valid payment object was not found for application id ${applicationId} - user4 not set`,
+      )
+    }
+
     return {
       // TODO: maybe treat the case where no payment was found differently?
       // not sure how/if that case would/could come up.
-      fulfilled: payment?.fulfilled || false,
+      fulfilled: payment.fulfilled || false,
+      paymentUrl: this.paymentService.makePaymentUrl(payment.user4),
     }
   }
 }

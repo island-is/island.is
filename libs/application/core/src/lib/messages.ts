@@ -174,6 +174,12 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Nei',
     description: 'No option value',
   },
+  paymentPollingIndicator: {
+    id: 'application.system:core.payment.pollingIndicator',
+    defaultMessage: 'Bíð staðfestingar frá greiðsluveitu',
+    description:
+      'Text indicating we are waiting for confirmation from 3rd party payment gateway',
+  },
 })
 
 export const coreErrorMessages = defineMessages({
@@ -228,5 +234,21 @@ export const coreErrorMessages = defineMessages({
     id: 'application.system:fetch.data.error',
     defaultMessage: 'Villa kom upp við að sækja gögn',
     description: 'Copy when there was an error in one or more data providers',
+  },
+
+  paymentSubmitFailed: {
+    id: 'application.system:core.payment.submitTitle',
+    defaultMessage: 'Sending umsóknar mistókst',
+    description: 'Message indicating submission after payment failed',
+  },
+  paymentSubmitRetryButtonCaption: {
+    id: 'application.system:core.payment.retryCaption',
+    defaultMessage: 'Reyna aftur',
+    description: 'Caption for the retry button',
+  },
+  paymentStatusError: {
+    id: 'application.system:core.payment.statusError',
+    defaultMessage: 'Tókst ekki að sækja stöðu greiðslu',
+    description: 'Message indicating failure to fetch payment status',
   },
 })
