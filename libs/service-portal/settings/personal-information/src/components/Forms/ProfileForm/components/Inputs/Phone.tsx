@@ -155,7 +155,6 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
     }
   }
 
-  console.log('telInternal', telInternal)
   return (
     <Box>
       <form
