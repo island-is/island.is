@@ -1,52 +1,21 @@
 import * as s from './Impacts.css'
-import { useMutation, gql } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import { Text, Box, Button, ModalBase } from '@island.is/island-ui/core'
 import React, { useState } from 'react'
 import { DraftChangeForm, RegDraftForm } from '../../state/types'
 // import { useDraftingState } from '../../state/useDraftingState'
 import { ImpactDate } from './ImpactDate'
 import { nameToSlug, RegName, toISODate } from '@island.is/regulations'
+import {
+  CREATE_DRAFT_REGULATION_CHANGE,
+  UPDATE_DRAFT_REGULATION_CHANGE,
+} from './impactQueries'
 
 type EditChangeProp = {
   draft: RegDraftForm
   change: DraftChangeForm
   closeModal: (updateImpacts?: boolean) => void
 }
-
-const CREATE_DRAFT_REGULATION_CHANGE = gql`
-  mutation CreateDraftRegulationChange(
-    $input: CreateDraftRegulationChangeInput!
-  ) {
-    createDraftRegulationChange(input: $input) {
-      id
-      type
-      name
-      regTitle
-      date
-      title
-      text
-      appendixes
-      comments
-    }
-  }
-`
-const UPDATE_DRAFT_REGULATION_CHANGE = gql`
-  mutation UpdateDraftRegulationChange(
-    $input: UpdateDraftRegulationChangeInput!
-  ) {
-    updateDraftRegulationChange(input: $input) {
-      id
-      type
-      name
-      regTitle
-      date
-      title
-      text
-      appendixes
-      comments
-    }
-  }
-`
 
 export const EditChange = (props: EditChangeProp) => {
   const { draft, change, closeModal } = props

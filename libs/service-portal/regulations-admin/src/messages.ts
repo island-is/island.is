@@ -311,6 +311,11 @@ export const impactMsgs = defineMessages({
     defaultMessage: 'Skoða / breyta',
   },
 
+  impactListDeleteButton: {
+    id: 'ap.regulations-admin:impacts-list-deletebutton',
+    defaultMessage: 'Eyða',
+  },
+
   selfAffecting: {
     id: 'ap.regulations-admin:draft-label-impact-selfaffecting',
     defaultMessage: 'Hefur áhrif á sjálfa sig',
