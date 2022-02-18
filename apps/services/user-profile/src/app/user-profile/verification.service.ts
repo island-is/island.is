@@ -16,6 +16,7 @@ import environment from '../../environments/environment'
 import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
 import { ConfirmSmsDto } from './dto/confirmSmsDto'
 import { ConfirmationDtoResponse } from './dto/confirmationResponseDto'
+import { pathToAsset } from './utils/pathToAsset'
 
 export const SMS_VERIFICATION_MAX_AGE = 5 * 60 * 1000
 export const SMS_VERIFICATION_MAX_TRIES = 5
@@ -217,16 +218,45 @@ export class VerificationService {
             address: verification.email,
           },
         ],
-        subject: `Staðfesting netfangs á Ísland.is`,
-        html: `Þú hefur skráð netfangið þitt á Mínum síðum á Ísland.is. Vinsamlegast staðfestu
-        skráninguna með því að afrita kóðann hér að neðan yfir á skráningarsíðuna:
-        <br /><br /><span
-          style="font-size: 18px; padding: 3px; border-style: 1px solid #D1D1D1"
-          >${verification.hash}</span
-        ><br />
-        <br />Ef kóðinn er ekki lengur í gildi biðjum við þig að endurtaka
-        skráninguna á Ísland.is. <br /><br />Ef þú kannast ekki við að hafa sett inn
-        þetta netfang, vinsamlegast hunsaðu þennan póst.`,
+        subject: `Staðfesting á netfangi á Ísland.is`,
+        template: {
+          title: 'Staðfesting á netfangi',
+          body: [
+            {
+              component: 'Image',
+              context: {
+                src: pathToAsset('digitalService.jpg'),
+                alt: 'Manneskja skoðar snjallsíma - myndskreyting',
+              },
+            },
+            {
+              component: 'Heading',
+              context: { copy: 'Staðfesting á netfangi' },
+            },
+            {
+              component: 'Copy',
+              context: { copy: 'Öryggiskóðinn þinn', small: true },
+            },
+            {
+              component: 'Copy',
+              context: { copy: verification.hash, style: 'bold' },
+            },
+            {
+              component: 'Copy',
+              context: {
+                copy:
+                  'Þetta er öryggiskóðinn þinn til staðfestingar á netfangi. Hann eyðist sjálfkrafa eftir 5mín, eftir þann tíma þarftu að láta senda nýjan í sama ferli og þú varst að fara gegnum.',
+              },
+            },
+            {
+              component: 'Copy',
+              context: {
+                copy:
+                  'Vinsamlegst hunsaðu þennan póst ef þú varst ekki að skrá netfangið þitt á Mínum síðum.',
+              },
+            },
+          ],
+        },
       })
     } catch (exception) {
       this.logger.error(exception)
