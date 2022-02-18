@@ -100,7 +100,6 @@ export const ImpactList = (props: ImpactListProps) => {
 
           {impacts.map((impact, i) => {
             const { id, name, regTitle, error, type, date } = impact
-            console.log({ impact })
 
             const isChange = type === 'amend'
             const headingText =

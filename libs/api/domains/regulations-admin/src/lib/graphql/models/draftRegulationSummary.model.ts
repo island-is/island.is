@@ -9,9 +9,6 @@ class RegulationSummaryAuthor {
 
   @Field()
   name?: string
-
-  @Field()
-  email?: string
 }
 
 @ObjectType()
