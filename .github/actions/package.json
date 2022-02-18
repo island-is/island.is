@@ -16,8 +16,10 @@
   },
   "devDependencies": {
     "@fluffy-spoon/substitute": "^1.208.0",
+    "@octokit/rest": "18.12.0",
     "@types/jest": "^27.4.0",
     "@zeit/ncc": "^0.22.3",
+    "esbuild-runner": "2.2.1",
     "jest": "27.5.1",
     "simple-git": "3.1.1",
     "ts-jest": "27.1.3",

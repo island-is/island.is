@@ -5,11 +5,7 @@ import { findBestGoodRefBranch, findBestGoodRefPR } from './change-detection'
 import { Arg, Substitute, SubstituteOf } from '@fluffy-spoon/substitute'
 import { existsSync, mkdir } from 'fs'
 import { promisify } from 'util'
-import {
-  BranchWorkflow,
-  GitActionStatus,
-  PRWorkflow,
-} from './git-action-status'
+import { GitActionStatus } from './git-action-status'
 
 const baseBranch = 'main'
 const headBranch = 'fix'
@@ -121,14 +117,40 @@ describe('Change detection', () => {
       expect(actual).toBe('rebuild')
     })
   })
-  describe('Branch', () => {
-    it('should take base branch commits if no good on this branch', async () => {
+  describe('Release branch', () => {
+    const headBranch = 'release-13.3.0'
+    let goodBeforeBadSha: string
+    let hotfix1: string
+    let hotfix2: string
+    let hotfix3: string
+    beforeEach(async () => {
       const br = await git.checkoutLocalBranch(baseBranch)
       const firstGoodSha = await makeChange(git, 'a', 'A-good')
-      const goodBeforeBadSha = await makeChange(git, 'a', 'B-good')
+      goodBeforeBadSha = await makeChange(git, 'a', 'B-good')
       const badSha = await makeChange(git, 'a', 'C-bad')
       const fixSha = await makeChange(git, 'a', 'D-good')
+      await git.checkoutBranch(headBranch, baseBranch)
+      hotfix1 = await makeChange(git, 'b', 'D-bad')
+      hotfix2 = await makeChange(git, 'b', 'D2-good')
+      hotfix3 = await makeChange(git, 'c', 'D3-good')
+    })
+    it('should prefer head branch commits over base branch ones', async () => {
+      githubApi
+        .getBranchBuilds(baseBranch)
+        .resolves([{ head_commit: goodBeforeBadSha }])
+      githubApi.getBranchBuilds(headBranch).resolves([{ head_commit: hotfix1 }])
 
+      expect(
+        await findBestGoodRefBranch(
+          (services) => services.length,
+          git,
+          githubApi,
+          headBranch,
+          baseBranch,
+        ),
+      ).toBe(hotfix1)
+    })
+    it('should take base branch commits if no good on this branch', async () => {
       githubApi
         .getBranchBuilds(baseBranch)
         .resolves([{ head_commit: goodBeforeBadSha }])
@@ -156,21 +178,6 @@ describe('Change detection', () => {
           baseBranch,
         ),
       ).toBe('rebuild')
-    })
-    it('should take last commit', async () => {
-      githubApi
-        .getBranchBuilds(baseBranch)
-        .resolves([{ head_commit: '1111' }, { head_commit: '2222' }])
-
-      expect(
-        await findBestGoodRefBranch(
-          (services) => services.length,
-          git,
-          githubApi,
-          baseBranch,
-          baseBranch,
-        ),
-      ).toBe('1111')
     })
   })
   describe('Pending', () => {

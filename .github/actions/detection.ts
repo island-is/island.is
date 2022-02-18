@@ -3,7 +3,7 @@ import { Endpoints } from '@octokit/types'
 export type ActionsListWorkflowRunsForRepoResponseData = Endpoints['GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs']['response']['data']
 export type ActionsListJobsForWorkflowRunResponseData = Endpoints['GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs']['response']['data']
 
-interface SuccessWorkflowsForBranch {
+export interface SuccessWorkflowsForBranch {
   run_number: number
   sha: string
   branch: string

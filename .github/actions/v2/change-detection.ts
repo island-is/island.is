@@ -5,14 +5,27 @@ export async function findBestGoodRefBranch(
   commitScore: (services) => number,
   git: SimpleGit,
   githubApi: GitActionStatus,
-  branch: string,
+  headBranch: string,
   baseBranch: string,
 ): Promise<string | 'rebuild'> {
-  const commits = await githubApi.getBranchBuilds(branch)
-  if (commits.length > 0) return commits[0].head_commit
-  const baseCommits = await githubApi.getBranchBuilds(baseBranch)
+  const br2 = await git.raw('merge-base', baseBranch, headBranch)
+  const commits = (
+    await git.raw('rev-list', '--date-order', 'HEAD~1', `${br2.trim()}`)
+  )
+    .split('\n')
+    .filter((s) => s.length > 0)
+    .map((c) => c.substr(0, 7))
+  const builds = await githubApi.getBranchBuilds(headBranch)
 
-  return baseCommits.length > 0 ? baseCommits[0].head_commit : 'rebuild'
+  for (const commit of commits) {
+    if (builds.map((b) => b.head_commit).includes(commit)) return commit
+  }
+  const baseCommits = await githubApi.getBranchBuilds(baseBranch)
+  for (const commit of commits) {
+    if (baseCommits.map((b) => b.head_commit).includes(commit)) return commit
+  }
+
+  return 'rebuild'
 }
 
 export async function findBestGoodRefPR(
