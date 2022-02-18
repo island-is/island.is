@@ -11,4 +11,5 @@ module.exports = {
     },
   },
   displayName: 'services-user-profile',
+  coveragePathIgnorePatterns: ['migrations'],
 }
