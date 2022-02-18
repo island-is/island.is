@@ -11,7 +11,8 @@ export interface BranchWorkflow {
 
 export interface GitActionStatus {
   getPRRuns(prID: number): Promise<PRWorkflow[]>
-  getBranchBuilds(branch: string): Promise<BranchWorkflow[]>
+
+  getBranchBuilds(branch: string, commits: string[]): Promise<BranchWorkflow[]>
   calculateDistance(
     git: SimpleGit,
     currentSha: string,

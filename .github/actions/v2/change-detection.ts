@@ -15,15 +15,11 @@ export async function findBestGoodRefBranch(
     .split('\n')
     .filter((s) => s.length > 0)
     .map((c) => c.substr(0, 7))
-  const builds = await githubApi.getBranchBuilds(headBranch)
+  const builds = await githubApi.getBranchBuilds(headBranch, commits)
+  if (builds.length > 0) return builds[0].head_commit
 
-  for (const commit of commits) {
-    if (builds.map((b) => b.head_commit).includes(commit)) return commit
-  }
-  const baseCommits = await githubApi.getBranchBuilds(baseBranch)
-  for (const commit of commits) {
-    if (baseCommits.map((b) => b.head_commit).includes(commit)) return commit
-  }
+  const baseCommits = await githubApi.getBranchBuilds(baseBranch, commits)
+  if (baseCommits.length > 0) return baseCommits[0].head_commit
 
   return 'rebuild'
 }
@@ -71,8 +67,8 @@ export async function findBestGoodRefPR(
       .split('\n')
       .filter((s) => s.length > 0)
       .map((c) => c.substr(0, 7))
-    const baseGoodBuilds = await githubApi.getBranchBuilds(baseBranch)
-    const headGoodBuilds = await githubApi.getBranchBuilds(headBranch)
+    const baseGoodBuilds = await githubApi.getBranchBuilds(baseBranch, commits)
+    const headGoodBuilds = await githubApi.getBranchBuilds(headBranch, commits)
 
     for (const commit of commits) {
       if (baseGoodBuilds.filter((b) => commit === b.head_commit).length > 0)

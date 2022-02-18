@@ -26,22 +26,33 @@ const workflow_file_name = 'push.yml'
 export type ActionsListJobsForWorkflowRunResponseData = Endpoints['GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs']['response']['data']
 
 class GitHubWorkflowQueries {
-  async getData(branch: string): Promise<string | 'not found'> {
-    let data = (
-      await octokit.request(
-        'GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs',
-        {
-          owner,
-          repo,
-          branch,
-          workflow_id: workflow_file_name,
-          event: 'push',
-          status: 'success',
-        },
-      )
-    ).data
+  async getData(
+    branch: string,
+    commits: string[],
+  ): Promise<string | 'not found'> {
+    const runsIterator = octokit.paginate.iterator(
+      'GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs',
+      {
+        owner,
+        repo,
+        branch,
+        workflow_id: workflow_file_name,
+        event: 'push',
+        status: 'success',
+      },
+    )
 
-    let sorted = data.workflow_runs
+    const runs: ActionsListWorkflowRunsForRepoResponseData['workflow_runs'] = []
+    for await (const workflow_runs of runsIterator) {
+      runs.push(
+        ...workflow_runs.data.filter((run) =>
+          commits.includes(run.head_sha.slice(0, 7)),
+        ),
+      )
+      if (runs.length > 40) break
+    }
+
+    let sorted = runs
       .map(({ run_number, head_sha, head_branch, jobs_url }) => ({
         run_number,
         sha: head_sha,
@@ -93,8 +104,11 @@ export class LocalRunner implements GitActionStatus {
     return Promise.resolve(printAffected.split(' ').map((s) => s.trim()))
   }
 
-  async getBranchBuilds(branch: string): Promise<BranchWorkflow[]> {
-    const d = await new GitHubWorkflowQueries().getData(branch)
+  async getBranchBuilds(
+    branch: string,
+    commits: string[],
+  ): Promise<BranchWorkflow[]> {
+    const d = await new GitHubWorkflowQueries().getData(branch, commits)
     if (d === 'not found') {
       return Promise.resolve([])
     } else {

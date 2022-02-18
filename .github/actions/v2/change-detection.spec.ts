@@ -66,9 +66,9 @@ describe('Change detection', () => {
     })
     it('should use last good commit when no PR runs available', async () => {
       githubApi.getPRRuns(100).resolves([])
-      githubApi.getBranchBuilds(baseBranch).resolves([])
+      githubApi.getBranchBuilds(baseBranch, Arg.any()).resolves([])
       githubApi
-        .getBranchBuilds(headBranch)
+        .getBranchBuilds(headBranch, Arg.any())
         .resolves([
           { head_commit: mainGoodBeforeBadSha },
           { head_commit: rootSha },
@@ -136,9 +136,11 @@ describe('Change detection', () => {
     })
     it('should prefer head branch commits over base branch ones', async () => {
       githubApi
-        .getBranchBuilds(baseBranch)
+        .getBranchBuilds(baseBranch, Arg.any())
         .resolves([{ head_commit: goodBeforeBadSha }])
-      githubApi.getBranchBuilds(headBranch).resolves([{ head_commit: hotfix1 }])
+      githubApi
+        .getBranchBuilds(headBranch, Arg.any())
+        .resolves([{ head_commit: hotfix1 }])
 
       expect(
         await findBestGoodRefBranch(
@@ -152,9 +154,9 @@ describe('Change detection', () => {
     })
     it('should take base branch commits if no good on this branch', async () => {
       githubApi
-        .getBranchBuilds(baseBranch)
+        .getBranchBuilds(baseBranch, Arg.any())
         .resolves([{ head_commit: goodBeforeBadSha }])
-      githubApi.getBranchBuilds(headBranch).resolves([])
+      githubApi.getBranchBuilds(headBranch, Arg.any()).resolves([])
 
       expect(
         await findBestGoodRefBranch(
@@ -167,7 +169,7 @@ describe('Change detection', () => {
       ).toBe(goodBeforeBadSha)
     })
     it('should trigger a full rebuild if no good commits found', async () => {
-      githubApi.getBranchBuilds(baseBranch).resolves([])
+      githubApi.getBranchBuilds(baseBranch, Arg.any()).resolves([])
 
       expect(
         await findBestGoodRefBranch(
