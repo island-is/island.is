@@ -30,7 +30,7 @@ export async function findBestGoodRefPR(
   githubApi: GitActionStatus,
   prID: number,
   headBranch: string,
-  baseBranch,
+  baseBranch: string,
 ): Promise<string | 'rebuild'> {
   const lastChanges = await git.log({ maxCount: 1 })
   const currentChange = lastChanges.latest
@@ -38,21 +38,25 @@ export async function findBestGoodRefPR(
   const runs = await githubApi.getPRRuns(prID)
   if (runs.length > 0) {
     const distances: { distance: number; hash: string }[] = []
-    for (const previousRun of runs) {
-      const tempBranch = `${headBranch}-${Math.round(Math.random() * 1000000)}`
-      await git.checkoutBranch(tempBranch, previousRun.base_commit)
-      await git.merge({ [previousRun.head_commit]: null })
-      const lastMerge = await git.log({ maxCount: 1 })
-      const lastMergeCommit = lastMerge.latest
-      const distance = await githubApi.calculateDistance(
-        git,
-        currentChange.hash,
-        lastMergeCommit.hash,
-      )
-      distances.push({
-        distance: commitScore(distance),
-        hash: previousRun.head_commit,
-      })
+    try {
+      for (const previousRun of runs) {
+        const tempBranch = `${headBranch}-${Math.round(Math.random() * 1000000)}`
+        await git.checkoutBranch(tempBranch, previousRun.base_commit)
+        await git.merge({[previousRun.head_commit]: null})
+        const lastMerge = await git.log({maxCount: 1})
+        const lastMergeCommit = lastMerge.latest
+        const distance = await githubApi.calculateDistance(
+          git,
+          currentChange.hash,
+          lastMergeCommit.hash,
+        )
+        distances.push({
+          distance: commitScore(distance),
+          hash: previousRun.head_commit,
+        })
+      }
+    } finally {
+      await git.checkout(headBranch)
     }
     distances.sort((a, b) => (a.distance > b.distance ? 1 : -1))
     return distances[0].hash
