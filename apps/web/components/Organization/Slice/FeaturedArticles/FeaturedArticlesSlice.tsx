@@ -31,16 +31,18 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
   const { linkResolver } = useLinkResolver()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
+  const labelId = 'sliceTitle-' + slice.id
+
   return (
     !!slice.articles.length && (
-      <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
+      <section key={slice.id} aria-labelledby={labelId}>
         <Box
           borderTopWidth="standard"
           borderColor="standard"
           paddingTop={[8, 6, 8]}
           paddingBottom={[8, 6, 6]}
         >
-          <Text as="h2" variant="h3" paddingBottom={6}>
+          <Text as="h2" variant="h3" paddingBottom={6} id={labelId}>
             {slice.title}
           </Text>
           <Stack space={2}>
@@ -73,6 +75,7 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
                   iconType="filled"
                   type="button"
                   variant="text"
+                  as="span"
                 >
                   {n('seeAllServices', 'Sjá allt efni')}
                 </Button>
