@@ -2,7 +2,8 @@ import { CanActivate } from '@nestjs/common'
 
 import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
 
-import { CaseExistsGuard, CaseReadGuard } from '../guards'
+import { CaseExistsGuard } from '../guards/caseExists.guard'
+import { CaseReadGuard } from '../guards/caseRead.guard'
 import { CaseController } from '../case.controller'
 
 describe('CaseController - Extend guards', () => {

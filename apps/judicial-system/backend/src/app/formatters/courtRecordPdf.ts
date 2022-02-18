@@ -18,7 +18,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
-import { Case } from '../modules/case/models'
+import { Case } from '../modules/case'
 import { courtRecord } from '../messages'
 import {
   addFooter,

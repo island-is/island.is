@@ -12,8 +12,8 @@ import {
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 
+import { Case } from '../models/case.model'
 import { getCasesQueryFilter, isCaseBlockedFromUser } from './case.filters'
-import { Case } from '../models'
 
 describe('isCaseBlockedFromUser', () => {
   each`

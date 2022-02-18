@@ -17,7 +17,7 @@ import { Label } from './shared/Label/Label'
 import { Menu, MenuProps } from './shared/Menu/Menu'
 import { Item } from './shared/Item/Item'
 import { Icon } from '../IconRC/Icon'
-import { ColorSchemeContext, ColorSchemes } from '../context'
+import { ColorSchemeContext } from '../context'
 
 import * as styles from './AsyncSearch.css'
 
@@ -38,6 +38,7 @@ export type AsyncSearchOption = {
 }
 
 export interface AsyncSearchProps {
+  id?: string
   label?: string
   placeholder?: string
   options: AsyncSearchOption[]
@@ -60,6 +61,7 @@ export interface AsyncSearchProps {
 export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
   (
     {
+      id = 'asyncsearch-id',
       label,
       placeholder,
       size = 'medium',
@@ -90,7 +92,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
 
     return (
       <Downshift
-        id="downshift"
+        id={id}
         onChange={onChange}
         initialInputValue={initialInputValue}
         onInputValueChange={onInputValueChange}
@@ -179,6 +181,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
                   onFocus,
                   onBlur,
                   ref,
+                  spellCheck: true,
                   ...(onSubmit && { onKeyDown }),
                 }),
                 inputSize: size,
