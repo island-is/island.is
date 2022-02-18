@@ -10,6 +10,7 @@ import {
 } from '@island.is/service-portal/core'
 import { USER_PROFILE } from '@island.is/service-portal/graphql'
 import { outOfDate } from '../src/utils/outOfDate'
+import { storageHidden } from '../src/utils/sessionStorageOnboarding'
 
 import { lazy } from 'react'
 import * as Sentry from '@sentry/react'
@@ -47,6 +48,7 @@ export const personalInformationModule: ServicePortalModule = {
       })
 
       const profileExists = res.data?.getUserProfile?.modified
+      const modalClosedInSession = storageHidden()
       const dateDiffLate = res.data?.getUserProfile
         ? outOfDate(res.data.getUserProfile)
         : false
@@ -54,6 +56,7 @@ export const personalInformationModule: ServicePortalModule = {
       if (
         // true
         process.env.NODE_ENV !== 'development' &&
+        !modalClosedInSession &&
         (!profileExists || dateDiffLate) &&
         userInfo.scopes.includes(UserProfileScope.write)
       )

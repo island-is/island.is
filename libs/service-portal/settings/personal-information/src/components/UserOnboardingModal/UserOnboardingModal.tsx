@@ -16,6 +16,7 @@ import { servicePortalCloseOnBoardingModal } from '@island.is/plausible'
 import { useLocation } from 'react-router-dom'
 import { OnboardingHeader } from './components/Header'
 import ProfileForm from '../Forms/ProfileForm/ProfileForm'
+import { setStorage } from '../../utils/sessionStorageOnboarding'
 import * as styles from './UserOnboardingModal.css'
 
 const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
@@ -27,6 +28,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
   const { pathname } = useLocation()
 
   const dropOnboardingSideEffects = () => {
+    setStorage()
     servicePortalCloseOnBoardingModal(pathname)
   }
 
