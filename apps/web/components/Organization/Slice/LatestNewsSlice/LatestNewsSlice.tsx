@@ -18,7 +18,7 @@ export const LatestNewsSlice: React.FC<SliceProps> = ({
       background="purple100"
       paddingTop={[5, 5, 8]}
       paddingBottom={[2, 2, 5]}
-      aria-labelledby="categories-title"
+      aria-labelledby="news-items-title"
     >
       <GridContainer>
         <NewsItems
