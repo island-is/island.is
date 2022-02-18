@@ -16,6 +16,7 @@ export enum ApplicationTypes {
   ACCIDENT_NOTIFICATION = 'AccidentNotification',
   GENERAL_PETITION = 'GeneralPetitionService',
   P_SIGN = 'PSign',
+  ANNOUNCEMENT_OF_DEATH = 'AnnouncementOfDeath',
   CRIMINAL_RECORD = 'CriminalRecord',
   EXAMPLE_PAYMENT = 'ExamplePayment',
 }
@@ -88,6 +89,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.P_SIGN]: {
     slug: 'p-merki',
     translation: 'ps.application',
+  },
+  [ApplicationTypes.ANNOUNCEMENT_OF_DEATH]: {
+    slug: 'andlatstilkynningar',
+    translation: 'aod.application',
   },
   [ApplicationTypes.CRIMINAL_RECORD]: {
     slug: 'sakavottord',

@@ -1947,6 +1947,40 @@
         }
       }
     },
+    "application-templates-announcement-of-death": {
+      "root": "libs/application/templates/announcement-of-death",
+      "sourceRoot": "libs/application/templates/announcement-of-death/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/announcement-of-death/tsconfig.lib.json",
+              "libs/application/templates/announcement-of-death/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/announcement-of-death/**/*"
+            ]
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/announcement-of-death/src/lib/messages.ts"
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/announcement-of-death/codegen.yml"
+          }
+        }
+      }
+    },
     "application-templates-children-residence-change": {
       "root": "libs/application/templates/family-matters/children-residence-change",
       "sourceRoot": "libs/application/templates/family-matters/children-residence-change/src",

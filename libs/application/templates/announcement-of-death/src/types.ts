@@ -1,0 +1,11 @@
+export enum RoleConfirmationEnum {
+  CONTINUE = 'continue',
+  DELEGATE = 'delegate',
+}
+
+export interface ElectPersonType {
+  roleConfirmation: RoleConfirmationEnum
+  electedPersonName?: string
+  electedPersonNationalId?: string
+  lookupError?: boolean
+}
