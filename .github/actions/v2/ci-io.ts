@@ -159,29 +159,31 @@ export class LocalRunner implements GitActionStatus {
     return Promise.resolve(printAffected.split(',').map((s) => s.trim()))
   }
 
-  async getBranchBuilds(
+  async getLastGoodBranchBuildRun(
     branch: string,
-    commits: string[],
-  ): Promise<BranchWorkflow[]> {
+    candidateCommits: string[],
+  ): Promise<BranchWorkflow | undefined> {
     const d = await new GitHubWorkflowQueries().getPushBuildInfo(
       branch,
-      commits,
+      candidateCommits,
     )
     if (d === 'not found') {
-      return Promise.resolve([])
+      return Promise.resolve(undefined)
     } else {
-      return Promise.resolve([{ head_commit: d.sha, run_nr: d.run_nr }])
+      return Promise.resolve({ head_commit: d.sha, run_nr: d.run_nr })
     }
   }
 
-  async getPRRuns(branch: string): Promise<PRWorkflow[]> {
+  async getLastGoodPRRun(branch: string): Promise<PRWorkflow | undefined> {
     const d = await new GitHubWorkflowQueries().getPullRequestBuildInfo(branch)
     if (d === 'not found') {
-      return Promise.resolve([])
+      return Promise.resolve(undefined)
     } else {
-      return Promise.resolve([
-        { head_commit: d.headSha, base_commit: d.baseSha, run_nr: d.run_nr },
-      ])
+      return Promise.resolve({
+        head_commit: d.headSha,
+        base_commit: d.baseSha,
+        run_nr: d.run_nr,
+      })
     }
   }
 }

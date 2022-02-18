@@ -15,11 +15,14 @@ export async function findBestGoodRefBranch(
     .split('\n')
     .filter((s) => s.length > 0)
     .map((c) => c.substr(0, 7))
-  const builds = await githubApi.getBranchBuilds(headBranch, commits)
-  if (builds.length > 0) return builds[0].head_commit
+  const builds = await githubApi.getLastGoodBranchBuildRun(headBranch, commits)
+  if (builds) return builds.head_commit
 
-  const baseCommits = await githubApi.getBranchBuilds(baseBranch, commits)
-  if (baseCommits.length > 0) return baseCommits[0].head_commit
+  const baseCommits = await githubApi.getLastGoodBranchBuildRun(
+    baseBranch,
+    commits,
+  )
+  if (baseCommits) return baseCommits.head_commit
 
   return 'rebuild'
 }
@@ -34,53 +37,50 @@ export async function findBestGoodRefPR(
   const lastChanges = await git.log({ maxCount: 1 })
   const currentChange = lastChanges.latest
 
-  const runs = await githubApi.getPRRuns(headBranch)
-  if (runs.length > 0) {
-    const distances: { distance: number; hash: string; run_nr: number }[] = []
+  const runs = await githubApi.getLastGoodPRRun(headBranch)
+  const prBuilds: { distance: number; hash: string; run_nr: number }[] = []
+  if (runs) {
     try {
-      for (const previousRun of runs) {
-        const tempBranch = `${headBranch}-${Math.round(
-          Math.random() * 1000000,
-        )}`
-        await git.checkoutBranch(tempBranch, previousRun.base_commit)
-        await git.merge({ [previousRun.head_commit]: null })
-        const lastMerge = await git.log({ maxCount: 1 })
-        const lastMergeCommit = lastMerge.latest
-        const distance = await githubApi.calculateDistance(
-          git,
-          currentChange.hash,
-          lastMergeCommit.hash,
-        )
-        distances.push({
-          distance: commitScore(distance),
-          hash: previousRun.head_commit,
-          run_nr: previousRun.run_nr,
-        })
-      }
+      const previousRun = runs
+      const tempBranch = `${headBranch}-${Math.round(Math.random() * 1000000)}`
+      await git.checkoutBranch(tempBranch, previousRun.base_commit)
+      await git.merge({ [previousRun.head_commit]: null })
+      const lastMerge = await git.log({ maxCount: 1 })
+      const lastMergeCommit = lastMerge.latest
+      const distance = await githubApi.calculateDistance(
+        git,
+        currentChange.hash,
+        lastMergeCommit.hash,
+      )
+      prBuilds.push({
+        distance: commitScore(distance),
+        hash: previousRun.head_commit,
+        run_nr: previousRun.run_nr,
+      })
     } finally {
       await git.checkout(headBranch)
     }
-    distances.sort((a, b) => (a.distance > b.distance ? 1 : -1))
-    return distances[0].hash
-  } else {
-    // no pr runs
-    const br2 = await git.raw('merge-base', baseBranch, headBranch)
-    // return br2.trim()
-    const commits = (
-      await git.raw('rev-list', '--date-order', 'HEAD~1', `${br2.trim()}`)
-    )
-      .split('\n')
-      .filter((s) => s.length > 0)
-      .map((c) => c.substr(0, 7))
-    const baseGoodBuilds = await githubApi.getBranchBuilds(baseBranch, commits)
-    const headGoodBuilds = await githubApi.getBranchBuilds(headBranch, commits)
-
-    for (const commit of commits) {
-      if (baseGoodBuilds.filter((b) => commit === b.head_commit).length > 0)
-        return commit
-      if (headGoodBuilds.filter((b) => commit === b.head_commit).length > 0)
-        return commit
-    }
-    return 'rebuild'
   }
+  const br2 = await git.raw('merge-base', baseBranch, headBranch)
+  // return br2.trim()
+  const commits = (
+    await git.raw('rev-list', '--date-order', 'HEAD~1', `${br2.trim()}`)
+  )
+    .split('\n')
+    .filter((s) => s.length > 0)
+    .map((c) => c.substr(0, 7))
+  const baseGoodBuilds = await githubApi.getLastGoodBranchBuildRun(
+    baseBranch,
+    commits,
+  )
+  if (baseGoodBuilds) {
+    prBuilds.push({
+      distance: 1,
+      hash: baseGoodBuilds.head_commit,
+      run_nr: baseGoodBuilds.run_nr,
+    })
+  }
+  prBuilds.sort((a, b) => (a.distance > b.distance ? 1 : -1))
+  if (prBuilds.length > 0) return prBuilds[0].hash
+  return 'rebuild'
 }
