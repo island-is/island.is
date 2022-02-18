@@ -150,7 +150,7 @@ const useCase = () => {
         toast.error(formatMessage(errors.createCase))
       }
     },
-    [createCaseMutation, isCreatingCase],
+    [createCaseMutation, formatMessage, isCreatingCase],
   )
 
   const createCourtCase = useMemo(
