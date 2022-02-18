@@ -4051,6 +4051,12 @@
             "exclude": ["**/node_modules/**", "!libs/email-service/**/*"]
           }
         },
+        "generate-html": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "cross-env NODE_ENV=development yarn ts-node -P libs/email-service/tsconfig.json libs/email-service/src/tools/generate-html/generate-html.ts"
+          }
+        },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
