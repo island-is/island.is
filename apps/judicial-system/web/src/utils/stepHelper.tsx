@@ -66,3 +66,11 @@ export const getAppealEndDate = (rulingDate: string) => {
   const appealEndDate = addDays(rulingDateToDate, 3)
   return formatDate(appealEndDate, 'PPPp')
 }
+
+export const isBusiness = (nationalId?: string) => {
+  if (!nationalId) {
+    return false
+  }
+
+  return parseInt(nationalId.slice(0, 2)) > 31
+}

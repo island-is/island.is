@@ -289,20 +289,20 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               title: formatMessage(core.judge),
               value: workingCase.judge?.name,
             },
-            ...(workingCase.registrar
-              ? [
-                  {
-                    title: formatMessage(core.registrar),
-                    value: workingCase.registrar?.name,
-                  },
-                ]
-              : []),
             // Conditionally add this field based on case type
             ...(isInvestigationCase(workingCase.type)
               ? [
                   {
                     title: formatMessage(core.caseType),
                     value: capitalize(caseTypes[workingCase.type]),
+                  },
+                ]
+              : []),
+            ...(workingCase.registrar
+              ? [
+                  {
+                    title: formatMessage(core.registrar),
+                    value: workingCase.registrar?.name,
                   },
                 ]
               : []),

@@ -13,9 +13,11 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
-import { BackendAPI } from '../../../services'
-import { PoliceCaseFilesQueryInput, UploadPoliceCaseFileInput } from './dto'
-import { PoliceCaseFile, UploadPoliceCaseFileResponse } from './models'
+import { BackendAPI } from '../../data-sources/backend'
+import { PoliceCaseFilesQueryInput } from './dto/policeCaseFiles.input'
+import { UploadPoliceCaseFileInput } from './dto/uploadPoliceCaseFile.input'
+import { PoliceCaseFile } from './models/policeCaseFile.model'
+import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver()
