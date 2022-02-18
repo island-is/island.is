@@ -2,7 +2,13 @@ import React, { useState, useEffect, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Text, Accordion, AccordionItem } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  Accordion,
+  AccordionItem,
+  toast,
+} from '@island.is/island-ui/core'
 import {
   NotificationType,
   CaseState,
@@ -32,6 +38,7 @@ import { UserContext } from '@island.is/judicial-system-web/src/components/UserP
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   core,
+  errors,
   laws,
   rcOverview,
   requestCourtDate,
@@ -92,7 +99,7 @@ export const Overview: React.FC = () => {
 
       setModalVisible(true)
     } catch (e) {
-      // TODO: Handle error
+      toast.error(formatMessage(errors.general))
     }
   }
 

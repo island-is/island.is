@@ -80,7 +80,6 @@ const Defendant = () => {
         router.push(`${constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${theCase.id}`)
       }
     } catch (error) {
-      // TODO: Do we want to be more spesific here?
       toast.error(formatMessage(errors.general))
     }
   }

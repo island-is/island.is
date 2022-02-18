@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Accordion, Box, Text } from '@island.is/island-ui/core'
+import { Accordion, Box, Text, toast } from '@island.is/island-ui/core'
 import {
   FormFooter,
   PoliceRequestAccordionItem,
@@ -29,6 +29,7 @@ import SigningModal from '@island.is/judicial-system-web/src/components/SigningM
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   core,
+  errors,
   rcConfirmation as m,
 } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -77,7 +78,7 @@ export const Confirmation: React.FC = () => {
         // TODO: Handle error
       }
     } catch (e) {
-      // TODO: Handle error
+      toast.error(formatMessage(errors.requestRulingSignature))
     }
   }
 

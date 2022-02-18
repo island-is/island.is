@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import { useQuery } from '@apollo/client'
+import { useIntl } from 'react-intl'
+
 import {
   CaseDecision,
   CaseState,
@@ -8,21 +11,22 @@ import {
   NotificationType,
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
+import { Box, Text, toast } from '@island.is/island-ui/core'
+import {
+  errors,
+  icConfirmation,
+  rcConfirmation,
+} from '@island.is/judicial-system-web/messages'
 import type {
   Case,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
 } from '@island.is/judicial-system/types'
-import { useCase } from '../../utils/hooks'
-import { RulingSignatureConfirmationQuery } from '../../utils/mutations'
-import { Box, Text } from '@island.is/island-ui/core'
-import { useQuery } from '@apollo/client'
-import { Modal } from '..'
-import {
-  icConfirmation,
-  rcConfirmation,
-} from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
+import { RulingSignatureConfirmationQuery } from '../../utils/mutations'
+import { Modal } from '..'
+import { useCase } from '../../utils/hooks'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 
 interface SigningModalProps {
@@ -39,6 +43,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
   setModalVisible,
 }) => {
   const router = useRouter()
+  const { formatMessage } = useIntl()
   const [
     rulingSignatureConfirmationResponse,
     setRulingSignatureConfirmationResponse,
@@ -85,7 +90,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
             // TODO: Handle error
           }
         } catch (e) {
-          // TODO: Handle error
+          toast.error(formatMessage(errors.sendNotification))
         }
       }
 
@@ -104,6 +109,7 @@ const SigningModal: React.FC<SigningModalProps> = ({
     sendNotification,
     workingCase,
     setWorkingCase,
+    formatMessage,
   ])
 
   const renderControlCode = () => {

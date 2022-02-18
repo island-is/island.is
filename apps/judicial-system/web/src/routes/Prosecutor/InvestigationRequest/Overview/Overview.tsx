@@ -17,7 +17,11 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { icOverview as m } from '@island.is/judicial-system-web/messages'
+import { toast } from '@island.is/island-ui/core'
+import {
+  errors,
+  icOverview as m,
+} from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import OverviewForm from './OverviewForm'
@@ -73,7 +77,7 @@ export const Overview: React.FC = () => {
 
       setModalVisible(true)
     } catch (e) {
-      // TODO: Handle error
+      toast.error(formatMessage(errors.general))
     }
   }
 

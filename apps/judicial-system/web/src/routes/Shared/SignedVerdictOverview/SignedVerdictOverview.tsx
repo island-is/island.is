@@ -39,7 +39,7 @@ import {
   CaseData,
   ReactSelectOption,
 } from '@island.is/judicial-system-web/src/types'
-import { Box, Input, Text } from '@island.is/island-ui/core'
+import { Box, Input, Text, toast } from '@island.is/island-ui/core'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   capitalize,
@@ -48,7 +48,10 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
-import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
+import {
+  errors,
+  signedVerdictOverview as m,
+} from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
@@ -202,9 +205,8 @@ export const SignedVerdictOverview: React.FC = () => {
           },
         })
       })
-      .catch((reason) => {
-        // TODO: Handle error
-        console.log(reason)
+      .catch(() => {
+        toast.error(formatMessage(errors.requestCourtRecordSignature))
       })
   }
 
@@ -231,9 +233,8 @@ export const SignedVerdictOverview: React.FC = () => {
               }
             }
           })
-          .catch((reason) => {
-            // TODO: Handle error
-            console.log(reason)
+          .catch(() => {
+            toast.error(formatMessage(errors.extendCase))
           })
       }
     }

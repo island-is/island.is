@@ -26,9 +26,13 @@ import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { rcRequestedHearingArrangements } from '@island.is/judicial-system-web/messages'
+import {
+  errors,
+  rcRequestedHearingArrangements,
+} from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { toast } from '@island.is/island-ui/core'
 import type { User } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
@@ -83,30 +87,38 @@ export const StepTwo: React.FC = () => {
     })
 
   const handleNextButtonClick = async () => {
-    if (!workingCase) {
-      return
-    }
-
-    const caseOpened =
-      workingCase.state === CaseState.NEW
-        ? await transitionCase(workingCase, CaseTransition.OPEN, setWorkingCase)
-        : true
-
-    if (caseOpened) {
-      if (
-        (workingCase.state !== CaseState.NEW &&
-          workingCase.state !== CaseState.DRAFT) ||
-        // TODO: Ignore failed notifications
-        workingCase.notifications?.find(
-          (notification) => notification.type === NotificationType.HEADS_UP,
-        )
-      ) {
-        router.push(`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`)
-      } else {
-        setModalVisible(true)
+    try {
+      if (!workingCase) {
+        return
       }
-    } else {
-      // TODO: Handle error
+
+      const caseOpened =
+        workingCase.state === CaseState.NEW
+          ? await transitionCase(
+              workingCase,
+              CaseTransition.OPEN,
+              setWorkingCase,
+            )
+          : true
+
+      if (caseOpened) {
+        if (
+          (workingCase.state !== CaseState.NEW &&
+            workingCase.state !== CaseState.DRAFT) ||
+          // TODO: Ignore failed notifications
+          workingCase.notifications?.find(
+            (notification) => notification.type === NotificationType.HEADS_UP,
+          )
+        ) {
+          router.push(`${Constants.STEP_THREE_ROUTE}/${workingCase.id}`)
+        } else {
+          setModalVisible(true)
+        }
+      } else {
+        // TODO: Handle error
+      }
+    } catch (error) {
+      toast.error(formatMessage(errors.transitionCase))
     }
   }
 
