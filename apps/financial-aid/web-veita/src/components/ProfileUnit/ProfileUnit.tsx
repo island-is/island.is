@@ -52,12 +52,7 @@ const ProfileUnit = ({
             >
               <Icon icon={'chevronUp'} color="purple400" />
             </Box>
-            <Box
-              display="flex"
-              borderBottomWidth="standard"
-              borderColor="dark200"
-              width="full"
-            >
+            <Box display="flex" width="full" className={styles.headlineBorder}>
               <Text as="h2" variant="h3" color="dark300" marginBottom={1}>
                 {heading}
               </Text>

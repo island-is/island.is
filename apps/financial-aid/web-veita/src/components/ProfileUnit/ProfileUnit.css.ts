@@ -34,15 +34,31 @@ export const toggleButton = style({
 
 export const toggleWrapper = style({
   display: 'grid',
+  alignItems: 'center',
   gridTemplateColumns: '32px auto',
   columnGap: theme.spacing[3],
+  borderBottom: `1px solid ${theme.color.dark200}`,
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      borderBottom: 'none',
+    },
+  },
+})
+export const headlineBorder = style({
+  borderBottom: `1px solid ${theme.color.dark200}`,
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.lg}px)`]: {
+      borderBottom: 'none',
+    },
+  },
 })
 
 export const iconContainer = style({
+  marginTop: '-4px',
   width: theme.spacing[4],
   height: theme.spacing[4],
   borderRadius: theme.spacing[1],
-  transition: 'transform 150ms ease, background-color 200ms ease',
+  transition: 'transform 150ms ease, background-color 250ms ease',
 })
 
 globalStyle(`${toggleButton}:hover ${iconContainer}`, {

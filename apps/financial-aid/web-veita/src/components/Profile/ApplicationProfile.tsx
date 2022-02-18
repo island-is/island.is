@@ -184,12 +184,7 @@ const ApplicationProfile = ({
           info={test}
           className={`contentUp delay-100`}
           collapsible={true}
-        >
-          <Box marginBottom={3}>lsadlals</Box>
-          <Box marginBottom={3}>lsadlals</Box>
-          <Box marginBottom={3}>lsadlals</Box>
-          <Box marginBottom={3}>lsadlals</Box>
-        </ProfileUnit>
+        />
 
         {showSpouseData[application.familyStatus] && (
           <ProfileUnit
