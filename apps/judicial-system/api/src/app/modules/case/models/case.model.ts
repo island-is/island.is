@@ -11,10 +11,10 @@ import type {
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
-import { Defendant } from '../../defendant/models/defendant.model'
-import { Institution } from '../../institution/institution.model'
-import { User } from '../../user/user.model'
-import { CaseFile } from '../../file/models/file.model'
+import { Defendant } from '../../defendant'
+import { Institution } from '../../institution'
+import { User } from '../../user'
+import { CaseFile } from '../../file'
 import { Notification } from './notification.model'
 
 @ObjectType()

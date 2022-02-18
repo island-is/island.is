@@ -22,7 +22,8 @@ import {
 } from '@island.is/judicial-system/auth'
 
 import { adminRule } from '../../guards'
-import { CreateUserDto, UpdateUserDto } from './dto'
+import { CreateUserDto } from './dto/createUser.dto'
+import { UpdateUserDto } from './dto/updateUser.dto'
 import { User } from './user.model'
 import { UserService } from './user.service'
 
