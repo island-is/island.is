@@ -1,9 +1,9 @@
 import React from 'react'
 import { Box, Divider, Text } from '@island.is/island-ui/core'
 import { Effects } from '../../types'
-import { format } from 'date-fns' // eslint-disable-line no-restricted-imports
 import { DraftCancelForm } from '../../state/types'
 import { nameToSlug, RegName } from '@island.is/regulations'
+import { format } from 'date-fns' // eslint-disable-line no-restricted-imports
 import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
 
 export type ImpactChangesContainerProps = {

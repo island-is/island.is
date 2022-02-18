@@ -70,7 +70,17 @@ export const useRegulationDraftQuery = (
 
 const ShippedRegulationsQuery = gql`
   query ShippedRegulationsQuery {
-    getShippedRegulations
+    getShippedRegulations {
+      id
+      draftingStatus
+      authors {
+        authorId
+        name
+      }
+      title
+      idealPublishDate
+      fastTrack
+    }
   }
 `
 
@@ -98,7 +108,17 @@ export const useShippedRegulationsQuery = (): QueryResult<
 
 const RegulationTaskListQuery = gql`
   query RegulationTaskListQuery {
-    getDraftRegulations
+    getDraftRegulations {
+      id
+      draftingStatus
+      authors {
+        authorId
+        name
+      }
+      title
+      idealPublishDate
+      fastTrack
+    }
   }
 `
 

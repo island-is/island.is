@@ -31,7 +31,9 @@ export const DELETE_DRAFT_REGULATION_CANCEL = gql`
   mutation DeleteDraftRegulationCancel(
     $input: DeleteDraftRegulationCancelInput!
   ) {
-    deleteDraftRegulationCancel(input: $input)
+    deleteDraftRegulationCancel(input: $input) {
+      id
+    }
   }
 `
 
@@ -74,6 +76,8 @@ export const DELETE_DRAFT_REGULATION_CHANGE = gql`
   mutation DeleteDraftRegulationChange(
     $input: DeleteDraftRegulationChangeInput!
   ) {
-    deleteDraftRegulationChange(input: $input)
+    deleteDraftRegulationChange(input: $input) {
+      id
+    }
   }
 `

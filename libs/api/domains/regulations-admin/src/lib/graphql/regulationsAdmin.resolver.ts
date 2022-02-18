@@ -33,6 +33,7 @@ import {
   DraftRegulationCancelModel,
   DraftRegulationChangeModel,
   DraftRegulationPdfDownloadModel,
+  DraftRegulationSummaryModel,
 } from './models'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -58,16 +59,14 @@ export class RegulationsAdminResolver {
     )
   }
 
-  // @Query(() => [DraftRegulationSummaryModel])
-  @Query(() => graphqlTypeJson)
+  @Query(() => [DraftRegulationSummaryModel])
   async getShippedRegulations(@CurrentUser() { authorization }: User) {
     return await this.regulationsAdminClientService.getShippedRegulations(
       authorization,
     )
   }
 
-  // @Query(() => [DraftRegulationSummaryModel])
-  @Query(() => graphqlTypeJson)
+  @Query(() => [DraftRegulationSummaryModel])
   async getDraftRegulations(@CurrentUser() user: User) {
     return await this.regulationsAdminClientService.getDraftRegulations(
       user.authorization,
@@ -97,7 +96,7 @@ export class RegulationsAdminResolver {
   async deleteDraftRegulation(
     @Args('input') input: DeleteDraftRegulationInput,
     @CurrentUser() { authorization }: User,
-  ): Promise<any> {
+  ): Promise<DeleteDraftRegulationModel> {
     await this.regulationsAdminApiService.deleteById(
       input.draftId,
       authorization,
@@ -185,11 +184,11 @@ export class RegulationsAdminResolver {
     )
   }
 
-  @Mutation(() => graphqlTypeJson)
+  @Mutation(() => DeleteDraftRegulationModel)
   async deleteDraftRegulationCancel(
     @Args('input') input: DeleteDraftRegulationCancelInput,
     @CurrentUser() { authorization }: User,
-  ): Promise<any> {
+  ): Promise<DeleteDraftRegulationModel> {
     await this.regulationsAdminApiService.deleteDraftRegulationCancel(
       input,
       authorization,
@@ -222,11 +221,11 @@ export class RegulationsAdminResolver {
     )
   }
 
-  @Mutation(() => graphqlTypeJson)
+  @Mutation(() => DeleteDraftRegulationModel)
   async deleteDraftRegulationChange(
     @Args('input') input: DeleteDraftRegulationChangeInput,
     @CurrentUser() { authorization }: User,
-  ): Promise<any> {
+  ): Promise<DeleteDraftRegulationModel> {
     await this.regulationsAdminApiService.deleteDraftRegulationChange(
       input,
       authorization,
