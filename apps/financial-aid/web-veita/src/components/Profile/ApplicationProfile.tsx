@@ -123,25 +123,6 @@ const ApplicationProfile = ({
 
   const applicantMoreInfo = getApplicantMoreInfo(application)
 
-  const test = [
-    {
-      title: 'Samtals heildarlaun',
-      content: 'kr.',
-    },
-    {
-      title: 'Meðaltal',
-      content: 'kr',
-    },
-    {
-      title: 'Persónuafsláttur',
-      content: 'kr',
-    },
-    {
-      title: 'Samtals staðgreiðsla',
-      content: 'kr',
-    },
-  ]
-
   const nationalRegistryInfo = getNationalRegistryInfo(application)
 
   const modalInfo = getAidAmountModalInfo(
