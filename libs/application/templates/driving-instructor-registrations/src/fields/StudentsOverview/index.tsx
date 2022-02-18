@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import {
   Button,
-  Text,
   Box,
   Input,
   Pagination,
@@ -140,9 +139,12 @@ const StudentsOverview = ({ application }: Data) => {
                   )
                 })
               ) : (
-                <Text marginY={2}>
-                  {formatMessage(m.studentsOverviewNoStudentFound)}
-                </Text>
+                <T.Row>
+                  <T.Data>{formatMessage(m.studentsOverviewNoStudentFound)}</T.Data>
+                  <T.Data></T.Data>
+                  <T.Data></T.Data>
+                  <T.Data></T.Data>
+                </T.Row>
               )}
             </T.Body>
           </T.Table>
