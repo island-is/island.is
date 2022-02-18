@@ -57,6 +57,8 @@
 /libs/application/templates/p-sign/                                                           @island-is/kosmos-kaos
 /libs/application/template-api-modules/src/lib/modules/templates/p-sign-submission            @island-is/kosmos-kaos
 /libs/message-queue/                                                                          @island-is/kosmos-kaos
+/libs/application/templates/example-payment/                                                  @island-is/kosmos-kaos
+/libs/application/template-api-modules/src/lib/modules/templates/example-payment-actions      @island-is/kosmos-kaos
 
 /libs/clients/auth-public-api/                                                                @island-is/aranja
 /libs/clients/middlewares/                                                                    @island-is/aranja
