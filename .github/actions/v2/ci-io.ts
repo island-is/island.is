@@ -157,7 +157,7 @@ export class LocalRunner implements GitActionStatus {
         cwd: monorepoRoot,
       },
     )
-    return Promise.resolve(printAffected.split(' ').map((s) => s.trim()))
+    return Promise.resolve(printAffected.split(',').map((s) => s.trim()))
   }
 
   async getBranchBuilds(
