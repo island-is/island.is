@@ -70,26 +70,24 @@ export const ImpactList = (props: ImpactListProps) => {
   }
 
   const deleteImpact = async (impact: DraftImpactForm) => {
-    if (window.confirm(t(impactMsgs.deleteConfirmation))) {
-      if (impact.type === 'amend') {
-        await deleteDraftRegulationChange({
-          variables: {
-            input: {
-              id: impact.id,
-            },
+    if (impact.type === 'amend') {
+      await deleteDraftRegulationChange({
+        variables: {
+          input: {
+            id: impact.id,
           },
-        })
-      } else {
-        await deleteDraftRegulationCancel({
-          variables: {
-            input: {
-              id: impact.id,
-            },
+        },
+      })
+    } else {
+      await deleteDraftRegulationCancel({
+        variables: {
+          input: {
+            id: impact.id,
           },
-        })
-      }
-      document.location.reload()
+        },
+      })
     }
+    document.location.reload()
   }
 
   return (

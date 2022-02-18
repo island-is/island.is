@@ -117,14 +117,10 @@ export const EditChange = (props: EditChangeProp) => {
               name={change.name}
               impact={change}
               onChangeDate={changeDate}
-              tag={
-                regulation?.type && {
-                  second:
-                    regulation?.type === 'base'
-                      ? 'Stofnreglugerð'
-                      : 'Breytingareglugerð',
-                }
-              }
+              tag={{
+                first: 'Textabreyting reglugerðar',
+                second: 'Stofnreglugerð',
+              }}
             />
           </GridColumn>
         </GridRow>
