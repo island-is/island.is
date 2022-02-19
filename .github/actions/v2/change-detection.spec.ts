@@ -78,7 +78,11 @@ describe('Change detection', () => {
         headBranch,
         baseBranch,
       )
-      expect(actual).toBe(mainGoodBeforeBadSha)
+      expect(actual).toStrictEqual({
+        sha: mainGoodBeforeBadSha,
+        run_number: 2,
+        branch: baseBranch,
+      })
     })
 
     it('should use PR run when available', async () => {
@@ -96,7 +100,11 @@ describe('Change detection', () => {
         headBranch,
         baseBranch,
       )
-      expect(actual).toBe(fixGoodSha)
+      expect(actual).toStrictEqual({
+        sha: fixGoodSha,
+        run_number: 2,
+        branch: headBranch,
+      })
     })
     it('prefer lighter branch run over heavier PR run', async () => {
       githubApi
@@ -113,7 +121,11 @@ describe('Change detection', () => {
         headBranch,
         baseBranch,
       )
-      expect(actual).toBe(majorChangeSha)
+      expect(actual).toStrictEqual({
+        sha: majorChangeSha,
+        run_number: 3,
+        branch: baseBranch,
+      })
     })
     it('should trigger a full rebuild if no good commits found neither on PR nor on base branch', async () => {
       githubApi.getLastGoodPRRun(headBranch).resolves(undefined)
@@ -177,7 +189,11 @@ describe('Change detection', () => {
         headBranch,
         baseBranch,
       )
-      expect(actual).toBe(mainGoodBeforeBadSha)
+      expect(actual).toStrictEqual({
+        sha: mainGoodBeforeBadSha,
+        run_number: 2,
+        branch: baseBranch,
+      })
     })
 
     it('should prefer the lighter run between a PR run a base branch run', async () => {
@@ -195,7 +211,11 @@ describe('Change detection', () => {
         headBranch,
         baseBranch,
       )
-      expect(actual).toBe(majorChangeSha)
+      expect(actual).toStrictEqual({
+        sha: majorChangeSha,
+        run_number: 3,
+        branch: baseBranch,
+      })
     })
     it('prefer lighter branch run over heavier PR run', async () => {
       githubApi
@@ -212,7 +232,11 @@ describe('Change detection', () => {
         headBranch,
         baseBranch,
       )
-      expect(actual).toBe(majorChangeSha)
+      expect(actual).toStrictEqual({
+        sha: majorChangeSha,
+        run_number: 3,
+        branch: baseBranch,
+      })
     })
   })
   describe('Release branch', () => {
@@ -246,7 +270,7 @@ describe('Change detection', () => {
           headBranch,
           baseBranch,
         ),
-      ).toBe(hotfix1)
+      ).toStrictEqual({ sha: hotfix1, run_number: 2, branch: headBranch })
     })
     it('should take base branch commits if no good on head branch', async () => {
       githubApi
@@ -264,7 +288,11 @@ describe('Change detection', () => {
           headBranch,
           baseBranch,
         ),
-      ).toBe(goodBeforeBadSha)
+      ).toStrictEqual({
+        sha: goodBeforeBadSha,
+        run_number: 1,
+        branch: baseBranch,
+      })
     })
     it('should trigger a full rebuild if no good commits found neither on head nor base branch', async () => {
       githubApi
@@ -305,7 +333,11 @@ describe('Change detection', () => {
           headBranch,
           baseBranch,
         ),
-      ).toBe(goodBeforeBadSha)
+      ).toStrictEqual({
+        sha: goodBeforeBadSha,
+        run_number: 1,
+        branch: baseBranch,
+      })
     })
     it('should trigger a full rebuild if no good commits found neither on head nor base branch', async () => {
       githubApi

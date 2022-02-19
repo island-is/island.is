@@ -1,13 +1,21 @@
 import { SimpleGit } from 'simple-git'
 import { GitActionStatus } from './git-action-status'
 
+type LastGoodBuild =
+  | {
+      sha: string
+      run_number: number
+      branch: string
+    }
+  | 'rebuild'
+
 export async function findBestGoodRefBranch(
   commitScore: (services) => number,
   git: SimpleGit,
   githubApi: GitActionStatus,
   headBranch: string,
   baseBranch: string,
-): Promise<string | 'rebuild'> {
+): Promise<LastGoodBuild> {
   const br2 = await git.raw('merge-base', baseBranch, headBranch)
   const commits = (
     await git.raw('rev-list', '--date-order', 'HEAD~1', `${br2.trim()}`)
@@ -16,13 +24,23 @@ export async function findBestGoodRefBranch(
     .filter((s) => s.length > 0)
     .map((c) => c.substr(0, 7))
   const builds = await githubApi.getLastGoodBranchBuildRun(headBranch, commits)
-  if (builds) return builds.head_commit
+  if (builds)
+    return {
+      sha: builds.head_commit,
+      run_number: builds.run_nr,
+      branch: headBranch,
+    }
 
   const baseCommits = await githubApi.getLastGoodBranchBuildRun(
     baseBranch,
     commits,
   )
-  if (baseCommits) return baseCommits.head_commit
+  if (baseCommits)
+    return {
+      sha: baseCommits.head_commit,
+      run_number: baseCommits.run_nr,
+      branch: baseBranch,
+    }
 
   return 'rebuild'
 }
@@ -33,12 +51,17 @@ export async function findBestGoodRefPR(
   githubApi: GitActionStatus,
   headBranch: string,
   baseBranch: string,
-): Promise<string | 'rebuild'> {
+): Promise<LastGoodBuild> {
   const lastChanges = await git.log({ maxCount: 1 })
   const currentChange = lastChanges.latest
 
   const runs = await githubApi.getLastGoodPRRun(headBranch)
-  const prBuilds: { distance: number; hash: string; run_nr: number }[] = []
+  const prBuilds: {
+    distance: number
+    hash: string
+    run_nr: number
+    branch: string
+  }[] = []
   if (runs) {
     try {
       const previousRun = runs
@@ -56,6 +79,7 @@ export async function findBestGoodRefPR(
         distance: diffWeight(distance),
         hash: previousRun.head_commit,
         run_nr: previousRun.run_nr,
+        branch: headBranch,
       })
     } finally {
       await git.checkout(headBranch)
@@ -87,9 +111,15 @@ export async function findBestGoodRefPR(
       distance: diffWeight(affectedComponents),
       hash: baseGoodBuilds.head_commit,
       run_nr: baseGoodBuilds.run_nr,
+      branch: baseBranch,
     })
   }
   prBuilds.sort((a, b) => (a.distance > b.distance ? 1 : -1))
-  if (prBuilds.length > 0) return prBuilds[0].hash
+  if (prBuilds.length > 0)
+    return {
+      sha: prBuilds[0].hash,
+      run_number: prBuilds[0].run_nr,
+      branch: prBuilds[0].branch,
+    }
   return 'rebuild'
 }
