@@ -28,7 +28,7 @@ export async function findBestGoodRefBranch(
 }
 
 export async function findBestGoodRefPR(
-  commitScore: (services) => number,
+  diffWeight: (services) => number,
   git: SimpleGit,
   githubApi: GitActionStatus,
   headBranch: string,
@@ -53,7 +53,7 @@ export async function findBestGoodRefPR(
         lastMergeCommit.hash,
       )
       prBuilds.push({
-        distance: commitScore(distance),
+        distance: diffWeight(distance),
         hash: previousRun.head_commit,
         run_nr: previousRun.run_nr,
       })
@@ -61,10 +61,14 @@ export async function findBestGoodRefPR(
       await git.checkout(headBranch)
     }
   }
-  const br2 = await git.raw('merge-base', baseBranch, headBranch)
-  // return br2.trim()
+  const mergeBaseCommit = await git.raw('merge-base', baseBranch, headBranch)
   const commits = (
-    await git.raw('rev-list', '--date-order', 'HEAD~1', `${br2.trim()}`)
+    await git.raw(
+      'rev-list',
+      '--date-order',
+      'HEAD~1',
+      `${mergeBaseCommit.trim()}`,
+    )
   )
     .split('\n')
     .filter((s) => s.length > 0)
@@ -74,8 +78,13 @@ export async function findBestGoodRefPR(
     commits,
   )
   if (baseGoodBuilds) {
+    let affectedComponents = await githubApi.calculateDistance(
+      git,
+      currentChange.hash,
+      baseGoodBuilds.head_commit,
+    )
     prBuilds.push({
-      distance: 1,
+      distance: diffWeight(affectedComponents),
       hash: baseGoodBuilds.head_commit,
       run_nr: baseGoodBuilds.run_nr,
     })
