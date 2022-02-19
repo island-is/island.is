@@ -39,24 +39,21 @@ describe('Change detection', () => {
 
   describe('PR', () => {
     let mainGoodBeforeBadSha: string
-    let forkSha: string
-    let fixFailSha1: string
-    let rootSha: string
     let fixGoodSha: string
     let mainSha1: string
     let mainSha2: string
     beforeEach(async () => {
-      const br = await git.checkoutLocalBranch(baseBranch)
-      rootSha = await makeChange(git, 'a', 'A-good')
+      await git.checkoutLocalBranch(baseBranch)
+      await makeChange(git, 'a', 'A-good')
       mainGoodBeforeBadSha = await makeChange(git, 'a', 'B-good')
-      forkSha = await makeChange(git, 'a', 'C-bad')
+      await makeChange(git, 'a', 'C-bad')
       await git.checkoutBranch('fix2', baseBranch)
-      const fix2Sha = await makeChange(git, 'a', 'C1-bad')
+      await makeChange(git, 'a', 'C1-bad')
 
       await git.checkoutBranch(headBranch, baseBranch)
-      const fixFailSha = await makeChange(git, 'b', 'D-bad')
-      fixFailSha1 = await makeChange(git, 'b', 'D2-good')
-      const fixFailSha2 = await makeChange(git, 'c', 'D3-good')
+      await makeChange(git, 'b', 'D-bad')
+      await makeChange(git, 'b', 'D2-good')
+      await makeChange(git, 'c', 'D3-good')
 
       fixGoodSha = await makeChange(git, 'b', 'E-good')
       await git.checkout(baseBranch)
@@ -114,7 +111,7 @@ describe('Change detection', () => {
       )
       expect(actual).toBe(mainSha2)
     })
-    it('should rebuild from the ground up when no good changes', async () => {
+    it('should trigger a full rebuild if no good commits found neither on PR nor on base branch', async () => {
       githubApi.getLastGoodPRRun(headBranch).resolves(undefined)
       githubApi
         .getLastGoodBranchBuildRun(baseBranch, Arg.any())
@@ -134,18 +131,16 @@ describe('Change detection', () => {
     const headBranch = 'release-13.3.0'
     let goodBeforeBadSha: string
     let hotfix1: string
-    let hotfix2: string
-    let hotfix3: string
     beforeEach(async () => {
-      const br = await git.checkoutLocalBranch(baseBranch)
-      const firstGoodSha = await makeChange(git, 'a', 'A-good')
+      await git.checkoutLocalBranch(baseBranch)
+      await makeChange(git, 'a', 'A-good')
       goodBeforeBadSha = await makeChange(git, 'a', 'B-good')
-      const badSha = await makeChange(git, 'a', 'C-bad')
-      const fixSha = await makeChange(git, 'a', 'D-good')
+      await makeChange(git, 'a', 'C-bad')
+      await makeChange(git, 'a', 'D-good')
       await git.checkoutBranch(headBranch, baseBranch)
       hotfix1 = await makeChange(git, 'b', 'D-bad')
-      hotfix2 = await makeChange(git, 'b', 'D2-good')
-      hotfix3 = await makeChange(git, 'c', 'D3-good')
+      await makeChange(git, 'b', 'D2-good')
+      await makeChange(git, 'c', 'D3-good')
     })
     it('should prefer head branch commits over base branch ones', async () => {
       githubApi
@@ -165,7 +160,7 @@ describe('Change detection', () => {
         ),
       ).toBe(hotfix1)
     })
-    it('should take base branch commits if no good on this branch', async () => {
+    it('should take base branch commits if no good on head branch', async () => {
       githubApi
         .getLastGoodBranchBuildRun(baseBranch, Arg.any())
         .resolves({ head_commit: goodBeforeBadSha, run_nr: 1 })
@@ -183,7 +178,7 @@ describe('Change detection', () => {
         ),
       ).toBe(goodBeforeBadSha)
     })
-    it('should trigger a full rebuild if no good commits found', async () => {
+    it('should trigger a full rebuild if no good commits found neither on head nor base branch', async () => {
       githubApi
         .getLastGoodBranchBuildRun(baseBranch, Arg.any())
         .resolves(undefined)
@@ -199,9 +194,46 @@ describe('Change detection', () => {
       ).toBe('rebuild')
     })
   })
-  describe('Pending', () => {
-    it.todo('PR workflow uses build workflow (sharing tests)')
-    it.todo('PR workflow uses PR workflow when available')
+  describe('Main branch', () => {
+    const headBranch = baseBranch
+    let goodBeforeBadSha: string
+    beforeEach(async () => {
+      await git.checkoutLocalBranch(baseBranch)
+      await makeChange(git, 'a', 'A-good')
+      goodBeforeBadSha = await makeChange(git, 'a', 'B-good')
+      await makeChange(git, 'a', 'C-bad')
+      await makeChange(git, 'a', 'D-good')
+    })
+    it('should take last good branch build', async () => {
+      githubApi
+        .getLastGoodBranchBuildRun(baseBranch, Arg.any())
+        .resolves({ head_commit: goodBeforeBadSha, run_nr: 1 })
+
+      expect(
+        await findBestGoodRefBranch(
+          (services) => services.length,
+          git,
+          githubApi,
+          headBranch,
+          baseBranch,
+        ),
+      ).toBe(goodBeforeBadSha)
+    })
+    it('should trigger a full rebuild if no good commits found neither on head nor base branch', async () => {
+      githubApi
+        .getLastGoodBranchBuildRun(baseBranch, Arg.any())
+        .resolves(undefined)
+
+      expect(
+        await findBestGoodRefBranch(
+          (services) => services.length,
+          git,
+          githubApi,
+          baseBranch,
+          baseBranch,
+        ),
+      ).toBe('rebuild')
+    })
   })
 })
 
