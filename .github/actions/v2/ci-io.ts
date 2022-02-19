@@ -12,24 +12,52 @@ import { ActionsListWorkflowRunsForRepoResponseData } from '../detection'
 import { Endpoints } from '@octokit/types'
 import { join } from 'path'
 
-const octokit = new Octokit(
-  // For local development
-  {
-    auth: process.env.GITHUB_TOKEN,
-  },
-)
 const repository = process.env.GITHUB_REPOSITORY || '/'
 const [owner, repo] = repository.split('/')
 const workflow_file_name = 'push.yml'
 const pr_file_name = 'pullrequest.yml'
 export type ActionsListJobsForWorkflowRunResponseData = Endpoints['GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs']['response']['data']
 
-class GitHubWorkflowQueries {
-  async getPushBuildInfo(
+const filterSkippedSuccessBuilds = (
+  run: ActionsListJobsForWorkflowRunResponseData,
+  jobName: string,
+  stepName: string,
+): boolean => {
+  const { jobs } = run
+  const successJob = jobs.find((job) => job.name === jobName)
+  if (successJob) {
+    const { steps } = successJob
+    const announceSuccessStep =
+      steps && steps.find((step) => step.name === stepName)
+    return announceSuccessStep && announceSuccessStep.conclusion === 'success'
+  }
+  return false
+}
+
+export class LocalRunner implements GitActionStatus {
+  constructor(private octokit: Octokit) {}
+  calculateDistance(
+    git: SimpleGit,
+    currentSha: string,
+    olderSha: string,
+  ): Promise<string[]> {
+    const target = 'docker-express'
+    let monorepoRoot = join(__dirname, '..', '..', '..')
+    const printAffected = execSync(
+      `fnm exec npx nx print-affected --target="${target}" --select=tasks.target.project --head=${currentSha} --base=${olderSha}`,
+      {
+        encoding: 'utf-8',
+        cwd: monorepoRoot,
+      },
+    )
+    return Promise.resolve(printAffected.split(',').map((s) => s.trim()))
+  }
+
+  async getLastGoodBranchBuildRun(
     branch: string,
-    commits: string[],
-  ): Promise<{ run_nr: number; sha: string } | 'not found'> {
-    const runsIterator = octokit.paginate.iterator(
+    candidateCommits: string[],
+  ): Promise<BranchWorkflow | undefined> {
+    const runsIterator = this.octokit.paginate.iterator(
       'GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs',
       {
         owner,
@@ -45,7 +73,7 @@ class GitHubWorkflowQueries {
     for await (const workflow_runs of runsIterator) {
       runs.push(
         ...workflow_runs.data.filter((run) =>
-          commits.includes(run.head_sha.slice(0, 7)),
+          candidateCommits.includes(run.head_sha.slice(0, 7)),
         ),
       )
       if (runs.length > 40) break
@@ -65,17 +93,14 @@ class GitHubWorkflowQueries {
       if (
         filterSkippedSuccessBuilds(jobs, 'push-success', 'Announce success')
       ) {
-        return { sha: run.sha, run_nr: run.run_number }
+        return { head_commit: run.sha, run_nr: run.run_number }
       }
     }
-    return 'not found'
+    return undefined
   }
-  async getPullRequestBuildInfo(
-    branch: string,
-  ): Promise<
-    { headSha: string; baseSha: string; run_nr: number } | 'not found'
-  > {
-    const runsIterator = octokit.paginate.iterator(
+
+  async getLastGoodPRRun(branch: string): Promise<PRWorkflow | undefined> {
+    const runsIterator = this.octokit.paginate.iterator(
       'GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs',
       {
         owner,
@@ -109,81 +134,17 @@ class GitHubWorkflowQueries {
       const jobs = await this.getJobs(`GET ${run.jobs_url}`)
       if (filterSkippedSuccessBuilds(jobs, 'success', 'Announce success')) {
         return {
-          headSha: run.pull_requests[0].head.sha,
+          head_commit: run.pull_requests[0].head.sha,
           run_nr: run.run_number,
-          baseSha: run.pull_requests[0].base.sha,
+          base_commit: run.pull_requests[0].base.sha,
         }
       }
     }
-    return 'not found'
+    return undefined
   }
-
-  async getJobs(
+  private async getJobs(
     jobs_url: string,
   ): Promise<ActionsListJobsForWorkflowRunResponseData> {
-    return (await octokit.request(jobs_url)).data
-  }
-}
-
-const filterSkippedSuccessBuilds = (
-  run: ActionsListJobsForWorkflowRunResponseData,
-  jobName: string,
-  stepName: string,
-): boolean => {
-  const { jobs } = run
-  const successJob = jobs.find((job) => job.name === jobName)
-  if (successJob) {
-    const { steps } = successJob
-    const announceSuccessStep =
-      steps && steps.find((step) => step.name === stepName)
-    return announceSuccessStep && announceSuccessStep.conclusion === 'success'
-  }
-  return false
-}
-
-export class LocalRunner implements GitActionStatus {
-  calculateDistance(
-    git: SimpleGit,
-    currentSha: string,
-    olderSha: string,
-  ): Promise<string[]> {
-    const target = 'docker-express'
-    let monorepoRoot = join(__dirname, '..', '..', '..')
-    const printAffected = execSync(
-      `fnm exec npx nx print-affected --target="${target}" --select=tasks.target.project --head=${currentSha} --base=${olderSha}`,
-      {
-        encoding: 'utf-8',
-        cwd: monorepoRoot,
-      },
-    )
-    return Promise.resolve(printAffected.split(',').map((s) => s.trim()))
-  }
-
-  async getLastGoodBranchBuildRun(
-    branch: string,
-    candidateCommits: string[],
-  ): Promise<BranchWorkflow | undefined> {
-    const d = await new GitHubWorkflowQueries().getPushBuildInfo(
-      branch,
-      candidateCommits,
-    )
-    if (d === 'not found') {
-      return Promise.resolve(undefined)
-    } else {
-      return Promise.resolve({ head_commit: d.sha, run_nr: d.run_nr })
-    }
-  }
-
-  async getLastGoodPRRun(branch: string): Promise<PRWorkflow | undefined> {
-    const d = await new GitHubWorkflowQueries().getPullRequestBuildInfo(branch)
-    if (d === 'not found') {
-      return Promise.resolve(undefined)
-    } else {
-      return Promise.resolve({
-        head_commit: d.headSha,
-        base_commit: d.baseSha,
-        run_nr: d.run_nr,
-      })
-    }
+    return (await this.octokit.request(jobs_url)).data
   }
 }
