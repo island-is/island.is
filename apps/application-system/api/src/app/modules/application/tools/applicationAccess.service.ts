@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 
-import { Application } from '../application.model'
-import { ApplicationService } from '../application.service'
+import { Application } from '@island.is/application/nest/application'
+import { ApplicationService } from '@island.is/application/nest/application'
 
 @Injectable()
 export class ApplicationAccessService {

@@ -124,8 +124,21 @@ export class ApplicationService {
     }
   }
 
-  async create(typeId: ApplicationTypes): Promise<Application> {
-    return this.applicationModel.create({ typeId })
+  async create(
+    application: Partial<
+      Pick<
+        Application,
+        | 'answers'
+        | 'applicant'
+        | 'assignees'
+        | 'attachments'
+        | 'state'
+        | 'status'
+        | 'typeId'
+      >
+    >,
+  ): Promise<Application> {
+    return this.applicationModel.create(application)
   }
 
   async update(

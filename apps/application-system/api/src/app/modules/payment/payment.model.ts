@@ -8,8 +8,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { Application } from '../application/application.model'
-
+import { Application } from '@island.is/application/nest/application'
 @Table({
   tableName: 'payment',
   timestamps: true,
