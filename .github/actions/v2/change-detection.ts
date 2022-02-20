@@ -2,8 +2,7 @@ import { SimpleGit } from 'simple-git'
 import { GitActionStatus } from './git-action-status'
 import Debug from 'debug'
 
-const gitLog = Debug('git')
-const logMethod1 = Debug('findBestGoodRefBranch')
+const app = Debug('change-detection')
 type LastGoodBuild =
   | {
       sha: string
@@ -19,11 +18,10 @@ export async function findBestGoodRefBranch(
   headBranch: string,
   baseBranch: string,
 ): Promise<LastGoodBuild> {
-  logMethod1(
-    `Starting with head branch ${headBranch} and base branch ${baseBranch}`,
-  )
+  const log = app.extend('findBestGoodRefBranch')
+  log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`)
   const mergeCommit = await git.raw('merge-base', baseBranch, headBranch)
-  gitLog(`Merge commit is ${mergeCommit}`)
+  app(`Merge commit is ${mergeCommit}`)
   const commits = (
     await git.raw(
       'rev-list',
@@ -65,22 +63,25 @@ export async function findBestGoodRefPR(
   headBranch: string,
   baseBranch: string,
 ): Promise<LastGoodBuild> {
+  const log = app.extend('findBestGoodRefPR')
+  log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`)
   const lastChanges = await git.log({ maxCount: 1 })
   const currentChange = lastChanges.latest
 
-  const runs = await githubApi.getLastGoodPRRun(headBranch)
+  const prRun = await githubApi.getLastGoodPRRun(headBranch)
   const prBuilds: {
     distance: number
     hash: string
     run_nr: number
     branch: string
   }[] = []
-  if (runs) {
+  if (prRun) {
+    log(`Found a PR run candidate: ${JSON.stringify(prRun)}`)
     try {
-      const previousRun = runs
       const tempBranch = `${headBranch}-${Math.round(Math.random() * 1000000)}`
-      await git.checkoutBranch(tempBranch, previousRun.base_commit)
-      await git.merge({ [previousRun.head_commit]: null })
+      await git.checkoutBranch(tempBranch, prRun.base_commit)
+      await git.merge({ [prRun.head_commit]: null })
+      log(`Simulated previous PR merge commit`)
       const lastMerge = await git.log({ maxCount: 1 })
       const lastMergeCommit = lastMerge.latest
       const distance = await githubApi.calculateDistance(
@@ -88,10 +89,11 @@ export async function findBestGoodRefPR(
         currentChange.hash,
         lastMergeCommit.hash,
       )
+      log(`Affected components since candidate PR run are ${distance}`)
       prBuilds.push({
         distance: diffWeight(distance),
-        hash: previousRun.head_commit,
-        run_nr: previousRun.run_nr,
+        hash: prRun.head_commit,
+        run_nr: prRun.run_nr,
         branch: headBranch,
       })
     } finally {
