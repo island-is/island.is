@@ -47,7 +47,6 @@ if (process.env.INIT_SCHEMA === 'true') {
   })
 }
 
-@Global()
 @Module({
   imports: [
     PaymentModule.register({
@@ -79,6 +78,5 @@ if (process.env.INIT_SCHEMA === 'true') {
     ApplicationAccessService,
     ApplicationLifeCycleService,
   ],
-  exports: [ApplicationService, APPLICATION_CONFIG, AwsService],
 })
 export class ApplicationModule {}
