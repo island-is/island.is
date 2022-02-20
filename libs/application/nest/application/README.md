@@ -1,4 +1,4 @@
-# application-nest-application
+# Application Nest Application
 
 This library was generated with [Nx](https://nx.dev).
 
