@@ -1,6 +1,9 @@
 import { SimpleGit } from 'simple-git'
 import { GitActionStatus } from './git-action-status'
+import debug from 'debug'
 
+const gitLog = debug('git')
+const logMethod1 = debug('findBestGoodRefBranch')
 type LastGoodBuild =
   | {
       sha: string
@@ -16,9 +19,13 @@ export async function findBestGoodRefBranch(
   headBranch: string,
   baseBranch: string,
 ): Promise<LastGoodBuild> {
-  const br2 = await git.raw('merge-base', baseBranch, headBranch)
+  logMethod1(
+    `Starting with head branch ${headBranch} and base branch ${baseBranch}`,
+  )
+  const mergeCommit = await git.raw('merge-base', baseBranch, headBranch)
+  gitLog(`Merge commit is ${mergeCommit}`)
   const commits = (
-    await git.raw('rev-list', '--date-order', 'HEAD~1', `${br2.trim()}`)
+    await git.raw('rev-list', '--date-order', 'HEAD~1', `${mergeCommit.trim()}`)
   )
     .split('\n')
     .filter((s) => s.length > 0)

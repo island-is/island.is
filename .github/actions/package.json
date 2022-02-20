@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "repository": "git@github.com:island-is/island.is.git",
-  "author": "Petar Shomov <petar@andes.is>",
+  "author": "DevOps team",
   "license": "MIT",
   "scripts": {
     "build": "./node_modules/.bin/ncc build ./main.ts -o ./dist",
+    "build-v2": "./node_modules/.bin/ncc build ./v2/ci-runner.ts -o ./dist-v2",
     "test": "./node_modules/.bin/jest"
   },
   "dependencies": {
@@ -17,8 +18,10 @@
   "devDependencies": {
     "@fluffy-spoon/substitute": "^1.208.0",
     "@octokit/rest": "18.12.0",
+    "@types/debug": "4.1.7",
     "@types/jest": "^27.4.0",
     "@zeit/ncc": "^0.22.3",
+    "debug": "4.3.3",
     "esbuild-runner": "2.2.1",
     "jest": "27.5.1",
     "simple-git": "3.1.1",
