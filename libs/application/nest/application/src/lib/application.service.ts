@@ -5,11 +5,9 @@ import {
   ExternalData,
   FormValue,
   ApplicationStatus,
+  ApplicationTypes,
 } from '@island.is/application/core'
-
 import { Application } from './application.model'
-import { CreateApplicationDto } from './dto/createApplication.dto'
-
 import { ApplicationLifecycle } from '@island.is/application/core'
 
 const applicationIsNotSetToBePruned = () => ({
@@ -126,8 +124,8 @@ export class ApplicationService {
     }
   }
 
-  async create(application: CreateApplicationDto): Promise<Application> {
-    return this.applicationModel.create(application)
+  async create(typeId: ApplicationTypes): Promise<Application> {
+    return this.applicationModel.create({ typeId })
   }
 
   async update(

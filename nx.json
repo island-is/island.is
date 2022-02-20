@@ -169,6 +169,9 @@
     "application-graphql": {
       "tags": []
     },
+    "application-nest-application": {
+      "tags": []
+    },
     "application-system-api": {
       "tags": []
     },
@@ -540,6 +543,9 @@
       "tags": []
     },
     "nest-audit": {
+      "tags": []
+    },
+    "nest-aws": {
       "tags": []
     },
     "nest-config": {

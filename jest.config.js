@@ -198,5 +198,7 @@ module.exports = {
     '<rootDir>/libs/testing/containers',
     '<rootDir>/libs/testing/fixtures',
     '<rootDir>/libs/testing/nest',
+    '<rootDir>/libs/application/nest/application',
+    '<rootDir>/libs/nest/aws',
   ],
 }
