@@ -131,7 +131,7 @@ export class UserProfileController {
           emailVerified: emailVerified.confirmed,
         }
       }
-      userProfileDto = omit(userProfileDto, 'email')
+      // userProfileDto = omit(userProfileDto, 'email')
     }
 
     if (userProfileDto.mobilePhoneNumber) {
@@ -151,7 +151,7 @@ export class UserProfileController {
           mobilePhoneNumberVerified: phoneVerified.confirmed,
         }
       }
-      userProfileDto = omit(userProfileDto, 'mobilePhoneNumber')
+      // userProfileDto = omit(userProfileDto, 'mobilePhoneNumber')
     }
 
     const userProfile = await this.userProfileService.create(userProfileDto)
@@ -183,6 +183,9 @@ export class UserProfileController {
     @CurrentUser()
     user: User,
   ): Promise<UserProfile> {
+    if (nationalId != user.nationalId) {
+      throw new ForbiddenException()
+    }
     // findOneByNationalId must be first as it implictly checks if the
     // route param matches the authenticated user.
     const updatedFields = Object.keys(userProfileToUpdate)
@@ -200,7 +203,7 @@ export class UserProfileController {
           mobilePhoneNumberVerified: phoneVerified.confirmed,
         }
       }
-      userProfileToUpdate = omit(userProfileToUpdate, 'mobilePhoneNumber')
+      // userProfileToUpdate = omit(userProfileToUpdate, 'mobilePhoneNumber')
     }
 
     if (userProfileToUpdate.email) {
@@ -216,7 +219,7 @@ export class UserProfileController {
           emailVerified: emailVerified.confirmed,
         }
       }
-      userProfileToUpdate = omit(userProfileToUpdate, 'email')
+      // userProfileToUpdate = omit(userProfileToUpdate, 'email')
     }
 
     const {
