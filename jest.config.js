@@ -103,6 +103,7 @@ module.exports = {
     '<rootDir>/libs/application/ui-components',
     '<rootDir>/libs/application/ui-fields',
     '<rootDir>/libs/application/ui-shell',
+    '<rootDir>/libs/application/nest/application',
     '<rootDir>/libs/application/templates/accident-notification',
     '<rootDir>/libs/application/templates/complaints-to-althingi-ombudsman',
     '<rootDir>/libs/application/templates/criminal-record',
@@ -159,6 +160,7 @@ module.exports = {
     '<rootDir>/libs/judicial-system/formatters',
     '<rootDir>/libs/judicial-system/types',
     '<rootDir>/libs/nest/audit',
+    '<rootDir>/libs/nest/aws',
     '<rootDir>/libs/nest/config',
     '<rootDir>/libs/nest/feature-flags',
     '<rootDir>/libs/nest/problem',
@@ -198,7 +200,5 @@ module.exports = {
     '<rootDir>/libs/testing/containers',
     '<rootDir>/libs/testing/fixtures',
     '<rootDir>/libs/testing/nest',
-    '<rootDir>/libs/application/nest/application',
-    '<rootDir>/libs/nest/aws',
   ],
 }
