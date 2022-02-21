@@ -7,6 +7,7 @@ export const ApplicationFragment = gql`
     modified
     applicant
     assignees
+    actors
     state
     actionCard {
       title

@@ -70,6 +70,11 @@ export class ApplicationResponseDto {
 
   @ApiProperty()
   @Expose()
+  @IsArray()
+  actors!: string[]
+
+  @ApiProperty()
+  @Expose()
   @IsString()
   state!: string
 

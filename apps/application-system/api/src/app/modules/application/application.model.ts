@@ -53,6 +53,12 @@ export class Application extends Model<Application> {
   assignees!: string[]
 
   @Column({
+    type: DataType.ARRAY(DataType.STRING),
+  })
+  @ApiProperty()
+  actors!: string[]
+
+  @Column({
     type: DataType.STRING,
   })
   @ApiProperty()

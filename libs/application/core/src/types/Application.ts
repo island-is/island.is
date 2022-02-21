@@ -34,6 +34,7 @@ export interface Application {
   actionCard?: ActionCardMetaData
   applicant: string
   assignees: string[]
+  actors: string[]
   typeId: ApplicationTypes
   modified: Date
   created: Date

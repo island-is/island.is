@@ -122,6 +122,7 @@ describe('formatText', () => {
   const application: Application = {
     answers: { someAnswer: 'awesome' },
     assignees: [],
+    actors: [],
     applicant: '',
     created: new Date(),
     externalData: {},
