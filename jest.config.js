@@ -61,6 +61,7 @@ module.exports = {
     '<rootDir>/libs/nova-sms',
     '<rootDir>/libs/plausible',
     '<rootDir>/libs/regulations',
+    '<rootDir>/libs/residence-history',
     '<rootDir>/libs/user-monitoring',
     '<rootDir>/libs/vmst-client',
     '<rootDir>/libs/air-discount-scheme/consts',
@@ -197,6 +198,5 @@ module.exports = {
     '<rootDir>/libs/testing/containers',
     '<rootDir>/libs/testing/fixtures',
     '<rootDir>/libs/testing/nest',
-    '<rootDir>/libs/residence-history',
   ],
 }
