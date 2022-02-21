@@ -111,7 +111,7 @@ export const ImpactList = (props: ImpactListProps) => {
           {Object.keys(impacts).map((impGrp, i) => {
             const impactGroup = impacts[impGrp]
             return (
-              <div className={s.impactGroup} key={impGrp + '-' + i}>
+              <Stack space={3} key={impGrp + '-' + i}>
                 <Text variant="h4" as="h4" marginTop={i === 0 ? 0 : 5}>
                   Breytingar á{' '}
                   {impGrp === 'self'
@@ -174,7 +174,7 @@ export const ImpactList = (props: ImpactListProps) => {
                     />
                   )
                 })}
-              </div>
+              </Stack>
             )
           })}
 
