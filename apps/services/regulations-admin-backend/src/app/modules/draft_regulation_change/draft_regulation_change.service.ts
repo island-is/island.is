@@ -10,6 +10,7 @@ import {
   UpdateDraftRegulationChangeDto,
 } from './dto'
 import { DraftRegulationChangeModel } from './draft_regulation_change.model'
+import { RegQueryName, slugToName } from '@island.is/regulations'
 
 @Injectable()
 export class DraftRegulationChangeService {
@@ -64,6 +65,16 @@ export class DraftRegulationChangeService {
     return this.draftRegulationChangeModel.destroy({
       where: {
         changing_id: changingId,
+      },
+    })
+  }
+
+  async findAllByName(
+    regulation: string,
+  ): Promise<DraftRegulationChangeModel[]> {
+    return this.draftRegulationChangeModel.findAll({
+      where: {
+        regulation: slugToName(regulation as RegQueryName),
       },
     })
   }

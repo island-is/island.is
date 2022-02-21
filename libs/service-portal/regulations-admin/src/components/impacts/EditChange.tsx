@@ -13,7 +13,10 @@ import { DraftChangeForm, RegDraftForm } from '../../state/types'
 import { PlainText, toISODate } from '@island.is/regulations'
 import { LayoverModal } from './LayoverModal'
 import { ImpactModalTitle } from './ImpactModalTitle'
-import { useGetCurrentRegulationFromApiQuery } from '../../utils/dataHooks'
+import {
+  useGetCurrentRegulationFromApiQuery,
+  useGetRegulationImpactsQuery,
+} from '../../utils/dataHooks'
 import {
   CREATE_DRAFT_REGULATION_CHANGE,
   UPDATE_DRAFT_REGULATION_CHANGE,
@@ -49,6 +52,9 @@ export const EditChange = (props: EditChangeProp) => {
     data: regulation,
     loading /* , error */,
   } = useGetCurrentRegulationFromApiQuery(activeChange.name)
+
+  const { data: draftImpacts } = useGetRegulationImpactsQuery(activeChange.name)
+  console.log({ draftImpacts })
 
   const changeDate = (newDate: Date | undefined) => {
     setActiveChange({

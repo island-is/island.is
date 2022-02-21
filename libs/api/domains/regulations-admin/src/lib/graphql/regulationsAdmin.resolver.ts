@@ -35,6 +35,7 @@ import {
   DraftRegulationPdfDownloadModel,
   DraftRegulationSummaryModel,
 } from './models'
+import { GetRegulationImpactsInput } from './dto/getRegulationImpactsByName.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -55,6 +56,17 @@ export class RegulationsAdminResolver {
   ) {
     return await this.regulationsAdminClientService.getDraftRegulation(
       input.draftId,
+      user.authorization,
+    )
+  }
+
+  @Query(() => graphqlTypeJson)
+  async getRegulationImpactsByName(
+    @Args('input') input: GetRegulationImpactsInput,
+    @CurrentUser() user: User,
+  ) {
+    return await this.regulationsAdminApiService.getImpactsByName(
+      input.regulation,
       user.authorization,
     )
   }

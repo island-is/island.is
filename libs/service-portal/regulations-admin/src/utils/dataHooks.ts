@@ -2,11 +2,16 @@ import { useMemo, useState } from 'react'
 import { useHistory } from 'react-router'
 import { Query } from '@island.is/api/schema'
 import { gql, useQuery, useMutation, ApolloError } from '@apollo/client'
-import { DraftImpactName, RegulationDraft } from '@island.is/regulations/admin'
+import {
+  DraftImpact,
+  DraftImpactName,
+  RegulationDraft,
+} from '@island.is/regulations/admin'
 import {
   LawChapter,
   LawChapterSlug,
   MinistryList,
+  nameToSlug,
   PlainText,
   RegName,
   Regulation,
@@ -63,6 +68,37 @@ export const useRegulationDraftQuery = (
   }
   return {
     data: data.getDraftRegulation as RegulationDraft,
+  }
+}
+
+// ---------------------------------------------------------------------------
+
+const RegulationImpactsQuery = gql`
+  query regulationImpactsByName($input: GetRegulationImpactsInput!) {
+    getRegulationImpactsByName(input: $input)
+  }
+`
+
+export const useGetRegulationImpactsQuery = (
+  regulation: string,
+): QueryResult<DraftImpact[]> => {
+  const { loading, error, data } = useQuery(RegulationImpactsQuery, {
+    variables: {
+      input: { regulation: nameToSlug(regulation as RegName) },
+    },
+    fetchPolicy: 'no-cache',
+  })
+
+  if (loading) {
+    return { loading }
+  }
+  if (!data) {
+    return {
+      error: error || new Error(`Error fetching impacts for "${regulation}"`),
+    }
+  }
+  return {
+    data: data.getRegulationImpactsByName as DraftImpact[],
   }
 }
 

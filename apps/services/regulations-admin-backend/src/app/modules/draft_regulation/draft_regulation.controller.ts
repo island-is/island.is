@@ -145,7 +145,10 @@ export class DraftRegulationController {
     type: DraftRegulationModel,
     description: 'Gets a DraftRegulation',
   })
-  async getById(@Param('id') id: string, @CurrentUser() user: User) {
+  async getById(
+    @Param('id') id: string,
+    // @CurrentUser() user: User
+  ) {
     const draftRegulation = await this.draftRegulationService.findById(id)
 
     if (!draftRegulation) {
@@ -153,5 +156,21 @@ export class DraftRegulationController {
     }
 
     return draftRegulation
+  }
+
+  @Scopes('@island.is/regulations:create')
+  @Get('draft_regulation_impacts/:name')
+  @ApiOkResponse({
+    description: 'Gets all DraftRegulationImpacts by RegName',
+  })
+  async getImpactsByName(
+    @Param('name') name: string,
+    // @CurrentUser() user: User,
+  ) {
+    const draftRegulationImpacts = await this.draftRegulationService.getRegulationImpactsByName(
+      name,
+    )
+
+    return draftRegulationImpacts
   }
 }

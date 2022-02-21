@@ -13,7 +13,7 @@ import { DraftRegulationCancelModel } from './draft_regulation_cancel.model'
 import { RegulationsService } from '@island.is/clients/regulations'
 import { DraftRegulationCancel } from '@island.is/regulations/admin'
 import { RegulationViewTypes } from '@island.is/regulations/web'
-import { nameToSlug } from '@island.is/regulations'
+import { nameToSlug, RegQueryName, slugToName } from '@island.is/regulations'
 
 @Injectable()
 export class DraftRegulationCancelService {
@@ -100,6 +100,16 @@ export class DraftRegulationCancelService {
     return this.draftRegulationCancelModel.destroy({
       where: {
         changing_id: draftId,
+      },
+    })
+  }
+
+  async findAllByName(
+    regulation: string,
+  ): Promise<DraftRegulationCancelModel[]> {
+    return this.draftRegulationCancelModel.findAll({
+      where: {
+        regulation: slugToName(regulation as RegQueryName),
       },
     })
   }

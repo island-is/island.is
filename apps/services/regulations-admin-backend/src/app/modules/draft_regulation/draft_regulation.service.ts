@@ -16,6 +16,7 @@ import { DraftRegulationChangeService } from '../draft_regulation_change/draft_r
 import { DraftAuthorService } from '../draft_author/draft_author.service'
 import {
   Author,
+  DraftImpact,
   DraftingStatus,
   DraftRegulationCancel,
   DraftRegulationCancelId,
@@ -179,6 +180,9 @@ export class DraftRegulationService {
       draftRegulation.cancels,
     ) as DraftRegulationCancelModel[]
     sortedCancels.forEach(async (cancel) => {
+      if (!groupedImpacts[cancel.regulation]) {
+        groupedImpacts[cancel.regulation] = []
+      }
       groupedImpacts[cancel.regulation].push({
         id: cancel.id as DraftRegulationCancelId,
         type: 'repeal',
@@ -326,5 +330,21 @@ export class DraftRegulationService {
     }
 
     return authors
+  }
+
+  async getRegulationImpactsByName(
+    regulation: string,
+  ): Promise<(DraftRegulationCancelModel | DraftRegulationChangeModel)[]> {
+    const draftRegulationCancelImpacts = await this.draftRegulationCancelService.findAllByName(
+      regulation,
+    )
+    const draftRegulationChangeImpacts = await this.draftRegulationChangeService.findAllByName(
+      regulation,
+    )
+
+    return sortImpacts([
+      ...draftRegulationChangeImpacts,
+      ...draftRegulationCancelImpacts,
+    ])
   }
 }
