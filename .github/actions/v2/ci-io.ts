@@ -57,7 +57,10 @@ export class LocalRunner implements GitActionStatus {
         cwd: monorepoRoot,
       },
     )
-    let affectedComponents = printAffected.split(',').map((s) => s.trim())
+    let affectedComponents = printAffected
+      .split(',')
+      .map((s) => s.trim())
+      .filter((c) => c.length > 0)
     log(
       `Affected components are ${
         affectedComponents.length
