@@ -332,19 +332,39 @@ export class DraftRegulationService {
     return authors
   }
 
-  async getRegulationImpactsByName(
-    regulation: string,
-  ): Promise<(DraftRegulationCancelModel | DraftRegulationChangeModel)[]> {
-    const draftRegulationCancelImpacts = await this.draftRegulationCancelService.findAllByName(
-      regulation,
-    )
-    const draftRegulationChangeImpacts = await this.draftRegulationChangeService.findAllByName(
-      regulation,
-    )
+  async getRegulationImpactsByName(regulation: string): Promise<DraftImpact[]> {
+    const draftRegulationCancelImpacts = (
+      await this.draftRegulationCancelService.findAllByName(regulation)
+    ).map((imp) => {
+      return {
+        id: imp.id as DraftRegulationCancelId,
+        type: 'repeal',
+        name: imp.regulation,
+        regTitle: imp.regulation,
+        changingId: imp.changing_id,
+        date: imp.date,
+        dropped: imp.dropped,
+      } as DraftRegulationCancel
+    })
 
-    return sortImpacts([
-      ...draftRegulationChangeImpacts,
-      ...draftRegulationCancelImpacts,
-    ])
+    const draftRegulationChangeImpacts = (
+      await this.draftRegulationChangeService.findAllByName(regulation)
+    ).map((imp) => {
+      return {
+        id: imp.id as DraftRegulationChangeId,
+        type: 'amend',
+        name: imp.regulation,
+        regTitle: imp.regulation,
+        changingId: imp.changing_id,
+        date: imp.date,
+        title: imp.title,
+        text: imp.text,
+        appendixes: imp.appendixes,
+        comments: imp.comments,
+        dropped: imp.dropped,
+      } as DraftRegulationChange
+    })
+
+    return [...draftRegulationChangeImpacts, ...draftRegulationCancelImpacts]
   }
 }
