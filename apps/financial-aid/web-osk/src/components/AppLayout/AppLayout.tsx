@@ -26,16 +26,32 @@ const AppLayout = ({ children }: Props) => {
     document.title = 'Fjárhagsaðstoð'
   }, [])
 
-  const redirectSpouse = user?.spouse?.hasPartnerApplied && user.spouse.hasFiles
-  const redirectApplicant =
-    !user?.spouse?.hasPartnerApplied && user?.currentApplicationId
+  const getRedirectPath = () => {
+    if (user?.spouse?.hasFiles) {
+      return `${Routes.statusPage(user.currentApplicationId as string)}`
+    }
+    if (user?.spouse?.hasPartnerApplied) {
+      return `${Routes.form.info}`
+    }
 
-  if (
-    router.pathname.startsWith(Routes.application) &&
-    (redirectApplicant || redirectSpouse)
-  ) {
-    router.push(`${Routes.statusPage(user.currentApplicationId as string)}`)
-    return null
+    if (user?.currentApplicationId) {
+      return `${Routes.statusPage(user.currentApplicationId as string)}`
+    }
+
+    return `${Routes.application}`
+  }
+
+  if (isAuthenticated && user) {
+    const redirectPath = getRedirectPath()
+
+    if (
+      router.pathname === '/' ||
+      (router.pathname.startsWith(Routes.application) &&
+        !redirectPath.startsWith(Routes.application))
+    ) {
+      router.push(redirectPath)
+      return null
+    }
   }
 
   if (isAuthenticated === false || user === undefined || loadingUser) {
