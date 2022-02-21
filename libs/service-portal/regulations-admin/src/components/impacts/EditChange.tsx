@@ -146,7 +146,6 @@ export const EditChange = (props: EditChangeProp) => {
             span={['12/12', '12/12', '12/12', '8/12']}
             offset={['0', '0', '0', '2/12']}
           >
-            {console.log('change', change)}
             <Box marginBottom={3}>
               <MagicTextarea
                 label="Titill reglugerðar"
