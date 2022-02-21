@@ -197,7 +197,7 @@ jobs:
             {
               attachments: [{
                 color: 'good',
-                text: `${env.DOCKER_TAG}`,
+                text: `${process.env.DOCKER_TAG}`,
               }]
             }
         env:
