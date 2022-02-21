@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react'
-import { Text, Divider, Box } from '@island.is/island-ui/core'
+import { Text, Divider, Box, Button } from '@island.is/island-ui/core'
 
 import {
   ContentContainer,
@@ -170,6 +170,30 @@ const SummaryForm = () => {
         </Box>
         <UserInfo />
         <FormInfo info={formInfoOverview} error={formError.status} />
+
+        {form.directTaxPayments &&
+          form.directTaxPayments.directTaxPayments.length > 0 && (
+            <>
+              <Divider />
+              <Box
+                display="flex"
+                justifyContent="spaceBetween"
+                alignItems="flexStart"
+                paddingY={[4, 4, 5]}
+              >
+                <Box marginRight={3}>
+                  <Text fontWeight="semiBold" color={'dark400'}>
+                    Staðgreiðsluskrá
+                  </Text>
+                  <Text>Staðgreiðsluskrá sótt</Text>
+                </Box>
+
+                <Button icon="open" iconType="outline" variant="utility">
+                  Opna sundurliðun
+                </Button>
+              </Box>
+            </>
+          )}
 
         <ContactInfo
           phone={form.phoneNumber}

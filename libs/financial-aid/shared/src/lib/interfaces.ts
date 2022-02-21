@@ -245,7 +245,6 @@ export interface PersonalTaxReturn {
 
 export interface DirectTaxPayments {
   directTaxPayments: DirectTaxPayment[]
-  success: boolean
 }
 
 export interface DirectTaxPayment {

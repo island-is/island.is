@@ -18,9 +18,7 @@ const useNavigationTree = () => {
 
   const hasIncome = Boolean(form?.hasIncome)
   const taxDataFetchedFailed = Boolean(
-    form?.taxReturnFromRskFile.length > 0 ||
-      form?.directTaxPayments ||
-      form?.directTaxPayments?.success,
+    form?.taxReturnFromRskFile.length > 0 || form?.directTaxPayments,
   )
 
   const section: FormStepperSection[] = [
@@ -170,11 +168,11 @@ const useNavigationTree = () => {
   ]
 
   return user?.spouse?.hasPartnerApplied
-    ? filterInvisible(spouseSection)
-    : filterInvisible(section)
+    ? filterVisible(spouseSection)
+    : filterVisible(section)
 }
 
-const filterInvisible = (sections: FormStepperSection[]) => {
+const filterVisible = (sections: FormStepperSection[]) => {
   return sections
     .filter((s) => s.isVisible)
     .map((s) => {

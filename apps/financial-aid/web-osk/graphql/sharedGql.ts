@@ -136,9 +136,11 @@ export const NationalRegistryUserQuery = gql`
 export const GatherTaxDataQuery = gql`
   query gatherTaxDataQuery {
     municipalitiesPersonalTaxReturn {
-      key
-      name
-      size
+      personalTaxReturn {
+        key
+        name
+        size
+      }
     }
     municipalitiesDirectTaxPayments {
       directTaxPayments {
@@ -148,7 +150,6 @@ export const GatherTaxDataQuery = gql`
         withheldAtSource
         month
       }
-      success
     }
   }
 `

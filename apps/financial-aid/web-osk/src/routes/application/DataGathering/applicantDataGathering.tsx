@@ -55,7 +55,7 @@ const ApplicantDataGathering = () => {
   >(NationalRegistryUserQuery)
 
   const gatherTaxDataQuery = useAsyncLazyQuery<{
-    municipalitiesPersonalTaxReturn: PersonalTaxReturn
+    municipalitiesPersonalTaxReturn: { personalTaxReturn: PersonalTaxReturn }
     municipalitiesDirectTaxPayments: DirectTaxPayments
   }>(GatherTaxDataQuery)
 
@@ -98,25 +98,16 @@ const ApplicantDataGathering = () => {
         .municipalityCode,
     ).then(async (municipality) => {
       if (navigation.nextUrl && municipality && municipality.active) {
-        const { data: taxes } = await gatherTaxDataQuery({}).catch(() => {
-          return {
-            data: {
-              municipalitiesPersonalTaxReturn: undefined,
-              municipalitiesDirectTaxPayments: {
-                directTaxPayments: [],
-                success: false,
-              },
-            },
-          }
-        })
+        const { data: taxes } = await gatherTaxDataQuery({})
 
         if (taxes) {
           updateForm({
             ...form,
             taxReturnFromRskFile: taxes?.municipalitiesPersonalTaxReturn
+              ?.personalTaxReturn
               ? [
                   {
-                    ...taxes.municipalitiesPersonalTaxReturn,
+                    ...taxes.municipalitiesPersonalTaxReturn?.personalTaxReturn,
                     type: FileType.TAXRETURN,
                   },
                 ]

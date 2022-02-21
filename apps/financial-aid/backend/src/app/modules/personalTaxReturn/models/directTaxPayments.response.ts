@@ -2,11 +2,8 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class DirectTaxPaymentsResponse {
-  @Field(() => [DirectTaxPayment])
-  directTaxPayments!: DirectTaxPayment[]
-
-  @Field(() => Boolean)
-  success!: boolean
+  @Field(() => [DirectTaxPayment], { nullable: true })
+  directTaxPayments?: DirectTaxPayment[]
 }
 
 class DirectTaxPayment {
