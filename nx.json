@@ -139,9 +139,6 @@
     "api-domains-national-registry": {
       "tags": []
     },
-    "api-domains-national-registry-real-estate": {
-      "tags": []
-    },
     "api-domains-national-registry-x-road": {
       "tags": []
     },
@@ -317,9 +314,6 @@
       "tags": []
     },
     "clients-mms": {
-      "tags": []
-    },
-    "clients-national-registry-real-estate-v1": {
       "tags": []
     },
     "clients-national-registry-v1": {

@@ -49,8 +49,6 @@ import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
 import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
-import { NationalRegistryRealEstateModule } from '@island.is/api/domains/national-registry-real-estate'
-import { NationalRegistryRealEstateClientConfig } from '@island.is/clients/national-registry-real-estate/v1'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
@@ -204,7 +202,6 @@ const autoSchemaFile = environment.production
     FinanceModule,
     AssetsModule,
     NationalRegistryXRoadModule,
-    NationalRegistryRealEstateModule,
     ApiDomainsPaymentModule.register({
       xRoadProviderId: environment.paymentDomain.xRoadProviderId!,
       xRoadBaseUrl: environment.paymentDomain.xRoadBaseUrl!,
@@ -257,7 +254,6 @@ const autoSchemaFile = environment.production
         FinanceClientConfig,
         IdsClientConfig,
         NationalRegistryClientConfig,
-        NationalRegistryRealEstateClientConfig,
         SyslumennClientConfig,
         FeatureFlagConfig,
         XRoadConfig,
