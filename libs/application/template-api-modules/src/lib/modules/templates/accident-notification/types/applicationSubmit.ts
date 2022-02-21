@@ -45,7 +45,7 @@ export interface Slys {
   banaslys: number
   bilslys: number
   stadurslysseferindi?: string
-  lysingerindis?: string
+  lysingerindis?: number
   undirtegund?: number
   slysvidheimilisstorf?: SlysVidHeimislisstorf
   slysvidvinnusjomanna?: SlysVidVinnusjomanna

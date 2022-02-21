@@ -20,7 +20,6 @@ import MobileMenu from '../MobileMenu/MobileMenu'
 import { useNamespaces } from '@island.is/localization'
 import { useStore } from '../../store/stateProvider'
 import { RemoveScroll } from 'react-remove-scroll'
-import { getLayout } from './helpers'
 import cn from 'classnames'
 
 const Layout: FC = ({ children }) => {
@@ -56,12 +55,7 @@ const Layout: FC = ({ children }) => {
         <Box as="main">
           <GridContainer>
             <GridRow>
-              <GridColumn
-                span={'12/12'}
-                // span={getLayout(pathname, sidebarState).span}
-                // offset={getLayout(pathname, sidebarState).offset}
-                className={styles.layoutGrid}
-              >
+              <GridColumn span={'12/12'} className={styles.layoutGrid}>
                 <ContentBreadcrumbs />
                 <div>{children}</div>
               </GridColumn>
