@@ -20,7 +20,7 @@ import {
   Staff,
   CreateStaff,
   CreateMunicipality,
-  DirectTaxPayments,
+  DirectTaxPayment,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
@@ -171,7 +171,7 @@ class BackendAPI extends RESTDataSource {
     return this.get('personalTaxReturn')
   }
 
-  getDirectTaxPayments(): Promise<DirectTaxPayments> {
+  getDirectTaxPayments(): Promise<DirectTaxPayment[]> {
     return this.get('personalTaxReturn/directTaxPayments')
   }
 }

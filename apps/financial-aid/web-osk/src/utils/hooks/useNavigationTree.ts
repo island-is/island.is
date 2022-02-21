@@ -17,8 +17,8 @@ const useNavigationTree = () => {
   const { form } = useContext(FormContext)
 
   const hasIncome = Boolean(form?.hasIncome)
-  const taxDataFetchedFailed = Boolean(
-    form?.taxReturnFromRskFile.length > 0 || form?.directTaxPayments,
+  const showTax = Boolean(
+    form?.taxReturnFromRskFile.length === 0 || !form?.directTaxPayments,
   )
 
   const section: FormStepperSection[] = [
@@ -82,7 +82,7 @@ const useNavigationTree = () => {
           type: 'SUB_SECTION',
           name: 'Skattagögn',
           url: Routes.form.taxReturnFiles,
-          isVisible: taxDataFetchedFailed,
+          isVisible: showTax,
         },
         {
           type: 'SUB_SECTION',
@@ -143,7 +143,7 @@ const useNavigationTree = () => {
           isVisible: hasIncome,
         },
         {
-          isVisible: taxDataFetchedFailed,
+          isVisible: showTax,
           type: 'SUB_SECTION',
           name: 'Skattagögn',
           url: Routes.form.taxReturnFiles,

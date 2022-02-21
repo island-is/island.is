@@ -12,34 +12,22 @@ import { useRouter } from 'next/router'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
-import {
-  DirectTaxPayments,
-  NavigationProps,
-  PersonalTaxReturn,
-  Routes,
-  useAsyncLazyQuery,
-} from '@island.is/financial-aid/shared/lib'
+import { NavigationProps, Routes } from '@island.is/financial-aid/shared/lib'
 
-import { GatherTaxDataQuery } from '@island.is/financial-aid-web/osk/graphql'
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
-import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
+import useTaxData from '@island.is/financial-aid-web/osk/src/utils/hooks/useTaxData'
 
 const SpouseDataGathering = () => {
   const router = useRouter()
   const { user } = useContext(AppContext)
-  const { form, updateForm } = useContext(FormContext)
 
   const [accept, setAccept] = useState(false)
   const [hasError, setHasError] = useState(false)
   const [error, setError] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const gatherTaxDataQuery = useAsyncLazyQuery<{
-    municipalitiesPersonalTaxReturn: PersonalTaxReturn
-    municipalitiesDirectTaxPayments: DirectTaxPayments
-  }>(GatherTaxDataQuery)
-
+  const gatherTaxData = useTaxData()
   const logOut = useLogOut()
 
   const navigation: NavigationProps = useFormNavigation(
@@ -55,23 +43,7 @@ const SpouseDataGathering = () => {
     setError(false)
     setLoading(true)
 
-    const { data: personalTaxReturn } = await gatherTaxDataQuery({}).catch(
-      () => {
-        return { data: undefined }
-      },
-    )
-
-    if (personalTaxReturn) {
-      updateForm({
-        ...form,
-        taxReturnFromRskFile: [
-          {
-            ...personalTaxReturn.municipalitiesPersonalTaxReturn,
-          },
-        ],
-      })
-    }
-
+    await gatherTaxData()
     setLoading(false)
 
     router.push(navigation?.nextUrl ?? Routes.form.info)

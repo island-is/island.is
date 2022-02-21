@@ -243,10 +243,6 @@ export interface PersonalTaxReturn {
   size: number
 }
 
-export interface DirectTaxPayments {
-  directTaxPayments: DirectTaxPayment[]
-}
-
 export interface DirectTaxPayment {
   totalSalary: number
   payerNationalId: number
