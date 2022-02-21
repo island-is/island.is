@@ -25,7 +25,6 @@ export async function generateComplaintPdf(
   attachedFiles: DocumentInfo[],
 ): Promise<Buffer> {
   const dto = applicationToComplaintPDF(application, attachedFiles)
-  console.log('dto ; ', dto)
   return await generatePdf<ComplaintPDF>(dto, dpcApplicationPdf)
 }
 
@@ -52,13 +51,6 @@ function dpcApplicationPdf(
     doc,
   )
   complaint.targetsOfComplaint.map((c, i) => {
-    const nationalIdLine = c?.nationalId
-      ? `kt. ${formatSsn(c.nationalId)},`
-      : ''
-    const linegap =
-      i === complaint.targetsOfComplaint.length - 1
-        ? PdfConstants.LARGE_LINE_GAP
-        : PdfConstants.SMALL_LINE_GAP
     addformFieldAndValue('Nafn', c.name, doc, PdfConstants.SMALL_LINE_GAP)
     if (c.nationalId) {
       addformFieldAndValue(
@@ -80,7 +72,7 @@ function dpcApplicationPdf(
       'Starfsemi innan Evrópu?',
       operatesWithinEuropeAnswer,
       doc,
-      linegap,
+      PdfConstants.LARGE_LINE_GAP,
     )
   })
 
@@ -112,9 +104,9 @@ function dpcApplicationPdf(
     complaint.description,
     doc,
     PdfConstants.NORMAL_FONT,
-    PdfConstants.LARGE_LINE_GAP,
+    PdfConstants.SMALL_LINE_GAP,
   )
-
+  doc.moveDown()
   if (complaint.attachments.length > 0) {
     addSubheader('Fylgiskjöl', doc)
 
@@ -142,7 +134,10 @@ function renderContactsAndComplainees(
 
   renderAgencyComplainees(complaint, doc)
 
-  if (complaint.onBehalf !== OnBehalf.MYSELF) {
+  if (
+    complaint.onBehalf !== OnBehalf.MYSELF ||
+    OnBehalf.ORGANIZATION_OR_INSTITUTION
+  ) {
     addSubheader('Tengiliður', doc)
   }
 
