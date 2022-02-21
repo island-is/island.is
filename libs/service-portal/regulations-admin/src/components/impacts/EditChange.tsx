@@ -9,8 +9,7 @@ import {
 } from '@island.is/island-ui/core'
 import React, { useState } from 'react'
 import { DraftChangeForm, RegDraftForm } from '../../state/types'
-// import { useDraftingState } from '../../state/useDraftingState'
-import { PlainText, toISODate } from '@island.is/regulations'
+import { HTMLDump, PlainText, toISODate } from '@island.is/regulations'
 import { LayoverModal } from './LayoverModal'
 import { ImpactModalTitle } from './ImpactModalTitle'
 import { useGetCurrentRegulationFromApiQuery } from '../../utils/dataHooks'
@@ -18,22 +17,20 @@ import {
   CREATE_DRAFT_REGULATION_CHANGE,
   UPDATE_DRAFT_REGULATION_CHANGE,
 } from './impactQueries'
-import * as s from './Impacts.css'
-import { Appendixes } from '../Appendixes'
 import { MagicTextarea } from '../MagicTextarea'
 import { MiniDiff } from '../MiniDiff'
 import { EditorInput } from '../EditorInput'
-import { RegDraftActions, useDraftingState } from '../../state/useDraftingState'
-
+import { getTextContentDiff } from '@island.is/regulations'
 type EditChangeProp = {
-  draft: RegDraftForm
-  change: DraftChangeForm
+  draft: RegDraftForm // Allt það sem er verið að breyta
+  change: DraftChangeForm // Áhrifafærslan
   closeModal: (updateImpacts?: boolean) => void
 }
 
 export const EditChange = (props: EditChangeProp) => {
   const { draft, change, closeModal } = props
-  const [activeChange, setActiveChange] = useState(change)
+  const [activeChange, setActiveChange] = useState(change) // Áhrifafærslan sem er verið að breyta
+
   const [regulationTitle, setRegulationTitle] = useState(
     activeChange.title.value,
   )
@@ -157,10 +154,10 @@ export const EditChange = (props: EditChangeProp) => {
                 required
                 error={undefined}
               />
-              {regulation?.title != null &&
-                regulation.title.toString() !== activeChange.title.value && (
+              {activeChange.title.value != null &&
+                activeChange.title.value !== change.title.value && (
                   <MiniDiff
-                    older={regulation.title.toString() || ''}
+                    older={change.title.value || ''}
                     newer={activeChange.title.value}
                   />
                 )}
@@ -177,13 +174,17 @@ export const EditChange = (props: EditChangeProp) => {
                 error={undefined}
               />
             </Box>
+            {/* <Box>
+              <HTMLDump html={getTextContentDiff(change.text, activeChange)} />
+            </Box> */}
 
             {/* VIÐAUKI */}
             {/* <Appendixes
               draftId={draft.id}
               appendixes={change.appendixes}
-              actions={}
-            /> */}
+              actions={} 
+            />
+              */}
           </GridColumn>
         </GridRow>
         <GridRow>

@@ -120,7 +120,6 @@ export const ImpactList = (props: ImpactListProps) => {
                 </Text>
                 {impactGroup.map((impact, idx) => {
                   const { id, name, regTitle, error, type, date } = impact
-
                   const isChange = type === 'amend'
                   const headingText =
                     name === 'self'
@@ -199,7 +198,7 @@ export const ImpactList = (props: ImpactListProps) => {
               closeModal={closeModal}
             />
           )}
-
+          {/* TODO: Dísa: Þegar delete impact er keyrt þarf að birta þennan modal "ertu alveg viss?"  */}
           {/*<ConfirmModal
             isVisible={isConfirmationVisible}
             message={`${formatMessage(impactMsgs.deleteConfirmation)}`}
