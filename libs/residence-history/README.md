@@ -1,4 +1,4 @@
-# residence-history
+# Residence History
 
 This library is responsible for calculating your primary country of residence
 according to the 185 day rule.
