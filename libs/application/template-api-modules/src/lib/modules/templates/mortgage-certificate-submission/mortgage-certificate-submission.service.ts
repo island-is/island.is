@@ -9,7 +9,8 @@ import {
   PersonType,
   MortgageCertificate,
 } from '@island.is/clients/syslumenn'
-import { generateSyslumennNotificationEmail } from './emailGenerators/syslumennNotification'
+import { generateSyslumennNotifyErrorEmail } from './emailGenerators/syslumennNotifyError'
+import { generateSyslumennSubmitRequestErrorEmail } from './emailGenerators/syslumennSubmitRequestError'
 import { Application } from '@island.is/application/core'
 import { NationalRegistry, UserProfile } from './types'
 import { ChargeItemCode } from '@island.is/shared/constants'
@@ -66,36 +67,76 @@ export class MortgageCertificateSubmissionService {
     }
   }
 
+  async submitRequestSyslumenn(
+    application: Application,
+    document: MortgageCertificate,
+  ) {
+    //TODOx
+    // const nationalRegistryData = application.externalData.nationalRegistry
+    //   ?.data as NationalRegistry
+    // const userProfileData = application.externalData.userProfile
+    //   ?.data as UserProfile
+    // const person: Person = {
+    //   name: nationalRegistryData?.fullName,
+    //   ssn: nationalRegistryData?.nationalId,
+    //   phoneNumber: userProfileData?.mobilePhoneNumber,
+    //   email: userProfileData?.email,
+    //   homeAddress: nationalRegistryData?.address.streetAddress,
+    //   postalCode: nationalRegistryData?.address.postalCode,
+    //   city: nationalRegistryData?.address.city,
+    //   signed: true,
+    //   type: PersonType.MortgageCertificateApplicant,
+    // }
+    // const persons: Person[] = [person]
+    // const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
+    // const attachment: Attachment = {
+    //   name: `vedbokarvottord_${nationalRegistryData?.nationalId}_${dateStr}.pdf`,
+    //   content: document.contentBase64,
+    // }
+    // const extraData: { [key: string]: string } = {}
+    // const uploadDataName = 'Umsókn um veðbókarvottorð frá Ísland.is'
+    // const uploadDataId = 'Vedbokarvottord'
+    // await this.syslumennService
+    //   .uploadData(persons, attachment, extraData, uploadDataName, uploadDataId)
+    //   .catch(async () => {
+    //     await this.sharedTemplateAPIService.sendEmail(
+    //       generateSyslumennNotifyErrorEmail,
+    //       (application as unknown) as Application,
+    //     )
+    //     return undefined
+    //   })
+  }
+
   async getMortgageCertificate({
     application,
   }: TemplateApiModuleActionProps): Promise<MortgageCertificate> {
     const applicantSsn = application.applicant
-    const record = await this.mortgageCertificateService.getMortgageCertificate(
+    const document = await this.mortgageCertificateService.getMortgageCertificate(
       applicantSsn,
     )
 
     // Call sýslumaður to get the document sealed before handing it over to the user
-    const sealedRecordResponse = await this.syslumennService.sealDocument(
-      record.contentBase64,
+    const sealedDocumentResponse = await this.syslumennService.sealDocument(
+      document.contentBase64,
     )
 
-    if (!sealedRecordResponse?.skjal) {
+    if (!sealedDocumentResponse?.skjal) {
       throw new Error('Eitthvað fór úrskeiðis.')
     }
 
-    const sealedRecord: MortgageCertificate = {
-      contentBase64: sealedRecordResponse.skjal,
+    const sealedDocument: MortgageCertificate = {
+      contentBase64: sealedDocumentResponse.skjal,
     }
 
     // Notify Sýslumaður that person has received the mortgage certificate
-    await this.notifySyslumenn(application, sealedRecord)
+    await this.notifySyslumenn(application, sealedDocument)
 
-    return sealedRecord
+    return sealedDocument
   }
 
   private async notifySyslumenn(
     application: Application,
-    record: MortgageCertificate,
+    document: MortgageCertificate,
   ) {
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistry
@@ -118,7 +159,7 @@ export class MortgageCertificateSubmissionService {
     const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
     const attachment: Attachment = {
       name: `vedbokarvottord_${nationalRegistryData?.nationalId}_${dateStr}.pdf`,
-      content: record.contentBase64,
+      content: document.contentBase64,
     }
 
     const extraData: { [key: string]: string } = {}
@@ -130,7 +171,7 @@ export class MortgageCertificateSubmissionService {
       .uploadData(persons, attachment, extraData, uploadDataName, uploadDataId)
       .catch(async () => {
         await this.sharedTemplateAPIService.sendEmail(
-          generateSyslumennNotificationEmail,
+          generateSyslumennNotifyErrorEmail,
           (application as unknown) as Application,
         )
         return undefined

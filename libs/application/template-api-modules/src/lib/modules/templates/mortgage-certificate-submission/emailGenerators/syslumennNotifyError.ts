@@ -1,7 +1,7 @@
 import { EmailTemplateGenerator } from '../../../../types'
 import { NationalRegistry } from '../types'
 
-export const generateSyslumennNotificationEmail: EmailTemplateGenerator = (
+export const generateSyslumennNotifyErrorEmail: EmailTemplateGenerator = (
   props,
 ) => {
   const {
@@ -14,7 +14,7 @@ export const generateSyslumennNotificationEmail: EmailTemplateGenerator = (
   const nationalRegistryData = application.externalData.nationalRegistry
     ?.data as NationalRegistry
 
-  const subject = 'Umsókn um sakavottorð'
+  const subject = 'Umsókn um veðbókarvottorð'
   const body = `
       Villa hefur komið upp í samskiptum milli island.is og sýslumanna, vegna kaupa á veðbókarvottorði fyrir ${
         nationalRegistryData.nationalId
