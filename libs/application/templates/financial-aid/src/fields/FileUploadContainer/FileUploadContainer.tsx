@@ -5,7 +5,7 @@ import * as styles from './FileUploadContainer.css'
 
 interface Props {
   children: ReactNode
-  hasError: boolean
+  hasError?: boolean
 }
 
 const FileUploadContainer = ({ children, hasError = false }: Props) => {

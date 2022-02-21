@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react'
+import React, { useEffect } from 'react'
 import { InputFileUpload, UploadFile } from '@island.is/island-ui/core'
 
 import { useIntl } from 'react-intl'
@@ -6,6 +6,7 @@ import { filesText } from '../../lib/messages'
 import { FileUploadContainer } from '..'
 import { useFileUpload } from '../../lib/useFileUpload'
 import { UploadFileType } from '../../lib/types'
+import { useFormContext } from 'react-hook-form'
 
 interface Props {
   uploadFiles: UploadFile[]
@@ -16,6 +17,7 @@ interface Props {
 
 const Files = ({ uploadFiles, fileKey, folderId, hasError = false }: Props) => {
   const { formatMessage } = useIntl()
+  const { setValue } = useFormContext()
 
   const {
     files,
@@ -41,12 +43,11 @@ const Files = ({ uploadFiles, fileKey, folderId, hasError = false }: Props) => {
       .map((f) => {
         return stringifyFile(f)
       })
-
-    // updateForm({ ...form, [fileKey]: formFiles })
+    setValue(fileKey, formFiles)
   }, [files])
 
   return (
-    <FileUploadContainer hasError={false}>
+    <FileUploadContainer>
       <InputFileUpload
         fileList={files}
         header={formatMessage(filesText.header)}

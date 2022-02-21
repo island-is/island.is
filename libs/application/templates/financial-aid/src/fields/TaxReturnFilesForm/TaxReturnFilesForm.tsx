@@ -1,18 +1,15 @@
-import React, { useContext } from 'react'
+import React from 'react'
 
 import { Text, UploadFile, Box } from '@island.is/island-ui/core'
 import { taxReturnForm } from '../../lib/messages'
 
 import { FAFieldBaseProps } from '../..'
 import { useIntl } from 'react-intl'
-import { useFormContext } from 'react-hook-form'
 import { DescriptionText, Files } from '..'
 
 const TaxReturnFilesForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
-  const { id } = application
-
-  const taxReturnFiles: UploadFile[] = []
+  const { id, answers } = application
 
   return (
     <>
@@ -23,7 +20,7 @@ const TaxReturnFilesForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 
       <Files
         fileKey="taxReturnFiles"
-        uploadFiles={taxReturnFiles}
+        uploadFiles={answers?.taxReturnFiles as UploadFile[]}
         folderId={id}
       />
       <Text as="h2" variant="h3" marginBottom={2}>

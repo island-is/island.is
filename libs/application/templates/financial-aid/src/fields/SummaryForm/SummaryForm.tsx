@@ -6,6 +6,7 @@ import {
   GridRow,
   Icon,
   Input,
+  UploadFile,
 } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 import { Controller, useFormContext } from 'react-hook-form'
@@ -35,6 +36,8 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { setValue } = useFormContext()
 
   const formCommentId = 'formComment'
+
+  const allFiles = answers?.taxReturnFiles?.concat(answers?.incomeFiles)
 
   return (
     <>
@@ -75,7 +78,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
                 {formatMessage(m.summaryForm.userInfo.name)}
               </Text>
               <Text>
-                {externalData.nationalRegistry.data?.applicant?.fullName}
+                {externalData.nationalRegistry?.data?.applicant?.fullName}
               </Text>
             </Box>
           </GridColumn>
@@ -85,7 +88,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
                 {formatMessage(m.summaryForm.userInfo.nationalId)}
               </Text>
               <Text>
-                {externalData?.nationalRegistry.data?.applicant?.nationalId}
+                {externalData?.nationalRegistry?.data?.applicant?.nationalId}
               </Text>
             </Box>
           </GridColumn>
@@ -95,7 +98,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
                 {formatMessage(m.summaryForm.userInfo.address)}
               </Text>
               <Text>
-                {formatAddress(externalData.nationalRegistry.data?.applicant)}
+                {formatAddress(externalData.nationalRegistry?.data?.applicant)}
               </Text>
             </Box>
           </GridColumn>
@@ -207,19 +210,44 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         </GridRow>
       </SummaryBlock>
 
-      <SummaryBlock editAction={() => goToScreen?.(routes.INCOME)}>
-        <Text fontWeight="semiBold">
-          {/* TODO files   */}
-          Gögn
-        </Text>
-        {/* TODO files pages */}
-        <Box display="flex">
-          <Box marginRight={1} display="flex" alignItems="center">
-            <Icon color="blue400" icon="document" size="small" type="outline" />
-          </Box>
+      <SummaryBlock
+        editAction={() =>
+          answers.income === ApproveOptions.Yes
+            ? goToScreen?.(routes.INCOMEFILES)
+            : goToScreen?.(routes.TAXRETURNFILES)
+        }
+      >
+        <Text fontWeight="semiBold">Gögn</Text>
 
-          <Text>filename todo</Text>
-        </Box>
+        {allFiles &&
+          allFiles.map((file: UploadFile, index) => {
+            return (
+              <a
+                href={`/${file.key}`}
+                key={`file-` + index}
+                target="_blank"
+                download
+                rel="noreferrer noopener"
+              >
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  marginBottom="smallGutter"
+                >
+                  <Box marginRight={1} display="flex" alignItems="center">
+                    <Icon
+                      color="blue400"
+                      icon="document"
+                      size="small"
+                      type="outline"
+                    />
+                  </Box>
+
+                  <Text>{file.name}</Text>
+                </Box>
+              </a>
+            )
+          })}
       </SummaryBlock>
 
       <Text as="h3" variant="h3">
