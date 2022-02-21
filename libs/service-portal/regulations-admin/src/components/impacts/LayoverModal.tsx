@@ -19,7 +19,7 @@ export const LayoverModal = (props: LayoverModalProps) => {
       baseId={id}
       isVisible={true}
       initialVisibility={true}
-      className={s.cancelModal}
+      className={s.layoverModal}
       hideOnClickOutside={false}
       // Setting this to true breaks the edit functionality, custom esc click is handled in EditImpacts
       hideOnEsc={false}

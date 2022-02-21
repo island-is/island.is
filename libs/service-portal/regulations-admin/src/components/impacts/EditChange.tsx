@@ -10,7 +10,7 @@ import {
 import React, { useState } from 'react'
 import { DraftChangeForm, RegDraftForm } from '../../state/types'
 // import { useDraftingState } from '../../state/useDraftingState'
-import { toISODate } from '@island.is/regulations'
+import { PlainText, toISODate } from '@island.is/regulations'
 import { LayoverModal } from './LayoverModal'
 import { ImpactModalTitle } from './ImpactModalTitle'
 import { useGetCurrentRegulationFromApiQuery } from '../../utils/dataHooks'
@@ -18,6 +18,12 @@ import {
   CREATE_DRAFT_REGULATION_CHANGE,
   UPDATE_DRAFT_REGULATION_CHANGE,
 } from './impactQueries'
+import * as s from './Impacts.css'
+import { Appendixes } from '../Appendixes'
+import { MagicTextarea } from '../MagicTextarea'
+import { MiniDiff } from '../MiniDiff'
+import { EditorInput } from '../EditorInput'
+import { RegDraftActions, useDraftingState } from '../../state/useDraftingState'
 
 type EditChangeProp = {
   draft: RegDraftForm
@@ -28,6 +34,7 @@ type EditChangeProp = {
 export const EditChange = (props: EditChangeProp) => {
   const { draft, change, closeModal } = props
   const [activeChange, setActiveChange] = useState(change)
+  const [regulationTitle, setRegulationTitle] = useState(change.title.value)
 
   const [createDraftRegulationChange] = useMutation(
     CREATE_DRAFT_REGULATION_CHANGE,
@@ -45,6 +52,15 @@ export const EditChange = (props: EditChangeProp) => {
     setActiveChange({
       ...activeChange,
       date: { value: newDate },
+    })
+  }
+
+  const changeRegulationTitle = (newTitle: string | undefined) => {
+    console.log('active', activeChange.title)
+    console.log('new', newTitle)
+    setActiveChange({
+      ...activeChange,
+      title: { value: newTitle as PlainText }, //TODO: What is the best way to do this is?
     })
   }
 
@@ -125,6 +141,53 @@ export const EditChange = (props: EditChangeProp) => {
                 }
               }
             />
+          </GridColumn>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '8/12']}
+            offset={['0', '0', '0', '2/12']}
+            paddingBottom={3}
+          ></GridColumn>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '8/12']}
+            offset={['0', '0', '0', '2/12']}
+          >
+            {console.log('change', change)}
+            <Box marginBottom={3}>
+              <MagicTextarea
+                label="Titill reglugerðar"
+                name="title"
+                value={activeChange.title.value}
+                onChange={(newValue) => changeRegulationTitle(newValue)}
+                required
+                error={undefined}
+              />
+              {regulation?.title != null &&
+                regulation.title.toString() !== change.title.value && (
+                  <MiniDiff
+                    older={regulation.title.toString() || ''}
+                    newer={change.title.value}
+                  />
+                )}
+            </Box>
+            <Box marginBottom={4}>
+              <EditorInput
+                label="Uppfærður texti"
+                baseText={regulation?.text}
+                value={change.text.value}
+                onChange={(newValue) => console.log(newValue)}
+                draftId={draft.id}
+                isImpact={true}
+                required
+                error={undefined}
+              />
+            </Box>
+
+            {/* VIÐAUKI */}
+            {/* <Appendixes
+              draftId={draft.id}
+              appendixes={change.appendixes}
+              actions={}
+            /> */}
           </GridColumn>
         </GridRow>
         <GridRow>
