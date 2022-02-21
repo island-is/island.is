@@ -34,7 +34,9 @@ type EditChangeProp = {
 export const EditChange = (props: EditChangeProp) => {
   const { draft, change, closeModal } = props
   const [activeChange, setActiveChange] = useState(change)
-  const [regulationTitle, setRegulationTitle] = useState(change.title.value)
+  const [regulationTitle, setRegulationTitle] = useState(
+    activeChange.title.value,
+  )
 
   const [createDraftRegulationChange] = useMutation(
     CREATE_DRAFT_REGULATION_CHANGE,
@@ -46,7 +48,7 @@ export const EditChange = (props: EditChangeProp) => {
   const {
     data: regulation,
     loading /* , error */,
-  } = useGetCurrentRegulationFromApiQuery(change.name)
+  } = useGetCurrentRegulationFromApiQuery(activeChange.name)
 
   const changeDate = (newDate: Date | undefined) => {
     setActiveChange({
@@ -127,9 +129,9 @@ export const EditChange = (props: EditChangeProp) => {
           >
             <ImpactModalTitle
               type="edit"
-              title={change.regTitle}
-              name={change.name}
-              impact={change}
+              title={activeChange.regTitle}
+              name={activeChange.name}
+              impact={activeChange}
               onChangeDate={changeDate}
               tag={{
                 first: 'Textabreyting reglugerðar',
@@ -156,10 +158,10 @@ export const EditChange = (props: EditChangeProp) => {
                 error={undefined}
               />
               {regulation?.title != null &&
-                regulation.title.toString() !== change.title.value && (
+                regulation.title.toString() !== activeChange.title.value && (
                   <MiniDiff
                     older={regulation.title.toString() || ''}
-                    newer={change.title.value}
+                    newer={activeChange.title.value}
                   />
                 )}
             </Box>
@@ -167,7 +169,7 @@ export const EditChange = (props: EditChangeProp) => {
               <EditorInput
                 label="Uppfærður texti"
                 baseText={regulation?.text}
-                value={change.text.value}
+                value={activeChange.text.value}
                 onChange={(newValue) => console.log(newValue)}
                 draftId={draft.id}
                 isImpact={true}

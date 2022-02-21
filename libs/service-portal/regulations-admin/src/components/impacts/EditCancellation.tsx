@@ -118,7 +118,7 @@ export const EditCancellation = (props: EditCancellationProp) => {
             offset={['0', '0', '0', '2/12']}
           >
             <ImpactModalTitle
-              impact={cancellation}
+              impact={activeCancellation}
               name={activeCancellation.name}
               title={activeCancellation.regTitle}
               type={'cancel'}
