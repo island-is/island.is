@@ -2,7 +2,7 @@ import React from 'react'
 import sortBy from 'lodash/sortBy'
 import { Box, Divider, Text } from '@island.is/island-ui/core'
 import { Effects } from '../../types'
-import { DraftCancelForm } from '../../state/types'
+import { DraftImpactForm } from '../../state/types'
 import {
   nameToSlug,
   RegName,
@@ -10,37 +10,35 @@ import {
 } from '@island.is/regulations'
 import { useLocale } from '@island.is/localization'
 
-export type ImpactChangesContainerProps = {
+export type ImpactHistoryProps = {
   effects?: Effects
-  activeCancellation?: DraftCancelForm
+  activeImpact?: DraftImpactForm
 }
 
-export const ImpactChangesContainer = (props: ImpactChangesContainerProps) => {
-  const { effects, activeCancellation } = props
+export const ImpactHistory = (props: ImpactHistoryProps) => {
+  const { effects, activeImpact } = props
   const { formatDateFns } = useLocale()
   const futureEffects = effects?.future ?? []
 
   const getCurrentEffect = (effect: RegulationHistoryItem) => {
-    return effect.name === activeCancellation?.name
+    return effect.name === activeImpact?.name
   }
 
   const getAllFutureEffects = () => {
-    const activeCancellationChangeItem = {
+    const activeImpactChangeItem = {
       date: formatDateFns(
-        activeCancellation?.date?.value
-          ? activeCancellation.date.value
-          : Date.now(),
+        activeImpact?.date?.value ? activeImpact.date.value : Date.now(),
         'yyyy-MM-dd',
       ),
-      name: activeCancellation?.name,
-      title: activeCancellation?.regTitle,
+      name: activeImpact?.name,
+      title: activeImpact?.regTitle,
       effect: 'amend',
     } as RegulationHistoryItem
 
     const futureEffectArray = [...futureEffects]
 
-    if (activeCancellation) {
-      futureEffectArray.push(activeCancellationChangeItem)
+    if (activeImpact) {
+      futureEffectArray.push(activeImpactChangeItem)
     }
 
     const futureEffectsByDate = sortBy(futureEffectArray, (o) => o.date)
@@ -57,7 +55,7 @@ export const ImpactChangesContainer = (props: ImpactChangesContainerProps) => {
       <Divider />
       <a
         href={`https://island.is/reglugerdir/nr/${nameToSlug(
-          activeCancellation?.name as RegName,
+          activeImpact?.name as RegName,
         )}`}
         target="_blank"
         rel="noreferrer"
@@ -74,11 +72,11 @@ export const ImpactChangesContainer = (props: ImpactChangesContainerProps) => {
           {allFutureEffects.map((effect) => (
             <a
               href={`https://island.is/reglugerdir/nr/${nameToSlug(
-                activeCancellation?.name as RegName,
+                activeImpact?.name as RegName,
               )}/d/${effect.date}/diff`}
               target="_blank"
               rel="noreferrer"
-              key={`${nameToSlug(activeCancellation?.name as RegName)}-${
+              key={`${nameToSlug(activeImpact?.name as RegName)}-${
                 effect.date
               }`}
             >

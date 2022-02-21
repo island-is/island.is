@@ -63,10 +63,10 @@ export const EditChange = (props: EditChangeProp) => {
     })
   }
 
-  const changeRegulationTitle = (newTitle: string | undefined) => {
+  const changeRegulationTitle = (newTitle: PlainText) => {
     setActiveChange({
       ...activeChange,
-      title: { value: newTitle as PlainText }, //TODO: What is the best way to do this is?
+      title: { value: newTitle }, //TODO: What is the best way to do this is?
     })
   }
 
