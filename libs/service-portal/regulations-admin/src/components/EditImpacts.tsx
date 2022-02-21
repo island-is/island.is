@@ -183,29 +183,39 @@ export const EditImpacts = () => {
           <Text variant="h4" as="h4" marginBottom={[2, 2, 3, 4]}>
             {t(impactMsgs.chooseType)}
           </Text>
-          <Inline space={[2, 2, 3, 4]} align="center" alignY="center">
-            {selRegOption.type === 'base' && (
-              <>
-                <Button
-                  variant="ghost"
-                  icon="document"
-                  iconType="outline"
-                  onClick={() => setChooseType('change')}
-                >
-                  {t(impactMsgs.chooseType_change)}
-                </Button>
-                <span> {t(impactMsgs.chooseType_or)} </span>
-              </>
-            )}
-            <Button
-              variant="ghost"
-              icon="fileTrayFull"
-              iconType="outline"
-              onClick={() => setChooseType('cancel')}
-            >
-              {t(impactMsgs.chooseType_cancel)}
-            </Button>
-          </Inline>
+          {draft.impacts[selRegOption.value] ? (
+            <Inline align="center" space={[2, 2, 3, 4]}>
+              <Text variant="h5" as="h5" marginBottom={[2, 2, 3, 4]}>
+                Reglugerð er með virka brottfellingu
+              </Text>
+            </Inline>
+          ) : (
+            <Inline space={[2, 2, 3, 4]} align="center" alignY="center">
+              {selRegOption.type === 'base' && (
+                <>
+                  <Button
+                    variant="ghost"
+                    icon="document"
+                    iconType="outline"
+                    onClick={() => setChooseType('change')}
+                    disabled={!!draft.impacts[selRegOption.value]}
+                  >
+                    {t(impactMsgs.chooseType_change)}
+                  </Button>
+                  <span> {t(impactMsgs.chooseType_or)} </span>
+                </>
+              )}
+              <Button
+                variant="ghost"
+                icon="fileTrayFull"
+                iconType="outline"
+                onClick={() => setChooseType('cancel')}
+                disabled={!!draft.impacts[selRegOption.value]}
+              >
+                {t(impactMsgs.chooseType_cancel)}
+              </Button>
+            </Inline>
+          )}
 
           {chooseType === 'cancel' && (
             <EditCancellation

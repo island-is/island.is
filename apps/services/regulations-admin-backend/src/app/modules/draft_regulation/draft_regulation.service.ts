@@ -340,7 +340,7 @@ export class DraftRegulationService {
         id: imp.id as DraftRegulationCancelId,
         type: 'repeal',
         name: imp.regulation,
-        regTitle: imp.regulation,
+        regTitle: '',
         changingId: imp.changing_id,
         date: imp.date,
         dropped: imp.dropped,
