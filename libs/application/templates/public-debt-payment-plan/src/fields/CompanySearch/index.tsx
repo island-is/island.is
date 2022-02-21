@@ -1,6 +1,6 @@
 import React, { FC, useState, useCallback, useEffect } from 'react'
 import { FieldBaseProps, getErrorViaPath } from '@island.is/application/core'
-import { AlertBanner, AlertMessage, AsyncSearch, AsyncSearchOption, Box, } from '@island.is/island-ui/core'
+import { AlertBanner, AlertMessage, AsyncSearch, AsyncSearchOption, Box, Text, } from '@island.is/island-ui/core'
 import { Controller, useFormContext } from 'react-hook-form'
 import { SearchItem } from './SearchItem'
 import { debounce } from 'lodash'
@@ -17,29 +17,36 @@ export const CompanySearch: FC<Props> = ({ field, errors = {}, application }) =>
   const initialValue = (application.answers[id] || { ...defaultAnswer }) as { value: string, label: string }
   const [searchQuery, setSearchQuery] = useState('')
   const [search, { loading, data }] = useLazyQuery(COMPANY_REGISTRY_COMPANIES);
-  const debouncer = useCallback(debounce(search, 250), []);
+  const debouncer = useCallback(debounce(search, 1), []);
 
+  const errorMessage = errors ? getErrorViaPath(
+    errors,
+    'correctedEmployer.nationalId',
+  ) : null;
+
+  const noResultsFound = data?.companyRegistryCompanies?.data?.length === 0 && !loading && searchQuery.trim().length > 0;
+
+  console.log('noResultsFound', noResultsFound)
   console.log('answers', application.answers)
-  console.log('Error', error)
+  console.log('Error', errors)
+
+
+
+
   const onSelect = (
     selection: AsyncSearchOption | null,
-    onChangeHandler: (args?: any) => void,
   ) => {
-    console.log('On Select')
     const { value, label } = selection || {}
     if (value && label) {
-      clearErrors(`${id}.nationalId`)
-      setValue(`${id}.nationalId`, value)
-      setValue(`${id}.label`, label)
-      onChangeHandler({ nationalId: value, label })
+      setValue(id, { nationalId: value, label })
     }
   }
 
-  const onInputChange = (inputValue: string, onChangeHandler: (args?: any) => void) => {
-    console.log('On input Change')
+  const onInputChange = (inputValue: string) => {
+    setValue(id, { nationalId: '', label: '' })
+    clearErrors(id)
     const query = inputValue?.trim() || ""
     setSearchQuery(query)
-    onChangeHandler(defaultAnswer)
     debouncer({
       variables: {
         input: {
@@ -54,7 +61,7 @@ export const CompanySearch: FC<Props> = ({ field, errors = {}, application }) =>
   const getSearchOptions = (query: string, response: { data: { name: string, nationalId: string }[] } = { data: [] }) => {
     const { data } = response
     const options = data?.map(({ name, nationalId }) => ({
-      label: `${name} - ${nationalId}`,
+      label: name,
       value: nationalId,
       component: (props: any) => (
         <SearchItem
@@ -74,7 +81,6 @@ export const CompanySearch: FC<Props> = ({ field, errors = {}, application }) =>
       <Box marginTop={[2, 4]}>
         <Controller
           name={`${id}`}
-          id={`${id}`}
           defaultValue={initialValue}
           render={({ onChange, value }) => {
             return (
@@ -85,18 +91,19 @@ export const CompanySearch: FC<Props> = ({ field, errors = {}, application }) =>
                   size="large"
                   placeholder="Sláðu inn nafn eða kennitölu"
                   colored
+                  inputValue={searchQuery}
                   label="Leitaðu af fyrirtæki"
-                  onInputValueChange={(selection) => onInputChange(selection, onChange)}
+                  onInputValueChange={(query) => onInputChange(query)}
                   initialInputValue={initialValue.label}
-                  onChange={(selection) => onSelect(selection, onChange)}
+                  onChange={(selection) => onSelect(selection)}
                 />
               </>
             )
           }}
         />
-        {error && (
+        {(errorMessage || noResultsFound) && (
           <Box marginTop={[2, 2]}>
-            <AlertMessage type="error" title="Engar niðurstöður fundust hjá fyrirtækjaskrá" message="Vinsamlegast athugaðu hvort að það er rétt slegið inn." />
+            <AlertMessage type="error" title={'Bingo'} message="Vinsamlegast athugaðu hvort að það er rétt slegið inn." />
           </Box>
         )}
       </Box >
