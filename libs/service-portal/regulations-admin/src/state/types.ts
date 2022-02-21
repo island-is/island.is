@@ -98,6 +98,8 @@ export type DraftImpactForm = DraftChangeForm | DraftCancelForm
 
 // ---------------------------------------------------------------------------
 
+export type GroupedDraftImpactForms = Record<string, DraftImpactForm[]>
+
 export type RegDraftForm = BodyDraftFields & {
   id: RegulationDraftId
   readonly draftingStatus: DraftingStatus // non-editable except via saveStatus or propose actions
@@ -120,7 +122,7 @@ export type RegDraftForm = BodyDraftFields & {
    * Mentioned is a 100% derived value, not to be saved on the server
    */
   mentioned: Array<RegName>
-  impacts: Array<DraftImpactForm>
+  impacts: GroupedDraftImpactForms
 
   draftingNotes: HtmlDraftField
   authors: DraftField<Array<Kennitala>>

@@ -10,7 +10,11 @@ import {
 import { useLocale } from '@island.is/localization'
 import { prettyName, RegName, toISODate } from '@island.is/regulations'
 import { impactMsgs } from '../../messages'
-import { DraftImpactForm, RegDraftForm } from '../../state/types'
+import {
+  DraftImpactForm,
+  GroupedDraftImpactForms,
+  RegDraftForm,
+} from '../../state/types'
 import { EditCancellation } from './EditCancellation'
 import { EditChange } from './EditChange'
 import {
@@ -28,29 +32,13 @@ import ConfirmModal from '../ConfirmModal/ConfirmModal'
 
 export type ImpactListProps = {
   draft: RegDraftForm
-  impacts: ReadonlyArray<DraftImpactForm>
+  impacts: GroupedDraftImpactForms
   title?: string | JSX.Element
   titleEmpty?: string | JSX.Element
 }
 
-type GroupedImpacts = Record<string, DraftImpactForm[]>
-
 export const ImpactList = (props: ImpactListProps) => {
   const { draft, impacts, title, titleEmpty } = props
-
-  const groupedImpacts: GroupedImpacts = {}
-  const sortedImpacts = [...impacts].sort((a, b) =>
-    (a.date.value as Date).getTime() >= (b.date.value as Date).getTime()
-      ? 1
-      : 0,
-  )
-
-  sortedImpacts.forEach((imp) => {
-    if (!groupedImpacts[imp.name]) {
-      groupedImpacts[imp.name] = []
-    }
-    groupedImpacts[imp.name].push(imp)
-  })
 
   const { formatMessage, formatDateFns } = useLocale()
   const t = formatMessage
@@ -113,7 +101,7 @@ export const ImpactList = (props: ImpactListProps) => {
         {' '}
       </Box>
 
-      {!Object.keys(groupedImpacts).length ? (
+      {!Object.keys(impacts).length ? (
         <Text variant="h3" as="h3">
           {titleEmpty || t(impactMsgs.impactListTitleEmpty)}
         </Text>
@@ -123,8 +111,8 @@ export const ImpactList = (props: ImpactListProps) => {
             {title || t(impactMsgs.impactListTitle)}
           </Text>
 
-          {Object.keys(groupedImpacts).map((impGrp, i) => {
-            const impactGroup = groupedImpacts[impGrp]
+          {Object.keys(impacts).map((impGrp, i) => {
+            const impactGroup = impacts[impGrp]
             return (
               <>
                 <Text variant="h4" as="h4" marginTop={i === 0 ? 0 : 5}>
@@ -196,13 +184,13 @@ export const ImpactList = (props: ImpactListProps) => {
           {chooseType?.type === 'repeal' && (
             <EditCancellation
               draft={draft}
-              cancellation={makeDraftCancellationForm({
-                type: 'repeal',
-                id: chooseType.id,
-                name: chooseType.name,
-                regTitle: chooseType.regTitle,
-                date: toISODate(chooseType.date.value) ?? undefined,
-              })}
+              cancellation={chooseType}
+              /*constraints={{
+                minDate:
+                  groupedImpacts[chooseType.name][
+                    groupedImpacts[chooseType.name].length - 1
+                  ].date.value,
+              }}*/
               closeModal={closeModal}
             />
           )}
@@ -210,19 +198,7 @@ export const ImpactList = (props: ImpactListProps) => {
           {chooseType?.type === 'amend' && (
             <EditChange
               draft={draft}
-              change={makeDraftChangeForm({
-                type: 'amend',
-                id: chooseType.id,
-                name: chooseType.name,
-                regTitle: chooseType.regTitle,
-                title: chooseType.title.value,
-                text: chooseType.text.value,
-                appendixes: chooseType.appendixes.map((apx) => ({
-                  title: apx.title.value,
-                  text: apx.text.value,
-                })),
-                comments: '',
-              })}
+              change={chooseType}
               closeModal={closeModal}
             />
           )}

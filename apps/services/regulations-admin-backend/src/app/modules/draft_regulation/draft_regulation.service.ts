@@ -22,6 +22,7 @@ import {
   DraftRegulationChange,
   DraftRegulationChangeId,
   DraftSummary,
+  GroupedDraftImpacts,
   RegulationDraft,
   RegulationDraftId,
 } from '@island.is/regulations/admin'
@@ -29,6 +30,16 @@ import { Kennitala } from '@island.is/regulations'
 import * as kennitala from 'kennitala'
 import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 import type { User } from '@island.is/auth-nest-tools'
+
+const sortImpacts = (
+  impacts?: (DraftRegulationChangeModel | DraftRegulationCancelModel)[],
+) => {
+  return impacts?.length
+    ? [...impacts].sort((a, b) =>
+        new Date(a.date).getTime() >= new Date(b.date).getTime() ? 1 : 0,
+      )
+    : []
+}
 
 @Injectable()
 export class DraftRegulationService {
@@ -138,10 +149,17 @@ export class DraftRegulationService {
       impactNames,
     )
 
-    const impacts: (DraftRegulationCancel | DraftRegulationChange)[] = []
-    draftRegulation.changes?.forEach(async (change) => {
-      impactNames.push(change.regulation)
-      impacts.push({
+    const groupedImpacts: GroupedDraftImpacts = {}
+
+    const sortedChanges = sortImpacts(
+      draftRegulation.changes,
+    ) as DraftRegulationChangeModel[]
+
+    sortedChanges.forEach(async (change) => {
+      if (!groupedImpacts[change.regulation]) {
+        groupedImpacts[change.regulation] = []
+      }
+      groupedImpacts[change.regulation].push({
         id: change.id as DraftRegulationChangeId,
         type: 'amend',
         date: change.date,
@@ -156,9 +174,12 @@ export class DraftRegulationService {
           '', // helpful for human-readable display in the UI
       })
     })
-    draftRegulation.cancels?.forEach(async (cancel) => {
-      impactNames.push(cancel.regulation)
-      impacts.push({
+
+    const sortedCancels = sortImpacts(
+      draftRegulation.cancels,
+    ) as DraftRegulationCancelModel[]
+    sortedCancels.forEach(async (cancel) => {
+      groupedImpacts[cancel.regulation].push({
         id: cancel.id as DraftRegulationCancelId,
         type: 'repeal',
         date: cancel.date,
@@ -183,7 +204,7 @@ export class DraftRegulationService {
       authors,
       idealPublishDate: draftRegulation.ideal_publish_date, // TODO: Exclude original from response.
       draftingNotes: draftRegulation.drafting_notes, // TODO: Exclude original from response.
-      impacts,
+      impacts: groupedImpacts,
       type: draftRegulation.type,
       effectiveDate: draftRegulation.effective_date,
       signatureDate: draftRegulation.signature_date,

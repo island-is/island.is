@@ -11,6 +11,7 @@ import {
   DraftCancelForm,
   DraftChangeForm,
   DraftField,
+  GroupedDraftImpactForms,
   HtmlDraftField,
   RegDraftForm,
   StepNav,
@@ -128,6 +129,16 @@ export const makeDraftAppendixForm = (
 // ===========================================================================
 
 export const makeDraftForm = (draft: RegulationDraft): RegDraftForm => {
+  const impacts = draft.impacts
+  const impactForms: GroupedDraftImpactForms = {}
+  Object.keys(impacts).forEach((impGrp, i) => {
+    impactForms[impGrp] = impacts[impGrp].map((impact) => {
+      return impact.type === 'amend'
+        ? makeDraftChangeForm(impact)
+        : makeDraftCancellationForm(impact)
+    })
+  })
+
   const form: RegDraftForm = {
     id: draft.id,
     title: fText(draft.title, true),
@@ -153,11 +164,7 @@ export const makeDraftForm = (draft: RegulationDraft): RegDraftForm => {
 
     mentioned: [], // NOTE: Contains values derived from `text`
 
-    impacts: draft.impacts.map((impact) => {
-      return impact.type === 'amend'
-        ? makeDraftChangeForm(impact)
-        : makeDraftCancellationForm(impact)
-    }),
+    impacts: impactForms,
 
     draftingNotes: fHtml(draft.draftingNotes),
     draftingStatus: draft.draftingStatus,

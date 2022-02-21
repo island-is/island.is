@@ -81,6 +81,8 @@ export type ShippedSummary = Pick<
 
 // ---------------------------------------------------------------------------
 
+export type GroupedDraftImpacts = Record<string, Array<DraftImpact>>
+
 export type RegulationDraft = {
   /** undefined signifies a new regulation draft */
   id: RegulationDraftId
@@ -101,7 +103,7 @@ export type RegulationDraft = {
   signedDocumentUrl?: URLString
   type?: RegulationType
   ministry?: string
-  impacts: ReadonlyArray<DraftImpact>
+  impacts: GroupedDraftImpacts
 }
 
 // ---------------------------------------------------------------------------
