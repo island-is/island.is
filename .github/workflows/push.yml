@@ -175,6 +175,26 @@ jobs:
           echo "::set-output name=DOCKER_TAG::${DOCKER_TAG}"
           echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
 
+      - name: Post to a Slack channel
+        if: contains(github.ref, "release")
+        id: slack
+        uses: slackapi/slack-github-action@v1.18.0
+        with:
+          channel-id: 'release-images'
+          slack-message: "Monorepo Release Tag is: ${{ env.DOCKER_TAG }}"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+      # - name: Send Slack notification
+      #   uses: 8398a7/action-slack@v3
+      #   with:
+      #     status: custom
+      #     icon_emoji: ':party_blob:'
+      #     fields: repo,message,commit,author,action,eventName,ref,workflow,took # selectable (default: repo,message)
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # optional
+      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+
       - run: |
           if [[ "$GITHUB_HEAD_REF" == "" ]]; then
             echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
