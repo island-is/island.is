@@ -11,6 +11,7 @@ import {
   FormInfo,
   FormComment,
   ContactInfo,
+  DirectTaxPaymentsModal,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
@@ -44,6 +45,7 @@ const SummaryForm = () => {
 
   const [isVisible, setIsVisible] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const [formError, setFormError] = useState({
     status: false,
@@ -171,29 +173,33 @@ const SummaryForm = () => {
         <UserInfo />
         <FormInfo info={formInfoOverview} error={formError.status} />
 
-        {form.directTaxPayments &&
-          form.directTaxPayments.directTaxPayments.length > 0 && (
-            <>
-              <Divider />
-              <Box
-                display="flex"
-                justifyContent="spaceBetween"
-                alignItems="flexStart"
-                paddingY={[4, 4, 5]}
-              >
-                <Box marginRight={3}>
-                  <Text fontWeight="semiBold" color={'dark400'}>
-                    Staðgreiðsluskrá
-                  </Text>
-                  <Text>Staðgreiðsluskrá sótt</Text>
-                </Box>
-
-                <Button icon="open" iconType="outline" variant="utility">
-                  Opna sundurliðun
-                </Button>
+        {form.directTaxPayments && form.directTaxPayments.length > 0 && (
+          <>
+            <Divider />
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="flexStart"
+              paddingY={[4, 4, 5]}
+            >
+              <Box marginRight={3}>
+                <Text fontWeight="semiBold" color={'dark400'}>
+                  Staðgreiðsluskrá
+                </Text>
+                <Text>Staðgreiðsluskrá sótt</Text>
               </Box>
-            </>
-          )}
+
+              <Button
+                onClick={() => setIsModalOpen(true)}
+                icon="open"
+                iconType="outline"
+                variant="utility"
+              >
+                Opna sundurliðun
+              </Button>
+            </Box>
+          </>
+        )}
 
         <ContactInfo
           phone={form.phoneNumber}
@@ -220,6 +226,15 @@ const SummaryForm = () => {
             setIsVisible(isModalVisible)
           }}
         />
+        {form.directTaxPayments && (
+          <DirectTaxPaymentsModal
+            items={form.directTaxPayments}
+            isVisible={isModalOpen}
+            onVisibilityChange={(isOpen) => {
+              setIsModalOpen(isOpen)
+            }}
+          />
+        )}
       </ContentContainer>
 
       <Footer
