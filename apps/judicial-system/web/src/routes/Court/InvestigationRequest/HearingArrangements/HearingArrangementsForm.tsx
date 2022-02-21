@@ -223,13 +223,15 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                   SessionArrangements.ALL_PRESENT
                 }
                 onChange={() => {
-                  setAndSendToServer(
-                    'sessionArrangements',
-                    SessionArrangements.ALL_PRESENT,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
+                  setWorkingCase({
+                    ...workingCase,
+                    sessionArrangements: SessionArrangements.ALL_PRESENT,
+                    defenderIsSpokesperson: false,
+                  })
+                  updateCase(workingCase.id, {
+                    sessionArrangements: SessionArrangements.ALL_PRESENT,
+                    defenderIsSpokesperson: false,
+                  })
                 }}
                 large
                 backgroundColor="white"
@@ -247,13 +249,17 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                   SessionArrangements.ALL_PRESENT_SPOKESPERSON
                 }
                 onChange={() => {
-                  setAndSendToServer(
-                    'sessionArrangements',
-                    SessionArrangements.ALL_PRESENT_SPOKESPERSON,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
+                  setWorkingCase({
+                    ...workingCase,
+                    sessionArrangements:
+                      SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+                    defenderIsSpokesperson: true,
+                  })
+                  updateCase(workingCase.id, {
+                    sessionArrangements:
+                      SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+                    defenderIsSpokesperson: true,
+                  })
                 }}
                 large
                 backgroundColor="white"
@@ -339,12 +345,16 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             </BlueBox>
           </Box>
         </Box>
-        <Box component="section" marginBottom={8}>
-          <DefenderInfo
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-          />
-        </Box>
+        {(workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
+          workingCase.sessionArrangements ===
+            SessionArrangements.ALL_PRESENT_SPOKESPERSON) && (
+          <Box component="section" marginBottom={8}>
+            <DefenderInfo
+              workingCase={workingCase}
+              setWorkingCase={setWorkingCase}
+            />
+          </Box>
+        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

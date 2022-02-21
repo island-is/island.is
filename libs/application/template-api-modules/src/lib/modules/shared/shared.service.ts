@@ -21,11 +21,15 @@ import {
   PaymentStatusData,
 } from './shared.queries'
 import { S3 } from 'aws-sdk'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class SharedTemplateApiService {
   private readonly s3: S3
   constructor(
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
     @Inject(EmailService)
     private readonly emailService: EmailService,
     @Inject(ConfigService)
@@ -160,7 +164,7 @@ export class SharedTemplateApiService {
     authorization: string,
     applicationId: string,
     chargeItemCode: string,
-  ) {
+  ): Promise<PaymentChargeData['applicationPaymentCharge']> {
     return this.makeGraphqlQuery<PaymentChargeData>(
       authorization,
       PAYMENT_QUERY,
@@ -181,7 +185,11 @@ export class SharedTemplateApiService {
       .then((res) => res.json())
       .then(({ errors, data }) => {
         if (errors && errors.length) {
-          throw new Error('Creating the payment charge failed')
+          this.logger.error('Graphql errors', {
+            errors,
+          })
+
+          throw new Error('Graphql errors present')
         }
 
         if (!data?.applicationPaymentCharge) {

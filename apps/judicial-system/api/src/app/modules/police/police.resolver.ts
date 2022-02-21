@@ -13,9 +13,11 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
-import { BackendAPI } from '../../../services'
-import { PoliceCaseFilesQueryInput, UploadPoliceCaseFileInput } from './dto'
-import { PoliceCaseFile, UploadPoliceCaseFileResponse } from './models'
+import { BackendApi } from '../../data-sources'
+import { PoliceCaseFilesQueryInput } from './dto/policeCaseFiles.input'
+import { UploadPoliceCaseFileInput } from './dto/uploadPoliceCaseFile.input'
+import { PoliceCaseFile } from './models/policeCaseFile.model'
+import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver()
@@ -31,7 +33,7 @@ export class PoliceResolver {
     @Args('input', { type: () => PoliceCaseFilesQueryInput })
     input: PoliceCaseFilesQueryInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<PoliceCaseFile[]> {
     this.logger.debug(`Getting all police case files for case ${input.caseId}`)
 
@@ -48,7 +50,7 @@ export class PoliceResolver {
     @Args('input', { type: () => UploadPoliceCaseFileInput })
     input: UploadPoliceCaseFileInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<UploadPoliceCaseFileResponse> {
     const { caseId, ...uploadPoliceFile } = input
     this.logger.debug(

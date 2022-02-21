@@ -60,17 +60,16 @@ const SpouseDataGathering = () => {
       },
     )
 
-    updateForm({
-      ...form,
-      taxReturnFromRskFile: [
-        personalTaxReturn
-          ? {
-              ...personalTaxReturn.municipalitiesPersonalTaxReturn,
-              type: FileType.SPOUSEFILES,
-            }
-          : undefined,
-      ],
-    })
+    if (personalTaxReturn) {
+      updateForm({
+        ...form,
+        taxReturnFromRskFile: [
+          {
+            ...personalTaxReturn.municipalitiesPersonalTaxReturn,
+          },
+        ],
+      })
+    }
 
     setLoading(false)
 

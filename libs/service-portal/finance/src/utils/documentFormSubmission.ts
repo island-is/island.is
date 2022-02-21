@@ -1,4 +1,9 @@
-export const formSubmit = (url: string, token: string, annual?: boolean) => {
+import { getAccessToken } from '@island.is/auth/react'
+
+export const formSubmit = async (url: string, annual?: boolean) => {
+  const token = await getAccessToken()
+  if (!token) return
+
   // Create form elements
   const form = document.createElement('form')
   const tokenInput = document.createElement('input')
