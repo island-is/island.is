@@ -11,7 +11,7 @@ import type {
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
-import { Defendant } from '../../defendant/models/defendant.model'
+import { Defendant } from '../../defendant'
 import { Institution } from '../../institution'
 import { User } from '../../user'
 import { CaseFile } from '../../file'
@@ -246,9 +246,6 @@ export class Case implements TCase {
 
   @Field(() => [CaseFile], { nullable: true })
   readonly caseFiles?: CaseFile[]
-
-  @Field({ nullable: true })
-  readonly isMasked?: boolean
 
   @Field({ nullable: true })
   readonly caseModifiedExplanation?: string

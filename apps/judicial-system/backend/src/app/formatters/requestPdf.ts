@@ -11,8 +11,8 @@ import {
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
+import { Case } from '../modules/case'
 import { request as m, core } from '../messages'
-import { Case } from '../modules/case/models'
 import { formatLegalProvisions } from './formatters'
 import {
   addEmptyLines,
@@ -91,9 +91,13 @@ function constructRestrictionRequestPdf(
 
     addNormalText(
       doc,
-      `${formatMessage(m.baseInfo.nationalId)} ${formatNationalId(
-        defendant.nationalId ?? '',
-      )}`,
+      `${formatMessage(
+        defendant.noNationalId ? m.baseInfo.dateOfBirth : m.baseInfo.nationalId,
+      )} ${
+        defendant.noNationalId
+          ? defendant.nationalId
+          : formatNationalId(defendant.nationalId ?? '')
+      }`,
       'Helvetica',
     )
     addNormalText(
@@ -249,9 +253,13 @@ function constructInvestigationRequestPdf(
 
     addNormalText(
       doc,
-      `${formatMessage(m.baseInfo.nationalId)} ${formatNationalId(
-        defendant.nationalId ?? '',
-      )}`,
+      `${formatMessage(
+        defendant.noNationalId ? m.baseInfo.dateOfBirth : m.baseInfo.nationalId,
+      )} ${
+        defendant.noNationalId
+          ? defendant.nationalId
+          : formatNationalId(defendant.nationalId ?? '')
+      }`,
       'Helvetica',
     )
     addNormalText(

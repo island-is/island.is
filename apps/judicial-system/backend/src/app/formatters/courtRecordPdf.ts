@@ -18,7 +18,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
-import { Case } from '../modules/case/models'
+import { Case } from '../modules/case'
 import { courtRecord } from '../messages'
 import {
   addFooter,
@@ -120,11 +120,9 @@ function constructRestrictionCourtRecordPdf(
             index === 0
               ? ''
               : index + 1 === theCase.defendants?.length
-              ? ', og'
+              ? ' og'
               : ','
-          } ${defendant.name ?? '-'}, kt. ${formatNationalId(
-            defendant.nationalId ?? '-',
-          )}`,
+          } ${defendant.name ?? '-'}`,
         '',
       ) ?? ` ${courtRecord.missingDefendants}`
     }.`,
@@ -372,11 +370,9 @@ function constructInvestigationCourtRecordPdf(
             index === 0
               ? ''
               : index + 1 === theCase.defendants?.length
-              ? ', og'
+              ? ' og'
               : ','
-          } ${defendant.name ?? '-'}, kt. ${formatNationalId(
-            defendant.nationalId ?? '-',
-          )}`,
+          } ${defendant.name ?? '-'}`,
         '',
       ) ?? ` ${courtRecord.missingDefendants}`
     }.`,

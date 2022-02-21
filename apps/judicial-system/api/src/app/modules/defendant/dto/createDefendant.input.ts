@@ -12,6 +12,10 @@ export class CreateDefendantInput implements CreateDefendant {
 
   @Allow()
   @Field({ nullable: true })
+  readonly noNationalId?: boolean
+
+  @Allow()
+  @Field({ nullable: true })
   readonly nationalId?: string
 
   @Allow()
@@ -25,4 +29,8 @@ export class CreateDefendantInput implements CreateDefendant {
   @Allow()
   @Field({ nullable: true })
   readonly address?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly citizenship?: string
 }

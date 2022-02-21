@@ -116,9 +116,11 @@ export const RulingStepTwo: React.FC = () => {
                   suffix: accusedSuffix,
                 }),
                 accusedName: theCase.defendants[0].name,
-                accusedNationalId: formatNationalId(
-                  theCase.defendants[0].nationalId ?? '',
-                ),
+                accusedNationalId: theCase.defendants[0].noNationalId
+                  ? ', '
+                  : `, kt. ${formatNationalId(
+                      theCase.defendants[0].nationalId ?? '',
+                    )}, `,
                 extensionSuffix:
                   theCase.parentCase &&
                   isAcceptingCaseDecision(theCase.parentCase.decision)
@@ -136,9 +138,11 @@ export const RulingStepTwo: React.FC = () => {
                   }),
                 ),
                 accusedName: theCase.defendants[0].name,
-                accusedNationalId: formatNationalId(
-                  theCase.defendants[0].nationalId ?? '',
-                ),
+                accusedNationalId: theCase.defendants[0].noNationalId
+                  ? ', '
+                  : `, kt. ${formatNationalId(
+                      theCase.defendants[0].nationalId ?? '',
+                    )}, `,
                 caseTypeAndExtensionSuffix:
                   theCase.decision === CaseDecision.ACCEPTING ||
                   theCase.decision === CaseDecision.ACCEPTING_PARTIALLY
@@ -291,6 +295,7 @@ export const RulingStepTwo: React.FC = () => {
               textarea
               required
               rows={7}
+              autoExpand={{ on: true, maxHeight: 300 }}
             />
           </Box>
         </Box>
@@ -531,6 +536,7 @@ export const RulingStepTwo: React.FC = () => {
                   }
                   textarea
                   rows={7}
+                  autoExpand={{ on: true, maxHeight: 300 }}
                 />
               </BlueBox>
             </Box>
@@ -705,6 +711,7 @@ export const RulingStepTwo: React.FC = () => {
                   }
                   textarea
                   rows={7}
+                  autoExpand={{ on: true, maxHeight: 300 }}
                 />
               </Box>
             </BlueBox>
@@ -744,6 +751,7 @@ export const RulingStepTwo: React.FC = () => {
                 )
               }
               rows={16}
+              autoExpand={{ on: true, maxHeight: 600 }}
               textarea
             />
           </Box>

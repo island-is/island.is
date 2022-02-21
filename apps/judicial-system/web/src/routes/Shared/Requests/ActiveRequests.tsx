@@ -228,9 +228,11 @@ const ActiveRequests: React.FC<Props> = (props) => {
                   {c.defendants.length === 1 ? (
                     <Text>
                       <Text as="span" variant="small" color="dark400">
-                        {`kt. ${
+                        {`${c.defendants[0].noNationalId ? 'fd.' : 'kt.'} ${
                           c.defendants[0].nationalId
-                            ? formatNationalId(c.defendants[0].nationalId)
+                            ? c.defendants[0].noNationalId
+                              ? c.defendants[0].nationalId
+                              : formatNationalId(c.defendants[0].nationalId)
                             : '-'
                         }`}
                       </Text>
