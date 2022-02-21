@@ -143,6 +143,7 @@
     "datebook": "7.0.8",
     "dd-trace": "0.33.1",
     "deepmerge": "4.2.2",
+    "document-register-element": "1.13.1",
     "downshift": "5.4.3",
     "elastic-builder": "2.6.1",
     "entropy-string": "4.2.0",

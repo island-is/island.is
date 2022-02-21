@@ -1,1 +1,1 @@
-export { DefendantModule } from './defendant.module'
+export { Defendant } from './models/defendant.model'

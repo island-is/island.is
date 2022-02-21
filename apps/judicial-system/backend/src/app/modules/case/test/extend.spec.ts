@@ -10,11 +10,10 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from './createTestingCaseModule'
-import { DefendantService } from '../../defendant/defendant.service'
-import { Defendant } from '../../defendant/models/defendant.model'
+import { DefendantService, Defendant } from '../../defendant'
 import { User } from '../../user'
 import { Institution } from '../../institution'
-import { Case } from '../models'
+import { Case } from '../models/case.model'
 
 interface Then {
   result: Case
