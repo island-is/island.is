@@ -3,20 +3,31 @@ import {
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
-import { NationalRegistryRealEstate } from '../types/schema'
 
 export class NationalRegistryRealEstateProvider extends BasicDataProvider {
   readonly type = 'NationalRegistryRealEstate'
 
-  async provide(): Promise<NationalRegistryRealEstate> {
+  async provide(): Promise<unknown> {
     const query = `
-      query GetNationalRegistryMyRealEstates {
-        nationalRegistryMyRealEstates {
-          realEstateNumber
+      query GetRealEstateQuery($input: GetMultiPropertyInput!) {
+        assetsOverview(input: $input) {
+          properties {
+            propertyNumber
+            defaultAddress {
+              locationNumber
+              postNumber
+              municipality
+              propertyNumber
+              display
+              displayShort
+            }
+          }
         }
       }
     `
-    return this.useGraphqlGateway<NationalRegistryRealEstate>(query)
+    return this.useGraphqlGateway(query, {
+      input: { cursor: '1' },
+    })
       .then(async (res: Response) => {
         const response = await res.json()
         if (response.errors) {
@@ -27,7 +38,7 @@ export class NationalRegistryRealEstateProvider extends BasicDataProvider {
         }
 
         return Promise.resolve({
-          ...response.data.nationalRegistryMyRealEstates,
+          ...response.data.assetsOverview,
         })
       })
       .catch((error) => {
@@ -45,9 +56,7 @@ export class NationalRegistryRealEstateProvider extends BasicDataProvider {
       data: result,
     }
   }
-  onProvideSuccess(
-    result: NationalRegistryRealEstate,
-  ): SuccessfulDataProviderResult {
+  onProvideSuccess(result: object): SuccessfulDataProviderResult {
     return { date: new Date(), status: 'success', data: result }
   }
 }

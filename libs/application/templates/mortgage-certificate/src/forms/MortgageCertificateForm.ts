@@ -34,13 +34,12 @@ export const MortgageCertificateForm: Form = buildForm({
               title: m.nationalRegistryTitle,
               subTitle: m.nationalRegistrySubTitle,
             }),
-            //TODOx enable when NationalRegistryRealEstate works
-            // buildDataProviderItem({
-            //   id: 'nationalRegistryRealEstate',
-            //   type: 'NationalRegistryRealEstateProvider',
-            //   title: m.nationalRegistryRealEstateTitle,
-            //   subTitle: m.nationalRegistryRealEstateSubTitle,
-            // }),
+            buildDataProviderItem({
+              id: 'nationalRegistryRealEstate',
+              type: 'NationalRegistryRealEstateProvider',
+              title: m.nationalRegistryRealEstateTitle,
+              subTitle: m.nationalRegistryRealEstateSubTitle,
+            }),
             buildDataProviderItem({
               id: 'userProfile',
               type: 'UserProfileProvider',
