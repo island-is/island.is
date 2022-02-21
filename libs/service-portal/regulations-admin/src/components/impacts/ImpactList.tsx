@@ -108,8 +108,7 @@ export const ImpactList = (props: ImpactListProps) => {
             {title || t(impactMsgs.impactListTitle)}
           </Text>
 
-          {Object.keys(impacts).map((impGrp, i) => {
-            const impactGroup = impacts[impGrp]
+          {Object.entries(impacts).forEach(([impGrp, impactGroup], i) => {
             return (
               <Stack space={3} key={impGrp + '-' + i}>
                 <Text variant="h4" as="h4" marginTop={i === 0 ? 0 : 5}>

@@ -201,7 +201,7 @@ export const EditReviewWarnings = (props: EditReviewWarningsProps) => {
         {t(reviewMessagse.warningsTitle)}
       </Text>
       {props.messages.map((m, i) => (
-        <Box marginBottom={2}>
+        <Box marginBottom={2} key={i}>
           <AlertMessage
             key={i}
             type="error"

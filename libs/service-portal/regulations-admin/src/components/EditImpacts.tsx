@@ -184,8 +184,8 @@ export const EditImpacts = () => {
             {t(impactMsgs.chooseType)}
           </Text>
           {draft.impacts[selRegOption.value] ? (
-            <Inline align="center" space={[2, 2, 3, 4]}>
-              <Text variant="h5" as="h5" marginBottom={[2, 2, 3, 4]}>
+            <Inline align="center">
+              <Text variant="h5" as="h5">
                 Reglugerð er með virka brottfellingu
               </Text>
             </Inline>

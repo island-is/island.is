@@ -35,15 +35,9 @@ export const ImpactHistory = (props: ImpactHistoryProps) => {
       effect: 'amend',
     } as RegulationHistoryItem
 
-    const futureEffectArray = [...futureEffects]
+    const futureEffectArray = [...futureEffects, activeImpactChangeItem]
 
-    if (activeImpact) {
-      futureEffectArray.push(activeImpactChangeItem)
-    }
-
-    const futureEffectsByDate = sortBy(futureEffectArray, (o) => o.date)
-
-    return futureEffectsByDate
+    return sortBy(futureEffectArray, (o) => o.date)
   }
 
   const allFutureEffects = getAllFutureEffects()
