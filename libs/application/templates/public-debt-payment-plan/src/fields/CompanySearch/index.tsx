@@ -1,7 +1,7 @@
-import React, { FC, useState, useCallback } from 'react'
-import { FieldBaseProps } from '@island.is/application/core'
-import { AlertBanner, AlertMessage, AsyncSearch, AsyncSearchOption, Box } from '@island.is/island-ui/core'
-import { Controller } from 'react-hook-form'
+import React, { FC, useState, useCallback, useEffect } from 'react'
+import { FieldBaseProps, getErrorViaPath } from '@island.is/application/core'
+import { AlertBanner, AlertMessage, AsyncSearch, AsyncSearchOption, Box, } from '@island.is/island-ui/core'
+import { Controller, useFormContext } from 'react-hook-form'
 import { SearchItem } from './SearchItem'
 import { debounce } from 'lodash'
 import { useLazyQuery } from '@apollo/client'
@@ -9,24 +9,37 @@ import { COMPANY_REGISTRY_COMPANIES } from './searchQuery'
 
 interface Props extends FieldBaseProps { }
 
-export const CompanySearch: FC<Props> = ({ field }) => {
+export const CompanySearch: FC<Props> = ({ field, errors = {}, application }) => {
+  const { clearErrors, setValue } = useFormContext()
+  const defaultAnswer = { value: '', label: '' }
   const { id } = field
+  const error = getErrorViaPath(errors, id)
+  const initialValue = (application.answers[id] || { ...defaultAnswer }) as { value: string, label: string }
   const [searchQuery, setSearchQuery] = useState('')
   const [search, { loading, data }] = useLazyQuery(COMPANY_REGISTRY_COMPANIES);
-  const hasNoResults = !loading && data?.companyRegistryCompanies?.data?.length === 0 && searchQuery.length > 0
-  console.log(hasNoResults)
   const debouncer = useCallback(debounce(search, 250), []);
 
-  const onChangeHandler = (
+  console.log('answers', application.answers)
+  console.log('Error', error)
+  const onSelect = (
     selection: AsyncSearchOption | null,
-    callback: (args?: any) => void,
+    onChangeHandler: (args?: any) => void,
   ) => {
-    callback(selection?.value || '')
+    console.log('On Select')
+    const { value, label } = selection || {}
+    if (value && label) {
+      clearErrors(`${id}.nationalId`)
+      setValue(`${id}.nationalId`, value)
+      setValue(`${id}.label`, label)
+      onChangeHandler({ nationalId: value, label })
+    }
   }
 
-  const onInputValueChangeHandler = (inputValue: string,) => {
+  const onInputChange = (inputValue: string, onChangeHandler: (args?: any) => void) => {
+    console.log('On input Change')
     const query = inputValue?.trim() || ""
     setSearchQuery(query)
+    onChangeHandler(defaultAnswer)
     debouncer({
       variables: {
         input: {
@@ -42,7 +55,7 @@ export const CompanySearch: FC<Props> = ({ field }) => {
     const { data } = response
     const options = data?.map(({ name, nationalId }) => ({
       label: `${name} - ${nationalId}`,
-      value: name,
+      value: nationalId,
       component: (props: any) => (
         <SearchItem
           {...props}
@@ -61,24 +74,27 @@ export const CompanySearch: FC<Props> = ({ field }) => {
       <Box marginTop={[2, 4]}>
         <Controller
           name={`${id}`}
-          defaultValue={""}
+          id={`${id}`}
+          defaultValue={initialValue}
           render={({ onChange, value }) => {
             return (
-              <AsyncSearch
-                loading={loading}
-                options={getSearchOptions(searchQuery, data?.companyRegistryCompanies)}
-                size="large"
-                placeholder="Sláðu inn nafn eða kennitölu"
-                colored
-                label="Leitaðu af fyrirtæki"
-                onInputValueChange={onInputValueChangeHandler}
-                initialInputValue={value}
-                onChange={(selection) => onChangeHandler(selection, onChange)}
-              />
+              <>
+                <AsyncSearch
+                  loading={loading}
+                  options={getSearchOptions(searchQuery, data?.companyRegistryCompanies)}
+                  size="large"
+                  placeholder="Sláðu inn nafn eða kennitölu"
+                  colored
+                  label="Leitaðu af fyrirtæki"
+                  onInputValueChange={(selection) => onInputChange(selection, onChange)}
+                  initialInputValue={initialValue.label}
+                  onChange={(selection) => onSelect(selection, onChange)}
+                />
+              </>
             )
           }}
         />
-        {hasNoResults && (
+        {error && (
           <Box marginTop={[2, 2]}>
             <AlertMessage type="error" title="Engar niðurstöður fundust hjá fyrirtækjaskrá" message="Vinsamlegast athugaðu hvort að það er rétt slegið inn." />
           </Box>
