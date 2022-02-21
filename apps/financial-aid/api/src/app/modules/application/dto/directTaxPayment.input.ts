@@ -25,4 +25,8 @@ export class DirectTaxPaymentInput implements DirectTaxPayment {
   @Allow()
   @Field()
   readonly month!: number
+
+  @Allow()
+  @Field()
+  readonly year!: number
 }

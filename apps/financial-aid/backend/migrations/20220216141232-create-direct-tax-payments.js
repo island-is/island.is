@@ -35,6 +35,9 @@ module.exports = {
           month: {
             type: Sequelize.INTEGER,
           },
+          year: {
+            type: Sequelize.INTEGER,
+          },
           user_type: {
             type: Sequelize.ENUM('Applicant', 'Spouse'),
             allowNull: false,

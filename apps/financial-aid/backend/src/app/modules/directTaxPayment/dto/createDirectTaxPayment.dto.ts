@@ -29,6 +29,10 @@ export class CreateDirectTaxPaymentDto {
   @ApiProperty()
   readonly month: number
 
+  @IsNumber()
+  @ApiProperty()
+  readonly year: number
+
   @IsEnum(UserType)
   @ApiProperty()
   readonly userType: UserType

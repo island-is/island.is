@@ -65,6 +65,12 @@ export class DirectTaxPaymentModel extends Model<DirectTaxPayment> {
   month: number
 
   @Column({
+    type: DataType.INTEGER,
+  })
+  @ApiProperty()
+  year: number
+
+  @Column({
     type: DataType.ENUM,
     values: Object.values(UserType),
   })

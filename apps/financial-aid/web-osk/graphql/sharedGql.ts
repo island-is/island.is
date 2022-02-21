@@ -149,6 +149,7 @@ export const GatherTaxDataQuery = gql`
         personalAllowance
         withheldAtSource
         month
+        year
       }
     }
   }

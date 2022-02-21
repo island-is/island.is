@@ -27,6 +27,7 @@ export class PersonalTaxReturnService {
             personalAllowance: salary.personalAllowance,
             withheldAtSource: salary.salaryWithheldAtSource,
             month: salary.period,
+            year: salary.year,
           }
         }),
       }

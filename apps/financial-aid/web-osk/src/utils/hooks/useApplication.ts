@@ -74,8 +74,7 @@ const useApplication = () => {
               postalCode: nationalRegistryData?.address.postalCode,
               city: nationalRegistryData?.address.city,
               municipalityCode: nationalRegistryData?.address.municipalityCode,
-              directTaxPayments:
-                form?.directTaxPayments?.directTaxPayments ?? [],
+              directTaxPayments: form?.directTaxPayments ?? [],
             },
           },
         })

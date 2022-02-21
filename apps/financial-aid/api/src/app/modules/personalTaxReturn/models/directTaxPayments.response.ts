@@ -22,4 +22,7 @@ class DirectTaxPaymentResponse {
 
   @Field(() => Number)
   month!: number
+
+  @Field(() => Number)
+  year!: number
 }

@@ -249,6 +249,7 @@ export interface DirectTaxPayment {
   personalAllowance: number
   withheldAtSource: number
   month: number
+  year: number
 }
 
 export interface Application {

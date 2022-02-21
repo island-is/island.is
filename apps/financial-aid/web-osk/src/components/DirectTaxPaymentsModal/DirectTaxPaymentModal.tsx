@@ -82,7 +82,7 @@ const DirectTaxPaymentModal = ({
                     >
                       <td>
                         <Text variant="small" marginBottom={1}>
-                          {getMonth(i.month)}
+                          {`${getMonth(i.month)} ${i.year}`}
                         </Text>
                       </td>
                       <td>
