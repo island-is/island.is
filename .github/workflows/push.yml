@@ -187,17 +187,17 @@ jobs:
 
       - name: Send Slack notification
         id: slack
-        # if: "startsWith(env.GIT_BASE_BRANCH, 'release/')"
+        if: "startsWith(env.GIT_BASE_BRANCH, 'release/')"
         uses: 8398a7/action-slack@v3
         with:
           status: custom
-          # icon_emoji: ':party_blob:'
+          icon_emoji: ':party_blob:'
           fields: repo,message # selectable (default: repo,message)
           custom_payload: |
             {
               attachments: [{
                 color: 'good',
-                text: `${process.env.DOCKER_TAG}`,
+                text: `Monorepo Release Tag is: ${process.env.DOCKER_TAG}`,
               }]
             }
         env:
