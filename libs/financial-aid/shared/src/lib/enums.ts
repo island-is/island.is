@@ -12,6 +12,7 @@ export enum AidTypeHomeCircumstances {
   OWNPLACE = 'OwnPlace',
   REGISTEREDLEASE = 'RegisteredLease',
   UNREGISTEREDLEASE = 'UnregisteredLease',
+  WITHOTHERS = 'WithOthers',
   WITHPARENTS = 'WithParents',
   UNKNOWN = 'Unknown',
 }
