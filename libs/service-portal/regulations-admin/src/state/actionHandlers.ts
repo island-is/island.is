@@ -115,8 +115,12 @@ export const actionHandlers: {
   },
 
   SET_IMPACT: (state, { impactId }) => {
-    if (impactId && state.draft.impacts.find((c) => c.id === impactId)) {
-      state.activeImpact = impactId
+    if (impactId) {
+      Object.entries(state.draft.impacts).forEach(([key, impacts]) => {
+        if (impacts.find((c) => c.id === impactId)) {
+          state.activeImpact = impactId
+        }
+      })
     }
     // ignore invalid/uknown `impactId`s
     state.activeImpact = undefined

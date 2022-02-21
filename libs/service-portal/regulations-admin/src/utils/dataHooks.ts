@@ -294,37 +294,3 @@ export const useGetCurrentRegulationFromApiQuery = (
     data: data.getCurrentRegulationFromApi as Regulation,
   }
 }
-
-// ---------------------------------------------------------------------------
-
-type ByTarget = Record<
-  string,
-  {
-    name: DraftImpactName
-    regTitle: PlainText
-    impacts: Array<DraftImpactForm>
-  }
->
-
-export const useImpactsByTarget = (
-  impacts: Array<DraftImpactForm>,
-): Array<ByTarget[string]> =>
-  useMemo(() => {
-    const byTarget: ByTarget = {}
-    impacts
-      .slice(0)
-      .sort((a, b) => (a.date > b.date ? 1 : -1))
-      .forEach((impact) => {
-        const { name, regTitle } = impact
-        let data = byTarget[name]
-        if (!byTarget[name]) {
-          data = byTarget[name] = {
-            name,
-            regTitle,
-            impacts: [],
-          }
-        }
-        data.impacts.push(impact)
-      })
-    return Object.values(byTarget)
-  }, [impacts])

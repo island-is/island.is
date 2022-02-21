@@ -150,7 +150,6 @@ export class DraftRegulationService {
     )
 
     const groupedImpacts: GroupedDraftImpacts = {}
-
     const sortedChanges = sortImpacts(
       draftRegulation.changes,
     ) as DraftRegulationChangeModel[]

@@ -144,9 +144,9 @@ export const useCollectMessages = (
       })
     }
 
-    impacts.forEach((impact) => {
-      // TODO: Return errors for impacts
-    })
+    // impacts.forEach((impact) => {
+    // TODO: Return errors for impacts
+    // })
 
     if (name.error) {
       messages.push({

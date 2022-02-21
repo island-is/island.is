@@ -115,7 +115,7 @@ export const ImpactList = (props: ImpactListProps) => {
                 <Text variant="h4" as="h4" marginTop={i === 0 ? 0 : 5}>
                   Breytingar á{' '}
                   {impGrp === 'self'
-                    ? 'sjálfri sér'
+                    ? t(impactMsgs.selfAffecting)
                     : `${prettyName(impactGroup[0].name as RegName)}`}
                 </Text>
                 {impactGroup.map((impact, idx) => {
@@ -124,7 +124,7 @@ export const ImpactList = (props: ImpactListProps) => {
                   const isChange = type === 'amend'
                   const headingText =
                     name === 'self'
-                      ? t(impactMsgs.selfAffecting)
+                      ? draft.title.value
                       : `${prettyName(name)} – ${regTitle}`
                   const errorMessage = !error
                     ? undefined

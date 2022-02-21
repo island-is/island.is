@@ -11,8 +11,8 @@ import {
   prettyName,
   combineTextAppendixesComments,
   toISODate,
+  RegName,
 } from '@island.is/regulations'
-import { useImpactsByTarget } from '../utils/dataHooks'
 import copyToClipboard from 'copy-to-clipboard'
 
 /** Mock PDF fetchher.
@@ -99,8 +99,6 @@ export const EditReviewOverview = (props: EditReviewOverviewProps) => {
   const t = formatMessage
   const { hasWarnings } = props
 
-  const impactsByTarget = useImpactsByTarget(draft.impacts)
-
   const [clicked, setClicked] = useState({
     title: false,
     html: false,
@@ -162,20 +160,21 @@ export const EditReviewOverview = (props: EditReviewOverviewProps) => {
         {draft.fastTrack.value ? ` (${t(editorMsgs.applyForFastTrack)})` : ''}
       </OverviewItem>
 
-      {impactsByTarget.length > 0 && (
+      {Object.keys(draft.impacts).length > 0 && (
         <Box marginTop={4} marginBottom={4}>
           <Text variant="h4" as="h4" marginBottom={2}>
             {t(reviewMessagse.impactsTitle)}
           </Text>
-          {impactsByTarget.map(({ name, regTitle, impacts }) => {
+
+          {Object.entries(draft.impacts).forEach(([key, impactsList]) => {
             const label =
-              name === 'self'
+              key === 'self'
                 ? t(impactMsgs.selfAffecting)
-                : `${prettyName(name)} – ${regTitle}`
+                : `${prettyName(key as RegName)} – `
 
             return (
-              <OverviewItem key={name} label={label} step="impacts">
-                {impacts.map((impact) => (
+              <OverviewItem key={key} label={label} step="impacts">
+                {impactsList.map((impact) => (
                   <div key={impact.id}>
                     {formatDate(impact.date.value)}{' '}
                     {t(
