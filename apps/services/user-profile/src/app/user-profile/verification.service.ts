@@ -225,7 +225,10 @@ export class VerificationService {
             {
               component: 'Image',
               context: {
-                src: pathToAsset('digitalService.jpg'),
+                src: pathToAsset(
+                  'digitalService.jpg',
+                  environment.email.servicePortalBaseUrl,
+                ),
                 alt: 'Manneskja skoðar snjallsíma - myndskreyting',
               },
             },
