@@ -245,7 +245,7 @@ export class ApplicationController {
         `No initial state found for type: ${typeId}`,
       )
     }
-
+    console.log("USER ",user)
     const applicationDto: Pick<
       BaseApplication,
       | 'answers'
