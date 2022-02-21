@@ -43,15 +43,12 @@ export class LocalRunner implements GitActionStatus {
     currentSha: string,
     olderSha: string,
   ): Promise<string[]> {
-    const target = 'docker-express'
     const log = app.extend('calculate-distance')
-    log(
-      `Calculating distance between current: ${currentSha} and ${olderSha} with target ${target}`,
-    )
+    log(`Calculating distance between current: ${currentSha} and ${olderSha}`)
     let monorepoRoot = join(__dirname, '..', '..', '..')
 
     const printAffected = execSync(
-      `fnm exec npx nx print-affected --target="${target}" --select=tasks.target.project --head=${currentSha} --base=${olderSha}`,
+      `npx nx print-affected --select=tasks.target.project --head=${currentSha} --base=${olderSha}`,
       {
         encoding: 'utf-8',
         cwd: monorepoRoot,
