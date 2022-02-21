@@ -11,7 +11,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../../environments'
-import { Case } from '../case/models/case.model'
+import { Case } from '../case'
 
 const caseEvent = {
   CREATE: ':new: Krafa stofnuð',

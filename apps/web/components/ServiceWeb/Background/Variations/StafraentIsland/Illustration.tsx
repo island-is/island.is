@@ -158,7 +158,7 @@ const SvgComponent = (props) => (
         y2={218.569}
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#FF4C84" />
+        <stop offset={0} stopColor="#FF4C84" />
         <stop offset={0.024} stopColor="#F1528E" />
         <stop offset={0.117} stopColor="#BF65B0" />
         <stop offset={0.209} stopColor="#9674CD" />
