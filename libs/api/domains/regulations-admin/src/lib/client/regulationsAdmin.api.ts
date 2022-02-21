@@ -14,6 +14,7 @@ import {
   UpdateDraftRegulationChangeInput,
   CreateDraftRegulationChangeInput,
 } from '../graphql/dto'
+import { DraftImpact } from '@island.is/regulations/admin'
 
 export class RegulationsAdminApi extends RESTDataSource {
   constructor(
@@ -48,6 +49,17 @@ export class RegulationsAdminApi extends RESTDataSource {
     return this.delete(`/draft_regulation/${draftId}`, undefined, {
       headers: { authorization },
     })
+  }
+
+  async getImpactsByName(regulation: string, authorization: string) {
+    const response = await this.get<DraftImpact[] | null>(
+      `/draft_regulation_impacts/${regulation}`,
+      {},
+      {
+        headers: { authorization },
+      },
+    )
+    return response
   }
 
   createDraftRegulationCancel(
