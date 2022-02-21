@@ -11,6 +11,8 @@ import { Octokit } from '@octokit/rest'
 import { ActionsListWorkflowRunsForRepoResponseData } from '../detection'
 import { Endpoints } from '@octokit/types'
 import { join } from 'path'
+import Debug from 'debug'
+const app = Debug('change-detection:io')
 
 const repository = process.env.GITHUB_REPOSITORY || '/'
 const [owner, repo] = repository.split('/')
@@ -42,7 +44,12 @@ export class LocalRunner implements GitActionStatus {
     olderSha: string,
   ): Promise<string[]> {
     const target = 'docker-express'
+    const log = app.extend('calculate-distance')
+    log(
+      `Calculating distance between current: ${currentSha} and ${olderSha} with target ${target}`,
+    )
     let monorepoRoot = join(__dirname, '..', '..', '..')
+
     const printAffected = execSync(
       `fnm exec npx nx print-affected --target="${target}" --select=tasks.target.project --head=${currentSha} --base=${olderSha}`,
       {
@@ -50,13 +57,21 @@ export class LocalRunner implements GitActionStatus {
         cwd: monorepoRoot,
       },
     )
-    return Promise.resolve(printAffected.split(',').map((s) => s.trim()))
+    let affectedComponents = printAffected.split(',').map((s) => s.trim())
+    log(
+      `Affected components are ${
+        affectedComponents.length
+      }: ${affectedComponents.join(',')}`,
+    )
+    return Promise.resolve(affectedComponents)
   }
 
   async getLastGoodBranchBuildRun(
     branch: string,
     candidateCommits: string[],
   ): Promise<BranchWorkflow | undefined> {
+    app(`Getting last good branch(push) build for branch ${branch}`)
+
     const runsIterator = this.octokit.paginate.iterator(
       'GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs',
       {
@@ -78,6 +93,7 @@ export class LocalRunner implements GitActionStatus {
       )
       if (runs.length > 40) break
     }
+    app(`Got GHA information for ${runs.length} workflows`)
 
     let sorted = runs
       .map(({ run_number, head_sha, head_branch, jobs_url }) => ({
@@ -89,17 +105,21 @@ export class LocalRunner implements GitActionStatus {
       .sort((a, b) => b.run_number - a.run_number)
 
     for (const run of sorted) {
+      app(`Considering ${run.run_number} with ${run.sha} on ${run.branch}`)
       const jobs = await this.getJobs(`GET ${run.jobs_url}`)
       if (
         filterSkippedSuccessBuilds(jobs, 'push-success', 'Announce success')
       ) {
+        app(`Run number ${run.run_number} matches success criteria`)
         return { head_commit: run.sha, run_nr: run.run_number }
       }
     }
+    app(`Done iterating over runs, nothing good found`)
     return undefined
   }
 
   async getLastGoodPRRun(branch: string): Promise<PRWorkflow | undefined> {
+    app(`Getting last good PR(pull_request) run for branch ${branch}`)
     const runsIterator = this.octokit.paginate.iterator(
       'GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs',
       {
@@ -117,6 +137,7 @@ export class LocalRunner implements GitActionStatus {
       runs.push(...workflow_runs.data)
       if (runs.length > 40) break
     }
+    app(`Got GHA information for ${runs.length} workflows`)
 
     let sorted = runs
       .map(
@@ -131,20 +152,28 @@ export class LocalRunner implements GitActionStatus {
       .sort((a, b) => b.run_number - a.run_number)
 
     for (const run of sorted) {
+      app(`Considering ${run.run_number} with ${run.sha} on ${run.branch}`)
       const jobs = await this.getJobs(`GET ${run.jobs_url}`)
       if (filterSkippedSuccessBuilds(jobs, 'success', 'Announce success')) {
+        let headCommit = run.pull_requests[0].head.sha
+        let baseCommit = run.pull_requests[0].base.sha
+        app(
+          `Run number ${run.run_number} matches success criteria, head sha: ${headCommit} and base sha: ${baseCommit}`,
+        )
         return {
-          head_commit: run.pull_requests[0].head.sha,
+          head_commit: headCommit,
           run_nr: run.run_number,
-          base_commit: run.pull_requests[0].base.sha,
+          base_commit: baseCommit,
         }
       }
     }
+    app(`Done iterating over PR runs, nothing good found`)
     return undefined
   }
   private async getJobs(
     jobs_url: string,
   ): Promise<ActionsListJobsForWorkflowRunResponseData> {
+    app(`Requesting jobs info at ${jobs_url}`)
     return (await this.octokit.request(jobs_url)).data
   }
 }
