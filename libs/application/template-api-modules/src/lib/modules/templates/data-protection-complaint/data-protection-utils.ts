@@ -8,7 +8,6 @@ import {
 } from './models'
 import {
   OnBehalf,
-  onBehalfValueLabelMapper,
   SubjectOfComplaint,
   DataProtectionComplaint,
   yesNoValueLabelMapper,
@@ -48,10 +47,8 @@ export const getAgencies = (answers: DataProtectionComplaint): Agency[] => {
   return extractAnswer<Agency[]>(answers, 'commissions.persons', [])
 }
 
-export const getAndFormatOnBehalf = (application: Application): string => {
-  const onBehalf = extractAnswer<OnBehalf>(application.answers, 'info.onBehalf')
-
-  return onBehalfValueLabelMapper[onBehalf].defaultMessage
+export const getAndFormatOnBehalf = (application: Application): OnBehalf => {
+  return extractAnswer<OnBehalf>(application.answers, 'info.onBehalf')
 }
 
 export const getAndFormatSubjectsOfComplaint = (
@@ -188,6 +185,7 @@ export const toRequestMetadata = (
 
 export const applicationToComplaintPDF = (
   application: Application,
+  attachedFiles: DocumentInfo[],
 ): ComplaintPDF => {
   const answers = application.answers as DataProtectionComplaint
   const timestamp = new Date()
@@ -207,6 +205,9 @@ export const applicationToComplaintPDF = (
     somethingElse: answers.subjectOfComplaint.somethingElse ?? '',
     description: extractAnswer(application.answers, 'complaint.description'),
     submitDate: timestamp,
+    attachments: attachedFiles
+      .map((x) => x.fileName ?? '')
+      .filter((x) => x !== ''),
   }
 }
 
