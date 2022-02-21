@@ -14,7 +14,7 @@ import { DraftCancelForm, RegDraftForm } from '../../state/types'
 import { ISODate, toISODate } from '@island.is/regulations'
 import { useGetCurrentRegulationFromApiQuery } from '../../utils/dataHooks'
 import { Effects } from '../../types'
-import { ImpactHistoryContainer } from './ImpactHistoryContainer'
+import { ImpactHistory } from './ImpactHistory'
 import { LayoverModal } from './LayoverModal'
 import { ImpactModalTitle } from './ImpactModalTitle'
 import {
@@ -139,7 +139,7 @@ export const EditCancellation = (props: EditCancellationProp) => {
             offset={['0', '0', '0', '1/12']}
           >
             {effects?.future && (
-              <ImpactHistoryContainer
+              <ImpactHistory
                 effects={effects}
                 activeImpact={activeCancellation}
               />
