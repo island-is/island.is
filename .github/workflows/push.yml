@@ -196,7 +196,7 @@ jobs:
           custom_payload: |
             {
               attachments: [{
-                color: ''good',
+                color: 'good',
                 text: `${env.DOCKER_TAG}`,
               }]
             }
