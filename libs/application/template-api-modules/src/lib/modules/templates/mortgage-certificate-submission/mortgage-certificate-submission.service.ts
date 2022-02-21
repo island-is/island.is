@@ -67,10 +67,7 @@ export class MortgageCertificateSubmissionService {
     }
   }
 
-  async submitRequestSyslumenn(
-    application: Application,
-    document: MortgageCertificate,
-  ) {
+  async submitRequestSyslumenn(application: Application) {
     //TODOx
     // const nationalRegistryData = application.externalData.nationalRegistry
     //   ?.data as NationalRegistry
@@ -89,18 +86,15 @@ export class MortgageCertificateSubmissionService {
     // }
     // const persons: Person[] = [person]
     // const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
-    // const attachment: Attachment = {
-    //   name: `vedbokarvottord_${nationalRegistryData?.nationalId}_${dateStr}.pdf`,
-    //   content: document.contentBase64,
-    // }
     // const extraData: { [key: string]: string } = {}
-    // const uploadDataName = 'Umsókn um veðbókarvottorð frá Ísland.is'
-    // const uploadDataId = 'Vedbokarvottord'
+    // const uploadDataName =
+    //   'Umsókn um lagfæringu á veðbókarvottorði frá Ísland.is'
+    // const uploadDataId = 'VedbokarvottordLagfaering'
     // await this.syslumennService
-    //   .uploadData(persons, attachment, extraData, uploadDataName, uploadDataId)
+    //   .uploadData(persons, null, extraData, uploadDataName, uploadDataId)
     //   .catch(async () => {
     //     await this.sharedTemplateAPIService.sendEmail(
-    //       generateSyslumennNotifyErrorEmail,
+    //       generateSyslumennSubmitRequestErrorEmail,
     //       (application as unknown) as Application,
     //     )
     //     return undefined

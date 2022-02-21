@@ -1,7 +1,7 @@
 import { EmailTemplateGenerator } from '../../../../types'
 import { NationalRegistry } from '../types'
 
-export const generateSyslumennNotificationEmail: EmailTemplateGenerator = (
+export const generateSyslumennNotifyErrorEmail: EmailTemplateGenerator = (
   props,
 ) => {
   const {
