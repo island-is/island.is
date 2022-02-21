@@ -81,7 +81,7 @@ describe('User profile API', () => {
     it('POST /userProfile should register userProfile and create verification', async () => {
       // Act
       await request(app.getHttpServer())
-        .post('/emailVerification/')
+        .post('/emailVerification')
         .send({
           nationalId: mockProfile.nationalId,
           email: mockProfile.email,
@@ -224,7 +224,7 @@ describe('User profile API', () => {
   })
 
   describe('PUT /userProfile', () => {
-    it('PUT /userProfile/ should return 404 not found error msg', async () => {
+    it('PUT /userProfile should return 404 not found error msg', async () => {
       // Arrange
       const updatedProfile = {
         mobilePhoneNumber: '9876543',
@@ -273,7 +273,7 @@ describe('User profile API', () => {
       )
     })
 
-    it('PUT /userProfile/ should return 403 forbidden on invalid authentication', async () => {
+    it('PUT /userProfile should return 403 forbidden on invalid authentication', async () => {
       // Arrange
       const updatedProfile = {
         mobilePhoneNumber: '987654321',
@@ -303,7 +303,7 @@ describe('User profile API', () => {
         .expect(201)
 
       await request(app.getHttpServer())
-        .post('/emailVerification/')
+        .post('/emailVerification')
         .send({
           nationalId: mockProfile.nationalId,
           email: mockProfile.email,
@@ -390,11 +390,11 @@ describe('User profile API', () => {
   })
 
   describe('POST /emailVerification', () => {
-    it('POST /emailVerification/ creates a email verfication in db', async () => {
+    it('POST /emailVerification creates a email verfication in db', async () => {
       // Act
       const spy = jest.spyOn(emailService, 'sendEmail')
       await request(app.getHttpServer())
-        .post('/emailVerification/')
+        .post('/emailVerification')
         .send({
           nationalId: mockProfile.nationalId,
           email: mockProfile.email,
@@ -412,7 +412,7 @@ describe('User profile API', () => {
   })
 
   describe('POST /confirmEmail', () => {
-    it('POST /confirmEmail/ marks as confirmed', async () => {
+    it('POST /confirmEmail marks as confirmed', async () => {
       //Arrange
       await request(app.getHttpServer())
         .post('/userProfile')
@@ -420,7 +420,7 @@ describe('User profile API', () => {
         .expect(201)
 
       await request(app.getHttpServer())
-        .post('/emailVerification/')
+        .post('/emailVerification')
         .send({
           nationalId: mockProfile.nationalId,
           email: mockProfile.email,
@@ -445,7 +445,7 @@ describe('User profile API', () => {
       )
     })
 
-    it('POST /confirmEmail/ returns 403 forbidden for invalid authentication', async () => {
+    it('POST /confirmEmail returns 403 forbidden for invalid authentication', async () => {
       //Arrange
       const invalidNationalId = '0987654321'
       await request(app.getHttpServer())
@@ -454,7 +454,7 @@ describe('User profile API', () => {
         .expect(201)
 
       await request(app.getHttpServer())
-        .post('/emailVerification/')
+        .post('/emailVerification')
         .send({
           nationalId: mockProfile.nationalId,
           email: mockProfile.email,
@@ -477,11 +477,11 @@ describe('User profile API', () => {
   })
 
   describe('POST /smsVerification', () => {
-    it('POST /smsVerification/ creates a sms verfication in db', async () => {
+    it('POST /smsVerification creates a sms verfication in db', async () => {
       // Act
       const spy = jest.spyOn(smsService, 'sendSms')
       await request(app.getHttpServer())
-        .post('/smsVerification/')
+        .post('/smsVerification')
         .send({
           nationalId: mockProfile.nationalId,
           mobilePhoneNumber: mockProfile.mobilePhoneNumber,
@@ -499,10 +499,10 @@ describe('User profile API', () => {
   })
 
   describe('POST /confirmSms', () => {
-    it('POST /confirmSms/ marks as verified', async () => {
+    it('POST /confirmSms marks as verified', async () => {
       // Arrange
       await request(app.getHttpServer())
-        .post('/smsVerification/')
+        .post('/smsVerification')
         .send({
           nationalId: mockProfile.nationalId,
           mobilePhoneNumber: mockProfile.mobilePhoneNumber,
@@ -527,11 +527,11 @@ describe('User profile API', () => {
       `)
     })
 
-    it('POST /confirmSms/ returns 403 forbidden for invalid authentication', async () => {
+    it('POST /confirmSms returns 403 forbidden for invalid authentication', async () => {
       // Arrange
       const invalidNationalId = '0987654321'
       await request(app.getHttpServer())
-        .post('/smsVerification/')
+        .post('/smsVerification')
         .send({
           nationalId: mockProfile.nationalId,
           mobilePhoneNumber: mockProfile.mobilePhoneNumber,
@@ -551,7 +551,7 @@ describe('User profile API', () => {
         .expect(403)
     })
 
-    it('POST /confirmSms/ returns confirmed: false for missing verifications', async () => {
+    it('POST /confirmSms returns confirmed: false for missing verifications', async () => {
       // Act
       const response = await request(app.getHttpServer())
         .post(`/confirmSms/${mockProfile.nationalId}`)
@@ -568,11 +568,11 @@ describe('User profile API', () => {
       `)
     })
 
-    it('POST /confirmSms/ returns confirmed: false for expired verifications', async () => {
+    it('POST /confirmSms returns confirmed: false for expired verifications', async () => {
       // Arrange
       jest.setSystemTime(new Date(2020, 5, 1))
       await request(app.getHttpServer())
-        .post('/smsVerification/')
+        .post('/smsVerification')
         .send({
           nationalId: mockProfile.nationalId,
           mobilePhoneNumber: mockProfile.mobilePhoneNumber,
@@ -598,10 +598,10 @@ describe('User profile API', () => {
       `)
     })
 
-    it('POST /confirmSms/ returns confirmed: false after too many tries', async () => {
+    it('POST /confirmSms returns confirmed: false after too many tries', async () => {
       // Arrange
       await request(app.getHttpServer())
-        .post('/smsVerification/')
+        .post('/smsVerification')
         .send({
           nationalId: mockProfile.nationalId,
           mobilePhoneNumber: mockProfile.mobilePhoneNumber,
@@ -639,11 +639,11 @@ describe('User profile API', () => {
       `)
     })
 
-    it('POST /confirmSms/ works after restarting a failed sms verification', async () => {
+    it('POST /confirmSms works after restarting a failed sms verification', async () => {
       // Arrange
       jest.setSystemTime(new Date(2020, 5, 1))
       await request(app.getHttpServer())
-        .post('/smsVerification/')
+        .post('/smsVerification')
         .send({
           nationalId: mockProfile.nationalId,
           mobilePhoneNumber: mockProfile.mobilePhoneNumber,
@@ -662,7 +662,7 @@ describe('User profile API', () => {
 
       // Act - Try again
       await request(app.getHttpServer())
-        .post('/smsVerification/')
+        .post('/smsVerification')
         .send({
           nationalId: mockProfile.nationalId,
           mobilePhoneNumber: mockProfile.mobilePhoneNumber,
