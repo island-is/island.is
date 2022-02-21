@@ -47,8 +47,9 @@ import { notifications, core } from '../../messages'
 import { Case } from '../case'
 import { CourtService } from '../court'
 import { CaseEvent, EventService } from '../event'
-import { SendNotificationDto } from './dto'
-import { Notification, SendNotificationResponse } from './models'
+import { SendNotificationDto } from './dto/sendNotification.dto'
+import { Notification } from './models/notification.model'
+import { SendNotificationResponse } from './models/sendNotification.resopnse'
 
 interface Recipient {
   address?: string
