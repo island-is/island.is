@@ -392,6 +392,21 @@ export class ApplicationService {
         updatedApplication?.setDataValue('files', filesResolved)
       })
 
+    if (
+      update.event === ApplicationEventType.SPOUSEFILEUPLOAD &&
+      update.directTaxPayments
+    ) {
+      await Promise.all([
+        update.directTaxPayments.map((d) => {
+          return this.directTaxPaymentService.create({
+            applicationId: id,
+            userType: UserType.SPOUSE,
+            ...d,
+          })
+        }),
+      ])
+    }
+
     await Promise.all([
       events,
       files,

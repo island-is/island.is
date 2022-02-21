@@ -124,6 +124,6 @@ export class CreateApplicationInput implements CreateApplication {
   readonly postalCode?: string
 
   @Allow()
-  @Field(() => [DirectTaxPaymentInput])
-  readonly directTaxPayments!: DirectTaxPaymentInput[]
+  @Field(() => [DirectTaxPaymentInput], { nullable: true })
+  readonly directTaxPayments?: DirectTaxPaymentInput[]
 }
