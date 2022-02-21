@@ -9,7 +9,7 @@ module.exports = {
           'dropped',
           {
             type: Sequelize.BOOLEAN,
-            allowNull: false,
+            allowNull: true,
           },
           { transaction: t },
         ),
