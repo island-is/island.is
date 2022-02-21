@@ -161,6 +161,19 @@ describe('User profile API', () => {
         // Assert
         .expect(403)
     })
+
+    it('POST /userProfile returns 400 bad request for malformed email', async () => {
+      // Arrange
+      const malformed_email = 'malformed@.code'
+      await request(app.getHttpServer())
+        .post('/userProfile')
+        .send({
+          nationalId: mockProfile.nationalId,
+          locale: mockProfile.locale,
+          email: malformed_email,
+        })
+        .expect(400)
+    })
   })
 
   describe('GET /userProfile', () => {
@@ -329,6 +342,29 @@ describe('User profile API', () => {
       // Act
       const response = await request(app.getHttpServer())
         .post(`/emailVerification/${mockProfile.nationalId}`)
+        // Assert
+        .expect(400)
+
+      expect(response.body.message).toBe(
+        'Profile does not have a configured email address.',
+      )
+    })
+
+    it('POST /emailVerification/:nationalId returns 400 bad request on malformed email', async () => {
+      // Arrange
+      const malformed_email = 'malformed@.com'
+      await request(app.getHttpServer())
+        .post('/userProfile')
+        .send({
+          nationalId: mockProfile.nationalId,
+          locale: mockProfile.locale,
+        })
+        .expect(201)
+
+      // Act
+      const response = await request(app.getHttpServer())
+        .post(`/emailVerification/${mockProfile.nationalId}`)
+        .send({email: malformed_email})
         // Assert
         .expect(400)
 
