@@ -45,9 +45,6 @@ class RegulationAuthor {
 
   @Field()
   name?: string
-
-  @Field()
-  email?: string
 }
 
 @ObjectType()

@@ -3,8 +3,7 @@ import { Box, Divider, Text } from '@island.is/island-ui/core'
 import { Effects } from '../../types'
 import { DraftCancelForm } from '../../state/types'
 import { nameToSlug, RegName } from '@island.is/regulations'
-import { format } from 'date-fns' // eslint-disable-line no-restricted-imports
-import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
+import { useLocale } from '@island.is/localization'
 
 export type ImpactChangesContainerProps = {
   effects?: Effects
@@ -13,8 +12,8 @@ export type ImpactChangesContainerProps = {
 
 export const ImpactChangesContainer = (props: ImpactChangesContainerProps) => {
   const { effects, activeCancellation } = props
-  const hasData = effects?.future && effects.future.length > 0
-  const data = hasData && effects?.future
+  const { formatDateFns } = useLocale()
+  const futureEffects = effects?.future ?? []
 
   return (
     <Box background="blueberry100" paddingY={3} paddingX={4} marginTop={10}>
@@ -22,43 +21,37 @@ export const ImpactChangesContainer = (props: ImpactChangesContainerProps) => {
         Breytingasaga reglugerðar
       </Text>
       <Divider />
-      <Text variant="h5" color="blueberry600" paddingTop={3} marginBottom={3}>
-        <a
-          href={`https://island.is/reglugerdir/nr/${nameToSlug(
-            activeCancellation?.name as RegName,
-          )}`}
-          // 'FIXME: target="_blank" is not working here?
-          target="_blank"
-          rel="noreferrer"
-        >
+      <a
+        href={`https://island.is/reglugerdir/nr/${nameToSlug(
+          activeCancellation?.name as RegName,
+        )}`}
+        target="_blank"
+        rel="noreferrer"
+      >
+        <Text variant="h5" color="blueberry600" paddingTop={3} marginBottom={3}>
           Nýjasta útgáfan
-        </a>
-      </Text>
-      {data && data?.length > 0 ? (
+        </Text>
+      </a>
+      {futureEffects.length > 0 ? (
         <>
           <Text variant="eyebrow" marginBottom={2}>
             Væntanlegar breytingar:
           </Text>
-          {data.map((effect) => (
-            <>
+          {futureEffects.map((effect) => (
+            <a
+              href={`https://island.is/reglugerdir/nr/${nameToSlug(
+                activeCancellation?.name as RegName,
+              )}/d/${effect.date}/diff`}
+              target="_blank"
+              rel="noreferrer"
+            >
               <Text variant="h5" color="blueberry600">
-                {format(new Date(effect.date), 'd. MMM yyyy', {
-                  locale: is,
-                })}
+                {formatDateFns(effect.date, 'd. MMM yyyy')}
               </Text>
               <Text variant="small" color="blueberry600" marginBottom={2}>
-                <a
-                  href={`https://island.is/reglugerdir/nr/${nameToSlug(
-                    activeCancellation?.name as RegName,
-                  )}/d/${effect.date}/diff`}
-                  // 'FIXME: target="_blank" is not working here?
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Breytt af {effect.name}
-                </a>
+                Breytt af {effect.name}
               </Text>
-            </>
+            </a>
           ))}
         </>
       ) : (

@@ -321,6 +321,11 @@ export const impactMsgs = defineMessages({
     defaultMessage: 'Hefur áhrif á sjálfa sig',
   },
 
+  deleteConfirmation: {
+    id: 'ap.regulations-admin:draft-label-impact-deleteConfirmation',
+    defaultMessage: 'Ertu viss um að þú viljir eyða þessari skráningu',
+  },
+
   // ---------------------------------------------------------------------------
 
   regExplainer: {

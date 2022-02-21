@@ -8,6 +8,7 @@ const draftRegulationChangeSeed = [
     date: '2021-08-09',
     title: 'Reglugerð um vörslu og nýtingu lífsýna í lífsýnasöfnum.',
     text: '<p>Lorem ipsum dolor sit amet</p>',
+    comments: '<p>Lorem ipsum dolor sit amet</p>',
   },
   {
     id: '1464cb70-570e-4ab5-93ef-3107a5e82515',

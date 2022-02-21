@@ -56,23 +56,21 @@ export const EditChange = (props: EditChangeProp) => {
   }
 
   const changeRegulationTitle = (newTitle: string | undefined) => {
-    console.log('active', activeChange.title)
-    console.log('new', newTitle)
     setActiveChange({
       ...activeChange,
       title: { value: newTitle as PlainText }, //TODO: What is the best way to do this is?
     })
   }
 
-  const saveChange = () => {
+  const saveChange = async () => {
     if (!activeChange.id) {
-      createDraftRegulationChange({
+      await createDraftRegulationChange({
         variables: {
           input: {
             changingId: draft.id,
             regulation: activeChange.name,
-            title: activeChange.title,
-            text: activeChange.title,
+            title: activeChange.title.value,
+            text: activeChange.text.value,
             appendixes: activeChange.appendixes.map((apx) => ({
               title: apx.title.value,
               text: apx.text.value,
@@ -91,12 +89,12 @@ export const EditChange = (props: EditChangeProp) => {
           return { success: false, error: error as Error }
         })
     } else {
-      updateDraftRegulationChange({
+      await updateDraftRegulationChange({
         variables: {
           input: {
             id: activeChange.id,
-            title: activeChange.title,
-            text: activeChange.title,
+            title: activeChange.title.value,
+            text: activeChange.text.value,
             appendixes: activeChange.appendixes.map((apx) => ({
               title: apx.title.value,
               text: apx.text.value,
@@ -115,6 +113,7 @@ export const EditChange = (props: EditChangeProp) => {
           return { success: false, error: error as Error }
         })
     }
+
     closeModal(true)
   }
 
@@ -132,14 +131,10 @@ export const EditChange = (props: EditChangeProp) => {
               name={change.name}
               impact={change}
               onChangeDate={changeDate}
-              tag={
-                regulation?.type && {
-                  second:
-                    regulation?.type === 'base'
-                      ? 'Stofnreglugerð'
-                      : 'Breytingareglugerð',
-                }
-              }
+              tag={{
+                first: 'Textabreyting reglugerðar',
+                second: 'Stofnreglugerð',
+              }}
             />
           </GridColumn>
           <GridColumn

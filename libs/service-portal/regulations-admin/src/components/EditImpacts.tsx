@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDraftingState } from '../state/useDraftingState'
 import { impactMsgs } from '../messages'
 import { useLocale } from '@island.is/localization'
-import { prettyName } from '@island.is/regulations'
+import { prettyName, RegulationType } from '@island.is/regulations'
 import {
   DraftImpactName,
   DraftRegulationCancelId,
@@ -32,9 +32,13 @@ import {
 } from '../state/makeFields'
 import { EditChange } from './impacts/EditChange'
 
-type SelRegOption = Option & { value?: DraftImpactName | '' }
+type SelRegOption = Option & {
+  value?: DraftImpactName | ''
+  type: RegulationType | ''
+}
 
 const useAffectedRegulations = (
+  selfType: RegulationType | '',
   mentioned: RegDraftForm['mentioned'],
   notFoundText: string,
   selfAffectingText: string,
@@ -51,6 +55,7 @@ const useAffectedRegulations = (
         const reg = data.find((r) => r.name === name)
         if (reg) {
           return {
+            type: reg.type,
             disabled: !!reg.repealed,
             value: name,
             label:
@@ -61,6 +66,7 @@ const useAffectedRegulations = (
           }
         }
         return {
+          type: '',
           disabled: true,
           value: '',
           label: prettyName(name) + ' ' + notFoundText,
@@ -69,12 +75,13 @@ const useAffectedRegulations = (
     )
 
     options.push({
+      type: selfType,
       value: 'self',
       label: selfAffectingText,
     })
 
     return options
-  }, [mentioned, data, notFoundText, selfAffectingText, repealedText])
+  }, [selfType, mentioned, data, notFoundText, selfAffectingText, repealedText])
 
   return {
     loading,
@@ -91,6 +98,7 @@ export const EditImpacts = () => {
   const { goToStep } = actions
 
   const { mentionedOptions, loading } = useAffectedRegulations(
+    draft.type.value || '',
     draft.mentioned,
     t(impactMsgs.regSelect_mentionedNotFound),
     t(impactMsgs.selfAffecting),
@@ -117,6 +125,13 @@ export const EditImpacts = () => {
   const [chooseType, setChooseType] = useState<
     'cancel' | 'change' | undefined
   >()
+
+  const closeModal = (reload?: boolean) => {
+    setChooseType(undefined)
+    if (reload) {
+      document.location.reload()
+    }
+  }
 
   const escClick = useCallback((e) => {
     if (e.key === 'Escape') {
@@ -169,15 +184,19 @@ export const EditImpacts = () => {
             {t(impactMsgs.chooseType)}
           </Text>
           <Inline space={[2, 2, 3, 4]} align="center" alignY="center">
-            <Button
-              variant="ghost"
-              icon="document"
-              iconType="outline"
-              onClick={() => setChooseType('change')}
-            >
-              {t(impactMsgs.chooseType_change)}
-            </Button>
-            <span> {t(impactMsgs.chooseType_or)} </span>
+            {selRegOption.type === 'base' && (
+              <>
+                <Button
+                  variant="ghost"
+                  icon="document"
+                  iconType="outline"
+                  onClick={() => setChooseType('change')}
+                >
+                  {t(impactMsgs.chooseType_change)}
+                </Button>
+                <span> {t(impactMsgs.chooseType_or)} </span>
+              </>
+            )}
             <Button
               variant="ghost"
               icon="fileTrayFull"
@@ -198,7 +217,7 @@ export const EditImpacts = () => {
                 regTitle: selRegOption.label,
                 date: undefined,
               })}
-              closeModal={() => setChooseType(undefined)}
+              closeModal={closeModal}
             />
           )}
 
@@ -218,7 +237,7 @@ export const EditImpacts = () => {
                 })),
                 comments: '',
               })}
-              closeModal={() => setChooseType(undefined)}
+              closeModal={closeModal}
             />
           )}
         </Box>

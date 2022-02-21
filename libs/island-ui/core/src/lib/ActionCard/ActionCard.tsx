@@ -36,6 +36,7 @@ type ActionCardProps = {
     label: string
     icon?: IconType
     onClick?: () => void
+    disabled?: boolean
   }
   progressMeter?: {
     active?: boolean
@@ -207,6 +208,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
                 variant="text"
                 onClick={secondaryCta?.onClick}
                 icon={secondaryCta?.icon}
+                disabled={secondaryCta?.disabled}
               >
                 {secondaryCta?.label}
               </Button>

@@ -25,11 +25,17 @@ export class DraftRegulationChangeModel {
   title!: string
 
   @Field(() => String, { nullable: true })
+  regTitle!: string
+
+  @Field(() => String, { nullable: true })
   date!: ISODate
 
   @Field(() => String, { nullable: true })
-  text?: HTMLText
+  text!: HTMLText
 
   @Field(() => [ChangeAppendix], { nullable: true })
   appendixes!: ChangeAppendix[]
+
+  @Field(() => String, { nullable: true })
+  comments!: HTMLText
 }
