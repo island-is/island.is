@@ -10,6 +10,7 @@ export const CREATE_DRAFT_REGULATION_CANCEL = gql`
       name
       regTitle
       date
+      dropped
     }
   }
 `
@@ -23,6 +24,7 @@ export const UPDATE_DRAFT_REGULATION_CANCEL = gql`
       name
       regTitle
       date
+      dropped
     }
   }
 `
@@ -54,6 +56,7 @@ export const CREATE_DRAFT_REGULATION_CHANGE = gql`
         text
       }
       comments
+      dropped
     }
   }
 `
@@ -74,6 +77,7 @@ export const UPDATE_DRAFT_REGULATION_CHANGE = gql`
         text
       }
       comments
+      dropped
     }
   }
 `

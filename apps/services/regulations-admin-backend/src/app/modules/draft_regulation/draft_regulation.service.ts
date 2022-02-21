@@ -171,6 +171,7 @@ export class DraftRegulationService {
         regTitle:
           impactOptions.find((opt) => opt.name === change.regulation)?.title ??
           '', // helpful for human-readable display in the UI
+        dropped: change.dropped,
       })
     })
 
@@ -187,6 +188,7 @@ export class DraftRegulationService {
         regTitle:
           impactOptions.find((opt) => opt.name === cancel?.regulation)?.title ??
           '', // helpful for human-readable display in the UI
+        dropped: cancel.dropped,
       })
     })
 

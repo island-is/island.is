@@ -38,4 +38,7 @@ export class DraftRegulationChangeModel {
 
   @Field(() => String, { nullable: true })
   comments!: HTMLText
+
+  @Field(() => Boolean, { nullable: true })
+  dropped?: boolean
 }

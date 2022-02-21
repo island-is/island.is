@@ -116,6 +116,7 @@ export type DraftRegulationCancel = {
   regTitle: PlainText
   id: DraftRegulationCancelId
   date?: ISODate
+  dropped?: boolean
 }
 
 // ---------------------------------------------------------------------------
@@ -127,6 +128,7 @@ export type DraftRegulationChange = {
   regTitle: PlainText
   date?: ISODate
   title: PlainText
+  dropped?: boolean
 } & Pick<Regulation, 'text' | 'appendixes' | 'comments'>
 
 // ---------------------------------------------------------------------------

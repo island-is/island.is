@@ -69,6 +69,12 @@ export class DraftRegulationChangeModel extends Model<DraftRegulationChangeModel
   appendixes!: Appendix[]
 
   @Column({
+    type: DataType.BOOLEAN,
+  })
+  @ApiProperty()
+  dropped?: boolean
+
+  @Column({
     type: DataType.TEXT,
   })
   @ApiProperty()

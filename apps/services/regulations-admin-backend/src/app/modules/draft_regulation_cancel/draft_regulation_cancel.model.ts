@@ -40,6 +40,12 @@ export class DraftRegulationCancelModel extends Model<DraftRegulationCancelModel
   regulation!: RegName
 
   @Column({
+    type: DataType.BOOLEAN,
+  })
+  @ApiProperty()
+  dropped?: boolean
+
+  @Column({
     type: DataType.DATEONLY,
   })
   @ApiProperty()

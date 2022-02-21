@@ -17,4 +17,7 @@ export class DraftRegulationCancelModel {
 
   @Field(() => String, { nullable: true })
   date!: ISODate
+
+  @Field(() => Boolean, { nullable: true })
+  dropped?: boolean
 }
