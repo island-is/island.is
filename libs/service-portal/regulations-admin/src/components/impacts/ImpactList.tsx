@@ -108,15 +108,14 @@ export const ImpactList = (props: ImpactListProps) => {
             {title || t(impactMsgs.impactListTitle)}
           </Text>
 
-          {Object.entries(impacts).forEach(([impGrp, impactGroup], i) => {
+          {Object.keys(impacts).map((impGrp, i) => {
+            const impactGroup = impacts[impGrp]
             return (
               <Stack space={3} key={impGrp + '-' + i}>
                 <Text variant="h4" as="h4" marginTop={i === 0 ? 0 : 5}>
                   {impGrp === 'self'
                     ? t(impactMsgs.selfAffecting)
-                    : `Breytingar á ${prettyName(
-                        impactGroup[0].name as RegName,
-                      )}`}
+                    : `Breytingar á ${prettyName(impGrp as RegName)}`}
                 </Text>
                 {impactGroup.map((impact, idx) => {
                   const { id, name, regTitle, error, type, date } = impact
