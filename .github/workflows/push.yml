@@ -510,6 +510,14 @@ jobs:
           DOCKER_TAG: latest
         run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
 
+      - name: Retag as release-latest
+        if: "startsWith(env.GIT_BRANCH, 'release/')"
+        env:
+          UNAFFECTED: helm-config
+          LAST_GOOD_BUILD_DOCKER_TAG: ${{ env.DOCKER_TAG }}
+          DOCKER_TAG: release-latest
+        run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
+
       - name: Retag lifecycle
         if: env.GIT_BRANCH == 'main'
         env:
