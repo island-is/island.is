@@ -1,5 +1,6 @@
 import { style } from '@vanilla-extract/css'
 
+export const impactGroup = style({})
 export const explainerText = style({})
 
 export const layoverModal = style({

@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
+import * as s from './Impacts.css'
 import {
   ActionCard,
   AlertMessage,
@@ -8,7 +9,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { prettyName, RegName, toISODate } from '@island.is/regulations'
+import { prettyName, RegName } from '@island.is/regulations'
 import { impactMsgs } from '../../messages'
 import {
   DraftImpactForm,
@@ -17,10 +18,6 @@ import {
 } from '../../state/types'
 import { EditCancellation } from './EditCancellation'
 import { EditChange } from './EditChange'
-import {
-  makeDraftCancellationForm,
-  makeDraftChangeForm,
-} from '../../state/makeFields'
 import { useMutation } from '@apollo/client'
 import {
   DELETE_DRAFT_REGULATION_CANCEL,
@@ -114,7 +111,7 @@ export const ImpactList = (props: ImpactListProps) => {
           {Object.keys(impacts).map((impGrp, i) => {
             const impactGroup = impacts[impGrp]
             return (
-              <>
+              <div className={s.impactGroup} key={impGrp + '-' + i}>
                 <Text variant="h4" as="h4" marginTop={i === 0 ? 0 : 5}>
                   Breytingar á{' '}
                   {impGrp === 'self'
@@ -137,7 +134,7 @@ export const ImpactList = (props: ImpactListProps) => {
 
                   return (
                     <ActionCard
-                      key={idx}
+                      key={id}
                       date={
                         date.value && formatDateFns(date.value, 'd. MMM yyyy')
                       }
@@ -177,7 +174,7 @@ export const ImpactList = (props: ImpactListProps) => {
                     />
                   )
                 })}
-              </>
+              </div>
             )
           })}
 

@@ -91,33 +91,29 @@ export const isDraftErrorFree = (state: DraftingState): boolean => {
     draftRootProps.every((key) => !draft[key].error) &&
     draft.appendixes.every(({ title, text }) => !title.error && !text.error)
 
-  const validImpacts = true
-  /*
+  let validImpacts = true
+
   Object.entries(draft.impacts).forEach(([key, impactsList]) => {
     impactsList.forEach((impact) => {
-      const { title, text, appendixes, comments } = impact
+      // skip checking 'repeal' impacts
+      if (impact.type === 'amend') {
+        const { title, text, appendixes, comments } = impact
+
+        if (
+          impact.error ||
+          impact.date.error ||
+          title.error ||
+          text.error ||
+          appendixes.every(({ title, text }) => title.error || text.error) ||
+          comments.error
+        ) {
+          validImpacts = false
+        }
+      }
     })
   })
-  */
 
   return validState && validImpacts
-  /*
-  return (
-    validState && validImpacts
-    draft.impacts.every((impact) => {
-      if (impact.error || impact.date.error) return false
-      if (impact.type === 'repeal') return true
-
-      const { title, text, appendixes, comments } = impact
-      return (
-        !(impact.error || impact.date.error) &&
-        !text.error &&
-        appendixes.every(({ title, text }) => !title.error && !text.error) &&
-        !comments.error
-      )
-    })
-  )
-  */
 }
 
 // ---------------------------------------------------------------------------
