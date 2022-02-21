@@ -70,7 +70,11 @@ export const validateState = (state: DraftingState) => {
     validateFieldValue(appendix.title)
     validateFieldValue(appendix.text)
   })
-  draft.impacts.forEach((impact) => validateImpact(state, impact))
+  Object.entries(draft.impacts).forEach(([key, impactsList]) => {
+    impactsList.forEach((impact) => {
+      validateImpact(state, impact)
+    })
+  })
 }
 // ---------------------------------------------------------------------------
 
@@ -82,23 +86,38 @@ export const validateState = (state: DraftingState) => {
 export const isDraftErrorFree = (state: DraftingState): boolean => {
   const { draft } = state
 
-  return (
+  const validState =
     !state.error &&
     draftRootProps.every((key) => !draft[key].error) &&
-    draft.appendixes.every(({ title, text }) => !title.error && !text.error) &&
+    draft.appendixes.every(({ title, text }) => !title.error && !text.error)
+
+  const validImpacts = true
+  /*
+  Object.entries(draft.impacts).forEach(([key, impactsList]) => {
+    impactsList.forEach((impact) => {
+      const { title, text, appendixes, comments } = impact
+    })
+  })
+  */
+
+  return validState && validImpacts
+  /*
+  return (
+    validState && validImpacts
     draft.impacts.every((impact) => {
       if (impact.error || impact.date.error) return false
       if (impact.type === 'repeal') return true
 
       const { title, text, appendixes, comments } = impact
       return (
-        !title.error &&
+        !(impact.error || impact.date.error) &&
         !text.error &&
         appendixes.every(({ title, text }) => !title.error && !text.error) &&
         !comments.error
       )
     })
   )
+  */
 }
 
 // ---------------------------------------------------------------------------
@@ -192,14 +211,17 @@ const updateImpacts = (
 
   if (mentionsChanged) {
     draft.mentioned = newMentions
-    impacts.forEach((impact) => {
-      if (impact.name === 'self') return
 
-      if (newMentions.includes(impact.name)) {
-        delete impact.error
-      } else {
-        impact.error = errorMsgs.impactingUnMentioned
-      }
+    Object.entries(impacts).forEach(([key, impactsList]) => {
+      impactsList.forEach((impact) => {
+        if (impact.name === 'self') return
+
+        if (newMentions.includes(impact.name)) {
+          delete impact.error
+        } else {
+          impact.error = errorMsgs.impactingUnMentioned
+        }
+      })
     })
   }
 }
