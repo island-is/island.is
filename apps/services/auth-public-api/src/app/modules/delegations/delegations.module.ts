@@ -30,6 +30,14 @@ import { ProblemModule } from '@island.is/nest/problem'
 import { environment } from '../../../environments'
 import { ActorDelegationsController } from './actorDelegations.controller'
 import { MeDelegationsController } from './meDelegations.controller'
+import {
+  PersonalRepresentative,
+  PersonalRepresentativeRight,
+  PersonalRepresentativeRightType,
+  PersonalRepresentativeScopePermission,
+  PersonalRepresentativeService,
+  PersonalRepresentativeType,
+} from '@island.is/auth-api-lib/personal-representative'
 
 const delegationAuthConfig: AuthConfig = environment.auth
 
@@ -50,6 +58,11 @@ const delegationAuthConfig: AuthConfig = environment.auth
       Domain,
       Delegation,
       DelegationScope,
+      PersonalRepresentative,
+      PersonalRepresentativeType,
+      PersonalRepresentativeRight,
+      PersonalRepresentativeRightType,
+      PersonalRepresentativeScopePermission,
     ]),
     RskProcuringClientModule,
     NationalRegistryClientModule,
@@ -61,6 +74,7 @@ const delegationAuthConfig: AuthConfig = environment.auth
     DelegationsService,
     DelegationScopeService,
     ResourcesService,
+    PersonalRepresentativeService,
     {
       provide: DELEGATIONS_AUTH_CONFIG,
       useValue: delegationAuthConfig,
