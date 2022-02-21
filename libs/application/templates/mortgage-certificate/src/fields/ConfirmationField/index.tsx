@@ -86,7 +86,7 @@ export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
           />
           <a
             href={`data:application/pdf;base64,${externalData.getMortgageCertificate.data.contentBase64}`}
-            download="sakavottord.pdf"
+            download="vedbokavottord.pdf"
             className={styles.linkWithoutDecorations}
           >
             <Button icon="download" iconType="outline" variant="text">

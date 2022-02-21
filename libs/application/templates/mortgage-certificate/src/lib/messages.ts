@@ -262,7 +262,14 @@ export const m = defineMessages({
   },
   selectRealEstateTitle: {
     id: 'cr.application:selectRealEstate.title',
-    defaultMessage: 'Val á fasteign',
+    defaultMessage: 'Upplýsingar um eign',
     description: 'Real estate selection',
+  },
+  selectRealEstateDescription: {
+    id: 'cr.application:selectRealEstate.description',
+    defaultMessage:
+      'Hér birtast upplýsingar úr fasteignaskrá um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að. Vinsamlegast hakaðu við þá eign sem þú ert að sækja veðbókarvottorð fyrir.',
+    description:
+      'Here is information from the Property Registry about your real estate, lands and plots that you are a registered owner of. Please check the property for which you are applying for a mortgage certificate.',
   },
 })
