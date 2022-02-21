@@ -46,3 +46,4 @@ export { default as MunicipalityAdminSettings } from './MunicipalityAdminSetting
 export { default as SuperAdminSideNavItems } from './SuperAdminSideNavItems/SuperAdminSideNavItems'
 export { default as NewMunicipalityModal } from './NewMunicipalityModal/NewMunicipalityModal'
 export { default as MunicipalityProfile } from './Profile/MunicipalityProfile'
+export { default as CollapsibleProfileUnit } from './ProfileUnit/CollapsibleProfileUnit'
