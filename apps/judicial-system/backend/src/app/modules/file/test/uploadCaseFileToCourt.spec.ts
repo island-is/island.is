@@ -7,7 +7,8 @@ import { CaseFileState } from '@island.is/judicial-system/types'
 import { CourtService } from '../../court'
 import { Case } from '../../case'
 import { AwsS3Service } from '../../aws-s3'
-import { CaseFile, UploadFileToCourtResponse } from '../models'
+import { CaseFile } from '../models/file.model'
+import { UploadFileToCourtResponse } from '../models/uploadFileToCourt.response'
 import { createTestingFileModule } from './createTestingFileModule'
 
 interface Then {
