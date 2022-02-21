@@ -4,12 +4,11 @@ import { Transaction } from 'sequelize/types'
 import { CaseType, User as TUser } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from './createTestingCaseModule'
-import { DefendantService } from '../../defendant/defendant.service'
+import { Defendant, DefendantService } from '../../defendant'
 import { User } from '../../user'
 import { Institution } from '../../institution'
-import { Defendant } from '../../defendant/models/defendant.model'
-import { CreateCaseDto } from '../dto'
-import { Case } from '../models'
+import { CreateCaseDto } from '../dto/createCase.dto'
+import { Case } from '../models/case.model'
 
 interface Then {
   result: Case

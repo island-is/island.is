@@ -8,9 +8,11 @@ import {
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
 import { FormatMessage } from '@island.is/cms-translations'
+import { Gender } from '@island.is/judicial-system/types'
 
 import { environment } from '../../environments'
-import { Case } from '../modules/case/models'
+import { Case } from '../modules/case'
+import { core, custodyNotice } from '../messages'
 import {
   addEmptyLines,
   addHugeHeading,
@@ -22,8 +24,6 @@ import {
   setTitle,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
-import { core, custodyNotice } from '../messages'
-import { Gender } from '@island.is/judicial-system/types'
 
 function constructCustodyNoticePdf(
   theCase: Case,

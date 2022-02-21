@@ -23,10 +23,10 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
-import { CaseFile } from '../../file/models/file.model'
+import { CaseFile } from '../../file'
 import { Institution } from '../../institution'
 import { User } from '../../user'
-import { Defendant } from '../../defendant/models/defendant.model'
+import { Defendant } from '../../defendant'
 
 @Table({
   tableName: 'case',
