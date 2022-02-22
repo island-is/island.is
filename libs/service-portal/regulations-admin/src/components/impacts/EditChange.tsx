@@ -251,9 +251,9 @@ export const EditChange = (props: EditChangeProp) => {
                   error={undefined}
                 />
                 {activeChange.title.value &&
-                  activeChange.title.value !== change.title.value && (
+                  activeChange.title.value !== regulation?.title && (
                     <MiniDiff
-                      older={change.title.value || ''}
+                      older={regulation?.title || ''}
                       newer={activeChange.title.value}
                     />
                   )}
