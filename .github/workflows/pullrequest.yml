@@ -44,15 +44,6 @@ jobs:
           git branch --show-current
           git rev-parse --abbrev-ref HEAD
 
-      - run: |
-          echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
-          export GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
-          HEAD=$GITHUB_SHA BASE="origin/$GITHUB_BASE_REF" source ./scripts/ci/00_prepare-base-tags.sh
-          echo "BASE=$BASE" >> $GITHUB_ENV
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GIT_BINARY: /usr/bin/git
-        name: Preparing HEAD and BASE tags
 
       - name: Calculate cache key for node_modules
         id: calculate_node_modules_hash
@@ -85,6 +76,16 @@ jobs:
       - name: Building NodeJS dependencies
         if: steps.node-modules.outputs.cache-hit != 'true'
         run: ./scripts/ci/10_prepare-host-deps.sh
+
+      - run: |
+          echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
+          export GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
+          HEAD=$GITHUB_SHA BASE="origin/$GITHUB_BASE_REF" source ./scripts/ci/00_prepare-base-tags.sh
+          echo "BASE=$BASE" >> $GITHUB_ENV
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_BINARY: /usr/bin/git
+        name: Preparing HEAD and BASE tags
 
       - name: Cache for cypress
         id: cypress
