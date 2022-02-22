@@ -13,9 +13,9 @@ export class CreateDirectTaxPaymentDto {
   @ApiProperty()
   readonly totalSalary: number
 
-  @IsNumber()
+  @IsString()
   @ApiProperty()
-  readonly payerNationalId: number
+  readonly payerNationalId: string
 
   @IsNumber()
   @ApiProperty()

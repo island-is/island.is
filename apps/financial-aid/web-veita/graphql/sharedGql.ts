@@ -68,6 +68,15 @@ export const ApplicationQuery = gql`
           amount
         }
       }
+      directTaxPayments {
+        totalSalary
+        payerNationalId
+        personalAllowance
+        withheldAtSource
+        month
+        year
+        userType
+      }
     }
   }
 `

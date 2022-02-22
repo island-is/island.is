@@ -42,6 +42,7 @@ import { logger } from '@island.is/logging'
 import { AmountModel, AmountService } from '../amount'
 import { DeductionFactorsModel } from '../deductionFactors'
 import { DirectTaxPaymentService } from '../directTaxPayment'
+import { DirectTaxPaymentModel } from '../directTaxPayment/models'
 
 interface Recipient {
   name: string
@@ -193,6 +194,10 @@ export class ApplicationService {
           separate: true,
           order: [['created', 'DESC']],
           limit: 1,
+        },
+        {
+          model: DirectTaxPaymentModel,
+          as: 'directTaxPayments',
         },
       ],
     })

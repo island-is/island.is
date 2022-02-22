@@ -23,7 +23,7 @@ export class PersonalTaxReturnService {
         directTaxPayments: directTaxPayments.salaryBreakdown.map((salary) => {
           return {
             totalSalary: salary.salaryTotal,
-            payerNationalId: salary.payerNationalId,
+            payerNationalId: salary.payerNationalId.toString(),
             personalAllowance: salary.personalAllowance,
             withheldAtSource: salary.salaryWithheldAtSource,
             month: salary.period,

@@ -41,10 +41,10 @@ export class DirectTaxPaymentModel extends Model<DirectTaxPayment> {
   totalSalary: number
 
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.STRING,
   })
   @ApiProperty()
-  payerNationalId: number
+  payerNationalId: string
 
   @Column({
     type: DataType.INTEGER,

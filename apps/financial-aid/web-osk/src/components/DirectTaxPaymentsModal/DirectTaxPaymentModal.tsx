@@ -87,7 +87,7 @@ const DirectTaxPaymentModal = ({
                       </td>
                       <td>
                         <Text variant="small" marginBottom={1}>
-                          {formatNationalId(i.payerNationalId.toString())}
+                          {formatNationalId(i.payerNationalId)}
                         </Text>
                       </td>
                       <td>

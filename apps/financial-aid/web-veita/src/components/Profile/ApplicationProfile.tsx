@@ -12,6 +12,7 @@ import {
   showSpouseData,
   AmountModal,
   getAidAmountModalInfo,
+  UserType,
 } from '@island.is/financial-aid/shared/lib'
 
 import format from 'date-fns/format'
@@ -31,8 +32,10 @@ import {
   getApplicant,
   getApplicantMoreInfo,
   getApplicantSpouse,
+  getDirectTaxPayments,
   getNationalRegistryInfo,
 } from '@island.is/financial-aid-web/veita/src/utils/applicationHelper'
+import { TaxBreakdown } from '@island.is/financial-aid/shared/components'
 
 interface ApplicationProps {
   application: Application
@@ -133,6 +136,14 @@ const ApplicationProfile = ({
     application?.amount,
   )
 
+  const applicantDirectPayments = application.directTaxPayments?.filter(
+    (d) => d.userType === UserType.APPLICANT,
+  )
+
+  const spouseDirectPayments = application.directTaxPayments?.filter(
+    (d) => d.userType === UserType.APPLICANT,
+  )
+
   return (
     <>
       <Box
@@ -161,24 +172,44 @@ const ApplicationProfile = ({
           className={`contentUp delay-75`}
         />
 
+        {applicantDirectPayments && (
+          <CollapsibleProfileUnit
+            heading="Upplýsingar um staðgreiðslu"
+            info={getDirectTaxPayments(applicantDirectPayments)}
+            className={`contentUp delay-75`}
+          >
+            <TaxBreakdown items={applicantDirectPayments} />
+          </CollapsibleProfileUnit>
+        )}
+
         {showSpouseData[application.familyStatus] && (
           <CollapsibleProfileUnit
             heading="Maki"
             info={applicantSpouse}
-            className={`contentUp delay-75`}
+            className={`contentUp delay-100`}
           />
+        )}
+
+        {spouseDirectPayments && (
+          <CollapsibleProfileUnit
+            heading="Upplýsingar um staðgreiðslu maka"
+            info={getDirectTaxPayments(spouseDirectPayments)}
+            className={`contentUp delay-125`}
+          >
+            <TaxBreakdown items={spouseDirectPayments} />
+          </CollapsibleProfileUnit>
         )}
 
         <CollapsibleProfileUnit
           heading="Umsóknarferli"
           info={applicantMoreInfo}
-          className={`contentUp delay-100`}
+          className={`contentUp delay-125`}
         />
 
         <CollapsibleProfileUnit
           heading="Þjóðskrá"
           info={nationalRegistryInfo}
-          className={`contentUp delay-100`}
+          className={`contentUp delay-125`}
         />
 
         {application.files && (

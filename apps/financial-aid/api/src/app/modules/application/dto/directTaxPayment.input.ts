@@ -12,7 +12,7 @@ export class DirectTaxPaymentInput implements DirectTaxPayment {
 
   @Allow()
   @Field()
-  readonly payerNationalId!: number
+  readonly payerNationalId!: string
 
   @Allow()
   @Field()

@@ -10,8 +10,8 @@ class DirectTaxPayment {
   @Field(() => Number)
   totalSalary!: number
 
-  @Field(() => Number)
-  payerNationalId!: number
+  @Field(() => String)
+  payerNationalId!: string
 
   @Field(() => Number)
   personalAllowance!: number

@@ -9,6 +9,7 @@ import {
   ApplicationStateUrl,
   FamilyStatus,
   AidType,
+  UserType,
 } from './enums'
 
 export interface GetSignedUrl {
@@ -245,11 +246,12 @@ export interface PersonalTaxReturn {
 
 export interface DirectTaxPayment {
   totalSalary: number
-  payerNationalId: number
+  payerNationalId: string
   personalAllowance: number
   withheldAtSource: number
   month: number
   year: number
+  userType?: UserType
 }
 
 export interface Application {
@@ -290,6 +292,7 @@ export interface Application {
   postalCode?: string
   city?: string
   municipalityCode?: string
+  directTaxPayments?: DirectTaxPayment[]
 }
 
 export interface GetSignedUrlForId {
