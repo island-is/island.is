@@ -27,7 +27,7 @@ import {
   RegulationDraft,
   RegulationDraftId,
 } from '@island.is/regulations/admin'
-import { Kennitala } from '@island.is/regulations'
+import { Kennitala, RegQueryName } from '@island.is/regulations'
 import * as kennitala from 'kennitala'
 import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 import type { User } from '@island.is/auth-nest-tools'
@@ -332,7 +332,9 @@ export class DraftRegulationService {
     return authors
   }
 
-  async getRegulationImpactsByName(regulation: string): Promise<DraftImpact[]> {
+  async getRegulationImpactsByName(
+    regulation: RegQueryName,
+  ): Promise<DraftImpact[]> {
     const draftRegulationCancelImpacts = (
       await this.draftRegulationCancelService.findAllByName(regulation)
     ).map((imp) => {
