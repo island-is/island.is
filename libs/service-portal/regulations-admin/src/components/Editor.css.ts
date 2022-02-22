@@ -359,26 +359,26 @@ export const impactClasses: EditorClasses = Object.assign(classes, {
     flexFlow: 'column',
     position: 'absolute',
     zIndex: 999,
-    pointerEvents: 'none',
-    width: 'calc(1vw + 4em)',
-    right: 0,
+    width: '100%',
+    transform: 'translateX(calc(50vw - 10%))',
+    left: '50%',
     backgroundColor: theme.color.white,
     overflow: 'hidden',
-    padding: theme.spacing[2],
     borderRadius: theme.border.radius.standard,
     border: `1px solid ${theme.color.blue200}`,
     transition: 'all 300ms 200ms ease-in-out',
-    transitionProperty: 'width, max-width',
+    transitionProperty: 'transform',
     selectors: {
       '&:hover': {
-        width: '45rem',
-        maxWidth: '90vw',
+        transform: 'translateX(calc(50vw - 104%))',
       },
     },
   }),
 
   comparisonpaneContainer: style({
-    // …
+    padding: theme.spacing[3],
+    paddingTop: theme.spacing[2],
+    pointerEvents: 'none',
   }),
 })
 
