@@ -70,7 +70,6 @@ export const SyslumennFooter: React.FC<FooterProps> = ({
       component="footer"
       aria-labelledby="organizationFooterTitle"
       className={styles.footerBg}
-      color="white"
       paddingTop={5}
     >
       <GridContainer>
