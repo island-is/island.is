@@ -31,6 +31,7 @@ import {
   makeDraftChangeForm,
 } from '../state/makeFields'
 import { EditChange } from './impacts/EditChange'
+import lastItem from 'lodash/last'
 
 export type SelRegOption = Option & {
   value?: DraftImpactName | ''
@@ -183,8 +184,7 @@ export const EditImpacts = () => {
           <Text variant="h4" as="h4" marginBottom={[2, 2, 3, 4]}>
             {t(impactMsgs.chooseType)}
           </Text>
-          {draft.impacts[selRegOption.value]?.slice(-1)[0]?.type ===
-          'repeal' ? (
+          {lastItem(draft.impacts[selRegOption.value])?.type === 'repeal' ? (
             <Inline align="center">
               <Text variant="h5" as="h5">
                 Reglugerð er með virka brottfellingu
