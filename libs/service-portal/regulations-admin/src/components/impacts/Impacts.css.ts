@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { style } from '@vanilla-extract/css'
 import {
   regulationContentStyling,
