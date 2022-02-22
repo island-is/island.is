@@ -6,6 +6,7 @@ import {
   Delegation,
   DelegationDTO,
   DelegationScope,
+  DelegationType,
 } from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
 import {
@@ -23,6 +24,12 @@ import {
 } from '../../../../test/setup'
 import { TestEndpointOptions } from '../../../../test/types'
 import { expectMatchingObject, getRequestMethod } from '../../../../test/utils'
+import {
+  PersonalRepresentative,
+  PersonalRepresentativeRight,
+  PersonalRepresentativeRightType,
+  PersonalRepresentativeType,
+} from '@island.is/auth-api-lib/personal-representative'
 
 const today = new Date('2021-11-12')
 const user = createCurrentUser({
@@ -63,7 +70,7 @@ describe('ActorDelegationsController', () => {
       await app.cleanUp()
     })
 
-    beforeEach(async () => {
+    afterEach(async () => {
       await delegationModel.destroy({
         where: {},
         cascade: true,
@@ -191,6 +198,119 @@ describe('ActorDelegationsController', () => {
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
         expectMatchingObject(res.body, expectedModels)
+      })
+
+      describe('when user is a personal representative with one representee', () => {
+        let prModel: typeof PersonalRepresentative
+        let prRightsModel: typeof PersonalRepresentativeRight
+        let prRightTypeModel: typeof PersonalRepresentativeRightType
+        let prTypeModel: typeof PersonalRepresentativeType
+
+        let response: request.Response
+        let body: DelegationDTO[]
+
+        beforeAll(async () => {
+          prTypeModel = app.get<typeof PersonalRepresentativeType>(
+            'PersonalRepresentativeTypeRepository',
+          )
+          prModel = app.get<typeof PersonalRepresentative>(
+            'PersonalRepresentativeRepository',
+          )
+          prRightTypeModel = app.get<typeof PersonalRepresentativeRightType>(
+            'PersonalRepresentativeRightTypeRepository',
+          )
+          prRightsModel = app.get<typeof PersonalRepresentativeRight>(
+            'PersonalRepresentativeRightRepository',
+          )
+
+          const prType = await prTypeModel.create({
+            code: 'prTypeCode',
+            name: 'prTypeName',
+            description: 'prTypeDescription',
+          })
+
+          const pr = await prModel.create({
+            nationalIdPersonalRepresentative: user.nationalId,
+            nationalIdRepresentedPerson: nationalRegistryUser.kennitala,
+            personalRepresentativeTypeCode: prType.code,
+            contractId: '1',
+            externalUserId: '1',
+          })
+
+          const prRightType = await prRightTypeModel.create({
+            code: 'prRightType',
+            description: 'prRightTypeDescription',
+          })
+
+          await prRightsModel.create({
+            rightTypeCode: prRightType.code,
+            personalRepresentativeId: pr.id,
+          })
+
+          response = await server.get(`${path}${query}`)
+          body = response.body
+        })
+
+        it('should have a an OK return status', () => {
+          expect(response.status).toEqual(200)
+        })
+
+        it('should return a single entity', () => {
+          expect(body.length).toEqual(1)
+        })
+
+        it('should have the nationalId of the user as the representer', () => {
+          expect(
+            body.some((d) => d.toNationalId === user.nationalId),
+          ).toBeTruthy()
+        })
+
+        it('should have the nationalId of the correct representee', () => {
+          expect(
+            body.some(
+              (d) => d.fromNationalId === nationalRegistryUser.kennitala,
+            ),
+          ).toBeTruthy()
+        })
+
+        it('should have the name of the correct representee', () => {
+          expect(
+            body.some((d) => d.fromName === nationalRegistryUser.nafn),
+          ).toBeTruthy()
+        })
+
+        it('should have the delegation type claim of PersonalRepresentative', () => {
+          expect(
+            body.some((d) => d.type === DelegationType.PersonalRepresentative),
+          ).toBeTruthy()
+        })
+
+        afterAll(async () => {
+          await prRightsModel.destroy({
+            where: {},
+            cascade: true,
+            truncate: true,
+            force: true,
+          })
+          await prRightTypeModel.destroy({
+            where: {},
+            cascade: true,
+            truncate: true,
+            force: true,
+          })
+          await prModel.destroy({
+            where: {},
+            cascade: true,
+            truncate: true,
+            force: true,
+          })
+          await prTypeModel.destroy({
+            where: {},
+            cascade: true,
+            truncate: true,
+            force: true,
+          })
+        })
       })
     })
   })
