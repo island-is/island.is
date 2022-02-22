@@ -33,7 +33,7 @@ type EditCancellationProp = {
 export const EditCancellation = (props: EditCancellationProp) => {
   const { draft, cancellation, closeModal } = props
   const [activeCancellation, setActiveCancellation] = useState(cancellation)
-  const today = new Date().toISOString().substr(0, 10) as ISODate
+  const today = toISODate(new Date())
 
   const { data: regulation } = useGetCurrentRegulationFromApiQuery(
     activeCancellation.name,
@@ -127,8 +127,8 @@ export const EditCancellation = (props: EditCancellationProp) => {
       <GridContainer>
         <GridRow>
           <GridColumn
-            span={['12/12', '12/12', '12/12', '10/12', '8/12']}
-            offset={['0', '0', '0', '1/12', '2/12']}
+            span={['12/12', '12/12', '12/12', '6/12']}
+            offset={['0', '0', '0', '2/12']}
           >
             <ImpactModalTitle
               impact={activeCancellation}
@@ -148,8 +148,8 @@ export const EditCancellation = (props: EditCancellationProp) => {
             />
           </GridColumn>
           <GridColumn
-            span={['12/12', '12/12', '12/12', '10/12', '8/12']}
-            offset={['0', '0', '0', '1/12', '2/12']}
+            span={['12/12', '12/12', '12/12', '3/12']}
+            offset={['0', '0', '0', '1/12']}
           >
             {effects?.future && (
               <ImpactHistory

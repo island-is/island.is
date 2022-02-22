@@ -9,7 +9,7 @@ import {
   BoxProps,
   FocusableBox,
 } from '@island.is/island-ui/core'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import {
   DraftChangeForm,
   DraftField,
@@ -43,6 +43,8 @@ import { MessageDescriptor } from 'react-intl'
 import * as s from './Impacts.css'
 import { ReferenceText } from './ReferenceText'
 import { makeDraftAppendixForm } from '../../state/makeFields'
+import { ImpactHistory } from './ImpactHistory'
+import { Effects } from '../../types'
 /* ---------------------------------------------------------------------------------------------------------------- */
 
 export type HTMLBoxProps = BoxProps & {
@@ -71,6 +73,8 @@ export const EditChange = (props: EditChangeProp) => {
   const [activeChange, setActiveChange] = useState(change) // Áhrifafærslan sem er verið að breyta
   const [showEditor, setShowEditor] = useState(false)
   const [showDiff, setShowDiff] = useState<boolean>(false)
+  const today = toISODate(new Date())
+
   const [createDraftRegulationChange] = useMutation(
     CREATE_DRAFT_REGULATION_CHANGE,
   )
@@ -82,6 +86,21 @@ export const EditChange = (props: EditChangeProp) => {
     data: regulation,
     loading /* , error */,
   } = useGetCurrentRegulationFromApiQuery(activeChange.name)
+
+  const { effects } = useMemo(() => {
+    const effects = regulation?.history.reduce<Effects>(
+      (obj, item, i) => {
+        const arr = item.date > today ? obj.future : obj.past
+        arr.push(item)
+        return obj
+      },
+      { past: [], future: [] },
+    )
+
+    return {
+      effects,
+    }
+  }, [regulation, today])
 
   const { data: draftImpacts } = useGetRegulationImpactsQuery(activeChange.name)
   const fHtml = (
@@ -220,8 +239,8 @@ export const EditChange = (props: EditChangeProp) => {
       <GridContainer>
         <GridRow>
           <GridColumn
-            span={['12/12', '12/12', '12/12', '10/12', '8/12']}
-            offset={['0', '0', '0', '1/12', '2/12']}
+            span={['12/12', '12/12', '12/12', '6/12']}
+            offset={['0', '0', '0', '2/12']}
           >
             <ImpactModalTitle
               type="edit"
@@ -234,6 +253,19 @@ export const EditChange = (props: EditChangeProp) => {
                 second: 'Stofnreglugerð',
               }}
             />
+          </GridColumn>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '3/12']}
+            offset={['0', '0', '0', '1/12']}
+          >
+            {effects?.future && (
+              <ImpactHistory
+                effects={effects}
+                activeImpact={activeChange}
+                draftImpacts={draftImpacts}
+                draftId={draft.id}
+              />
+            )}
           </GridColumn>
 
           {showEditor && (
