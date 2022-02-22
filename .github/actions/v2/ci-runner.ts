@@ -1,12 +1,15 @@
 import { LocalRunner } from './ci-io'
-import { findBestGoodRefPR } from './change-detection'
+import { findBestGoodRefBranch, findBestGoodRefPR } from './change-detection'
 import simpleGit from 'simple-git'
 import { Octokit } from '@octokit/action'
 ;(async () => {
   const runner = new LocalRunner(new Octokit())
   let git = simpleGit({ baseDir: `${__dirname}/../../..` })
-  const rev = await findBestGoodRefPR(
-    (s) => s.length,
+  const diffWeight = (s) => s.length
+  const rev = await (process.env.GITHUB_EVENT_NAME === 'pull_request'
+    ? findBestGoodRefPR
+    : findBestGoodRefBranch)(
+    diffWeight,
     git,
     runner,
     `infra/new-ci-change-detector`,
