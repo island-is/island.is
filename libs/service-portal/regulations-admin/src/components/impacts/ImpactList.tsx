@@ -42,6 +42,8 @@ export const ImpactList = (props: ImpactListProps) => {
 
   const [chooseType, setChooseType] = useState<DraftImpactForm | undefined>()
 
+  const [isConfirmationVisible, setIsConfirmationVisible] = useState(false)
+
   const [deleteDraftRegulationCancel] = useMutation(
     DELETE_DRAFT_REGULATION_CANCEL,
   )
@@ -197,11 +199,11 @@ export const ImpactList = (props: ImpactListProps) => {
               closeModal={closeModal}
             />
           )}
-          {/* TODO: Dísa: Þegar delete impact er keyrt þarf að birta þennan modal "ertu alveg viss?"  */}
-          {/*<ConfirmModal
+          {/* TODO: Dísa: Þegar delete impact er keyrt þarf að birta þennan modal "ertu alveg viss?" 
+          <ConfirmModal
             isVisible={isConfirmationVisible}
             message={`${formatMessage(impactMsgs.deleteConfirmation)}`}
-            onConfirm={onConfirmDelete}
+            onConfirm={deleteImpact(impact)}
             onVisibilityChange={(visibility: boolean) => {
               if (!visibility) {
                 onClear()
@@ -209,7 +211,7 @@ export const ImpactList = (props: ImpactListProps) => {
 
               setIsConfirmationVisible(visibility)
             }}
-          />*/}
+          /> */}
         </Stack>
       )}
     </>

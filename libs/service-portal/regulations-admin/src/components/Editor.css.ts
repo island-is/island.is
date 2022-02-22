@@ -341,6 +341,45 @@ export const impactClasses: EditorClasses = Object.assign(classes, {
     paddingRight: spacing[1],
     opacity: 0.67,
   },
+
+  wrapper: style({
+    zIndex: 0,
+    display: 'flex',
+    flexFlow: 'row nowrap',
+  }),
+
+  editingpane: style({
+    display: 'flex',
+    flexFlow: 'column',
+    width: '100%',
+  }),
+
+  comparisonpane: style({
+    display: 'flex',
+    flexFlow: 'column',
+    position: 'absolute',
+    zIndex: 999,
+    pointerEvents: 'none',
+    width: 'calc(1vw + 4em)',
+    right: 0,
+    backgroundColor: theme.color.white,
+    overflow: 'hidden',
+    padding: theme.spacing[2],
+    borderRadius: theme.border.radius.standard,
+    border: `1px solid ${theme.color.blue200}`,
+    transition: 'all 300ms 200ms ease-in-out',
+    transitionProperty: 'width, max-width',
+    selectors: {
+      '&:hover': {
+        width: '45rem',
+        maxWidth: '90vw',
+      },
+    },
+  }),
+
+  comparisonpaneContainer: style({
+    // …
+  }),
 })
 
 // ---------------------------------------------------------------------------

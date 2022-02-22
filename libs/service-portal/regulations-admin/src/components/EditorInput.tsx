@@ -54,6 +54,7 @@ export const EditorInput = (props: EditorInputProps) => {
     isImpact,
     ...editorProps
   } = props
+
   const valueRef = useRef(() => value)
   const [hasFocus, setHasFocus] = useState(false)
   const domid = useDomid()

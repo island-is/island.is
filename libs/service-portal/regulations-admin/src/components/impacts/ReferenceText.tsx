@@ -59,16 +59,16 @@ export const ReferenceText = (props: ReferenceTextProps) => {
   return (
     <div className={s.referenceTextContainer}>
       <div className={s.referenceText}>
-        <h2 className={s.referenceText__legend}>
+        <h2 className={s.referenceTextLegend}>
           {t('referenceLegend', { name: prettyName(name) })}
           <Link
             href={taskUrl(baseName) + `?edit=${name}&fixText`}
-            className={s.referenceText__editlink}
+            className={s.referenceTextEditlink}
           >
             {t('referenceEditLink')}
           </Link>
         </h2>
-        <div className={s.referenceText__meta}>
+        <div className={s.referenceTextMeta}>
           {t.arr('referenceMeta', {
             published: (
               <strong key="1">
@@ -80,18 +80,18 @@ export const ReferenceText = (props: ReferenceTextProps) => {
             <>&nbsp; ({mapRegulationTypeToDisplayString(type)})</>
           )}
         </div>
-        <div className={s.referenceText__inner}>
+        <div className={s.referenceTextInner}>
           <HTMLDump className={ed.classes.editor} html={text as HTMLText} />
           {appendixes.map(({ title, text }, i) => (
-            <div className={s.referenceText__appendix} key={i}>
-              <h2 className={s.referenceText__appendix__title}>{title}</h2>
+            <div className={s.referenceTextAppendix} key={i}>
+              <h2 className={s.referenceTextAppendixTitle}>{title}</h2>
               <HTMLDump className={ed.classes.editor} html={text as HTMLText} />
             </div>
           ))}
 
           {comments && (
-            <div className={s.referenceText__comments}>
-              <h2 className={s.referenceText__comments__title}>
+            <div className={s.referenceTextComments}>
+              <h2 className={s.referenceTextCommentsTitle}>
                 {t('commentsTitle')}
               </h2>
               <HTMLDump

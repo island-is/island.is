@@ -22,6 +22,10 @@ export const editBox = style({
 export const diff = style({})
 diffStyling(diff)
 
+export const diffButton = style({
+  position: 'absolute',
+})
+
 export const referenceWrapper = style({
   position: 'relative',
 })
@@ -68,7 +72,7 @@ export const referenceText = style({
   },
 })
 
-export const referenceText__legend = style({
+export const referenceTextLegend = style({
   padding: '0 0.5rem',
   width: '45rem',
   maxWidth: '90vw',
@@ -79,13 +83,13 @@ export const referenceText__legend = style({
   backgroundColor: '#eeeeee',
 })
 
-export const referenceText__editlink = style({
+export const referenceTextEditlink = style({
   fontSize: '0.8rem',
   fontWeight: 'normal',
   float: 'right',
 })
 
-export const referenceText__meta = style({
+export const referenceTextMeta = style({
   padding: '0 0.5rem',
   paddingBottom: '0.5rem',
   width: '45rem',
@@ -95,7 +99,7 @@ export const referenceText__meta = style({
   backgroundColor: '#eeeeee',
 })
 
-export const referenceText__inner = style({
+export const referenceTextInner = style({
   padding: '1rem',
   width: '45rem',
   maxWidth: '90vw',
@@ -115,15 +119,15 @@ const referenceTextAppendixCommentTitle = {
   fontSize: '1.5em',
   fontWeigth: 700,
 }
-export const referenceText__appendix = style({
+export const referenceTextAppendix = style({
   ...referenceTextAppendixComment,
 })
-export const referenceText__comments = style({
+export const referenceTextComments = style({
   ...referenceTextAppendixComment,
 })
-export const referenceText__appendix__title = style({
+export const referenceTextAppendixTitle = style({
   ...referenceTextAppendixCommentTitle,
 })
-export const referenceText__comments__title = style({
+export const referenceTextCommentsTitle = style({
   ...referenceTextAppendixCommentTitle,
 })

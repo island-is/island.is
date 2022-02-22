@@ -7,6 +7,7 @@ import {
   GridRow,
   GridColumn,
   BoxProps,
+  FocusableBox,
 } from '@island.is/island-ui/core'
 import React, { useEffect, useState } from 'react'
 import {
@@ -69,6 +70,7 @@ export const EditChange = (props: EditChangeProp) => {
   const { draft, change, closeModal } = props
   const [activeChange, setActiveChange] = useState(change) // Áhrifafærslan sem er verið að breyta
   const [showEditor, setShowEditor] = useState(false)
+  const [showDiff, setShowDiff] = useState<boolean>(false)
   const [createDraftRegulationChange] = useMutation(
     CREATE_DRAFT_REGULATION_CHANGE,
   )
@@ -256,13 +258,21 @@ export const EditChange = (props: EditChangeProp) => {
                     />
                   )}
               </Box>
-              <Box marginBottom={4}>
+              <Box marginBottom={4} position="relative">
+                <FocusableBox
+                  background="blueberry200"
+                  className={s.diffButton}
+                  onClick={() => setShowDiff(!showDiff)}
+                >
+                  {showDiff ? 'Fela breytingar' : 'Sjá breytingar'}
+                </FocusableBox>
                 <EditorInput
                   label="Uppfærður texti"
                   baseText={
-                    regulation?.text !== activeChange.text.value
-                      ? regulation?.text
-                      : undefined
+                    regulation?.text
+                    // regulation?.text !== activeChange.text.value
+                    //   ? regulation?.text
+                    //   : undefined
                   }
                   value={activeChange.text.value}
                   onChange={(newValue) => changeRegulationText(newValue)}
