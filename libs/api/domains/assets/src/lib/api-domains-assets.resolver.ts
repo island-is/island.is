@@ -19,7 +19,10 @@ import {
 import { PropertyOwnersModel } from '../models/propertyOwners.model'
 import { UnitsOfUseModel } from '../models/propertyUnitsOfUse.model'
 import { PropertyDetail } from '../models/propertyDetail.model'
-import { PropertyOverview } from '../models/propertyOverview.model'
+import {
+  PropertyOverview,
+  PropertyOverviewWithDetail,
+} from '../models/propertyOverview.model'
 import { AssetsXRoadService } from './api-domains-assets.service'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
@@ -72,5 +75,14 @@ export class AssetsXRoadResolver {
       input.cursor,
       input.limit,
     )
+  }
+
+  @Query(() => PropertyOverviewWithDetail, { nullable: true })
+  @Audit()
+  async assetsOverviewWithDetail(
+    @Args('input') input: GetMultiPropertyInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.assetsXRoadService.getRealEstatesWithDetail(user, input.cursor)
   }
 }

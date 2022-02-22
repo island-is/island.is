@@ -3,14 +3,15 @@ import {
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
+import { PropertyOverviewWithDetail } from '../types/schema'
 
 export class NationalRegistryRealEstateProvider extends BasicDataProvider {
   readonly type = 'NationalRegistryRealEstate'
 
-  async provide(): Promise<unknown> {
+  async provide(): Promise<PropertyOverviewWithDetail> {
     const query = `
       query GetRealEstateQuery($input: GetMultiPropertyInput!) {
-        assetsOverview(input: $input) {
+        assetsOverviewWithDetail(input: $input) {
           properties {
             propertyNumber
             defaultAddress {
@@ -21,11 +22,60 @@ export class NationalRegistryRealEstateProvider extends BasicDataProvider {
               display
               displayShort
             }
+            appraisal {
+              activeAppraisal
+              plannedAppraisal
+              activeStructureAppraisal
+              plannedStructureAppraisal
+              activePlotAssessment
+              plannedPlotAssessment
+              activeYear
+              plannedYear
+            }
+            registeredOwners {
+              registeredOwners {
+                name
+                ssn
+                ownership
+                purchaseDate
+                grantDisplay
+              }
+            }
+            unitsOfUse {
+              unitsOfUse {
+                propertyNumber
+                unitOfUseNumber
+                marking
+                usageDisplay
+                displaySize
+                buildYearDisplay
+                fireAssessment
+                explanation
+                appraisal {
+                  activeAppraisal
+                  plannedAppraisal
+                  activeStructureAppraisal
+                  plannedStructureAppraisal
+                  activePlotAssessment
+                  plannedPlotAssessment
+                  activeYear
+                  plannedYear
+                }
+                address {
+                  locationNumber
+                  postNumber
+                  municipality
+                  propertyNumber
+                  display
+                  displayShort
+                }
+              }
+            }
           }
         }
       }
     `
-    return this.useGraphqlGateway(query, {
+    return this.useGraphqlGateway<PropertyOverviewWithDetail>(query, {
       input: { cursor: '1' },
     })
       .then(async (res: Response) => {
@@ -38,7 +88,7 @@ export class NationalRegistryRealEstateProvider extends BasicDataProvider {
         }
 
         return Promise.resolve({
-          ...response.data.assetsOverview,
+          ...response.data.assetsOverviewWithDetail,
         })
       })
       .catch((error) => {
@@ -56,7 +106,9 @@ export class NationalRegistryRealEstateProvider extends BasicDataProvider {
       data: result,
     }
   }
-  onProvideSuccess(result: object): SuccessfulDataProviderResult {
+  onProvideSuccess(
+    result: PropertyOverviewWithDetail,
+  ): SuccessfulDataProviderResult {
     return { date: new Date(), status: 'success', data: result }
   }
 }

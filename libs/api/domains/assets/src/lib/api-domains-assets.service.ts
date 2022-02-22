@@ -242,4 +242,22 @@ export class AssetsXRoadService {
 
     throw new Error('Could not fetch fasteignir')
   }
+
+  async getRealEstatesWithDetail(
+    auth: User,
+    cursor?: string | null,
+  ): Promise<any | null> {
+    const getRealEstatesRes = await this.getRealEstates(auth, cursor)
+    if (getRealEstatesRes && getRealEstatesRes.properties) {
+      return {
+        paging: getRealEstatesRes.paging,
+        properties: getRealEstatesRes.properties.map(
+          async (item: { propertyNumber: string }) =>
+            await this.getRealEstateDetail(item.propertyNumber, auth),
+        ),
+      }
+    }
+
+    throw new Error('Could not fetch fasteignir')
+  }
 }
