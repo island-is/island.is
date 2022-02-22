@@ -80,7 +80,7 @@ export const classes: EditorClasses = {
 
   toolbar: style({
     position: 'sticky',
-    top: SERVICE_PORTAL_HEADER_HEIGHT_SM - 1,
+    top: 0,
     zIndex: 1,
 
     margin: 0,
@@ -89,7 +89,7 @@ export const classes: EditorClasses = {
 
     ...themeUtils.responsiveStyle({
       md: {
-        top: SERVICE_PORTAL_HEADER_HEIGHT_LG - 1,
+        top: 0,
       },
     }),
   }),
@@ -107,14 +107,13 @@ export const classes: EditorClasses = {
   }),
 
   comparisonpane: style({
-    // display: 'flex',
-    display: 'none',
+    display: 'flex',
     flexFlow: 'column',
     position: 'relative',
     zIndex: 999,
     pointerEvents: 'none',
     width: '100%',
-    marginLeft: '-100%',
+    marginRight: '-80%',
   }),
 
   comparisonpaneContainer: style({

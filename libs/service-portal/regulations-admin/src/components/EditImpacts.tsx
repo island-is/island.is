@@ -32,7 +32,7 @@ import {
 } from '../state/makeFields'
 import { EditChange } from './impacts/EditChange'
 
-type SelRegOption = Option & {
+export type SelRegOption = Option & {
   value?: DraftImpactName | ''
   type: RegulationType | ''
 }
@@ -229,12 +229,9 @@ export const EditImpacts = () => {
                 id: '' as DraftRegulationChangeId, // no ID available at this stage
                 name: selRegOption.value as DraftImpactName,
                 regTitle: selRegOption.label,
-                title: draft.title.value,
-                text: draft.text.value,
-                appendixes: draft.appendixes.map((apx) => ({
-                  title: apx.title.value,
-                  text: apx.text.value,
-                })),
+                title: '',
+                text: '',
+                appendixes: [],
                 comments: '',
               })}
               closeModal={closeModal}

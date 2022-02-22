@@ -50,6 +50,8 @@ export const EditorInput = (props: EditorInputProps) => {
     onChange,
     value,
     required,
+    baseText,
+    isImpact,
     ...editorProps
   } = props
   const valueRef = useRef(() => value)
@@ -87,6 +89,7 @@ export const EditorInput = (props: EditorInputProps) => {
           valueRef={valueRef}
           classes={classes}
           fileUploader={fileUploader}
+          baseText={baseText}
           onFocus={() => {
             setHasFocus(true)
           }}
@@ -97,6 +100,7 @@ export const EditorInput = (props: EditorInputProps) => {
           aria-labelledBy={labelId}
           aria-describedBy={errorId}
           warningsAbove={warningsAbove}
+          isImpact={isImpact}
         />
       </Box>
       {hasError && (
