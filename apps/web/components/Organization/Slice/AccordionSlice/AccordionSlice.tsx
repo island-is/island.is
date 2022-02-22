@@ -19,15 +19,17 @@ interface SliceProps {
 }
 
 export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
+  const labelId = 'sliceTitle-' + slice.id
+
   return (
-    <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
+    <section key={slice.id} aria-labelledby={labelId}>
       <Box
         borderTopWidth="standard"
         borderColor="standard"
         paddingTop={[4, 4, 6]}
         paddingBottom={[4, 4, 6]}
       >
-        <Text variant="h2" as="h2" marginBottom={2}>
+        <Text variant="h2" as="h2" marginBottom={2} id={labelId}>
           {slice.title}
         </Text>
         {slice.type === 'accordion' &&

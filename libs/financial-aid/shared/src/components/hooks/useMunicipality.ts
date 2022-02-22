@@ -20,18 +20,18 @@ const MunicipalityQuery = gql`
         ownPlace
         registeredRenting
         unregisteredRenting
+        withOthers
         livesWithParents
         unknown
-        withOthers
         type
       }
       cohabitationAid {
         ownPlace
         registeredRenting
         unregisteredRenting
+        withOthers
         livesWithParents
         unknown
-        withOthers
         type
       }
     }

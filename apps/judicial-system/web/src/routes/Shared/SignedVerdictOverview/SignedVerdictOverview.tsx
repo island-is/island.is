@@ -429,6 +429,9 @@ export const SignedVerdictOverview: React.FC = () => {
             created: new Date().toString(),
             modified: new Date().toString(),
           },
+          isHeightenedSecurityLevel: workingCase.isHeightenedSecurityLevel
+            ? false
+            : workingCase.isHeightenedSecurityLevel,
         })
 
         updateCase(

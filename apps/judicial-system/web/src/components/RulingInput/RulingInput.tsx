@@ -83,6 +83,10 @@ const RulingInput: React.FC<Props> = (props) => {
       }
       textarea
       rows={rows ?? 16}
+      autoExpand={{
+        on: !rows,
+        maxHeight: 600,
+      }}
     />
   )
 }

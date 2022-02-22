@@ -12,6 +12,7 @@ export enum AidTypeHomeCircumstances {
   OWNPLACE = 'OwnPlace',
   REGISTEREDLEASE = 'RegisteredLease',
   UNREGISTEREDLEASE = 'UnregisteredLease',
+  WITHOTHERS = 'WithOthers',
   WITHPARENTS = 'WithParents',
   UNKNOWN = 'Unknown',
 }
@@ -99,4 +100,13 @@ export enum MartialStatusType {
 export enum AmountModal {
   ESTIMATED = 'Estimated',
   PROVIDED = 'Provided',
+}
+
+export enum AidName {
+  OWNPLACE = 'ownPlace',
+  REGISTEREDRENTING = 'registeredRenting',
+  UNREGISTEREDRENTING = 'unregisteredRenting',
+  WITHOTHERS = 'withOthers',
+  LIVESWITHPARENTS = 'livesWithParents',
+  UNKNOWN = 'unknown',
 }
