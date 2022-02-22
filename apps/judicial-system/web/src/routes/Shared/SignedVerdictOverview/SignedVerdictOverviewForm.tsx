@@ -438,8 +438,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           <Box marginBottom={9}>
             <Box marginBottom={3}>
               <Text variant="h3">
-                Opna mál fyrir öðru embætti{' '}
-                <Tooltip text="Hægt er að gefa öðru embætti aðgang að málinu. Viðkomandi embætti getur skoðað málið og farið fram á framlengingu." />
+                {formatMessage(m.sections.shareCase.title)}{' '}
+                <Tooltip text={formatMessage(m.sections.shareCase.info)} />
               </Text>
             </Box>
             <BlueBox>
@@ -447,8 +447,10 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                 <Box flexGrow={1} marginRight={2}>
                   <Select
                     name="sharedWithProsecutorsOfficeId"
-                    label="Veldu embætti"
-                    placeholder="Velja embætti sem tekur við málinu"
+                    label={formatMessage(m.sections.shareCase.label)}
+                    placeholder={formatMessage(
+                      m.sections.shareCase.placeholder,
+                    )}
                     size="sm"
                     icon={
                       workingCase.sharedWithProsecutorsOffice
@@ -495,8 +497,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                   }
                 >
                   {workingCase.sharedWithProsecutorsOffice
-                    ? 'Loka aðgangi'
-                    : 'Opna mál'}
+                    ? formatMessage(m.sections.shareCase.close)
+                    : formatMessage(m.sections.shareCase.open)}
                 </Button>
               </Box>
             </BlueBox>
