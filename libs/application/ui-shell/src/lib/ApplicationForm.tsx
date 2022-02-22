@@ -9,6 +9,7 @@ import {
   Form,
   Schema,
   coreMessages,
+  getTypeFromSlug,
 } from '@island.is/application/core'
 import {
   getApplicationTemplateByTypeId,
@@ -22,11 +23,20 @@ import { FieldProvider, useFields } from '../context/FieldContext'
 import { LoadingShell } from '../components/LoadingShell'
 import { FormShell } from './FormShell'
 import { ErrorShell } from '../components/ErrorShell'
+import {
+  ProblemType,
+  findProblemInApolloError,
+} from '@island.is/shared/problem'
+import { DelegationsScreen } from '../components/DelegationsScreen'
 
 const ApplicationLoader: FC<{
   applicationId: string
   nationalRegistryId: string
-}> = ({ applicationId, nationalRegistryId }) => {
+  slug: string
+}> = ({ applicationId, nationalRegistryId, slug }) => {
+  const type = getTypeFromSlug(slug)
+  const [delegationsChecked, setDelegationsChecked] = useState(false)
+
   const { lang: locale } = useLocale()
   const { data, error, loading, refetch } = useQuery(APPLICATION_APPLICATION, {
     variables: {
@@ -42,6 +52,7 @@ const ApplicationLoader: FC<{
     notifyOnNetworkStatusChange: true,
     skip: !applicationId,
   })
+
   const application = data?.applicationApplication
 
   if (loading) {
@@ -49,6 +60,20 @@ const ApplicationLoader: FC<{
   }
 
   if (!applicationId || error) {
+    const problem = findProblemInApolloError(error)
+    if (
+      problem?.type === ProblemType.VALIDATION_FAILED &&
+      !delegationsChecked &&
+      type
+    ) {
+      return (
+        <DelegationsScreen
+          type={type}
+          setDelegationsChecked={setDelegationsChecked}
+          problem={problem}
+        />
+      )
+    }
     return <ErrorShell />
   }
 
@@ -145,7 +170,8 @@ const ShellWrapper: FC<{
 export const ApplicationForm: FC<{
   applicationId: string
   nationalRegistryId: string
-}> = ({ applicationId, nationalRegistryId }) => {
+  slug: string
+}> = ({ applicationId, nationalRegistryId, slug }) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -166,6 +192,7 @@ export const ApplicationForm: FC<{
         <ApplicationLoader
           applicationId={applicationId}
           nationalRegistryId={nationalRegistryId}
+          slug={slug}
         />
       </FieldProvider>
     </Sentry.ErrorBoundary>

@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 
 import { ApplicationForm, ErrorShell } from '@island.is/application/ui-shell'
 import { useLocale } from '@island.is/localization'
-import { coreMessages } from '@island.is/application/core'
+import { coreMessages, getTypeFromSlug } from '@island.is/application/core'
 import { useAuth } from '@island.is/auth/react'
 
 export const Application = () => {
@@ -29,6 +29,7 @@ export const Application = () => {
     <ApplicationForm
       applicationId={id}
       nationalRegistryId={nationalRegistryId}
+      slug={slug}
     />
   )
 }

@@ -245,12 +245,13 @@ export class ApplicationController {
         `No initial state found for type: ${typeId}`,
       )
     }
-    console.log("USER ",user)
+
     const applicationDto: Pick<
       BaseApplication,
       | 'answers'
       | 'applicant'
       | 'assignees'
+      | 'actors'
       | 'attachments'
       | 'state'
       | 'status'
@@ -259,6 +260,7 @@ export class ApplicationController {
       answers: {},
       applicant: user.nationalId,
       assignees: [],
+      actors: user.actor ? [user.actor.nationalId] : [],
       attachments: {},
       state: initialState,
       status: ApplicationStatus.IN_PROGRESS,

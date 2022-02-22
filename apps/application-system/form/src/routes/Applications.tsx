@@ -30,14 +30,16 @@ export const Applications: FC = () => {
   const { formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)
 
-  function useQuery() {
+  function getQuery() {
     const { search } = useLocation()
     return React.useMemo(() => new URLSearchParams(search), [search])
   }
 
-  let query = useQuery()
+  let query = getQuery()
 
-  const [delegationsChecked, setDelegationsChecked] = useState(!!query.get('delegationChecked'))
+  const [delegationsChecked, setDelegationsChecked] = useState(
+    !!query.get('delegationChecked'),
+  )
 
   useApplicationNamespaces(type)
 
@@ -71,7 +73,12 @@ export const Applications: FC = () => {
   }
 
   useEffect(() => {
-    if (type && data && isEmpty(data.applicationApplications) && delegationsChecked) {
+    if (
+      type &&
+      data &&
+      isEmpty(data.applicationApplications) &&
+      delegationsChecked
+    ) {
       createApplication()
     }
   }, [type, data, delegationsChecked])

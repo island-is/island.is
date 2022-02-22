@@ -12,7 +12,8 @@ import {
 } from '@island.is/island-ui/core'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { ApplicationTypes } from '@island.is/application/core'
-import { ApplicationLoading } from '../ApplicationsLoading/ApplicationLoading'
+import { LoadingShell } from './LoadingShell'
+import { ValidationFailedProblem } from '@island.is/shared/problem'
 
 type Delegation = {
   type: string
@@ -24,16 +25,16 @@ type Delegation = {
 interface DelegationsScreenProps {
   type: ApplicationTypes
   setDelegationsChecked: Dispatch<SetStateAction<boolean>>
-  slug: string
+  problem: ValidationFailedProblem
 }
 
 export const DelegationsScreen = ({
   type,
   setDelegationsChecked,
-  slug,
+  problem,
 }: DelegationsScreenProps) => {
   const [allowedDelegations, setAllowedDelegations] = useState<string[]>()
-  const history = useHistory()
+  const [applicant, setApplicant] = useState<Delegation>()
 
   const { switchUser, userInfo: user } = useAuth()
 
@@ -44,9 +45,6 @@ export const DelegationsScreen = ({
         const template = await getApplicationTemplateByTypeId(type)
         if (template.allowedDelegations) {
           setAllowedDelegations(template.allowedDelegations)
-        } else {
-          if (user?.profile.actor) switchUser(user?.profile.actor.nationalId)
-          setDelegationsChecked(true)
         }
       }
     }
@@ -61,30 +59,31 @@ export const DelegationsScreen = ({
   // Check if user has the delegations of the delegation types the application supports
   useEffect(() => {
     if (delegations && allowedDelegations) {
-      const authActorDelegations: Delegation[] = delegations.authActorDelegations.map(
-        (delegation: Delegation) => {
-          if (allowedDelegations.includes(delegation.type)) {
-            return delegation
-          }
-        },
+      // Does the actor have delegation for the applicant of the application
+      const found: Delegation = delegations.authActorDelegations.find(
+        (delegation: Delegation) =>
+          delegation.from.nationalId === problem.fields.applicant &&
+          allowedDelegations.includes(delegation.type), // &&
+        // problem.fields.delegationType === delegation.type,
       )
-      if (authActorDelegations.length <= 0) setDelegationsChecked(true)
+      if (!found) setDelegationsChecked(true)
+      setApplicant(found)
     }
-  }, [delegations, allowedDelegations])
+  }, [delegations, allowedDelegations, problem])
 
   const handleClick = (nationalId?: string) => {
-    history.push(`../${slug}/?delegationChecked=true`)
+    // history.push(`../${applicationId}/?delegationChecked=true`)
     if (nationalId) switchUser(nationalId)
     else setDelegationsChecked(true)
   }
-
+  // TODO: Set delegated user as default, are the others disabled?
   if (delegations && user) {
     return (
       <Page>
         <GridContainer>
           <Box>
             <Box marginTop={5} marginBottom={5}>
-              <Text variant="h1">Þessi umsókn styður umboð.</Text>
+              <Text variant="h1">?essi ums'okn .</Text>
             </Box>
             <Box
               marginTop={5}
@@ -124,6 +123,12 @@ export const DelegationsScreen = ({
                   >
                     <Text variant="h1">{delegation.from.name}</Text>
                     <Button
+                      disabled={
+                        delegation.from.nationalId ===
+                        applicant?.from.nationalId
+                          ? false
+                          : true
+                      }
                       onClick={() =>
                         handleClick(
                           user.profile.nationalId != delegation.from.nationalId
@@ -143,5 +148,5 @@ export const DelegationsScreen = ({
       </Page>
     )
   }
-  return <ApplicationLoading />
+  return <LoadingShell />
 }

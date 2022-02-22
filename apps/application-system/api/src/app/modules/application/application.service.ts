@@ -53,6 +53,22 @@ export class ApplicationService {
     })
   }
 
+  async findOneByActorId(
+    id: string,
+    nationalId?: string,
+  ): Promise<Application | null> {
+    return this.applicationModel.findOne({
+      where: {
+        id,
+        ...(nationalId
+          ? {
+              [Op.or]: [{ actors: { [Op.contains]: [nationalId] } }],
+            }
+          : {}),
+      },
+    })
+  }
+
   async findAllByNationalIdAndFilters(
     nationalId: string,
     typeId?: string,
