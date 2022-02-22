@@ -183,7 +183,8 @@ export const EditImpacts = () => {
           <Text variant="h4" as="h4" marginBottom={[2, 2, 3, 4]}>
             {t(impactMsgs.chooseType)}
           </Text>
-          {draft.impacts[selRegOption.value].slice(-1)[0].type === 'repeal' ? (
+          {draft.impacts[selRegOption.value]?.slice(-1)[0]?.type ===
+          'repeal' ? (
             <Inline align="center">
               <Text variant="h5" as="h5">
                 Reglugerð er með virka brottfellingu
