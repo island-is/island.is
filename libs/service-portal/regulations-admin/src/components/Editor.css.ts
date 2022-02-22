@@ -330,6 +330,19 @@ export const classes: EditorClasses = {
   }),
 }
 
+export const impactClasses: EditorClasses = Object.assign(classes, {
+  result_diff: {
+    paddingLeft: spacing[1],
+    paddingRight: spacing[1],
+    opacity: 0.67,
+  },
+  result_base: {
+    paddingLeft: spacing[1],
+    paddingRight: spacing[1],
+    opacity: 0.67,
+  },
+})
+
 // ---------------------------------------------------------------------------
 
 globalStyle(`${classes.toolbar} .tox .tox-menu`, {

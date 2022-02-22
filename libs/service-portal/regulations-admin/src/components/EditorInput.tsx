@@ -1,5 +1,5 @@
 import * as s from './EditorInput.css'
-import { classes } from './Editor.css'
+import { classes, impactClasses } from './Editor.css'
 
 import React, { useMemo, useRef, useState } from 'react'
 import { Box } from '@island.is/island-ui/core'
@@ -87,7 +87,7 @@ export const EditorInput = (props: EditorInputProps) => {
         <RegulationsEditor
           {...editorProps}
           valueRef={valueRef}
-          classes={classes}
+          classes={isImpact ? impactClasses : classes}
           fileUploader={fileUploader}
           baseText={baseText}
           onFocus={() => {
