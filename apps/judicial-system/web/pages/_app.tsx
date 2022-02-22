@@ -4,12 +4,15 @@ import getConfig from 'next/config'
 import ApolloClient from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 import { ApolloProvider } from '@apollo/client'
+
 import { QueryGetTranslationsArgs, Query } from '@island.is/api/schema'
 import { LocaleProvider, GET_TRANSLATIONS } from '@island.is/localization'
-import { UserProvider, Header, FeatureProvider } from '../src/components'
+import { ToastContainer } from '@island.is/island-ui/core'
+
 import { client } from '../graphql'
 import { withHealthchecks } from '../units/Healthchecks/withHealthchecks'
 import FormProvider from '../src/components/FormProvider/FormProvider'
+import { UserProvider, Header, FeatureProvider } from '../src/components'
 
 const getTranslationStrings = ({
   apolloClient,
@@ -72,6 +75,7 @@ class JudicialSystemApplication extends App<Props> {
                 <Header />
                 <FormProvider>
                   <Component {...pageProps} />
+                  <ToastContainer useKeyframeStyles />
                 </FormProvider>
                 <style jsx global>{`
                   @font-face {
