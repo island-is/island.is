@@ -6,10 +6,24 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
+  BoxProps,
 } from '@island.is/island-ui/core'
-import React, { useState } from 'react'
-import { DraftChangeForm, RegDraftForm } from '../../state/types'
-import { HTMLDump, PlainText, toISODate } from '@island.is/regulations'
+import React, { useEffect, useState } from 'react'
+import {
+  DraftChangeForm,
+  DraftField,
+  HtmlDraftField,
+  RegDraftForm,
+} from '../../state/types'
+import {
+  getDiff,
+  HTMLDump,
+  HTMLText,
+  PlainText,
+  RegName,
+  Regulation,
+  toISODate,
+} from '@island.is/regulations'
 import { LayoverModal } from './LayoverModal'
 import { ImpactModalTitle } from './ImpactModalTitle'
 import {
@@ -24,6 +38,27 @@ import { MagicTextarea } from '../MagicTextarea'
 import { MiniDiff } from '../MiniDiff'
 import { EditorInput } from '../EditorInput'
 import { getTextContentDiff } from '@island.is/regulations'
+import { MessageDescriptor } from 'react-intl'
+import * as s from './Impacts.css'
+import { ReferenceText } from './ReferenceText'
+import { makeDraftAppendixForm } from '../../state/makeFields'
+/* ---------------------------------------------------------------------------------------------------------------- */
+
+export type HTMLBoxProps = BoxProps & {
+  html: HTMLText
+  dangerouslySetInnerHTML?: undefined
+}
+
+export const HTMLBox = (props: HTMLBoxProps) => {
+  const { html, ...boxProps } = props
+  return React.createElement(Box, {
+    ...boxProps,
+    dangerouslySetInnerHTML: { __html: html },
+  })
+}
+
+/* ---------------------------------------------------------------------------------------------------------------- */
+
 type EditChangeProp = {
   draft: RegDraftForm // Allt það sem er verið að breyta
   change: DraftChangeForm // Áhrifafærslan
@@ -33,11 +68,7 @@ type EditChangeProp = {
 export const EditChange = (props: EditChangeProp) => {
   const { draft, change, closeModal } = props
   const [activeChange, setActiveChange] = useState(change) // Áhrifafærslan sem er verið að breyta
-
-  const [regulationTitle, setRegulationTitle] = useState(
-    activeChange.title.value,
-  )
-
+  const [showEditor, setShowEditor] = useState(false)
   const [createDraftRegulationChange] = useMutation(
     CREATE_DRAFT_REGULATION_CHANGE,
   )
@@ -51,7 +82,45 @@ export const EditChange = (props: EditChangeProp) => {
   } = useGetCurrentRegulationFromApiQuery(activeChange.name)
 
   const { data: draftImpacts } = useGetRegulationImpactsQuery(activeChange.name)
-  console.log({ draftImpacts })
+  const fHtml = (
+    value: HTMLText,
+    required?: true | MessageDescriptor,
+  ): HtmlDraftField => ({
+    value,
+    required,
+    type: 'html',
+    warnings: [],
+  })
+
+  const fText = <T extends string>(
+    value: T,
+    required?: true | MessageDescriptor,
+  ): DraftField<T, 'text'> => ({
+    value,
+    required,
+    type: 'text',
+  })
+
+  regulation && console.log(fHtml(regulation?.text, true))
+  useEffect(() => {
+    if (!change.id && regulation) {
+      setActiveChange({
+        ...activeChange,
+        text: fHtml(regulation.text, true),
+        title: fText(regulation.title),
+        appendixes: regulation.appendixes.map((a, i) =>
+          makeDraftAppendixForm(a, String(i)),
+        ),
+      })
+    }
+  }, [regulation])
+
+  useEffect(() => {
+    if (activeChange.date.value) {
+      console.log('has Date', activeChange.date)
+      setShowEditor(true)
+    }
+  }, [activeChange])
 
   const changeDate = (newDate: Date | undefined) => {
     setActiveChange({
@@ -60,13 +129,19 @@ export const EditChange = (props: EditChangeProp) => {
     })
   }
 
-  const changeRegulationTitle = (newTitle: string | undefined) => {
+  const changeRegulationTitle = (newTitle: PlainText | undefined) => {
     setActiveChange({
       ...activeChange,
-      title: { value: newTitle as PlainText }, //TODO: What is the best way to do this is?
+      title: { value: newTitle ?? '' }, //TODO: What is the best way to do this is?
     })
   }
 
+  const changeRegulationText = (newText: HTMLText) => {
+    setActiveChange({
+      ...activeChange,
+      text: fHtml(newText, true),
+    })
+  }
   const saveChange = async () => {
     if (!activeChange.id) {
       await createDraftRegulationChange({
@@ -124,6 +199,22 @@ export const EditChange = (props: EditChangeProp) => {
 
   return (
     <LayoverModal closeModal={closeModal} id="EditChangeModal">
+      {draft && (
+        <ReferenceText
+          regulation={
+            {
+              title: draft.title.value,
+              text: draft.text.value,
+              name: '' as RegName,
+              appendixes: draft.appendixes.map((apx) => ({
+                title: apx.title.value,
+                text: apx.text.value,
+              })),
+            } as Regulation
+          }
+          baseName={'' as RegName}
+        />
+      )}
       <GridContainer>
         <GridRow>
           <GridColumn
@@ -142,56 +233,54 @@ export const EditChange = (props: EditChangeProp) => {
               }}
             />
           </GridColumn>
-          <GridColumn
-            span={['12/12', '12/12', '12/12', '8/12']}
-            offset={['0', '0', '0', '2/12']}
-            paddingBottom={3}
-          ></GridColumn>
-          <GridColumn
-            span={['12/12', '12/12', '12/12', '8/12']}
-            offset={['0', '0', '0', '2/12']}
-          >
-            <Box marginBottom={3}>
-              <MagicTextarea
-                label="Titill reglugerðar"
-                name="title"
-                value={activeChange.title.value}
-                onChange={(newValue) => changeRegulationTitle(newValue)}
-                required
-                error={undefined}
-              />
-              {activeChange.title.value != null &&
-                activeChange.title.value !== change.title.value && (
-                  <MiniDiff
-                    older={change.title.value || ''}
-                    newer={activeChange.title.value}
-                  />
-                )}
-            </Box>
-            <Box marginBottom={4}>
-              <EditorInput
-                label="Uppfærður texti"
-                baseText={regulation?.text}
-                value={activeChange.text.value}
-                onChange={(newValue) => console.log(newValue)}
-                draftId={draft.id}
-                isImpact={true}
-                required
-                error={undefined}
-              />
-            </Box>
-            {/* <Box>
-              <HTMLDump html={getTextContentDiff(change.text, activeChange)} />
-            </Box> */}
 
-            {/* VIÐAUKI */}
-            {/* <Appendixes
+          {showEditor && (
+            <GridColumn
+              span={['12/12', '12/12', '12/12', '8/12']}
+              offset={['0', '0', '0', '2/12']}
+            >
+              <Box marginBottom={3}>
+                <MagicTextarea
+                  label="Titill reglugerðar"
+                  name="title"
+                  value={activeChange.title.value}
+                  onChange={(newValue) => changeRegulationTitle(newValue)}
+                  required
+                  error={undefined}
+                />
+                {activeChange.title.value &&
+                  activeChange.title.value !== change.title.value && (
+                    <MiniDiff
+                      older={change.title.value || ''}
+                      newer={activeChange.title.value}
+                    />
+                  )}
+              </Box>
+              <Box marginBottom={4}>
+                <EditorInput
+                  label="Uppfærður texti"
+                  baseText={
+                    regulation?.text !== activeChange.text.value
+                      ? regulation?.text
+                      : undefined
+                  }
+                  value={activeChange.text.value}
+                  onChange={(newValue) => changeRegulationText(newValue)}
+                  draftId={draft.id}
+                  isImpact={true}
+                  required
+                  error={undefined}
+                />
+              </Box>
+              {/* VIÐAUKI */}
+              {/* <Appendixes
               draftId={draft.id}
               appendixes={change.appendixes}
               actions={} 
-            />
-              */}
-          </GridColumn>
+              />
+            */}
+            </GridColumn>
+          )}
         </GridRow>
         <GridRow>
           <GridColumn

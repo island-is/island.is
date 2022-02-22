@@ -39,3 +39,19 @@ export const getImpactUrl = (
   (draftId ? generatePath(RegulationsAdminEdit, { draftId }) : '') +
   `impacts?impact=${encodeURI(impactId)}`
 */
+
+/** Converts a Regulation `name` into a URL path segment
+ *
+ *  Example: '0123/2020' --> '2020/0123'
+ */
+export const nameToPath = (regulationName: string, seperator?: string) => {
+  const [number, year] = regulationName.split('/')
+  return year + (seperator || '/') + number
+}
+
+/** Creates a bare task URL for a given Regulation `name`
+ *
+ *  Example: '0123/2020' --> '/task/2020/0123'
+ */
+export const taskUrl = (regulationName: string) =>
+  '/task/' + nameToPath(regulationName)
