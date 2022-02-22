@@ -148,7 +148,15 @@ export class LocalRunner implements GitActionStatus {
 
     let sorted = runs
       .map(
-        ({ run_number, head_sha, head_branch, jobs_url, pull_requests }) => ({
+        ({
+          run_number,
+          head_sha,
+          head_branch,
+          jobs_url,
+          pull_requests,
+          id,
+        }) => ({
+          run_id: id,
           run_number,
           sha: head_sha,
           branch: head_branch,
@@ -167,10 +175,31 @@ export class LocalRunner implements GitActionStatus {
         app(
           `Run number ${run.run_number} matches success criteria, head sha: ${headCommit} and base sha: ${baseCommit}`,
         )
-        return {
-          head_commit: headCommit,
-          run_nr: run.run_number,
-          base_commit: baseCommit,
+
+        app(`Looking for PR metadata`)
+        const artifacts = await this.octokit.actions.listWorkflowRunArtifacts({
+          run_id: run.run_id,
+          owner: owner,
+          repo,
+        })
+        const artifactUrls = artifacts.data.artifacts.filter(
+          (artifact) => artifact.name === 'pr-event',
+        )
+        if (artifactUrls.length === 1) {
+          app(`Found an artifact with PR metadata`)
+          const artifact = await this.octokit.actions.getArtifact({
+            owner: owner,
+            repo: repo,
+            artifact_id: artifactUrls[0].id,
+          })
+
+          // return {
+          //   head_commit: headCommit,
+          //   run_nr: run.run_number,
+          //   base_commit: baseCommit,
+          // }
+        } else {
+          app(`No PR metadata found`)
         }
       }
     }

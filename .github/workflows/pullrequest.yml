@@ -92,7 +92,7 @@ jobs:
           export GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
           git fetch origin $GITHUB_HEAD_REF
           git fetch origin $GITHUB_BASE_REF
-          HEAD="origin/$GITHUB_HEAD_REF" BASE="origin/$GITHUB_BASE_REF" PR=$GITHUB_REF_NAME source ./scripts/ci/00_prepare-base-tags.sh
+          HEAD="origin/$GITHUB_HEAD_REF" BASE="origin/$GITHUB_BASE_REF" PR=$GITHUB_REF source ./scripts/ci/00_prepare-base-tags.sh
           echo "BASE=$BASE" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
