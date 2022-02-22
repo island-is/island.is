@@ -5,7 +5,8 @@ import { NotFoundException } from '@nestjs/common'
 import { CaseFileState } from '@island.is/judicial-system/types'
 
 import { AwsS3Service } from '../../aws-s3'
-import { CaseFile, SignedUrl } from '../models'
+import { CaseFile } from '../models/file.model'
+import { SignedUrl } from '../models/signedUrl.model'
 import { createTestingFileModule } from './createTestingFileModule'
 
 interface Then {

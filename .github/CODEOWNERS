@@ -126,7 +126,10 @@
 /libs/application/template-api-modules/src/lib/modules/templates/general-fishing-license/     @island-is/sendiradid
 /libs/clients/data-protection-complaint/                                                      @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/data-protection-complaint/   @island-is/sendiradid
-/apps/application-system/api/src/app/modules/application/lifecycle/                           @island-is/sendiradid
+
+/apps/application-system/                                                                     @island-is/sendiradid-applications
+/libs/api/domains/application/                                                                @island-is/sendiradid-applications
+/libs/application/                                                                            @island-is/sendiradid-applications
 
 /apps/services/search-indexer/                                                                @island-is/stefna @island-is/kosmos-kaos
 /apps/web/screens/Organization/                                                               @island-is/stefna

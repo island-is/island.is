@@ -1,12 +1,12 @@
-import { RightTypesController } from './rightTypes.controller'
-import { Module } from '@nestjs/common'
 import {
   PersonalRepresentative,
   PersonalRepresentativeRight,
   PersonalRepresentativeRightType,
   PersonalRepresentativeRightTypeService,
 } from '@island.is/auth-api-lib/personal-representative'
+import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
+import { RightTypesController } from './rightTypes.controller'
 
 @Module({
   imports: [

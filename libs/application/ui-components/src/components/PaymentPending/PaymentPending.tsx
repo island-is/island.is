@@ -22,13 +22,10 @@ export const PaymentPending: FC<PaymentPendingProps> = ({
   targetEvent,
 }) => {
   const msg = useMsg(application)
-  console.log('HELLO')
 
   const { paymentStatus, stopPolling, pollingError } = usePaymentStatus(
     application.id,
   )
-
-  console.log(paymentStatus)
 
   const shouldRedirect = !isComingFromRedirect() && paymentStatus.paymentUrl
 

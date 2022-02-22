@@ -9,8 +9,8 @@ import type { User } from '@island.is/judicial-system/types'
 import { AuditTrailModule } from '@island.is/judicial-system/audit-trail'
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 
-import { BackendAPI } from '../../../services'
 import { environment } from '../../../environments'
+import { BackendApi } from '../../data-sources'
 import { CourtResolver } from './court.resolver'
 import { CourtService } from './court.service'
 
@@ -75,7 +75,7 @@ describe('CourtModule', () => {
       const res = await courtResolver.createCourtCase(
         { caseId, courtId, type, policeCaseNumber, isExtension },
         user,
-        { backendApi: ({ updateCase } as unknown) as BackendAPI },
+        { backendApi: ({ updateCase } as unknown) as BackendApi },
       )
 
       expect(createCase).toHaveBeenCalledTimes(1)
@@ -101,7 +101,7 @@ describe('CourtModule', () => {
       const res = await courtResolver.createCourtCase(
         { caseId, courtId, type, policeCaseNumber, isExtension },
         user,
-        { backendApi: ({ updateCase } as unknown) as BackendAPI },
+        { backendApi: ({ updateCase } as unknown) as BackendApi },
       )
 
       expect(createCase).toHaveBeenCalledTimes(1)
@@ -127,7 +127,7 @@ describe('CourtModule', () => {
       const res = await courtResolver.createCourtCase(
         { caseId, courtId, type, policeCaseNumber, isExtension },
         user,
-        { backendApi: ({ updateCase } as unknown) as BackendAPI },
+        { backendApi: ({ updateCase } as unknown) as BackendApi },
       )
 
       expect(createCase).toHaveBeenCalledTimes(1)
@@ -153,7 +153,7 @@ describe('CourtModule', () => {
       const res = await courtResolver.createCourtCase(
         { caseId, courtId, type, policeCaseNumber, isExtension },
         user,
-        { backendApi: ({ updateCase } as unknown) as BackendAPI },
+        { backendApi: ({ updateCase } as unknown) as BackendApi },
       )
 
       expect(createCase).toHaveBeenCalledTimes(1)

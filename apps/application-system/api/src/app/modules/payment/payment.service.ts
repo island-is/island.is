@@ -44,7 +44,11 @@ export class PaymentService {
     return this.paymentModel
       .findOne({
         where: {
+<<<<<<< HEAD
           [Op.and]: [{ application_id: applicationId }],
+=======
+          application_id: applicationId,
+>>>>>>> ae18bc875c11335e17d4c0b55406181a1a7e66ec
         },
       })
       .catch(handleError)
@@ -95,7 +99,6 @@ export class PaymentService {
     }
     console.log('HELLO FRIEND')
     const result = await this.paymentApi.createCharge(charge)
-    console.log('RESULT: ', result)
     return {
       ...result,
       paymentUrl: this.makePaymentUrl(result.user4),

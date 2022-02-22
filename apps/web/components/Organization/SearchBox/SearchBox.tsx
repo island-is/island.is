@@ -22,6 +22,7 @@ interface AsyncSearchOptionWithIsArticleField extends AsyncSearchOption {
 }
 
 interface SearchBoxProps {
+  id?: string
   organizationPage: Query['getOrganizationPage']
   placeholder: string
   noResultsText: string
@@ -29,6 +30,7 @@ interface SearchBoxProps {
 }
 
 export const SearchBox = ({
+  id = 'id',
   organizationPage,
   placeholder,
   noResultsText,
@@ -209,6 +211,7 @@ export const SearchBox = ({
   return (
     <Box marginTop={3}>
       <AsyncSearch
+        id={`organization-search-box-${id}`}
         size={'medium'}
         colored={false}
         key="island-organization"
