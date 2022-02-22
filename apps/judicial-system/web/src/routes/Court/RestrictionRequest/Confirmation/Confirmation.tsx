@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Accordion, Box, Text, toast } from '@island.is/island-ui/core'
+import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import {
   FormFooter,
   PoliceRequestAccordionItem,
@@ -29,7 +29,6 @@ import SigningModal from '@island.is/judicial-system-web/src/components/SigningM
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   core,
-  errors,
   rcConfirmation as m,
 } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -67,18 +66,14 @@ export const Confirmation: React.FC = () => {
     }
 
     // Request ruling signature to get control code
-    try {
-      const requestRulingSignatureResponse = await requestRulingSignature(
-        workingCase.id,
-      )
-      if (requestRulingSignatureResponse) {
-        setRequestRulingSignatureResponse(requestRulingSignatureResponse)
-        setModalVisible(true)
-      } else {
-        // TODO: Handle error
-      }
-    } catch (e) {
-      toast.error(formatMessage(errors.requestRulingSignature))
+    const requestRulingSignatureResponse = await requestRulingSignature(
+      workingCase.id,
+    )
+    if (requestRulingSignatureResponse) {
+      setRequestRulingSignatureResponse(requestRulingSignatureResponse)
+      setModalVisible(true)
+    } else {
+      // TODO: Handle error
     }
   }
 

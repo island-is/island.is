@@ -39,7 +39,7 @@ import {
   CaseData,
   ReactSelectOption,
 } from '@island.is/judicial-system-web/src/types'
-import { Box, Input, Text, toast } from '@island.is/island-ui/core'
+import { Box, Input, Text } from '@island.is/island-ui/core'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   capitalize,
@@ -48,10 +48,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
-import {
-  errors,
-  signedVerdictOverview as m,
-} from '@island.is/judicial-system-web/messages'
+import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
@@ -191,8 +188,8 @@ export const SignedVerdictOverview: React.FC = () => {
     }
 
     // Request court record signature to get control code
-    requestCourtRecordSignature(workingCase.id)
-      .then((requestCourtRecordSignatureResponse) => {
+    requestCourtRecordSignature(workingCase.id).then(
+      (requestCourtRecordSignatureResponse) => {
         setRequestCourtRecordSignatureResponse(
           requestCourtRecordSignatureResponse,
         )
@@ -204,10 +201,8 @@ export const SignedVerdictOverview: React.FC = () => {
             },
           },
         })
-      })
-      .catch(() => {
-        toast.error(formatMessage(errors.requestCourtRecordSignature))
-      })
+      },
+    )
   }
 
   const handleCaseExtension = async () => {
@@ -221,21 +216,15 @@ export const SignedVerdictOverview: React.FC = () => {
           )
         }
       } else {
-        await extendCase(workingCase.id)
-          .then((extendedCase) => {
-            if (extendedCase) {
-              if (isRestrictionCase(extendedCase.type)) {
-                router.push(`${Constants.STEP_ONE_ROUTE}/${extendedCase.id}`)
-              } else {
-                router.push(
-                  `${Constants.IC_DEFENDANT_ROUTE}/${extendedCase.id}`,
-                )
-              }
+        await extendCase(workingCase.id).then((extendedCase) => {
+          if (extendedCase) {
+            if (isRestrictionCase(extendedCase.type)) {
+              router.push(`${Constants.STEP_ONE_ROUTE}/${extendedCase.id}`)
+            } else {
+              router.push(`${Constants.IC_DEFENDANT_ROUTE}/${extendedCase.id}`)
             }
-          })
-          .catch(() => {
-            toast.error(formatMessage(errors.extendCase))
-          })
+          }
+        })
       }
     }
   }

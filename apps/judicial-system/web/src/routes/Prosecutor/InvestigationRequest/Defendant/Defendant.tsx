@@ -1,6 +1,5 @@
 import React, { useContext, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { useIntl } from 'react-intl'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
@@ -10,8 +9,6 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { toast } from '@island.is/island-ui/core'
-import { errors } from '@island.is/judicial-system-web/messages/Core/errors'
 import type { Case } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system-web/src/utils/constants'
 
@@ -20,7 +17,6 @@ import DefendantForm from './DefendantForm'
 const Defendant = () => {
   const router = useRouter()
   const { updateDefendant, createDefendant } = useDefendants()
-  const { formatMessage } = useIntl()
 
   const {
     workingCase,
@@ -56,9 +52,7 @@ const Defendant = () => {
                 noNationalId: defendant.noNationalId,
                 citizenship: defendant.citizenship,
               },
-            ).catch(() => {
-              toast.error(formatMessage(errors.updateDefendant))
-            })
+            )
           } else {
             await createDefendant(createdCase.id, {
               gender: defendant.gender,
@@ -67,8 +61,6 @@ const Defendant = () => {
               nationalId: defendant.nationalId,
               noNationalId: defendant.noNationalId,
               citizenship: defendant.citizenship,
-            }).catch(() => {
-              toast.error(formatMessage(errors.createDefendant))
             })
           }
         })

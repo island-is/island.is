@@ -98,9 +98,12 @@ const DefendantForm: React.FC<Props> = (props) => {
     try {
       if (workingCase.defendants && workingCase.defendants.length > 1) {
         if (workingCase.id) {
-          const { data } = await deleteDefendant(workingCase.id, defendant.id)
+          const defendantDeleted = await deleteDefendant(
+            workingCase.id,
+            defendant.id,
+          )
 
-          if (data?.deleteDefendant.deleted && workingCase.defendants) {
+          if (defendantDeleted && workingCase.defendants) {
             removeDefendantFromState(defendant)
           } else {
             // TODO: handle error
@@ -128,14 +131,15 @@ const DefendantForm: React.FC<Props> = (props) => {
   const handleCreateDefendantClick = async () => {
     try {
       if (workingCase.id) {
-        const { data } = await createDefendant(workingCase.id, {
+        const defendantId = await createDefendant(workingCase.id, {
           gender: undefined,
           name: '',
           address: '',
           nationalId: '',
           citizenship: '',
         })
-        createEmptyDefendant(data?.createDefendant.id)
+
+        createEmptyDefendant(defendantId)
       } else {
         createEmptyDefendant()
       }

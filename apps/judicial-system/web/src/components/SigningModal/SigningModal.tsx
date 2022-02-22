@@ -11,9 +11,8 @@ import {
   NotificationType,
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
-import { Box, Text, toast } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import {
-  errors,
   icConfirmation,
   rcConfirmation,
 } from '@island.is/judicial-system-web/messages'
@@ -73,24 +72,20 @@ const SigningModal: React.FC<SigningModalProps> = ({
         resRulingSignatureConfirmationResponse.documentSigned &&
         workingCase.state === CaseState.RECEIVED
       ) {
-        try {
-          const caseCompleted = await transitionCase(
-            workingCase,
-            workingCase.decision === CaseDecision.REJECTING
-              ? CaseTransition.REJECT
-              : workingCase.decision === CaseDecision.DISMISSING
-              ? CaseTransition.DISMISS
-              : CaseTransition.ACCEPT,
-            setWorkingCase,
-          )
+        const caseCompleted = await transitionCase(
+          workingCase,
+          workingCase.decision === CaseDecision.REJECTING
+            ? CaseTransition.REJECT
+            : workingCase.decision === CaseDecision.DISMISSING
+            ? CaseTransition.DISMISS
+            : CaseTransition.ACCEPT,
+          setWorkingCase,
+        )
 
-          if (caseCompleted) {
-            await sendNotification(workingCase.id, NotificationType.RULING)
-          } else {
-            // TODO: Handle error
-          }
-        } catch (e) {
-          toast.error(formatMessage(errors.sendNotification))
+        if (caseCompleted) {
+          await sendNotification(workingCase.id, NotificationType.RULING)
+        } else {
+          // TODO: Handle error
         }
       }
 

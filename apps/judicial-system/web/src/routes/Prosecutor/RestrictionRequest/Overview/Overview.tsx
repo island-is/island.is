@@ -2,13 +2,7 @@ import React, { useState, useEffect, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import {
-  Box,
-  Text,
-  Accordion,
-  AccordionItem,
-  toast,
-} from '@island.is/island-ui/core'
+import { Box, Text, Accordion, AccordionItem } from '@island.is/island-ui/core'
 import {
   NotificationType,
   CaseState,
@@ -38,7 +32,6 @@ import { UserContext } from '@island.is/judicial-system-web/src/components/UserP
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   core,
-  errors,
   laws,
   rcOverview,
   requestCourtDate,
@@ -73,22 +66,11 @@ export const Overview: React.FC = () => {
     const shouldSubmitCase = workingCase.state === CaseState.DRAFT
 
     const caseSubmitted = shouldSubmitCase
-      ? await transitionCase(
-          workingCase,
-          CaseTransition.SUBMIT,
-          setWorkingCase,
-        ).catch(() => {
-          toast.error(formatMessage(errors.transitionCase))
-        })
+      ? await transitionCase(workingCase, CaseTransition.SUBMIT, setWorkingCase)
       : workingCase.state !== CaseState.NEW
 
     const notificationSent = caseSubmitted
-      ? await sendNotification(
-          workingCase.id,
-          NotificationType.READY_FOR_COURT,
-        ).catch(() => {
-          toast.error(formatMessage(errors.sendNotification))
-        })
+      ? await sendNotification(workingCase.id, NotificationType.READY_FOR_COURT)
       : false
 
     // An SMS should have been sent

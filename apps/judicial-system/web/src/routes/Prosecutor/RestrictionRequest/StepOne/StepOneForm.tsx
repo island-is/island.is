@@ -7,7 +7,6 @@ import {
   Box,
   Tooltip,
   AlertMessage,
-  toast,
 } from '@island.is/island-ui/core'
 import {
   FormContentContainer,
@@ -20,7 +19,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { isAccusedStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
-import { accused as m, errors } from '@island.is/judicial-system-web/messages'
+import { accused as m } from '@island.is/judicial-system-web/messages'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -64,14 +63,10 @@ export const StepOneForm: React.FC<Props> = (props) => {
     defendantId: string,
     updatedDefendant: UpdateDefendant,
   ) => {
-    try {
-      updateDefendantState(defendantId, updatedDefendant)
+    updateDefendantState(defendantId, updatedDefendant)
 
-      if (defendantId) {
-        updateDefendant(workingCase.id, defendantId, updatedDefendant)
-      }
-    } catch (error) {
-      toast.error(formatMessage(errors.updateDefendant))
+    if (defendantId) {
+      updateDefendant(workingCase.id, defendantId, updatedDefendant)
     }
   }
 

@@ -17,11 +17,7 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { toast } from '@island.is/island-ui/core'
-import {
-  errors,
-  icOverview as m,
-} from '@island.is/judicial-system-web/messages'
+import { icOverview as m } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import OverviewForm from './OverviewForm'
@@ -53,22 +49,11 @@ export const Overview: React.FC = () => {
     const shouldSubmitCase = workingCase.state === CaseState.DRAFT
 
     const caseSubmitted = shouldSubmitCase
-      ? await transitionCase(
-          workingCase,
-          CaseTransition.SUBMIT,
-          setWorkingCase,
-        ).catch(() => {
-          toast.error(formatMessage(errors.transitionCase))
-        })
+      ? await transitionCase(workingCase, CaseTransition.SUBMIT, setWorkingCase)
       : workingCase.state !== CaseState.NEW
 
     const notificationSent = caseSubmitted
-      ? await sendNotification(
-          workingCase.id,
-          NotificationType.READY_FOR_COURT,
-        ).catch(() => {
-          toast.error(formatMessage(errors.sendNotification))
-        })
+      ? await sendNotification(workingCase.id, NotificationType.READY_FOR_COURT)
       : false
 
     // An SMS should have been sent

@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import {
@@ -11,8 +10,6 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import type { RequestSignatureResponse } from '@island.is/judicial-system/types'
-import { toast } from '@island.is/island-ui/core'
-import { errors } from '@island.is/judicial-system-web/messages'
 
 import ConfirmationForm from './ConfirmationForm'
 
@@ -32,7 +29,6 @@ const Confirmation = () => {
 
   const { user } = useContext(UserContext)
   const { requestRulingSignature, isRequestingRulingSignature } = useCase()
-  const { formatMessage } = useIntl()
 
   useEffect(() => {
     document.title = 'Yfirlit úrskurðar - Réttarvörslugátt'
@@ -50,18 +46,14 @@ const Confirmation = () => {
     }
 
     // Request ruling signature to get control code
-    try {
-      const requestRulingSignatureResponse = await requestRulingSignature(
-        workingCase.id,
-      )
-      if (requestRulingSignatureResponse) {
-        setRequestRulingSignatureResponse(requestRulingSignatureResponse)
-        setModalVisible(true)
-      } else {
-        // TODO: Handle error
-      }
-    } catch (e) {
-      toast.error(formatMessage(errors.requestRulingSignature))
+    const requestRulingSignatureResponse = await requestRulingSignature(
+      workingCase.id,
+    )
+    if (requestRulingSignatureResponse) {
+      setRequestRulingSignatureResponse(requestRulingSignatureResponse)
+      setModalVisible(true)
+    } else {
+      // TODO: Handle error
     }
   }
 

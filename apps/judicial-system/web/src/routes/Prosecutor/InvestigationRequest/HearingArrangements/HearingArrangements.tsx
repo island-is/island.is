@@ -4,7 +4,6 @@ import { useRouter } from 'next/router'
 import { ValueType } from 'react-select'
 import { useQuery } from '@apollo/client'
 
-import { toast } from '@island.is/island-ui/core'
 import {
   Modal,
   PageLayout,
@@ -28,10 +27,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import {
-  errors,
-  icRequestedHearingArrangements as m,
-} from '@island.is/judicial-system-web/messages'
+import { icRequestedHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import type { User } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
@@ -95,38 +91,30 @@ const HearingArrangements = () => {
   }, [userData, workingCase, workingCase?.creatingProsecutor?.institution?.id])
 
   const handleNextButtonClick = async () => {
-    try {
-      if (!workingCase) {
-        return
-      }
+    if (!workingCase) {
+      return
+    }
 
-      const caseOpened =
-        workingCase.state === CaseState.NEW
-          ? await transitionCase(
-              workingCase,
-              CaseTransition.OPEN,
-              setWorkingCase,
-            )
-          : true
+    const caseOpened =
+      workingCase.state === CaseState.NEW
+        ? await transitionCase(workingCase, CaseTransition.OPEN, setWorkingCase)
+        : true
 
-      if (caseOpened) {
-        if (
-          (workingCase.state !== CaseState.NEW &&
-            workingCase.state !== CaseState.DRAFT) ||
-          // TODO: Ignore failed notifications
-          workingCase.notifications?.find(
-            (notification) => notification.type === NotificationType.HEADS_UP,
-          )
-        ) {
-          router.push(`${Constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`)
-        } else {
-          setIsNotificationModalVisible(true)
-        }
+    if (caseOpened) {
+      if (
+        (workingCase.state !== CaseState.NEW &&
+          workingCase.state !== CaseState.DRAFT) ||
+        // TODO: Ignore failed notifications
+        workingCase.notifications?.find(
+          (notification) => notification.type === NotificationType.HEADS_UP,
+        )
+      ) {
+        router.push(`${Constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`)
       } else {
-        // TODO: Handle error
+        setIsNotificationModalVisible(true)
       }
-    } catch (e) {
-      toast.error(formatMessage(errors.transitionCase))
+    } else {
+      // TODO: Handle error
     }
   }
 
