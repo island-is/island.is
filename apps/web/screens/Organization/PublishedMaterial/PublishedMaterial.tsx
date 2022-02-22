@@ -1,11 +1,14 @@
 import {
+  // ActionCard,
   Filter,
   FilterInput,
+  FilterMultiChoice,
   GridColumn,
   GridContainer,
   GridRow,
   NavigationItem,
   Text,
+  TopicCard,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { getThemeConfig, OrganizationWrapper } from '@island.is/web/components'
@@ -119,8 +122,68 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
               />
             }
             onFilterClear={() => {}}
-          ></Filter>
+          >
+            <FilterMultiChoice
+              labelClear={
+                activeLocale === 'en' ? 'Clear selection' : 'Hreinsa val'
+              }
+              onChange={() => {}}
+              onClear={() => {}}
+              categories={[]}
+            ></FilterMultiChoice>
+          </Filter>
         </GridRow>
+
+        <GridContainer>
+          {/* <ActionCard
+            date="16/03/2021"
+            heading="Fjöldi sjúklinga og útgjöld sjúkratrygginga vegna almennra tannlækninga 1995-2019"
+            headingVariant="h3"
+            tag={{
+              label: 'excel',
+              variant: 'blue',
+              outlined: false,
+            }}
+            cta={{
+              label: '',
+              variant: 'ghost',
+              size: 'small',
+              icon: undefined,
+            }}
+          /> */}
+          <GridRow marginTop={6} marginBottom={2}>
+            <TopicCard
+              href="https://www.landlaeknir.is/servlet/file/store93/item41986/Lei%C3%B0beiningar%20til%20hj%C3%BAkrunarheimila_21.02.2022.pdf"
+              tag="pdf"
+            >
+              Leiðbeiningar til starfsmanna hjúkrunarheimila og dagdvala
+            </TopicCard>
+          </GridRow>
+          <GridRow marginBottom={2}>
+            <TopicCard
+              href="https://www.landlaeknir.is/servlet/file/store93/item32543/Skurdstofustarfsemi%20vidmid.pdf"
+              tag="pdf"
+            >
+              Skurðstofustarfsemi - viðmið
+            </TopicCard>
+          </GridRow>
+          <GridRow marginBottom={2}>
+            <TopicCard
+              href="https://www.landlaeknir.is/servlet/file/store93/item46999/Lei%C3%B0beiningar%20fyrir%20sundlaugar.pdf"
+              tag="pdf"
+            >
+              Leiðbeiningar fyrir sund- og baðstaði og baðstaði í náttúrunni
+            </TopicCard>
+          </GridRow>
+          <GridRow marginBottom={2}>
+            <TopicCard
+              href="https://www.landlaeknir.is/servlet/file/store93/item48630/Talnabrunnur_jan%C3%BAar_2022.pdf"
+              tag="pdf"
+            >
+              Talnabrunnur. Janúar 2022.
+            </TopicCard>
+          </GridRow>
+        </GridContainer>
       </GridContainer>
     </OrganizationWrapper>
   )
