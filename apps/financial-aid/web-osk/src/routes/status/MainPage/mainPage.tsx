@@ -1,12 +1,5 @@
 import React, { useContext, useEffect } from 'react'
-import {
-  Text,
-  Box,
-  BulletList,
-  Bullet,
-  LoadingDots,
-  Link,
-} from '@island.is/island-ui/core'
+import { Text, Box, LoadingDots, Button } from '@island.is/island-ui/core'
 
 import {
   Approved,
@@ -87,33 +80,45 @@ const MainPage = () => {
         )}
         {loading && <LoadingDots />}
 
-        <Text as="h4" variant="h3" marginBottom={2} marginTop={[3, 3, 7]}>
-          Frekari aðgerðir í boði
-        </Text>
-        <Box marginBottom={[5, 5, 10]}>
-          <BulletList type={'ul'} space={2}>
-            <Bullet>
-              <Link
-                href={municipality?.homepage ?? ''}
-                color="blue400"
-                underline="normal"
-                underlineVisibility="always"
-              >
-                <b>Upplýsingar um fjárhagsaðstoð</b>
-              </Link>
-            </Bullet>
-            <Bullet>
-              <Link
-                href={`mailto: ${municipality?.email}`}
-                color="blue400"
-                underline="normal"
-                underlineVisibility="always"
-              >
-                <b> Hafa samband</b>
-              </Link>
-            </Bullet>
-          </BulletList>
-        </Box>
+        {(municipality?.homepage || municipality?.email) && (
+          <Box>
+            <Text as="h4" variant="h3" marginBottom={2} marginTop={[3, 3, 7]}>
+              Frekari aðgerðir í boði
+            </Text>
+            <Box marginBottom={[5, 5, 10]}>
+              {municipality?.homepage && (
+                <Box marginBottom={municipality.email ? 2 : 0}>
+                  <Button
+                    icon="open"
+                    iconType="outline"
+                    size="small"
+                    variant="text"
+                    onClick={() => {
+                      window.open(municipality.homepage, '_ blank')
+                    }}
+                  >
+                    Upplýsingar um fjárhagsaðstoð
+                  </Button>
+                </Box>
+              )}
+              {municipality?.email && (
+                <Box>
+                  <Button
+                    icon="open"
+                    iconType="outline"
+                    size="small"
+                    variant="text"
+                    onClick={() => {
+                      window.open(`mailto: ${municipality.email}`, '_ blank')
+                    }}
+                  >
+                    Hafa samband
+                  </Button>
+                </Box>
+              )}
+            </Box>
+          </Box>
+        )}
       </ContentContainer>
       <Footer
         onPrevButtonClick={() => {
