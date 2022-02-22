@@ -90,7 +90,7 @@ export const referenceTextInner = style({
   padding: '1rem',
   width: '45rem',
   maxWidth: '90vw',
-  height: 'calc(100vh - 3em)',
+  height: '75vh',
   overflowY: 'auto',
   borderBottom: '0.5rem solid transparent', // hack for getting overflow padding-bottom in FF
 })
