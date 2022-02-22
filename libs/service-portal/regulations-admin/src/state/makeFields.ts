@@ -58,7 +58,7 @@ const f = <V, T extends string | undefined>(
   required,
   type: (type || '') as T extends string ? T : '',
 })
-const fText = <T extends string>(
+export const fText = <T extends string>(
   value: T,
   required?: true | MessageDescriptor,
 ): DraftField<T, 'text'> => ({
@@ -66,7 +66,7 @@ const fText = <T extends string>(
   required,
   type: 'text',
 })
-const fHtml = (
+export const fHtml = (
   value: HTMLText,
   required?: true | MessageDescriptor,
 ): HtmlDraftField => ({
@@ -75,7 +75,7 @@ const fHtml = (
   type: 'html',
   warnings: [],
 })
-const fDate = (
+export const fDate = (
   value: Date | undefined,
   required?: true | MessageDescriptor,
   opts: { min?: Date; max?: Date } = {},

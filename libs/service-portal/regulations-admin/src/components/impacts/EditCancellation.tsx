@@ -10,7 +10,7 @@ import {
 import React, { useMemo, useState } from 'react'
 import { DraftCancelForm, RegDraftForm } from '../../state/types'
 // import { useDraftingState } from '../../state/useDraftingState'
-import { ISODate, toISODate } from '@island.is/regulations'
+import { toISODate } from '@island.is/regulations'
 import {
   useGetCurrentRegulationFromApiQuery,
   useGetRegulationImpactsQuery,

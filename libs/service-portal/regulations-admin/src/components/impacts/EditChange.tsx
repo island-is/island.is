@@ -10,15 +10,8 @@ import {
   FocusableBox,
 } from '@island.is/island-ui/core'
 import React, { useEffect, useMemo, useState } from 'react'
+import { DraftChangeForm, RegDraftForm } from '../../state/types'
 import {
-  DraftChangeForm,
-  DraftField,
-  HtmlDraftField,
-  RegDraftForm,
-} from '../../state/types'
-import {
-  getDiff,
-  HTMLDump,
   HTMLText,
   PlainText,
   RegName,
@@ -38,11 +31,9 @@ import {
 import { MagicTextarea } from '../MagicTextarea'
 import { MiniDiff } from '../MiniDiff'
 import { EditorInput } from '../EditorInput'
-import { getTextContentDiff } from '@island.is/regulations'
-import { MessageDescriptor } from 'react-intl'
 import * as s from './Impacts.css'
 import { ReferenceText } from './ReferenceText'
-import { makeDraftAppendixForm } from '../../state/makeFields'
+import { fHtml, fText, makeDraftAppendixForm } from '../../state/makeFields'
 import { ImpactHistory } from './ImpactHistory'
 import { Effects } from '../../types'
 /* ---------------------------------------------------------------------------------------------------------------- */
@@ -82,10 +73,10 @@ export const EditChange = (props: EditChangeProp) => {
     UPDATE_DRAFT_REGULATION_CHANGE,
   )
 
-  const {
-    data: regulation,
-    loading /* , error */,
-  } = useGetCurrentRegulationFromApiQuery(activeChange.name)
+  const { data: regulation } = useGetCurrentRegulationFromApiQuery(
+    activeChange.name,
+  )
+  const { data: draftImpacts } = useGetRegulationImpactsQuery(activeChange.name)
 
   const { effects } = useMemo(() => {
     const effects = regulation?.history.reduce<Effects>(
@@ -102,27 +93,6 @@ export const EditChange = (props: EditChangeProp) => {
     }
   }, [regulation, today])
 
-  const { data: draftImpacts } = useGetRegulationImpactsQuery(activeChange.name)
-  const fHtml = (
-    value: HTMLText,
-    required?: true | MessageDescriptor,
-  ): HtmlDraftField => ({
-    value,
-    required,
-    type: 'html',
-    warnings: [],
-  })
-
-  const fText = <T extends string>(
-    value: T,
-    required?: true | MessageDescriptor,
-  ): DraftField<T, 'text'> => ({
-    value,
-    required,
-    type: 'text',
-  })
-
-  regulation && console.log(fHtml(regulation?.text, true))
   useEffect(() => {
     if (!change.id && regulation) {
       setActiveChange({
@@ -150,10 +120,10 @@ export const EditChange = (props: EditChangeProp) => {
     })
   }
 
-  const changeRegulationTitle = (newTitle: PlainText | undefined) => {
+  const changeRegulationTitle = (newTitle: PlainText) => {
     setActiveChange({
       ...activeChange,
-      title: { value: newTitle ?? '' }, //TODO: What is the best way to do this is?
+      title: fText(newTitle),
     })
   }
 
@@ -282,13 +252,12 @@ export const EditChange = (props: EditChangeProp) => {
                   required
                   error={undefined}
                 />
-                {activeChange.title.value &&
-                  activeChange.title.value !== regulation?.title && (
-                    <MiniDiff
-                      older={regulation?.title || ''}
-                      newer={activeChange.title.value}
-                    />
-                  )}
+                {activeChange.title.value !== regulation?.title && (
+                  <MiniDiff
+                    older={regulation?.title || ''}
+                    newer={activeChange.title.value}
+                  />
+                )}
               </Box>
               <Box marginBottom={4} position="relative">
                 <FocusableBox
