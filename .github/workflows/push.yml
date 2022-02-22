@@ -132,7 +132,7 @@ jobs:
 
       - name: Check node version
         run: |
-          node -v 
+          node -v
           ls -l `which node`
 
       - name: Cleanup disk space
@@ -195,6 +195,7 @@ jobs:
         name: Preparing BASE tags
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_BINARY: /usr/bin/git
 
       - name: Calculate cache key for node_modules
         id: calculate_node_modules_hash

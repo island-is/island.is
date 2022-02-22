@@ -61829,7 +61829,10 @@ var dist_node = __webpack_require__(725);
 
 (() => Object(tslib.__awaiter)(void 0, void 0, void 0, function* () {
     const runner = new ci_io_LocalRunner(new dist_node.Octokit());
-    let git = cjs_default()({ baseDir: `${__dirname}/../../..` });
+    let git = cjs_default()({
+        baseDir: `${__dirname}/../../..`,
+        binary: process.env.GIT_BINARY,
+    });
     const diffWeight = (s) => s.length;
     const rev = yield (process.env.GITHUB_EVENT_NAME === 'pull_request'
         ? findBestGoodRefPR
