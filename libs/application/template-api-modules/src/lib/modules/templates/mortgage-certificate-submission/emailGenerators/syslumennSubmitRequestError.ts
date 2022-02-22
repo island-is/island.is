@@ -16,10 +16,9 @@ export const generateSyslumennSubmitRequestErrorEmail: EmailTemplateGenerator = 
 
   const subject = 'Umsókn um veðbókarvottorð'
   const body = `
-      Villa hefur komið upp í samskiptum milli island.is og sýslumanna, vegna beiðni um lagfæringu á veðbókarvottorði fyrir ${
-        nationalRegistryData.nationalId
-      }, fasteignanúmer ${'TODOx'}.
-      `
+      Villa hefur komið upp í samskiptum milli island.is og sýslumanna,
+      vegna beiðni um lagfæringu á veðbókarvottorði fyrir ${nationalRegistryData.nationalId},
+      fasteignanúmer <VANTAR>.` // TODOx sækja fasteignanúmer frá externalData
 
   return {
     from: {
