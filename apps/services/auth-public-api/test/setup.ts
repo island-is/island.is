@@ -70,8 +70,12 @@ export const Scopes: ScopeSetupOptions[] = [
     name: '@island.is/scope3',
   },
   {
+    // Test user has access to
+    name: '@island.is/scope4',
+  },
+  {
     // Scope for another org
-    name: '@otherorg.is/scope4',
+    name: '@otherorg.is/scope5',
   },
 ]
 

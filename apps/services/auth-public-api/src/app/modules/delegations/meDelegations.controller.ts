@@ -54,7 +54,6 @@ export class MeDelegationsController {
   constructor(
     private readonly delegationsService: DelegationsService,
     private readonly auditService: AuditService,
-    private readonly resourcesService: ResourcesService,
   ) {}
 
   @Scopes(AuthScope.readDelegations)
@@ -79,6 +78,8 @@ export class MeDelegationsController {
           },
         },
         otherUser: {
+          description:
+            'NationalId of an other user to find if the current user has given that user a delegation.',
           required: false,
           type: 'string',
         },
@@ -101,11 +102,7 @@ export class MeDelegationsController {
       )
     }
 
-    return this.delegationsService.findAllOutgoing(
-      user.nationalId,
-      valid,
-      otherUser,
-    )
+    return this.delegationsService.findAllOutgoing(user, valid, otherUser)
   }
 
   @Scopes(AuthScope.readDelegations)
@@ -142,7 +139,7 @@ export class MeDelegationsController {
     @Query('valid') valid: DelegationValidity = DelegationValidity.ALL,
   ): Promise<DelegationDTO | null> {
     const delegation = await this.delegationsService.findById(
-      user.nationalId,
+      user,
       delegationId,
       valid,
     )
@@ -167,29 +164,6 @@ export class MeDelegationsController {
     @CurrentUser() user: User,
     @Body() delegation: CreateDelegationDTO,
   ): Promise<DelegationDTO | null> {
-    if (!(await this.validateScopesAccess(user, delegation.scopes))) {
-      throw new BadRequestException(
-        'User does not have access to the requested scopes.',
-      )
-    }
-
-    if (!this.validateScopesPeriod(delegation.scopes)) {
-      throw new BadRequestException(
-        'If scope validTo property is provided it must be in the future',
-      )
-    }
-
-    if (
-      await this.delegationsService.findByRelationship(
-        user.nationalId,
-        delegation.toNationalId,
-      )
-    ) {
-      throw new ConflictException(
-        'Delegation exists. Please use PUT method to update.',
-      )
-    }
-
     return this.delegationsService.create(
       user,
       delegation,
@@ -209,18 +183,6 @@ export class MeDelegationsController {
     @Body() delegation: UpdateDelegationDTO,
     @Param('delegationId') delegationId: string,
   ): Promise<DelegationDTO | null> {
-    if (!(await this.validateScopesAccess(user, delegation.scopes))) {
-      throw new BadRequestException(
-        'User does not have access to the requested scopes.',
-      )
-    }
-
-    if (!this.validateScopesPeriod(delegation.scopes)) {
-      throw new BadRequestException(
-        'If scope validTo property is provided it must be in the future',
-      )
-    }
-
     return this.auditService.auditPromise<DelegationDTO | null>(
       {
         auth: user,
@@ -229,7 +191,7 @@ export class MeDelegationsController {
         resources: (delegation) => delegation?.id ?? '',
         meta: { fields: Object.keys(delegation) },
       },
-      this.delegationsService.update(user.nationalId, delegation, delegationId),
+      this.delegationsService.update(user, delegation, delegationId),
     )
   }
 
@@ -251,53 +213,6 @@ export class MeDelegationsController {
         resources: delegationId,
       },
       this.delegationsService.delete(user.nationalId, delegationId),
-    )
-  }
-
-  /**
-   * Validates that the delegation scopes belong to user and are valid for delegation
-   * @param user user scopes from the currently authenticated user
-   * @param requestedScopes requested scopes from a delegation
-   * @returns
-   */
-  private async validateScopesAccess(
-    user: User,
-    requestedScopes?: UpdateDelegationScopeDTO[],
-  ): Promise<boolean> {
-    if (!requestedScopes || requestedScopes.length === 0) {
-      return true
-    }
-
-    const userScopes = user.scope
-    for (const scope of requestedScopes) {
-      // Delegation scopes need to be associated with the user scopes
-      if (!userScopes.includes(scope.name)) {
-        return false
-      }
-    }
-
-    // Check if the requested scopes are valid
-    const scopes = requestedScopes.map((scope) => scope.name)
-    const allowedApiScopesCount = await this.resourcesService.countAllowedDelegationApiScopesForUser(
-      scopes,
-      user,
-    )
-    return requestedScopes.length === allowedApiScopesCount
-  }
-
-  /**
-   * Validates the valid period of the scopes requested in a delegation.
-   * @param scopes requested scopes on a delegation
-   */
-  private validateScopesPeriod(scopes?: UpdateDelegationScopeDTO[]): boolean {
-    if (!scopes || scopes.length === 0) {
-      return true
-    }
-
-    const startOfToday = startOfDay(new Date())
-    // validTo can be null or undefined or it needs to be the current day or in the future
-    return scopes.every(
-      (scope) => !scope.validTo || new Date(scope.validTo) >= startOfToday,
     )
   }
 }

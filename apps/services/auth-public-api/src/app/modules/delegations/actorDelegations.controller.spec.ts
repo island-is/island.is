@@ -89,7 +89,7 @@ describe('ActorDelegationsController', () => {
       const path = '/v1/actor/delegations'
       const query = '?direction=incoming'
 
-      it('returns only valid delegations', async () => {
+      it('should return only valid delegations', async () => {
         // Arrange
         const models = await delegationModel.bulkCreate(
           [
@@ -122,30 +122,25 @@ describe('ActorDelegationsController', () => {
         expectMatchingObject(res.body[0], expectedModel)
       })
 
-      it('returns only delegations with scopes the client has access to', async () => {
+      it('should return only delegations with scopes the client has access to', async () => {
         // Arrange
-        const models = await delegationModel.bulkCreate(
-          [
+        const expectedModel = (
+          await delegationModel.create(
             createDelegation({
               fromNationalId: nationalRegistryUser.kennitala,
               toNationalId: user.nationalId,
-              scopes: [Scopes[0].name, Scopes[4].name],
+              scopes: [Scopes[0].name, Scopes[5].name],
               today,
             }),
-          ],
-          {
-            include: [{ model: DelegationScope, as: 'delegationScopes' }],
-          },
-        )
-        const completeModel = models[0].toDTO()
+            {
+              include: [{ model: DelegationScope, as: 'delegationScopes' }],
+            },
+          )
+        ).toDTO()
         // The expected model should not contain the scope from the other org
-        const expectedModel: DelegationDTO = {
-          ...completeModel,
-          scopes: [
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            completeModel.scopes!.find((s) => s.scopeName === Scopes[0].name)!,
-          ],
-        }
+        expectedModel.scopes = expectedModel.scopes?.filter(
+          (s) => s.scopeName === Scopes[0].name,
+        )
 
         // Act
         const res = await server.get(`${path}${query}`)
@@ -156,7 +151,29 @@ describe('ActorDelegationsController', () => {
         expectMatchingObject(res.body[0], expectedModel)
       })
 
-      it('returns 400 BadRequest if required query paramter is missing', async () => {
+      it('should return no delegation when the client does not have access to any scope', async () => {
+        // Arrange
+        await delegationModel.create(
+          createDelegation({
+            fromNationalId: nationalRegistryUser.kennitala,
+            toNationalId: user.nationalId,
+            scopes: [Scopes[5].name],
+            today,
+          }),
+          {
+            include: [{ model: DelegationScope, as: 'delegationScopes' }],
+          },
+        )
+
+        // Act
+        const res = await server.get(`${path}${query}`)
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(0)
+      })
+
+      it('should return 400 BadRequest if required query paramter is missing', async () => {
         // Act
         const res = await server.get(path)
 

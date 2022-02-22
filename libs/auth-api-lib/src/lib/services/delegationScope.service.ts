@@ -56,11 +56,11 @@ export class DelegationScopeService {
 
   async delete(
     delegationId: string,
-    scopeName?: string | null,
+    scopeNames?: string[] | null,
   ): Promise<number> {
-    if (scopeName) {
+    if (scopeNames) {
       return this.delegationScopeModel.destroy({
-        where: { delegationId: delegationId, scopeName: scopeName },
+        where: { delegationId: delegationId, scopeName: scopeNames },
       })
     }
 
