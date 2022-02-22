@@ -1,5 +1,4 @@
-import * as s from './Impacts.css'
-import { useMutation, gql } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import {
   Box,
   Button,
@@ -36,10 +35,9 @@ export const EditCancellation = (props: EditCancellationProp) => {
   const [activeCancellation, setActiveCancellation] = useState(cancellation)
   const today = new Date().toISOString().substr(0, 10) as ISODate
 
-  const {
-    data: regulation,
-    loading /* , error */,
-  } = useGetCurrentRegulationFromApiQuery(activeCancellation.name)
+  const { data: regulation } = useGetCurrentRegulationFromApiQuery(
+    activeCancellation.name,
+  )
 
   const { effects } = useMemo(() => {
     const effects = regulation?.history.reduce<Effects>(

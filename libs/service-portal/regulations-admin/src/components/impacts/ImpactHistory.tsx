@@ -52,18 +52,13 @@ export const ImpactHistory = (props: ImpactHistoryProps) => {
       effect: 'repeal',
     }
 
-    const futureEffectArray = [...futureEffects]
+    const futureEffectArray = [
+      ...futureEffects,
+      ...draftImpactsArray,
+      activeImpactChangeItem,
+    ]
 
-    if (activeImpact) {
-      futureEffectArray.push(activeImpactChangeItem)
-    }
-
-    const futureEffectsByDate = sortBy(
-      [...futureEffectArray, ...draftImpactsArray],
-      (o) => o.date,
-    )
-
-    return futureEffectsByDate
+    return sortBy(futureEffectArray, (o) => o.date)
   }
 
   const allFutureEffects = getAllFutureEffects()
