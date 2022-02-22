@@ -370,7 +370,7 @@ export const impactClasses: EditorClasses = Object.assign(classes, {
     transitionProperty: 'transform',
     selectors: {
       '&:hover': {
-        transform: 'translateX(calc(50vw - 104%))',
+        transform: 'translateX(calc(50vw - 105%))',
       },
     },
   }),

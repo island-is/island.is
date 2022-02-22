@@ -32,45 +32,30 @@ export const referenceWrapper = style({
 })
 
 export const referenceTextContainer = style({
-  position: 'sticky',
-  top: -2,
+  position: 'fixed',
+  top: '10vh',
   zIndex: 10010,
   height: 0,
+  transition: 'all 300ms 200ms ease-in-out',
+  transitionProperty: 'transform',
+  width: '45rem',
+  maxWidth: '90vw',
+  right: '50%',
+  transform: 'translateX(calc(-50vw + 5%))',
+
+  selectors: {
+    '&:hover': {
+      transform: 'translateX(calc(-50vw + 101%))',
+    },
+  },
 })
 
 export const referenceText = style({
-  boxSizing: 'content-box',
-  position: 'relative',
-  marginLeft: 'calc(-50vw + 50%)',
-  paddingLeft: 7, // half normal scrollbar width
-  width: 'calc(1vw + 1.75em - 7px)',
-  height: '100vh',
+  height: '85vh',
   overflow: 'hidden',
   border: '2px solid black',
-  borderLeft: 0,
   backgroundColor: '#ffffff',
-  transition: 'all 300ms 200ms ease-in-out',
-  transitionProperty: 'width, max-width',
   boxShadow: '1rem 1rem 2rem rgba(black, 0.15)',
-  '::after': {
-    content: '',
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    pointerEvents: 'none',
-    boxShadow: 'inset -2rem 0 1rem -1rem rgba(black, 0.2)',
-  },
-  selectors: {
-    '&:hover': {
-      width: '45rem',
-      maxWidth: '90vw',
-    },
-    '&:hover:after': {
-      content: 'none',
-    },
-  },
 })
 
 export const referenceTextLegend = style({
