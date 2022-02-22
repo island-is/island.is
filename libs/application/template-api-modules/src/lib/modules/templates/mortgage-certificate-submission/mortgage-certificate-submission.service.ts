@@ -68,7 +68,7 @@ export class MortgageCertificateSubmissionService {
   }
 
   async submitRequestSyslumenn(application: Application) {
-    //TODOx
+    //TODOx need information from Styrmir about what this should look like
     // const nationalRegistryData = application.externalData.nationalRegistry
     //   ?.data as NationalRegistry
     // const userProfileData = application.externalData.userProfile

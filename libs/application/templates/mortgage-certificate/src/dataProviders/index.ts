@@ -1,5 +1,5 @@
 export { NationalRegistryProvider } from '@island.is/application/data-providers'
 export { UserProfileProvider } from '@island.is/application/data-providers'
 export { FeeInfoProvider } from './FeeInfoProvider'
-export { MortgageCertificateProvider } from './MortgageCertificateProvider'
+// export { MortgageCertificateProvider } from './MortgageCertificateProvider'
 export { NationalRegistryRealEstateProvider } from './NationalRegistryRealEstateProvider'
