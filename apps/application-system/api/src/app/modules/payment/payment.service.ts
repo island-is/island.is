@@ -44,11 +44,7 @@ export class PaymentService {
     return this.paymentModel
       .findOne({
         where: {
-<<<<<<< HEAD
           [Op.and]: [{ application_id: applicationId }],
-=======
-          application_id: applicationId,
->>>>>>> ae18bc875c11335e17d4c0b55406181a1a7e66ec
         },
       })
       .catch(handleError)
