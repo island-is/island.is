@@ -1,5 +1,4 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { DraftingStatus, RegulationDraftId } from '@island.is/regulations/admin'
 import {
   HTMLText,
   ISODate,
@@ -50,10 +49,10 @@ class RegulationAuthor {
 @ObjectType()
 export class DraftRegulationModel {
   @Field(() => String)
-  id!: RegulationDraftId
+  id!: string
 
   @Field(() => String)
-  draftingStatus!: DraftingStatus
+  draftingStatus!: string
 
   @Field(() => String)
   draftingNotes!: string

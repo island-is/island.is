@@ -11,7 +11,10 @@ import {
 } from './dto'
 import { DraftRegulationCancelModel } from './draft_regulation_cancel.model'
 import { RegulationsService } from '@island.is/clients/regulations'
-import { DraftRegulationCancel } from '@island.is/regulations/admin'
+import {
+  DraftRegulationCancel,
+  DraftRegulationCancelId,
+} from '@island.is/regulations/admin'
 import { RegulationViewTypes } from '@island.is/regulations/web'
 import { nameToSlug, RegQueryName, slugToName } from '@island.is/regulations'
 
@@ -35,7 +38,7 @@ export class DraftRegulationCancelService {
       type: 'repeal',
       name: draftRegulationcancel.regulation,
       regTitle: regulation?.title ?? '',
-      id: draftRegulationcancel.id,
+      id: draftRegulationcancel.id as DraftRegulationCancelId,
       date: draftRegulationcancel.date,
     }
 

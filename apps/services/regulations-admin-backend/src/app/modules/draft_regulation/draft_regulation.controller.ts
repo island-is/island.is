@@ -26,7 +26,7 @@ import { Audit, AuditService } from '@island.is/nest/audit'
 
 import { environment } from '../../../environments'
 import { DraftSummary } from '@island.is/regulations/admin'
-import { Kennitala } from '@island.is/regulations'
+import { Kennitala, RegQueryName } from '@island.is/regulations'
 const namespace = `${environment.audit.defaultNamespace}/draft_regulations`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -164,7 +164,7 @@ export class DraftRegulationController {
     description: 'Gets all DraftRegulationImpacts by RegName',
   })
   async getImpactsByName(
-    @Param('name') name: string,
+    @Param('name') name: RegQueryName,
     // @CurrentUser() user: User,
   ) {
     const draftRegulationImpacts = await this.draftRegulationService.getRegulationImpactsByName(

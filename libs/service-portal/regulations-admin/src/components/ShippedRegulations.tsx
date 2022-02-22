@@ -50,7 +50,7 @@ export const ShippedRegulations = () => {
               : t(statusMsgs.shipped)
 
           return (
-            <TopicCard key={shipped.id} tag={tagText} onClick={() => undefined}>
+            <TopicCard key={shipped.id} tag={tagText}>
               {name && prettyName(name)} {shipped.title}
             </TopicCard>
           )

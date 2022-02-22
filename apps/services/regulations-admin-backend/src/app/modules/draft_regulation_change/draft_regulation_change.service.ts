@@ -70,11 +70,11 @@ export class DraftRegulationChangeService {
   }
 
   async findAllByName(
-    regulation: string,
+    regulation: RegQueryName,
   ): Promise<DraftRegulationChangeModel[]> {
     return this.draftRegulationChangeModel.findAll({
       where: {
-        regulation: slugToName(regulation as RegQueryName),
+        regulation: slugToName(regulation),
       },
     })
   }

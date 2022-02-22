@@ -115,6 +115,7 @@ export type DraftRegulationCancel = {
   name: DraftImpactName
   regTitle: PlainText
   id: DraftRegulationCancelId
+  changingId?: string
   date?: ISODate
   dropped?: boolean
 }
@@ -123,6 +124,7 @@ export type DraftRegulationCancel = {
 
 export type DraftRegulationChange = {
   id: DraftRegulationChangeId
+  changingId?: string
   type: 'amend'
   name: DraftImpactName
   regTitle: PlainText
