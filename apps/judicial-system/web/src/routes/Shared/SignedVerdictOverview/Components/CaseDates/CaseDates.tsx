@@ -1,6 +1,12 @@
 import React from 'react'
 
-import { Case, CaseDecision, CaseType } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseState,
+  CaseDecision,
+  CaseType,
+  isRestrictionCase,
+} from '@island.is/judicial-system/types'
 import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { Box, Button, IconMapIcon, Text } from '@island.is/island-ui/core'
 
@@ -32,58 +38,59 @@ const CaseDates: React.FC<Props> = (props) => {
           )} kl. ${formatDate(workingCase.courtEndTime, TIME_FORMAT)}`}
         </Text>
       </Box>
-      <div className={styles.caseDateContainer}>
-        {workingCase.isValidToDateInThePast ? (
-          <Text variant="h5" as="h5">
-            {`${
-              isTravelBan ? 'Farbann' : 'Gæsla' // ACCEPTING
-            } rann út ${formatDate(
-              workingCase.validToDate,
-              'PPP',
-            )} kl. ${formatDate(workingCase.validToDate, TIME_FORMAT)}`}
-          </Text>
-        ) : (
-          <Box
-            display="flex"
-            justifyContent="spaceBetween"
-            alignItems="flexEnd"
-          >
-            <Box>
+      {workingCase.state === CaseState.ACCEPTED &&
+        isRestrictionCase(workingCase.type) && (
+          <div className={styles.caseDateContainer}>
+            {workingCase.isValidToDateInThePast ? (
               <Text variant="h5" as="h5">
-                {`${
-                  isTravelBan ? 'Farbann' : 'Gæsla' // ACCEPTING
-                } til ${formatDate(
+                {`${isTravelBan ? 'Farbann' : 'Gæsla'} rann út ${formatDate(
                   workingCase.validToDate,
                   'PPP',
                 )} kl. ${formatDate(workingCase.validToDate, TIME_FORMAT)}`}
               </Text>
-              {workingCase.isCustodyIsolation && workingCase.isolationToDate && (
-                <Text variant="h5" as="h5">
-                  {`Einangrun til ${formatDate(
-                    workingCase.isolationToDate,
-                    'PPP',
-                  )} kl. ${formatDate(
-                    workingCase.isolationToDate,
-                    TIME_FORMAT,
-                  )}`}
-                </Text>
-              )}
-            </Box>
-            <Box>
-              {button && (
-                <Button
-                  size="small"
-                  variant="text"
-                  onClick={button.onClick}
-                  icon={button.icon}
-                >
-                  {button.label}
-                </Button>
-              )}
-            </Box>
-          </Box>
+            ) : (
+              <Box
+                display="flex"
+                justifyContent="spaceBetween"
+                alignItems="flexEnd"
+              >
+                <Box>
+                  <Text variant="h5" as="h5">
+                    {`${isTravelBan ? 'Farbann' : 'Gæsla'} til ${formatDate(
+                      workingCase.validToDate,
+                      'PPP',
+                    )} kl. ${formatDate(workingCase.validToDate, TIME_FORMAT)}`}
+                  </Text>
+                  {workingCase.type === CaseType.CUSTODY &&
+                    workingCase.isCustodyIsolation &&
+                    workingCase.isolationToDate && (
+                      <Text variant="h5" as="h5">
+                        {`Einangrun til ${formatDate(
+                          workingCase.isolationToDate,
+                          'PPP',
+                        )} kl. ${formatDate(
+                          workingCase.isolationToDate,
+                          TIME_FORMAT,
+                        )}`}
+                      </Text>
+                    )}
+                </Box>
+                <Box>
+                  {button && (
+                    <Button
+                      size="small"
+                      variant="text"
+                      onClick={button.onClick}
+                      icon={button.icon}
+                    >
+                      {button.label}
+                    </Button>
+                  )}
+                </Box>
+              </Box>
+            )}
+          </div>
         )}
-      </div>
     </Box>
   )
 }

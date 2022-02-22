@@ -165,21 +165,22 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             </Box>
           </Box>
           <Box display="flex" flexDirection="column">
-            {workingCase.isCustodyIsolation && (
-              <Box marginBottom={1}>
-                <Tag
-                  variant={getRestrictionTagVariant(
-                    CaseCustodyRestrictions.ISOLATION,
-                  )}
-                  outlined
-                  disabled
-                >
-                  {getShortRestrictionByValue(
-                    CaseCustodyRestrictions.ISOLATION,
-                  )}
-                </Tag>
-              </Box>
-            )}
+            {workingCase.type === CaseType.CUSTODY &&
+              workingCase.isCustodyIsolation && (
+                <Box marginBottom={1}>
+                  <Tag
+                    variant={getRestrictionTagVariant(
+                      CaseCustodyRestrictions.ISOLATION,
+                    )}
+                    outlined
+                    disabled
+                  >
+                    {getShortRestrictionByValue(
+                      CaseCustodyRestrictions.ISOLATION,
+                    )}
+                  </Tag>
+                </Box>
+              )}
             {
               // Custody restrictions
               isAcceptingCaseDecision(workingCase.decision) &&
