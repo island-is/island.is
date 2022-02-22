@@ -8,6 +8,7 @@ import {
 export const explainerText = style({})
 
 export const layoverModal = style({
+  overflow: 'hidden',
   backgroundColor: 'white',
   width: 'calc(100% - 40px)',
   height: 'calc(100% - 40px)',

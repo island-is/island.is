@@ -220,8 +220,8 @@ export const EditChange = (props: EditChangeProp) => {
       <GridContainer>
         <GridRow>
           <GridColumn
-            span={['12/12', '12/12', '12/12', '8/12']}
-            offset={['0', '0', '0', '2/12']}
+            span={['12/12', '12/12', '12/12', '10/12', '8/12']}
+            offset={['0', '0', '0', '1/12', '2/12']}
           >
             <ImpactModalTitle
               type="edit"
@@ -286,7 +286,7 @@ export const EditChange = (props: EditChangeProp) => {
               {/* <Appendixes
               draftId={draft.id}
               appendixes={change.appendixes}
-              actions={} 
+              actions={}
               />
             */}
             </GridColumn>
