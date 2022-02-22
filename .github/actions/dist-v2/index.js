@@ -61745,7 +61745,7 @@ function findBestGoodRefBranch(commitScore, git, githubApi, headBranch, baseBran
         log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`);
         const mergeCommit = yield git.raw('merge-base', baseBranch, headBranch);
         change_detection_app(`Merge commit is ${mergeCommit}`);
-        const commits = (yield git.raw('rev-list', '--date-order', '--max-count=100', 'HEAD~1', `${mergeCommit.trim()}`))
+        const commits = (yield git.raw('rev-list', '--date-order', '--max-count=50', 'HEAD~1', `${mergeCommit.trim()}`))
             .split('\n')
             .filter((s) => s.length > 0)
             .map((c) => c.substr(0, 7));
@@ -61766,7 +61766,7 @@ function findBestGoodRefBranch(commitScore, git, githubApi, headBranch, baseBran
         return 'rebuild';
     });
 }
-function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch) {
+function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, prBranch) {
     return Object(tslib.__awaiter)(this, void 0, void 0, function* () {
         const log = change_detection_app.extend('findBestGoodRefPR');
         log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`);
@@ -61793,11 +61793,11 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch) {
                 });
             }
             finally {
-                yield git.checkout(headBranch);
+                yield git.checkout(prBranch);
             }
         }
-        const mergeBaseCommit = yield git.raw('merge-base', baseBranch, headBranch);
-        const commits = (yield git.raw('rev-list', '--date-order', 'HEAD~1', `${mergeBaseCommit.trim()}`))
+        const mergeBaseCommit = yield git.raw('merge-base', prBranch, baseBranch);
+        const commits = (yield git.raw('rev-list', '--date-order', '--max-count=50', 'HEAD~1', `${mergeBaseCommit.trim()}`))
             .split('\n')
             .filter((s) => s.length > 0)
             .map((c) => c.substr(0, 7));
@@ -61816,7 +61816,7 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch) {
             return {
                 sha: prBuilds[0].hash,
                 run_number: prBuilds[0].run_nr,
-                branch: prBuilds[0].branch,
+                branch: prBuilds[0].branch.replace('origin/', ''),
             };
         return 'rebuild';
     });
@@ -61844,9 +61844,9 @@ var dist_node = __webpack_require__(725);
     });
     git.env(process.env);
     const diffWeight = (s) => s.length;
-    const rev = yield (process.env.GITHUB_EVENT_NAME === 'pull_request'
-        ? findBestGoodRefPR
-        : findBestGoodRefBranch)(diffWeight, git, runner, process.env.HEAD, process.env.BASE);
+    const rev = process.env.GITHUB_EVENT_NAME === 'pull_request'
+        ? yield findBestGoodRefPR(diffWeight, git, runner, process.env.HEAD, process.env.BASE, process.env.PR)
+        : yield findBestGoodRefBranch(diffWeight, git, runner, process.env.HEAD, process.env.BASE);
     if (rev === 'rebuild') {
         console.log(`Full rebuild needed`);
     }

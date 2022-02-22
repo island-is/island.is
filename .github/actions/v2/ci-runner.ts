@@ -11,15 +11,24 @@ import { Octokit } from '@octokit/action'
   })
   git.env(process.env)
   const diffWeight = (s) => s.length
-  const rev = await (process.env.GITHUB_EVENT_NAME === 'pull_request'
-    ? findBestGoodRefPR
-    : findBestGoodRefBranch)(
-    diffWeight,
-    git,
-    runner,
-    process.env.HEAD,
-    process.env.BASE,
-  )
+  const rev =
+    process.env.GITHUB_EVENT_NAME === 'pull_request'
+      ? await findBestGoodRefPR(
+          diffWeight,
+          git,
+          runner,
+          process.env.HEAD,
+          process.env.BASE,
+          process.env.PR,
+        )
+      : await findBestGoodRefBranch(
+          diffWeight,
+          git,
+          runner,
+          process.env.HEAD,
+          process.env.BASE,
+        )
+
   if (rev === 'rebuild') {
     console.log(`Full rebuild needed`)
   } else {

@@ -26,7 +26,7 @@ export async function findBestGoodRefBranch(
     await git.raw(
       'rev-list',
       '--date-order',
-      '--max-count=100',
+      '--max-count=50',
       'HEAD~1',
       `${mergeCommit.trim()}`,
     )
@@ -62,6 +62,7 @@ export async function findBestGoodRefPR(
   githubApi: GitActionStatus,
   headBranch: string,
   baseBranch: string,
+  prBranch,
 ): Promise<LastGoodBuild> {
   const log = app.extend('findBestGoodRefPR')
   log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`)
@@ -97,14 +98,15 @@ export async function findBestGoodRefPR(
         branch: headBranch,
       })
     } finally {
-      await git.checkout(headBranch)
+      await git.checkout(prBranch)
     }
   }
-  const mergeBaseCommit = await git.raw('merge-base', baseBranch, headBranch)
+  const mergeBaseCommit = await git.raw('merge-base', prBranch, baseBranch)
   const commits = (
     await git.raw(
       'rev-list',
       '--date-order',
+      '--max-count=50',
       'HEAD~1',
       `${mergeBaseCommit.trim()}`,
     )
@@ -134,7 +136,7 @@ export async function findBestGoodRefPR(
     return {
       sha: prBuilds[0].hash,
       run_number: prBuilds[0].run_nr,
-      branch: prBuilds[0].branch,
+      branch: prBuilds[0].branch.replace('origin/', ''),
     }
   return 'rebuild'
 }
