@@ -44,11 +44,15 @@ jobs:
           git branch --show-current
           git rev-parse --abbrev-ref HEAD
 
+      - name: Dumping event on dist
+        run: |
+          cp $GITHUB_EVENT_PATH event.json
+
       - name: Keep PR run event
         uses: actions/upload-artifact@v2
         with:
           name: pr-event
-          path: ${{env.GITHUB_EVENT_PATH}}
+          path: event.json
           retention-days: 60
 
       - name: Calculate cache key for node_modules
