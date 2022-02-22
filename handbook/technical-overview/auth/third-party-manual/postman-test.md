@@ -1,4 +1,4 @@
-# Test client with Postman
+# Test Client With Postman
 
 Here is a guide on how you can verify and test your client configuration using [Postman](https://www.postman.com/).
 
