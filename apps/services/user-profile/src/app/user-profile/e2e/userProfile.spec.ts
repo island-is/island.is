@@ -78,41 +78,6 @@ describe('User profile API', () => {
       expect(response.body.id).toBeTruthy()
     })
 
-    it('POST /userProfile should register userProfile and create verification', async () => {
-      // Act
-      await request(app.getHttpServer())
-        .post('/emailVerification/')
-        .send({
-          nationalId: mockProfile.nationalId,
-          email: mockProfile.email,
-        })
-        .expect(204)
-
-      const verification = await EmailVerification.findOne({
-        where: { nationalId: mockProfile.nationalId },
-      })
-
-      const spy = jest
-        .spyOn(emailService, 'sendEmail')
-        .mockImplementation(() => Promise.resolve('user'))
-      const response = await request(app.getHttpServer())
-        .post('/userProfile')
-        .send({ ...mockProfile, emailCode: verification.hash })
-        .expect(201)
-      expect(spy).toHaveBeenCalled()
-      expect(response.body.id).toBeTruthy()
-
-      // Assert
-      expect(response.body.emailStatus).toEqual(DataStatus.VERIFIED)
-      expect(verification.nationalId).toEqual(mockProfile.nationalId)
-      expect(response.body).toEqual(
-        expect.objectContaining({ nationalId: verification.nationalId }),
-      )
-      expect(response.body).toEqual(
-        expect.objectContaining({ email: verification.email }),
-      )
-    })
-
     it('POST /userProfile should return conflict on existing nationalId', async () => {
       // Act
       await request(app.getHttpServer())

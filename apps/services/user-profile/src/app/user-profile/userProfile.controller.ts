@@ -114,43 +114,6 @@ export class UserProfileController {
       )
     }
 
-    if (userProfileDto.email) {
-      const emailVerified = await this.verificationService.confirmEmail(
-        { hash: userProfileDto.emailCode },
-        user.nationalId,
-      )
-
-      if (emailVerified.confirmed) {
-        await this.verificationService.removeEmailVerification(
-          userProfileDto.nationalId,
-        )
-        userProfileDto = {
-          ...userProfileDto,
-          emailStatus: DataStatus.VERIFIED,
-          emailVerified: emailVerified.confirmed,
-        }
-      }
-    }
-
-    if (userProfileDto.mobilePhoneNumber) {
-      const phoneVerified = await this.verificationService.confirmSms(
-        { code: userProfileDto.smsCode },
-        user.nationalId,
-      )
-
-      if (phoneVerified.confirmed) {
-        await this.verificationService.removeSmsVerification(
-          userProfileDto.nationalId,
-        )
-
-        userProfileDto = {
-          ...userProfileDto,
-          emailStatus: DataStatus.VERIFIED,
-          mobilePhoneNumberVerified: phoneVerified.confirmed,
-        }
-      }
-    }
-
     const userProfile = await this.userProfileService.create(userProfileDto)
     this.auditService.audit({
       auth: user,
