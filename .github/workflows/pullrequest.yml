@@ -92,11 +92,13 @@ jobs:
           export GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
           git fetch origin $GITHUB_HEAD_REF
           git fetch origin $GITHUB_BASE_REF
-          HEAD="origin/$GITHUB_HEAD_REF" BASE="origin/$GITHUB_BASE_REF" PR=$GITHUB_SHA source ./scripts/ci/00_prepare-base-tags.sh
+          export HEAD_REF="origin/$GITHUB_HEAD_REF"
+          export BASE_REF="origin/$GITHUB_BASE_REF"
+          export PR_REF=$GITHUB_SHA
+          source ./scripts/ci/00_prepare-base-tags.sh
           echo "BASE=$BASE" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GIT_BINARY: /usr/bin/git
         name: Preparing HEAD and BASE tags
 
       - name: Cache for cypress

@@ -49,7 +49,7 @@ export class LocalRunner implements GitActionStatus {
 
     try {
       const printAffected = execSync(
-        `npx nx print-affected --select=tasks.target.project --head=${currentSha} --base=${olderSha}`,
+        `npx nx print-affected --select=projects --head=${currentSha} --base=${olderSha}`,
         {
           encoding: 'utf-8',
           cwd: monorepoRoot,
@@ -92,12 +92,13 @@ export class LocalRunner implements GitActionStatus {
 
     const runs: ActionsListWorkflowRunsForRepoResponseData['workflow_runs'] = []
     for await (const workflow_runs of runsIterator) {
+      app(`Retrieved ${workflow_runs.data.length} workflow runs`)
       runs.push(
         ...workflow_runs.data.filter((run) =>
           candidateCommits.includes(run.head_sha.slice(0, 7)),
         ),
       )
-      if (runs.length > 40) break
+      if (runs.length > 10) break
     }
     app(`Got GHA information for ${runs.length} workflows`)
 
@@ -141,8 +142,9 @@ export class LocalRunner implements GitActionStatus {
 
     const runs: ActionsListWorkflowRunsForRepoResponseData['workflow_runs'] = []
     for await (const workflow_runs of runsIterator) {
+      app(`Retrieved ${workflow_runs.data.length} workflow runs`)
       runs.push(...workflow_runs.data)
-      if (runs.length > 40) break
+      if (runs.length > 10) break
     }
     app(`Got GHA information for ${runs.length} workflows`)
 

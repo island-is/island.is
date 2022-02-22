@@ -7,7 +7,6 @@ import { Octokit } from '@octokit/action'
   let git = simpleGit({
     baseDir: `${__dirname}/../../..`,
     maxConcurrentProcesses: 1,
-    binary: process.env.GIT_BINARY,
   })
   git.env(process.env)
   const diffWeight = (s) => s.length
@@ -17,16 +16,16 @@ import { Octokit } from '@octokit/action'
           diffWeight,
           git,
           runner,
-          process.env.HEAD,
-          process.env.BASE,
-          process.env.PR,
+          process.env.HEAD_REF,
+          process.env.BASE_REF,
+          process.env.PR_REF,
         )
       : await findBestGoodRefBranch(
           diffWeight,
           git,
           runner,
-          process.env.HEAD,
-          process.env.BASE,
+          process.env.HEAD_REF,
+          process.env.BASE_REF,
         )
 
   if (rev === 'rebuild') {

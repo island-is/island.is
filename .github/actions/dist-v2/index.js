@@ -61604,7 +61604,7 @@ class ci_io_LocalRunner {
         log(`Calculating distance between current: ${currentSha} and ${olderSha}`);
         let monorepoRoot = Object(external_path_.join)(__dirname, '..', '..', '..');
         try {
-            const printAffected = Object(external_child_process_.execSync)(`npx nx print-affected --select=tasks.target.project --head=${currentSha} --base=${olderSha}`, {
+            const printAffected = Object(external_child_process_.execSync)(`npx nx print-affected --select=projects --head=${currentSha} --base=${olderSha}`, {
                 encoding: 'utf-8',
                 cwd: monorepoRoot,
             });
@@ -61637,8 +61637,9 @@ class ci_io_LocalRunner {
             try {
                 for (var runsIterator_1 = Object(tslib.__asyncValues)(runsIterator), runsIterator_1_1; runsIterator_1_1 = yield runsIterator_1.next(), !runsIterator_1_1.done;) {
                     const workflow_runs = runsIterator_1_1.value;
+                    app(`Retrieved ${workflow_runs.data.length} workflow runs`);
                     runs.push(...workflow_runs.data.filter((run) => candidateCommits.includes(run.head_sha.slice(0, 7))));
-                    if (runs.length > 40)
+                    if (runs.length > 10)
                         break;
                 }
             }
@@ -61687,8 +61688,9 @@ class ci_io_LocalRunner {
             try {
                 for (var runsIterator_2 = Object(tslib.__asyncValues)(runsIterator), runsIterator_2_1; runsIterator_2_1 = yield runsIterator_2.next(), !runsIterator_2_1.done;) {
                     const workflow_runs = runsIterator_2_1.value;
+                    app(`Retrieved ${workflow_runs.data.length} workflow runs`);
                     runs.push(...workflow_runs.data);
-                    if (runs.length > 40)
+                    if (runs.length > 10)
                         break;
                 }
             }
@@ -61859,13 +61861,12 @@ var dist_node = __webpack_require__(725);
     let git = cjs_default()({
         baseDir: `${__dirname}/../../..`,
         maxConcurrentProcesses: 1,
-        binary: process.env.GIT_BINARY,
     });
     git.env(process.env);
     const diffWeight = (s) => s.length;
     const rev = process.env.GITHUB_EVENT_NAME === 'pull_request'
-        ? yield findBestGoodRefPR(diffWeight, git, runner, process.env.HEAD, process.env.BASE, process.env.PR)
-        : yield findBestGoodRefBranch(diffWeight, git, runner, process.env.HEAD, process.env.BASE);
+        ? yield findBestGoodRefPR(diffWeight, git, runner, process.env.HEAD_REF, process.env.BASE_REF, process.env.PR_REF)
+        : yield findBestGoodRefBranch(diffWeight, git, runner, process.env.HEAD_REF, process.env.BASE_REF);
     if (rev === 'rebuild') {
         console.log(`Full rebuild needed`);
     }
