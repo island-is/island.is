@@ -20,13 +20,14 @@ graph BT
     classDef badBuild fill:red;
     classDef merge fill:orange;
 ```
+
 If the two branches cannot be merged together, someone must step in to fix that up.
 If the two branches can be merged together than that's great and at least it means the head branch can be merged into the base one. If there are GitHub Actions workflows configured for this event (pull request, that is) and the `PR1` merge was successful then those are executed.
 
 ```mermaid
 graph BT
     subgraph main
-    M1:::goodBuild -->|A| M2:::badBuild --> M3:::goodBuild 
+    M1:::goodBuild -->|A| M2:::badBuild --> M3:::goodBuild
     end
     subgraph head
     M2 --> F1 --> F2
