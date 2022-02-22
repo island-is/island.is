@@ -18,10 +18,6 @@ export class GeneralFishingLicenseService {
     const chargeItemCode = 'L5102'
     // const chargeItemCode = 'AY110'
 
-    console.log('IM HERE!!!!!')
-
-    console.log('AUTH: ', auth.authorization)
-    console.log('ID: ', id)
     console.log('CHARGE ITEM CODE: ', chargeItemCode)
 
     const response = await this.sharedTemplateAPIService.createCharge(

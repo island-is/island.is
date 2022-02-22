@@ -5,7 +5,6 @@ import { Seaworthiness } from './seaworthiness.model'
 
 @ObjectType()
 export class Ship {
-  // blalalafalf
   @Field(() => String)
   name!: string
   @Field()
