@@ -72,6 +72,7 @@ export class DirectTaxPaymentModel extends Model<DirectTaxPayment> {
 
   @Column({
     type: DataType.ENUM,
+    allowNull: false,
     values: Object.values(UserType),
   })
   @ApiProperty()

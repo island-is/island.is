@@ -12,8 +12,3 @@ export const sanitizeInput = (
 }
 
 export const isNumber = (val: string) => /^\d+$/.test(val)
-
-export interface Period {
-  year: number
-  month: number
-}

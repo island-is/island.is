@@ -3,7 +3,7 @@ import { ConfigType } from '@nestjs/config'
 import { PersonalTaxReturnConfig } from './personalTaxReturn.config'
 import * as xml2js from 'xml2js'
 import { directTaxPaymentRequest, pdfRequest } from './requests'
-import { Period } from './utils'
+import { Period } from './interfaces'
 import { DirectTaxPaymentDto, PdfDto } from './dto'
 import { DirectTaxPaymentResponse, PdfResponse } from './responses'
 import {
@@ -33,7 +33,7 @@ export class PersonalTaxReturnApi {
           this.config.agentNationalId,
           this.config.agentId,
           nationalId,
-          2020,
+          year,
         ),
         { headers },
       )
@@ -65,8 +65,8 @@ export class PersonalTaxReturnApi {
           this.config.agentNationalId,
           this.config.agentId,
           nationalId,
-          { year: 2020, month: 1 },
-          { year: 2020, month: 3 },
+          from,
+          to,
         ),
         { headers },
       )

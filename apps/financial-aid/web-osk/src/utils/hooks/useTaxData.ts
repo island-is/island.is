@@ -20,22 +20,20 @@ const useTaxData = () => {
   const gatherTaxData = async () => {
     const { data: taxes } = await gatherTaxDataQuery({})
 
-    if (taxes) {
-      updateForm({
-        ...form,
-        taxReturnFromRskFile: taxes?.municipalitiesPersonalTaxReturn
-          ?.personalTaxReturn
-          ? [
-              {
-                ...taxes.municipalitiesPersonalTaxReturn?.personalTaxReturn,
-                type: FileType.TAXRETURN,
-              },
-            ]
-          : [],
-        directTaxPayments:
-          taxes?.municipalitiesDirectTaxPayments.directTaxPayments,
-      })
-    }
+    updateForm({
+      ...form,
+      taxReturnFromRskFile: taxes?.municipalitiesPersonalTaxReturn
+        ?.personalTaxReturn
+        ? [
+            {
+              ...taxes.municipalitiesPersonalTaxReturn?.personalTaxReturn,
+              type: FileType.TAXRETURN,
+            },
+          ]
+        : [],
+      directTaxPayments:
+        taxes?.municipalitiesDirectTaxPayments.directTaxPayments,
+    })
   }
 
   return gatherTaxData

@@ -136,13 +136,15 @@ const ApplicationProfile = ({
     application?.amount,
   )
 
-  const applicantDirectPayments = application.directTaxPayments?.filter(
-    (d) => d.userType === UserType.APPLICANT,
-  )
+  const applicantDirectPayments =
+    application.directTaxPayments?.filter(
+      (d) => d.userType === UserType.APPLICANT,
+    ) ?? []
 
-  const spouseDirectPayments = application.directTaxPayments?.filter(
-    (d) => d.userType === UserType.APPLICANT,
-  )
+  const spouseDirectPayments =
+    application.directTaxPayments?.filter(
+      (d) => d.userType === UserType.SPOUSE,
+    ) ?? []
 
   return (
     <>
@@ -172,7 +174,7 @@ const ApplicationProfile = ({
           className={`contentUp delay-75`}
         />
 
-        {applicantDirectPayments && (
+        {applicantDirectPayments.length > 0 && (
           <CollapsibleProfileUnit
             heading="Upplýsingar um staðgreiðslu"
             info={getDirectTaxPayments(applicantDirectPayments)}
@@ -190,7 +192,7 @@ const ApplicationProfile = ({
           />
         )}
 
-        {spouseDirectPayments && (
+        {spouseDirectPayments.length > 0 && (
           <CollapsibleProfileUnit
             heading="Upplýsingar um staðgreiðslu maka"
             info={getDirectTaxPayments(spouseDirectPayments)}

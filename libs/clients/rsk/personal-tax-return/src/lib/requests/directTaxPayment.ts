@@ -1,5 +1,6 @@
-import { isNumber, Period, sanitizeInput } from '../utils'
+import { isNumber, sanitizeInput } from '../utils'
 import * as NationalId from 'kennitala'
+import { Period } from '../interfaces'
 
 export const directTaxPaymentRequest = (
   agentNationalId: string,
