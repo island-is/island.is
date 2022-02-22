@@ -1,39 +1,56 @@
 import React from 'react'
 import sortBy from 'lodash/sortBy'
 import { Box, Divider, Text } from '@island.is/island-ui/core'
+import { ImpactListItem } from './ImpactListItem'
 import { Effects } from '../../types'
 import { DraftImpactForm } from '../../state/types'
 import {
+  ISODate,
   nameToSlug,
   RegName,
   RegulationHistoryItem,
 } from '@island.is/regulations'
+import { DraftImpact, RegulationDraftId } from '@island.is/regulations/admin'
 import { useLocale } from '@island.is/localization'
 
 export type ImpactHistoryProps = {
   effects?: Effects
   activeImpact?: DraftImpactForm
+  draftImpacts?: DraftImpact[]
+  draftId?: RegulationDraftId
 }
 
 export const ImpactHistory = (props: ImpactHistoryProps) => {
-  const { effects, activeImpact } = props
+  const { effects, activeImpact, draftImpacts, draftId } = props
   const { formatDateFns } = useLocale()
-  const futureEffects = effects?.future ?? []
 
-  const getCurrentEffect = (effect: RegulationHistoryItem) => {
-    return effect.name === activeImpact?.name
+  const getCurrentEffect = (effect: RegulationHistoryItem | DraftImpact) => {
+    return (effect as RegulationHistoryItem).title === 'active'
+  }
+
+  const hasMismatchId = (effect: RegulationHistoryItem | DraftImpact) => {
+    const effectID = (effect as DraftImpact).changingId
+    if (effectID && draftId) {
+      return effectID !== draftId
+    }
+
+    // Return false if either ID is missing.
+    return false
   }
 
   const getAllFutureEffects = () => {
-    const activeImpactChangeItem = {
+    const futureEffects = effects?.future ?? []
+    const draftImpactsArray = draftImpacts ?? []
+
+    const activeImpactChangeItem: RegulationHistoryItem = {
       date: formatDateFns(
         activeImpact?.date?.value ? activeImpact.date.value : Date.now(),
         'yyyy-MM-dd',
-      ),
-      name: activeImpact?.name,
-      title: activeImpact?.regTitle,
-      effect: 'amend',
-    } as RegulationHistoryItem
+      ) as ISODate,
+      name: activeImpact?.name as RegName,
+      title: 'active',
+      effect: 'repeal',
+    }
 
     const futureEffectArray = [...futureEffects]
 
@@ -41,7 +58,10 @@ export const ImpactHistory = (props: ImpactHistoryProps) => {
       futureEffectArray.push(activeImpactChangeItem)
     }
 
-    const futureEffectsByDate = sortBy(futureEffectArray, (o) => o.date)
+    const futureEffectsByDate = sortBy(
+      [...futureEffectArray, ...draftImpactsArray],
+      (o) => o.date,
+    )
 
     return futureEffectsByDate
   }
@@ -70,31 +90,15 @@ export const ImpactHistory = (props: ImpactHistoryProps) => {
             Væntanlegar breytingar:
           </Text>
           {allFutureEffects.map((effect) => (
-            <a
-              href={`https://island.is/reglugerdir/nr/${nameToSlug(
-                activeImpact?.name as RegName,
-              )}/d/${effect.date}/diff`}
-              target="_blank"
-              rel="noreferrer"
+            <ImpactListItem
+              effect={effect}
+              current={getCurrentEffect(effect)}
+              idMismatch={hasMismatchId(effect)}
+              activeName={activeImpact?.name ?? ''}
               key={`${nameToSlug(activeImpact?.name as RegName)}-${
                 effect.date
               }`}
-            >
-              <Text
-                variant="h5"
-                color={getCurrentEffect(effect) ? 'red600' : 'blueberry600'}
-              >
-                {formatDateFns(effect.date, 'd. MMM yyyy')}
-              </Text>
-              <Text
-                variant="small"
-                color={getCurrentEffect(effect) ? 'red600' : 'blueberry600'}
-                marginBottom={2}
-              >
-                Breytt af{' '}
-                {getCurrentEffect(effect) ? 'núverandi reglugerð' : effect.name}
-              </Text>
-            </a>
+            />
           ))}
         </>
       ) : (

@@ -12,7 +12,10 @@ import React, { useMemo, useState } from 'react'
 import { DraftCancelForm, RegDraftForm } from '../../state/types'
 // import { useDraftingState } from '../../state/useDraftingState'
 import { ISODate, toISODate } from '@island.is/regulations'
-import { useGetCurrentRegulationFromApiQuery } from '../../utils/dataHooks'
+import {
+  useGetCurrentRegulationFromApiQuery,
+  useGetRegulationImpactsQuery,
+} from '../../utils/dataHooks'
 import { Effects } from '../../types'
 import { ImpactHistory } from './ImpactHistory'
 import { LayoverModal } from './LayoverModal'
@@ -58,6 +61,10 @@ export const EditCancellation = (props: EditCancellationProp) => {
   )
   const [updateDraftRegulationCancel] = useMutation(
     UPDATE_DRAFT_REGULATION_CANCEL,
+  )
+
+  const { data: draftImpacts } = useGetRegulationImpactsQuery(
+    activeCancellation.name,
   )
 
   const changeCancelDate = (newDate: Date | undefined) => {
@@ -109,6 +116,14 @@ export const EditCancellation = (props: EditCancellationProp) => {
     closeModal(true)
   }
 
+  const hasImpactMismatch = () => {
+    const impacts = draftImpacts ?? []
+    const mismatchArray = impacts.filter(
+      (draftImpact) => draftImpact.changingId !== draft.id,
+    )
+    return mismatchArray.length > 0
+  }
+
   return (
     <LayoverModal closeModal={closeModal} id="EditCancelationModal">
       <GridContainer>
@@ -142,6 +157,8 @@ export const EditCancellation = (props: EditCancellationProp) => {
               <ImpactHistory
                 effects={effects}
                 activeImpact={activeCancellation}
+                draftImpacts={draftImpacts}
+                draftId={draft.id}
               />
             )}
           </GridColumn>
@@ -171,6 +188,7 @@ export const EditCancellation = (props: EditCancellationProp) => {
                 onClick={saveCancellation}
                 size="small"
                 icon="arrowForward"
+                disabled={hasImpactMismatch()}
               >
                 Vista brottfellingu
               </Button>
