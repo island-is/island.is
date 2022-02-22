@@ -47,23 +47,28 @@ export class LocalRunner implements GitActionStatus {
     log(`Calculating distance between current: ${currentSha} and ${olderSha}`)
     let monorepoRoot = join(__dirname, '..', '..', '..')
 
-    const printAffected = execSync(
-      `npx nx print-affected --select=tasks.target.project --head=${currentSha} --base=${olderSha}`,
-      {
-        encoding: 'utf-8',
-        cwd: monorepoRoot,
-      },
-    )
-    let affectedComponents = printAffected
-      .split(',')
-      .map((s) => s.trim())
-      .filter((c) => c.length > 0)
-    log(
-      `Affected components are ${
-        affectedComponents.length
-      }: ${affectedComponents.join(',')}`,
-    )
-    return Promise.resolve(affectedComponents)
+    try {
+      const printAffected = execSync(
+        `npx nx print-affected --select=tasks.target.project --head=${currentSha} --base=${olderSha}`,
+        {
+          encoding: 'utf-8',
+          cwd: monorepoRoot,
+        },
+      )
+      let affectedComponents = printAffected
+        .split(',')
+        .map((s) => s.trim())
+        .filter((c) => c.length > 0)
+      log(
+        `Affected components are ${
+          affectedComponents.length
+        }: ${affectedComponents.join(',')}`,
+      )
+      return Promise.resolve(affectedComponents)
+    } catch (e) {
+      log('Error getting affected components: %O', e)
+      throw e
+    }
   }
 
   async getLastGoodBranchBuildRun(

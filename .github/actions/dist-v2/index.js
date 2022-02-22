@@ -61603,16 +61603,22 @@ class ci_io_LocalRunner {
         const log = app.extend('calculate-distance');
         log(`Calculating distance between current: ${currentSha} and ${olderSha}`);
         let monorepoRoot = Object(external_path_.join)(__dirname, '..', '..', '..');
-        const printAffected = Object(external_child_process_.execSync)(`npx nx print-affected --select=tasks.target.project --head=${currentSha} --base=${olderSha}`, {
-            encoding: 'utf-8',
-            cwd: monorepoRoot,
-        });
-        let affectedComponents = printAffected
-            .split(',')
-            .map((s) => s.trim())
-            .filter((c) => c.length > 0);
-        log(`Affected components are ${affectedComponents.length}: ${affectedComponents.join(',')}`);
-        return Promise.resolve(affectedComponents);
+        try {
+            const printAffected = Object(external_child_process_.execSync)(`npx nx print-affected --select=tasks.target.project --head=${currentSha} --base=${olderSha}`, {
+                encoding: 'utf-8',
+                cwd: monorepoRoot,
+            });
+            let affectedComponents = printAffected
+                .split(',')
+                .map((s) => s.trim())
+                .filter((c) => c.length > 0);
+            log(`Affected components are ${affectedComponents.length}: ${affectedComponents.join(',')}`);
+            return Promise.resolve(affectedComponents);
+        }
+        catch (e) {
+            log('Error getting affected components: %O', e);
+            throw e;
+        }
     }
     getLastGoodBranchBuildRun(branch, candidateCommits) {
         var e_1, _a;
