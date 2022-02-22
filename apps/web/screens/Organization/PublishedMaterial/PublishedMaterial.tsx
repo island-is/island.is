@@ -2,12 +2,13 @@ import {
   Filter,
   FilterInput,
   FilterMultiChoice,
+  FocusableBox,
   GridColumn,
   GridContainer,
   GridRow,
+  LinkCard,
   NavigationItem,
   Text,
-  TopicCard,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { getThemeConfig, OrganizationWrapper } from '@island.is/web/components'
@@ -93,6 +94,32 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     }),
   )
 
+  const [parameters, setParameters] = useState({
+    tegundutgafu: [],
+  })
+
+  const filterCategories = [
+    {
+      id: 'tegundutgafu',
+      label: 'Tegund útgáfu',
+      selected: parameters.tegundutgafu,
+      filters: [
+        {
+          value: 'arsskyrslur',
+          label: 'Ársskýrslur',
+        },
+        {
+          value: 'skyrslur',
+          label: 'Skýrslur',
+        },
+        {
+          value: 'greinar',
+          label: 'Greinar',
+        },
+      ],
+    },
+  ]
+
   const pageTitle =
     activeLocale === 'en' ? 'Published material' : 'Útgefið efni'
 
@@ -157,15 +184,32 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
                 onChange={setSearchValue}
               />
             }
-            onFilterClear={() => {}}
+            onFilterClear={() => {
+              setParameters((prevParameters) => {
+                const newParameters = { ...prevParameters }
+                for (const key in newParameters) newParameters[key] = []
+                return newParameters
+              })
+              setSearchValue('')
+            }}
           >
             <FilterMultiChoice
               labelClear={
                 activeLocale === 'en' ? 'Clear selection' : 'Hreinsa val'
               }
-              onChange={() => {}}
-              onClear={() => {}}
-              categories={[]}
+              onChange={({ categoryId, selected }) =>
+                setParameters((prevParameters) => ({
+                  ...prevParameters,
+                  [categoryId]: selected,
+                }))
+              }
+              onClear={(categoryId) =>
+                setParameters((prevParameters) => ({
+                  ...prevParameters,
+                  [categoryId]: [],
+                }))
+              }
+              categories={filterCategories}
             ></FilterMultiChoice>
           </Filter>
         </GridRow>
@@ -178,12 +222,20 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
                 marginTop={index === 0 ? 6 : 2}
                 marginBottom={2}
               >
-                <TopicCard
+                <FocusableBox
+                  width="full"
                   href={item.href}
-                  tag={item.href.split('.').pop().toLowerCase()}
+                  border="standard"
+                  borderRadius="large"
                 >
-                  {item.name}
-                </TopicCard>
+                  <LinkCard
+                    color="black"
+                    background="white"
+                    tag={item.href.split('.').pop().toUpperCase()}
+                  >
+                    {item.name}
+                  </LinkCard>
+                </FocusableBox>
               </GridRow>
             )
           })}
