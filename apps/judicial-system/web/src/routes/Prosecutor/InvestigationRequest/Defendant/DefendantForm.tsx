@@ -4,14 +4,7 @@ import { ValueType } from 'react-select/src/types'
 import { AnimatePresence, motion } from 'framer-motion'
 import { uuid } from 'uuidv4'
 
-import {
-  Box,
-  Button,
-  Input,
-  Select,
-  Text,
-  toast,
-} from '@island.is/island-ui/core'
+import { Box, Button, Input, Select, Text } from '@island.is/island-ui/core'
 import {
   BlueBox,
   FormContentContainer,
@@ -34,7 +27,7 @@ import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils
 import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { defendant as m, errors } from '@island.is/judicial-system-web/messages'
+import { defendant as m } from '@island.is/judicial-system-web/messages'
 import * as constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
@@ -83,37 +76,29 @@ const DefendantForm: React.FC<Props> = (props) => {
     defendantId: string,
     updatedDefendant: UpdateDefendant,
   ) => {
-    try {
-      updateDefendantState(defendantId, updatedDefendant)
+    updateDefendantState(defendantId, updatedDefendant)
 
-      if (workingCase.id) {
-        updateDefendant(workingCase.id, defendantId, updatedDefendant)
-      }
-    } catch (error) {
-      toast.error(formatMessage(errors.updateDefendant))
+    if (workingCase.id) {
+      updateDefendant(workingCase.id, defendantId, updatedDefendant)
     }
   }
 
   const handleDeleteDefendant = async (defendant: Defendant) => {
-    try {
-      if (workingCase.defendants && workingCase.defendants.length > 1) {
-        if (workingCase.id) {
-          const defendantDeleted = await deleteDefendant(
-            workingCase.id,
-            defendant.id,
-          )
+    if (workingCase.defendants && workingCase.defendants.length > 1) {
+      if (workingCase.id) {
+        const defendantDeleted = await deleteDefendant(
+          workingCase.id,
+          defendant.id,
+        )
 
-          if (defendantDeleted && workingCase.defendants) {
-            removeDefendantFromState(defendant)
-          } else {
-            // TODO: handle error
-          }
-        } else {
+        if (defendantDeleted && workingCase.defendants) {
           removeDefendantFromState(defendant)
+        } else {
+          // TODO: handle error
         }
+      } else {
+        removeDefendantFromState(defendant)
       }
-    } catch (error) {
-      toast.error(formatMessage(errors.deleteDefendant))
     }
   }
 
@@ -129,25 +114,21 @@ const DefendantForm: React.FC<Props> = (props) => {
   }
 
   const handleCreateDefendantClick = async () => {
-    try {
-      if (workingCase.id) {
-        const defendantId = await createDefendant(workingCase.id, {
-          gender: undefined,
-          name: '',
-          address: '',
-          nationalId: '',
-          citizenship: '',
-        })
+    if (workingCase.id) {
+      const defendantId = await createDefendant(workingCase.id, {
+        gender: undefined,
+        name: '',
+        address: '',
+        nationalId: '',
+        citizenship: '',
+      })
 
-        createEmptyDefendant(defendantId)
-      } else {
-        createEmptyDefendant()
-      }
-
-      window.scrollTo(0, document.body.scrollHeight)
-    } catch (error) {
-      toast.error(formatMessage(errors.createDefendant))
+      createEmptyDefendant(defendantId)
+    } else {
+      createEmptyDefendant()
     }
+
+    window.scrollTo(0, document.body.scrollHeight)
   }
 
   const createEmptyDefendant = (defendantId?: string) => {
