@@ -25,11 +25,11 @@ const TaxBreakdown = ({ items }: Props) => {
     <table className={styles.tableContainer}>
       <thead>
         <tr className={styles.tableHeaders}>
-          {taxBreakDownHeaders.map((headers) => {
+          {taxBreakDownHeaders.map((head) => {
             return (
-              <th>
+              <th key={head}>
                 <Text variant="small" fontWeight="semiBold">
-                  {headers}
+                  {head}
                 </Text>
               </th>
             )
@@ -37,10 +37,11 @@ const TaxBreakdown = ({ items }: Props) => {
         </tr>
       </thead>
       <tbody>
-        {items.map((i) => {
+        {items.map((i, index) => {
           return (
             <TaxBreakdownItem
               headline={`${getMonth(i.month)} ${i.year}`}
+              key={`${index}-taxbreakDown-${i.payerNationalId}-${i.userType}`}
               items={[
                 formatNationalId(i.payerNationalId),
                 `${i.totalSalary.toLocaleString('de-DE')} kr.`,

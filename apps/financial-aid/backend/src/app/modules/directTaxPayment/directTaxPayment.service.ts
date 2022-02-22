@@ -15,4 +15,8 @@ export class DirectTaxPaymentService {
   ): Promise<DirectTaxPaymentModel> {
     return this.directTaxPaymentModel.create(directTaxPayment)
   }
+
+  async getByApplicationId(id: string): Promise<DirectTaxPaymentModel[]> {
+    return this.directTaxPaymentModel.findAll({ where: { applicationId: id } })
+  }
 }

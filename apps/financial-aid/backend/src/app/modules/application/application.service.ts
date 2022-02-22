@@ -397,6 +397,12 @@ export class ApplicationService {
         updatedApplication?.setDataValue('files', filesResolved)
       })
 
+    const directTaxPayments = this.directTaxPaymentService
+      .getByApplicationId(id)
+      .then((resolved) => {
+        updatedApplication?.setDataValue('directTaxPayments', resolved)
+      })
+
     if (
       update.event === ApplicationEventType.SPOUSEFILEUPLOAD &&
       update.directTaxPayments
@@ -416,6 +422,7 @@ export class ApplicationService {
       events,
       files,
       this.sendApplicationUpdateEmail(update, updatedApplication),
+      directTaxPayments,
     ])
 
     return updatedApplication

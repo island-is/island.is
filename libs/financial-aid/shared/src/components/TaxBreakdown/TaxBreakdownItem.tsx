@@ -17,7 +17,7 @@ const TaxBreakdownItem = ({ headline, items }: Props) => {
       <tr className={styles.information}>
         {items.map((el, index) => {
           return (
-            <td>
+            <td key={`taxbreakDownItem-${el}-${index}-${headline}`}>
               <Box display={['block', 'none', 'none', 'none']}>
                 <Text variant="small" fontWeight="semiBold" marginBottom={1}>
                   {taxBreakDownHeaders[index]}
