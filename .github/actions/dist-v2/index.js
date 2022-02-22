@@ -61617,11 +61617,12 @@ class ci_io_LocalRunner {
     getLastGoodBranchBuildRun(branch, candidateCommits) {
         var e_1, _a;
         return Object(tslib.__awaiter)(this, void 0, void 0, function* () {
-            app(`Getting last good branch(push) build for branch ${branch}`);
+            const branchName = branch.replace('origin/', '');
+            app(`Getting last good branch(push) build for branch ${branchName}`);
             const runsIterator = this.octokit.paginate.iterator('GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs', {
                 owner,
                 repo,
-                branch,
+                branch: branchName,
                 workflow_id: workflow_file_name,
                 event: 'push',
                 status: 'success',
@@ -61666,11 +61667,12 @@ class ci_io_LocalRunner {
     getLastGoodPRRun(branch) {
         var e_2, _a;
         return Object(tslib.__awaiter)(this, void 0, void 0, function* () {
-            app(`Getting last good PR(pull_request) run for branch ${branch}`);
+            const branchName = branch.replace('origin/', '');
+            app(`Getting last good PR(pull_request) run for branch ${branchName}`);
             const runsIterator = this.octokit.paginate.iterator('GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs', {
                 owner,
                 repo,
-                branch,
+                branch: branchName,
                 workflow_id: pr_file_name,
                 event: 'pull_request',
                 status: 'success',

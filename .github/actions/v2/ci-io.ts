@@ -70,14 +70,15 @@ export class LocalRunner implements GitActionStatus {
     branch: string,
     candidateCommits: string[],
   ): Promise<BranchWorkflow | undefined> {
-    app(`Getting last good branch(push) build for branch ${branch}`)
+    const branchName = branch.replace('origin/', '')
+    app(`Getting last good branch(push) build for branch ${branchName}`)
 
     const runsIterator = this.octokit.paginate.iterator(
       'GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs',
       {
         owner,
         repo,
-        branch,
+        branch: branchName,
         workflow_id: workflow_file_name,
         event: 'push',
         status: 'success',
@@ -119,13 +120,14 @@ export class LocalRunner implements GitActionStatus {
   }
 
   async getLastGoodPRRun(branch: string): Promise<PRWorkflow | undefined> {
-    app(`Getting last good PR(pull_request) run for branch ${branch}`)
+    const branchName = branch.replace('origin/', '')
+    app(`Getting last good PR(pull_request) run for branch ${branchName}`)
     const runsIterator = this.octokit.paginate.iterator(
       'GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs',
       {
         owner,
         repo,
-        branch,
+        branch: branchName,
         workflow_id: pr_file_name,
         event: 'pull_request',
         status: 'success',
