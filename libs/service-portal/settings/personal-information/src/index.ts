@@ -52,13 +52,15 @@ export const personalInformationModule: ServicePortalModule = {
       const dateDiffLate = res.data?.getUserProfile
         ? outOfDate(res.data.getUserProfile)
         : false
+
       // If the user profile is empty or has not been modified for 3 months, we render the onboarding modal
+      const userDataShowModal =
+        (!profileExists || dateDiffLate) && !modalClosedInSession
       if (
         // true
         process.env.NODE_ENV !== 'development' &&
-        !modalClosedInSession &&
-        (!profileExists || dateDiffLate) &&
-        userInfo.scopes.includes(UserProfileScope.write)
+        userInfo.scopes.includes(UserProfileScope.write) &&
+        userDataShowModal
       )
         routes.push({
           render: () =>
