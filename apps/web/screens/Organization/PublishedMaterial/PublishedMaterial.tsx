@@ -1,5 +1,4 @@
 import {
-  // ActionCard,
   Filter,
   FilterInput,
   FilterMultiChoice,
@@ -28,6 +27,39 @@ import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import { Screen } from '../../../types'
 import { GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
+
+interface Item {
+  id: number
+  href: string
+  name: string
+}
+
+const items: Item[] = [
+  {
+    id: 1,
+    href:
+      'https://www.landlaeknir.is/servlet/file/store93/item41986/Lei%C3%B0beiningar%20til%20hj%C3%BAkrunarheimila_21.02.2022.pdf',
+    name: 'Leiðbeiningar til starfsmanna hjúkrunarheimila og dagdvala',
+  },
+  {
+    id: 2,
+    href:
+      'https://www.landlaeknir.is/servlet/file/store93/item32543/Skurdstofustarfsemi%20vidmid.pdf',
+    name: 'Skurðstofustarfsemi - viðmið',
+  },
+  {
+    id: 3,
+    href:
+      'https://www.landlaeknir.is/servlet/file/store93/item46999/Lei%C3%B0beiningar%20fyrir%20sundlaugar.pdf',
+    name: 'Leiðbeiningar fyrir sund- og baðstaði og baðstaði í náttúrunni',
+  },
+  {
+    id: 4,
+    href:
+      'https://www.landlaeknir.is/servlet/file/store93/item48630/Talnabrunnur_jan%C3%BAar_2022.pdf',
+    name: 'Talnabrunnur. Janúar 2022.',
+  },
+]
 
 interface PublishedMaterialProps {
   organizationPage: Query['getOrganizationPage']
@@ -65,6 +97,10 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     activeLocale === 'en' ? 'Published material' : 'Útgefið efni'
 
   const isMobile = width < theme.breakpoints.md
+
+  const filteredItems = items.filter(
+    (item) => item.name.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1,
+  )
 
   return (
     <OrganizationWrapper
@@ -135,54 +171,22 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
         </GridRow>
 
         <GridContainer>
-          {/* <ActionCard
-            date="16/03/2021"
-            heading="Fjöldi sjúklinga og útgjöld sjúkratrygginga vegna almennra tannlækninga 1995-2019"
-            headingVariant="h3"
-            tag={{
-              label: 'excel',
-              variant: 'blue',
-              outlined: false,
-            }}
-            cta={{
-              label: '',
-              variant: 'ghost',
-              size: 'small',
-              icon: undefined,
-            }}
-          /> */}
-          <GridRow marginTop={6} marginBottom={2}>
-            <TopicCard
-              href="https://www.landlaeknir.is/servlet/file/store93/item41986/Lei%C3%B0beiningar%20til%20hj%C3%BAkrunarheimila_21.02.2022.pdf"
-              tag="pdf"
-            >
-              Leiðbeiningar til starfsmanna hjúkrunarheimila og dagdvala
-            </TopicCard>
-          </GridRow>
-          <GridRow marginBottom={2}>
-            <TopicCard
-              href="https://www.landlaeknir.is/servlet/file/store93/item32543/Skurdstofustarfsemi%20vidmid.pdf"
-              tag="pdf"
-            >
-              Skurðstofustarfsemi - viðmið
-            </TopicCard>
-          </GridRow>
-          <GridRow marginBottom={2}>
-            <TopicCard
-              href="https://www.landlaeknir.is/servlet/file/store93/item46999/Lei%C3%B0beiningar%20fyrir%20sundlaugar.pdf"
-              tag="pdf"
-            >
-              Leiðbeiningar fyrir sund- og baðstaði og baðstaði í náttúrunni
-            </TopicCard>
-          </GridRow>
-          <GridRow marginBottom={2}>
-            <TopicCard
-              href="https://www.landlaeknir.is/servlet/file/store93/item48630/Talnabrunnur_jan%C3%BAar_2022.pdf"
-              tag="pdf"
-            >
-              Talnabrunnur. Janúar 2022.
-            </TopicCard>
-          </GridRow>
+          {filteredItems.map((item, index) => {
+            return (
+              <GridRow
+                key={item.id}
+                marginTop={index === 0 ? 6 : 2}
+                marginBottom={2}
+              >
+                <TopicCard
+                  href={item.href}
+                  tag={item.href.split('.').pop().toLowerCase()}
+                >
+                  {item.name}
+                </TopicCard>
+              </GridRow>
+            )
+          })}
         </GridContainer>
       </GridContainer>
     </OrganizationWrapper>
