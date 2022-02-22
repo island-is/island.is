@@ -183,7 +183,7 @@ export const EditImpacts = () => {
           <Text variant="h4" as="h4" marginBottom={[2, 2, 3, 4]}>
             {t(impactMsgs.chooseType)}
           </Text>
-          {draft.impacts[selRegOption.value] ? (
+          {draft.impacts[selRegOption.value].slice(-1)[0].type === 'repeal' ? (
             <Inline align="center">
               <Text variant="h5" as="h5">
                 Reglugerð er með virka brottfellingu
@@ -198,7 +198,7 @@ export const EditImpacts = () => {
                     icon="document"
                     iconType="outline"
                     onClick={() => setChooseType('change')}
-                    disabled={!!draft.impacts[selRegOption.value]}
+                    // disabled={!!draft.impacts[selRegOption.value]}
                   >
                     {t(impactMsgs.chooseType_change)}
                   </Button>
@@ -210,7 +210,7 @@ export const EditImpacts = () => {
                 icon="fileTrayFull"
                 iconType="outline"
                 onClick={() => setChooseType('cancel')}
-                disabled={!!draft.impacts[selRegOption.value]}
+                // disabled={!!draft.impacts[selRegOption.value]}
               >
                 {t(impactMsgs.chooseType_cancel)}
               </Button>
