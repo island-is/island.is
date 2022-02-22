@@ -6,8 +6,10 @@ import { Octokit } from '@octokit/action'
   const runner = new LocalRunner(new Octokit())
   let git = simpleGit({
     baseDir: `${__dirname}/../../..`,
+    maxConcurrentProcesses: 1,
     binary: process.env.GIT_BINARY,
   })
+  git.env(process.env)
   const diffWeight = (s) => s.length
   const rev = await (process.env.GITHUB_EVENT_NAME === 'pull_request'
     ? findBestGoodRefPR

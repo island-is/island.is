@@ -3,7 +3,7 @@ set -euxo pipefail
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-LAST_GOOD_BUILD=$(DEBUG="*,-simple-git*" node $DIR/../../.github/actions/dist-v2/index.js)
+LAST_GOOD_BUILD=$(DEBUG="*" node $DIR/../../.github/actions/dist-v2/index.js)
 LAST_GOOD_BUILD_SHA=$(echo "$LAST_GOOD_BUILD" | jq -r '.sha')
 LAST_GOOD_BUILD_BRANCH=$(echo "$LAST_GOOD_BUILD" | jq -r '.branch')
 LAST_GOOD_BUILD_RUN_NUMBER=$(echo "$LAST_GOOD_BUILD" | jq -r '.run_number')

@@ -39,11 +39,13 @@ jobs:
         run: |
           node -v
           ls -l `which node`
+          ls -l `which git`
+          git --version
 
       - run: |
           echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
           source ./scripts/ci/00_prepare-base-tags.sh
-          echo "BASE=$(git merge-base origin/main $GITHUB_SHA)" >> $GITHUB_ENV
+          echo "BASE=$BASE" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GIT_BINARY: /usr/bin/git
