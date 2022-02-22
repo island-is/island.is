@@ -5,9 +5,9 @@ import { Base64 } from 'js-base64'
 import { BadGatewayException, NotFoundException } from '@nestjs/common'
 
 import { AwsS3Service } from '../../aws-s3'
-import { UploadPoliceCaseFileResponse } from '../models'
+import { UploadPoliceCaseFileResponse } from '../models/uploadPoliceCaseFile.response'
 import { createTestingPoliceModule } from './createTestingPoliceModule'
-import { UploadPoliceCaseFileDto } from '../dto'
+import { UploadPoliceCaseFileDto } from '../dto/uploadPoliceCaseFile.dto'
 
 jest.mock('isomorphic-fetch')
 

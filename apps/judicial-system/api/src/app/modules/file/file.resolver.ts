@@ -13,7 +13,7 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import type { User } from '@island.is/judicial-system/types'
 
-import { BackendAPI } from '../../data-sources/backend'
+import { BackendApi } from '../../data-sources'
 import { CreateFileInput } from './dto/createFile.input'
 import { CreatePresignedPostInput } from './dto/createPresignedPost.input'
 import { DeleteFileInput } from './dto/deleteFile.input'
@@ -39,7 +39,7 @@ export class FileResolver {
     @Args('input', { type: () => CreatePresignedPostInput })
     input: CreatePresignedPostInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<PresignedPost> {
     const { caseId, ...createPresignedPost } = input
 
@@ -58,7 +58,7 @@ export class FileResolver {
     @Args('input', { type: () => GetSignedUrlInput })
     input: GetSignedUrlInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<SignedUrl> {
     const { caseId, id } = input
 
@@ -77,7 +77,7 @@ export class FileResolver {
     @Args('input', { type: () => DeleteFileInput })
     input: DeleteFileInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<DeleteFileResponse> {
     const { caseId, id } = input
 
@@ -96,7 +96,7 @@ export class FileResolver {
     @Args('input', { type: () => CreateFileInput })
     input: CreateFileInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<CaseFile> {
     const { caseId, ...createFile } = input
 
@@ -115,7 +115,7 @@ export class FileResolver {
     @Args('input', { type: () => UploadFileToCourtInput })
     input: UploadFileToCourtInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<UploadFileToCourtResponse> {
     const { caseId, id } = input
 

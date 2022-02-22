@@ -6,7 +6,7 @@ import {
   ForbiddenException,
 } from '@nestjs/common'
 
-import { isCaseBlockedFromUser } from '../filters'
+import { isCaseBlockedFromUser } from '../filters/case.filters'
 
 @Injectable()
 export class CaseReadGuard implements CanActivate {
