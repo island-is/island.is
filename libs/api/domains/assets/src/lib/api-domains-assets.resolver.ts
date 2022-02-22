@@ -26,7 +26,7 @@ import {
 import { AssetsXRoadService } from './api-domains-assets.service'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.assets, ApiScope.meDetails) //TODOx find better fix
+@Scopes(ApiScope.assets)
 @Audit({ namespace: '@island.is/api/assets' })
 export class AssetsXRoadResolver {
   constructor(private assetsXRoadService: AssetsXRoadService) {}
