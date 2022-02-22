@@ -37,11 +37,12 @@ jobs:
 
       - name: Check node version
         run: |
-          node -v 
+          node -v
           ls -l `which node`
 
       - run: |
           echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
+          source ./scripts/ci/00_prepare-base-tags.sh
           echo "BASE=$(git merge-base origin/main $GITHUB_SHA)" >> $GITHUB_ENV
         name: Preparing HEAD and BASE tags
 
