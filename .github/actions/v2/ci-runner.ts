@@ -17,8 +17,8 @@ import { Octokit } from '@octokit/action'
     diffWeight,
     git,
     runner,
-    `infra/new-ci-change-detector`,
-    'main',
+    process.env.HEAD,
+    process.env.BASE,
   )
   if (rev === 'rebuild') {
     console.log(`Full rebuild needed`)

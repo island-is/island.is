@@ -61838,7 +61838,7 @@ var dist_node = __webpack_require__(725);
     const diffWeight = (s) => s.length;
     const rev = yield (process.env.GITHUB_EVENT_NAME === 'pull_request'
         ? findBestGoodRefPR
-        : findBestGoodRefBranch)(diffWeight, git, runner, `infra/new-ci-change-detector`, 'main');
+        : findBestGoodRefBranch)(diffWeight, git, runner, process.env.HEAD, process.env.BASE);
     if (rev === 'rebuild') {
         console.log(`Full rebuild needed`);
     }
