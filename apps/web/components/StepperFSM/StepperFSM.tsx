@@ -131,7 +131,8 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
   const router = useRouter()
   const { activeLocale } = useI18n()
 
-  const [counter, setCounter] = useState(0)
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  const [_, setCounter] = useState(0)
 
   const stepperMachine = useMemo(() => getStepperMachine(stepper), [stepper])
 
@@ -328,11 +329,10 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
     <Box
       marginBottom={3}
       onClick={(ev) => {
-        // If the user triple clicks on the question title, we enable the helper if we're not in production
-        // TODO: Consider using quintuple click instead of triple click.
-        if (ev.detail === 3) {
-          localStorage.setItem(STEPPER_HELPER_ENABLED, JSON.stringify(true))
-          setShowStepperConfigHelper(FEATURE_FLAG_STEPPER_HELPER_ENABLED)
+        // If the user clicks four times in a row on the question title, we enable the helper if we're not in production
+        if (ev.detail === 4) {
+          localStorage.setItem(STEPPER_HELPER_ENABLED_KEY, JSON.stringify(true))
+          setShowStepperConfigHelper(STEPPER_HELPER_ENABLED)
           setCounter((c) => c + 1)
         }
       }}
@@ -406,8 +406,6 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
           <ContinueButton />
         </>
       )}
-
-      {/* {currentStepType === STEP_TYPES.ANSWER && <Text>Render Answer...</Text>} */}
 
       {!isOnFirstStep && (
         <Box marginTop={10}>

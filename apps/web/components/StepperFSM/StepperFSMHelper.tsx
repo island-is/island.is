@@ -170,13 +170,11 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
 }) => {
   const [isHidden, setIsHidden] = useState(false)
 
-  useEffect(() => {
-    const value = localStorage.getItem(STEPPER_HELPER_ENABLED_KEY)
-    if (value) {
-      const shouldBeHidden = !JSON.parse(value)
-      if (shouldBeHidden !== isHidden) setIsHidden(shouldBeHidden)
-    }
-  })
+  const value = localStorage.getItem(STEPPER_HELPER_ENABLED_KEY)
+  if (value) {
+    const shouldBeHidden = !JSON.parse(value)
+    if (shouldBeHidden !== isHidden) setIsHidden(shouldBeHidden)
+  }
 
   const { activeLocale } = useI18n()
   const currentStepOptions = getStepOptions(
