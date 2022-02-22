@@ -183,11 +183,13 @@ interface NationalRegistryMeta {
 }
 
 export interface NationalRegistryResponsePerson {
-  items: NationalRegistryPerson[]
-  meta: NationalRegistryMeta
+  items?: NationalRegistryPerson[]
+  meta?: NationalRegistryMeta
+  error?: string
 }
 
 export interface NationalRegistryResponseBusiness {
-  items: NationalRegistryBusiness[]
-  meta: NationalRegistryMeta
+  items?: NationalRegistryBusiness[]
+  meta?: NationalRegistryMeta
+  error?: string
 }
