@@ -3,7 +3,6 @@ set -euxo pipefail
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-MERGE_BASE=$(git merge-base origin/main HEAD)
 LAST_GOOD_BUILD=$(DEBUG="*,-simple-git*" node $DIR/../../.github/actions/dist-v2/index.js)
 LAST_GOOD_BUILD_SHA=$(echo "$LAST_GOOD_BUILD" | jq -r '.sha')
 LAST_GOOD_BUILD_BRANCH=$(echo "$LAST_GOOD_BUILD" | jq -r '.branch')
