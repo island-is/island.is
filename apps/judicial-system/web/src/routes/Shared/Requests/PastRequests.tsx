@@ -96,7 +96,7 @@ const PastRequests: React.FC<Props> = (props) => {
             )}
           </>
         ) : (
-          <Text>-</Text>
+          <Text as="span">-</Text>
         )
       },
     },
