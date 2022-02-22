@@ -26,37 +26,18 @@ import type {
   CaseLegalProvisions,
 } from '@island.is/judicial-system/types'
 
-import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
 import * as styles from './Overview.css'
 
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
-  handleCreateCourtCase: (wc: Case) => void
-  createCourtCaseSuccess: boolean
-  setCreateCourtCaseSuccess: React.Dispatch<React.SetStateAction<boolean>>
-  courtCaseNumberEM: string
-  setCourtCaseNumberEM: React.Dispatch<React.SetStateAction<string>>
   setIsDraftingConclusion: React.Dispatch<
     React.SetStateAction<boolean | undefined>
   >
-  isCreatingCourtCase: boolean
-  receiveCase: (wc: Case, courtCaseNumber: string) => void
 }
 
 const OverviewForm: React.FC<Props> = (props) => {
-  const {
-    workingCase,
-    setWorkingCase,
-    handleCreateCourtCase,
-    createCourtCaseSuccess,
-    setCreateCourtCaseSuccess,
-    courtCaseNumberEM,
-    setCourtCaseNumberEM,
-    setIsDraftingConclusion,
-    isCreatingCourtCase,
-    receiveCase,
-  } = props
+  const { workingCase, setWorkingCase, setIsDraftingConclusion } = props
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
@@ -70,19 +51,6 @@ const OverviewForm: React.FC<Props> = (props) => {
               : 'farbannskröfu'
           }`}
         </Text>
-      </Box>
-      <Box component="section" marginBottom={6}>
-        <CourtCaseNumber
-          workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
-          courtCaseNumberEM={courtCaseNumberEM}
-          setCourtCaseNumberEM={setCourtCaseNumberEM}
-          createCourtCaseSuccess={createCourtCaseSuccess}
-          setCreateCourtCaseSuccess={setCreateCourtCaseSuccess}
-          handleCreateCourtCase={handleCreateCourtCase}
-          isCreatingCourtCase={isCreatingCourtCase}
-          receiveCase={receiveCase}
-        />
       </Box>
       <Box component="section" marginBottom={5}>
         <InfoCard
