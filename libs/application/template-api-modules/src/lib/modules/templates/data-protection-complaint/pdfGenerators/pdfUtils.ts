@@ -7,8 +7,15 @@ const addToDoc = (
   lineGap: number,
   text: string,
   doc: PDFKit.PDFDocument,
+  align: 'left' | 'right' | 'center' | 'justify' = 'left',
+  textWidth: number | undefined = undefined,
+  indent: number | undefined = undefined,
 ) => {
-  doc.font(font).fontSize(fontSize).lineGap(lineGap).text(text)
+  doc.font(font).fontSize(fontSize).lineGap(lineGap).text(text, {
+    align,
+    width: textWidth,
+    indent,
+  })
 }
 
 export const formatSsn = (ssn: string) => {
@@ -40,6 +47,43 @@ export const addValue = (
   lineGap = PdfConstants.NO_LINE_GAP,
 ) => {
   addToDoc(weight, PdfConstants.VALUE_FONT_SIZE, lineGap, text, doc)
+}
+
+export const addformFieldAndValue = (
+  field: string,
+  value: string,
+  doc: PDFKit.PDFDocument,
+  lineGap = PdfConstants.NO_LINE_GAP,
+) => {
+  addToDoc(
+    PdfConstants.BOLD_FONT,
+    PdfConstants.VALUE_FONT_SIZE,
+    lineGap,
+    field,
+    doc,
+    'left',
+    150,
+  )
+  doc.moveUp()
+  addToDoc(
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.VALUE_FONT_SIZE,
+    lineGap,
+    value,
+    doc,
+    'left',
+    undefined,
+    200,
+  )
+}
+
+export const lineDivider = (doc: PDFKit.PDFDocument) => {
+  doc
+    .strokeColor('#808080')
+    .lineWidth(1)
+    .moveTo(PdfConstants.HORIZONTAL_MARGIN, doc.y)
+    .lineTo(PdfConstants.HORIZONTAL_MARGIN + 500, doc.y)
+    .stroke()
 }
 
 export const addSubtitle = (
