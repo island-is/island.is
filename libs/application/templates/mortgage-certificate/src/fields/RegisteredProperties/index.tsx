@@ -1,15 +1,11 @@
-import React, { FC, useState } from 'react'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
-import { Box, Text, Table as T, RadioButton } from '@island.is/island-ui/core'
-import { m } from '../../lib/messages'
-import { useLocale } from '@island.is/localization'
-import { RealEstate, SelectedProperty } from '../PropertiesManager'
+import React, { FC } from 'react'
+import { FieldBaseProps } from '@island.is/application/core'
 import { PropertyTable } from '../PropertyTable'
 import { PropertyOverviewWithDetail, PropertyDetail } from '../../types/schema'
 
 interface RegisteredPropertiesProps {
-  selectHandler: (property: RealEstate) => void
-  activePropertyNumber: string
+  selectHandler: (property: PropertyDetail) => void
+  activePropertyNumber: string | undefined | null
 }
 
 export const RegisteredProperties: FC<
@@ -20,17 +16,18 @@ export const RegisteredProperties: FC<
     (externalData.nationalRegistryRealEstate
       ?.data as PropertyOverviewWithDetail)?.properties || []
 
-  return properties.map((p: PropertyDetail) => {
-    const unitsOfUseList = p.unitsOfUse?.unitsOfUse
-    const unitOfUse =
-      unitsOfUseList && unitsOfUseList[unitsOfUseList.length - 1]
-    return (
-      <PropertyTable
-        key={p.propertyNumber}
-        selectHandler={selectHandler}
-        activePropertyNumber={activePropertyNumber}
-        {...p}
-      />
-    )
-  })
+  return (
+    <>
+      {properties.map((p: PropertyDetail) => {
+        return (
+          <PropertyTable
+            key={p.propertyNumber}
+            selectHandler={selectHandler}
+            activePropertyNumber={activePropertyNumber || ''}
+            {...p}
+          />
+        )
+      })}
+    </>
+  )
 }

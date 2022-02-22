@@ -1,12 +1,12 @@
 import React, { FC, useState } from 'react'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box, Text, Input, Button } from '@island.is/island-ui/core'
-import { RealEstate } from '../PropertiesManager'
 import { PropertyTable } from '../PropertyTable'
+import { PropertyDetail, PropertyOverviewWithDetail } from '../../types/schema'
 
 interface SearchPropertiesProps {
-  selectHandler: (property: RealEstate) => void
-  activePropertyNumber: string
+  selectHandler: (property: PropertyDetail) => void
+  activePropertyNumber: string | null | undefined
 }
 
 export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
@@ -16,19 +16,21 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
 }) => {
   // Replace this mock functionality with skra api calls inside PropertyManager component
   const { externalData } = application
-  const mockProperties = externalData.nationalRegistryRealEstate.data.properties
+  const mockProperties =
+    (externalData.nationalRegistryRealEstate
+      ?.data as PropertyOverviewWithDetail)?.properties || []
 
   const [propertyNumber, setPropertyNumber] = useState('')
-  const [foundProperty, setFoundProperty] = useState<RealEstate | undefined>(
-    undefined,
-  )
+  const [foundProperty, setFoundProperty] = useState<
+    PropertyDetail | undefined
+  >(undefined)
   const [searching, setSearching] = useState<boolean>(false)
 
   const handleSearch = () => {
     setSearching(true)
     setTimeout(() => {
       const property = mockProperties.filter(
-        (p: RealEstate) => p.propertyNumber === propertyNumber,
+        (p: PropertyDetail) => p.propertyNumber === propertyNumber,
       )[0]
       setFoundProperty(property)
       setSearching(false)
@@ -65,7 +67,7 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
         <PropertyTable
           key={foundProperty.propertyNumber}
           selectHandler={selectHandler}
-          activePropertyNumber={activePropertyNumber}
+          activePropertyNumber={activePropertyNumber || ''}
           {...foundProperty}
         />
       )}
