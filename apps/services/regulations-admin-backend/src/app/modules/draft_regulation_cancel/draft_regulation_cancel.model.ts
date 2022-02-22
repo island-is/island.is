@@ -11,7 +11,6 @@ import { ApiProperty } from '@nestjs/swagger'
 import { DraftRegulationModel } from '../draft_regulation'
 
 import { ISODate, RegName } from '@island.is/regulations'
-import { DraftRegulationCancelId } from '@island.is/regulations/admin'
 
 @Table({
   tableName: 'draft_regulation_cancel',
@@ -24,7 +23,7 @@ export class DraftRegulationCancelModel extends Model<DraftRegulationCancelModel
     defaultValue: DataType.UUIDV4,
   })
   @ApiProperty()
-  id!: DraftRegulationCancelId
+  id!: string
 
   @ForeignKey(() => DraftRegulationModel)
   @Column({
