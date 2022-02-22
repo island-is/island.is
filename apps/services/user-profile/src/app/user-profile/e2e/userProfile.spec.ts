@@ -686,22 +686,17 @@ describe('User profile API', () => {
     })
   })
 
-  describe('/userProfile/{nationalId}/device-tokens', () => {
-    it('GET /userProfile/{nationalId}/device-tokens should 401 as admin:scope is needed and is IdsAuthGuard-ed', async () => {
+  describe('GET /userProfile/:nationalId/device-tokens', () => {
+    it('GET /userProfile/:nationalId/device-tokens should 401 as admin:scope is needed and is IdsAuthGuard-ed', async () => {
       await request(app.getHttpServer())
         .get(`/userProfile/${mockProfile.nationalId}/device-tokens`)
         .send()
         .expect(401)
     })
+  })
 
-    it('GET /userProfile/{nationalId}/notification-settings should 401 as admin:scope is needed and is IdsAuthGuard-ed', async () => {
-      await request(app.getHttpServer())
-        .get(`/userProfile/${mockProfile.nationalId}/notification-settings`)
-        .send()
-        .expect(401)
-    })
-
-    it('POST /userProfile/{nationalId}/device-tokens should return 201 created', async () => {
+  describe('POST /userProfile/:nationalId/device-tokens', () => {
+    it('POST /userProfile/:nationalId/device-tokens should return 201 created', async () => {
       // create it
       const response = await request(app.getHttpServer())
         .post(`/userProfile/${mockProfile.nationalId}/device-tokens`)
@@ -718,7 +713,7 @@ describe('User profile API', () => {
       )
     })
 
-    it('POST /userProfile/{nationalId}/device-tokens duplicate token should return 400 bad request', async () => {
+    it('POST /userProfile/:nationalId/device-tokens duplicate token should return 400 bad request', async () => {
       // create it
       await request(app.getHttpServer())
         .post(`/userProfile/${mockProfile.nationalId}/device-tokens`)
@@ -735,7 +730,7 @@ describe('User profile API', () => {
         .expect(400)
     })
 
-    it('POST /userProfile/{nationalId}/device-tokens with missing payload should 400 bad request', async () => {
+    it('POST /userProfile/:nationalId/device-tokens with missing payload should 400 bad request', async () => {
       // create it
       await request(app.getHttpServer())
         .post(`/userProfile/${mockProfile.nationalId}/device-tokens`)
@@ -743,7 +738,10 @@ describe('User profile API', () => {
         .expect(400)
     })
 
-    it('DELETE /userProfile/{nationalId}/device-tokens should remove row with 200', async () => {
+  })
+
+  describe('DELETE /userProfile/:nationalId/device-tokens', () => {
+    it('DELETE /userProfile/:nationalId/device-tokens should remove row with 200', async () => {
       // create one first ...
       await request(app.getHttpServer())
         .post(`/userProfile/${mockProfile.nationalId}/device-tokens`)
@@ -764,6 +762,15 @@ describe('User profile API', () => {
           success: true,
         }),
       )
+    })
+  })
+
+  describe('GET /userProfile/:nationalId/notification-settings', () => {
+    it('GET /userProfile/:nationalId/notification-settings should 401 as admin:scope is needed and is IdsAuthGuard-ed', async () => {
+      await request(app.getHttpServer())
+        .get(`/userProfile/${mockProfile.nationalId}/notification-settings`)
+        .send()
+        .expect(401)
     })
   })
 })

@@ -182,7 +182,7 @@ export class UserProfileController {
   ): Promise<UserProfile> {
     // findOneByNationalId must be first as it implictly checks if the
     // route param matches the authenticated user.
-    const profile = await this.findOneByNationalId(nationalId, user)
+    const _profile = await this.findOneByNationalId(nationalId, user)
     const updatedFields = Object.keys(userProfileToUpdate)
     userProfileToUpdate = {
       ...userProfileToUpdate,
