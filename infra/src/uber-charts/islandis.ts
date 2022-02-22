@@ -74,7 +74,9 @@ const skilavottordWeb = skilavottordWebSetup({ api: skilavottordWs })
 const storybook = storybookSetup({})
 const contentfulTranslationExtension = contentfulTranslationExtensionSetup()
 
-const downloadService = downloadServiceSetup()
+const downloadService = downloadServiceSetup({
+  regulationsAdminBackend: rabBackend,
+})
 
 const userNotificationService = userNotificationServiceSetup()
 const userNotificationWorkerService = userNotificationWorkerSetup({
