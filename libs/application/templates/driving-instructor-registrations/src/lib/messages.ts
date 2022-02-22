@@ -36,6 +36,11 @@ export const m = defineMessages({
   },
 
   /* Students Overview Table Section */
+  studentsOverviewSideTitle: {
+    id: 'dir.application:studentsOverviewSideTitle',
+    defaultMessage: 'Skráningar',
+    description: 'Students overview page sidebar title',
+  },
   studentsOverviewTitle: {
     id: 'dir.application:studentsOverviewTitle',
     defaultMessage: 'Mínir ökunemar',
@@ -95,6 +100,11 @@ export const m = defineMessages({
     id: 'dir.application:studentsOverviewNoStudentFound',
     defaultMessage: 'Enginn nemandi fannst',
     description: 'No students',
+  },
+  studentsOverviewNoStudentFoundInModal: {
+    id: 'dir.application:studentsOverviewNoStudentFoundInModal',
+    defaultMessage: 'Enginn nemandi skráður á eftirfarandi kennitölu',
+    description: 'No students error in modal',
   },
 
   /* View Single Student Section */
