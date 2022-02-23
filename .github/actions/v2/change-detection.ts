@@ -80,9 +80,11 @@ export async function findBestGoodRefPR(
   }[] = []
   if (prRun) {
     log(`Found a PR run candidate: ${JSON.stringify(prRun)}`)
+    execSync(`which git; whoami; which sh`, { stdio: 'inherit' })
     try {
       const tempBranch = `${headBranch}-${Math.round(Math.random() * 1000000)}`
       await git.checkoutBranch(tempBranch, prRun.base_commit)
+      log(`Branch checked out`)
       execSync(`which git; whoami`, { stdio: 'inherit' })
       await git.merge(prRun.head_commit)
       execSync(`which git; whoami`, { stdio: 'inherit' })

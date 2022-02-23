@@ -88929,9 +88929,11 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
         const prBuilds = [];
         if (prRun) {
             log(`Found a PR run candidate: ${JSON.stringify(prRun)}`);
+            (0,external_child_process_.execSync)(`which git; whoami; which sh`, { stdio: 'inherit' });
             try {
                 const tempBranch = `${headBranch}-${Math.round(Math.random() * 1000000)}`;
                 yield git.checkoutBranch(tempBranch, prRun.base_commit);
+                log(`Branch checked out`);
                 (0,external_child_process_.execSync)(`which git; whoami`, { stdio: 'inherit' });
                 yield git.merge(prRun.head_commit);
                 (0,external_child_process_.execSync)(`which git; whoami`, { stdio: 'inherit' });
