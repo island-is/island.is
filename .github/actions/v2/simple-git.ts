@@ -1,20 +1,21 @@
 import { execSync } from 'child_process'
+import Debug from 'debug'
 
 export class SimpleGit {
-  constructor(private cwd: string) {}
+  constructor(private cwd: string, private _log = Debug('simple-git')) {}
   async git(...args: string[]) {
     const command = `git ${args.join(' ')}`
     try {
-      console.log(`In: ${command}`)
+      this._log(`In: ${command}`)
       const out = execSync(command, {
         cwd: this.cwd,
         encoding: 'utf-8',
       })
-      console.log(`Out: ${out}`)
+      this._log(`Out: ${out}`)
       return Promise.resolve(out)
     } catch (e) {
-      console.error(`In: ${command}`)
-      console.error(`Error: ${e.message}`)
+      this._log(`Error, in: ${command}`)
+      this._log(`Error, out: ${e.message}`)
       return Promise.reject(e)
     }
   }

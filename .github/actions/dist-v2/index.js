@@ -88920,8 +88920,8 @@ function findBestGoodRefBranch(commitScore, git, githubApi, headBranch, baseBran
     });
 }
 const dump = () => {
-    console.log((0,external_child_process_.execSync)(`which git; whoami; which sh`, {
-        stdio: 'inherit',
+    const log = change_detection_app.extend('dump');
+    log((0,external_child_process_.execSync)(`which git; whoami; which sh`, {
         encoding: 'utf-8',
     }));
 };
@@ -88990,9 +88990,11 @@ var dist_node = __nccwpck_require__(1231);
 ;// CONCATENATED MODULE: ./v2/simple-git.ts
 
 
+
 class SimpleGit {
-    constructor(cwd) {
+    constructor(cwd, _log = src_default()('simple-git')) {
         this.cwd = cwd;
+        this._log = _log;
         this.raw = this.git;
         this.add = this._method('add');
         this.init = this._method('init', '.');
@@ -89005,17 +89007,17 @@ class SimpleGit {
         return __awaiter(this, void 0, void 0, function* () {
             const command = `git ${args.join(' ')}`;
             try {
-                console.log(`In: ${command}`);
+                this._log(`In: ${command}`);
                 const out = (0,external_child_process_.execSync)(command, {
                     cwd: this.cwd,
                     encoding: 'utf-8',
                 });
-                console.log(`Out: ${out}`);
+                this._log(`Out: ${out}`);
                 return Promise.resolve(out);
             }
             catch (e) {
-                console.error(`In: ${command}`);
-                console.error(`Error: ${e.message}`);
+                this._log(`Error, in: ${command}`);
+                this._log(`Error, out: ${e.message}`);
                 return Promise.reject(e);
             }
         });

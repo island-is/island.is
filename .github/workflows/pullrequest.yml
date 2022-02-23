@@ -42,6 +42,7 @@ jobs:
           ls -l `which git`
           git --version
           whoami
+          which sh
           git branch --show-current
           git rev-parse --abbrev-ref HEAD
 

@@ -59,9 +59,9 @@ export async function findBestGoodRefBranch(
 }
 
 const dump = () => {
-  console.log(
+  const log = app.extend('dump')
+  log(
     execSync(`which git; whoami; which sh`, {
-      stdio: 'inherit',
       encoding: 'utf-8',
     }),
   )
