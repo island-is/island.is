@@ -679,6 +679,12 @@
       "phoneNr": "4204030"
     },
     {
+      "name": "Ásta Guðjónsdóttir",
+      "practice": "Valitor",
+      "email": "astag@valitor.is",
+      "phoneNr": "5252000"
+    },
+    {
       "name": "Ásta Guðrún Beck",
       "practice": "Þjóðkirkjan - Biskupsstofa",
       "email": "asta@biskup.is",
@@ -2483,12 +2489,6 @@
       "practice": "Lögheimtan",
       "email": "hafsteinnvh@logheimtan.is",
       "phoneNr": "4407800"
-    },
-    {
-      "name": "Halla Björg Evans",
-      "practice": "Ríkiskaup",
-      "email": "halla.b.evans@rikiskaup.is",
-      "phoneNr": "5301406"
     },
     {
       "name": "Halla Björgvinsdóttir",
@@ -4397,12 +4397,6 @@
       "practice": "LAGASTOÐ",
       "email": "marteinn@rettsyn.is",
       "phoneNr": "5164072"
-    },
-    {
-      "name": "Máni Atlason",
-      "practice": "GAMMA",
-      "email": "mani.atlason@gamma.is",
-      "phoneNr": "5193300"
     },
     {
       "name": "Nína Guðríður Sigurðardóttir",

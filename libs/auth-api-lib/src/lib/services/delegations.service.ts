@@ -1,3 +1,21 @@
+import type { AuthConfig, User } from '@island.is/auth-nest-tools'
+import {
+  AuthMiddleware,
+  AuthMiddlewareOptions,
+} from '@island.is/auth-nest-tools'
+import {
+  createEnhancedFetch,
+  EnhancedFetchAPI,
+} from '@island.is/clients/middlewares'
+import type {
+  EinstaklingarGetEinstaklingurRequest,
+  EinstaklingarGetForsjaRequest,
+} from '@island.is/clients/national-registry-v2'
+import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
+import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
   BadRequestException,
   Inject,
@@ -10,25 +28,6 @@ import startOfDay from 'date-fns/startOfDay'
 import uniqBy from 'lodash/uniqBy'
 import { Op, WhereOptions } from 'sequelize'
 import { uuid } from 'uuidv4'
-
-import {
-  ApiScope,
-  DelegationScope,
-  DelegationValidity,
-} from '@island.is/auth-api-lib'
-import {
-  AuthMiddleware,
-  AuthMiddlewareOptions,
-} from '@island.is/auth-nest-tools'
-import {
-  createEnhancedFetch,
-  EnhancedFetchAPI,
-} from '@island.is/clients/middlewares'
-import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
-import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
-
 import {
   CreateDelegationDTO,
   DelegationDTO,
@@ -36,15 +35,14 @@ import {
   DelegationType,
   UpdateDelegationDTO,
 } from '../entities/dto/delegation.dto'
+import { ApiScope } from '../entities/models/api-scope.model'
+import { DelegationScope } from '../entities/models/delegation-scope.model'
 import { Delegation } from '../entities/models/delegation.model'
+import { PersonalRepresentativeService } from '../personal-representative'
+import type { PersonalRepresentativeDTO } from '../personal-representative/entities/dto/personal-representative.dto'
+import { DelegationValidity } from '../types/delegationValidity'
 import { DelegationScopeService } from './delegationScope.service'
 
-import type { AuthConfig, User } from '@island.is/auth-nest-tools'
-import type {
-  EinstaklingarGetEinstaklingurRequest,
-  EinstaklingarGetForsjaRequest,
-} from '@island.is/clients/national-registry-v2'
-import type { Logger } from '@island.is/logging'
 export const DELEGATIONS_AUTH_CONFIG = 'DELEGATIONS_AUTH_CONFIG'
 
 @Injectable()
@@ -62,6 +60,7 @@ export class DelegationsService {
     private personApi: EinstaklingarApi,
     private delegationScopeService: DelegationScopeService,
     private featureFlagService: FeatureFlagService,
+    private prService: PersonalRepresentativeService,
   ) {
     this.authFetch = createEnhancedFetch({ name: 'delegation-auth-client' })
   }
@@ -264,15 +263,17 @@ export class DelegationsService {
     user: User,
     authMiddlewareOptions: AuthMiddlewareOptions,
   ): Promise<DelegationDTO[]> {
-    const [wards, companies, custom] = await Promise.all([
+    const [wards, companies, custom, represented] = await Promise.all([
       this.findAllWardsIncoming(user, authMiddlewareOptions),
       this.findAllCompaniesIncoming(user),
       this.findAllValidCustomIncoming(user),
+      this.findAllRepresentedPersonsIncoming(user, authMiddlewareOptions),
     ])
 
-    return uniqBy([...wards, ...companies, ...custom], 'fromNationalId').filter(
-      (delegation) => delegation.fromNationalId !== user.nationalId,
-    )
+    return uniqBy(
+      [...wards, ...companies, ...custom, ...represented],
+      'fromNationalId',
+    ).filter((delegation) => delegation.fromNationalId !== user.nationalId)
   }
 
   /**
@@ -398,6 +399,61 @@ export class DelegationsService {
       }
     } catch (error) {
       this.logger.error('Error in findAllCompanies', error)
+    }
+
+    return []
+  }
+
+  /**
+   * Finds all represented persons the user is representing.
+   * @param user Personal representative
+   * @returns
+   */
+  private async findAllRepresentedPersonsIncoming(
+    user: User,
+    authMiddlewareOptions: AuthMiddlewareOptions,
+  ): Promise<DelegationDTO[]> {
+    try {
+      const feature = await this.featureFlagService.getValue(
+        Features.personalRepresentativeDelegations,
+        false,
+        user,
+      )
+      if (!feature) {
+        return []
+      }
+
+      const toDelegationDTO = (
+        name: string,
+        representative: PersonalRepresentativeDTO,
+      ): DelegationDTO => ({
+        toNationalId: representative.nationalIdPersonalRepresentative,
+        fromNationalId: representative.nationalIdRepresentedPerson,
+        fromName: name,
+        type: DelegationType.PersonalRepresentative,
+        provider: DelegationProvider.PersonalRepresentativeRegistry,
+      })
+
+      const rp = await this.prService.getByPersonalRepresentative(
+        user.nationalId,
+        false,
+      )
+
+      const resultPromises = rp.map(async (representative) =>
+        this.personApi
+          .withMiddleware(new AuthMiddleware(user, authMiddlewareOptions))
+          .einstaklingarGetEinstaklingur(<EinstaklingarGetEinstaklingurRequest>{
+            id: representative.nationalIdRepresentedPerson,
+          })
+          .then(
+            ({ nafn }) => toDelegationDTO(nafn, representative),
+            () => toDelegationDTO('Óþekkt nafn', representative),
+          ),
+      )
+
+      return await Promise.all(resultPromises)
+    } catch (error) {
+      this.logger.error('Error in findAllRepresentedPersons', error)
     }
 
     return []
