@@ -92,7 +92,7 @@ jobs:
           export GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
           git checkout $GITHUB_HEAD_REF
           git checkout $GITHUB_BASE_REF
-          git checkout $GITHUB_REF
+          git checkout $GITHUB_SHA
           export HEAD_REF="$GITHUB_HEAD_REF"
           export BASE_REF="$GITHUB_BASE_REF"
           export PR_REF=$GITHUB_SHA
