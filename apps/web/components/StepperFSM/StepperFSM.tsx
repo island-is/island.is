@@ -113,7 +113,7 @@ const StepperFSMWrapper = (
   const Component = (props: StepperProps) => {
     const configErrors = validateStepperConfig(props.stepper)
 
-    const showStepperConfigHelper = true
+    const showStepperConfigHelper = STEPPER_HELPER_ENABLED
 
     if (configErrors.size > 0) {
       return showStepperConfigHelper
@@ -261,7 +261,7 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
                 query: query,
               }}
             >
-              {activeLocale === 'is' ? 'Breyta' : 'Change'}
+              {activeLocale === 'en' ? 'Change' : 'Breyta'}
             </Link>
           </Box>
         </Box>
@@ -308,9 +308,9 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
 
             if (!transitionWorked) {
               setTransitionErrorMessage(
-                activeLocale === 'is'
-                  ? 'Því miður gekk ekki að hlaða niður næsta skrefi'
-                  : 'Sadly, the next step could not be loaded',
+                activeLocale === 'en'
+                  ? 'Sadly, the next step could not be loaded'
+                  : 'Því miður gekk ekki að hlaða niður næsta skrefi',
               )
             } else {
               setTransitionErrorMessage('')
@@ -320,13 +320,14 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
           })
         }}
       >
-        {activeLocale === 'is' ? 'Áfram' : 'Continue'}
+        {activeLocale === 'en' ? 'Continue' : 'Áfram'}
       </Button>
     </Box>
   )
 
   const QuestionTitle = () => (
     <Box
+      marginTop={currentStep.stepType === STEP_TYPES.ANSWER ? 8 : 0}
       marginBottom={3}
       onClick={(ev) => {
         // If the user clicks four times in a row on the question title, we enable the helper if we're not in production
@@ -377,7 +378,7 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
           <Select
             name="step-option-select"
             noOptionsMessage={
-              activeLocale === 'is' ? 'Enginn valmöguleiki' : 'No options'
+              activeLocale === 'en' ? 'No options' : 'Enginn valmöguleiki'
             }
             value={{
               label: selectedOption?.label,
@@ -410,7 +411,7 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
       {!isOnFirstStep && (
         <Box marginTop={10}>
           <Text variant="h3" marginBottom={2}>
-            {activeLocale === 'is' ? 'Svörin þín' : 'Your answers'}
+            {activeLocale === 'en' ? 'Your answers' : 'Svörin þín'}
           </Text>
           <Box marginBottom={3}>
             <Link
@@ -420,7 +421,7 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
               color="blue400"
               href={router.asPath.split('?')[0]}
             >
-              {activeLocale === 'is' ? 'Byrja aftur' : 'Start again'}
+              {activeLocale === 'en' ? 'Start again' : 'Byrja aftur'}
             </Link>
           </Box>
 

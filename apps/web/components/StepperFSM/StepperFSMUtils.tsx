@@ -8,8 +8,7 @@ import {
 
 import { Step, Stepper } from '@island.is/api/schema'
 
-// TODO: Look into disabling no-explicit-any for next N Lines
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+/* eslint-disable @typescript-eslint/no-explicit-any */
 type StepperState = State<
   any,
   AnyEventObject,
@@ -17,14 +16,21 @@ type StepperState = State<
   { value: any; context: any }
 >
 
-// TODO: Look into disabling no-explicit-any for next N Lines
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type StepperMachine = StateMachine<
   any,
   any,
   AnyEventObject,
   { value: any; context: any }
 >
+
+interface StepperConfig {
+  xStateFSM: MachineConfig<any, any, AnyEventObject>
+}
+
+interface StepperConfig {
+  xStateFSM: MachineConfig<any, any, AnyEventObject>
+}
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 interface StepOptionCMS {
   labelIS: string
@@ -59,18 +65,8 @@ interface StepOption {
   slug: string
 }
 
-interface StepperConfig {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  xStateFSM: MachineConfig<any, any, AnyEventObject>
-}
-
 interface StateMeta {
   stepSlug: string
-}
-
-interface StepperConfig {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  xStateFSM: MachineConfig<any, any, AnyEventObject>
 }
 
 interface StateMeta {
@@ -133,6 +129,25 @@ const validateStepperConfig = (stepper: Stepper) => {
 
   if (!stepperConfig?.xStateFSM) {
     errors.add('XStateFSM missing from config')
+    return errors
+  }
+
+  if (!stepperConfig?.xStateFSM?.states) {
+    errors.add('States missing from config')
+    return errors
+  }
+
+  if (!stepperConfig?.xStateFSM?.initial) {
+    errors.add('Initial state missing from config')
+    return errors
+  }
+
+  if (
+    !stepperConfig?.xStateFSM?.states?.[
+      stepperConfig?.xStateFSM?.initial as string
+    ]
+  ) {
+    errors.add('Initial state missing from states object in config')
     return errors
   }
 
@@ -213,7 +228,7 @@ const getStepOptions = (
     const stepOptions = optionsFromNamespace.find(
       (value) => value.slug === step.slug,
     )
-    if (!stepOptions) return []
+    if (!stepOptions || !stepOptions.data) return []
     return stepOptions.data.map((o) => {
       const {
         labelFieldEN,
@@ -221,13 +236,14 @@ const getStepOptions = (
         optionSlugField,
         transitions,
       } = stepConfig.optionsFromSource
-      const label = lang === 'is' ? o[labelFieldIS] : o[labelFieldEN]
+      const label = lang === 'en' ? o[labelFieldEN] : o[labelFieldIS]
       let stepTransition = ''
 
       transitions.sort((a, b) => {
-        if (!a.priority || !b.priority) return 0
-        if (a.priority < b.priority) return -1
-        return 1
+        if (!a.priority && !b.priority) return 0
+        if (!a.priority) return 1
+        if (!b.priority) return -1
+        return a.priority - b.priority
       })
 
       for (const { criteria, transition, criteriaExclude } of transitions) {
@@ -261,8 +277,10 @@ const getStepOptions = (
     })
   }
 
+  if (!stepConfig.options) return []
+
   return stepConfig.options.map((o) => {
-    const label = lang === 'is' ? o.labelIS : o.labelEN
+    const label = lang === 'en' ? o.labelEN : o.labelIS
     return {
       label: label,
       transition: o.transition,
@@ -290,7 +308,7 @@ const stepContainsQuestion = (step: Step) => {
   )
 }
 
-const getStepQuestion = (step: Step) => {
+const getStepQuestion = (step: Step): string => {
   if (stepContainsQuestion(step)) {
     return step.subtitle[0].document.content[0].content[0].value
   }

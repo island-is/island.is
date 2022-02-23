@@ -117,8 +117,9 @@ export const renderErrors = (errors: ErrorField[]) => {
         symbol={errors.length > 0 ? ERROR_SYMBOL : SUCCESS_SYMBOL}
       />
       <Box marginLeft={4}>
-        {errors.map((error) => (
+        {errors.map((error, index) => (
           <div
+            key={index}
             className={`${error.messageId ? styles.error : ''} ${
               styles.fitBorder
             }`}
@@ -266,9 +267,8 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
                   ? SUCCESS_SYMBOL
                   : ERROR_SYMBOL
                 return (
-                  <Box className={styles.fitBorder} marginBottom={1}>
+                  <Box key={i} className={styles.fitBorder} marginBottom={1}>
                     <Field
-                      key={i}
                       value={nextEvent}
                       ariaLabel={ariaLabel}
                       symbol={symbol}
@@ -378,8 +378,8 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
                     marginLeft={4}
                     className={styles.fitBorder}
                     marginBottom={1}
-                    key={i}
                     marginTop={i === 0 ? 1 : 0}
+                    key={id}
                     id={id}
                   >
                     <Field name="State name" value={stateName} />
@@ -443,9 +443,9 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
                               className={styles.fitBorder}
                               marginBottom={1}
                               id={id}
+                              key={id}
                             >
                               <Field
-                                key={j}
                                 value={nextEvent}
                                 symbol={
                                   transitionExists
@@ -502,7 +502,7 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
                     marginLeft={4}
                     className={styles.fitBorder}
                     marginBottom={1}
-                    key={i}
+                    key={id}
                     id={id}
                     marginTop={i === 0 ? 1 : 0}
                   >
@@ -580,7 +580,7 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
                           className={styles.fitBorder}
                           marginLeft={4}
                           marginBottom={1}
-                          key={o.slug}
+                          key={id}
                           id={id}
                         >
                           <Field name="Label" value={o.label} />
