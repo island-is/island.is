@@ -198,6 +198,7 @@ export class LocalRunner implements GitActionStatus {
 
           const entries = await unzip(artifact.data)
           const event = await entries.entries['event.json'].json()
+          app(`Got event data from PR ${run.run_number}`)
           return {
             head_commit: event.pull_request.head.sha,
             run_nr: run.run_number,
