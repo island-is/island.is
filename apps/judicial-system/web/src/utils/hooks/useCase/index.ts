@@ -32,7 +32,6 @@ type autofillProperties = Pick<
   | 'demands'
   | 'courtAttendees'
   | 'prosecutorDemands'
-  | 'litigationPresentations'
   | 'courtStartDate'
   | 'courtCaseFacts'
   | 'courtLegalArguments'
@@ -42,7 +41,7 @@ type autofillProperties = Pick<
   | 'conclusion'
   | 'courtDate'
   | 'courtLocation'
-  | 'accusedBookings'
+  | 'sessionBookings'
   | 'ruling'
   | 'endOfSessionBookings'
 >

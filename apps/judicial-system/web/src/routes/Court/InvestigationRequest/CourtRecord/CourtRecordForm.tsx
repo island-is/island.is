@@ -43,20 +43,10 @@ interface Props {
 const CourtRecordForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading, user } = props
   const [courtLocationEM, setCourtLocationEM] = useState('')
-  const [
-    litigationPresentationsErrorMessage,
-    setLitigationPresentationsMessage,
-  ] = useState('')
+  const [sessionBookingsErrorMessage, setSessionBookingsMessage] = useState('')
 
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
-
-  const displayAccusedBookings =
-    workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
-    (workingCase.sessionArrangements ===
-      SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
-      workingCase.defenderIsSpokesperson &&
-      workingCase.defenderName)
 
   return (
     <>
@@ -190,84 +180,47 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             workingCase={workingCase}
           />
         </Box>
-        {displayAccusedBookings && (
-          <Box component="section" marginBottom={8}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                {`${formatMessage(m.sections.accusedBookings.title)} `}
-                <Tooltip
-                  text={formatMessage(m.sections.accusedBookings.tooltip)}
-                />
-              </Text>
-            </Box>
-            <Input
-              data-testid="accusedBookings"
-              name="accusedBookings"
-              label={formatMessage(m.sections.accusedBookings.label)}
-              value={workingCase.accusedBookings || ''}
-              placeholder={formatMessage(
-                m.sections.accusedBookings.placeholder,
-              )}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'accusedBookings',
-                  event.target.value,
-                  [],
-                  workingCase,
-                  setWorkingCase,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'accusedBookings',
-                  event.target.value,
-                  [],
-                  workingCase,
-                  updateCase,
-                )
-              }
-              textarea
-              rows={16}
-              autoExpand={{ on: true, maxHeight: 600 }}
-            />
-          </Box>
-        )}
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Málflutningur
+              {`${formatMessage(m.sections.sessionBookings.title)} `}
+              <Tooltip
+                text={formatMessage(m.sections.sessionBookings.tooltip)}
+              />
             </Text>
           </Box>
           <Box marginBottom={3}>
             <Input
-              data-testid="litigationPresentations"
-              name="litigationPresentations"
-              label="Málflutningur og aðrar bókanir"
-              value={workingCase.litigationPresentations || ''}
-              placeholder="Málflutningsræður og annað sem fram kom í þinghaldi er skráð hér..."
+              data-testid="sessionBookings"
+              name="sessionBookings"
+              label={formatMessage(m.sections.sessionBookings.label)}
+              value={workingCase.sessionBookings || ''}
+              placeholder={formatMessage(
+                m.sections.sessionBookings.placeholder,
+              )}
               onChange={(event) =>
                 removeTabsValidateAndSet(
-                  'litigationPresentations',
+                  'sessionBookings',
                   event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
-                  litigationPresentationsErrorMessage,
-                  setLitigationPresentationsMessage,
+                  sessionBookingsErrorMessage,
+                  setSessionBookingsMessage,
                 )
               }
               onBlur={(event) =>
                 validateAndSendToServer(
-                  'litigationPresentations',
+                  'sessionBookings',
                   event.target.value,
                   ['empty'],
                   workingCase,
                   updateCase,
-                  setLitigationPresentationsMessage,
+                  setSessionBookingsMessage,
                 )
               }
-              errorMessage={litigationPresentationsErrorMessage}
-              hasError={litigationPresentationsErrorMessage !== ''}
+              errorMessage={sessionBookingsErrorMessage}
+              hasError={sessionBookingsErrorMessage !== ''}
               textarea
               rows={16}
               autoExpand={{ on: true, maxHeight: 600 }}

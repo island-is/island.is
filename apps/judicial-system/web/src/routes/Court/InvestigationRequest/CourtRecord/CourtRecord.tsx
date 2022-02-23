@@ -109,11 +109,11 @@ const CourtRecord = () => {
       }
 
       if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
-        let autofillAccusedBookings = ''
+        let autofillSessionBookings = ''
 
         if (theCase.defenderName) {
-          autofillAccusedBookings += `${formatMessage(
-            m.sections.accusedBookings.autofillDefender,
+          autofillSessionBookings += `${formatMessage(
+            m.sections.sessionBookings.autofillDefender,
             {
               defender: theCase.defenderName,
             },
@@ -121,21 +121,21 @@ const CourtRecord = () => {
         }
 
         if (theCase.translator) {
-          autofillAccusedBookings += `${formatMessage(
-            m.sections.accusedBookings.autofillTranslator,
+          autofillSessionBookings += `${formatMessage(
+            m.sections.sessionBookings.autofillTranslator,
             {
               translator: theCase.translator,
             },
           )}\n\n`
         }
 
-        autofillAccusedBookings += `${formatMessage(
-          m.sections.accusedBookings.autofillRightToRemainSilent,
+        autofillSessionBookings += `${formatMessage(
+          m.sections.sessionBookings.autofillRightToRemainSilent,
         )}\n\n${formatMessage(
-          m.sections.accusedBookings.autofillCourtDocumentOne,
-        )}\n\n${formatMessage(m.sections.accusedBookings.autofillAccusedPlea)}`
+          m.sections.sessionBookings.autofillCourtDocumentOne,
+        )}\n\n${formatMessage(m.sections.sessionBookings.autofillAccusedPlea)}`
 
-        autofill('accusedBookings', autofillAccusedBookings, theCase)
+        autofill('sessionBookings', autofillSessionBookings, theCase)
       }
 
       if (
@@ -145,8 +145,8 @@ const CourtRecord = () => {
         theCase.defenderName
       ) {
         autofill(
-          'accusedBookings',
-          formatMessage(m.sections.accusedBookings.autofillSpokeperson, {
+          'sessionBookings',
+          formatMessage(m.sections.sessionBookings.autofillSpokeperson, {
             spokesperson: theCase.defenderName,
           }),
           theCase,
