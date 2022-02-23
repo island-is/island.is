@@ -81,7 +81,11 @@ export async function findBestGoodRefPR(
     try {
       const tempBranch = `${headBranch}-${Math.round(Math.random() * 1000000)}`
       await git.checkoutBranch(tempBranch, prRun.base_commit)
-      await git.merge({ [prRun.head_commit]: null })
+      await git.merge({
+        [prRun.head_commit]: null,
+        '--progress': null,
+        '--verbose': null,
+      })
       log(`Simulated previous PR merge commit`)
       const lastMerge = await git.log({ maxCount: 1 })
       const lastMergeCommit = lastMerge.latest

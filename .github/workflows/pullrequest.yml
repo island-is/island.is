@@ -94,6 +94,7 @@ jobs:
           git checkout $GITHUB_BASE_REF
           git checkout $GITHUB_SHA
           git log  --pretty=oneline -n 50
+          git status
           export HEAD_REF="$GITHUB_HEAD_REF"
           export BASE_REF="$GITHUB_BASE_REF"
           export PR_REF=$GITHUB_SHA

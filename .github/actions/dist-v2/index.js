@@ -89899,7 +89899,11 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
             try {
                 const tempBranch = `${headBranch}-${Math.round(Math.random() * 1000000)}`;
                 yield git.checkoutBranch(tempBranch, prRun.base_commit);
-                yield git.merge({ [prRun.head_commit]: null });
+                yield git.merge({
+                    [prRun.head_commit]: null,
+                    '--progress': null,
+                    '--verbose': null,
+                });
                 log(`Simulated previous PR merge commit`);
                 const lastMerge = yield git.log({ maxCount: 1 });
                 const lastMergeCommit = lastMerge.latest;
