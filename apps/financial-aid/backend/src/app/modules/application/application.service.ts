@@ -268,9 +268,6 @@ export class ApplicationService {
       ...application,
     })
 
-    console.log('direct tax payments', application.directTaxPayments)
-    console.log('files', application.files)
-
     await Promise.all([
       application.directTaxPayments?.map((d) => {
         return this.directTaxPaymentService.create({

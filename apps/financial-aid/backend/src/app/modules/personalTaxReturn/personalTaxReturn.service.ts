@@ -40,10 +40,14 @@ export class PersonalTaxReturnService {
     try {
       let year = new Date().getFullYear() - 1
 
-      let taxReturn = await this.personalTaxReturnApi.personalTaxReturnInPdf(
-        nationalId,
-        year,
-      )
+      let taxReturn = await this.personalTaxReturnApi
+        .personalTaxReturnInPdf(nationalId, year)
+        .catch(() => {
+          return {
+            success: false,
+            content: '',
+          }
+        })
 
       if (taxReturn.success === false) {
         year -= 1
@@ -72,8 +76,6 @@ export class PersonalTaxReturnService {
           'Content-Length': size.toString(),
         },
       })
-
-      console.log(presignedUrl.key, fileName)
 
       return {
         personalTaxReturn: { key: presignedUrl.key, name: fileName, size },
