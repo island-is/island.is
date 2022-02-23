@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { ISODate, PlainText } from '@island.is/regulations'
+import { ISODate, PlainText, RegName } from '@island.is/regulations'
 
 @ObjectType()
 class RegulationSummaryAuthor {
@@ -23,6 +23,9 @@ export class DraftRegulationSummaryModel {
 
   @Field(() => String, { nullable: true })
   title!: PlainText
+
+  @Field(() => String, { nullable: true })
+  name?: RegName
 
   @Field(() => String, { nullable: true })
   idealPublishDate?: ISODate

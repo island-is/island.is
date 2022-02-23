@@ -48,26 +48,31 @@ export const ShippedRegulations = () => {
               ? t(statusMsgs.published) +
                 ' ' +
                 (publishedDate
-                  ? formatDateFns(publishedDate, 'dd. MMM yyyy')
+                  ? formatDateFns(publishedDate, 'd. MMM yyyy')
                   : '??dags??')
               : t(statusMsgs.shipped)
 
           return (
             <ActionCard
               key={shipped.id}
+              eyebrow={name ? prettyName(name) : undefined}
               tag={{
                 label: tagText,
                 variant: 'blueberry',
               }}
-              heading={`${name ? prettyName(name) : ''} ${shipped.title}`}
-              cta={{
-                icon: 'arrowForward',
-                label: t(homeMessages.cta_publish),
-                variant: 'ghost',
-                onClick: () => {
-                  history.push(getEditUrl(shipped.id, 'publish'))
-                },
-              }}
+              heading={shipped.title}
+              cta={
+                shipped.draftingStatus === 'shipped'
+                  ? {
+                      icon: 'arrowForward',
+                      label: t(homeMessages.cta_publish),
+                      variant: 'ghost',
+                      onClick: () => {
+                        history.push(getEditUrl(shipped.id, 'publish'))
+                      },
+                    }
+                  : (undefined as any)
+              }
             ></ActionCard>
           )
         })}

@@ -109,13 +109,9 @@ const ShippedRegulationsQuery = gql`
     getShippedRegulations {
       id
       draftingStatus
-      authors {
-        authorId
-        name
-      }
       title
       idealPublishDate
-      fastTrack
+      name
     }
   }
 `

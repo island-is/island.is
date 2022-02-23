@@ -26,6 +26,7 @@ import {
   GroupedDraftImpacts,
   RegulationDraft,
   RegulationDraftId,
+  ShippedSummary,
 } from '@island.is/regulations/admin'
 import { Kennitala, RegQueryName } from '@island.is/regulations'
 import * as kennitala from 'kennitala'
@@ -92,7 +93,7 @@ export class DraftRegulationService {
     return drafts
   }
 
-  async getAllShipped(): Promise<DraftSummary[]> {
+  async getAllShipped(): Promise<ShippedSummary[]> {
     this.logger.debug('Getting all shipped/published DraftRegulations')
 
     const draftRegulations = await this.draftRegulationModel.findAll({
@@ -102,15 +103,14 @@ export class DraftRegulationService {
       order: [['created', 'DESC']],
     })
 
-    const drafts: DraftSummary[] = []
+    const drafts: ShippedSummary[] = []
     for await (const draft of draftRegulations) {
       drafts.push({
         id: draft.id as RegulationDraftId,
-        draftingStatus: draft.drafting_status as 'draft' | 'proposal',
+        draftingStatus: draft.drafting_status as 'shipped' | 'published',
         title: draft.title,
+        name: draft.name,
         idealPublishDate: draft.ideal_publish_date,
-        authors: [],
-        fastTrack: draft.fast_track,
       })
     }
 
