@@ -21,8 +21,7 @@ interface newUsersModalState {
   staffName: string
   staffEmail: string
   hasError: boolean
-  hasSubmitError: boolean
-  errorMessage: string
+  errorMessage?: string
   roles: StaffRole[]
 }
 
@@ -40,8 +39,7 @@ const NewUserModal = ({
     staffName: '',
     staffEmail: '',
     hasError: false,
-    hasSubmitError: false,
-    errorMessage: '',
+    errorMessage: undefined,
     roles: predefinedRoles,
   })
   const [createStaff] = useMutation(StaffMutation)
@@ -87,7 +85,6 @@ const NewUserModal = ({
     } catch (e) {
       setState({
         ...state,
-        hasSubmitError: true,
         errorMessage:
           (e as ApolloError).graphQLErrors[0]?.extensions?.response.status ===
           400
@@ -102,7 +99,7 @@ const NewUserModal = ({
       isVisible={isVisible}
       setIsVisible={setIsVisible}
       header={'Nýr notandi'}
-      hasError={state.hasSubmitError}
+      hasError={state.errorMessage !== undefined}
       errorMessage={state.errorMessage}
       submitButtonText={'Stofna notanda'}
       onSubmit={submit}
