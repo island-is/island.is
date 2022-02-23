@@ -1,10 +1,11 @@
 import * as s from './SaveDeleteButtons.css'
 import { Box, Button } from '@island.is/island-ui/core'
-import React from 'react'
-import { buttonsMsgs as msg } from '../messages'
+import React, { useState } from 'react'
+import { buttonsMsgs, buttonsMsgs as msg } from '../messages'
 import { useLocale } from '@island.is/localization'
 import { RegDraftForm } from '../state/types'
 import { useDraftingState } from '../state/useDraftingState'
+import ConfirmModal from './ConfirmModal/ConfirmModal'
 
 const isDraftEmpty = (draft: RegDraftForm): boolean => {
   const someContent =
@@ -35,16 +36,8 @@ export const SaveDeleteButtons = (props: SaveDeleteButtonsProps) => {
   const t = useLocale().formatMessage
   const { draft, saving, actions } = useDraftingState()
   const { saveStatus, deleteDraft, propose } = actions
-
-  const handleDeleteClick = () => {
-    if (
-      isDraftEmpty(draft) ||
-      // eslint-disable-next-line no-restricted-globals
-      confirm(t(msg.confirmDelete))
-    ) {
-      deleteDraft()
-    }
-  }
+  const [isConfirmationVisible, setIsConfirmationVisible] = useState(false)
+  const { formatMessage } = useLocale()
 
   const buttons = (
     <>
@@ -76,7 +69,7 @@ export const SaveDeleteButtons = (props: SaveDeleteButtonsProps) => {
       )}
       <Box className={classes.deleteDraft}>
         <Button
-          onClick={() => handleDeleteClick()}
+          onClick={() => setIsConfirmationVisible(true)}
           icon="trash"
           iconType="outline"
           variant="text"
@@ -86,6 +79,14 @@ export const SaveDeleteButtons = (props: SaveDeleteButtonsProps) => {
           {t(msg.delete)}
         </Button>
       </Box>{' '}
+      <ConfirmModal
+        isVisible={isConfirmationVisible}
+        message={formatMessage(buttonsMsgs.confirmDelete)}
+        onConfirm={deleteDraft}
+        onVisibilityChange={(visibility: boolean) => {
+          setIsConfirmationVisible(visibility)
+        }}
+      />
     </>
   )
 

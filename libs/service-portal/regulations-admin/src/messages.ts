@@ -306,6 +306,10 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-btn-publish',
     defaultMessage: 'Gefa út reglugerð',
   },
+  deleteConfirmation: {
+    id: 'ap.regulations-admin:draft-label-deleteConfirmation',
+    defaultMessage: 'Ertu alveg viss um að þú viljir eyða ',
+  },
 })
 
 export const impactMsgs = defineMessages({
@@ -595,7 +599,8 @@ export const buttonsMsgs = defineMessages({
   },
   confirmDelete: {
     id: 'ap.regulations-admin:btn-delete-confirm',
-    defaultMessage: 'Þessu uppkasti að reglugerð verður eytt varanlega!',
+    defaultMessage:
+      'Þessu uppkasti að reglugerð verður eytt varanlega. Ertu viss um að þú viljir halda áfram?',
   },
 })
 
