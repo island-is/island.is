@@ -88992,8 +88992,9 @@ var dist_node = __nccwpck_require__(1231);
 
 
 class SimpleGit {
-    constructor(cwd, _log = src_default()('simple-git')) {
+    constructor(cwd, shell = (0,external_child_process_.execSync)('which sh', { encoding: 'utf-8' }).trim(), _log = src_default()('simple-git')) {
         this.cwd = cwd;
+        this.shell = shell;
         this._log = _log;
         this.raw = this.git;
         this.add = this._method('add');
@@ -89010,6 +89011,7 @@ class SimpleGit {
                 this._log(`In: ${command}`);
                 const out = (0,external_child_process_.execSync)(command, {
                     cwd: this.cwd,
+                    shell: this.shell,
                     encoding: 'utf-8',
                 });
                 this._log(`Out: ${out}`);
