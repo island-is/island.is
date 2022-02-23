@@ -11,6 +11,10 @@ import {
 } from './dto'
 import { DraftRegulationChangeModel } from './draft_regulation_change.model'
 import { RegQueryName, slugToName } from '@island.is/regulations'
+import {
+  DraftRegulationChange,
+  DraftRegulationChangeId,
+} from '@island.is/regulations/admin'
 
 @Injectable()
 export class DraftRegulationChangeService {
@@ -21,12 +25,38 @@ export class DraftRegulationChangeService {
     private readonly logger: Logger,
   ) {}
 
-  create(
+  async create(
     draftRegulationChangeToCreate: CreateDraftRegulationChangeDto,
-  ): Promise<DraftRegulationChangeModel> {
+  ): Promise<DraftRegulationChange> {
     this.logger.debug('Creating a new DraftRegulationChange')
 
-    return this.draftRegulationChangeModel.create(draftRegulationChangeToCreate)
+    const createData: Partial<DraftRegulationChangeModel> = {
+      changing_id: draftRegulationChangeToCreate.changingId,
+      regulation: draftRegulationChangeToCreate.regulation,
+      date: draftRegulationChangeToCreate.date,
+      title: draftRegulationChangeToCreate.title,
+      text: draftRegulationChangeToCreate.text,
+      appendixes: draftRegulationChangeToCreate.appendixes,
+      comments: draftRegulationChangeToCreate.comments,
+    }
+
+    const createResponce = await this.draftRegulationChangeModel.create(
+      createData,
+    )
+
+    return {
+      id: createResponce.id as DraftRegulationChangeId,
+      changingId: createResponce.changing_id,
+      type: 'amend',
+      name: createResponce.regulation,
+      regTitle: createResponce.regulation + ' - ' + createResponce.title,
+      date: createResponce.date,
+      title: createResponce.title,
+      dropped: createResponce.dropped,
+      text: createResponce.text,
+      appendixes: createResponce.appendixes,
+      comments: createResponce.comments,
+    }
   }
 
   async update(
@@ -34,17 +64,31 @@ export class DraftRegulationChangeService {
     update: UpdateDraftRegulationChangeDto,
   ): Promise<{
     numberOfAffectedRows: number
-    updatedDraftRegulationChange: DraftRegulationChangeModel
+    updatedDraftRegulationChange: DraftRegulationChange
   }> {
     this.logger.debug(`Updating DraftRegulationChange ${id}`)
 
     const [
       numberOfAffectedRows,
-      [updatedDraftRegulationChange],
+      [updateData],
     ] = await this.draftRegulationChangeModel.update(update, {
       where: { id },
       returning: true,
     })
+
+    const updatedDraftRegulationChange: DraftRegulationChange = {
+      id: updateData.id as DraftRegulationChangeId,
+      changingId: updateData.changing_id,
+      type: 'amend',
+      name: updateData.regulation,
+      regTitle: updateData.regulation + ' - ' + updateData.title,
+      date: updateData.date,
+      title: updateData.title,
+      dropped: updateData.dropped,
+      text: updateData.text,
+      appendixes: updateData.appendixes,
+      comments: updateData.comments,
+    }
 
     return { numberOfAffectedRows, updatedDraftRegulationChange }
   }

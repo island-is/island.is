@@ -5,7 +5,7 @@ import { Appendix, HTMLText, ISODate, PlainText } from '@island.is/regulations'
 
 export class UpdateDraftRegulationChangeDto {
   @IsOptional()
-  @IsDate()
+  @IsString()
   @ApiProperty()
   readonly date?: ISODate
 
