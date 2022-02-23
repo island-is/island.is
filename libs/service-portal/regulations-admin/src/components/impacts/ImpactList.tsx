@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import * as s from './Impacts.css'
 import {
   ActionCard,
   AlertMessage,
@@ -41,6 +40,9 @@ export const ImpactList = (props: ImpactListProps) => {
   const t = formatMessage
 
   const [chooseType, setChooseType] = useState<DraftImpactForm | undefined>()
+  const [impactToDelete, setImpactToDelete] = useState<
+    DraftImpactForm | undefined
+  >()
 
   const [isConfirmationVisible, setIsConfirmationVisible] = useState(false)
 
@@ -72,25 +74,28 @@ export const ImpactList = (props: ImpactListProps) => {
     }
   }
 
-  const deleteImpact = async (impact: DraftImpactForm) => {
-    if (impact.type === 'amend') {
-      await deleteDraftRegulationChange({
-        variables: {
-          input: {
-            id: impact.id,
+  const deleteImpact = async () => {
+    const impact = impactToDelete
+    if (impact) {
+      if (impact.type === 'amend') {
+        await deleteDraftRegulationChange({
+          variables: {
+            input: {
+              id: impact.id,
+            },
           },
-        },
-      })
-    } else {
-      await deleteDraftRegulationCancel({
-        variables: {
-          input: {
-            id: impact.id,
+        })
+      } else {
+        await deleteDraftRegulationCancel({
+          variables: {
+            input: {
+              id: impact.id,
+            },
           },
-        },
-      })
+        })
+      }
+      document.location.reload()
     }
-    document.location.reload()
   }
 
   return (
@@ -109,7 +114,6 @@ export const ImpactList = (props: ImpactListProps) => {
           <Text variant="h3" as="h3">
             {title || t(impactMsgs.impactListTitle)}
           </Text>
-
           {Object.keys(impacts).map((impGrp, i) => {
             const impactGroup = impacts[impGrp]
             return (
@@ -161,7 +165,8 @@ export const ImpactList = (props: ImpactListProps) => {
                         label: formatMessage(impactMsgs.impactListDeleteButton),
                         disabled: idx !== impactGroup.length - 1,
                         onClick: () => {
-                          deleteImpact(impact)
+                          setImpactToDelete(impact)
+                          setIsConfirmationVisible(true)
                         },
                       }}
                       text={
@@ -177,7 +182,6 @@ export const ImpactList = (props: ImpactListProps) => {
               </Stack>
             )
           })}
-
           {chooseType?.type === 'repeal' && (
             <EditCancellation
               draft={draft}
@@ -191,7 +195,6 @@ export const ImpactList = (props: ImpactListProps) => {
               closeModal={closeModal}
             />
           )}
-
           {chooseType?.type === 'amend' && (
             <EditChange
               draft={draft}
@@ -199,19 +202,19 @@ export const ImpactList = (props: ImpactListProps) => {
               closeModal={closeModal}
             />
           )}
-          {/* TODO: Dísa: Þegar delete impact er keyrt þarf að birta þennan modal "ertu alveg viss?" 
+
           <ConfirmModal
             isVisible={isConfirmationVisible}
             message={`${formatMessage(impactMsgs.deleteConfirmation)}`}
-            onConfirm={deleteImpact(impact)}
+            onConfirm={deleteImpact}
             onVisibilityChange={(visibility: boolean) => {
               if (!visibility) {
-                onClear()
+                closeModal()
               }
 
               setIsConfirmationVisible(visibility)
             }}
-          /> */}
+          />
         </Stack>
       )}
     </>

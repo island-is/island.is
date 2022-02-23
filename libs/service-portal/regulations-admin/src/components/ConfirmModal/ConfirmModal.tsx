@@ -19,7 +19,7 @@ const ConfirmModal: FC<ConfirmModalProps> = ({
 }) => {
   return (
     <ModalBase
-      baseId={`icelandicNameConfirmDialog`}
+      baseId={`deleteImpactModal`}
       className={styles.modal}
       isVisible={isVisible}
       hideOnClickOutside={false}
@@ -39,7 +39,7 @@ const ConfirmModal: FC<ConfirmModalProps> = ({
                 Hætta við
               </Button>
               <Button
-                onClick={onConfirm}
+                onClick={() => onConfirm()}
                 size="small"
                 colorScheme="destructive"
               >
