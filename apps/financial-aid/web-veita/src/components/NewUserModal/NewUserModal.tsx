@@ -21,8 +21,8 @@ interface newUsersModalState {
   staffName: string
   staffEmail: string
   hasError: boolean
-  hasNationalIdError: boolean
   hasSubmitError: boolean
+  errorMessage: string
   roles: StaffRole[]
 }
 
@@ -41,7 +41,7 @@ const NewUserModal = ({
     staffEmail: '',
     hasError: false,
     hasSubmitError: false,
-    hasNationalIdError: false,
+    errorMessage: '',
     roles: predefinedRoles,
   })
   const [createStaff] = useMutation(StaffMutation)
@@ -88,9 +88,11 @@ const NewUserModal = ({
       setState({
         ...state,
         hasSubmitError: true,
-        hasNationalIdError:
+        errorMessage:
           (e as ApolloError).graphQLErrors[0]?.extensions?.response.status ===
-          400,
+          400
+            ? 'Mögulega er notandi með þessa kennitölu til nú þegar'
+            : 'Eitthvað fór úrskeiðis, vinsamlega reynið aftur síðar',
       })
     }
   }
@@ -101,11 +103,7 @@ const NewUserModal = ({
       setIsVisible={setIsVisible}
       header={'Nýr notandi'}
       hasError={state.hasSubmitError}
-      errorMessage={
-        state.hasNationalIdError
-          ? 'Mögulega er notandi með þessa kennitölu til nú þegar'
-          : 'Eitthvað fór úrskeiðis, vinsamlega reynið aftur síðar'
-      }
+      errorMessage={state.errorMessage}
       submitButtonText={'Stofna notanda'}
       onSubmit={submit}
     >
