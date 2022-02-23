@@ -7,7 +7,9 @@ interface Props {
 }
 
 const MoreActions = ({ homepage, email }: Props) => {
-  if (!homepage && !email) return null
+  if (!homepage && !email) {
+    return null
+  }
 
   return (
     <Box>
