@@ -18,7 +18,7 @@ const MoreActions = ({ homepage, email }: Props) => {
       </Text>
       <Box marginBottom={[5, 5, 10]}>
         {homepage && (
-          <Box marginBottom={email ? 2 : 0}>
+          <Box marginBottom={2}>
             <Button
               icon="open"
               iconType="outline"
