@@ -52,7 +52,7 @@ export const ShippedRegulations = () => {
           return (
             <ActionCard
               key={shipped.id}
-              eyebrow={name ? prettyName(name) : undefined}
+              date={name ? prettyName(name) : undefined}
               tag={{
                 label: tagText,
                 variant: 'blueberry',
