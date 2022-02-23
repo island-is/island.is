@@ -93712,7 +93712,6 @@ var dist_node = __nccwpck_require__(1231);
         baseDir: `${__dirname}/../../..`,
         maxConcurrentProcesses: 1,
     });
-    git.env(process.env);
     const diffWeight = (s) => s.length;
     const rev = process.env.GITHUB_EVENT_NAME === 'pull_request'
         ? yield findBestGoodRefPR(diffWeight, git, runner, process.env.HEAD_REF, process.env.BASE_REF, process.env.PR_REF)

@@ -8,7 +8,7 @@ import { Octokit } from '@octokit/action'
     baseDir: `${__dirname}/../../..`,
     maxConcurrentProcesses: 1,
   })
-  git.env(process.env)
+
   const diffWeight = (s) => s.length
   const rev =
     process.env.GITHUB_EVENT_NAME === 'pull_request'
