@@ -24,6 +24,7 @@ import { EditMeta } from '../components/EditMeta'
 import { EditSignature } from '../components/EditSignature'
 import { EditImpacts } from '../components/EditImpacts'
 import { EditReview } from '../components/EditReview'
+import { EditPublish } from '../components/EditPublish'
 import { Box, Text, toast } from '@island.is/island-ui/core'
 import { SaveDeleteButtons } from '../components/SaveDeleteButtons'
 import { DraftingNotes } from '../components/DraftingNotes'
@@ -85,6 +86,11 @@ const stepData: Record<
     title: editorMsgs.stepReviewHeadline,
     intro: editorMsgs.stepReviewIntro,
     Component: EditReview,
+  },
+  publish: {
+    title: editorMsgs.stepPublishHeadline,
+    intro: editorMsgs.stepPublishIntro,
+    Component: EditPublish,
   },
 }
 

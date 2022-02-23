@@ -45,6 +45,9 @@ export const steps: Record<Step, StepNav> = {
     name: 'review',
     prev: 'impacts',
   },
+  publish: {
+    name: 'publish',
+  },
 }
 
 // ---------------------------------------------------------------------------

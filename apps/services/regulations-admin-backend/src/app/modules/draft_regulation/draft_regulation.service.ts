@@ -85,6 +85,7 @@ export class DraftRegulationService {
         title: draft.title,
         idealPublishDate: draft.ideal_publish_date,
         authors,
+        fastTrack: draft.fast_track,
       })
     }
 
@@ -109,6 +110,7 @@ export class DraftRegulationService {
         title: draft.title,
         idealPublishDate: draft.ideal_publish_date,
         authors: [],
+        fastTrack: draft.fast_track,
       })
     }
 
