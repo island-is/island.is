@@ -58,6 +58,14 @@ export async function findBestGoodRefBranch(
   return 'rebuild'
 }
 
+const dump = () => {
+  console.log(
+    execSync(`which git; whoami; which sh`, {
+      stdio: 'inherit',
+      encoding: 'utf-8',
+    }),
+  )
+}
 export async function findBestGoodRefPR(
   diffWeight: (services) => number,
   git: SimpleGit,
@@ -80,14 +88,14 @@ export async function findBestGoodRefPR(
   }[] = []
   if (prRun) {
     log(`Found a PR run candidate: ${JSON.stringify(prRun)}`)
-    execSync(`which git; whoami; which sh`, { stdio: 'inherit' })
+    dump()
     try {
       const tempBranch = `${headBranch}-${Math.round(Math.random() * 1000000)}`
       await git.checkoutBranch(tempBranch, prRun.base_commit)
       log(`Branch checked out`)
-      execSync(`which git; whoami`, { stdio: 'inherit' })
+      dump()
       await git.merge(prRun.head_commit)
-      execSync(`which git; whoami`, { stdio: 'inherit' })
+      dump()
       log(`Simulated previous PR merge commit`)
       const lastMerge = await git.log({ maxCount: 1 })
       const lastMergeCommit = lastMerge.latest

@@ -88919,6 +88919,12 @@ function findBestGoodRefBranch(commitScore, git, githubApi, headBranch, baseBran
         return 'rebuild';
     });
 }
+const dump = () => {
+    console.log((0,external_child_process_.execSync)(`which git; whoami; which sh`, {
+        stdio: 'inherit',
+        encoding: 'utf-8',
+    }));
+};
 function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, prBranch) {
     return __awaiter(this, void 0, void 0, function* () {
         const log = change_detection_app.extend('findBestGoodRefPR');
@@ -88929,14 +88935,14 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
         const prBuilds = [];
         if (prRun) {
             log(`Found a PR run candidate: ${JSON.stringify(prRun)}`);
-            (0,external_child_process_.execSync)(`which git; whoami; which sh`, { stdio: 'inherit' });
+            dump();
             try {
                 const tempBranch = `${headBranch}-${Math.round(Math.random() * 1000000)}`;
                 yield git.checkoutBranch(tempBranch, prRun.base_commit);
                 log(`Branch checked out`);
-                (0,external_child_process_.execSync)(`which git; whoami`, { stdio: 'inherit' });
+                dump();
                 yield git.merge(prRun.head_commit);
-                (0,external_child_process_.execSync)(`which git; whoami`, { stdio: 'inherit' });
+                dump();
                 log(`Simulated previous PR merge commit`);
                 const lastMerge = yield git.log({ maxCount: 1 });
                 const lastMergeCommit = lastMerge.latest;
