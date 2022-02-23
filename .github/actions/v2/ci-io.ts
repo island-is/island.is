@@ -11,7 +11,7 @@ import { ActionsListWorkflowRunsForRepoResponseData } from '../detection'
 import { Endpoints } from '@octokit/types'
 import { join } from 'path'
 import Debug from 'debug'
-import { unzip } from 'unzipit'
+import * as unzipper from 'unzipper'
 const app = Debug('change-detection:io')
 
 const repository = process.env.GITHUB_REPOSITORY || '/'
@@ -196,8 +196,10 @@ export class LocalRunner implements GitActionStatus {
             archive_format: 'zip',
           })) as any
 
-          const entries = await unzip(artifact.data)
-          const event = await entries.entries['event.json'].json()
+          const dir = await unzipper.Open.buffer(new Uint8Array(artifact.data))
+          const event = JSON.parse(
+            (await dir.files[0].buffer()).toString('utf-8'),
+          )
           app(`Got event data from PR ${run.run_number}`)
           return {
             head_commit: event.pull_request.head.sha,
