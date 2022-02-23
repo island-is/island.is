@@ -89001,7 +89001,6 @@ class SimpleGit {
                 const out = (0,external_child_process_.execSync)(command, {
                     cwd: this.cwd,
                     encoding: 'utf-8',
-                    stdio: 'inherit',
                 });
                 console.log(`Out: ${out}`);
                 return Promise.resolve(out);

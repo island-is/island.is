@@ -9,7 +9,6 @@ export class SimpleGit {
       const out = execSync(command, {
         cwd: this.cwd,
         encoding: 'utf-8',
-        stdio: 'inherit',
       })
       console.log(`Out: ${out}`)
       return Promise.resolve(out)
