@@ -95,6 +95,8 @@ jobs:
           git checkout $GITHUB_SHA
           git checkout -b infra/new-ci-change-detector-217157 822667b0e65716ed811e439ddcf028f1e001b12a
           git merge 2c4883942e230c51d4391151d621cff30215fb9d
+          git config --global user.email "ci@island.is"
+          git config --global user.name "CI Bot"
           git checkout $GITHUB_SHA
           export HEAD_REF="$GITHUB_HEAD_REF"
           export BASE_REF="$GITHUB_BASE_REF"
