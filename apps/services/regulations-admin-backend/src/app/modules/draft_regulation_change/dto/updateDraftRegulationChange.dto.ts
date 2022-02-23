@@ -1,23 +1,23 @@
 import { IsArray, IsDate, IsOptional, IsString } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
-import { Appendix, HTMLText } from '@island.is/regulations'
+import { Appendix, HTMLText, ISODate, PlainText } from '@island.is/regulations'
 
 export class UpdateDraftRegulationChangeDto {
   @IsOptional()
   @IsDate()
   @ApiProperty()
-  readonly date?: Date
+  readonly date?: ISODate
 
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly title?: string
+  readonly title?: PlainText
 
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly text?: string
+  readonly text?: HTMLText
 
   @IsOptional()
   @IsArray()
