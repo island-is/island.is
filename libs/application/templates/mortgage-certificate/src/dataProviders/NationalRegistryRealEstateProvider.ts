@@ -10,7 +10,7 @@ export class NationalRegistryRealEstateProvider extends BasicDataProvider {
 
   async provide(): Promise<PropertyOverviewWithDetail> {
     const query = `
-      query GetRealEstateQuery($input: GetMultiPropertyInput!) {
+      query GetMyRealEstatesQuery($input: GetMultiPropertyInput!) {
         assetsOverviewWithDetail(input: $input) {
           properties {
             propertyNumber

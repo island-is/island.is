@@ -3,11 +3,77 @@ import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box, Text, Input, Button } from '@island.is/island-ui/core'
 import { PropertyTable } from '../PropertyTable'
 import { PropertyDetail, PropertyOverviewWithDetail } from '../../types/schema'
+import { gql, useLazyQuery } from '@apollo/client'
 
 interface SearchPropertiesProps {
   selectHandler: (property: PropertyDetail) => void
   activePropertyNumber: string | null | undefined
 }
+
+export const searchRealEstateMutation = gql`
+  query SearchRealEstateQuery($input: GetRealEstateInput!) {
+    assetsDetail(input: $input) {
+      propertyNumber
+      defaultAddress {
+        locationNumber
+        postNumber
+        municipality
+        propertyNumber
+        display
+        displayShort
+      }
+      appraisal {
+        activeAppraisal
+        plannedAppraisal
+        activeStructureAppraisal
+        plannedStructureAppraisal
+        activePlotAssessment
+        plannedPlotAssessment
+        activeYear
+        plannedYear
+      }
+      registeredOwners {
+        registeredOwners {
+          name
+          ssn
+          ownership
+          purchaseDate
+          grantDisplay
+        }
+      }
+      unitsOfUse {
+        unitsOfUse {
+          propertyNumber
+          unitOfUseNumber
+          marking
+          usageDisplay
+          displaySize
+          buildYearDisplay
+          fireAssessment
+          explanation
+          appraisal {
+            activeAppraisal
+            plannedAppraisal
+            activeStructureAppraisal
+            plannedStructureAppraisal
+            activePlotAssessment
+            plannedPlotAssessment
+            activeYear
+            plannedYear
+          }
+          address {
+            locationNumber
+            postNumber
+            municipality
+            propertyNumber
+            display
+            displayShort
+          }
+        }
+      }
+    }
+  }
+`
 
 export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
   application,
@@ -16,25 +82,36 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
 }) => {
   // Replace this mock functionality with skra api calls inside PropertyManager component
   const { externalData } = application
-  const mockProperties =
-    (externalData.nationalRegistryRealEstate
-      ?.data as PropertyOverviewWithDetail)?.properties || []
 
   const [propertyNumber, setPropertyNumber] = useState('')
   const [foundProperty, setFoundProperty] = useState<
     PropertyDetail | undefined
   >(undefined)
+
   const [searching, setSearching] = useState<boolean>(false)
 
-  const handleSearch = () => {
+  const [runQuery, { called, loading, data }] = useLazyQuery(
+    searchRealEstateMutation,
+    {
+      variables: {
+        input: {
+          assetId: propertyNumber,
+        },
+      },
+      onCompleted(result) {
+        setFoundProperty(result.assetsDetail)
+        setSearching(false)
+      },
+      onError() {
+        setSearching(false)
+      },
+    },
+  )
+
+  const handleClickSearch = () => {
+    setFoundProperty(undefined)
     setSearching(true)
-    setTimeout(() => {
-      const property = mockProperties.filter(
-        (p: PropertyDetail) => p.propertyNumber === propertyNumber,
-      )[0]
-      setFoundProperty(property)
-      setSearching(false)
-    }, 2500)
+    runQuery()
   }
 
   return (
@@ -47,17 +124,16 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
           <Input
             size="sm"
             label="Fasteignarnúmer"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setPropertyNumber(e.target.value)
-            }
+            name="propertyNumber"
+            onChange={(e) => setPropertyNumber(e.target.value)}
           />
         </Box>
         <Box>
           <Button
             disabled={searching}
-            onClick={() => handleSearch()}
+            onClick={() => handleClickSearch()}
             variant="ghost"
-            style={{ width: 146, paddingLeft: 20, paddingRight: 20 }}
+            //style={{ width: 146, paddingLeft: 20, paddingRight: 20 }}
           >
             Leita að eign
           </Button>
