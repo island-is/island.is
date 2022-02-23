@@ -16,4 +16,8 @@ export class SendNotificationInput implements SendNotification {
   @Allow()
   @Field(() => String)
   readonly type!: NotificationType
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly eventOnly?: boolean
 }
