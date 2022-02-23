@@ -4,7 +4,7 @@ import Debug from 'debug'
 export class SimpleGit {
   constructor(
     private cwd: string,
-    private shell: string = execSync('which sh', { encoding: 'utf-8' }).trim(),
+    private shell: string = `'/usr/bin/bash',`,
     private _log = Debug('simple-git'),
   ) {}
   async git(...args: string[]) {
@@ -21,6 +21,7 @@ export class SimpleGit {
     } catch (e) {
       this._log(`Error, in: ${command}`)
       this._log(`Error, out: ${e.message}`)
+
       return Promise.reject(e)
     }
   }

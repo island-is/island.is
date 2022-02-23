@@ -7,7 +7,6 @@ import { existsSync, mkdir } from 'fs'
 import { promisify } from 'util'
 import { GitActionStatus } from './git-action-status'
 import { SimpleGit } from './simple-git'
-import { execSync } from 'child_process'
 
 const baseBranch = 'main'
 const headBranch = 'fix'

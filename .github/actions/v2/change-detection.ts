@@ -61,8 +61,9 @@ export async function findBestGoodRefBranch(
 const dump = () => {
   const log = app.extend('dump')
   log(
-    execSync(`which git; whoami; which sh`, {
+    execSync(`which git; whoami; which sh; ls -la /usr/bin`, {
       encoding: 'utf-8',
+      shell: '/usr/bin/bash',
     }),
   )
 }
@@ -88,14 +89,14 @@ export async function findBestGoodRefPR(
   }[] = []
   if (prRun) {
     log(`Found a PR run candidate: ${JSON.stringify(prRun)}`)
-    dump()
+    // dump()
     try {
       const tempBranch = `${headBranch}-${Math.round(Math.random() * 1000000)}`
       await git.checkoutBranch(tempBranch, prRun.base_commit)
       log(`Branch checked out`)
-      dump()
+      // dump()
       await git.merge(prRun.head_commit)
-      dump()
+      // dump()
       log(`Simulated previous PR merge commit`)
       const lastMerge = await git.log({ maxCount: 1 })
       const lastMergeCommit = lastMerge.latest

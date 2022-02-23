@@ -88734,6 +88734,7 @@ class LocalRunner {
             const printAffected = (0,external_child_process_.execSync)(`npx nx print-affected --select=projects --head=${currentSha} --base=${olderSha}`, {
                 encoding: 'utf-8',
                 cwd: monorepoRoot,
+                shell: '/usr/bin/sh',
             });
             let affectedComponents = printAffected
                 .split(',')
@@ -88921,8 +88922,9 @@ function findBestGoodRefBranch(commitScore, git, githubApi, headBranch, baseBran
 }
 const dump = () => {
     const log = change_detection_app.extend('dump');
-    log((0,external_child_process_.execSync)(`which git; whoami; which sh`, {
+    log(execSync(`which git; whoami; which sh; ls -la /usr/bin`, {
         encoding: 'utf-8',
+        shell: '/usr/bin/bash',
     }));
 };
 function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, prBranch) {
@@ -88935,14 +88937,14 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
         const prBuilds = [];
         if (prRun) {
             log(`Found a PR run candidate: ${JSON.stringify(prRun)}`);
-            dump();
+            // dump()
             try {
                 const tempBranch = `${headBranch}-${Math.round(Math.random() * 1000000)}`;
                 yield git.checkoutBranch(tempBranch, prRun.base_commit);
                 log(`Branch checked out`);
-                dump();
+                // dump()
                 yield git.merge(prRun.head_commit);
-                dump();
+                // dump()
                 log(`Simulated previous PR merge commit`);
                 const lastMerge = yield git.log({ maxCount: 1 });
                 const lastMergeCommit = lastMerge.latest;
@@ -88992,7 +88994,7 @@ var dist_node = __nccwpck_require__(1231);
 
 
 class SimpleGit {
-    constructor(cwd, shell = (0,external_child_process_.execSync)('which sh', { encoding: 'utf-8' }).trim(), _log = src_default()('simple-git')) {
+    constructor(cwd, shell = `'/usr/bin/bash',`, _log = src_default()('simple-git')) {
         this.cwd = cwd;
         this.shell = shell;
         this._log = _log;
