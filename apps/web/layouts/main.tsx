@@ -67,6 +67,8 @@ const { publicRuntimeConfig = {} } = getConfig() ?? {}
 const IS_MOCK =
   process.env.NODE_ENV !== 'production' && process.env.API_MOCKS === 'true'
 
+const SHOULD_LINK_TO_SERVICE_WEB = false
+
 const absoluteUrl = (req, setLocalhost) => {
   let protocol = 'https:'
   let host = req
@@ -214,7 +216,11 @@ const Layout: NextComponentType<
   const isServiceWeb = pathIsRoute(asPath, 'serviceweb')
 
   return (
-    <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
+    <GlobalContextProvider
+      namespace={namespace}
+      shouldLinkToServiceWeb={SHOULD_LINK_TO_SERVICE_WEB}
+      isServiceWeb={isServiceWeb}
+    >
       <Page component="div">
         <Head>
           {preloadedFonts.map((href, index) => {
@@ -349,7 +355,11 @@ const Layout: NextComponentType<
             <Footer
               topLinks={footerUpperInfo}
               {...(activeLocale === 'is'
-                ? { linkToHelpWeb: linkResolver('serviceweb').href }
+                ? {
+                    linkToHelpWeb: SHOULD_LINK_TO_SERVICE_WEB
+                      ? linkResolver('serviceweb').href
+                      : '',
+                  }
                 : { topLinksContact: footerUpperContact })}
               bottomLinks={footerLowerMenu}
               middleLinks={footerMiddleMenu}
