@@ -475,7 +475,7 @@ export class CaseService {
   async getAll(user: TUser): Promise<Case[]> {
     return this.caseModel.findAll({
       include: includes,
-      order: [['courtDate', 'ASC'], ['created', 'DESC'], defendantsOrder],
+      order: [defendantsOrder],
       where: getCasesQueryFilter(user),
     })
   }
