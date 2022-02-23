@@ -237,8 +237,7 @@ const OverviewForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}
-          }`}
+          previousUrl={`${Constants.IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoading}
           nextUrl={`${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
         />
