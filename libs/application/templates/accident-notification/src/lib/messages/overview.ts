@@ -4,13 +4,13 @@ export const overview = {
   general: defineMessages({
     sectionTitle: {
       id: 'an.application:overview.general.sectionTitle',
-      defaultMessage: 'Yfirlit tilkynningar slyss',
+      defaultMessage: 'Yfirlit',
       description: 'Overview of accident report',
     },
     description: {
       id: 'an.application:overview.general.description',
       defaultMessage:
-        'Á þessari síðu má sjá upplýsingar um þann slasaða og nákvæma lýsingu á slysi, farðu vel yfir áður en þú sendir inn tilkynninguna.',
+        'Á þessari síðu má sjá upplýsingar um þann slasaða og nákvæma lýsingu á slysi, farðu vel yfir upplýsingarnar áður en þú sendir inn tilkynninguna.',
       description:
         'On this page you can see information about the injured and a detailed description of the accident, go over it carefully before submitting the report.',
     },
@@ -46,6 +46,12 @@ export const overview = {
       defaultMessage: 'Bæta við skjölum',
       description: 'Label for missing documents button in overview',
     },
+    hospitalSendsCertificate: {
+      id: 'an.application:overview.labels.hospitalSendsCertificate',
+      defaultMessage:
+        'Bráðamóttökuskrá - Ég mun óska eftir því að Landspítalinn sendi bráðamóttökuskrá til Sjúkratrygginga Íslands',
+      description: 'Label for hospital sends certificate in document list',
+    },
   }),
   alertMessage: defineMessages({
     title: {
@@ -56,21 +62,8 @@ export const overview = {
     description: {
       id: 'an.application:overview.alertMessage.description',
       defaultMessage:
-        'Áður en að Sjúkratryggingar Íslands fer yfir umsókn og tekur afstöðu til bótaskyldu þurfa eftirtalin fylgiskjöl að berast: ',
+        'Áður en að Sjúkratryggingar Íslands fara yfir umsókn og taka afstöðu til bótaskyldu þurfa að minnsta kosti eftirtalin fylgiskjöl að berast: ',
       description: 'Description of alert message that appears on overview page',
-    },
-  }),
-  forThirdParty: defineMessages({
-    description: {
-      id: 'an.application:overview.forThirdParty.description',
-      defaultMessage:
-        'Á þessari síðu má sjá upplýsingar um þann slasaða og nákvæma lýsingu á slysi, farðu vel yfir áður en þú staðfestir eða andmælir tilkynningu.',
-      description: 'Description visible for third party',
-    },
-    buttonText: {
-      id: 'an.application:overview.forThirdParty.buttonText',
-      defaultMessage: 'Athugasemd',
-      description: 'Comment button',
     },
   }),
 }

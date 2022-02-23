@@ -1,6 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
+ROOT=$(git rev-parse --show-toplevel)
+
 function main {
   echo "Fetching secret environment variables for $1"
   dir="${0%/*}"
@@ -11,14 +13,7 @@ function main {
     : > "$env_secret_file"
   fi
 
-  secrets=$(aws ssm --region eu-west-1 get-parameters-by-path \
-    --path "/k8s/$1/" --with-decryption --recursive \
-    --parameter-filters Key=Label,Option=Equals,Values=dev \
-    | npx jq -r '.Parameters | map(.Name |= split("/")) | .[] | [.Name[-1], .Value] | join("=")')
-
-  for secret in $secrets; do
-    echo "export $secret" >> "$env_secret_file"
-  done
+  ts-node --dir "$ROOT"/infra "$ROOT"/infra/src/cli/cli render-secrets --service="$1" >> "$env_secret_file"
 
   echo "Done"
 }

@@ -21,7 +21,7 @@ import {
   Typography,
 } from '@island.is/island-ui/core'
 
-import * as styles from './FormInfo.treat'
+import * as styles from './FormInfo.css'
 
 interface PropTypes {
   application: CompanyApplication

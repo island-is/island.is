@@ -1,9 +1,8 @@
 import { User } from '@island.is/auth-nest-tools'
-import {
-  PaymentScheduleAPI,
-  ScheduleType,
-} from '@island.is/clients/payment-schedule'
+import { DefaultApi, ScheduleType } from '@island.is/clients/payment-schedule'
+import { Logger } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
+import { PaymentScheduleService } from '../payment-schedule.service'
 import { PaymentScheduleResolver } from './payment-schedule.resolver'
 
 describe('PaymentScheduleResolver', () => {
@@ -20,9 +19,9 @@ describe('PaymentScheduleResolver', () => {
       providers: [
         PaymentScheduleResolver,
         {
-          provide: PaymentScheduleAPI,
+          provide: PaymentScheduleService,
           useFactory: () => ({
-            getConditions: jest.fn((nationalId: string) => ({
+            getConditions: jest.fn((user: User) => ({
               maxDebtAmount: 100000,
               totalDebtAmount: 10000,
               minPayment: 0,
@@ -40,9 +39,9 @@ describe('PaymentScheduleResolver', () => {
               wageReturns: false,
               alimony: 12000,
             })),
-            getDebts: jest.fn((nationalId: string) => [
+            getDebts: jest.fn((user: User) => [
               {
-                nationalId: nationalId,
+                nationalId: user.nationalId,
                 type: 'SR',
                 paymentSchedule: 'string',
                 organization: 'string',
@@ -60,7 +59,7 @@ describe('PaymentScheduleResolver', () => {
                 ],
               },
             ]),
-            getCurrentEmployer: jest.fn((nationalId: string) => ({
+            getCurrentEmployer: jest.fn((user: User) => ({
               employerNationalId: '0987654321',
               employerName: 'island.is',
             })),
@@ -79,7 +78,7 @@ describe('PaymentScheduleResolver', () => {
                 maxCountMonth: 12,
               }),
             ),
-            getPaymentDistribtion: jest.fn((nationalId: string) => ({
+            getPaymentDistribution: jest.fn((user: User) => ({
               nationalId: '1234567890',
               scheduleType: ScheduleType.FinesAndLegalCost,
               payments: [
@@ -92,6 +91,8 @@ describe('PaymentScheduleResolver', () => {
             })),
           }),
         },
+        DefaultApi,
+        Logger,
       ],
     }).compile()
 
@@ -127,7 +128,7 @@ describe('PaymentScheduleResolver', () => {
   })
 
   describe('debts', () => {
-    it('should get debs', async () => {
+    it('should get debts', async () => {
       const debts = await resolver.debts(mockedUser)
       expect(debts).toEqual([
         {
@@ -156,8 +157,8 @@ describe('PaymentScheduleResolver', () => {
     it('should get employer', async () => {
       const employer = await resolver.employer(mockedUser)
       expect(employer).toEqual({
-        name: 'island.is',
-        nationalId: '0987654321',
+        employerName: 'island.is',
+        employerNationalId: '0987654321',
       })
     })
   })

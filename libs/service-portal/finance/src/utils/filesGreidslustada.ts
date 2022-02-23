@@ -8,8 +8,8 @@ import { greidsluStadaHeaders } from './dataHeaders'
 const name = 'Staða ríkissjóður stofnanir'
 
 const getDataArray = (data: FinanceStatusDataType) =>
-  data.organizations.map((org: FinanceStatusOrganizationType) =>
-    org.chargeTypes.map((chargeType) => [
+  data?.organizations?.map((org: FinanceStatusOrganizationType) =>
+    org?.chargeTypes?.map((chargeType) => [
       chargeType.name,
       chargeType.totals,
       org.name,

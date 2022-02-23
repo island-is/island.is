@@ -1,3 +1,3 @@
-import Login from '@island.is/financial-aid-web/veita/src/routes/Login/login'
+import RedirectPage from '@island.is/financial-aid-web/veita/src/routes/RedirectPage/redirectPage'
 
-export default Login
+export default RedirectPage

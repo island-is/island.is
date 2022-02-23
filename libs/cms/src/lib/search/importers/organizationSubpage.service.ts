@@ -5,16 +5,24 @@ import { Entry } from 'contentful'
 import { IOrganizationSubpage } from '../../generated/contentfulTypes'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { mapOrganizationSubpage } from '../../models/organizationSubpage.model'
+import { extractStringsFromObject, removeField } from './utils'
 
 @Injectable()
 export class OrganizationSubpageSyncService
   implements CmsSyncProvider<IOrganizationSubpage> {
   processSyncData(entries: processSyncDataInput<IOrganizationSubpage>) {
-    return entries.filter(
+    const data = entries.filter(
       (entry: Entry<any>): entry is IOrganizationSubpage =>
         entry.sys.contentType.sys.id === 'organizationSubpage' &&
         !!entry.fields.title,
     )
+
+    data.forEach((entry) => {
+      // Remove the parent field in case there's a nested article underneath to prevent circularity
+      removeField(entry.fields.description, 'parent')
+    })
+
+    return data
   }
 
   doMapping(entries: IOrganizationSubpage[]) {
@@ -24,9 +32,12 @@ export class OrganizationSubpageSyncService
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapOrganizationSubpage(entry)
+          const content = extractStringsFromObject(mapped.description ?? [])
           return {
             _id: mapped.id,
             title: mapped.title,
+            content,
+            contentWordCount: content.split(/\s+/).length,
             type: 'webOrganizationSubpage',
             response: JSON.stringify({
               ...mapped,

@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client'
 
-export const CreateApplicationQuery = gql`
+export const CreateApplicationMutation = gql`
   mutation createApplication($input: CreateApplicationInput!) {
     createApplication(input: $input) {
       id
@@ -8,28 +8,10 @@ export const CreateApplicationQuery = gql`
   }
 `
 
-export const CreateApplicationEventQuery = gql`
-  mutation createApplicationEvent($input: CreateApplicationEventInput!) {
-    createApplicationEvent(input: $input) {
-      id
-    }
-  }
-`
-
-export const CreateApplicationFiles = gql`
+export const ApplicationFilesMutation = gql`
   mutation createApplicationFiles($input: CreateApplicationFilesInput!) {
     createApplicationFiles(input: $input) {
       success
-    }
-  }
-`
-
-export const GetMunicipalityQuery = gql`
-  query GetMunicipalityQuery($input: MunicipalityQueryInput!) {
-    municipality(input: $input) {
-      id
-      name
-      settings
     }
   }
 `
@@ -49,20 +31,114 @@ export const CurrentUserQuery = gql`
       nationalId
       name
       phoneNumber
-      currentApplication {
+      postalCode
+      spouse {
+        hasPartnerApplied
+        hasFiles
+        applicantName
+        applicantSpouseEmail
+      }
+      currentApplicationId
+    }
+  }
+`
+
+export const ApplicationQuery = gql`
+  query GetApplicationQuery($input: ApplicationInput!) {
+    application(input: $input) {
+      id
+      homeCircumstances
+      usePersonalTaxCredit
+      state
+      amount {
+        aidAmount
+        income
+        personalTaxCredit
+        spousePersonalTaxCredit
+        tax
+        finalAmount
+        deductionFactors {
+          description
+          amount
+        }
+      }
+      rejection
+      created
+      modified
+      municipalityCode
+      spouseNationalId
+      applicationEvents {
         id
-        state
-        homeCircumstances
-        usePersonalTaxCredit
+        applicationId
+        eventType
+        comment
+        created
       }
     }
   }
 `
 
-export const UpdateApplicationMutation = gql`
+export const ApplicationMutation = gql`
   mutation UpdateApplicationMutation($input: UpdateApplicationInput!) {
     updateApplication(input: $input) {
       id
+      homeCircumstances
+      usePersonalTaxCredit
+      state
+      amount {
+        aidAmount
+        income
+        personalTaxCredit
+        spousePersonalTaxCredit
+        tax
+        finalAmount
+        deductionFactors {
+          description
+          amount
+        }
+      }
+      rejection
+      created
+      modified
+      municipalityCode
+      spouseNationalId
+      applicationEvents {
+        id
+        applicationId
+        eventType
+        comment
+        created
+      }
+    }
+  }
+`
+
+export const NationalRegistryUserQuery = gql`
+  query getNationalRegistryUserQuery {
+    municipalityNationalRegistryUserV2 {
+      nationalId
+      fullName
+      address {
+        streetName
+        postalCode
+        city
+        municipalityCode
+      }
+      spouse {
+        nationalId
+        maritalStatus
+        name
+      }
+    }
+  }
+`
+
+export const PersonalTaxReturnQuery = gql`
+  query personalTaxReturnQuery {
+    municipalitiesPersonalTaxReturn {
+      key
+      name
+      size
     }
   }
 `

@@ -1,29 +1,34 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 
 import { useRouter } from 'next/router'
 
 import { Box, Input, Button } from '@island.is/island-ui/core'
-import cn from 'classnames'
 
-import * as styles from './CommentSection.treat'
 import { useMutation } from '@apollo/client'
-import { CreateApplicationEventQuery } from '@island.is/financial-aid-web/veitagraphql/sharedGql'
-import { ApplicationEventType } from '@island.is/financial-aid/shared'
+import { ApplicationEventMutation } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
+import {
+  Application,
+  ApplicationEventType,
+} from '@island.is/financial-aid/shared/lib'
+import { AdminContext } from '../AdminProvider/AdminProvider'
+import AnimateHeight from 'react-animate-height'
 
 interface Props {
   className?: string
+  setApplication: React.Dispatch<React.SetStateAction<Application | undefined>>
 }
 
-const CommentSection = ({ className }: Props) => {
+const CommentSection = ({ className, setApplication }: Props) => {
   const router = useRouter()
 
+  const { admin } = useContext(AdminContext)
   const [showInput, setShowInput] = useState<boolean>(false)
   const [comment, setComment] = useState<string>()
 
   const [
     createApplicationEventMutation,
     { loading: isCreatingApplicationEvent },
-  ] = useMutation(CreateApplicationEventQuery)
+  ] = useMutation(ApplicationEventMutation)
 
   const saveStaffComment = async (staffComment: string | undefined) => {
     if (staffComment) {
@@ -33,12 +38,15 @@ const CommentSection = ({ className }: Props) => {
             applicationId: router.query.id,
             comment: staffComment,
             eventType: ApplicationEventType.STAFFCOMMENT,
+            staffNationalId: admin?.nationalId,
+            staffName: admin?.name,
           },
         },
       })
 
       if (data) {
-        setComment(undefined)
+        setApplication(data.createApplicationEvent)
+        setComment('')
         setShowInput(false)
       }
     }
@@ -46,27 +54,25 @@ const CommentSection = ({ className }: Props) => {
 
   return (
     <Box marginBottom={3} className={`${className} `}>
-      <Button
-        icon={showInput ? 'close' : 'open'}
-        size="small"
-        iconType="outline"
-        onClick={() => {
-          setShowInput(!showInput)
-        }}
-      >
-        {showInput ? 'Loka' : 'Skrifa athugasemd'}
-      </Button>
+      <Box marginBottom={3}>
+        <Button
+          icon={showInput ? 'close' : 'open'}
+          size="small"
+          iconType="outline"
+          onClick={() => {
+            setShowInput((showInput) => !showInput)
+          }}
+        >
+          {showInput ? 'Loka' : 'Skrifa athugasemd'}
+        </Button>
+      </Box>
 
-      <div
-        className={cn({
-          [`${styles.inputFieldContainer}`]: true,
-          [`${styles.showInput}`]: showInput,
-        })}
-      >
+      <AnimateHeight duration={250} height={showInput ? 'auto' : 0}>
         <Input
           backgroundColor="blue"
           label="Athugasemd"
           name="comment"
+          value={comment}
           rows={4}
           textarea
           onChange={(event) => {
@@ -86,7 +92,7 @@ const CommentSection = ({ className }: Props) => {
             Vista athugasemd
           </Button>
         </Box>
-      </div>
+      </AnimateHeight>
     </Box>
   )
 }

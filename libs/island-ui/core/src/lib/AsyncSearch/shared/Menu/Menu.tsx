@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react'
 import cn from 'classnames'
 
-import * as styles from './Menu.treat'
+import * as styles from './Menu.css'
 
 export interface MenuProps {
   comp?: React.ElementType

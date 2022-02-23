@@ -4,12 +4,12 @@ import {
   MinistrySlug,
   RegName,
   RegQueryName,
+  Regulation,
+  RegulationRedirect,
+  MinistryList,
   Year,
 } from '@island.is/regulations'
 import {
-  Regulation,
-  RegulationMinistryList,
-  RegulationRedirect,
   RegulationSearchResults,
   RegulationYears,
 } from '@island.is/regulations/web'
@@ -22,7 +22,7 @@ export const demoRegulationsYears: RegulationYears = [
   2021 as Year,
 ]
 
-export const demoRegulationsMinistries: RegulationMinistryList = [
+export const demoRegulationsMinistries: MinistryList = [
   {
     name: 'Forsætisráðuneyti',
     order: 1,
@@ -79,12 +79,17 @@ export const demoRegulation: Regulation = {
     slug: 'ssvrn' as MinistrySlug,
   },
   lawChapters: [],
+  originalDoc: 'https://www.stjornartidindi.is/foobar.pdf',
+  pdfVersion: 'https://files.reglugerd.is/pdf/0244-2021/current',
+
+  repealed: false,
 
   // timelineDate: '2021-03-05' as ISODate,
   // showingDiff: {
   //   from: '2021-03-05' as ISODate,
   //   to: '2021-02-18' as ISODate,
   // },
+  // pdfVersion: 'https://files.reglugerd.is/pdf/0244-2021/d/2021-03-05/diff',
 }
 
 export const demoRegulationRedirect: RegulationRedirect = {

@@ -1,11 +1,12 @@
 import React from 'react'
+import { PlausiblePageviewDetail } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import { useQuery, gql } from '@apollo/client'
-
 import { Query } from '@island.is/api/schema'
 import {
   Box,
+  Divider,
   GridColumn,
   GridRow,
   Stack,
@@ -17,22 +18,13 @@ import {
   ServicePortalModuleComponent,
   UserInfoLine,
   m,
+  ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  natRegGenderMessageDescriptorRecord,
-  natRegMaritalStatusMessageDescriptorRecord,
-} from '../../helpers/localizationHelpers'
+import { Parents } from '../../components/Parents/Parents'
 
-const NationalRegistryFamilyQuery = gql`
-  query NationalRegistryFamilyQuery {
-    nationalRegistryFamily {
-      fullName
-      nationalId
-      gender
-    }
-  }
-`
+import { NATIONAL_REGISTRY_CHILDREN } from '../../lib/queries/getNationalChildren'
+
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
   defaultMessage: 'Gögn fundust ekki',
@@ -41,12 +33,18 @@ const dataNotFoundMessage = defineMessage({
 const FamilyMember: ServicePortalModuleComponent = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
-  const { data, loading, error } = useQuery<Query>(NationalRegistryFamilyQuery)
-  const { nationalRegistryFamily } = data || {}
+
+  PlausiblePageviewDetail(
+    ServicePortalPath.FamilyMember.replace(':nationalId', 'child'),
+  )
+
+  const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_CHILDREN)
+  const { nationalRegistryChildren } = data || {}
+
   const { nationalId }: { nationalId: string | undefined } = useParams()
 
   const person =
-    nationalRegistryFamily?.find((x) => x.nationalId === nationalId) || null
+    nationalRegistryChildren?.find((x) => x.nationalId === nationalId) || null
 
   if (!nationalId || error || (!loading && !person))
     return (
@@ -64,7 +62,7 @@ const FamilyMember: ServicePortalModuleComponent = () => {
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
             <Stack space={2}>
-              <Text variant="h1" as="h1">
+              <Text variant="h3" as="h1">
                 {person?.fullName || ''}
               </Text>
             </Stack>
@@ -73,26 +71,111 @@ const FamilyMember: ServicePortalModuleComponent = () => {
       </Box>
       <Stack space={1}>
         <UserInfoLine
-          label={defineMessage(m.displayName)}
+          title={'Mín skráning'}
+          label={defineMessage(m.fullName)}
           content={person?.fullName || '...'}
           loading={loading}
         />
+        <Divider />
         <UserInfoLine
           label={defineMessage(m.natreg)}
           content={formatNationalId(nationalId)}
           loading={loading}
         />
+        <Divider />
+        <UserInfoLine
+          label={defineMessage(m.legalResidence)}
+          content={person?.homeAddress || '...'}
+          loading={loading}
+        />
+        <Divider />
+        <Box marginY={3} />
+
+        <UserInfoLine
+          title={formatMessage(m.baseInfo)}
+          label={formatMessage({
+            id: 'sp.family:birthplace',
+            defaultMessage: 'Fæðingarstaður',
+          })}
+          content={
+            error
+              ? formatMessage(dataNotFoundMessage)
+              : person?.birthplace || ''
+          }
+          loading={loading}
+        />
+        <Divider />
+        <UserInfoLine
+          label={defineMessage(m.religion)}
+          content={
+            error ? formatMessage(dataNotFoundMessage) : person?.religion || ''
+          }
+          loading={loading}
+        />
+        <Divider />
         <UserInfoLine
           label={defineMessage(m.gender)}
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : person?.gender
-              ? formatMessage(
-                  natRegGenderMessageDescriptorRecord[person.gender],
-                )
-              : ''
+              : person?.genderDisplay || ''
           }
+          loading={loading}
+        />
+        <Divider />
+        <UserInfoLine
+          label={formatMessage(m.citizenship)}
+          content={
+            error
+              ? formatMessage(dataNotFoundMessage)
+              : person?.nationality || ''
+          }
+          loading={loading}
+        />
+        <Divider />
+        <Box marginY={3} />
+        <Parents
+          title={formatMessage({
+            id: 'sp.family:custody-and-parents',
+            defaultMessage: 'Forsjá & foreldrar',
+          })}
+          label={formatMessage({
+            id: 'sp.family:parents',
+            defaultMessage: 'Foreldrar',
+          })}
+          parent1={person?.nameCustody1}
+          parent2={person?.nameCustody2}
+          loading={loading}
+        />
+        <Parents
+          label={formatMessage(m.natreg)}
+          parent1={person?.custody1}
+          parent2={person?.custody2}
+          loading={loading}
+        />
+        <Divider />
+        <Parents
+          label={formatMessage({
+            id: 'sp.family:custody-parents',
+            defaultMessage: 'Forsjár foreldrar',
+          })}
+          parent1={person?.nameCustody1}
+          parent2={person?.nameCustody2}
+          loading={loading}
+        />
+        <Parents
+          label={formatMessage(m.natreg)}
+          parent1={person?.custody1}
+          parent2={person?.custody2}
+          loading={loading}
+        />
+        <Parents
+          label={formatMessage({
+            id: 'sp.family:custody-status',
+            defaultMessage: 'Staða forsjár',
+          })}
+          parent1={person?.custodyText1}
+          parent2={person?.custodyText2}
           loading={loading}
         />
       </Stack>

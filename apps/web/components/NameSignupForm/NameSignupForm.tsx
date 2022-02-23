@@ -12,7 +12,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './NameSignupForm.treat'
+import * as styles from './NameSignupForm.css'
 import {
   MailingListSignupSlice,
   Namespace,

@@ -51,6 +51,9 @@ export class FlightService {
   ) {}
 
   isADSPostalCode(postalcode: number): boolean {
+    if (postalcode === null) {
+      return false
+    }
     if (
       postalcode >= ADS_POSTAL_CODES['Reykhólahreppur'] &&
       postalcode <= ADS_POSTAL_CODES['Þingeyri']

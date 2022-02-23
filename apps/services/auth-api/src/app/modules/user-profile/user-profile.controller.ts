@@ -22,7 +22,6 @@ export class UserProfileController {
   async findIndividual(@CurrentUser() user: User): Promise<IndividuaInfoDTO> {
     return this.userProfileService.findIndividual(
       user,
-      environment.nationalRegistry.xroad.clientId ?? '',
       environment.nationalRegistry.authMiddlewareOptions,
     )
   }

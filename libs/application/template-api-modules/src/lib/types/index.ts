@@ -1,8 +1,16 @@
-import { Application } from '@island.is/application/core'
+import {
+  Application,
+  ApplicationWithAttachments,
+} from '@island.is/application/core'
 import { Config as DrivingLicenseApiConfig } from '@island.is/api/domains/driving-license'
+import { Config as CriminalRecordConfig } from '@island.is/api/domains/criminal-record'
 import { PaymentServiceOptions } from '@island.is/clients/payment'
 import { Message } from '@island.is/email-service'
-import { PartyApplicationServiceOptions } from '../modules/templates/party-application/party-application.service'
+import { User } from '@island.is/auth-nest-tools'
+import { PaymentScheduleServiceOptions } from '@island.is/clients/payment-schedule'
+import { HealthInsuranceV2Options } from '@island.is/clients/health-insurance-v2'
+import { DataProtectionComplaintClientConfig } from '@island.is/clients/data-protection-complaint'
+import { Injectable, Type } from '@nestjs/common'
 
 export interface BaseTemplateAPIModuleConfig {
   xRoadBasePathWithEnv: string
@@ -16,11 +24,6 @@ export interface BaseTemplateAPIModuleConfig {
     }
   }
   baseApiUrl: string
-  syslumenn: {
-    url: string
-    username: string
-    password: string
-  }
   email: {
     sender: string
     address: string
@@ -31,22 +34,22 @@ export interface BaseTemplateAPIModuleConfig {
     password: string
   }
   drivingLicense: DrivingLicenseApiConfig
+  criminalRecord: CriminalRecordConfig
   attachmentBucket: string
   presignBucket: string
   paymentOptions: PaymentServiceOptions
-  partyLetter: {
-    partyLetterRegistryApiBasePath: string
+  generalPetition: {
     endorsementsApiBasePath: string
   }
-  partyApplication: {
-    endorsementsApiBasePath: string
-    options: PartyApplicationServiceOptions
-  }
+  paymentScheduleConfig: PaymentScheduleServiceOptions
+  healthInsuranceV2: HealthInsuranceV2Options
+  dataProtectionComplaint: DataProtectionComplaintClientConfig
+  applicationService: Type<BaseTemplateApiApplicationService>
 }
 
 export interface TemplateApiModuleActionProps {
-  application: Application
-  authorization: string
+  application: ApplicationWithAttachments
+  auth: User
 }
 
 export interface EmailTemplateGeneratorProps {
@@ -72,3 +75,17 @@ export type AttachmentEmailTemplateGenerator = (
   fileContent: string,
   email: string,
 ) => Message
+
+@Injectable()
+export abstract class BaseTemplateApiApplicationService {
+  abstract saveAttachmentToApplicaton(
+    application: ApplicationWithAttachments,
+    fileName: string,
+    buffer: Buffer,
+    uploadParameters?: {
+      ContentType?: string
+      ContentDisposition?: string
+      ContentEncoding?: string
+    },
+  ): Promise<string>
+}

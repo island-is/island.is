@@ -12,11 +12,13 @@ import {
   ColorSchemeContext,
   ColorSchemes,
 } from '@island.is/island-ui/core'
+import getConfig from 'next/config'
 import { NextComponentType, NextPageContext } from 'next'
 import { Screen, GetInitialPropsContext } from '../types'
 import Cookies from 'js-cookie'
 import * as Sentry from '@sentry/node'
 import { RewriteFrames } from '@sentry/integrations'
+import { userMonitoring } from '@island.is/user-monitoring'
 import { useRouter } from 'next/router'
 import {
   Header,
@@ -53,8 +55,14 @@ import {
   LinkType,
   useLinkResolver,
   linkResolver as LinkResolver,
+  pathIsRoute,
 } from '../hooks/useLinkResolver'
 import { stringHash } from '@island.is/web/utils/stringHash'
+
+import Illustration from './Illustration'
+import * as styles from './main.css'
+
+const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
 const IS_MOCK =
   process.env.NODE_ENV !== 'production' && process.env.API_MOCKS === 'true'
@@ -82,6 +90,7 @@ export interface LayoutProps {
   headerColorScheme?: ColorSchemes
   headerButtonColorScheme?: ButtonTypes['colorScheme']
   showFooter?: boolean
+  showFooterIllustration?: boolean
   categories: GetArticleCategoriesQuery['getArticleCategories']
   topMenuCustomLinks?: FooterLinkProps[]
   footerUpperInfo?: FooterLinkProps[]
@@ -110,6 +119,20 @@ if (environment.sentryDsn) {
   })
 }
 
+if (
+  publicRuntimeConfig.ddRumApplicationId &&
+  publicRuntimeConfig.ddRumClientToken &&
+  typeof window !== 'undefined'
+) {
+  userMonitoring.initDdRum({
+    service: 'islandis',
+    applicationId: publicRuntimeConfig.ddRumApplicationId,
+    clientToken: publicRuntimeConfig.ddRumClientToken,
+    env: publicRuntimeConfig.environment || 'local',
+    version: publicRuntimeConfig.appVersion || 'local',
+  })
+}
+
 const Layout: NextComponentType<
   GetInitialPropsContext<NextPageContext>,
   LayoutProps,
@@ -121,13 +144,13 @@ const Layout: NextComponentType<
   headerColorScheme,
   headerButtonColorScheme,
   showFooter = true,
+  showFooterIllustration = false,
   categories,
   topMenuCustomLinks,
   footerUpperInfo,
   footerUpperContact,
   footerLowerMenu,
   footerMiddleMenu,
-  footerTagsMenu,
   namespace,
   alertBannerContent,
   respOrigin,
@@ -188,18 +211,21 @@ const Layout: NextComponentType<
     '/fonts/ibm-plex-sans-v7-latin-600.woff2',
   ]
 
+  const isServiceWeb = pathIsRoute(asPath, 'serviceweb')
+
   return (
-    <GlobalContextProvider namespace={namespace}>
+    <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
       <Page component="div">
         <Head>
           {preloadedFonts.map((href, index) => {
             return (
               <link
+                key={index}
                 rel="preload"
                 href={href}
                 as="font"
                 type="font/woff2"
-                crossOrigin="true"
+                crossOrigin="anonymous"
               />
             )
           })}
@@ -317,21 +343,23 @@ const Layout: NextComponentType<
         </MenuTabsContext.Provider>
         {showFooter && (
           <Hidden print={true}>
+            {showFooterIllustration && (
+              <Illustration className={styles.illustration} />
+            )}
             <Footer
               topLinks={footerUpperInfo}
-              topLinksContact={footerUpperContact}
+              {...(activeLocale === 'is'
+                ? { linkToHelpWeb: linkResolver('serviceweb').href }
+                : { topLinksContact: footerUpperContact })}
               bottomLinks={footerLowerMenu}
               middleLinks={footerMiddleMenu}
               bottomLinksTitle={t.siteExternalTitle}
-              tagLinks={footerTagsMenu}
               middleLinksTitle={String(namespace.footerMiddleLabel)}
-              tagLinksTitle={String(namespace.footerRightLabel)}
               languageSwitchLink={{
                 title: activeLocale === 'en' ? 'Íslenska' : 'English',
                 href: activeLocale === 'en' ? '/' : '/en',
               }}
               showMiddleLinks
-              showTagLinks
             />
           </Hidden>
         )}
@@ -448,6 +476,7 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
       })
       .then((res) => res.data.getGroupedMenu),
   ])
+
   const alertBannerId = `alert-${stringHash(JSON.stringify(alertBanner))}`
   const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
 
@@ -572,9 +601,7 @@ export const withMainLayout = <T,>(
     ])
 
     const themeConfig: Partial<LayoutProps> =
-      'darkTheme' in componentProps
-        ? { headerColorScheme: 'white', headerButtonColorScheme: 'negative' }
-        : {}
+      'themeConfig' in componentProps ? componentProps['themeConfig'] : {}
 
     return {
       layoutProps: { ...layoutProps, ...layoutConfig, ...themeConfig },

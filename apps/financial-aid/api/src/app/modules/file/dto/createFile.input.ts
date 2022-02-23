@@ -5,7 +5,7 @@ import { Field, InputType } from '@nestjs/graphql'
 import {
   CreateApplicationFile,
   FileType,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 
 @InputType()
 export class CreateApplicationFileInput implements CreateApplicationFile {

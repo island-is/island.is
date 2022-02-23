@@ -1,104 +1,170 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useIntl } from 'react-intl'
-import type { Case, Institution } from '@island.is/judicial-system/types'
+import { ValueType } from 'react-select'
+
 import {
+  BlueBox,
+  CaseInfo,
   FormContentContainer,
   FormFooter,
-} from '@island.is/judicial-system-web/src/shared-components'
-import { Box, Text } from '@island.is/island-ui/core'
-import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
+} from '@island.is/judicial-system-web/src/components'
+import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
 import {
-  FormSettings,
-  useCaseFormHelper,
-} from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
-import { icRequestedHearingArrangements } from '@island.is/judicial-system-web/messages'
+  removeTabsValidateAndSet,
+  setAndSendDateToServer,
+  setAndSendToServer,
+  validateAndSendToServer,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
+import { icRequestedHearingArrangements as m } from '@island.is/judicial-system-web/messages'
+import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import type {
+  Case,
+  Institution,
+  UpdateCase,
+  User,
+} from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
+import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
+import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
+import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  user: User
   prosecutors: ReactSelectOption[]
   courts: Institution[]
   isLoading: boolean
-  handleNextButtonClick: () => Promise<void>
+  onNextButtonClick: () => Promise<void>
+  onProsecutorChange: (selectedOption: ValueType<ReactSelectOption>) => boolean
+  onCourtChange: (courtId: string) => boolean
+  updateCase: (id: string, updateCase: UpdateCase) => Promise<Case | undefined>
 }
 
 const HearingArrangementsForms: React.FC<Props> = (props) => {
   const {
     workingCase,
     setWorkingCase,
+    user,
     prosecutors,
     courts,
     isLoading,
-    handleNextButtonClick,
+    onNextButtonClick,
+    onProsecutorChange,
+    onCourtChange,
+    updateCase,
   } = props
 
   const { formatMessage } = useIntl()
-
-  const validations: FormSettings = {
-    requestedCourtDate: {
-      validations: ['empty'],
-    },
-    prosecutor: {
-      validations: ['empty'],
-    },
-    court: {
-      validations: ['empty'],
-    },
-  }
-  const [, setRequestedCourtDateIsValid] = useState<boolean>(
-    workingCase.requestedCourtDate !== null,
-  )
-  const { isValid } = useCaseFormHelper(
-    workingCase,
-    setWorkingCase,
-    validations,
-  )
-
-  const { updateCase } = useCase()
 
   return (
     <>
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            {formatMessage(icRequestedHearingArrangements.heading)}
+            {formatMessage(m.heading)}
           </Text>
+        </Box>
+        <Box component="section" marginBottom={7}>
+          <CaseInfo workingCase={workingCase} userRole={user.role} />
         </Box>
         {prosecutors && (
           <Box component="section" marginBottom={5}>
-            <SelectProsecutor
-              workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
-              prosecutors={prosecutors}
-            />
+            <BlueBox>
+              <Box marginBottom={2}>
+                <SelectProsecutor
+                  workingCase={workingCase}
+                  prosecutors={prosecutors}
+                  onChange={onProsecutorChange}
+                />
+              </Box>
+              <Checkbox
+                name="isHeightenedSecurityLevel"
+                label={formatMessage(
+                  m.sections.prosecutor.heightenSecurityLevelLabel,
+                )}
+                tooltip={formatMessage(
+                  m.sections.prosecutor.heightenSecurityLevelInfo,
+                )}
+                disabled={
+                  user.id !== workingCase.creatingProsecutor?.id &&
+                  user.id !==
+                    (((workingCase as unknown) as { prosecutorId: string })
+                      .prosecutorId === undefined
+                      ? workingCase.prosecutor?.id
+                      : ((workingCase as unknown) as { prosecutorId: string })
+                          .prosecutorId)
+                }
+                checked={workingCase.isHeightenedSecurityLevel}
+                onChange={(event) =>
+                  setAndSendToServer(
+                    'isHeightenedSecurityLevel',
+                    event.target.checked,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }
+                large
+                filled
+              />
+            </BlueBox>
           </Box>
         )}
         {courts && (
           <Box component="section" marginBottom={5}>
             <SelectCourt
               workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
               courts={courts}
+              onChange={onCourtChange}
             />
           </Box>
         )}
-        <Box component="section" marginBottom={10}>
+        <Box component="section" marginBottom={5}>
           <RequestCourtDate
             workingCase={workingCase}
             onChange={(date: Date | undefined, valid: boolean) =>
-              newSetAndSendDateToServer(
+              setAndSendDateToServer(
                 'requestedCourtDate',
                 date,
                 valid,
                 workingCase,
                 setWorkingCase,
-                setRequestedCourtDateIsValid,
+                updateCase,
+              )
+            }
+          />
+        </Box>
+        <Box component="section" marginBottom={10}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              {formatMessage(m.sections.translator.heading)}
+            </Text>
+          </Box>
+          <Input
+            data-testid="translator"
+            name="translator"
+            autoComplete="off"
+            label={formatMessage(m.sections.translator.label)}
+            placeholder={formatMessage(m.sections.translator.placeholder)}
+            value={workingCase.translator || ''}
+            onChange={(event) =>
+              removeTabsValidateAndSet(
+                'translator',
+                event.target.value,
+                [],
+                workingCase,
+                setWorkingCase,
+              )
+            }
+            onBlur={(event) =>
+              validateAndSendToServer(
+                'traslator',
+                event.target.value,
+                [],
+                workingCase,
                 updateCase,
               )
             }
@@ -108,8 +174,8 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${Constants.IC_DEFENDANT_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={async () => await handleNextButtonClick()}
-          nextIsDisabled={!isValid}
+          onNextButtonClick={async () => await onNextButtonClick()}
+          nextIsDisabled={!isHearingArrangementsStepValidIC(workingCase)}
           nextIsLoading={isLoading}
         />
       </FormContentContainer>

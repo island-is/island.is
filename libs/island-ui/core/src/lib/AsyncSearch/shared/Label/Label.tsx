@@ -1,6 +1,6 @@
 import React from 'react'
 
-import * as styles from './Label.treat'
+import * as styles from './Label.css'
 
 export const Label: React.FC<
   React.DetailedHTMLProps<

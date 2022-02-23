@@ -1,7 +1,12 @@
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useEffect, useState, useMemo } from 'react'
+import { useWindowSize } from 'react-use'
+import { useRouter } from 'next/router'
+import NextLink from 'next/link'
+import getConfig from 'next/config'
+import { theme } from '@island.is/island-ui/theme'
+import { LayoutProps } from '@island.is/web/layouts/main'
 import {
   Image,
-  LinkGroup,
   Organization,
   OrganizationPage,
 } from '@island.is/web/graphql/schema'
@@ -12,19 +17,18 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Hidden,
   Link,
   Navigation,
   NavigationItem,
   ProfileCard,
   Stack,
   Text,
+  Button,
+  Inline,
 } from '@island.is/island-ui/core'
-import NextLink from 'next/link'
 import {
   ChatPanel,
   HeadWithSocialSharing,
-  Main,
   Sticky,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
@@ -35,14 +39,14 @@ import {
 } from './Themes/SjukratryggingarTheme'
 import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
 import { DefaultHeader } from './Themes/DefaultTheme'
-import getConfig from 'next/config'
 import {
   UtlendingastofnunFooter,
   UtlendingastofnunHeader,
 } from './Themes/UtlendingastofnunTheme'
 import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
-import { useRouter } from 'next/router'
-import * as styles from './OrganizationWrapper.treat'
+import { OrganizationAlert } from '../OrganizationAlert/OrganizationAlert'
+
+import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
   title: string
@@ -63,6 +67,7 @@ interface WrapperProps {
   stickySidebar?: boolean
   minimal?: boolean
   showSecondaryMenu?: boolean
+  showExternalLinks?: boolean
 }
 
 interface HeaderProps {
@@ -70,6 +75,29 @@ interface HeaderProps {
 }
 
 export const lightThemes = ['digital_iceland', 'utlendingastofnun']
+export const footerEnabled = ['syslumenn']
+
+export const getThemeConfig = (
+  theme: string,
+): { themeConfig: Partial<LayoutProps> } => {
+  if (theme === 'sjukratryggingar')
+    return {
+      themeConfig: {
+        headerButtonColorScheme: 'blueberry',
+        headerColorScheme: 'blueberry',
+      },
+    }
+
+  const isLightTheme = lightThemes.includes(theme)
+  return !isLightTheme
+    ? {
+        themeConfig: {
+          headerColorScheme: 'white',
+          headerButtonColorScheme: 'negative',
+        },
+      }
+    : { themeConfig: {} }
+}
 
 const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   switch (organizationPage.theme) {
@@ -86,6 +114,40 @@ const OrganizationHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
   }
 }
 
+interface ExternalLinksProps {
+  organizationPage: OrganizationPage
+}
+
+export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
+  organizationPage,
+}) => {
+  if (organizationPage.externalLinks) {
+    return (
+      <Box
+        display={['none', 'none', 'flex', 'flex']}
+        justifyContent="flexEnd"
+        marginBottom={4}
+      >
+        <Inline space={2}>
+          {organizationPage.externalLinks.map((link, index) => (
+            <Link href={link.url} key={'organization-external-link-' + index}>
+              <Button
+                colorScheme="light"
+                icon="open"
+                iconType="outline"
+                size="small"
+              >
+                {link.text}
+              </Button>
+            </Link>
+          ))}
+        </Inline>
+      </Box>
+    )
+  }
+  return null
+}
+
 interface FooterProps {
   organizations: Array<Organization>
   force?: boolean
@@ -95,8 +157,6 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
   organizations,
   force = false,
 }) => {
-  const footerEnabled = ['syslumenn']
-
   const organization = force
     ? organizations[0]
     : organizations.find((x) => footerEnabled.includes(x.slug))
@@ -189,6 +249,22 @@ const SecondaryMenu = ({
   </Box>
 )
 
+const getActiveNavigationItemTitle = (
+  navigationItems: NavigationItem[],
+  clientUrl: string,
+) => {
+  for (const item of navigationItems) {
+    if (clientUrl === item.href) {
+      return item.title
+    }
+    for (const childItem of item.items) {
+      if (clientUrl === childItem.href) {
+        return childItem.title
+      }
+    }
+  }
+}
+
 export const OrganizationWrapper: React.FC<WrapperProps> = ({
   pageTitle,
   pageDescription,
@@ -203,15 +279,25 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   children,
   minimal = false,
   showSecondaryMenu = true,
+  showExternalLinks = false,
 }) => {
-  const Router = useRouter()
+  const router = useRouter()
+  const { width } = useWindowSize()
+  const [isMobile, setIsMobile] = useState<boolean | undefined>()
+
+  useEffect(() => setIsMobile(width < theme.breakpoints.md), [width])
 
   const secondaryNavList: NavigationItem[] =
     organizationPage.secondaryMenu?.childrenLinks.map(({ text, url }) => ({
       title: text,
       href: url,
-      active: Router.asPath === url,
+      active: router.asPath === url,
     })) ?? []
+
+  const activeNavigationItemTitle = useMemo(
+    () => getActiveNavigationItemTitle(navigationData.items, router.asPath),
+    [navigationData.items, router.asPath],
+  )
 
   const metaTitleSuffix =
     pageTitle !== organizationPage.title ? ` | ${organizationPage.title}` : ''
@@ -229,20 +315,66 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         imageHeight={pageFeaturedImage?.height?.toString()}
       />
       <OrganizationHeader organizationPage={organizationPage} />
-      <Main>
-        {!minimal && (
-          <SidebarLayout
-            paddingTop={[2, 2, 9]}
-            paddingBottom={[4, 4, 4]}
-            isSticky={false}
-            fullWidthContent={fullWidthContent}
-            sidebarContent={
-              <SidebarContainer>
+      {organizationPage.alertBanner && (
+        <OrganizationAlert
+          alertBanner={organizationPage.alertBanner}
+          centered={true}
+          marginTop={10}
+        />
+      )}
+      {!minimal && (
+        <SidebarLayout
+          paddingTop={[2, 2, 9]}
+          paddingBottom={[4, 4, 4]}
+          isSticky={false}
+          fullWidthContent={fullWidthContent}
+          sidebarContent={
+            <SidebarContainer>
+              <Navigation
+                baseId="pageNav"
+                items={navigationData.items}
+                title={navigationData.title}
+                activeItemTitle={activeNavigationItemTitle}
+                renderLink={(link, item) => {
+                  return item?.href ? (
+                    <NextLink href={item?.href}>{link}</NextLink>
+                  ) : (
+                    link
+                  )
+                }}
+              />
+              {showSecondaryMenu && (
+                <>
+                  {organizationPage.secondaryMenu && (
+                    <SecondaryMenu
+                      title={organizationPage.secondaryMenu.name}
+                      items={secondaryNavList}
+                    />
+                  )}
+                  {organizationPage.sidebarCards.map((card) => (
+                    <ProfileCard
+                      title={card.title}
+                      description={card.content}
+                      link={card.link}
+                      image="https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png"
+                      size="small"
+                    />
+                  ))}
+                </>
+              )}
+              {sidebarContent}
+            </SidebarContainer>
+          }
+        >
+          {isMobile && (
+            <Box className={styles.menuStyle}>
+              <Box marginY={2}>
                 <Navigation
-                  baseId="pageNav"
+                  baseId="pageNavMobile"
+                  isMenuDialog={true}
                   items={navigationData.items}
                   title={navigationData.title}
-                  activeItemTitle={navigationData.activeItemTitle}
+                  activeItemTitle={activeNavigationItemTitle}
                   renderLink={(link, item) => {
                     return item?.href ? (
                       <NextLink href={item?.href}>{link}</NextLink>
@@ -251,38 +383,15 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                     )
                   }}
                 />
-                {showSecondaryMenu && (
-                  <>
-                    {organizationPage.secondaryMenu && (
-                      <SecondaryMenu
-                        title={organizationPage.secondaryMenu.name}
-                        items={secondaryNavList}
-                      />
-                    )}
-                    {organizationPage.sidebarCards.map((card) => (
-                      <ProfileCard
-                        title={card.title}
-                        description={card.content}
-                        link={card.link}
-                        image="https://images.ctfassets.net/8k0h54kbe6bj/6jpT5mePCNk02nVrzVLzt2/6adca7c10cc927d25597452d59c2a873/bitmap.png"
-                        size="small"
-                      />
-                    ))}
-                  </>
-                )}
-                {sidebarContent}
-              </SidebarContainer>
-            }
-          >
-            <Hidden above="sm">
-              <Box className={styles.menuStyle}>
+              </Box>
+              {organizationPage.secondaryMenu && (
                 <Box marginY={2}>
                   <Navigation
-                    baseId="pageNav"
+                    baseId="secondaryNav"
+                    colorScheme="purple"
                     isMenuDialog={true}
-                    items={navigationData.items}
-                    title={navigationData.title}
-                    activeItemTitle={navigationData.activeItemTitle}
+                    title={organizationPage.secondaryMenu.name}
+                    items={secondaryNavList}
                     renderLink={(link, item) => {
                       return item?.href ? (
                         <NextLink href={item?.href}>{link}</NextLink>
@@ -292,73 +401,60 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                     }}
                   />
                 </Box>
-                {organizationPage.secondaryMenu && (
-                  <Box marginY={2}>
-                    <Navigation
-                      colorScheme="purple"
-                      baseId="secondarynav"
-                      isMenuDialog={true}
-                      title={organizationPage.secondaryMenu.name}
-                      items={secondaryNavList}
-                      renderLink={(link, item) => {
-                        return item?.href ? (
-                          <NextLink href={item?.href}>{link}</NextLink>
-                        ) : (
-                          link
-                        )
-                      }}
-                    />
-                  </Box>
-                )}
-              </Box>
-            </Hidden>
-            <GridContainer>
-              <GridRow>
-                <GridColumn
-                  span={fullWidthContent ? ['9/9', '9/9', '7/9'] : '9/9'}
-                  offset={fullWidthContent ? ['0', '0', '1/9'] : '0'}
-                >
-                  {breadcrumbItems && (
-                    <Breadcrumbs
-                      items={breadcrumbItems ?? []}
-                      renderLink={(link, item) => {
-                        return item?.href ? (
-                          <NextLink href={item?.href}>{link}</NextLink>
-                        ) : (
-                          link
-                        )
-                      }}
-                    />
-                  )}
-                  {pageDescription && (
-                    <Box paddingTop={[2, 2, breadcrumbItems ? 5 : 0]}>
-                      <Text variant="default">{pageDescription}</Text>
-                    </Box>
-                  )}
-                </GridColumn>
-              </GridRow>
-            </GridContainer>
-            <Hidden above="sm">{sidebarContent}</Hidden>
-            <Box paddingTop={fullWidthContent ? 0 : 4}>
-              {mainContent ?? children}
+              )}
             </Box>
-          </SidebarLayout>
-        )}
-        {!!mainContent && children}
-        {minimal && (
+          )}
           <GridContainer>
             <GridRow>
               <GridColumn
-                paddingTop={6}
-                span={['12/12', '12/12', '10/12']}
-                offset={['0', '0', '1/12']}
+                span={fullWidthContent ? ['9/9', '9/9', '7/9'] : '9/9'}
+                offset={fullWidthContent ? ['0', '0', '1/9'] : '0'}
               >
-                {children}
+                {breadcrumbItems && (
+                  <Breadcrumbs
+                    items={breadcrumbItems ?? []}
+                    renderLink={(link, item) => {
+                      return item?.href ? (
+                        <NextLink href={item?.href}>{link}</NextLink>
+                      ) : (
+                        link
+                      )
+                    }}
+                  />
+                )}
+                {showExternalLinks && (
+                  <OrganizationExternalLinks
+                    organizationPage={organizationPage}
+                  />
+                )}
+                {pageDescription && (
+                  <Box paddingTop={[2, 2, breadcrumbItems ? 5 : 0]}>
+                    <Text variant="default">{pageDescription}</Text>
+                  </Box>
+                )}
               </GridColumn>
             </GridRow>
           </GridContainer>
-        )}
-      </Main>
+          {isMobile && sidebarContent}
+          <Box paddingTop={fullWidthContent ? 0 : 4}>
+            {mainContent ?? children}
+          </Box>
+        </SidebarLayout>
+      )}
+      {!!mainContent && children}
+      {minimal && (
+        <GridContainer>
+          <GridRow>
+            <GridColumn
+              paddingTop={6}
+              span={['12/12', '12/12', '10/12']}
+              offset={['0', '0', '1/12']}
+            >
+              {children}
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      )}
       {!minimal && (
         <OrganizationFooter
           organizations={[organizationPage.organization]}

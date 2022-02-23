@@ -14,11 +14,6 @@ import { GrantType } from './grant-type.model'
 
 @Table({
   tableName: 'client_grant_type',
-  indexes: [
-    {
-      fields: ['client_id', 'grant_type'],
-    },
-  ],
 })
 export class ClientGrantType extends Model<ClientGrantType> {
   @PrimaryKey

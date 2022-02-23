@@ -9,7 +9,7 @@ import {
 } from '@island.is/island-ui/core'
 // import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 
-import * as styles from './DataLinkCard.treat'
+import * as styles from './DataLinkCard.css'
 
 export interface DataLinkCardProps {
   title: string

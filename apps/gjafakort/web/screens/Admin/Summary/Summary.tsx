@@ -21,7 +21,7 @@ import { ContentLoader } from '@island.is/gjafakort-web/components'
 
 import { KeyValue } from '../../../components'
 
-import * as styles from './Summary.treat'
+import * as styles from './Summary.css'
 
 const CompanyApplicationsQuery = gql`
   query CompanyApplicationsQueryMinimal {

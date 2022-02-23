@@ -10,7 +10,7 @@ import {
   Hidden,
 } from '@island.is/island-ui/core'
 import { EventSlice as EventSliceProps } from '@island.is/web/graphql/schema'
-import * as styles from './EventSlice.treat'
+import * as styles from './EventSlice.css'
 
 interface SliceProps {
   slice: EventSliceProps

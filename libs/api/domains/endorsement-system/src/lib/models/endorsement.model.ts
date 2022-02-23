@@ -13,7 +13,7 @@ export class Endorsement {
   @Field()
   endorsementListId!: string
 
-  @Field({ nullable: true })
+  @Field(() => EndorsementListOpen, { nullable: true })
   endorsementList?: EndorsementListOpen
 
   @Field(() => EndorsementMetadata)

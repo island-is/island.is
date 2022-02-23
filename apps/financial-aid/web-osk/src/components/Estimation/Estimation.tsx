@@ -1,23 +1,17 @@
-import React, { ReactNode, useMemo } from 'react'
-import { Text, Box, LoadingDots, Divider } from '@island.is/island-ui/core'
+import React, { ReactNode, useContext, useMemo } from 'react'
+import { Text, Box } from '@island.is/island-ui/core'
 
 import {
   aidCalculator,
-  calculateAidFinalAmount,
-  calulatePersonalTaxAllowanceUsed,
-  calulateTaxOfAmount,
   HomeCircumstances,
-  Municipality,
-  months,
-} from '@island.is/financial-aid/shared'
-import { useQuery } from '@apollo/client'
-import { GetMunicipalityQuery } from '@island.is/financial-aid-web/oskgraphql'
+  getNextPeriod,
+  MartialStatusType,
+  martialStatusTypeFromMartialCode,
+  estimatedBreakDown,
+} from '@island.is/financial-aid/shared/lib'
 
-import format from 'date-fns/format'
-
-interface MunicipalityData {
-  municipality: Municipality
-}
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
+import { Breakdown } from '@island.is/financial-aid/shared/components'
 
 interface Props {
   aboutText: ReactNode
@@ -30,55 +24,20 @@ const Estimation = ({
   homeCircumstances,
   usePersonalTaxCredit,
 }: Props) => {
-  const currentYear = format(new Date(), 'yyyy')
-  const currentMonth = parseInt(format(new Date(), 'MM'))
-
-  const { data, loading } = useQuery<MunicipalityData>(GetMunicipalityQuery, {
-    variables: { input: { id: 'hfj' } },
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
+  const { municipality, nationalRegistryData } = useContext(AppContext)
 
   const aidAmount = useMemo(() => {
-    if (data && homeCircumstances) {
-      return aidCalculator(homeCircumstances, data?.municipality.settings.aid)
+    if (municipality && homeCircumstances) {
+      return aidCalculator(
+        homeCircumstances,
+        martialStatusTypeFromMartialCode(
+          nationalRegistryData?.spouse?.maritalStatus,
+        ) === MartialStatusType.SINGLE
+          ? municipality.individualAid
+          : municipality.cohabitationAid,
+      )
     }
-  }, [data])
-
-  const calculations = aidAmount
-    ? [
-        {
-          title: 'Grunnupphæð',
-          calculation: `${aidAmount?.toLocaleString('de-DE')} kr.`,
-        },
-        {
-          title: 'Skattur',
-          calculation: `- 
-      ${calulateTaxOfAmount(aidAmount, currentYear).toLocaleString(
-        'de-DE',
-      )} kr.`,
-        },
-        {
-          title: 'Persónuafsláttur',
-          calculation: `+  
-      ${calulatePersonalTaxAllowanceUsed(
-        aidAmount,
-        Boolean(usePersonalTaxCredit),
-        currentYear,
-      ).toLocaleString('de-DE')} kr.`,
-        },
-        {
-          title: 'Áætluð aðstoð (hámark)',
-          calculation: `${
-            calculateAidFinalAmount(
-              aidAmount,
-              Boolean(usePersonalTaxCredit),
-              currentYear,
-            ).toLocaleString('de-DE') + ' kr.'
-          }`,
-        },
-      ]
-    : []
+  }, [municipality])
 
   return (
     <>
@@ -90,47 +49,15 @@ const Estimation = ({
         </Box>
 
         <Text variant="small">
-          (til útgreiðslu í byrjun {months[currentMonth].toLowerCase()})
+          (til útgreiðslu í byrjun {getNextPeriod.month})
         </Text>
       </Box>
 
       {aboutText}
 
-      {data && (
-        <>
-          {calculations.map((item, index) => {
-            return (
-              <span key={`calculations-` + index}>
-                <Divider />
-                <Box
-                  display="flex"
-                  justifyContent="spaceBetween"
-                  alignItems="center"
-                  padding={2}
-                  background={
-                    index === calculations.length - 1 ? 'blue100' : 'white'
-                  }
-                >
-                  <Text variant="small">{item.title}</Text>
-                  <Text>{item.calculation}</Text>
-                </Box>
-              </span>
-            )
-          })}
-
-          <Divider />
-
-          {loading && (
-            <Box
-              marginBottom={[4, 4, 5]}
-              display="flex"
-              justifyContent="center"
-            >
-              <LoadingDots large />
-            </Box>
-          )}
-        </>
-      )}
+      <Breakdown
+        calculations={estimatedBreakDown(aidAmount, usePersonalTaxCredit)}
+      />
     </>
   )
 }

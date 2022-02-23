@@ -1,14 +1,21 @@
-import { SharedAuthModule } from '@island.is/financial-aid/auth'
+import { AuthModule } from '@island.is/auth-nest-tools'
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-
 import { environment } from '../environments'
+import { AuditModule } from '@island.is/nest/audit'
+
 import {
   ApplicationModule,
+  FileModule,
+  StaffModule,
   MunicipalityModule,
   ApplicationEventModule,
-  FileModule,
+  AidModule,
+  AmountModule,
+  DeductionFactorsModule,
+  PersonalTaxReturnModule,
 } from './modules'
+
 import { SequelizeConfigService } from './sequelizeConfig.service'
 
 @Module({
@@ -16,14 +23,17 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
-    SharedAuthModule.register({
-      jwtSecret: environment.auth.jwtSecret,
-      secretToken: environment.auth.secretToken,
-    }),
+    AuthModule.register(environment.identityServerAuth),
+    AmountModule,
+    DeductionFactorsModule,
+    StaffModule,
     ApplicationModule,
     MunicipalityModule,
     FileModule,
     ApplicationEventModule,
+    AidModule,
+    PersonalTaxReturnModule,
+    AuditModule.forRoot(environment.audit),
   ],
 })
 export class AppModule {}

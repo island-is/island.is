@@ -10,7 +10,9 @@ export class IdpProviderService extends BaseService {
     count: number,
   ): Promise<{ rows: IdpProvider[]; count: number } | null> {
     return BaseService.GET(
-      `idp-provider/?searchString=${searchString}&page=${page}&count=${count}`,
+      `idp-provider/?searchString=${encodeURIComponent(
+        searchString,
+      )}&page=${page}&count=${count}`,
     )
   }
 

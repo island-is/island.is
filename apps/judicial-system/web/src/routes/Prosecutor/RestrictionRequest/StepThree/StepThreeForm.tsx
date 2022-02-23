@@ -1,69 +1,77 @@
 import React, { useState } from 'react'
-import { Box, Text, Input } from '@island.is/island-ui/core'
+import { useIntl } from 'react-intl'
+
+import { Box, Text, Input, Checkbox } from '@island.is/island-ui/core'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  formatAccusedByGender,
-  formatDate,
-  NounCases,
-} from '@island.is/judicial-system/formatters'
-import { CaseType } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
+  CaseCustodyRestrictions,
+  CaseType,
+  Gender,
+  User,
+} from '@island.is/judicial-system/types'
 import {
   BlueBox,
+  CaseInfo,
   DateTime,
   FormContentContainer,
   FormFooter,
-} from '@island.is/judicial-system-web/src/shared-components'
+} from '@island.is/judicial-system-web/src/components'
 import {
-  newSetAndSendDateToServer,
+  setAndSendDateToServer,
   removeTabsValidateAndSet,
   setCheckboxAndSendToServer,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import CheckboxList from '@island.is/judicial-system-web/src/shared-components/CheckboxList/CheckboxList'
+import CheckboxList from '@island.is/judicial-system-web/src/components/CheckboxList/CheckboxList'
 import {
-  custodyProvisions,
+  legalProvisions,
   travelBanProvisions,
 } from '@island.is/judicial-system-web/src/utils/laws'
 import {
   alternativeTravelBanRestrictions,
   restrictions,
 } from '@island.is/judicial-system-web/src/utils/Restrictions'
-import { validate } from '@island.is/judicial-system-web/src/utils/validate'
+import { isPoliceDemandsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
+import { rcDemands } from '@island.is/judicial-system-web/messages/RestrictionCases/Prosecutor/demandsForm'
+import { core } from '@island.is/judicial-system-web/messages'
+import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
-  requestedValidToDateIsValid: boolean
-  setRequestedValidToDateIsValid: React.Dispatch<React.SetStateAction<boolean>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  user?: User
 }
 
 const StepThreeForm: React.FC<Props> = (props) => {
-  const {
-    workingCase,
-    setWorkingCase,
-    requestedValidToDateIsValid,
-    setRequestedValidToDateIsValid,
-  } = props
+  const { workingCase, setWorkingCase, user } = props
   const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] = useState<string>(
     '',
   )
 
   const { updateCase } = useCase()
+  const { formatMessage } = useIntl()
 
   return (
     <>
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            Dómkröfur og lagagrundvöllur
+            {formatMessage(rcDemands.heading)}
           </Text>
+        </Box>
+        <Box marginBottom={7}>
+          <CaseInfo
+            workingCase={workingCase}
+            userRole={user?.role}
+            showAdditionalInfo
+          />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Dómkröfur
+              {formatMessage(rcDemands.sections.demands.heading)}
             </Text>
             {workingCase.parentCase && (
               <Box marginTop={1}>
@@ -83,102 +91,166 @@ const StepThreeForm: React.FC<Props> = (props) => {
               </Box>
             )}
           </Box>
-          <DateTime
-            name="reqValidToDate"
-            datepickerLabel={`${
-              workingCase.type === CaseType.CUSTODY
-                ? 'Gæsluvarðhald'
-                : 'Farbann'
-            } til`}
-            minDate={new Date()}
-            selectedDate={
-              workingCase.requestedValidToDate
-                ? new Date(workingCase.requestedValidToDate)
-                : undefined
-            }
-            onChange={(date: Date | undefined, valid: boolean) => {
-              newSetAndSendDateToServer(
-                'requestedValidToDate',
-                date,
-                valid,
-                workingCase,
-                setWorkingCase,
-                setRequestedValidToDateIsValid,
-                updateCase,
-              )
-            }}
-            required
-          />
+          <BlueBox>
+            <Box marginBottom={workingCase.type === CaseType.CUSTODY ? 3 : 0}>
+              <DateTime
+                name="reqValidToDate"
+                datepickerLabel={`${
+                  workingCase.type === CaseType.CUSTODY
+                    ? 'Gæsluvarðhald'
+                    : 'Farbann'
+                } til`}
+                minDate={new Date()}
+                selectedDate={workingCase.requestedValidToDate}
+                onChange={(date: Date | undefined, valid: boolean) => {
+                  setAndSendDateToServer(
+                    'requestedValidToDate',
+                    date,
+                    valid,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }}
+                required
+                blueBox={false}
+              />
+            </Box>
+            {workingCase.type === CaseType.CUSTODY && (
+              <Checkbox
+                name="isIsolation"
+                label={formatMessage(rcDemands.sections.demands.isolation)}
+                tooltip={formatMessage(rcDemands.sections.demands.tooltip)}
+                checked={workingCase.requestedCustodyRestrictions?.includes(
+                  CaseCustodyRestrictions.ISOLATION,
+                )}
+                onChange={() =>
+                  setCheckboxAndSendToServer(
+                    'requestedCustodyRestrictions',
+                    'ISOLATION',
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }
+                large
+                filled
+              />
+            )}
+          </BlueBox>
         </Box>
-        <Box component="section" marginBottom={7}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              Lagaákvæði sem brot varða við
-            </Text>
+        {workingCase.defendants && workingCase.defendants.length > 0 && (
+          <Box component="section" marginBottom={7}>
+            <Box marginBottom={3}>
+              <Text as="h3" variant="h3">
+                {formatMessage(rcDemands.sections.lawsBroken.heading)}
+              </Text>
+            </Box>
+            <Input
+              data-testid="lawsBroken"
+              name="lawsBroken"
+              label={formatMessage(rcDemands.sections.lawsBroken.label, {
+                defendant: formatMessage(core.accused, {
+                  suffix:
+                    workingCase.defendants[0].gender === Gender.FEMALE
+                      ? 'u'
+                      : 'a',
+                }),
+              })}
+              placeholder={formatMessage(
+                rcDemands.sections.lawsBroken.placeholder,
+              )}
+              value={workingCase.lawsBroken || ''}
+              errorMessage={lawsBrokenErrorMessage}
+              hasError={lawsBrokenErrorMessage !== ''}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'lawsBroken',
+                  event.target.value,
+                  ['empty'],
+                  workingCase,
+                  setWorkingCase,
+                  lawsBrokenErrorMessage,
+                  setLawsBrokenErrorMessage,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'lawsBroken',
+                  event.target.value,
+                  ['empty'],
+                  workingCase,
+                  updateCase,
+                  setLawsBrokenErrorMessage,
+                )
+              }
+              required
+              textarea
+              rows={7}
+              autoExpand={{ on: true, maxHeight: 300 }}
+            />
           </Box>
-          <Input
-            data-testid="lawsBroken"
-            name="lawsBroken"
-            label={`Lagaákvæði sem ætluð brot ${formatAccusedByGender(
-              workingCase?.accusedGender,
-              NounCases.GENITIVE,
-            )} þykja varða við`}
-            placeholder="Skrá inn þau lagaákvæði sem brotið varðar við, til dæmis 1. mgr. 244 gr. almennra hegningarlaga nr. 19/1940..."
-            defaultValue={workingCase?.lawsBroken}
-            errorMessage={lawsBrokenErrorMessage}
-            hasError={lawsBrokenErrorMessage !== ''}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'lawsBroken',
-                event,
-                ['empty'],
-                workingCase,
-                setWorkingCase,
-                lawsBrokenErrorMessage,
-                setLawsBrokenErrorMessage,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'lawsBroken',
-                event.target.value,
-                ['empty'],
-                workingCase,
-                updateCase,
-                setLawsBrokenErrorMessage,
-              )
-            }
-            required
-            textarea
-            rows={7}
-          />
-        </Box>
+        )}
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Lagaákvæði sem krafan er byggð á{' '}
+              {formatMessage(rcDemands.sections.legalBasis.heading)}{' '}
               <Text as="span" color={'red600'} fontWeight="semiBold">
                 *
               </Text>
             </Text>
           </Box>
           <BlueBox>
-            <CheckboxList
-              checkboxes={
-                workingCase.type === CaseType.CUSTODY
-                  ? custodyProvisions
-                  : travelBanProvisions
-              }
-              selected={workingCase.custodyProvisions}
-              onChange={(id) =>
-                setCheckboxAndSendToServer(
-                  'custodyProvisions',
-                  id,
+            <Box marginBottom={2}>
+              <CheckboxList
+                checkboxes={
+                  workingCase.type === CaseType.CUSTODY
+                    ? legalProvisions
+                    : travelBanProvisions
+                }
+                selected={workingCase.legalProvisions}
+                onChange={(id) =>
+                  setCheckboxAndSendToServer(
+                    'legalProvisions',
+                    id,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }
+              />
+            </Box>
+            <Input
+              data-testid="legalBasis"
+              name="legalBasis"
+              label={formatMessage(
+                rcDemands.sections.legalBasis.legalBasisLabel,
+              )}
+              placeholder={formatMessage(
+                rcDemands.sections.legalBasis.legalBasisPlaceholder,
+              )}
+              value={workingCase.legalBasis || ''}
+              onChange={(event) =>
+                removeTabsValidateAndSet(
+                  'legalBasis',
+                  event.target.value,
+                  [],
                   workingCase,
                   setWorkingCase,
+                )
+              }
+              onBlur={(event) =>
+                validateAndSendToServer(
+                  'legalBasis',
+                  event.target.value,
+                  [],
+                  workingCase,
                   updateCase,
                 )
               }
+              textarea
+              rows={7}
+              autoExpand={{ on: true, maxHeight: 300 }}
             />
           </BlueBox>
         </Box>
@@ -187,10 +259,22 @@ const StepThreeForm: React.FC<Props> = (props) => {
             <Box marginBottom={3}>
               <Box marginBottom={1}>
                 <Text as="h3" variant="h3">
-                  Takmarkanir og tilhögun gæslu
+                  {formatMessage(
+                    rcDemands.sections.custodyRestrictions.heading,
+                    {
+                      caseType: 'gæslu',
+                    },
+                  )}
                 </Text>
               </Box>
-              <Text>Ef ekkert er valið er gæsla án takmarkana</Text>
+              <Text>
+                {formatMessage(
+                  rcDemands.sections.custodyRestrictions.subHeading,
+                  {
+                    caseType: 'gæsla',
+                  },
+                )}
+              </Text>
             </Box>
             <BlueBox>
               <CheckboxList
@@ -213,9 +297,18 @@ const StepThreeForm: React.FC<Props> = (props) => {
           <Box component="section" marginBottom={4}>
             <Box marginBottom={3}>
               <Text as="h3" variant="h3">
-                Takmarkanir og tilhögun farbanns
+                {formatMessage(rcDemands.sections.custodyRestrictions.heading, {
+                  caseType: 'farbanns',
+                })}
               </Text>
-              <Text>Ef ekkert er valið er farbann án takmarkana.</Text>
+              <Text>
+                {formatMessage(
+                  rcDemands.sections.custodyRestrictions.subHeading,
+                  {
+                    caseType: 'farbann',
+                  },
+                )}
+              </Text>
             </Box>
             <BlueBox>
               <Box marginBottom={3}>
@@ -236,13 +329,17 @@ const StepThreeForm: React.FC<Props> = (props) => {
               <Input
                 name="requestedOtherRestrictions"
                 data-testid="requestedOtherRestrictions"
-                label="Nánari útlistun eða aðrar takmarkanir"
-                defaultValue={workingCase.requestedOtherRestrictions}
-                placeholder="Til dæmis hvernig tilkynningarskyldu sé háttað..."
+                label={formatMessage(
+                  rcDemands.sections.custodyRestrictions.label,
+                )}
+                value={workingCase.requestedOtherRestrictions || ''}
+                placeholder={formatMessage(
+                  rcDemands.sections.custodyRestrictions.placeholder,
+                )}
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'requestedOtherRestrictions',
-                    event,
+                    event.target.value,
                     [],
                     workingCase,
                     setWorkingCase,
@@ -258,6 +355,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
                   )
                 }
                 rows={10}
+                autoExpand={{ on: true, maxHeight: 500 }}
                 textarea
               />
             </BlueBox>
@@ -268,12 +366,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
         <FormFooter
           previousUrl={`${Constants.STEP_TWO_ROUTE}/${workingCase.id}`}
           nextUrl={`${Constants.STEP_FOUR_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={
-            !validate(workingCase.lawsBroken ?? '', 'empty').isValid ||
-            !requestedValidToDateIsValid ||
-            !workingCase.custodyProvisions ||
-            workingCase.custodyProvisions?.length === 0
-          }
+          nextIsDisabled={!isPoliceDemandsStepValidRC(workingCase)}
         />
       </FormContentContainer>
     </>

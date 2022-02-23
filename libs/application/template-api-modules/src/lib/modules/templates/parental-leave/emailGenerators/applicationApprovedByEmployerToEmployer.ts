@@ -20,7 +20,7 @@ export const generateApplicationApprovedByEmployerToEmployerEmail: EmailTemplate
   const employerEmail = get(application.answers, 'employer.email') as string
   const periods = (get(application.answers, 'periods') as unknown) as Period[]
 
-  const emailSubject = `Þú hefur samþykkt umsókn um fæðingarorlof (kt. starfsmanns ${application.applicant})`
+  const emailSubject = `Samþykkt umsókn um fæðingarorlof (kt. ${application.applicant}) - Vinsamlegast áframsendið til launadeildar`
   const subject = `Þú samþykktir umsókn um fæðingarorlof`
 
   return {
@@ -57,18 +57,15 @@ export const generateApplicationApprovedByEmployerToEmployerEmail: EmailTemplate
         {
           component: 'Copy',
           context: {
-            copy:
-              'Þessi tölvupóstur er staðfesting á því að þú hafir samþykkt umsókn um fæðingarorlof.',
+            copy: `Þú hefur samþykkt umsókn fyrir kt. ${application.applicant} um fæðingarorlof.`,
           },
         },
         {
           component: 'Copy',
           context: {
-            copy: `Umsækjandi með kennitöluna ${
-              application.applicant
-            } sótti um fæðingarorlof fyrir ${
-              periods.length === 1 ? 'tímabilið' : 'tímabilin'
-            }:`,
+            copy: `${
+              periods.length === 1 ? 'Tímabilið' : 'Tímabilin'
+            } sem þú hefur samþykkt ${periods.length === 1 ? 'er' : 'eru'}:`,
           },
         },
         {
@@ -85,8 +82,16 @@ export const generateApplicationApprovedByEmployerToEmployerEmail: EmailTemplate
               .join('<br/>'),
           },
         },
-        { component: 'Copy', context: { copy: 'Með kveðju,' } },
-        { component: 'Copy', context: { copy: 'Fæðingarorlofssjóður' } },
+        {
+          component: 'Copy',
+          context: {
+            copy: `Athugaðu að þetta er stafræn pappírslaus umsókn. Við viljum því biðja þig að tryggja að staðfestingin komist í réttar hendur og t.a.m. áframsenda á launadeild.`,
+          },
+        },
+        {
+          component: 'Copy',
+          context: { copy: 'Kærar þakkir,<br/>Starfsfólk Fæðingarorlofssjóðs' },
+        },
       ],
     },
   }

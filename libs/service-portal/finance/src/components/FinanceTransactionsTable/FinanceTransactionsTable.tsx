@@ -3,6 +3,7 @@ import format from 'date-fns/format'
 import { Table as T, Box, Pagination } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
+import sortBy from 'lodash/sortBy'
 import { dateFormat } from '@island.is/shared/constants'
 import amountFormat from '../../utils/amountFormat'
 import { ExpandRow, ExpandHeader } from '../../components/ExpandableTable'
@@ -37,11 +38,14 @@ const FinanceTransactionsTable: FC<Props> = ({ recordsArray }) => {
           ]}
         />
         <T.Body>
-          {recordsArray
+          {sortBy(recordsArray, (item) => {
+            return item.createDate
+          })
+            .reverse()
             .slice(ITEMS_ON_PAGE * (page - 1), ITEMS_ON_PAGE * page)
             .map((record) => (
               <ExpandRow
-                key={`${record.createTime}-${record.referenceToLevy}`}
+                key={`${record.createTime}-${record.createDate}-${record.accountReference}-${record.reference}-${record.amount}`}
                 data={[
                   { value: format(new Date(record.createDate), dateFormat.is) },
                   { value: record.chargeType },

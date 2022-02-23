@@ -1,65 +1,29 @@
-import React, { FC } from 'react'
-
-import { useLocale } from '@island.is/localization'
-import format from 'date-fns/format'
-import { m } from '../../lib/messages'
-
-import { FieldBaseProps } from '@island.is/application/core'
+import React, { FC, useEffect } from 'react'
+import type { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
-import ReviewSection, { ReviewSectionState, Step } from './ReviewSection'
-import { dateFormat } from '@island.is/shared/constants'
-import { MessageDescriptor } from '@formatjs/intl'
-import { ApplicationEligibility, RequirementKey } from '../../types/schema'
+import ReviewSection from './ReviewSection'
+import { useFormContext } from 'react-hook-form'
+import { extractReasons } from './extractReasons'
+import { useEligibility } from './useEligibility'
 
-const extractReasons = (eligibility: ApplicationEligibility): Step[] => {
-  return eligibility.requirements.map(({ key, requirementMet }) =>
-    requirementKeyToStep(key, requirementMet),
-  )
-}
+export const EligibilitySummary: FC<FieldBaseProps> = ({ application }) => {
+  const { eligibility, loading, error } = useEligibility(application.answers)
 
-// TODO: we need a better way of getting the translated string in here, outside
-// of react. Possibly we should just make a more flexible results screen.
-// This string ends up being used as the paramejter displayed as the error message
-// for the failed dataprovider
-const requirementKeyToStep = (key: string, isRequirementMet: boolean): Step => {
-  const step = {
-    state: isRequirementMet
-      ? ReviewSectionState.complete
-      : ReviewSectionState.requiresAction,
+  const { setValue } = useFormContext()
+
+  useEffect(() => {
+    setValue('requirementsMet', eligibility?.isEligible || false)
+  }, [eligibility?.isEligible, setValue])
+
+  if (loading) {
+    return <Text>Sæki upplýsingar...</Text>
   }
 
-  switch (key) {
-    case RequirementKey.DrivingSchoolMissing:
-      return {
-        ...step,
-        title: m.requirementUnmetDrivingSchoolTitle,
-        description: m.requirementUnmetDrivingSchoolDescription,
-      }
-    case RequirementKey.DrivingAssessmentMissing:
-      return {
-        ...step,
-        title: m.requirementUnmetDrivingAssessmentTitle,
-        description: m.requirementUnmetDrivingAssessmentDescription,
-      }
-    case RequirementKey.DeniedByService:
-      return {
-        ...step,
-        title: m.requirementUnmetDeniedByServiceTitle,
-        description: m.requirementUnmetDeniedByServiceDescription,
-      }
-    default:
-      throw new Error('Unknown requirement reason - should not happen')
+  if (error || !eligibility) {
+    return <Text>Villa kom upp við að sækja upplýsingar</Text>
   }
-}
 
-const EligibilitySummary: FC<FieldBaseProps> = ({ application }) => {
-  const {
-    eligibility: { data: eligibility },
-  } = application.externalData
-
-  const steps = extractReasons(
-    (eligibility as unknown) as ApplicationEligibility,
-  )
+  const requirements = extractReasons(eligibility)
 
   return (
     <Box marginBottom={10}>
@@ -67,15 +31,14 @@ const EligibilitySummary: FC<FieldBaseProps> = ({ application }) => {
         display={['block', 'block', 'block', 'flex']}
         justifyContent="spaceBetween"
       ></Box>
-
       <Box marginTop={7} marginBottom={8}>
-        {steps.map((step, i) => {
+        {requirements.map((requirement, i) => {
           return (
             <ReviewSection
               key={i}
               application={application}
               index={i + 1}
-              step={step}
+              step={requirement}
             />
           )
         })}
@@ -83,5 +46,3 @@ const EligibilitySummary: FC<FieldBaseProps> = ({ application }) => {
     </Box>
   )
 }
-
-export { EligibilitySummary }

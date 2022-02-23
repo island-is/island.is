@@ -1,12 +1,12 @@
-import * as s from './DiffModeToggle.treat'
+import * as s from './DiffModeToggle.css'
 
 import { Link, ToggleSwitchLink } from '@island.is/island-ui/core'
 import React from 'react'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { useRegulationLinkResolver } from './regulationUtils'
-import { RegulationMaybeDiff } from '@island.is/regulations/web'
-import { ISODate } from '@hugsmidjan/regulations-editor/types'
+import { ISODate, RegulationMaybeDiff } from '@island.is/regulations'
+import cl from 'classnames'
 
 export type DiffModeToggleProps = {
   regulation: RegulationMaybeDiff
@@ -21,20 +21,18 @@ export const DiffModeToggle = (props: DiffModeToggleProps) => {
   const { regulation } = props
   const {
     timelineDate,
-    effectiveDate,
+    publishedDate,
     lastAmendDate,
     showingDiff,
     history,
   } = regulation
 
-  const isDiffable =
-    regulation.history.length > 0 && timelineDate !== effectiveDate
+  const firstEvent = regulation.history[0]
 
-  if (!isDiffable) {
+  if (!firstEvent || firstEvent.effect !== 'amend') {
     return null
   }
-
-  console.log({ showingDiff, history })
+  const isDiffable = timelineDate !== publishedDate
 
   const diffView = !!showingDiff
   const showSecondaryButton =
@@ -43,8 +41,9 @@ export const DiffModeToggle = (props: DiffModeToggleProps) => {
     !!showingDiff && showingDiff.from === history[0].date
 
   return (
-    <div className={s.wrapper}>
+    <div className={cl(s.wrapper, !isDiffable && s.wrapperDisabled)}>
       <ToggleSwitchLink
+        disabled={!isDiffable}
         className={s.toggler}
         checked={diffView}
         href={linkToRegulation(regulation.name, {
@@ -74,7 +73,7 @@ export const DiffModeToggle = (props: DiffModeToggleProps) => {
               color="blue400"
               underline="small"
             >
-              {txt('showDiff_fromLast')}
+              <a rel="nofollow">{txt('showDiff_fromLast')}</a>
             </Link>
           ) : (
             <Link
@@ -89,7 +88,7 @@ export const DiffModeToggle = (props: DiffModeToggleProps) => {
               color="blue400"
               underline="small"
             >
-              {txt('showDiff_fromOriginal')}
+              <a rel="nofollow">{txt('showDiff_fromOriginal')}</a>
             </Link>
           )}
         </div>

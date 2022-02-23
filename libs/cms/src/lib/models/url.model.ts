@@ -15,11 +15,15 @@ export class Url {
 
   @Field(() => [String])
   urlsList!: Array<string>
+
+  @Field(() => String, { nullable: true })
+  explicitRedirect?: string
 }
 
 export const mapUrl = ({ fields, sys }: IUrl): Url => ({
   id: sys.id,
   title: fields.title ?? '',
   page: fields.page ? mapReferenceLink(fields.page) : null,
+  explicitRedirect: fields.explicitRedirect ?? '',
   urlsList: fields.urlsList ?? [],
 })

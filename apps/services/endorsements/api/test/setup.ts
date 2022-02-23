@@ -5,6 +5,7 @@ import { Sequelize } from 'sequelize-typescript'
 import { AppModule } from '../src/app/app.module'
 import { EndorsementsScope } from '@island.is/auth/scopes'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
+import { startMocking } from '@island.is/shared/mocking'
 
 export let app: INestApplication
 let sequelize: Sequelize
@@ -49,17 +50,13 @@ export const getAuthenticatedApp = ({
   nationalId = '1234567890',
 }: SetupAuthInput): Promise<INestApplication> =>
   setup({
-    override: (builder) => {
-      builder
-        .overrideProvider(IdsUserGuard)
-        .useValue(
-          new MockAuthGuard({
-            nationalId,
-            scope,
-          }),
-        )
-        .compile()
-    },
+    override: (builder) =>
+      builder.overrideProvider(IdsUserGuard).useValue(
+        new MockAuthGuard({
+          nationalId,
+          scope,
+        }),
+      ),
   })
 
 afterAll(async () => {

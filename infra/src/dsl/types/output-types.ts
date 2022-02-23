@@ -1,13 +1,14 @@
-import { Hash, ReplicaCount, Service, ValueType } from './input-types'
+import { Hash, ReplicaCount, Service } from './input-types'
 import { UberChartType } from './charts'
+import { FeatureNames } from '../features'
 
 // Output types
 export type ContainerRunHelm = {
   command: string[]
   args?: string[]
   name?: string
-  resources?: {
-    limits?: {
+  resources: {
+    limits: {
       cpu: string
       memory: string
     }
@@ -17,6 +18,9 @@ export type ContainerRunHelm = {
     }
   }
 }
+
+export type ContainerEnvironmentVariables = { [name: string]: string }
+export type ContainerSecrets = { [name: string]: string }
 
 export interface ServiceHelm {
   replicaCount?: ReplicaCount
@@ -64,8 +68,8 @@ export interface ServiceHelm {
   }
 
   initContainer?: {
-    secrets?: { [key: string]: string }
-    env?: { [key: string]: string }
+    secrets: ContainerSecrets
+    env: ContainerEnvironmentVariables
     containers: ContainerRunHelm[]
   }
 
@@ -84,17 +88,15 @@ export interface ServiceHelm {
   grantNamespaces: string[]
   grantNamespacesEnabled: boolean
 
-  env?: { [name: string]: string }
-  secrets?: { [name: string]: string }
+  env: ContainerEnvironmentVariables
+  secrets: ContainerSecrets
   enabled: boolean
   namespace: string
   image: {
     repository: string
   }
   extra?: Hash
-  strategy?: {
-    type: 'RollingUpdate' | 'Recreate'
-  }
+  files?: string[]
 }
 
 export interface FeatureKubeJob {
@@ -130,6 +132,14 @@ export type SerializeErrors = {
 export type SerializeMethod = (
   service: Service,
   uberChart: UberChartType,
+  featuresOn?: FeatureNames[],
 ) => SerializeSuccess | SerializeErrors
 
-export type ValueFile = { [name: string]: ServiceHelm }
+export type Services = {
+  [name: string]: ServiceHelm
+}
+
+export type ValueFile = {
+  namespaces: string[]
+  services: Services
+}

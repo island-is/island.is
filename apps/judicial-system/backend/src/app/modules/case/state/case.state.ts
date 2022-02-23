@@ -30,6 +30,13 @@ const caseStateMachine: Map<CaseTransition, Rule> = new Map([
     },
   ],
   [
+    CaseTransition.DISMISS,
+    {
+      from: [CaseState.RECEIVED],
+      to: CaseState.DISMISSED,
+    },
+  ],
+  [
     CaseTransition.ACCEPT,
     {
       from: [CaseState.RECEIVED],

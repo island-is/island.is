@@ -1,9 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-export * from '@hugsmidjan/regulations-editor/types'
-
-declare const _Year__Brand: unique symbol
-/** Four letter positive integer that might reasonably be a year */
-export type Year = number & { [_Year__Brand]: true }
+export * from '@island.is/regulations-tools/types'
 
 declare const _Kennitala__Brand: unique symbol
 /** Icelandic national census id number  */

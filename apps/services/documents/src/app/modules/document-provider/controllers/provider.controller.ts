@@ -1,3 +1,4 @@
+import { ApiScope } from '@island.is/auth/scopes'
 import {
   Body,
   Controller,
@@ -14,7 +15,12 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger'
-import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 
@@ -26,7 +32,8 @@ import { Provider } from '../models/provider.model'
 
 const namespace = `${environment.audit.defaultNamespace}/providers`
 
-@UseGuards(IdsUserGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(ApiScope.internal)
 @ApiTags('providers')
 @ApiHeader({
   name: 'authorization',
@@ -119,7 +126,7 @@ export class ProviderController {
     }
 
     this.auditService.audit({
-      user,
+      auth: user,
       namespace,
       action: 'updateProvider',
       resources: id,

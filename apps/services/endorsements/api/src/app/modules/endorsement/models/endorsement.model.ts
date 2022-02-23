@@ -10,7 +10,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { EndorsementList } from '../../endorsementList/endorsementList.model'
-import { EndorsementMetadata } from '../../endorsementMetadata/endorsementMetadata.model'
+import { EndorsementMetadata } from './endorsementMetadata.model'
 import { EndorsementListOpen } from './endorsementListOpen.model'
 
 @Table({
@@ -30,6 +30,13 @@ export class Endorsement extends Model<Endorsement> {
     defaultValue: DataType.UUIDV4,
   })
   id!: string
+
+  @ApiProperty()
+  @Column({
+    type: DataType.NUMBER,
+    allowNull: true,
+  })
+  counter!: number
 
   @ApiProperty()
   @Column({

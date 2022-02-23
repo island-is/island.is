@@ -1,4 +1,4 @@
-import * as s from './RegulationsSearchSection.treat'
+import * as s from './RegulationsSearchSection.css'
 
 import React, { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
@@ -14,11 +14,7 @@ import {
   Select,
 } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
-import { useShortState } from '@island.is/regulations'
-import {
-  RegulationLawChapterTree,
-  RegulationMinistry,
-} from '@island.is/regulations/web'
+import { useShortState, LawChapterTree, Ministry } from '@island.is/regulations'
 import { RegulationHomeTexts } from './RegulationTexts.types'
 import { OptionTypeBase, ValueType } from 'react-select'
 import { RegulationSearchFilters, RegulationSearchKey } from './regulationUtils'
@@ -96,8 +92,8 @@ const cleanQuery = (
 export type RegulationsSearchSectionProps = {
   searchFilters: RegulationSearchFilters
   years: ReadonlyArray<number>
-  ministries: ReadonlyArray<RegulationMinistry>
-  lawChapters: Readonly<RegulationLawChapterTree>
+  ministries: ReadonlyArray<Ministry>
+  lawChapters: Readonly<LawChapterTree>
   texts: RegulationHomeTexts
   page?: number
   anchorRef: React.RefObject<HTMLDivElement>
@@ -196,6 +192,7 @@ export const RegulationsSearchSection = (
       query: cleanQuery(newFilters),
     })
   }
+
   const clearSearch = () => {
     setFilterValue('')
     router.replace({
@@ -327,7 +324,10 @@ export const RegulationsSearchSection = (
                         )}
                         checked={!!filters.iR}
                         onChange={() =>
-                          doSearch('iR', !filters.iR ? 'true' : '')
+                          doSearch({
+                            iR: !filters.iR ? 'true' : '',
+                            rn: undefined,
+                          })
                         }
                       />
                     </GridColumn>
@@ -349,7 +349,7 @@ export const RegulationsSearchSection = (
                         value={findValueOption(ministryOptions, filters.rn)}
                         options={ministryOptions}
                         onChange={(option) =>
-                          doSearch('rn', getRSValue(option))
+                          doSearch({ rn: getRSValue(option), iR: undefined })
                         }
                         size="sm"
                       />

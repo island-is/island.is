@@ -55,12 +55,5 @@ export class Notification extends Model<Notification> {
     allowNull: true,
   })
   @ApiProperty()
-  condition?: string
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
   recipients?: string
 }

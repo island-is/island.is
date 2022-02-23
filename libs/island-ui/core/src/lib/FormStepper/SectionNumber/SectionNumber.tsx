@@ -5,7 +5,7 @@ import { Box } from '../../Box/Box'
 import { Icon } from '../../IconRC/Icon'
 import { SectionNumberColumn } from '../SectionNumberColumn/SectionNumberColumn'
 import * as types from '../types'
-import * as styles from './SectionNumber.treat'
+import * as styles from './SectionNumber.css'
 
 const bulletColors = {
   [types.FormStepperThemes.PURPLE]: 'purple200',

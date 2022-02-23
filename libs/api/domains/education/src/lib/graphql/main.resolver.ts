@@ -1,4 +1,5 @@
-import { Args, Query, Mutation, Resolver } from '@nestjs/graphql'
+import { ApiScope } from '@island.is/auth/scopes'
+import { Args, Query, Mutation, Resolver, Int } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 
@@ -7,6 +8,7 @@ import {
   IdsUserGuard,
   ScopesGuard,
   CurrentUser,
+  Scopes,
 } from '@island.is/auth-nest-tools'
 import { AuditService } from '@island.is/nest/audit'
 
@@ -29,10 +31,11 @@ export class MainResolver {
   ) {}
 
   @Query(() => [EducationLicense])
+  @Scopes(ApiScope.internal)
   educationLicense(@CurrentUser() user: User): Promise<EducationLicense[]> {
     return this.auditService.auditPromise<EducationLicense[]>(
       {
-        user,
+        auth: user,
         namespace,
         action: 'educationLicense',
         resources: (licenses) => licenses.map((license) => license.id),
@@ -42,6 +45,7 @@ export class MainResolver {
   }
 
   @Mutation(() => EducationSignedLicense, { nullable: true })
+  @Scopes(ApiScope.internal)
   async fetchEducationSignedLicenseUrl(
     @CurrentUser() user: User,
     @Args('input', { type: () => FetchEducationSignedLicenseUrlInput })
@@ -56,7 +60,7 @@ export class MainResolver {
     }
 
     this.auditService.audit({
-      user,
+      auth: user,
       namespace,
       action: 'fetchEducationSignedicenseUrl',
       resources: input.licenseId,
@@ -66,12 +70,13 @@ export class MainResolver {
   }
 
   @Query(() => [ExamFamilyOverview])
+  @Scopes(ApiScope.education)
   educationExamFamilyOverviews(
     @CurrentUser() user: User,
   ): Promise<ExamFamilyOverview[]> {
     return this.auditService.auditPromise<ExamFamilyOverview[]>(
       {
-        user,
+        auth: user,
         namespace,
         action: 'educationExamFamilyOverviews',
         resources: (results) => results.map((result) => result.nationalId),
@@ -81,23 +86,24 @@ export class MainResolver {
   }
 
   @Query(() => ExamResult)
+  @Scopes(ApiScope.education)
   async educationExamResult(
     @CurrentUser() user: User,
-    @Args('nationalId') nationalId: string,
+    @Args('familyIndex', { type: () => Int }) familyIndex: number,
   ): Promise<ExamResult> {
     const family = await this.educationService.getFamily(user.nationalId)
-    const familyMember = family.find(
-      (familyMember) => familyMember.Kennitala === nationalId,
-    )
+    const familyMember = family[familyIndex]
+
     if (!familyMember) {
       throw new ApolloError('The requested nationalId is not a part of family')
     }
+
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'educationExamResult',
-        resources: nationalId,
+        resources: familyMember.Kennitala,
       },
       this.educationService.getExamResult(familyMember),
     )

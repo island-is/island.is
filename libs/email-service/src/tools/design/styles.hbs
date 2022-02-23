@@ -74,14 +74,30 @@
     color: #00003c;
   }
 
+  .heading.size-small {
+    font-size: 24px;
+    line-height: 34px;
+  }
+
   @media only screen and (max-width: 620px) {
     .heading {
       font-size: 26px !important;
-      line-height: 30px !important;
+      line-height: 32px !important;
 
       padding-left: 0 !important;
       padding-right: 0 !important;
     }
+
+    .heading.size-small {
+      font-size: 20px !important;
+      line-height: 26px !important;
+    }
+  }
+
+  .heading.heading-eyebrow {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 16px;
   }
 
   /*
@@ -114,7 +130,19 @@
     font-size: 24px;
     line-height: 34px;
     color: #00003c;
+  }
 
+  .copy.style-bold p {
+    font-weight: 600;
+  }
+
+  .copy.style-italic p {
+    font-style: italic;
+  }
+
+  .copy.size-small p {
+    font-size: 18px;
+    line-height: 28px;
   }
 
   @media only screen and (max-width: 620px) {
@@ -122,8 +150,66 @@
       font-size: 18px !important;
       line-height: 26px !important;
     }
+
+    .copy.size-small p {
+      font-size: 16px !important;
+      line-height: 24px !important;
+    }
   }
 
+  /*
+  * List partial
+  */
+  .list {
+    list-style: none;
+    padding-left: 88px;
+    padding-right: 40px;
+
+    margin-top: 15px;
+    margin-bottom: 15px;
+  }
+
+  .list li {
+    position: relative;
+  }
+
+  .list .bullet {
+    position: absolute;
+    background-color: #ff0050;
+    border-radius: 8px;
+    height: 8px;
+    width: 8px;
+    left: -30px;
+    top: 8px;
+  }
+
+  @media only screen and (max-width: 620px) {
+    .list {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+
+      margin-top: 6px !important;
+      margin-bottom: 6px !important;
+    }
+  }
+
+  .list p {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    font-family: 'IBM Plex Sans', Helvetica, Arial, sans-serif;
+    font-weight: 300;
+    font-size: 18px;
+    line-height: 26px;
+    color: #00003c;
+  }
+
+  @media only screen and (max-width: 620px) {
+    .list p {
+      font-size: 14px !important;
+      line-height: 20px !important;
+    }
+  }
   /*
   * Button partial
   */
@@ -165,5 +251,55 @@
       padding-left: 20px !important;
       padding-right: 20px !important;
     }
+  }
+
+  /*
+   * Subtitle partial
+   */
+  .subtitle {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    padding-left: 40px;
+    padding-right: 40px;
+
+    font-family: 'IBM Plex Sans', Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 28px;
+    text-align: center;
+
+    color: #00003c;
+  }
+  @media only screen and (max-width: 620px) {
+    .subtitle {
+      font-size: 16px !important;
+      line-height: 24px !important;
+
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+  }
+
+  /*
+   * Application number partial (Inside Subtitle partial)
+   */
+  .application-number {
+    color: #0061ff;
+  }
+  
+  /**
+   * Helper classes
+   */
+  .text-left {
+    text-align: left;
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  .text-right {
+    text-align: right;
   }
 </style>

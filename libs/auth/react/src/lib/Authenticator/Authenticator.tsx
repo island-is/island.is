@@ -73,6 +73,12 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
         nationalId !== undefined
           ? {
               login_hint: nationalId,
+              /**
+               * TODO: remove this.
+               * It is currently required to switch delegations, but we'd like
+               * the IDS to handle login_required and other potential road
+               * blocks. Now OidcSignIn is handling login_required.
+               */
               prompt: 'none',
             }
           : {
@@ -83,7 +89,9 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
         type: ActionType.SWITCH_USER,
       })
       return userManager.signinRedirect({
-        state: getReturnUrl(history, authSettings),
+        state:
+          authSettings.switchUserRedirectUrl ??
+          getReturnUrl(history, authSettings),
         ...args,
       })
       // Nothing more happens here since browser will redirect to IDS.
@@ -148,10 +156,11 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
     }
 
     // This is raised when the user is signed out of the IDP.
-    const userSignedOut = () => {
+    const userSignedOut = async () => {
       dispatch({
         type: ActionType.LOGGED_OUT,
       })
+      await userManager.removeUser()
       if (autoLogin) {
         signIn()
       }

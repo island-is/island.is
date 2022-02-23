@@ -28,7 +28,7 @@ export class SequelizeConfigService implements SequelizeOptionsFactory {
   }
 
   createSequelizeOptions(): SequelizeModuleOptions {
-    const config = this.getSequelizeConfig()
+    const config = this.getSequelizeConfig() as SequelizeModuleOptions
     return {
       ...config,
       define: {

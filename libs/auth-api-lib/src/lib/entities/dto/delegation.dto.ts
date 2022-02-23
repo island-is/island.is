@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional, OmitType } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
   IsString,
@@ -15,18 +15,21 @@ import {
 export enum DelegationType {
   LegalGuardian = 'LegalGuardian',
   ProcurationHolder = 'ProcurationHolder',
+  PersonalRepresentative = 'PersonalRepresentative',
   Custom = 'Custom',
 }
 
 export enum DelegationProvider {
   NationalRegistry = 'thjodskra',
   CompanyRegistry = 'fyrirtaekjaskra',
+  PersonalRepresentativeRegistry = 'talsmannagrunnur',
   Custom = 'delegationdb',
 }
 
 export class DelegationDTO {
-  @ApiPropertyOptional()
-  id?: string
+  @IsString()
+  @ApiPropertyOptional({ nullable: true })
+  id?: string | null
 
   @IsString()
   @ApiProperty()
@@ -41,12 +44,12 @@ export class DelegationDTO {
   toNationalId!: string
 
   @IsString()
-  @ApiPropertyOptional()
-  toName?: string
+  @ApiPropertyOptional({ nullable: true })
+  toName?: string | null
 
   @IsDateString()
-  @ApiPropertyOptional()
-  validTo?: Date | null | undefined
+  @ApiPropertyOptional({ nullable: true })
+  validTo?: Date | null
 
   @ApiProperty({ enum: DelegationType, enumName: 'DelegationType' })
   type!: DelegationType
@@ -61,20 +64,12 @@ export class DelegationDTO {
 }
 
 export class UpdateDelegationDTO {
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  fromName?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  toName?: string
-
   @ApiPropertyOptional({ type: [UpdateDelegationScopeDTO] })
   @Type(() => UpdateDelegationScopeDTO)
+  @ValidateNested({ each: true })
+  @IsOptional()
   @IsArray()
-  scopes!: UpdateDelegationScopeDTO[]
+  scopes?: UpdateDelegationScopeDTO[]
 }
 
 export class CreateDelegationDTO {
@@ -82,11 +77,8 @@ export class CreateDelegationDTO {
   @ApiProperty()
   toNationalId!: string
 
-  @IsString()
-  @ApiProperty()
-  toName!: string
-
   @ApiPropertyOptional({ type: [UpdateDelegationScopeDTO] })
+  @Type(() => UpdateDelegationScopeDTO)
   @ValidateNested({ each: true })
   @IsOptional()
   @IsArray()

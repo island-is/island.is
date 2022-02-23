@@ -5,6 +5,7 @@ import { useForm, Controller, ValidationRules } from 'react-hook-form'
 import { useHistory } from 'react-router-dom'
 import { defineMessage } from 'react-intl'
 import * as kennitala from 'kennitala'
+import { sharedMessages } from '@island.is/shared/translations'
 
 import {
   Box,
@@ -26,7 +27,7 @@ import {
 import { useLocale } from '@island.is/localization'
 
 import { AuthDelegationsQuery } from '../AccessControl'
-import * as styles from './GrantAccess.treat'
+import * as styles from './GrantAccess.css'
 
 const CreateAuthDelegationMutation = gql`
   mutation CreateAuthDelegationMutation($input: CreateAuthDelegationInput!) {
@@ -50,6 +51,15 @@ const IdentityQuery = gql`
 `
 
 function GrantAccess() {
+  const noUserFoundToast = () => {
+    toast.error(
+      formatMessage({
+        id: 'service.portal.settings.accessControl:grant-identity-error',
+        defaultMessage: 'Enginn notandi fannst með þessa kennitölu.',
+      }),
+    )
+  }
+
   const [name, setName] = useState('')
   const { handleSubmit, control, errors, watch, reset } = useForm({
     mode: 'onChange',
@@ -63,13 +73,11 @@ function GrantAccess() {
   const [getIdentity, { data, loading: queryLoading }] = useLazyQuery<Query>(
     IdentityQuery,
     {
-      onError: (error) => {
-        toast.error(
-          formatMessage({
-            id: 'service.portal.settings.accessControl:grant-identity-error',
-            defaultMessage: 'Enginn notandi fannst með þessa kennitölu.',
-          }),
-        )
+      onError: noUserFoundToast,
+      onCompleted: (data) => {
+        if (!data.identity) {
+          noUserFoundToast()
+        }
       },
     },
   )
@@ -103,11 +111,11 @@ function GrantAccess() {
   const onSubmit = handleSubmit(async ({ toNationalId }) => {
     try {
       const { data } = await createAuthDelegation({
-        variables: { input: { name, toNationalId } },
+        variables: { input: { toNationalId } },
       })
       if (data) {
         history.push(
-          `${ServicePortalPath.SettingsAccessControl}/${data.createAuthDelegation.to.nationalId}`,
+          `${ServicePortalPath.SettingsAccessControl}/${data.createAuthDelegation.id}`,
         )
       }
     } catch (error) {
@@ -147,7 +155,7 @@ function GrantAccess() {
               })}
             </Text>
           </GridColumn>
-          <GridColumn span={['12/12', '12/12', '8/12']} paddingBottom={4}>
+          <GridColumn span={['12/12', '12/12', '8/12']}>
             <div className={styles.inputWrapper}>
               {name && (
                 <Input
@@ -160,9 +168,14 @@ function GrantAccess() {
                     defaultMessage: 'Aðgangshafi',
                   })}
                   disabled
+                  size="md"
                 />
               )}
-              <Box display={name ? 'none' : 'block'} aria-live="assertive">
+              <Box
+                display={name ? 'none' : 'block'}
+                aria-live="assertive"
+                marginBottom={[1, 1, 0]}
+              >
                 <InputController
                   control={control}
                   id="toNationalId"
@@ -197,18 +210,13 @@ function GrantAccess() {
                   }
                   type="tel"
                   format="######-####"
-                  label={formatMessage({
-                    id: 'global:nationalId',
-                    defaultMessage: 'Kennitala',
-                  })}
-                  placeholder={formatMessage({
-                    id: 'global:nationalId',
-                    defaultMessage: 'Kennitala',
-                  })}
+                  label={formatMessage(sharedMessages.nationalId)}
+                  placeholder={formatMessage(sharedMessages.nationalId)}
                   error={errors.toNationalId?.message}
                   onChange={(value) => {
                     requestDelegation(value)
                   }}
+                  size="md"
                 />
               </Box>
               {queryLoading ? (

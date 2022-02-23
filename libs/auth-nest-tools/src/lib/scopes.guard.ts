@@ -11,13 +11,13 @@ export class ScopesGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const scopes = this.reflector.get<string[]>(
-      SCOPES_KEY,
+    const scopes = this.reflector.getAllAndOverride<string[]>(SCOPES_KEY, [
       context.getHandler(),
-    )
-    const actorScopes = this.reflector.get<string[]>(
+      context.getClass(),
+    ])
+    const actorScopes = this.reflector.getAllAndOverride<string[]>(
       ACTOR_SCOPES_KEY,
-      context.getHandler(),
+      [context.getHandler(), context.getClass()],
     )
     const request = getRequest(context)
 

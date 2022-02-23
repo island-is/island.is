@@ -1,9 +1,10 @@
-import { FormValue } from '@island.is/application/core'
+import { FormValue, getValueViaPath } from '@island.is/application/core'
 import { WhoIsTheNotificationForEnum } from '../types'
 
 export const isReportingOnBehalfOfChild = (formValue: FormValue) => {
-  const whoIsTheNotificationFor = (formValue as {
-    whoIsTheNotificationFor: { answer: WhoIsTheNotificationForEnum }
-  })?.whoIsTheNotificationFor?.answer
+  const whoIsTheNotificationFor = getValueViaPath(
+    formValue,
+    'whoIsTheNotificationFor.answer',
+  ) as WhoIsTheNotificationForEnum
   return whoIsTheNotificationFor === WhoIsTheNotificationForEnum.CHILDINCUSTODY
 }

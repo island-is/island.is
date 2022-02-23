@@ -1,7 +1,9 @@
 import { ExternalData } from '@island.is/application/core'
 import { Address } from '@island.is/api/schema'
 import { Applications } from './dataProviders/APIDataTypes'
-import { EFTA, EU, NordicCountries } from './shared'
+import { NordicCountriesCountryCode } from './shared'
+import { EU } from './lib/EU'
+import { EFTA } from './lib/EFTA'
 
 const sortApplicationsByDateAscending = (applications: Applications[]) => {
   const sortedApplications = applications
@@ -67,34 +69,36 @@ export const prerequisitesFailed = (externalData: ExternalData) => {
   )
 }
 
-export const isEUCountry = (countryData: string) => {
-  const regions = extractKeyFromStringObject(countryData, 'regions')
-  return regions?.includes(EU) || regions?.includes(EFTA)
-}
-
-export const requireConfirmationOfResidency = (formerCountry: string) => {
-  const countryName = extractKeyFromStringObject(formerCountry, 'name')
-  return (
-    countryName === NordicCountries.FAROE_ISLANDS ||
-    countryName === NordicCountries.GREENLAND
+export const isEUCountry = (countryCode: string) => {
+  const isInEFTA = !!EFTA.find(
+    (element: any) => element.alpha2Code === countryCode,
   )
+  const isInEU = !!EU.find((element: any) => element.alpha2Code === countryCode)
+  return isInEU || isInEFTA
 }
 
-export const isNordicCountry = (countryData: string) => {
-  const countryName = extractKeyFromStringObject(countryData, 'name')
-  return Object.values(NordicCountries).includes(countryName)
+// Special cases for Faroe islands and greenland
+export const requireConfirmationOfResidency = (country: string) => {
+  const countryCode = extractKeyFromStringObject(country, 'countryCode')
+  return countryCode === 'FO' || countryCode === 'GL'
+}
+
+export const isNordicCountry = (countryCode: string) => {
+  return countryCode in NordicCountriesCountryCode
 }
 
 export const requireWaitingPeriod = (
   formerCountry: string,
   citizenship: string,
 ) => {
-  // Moving from outside of an EU/EEA country require waiting period
-  // Moving from an EU country, and user is not an EU/EEA citizen require waiting period
-  // Exceptions are if user is moving from a nordic country.
-  if (!isNordicCountry(formerCountry)) {
-    if (isEUCountry(formerCountry)) {
-      if (!isEUCountry(citizenship)) return true
+  const citizenshipCode = extractKeyFromStringObject(citizenship, 'code')
+  const formerCountryCode = extractKeyFromStringObject(
+    formerCountry,
+    'countryCode',
+  )
+  if (!isNordicCountry(formerCountryCode)) {
+    if (isEUCountry(formerCountryCode)) {
+      if (!isEUCountry(citizenshipCode)) return true
     } else {
       return true
     }

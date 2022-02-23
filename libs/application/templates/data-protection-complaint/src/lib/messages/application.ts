@@ -12,6 +12,11 @@ export const application = defineMessages({
     defaultMessage: 'Persónuvernd',
     description: 'Name of the Data Protection Authority',
   },
+  submittedTag: {
+    id: 'dpac.application:application.submittedTag',
+    defaultMessage: 'Lokið',
+    description: 'Submitted tag on action card',
+  },
 })
 
 // All sections in the application
@@ -46,9 +51,14 @@ export const section = defineMessages({
     defaultMessage: 'Meiðyrði',
     description: 'Complaint regards libel',
   },
+  personalDataConflict: {
+    id: 'dpac.application:section.personalDataConflict',
+    defaultMessage: 'Meðhöndlun gagna',
+    description: 'Complaint regards personal data conflict',
+  },
   agreement: {
     id: 'dpac.application:section.agreement',
-    defaultMessage: 'Samþykki',
+    defaultMessage: 'Upplýsingar um málsmeðferð',
     description: 'Agreement section title',
   },
   info: {
@@ -118,6 +128,11 @@ export const sharedFields = defineMessages({
     id: 'dpac.application:sharedFields.no',
     defaultMessage: 'Nei',
     description: 'Used to give a negative response',
+  },
+  noIdontKnow: {
+    id: 'dpac.application:sharedFields.noIdontKnow',
+    defaultMessage: 'Nei / Veit það ekki',
+    description: 'Used to give a negative / I dont know response',
   },
   edit: {
     id: 'dpac.application:sharedFields.edit',

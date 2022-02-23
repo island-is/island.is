@@ -72,8 +72,10 @@ export const Webreader: FC<WebReaderProps> = ({
       // the readspeaker will still remain initialized
       // but in order for functionality to be added to the new button
       // we need to call 'addClickEvents'
-      rspkr.init()
-      rspkr.ui.addClickEvents()
+      window.onload = () => {
+        rspkr.init()
+        rspkr.ui.addClickEvents()
+      }
     }
   }, [])
 

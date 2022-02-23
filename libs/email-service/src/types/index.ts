@@ -1,4 +1,8 @@
 import { SendMailOptions } from 'nodemailer'
+import handlebars from 'handlebars'
+
+type Alignment = 'left' | 'center' | 'right' | undefined
+type Style = 'bold' | 'italic' | 'normal' | undefined
 
 export interface ImageComponent {
   component: 'Image'
@@ -8,21 +12,34 @@ export interface ImageComponent {
   }
 }
 
-interface HeadingComponent {
+export interface HeadingComponent {
   component: 'Heading'
   context: {
     copy: string
+    align?: Alignment
+    small?: boolean
+    eyebrow?: string
   }
 }
 
-interface CopyComponent {
+export interface CopyComponent {
   component: 'Copy'
   context: {
     copy: string
+    align?: Alignment
+    small?: boolean
+    style?: Style
   }
 }
 
-interface ButtonComponent {
+export interface ListComponent {
+  component: 'List'
+  context: {
+    items: string[]
+  }
+}
+
+export interface ButtonComponent {
   component: 'Button'
   context: {
     copy: string
@@ -30,9 +47,25 @@ interface ButtonComponent {
   }
 }
 
+interface SubtitleComponent {
+  component: 'Subtitle'
+  context: {
+    copy: string
+    application: string
+  }
+}
+
+export type Body =
+  | ImageComponent
+  | HeadingComponent
+  | CopyComponent
+  | ButtonComponent
+  | ListComponent
+  | SubtitleComponent
+
 export interface Template {
   title: string
-  body: (ImageComponent | HeadingComponent | CopyComponent | ButtonComponent)[]
+  body: Body[]
 }
 
 /**
@@ -55,3 +88,5 @@ export interface DesignTemplate {
 }
 
 export type Message = SendMailOptions & DesignTemplate
+
+export type Handlebars = typeof handlebars

@@ -4,7 +4,6 @@ import * as types from '../generated/contentfulTypes'
 import { SystemMetadata } from '@island.is/shared/types'
 import { Image, mapImage } from './image.model'
 import { LinkCardSlice, mapLinkCardSlice } from './linkCardSlice.model'
-import { Graph, mapGraph } from './graph.model'
 import { GraphCard, mapGraphCard } from './graphCard.model'
 import { StatisticsCard, mapStatisticsCard } from './statisticsCard.model'
 

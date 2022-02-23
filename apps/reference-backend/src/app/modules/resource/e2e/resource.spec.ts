@@ -7,14 +7,13 @@ let app: INestApplication
 
 beforeAll(async () => {
   app = await setup({
-    override: (builder) => {
+    override: (builder) =>
       builder.overrideGuard(IdsUserGuard).useValue(
         new MockAuthGuard({
           nationalId: '1234567890',
           scope: [],
         }),
-      )
-    },
+      ),
   })
 })
 

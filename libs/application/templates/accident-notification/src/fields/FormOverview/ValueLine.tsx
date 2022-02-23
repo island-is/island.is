@@ -3,7 +3,8 @@ import { Colors } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { MessageDescriptor } from 'react-intl'
-import { FileType } from '../../types'
+import * as styles from './FormOverview.css'
+import cn from 'classnames'
 
 interface ValueLineProps {
   label: string | MessageDescriptor
@@ -15,7 +16,7 @@ export const ValueLine: FC<ValueLineProps> = ({ label, value, color }) => {
   const { formatMessage } = useLocale()
 
   return (
-    <Box paddingBottom={3}>
+    <Box paddingBottom={3} className={cn(styles.formValueBreakWord)}>
       <Text variant="h5">{formatMessage(label)}</Text>
       <Text color={color}>{formatMessage(value)}</Text>
     </Box>
@@ -24,21 +25,25 @@ export const ValueLine: FC<ValueLineProps> = ({ label, value, color }) => {
 
 interface FileValueLineProps {
   label: string | MessageDescriptor
-  files: FileType[] | undefined
+  files: MessageDescriptor[] | undefined
 }
 
 export const FileValueLine: FC<FileValueLineProps> = ({ label, files }) => {
   const { formatMessage } = useLocale()
 
   return (
-    <Box marginTop={2} paddingBottom={!files || files.length === 0 ? 0 : 2}>
+    <Box
+      marginTop={2}
+      paddingBottom={!files || files.length === 0 ? 0 : 2}
+      className={cn(styles.formValueBreakWord)}
+    >
       <Text variant="h5" marginBottom={[2, 2, 3]}>
         {formatMessage(label)}
       </Text>
       {!files || files.length === 0 ? null : (
         <BulletList space={1} type="ul">
           {files?.map((file, index) => (
-            <Bullet key={`${file.name}-${index}`}>{file.name}</Bullet>
+            <Bullet key={`${file.id}-${index}`}>{formatMessage(file)}</Bullet>
           ))}
         </BulletList>
       )}

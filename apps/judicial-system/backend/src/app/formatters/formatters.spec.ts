@@ -1,17 +1,14 @@
+import { makeProsecutor } from '@island.is/judicial-system/formatters'
 import {
-  CaseAppealDecision,
-  CaseCustodyProvisions,
-  CaseCustodyRestrictions,
-  CaseDecision,
-  CaseGender,
+  CaseLegalProvisions,
+  Gender,
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
 import {
   formatProsecutorCourtDateEmailNotification,
-  formatCourtDateNotificationCondition,
-  formatCustodyProvisions,
+  formatLegalProvisions,
   formatCourtHeadsUpSmsNotification,
   formatCourtReadyForCourtSmsNotification,
   formatPrisonCourtDateEmailNotification,
@@ -22,60 +19,102 @@ import {
   formatPrisonRevokedEmailNotification,
   formatDefenderRevokedEmailNotification,
   formatProsecutorReceivedByCourtSmsNotification,
+  formatCourtResubmittedToCourtSmsNotification,
 } from './formatters'
 
-describe('formatCustodyProvisions', () => {
-  test('should format custody provisions when no provisions are selected', () => {
+describe('formatLegalProvisions', () => {
+  test('should format legal provisions when no provisions are selected', () => {
     // Arrange
-    const custodyProvisions: CaseCustodyProvisions[] = []
+    const legalProvisions: CaseLegalProvisions[] = []
 
     // Act
-    const res = formatCustodyProvisions(custodyProvisions)
+    const res = formatLegalProvisions(legalProvisions)
 
     // Assert
-    expect(res).toBe('')
+    expect(res).toBe('Lagaákvæði ekki skráð')
   })
 
-  test('should format custody provisions when some provisions are selected', () => {
+  test('should format legal provisions when provisions not defined', () => {
+    // Act
+    const res = formatLegalProvisions()
+
+    // Assert
+    expect(res).toBe('Lagaákvæði ekki skráð')
+  })
+
+  test('should format legal provisions when some provisions are selected', () => {
     // Arrange
-    const custodyProvisions = [
-      CaseCustodyProvisions._95_1_A,
-      CaseCustodyProvisions._95_1_B,
-      CaseCustodyProvisions._95_1_C,
-      CaseCustodyProvisions._95_1_D,
-      CaseCustodyProvisions._95_2,
-      CaseCustodyProvisions._99_1_B,
-      CaseCustodyProvisions._100_1,
+    const legalProvisions = [
+      CaseLegalProvisions._95_1_A,
+      CaseLegalProvisions._95_1_B,
+      CaseLegalProvisions._95_1_C,
+      CaseLegalProvisions._95_1_D,
+      CaseLegalProvisions._95_2,
+      CaseLegalProvisions._99_1_B,
+      CaseLegalProvisions._100_1,
     ]
 
     // Act
-    const res = formatCustodyProvisions(custodyProvisions)
+    const res = formatLegalProvisions(legalProvisions)
 
     // Assert
     expect(res).toBe(
-      'a-lið 1. mgr. 95. gr.\nb-lið 1. mgr. 95. gr.\nc-lið 1. mgr. 95. gr.\nd-lið 1. mgr. 95. gr.\n2. mgr. 95. gr.\nb-lið 1. mgr. 99. gr.\n1. mgr. 100. gr. sml.',
+      'a-lið 1. mgr. 95. gr. sml.\nb-lið 1. mgr. 95. gr. sml.\nc-lið 1. mgr. 95. gr. sml.\nd-lið 1. mgr. 95. gr. sml.\n2. mgr. 95. gr. sml.\nb-lið 1. mgr. 99. gr. sml.\n1. mgr. 100. gr. sml.',
     )
   })
 
-  test('should sort provisions when formatting custody provisions', () => {
+  test('should sort provisions when formatting legal provisions', () => {
     // Arrange
-    const custodyProvisions = [
-      CaseCustodyProvisions._95_1_C,
-      CaseCustodyProvisions._95_1_D,
-      CaseCustodyProvisions._95_1_A,
-      CaseCustodyProvisions._95_2,
-      CaseCustodyProvisions._99_1_B,
-      CaseCustodyProvisions._95_1_B,
-      CaseCustodyProvisions._100_1,
+    const legalProvisions = [
+      CaseLegalProvisions._95_1_C,
+      CaseLegalProvisions._95_1_D,
+      CaseLegalProvisions._95_1_A,
+      CaseLegalProvisions._95_2,
+      CaseLegalProvisions._99_1_B,
+      CaseLegalProvisions._95_1_B,
+      CaseLegalProvisions._100_1,
     ]
 
     // Act
-    const res = formatCustodyProvisions(custodyProvisions)
+    const res = formatLegalProvisions(legalProvisions)
 
     // Assert
     expect(res).toBe(
-      'a-lið 1. mgr. 95. gr.\nb-lið 1. mgr. 95. gr.\nc-lið 1. mgr. 95. gr.\nd-lið 1. mgr. 95. gr.\n2. mgr. 95. gr.\nb-lið 1. mgr. 99. gr.\n1. mgr. 100. gr. sml.',
+      'a-lið 1. mgr. 95. gr. sml.\nb-lið 1. mgr. 95. gr. sml.\nc-lið 1. mgr. 95. gr. sml.\nd-lið 1. mgr. 95. gr. sml.\n2. mgr. 95. gr. sml.\nb-lið 1. mgr. 99. gr. sml.\n1. mgr. 100. gr. sml.',
     )
+  })
+
+  test('should format legal provisions when some provisions are selected and additional freetext provided', () => {
+    // Arrange
+    const legalProvisions = [
+      CaseLegalProvisions._95_1_A,
+      CaseLegalProvisions._95_1_B,
+      CaseLegalProvisions._95_1_C,
+      CaseLegalProvisions._95_1_D,
+      CaseLegalProvisions._95_2,
+      CaseLegalProvisions._99_1_B,
+      CaseLegalProvisions._100_1,
+    ]
+    const legalBasis = 'some lið mgr. gr. sml.'
+
+    // Act
+    const res = formatLegalProvisions(legalProvisions, legalBasis)
+
+    // Assert
+    expect(res).toBe(
+      'a-lið 1. mgr. 95. gr. sml.\nb-lið 1. mgr. 95. gr. sml.\nc-lið 1. mgr. 95. gr. sml.\nd-lið 1. mgr. 95. gr. sml.\n2. mgr. 95. gr. sml.\nb-lið 1. mgr. 99. gr. sml.\n1. mgr. 100. gr. sml.\nsome lið mgr. gr. sml.',
+    )
+  })
+
+  test('should format legal provisions only freetext provided', () => {
+    // Arrange
+    const legalBasis = 'some lið mgr. gr. sml.'
+
+    // Act
+    const res = formatLegalProvisions(undefined, legalBasis)
+
+    // Assert
+    expect(res).toBe('some lið mgr. gr. sml.')
   })
 })
 
@@ -97,7 +136,7 @@ describe('formatHeadsUpSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Ný gæsluvarðhaldskrafa í vinnslu. Ákærandi: Árni Ákærandi. Viðkomandi handtekinn 24.11.2020, kl. 13:22. ÓE fyrirtöku 25.11.2020, eftir kl. 09:15.',
+      'Ný gæsluvarðhaldskrafa í vinnslu. Sækjandi: Árni Ákærandi. Viðkomandi handtekinn 24.11.2020, kl. 13:22. ÓE fyrirtöku 25.11.2020, eftir kl. 09:15.',
     )
   })
 
@@ -116,7 +155,7 @@ describe('formatHeadsUpSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Ný gæsluvarðhaldskrafa í vinnslu. Ákærandi: Árni Ákærandi.',
+      'Ný gæsluvarðhaldskrafa í vinnslu. Sækjandi: Árni Ákærandi.',
     )
   })
 
@@ -134,7 +173,7 @@ describe('formatHeadsUpSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Ný gæsluvarðhaldskrafa í vinnslu. Ákærandi: Ekki skráður.',
+      'Ný gæsluvarðhaldskrafa í vinnslu. Sækjandi: Ekki skráður.',
     )
   })
 
@@ -155,7 +194,7 @@ describe('formatHeadsUpSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Ný farbannskrafa í vinnslu. Ákærandi: Ákærandinn. Viðkomandi handtekinn 24.01.2021, kl. 13:00. ÓE fyrirtöku 25.01.2021, eftir kl. 19:15.',
+      'Ný farbannskrafa í vinnslu. Sækjandi: Ákærandinn. Viðkomandi handtekinn 24.01.2021, kl. 13:00. ÓE fyrirtöku 25.01.2021, eftir kl. 19:15.',
     )
   })
 
@@ -176,7 +215,7 @@ describe('formatHeadsUpSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Ný krafa um rannsóknarheimild (leit og líkamsrannsókn) í vinnslu. Ákærandi: Al Coe. Viðkomandi handtekinn 24.01.2021, kl. 13:00. ÓE fyrirtöku 20.06.2021, eftir kl. 10:00.',
+      'Ný krafa um rannsóknarheimild (leit og líkamsrannsókn) í vinnslu. Sækjandi: Al Coe. Viðkomandi handtekinn 24.01.2021, kl. 13:00. ÓE fyrirtöku 20.06.2021, eftir kl. 10:00.',
     )
   })
 
@@ -197,7 +236,7 @@ describe('formatHeadsUpSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Ný krafa um rannsóknarheimild í vinnslu. Ákærandi: Al Coe. Viðkomandi handtekinn 24.01.2021, kl. 13:00. ÓE fyrirtöku 20.06.2021, eftir kl. 10:00.',
+      'Ný krafa um rannsóknarheimild í vinnslu. Sækjandi: Al Coe. Viðkomandi handtekinn 24.01.2021, kl. 13:00. ÓE fyrirtöku 20.06.2021, eftir kl. 10:00.',
     )
   })
 })
@@ -218,7 +257,7 @@ describe('formatReadyForCourtSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Gæsluvarðhaldskrafa tilbúin til afgreiðslu. Ákærandi: Árni Ákærandi. Dómstóll: Héraðsdómur Reykjavíkur.',
+      'Gæsluvarðhaldskrafa tilbúin til afgreiðslu. Sækjandi: Árni Ákærandi. Dómstóll: Héraðsdómur Reykjavíkur.',
     )
   })
 
@@ -235,7 +274,7 @@ describe('formatReadyForCourtSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Gæsluvarðhaldskrafa tilbúin til afgreiðslu. Ákærandi: Ekki skráður. Dómstóll: Ekki skráður.',
+      'Gæsluvarðhaldskrafa tilbúin til afgreiðslu. Sækjandi: Ekki skráður. Dómstóll: Ekki skráður.',
     )
   })
 
@@ -254,7 +293,7 @@ describe('formatReadyForCourtSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Farbannskrafa tilbúin til afgreiðslu. Ákærandi: Árni Ákærandi. Dómstóll: Héraðsdómur Austurlands.',
+      'Farbannskrafa tilbúin til afgreiðslu. Sækjandi: Árni Ákærandi. Dómstóll: Héraðsdómur Austurlands.',
     )
   })
 
@@ -273,7 +312,7 @@ describe('formatReadyForCourtSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Krafa um rannsóknarheimild (upplýsingar um vefnotkun) tilbúin til afgreiðslu. Ákærandi: Árni Ákærandi. Dómstóll: Héraðsdómur Austurlands.',
+      'Krafa um rannsóknarheimild (upplýsingar um vefnotkun) tilbúin til afgreiðslu. Sækjandi: Árni Ákærandi. Dómstóll: Héraðsdómur Austurlands.',
     )
   })
 
@@ -292,7 +331,22 @@ describe('formatReadyForCourtSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Krafa um rannsóknarheimild tilbúin til afgreiðslu. Ákærandi: Árni Ákærandi. Dómstóll: Héraðsdómur Austurlands.',
+      'Krafa um rannsóknarheimild tilbúin til afgreiðslu. Sækjandi: Árni Ákærandi. Dómstóll: Héraðsdómur Austurlands.',
+    )
+  })
+})
+
+describe('formatReadyForCourtSmsNotification', () => {
+  test('should format ready for court SMS notification', () => {
+    // Arrange
+    const courtCaseNumber = 'R-123/2021'
+
+    // Act
+    const res = formatCourtResubmittedToCourtSmsNotification(courtCaseNumber)
+
+    // Assert
+    expect(res).toBe(
+      'Sækjandi í máli R-123/2021 hefur breytt kröfunni og sent aftur á héraðsdómstól. Nýtt kröfuskjal hefur verið vistað í Auði.',
     )
   })
 })
@@ -426,7 +480,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu.<br /><br />Fyrirtaka mun fara fram 24. desember 2020, kl. 18:00.<br /><br />Dómsalur: 101.<br /><br />Dómari hefur ekki verið skráður.<br /><br />Dómritari hefur ekki verið skráður.<br /><br />Talsmaður sakbornings hefur ekki verið skráður.',
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu.<br /><br />Fyrirtaka mun fara fram 24. desember 2020, kl. 18:00.<br /><br />Dómsalur: 101.<br /><br />Dómari hefur ekki verið skráður.<br /><br />Talsmaður sakbornings hefur ekki verið skráður.',
     )
   })
 
@@ -518,7 +572,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     )
   })
 
-  test('should format court date notification when prosecutor will not attend', () => {
+  test('should format court date notification when defender will not attend', () => {
     // Arrange
     const type = CaseType.OTHER
     const court = 'Héraðsdómur Reykjavíkur'
@@ -528,7 +582,7 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     const registrarName = 'Dalli Dómritari'
     const defenderName = 'Tinni Talsmaður'
     const defenderIsSpokesperson = true
-    const sessionArrangements = SessionArrangements.REMOTE_SESSION
+    const sessionArrangements = SessionArrangements.PROSECUTOR_PRESENT
 
     // Act
     const res = formatProsecutorCourtDateEmailNotification(
@@ -545,7 +599,34 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Úrskurðað verður um kröfuna án mætingar af hálfu málsaðila.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.<br /><br />Talsmaður sakbornings: Tinni Talsmaður.',
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um rannsóknarheimild.<br /><br />Fyrirtaka mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.',
+    )
+  })
+
+  test('should format court date notification when courtroom is not set', () => {
+    // Arrange
+    const type = CaseType.CUSTODY
+    const court = 'Héraðsdómur Reykjavíkur'
+    const courtDate = new Date('2020-12-24T18:00')
+    const courtRoom = undefined
+    const judgeName = 'Dóra Dómari'
+    const registrarName = 'Dalli Dómritari'
+    const defenderName = 'Valdi Verjandi'
+
+    // Act
+    const res = formatProsecutorCourtDateEmailNotification(
+      type,
+      court,
+      courtDate,
+      courtRoom,
+      judgeName,
+      registrarName,
+      defenderName,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir gæsluvarðhaldskröfu.<br /><br />Fyrirtaka mun fara fram 24. desember 2020, kl. 18:00.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.<br /><br />Verjandi sakbornings: Valdi Verjandi.',
     )
   })
 })
@@ -557,7 +638,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
     const accusedName = 'Maggi Murder'
-    const accusedGender = CaseGender.FEMALE
+    const accusedGender = Gender.FEMALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = true
     const defenderName = 'Varði Varnari'
@@ -589,7 +670,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
     const accusedName = 'Maggi Murder'
-    const accusedGender = CaseGender.OTHER
+    const accusedGender = Gender.OTHER
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = true
     const defenderName = 'Vala Verja'
@@ -622,7 +703,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
     const accusedName = 'Maggi Murder'
-    const accusedGender = CaseGender.MALE
+    const accusedGender = Gender.MALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = false
     const defenderName = 'Vala Verja'
@@ -655,7 +736,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-04T02:02')
     const accusedName = 'Maggi Murder'
-    const accusedGender = CaseGender.MALE
+    const accusedGender = Gender.MALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = false
     const isExtension = false
@@ -686,7 +767,7 @@ describe('formatPrisonCourtDateEmailNotification', () => {
     const court = 'Héraðsdómur Austurlands'
     const courtDate = new Date('2021-02-11T12:02')
     const accusedName = 'Maggi Murder'
-    const accusedGender = CaseGender.MALE
+    const accusedGender = Gender.MALE
     const requestedValidToDate = new Date('2030-08-12T08:25')
     const isolation = false
     const defenderIsSpokesperson = true
@@ -720,6 +801,9 @@ describe('formatDefenderCourtDateEmailNotification', () => {
     const courtCaseNumber = 'R-77/2021'
     const courtDate = new Date('2020-12-19T10:19')
     const courtRoom = '101'
+    const judgeName = 'Judy'
+    const registrarName = 'Robin'
+    const prosecutor = makeProsecutor()
 
     // Act
     const res = formatDefenderCourtDateEmailNotification(
@@ -727,11 +811,16 @@ describe('formatDefenderCourtDateEmailNotification', () => {
       courtCaseNumber,
       courtDate,
       courtRoom,
+      false,
+      judgeName,
+      registrarName,
+      prosecutor.name,
+      prosecutor.institution?.name,
     )
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.',
+      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.<br /><br />Dómari: Judy.<br /><br />Dómritari: Robin.<br /><br />Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
     )
   })
 
@@ -742,6 +831,9 @@ describe('formatDefenderCourtDateEmailNotification', () => {
     const courtDate = new Date('2020-12-19T10:19')
     const courtRoom = '101'
     const defenderIsSpokesperson = true
+    const judgeName = 'Judy'
+    const registrarName = 'Robin'
+    const prosecutor = makeProsecutor()
 
     // Act
     const res = formatDefenderCourtDateEmailNotification(
@@ -750,27 +842,72 @@ describe('formatDefenderCourtDateEmailNotification', () => {
       courtDate,
       courtRoom,
       defenderIsSpokesperson,
+      judgeName,
+      registrarName,
+      prosecutor.name,
+      prosecutor.institution?.name,
     )
 
     // Assert
     expect(res).toBe(
-      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem talsmann sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.',
+      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem talsmann sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur: 101.<br /><br />Dómari: Judy.<br /><br />Dómritari: Robin.<br /><br />Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
     )
   })
-})
 
-describe('formatCourtDateNotificationCondition', () => {
-  test('should format prison court date notification', () => {
+  test('should format defender court date notification when courtroom is not set', () => {
     // Arrange
-    const courtDate = new Date('2020-12-20T13:32')
-    const defenderEmail = 'defender@defenders.is'
+    const court = 'Héraðsdómur Norðurlands'
+    const courtCaseNumber = 'R-77/2021'
+    const courtDate = new Date('2020-12-19T10:19')
+    const courtRoom = undefined
+    const judgeName = 'Judy'
+    const registrarName = 'Robin'
+    const prosecutor = makeProsecutor()
 
     // Act
-    const res = formatCourtDateNotificationCondition(courtDate, defenderEmail)
+    const res = formatDefenderCourtDateEmailNotification(
+      court,
+      courtCaseNumber,
+      courtDate,
+      courtRoom,
+      false,
+      judgeName,
+      registrarName,
+      prosecutor.name,
+      prosecutor.institution?.name,
+    )
 
     // Assert
     expect(res).toBe(
-      'courtDate=20.12.2020 13:32,defenderEmail=defender@defenders.is',
+      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari: Judy.<br /><br />Dómritari: Robin.<br /><br />Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
+    )
+  })
+
+  test('should format defender court date notification when registrar is not set', () => {
+    // Arrange
+    const court = 'Héraðsdómur Norðurlands'
+    const courtCaseNumber = 'R-77/2021'
+    const courtDate = new Date('2020-12-19T10:19')
+    const courtRoom = undefined
+    const judgeName = 'Judy'
+    const prosecutor = makeProsecutor()
+
+    // Act
+    const res = formatDefenderCourtDateEmailNotification(
+      court,
+      courtCaseNumber,
+      courtDate,
+      courtRoom,
+      false,
+      judgeName,
+      undefined,
+      prosecutor.name,
+      prosecutor.institution?.name,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Héraðsdómur Norðurlands hefur boðað þig í fyrirtöku sem verjanda sakbornings.<br /><br />Fyrirtaka mun fara fram laugardaginn 19. desember 2020, kl. 10:19.<br /><br />Málsnúmer: R-77/2021.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari: Judy.<br /><br />Sækjandi: Áki Ákærandi (Lögreglan á Höfuðborgarsvæðinu).',
     )
   })
 })
@@ -778,138 +915,14 @@ describe('formatCourtDateNotificationCondition', () => {
 describe('formatPrisonRulingEmailNotification', () => {
   test('should format prison ruling notification', () => {
     // Arrange
-    const accusedGender = CaseGender.MALE
-    const court = 'Héraðsdómur Vesturlands'
-    const prosecutorName = 'Siggi Sakó'
     const courtEndTime = new Date('2020-12-20T13:32')
-    const defenderName = 'Skúli Skjöldur'
-    const defenderEmail = 'shield@defend.is'
-    const decision = CaseDecision.ACCEPTING
-    const validToDate = new Date('2021-04-06T12:30')
-    const custodyRestrictions = [
-      CaseCustodyRestrictions.ISOLATION,
-      CaseCustodyRestrictions.MEDIA,
-    ]
-    const accusedAppealDecision = CaseAppealDecision.APPEAL
-    const prosecutorAppealDecision = CaseAppealDecision.ACCEPT
-    const judgeName = 'Dalli Dómari'
-    const judgeTitle = 'aðal dómarinn'
-    const conclusion =
-      'Kærði, Biggi Börgler, kt. 241101-8760, skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 6. apríl 2021, kl. 12:30. Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.'
-    const isolationToDate = new Date('2021-04-06T12:30')
 
     // Act
-    const res = formatPrisonRulingEmailNotification(
-      accusedGender,
-      court,
-      prosecutorName,
-      courtEndTime,
-      defenderName,
-      defenderEmail,
-      decision,
-      validToDate,
-      custodyRestrictions,
-      accusedAppealDecision,
-      prosecutorAppealDecision,
-      judgeName,
-      judgeTitle,
-      conclusion,
-      isolationToDate,
-    )
+    const res = formatPrisonRulingEmailNotification(courtEndTime)
 
     // Assert
     expect(res).toBe(
-      '<strong>Úrskurður um gæsluvarðhald</strong><br /><br />Héraðsdómur Vesturlands, 20. desember 2020.<br /><br />Þinghaldi lauk kl. 13:32.<br /><br />Ákærandi: Siggi Sakó.<br />Verjandi: Skúli Skjöldur, shield@defend.is.<br /><br /><strong>Úrskurðarorð</strong><br /><br />Kærði, Biggi Börgler, kt. 241101-8760, skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 6. apríl 2021, kl. 12:30. Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.<br /><br /><strong>Ákvörðun um kæru</strong><br />Kærði kærir úrskurðinn.<br />Sækjandi unir úrskurðinum.<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />Sækjandi tekur fram að kærði skuli sæta einangrun á meðan á gæsluvarðhaldinu stendur og að gæsluvarðhaldið verði með fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.<br /><br />Dalli Dómari aðal dómarinn',
-    )
-  })
-
-  test('should format prison ruling notification for a rejected case', () => {
-    // Arrange
-    const accusedGender = CaseGender.MALE
-    const court = 'Héraðsdómur Vesturlands'
-    const prosecutorName = 'Siggi Sakó'
-    const courtEndTime = new Date('2020-12-20T14:30')
-    const defenderName = 'Skúli Skjöldur'
-    const defenderEmail = 'shield@defend.is'
-    const decision = CaseDecision.REJECTING
-    const validToDate = new Date('2021-04-06T12:30')
-    const custodyRestrictions = [
-      CaseCustodyRestrictions.ISOLATION,
-      CaseCustodyRestrictions.MEDIA,
-    ]
-    const accusedAppealDecision = CaseAppealDecision.APPEAL
-    const prosecutorAppealDecision = CaseAppealDecision.ACCEPT
-    const judgeName = 'Dalli Dómari'
-    const judgeTitle = 'aðal dómarinn'
-    const conclusion =
-      'Kröfu um að kærði, Biggi Börgler, kt. 241101-8760, sæti gæsluvarðhaldi er hafnað.'
-
-    // Act
-    const res = formatPrisonRulingEmailNotification(
-      accusedGender,
-      court,
-      prosecutorName,
-      courtEndTime,
-      defenderName,
-      defenderEmail,
-      decision,
-      validToDate,
-      custodyRestrictions,
-      accusedAppealDecision,
-      prosecutorAppealDecision,
-      judgeName,
-      judgeTitle,
-      conclusion,
-    )
-
-    // Assert
-    expect(res).toBe(
-      '<strong>Úrskurður um gæsluvarðhald</strong><br /><br />Héraðsdómur Vesturlands, 20. desember 2020.<br /><br />Þinghaldi lauk kl. 14:30.<br /><br />Ákærandi: Siggi Sakó.<br />Verjandi: Skúli Skjöldur, shield@defend.is.<br /><br /><strong>Úrskurðarorð</strong><br /><br />Kröfu um að kærði, Biggi Börgler, kt. 241101-8760, sæti gæsluvarðhaldi er hafnað.<br /><br /><strong>Ákvörðun um kæru</strong><br />Kærði kærir úrskurðinn.<br />Sækjandi unir úrskurðinum.<br /><br />Dalli Dómari aðal dómarinn',
-    )
-  })
-
-  test('should format prison ruling notification when a defender has not been set', () => {
-    // Arrange
-    const accusedGender = CaseGender.MALE
-    const court = 'Héraðsdómur Vesturlands'
-    const prosecutorName = 'Siggi Sakó'
-    const courtEndTime = new Date('2020-12-20T13:32')
-    const decision = CaseDecision.ACCEPTING
-    const validToDate = new Date('2021-04-06T12:30')
-    const custodyRestrictions = [
-      CaseCustodyRestrictions.ISOLATION,
-      CaseCustodyRestrictions.MEDIA,
-    ]
-    const accusedAppealDecision = CaseAppealDecision.APPEAL
-    const prosecutorAppealDecision = CaseAppealDecision.ACCEPT
-    const judgeName = 'Dalli Dómari'
-    const judgeTitle = 'aðal dómarinn'
-    const conclusion =
-      'Kærði, Biggi Börgler, kt. 241101-8760, skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 6. apríl 2021, kl. 12:30. Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.'
-    const isolationToDate = new Date('2021-04-06T12:30')
-
-    // Act
-    const res = formatPrisonRulingEmailNotification(
-      accusedGender,
-      court,
-      prosecutorName,
-      courtEndTime,
-      undefined,
-      undefined,
-      decision,
-      validToDate,
-      custodyRestrictions,
-      accusedAppealDecision,
-      prosecutorAppealDecision,
-      judgeName,
-      judgeTitle,
-      conclusion,
-      isolationToDate,
-    )
-
-    // Assert
-    expect(res).toBe(
-      '<strong>Úrskurður um gæsluvarðhald</strong><br /><br />Héraðsdómur Vesturlands, 20. desember 2020.<br /><br />Þinghaldi lauk kl. 13:32.<br /><br />Ákærandi: Siggi Sakó.<br />Verjandi: Hefur ekki verið skráður.<br /><br /><strong>Úrskurðarorð</strong><br /><br />Kærði, Biggi Börgler, kt. 241101-8760, skal sæta gæsluvarðhaldi, þó ekki lengur en til þriðjudagsins 6. apríl 2021, kl. 12:30. Kærði skal sæta einangrun á meðan á gæsluvarðhaldinu stendur.<br /><br /><strong>Ákvörðun um kæru</strong><br />Kærði kærir úrskurðinn.<br />Sækjandi unir úrskurðinum.<br /><br /><strong>Tilhögun gæsluvarðhalds</strong><br />Sækjandi tekur fram að kærði skuli sæta einangrun á meðan á gæsluvarðhaldinu stendur og að gæsluvarðhaldið verði með fjölmiðlabanni skv. 99. gr. laga nr. 88/2008.<br /><br />Dalli Dómari aðal dómarinn',
+      'Meðfylgjandi er vistunarseðill gæsluvarðhaldsfanga sem var úrskurðaður í gæsluvarðhald í héraðsdómi 20. desember 2020, auk þingbókar þar sem úrskurðarorðin koma fram.',
     )
   })
 })
@@ -932,7 +945,7 @@ describe('formatCourtRevokedSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Gæsluvarðhaldskrafa afturkölluð. Ákærandi: Kiddi Kærari. Fyrirtökutími: 20.12.2021, kl. 11:30.',
+      'Gæsluvarðhaldskrafa afturkölluð. Sækjandi: Kiddi Kærari. Fyrirtökutími: 20.12.2021, kl. 11:30.',
     )
   })
 
@@ -952,7 +965,7 @@ describe('formatCourtRevokedSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Gæsluvarðhaldskrafa afturkölluð. Ákærandi: Kiddi Kærari. ÓVE fyrirtöku 20.01.2021, eftir kl. 11:10.',
+      'Gæsluvarðhaldskrafa afturkölluð. Sækjandi: Kiddi Kærari. ÓVE fyrirtöku 20.01.2021, eftir kl. 11:10.',
     )
   })
 
@@ -969,7 +982,7 @@ describe('formatCourtRevokedSmsNotification', () => {
     )
 
     // Assert
-    expect(res).toBe('Gæsluvarðhaldskrafa afturkölluð. Ákærandi: Ekki skráður.')
+    expect(res).toBe('Gæsluvarðhaldskrafa afturkölluð. Sækjandi: Ekki skráður.')
   })
 
   test('should format revoked sms for travel ban', () => {
@@ -989,7 +1002,7 @@ describe('formatCourtRevokedSmsNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Farbannskrafa afturkölluð. Ákærandi: Kiddi Kærari. Fyrirtökutími: 20.12.2021, kl. 11:30.',
+      'Farbannskrafa afturkölluð. Sækjandi: Kiddi Kærari. Fyrirtökutími: 20.12.2021, kl. 11:30.',
     )
   })
 })
@@ -1025,16 +1038,18 @@ describe('formatDefenderRevokedEmailNotification', () => {
   test('should format revoked notification', () => {
     // Arrange
     const type = CaseType.CUSTODY
-    const accusedNationalId = '0000001111'
-    const accusedName = 'Gaui Glæpon'
+    const defendantNationalId = '0000001111'
+    const defendantName = 'Gaui Glæpon'
+    const defendantNoNationalId = false
     const court = 'Héraðsdómur Þingvalla'
     const courtDate = new Date('2021-01-24T08:15')
 
     // Act
     const res = formatDefenderRevokedEmailNotification(
       type,
-      accusedNationalId,
-      accusedName,
+      defendantNationalId,
+      defendantName,
+      defendantNoNationalId,
       court,
       courtDate,
     )
@@ -1048,16 +1063,18 @@ describe('formatDefenderRevokedEmailNotification', () => {
   test('should format revoked notification for travel ban', () => {
     // Arrange
     const type = CaseType.TRAVEL_BAN
-    const accusedNationalId = '1111001111'
-    const accusedName = 'Gaui Glæpon'
+    const defendantNationalId = '1111001111'
+    const defendantName = 'Gaui Glæpon'
+    const defendantNoNationalId = false
     const court = 'Héraðsdómur Þingvalla'
     const courtDate = new Date('2021-01-24T08:15')
 
     // Act
     const res = formatDefenderRevokedEmailNotification(
       type,
-      accusedNationalId,
-      accusedName,
+      defendantNationalId,
+      defendantName,
+      defendantNoNationalId,
       court,
       courtDate,
     )
@@ -1067,17 +1084,68 @@ describe('formatDefenderRevokedEmailNotification', () => {
       'Farbannskrafa sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 111100-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
     )
   })
+
+  test('should format revoked notification for investigation', () => {
+    // Arrange
+    const type = CaseType.BANKING_SECRECY_WAIVER
+    const defendantNationalId = '1111001111'
+    const defendantName = 'Gaui Glæpon'
+    const defendantNoNationalId = false
+    const court = 'Héraðsdómur Þingvalla'
+    const courtDate = new Date('2021-01-24T08:15')
+
+    // Act
+    const res = formatDefenderRevokedEmailNotification(
+      type,
+      defendantNationalId,
+      defendantName,
+      defendantNoNationalId,
+      court,
+      courtDate,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Krafa um rannsóknarheimild sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 111100-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
+    )
+  })
+
+  test('should format revoked notification when defendant does not have a national id', () => {
+    // Arrange
+    const type = CaseType.BANKING_SECRECY_WAIVER
+    const defendantNationalId = '01.01.2022'
+    const defendantName = 'Gaui Glæpon'
+    const defendantNoNationalId = true
+    const court = 'Héraðsdómur Þingvalla'
+    const courtDate = new Date('2021-01-24T08:15')
+
+    // Act
+    const res = formatDefenderRevokedEmailNotification(
+      type,
+      defendantNationalId,
+      defendantName,
+      defendantNoNationalId,
+      court,
+      courtDate,
+    )
+
+    // Assert
+    expect(res).toBe(
+      'Krafa um rannsóknarheimild sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, fd. 01.01.2022.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.',
+    )
+  })
 })
 
 describe('stripHtmlTags', () => {
-  test('should format court date notification condition', () => {
+  test('should strip html tags', () => {
     // Arrange
-    const html = 'bla<strong>blab</strong>la<br /><br />blabla'
+    const html =
+      'bla<strong>blab</strong>la<br /><br />blabla<a href="blablabla">blabla</a>'
 
     // Act
     const res = stripHtmlTags(html)
 
     // Assert
-    expect(res).toBe('blablabla\n\nblabla')
+    expect(res).toBe('blablabla\n\nblablablabla')
   })
 })

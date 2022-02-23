@@ -79,7 +79,7 @@ export const Menu = ({
             closeModal()
           }}
         >
-          <span>{logo}</span>
+          <div>{logo}</div>
         </Link>
       )}
       menuButton={

@@ -1,11 +1,4 @@
-import React, {
-  useRef,
-  useState,
-  useEffect,
-  useMemo,
-  forwardRef,
-  Fragment,
-} from 'react'
+import React, { useRef, useState, useEffect, useMemo, Fragment } from 'react'
 import {
   Box,
   Button,
@@ -22,8 +15,8 @@ import {
 } from '@island.is/island-ui/core'
 import { TimelineSlice as Timeline } from '@island.is/web/graphql/schema'
 import cn from 'classnames'
-import * as timelineStyles from './TimelineSlice.treat'
-import * as eventStyles from './Event.treat'
+import * as timelineStyles from './TimelineSlice.css'
+import * as eventStyles from './Event.css'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import Link from 'next/link'
 import ReactDOM from 'react-dom'
@@ -189,6 +182,9 @@ export const TimelineSlice: React.FC<SliceProps> = ({ slice }) => {
       )
       .filter((x) => x > 0)
 
+    if (futureMonths.length === 0) {
+      return 0
+    }
     return Math.min(...futureMonths)
   })
 
@@ -457,10 +453,11 @@ interface EventModalProps {
 const formatNumber = (value: number) =>
   value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
 
-const EventModal = forwardRef(({ event, onClose }: EventModalProps) => {
+const EventModal = ({ event, onClose }: EventModalProps) => {
   if (!event) {
     return null
   }
+
   return (
     <div className={eventStyles.eventModal}>
       <Box
@@ -535,4 +532,4 @@ const EventModal = forwardRef(({ event, onClose }: EventModalProps) => {
       </Box>
     </div>
   )
-})
+}

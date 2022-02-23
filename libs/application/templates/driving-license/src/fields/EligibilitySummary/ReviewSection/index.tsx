@@ -8,7 +8,7 @@ import {
 } from '@island.is/application/core'
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
 
-import * as styles from './ReviewSection.treat'
+import * as styles from './ReviewSection.css'
 import { MessageDescriptor } from '@formatjs/intl'
 import { m } from '../../../lib/messages'
 

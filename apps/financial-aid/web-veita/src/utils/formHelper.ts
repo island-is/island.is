@@ -4,7 +4,7 @@ import differenceInDays from 'date-fns/differenceInDays'
 import differenceInYears from 'date-fns/differenceInYears'
 import differenceInWeeks from 'date-fns/differenceInWeeks'
 
-import { ApplicationState } from '@island.is/financial-aid/shared'
+import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 
 export const isPluralInIcelandic = (value: number): boolean =>
   value % 10 !== 1 || value % 100 === 11
@@ -46,11 +46,6 @@ export const calcAge = (ssn: string) => {
   )
 
   return differenceInYears(new Date(), birthDay)
-}
-
-export const getFileType = (fileName: string) => {
-  // TODO: hande no file type? Handle when files is ready?
-  return fileName.substring(fileName.lastIndexOf('.') + 1)
 }
 
 export const getTagByState = (state: ApplicationState) => {

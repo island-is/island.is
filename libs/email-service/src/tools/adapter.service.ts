@@ -11,6 +11,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { ImageComponent, Template } from '../types'
+import registerHelpers from './helpers'
 
 @Injectable()
 export class AdapterService {
@@ -22,6 +23,8 @@ export class AdapterService {
   } = {}
 
   constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {
+    registerHelpers(handlebars)
+
     const path = isRunningOnEnvironment('local')
       ? 'libs/email-service/src/tools/design/*.hbs'
       : 'email-service-assets/*.hbs'

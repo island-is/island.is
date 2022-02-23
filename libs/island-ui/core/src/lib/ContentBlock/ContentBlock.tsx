@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react'
 import { Box } from '../Box/Box'
-import * as styles from './ContentBlock.treat'
+import * as styles from './ContentBlock.css'
 
 /** ContentBlock is a container with a set max-width that centers its children. */
 export interface ContentBlockProps {

@@ -12,7 +12,7 @@ describe('getWorkplaceData', () => {
 
   const professionalAthleteAccident: FormValue = {
     accidentType: { radioButton: AccidentTypeEnum.SPORTS },
-    sportsClubInfo: { employee: { radioButton: YES } },
+    companyInfo: { onPayRoll: { answer: YES } },
   }
 
   const rescueWorkAccident: FormValue = {
@@ -44,14 +44,15 @@ describe('getWorkplaceData', () => {
 
   it('should return employee information for professional athlete accidents', () => {
     expect(
-      getWorkplaceData(professionalAthleteAccident)?.info.employee?.radioButton,
+      getWorkplaceData(professionalAthleteAccident)?.companyInfo.onPayRoll
+        ?.answer,
     ).toBe(YES)
   })
 
   it('should not return employee information for general workplace accident', () => {
-    expect(getWorkplaceData(generalWorkplaceAccident)?.info.employee).toBe(
-      undefined,
-    )
+    expect(
+      getWorkplaceData(generalWorkplaceAccident)?.companyInfo.onPayRoll,
+    ).toBe(undefined)
   })
 
   it('should return rescue work type data for rescue work accidents', () => {

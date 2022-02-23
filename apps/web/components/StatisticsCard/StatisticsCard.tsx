@@ -4,7 +4,7 @@ import { Box, Stack, Text, Hyphen } from '@island.is/island-ui/core'
 import { BackgroundImage } from '@island.is/web/components'
 import { useMeasure } from 'react-use'
 
-import * as styles from './StatisticsCard.treat'
+import * as styles from './StatisticsCard.css'
 
 export interface StatisticsCardsProps {
   title: string

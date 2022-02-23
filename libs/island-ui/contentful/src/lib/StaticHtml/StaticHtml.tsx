@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
-import * as styles from './StaticHtml.treat'
+import * as styles from './StaticHtml.css'
 
 export interface HtmlProps {
   className?: string

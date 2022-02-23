@@ -13,6 +13,7 @@ import {
   DefaultEvents,
   DefaultStateLifeCycle,
   ApplicationConfigurations,
+  EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 
 import {
@@ -73,11 +74,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         ],
         meta: {
           name: States.PREREQUISITES,
-          lifecycle: {
-            shouldBeListed: false,
-            shouldBePruned: true,
-            whenToPrune: 24 * 3600 * 1000,
-          },
+          lifecycle: EphemeralStateLifeCycle,
           progress: 0.25,
           roles: [
             {
@@ -102,6 +99,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
+        entry: 'clearAssignees',
         exit: 'setOtherParentIdIfSelectedSpouse',
         meta: {
           name: States.DRAFT,
@@ -199,6 +197,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.VINNUMALASTOFNUN_APPROVAL,
             },
           ],
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
           [DefaultEvents.REJECT]: { target: States.OTHER_PARENT_ACTION },
         },
       },
@@ -232,7 +231,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN]: {
-        exit: 'setEmployerNationalRegistryId',
+        exit: 'setEmployerReviewerNationalRegistryId',
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN,
           actionCard: {
@@ -287,6 +286,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 ],
                 externalData: ['children'],
               },
+              write: {
+                answers: ['employerNationalRegistryId'],
+              },
               actions: [
                 {
                   event: DefaultEvents.APPROVE,
@@ -314,6 +316,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
           ],
           [DefaultEvents.REJECT]: { target: States.EMPLOYER_ACTION },
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
       [States.EMPLOYER_ACTION]: {
@@ -461,7 +464,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS]: {
-        exit: 'setEmployerNationalRegistryId',
+        exit: 'setEmployerReviewerNationalRegistryId',
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
           actionCard: {
@@ -690,7 +693,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
-      setEmployerNationalRegistryId: assign((context, event) => {
+      setEmployerReviewerNationalRegistryId: assign((context, event) => {
         // Only set if employer gets assigned
         if (event.type !== DefaultEvents.ASSIGN) {
           return context
@@ -699,7 +702,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { application } = context
         const { answers } = application
 
-        set(answers, 'employer.nationalRegistryId', application.assignees[0])
+        set(
+          answers,
+          'employerReviewerNationalRegistryId',
+          application.assignees[0],
+        )
 
         return context
       }),

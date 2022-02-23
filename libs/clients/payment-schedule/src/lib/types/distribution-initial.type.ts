@@ -10,7 +10,7 @@ export interface DistributionInitialPosition {
 }
 
 export interface DistributionInitialPositionResponse {
-  DistributionInitialPosition: DistributionInitialPosition
+  distributionInitialPosition: DistributionInitialPosition
 }
 
 export interface DistributionInitialPositionRequest {

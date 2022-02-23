@@ -1,7 +1,11 @@
-import { Injectable } from '@nestjs/common'
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { CurrentApplicationModel, ApplicationModel } from './models'
+import { ApplicationModel, SpouseResponse } from './models'
 
 import { Op } from 'sequelize'
 
@@ -10,10 +14,41 @@ import {
   ApplicationEventType,
   ApplicationFilters,
   ApplicationState,
+  ApplicationStateUrl,
+  getEventTypesFromService,
+  getStateFromUrl,
+  RolesRule,
   User,
-} from '@island.is/financial-aid/shared'
+  Staff,
+  FileType,
+  getApplicantEmailDataFromEventType,
+  firstDateOfMonth,
+} from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
-import { ApplicationEventService } from '../applicationEvent'
+import {
+  ApplicationEventService,
+  ApplicationEventModel,
+} from '../applicationEvent'
+import { StaffModel } from '../staff'
+
+import { EmailService } from '@island.is/email-service'
+
+import { ApplicationFileModel } from '../file/models'
+import { environment } from '../../../environments'
+import { ApplicantEmailTemplate } from './emailTemplates/applicantEmailTemplate'
+import { MunicipalityService } from '../municipality'
+import { logger } from '@island.is/logging'
+import { AmountModel, AmountService } from '../amount'
+import { DeductionFactorsModel } from '../deductionFactors'
+
+interface Recipient {
+  name: string
+  address: string
+}
+
+const linkToStatusPage = (applicationId: string) => {
+  return `${environment.oskBaseUrl}/stada/${applicationId}"`
+}
 
 @Injectable()
 export class ApplicationService {
@@ -21,41 +56,155 @@ export class ApplicationService {
     @InjectModel(ApplicationModel)
     private readonly applicationModel: typeof ApplicationModel,
     private readonly fileService: FileService,
+    private readonly amountService: AmountService,
     private readonly applicationEventService: ApplicationEventService,
+    private readonly emailService: EmailService,
+    private readonly municipalityService: MunicipalityService,
   ) {}
 
-  async getCurrentApplication(
-    nationalId: string,
-  ): Promise<CurrentApplicationModel | null> {
-    const date = new Date()
-
-    const firstDateOfMonth = new Date(date.getFullYear(), date.getMonth(), 1)
-
-    return this.applicationModel.findOne({
+  async getSpouseInfo(spouseNationalId: string): Promise<SpouseResponse> {
+    const application = await this.applicationModel.findOne({
       where: {
-        nationalId,
-        created: { [Op.gte]: firstDateOfMonth },
+        spouseNationalId,
+        created: { [Op.gte]: firstDateOfMonth() },
       },
     })
+
+    const files = application
+      ? await this.fileService.getApplicationFilesByType(
+          application.id,
+          FileType.SPOUSEFILES,
+        )
+      : false
+
+    return {
+      hasPartnerApplied: Boolean(application),
+      hasFiles: Boolean(files),
+      applicantName: application ? application.name : '',
+      applicantSpouseEmail: application?.spouseEmail ?? '',
+    }
   }
 
-  async getAll(): Promise<ApplicationModel[]> {
-    return this.applicationModel.findAll({ order: [['modified', 'DESC']] })
+  async findByNationalId(
+    nationalId: string,
+    municipalityCode: string,
+  ): Promise<ApplicationModel[]> {
+    return this.applicationModel.findAll({
+      where: {
+        [Op.or]: [
+          {
+            nationalId,
+            municipalityCode,
+          },
+          {
+            spouseNationalId: nationalId,
+            municipalityCode,
+          },
+        ],
+      },
+      order: [['modified', 'DESC']],
+      include: [
+        {
+          model: ApplicationFileModel,
+          as: 'files',
+          separate: true,
+          order: [['created', 'DESC']],
+        },
+      ],
+    })
   }
 
-  async findById(id: string): Promise<ApplicationModel | null> {
-    const application = await this.applicationModel.findOne({
-      where: { id },
+  async getCurrentApplicationId(nationalId: string): Promise<string | null> {
+    const currentApplication = await this.applicationModel.findOne({
+      where: {
+        [Op.or]: [
+          {
+            nationalId,
+          },
+          {
+            spouseNationalId: nationalId,
+          },
+        ],
+        created: { [Op.gte]: firstDateOfMonth() },
+      },
     })
 
-    const files = await this.fileService.getAllApplicationFiles(id)
+    if (currentApplication) {
+      return currentApplication.id
+    }
 
-    application.setDataValue('files', files)
+    return null
+  }
+
+  async getAll(
+    stateUrl: ApplicationStateUrl,
+    staffId: string,
+    municipalityCode: string,
+  ): Promise<ApplicationModel[]> {
+    return this.applicationModel.findAll({
+      where:
+        stateUrl === ApplicationStateUrl.MYCASES
+          ? {
+              state: { [Op.in]: getStateFromUrl[stateUrl] },
+              staffId,
+              municipalityCode,
+            }
+          : {
+              state: { [Op.in]: getStateFromUrl[stateUrl] },
+              municipalityCode,
+            },
+      order: [['modified', 'DESC']],
+      include: [{ model: StaffModel, as: 'staff' }],
+    })
+  }
+
+  async findById(
+    id: string,
+    service: RolesRule,
+  ): Promise<ApplicationModel | null> {
+    const application = await this.applicationModel.findOne({
+      where: { id },
+      include: [
+        { model: StaffModel, as: 'staff' },
+        {
+          model: ApplicationEventModel,
+          as: 'applicationEvents',
+          separate: true,
+          where: {
+            eventType: {
+              [Op.in]: getEventTypesFromService[service],
+            },
+          },
+          order: [['created', 'DESC']],
+        },
+        {
+          model: ApplicationFileModel,
+          as: 'files',
+          separate: true,
+          order: [['created', 'DESC']],
+        },
+        {
+          model: AmountModel,
+          as: 'amount',
+          include: [{ model: DeductionFactorsModel, as: 'deductionFactors' }],
+          separate: true,
+          order: [['created', 'DESC']],
+          limit: 1,
+        },
+      ],
+    })
+
+    if (application?.amount) {
+      application.setDataValue('amount', application.amount['0'])
+    }
 
     return application
   }
 
-  async getAllFilters(): Promise<ApplicationFilters> {
+  async getAllFilters(
+    staffId: string,
+    municipalityCode: string,
+  ): Promise<ApplicationFilters> {
     const statesToCount = [
       ApplicationState.NEW,
       ApplicationState.INPROGRESS,
@@ -66,7 +215,19 @@ export class ApplicationService {
 
     const countPromises = statesToCount.map((item) =>
       this.applicationModel.count({
-        where: { state: { [Op.eq]: item } },
+        where: { state: item, municipalityCode },
+      }),
+    )
+
+    countPromises.push(
+      this.applicationModel.count({
+        where: {
+          staffId,
+          municipalityCode,
+          state: {
+            [Op.or]: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
+          },
+        },
       }),
     )
 
@@ -78,6 +239,7 @@ export class ApplicationService {
       DataNeeded: filterCounts[2],
       Rejected: filterCounts[3],
       Approved: filterCounts[4],
+      MyCases: filterCounts[5],
     }
   }
 
@@ -85,15 +247,24 @@ export class ApplicationService {
     application: CreateApplicationDto,
     user: User,
   ): Promise<ApplicationModel> {
-    const appModel = await this.applicationModel.create(application)
+    const hasAppliedForPeriod = await this.getCurrentApplicationId(
+      user.nationalId,
+    )
 
-    //Create applicationEvent
+    if (hasAppliedForPeriod) {
+      throw new ForbiddenException('User or spouse has applied for period')
+    }
+
+    const appModel = await this.applicationModel.create({
+      nationalId: user.nationalId,
+      ...application,
+    })
+
     await this.applicationEventService.create({
       applicationId: appModel.id,
       eventType: ApplicationEventType[appModel.state.toUpperCase()],
     })
 
-    //Create file
     if (application.files) {
       const promises = application.files.map((f) => {
         return this.fileService.createFile({
@@ -108,16 +279,73 @@ export class ApplicationService {
       await Promise.all(promises)
     }
 
+    await this.createApplicationEmails(application, appModel, user)
+
     return appModel
+  }
+
+  private async createApplicationEmails(
+    application: CreateApplicationDto,
+    appModel: ApplicationModel,
+    user: User,
+  ) {
+    const municipality = await this.municipalityService.findByMunicipalityId(
+      application.municipalityCode,
+    )
+
+    const emailData = getApplicantEmailDataFromEventType(
+      ApplicationEventType.NEW,
+      linkToStatusPage(appModel.id),
+      application.email,
+      municipality,
+      appModel.created,
+    )
+
+    const emailPromises: Promise<void>[] = []
+
+    emailPromises.push(
+      this.sendEmail(
+        {
+          name: user.name,
+          address: appModel.email,
+        },
+        emailData.subject,
+        ApplicantEmailTemplate(emailData.data),
+      ),
+    )
+
+    if (application.spouseNationalId) {
+      const emailData = getApplicantEmailDataFromEventType(
+        'SPOUSE',
+        environment.oskBaseUrl,
+        appModel.spouseEmail,
+        municipality,
+        appModel.created,
+      )
+      emailPromises.push(
+        this.sendEmail(
+          {
+            name: appModel.spouseName,
+            address: appModel.spouseEmail,
+          },
+          emailData.subject,
+          ApplicantEmailTemplate(emailData.data),
+        ),
+      )
+    }
+
+    await Promise.all(emailPromises)
   }
 
   async update(
     id: string,
     update: UpdateApplicationDto,
-  ): Promise<{
-    numberOfAffectedRows: number
-    updatedApplication: ApplicationModel
-  }> {
+    staff?: Staff,
+  ): Promise<ApplicationModel> {
+    if (update.state && update.state === ApplicationState.NEW) {
+      update.staffId = null
+    }
+
     const [
       numberOfAffectedRows,
       [updatedApplication],
@@ -126,13 +354,103 @@ export class ApplicationService {
       returning: true,
     })
 
-    //Create applicationEvent
-    const eventModel = await this.applicationEventService.create({
+    if (numberOfAffectedRows === 0) {
+      throw new NotFoundException(`Application ${id} does not exist`)
+    }
+
+    await this.applicationEventService.create({
       applicationId: id,
-      eventType: ApplicationEventType[update.state.toUpperCase()],
-      comment: update?.rejection || update?.amount?.toLocaleString('de-DE'),
+      eventType: update.event,
+      comment: update?.rejection || update?.comment,
+      staffName: staff?.name,
+      staffNationalId: staff?.nationalId,
     })
 
-    return { numberOfAffectedRows, updatedApplication }
+    if (update.amount) {
+      const amount = await this.amountService.create(update.amount)
+      updatedApplication?.setDataValue('amount', amount)
+    }
+
+    const events = this.applicationEventService
+      .findById(id)
+      .then((eventsResolved) => {
+        updatedApplication?.setDataValue('applicationEvents', eventsResolved)
+      })
+
+    const files = this.fileService
+      .getAllApplicationFiles(id)
+      .then((filesResolved) => {
+        updatedApplication?.setDataValue('files', filesResolved)
+      })
+
+    await Promise.all([
+      events,
+      files,
+      this.sendApplicationUpdateEmail(update, updatedApplication),
+    ])
+
+    return updatedApplication
+  }
+
+  private async sendApplicationUpdateEmail(
+    update: UpdateApplicationDto,
+    updatedApplication: ApplicationModel,
+  ) {
+    if (
+      update.event === ApplicationEventType.DATANEEDED ||
+      update.event === ApplicationEventType.REJECTED ||
+      update.event === ApplicationEventType.APPROVED
+    ) {
+      const municipality = await this.municipalityService.findByMunicipalityId(
+        updatedApplication.municipalityCode,
+      )
+
+      const emailData = getApplicantEmailDataFromEventType(
+        update.event,
+        linkToStatusPage(updatedApplication.id),
+        updatedApplication.email,
+        municipality,
+        updatedApplication.created,
+        update.event === ApplicationEventType.DATANEEDED
+          ? update?.comment
+          : undefined,
+        update.event === ApplicationEventType.REJECTED
+          ? update?.rejection
+          : undefined,
+      )
+
+      await this.sendEmail(
+        {
+          name: updatedApplication.name,
+          address: updatedApplication.email,
+        },
+        emailData.subject,
+        ApplicantEmailTemplate(emailData.data),
+      )
+    }
+  }
+
+  private async sendEmail(
+    to: Recipient | Recipient[],
+    subject: string,
+    html: string,
+  ) {
+    try {
+      await this.emailService.sendEmail({
+        from: {
+          name: 'Samband íslenskra sveitarfélaga',
+          address: environment.emailOptions.fromEmail,
+        },
+        replyTo: {
+          name: 'Samband íslenskra sveitarfélaga',
+          address: environment.emailOptions.replyToEmail,
+        },
+        to,
+        subject,
+        html,
+      })
+    } catch (error) {
+      logger.warn('failed to send email', error)
+    }
   }
 }

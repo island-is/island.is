@@ -16,6 +16,7 @@ import {
 
 let id = 0
 
+// eslint-disable-next-line local-rules/disallow-kennitalas
 const PRIMARY_PARENT_ID = '0101302129'
 const SECONDARY_PARENT_ID = '0101302239'
 

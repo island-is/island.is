@@ -8,12 +8,7 @@ let app: INestApplication
 let server: request.SuperTest<request.Test>
 
 beforeAll(async () => {
-  app = await setup({
-    override: (builder) => {
-      builder.compile()
-    },
-  })
-
+  app = await setup()
   server = request(app.getHttpServer())
 })
 

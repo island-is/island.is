@@ -1,18 +1,30 @@
-import { Module } from '@nestjs/common'
-import { SequelizeModule } from '@nestjs/sequelize'
 import {
-  DelegationsService,
+  ApiScope,
   Delegation,
   DelegationScope,
   DelegationScopeService,
+  DelegationsService,
+  DELEGATIONS_AUTH_CONFIG,
   IdentityResource,
-  ApiScope,
 } from '@island.is/auth-api-lib'
+import {
+  PersonalRepresentative,
+  PersonalRepresentativeRight,
+  PersonalRepresentativeRightType,
+  PersonalRepresentativeScopePermission,
+  PersonalRepresentativeService,
+  PersonalRepresentativeType,
+} from '@island.is/auth-api-lib/personal-representative'
+import { AuthConfig } from '@island.is/auth-nest-tools'
+import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
+import { RskProcuringClientModule } from '@island.is/clients/rsk/procuring'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
+import { Module } from '@nestjs/common'
+import { SequelizeModule } from '@nestjs/sequelize'
+import { environment } from '../../../environments'
 import { DelegationsController } from './delegations.controller'
-import { RskModule } from '@island.is/clients/rsk/v2'
-import { RskConfig } from './rsk.config'
-import { NationalRegistryModule } from '@island.is/clients/national-registry-v2'
-import { NationalRegistryConfig } from './national-registry.config'
+
+const delegationAuthConfig: AuthConfig = environment.auth
 
 @Module({
   imports: [
@@ -21,11 +33,25 @@ import { NationalRegistryConfig } from './national-registry.config'
       DelegationScope,
       ApiScope,
       IdentityResource,
+      PersonalRepresentative,
+      PersonalRepresentativeType,
+      PersonalRepresentativeRight,
+      PersonalRepresentativeRightType,
+      PersonalRepresentativeScopePermission,
     ]),
-    RskModule.register(RskConfig),
-    NationalRegistryModule.register(NationalRegistryConfig),
+    RskProcuringClientModule,
+    NationalRegistryClientModule,
+    FeatureFlagModule,
   ],
   controllers: [DelegationsController],
-  providers: [DelegationsService, DelegationScopeService],
+  providers: [
+    DelegationsService,
+    DelegationScopeService,
+    PersonalRepresentativeService,
+    {
+      provide: DELEGATIONS_AUTH_CONFIG,
+      useValue: delegationAuthConfig,
+    },
+  ],
 })
 export class DelegationsModule {}

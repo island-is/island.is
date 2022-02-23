@@ -39,7 +39,7 @@ import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
 } from '@island.is/web/utils/processMenuData'
-import * as styles from './OpenData.treat'
+import * as styles from './OpenData.css'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
 

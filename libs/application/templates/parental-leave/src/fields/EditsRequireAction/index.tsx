@@ -6,16 +6,16 @@ import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
+import { handleServerError } from '@island.is/application/ui-components'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import { States as ApplicationStates } from '../../constants'
-import { handleSubmitError } from '../../lib/parentalLeaveClientUtils'
 
 const EditsRequireAction: FC<FieldBaseProps> = ({ application, refetch }) => {
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
-      onError: (e) => handleSubmitError(e.message, formatMessage),
+      onError: (e) => handleServerError(e, formatMessage),
     },
   )
 

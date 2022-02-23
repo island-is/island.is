@@ -18,9 +18,6 @@ export const AgreementDescription: FC<FieldBaseProps> = () => {
       <Bullet>
         {formatMessage(externalData.agreementDescription.bulletThree)}
       </Bullet>
-      <Bullet>
-        {formatMessage(externalData.agreementDescription.bulletFour)}
-      </Bullet>
     </Stack>
   )
 }

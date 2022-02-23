@@ -4,21 +4,20 @@ import { Text, Input, Box } from '@island.is/island-ui/core'
 import {
   ContentContainer,
   Footer,
-  FormLayout,
   RadioButtonContainer,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
 
-import * as styles from './employmentForm.treat'
+import * as styles from './employmentForm.css'
 import cn from 'classnames'
 
-import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
+import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 import {
   NavigationProps,
   Employment,
   getEmploymentStatus,
-} from '@island.is/financial-aid/shared'
+} from '@island.is/financial-aid/shared/lib'
 
 const EmploymentForm = () => {
   const router = useRouter()
@@ -65,10 +64,7 @@ const EmploymentForm = () => {
   }
 
   return (
-    <FormLayout
-      activeSection={navigation?.activeSectionIndex}
-      activeSubSection={navigation?.activeSubSectionIndex}
-    >
+    <>
       <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
           Hvað lýsir stöðu þinni best?
@@ -82,22 +78,24 @@ const EmploymentForm = () => {
           }}
           onChange={(value: Employment) => {
             updateForm({ ...form, employment: value })
-            if (hasError) {
-              setHasError(false)
-            }
+
+            setHasError(false)
           }}
         />
 
-        <div
-          className={cn({
-            [`errorMessage`]: true,
-            [`showErrorMessage`]: hasError && !form?.employment,
-          })}
-        >
-          <Text color="red600" fontWeight="semiBold" variant="small">
-            Þú þarft að velja einn valmöguleika
-          </Text>
-        </div>
+        {hasError && !form?.employment && (
+          <div
+            data-testid="noOptionSelectedErrorMessage"
+            className={cn({
+              [`errorMessage`]: true,
+              [`showErrorMessage`]: hasError && !form?.employment,
+            })}
+          >
+            <Text color="red600" fontWeight="semiBold" variant="small">
+              Þú þarft að velja einn valmöguleika
+            </Text>
+          </div>
+        )}
 
         <Box
           marginTop={1}
@@ -107,19 +105,21 @@ const EmploymentForm = () => {
             [`${styles.inputAppear}`]: form?.employment === 'Other',
           })}
         >
-          <Input
-            backgroundColor={'blue'}
-            label="Lýstu þinni stöðu"
-            name="employmentCustom"
-            rows={8}
-            textarea
-            value={form?.employmentCustom}
-            hasError={hasError && !Boolean(form?.employmentCustom)}
-            errorMessage="Þú þarft að skrifa í textareitinn"
-            onChange={(event) => {
-              updateForm({ ...form, employmentCustom: event.target.value })
-            }}
-          />
+          {form?.employment === 'Other' && (
+            <Input
+              backgroundColor={'blue'}
+              label="Lýstu þinni stöðu"
+              name="employmentCustom"
+              rows={8}
+              textarea
+              value={form?.employmentCustom}
+              hasError={hasError && !Boolean(form?.employmentCustom)}
+              errorMessage="Þú þarft að skrifa í textareitinn"
+              onChange={(event) => {
+                updateForm({ ...form, employmentCustom: event.target.value })
+              }}
+            />
+          )}
         </Box>
       </ContentContainer>
 
@@ -127,7 +127,7 @@ const EmploymentForm = () => {
         previousUrl={navigation?.prevUrl}
         onNextButtonClick={() => errorCheck()}
       />
-    </FormLayout>
+    </>
   )
 }
 

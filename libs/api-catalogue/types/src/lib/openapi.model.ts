@@ -24,6 +24,7 @@ export interface ExtendedInfoObject extends InfoObject {
   'x-category': Array<DataCategory>
   'x-pricing': Array<PricingCategory>
   'x-links': LinksObject
+  'x-hide-api-catalogue': boolean
 }
 
 export interface LinksObject {

@@ -94,6 +94,9 @@ The following components and their props are available:
   component: 'Heading',
   context: {
     copy: 'A mind-blowing heading',
+    align: 'left' | 'center' | 'right'
+    small: false
+    eyebrow: 'A tiny bit of text displayed above the heading'
   },
 }
 ```
@@ -105,6 +108,9 @@ The following components and their props are available:
   component: 'Copy',
   context: {
     copy: 'Some beautiful lorem ipsum',
+    align: 'left' | 'center' | 'right'
+    small: false
+    eyebrow: 'A tiny bit of text displayed above the heading'
   },
 }
 ```
@@ -118,6 +124,29 @@ The following components and their props are available:
     copy: 'Button copy',
     href: 'Button url',
   },
+}
+```
+
+- Subtitle
+
+```typescript
+{
+  component: 'Subtitle'
+  context: {
+    copy: 'Some text - esp. suited for application-related emails'
+    application: 'Name of an application'
+  }
+}
+```
+
+- Bulleted list
+
+```typescript
+{
+  component: 'List'
+  context: {
+    items: ['Item 1', 'Item 2']
+  }
 }
 ```
 
@@ -151,6 +180,16 @@ const message = {
 {% hint style="info" %}
 [Email example](https://github.com/island-is/island.is/blob/main/libs/application/template-api-modules/src/lib/modules/templates/parental-leave/emailGenerators/assignEmployerEmail.ts) for the parental leave application.
 {% endhint %}
+
+## Generate an example email template into an html file
+
+If you are curious to see what your template will look like or simply want to play around with the template components you can modify `libs/email-service/src/tools/generate-html/example.ts` and then run:
+
+```bash
+yarn nx run email-service:generate-html
+```
+
+Once generated, the output html file will appear in `libs/email-service/src/tools/generate-html/output`
 
 ### Under the hood
 

@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
-import { ApplicationFile, FileType } from '@island.is/financial-aid/shared'
+import { ApplicationFile, FileType } from '@island.is/financial-aid/shared/lib'
 
 @ObjectType()
 export class ApplicationFileModel implements ApplicationFile {

@@ -64,17 +64,15 @@ const TestEndPoint: FC<FieldBaseProps> = ({ application }) => {
     },
   )
 
-  const nationalId = getValueViaPath(
+  const nationalId = getValueViaPath<string>(
     application.answers,
     'applicant.nationalId',
-    undefined,
-  ) as string
+  )
 
-  const testProviderId = getValueViaPath(
+  const testProviderId = getValueViaPath<string>(
     application.answers,
     'testProviderId',
-    undefined,
-  ) as string
+  )
 
   const onUpdateEndpoint = async (isValid: boolean) => {
     setTestEndPointError(null)

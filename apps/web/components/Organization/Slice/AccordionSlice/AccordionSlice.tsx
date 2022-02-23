@@ -11,7 +11,7 @@ import {
   AccordionSlice as AccordionSliceSchema,
   Html,
 } from '@island.is/web/graphql/schema'
-import * as styles from './AccordionSlice.treat'
+import * as styles from './AccordionSlice.css'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 
 interface SliceProps {
@@ -19,20 +19,22 @@ interface SliceProps {
 }
 
 export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
+  const labelId = 'sliceTitle-' + slice.id
+
   return (
-    <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
+    <section key={slice.id} aria-labelledby={labelId}>
       <Box
         borderTopWidth="standard"
         borderColor="standard"
         paddingTop={[4, 4, 6]}
         paddingBottom={[4, 4, 6]}
       >
-        <Text variant="h2" as="h2" marginBottom={2}>
+        <Text variant="h2" as="h2" marginBottom={2} id={labelId}>
           {slice.title}
         </Text>
         {slice.type === 'accordion' &&
           slice.accordionItems.map((item) => (
-            <Box paddingY={1}>
+            <Box paddingY={1} key={item.id}>
               <AccordionCard
                 id={item.id}
                 label={item.title}
@@ -49,6 +51,7 @@ export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
             <Accordion>
               {slice.accordionItems.map((item) => (
                 <AccordionItem
+                  key={item.id}
                   id={item.id}
                   label={item.title}
                   startExpanded={slice.accordionItems.length === 1}
@@ -60,8 +63,8 @@ export const AccordionSlice: React.FC<SliceProps> = ({ slice }) => {
           </Box>
         )}
         {slice.type === 'CTA' &&
-          slice.accordionItems.map((item) => (
-            <Box>
+          slice.accordionItems.map((item, index) => (
+            <Box marginTop={index ? 4 : 0} key={item.id}>
               <ActionCard
                 heading={item.title}
                 text={

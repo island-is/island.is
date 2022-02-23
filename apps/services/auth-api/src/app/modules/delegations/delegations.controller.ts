@@ -28,9 +28,8 @@ export class DelegationsController {
   @Get()
   @ApiOkResponse({ isArray: true })
   async findAllTo(@CurrentUser() user: User): Promise<DelegationDTO[]> {
-    return this.delegationsService.findAllTo(
+    return this.delegationsService.findAllIncoming(
       user,
-      environment.nationalRegistry.xroad.clientId ?? '',
       environment.nationalRegistry.authMiddlewareOptions,
     )
   }
@@ -52,6 +51,13 @@ export class DelegationsController {
       }
       case DelegationType.LegalGuardian: {
         scopes = await this.delegationScopeService.findAllLegalGuardianScopes()
+        break
+      }
+      case DelegationType.PersonalRepresentative: {
+        scopes = await this.delegationScopeService.findPersonalRepresentativeScopes(
+          user.nationalId,
+          fromNationalId,
+        )
         break
       }
       case DelegationType.Custom: {

@@ -16,6 +16,12 @@ declare namespace Cypress {
     getByTestid(selector: string): Chainable<Element>
 
     /**
+     * Custom command to set the csfr token. This authenticates a user
+     * @example cy.login()
+     */
+    login(): Chainable<Element>
+
+    /**
      * Custom command to click outside a selected element
      * @example cy.clickOutside()
      */

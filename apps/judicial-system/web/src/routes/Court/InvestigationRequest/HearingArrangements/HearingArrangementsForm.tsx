@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
 import { ValueType } from 'react-select'
-import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
 
 import {
-  AlertMessage,
   Box,
   Select,
   Text,
@@ -12,72 +11,52 @@ import {
   Option,
   Input,
   RadioButton,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import {
   BlueBox,
-  CaseNumbers,
+  CaseInfo,
   DateTime,
   FormContentContainer,
   FormFooter,
-} from '@island.is/judicial-system-web/src/shared-components'
+  Modal,
+} from '@island.is/judicial-system-web/src/components'
 import {
-  CaseState,
+  NotificationType,
   SessionArrangements,
   UserRole,
 } from '@island.is/judicial-system/types'
-import type { Case, User } from '@island.is/judicial-system/types'
 import {
   ReactSelectOption,
   UserData,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  newSetAndSendDateToServer,
+  setAndSendDateToServer,
   removeTabsValidateAndSet,
   setAndSendToServer,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  FormSettings,
-  useCaseFormHelper,
-} from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import { icHearingArrangements } from '@island.is/judicial-system-web/messages'
+import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import { icHearingArrangements as m } from '@island.is/judicial-system-web/messages'
+import type { Case, User } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import * as styles from './HearingArrangements.treat'
+import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
   users: UserData
+  user: User
 }
 
 const HearingArrangementsForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading, users } = props
-  const [courtroomEM, setCourtroomEM] = useState('')
-  const [defenderEmailEM, setDefenderEmailEM] = useState('')
-  const [defenderPhoneNumberEM, setDefenderPhoneNumberEM] = useState('')
-  const [courtDateIsValid, setCourtDateIsValid] = useState(true)
-  const { updateCase } = useCase()
+  const { workingCase, setWorkingCase, isLoading, users, user } = props
+  const [modalVisible, setModalVisible] = useState(false)
+  const { updateCase, sendNotification, isSendingNotification } = useCase()
   const { formatMessage } = useIntl()
-
-  const validations: FormSettings = {
-    judge: {
-      validations: ['empty'],
-    },
-    registrar: {
-      validations: ['empty'],
-    },
-    courtRoom: {
-      validations: ['empty'],
-    },
-  }
-
-  const { isValid } = useCaseFormHelper(
-    workingCase,
-    setWorkingCase,
-    validations,
-  )
+  const router = useRouter()
 
   const setJudge = (id: string) => {
     if (workingCase) {
@@ -89,7 +68,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
     }
   }
 
-  const setRegistrar = (id: string) => {
+  const setRegistrar = (id?: string) => {
     if (workingCase) {
       setAndSendToServer(
         'registrarId',
@@ -101,7 +80,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
 
       const registrar = users?.users.find((r) => r.id === id)
 
-      setWorkingCase({ ...workingCase, registrar: registrar })
+      setWorkingCase({ ...workingCase, registrar })
     }
   }
 
@@ -132,43 +111,61 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
   const defaultRegistrar = registrars?.find(
     (registrar: Option) => registrar.value === workingCase?.registrar?.id,
   )
+
+  const handleNextButtonClick = () => {
+    if (
+      workingCase.notifications?.find(
+        (notification) => notification.type === NotificationType.COURT_DATE,
+      )
+    ) {
+      router.push(`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`)
+    } else {
+      setModalVisible(true)
+    }
+  }
+
   return (
     <>
       <FormContentContainer>
-        <Box marginBottom={7}>
-          <Text as="h1" variant="h1">
-            Fyrirtaka
-          </Text>
-        </Box>
-        {workingCase.state === CaseState.DRAFT && (
-          <Box marginBottom={8}>
+        {workingCase.requestProsecutorOnlySession &&
+          workingCase.prosecutorOnlySessionRequest && (
+            <Box marginBottom={workingCase.comments ? 2 : 5}>
+              <AlertMessage
+                type="warning"
+                title={formatMessage(m.requestProsecutorOnlySession)}
+                message={workingCase.prosecutorOnlySessionRequest}
+              />
+            </Box>
+          )}
+        {workingCase.comments && (
+          <Box marginBottom={5}>
             <AlertMessage
-              type="info"
-              title="Krafa hefur ekki verið staðfest af ákæranda"
-              message="Þú getur úthlutað fyrirtökutíma, dómsal og verjanda en ekki er hægt að halda áfram fyrr en ákærandi hefur staðfest kröfuna."
+              type="warning"
+              title={formatMessage(m.comments.title)}
+              message={workingCase.comments}
             />
           </Box>
         )}
+        <Box marginBottom={7}>
+          <Text as="h1" variant="h1">
+            {formatMessage(m.title)}
+          </Text>
+        </Box>
         <Box component="section" marginBottom={7}>
-          <Text variant="h2">{`Mál nr. ${workingCase.courtCaseNumber}`}</Text>
-          <CaseNumbers workingCase={workingCase} />
+          <CaseInfo workingCase={workingCase} userRole={user.role} />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Dómari{' '}
-              <Tooltip
-                text={formatMessage(
-                  icHearingArrangements.sections.setJudge.tooltip,
-                )}
-              />
+              {`${formatMessage(m.sections.setJudge.title)} `}
+              <Tooltip text={formatMessage(m.sections.setJudge.tooltip)} />
             </Text>
           </Box>
           <Select
             name="judge"
             label="Veldu dómara"
             placeholder="Velja héraðsdómara"
-            defaultValue={defaultJudge}
+            value={defaultJudge}
             options={judges}
             onChange={(selectedOption: ValueType<ReactSelectOption>) =>
               setJudge((selectedOption as ReactSelectOption).value.toString())
@@ -179,38 +176,37 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              Dómritari{' '}
-              <Tooltip
-                text={formatMessage(
-                  icHearingArrangements.sections.setRegistrar.tooltip,
-                )}
-              />
+              {`${formatMessage(m.sections.setRegistrar.title)} `}
+              <Tooltip text={formatMessage(m.sections.setRegistrar.tooltip)} />
             </Text>
           </Box>
           <Select
             name="registrar"
             label="Veldu dómritara"
             placeholder="Velja dómritara"
-            defaultValue={defaultRegistrar}
+            value={defaultRegistrar}
             options={registrars}
-            onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-              setRegistrar(
-                (selectedOption as ReactSelectOption).value.toString(),
-              )
-            }
-            required
+            onChange={(selectedOption: ValueType<ReactSelectOption>) => {
+              if (selectedOption) {
+                setRegistrar(
+                  (selectedOption as ReactSelectOption).value.toString(),
+                )
+              } else {
+                setRegistrar(undefined)
+              }
+            }}
+            isClearable
           />
         </Box>
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              {`${formatMessage(
-                icHearingArrangements.sections.sessionArrangements.heading,
-              )} `}
+              {`${formatMessage(m.sections.sessionArrangements.heading)} `}
+              <Text as="span" color="red600" fontWeight="semiBold">
+                *
+              </Text>
               <Tooltip
-                text={formatMessage(
-                  icHearingArrangements.sections.sessionArrangements.tooltip,
-                )}
+                text={formatMessage(m.sections.sessionArrangements.tooltip)}
               />
             </Text>
           </Box>
@@ -220,21 +216,22 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 name="session-arrangements-all-present"
                 id="session-arrangements-all-present"
                 label={formatMessage(
-                  icHearingArrangements.sections.sessionArrangements.options
-                    .allPresent,
+                  m.sections.sessionArrangements.options.allPresent,
                 )}
                 checked={
                   workingCase.sessionArrangements ===
                   SessionArrangements.ALL_PRESENT
                 }
                 onChange={() => {
-                  setAndSendToServer(
-                    'sessionArrangements',
-                    SessionArrangements.ALL_PRESENT,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
+                  setWorkingCase({
+                    ...workingCase,
+                    sessionArrangements: SessionArrangements.ALL_PRESENT,
+                    defenderIsSpokesperson: false,
+                  })
+                  updateCase(workingCase.id, {
+                    sessionArrangements: SessionArrangements.ALL_PRESENT,
+                    defenderIsSpokesperson: false,
+                  })
                 }}
                 large
                 backgroundColor="white"
@@ -242,44 +239,46 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             </Box>
             <Box marginBottom={2}>
               <RadioButton
-                name="session-arrangements-prosecutor-present"
-                id="session-arrangements-prosecutor-present"
+                name="session-arrangements-all-present_spokesperson"
+                id="session-arrangements-all-present_spokesperson"
                 label={formatMessage(
-                  icHearingArrangements.sections.sessionArrangements.options
-                    .prosecutorPresent,
+                  m.sections.sessionArrangements.options.allPresentSpokesperson,
                 )}
                 checked={
                   workingCase.sessionArrangements ===
-                  SessionArrangements.PROSECUTOR_PRESENT
+                  SessionArrangements.ALL_PRESENT_SPOKESPERSON
                 }
                 onChange={() => {
-                  setAndSendToServer(
-                    'sessionArrangements',
-                    SessionArrangements.PROSECUTOR_PRESENT,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
+                  setWorkingCase({
+                    ...workingCase,
+                    sessionArrangements:
+                      SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+                    defenderIsSpokesperson: true,
+                  })
+                  updateCase(workingCase.id, {
+                    sessionArrangements:
+                      SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+                    defenderIsSpokesperson: true,
+                  })
                 }}
                 large
                 backgroundColor="white"
               />
             </Box>
             <RadioButton
-              name="session-arrangements-remote-session"
-              id="session-arrangements-remote-session"
+              name="session-arrangements-prosecutor-present"
+              id="session-arrangements-prosecutor-present"
               label={formatMessage(
-                icHearingArrangements.sections.sessionArrangements.options
-                  .remoteSession,
+                m.sections.sessionArrangements.options.prosecutorPresent,
               )}
               checked={
                 workingCase.sessionArrangements ===
-                SessionArrangements.REMOTE_SESSION
+                SessionArrangements.PROSECUTOR_PRESENT
               }
               onChange={() => {
                 setAndSendToServer(
                   'sessionArrangements',
-                  SessionArrangements.REMOTE_SESSION,
+                  SessionArrangements.PROSECUTOR_PRESENT,
                   workingCase,
                   setWorkingCase,
                   updateCase,
@@ -293,7 +292,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Skrá fyrirtökutíma
+              {formatMessage(m.sections.requestedCourtDate.title)}
             </Text>
           </Box>
           <Box marginBottom={2}>
@@ -301,20 +300,15 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
               <Box marginBottom={2}>
                 <DateTime
                   name="courtDate"
-                  selectedDate={
-                    workingCase.courtDate
-                      ? new Date(workingCase.courtDate)
-                      : undefined
-                  }
+                  selectedDate={workingCase.courtDate}
                   minDate={new Date()}
                   onChange={(date: Date | undefined, valid: boolean) => {
-                    newSetAndSendDateToServer(
+                    setAndSendDateToServer(
                       'courtDate',
                       date,
                       valid,
                       workingCase,
                       setWorkingCase,
-                      setCourtDateIsValid,
                       updateCase,
                     )
                   }}
@@ -326,192 +320,81 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 data-testid="courtroom"
                 name="courtroom"
                 label="Dómsalur"
-                defaultValue={workingCase.courtRoom}
+                value={workingCase.courtRoom || ''}
                 placeholder="Skráðu inn dómsal"
                 autoComplete="off"
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'courtRoom',
-                    event,
-                    ['empty'],
+                    event.target.value,
+                    [],
                     workingCase,
                     setWorkingCase,
-                    courtroomEM,
-                    setCourtroomEM,
                   )
                 }
                 onBlur={(event) =>
                   validateAndSendToServer(
                     'courtRoom',
                     event.target.value,
-                    ['empty'],
+                    [],
                     workingCase,
                     updateCase,
-                    setCourtroomEM,
                   )
                 }
-                errorMessage={courtroomEM}
-                hasError={courtroomEM !== ''}
-                required
               />
             </BlueBox>
           </Box>
         </Box>
-        <Box component="section" marginBottom={8}>
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              Skipaður verjandi/talsmaður
-            </Text>
+        {(workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
+          workingCase.sessionArrangements ===
+            SessionArrangements.ALL_PRESENT_SPOKESPERSON) && (
+          <Box component="section" marginBottom={8}>
+            <DefenderInfo
+              workingCase={workingCase}
+              setWorkingCase={setWorkingCase}
+            />
           </Box>
-          <BlueBox>
-            <div className={styles.defenderOptions}>
-              <RadioButton
-                name="defender-type-defender"
-                id="defender-type-defender"
-                label="Verjandi"
-                checked={workingCase.defenderIsSpokesperson === false}
-                onChange={() => {
-                  setAndSendToServer(
-                    'defenderIsSpokesperson',
-                    false,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
-                }}
-                large
-                backgroundColor="white"
-              />
-              <RadioButton
-                name="defender-type-spokesperson"
-                id="defender-type-spokesperson"
-                label="Talsmaður"
-                checked={workingCase.defenderIsSpokesperson === true}
-                onChange={() => {
-                  setAndSendToServer(
-                    'defenderIsSpokesperson',
-                    true,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
-                }}
-                large
-                backgroundColor="white"
-              />
-            </div>
-            <Box marginBottom={2}>
-              <Input
-                name="defenderName"
-                label={`Nafn ${
-                  workingCase.defenderIsSpokesperson ? 'talsmanns' : 'verjanda'
-                }`}
-                defaultValue={workingCase.defenderName}
-                placeholder="Fullt nafn"
-                autoComplete="off"
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'defenderName',
-                    event,
-                    [],
-                    workingCase,
-                    setWorkingCase,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'defenderName',
-                    event.target.value,
-                    [],
-                    workingCase,
-                    updateCase,
-                  )
-                }
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <Input
-                name="defenderEmail"
-                label={`Netfang ${
-                  workingCase.defenderIsSpokesperson ? 'talsmanns' : 'verjanda'
-                }`}
-                defaultValue={workingCase.defenderEmail}
-                placeholder="Netfang"
-                autoComplete="off"
-                errorMessage={defenderEmailEM}
-                hasError={defenderEmailEM !== ''}
-                onChange={(event) =>
-                  removeTabsValidateAndSet(
-                    'defenderEmail',
-                    event,
-                    ['email-format'],
-                    workingCase,
-                    setWorkingCase,
-                    defenderEmailEM,
-                    setDefenderEmailEM,
-                  )
-                }
-                onBlur={(event) =>
-                  validateAndSendToServer(
-                    'defenderEmail',
-                    event.target.value,
-                    ['email-format'],
-                    workingCase,
-                    updateCase,
-                    setDefenderEmailEM,
-                  )
-                }
-              />
-            </Box>
-            <InputMask
-              mask="999-9999"
-              maskPlaceholder={null}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'defenderPhoneNumber',
-                  event,
-                  ['phonenumber'],
-                  workingCase,
-                  setWorkingCase,
-                  defenderPhoneNumberEM,
-                  setDefenderPhoneNumberEM,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'defenderPhoneNumber',
-                  event.target.value,
-                  ['phonenumber'],
-                  workingCase,
-                  updateCase,
-                  setDefenderPhoneNumberEM,
-                )
-              }
-            >
-              <Input
-                name="defenderPhoneNumber"
-                label={`Símanúmer ${
-                  workingCase.defenderIsSpokesperson ? 'talsmanns' : 'verjanda'
-                }`}
-                defaultValue={workingCase.defenderPhoneNumber}
-                placeholder="Símanúmer"
-                autoComplete="off"
-                errorMessage={defenderPhoneNumberEM}
-                hasError={defenderPhoneNumberEM !== ''}
-              />
-            </InputMask>
-          </BlueBox>
-        </Box>
+        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${Constants.IC_OVERVIEW_ROUTE}/${workingCase.id}`}
-          nextUrl={`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`}
+          onNextButtonClick={handleNextButtonClick}
           nextIsLoading={isLoading}
-          nextIsDisabled={!isValid || !courtDateIsValid}
-          nextButtonText="Staðfesta og senda"
+          nextIsDisabled={!isCourtHearingArrangementsStepValidIC(workingCase)}
         />
       </FormContentContainer>
+      {modalVisible && (
+        <Modal
+          title={formatMessage(m.modal.heading)}
+          text={formatMessage(
+            workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT
+              ? m.modal.allPresentText
+              : workingCase.sessionArrangements ===
+                SessionArrangements.ALL_PRESENT_SPOKESPERSON
+              ? m.modal.allPresentSpokespersonText
+              : m.modal.prosecutorPresentText,
+          )}
+          handlePrimaryButtonClick={async () => {
+            const notificationSent = await sendNotification(
+              workingCase.id,
+              NotificationType.COURT_DATE,
+            )
+
+            if (notificationSent) {
+              router.push(
+                `${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`,
+              )
+            }
+          }}
+          handleSecondaryButtonClick={() => {
+            router.push(`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`)
+          }}
+          primaryButtonText={formatMessage(m.modal.primaryButtonText)}
+          secondaryButtonText={formatMessage(m.modal.secondaryButtonText)}
+          isPrimaryButtonLoading={isSendingNotification}
+        />
+      )}
     </>
   )
 }

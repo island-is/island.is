@@ -1,4 +1,4 @@
-import * as s from './RegulationDisplay.treat'
+import * as s from './RegulationDisplay.css'
 
 import { RegName, prettyName } from '@island.is/regulations'
 import { RegulationPageTexts } from './RegulationTexts.types'

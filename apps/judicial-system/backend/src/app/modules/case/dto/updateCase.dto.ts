@@ -9,12 +9,10 @@ import {
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
 import {
-  CaseCustodyProvisions,
+  CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseAppealDecision,
-  CaseGender,
   CaseDecision,
-  AccusedPleaDecision,
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
@@ -34,26 +32,6 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly policeCaseNumber?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly accusedNationalId?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly accusedName?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly accusedAddress?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ enum: CaseGender })
-  readonly accusedGender?: CaseGender
 
   @IsOptional()
   @IsString()
@@ -81,6 +59,11 @@ export class UpdateCaseDto {
   readonly defenderIsSpokesperson?: boolean
 
   @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly isHeightenedSecurityLevel?: boolean
+
+  @IsOptional()
   @IsString()
   @ApiPropertyOptional()
   readonly courtId?: string
@@ -103,6 +86,11 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
+  readonly translator?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
   readonly requestedValidToDate?: Date
 
   @IsOptional()
@@ -121,9 +109,9 @@ export class UpdateCaseDto {
   readonly legalBasis?: string
 
   @IsOptional()
-  @IsEnum(CaseCustodyProvisions, { each: true })
-  @ApiPropertyOptional({ enum: CaseCustodyProvisions, isArray: true })
-  readonly custodyProvisions?: CaseCustodyProvisions[]
+  @IsEnum(CaseLegalProvisions, { each: true })
+  @ApiPropertyOptional({ enum: CaseLegalProvisions, isArray: true })
+  readonly legalProvisions?: CaseLegalProvisions[]
 
   @IsOptional()
   @IsEnum(CaseCustodyRestrictions, { each: true })
@@ -193,6 +181,11 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
+  readonly courtLocation?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
   readonly courtRoom?: string
 
   @IsOptional()
@@ -204,6 +197,11 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly courtEndTime?: Date
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly isClosedCourtHidden?: boolean
 
   @IsOptional()
   @IsString()
@@ -221,19 +219,9 @@ export class UpdateCaseDto {
   readonly courtDocuments?: string
 
   @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional()
-  readonly isAccusedAbsent?: boolean
-
-  @IsOptional()
-  @IsEnum(AccusedPleaDecision)
-  @ApiPropertyOptional({ enum: AccusedPleaDecision })
-  readonly accusedPleaDecision?: AccusedPleaDecision
-
-  @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly accusedPleaAnnouncement?: string
+  readonly accusedBookings?: string
 
   @IsOptional()
   @IsString()
@@ -266,14 +254,9 @@ export class UpdateCaseDto {
   readonly validToDate?: Date
 
   @IsOptional()
-  @IsEnum(CaseCustodyRestrictions, { each: true })
-  @ApiPropertyOptional({ enum: CaseCustodyRestrictions, isArray: true })
-  readonly custodyRestrictions?: CaseCustodyRestrictions[]
-
-  @IsOptional()
-  @IsString()
+  @IsBoolean()
   @ApiPropertyOptional()
-  readonly otherRestrictions?: string
+  readonly isCustodyIsolation?: boolean
 
   @IsOptional()
   @IsString()
@@ -284,6 +267,11 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly conclusion?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly endOfSessionBookings?: string
 
   @IsOptional()
   @IsEnum(CaseAppealDecision)
@@ -324,4 +312,9 @@ export class UpdateCaseDto {
   @IsUUID()
   @ApiPropertyOptional()
   readonly registrarId?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly caseModifiedExplanation?: string
 }

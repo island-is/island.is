@@ -4,11 +4,9 @@ import { Field, InputType } from '@nestjs/graphql'
 
 import type {
   CaseAppealDecision,
-  CaseCustodyProvisions,
+  CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseDecision,
-  CaseGender,
-  AccusedPleaDecision,
   UpdateCase,
   CaseType,
   SessionArrangements,
@@ -34,22 +32,6 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly accusedNationalId?: string
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly accusedName?: string
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly accusedAddress?: string
-
-  @Allow()
-  @Field(() => String, { nullable: true })
-  readonly accusedGender?: CaseGender
-
-  @Allow()
-  @Field({ nullable: true })
   readonly defenderName?: string
 
   @Allow()
@@ -67,6 +49,10 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly defenderIsSpokesperson?: boolean
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly isHeightenedSecurityLevel?: boolean
 
   @Allow()
   @Field({ nullable: true })
@@ -90,6 +76,10 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
+  readonly translator?: string
+
+  @Allow()
+  @Field({ nullable: true })
   readonly demands?: string
 
   @Allow()
@@ -102,7 +92,7 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field(() => [String], { nullable: true })
-  readonly custodyProvisions?: CaseCustodyProvisions[]
+  readonly legalProvisions?: CaseLegalProvisions[]
 
   @Allow()
   @Field(() => [String], { nullable: true })
@@ -158,6 +148,10 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
+  readonly courtLocation?: string
+
+  @Allow()
+  @Field({ nullable: true })
   readonly courtRoom?: string
 
   @Allow()
@@ -167,6 +161,10 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly courtEndTime?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly isClosedCourtHidden?: boolean
 
   @Allow()
   @Field({ nullable: true })
@@ -182,15 +180,7 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly isAccusedAbsent?: boolean
-
-  @Allow()
-  @Field(() => String, { nullable: true })
-  readonly accusedPleaDecision?: AccusedPleaDecision
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly accusedPleaAnnouncement?: string
+  readonly accusedBookings?: string
 
   @Allow()
   @Field({ nullable: true })
@@ -217,12 +207,8 @@ export class UpdateCaseInput implements UpdateCase {
   readonly validToDate?: string
 
   @Allow()
-  @Field(() => [String], { nullable: true })
-  readonly custodyRestrictions?: CaseCustodyRestrictions[]
-
-  @Allow()
   @Field({ nullable: true })
-  readonly otherRestrictions?: string
+  readonly isCustodyIsolation?: boolean
 
   @Allow()
   @Field({ nullable: true })
@@ -231,6 +217,10 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly conclusion?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly endOfSessionBookings?: string
 
   @Allow()
   @Field(() => String, { nullable: true })
@@ -263,4 +253,8 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly registrarId?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly caseModifiedExplanation?: string
 }

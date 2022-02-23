@@ -11,11 +11,11 @@ import {
 export class TellUsAStoryInput {
   @Field()
   @IsString()
-  organization: string
+  organization!: string
 
   @Field()
   @IsDateString()
-  dateOfStory: string
+  dateOfStory!: string
 
   @Field()
   @IsOptional()
@@ -24,15 +24,15 @@ export class TellUsAStoryInput {
 
   @Field()
   @IsString()
-  message: string
+  message!: string
 
   @Field()
   @IsString()
-  name: string
+  name!: string
 
   @Field()
   @IsEmail()
-  email: string
+  email!: string
 
   @Field()
   @IsOptional()

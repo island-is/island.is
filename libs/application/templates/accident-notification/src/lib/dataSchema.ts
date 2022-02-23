@@ -15,6 +15,7 @@ import {
   StudiesAccidentTypeEnum,
   WhoIsTheNotificationForEnum,
   WorkAccidentTypeEnum,
+  ReviewApprovalEnum,
 } from '../types'
 import { isValid24HFormatTime } from '../utils'
 import { error } from './messages/error'
@@ -30,24 +31,43 @@ const FileSchema = z.object({
   url: z.string().optional(),
 })
 
-const CompanyInfoSchema = z.object({
-  nationalRegistrationId: z
-    .string()
-    .refine((x) => (x ? kennitala.isCompany(x) : false)),
-  companyName: z.string().min(1),
-  name: z.string().min(1),
+const RepresentativeInfo = z.object({
+  name: z.string().refine((x) => x.trim().length > 0, {
+    params: error.invalidValue,
+  }),
+  nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false), {
+    params: error.invalidValue,
+  }),
   email: z.string().email(),
   phoneNumber: z.string().optional(),
 })
 
+const CompanyInfo = z
+  .object({
+    name: z.string().refine((x) => x.trim().length > 0, {
+      params: error.invalidValue,
+    }),
+    nationalRegistrationId: z
+      .string()
+      .refine((x) => (x ? kennitala.isCompany(x) : false), {
+        params: error.invalidValue,
+      }),
+  })
+  .optional()
+
 export const AccidentNotificationSchema = z.object({
+  approveExternalData: z.boolean().refine((v) => v),
+  representative: RepresentativeInfo,
+  companyInfo: CompanyInfo,
   externalData: z.object({
     nationalRegistry: z.object({
       data: z.object({
         address: z.object({
           city: z.string(),
           code: z.string(),
-          postalCode: z.string(),
+          postalCode: z.string().refine((x) => +x >= 100 && +x <= 999, {
+            params: error.invalidValue,
+          }),
           streetAddress: z.string(),
         }),
         age: z.number(),
@@ -67,22 +87,23 @@ export const AccidentNotificationSchema = z.object({
         email: z.string(),
         mobilePhoneNumber: z.string(),
       }),
-      date: z.string(),
-      status: z.enum(['success', 'failure']),
     }),
   }),
-  approveExternalData: z.boolean().refine((p) => p),
   info: z.object({
     onBehalf: z.enum([OnBehalf.MYSELF, OnBehalf.OTHERS]),
   }),
   timePassedHindrance: z.enum([YES, NO]),
   carAccidentHindrance: z.enum([YES, NO]),
   applicant: z.object({
-    name: z.string().min(1, error.required.defaultMessage),
+    name: z.string().refine((x) => x.trim().length > 0),
     nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
-    address: z.string().min(1, error.required.defaultMessage),
-    postalCode: z.string().min(1, error.required.defaultMessage),
-    city: z.string().min(1, error.required.defaultMessage),
+    address: z.string().refine((x) => x.trim().length > 0),
+    postalCode: z.string().refine((x) => +x >= 100 && +x <= 999, {
+      params: error.invalidValue,
+    }),
+    city: z.string().refine((x) => x.trim().length > 0, {
+      params: error.invalidValue,
+    }),
     email: z.string().email(),
     phoneNumber: z.string().optional(),
   }),
@@ -94,36 +115,86 @@ export const AccidentNotificationSchema = z.object({
       WhoIsTheNotificationForEnum.CHILDINCUSTODY,
     ]),
   }),
-  attachments: z.object({
-    injuryCertificate: z.enum([
+  injuryCertificate: z.object({
+    answer: z.enum([
       AttachmentsEnum.HOSPITALSENDSCERTIFICATE,
       AttachmentsEnum.INJURYCERTIFICATE,
       AttachmentsEnum.SENDCERTIFICATELATER,
-      AttachmentsEnum.INJUREDSENDSCERTIFICATE,
     ]),
-    injuryCertificateFile: z.array(FileSchema).optional(),
-    deathCertificateFile: z.array(FileSchema).optional(),
-    powerOfAttorneyFile: z.array(FileSchema).optional(),
+  }),
+  additionalAttachments: z.object({
+    answer: z.enum([
+      AttachmentsEnum.ADDITIONALNOW,
+      AttachmentsEnum.ADDITIONALLATER,
+    ]),
+  }),
+
+  attachments: z.object({
+    injuryCertificateFile: z
+      .object({
+        file: z.array(FileSchema),
+        // .refine((v) => v.length > 0, { params: error.requiredFile }),
+      })
+      .optional(),
+    deathCertificateFile: z
+      .object({
+        file: z.array(FileSchema),
+        // .refine((v) => v.length > 0, { params: error.requiredFile }),
+      })
+      .optional(),
+    powerOfAttorneyFile: z
+      .object({
+        file: z.array(FileSchema),
+        // .refine((v) => v.length > 0, { params: error.requiredFile }),
+      })
+      .optional(),
+    additionalFiles: z
+      .object({
+        file: z.array(FileSchema),
+        // .refine((v) => v.length > 0, { params: error.requiredFile }),
+      })
+      .optional(),
+    additionalFilesFromReviewer: z
+      .object({
+        file: z.array(FileSchema),
+      })
+      .optional(),
   }),
   wasTheAccidentFatal: z.enum([YES, NO]),
   fatalAccidentUploadDeathCertificateNow: z.enum([YES, NO]),
   accidentDetails: z.object({
-    dateOfAccident: z.string().min(1),
-    isHealthInsured: z.enum([YES, NO]),
+    dateOfAccident: z.string().refine((x) => x.trim().length > 0, {
+      params: error.invalidValue,
+    }),
+    isHealthInsured: z.enum([YES, NO]).optional(),
     timeOfAccident: z
       .string()
-      .refine((x) => (x ? isValid24HFormatTime(x) : false)),
-    descriptionOfAccident: z.string().min(1),
+      .refine((x) => (x ? isValid24HFormatTime(x) : false), {
+        params: error.invalidValue,
+      }),
+    descriptionOfAccident: z.string().refine((x) => x.trim().length > 0, {
+      params: error.invalidValue,
+    }),
   }),
-  isRepresentativeOfCompanyOrInstitue: z.enum([YES, NO]),
-  companyInfo: CompanyInfoSchema,
-  schoolInfo: CompanyInfoSchema,
-  fishingCompanyInfo: CompanyInfoSchema,
-  sportsClubInfo: CompanyInfoSchema,
-  rescueSquadInfo: CompanyInfoSchema,
+  isRepresentativeOfCompanyOrInstitue: z.array(z.string()).optional(),
+  fishingShipInfo: z.object({
+    shipName: z.string().refine((x) => x.trim().length > 0, {
+      params: error.invalidValue,
+    }),
+    shipCharacters: z.string().refine((x) => x.trim().length > 0, {
+      params: error.invalidValue,
+    }),
+    homePort: z.string(),
+    shipRegisterNumber: z.string(),
+  }),
+
+  onPayRoll: z.object({
+    answer: z.enum([YES, NO]),
+  }),
   locationAndPurpose: z.object({
-    location: z.string().min(1),
-    purpose: z.string().min(1),
+    location: z.string().refine((x) => x.trim().length > 0, {
+      params: error.invalidValue,
+    }),
   }),
   accidentLocation: z.object({
     answer: z.enum([
@@ -138,28 +209,41 @@ export const AccidentNotificationSchema = z.object({
       ProfessionalAthleteAccidentLocationEnum.OTHER,
       AgricultureAccidentLocationEnum.ATTHEWORKPLACE,
       AgricultureAccidentLocationEnum.TOORFROMTHEWORKPLACE,
+      AgricultureAccidentLocationEnum.OTHER,
       RescueWorkAccidentLocationEnum.TOORFROMRESCUE,
       RescueWorkAccidentLocationEnum.DURINGRESCUE,
       RescueWorkAccidentLocationEnum.OTHER,
       StudiesAccidentLocationEnum.ATTHESCHOOL,
-      StudiesAccidentLocationEnum.DURINGSTUDIES,
       StudiesAccidentLocationEnum.OTHER,
     ]),
   }),
-  fishermanLocation: z.object({
+  homeAccident: z.object({
+    address: z.string().refine((x) => x.trim().length > 0, {
+      params: error.invalidValue,
+    }),
+    postalCode: z.string().refine((x) => +x >= 100 && +x <= 999, {
+      params: error.invalidValue,
+    }),
+    community: z
+      .string()
+      .regex(/^([^0-9]*)$/)
+      .refine((x) => x.trim().length > 0, {
+        params: error.invalidValue,
+      }),
+    moreDetails: z.string().optional(),
+  }),
+  shipLocation: z.object({
     answer: z.enum([
       FishermanWorkplaceAccidentShipLocationEnum.SAILINGORFISHING,
       FishermanWorkplaceAccidentShipLocationEnum.HARBOR,
       FishermanWorkplaceAccidentShipLocationEnum.OTHER,
     ]),
-    locationAndPurpose: z.object({
-      location: z.string().min(1),
-      purpose: z.string().min(1),
-    }),
   }),
   workMachineRadio: z.enum([YES, NO]),
   workMachine: z.object({
-    desriptionOfMachine: z.string().min(1),
+    desriptionOfMachine: z.string().refine((x) => x.trim().length > 0, {
+      params: error.invalidValue,
+    }),
   }),
   accidentType: z.object({
     radioButton: z.enum([
@@ -171,42 +255,55 @@ export const AccidentNotificationSchema = z.object({
     ]),
   }),
   workAccident: z.object({
-    type: z
-      .enum([
-        WorkAccidentTypeEnum.AGRICULTURE,
-        WorkAccidentTypeEnum.FISHERMAN,
-        WorkAccidentTypeEnum.GENERAL,
-        WorkAccidentTypeEnum.PROFESSIONALATHLETE,
-      ])
-      .optional(),
+    type: z.enum([
+      WorkAccidentTypeEnum.AGRICULTURE,
+      WorkAccidentTypeEnum.FISHERMAN,
+      WorkAccidentTypeEnum.GENERAL,
+      WorkAccidentTypeEnum.PROFESSIONALATHLETE,
+    ]),
   }),
   studiesAccident: z.object({
-    type: z
-      .enum([
-        StudiesAccidentTypeEnum.APPRENTICESHIP,
-        StudiesAccidentTypeEnum.INTERNSHIP,
-        StudiesAccidentTypeEnum.VOCATIONALEDUCATION,
-      ])
-      .optional(),
+    type: z.enum([
+      StudiesAccidentTypeEnum.APPRENTICESHIP,
+      StudiesAccidentTypeEnum.INTERNSHIP,
+      StudiesAccidentTypeEnum.VOCATIONALEDUCATION,
+    ]),
   }),
   injuredPersonInformation: z.object({
-    name: z.string().min(1, error.required.defaultMessage),
-    nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
-    email: z.string().email().min(1, error.required.defaultMessage),
+    name: z.string().refine((x) => x.trim().length > 0, {
+      params: error.invalidValue,
+    }),
+    nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false), {
+      params: error.invalidValue,
+    }),
+    email: z
+      .string()
+      .email()
+      .refine((x) => x.trim().length > 0, {
+        params: error.invalidValue,
+      }),
     phoneNumber: z.string().optional(),
   }),
   juridicalPerson: z.object({
-    companyName: z.string().min(1, error.required.defaultMessage),
+    companyName: z.string().refine((x) => x.trim().length > 0, {
+      params: error.invalidValue,
+    }),
     companyNationalId: z
       .string()
-      .refine((x) => (x ? kennitala.isCompany(x) : false)),
-    companyConfirmation: z.enum([YES]),
+      .refine((x) => (x ? kennitala.isCompany(x) : false), {
+        params: error.invalidValue,
+      }),
+    companyConfirmation: z.array(z.string()).refine((v) => v.includes(YES), {
+      params: error.requiredCheckmark,
+    }),
   }),
   childInCustody: z.object({
-    name: z.string().min(1, error.required.defaultMessage),
-    nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false)),
-    email: z.string().optional(),
-    phoneNumber: z.string().optional(),
+    name: z.string().refine((x) => x.trim().length > 0, {
+      params: error.invalidValue,
+    }),
+    nationalId: z.string().refine((x) => (x ? kennitala.isPerson(x) : false), {
+      params: error.invalidValue,
+    }),
   }),
   powerOfAttorney: z.object({
     type: z.enum([
@@ -215,9 +312,14 @@ export const AccidentNotificationSchema = z.object({
       PowerOfAttorneyUploadEnum.UPLOADNOW,
     ]),
   }),
-  comment: z.object({
-    description: z.string().optional(),
-  }),
+  reviewApproval: z
+    .enum([
+      ReviewApprovalEnum.APPROVED,
+      ReviewApprovalEnum.REJECTED,
+      ReviewApprovalEnum.NOTREVIEWED,
+    ])
+    .refine((x) => (x ? x : ReviewApprovalEnum.NOTREVIEWED)),
+  reviewComment: z.string().optional(),
 })
 
 export type AccidentNotification = z.TypeOf<typeof AccidentNotificationSchema>

@@ -1,32 +1,37 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
+
 import { CaseType } from '@island.is/judicial-system/types'
-import type {
-  Case,
-  CaseCustodyProvisions,
-} from '@island.is/judicial-system/types'
 import {
-  CaseFileList,
   FormContentContainer,
   InfoCard,
   PdfButton,
-} from '@island.is/judicial-system-web/src/shared-components'
-import { Box, Button, Text } from '@island.is/island-ui/core'
-import * as styles from './Overview.treat'
+} from '@island.is/judicial-system-web/src/components'
+import { Accordion, Box, Button, Text } from '@island.is/island-ui/core'
 import {
   capitalize,
   formatDate,
   formatRequestedCustodyRestrictions,
-  laws,
   TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
-import { requestCourtDate } from '@island.is/judicial-system-web/messages'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import CaseFilesAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CaseFilesAccordionItem/CaseFilesAccordionItem'
+import {
+  core,
+  laws,
+  requestCourtDate,
+} from '@island.is/judicial-system-web/messages'
+import type {
+  Case,
+  CaseLegalProvisions,
+} from '@island.is/judicial-system/types'
+
 import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
+import * as styles from './Overview.css'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   handleCreateCourtCase: (wc: Case) => void
   createCourtCaseSuccess: boolean
   setCreateCourtCaseSuccess: React.Dispatch<React.SetStateAction<boolean>>
@@ -83,9 +88,10 @@ const OverviewForm: React.FC<Props> = (props) => {
         <InfoCard
           data={[
             {
-              title: 'Embætti',
+              title: formatMessage(core.prosecutor),
               value: `${
-                workingCase.prosecutor?.institution?.name ?? 'Ekki skráð'
+                workingCase.creatingProsecutor?.institution?.name ??
+                'Ekki skráð'
               }`,
             },
             {
@@ -97,15 +103,18 @@ const OverviewForm: React.FC<Props> = (props) => {
                 TIME_FORMAT,
               )}`,
             },
-            { title: 'Ákærandi', value: workingCase.prosecutor?.name },
+            {
+              title: formatMessage(core.prosecutorPerson),
+              value: workingCase.prosecutor?.name,
+            },
             {
               title: workingCase.parentCase
                 ? `${
                     workingCase.type === CaseType.CUSTODY
-                      ? 'Fyrri gæsla'
-                      : 'Fyrra farbann'
+                      ? formatMessage(core.pastCustody)
+                      : formatMessage(core.pastTravelBan)
                   }`
-                : 'Tími handtöku',
+                : formatMessage(core.arrestDate),
               value: workingCase.parentCase
                 ? `${capitalize(
                     formatDate(
@@ -124,9 +133,7 @@ const OverviewForm: React.FC<Props> = (props) => {
                 : 'Var ekki skráður',
             },
           ]}
-          accusedName={workingCase.accusedName}
-          accusedNationalId={workingCase.accusedNationalId}
-          accusedAddress={workingCase.accusedAddress}
+          defendants={workingCase.defendants ?? []}
           defender={{
             name: workingCase.defenderName ?? '',
             email: workingCase.defenderEmail,
@@ -156,21 +163,22 @@ const OverviewForm: React.FC<Props> = (props) => {
               </span>
             </Text>
           </Box>
-          <Box data-testid="custodyProvisions">
+          <Box data-testid="legalProvisions">
             <Box marginBottom={1}>
               <Text as="h2" variant="h3">
                 Lagaákvæði sem krafan er byggð á
               </Text>
             </Box>
-            {workingCase.custodyProvisions?.map(
-              (custodyProvision: CaseCustodyProvisions, index) => {
+            {workingCase.legalProvisions?.map(
+              (legalProvision: CaseLegalProvisions, index) => {
                 return (
                   <div key={index}>
-                    <Text>{laws[custodyProvision]}</Text>
+                    <Text>{formatMessage(laws[legalProvision].title)}</Text>
                   </div>
                 )
               },
             )}
+            {workingCase.legalBasis && <Text>{workingCase.legalBasis}</Text>}
           </Box>
         </div>
         <div className={styles.infoSection} data-testid="custodyRestrictions">
@@ -269,27 +277,21 @@ const OverviewForm: React.FC<Props> = (props) => {
             )}
           </div>
         )}
-
-        <div className={styles.infoSection}>
-          <Box marginBottom={1}>
-            <Text as="h2" variant="h3">
-              {`Rannsóknargögn (${
-                workingCase.files ? workingCase.files.length : 0
-              })`}
-            </Text>
+        {user && (
+          <Box marginBottom={5}>
+            <Accordion>
+              <CaseFilesAccordionItem
+                workingCase={workingCase}
+                setWorkingCase={setWorkingCase}
+                user={user}
+              />
+            </Accordion>
           </Box>
-          <CaseFileList
-            caseId={workingCase.id}
-            files={workingCase.files ?? []}
-            canOpenFiles={
-              workingCase.judge !== null && workingCase.judge?.id === user?.id
-            }
-          />
-        </div>
+        )}
         <Box marginBottom={3}>
           <PdfButton
             caseId={workingCase.id}
-            title="Opna PDF kröfu"
+            title={formatMessage(core.pdfButtonRequest)}
             pdfType="request"
           />
         </Box>

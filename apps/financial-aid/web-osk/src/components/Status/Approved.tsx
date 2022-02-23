@@ -4,29 +4,47 @@ import { Text } from '@island.is/island-ui/core'
 import {
   ApplicationState,
   getState,
-  months,
-} from '@island.is/financial-aid/shared'
-import format from 'date-fns/format'
+  currentMonth,
+  Amount,
+  acceptedAmountBreakDown,
+} from '@island.is/financial-aid/shared/lib'
+import { Breakdown } from '@island.is/financial-aid/shared/components'
 
 interface Props {
   state: ApplicationState
+  amount?: Amount
+  isStateVisible: boolean
+  isApplicant?: boolean
 }
 
-const Approved = ({ state }: Props) => {
-  const currentMonth = parseInt(format(new Date(), 'MM')) - 1
+const Approved = ({
+  state,
+  amount,
+  isStateVisible,
+  isApplicant = true,
+}: Props) => {
+  if (!isStateVisible) {
+    return null
+  }
 
   return (
     <>
-      <Text as="h2" variant="h3" color="mint600" marginBottom={[4, 4, 7]}>
+      <Text as="h2" variant="h3" color="mint600" marginBottom={[4, 4, 5]}>
         Umsókn {getState[state].toLowerCase()}
       </Text>
-      <Text variant="intro">
-        Umsóknin þín um fjárhagsaðstoð í {months[currentMonth].toLowerCase()} er
-        samþykkt en athugaðu að hún byggir á tekjum og öðrum þáttum sem kunna að
-        koma upp í {months[currentMonth].toLowerCase()} og getur því tekið
-        breytingum.
-      </Text>
-      {/* //TODO estimated aid, need approval */}
+      {isApplicant && amount ? (
+        <>
+          <Text as="h3" variant="h3" marginBottom={2}>
+            Veitt aðstoð
+          </Text>
+          <Breakdown calculations={acceptedAmountBreakDown(amount)} />
+        </>
+      ) : (
+        <Text variant="intro">
+          Umsóknin maka þíns um fjárhagsaðstoð í {currentMonth()} er samþykkt.
+          Maki þinn fær frekari upplýsingar um veitta aðstoð.
+        </Text>
+      )}
     </>
   )
 }

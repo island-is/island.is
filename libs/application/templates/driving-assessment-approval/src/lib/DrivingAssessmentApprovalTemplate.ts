@@ -2,11 +2,8 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
-  ApplicationRole,
   ApplicationStateSchema,
-  Application,
   DefaultEvents,
-  DefaultStateLifeCycle,
   ApplicationConfigurations,
 } from '@island.is/application/core'
 import * as z from 'zod'
@@ -116,7 +113,11 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole: () => Roles.TEACHER,
+  mapUserToRole: (nationalId, application) => {
+    if (nationalId === application.applicant) {
+      return Roles.TEACHER
+    }
+  },
 }
 
 export default ReferenceApplicationTemplate

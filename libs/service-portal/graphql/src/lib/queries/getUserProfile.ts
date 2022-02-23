@@ -7,8 +7,11 @@ export const USER_PROFILE = gql`
       mobilePhoneNumber
       locale
       email
-      emailVerified
-      mobilePhoneNumberVerified
+      canNudge
+      bankInfo
+      emailStatus
+      mobileStatus
+      modified
     }
   }
 `

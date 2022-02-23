@@ -11,7 +11,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../../environments'
-import { Case } from '../case/models/case.model'
+import { Case } from '../case'
 
 const caseEvent = {
   CREATE: ':new: Krafa stofnuð',
@@ -19,11 +19,13 @@ const caseEvent = {
   EXTEND: ':recycle: Krafa framlengd',
   OPEN: ':unlock: Krafa opnuð fyrir dómstól',
   SUBMIT: ':mailbox_with_mail: Krafa send til dómstóls',
+  RESUBMIT: ':mailbox_with_mail: Krafa send aftur til dómstóls',
   RECEIVE: ':eyes: Krafa móttekin',
   ACCEPT: ':white_check_mark: Krafa samþykkt',
   REJECT: ':negative_squared_cross_mark: Kröfu hafnað',
   DELETE: ':fire: Krafa dregin til baka',
-  COURT_DATE: ':timer_clock: Kröfu úthlutað fyrirtökutíma',
+  SCHEDULE_COURT_DATE: ':timer_clock: Kröfu úthlutað fyrirtökutíma',
+  DISMISS: ':woman-shrugging: Kröfu vísað frá',
 }
 
 export enum CaseEvent {
@@ -32,11 +34,13 @@ export enum CaseEvent {
   EXTEND = 'EXTEND',
   OPEN = 'OPEN',
   SUBMIT = 'SUBMIT',
+  RESUBMIT = 'RESUBMIT',
   RECEIVE = 'RECEIVE',
   ACCEPT = 'ACCEPT',
   REJECT = 'REJECT',
   DELETE = 'DELETE',
-  COURT_DATE = 'COURT_DATE',
+  SCHEDULE_COURT_DATE = 'SCHEDULE_COURT_DATE',
+  DISMISS = 'DISMISS',
 }
 
 @Injectable()
@@ -52,9 +56,9 @@ export class EventService {
         return
       }
 
-      const typeText = `${capitalize(caseTypes[theCase.type])}${
-        theCase.description ? ` - _${theCase.description}_` : ''
-      }`
+      const typeText = `${capitalize(caseTypes[theCase.type])} ${
+        theCase.description ? `- _${theCase.description}_ ` : ''
+      }*${theCase.id}*`
       const prosecutionText = `${
         theCase.prosecutor?.institution
           ? `${theCase.prosecutor?.institution?.name} `
@@ -66,7 +70,7 @@ export class EventService {
           }`
         : ''
       const extraText =
-        event === CaseEvent.COURT_DATE
+        event === CaseEvent.SCHEDULE_COURT_DATE
           ? `\n>Dómari ${
               theCase.judge?.name ?? 'er ekki skráður'
             }\n>Dómritari ${
@@ -93,9 +97,10 @@ export class EventService {
         }),
       })
     } catch (error) {
+      // Tolerate failure, but log error
       this.logger.error(
         `Failed to post event ${event} for case ${theCase.id}`,
-        error,
+        { error },
       )
     }
   }

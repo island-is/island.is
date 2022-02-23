@@ -1,5 +1,5 @@
 const path = require('path')
-const TreatPlugin = require('treat/webpack-plugin')
+const { VanillaExtractPlugin } = require('@vanilla-extract/webpack-plugin')
 
 const rootDir = (dir) => path.resolve(__dirname, dir)
 
@@ -15,7 +15,7 @@ module.exports = {
     'storybook-addon-designs',
   ],
   webpackFinal: (config) => {
-    config.plugins.push(new TreatPlugin())
+    config.plugins.push(new VanillaExtractPlugin())
     config.devtool = false
 
     config.module.rules.push(
@@ -55,15 +55,23 @@ module.exports = {
         '@island.is/island-ui/core': rootDir('../../core/src'),
         '@island.is/island-ui/theme': rootDir('../../theme/src'),
         '@island.is/island-ui/utils': rootDir('../../utils/src'),
+        '@island.is/island-ui/vanilla-extract-utils': rootDir(
+          '../../vanilla-extract-utils/src',
+        ),
         '@island.is/application/core': rootDir('../../../application/core/src'),
         '@island.is/application/graphql': rootDir(
           '../../../application/graphql/src',
+        ),
+        '@island.is/application/ui-components': rootDir(
+          '../../../application/ui-components/src',
         ),
         '@island.is/auth/react': rootDir('../../../auth/react/src'),
         '@island.is/shared/constants': rootDir('../../../shared/constants/src'),
         '@island.is/shared/form-fields': rootDir(
           '../../../shared/form-fields/src',
         ),
+        '@island.is/shared/problem': rootDir('../../../shared/problem/src'),
+        '@island.is/shared/utils': rootDir('../../../shared/utils/src'),
         '@island.is/localization': rootDir('../../../localization/src'),
       },
     }

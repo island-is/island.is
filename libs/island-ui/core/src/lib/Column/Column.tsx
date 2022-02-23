@@ -2,7 +2,7 @@
 import React, { ReactNode, useContext } from 'react'
 import { Box } from '../Box/Box'
 import { ColumnsContext } from '../Columns/Columns'
-import * as styles from './Column.treat'
+import * as styles from './Column.css'
 
 export interface ColumnProps {
   children: ReactNode
@@ -22,10 +22,12 @@ export const Column = ({ children, width }: ColumnProps) => {
     lgSpace,
     xlSpace,
     collapsibleAlignmentChildProps,
+    as,
   } = useContext(ColumnsContext)
 
   return (
     <Box
+      component={as}
       minWidth={0}
       width={width !== 'content' ? 'full' : undefined}
       flexShrink={width === 'content' ? 0 : undefined}
@@ -35,6 +37,7 @@ export const Column = ({ children, width }: ColumnProps) => {
       ]}
     >
       <Box
+        component={as}
         paddingLeft={[
           collapseXs ? 'none' : xsSpace,
           collapseSm ? 'none' : smSpace,

@@ -1,37 +1,49 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
+
 import {
-  DelegationsService,
-  Delegation,
-  DelegationScopeService,
-  DelegationScope,
-  IdentityResource,
-  IdentityResourceUserClaim,
-  ApiScope,
-  ApiScopeUserClaim,
   ApiResource,
-  ApiResourceUserClaim,
   ApiResourceScope,
   ApiResourceSecret,
-  ApiScopeUserAccess,
-  ApiScopeUser,
+  ApiResourceUserClaim,
+  ApiScope,
   ApiScopeGroup,
+  ApiScopeUser,
+  ApiScopeUserAccess,
+  ApiScopeUserClaim,
+  Delegation,
+  DELEGATIONS_AUTH_CONFIG,
+  DelegationScope,
+  DelegationScopeService,
+  DelegationsService,
   Domain,
+  IdentityResource,
+  IdentityResourceUserClaim,
   ResourcesService,
 } from '@island.is/auth-api-lib'
-import { DelegationsController } from './delegations.controller'
-import { RskModule } from '@island.is/clients/rsk/v2'
-import { RskConfig } from './rsk.config'
-import { NationalRegistryModule } from '@island.is/clients/national-registry-v2'
-import { NationalRegistryConfig } from './national-registry.config'
+import { AuthConfig } from '@island.is/auth-nest-tools'
+import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
+import { RskProcuringClientModule } from '@island.is/clients/rsk/procuring'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
+import { ProblemModule } from '@island.is/nest/problem'
+
+import { environment } from '../../../environments'
+import { ActorDelegationsController } from './actorDelegations.controller'
+import { MeDelegationsController } from './meDelegations.controller'
+import {
+  PersonalRepresentative,
+  PersonalRepresentativeRight,
+  PersonalRepresentativeRightType,
+  PersonalRepresentativeScopePermission,
+  PersonalRepresentativeService,
+  PersonalRepresentativeType,
+} from '@island.is/auth-api-lib/personal-representative'
+
+const delegationAuthConfig: AuthConfig = environment.auth
 
 @Module({
   imports: [
     SequelizeModule.forFeature([
-      Delegation,
-      DelegationScope,
-      ApiScope,
-      IdentityResource,
       IdentityResource,
       IdentityResourceUserClaim,
       ApiScope,
@@ -44,11 +56,29 @@ import { NationalRegistryConfig } from './national-registry.config'
       ApiScopeUser,
       ApiScopeGroup,
       Domain,
+      Delegation,
+      DelegationScope,
+      PersonalRepresentative,
+      PersonalRepresentativeType,
+      PersonalRepresentativeRight,
+      PersonalRepresentativeRightType,
+      PersonalRepresentativeScopePermission,
     ]),
-    RskModule.register(RskConfig),
-    NationalRegistryModule.register(NationalRegistryConfig),
+    RskProcuringClientModule,
+    NationalRegistryClientModule,
+    FeatureFlagModule,
+    ProblemModule,
   ],
-  controllers: [DelegationsController],
-  providers: [DelegationsService, DelegationScopeService, ResourcesService],
+  controllers: [ActorDelegationsController, MeDelegationsController],
+  providers: [
+    DelegationsService,
+    DelegationScopeService,
+    ResourcesService,
+    PersonalRepresentativeService,
+    {
+      provide: DELEGATIONS_AUTH_CONFIG,
+      useValue: delegationAuthConfig,
+    },
+  ],
 })
 export class DelegationsModule {}

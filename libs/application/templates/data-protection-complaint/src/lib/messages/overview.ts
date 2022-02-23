@@ -19,11 +19,10 @@ export const overview = {
     },
   }),
   labels: defineMessage({
-    termsAgreement: {
-      id: 'dpac.application:section.overview.labels.termsAgreement',
-      defaultMessage:
-        'Ég samþykki að Persónuvernd hefur leyfi til þess að nota persónuupplýsingar til meðferðar á þessari umsókn.',
-      description: 'Terms agreement label',
+    sendApplication: {
+      id: 'dpac.application:section.overview.labels.sendApplication',
+      defaultMessage: 'Senda',
+      description: 'Send button on overview screen',
     },
     delimitationAccordionTitle: {
       id: 'dpac.application:section.overview.labels.delimitationAccordionTitle',

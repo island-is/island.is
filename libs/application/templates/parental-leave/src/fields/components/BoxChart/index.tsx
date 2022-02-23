@@ -3,7 +3,7 @@ import cn from 'classnames'
 
 import { Box, Text } from '@island.is/island-ui/core'
 
-import * as styles from './BoxChart.treat'
+import * as styles from './BoxChart.css'
 import { Application, formatText, FormText } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 

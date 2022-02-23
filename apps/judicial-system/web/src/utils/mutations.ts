@@ -1,8 +1,10 @@
 import { gql } from '@apollo/client'
 
-export const SignatureConfirmationQuery = gql`
-  query SignatureConfirmationQuery($input: SignatureConfirmationQueryInput!) {
-    signatureConfirmation(input: $input) {
+export const RulingSignatureConfirmationQuery = gql`
+  query RulingSignatureConfirmationQuery(
+    $input: SignatureConfirmationQueryInput!
+  ) {
+    rulingSignatureConfirmation(input: $input) {
       documentSigned
       code
       message
@@ -16,15 +18,19 @@ export const CasesQuery = gql`
       id
       created
       type
-      description
       state
       policeCaseNumber
-      accusedNationalId
-      accusedName
+      defendants {
+        id
+        nationalId
+        name
+        noNationalId
+      }
       validToDate
       decision
       isValidToDateInThePast
       courtCaseNumber
+      courtDate
       rulingDate
       courtEndTime
       accusedAppealDecision
@@ -34,98 +40,11 @@ export const CasesQuery = gql`
       parentCase {
         id
       }
+      initialRulingDate
     }
   }
 `
 
-export const ExtendCaseMutation = gql`
-  mutation ExtendCaseMutation($input: ExtendCaseInput!) {
-    extendCase(input: $input) {
-      id
-      created
-      modified
-      type
-      description
-      state
-      policeCaseNumber
-      accusedNationalId
-      accusedName
-      accusedAddress
-      accusedGender
-      defenderName
-      defenderEmail
-      defenderPhoneNumber
-      sendRequestToDefender
-      defenderIsSpokesperson
-      court {
-        id
-        type
-        name
-      }
-      leadInvestigator
-      arrestDate
-      requestedCourtDate
-      requestedValidToDate
-      demands
-      lawsBroken
-      legalBasis
-      custodyProvisions
-      requestedCustodyRestrictions
-      requestedOtherRestrictions
-      caseFacts
-      legalArguments
-      requestProsecutorOnlySession
-      prosecutorOnlySessionRequest
-      comments
-      caseFilesComments
-      prosecutor {
-        name
-        title
-      }
-      sharedWithProsecutorsOffice {
-        id
-        type
-        name
-      }
-      courtCaseNumber
-      sessionArrangements
-      courtDate
-      courtRoom
-      courtStartDate
-      courtEndTime
-      courtAttendees
-      prosecutorDemands
-      courtDocuments
-      isAccusedAbsent
-      accusedPleaDecision
-      accusedPleaAnnouncement
-      litigationPresentations
-      courtCaseFacts
-      courtLegalArguments
-      ruling
-      decision
-      validToDate
-      isValidToDateInThePast
-      custodyRestrictions
-      otherRestrictions
-      isolationToDate
-      conclusion
-      accusedAppealDecision
-      accusedAppealAnnouncement
-      prosecutorAppealDecision
-      prosecutorAppealAnnouncement
-      accusedPostponedAppealDate
-      prosecutorPostponedAppealDate
-      judge {
-        name
-        title
-      }
-      parentCase {
-        id
-      }
-    }
-  }
-`
 export const CreateUserMutation = gql`
   mutation CreateUserMutation($input: CreateUserInput!) {
     createUser(input: $input) {

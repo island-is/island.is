@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { Controller, useFormContext } from 'react-hook-form'
 import Markdown from 'markdown-to-jsx'
@@ -13,6 +13,7 @@ import {
 } from '@island.is/island-ui/core'
 import {
   DataProviderItem,
+  DataProviderPermissionItem,
   DataProviderResult,
   ExternalData,
   FormValue,
@@ -21,6 +22,7 @@ import {
   RecordObject,
   SetBeforeSubmitCallback,
   coreErrorMessages,
+  StaticText,
 } from '@island.is/application/core'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
@@ -28,15 +30,14 @@ import { useLocale } from '@island.is/localization'
 import { ExternalDataProviderScreen } from '../types'
 import { verifyExternalData } from '../utils'
 
-const ProviderItem: FC<{
-  dataProviderResult: DataProviderResult
-  provider: DataProviderItem
-}> = ({ dataProviderResult = {}, provider }) => {
-  const { subTitle, title } = provider
+const ItemHeader: React.FC<{ title: StaticText; subTitle?: StaticText }> = ({
+  title,
+  subTitle,
+}) => {
   const { formatMessage } = useLocale()
 
   return (
-    <Box marginBottom={3}>
+    <>
       <Text variant="h4" color="blue400">
         {formatMessage(title)}
       </Text>
@@ -46,20 +47,62 @@ const ProviderItem: FC<{
           <Markdown>{formatMessage(subTitle)}</Markdown>
         </Text>
       )}
+    </>
+  )
+}
 
-      {provider.type && dataProviderResult?.status === 'failure' && (
+const isTranslationObject = (reason?: StaticText) => {
+  if (typeof reason !== 'object') {
+    return false
+  }
+
+  return reason.id !== undefined
+}
+
+const ProviderItem: FC<{
+  dataProviderResult: DataProviderResult
+  provider: DataProviderItem
+  suppressProviderError: boolean
+}> = ({ dataProviderResult = {}, provider, suppressProviderError }) => {
+  const { title, subTitle } = provider
+  const { formatMessage } = useLocale()
+
+  const showError =
+    provider.type &&
+    dataProviderResult?.status === 'failure' &&
+    !suppressProviderError
+
+  return (
+    <Box marginBottom={3}>
+      <ItemHeader title={title} subTitle={subTitle} />
+
+      {showError && (
         <Box marginTop={2}>
           <AlertMessage
             type="error"
             title={formatMessage(coreErrorMessages.errorDataProvider)}
             message={
-              typeof dataProviderResult?.reason === 'object'
-                ? formatMessage(dataProviderResult?.reason)
-                : dataProviderResult?.reason
+              isTranslationObject(dataProviderResult?.reason)
+                ? formatMessage(dataProviderResult.reason!)
+                : typeof dataProviderResult?.reason === 'string'
+                ? dataProviderResult.reason
+                : formatMessage(coreErrorMessages.failedDataProvider)
             }
           />
         </Box>
       )}
+    </Box>
+  )
+}
+
+const PermissionItem: FC<{
+  permission: DataProviderPermissionItem
+}> = ({ permission }) => {
+  const { title, subTitle } = permission
+
+  return (
+    <Box marginBottom={3}>
+      <ItemHeader title={title} subTitle={subTitle} />
     </Box>
   )
 }
@@ -103,11 +146,14 @@ const FormExternalDataProvider: FC<{
   const {
     id,
     dataProviders,
+    otherPermissions,
     subTitle,
     description,
     checkboxLabel,
   } = externalDataProvider
   const relevantDataProviders = dataProviders.filter((p) => p.type)
+
+  const [suppressProviderErrors, setSuppressProviderErrors] = useState(true)
 
   // If id is undefined then the error won't be attached to the field with id
   const error = getValueViaPath(errors, id ?? '', undefined) as
@@ -129,6 +175,7 @@ const FormExternalDataProvider: FC<{
             locale,
           },
         })
+        setSuppressProviderErrors(false)
 
         if (
           response.data &&
@@ -140,8 +187,7 @@ const FormExternalDataProvider: FC<{
           return [true, null]
         }
 
-        // TODO: translated
-        return [false, 'Failed to update application']
+        return [false, formatMessage(coreErrorMessages.failedDataProvider)]
       })
     } else {
       setBeforeSubmitCallback(null)
@@ -173,9 +219,14 @@ const FormExternalDataProvider: FC<{
           <ProviderItem
             provider={provider}
             key={provider.id}
+            suppressProviderError={suppressProviderErrors}
             dataProviderResult={externalData[provider.id]}
           />
         ))}
+        {otherPermissions &&
+          otherPermissions.map((permission) => (
+            <PermissionItem permission={permission} key={permission.id} />
+          ))}
       </Box>
       <Controller
         name={`${id}`}

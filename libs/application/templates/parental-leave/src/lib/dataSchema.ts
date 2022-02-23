@@ -2,7 +2,7 @@ import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
-import { NO, YES, StartDateOptions, MANUAL, SPOUSE } from '../constants'
+import { NO, YES, MANUAL, SPOUSE, TransferRightsOption } from '../constants'
 import { errorMessages } from './messages'
 
 const PersonalAllowance = z
@@ -51,7 +51,11 @@ export const dataSchema = z.object({
   }),
   shareInformationWithOtherParent: z.enum([YES, NO]),
   usePrivatePensionFund: z.enum([YES, NO]),
-  employerInformation: z.object({ email: z.string().email() }).optional(),
+  employerNationalRegistryId: z
+    .string()
+    .refine((n) => n && kennitala.isValid(n), {
+      params: errorMessages.employerNationalRegistryId,
+    }),
   requestRights: z.object({
     isRequestingRights: z.enum([YES, NO]),
     requestDays: z
@@ -68,13 +72,11 @@ export const dataSchema = z.object({
         .optional(),
     })
     .optional(),
-  singlePeriod: z.enum([YES, NO]),
-  firstPeriodStart: z.enum([
-    StartDateOptions.ACTUAL_DATE_OF_BIRTH,
-    StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
-    StartDateOptions.SPECIFIC_DATE,
+  transferRights: z.enum([
+    TransferRightsOption.REQUEST,
+    TransferRightsOption.GIVE,
+    TransferRightsOption.NONE,
   ]),
-  confirmLeaveDuration: z.enum(['duration', 'specificDate']),
   otherParent: z.enum([SPOUSE, NO, MANUAL]).optional(),
   otherParentName: z.string().optional(),
   otherParentId: z

@@ -64,4 +64,34 @@ describe('EndorsementList', () => {
     const endorsementList = new EndorsementList({ ...response.body })
     await expect(endorsementList.validate()).resolves.not.toThrow()
   })
+
+  // general petition tests
+  it(`GET /endorsement-list/general-petition-list/{listId} should return 200 and a list`, async () => {
+    const app = await getAuthenticatedApp({
+      nationalId: authNationalId,
+      scope: [EndorsementsScope.main],
+    })
+    const response = await request(app.getHttpServer())
+      .get(
+        `/endorsement-list/general-petition-list/7d6c2b91-8d8d-42d0-82f7-cd64ce16d753`,
+      )
+      .send()
+      .expect(200)
+    const endorsementList = new EndorsementList({ ...response.body })
+    await expect(endorsementList.validate()).resolves.not.toThrow()
+  })
+
+  // gp try to get non gp list and fail
+  it(`GET /endorsement-list/general-petition-list/{listId} should return 404 and fail`, async () => {
+    const app = await getAuthenticatedApp({
+      nationalId: authNationalId,
+      scope: [EndorsementsScope.main],
+    })
+    const response = await request(app.getHttpServer())
+      .get(
+        `/endorsement-list/general-petition-list/9c0b4106-4213-43be-a6b2-ff324f4ba016`,
+      )
+      .send()
+      .expect(404)
+  })
 })

@@ -5,8 +5,22 @@ import { ZendeskModule, ZendeskService } from '@island.is/clients/zendesk'
 import { CommunicationsService } from './communications.service'
 import { ContactUsInput } from './dto/contactUs.input'
 import { TellUsAStoryInput } from './dto/tellUsAStory.input'
+import {
+  ServiceWebFormsInput,
+  ServiceWebFormsInputWithInstitutionEmail,
+} from './dto/serviceWebForms.input'
 
 describe('communicationsService', () => {
+  const fakeServiceWebInput: ServiceWebFormsInput = {
+    email: 'test@example.com',
+    message: 'Test message',
+    name: 'Tester',
+    subject: 'Test',
+    institutionSlug: 'stafraent-island',
+    syslumadur: '',
+    category: '',
+    type: 'serviceWebForms',
+  }
   const fakeContactUsInput: ContactUsInput = {
     email: 'test@example.com',
     message: 'Test message',
@@ -60,6 +74,25 @@ describe('communicationsService', () => {
         fakeTellUsAStoryInput,
       )
       expect(contactUsTemplate).not.toMatchObject(tellUsAStoryTemplate)
+    })
+  })
+
+  describe('getInputWithInstitutionEmail', () => {
+    it('should get service web input with institution email', async () => {
+      const inputWithInstitutionEmail: ServiceWebFormsInputWithInstitutionEmail = {
+        ...fakeServiceWebInput,
+        institutionEmail: 'test@email.com',
+      }
+
+      jest
+        .spyOn(communicationsService, 'getInputWithInstitutionEmail')
+        .mockImplementation(() => Promise.resolve(inputWithInstitutionEmail))
+
+      const response = await communicationsService.getInputWithInstitutionEmail(
+        fakeServiceWebInput,
+      )
+
+      expect(response).toEqual(inputWithInstitutionEmail)
     })
   })
 

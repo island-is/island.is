@@ -10,6 +10,14 @@ export const serviceSetup = (services: {
     .env({
       API_URL: ref((h) => `http://${h.svc(services.api)}`),
     })
+    .secrets({
+      IDENTITY_SERVER_DOMAIN: '/k8s/skilavottord/web/IDENTITY_SERVER_DOMAIN',
+      IDENTITY_SERVER_CLIENT_SECRET:
+        '/k8s/skilavottord/web/IDENTITY_SERVER_CLIENT_SECRET',
+      IDENTITY_SERVER_LOGOUT_REDIRECT_URL:
+        '/k8s/skilavottord/web/IDENTITY_SERVER_LOGOUT_REDIRECT_URL',
+      NEXTAUTH_URL: '/k8s/skilavottord/web/NEXTAUTH_URL',
+    })
     .ingress({
       primary: {
         host: {

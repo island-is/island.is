@@ -4,7 +4,7 @@ import { Icon } from '../../Icon/Icon'
 import { Text } from '../../Text/Text'
 import { Box } from '../../Box/Box'
 import { SectionNumberColumn } from '../SectionNumberColumn/SectionNumberColumn'
-import * as styles from './SubSectionItem.treat'
+import * as styles from './SubSectionItem.css'
 import { Link } from '../../Link/Link'
 
 interface SubSectionItemProps {

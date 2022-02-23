@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react'
 import {
   Box,
-  LoadingIcon,
   NavigationItem,
   Option,
   Select,
@@ -16,6 +15,7 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -23,7 +23,7 @@ import {
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
-  QueryGetSyslumennAuctionsArgs,
+  SyslumennAuction,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
@@ -39,8 +39,6 @@ import getConfig from 'next/config'
 import { useQuery } from '@apollo/client'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { useRouter } from 'next/router'
-import format from 'date-fns/format'
-import { LottieOptions } from '@island.is/web/libs/react-lottie/types'
 import { theme } from '@island.is/island-ui/theme'
 
 const { publicRuntimeConfig } = getConfig()
@@ -121,12 +119,6 @@ const OFFICE_LOCATIONS: OfficeLocation[] = [
     location: 'Patreksfjörður',
   },
   {
-    filterLabel: ' - Bolungavík',
-    slugValue: 'syslumadurinn-a-vestfjordum-bolungarvik',
-    office: 'Sýslumaðurinn á Vestfjörðum',
-    location: 'Bolungavík',
-  },
-  {
     filterLabel: ' - Ísafjörður',
     slugValue: 'syslumadurinn-a-vestfjordum-isafjordur',
     office: 'Sýslumaðurinn á Vestfjörðum',
@@ -148,7 +140,7 @@ const OFFICE_LOCATIONS: OfficeLocation[] = [
   },
   {
     filterLabel: ' - Blönduós',
-    slugValue: 'syslumadurinn-a-nordurlandi-vestra-bolnduos',
+    slugValue: 'syslumadurinn-a-nordurlandi-vestra-blonduos',
     office: 'Sýslumaðurinn á Norðurlandi vestra',
     location: 'Blönduós',
   },
@@ -284,6 +276,7 @@ const LOT_TYPES = {
 const AUCTION_TYPES = {
   START: 'Byrjun uppboðs',
   CONTINUATION: 'Framhald uppboðs',
+  SOLD: 'Sölu lokið',
 }
 
 interface LotTypeOption {
@@ -291,82 +284,112 @@ interface LotTypeOption {
   value: string
   lotType: string
   auctionType: string
+  excludeAuctionType: string
 }
 
 const LOT_TYPES_OPTIONS: LotTypeOption[] = [
   {
-    filterLabel: 'Allar tegundir',
-    value: 'allar-tegundir',
+    filterLabel: 'Öll opin mál',
+    value: 'oll-opin-mal',
     lotType: '',
     auctionType: '',
+    excludeAuctionType: AUCTION_TYPES.SOLD,
   },
   {
     filterLabel: `${LOT_TYPES.REAL_ESTATE} - ${AUCTION_TYPES.START}`,
     value: 'fasteign-byrjun',
     lotType: LOT_TYPES.REAL_ESTATE,
     auctionType: AUCTION_TYPES.START,
+    excludeAuctionType: '',
   },
   {
     filterLabel: `${LOT_TYPES.REAL_ESTATE} - ${AUCTION_TYPES.CONTINUATION}`,
     value: 'fasteign-framhald',
     lotType: LOT_TYPES.REAL_ESTATE,
     auctionType: AUCTION_TYPES.CONTINUATION,
+    excludeAuctionType: '',
   },
   {
     filterLabel: LOT_TYPES.VEHICLE,
     value: 'okutaeki',
     lotType: LOT_TYPES.VEHICLE,
     auctionType: '',
+    excludeAuctionType: '',
   },
   {
     filterLabel: LOT_TYPES.AIRCRAFT,
     value: 'loftfar',
     lotType: LOT_TYPES.AIRCRAFT,
     auctionType: '...',
+    excludeAuctionType: '',
   },
   {
     filterLabel: LOT_TYPES.SHIP,
     value: 'skip',
     lotType: LOT_TYPES.SHIP,
     auctionType: '',
+    excludeAuctionType: '',
   },
   {
     filterLabel: LOT_TYPES.LIQUID_ASSETS,
     value: 'lausafjarmunir',
     lotType: LOT_TYPES.LIQUID_ASSETS,
     auctionType: '',
+    excludeAuctionType: '',
   },
   {
     filterLabel: LOT_TYPES.SHAREHOLDING,
     value: 'hlutafjareign',
     lotType: LOT_TYPES.SHAREHOLDING,
     auctionType: '',
+    excludeAuctionType: '',
   },
   {
     filterLabel: LOT_TYPES.SHAREHOLDING_PLC,
     value: 'hlutafjareign-i-einkahlutafelagi',
     lotType: LOT_TYPES.SHAREHOLDING_PLC,
     auctionType: '',
+    excludeAuctionType: '',
   },
   {
     filterLabel: LOT_TYPES.SHAREHOLDING_LLC,
     value: 'hlutafjareign-i-hlutafelagi',
     lotType: LOT_TYPES.SHAREHOLDING_LLC,
     auctionType: '',
+    excludeAuctionType: '',
   },
   {
     filterLabel: LOT_TYPES.STOCKS,
     value: 'verdbref',
     lotType: LOT_TYPES.STOCKS,
     auctionType: '...',
+    excludeAuctionType: '',
   },
   {
     filterLabel: LOT_TYPES.CLAIMS,
     value: 'krofurettindi',
     lotType: LOT_TYPES.CLAIMS,
     auctionType: '',
+    excludeAuctionType: '',
+  },
+  {
+    filterLabel: AUCTION_TYPES.SOLD,
+    value: 'solu-lokid',
+    lotType: '',
+    auctionType: AUCTION_TYPES.SOLD,
+    excludeAuctionType: '',
   },
 ]
+
+const sameDay = (d1: Date, d2: Date) => {
+  if (!d1 && !d2) return true
+  if (!d1 || !d2) return false
+  return (
+    d1.getDate() === d2.getDate() &&
+    d1.getFullYear() === d2.getFullYear() &&
+    d1.getMonth() === d2.getMonth()
+  )
+}
 
 const Auctions: Screen<AuctionsProps> = ({
   organizationPage,
@@ -382,6 +405,7 @@ const Auctions: Screen<AuctionsProps> = ({
   const { linkResolver } = useLinkResolver()
   const { format } = useDateUtils()
   const Router = useRouter()
+  const auctionDataFetched = new Date()
 
   const pageUrl = Router.pathname
 
@@ -438,16 +462,7 @@ const Auctions: Screen<AuctionsProps> = ({
 
   const [showCount, setShowCount] = useState(10)
 
-  const { loading, error, data } = useQuery<
-    Query,
-    QueryGetSyslumennAuctionsArgs
-  >(GET_SYSLUMENN_AUCTIONS_QUERY, {
-    variables: {
-      input: {},
-    },
-  })
-
-  // TODO: Fix input focus bug, where after after initial load of the page and first key-up on the Input, the Input looses focus.
+  const { loading, error, data } = useQuery<Query>(GET_SYSLUMENN_AUCTIONS_QUERY)
 
   useEffect(() => {
     const hashString = window.location.hash.replace('#', '')
@@ -463,6 +478,9 @@ const Auctions: Screen<AuctionsProps> = ({
   }, [Router, setOfficeLocation])
 
   const filteredAuctions = syslumennAuctions.filter((auction) => {
+    const auctionDate = auction.auctionDate
+      ? new Date(auction.auctionDate)
+      : null
     return (
       // Filter by office
       (officeLocation.office
@@ -481,18 +499,142 @@ const Auctions: Screen<AuctionsProps> = ({
       (lotTypeOption.auctionType
         ? auction.auctionType === lotTypeOption.auctionType
         : true) &&
-      // Filter by Date
-      (date
-        ? auction.auctionDate.startsWith(format(date, 'yyyy-MM-dd'))
+      // Filter out excluded auction type
+      (lotTypeOption.excludeAuctionType
+        ? auction.auctionType !== lotTypeOption.excludeAuctionType
         : true) &&
+      // Filter by Date
+      (date ? sameDay(date, auctionDate) : true) &&
       // Filter by search query
       (auction.lotName?.toLowerCase().includes(query) ||
         auction.lotId?.toLowerCase().includes(query) ||
         auction.lotItems?.toLowerCase().includes(query) ||
         auction.office?.toLowerCase().includes(query) ||
-        auction.location?.toLowerCase().includes(query))
+        auction.location?.toLowerCase().includes(query) ||
+        (auction.lotType === LOT_TYPES.REAL_ESTATE &&
+          auction.respondent?.toLowerCase().includes(query)) ||
+        (auction.lotType === LOT_TYPES.REAL_ESTATE &&
+          auction.petitioners?.toLowerCase().includes(query)))
     )
   })
+
+  /**
+   * The following code handles special cases in order to display certain information for
+   * certain Auctions, information that should be handed from the external Syslumenn API
+   * but has not been implemented yet. To accomplish this, we utilize Contentful to store
+   * keywords to identify certain Auctions.
+   */
+  const vakaAuctionKeywords = (n(
+    'auctionVakaAuctionKeywords',
+    '',
+  ) as string).split(';')
+  const capitalAreaOffice = n(
+    'auctionCapitalAreaOffice',
+    'Sýslumaðurinn á höfuðborgarsvæðinu',
+  ) as string
+  const auctionContainsVakaKeyword = (auction: SyslumennAuction) => {
+    return vakaAuctionKeywords.some((keyword) => {
+      return (
+        keyword &&
+        (auction.lotId === keyword ||
+          auction.lotName.includes(keyword) ||
+          auction.lotItems.includes(keyword))
+      )
+    })
+  }
+  const auctionAtVaka = (auction: SyslumennAuction) => {
+    return (
+      auction.office.toLowerCase() === capitalAreaOffice.toLowerCase() &&
+      (auction.lotType === LOT_TYPES.VEHICLE ||
+        auctionContainsVakaKeyword(auction))
+    )
+  }
+  const renderWhereAuctionTakesPlaceAndExtraInfo = (
+    auction: SyslumennAuction,
+  ) => {
+    if (auctionAtVaka(auction)) {
+      return (
+        <div>
+          <Text paddingBottom={1}>
+            {n('auctionTakesPlaceAt', 'Staðsetning uppboðs')}:{' '}
+            {auction.auctionTakesPlaceAt ??
+              n(
+                'auctionTakesPlaceAtVaka',
+                'Uppboð verður haldið í aðstöðu Vöku hf., Héðinsgötu 1 - 3.',
+              )}
+          </Text>
+          <Text variant="small">
+            {n(
+              'auctionRequiresNegativeTestResult',
+              'Allir, fæddir 2015 og fyrr, þurfa að framvísa neikvæðri niðurstöðu úr hraðprófi (antigen) sem má ekki vera eldra en 48 klst.',
+            )}
+          </Text>
+          <Text variant="small">
+            {n('auctionRequiresFaceMask', 'Grímuskylda er á uppboðinu.')}
+          </Text>
+          <Text variant="small">
+            {n(
+              'auctionPaymentInfo',
+              'Hvorki ávísanir né kreditkort eru tekin gild sem greiðsla einungis debetkort eða peningar. Greiðsla við hamarshögg.',
+            )}
+          </Text>
+        </div>
+      )
+    } else if (
+      auction.lotId &&
+      auction.lotType === LOT_TYPES.REAL_ESTATE &&
+      auction.auctionType === AUCTION_TYPES.CONTINUATION
+    ) {
+      return (
+        <Text paddingBottom={1}>
+          {n(
+            'auctionRealEstateAuctionContinuationLocation',
+            'Framhald uppboðs fasteignarinnar verður háð á fasteigninni sjálfri.',
+          )}
+        </Text>
+      )
+    } else {
+      return (
+        auction.auctionTakesPlaceAt && (
+          <Text paddingBottom={1}>
+            {n('auctionTakesPlaceAt', 'Staðsetning uppboðs')}:{' '}
+            {auction.auctionTakesPlaceAt}
+          </Text>
+        )
+      )
+    }
+  }
+
+  const renderRespondents = (
+    auction: SyslumennAuction,
+    auctionRespondents: string[],
+  ) => {
+    if (!auctionRespondents) return null
+
+    if (auction.lotType === LOT_TYPES.REAL_ESTATE) {
+      return (
+        <Text paddingTop={2} paddingBottom={1}>
+          {auctionRespondents.length > 1
+            ? n('auctionRealEstateRespondentsPlural', 'Þinglýstir eigendur')
+            : n('auctionRealEstateRespondentsSingle', 'Þinglýstur eigandi')}
+          : {auctionRespondents.join(', ')}
+        </Text>
+      )
+    }
+
+    if (auction.lotType === LOT_TYPES.SHIP) {
+      return (
+        <Text paddingTop={2} paddingBottom={1}>
+          {auctionRespondents.length > 1
+            ? n('auctionShipRespondentsPlural', 'Gerðarþolar')
+            : n('auctionShipRespondentsSingle', 'Gerðarþoli')}
+          : {auctionRespondents.join(', ')}
+        </Text>
+      )
+    }
+
+    return null
+  }
 
   return (
     <OrganizationWrapper
@@ -522,8 +664,8 @@ const Auctions: Screen<AuctionsProps> = ({
         <GridRow>
           <GridColumn
             paddingTop={[0, 0, 0]}
-            paddingBottom={[4, 4, 2]}
-            span="4/12"
+            paddingBottom={2}
+            span={['12/12', '12/12', '12/12', '12/12', '4/12']}
           >
             <Select
               backgroundColor="white"
@@ -547,9 +689,8 @@ const Auctions: Screen<AuctionsProps> = ({
             />
           </GridColumn>
           <GridColumn
-            paddingTop={[2, 2, 0]}
-            paddingBottom={[4, 4, 2]}
-            span="4/12"
+            paddingBottom={2}
+            span={['12/12', '12/12', '12/12', '6/12', '4/12']}
           >
             <Select
               backgroundColor="white"
@@ -573,9 +714,8 @@ const Auctions: Screen<AuctionsProps> = ({
             />
           </GridColumn>
           <GridColumn
-            paddingTop={[2, 2, 0]}
-            paddingBottom={[4, 4, 2]}
-            span="4/12"
+            paddingBottom={2}
+            span={['12/12', '12/12', '12/12', '6/12', '4/12']}
           >
             <DatePicker
               label={n('auctionFilterDateLabel', 'Dagsetning')}
@@ -588,11 +728,7 @@ const Auctions: Screen<AuctionsProps> = ({
           </GridColumn>
         </GridRow>
         <GridRow>
-          <GridColumn
-            paddingTop={[2, 2, 0]}
-            paddingBottom={[4, 4, 6]}
-            span="12/12"
-          >
+          <GridColumn paddingBottom={[1, 1, 1]} span={'12/12'}>
             <Input
               name="homestaySearchInput"
               placeholder={n('auctionFilterSearch', 'Leita eftir uppboði')}
@@ -606,6 +742,17 @@ const Auctions: Screen<AuctionsProps> = ({
         </GridRow>
       </GridContainer>
       <Box
+        display="flex"
+        alignItems="flexEnd"
+        flexDirection="column"
+        paddingTop={2}
+        paddingBottom={3}
+      >
+        <Text variant="small">
+          Gögn sótt: {format(auctionDataFetched, "d. MMM yyyy 'kl.' HH:mm")}
+        </Text>
+      </Box>
+      <Box
         borderTopWidth="standard"
         borderColor="standard"
         paddingTop={[4, 4, 6]}
@@ -613,7 +760,7 @@ const Auctions: Screen<AuctionsProps> = ({
       >
         {loading && (
           <Box display="flex" marginTop={4} justifyContent="center">
-            <LoadingIcon size={48} />
+            <LoadingDots />
           </Box>
         )}
         {(error || !filteredAuctions.length) && !loading && (
@@ -625,11 +772,14 @@ const Auctions: Screen<AuctionsProps> = ({
         )}
         {!loading &&
           !error &&
-          filteredAuctions.slice(0, showCount).map((auction) => {
+          filteredAuctions.slice(0, showCount).map((auction, index) => {
             const auctionDate = new Date(auction.auctionDate)
+            const auctionPetitioners = auction.petitioners?.split(',')
+            const auctionRespondents = auction.respondent?.split(',')
 
             return (
               <Box
+                key={`auction-${index}`}
                 borderWidth="standard"
                 borderColor="standard"
                 borderRadius="standard"
@@ -640,7 +790,12 @@ const Auctions: Screen<AuctionsProps> = ({
                 <Box
                   alignItems="flexStart"
                   display="flex"
-                  flexDirection="row"
+                  flexDirection={[
+                    'columnReverse',
+                    'columnReverse',
+                    'columnReverse',
+                    'row',
+                  ]}
                   justifyContent="spaceBetween"
                 >
                   <Text variant="eyebrow" color="purple400" paddingTop={1}>
@@ -650,7 +805,9 @@ const Auctions: Screen<AuctionsProps> = ({
                       KNOWN_LOCATIONS.includes(auction.location) &&
                       ' - ' + auction.location}
                   </Text>
-                  <Tag disabled>{auction.office}</Tag>
+                  <Box marginBottom={[2, 2, 2, 0]}>
+                    <Tag disabled>{auction.office}</Tag>
+                  </Box>
                 </Box>
                 <Box>
                   <Text variant="h3">{auction.lotName}</Text>
@@ -697,6 +854,24 @@ const Auctions: Screen<AuctionsProps> = ({
                       href={`https://www.samgongustofa.is/siglingar/skrar-og-utgafa/skipaskra/uppfletting?sq=${auction.lotId}`}
                     />
                   )}
+
+                  {/* Auction extra info */}
+                  {renderWhereAuctionTakesPlaceAndExtraInfo(auction)}
+
+                  {/* Respondents */}
+                  {renderRespondents(auction, auctionRespondents)}
+
+                  {/* Petitioners */}
+                  {auctionPetitioners &&
+                    (auction.lotType === LOT_TYPES.REAL_ESTATE ||
+                      auction.lotType === LOT_TYPES.SHIP) && (
+                      <Text paddingBottom={1}>
+                        {auctionPetitioners.length > 1
+                          ? n('auctionPetitionersPlural', 'Gerðarbeiðendur')
+                          : n('auctionPetitionersSingle', 'Gerðarbeiðandi')}
+                        : {auctionPetitioners.join(', ')}
+                      </Text>
+                    )}
 
                   <Box
                     alignItems="flexEnd"
@@ -768,7 +943,6 @@ const LotLink = ({
         <a
           style={{
             color: theme.color.blue400,
-            textDecoration: 'underline',
           }}
           href={href}
           rel="noopener noreferrer"
@@ -804,11 +978,8 @@ Auctions.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryGetSyslumennAuctionsArgs>({
+    apolloClient.query<Query>({
       query: GET_SYSLUMENN_AUCTIONS_QUERY,
-      variables: {
-        input: {},
-      },
     }),
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({

@@ -5,8 +5,9 @@ import {
   UseGuards,
   Get,
   ParseUUIDPipe,
-  BadRequestException,
   Body,
+  NotFoundException,
+  InternalServerErrorException,
 } from '@nestjs/common'
 
 import {
@@ -31,10 +32,8 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
 import { PaymentService } from './payment.service'
 import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
-import { isUuid } from 'uuidv4'
 import { CreateChargeInput } from './dto/createChargeInput.dto'
 import { PaymentAPI } from '@island.is/clients/payment'
-import { findItemType } from './utils/findItemType'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('payments')
@@ -63,44 +62,9 @@ export class PaymentController {
     @Param('applicationId', new ParseUUIDPipe()) applicationId: string,
     @Body() payload: CreateChargeInput,
   ): Promise<CreatePaymentResponseDto> {
-    if (!isUuid(applicationId)) {
-      throw new BadRequestException(`ApplicationId is on wrong format.`)
-    }
-    const DISTRICT_COMMISSIONER_OF_REYKJAVIK = '6509142520'
-    const inputApplicationType = findItemType(payload.chargeItemCode)
-
-    // Finding application to confirm correct catalog & price
-    const thisApplication = await this.paymentService
-      .findApplicationById(applicationId, user.nationalId, inputApplicationType)
-      .catch((error) => {
-        throw new BadRequestException(
-          `Unable to find application with the ID ${applicationId} ` + error,
-        )
-      })
-
-    if (thisApplication.typeId.toString() !== inputApplicationType) {
-      throw new BadRequestException(
-        new Error(
-          'Mismatch between create charge input and application payment.',
-        ),
-      )
-    }
-
-    const allCatalogs =
-      payload.chargeItemCode.slice(0, 2) === 'AY'
-        ? await this.paymentAPI.getCatalogByPerformingOrg(
-            DISTRICT_COMMISSIONER_OF_REYKJAVIK,
-          )
-        : await this.paymentAPI.getCatalog()
-
-    // Sort through all catalogs to find the correct one.
-    const catalog = await this.paymentService
-      .searchCorrectCatalog(payload.chargeItemCode, allCatalogs.item)
-      .catch((error) => {
-        throw new BadRequestException(
-          'Catalog request failed or bad input ' + error,
-        )
-      })
+    const chargeItem = await this.paymentService.findChargeItem(
+      payload.chargeItemCode,
+    )
 
     const paymentDto: Pick<
       BasePayment,
@@ -108,13 +72,13 @@ export class PaymentController {
     > = {
       application_id: applicationId,
       fulfilled: false,
-      amount: catalog.priceAmount,
+      amount: chargeItem.priceAmount,
       definition: {
-        chargeItemName: catalog.chargeItemName,
-        chargeItemCode: catalog.chargeItemCode,
-        performingOrganiationID: catalog.performingOrgID,
-        chargeType: catalog.chargeType,
-        amount: catalog.priceAmount,
+        chargeItemName: chargeItem.chargeItemName,
+        chargeItemCode: chargeItem.chargeItemCode,
+        performingOrganiationID: chargeItem.performingOrgID,
+        chargeType: chargeItem.chargeType,
+        amount: chargeItem.priceAmount,
       },
       expires_at: new Date(),
     }
@@ -124,11 +88,23 @@ export class PaymentController {
     const chargeResult = await this.paymentService.createCharge(payment, user)
 
     this.auditService.audit({
-      user,
-      action: 'create',
+      auth: user,
+      action: 'createCharge',
       resources: paymentDto.application_id as string,
       meta: { applicationId: paymentDto.application_id, id: payment.id },
     })
+
+    await this.paymentModel.update(
+      {
+        user4: chargeResult.user4,
+      },
+      {
+        where: {
+          id: payment.id,
+          application_id: applicationId,
+        },
+      },
+    )
 
     return {
       id: payment.id,
@@ -146,19 +122,29 @@ export class PaymentController {
     description: 'The id of the application check if it is paid.',
   })
   async getPaymentStatus(
-    @Param('applicationId') applicationId: string,
+    @Param('applicationId', new ParseUUIDPipe()) applicationId: string,
   ): Promise<PaymentStatusResponseDto> {
-    if (!isUuid(applicationId)) {
-      throw new BadRequestException(`ApplicationId is on wrong format.`)
-    }
     const payment = await this.paymentService.findPaymentByApplicationId(
       applicationId,
     )
 
+    if (!payment) {
+      throw new NotFoundException(
+        `payment object was not found for application id ${applicationId}`,
+      )
+    }
+
+    if (!payment.user4) {
+      throw new InternalServerErrorException(
+        `valid payment object was not found for application id ${applicationId} - user4 not set`,
+      )
+    }
+
     return {
       // TODO: maybe treat the case where no payment was found differently?
       // not sure how/if that case would/could come up.
-      fulfilled: payment?.fulfilled || false,
+      fulfilled: payment.fulfilled || false,
+      paymentUrl: this.paymentService.makePaymentUrl(payment.user4),
     }
   }
 }

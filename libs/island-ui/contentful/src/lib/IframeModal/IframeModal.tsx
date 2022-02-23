@@ -17,7 +17,7 @@ import {
   DialogProps,
 } from 'reakit/Dialog'
 
-import * as styles from './IframeModal.treat'
+import * as styles from './IframeModal.css'
 
 interface IframeModalProps {
   title?: string

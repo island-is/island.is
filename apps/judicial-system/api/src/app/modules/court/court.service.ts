@@ -24,7 +24,7 @@ const subTypes = {
   // 'Lausn út öryggisgæslu',
   BODY_SEARCH: 'Leit og líkamsrannsókn',
   // 'Lögmæti rannsóknarathafna',
-  // 'Nálgunarbann',
+  RESTRAINING_ORDER: 'Nálgunarbann',
   // 'Réttarstaða afplánunarfanga',
   // 'Réttarstaða gæsluvarðhaldsfanga',
   // 'Rof á reynslulausn',
@@ -37,6 +37,7 @@ const subTypes = {
   // 'Skýrslutaka fyrir dómi',
   TELECOMMUNICATIONS: 'Upplýsingar um fjarskiptasamskipti',
   INTERNET_USAGE: 'Upplýsingar um vefnotkun',
+  ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'Rannsókn á rafrænum gögnum',
 }
 
 @Injectable()

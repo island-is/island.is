@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 import { TerminusModule } from '@nestjs/terminus'
 import responseCachePlugin from 'apollo-server-plugin-response-cache'
-
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/cms'
@@ -18,29 +17,44 @@ import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 import { HealthInsuranceModule } from '@island.is/api/domains/health-insurance'
 import { IdentityModule } from '@island.is/api/domains/identity'
-import { AuthModule } from '@island.is/auth-nest-tools'
+import { AuthConfig, AuthModule } from '@island.is/auth-nest-tools'
 import { HealthController } from './health.controller'
-import { environment } from './environments'
+import { getConfig } from './environments'
 import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
+import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
-import { RSKModule } from '@island.is/api/domains/rsk'
+import { CompanyRegistryModule } from '@island.is/api/domains/company-registry'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { FinanceModule } from '@island.is/api/domains/finance'
+import { AssetsModule } from '@island.is/api/domains/assets'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
-import { TemporaryVoterRegistryModule } from '@island.is/api/domains/temporary-voter-registry'
-import { PartyLetterRegistryModule } from '@island.is/api/domains/party-letter-registry'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
-import { AuditModule } from '@island.is/nest/audit'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
+import { AssetsClientConfig } from '@island.is/clients/assets'
+import { AuthPublicApiClientConfig } from '@island.is/clients/auth-public-api'
+import { FinanceClientConfig } from '@island.is/clients/finance'
+import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
+import { AuditModule } from '@island.is/nest/audit'
+import {
+  ConfigModule,
+  DownloadServiceConfig,
+  IdsClientConfig,
+  XRoadConfig,
+} from '@island.is/nest/config'
+import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
+import { ProblemModule } from '@island.is/nest/problem'
+import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
+import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
+const environment = getConfig
 const autoSchemaFile = environment.production
   ? true
   : 'apps/api/src/api.graphql'
@@ -58,188 +72,191 @@ const autoSchemaFile = environment.production
       },
       plugins: [
         responseCachePlugin({
-          shouldReadFromCache: ({
-            request: {
-              http: { headers },
-            },
-          }) => {
-            const bypassCacheKey = headers.get('bypass-cache-key')
+          shouldReadFromCache: ({ request: { http } }) => {
+            const bypassCacheKey = http?.headers.get('bypass-cache-key')
             return bypassCacheKey !== process.env.BYPASS_CACHE_KEY
           },
         }),
       ],
     }),
-    AuthDomainModule.register({
-      identity: {
-        nationalRegistryXRoad: {
-          xRoadBasePathWithEnv: environment.nationalRegistryXRoad.url,
-          xRoadTjodskraMemberCode: environment.nationalRegistryXRoad.memberCode,
-          xRoadTjodskraApiPath: environment.nationalRegistryXRoad.apiPath,
-          xRoadClientId: environment.nationalRegistryXRoad.clientId,
-        },
-      },
-      authPublicApi: environment.authPublicApi,
-    }),
+    AuthDomainModule,
     AuditModule.forRoot(environment.audit),
     ContentSearchModule,
     CmsModule,
     DrivingLicenseModule.register({
-      xroadBaseUrl: environment.xroad.baseUrl,
-      xroadClientId: environment.xroad.clientId,
-      secret: environment.drivingLicense.secret,
-      xroadPath: environment.drivingLicense.xroadPath,
+      clientConfig: {
+        xroadBaseUrl: environment.xroad.baseUrl!,
+        xroadClientId: environment.xroad.clientId!,
+        secret: environment.drivingLicense.secret!,
+        xroadPathV1: environment.drivingLicense.v1.xroadPath!,
+        xroadPathV2: environment.drivingLicense.v2.xroadPath!,
+      },
     }),
     EducationModule.register({
       xroad: {
-        baseUrl: environment.xroad.baseUrl,
-        clientId: environment.xroad.clientId,
+        baseUrl: environment.xroad.baseUrl!,
+        clientId: environment.xroad.clientId!,
         services: {
-          license: environment.education.xroadLicenseServiceId,
-          grade: environment.education.xroadGradeServiceId,
+          license: environment.education.xroadLicenseServiceId!,
+          grade: environment.education.xroadGradeServiceId!,
         },
       },
       nationalRegistry: {
-        baseSoapUrl: environment.nationalRegistry.baseSoapUrl,
-        user: environment.nationalRegistry.user,
-        password: environment.nationalRegistry.password,
-        host: environment.nationalRegistry.host,
+        baseSoapUrl: environment.nationalRegistry.baseSoapUrl!,
+        user: environment.nationalRegistry.user!,
+        password: environment.nationalRegistry.password!,
+        host: environment.nationalRegistry.host!,
       },
-      fileDownloadBucket: environment.education.fileDownloadBucket,
+      fileDownloadBucket: environment.education.fileDownloadBucket!,
     }),
     ApplicationModule.register({
-      baseApiUrl: environment.applicationSystem.baseApiUrl,
+      baseApiUrl: environment.applicationSystem.baseApiUrl!,
     }),
     DirectorateOfLabourModule.register(),
     FileUploadModule.register({ fileStorage: environment.fileStorage }),
     DocumentModule.register({
       documentClientConfig: {
-        basePath: environment.documentService.basePath,
+        basePath: environment.documentService.basePath!,
         clientId: environment.documentService.clientId,
         clientSecret: environment.documentService.clientSecret,
         tokenUrl: environment.documentService.tokenUrl,
       },
-      downloadServiceConfig: {
-        downloadServiceBaseUrl: environment.downloadService.baseUrl,
-      },
     }),
     DocumentProviderModule.register({
       test: {
-        basePath: environment.documentProviderService.test.basePath,
+        basePath: environment.documentProviderService.test.basePath!,
         clientId: environment.documentProviderService.test.clientId,
         clientSecret: environment.documentProviderService.test.clientSecret,
         tokenUrl: environment.documentProviderService.test.tokenUrl,
       },
       prod: {
-        basePath: environment.documentProviderService.prod.basePath,
+        basePath: environment.documentProviderService.prod.basePath!,
         clientId: environment.documentProviderService.prod.clientId,
         clientSecret: environment.documentProviderService.prod.clientSecret,
         tokenUrl: environment.documentProviderService.prod.tokenUrl,
       },
-      documentsServiceBasePath:
-        environment.documentProviderService.documentsServiceBasePath,
-      documentProviderAdmins:
-        environment.documentProviderService.documentProviderAdmins,
+      documentsServiceBasePath: environment.documentProviderService
+        .documentsServiceBasePath!,
+      documentProviderAdmins: environment.documentProviderService
+        .documentProviderAdmins!,
     }),
     CmsTranslationsModule,
     TerminusModule,
     NationalRegistryModule.register({
       nationalRegistry: {
-        baseSoapUrl: environment.nationalRegistry.baseSoapUrl,
-        user: environment.nationalRegistry.user,
-        password: environment.nationalRegistry.password,
-        host: environment.nationalRegistry.host,
+        baseSoapUrl: environment.nationalRegistry.baseSoapUrl!,
+        user: environment.nationalRegistry.user!,
+        password: environment.nationalRegistry.password!,
+        host: environment.nationalRegistry.host!,
       },
     }),
     HealthInsuranceModule.register({
-      wsdlUrl: environment.healthInsurance.wsdlUrl,
-      baseUrl: environment.healthInsurance.baseUrl,
-      username: environment.healthInsurance.username,
-      password: environment.healthInsurance.password,
-      clientID: environment.healthInsurance.clientID,
-      xroadID: environment.healthInsurance.xroadID,
+      soapConfig: {
+        wsdlUrl: environment.healthInsurance.wsdlUrl!,
+        baseUrl: environment.healthInsurance.baseUrl!,
+        username: environment.healthInsurance.username!,
+        password: environment.healthInsurance.password!,
+        clientID: environment.healthInsurance.clientID!,
+        xroadID: environment.healthInsurance.xroadID!,
+      },
+      clientV2Config: {
+        xRoadBaseUrl: environment.healthInsuranceV2.xRoadBaseUrl!,
+        xRoadProviderId: environment.healthInsuranceV2.xRoadProviderId!,
+        xRoadClientId: environment.healthInsuranceV2.xRoadClientId!,
+        username: environment.healthInsuranceV2.username!,
+        password: environment.healthInsuranceV2.password!,
+      },
     }),
     UserProfileModule.register({
-      userProfileServiceBasePath:
-        environment.userProfile.userProfileServiceBasePath,
+      userProfileServiceBasePath: environment.userProfile
+        .userProfileServiceBasePath!,
+      islykill: {
+        cert: environment.islykill.cert!,
+        passphrase: environment.islykill.passphrase!,
+        basePath: environment.islykill.basePath!,
+      },
     }),
     CommunicationsModule,
     ApiCatalogueModule,
-    IdentityModule.register({
-      nationalRegistryXRoad: {
-        xRoadBasePathWithEnv: environment.nationalRegistryXRoad.url,
-        xRoadTjodskraMemberCode: environment.nationalRegistryXRoad.memberCode,
-        xRoadTjodskraApiPath: environment.nationalRegistryXRoad.apiPath,
-        xRoadClientId: environment.nationalRegistryXRoad.clientId,
-      },
-    }),
-    AuthModule.register(environment.auth),
-    SyslumennModule.register({
-      url: environment.syslumennService.url,
-      username: environment.syslumennService.username,
-      password: environment.syslumennService.password,
-    }),
-    RSKModule.register({
-      password: environment.rskDomain.password,
-      url: environment.rskDomain.url,
-      username: environment.rskDomain.username,
+    IdentityModule,
+    AuthModule.register(environment.auth as AuthConfig),
+    SyslumennModule,
+    CompanyRegistryModule.register({
+      password: environment.rskDomain.password!,
+      url: environment.rskDomain.url!,
+      username: environment.rskDomain.username!,
+      xRoadProviderId: environment.rskCompanyInfo.xRoadProviderId!,
+      xRoadBaseUrl: environment.rskCompanyInfo.xRoadBaseUrl!,
+      xRoadClientId: environment.rskCompanyInfo.xRoadClientId!,
     }),
     IcelandicNamesModule.register({
-      backendUrl: environment.icelandicNamesRegistry.backendUrl,
+      backendUrl: environment.icelandicNamesRegistry.backendUrl!,
     }),
     EndorsementSystemModule.register({
-      baseApiUrl: environment.endorsementSystem.baseApiUrl,
-    }),
-    TemporaryVoterRegistryModule.register({
-      baseApiUrl: environment.temporaryVoterRegistry.baseApiUrl,
+      baseApiUrl: environment.endorsementSystem.baseApiUrl!,
     }),
     RegulationsModule.register({
-      url: environment.regulationsDomain.url,
+      url: environment.regulationsDomain.url!,
     }),
-    FinanceModule.register({
-      ttl: environment.fjarmalDomain.ttl,
-      downloadServiceBaseUrl: environment.downloadService.baseUrl,
-      xroadApiPath: environment.fjarmalDomain.xroadApiPath,
-      xroadBaseUrl: environment.xroad.baseUrl,
-      xroadClientId: environment.xroad.clientId,
-    }),
-    NationalRegistryXRoadModule.register({
-      xRoadBasePathWithEnv: environment.nationalRegistryXRoad.url,
-      xRoadTjodskraMemberCode: environment.nationalRegistryXRoad.memberCode,
-      xRoadTjodskraApiPath: environment.nationalRegistryXRoad.apiPath,
-      xRoadClientId: environment.nationalRegistryXRoad.clientId,
-    }),
+    FinanceModule,
+    AssetsModule,
+    NationalRegistryXRoadModule,
     ApiDomainsPaymentModule.register({
-      xRoadProviderId: environment.paymentDomain.xRoadProviderId,
-      xRoadBaseUrl: environment.paymentDomain.xRoadBaseUrl,
-      xRoadClientId: environment.xroad.clientId,
-      password: environment.paymentDomain.password,
-      username: environment.paymentDomain.username,
-      callbackBaseUrl: environment.paymentDomain.callbackBaseUrl,
-      callbackAdditionUrl: environment.paymentDomain.callbackAdditionUrl,
-      arkBaseUrl: environment.paymentDomain.arkBaseUrl,
-    }),
-    PartyLetterRegistryModule.register({
-      baseApiUrl: environment.partyLetterRegistry.baseApiUrl,
+      xRoadProviderId: environment.paymentDomain.xRoadProviderId!,
+      xRoadBaseUrl: environment.paymentDomain.xRoadBaseUrl!,
+      xRoadClientId: environment.xroad.clientId!,
+      password: environment.paymentDomain.password!,
+      username: environment.paymentDomain.username!,
+      callbackBaseUrl: environment.paymentDomain.callbackBaseUrl!,
+      callbackAdditionUrl: environment.paymentDomain.callbackAdditionUrl!,
+      arkBaseUrl: environment.paymentDomain.arkBaseUrl!,
     }),
     LicenseServiceModule.register({
       xroad: {
-        baseUrl: environment.xroad.baseUrl,
-        clientId: environment.xroad.clientId,
-        path: environment.drivingLicense.xroadPath,
-        secret: environment.drivingLicense.secret,
+        baseUrl: environment.xroad.baseUrl!,
+        clientId: environment.xroad.clientId!,
+        path: environment.drivingLicense.v1.xroadPath!,
+        secret: environment.drivingLicense.secret!,
       },
       pkpass: {
-        apiKey: environment.pkpass.apiKey,
-        apiUrl: environment.pkpass.apiUrl,
-        secretKey: environment.pkpass.secretKey,
+        apiKey: environment.pkpass.apiKey!,
+        apiUrl: environment.pkpass.apiUrl!,
+        secretKey: environment.pkpass.secretKey!,
+        cacheKey: environment.pkpass.cacheKey!,
+        cacheTokenExpiryDelta: environment.pkpass.cacheTokenExpiryDelta!,
+        authRetries: environment.pkpass.authRetries!,
       },
     }),
     PaymentScheduleModule.register({
-      xRoadProviderId: environment.paymentSchedule.xRoadProviderId,
-      xRoadBaseUrl: environment.paymentSchedule.xRoadBaseUrl,
-      xRoadClientId: environment.xroad.clientId,
-      password: environment.paymentSchedule.password,
-      username: environment.paymentSchedule.username,
+      xRoadProviderId: environment.paymentSchedule.xRoadProviderId!,
+      xRoadBaseUrl: environment.paymentSchedule.xRoadBaseUrl!,
+      xRoadClientId: environment.xroad.clientId!,
+      password: environment.paymentSchedule.password!,
+      username: environment.paymentSchedule.username!,
+    }),
+    ProblemModule,
+    CriminalRecordModule.register({
+      clientConfig: {
+        xroadBaseUrl: environment.xroad.baseUrl!,
+        xroadClientId: environment.xroad.clientId!,
+        xroadPath: environment.criminalRecord.xroadPath!,
+      },
+    }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [
+        AssetsClientConfig,
+        AuthPublicApiClientConfig,
+        DownloadServiceConfig,
+        FeatureFlagConfig,
+        FinanceClientConfig,
+        IdsClientConfig,
+        NationalRegistryClientConfig,
+        SyslumennClientConfig,
+        FeatureFlagConfig,
+        XRoadConfig,
+        CompanyRegistryConfig,
+      ],
     }),
   ],
 })

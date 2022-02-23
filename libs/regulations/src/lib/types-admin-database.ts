@@ -69,7 +69,7 @@ export type DB_RegulationDraft = (
   /** Date signed in the ministry */
   signatureDate?: ISODate
 
-  /** Date when the regulation took effect for the first time */
+  /** NOTE: This date is for informational purposes only */
   effectiveDate?: ISODate
 
   type?: RegulationType

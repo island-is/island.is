@@ -65,7 +65,7 @@ export class RedirectUriController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'delete',
         namespace,
         resources: clientId,

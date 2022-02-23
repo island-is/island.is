@@ -4,7 +4,7 @@ export const accidentType = {
   general: defineMessages({
     sectionTitle: {
       id: 'an.application:accidentType.sectionTitle',
-      defaultMessage: 'Aðstæður slys',
+      defaultMessage: 'Upplýsingar um slys',
       description: 'Accident circumstances',
     },
     heading: {
@@ -14,9 +14,14 @@ export const accidentType = {
     },
     description: {
       id: 'an.application:accidentType.description',
-      defaultMessage: `Vinsamlegast veldu þann slysaflokk sem lýsir best aðstæðum slyssins. `,
+      defaultMessage: `Vinsamlegast veldu þann slysaflokk sem lýsir best aðstæðum slyssins.  Slysið sem um ræðir varð við:`,
       description:
         'Please select the category of accident that best describes the situation of the accident.',
+    },
+    subsectionTitle: {
+      id: 'an.application:accidentType.subsectionTitle',
+      defaultMessage: `Aðstæður slyss`,
+      description: 'AccidentType subsection title.',
     },
   }),
   labels: defineMessages({
@@ -31,17 +36,17 @@ export const accidentType = {
       description: 'Work',
     },
     rescueWork: {
-      id: 'an.application:accidentType.labels.work',
+      id: 'an.application:accidentType.labels.rescueWork',
       defaultMessage: 'Björgunarstörf',
       description: 'Rescue Work',
     },
     studies: {
-      id: 'an.application:accidentType.labels.work',
+      id: 'an.application:accidentType.labels.studies',
       defaultMessage: 'Nám',
       description: 'Studies',
     },
     sports: {
-      id: 'an.application:accidentType.labels.work',
+      id: 'an.application:accidentType.labels.sport',
       defaultMessage: 'Íþróttaiðkun',
       description: 'Sport activites',
     },
@@ -74,10 +79,7 @@ export const accidentType = {
     },
     description: {
       id: 'an.application:accidentType.workAccidentType.description',
-      defaultMessage: `Allir launþegar án tillits til aldurs, sem starfa hér á landi.
-        Starf um borð í skipi eða loftfari, íslensku eða sem gert er út eða rekið af íslenskum aðilum
-        jafngildir starfi hér á landi ef laun eru greidd hér á landi eru slysatryggðir.
-        Veldu slysaflokk hér að neðan sem að á við`,
+      defaultMessage: `Allir launþegar án tillits til aldurs, sem starfa hér á landi eru slysatryggðir ef laun eru greidd hér á landi. Vinsamlegast veldu þann flokk sem lýsir best aðstæðum sem um ræðir varðar við:`,
       description: 'Work accident type description',
     },
     subSectionTitle: {
@@ -89,7 +91,7 @@ export const accidentType = {
   studiesAccidentType: defineMessages({
     heading: {
       id: 'an.application:accidentType.studiesAccidentType.heading',
-      defaultMessage: 'Í hverskonar námi gerðist slysið?',
+      defaultMessage: 'Í hverskonar námi tengist slysið?',
       description: 'Studies accident type heading',
     },
     description: {
@@ -106,7 +108,7 @@ export const accidentType = {
     },
     apprenticeship: {
       id: 'an.application:accidentType.studiesAccidentType.appprenticeship',
-      defaultMessage: 'Verknámi í Háskóla',
+      defaultMessage: 'Verknámi í háskóla',
       description: 'Label for the apprenticeship studies accident',
     },
     internship: {

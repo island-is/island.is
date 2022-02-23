@@ -26,7 +26,11 @@ export const Congratulations = ({ application }: PropTypes): JSX.Element => {
               application,
               formatMessage,
             )}`}
-            message=""
+            message={`${formatText(
+              m.finalAssessmentDescription,
+              application,
+              formatMessage,
+            )}`}
           />
         </ContentBlock>
       </Box>

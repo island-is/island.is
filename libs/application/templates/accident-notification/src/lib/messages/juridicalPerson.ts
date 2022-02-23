@@ -9,7 +9,7 @@ export const juridicalPerson = {
     },
     title: {
       id: 'an.application:juridicalPerson.general.title',
-      defaultMessage: 'Upplýsingar um félag eða atvinnurekanda',
+      defaultMessage: 'Upplýsingar um lögaðila',
       description: 'Title of juridical person screen',
     },
     description: {

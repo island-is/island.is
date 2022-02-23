@@ -1,28 +1,44 @@
 import { Injectable, Inject } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { EmailService } from '@island.is/email-service'
-import { Application } from '@island.is/application/core'
+import {
+  Application,
+  ApplicationWithAttachments,
+  GraphqlGatewayResponse,
+} from '@island.is/application/core'
 import {
   BaseTemplateAPIModuleConfig,
   EmailTemplateGenerator,
   AssignmentEmailTemplateGenerator,
   AttachmentEmailTemplateGenerator,
+  BaseTemplateApiApplicationService,
 } from '../../types'
+import { createAssignToken, getConfigValue } from './shared.utils'
 import {
-  createAssignToken,
-  getConfigValue,
   PAYMENT_QUERY,
   PAYMENT_STATUS_QUERY,
-} from './shared.utils'
+  PaymentChargeData,
+  PaymentStatusData,
+} from './shared.queries'
+import { S3 } from 'aws-sdk'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class SharedTemplateApiService {
+  private readonly s3: S3
   constructor(
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
     @Inject(EmailService)
     private readonly emailService: EmailService,
     @Inject(ConfigService)
     private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
-  ) {}
+    @Inject(BaseTemplateApiApplicationService)
+    private readonly applicationService: BaseTemplateApiApplicationService,
+  ) {
+    this.s3 = new S3()
+  }
 
   async sendEmail(
     templateGenerator: EmailTemplateGenerator,
@@ -123,11 +139,11 @@ export class SharedTemplateApiService {
     return this.emailService.sendEmail(template)
   }
 
-  async makeGraphqlQuery(
+  async makeGraphqlQuery<T = unknown>(
     authorization: string,
     query: string,
-    variables?: Record<string, any>,
-  ): Promise<Response> {
+    variables?: Record<string, unknown>,
+  ): Promise<GraphqlGatewayResponse<T>> {
     const baseApiUrl = getConfigValue(
       this.configService,
       'baseApiUrl',
@@ -148,13 +164,17 @@ export class SharedTemplateApiService {
     authorization: string,
     applicationId: string,
     chargeItemCode: string,
-  ) {
-    return this.makeGraphqlQuery(authorization, PAYMENT_QUERY, {
-      input: {
-        applicationId,
-        chargeItemCode,
+  ): Promise<PaymentChargeData['applicationPaymentCharge']> {
+    return this.makeGraphqlQuery<PaymentChargeData>(
+      authorization,
+      PAYMENT_QUERY,
+      {
+        input: {
+          applicationId,
+          chargeItemCode,
+        },
       },
-    })
+    )
       .then((res) => {
         if (!res.ok) {
           throw new Error('graphql query failed')
@@ -163,15 +183,33 @@ export class SharedTemplateApiService {
         return res
       })
       .then((res) => res.json())
-      .then((json) => {
-        return json.data.applicationPaymentCharge
+      .then(({ errors, data }) => {
+        if (errors && errors.length) {
+          this.logger.error('Graphql errors', {
+            errors,
+          })
+
+          throw new Error('Graphql errors present')
+        }
+
+        if (!data?.applicationPaymentCharge) {
+          throw new Error(
+            'no graphql error, but payment object was not returned',
+          )
+        }
+
+        return data.applicationPaymentCharge
       })
   }
 
   async getPaymentStatus(authorization: string, applicationId: string) {
-    return await this.makeGraphqlQuery(authorization, PAYMENT_STATUS_QUERY, {
-      applicationId,
-    })
+    return await this.makeGraphqlQuery<PaymentStatusData>(
+      authorization,
+      PAYMENT_STATUS_QUERY,
+      {
+        applicationId,
+      },
+    )
       .then((res) => {
         if (!res.ok) {
           throw new Error('Couldnt query payment status')
@@ -179,8 +217,26 @@ export class SharedTemplateApiService {
         return res
       })
       .then((res) => res.json())
-      .then((json) => {
-        return json.data.applicationPaymentStatus
+      .then(({ data }) => {
+        return data?.applicationPaymentStatus
       })
+  }
+
+  async addAttachment(
+    application: ApplicationWithAttachments,
+    fileName: string,
+    buffer: Buffer,
+    uploadParameters?: {
+      ContentType?: string
+      ContentDisposition?: string
+      ContentEncoding?: string
+    },
+  ): Promise<string> {
+    return this.applicationService.saveAttachmentToApplicaton(
+      application,
+      fileName,
+      buffer,
+      uploadParameters,
+    )
   }
 }

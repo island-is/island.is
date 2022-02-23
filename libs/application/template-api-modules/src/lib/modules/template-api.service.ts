@@ -10,11 +10,14 @@ import {
   ChildrenResidenceChangeService,
   LoginServiceService,
   FundingGovernmentProjectsService,
-  PartyLetterService,
   DrivingLicenseSubmissionService,
-  PartyApplicationService,
-  PayableDummyTemplateService,
   AccidentNotificationService,
+  PublicDebtPaymentPlanTemplateService,
+  GeneralPetitionService,
+  CriminalRecordSubmissionService,
+  DataProtectionComplaintService,
+  PSignSubmissionService,
+  ExamplePaymentActionsService,
 } from './templates'
 
 interface ApplicationApiAction {
@@ -44,11 +47,14 @@ export class TemplateAPIService {
     private readonly childrenResidenceChangeService: ChildrenResidenceChangeService,
     private readonly loginServiceService: LoginServiceService,
     private readonly fundingGovernmentProjectsService: FundingGovernmentProjectsService,
-    private readonly partyLetterService: PartyLetterService,
     private readonly drivingLicenseSubmissionService: DrivingLicenseSubmissionService,
-    private readonly partyApplicationService: PartyApplicationService,
-    private readonly payableDummyTemplateService: PayableDummyTemplateService,
     private readonly accidentNotificationService: AccidentNotificationService,
+    private readonly publicDebtPaymentPlanService: PublicDebtPaymentPlanTemplateService,
+    private readonly generalPetitionService: GeneralPetitionService,
+    private readonly criminalRecordSubmissionService: CriminalRecordSubmissionService,
+    private readonly dataProtectionComplaintService: DataProtectionComplaintService,
+    private readonly pSignSubmissionService: PSignSubmissionService,
+    private readonly examplePaymentActionsService: ExamplePaymentActionsService,
   ) {}
 
   private async tryRunningActionOnService(
@@ -61,11 +67,14 @@ export class TemplateAPIService {
       | ChildrenResidenceChangeService
       | LoginServiceService
       | FundingGovernmentProjectsService
-      | PartyLetterService
       | DrivingLicenseSubmissionService
-      | PartyApplicationService
-      | PayableDummyTemplateService
-      | AccidentNotificationService,
+      | AccidentNotificationService
+      | PublicDebtPaymentPlanTemplateService
+      | GeneralPetitionService
+      | CriminalRecordSubmissionService
+      | DataProtectionComplaintService
+      | PSignSubmissionService
+      | ExamplePaymentActionsService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
     // No index signature with a parameter of type 'string' was found on type
@@ -85,7 +94,7 @@ export class TemplateAPIService {
       } catch (e) {
         return {
           success: false,
-          error: e.message,
+          error: (e as Error).message,
         }
       }
     }
@@ -134,9 +143,6 @@ export class TemplateAPIService {
           this.fundingGovernmentProjectsService,
           action,
         )
-      case ApplicationTypes.PARTY_LETTER:
-        return this.tryRunningActionOnService(this.partyLetterService, action)
-
       case ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL:
         return this.tryRunningActionOnService(
           this.drivingLicenseSubmissionService,
@@ -147,19 +153,39 @@ export class TemplateAPIService {
           this.drivingLicenseSubmissionService,
           action,
         )
-      case ApplicationTypes.PARTY_APPLICATION:
-        return this.tryRunningActionOnService(
-          this.partyApplicationService,
-          action,
-        )
-      case ApplicationTypes.PAYABLE_DUMMY_TEMPLATE:
-        return this.tryRunningActionOnService(
-          this.payableDummyTemplateService,
-          action,
-        )
       case ApplicationTypes.ACCIDENT_NOTIFICATION:
         return this.tryRunningActionOnService(
           this.accidentNotificationService,
+          action,
+        )
+      case ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN:
+        return this.tryRunningActionOnService(
+          this.publicDebtPaymentPlanService,
+          action,
+        )
+      case ApplicationTypes.GENERAL_PETITION:
+        return this.tryRunningActionOnService(
+          this.generalPetitionService,
+          action,
+        )
+      case ApplicationTypes.CRIMINAL_RECORD:
+        return this.tryRunningActionOnService(
+          this.criminalRecordSubmissionService,
+          action,
+        )
+      case ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT:
+        return this.tryRunningActionOnService(
+          this.dataProtectionComplaintService,
+          action,
+        )
+      case ApplicationTypes.P_SIGN:
+        return this.tryRunningActionOnService(
+          this.pSignSubmissionService,
+          action,
+        )
+      case ApplicationTypes.EXAMPLE_PAYMENT:
+        return this.tryRunningActionOnService(
+          this.examplePaymentActionsService,
           action,
         )
     }

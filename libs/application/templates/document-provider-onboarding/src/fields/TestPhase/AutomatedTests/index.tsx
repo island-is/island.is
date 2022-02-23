@@ -47,20 +47,18 @@ const AutomatedTests: FC<FieldBaseProps> = ({ application }) => {
   const { register, errors, trigger, getValues } = useForm()
   const [runEndpointTests, { loading }] = useMutation(runEndpointTestsMutation)
 
-  const nationalId = getValueViaPath(
+  const nationalId = getValueViaPath<string>(
     application.answers,
     'applicant.nationalId',
-    undefined,
-  ) as string
+  )
 
   const validateEndpoint = async () => {
     setautomatedTestsError(null)
 
-    const testProviderId = getValueViaPath(
+    const testProviderId = getValueViaPath<string>(
       application.answers,
       'testProviderId',
-      undefined,
-    ) as string
+    )
 
     const results = await runEndpointTests({
       variables: {

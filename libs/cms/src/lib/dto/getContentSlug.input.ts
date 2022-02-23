@@ -6,8 +6,4 @@ export class GetContentSlugInput {
   @Field()
   @IsString()
   id!: string // checked against in LanguageToggler.tsx
-
-  @Field(() => String)
-  @IsString()
-  lang = 'is-IS'
 }

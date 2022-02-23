@@ -20,14 +20,15 @@ interface SidenavProps {
   activeSection: number
 }
 
-type SidenavIcon = 'car' | 'business'
+type SidenavIcon = 'car' | 'business' | 'lockClosed'
 
 export const Sidenav = ({ title, sections, activeSection }: SidenavProps) => (
-  <Box background="purple100" padding={4} borderRadius="large">
-    <Stack space={3}>
-      <Text variant="h4">{title}</Text>
-      <Divider weight="alternate" />
-      <Stack space={2}>
+  <Box background="blue100" padding={4} borderRadius="large">
+    <Stack space={2}>
+      <Text color="blue600" variant="eyebrow">
+        {title}
+      </Text>
+      <Stack space={3}>
         {sections.map((section, index) => (
           <FocusableBox
             key={index}
@@ -35,14 +36,17 @@ export const Sidenav = ({ title, sections, activeSection }: SidenavProps) => (
             href={section.link}
             alignItems="center"
           >
-            <Box paddingRight={1}>
+            <Box paddingRight={2} display="flex" alignItems="center">
               <Icon
                 icon={section.icon as SidenavIcon}
                 type="outline"
-                color="dark300"
+                color={index === activeSection ? 'blue600' : 'blue300'}
               />
             </Box>
-            <Text variant={index === activeSection ? 'h5' : 'default'}>
+            <Text
+              color="blue600"
+              fontWeight={index === activeSection ? 'semiBold' : 'regular'}
+            >
               {section.title}
             </Text>
           </FocusableBox>

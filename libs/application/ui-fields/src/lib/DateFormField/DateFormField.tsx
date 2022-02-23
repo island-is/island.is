@@ -6,6 +6,7 @@ import {
   formatText,
   MaybeWithApplicationAndField,
   Application,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 import {
@@ -13,6 +14,7 @@ import {
   FieldDescription,
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
+import { getDefaultValue } from '../../getDefaultValue'
 
 interface Props extends FieldBaseProps {
   field: DateField
@@ -24,6 +26,7 @@ export const DateFormField: FC<Props> = ({ application, error, field }) => {
     disabled,
     title,
     description,
+    defaultValue,
     placeholder,
     backgroundColor,
     excludeDates,
@@ -31,6 +34,11 @@ export const DateFormField: FC<Props> = ({ application, error, field }) => {
     onChange,
   } = field
   const { formatMessage, lang } = useLocale()
+
+  const computedDefaultValue =
+    typeof defaultValue === 'function'
+      ? defaultValue(application, field)
+      : defaultValue
 
   const computeMinDate = (
     maybeMinDate: MaybeWithApplicationAndField<Date>,
@@ -87,6 +95,10 @@ export const DateFormField: FC<Props> = ({ application, error, field }) => {
       <Box paddingTop={2}>
         <DatePickerController
           disabled={disabled}
+          defaultValue={
+            (getValueViaPath(application.answers, id) as string) ??
+            getDefaultValue(field, application)
+          }
           id={id}
           name={id}
           locale={lang}

@@ -7,7 +7,7 @@ import {
   Link,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './UtlendingastofnunHeader.treat'
+import * as styles from './UtlendingastofnunHeader.css'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
@@ -43,20 +43,23 @@ export const UtlendingastofnunHeader: React.FC<HeaderProps> = ({
               )
             }
           >
-            <Hidden above="sm">
-              <Link
-                href={
-                  linkResolver('organizationpage', [organizationPage.slug]).href
-                }
-                className={styles.iconCircle}
-              >
-                <img
-                  src={organizationPage.organization.logo.url}
-                  className={styles.headerLogo}
-                  alt=""
-                />
-              </Link>
-            </Hidden>
+            {!!organizationPage.organization.logo && (
+              <Hidden above="sm">
+                <Link
+                  href={
+                    linkResolver('organizationpage', [organizationPage.slug])
+                      .href
+                  }
+                  className={styles.iconCircle}
+                >
+                  <img
+                    src={organizationPage.organization.logo.url}
+                    className={styles.headerLogo}
+                    alt=""
+                  />
+                </Link>
+              </Hidden>
+            )}
             <Box
               marginTop={[2, 2, 6]}
               textAlign={['center', 'center', 'right']}

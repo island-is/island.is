@@ -16,8 +16,8 @@ import range from 'lodash/range'
 import { Icon } from '../IconRC/Icon'
 import { Text } from '../Text/Text'
 
-import * as styles from './DatePicker.treat'
-import * as coreStyles from './react-datepicker.treat'
+import * as styles from './DatePicker.css'
+import * as coreStyles from './react-datepicker.css'
 import { Input } from '../Input/Input'
 import { InputProps } from '../Input/types'
 import { DatePickerProps, DatePickerCustomHeaderProps } from './types'
@@ -81,9 +81,15 @@ export const DatePicker: React.FC<DatePickerProps> = ({
       <div
         className={cn(styles.root, 'island-ui-datepicker', {
           [styles.small]: size === 'sm',
+          [styles.extraSmall]: size === 'xs',
         })}
       >
         <ReactDatePicker
+          popperClassName={cn(styles.popper, {
+            [styles.popperSmall]: size === 'sm',
+            [styles.popperSmallWithoutLabel]: size === 'sm' && !label,
+            [styles.popperWithoutLabel]: size === 'md' && !label,
+          })}
           id={id}
           disabled={disabled}
           selected={selected ?? startDate}
@@ -208,6 +214,7 @@ const CustomHeader = ({
         type="button"
         onClick={decreaseMonth}
         className={styles.decreaseButton}
+        aria-label="Previous month"
       >
         <Icon icon="chevronBack" type="outline" color="blue400" />
       </button>
@@ -218,6 +225,7 @@ const CustomHeader = ({
           </Text>
         </VisuallyHidden>
         <select
+          aria-label="Select month"
           className={styles.headerSelect}
           value={month}
           onChange={({ target: { value } }) =>
@@ -257,6 +265,7 @@ const CustomHeader = ({
         type="button"
         onClick={increaseMonth}
         className={styles.increaseButton}
+        aria-label="Next month"
       >
         <Icon icon="chevronForward" type="outline" color="blue400" />
       </button>

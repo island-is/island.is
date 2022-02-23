@@ -1,10 +1,9 @@
-import * as s from './RegulationDisplay.treat'
+import * as s from './RegulationDisplay.css'
 
 import React, { memo } from 'react'
-import { HTMLText, useDomid } from '@island.is/regulations'
-import { RegulationMaybeDiff } from '@island.is/regulations/web'
+import { HTMLText, RegulationMaybeDiff } from '@island.is/regulations'
 import { Accordion, AccordionItem, Box } from '@island.is/island-ui/core'
-import { HTMLBox } from '@island.is/regulations/react'
+import { HTMLBox } from './HTMLBox'
 
 const hasDiff = (text: string) => /<(?:del|ins)/.test(text)
 
@@ -20,8 +19,6 @@ export type AppendixesProps = {
 export const Appendixes = memo((props: AppendixesProps) => {
   const { appendixes, diffing } = props
 
-  const domid = useDomid()
-
   if (!appendixes.length) {
     return null
   }
@@ -30,30 +27,33 @@ export const Appendixes = memo((props: AppendixesProps) => {
     <Box marginTop={[6, 10]} marginBottom={[6, 6]} aria-label={props.legend}>
       <Accordion singleExpand={false}>
         {appendixes.map((appendix, i) => {
-          const id = 'appendix' + i + domid
-
+          const id = `v${i + 1}`
           return (
             appendix.text && (
-              <AccordionItem
-                key={id}
-                id={id}
-                labelVariant="h3"
-                labelUse="h2"
-                label={
-                  diffing ? (
-                    <HTMLBox
-                      component="span"
-                      className={s.bodyText}
-                      html={appendix.title as HTMLText}
-                    />
-                  ) : (
-                    appendix.title
-                  )
-                }
-                startExpanded={hasDiff(appendix.text)}
-              >
-                <HTMLBox className={s.bodyText} html={appendix.text} />
-              </AccordionItem>
+              <div id={id} key={id}>
+                <AccordionItem
+                  id={id + '-internals'}
+                  labelVariant="h3"
+                  labelUse="h2"
+                  label={
+                    diffing ? (
+                      <HTMLBox
+                        component="span"
+                        className={s.bodyText + ' ' + s.diffText}
+                        html={appendix.title as HTMLText}
+                      />
+                    ) : (
+                      appendix.title
+                    )
+                  }
+                  startExpanded={hasDiff(appendix.text)}
+                >
+                  <HTMLBox
+                    className={s.bodyText + ' ' + s.diffText}
+                    html={appendix.text}
+                  />
+                </AccordionItem>
+              </div>
             )
           )
         })}

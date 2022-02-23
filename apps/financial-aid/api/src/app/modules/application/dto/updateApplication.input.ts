@@ -5,7 +5,10 @@ import { Field, InputType } from '@nestjs/graphql'
 import {
   UpdateApplication,
   ApplicationState,
-} from '@island.is/financial-aid/shared'
+  ApplicationEventType,
+  Amount,
+} from '@island.is/financial-aid/shared/lib'
+import { CreateAmountInput } from '../../amount'
 
 @InputType()
 export class UpdateApplicationInput implements UpdateApplication {
@@ -14,14 +17,42 @@ export class UpdateApplicationInput implements UpdateApplication {
   readonly id!: string
 
   @Allow()
-  @Field(() => String)
-  readonly state!: ApplicationState
+  @Field(() => String, { nullable: true })
+  readonly state?: ApplicationState
 
   @Allow()
-  @Field({ nullable: true })
-  readonly amount?: number
+  @Field(() => String)
+  readonly event!: ApplicationEventType
 
   @Allow()
   @Field({ nullable: true })
   readonly rejection?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly comment?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly staffId?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly spouseEmail?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly spousePhoneNumber?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly spouseName?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly spouseFormComment?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly amount?: CreateAmountInput
 }

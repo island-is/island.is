@@ -2,51 +2,43 @@ import {
   Body,
   Controller,
   Delete,
-  ForbiddenException,
   Get,
-  NotFoundException,
+  Inject,
   Param,
   Post,
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import {
-  CurrentHttpUser,
   JwtAuthGuard,
   RolesGuard,
-  RolesRule,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import {
-  UserRole,
-  CaseState,
-  CaseAppealDecision,
-  hasCaseBeenAppealed,
-  completedCaseStates,
-} from '@island.is/judicial-system/types'
-import type { User, Case as TCase } from '@island.is/judicial-system/types'
 
-import { Case, CaseService } from '../case'
-import { CreateFileDto, CreatePresignedPostDto } from './dto'
+import { judgeRule, prosecutorRule, registrarRule } from '../../guards'
 import {
-  PresignedPost,
-  CaseFile,
-  DeleteFileResponse,
-  SignedUrl,
-} from './models'
+  Case,
+  CaseNotCompletedGuard,
+  CurrentCase,
+  CaseExistsGuard,
+  CaseReadGuard,
+  CaseReceivedGuard,
+  CaseWriteGuard,
+} from '../case'
+import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
+import { CurrentCaseFile } from './guards/caseFile.decorator'
+import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
+import { CreateFileDto } from './dto/createFile.dto'
+import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
+import { PresignedPost } from './models/presignedPost.model'
+import { CaseFile } from './models/file.model'
+import { DeleteFileResponse } from './models/deleteFile.response'
+import { SignedUrl } from './models/signedUrl.model'
+import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { FileService } from './file.service'
-
-// Allows prosecutors to perform any action
-const prosecutorRule = UserRole.PROSECUTOR as RolesRule
-
-// Allows judges to perform any action
-const judgeRule = UserRole.JUDGE as RolesRule
-
-// Allows registrars to perform any action
-const registrarRule = UserRole.REGISTRAR as RolesRule
-
-const sevenDays = 7 * 24 * 60 * 60 * 1000
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('api/case/:caseId')
@@ -54,193 +46,125 @@ const sevenDays = 7 * 24 * 60 * 60 * 1000
 export class FileController {
   constructor(
     private readonly fileService: FileService,
-    private readonly caseService: CaseService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private getAppealDate(existingCase: Case): Date {
-    // Assumption: case has been appealed and the appeal date is in the past
-
-    // If either party appealed in court, then use the ruling date
-    if (
-      existingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
-      existingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
-    ) {
-      return existingCase.rulingDate as Date // We should have date
-    }
-
-    // Otherwise, use the earliest postponed appeal date
-    const prosecutorPostponedAppealDate =
-      existingCase.prosecutorPostponedAppealDate ?? new Date()
-    const accusedPostponedAppealDate =
-      existingCase.accusedPostponedAppealDate ?? new Date()
-
-    return prosecutorPostponedAppealDate < accusedPostponedAppealDate
-      ? prosecutorPostponedAppealDate
-      : accusedPostponedAppealDate
-  }
-
-  private isLessThanSevenDaysAfterAppealDate(existingCase: Case): boolean {
-    const appealDate = this.getAppealDate(existingCase)
-
-    return Date.now() < appealDate.getTime() + sevenDays
-  }
-
-  private doesUserHavePermissionToViewCaseFiles(
-    user: User,
-    existingCase: Case,
-  ): boolean {
-    // Prosecutors have permission to view all case files
-    if (user.role === UserRole.PROSECUTOR) {
-      return true
-    }
-
-    // Judges have permission to view files of appealed cases for 7 days, and
-    // of uncompleted received cases they have been assigned to
-    if (user.role === UserRole.JUDGE) {
-      return (
-        (hasCaseBeenAppealed((existingCase as unknown) as TCase) &&
-          this.isLessThanSevenDaysAfterAppealDate(existingCase)) ||
-        (existingCase.state === CaseState.RECEIVED &&
-          user.id === existingCase.judgeId)
-      )
-    }
-
-    // Registrars have permission to view files of appealed cases for 7 days
-    if (user.role === UserRole.REGISTRAR) {
-      return (
-        hasCaseBeenAppealed((existingCase as unknown) as TCase) &&
-        this.isLessThanSevenDaysAfterAppealDate(existingCase)
-      )
-    }
-
-    // Other users do not have permission to view any case files
-    return false
-  }
-
+  @UseGuards(CaseExistsGuard, CaseWriteGuard, CaseNotCompletedGuard)
   @RolesRules(prosecutorRule)
   @Post('file/url')
   @ApiCreatedResponse({
     type: PresignedPost,
     description: 'Creates a new presigned post',
   })
-  async createCasePresignedPost(
+  createPresignedPost(
     @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
     @Body() createPresignedPost: CreatePresignedPostDto,
   ): Promise<PresignedPost> {
-    const existingCase = await this.caseService.findByIdAndUser(caseId, user)
+    this.logger.debug(`Creating a presigned post for case ${caseId}`)
 
-    if (completedCaseStates.includes(existingCase.state)) {
-      throw new ForbiddenException('Files cannot be added to a completed case')
-    }
-
-    return this.fileService.createCasePresignedPost(
-      existingCase.id,
-      createPresignedPost,
-    )
+    return this.fileService.createPresignedPost(caseId, createPresignedPost)
   }
 
+  @UseGuards(CaseExistsGuard, CaseWriteGuard, CaseNotCompletedGuard)
   @RolesRules(prosecutorRule)
   @Post('file')
   @ApiCreatedResponse({
     type: CaseFile,
-    description: 'Creates a new file',
+    description: 'Creates a new case file',
   })
   async createCaseFile(
     @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
     @Body() createFile: CreateFileDto,
   ): Promise<CaseFile> {
-    const existingCase = await this.caseService.findByIdAndUser(caseId, user)
+    this.logger.debug(`Creating a file for case ${caseId}`)
 
-    if (completedCaseStates.includes(existingCase.state)) {
-      throw new ForbiddenException('Files cannot be added to a completed case')
-    }
-
-    return this.fileService.createCaseFile(existingCase.id, createFile)
+    return this.fileService.createCaseFile(caseId, createFile)
   }
 
+  @UseGuards(CaseExistsGuard, CaseReadGuard)
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
   @Get('files')
   @ApiOkResponse({
     type: CaseFile,
     isArray: true,
-    description: 'Gets all existing files for an existing case',
+    description: 'Gets all existing case file',
   })
-  async getAllCaseFiles(
-    @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
-  ): Promise<CaseFile[]> {
-    const existingCase = await this.caseService.findByIdAndUser(
-      caseId,
-      user,
-      false,
-    )
+  getAllCaseFiles(@Param('caseId') caseId: string): Promise<CaseFile[]> {
+    this.logger.debug(`Getting all files for case ${caseId}`)
 
-    return this.fileService.getAllCaseFiles(existingCase.id)
+    return this.fileService.getAllCaseFiles(caseId)
   }
 
-  @RolesRules(prosecutorRule)
-  @Delete('file/:id')
-  @ApiOkResponse({
-    type: DeleteFileResponse,
-    description: 'Deletes a file',
-  })
-  async deleteCaseFile(
-    @Param('caseId') caseId: string,
-    @Param('id') id: string,
-    @CurrentHttpUser() user: User,
-  ): Promise<DeleteFileResponse> {
-    const existingCase = await this.caseService.findByIdAndUser(caseId, user)
-
-    if (completedCaseStates.includes(existingCase.state)) {
-      throw new ForbiddenException(
-        'Files cannot be deleted from a completed case',
-      )
-    }
-
-    const file = await this.fileService.findById(id)
-
-    if (!file || file.caseId !== existingCase.id) {
-      throw new NotFoundException(
-        `File ${id} of case ${existingCase.id} does not exist`,
-      )
-    }
-
-    return this.fileService.deleteCaseFile(existingCase.id, file)
-  }
-
+  @UseGuards(
+    CaseExistsGuard,
+    CaseReadGuard,
+    ViewCaseFileGuard,
+    CaseFileExistsGuard,
+  )
   @RolesRules(prosecutorRule, judgeRule, registrarRule)
-  @Get('file/:id/url')
+  @Get('file/:fileId/url')
   @ApiOkResponse({
     type: PresignedPost,
-    description: 'Gets a signed url for an existing file',
+    description: 'Gets a signed url for a case file',
   })
-  async getCaseFileSignedUrl(
+  getCaseFileSignedUrl(
     @Param('caseId') caseId: string,
-    @Param('id') id: string,
-    @CurrentHttpUser() user: User,
+    @Param('fileId') fileId: string,
+    @CurrentCaseFile() caseFile: CaseFile,
   ): Promise<SignedUrl> {
-    const existingCase = await this.caseService.findByIdAndUser(
-      caseId,
-      user,
-      false,
+    this.logger.debug(
+      `Getting a signed url for file ${fileId} of case ${caseId}`,
     )
 
-    if (!this.doesUserHavePermissionToViewCaseFiles(user, existingCase)) {
-      throw new ForbiddenException(
-        `User ${user.id} does not have permission to view files of case ${existingCase.id}`,
-      )
-    }
+    return this.fileService.getCaseFileSignedUrl(caseFile)
+  }
 
-    const file = await this.fileService.findById(id)
+  @UseGuards(
+    CaseExistsGuard,
+    CaseWriteGuard,
+    CaseNotCompletedGuard,
+    CaseFileExistsGuard,
+  )
+  @RolesRules(prosecutorRule)
+  @Delete('file/:fileId')
+  @ApiOkResponse({
+    type: DeleteFileResponse,
+    description: 'Deletes a case file',
+  })
+  deleteCaseFile(
+    @Param('caseId') caseId: string,
+    @Param('fileId') fileId: string,
+    @CurrentCaseFile() caseFile: CaseFile,
+  ): Promise<DeleteFileResponse> {
+    this.logger.debug(`Deleting file ${fileId} of case ${caseId}`)
 
-    if (!file || file.caseId !== existingCase.id) {
-      throw new NotFoundException(
-        `File ${id} of case ${existingCase.id} does not exist`,
-      )
-    }
+    return this.fileService.deleteCaseFile(caseFile)
+  }
 
-    return this.fileService.getCaseFileSignedUrl(existingCase.id, file)
+  @UseGuards(
+    CaseExistsGuard,
+    CaseWriteGuard,
+    CaseReceivedGuard,
+    CaseFileExistsGuard,
+  )
+  @RolesRules(judgeRule, registrarRule)
+  @Post('file/:fileId/court')
+  @ApiOkResponse({
+    type: UploadFileToCourtResponse,
+    description: 'Uploads a case file to court',
+  })
+  uploadCaseFileToCourt(
+    @Param('caseId') caseId: string,
+    @Param('fileId') fileId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentCaseFile() caseFile: CaseFile,
+  ): Promise<UploadFileToCourtResponse> {
+    this.logger.debug(`Uploading file ${fileId} of case ${caseId} to court`)
+
+    return this.fileService.uploadCaseFileToCourt(
+      theCase.courtId,
+      theCase.courtCaseNumber,
+      caseFile,
+    )
   }
 }

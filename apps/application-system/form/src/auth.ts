@@ -1,10 +1,12 @@
 import { configure, configureMock } from '@island.is/auth/react'
 import { environment } from './environments'
 import {
+  ApiScope,
   ApplicationScope,
   NationalRegistryScope,
   UserProfileScope,
   EndorsementsScope,
+  AuthScope,
 } from '@island.is/auth/scopes'
 
 const userMocked = process.env.API_MOCKS === 'true'
@@ -26,9 +28,12 @@ if (userMocked) {
       'api_resource.scope',
       ApplicationScope.read,
       ApplicationScope.write,
+      AuthScope.actorDelegations,
       UserProfileScope.read,
       NationalRegistryScope.individuals,
       EndorsementsScope.main,
+      ApiScope.internal,
+      ApiScope.meDetails,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'as.',

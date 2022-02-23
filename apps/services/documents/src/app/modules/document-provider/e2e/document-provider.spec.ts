@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common'
 import request from 'supertest'
+import { ApiScope } from '@island.is/auth/scopes'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 
 import { setup } from '../../../../../test/setup'
@@ -48,16 +49,13 @@ const simpleOrg = {
 
 beforeAll(async () => {
   app = await setup({
-    override: (builder) => {
-      builder
-        .overrideGuard(IdsUserGuard)
-        .useValue(
-          new MockAuthGuard({
-            nationalId,
-          }),
-        )
-        .compile()
-    },
+    override: (builder) =>
+      builder.overrideGuard(IdsUserGuard).useValue(
+        new MockAuthGuard({
+          nationalId,
+          scope: [ApiScope.internal],
+        }),
+      ),
   })
 
   server = request(app.getHttpServer())

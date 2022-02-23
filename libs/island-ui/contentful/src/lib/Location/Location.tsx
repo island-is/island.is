@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import * as styles from './Location.treat'
+import * as styles from './Location.css'
 import {
   Box,
   Text,

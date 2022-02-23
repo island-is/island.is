@@ -1,4 +1,4 @@
-import * as s from './Ball.treat'
+import * as s from './Ball.css'
 
 import React, { ReactNode } from 'react'
 import cn from 'classnames'

@@ -1,28 +1,42 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useIntl } from 'react-intl'
-import type { Case, Institution } from '@island.is/judicial-system/types'
-import { Box, Text } from '@island.is/island-ui/core'
-import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { ValueType } from 'react-select/src/types'
+
+import type { Case, Institution, User } from '@island.is/judicial-system/types'
+import { Box, Input, Text, Checkbox } from '@island.is/island-ui/core'
+import {
+  removeTabsValidateAndSet,
+  setAndSendDateToServer,
+  setAndSendToServer,
+  validateAndSendToServer,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   DateTime,
   FormContentContainer,
   FormFooter,
-} from '@island.is/judicial-system-web/src/shared-components'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+  BlueBox,
+  CaseInfo,
+} from '@island.is/judicial-system-web/src/components'
 import { rcRequestedHearingArrangements } from '@island.is/judicial-system-web/messages'
+import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
 import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
 import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
 import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   prosecutors: ReactSelectOption[]
   courts: Institution[]
   handleNextButtonClick: () => Promise<void>
+  onProsecutorChange: (selectedOption: ValueType<ReactSelectOption>) => boolean
+  onCourtChange: (courtId: string) => boolean
   transitionLoading: boolean
+  user?: User
 }
 
 const StepTwoForm: React.FC<Props> = (props) => {
@@ -32,14 +46,11 @@ const StepTwoForm: React.FC<Props> = (props) => {
     prosecutors,
     courts,
     handleNextButtonClick,
+    onProsecutorChange,
+    onCourtChange,
     transitionLoading,
+    user,
   } = props
-  const [arrestDateIsValid, setArrestDateIsValid] = useState(true)
-  const [
-    requestedCourtDateIsValid,
-    setRequestedCourtDateIsValid,
-  ] = useState<boolean>(workingCase.requestedCourtDate !== null)
-
   const { formatMessage } = useIntl()
   const { updateCase } = useCase()
 
@@ -51,18 +62,54 @@ const StepTwoForm: React.FC<Props> = (props) => {
             {formatMessage(rcRequestedHearingArrangements.heading)}
           </Text>
         </Box>
+        <Box component="section" marginBottom={7}>
+          <CaseInfo workingCase={workingCase} />
+        </Box>
         <Box component="section" marginBottom={5}>
-          <SelectProsecutor
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-            prosecutors={prosecutors}
-          />
+          <BlueBox>
+            <Box marginBottom={2}>
+              <SelectProsecutor
+                workingCase={workingCase}
+                prosecutors={prosecutors}
+                onChange={onProsecutorChange}
+              />
+            </Box>
+            <Checkbox
+              name="isHeightenedSecurityLevel"
+              label={formatMessage(
+                rcRequestedHearingArrangements.sections.prosecutor
+                  .heightenSecurityLevelLabel,
+              )}
+              tooltip={formatMessage(
+                rcRequestedHearingArrangements.sections.prosecutor
+                  .heightenSecurityLevelInfo,
+              )}
+              disabled={
+                user?.id !== workingCase.creatingProsecutor?.id &&
+                user?.id !==
+                  (((workingCase as unknown) as { prosecutorId: string })
+                    .prosecutorId ?? workingCase.prosecutor?.id)
+              }
+              checked={workingCase.isHeightenedSecurityLevel}
+              onChange={(event) =>
+                setAndSendToServer(
+                  'isHeightenedSecurityLevel',
+                  event.target.checked,
+                  workingCase,
+                  setWorkingCase,
+                  updateCase,
+                )
+              }
+              large
+              filled
+            />
+          </BlueBox>
         </Box>
         <Box component="section" marginBottom={5}>
           <SelectCourt
             workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
             courts={courts}
+            onChange={onCourtChange}
           />
         </Box>
         {!workingCase.parentCase && (
@@ -77,36 +124,69 @@ const StepTwoForm: React.FC<Props> = (props) => {
             <DateTime
               name="arrestDate"
               maxDate={new Date()}
-              selectedDate={
-                workingCase.arrestDate
-                  ? new Date(workingCase.arrestDate)
-                  : undefined
-              }
+              selectedDate={workingCase.arrestDate}
               onChange={(date: Date | undefined, valid: boolean) => {
-                newSetAndSendDateToServer(
+                setAndSendDateToServer(
                   'arrestDate',
                   date,
                   valid,
                   workingCase,
                   setWorkingCase,
-                  setArrestDateIsValid,
                   updateCase,
                 )
               }}
             />
           </Box>
         )}
-        <Box component="section" marginBottom={10}>
+        <Box component="section" marginBottom={5}>
           <RequestCourtDate
             workingCase={workingCase}
             onChange={(date: Date | undefined, valid: boolean) =>
-              newSetAndSendDateToServer(
+              setAndSendDateToServer(
                 'requestedCourtDate',
                 date,
                 valid,
                 workingCase,
                 setWorkingCase,
-                setRequestedCourtDateIsValid,
+                updateCase,
+              )
+            }
+          />
+        </Box>
+        <Box component="section" marginBottom={10}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              {formatMessage(
+                rcRequestedHearingArrangements.sections.translator.heading,
+              )}
+            </Text>
+          </Box>
+          <Input
+            data-testid="translator"
+            name="translator"
+            autoComplete="off"
+            label={formatMessage(
+              rcRequestedHearingArrangements.sections.translator.label,
+            )}
+            placeholder={formatMessage(
+              rcRequestedHearingArrangements.sections.translator.placeholder,
+            )}
+            value={workingCase.translator || ''}
+            onChange={(event) =>
+              removeTabsValidateAndSet(
+                'translator',
+                event.target.value,
+                [],
+                workingCase,
+                setWorkingCase,
+              )
+            }
+            onBlur={(event) =>
+              validateAndSendToServer(
+                'translator',
+                event.target.value,
+                [],
+                workingCase,
                 updateCase,
               )
             }
@@ -118,9 +198,7 @@ const StepTwoForm: React.FC<Props> = (props) => {
           previousUrl={`${Constants.STEP_ONE_ROUTE}/${workingCase.id}`}
           onNextButtonClick={async () => await handleNextButtonClick()}
           nextIsDisabled={
-            transitionLoading ||
-            !arrestDateIsValid ||
-            !requestedCourtDateIsValid
+            !isHearingArrangementsStepValidRC(workingCase) || transitionLoading
           }
           nextIsLoading={transitionLoading}
         />

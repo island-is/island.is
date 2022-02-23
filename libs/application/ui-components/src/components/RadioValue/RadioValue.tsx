@@ -5,7 +5,7 @@ import { useLocale } from '@island.is/localization'
 import { coreMessages } from '@island.is/application/core'
 
 import { Label } from '../Label/Label'
-import * as styles from './RadioValue.treat'
+import * as styles from './RadioValue.css'
 
 interface RadioValueProps {
   label?: string

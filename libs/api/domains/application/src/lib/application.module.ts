@@ -1,8 +1,8 @@
 import { Module, DynamicModule } from '@nestjs/common'
-import fetch from 'isomorphic-fetch'
 import { ApplicationResolver } from './application.resolver'
 import { ApplicationService } from './application.service'
 import { ApplicationsApi, PaymentsApi, Configuration } from '../../gen/fetch'
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
 
 export interface Config {
   baseApiUrl: string
@@ -21,7 +21,10 @@ export class ApplicationModule {
           useFactory: async () =>
             new ApplicationsApi(
               new Configuration({
-                fetchApi: fetch,
+                fetchApi: createEnhancedFetch({
+                  name: 'ApplicationModule.applicationsApi',
+                  timeout: 60000,
+                }),
                 basePath: config.baseApiUrl,
               }),
             ),
@@ -31,7 +34,9 @@ export class ApplicationModule {
           useFactory: async () =>
             new PaymentsApi(
               new Configuration({
-                fetchApi: fetch,
+                fetchApi: createEnhancedFetch({
+                  name: 'ApplicationModule.paymentsApi',
+                }),
                 basePath: config.baseApiUrl,
               }),
             ),

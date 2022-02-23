@@ -1,11 +1,11 @@
+import { UserProfileScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
-  IdsUserGuard,
   Scopes,
   ScopesGuard,
+  IdsUserGuard,
 } from '@island.is/auth-nest-tools'
-import { UserProfileScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   Body,
@@ -19,10 +19,14 @@ import {
   UseGuards,
   ForbiddenException,
   BadRequestException,
+  HttpCode,
+  Delete,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
+  ApiNoContentResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiParam,
   ApiSecurity,
   ApiTags,
@@ -31,13 +35,16 @@ import { ConfirmationDtoResponse } from './dto/confirmationResponseDto'
 import { ConfirmEmailDto } from './dto/confirmEmailDto'
 import { ConfirmSmsDto } from './dto/confirmSmsDto'
 import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
+import { CreateEmailVerificationDto } from './dto/createEmailVerificationDto'
 import { CreateUserProfileDto } from './dto/createUserProfileDto'
+import { DeleteTokenResponseDto } from './dto/deleteTokenResponseDto'
+import { DeviceTokenDto } from './dto/deviceToken.dto'
 import { UpdateUserProfileDto } from './dto/updateUserProfileDto'
-import { EmailVerification } from './emailVerification.model'
-import { SmsVerification } from './smsVerification.model'
+import { UserDeviceTokenDto } from './dto/userDeviceToken.dto'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 import { VerificationService } from './verification.service'
+import { DataStatus } from './types/dataStatusTypes'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('User Profile')
@@ -108,30 +115,45 @@ export class UserProfileController {
     }
 
     if (userProfileDto.email) {
-      await this.verificationService.createEmailVerification(
-        userProfileDto.nationalId,
-        userProfileDto.email,
+      const emailVerified = await this.verificationService.confirmEmail(
+        { hash: userProfileDto.emailCode },
+        user.nationalId,
       )
+
+      if (emailVerified.confirmed) {
+        await this.verificationService.removeEmailVerification(
+          userProfileDto.nationalId,
+        )
+        userProfileDto = {
+          ...userProfileDto,
+          emailStatus: DataStatus.VERIFIED,
+          emailVerified: emailVerified.confirmed,
+        }
+      }
     }
 
     if (userProfileDto.mobilePhoneNumber) {
-      const phoneVerified = await this.verificationService.isPhoneNumberVerified(
-        userProfileDto,
+      const phoneVerified = await this.verificationService.confirmSms(
+        { code: userProfileDto.smsCode },
+        user.nationalId,
       )
-      userProfileDto = {
-        ...userProfileDto,
-        mobilePhoneNumberVerified: phoneVerified,
-      }
-      if (phoneVerified) {
+
+      if (phoneVerified.confirmed) {
         await this.verificationService.removeSmsVerification(
           userProfileDto.nationalId,
         )
+
+        userProfileDto = {
+          ...userProfileDto,
+          emailStatus: DataStatus.VERIFIED,
+          mobilePhoneNumberVerified: phoneVerified.confirmed,
+        }
       }
     }
 
     const userProfile = await this.userProfileService.create(userProfileDto)
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'create',
       resources: userProfileDto.nationalId,
       meta: { fields: Object.keys(userProfileDto) },
@@ -164,31 +186,38 @@ export class UserProfileController {
     const updatedFields = Object.keys(userProfileToUpdate)
     userProfileToUpdate = {
       ...userProfileToUpdate,
-      emailVerified: profile.emailVerified,
-      mobilePhoneNumberVerified: profile.mobilePhoneNumberVerified,
+      mobileStatus: DataStatus.NOT_VERIFIED,
+      emailStatus: DataStatus.NOT_VERIFIED,
     }
 
     if (userProfileToUpdate.mobilePhoneNumber) {
-      const { mobilePhoneNumber } = userProfileToUpdate
-      const phoneVerified = await this.verificationService.isPhoneNumberVerified(
-        { nationalId, mobilePhoneNumber },
+      const phoneVerified = await this.verificationService.confirmSms(
+        { code: userProfileToUpdate.smsCode },
+        user.nationalId,
       )
 
-      userProfileToUpdate = {
-        ...userProfileToUpdate,
-        mobilePhoneNumberVerified: phoneVerified,
+      if (phoneVerified.confirmed) {
+        userProfileToUpdate = {
+          ...userProfileToUpdate,
+          mobileStatus: DataStatus.VERIFIED,
+          mobilePhoneNumberVerified: phoneVerified.confirmed,
+        }
       }
     }
 
-    if (
-      userProfileToUpdate.email &&
-      userProfileToUpdate.email !== profile.email
-    ) {
-      await this.verificationService.createEmailVerification(
-        nationalId,
-        userProfileToUpdate.email,
+    if (userProfileToUpdate.email) {
+      const emailVerified = await this.verificationService.confirmEmail(
+        { hash: userProfileToUpdate.emailCode },
+        user.nationalId,
       )
-      userProfileToUpdate = { ...userProfileToUpdate, emailVerified: false }
+
+      if (emailVerified.confirmed) {
+        userProfileToUpdate = {
+          ...userProfileToUpdate,
+          emailStatus: DataStatus.VERIFIED,
+          emailVerified: emailVerified.confirmed,
+        }
+      }
     }
 
     const {
@@ -201,7 +230,7 @@ export class UserProfileController {
       )
     }
     this.auditService.audit({
-      user,
+      auth: user,
       action: 'update',
       resources: updatedUserProfile.nationalId,
       meta: { fields: updatedFields },
@@ -219,16 +248,15 @@ export class UserProfileController {
     description: 'The national id of the user for email verification.',
     allowEmptyValue: false,
   })
-  @ApiCreatedResponse({ type: EmailVerification })
-  @Audit<EmailVerification>({
-    resources: (emailVerification) => emailVerification?.nationalId ?? '',
-  })
+  @HttpCode(204)
+  @ApiNoContentResponse()
+  @Audit()
   async recreateVerification(
     @Param('nationalId')
     nationalId: string,
     @CurrentUser()
     user: User,
-  ): Promise<EmailVerification> {
+  ): Promise<void> {
     // findOneByNationalId must be first as it implictly checks if the
     // route param matches the authenticated user.
     const profile = await this.findOneByNationalId(nationalId, user)
@@ -238,9 +266,31 @@ export class UserProfileController {
       )
     }
 
-    return await this.verificationService.createEmailVerification(
+    await this.verificationService.createEmailVerification(
       profile.nationalId,
       profile.email,
+    )
+  }
+
+  @Scopes(UserProfileScope.write)
+  @ApiSecurity('oauth2', [UserProfileScope.write])
+  @Post('emailVerification/')
+  @HttpCode(204)
+  @ApiNoContentResponse()
+  @Audit()
+  async createEmailVerification(
+    @Body()
+    emailVerification: CreateEmailVerificationDto,
+    @CurrentUser()
+    user: User,
+  ): Promise<void> {
+    if (emailVerification.nationalId != user.nationalId) {
+      throw new ForbiddenException()
+    }
+
+    await this.verificationService.createEmailVerification(
+      emailVerification.nationalId,
+      emailVerification.email,
     )
   }
 
@@ -254,7 +304,8 @@ export class UserProfileController {
     description: 'The national id of the user for email verification.',
     allowEmptyValue: false,
   })
-  @ApiCreatedResponse({ type: ConfirmationDtoResponse })
+  @HttpCode(200)
+  @ApiOkResponse({ type: ConfirmationDtoResponse })
   async confirmEmail(
     @Param('nationalId')
     nationalId: string,
@@ -269,11 +320,11 @@ export class UserProfileController {
 
     return await this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'confirmEmail',
         resources: profile.nationalId,
       },
-      this.verificationService.confirmEmail(confirmEmailDto, profile),
+      this.verificationService.confirmEmail(confirmEmailDto, nationalId),
     )
   }
 
@@ -287,7 +338,8 @@ export class UserProfileController {
     description: 'The national id of the user for email verification.',
     allowEmptyValue: false,
   })
-  @ApiCreatedResponse({ type: ConfirmationDtoResponse })
+  @HttpCode(200)
+  @ApiOkResponse({ type: ConfirmationDtoResponse })
   async confirmSms(
     @Param('nationalId')
     nationalId: string,
@@ -302,7 +354,7 @@ export class UserProfileController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'confirmSms',
         resources: nationalId,
       },
@@ -313,21 +365,61 @@ export class UserProfileController {
   @Scopes(UserProfileScope.write)
   @ApiSecurity('oauth2', [UserProfileScope.write])
   @Post('smsVerification/')
-  @Audit<SmsVerification>({
-    resources: (smsVerification) => smsVerification.nationalId,
-  })
+  @HttpCode(204)
+  @ApiNoContentResponse()
+  @Audit()
   async createSmsVerification(
     @Body()
     createSmsVerification: CreateSmsVerificationDto,
     @CurrentUser()
     user: User,
-  ): Promise<SmsVerification | null> {
+  ): Promise<void> {
     if (createSmsVerification.nationalId != user.nationalId) {
       throw new ForbiddenException()
     }
 
-    return await this.verificationService.createSmsVerification(
-      createSmsVerification,
-    )
+    await this.verificationService.createSmsVerification(createSmsVerification)
+  }
+
+  @Audit()
+  @ApiOperation({
+    summary: 'Adds a device token for notifications for a user device ',
+  })
+  @ApiOkResponse({ type: UserDeviceTokenDto })
+  @Scopes(UserProfileScope.write)
+  @ApiSecurity('oauth2', [UserProfileScope.write])
+  @Post('userProfile/:nationalId/device-tokens')
+  async addDeviceToken(
+    @Param('nationalId')
+    nationalId: string,
+    @CurrentUser() user: User,
+    @Body() body: DeviceTokenDto,
+  ): Promise<UserDeviceTokenDto> {
+    if (nationalId != user.nationalId) {
+      throw new BadRequestException()
+    } else {
+      return await this.userProfileService.addDeviceToken(body, user)
+    }
+  }
+
+  @Audit()
+  @ApiOperation({
+    summary: 'Deletes a device token for a user device',
+  })
+  @Scopes(UserProfileScope.write)
+  @ApiSecurity('oauth2', [UserProfileScope.write])
+  @ApiOkResponse({ type: DeleteTokenResponseDto })
+  @Delete('userProfile/:nationalId/device-tokens')
+  async deleteDeviceToken(
+    @Param('nationalId')
+    nationalId: string,
+    @CurrentUser() user: User,
+    @Body() body: DeviceTokenDto,
+  ): Promise<DeleteTokenResponseDto> {
+    if (nationalId != user.nationalId) {
+      throw new BadRequestException()
+    } else {
+      return await this.userProfileService.deleteDeviceToken(body, user)
+    }
   }
 }

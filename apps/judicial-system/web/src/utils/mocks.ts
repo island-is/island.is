@@ -1,9 +1,10 @@
 import {
   CaseAppealDecision,
-  CaseCustodyProvisions,
+  CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseDecision,
-  CaseGender,
+  CaseFileState,
+  Gender,
   CaseState,
   CaseType,
   InstitutionType,
@@ -11,17 +12,29 @@ import {
 } from '@island.is/judicial-system/types'
 import type { UpdateCase, User } from '@island.is/judicial-system/types'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
-import { CurrentUserQuery } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+import { CurrentUserQuery } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   InstitutionsQuery,
   UsersQuery,
 } from '@island.is/judicial-system-web/src/utils/mutations'
-import { UpdateCaseMutation } from '@island.is/judicial-system-web/src/utils/hooks/use-case/updateCaseGql'
+import { UpdateCaseMutation } from '@island.is/judicial-system-web/src/utils/hooks/useCase/updateCaseGql'
 
 export const mockCourt = {
   id: 'court_id',
   type: InstitutionType.COURT,
   name: 'Héraðsdómur Reykjavíkur',
+}
+
+export const mockHighCourt = {
+  id: 'high_court_id',
+  type: InstitutionType.HIGH_COURT,
+  name: 'Landsréttur',
+}
+
+export const mockPrison = {
+  id: 'prison_id',
+  type: InstitutionType.PRISON,
+  name: 'Stóra Hraun',
 }
 
 export const mockProsecutor = {
@@ -52,6 +65,22 @@ export const mockJudge = {
   institution: mockCourt,
 } as User
 
+export const mockHighCourtUser = {
+  id: 'hc_1',
+  role: UserRole.JUDGE,
+  name: 'Lalli Landsréttardómari',
+  title: 'dómari',
+  institution: mockHighCourt,
+} as User
+
+export const mockPrisonUser = {
+  id: 'hc_1',
+  role: UserRole.STAFF,
+  name: 'Lalli Landsréttardómari',
+  title: 'dómari',
+  institution: mockPrison,
+} as User
+
 export const mockJudgeBatman = {
   id: 'judge_2',
   role: UserRole.JUDGE,
@@ -80,9 +109,9 @@ const testCase1 = {
   type: CaseType.CUSTODY,
   state: CaseState.ACCEPTED,
   policeCaseNumber: 'string',
-  accusedNationalId: 'string',
-  accusedName: 'Jon Harring',
-  accusedAddress: 'Harringvej 2',
+  defendants: [
+    { nationalId: 'string', name: 'Jon Harring', address: 'Harringvej 2' },
+  ],
   court: mockCourt,
   arrestDate: '2020-09-16T19:51:28.224Z',
   requestedCourtDate: '2020-09-16T19:51:00.000Z',
@@ -90,14 +119,17 @@ const testCase1 = {
   demands:
     'Þess er krafist að Jon Harring, kt. string, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:51, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
   lawsBroken: 'string',
-  custodyProvisions: [
-    CaseCustodyProvisions._95_1_A,
-    CaseCustodyProvisions._95_1_C,
-  ],
+  legalProvisions: [CaseLegalProvisions._95_1_A, CaseLegalProvisions._95_1_C],
   requestedCustodyRestrictions: ['ISOLATION', 'MEDIA'],
   caseFacts: 'string',
   legalArguments: 'string',
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Áki Ákærandi',
+    institution: {
+      id: '1338',
+    },
+  },
   prosecutor: {
     name: 'Áki Ákærandi',
     institution: {
@@ -110,16 +142,12 @@ const testCase1 = {
   courtEndTime: null,
   courtAttendees: null,
   prosecutorDemands: null,
-  accusedPleaAnnouncement: null,
+  accusedBookings: null,
   litigationPresentations: null,
   ruling:
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Prioris generis est docilitas, memoria; Quod quidem nobis non saepe contingit. Quae qui non vident, nihil umquam magnum ac cognitione dignum amaverunt. Quasi vero, inquit, perpetua oratio rhetorum solum, non etiam philosophorum sit. Duo Reges: constructio interrete. Non est ista, inquam, Piso, magna dissensio. Quantum Aristoxeni ingenium consumptum videmus in musicis? ',
   decision: CaseDecision.ACCEPTING,
   validToDate: '2020-09-16T19:50:08.033Z',
-  custodyRestrictions: [
-    CaseCustodyRestrictions.MEDIA,
-    CaseCustodyRestrictions.ISOLATION,
-  ],
   isolationToDate: '2020-09-16T19:50:08.033Z',
   accusedAppealDecision: CaseAppealDecision.APPEAL,
   accusedAppealAnnouncement: 'accusedAppealAnnouncement test',
@@ -127,12 +155,13 @@ const testCase1 = {
   prosecutorAppealAnnouncement: 'prosecutorAppealAnnouncement test',
   judge: null,
   conclusion: null,
-  files: [
+  caseFiles: [
     {
       id: 'fc96b11c-f750-4867-b767-c5e562a54f09',
       name: 'Screen Recording 2021-04-09 at 14.39.51.mov',
       size: 4991527,
       created: '2021-04-12T13:55:28.131Z',
+      state: CaseFileState.STORED_IN_RVG,
     },
   ],
 }
@@ -144,20 +173,28 @@ const testCase2 = {
   type: CaseType.CUSTODY,
   state: CaseState.REJECTED,
   policeCaseNumber: '000-0000-0000',
-  accusedNationalId: '000000-0000',
-  accusedName: 'Jon Harring',
-  accusedAddress: 'Harringvej 2',
-  accusedGender: CaseGender.MALE,
+  defendants: [
+    {
+      nationalId: '000000-0000',
+      name: 'Jon Harring',
+      aaddress: 'Harringvej 2',
+      gender: Gender.MALE,
+    },
+  ],
   court: mockCourt,
   arrestDate: '2020-09-16T19:51:28.224Z',
   requestedCourtDate: '2020-09-12T14:51:00.000Z',
   requestedValidToDate: null,
   lawsBroken: null,
-  custodyProvisions: [],
+  legalProvisions: [],
   requestedCustodyRestrictions: [],
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',
@@ -168,12 +205,11 @@ const testCase2 = {
   courtEndTime: null,
   courtAttendees: null,
   prosecutorDemands: null,
-  accusedPleaAnnouncement: null,
+  accusedBookings: null,
   litigationPresentations: null,
   ruling: null,
   decision: CaseDecision.REJECTING,
   validToDate: null,
-  custodyRestrictions: [CaseCustodyRestrictions.VISITAION],
   accusedAppealDecision: null,
   accusedAppealAnnouncement: null,
   prosecutorAppealDecision: null,
@@ -190,21 +226,26 @@ const testCase3 = {
   type: CaseType.CUSTODY,
   state: CaseState.DRAFT,
   policeCaseNumber: '010-0000-0191',
-  accusedNationalId: '1111110000',
-  accusedName: 'Jon Harring',
-  accusedAddress: 'Harringvej 2',
-  accusedGender: CaseGender.MALE,
+  defendants: [
+    {
+      nationalId: '1111110000',
+      name: 'Jon Harring',
+      aaddress: 'Harringvej 2',
+      gender: Gender.MALE,
+    },
+  ],
   court: mockCourt,
   leadInvestigator: 'ben10',
   arrestDate: null,
   requestedCourtDate: null,
   requestedValidToDate: '2020-10-24T12:31:00Z',
   lawsBroken: null,
-  custodyProvisions: [],
+  legalProvisions: [],
   requestedCustodyRestrictions: [CaseCustodyRestrictions.MEDIA],
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: null,
   prosecutor: null,
   courtCaseNumber: null,
   courtDate: '2020-09-16T19:51:28.224Z',
@@ -213,7 +254,7 @@ const testCase3 = {
   courtAttendees: null,
   courtRoom: '999',
   prosecutorDemands: null,
-  accusedPleaAnnouncement: null,
+  accusedBookings: null,
   litigationPresentations: null,
   courtCaseFacts: null,
   courtLegalArguments: null,
@@ -221,7 +262,6 @@ const testCase3 = {
   decision: null,
   validToDate: null,
   isolationToDate: '2020-09-16T19:51:00.000Z',
-  custodyRestrictions: null,
   accusedAppealDecision: null,
   accusedAppealAnnouncement: null,
   prosecutorAppealDecision: null,
@@ -238,20 +278,28 @@ const testCase4 = {
   type: CaseType.CUSTODY,
   state: CaseState.REJECTED,
   policeCaseNumber: 'string',
-  accusedNationalId: 'string',
-  accusedName: 'Jon Harring',
-  accusedAddress: 'Harringvej 2',
-  accusedGender: CaseGender.MALE,
+  defendants: [
+    {
+      nationalId: 'string',
+      name: 'Jon Harring',
+      aaddress: 'Harringvej 2',
+      gender: Gender.MALE,
+    },
+  ],
   court: mockCourt,
   arrestDate: '2020-09-16T19:51:28.224Z',
   requestedCourtDate: null,
   requestedValidToDate: '2020-09-16',
   lawsBroken: null,
-  custodyProvisions: [],
+  legalProvisions: [],
   requestedCustodyRestrictions: [],
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',
@@ -262,12 +310,11 @@ const testCase4 = {
   courtEndTime: '2020-09-16T19:51:28.224Z',
   courtAttendees: null,
   prosecutorDemands: null,
-  accusedPleaAnnouncement: null,
+  accusedBookings: null,
   litigationPresentations: null,
   ruling: null,
   decision: CaseDecision.REJECTING,
   validToDate: '2020-10-24',
-  custodyRestrictions: [CaseCustodyRestrictions.VISITAION],
   accusedAppealDecision: null,
   accusedAppealAnnouncement: null,
   prosecutorAppealDecision: null,
@@ -275,7 +322,7 @@ const testCase4 = {
   judge: mockJudgeBatman,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
-  files: [
+  caseFiles: [
     {
       id: 'fc96b11c-f750-4867-b767-c5e562a54f09',
       name: 'Screen Recording 2021-04-09 at 14.39.51.mov',
@@ -296,22 +343,30 @@ const testCase5 = {
   created: '2020-09-16T19:50:08.033Z',
   modified: '2020-09-16T19:51:39.466Z',
   type: CaseType.CUSTODY,
-  state: CaseState.RECEIVED,
+  state: CaseState.ACCEPTED,
   policeCaseNumber: 'string',
-  accusedNationalId: 'string',
-  accusedName: 'Jon Harring',
-  accusedAddress: 'Harringvej 2',
-  accusedGender: CaseGender.MALE,
+  defendants: [
+    {
+      nationalId: 'string',
+      name: 'Jon Harring',
+      aaddress: 'Harringvej 2',
+      gender: Gender.MALE,
+    },
+  ],
   court: mockCourt,
   arrestDate: '2020-09-16T19:51:28.224Z',
   requestedCourtDate: '2020-09-12T14:51:00.000Z',
   requestedValidToDate: '2020-09-16',
   lawsBroken: null,
-  custodyProvisions: [],
+  legalProvisions: [],
   requestedCustodyRestrictions: [],
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',
@@ -319,17 +374,17 @@ const testCase5 = {
   courtCaseNumber: null,
   courtDate: null,
   courtStartDate: '2020-09-16',
-  courtEndTime: null,
+  courtEndTime: '2020-09-19T17:50:08.033Z',
   courtAttendees: null,
   prosecutorDemands: null,
-  accusedPleaAnnouncement: null,
+  accusedBookings: null,
   litigationPresentations: null,
   courtCaseFacts: null,
   courtLegalArguments: null,
   ruling: null,
+  rulingDate: '2020-09-20T17:50:08.033Z',
   decision: CaseDecision.ACCEPTING,
   validToDate: '2020-09-25T19:50:08.033Z',
-  custodyRestrictions: [CaseCustodyRestrictions.VISITAION],
   accusedAppealDecision: null,
   accusedAppealAnnouncement: null,
   prosecutorAppealDecision: null,
@@ -337,7 +392,7 @@ const testCase5 = {
   judge: mockJudge,
   defenderName: 'Saul Goodman',
   defenderEmail: 'saul@goodman.com',
-  files: [
+  caseFiles: [
     {
       id: 'fc96b11c-f750-4867-b767-c5e562a54f09',
       name: 'Screen Recording 2021-04-09 at 14.39.51.mov',
@@ -360,20 +415,28 @@ const testCase6 = {
   type: CaseType.CUSTODY,
   state: CaseState.ACCEPTED,
   policeCaseNumber: 'string',
-  accusedNationalId: 'string',
-  accusedName: 'Jon Harring',
-  accusedAddress: 'Harringvej 2',
-  accusedGender: CaseGender.MALE,
+  defendants: [
+    {
+      nationalId: 'string',
+      name: 'Jon Harring',
+      aaddress: 'Harringvej 2',
+      gender: Gender.MALE,
+    },
+  ],
   court: mockCourt,
   arrestDate: null,
   requestedCourtDate: null,
   requestedValidToDate: '2020-09-16',
   lawsBroken: null,
-  custodyProvisions: [],
-  requestedCustodyRestrictions: [],
+  legalProvisions: [],
+  requestedCustodyRestrictions: [CaseCustodyRestrictions.VISITAION],
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',
@@ -384,12 +447,12 @@ const testCase6 = {
   courtEndTime: '2020-09-16T19:51:28.224Z',
   courtAttendees: null,
   prosecutorDemands: null,
-  accusedPleaAnnouncement: null,
+  accusedBookings: null,
   litigationPresentations: null,
   ruling: null,
+  rulingDate: '2020-09-20T17:50:08.033Z',
   decision: CaseDecision.ACCEPTING,
   validToDate: '2020-09-24T19:50:08.033Z',
-  custodyRestrictions: [CaseCustodyRestrictions.VISITAION],
   accusedAppealDecision: null,
   accusedAppealAnnouncement: null,
   prosecutorAppealDecision: null,
@@ -407,20 +470,28 @@ const testCase7 = {
   type: CaseType.CUSTODY,
   state: CaseState.ACCEPTED,
   policeCaseNumber: 'string',
-  accusedNationalId: 'string',
-  accusedName: 'Jon Harring',
-  accusedAddress: 'Harringvej 2',
-  accusedGender: CaseGender.MALE,
+  defendants: [
+    {
+      nationalId: 'string',
+      name: 'Jon Harring',
+      aaddress: 'Harringvej 2',
+      gender: Gender.MALE,
+    },
+  ],
   court: mockCourt,
   arrestDate: '2020-09-16T19:51:28.224Z',
   requestedCourtDate: '2020-09-12T14:51:00.000Z',
   requestedValidToDate: '2020-09-16',
   lawsBroken: null,
-  custodyProvisions: [],
+  legalProvisions: [],
   requestedCustodyRestrictions: [],
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',
@@ -428,15 +499,15 @@ const testCase7 = {
   courtCaseNumber: null,
   courtDate: null,
   courtStartDate: null,
-  courtEndTime: '2020-09-16',
+  courtEndTime: '2020-09-16T17:50:08.033Z',
   courtAttendees: null,
   prosecutorDemands: null,
-  accusedPleaAnnouncement: null,
+  accusedBookings: null,
   litigationPresentations: null,
   ruling: null,
+  rulingDate: '2020-09-20T17:50:08.033Z',
   decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
   validToDate: '2020-09-25T19:50:08.033Z',
-  custodyRestrictions: [CaseCustodyRestrictions.VISITAION],
   accusedAppealDecision: null,
   accusedAppealAnnouncement: null,
   prosecutorAppealDecision: null,
@@ -453,20 +524,28 @@ const testCase8 = {
   type: CaseType.CUSTODY,
   state: CaseState.ACCEPTED,
   policeCaseNumber: 'string',
-  accusedNationalId: 'string',
-  accusedName: 'Jon Harring',
-  accusedAddress: 'Harringvej 2',
-  accusedGender: CaseGender.MALE,
+  defendants: [
+    {
+      nationalId: 'string',
+      name: 'Jon Harring',
+      aaddress: 'Harringvej 2',
+      gender: Gender.MALE,
+    },
+  ],
   court: mockCourt,
   arrestDate: null,
   requestedCourtDate: null,
   requestedValidToDate: '2020-09-16',
   lawsBroken: null,
-  custodyProvisions: [],
+  legalProvisions: [],
   requestedCustodyRestrictions: [],
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',
@@ -477,12 +556,12 @@ const testCase8 = {
   courtEndTime: '2020-09-16T19:51:28.224Z',
   courtAttendees: null,
   prosecutorDemands: null,
-  accusedPleaAnnouncement: null,
+  accusedBookings: null,
   litigationPresentations: null,
   ruling: null,
+  rulingDate: '2020-09-20T17:50:08.033Z',
   decision: CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
   validToDate: '2020-09-24T19:50:08.033Z',
-  custodyRestrictions: [CaseCustodyRestrictions.VISITAION],
   accusedAppealDecision: CaseAppealDecision.ACCEPT,
   accusedAppealAnnouncement: null,
   prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
@@ -496,7 +575,7 @@ const testCase8 = {
   parentCase: {
     validToDate: '2021-01-18T19:50:08.033Z',
   },
-  files: [
+  caseFiles: [
     {
       id: 'fc96b11c-f750-4867-b767-c5e562a54f09',
       name: 'Screen Recording 2021-04-09 at 14.39.51.mov',
@@ -537,21 +616,29 @@ const testCase9 = {
   type: CaseType.CUSTODY,
   state: CaseState.REJECTED,
   policeCaseNumber: '000-0000-0000',
-  accusedNationalId: '000000-0000',
-  accusedName: 'Jon Harring',
-  accusedAddress: 'Harringvej 2',
-  accusedGender: CaseGender.MALE,
+  defendants: [
+    {
+      nationalId: '000000-0000',
+      name: 'Jon Harring',
+      aaddress: 'Harringvej 2',
+      gender: Gender.MALE,
+    },
+  ],
   court: mockCourt,
   arrestDate: '2020-09-16T19:51:28.224Z',
   requestedCourtDate: '2020-09-12T14:51:00.000Z',
   requestedValidToDate: '2020-09-16T00:00:00.000Z',
   demands: 'Þess er krafist ...',
   lawsBroken: null,
-  custodyProvisions: [],
+  legalProvisions: [],
   requestedCustodyRestrictions: [],
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',
@@ -562,12 +649,11 @@ const testCase9 = {
   courtEndTime: null,
   courtAttendees: null,
   prosecutorDemands: null,
-  accusedPleaAnnouncement: null,
+  accusedBookings: null,
   litigationPresentations: null,
   ruling: null,
   decision: CaseDecision.REJECTING,
   validToDate: '2020-09-16T00:00:00.000Z',
-  custodyRestrictions: [CaseCustodyRestrictions.VISITAION],
   accusedAppealDecision: null,
   accusedAppealAnnouncement: null,
   prosecutorAppealDecision: null,
@@ -584,20 +670,28 @@ const testCase10 = {
   type: CaseType.TRAVEL_BAN,
   state: CaseState.ACCEPTED,
   policeCaseNumber: 'string',
-  accusedNationalId: 'string',
-  accusedName: 'Jon Harring',
-  accusedAddress: 'Harringvej 2',
-  accusedGender: CaseGender.MALE,
+  defendants: [
+    {
+      nationalId: 'string',
+      name: 'Jon Harring',
+      aaddress: 'Harringvej 2',
+      gender: Gender.MALE,
+    },
+  ],
   court: mockCourt,
   arrestDate: null,
   requestedCourtDate: null,
   requestedValidToDate: '2020-09-16',
   lawsBroken: null,
-  custodyProvisions: [],
+  legalProvisions: [],
   requestedCustodyRestrictions: [],
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',
@@ -608,12 +702,11 @@ const testCase10 = {
   courtEndTime: '2020-09-16T19:51:28.224Z',
   courtAttendees: null,
   prosecutorDemands: null,
-  accusedPleaAnnouncement: null,
+  accusedBookings: null,
   litigationPresentations: null,
   ruling: null,
   decision: CaseDecision.ACCEPTING,
   validToDate: '2020-09-24T19:50:08.033Z',
-  custodyRestrictions: [CaseCustodyRestrictions.VISITAION],
   accusedAppealDecision: null,
   accusedAppealAnnouncement: null,
   prosecutorAppealDecision: null,
@@ -631,20 +724,28 @@ const testCase11 = {
   type: CaseType.CUSTODY,
   state: CaseState.REJECTED,
   policeCaseNumber: '000-0000-0000',
-  accusedNationalId: '000000-0000',
-  accusedName: 'Jon Harring',
-  accusedAddress: 'Harringvej 2',
-  accusedGender: CaseGender.MALE,
+  defendants: [
+    {
+      nationalId: '000000-0000',
+      name: 'Jon Harring',
+      aaddress: 'Harringvej 2',
+      gender: Gender.MALE,
+    },
+  ],
   court: mockCourt,
   arrestDate: '2020-09-16T19:51:28.224Z',
   requestedCourtDate: '2020-09-12T14:51:00.000Z',
   requestedValidToDate: '2020-09-16T19:51:28.224Z',
   lawsBroken: null,
-  custodyProvisions: [],
+  legalProvisions: [],
   requestedCustodyRestrictions: [],
   caseFacts: null,
   legalArguments: null,
   comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
   prosecutor: {
     name: 'Ruth Bader Ginsburg',
     title: 'saksóknari',
@@ -655,12 +756,64 @@ const testCase11 = {
   courtEndTime: null,
   courtAttendees: null,
   prosecutorDemands: null,
-  accusedPleaAnnouncement: null,
+  accusedBookings: null,
   litigationPresentations: null,
   ruling: null,
   decision: CaseDecision.REJECTING,
   validToDate: null,
-  custodyRestrictions: [CaseCustodyRestrictions.VISITAION],
+  accusedAppealDecision: null,
+  accusedAppealAnnouncement: null,
+  prosecutorAppealDecision: null,
+  prosecutorAppealAnnouncement: null,
+  judge: null,
+  defenderName: 'Saul Goodman',
+  defenderEmail: 'saul@goodman.com',
+}
+
+const testCase12 = {
+  id: 'test_id_11',
+  created: '2020-09-16T19:50:08.033Z',
+  modified: '2020-09-16T19:51:39.466Z',
+  type: CaseType.CUSTODY,
+  state: CaseState.DISMISSED,
+  policeCaseNumber: '000-0000-0000',
+  defendants: [
+    {
+      nationalId: '000000-0000',
+      name: 'Jon Harring',
+      aaddress: 'Harringvej 2',
+      gender: Gender.MALE,
+    },
+  ],
+  court: mockCourt,
+  arrestDate: '2020-09-16T19:51:28.224Z',
+  requestedCourtDate: '2020-09-12T14:51:00.000Z',
+  requestedValidToDate: '2020-09-16T19:51:28.224Z',
+  lawsBroken: null,
+  legalProvisions: [],
+  requestedCustodyRestrictions: [],
+  caseFacts: null,
+  legalArguments: null,
+  comments: 'string',
+  creatingProsecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
+  prosecutor: {
+    name: 'Ruth Bader Ginsburg',
+    title: 'saksóknari',
+  },
+  courtCaseNumber: null,
+  courtDate: null,
+  courtStartDate: null,
+  courtEndTime: '2020-09-16T19:51:28.224Z',
+  courtAttendees: null,
+  prosecutorDemands: null,
+  accusedBookings: null,
+  litigationPresentations: null,
+  ruling: null,
+  decision: CaseDecision.DISMISSING,
+  validToDate: null,
   accusedAppealDecision: null,
   accusedAppealAnnouncement: null,
   prosecutorAppealDecision: null,
@@ -691,6 +844,32 @@ export const mockJudgeQuery = [
     result: {
       data: {
         currentUser: mockJudge,
+      },
+    },
+  },
+]
+
+export const mockHighCourtQuery = [
+  {
+    request: {
+      query: CurrentUserQuery,
+    },
+    result: {
+      data: {
+        currentUser: mockHighCourtUser,
+      },
+    },
+  },
+]
+
+export const mockPrisonUserQuery = [
+  {
+    request: {
+      query: CurrentUserQuery,
+    },
+    result: {
+      data: {
+        currentUser: mockPrisonUser,
       },
     },
   },
@@ -742,7 +921,7 @@ export const mockUsersQuery = [
     },
     result: {
       data: {
-        users: [mockProsecutor, mockJudge, mockRegistrar],
+        users: [mockProsecutor, mockJudge, mockRegistrar, mockHighCourtUser],
       },
     },
   },
@@ -867,6 +1046,17 @@ export const mockCaseQueries = [
     result: {
       data: {
         case: testCase11,
+      },
+    },
+  },
+  {
+    request: {
+      query: CaseQuery,
+      variables: { input: { id: 'test_id_12' } },
+    },
+    result: {
+      data: {
+        case: testCase12,
       },
     },
   },

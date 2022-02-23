@@ -8,9 +8,8 @@ import {
   ServicePortalPath,
   EducationCard,
   EmptyState,
-  m,
 } from '@island.is/service-portal/core'
-import * as styles from './CareerCards.treat'
+import * as styles from './CareerCards.css'
 import { defineMessage } from 'react-intl'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
@@ -23,6 +22,7 @@ const EducationExamFamilyOverviewsQuery = gql`
       organizationType
       organizationName
       yearInterval
+      familyIndex
     }
   }
 `
@@ -51,8 +51,8 @@ const CareerCards = () => {
             CTA={
               <Link
                 to={ServicePortalPath.EducationStudentAssessment.replace(
-                  ':nationalId',
-                  member.nationalId,
+                  ':familyIndex',
+                  member.familyIndex.toString(),
                 )}
                 className={styles.link}
               >

@@ -5,7 +5,7 @@ import { Eligibility } from './eligibility.model'
 @ObjectType()
 export class DrivingLicense {
   @Field(() => ID)
-  id!: string
+  id!: number
 
   @Field()
   name!: string
@@ -16,9 +16,6 @@ export class DrivingLicense {
   @Field()
   expires!: string
 
-  @Field({ nullable: true })
-  isProvisional!: boolean | null
-
   @Field(() => [Eligibility])
-  eligibilities!: Eligibility[]
+  categories!: Eligibility[]
 }

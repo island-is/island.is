@@ -1,20 +1,21 @@
-import { DEFAULT_FULL_SCHEMA, dump, safeLoad, safeLoadAll } from 'js-yaml'
+import { dump, load } from 'js-yaml'
 import { postgresIdentifier, serializeService } from './map-to-values'
 import { PostgresInfo, Service } from './types/input-types'
 import { UberChart } from './uber-chart'
-import { ValueFile, FeatureKubeJob } from './types/output-types'
+import { ValueFile, FeatureKubeJob, Services } from './types/output-types'
 
 const MAX_LEVEL_DEPENDENCIES = 20
+const dumpOpts = {
+  sortKeys: true,
+  noRefs: true,
+  forceQuotes: true,
+}
 
 const renderValueFile = (
   uberChart: UberChart,
   ...services: Service[]
 ): ValueFile => {
-  // const enabledGrantNamespaces = services
-  //   .filter((s) => s.serviceDef.grantNamespacesEnabled[uberChart.env.type])
-  //   .map((s) => s.serviceDef.namespace)
-  //   .forEach(ns => services.filter(s => s.serviceDef.namespace === ns).forEach(s => s.grantNamespacesEnabled))
-  const helmServices: ValueFile = services.reduce((acc, s) => {
+  const helmServices: Services = services.reduce((acc, s) => {
     const values = serializeService(s, uberChart)
     switch (values.type) {
       case 'error':
@@ -41,16 +42,21 @@ const renderValueFile = (
           s.grantNamespaces = grantNamespaces
         }),
     )
-  return helmServices
+  return {
+    namespaces: Array.from(
+      Object.values(helmServices)
+        .map((s) => s.namespace)
+        .filter((n) => n)
+        .reduce((prev, cur) => prev.add(cur), new Set<string>())
+        .values(),
+    ),
+    services: helmServices,
+  }
 }
 
 export const reformatYaml = (content: string): string => {
-  const obj = safeLoad(content, { json: true })
-  return dump(obj, {
-    sortKeys: true,
-    noRefs: true,
-    schema: DEFAULT_FULL_SCHEMA,
-  })
+  const obj = load(content, { json: true })
+  return dump(obj, dumpOpts)
 }
 
 export const generateYamlForEnv = (
@@ -60,12 +66,16 @@ export const generateYamlForEnv = (
   return renderValueFile(uberChart, ...services)
 }
 
-export const dumpYaml = (valueFile: ValueFile | FeatureKubeJob) =>
-  dump(valueFile, {
-    sortKeys: true,
-    noRefs: true,
-    schema: DEFAULT_FULL_SCHEMA,
-  })
+export const dumpYaml = (ch: UberChart, valueFile: ValueFile) => {
+  const { namespaces, services } = valueFile
+  const namespaceLabels = ch.env.feature ? { namespaceType: 'feature' } : {}
+  return dump(
+    { namespaces: { namespaces, labels: namespaceLabels }, ...services },
+    dumpOpts,
+  )
+}
+
+export const dumpJobYaml = (job: FeatureKubeJob) => dump(job, dumpOpts)
 
 const findDependencies = (
   uberChart: UberChart,
@@ -106,43 +116,68 @@ export const getDependantServices = (
     )
 }
 
+export function featureSpecificServiceDef(
+  feature: string,
+  featureSpecificServices: Service[],
+) {
+  const namespace = `feature-${feature}`
+  featureSpecificServices.forEach((s) => {
+    s.serviceDef.namespace = namespace
+    s.serviceDef.replicaCount = { min: 1, max: 2, default: 1 }
+  })
+  featureSpecificServices.forEach((s) => {
+    Object.entries(s.serviceDef.ingress).forEach(([name, ingress]) => {
+      if (!Array.isArray(ingress.host.dev)) {
+        ingress.host.dev = [ingress.host.dev]
+      }
+      ingress.host.dev = ingress.host.dev.map((host) => `${feature}-${host}`)
+    })
+  })
+  featureSpecificServices.forEach((s) => {
+    s.serviceDef.postgres = getPostgresInfoForFeature(
+      feature,
+      s.serviceDef.postgres,
+    )
+    if (s.serviceDef.initContainers) {
+      s.serviceDef.initContainers.postgres = getPostgresInfoForFeature(
+        feature,
+        s.serviceDef.initContainers.postgres,
+      )
+    }
+  })
+}
+
+function featureSpecificServicesPrepare(
+  uberChart: UberChart,
+  habitat: Service[],
+  services: Service[],
+  feature: string,
+) {
+  const featureSpecificServices = getDependantServices(
+    uberChart,
+    habitat,
+    ...services,
+  )
+  featureSpecificServiceDef(feature, featureSpecificServices)
+  return featureSpecificServices
+}
+
 export const generateYamlForFeature = (
   uberChart: UberChart,
   habitat: Service[],
-  ...services: Service[]
+  services: Service[],
+  excludedServices: Service[] = [],
 ) => {
   const feature = uberChart.env.feature
   if (typeof feature !== 'undefined') {
-    const featureSpecificServices = getDependantServices(
+    const excludedServiceNames = excludedServices.map((f) => f.serviceDef.name)
+
+    const featureSpecificServices = featureSpecificServicesPrepare(
       uberChart,
       habitat,
-      ...services,
-    )
-    const namespace = `feature-${feature}`
-    featureSpecificServices.forEach((s) => {
-      s.serviceDef.namespace = namespace
-      s.serviceDef.replicaCount = { min: 1, max: 2, default: 1 }
-    })
-    featureSpecificServices.forEach((s) => {
-      Object.entries(s.serviceDef.ingress).forEach(([name, ingress]) => {
-        if (!Array.isArray(ingress.host.dev)) {
-          ingress.host.dev = [ingress.host.dev]
-        }
-        ingress.host.dev = ingress.host.dev.map((host) => `${feature}-${host}`)
-      })
-    })
-    featureSpecificServices.forEach((s) => {
-      s.serviceDef.postgres = getPostgresInfoForFeature(
-        feature,
-        s.serviceDef.postgres,
-      )
-      if (s.serviceDef.initContainers) {
-        s.serviceDef.initContainers.postgres = getPostgresInfoForFeature(
-          feature,
-          s.serviceDef.initContainers.postgres,
-        )
-      }
-    })
+      services,
+      feature,
+    ).filter((f) => !excludedServiceNames.includes(f.serviceDef.name))
     return renderValueFile(uberChart, ...featureSpecificServices)
   } else {
     throw new Error('Feature deployment with a feature name not defined')

@@ -1,16 +1,27 @@
-import { Module } from '@nestjs/common'
+import { forwardRef, Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { ApplicationModel } from './models'
-import { ApplicationEventModule } from '../applicationEvent'
+import { ApplicationModel } from './models/application.model'
+import { EmailModule } from '@island.is/email-service'
 import { ApplicationController } from './application.controller'
 import { ApplicationService } from './application.service'
-import { FileModule } from '../file'
+import { environment } from '../../../environments'
+import {
+  AmountModule,
+  MunicipalityModule,
+  FileModule,
+  StaffModule,
+  ApplicationEventModule,
+} from '../index'
 
 @Module({
   imports: [
-    FileModule,
-    ApplicationEventModule,
+    forwardRef(() => StaffModule),
+    forwardRef(() => FileModule),
+    EmailModule.register(environment.emailOptions),
+    forwardRef(() => ApplicationEventModule),
+    forwardRef(() => MunicipalityModule),
+    forwardRef(() => AmountModule),
     SequelizeModule.forFeature([ApplicationModel]),
   ],
   providers: [ApplicationService],

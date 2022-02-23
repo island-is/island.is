@@ -1,22 +1,60 @@
-import { IsNotEmpty, IsString, IsOptional, IsNumber } from 'class-validator'
+import { IsNotEmpty, IsString, IsOptional } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { ApplicationState } from '@island.is/financial-aid/shared'
+import {
+  ApplicationEventType,
+  ApplicationState,
+} from '@island.is/financial-aid/shared/lib'
+import { CreateAmountDto } from '../../amount'
 
 export class UpdateApplicationDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @ApiProperty()
   readonly state: ApplicationState
 
-  @IsOptional()
-  @IsNumber()
+  @IsNotEmpty()
+  @IsString()
   @ApiProperty()
-  readonly amount: number
+  readonly event: ApplicationEventType
 
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly rejection: string
+  readonly rejection?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly comment?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  staffId?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly spouseFormComment?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly spouseEmail?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly spousePhoneNumber?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly spouseName?: string
+
+  @IsOptional()
+  @ApiProperty()
+  readonly amount?: CreateAmountDto
 }

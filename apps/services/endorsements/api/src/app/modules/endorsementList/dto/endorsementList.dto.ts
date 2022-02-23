@@ -5,9 +5,10 @@ import {
   ValidateNested,
   IsArray,
   IsObject,
+  IsBoolean,
+  IsDate,
 } from 'class-validator'
 import { Type } from 'class-transformer'
-import { ValidationRuleDto } from './validationRule.dto'
 import { ApiProperty } from '@nestjs/swagger'
 import { EndorsementTag } from '../constants'
 import { EndorsementMetadataDto } from './endorsementMetadata.dto'
@@ -16,7 +17,7 @@ export class EndorsementListDto {
   @IsString()
   title!: string
 
-  @ApiProperty({ type: String, nullable: true })
+  @ApiProperty({ type: String, nullable: true, required: false })
   @IsOptional()
   @IsString()
   description = ''
@@ -34,15 +35,22 @@ export class EndorsementListDto {
   @IsEnum(EndorsementTag, { each: true })
   tags = [] as EndorsementTag[]
 
-  @ApiProperty({ type: [ValidationRuleDto], nullable: true })
-  @IsOptional()
-  @ValidateNested({ each: true })
-  @Type(() => ValidationRuleDto)
-  @IsArray()
-  validationRules = [] as ValidationRuleDto[]
-
   @ApiProperty({ nullable: true })
   @IsOptional()
   @IsObject()
   meta = {}
+
+  @ApiProperty({ type: Date })
+  @Type(() => Date)
+  @IsDate()
+  closedDate!: Date
+
+  @ApiProperty({ type: Date })
+  @Type(() => Date)
+  @IsDate()
+  openedDate!: Date
+
+  @ApiProperty({ type: Boolean })
+  @IsBoolean()
+  adminLock!: boolean
 }
