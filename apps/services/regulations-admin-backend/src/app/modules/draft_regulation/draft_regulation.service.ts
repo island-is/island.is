@@ -115,16 +115,20 @@ export class DraftRegulationService {
     return drafts
   }
 
-  async findById(id: string): Promise<RegulationDraft | null> {
-    this.logger.debug(`Finding DraftRegulation ${id}`)
-
-    const draftRegulation = await this.draftRegulationModel.findOne({
+  async findDraftById(id: string): Promise<DraftRegulationModel | null> {
+    return await this.draftRegulationModel.findOne({
       where: { id },
       include: [
         { model: DraftRegulationChangeModel },
         { model: DraftRegulationCancelModel },
       ],
     })
+  }
+
+  async findById(id: string): Promise<RegulationDraft | null> {
+    this.logger.debug(`Finding DraftRegulation ${id}`)
+
+    const draftRegulation = await this.findDraftById(id)
 
     if (!draftRegulation) {
       return null
@@ -247,9 +251,10 @@ export class DraftRegulationService {
     this.logger.debug(`Updating DraftRegulation ${id}`)
 
     const nationalId = user?.nationalId as Kennitala
+    const draftRegulation = await this.findDraftById(id)
 
-    if (update.authors && !update.authors.includes(nationalId)) {
-      update.authors.push(nationalId)
+    if (draftRegulation && !draftRegulation.authors.includes(nationalId)) {
+      update.authors = [...draftRegulation.authors, nationalId]
     }
 
     const updateData: Partial<DraftRegulationModel> = {
