@@ -176,11 +176,8 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
   const isOnFirstStep = stepperMachine.initialState.value === currentState.value
   const [selectedOption, setSelectedOption] = useState<StepOption | null>(null)
   const stepOptions = useMemo<StepOption[]>(
-    () =>
-      currentStepType !== STEP_TYPES.ANSWER
-        ? getStepOptions(currentStep, activeLocale, optionsFromNamespace)
-        : [],
-    [activeLocale, currentStep, currentStepType, optionsFromNamespace],
+    () => getStepOptions(currentStep, activeLocale, optionsFromNamespace),
+    [activeLocale, currentStep, optionsFromNamespace],
   )
 
   const [
@@ -334,6 +331,8 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
         if (ev.detail === 4) {
           localStorage.setItem(STEPPER_HELPER_ENABLED_KEY, JSON.stringify(true))
           setShowStepperConfigHelper(STEPPER_HELPER_ENABLED)
+
+          // Force a re-render so that the StepperHelper gets rendered
           setCounter((c) => c + 1)
         }
       }}
@@ -342,71 +341,65 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
     </Box>
   )
 
+  const renderCurrentStepOptions = () => {
+    if (currentStepType === STEP_TYPES.QUESTION_RADIO)
+      return stepOptions.map(function (option, i) {
+        const key = `step-option-${i}`
+        return (
+          <RadioButton
+            key={key}
+            name={key}
+            large={true}
+            hasError={
+              hasClickedContinueWithoutSelecting && selectedOption === null
+            }
+            label={option.label}
+            checked={option.slug === selectedOption?.slug}
+            onChange={() => setSelectedOption(option)}
+          />
+        )
+      })
+
+    if (currentStepType === STEP_TYPES.QUESTION_DROPDOWN)
+      return (
+        <Select
+          name="step-option-select"
+          noOptionsMessage={
+            activeLocale === 'en' ? 'No options' : 'Enginn valmöguleiki'
+          }
+          value={{
+            label: selectedOption?.label ?? '',
+            value: selectedOption?.slug ?? '',
+          }}
+          onChange={(option: ValueType<StepOptionSelectItem>) => {
+            const stepOptionSelectItem = option as StepOptionSelectItem
+            const newSelectedOption = {
+              label: stepOptionSelectItem.label,
+              slug: stepOptionSelectItem.value,
+              transition: stepOptionSelectItem.transition,
+            }
+            setSelectedOption(newSelectedOption)
+          }}
+          options={stepOptions.map((option) => ({
+            label: option.label,
+            value: option.slug,
+            transition: option.transition,
+          }))}
+        />
+      )
+  }
+
   return (
     <Box className={styles.container}>
       {currentStep && <QuestionTitle />}
 
-      {currentStepType === STEP_TYPES.QUESTION_RADIO && (
-        <>
-          {stepOptions.map(function (option, i) {
-            const key = `step-option-${i}`
-            return (
-              <RadioButton
-                key={key}
-                name={key}
-                large={true}
-                hasError={
-                  hasClickedContinueWithoutSelecting && selectedOption === null
-                }
-                label={option.label}
-                checked={option.slug === selectedOption?.slug}
-                onChange={() => setSelectedOption(option)}
-              />
-            )
-          })}
-          {transitionErrorMessage && (
-            <Text marginBottom={2} marginTop={2} color="red400">
-              {transitionErrorMessage}
-            </Text>
-          )}
-          <ContinueButton />
-        </>
+      {renderCurrentStepOptions()}
+      {transitionErrorMessage && (
+        <Text marginBottom={2} marginTop={2} color="red400">
+          {transitionErrorMessage}
+        </Text>
       )}
-
-      {currentStepType === STEP_TYPES.QUESTION_DROPDOWN && (
-        <>
-          <Select
-            name="step-option-select"
-            noOptionsMessage={
-              activeLocale === 'en' ? 'No options' : 'Enginn valmöguleiki'
-            }
-            value={{
-              label: selectedOption?.label,
-              value: selectedOption?.slug,
-            }}
-            onChange={(option: ValueType<StepOptionSelectItem>) => {
-              const stepOptionSelectItem = option as StepOptionSelectItem
-              const newSelectedOption = {
-                label: stepOptionSelectItem.label,
-                slug: stepOptionSelectItem.value,
-                transition: stepOptionSelectItem.transition,
-              }
-              setSelectedOption(newSelectedOption)
-            }}
-            options={stepOptions.map((option) => ({
-              label: option.label,
-              value: option.slug,
-              transition: option.transition,
-            }))}
-          />
-          {transitionErrorMessage && (
-            <Text marginBottom={2} marginTop={2} color="red400">
-              {transitionErrorMessage}
-            </Text>
-          )}
-          <ContinueButton />
-        </>
-      )}
+      {stepOptions?.length > 0 && <ContinueButton />}
 
       {!isOnFirstStep && (
         <Box marginTop={10}>
