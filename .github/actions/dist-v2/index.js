@@ -88890,6 +88890,7 @@ class LocalRunner {
 ;// CONCATENATED MODULE: ./v2/change-detection.ts
 
 
+
 const change_detection_app = src_default()('change-detection');
 function findBestGoodRefBranch(commitScore, git, githubApi, headBranch, baseBranch) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -88931,7 +88932,9 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
             try {
                 const tempBranch = `${headBranch}-${Math.round(Math.random() * 1000000)}`;
                 yield git.checkoutBranch(tempBranch, prRun.base_commit);
+                (0,external_child_process_.execSync)(`which git; whoami`, { stdio: 'inherit' });
                 yield git.merge(prRun.head_commit);
+                (0,external_child_process_.execSync)(`which git; whoami`, { stdio: 'inherit' });
                 log(`Simulated previous PR merge commit`);
                 const lastMerge = yield git.log({ maxCount: 1 });
                 const lastMergeCommit = lastMerge.latest;
@@ -88987,7 +88990,7 @@ class SimpleGit {
         this.init = this._method('init', '.');
         this.checkoutLocalBranch = this._method('checkout', '-b');
         this.checkoutBranch = this._method('checkout', '-b');
-        this.merge = this._method('checkout', '-b');
+        this.merge = this._method('merge');
         this.checkout = this._method('checkout');
     }
     git(...args) {
@@ -88998,6 +89001,7 @@ class SimpleGit {
                 const out = (0,external_child_process_.execSync)(command, {
                     cwd: this.cwd,
                     encoding: 'utf-8',
+                    stdio: 'inherit',
                 });
                 console.log(`Out: ${out}`);
                 return Promise.resolve(out);

@@ -41,6 +41,7 @@ jobs:
           ls -l `which node`
           ls -l `which git`
           git --version
+          whoami
           git branch --show-current
           git rev-parse --abbrev-ref HEAD
 
@@ -101,6 +102,7 @@ jobs:
           export HEAD_REF="$GITHUB_HEAD_REF"
           export BASE_REF="$GITHUB_BASE_REF"
           export PR_REF=$GITHUB_SHA
+          which git
           source ./scripts/ci/00_prepare-base-tags.sh
           git checkout $GITHUB_SHA
           echo "BASE=$BASE" >> $GITHUB_ENV

@@ -2,6 +2,7 @@
 import { SimpleGit } from './simple-git'
 import { GitActionStatus } from './git-action-status'
 import Debug from 'debug'
+import { execSync } from 'child_process'
 
 const app = Debug('change-detection')
 type LastGoodBuild =
@@ -82,7 +83,9 @@ export async function findBestGoodRefPR(
     try {
       const tempBranch = `${headBranch}-${Math.round(Math.random() * 1000000)}`
       await git.checkoutBranch(tempBranch, prRun.base_commit)
+      execSync(`which git; whoami`, { stdio: 'inherit' })
       await git.merge(prRun.head_commit)
+      execSync(`which git; whoami`, { stdio: 'inherit' })
       log(`Simulated previous PR merge commit`)
       const lastMerge = await git.log({ maxCount: 1 })
       const lastMergeCommit = lastMerge.latest

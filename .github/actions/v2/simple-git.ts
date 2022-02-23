@@ -9,6 +9,7 @@ export class SimpleGit {
       const out = execSync(command, {
         cwd: this.cwd,
         encoding: 'utf-8',
+        stdio: 'inherit',
       })
       console.log(`Out: ${out}`)
       return Promise.resolve(out)
@@ -33,7 +34,7 @@ export class SimpleGit {
   }
   checkoutLocalBranch = this._method('checkout', '-b')
   checkoutBranch = this._method('checkout', '-b')
-  merge = this._method('checkout', '-b')
+  merge = this._method('merge')
   checkout = this._method('checkout')
   async log(params: { maxCount: number }) {
     const out = await this.git(
