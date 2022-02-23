@@ -88994,7 +88994,7 @@ var dist_node = __nccwpck_require__(1231);
 
 
 class SimpleGit {
-    constructor(cwd, shell = `'/usr/bin/bash',`, _log = src_default()('simple-git')) {
+    constructor(cwd, shell = `/usr/bin/bash`, _log = src_default()('simple-git')) {
         this.cwd = cwd;
         this.shell = shell;
         this._log = _log;

@@ -4,7 +4,7 @@ import Debug from 'debug'
 export class SimpleGit {
   constructor(
     private cwd: string,
-    private shell: string = `'/usr/bin/bash',`,
+    private shell: string = `/usr/bin/bash`,
     private _log = Debug('simple-git'),
   ) {}
   async git(...args: string[]) {
