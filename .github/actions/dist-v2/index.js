@@ -93712,9 +93712,26 @@ var dist_node = __nccwpck_require__(1231);
 
 (() => __awaiter(void 0, void 0, void 0, function* () {
     const runner = new LocalRunner(new dist_node/* Octokit */.v());
+    const progress = ({ method, stage, progress }) => {
+        console.log(`git.${method} ${stage} stage ${progress}% complete`);
+    };
     let git = esm_default({
         baseDir: `${__dirname}/../../..`,
         maxConcurrentProcesses: 1,
+        progress: progress,
+        errors(error, result) {
+            if (error)
+                return error;
+            // customise the `errorCode` values to treat as success
+            if (result.exitCode === 0) {
+                return;
+            }
+            // the default error messages include both stdOut and stdErr, but that
+            // can be changed here, or completely replaced with some other content
+            console.log(`Error: ${result.stdErr.toString()}`);
+            console.log(`Info: ${result.stdOut.toString()}`);
+            return Buffer.concat([...result.stdOut, ...result.stdErr]);
+        },
     });
     const diffWeight = (s) => s.length;
     const rev = process.env.GITHUB_EVENT_NAME === 'pull_request'
