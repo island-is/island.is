@@ -27,6 +27,7 @@ interface Props {
   buttonText: string
   mobile?: string
   telDirty: (isDirty: boolean) => void
+  disabled?: boolean
 }
 
 interface FormErrors {
@@ -34,7 +35,12 @@ interface FormErrors {
   code: string | undefined
 }
 
-export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
+export const InputPhone: FC<Props> = ({
+  buttonText,
+  mobile,
+  disabled,
+  telDirty,
+}) => {
   useNamespaces('sp.settings')
   const { handleSubmit, control, errors, getValues } = useForm()
   const {
@@ -191,7 +197,7 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
                   format="### ####"
                   required={false}
                   defaultValue={mobile}
-                  disabled={verificationValid}
+                  disabled={verificationValid || disabled}
                   size="xs"
                   rules={{
                     minLength: {
@@ -225,10 +231,10 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
               paddingTop={2}
             >
               {!createLoading && !deleteLoading && (
-                <button type="submit" disabled={verificationValid}>
+                <button type="submit" disabled={verificationValid || disabled}>
                   <Button
                     variant="text"
-                    disabled={verificationValid}
+                    disabled={verificationValid || disabled}
                     size="small"
                   >
                     {telInternal
@@ -253,6 +259,7 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
                   }}
                   variant="text"
                   size="small"
+                  disabled={disabled}
                 >
                   {formatMessage(msg.buttonChange)}
                 </Button>
@@ -295,7 +302,7 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
                   placeholder={formatMessage(m.verificationCode)}
                   defaultValue=""
                   error={errors.code?.message || formErrors.code}
-                  disabled={verificationValid}
+                  disabled={verificationValid || disabled}
                   size="xs"
                   onChange={(inp) => {
                     setCodeInternal(inp.target.value)
@@ -324,11 +331,14 @@ export const InputPhone: FC<Props> = ({ buttonText, mobile, telDirty }) => {
                         type="filled"
                       />
                     ) : (
-                      <button type="submit" disabled={!codeInternal}>
+                      <button
+                        type="submit"
+                        disabled={!codeInternal || disabled}
+                      >
                         <Button
                           variant="text"
                           size="small"
-                          disabled={!codeInternal}
+                          disabled={!codeInternal || disabled}
                         >
                           {formatMessage(m.confirmCode)}
                         </Button>

@@ -25,6 +25,7 @@ interface Props {
   canDrop?: boolean
   title: string
   showDetails?: boolean
+  setFormLoading?: (isLoading: boolean) => void
 }
 
 export const ProfileForm: FC<Props> = ({
@@ -33,17 +34,31 @@ export const ProfileForm: FC<Props> = ({
   canDrop,
   title,
   showDetails,
+  setFormLoading,
 }) => {
   useNamespaces('sp.settings')
   const [telDirty, setTelDirty] = useState(true)
   const [emailDirty, setEmailDirty] = useState(true)
   const [showDropModal, setShowDropModal] = useState<DropModalType>()
-  const { updateOrCreateUserProfile } = useUpdateOrCreateUserProfile()
-  const { deleteIslykillValue } = useDeleteIslykillValue()
+  const {
+    updateOrCreateUserProfile,
+    loading: updateLoading,
+  } = useUpdateOrCreateUserProfile()
+  const {
+    deleteIslykillValue,
+    loading: deleteLoading,
+  } = useDeleteIslykillValue()
 
   const { data: userProfile, loading: userLoading, refetch } = useUserProfile()
 
   const { formatMessage } = useLocale()
+
+  useEffect(() => {
+    const isLoadingForm = updateLoading || deleteLoading
+    if (setFormLoading) {
+      setFormLoading(isLoadingForm)
+    }
+  }, [updateLoading, deleteLoading])
 
   useEffect(() => {
     if (canDrop && onCloseOverlay) {
@@ -142,6 +157,7 @@ export const ProfileForm: FC<Props> = ({
                 buttonText={formatMessage(msg.saveEmail)}
                 email={userProfile?.email || ''}
                 emailDirty={(isDirty) => setEmailDirty(isDirty)}
+                disabled={updateLoading || deleteLoading}
               />
             )}
           </InputSection>
@@ -155,6 +171,7 @@ export const ProfileForm: FC<Props> = ({
                 buttonText={formatMessage(msg.saveTel)}
                 mobile={parseNumber(userProfile?.mobilePhoneNumber || '')}
                 telDirty={(isDirty) => setTelDirty(isDirty)}
+                disabled={updateLoading || deleteLoading}
               />
             )}
           </InputSection>

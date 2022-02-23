@@ -23,6 +23,7 @@ interface Props {
   buttonText: string
   email: string
   emailDirty: (isDirty: boolean) => void
+  disabled?: boolean
 }
 
 interface FormErrors {
@@ -30,7 +31,12 @@ interface FormErrors {
   code: string | undefined
 }
 
-export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
+export const InputEmail: FC<Props> = ({
+  buttonText,
+  email,
+  disabled,
+  emailDirty,
+}) => {
   useNamespaces('sp.settings')
   const { handleSubmit, control, errors, getValues } = useForm()
   const {
@@ -174,7 +180,7 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
               name="email"
               required={false}
               type="email"
-              disabled={verificationValid}
+              disabled={verificationValid || disabled}
               rules={{
                 pattern: {
                   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
@@ -203,7 +209,7 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
                 <Button
                   variant="text"
                   size="small"
-                  disabled={verificationValid}
+                  disabled={verificationValid || disabled}
                   onClick={() =>
                     handleSendEmailVerification({ email: getValues().email })
                   }
@@ -234,6 +240,7 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
                   }}
                   variant="text"
                   size="small"
+                  disabled={disabled}
                 >
                   {formatMessage(msg.buttonChange)}
                 </Button>
@@ -277,7 +284,7 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
                   placeholder={formatMessage(m.verificationCode)}
                   defaultValue=""
                   error={errors.code?.message || formErrors.code}
-                  disabled={verificationValid}
+                  disabled={verificationValid || disabled}
                   size="xs"
                   onChange={(inp) => {
                     setCodeInternal(inp.target.value)
@@ -306,11 +313,14 @@ export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
                         type="filled"
                       />
                     ) : (
-                      <button type="submit" disabled={!codeInternal}>
+                      <button
+                        type="submit"
+                        disabled={!codeInternal || disabled}
+                      >
                         <Button
                           variant="text"
                           size="small"
-                          disabled={!codeInternal}
+                          disabled={!codeInternal || disabled}
                         >
                           {formatMessage(m.confirmCode)}
                         </Button>
