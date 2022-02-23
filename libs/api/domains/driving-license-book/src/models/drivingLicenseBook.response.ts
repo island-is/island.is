@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { Lesson } from './lessons.response'
+import { DrivingBookLesson } from './drivingBookLesson.response'
 import { DrivingSchoolExam } from './drivingSchoolExam.response'
-import { DrivingLicenceTestResult } from './drivingLicenseTestResult.resopnse'
+import { DrivingLicenceTestResult } from './drivingLicenseTestResult.response'
 
 @ObjectType()
 export class DrivingLicenseBook {
@@ -35,8 +35,8 @@ export class DrivingLicenseBook {
   @Field({ nullable: true })
   totalLessonCount?: number
 
-  @Field(() => [Lesson], { nullable: true })
-  teachersAndLessons?: Lesson[]
+  @Field(() => [DrivingBookLesson], { nullable: true })
+  teachersAndLessons?: DrivingBookLesson[]
 
   @Field(() => [DrivingSchoolExam], { nullable: true })
   drivingSchoolExams?: DrivingSchoolExam[]

@@ -4,23 +4,17 @@ import { Field, InputType } from '@nestjs/graphql'
 @InputType()
 export class UpdatePracticalDrivingLesson {
   @Field()
-  @IsNumber()
   minutes!: number
 
   @Field()
-  @IsString()
   createdOn!: string
 
   @Field({ nullable: true })
-  @IsString()
-  @IsOptional()
   comments?: string
 }
 
 @InputType()
 export class UpdatePracticalDrivingLessonInput {
-  @Field()
-  @IsString()
   id!: string
 
   @Field(() => UpdatePracticalDrivingLesson)

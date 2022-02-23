@@ -22,9 +22,12 @@ import { StudentListInput } from './dto/studentList.input'
 import { User } from '@island.is/auth-nest-tools'
 import { StudentListTeacherSsnResponse } from './models/studentsTeacherSsn.response'
 import { studentListTeacherSsn } from './mock/studentListTeacherSsn'
-import { StudentOverViewResponse } from './models/student.response'
+import { DrivingBookStudentOverview } from './models/drivingBookStudentOverview.response'
 import { DrivingLicenseBook } from './models/drivingLicenseBook.response'
 import { LICENSE_CATEGORY } from './drivinLicenceBook.type'
+import { DrivingBookStudent } from './models/drivingBookStudent.response'
+import { PracticalDrivingLesson } from './models/practicalDrivingLesson.response'
+import { SuccessResponse } from './models/success.response'
 
 @Injectable()
 export class DrivingLicenseBookService {
@@ -39,9 +42,13 @@ export class DrivingLicenseBookService {
   }
   async createPracticalDrivingLesson(
     input: ApiTeacherCreatePracticalDrivingLessonPostRequest,
-  ): Promise<PracticalDrivingLessonCreateResponse> {
+  ): Promise<PracticalDrivingLesson | null> {
     const api = await this.apiWithAuth()
-    return await api.apiTeacherCreatePracticalDrivingLessonPost(input)
+    const { data } = await api.apiTeacherCreatePracticalDrivingLessonPost(input)
+    if (data && data.id) {
+      return { id: data?.id }
+    }
+    return null
   }
 
   async updatePracticalDrivingLesson(
@@ -70,9 +77,13 @@ export class DrivingLicenseBookService {
 
   async getStudentList(
     input: StudentListInput,
-  ): Promise<StudentListGetResponse> {
+  ): Promise<DrivingBookStudent[] | null> {
     const api = await this.apiWithAuth()
-    return await api.apiStudentGetStudentListGet(input)
+    const {data} =  await api.apiStudentGetStudentListGet(input)
+    if (!data) {
+      return null
+    }
+    return data as DrivingBookStudent[]
   }
 
   async getStudentListTeacherSsn(
@@ -83,42 +94,41 @@ export class DrivingLicenseBookService {
 
   async getStudent(
     input: ApiStudentGetStudentOverviewSsnGetRequest,
-  ): Promise<StudentOverViewResponse> {
+  ): Promise<DrivingBookStudentOverview | null> {
     const api = await this.apiWithAuth()
     const { data } = await api.apiStudentGetStudentOverviewSsnGet(input)
     if (data?.books && data?.ssn) {
-      const bookId = await this.getActiveBookId({
+      const activeBook = await this.getActiveBookId({
         ssn: data?.ssn,
         licenseCategory: LICENSE_CATEGORY,
       })
       const book = data?.books.filter(
-        (b) => b.id === bookId.data?.bookId,
+        (b) => b.id === activeBook,
       )[0] as DrivingLicenseBook
-      return { data: { ...data, book } } as StudentOverViewResponse
+      return { ...data, book } as DrivingBookStudentOverview
     }
 
+    return null
+  }
+
+  async getPracticalDrivingLessons(
+    input: ApiTeacherGetPracticalDrivingLessonsBookIdGetRequest,
+  ): Promise<PracticalDrivingLesson[]> {
+    const api = await this.apiWithAuth()
+    const { data } = await api.apiTeacherGetPracticalDrivingLessonsBookIdGet(
+      input,
+    )
+    if (data) {
+      return data as PracticalDrivingLesson[]
+    }
     throw new NotFoundException()
   }
 
-  // The following all show data available in the get student query so maybe not needed
-  async getLicenseBookId(
-    input: ApiStudentGetLicenseBookIdGetRequest,
-  ): Promise<DigitalBookGetResponse> {
-    const api = await this.apiWithAuth()
-    return await api.apiStudentGetLicenseBookIdGet(input)
-  }
-
-  async getPracticalDrivingLessonsBookId(
-    input: ApiTeacherGetPracticalDrivingLessonsBookIdGetRequest,
-  ): Promise<PracticalDrivingLessonGetResponse> {
-    const api = await this.apiWithAuth()
-    return await api.apiTeacherGetPracticalDrivingLessonsBookIdGet(input)
-  }
-
-  async getActiveBookId(
+  private async getActiveBookId(
     input: ApiStudentGetStudentActiveBookIdSsnGetRequest,
-  ): Promise<StudentBookIdGetResponse> {
+  ): Promise<string> {
     const api = await this.apiWithAuth()
-    return await api.apiStudentGetStudentActiveBookIdSsnGet(input)
+    const { data } = await api.apiStudentGetStudentActiveBookIdSsnGet(input)
+    return data?.bookId ?? '' 
   }
 }

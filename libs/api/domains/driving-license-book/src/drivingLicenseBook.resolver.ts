@@ -8,21 +8,16 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import { DrivingLicenseBookService } from './drivingLicenseBook.service'
 import { StudentListInput } from './dto/studentList.input'
-import { StudentListResponse } from './models/studentList.response'
-import { LicenseBookIdInput } from './dto/licenseBookId.input'
-import { DigitalBookResponse } from './models/digitalBook.response'
+import { DrivingBookStudent } from './models/drivingBookStudent.response'
 import { PracticalDrivingLessonsInput } from './dto/getPracticalDrivingLessons.input'
-import { PracticalDrivingLessonsResponse } from './models/practicalDrivingLessons.response'
+import { PracticalDrivingLesson } from './models/practicalDrivingLesson.response'
 import { StudentInput } from './dto/student.input'
-import { StudentOverViewResponse } from './models/student.response'
-import { CreatePracticalDrivingLessonResponse } from './models/createPracticalDrivingLicense.response'
+import { DrivingBookStudentOverview } from './models/drivingBookStudentOverview.response'
 import { CreatePracticalDrivingLessonInput } from './dto/createPracticalDrivingLesson.input'
 import { SuccessResponse } from './models/success.response'
 import { UpdatePracticalDrivingLessonInput } from './dto/updatePracticalDrivingLesson.input'
 import { DeletePracticalDrivingLessonInput } from './dto/deletePracticalDrivingLesson.input'
 import { StudentListTeacherSsnResponse } from './models/studentsTeacherSsn.response'
-import { ActiveBookIdInput } from './dto/activeBookId.input'
-import { ActiveBookIdResponse } from './models/activeBookId.response'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -31,7 +26,7 @@ export class DrivinLicenseBookResolver {
     private readonly drivingLicenseBookService: DrivingLicenseBookService,
   ) {}
 
-  @Query(() => StudentListResponse)
+  @Query(() => [DrivingBookStudent], {nullable: true})
   drivingBookStudentList(@Args('input') input: StudentListInput) {
     return this.drivingLicenseBookService.getStudentList(input)
   }
@@ -41,31 +36,21 @@ export class DrivinLicenseBookResolver {
     return this.drivingLicenseBookService.getStudentListTeacherSsn(user)
   }
 
-  @Query(() => StudentOverViewResponse)
+  @Query(() => DrivingBookStudentOverview)
   drivingBookStudent(@Args('input') input: StudentInput) {
     return this.drivingLicenseBookService.getStudent(input)
   }
 
-  @Query(() => ActiveBookIdResponse)
-  drivingBookActiveBookId(@Args('input') input: ActiveBookIdInput) {
-    return this.drivingLicenseBookService.getActiveBookId(input)
-  }
-
-  @Query(() => DigitalBookResponse)
-  drivingBookDigitalBook(@Args('input') input: LicenseBookIdInput) {
-    return this.drivingLicenseBookService.getLicenseBookId(input)
-  }
-
-  @Query(() => PracticalDrivingLessonsResponse)
+  @Query(() => [PracticalDrivingLesson])
   drivingBookPracticalDrivingLessons(
     @Args('input') input: PracticalDrivingLessonsInput,
   ) {
-    return this.drivingLicenseBookService.getPracticalDrivingLessonsBookId(
+    return this.drivingLicenseBookService.getPracticalDrivingLessons(
       input,
     )
   }
 
-  @Mutation(() => CreatePracticalDrivingLessonResponse)
+  @Mutation(() => PracticalDrivingLesson, { nullable: true })
   drivingBookCreatePracticalDrivingLesson(
     @Args('input') input: CreatePracticalDrivingLessonInput,
   ) {

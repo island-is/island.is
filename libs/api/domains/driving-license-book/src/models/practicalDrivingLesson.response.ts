@@ -1,10 +1,10 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 @ObjectType()
 export class PracticalDrivingLesson {
-  @Field({ nullable: true })
+  @Field(()=> ID, { nullable: true })
   bookId?: string
 
-  @Field({ nullable: true })
+  @Field(()=> ID, { nullable: true })
   id?: string
 
   @Field({ nullable: true })
@@ -30,10 +30,4 @@ export class PracticalDrivingLesson {
 
   @Field({ nullable: true })
   comments?: string
-}
-
-@ObjectType()
-export class PracticalDrivingLessonsResponse {
-  @Field(() => [PracticalDrivingLesson], { nullable: true })
-  data?: PracticalDrivingLesson[]
 }
