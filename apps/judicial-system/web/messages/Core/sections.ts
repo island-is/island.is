@@ -4,14 +4,14 @@ export const sections = {
   custodyAndTravelBanProsecutorSection: defineMessages({
     custodyTitle: {
       id:
-        'judicial-system.core:sections.custody_and_travel_ban_prosecutor_section.custody_title',
+        'judicial.system.core:sections.custody_and_travel_ban_prosecutor_section.custody_title',
       defaultMessage: 'Krafa um gæsluvarðhald',
       description:
         'Notaður sem titill í hliðarstiku í gæsluvarðhaldsmálum hjá sækjendum',
     },
     travelBanTitle: {
       id:
-        'judicial-system.core:sections.custody_and_travel_ban_prosecutor_section.custody_title',
+        'judicial.system.core:sections.custody_and_travel_ban_prosecutor_section.travel_ban_title',
       defaultMessage: 'Krafa um farbann',
       description:
         'Notaður sem titill í hliðarstiku í farbannsmálum hjá sækjendum',
@@ -55,7 +55,7 @@ export const sections = {
   investigationCaseProsecutorSection: defineMessages({
     title: {
       id:
-        'judicial-system.core:sections.investigation_case_prosecutor_section.title',
+        'judicial.system.core:sections.investigation_case_prosecutor_section.title',
       defaultMessage: 'Krafa um rannsóknarheimild',
       description:
         'Notaður sem titill í hliðarstiku í rannsóknarheimildum hjá sækjendum',
@@ -99,7 +99,7 @@ export const sections = {
   investigationCaseCourtSection: defineMessages({
     title: {
       id:
-        'judicial-system.core:sections.investigation_case_court_section.title',
+        'judicial.system.core:sections.investigation_case_court_section.title',
       defaultMessage: 'Úrskurður Héraðsdóms',
       description:
         'Notaður sem titill í hliðarstiku í rannsóknarheimildum hjá héraðsdómum',
@@ -149,7 +149,7 @@ export const sections = {
   }),
   courtSection: defineMessages({
     title: {
-      id: 'judicial-system.core:sections.court_section.title',
+      id: 'judicial.system.core:sections.court_section.title',
       defaultMessage: 'Úrskurður Héraðsdóms',
       description:
         'Notaður sem titill í hliðarstiku í gæslu- og farbannsmálum hjá héraðsdómum',
@@ -193,7 +193,7 @@ export const sections = {
   }),
   extensionSection: defineMessages({
     title: {
-      id: 'judicial-system.core:sections.extension_section.title',
+      id: 'judicial.system.core:sections.extension_section.title',
       defaultMessage: 'Krafa um framlengingu',
       description:
         'Notaður sem titill í hliðarstiku í framlengingdum gæslu- og farbannsmálum',
@@ -233,7 +233,7 @@ export const sections = {
   investigationCaseExtensionSection: defineMessages({
     title: {
       id:
-        'judicial-system.core:sections.investigation_case_extension_section.title',
+        'judicial.system.core:sections.investigation_case_extension_section.title',
       defaultMessage: 'Krafa um framlengingu',
       description:
         'Notaður sem titill í hliðarstiku í framlengingdum rannsóknarheimildum',
