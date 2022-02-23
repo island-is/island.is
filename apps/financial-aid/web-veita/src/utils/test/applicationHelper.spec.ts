@@ -6,7 +6,7 @@ describe('applicationHelper', () => {
       const result = getDirectTaxPayments([
         {
           totalSalary: 100100,
-          personalAllowance: 2,
+          personalAllowance: 10,
           withheldAtSource: 3,
           payerNationalId: '0000000000',
           year: 2022,
@@ -14,7 +14,7 @@ describe('applicationHelper', () => {
         },
         {
           totalSalary: 100200,
-          personalAllowance: 2,
+          personalAllowance: 5,
           withheldAtSource: 3,
           payerNationalId: '0000000000',
           year: 2022,
@@ -22,7 +22,7 @@ describe('applicationHelper', () => {
         },
         {
           totalSalary: 100000,
-          personalAllowance: 2,
+          personalAllowance: 15,
           withheldAtSource: 3,
           payerNationalId: '0000000000',
           year: 2022,
@@ -33,7 +33,7 @@ describe('applicationHelper', () => {
       const expected = [
         { title: 'Samtals heildarlaun', content: '300.300' },
         { title: 'Meðaltal', content: '100.100' },
-        { title: 'Persónuafsláttur', content: '2' },
+        { title: 'Persónuafsláttur meðaltal', content: '10' },
         { title: 'Samtals staðgreiðsla', content: '9' },
       ]
       expect(true).toEqual(true)

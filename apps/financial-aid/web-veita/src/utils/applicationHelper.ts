@@ -154,8 +154,13 @@ export const getDirectTaxPayments = (directTaxPayments: DirectTaxPayment[]) => {
       ).toLocaleString('de-DE'),
     },
     {
-      title: 'Persónuafsláttur',
-      content: directTaxPayments[0].personalAllowance.toLocaleString('de-DE'),
+      title: 'Persónuafsláttur meðaltal',
+      content: (
+        directTaxPayments.reduce(
+          (n, { personalAllowance }) => n + personalAllowance,
+          0,
+        ) / directTaxPayments.length
+      ).toLocaleString('de-DE'),
     },
     {
       title: 'Samtals staðgreiðsla',
