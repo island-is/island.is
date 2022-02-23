@@ -93,8 +93,9 @@ jobs:
           git checkout $GITHUB_HEAD_REF
           git checkout $GITHUB_BASE_REF
           git checkout $GITHUB_SHA
-          git log  --pretty=oneline -n 50
-          git status
+          git checkout -b infra/new-ci-change-detector-217157 822667b0e65716ed811e439ddcf028f1e001b12a
+          git merge 2c4883942e230c51d4391151d621cff30215fb9d
+          git checkout $GITHUB_SHA
           export HEAD_REF="$GITHUB_HEAD_REF"
           export BASE_REF="$GITHUB_BASE_REF"
           export PR_REF=$GITHUB_SHA
