@@ -20,7 +20,6 @@ import {
   Staff,
   CreateStaff,
   CreateMunicipality,
-  DirectTaxPayment,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
@@ -28,7 +27,10 @@ import { CreateApplicationFilesInput } from '../app/modules/file/dto'
 import { CreateStaffInput } from '../app/modules/staff'
 import { SpouseModel } from '../app/modules/user'
 import { UpdateMunicipalityInput } from '../app/modules/municipality/dto'
-import { PersonalTaxReturnResponse } from '../app/modules/personalTaxReturn/models'
+import {
+  DirectTaxPaymentsResponse,
+  PersonalTaxReturnResponse,
+} from '../app/modules/personalTaxReturn/models'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
@@ -171,7 +173,7 @@ class BackendAPI extends RESTDataSource {
     return this.get('personalTaxReturn')
   }
 
-  getDirectTaxPayments(): Promise<DirectTaxPayment[]> {
+  getDirectTaxPayments(): Promise<DirectTaxPaymentsResponse> {
     return this.get('personalTaxReturn/directTaxPayments')
   }
 }
