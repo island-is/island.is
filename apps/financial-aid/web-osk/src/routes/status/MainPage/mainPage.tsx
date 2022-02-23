@@ -1,11 +1,12 @@
 import React, { useContext, useEffect } from 'react'
-import { Text, Box, LoadingDots, Button } from '@island.is/island-ui/core'
+import { Text, LoadingDots } from '@island.is/island-ui/core'
 
 import {
   Approved,
   ContentContainer,
   Footer,
   InProgress,
+  MoreActions,
   Rejected,
   Timeline,
 } from '@island.is/financial-aid-web/osk/src/components'
@@ -80,45 +81,10 @@ const MainPage = () => {
         )}
         {loading && <LoadingDots />}
 
-        {(municipality?.homepage || municipality?.email) && (
-          <Box>
-            <Text as="h4" variant="h3" marginBottom={2} marginTop={[3, 3, 7]}>
-              Frekari aðgerðir í boði
-            </Text>
-            <Box marginBottom={[5, 5, 10]}>
-              {municipality?.homepage && (
-                <Box marginBottom={municipality.email ? 2 : 0}>
-                  <Button
-                    icon="open"
-                    iconType="outline"
-                    size="small"
-                    variant="text"
-                    onClick={() => {
-                      window.open(municipality.homepage, '_ blank')
-                    }}
-                  >
-                    Upplýsingar um fjárhagsaðstoð
-                  </Button>
-                </Box>
-              )}
-              {municipality?.email && (
-                <Box>
-                  <Button
-                    icon="open"
-                    iconType="outline"
-                    size="small"
-                    variant="text"
-                    onClick={() => {
-                      window.open(`mailto: ${municipality.email}`, '_ blank')
-                    }}
-                  >
-                    Hafa samband
-                  </Button>
-                </Box>
-              )}
-            </Box>
-          </Box>
-        )}
+        <MoreActions
+          homepage={municipality?.homepage}
+          email={municipality?.email}
+        />
       </ContentContainer>
       <Footer
         onPrevButtonClick={() => {
