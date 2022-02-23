@@ -13,175 +13,176 @@ import { environment } from '../../../environments'
 
 export const ONE_MONTH = 2592000 // seconds
 export const CACHE_KEY = 'nationalRegistry'
-const MAX_AGE_LIMIT = 18
+const MAX_AGE_LIMIT = 1888
 
-const TEST_USERS: NationalRegistryUser[] = [
-  {
-    // Test User Ísabella
-    nationalId: '1902982649',
-    firstName: 'Ísabella',
-    address: 'Hrimblugrugg 2',
-    city: 'Vestmannaeyjar',
-    gender: 'kvk',
-    lastName: 'Developersdóttir',
-    middleName: 'EagleAir',
-    postalcode: 900,
-  },
-  {
-    // Gervibarn Ísabellu
-    nationalId: '1111990000',
-    firstName: 'Minnsti',
-    middleName: 'Drengur',
-    lastName: 'Ísabelluson',
-    gender: 'kk',
-    address: 'Hrimblugrugg 2',
-    postalcode: 900,
-    city: 'Vestmannaeyjar',
-  },
-  {
-    // Gervibarn Ísabellu
-    nationalId: '1111994500',
-    firstName: 'Stærri',
-    middleName: 'Drengur',
-    lastName: 'Ísabelluson',
-    gender: 'kk',
-    address: 'Hrimblugrugg 2',
-    postalcode: 900,
-    city: 'Vestmannaeyjar',
-  },
-  {
-    // Gervibarn Ísabellu
-    nationalId: '1111997600',
-    firstName: 'Lítil',
-    middleName: 'Stúlka',
-    lastName: 'Ísabelludóttir',
-    gender: 'kvk',
-    address: 'Hrimblugrugg 2',
-    postalcode: 900,
-    city: 'Vestmannaeyjar',
-  },
-  {
-    // Gervibarn Ísabellu
-    nationalId: '1111999300',
-    firstName: 'Stærsta',
-    middleName: 'Stúlka',
-    lastName: 'Ísabelludóttir',
-    gender: 'kvk',
-    address: 'Hrimblugrugg 2',
-    postalcode: 900,
-    city: 'Vestmannaeyjar',
-  },
-  {
-    // Gervimadur Ameríka
-    nationalId: '0101302989',
-    firstName: 'Gervimaður',
-    middleName: '',
-    lastName: 'Ameríka',
-    gender: 'kk',
-    address: 'Vallargata 1',
-    postalcode: 900,
-    city: 'Vestmannaeyjar',
-  },
-  {
-    // Gervibarn Friðrik
-    nationalId: '1204209090',
-    firstName: 'Friðrik',
-    middleName: 'Ari',
-    lastName: 'Baldursson',
-    gender: 'kk',
-    address: 'Vallargata 1',
-    postalcode: 900,
-    city: 'Vestmannaeyjar',
-  },
-  {
-    // Gervibarn Eyjólfur
-    nationalId: '0711196370',
-    firstName: 'Eyjólfur',
-    middleName: '',
-    lastName: 'Baldursson',
-    gender: 'kk',
-    address: 'Vallargata 1',
-    postalcode: 900,
-    city: 'Vestmannaeyjar',
-  },
-  {
-    // Gervibarn Arnar
-    nationalId: '1508154790',
-    firstName: 'Arnar',
-    middleName: '',
-    lastName: 'Sigurðarson',
-    gender: 'kk',
-    address: 'Vallargata 1',
-    postalcode: 900,
-    city: 'Vestmannaeyjar',
-  },
-  {
-    // Gervimadur Afríka
-    nationalId: '0101303019',
-    firstName: 'Gervimaður',
-    middleName: '',
-    lastName: 'Afríka',
-    gender: 'kk',
-    address: 'Urðarbraut 1',
-    postalcode: 540,
-    city: 'Blönduós',
-  },
-  {
-    // Gervibarn Stefán
-    nationalId: '2508107410',
-    firstName: 'Stefán',
-    middleName: 'Eysteinn',
-    lastName: 'Júlíusson',
-    gender: 'kk',
-    address: 'Urðarbraut 1',
-    postalcode: 540,
-    city: 'Blönduós',
-  },
-  {
-    // Gervibarn Embla
-    nationalId: '2508105630',
-    firstName: 'Embla',
-    middleName: '',
-    lastName: 'Asksdóttir',
-    gender: 'kvk',
-    address: 'Urðarbraut 1',
-    postalcode: 540,
-    city: 'Blönduós',
-  },
-  {
-    // Gervibarn Sunna
-    nationalId: '1110199320',
-    firstName: 'Sunna',
-    middleName: 'Hlín',
-    lastName: 'Júlíusdóttir',
-    gender: 'kvk',
-    address: 'Urðarbraut 1',
-    postalcode: 540,
-    city: 'Blönduós',
-  },
-  {
-    // Gervimaður Útlönd
-    nationalId: '0101307789',
-    firstName: 'Gervimaður',
-    middleName: '',
-    lastName: 'Útlönd',
-    gender: 'kk',
-    address: 'Vallargata 1',
-    postalcode: 900,
-    city: 'Vestmannaeyjar',
-  },
-  {
-    // Gervibarn Útlönd
-    nationalId: '1111111119',
-    firstName: 'Sól',
-    middleName: 'Rún',
-    lastName: 'Gervimannsdóttir',
-    gender: 'kvk',
-    address: 'Urðarbraut 1',
-    postalcode: 210,
-    city: 'Garðabær',
-  },
-]
+const TEST_USERS: NationalRegistryUser[] = []
+//const TEST_USERS: NationalRegistryUser[] = [
+//  {
+//    // Test User Ísabella
+//    nationalId: '1902982649',
+//    firstName: 'Ísabella',
+//    address: 'Hrimblugrugg 2',
+//    city: 'Vestmannaeyjar',
+//    gender: 'kvk',
+//    lastName: 'Developersdóttir',
+//    middleName: 'EagleAir',
+//    postalcode: 900,
+//  },
+//  {
+//    // Gervibarn Ísabellu
+//    nationalId: '1111990000',
+//    firstName: 'Minnsti',
+//    middleName: 'Drengur',
+//    lastName: 'Ísabelluson',
+//    gender: 'kk',
+//    address: 'Hrimblugrugg 2',
+//    postalcode: 900,
+//    city: 'Vestmannaeyjar',
+//  },
+//  {
+//    // Gervibarn Ísabellu
+//    nationalId: '1111994500',
+//    firstName: 'Stærri',
+//    middleName: 'Drengur',
+//    lastName: 'Ísabelluson',
+//    gender: 'kk',
+//    address: 'Hrimblugrugg 2',
+//    postalcode: 900,
+//    city: 'Vestmannaeyjar',
+//  },
+//  {
+//    // Gervibarn Ísabellu
+//    nationalId: '1111997600',
+//    firstName: 'Lítil',
+//    middleName: 'Stúlka',
+//    lastName: 'Ísabelludóttir',
+//    gender: 'kvk',
+//    address: 'Hrimblugrugg 2',
+//    postalcode: 900,
+//    city: 'Vestmannaeyjar',
+//  },
+//  {
+//    // Gervibarn Ísabellu
+//    nationalId: '1111999300',
+//    firstName: 'Stærsta',
+//    middleName: 'Stúlka',
+//    lastName: 'Ísabelludóttir',
+//    gender: 'kvk',
+//    address: 'Hrimblugrugg 2',
+//    postalcode: 900,
+//    city: 'Vestmannaeyjar',
+//  },
+//  {
+//    // Gervimadur Ameríka
+//    nationalId: '0101302989',
+//    firstName: 'Gervimaður',
+//    middleName: '',
+//    lastName: 'Ameríka',
+//    gender: 'kk',
+//    address: 'Vallargata 1',
+//    postalcode: 900,
+//    city: 'Vestmannaeyjar',
+//  },
+//  {
+//    // Gervibarn Friðrik
+//    nationalId: '1204209090',
+//    firstName: 'Friðrik',
+//    middleName: 'Ari',
+//    lastName: 'Baldursson',
+//    gender: 'kk',
+//    address: 'Vallargata 1',
+//    postalcode: 900,
+//    city: 'Vestmannaeyjar',
+//  },
+//  {
+//    // Gervibarn Eyjólfur
+//    nationalId: '0711196370',
+//    firstName: 'Eyjólfur',
+//    middleName: '',
+//    lastName: 'Baldursson',
+//    gender: 'kk',
+//    address: 'Vallargata 1',
+//    postalcode: 900,
+//    city: 'Vestmannaeyjar',
+//  },
+//  {
+//    // Gervibarn Arnar
+//    nationalId: '1508154790',
+//    firstName: 'Arnar',
+//    middleName: '',
+//    lastName: 'Sigurðarson',
+//    gender: 'kk',
+//    address: 'Vallargata 1',
+//    postalcode: 900,
+//    city: 'Vestmannaeyjar',
+//  },
+//  {
+//    // Gervimadur Afríka
+//    nationalId: '0101303019',
+//    firstName: 'Gervimaður',
+//    middleName: '',
+//    lastName: 'Afríka',
+//    gender: 'kk',
+//    address: 'Urðarbraut 1',
+//    postalcode: 540,
+//    city: 'Blönduós',
+//  },
+//  {
+//    // Gervibarn Stefán
+//    nationalId: '2508107410',
+//    firstName: 'Stefán',
+//    middleName: 'Eysteinn',
+//    lastName: 'Júlíusson',
+//    gender: 'kk',
+//    address: 'Urðarbraut 1',
+//    postalcode: 540,
+//    city: 'Blönduós',
+//  },
+//  {
+//    // Gervibarn Embla
+//    nationalId: '2508105630',
+//    firstName: 'Embla',
+//    middleName: '',
+//    lastName: 'Asksdóttir',
+//    gender: 'kvk',
+//    address: 'Urðarbraut 1',
+//    postalcode: 540,
+//    city: 'Blönduós',
+//  },
+//  {
+//    // Gervibarn Sunna
+//    nationalId: '1110199320',
+//    firstName: 'Sunna',
+//    middleName: 'Hlín',
+//    lastName: 'Júlíusdóttir',
+//    gender: 'kvk',
+//    address: 'Urðarbraut 1',
+//    postalcode: 540,
+//    city: 'Blönduós',
+//  },
+//  {
+//    // Gervimaður Útlönd
+//    nationalId: '0101307789',
+//    firstName: 'Gervimaður',
+//    middleName: '',
+//    lastName: 'Útlönd',
+//    gender: 'kk',
+//    address: 'Vallargata 1',
+//    postalcode: 900,
+//    city: 'Vestmannaeyjar',
+//  },
+//  {
+//    // Gervibarn Útlönd
+//    nationalId: '1111111119',
+//    firstName: 'Sól',
+//    middleName: 'Rún',
+//    lastName: 'Gervimannsdóttir',
+//    gender: 'kvk',
+//    address: 'Urðarbraut 1',
+//    postalcode: 210,
+//    city: 'Garðabær',
+//  },
+//]
 
 @Injectable()
 export class NationalRegistryService {
