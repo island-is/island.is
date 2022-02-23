@@ -105,6 +105,8 @@ jobs:
           export PR_REF=$GITHUB_SHA
           which git
           source ./scripts/ci/00_prepare-base-tags.sh
+          ls -la /usr/bin
+          which sh
           git checkout $GITHUB_SHA
           echo "BASE=$BASE" >> $GITHUB_ENV
         env:
