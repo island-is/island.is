@@ -39,6 +39,7 @@ export type EditorInputProps = Omit<
   draftId: RegulationDraftId
   /** Called on editor blur */
   onChange: (newValue: HTMLText) => void
+  readOnly?: boolean
 }
 
 export const EditorInput = (props: EditorInputProps) => {
@@ -52,6 +53,7 @@ export const EditorInput = (props: EditorInputProps) => {
     required,
     baseText,
     isImpact,
+    readOnly,
     ...editorProps
   } = props
 

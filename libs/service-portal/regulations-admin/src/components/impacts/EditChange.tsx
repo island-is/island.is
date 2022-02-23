@@ -22,7 +22,7 @@ import {
 import { LayoverModal } from './LayoverModal'
 import { ImpactModalTitle } from './ImpactModalTitle'
 import {
-  useGetCurrentRegulationFromApiQuery,
+  useGetRegulationFromApiQuery,
   useGetRegulationImpactsQuery,
 } from '../../utils/dataHooks'
 import {
@@ -58,14 +58,17 @@ export const HTMLBox = (props: HTMLBoxProps) => {
 type EditChangeProp = {
   draft: RegDraftForm // Allt það sem er verið að breyta
   change: DraftChangeForm // Áhrifafærslan
+  readOnly?: boolean
   closeModal: (updateImpacts?: boolean) => void
 }
 
 export const EditChange = (props: EditChangeProp) => {
-  const { draft, change, closeModal } = props
+  const { draft, change, readOnly, closeModal } = props
   const [activeChange, setActiveChange] = useState(change) // Áhrifafærslan sem er verið að breyta
+  const [activeRegulation, setActiveRegulation] = useState<
+    Regulation | undefined
+  >() // Target reglugerðin sem á að breyta
   const [showEditor, setShowEditor] = useState(false)
-  const [showDiff, setShowDiff] = useState<boolean>(false)
   const today = toISODate(new Date())
 
   const [createDraftRegulationChange] = useMutation(
@@ -75,13 +78,18 @@ export const EditChange = (props: EditChangeProp) => {
     UPDATE_DRAFT_REGULATION_CHANGE,
   )
 
-  const { data: regulation } = useGetCurrentRegulationFromApiQuery(
-    activeChange.name,
+  // TODO: we need to refetch the regulation when activeChange.date is changed
+  const { data: regulation } = useGetRegulationFromApiQuery(
+    change.name,
+    toISODate(change.date.value) ?? undefined,
   )
+  useEffect(() => {
+    setActiveRegulation(regulation)
+  }, [regulation])
   const { data: draftImpacts } = useGetRegulationImpactsQuery(activeChange.name)
 
   const { effects } = useMemo(() => {
-    const effects = regulation?.history.reduce<Effects>(
+    const effects = activeRegulation?.history.reduce<Effects>(
       (obj, item) => {
         const arr = item.date > today ? obj.future : obj.past
         arr.push(item)
@@ -93,27 +101,24 @@ export const EditChange = (props: EditChangeProp) => {
     return {
       effects,
     }
-  }, [regulation, today])
+  }, [activeRegulation, today])
 
   useEffect(() => {
-    if (!change.id && regulation) {
+    if (!change.id && !activeChange.title.value && activeRegulation) {
       setActiveChange({
         ...activeChange,
-        text: fHtml(regulation.text, true),
-        title: fText(regulation.title),
-        appendixes: regulation.appendixes.map((a, i) =>
+        text: fHtml(activeRegulation.text, true),
+        title: fText(activeRegulation.title),
+        appendixes: activeRegulation.appendixes.map((a, i) =>
           makeDraftAppendixForm(a, String(i)),
         ),
       })
     }
-  }, [regulation])
+  }, [activeRegulation])
 
   useEffect(() => {
-    if (activeChange.date.value) {
-      console.log('has Date', activeChange.date)
-      setShowEditor(true)
-    }
-  }, [activeChange])
+    setShowEditor(!!activeChange.date.value && !!activeRegulation)
+  }, [activeChange.date.value, activeRegulation])
 
   const changeDate = (newDate: Date | undefined) => {
     setActiveChange({
@@ -252,11 +257,12 @@ export const EditChange = (props: EditChangeProp) => {
                   value={activeChange.title.value}
                   onChange={(newValue) => changeRegulationTitle(newValue)}
                   required
+                  readOnly={readOnly}
                   error={undefined}
                 />
-                {activeChange.title.value !== regulation?.title && (
+                {activeChange.title.value !== activeRegulation?.title && (
                   <MiniDiff
-                    older={regulation?.title || ''}
+                    older={activeRegulation?.title || ''}
                     newer={activeChange.title.value}
                   />
                 )}
@@ -267,12 +273,13 @@ export const EditChange = (props: EditChangeProp) => {
                 </Text>
                 <EditorInput
                   label=""
-                  baseText={regulation?.text}
+                  baseText={activeRegulation?.text}
                   value={activeChange.text.value}
                   onChange={(newValue) => changeRegulationText(newValue)}
                   draftId={draft.id}
                   isImpact={true}
                   error={undefined}
+                  readOnly={readOnly}
                 />
               </Box>
             </GridColumn>

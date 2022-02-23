@@ -18,7 +18,7 @@ import {
   CreateDraftRegulationCancelInput,
   DeleteDraftRegulationInput,
   EditDraftRegulationInput,
-  GetCurrentRegulationFromApiInput,
+  GetRegulationFromApiInput,
   GetDraftRegulationInput,
   GetDraftRegulationPdfDownloadInput,
   GetRegulationOptionListInput,
@@ -120,12 +120,13 @@ export class RegulationsAdminResolver {
   }
 
   @Query(() => graphqlTypeJson)
-  getCurrentRegulationFromApi(
-    @Args('input') input: GetCurrentRegulationFromApiInput,
+  getRegulationFromApi(
+    @Args('input') input: GetRegulationFromApiInput,
   ): Promise<any> {
-    return this.regulationsService.getRegulation(
-      RegulationViewTypes.current,
+    return this.regulationsService.getRegulationOnDate(
+      input.date ? RegulationViewTypes.d : RegulationViewTypes.current,
       nameToSlug(input.regulation),
+      input.date,
     )
   }
 
