@@ -4,6 +4,12 @@ export type UserRole = 'author' | 'editor'
 
 // ---------------------------------------------------------------------------
 
-export type Step = 'basics' | 'meta' | 'signature' | 'impacts' | 'review'
+export type Step =
+  | 'basics'
+  | 'meta'
+  | 'signature'
+  | 'impacts'
+  | 'review'
+  | 'publish'
 
 export type Effects = Record<'past' | 'future', Array<RegulationHistoryItem>>

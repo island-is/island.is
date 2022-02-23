@@ -23,6 +23,7 @@ const draftRegulationSeed = [
     type: 'base',
     authors: [TEST_USERS.utlond, TEST_USERS.afrika],
     law_chapters: ['01', '02a'],
+    fast_track: true,
   },
   {
     id: '32e191a3-497c-46e4-ae10-8ba579f07f28',
@@ -43,15 +44,19 @@ const draftRegulationSeed = [
   {
     id: 'b99f6276-68ff-4ac7-a9f4-b42d522922e8',
     drafting_status: 'shipped',
-    name: '1234-1234',
+    name: '1234/1234',
     title:
       'Reglugerð um eftirlitsstaði erlendra skipa vegna veiða og siglinga í íslenskri fiskveiðilögsögu.',
     text:
       '<h3 class="article__title">\n\t1. gr. <em class="article__name">Gildissvið.</em>\n</h3>\n<p>\n\tReglugerð þessi gildir um öll erlend skip sem stunda veiðar innan íslenskrar\n\tfiskveiði­lögsögu með leyfi íslenskra stjórnvalda.\n</p>\n<h3 class="article__title">\n\t2. gr. <em class="article__name">Eftirlitsstaðir.</em>\n</h3>\n<p>\n\tErlend skip á leið til veiðisvæðis, skulu áður en veiðar í fiskveiðilögsögu\n\tÍslands hefjast og á leið út úr fiskveiðilögsögu Íslands, sigla um einn af\n\tneðangreindum eftirlitsstöðum:\n</p>\n<ol type="A">\n\t<li>69°15′N - 013°00′V</li>\n\t<li>68°30′N - 011°00′V</li>\n\t<li>67°30′N - 010°00′V</li>\n\t<li>66°15′N - 009°00′V</li>\n\t<li>65°00′N - 010°00′V</li>\n\t<li>64°00′N - 012°00′V</li>\n\t<li>63°30′N - 016°00′V</li>\n\t<li>63°00′N - 020°00′V</li>\n\t<li>63°30′N - 025°00′V</li>\n\t<li>65°00′N - 027°00′V</li>\n</ol>\n<p>\n\tLandhelgisgæslu Íslands er heimilt að ákveða hvaða eftirlitsstað veiðiskip\n\tskal sigla um. Heimilt er með samþykki Landhelgisgæslunnar að halda til\n\tannarra eftirlitsstaða. Einnig er Landhelgisgæslunni heimilt að ákveða aðra\n\teftirlitsstaði en þá sem tilgreindir eru í 1. mgr., t.d. vegna staðsetningar\n\tveiðisvæðis. Óheimilt er að yfirgefa eftirlitsstað nema með samþykki\n\tLandhelgisgæslu Íslands.\n</p>\n<h3 class="article__title">\n\t3. gr.\n\t<em class="article__name">Sjálfvirkur fjarskiptabúnaður - fjareftirlit.</em>\n</h3>\n<p>\n\tÖll erlend skip sem stunda veiðar innan íslenskrar fiskveiðilögsögu, skulu\n\tbúin fjar­skipta­búnaði sem sendir upplýsingar um staðsetningu skips, stefnu\n\tog hraða með sjálf­virkum hætti á klukkustundar fresti til sameiginlegrar\n\teftirlitsstöðvar Landhelgisgæslu og Fiski­stofu.\n</p>\n<h3 class="article__title">\n\t4. gr. <em class="article__name">Undanþáguheimildir.</em>\n</h3>\n<p>\n\tHeimilt er að veita undanþágu frá ákvæðum 2. gr. hafi aðilar gert samkomulag\n\tþar um.\n</p>\n<h3 class="article__title">5. gr. <em class="article__name">Viðurlög.</em></h3>\n<p>\n\tBrot á reglugerð þessari varða viðurlögum samkvæmt ákvæðum laga nr. 22, 8.\n\tapríl 1998, um veiðar og vinnslu erlendra skipa í fiskveiðilögsögu Íslands,\n\tmeð síðari breyt­ingum.\n</p>\n<h3 class="article__title">\n\t6. gr. <em class="article__name">Gildistaka.</em>\n</h3>\n<p>\n\tReglugerð þessi er sett skv. 9. gr. laga nr. 22, 8. apríl 1998, um veiðar og\n\tvinnslu erlendra skipa í fiskveiðilandhelgi Íslands, með síðari breytingum,\n\ttil þess að öðlast þegar gildi og birtist til eftirbreytni öllum þeim sem hlut\n\teiga að máli.\n</p>\n<p class="Dags" align="center">\n\t<em>Atvinnuvega- og nýsköpunarráðuneytinu, 18. desember 2013.</em>\n</p>\n<p class="FHUndirskr" align="center">\n\tF. h. sjávarútvegs- og landbúnaðarráðherra,\n</p>\n<p align="center">\n\t<strong>Kristján Freyr Helgason.</strong>\n</p>\n<p align="right">\n\t<em>Ásta Einarsdóttir.</em>\n</p>\n',
     drafting_notes: '',
     ideal_publish_date: '2021-09-09',
-    ministry: 'fsr',
+    ministry: 'Dómsmálaráðuneyti',
     signature_date: '2021-09-09',
+    signature_text:
+      '<p class="Dags" style="text-align: center;"><em>Dómsmálaráðuneytinu, 23. febrúar 2022.</em></p><p class="FHUndirskr" style="text-align: center;">f.h.r.</p><p class="Undirritun" style="text-align: center;"><strong>NAFN</strong><br>⸻ráðherra.</p><p class="Undirritun" style="text-align: right;"><em>NAFN.</em></p>',
+    signed_document_url:
+      'https://files.reglugerd.is/admin-drafts/a1fd62db-18a6-4741-88eb-a7b7a7e05833/download-1.pdf',
     effective_date: '2021-09-09',
     type: 'base',
     authors: [TEST_USERS.afrika],

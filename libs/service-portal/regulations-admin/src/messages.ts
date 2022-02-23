@@ -38,6 +38,16 @@ export const editorMsgs = defineMessages({
       'Áður en reglugerð er gefin út í Stjórnartíðindum, og birt í reglugerðasafninu á vefnum, þarf að yfirfara að allar skráðar upplýsingar séu réttar',
   },
 
+  stepPublishHeadline: {
+    id: 'ap.regulations-admin:draft-step_publish-headline',
+    defaultMessage: 'Gefa út reglugerð',
+  },
+  stepPublishIntro: {
+    id: 'ap.regulations-admin:draft-step_publish-intro',
+    defaultMessage:
+      'Eftir útgáfu í Stjórnartíðindum fær reglugerð nafn og getur verið birt í reglugerðasafninu á vefnum',
+  },
+
   name: {
     id: 'ap.regulations-admin:draft-labels-name',
     defaultMessage: 'Útgáfunúmer í Stjórnartíðindum',
@@ -158,6 +168,11 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-labels-idealpublishdate',
     defaultMessage: 'Ósk um útgáfudag',
   },
+  publishDate: {
+    id: 'ap.regulations-admin:draft-labels-publishdate',
+    defaultMessage: 'Skráðu útgáfudagsetningu',
+  },
+
   idealPublishDate_default: {
     id: 'ap.regulations-admin:draft-opts-idealpublishdate-default',
     defaultMessage: 'Við fyrsta tækifæri',
@@ -285,6 +300,11 @@ export const editorMsgs = defineMessages({
   change_add: {
     id: 'ap.regulations-admin:draft-btn-change-add',
     defaultMessage: 'Ný texta-/ákvæðabreyting',
+  },
+
+  publish_button: {
+    id: 'ap.regulations-admin:draft-btn-publish',
+    defaultMessage: 'Gefa út reglugerð',
   },
 })
 
@@ -427,7 +447,7 @@ export const errorMsgs = defineMessages({
   },
   signedDocumentUrlRequired: {
     id: 'ap.regulations-admin:error-signeddocurl-required',
-    defaultMessage: 'Það verður að hlaðaupp undirrituðu eintaki',
+    defaultMessage: 'Það verður að hlaða upp undirrituðu eintaki',
   },
   fieldRequired: {
     id: 'ap.regulations-admin:error-field-required',
@@ -484,6 +504,11 @@ export const homeMessages = defineMessages({
   cta: {
     id: 'ap.regulations-admin:task-cta',
     defaultMessage: 'Halda áfram',
+  },
+
+  cta_publish: {
+    id: 'ap.regulations-admin:task-cta-publish',
+    defaultMessage: 'Skrá útgáfu',
   },
 
   publishSoon: editorMsgs.idealPublishDate_default,

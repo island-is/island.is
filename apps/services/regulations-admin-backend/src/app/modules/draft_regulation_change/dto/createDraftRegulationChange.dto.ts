@@ -18,7 +18,7 @@ export class CreateDraftRegulationChangeDto {
   @ApiProperty()
   readonly regulation!: RegName
 
-  @IsDate()
+  @IsString()
   @ApiProperty()
   readonly date!: ISODate
 

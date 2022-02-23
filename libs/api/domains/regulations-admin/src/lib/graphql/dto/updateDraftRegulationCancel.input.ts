@@ -7,7 +7,7 @@ export class UpdateDraftRegulationCancelInput {
   @Field(() => String)
   id!: string
 
-  @Field(() => String, { nullable: true })
+  @Field(() => Date, { nullable: true })
   @IsOptional()
   date?: ISODate
 }

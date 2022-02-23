@@ -84,13 +84,13 @@ export class DraftRegulationModel {
   @Field(() => String, { nullable: true })
   name?: RegName
 
-  @Field(() => Date, { nullable: true })
-  idealPublishDate?: string
+  @Field(() => String, { nullable: true })
+  idealPublishDate?: ISODate
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => String, { nullable: true })
   signatureDate?: ISODate
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => String, { nullable: true })
   effectiveDate?: ISODate
 
   @Field(() => String)
