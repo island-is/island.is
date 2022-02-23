@@ -61,12 +61,6 @@ export const ReferenceText = (props: ReferenceTextProps) => {
       <div className={s.referenceText}>
         <h2 className={s.referenceTextLegend}>
           {t('referenceLegend', { name: prettyName(name) })}
-          <Link
-            href={taskUrl(baseName) + `?edit=${name}&fixText`}
-            className={s.referenceTextEditlink}
-          >
-            {t('referenceEditLink')}
-          </Link>
         </h2>
         <div className={s.referenceTextMeta}>
           {t.arr('referenceMeta', {

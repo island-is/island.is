@@ -1,10 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { style } from '@vanilla-extract/css'
-import {
-  regulationContentStyling,
-  diffStyling,
-  regulationTitleStyling,
-} from '@island.is/regulations/styling'
+import { diffStyling } from '@island.is/regulations/styling'
+import { theme } from '@island.is/island-ui/theme'
+
 export const explainerText = style({})
 
 export const layoverModal = style({
@@ -54,20 +52,20 @@ export const referenceTextContainer = style({
 export const referenceText = style({
   height: '85vh',
   overflow: 'hidden',
-  border: '2px solid black',
+  borderRadius: theme.border.radius.standard,
+  border: `1px solid ${theme.color.dark200}`,
   backgroundColor: '#ffffff',
   boxShadow: '1rem 1rem 2rem rgba(black, 0.15)',
 })
 
 export const referenceTextLegend = style({
-  padding: '0 0.5rem',
+  padding: theme.spacing[3],
   width: '45rem',
   maxWidth: '90vw',
   fontSize: '1.6rem',
   fontWeight: 'bold',
-  lineHeight: '3em',
   whiteSpace: 'nowrap',
-  backgroundColor: '#eeeeee',
+  backgroundColor: theme.color.dark100,
 })
 
 export const referenceTextEditlink = style({
@@ -77,17 +75,16 @@ export const referenceTextEditlink = style({
 })
 
 export const referenceTextMeta = style({
-  padding: '0 0.5rem',
-  paddingBottom: '0.5rem',
+  padding: theme.spacing[3],
+  paddingTop: 0,
   width: '45rem',
   maxWidth: '90vw',
-  borderBottom: '1px solid #dddddd',
-  lineHeight: '2rem - 0.5rem',
-  backgroundColor: '#eeeeee',
+  borderBottom: `1px solid ${theme.color.dark200}`,
+  backgroundColor: theme.color.dark100,
 })
 
 export const referenceTextInner = style({
-  padding: '1rem',
+  padding: theme.spacing[2],
   width: '45rem',
   maxWidth: '90vw',
   height: '75vh',

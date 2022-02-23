@@ -8,6 +8,7 @@ import {
   GridColumn,
   BoxProps,
   FocusableBox,
+  Text,
 } from '@island.is/island-ui/core'
 import React, { useEffect, useMemo, useState } from 'react'
 import { DraftChangeForm, RegDraftForm } from '../../state/types'
@@ -36,6 +37,7 @@ import { ReferenceText } from './ReferenceText'
 import { fHtml, fText, makeDraftAppendixForm } from '../../state/makeFields'
 import { ImpactHistory } from './ImpactHistory'
 import { Effects } from '../../types'
+import { Appendixes } from '../Appendixes'
 /* ---------------------------------------------------------------------------------------------------------------- */
 
 export type HTMLBoxProps = BoxProps & {
@@ -80,7 +82,7 @@ export const EditChange = (props: EditChangeProp) => {
 
   const { effects } = useMemo(() => {
     const effects = regulation?.history.reduce<Effects>(
-      (obj, item, i) => {
+      (obj, item) => {
         const arr = item.date > today ? obj.future : obj.past
         arr.push(item)
         return obj
@@ -260,36 +262,19 @@ export const EditChange = (props: EditChangeProp) => {
                 )}
               </Box>
               <Box marginBottom={4} position="relative">
-                <FocusableBox
-                  background="blueberry200"
-                  className={s.diffButton}
-                  onClick={() => setShowDiff(!showDiff)}
-                >
-                  {showDiff ? 'Fela breytingar' : 'Sjá breytingar'}
-                </FocusableBox>
+                <Text fontWeight="semiBold" paddingBottom="p2">
+                  Uppfærður texti
+                </Text>
                 <EditorInput
-                  label="Uppfærður texti"
-                  baseText={
-                    regulation?.text
-                    // regulation?.text !== activeChange.text.value
-                    //   ? regulation?.text
-                    //   : undefined
-                  }
+                  label=""
+                  baseText={regulation?.text}
                   value={activeChange.text.value}
                   onChange={(newValue) => changeRegulationText(newValue)}
                   draftId={draft.id}
                   isImpact={true}
-                  required
                   error={undefined}
                 />
               </Box>
-              {/* VIÐAUKI */}
-              {/* <Appendixes
-              draftId={draft.id}
-              appendixes={change.appendixes}
-              actions={}
-              />
-            */}
             </GridColumn>
           )}
         </GridRow>
