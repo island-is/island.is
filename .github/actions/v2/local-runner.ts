@@ -18,7 +18,7 @@ import { Octokit } from '@octokit/rest'
     runner,
     `infra/new-ci-change-detector`,
     'main',
-    `infra/new-ci-change-detector`,
+    `origin/pr/6665`,
   )
   if (rev === 'rebuild') {
     console.log(`Full rebuild needed`)

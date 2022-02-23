@@ -189,17 +189,18 @@ export class LocalRunner implements GitActionStatus {
         )
         if (artifactUrls.length === 1) {
           app(`Found an artifact with PR metadata`)
-          const artifact = await this.octokit.actions.getArtifact({
+          const artifact = (await this.octokit.actions.downloadArtifact({
             owner: owner,
             repo: repo,
             artifact_id: artifactUrls[0].id,
-          })
+            archive_format: 'zip',
+          })) as any
 
-          // return {
-          //   head_commit: headCommit,
-          //   run_nr: run.run_number,
-          //   base_commit: baseCommit,
-          // }
+          return {
+            head_commit: artifact.data.pull_requests.head.sha,
+            run_nr: run.run_number,
+            base_commit: artifact.data.pull_requests.base.sha,
+          }
         } else {
           app(`No PR metadata found`)
         }
