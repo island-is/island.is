@@ -107,8 +107,14 @@ const ApplicationList = ({ applications, onClick }: Props) => {
               icon: undefined,
               onClick: () => onClick(`${slug}/${application.id}`),
             }}
+            secondaryCta={{
+              label: 'delete',
+              icon: undefined,
+              visible: actionCard?.cta?.delete,
+              onClick: () => onClick(`${slug}/${application.id}`),
+            }}
             progressMeter={{
-              active: Boolean(application.progress),
+              active: false, // Boolean(application.progress), todo proper button
               progress: application.progress,
               variant: stateDefaultData.progress.variant,
             }}

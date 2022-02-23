@@ -26,6 +26,9 @@ export interface ActionCardMetaData {
     label?: string
     variant?: ActionCardTag
   }
+  cta?: {
+    delete?: boolean
+  }
 }
 
 export interface Application {

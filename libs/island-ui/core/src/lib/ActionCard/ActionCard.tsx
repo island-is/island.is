@@ -34,6 +34,7 @@ type ActionCardProps = {
   secondaryCta?: {
     label: string
     icon?: 'arrowForward'
+    visible?: boolean
     onClick?: () => void
   }
   progressMeter?: {
@@ -189,7 +190,10 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   const renderDefault = () => {
     const hasCTA = cta.label && !progressMeter.active
     const hasSecondaryCTA =
-      hasCTA && secondaryCta?.label && !progressMeter.active
+      hasCTA &&
+      secondaryCta?.label &&
+      !progressMeter.active &&
+      secondaryCta?.visible
 
     return (
       !!hasCTA && (

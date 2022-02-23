@@ -81,6 +81,9 @@ export class ApplicationSerializer
             ? intl.formatMessage(actionCardMeta.tag.label)
             : null,
         },
+        cta: {
+          delete: true,
+        },
       },
       name: intl.formatMessage(template.name),
       institution: template.institution
