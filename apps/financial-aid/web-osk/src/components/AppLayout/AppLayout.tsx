@@ -41,17 +41,17 @@ const AppLayout = ({ children }: Props) => {
     return `${Routes.application}`
   }
 
-  if (isAuthenticated && user) {
-    const redirectPath = getRedirectPath()
+  const redirectPath = getRedirectPath()
+  const isUserLoggedIn = isAuthenticated && user
 
-    if (
-      router.pathname === '/' ||
-      (router.pathname.startsWith(Routes.application) &&
-        !redirectPath.startsWith(Routes.application))
-    ) {
-      router.push(redirectPath)
-      return null
-    }
+  const shouldRedirect =
+    router.pathname === '/' ||
+    (router.pathname.startsWith(Routes.application) &&
+      !redirectPath.startsWith(Routes.application))
+
+  if (isUserLoggedIn && shouldRedirect) {
+    router.push(redirectPath)
+    return null
   }
 
   if (isAuthenticated === false || user === undefined || loadingUser) {
