@@ -1,4 +1,4 @@
-import simpleGit, { SimpleGit } from 'simple-git'
+// import simpleGit, { SimpleGit } from 'simple-git'
 import { mkdtemp, writeFile } from 'fs/promises'
 import { join } from 'path'
 import { findBestGoodRefBranch, findBestGoodRefPR } from './change-detection'
@@ -6,6 +6,7 @@ import { Arg, Substitute, SubstituteOf } from '@fluffy-spoon/substitute'
 import { existsSync, mkdir } from 'fs'
 import { promisify } from 'util'
 import { GitActionStatus } from './git-action-status'
+import { SimpleGit } from './simple-git'
 
 const baseBranch = 'main'
 const headBranch = 'fix'
@@ -24,8 +25,8 @@ describe('Change detection', () => {
   ) => Promise<string>
   beforeEach(async () => {
     path = await mkdtemp(`${__dirname}/test-data/repo`)
-    git = simpleGit(path, { baseDir: path })
-    const r = await git.init()
+    git = new SimpleGit(path)
+    const r = await git.git('init', '.')
     githubApi = Substitute.for<GitActionStatus>()
     githubApi.calculateDistance(Arg.all()).mimicks(calculateDistance)
 
@@ -391,11 +392,7 @@ async function calculateDistance(
   currentSha: string,
   olderSha: string,
 ): Promise<string[]> {
-  const diffNames = await git.diff({
-    '--name-status': null,
-    [currentSha]: null,
-    [olderSha]: null,
-  })
+  const diffNames = await git.git('diff', '--name-status', currentSha, olderSha)
   return [
     // @ts-ignore
     ...new Set(
@@ -418,11 +415,8 @@ async function makeChangeWithContent(
     await writeFile(change.path, change.content)
     await git.add(change.path)
   }
-  const commit = await git.commit(
-    message,
-    changeset.map((c) => c.path),
-  )
-  return commit.commit
+  const commit = await git.commit(message)
+  return commit.slice(0, 7)
 }
 
 async function makeChangeGlobal(

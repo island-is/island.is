@@ -102,6 +102,7 @@ jobs:
           export BASE_REF="$GITHUB_BASE_REF"
           export PR_REF=$GITHUB_SHA
           source ./scripts/ci/00_prepare-base-tags.sh
+          git checkout $GITHUB_SHA
           echo "BASE=$BASE" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

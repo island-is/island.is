@@ -1,4 +1,5 @@
-import { SimpleGit } from 'simple-git'
+// import { SimpleGit } from 'simple-git'
+import { SimpleGit } from './simple-git'
 import {
   BranchWorkflow,
   GitActionStatus,
