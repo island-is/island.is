@@ -25,6 +25,8 @@ export const IC_POLICE_DEMANDS_ROUTE =
 export const IC_POLICE_REPORT_ROUTE = '/krafa/rannsoknarheimild/greinargerd'
 export const IC_CASE_FILES_ROUTE = '/krafa/rannsoknarheimild/rannsoknargogn'
 export const IC_POLICE_CONFIRMATION_ROUTE = '/krafa/rannsoknarheimild/stadfesta'
+export const IC_RECEPTION_AND_ASSIGNMENT_ROUTE =
+  '/domur/rannsoknarheimild/mottaka'
 export const IC_OVERVIEW_ROUTE = '/domur/rannsoknarheimild/yfirlit'
 export const IC_COURT_HEARING_ARRANGEMENTS_ROUTE =
   '/domur/rannsoknarheimild/fyrirtaka'

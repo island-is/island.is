@@ -21,7 +21,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isReceptionAndAssignmentStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
+import { isReceptionAndAssignmentStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import ReceptionAndAssignmentForm from './ReceptionAndAssignmentForm'
@@ -115,8 +115,8 @@ const ReceptionAndAssignment = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={Constants.REQUEST_LIST_ROUTE}
-          nextUrl={`${Constants.REQUEST_OVERVIEW_BASE_ROUTE}/${id}`}
-          nextIsDisabled={!isReceptionAndAssignmentStepValidRC(workingCase)}
+          nextUrl={`${Constants.IC_OVERVIEW_ROUTE}/${id}`}
+          nextIsDisabled={!isReceptionAndAssignmentStepValidIC(workingCase)}
         />
       </FormContentContainer>
     </PageLayout>

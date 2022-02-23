@@ -50,7 +50,7 @@ export const JudgeOverview: React.FC = () => {
       />
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={Constants.RECEPTION_AND_ASSIGNMENT_ROUTE}
+          previousUrl={`${Constants.RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`}
           nextUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`}
         />
       </FormContentContainer>

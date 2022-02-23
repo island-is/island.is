@@ -16,7 +16,6 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
-import { isOverviewStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import CaseFilesAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CaseFilesAccordionItem/CaseFilesAccordionItem'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -238,10 +237,10 @@ const OverviewForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={Constants.REQUEST_LIST_ROUTE}
+          previousUrl={`${Constants.IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}
+          }`}
           nextIsLoading={isLoading}
           nextUrl={`${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!isOverviewStepValidIC(workingCase)}
         />
       </FormContentContainer>
     </>
