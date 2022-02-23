@@ -56,7 +56,7 @@ const useNavigationTree = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: 'Atvinna',
+          name: 'Staða',
           url: Routes.form.employment,
           isVisible: true,
         },
