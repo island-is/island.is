@@ -104,7 +104,8 @@ export const isDraftErrorFree = (state: DraftingState): boolean => {
           impact.date.error ||
           title.error ||
           text.error ||
-          appendixes.every(({ title, text }) => title.error || text.error) ||
+          (appendixes.length &&
+            appendixes.every(({ title, text }) => title.error || text.error)) ||
           comments.error
         ) {
           validImpacts = false
