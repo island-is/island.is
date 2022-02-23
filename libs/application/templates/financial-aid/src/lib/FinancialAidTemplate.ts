@@ -11,6 +11,7 @@ import { Roles, ApplicationStates, ONE_DAY, ONE_MONTH } from './constants'
 
 import { application } from './messages'
 import { dataSchema } from './dataSchema'
+import { hasSpouse } from './utils'
 
 type Events = { type: DefaultEvents.SUBMIT }
 
@@ -72,6 +73,58 @@ const FinancialAidTemplate: ApplicationTemplate<
               // TODO: Limit this
               read: 'all',
               write: 'all',
+            },
+          ],
+        },
+        on: {
+          SUBMIT: [
+            { target: ApplicationStates.SPOUSE, cond: hasSpouse },
+            { target: ApplicationStates.SUBMITTED },
+          ],
+        },
+      },
+      [ApplicationStates.SPOUSE]: {
+        meta: {
+          name: application.name.defaultMessage,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: ONE_MONTH,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Prerequisites').then((module) =>
+                  Promise.resolve(module.Prerequisites),
+                ),
+              write: {
+                answers: ['approveExternalData'],
+                externalData: ['nationalRegistry', 'veita'],
+              },
+            },
+          ],
+        },
+      },
+      [ApplicationStates.SUBMITTED]: {
+        meta: {
+          name: application.name.defaultMessage,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: ONE_MONTH,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Prerequisites').then((module) =>
+                  Promise.resolve(module.Prerequisites),
+                ),
+              write: {
+                answers: ['approveExternalData'],
+                externalData: ['nationalRegistry', 'veita'],
+              },
             },
           ],
         },

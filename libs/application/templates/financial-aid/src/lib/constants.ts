@@ -1,6 +1,8 @@
 export enum ApplicationStates {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
+  SUBMITTED = 'submitted',
+  SPOUSE = 'spouse',
 }
 
 export enum Roles {
@@ -10,7 +12,7 @@ export enum Roles {
 export const ONE_MONTH = 24 * 3600 * 1000 * 31
 export const ONE_DAY = 24 * 3600 * 1000
 
-export enum routes {
+export enum Routes {
   INRELATIONSHIP = 'inRelationship',
   HOMECIRCUMSTANCES = 'homeCircumstances',
   STUDENT = 'student',

@@ -31,8 +31,13 @@ export const summaryForm = {
     calculationsOverview: {
       id: 'fa.application:section.summaryForm.general.calculationsOverview',
       defaultMessage:
-        'Vinsamlegast farðu yfir gögnin hér að neðan til að staðfesta að réttar upplýsingar hafi verið gefnar upp. ',
+        'Vinsamlegast farðu yfir gögnin hér að neðan til að staðfesta að réttar upplýsingar hafi verið gefnar upp.',
       description: 'Summary form asking applicant to go over calculations',
+    },
+    submit: {
+      id: 'fa.application:section.summaryForm.general.submit',
+      defaultMessage: 'Senda umsókn',
+      description: 'Summary form submit application button',
     },
   }),
   userInfo: defineMessages({
