@@ -27,7 +27,6 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
     id: 'sp.licenses:no-data-found',
     defaultMessage: 'Engin gögn fundust',
   })
-  console.log(data, status, loading, error)
   return (
     <>
       <Box marginBottom={[3, 4, 5]}>

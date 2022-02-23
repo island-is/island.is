@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useMutation } from '@apollo/client'
+import { useIntl } from 'react-intl'
 
 import {
   parseString,
@@ -14,6 +15,8 @@ import type {
   UpdateCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
+import { toast } from '@island.is/island-ui/core'
+import { errors } from '@island.is/judicial-system-web/messages'
 
 import { CreateCaseMutation } from './createCaseGql'
 import { CreateCourtCaseMutation } from './createCourtCaseGql'
@@ -81,6 +84,7 @@ interface ExtendCaseMutationResponse {
 }
 
 const useCase = () => {
+  const { formatMessage } = useIntl()
   const [
     createCaseMutation,
     { loading: isCreatingCase },
@@ -120,29 +124,33 @@ const useCase = () => {
 
   const createCase = useMemo(
     () => async (theCase: Case): Promise<Case | undefined> => {
-      if (isCreatingCase === false) {
-        const { data } = await createCaseMutation({
-          variables: {
-            input: {
-              type: theCase.type,
-              policeCaseNumber: theCase.policeCaseNumber,
-              defenderName: theCase.defenderName,
-              defenderEmail: theCase.defenderEmail,
-              defenderPhoneNumber: theCase.defenderPhoneNumber,
-              sendRequestToDefender: theCase.sendRequestToDefender,
-              leadInvestigator: theCase.leadInvestigator,
-              courtId: theCase.court?.id,
-              description: theCase.description,
+      try {
+        if (isCreatingCase === false) {
+          const { data } = await createCaseMutation({
+            variables: {
+              input: {
+                type: theCase.type,
+                policeCaseNumber: theCase.policeCaseNumber,
+                defenderName: theCase.defenderName,
+                defenderEmail: theCase.defenderEmail,
+                defenderPhoneNumber: theCase.defenderPhoneNumber,
+                sendRequestToDefender: theCase.sendRequestToDefender,
+                leadInvestigator: theCase.leadInvestigator,
+                courtId: theCase.court?.id,
+                description: theCase.description,
+              },
             },
-          },
-        })
+          })
 
-        if (data) {
-          return data.createCase
+          if (data) {
+            return data.createCase
+          }
         }
+      } catch (error) {
+        toast.error(formatMessage(errors.createCase))
       }
     },
-    [createCaseMutation, isCreatingCase],
+    [createCaseMutation, formatMessage, isCreatingCase],
   )
 
   const createCourtCase = useMemo(
@@ -153,8 +161,8 @@ const useCase = () => {
         React.SetStateAction<string>
       >,
     ): Promise<string> => {
-      if (isCreatingCourtCase === false) {
-        try {
+      try {
+        if (isCreatingCourtCase === false) {
           const { data, errors } = await createCourtCaseMutation({
             variables: {
               input: {
@@ -177,12 +185,12 @@ const useCase = () => {
 
             return data.createCourtCase.courtCaseNumber
           }
-        } catch (error) {
-          // Catch all so we can set an eror message
-          setCourtCaseNumberErrorMessage(
-            'Ekki tókst að stofna nýtt mál, reyndu aftur eða sláðu inn málsnúmer',
-          )
         }
+      } catch (error) {
+        // Catch all so we can set an eror message
+        setCourtCaseNumberErrorMessage(
+          'Ekki tókst að stofna nýtt mál, reyndu aftur eða sláðu inn málsnúmer',
+        )
       }
 
       return ''
@@ -192,20 +200,22 @@ const useCase = () => {
 
   const updateCase = useMemo(
     () => async (id: string, updateCase: UpdateCase) => {
-      // Only update if id has been set
-      if (!id) {
-        return
+      try {
+        // Only update if id has been set
+        if (!id) {
+          return
+        }
+
+        const { data } = await updateCaseMutation({
+          variables: { input: { id, ...updateCase } },
+        })
+
+        return data?.updateCase
+      } catch (error) {
+        toast.error(formatMessage(errors.updateCase))
       }
-
-      const { data } = await updateCaseMutation({
-        variables: { input: { id, ...updateCase } },
-      })
-
-      // TODO: Handle errors and
-
-      return data?.updateCase
     },
-    [updateCaseMutation],
+    [formatMessage, updateCaseMutation],
   )
 
   const transitionCase = useMemo(
@@ -237,10 +247,11 @@ const useCase = () => {
 
         return true
       } catch (e) {
+        toast.error(formatMessage(errors.transitionCase))
         return false
       }
     },
-    [transitionCaseMutation],
+    [formatMessage, transitionCaseMutation],
   )
 
   const sendNotification = useMemo(
@@ -260,43 +271,56 @@ const useCase = () => {
 
         return Boolean(data?.sendNotification?.notificationSent)
       } catch (e) {
+        toast.error(formatMessage(errors.sendNotification))
         return false
       }
     },
-    [sendNotificationMutation],
+    [formatMessage, sendNotificationMutation],
   )
 
   const requestRulingSignature = useMemo(
     () => async (id: string) => {
-      const { data } = await requestRulingSignatureMutation({
-        variables: { input: { caseId: id } },
-      })
+      try {
+        const { data } = await requestRulingSignatureMutation({
+          variables: { input: { caseId: id } },
+        })
 
-      return data?.requestRulingSignature
+        return data?.requestRulingSignature
+      } catch (error) {
+        toast.error(formatMessage(errors.requestRulingSignature))
+      }
     },
-    [requestRulingSignatureMutation],
+    [formatMessage, requestRulingSignatureMutation],
   )
 
   const requestCourtRecordSignature = useMemo(
     () => async (id: string) => {
-      const { data } = await requestCourtRecordSignatureMutation({
-        variables: { input: { caseId: id } },
-      })
+      try {
+        const { data } = await requestCourtRecordSignatureMutation({
+          variables: { input: { caseId: id } },
+        })
 
-      return data?.requestCourtRecordSignature
+        return data?.requestCourtRecordSignature
+      } catch (error) {
+        toast.error(formatMessage(errors.requestCourtRecordSignature))
+      }
     },
-    [requestCourtRecordSignatureMutation],
+    [formatMessage, requestCourtRecordSignatureMutation],
   )
 
   const extendCase = useMemo(
     () => async (id: string) => {
-      const { data } = await extendCaseMutation({
-        variables: { input: { id } },
-      })
+      try {
+        const { data } = await extendCaseMutation({
+          variables: { input: { id } },
+        })
 
-      return data?.extendCase
+        return data?.extendCase
+      } catch (error) {
+        toast.error(formatMessage(errors.extendCase))
+      }
     },
-    [extendCaseMutation],
+    [extendCaseMutation, formatMessage],
   )
 
   const autofill = useMemo(

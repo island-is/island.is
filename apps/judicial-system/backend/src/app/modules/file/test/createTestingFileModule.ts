@@ -8,7 +8,7 @@ import { environment } from '../../../../environments'
 import { CourtService } from '../../court'
 import { AwsS3Service } from '../../aws-s3'
 import { CaseService } from '../../case'
-import { CaseFile } from '../models'
+import { CaseFile } from '../models/file.model'
 import { FileService } from '../file.service'
 import { FileController } from '../file.controller'
 

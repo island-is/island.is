@@ -31,6 +31,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import useNationalRegistry from '@island.is/judicial-system-web/src/utils/hooks/useNationalRegistry'
+import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 interface Props {
   defendant: Defendant
@@ -45,7 +46,12 @@ interface Props {
 const DefendantInfo: React.FC<Props> = (props) => {
   const { defendant, onDelete, onChange, updateDefendantState } = props
   const { formatMessage } = useIntl()
-  const { person, error } = useNationalRegistry(defendant.nationalId)
+  const {
+    personData,
+    businessData,
+    personError,
+    businessError,
+  } = useNationalRegistry(defendant.nationalId)
 
   const genderOptions: ReactSelectOption[] = [
     { label: formatMessage(core.male), value: Gender.MALE },
@@ -68,6 +74,13 @@ const DefendantInfo: React.FC<Props> = (props) => {
     setAccusedAddressErrorMessage,
   ] = useState<string>('')
 
+  const [
+    isGenderAndCitizenshipDisabled,
+    setIsGenderAndCitizenshipDisabled,
+  ] = useState<boolean>(
+    !!defendant.nationalId && isBusiness(defendant.nationalId),
+  )
+
   const mapNationalRegistryGenderToGender = (gender: string) => {
     return gender === 'male'
       ? Gender.MALE
@@ -77,23 +90,45 @@ const DefendantInfo: React.FC<Props> = (props) => {
   }
 
   useEffect(() => {
-    if (error || person?.items.length === 0) {
+    if (personError || (personData && personData.items?.length === 0)) {
       setNationalIdNotFound(true)
       return
     }
 
-    if (person && person.items.length > 0) {
+    if (personData && personData.items && personData.items.length > 0) {
       setAccusedNameErrorMessage('')
       setAccusedAddressErrorMessage('')
       setNationalIdErrorMessage('')
+      setIsGenderAndCitizenshipDisabled(false)
 
       onChange(defendant.id, {
-        name: person.items[0].name,
-        gender: mapNationalRegistryGenderToGender(person.items[0].gender),
-        address: person.items[0].permanent_address.street?.nominative,
+        name: personData.items[0].name,
+        gender: mapNationalRegistryGenderToGender(personData.items[0].gender),
+        address: personData.items[0].permanent_address.street?.nominative,
       })
     }
-  }, [person])
+  }, [personData])
+
+  useEffect(() => {
+    if (businessError || (businessData && businessData.items?.length === 0)) {
+      setNationalIdNotFound(true)
+      return
+    }
+
+    if (businessData && businessData.items && businessData.items.length > 0) {
+      setAccusedNameErrorMessage('')
+      setAccusedAddressErrorMessage('')
+      setNationalIdErrorMessage('')
+      setIsGenderAndCitizenshipDisabled(true)
+
+      onChange(defendant.id, {
+        name: businessData.items[0].full_name,
+        address: businessData.items[0].legal_address.street?.nominative,
+        gender: undefined,
+        citizenship: undefined,
+      })
+    }
+  }, [businessData])
 
   return (
     <BlueBox>
@@ -273,6 +308,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
                   gender: (selectedOption as ReactSelectOption).value as Gender,
                 })
               }
+              disabled={isGenderAndCitizenshipDisabled}
               required
             />
           </GridColumn>
@@ -291,6 +327,7 @@ const DefendantInfo: React.FC<Props> = (props) => {
               onBlur={(evt) => {
                 onChange(defendant.id, { citizenship: evt.target.value })
               }}
+              disabled={isGenderAndCitizenshipDisabled}
             />
           </GridColumn>
         </GridRow>

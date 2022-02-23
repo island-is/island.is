@@ -1,6 +1,6 @@
 import faker from 'faker'
 
-import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
+import { Case, CaseState } from '@island.is/judicial-system/types'
 import {
   makeInvestigationCase,
   makeCourt,
@@ -11,17 +11,9 @@ import { intercept } from '../../../utils'
 describe('/domur/rannsoknarheimild/fyrirtaka/:id', () => {
   beforeEach(() => {
     cy.login()
-    const caseData = makeInvestigationCase()
-    const caseDataAddition: Case = {
-      ...caseData,
-      court: makeCourt(),
-      requestedCourtDate: '2020-09-16T19:50:08.033Z',
-      state: CaseState.RECEIVED,
-    }
 
     cy.stubAPIResponses()
-
-    intercept(caseDataAddition)
+    cy.visit('/domur/rannsoknarheimild/fyrirtaka/test_id_stadfest')
   })
 
   it('should display case comments', () => {
@@ -32,7 +24,6 @@ describe('/domur/rannsoknarheimild/fyrirtaka/:id', () => {
       comments: comment,
     }
 
-    cy.visit('/domur/rannsoknarheimild/fyrirtaka/test_id_stadfest')
     intercept(caseDataAddition)
 
     cy.contains(comment)
@@ -48,7 +39,6 @@ describe('/domur/rannsoknarheimild/fyrirtaka/:id', () => {
       state: CaseState.RECEIVED,
     }
 
-    cy.visit('/domur/rannsoknarheimild/fyrirtaka/test_id_stadfest')
     intercept(caseDataAddition)
 
     cy.getByTestid('select-judge').click()
@@ -70,7 +60,6 @@ describe('/domur/rannsoknarheimild/fyrirtaka/:id', () => {
       state: CaseState.RECEIVED,
     }
 
-    cy.visit('/domur/rannsoknarheimild/fyrirtaka/test_id_stadfest')
     intercept(caseDataAddition)
 
     cy.getByTestid('select-judge').click()
