@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import { useQuery } from '@apollo/client'
 
 import {
   FormContentContainer,
@@ -9,6 +10,7 @@ import {
 import {
   JudgeSubsections,
   Sections,
+  UserData,
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
@@ -17,6 +19,7 @@ import {
   CaseTransition,
   NotificationType,
 } from '@island.is/judicial-system/types'
+import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isOverviewStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -50,6 +53,14 @@ const ReceptionAndAssignment = () => {
   useEffect(() => {
     document.title = 'Móttaka - Réttarvörslugátt'
   }, [])
+
+  const { data: userData, loading: userLoading } = useQuery<UserData>(
+    UsersQuery,
+    {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    },
+  )
 
   const receiveCase = async (workingCase: Case, courtCaseNumber: string) => {
     if (workingCase.state === CaseState.SUBMITTED && !isTransitioningCase) {
@@ -86,7 +97,7 @@ const ReceptionAndAssignment = () => {
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
       activeSubSection={JudgeSubsections.JUDGE_OVERVIEW}
-      isLoading={isLoadingWorkingCase}
+      isLoading={isLoadingWorkingCase || userLoading}
       notFound={caseNotFound}
     >
       <ReceptionAndAssignmentForm
@@ -99,6 +110,7 @@ const ReceptionAndAssignment = () => {
         setCourtCaseNumberEM={setCourtCaseNumberEM}
         isCreatingCourtCase={isCreatingCourtCase}
         receiveCase={receiveCase}
+        users={userData?.users}
       />
       <FormContentContainer isFooter>
         <FormFooter
