@@ -112,6 +112,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         name: Preparing HEAD and BASE tags
+        shell: bash
 
       - name: Cache for cypress
         id: cypress
