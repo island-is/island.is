@@ -9,7 +9,7 @@ Sentry.init({
   dsn: environment.sentry.dsn,
   environment: 'api',
 })
-
+console.log('dummy change')
 bootstrap({
   appModule: AppModule,
   name: 'ads-api',
