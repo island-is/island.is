@@ -183,7 +183,7 @@ export class SyslumennService {
 
     const contentBase64 =
       (
-        await api.vedbandayfirlitPost({
+        await api.vedbokarvottordPost({
           skilabod: {
             audkenni: id,
             fastanumer: realEstateNumber,

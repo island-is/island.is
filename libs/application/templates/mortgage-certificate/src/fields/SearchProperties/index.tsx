@@ -80,9 +80,6 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
   selectHandler,
   activePropertyNumber,
 }) => {
-  // Replace this mock functionality with skra api calls inside PropertyManager component
-  const { externalData } = application
-
   const [propertyNumber, setPropertyNumber] = useState('')
   const [foundProperty, setFoundProperty] = useState<
     PropertyDetail | undefined
@@ -90,23 +87,20 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
 
   const [searching, setSearching] = useState<boolean>(false)
 
-  const [runQuery, { called, loading, data }] = useLazyQuery(
-    searchRealEstateMutation,
-    {
-      variables: {
-        input: {
-          assetId: propertyNumber,
-        },
-      },
-      onCompleted(result) {
-        setFoundProperty(result.assetsDetail)
-        setSearching(false)
-      },
-      onError() {
-        setSearching(false)
+  const [runQuery] = useLazyQuery(searchRealEstateMutation, {
+    variables: {
+      input: {
+        assetId: propertyNumber,
       },
     },
-  )
+    onCompleted(result) {
+      setFoundProperty(result.assetsDetail)
+      setSearching(false)
+    },
+    onError() {
+      setSearching(false)
+    },
+  })
 
   const handleClickSearch = () => {
     setFoundProperty(undefined)
@@ -133,7 +127,7 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
             disabled={searching}
             onClick={() => handleClickSearch()}
             variant="ghost"
-            //style={{ width: 146, paddingLeft: 20, paddingRight: 20 }}
+            style={{ width: 146, paddingLeft: 20, paddingRight: 20 }}
           >
             Leita að eign
           </Button>
