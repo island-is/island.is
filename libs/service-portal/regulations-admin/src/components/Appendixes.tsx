@@ -15,6 +15,7 @@ import {
 import { MagicTextarea } from './MagicTextarea'
 import { useLocale } from '@island.is/localization'
 import { AppendixDraftForm } from '../state/types'
+import { RegImpactDraftActions } from '../state/useImpactDraftingState'
 import { RegDraftActions } from '../state/useDraftingState'
 
 // ---------------------------------------------------------------------------
@@ -182,14 +183,23 @@ type AppendixesProps = {
   draftId: RegulationDraft['id']
   appendixes: Array<AppendixDraftForm>
   baseAppendixes?: ReadonlyArray<Appendix>
-  actions: Pick<
-    RegDraftActions,
-    | 'setAppendixProp'
-    | 'addAppendix'
-    | 'deleteAppendix'
-    | 'revokeAppendix'
-    | 'moveAppendixUp'
-  >
+  actions:
+    | Pick<
+        RegImpactDraftActions,
+        | 'setAppendixProp'
+        | 'addAppendix'
+        | 'deleteAppendix'
+        | 'revokeAppendix'
+        | 'moveAppendixUp'
+      >
+    | Pick<
+        RegDraftActions,
+        | 'setAppendixProp'
+        | 'addAppendix'
+        | 'deleteAppendix'
+        | 'revokeAppendix'
+        | 'moveAppendixUp'
+      >
 }
 
 export const Appendixes = (props: AppendixesProps) => {
