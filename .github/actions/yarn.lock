@@ -3567,6 +3567,18 @@ unpipe@1.0.0:
   resolved "https://registry.yarnpkg.com/unpipe/-/unpipe-1.0.0.tgz#b2bf4ee8514aae6165b4817829d21b2ef49904ec"
   integrity sha1-sr9O6FFKrmFltIF4KdIbLvSZBOw=
 
+unzipit@1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/unzipit/-/unzipit-1.4.0.tgz#69fc6eef47730897e39b15e54f972d60a1a92441"
+  integrity sha512-hjoB8j1igXJgmxqaAvqkIW+faKTpG9cPK6QvkBhNCyd8OPWqODXTBVqTEmZbz62K5J/dX4Xa8lTa0NRikQwSjQ==
+  dependencies:
+    uzip-module "^1.0.2"
+
+uzip-module@^1.0.2:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/uzip-module/-/uzip-module-1.0.3.tgz#6bbabe2a3efea5d5a4a47479f523a571de3427ce"
+  integrity sha512-AMqwWZaknLM77G+VPYNZLEruMGWGzyigPK3/Whg99B3S6vGHuqsyl5ZrOv1UUF3paGK1U6PM0cnayioaryg/fA==
+
 v8-to-istanbul@^8.1.0:
   version "8.1.0"
   resolved "https://registry.yarnpkg.com/v8-to-istanbul/-/v8-to-istanbul-8.1.0.tgz#0aeb763894f1a0a1676adf8a8b7612a38902446c"

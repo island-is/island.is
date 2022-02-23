@@ -5,13 +5,13 @@ import {
   PRWorkflow,
 } from './git-action-status'
 import { execSync } from 'child_process'
-// import { Octokit } from '@octokit/action'
 import { Octokit } from '@octokit/rest'
 
 import { ActionsListWorkflowRunsForRepoResponseData } from '../detection'
 import { Endpoints } from '@octokit/types'
 import { join } from 'path'
 import Debug from 'debug'
+import { unzip } from 'unzipit'
 const app = Debug('change-detection:io')
 
 const repository = process.env.GITHUB_REPOSITORY || '/'
@@ -196,10 +196,12 @@ export class LocalRunner implements GitActionStatus {
             archive_format: 'zip',
           })) as any
 
+          const entries = await unzip(artifact.data)
+          const event = await entries.entries['event.json'].json()
           return {
-            head_commit: artifact.data.pull_requests.head.sha,
+            head_commit: event.pull_request.head.sha,
             run_nr: run.run_number,
-            base_commit: artifact.data.pull_requests.base.sha,
+            base_commit: event.pull_request.base.sha,
           }
         } else {
           app(`No PR metadata found`)
