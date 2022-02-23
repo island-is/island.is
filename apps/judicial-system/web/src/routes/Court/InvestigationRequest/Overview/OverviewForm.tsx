@@ -9,12 +9,6 @@ import {
   PdfButton,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseState,
-  CaseTransition,
-  NotificationType,
-} from '@island.is/judicial-system/types'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
   capitalize,
   caseTypes,
   formatDate,
@@ -28,7 +22,6 @@ import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
-import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
 import * as styles from './Overview.css'
 
 interface Props {
@@ -40,49 +33,10 @@ interface Props {
 
 const OverviewForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading, isCaseUpToDate } = props
-  const [courtCaseNumberEM, setCourtCaseNumberEM] = useState<string>('')
-  const [createCourtCaseSuccess, setCreateCourtCaseSuccess] = useState<boolean>(
-    false,
-  )
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
 
   const { user } = useContext(UserContext)
-  const {
-    createCourtCase,
-    isCreatingCourtCase,
-    transitionCase,
-    isTransitioningCase,
-    sendNotification,
-  } = useCase()
   const { formatMessage } = useIntl()
-
-  const receiveCase = async (workingCase: Case, courtCaseNumber: string) => {
-    if (workingCase.state === CaseState.SUBMITTED && !isTransitioningCase) {
-      // Transition case from SUBMITTED to RECEIVED when courtCaseNumber is set
-      const received = await transitionCase(
-        { ...workingCase, courtCaseNumber },
-        CaseTransition.RECEIVE,
-        setWorkingCase,
-      )
-
-      if (received) {
-        sendNotification(workingCase.id, NotificationType.RECEIVED_BY_COURT)
-      }
-    }
-  }
-
-  const handleCreateCourtCase = async (workingCase: Case) => {
-    const courtCaseNumber = await createCourtCase(
-      workingCase,
-      setWorkingCase,
-      setCourtCaseNumberEM,
-    )
-
-    if (courtCaseNumber !== '') {
-      setCreateCourtCaseSuccess(true)
-      receiveCase(workingCase, courtCaseNumber)
-    }
-  }
 
   return (
     <>
@@ -91,19 +45,6 @@ const OverviewForm: React.FC<Props> = (props) => {
           <Text as="h1" variant="h1">
             Yfirlit kröfu um rannsóknarheimild
           </Text>
-        </Box>
-        <Box component="section" marginBottom={6}>
-          <CourtCaseNumber
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-            courtCaseNumberEM={courtCaseNumberEM}
-            setCourtCaseNumberEM={setCourtCaseNumberEM}
-            createCourtCaseSuccess={createCourtCaseSuccess}
-            setCreateCourtCaseSuccess={setCreateCourtCaseSuccess}
-            handleCreateCourtCase={handleCreateCourtCase}
-            isCreatingCourtCase={isCreatingCourtCase}
-            receiveCase={receiveCase}
-          />
         </Box>
         <Box component="section" marginBottom={5}>
           <InfoCard

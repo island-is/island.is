@@ -1,14 +1,11 @@
 import React, { useState } from 'react'
-import { ValueType } from 'react-select'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
   Box,
-  Select,
   Text,
   Tooltip,
-  Option,
   Input,
   RadioButton,
   AlertMessage,
@@ -24,12 +21,7 @@ import {
 import {
   NotificationType,
   SessionArrangements,
-  UserRole,
 } from '@island.is/judicial-system/types'
-import {
-  ReactSelectOption,
-  UserData,
-} from '@island.is/judicial-system-web/src/types'
 import {
   setAndSendDateToServer,
   removeTabsValidateAndSet,
@@ -46,71 +38,15 @@ import DefenderInfo from '@island.is/judicial-system-web/src/components/Defender
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
-  isLoading: boolean
-  users: UserData
   user: User
 }
 
 const HearingArrangementsForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading, users, user } = props
+  const { workingCase, setWorkingCase, user } = props
   const [modalVisible, setModalVisible] = useState(false)
   const { updateCase, sendNotification, isSendingNotification } = useCase()
   const { formatMessage } = useIntl()
   const router = useRouter()
-
-  const setJudge = (id: string) => {
-    if (workingCase) {
-      setAndSendToServer('judgeId', id, workingCase, setWorkingCase, updateCase)
-
-      const judge = users?.users.find((j) => j.id === id)
-
-      setWorkingCase({ ...workingCase, judge: judge })
-    }
-  }
-
-  const setRegistrar = (id?: string) => {
-    if (workingCase) {
-      setAndSendToServer(
-        'registrarId',
-        id,
-        workingCase,
-        setWorkingCase,
-        updateCase,
-      )
-
-      const registrar = users?.users.find((r) => r.id === id)
-
-      setWorkingCase({ ...workingCase, registrar })
-    }
-  }
-
-  const judges = (users?.users ?? [])
-    .filter(
-      (user: User) =>
-        user.role === UserRole.JUDGE &&
-        user.institution?.id === workingCase?.court?.id,
-    )
-    .map((judge: User) => {
-      return { label: judge.name, value: judge.id }
-    })
-
-  const registrars = (users?.users ?? [])
-    .filter(
-      (user: User) =>
-        user.role === UserRole.REGISTRAR &&
-        user.institution?.id === workingCase?.court?.id,
-    )
-    .map((registrar: User) => {
-      return { label: registrar.name, value: registrar.id }
-    })
-
-  const defaultJudge = judges?.find(
-    (judge: Option) => judge.value === workingCase?.judge?.id,
-  )
-
-  const defaultRegistrar = registrars?.find(
-    (registrar: Option) => registrar.value === workingCase?.registrar?.id,
-  )
 
   const handleNextButtonClick = () => {
     if (
@@ -153,50 +89,6 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
         </Box>
         <Box component="section" marginBottom={7}>
           <CaseInfo workingCase={workingCase} userRole={user.role} />
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {`${formatMessage(m.sections.setJudge.title)} `}
-              <Tooltip text={formatMessage(m.sections.setJudge.tooltip)} />
-            </Text>
-          </Box>
-          <Select
-            name="judge"
-            label="Veldu dómara"
-            placeholder="Velja héraðsdómara"
-            value={defaultJudge}
-            options={judges}
-            onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-              setJudge((selectedOption as ReactSelectOption).value.toString())
-            }
-            required
-          />
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {`${formatMessage(m.sections.setRegistrar.title)} `}
-              <Tooltip text={formatMessage(m.sections.setRegistrar.tooltip)} />
-            </Text>
-          </Box>
-          <Select
-            name="registrar"
-            label="Veldu dómritara"
-            placeholder="Velja dómritara"
-            value={defaultRegistrar}
-            options={registrars}
-            onChange={(selectedOption: ValueType<ReactSelectOption>) => {
-              if (selectedOption) {
-                setRegistrar(
-                  (selectedOption as ReactSelectOption).value.toString(),
-                )
-              } else {
-                setRegistrar(undefined)
-              }
-            }}
-            isClearable
-          />
         </Box>
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
@@ -360,7 +252,6 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
         <FormFooter
           previousUrl={`${Constants.IC_OVERVIEW_ROUTE}/${workingCase.id}`}
           onNextButtonClick={handleNextButtonClick}
-          nextIsLoading={isLoading}
           nextIsDisabled={!isCourtHearingArrangementsStepValidIC(workingCase)}
         />
       </FormContentContainer>
