@@ -19,6 +19,10 @@ const draftRegulationSeed = [
     ideal_publish_date: '2021-08-08',
     ministry: 'fsr',
     signature_date: '2021-08-08',
+    signature_text:
+      '<p class="Dags" style="text-align: center;"><em>Dómsmálaráðuneytinu, 23. febrúar 2022.</em></p><p class="FHUndirskr" style="text-align: center;">f.h.r.</p><p class="Undirritun" style="text-align: center;"><strong>NAFN</strong><br>⸻ráðherra.</p><p class="Undirritun" style="text-align: right;"><em>NAFN.</em></p>',
+    signed_document_url:
+      'https://files.reglugerd.is/admin-drafts/a1fd62db-18a6-4741-88eb-a7b7a7e05833/download-1.pdf',
     effective_date: '2021-08-08',
     type: 'base',
     authors: [TEST_USERS.utlond, TEST_USERS.afrika],

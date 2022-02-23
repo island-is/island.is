@@ -72,6 +72,7 @@ export class DraftRegulationService {
       },
       order: [
         ['drafting_status', 'ASC'],
+        ['fast_track', 'ASC'],
         ['created', 'DESC'],
       ],
     })

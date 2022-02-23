@@ -78,11 +78,11 @@ type OverviewItemProps = {
   step?: Step
 }
 const OverviewItem = (props: OverviewItemProps) => {
-  const { label, step } = props
+  const { label, step, children } = props
   return (
     <Box marginBottom={2}>
       <Text fontWeight="semiBold">{label}:</Text>
-      {step && <JumpToStep step={step} label={label} />} {props.children}
+      {step && <JumpToStep step={step} label={label} />} {children}
     </Box>
   )
 }
@@ -165,15 +165,21 @@ export const EditReviewOverview = (props: EditReviewOverviewProps) => {
           <Text variant="h4" as="h4" marginBottom={2}>
             {t(reviewMessagse.impactsTitle)}
           </Text>
+          Foo!
+          {Object.keys(draft.impacts).forEach((key) => {
+            const impactsList = draft.impacts[key]
+            console.log({ key, impactsList })
 
-          {Object.entries(draft.impacts).forEach(([key, impactsList]) => {
             const label =
               key === 'self'
                 ? t(impactMsgs.selfAffecting)
                 : `${prettyName(key as RegName)} – `
 
+            return <>{label}</>
+
             return (
               <OverviewItem key={key} label={label} step="impacts">
+                Foo!
                 {impactsList.map((impact) => (
                   <div key={impact.id}>
                     {formatDate(impact.date.value)}{' '}
