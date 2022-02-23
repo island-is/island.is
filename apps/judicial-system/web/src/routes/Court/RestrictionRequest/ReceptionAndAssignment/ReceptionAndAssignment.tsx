@@ -8,7 +8,7 @@ import {
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  JudgeSubsections,
+  CourtSubsections,
   Sections,
   UserData,
 } from '@island.is/judicial-system-web/src/types'
@@ -21,7 +21,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isOverviewStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
+import { isReceptionAndAssignmentStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import ReceptionAndAssignmentForm from './ReceptionAndAssignmentForm'
@@ -96,7 +96,7 @@ const ReceptionAndAssignment = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={JudgeSubsections.JUDGE_OVERVIEW}
+      activeSubSection={CourtSubsections.RECEPTION_AND_ASSIGNMENT}
       isLoading={isLoadingWorkingCase || userLoading}
       notFound={caseNotFound}
     >
@@ -115,8 +115,8 @@ const ReceptionAndAssignment = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={Constants.REQUEST_LIST_ROUTE}
-          nextUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`}
-          nextIsDisabled={!isOverviewStepValidRC(workingCase)}
+          nextUrl={`${Constants.REQUEST_OVERVIEW_BASE_ROUTE}/${id}`}
+          nextIsDisabled={!isReceptionAndAssignmentStepValidRC(workingCase)}
         />
       </FormContentContainer>
     </PageLayout>

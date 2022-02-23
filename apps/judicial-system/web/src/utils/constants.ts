@@ -34,7 +34,8 @@ export const IC_RULING_STEP_TWO_ROUTE = '/domur/rannsoknarheimild/urskurdarord'
 export const IC_CONFIRMATION_ROUTE = '/domur/rannsoknarheimild/stadfesta'
 
 // Court
-export const COURT_SINGLE_REQUEST_BASE_ROUTE = '/domur/krafa'
+export const RECEPTION_AND_ASSIGNMENT_ROUTE = '/domur/mottaka'
+export const REQUEST_OVERVIEW_BASE_ROUTE = '/domur/krafa'
 export const HEARING_ARRANGEMENTS_ROUTE = '/domur/fyrirtokutimi'
 export const COURT_RECORD_ROUTE = '/domur/thingbok'
 export const RULING_STEP_ONE_ROUTE = '/domur/urskurdur'

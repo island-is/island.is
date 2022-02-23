@@ -29,7 +29,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
-  JudgeSubsections,
+  CourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
@@ -248,7 +248,7 @@ export const RulingStepTwo: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={JudgeSubsections.RULING_STEP_TWO}
+      activeSubSection={CourtSubsections.RULING_STEP_TWO}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >

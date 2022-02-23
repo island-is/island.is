@@ -7,10 +7,9 @@ import {
   FormContentContainer,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  JudgeSubsections,
+  CourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import { isOverviewStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
@@ -40,7 +39,7 @@ export const JudgeOverview: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={JudgeSubsections.JUDGE_OVERVIEW}
+      activeSubSection={CourtSubsections.JUDGE_OVERVIEW}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -51,9 +50,8 @@ export const JudgeOverview: React.FC = () => {
       />
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={Constants.REQUEST_LIST_ROUTE}
+          previousUrl={Constants.RECEPTION_AND_ASSIGNMENT_ROUTE}
           nextUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`}
-          nextIsDisabled={!isOverviewStepValidRC(workingCase)}
         />
       </FormContentContainer>
       <DraftConclusionModal
