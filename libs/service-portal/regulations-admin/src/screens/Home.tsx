@@ -2,7 +2,7 @@ import * as s from './Home.css'
 
 import React from 'react'
 
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text, Tabs } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
 import { TaskList } from '../components/TaskList'
 import { ShippedRegulations } from '../components/ShippedRegulations'
@@ -15,7 +15,18 @@ const Home = () => {
   const t = useLocale().formatMessage
 
   const { createNewDraft, creating, error } = useCreateRegulationDraft()
-
+  const TaskListContent = <TaskList />
+  const ShippedRegulationsContent = <ShippedRegulations />
+  const tabs = [
+    {
+      label: t(msg.taskListTitle),
+      content: TaskListContent,
+    },
+    {
+      label: t(msg.shippedTitle),
+      content: ShippedRegulationsContent,
+    },
+  ]
   return (
     <Box marginBottom={[6, 6, 10]}>
       <Box marginBottom={[4, 4, 8]}>
@@ -45,9 +56,7 @@ const Home = () => {
         </Button>
       </div>
 
-      <TaskList />
-
-      <ShippedRegulations />
+      <Tabs label="Reglugerðir" tabs={tabs} contentBackground="white" />
     </Box>
   )
 }

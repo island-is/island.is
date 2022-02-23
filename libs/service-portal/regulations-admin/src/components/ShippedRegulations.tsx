@@ -34,10 +34,7 @@ export const ShippedRegulations = () => {
   // Food for thought.
 
   return (
-    <Box marginTop={[4, 4, 8]}>
-      <Text variant="h3" as="h2" marginBottom={[2, 2, 3]}>
-        {formatMessage(homeMessages.shippedTitle)}
-      </Text>
+    <Box marginTop={6}>
       <Stack space={2}>
         {shippedRegs.data.map((shipped) => {
           const name = shipped.name
@@ -66,7 +63,8 @@ export const ShippedRegulations = () => {
                   ? {
                       icon: 'arrowForward',
                       label: t(homeMessages.cta_publish),
-                      variant: 'ghost',
+                      variant: 'text',
+                      size: 'small',
                       onClick: () => {
                         history.push(getEditUrl(shipped.id, 'publish'))
                       },

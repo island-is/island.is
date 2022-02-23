@@ -485,7 +485,7 @@ export const homeMessages = defineMessages({
   intro: {
     id: 'ap.regulations-admin:home-intro',
     defaultMessage:
-      '…fyrir lögformlega útgáfu í Stjórnartíðindum og endurbirtingu í reglugerðasafni.',
+      'Nýskráning fyrir lögformlega útgáfu í Stjórnartíðindum og endurbirtingu í reglugerðasafni.',
   },
 
   taskListTitle: {
@@ -494,7 +494,7 @@ export const homeMessages = defineMessages({
   },
   shippedTitle: {
     id: 'ap.regulations-admin:shipped-title',
-    defaultMessage: 'Reglugerðir sem bíða formlegrar birtingar',
+    defaultMessage: 'Reglugerðir sem bíða birtingar',
   },
   createRegulation: {
     id: 'ap.regulations-admin:create-regulation-cta',
@@ -508,6 +508,11 @@ export const homeMessages = defineMessages({
   cta: {
     id: 'ap.regulations-admin:task-cta',
     defaultMessage: 'Halda áfram',
+  },
+
+  cta_seeRegulation: {
+    id: 'ap.regulations-admin:task-cta-see-regulation',
+    defaultMessage: 'Skoða reglugerð',
   },
 
   cta_publish: {

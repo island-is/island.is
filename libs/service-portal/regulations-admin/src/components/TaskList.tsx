@@ -54,10 +54,7 @@ export const TaskList = () => {
   }
 
   return (
-    <Box marginBottom={[4, 4, 8]}>
-      <Text variant="h3" as="h2" paddingY={[1, 1]} marginBottom={[2, 2, 3]}>
-        {t(msg.taskListTitle)}
-      </Text>
+    <Box marginBottom={[4, 4, 8]} marginTop={6}>
       <Stack space={3}>
         {tasklist.data.map((item) => {
           const {
@@ -86,8 +83,9 @@ export const TaskList = () => {
                 .join(', ')}
               cta={{
                 icon: 'arrowForward',
-                label: t(msg.cta),
-                variant: 'ghost',
+                label: t(msg.cta_seeRegulation),
+                variant: 'text',
+                size: 'small',
                 onClick: () => {
                   history.push(getEditUrl(id))
                 },
