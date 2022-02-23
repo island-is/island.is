@@ -26,31 +26,12 @@ const AppLayout = ({ children }: Props) => {
     document.title = 'Fjárhagsaðstoð'
   }, [])
 
-  const getRedirectPath = () => {
-    if (user?.spouse?.hasFiles) {
-      return `${Routes.statusPage(user.currentApplicationId as string)}`
-    }
-    if (user?.spouse?.hasPartnerApplied) {
-      return `${Routes.form.info}`
-    }
-
-    if (user?.currentApplicationId) {
-      return `${Routes.statusPage(user.currentApplicationId as string)}`
-    }
-
-    return `${Routes.application}`
-  }
-
-  const redirectPath = getRedirectPath()
   const isUserLoggedIn = isAuthenticated && user
+  const shouldRedirect = router.pathname.startsWith(Routes.application)
+  const shouldRouteToStatus = user?.spouse?.hasFiles || (user?.currentApplicationId && !user?.spouse?.hasPartnerApplied)
 
-  const shouldRedirect =
-    router.pathname === '/' ||
-    (router.pathname.startsWith(Routes.application) &&
-      !redirectPath.startsWith(Routes.application))
-
-  if (isUserLoggedIn && shouldRedirect) {
-    router.push(redirectPath)
+  if (isUserLoggedIn && shouldRedirect && shouldRouteToStatus) {
+    router.push(Routes.statusPage(user.currentApplicationId as string))
     return null
   }
 
