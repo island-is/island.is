@@ -28,7 +28,9 @@ const AppLayout = ({ children }: Props) => {
 
   const isUserLoggedIn = isAuthenticated && user
   const shouldRedirect = router.pathname.startsWith(Routes.application)
-  const shouldRouteToStatus = user?.spouse?.hasFiles || (user?.currentApplicationId && !user?.spouse?.hasPartnerApplied)
+  const shouldRouteToStatus =
+    user?.spouse?.hasFiles ||
+    (user?.currentApplicationId && !user?.spouse?.hasPartnerApplied)
 
   if (isUserLoggedIn && shouldRedirect && shouldRouteToStatus) {
     router.push(Routes.statusPage(user.currentApplicationId as string))
