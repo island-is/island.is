@@ -125,15 +125,11 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
   }
 
   const uploadStateFiles = async (applicationId: string, type: FileType) => {
-    try {
-      return await createApplicationFiles({
-        variables: {
-          input: { files: formatFiles(files, applicationId, type) },
-        },
-      })
-    } catch (e) {
-      throw e
-    }
+    return await createApplicationFiles({
+      variables: {
+        input: { files: formatFiles(files, applicationId, type) },
+      },
+    })
   }
 
   const uploadFiles = async (
@@ -141,15 +137,11 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
     type: FileType,
     uploadFile: UploadFile[],
   ) => {
-    try {
-      return await createApplicationFiles({
-        variables: {
-          input: { files: formatFiles(uploadFile, applicationId, type) },
-        },
-      })
-    } catch (e) {
-      throw e
-    }
+    return await createApplicationFiles({
+      variables: {
+        input: { files: formatFiles(uploadFile, applicationId, type) },
+      },
+    })
   }
 
   const uploadToCloudFront = (file: UploadFile, url: string) => {
