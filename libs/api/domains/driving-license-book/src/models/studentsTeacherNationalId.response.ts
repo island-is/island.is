@@ -1,7 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class StudentListTeacherSsnResponse {
+export class StudentListTeacherNationalIdResponse {
   @Field(() => [Student], { nullable: true })
   data?: Student[]
 
@@ -11,11 +11,11 @@ export class StudentListTeacherSsnResponse {
 
 @ObjectType()
 export class Student {
-  @Field(() => ID,{ nullable: true })
+  @Field(() => ID, { nullable: true })
   id?: string
 
   @Field({ nullable: true })
-  ssn?: string
+  nationalId?: string
 
   @Field({ nullable: true })
   name?: string

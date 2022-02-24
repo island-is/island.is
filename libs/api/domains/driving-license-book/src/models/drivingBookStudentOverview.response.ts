@@ -3,7 +3,7 @@ import { DrivingLicenseBook } from './drivingLicenseBook.response'
 import { DrivingBookStudent } from './drivingBookStudent.response'
 
 @ObjectType()
-export class DrivingBookStudentOverview extends  DrivingBookStudent{
+export class DrivingBookStudentOverview extends DrivingBookStudent {
   @Field(() => DrivingLicenseBook, { nullable: true })
   book?: DrivingLicenseBook
 }

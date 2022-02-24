@@ -11,7 +11,7 @@ export class DrivingBookLesson {
   lessonTime?: number
 
   @Field({ nullable: true })
-  teacherSsn?: string
+  teacherNationalId?: string
 
   @Field({ nullable: true })
   teacherName?: string

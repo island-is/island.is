@@ -21,13 +21,13 @@ export class DrivingLicenceTestResult {
   hasPassed?: boolean
 
   @Field({ nullable: true })
-  testCenterSsn?: string
+  testCenterNationalId?: string
 
   @Field({ nullable: true })
   testCenterName?: string
 
   @Field({ nullable: true })
-  testExaminerSsn?: string
+  testExaminerNationalId?: string
 
   @Field({ nullable: true })
   testExaminerName?: string

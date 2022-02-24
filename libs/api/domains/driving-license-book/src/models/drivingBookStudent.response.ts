@@ -7,7 +7,7 @@ export class DrivingBookStudent {
   id?: string
 
   @Field({ nullable: true })
-  ssn?: string
+  nationalId?: string
 
   @Field({ nullable: true })
   name?: string

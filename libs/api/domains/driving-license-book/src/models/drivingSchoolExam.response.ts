@@ -9,13 +9,13 @@ export class DrivingSchoolExam {
   examDate?: string
 
   @Field({ nullable: true })
-  schoolSsn?: string
+  schoolNationalId?: string
 
   @Field({ nullable: true })
   schoolName?: string
 
   @Field({ nullable: true })
-  schoolEmployeeSsn?: string
+  schoolEmployeeNationalId?: string
 
   @Field({ nullable: true })
   schoolEmployeeName?: string

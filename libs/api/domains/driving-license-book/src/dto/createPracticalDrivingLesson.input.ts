@@ -6,7 +6,7 @@ export class CreatePracticalDrivingLesson {
   bookId!: string
 
   @Field()
-  teacherSsn!: string
+  teacherNationalId!: string
 
   @Field()
   minutes!: number
@@ -16,10 +16,4 @@ export class CreatePracticalDrivingLesson {
 
   @Field({ nullable: true })
   comments?: string
-}
-
-@InputType()
-export class CreatePracticalDrivingLessonInput {
-  @Field(() => CreatePracticalDrivingLesson)
-  practicalDrivingLessonCreateRequestBody?: CreatePracticalDrivingLesson
 }

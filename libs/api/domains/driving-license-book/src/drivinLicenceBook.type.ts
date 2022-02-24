@@ -12,7 +12,7 @@ export interface StudentList {
 
 export interface ActorStudent {
   id: string | null
-  ssn: string | null
+  nationalId: string | null
   name: string | null
   zipCode: number | null
   address: string | null

@@ -15,13 +15,13 @@ export class DrivingLicenseBook {
   createdOn?: string
 
   @Field({ nullable: true })
-  teacherSsn?: string
+  teacherNationalId?: string
 
   @Field({ nullable: true })
   teacherName?: string
 
   @Field({ nullable: true })
-  schoolSsn?: string
+  schoolNationalId?: string
 
   @Field({ nullable: true })
   schoolName?: string
