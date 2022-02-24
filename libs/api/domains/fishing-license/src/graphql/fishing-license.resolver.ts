@@ -1,12 +1,10 @@
 import { UseGuards } from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { Audit } from '@island.is/nest/audit'
-import { ApiScope, FishingLicenseScope } from '@island.is/auth/scopes'
 import {
   CurrentUser,
   IdsAuthGuard,
   IdsUserGuard,
-  Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
@@ -35,7 +33,6 @@ export class FishingLicenseResolver {
     registrationNumber: number,
     @CurrentUser() user: User,
   ) {
-    console.log('getting fishings licelicieclei')
     return await this.fishingLicenseService.getFishingLicenses(
       registrationNumber,
       user,
