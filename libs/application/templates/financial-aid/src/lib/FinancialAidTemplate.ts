@@ -8,13 +8,22 @@ import {
   Application,
 } from '@island.is/application/core'
 
+import { assign } from 'xstate'
+
 import { Roles, ApplicationStates, ONE_DAY, ONE_MONTH } from './constants'
 
 import { application } from './messages'
 import { dataSchema } from './dataSchema'
 import { hasSpouse } from './utils'
+import { FAApplication } from '..'
 
 type Events = { type: DefaultEvents.SUBMIT }
+
+const oneMonthLifeCycle = {
+  shouldBeListed: true,
+  shouldBePruned: true,
+  whenToPrune: ONE_MONTH,
+}
 
 const FinancialAidTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -59,11 +68,7 @@ const FinancialAidTemplate: ApplicationTemplate<
       [ApplicationStates.DRAFT]: {
         meta: {
           name: application.name.defaultMessage,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            whenToPrune: ONE_MONTH,
-          },
+          lifecycle: oneMonthLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -85,13 +90,10 @@ const FinancialAidTemplate: ApplicationTemplate<
         },
       },
       [ApplicationStates.SPOUSE]: {
+        entry: 'assignToSpouse',
         meta: {
           name: application.name.defaultMessage,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            whenToPrune: ONE_MONTH,
-          },
+          lifecycle: oneMonthLifeCycle,
           roles: [
             {
               id: Roles.SPOUSE,
@@ -113,11 +115,7 @@ const FinancialAidTemplate: ApplicationTemplate<
       [ApplicationStates.SUBMITTED]: {
         meta: {
           name: application.name.defaultMessage,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            whenToPrune: ONE_MONTH,
-          },
+          lifecycle: oneMonthLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT || Roles.SPOUSE,
@@ -129,6 +127,31 @@ const FinancialAidTemplate: ApplicationTemplate<
           ],
         },
       },
+    },
+  },
+  stateMachineOptions: {
+    actions: {
+      assignToSpouse: assign((context) => {
+        const {
+          externalData,
+          answers,
+        } = (context.application as unknown) as FAApplication
+        const { applicant } = externalData.nationalRegistry.data
+        const spouse =
+          applicant.spouse?.nationalId ||
+          answers.relationshipStatus.spouseNationalId
+
+        if (spouse) {
+          return {
+            ...context,
+            application: {
+              ...context.application,
+              assignees: [spouse],
+            },
+          }
+        }
+        return { ...context }
+      }),
     },
   },
 
