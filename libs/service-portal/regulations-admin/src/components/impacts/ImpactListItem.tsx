@@ -39,7 +39,7 @@ export const ImpactListItem = (props: ImpactListItemProps) => {
     return (
       <div>
         <DateText date={effect.date as string} color="red600" />
-        <Text variant="small" color="red600" marginBottom={2}>
+        <Text variant="small" color="red600">
           Villa! Sama reglugerð er í vinnslu annarsstaðar.
         </Text>
       </div>
@@ -50,7 +50,7 @@ export const ImpactListItem = (props: ImpactListItemProps) => {
     return (
       <div>
         <DateText date={effect.date as string} color="mint800" />
-        <Text variant="small" color="mint800" marginBottom={2}>
+        <Text variant="small" color="mint800">
           Breytt af núverandi reglugerð
         </Text>
       </div>
@@ -69,7 +69,6 @@ export const ImpactListItem = (props: ImpactListItemProps) => {
       <Text
         variant="small"
         color={getCurrentEffect(effect) ? 'mint800' : 'blueberry600'}
-        marginBottom={2}
       >
         Breytt af{' '}
         {getCurrentEffect(effect) ? 'núverandi reglugerð' : effect.name}

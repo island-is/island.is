@@ -12,6 +12,7 @@ import {
 } from '@island.is/regulations'
 import { DraftImpact, RegulationDraftId } from '@island.is/regulations/admin'
 import { useLocale } from '@island.is/localization'
+import * as s from './Impacts.css'
 
 export type ImpactHistoryProps = {
   effects?: Effects
@@ -63,38 +64,66 @@ export const ImpactHistory = (props: ImpactHistoryProps) => {
 
   const allFutureEffects = getAllFutureEffects()
   return (
-    <Box background="blueberry100" paddingY={3} paddingX={4} marginTop={10}>
-      <Text variant="h4" color="blueberry600" marginBottom={3}>
-        Breytingasaga reglugerðar
-      </Text>
-      <Divider />
-      <a
-        href={`https://island.is/reglugerdir/nr/${nameToSlug(
-          activeImpact?.name as RegName,
-        )}`}
-        target="_blank"
-        rel="noreferrer"
+    <Box background="blueberry100" paddingY={3} paddingX={4} marginBottom={7}>
+      <Box
+        className={s.border}
+        display="flex"
+        alignItems="flexEnd"
+        borderBottomWidth="standard"
+        borderColor="purple200"
       >
-        <Text variant="h5" color="blueberry600" paddingTop={3} marginBottom={3}>
-          Nýjasta útgáfan
+        <Text variant="h4" color="blueberry600">
+          Breytingasaga reglugerðar
         </Text>
-      </a>
+        <Box className={s.line} marginX={2} />
+        <a
+          href={`https://island.is/reglugerdir/nr/${nameToSlug(
+            activeImpact?.name as RegName,
+          )}`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          <Text variant="h5" color="blueberry600">
+            Nýjasta útgáfan
+          </Text>
+        </a>
+      </Box>
+      {/* <Divider /> */}
       {allFutureEffects.length > 0 ? (
         <>
           <Text variant="eyebrow" marginBottom={2}>
             Væntanlegar breytingar:
           </Text>
-          {allFutureEffects.map((effect) => (
-            <ImpactListItem
-              effect={effect}
-              current={getCurrentEffect(effect)}
-              idMismatch={hasMismatchId(effect)}
-              activeName={activeImpact?.name ?? ''}
-              key={`${nameToSlug(activeImpact?.name as RegName)}-${
-                effect.date
-              }`}
-            />
-          ))}
+          <Box
+            display="flex"
+            flexDirection="row"
+            flexWrap="wrap"
+            justifyContent="flexStart"
+            className={s.history}
+          >
+            {allFutureEffects.map((effect) => (
+              <>
+                <ImpactListItem
+                  effect={effect}
+                  current={getCurrentEffect(effect)}
+                  idMismatch={hasMismatchId(effect)}
+                  activeName={activeImpact?.name ?? ''}
+                  key={`${nameToSlug(activeImpact?.name as RegName)}-${
+                    effect.date
+                  }`}
+                />
+                <ImpactListItem
+                  effect={effect}
+                  current={getCurrentEffect(effect)}
+                  idMismatch={hasMismatchId(effect)}
+                  activeName={activeImpact?.name ?? ''}
+                  key={`${nameToSlug(activeImpact?.name as RegName)}-${
+                    effect.date
+                  }`}
+                />
+              </>
+            ))}
+          </Box>
         </>
       ) : (
         <Text variant="h5" marginBottom={2}>
