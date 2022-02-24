@@ -7,6 +7,7 @@ export enum ApplicationStates {
 
 export enum Roles {
   APPLICANT = 'applicant',
+  SPOUSE = 'spouse',
 }
 
 export const ONE_MONTH = 24 * 3600 * 1000 * 31

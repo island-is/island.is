@@ -5,6 +5,7 @@ import {
   ApplicationStateSchema,
   DefaultEvents,
   ApplicationConfigurations,
+  Application,
 } from '@island.is/application/core'
 
 import { Roles, ApplicationStates, ONE_DAY, ONE_MONTH } from './constants'
@@ -93,15 +94,18 @@ const FinancialAidTemplate: ApplicationTemplate<
           },
           roles: [
             {
+              id: Roles.SPOUSE,
+              formLoader: () =>
+                import('../forms/Spouse').then((module) =>
+                  Promise.resolve(module.Spouse),
+                ),
+            },
+            {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Prerequisites').then((module) =>
-                  Promise.resolve(module.Prerequisites),
+                import('../forms/WaitingForSpouse').then((module) =>
+                  Promise.resolve(module.WaitingForSpouse),
                 ),
-              write: {
-                answers: ['approveExternalData'],
-                externalData: ['nationalRegistry', 'veita'],
-              },
             },
           ],
         },
@@ -116,15 +120,11 @@ const FinancialAidTemplate: ApplicationTemplate<
           },
           roles: [
             {
-              id: Roles.APPLICANT,
+              id: Roles.APPLICANT || Roles.SPOUSE,
               formLoader: () =>
-                import('../forms/Prerequisites').then((module) =>
-                  Promise.resolve(module.Prerequisites),
+                import('../forms/Submitted').then((module) =>
+                  Promise.resolve(module.Submitted),
                 ),
-              write: {
-                answers: ['approveExternalData'],
-                externalData: ['nationalRegistry', 'veita'],
-              },
             },
           ],
         },
@@ -132,8 +132,14 @@ const FinancialAidTemplate: ApplicationTemplate<
     },
   },
 
-  mapUserToRole() {
-    return Roles.APPLICANT
+  mapUserToRole(id: string, application: Application) {
+    if (id === application.applicant) {
+      return Roles.APPLICANT
+    }
+    if (application.assignees.includes(id)) {
+      return Roles.SPOUSE
+    }
+    return undefined
   },
 }
 
