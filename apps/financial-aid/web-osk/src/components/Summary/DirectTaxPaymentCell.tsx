@@ -3,12 +3,12 @@ import { Box, Text, Button, Divider } from '@island.is/island-ui/core'
 import { DirectTaxPayment } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
-  directTaxPayments?: DirectTaxPayment[]
+  directTaxPayments: DirectTaxPayment[]
   setIsModalOpen: (open: boolean) => void
 }
 
 const DirectTaxPaymentCell = ({ directTaxPayments, setIsModalOpen }: Props) => {
-  if (!directTaxPayments || directTaxPayments.length === 0) {
+  if (directTaxPayments.length === 0) {
     return null
   }
   return (

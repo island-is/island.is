@@ -153,7 +153,6 @@ export class CreateApplicationDto {
   @ApiProperty()
   readonly streetName: string
 
-  @IsOptional()
   @IsArray()
   @ApiProperty()
   readonly directTaxPayments: DirectTaxPayment[]

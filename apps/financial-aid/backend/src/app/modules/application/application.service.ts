@@ -269,7 +269,7 @@ export class ApplicationService {
     })
 
     await Promise.all([
-      application.directTaxPayments?.map((d) => {
+      application.directTaxPayments.map((d) => {
         return this.directTaxPaymentService.create({
           applicationId: appModel.id,
           userType: UserType.APPLICANT,
@@ -400,10 +400,7 @@ export class ApplicationService {
         updatedApplication?.setDataValue('directTaxPayments', resolved)
       })
 
-    if (
-      update.event === ApplicationEventType.SPOUSEFILEUPLOAD &&
-      update.directTaxPayments
-    ) {
+    if (update.event === ApplicationEventType.SPOUSEFILEUPLOAD) {
       await Promise.all([
         update.directTaxPayments.map((d) => {
           return this.directTaxPaymentService.create({

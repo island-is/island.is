@@ -5,6 +5,7 @@ import { Period } from '../interfaces'
 export const directTaxPaymentRequest = (
   agentNationalId: string,
   agentId: string,
+  url: string,
   requesterNationalId: string,
   from: Period,
   to: Period,
@@ -15,7 +16,7 @@ export const directTaxPaymentRequest = (
   sanitizeInput(from.month.toString(), (i) => i.length <= 2 && isNumber(i))
   sanitizeInput(to.month.toString(), (i) => i.length <= 2 && isNumber(i))
   return `<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:tem="http://tempuri.org/" xmlns:ns="http://skattur.is/UmbodsmadurSkuldaraThjonusta/2010/12/23">
-  <soap:Header xmlns:wsa="http://www.w3.org/2005/08/addressing"><wsa:Action>http://tempuri.org/IUSStadgreidslaFramtalGogn/SaekjaSundurlidanir</wsa:Action><wsa:To>https://vefurp.rsk.is/ws/securep/UMS/WS/USStadgreidslaFramtalGogn.svc</wsa:To></soap:Header>
+  <soap:Header xmlns:wsa="http://www.w3.org/2005/08/addressing"><wsa:Action>http://tempuri.org/IUSStadgreidslaFramtalGogn/SaekjaSundurlidanir</wsa:Action><wsa:To>${url}</wsa:To></soap:Header>
   <soap:Body>
      <tem:SaekjaSundurlidanir>
         <!--Optional:-->

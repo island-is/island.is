@@ -137,12 +137,12 @@ const ApplicationProfile = ({
   )
 
   const applicantDirectPayments =
-    application.directTaxPayments?.filter(
+    application.directTaxPayments.filter(
       (d) => d.userType === UserType.APPLICANT,
     ) ?? []
 
   const spouseDirectPayments =
-    application.directTaxPayments?.filter(
+    application.directTaxPayments.filter(
       (d) => d.userType === UserType.SPOUSE,
     ) ?? []
 

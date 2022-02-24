@@ -148,7 +148,7 @@ export const getDirectTaxPayments = (directTaxPayments: DirectTaxPayment[]) => {
       content: totalSalary.toLocaleString('de-DE'),
     },
     {
-      title: 'Meðtal',
+      title: 'Meðaltal',
       content: Math.floor(
         totalSalary / directTaxPayments.length,
       ).toLocaleString('de-DE'),

@@ -145,7 +145,7 @@ const SpouseSummary = () => {
             {formError.message}
           </Text>
         </div>
-        {form.directTaxPayments && (
+        {form.directTaxPayments.length > 0 && (
           <DirectTaxPaymentsModal
             items={form.directTaxPayments}
             isVisible={isModalOpen}

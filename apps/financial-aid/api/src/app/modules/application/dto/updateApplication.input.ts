@@ -57,6 +57,6 @@ export class UpdateApplicationInput implements UpdateApplication {
   readonly amount?: CreateAmountInput
 
   @Allow()
-  @Field(() => [DirectTaxPaymentInput], { nullable: true })
-  readonly directTaxPayments?: DirectTaxPaymentInput[]
+  @Field(() => [DirectTaxPaymentInput])
+  readonly directTaxPayments!: DirectTaxPaymentInput[]
 }

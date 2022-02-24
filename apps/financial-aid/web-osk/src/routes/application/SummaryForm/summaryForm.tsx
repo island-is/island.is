@@ -203,7 +203,7 @@ const SummaryForm = () => {
             setIsVisible(isModalVisible)
           }}
         />
-        {form.directTaxPayments && (
+        {form.directTaxPayments.length > 0 && (
           <DirectTaxPaymentsModal
             items={form.directTaxPayments}
             isVisible={isModalOpen}

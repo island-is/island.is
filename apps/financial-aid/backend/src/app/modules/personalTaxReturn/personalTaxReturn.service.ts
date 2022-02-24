@@ -32,16 +32,16 @@ export class PersonalTaxReturnService {
         }),
       }
     } catch {
-      return undefined
+      return { directTaxPayments: [] }
     }
   }
 
   async personalTaxReturn(nationalId: string, folder: string) {
     try {
-      let year = new Date().getFullYear() - 1
+      let changeableYear = new Date().getFullYear() - 1
 
       let taxReturn = await this.personalTaxReturnApi
-        .personalTaxReturnInPdf(nationalId, year)
+        .personalTaxReturnInPdf(nationalId, changeableYear)
         .catch(() => {
           return {
             success: false,
@@ -50,10 +50,10 @@ export class PersonalTaxReturnService {
         })
 
       if (taxReturn.success === false) {
-        year -= 1
+        changeableYear -= 1
         taxReturn = await this.personalTaxReturnApi.personalTaxReturnInPdf(
           nationalId,
-          year,
+          changeableYear,
         )
       }
 
@@ -61,7 +61,7 @@ export class PersonalTaxReturnService {
         throw Error('Tax return was not successful')
       }
 
-      const fileName = `Framtal_${nationalId}_${year}.pdf`
+      const fileName = `Framtal_${nationalId}_${changeableYear}.pdf`
 
       const presignedUrl = this.fileService.createSignedUrl(folder, fileName)
       const base64 = Base64.atob(taxReturn.content)

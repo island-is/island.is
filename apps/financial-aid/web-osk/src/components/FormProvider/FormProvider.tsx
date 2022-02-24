@@ -38,7 +38,7 @@ export interface Form {
   familyStatus?: FamilyStatus
   spouse?: FormSpouse
   phoneNumber?: string
-  directTaxPayments?: DirectTaxPayment[]
+  directTaxPayments: DirectTaxPayment[]
 }
 
 export const initialState = {
@@ -47,6 +47,7 @@ export const initialState = {
   taxReturnFiles: [],
   taxReturnFromRskFile: [],
   otherFiles: [],
+  directTaxPayments: [],
 }
 
 interface FormProvider {
@@ -87,6 +88,7 @@ const FormProvider = ({ children }: Props) => {
       taxReturnFiles: [],
       otherFiles: [],
       taxReturnFromRskFile: [],
+      directTaxPayments: [],
     })
   }
 

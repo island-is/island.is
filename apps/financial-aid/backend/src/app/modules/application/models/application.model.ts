@@ -281,6 +281,6 @@ export class ApplicationModel extends Model<Application> {
   municipalityCode: string
 
   @HasMany(() => DirectTaxPaymentModel, 'applicationId')
-  @ApiProperty({ type: DirectTaxPaymentModel, nullable: true, isArray: true })
-  directTaxPayments?: DirectTaxPaymentModel[]
+  @ApiProperty({ type: DirectTaxPaymentModel, isArray: true })
+  directTaxPayments: DirectTaxPaymentModel[]
 }

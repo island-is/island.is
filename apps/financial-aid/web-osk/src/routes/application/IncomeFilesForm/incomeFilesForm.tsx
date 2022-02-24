@@ -28,9 +28,10 @@ const IncomeFilesForm = () => {
     }
   }
 
-  const periodText = form.directTaxPayments
-    ? 'Við þurfum að sjá gögn um tekjur í síðasta mánuði.'
-    : 'Við þurfum að sjá gögn um tekjur í þessum og síðustu tvo mánuði.'
+  const periodText =
+    form.directTaxPayments.length > 0
+      ? 'Við þurfum að sjá gögn um tekjur í síðasta mánuði.'
+      : 'Við þurfum að sjá gögn um tekjur í þessum og síðustu tvo mánuði.'
 
   return (
     <>

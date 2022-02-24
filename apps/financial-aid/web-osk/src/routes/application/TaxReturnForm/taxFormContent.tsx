@@ -1,4 +1,4 @@
-import { Text, LinkContext } from '@island.is/island-ui/core'
+import { Text, LinkContext, Link } from '@island.is/island-ui/core'
 
 const DirectTaxPaymentsInfo = () => {
   return (
@@ -7,7 +7,7 @@ const DirectTaxPaymentsInfo = () => {
         Hvar finn ég staðfestingarskjal úr staðgreiðsluskrá?
       </Text>
       <Text marginBottom={[3, 3, 10]}>
-        Eftir að þú hefur innskráð þig á Þjónustuvef Skattsins ferð þú í Almennt
+        Eftir að þú hefur innskráð þig á þjónustuvef Skattsins ferð þú í Almennt
         → Staðgreiðsluskrá RSK → Sækja PDF.
       </Text>
     </>
@@ -39,9 +39,14 @@ const TaxReturnInfo = () => {
       >
         <Text marginBottom={[3, 3, 5]}>
           Á vef Skattsins finnur þú{' '}
-          <a href="https://www.skatturinn.is/einstaklingar/framtal-og-alagning/stadfest-afrit-framtals/">
+          <Link
+            href="https://www.skatturinn.is/einstaklingar/framtal-og-alagning/stadfest-afrit-framtals/"
+            color="blue400"
+            underline="small"
+            underlineVisibility="always"
+          >
             leiðbeiningar
-          </a>{' '}
+          </Link>
           um hvernig sækja má staðfest afrit skattframtals.
         </Text>
       </LinkContext.Provider>
@@ -65,8 +70,8 @@ export const getTaxFormContent = (
         reason: (
           <Text marginBottom={[4, 4, 5]}>
             Skattframtal er staðfesting á öllum þeim tekjum, eignum og skuldum
-            sem þú áttir á skattárinu og er nauðsynlegt fylgigagn fyrir
-            úrvinnslu á fjárhagsaðstoð.
+            sem þú áttir á skattárinu og er nauðsynlegt fyrir úrvinnslu á
+            fjárhagsaðstoð.
           </Text>
         ),
         info: <TaxReturnInfo />,
@@ -75,27 +80,26 @@ export const getTaxFormContent = (
       return {
         data: (
           <Text marginBottom={2}>
-            Við þurfum að fá afrit úr <strong>staðreiðsluskrá</strong> Skattsins
-            þar sem ekki náðist að sækja gögnin sjálfvirkt.
+            Við þurfum að fá afrit úr <strong>staðgreiðsluskrá</strong>{' '}
+            Skattsins þar sem ekki náðist að sækja gögnin sjálfvirkt.
           </Text>
         ),
         reason: (
           <Text marginBottom={[4, 4, 5]}>
             Staðgreiðsluskrá er staðfesting/yfirlit frá Skattinum um
-            skattskyldar tekjur umsækjanda á árinu. Það er nauðsynlegt fylgigagn
-            fyrir úrvinnslu umsóknar um fjárhagsaðstoð.
+            skattskyldar tekjur umsækjanda á árinu. Það er nauðsynlegt fyrir
+            úrvinnslu umsóknar um fjárhagsaðstoð.
           </Text>
         ),
         info: <DirectTaxPaymentsInfo />,
       }
 
-    case taxReturnFailed && directTaxPaymentsFailed:
     default:
       return {
         data: (
           <Text marginBottom={2}>
             Við þurfum að fá afrit af nýjasta <strong>skattframtali</strong>{' '}
-            þínu og staðfestingarskjal úr <strong>staðreiðsluskrá</strong>{' '}
+            þínu og staðfestingarskjal úr <strong>staðgreiðsluskrá</strong>{' '}
             Skattsins þar sem ekki tókst að sækja gögnin sjálfvikrt.
           </Text>
         ),

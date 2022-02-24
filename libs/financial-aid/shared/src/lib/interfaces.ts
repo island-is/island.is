@@ -292,7 +292,7 @@ export interface Application {
   postalCode?: string
   city?: string
   municipalityCode?: string
-  directTaxPayments?: DirectTaxPayment[]
+  directTaxPayments: DirectTaxPayment[]
 }
 
 export interface GetSignedUrlForId {

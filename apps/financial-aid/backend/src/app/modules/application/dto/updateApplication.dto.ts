@@ -59,8 +59,7 @@ export class UpdateApplicationDto {
   @ApiProperty()
   readonly amount?: CreateAmountDto
 
-  @IsOptional()
   @IsArray()
   @ApiProperty()
-  readonly directTaxPayments?: DirectTaxPayment[]
+  readonly directTaxPayments: DirectTaxPayment[]
 }

@@ -64,6 +64,7 @@ export class PersonalTaxReturnApi {
         directTaxPaymentRequest(
           this.config.agentNationalId,
           this.config.agentId,
+          this.config.url,
           nationalId,
           from,
           to,

@@ -30,7 +30,7 @@ const TaxReturnForm = () => {
   }
 
   const taxReturnFetchFailed = form.taxReturnFromRskFile.length === 0
-  const directTaxPaymentsFetchedFailed = !form.directTaxPayments
+  const directTaxPaymentsFetchedFailed = form.directTaxPayments.length === 0
 
   const taxDataGatheringFailed =
     taxReturnFetchFailed && directTaxPaymentsFetchedFailed
@@ -52,7 +52,7 @@ const TaxReturnForm = () => {
             <AlertMessage
               type="error"
               title="Ekki tókst að sækja skattframtal og staðgreiðsluskrá"
-              message="Það náðist ekki tenging við skattinn"
+              message="Það náðist ekki tenging við Skattinn"
             />
           </Box>
         )}
