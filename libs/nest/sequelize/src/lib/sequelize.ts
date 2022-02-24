@@ -2,6 +2,8 @@ import { SequelizeModuleOptions } from '@nestjs/sequelize'
 import addSeconds from 'date-fns/addSeconds'
 import differenceInSeconds from 'date-fns/differenceInSeconds'
 
+import type { Logger } from '@island.is/logging'
+
 const baseConnectionAgeInSeconds = 1 * 60 // 1 minute
 
 const getRandomWithinRange = (min: number, max: number) => {
@@ -10,7 +12,13 @@ const getRandomWithinRange = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1)) + min
 }
 
-export const getOptions = (): SequelizeModuleOptions => ({
+interface Params {
+  logger?: Logger
+}
+
+export const getOptions = ({
+  logger,
+}: Params = {}): SequelizeModuleOptions => ({
   define: {
     underscored: true,
     timestamps: true,
@@ -42,7 +50,7 @@ export const getOptions = (): SequelizeModuleOptions => ({
       return differenceInSeconds(new Date(), obj.recycleWhen) < 0
     },
   },
-  logging: false,
+  logging: logger ? (message) => logger.debug(message) : false,
   autoLoadModels: true,
   synchronize: false,
 })
