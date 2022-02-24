@@ -9,6 +9,7 @@ import {
   Delete,
   UseGuards,
   BadRequestException,
+  Query,
 } from '@nestjs/common'
 import { ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger'
 import {
@@ -117,10 +118,16 @@ export class DraftRegulationController {
     isArray: true,
     description: 'Gets all DraftRegulations with status draft and proposal',
   })
-  async getAll(@CurrentUser() user: User): Promise<TaskListType> {
+  async getAll(
+    @CurrentUser() user: User,
+    @Query('page') page?: number,
+  ): Promise<TaskListType> {
     const canManage = user.scope.includes('@island.is/regulations:manage')
+    console.log({ page })
+
     return await this.draftRegulationService.getAll(
       !canManage ? user : undefined,
+      page,
     )
   }
 

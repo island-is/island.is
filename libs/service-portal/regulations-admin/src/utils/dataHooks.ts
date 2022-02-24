@@ -6,6 +6,7 @@ import {
   DraftImpact,
   DraftImpactName,
   RegulationDraft,
+  TaskListType,
 } from '@island.is/regulations/admin'
 import {
   ISODate,
@@ -167,11 +168,6 @@ const RegulationTaskListQuery = gql`
     getDraftRegulations(input: $input)
   }
 `
-
-type TaskListType = {
-  drafts: Array<DraftSummary>
-  pages: { page: number; pages: number }
-}
 
 export const useRegulationTaskListQuery = (
   page = 1,

@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   ActionCard,
   Box,
   SkeletonLoader,
   Stack,
   Text,
+  Button,
 } from '@island.is/island-ui/core'
 import { homeMessages as msg, statusMsgs } from '../messages'
 import { ISODate, toISODate } from '@island.is/regulations'
@@ -17,9 +18,10 @@ import { useLocale } from '@island.is/localization'
 export const TaskList = () => {
   const { formatMessage, formatDateFns } = useLocale()
   const t = formatMessage
+  const [page, setPage] = useState(1)
 
   const history = useHistory()
-  const tasklist = useRegulationTaskListQuery()
+  const tasklist = useRegulationTaskListQuery(page)
 
   if (tasklist.loading || tasklist.error) {
     return (
@@ -93,6 +95,12 @@ export const TaskList = () => {
             />
           )
         })}
+        {tasklist.data.paging.pages > 1 && (
+          <p>
+            Page {page} of {tasklist.data.paging.pages}
+            <Button onClick={() => setPage(page + 1)}>Næsta síða</Button>
+          </p>
+        )}
       </Stack>
     </Box>
   )
