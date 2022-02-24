@@ -75,7 +75,7 @@ export class RegulationsAdminResolver {
 
   @Query(() => [DraftRegulationShippedModel])
   async getShippedRegulations(@CurrentUser() { authorization }: User) {
-    return await this.regulationsAdminClientService.getShippedRegulations(
+    return await this.regulationsAdminApiService.getShippedRegulations(
       authorization,
     )
   }
@@ -86,7 +86,7 @@ export class RegulationsAdminResolver {
     @Args('input') input: GetDraftRegulationsInput,
     @CurrentUser() user: User,
   ) {
-    return await this.regulationsAdminClientService.getDraftRegulations(
+    return await this.regulationsAdminApiService.getDraftRegulations(
       user.authorization,
       input.page,
     )
