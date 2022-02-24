@@ -27,6 +27,8 @@ import {
   DeleteDraftRegulationChangeInput,
   UpdateDraftRegulationChangeInput,
   CreateDraftRegulationChangeInput,
+  GetDraftRegulationsInput,
+  GetRegulationImpactsInput,
 } from './dto'
 import {
   DeleteDraftRegulationModel,
@@ -34,10 +36,8 @@ import {
   DraftRegulationChangeModel,
   DraftRegulationPdfDownloadModel,
   DraftRegulationSummaryModel,
+  DraftRegulationShippedModel,
 } from './models'
-import { GetRegulationImpactsInput } from './dto/getRegulationImpactsByName.input'
-import { GetDraftRegulationsInput } from './dto/getDraftRegulations.input'
-import { DraftRegulationShippedModel } from './models/draftRegulationShipped.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -75,7 +75,7 @@ export class RegulationsAdminResolver {
 
   @Query(() => [DraftRegulationShippedModel])
   async getShippedRegulations(@CurrentUser() { authorization }: User) {
-    return await this.regulationsAdminClientService.getShippedRegulations(
+    return await this.regulationsAdminApiService.getShippedRegulations(
       authorization,
     )
   }
@@ -86,7 +86,7 @@ export class RegulationsAdminResolver {
     @Args('input') input: GetDraftRegulationsInput,
     @CurrentUser() user: User,
   ) {
-    return await this.regulationsAdminClientService.getDraftRegulations(
+    return await this.regulationsAdminApiService.getDraftRegulations(
       user.authorization,
       input.page,
     )

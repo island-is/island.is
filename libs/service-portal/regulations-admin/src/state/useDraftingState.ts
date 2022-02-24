@@ -75,8 +75,12 @@ const useMakeDraftingState = (inputs: StateInputs) => {
   const draftIsLocked = isDraftLocked(state.draft)
 
   useEffect(() => {
-    if (draftIsLocked && inputs.stepName !== 'publish') {
-      history.replace(getEditUrl('publish'))
+    if (
+      draftIsLocked &&
+      inputs.stepName !== 'review' &&
+      inputs.stepName !== 'publish'
+    ) {
+      history.replace(getEditUrl('review'))
     } else {
       dispatch({ type: 'CHANGE_STEP', stepName: inputs.stepName })
     }
@@ -112,6 +116,7 @@ const useMakeDraftingState = (inputs: StateInputs) => {
           input: {
             id: draft.id,
             body: {
+              name: draft.name.value,
               title: draft.title.value,
               text: draft.text.value,
               appendixes: draft.appendixes.map((apx) => ({
@@ -299,7 +304,7 @@ const useMakeDraftingState = (inputs: StateInputs) => {
 
       publish:
         state.isEditor &&
-        // only offer publish from "review" step
+        // only offer publish from "publish" step
         state.step.name === 'publish'
           ? () => {
               if (!isDraftPublishable(state)) {

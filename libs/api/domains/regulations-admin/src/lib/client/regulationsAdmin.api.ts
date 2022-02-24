@@ -14,7 +14,11 @@ import {
   UpdateDraftRegulationChangeInput,
   CreateDraftRegulationChangeInput,
 } from '../graphql/dto'
-import { DraftImpact } from '@island.is/regulations/admin'
+import {
+  DraftImpact,
+  ShippedSummary,
+  TaskListType,
+} from '@island.is/regulations/admin'
 
 export class RegulationsAdminApi extends RESTDataSource {
   constructor(
@@ -29,6 +33,28 @@ export class RegulationsAdminApi extends RESTDataSource {
   willSendRequest(request: RequestOptions) {
     this.memoizedResults.clear()
     request.headers.set('Content-Type', 'application/json')
+  }
+
+  async getDraftRegulations(authorization: string, page?: number) {
+    return await this.get<TaskListType>(
+      '/draft_regulations',
+      {
+        page,
+      },
+      {
+        headers: { authorization },
+      },
+    )
+  }
+
+  async getShippedRegulations(authorization: string) {
+    return await this.get<ShippedSummary[]>(
+      `/draft_regulations_shipped`,
+      {},
+      {
+        headers: { authorization },
+      },
+    )
   }
 
   create(authorization: string): Promise<any> {

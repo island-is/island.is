@@ -5,3 +5,4 @@ export { DraftRegulationPdfDownloadModel } from './draftRegulationPdfDownload.mo
 export { DraftRegulationCancelModel } from './draftRegulationCancel.model'
 export { DraftRegulationChangeModel } from './draftRegulationChange.model'
 export { DraftRegulationSummaryModel } from './draftRegulationSummary.model'
+export { DraftRegulationShippedModel } from './draftRegulationShipped.model'

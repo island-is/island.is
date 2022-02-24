@@ -7,7 +7,7 @@ export const tableContainer = style({
   border: `1px solid ${theme.color.blue200}`,
 })
 
-globalStyle(`${tableContainer} th, td`, {
+globalStyle(`${tableContainer} th, ${tableContainer} td`, {
   paddingRight: theme.spacing[3],
   paddingLeft: theme.spacing[3],
   paddingTop: theme.spacing[2],
@@ -34,7 +34,7 @@ export const headlineContainer = style({
   fontWeight: 600,
 })
 
-globalStyle(`${headlineContainer} td`, {
+globalStyle(`${headlineContainer} > td`, {
   paddingTop: theme.spacing[1],
   paddingBottom: theme.spacing[1],
 })

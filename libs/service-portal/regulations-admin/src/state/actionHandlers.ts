@@ -17,7 +17,11 @@ export const actionHandlers: {
   ) => Draft<DraftingState> | void
 } = {
   CHANGE_STEP: (state, { stepName }) => {
-    if (isDraftLocked(state.draft) && stepName !== 'review') {
+    if (
+      isDraftLocked(state.draft) &&
+      stepName !== 'review' &&
+      stepName !== 'publish'
+    ) {
       state.step = steps.review
     }
     state.step = steps[stepName]

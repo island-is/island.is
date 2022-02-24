@@ -197,6 +197,12 @@ export const EditChange = (props: EditChangeProp) => {
     closeModal(true)
   }
 
+  const hasImpactMismatch = () => {
+    return !!draftImpacts?.filter(
+      (draftImpact) => draftImpact.changingId !== draft.id,
+    ).length
+  }
+
   return (
     <LayoverModal closeModal={closeModal} id="EditChangeModal">
       {draft && (
@@ -330,7 +336,12 @@ export const EditChange = (props: EditChangeProp) => {
               >
                 Til baka
               </Button>
-              <Button onClick={saveChange} size="small" icon="arrowForward">
+              <Button
+                onClick={saveChange}
+                size="small"
+                icon="arrowForward"
+                disabled={hasImpactMismatch()}
+              >
                 Vista textabreytingu
               </Button>
             </Box>

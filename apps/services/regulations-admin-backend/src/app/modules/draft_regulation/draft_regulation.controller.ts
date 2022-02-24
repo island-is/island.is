@@ -122,8 +122,8 @@ export class DraftRegulationController {
     @CurrentUser() user: User,
     @Query('page') page?: number,
   ): Promise<TaskListType> {
+    // managers can see all, creators can only see their own
     const canManage = user.scope.includes('@island.is/regulations:manage')
-    console.log({ page })
 
     return await this.draftRegulationService.getAll(
       !canManage ? user : undefined,
