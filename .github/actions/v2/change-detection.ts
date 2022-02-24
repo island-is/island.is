@@ -79,8 +79,21 @@ export async function findBestGoodRefPR(
   log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`)
   const lastChanges = await git.log({ maxCount: 1 })
   const currentChange = lastChanges.latest
+  const mergeBaseCommit = await git.raw('merge-base', prBranch, baseBranch)
+  const commits = (
+    await git.raw(
+      'rev-list',
+      '--date-order',
+      '--max-count=100',
+      'HEAD~1',
+      `${mergeBaseCommit.trim()}`,
+    )
+  )
+    .split('\n')
+    .filter((s) => s.length > 0)
+    .map((c) => c.substr(0, 7))
 
-  const prRun = await githubApi.getLastGoodPRRun(headBranch)
+  const prRun = await githubApi.getLastGoodPRRun(headBranch, commits)
   const prBuilds: {
     distance: number
     hash: string
@@ -94,9 +107,7 @@ export async function findBestGoodRefPR(
       const tempBranch = `${headBranch}-${Math.round(Math.random() * 1000000)}`
       await git.checkoutBranch(tempBranch, prRun.base_commit)
       log(`Branch checked out`)
-      // dump()
       await git.merge(prRun.head_commit)
-      // dump()
       log(`Simulated previous PR merge commit`)
       const lastMerge = await git.log({ maxCount: 1 })
       const lastMergeCommit = lastMerge.latest
@@ -116,19 +127,6 @@ export async function findBestGoodRefPR(
       await git.checkout(prBranch)
     }
   }
-  const mergeBaseCommit = await git.raw('merge-base', prBranch, baseBranch)
-  const commits = (
-    await git.raw(
-      'rev-list',
-      '--date-order',
-      '--max-count=50',
-      'HEAD~1',
-      `${mergeBaseCommit.trim()}`,
-    )
-  )
-    .split('\n')
-    .filter((s) => s.length > 0)
-    .map((c) => c.substr(0, 7))
   const baseGoodBuilds = await githubApi.getLastGoodBranchBuildRun(
     baseBranch,
     commits,

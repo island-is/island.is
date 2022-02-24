@@ -13,7 +13,10 @@ export interface BranchWorkflow {
 }
 
 export interface GitActionStatus {
-  getLastGoodPRRun(branch: string): Promise<PRWorkflow | undefined>
+  getLastGoodPRRun(
+    branch: string,
+    commits: string[],
+  ): Promise<PRWorkflow | undefined>
   getLastGoodBranchBuildRun(
     branch: string,
     candidateCommits: string[],

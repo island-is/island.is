@@ -72,7 +72,7 @@ describe('Change detection', () => {
       await git.mergeFromTo(baseBranch, prBranch)
     })
     it('should use last good branch run when no PR runs available', async () => {
-      githubApi.getLastGoodPRRun(headBranch).resolves(undefined)
+      githubApi.getLastGoodPRRun(headBranch, Arg.any()).resolves(undefined)
       githubApi
         .getLastGoodBranchBuildRun(
           baseBranch,
@@ -97,7 +97,13 @@ describe('Change detection', () => {
 
     it('should use PR run when available', async () => {
       githubApi
-        .getLastGoodPRRun(headBranch)
+        .getLastGoodPRRun(
+          headBranch,
+          Arg.is(
+            (commits) =>
+              commits.includes(fixGoodSha) && commits.includes(mainSha1),
+          ),
+        )
         .resolves({ head_commit: fixGoodSha, base_commit: mainSha1, run_nr: 2 })
       githubApi
         .getLastGoodBranchBuildRun(baseBranch, Arg.any())
@@ -119,7 +125,13 @@ describe('Change detection', () => {
     })
     it('prefer lighter branch run over heavier PR run', async () => {
       githubApi
-        .getLastGoodPRRun(headBranch)
+        .getLastGoodPRRun(
+          headBranch,
+          Arg.is(
+            (commits) =>
+              commits.includes(fixGoodSha) && commits.includes(mainSha1),
+          ),
+        )
         .resolves({ head_commit: fixGoodSha, base_commit: mainSha1, run_nr: 2 })
       githubApi
         .getLastGoodBranchBuildRun(
@@ -143,7 +155,7 @@ describe('Change detection', () => {
       })
     })
     it('should trigger a full rebuild if no good commits found neither on PR nor on base branch', async () => {
-      githubApi.getLastGoodPRRun(headBranch).resolves(undefined)
+      githubApi.getLastGoodPRRun(headBranch, Arg.any()).resolves(undefined)
       githubApi
         .getLastGoodBranchBuildRun(baseBranch, Arg.any())
         .resolves(undefined)
@@ -192,7 +204,7 @@ describe('Change detection', () => {
       await git.mergeFromTo(baseBranch, prBranch)
     })
     it('should use last good branch from main when no good runs on base or head branch', async () => {
-      githubApi.getLastGoodPRRun(headBranch).resolves(undefined)
+      githubApi.getLastGoodPRRun(headBranch, Arg.any()).resolves(undefined)
       githubApi
         .getLastGoodBranchBuildRun(
           baseBranch,
@@ -217,7 +229,13 @@ describe('Change detection', () => {
 
     it('should prefer the lighter run between a PR run a base branch run', async () => {
       githubApi
-        .getLastGoodPRRun(headBranch)
+        .getLastGoodPRRun(
+          headBranch,
+          Arg.is(
+            (commits) =>
+              commits.includes(fixGoodSha) && commits.includes(hotfix1),
+          ),
+        )
         .resolves({ head_commit: fixGoodSha, base_commit: hotfix1, run_nr: 2 })
       githubApi
         .getLastGoodBranchBuildRun(
@@ -242,7 +260,13 @@ describe('Change detection', () => {
     })
     it('prefer lighter branch run over heavier PR run', async () => {
       githubApi
-        .getLastGoodPRRun(headBranch)
+        .getLastGoodPRRun(
+          headBranch,
+          Arg.is(
+            (commits) =>
+              commits.includes(fixGoodSha) && commits.includes(mainSha1),
+          ),
+        )
         .resolves({ head_commit: fixGoodSha, base_commit: mainSha1, run_nr: 2 })
       githubApi
         .getLastGoodBranchBuildRun(

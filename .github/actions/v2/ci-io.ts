@@ -127,7 +127,10 @@ export class LocalRunner implements GitActionStatus {
     return undefined
   }
 
-  async getLastGoodPRRun(branch: string): Promise<PRWorkflow | undefined> {
+  async getLastGoodPRRun(
+    branch: string,
+    commits: string[],
+  ): Promise<PRWorkflow | undefined> {
     const branchName = branch.replace('origin/', '')
     app(`Getting last good PR(pull_request) run for branch ${branchName}`)
     const runsIterator = this.octokit.paginate.iterator(
@@ -203,10 +206,15 @@ export class LocalRunner implements GitActionStatus {
             (await dir.files[0].buffer()).toString('utf-8'),
           )
           app(`Got event data from PR ${run.run_number}`)
-          return {
-            head_commit: event.pull_request.head.sha,
-            run_nr: run.run_number,
-            base_commit: event.pull_request.base.sha,
+          if (
+            commits.includes(event.pull_request.head.sha) &&
+            commits.includes(event.pull_request.base.sha)
+          ) {
+            return {
+              head_commit: event.pull_request.head.sha,
+              run_nr: run.run_number,
+              base_commit: event.pull_request.base.sha,
+            }
           }
         } else {
           app(`No PR metadata found`)

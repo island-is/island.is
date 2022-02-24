@@ -91025,7 +91025,7 @@ class LocalRunner {
             return undefined;
         });
     }
-    getLastGoodPRRun(branch) {
+    getLastGoodPRRun(branch, commits) {
         var e_2, _a;
         return __awaiter(this, void 0, void 0, function* () {
             const branchName = branch.replace('origin/', '');
@@ -91091,11 +91091,14 @@ class LocalRunner {
                         const dir = yield unzip.Open.buffer(new Uint8Array(artifact.data));
                         const event = JSON.parse((yield dir.files[0].buffer()).toString('utf-8'));
                         app(`Got event data from PR ${run.run_number}`);
-                        return {
-                            head_commit: event.pull_request.head.sha,
-                            run_nr: run.run_number,
-                            base_commit: event.pull_request.base.sha,
-                        };
+                        if (commits.includes(event.pull_request.head.sha) &&
+                            commits.includes(event.pull_request.base.sha)) {
+                            return {
+                                head_commit: event.pull_request.head.sha,
+                                run_nr: run.run_number,
+                                base_commit: event.pull_request.base.sha,
+                            };
+                        }
                     }
                     else {
                         app(`No PR metadata found`);
@@ -91159,7 +91162,12 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
         log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`);
         const lastChanges = yield git.log({ maxCount: 1 });
         const currentChange = lastChanges.latest;
-        const prRun = yield githubApi.getLastGoodPRRun(headBranch);
+        const mergeBaseCommit = yield git.raw('merge-base', prBranch, baseBranch);
+        const commits = (yield git.raw('rev-list', '--date-order', '--max-count=100', 'HEAD~1', `${mergeBaseCommit.trim()}`))
+            .split('\n')
+            .filter((s) => s.length > 0)
+            .map((c) => c.substr(0, 7));
+        const prRun = yield githubApi.getLastGoodPRRun(headBranch, commits);
         const prBuilds = [];
         if (prRun) {
             log(`Found a PR run candidate: ${JSON.stringify(prRun)}`);
@@ -91168,9 +91176,7 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
                 const tempBranch = `${headBranch}-${Math.round(Math.random() * 1000000)}`;
                 yield git.checkoutBranch(tempBranch, prRun.base_commit);
                 log(`Branch checked out`);
-                // dump()
                 yield git.merge(prRun.head_commit);
-                // dump()
                 log(`Simulated previous PR merge commit`);
                 const lastMerge = yield git.log({ maxCount: 1 });
                 const lastMergeCommit = lastMerge.latest;
@@ -91187,11 +91193,6 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
                 yield git.checkout(prBranch);
             }
         }
-        const mergeBaseCommit = yield git.raw('merge-base', prBranch, baseBranch);
-        const commits = (yield git.raw('rev-list', '--date-order', '--max-count=50', 'HEAD~1', `${mergeBaseCommit.trim()}`))
-            .split('\n')
-            .filter((s) => s.length > 0)
-            .map((c) => c.substr(0, 7));
         const baseGoodBuilds = yield githubApi.getLastGoodBranchBuildRun(baseBranch, commits);
         if (baseGoodBuilds) {
             let affectedComponents = yield githubApi.calculateDistance(git, currentChange.hash, baseGoodBuilds.head_commit);
