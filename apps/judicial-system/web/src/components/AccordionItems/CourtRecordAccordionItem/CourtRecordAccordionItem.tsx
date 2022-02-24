@@ -6,7 +6,6 @@ import {
   capitalize,
   formatAppeal,
   formatDate,
-  TIME_FORMAT,
   formatRequestCaseType,
 } from '@island.is/judicial-system/formatters'
 import {
@@ -17,6 +16,7 @@ import {
 import { closedCourt, core } from '@island.is/judicial-system-web/messages'
 import { courtRecordAccordion as m } from '@island.is/judicial-system-web/messages/Core/courtRecordAccordion'
 import type { Case } from '@island.is/judicial-system/types'
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 

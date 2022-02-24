@@ -5,10 +5,14 @@ import {
   makeInvestigationCase,
   makeProsecutor,
 } from '@island.is/judicial-system/formatters'
+import {
+  IC_COURT_RECORD_ROUTE,
+  IC_RULING_STEP_ONE_ROUTE,
+} from '@island.is/judicial-system/consts'
 
 import { intercept } from '../../../utils'
 
-describe('/domur/rannsoknarheimild/thingbok/:id', () => {
+describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
   beforeEach(() => {
     const caseData = makeInvestigationCase()
 
@@ -19,7 +23,7 @@ describe('/domur/rannsoknarheimild/thingbok/:id', () => {
     }
 
     cy.stubAPIResponses()
-    cy.visit('/domur/rannsoknarheimild/thingbok/test_id_stadfest')
+    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     intercept(caseDataAddition)
   })
@@ -49,6 +53,6 @@ describe('/domur/rannsoknarheimild/thingbok/:id', () => {
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
     cy.getByTestid('sessionBookings').type(faker.lorem.words(5))
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', '/domur/rannsoknarheimild/urskurdur')
+    cy.url().should('include', IC_RULING_STEP_ONE_ROUTE)
   })
 })
