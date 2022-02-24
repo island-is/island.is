@@ -1,10 +1,7 @@
 import { LocalRunner } from './ci-io'
 import { findBestGoodRefBranch, findBestGoodRefPR } from './change-detection'
-// import simpleGit, { SimpleGitProgressEvent } from 'simple-git'
 import { Octokit } from '@octokit/action'
-import { GitExecutorResult } from 'simple-git/src/lib/types'
 import { SimpleGit } from './simple-git'
-
 ;(async () => {
   const runner = new LocalRunner(new Octokit())
   let git = new SimpleGit(`${__dirname}/../../..`)

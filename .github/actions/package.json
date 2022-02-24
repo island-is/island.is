@@ -8,6 +8,7 @@
   "scripts": {
     "build": "./node_modules/.bin/ncc build ./main.ts -o ./dist",
     "build-v2": "./node_modules/.bin/ncc build ./v2/ci-runner.ts -o ./dist-v2",
+    "build-v3": "./node_modules/.bin/ncc build ./v2/local-runner.ts -o ./dist-v3",
     "test": "./node_modules/.bin/jest"
   },
   "dependencies": {
@@ -24,7 +25,6 @@
     "debug": "4.3.3",
     "esbuild-runner": "2.2.1",
     "jest": "27.5.1",
-    "simple-git": "3.1.1",
     "ts-jest": "27.1.3",
     "ts-node": "^9.1.1",
     "typescript": "^4.5.5",
