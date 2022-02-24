@@ -46,14 +46,13 @@ export class LocalRunner implements GitActionStatus {
   ): Promise<string[]> {
     const log = app.extend('calculate-distance')
     log(`Calculating distance between current: ${currentSha} and ${olderSha}`)
-    let monorepoRoot = join(__dirname, '..', '..', '..')
 
     try {
       const printAffected = execSync(
         `npx nx print-affected --select=projects --head=${currentSha} --base=${olderSha}`,
         {
           encoding: 'utf-8',
-          cwd: monorepoRoot,
+          cwd: git.cwd,
           shell: git.shell,
         },
       )

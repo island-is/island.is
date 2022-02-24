@@ -6,19 +6,22 @@ const spawn = promisify(sp)
 
 export class SimpleGit {
   constructor(
-    private cwd: string,
+    private _cwd: string,
     private _shell: string = `/usr/bin/bash`,
     private _log = Debug('simple-git'),
   ) {}
   public get shell() {
     return this._shell
   }
+  public get cwd() {
+    return this._cwd
+  }
   async git(...args: string[]) {
     const command = `git ${args.join(' ')}`
     try {
       this._log(`In: ${command}`)
       const { stdout, stderr } = await exec(command, {
-        cwd: this.cwd,
+        cwd: this._cwd,
         shell: this._shell,
         encoding: 'utf-8',
       })

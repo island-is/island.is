@@ -34901,15 +34901,12 @@ const {
 
 // EXTERNAL MODULE: external "child_process"
 var external_child_process_ = __nccwpck_require__(2081);
-// EXTERNAL MODULE: external "path"
-var external_path_ = __nccwpck_require__(1017);
 // EXTERNAL MODULE: ./node_modules/debug/src/index.js
 var src = __nccwpck_require__(8237);
 var src_default = /*#__PURE__*/__nccwpck_require__.n(src);
 // EXTERNAL MODULE: ./node_modules/unzipper/unzip.js
 var unzip = __nccwpck_require__(1639);
 ;// CONCATENATED MODULE: ./v2/ci-io.ts
-
 
 
 
@@ -34936,11 +34933,10 @@ class LocalRunner {
     calculateDistance(git, currentSha, olderSha) {
         const log = app.extend('calculate-distance');
         log(`Calculating distance between current: ${currentSha} and ${olderSha}`);
-        let monorepoRoot = (0,external_path_.join)(__dirname, '..', '..', '..');
         try {
             const printAffected = (0,external_child_process_.execSync)(`npx nx print-affected --select=projects --head=${currentSha} --base=${olderSha}`, {
                 encoding: 'utf-8',
-                cwd: monorepoRoot,
+                cwd: git.cwd,
                 shell: git.shell,
             });
             let affectedComponents = printAffected
@@ -35208,8 +35204,8 @@ var external_util_ = __nccwpck_require__(3837);
 const exec = (0,external_util_.promisify)(external_child_process_.exec);
 const spawn = (0,external_util_.promisify)(external_child_process_.spawn);
 class SimpleGit {
-    constructor(cwd, _shell = `/usr/bin/bash`, _log = src_default()('simple-git')) {
-        this.cwd = cwd;
+    constructor(_cwd, _shell = `/usr/bin/bash`, _log = src_default()('simple-git')) {
+        this._cwd = _cwd;
         this._shell = _shell;
         this._log = _log;
         this.raw = this.git;
@@ -35223,13 +35219,16 @@ class SimpleGit {
     get shell() {
         return this._shell;
     }
+    get cwd() {
+        return this._cwd;
+    }
     git(...args) {
         return modules_awaiter(this, void 0, void 0, function* () {
             const command = `git ${args.join(' ')}`;
             try {
                 this._log(`In: ${command}`);
                 const { stdout, stderr } = yield exec(command, {
-                    cwd: this.cwd,
+                    cwd: this._cwd,
                     shell: this._shell,
                     encoding: 'utf-8',
                 });
