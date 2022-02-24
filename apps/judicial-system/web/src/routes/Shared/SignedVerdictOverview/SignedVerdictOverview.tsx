@@ -429,13 +429,13 @@ export const SignedVerdictOverview: React.FC = () => {
             : workingCase.isHeightenedSecurityLevel,
         })
 
-        updateCase(
-          workingCase.id,
-          parseString(
-            'sharedWithProsecutorsOfficeId',
-            (institution as ReactSelectOption).value as string,
-          ),
-        )
+        updateCase(workingCase.id, {
+          sharedWithProsecutorsOfficeId: (institution as ReactSelectOption)
+            .value as string,
+          isHeightenedSecurityLevel: workingCase.isHeightenedSecurityLevel
+            ? false
+            : workingCase.isHeightenedSecurityLevel,
+        })
       }
     }
   }
