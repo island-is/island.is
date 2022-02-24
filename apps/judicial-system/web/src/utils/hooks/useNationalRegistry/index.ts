@@ -1,16 +1,21 @@
 import { useEffect, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import useSWR from 'swr'
 
 import {
   NationalRegistryResponseBusiness,
   NationalRegistryResponsePerson,
 } from '@island.is/judicial-system-web/src/types'
+import { toast } from '@island.is/island-ui/core'
+import { errors } from '@island.is/judicial-system-web/messages'
 
 import { validate } from '../../validate'
 import { isBusiness } from '../../stepHelper'
 
 const useNationalRegistry = (nationalId?: string) => {
+  const { formatMessage } = useIntl()
   const [shouldFetch, setShouldFetch] = useState<boolean>(false)
+
   const isMounted = useRef(false)
   const { isValid: isValidNationalId } = validate(
     nationalId ?? '',
@@ -48,6 +53,17 @@ const useNationalRegistry = (nationalId?: string) => {
       isMounted.current = true
     }
   }, [nationalId])
+
+  useEffect(() => {
+    if (
+      (personData && personData.error) ||
+      personError ||
+      (businessData && businessData.error) ||
+      businessError
+    ) {
+      toast.error(formatMessage(errors.nationalRegistry))
+    }
+  }, [personData, businessData, personError, businessError, formatMessage])
 
   return {
     personData,
