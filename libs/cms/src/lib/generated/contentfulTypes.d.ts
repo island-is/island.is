@@ -676,6 +676,9 @@ export interface IFooterItemFields {
 
   /** Content */
   content?: Document | undefined
+
+  /** Service web content */
+  serviceWebContent?: Document | undefined
 }
 
 export interface IFooterItem extends Entry<IFooterItemFields> {
@@ -1933,6 +1936,9 @@ export interface IOrganizationPageFields {
 
   /** External Links */
   externalLinks?: ILink[] | undefined
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
@@ -2759,6 +2765,9 @@ export interface ISupportQnaFields {
 
   /** Organization */
   organization: IOrganization
+
+  /** Importance */
+  importance?: number | undefined
 }
 
 /** Helpdesk support questions and answer */
@@ -2789,6 +2798,9 @@ export interface ISupportSubCategoryFields {
 
   /** slug */
   slug: string
+
+  /** Importance */
+  importance?: number | undefined
 }
 
 export interface ISupportSubCategory extends Entry<ISupportSubCategoryFields> {

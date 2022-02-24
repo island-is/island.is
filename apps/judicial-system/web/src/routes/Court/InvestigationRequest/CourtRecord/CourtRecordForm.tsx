@@ -17,7 +17,7 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 import {
-  newSetAndSendDateToServer,
+  setAndSendDateToServer,
   removeTabsValidateAndSet,
   setAndSendToServer,
   validateAndSendToServer,
@@ -79,7 +79,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                 maxDate={new Date()}
                 selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
-                  newSetAndSendDateToServer(
+                  setAndSendDateToServer(
                     'courtStartDate',
                     date,
                     valid,
@@ -102,7 +102,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'courtLocation',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -153,7 +153,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'courtAttendees',
-                event,
+                event.target.value,
                 [],
                 workingCase,
                 setWorkingCase,
@@ -167,6 +167,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             }
             textarea
             rows={7}
+            autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
         <Box component="section" marginBottom={8}>
@@ -210,7 +211,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'accusedBookings',
-                  event,
+                  event.target.value,
                   [],
                   workingCase,
                   setWorkingCase,
@@ -227,6 +228,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               }
               textarea
               rows={16}
+              autoExpand={{ on: true, maxHeight: 600 }}
             />
           </Box>
         )}
@@ -246,7 +248,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'litigationPresentations',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -268,6 +270,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               hasError={litigationPresentationsErrorMessage !== ''}
               textarea
               rows={16}
+              autoExpand={{ on: true, maxHeight: 600 }}
               required
             />
           </Box>

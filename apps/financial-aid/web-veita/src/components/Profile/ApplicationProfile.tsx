@@ -17,6 +17,7 @@ import {
 import format from 'date-fns/format'
 
 import {
+  CollapsibleProfileUnit,
   ProfileUnit,
   StateModal,
   AidAmountModal,
@@ -64,7 +65,7 @@ const ApplicationProfile = ({
     if (application && municipality && application.homeCircumstances) {
       return aidCalculator(
         application.homeCircumstances,
-        application.spouseNationalId
+        showSpouseData[application.familyStatus]
           ? municipality.cohabitationAid
           : municipality.individualAid,
       )
@@ -161,26 +162,28 @@ const ApplicationProfile = ({
         />
 
         {showSpouseData[application.familyStatus] && (
-          <ProfileUnit
+          <CollapsibleProfileUnit
             heading="Maki"
             info={applicantSpouse}
             className={`contentUp delay-75`}
           />
         )}
 
-        <ProfileUnit
+        <CollapsibleProfileUnit
           heading="Umsóknarferli"
           info={applicantMoreInfo}
           className={`contentUp delay-100`}
         />
 
-        <ProfileUnit
+        <CollapsibleProfileUnit
           heading="Þjóðskrá"
           info={nationalRegistryInfo}
           className={`contentUp delay-100`}
         />
 
-        <FilesListWithHeaderContainer applicationFiles={application.files} />
+        {application.files && (
+          <FilesListWithHeaderContainer applicationFiles={application.files} />
+        )}
 
         <CommentSection
           className={`contentUp delay-125 ${styles.widthAlmostFull}`}
@@ -203,8 +206,9 @@ const ApplicationProfile = ({
           applicationId={application.id}
           currentState={application.state}
           homeCircumstances={application.homeCircumstances}
-          spouseNationalId={application.spouseNationalId}
+          familyStatus={application.familyStatus}
           setIsLoading={setIsLoading}
+          applicationCreated={application.created}
         />
       )}
 

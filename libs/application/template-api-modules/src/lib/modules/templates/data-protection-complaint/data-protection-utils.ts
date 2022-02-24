@@ -1,14 +1,13 @@
 import get from 'lodash/get'
 import {
   Agency,
-  ComplaintDto,
+  ComplaintPDF,
   ContactInfo,
   ContactRole,
   TargetOfComplaint,
 } from './models'
 import {
   OnBehalf,
-  onBehalfValueLabelMapper,
   SubjectOfComplaint,
   DataProtectionComplaint,
   yesNoValueLabelMapper,
@@ -48,10 +47,8 @@ export const getAgencies = (answers: DataProtectionComplaint): Agency[] => {
   return extractAnswer<Agency[]>(answers, 'commissions.persons', [])
 }
 
-export const getAndFormatOnBehalf = (application: Application): string => {
-  const onBehalf = extractAnswer<OnBehalf>(application.answers, 'info.onBehalf')
-
-  return onBehalfValueLabelMapper[onBehalf].defaultMessage
+export const getAndFormatOnBehalf = (application: Application): OnBehalf => {
+  return extractAnswer<OnBehalf>(application.answers, 'info.onBehalf')
 }
 
 export const getAndFormatSubjectsOfComplaint = (
@@ -97,7 +94,7 @@ export const gatherContacts = (
   const complainees = getComplaintTargets(answers).map(
     (target: TargetOfComplaint, index: number) => {
       return {
-        type: getContactType(target.nationalId),
+        type: getContactType(target?.nationalId ?? ''),
         name: target.name,
         address: target.address,
         idnumber: target.nationalId,
@@ -186,10 +183,13 @@ export const toRequestMetadata = (
   ]
 }
 
-export const transformApplicationToComplaintDto = (
+export const applicationToComplaintPDF = (
   application: Application,
-): ComplaintDto => {
+  attachedFiles: DocumentInfo[],
+): ComplaintPDF => {
   const answers = application.answers as DataProtectionComplaint
+  const timestamp = new Date()
+
   return {
     applicantInfo: {
       name: 'Applicant',
@@ -197,15 +197,17 @@ export const transformApplicationToComplaintDto = (
     },
     onBehalf: getAndFormatOnBehalf(application),
     agency: {
-      files: [],
       persons: getAgencies(answers),
     },
     contactInfo: getContactInfo(answers),
     targetsOfComplaint: getComplaintTargets(answers),
     complaintCategories: getAndFormatSubjectsOfComplaint(answers),
-    attachments: [],
+    somethingElse: answers.subjectOfComplaint.somethingElse ?? '',
     description: extractAnswer(application.answers, 'complaint.description'),
-    applicationPdf: '',
+    submitDate: timestamp,
+    attachments: attachedFiles
+      .map((x) => x.fileName ?? '')
+      .filter((x) => x !== ''),
   }
 }
 

@@ -5,7 +5,8 @@ import { ForbiddenException } from '@nestjs/common'
 
 import { User } from '@island.is/judicial-system/types'
 
-import { Case, SignatureConfirmationResponse } from '../models'
+import { Case } from '../models/case.model'
+import { SignatureConfirmationResponse } from '../models/signatureConfirmation.response'
 import { createTestingCaseModule } from './createTestingCaseModule'
 
 interface Then {
@@ -56,7 +57,7 @@ describe('CaseController - Get court record signature confirmation', () => {
     assignedRole
     ${'judgeId'}
     ${'registrarId'}
-  `.describe('given an assigne role', ({ assignedRole }) => {
+  `.describe('given an assigned role', ({ assignedRole }) => {
     const userId = uuid()
     const user = { id: userId } as User
     const caseId = uuid()

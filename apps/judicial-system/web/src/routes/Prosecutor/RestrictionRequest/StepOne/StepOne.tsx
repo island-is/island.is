@@ -6,16 +6,16 @@ import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import type { Case, UpdateDefendant } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-
-import { StepOneForm } from './StepOneForm'
 import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
+import type { Case, UpdateDefendant } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
+import { StepOneForm } from './StepOneForm'
 
 export const StepOne: React.FC = () => {
   const router = useRouter()
@@ -46,10 +46,12 @@ export const StepOne: React.FC = () => {
           name: theCase.defendants[0].name,
           address: theCase.defendants[0].address,
           nationalId: theCase.defendants[0].nationalId,
+          noNationalId: theCase.defendants[0].noNationalId,
+          citizenship: theCase.defendants[0].citizenship,
         })
-      }
 
-      router.push(`${Constants.STEP_TWO_ROUTE}/${createdCase.id}`)
+        router.push(`${Constants.STEP_TWO_ROUTE}/${createdCase.id}`)
+      }
     } else {
       router.push(`${Constants.STEP_TWO_ROUTE}/${theCase.id}`)
     }

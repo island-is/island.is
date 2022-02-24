@@ -75,7 +75,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'conclusion',
-                event,
+                event.target.value,
                 [],
                 workingCase,
                 setWorkingCase,
@@ -91,6 +91,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
               )
             }
             rows={7}
+            autoExpand={{ on: true, maxHeight: 300 }}
             textarea
             required
           />
@@ -272,7 +273,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                   onChange={(event) =>
                     removeTabsValidateAndSet(
                       'accusedAppealAnnouncement',
-                      event,
+                      event.target.value,
                       [],
                       workingCase,
                       setWorkingCase,
@@ -289,6 +290,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                   }
                   textarea
                   rows={7}
+                  autoExpand={{ on: true, maxHeight: 300 }}
                 />
               </BlueBox>
             </Box>
@@ -446,7 +448,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                   onChange={(event) =>
                     removeTabsValidateAndSet(
                       'prosecutorAppealAnnouncement',
-                      event,
+                      event.target.value,
                       [],
                       workingCase,
                       setWorkingCase,
@@ -463,6 +465,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                   }
                   textarea
                   rows={7}
+                  autoExpand={{ on: true, maxHeight: 300 }}
                 />
               </Box>
             </BlueBox>
@@ -486,7 +489,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'endOfSessionBookings',
-                  event,
+                  event.target.value,
                   [],
                   workingCase,
                   setWorkingCase,
@@ -502,6 +505,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                 )
               }
               rows={16}
+              autoExpand={{ on: true, maxHeight: 600 }}
               textarea
             />
           </Box>

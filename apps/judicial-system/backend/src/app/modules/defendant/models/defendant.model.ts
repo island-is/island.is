@@ -12,6 +12,7 @@ import { ApiProperty } from '@nestjs/swagger'
 
 import { Gender } from '@island.is/judicial-system/types'
 
+// TODO Find a way to import from case index file
 import { Case } from '../../case/models/case.model'
 
 @Table({
@@ -45,6 +46,13 @@ export class Defendant extends Model<Defendant> {
   caseId!: string
 
   @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  noNationalId?: boolean
+
+  @Column({
     type: DataType.STRING,
     allowNull: true,
   })
@@ -71,4 +79,10 @@ export class Defendant extends Model<Defendant> {
   })
   @ApiProperty()
   address?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  citizenship?: string
 }

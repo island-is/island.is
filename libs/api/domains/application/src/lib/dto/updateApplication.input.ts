@@ -6,7 +6,7 @@ import { IsString, IsOptional, IsObject } from 'class-validator'
 export class UpdateApplicationInput {
   @Field((type) => String)
   @IsString()
-  id: string
+  id!: string
 
   @Field((type) => graphqlTypeJson, { nullable: true })
   @IsObject()

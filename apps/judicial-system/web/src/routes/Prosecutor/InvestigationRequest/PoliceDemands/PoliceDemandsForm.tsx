@@ -85,9 +85,13 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
                 accusedName: workingCase.defendants
                   .map(
                     (defendant) =>
-                      `${defendant.name} kt. ${formatNationalId(
-                        defendant.nationalId ?? '',
-                      )}`,
+                      `${defendant.name} ${
+                        defendant.noNationalId ? 'fd.' : 'kt.'
+                      } ${
+                        defendant.noNationalId
+                          ? defendant.nationalId
+                          : formatNationalId(defendant.nationalId ?? '')
+                      }`,
                   )
                   .toString()
                   .replace(/,/g, ', '),
@@ -135,7 +139,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'demands',
-                event,
+                event.target.value,
                 ['empty'],
                 workingCase,
                 setWorkingCase,
@@ -156,6 +160,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             required
             textarea
             rows={7}
+            autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -179,7 +184,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'lawsBroken',
-                event,
+                event.target.value,
                 ['empty'],
                 workingCase,
                 setWorkingCase,
@@ -200,6 +205,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             required
             textarea
             rows={7}
+            autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
         <Box component="section" marginBottom={10}>
@@ -221,7 +227,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'legalBasis',
-                event,
+                event.target.value,
                 ['empty'],
                 workingCase,
                 setWorkingCase,
@@ -242,6 +248,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             required
             textarea
             rows={7}
+            autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
       </FormContentContainer>

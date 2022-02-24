@@ -8,5 +8,5 @@ export class GradeResult {
   studentYear!: string
 
   @Field(() => [CourseGrade])
-  courses: CourseGrade[]
+  courses!: CourseGrade[]
 }

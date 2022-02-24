@@ -175,6 +175,23 @@ jobs:
           echo "::set-output name=DOCKER_TAG::${DOCKER_TAG}"
           echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
 
+      - name: Send Slack notification
+        id: slack
+        if: "startsWith(env.GIT_BASE_BRANCH, 'release/')"
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          fields: repo,message # selectable (default: repo,message)
+          custom_payload: |
+            {
+              attachments: [{
+                color: 'good',
+                text: `Monorepo Release Tag is: ${process.env.DOCKER_TAG}`,
+              }]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_RELEASE_WEBHOOK_URL }} # required
+
       - run: |
           if [[ "$GITHUB_HEAD_REF" == "" ]]; then
             echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
@@ -504,7 +521,7 @@ jobs:
 
       - name: Comment on PR
         if: needs.pre-checks.outputs.LABELED_FOR_DEPLOY == 'true'
-        uses: actions/github-script@v5
+        uses: actions/github-script@v6
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
