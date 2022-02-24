@@ -212,7 +212,7 @@ export class MeDelegationsController {
         action: 'deleteFrom',
         resources: delegationId,
       },
-      this.delegationsService.delete(user.nationalId, delegationId),
+      this.delegationsService.delete(user, delegationId),
     )
   }
 }

@@ -216,7 +216,7 @@ describe('MeDelegationsController', () => {
         expectMatchingObject(res.body, expectedModels)
       })
 
-      it('should return only delegations with scopes the client has access to', async () => {
+      it('should return only delegations with scopes the user has access to', async () => {
         // Arrange
         const expectedModel = (
           await delegationModel.create(
@@ -445,6 +445,37 @@ describe('MeDelegationsController', () => {
         expectMatchingObject(res.body, expectedModel)
       })
 
+      it('should return an array with single delegation and empty scopes for otherUser even though user has access to none of the scopes', async () => {
+        // Arrange
+        const expectedModel = await delegationModel.create(
+          createDelegation({
+            fromNationalId: user.nationalId,
+            toNationalId: nationalRegistryUser.kennitala,
+            scopes: [Scopes[5].name],
+            today,
+          }),
+          {
+            include: [
+              {
+                model: DelegationScope,
+                as: 'delegationScopes',
+              },
+            ],
+          },
+        )
+        expectedModel.delegationScopes = []
+
+        // Act
+        const res = await server.get(
+          `${path}?direction=outgoing&otherUser=${expectedModel.toNationalId}`,
+        )
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(1)
+        expectMatchingObject(res.body, [expectedModel.toDTO()])
+      })
+
       it('should return an empty array when filtered to specific otherUser and no delegation exists', async () => {
         // Act
         const res = await server.get(
@@ -610,7 +641,7 @@ describe('MeDelegationsController', () => {
         expectMatchingObject(res.body, expectedModel)
       })
 
-      it('should return a delegation with filtered scopes list by client access', async () => {
+      it('should return a delegation with filtered scopes list by user access', async () => {
         // Arrange
         const expectedModel = (
           await delegationModel.create(
@@ -638,30 +669,28 @@ describe('MeDelegationsController', () => {
         expectMatchingObject(res.body, expectedModel)
       })
 
-      it('should return a delegation with empty scopes list when client does not have access to any scopes', async () => {
+      it('should return a delegation with empty scopes list when user does not have access to any scopes', async () => {
         // Arrange
-        const expectedModel = (
-          await delegationModel.create(
-            createDelegation({
-              fromNationalId: nationalRegistryUser.kennitala,
-              toNationalId: user.nationalId,
-              scopes: [Scopes[5].name],
-              today,
-            }),
-            {
-              include: [{ model: DelegationScope, as: 'delegationScopes' }],
-            },
-          )
-        ).toDTO()
+        const expectedModel = await delegationModel.create(
+          createDelegation({
+            fromNationalId: nationalRegistryUser.kennitala,
+            toNationalId: user.nationalId,
+            scopes: [Scopes[5].name],
+            today,
+          }),
+          {
+            include: [{ model: DelegationScope, as: 'delegationScopes' }],
+          },
+        )
         // The expected model should not contain the scope from the other org
-        expectedModel.scopes = []
+        expectedModel.delegationScopes = []
 
         // Act
         const res = await server.get(`${path}/${expectedModel.id}`)
 
         // Assert
         expect(res.status).toEqual(200)
-        expectMatchingObject(res.body, expectedModel)
+        expectMatchingObject(res.body, expectedModel.toDTO())
       })
 
       it('can filter future scopes for delegation that exists for auth user', async () => {
@@ -956,7 +985,7 @@ describe('MeDelegationsController', () => {
         })
       })
 
-      it('should only remove and update scopes the client has access to', async () => {
+      it('should only remove and update scopes the user has access to', async () => {
         // Arrange
         const expectedValidTo = addDays(today, 2)
         const model = {
@@ -972,7 +1001,7 @@ describe('MeDelegationsController', () => {
           createDelegation({
             fromNationalId: user.nationalId,
             toNationalId: nationalRegistryUser.kennitala,
-            scopes: [Scopes[0].name, Scopes[5].name],
+            scopes: [Scopes[0].name, Scopes[1].name, Scopes[5].name],
             today,
           }),
           {
@@ -1007,8 +1036,11 @@ describe('MeDelegationsController', () => {
             ],
           },
         )
-        expect(updatedDelegation?.delegationScopes?.length).toEqual(2)
+        expect(updatedDelegation?.delegationScopes?.length).toEqual(3)
         expect(updatedDelegation?.delegationScopes).toMatchObject([
+          {
+            scopeName: Scopes[1].name,
+          },
           {
             scopeName: Scopes[4].name,
           },
@@ -1184,9 +1216,12 @@ describe('MeDelegationsController', () => {
           createDelegation({
             fromNationalId: user.nationalId,
             toNationalId: nationalRegistryUser.kennitala,
-            scopes: [],
+            scopes: [Scopes[0].name],
             today,
           }),
+          {
+            include: [{ model: DelegationScope, as: 'delegationScopes' }],
+          },
         )
 
         // Act
@@ -1195,6 +1230,42 @@ describe('MeDelegationsController', () => {
         // Assert
         expect(res.status).toEqual(204)
         expect(res.body).toMatchObject({})
+
+        // Check the DB
+        const model = await delegationModel.findByPk(id, {
+          include: [{ model: DelegationScope, as: 'delegationScopes' }],
+        })
+        expect(model).not.toBeNull()
+        expect(model?.delegationScopes?.length).toEqual(0)
+      })
+
+      it('should return 204 No Content when successfully only delete scopes the user has access to', async () => {
+        // Arrange
+        const { id } = await delegationModel.create(
+          createDelegation({
+            fromNationalId: user.nationalId,
+            toNationalId: nationalRegistryUser.kennitala,
+            scopes: [Scopes[0].name, Scopes[5].name],
+            today,
+          }),
+          {
+            include: [{ model: DelegationScope, as: 'delegationScopes' }],
+          },
+        )
+
+        // Act
+        const res = await server.delete(`${path}/${id}`)
+
+        // Assert
+        expect(res.status).toEqual(204)
+        expect(res.body).toMatchObject({})
+
+        // Check the DB
+        const model = await delegationModel.findByPk(id, {
+          include: [{ model: DelegationScope, as: 'delegationScopes' }],
+        })
+        expect(model).not.toBeNull()
+        expect(model?.delegationScopes?.length).toEqual(1)
       })
 
       it('should return 404 Not Found for a delegation that user did not give', async () => {
@@ -1212,8 +1283,6 @@ describe('MeDelegationsController', () => {
           title: 'Not Found',
         })
       })
-
-      it('should only delete scopes ')
     })
   })
 

@@ -164,9 +164,7 @@ export class DelegationsService {
 
     this.logger.debug(`Updating delegation ${delegation.id}`)
 
-    const clientAllowedScopes = await this.getClientAllowedScopes(user)
-
-    await this.delegationScopeService.delete(delegationId, clientAllowedScopes)
+    await this.delegationScopeService.delete(delegationId, user.scope)
     if (input.scopes && input.scopes.length > 0) {
       await this.delegationScopeService.createMany(delegationId, input.scopes)
     }
@@ -188,11 +186,7 @@ export class DelegationsService {
       throw new NotFoundException()
     }
 
-    await this.delegationScopeService.delete(id)
-
-    return this.delegationModel.destroy({
-      where: { id },
-    })
+    return this.delegationScopeService.delete(id, user.scope)
   }
 
   /**
@@ -234,9 +228,14 @@ export class DelegationsService {
         },
       ],
     })
-    return delegation
-      ? (await this.transformAndFilter([delegation], user, true))[0]
-      : null
+
+    if (delegation) {
+      delegation.delegationScopes = delegation.delegationScopes?.filter((s) =>
+        this.checkIfScopeAllowed(s, user.scope),
+      )
+    }
+
+    return delegation?.toDTO() || null
   }
 
   /**
@@ -293,7 +292,25 @@ export class DelegationsService {
       )
     }
 
-    return this.transformAndFilter(delegations, user, true)
+    return delegations
+      .filter(
+        (d) =>
+          // Allow empty scopes if otherUser is set
+          otherUser ||
+          // Allow empty scopes if date validation or explicit grant filtered out scopes
+          !d.delegationScopes ||
+          d.delegationScopes.length < 1 ||
+          // Otherwise the user must have at least access to one of the scopes
+          d.delegationScopes.some((s) =>
+            this.checkIfScopeAllowed(s, user.scope),
+          ),
+      )
+      .map((d) => {
+        d.delegationScopes = d.delegationScopes?.filter((s) =>
+          this.checkIfScopeAllowed(s, user.scope),
+        )
+        return d.toDTO()
+      })
   }
 
   /***** Incoming Delegations *****/
@@ -524,7 +541,7 @@ export class DelegationsService {
       return []
     }
 
-    const results = await this.delegationModel.findAll({
+    const delegations = await this.delegationModel.findAll({
       where: {
         toNationalId: user.nationalId,
       },
@@ -547,7 +564,21 @@ export class DelegationsService {
       ],
     })
 
-    return this.transformAndFilter(results, user)
+    const allowedScopes = await this.getClientAllowedScopes(user)
+
+    //return this.transformAndFilter(results, user, DelegationDirection.INCOMING)
+    return delegations
+      .filter((d) =>
+        d.delegationScopes?.some((s) =>
+          this.checkIfScopeAllowed(s, allowedScopes),
+        ),
+      )
+      .map((d) => {
+        d.delegationScopes = d.delegationScopes?.filter((s) =>
+          this.checkIfScopeAllowed(s, user.scope),
+        )
+        return d.toDTO()
+      })
   }
 
   /**
@@ -589,43 +620,16 @@ export class DelegationsService {
     return scopesWhere
   }
 
-  /**
-   * Transforms the models to DTOs and filters based on the client scope access.
-   * @param delegations Delegations results from DB query.
-   * @param user The authenticated user object.
-   * @param allowEmpty Flag to overwrite behaviour to allow keeping delegation with empty scopes array
-   * @returns
-   */
-  private async transformAndFilter(
-    delegations: Delegation[],
-    user: User,
-    allowEmptyScopes = false,
-  ): Promise<DelegationDTO[]> {
-    const clientAllowedScopes = await this.getClientAllowedScopes(user)
-
-    return delegations
-      .filter(
-        (d) =>
-          // The delegation must contain at least on scope that the client has access to
-          allowEmptyScopes ||
-          d.delegationScopes?.some(
-            (s) =>
-              (s.scopeName && clientAllowedScopes.includes(s.scopeName)) ||
-              (s.identityResourceName &&
-                clientAllowedScopes.includes(s.identityResourceName)),
-          ),
-      )
-      .map((d) => {
-        // Transform to the DTO defintion
-        const dto = d.toDTO()
-
-        // Filter out other scopes the client does not have access to
-        dto.scopes = dto.scopes?.filter((s) =>
-          clientAllowedScopes.includes(s.scopeName),
-        )
-
-        return dto
-      })
+  private checkIfScopeAllowed(
+    scope: DelegationScope,
+    allowedScopes: string[],
+  ): boolean {
+    return (
+      (scope.scopeName && allowedScopes.includes(scope.scopeName)) ||
+      (scope.identityResourceName &&
+        allowedScopes.includes(scope.identityResourceName)) ||
+      false
+    )
   }
 
   private async getClientAllowedScopes(user: User) {
