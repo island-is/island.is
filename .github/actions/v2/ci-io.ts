@@ -207,8 +207,8 @@ export class LocalRunner implements GitActionStatus {
           )
           app(`Got event data from PR ${run.run_number}`)
           if (
-            commits.includes(event.pull_request.head.sha) &&
-            commits.includes(event.pull_request.base.sha)
+            commits.includes(event.pull_request.head.sha.slice(0, 7)) &&
+            commits.includes(event.pull_request.base.sha.slice(0, 7))
           ) {
             return {
               head_commit: event.pull_request.head.sha,

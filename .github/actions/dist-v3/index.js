@@ -35072,8 +35072,8 @@ class LocalRunner {
                         const dir = yield unzip.Open.buffer(new Uint8Array(artifact.data));
                         const event = JSON.parse((yield dir.files[0].buffer()).toString('utf-8'));
                         app(`Got event data from PR ${run.run_number}`);
-                        if (commits.includes(event.pull_request.head.sha) &&
-                            commits.includes(event.pull_request.base.sha)) {
+                        if (commits.includes(event.pull_request.head.sha.slice(0, 7)) &&
+                            commits.includes(event.pull_request.base.sha.slice(0, 7))) {
                             return {
                                 head_commit: event.pull_request.head.sha,
                                 run_nr: run.run_number,
