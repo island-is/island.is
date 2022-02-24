@@ -7,7 +7,7 @@ import {
   FormFooter,
   CourtDocuments,
   PageLayout,
-  CaseNumbers,
+  CaseInfo,
   BlueBox,
   FormContentContainer,
   DateTime,
@@ -24,7 +24,7 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
   setAndSendToServer,
-  newSetAndSendDateToServer,
+  setAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -34,6 +34,7 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import { isCourtRecordStepValidRC } from '../../../../utils/validate'
@@ -46,6 +47,8 @@ export const CourtRecord: React.FC = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
+  const { user } = useContext(UserContext)
+
   const [courtLocationErrorMessage, setCourtLocationMessage] = useState('')
   const [
     litigationPresentationsErrorMessage,
@@ -71,15 +74,6 @@ export const CourtRecord: React.FC = () => {
           attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}`
         }
 
-        if (wc.defendants && wc.defendants.length > 0) {
-          attendees += `\n${wc.defendants[0].name} ${formatMessage(
-            core.accused,
-            {
-              suffix: wc.defendants[0].gender === Gender.MALE ? 'i' : 'a',
-            },
-          )}`
-        }
-
         if (wc.defenderName) {
           attendees += `\n${wc.defenderName} skipaður verjandi ${formatMessage(
             core.accused,
@@ -96,6 +90,15 @@ export const CourtRecord: React.FC = () => {
 
         if (wc.translator) {
           attendees += `\n${wc.translator} túlkur`
+        }
+
+        if (wc.defendants && wc.defendants.length > 0) {
+          attendees += `\n${wc.defendants[0].name} ${formatMessage(
+            core.accused,
+            {
+              suffix: wc.defendants[0].gender === Gender.MALE ? 'i' : 'a',
+            },
+          )}`
         }
 
         return attendees
@@ -183,13 +186,13 @@ export const CourtRecord: React.FC = () => {
       notFound={caseNotFound}
     >
       <FormContentContainer>
-        <Box marginBottom={10}>
+        <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             Þingbók
           </Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers workingCase={workingCase} />
+          <CaseInfo workingCase={workingCase} userRole={user?.role} />
         </Box>
         <Box component="section" marginBottom={3}>
           <BlueBox>
@@ -201,7 +204,7 @@ export const CourtRecord: React.FC = () => {
                 maxDate={new Date()}
                 selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
-                  newSetAndSendDateToServer(
+                  setAndSendDateToServer(
                     'courtStartDate',
                     date,
                     valid,
@@ -224,7 +227,7 @@ export const CourtRecord: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'courtLocation',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -275,7 +278,7 @@ export const CourtRecord: React.FC = () => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'courtAttendees',
-                event,
+                event.target.value,
                 ['empty'],
                 workingCase,
                 setWorkingCase,
@@ -289,6 +292,7 @@ export const CourtRecord: React.FC = () => {
             }
             textarea
             rows={7}
+            autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
         <Box component="section" marginBottom={8}>
@@ -309,7 +313,6 @@ export const CourtRecord: React.FC = () => {
             workingCase={workingCase}
           />
         </Box>
-
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
@@ -346,7 +349,7 @@ export const CourtRecord: React.FC = () => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'accusedBookings',
-                event,
+                event.target.value,
                 [],
                 workingCase,
                 setWorkingCase,
@@ -363,6 +366,7 @@ export const CourtRecord: React.FC = () => {
             }
             textarea
             rows={16}
+            autoExpand={{ on: true, maxHeight: 600 }}
           />
         </Box>
         <Box component="section" marginBottom={8}>
@@ -381,7 +385,7 @@ export const CourtRecord: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'litigationPresentations',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -403,6 +407,7 @@ export const CourtRecord: React.FC = () => {
               hasError={litigationPresentationsErrorMessage !== ''}
               textarea
               rows={16}
+              autoExpand={{ on: true, maxHeight: 600 }}
               required
             />
           </Box>

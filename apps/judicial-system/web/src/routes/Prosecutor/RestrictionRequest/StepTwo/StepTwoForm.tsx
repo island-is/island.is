@@ -4,7 +4,12 @@ import { ValueType } from 'react-select/src/types'
 
 import type { Case, Institution, User } from '@island.is/judicial-system/types'
 import { Box, Input, Text, Checkbox } from '@island.is/island-ui/core'
-import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  removeTabsValidateAndSet,
+  setAndSendDateToServer,
+  setAndSendToServer,
+  validateAndSendToServer,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -12,9 +17,9 @@ import {
   FormContentContainer,
   FormFooter,
   BlueBox,
+  CaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import { rcRequestedHearingArrangements } from '@island.is/judicial-system-web/messages'
-import { useCaseFormHelper } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
@@ -48,11 +53,6 @@ const StepTwoForm: React.FC<Props> = (props) => {
   } = props
   const { formatMessage } = useIntl()
   const { updateCase } = useCase()
-  const {
-    validateAndSendToServer,
-    setField,
-    setAndSendToServer,
-  } = useCaseFormHelper(workingCase, setWorkingCase, {})
 
   return (
     <>
@@ -61,6 +61,9 @@ const StepTwoForm: React.FC<Props> = (props) => {
           <Text as="h1" variant="h1">
             {formatMessage(rcRequestedHearingArrangements.heading)}
           </Text>
+        </Box>
+        <Box component="section" marginBottom={7}>
+          <CaseInfo workingCase={workingCase} />
         </Box>
         <Box component="section" marginBottom={5}>
           <BlueBox>
@@ -88,7 +91,15 @@ const StepTwoForm: React.FC<Props> = (props) => {
                     .prosecutorId ?? workingCase.prosecutor?.id)
               }
               checked={workingCase.isHeightenedSecurityLevel}
-              onChange={(event) => setAndSendToServer(event.target)}
+              onChange={(event) =>
+                setAndSendToServer(
+                  'isHeightenedSecurityLevel',
+                  event.target.checked,
+                  workingCase,
+                  setWorkingCase,
+                  updateCase,
+                )
+              }
               large
               filled
             />
@@ -115,7 +126,7 @@ const StepTwoForm: React.FC<Props> = (props) => {
               maxDate={new Date()}
               selectedDate={workingCase.arrestDate}
               onChange={(date: Date | undefined, valid: boolean) => {
-                newSetAndSendDateToServer(
+                setAndSendDateToServer(
                   'arrestDate',
                   date,
                   valid,
@@ -131,7 +142,7 @@ const StepTwoForm: React.FC<Props> = (props) => {
           <RequestCourtDate
             workingCase={workingCase}
             onChange={(date: Date | undefined, valid: boolean) =>
-              newSetAndSendDateToServer(
+              setAndSendDateToServer(
                 'requestedCourtDate',
                 date,
                 valid,
@@ -161,8 +172,24 @@ const StepTwoForm: React.FC<Props> = (props) => {
               rcRequestedHearingArrangements.sections.translator.placeholder,
             )}
             value={workingCase.translator || ''}
-            onChange={(event) => setField(event.target)}
-            onBlur={(event) => validateAndSendToServer(event.target)}
+            onChange={(event) =>
+              removeTabsValidateAndSet(
+                'translator',
+                event.target.value,
+                [],
+                workingCase,
+                setWorkingCase,
+              )
+            }
+            onBlur={(event) =>
+              validateAndSendToServer(
+                'translator',
+                event.target.value,
+                [],
+                workingCase,
+                updateCase,
+              )
+            }
           />
         </Box>
       </FormContentContainer>

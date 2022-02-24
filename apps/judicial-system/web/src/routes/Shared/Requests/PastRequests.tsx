@@ -18,9 +18,9 @@ import {
   capitalize,
   caseTypes,
   formatDate,
+  formatNationalId,
 } from '@island.is/judicial-system/formatters'
 import { Table } from '@island.is/judicial-system-web/src/components'
-import { insertAt } from '@island.is/judicial-system-web/src/utils/formatters'
 import { core, requests } from '@island.is/judicial-system-web/messages'
 
 import { getAppealDate, mapCaseStateToTagVariant } from './utils'
@@ -70,37 +70,33 @@ const PastRequests: React.FC<Props> = (props) => {
       Cell: (row: {
         row: { original: { accusedName: string; defendants: Defendant[] } }
       }) => {
-        return row.row.original.defendants &&
-          row.row.original.defendants.length > 0 ? (
+        const theCase = row.row.original
+
+        return theCase.defendants && theCase.defendants.length > 0 ? (
           <>
             <Box component="span" display="block">
-              {row.row.original.defendants[0].name}
+              {theCase.defendants[0].name}
             </Box>
-            {row.row.original.defendants.length === 1 ? (
+            {theCase.defendants.length === 1 ? (
               <Text>
                 <Text as="span" variant="small" color="dark400">
-                  {`kt. ${
-                    row.row.original.defendants[0].nationalId
-                      ? insertAt(
-                          row.row.original.defendants[0].nationalId.replace(
-                            '-',
-                            '',
-                          ),
-                          '-',
-                          6,
-                        )
+                  {`${theCase.defendants[0].noNationalId ? 'fd.' : 'kt.'} ${
+                    theCase.defendants[0].nationalId
+                      ? theCase.defendants[0].noNationalId
+                        ? theCase.defendants[0].nationalId
+                        : formatNationalId(theCase.defendants[0].nationalId)
                       : '-'
                   }`}
                 </Text>
               </Text>
             ) : (
               <Text as="span" variant="small" color="dark400">
-                {`+ ${row.row.original.defendants.length - 1}`}
+                {`+ ${theCase.defendants.length - 1}`}
               </Text>
             )}
           </>
         ) : (
-          <Text>-</Text>
+          <Text as="span">-</Text>
         )
       },
     },
@@ -259,7 +255,13 @@ const PastRequests: React.FC<Props> = (props) => {
     [isCourtRole, isHighCourtUser, highCourtPrColumns, prColumns],
   )
 
-  const pastRequestsData = useMemo(() => cases, [cases])
+  const pastRequestsData = useMemo(
+    () =>
+      cases.sort((a: Case, b: Case) =>
+        b['created'].localeCompare(a['created']),
+      ),
+    [cases],
+  )
 
   return (
     <Table

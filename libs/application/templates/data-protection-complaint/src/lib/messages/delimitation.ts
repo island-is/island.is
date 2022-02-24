@@ -55,12 +55,36 @@ export const delimitation = {
         'Þegar kvörtun er tekin til meðferðar er gagnaðila (þ.e. þeim sem kvartað er yfir) tilkynnt um kvörtunina og sent afrit af henni og fylgiskjölum með henni. Honum er gefinn kostur á að koma andmælum sínum á framfæri.',
       description: 'Agreement description bullet one',
     },
+    agreementDescriptionBulletOneLink: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletOneLink',
+      defaultMessage: 'https://www.personuvernd.is/upplysingar-um-thig/',
+      description: 'Agreement description link for bullet one',
+    },
+    agreementDescriptionBulletOneLinkName: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletOneLinkName',
+      defaultMessage: 'persónuverndarstefnu stofnunarinnar',
+      description: 'Agreement description link name for bullet one',
+    },
     agreementDescriptionBulletTwo: {
       id:
         'dpac.application:section.delimitation.labels.agreementDescriptionBulletTwo',
       defaultMessage:
         'Ef Persónuvernd telur nauðsynlegt að upplýsa málið betur getur stofnunin óskað eftir frekari gögnum eða upplýsingum frá öllum aðilum, eftir því sem við á hverju sinni.',
       description: 'Agreement description bullet Two',
+    },
+    agreementDescriptionBulletTwoLink: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletTwoLink',
+      defaultMessage: 'https://www.personuvernd.is/upplysingar-um-thig/',
+      description: 'Agreement description link for bullet two',
+    },
+    agreementDescriptionBulletTwoLinkName: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletTwoLinkName',
+      defaultMessage: 'persónuverndarstefnu stofnunarinnar',
+      description: 'Agreement description link name for bullet two',
     },
     agreementDescriptionBulletThree: {
       id:
@@ -69,6 +93,18 @@ export const delimitation = {
         'Málsgögn eru almennt aðgengileg öllum málsaðilum á grundvelli ákvæða stjórnsýslulaga, nr. 37/1993, að teknu tilliti til undantekninga samkvæmt þeim lögum. Þá geta þau eftir atvikum verið aðgengileg öðrum á grundvelli annarra laga, svo sem upplýsingalaga nr. 140/2012 eða laga um persónuvernd og vinnslu persónuupplýsinga nr. 90/2018.',
       description: 'Agreement description bullet Three',
     },
+    agreementDescriptionBulletThreeLink: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletThreeLink',
+      defaultMessage: 'https://www.personuvernd.is/upplysingar-um-thig/',
+      description: 'Agreement description link for bullet three',
+    },
+    agreementDescriptionBulletThreeLinkName: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletThreeLinkName',
+      defaultMessage: 'persónuverndarstefnu stofnunarinnar',
+      description: 'Agreement description link name for bullet three',
+    },
     agreementDescriptionBulletFour: {
       id:
         'dpac.application:section.delimitation.labels.agreementDescriptionBulletFour',
@@ -76,12 +112,37 @@ export const delimitation = {
         'Öll mál sem berast Persónuvernd eru sett í viðeigandi farveg eins fljótt og unnt er og málsaðilum tilkynnt um það, þó svo að á því geti orðið tafir í ljósi mikilla anna hjá Persónuvernd.',
       description: 'Agreement description bullet Four',
     },
+    agreementDescriptionBulletFourLink: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletFourLink',
+      defaultMessage: 'https://www.personuvernd.is/upplysingar-um-thig/',
+      description: 'Agreement description link for bullet four',
+    },
+    agreementDescriptionBulletFourLinkName: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletFourLinkName',
+      defaultMessage: 'persónuverndarstefnu stofnunarinnar',
+      description: 'Agreement description link name for bullet four',
+    },
     agreementDescriptionBulletFive: {
       id:
         'dpac.application:section.delimitation.labels.agreementDescriptionBulletFive',
       defaultMessage:
-        'Almennt er áætlað að afgreiðsla kvartana geti tekið um 9-15 mánuði. Afgreiðslutími getur þó orðið lengri ef mál eru flókin eða mikil að umfangi, eða ef álag hjá Persónuvernd eykst.',
+        'Upplýsingar um áætlaðan afgreiðslutíma kvartana má nálgast í {link}.',
       description: 'Agreement description bullet Five',
+    },
+    agreementDescriptionBulletFiveLink: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletFiveLink',
+      defaultMessage:
+        'https://www.personuvernd.is/efst-a-baugi/malsmedferdartimi-hja-personuvernd',
+      description: 'Agreement description link for bullet five',
+    },
+    agreementDescriptionBulletFiveLinkName: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletFiveLinkName',
+      defaultMessage: 'tilkynningu á vefsíðu Persónuverndar',
+      description: 'Agreement description link name for bullet five',
     },
     agreementDescriptionBulletSix: {
       id:
@@ -90,19 +151,56 @@ export const delimitation = {
         'Úrskurðir Persónuverndar í kvörtunarmálum eru almennt birtir á vefsíðu stofnunarinnar. Nöfn einstaklinga eru þó afmáð áður, sem og aðrar upplýsingar sem gera kleift að persónugreina kvartendur.',
       description: 'Agreement description bullet Six',
     },
+    agreementDescriptionBulletSixLink: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletSixLink',
+      defaultMessage: 'https://www.personuvernd.is/upplysingar-um-thig/',
+      description: 'Agreement description link for bullet six',
+    },
+    agreementDescriptionBulletSixLinkName: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletSixLinkName',
+      defaultMessage: 'persónuverndarstefnu stofnunarinnar',
+      description: 'Agreement description link name for bullet six',
+    },
     agreementDescriptionBulletSeven: {
       id:
         'dpac.application:section.delimitation.labels.agreementDescriptionBulletSeven',
       defaultMessage:
-        'Ítarlegri upplýsingar um málsmeðferð hjá Persónuvernd má nálgast í málsmeðferðarreglum stofnunarinnar.',
+        'Ítarlegri upplýsingar um málsmeðferð hjá Persónuvernd má nálgast í {link}.',
       description: 'Agreement description bullet Seven',
+    },
+    agreementDescriptionBulletSevenLink: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletSevenLink',
+      defaultMessage:
+        'https://www.personuvernd.is/log-og-reglur/reglur-og-reglugerdir/reglur-um-malsmedferd-personuverndar',
+      description: 'Agreement description link for bullet seven',
+    },
+    agreementDescriptionBulletSevenLinkName: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletSevenLinkName',
+      defaultMessage: 'málsmeðferðarreglum stofnunarinnar',
+      description: 'Agreement description link name for bullet seven',
     },
     agreementDescriptionBulletEight: {
       id:
         'dpac.application:section.delimitation.labels.agreementDescriptionBulletEight',
       defaultMessage:
-        'Ítarlegri upplýsingar um vinnslu persónuupplýsinga hjá Persónuvernd má nálgast í persónuverndarstefnu stofnunarinnar.',
+        'Ítarlegri upplýsingar um vinnslu persónuupplýsinga hjá Persónuvernd má nálgast í {link}.',
       description: 'Agreement description bullet Eight',
+    },
+    agreementDescriptionBulletEightLink: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletEightLink',
+      defaultMessage: 'https://www.personuvernd.is/upplysingar-um-thig/',
+      description: 'Agreement description link for bullet ight',
+    },
+    agreementDescriptionBulletEightLinkName: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletEightLinkName',
+      defaultMessage: 'persónuverndarstefnu stofnunarinnar',
+      description: 'Agreement description link name for bullet eight',
     },
   }),
   links: defineMessages({

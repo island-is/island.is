@@ -76,6 +76,7 @@ export enum FieldTypes {
   DIVIDER = 'DIVIDER',
   KEY_VALUE = 'KEY_VALUE',
   ASYNC_SELECT = 'ASYNC_SELECT',
+  PAYMENT_PENDING = 'PAYMENT_PENDING',
 }
 
 export enum FieldComponents {
@@ -90,6 +91,7 @@ export enum FieldComponents {
   KEY_VALUE = 'KeyValueFormField',
   SUBMIT = 'SubmitFormField',
   ASYNC_SELECT = 'AsyncSelectFormField',
+  PAYMENT_PENDING = 'PaymentPendingField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -99,6 +101,7 @@ export interface CheckboxField extends BaseField {
   large?: boolean
   strong?: boolean
   backgroundColor?: InputBackgroundColor
+  onSelect?: ((s: string[]) => void) | undefined
 }
 
 export interface DateField extends BaseField {
@@ -165,6 +168,7 @@ export interface TextField extends BaseField {
   suffix?: string
   rows?: number
   required?: boolean
+  onChange?: (...event: any[]) => void
 }
 
 export interface FileUploadField extends BaseField {
@@ -177,6 +181,7 @@ export interface FileUploadField extends BaseField {
   readonly uploadMultiple?: boolean
   readonly uploadAccept?: string
   readonly maxSize?: number
+  readonly forImageUpload?: boolean
 }
 
 export interface SubmitField extends BaseField {

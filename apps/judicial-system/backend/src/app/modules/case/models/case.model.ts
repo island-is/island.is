@@ -23,10 +23,10 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
-import { CaseFile } from '../../file/models/file.model'
+import { CaseFile } from '../../file'
 import { Institution } from '../../institution'
 import { User } from '../../user'
-import { Defendant } from '../../defendant/models/defendant.model'
+import { Defendant } from '../../defendant'
 
 @Table({
   tableName: 'case',
@@ -832,4 +832,14 @@ export class Case extends Model<Case> {
   @HasMany(() => CaseFile, 'caseId')
   @ApiProperty({ type: CaseFile, isArray: true })
   caseFiles?: CaseFile[]
+
+  /**********
+   * The explanation given for a modification of a case's validTo or isolationTo dates
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiProperty()
+  caseModifiedExplanation?: string
 }

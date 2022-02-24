@@ -239,6 +239,13 @@ export class ApplicationController {
       ApplicationEventType.FILEUPLOAD,
     ]
 
+    if (user.service === RolesRule.VEITA) {
+      staff = await this.staffService.findByNationalId(user.nationalId)
+      if (!staff) {
+        throw new ForbiddenException('Staff not found')
+      }
+    }
+
     if (
       (user.scope.includes(MunicipalitiesFinancialAidScope.applicant) &&
         staffUpdateEvents.includes(applicationToUpdate.event)) ||

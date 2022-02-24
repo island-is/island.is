@@ -15,7 +15,7 @@ import {
 } from '@island.is/island-ui/core'
 import {
   BlueBox,
-  CaseNumbers,
+  CaseInfo,
   DateTime,
   FormContentContainer,
   FormFooter,
@@ -31,7 +31,7 @@ import {
   UserData,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  newSetAndSendDateToServer,
+  setAndSendDateToServer,
   removeTabsValidateAndSet,
   setAndSendToServer,
   validateAndSendToServer,
@@ -127,6 +127,16 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
   return (
     <>
       <FormContentContainer>
+        {workingCase.requestProsecutorOnlySession &&
+          workingCase.prosecutorOnlySessionRequest && (
+            <Box marginBottom={workingCase.comments ? 2 : 5}>
+              <AlertMessage
+                type="warning"
+                title={formatMessage(m.requestProsecutorOnlySession)}
+                message={workingCase.prosecutorOnlySessionRequest}
+              />
+            </Box>
+          )}
         {workingCase.comments && (
           <Box marginBottom={5}>
             <AlertMessage
@@ -142,7 +152,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers workingCase={workingCase} />
+          <CaseInfo workingCase={workingCase} userRole={user.role} />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
@@ -213,13 +223,15 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                   SessionArrangements.ALL_PRESENT
                 }
                 onChange={() => {
-                  setAndSendToServer(
-                    'sessionArrangements',
-                    SessionArrangements.ALL_PRESENT,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
+                  setWorkingCase({
+                    ...workingCase,
+                    sessionArrangements: SessionArrangements.ALL_PRESENT,
+                    defenderIsSpokesperson: false,
+                  })
+                  updateCase(workingCase.id, {
+                    sessionArrangements: SessionArrangements.ALL_PRESENT,
+                    defenderIsSpokesperson: false,
+                  })
                 }}
                 large
                 backgroundColor="white"
@@ -237,13 +249,17 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                   SessionArrangements.ALL_PRESENT_SPOKESPERSON
                 }
                 onChange={() => {
-                  setAndSendToServer(
-                    'sessionArrangements',
-                    SessionArrangements.ALL_PRESENT_SPOKESPERSON,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
+                  setWorkingCase({
+                    ...workingCase,
+                    sessionArrangements:
+                      SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+                    defenderIsSpokesperson: true,
+                  })
+                  updateCase(workingCase.id, {
+                    sessionArrangements:
+                      SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+                    defenderIsSpokesperson: true,
+                  })
                 }}
                 large
                 backgroundColor="white"
@@ -287,7 +303,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                   selectedDate={workingCase.courtDate}
                   minDate={new Date()}
                   onChange={(date: Date | undefined, valid: boolean) => {
-                    newSetAndSendDateToServer(
+                    setAndSendDateToServer(
                       'courtDate',
                       date,
                       valid,
@@ -310,7 +326,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'courtRoom',
-                    event,
+                    event.target.value,
                     [],
                     workingCase,
                     setWorkingCase,
@@ -329,12 +345,16 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             </BlueBox>
           </Box>
         </Box>
-        <Box component="section" marginBottom={8}>
-          <DefenderInfo
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-          />
-        </Box>
+        {(workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
+          workingCase.sessionArrangements ===
+            SessionArrangements.ALL_PRESENT_SPOKESPERSON) && (
+          <Box component="section" marginBottom={8}>
+            <DefenderInfo
+              workingCase={workingCase}
+              setWorkingCase={setWorkingCase}
+            />
+          </Box>
+        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
@@ -342,16 +362,6 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           onNextButtonClick={handleNextButtonClick}
           nextIsLoading={isLoading}
           nextIsDisabled={!isCourtHearingArrangementsStepValidIC(workingCase)}
-          hideNextButton={
-            user.id !== workingCase.judge?.id &&
-            user.id !== workingCase.registrar?.id
-          }
-          infoBoxText={
-            user.id !== workingCase.judge?.id &&
-            user.id !== workingCase.registrar?.id
-              ? formatMessage(m.footer.infoPanelForRestrictedAccess)
-              : undefined
-          }
         />
       </FormContentContainer>
       {modalVisible && (

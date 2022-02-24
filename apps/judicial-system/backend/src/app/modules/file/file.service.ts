@@ -17,14 +17,13 @@ import { environment } from '../../../environments'
 import { writeFile } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
-import { CreateFileDto, CreatePresignedPostDto } from './dto'
-import {
-  PresignedPost,
-  CaseFile,
-  DeleteFileResponse,
-  SignedUrl,
-  UploadFileToCourtResponse,
-} from './models'
+import { CreateFileDto } from './dto/createFile.dto'
+import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
+import { PresignedPost } from './models/presignedPost.model'
+import { CaseFile } from './models/file.model'
+import { DeleteFileResponse } from './models/deleteFile.response'
+import { SignedUrl } from './models/signedUrl.model'
+import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 
 // Files are stored in AWS S3 under a key which has the following format:
 // uploads/<uuid>/<uuid>/<filename>
@@ -64,7 +63,8 @@ export class FileService {
 
   private async throttleUploadStream(
     file: CaseFile,
-    courtId: string | undefined,
+    courtId?: string,
+    courtCaseNumber?: string,
   ): Promise<string> {
     await this.throttle.catch((reason) => {
       this.logger.info('Previous upload failed', { reason })
@@ -76,8 +76,10 @@ export class FileService {
       writeFile(`${file.name}`, content)
     }
 
-    return this.courtService.uploadStream(
+    return this.courtService.createDocument(
       courtId,
+      courtCaseNumber,
+      file.name,
       file.name,
       file.type,
       content,
@@ -203,17 +205,9 @@ export class FileService {
       throw new NotFoundException(`File ${file.id} does not exists in AWS S3`)
     }
 
-    this.throttle = this.throttleUploadStream(file, courtId)
+    this.throttle = this.throttleUploadStream(file, courtId, courtCaseNumber)
 
-    const streamId = await this.throttle
-
-    const documentId = await this.courtService.createDocument(
-      courtId,
-      courtCaseNumber,
-      file.name,
-      file.name,
-      streamId,
-    )
+    const documentId = await this.throttle
 
     const s3Key = file.key
 

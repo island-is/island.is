@@ -12,6 +12,7 @@ import {
   FormFooter,
   PageLayout,
   FormContentContainer,
+  CaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import {
   ProsecutorSubsections,
@@ -27,6 +28,7 @@ import {
   formatDate,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
@@ -39,6 +41,7 @@ export const StepFour: React.FC = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
+  const { user } = useContext(UserContext)
   const [demandsErrorMessage, setDemandsErrorMessage] = useState<string>('')
   const [caseFactsErrorMessage, setCaseFactsErrorMessage] = useState<string>('')
   const [
@@ -63,9 +66,11 @@ export const StepFour: React.FC = () => {
           'demands',
           `${formatMessage(rcReportForm.sections.demands.autofill, {
             accusedName: theCase.defendants[0].name,
-            accusedNationalId: formatNationalId(
-              theCase.defendants[0].nationalId ?? '',
-            ),
+            accusedNationalId: theCase.defendants[0].noNationalId
+              ? ' '
+              : `, kt. ${formatNationalId(
+                  theCase.defendants[0].nationalId ?? '',
+                )}, `,
             extensionSuffix:
               theCase.parentCase &&
               isAcceptingCaseDecision(theCase.parentCase.decision)
@@ -107,10 +112,17 @@ export const StepFour: React.FC = () => {
       notFound={caseNotFound}
     >
       <FormContentContainer>
-        <Box marginBottom={10}>
+        <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(rcReportForm.heading)}
           </Text>
+        </Box>
+        <Box marginBottom={7}>
+          <CaseInfo
+            workingCase={workingCase}
+            userRole={user?.role}
+            showAdditionalInfo
+          />
         </Box>
         <Box component="section" marginBottom={7}>
           <Box marginBottom={4}>
@@ -134,7 +146,7 @@ export const StepFour: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'demands',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -153,6 +165,7 @@ export const StepFour: React.FC = () => {
                 )
               }
               rows={7}
+              autoExpand={{ on: true, maxHeight: 300 }}
               textarea
               required
             />
@@ -183,7 +196,7 @@ export const StepFour: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'caseFacts',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -203,6 +216,7 @@ export const StepFour: React.FC = () => {
               }
               required
               rows={14}
+              autoExpand={{ on: true, maxHeight: 600 }}
               textarea
             />
           </Box>
@@ -234,7 +248,7 @@ export const StepFour: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'legalArguments',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -255,6 +269,7 @@ export const StepFour: React.FC = () => {
               required
               textarea
               rows={14}
+              autoExpand={{ on: true, maxHeight: 600 }}
             />
           </Box>
           <Box component="section" marginBottom={7}>
@@ -279,7 +294,7 @@ export const StepFour: React.FC = () => {
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'comments',
-                    event,
+                    event.target.value,
                     [],
                     workingCase,
                     setWorkingCase,
@@ -296,6 +311,7 @@ export const StepFour: React.FC = () => {
                 }
                 textarea
                 rows={7}
+                autoExpand={{ on: true, maxHeight: 300 }}
               />
             </Box>
           </Box>

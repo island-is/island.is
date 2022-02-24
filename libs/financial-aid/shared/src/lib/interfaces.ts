@@ -222,6 +222,7 @@ export interface ApplicantEmailData {
   applicationLink: string
   applicantEmail: string
   municipality: Municipality
+  applicationLinkText: string
 }
 
 export interface ApplicationFilters {
@@ -231,6 +232,12 @@ export interface ApplicationFilters {
   Rejected: number
   Approved: number
   MyCases: number
+}
+
+export interface PersonalTaxReturn {
+  key: string
+  name: string
+  size: number
 }
 
 export interface Application {
@@ -280,7 +287,8 @@ export interface GetSignedUrlForId {
 export interface Spouse {
   hasPartnerApplied: boolean
   hasFiles: boolean
-  spouseName?: string
+  applicantName: string
+  applicantSpouseEmail: string
 }
 
 export interface UpdateApplicationTableResponseType {

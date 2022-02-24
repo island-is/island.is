@@ -4,28 +4,28 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 @ObjectType()
 export class Document {
   @Field(() => ID)
-  id: string
+  id!: string
 
   @Field(() => Date)
-  date: Date
+  date!: Date
 
   @Field(() => String)
-  subject: string
+  subject!: string
 
   @Field(() => String)
   senderName?: string
 
   @Field(() => String)
-  senderNatReg: string
+  senderNatReg!: string
 
   @Field(() => Boolean)
-  opened: boolean
+  opened!: boolean
 
   @Field(() => String)
-  fileType: string
+  fileType!: string
 
   @Field(() => String)
-  url: string
+  url!: string
 
   static fromDocumentInfo(docInfo: DocumentInfoDTO): Document {
     const doc = new Document()

@@ -7,7 +7,7 @@ import {
   PoliceRequestAccordionItem,
   CourtRecordAccordionItem,
   PdfButton,
-  CaseNumbers,
+  CaseInfo,
   PageLayout,
   FormContentContainer,
   RulingAccordionItem,
@@ -66,17 +66,13 @@ export const Confirmation: React.FC = () => {
     }
 
     // Request ruling signature to get control code
-    try {
-      const requestRulingSignatureResponse = await requestRulingSignature(
-        workingCase.id,
-      )
-      if (requestRulingSignatureResponse) {
-        setRequestRulingSignatureResponse(requestRulingSignatureResponse)
-        setModalVisible(true)
-      } else {
-        // TODO: Handle error
-      }
-    } catch (e) {
+    const requestRulingSignatureResponse = await requestRulingSignature(
+      workingCase.id,
+    )
+    if (requestRulingSignatureResponse) {
+      setRequestRulingSignatureResponse(requestRulingSignatureResponse)
+      setModalVisible(true)
+    } else {
       // TODO: Handle error
     }
   }
@@ -97,7 +93,7 @@ export const Confirmation: React.FC = () => {
             Yfirlit úrskurðar
           </Text>
         </Box>
-        <Box display="flex" marginBottom={10}>
+        <Box display="flex" marginBottom={7}>
           <Box marginRight={2}>
             <Text variant="small">{`Krafa stofnuð: ${formatDate(
               workingCase.created,
@@ -110,7 +106,7 @@ export const Confirmation: React.FC = () => {
           )}`}</Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers workingCase={workingCase} />
+          <CaseInfo workingCase={workingCase} userRole={user?.role} />
         </Box>
         <Box marginBottom={9}>
           <Accordion>

@@ -15,7 +15,7 @@ import {
   FormFooter,
   PageLayout,
   BlueBox,
-  CaseNumbers,
+  CaseInfo,
   FormContentContainer,
   TimeInputField,
 } from '@island.is/judicial-system-web/src/components'
@@ -49,6 +49,7 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isRulingStepTwoValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   core,
   rcRulingStepTwo as m,
@@ -65,6 +66,8 @@ export const RulingStepTwo: React.FC = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
+  const { user } = useContext(UserContext)
+
   const [
     courtDocumentEndErrorMessage,
     setCourtDocumentEndErrorMessage,
@@ -113,9 +116,11 @@ export const RulingStepTwo: React.FC = () => {
                   suffix: accusedSuffix,
                 }),
                 accusedName: theCase.defendants[0].name,
-                accusedNationalId: formatNationalId(
-                  theCase.defendants[0].nationalId ?? '',
-                ),
+                accusedNationalId: theCase.defendants[0].noNationalId
+                  ? ', '
+                  : `, kt. ${formatNationalId(
+                      theCase.defendants[0].nationalId ?? '',
+                    )}, `,
                 extensionSuffix:
                   theCase.parentCase &&
                   isAcceptingCaseDecision(theCase.parentCase.decision)
@@ -133,9 +138,11 @@ export const RulingStepTwo: React.FC = () => {
                   }),
                 ),
                 accusedName: theCase.defendants[0].name,
-                accusedNationalId: formatNationalId(
-                  theCase.defendants[0].nationalId ?? '',
-                ),
+                accusedNationalId: theCase.defendants[0].noNationalId
+                  ? ', '
+                  : `, kt. ${formatNationalId(
+                      theCase.defendants[0].nationalId ?? '',
+                    )}, `,
                 caseTypeAndExtensionSuffix:
                   theCase.decision === CaseDecision.ACCEPTING ||
                   theCase.decision === CaseDecision.ACCEPTING_PARTIALLY
@@ -246,13 +253,13 @@ export const RulingStepTwo: React.FC = () => {
       notFound={caseNotFound}
     >
       <FormContentContainer>
-        <Box marginBottom={10}>
+        <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(m.title)}
           </Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers workingCase={workingCase} />
+          <CaseInfo workingCase={workingCase} userRole={user?.role} />
         </Box>
         <Box component="section" marginBottom={8}>
           <Box marginBottom={6}>
@@ -270,7 +277,7 @@ export const RulingStepTwo: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'conclusion',
-                  event,
+                  event.target.value,
                   [],
                   workingCase,
                   setWorkingCase,
@@ -288,6 +295,7 @@ export const RulingStepTwo: React.FC = () => {
               textarea
               required
               rows={7}
+              autoExpand={{ on: true, maxHeight: 300 }}
             />
           </Box>
         </Box>
@@ -511,7 +519,7 @@ export const RulingStepTwo: React.FC = () => {
                   onChange={(event) =>
                     removeTabsValidateAndSet(
                       'accusedAppealAnnouncement',
-                      event,
+                      event.target.value,
                       [],
                       workingCase,
                       setWorkingCase,
@@ -528,6 +536,7 @@ export const RulingStepTwo: React.FC = () => {
                   }
                   textarea
                   rows={7}
+                  autoExpand={{ on: true, maxHeight: 300 }}
                 />
               </BlueBox>
             </Box>
@@ -685,7 +694,7 @@ export const RulingStepTwo: React.FC = () => {
                   onChange={(event) =>
                     removeTabsValidateAndSet(
                       'prosecutorAppealAnnouncement',
-                      event,
+                      event.target.value,
                       [],
                       workingCase,
                       setWorkingCase,
@@ -702,6 +711,7 @@ export const RulingStepTwo: React.FC = () => {
                   }
                   textarea
                   rows={7}
+                  autoExpand={{ on: true, maxHeight: 300 }}
                 />
               </Box>
             </BlueBox>
@@ -725,7 +735,7 @@ export const RulingStepTwo: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'endOfSessionBookings',
-                  event,
+                  event.target.value,
                   [],
                   workingCase,
                   setWorkingCase,
@@ -741,6 +751,7 @@ export const RulingStepTwo: React.FC = () => {
                 )
               }
               rows={16}
+              autoExpand={{ on: true, maxHeight: 600 }}
               textarea
             />
           </Box>
