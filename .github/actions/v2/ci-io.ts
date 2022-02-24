@@ -180,9 +180,7 @@ export class LocalRunner implements GitActionStatus {
       if (filterSkippedSuccessBuilds(jobs, 'success', 'Announce success')) {
         let headCommit = run.pull_requests[0].head.sha
         let baseCommit = run.pull_requests[0].base.sha
-        app(
-          `Run number ${run.run_number} matches success criteria, head sha: ${headCommit} and base sha: ${baseCommit}`,
-        )
+        app(`Run number ${run.run_number} matches success criteria`)
 
         app(`Looking for PR metadata`)
         const artifacts = await this.octokit.actions.listWorkflowRunArtifacts({
