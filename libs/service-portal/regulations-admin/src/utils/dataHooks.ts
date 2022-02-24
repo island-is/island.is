@@ -8,6 +8,7 @@ import {
   RegulationDraft,
 } from '@island.is/regulations/admin'
 import {
+  ISODate,
   LawChapter,
   LawChapterSlug,
   MinistryList,
@@ -298,21 +299,19 @@ export const useRegulationListQuery = (
 
 // ---------------------------------------------------------------------------
 
-const GetCurrentRegulationFromApiQuery = gql`
-  query GetCurrentRegulationFromApi($input: GetCurrentRegulationFromApiInput!) {
-    getCurrentRegulationFromApi(input: $input)
+const GetRegulationFromApiQuery = gql`
+  query GetRegulationFromApi($input: GetRegulationFromApiInput!) {
+    getRegulationFromApi(input: $input)
   }
 `
 
-export const useGetCurrentRegulationFromApiQuery = (
+export const useGetRegulationFromApiQuery = (
   regulation: RegName | DraftImpactName,
+  date?: ISODate,
 ): QueryResult<Regulation> => {
-  const { loading, error, data } = useQuery<Query>(
-    GetCurrentRegulationFromApiQuery,
-    {
-      variables: { input: { regulation } },
-    },
-  )
+  const { loading, error, data } = useQuery<Query>(GetRegulationFromApiQuery, {
+    variables: { input: { regulation, date } },
+  })
 
   if (loading) {
     return { loading }
@@ -323,6 +322,6 @@ export const useGetCurrentRegulationFromApiQuery = (
     }
   }
   return {
-    data: data.getCurrentRegulationFromApi as Regulation,
+    data: data.getRegulationFromApi as Regulation,
   }
 }

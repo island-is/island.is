@@ -186,12 +186,6 @@ export const ImpactList = (props: ImpactListProps) => {
             <EditCancellation
               draft={draft}
               cancellation={chooseType}
-              /*constraints={{
-                minDate:
-                  groupedImpacts[chooseType.name][
-                    groupedImpacts[chooseType.name].length - 1
-                  ].date.value,
-              }}*/
               closeModal={closeModal}
             />
           )}

@@ -7,7 +7,7 @@ export { RegulationsAdminClientService } from '@island.is/clients/regulations-ad
 export { UpdateDraftRegulationCancelInput } from './updateDraftRegulationCancel.input'
 export { CreateDraftRegulationCancelInput } from './createDraftRegulationCancel.input'
 export { DeleteDraftRegulationCancelInput } from './deleteDraftRegulationCancel.input'
-export { GetCurrentRegulationFromApiInput } from './getCurrentRegulationFromApi.input'
+export { GetRegulationFromApiInput } from './getRegulationFromApi.input'
 export { CreateDraftRegulationChangeInput } from './createDraftRegulationChange.input'
 export { UpdateDraftRegulationChangeInput } from './updateDraftRegulationChange.input'
 export { DeleteDraftRegulationChangeInput } from './deleteDraftRegulationChange.input'
