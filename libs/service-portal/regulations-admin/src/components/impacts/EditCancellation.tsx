@@ -116,11 +116,9 @@ export const EditCancellation = (props: EditCancellationProp) => {
   }
 
   const hasImpactMismatch = () => {
-    const impacts = draftImpacts ?? []
-    const mismatchArray = impacts.filter(
+    return !!draftImpacts?.filter(
       (draftImpact) => draftImpact.changingId !== draft.id,
-    )
-    return mismatchArray.length > 0
+    ).length
   }
 
   return (
