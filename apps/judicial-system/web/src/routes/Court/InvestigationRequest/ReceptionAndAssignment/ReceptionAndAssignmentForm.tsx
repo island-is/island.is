@@ -7,10 +7,10 @@ import { FormContentContainer } from '@island.is/judicial-system-web/src/compone
 import { Case, User, UserRole } from '@island.is/judicial-system/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { icReceptionAndAssignment as m } from '@island.is/judicial-system-web/messages/InvestigationCases/Court/receptionAndAssignment'
 
 import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
-import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 interface Props {
   workingCase: Case

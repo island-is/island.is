@@ -23,6 +23,7 @@ import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isReceptionAndAssignmentStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import * as Constants from '@island.is/judicial-system/consts'
+
 import ReceptionAndAssignmentForm from './ReceptionAndAssignmentForm'
 
 const ReceptionAndAssignment = () => {
