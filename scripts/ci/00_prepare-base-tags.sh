@@ -2,8 +2,13 @@
 set -euxo pipefail
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+ROOT="$DIR/../.."
 
-LAST_GOOD_BUILD=$(DEBUG="*" node $DIR/../../.github/actions/dist-v2/index.js)
+tempRepo=$(mktemp -d 2>/dev/null || mktemp -d -t 'mytmpdir')
+cp -r "$ROOT"/. "$tempRepo"
+
+LAST_GOOD_BUILD=$(DEBUG="*" REPO_ROOT="$tempRepo" node $DIR/../../.github/actions/dist-v2/index.js)
+rm -rf $tempRepo
 LAST_GOOD_BUILD_SHA=$(echo "$LAST_GOOD_BUILD" | jq -r '.sha')
 LAST_GOOD_BUILD_BRANCH=$(echo "$LAST_GOOD_BUILD" | jq -r '.branch')
 LAST_GOOD_BUILD_RUN_NUMBER=$(echo "$LAST_GOOD_BUILD" | jq -r '.run_number')

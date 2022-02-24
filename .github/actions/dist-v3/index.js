@@ -35290,7 +35290,7 @@ class SimpleGit {
         auth: process.env.GITHUB_TOKEN,
     });
     const runner = new LocalRunner(octokit);
-    let git = new SimpleGit(`${__dirname}/../../..`, '/bin/bash');
+    let git = new SimpleGit(process.env.REPO_ROOT, '/bin/bash');
     const rev = yield findBestGoodRefPR((s) => s.length, git, runner, `infra/new-ci-change-detector`, 'main', `origin/pr/6665`);
     if (rev === 'rebuild') {
         console.log(`Full rebuild needed`);

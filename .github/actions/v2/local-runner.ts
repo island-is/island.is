@@ -11,7 +11,7 @@ import { SimpleGit } from './simple-git'
   )
 
   const runner = new LocalRunner(octokit)
-  let git = new SimpleGit(`${__dirname}/../../..`, '/bin/bash')
+  let git = new SimpleGit(process.env.REPO_ROOT, '/bin/bash')
   const rev = await findBestGoodRefPR(
     (s) => s.length,
     git,

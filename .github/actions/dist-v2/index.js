@@ -91304,7 +91304,7 @@ class SimpleGit {
 
 (() => __awaiter(void 0, void 0, void 0, function* () {
     const runner = new LocalRunner(new dist_node/* Octokit */.v());
-    let git = new SimpleGit(`${__dirname}/../../..`, process.env.SHELL);
+    let git = new SimpleGit(process.env.REPO_ROOT, process.env.SHELL);
     const diffWeight = (s) => s.length;
     const rev = process.env.GITHUB_EVENT_NAME === 'pull_request'
         ? yield findBestGoodRefPR(diffWeight, git, runner, process.env.HEAD_REF, process.env.BASE_REF, process.env.PR_REF)
