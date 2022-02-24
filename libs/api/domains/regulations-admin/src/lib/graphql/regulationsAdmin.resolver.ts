@@ -27,6 +27,8 @@ import {
   DeleteDraftRegulationChangeInput,
   UpdateDraftRegulationChangeInput,
   CreateDraftRegulationChangeInput,
+  GetDraftRegulationsInput,
+  GetRegulationImpactsInput,
 } from './dto'
 import {
   DeleteDraftRegulationModel,
@@ -34,10 +36,8 @@ import {
   DraftRegulationChangeModel,
   DraftRegulationPdfDownloadModel,
   DraftRegulationSummaryModel,
+  DraftRegulationShippedModel,
 } from './models'
-import { GetRegulationImpactsInput } from './dto/getRegulationImpactsByName.input'
-import { GetDraftRegulationsInput } from './dto/getDraftRegulations.input'
-import { DraftRegulationShippedModel } from './models/draftRegulationShipped.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
