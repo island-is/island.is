@@ -49,7 +49,7 @@ const CourtRecord = () => {
         ) {
           attendees += `\n${wc.defenderName} skipaður ${
             wc.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
-          } ${formatMessage(core.defendant, { suffix: 'a' })}\n`
+          } ${formatMessage(core.defendant, { suffix: 'a' })}`
         }
 
         if (wc.translator) {

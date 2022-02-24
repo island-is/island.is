@@ -11,11 +11,7 @@ import {
   FormFooter,
   HideableText,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  Case,
-  SessionArrangements,
-  User,
-} from '@island.is/judicial-system/types'
+import { Case, User } from '@island.is/judicial-system/types'
 import {
   setAndSendDateToServer,
   removeTabsValidateAndSet,
