@@ -12,4 +12,4 @@ export { CreateDraftRegulationChangeInput } from './createDraftRegulationChange.
 export { UpdateDraftRegulationChangeInput } from './updateDraftRegulationChange.input'
 export { DeleteDraftRegulationChangeInput } from './deleteDraftRegulationChange.input'
 export { GetDraftRegulationsInput } from './getDraftRegulations.input'
-export { GetRegulationImpactsInput } from './getRegulationImpacts.input'
+export { GetRegulationImpactsInput } from './GetRegulationImpacts.input'
