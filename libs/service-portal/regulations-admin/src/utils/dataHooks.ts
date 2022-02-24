@@ -6,8 +6,10 @@ import {
   DraftImpact,
   DraftImpactName,
   RegulationDraft,
+  TaskListType,
 } from '@island.is/regulations/admin'
 import {
+  ISODate,
   LawChapter,
   LawChapterSlug,
   MinistryList,
@@ -109,13 +111,9 @@ const ShippedRegulationsQuery = gql`
     getShippedRegulations {
       id
       draftingStatus
-      authors {
-        authorId
-        name
-      }
       title
       idealPublishDate
-      fastTrack
+      name
     }
   }
 `
@@ -141,27 +139,43 @@ export const useShippedRegulationsQuery = (): QueryResult<
 }
 
 // ---------------------------------------------------------------------------
-
+/*
+// FIXME: Return error: "GraphQLError: Expected Iterable, but did not find one for field \"Query.getDraftRegulations\".
 const RegulationTaskListQuery = gql`
-  query RegulationTaskListQuery {
-    getDraftRegulations {
-      id
-      draftingStatus
-      authors {
-        authorId
-        name
+  query RegulationTaskListQuery($input: GetDraftRegulationsInput!) {
+    getDraftRegulations(input: $input) {
+      drafts {
+        id
+        draftingStatus
+        authors {
+          authorId
+          name
+        }
+        title
+        idealPublishDate
+        fastTrack
       }
-      title
-      idealPublishDate
-      fastTrack
+      paging {
+        page
+        pages
+      }
     }
   }
 `
+*/
+const RegulationTaskListQuery = gql`
+  query RegulationTaskListQuery($input: GetDraftRegulationsInput!) {
+    getDraftRegulations(input: $input)
+  }
+`
 
-export const useRegulationTaskListQuery = (): QueryResult<
-  Array<DraftSummary>
-> => {
+export const useRegulationTaskListQuery = (
+  page = 1,
+): QueryResult<TaskListType> => {
   const { loading, error, data } = useQuery(RegulationTaskListQuery, {
+    variables: {
+      input: { page },
+    },
     fetchPolicy: 'no-cache',
   })
 
@@ -174,7 +188,7 @@ export const useRegulationTaskListQuery = (): QueryResult<
     }
   }
   return {
-    data: data.getDraftRegulations as Array<DraftSummary>,
+    data: data.getDraftRegulations as TaskListType,
   }
 }
 
@@ -302,21 +316,19 @@ export const useRegulationListQuery = (
 
 // ---------------------------------------------------------------------------
 
-const GetCurrentRegulationFromApiQuery = gql`
-  query GetCurrentRegulationFromApi($input: GetCurrentRegulationFromApiInput!) {
-    getCurrentRegulationFromApi(input: $input)
+const GetRegulationFromApiQuery = gql`
+  query GetRegulationFromApi($input: GetRegulationFromApiInput!) {
+    getRegulationFromApi(input: $input)
   }
 `
 
-export const useGetCurrentRegulationFromApiQuery = (
+export const useGetRegulationFromApiQuery = (
   regulation: RegName | DraftImpactName,
+  date?: ISODate,
 ): QueryResult<Regulation> => {
-  const { loading, error, data } = useQuery<Query>(
-    GetCurrentRegulationFromApiQuery,
-    {
-      variables: { input: { regulation } },
-    },
-  )
+  const { loading, error, data } = useQuery<Query>(GetRegulationFromApiQuery, {
+    variables: { input: { regulation, date } },
+  })
 
   if (loading) {
     return { loading }
@@ -327,6 +339,6 @@ export const useGetCurrentRegulationFromApiQuery = (
     }
   }
   return {
-    data: data.getCurrentRegulationFromApi as Regulation,
+    data: data.getRegulationFromApi as Regulation,
   }
 }

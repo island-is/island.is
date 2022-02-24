@@ -22,7 +22,7 @@ export class DraftRegulationChangeModel {
   name!: RegName
 
   @Field(() => String, { nullable: true })
-  title!: string
+  title!: PlainText
 
   @Field(() => String, { nullable: true })
   regTitle!: string

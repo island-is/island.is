@@ -79,6 +79,11 @@ export type ShippedSummary = Pick<
   draftingStatus: Extract<DraftingStatus, 'shipped' | 'published'>
 }
 
+export type TaskListType = {
+  drafts: Array<DraftSummary>
+  paging: { page: number; pages: number }
+}
+
 // ---------------------------------------------------------------------------
 
 export type GroupedDraftImpacts = Record<string, Array<DraftImpact>>

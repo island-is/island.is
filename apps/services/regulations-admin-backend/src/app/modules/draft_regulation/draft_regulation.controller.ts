@@ -9,6 +9,7 @@ import {
   Delete,
   UseGuards,
   BadRequestException,
+  Query,
 } from '@nestjs/common'
 import { ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger'
 import {
@@ -25,7 +26,7 @@ import { DraftRegulationService } from './draft_regulation.service'
 import { Audit, AuditService } from '@island.is/nest/audit'
 
 import { environment } from '../../../environments'
-import { DraftSummary } from '@island.is/regulations/admin'
+import { ShippedSummary, TaskListType } from '@island.is/regulations/admin'
 import { Kennitala, RegQueryName } from '@island.is/regulations'
 const namespace = `${environment.audit.defaultNamespace}/draft_regulations`
 
@@ -117,10 +118,16 @@ export class DraftRegulationController {
     isArray: true,
     description: 'Gets all DraftRegulations with status draft and proposal',
   })
-  async getAll(@CurrentUser() user: User): Promise<DraftSummary[]> {
+  async getAll(
+    @CurrentUser() user: User,
+    @Query('page') page?: number,
+  ): Promise<TaskListType> {
+    // managers can see all, creators can only see their own
     const canManage = user.scope.includes('@island.is/regulations:manage')
+
     return await this.draftRegulationService.getAll(
       !canManage ? user : undefined,
+      page,
     )
   }
 
@@ -131,7 +138,7 @@ export class DraftRegulationController {
     isArray: true,
     description: 'Gets all DraftRegulations with status shipped',
   })
-  async getAllShipped(@CurrentUser() user: User): Promise<DraftSummary[]> {
+  async getAllShipped(@CurrentUser() user: User): Promise<ShippedSummary[]> {
     const canManage = user.scope.includes('@island.is/regulations:manage')
     if (!canManage) {
       return []

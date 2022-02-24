@@ -15,6 +15,7 @@ import {
 import { MagicTextarea } from './MagicTextarea'
 import { useLocale } from '@island.is/localization'
 import { AppendixDraftForm } from '../state/types'
+import { RegImpactDraftActions } from '../state/useImpactDraftingState'
 import { RegDraftActions } from '../state/useDraftingState'
 
 // ---------------------------------------------------------------------------
@@ -107,7 +108,8 @@ const AppendixEditing = (props: AppendixEditingProps) => {
               name="title"
               value={title.value}
               onChange={(value) => {
-                actions.setAppendixProp(idx, 'title', value)
+                console.log('setAppendixProp', idx, 'title', value)
+                //actions.setAppendixProp(idx, 'title', value)
               }}
               onFocus={handleFocus}
               required={!!title.required}
@@ -122,8 +124,10 @@ const AppendixEditing = (props: AppendixEditingProps) => {
               label={t(msg.appendix_text)}
               baseText={baseText}
               value={text.value}
-              onChange={(newValue) =>
-                actions.setAppendixProp(idx, 'text', newValue)
+              onChange={
+                (newValue) =>
+                  console.log('setAppendixProp', idx, 'text', newValue)
+                // actions.setAppendixProp(idx, 'text', newValue)
               }
               draftId={draftId}
               isImpact={isImpact}
@@ -182,14 +186,23 @@ type AppendixesProps = {
   draftId: RegulationDraft['id']
   appendixes: Array<AppendixDraftForm>
   baseAppendixes?: ReadonlyArray<Appendix>
-  actions: Pick<
-    RegDraftActions,
-    | 'setAppendixProp'
-    | 'addAppendix'
-    | 'deleteAppendix'
-    | 'revokeAppendix'
-    | 'moveAppendixUp'
-  >
+  actions:
+    | Pick<
+        RegImpactDraftActions,
+        | 'setAppendixProp'
+        | 'addAppendix'
+        | 'deleteAppendix'
+        | 'revokeAppendix'
+        | 'moveAppendixUp'
+      >
+    | Pick<
+        RegDraftActions,
+        | 'setAppendixProp'
+        | 'addAppendix'
+        | 'deleteAppendix'
+        | 'revokeAppendix'
+        | 'moveAppendixUp'
+      >
 }
 
 export const Appendixes = (props: AppendixesProps) => {
@@ -232,7 +245,10 @@ export const Appendixes = (props: AppendixesProps) => {
           variant="text"
           preTextIcon="add"
           // size="large"
-          onClick={props.actions.addAppendix}
+          onClick={
+            () => console.log('appAppendix')
+            //props.actions.addAppendix
+          }
         >
           {t(msg.appendix_add)}
         </Button>

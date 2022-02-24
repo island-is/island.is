@@ -188,8 +188,7 @@ function remainingJudgeCaseData() {
     courtAttendees: 'Court Attendees',
     prosecutorDemands: 'Police Demands',
     courtDocuments: ['Þingskjal 1', 'Þingskjal 2'],
-    accusedBookings: 'Accused Plea',
-    litigationPresentations: 'Litigation Presentations',
+    sessionBookings: 'Session Bookings',
     courtCaseFacts: 'Court Case Facts',
     courtLegalArguments: 'Court Legal Arguments',
     ruling: 'Ruling',
@@ -418,10 +417,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.courtDocuments ?? null).toStrictEqual(
     caseTwo.courtDocuments ?? null,
   )
-  expect(caseOne.accusedBookings ?? null).toBe(caseTwo.accusedBookings ?? null)
-  expect(caseOne.litigationPresentations ?? null).toBe(
-    caseTwo.litigationPresentations ?? null,
-  )
+  expect(caseOne.sessionBookings ?? null).toBe(caseTwo.sessionBookings ?? null)
   expect(caseOne.courtCaseFacts ?? null).toBe(caseTwo.courtCaseFacts ?? null)
   expect(caseOne.courtLegalArguments ?? null).toBe(
     caseTwo.courtLegalArguments ?? null,

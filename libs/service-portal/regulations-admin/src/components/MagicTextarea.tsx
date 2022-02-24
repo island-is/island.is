@@ -29,6 +29,7 @@ export type MagicTextareaProps = {
   error?: string
   rows?: number
   required?: boolean
+  readOnly?: boolean
 }
 
 export const MagicTextarea = (props: MagicTextareaProps) => {
@@ -43,6 +44,7 @@ export const MagicTextarea = (props: MagicTextareaProps) => {
     error,
     rows,
     required,
+    readOnly,
   } = props
 
   const elmRef = useRef<HTMLTextAreaElement>(null)
@@ -75,6 +77,7 @@ export const MagicTextarea = (props: MagicTextareaProps) => {
       rows={rows || 1}
       ref={elmRef}
       backgroundColor="blue"
+      readOnly={readOnly}
     />
   )
 }

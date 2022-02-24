@@ -84,6 +84,26 @@ export class RegulationsService extends RESTDataSource {
     return response
   }
 
+  async getRegulationOnDate(
+    viewType: RegulationViewTypes,
+    name: RegQueryName,
+    date?: ISODate,
+  ): Promise<Regulation | RegulationDiff | RegulationRedirect | null> {
+    const url = buildRegulationApiPath({
+      name,
+      viewType,
+      date,
+    })
+    const response = await this.get<
+      Regulation | RegulationDiff | RegulationRedirect | null
+    >(
+      `/regulation/${name}/${
+        viewType === 'current' ? 'current' : 'on/' + date
+      }`,
+    )
+    return response
+  }
+
   async getRegulations(
     type: 'newest',
     page?: number,

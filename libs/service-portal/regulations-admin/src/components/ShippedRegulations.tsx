@@ -1,15 +1,18 @@
 import React from 'react'
 
-import { Box, Stack, Text, TopicCard } from '@island.is/island-ui/core'
+import { ActionCard, Box, Stack, Text } from '@island.is/island-ui/core'
 import { homeMessages, statusMsgs } from '../messages'
 import { prettyName } from '@island.is/regulations'
 import { useLocale } from '@island.is/localization'
 import { useShippedRegulationsQuery } from '../utils/dataHooks'
+import { getEditUrl } from '../utils/routing'
+import { useHistory } from 'react-router-dom'
 
 export const ShippedRegulations = () => {
   const { formatMessage, formatDateFns } = useLocale()
   const t = formatMessage
   const shippedRegs = useShippedRegulationsQuery()
+  const history = useHistory()
 
   if (shippedRegs.loading || shippedRegs.error) {
     return null
@@ -31,10 +34,7 @@ export const ShippedRegulations = () => {
   // Food for thought.
 
   return (
-    <Box marginTop={[4, 4, 8]}>
-      <Text variant="h3" as="h2" marginBottom={[2, 2, 3]}>
-        {formatMessage(homeMessages.shippedTitle)}
-      </Text>
+    <Box marginTop={6}>
       <Stack space={2}>
         {shippedRegs.data.map((shipped) => {
           const name = shipped.name
@@ -45,14 +45,33 @@ export const ShippedRegulations = () => {
               ? t(statusMsgs.published) +
                 ' ' +
                 (publishedDate
-                  ? formatDateFns(publishedDate, 'dd. MMM yyyy')
+                  ? formatDateFns(publishedDate, 'd. MMM yyyy')
                   : '??dags??')
               : t(statusMsgs.shipped)
 
           return (
-            <TopicCard key={shipped.id} tag={tagText}>
-              {name && prettyName(name)} {shipped.title}
-            </TopicCard>
+            <ActionCard
+              key={shipped.id}
+              date={name ? prettyName(name) : undefined}
+              tag={{
+                label: tagText,
+                variant: 'blueberry',
+              }}
+              heading={shipped.title}
+              cta={
+                shipped.draftingStatus === 'shipped'
+                  ? {
+                      icon: 'arrowForward',
+                      label: t(homeMessages.cta_publish),
+                      variant: 'text',
+                      size: 'small',
+                      onClick: () => {
+                        history.push(getEditUrl(shipped.id, 'publish'))
+                      },
+                    }
+                  : (undefined as any)
+              }
+            ></ActionCard>
           )
         })}
       </Stack>

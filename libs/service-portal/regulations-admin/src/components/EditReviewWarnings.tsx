@@ -191,7 +191,7 @@ export type EditReviewWarningsProps = {
 export const EditReviewWarnings = (props: EditReviewWarningsProps) => {
   const t = useLocale().formatMessage
 
-  if (!props.messages) {
+  if (!props.messages?.length) {
     return null
   }
 

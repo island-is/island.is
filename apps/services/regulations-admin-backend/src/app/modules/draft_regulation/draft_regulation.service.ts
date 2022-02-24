@@ -26,6 +26,8 @@ import {
   GroupedDraftImpacts,
   RegulationDraft,
   RegulationDraftId,
+  ShippedSummary,
+  TaskListType,
 } from '@island.is/regulations/admin'
 import { Kennitala, RegQueryName } from '@island.is/regulations'
 import * as kennitala from 'kennitala'
@@ -56,7 +58,7 @@ export class DraftRegulationService {
     private readonly nationalRegistryApi: NationalRegistryApi,
   ) {}
 
-  async getAll(user?: User): Promise<DraftSummary[]> {
+  async getAll(user?: User, page = 1): Promise<TaskListType> {
     this.logger.debug(
       'Getting all non shipped DraftRegulations, filtered by national id for non managers',
     )
@@ -64,13 +66,21 @@ export class DraftRegulationService {
       authors: { [Op.contains]: [user.nationalId] },
     }
 
-    const draftRegulations = await this.draftRegulationModel.findAll({
+    const count = 5
+
+    const {
+      rows: draftRegulations,
+      count: totalCount,
+    } = await this.draftRegulationModel.findAndCountAll({
       where: {
         drafting_status: { [Op.in]: ['draft', 'proposal'] },
         ...authorsCondition,
       },
+      limit: count,
+      offset: (page - 1) * count,
       order: [
         ['drafting_status', 'ASC'],
+        ['fast_track', 'ASC'],
         ['created', 'DESC'],
       ],
     })
@@ -85,13 +95,20 @@ export class DraftRegulationService {
         title: draft.title,
         idealPublishDate: draft.ideal_publish_date,
         authors,
+        fastTrack: draft.fast_track,
       })
     }
 
-    return drafts
+    return {
+      drafts,
+      paging: {
+        page,
+        pages: Math.ceil(totalCount / count),
+      },
+    }
   }
 
-  async getAllShipped(): Promise<DraftSummary[]> {
+  async getAllShipped(): Promise<ShippedSummary[]> {
     this.logger.debug('Getting all shipped/published DraftRegulations')
 
     const draftRegulations = await this.draftRegulationModel.findAll({
@@ -101,30 +118,34 @@ export class DraftRegulationService {
       order: [['created', 'DESC']],
     })
 
-    const drafts: DraftSummary[] = []
+    const drafts: ShippedSummary[] = []
     for await (const draft of draftRegulations) {
       drafts.push({
         id: draft.id as RegulationDraftId,
-        draftingStatus: draft.drafting_status as 'draft' | 'proposal',
+        draftingStatus: draft.drafting_status as 'shipped' | 'published',
         title: draft.title,
+        name: draft.name,
         idealPublishDate: draft.ideal_publish_date,
-        authors: [],
       })
     }
 
     return drafts
   }
 
-  async findById(id: string): Promise<RegulationDraft | null> {
-    this.logger.debug(`Finding DraftRegulation ${id}`)
-
-    const draftRegulation = await this.draftRegulationModel.findOne({
+  async findDraftById(id: string): Promise<DraftRegulationModel | null> {
+    return await this.draftRegulationModel.findOne({
       where: { id },
       include: [
         { model: DraftRegulationChangeModel },
         { model: DraftRegulationCancelModel },
       ],
     })
+  }
+
+  async findById(id: string): Promise<RegulationDraft | null> {
+    this.logger.debug(`Finding DraftRegulation ${id}`)
+
+    const draftRegulation = await this.findDraftById(id)
 
     if (!draftRegulation) {
       return null
@@ -247,9 +268,10 @@ export class DraftRegulationService {
     this.logger.debug(`Updating DraftRegulation ${id}`)
 
     const nationalId = user?.nationalId as Kennitala
+    const draftRegulation = await this.findDraftById(id)
 
-    if (update.authors && !update.authors.includes(nationalId)) {
-      update.authors.push(nationalId)
+    if (draftRegulation && !draftRegulation.authors.includes(nationalId)) {
+      update.authors = [...draftRegulation.authors, nationalId]
     }
 
     const updateData: Partial<DraftRegulationModel> = {

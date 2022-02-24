@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   ActionCard,
   Box,
   SkeletonLoader,
   Stack,
   Text,
+  Button,
 } from '@island.is/island-ui/core'
 import { homeMessages as msg, statusMsgs } from '../messages'
 import { ISODate, toISODate } from '@island.is/regulations'
@@ -17,9 +18,10 @@ import { useLocale } from '@island.is/localization'
 export const TaskList = () => {
   const { formatMessage, formatDateFns } = useLocale()
   const t = formatMessage
+  const [page, setPage] = useState(1)
 
   const history = useHistory()
-  const tasklist = useRegulationTaskListQuery()
+  const tasklist = useRegulationTaskListQuery(page)
 
   if (tasklist.loading || tasklist.error) {
     return (
@@ -29,7 +31,7 @@ export const TaskList = () => {
     )
   }
 
-  if (tasklist.data.length === 0) {
+  if (tasklist.data.drafts.length === 0) {
     return null
   }
 
@@ -54,12 +56,9 @@ export const TaskList = () => {
   }
 
   return (
-    <Box marginBottom={[4, 4, 8]}>
-      <Text variant="h3" as="h2" paddingY={[1, 1]} marginBottom={[2, 2, 3]}>
-        {t(msg.taskListTitle)}
-      </Text>
+    <Box marginBottom={[4, 4, 8]} marginTop={6}>
       <Stack space={3}>
-        {tasklist.data.map((item) => {
+        {tasklist.data.drafts.map((item) => {
           const {
             id,
             title,
@@ -86,8 +85,9 @@ export const TaskList = () => {
                 .join(', ')}
               cta={{
                 icon: 'arrowForward',
-                label: t(msg.cta),
-                variant: 'ghost',
+                label: t(msg.cta_seeRegulation),
+                variant: 'text',
+                size: 'small',
                 onClick: () => {
                   history.push(getEditUrl(id))
                 },
@@ -95,6 +95,12 @@ export const TaskList = () => {
             />
           )
         })}
+        {tasklist.data.paging.pages > 1 && (
+          <p>
+            Page {page} of {tasklist.data.paging.pages}
+            <Button onClick={() => setPage(page + 1)}>Næsta síða</Button>
+          </p>
+        )}
       </Stack>
     </Box>
   )

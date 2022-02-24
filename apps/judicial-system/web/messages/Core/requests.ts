@@ -26,12 +26,12 @@ export const requests = {
             description:
               'Notaður sem titill fyrir staða dálk í lista yfir kröfur í vinnslu.',
           }),
-          created: defineMessage({
+          date: defineMessage({
             id:
-              'judicial.system.core:requests.active_requests.table.headers.created',
-            defaultMessage: 'Krafa stofnuð',
+              'judicial.system.core:requests.active_requests.table.headers.date',
+            defaultMessage: 'Stofnað/Fyrirtaka',
             description:
-              'Notaður sem titill fyrir krafa stofnuð dálk í lista yfir kröfur í vinnslu.',
+              'Notaður sem titill fyrir dagsetningardálk í lista yfir óafgreiddar kröfur í vinnslu.',
           }),
         },
       },

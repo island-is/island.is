@@ -10,7 +10,7 @@ export const EditReview = () => {
   const t = useLocale().formatMessage
   const state = useDraftingState()
   const { actions } = state
-  const { publish, propose } = actions
+  const { ship, propose } = actions
 
   const messages = useCollectMessages(state, t)
   const [confirmed, setConfirmed] = useState(false)
@@ -18,9 +18,9 @@ export const EditReview = () => {
   return (
     <Box marginY={[4, 4, 8]}>
       <EditReviewWarnings messages={messages} />
-      <EditReviewOverview hasWarnings={!!messages} />
+      <EditReviewOverview hasWarnings={!!messages?.length} />
 
-      {!messages && publish && (
+      {!messages?.length && ship && (
         <Box>
           <Box marginBottom={[0, 0, 2]}>
             <Divider />
@@ -36,11 +36,7 @@ export const EditReview = () => {
             />
           </Box>
 
-          <Button
-            icon="document"
-            disabled={confirmed}
-            onClick={() => publish()}
-          >
+          <Button icon="document" disabled={!confirmed} onClick={() => ship()}>
             {t(buttonsMsgs.publish)}
           </Button>
         </Box>

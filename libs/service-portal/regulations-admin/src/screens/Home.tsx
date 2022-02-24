@@ -2,7 +2,14 @@ import * as s from './Home.css'
 
 import React from 'react'
 
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Text,
+  Tabs,
+  GridColumn,
+  GridRow,
+} from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
 import { TaskList } from '../components/TaskList'
 import { ShippedRegulations } from '../components/ShippedRegulations'
@@ -15,39 +22,59 @@ const Home = () => {
   const t = useLocale().formatMessage
 
   const { createNewDraft, creating, error } = useCreateRegulationDraft()
-
+  const TaskListContent = <TaskList />
+  const ShippedRegulationsContent = <ShippedRegulations />
+  const tabs = [
+    {
+      label: t(msg.taskListTitle),
+      content: TaskListContent,
+    },
+    {
+      label: t(msg.shippedTitle),
+      content: ShippedRegulationsContent,
+    },
+  ]
   return (
     <Box marginBottom={[6, 6, 10]}>
-      <Box marginBottom={[4, 4, 8]}>
+      <GridRow>
         <Text as="h1" variant="h1">
           {t(msg.title)}
         </Text>
-        {msg.intro && (
-          <Text as="p" marginTop={1}>
-            {t(msg.intro)}
-          </Text>
-        )}
-      </Box>
-
-      {/* <IntroHeader title={msg.title} intro={msg.intro} /> */}
-
-      <div className={s.newButtonBox}>
-        <Button
-          colorScheme="default"
-          iconType="filled"
-          preTextIconType="filled"
-          size="small"
-          variant="primary"
-          disabled={creating}
-          onClick={() => createNewDraft()}
-        >
-          {t(msg.createRegulation)}
-        </Button>
-      </div>
-
-      <TaskList />
-
-      <ShippedRegulations />
+      </GridRow>
+      <GridRow>
+        <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
+          <Box marginBottom={[4, 4, 8]}>
+            {msg.intro && (
+              <Text as="p" marginTop={1}>
+                {t(msg.intro)}
+              </Text>
+            )}
+          </Box>
+        </GridColumn>
+        <GridColumn span={['12/12', '12/12', '12/12', '4/12']}>
+          {/* <IntroHeader title={msg.title} intro={msg.intro} /> */}
+          <Box
+            marginBottom={3}
+            marginLeft={[0, 0, 2]}
+            display="flex"
+            justifyContent={['flexStart', 'flexStart', 'flexEnd']}
+            alignItems="center"
+          >
+            <Button
+              colorScheme="default"
+              iconType="filled"
+              preTextIconType="filled"
+              size="small"
+              variant="primary"
+              disabled={creating}
+              onClick={() => createNewDraft()}
+            >
+              {t(msg.createRegulation)}
+            </Button>
+          </Box>
+        </GridColumn>
+      </GridRow>
+      <Tabs label="Reglugerðir" tabs={tabs} contentBackground="white" />
     </Box>
   )
 }

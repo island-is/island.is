@@ -78,11 +78,11 @@ type OverviewItemProps = {
   step?: Step
 }
 const OverviewItem = (props: OverviewItemProps) => {
-  const { label, step } = props
+  const { label, step, children } = props
   return (
     <Box marginBottom={2}>
       <Text fontWeight="semiBold">{label}:</Text>
-      {step && <JumpToStep step={step} label={label} />} {props.children}
+      {step && <JumpToStep step={step} label={label} />} {children}
     </Box>
   )
 }
@@ -112,7 +112,7 @@ export const EditReviewOverview = (props: EditReviewOverviewProps) => {
     setClicked({ ...clicked, [key]: true })
 
   const formatDate = (date?: Date, format?: string) =>
-    date ? formatDateFns(date, format || 'dd MMMM yyyy') : ''
+    date ? formatDateFns(date, format || 'd. MMMM yyyy') : ''
 
   if (hasWarnings) {
     return null
@@ -166,17 +166,17 @@ export const EditReviewOverview = (props: EditReviewOverviewProps) => {
             {t(reviewMessagse.impactsTitle)}
           </Text>
 
-          {Object.entries(draft.impacts).forEach(([key, impactsList]) => {
+          {Object.keys(draft.impacts).map((key) => {
+            const impactsList = draft.impacts[key]
             const label =
-              key === 'self'
-                ? t(impactMsgs.selfAffecting)
-                : `${prettyName(key as RegName)} – `
+              key === 'self' ? t(impactMsgs.selfAffecting) : `${key}`
 
             return (
               <OverviewItem key={key} label={label} step="impacts">
                 {impactsList.map((impact) => (
                   <div key={impact.id}>
-                    {formatDate(impact.date.value)}{' '}
+                    {formatDate(impact.date.value)}
+                    {' - '}
                     {t(
                       impact.type === 'amend'
                         ? 'Textabreyting'

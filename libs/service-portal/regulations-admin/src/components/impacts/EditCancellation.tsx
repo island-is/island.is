@@ -12,7 +12,7 @@ import { DraftCancelForm, RegDraftForm } from '../../state/types'
 // import { useDraftingState } from '../../state/useDraftingState'
 import { toISODate } from '@island.is/regulations'
 import {
-  useGetCurrentRegulationFromApiQuery,
+  useGetRegulationFromApiQuery,
   useGetRegulationImpactsQuery,
 } from '../../utils/dataHooks'
 import { Effects } from '../../types'
@@ -35,8 +35,9 @@ export const EditCancellation = (props: EditCancellationProp) => {
   const [activeCancellation, setActiveCancellation] = useState(cancellation)
   const today = toISODate(new Date())
 
-  const { data: regulation } = useGetCurrentRegulationFromApiQuery(
-    activeCancellation.name,
+  const { data: regulation } = useGetRegulationFromApiQuery(
+    cancellation.name,
+    toISODate(cancellation.date.value) ?? undefined,
   )
 
   const { effects } = useMemo(() => {
@@ -115,11 +116,9 @@ export const EditCancellation = (props: EditCancellationProp) => {
   }
 
   const hasImpactMismatch = () => {
-    const impacts = draftImpacts ?? []
-    const mismatchArray = impacts.filter(
+    return !!draftImpacts?.filter(
       (draftImpact) => draftImpact.changingId !== draft.id,
-    )
-    return mismatchArray.length > 0
+    ).length
   }
 
   return (

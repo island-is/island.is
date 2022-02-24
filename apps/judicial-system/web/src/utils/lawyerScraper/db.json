@@ -679,6 +679,12 @@
       "phoneNr": "4204030"
     },
     {
+      "name": "Ásta Guðjónsdóttir",
+      "practice": "Valitor",
+      "email": "astag@valitor.is",
+      "phoneNr": "5252000"
+    },
+    {
       "name": "Ásta Guðrún Beck",
       "practice": "Þjóðkirkjan - Biskupsstofa",
       "email": "asta@biskup.is",
@@ -1442,8 +1448,8 @@
     },
     {
       "name": "Einar Örn Davíðsson",
-      "practice": "",
-      "email": "einarorndavidsson@gmail.com",
+      "practice": "Davíðsson lögfræðistofa ehf.",
+      "email": "einarorn@dlf.is",
       "phoneNr": "7771100"
     },
     {
@@ -2485,12 +2491,6 @@
       "phoneNr": "4407800"
     },
     {
-      "name": "Halla Björg Evans",
-      "practice": "Ríkiskaup",
-      "email": "halla.b.evans@rikiskaup.is",
-      "phoneNr": "5301406"
-    },
-    {
       "name": "Halla Björgvinsdóttir",
       "practice": "Marel hf.",
       "email": "halla.bjorgvinsdottir@marel.com",
@@ -3471,7 +3471,7 @@
     {
       "name": "Jóhann Örn Helgason",
       "practice": "JH lögmannsstofa",
-      "email": "jhlogmannsstofa@gmail.com",
+      "email": "johann@jhlegal.is",
       "phoneNr": "6638765"
     },
     {
@@ -4179,7 +4179,7 @@
     {
       "name": "Leifur Valentín Gunnarsson",
       "practice": "LMG lögmenn",
-      "email": "leifur1992@gmail.com",
+      "email": "leifur@lmg.is",
       "phoneNr": "5111190"
     },
     {
@@ -4397,12 +4397,6 @@
       "practice": "LAGASTOÐ",
       "email": "marteinn@rettsyn.is",
       "phoneNr": "5164072"
-    },
-    {
-      "name": "Máni Atlason",
-      "practice": "GAMMA",
-      "email": "mani.atlason@gamma.is",
-      "phoneNr": "5193300"
     },
     {
       "name": "Nína Guðríður Sigurðardóttir",
@@ -6135,7 +6129,7 @@
     {
       "name": "Þorsteinn Yngvason",
       "practice": "",
-      "email": "thorsteinn@fastlind.is",
+      "email": "thorsteinn@remax.is",
       "phoneNr": "6960226"
     },
     {

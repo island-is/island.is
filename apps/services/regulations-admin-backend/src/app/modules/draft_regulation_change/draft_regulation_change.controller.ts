@@ -27,6 +27,7 @@ import { DraftRegulationChangeModel } from './draft_regulation_change.model'
 import { DraftRegulationChangeService } from './draft_regulation_change.service'
 
 import { environment } from '../../../environments'
+import { DraftRegulationChange } from '@island.is/regulations/admin'
 const namespace = `${environment.audit.defaultNamespace}/draft_regulation_change`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -51,7 +52,7 @@ export class DraftRegulationChangeController {
   create(
     @Body() draftRegulationChangeToCreate: CreateDraftRegulationChangeDto,
     @CurrentUser() user: User,
-  ): Promise<DraftRegulationChangeModel> {
+  ): Promise<DraftRegulationChange> {
     return this.draftRegulationChangeService.create(
       draftRegulationChangeToCreate,
     )
@@ -69,8 +70,8 @@ export class DraftRegulationChangeController {
   async update(
     @Param('id') id: string,
     @Body() draftRegulationChangeToUpdate: UpdateDraftRegulationChangeDto,
-    @CurrentUser() user: User,
-  ): Promise<DraftRegulationChangeModel> {
+    // @CurrentUser() user: User,
+  ): Promise<DraftRegulationChange> {
     const {
       numberOfAffectedRows,
       updatedDraftRegulationChange,

@@ -18,7 +18,7 @@ import {
   CreateDraftRegulationCancelInput,
   DeleteDraftRegulationInput,
   EditDraftRegulationInput,
-  GetCurrentRegulationFromApiInput,
+  GetRegulationFromApiInput,
   GetDraftRegulationInput,
   GetDraftRegulationPdfDownloadInput,
   GetRegulationOptionListInput,
@@ -36,6 +36,8 @@ import {
   DraftRegulationSummaryModel,
 } from './models'
 import { GetRegulationImpactsInput } from './dto/getRegulationImpactsByName.input'
+import { GetDraftRegulationsInput } from './dto/getDraftRegulations.input'
+import { DraftRegulationShippedModel } from './models/draftRegulationShipped.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -71,17 +73,22 @@ export class RegulationsAdminResolver {
     )
   }
 
-  @Query(() => [DraftRegulationSummaryModel])
+  @Query(() => [DraftRegulationShippedModel])
   async getShippedRegulations(@CurrentUser() { authorization }: User) {
     return await this.regulationsAdminClientService.getShippedRegulations(
       authorization,
     )
   }
 
-  @Query(() => [DraftRegulationSummaryModel])
-  async getDraftRegulations(@CurrentUser() user: User) {
+  // @Query(() => [DraftRegulationSummaryModel])
+  @Query(() => graphqlTypeJson)
+  async getDraftRegulations(
+    @Args('input') input: GetDraftRegulationsInput,
+    @CurrentUser() user: User,
+  ) {
     return await this.regulationsAdminClientService.getDraftRegulations(
       user.authorization,
+      input.page,
     )
   }
 
@@ -120,12 +127,13 @@ export class RegulationsAdminResolver {
   }
 
   @Query(() => graphqlTypeJson)
-  getCurrentRegulationFromApi(
-    @Args('input') input: GetCurrentRegulationFromApiInput,
+  getRegulationFromApi(
+    @Args('input') input: GetRegulationFromApiInput,
   ): Promise<any> {
-    return this.regulationsService.getRegulation(
-      RegulationViewTypes.current,
+    return this.regulationsService.getRegulationOnDate(
+      input.date ? RegulationViewTypes.d : RegulationViewTypes.current,
       nameToSlug(input.regulation),
+      input.date,
     )
   }
 
