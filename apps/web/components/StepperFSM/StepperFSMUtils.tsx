@@ -180,6 +180,62 @@ const validateStepperConfig = (stepper: Stepper) => {
   return errors
 }
 
+const validateStepConfig = (step: Step) => {
+  const errors: Set<string> = new Set<string>()
+
+  if (resolveStepType(step) === STEP_TYPES.ANSWER) return errors
+
+  if (!step.config) {
+    errors.add('Missing config!')
+    return errors
+  }
+
+  let stepConfig: StepConfig
+
+  try {
+    stepConfig = JSON.parse(step?.config) as StepConfig
+  } catch (error) {
+    errors.add('Config could not be parsed')
+    return errors
+  }
+
+  if (!stepConfig.options && !stepConfig.optionsFromSource) {
+    errors.add('Neither options nor optionsFromSource provided')
+    return errors
+  }
+
+  if (stepConfig.optionsFromSource) {
+    const expectedFields = [
+      'labelFieldEN',
+      'labelFieldIS',
+      'sourceNamespace',
+      'transitions',
+    ]
+    for (const field of expectedFields)
+      if (!stepConfig.optionsFromSource[field])
+        errors.add(`optionsFromSource is missing a "${field}" field`)
+
+    if (errors.size > 0) return errors
+
+    for (const transition of stepConfig.optionsFromSource.transitions) {
+      if (!transition.criteria && !transition.criteriaExclude)
+        errors.add('Not all transitions have a criteria')
+      if (!transition.transition)
+        errors.add('Not all transitions have a "transition" field')
+      if (errors.size > 0) return errors
+    }
+  } else if (stepConfig.options) {
+    for (const option of stepConfig.options) {
+      const expectedFields = ['labelEN', 'labelIS', 'transition', 'optionSlug']
+      for (const field of expectedFields)
+        if (!option[field])
+          errors.add(`Not all options have a "${field}" field`)
+    }
+  }
+
+  return errors
+}
+
 const getStepperMachine = (stepper: Stepper): StepperMachine => {
   const stepperConfig: StepperConfig = JSON.parse(
     stepper.config,
@@ -327,6 +383,7 @@ export {
   getStepOptionsSourceNamespace,
   getCurrentStepAndStepType,
   validateStepperConfig,
+  validateStepConfig,
 }
 export type {
   StepperConfig,

@@ -11,7 +11,10 @@ import {
 
 import { Stepper } from '@island.is/api/schema'
 
-import { renderStepperConfigErrors, StepperHelper } from './StepperFSMHelper'
+import {
+  renderStepperAndStepConfigErrors,
+  StepperHelper,
+} from './StepperFSMHelper'
 import * as styles from './StepperFSM.css'
 
 import {
@@ -25,6 +28,7 @@ import {
   getStepQuestion,
   getCurrentStepAndStepType,
   validateStepperConfig,
+  validateStepConfig,
 } from './StepperFSMUtils'
 import { useRouter } from 'next/router'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
@@ -36,7 +40,6 @@ import { isRunningOnEnvironment } from '@island.is/shared/utils'
 const ANSWER_DELIMITER = ','
 export const STEPPER_HELPER_ENABLED_KEY = 'show-stepper-config-helper'
 
-// TODO: test
 const STEPPER_HELPER_ENABLED =
   isRunningOnEnvironment('dev') || isRunningOnEnvironment('local')
 
@@ -112,12 +115,28 @@ const StepperFSMWrapper = (
 ) => {
   const Component = (props: StepperProps) => {
     const configErrors = validateStepperConfig(props.stepper)
+    const steps =
+      props.stepper?.steps
+        ?.map((s) => s.slug)
+        ?.map((s) => getStepBySlug(props.stepper, s)) ?? []
+
+    const stepConfigErrors = steps.map((step) => ({
+      step,
+      errors: validateStepConfig(step),
+    }))
 
     const showStepperConfigHelper = STEPPER_HELPER_ENABLED
 
-    if (configErrors.size > 0) {
+    if (
+      configErrors.size > 0 ||
+      stepConfigErrors.some(({ errors }) => errors.size > 0)
+    ) {
       return showStepperConfigHelper
-        ? renderStepperConfigErrors(props.stepper, configErrors)
+        ? renderStepperAndStepConfigErrors(
+            props.stepper,
+            configErrors,
+            stepConfigErrors,
+          )
         : null
     }
 

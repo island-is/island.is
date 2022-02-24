@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useState } from 'react'
 
 import {
   AccordionItem,
@@ -139,16 +139,35 @@ export const renderErrors = (errors: ErrorField[]) => {
   )
 }
 
-export const renderStepperConfigErrors = (
+export const renderStepperAndStepConfigErrors = (
   stepper: Stepper,
-  configErrors: Set<string>,
+  stepperConfigErrors: Set<string>,
+  stepConfigErrors: { step: Step; errors: Set<string> }[],
 ) => {
+  const stepperConfigErrorComponent =
+    stepperConfigErrors.size > 0 ? (
+      <div className={styles.border}>
+        <Text variant="h4">Stepper config errors:</Text>
+        <ArrowLink href={getContentfulLink(stepper)}>Contentful</ArrowLink>
+        {renderErrors(
+          Array.from(stepperConfigErrors).map((e) => ({ message: e })),
+        )}
+      </div>
+    ) : null
+
   return (
     <Box marginTop={15}>
       <AccordionItem label="Helper" startExpanded={true} id="stepper-helper">
-        <Text variant="h4">Stepper config errors:</Text>
-        <ArrowLink href={getContentfulLink(stepper)}>Contentful</ArrowLink>
-        {renderErrors(Array.from(configErrors).map((e) => ({ message: e })))}
+        {stepperConfigErrorComponent}
+        {stepConfigErrors
+          .filter(({ errors }) => errors.size > 0)
+          .map(({ step, errors }, index) => (
+            <div key={index} className={styles.border}>
+              <Text variant="h5">Step config errors:</Text>
+              <ArrowLink href={getContentfulLink(step)}>Contentful</ArrowLink>
+              {renderErrors(Array.from(errors).map((e) => ({ message: e })))}
+            </div>
+          ))}
       </AccordionItem>
     </Box>
   )

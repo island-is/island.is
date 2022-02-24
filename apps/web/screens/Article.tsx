@@ -313,7 +313,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
     return sub.slug.split('/').pop() === query.subSlug
   })
 
-  useContentfulId(article.id)
+  useContentfulId(article.id, subArticle?.id)
 
   useScrollPosition(
     ({ currPos }) => {
