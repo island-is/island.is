@@ -80,18 +80,16 @@ export class RegulationsAdminResolver {
     )
   }
 
-  @Query(() => [DraftRegulationSummaryModel])
+  // @Query(() => [DraftRegulationSummaryModel])
+  @Query(() => graphqlTypeJson)
   async getDraftRegulations(
     @Args('input') input: GetDraftRegulationsInput,
     @CurrentUser() user: User,
   ) {
-    const tasklist = await this.regulationsAdminClientService.getDraftRegulations(
+    return await this.regulationsAdminClientService.getDraftRegulations(
       user.authorization,
       input.page,
     )
-    console.log({ tasklist })
-
-    return tasklist
   }
 
   @Mutation(() => graphqlTypeJson)
