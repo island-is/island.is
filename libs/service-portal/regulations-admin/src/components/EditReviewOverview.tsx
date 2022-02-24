@@ -80,9 +80,13 @@ type OverviewItemProps = {
 const OverviewItem = (props: OverviewItemProps) => {
   const { label, step, children } = props
   return (
-    <Box marginBottom={2}>
-      <Text fontWeight="semiBold">{label}:</Text>
-      {step && <JumpToStep step={step} label={label} />} {children}
+    <Box marginBottom={4} paddingRight={6}>
+      <Box display="flex" alignItems="flexEnd" justifyContent="spaceBetween">
+        <Text fontWeight="semiBold">{label}:</Text>
+        {step && <JumpToStep step={step} label={label} />}
+      </Box>
+
+      {children}
     </Box>
   )
 }
@@ -127,37 +131,48 @@ export const EditReviewOverview = (props: EditReviewOverviewProps) => {
   return (
     <Box marginBottom={4}>
       <OverviewItem label={t(editorMsgs.title)} step="basics">
-        {draft.title.value}
-        <br />({typeName})
+        <Text>
+          {draft.title.value}({typeName})
+        </Text>
       </OverviewItem>
 
       {draft.appendixes.length > 0 && (
         <OverviewItem label={t(editorMsgs.appendixes)} step="basics">
-          {prettyJoin(draft.appendixes.map((a) => '„' + a.title.value + '“'))}
+          <Text>
+            {prettyJoin(draft.appendixes.map((a) => '„' + a.title.value + '“'))}
+          </Text>
         </OverviewItem>
       )}
 
       <OverviewItem label={t(editorMsgs.effectiveDate)} step="meta">
-        {formatDate(draft.effectiveDate.value) ||
-          t(editorMsgs.effectiveDate_default)}
+        <Text>
+          {formatDate(draft.effectiveDate.value) ||
+            t(editorMsgs.effectiveDate_default)}
+        </Text>
       </OverviewItem>
 
       <OverviewItem label={t(editorMsgs.lawChapters)} step="meta">
-        {prettyJoin(
-          draft.lawChapters.value.map(
-            (slug) => '„' + lawChapters.bySlug[slug] + '“',
-          ),
-        )}
+        <Text>
+          {prettyJoin(
+            draft.lawChapters.value.map(
+              (slug) => '„' + lawChapters.bySlug[slug] + '“',
+            ),
+          )}
+        </Text>
       </OverviewItem>
 
       <OverviewItem label={t(editorMsgs.signatureDate)} step="signature">
-        {draft.ministry.value}nu, {formatDate(draft.signatureDate.value)}
+        <Text>
+          {draft.ministry.value}nu, {formatDate(draft.signatureDate.value)}
+        </Text>
       </OverviewItem>
 
       <OverviewItem label={t(editorMsgs.idealPublishDate)} step="signature">
-        {formatDate(draft.idealPublishDate.value) ||
-          t(editorMsgs.idealPublishDate_default)}
-        {draft.fastTrack.value ? ` (${t(editorMsgs.applyForFastTrack)})` : ''}
+        <Text>
+          {formatDate(draft.idealPublishDate.value) ||
+            t(editorMsgs.idealPublishDate_default)}
+          {draft.fastTrack.value ? ` (${t(editorMsgs.applyForFastTrack)})` : ''}
+        </Text>
       </OverviewItem>
 
       {Object.keys(draft.impacts).length > 0 && (
@@ -196,13 +211,13 @@ export const EditReviewOverview = (props: EditReviewOverviewProps) => {
       )}
 
       {isEditor && (
-        <Box marginTop={[4, 4, 8]} marginBottom={[4, 4, 8]}>
+        <Box marginTop={4}>
           <Box marginBottom={[0, 0, 2]}>
             <Divider />
             {' '}
           </Box>
 
-          <Inline space={[3, 3, 4, 5]} align="center" alignY="center">
+          <Inline space={[3, 3, 4, 5]} align="left" alignY="center">
             <MicroAction
               text={t(reviewMessagse.copyTitle)}
               clicked={clicked.title}

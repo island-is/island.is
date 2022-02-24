@@ -167,7 +167,7 @@ export const JumpToStep = (props: { step: Step; label: string }) => {
   const jumpLabel = t(reviewMessagse.jumpToStepButton)
 
   return (
-    <div style={{ float: 'right', marginTop: '-2em' }}>
+    <div>
       <Button
         variant="text"
         size="small"

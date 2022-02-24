@@ -13,7 +13,7 @@ export const DraftingNotes = () => {
   const [expanded, setExpanded] = useState(!!draftingNotes.value)
 
   return (
-    <Box marginTop={[6, 6, 8]}>
+    <Box marginTop={4}>
       <Accordion>
         <AccordionItem
           id={id + '-notes'}

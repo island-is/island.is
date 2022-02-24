@@ -25,7 +25,13 @@ import { EditSignature } from '../components/EditSignature'
 import { EditImpacts } from '../components/EditImpacts'
 import { EditReview } from '../components/EditReview'
 import { EditPublish } from '../components/EditPublish'
-import { Box, Text, toast } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridColumn,
+  GridRow,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import { SaveDeleteButtons } from '../components/SaveDeleteButtons'
 import { DraftingNotes } from '../components/DraftingNotes'
 import { ButtonBar } from '../components/ButtonBar'
@@ -109,16 +115,16 @@ const EditScreen = () => {
 
   return (
     <>
-      <Box marginBottom={[2, 2, 4]}>
-        <Text as="h1" variant="h1">
-          {t(step.title)}
-        </Text>
-        {step.intro && (
-          <Text as="p" marginTop={1}>
-            {t(step.intro)}
-          </Text>
-        )}
-      </Box>
+      <GridRow>
+        <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+          <Box marginBottom={[4, 4, 5]}>
+            <Text as="h1" variant="h1" paddingBottom={3}>
+              {t(step.title)}
+            </Text>
+            {step.intro && <Text as="p">{t(step.intro)}</Text>}
+          </Box>
+        </GridColumn>
+      </GridRow>
 
       <SaveDeleteButtons wrap />
       <step.Component />
