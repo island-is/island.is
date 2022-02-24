@@ -34917,7 +34917,7 @@ const [owner, repo] = repository.split('/');
 const workflow_file_name = 'push.yml';
 const pr_file_name = 'pullrequest.yml';
 const filterSkippedSuccessBuilds = (run, jobName, stepName) => {
-    const { jobs } = run;
+    const jobs = run;
     const successJob = jobs.find((job) => job.name === jobName);
     if (successJob) {
         const { steps } = successJob;
@@ -35096,9 +35096,25 @@ class LocalRunner {
         });
     }
     getJobs(jobs_url) {
+        var e_3, _a;
         return modules_awaiter(this, void 0, void 0, function* () {
-            app(`Requesting jobs info at ${jobs_url}`);
-            return (yield this.octokit.request(jobs_url)).data;
+            const runs = [];
+            const runsIterator = this.octokit.paginate.iterator(jobs_url, {});
+            try {
+                for (var runsIterator_3 = __asyncValues(runsIterator), runsIterator_3_1; runsIterator_3_1 = yield runsIterator_3.next(), !runsIterator_3_1.done;) {
+                    const jobs = runsIterator_3_1.value;
+                    app(`Requesting jobs info at ${jobs_url}`);
+                    runs.push(...jobs.data);
+                }
+            }
+            catch (e_3_1) { e_3 = { error: e_3_1 }; }
+            finally {
+                try {
+                    if (runsIterator_3_1 && !runsIterator_3_1.done && (_a = runsIterator_3.return)) yield _a.call(runsIterator_3);
+                }
+                finally { if (e_3) throw e_3.error; }
+            }
+            return runs;
         });
     }
 }
@@ -35141,7 +35157,7 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
         const lastChanges = yield git.log({ maxCount: 1 });
         const currentChange = lastChanges.latest;
         const mergeBaseCommit = yield git.raw('merge-base', prBranch, baseBranch);
-        const commits = (yield git.raw('rev-list', '--date-order', '--max-count=100', 'HEAD~1', `${mergeBaseCommit.trim()}`))
+        const commits = (yield git.raw('rev-list', '--date-order', '--max-count=300', 'HEAD~1', `${mergeBaseCommit.trim()}`))
             .split('\n')
             .filter((s) => s.length > 0)
             .map((c) => c.substr(0, 7));

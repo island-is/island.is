@@ -75,7 +75,7 @@ export async function findBestGoodRefPR(
     await git.raw(
       'rev-list',
       '--date-order',
-      '--max-count=100',
+      '--max-count=300',
       'HEAD~1',
       `${mergeBaseCommit.trim()}`,
     )

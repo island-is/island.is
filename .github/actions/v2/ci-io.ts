@@ -22,11 +22,11 @@ const pr_file_name = 'pullrequest.yml'
 export type ActionsListJobsForWorkflowRunResponseData = Endpoints['GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs']['response']['data']
 
 const filterSkippedSuccessBuilds = (
-  run: ActionsListJobsForWorkflowRunResponseData,
+  run: ActionsListJobsForWorkflowRunResponseData['jobs'],
   jobName: string,
   stepName: string,
 ): boolean => {
-  const { jobs } = run
+  const jobs = run
   const successJob = jobs.find((job) => job.name === jobName)
   if (successJob) {
     const { steps } = successJob
@@ -231,8 +231,15 @@ export class LocalRunner implements GitActionStatus {
   }
   private async getJobs(
     jobs_url: string,
-  ): Promise<ActionsListJobsForWorkflowRunResponseData> {
-    app(`Requesting jobs info at ${jobs_url}`)
-    return (await this.octokit.request(jobs_url)).data
+  ): Promise<ActionsListJobsForWorkflowRunResponseData['jobs']> {
+    const runs: ActionsListJobsForWorkflowRunResponseData['jobs'] = []
+    const runsIterator = this.octokit.paginate.iterator(jobs_url, {})
+    for await (const jobs of runsIterator) {
+      app(`Requesting jobs info at ${jobs_url}`)
+      runs.push(
+        ...(jobs.data as ActionsListJobsForWorkflowRunResponseData['jobs']),
+      )
+    }
+    return runs
   }
 }
