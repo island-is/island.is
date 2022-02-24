@@ -96,7 +96,7 @@ const PastRequests: React.FC<Props> = (props) => {
             )}
           </>
         ) : (
-          <Text>-</Text>
+          <Text as="span">-</Text>
         )
       },
     },
@@ -255,7 +255,13 @@ const PastRequests: React.FC<Props> = (props) => {
     [isCourtRole, isHighCourtUser, highCourtPrColumns, prColumns],
   )
 
-  const pastRequestsData = useMemo(() => cases, [cases])
+  const pastRequestsData = useMemo(
+    () =>
+      cases.sort((a: Case, b: Case) =>
+        b['created'].localeCompare(a['created']),
+      ),
+    [cases],
+  )
 
   return (
     <Table

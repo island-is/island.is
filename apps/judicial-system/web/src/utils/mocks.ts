@@ -343,7 +343,7 @@ const testCase5 = {
   created: '2020-09-16T19:50:08.033Z',
   modified: '2020-09-16T19:51:39.466Z',
   type: CaseType.CUSTODY,
-  state: CaseState.RECEIVED,
+  state: CaseState.ACCEPTED,
   policeCaseNumber: 'string',
   defendants: [
     {

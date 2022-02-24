@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMutation } from '@apollo/client'
+import { useIntl } from 'react-intl'
 
 import { UploadFile } from '@island.is/island-ui/core'
 import {
@@ -13,12 +14,14 @@ import {
   PresignedPost,
   UploadPoliceCaseFileResponse,
 } from '@island.is/judicial-system/types'
+import { errors } from '@island.is/judicial-system-web/messages'
 
 export const useS3Upload = (workingCase: Case) => {
   const [files, setFiles] = useState<UploadFile[]>([])
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string>()
   const [allFilesUploaded, setAllFilesUploaded] = useState<boolean>(true)
   const filesRef = useRef<UploadFile[]>(files)
+  const { formatMessage } = useIntl()
 
   useEffect(() => {
     const uploadCaseFiles = workingCase.caseFiles?.map((caseFile) => {
@@ -49,36 +52,48 @@ export const useS3Upload = (workingCase: Case) => {
     id: string,
     name: string,
   ): Promise<UploadPoliceCaseFileResponse> => {
-    const {
-      data: uploadPoliceCaseFileData,
-    } = await uploadPoliceCaseFileMutation({
-      variables: {
-        input: {
-          caseId: workingCase.id,
-          id: id,
-          name: name,
+    try {
+      const {
+        data: uploadPoliceCaseFileData,
+      } = await uploadPoliceCaseFileMutation({
+        variables: {
+          input: {
+            caseId: workingCase.id,
+            id: id,
+            name: name,
+          },
         },
-      },
-    })
+      })
 
-    return uploadPoliceCaseFileData?.uploadPoliceCaseFile
+      return uploadPoliceCaseFileData?.uploadPoliceCaseFile
+    } catch (error) {
+      setUploadErrorMessage(formatMessage(errors.general))
+
+      return { key: '', size: -1 }
+    }
   }
 
   const createPresignedPost = async (
     filename: string,
     type: string,
   ): Promise<PresignedPost> => {
-    const { data: presignedPostData } = await createPresignedPostMutation({
-      variables: {
-        input: {
-          caseId: workingCase.id,
-          fileName: filename,
-          type,
+    try {
+      const { data: presignedPostData } = await createPresignedPostMutation({
+        variables: {
+          input: {
+            caseId: workingCase.id,
+            fileName: filename,
+            type,
+          },
         },
-      },
-    })
+      })
 
-    return presignedPostData?.createPresignedPost
+      return presignedPostData?.createPresignedPost
+    } catch (error) {
+      setUploadErrorMessage(formatMessage(errors.general))
+
+      return { url: '', fields: {} }
+    }
   }
 
   const createFormData = (
@@ -199,12 +214,9 @@ export const useS3Upload = (workingCase: Case) => {
           file.status = 'done'
           updateFile(file)
         })
-        .catch((reason) => {
+        .catch(() => {
           // TODO: Log to sentry
-          setUploadErrorMessage(
-            'Upp kom óvænt kerfisvilla. Vinsamlegast reynið aftur.',
-          )
-          console.log(reason)
+          setUploadErrorMessage(formatMessage(errors.general))
         })
     }
   }
@@ -222,11 +234,7 @@ export const useS3Upload = (workingCase: Case) => {
       const presignedPost = await createPresignedPost(
         file.name.normalize(),
         file.type ?? '',
-      ).catch(() =>
-        setUploadErrorMessage(
-          'Upp kom óvænt kerfisvilla. Vinsamlegast reynið aftur.',
-        ),
-      )
+      ).catch(() => setUploadErrorMessage(formatMessage(errors.general)))
 
       if (!presignedPost) {
         return
@@ -259,12 +267,9 @@ export const useS3Upload = (workingCase: Case) => {
             console.log(res.errors)
           }
         })
-        .catch((res) => {
+        .catch(() => {
           // TODO: Log to Sentry and display an error message.
-          console.log(res)
-          setUploadErrorMessage(
-            'Upp kom óvænt kerfisvilla. Vinsamlegast reynið aftur.',
-          )
+          setUploadErrorMessage(formatMessage(errors.general))
         })
     }
   }
