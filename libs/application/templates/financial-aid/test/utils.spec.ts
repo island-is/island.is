@@ -1,4 +1,4 @@
-import { isValidEmail, isValidPhone } from '../src/lib/utils'
+import { isValidEmail, isValidNationalId, isValidPhone } from '../src/lib/utils'
 
 describe('Utilts test', () => {
   describe('is email valid test', () => {
@@ -64,6 +64,40 @@ describe('Utilts test', () => {
     test('should return that phone is valid', () => {
       const validPhone = isValidPhone('5677977')
       expect(validPhone).toEqual(true)
+    })
+  })
+
+  describe('is kennitala valid test', () => {
+    test('should return that national id is  not valid', () => {
+      const notValidNationalId = isValidNationalId('5677977')
+      expect(notValidNationalId).toEqual(false)
+    })
+  })
+  describe('is kennitala valid test', () => {
+    test('should return that national id is  not valid', () => {
+      const notValidNationalId = isValidNationalId('010101-3320')
+      expect(notValidNationalId).toEqual(false)
+    })
+  })
+
+  describe('is kennitala valid test', () => {
+    test('should return that national id is  valid', () => {
+      const validNationalId = isValidNationalId('010105-1450')
+      expect(validNationalId).toEqual(true)
+    })
+  })
+
+  describe('is kennitala valid test', () => {
+    test('should return that national id is valid', () => {
+      const validNationalId = isValidNationalId('*010105-1450.')
+      expect(validNationalId).toEqual(true)
+    })
+  })
+
+  describe('is kennitala valid test', () => {
+    test('should return that national id is valid', () => {
+      const validNationalId = isValidNationalId('0101051450')
+      expect(validNationalId).toEqual(true)
     })
   })
 })

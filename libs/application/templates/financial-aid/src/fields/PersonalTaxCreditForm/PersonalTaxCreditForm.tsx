@@ -21,7 +21,7 @@ const PersonalTaxCreditForm = ({
       <Box marginTop={[3, 3, 4]}>
         <RadioController
           id={field.id}
-          defaultValue={answers?.personalTaxCreditForm}
+          defaultValue={answers?.personalTaxCredit}
           options={[
             {
               value: ApproveOptions.Yes,
@@ -39,7 +39,7 @@ const PersonalTaxCreditForm = ({
           split="1/2"
           largeButtons
           backgroundColor="white"
-          error={errors.personalTaxCreditForm}
+          error={errors.personalTaxCredit}
         />
       </Box>
       <Text as="h3" variant="h3" marginTop={[2, 2, 3]}>

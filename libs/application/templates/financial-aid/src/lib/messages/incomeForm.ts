@@ -38,4 +38,19 @@ export const incomeForm = {
         'Income form bullet list of examples of income, list is on the right side until window size is mobile',
     },
   }),
+  summary: defineMessages({
+    yes: {
+      id: 'fa.application:section.incomeForm.summary.yes',
+      defaultMessage: 'Ég hef fengið tekjur í þessum eða síðustu tvo mánuði',
+      description:
+        'Answer showed in summary when applicant answers yes he has income',
+    },
+    no: {
+      id: 'fa.application:section.incomeForm.summary.no',
+      defaultMessage:
+        'Ég hef ekki fengið tekjur í þessum eða síðustu tvo mánuði',
+      description:
+        'Answer showed in summary when applicant answers no he has no income',
+    },
+  }),
 }
