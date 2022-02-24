@@ -39,7 +39,10 @@ export const ImpactList = (props: ImpactListProps) => {
   const { formatMessage, formatDateFns } = useLocale()
   const t = formatMessage
 
-  const [chooseType, setChooseType] = useState<DraftImpactForm | undefined>()
+  const [chooseType, setChooseType] = useState<{
+    impact: DraftImpactForm | undefined
+    readonly: boolean
+  }>()
   const [impactToDelete, setImpactToDelete] = useState<
     DraftImpactForm | undefined
   >()
@@ -153,11 +156,16 @@ export const ImpactList = (props: ImpactListProps) => {
                       }}
                       cta={{
                         icon: undefined,
-                        label: formatMessage(impactMsgs.impactListEditButton),
+                        label:
+                          idx !== impactGroup.length - 1
+                            ? formatMessage(impactMsgs.impactListViewButton)
+                            : formatMessage(impactMsgs.impactListEditButton),
                         variant: 'ghost',
-                        disabled: idx !== impactGroup.length - 1,
                         onClick: () => {
-                          setChooseType(impact)
+                          setChooseType({
+                            impact,
+                            readonly: idx !== impactGroup.length - 1,
+                          })
                         },
                       }}
                       secondaryCta={{
@@ -182,17 +190,18 @@ export const ImpactList = (props: ImpactListProps) => {
               </Stack>
             )
           })}
-          {chooseType?.type === 'repeal' && (
+          {chooseType?.impact?.type === 'repeal' && (
             <EditCancellation
               draft={draft}
-              cancellation={chooseType}
+              cancellation={chooseType.impact}
               closeModal={closeModal}
             />
           )}
-          {chooseType?.type === 'amend' && (
+          {chooseType?.impact?.type === 'amend' && (
             <EditChange
               draft={draft}
-              change={chooseType}
+              change={chooseType.impact}
+              readOnly={chooseType.readonly}
               closeModal={closeModal}
             />
           )}

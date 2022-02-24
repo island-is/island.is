@@ -36,6 +36,8 @@ import {
   DraftRegulationSummaryModel,
 } from './models'
 import { GetRegulationImpactsInput } from './dto/getRegulationImpactsByName.input'
+import { GetDraftRegulationsInput } from './dto/getDraftRegulations.input'
+import { DraftRegulationShippedModel } from './models/draftRegulationShipped.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -71,7 +73,7 @@ export class RegulationsAdminResolver {
     )
   }
 
-  @Query(() => [DraftRegulationSummaryModel])
+  @Query(() => [DraftRegulationShippedModel])
   async getShippedRegulations(@CurrentUser() { authorization }: User) {
     return await this.regulationsAdminClientService.getShippedRegulations(
       authorization,
@@ -79,10 +81,17 @@ export class RegulationsAdminResolver {
   }
 
   @Query(() => [DraftRegulationSummaryModel])
-  async getDraftRegulations(@CurrentUser() user: User) {
-    return await this.regulationsAdminClientService.getDraftRegulations(
+  async getDraftRegulations(
+    @Args('input') input: GetDraftRegulationsInput,
+    @CurrentUser() user: User,
+  ) {
+    const tasklist = await this.regulationsAdminClientService.getDraftRegulations(
       user.authorization,
+      input.page,
     )
+    console.log({ tasklist })
+
+    return tasklist
   }
 
   @Mutation(() => graphqlTypeJson)

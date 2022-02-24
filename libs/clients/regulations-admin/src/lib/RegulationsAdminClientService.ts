@@ -2,10 +2,9 @@ import { Inject } from '@nestjs/common'
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 import { DataSourceConfig } from 'apollo-datasource'
 import {
-  DraftingStatus,
-  DraftSummary,
   RegulationDraft,
   ShippedSummary,
+  TaskListType,
 } from '@island.is/regulations/admin'
 import { RegulationsAdminClientConfig } from './RegulationsAdminClientConfig'
 import { ConfigType } from '@nestjs/config'
@@ -25,16 +24,12 @@ export class RegulationsAdminClientService extends RESTDataSource {
     request.headers.set('Content-Type', 'application/json')
   }
 
-  async getDraftRegulations(authorization: string) {
-    return await this.get<
-      Array<
-        DraftSummary & {
-          draftingStatus: Extract<DraftingStatus, 'draft' | 'proposal'>
-        }
-      >
-    >(
+  async getDraftRegulations(authorization: string, page?: number) {
+    return await this.get<TaskListType>(
       '/draft_regulations',
-      {},
+      {
+        page,
+      },
       {
         headers: { authorization },
       },
@@ -42,13 +37,7 @@ export class RegulationsAdminClientService extends RESTDataSource {
   }
 
   async getShippedRegulations(authorization: string) {
-    return await this.get<
-      Array<
-        ShippedSummary & {
-          draftingStatus: Extract<DraftingStatus, 'shipped' | 'published'>
-        }
-      >
-    >(
+    return await this.get<ShippedSummary[]>(
       `/draft_regulations_shipped`,
       {},
       {

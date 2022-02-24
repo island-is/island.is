@@ -27,6 +27,7 @@ import {
   RegulationDraft,
   RegulationDraftId,
   ShippedSummary,
+  TaskListType,
 } from '@island.is/regulations/admin'
 import { Kennitala, RegQueryName } from '@island.is/regulations'
 import * as kennitala from 'kennitala'
@@ -57,7 +58,7 @@ export class DraftRegulationService {
     private readonly nationalRegistryApi: NationalRegistryApi,
   ) {}
 
-  async getAll(user?: User): Promise<DraftSummary[]> {
+  async getAll(user?: User, page = 1): Promise<TaskListType> {
     this.logger.debug(
       'Getting all non shipped DraftRegulations, filtered by national id for non managers',
     )
@@ -65,11 +66,18 @@ export class DraftRegulationService {
       authors: { [Op.contains]: [user.nationalId] },
     }
 
-    const draftRegulations = await this.draftRegulationModel.findAll({
+    const count = 5
+
+    const {
+      rows: draftRegulations,
+      count: totalCount,
+    } = await this.draftRegulationModel.findAndCountAll({
       where: {
         drafting_status: { [Op.in]: ['draft', 'proposal'] },
         ...authorsCondition,
       },
+      limit: count,
+      offset: (page - 1) * count,
       order: [
         ['drafting_status', 'ASC'],
         ['fast_track', 'ASC'],
@@ -91,7 +99,13 @@ export class DraftRegulationService {
       })
     }
 
-    return drafts
+    return {
+      drafts,
+      paging: {
+        page,
+        pages: Math.ceil(totalCount / count),
+      },
+    }
   }
 
   async getAllShipped(): Promise<ShippedSummary[]> {

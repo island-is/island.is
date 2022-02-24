@@ -140,25 +140,39 @@ export const useShippedRegulationsQuery = (): QueryResult<
 // ---------------------------------------------------------------------------
 
 const RegulationTaskListQuery = gql`
-  query RegulationTaskListQuery {
-    getDraftRegulations {
-      id
-      draftingStatus
-      authors {
-        authorId
-        name
+  query RegulationTaskListQuery($input: GetDraftRegulationsInput!) {
+    getDraftRegulations(input: $input) {
+      drafts {
+        id
+        draftingStatus
+        authors {
+          authorId
+          name
+        }
+        title
+        idealPublishDate
+        fastTrack
       }
-      title
-      idealPublishDate
-      fastTrack
+      paging {
+        page
+        pages
+      }
     }
   }
 `
 
-export const useRegulationTaskListQuery = (): QueryResult<
-  Array<DraftSummary>
-> => {
+type TaskListType = {
+  drafts: Array<DraftSummary>
+  pages: { page: number; pages: number }
+}
+
+export const useRegulationTaskListQuery = (
+  page = 1,
+): QueryResult<TaskListType> => {
   const { loading, error, data } = useQuery(RegulationTaskListQuery, {
+    variables: {
+      input: { page },
+    },
     fetchPolicy: 'no-cache',
   })
 
@@ -171,7 +185,7 @@ export const useRegulationTaskListQuery = (): QueryResult<
     }
   }
   return {
-    data: data.getDraftRegulations as Array<DraftSummary>,
+    data: data.getDraftRegulations as TaskListType,
   }
 }
 

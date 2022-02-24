@@ -335,6 +335,11 @@ export const impactMsgs = defineMessages({
     defaultMessage: 'Skoða / breyta',
   },
 
+  impactListViewButton: {
+    id: 'ap.regulations-admin:impacts-list-editbutton',
+    defaultMessage: 'Skoða',
+  },
+
   impactListDeleteButton: {
     id: 'ap.regulations-admin:impacts-list-deletebutton',
     defaultMessage: 'Eyða',

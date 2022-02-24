@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { ISODate, PlainText, RegName } from '@island.is/regulations'
 
 @ObjectType()
-class RegulationSummaryAuthor {
+class RegulationShippedAuthor {
   @Field()
   authorId?: string
 
@@ -11,24 +11,15 @@ class RegulationSummaryAuthor {
 }
 
 @ObjectType()
-class DraftRegulationPagingModel {
-  @Field()
-  page?: number
-
-  @Field()
-  pages?: number
-}
-
-@ObjectType()
-class DraftRegulationSummary {
+export class DraftRegulationShippedModel {
   @Field(() => String)
   id!: string
 
   @Field(() => String)
   draftingStatus!: string
 
-  @Field(() => [RegulationSummaryAuthor])
-  authors!: RegulationSummaryAuthor[]
+  @Field(() => [RegulationShippedAuthor])
+  authors!: RegulationShippedAuthor[]
 
   @Field(() => String, { nullable: true })
   title!: PlainText
@@ -41,13 +32,4 @@ class DraftRegulationSummary {
 
   @Field(() => Boolean, { nullable: true })
   fastTrack?: boolean
-}
-
-@ObjectType()
-export class DraftRegulationSummaryModel {
-  @Field(() => [DraftRegulationSummary])
-  drafts?: DraftRegulationSummary[]
-
-  @Field()
-  paging?: DraftRegulationPagingModel
 }

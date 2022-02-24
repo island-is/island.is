@@ -29,7 +29,7 @@ export const TaskList = () => {
     )
   }
 
-  if (tasklist.data.length === 0) {
+  if (tasklist.data.drafts.length === 0) {
     return null
   }
 
@@ -56,7 +56,7 @@ export const TaskList = () => {
   return (
     <Box marginBottom={[4, 4, 8]} marginTop={6}>
       <Stack space={3}>
-        {tasklist.data.map((item) => {
+        {tasklist.data.drafts.map((item) => {
           const {
             id,
             title,

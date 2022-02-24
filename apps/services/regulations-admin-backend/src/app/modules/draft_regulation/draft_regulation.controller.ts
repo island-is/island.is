@@ -25,7 +25,7 @@ import { DraftRegulationService } from './draft_regulation.service'
 import { Audit, AuditService } from '@island.is/nest/audit'
 
 import { environment } from '../../../environments'
-import { DraftSummary, ShippedSummary } from '@island.is/regulations/admin'
+import { ShippedSummary, TaskListType } from '@island.is/regulations/admin'
 import { Kennitala, RegQueryName } from '@island.is/regulations'
 const namespace = `${environment.audit.defaultNamespace}/draft_regulations`
 
@@ -117,7 +117,7 @@ export class DraftRegulationController {
     isArray: true,
     description: 'Gets all DraftRegulations with status draft and proposal',
   })
-  async getAll(@CurrentUser() user: User): Promise<DraftSummary[]> {
+  async getAll(@CurrentUser() user: User): Promise<TaskListType> {
     const canManage = user.scope.includes('@island.is/regulations:manage')
     return await this.draftRegulationService.getAll(
       !canManage ? user : undefined,
