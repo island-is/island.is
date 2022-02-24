@@ -12,13 +12,12 @@ import {
   capitalize,
   caseTypes,
   formatDate,
-  TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
 import CaseFilesAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CaseFilesAccordionItem/CaseFilesAccordionItem'
 import type { Case } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import * as Constants from '@island.is/judicial-system/consts'
 
 import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
 import * as styles from './Overview.css'
@@ -66,7 +65,7 @@ const OverviewForm: React.FC<Props> = (props) => {
                     '',
                 )} eftir kl. ${formatDate(
                   workingCase.requestedCourtDate,
-                  TIME_FORMAT,
+                  Constants.TIME_FORMAT,
                 )}`,
               },
               {

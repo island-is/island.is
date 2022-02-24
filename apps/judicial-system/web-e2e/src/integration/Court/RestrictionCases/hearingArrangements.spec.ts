@@ -1,15 +1,21 @@
+import * as faker from 'faker'
+
 import { Case, CaseState } from '@island.is/judicial-system/types'
 import {
   makeCustodyCase,
   makeCourt,
 } from '@island.is/judicial-system/formatters'
-import * as faker from 'faker'
+import {
+  COURT_RECORD_ROUTE,
+  HEARING_ARRANGEMENTS_ROUTE,
+} from '@island.is/judicial-system/consts'
+
 import { intercept } from '../../../utils'
 
-describe('/domur/krafa/fyrirtokutimi/:id', () => {
+describe(`${HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   beforeEach(() => {
     cy.stubAPIResponses()
-    cy.visit('/domur/fyrirtokutimi/test_id_stadfest')
+    cy.visit(`${HEARING_ARRANGEMENTS_ROUTE}/test_id_stadfest`)
   })
 
   it('should display case comments', () => {
@@ -52,12 +58,8 @@ describe('/domur/krafa/fyrirtokutimi/:id', () => {
 
     intercept(caseDataAddition)
 
-    cy.getByTestid('continueButton').should('be.disabled')
-    cy.getByTestid('select-judge').click()
-    cy.get('#react-select-judge-option-0').click()
-    cy.getByTestid('continueButton').should('not.be.disabled')
     cy.getByTestid('continueButton').click()
     cy.getByTestid('modalSecondaryButton').click()
-    cy.url().should('include', '/domur/thingbok/test_id_stadfest')
+    cy.url().should('include', `${COURT_RECORD_ROUTE}/test_id_stadfest`)
   })
 })

@@ -4,13 +4,13 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { CaseState } from '@island.is/judicial-system/types'
 import {
-  OVERVIEW_ROUTE,
-  RECEPTION_AND_ASSIGNMENT_ROUTE,
+  IC_OVERVIEW_ROUTE,
+  IC_RECEPTION_AND_ASSIGNMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 
 import { intercept } from '../../../utils'
 
-describe(`${RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
+describe(`${IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
   beforeEach(() => {
     const caseData = makeCustodyCase()
 
@@ -22,7 +22,7 @@ describe(`${RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
 
     cy.login()
     cy.stubAPIResponses()
-    cy.visit(`${RECEPTION_AND_ASSIGNMENT_ROUTE}/test`)
+    cy.visit(`${IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/test`)
 
     intercept(caseDataAddition)
   })
@@ -41,6 +41,6 @@ describe(`${RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
     cy.getByTestid('select-registrar').click()
     cy.get('#react-select-registrar-option-0').click()
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', OVERVIEW_ROUTE)
+    cy.url().should('include', IC_OVERVIEW_ROUTE)
   })
 })

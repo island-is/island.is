@@ -12,7 +12,6 @@ import {
   capitalize,
   formatDate,
   formatRequestedCustodyRestrictions,
-  TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import CaseFilesAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CaseFilesAccordionItem/CaseFilesAccordionItem'
@@ -25,6 +24,7 @@ import type {
   Case,
   CaseLegalProvisions,
 } from '@island.is/judicial-system/types'
+import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './Overview.css'
 
@@ -68,7 +68,7 @@ const OverviewForm: React.FC<Props> = (props) => {
                 formatDate(workingCase.requestedCourtDate, 'PPPP', true) ?? '',
               )} eftir kl. ${formatDate(
                 workingCase.requestedCourtDate,
-                TIME_FORMAT,
+                constants.TIME_FORMAT,
               )}`,
             },
             {
@@ -92,12 +92,15 @@ const OverviewForm: React.FC<Props> = (props) => {
                     ) ?? '',
                   )} kl. ${formatDate(
                     workingCase.parentCase.validToDate,
-                    TIME_FORMAT,
+                    constants.TIME_FORMAT,
                   )}`
                 : workingCase.arrestDate
                 ? `${capitalize(
                     formatDate(workingCase.arrestDate, 'PPPP', true) ?? '',
-                  )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`
+                  )} kl. ${formatDate(
+                    workingCase.arrestDate,
+                    constants.TIME_FORMAT,
+                  )}`
                 : 'Var ekki skráður',
             },
           ]}

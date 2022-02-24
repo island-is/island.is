@@ -11,8 +11,7 @@ import { caseResult } from '@island.is/judicial-system-web/src/components/PageLa
 import { sections } from '@island.is/judicial-system-web/messages/Core/sections'
 import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-
+import * as Constants from '@island.is/judicial-system/consts'
 import {
   isAccusedStepValidRC,
   isCourtHearingArrangemenstStepValidRC,

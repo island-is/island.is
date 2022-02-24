@@ -29,7 +29,6 @@ import {
   Gender,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { isRulingStepOneValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   CourtSubsections,
@@ -50,6 +49,7 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { capitalize } from '@island.is/judicial-system/formatters'
+import * as Constants from '@island.is/judicial-system/consts'
 
 export const RulingStepOne: React.FC = () => {
   const {

@@ -28,8 +28,7 @@ import { FormContext } from '@island.is/judicial-system-web/src/components/FormP
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { rcHearingArrangements as m } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-
+import * as Constants from '@island.is/judicial-system/consts'
 export const HearingArrangements: React.FC = () => {
   const {
     workingCase,

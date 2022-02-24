@@ -6,7 +6,6 @@ import {
   capitalize,
   formatRequestedCustodyRestrictions,
   formatDate,
-  TIME_FORMAT,
   formatRequestCaseType,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
@@ -20,6 +19,7 @@ import {
   core,
   laws,
 } from '@island.is/judicial-system-web/messages'
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import * as styles from './PoliceRequestAccordionItem.css'

@@ -8,9 +8,14 @@ import {
   makeCustodyCase,
   makeProsecutor,
 } from '@island.is/judicial-system/formatters'
+import {
+  HEARING_ARRANGEMENTS_ROUTE,
+  OVERVIEW_ROUTE,
+} from '@island.is/judicial-system/consts'
+
 import { intercept } from '../../../utils'
 
-describe('/domur/krafa/:id', () => {
+describe(`${OVERVIEW_ROUTE}/:id`, () => {
   beforeEach(() => {
     const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
@@ -31,7 +36,7 @@ describe('/domur/krafa/:id', () => {
     }
 
     cy.stubAPIResponses()
-    cy.visit('/domur/krafa/test_id_stadfest')
+    cy.visit(`${OVERVIEW_ROUTE}/test_id_stadfest`)
 
     intercept(caseDataAddition)
   })
@@ -70,6 +75,6 @@ describe('/domur/krafa/:id', () => {
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', '/domur/fyrirtokutimi/test_id_stadfest')
+    cy.url().should('include', HEARING_ARRANGEMENTS_ROUTE)
   })
 })

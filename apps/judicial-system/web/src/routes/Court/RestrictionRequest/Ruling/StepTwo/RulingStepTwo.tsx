@@ -44,7 +44,6 @@ import {
   formatDate,
   formatNationalId,
   formatTravelBanRestrictions,
-  TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isRulingStepTwoValidRC } from '@island.is/judicial-system-web/src/utils/validate'
@@ -54,7 +53,7 @@ import {
   core,
   rcRulingStepTwo as m,
 } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import * as Constants from '@island.is/judicial-system/consts'
 
 export const RulingStepTwo: React.FC = () => {
   const router = useRouter()
@@ -798,7 +797,7 @@ export const RulingStepTwo: React.FC = () => {
                     autoComplete="off"
                     defaultValue={formatDate(
                       workingCase.courtEndTime,
-                      TIME_FORMAT,
+                      Constants.TIME_FORMAT,
                     )}
                     errorMessage={courtDocumentEndErrorMessage}
                     hasError={courtDocumentEndErrorMessage !== ''}
