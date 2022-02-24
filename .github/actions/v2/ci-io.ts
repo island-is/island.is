@@ -215,6 +215,10 @@ export class LocalRunner implements GitActionStatus {
               run_nr: run.run_number,
               base_commit: event.pull_request.base.sha,
             }
+          } else {
+            app(
+              `PR base commit ${event.pull_request.base.sha} or head commit ${event.pull_request.head.sha} could not be matched. Most likely PR was rebased`,
+            )
           }
         } else {
           app(`No PR metadata found`)
