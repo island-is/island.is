@@ -46,8 +46,8 @@ export const isNationalIdValid = (nationalId: string): boolean => {
   )
 }
 
-export const sanitizeOnlyNumbers = (input: string) =>
-  input?.replace(/[^0-9]/g, '')
+export const sanitizeOnlyNumbers = (value: string) =>
+  value?.replace(/[^0-9]/g, '')
 
 export const isEmailValid = (emailAddress?: string) => {
   if (emailAddress) {
