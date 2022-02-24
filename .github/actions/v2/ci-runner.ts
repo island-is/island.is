@@ -4,7 +4,7 @@ import { Octokit } from '@octokit/action'
 import { SimpleGit } from './simple-git'
 ;(async () => {
   const runner = new LocalRunner(new Octokit())
-  let git = new SimpleGit(`${__dirname}/../../..`)
+  let git = new SimpleGit(`${__dirname}/../../..`, process.env.SHELL)
 
   const diffWeight = (s) => s.length
   const rev =

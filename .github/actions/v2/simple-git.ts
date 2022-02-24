@@ -1,23 +1,30 @@
-import { execSync } from 'child_process'
 import Debug from 'debug'
+import { execSync, exec as ex, spawn as sp } from 'child_process'
+import { promisify } from 'util'
+const exec = promisify(ex)
+const spawn = promisify(sp)
 
 export class SimpleGit {
   constructor(
     private cwd: string,
-    private shell: string = `/usr/bin/bash`,
+    private _shell: string = `/usr/bin/bash`,
     private _log = Debug('simple-git'),
   ) {}
+  public get shell() {
+    return this._shell
+  }
   async git(...args: string[]) {
     const command = `git ${args.join(' ')}`
     try {
       this._log(`In: ${command}`)
-      const out = execSync(command, {
+      const { stdout, stderr } = await exec(command, {
         cwd: this.cwd,
-        shell: this.shell,
+        shell: this._shell,
         encoding: 'utf-8',
       })
-      this._log(`Out: ${out}`)
-      return Promise.resolve(out)
+      this._log(`StdOut: ${stdout}`)
+      this._log(`StdErr: ${stderr}`)
+      return Promise.resolve(stdout)
     } catch (e) {
       this._log(`Error, in: ${command}`)
       this._log(`Error, out: ${e.message}`)

@@ -54,7 +54,7 @@ export class LocalRunner implements GitActionStatus {
         {
           encoding: 'utf-8',
           cwd: monorepoRoot,
-          shell: '/bin/bash',
+          shell: git.shell,
         },
       )
       let affectedComponents = printAffected

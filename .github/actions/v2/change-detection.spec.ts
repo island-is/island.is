@@ -25,7 +25,7 @@ describe('Change detection', () => {
   ) => Promise<string>
   beforeEach(async () => {
     path = await mkdtemp(`${__dirname}/test-data/repo`)
-    git = new SimpleGit(path)
+    git = new SimpleGit(path, process.env.SHELL)
     const r = await git.git('init', '.')
     githubApi = Substitute.for<GitActionStatus>()
     githubApi.calculateDistance(Arg.all()).mimicks(calculateDistance)

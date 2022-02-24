@@ -90960,7 +90960,7 @@ class LocalRunner {
             const printAffected = (0,external_child_process_.execSync)(`npx nx print-affected --select=projects --head=${currentSha} --base=${olderSha}`, {
                 encoding: 'utf-8',
                 cwd: monorepoRoot,
-                shell: '/bin/bash',
+                shell: git.shell,
             });
             let affectedComponents = printAffected
                 .split(',')
@@ -91215,14 +91215,19 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
 
 // EXTERNAL MODULE: ./node_modules/@octokit/action/dist-node/index.js
 var dist_node = __nccwpck_require__(1231);
+// EXTERNAL MODULE: external "util"
+var external_util_ = __nccwpck_require__(3837);
 ;// CONCATENATED MODULE: ./v2/simple-git.ts
 
 
 
+
+const exec = (0,external_util_.promisify)(external_child_process_.exec);
+const spawn = (0,external_util_.promisify)(external_child_process_.spawn);
 class SimpleGit {
-    constructor(cwd, shell = `/usr/bin/bash`, _log = src_default()('simple-git')) {
+    constructor(cwd, _shell = `/usr/bin/bash`, _log = src_default()('simple-git')) {
         this.cwd = cwd;
-        this.shell = shell;
+        this._shell = _shell;
         this._log = _log;
         this.raw = this.git;
         this.add = this._method('add');
@@ -91232,18 +91237,22 @@ class SimpleGit {
         this.merge = this._method('merge');
         this.checkout = this._method('checkout');
     }
+    get shell() {
+        return this._shell;
+    }
     git(...args) {
         return __awaiter(this, void 0, void 0, function* () {
             const command = `git ${args.join(' ')}`;
             try {
                 this._log(`In: ${command}`);
-                const out = (0,external_child_process_.execSync)(command, {
+                const { stdout, stderr } = yield exec(command, {
                     cwd: this.cwd,
-                    shell: this.shell,
+                    shell: this._shell,
                     encoding: 'utf-8',
                 });
-                this._log(`Out: ${out}`);
-                return Promise.resolve(out);
+                this._log(`StdOut: ${stdout}`);
+                this._log(`StdErr: ${stderr}`);
+                return Promise.resolve(stdout);
             }
             catch (e) {
                 this._log(`Error, in: ${command}`);
@@ -91295,7 +91304,7 @@ class SimpleGit {
 
 (() => __awaiter(void 0, void 0, void 0, function* () {
     const runner = new LocalRunner(new dist_node/* Octokit */.v());
-    let git = new SimpleGit(`${__dirname}/../../..`);
+    let git = new SimpleGit(`${__dirname}/../../..`, process.env.SHELL);
     const diffWeight = (s) => s.length;
     const rev = process.env.GITHUB_EVENT_NAME === 'pull_request'
         ? yield findBestGoodRefPR(diffWeight, git, runner, process.env.HEAD_REF, process.env.BASE_REF, process.env.PR_REF)

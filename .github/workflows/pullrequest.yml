@@ -104,6 +104,7 @@ jobs:
           export BASE_REF="$GITHUB_BASE_REF"
           export PR_REF=$GITHUB_SHA
           which git
+          export SHELL=/usr/bin/bash
           source ./scripts/ci/00_prepare-base-tags.sh
           ls -la /usr/bin
           which sh
