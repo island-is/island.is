@@ -18,6 +18,7 @@ export enum ApplicationTypes {
   P_SIGN = 'PSign',
   CRIMINAL_RECORD = 'CriminalRecord',
   FINANCIAL_AID = 'FinancialAid',
+  EXAMPLE_PAYMENT = 'ExamplePayment',
 }
 
 export const ApplicationConfigurations = {
@@ -96,5 +97,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.FINANCIAL_AID]: {
     slug: 'fjarhagsadstod',
     translation: 'fa.application',
+  },
+  [ApplicationTypes.EXAMPLE_PAYMENT]: {
+    slug: 'greida',
+    translation: 'ep.application',
   },
 }

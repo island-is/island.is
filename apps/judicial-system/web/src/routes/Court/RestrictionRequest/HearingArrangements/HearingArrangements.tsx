@@ -16,7 +16,7 @@ import {
 import {
   FormFooter,
   PageLayout,
-  CaseNumbers,
+  CaseInfo,
   BlueBox,
   FormContentContainer,
   Modal,
@@ -38,13 +38,14 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
   setAndSendToServer,
-  newSetAndSendDateToServer,
+  setAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { rcHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
@@ -56,6 +57,8 @@ export const HearingArrangements: React.FC = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
+  const { user } = useContext(UserContext)
+
   const [modalVisible, setModalVisible] = useState(false)
 
   const router = useRouter()
@@ -185,7 +188,7 @@ export const HearingArrangements: React.FC = () => {
           </Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers workingCase={workingCase} />
+          <CaseInfo workingCase={workingCase} userRole={user?.role} />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
@@ -245,7 +248,7 @@ export const HearingArrangements: React.FC = () => {
                   selectedDate={workingCase.courtDate}
                   minDate={new Date()}
                   onChange={(date: Date | undefined, valid: boolean) => {
-                    newSetAndSendDateToServer(
+                    setAndSendDateToServer(
                       'courtDate',
                       date,
                       valid,
@@ -268,7 +271,7 @@ export const HearingArrangements: React.FC = () => {
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'courtRoom',
-                    event,
+                    event.target.value,
                     [],
                     workingCase,
                     setWorkingCase,

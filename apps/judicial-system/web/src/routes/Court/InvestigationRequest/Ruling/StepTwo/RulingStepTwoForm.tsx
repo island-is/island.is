@@ -4,13 +4,14 @@ import { useIntl } from 'react-intl'
 import {
   CaseAppealDecision,
   SessionArrangements,
+  User,
 } from '@island.is/judicial-system/types'
 import {
   BlueBox,
   FormContentContainer,
   FormFooter,
   TimeInputField,
-  CaseNumbers,
+  CaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Box,
@@ -39,10 +40,11 @@ interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
+  user?: User
 }
 
 const RulingStepTwoForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading } = props
+  const { workingCase, setWorkingCase, isLoading, user } = props
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
   const [courtDocumentEndEM, setCourtDocumentEndEM] = useState<string>('')
@@ -56,7 +58,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers workingCase={workingCase} />
+          <CaseInfo workingCase={workingCase} userRole={user?.role} />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
@@ -73,7 +75,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'conclusion',
-                event,
+                event.target.value,
                 [],
                 workingCase,
                 setWorkingCase,
@@ -89,6 +91,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
               )
             }
             rows={7}
+            autoExpand={{ on: true, maxHeight: 300 }}
             textarea
             required
           />
@@ -270,7 +273,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                   onChange={(event) =>
                     removeTabsValidateAndSet(
                       'accusedAppealAnnouncement',
-                      event,
+                      event.target.value,
                       [],
                       workingCase,
                       setWorkingCase,
@@ -287,6 +290,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                   }
                   textarea
                   rows={7}
+                  autoExpand={{ on: true, maxHeight: 300 }}
                 />
               </BlueBox>
             </Box>
@@ -444,7 +448,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                   onChange={(event) =>
                     removeTabsValidateAndSet(
                       'prosecutorAppealAnnouncement',
-                      event,
+                      event.target.value,
                       [],
                       workingCase,
                       setWorkingCase,
@@ -461,6 +465,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                   }
                   textarea
                   rows={7}
+                  autoExpand={{ on: true, maxHeight: 300 }}
                 />
               </Box>
             </BlueBox>
@@ -484,7 +489,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'endOfSessionBookings',
-                  event,
+                  event.target.value,
                   [],
                   workingCase,
                   setWorkingCase,
@@ -500,6 +505,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                 )
               }
               rows={16}
+              autoExpand={{ on: true, maxHeight: 600 }}
               textarea
             />
           </Box>

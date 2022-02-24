@@ -517,6 +517,33 @@ describe('ApplicationController - Update', () => {
     })
   })
 
+  describe('staff not found', () => {
+    let then: Then
+
+    const id = uuid()
+    const applicationUpdate: UpdateApplicationDto = {
+      state: ApplicationState.DATANEEDED,
+      event: ApplicationEventType.DATANEEDED,
+    }
+    const staff: User = {
+      nationalId: '0000000000',
+      name: 'The Staff',
+      folder: undefined,
+      service: RolesRule.VEITA,
+    }
+
+    beforeEach(async () => {
+      const findStaffByNationalId = mockStaffService.findByNationalId as jest.Mock
+      findStaffByNationalId.mockReturnValueOnce(Promise.resolve(undefined))
+
+      then = await givenWhenThen(id, applicationUpdate, staff)
+    })
+
+    it('should throw forbidden exception', () => {
+      expect(then.error).toBeInstanceOf(ForbiddenException)
+    })
+  })
+
   describe('database query fails', () => {
     let then: Then
 

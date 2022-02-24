@@ -19,8 +19,9 @@ import {
 
 import { environment } from '../../../environments'
 import { AwsS3Service } from '../aws-s3'
-import { UploadPoliceCaseFileDto } from './dto'
-import { PoliceCaseFile, UploadPoliceCaseFileResponse } from './models'
+import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
+import { PoliceCaseFile } from './models/policeCaseFile.model'
+import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 
 @Injectable()
 export class PoliceService {
@@ -96,7 +97,7 @@ export class PoliceService {
     const base64 = await res.json()
     const pdf = Base64.atob(base64)
 
-    const key = `${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
+    const key = `uploads/${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
 
     await this.awsS3Service.putObject(key, pdf)
 

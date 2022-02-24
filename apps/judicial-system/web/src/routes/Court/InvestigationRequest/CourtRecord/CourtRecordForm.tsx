@@ -4,16 +4,20 @@ import { useIntl } from 'react-intl'
 import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   BlueBox,
-  CaseNumbers,
+  CaseInfo,
   CourtDocuments,
   DateTime,
   FormContentContainer,
   FormFooter,
   HideableText,
 } from '@island.is/judicial-system-web/src/components'
-import { Case, SessionArrangements } from '@island.is/judicial-system/types'
 import {
-  newSetAndSendDateToServer,
+  Case,
+  SessionArrangements,
+  User,
+} from '@island.is/judicial-system/types'
+import {
+  setAndSendDateToServer,
   removeTabsValidateAndSet,
   setAndSendToServer,
   validateAndSendToServer,
@@ -33,10 +37,11 @@ interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
+  user?: User
 }
 
 const CourtRecordForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading } = props
+  const { workingCase, setWorkingCase, isLoading, user } = props
   const [courtLocationEM, setCourtLocationEM] = useState('')
   const [
     litigationPresentationsErrorMessage,
@@ -62,7 +67,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers workingCase={workingCase} />
+          <CaseInfo workingCase={workingCase} userRole={user?.role} />
         </Box>
         <Box component="section" marginBottom={3}>
           <BlueBox>
@@ -74,7 +79,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                 maxDate={new Date()}
                 selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
-                  newSetAndSendDateToServer(
+                  setAndSendDateToServer(
                     'courtStartDate',
                     date,
                     valid,
@@ -97,7 +102,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'courtLocation',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -148,7 +153,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'courtAttendees',
-                event,
+                event.target.value,
                 [],
                 workingCase,
                 setWorkingCase,
@@ -162,6 +167,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             }
             textarea
             rows={7}
+            autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
         <Box component="section" marginBottom={8}>
@@ -205,7 +211,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'accusedBookings',
-                  event,
+                  event.target.value,
                   [],
                   workingCase,
                   setWorkingCase,
@@ -222,6 +228,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               }
               textarea
               rows={16}
+              autoExpand={{ on: true, maxHeight: 600 }}
             />
           </Box>
         )}
@@ -241,7 +248,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'litigationPresentations',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -263,6 +270,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               hasError={litigationPresentationsErrorMessage !== ''}
               textarea
               rows={16}
+              autoExpand={{ on: true, maxHeight: 600 }}
               required
             />
           </Box>

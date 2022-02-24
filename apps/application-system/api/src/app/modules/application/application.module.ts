@@ -1,4 +1,4 @@
-import { DynamicModule, Module } from '@nestjs/common'
+import { DynamicModule, Global, Module } from '@nestjs/common'
 import { BullModule as NestBullModule } from '@nestjs/bull'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { FileStorageModule } from '@island.is/file-storage'
@@ -22,6 +22,9 @@ import {
 } from './application.configuration'
 import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { PaymentModule } from '../payment/payment.module'
+import { ApplicationLifeCycleService } from './lifecycle/application-lifecycle.service'
+import { LoggingModule } from '@island.is/logging'
+import { TemplateApiApplicationService } from './template-api.service'
 
 let BullModule: DynamicModule
 
@@ -44,6 +47,7 @@ if (process.env.INIT_SCHEMA === 'true') {
   })
 }
 
+@Global()
 @Module({
   imports: [
     PaymentModule.register({
@@ -51,12 +55,16 @@ if (process.env.INIT_SCHEMA === 'true') {
     }),
     AuditModule.forRoot(environment.audit),
     AuthModule.register(environment.auth),
-    TemplateAPIModule.register(environment.templateApi),
+    TemplateAPIModule.register({
+      ...environment.templateApi,
+      applicationService: TemplateApiApplicationService,
+    }),
     SequelizeModule.forFeature([Application]),
     FileStorageModule.register(environment.fileStorage),
     BullModule,
     SigningModule.register(environment.signingOptions),
     CmsTranslationsModule,
+    LoggingModule,
   ],
   controllers: [ApplicationController],
   providers: [
@@ -69,6 +77,8 @@ if (process.env.INIT_SCHEMA === 'true') {
     },
     AwsService,
     ApplicationAccessService,
+    ApplicationLifeCycleService,
   ],
+  exports: [ApplicationService, APPLICATION_CONFIG, AwsService],
 })
 export class ApplicationModule {}

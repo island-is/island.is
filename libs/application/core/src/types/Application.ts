@@ -37,11 +37,14 @@ export interface Application {
   typeId: ApplicationTypes
   modified: Date
   created: Date
-  attachments: object
   answers: FormValue
   externalData: ExternalData
   name?: string
   institution?: string
   progress?: number
   status: ApplicationStatus
+}
+
+export interface ApplicationWithAttachments extends Application {
+  attachments: object
 }
