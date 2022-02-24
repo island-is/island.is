@@ -121,6 +121,8 @@ export class LocalRunner implements GitActionStatus {
       ) {
         app(`Run number ${run.run_number} matches success criteria`)
         return { head_commit: run.sha, run_nr: run.run_number }
+      } else {
+        app(`Not satisfied ${run.run_number} with ${run.sha} on ${run.branch}`)
       }
     }
     app(`Done iterating over runs, nothing good found`)
@@ -223,6 +225,8 @@ export class LocalRunner implements GitActionStatus {
         } else {
           app(`No PR metadata found`)
         }
+      } else {
+        app(`Job not successful`)
       }
     }
     app(`Done iterating over PR runs, nothing good found`)

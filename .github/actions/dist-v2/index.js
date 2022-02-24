@@ -91020,6 +91020,9 @@ class LocalRunner {
                     app(`Run number ${run.run_number} matches success criteria`);
                     return { head_commit: run.sha, run_nr: run.run_number };
                 }
+                else {
+                    app(`Not satisfied ${run.run_number} with ${run.sha} on ${run.branch}`);
+                }
             }
             app(`Done iterating over runs, nothing good found`);
             return undefined;
@@ -91107,6 +91110,9 @@ class LocalRunner {
                         app(`No PR metadata found`);
                     }
                 }
+                else {
+                    app(`Job not successful`);
+                }
             }
             app(`Done iterating over PR runs, nothing good found`);
             return undefined;
@@ -91121,7 +91127,6 @@ class LocalRunner {
 }
 
 ;// CONCATENATED MODULE: ./v2/change-detection.ts
-
 
 
 const change_detection_app = src_default()('change-detection');
@@ -91152,13 +91157,6 @@ function findBestGoodRefBranch(commitScore, git, githubApi, headBranch, baseBran
         return 'rebuild';
     });
 }
-const dump = () => {
-    const log = change_detection_app.extend('dump');
-    log(execSync(`which git; whoami; which sh; ls -la /usr/bin`, {
-        encoding: 'utf-8',
-        shell: '/usr/bin/bash',
-    }));
-};
 function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, prBranch) {
     return __awaiter(this, void 0, void 0, function* () {
         const log = change_detection_app.extend('findBestGoodRefPR');

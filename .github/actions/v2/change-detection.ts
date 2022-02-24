@@ -58,15 +58,6 @@ export async function findBestGoodRefBranch(
   return 'rebuild'
 }
 
-const dump = () => {
-  const log = app.extend('dump')
-  log(
-    execSync(`which git; whoami; which sh; ls -la /usr/bin`, {
-      encoding: 'utf-8',
-      shell: '/usr/bin/bash',
-    }),
-  )
-}
 export async function findBestGoodRefPR(
   diffWeight: (services) => number,
   git: SimpleGit,
