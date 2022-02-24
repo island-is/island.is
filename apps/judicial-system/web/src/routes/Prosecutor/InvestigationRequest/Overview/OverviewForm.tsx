@@ -16,7 +16,6 @@ import {
   capitalize,
   caseTypes,
   formatDate,
-  TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
@@ -24,8 +23,7 @@ import {
   requestCourtDate,
   icOverview,
 } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-
+import * as Constants from '@island.is/judicial-system/consts'
 import * as styles from './Overview.css'
 
 interface Props {
@@ -95,7 +93,7 @@ const OverviewForm: React.FC<Props> = (props) => {
                     '',
                 )} eftir kl. ${formatDate(
                   workingCase.requestedCourtDate,
-                  TIME_FORMAT,
+                  Constants.TIME_FORMAT,
                 )}`,
               },
               ...(workingCase.registrar
@@ -120,7 +118,10 @@ const OverviewForm: React.FC<Props> = (props) => {
                       title: formatMessage(core.confirmedCourtDate),
                       value: `${capitalize(
                         formatDate(workingCase.courtDate, 'PPPP', true) ?? '',
-                      )} kl. ${formatDate(workingCase.courtDate, TIME_FORMAT)}`,
+                      )} kl. ${formatDate(
+                        workingCase.courtDate,
+                        Constants.TIME_FORMAT,
+                      )}`,
                     },
                   ]
                 : []),
