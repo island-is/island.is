@@ -43,6 +43,8 @@ export const ButtonBar = () => {
             onClick={actions.goBack}
             preTextIcon="arrowBack"
             preTextIconType="outline"
+            variant="text"
+            size="medium"
             colorScheme="light"
           >
             {t(msg.goBack)}
