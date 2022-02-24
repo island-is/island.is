@@ -2,7 +2,6 @@ import { LocalRunner } from './ci-io'
 import { findBestGoodRefPR } from './change-detection'
 import { Octokit } from '@octokit/rest'
 import { SimpleGit } from './simple-git'
-
 ;(async () => {
   const octokit = new Octokit(
     // For local development
@@ -12,7 +11,7 @@ import { SimpleGit } from './simple-git'
   )
 
   const runner = new LocalRunner(octokit)
-  let git = new SimpleGit(`${__dirname}/../../..`)
+  let git = new SimpleGit(`${__dirname}/../../..`, '/bin/bash')
   const rev = await findBestGoodRefPR(
     (s) => s.length,
     git,
