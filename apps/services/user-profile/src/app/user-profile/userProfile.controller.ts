@@ -124,12 +124,16 @@ export class UserProfileController {
         await this.verificationService.removeEmailVerification(
           userProfileDto.nationalId,
         )
-        userProfileDto = {
-          ...userProfileDto,
-          emailStatus: DataStatus.VERIFIED,
-          emailVerified: emailVerified.confirmed,
-        }
       }
+      userProfileDto = {
+        ...userProfileDto,
+        emailStatus: emailVerified.confirmed? DataStatus.VERIFIED : DataStatus.NOT_VERIFIED,
+        emailVerified: emailVerified.confirmed,
+      }
+      console.log("GOT EMAIL")
+    }
+    else {
+      console.log("NO EMAIL")
     }
 
     if (userProfileDto.mobilePhoneNumber) {
@@ -142,12 +146,13 @@ export class UserProfileController {
         await this.verificationService.removeSmsVerification(
           userProfileDto.nationalId,
         )
+      }
 
-        userProfileDto = {
-          ...userProfileDto,
-          emailStatus: DataStatus.VERIFIED,
-          mobilePhoneNumberVerified: phoneVerified.confirmed,
-        }
+      const verifiedStatus = phoneVerified.confirmed || userProfileDto.emailStatus == DataStatus.VERIFIED ? DataStatus.VERIFIED : DataStatus.NOT_DEFINED
+      userProfileDto = {
+        ...userProfileDto,
+        emailStatus: verifiedStatus,
+        mobilePhoneNumberVerified: phoneVerified.confirmed,
       }
     }
 
