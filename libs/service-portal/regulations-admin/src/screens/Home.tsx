@@ -16,24 +16,14 @@ import { ShippedRegulations } from '../components/ShippedRegulations'
 import { homeMessages as msg } from '../messages'
 import { useLocale } from '@island.is/localization'
 import { useCreateRegulationDraft } from '../utils/dataHooks'
+import { RegulationsTabs } from '../components/RegulationsTabs'
 
 const Home = () => {
   useNamespaces('ap.regulations-admin')
-  const t = useLocale().formatMessage
 
-  const { createNewDraft, creating, error } = useCreateRegulationDraft()
-  const TaskListContent = <TaskList />
-  const ShippedRegulationsContent = <ShippedRegulations />
-  const tabs = [
-    {
-      label: t(msg.taskListTitle),
-      content: TaskListContent,
-    },
-    {
-      label: t(msg.shippedTitle),
-      content: ShippedRegulationsContent,
-    },
-  ]
+  const t = useLocale().formatMessage
+  const { createNewDraft, creating } = useCreateRegulationDraft()
+
   return (
     <Box marginBottom={[6, 6, 10]}>
       <GridRow>
@@ -74,7 +64,7 @@ const Home = () => {
           </Box>
         </GridColumn>
       </GridRow>
-      <Tabs label="Reglugerðir" tabs={tabs} contentBackground="white" />
+      <RegulationsTabs />
     </Box>
   )
 }
