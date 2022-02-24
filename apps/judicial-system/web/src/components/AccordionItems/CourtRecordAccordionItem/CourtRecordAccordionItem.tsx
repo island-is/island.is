@@ -109,27 +109,11 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           })}
         </Text>
       </AccordionListItem>
-      {workingCase.accusedBookings?.trim() && (
-        <AccordionListItem
-          title={formatMessage(m.sections.accusedBookings.title, {
-            accusedType: isRestrictionCase(workingCase.type)
-              ? formatMessage(core.accused, {
-                  suffix:
-                    workingCase.defendants &&
-                    workingCase.defendants.length > 0 &&
-                    workingCase.defendants[0].gender === Gender.FEMALE
-                      ? 'u'
-                      : 'a',
-                })
-              : formatMessage(core.defendant, { suffix: 'a' }),
-          })}
-          breakSpaces
-        >
-          <Text>{workingCase.accusedBookings.trim()}</Text>
-        </AccordionListItem>
-      )}
-      <AccordionListItem title="Málflutningur" breakSpaces>
-        <Text>{workingCase.litigationPresentations}</Text>
+      <AccordionListItem
+        title={formatMessage(m.sections.sessionBookings.title)}
+        breakSpaces
+      >
+        <Text>{workingCase.sessionBookings}</Text>
       </AccordionListItem>
       {isRestrictionCase(workingCase.type) && (
         <Box marginBottom={3}>

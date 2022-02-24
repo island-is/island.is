@@ -50,8 +50,8 @@ export const CourtRecord: React.FC = () => {
 
   const [courtLocationErrorMessage, setCourtLocationMessage] = useState('')
   const [
-    litigationPresentationsErrorMessage,
-    setLitigationPresentationsMessage,
+    sessionBookingsErrorMessage,
+    setSessionBookingsErrorMessage,
   ] = useState('')
 
   const router = useRouter()
@@ -125,28 +125,11 @@ export const CourtRecord: React.FC = () => {
         autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
       }
 
-      if (theCase.type === CaseType.CUSTODY) {
-        autofill(
-          'litigationPresentations',
-          `Sækjandi ítrekar kröfu um gæsluvarðhald, reifar og rökstyður kröfuna og leggur málið í úrskurð með venjulegum fyrirvara.\n\nVerjandi ${formatMessage(
-            core.accused,
-            { suffix: 'a' },
-          )} ítrekar mótmæli hans, krefst þess að kröfunni verði hafnað, til vara að ${formatMessage(
-            core.accused,
-            { suffix: 'i' },
-          )} verði gert að sæta farbanni í stað gæsluvarðhalds, en til þrautavara að gæsluvarðhaldi verði markaður skemmri tími en krafist er og að ${formatMessage(
-            core.accused,
-            { suffix: 'a' },
-          )} verði ekki gert að sæta einangrun á meðan á gæsluvarðhaldi stendur. Verjandinn reifar og rökstyður mótmælin og leggur málið í úrskurð með venjulegum fyrirvara.`,
-          theCase,
-        )
-      }
-
-      let autofillAccusedBookings = ''
+      let autofillSessionBookings = ''
 
       if (theCase.defenderName) {
-        autofillAccusedBookings += `${formatMessage(
-          m.sections.accusedBookings.autofillDefender,
+        autofillSessionBookings += `${formatMessage(
+          m.sections.sessionBookings.autofillDefender,
           {
             defender: theCase.defenderName,
           },
@@ -154,21 +137,37 @@ export const CourtRecord: React.FC = () => {
       }
 
       if (theCase.translator) {
-        autofillAccusedBookings += `${formatMessage(
-          m.sections.accusedBookings.autofillTranslator,
+        autofillSessionBookings += `${formatMessage(
+          m.sections.sessionBookings.autofillTranslator,
           {
             translator: theCase.translator,
           },
         )}\n\n`
       }
 
-      autofillAccusedBookings += `${formatMessage(
-        m.sections.accusedBookings.autofillRightToRemainSilent,
+      autofillSessionBookings += `${formatMessage(
+        m.sections.sessionBookings.autofillRightToRemainSilent,
       )}\n\n${formatMessage(
-        m.sections.accusedBookings.autofillCourtDocumentOne,
-      )}\n\n${formatMessage(m.sections.accusedBookings.autofillAccusedPlea)}`
+        m.sections.sessionBookings.autofillCourtDocumentOne,
+      )}\n\n${formatMessage(m.sections.sessionBookings.autofillAccusedPlea)}`
 
-      autofill('accusedBookings', autofillAccusedBookings, theCase)
+      if (theCase.type === CaseType.CUSTODY) {
+        autofillSessionBookings += `\n\n${formatMessage(
+          m.sections.sessionBookings.autofillPresentations,
+          {
+            accused: formatMessage(core.accused, {
+              suffix:
+                theCase.defendants &&
+                theCase.defendants.length > 0 &&
+                theCase.defendants[0].gender === Gender.FEMALE
+                  ? 'u'
+                  : 'a',
+            }),
+          },
+        )}`
+      }
+
+      autofill('sessionBookings', autofillSessionBookings, theCase)
 
       setWorkingCase(theCase)
     }
@@ -315,95 +314,44 @@ export const CourtRecord: React.FC = () => {
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              {`${formatMessage(m.sections.accusedBookings.title, {
-                genderedAccused: formatMessage(core.accused, {
-                  suffix:
-                    workingCase.defendants &&
-                    workingCase.defendants.length > 0 &&
-                    workingCase.defendants[0].gender === Gender.FEMALE
-                      ? 'u'
-                      : 'a',
-                }),
-              })} `}
+              {`${formatMessage(m.sections.sessionBookings.title)} `}
               <Tooltip
-                text={formatMessage(m.sections.accusedBookings.tooltip)}
+                text={formatMessage(m.sections.sessionBookings.tooltip)}
               />
-            </Text>
-          </Box>
-          <Input
-            data-testid="accusedBookings"
-            name="accusedBookings"
-            label={formatMessage(m.sections.accusedBookings.label, {
-              genderedAccused: formatMessage(core.accused, {
-                suffix:
-                  workingCase.defendants &&
-                  workingCase.defendants.length > 0 &&
-                  workingCase.defendants[0].gender === Gender.FEMALE
-                    ? 'u'
-                    : 'a',
-              }),
-            })}
-            value={workingCase.accusedBookings || ''}
-            placeholder={formatMessage(m.sections.accusedBookings.placeholder)}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'accusedBookings',
-                event.target.value,
-                [],
-                workingCase,
-                setWorkingCase,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'accusedBookings',
-                event.target.value,
-                [],
-                workingCase,
-                updateCase,
-              )
-            }
-            textarea
-            rows={16}
-            autoExpand={{ on: true, maxHeight: 600 }}
-          />
-        </Box>
-        <Box component="section" marginBottom={8}>
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              Málflutningur
             </Text>
           </Box>
           <Box marginBottom={3}>
             <Input
-              data-testid="litigationPresentations"
-              name="litigationPresentations"
-              label="Málflutningur og aðrar bókanir"
-              value={workingCase.litigationPresentations || ''}
-              placeholder="Málflutningsræður og annað sem fram kom í þinghaldi er skráð hér..."
+              data-testid="sessionBookings"
+              name="sessionBookings"
+              label={formatMessage(m.sections.sessionBookings.label)}
+              value={workingCase.sessionBookings || ''}
+              placeholder={formatMessage(
+                m.sections.sessionBookings.placeholder,
+              )}
               onChange={(event) =>
                 removeTabsValidateAndSet(
-                  'litigationPresentations',
+                  'sessionBookings',
                   event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
-                  litigationPresentationsErrorMessage,
-                  setLitigationPresentationsMessage,
+                  sessionBookingsErrorMessage,
+                  setSessionBookingsErrorMessage,
                 )
               }
               onBlur={(event) =>
                 validateAndSendToServer(
-                  'litigationPresentations',
+                  'sessionBookings',
                   event.target.value,
                   ['empty'],
                   workingCase,
                   updateCase,
-                  setLitigationPresentationsMessage,
+                  setSessionBookingsErrorMessage,
                 )
               }
-              errorMessage={litigationPresentationsErrorMessage}
-              hasError={litigationPresentationsErrorMessage !== ''}
+              errorMessage={sessionBookingsErrorMessage}
+              hasError={sessionBookingsErrorMessage !== ''}
               textarea
               rows={16}
               autoExpand={{ on: true, maxHeight: 600 }}

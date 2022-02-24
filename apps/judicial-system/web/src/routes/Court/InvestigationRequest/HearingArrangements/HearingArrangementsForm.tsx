@@ -279,6 +279,8 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             }
           }}
           handleSecondaryButtonClick={() => {
+            sendNotification(workingCase.id, NotificationType.COURT_DATE, true)
+
             router.push(`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`)
           }}
           primaryButtonText={formatMessage(m.modal.primaryButtonText)}

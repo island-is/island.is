@@ -41,17 +41,17 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
-  it.skip('should require a valid litigation presentations', () => {
+  it.skip('should require valid session bookings', () => {
     cy.clock()
     cy.tick(1000)
-    cy.getByTestid('litigationPresentations').clear().blur()
+    cy.getByTestid('sessionBookings').clear().blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('litigationPresentations').type(faker.lorem.words(5))
+    cy.getByTestid('sessionBookings').type(faker.lorem.words(5))
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
-    cy.getByTestid('litigationPresentations').type(faker.lorem.words(5))
+    cy.getByTestid('sessionBookings').type(faker.lorem.words(5))
     cy.getByTestid('continueButton').click()
     cy.url().should('include', IC_RULING_STEP_ONE_ROUTE)
   })

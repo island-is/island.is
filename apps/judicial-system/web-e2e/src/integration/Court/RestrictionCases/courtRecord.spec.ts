@@ -37,7 +37,7 @@ describe(`${COURT_RECORD_ROUTE}/:id`, () => {
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
     cy.getByTestid('continueButton').should('be.disabled')
     cy.getByTestid('courtLocation').type('í Dúfnahólum 10')
-    cy.getByTestid('litigationPresentations').type('lorem')
+    cy.getByTestid('sessionBookings').type('lorem')
     cy.getByTestid('continueButton').should('not.be.disabled')
     cy.getByTestid('continueButton').click()
     cy.url().should('include', `${RULING_STEP_ONE_ROUTE}/test_id_stadfest`)

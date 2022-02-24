@@ -67,7 +67,12 @@ export const Requests: React.FC = () => {
     },
   })
 
-  const { transitionCase, sendNotification } = useCase()
+  const {
+    transitionCase,
+    isTransitioningCase,
+    sendNotification,
+    isSendingNotification,
+  } = useCase()
   const { formatMessage } = useIntl()
 
   const resCases = data?.cases
@@ -241,6 +246,9 @@ export const Requests: React.FC = () => {
                     <ActiveRequests
                       cases={activeCases}
                       onRowClick={handleRowClick}
+                      isDeletingCase={
+                        isTransitioningCase || isSendingNotification
+                      }
                       onDeleteCase={deleteCase}
                     />
                   )
