@@ -1,111 +1,64 @@
 import React, { FC, useState } from 'react'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text, Input, Button } from '@island.is/island-ui/core'
 import { PropertyTable } from '../PropertyTable'
-import { PropertyDetail, PropertyOverviewWithDetail } from '../../types/schema'
+import { PropertyDetail } from '../../types/schema'
 import { gql, useLazyQuery } from '@apollo/client'
+import { SEARCH_REAL_ESTATE_QUERY } from '../../graphql/queries'
 
 interface SearchPropertiesProps {
-  selectHandler: (property: PropertyDetail) => void
-  activePropertyNumber: string | null | undefined
+  selectHandler: (property: PropertyDetail | undefined) => void
+  selectedPropertyNumber: string | undefined
 }
 
 export const searchRealEstateMutation = gql`
-  query SearchRealEstateQuery($input: GetRealEstateInput!) {
-    assetsDetail(input: $input) {
-      propertyNumber
-      defaultAddress {
-        locationNumber
-        postNumber
-        municipality
-        propertyNumber
-        display
-        displayShort
-      }
-      appraisal {
-        activeAppraisal
-        plannedAppraisal
-        activeStructureAppraisal
-        plannedStructureAppraisal
-        activePlotAssessment
-        plannedPlotAssessment
-        activeYear
-        plannedYear
-      }
-      registeredOwners {
-        registeredOwners {
-          name
-          ssn
-          ownership
-          purchaseDate
-          grantDisplay
-        }
-      }
-      unitsOfUse {
-        unitsOfUse {
-          propertyNumber
-          unitOfUseNumber
-          marking
-          usageDisplay
-          displaySize
-          buildYearDisplay
-          fireAssessment
-          explanation
-          appraisal {
-            activeAppraisal
-            plannedAppraisal
-            activeStructureAppraisal
-            plannedStructureAppraisal
-            activePlotAssessment
-            plannedPlotAssessment
-            activeYear
-            plannedYear
-          }
-          address {
-            locationNumber
-            postNumber
-            municipality
-            propertyNumber
-            display
-            displayShort
-          }
-        }
-      }
-    }
-  }
+  ${SEARCH_REAL_ESTATE_QUERY}
 `
 
 export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
   application,
+  field,
   selectHandler,
-  activePropertyNumber,
+  selectedPropertyNumber,
 }) => {
-  const [propertyNumber, setPropertyNumber] = useState('')
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [searchStr, setSearchStr] = useState('')
   const [foundProperty, setFoundProperty] = useState<
     PropertyDetail | undefined
   >(undefined)
 
-  const [searching, setSearching] = useState<boolean>(false)
-
   const [runQuery] = useLazyQuery(searchRealEstateMutation, {
     variables: {
       input: {
-        assetId: propertyNumber,
+        assetId: searchStr,
       },
     },
     onCompleted(result) {
       setFoundProperty(result.assetsDetail)
-      setSearching(false)
+      setIsLoading(false)
     },
     onError() {
-      setSearching(false)
+      setIsLoading(false)
     },
   })
 
   const handleClickSearch = () => {
     setFoundProperty(undefined)
-    setSearching(true)
+    setIsLoading(true)
     runQuery()
+  }
+
+  // initialize search box and search result
+  const [hasInitialized, setHasInitialized] = useState<boolean>(false)
+  const selectedProperty = (application.answers
+    .selectedProperty as unknown) as PropertyDetail
+  const isFromSearch = ((application.answers.selectedProperty as unknown) as {
+    isFromSearch: boolean
+  })?.isFromSearch
+  if (!hasInitialized && isFromSearch) {
+    setHasInitialized(true)
+    setSearchStr(selectedProperty?.propertyNumber || '')
+    setFoundProperty(selectedProperty || undefined)
   }
 
   return (
@@ -119,15 +72,16 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
             size="sm"
             label="Fasteignarnúmer"
             name="propertyNumber"
-            onChange={(e) => setPropertyNumber(e.target.value)}
+            value={searchStr}
+            onChange={(e) => setSearchStr(e.target.value)}
           />
         </Box>
         <Box>
           <Button
-            disabled={searching}
+            disabled={isLoading}
             onClick={() => handleClickSearch()}
             variant="ghost"
-            style={{ width: 146, paddingLeft: 20, paddingRight: 20 }}
+            //style={{ width: 146, paddingLeft: 20, paddingRight: 20 }}
           >
             Leita að eign
           </Button>
@@ -135,10 +89,12 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
       </Box>
       {foundProperty !== undefined && (
         <PropertyTable
+          application={application}
+          field={field}
           key={foundProperty.propertyNumber}
           selectHandler={selectHandler}
-          activePropertyNumber={activePropertyNumber || ''}
-          {...foundProperty}
+          propertyInfo={foundProperty}
+          selectedPropertyNumber={selectedPropertyNumber}
         />
       )}
     </Box>

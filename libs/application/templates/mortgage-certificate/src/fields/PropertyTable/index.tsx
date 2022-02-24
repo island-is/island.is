@@ -1,26 +1,33 @@
 import React, { FC } from 'react'
 import { Box, Text, Table as T, RadioButton } from '@island.is/island-ui/core'
+import { FieldBaseProps } from '@island.is/application/core'
 import { PropertyDetail } from '../../types/schema'
 
 interface PropertyTableProps {
-  selectHandler: (property: PropertyDetail) => void
-  activePropertyNumber: string
+  selectHandler: (property: PropertyDetail | undefined) => void
+  propertyInfo: PropertyDetail | undefined
+  selectedPropertyNumber: string | undefined
 }
 
-export const PropertyTable: FC<PropertyDetail & PropertyTableProps> = ({
-  defaultAddress,
-  propertyNumber,
+export const PropertyTable: FC<
+  FieldBaseProps & PropertyTableProps & PropertyDetail
+> = ({
+  application,
+  field,
   selectHandler,
-  activePropertyNumber,
-  unitsOfUse,
+  propertyInfo,
+  selectedPropertyNumber,
 }) => {
-  const unitOfUse = (unitsOfUse?.unitsOfUse || [])[0]
+  //const { answers } = application
+  const { id } = field
+
+  const unitOfUse = (propertyInfo?.unitsOfUse?.unitsOfUse || [])[0]
 
   return (
     <>
       <Box paddingY={2}>
         <Text paddingY={2} variant={'h4'}>
-          {defaultAddress?.display}
+          {propertyInfo?.defaultAddress?.display}
         </Text>
         <T.Table>
           <T.Head>
@@ -47,15 +54,19 @@ export const PropertyTable: FC<PropertyDetail & PropertyTableProps> = ({
             <T.Row>
               <T.Data>
                 <RadioButton
+                  id={id}
+                  name={`${id}`}
                   checked={
-                    propertyNumber === activePropertyNumber ? true : false
+                    propertyInfo?.propertyNumber === selectedPropertyNumber
+                      ? true
+                      : false
                   }
-                  onChange={() =>
-                    selectHandler({ defaultAddress, propertyNumber })
-                  }
+                  onChange={() => {
+                    selectHandler(propertyInfo)
+                  }}
                 />
               </T.Data>
-              <T.Data>{propertyNumber}</T.Data>
+              <T.Data>{propertyInfo?.propertyNumber}</T.Data>
               <T.Data>{unitOfUse?.marking}</T.Data>
               <T.Data>{unitOfUse?.explanation}</T.Data>
               <T.Data>{unitOfUse?.buildYearDisplay}</T.Data>

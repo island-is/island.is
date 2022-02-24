@@ -68,37 +68,36 @@ export class MortgageCertificateSubmissionService {
   }
 
   async submitRequestSyslumenn(application: Application) {
-    //TODOx need information from Styrmir about what this should look like
-    // const nationalRegistryData = application.externalData.nationalRegistry
-    //   ?.data as NationalRegistry
-    // const userProfileData = application.externalData.userProfile
-    //   ?.data as UserProfile
-    // const person: Person = {
-    //   name: nationalRegistryData?.fullName,
-    //   ssn: nationalRegistryData?.nationalId,
-    //   phoneNumber: userProfileData?.mobilePhoneNumber,
-    //   email: userProfileData?.email,
-    //   homeAddress: nationalRegistryData?.address.streetAddress,
-    //   postalCode: nationalRegistryData?.address.postalCode,
-    //   city: nationalRegistryData?.address.city,
-    //   signed: true,
-    //   type: PersonType.MortgageCertificateApplicant,
-    // }
-    // const persons: Person[] = [person]
-    // const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
-    // const extraData: { [key: string]: string } = {}
-    // const uploadDataName =
-    //   'Umsókn um lagfæringu á veðbókarvottorði frá Ísland.is'
-    // const uploadDataId = 'VedbokarvottordLagfaering'
-    // await this.syslumennService
-    //   .uploadData(persons, null, extraData, uploadDataName, uploadDataId)
-    //   .catch(async () => {
-    //     await this.sharedTemplateAPIService.sendEmail(
-    //       generateSyslumennSubmitRequestErrorEmail,
-    //       (application as unknown) as Application,
-    //     )
-    //     return undefined
-    //   })
+    const nationalRegistryData = application.externalData.nationalRegistry
+      ?.data as NationalRegistry
+    const userProfileData = application.externalData.userProfile
+      ?.data as UserProfile
+    const person: Person = {
+      name: nationalRegistryData?.fullName,
+      ssn: nationalRegistryData?.nationalId,
+      phoneNumber: userProfileData?.mobilePhoneNumber,
+      email: userProfileData?.email,
+      homeAddress: nationalRegistryData?.address.streetAddress,
+      postalCode: nationalRegistryData?.address.postalCode,
+      city: nationalRegistryData?.address.city,
+      signed: true,
+      type: PersonType.MortgageCertificateApplicant,
+    }
+    const persons: Person[] = [person]
+    const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
+    const extraData: { [key: string]: string } = {}
+    const uploadDataName =
+      'Umsókn um lagfæringu á veðbókarvottorði frá Ísland.is'
+    const uploadDataId = 'VedbokavottordVilla1.0'
+    await this.syslumennService
+      .uploadData(persons, undefined, extraData, uploadDataName, uploadDataId)
+      .catch(async () => {
+        await this.sharedTemplateAPIService.sendEmail(
+          generateSyslumennSubmitRequestErrorEmail,
+          (application as unknown) as Application,
+        )
+        return undefined
+      })
   }
 
   async getMortgageCertificate({
@@ -159,7 +158,7 @@ export class MortgageCertificateSubmissionService {
     const extraData: { [key: string]: string } = {}
 
     const uploadDataName = 'Umsókn um veðbókarvottorð frá Ísland.is'
-    const uploadDataId = 'Vedbokarvottord'
+    const uploadDataId = 'Vedbokavottord1.0'
 
     await this.syslumennService
       .uploadData(persons, attachment, extraData, uploadDataName, uploadDataId)

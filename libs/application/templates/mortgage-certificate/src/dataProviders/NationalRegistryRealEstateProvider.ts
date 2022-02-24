@@ -4,77 +4,13 @@ import {
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
 import { PropertyOverviewWithDetail } from '../types/schema'
+import { MY_REAL_ESTATES_QUERY } from '../graphql/queries'
 
 export class NationalRegistryRealEstateProvider extends BasicDataProvider {
   readonly type = 'NationalRegistryRealEstate'
 
   async provide(): Promise<PropertyOverviewWithDetail> {
-    const query = `
-      query GetMyRealEstatesQuery($input: GetMultiPropertyInput!) {
-        assetsOverviewWithDetail(input: $input) {
-          properties {
-            propertyNumber
-            defaultAddress {
-              locationNumber
-              postNumber
-              municipality
-              propertyNumber
-              display
-              displayShort
-            }
-            appraisal {
-              activeAppraisal
-              plannedAppraisal
-              activeStructureAppraisal
-              plannedStructureAppraisal
-              activePlotAssessment
-              plannedPlotAssessment
-              activeYear
-              plannedYear
-            }
-            registeredOwners {
-              registeredOwners {
-                name
-                ssn
-                ownership
-                purchaseDate
-                grantDisplay
-              }
-            }
-            unitsOfUse {
-              unitsOfUse {
-                propertyNumber
-                unitOfUseNumber
-                marking
-                usageDisplay
-                displaySize
-                buildYearDisplay
-                fireAssessment
-                explanation
-                appraisal {
-                  activeAppraisal
-                  plannedAppraisal
-                  activeStructureAppraisal
-                  plannedStructureAppraisal
-                  activePlotAssessment
-                  plannedPlotAssessment
-                  activeYear
-                  plannedYear
-                }
-                address {
-                  locationNumber
-                  postNumber
-                  municipality
-                  propertyNumber
-                  display
-                  displayShort
-                }
-              }
-            }
-          }
-        }
-      }
-    `
+    const query = MY_REAL_ESTATES_QUERY
     return this.useGraphqlGateway<PropertyOverviewWithDetail>(query, {
       input: { cursor: '1' },
     })

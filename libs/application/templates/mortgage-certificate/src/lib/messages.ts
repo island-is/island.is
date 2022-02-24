@@ -2,166 +2,166 @@ import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
   name: {
-    id: 'cr.application:name',
+    id: 'mc.application:name',
     defaultMessage: 'Umsókn um veðbókarvottorð',
     description: "Application's name",
   },
   mortgageCertificate: {
-    id: 'cr.application:mortgageCertificate',
+    id: 'mc.application:mortgageCertificate',
     defaultMessage: 'Veðbókarvottorð',
     description: 'MortgageCertificate',
   },
   externalDataSection: {
-    id: 'cr.application:externalData.section',
+    id: 'mc.application:externalData.section',
     defaultMessage: 'Gagnaöflun',
     description: 'Some description',
   },
   externalDataTitle: {
-    id: 'cr.application:mortgageCertificate.mainTitle',
+    id: 'mc.application:mortgageCertificate.mainTitle',
     defaultMessage: 'Umsókn um veðbókarvottorð',
     description: 'Title of the application',
   },
   externalDataSubTitle: {
-    id: 'cr.application:externalData.title',
+    id: 'mc.application:externalData.title',
     defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
     description: 'he following data will be retrieved electronically',
   },
   externalDataAgreement: {
-    id: 'cr.application:externalData.agreement',
+    id: 'mc.application:externalData.agreement',
     defaultMessage: 'Ég hef kynnt mér ofangreint',
     description: 'I understand',
   },
   nationalRegistryTitle: {
-    id: 'cr.application:nationalRegistry.title',
+    id: 'mc.application:nationalRegistry.title',
     defaultMessage: 'Persónuupplýsingar úr Þjóðskrá',
     description: 'Personal information from the National Registry',
   },
   nationalRegistrySubTitle: {
-    id: 'cr.application:nationalRegistry.subTitle',
+    id: 'mc.application:nationalRegistry.subTitle',
     defaultMessage:
       'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
     description:
       'Information from the National Registry will be used to prefill the data in the application',
   },
   nationalRegistryRealEstateTitle: {
-    id: 'cr.application:nationalRegistryRealEstate.title',
+    id: 'mc.application:nationalRegistryRealEstate.title',
     defaultMessage: 'Fasteignaupplýsingar úr Þjóðskrá',
     description: 'Real estate information from the National Registry',
   },
   nationalRegistryRealEstateSubTitle: {
-    id: 'cr.application:nationalRegistryRealEstate.subTitle',
+    id: 'mc.application:nationalRegistryRealEstate.subTitle',
     defaultMessage:
       'Til þess að auðvelda fyrir sækjum við fasteignaupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
     description:
       'Information from the National Registry will be used to prefill the data in the application',
   },
   userProfileInformationTitle: {
-    id: 'cr.application:userprofile.title',
+    id: 'mc.application:userprofile.title',
     defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
     description: 'Your user profile information',
   },
   userProfileInformationSubTitle: {
-    id: 'cr.application:userprofile.subTitle',
+    id: 'mc.application:userprofile.subTitle',
     defaultMessage:
       'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
     description:
       'In order to apply for this application we need your email and phone number',
   },
   actionCardDraft: {
-    id: 'cr.application:actionCardDraft',
+    id: 'mc.application:actionCardDraft',
     defaultMessage: 'Í vinnslu',
     description:
       'Description of application state/status when the application is in progress',
   },
   actionCardPayment: {
-    id: 'cr.application:actionCardPayment',
+    id: 'mc.application:actionCardPayment',
     defaultMessage: 'Greiðslu vantar',
     description:
       'Description of application state/status when payment is pending',
   },
   actionCardDone: {
-    id: 'cr.application:actionCardDone',
+    id: 'mc.application:actionCardDone',
     defaultMessage: 'Afgreidd',
     description:
       'Description of application state/status when application is processed',
   },
   payment: {
-    id: 'cr.application:payment',
+    id: 'mc.application:payment',
     defaultMessage: 'Greiðsla',
     description: 'payment',
   },
   paymentCapital: {
-    id: 'cr.application:awaitingPayment',
+    id: 'mc.application:awaitingPayment',
     defaultMessage: 'Staðfesting á greiðslu',
     description: 'Payment',
   },
   forwardingToPayment: {
-    id: 'cr.application:forwardingToPayment',
+    id: 'mc.application:forwardingToPayment',
     defaultMessage: 'Sendi þig áfram á greiðsluveitu...',
     description: 'Forwarding you to payment handler...',
   },
   confirmation: {
-    id: 'cr.application:confirmation',
+    id: 'mc.application:confirmation',
     defaultMessage: 'Staðfesting',
     description: 'payment',
   },
   confirm: {
-    id: 'cr.application:confirm',
+    id: 'mc.application:confirm',
     defaultMessage: 'Staðfesta',
     description: 'payment',
   },
   institutionName: {
-    id: 'cr.application:institution',
+    id: 'mc.application:institution',
     defaultMessage: 'Sýslumenn',
     description: "Institution's name",
   },
   draftTitle: {
-    id: 'cr.application:draft.title',
+    id: 'mc.application:draft.title',
     defaultMessage: 'Drög',
     description: 'First state title',
   },
   overviewPaymentCharge: {
-    id: 'cr.application:overview.paymentcharge',
+    id: 'mc.application:overview.paymentcharge',
     defaultMessage: 'Til greiðslu',
     description: 'Cost',
   },
   draftDescription: {
-    id: 'cr.application:draft.description',
+    id: 'mc.application:draft.description',
     defaultMessage: 'Á eftir að samþykkja gagnaöflun',
     description: 'Description of the state',
   },
   errorDataProviderMortgageCertificate: {
-    id: 'cr.application:error.errorDataProviderMortgageCertificate',
+    id: 'mc.application:error.errorDataProviderMortgageCertificate',
     defaultMessage: 'Reyndu aftur síðar eða leitaðu til næsta sýslumanns',
     description: 'Unhandled error in mortgage certificate data provider',
   },
   errorDataProvider: {
-    id: 'cr.application:error.dataProvider',
+    id: 'mc.application:error.dataProvider',
     defaultMessage: 'Reyndu aftur síðar',
     description: 'Unhandled error in data provider',
   },
   mortgageCertificateInformationTitle: {
-    id: 'cr.application:mortgageCertificate.title',
+    id: 'mc.application:mortgageCertificate.title',
     defaultMessage: 'Upplýsingar úr veðbókarskrá',
     description: 'Information from the mortgage certificate database',
   },
   mortgageCertificateInformationSubTitle: {
-    id: 'cr.application:mortgageCertificate.subTitle',
+    id: 'mc.application:mortgageCertificate.subTitle',
     defaultMessage: 'Skjal sem inniheldur veðbókarvottorðið þitt.',
     description: 'Document that contains your mortgage certificate.',
   },
   examplePaymentPendingFieldError: {
-    id: 'cr.application:example.waitingForPaymentError',
+    id: 'mc.application:example.waitingForPaymentError',
     defaultMessage: 'Villa kom upp við að sækja upplýsingar um greiðslu',
     description: 'An error came up while getting payment information',
   },
   examplePaymentPendingDescription: {
-    id: 'cr.application:example.waitingDescription',
+    id: 'mc.application:example.waitingDescription',
     defaultMessage: 'Texti um hvað er að gerast',
     description: 'Text about current payment proceedures.',
   },
   paymentPendingDescription: {
-    id: 'cr.application:paymentPendingDescription',
+    id: 'mc.application:paymentPendingDescription',
     defaultMessage: 'Augnablik meðan beðið er eftir staðfestingu',
     description: 'Please wait until the payment is confirmed',
   },
@@ -171,102 +171,102 @@ export const m = defineMessages({
     description: 'Company Image',
   },
   submitErrorButtonCaption: {
-    id: 'cr.application:submitErrorButtonCaption',
+    id: 'mc.application:submitErrorButtonCaption',
     defaultMessage: 'Reyna aftur',
     description:
       'Button that shows up when submitting the application fails, allowing you to retry',
   },
   submitErrorTitle: {
-    id: 'cr.application:submitErrorTitle',
+    id: 'mc.application:submitErrorTitle',
     defaultMessage: 'Móttaka umsóknar tókst ekki',
     description:
       'title that shows up when an error occurs while submitting the application',
   },
   submitErrorMessage: {
-    id: 'cr.application:submitErrorMessage',
+    id: 'mc.application:submitErrorMessage',
     defaultMessage:
       'Eitthvað fór úrskeiðis við að senda inn umsókn. Reyndu aftur síðar.',
     description:
       'Text that shows up when an error occurs while submitting the application',
   },
   successTitle: {
-    id: 'cr.application:successTitle',
+    id: 'mc.application:successTitle',
     defaultMessage: 'Umsókn þín um veðbókarvottorð hefur verið staðfest',
     description: '',
   },
   successDescription: {
-    id: 'cr.application:successDescription',
+    id: 'mc.application:successDescription',
     defaultMessage: 'Þú getur nú nálgast umsóknina þína inni á mínum síðum',
     description: '',
   },
   verificationDescription: {
-    id: 'cr.application:verificationDescription',
+    id: 'mc.application:verificationDescription',
     defaultMessage: 'Nánari upplýsingar um sannreyningu má finna á',
     description: '',
   },
   verificationLinkUrl: {
-    id: 'cr.application:verificationLinkUrl',
+    id: 'mc.application:verificationLinkUrl',
     defaultMessage: 'https://island.is/sannreyna',
     description:
       'The url for the link to further information about the verification',
   },
   verificationLinkTitle: {
-    id: 'cr.application:verificationLinkTitle',
+    id: 'mc.application:verificationLinkTitle',
     defaultMessage: 'island.is/sannreyna',
     description:
       'The title for the link to further information about the verification',
   },
   mortgageCertificateInboxText: {
-    id: 'cr.application:mortgageCertificateInboxText',
+    id: 'mc.application:mortgageCertificateInboxText',
     defaultMessage:
       'Veðbókarvottorðið geturðu einnig fundið í pósthólfinu þínu',
     description: 'You can also find the mortgage certificate in your inbox',
   },
   mortgageCertificateInboxLink: {
-    id: 'cr.application:mortgageCertificateInboxLink',
+    id: 'mc.application:mortgageCertificateInboxLink',
     defaultMessage: 'https://island.is/minarsidur/postholf',
     description: 'Link to the island.is inbox',
   },
   downloadMortgageCertificate: {
-    id: 'cr.application:downloadMortgageCertificate',
+    id: 'mc.application:downloadMortgageCertificate',
     defaultMessage: 'Hlaða niður veðbókarvottorði',
     description: 'Download mortgage certificate',
   },
   openMySites: {
-    id: 'cr.application:openMySites',
+    id: 'mc.application:openMySites',
     defaultMessage: 'Opna mínar síður',
     description: 'Open my sites',
   },
   outroMessage: {
-    id: 'cr.application:outro.message',
+    id: 'mc.application:outro.message',
     defaultMessage:
       'Your application #{id} is now in review. The ID of the application is returned by the createApplication API action and read from application.externalData',
     description: '',
   },
   errorMinAgeNotFulfilled: {
-    id: 'cr.application:errorMinAgeNotFulfilled',
+    id: 'mc.application:errorMinAgeNotFulfilled',
     defaultMessage:
       'Þú hefur ekki náð lágmarksaldri til að sækja um veðbókarvottorð',
     description: '',
   },
   errorMortgageCertificateDataProvider: {
-    id: 'cr.application:errorMortgageCertificateDataProvider',
+    id: 'mc.application:errorMortgageCertificateDataProvider',
     defaultMessage:
       'Þú hefur ekki náð lágmarksaldri til að sækja um veðbókarvottorð',
     description: '',
   },
   tryAgain: {
-    id: 'cr.application:tryAgain',
+    id: 'mc.application:tryAgain',
     defaultMessage: 'Reyna aftur',
     description: '',
   },
   selectRealEstateTitle: {
-    id: 'cr.application:selectRealEstate.title',
+    id: 'mc.application:selectRealEstate.title',
     defaultMessage: 'Upplýsingar um eign',
     description: 'Real estate selection',
   },
   selectRealEstateDescription: {
-    id: 'cr.application:selectRealEstate.description',
+    id: 'mc.application:selectRealEstate.description',
     defaultMessage:
       'Hér birtast upplýsingar úr fasteignaskrá um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að. Vinsamlegast hakaðu við þá eign sem þú ert að sækja veðbókarvottorð fyrir.',
     description:

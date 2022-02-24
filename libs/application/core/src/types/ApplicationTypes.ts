@@ -95,6 +95,6 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.MORTGAGE_CERTIFICATE]: {
     slug: 'vedbokarvottord',
-    translation: 'cr.application',
+    translation: 'mc.application',
   },
 }

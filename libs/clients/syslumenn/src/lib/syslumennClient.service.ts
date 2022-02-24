@@ -121,7 +121,7 @@ export class SyslumennService {
 
   async uploadData(
     persons: Person[],
-    attachment: Attachment,
+    attachment: Attachment | undefined,
     extraData: { [key: string]: string },
     uploadDataName: string,
     uploadDataId?: string,

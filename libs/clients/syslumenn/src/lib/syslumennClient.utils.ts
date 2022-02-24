@@ -111,7 +111,7 @@ export const mapOperatingLicense = (
 export function constructUploadDataObject(
   id: string,
   persons: Person[],
-  attachment: Attachment,
+  attachment: Attachment | undefined,
   extraData: { [key: string]: string },
   uploadDataName: string,
   uploadDataId?: string,
@@ -136,9 +136,14 @@ export function constructUploadDataObject(
             tegund: mapPersonEnum(p.type),
           }
         }),
-        attachments: [
-          { nafnSkraar: attachment.name, innihaldSkraar: attachment.content },
-        ],
+        attachments: attachment
+          ? [
+              {
+                nafnSkraar: attachment.name,
+                innihaldSkraar: attachment.content,
+              },
+            ]
+          : undefined,
         gagnaMengi: extraData ?? {},
       },
     },

@@ -4,13 +4,13 @@ import { PropertyTable } from '../PropertyTable'
 import { PropertyOverviewWithDetail, PropertyDetail } from '../../types/schema'
 
 interface RegisteredPropertiesProps {
-  selectHandler: (property: PropertyDetail) => void
-  activePropertyNumber: string | undefined | null
+  selectHandler: (property: PropertyDetail | undefined) => void
+  selectedPropertyNumber: string | undefined
 }
 
 export const RegisteredProperties: FC<
   FieldBaseProps & RegisteredPropertiesProps
-> = ({ application, selectHandler, activePropertyNumber }) => {
+> = ({ application, field, selectHandler, selectedPropertyNumber }) => {
   const { externalData } = application
   const properties =
     (externalData.nationalRegistryRealEstate
@@ -21,10 +21,12 @@ export const RegisteredProperties: FC<
       {properties.map((p: PropertyDetail) => {
         return (
           <PropertyTable
+            application={application}
+            field={field}
             key={p.propertyNumber}
             selectHandler={selectHandler}
-            activePropertyNumber={activePropertyNumber || ''}
-            {...p}
+            propertyInfo={p}
+            selectedPropertyNumber={selectedPropertyNumber}
           />
         )
       })}
