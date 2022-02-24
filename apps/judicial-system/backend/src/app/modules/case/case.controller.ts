@@ -43,12 +43,10 @@ import {
 } from '../../guards'
 import { UserService } from '../user'
 import { CaseEvent, EventService } from '../event'
-import {
-  CaseExistsGuard,
-  CaseReadGuard,
-  CaseWriteGuard,
-  CurrentCase,
-} from './guards'
+import { CaseExistsGuard } from './guards/caseExists.guard'
+import { CaseReadGuard } from './guards/caseRead.guard'
+import { CaseWriteGuard } from './guards/caseWrite.guard'
+import { CurrentCase } from './guards/case.decorator'
 import {
   judgeTransitionRule,
   judgeUpdateRule,
@@ -57,14 +55,13 @@ import {
   registrarTransitionRule,
   registrarUpdateRule,
 } from './guards/rolesRules'
-import {
-  CreateCaseDto,
-  InternalCreateCaseDto,
-  TransitionCaseDto,
-  UpdateCaseDto,
-} from './dto'
-import { Case, SignatureConfirmationResponse } from './models'
-import { transitionCase } from './state'
+import { CreateCaseDto } from './dto/createCase.dto'
+import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
+import { TransitionCaseDto } from './dto/transitionCase.dto'
+import { UpdateCaseDto } from './dto/updateCase.dto'
+import { Case } from './models/case.model'
+import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
+import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
 
 @Controller('api')

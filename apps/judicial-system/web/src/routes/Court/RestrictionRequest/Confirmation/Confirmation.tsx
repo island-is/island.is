@@ -66,17 +66,13 @@ export const Confirmation: React.FC = () => {
     }
 
     // Request ruling signature to get control code
-    try {
-      const requestRulingSignatureResponse = await requestRulingSignature(
-        workingCase.id,
-      )
-      if (requestRulingSignatureResponse) {
-        setRequestRulingSignatureResponse(requestRulingSignatureResponse)
-        setModalVisible(true)
-      } else {
-        // TODO: Handle error
-      }
-    } catch (e) {
+    const requestRulingSignatureResponse = await requestRulingSignature(
+      workingCase.id,
+    )
+    if (requestRulingSignatureResponse) {
+      setRequestRulingSignatureResponse(requestRulingSignatureResponse)
+      setModalVisible(true)
+    } else {
       // TODO: Handle error
     }
   }

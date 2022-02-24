@@ -8,6 +8,7 @@ export const mapCaseStateToTagVariant = (
   isCourtRole: boolean,
   isInvestigationCase?: boolean,
   isValidToDateInThePast?: boolean,
+  courtDate?: string,
 ): { color: TagVariant; text: string } => {
   switch (state) {
     case CaseState.NEW:
@@ -19,29 +20,18 @@ export const mapCaseStateToTagVariant = (
         text: `${isCourtRole ? 'Ný krafa' : 'Krafa send'}`,
       }
     case CaseState.RECEIVED:
-      return { color: 'blueberry', text: 'Krafa móttekin' }
+      return courtDate
+        ? { color: 'mint', text: 'Á dagskrá' }
+        : { color: 'blueberry', text: 'Krafa móttekin' }
     case CaseState.ACCEPTED:
-      if (isValidToDateInThePast) {
-        return {
-          color: 'darkerBlue',
-          text: 'Lokið',
-        }
-      } else {
-        return {
-          color: 'blue',
-          text: isInvestigationCase ? 'Samþykkt' : 'Virkt',
-        }
-      }
+      return isValidToDateInThePast
+        ? { color: 'darkerBlue', text: 'Lokið' }
+        : { color: 'blue', text: isInvestigationCase ? 'Samþykkt' : 'Virkt' }
+
     case CaseState.REJECTED:
-      return {
-        color: 'rose',
-        text: 'Hafnað',
-      }
+      return { color: 'rose', text: 'Hafnað' }
     case CaseState.DISMISSED:
-      return {
-        color: 'dark',
-        text: 'Vísað frá',
-      }
+      return { color: 'dark', text: 'Vísað frá' }
     default:
       return { color: 'white', text: 'Óþekkt' }
   }

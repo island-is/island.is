@@ -5,7 +5,8 @@ import { ForbiddenException } from '@nestjs/common'
 
 import { User } from '@island.is/judicial-system/types'
 
-import { Case, SignatureConfirmationResponse } from '../models'
+import { Case } from '../models/case.model'
+import { SignatureConfirmationResponse } from '../models/signatureConfirmation.response'
 import { createTestingCaseModule } from './createTestingCaseModule'
 
 interface Then {
