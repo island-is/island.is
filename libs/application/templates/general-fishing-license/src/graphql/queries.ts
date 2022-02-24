@@ -40,11 +40,3 @@ export const queryFishingLicense = gql`
     }
   }
 `
-
-export const PAYMENT_STATUS = gql`
-  query ApplicationPaymentStatus($applicationId: String!) {
-    applicationPaymentStatus(applicationId: $applicationId) {
-      fulfilled
-    }
-  }
-`

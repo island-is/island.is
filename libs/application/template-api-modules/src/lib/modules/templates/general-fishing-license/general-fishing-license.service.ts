@@ -14,19 +14,14 @@ export class GeneralFishingLicenseService {
     auth,
   }: TemplateApiModuleActionProps) {
     // Create real charge
-
+    // TODO: Get charge item code from answers when service from Fiskistofa is ready
     const chargeItemCode = 'L5102'
-    // const chargeItemCode = 'AY110'
-
-    console.log('CHARGE ITEM CODE: ', chargeItemCode)
 
     const response = await this.sharedTemplateAPIService.createCharge(
       auth.authorization,
       id,
       chargeItemCode,
     )
-
-    console.log('Response from Service: ', response)
 
     if (!response?.paymentUrl) {
       throw new Error('paymentUrl missing in response')

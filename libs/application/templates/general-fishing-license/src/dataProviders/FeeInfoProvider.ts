@@ -8,8 +8,6 @@ import { error } from '../lib/messages'
 
 const FISKISTOFA_NATIONAL_ID = '6608922069'
 
-// const FISKISTOFA_NATIONAL_ID = '6509142520'
-
 export class FeeInfoProvider extends PaymentCatalogProvider {
   type = 'FeeInfoProvider'
 

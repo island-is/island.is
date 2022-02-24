@@ -26,7 +26,6 @@ export const ShipSelection: FC<FieldBaseProps> = ({
   field,
   errors,
 }) => {
-  console.log(application)
   const { formatMessage } = useLocale()
   const { register } = useFormContext()
   const [showTitle, setShowTitle] = useState<boolean>(false)
