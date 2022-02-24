@@ -174,7 +174,7 @@ export const HearingArrangements: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.REQUEST_OVERVIEW_BASE_ROUTE}/${workingCase.id}`}
+          previousUrl={`${Constants.OVERVIEW_ROUTE}/${workingCase.id}`}
           onNextButtonClick={handleNextButtonClick}
           nextIsDisabled={!isCourtHearingArrangemenstStepValidRC(workingCase)}
         />

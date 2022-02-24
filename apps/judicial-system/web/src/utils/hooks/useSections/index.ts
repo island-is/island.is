@@ -339,7 +339,7 @@ const useSections = () => {
           href:
             (activeSubSection && activeSubSection > 1) ||
             isReceptionAndAssignmentStepValidRC(workingCase)
-              ? `${Constants.REQUEST_OVERVIEW_BASE_ROUTE}/${id}`
+              ? `${Constants.OVERVIEW_ROUTE}/${id}`
               : undefined,
         },
         {
