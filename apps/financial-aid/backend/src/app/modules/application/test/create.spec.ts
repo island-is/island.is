@@ -106,7 +106,7 @@ describe('ApplicationController - Create', () => {
       municipalityCode: '',
       streetName: '',
       homeCircumstancesCustom: '',
-      directTaxPayments: undefined,
+      directTaxPayments: [],
     }
     const user: User = {
       nationalId: '0000000000',
@@ -181,7 +181,7 @@ describe('ApplicationController - Create', () => {
       streetName: '',
       homeCircumstancesCustom: '',
       employmentCustom: '',
-      directTaxPayments: undefined,
+      directTaxPayments: [],
     }
     const user: User = {
       nationalId: '0000000000',
@@ -295,7 +295,7 @@ describe('ApplicationController - Create', () => {
       streetName: '',
       homeCircumstancesCustom: '',
       employmentCustom: '',
-      directTaxPayments: undefined,
+      directTaxPayments: [],
     }
     const user: User = {
       nationalId: '0000000000',
@@ -402,7 +402,7 @@ describe('ApplicationController - Create', () => {
       streetName: '',
       homeCircumstancesCustom: '',
       employmentCustom: '',
-      directTaxPayments: undefined,
+      directTaxPayments: [],
     }
     const user: User = {
       nationalId: '0000000000',
@@ -579,7 +579,7 @@ describe('ApplicationController - Create', () => {
       streetName: '',
       homeCircumstancesCustom: '',
       employmentCustom: '',
-      directTaxPayments: undefined,
+      directTaxPayments: [],
     }
     const user: User = {
       nationalId: '0000000000',
@@ -638,7 +638,7 @@ describe('ApplicationController - Create', () => {
       streetName: '',
       homeCircumstancesCustom: '',
       employmentCustom: '',
-      directTaxPayments: undefined,
+      directTaxPayments: [],
     }
     const user: User = {
       nationalId: '0000000000',

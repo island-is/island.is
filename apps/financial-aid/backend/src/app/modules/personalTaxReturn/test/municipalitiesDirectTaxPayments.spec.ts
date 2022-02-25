@@ -72,8 +72,8 @@ describe('PersonalTaxReturnController - Municipalities direct tax payments', () 
       )
     })
 
-    it('should return undefined', () => {
-      expect(then.result).toBeUndefined()
+    it('should return empty array', () => {
+      expect(then.result).toEqual({ directTaxPayments: [] })
     })
   })
 

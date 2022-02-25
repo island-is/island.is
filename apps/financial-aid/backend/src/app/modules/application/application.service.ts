@@ -400,7 +400,10 @@ export class ApplicationService {
         updatedApplication?.setDataValue('directTaxPayments', resolved)
       })
 
-    if (update.event === ApplicationEventType.SPOUSEFILEUPLOAD) {
+    if (
+      update.event === ApplicationEventType.SPOUSEFILEUPLOAD &&
+      update.directTaxPayments
+    ) {
       await Promise.all([
         update.directTaxPayments.map((d) => {
           return this.directTaxPaymentService.create({
