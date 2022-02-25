@@ -1,0 +1,202 @@
+import { uuid } from 'uuidv4'
+import formatISO from 'date-fns/formatISO'
+import each from 'jest-each'
+
+import { CourtClientService } from '@island.is/judicial-system/court-client'
+import { CaseType } from '@island.is/judicial-system/types'
+
+import { subTypes } from '../court.service'
+import { createTestingCourtModule } from './createTestingCourtModule'
+
+const randomDate = () => {
+  const earliest = new Date()
+  const latest = new Date(2999, 11, 31)
+  return new Date(
+    earliest.getTime() +
+      Math.random() * (latest.getTime() - earliest.getTime()),
+  )
+}
+
+function randomEnum<T>(anEnum: T): T[keyof T] {
+  const enumValues = (Object.keys(anEnum)
+    .map((n) => Number.parseInt(n))
+    .filter((n) => !Number.isNaN(n)) as unknown) as T[keyof T][]
+  const randomIndex = Math.floor(Math.random() * enumValues.length)
+  const randomEnumValue = enumValues[randomIndex]
+
+  return randomEnumValue
+}
+
+interface Then {
+  result: string
+  error: Error
+}
+
+type GivenWhenThen = (
+  courtId: string,
+  type: CaseType,
+  policeCaseNumber: string,
+  isExtension?: boolean,
+) => Promise<Then>
+
+describe('CourtService - Create court case', () => {
+  const date = randomDate()
+  let mockCourtClientService: CourtClientService
+  let givenWhenThen: GivenWhenThen
+
+  beforeEach(async () => {
+    const {
+      courtClientService,
+      today,
+      courtService,
+    } = await createTestingCourtModule()
+
+    mockCourtClientService = courtClientService
+
+    const mockToday = today as jest.Mock
+    mockToday.mockReturnValueOnce(date)
+
+    givenWhenThen = async (
+      courtId: string,
+      type: CaseType,
+      policeCaseNumber: string,
+      isExtension?: boolean,
+    ) => {
+      const then = {} as Then
+
+      try {
+        then.result = await courtService.createCourtCase(
+          courtId,
+          type,
+          policeCaseNumber,
+          isExtension,
+        )
+      } catch (error) {
+        then.error = error as Error
+      }
+
+      return then
+    }
+  })
+
+  each`
+    type
+    ${CaseType.SEARCH_WARRANT}
+    ${CaseType.BANKING_SECRECY_WAIVER}
+    ${CaseType.PHONE_TAPPING}
+    ${CaseType.TELECOMMUNICATIONS}
+    ${CaseType.TRACKING_EQUIPMENT}
+    ${CaseType.PSYCHIATRIC_EXAMINATION}
+    ${CaseType.SOUND_RECORDING_EQUIPMENT}
+    ${CaseType.AUTOPSY}
+    ${CaseType.BODY_SEARCH}
+    ${CaseType.INTERNET_USAGE}
+    ${CaseType.RESTRAINING_ORDER}
+    ${CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION}
+    ${CaseType.OTHER}
+  `.describe('court case created for $type', ({ type }) => {
+    const courtId = uuid()
+    const policeCaseNumber = uuid()
+
+    beforeEach(async () => {
+      await givenWhenThen(courtId, type, policeCaseNumber)
+    })
+
+    it('should create a court case', () => {
+      expect(mockCourtClientService.createCase).toHaveBeenCalledWith(courtId, {
+        caseType: 'R - Rannsóknarmál',
+        subtype: subTypes[type as CaseType],
+        status: 'Skráð',
+        receivalDate: formatISO(date, { representation: 'date' }),
+        basedOn: 'Rannsóknarhagsmunir',
+        sourceNumber: policeCaseNumber,
+      })
+    })
+  })
+
+  each`
+    type
+    ${CaseType.CUSTODY}
+    ${CaseType.TRAVEL_BAN}
+  `.describe('extendable court case created for $type', ({ type }) => {
+    const courtId = uuid()
+    const policeCaseNumber = uuid()
+
+    beforeEach(async () => {
+      await givenWhenThen(courtId, type, policeCaseNumber)
+    })
+
+    it('should create a court case', () => {
+      expect(mockCourtClientService.createCase).toHaveBeenCalledWith(courtId, {
+        caseType: 'R - Rannsóknarmál',
+        subtype: subTypes[type as CaseType][0],
+        status: 'Skráð',
+        receivalDate: formatISO(date, { representation: 'date' }),
+        basedOn: 'Rannsóknarhagsmunir',
+        sourceNumber: policeCaseNumber,
+      })
+    })
+  })
+
+  each`
+    type
+    ${CaseType.CUSTODY}
+    ${CaseType.TRAVEL_BAN}
+  `.describe('extended court case created for $type', ({ type }) => {
+    const courtId = uuid()
+    const policeCaseNumber = uuid()
+
+    beforeEach(async () => {
+      await givenWhenThen(courtId, type, policeCaseNumber, true)
+    })
+
+    it('should create a court case', () => {
+      expect(mockCourtClientService.createCase).toHaveBeenCalledWith(courtId, {
+        caseType: 'R - Rannsóknarmál',
+        subtype: subTypes[type as CaseType][1],
+        status: 'Skráð',
+        receivalDate: formatISO(date, { representation: 'date' }),
+        basedOn: 'Rannsóknarhagsmunir',
+        sourceNumber: policeCaseNumber,
+      })
+    })
+  })
+
+  describe('court case number returned', () => {
+    const courtId = uuid()
+    const type = randomEnum(CaseType)
+    const policeCaseNumber = uuid()
+    const courtCaseNumber = uuid()
+    let then: Then
+
+    beforeEach(async () => {
+      const mockCreateCase = mockCourtClientService.createCase as jest.Mock
+      mockCreateCase.mockResolvedValueOnce(courtCaseNumber)
+
+      then = await givenWhenThen(courtId, type, policeCaseNumber)
+    })
+
+    it('should return a court case number', () => {
+      expect(then.result).toBe(courtCaseNumber)
+    })
+  })
+
+  describe('create court case failes', () => {
+    const courtId = uuid()
+    const type = randomEnum(CaseType)
+    const policeCaseNumber = uuid()
+    let then: Then
+
+    beforeEach(async () => {
+      const mockCreateCase = mockCourtClientService.createCase as jest.Mock
+      mockCreateCase.mockRejectedValueOnce(new Error('Some error'))
+
+      then = await givenWhenThen(courtId, type, policeCaseNumber)
+    })
+
+    it('should throw Error', () => {
+      expect(then.error).toBeInstanceOf(Error)
+      expect(then.error.message).toBe('Some error')
+    })
+  })
+})
