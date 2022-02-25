@@ -22,8 +22,7 @@ import DefenderInfo from '@island.is/judicial-system-web/src/components/Defender
 import { accused as m } from '@island.is/judicial-system-web/messages'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 import type { Case } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-
+import * as Constants from '@island.is/judicial-system/consts'
 import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
 import {
