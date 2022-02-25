@@ -162,11 +162,7 @@ const OverviewForm: React.FC<Props> = (props) => {
               id="id_1"
               label="Lagaákvæði sem brot varða við"
             >
-              <Text>
-                <span className={styles.breakSpaces}>
-                  {workingCase.lawsBroken}
-                </span>
-              </Text>
+              <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
             </AccordionItem>
             <AccordionItem
               labelVariant="h3"
@@ -185,11 +181,7 @@ const OverviewForm: React.FC<Props> = (props) => {
                   <Box marginBottom={2}>
                     <Text variant="h5">Málsatvik</Text>
                   </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.caseFacts}
-                    </span>
-                  </Text>
+                  <Text whiteSpace="breakSpaces">{workingCase.caseFacts}</Text>
                 </Box>
               )}
               {workingCase.legalArguments && (
@@ -197,10 +189,8 @@ const OverviewForm: React.FC<Props> = (props) => {
                   <Box marginBottom={2}>
                     <Text variant="h5">Lagarök</Text>
                   </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.legalArguments}
-                    </span>
+                  <Text whiteSpace="breakSpaces">
+                    {workingCase.legalArguments}
                   </Text>
                 </Box>
               )}

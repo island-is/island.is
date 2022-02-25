@@ -233,11 +233,7 @@ export const Overview: React.FC = () => {
               id="id_1"
               label="Lagaákvæði sem brot varða við"
             >
-              <Text>
-                <span className={styles.breakSpaces}>
-                  {workingCase.lawsBroken}
-                </span>
-              </Text>
+              <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
             </AccordionItem>
             <AccordionItem
               labelVariant="h3"
@@ -287,11 +283,7 @@ export const Overview: React.FC = () => {
                   <Box marginBottom={2}>
                     <Text variant="h5">Málsatvik</Text>
                   </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.caseFacts}
-                    </span>
-                  </Text>
+                  <Text whiteSpace="breakSpaces">{workingCase.caseFacts}</Text>
                 </Box>
               )}
               {workingCase.legalArguments && (
@@ -299,10 +291,8 @@ export const Overview: React.FC = () => {
                   <Box marginBottom={2}>
                     <Text variant="h5">Lagarök</Text>
                   </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.legalArguments}
-                    </span>
+                  <Text whiteSpace="breakSpaces">
+                    {workingCase.legalArguments}
                   </Text>
                 </Box>
               )}
@@ -317,11 +307,7 @@ export const Overview: React.FC = () => {
                         Athugasemdir vegna málsmeðferðar
                       </Text>
                     </Box>
-                    <Text>
-                      <span className={styles.breakSpaces}>
-                        {workingCase.comments}
-                      </span>
-                    </Text>
+                    <Text whiteSpace="breakSpaces">{workingCase.comments}</Text>
                   </Box>
                 )}
                 {Boolean(workingCase.caseFilesComments) && (
@@ -329,10 +315,8 @@ export const Overview: React.FC = () => {
                     <Text variant="h4" as="h4">
                       Athugasemdir vegna rannsóknargagna
                     </Text>
-                    <Text>
-                      <span className={styles.breakSpaces}>
-                        {workingCase.caseFilesComments}
-                      </span>
+                    <Text whiteSpace="breakSpaces">
+                      {workingCase.caseFilesComments}
                     </Text>
                   </>
                 )}
