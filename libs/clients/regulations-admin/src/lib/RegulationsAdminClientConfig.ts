@@ -3,6 +3,7 @@ import { defineConfig } from '@island.is/nest/config'
 
 const schema = z.object({
   baseApiUrl: z.string(),
+  regulationsApiUrl: z.string(),
 })
 
 export const RegulationsAdminClientConfig = defineConfig({
@@ -12,6 +13,10 @@ export const RegulationsAdminClientConfig = defineConfig({
     baseApiUrl: env.required(
       'REGULATIONS_ADMIN_URL',
       'http://localhost:3333/api',
+    ),
+    regulationsApiUrl: env.required(
+      'REGULATIONS_API_URL',
+      'https://reglugerdir-api.herokuapp.com/api/v1',
     ),
   }),
 })

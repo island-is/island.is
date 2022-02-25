@@ -50,5 +50,14 @@ import { environment } from '../environments'
       ],
     }),
   ],
+  providers: [
+    {
+      provide: RegulationsService,
+      useFactory: async () =>
+        new RegulationsService({
+          url: environment.regulationsAdmin.regulationsApiUrl,
+        }),
+    },
+  ],
 })
 export class AppModule {}

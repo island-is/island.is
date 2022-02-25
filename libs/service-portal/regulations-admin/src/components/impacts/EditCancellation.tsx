@@ -146,9 +146,11 @@ export const EditCancellation = (props: EditCancellationProp) => {
               onChangeDate={changeCancelDate}
             />
           </GridColumn>
+        </GridRow>
+        <GridRow>
           <GridColumn
-            span={['12/12', '12/12', '12/12', '3/12']}
-            offset={['0', '0', '0', '1/12']}
+            span={['12/12', '12/12', '12/12', '10/12', '8/12']}
+            offset={['0', '0', '0', '1/12', '2/12']}
           >
             {effects?.future && (
               <ImpactHistory

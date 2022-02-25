@@ -1,25 +1,22 @@
 import React from 'react'
 
-import { ActionCard, Box, Stack, Text } from '@island.is/island-ui/core'
+import { ActionCard, Box, Stack } from '@island.is/island-ui/core'
 import { homeMessages, statusMsgs } from '../messages'
 import { prettyName } from '@island.is/regulations'
 import { useLocale } from '@island.is/localization'
-import { useShippedRegulationsQuery } from '../utils/dataHooks'
 import { getEditUrl } from '../utils/routing'
 import { useHistory } from 'react-router-dom'
+import { ShippedSummary } from '@island.is/regulations/admin'
 
-export const ShippedRegulations = () => {
+export type ShippedRegulationsProps = {
+  shippedRegs: ShippedSummary[]
+}
+
+export const ShippedRegulations = (props: ShippedRegulationsProps) => {
+  const { shippedRegs } = props
   const { formatMessage, formatDateFns } = useLocale()
   const t = formatMessage
-  const shippedRegs = useShippedRegulationsQuery()
   const history = useHistory()
-
-  if (shippedRegs.loading || shippedRegs.error) {
-    return null
-  }
-  if (shippedRegs.data.length === 0) {
-    return null
-  }
 
   // DECIDE:
   // We are currently loading both shipped (i.e. locked) drafts
@@ -36,7 +33,7 @@ export const ShippedRegulations = () => {
   return (
     <Box marginTop={6}>
       <Stack space={2}>
-        {shippedRegs.data.map((shipped) => {
+        {shippedRegs.map((shipped) => {
           const name = shipped.name
           const publishedDate = shipped.idealPublishDate
 

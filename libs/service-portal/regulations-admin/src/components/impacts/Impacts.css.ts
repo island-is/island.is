@@ -115,3 +115,19 @@ export const referenceTextAppendixTitle = style({
 export const referenceTextCommentsTitle = style({
   ...referenceTextAppendixCommentTitle,
 })
+
+export const border = style({
+  maxWidth: 'fit-content',
+  paddingBottom: theme.spacing[1],
+  marginBottom: theme.spacing[3],
+})
+
+export const line = style({
+  width: 1,
+  height: theme.spacing[3],
+  background: theme.color.dark200,
+})
+
+export const history = style({
+  gap: theme.spacing[4],
+})

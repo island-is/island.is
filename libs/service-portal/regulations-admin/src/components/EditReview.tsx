@@ -16,7 +16,7 @@ export const EditReview = () => {
   const [confirmed, setConfirmed] = useState(false)
 
   return (
-    <Box marginY={[4, 4, 8]}>
+    <Box marginBottom={4}>
       <EditReviewWarnings messages={messages} />
       <EditReviewOverview hasWarnings={!!messages?.length} />
 

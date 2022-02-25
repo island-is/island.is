@@ -1,11 +1,10 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import {
   ActionCard,
   Box,
   SkeletonLoader,
   Stack,
-  Text,
-  Button,
+  Pagination,
 } from '@island.is/island-ui/core'
 import { homeMessages as msg, statusMsgs } from '../messages'
 import { ISODate, toISODate } from '@island.is/regulations'
@@ -19,11 +18,14 @@ export const TaskList = () => {
   const { formatMessage, formatDateFns } = useLocale()
   const t = formatMessage
   const [page, setPage] = useState(1)
-
   const history = useHistory()
-  const tasklist = useRegulationTaskListQuery(page)
+  const handlePageChange = useCallback((page: number) => setPage(page), [])
+  const { loading, data, error } = useRegulationTaskListQuery(page)
 
-  if (tasklist.loading || tasklist.error) {
+  const drafts = data?.drafts
+  const paging = data?.paging
+
+  if (loading || error) {
     return (
       <Box marginBottom={[4, 4, 8]}>
         <SkeletonLoader height={80} repeat={3} space={3} />
@@ -31,7 +33,7 @@ export const TaskList = () => {
     )
   }
 
-  if (tasklist.data.drafts.length === 0) {
+  if (drafts && drafts.length === 0) {
     return null
   }
 
@@ -58,48 +60,57 @@ export const TaskList = () => {
   return (
     <Box marginBottom={[4, 4, 8]} marginTop={6}>
       <Stack space={3}>
-        {tasklist.data.drafts.map((item) => {
-          const {
-            id,
-            title,
-            idealPublishDate,
-            fastTrack,
-            draftingStatus,
-            authors,
-          } = item
-          // const statusLabel = formatMessage(statusMsgs[draftingStatus])
+        {drafts &&
+          drafts.map((item) => {
+            const {
+              id,
+              title,
+              idealPublishDate,
+              fastTrack,
+              draftingStatus,
+              authors,
+            } = item
+            // const statusLabel = formatMessage(statusMsgs[draftingStatus])
 
-          return (
-            <ActionCard
-              key={id}
-              date={getReqDate(idealPublishDate, fastTrack)}
-              backgroundColor={fastTrack ? 'blue' : undefined}
-              heading={title || t(msg.taskList_draftTitleMissing)}
-              tag={{
-                label: t(statusMsgs[draftingStatus]),
-                outlined: false,
-                variant: draftingStatus === 'proposal' ? 'blueberry' : 'red',
-              }}
-              text={authors
-                ?.map((item) => item.name || item.authorId)
-                .join(', ')}
-              cta={{
-                icon: 'arrowForward',
-                label: t(msg.cta_seeRegulation),
-                variant: 'text',
-                size: 'small',
-                onClick: () => {
-                  history.push(getEditUrl(id))
-                },
-              }}
-            />
-          )
-        })}
-        {tasklist.data.paging.pages > 1 && (
-          <p>
-            Page {page} of {tasklist.data.paging.pages}
-            <Button onClick={() => setPage(page + 1)}>Næsta síða</Button>
-          </p>
+            return (
+              <ActionCard
+                key={id}
+                date={getReqDate(idealPublishDate, fastTrack)}
+                backgroundColor={fastTrack ? 'blue' : undefined}
+                heading={title || t(msg.taskList_draftTitleMissing)}
+                tag={{
+                  label: t(statusMsgs[draftingStatus]),
+                  outlined: false,
+                  variant: draftingStatus === 'proposal' ? 'blueberry' : 'red',
+                }}
+                text={authors
+                  ?.map((item) => item.name || item.authorId)
+                  .join(', ')}
+                cta={{
+                  icon: 'arrowForward',
+                  label: t(msg.cta_seeRegulation),
+                  variant: 'text',
+                  size: 'small',
+                  onClick: () => {
+                    history.push(getEditUrl(id))
+                  },
+                }}
+              />
+            )
+          })}
+        {paging && paging.pages > 1 && (
+          <Pagination
+            page={page}
+            totalPages={paging.pages}
+            renderLink={(page, className, children) => (
+              <button
+                className={className}
+                onClick={handlePageChange.bind(null, page)}
+              >
+                {children}
+              </button>
+            )}
+          />
         )}
       </Stack>
     </Box>
