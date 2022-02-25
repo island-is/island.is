@@ -80,7 +80,8 @@ export class DraftRegulationService {
       offset: (page - 1) * count,
       order: [
         ['drafting_status', 'ASC'],
-        ['fast_track', 'ASC'],
+        ['fast_track', 'DESC'],
+        ['ideal_publish_date', 'ASC'],
         ['created', 'DESC'],
       ],
     })
