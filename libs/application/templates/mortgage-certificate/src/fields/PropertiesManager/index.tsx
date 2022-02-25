@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { RegisteredProperties } from '../RegisteredProperties'
 import { SearchProperties } from '../SearchProperties'
 import { PropertyOverviewWithDetail, PropertyDetail } from '../../types/schema'
@@ -10,7 +10,8 @@ export const PropertiesManager: FC<FieldBaseProps> = ({
   field,
 }) => {
   const { externalData } = application
-  const { setValue, getValues } = useFormContext()
+  const { id } = field
+  const { setValue } = useFormContext()
 
   const myProperties =
     (externalData.nationalRegistryRealEstate
@@ -37,14 +38,15 @@ export const PropertiesManager: FC<FieldBaseProps> = ({
     }
   }
 
+  var selectedPropertyNumber = getValueViaPath(
+    application.answers,
+    'selectProperty.property.propertyNumber',
+  ) as string
+
   return (
     <Controller
-      name="selectedProperty.propertyNumber"
-      defaultValue={
-        ((application.answers.selectedProperty as unknown) as {
-          propertyNumber?: string
-        })?.propertyNumber || myProperties[0]?.propertyNumber
-      }
+      name="selectProperty.property.propertyNumber"
+      defaultValue={selectedPropertyNumber || myProperties[0]?.propertyNumber}
       render={({ value, onChange }) => {
         return (
           <>
@@ -53,8 +55,8 @@ export const PropertiesManager: FC<FieldBaseProps> = ({
               field={field}
               selectHandler={(p: PropertyDetail | undefined) => {
                 onChange(p?.propertyNumber)
-                setValue('selectedProperty', {
-                  ...getCleanValue(p),
+                setValue(id, {
+                  property: getCleanValue(p),
                   isFromSearch: false,
                 })
               }}
@@ -65,8 +67,8 @@ export const PropertiesManager: FC<FieldBaseProps> = ({
               field={field}
               selectHandler={(p: PropertyDetail | undefined) => {
                 onChange(p?.propertyNumber)
-                setValue('selectedProperty', {
-                  ...getCleanValue(p),
+                setValue(id, {
+                  property: getCleanValue(p),
                   isFromSearch: true,
                 })
               }}

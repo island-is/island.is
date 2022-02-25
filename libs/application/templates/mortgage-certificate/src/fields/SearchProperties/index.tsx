@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Box, Text, Input, Button } from '@island.is/island-ui/core'
 import { PropertyTable } from '../PropertyTable'
 import { PropertyDetail } from '../../types/schema'
@@ -21,6 +21,7 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
   selectHandler,
   selectedPropertyNumber,
 }) => {
+  const [hasInitialized, setHasInitialized] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [searchStr, setSearchStr] = useState('')
   const [foundProperty, setFoundProperty] = useState<
@@ -48,17 +49,16 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
     runQuery()
   }
 
+  var selectProperty = getValueViaPath(
+    application.answers,
+    'selectProperty',
+  ) as { property: PropertyDetail; isFromSearch: boolean }
+
   // initialize search box and search result
-  const [hasInitialized, setHasInitialized] = useState<boolean>(false)
-  const selectedProperty = (application.answers
-    .selectedProperty as unknown) as PropertyDetail
-  const isFromSearch = ((application.answers.selectedProperty as unknown) as {
-    isFromSearch: boolean
-  })?.isFromSearch
-  if (!hasInitialized && isFromSearch) {
+  if (!hasInitialized && selectProperty?.isFromSearch) {
     setHasInitialized(true)
-    setSearchStr(selectedProperty?.propertyNumber || '')
-    setFoundProperty(selectedProperty || undefined)
+    setSearchStr(selectProperty?.property?.propertyNumber || '')
+    setFoundProperty(selectProperty?.property || undefined)
   }
 
   return (

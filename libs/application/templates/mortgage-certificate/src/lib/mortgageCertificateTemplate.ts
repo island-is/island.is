@@ -16,30 +16,34 @@ import { m } from './messages'
 
 const MortgageCertificateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  selectedProperty: z.object({
-    propertyNumber: z.string(),
-    defaultAddress: z
+  selectProperty: z.object({
+    property: z
       .object({
-        display: z.string().optional(),
-      })
-      .optional(),
-    unitsOfUse: z
-      .object({
+        propertyNumber: z.string(),
+        defaultAddress: z
+          .object({
+            display: z.string().optional(),
+          })
+          .optional(),
         unitsOfUse: z
-          .array(
-            z
-              .object({
-                marking: z.string().optional(),
-                displaySize: z.number().optional(),
-                buildYearDisplay: z.string().optional(),
-                explanation: z.string().optional(),
-              })
+          .object({
+            unitsOfUse: z
+              .array(
+                z
+                  .object({
+                    marking: z.string().optional(),
+                    displaySize: z.number().optional(),
+                    buildYearDisplay: z.string().optional(),
+                    explanation: z.string().optional(),
+                  })
+                  .optional(),
+              )
               .optional(),
-          )
+          })
           .optional(),
       })
       .optional(),
-    isFromSearch: z.boolean(), //TODOx, dont have under selectedProperty?
+    isFromSearch: z.boolean().optional(),
   }),
 })
 

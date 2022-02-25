@@ -70,7 +70,7 @@ export const MortgageCertificateForm: Form = buildForm({
               description: m.selectRealEstateDescription,
             }),
             buildCustomField({
-              id: 'selectedProperty',
+              id: 'selectProperty',
               title: '',
               component: 'PropertiesManager',
             }),
