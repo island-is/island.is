@@ -18,13 +18,36 @@ import {
 } from '@island.is/react/feature-flags'
 import { UserMenu } from './UserMenu'
 import { ACTOR_DELEGATIONS } from './actorDelegations.graphql'
-import { ActorDelegationsQuery } from '../../../gen/graphql'
+import { ActorDelegationsQuery, Maybe } from '../../../gen/graphql'
 import { USER_PROFILE } from './userProfile.graphql'
 import { GetUserProfileQuery } from '../../../gen/graphql'
+import { gql } from '@apollo/client'
+
+const NationalRegistryUserQuery = gql`
+  query NationalRegistryUserProfileQuery {
+    nationalRegistryUser {
+      fullName
+      nationalId
+      gender
+    }
+  }
+`
+
+export type GetNationalRegistryQuery = {
+  __typename?: 'Query'
+  nationalRegistryUser?: Maybe<{
+    __typename?: 'NationalRegistryUser'
+    fullName?: Maybe<string>
+  }>
+}
 
 const delegation = {
   name: 'Phil',
   nationalId: '1111111111',
+}
+
+const nationalRegistryData = {
+  fullName: 'Gervimaður Testsson',
 }
 const mocks = [
   {
@@ -52,6 +75,18 @@ const mocks = [
           mobile: '0000000',
         },
       } as GetUserProfileQuery,
+    },
+  },
+  {
+    request: {
+      query: NationalRegistryUserQuery,
+    },
+    result: {
+      data: {
+        nationalRegistryUser: {
+          fullName: nationalRegistryData.fullName,
+        },
+      } as GetNationalRegistryQuery,
     },
   },
 ]
@@ -116,7 +151,7 @@ describe('UserMenu', () => {
 
     // Assert
     const button = screen.getAllByRole('button', { name: /útskráning/i })[0]
-    expect(button).toHaveTextContent('John')
+    expect(button).toBeDefined()
   })
 
   it('shows delegation name when authenticated with delegations', async () => {
@@ -132,7 +167,7 @@ describe('UserMenu', () => {
 
     // Assert
     const button = screen.getAllByRole('button', { name: /útskráning/i })
-    expect(button[0]).toHaveTextContent('John')
+    expect(button[0]).toBeDefined()
     expect(button[1]).toHaveTextContent('Anna')
   })
 

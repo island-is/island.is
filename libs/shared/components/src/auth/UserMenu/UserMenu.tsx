@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Hidden } from '@island.is/island-ui/core'
+import { Box, Hidden, SkeletonLoader } from '@island.is/island-ui/core'
 import { useAuth } from '@island.is/auth/react'
 import { UserButton } from './UserButton'
 import { UserDropdown } from './UserDropdown'
@@ -50,47 +50,40 @@ export const UserMenu = ({
     }
   }, [userMenuOpen])
 
-  if (!user) {
+  if (!user || error) {
     return null
-  }
-
-  let fullName: string | undefined = user.profile.name
-
-  if (!loading && !error) {
-    fullName = nationalRegistryUser?.fullName
   }
 
   return (
     <Box display="flex" position="relative" height="full">
-      {!loading && (
-        <>
-          <Hidden below="md">
-            <UserLanguageSwitcher user={user} />
-          </Hidden>
-          <UserButton
-            user={user}
-            name={fullName}
-            onClick={handleClick}
-            small={small}
-          />
-          <UserDropdown
-            user={user}
-            name={fullName}
-            dropdownState={dropdownState}
-            setDropdownState={setDropdownState}
-            onLogout={() => {
-              setDropdownState('closed')
-              signOut()
-            }}
-            onSwitchUser={(nationalId: string) => {
-              setDropdownState('closed')
-              switchUser(nationalId)
-            }}
-            fullscreen={fullscreen}
-            showDropdownLanguage={showDropdownLanguage}
-          />
-        </>
-      )}
+      <>
+        <Hidden below="md">
+          <UserLanguageSwitcher user={user} />
+        </Hidden>
+
+        <UserButton
+          user={user}
+          name={nationalRegistryUser?.fullName}
+          onClick={handleClick}
+          small={small}
+        />
+        <UserDropdown
+          user={user}
+          name={nationalRegistryUser?.fullName}
+          dropdownState={dropdownState}
+          setDropdownState={setDropdownState}
+          onLogout={() => {
+            setDropdownState('closed')
+            signOut()
+          }}
+          onSwitchUser={(nationalId: string) => {
+            setDropdownState('closed')
+            switchUser(nationalId)
+          }}
+          fullscreen={fullscreen}
+          showDropdownLanguage={showDropdownLanguage}
+        />
+      </>
     </Box>
   )
 }

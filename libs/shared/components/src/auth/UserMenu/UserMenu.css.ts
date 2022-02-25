@@ -127,6 +127,7 @@ export const resetButtonPadding = style({
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'flex-start',
+  minWidth: 100,
 })
 
 export const delegationName = style({
