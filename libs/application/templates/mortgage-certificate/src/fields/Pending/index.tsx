@@ -5,7 +5,7 @@ import { Box, LoadingDots } from '@island.is/island-ui/core'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { MCEvents } from '../../lib/constants'
 
-export const PendingCertificateField: FC<FieldBaseProps> = ({
+export const Pending: FC<FieldBaseProps> = ({
   application,
   field,
   refetch,
@@ -13,7 +13,7 @@ export const PendingCertificateField: FC<FieldBaseProps> = ({
   const { externalData } = application
   const applicationId = application.id
   const [kMarked, setKMarked] = useState<boolean>(false)
-  const [certificate, setCertificate] = useState<boolean>(true)
+  const [certificate, setCertificate] = useState<boolean>(false)
   const [submitError, setSubmitError] = useState<boolean>(false)
 
   const [submitApplication] = useMutation(SUBMIT_APPLICATION, {
@@ -52,7 +52,7 @@ export const PendingCertificateField: FC<FieldBaseProps> = ({
         variables: {
           input: {
             id: applicationId,
-            event: 'PENDING_REJECTED',
+            event: MCEvents.PENDING_REJECTED,
             answers: application.answers,
           },
         },

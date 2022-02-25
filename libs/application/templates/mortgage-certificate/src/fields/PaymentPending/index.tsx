@@ -7,10 +7,10 @@ import {
   DefaultEvents,
 } from '@island.is/application/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import { m } from '../lib/messages'
+import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
-import { Company } from '../assets'
+import { Company } from '../../assets'
 
 const QUERY = gql`
   query status($applicationId: String!) {
@@ -28,11 +28,7 @@ interface PaymentStatus {
   fulfilled: boolean
 }
 
-export const PaymentPendingField: FC<Props> = ({
-  error,
-  application,
-  refetch,
-}) => {
+export const PaymentPending: FC<Props> = ({ error, application, refetch }) => {
   const applicationId = application.id
   const { formatMessage } = useLocale()
   const [continuePolling, setContinuePolling] = useState(true)

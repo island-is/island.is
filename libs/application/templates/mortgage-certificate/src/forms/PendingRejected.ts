@@ -34,20 +34,6 @@ export const PendingRejected: Form = buildForm({
               title: '',
               description: '',
             }),
-            buildSubmitField({
-              id: 'submit',
-              placement: 'footer',
-              title: m.continue,
-              refetchApplicationAfterSubmit: true,
-              actions: [
-                {
-                  event: DefaultEvents.PAYMENT,
-                  name: m.continue,
-                  type: 'primary',
-                  icon: 'arrowRight',
-                },
-              ],
-            }),
           ],
         }),
       ],

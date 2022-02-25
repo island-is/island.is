@@ -2,9 +2,9 @@ import React, { FC, useState } from 'react'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Box, Text, Input, Button } from '@island.is/island-ui/core'
 import { PropertyTable } from '../PropertyTable'
-import { PropertyDetail } from '../../types/schema'
+import { PropertyDetail } from '../../../types/schema'
 import { gql, useLazyQuery } from '@apollo/client'
-import { SEARCH_REAL_ESTATE_QUERY } from '../../graphql/queries'
+import { SEARCH_REAL_ESTATE_QUERY } from '../../../graphql/queries'
 
 interface SearchPropertiesProps {
   selectHandler: (property: PropertyDetail | undefined) => void

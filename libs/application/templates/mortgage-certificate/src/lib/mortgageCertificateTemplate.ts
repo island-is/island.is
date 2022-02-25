@@ -88,7 +88,7 @@ const template: ApplicationTemplate<
                 ),
               actions: [
                 {
-                  event: 'PENDING',
+                  event: MCEvents.PENDING,
                   name: 'Staðfesta',
                   type: 'primary',
                 },
@@ -98,7 +98,7 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.PAYMENT]: { target: States.PENDING },
+          [MCEvents.PENDING]: { target: States.PENDING },
           [DefaultEvents.SUBMIT]: { target: States.PENDING },
         },
       },
@@ -124,16 +124,7 @@ const template: ApplicationTemplate<
               formLoader: () =>
                 import('../forms/Pending').then((val) => val.Pending),
               actions: [
-                {
-                  event: DefaultEvents.PAYMENT,
-                  name: 'Staðfesta',
-                  type: 'primary',
-                },
-                {
-                  event: 'PENDING_REJECTED',
-                  name: 'Mínaru síður',
-                  type: 'primary',
-                },
+                { event: DefaultEvents.SUBMIT, name: 'Áfram', type: 'primary' },
               ],
               write: 'all',
             },
@@ -141,9 +132,9 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.PAYMENT]: { target: States.PAYMENT_INFO },
-          [DefaultEvents.SUBMIT]: { target: States.PAYMENT_INFO },
-          [MCEvents.ERROR]: { target: States.DRAFT },
           [MCEvents.PENDING_REJECTED]: { target: States.PENDING_REJECTED },
+          [MCEvents.ERROR]: { target: States.DRAFT },
+          [DefaultEvents.SUBMIT]: { target: States.PAYMENT_INFO },
         },
       },
       [States.PENDING_REJECTED]: {
@@ -156,12 +147,7 @@ const template: ApplicationTemplate<
             },
           },
           progress: 0.25,
-          lifecycle: {
-            shouldBeListed: false,
-            shouldBePruned: true,
-            // Applications that stay in this state for 24 hours will be pruned automatically
-            whenToPrune: 24 * 3600 * 1000,
-          },
+          lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -169,15 +155,40 @@ const template: ApplicationTemplate<
                 import('../forms/PendingRejected').then(
                   (val) => val.PendingRejected,
                 ),
+              actions: [],
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [MCEvents.PENDING_REJECTED_TRY_AGAIN]: {
+            target: States.PENDING_REJECTED_TRY_AGAIN,
+          },
+          [DefaultEvents.SUBMIT]: { target: States.PENDING_REJECTED_TRY_AGAIN },
+        },
+      },
+      [States.PENDING_REJECTED_TRY_AGAIN]: {
+        meta: {
+          name: 'Beiðni um vinnslu',
+          actionCard: {
+            tag: {
+              label: m.actionCardDraft,
+              variant: 'blue',
+            },
+          },
+          progress: 0.25,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/PendingRejectedTryAgain').then(
+                  (val) => val.PendingRejectedTryAgain,
+                ),
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,
                   name: 'Staðfesta',
-                  type: 'primary',
-                },
-                {
-                  event: 'PENDING_REJECTED',
-                  name: 'Mínaru síður',
                   type: 'primary',
                 },
               ],
@@ -187,7 +198,7 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.PAYMENT]: { target: States.PAYMENT_INFO },
-          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
+          [DefaultEvents.SUBMIT]: { target: States.PAYMENT_INFO },
         },
       },
       [States.PAYMENT_INFO]: {
@@ -219,8 +230,8 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
           [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
+          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
         },
       },
       [States.PAYMENT]: {
@@ -253,8 +264,8 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
           [DefaultEvents.PAYMENT]: { target: States.DRAFT },
+          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
         },
       },
       [States.COMPLETED]: {

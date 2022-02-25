@@ -1,7 +1,10 @@
 import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import { PropertyTable } from '../PropertyTable'
-import { PropertyOverviewWithDetail, PropertyDetail } from '../../types/schema'
+import {
+  PropertyOverviewWithDetail,
+  PropertyDetail,
+} from '../../../types/schema'
 
 interface RegisteredPropertiesProps {
   selectHandler: (property: PropertyDetail | undefined) => void

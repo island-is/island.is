@@ -12,6 +12,7 @@ import {
   DefaultEvents,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
+import { MCEvents } from '../lib/constants'
 
 export const MortgageCertificateForm: Form = buildForm({
   id: 'MortgageCertificateFormDraft',
@@ -64,19 +65,6 @@ export const MortgageCertificateForm: Form = buildForm({
           title: m.selectRealEstateTitle,
           space: 1,
           children: [
-            buildSubmitField({
-              id: 'submit',
-              placement: 'footer',
-              title: m.continue,
-              refetchApplicationAfterSubmit: true,
-              actions: [
-                {
-                  event: DefaultEvents.PAYMENT,
-                  name: m.continue,
-                  type: 'primary',
-                },
-              ],
-            }),
             buildDescriptionField({
               id: 'selectRealEstateDescription',
               title: '',
@@ -86,6 +74,19 @@ export const MortgageCertificateForm: Form = buildForm({
               id: 'selectProperty',
               title: '',
               component: 'PropertiesManager',
+            }),
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: m.continue,
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: MCEvents.PENDING,
+                  name: m.continue,
+                  type: 'primary',
+                },
+              ],
             }),
           ],
         }),

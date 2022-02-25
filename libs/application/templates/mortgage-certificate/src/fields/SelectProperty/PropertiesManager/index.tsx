@@ -3,7 +3,10 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { RegisteredProperties } from '../RegisteredProperties'
 import { SearchProperties } from '../SearchProperties'
-import { PropertyOverviewWithDetail, PropertyDetail } from '../../types/schema'
+import {
+  PropertyOverviewWithDetail,
+  PropertyDetail,
+} from '../../../types/schema'
 
 export const PropertiesManager: FC<FieldBaseProps> = ({
   application,
