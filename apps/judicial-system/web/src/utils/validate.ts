@@ -1,6 +1,8 @@
 // TODO: Add tests
 import { Case, CaseType, User } from '@island.is/judicial-system/types'
 
+import { isBusiness } from './stepHelper'
+
 export type Validation =
   | 'empty'
   | 'time-format'
@@ -16,7 +18,7 @@ const someDefendantIsInvalid = (workingCase: Case) => {
     workingCase.defendants &&
     workingCase.defendants.some(
       (defendant) =>
-        !defendant.gender ||
+        (!isBusiness(defendant.nationalId) && !defendant.gender) ||
         !validate(defendant.nationalId || '', 'empty').isValid ||
         !validate(
           defendant.nationalId || '',
@@ -175,28 +177,34 @@ export const isPoliceReportStepValidIC = (workingCase: Case) => {
   )
 }
 
-export const isOverviewStepValidRC = (workingCase: Case) => {
-  return validate(workingCase.courtCaseNumber || '', 'empty').isValid
+export const isReceptionAndAssignmentStepValidRC = (workingCase: Case) => {
+  return (
+    validate(workingCase.courtCaseNumber || '', 'empty').isValid &&
+    workingCase.judge
+  )
 }
 
-export const isOverviewStepValidIC = (workingCase: Case) => {
-  return validate(workingCase.courtCaseNumber || '', 'empty').isValid
+export const isReceptionAndAssignmentStepValidIC = (workingCase: Case) => {
+  return (
+    validate(workingCase.courtCaseNumber || '', 'empty').isValid &&
+    workingCase.judge
+  )
 }
 
 export const isCourtHearingArrangemenstStepValidRC = (workingCase: Case) => {
   return (
     validate(workingCase.defenderEmail || '', 'email-format').isValid &&
     validate(workingCase.defenderPhoneNumber || '', 'phonenumber').isValid &&
-    validate(workingCase.courtDate || '', 'date-format').isValid &&
-    workingCase.judge
+    validate(workingCase.courtDate || '', 'date-format').isValid
   )
 }
 
 export const isCourtHearingArrangementsStepValidIC = (workingCase: Case) => {
   return (
-    workingCase.judge &&
     workingCase.sessionArrangements &&
-    validate(workingCase.courtDate || '', 'date-format').isValid
+    validate(workingCase.courtDate || '', 'date-format').isValid &&
+    validate(workingCase.defenderEmail || '', 'email-format').isValid &&
+    validate(workingCase.defenderPhoneNumber || '', 'phonenumber').isValid
   )
 }
 
@@ -204,7 +212,7 @@ export const isCourtRecordStepValidRC = (workingCase: Case) => {
   return (
     validate(workingCase.courtStartDate || '', 'date-format').isValid &&
     validate(workingCase.courtLocation || '', 'empty').isValid &&
-    validate(workingCase.litigationPresentations || '', 'empty').isValid
+    validate(workingCase.sessionBookings || '', 'empty').isValid
   )
 }
 
@@ -212,7 +220,7 @@ export const isCourtRecordStepValidIC = (workingCase: Case) => {
   return (
     validate(workingCase.courtStartDate || '', 'date-format').isValid &&
     validate(workingCase.courtLocation || '', 'empty').isValid &&
-    validate(workingCase.litigationPresentations || '', 'empty').isValid
+    validate(workingCase.sessionBookings || '', 'empty').isValid
   )
 }
 

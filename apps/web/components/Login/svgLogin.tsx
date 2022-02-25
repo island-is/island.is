@@ -75,7 +75,7 @@ export const SvgLogin = ({ ...props }: React.SVGProps<SVGSVGElement>) => {
           y2={428.907}
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#FF4C84" />
+          <stop offset={0} stopColor="#FF4C84" />
           <stop offset={0.353} stopColor="#B569B7" />
           <stop offset={0.656} stopColor="#7D7EDE" />
           <stop offset={0.88} stopColor="#5A8BF6" />

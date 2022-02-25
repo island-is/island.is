@@ -29,7 +29,7 @@ import {
 } from '@island.is/judicial-system/types'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import {
-  JudgeSubsections,
+  CourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
@@ -44,7 +44,6 @@ import {
   formatDate,
   formatNationalId,
   formatTravelBanRestrictions,
-  TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isRulingStepTwoValidRC } from '@island.is/judicial-system-web/src/utils/validate'
@@ -54,7 +53,7 @@ import {
   core,
   rcRulingStepTwo as m,
 } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import * as Constants from '@island.is/judicial-system/consts'
 
 export const RulingStepTwo: React.FC = () => {
   const router = useRouter()
@@ -248,7 +247,7 @@ export const RulingStepTwo: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={JudgeSubsections.RULING_STEP_TWO}
+      activeSubSection={CourtSubsections.RULING_STEP_TWO}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -295,6 +294,7 @@ export const RulingStepTwo: React.FC = () => {
               textarea
               required
               rows={7}
+              autoExpand={{ on: true, maxHeight: 300 }}
             />
           </Box>
         </Box>
@@ -535,6 +535,7 @@ export const RulingStepTwo: React.FC = () => {
                   }
                   textarea
                   rows={7}
+                  autoExpand={{ on: true, maxHeight: 300 }}
                 />
               </BlueBox>
             </Box>
@@ -709,6 +710,7 @@ export const RulingStepTwo: React.FC = () => {
                   }
                   textarea
                   rows={7}
+                  autoExpand={{ on: true, maxHeight: 300 }}
                 />
               </Box>
             </BlueBox>
@@ -748,6 +750,7 @@ export const RulingStepTwo: React.FC = () => {
                 )
               }
               rows={16}
+              autoExpand={{ on: true, maxHeight: 600 }}
               textarea
             />
           </Box>
@@ -794,7 +797,7 @@ export const RulingStepTwo: React.FC = () => {
                     autoComplete="off"
                     defaultValue={formatDate(
                       workingCase.courtEndTime,
-                      TIME_FORMAT,
+                      Constants.TIME_FORMAT,
                     )}
                     errorMessage={courtDocumentEndErrorMessage}
                     hasError={courtDocumentEndErrorMessage !== ''}

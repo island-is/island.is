@@ -18,6 +18,16 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
   const { formatMessage } = useLocale()
   const { data, status, loading, error } = useDrivingLicense()
 
+  const errorFetchText = defineMessage({
+    id: 'sp.licenses:error-fetch',
+    defaultMessage: 'Ekki tókst að sækja gögn',
+  })
+
+  const noDataFoundText = defineMessage({
+    id: 'sp.licenses:no-data-found',
+    defaultMessage: 'Engin gögn fundust',
+  })
+
   return (
     <>
       <Box marginBottom={[3, 4, 5]}>

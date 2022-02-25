@@ -2191,6 +2191,41 @@
         }
       }
     },
+    "application-templates-example-payment": {
+      "root": "libs/application/templates/example-payment",
+      "sourceRoot": "libs/application/templates/example-payment/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/application/templates/example-payment/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/application/templates/example-payment"],
+          "options": {
+            "jestConfig": "libs/application/templates/example-payment/jest.config.js",
+            "passWithNoTests": false
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/example-payment/src/**/*.{js,ts,tsx}'"
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/example-payment/codegen.yml"
+          }
+        }
+      }
+    },
     "application-templates-family-matters-core": {
       "root": "libs/application/templates/family-matters/core",
       "sourceRoot": "libs/application/templates/family-matters/core/src",
@@ -4049,6 +4084,12 @@
               "libs/email-service/tsconfig.spec.json"
             ],
             "exclude": ["**/node_modules/**", "!libs/email-service/**/*"]
+          }
+        },
+        "generate-html": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "cross-env NODE_ENV=development yarn ts-node -P libs/email-service/tsconfig.json libs/email-service/src/tools/generate-html/generate-html.ts"
           }
         },
         "test": {

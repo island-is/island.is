@@ -43,7 +43,6 @@ const PkPass = ({ licenseType }: PkPassProps) => {
       }
     }
     getCode()
-    console.log(pkpassQRCode)
   }, [])
 
   return (

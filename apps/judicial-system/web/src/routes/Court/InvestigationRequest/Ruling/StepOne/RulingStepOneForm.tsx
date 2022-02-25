@@ -19,7 +19,6 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -28,6 +27,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isRulingStepOneValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { icRulingStepOne as m } from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system/consts'
 
 interface Props {
   workingCase: Case
@@ -89,7 +89,9 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
             name="prosecutorDemands"
             label={formatMessage(m.sections.prosecutorDemands.label)}
             value={workingCase.prosecutorDemands || ''}
-            placeholder={formatMessage(m.sections.prosecutorDemands.label)}
+            placeholder={formatMessage(
+              m.sections.prosecutorDemands.placeholder,
+            )}
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'prosecutorDemands',
@@ -115,6 +117,7 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
             hasError={prosecutorDemandsEM !== ''}
             textarea
             rows={7}
+            autoExpand={{ on: true, maxHeight: 300 }}
             required
           />
         </Box>
@@ -159,6 +162,7 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
               hasError={courtCaseFactsEM !== ''}
               textarea
               rows={16}
+              autoExpand={{ on: true, maxHeight: 600 }}
               required
             />
           </Box>
@@ -206,6 +210,7 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
               hasError={courtLegalArgumentsEM !== ''}
               textarea
               rows={16}
+              autoExpand={{ on: true, maxHeight: 600 }}
               required
             />
           </Box>

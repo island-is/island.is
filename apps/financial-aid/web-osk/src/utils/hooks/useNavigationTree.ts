@@ -36,7 +36,7 @@ const useNavigationTree = (hasIncome: boolean) => {
           url: Routes.form.homeCircumstances,
         },
         { type: 'SUB_SECTION', name: 'Nám', url: Routes.form.student },
-        { type: 'SUB_SECTION', name: 'Atvinna', url: Routes.form.employment },
+        { type: 'SUB_SECTION', name: 'Staða', url: Routes.form.employment },
       ],
     },
     {

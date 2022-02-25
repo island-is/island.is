@@ -1,6 +1,9 @@
-import type { Case, UpdateCase } from '@island.is/judicial-system/types'
 import formatISO from 'date-fns/formatISO'
-import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
+
+import { formatDate } from '@island.is/judicial-system/formatters'
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
+import type { Case, UpdateCase } from '@island.is/judicial-system/types'
+
 import {
   padTimeWithZero,
   parseArray,
@@ -202,16 +205,13 @@ export const setAndSendToServer = (
   setCase: (value: React.SetStateAction<Case>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
-  let stringValue = ''
-
   setCase({
     ...theCase,
     [field]: value,
   })
   if (theCase.id !== '') {
     if (typeof value === 'string') {
-      stringValue = value
-      return updateCase(theCase.id, parseString(field, stringValue))
+      return updateCase(theCase.id, parseString(field, value))
     } else if (typeof value === 'boolean') {
       return updateCase(theCase.id, parseBoolean(field, value))
     } else {

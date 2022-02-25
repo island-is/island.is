@@ -22,13 +22,14 @@ export enum ProsecutorSubsections {
   PROSECUTOR_OVERVIEW = 5,
 }
 
-export enum JudgeSubsections {
-  JUDGE_OVERVIEW = 0,
-  HEARING_ARRANGEMENTS = 1,
-  COURT_RECORD = 2,
-  RULING_STEP_ONE = 3,
-  RULING_STEP_TWO = 4,
-  CONFIRMATION = 5,
+export enum CourtSubsections {
+  RECEPTION_AND_ASSIGNMENT = 0,
+  JUDGE_OVERVIEW = 1,
+  HEARING_ARRANGEMENTS = 2,
+  COURT_RECORD = 3,
+  RULING_STEP_ONE = 4,
+  RULING_STEP_TWO = 5,
+  CONFIRMATION = 6,
 }
 
 export type ReactSelectOption = { label: string; value: string | number }
@@ -100,6 +101,81 @@ interface NationalRegistryPerson {
   type: string
 }
 
+interface NationalRegistryBusiness {
+  type: string
+  kennitala: string
+  full_name: string
+  short_name: string
+  alt_foreign_name?: string
+  is_company: boolean
+  business_type: {
+    code: string
+    name: {
+      is: string
+      en: string
+    }
+  }
+  business_activity?: string
+  parent_company_kennitala?: string
+  director: string
+  legal_address: {
+    street: {
+      nominative: string
+      dative: string
+    }
+    postal_code: number
+    town: {
+      nominative: string
+      dative: string
+    }
+    country: {
+      code: string
+      name: {
+        is: string
+        en: string
+      }
+    }
+    municipality: string
+    coordinates: {
+      longitude: number
+      latitude: number
+      x_isn93: number
+      y_isn93: number
+    }
+  }
+  postal_address: {
+    street: {
+      nominative: string
+      dative: string
+    }
+    postal_code: number
+    town: {
+      nominative: string
+      dative: string
+    }
+    country: {
+      code: string
+      name: {
+        is: string
+        en: string
+      }
+    }
+    municipality: string
+    coordinates: {
+      longitude: number
+      latitude: number
+      x_isn93: number
+      y_isn93: number
+    }
+  }
+  international_address?: string
+  receiver?: string
+  currency: string
+  share_capital: number
+  remarks?: string
+  banned: boolean
+}
+
 interface NationalRegistryMeta {
   api_version: number
   first_item: number
@@ -107,7 +183,14 @@ interface NationalRegistryMeta {
   total_items: number
 }
 
-export interface NationalRegistryResponse {
-  items: NationalRegistryPerson[]
-  meta: NationalRegistryMeta
+export interface NationalRegistryResponsePerson {
+  items?: NationalRegistryPerson[]
+  meta?: NationalRegistryMeta
+  error?: string
+}
+
+export interface NationalRegistryResponseBusiness {
+  items?: NationalRegistryBusiness[]
+  meta?: NationalRegistryMeta
+  error?: string
 }

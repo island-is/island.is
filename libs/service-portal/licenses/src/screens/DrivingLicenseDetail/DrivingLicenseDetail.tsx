@@ -35,7 +35,6 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
   const licenseExpired = data && isExpired(new Date(), new Date(data.gildirTil))
 
   const toggleModal = () => {
-    console.log('toggleModal', !modalOpen)
     setModalOpen(!modalOpen)
   }
 
@@ -214,7 +213,7 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
                     category={item.nr}
                   >
                     {item.nr &&
-                      ReactHtmlParser(mapCategory(item.nr).text ?? '')}
+                      ReactHtmlParser(mapCategory(item.nr.trim()).text ?? '')}
                   </ExpandableLine>
                 )
               },
