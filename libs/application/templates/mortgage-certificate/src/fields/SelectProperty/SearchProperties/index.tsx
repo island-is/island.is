@@ -81,7 +81,7 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
             disabled={isLoading}
             onClick={() => handleClickSearch()}
             variant="ghost"
-            //style={{ width: 146, paddingLeft: 20, paddingRight: 20 }}
+            style={{ minWidth: 156, paddingLeft: 20, paddingRight: 20 }}
           >
             Leita að eign
           </Button>

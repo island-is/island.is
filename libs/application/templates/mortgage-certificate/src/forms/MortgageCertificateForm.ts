@@ -75,30 +75,30 @@ export const MortgageCertificateForm: Form = buildForm({
               title: '',
               component: 'PropertiesManager',
             }),
-            buildSubmitField({
-              id: 'submit',
-              placement: 'footer',
-              title: m.continue,
-              refetchApplicationAfterSubmit: true,
-              actions: [
-                {
-                  event: MCEvents.PENDING,
-                  name: m.continue,
-                  type: 'primary',
-                },
-              ],
-            }),
+            // buildSubmitField({
+            //   id: 'submit',
+            //   placement: 'footer',
+            //   title: m.continue,
+            //   refetchApplicationAfterSubmit: true,
+            //   actions: [
+            //     {
+            //       event: MCEvents.PENDING,
+            //       name: m.continue,
+            //       type: 'primary',
+            //     },
+            //   ],
+            // }),
           ],
         }),
-        buildDescriptionField({
-          id: 'final',
-          title: 'Takk',
-          description: () => {
-            return {
-              ...m.outroMessage,
-            }
-          },
-        }),
+        // buildDescriptionField({
+        //   id: 'final',
+        //   title: 'Takk',
+        //   description: () => {
+        //     return {
+        //       ...m.outroMessage,
+        //     }
+        //   },
+        // }),
       ],
     }),
     buildSection({
