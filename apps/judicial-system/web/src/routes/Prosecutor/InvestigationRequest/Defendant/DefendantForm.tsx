@@ -28,8 +28,7 @@ import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/for
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { defendant as m } from '@island.is/judicial-system-web/messages'
-import * as constants from '@island.is/judicial-system-web/src/utils/constants'
-
+import * as constants from '@island.is/judicial-system/consts'
 import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
 

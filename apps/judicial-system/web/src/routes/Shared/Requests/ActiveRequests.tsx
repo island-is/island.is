@@ -31,11 +31,12 @@ import * as styles from './Requests.css'
 interface Props {
   cases: Case[]
   onRowClick: (id: string) => void
+  isDeletingCase: boolean
   onDeleteCase?: (caseToDelete: Case) => Promise<void>
 }
 
 const ActiveRequests: React.FC<Props> = (props) => {
-  const { cases, onRowClick, onDeleteCase } = props
+  const { cases, onRowClick, isDeletingCase, onDeleteCase } = props
 
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
@@ -43,15 +44,17 @@ const ActiveRequests: React.FC<Props> = (props) => {
   const isCourtRole =
     user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR
 
-  const [sortConfig, setSortConfig] = useState<SortConfig>()
+  const [sortConfig, setSortConfig] = useState<SortConfig>({
+    column: 'createdAt',
+    direction: 'descending',
+  })
+
   // The index of requset that's about to be removed
   const [requestToRemoveIndex, setRequestToRemoveIndex] = useState<number>()
 
   useMemo(() => {
-    const sortedCases = cases ?? []
-
-    if (sortConfig) {
-      sortedCases.sort((a: Case, b: Case) => {
+    if (cases && sortConfig) {
+      cases.sort((a: Case, b: Case) => {
         // Credit: https://stackoverflow.com/a/51169
         return sortConfig.direction === 'ascending'
           ? (sortConfig.column === 'defendant' &&
@@ -80,7 +83,6 @@ const ActiveRequests: React.FC<Props> = (props) => {
             )
       })
     }
-    return sortedCases
   }, [cases, sortConfig])
 
   const requestSort = (column: sortableTableColumn) => {
@@ -342,6 +344,7 @@ const ActiveRequests: React.FC<Props> = (props) => {
               <Button
                 colorScheme="destructive"
                 size="small"
+                loading={isDeletingCase}
                 onClick={(evt) => {
                   evt.stopPropagation()
                   setRequestToRemoveIndex(undefined)

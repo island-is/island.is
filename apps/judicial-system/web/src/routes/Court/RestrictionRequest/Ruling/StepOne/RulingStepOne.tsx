@@ -29,10 +29,9 @@ import {
   Gender,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { isRulingStepOneValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import {
-  JudgeSubsections,
+  CourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
@@ -50,6 +49,7 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { capitalize } from '@island.is/judicial-system/formatters'
+import * as Constants from '@island.is/judicial-system/consts'
 
 export const RulingStepOne: React.FC = () => {
   const {
@@ -137,7 +137,7 @@ export const RulingStepOne: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={JudgeSubsections.RULING_STEP_ONE}
+      activeSubSection={CourtSubsections.RULING_STEP_ONE}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >

@@ -1,7 +1,9 @@
-describe('/krofur', () => {
+import { REQUEST_LIST_ROUTE } from '@island.is/judicial-system/consts'
+
+describe(REQUEST_LIST_ROUTE, () => {
   beforeEach(() => {
     cy.stubAPIResponses()
-    cy.visit('/krofur')
+    cy.visit(REQUEST_LIST_ROUTE)
   })
 
   it.skip('should have a table with one row that is a button', () => {

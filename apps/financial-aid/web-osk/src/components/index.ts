@@ -30,3 +30,4 @@ export { default as DataGatheringCheckbox } from './DataGathering/DataGatheringC
 export { default as DataGatheringHeader } from './DataGathering/DataGatheringHeader'
 export { default as DirectTaxPaymentsModal } from './DirectTaxPaymentsModal/DirectTaxPaymentModal'
 export * from './Summary'
+export { default as MoreActions } from './MoreActions/MoreActions'

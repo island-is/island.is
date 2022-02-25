@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import {
-  JudgeSubsections,
+  CourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import SigningModal from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
@@ -63,7 +63,7 @@ const Confirmation = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={JudgeSubsections.CONFIRMATION}
+      activeSubSection={CourtSubsections.CONFIRMATION}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >

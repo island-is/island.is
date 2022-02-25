@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
+import { useQuery } from '@apollo/client'
+import { useRouter } from 'next/router'
+import { ValueType } from 'react-select'
+
 import {
   AlertMessage,
   Box,
@@ -9,17 +13,15 @@ import {
 } from '@island.is/island-ui/core'
 import { Loading } from '@island.is/judicial-system-web/src/components'
 import { Institution, UserRole } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import { useQuery } from '@apollo/client'
 import {
   InstitutionsQuery,
   UsersQuery,
 } from '@island.is/judicial-system-web/src/utils/mutations'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
-import { useRouter } from 'next/router'
-import { ValueType } from 'react-select'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import type { User } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system/consts'
+
 import * as styles from './Users.css'
 
 interface UserData {
