@@ -3,7 +3,7 @@ import React, { useContext, useEffect } from 'react'
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import {
-  JudgeSubsections,
+  CourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -47,7 +47,7 @@ const RulingStepTwo = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={JudgeSubsections.RULING_STEP_TWO}
+      activeSubSection={CourtSubsections.RULING_STEP_TWO}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
