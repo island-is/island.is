@@ -1,6 +1,7 @@
 import type { AuthConfig, User } from '@island.is/auth-nest-tools'
 import {
   BadRequestException,
+  ConflictException,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -21,8 +22,13 @@ import {
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
+import type {
+  EinstaklingarGetEinstaklingurRequest,
+  EinstaklingarGetForsjaRequest,
+} from '@island.is/clients/national-registry-v2'
 import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
 import { UpdateDelegationScopeDTO } from '../entities/dto/delegation-scope.dto'
@@ -38,16 +44,11 @@ import { ClientAllowedScope } from '../entities/models/client-allowed-scope.mode
 import { DelegationScope } from '../entities/models/delegation-scope.model'
 import { Delegation } from '../entities/models/delegation.model'
 import { PersonalRepresentativeService } from '../personal-representative'
+import type { PersonalRepresentativeDTO } from '../personal-representative/entities/dto/personal-representative.dto'
 import { DelegationValidity } from '../types/delegationValidity'
 import { DelegationScopeService } from './delegationScope.service'
 import { ResourcesService } from './resources.service'
 
-import type {
-  EinstaklingarGetEinstaklingurRequest,
-  EinstaklingarGetForsjaRequest,
-} from '@island.is/clients/national-registry-v2'
-import type { Logger } from '@island.is/logging'
-import type { PersonalRepresentativeDTO } from '../personal-representative/entities/dto/personal-representative.dto'
 export const DELEGATIONS_AUTH_CONFIG = 'DELEGATIONS_AUTH_CONFIG'
 
 @Injectable()
