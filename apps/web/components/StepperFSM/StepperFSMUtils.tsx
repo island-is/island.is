@@ -313,18 +313,10 @@ const getStepOptions = (
           )
 
         if (everyCriteriaMatches && everyExclusionCriteriaMatches) {
-          if (stepTransition !== '') {
-            // TODO: there are two or more possible transitions, maybe do something here or leave it to the helper
-          }
           stepTransition = transition
           break
         }
       }
-
-      if (stepTransition === '') {
-        // TODO: There is no transition, maybe do something here or leave it to the helper
-      }
-
       return {
         label: label,
         transition: stepTransition,
