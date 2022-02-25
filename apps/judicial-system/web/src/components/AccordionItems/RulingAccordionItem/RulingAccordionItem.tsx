@@ -6,7 +6,6 @@ import { rulingAccordion as m } from '@island.is/judicial-system-web/messages/Co
 import type { Case } from '@island.is/judicial-system/types'
 
 import { AccordionListItem } from '../..'
-import * as style from './RulingAccordionItem.css'
 
 interface Props {
   workingCase: Case
@@ -49,9 +48,7 @@ const RulingAccordionItem: React.FC<Props> = ({
           <Text>{workingCase.courtLegalArguments}</Text>
         </AccordionListItem>
         <AccordionListItem title={formatMessage(m.sections.ruling.title)}>
-          <Text>
-            <span className={style.breakSpaces}>{workingCase.ruling}</span>
-          </Text>
+          <Text whiteSpace="breakSpaces">{workingCase.ruling}</Text>
         </AccordionListItem>
       </Box>
     </AccordionItem>

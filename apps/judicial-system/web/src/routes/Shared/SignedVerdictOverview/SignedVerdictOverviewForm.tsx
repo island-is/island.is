@@ -23,6 +23,8 @@ import {
   PdfRow,
   PoliceRequestAccordionItem,
   RulingAccordionItem,
+  CommentsAccordionItem,
+  CaseFilesAccordionItem,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealDecision,
@@ -47,7 +49,6 @@ import { UserContext } from '@island.is/judicial-system-web/src/components/UserP
 import { core } from '@island.is/judicial-system-web/messages'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import CaseFilesAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CaseFilesAccordionItem/CaseFilesAccordionItem'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
 import * as Constants from '@island.is/judicial-system/consts'
 import AppealSection from './Components/AppealSection/AppealSection'
@@ -345,6 +346,10 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                   setWorkingCase={setWorkingCase}
                   user={user}
                 />
+              )}
+              {(Boolean(workingCase.comments) ||
+                Boolean(workingCase.caseFilesComments)) && (
+                <CommentsAccordionItem workingCase={workingCase} />
               )}
             </Accordion>
           </Box>

@@ -1,6 +1,6 @@
-import { Box, Text } from '@island.is/island-ui/core'
 import React, { PropsWithChildren } from 'react'
-import * as styles from './AccordionListItem.css'
+
+import { Box, Text } from '@island.is/island-ui/core'
 
 interface AccordionListItemProps {
   title: string
@@ -19,7 +19,9 @@ const AccordionListItem: React.FC<AccordionListItemProps> = (
       </Box>
       <Box marginBottom={3}>
         {props.breakSpaces ? (
-          <span className={styles.breakSpaces}>{props.children}</span>
+          <Text as="span" whiteSpace="breakSpaces">
+            {props.children}
+          </Text>
         ) : (
           props.children
         )}
