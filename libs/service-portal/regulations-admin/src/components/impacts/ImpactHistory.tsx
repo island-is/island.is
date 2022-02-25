@@ -30,14 +30,8 @@ export const ImpactHistory = (props: ImpactHistoryProps) => {
   const { effects, activeImpact, draftImpacts, draftId } = props
   const { formatDateFns } = useLocale()
 
-  const hasMismatchId = (effect: RegulationHistoryItemAdmin | DraftImpact) => {
-    const effectID = (effect as DraftImpact).changingId
-    if (effectID && draftId) {
-      return effectID !== draftId
-    }
-
-    // Return false if either ID is missing.
-    return false
+  const hasMismatchId = (effect: RegulationHistoryItemAdmin) => {
+    return !!(effect.changingId && draftId && effect.changingId !== draftId)
   }
 
   const targetName = activeImpact?.name as RegName
@@ -48,12 +42,14 @@ export const ImpactHistory = (props: ImpactHistoryProps) => {
 
     const futureEffects: RegulationHistoryItemAdmin[] =
       effects?.future.map((f) => ({ ...f, origin: 'api', id: 'api' })) ?? []
+
     const draftImpactsArray: RegulationHistoryItemAdmin[] =
       draftImpacts?.map((i) => ({
         id: i.id,
-        date: i.date as ISODate,
-        name: i.name as RegName,
-        title: '',
+        changingId: i.changingId,
+        date: i.date,
+        name: i.name,
+        title: i.regTitle,
         effect: i.type,
         origin: i.id === activeImpact.id ? 'self' : 'admin',
       })) ?? []

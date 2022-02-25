@@ -167,8 +167,13 @@ export type RegulationHistory = Array<
   RegulationVersion | RegulationCancellation
 >
 
-export type RegulationHistoryItemAdmin = RegulationHistoryItem & {
+export type RegulationHistoryItemAdmin = {
+  name: DraftImpactName | RegName
+  title: string
+  effect: 'amend' | 'repeal'
+  date?: ISODate
   id: string
+  changingId?: string
   origin: 'api' | 'admin' | 'self'
 }
 
