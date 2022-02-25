@@ -596,15 +596,17 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
 
   global(
     `
-    .section__title em + br[data-mce-bogus="1"],
-    .section__title i + br[data-mce-bogus="1"],
-    .chapter__title em + br[data-mce-bogus="1"],
-    .chapter__title i + br[data-mce-bogus="1"],
-    .article__title em + br[data-mce-bogus="1"],
-    .article__title i + br[data-mce-bogus="1"]
+    .section__title em + br:last-child,
+    .section__title i + br:last-child,
+    .chapter__title em + br:last-child,
+    .chapter__title i + br:last-child,
+    .subchapter__title em + br:last-child,
+    .subchapter__title i + br:last-child,
+    .article__title em + br:last-child,
+    .article__title i + br:last-child
     `,
     {
-      display: 'none',
+      display: 'block',
     },
   )
 
