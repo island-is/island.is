@@ -287,7 +287,9 @@ export const Overview: React.FC = () => {
               )}
               {workingCase.legalArguments && (
                 <AccordionListItem title="Lagarök">
-                  {workingCase.legalArguments}
+                  <Text whiteSpace="breakSpaces">
+                    {workingCase.legalArguments}
+                  </Text>
                 </AccordionListItem>
               )}
             </AccordionItem>
