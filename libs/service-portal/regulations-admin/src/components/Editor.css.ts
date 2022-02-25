@@ -9,6 +9,8 @@ import {
   diffStyling,
   regulationContentStyling,
 } from '@island.is/regulations/styling'
+import { hasFocus } from './EditorInput.css'
+
 const { color, typography, border } = theme
 
 // ---------------------------------------------------------------------------
@@ -330,6 +332,12 @@ export const classes: EditorClasses = {
   }),
 }
 
+const impactWrapper = style({
+  zIndex: 0,
+  display: 'flex',
+  flexFlow: 'row nowrap',
+})
+
 export const impactClasses: EditorClasses = Object.assign(classes, {
   result_diff: {
     paddingLeft: spacing[1],
@@ -342,11 +350,7 @@ export const impactClasses: EditorClasses = Object.assign(classes, {
     opacity: 0.67,
   },
 
-  wrapper: style({
-    zIndex: 0,
-    display: 'flex',
-    flexFlow: 'row nowrap',
-  }),
+  wrapper: impactWrapper,
 
   editingpane: style({
     display: 'flex',
@@ -368,9 +372,22 @@ export const impactClasses: EditorClasses = Object.assign(classes, {
     border: `1px solid ${theme.color.blue200}`,
     transition: 'all 300ms 200ms ease-in-out',
     transitionProperty: 'transform',
+    boxShadow: '0 0 5rem transparent',
+    opacity: 0,
+    // visibility: 'hidden',
+
     selectors: {
       '&:hover': {
+        boxShadow: '0 0 5rem rgba(0, 0, 0, .15)', // give this a try for mo' better contrast
         transform: 'translateX(calc(50vw - 105%))',
+      },
+      [`${impactWrapper}:hover &`]: {
+        opacity: 1,
+        // visibility: 'visible',
+      },
+      [`${hasFocus} &`]: {
+        opacity: 1,
+        // visibility: 'visible',
       },
     },
   }),
