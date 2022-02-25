@@ -9,9 +9,13 @@ import {
   nameToSlug,
   prettyName,
   RegName,
-  RegulationHistoryItem,
+  toISODate,
 } from '@island.is/regulations'
-import { DraftImpact, RegulationDraftId } from '@island.is/regulations/admin'
+import {
+  DraftImpact,
+  RegulationDraftId,
+  RegulationHistoryItemAdmin,
+} from '@island.is/regulations/admin'
 import { useLocale } from '@island.is/localization'
 import * as s from './Impacts.css'
 
@@ -26,11 +30,7 @@ export const ImpactHistory = (props: ImpactHistoryProps) => {
   const { effects, activeImpact, draftImpacts, draftId } = props
   const { formatDateFns } = useLocale()
 
-  const getCurrentEffect = (effect: RegulationHistoryItem | DraftImpact) => {
-    return (effect as RegulationHistoryItem).title === 'active'
-  }
-
-  const hasMismatchId = (effect: RegulationHistoryItem | DraftImpact) => {
+  const hasMismatchId = (effect: RegulationHistoryItemAdmin | DraftImpact) => {
     const effectID = (effect as DraftImpact).changingId
     if (effectID && draftId) {
       return effectID !== draftId
@@ -46,24 +46,30 @@ export const ImpactHistory = (props: ImpactHistoryProps) => {
   const allFutureEffects = useMemo(() => {
     if (!activeImpact) return []
 
-    const futureEffects = effects?.future ?? []
-    const draftImpactsArray = draftImpacts ?? []
+    const futureEffects: RegulationHistoryItemAdmin[] =
+      effects?.future.map((f) => ({ ...f, origin: 'api', id: 'api' })) ?? []
+    const draftImpactsArray: RegulationHistoryItemAdmin[] =
+      draftImpacts?.map((i) => ({
+        id: i.id,
+        date: i.date as ISODate,
+        name: i.name as RegName,
+        title: '',
+        effect: i.type,
+        origin: i.id === activeImpact.id ? 'self' : 'admin',
+      })) ?? []
 
-    const activeImpactChangeItem: RegulationHistoryItem = {
-      date: formatDateFns(
-        activeImpactDate ? activeImpactDate : Date.now(),
-        'yyyy-MM-dd',
-      ) as ISODate,
-      name: targetName,
-      title: 'active',
-      effect: 'repeal',
+    const futureEffectArray = [...futureEffects, ...draftImpactsArray]
+
+    if (!draftImpactsArray.find((i) => i.id === activeImpact.id)) {
+      futureEffectArray.push({
+        date: toISODate(activeImpactDate ? activeImpactDate : new Date()),
+        name: targetName,
+        title: 'active',
+        effect: 'repeal',
+        origin: 'self',
+        id: 'self',
+      })
     }
-
-    const futureEffectArray = [
-      ...futureEffects,
-      ...draftImpactsArray,
-      activeImpactChangeItem,
-    ]
 
     return sortBy(futureEffectArray, (o) => o.date)
   }, [
@@ -120,7 +126,6 @@ export const ImpactHistory = (props: ImpactHistoryProps) => {
             <ImpactListItem
               key={targetName + '_' + effect.date}
               effect={effect}
-              current={getCurrentEffect(effect)}
               idMismatch={hasMismatchId(effect)}
               activeName={targetName}
             />

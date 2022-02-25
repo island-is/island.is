@@ -1,17 +1,12 @@
 import React from 'react'
 import { Colors } from '@island.is/island-ui/theme'
 import { Text } from '@island.is/island-ui/core'
-import {
-  nameToSlug,
-  RegName,
-  RegulationHistoryItem,
-} from '@island.is/regulations'
-import { DraftImpact } from '@island.is/regulations/admin'
+import { nameToSlug, RegName } from '@island.is/regulations'
+import { RegulationHistoryItemAdmin } from '@island.is/regulations/admin'
 import { useLocale } from '@island.is/localization'
 
 export type ImpactListItemProps = {
-  effect: RegulationHistoryItem | DraftImpact
-  current: boolean
+  effect: RegulationHistoryItemAdmin
   idMismatch: boolean
   activeName: string
 }
@@ -28,10 +23,10 @@ const DateText = ({ date, color }: DateTextProps) => {
 }
 
 export const ImpactListItem = (props: ImpactListItemProps) => {
-  const { effect, current, idMismatch, activeName } = props
+  const { effect, idMismatch, activeName } = props
 
-  const getCurrentEffect = (effect: RegulationHistoryItem | DraftImpact) => {
-    return (effect as RegulationHistoryItem).title === 'active'
+  const getCurrentEffect = (effect: RegulationHistoryItemAdmin) => {
+    return effect.title === 'active'
   }
 
   if (idMismatch) {
@@ -46,13 +41,22 @@ export const ImpactListItem = (props: ImpactListItemProps) => {
     )
   }
 
-  if (current) {
+  if (effect.origin === 'self') {
     return (
       <div>
         <DateText date={effect.date as string} color="mint800" />
         <Text variant="small" color="mint800">
           Breytt af núverandi reglugerð
         </Text>
+      </div>
+    )
+  }
+
+  if (effect.origin === 'admin') {
+    return (
+      <div>
+        <DateText date={effect.date as string} color="blueberry600" />
+        <Text variant="small">Breytt af {effect.name}</Text>
       </div>
     )
   }

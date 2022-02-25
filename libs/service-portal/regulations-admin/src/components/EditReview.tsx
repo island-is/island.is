@@ -20,14 +20,6 @@ export const EditReview = () => {
       <EditReviewWarnings messages={messages} />
       <EditReviewOverview hasWarnings={!!messages?.length} />
 
-      {propose && (
-        <Box>
-          <Button icon="checkmark" onClick={() => propose()}>
-            {t(buttonsMsgs.propose)}
-          </Button>
-        </Box>
-      )}
-
       {!messages?.length && ship && (
         <Box>
           <Box marginBottom={[0, 0, 2]}>

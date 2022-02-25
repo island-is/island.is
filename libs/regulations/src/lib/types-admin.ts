@@ -10,6 +10,7 @@ import {
   Regulation,
   LawChapter,
   Appendix,
+  RegulationHistoryItem,
 } from './types'
 
 // ---------------------------------------------------------------------------
@@ -165,6 +166,11 @@ export type RegulationCancellation = {
 export type RegulationHistory = Array<
   RegulationVersion | RegulationCancellation
 >
+
+export type RegulationHistoryItemAdmin = RegulationHistoryItem & {
+  id: string
+  origin: 'api' | 'admin' | 'self'
+}
 
 // ---------------------------------------------------------------------------
 
