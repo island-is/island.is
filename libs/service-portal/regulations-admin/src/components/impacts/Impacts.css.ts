@@ -32,7 +32,7 @@ export const referenceWrapper = style({
 
 export const referenceTextContainer = style({
   position: 'fixed',
-  top: '10vh',
+  top: '2vh',
   zIndex: 10010,
   height: 0,
   transition: 'all 300ms 200ms ease-in-out',
@@ -50,7 +50,7 @@ export const referenceTextContainer = style({
 })
 
 export const referenceText = style({
-  height: '85vh',
+  height: '96vh',
   overflow: 'hidden',
   borderRadius: theme.border.radius.standard,
   border: `1px solid ${theme.color.dark200}`,
@@ -87,7 +87,8 @@ export const referenceTextInner = style({
   padding: theme.spacing[2],
   width: '45rem',
   maxWidth: '90vw',
-  height: '75vh',
+  // FIXME: Simplify use flexbox to make this strecth to fill the available space.
+  height: '80vh',
   overflowY: 'auto',
   borderBottom: '0.5rem solid transparent', // hack for getting overflow padding-bottom in FF
 })
