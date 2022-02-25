@@ -33,6 +33,9 @@ export const isRequiredStar = style({
 })
 
 export const hasFocus = style({
+  position: 'relative',
+  zIndex: 4,
+
   selectors: {
     [`&${container}`]: mixins.containerFocus,
   },
