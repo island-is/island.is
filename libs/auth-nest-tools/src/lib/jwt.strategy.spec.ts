@@ -52,6 +52,25 @@ describe('JwtStrategy#validate', () => {
     expect(user.actor!.scope).toEqual(['act1', 'act2'])
   })
 
+  it('supports scopes as string array', async () => {
+    // Arrange
+    const payload = {
+      ...fakePayload,
+      scope: ['scope1', 'scope2'],
+      actor: {
+        ...fakePayload.actor!,
+        scope: ['act1', 'act2'],
+      },
+    }
+
+    // Act
+    const user = await jwtStrategy.validate(fakeRequest, payload)
+
+    // Assert
+    expect(user.scope).toEqual(['scope1', 'scope2'])
+    expect(user.actor!.scope).toEqual(['act1', 'act2'])
+  })
+
   it('supports scopes as space separated string', async () => {
     // Arrange
     const payload = {
@@ -132,5 +151,28 @@ describe('JwtStrategy#validate', () => {
     // Assert
     expect(user.actor!.nationalId).toEqual(payload.actor!.nationalId)
     expect(user.actor!.scope).toEqual(payload.actor!.scope)
+  })
+
+  it('picks up client_nationalId', async () => {
+    const jwtStrategywithClientNationalId = new JwtStrategy({
+      issuer: 'issuer',
+      audience: 'audience',
+      allowClientNationalId: true,
+    })
+    // Arrange
+    const payload: JwtPayload = {
+      scope: ['test-scope-1'],
+      client_id: 'test-client',
+      client_nationalId: '1234565555',
+    }
+
+    // Act
+    const user = await jwtStrategywithClientNationalId.validate(
+      fakeRequest,
+      payload,
+    )
+
+    // Assert
+    expect(user.nationalId).toEqual(payload.client_nationalId)
   })
 })
