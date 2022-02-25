@@ -26,6 +26,7 @@ import {
 const NationalRegistryUserQuery = gql`
   query NationalRegistryUserQuery {
     nationalRegistryUser {
+      fullName
       nationalId
       maritalStatus
       religion
@@ -35,6 +36,11 @@ const NationalRegistryUserQuery = gql`
       citizenship {
         code
         name
+      }
+      spouse {
+        name
+        nationalId
+        cohabitant
       }
     }
   }
@@ -58,7 +64,9 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
             <Stack space={1}>
               <Text variant="h3" as="h1" paddingTop={0}>
-                {userInfo.profile.name}
+                {loading
+                  ? '\xA0'
+                  : nationalRegistryUser?.fullName || userInfo.profile.name}
               </Text>
               <Text as="p" variant="default">
                 {formatMessage({
@@ -74,7 +82,8 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
       <Stack space={1}>
         <UserInfoLine
           label={m.displayName}
-          content={userInfo.profile.name}
+          loading={loading}
+          content={nationalRegistryUser?.fullName || userInfo.profile.name}
           editLink={{
             external: true,
             title: defineMessage({
@@ -87,6 +96,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
         />
         <Divider />
         <UserInfoLine
+          loading={loading}
           label={m.natreg}
           content={formatNationalId(userInfo.profile.nationalId)}
         />

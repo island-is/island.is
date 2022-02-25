@@ -17,9 +17,19 @@ import { FamilyMemberCardLoader } from '../../components/FamilyMemberCard/Family
 import { NATIONAL_REGISTRY_CHILDREN } from '../../lib/queries/getNationalChildren'
 
 const NationalRegistryCurrentUserQuery = gql`
-  query NationalRegistryCurrentUserQuery {
+  query NationalRegistryUserQuery {
     nationalRegistryUser {
+      fullName
       nationalId
+      maritalStatus
+      religion
+      legalResidence
+      birthPlace
+      gender
+      citizenship {
+        code
+        name
+      }
       spouse {
         name
         nationalId
@@ -68,12 +78,17 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
         {called && !loading && !error && !nationalRegistryUser && (
           <AlertMessage type="info" title={formatMessage(m.noDataPresent)} />
         )}
-        <FamilyMemberCard
-          title={userInfo.profile.name || ''}
-          nationalId={userInfo.profile.nationalId}
-          currentUser
-        />
-        {loading && <FamilyMemberCardLoader />}
+        {loading ? (
+          <FamilyMemberCardLoader />
+        ) : (
+          <FamilyMemberCard
+            title={
+              nationalRegistryUser?.fullName || userInfo.profile.name || ''
+            }
+            nationalId={userInfo.profile.nationalId}
+            currentUser
+          />
+        )}
         {spouseData && (
           <FamilyMemberCard
             key={nationalRegistryUser?.spouse?.nationalId}

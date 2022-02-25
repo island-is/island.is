@@ -14,8 +14,9 @@ import { Query } from '@island.is/api/schema'
 import { m } from '@island.is/service-portal/core'
 
 const NationalRegistryUserQuery = gql`
-  query NationalRegistryUserQuery {
+  query NationalRegistryUserProfileQuery {
     nationalRegistryUser {
+      fullName
       nationalId
       gender
     }
@@ -25,7 +26,6 @@ const NationalRegistryUserQuery = gql`
 const Greeting: FC<{}> = () => {
   const { formatMessage } = useLocale()
   const { data } = useQuery<Query>(NationalRegistryUserQuery)
-  const { userInfo } = useAuth()
   const currentHour = new Date().getHours()
   const isEveningGreeting = currentHour > 17 || currentHour < 4
   const { nationalRegistryUser } = data || {}
@@ -68,7 +68,7 @@ const Greeting: FC<{}> = () => {
                   }))}
           </Text>
           <Text variant="h1" as="h1" marginBottom={1}>
-            {userInfo?.profile.name}
+            {nationalRegistryUser?.fullName}
           </Text>
           <Text marginBottom={2}>{formatMessage(m.greetingIntro)}</Text>
           <div>

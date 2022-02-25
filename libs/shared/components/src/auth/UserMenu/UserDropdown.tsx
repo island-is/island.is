@@ -27,6 +27,7 @@ import { useWindowSize } from 'react-use'
 
 interface UserDropdownProps {
   user: User
+  name?: string
   dropdownState: 'open' | 'closed'
   setDropdownState: Dispatch<SetStateAction<'closed' | 'open'>>
   onLogout?: () => void
@@ -37,6 +38,7 @@ interface UserDropdownProps {
 
 export const UserDropdown = ({
   user,
+  name,
   dropdownState,
   setDropdownState,
   onSwitchUser,
@@ -52,7 +54,7 @@ export const UserDropdown = ({
 
   const actor = user.profile.actor
   const isDelegation = Boolean(actor)
-  const userName = user.profile.name
+  const userName = name ?? user.profile.name
   const actorName = actor?.name
   const isDelegationCompany = false
 

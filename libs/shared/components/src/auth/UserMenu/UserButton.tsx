@@ -13,6 +13,7 @@ import * as styles from './UserMenu.css'
 
 interface UserButtonProps {
   user: User
+  name?: string
   small: boolean
   onClick: () => void
 }
@@ -21,6 +22,7 @@ export const UserButton = ({
   onClick,
   user: { profile },
   small,
+  name,
 }: UserButtonProps) => {
   const isDelegation = Boolean(profile.actor)
   const { formatMessage } = useLocale()
@@ -31,7 +33,7 @@ export const UserButton = ({
           <Box className={styles.smallAvatar}>
             <UserAvatar
               isDelegation={isDelegation}
-              username={profile.name}
+              username={name}
               onClick={onClick}
               aria-label={formatMessage(userMessages.userButtonAria)}
             />
@@ -48,7 +50,7 @@ export const UserButton = ({
             <div className={styles.resetButtonPadding}>
               {
                 <Inline space={1} alignY="center">
-                  {profile.name.split(' ')[0]}
+                  {name?.split(' ')[0]}
                 </Inline>
               }
             </div>
@@ -70,7 +72,7 @@ export const UserButton = ({
                 <div className={styles.actorName}>{profile.actor!.name}</div>
               </>
             ) : (
-              profile.name
+              name
             )}
           </div>
         </Button>
