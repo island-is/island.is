@@ -9,6 +9,7 @@ interface Props {
 
 const CommentsAccordionItem: React.FC<Props> = (props) => {
   const { workingCase } = props
+
   return (
     <AccordionItem id="id_5" label="Athugasemdir" labelVariant="h3">
       {Boolean(workingCase.comments) && (
@@ -23,9 +24,11 @@ const CommentsAccordionItem: React.FC<Props> = (props) => {
       )}
       {Boolean(workingCase.caseFilesComments) && (
         <>
-          <Text variant="h4" as="h4">
-            Athugasemdir vegna rannsóknargagna
-          </Text>
+          <Box marginBottom={1}>
+            <Text variant="h4" as="h4">
+              Athugasemdir vegna rannsóknargagna
+            </Text>
+          </Box>
           <Text whiteSpace="breakSpaces">{workingCase.caseFilesComments}</Text>
         </>
       )}

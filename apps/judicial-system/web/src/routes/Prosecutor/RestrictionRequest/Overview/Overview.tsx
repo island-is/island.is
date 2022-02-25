@@ -34,6 +34,7 @@ import {
   requestCourtDate,
 } from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import CommentsAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
 import type { CaseLegalProvisions } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 import * as styles from './Overview.css'
@@ -297,31 +298,6 @@ export const Overview: React.FC = () => {
                 </Box>
               )}
             </AccordionItem>
-            {(Boolean(workingCase.comments) ||
-              Boolean(workingCase.caseFilesComments)) && (
-              <AccordionItem id="id_5" label="Athugasemdir" labelVariant="h3">
-                {Boolean(workingCase.comments) && (
-                  <Box marginBottom={workingCase.caseFilesComments ? 3 : 0}>
-                    <Box marginBottom={1}>
-                      <Text variant="h4" as="h4">
-                        Athugasemdir vegna málsmeðferðar
-                      </Text>
-                    </Box>
-                    <Text whiteSpace="breakSpaces">{workingCase.comments}</Text>
-                  </Box>
-                )}
-                {Boolean(workingCase.caseFilesComments) && (
-                  <>
-                    <Text variant="h4" as="h4">
-                      Athugasemdir vegna rannsóknargagna
-                    </Text>
-                    <Text whiteSpace="breakSpaces">
-                      {workingCase.caseFilesComments}
-                    </Text>
-                  </>
-                )}
-              </AccordionItem>
-            )}
             <AccordionItem
               id="id_6"
               label={`Rannsóknargögn ${`(${
@@ -336,6 +312,10 @@ export const Overview: React.FC = () => {
                 />
               </Box>
             </AccordionItem>
+            {(Boolean(workingCase.comments) ||
+              Boolean(workingCase.caseFilesComments)) && (
+              <CommentsAccordionItem workingCase={workingCase} />
+            )}
           </Accordion>
         </Box>
         <Box className={styles.prosecutorContainer}>

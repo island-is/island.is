@@ -205,10 +205,6 @@ const OverviewForm: React.FC<Props> = (props) => {
                 </Box>
               )}
             </AccordionItem>
-            {(Boolean(workingCase.comments) ||
-              Boolean(workingCase.caseFilesComments)) && (
-              <CommentsAccordionItem workingCase={workingCase} />
-            )}
             <AccordionItem
               id="id_6"
               label={`Rannsóknargögn ${`(${
@@ -223,6 +219,10 @@ const OverviewForm: React.FC<Props> = (props) => {
                 />
               </Box>
             </AccordionItem>
+            {(Boolean(workingCase.comments) ||
+              Boolean(workingCase.caseFilesComments)) && (
+              <CommentsAccordionItem workingCase={workingCase} />
+            )}
           </Accordion>
         </Box>
         <Box className={styles.prosecutorContainer}>
