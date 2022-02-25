@@ -121,7 +121,7 @@ export class SyslumennService {
 
   async uploadData(
     persons: Person[],
-    attachment: Attachment,
+    attachment: Attachment | undefined,
     extraData: { [key: string]: string },
     uploadDataName: string,
     uploadDataId?: string,
@@ -183,7 +183,7 @@ export class SyslumennService {
 
     const contentBase64 =
       (
-        await api.vedbandayfirlitPost({
+        await api.vedbokarvottordPost({
           skilabod: {
             audkenni: id,
             fastanumer: realEstateNumber,

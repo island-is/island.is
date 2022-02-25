@@ -114,7 +114,7 @@
 ## Libs
 
 - [API](libs/api/README.md)
-    - [API Domains Mortgage Certificate](libs/api/domains/mortgage-certificate/README.md)
+  - [API Domains Mortgage Certificate](libs/api/domains/mortgage-certificate/README.md)
   - [Mocks](libs/api/mocks/README.md)
 - [API Catalogue](libs/api-catalogue/README.md)
   - [Elastic](libs/api-catalogue/elastic/README.md)

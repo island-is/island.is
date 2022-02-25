@@ -1,5 +1,7 @@
 import { EmailTemplateGenerator } from '../../../../types'
 import { NationalRegistry } from '../types'
+import { getValueViaPath } from '@island.is/application/core'
+import { PropertyDetail } from '@island.is/api/schema'
 
 export const generateSyslumennSubmitRequestErrorEmail: EmailTemplateGenerator = (
   props,
@@ -14,11 +16,16 @@ export const generateSyslumennSubmitRequestErrorEmail: EmailTemplateGenerator = 
   const nationalRegistryData = application.externalData.nationalRegistry
     ?.data as NationalRegistry
 
+  var selectedProperty = getValueViaPath(
+    application.answers,
+    'selectProperty.property',
+  ) as PropertyDetail
+
   const subject = 'Umsókn um veðbókarvottorð'
   const body = `
       Villa hefur komið upp í samskiptum milli island.is og sýslumanna,
       vegna beiðni um lagfæringu á veðbókarvottorði fyrir ${nationalRegistryData.nationalId},
-      fasteignanúmer <VANTAR>.` // TODOx sækja fasteignanúmer frá externalData
+      fasteignanúmer ${selectedProperty.propertyNumber}.`
 
   return {
     from: {

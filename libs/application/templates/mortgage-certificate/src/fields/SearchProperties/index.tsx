@@ -1,40 +1,64 @@
 import React, { FC, useState } from 'react'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Box, Text, Input, Button } from '@island.is/island-ui/core'
 import { PropertyTable } from '../PropertyTable'
-import { PropertyDetail, PropertyOverviewWithDetail } from '../../types/schema'
+import { PropertyDetail } from '../../types/schema'
+import { gql, useLazyQuery } from '@apollo/client'
+import { SEARCH_REAL_ESTATE_QUERY } from '../../graphql/queries'
 
 interface SearchPropertiesProps {
-  selectHandler: (property: PropertyDetail) => void
-  activePropertyNumber: string | null | undefined
+  selectHandler: (property: PropertyDetail | undefined) => void
+  selectedPropertyNumber: string | undefined
 }
+
+export const searchRealEstateMutation = gql`
+  ${SEARCH_REAL_ESTATE_QUERY}
+`
 
 export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
   application,
+  field,
   selectHandler,
-  activePropertyNumber,
+  selectedPropertyNumber,
 }) => {
-  // Replace this mock functionality with skra api calls inside PropertyManager component
-  const { externalData } = application
-  const mockProperties =
-    (externalData.nationalRegistryRealEstate
-      ?.data as PropertyOverviewWithDetail)?.properties || []
-
-  const [propertyNumber, setPropertyNumber] = useState('')
+  const [hasInitialized, setHasInitialized] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [searchStr, setSearchStr] = useState('')
   const [foundProperty, setFoundProperty] = useState<
     PropertyDetail | undefined
   >(undefined)
-  const [searching, setSearching] = useState<boolean>(false)
 
-  const handleSearch = () => {
-    setSearching(true)
-    setTimeout(() => {
-      const property = mockProperties.filter(
-        (p: PropertyDetail) => p.propertyNumber === propertyNumber,
-      )[0]
-      setFoundProperty(property)
-      setSearching(false)
-    }, 2500)
+  const [runQuery] = useLazyQuery(searchRealEstateMutation, {
+    variables: {
+      input: {
+        assetId: searchStr,
+      },
+    },
+    onCompleted(result) {
+      setFoundProperty(result.assetsDetail)
+      setIsLoading(false)
+    },
+    onError() {
+      setIsLoading(false)
+    },
+  })
+
+  const handleClickSearch = () => {
+    setFoundProperty(undefined)
+    setIsLoading(true)
+    runQuery()
+  }
+
+  var selectProperty = getValueViaPath(
+    application.answers,
+    'selectProperty',
+  ) as { property: PropertyDetail; isFromSearch: boolean }
+
+  // initialize search box and search result
+  if (!hasInitialized && selectProperty?.isFromSearch) {
+    setHasInitialized(true)
+    setSearchStr(selectProperty?.property?.propertyNumber || '')
+    setFoundProperty(selectProperty?.property || undefined)
   }
 
   return (
@@ -47,17 +71,17 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
           <Input
             size="sm"
             label="Fasteignarnúmer"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setPropertyNumber(e.target.value)
-            }
+            name="propertyNumber"
+            value={searchStr}
+            onChange={(e) => setSearchStr(e.target.value)}
           />
         </Box>
         <Box>
           <Button
-            disabled={searching}
-            onClick={() => handleSearch()}
+            disabled={isLoading}
+            onClick={() => handleClickSearch()}
             variant="ghost"
-            style={{ width: 146, paddingLeft: 20, paddingRight: 20 }}
+            //style={{ width: 146, paddingLeft: 20, paddingRight: 20 }}
           >
             Leita að eign
           </Button>
@@ -65,10 +89,12 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
       </Box>
       {foundProperty !== undefined && (
         <PropertyTable
+          application={application}
+          field={field}
           key={foundProperty.propertyNumber}
           selectHandler={selectHandler}
-          activePropertyNumber={activePropertyNumber || ''}
-          {...foundProperty}
+          propertyInfo={foundProperty}
+          selectedPropertyNumber={selectedPropertyNumber}
         />
       )}
     </Box>

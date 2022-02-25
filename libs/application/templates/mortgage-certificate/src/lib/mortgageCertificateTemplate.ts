@@ -16,6 +16,35 @@ import { m } from './messages'
 
 const MortgageCertificateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
+  selectProperty: z.object({
+    property: z
+      .object({
+        propertyNumber: z.string(),
+        defaultAddress: z
+          .object({
+            display: z.string().optional(),
+          })
+          .optional(),
+        unitsOfUse: z
+          .object({
+            unitsOfUse: z
+              .array(
+                z
+                  .object({
+                    marking: z.string().optional(),
+                    displaySize: z.number().optional(),
+                    buildYearDisplay: z.string().optional(),
+                    explanation: z.string().optional(),
+                  })
+                  .optional(),
+              )
+              .optional(),
+          })
+          .optional(),
+      })
+      .optional(),
+    isFromSearch: z.boolean().optional(),
+  }),
 })
 
 const template: ApplicationTemplate<
@@ -30,7 +59,7 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.MortgageCertificate.translation,
   ],
   dataSchema: MortgageCertificateSchema,
-  readyForProduction: true,
+  //readyForProduction: true, //TODOx
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
