@@ -24,7 +24,7 @@ import {
   icOverview,
 } from '@island.is/judicial-system-web/messages'
 import CommentsAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import * as Constants from '@island.is/judicial-system/consts'
 
 import * as styles from './Overview.css'
 
