@@ -1,12 +1,13 @@
-import React from 'react'
+import React, { Fragment, useMemo } from 'react'
 import sortBy from 'lodash/sortBy'
-import { Box, Divider, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { ImpactListItem } from './ImpactListItem'
 import { Effects } from '../../types'
 import { DraftImpactForm } from '../../state/types'
 import {
   ISODate,
   nameToSlug,
+  prettyName,
   RegName,
   RegulationHistoryItem,
 } from '@island.is/regulations'
@@ -39,16 +40,21 @@ export const ImpactHistory = (props: ImpactHistoryProps) => {
     return false
   }
 
-  const getAllFutureEffects = () => {
+  const targetName = activeImpact?.name as RegName
+  const activeImpactDate = activeImpact?.date?.value
+
+  const allFutureEffects = useMemo(() => {
+    if (!activeImpact) return []
+
     const futureEffects = effects?.future ?? []
     const draftImpactsArray = draftImpacts ?? []
 
     const activeImpactChangeItem: RegulationHistoryItem = {
       date: formatDateFns(
-        activeImpact?.date?.value ? activeImpact.date.value : Date.now(),
+        activeImpactDate ? activeImpactDate : Date.now(),
         'yyyy-MM-dd',
       ) as ISODate,
-      name: activeImpact?.name as RegName,
+      name: targetName,
       title: 'active',
       effect: 'repeal',
     }
@@ -60,9 +66,19 @@ export const ImpactHistory = (props: ImpactHistoryProps) => {
     ]
 
     return sortBy(futureEffectArray, (o) => o.date)
+  }, [
+    activeImpact,
+    activeImpactDate,
+    targetName,
+    draftImpacts,
+    effects?.future,
+    formatDateFns,
+  ])
+
+  if (!activeImpact) {
+    return null
   }
 
-  const allFutureEffects = getAllFutureEffects()
   return (
     <Box background="blueberry100" paddingY={3} paddingX={4} marginBottom={7}>
       <Box
@@ -73,58 +89,43 @@ export const ImpactHistory = (props: ImpactHistoryProps) => {
         borderColor="purple200"
       >
         <Text variant="h4" color="blueberry600">
-          Breytingasaga reglugerðar
+          Væntanlegar breytingar á{' '}
+          {targetName === 'self'
+            ? 'reglugerðinni'
+            : `reglugerð ${prettyName(targetName)}`}
         </Text>
         <Box className={s.line} marginX={2} />
-        <a
-          href={`https://island.is/reglugerdir/nr/${nameToSlug(
-            activeImpact?.name as RegName,
-          )}`}
-          target="_blank"
-          rel="noreferrer"
-        >
-          <Text variant="h5" color="blueberry600">
-            Nýjasta útgáfan
-          </Text>
-        </a>
+        {targetName !== 'self' && (
+          <a
+            href={`https://island.is/reglugerdir/nr/${nameToSlug(targetName)}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <Text variant="h5" color="blueberry600">
+              Nýjasta útgáfan
+            </Text>
+          </a>
+        )}
       </Box>
       {/* <Divider /> */}
       {allFutureEffects.length > 0 ? (
-        <>
-          <Text variant="eyebrow" marginBottom={2}>
-            Væntanlegar breytingar:
-          </Text>
-          <Box
-            display="flex"
-            flexDirection="row"
-            flexWrap="wrap"
-            justifyContent="flexStart"
-            className={s.history}
-          >
-            {allFutureEffects.map((effect) => (
-              <>
-                <ImpactListItem
-                  effect={effect}
-                  current={getCurrentEffect(effect)}
-                  idMismatch={hasMismatchId(effect)}
-                  activeName={activeImpact?.name ?? ''}
-                  key={`${nameToSlug(activeImpact?.name as RegName)}-${
-                    effect.date
-                  }`}
-                />
-                <ImpactListItem
-                  effect={effect}
-                  current={getCurrentEffect(effect)}
-                  idMismatch={hasMismatchId(effect)}
-                  activeName={activeImpact?.name ?? ''}
-                  key={`${nameToSlug(activeImpact?.name as RegName)}-${
-                    effect.date
-                  }`}
-                />
-              </>
-            ))}
-          </Box>
-        </>
+        <Box
+          display="flex"
+          flexDirection="row"
+          flexWrap="wrap"
+          justifyContent="flexStart"
+          className={s.history}
+        >
+          {allFutureEffects.map((effect) => (
+            <ImpactListItem
+              key={targetName + '_' + effect.date}
+              effect={effect}
+              current={getCurrentEffect(effect)}
+              idMismatch={hasMismatchId(effect)}
+              activeName={targetName}
+            />
+          ))}
+        </Box>
       ) : (
         <Text variant="h5" marginBottom={2}>
           Engar breytingar framundan
