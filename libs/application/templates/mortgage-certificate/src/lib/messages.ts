@@ -6,6 +6,11 @@ export const m = defineMessages({
     defaultMessage: 'Umsókn um veðbókarvottorð',
     description: "Application's name",
   },
+  continue: {
+    id: 'cr.application:continue',
+    defaultMessage: 'Áfram',
+    description: 'Continue',
+  },
   mortgageCertificate: {
     id: 'cr.application:mortgageCertificate',
     defaultMessage: 'Veðbókarvottorð',

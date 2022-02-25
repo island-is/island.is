@@ -9,7 +9,7 @@ import {
   DefaultStateLifeCycle,
   ApplicationConfigurations,
 } from '@island.is/application/core'
-import { Events, States, Roles } from './constants'
+import { Events, States, Roles, MCEvents } from './constants'
 import * as z from 'zod'
 import { ApiActions } from '../shared'
 import { m } from './messages'
@@ -59,7 +59,7 @@ const template: ApplicationTemplate<
                 ),
               actions: [
                 {
-                  event: DefaultEvents.PAYMENT,
+                  event: 'PENDING',
                   name: 'Staðfesta',
                   type: 'primary',
                 },
@@ -69,8 +69,129 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
+          [DefaultEvents.PAYMENT]: { target: States.PENDING },
+          [DefaultEvents.SUBMIT]: { target: States.PENDING },
+        },
+      },
+      [States.PENDING]: {
+        meta: {
+          name: 'Sækja veðbókarvottorð',
+          actionCard: {
+            tag: {
+              label: m.actionCardDraft,
+              variant: 'blue',
+            },
+          },
+          progress: 0.25,
+          lifecycle: {
+            shouldBeListed: false,
+            shouldBePruned: true,
+            // Applications that stay in this state for 24 hours will be pruned automatically
+            whenToPrune: 24 * 3600 * 1000,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Pending').then((val) => val.Pending),
+              actions: [
+                {
+                  event: DefaultEvents.PAYMENT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+                {
+                  event: 'PENDING_REJECTED',
+                  name: 'Mínaru síður',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.PAYMENT]: { target: States.PAYMENT_INFO },
+          [DefaultEvents.SUBMIT]: { target: States.PAYMENT_INFO },
+          [MCEvents.ERROR]: { target: States.DRAFT },
+          [MCEvents.PENDING_REJECTED]: { target: States.PENDING_REJECTED },
+        },
+      },
+      [States.PENDING_REJECTED]: {
+        meta: {
+          name: 'Beiðni um vinnslu',
+          actionCard: {
+            tag: {
+              label: m.actionCardDraft,
+              variant: 'blue',
+            },
+          },
+          progress: 0.25,
+          lifecycle: {
+            shouldBeListed: false,
+            shouldBePruned: true,
+            // Applications that stay in this state for 24 hours will be pruned automatically
+            whenToPrune: 24 * 3600 * 1000,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/PendingRejected').then(
+                  (val) => val.PendingRejected,
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.PAYMENT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+                {
+                  event: 'PENDING_REJECTED',
+                  name: 'Mínaru síður',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.PAYMENT]: { target: States.PAYMENT_INFO },
           [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
+        },
+      },
+      [States.PAYMENT_INFO]: {
+        meta: {
+          name: 'Greiðsla',
+          actionCard: {
+            tag: {
+              label: m.actionCardPayment,
+              variant: 'red',
+            },
+          },
+          progress: 0.25,
+          lifecycle: {
+            shouldBeListed: false,
+            shouldBePruned: true,
+            // Applications that stay in this state for 24 hours will be pruned automatically
+            whenToPrune: 24 * 3600 * 1000,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/PaymentInfo').then((val) => val.PaymentInfo),
+              actions: [
+                { event: DefaultEvents.SUBMIT, name: 'Áfram', type: 'primary' },
+              ],
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
+          [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
         },
       },
       [States.PAYMENT]: {

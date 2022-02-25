@@ -64,6 +64,19 @@ export const MortgageCertificateForm: Form = buildForm({
           title: m.selectRealEstateTitle,
           space: 1,
           children: [
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: m.continue,
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: DefaultEvents.PAYMENT,
+                  name: m.continue,
+                  type: 'primary',
+                },
+              ],
+            }),
             buildDescriptionField({
               id: 'testDescription',
               title: '',
@@ -73,50 +86,6 @@ export const MortgageCertificateForm: Form = buildForm({
               id: 'info.properties',
               title: '',
               component: 'PropertiesManager',
-            }),
-          ],
-        }),
-        // buildExternalDataProvider({
-        //   id: 'approveExternalData2',
-        //   title: '',
-        //   subTitle: '',
-        //   checkboxLabel: '',
-        //   dataProviders: [
-        //     buildDataProviderItem({
-        //       id: 'mortgageCertificate',
-        //       type: 'MortgageCertificateProvider',
-        //       title: '',
-        //     }),
-        //   ],
-        // }),
-      ],
-    }),
-    buildSection({
-      id: 'payment',
-      title: m.payment,
-      children: [
-        buildMultiField({
-          id: 'payment.info',
-          title: m.payment,
-          space: 1,
-          children: [
-            buildSubmitField({
-              id: 'submit',
-              placement: 'footer',
-              title: m.confirm,
-              refetchApplicationAfterSubmit: true,
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: m.confirm,
-                  type: 'primary',
-                },
-              ],
-            }),
-            buildCustomField({
-              id: 'payment.over',
-              title: '',
-              component: 'OverviewPaymentCharge',
             }),
           ],
         }),
@@ -130,6 +99,11 @@ export const MortgageCertificateForm: Form = buildForm({
           },
         }),
       ],
+    }),
+    buildSection({
+      id: 'payment',
+      title: m.payment,
+      children: [],
     }),
     buildSection({
       id: 'confirmation',
