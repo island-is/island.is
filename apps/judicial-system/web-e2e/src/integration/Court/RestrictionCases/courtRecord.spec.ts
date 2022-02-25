@@ -3,9 +3,14 @@ import {
   makeCustodyCase,
   makeProsecutor,
 } from '@island.is/judicial-system/formatters'
+import {
+  COURT_RECORD_ROUTE,
+  RULING_STEP_ONE_ROUTE,
+} from '@island.is/judicial-system/consts'
+
 import { intercept } from '../../../utils'
 
-describe('/domur/thingbok/:id', () => {
+describe(`${COURT_RECORD_ROUTE}/:id`, () => {
   beforeEach(() => {
     const caseData = makeCustodyCase()
 
@@ -18,7 +23,7 @@ describe('/domur/thingbok/:id', () => {
     }
 
     cy.stubAPIResponses()
-    cy.visit('/domur/thingbok/test_id_stadfest')
+    cy.visit(`${COURT_RECORD_ROUTE}/test_id_stadfest`)
 
     intercept(caseDataAddition)
   })
@@ -32,9 +37,9 @@ describe('/domur/thingbok/:id', () => {
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
     cy.getByTestid('continueButton').should('be.disabled')
     cy.getByTestid('courtLocation').type('í Dúfnahólum 10')
-    cy.getByTestid('litigationPresentations').type('lorem')
+    cy.getByTestid('sessionBookings').type('lorem')
     cy.getByTestid('continueButton').should('not.be.disabled')
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', '/domur/urskurdur/test_id_stadfest')
+    cy.url().should('include', `${RULING_STEP_ONE_ROUTE}/test_id_stadfest`)
   })
 })

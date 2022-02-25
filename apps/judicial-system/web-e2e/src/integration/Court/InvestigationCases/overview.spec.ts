@@ -7,10 +7,14 @@ import {
   makeInvestigationCase,
   makeProsecutor,
 } from '@island.is/judicial-system/formatters'
+import {
+  IC_COURT_HEARING_ARRANGEMENTS_ROUTE,
+  IC_OVERVIEW_ROUTE,
+} from '@island.is/judicial-system/consts'
 
 import { intercept } from '../../../utils'
 
-describe('/domur/krafa/:id', () => {
+describe(`${IC_OVERVIEW_ROUTE}/:id`, () => {
   const demands = faker.lorem.paragraph()
   const defenderName = faker.name.findName()
   const defenderEmail = faker.internet.email()
@@ -79,16 +83,8 @@ describe('/domur/krafa/:id', () => {
     cy.getByTestid('requestPDFButton').should('exist')
   })
 
-  it('should require a valid case id', () => {
-    cy.getByTestid('courtCaseNumber').click().blur()
-    cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('courtCaseNumber').type('R-X/2021')
-    cy.getByTestid('inputErrorMessage').should('not.exist')
-  })
-
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
-    cy.getByTestid('courtCaseNumber').type('R-X/2021')
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', '/domur/rannsoknarheimild/fyrirtaka')
+    cy.url().should('include', IC_COURT_HEARING_ARRANGEMENTS_ROUTE)
   })
 })

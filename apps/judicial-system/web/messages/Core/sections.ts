@@ -154,6 +154,13 @@ export const sections = {
       description:
         'Notaður sem titill í hliðarstiku í gæslu- og farbannsmálum hjá héraðsdómum',
     },
+    receptionAndAssignment: {
+      id:
+        'judicial.system.core:sections.court_section.reception_and_assignment',
+      defaultMessage: 'Móttaka',
+      description:
+        'Notaður sem texti fyrir Móttaka skref í hliðarstiku í gæslu- og farbannsmálum hjá héraðsdómum',
+    },
     overview: {
       id: 'judicial.system.core:sections.court_section.overview',
       defaultMessage: 'Yfirlit kröfu',
