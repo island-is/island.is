@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 
 import {
   AccordionItem,
@@ -24,6 +24,7 @@ import { useI18n } from '@island.is/web/i18n'
 import * as styles from './StepperFSMHelper.css'
 import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
 import { STEPPER_HELPER_ENABLED_KEY } from './StepperFSM'
+import { useRouter } from 'next/router'
 
 const SUCCESS_SYMBOL = '✔️'
 const ERROR_SYMBOL = '❌'
@@ -188,6 +189,7 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
   currentStep,
   optionsFromNamespace,
 }) => {
+  const router = useRouter()
   const [isHidden, setIsHidden] = useState(false)
 
   const value = localStorage.getItem(STEPPER_HELPER_ENABLED_KEY)
@@ -222,6 +224,10 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
     : 'The slug is missing'
 
   const [errors, setErrors] = useState<ErrorField[]>([])
+
+  useEffect(() => {
+    setErrors([])
+  }, [router.asPath])
 
   if (isHidden) return null
 
