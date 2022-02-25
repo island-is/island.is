@@ -275,6 +275,7 @@ export class DraftRegulationService {
     }
 
     const updateData: Partial<DraftRegulationModel> = {
+      name: update.name,
       title: update.title,
       text: update.text,
       appendixes: update.appendixes,
