@@ -6,6 +6,7 @@ import {
   MOCK_NATIONAL_ID_EXPIRED,
   MOCK_NATIONAL_ID_NO_ASSESSMENT,
   MOCK_NATIONAL_ID_TEACHER,
+  MOCK_USER,
   requestHandlers,
 } from './__mock-data__/requestHandlers'
 import { startMocking } from '@island.is/shared/mocking'
@@ -176,6 +177,7 @@ describe('DrivingLicenseService', () => {
   describe('getApplicationEligibility', () => {
     it('all checks should pass for applicable students', async () => {
       const response = await service.getApplicationEligibility(
+        MOCK_USER,
         MOCK_NATIONAL_ID,
         'B-full',
       )
@@ -201,6 +203,7 @@ describe('DrivingLicenseService', () => {
 
     it('all checks should pass for applicable students for temporary license', async () => {
       const response = await service.getApplicationEligibility(
+        MOCK_USER,
         MOCK_NATIONAL_ID,
         'B-temp',
       )
@@ -222,6 +225,7 @@ describe('DrivingLicenseService', () => {
 
     it('checks should fail for non-applicable students', async () => {
       const response = await service.getApplicationEligibility(
+        MOCK_USER,
         MOCK_NATIONAL_ID_EXPIRED,
         'B-full',
       )

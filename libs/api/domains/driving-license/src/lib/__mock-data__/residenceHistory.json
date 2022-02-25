@@ -1,0 +1,18 @@
+{
+  "address": {
+    "streetName": null,
+
+    "postalCode": null,
+
+    "city": null,
+
+    "municipalityCode": null
+  },
+
+  "houseIdentificationCode": null,
+
+  "realEstateNumber": null,
+
+  "country?": "IS",
+  "dateOfChange?": "Sat Feb 26 2022 16:36:14 GMT+0000 (Greenwich Mean Time)"
+}
