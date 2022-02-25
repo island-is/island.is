@@ -78,7 +78,7 @@ export const MortgageCertificateForm: Form = buildForm({
               ],
             }),
             buildDescriptionField({
-              id: 'testDescription',
+              id: 'selectRealEstateDescription',
               title: '',
               description: m.selectRealEstateDescription,
             }),
