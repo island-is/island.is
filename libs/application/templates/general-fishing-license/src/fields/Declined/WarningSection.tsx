@@ -9,10 +9,8 @@ import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
 import * as styles from './WarningSection.css'
 
 interface Step {
-  key: string
   title: string
   description: string
-  state: boolean
 }
 
 type WarningSectionProps = {
@@ -35,7 +33,6 @@ export const WarningSection: FC<WarningSectionProps> = ({
       marginBottom={2}
       borderColor={'red600'}
     >
-      {/* Warning Icon */}
       <Box
         display="flex"
         alignItems="center"
@@ -48,8 +45,6 @@ export const WarningSection: FC<WarningSectionProps> = ({
       >
         <Icon color="white" size="small" icon="warning" />
       </Box>
-
-      {/* Contents */}
       <Box
         alignItems="flexStart"
         display="flex"

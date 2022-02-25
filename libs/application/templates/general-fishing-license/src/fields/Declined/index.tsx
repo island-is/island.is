@@ -19,8 +19,6 @@ export const Declined = ({ application }: FieldBaseProps): JSX.Element => {
           application={application}
           step={{
             title: formatMessage(declined.labels.otherCountryTitle),
-            key: 'key',
-            state: false,
             description: formatMessage(declined.labels.otherCountryDescription),
           }}
         />
