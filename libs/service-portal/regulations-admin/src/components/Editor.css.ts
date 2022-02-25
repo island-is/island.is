@@ -572,6 +572,8 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
     .section__title i,
     .chapter__title em,
     .chapter__title i,
+    .subchapter__title em,
+    .subchapter__title i,
     .article__title em,
     .article__title i
     `,
