@@ -19,6 +19,7 @@ import {
   FormContentContainer,
   CaseFileList,
   CaseInfo,
+  AccordionListItem,
 } from '@island.is/judicial-system-web/src/components'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system/formatters'
 import {
@@ -280,22 +281,16 @@ export const Overview: React.FC = () => {
               label="Greinargerð um málsatvik og lagarök"
             >
               {workingCase.caseFacts && (
-                <Box marginBottom={2}>
-                  <Box marginBottom={2}>
-                    <Text variant="h5">Málsatvik</Text>
-                  </Box>
+                <AccordionListItem title="Málsatvik">
                   <Text whiteSpace="breakSpaces">{workingCase.caseFacts}</Text>
-                </Box>
+                </AccordionListItem>
               )}
               {workingCase.legalArguments && (
-                <Box marginBottom={2}>
-                  <Box marginBottom={2}>
-                    <Text variant="h5">Lagarök</Text>
-                  </Box>
+                <AccordionListItem title="Lagarök">
                   <Text whiteSpace="breakSpaces">
                     {workingCase.legalArguments}
                   </Text>
-                </Box>
+                </AccordionListItem>
               )}
             </AccordionItem>
             <AccordionItem
