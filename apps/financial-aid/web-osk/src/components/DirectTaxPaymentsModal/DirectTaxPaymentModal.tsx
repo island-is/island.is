@@ -41,6 +41,7 @@ const DirectTaxPaymentModal = ({
         }
       }}
     >
+      {/* <TaxBreakdown items={items} /> */}
       {({
         closeModal,
       }: {
@@ -59,47 +60,7 @@ const DirectTaxPaymentModal = ({
               Staðgreiðsluskrá
             </Text>
 
-            <table className={styles.tableContainer}>
-              <thead>
-                <tr className={styles.tableHeaders}>
-                  {['Mánuður', 'Greiðandi', 'Upphæð'].map((head) => {
-                    return (
-                      <th key={`DirectTaxPaymentModalHeaders${head}`}>
-                        <Text variant="small" fontWeight="semiBold">
-                          {head}
-                        </Text>
-                      </th>
-                    )
-                  })}
-                </tr>
-              </thead>
-              <tbody>
-                {items.map((i, index) => {
-                  return (
-                    <tr
-                      key={`${index}-DirectTaxPaymentModalItem-${i.month}`}
-                      className={styles.tableItem}
-                    >
-                      <td>
-                        <Text variant="small" marginBottom={1}>
-                          {`${getMonth(i.month)} ${i.year}`}
-                        </Text>
-                      </td>
-                      <td>
-                        <Text variant="small" marginBottom={1}>
-                          {formatNationalId(i.payerNationalId)}
-                        </Text>
-                      </td>
-                      <td>
-                        <Text variant="small" marginBottom={1}>
-                          {`${i.totalSalary.toLocaleString('de-DE')} kr.`}
-                        </Text>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
+            <TaxBreakdown items={items} />
 
             <Box paddingTop={4} display="flex" justifyContent="flexEnd">
               <Button onClick={closeModal}>Loka</Button>

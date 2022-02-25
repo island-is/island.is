@@ -7,10 +7,14 @@ export const modalBase = style({
 })
 
 export const container = style({
-  height: '100%',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      height: '100%',
+    },
+  },
 })
 
 export const modal = style({
