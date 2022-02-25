@@ -20,7 +20,6 @@ import {
   TableOfContents,
   Button,
   Tag,
-  LinkContext,
 } from '@island.is/island-ui/core'
 import {
   HeadWithSocialSharing,
@@ -45,6 +44,7 @@ import {
   GetSingleArticleQuery,
   QueryGetSingleArticleArgs,
   Organization,
+  Step,
 } from '@island.is/web/graphql/schema'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -58,6 +58,9 @@ import {
 import { Locale } from '@island.is/shared/types'
 import { useScrollPosition } from '../hooks/useScrollPosition'
 import { scrollTo } from '../hooks/useScrollSpy'
+import StepperFSM from '../components/StepperFSM/StepperFSM'
+import { getStepOptionsSourceNamespace } from '../components/StepperFSM/StepperFSMUtils'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
@@ -284,9 +287,14 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
 export interface ArticleProps {
   article: Article
   namespace: GetNamespaceQuery['getNamespace']
+  subArticleStepOptions: { data: []; slug: string }[]
 }
 
-const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
+const ArticleScreen: Screen<ArticleProps> = ({
+  article,
+  namespace,
+  subArticleStepOptions,
+}) => {
   const { activeLocale } = useI18n()
   const portalRef = useRef()
   const processEntryRef = useRef(null)
@@ -297,10 +305,15 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
     processEntryRef.current = document.querySelector('#processRef')
     setMounted(true)
   }, [])
-  useContentfulId(article.id)
   const n = useNamespace(namespace)
   const { query } = useRouter()
   const { linkResolver } = useLinkResolver()
+
+  const subArticle = article.subArticles.find((sub) => {
+    return sub.slug.split('/').pop() === query.subSlug
+  })
+
+  useContentfulId(article.id, subArticle?.id)
 
   useScrollPosition(
     ({ currPos }) => {
@@ -324,10 +337,6 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
     false,
     150,
   )
-
-  const subArticle = article.subArticles.find((sub) => {
-    return sub.slug.split('/').pop() === query.subSlug
-  })
 
   const contentOverviewOptions = useMemo(() => {
     return createArticleNavigation(article, subArticle, linkResolver)
@@ -495,20 +504,35 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
               </GridColumn>
             </GridRow>
           )}
-          {subArticle && (
+          {subArticle && !subArticle.stepper && (
             <Text variant="h2" as="h2" paddingTop={7}>
               <span id={slugify(subArticle.title)} className="rs_read">
                 {subArticle.title}
               </span>
             </Text>
           )}
+          {subArticle && subArticle.stepper && (
+            <Text color="dark300" variant="h3" as="h3" paddingTop={7}>
+              <span id={slugify(subArticle.title)} className="rs_read">
+                {subArticle.title}
+              </span>
+            </Text>
+          )}
         </Box>
-        <Box paddingTop={subArticle ? 2 : 4}>
+        <Box
+          paddingTop={subArticle && subArticle.stepper ? 0 : subArticle ? 2 : 4}
+        >
           <Box className="rs_read">
             {richText(
               (subArticle ?? article).body as SliceType[],
               undefined,
               activeLocale,
+            )}
+            {subArticle && subArticle.stepper && (
+              <StepperFSM
+                stepper={subArticle.stepper}
+                optionsFromNamespace={subArticleStepOptions}
+              />
             )}
             <AppendedArticleComponents article={article} />
           </Box>
@@ -622,10 +646,55 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
     throw new CustomNextError(404, 'Article not found')
   }
 
+  // The stepper in the subArticle can have steps that need data from a namespace
+  const subArticleStepOptions = await getSubArticleStepOptions(
+    subArticle,
+    apolloClient,
+  )
+
   return {
     article,
     namespace,
+    subArticleStepOptions,
   }
+}
+
+const getSubArticleStepOptions = async (
+  subArticle: SubArticle,
+  apolloClient: ApolloClient<NormalizedCacheObject>,
+) => {
+  const subArticleStepOptions: { data: []; slug: string }[] = []
+  if (subArticle && subArticle.stepper) {
+    const queries = subArticle.stepper.steps.map((step) => {
+      const stepOptionsNameSpace = getStepOptionsSourceNamespace(step as Step)
+      if (!stepOptionsNameSpace) return null
+      return apolloClient
+        .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+          query: GET_NAMESPACE_QUERY,
+          variables: {
+            input: {
+              namespace: stepOptionsNameSpace,
+              lang: 'is',
+            },
+          },
+        })
+        .then((content) => {
+          // map data here to reduce data processing in component
+          return JSON.parse(content.data.getNamespace.fields)
+        })
+    })
+
+    const dataArray = await Promise.all(queries)
+
+    for (let i = 0; i < dataArray.length; i += 1) {
+      subArticleStepOptions.push({
+        slug: subArticle.stepper.steps[i].slug,
+        data: dataArray[i],
+      })
+    }
+  }
+
+  return subArticleStepOptions
 }
 
 export default withMainLayout(ArticleScreen)

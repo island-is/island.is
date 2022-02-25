@@ -54,6 +54,7 @@
 - [Code Standards](handbook/technical-overview/code-standards.md)
 - [Devops](handbook/technical-overview/devops/README.md)
   - [Continuous Delivery](handbook/technical-overview/devops/continuous-delivery.md)
+  - [Database](handbook/technical-overview/devops/database.md)
   - [Dockerizing](handbook/technical-overview/devops/dockerizing.md)
   - [Environment Setup](handbook/technical-overview/devops/environment-setup.md)
   - [Logging](handbook/technical-overview/devops/logging.md)

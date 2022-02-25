@@ -34,8 +34,7 @@ import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/uti
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import { rcCaseFiles as m } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-
+import * as Constants from '@island.is/judicial-system/consts'
 import { PoliceCaseFilesData } from './StepFive'
 import { PoliceCaseFilesMessageBox } from '../../SharedComponents/PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
 import * as styles from './StepFive.css'

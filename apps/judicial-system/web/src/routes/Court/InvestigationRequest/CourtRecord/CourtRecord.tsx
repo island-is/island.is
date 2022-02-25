@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import { SessionArrangements } from '@island.is/judicial-system/types'
 import {
-  JudgeSubsections,
+  CourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -49,7 +49,7 @@ const CourtRecord = () => {
         ) {
           attendees += `\n${wc.defenderName} skipaður ${
             wc.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
-          } ${formatMessage(core.defendant, { suffix: 'a' })}\n`
+          } ${formatMessage(core.defendant, { suffix: 'a' })}`
         }
 
         if (wc.translator) {
@@ -163,7 +163,7 @@ const CourtRecord = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={JudgeSubsections.COURT_RECORD}
+      activeSubSection={CourtSubsections.COURT_RECORD}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >

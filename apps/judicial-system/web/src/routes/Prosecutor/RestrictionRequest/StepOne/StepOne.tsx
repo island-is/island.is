@@ -13,8 +13,7 @@ import {
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 import type { Case, UpdateDefendant } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-
+import * as Constants from '@island.is/judicial-system/consts'
 import { StepOneForm } from './StepOneForm'
 
 export const StepOne: React.FC = () => {

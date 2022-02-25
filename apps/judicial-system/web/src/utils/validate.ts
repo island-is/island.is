@@ -177,28 +177,34 @@ export const isPoliceReportStepValidIC = (workingCase: Case) => {
   )
 }
 
-export const isOverviewStepValidRC = (workingCase: Case) => {
-  return validate(workingCase.courtCaseNumber || '', 'empty').isValid
+export const isReceptionAndAssignmentStepValidRC = (workingCase: Case) => {
+  return (
+    validate(workingCase.courtCaseNumber || '', 'empty').isValid &&
+    workingCase.judge
+  )
 }
 
-export const isOverviewStepValidIC = (workingCase: Case) => {
-  return validate(workingCase.courtCaseNumber || '', 'empty').isValid
+export const isReceptionAndAssignmentStepValidIC = (workingCase: Case) => {
+  return (
+    validate(workingCase.courtCaseNumber || '', 'empty').isValid &&
+    workingCase.judge
+  )
 }
 
 export const isCourtHearingArrangemenstStepValidRC = (workingCase: Case) => {
   return (
     validate(workingCase.defenderEmail || '', 'email-format').isValid &&
     validate(workingCase.defenderPhoneNumber || '', 'phonenumber').isValid &&
-    validate(workingCase.courtDate || '', 'date-format').isValid &&
-    workingCase.judge
+    validate(workingCase.courtDate || '', 'date-format').isValid
   )
 }
 
 export const isCourtHearingArrangementsStepValidIC = (workingCase: Case) => {
   return (
-    workingCase.judge &&
     workingCase.sessionArrangements &&
-    validate(workingCase.courtDate || '', 'date-format').isValid
+    validate(workingCase.courtDate || '', 'date-format').isValid &&
+    validate(workingCase.defenderEmail || '', 'email-format').isValid &&
+    validate(workingCase.defenderPhoneNumber || '', 'phonenumber').isValid
   )
 }
 

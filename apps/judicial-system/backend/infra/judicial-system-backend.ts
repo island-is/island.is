@@ -35,6 +35,20 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
         staging: 'https://judicial-system.staging01.devland.is/krafa/yfirlit/',
         prod: 'https://rettarvorslugatt.island.is/krafa/yfirlit/',
       },
+      PROSECUTOR_RESTRICTION_CASE_OVERVIEW_URL: {
+        dev: 'https://judicial-system.dev01.devland.is/krafa/stadfesta/',
+        staging:
+          'https://judicial-system.staging01.devland.is/krafa/stadfesta/',
+        prod: 'https://rettarvorslugatt.island.is/krafa/stadfesta/',
+      },
+      PROSECUTOR_INVESTIGATION_CASE_OVERVIEW_URL: {
+        dev:
+          'https://judicial-system.dev01.devland.is/krafa/rannsoknarheimild/stadfesta/',
+        staging:
+          'https://judicial-system.staging01.devland.is/krafa/rannsoknarheimild/stadfesta/',
+        prod:
+          'https://rettarvorslugatt.island.is/krafa/rannsoknarheimild/stadfesta/',
+      },
     })
     .xroad(Base, JudicialSystem)
     .secrets({
