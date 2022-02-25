@@ -30,8 +30,7 @@ import { parseString } from '@island.is/judicial-system-web/src/utils/formatters
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import { icCaseFiles as m } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-
+import * as Constants from '@island.is/judicial-system/consts'
 import { PoliceCaseFilesMessageBox } from '../../SharedComponents/PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
 import { PoliceCaseFilesData } from './CaseFiles'
 import * as styles from './CaseFiles.css'

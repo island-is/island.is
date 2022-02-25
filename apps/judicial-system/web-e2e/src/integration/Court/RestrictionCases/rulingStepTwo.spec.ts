@@ -1,8 +1,13 @@
 import { Case, CaseDecision, CaseType } from '@island.is/judicial-system/types'
 import { makeCustodyCase } from '@island.is/judicial-system/formatters'
+import {
+  CONFIRMATION_ROUTE,
+  RULING_STEP_TWO_ROUTE,
+} from '@island.is/judicial-system/consts'
+
 import { intercept } from '../../../utils'
 
-describe('/domur/urskurdarord/:id', () => {
+describe(`${RULING_STEP_TWO_ROUTE}/:id`, () => {
   beforeEach(() => {
     cy.stubAPIResponses()
   })
@@ -14,7 +19,7 @@ describe('/domur/urskurdarord/:id', () => {
       decision: CaseDecision.REJECTING,
     }
 
-    cy.visit('/domur/urskurdarord/conclusion_rejected')
+    cy.visit(`${RULING_STEP_TWO_ROUTE}/conclusion_rejected`)
 
     intercept(caseDataAddition)
 
@@ -32,7 +37,7 @@ describe('/domur/urskurdarord/:id', () => {
       validToDate: '2020-12-22T11:23:00.000Z',
     }
 
-    cy.visit('/domur/urskurdarord/conclusion_accepted_without_isolation')
+    cy.visit(`${RULING_STEP_TWO_ROUTE}/conclusion_accepted_without_isolation`)
 
     intercept(caseDataAddition)
 
@@ -51,7 +56,7 @@ describe('/domur/urskurdarord/:id', () => {
       validToDate: '2020-12-22T11:23:00.000Z',
     }
 
-    cy.visit('/domur/urskurdarord/conclusion_accepted_with_isolation')
+    cy.visit(`${RULING_STEP_TWO_ROUTE}/conclusion_accepted_with_isolation`)
 
     intercept(caseDataAddition)
 
@@ -72,7 +77,7 @@ describe('/domur/urskurdarord/:id', () => {
     }
 
     cy.visit(
-      '/domur/urskurdarord/conclusion_accepted_with_isolation_isolation_ends_before_custody',
+      `${RULING_STEP_TWO_ROUTE}/conclusion_accepted_with_isolation_isolation_ends_before_custody`,
     )
 
     intercept(caseDataAddition)
@@ -92,7 +97,7 @@ describe('/domur/urskurdarord/:id', () => {
     }
 
     cy.visit(
-      '/domur/urskurdarord/conclusion_rejected_with_alternative_travel_ban',
+      `${RULING_STEP_TWO_ROUTE}/conclusion_rejected_with_alternative_travel_ban`,
     )
 
     intercept(caseDataAddition)
@@ -114,7 +119,7 @@ describe('/domur/urskurdarord/:id', () => {
       },
     }
 
-    cy.visit('/domur/urskurdarord/conclusion_rejected_extension')
+    cy.visit(`${RULING_STEP_TWO_ROUTE}/conclusion_rejected_extension`)
 
     intercept(caseDataAddition)
 
@@ -136,7 +141,7 @@ describe('/domur/urskurdarord/:id', () => {
     }
 
     cy.visit(
-      '/domur/urskurdarord/conclusion_rejected_extension_previous_decision_travel_ban',
+      `${RULING_STEP_TWO_ROUTE}/conclusion_rejected_extension_previous_decision_travel_ban`,
     )
 
     intercept(caseDataAddition)
@@ -159,7 +164,7 @@ describe('/domur/urskurdarord/:id', () => {
       validToDate: '2020-12-22T11:23:00.000Z',
     }
 
-    cy.visit('/domur/urskurdarord/conclusion_accepted_extension')
+    cy.visit(`${RULING_STEP_TWO_ROUTE}/conclusion_accepted_extension`)
 
     intercept(caseDataAddition)
 
@@ -182,7 +187,7 @@ describe('/domur/urskurdarord/:id', () => {
     }
 
     cy.visit(
-      '/domur/urskurdarord/conclusion_accepted_extension_previous_decision_travel_ban',
+      `${RULING_STEP_TWO_ROUTE}/conclusion_accepted_extension_previous_decision_travel_ban`,
     )
 
     intercept(caseDataAddition)
@@ -206,7 +211,7 @@ describe('/domur/urskurdarord/:id', () => {
     }
 
     cy.visit(
-      '/domur/urskurdarord/conclusion_rejected_extension_accepted_alternative_travel_ban',
+      `${RULING_STEP_TWO_ROUTE}/conclusion_rejected_extension_accepted_alternative_travel_ban`,
     )
 
     intercept(caseDataAddition)
@@ -225,7 +230,7 @@ describe('/domur/urskurdarord/:id', () => {
       decision: CaseDecision.REJECTING,
     }
 
-    cy.visit('/domur/urskurdarord/conclusion_rejected_travel_ban')
+    cy.visit(`${RULING_STEP_TWO_ROUTE}/conclusion_rejected_travel_ban`)
 
     intercept(caseDataAddition)
 
@@ -244,7 +249,7 @@ describe('/domur/urskurdarord/:id', () => {
       validToDate: '2020-12-22T11:23:00.000Z',
     }
 
-    cy.visit('/domur/urskurdarord/conclusion_accepted_travel_ban')
+    cy.visit(`${RULING_STEP_TWO_ROUTE}/conclusion_accepted_travel_ban`)
 
     intercept(caseDataAddition)
 
@@ -261,7 +266,7 @@ describe('/domur/urskurdarord/:id', () => {
       courtStartDate: '2020-12-22T11:23:00.000Z',
     }
 
-    cy.visit('/domur/urskurdarord/test_id_stadfest')
+    cy.visit(`${RULING_STEP_TWO_ROUTE}/test_id_stadfest`)
 
     intercept(caseDataAddition)
 
@@ -279,7 +284,7 @@ describe('/domur/urskurdarord/:id', () => {
       courtStartDate: '2020-12-22T11:23:00.000Z',
     }
 
-    cy.visit('/domur/urskurdarord/test_id_stadfest')
+    cy.visit(`${RULING_STEP_TWO_ROUTE}/test_id_stadfest`)
 
     intercept(caseDataAddition)
 
@@ -287,6 +292,6 @@ describe('/domur/urskurdarord/:id', () => {
     cy.get('#accused-appeal').check()
     cy.getByTestid('courtEndTime').type('11:00')
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', '/domur/stadfesta/test_id_stadfest')
+    cy.url().should('include', CONFIRMATION_ROUTE)
   })
 })
