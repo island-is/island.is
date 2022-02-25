@@ -3,7 +3,6 @@ import { useIntl } from 'react-intl'
 import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
 import type { Case } from '@island.is/judicial-system/types'
 import { rulingAccordion as m } from '@island.is/judicial-system-web/messages/Core/rulingAccordion'
-import * as style from './RulingAccordionItem.css'
 
 interface Props {
   workingCase: Case
@@ -57,9 +56,7 @@ const RulingAccordionItem: React.FC<Props> = ({
         <Text variant="eyebrow" color="blue400">
           {formatMessage(m.sections.ruling.title)}
         </Text>
-        <Text>
-          <span className={style.breakSpaces}>{workingCase.ruling}</span>
-        </Text>
+        <Text whiteSpace="breakSpaces">{workingCase.ruling}</Text>
       </Box>
     </AccordionItem>
   )

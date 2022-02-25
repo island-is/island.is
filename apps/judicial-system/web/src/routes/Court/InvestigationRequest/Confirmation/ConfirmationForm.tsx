@@ -20,8 +20,7 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import type { Case, User } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-
+import * as Constants from '@island.is/judicial-system/consts'
 interface Props {
   workingCase: Case
   user: User
