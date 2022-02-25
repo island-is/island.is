@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import {
   SyslumennService,
   MortgageCertificate,
+  MortgageCertificateValidation,
 } from '@island.is/clients/syslumenn'
 
 @Injectable()
@@ -16,7 +17,7 @@ export class MortgageCertificateService {
 
   async validateMortgageCertificate(
     realEstateNumber: string,
-  ): Promise<Boolean> {
+  ): Promise<MortgageCertificateValidation> {
     return await this.syslumennService.validateMortgageCertificate(
       realEstateNumber,
     )

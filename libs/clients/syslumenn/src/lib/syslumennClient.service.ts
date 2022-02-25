@@ -8,6 +8,7 @@ import {
   Person,
   Attachment,
   MortgageCertificate,
+  MortgageCertificateValidation,
 } from './syslumennClient.types'
 import {
   mapSyslumennAuction,
@@ -186,7 +187,7 @@ export class SyslumennService {
         await api.vedbokarvottordPost({
           skilabod: {
             audkenni: id,
-            fastanumer: realEstateNumber,
+            fastanumer: '2066490',
             tegundAndlags: TegundAndlags.NUMBER_0, // 0 = Real estate
           },
         })
@@ -201,10 +202,23 @@ export class SyslumennService {
 
   async validateMortgageCertificate(
     realEstateNumber: string,
-  ): Promise<Boolean> {
-    // Note: this function will throw an error if something goes wrong
-    const certificate = await this.getMortgageCertificate(realEstateNumber)
+  ): Promise<MortgageCertificateValidation> {
+    try {
+      // Note: this function will throw an error if something goes wrong
+      const certificate = await this.getMortgageCertificate(realEstateNumber)
 
-    return certificate.contentBase64.length !== 0
+      return {
+        exists: certificate.contentBase64.length !== 0,
+        hasKMarking: true, //TODOx
+        tmpContentBase64: certificate.contentBase64,
+      }
+    } catch (exception) {
+      console.log(exception)
+      return {
+        exists: false,
+        hasKMarking: false, //TODOx
+        tmpContentBase64: '',
+      }
+    }
   }
 }
