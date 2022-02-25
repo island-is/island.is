@@ -116,7 +116,12 @@ export class DraftRegulationService {
       where: {
         drafting_status: { [Op.in]: ['shipped', 'published'] },
       },
-      order: [['created', 'DESC']],
+      order: [
+        ['drafting_status', 'ASC'],
+        ['fast_track', 'DESC'],
+        ['ideal_publish_date', 'ASC'],
+        ['created', 'DESC'],
+      ],
     })
 
     const drafts: ShippedSummary[] = []
