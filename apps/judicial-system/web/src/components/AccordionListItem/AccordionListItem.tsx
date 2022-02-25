@@ -13,7 +13,9 @@ const AccordionListItem: React.FC<AccordionListItemProps> = (
   return (
     <>
       <Box marginBottom={1}>
-        <Text variant="h5">{props.title}</Text>
+        <Text variant="h5" as="h5">
+          {props.title}
+        </Text>
       </Box>
       <Box marginBottom={3}>
         {props.breakSpaces ? (
