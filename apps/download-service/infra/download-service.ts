@@ -25,6 +25,7 @@ export const serviceSetup = (services: {
       POSTHOLF_CLIENT_SECRET: '/k8s/documents/POSTHOLF_CLIENT_SECRET',
       POSTHOLF_TOKEN_URL: '/k8s/documents/POSTHOLF_TOKEN_URL',
       POSTHOLF_BASE_PATH: '/k8s/documents/POSTHOLF_BASE_PATH',
+      REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL',
     })
     .xroad(Base, Client, Finance)
     .ingress({
