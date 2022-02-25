@@ -1,10 +1,14 @@
 /// <reference path="../../../support/index.d.ts" />
-
 import { Case, CaseDecision } from '@island.is/judicial-system/types'
 import { makeCustodyCase } from '@island.is/judicial-system/formatters'
+import {
+  RULING_STEP_ONE_ROUTE,
+  RULING_STEP_TWO_ROUTE,
+} from '@island.is/judicial-system/consts'
+
 import { intercept } from '../../../utils'
 
-describe('/domur/urskurdur/:id', () => {
+describe(`${RULING_STEP_ONE_ROUTE}/:id`, () => {
   beforeEach(() => {
     cy.stubAPIResponses()
   })
@@ -18,7 +22,7 @@ describe('/domur/urskurdur/:id', () => {
       demands:
         'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
     }
-    cy.visit('/domur/urskurdur/test_id_stadfest')
+    cy.visit(`${RULING_STEP_ONE_ROUTE}/test_id_stadfest`)
 
     intercept(caseDataAddition)
 
@@ -36,7 +40,7 @@ describe('/domur/urskurdur/:id', () => {
       demands:
         'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
     }
-    cy.visit('/domur/urskurdur/test_id_stadfest')
+    cy.visit(`${RULING_STEP_ONE_ROUTE}/test_id_stadfest`)
 
     intercept(caseDataAddition)
 
@@ -51,25 +55,6 @@ describe('/domur/urskurdur/:id', () => {
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
-  it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
-    const caseData = makeCustodyCase()
-    const caseDataAddition: Case = {
-      ...caseData,
-      caseFacts: 'lorem ipsum',
-      legalArguments: 'lorem ipsum',
-      demands:
-        'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
-    }
-    cy.visit('/domur/urskurdur/test_id_stadfest')
-
-    intercept(caseDataAddition)
-
-    cy.getByTestid('ruling').type('lorem')
-    cy.get('#case-decision-accepting').check()
-    cy.getByTestid('continueButton').click()
-    cy.url().should('include', '/domur/urskurdarord/test_id_stadfest')
-  })
-
   it('should show appropriate valid to dates based on decision', () => {
     const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
@@ -79,7 +64,7 @@ describe('/domur/urskurdur/:id', () => {
       demands:
         'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
     }
-    cy.visit('/domur/urskurdur/test_id_stadfest')
+    cy.visit(`${RULING_STEP_ONE_ROUTE}/test_id_stadfest`)
 
     intercept(caseDataAddition)
 
@@ -99,12 +84,31 @@ describe('/domur/urskurdur/:id', () => {
       decision: CaseDecision.ACCEPTING,
       isCustodyIsolation: true,
     }
-    cy.visit('/domur/urskurdur/test_id_stadfest')
+    cy.visit(`${RULING_STEP_ONE_ROUTE}/test_id_stadfest`)
 
     intercept(caseDataAddition)
 
     cy.get('#isolationToDate').should('not.have.attr', 'disabled')
     cy.get('[name="isCustodyIsolation"]').uncheck()
     cy.get('#isolationToDate').should('have.attr', 'disabled')
+  })
+
+  it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
+    const caseData = makeCustodyCase()
+    const caseDataAddition: Case = {
+      ...caseData,
+      caseFacts: 'lorem ipsum',
+      legalArguments: 'lorem ipsum',
+      demands:
+        'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
+    }
+    cy.visit(`${RULING_STEP_ONE_ROUTE}/test_id_stadfest`)
+
+    intercept(caseDataAddition)
+
+    cy.getByTestid('ruling').type('lorem')
+    cy.get('#case-decision-accepting').check()
+    cy.getByTestid('continueButton').click()
+    cy.url().should('include', RULING_STEP_TWO_ROUTE)
   })
 })
