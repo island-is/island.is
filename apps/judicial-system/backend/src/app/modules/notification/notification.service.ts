@@ -538,7 +538,14 @@ export class NotificationService {
 
   private async sendCourtDateNotifications(
     theCase: Case,
+    eventOnly?: boolean,
   ): Promise<SendNotificationResponse> {
+    this.eventService.postEvent(CaseEvent.SCHEDULE_COURT_DATE, theCase)
+
+    if (eventOnly) {
+      return { notificationSent: false }
+    }
+
     const promises: Promise<Recipient>[] = [
       this.sendCourtDateEmailNotificationToProsecutor(theCase),
     ]
@@ -565,10 +572,6 @@ export class NotificationService {
       NotificationType.COURT_DATE,
       recipients,
     )
-
-    if (result.notificationSent) {
-      this.eventService.postEvent(CaseEvent.SCHEDULE_COURT_DATE, theCase)
-    }
 
     return result
   }
@@ -904,7 +907,7 @@ export class NotificationService {
       case NotificationType.RECEIVED_BY_COURT:
         return this.sendReceivedByCourtNotifications(theCase)
       case NotificationType.COURT_DATE:
-        return this.sendCourtDateNotifications(theCase)
+        return this.sendCourtDateNotifications(theCase, notification.eventOnly)
       case NotificationType.RULING:
         return this.sendRulingNotifications(theCase)
       case NotificationType.MODIFIED:
