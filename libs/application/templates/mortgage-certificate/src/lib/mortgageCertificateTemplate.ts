@@ -79,6 +79,9 @@ const template: ApplicationTemplate<
             // Applications that stay in this state for 24 hours will be pruned automatically
             whenToPrune: 24 * 3600 * 1000,
           },
+          onExit: {
+            apiModuleAction: ApiActions.validateMortgageCertificate,
+          },
           roles: [
             {
               id: Roles.APPLICANT,

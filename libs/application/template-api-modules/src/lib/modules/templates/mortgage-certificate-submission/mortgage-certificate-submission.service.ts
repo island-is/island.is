@@ -8,6 +8,7 @@ import {
   Attachment,
   PersonType,
   MortgageCertificate,
+  MortgageCertificateValidation,
 } from '@island.is/clients/syslumenn'
 import { generateSyslumennNotifyErrorEmail } from './emailGenerators/syslumennNotifyError'
 import { generateSyslumennSubmitRequestErrorEmail } from './emailGenerators/syslumennSubmitRequestError'
@@ -67,37 +68,13 @@ export class MortgageCertificateSubmissionService {
     }
   }
 
-  async submitRequestSyslumenn(application: Application) {
-    const nationalRegistryData = application.externalData.nationalRegistry
-      ?.data as NationalRegistry
-    const userProfileData = application.externalData.userProfile
-      ?.data as UserProfile
-    const person: Person = {
-      name: nationalRegistryData?.fullName,
-      ssn: nationalRegistryData?.nationalId,
-      phoneNumber: userProfileData?.mobilePhoneNumber,
-      email: userProfileData?.email,
-      homeAddress: nationalRegistryData?.address.streetAddress,
-      postalCode: nationalRegistryData?.address.postalCode,
-      city: nationalRegistryData?.address.city,
-      signed: true,
-      type: PersonType.MortgageCertificateApplicant,
-    }
-    const persons: Person[] = [person]
-    const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
-    const extraData: { [key: string]: string } = {}
-    const uploadDataName =
-      'Umsókn um lagfæringu á veðbókarvottorði frá Ísland.is'
-    const uploadDataId = 'VedbokavottordVilla1.0'
-    await this.syslumennService
-      .uploadData(persons, undefined, extraData, uploadDataName, uploadDataId)
-      .catch(async () => {
-        await this.sharedTemplateAPIService.sendEmail(
-          generateSyslumennSubmitRequestErrorEmail,
-          (application as unknown) as Application,
-        )
-        return undefined
-      })
+  async validateMortgageCertificate({
+    application,
+  }: TemplateApiModuleActionProps): Promise<MortgageCertificateValidation> {
+    const applicantSsn = application.applicant
+    return await this.mortgageCertificateService.validateMortgageCertificate(
+      applicantSsn,
+    )
   }
 
   async getMortgageCertificate({
@@ -125,6 +102,38 @@ export class MortgageCertificateSubmissionService {
     await this.notifySyslumenn(application, sealedDocument)
 
     return sealedDocument
+  }
+
+  async submitRequestSyslumenn(application: Application) {
+    const nationalRegistryData = application.externalData.nationalRegistry
+      ?.data as NationalRegistry
+    const userProfileData = application.externalData.userProfile
+      ?.data as UserProfile
+    const person: Person = {
+      name: nationalRegistryData?.fullName,
+      ssn: nationalRegistryData?.nationalId,
+      phoneNumber: userProfileData?.mobilePhoneNumber,
+      email: userProfileData?.email,
+      homeAddress: nationalRegistryData?.address.streetAddress,
+      postalCode: nationalRegistryData?.address.postalCode,
+      city: nationalRegistryData?.address.city,
+      signed: true,
+      type: PersonType.MortgageCertificateApplicant,
+    }
+    const persons: Person[] = [person]
+    const extraData: { [key: string]: string } = {}
+    const uploadDataName =
+      'Umsókn um lagfæringu á veðbókarvottorði frá Ísland.is'
+    const uploadDataId = 'VedbokavottordVilla1.0'
+    await this.syslumennService
+      .uploadData(persons, undefined, extraData, uploadDataName, uploadDataId)
+      .catch(async () => {
+        await this.sharedTemplateAPIService.sendEmail(
+          generateSyslumennSubmitRequestErrorEmail,
+          (application as unknown) as Application,
+        )
+        return undefined
+      })
   }
 
   private async notifySyslumenn(

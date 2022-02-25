@@ -93,3 +93,9 @@ export enum PersonType {
 export interface MortgageCertificate {
   contentBase64: string
 }
+
+export interface MortgageCertificateValidation {
+  exists: boolean
+  hasKMarking: boolean
+  tmpContentBase64: string //TODOx remove
+}

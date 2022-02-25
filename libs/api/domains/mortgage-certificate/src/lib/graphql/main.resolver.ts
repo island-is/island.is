@@ -15,13 +15,13 @@ export class MainResolver {
     private readonly mortgageCertificateService: MortgageCertificateService,
   ) {}
 
-  @Query(() => Boolean)
-  async mortgageCertificateValidation(
-    // @CurrentUser() user: User,
-    @Args('realEstateNumber') realEstateNumber: string,
-  ) {
-    return await this.mortgageCertificateService.validateMortgageCertificate(
-      realEstateNumber,
-    )
-  }
+  // @Query(() => Boolean)
+  // async mortgageCertificateValidation(
+  //   // @CurrentUser() user: User,
+  //   @Args('realEstateNumber') realEstateNumber: string,
+  // ) {
+  //   return await this.mortgageCertificateService.validateMortgageCertificate(
+  //     realEstateNumber,
+  //   )
+  // }
 }
