@@ -46,7 +46,7 @@ export const ImpactListItem = (props: ImpactListItemProps) => {
       <div>
         <DateText date={effect.date as string} color="mint800" />
         <Text variant="small" color="mint800">
-          Breytt af núverandi reglugerð
+          Þessi breyting
         </Text>
       </div>
     )
@@ -56,7 +56,7 @@ export const ImpactListItem = (props: ImpactListItemProps) => {
     return (
       <div>
         <DateText date={effect.date as string} color="blueberry600" />
-        <Text variant="small">Breytt af {effect.name}</Text>
+        <Text variant="small">Breytt af virkri reglugerð</Text>
       </div>
     )
   }
