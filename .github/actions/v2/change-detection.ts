@@ -58,33 +58,43 @@ export async function findBestGoodRefBranch(
   return 'rebuild'
 }
 
-export async function findBestGoodRefPR(
-  diffWeight: (services) => number,
+async function getCommits(
   git: SimpleGit,
-  githubApi: GitActionStatus,
   headBranch: string,
   baseBranch: string,
-  prBranch,
-): Promise<LastGoodBuild> {
-  const log = app.extend('findBestGoodRefPR')
-  log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`)
-  const lastChanges = await git.log({ maxCount: 1 })
-  const currentChange = lastChanges.latest
-  const mergeBaseCommit = await git.raw('merge-base', prBranch, baseBranch)
+  head: string,
+): Promise<string[]> {
+  const mergeBaseCommit = await git.raw('merge-base', headBranch, baseBranch)
   const commits = (
     await git.raw(
       'rev-list',
       '--date-order',
       '--max-count=300',
-      'HEAD~1',
+      head,
       `${mergeBaseCommit.trim()}`,
     )
   )
     .split('\n')
     .filter((s) => s.length > 0)
     .map((c) => c.substr(0, 7))
+  return commits
+}
 
-  const prRun = await githubApi.getLastGoodPRRun(headBranch, commits)
+export async function findBestGoodRefPR(
+  diffWeight: (services) => number,
+  git: SimpleGit,
+  githubApi: GitActionStatus,
+  headBranch: string,
+  baseBranch: string,
+  prBranch: string,
+): Promise<LastGoodBuild> {
+  const log = app.extend('findBestGoodRefPR')
+  log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`)
+  const lastChanges = await git.log({ maxCount: 1 })
+  const currentChange = lastChanges.latest
+  const prCommits = await getCommits(git, headBranch, baseBranch, 'HEAD')
+
+  const prRun = await githubApi.getLastGoodPRRun(headBranch, prCommits)
   const prBuilds: {
     distance: number
     hash: string
@@ -118,9 +128,12 @@ export async function findBestGoodRefPR(
       await git.checkout(prBranch)
     }
   }
+
+  const baseCommits = await getCommits(git, prBranch, baseBranch, 'HEAD~1')
+
   const baseGoodBuilds = await githubApi.getLastGoodBranchBuildRun(
     baseBranch,
-    commits,
+    baseCommits,
   )
   if (baseGoodBuilds) {
     let affectedComponents = await githubApi.calculateDistance(

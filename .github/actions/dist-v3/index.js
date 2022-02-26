@@ -35150,18 +35150,24 @@ function findBestGoodRefBranch(commitScore, git, githubApi, headBranch, baseBran
         return 'rebuild';
     });
 }
+function getCommits(git, headBranch, baseBranch, head) {
+    return modules_awaiter(this, void 0, void 0, function* () {
+        const mergeBaseCommit = yield git.raw('merge-base', headBranch, baseBranch);
+        const commits = (yield git.raw('rev-list', '--date-order', '--max-count=300', head, `${mergeBaseCommit.trim()}`))
+            .split('\n')
+            .filter((s) => s.length > 0)
+            .map((c) => c.substr(0, 7));
+        return commits;
+    });
+}
 function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, prBranch) {
     return modules_awaiter(this, void 0, void 0, function* () {
         const log = change_detection_app.extend('findBestGoodRefPR');
         log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`);
         const lastChanges = yield git.log({ maxCount: 1 });
         const currentChange = lastChanges.latest;
-        const mergeBaseCommit = yield git.raw('merge-base', prBranch, baseBranch);
-        const commits = (yield git.raw('rev-list', '--date-order', '--max-count=300', 'HEAD~1', `${mergeBaseCommit.trim()}`))
-            .split('\n')
-            .filter((s) => s.length > 0)
-            .map((c) => c.substr(0, 7));
-        const prRun = yield githubApi.getLastGoodPRRun(headBranch, commits);
+        const prCommits = yield getCommits(git, headBranch, baseBranch, 'HEAD');
+        const prRun = yield githubApi.getLastGoodPRRun(headBranch, prCommits);
         const prBuilds = [];
         if (prRun) {
             log(`Found a PR run candidate: ${JSON.stringify(prRun)}`);
@@ -35187,7 +35193,8 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
                 yield git.checkout(prBranch);
             }
         }
-        const baseGoodBuilds = yield githubApi.getLastGoodBranchBuildRun(baseBranch, commits);
+        const baseCommits = yield getCommits(git, prBranch, baseBranch, 'HEAD~1');
+        const baseGoodBuilds = yield githubApi.getLastGoodBranchBuildRun(baseBranch, baseCommits);
         if (baseGoodBuilds) {
             let affectedComponents = yield githubApi.calculateDistance(git, currentChange.hash, baseGoodBuilds.head_commit);
             prBuilds.push({

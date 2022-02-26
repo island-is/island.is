@@ -47,11 +47,12 @@ describe('Change detection', () => {
     let f1: string
     let f2: string
     let f3: string
+    let forkSha: string
     beforeEach(async () => {
       await git.checkoutLocalBranch(baseBranch)
       await makeChange(git, 'a', 'A-good')
       mainGoodBeforeBadSha = await makeChange(git, 'a', 'B-good')
-      await makeChange(git, 'a', 'C-bad')
+      forkSha = await makeChange(git, 'a', 'C-bad')
       await git.checkoutBranch('fix2', baseBranch)
       await makeChange(git, 'a', 'C1-bad')
 
@@ -68,8 +69,8 @@ describe('Change detection', () => {
         ['a', 'b', 'c', 'd', 'e'],
         'D2-good',
       )
-      await git.checkoutBranch(prBranch, headBranch)
-      await git.mergeFromTo(baseBranch, prBranch)
+      await git.checkoutBranch(prBranch, baseBranch)
+      await git.mergeFromTo(headBranch, prBranch)
     })
     it('should use last good branch run when no PR runs available', async () => {
       githubApi.getLastGoodPRRun(headBranch, Arg.any()).resolves(undefined)
@@ -108,6 +109,25 @@ describe('Change detection', () => {
       githubApi
         .getLastGoodBranchBuildRun(baseBranch, Arg.any())
         .resolves(undefined)
+
+      const mergeBaseCommit = await git.raw(
+        'merge-base',
+        headBranch,
+        baseBranch,
+      )
+      expect(mergeBaseCommit.slice(0, 7)).toBe(forkSha)
+      const commits = (
+        await git.raw(
+          'rev-list',
+          '--date-order',
+          '--max-count=300',
+          'HEAD',
+          `${mergeBaseCommit.trim()}`,
+        )
+      )
+        .split('\n')
+        .filter((s) => s.length > 0)
+        .map((c) => c.substr(0, 7))
 
       let actual = await findBestGoodRefPR(
         (services) => services.length,
@@ -174,40 +194,38 @@ describe('Change detection', () => {
   describe('PR to release branch', () => {
     let mainGoodBeforeBadSha: string
     let fixGoodSha: string
-    let mainSha1: string
-    let majorChangeSha: string
+    let hotfix2: string
+    let hotfix3: string
     const mainBranch = 'main'
-    const baseBranch = 'release-13.2.0'
-    const prBranch = 'pr'
+    const releaseBranch = 'release-13.2.0'
+    const hotfixBranch = 'hotfix-123'
+    const pr = 'pr-hotfix'
     let hotfix1: string
     beforeEach(async () => {
       await git.checkoutLocalBranch(mainBranch)
       mainGoodBeforeBadSha = await makeChange(git, 'a', 'A-good')
       await makeChange(git, 'a', 'C-bad')
-      await git.checkoutBranch(baseBranch, mainBranch)
+      await git.checkoutBranch(releaseBranch, mainBranch)
       hotfix1 = await makeChange(git, 'a', 'C1-bad')
 
-      await git.checkoutBranch(headBranch, baseBranch)
+      await git.checkoutBranch(hotfixBranch, releaseBranch)
       await makeChange(git, 'b', 'D-bad')
       await makeChange(git, 'b', 'D2-good')
       await makeChange(git, 'c', 'D3-good')
 
       fixGoodSha = await makeChange(git, 'b', 'E-good')
-      await git.checkout(baseBranch)
-      mainSha1 = await makeChange(git, 'd', 'D1-good')
-      majorChangeSha = await makeChange(
-        git,
-        ['a', 'b', 'c', 'd', 'e'],
-        'D2-good',
-      )
-      await git.checkoutBranch(prBranch, headBranch)
-      await git.mergeFromTo(baseBranch, prBranch)
+      await git.checkout(releaseBranch)
+      hotfix2 = await makeChange(git, 'd', 'D1-good')
+      hotfix3 = await makeChange(git, ['a', 'b', 'c', 'd', 'e'], 'D2-good')
+
+      await git.checkoutBranch(prBranch, releaseBranch)
+      await git.mergeFromTo(hotfixBranch, prBranch)
     })
     it('should use last good branch from main when no good runs on base or head branch', async () => {
-      githubApi.getLastGoodPRRun(headBranch, Arg.any()).resolves(undefined)
+      githubApi.getLastGoodPRRun(hotfixBranch, Arg.any()).resolves(undefined)
       githubApi
         .getLastGoodBranchBuildRun(
-          baseBranch,
+          releaseBranch,
           Arg.is((commits) => commits.includes(mainGoodBeforeBadSha)),
         )
         .resolves({ head_commit: mainGoodBeforeBadSha, run_nr: 2 })
@@ -216,21 +234,21 @@ describe('Change detection', () => {
         (services) => services.length,
         git,
         githubApi,
-        headBranch,
-        baseBranch,
+        hotfixBranch,
+        releaseBranch,
         prBranch,
       )
       expect(actual).toStrictEqual({
         sha: mainGoodBeforeBadSha,
         run_number: 2,
-        branch: baseBranch,
+        branch: releaseBranch,
       })
     })
 
     it('should prefer the lighter run between a PR run a base branch run', async () => {
       githubApi
         .getLastGoodPRRun(
-          headBranch,
+          hotfixBranch,
           Arg.is(
             (commits) =>
               commits.includes(fixGoodSha) && commits.includes(hotfix1),
@@ -239,54 +257,54 @@ describe('Change detection', () => {
         .resolves({ head_commit: fixGoodSha, base_commit: hotfix1, run_nr: 2 })
       githubApi
         .getLastGoodBranchBuildRun(
-          baseBranch,
-          Arg.is((commits) => commits.includes(majorChangeSha)),
+          releaseBranch,
+          Arg.is((commits) => commits.includes(hotfix3)),
         )
-        .resolves({ head_commit: majorChangeSha, run_nr: 3 })
+        .resolves({ head_commit: hotfix3, run_nr: 3 })
 
       let actual = await findBestGoodRefPR(
         (services) => services.length,
         git,
         githubApi,
-        headBranch,
-        baseBranch,
+        hotfixBranch,
+        releaseBranch,
         prBranch,
       )
       expect(actual).toStrictEqual({
-        sha: majorChangeSha,
+        sha: hotfix3,
         run_number: 3,
-        branch: baseBranch,
+        branch: releaseBranch,
       })
     })
     it('prefer lighter branch run over heavier PR run', async () => {
       githubApi
         .getLastGoodPRRun(
-          headBranch,
+          hotfixBranch,
           Arg.is(
             (commits) =>
-              commits.includes(fixGoodSha) && commits.includes(mainSha1),
+              commits.includes(fixGoodSha) && commits.includes(hotfix2),
           ),
         )
-        .resolves({ head_commit: fixGoodSha, base_commit: mainSha1, run_nr: 2 })
+        .resolves({ head_commit: fixGoodSha, base_commit: hotfix2, run_nr: 2 })
       githubApi
         .getLastGoodBranchBuildRun(
-          baseBranch,
-          Arg.is((commits) => commits.includes(majorChangeSha)),
+          releaseBranch,
+          Arg.is((commits) => commits.includes(hotfix3)),
         )
-        .resolves({ head_commit: majorChangeSha, run_nr: 3 })
+        .resolves({ head_commit: hotfix3, run_nr: 3 })
 
       let actual = await findBestGoodRefPR(
         (services) => services.length,
         git,
         githubApi,
-        headBranch,
-        baseBranch,
+        hotfixBranch,
+        releaseBranch,
         prBranch,
       )
       expect(actual).toStrictEqual({
-        sha: majorChangeSha,
+        sha: hotfix3,
         run_number: 3,
-        branch: baseBranch,
+        branch: releaseBranch,
       })
     })
   })
