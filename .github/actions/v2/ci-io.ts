@@ -39,17 +39,32 @@ const filterSkippedSuccessBuilds = (
 
 export class LocalRunner implements GitActionStatus {
   constructor(private octokit: Octokit) {}
-  calculateDistance(
+  async calculateDistance(
     git: SimpleGit,
     currentSha: string,
     olderSha: string,
   ): Promise<string[]> {
     const log = app.extend('calculate-distance')
     log(`Calculating distance between current: ${currentSha} and ${olderSha}`)
+    const diffNames = await git.git('diff', '--name-only', currentSha, olderSha)
+    const changedFiles = [
+      // @ts-ignore
+      ...new Set(
+        diffNames
+          .split('\n')
+          .map((l) => l.trim())
+          .filter((s) => s.length > 0),
+      ),
+    ]
 
+    log(`Changed files: ${changedFiles.join(',')}`)
+
+    if (changedFiles.length === 0) return Promise.resolve([])
     try {
       const printAffected = execSync(
-        `npx nx print-affected --select=projects --head=${currentSha} --base=${olderSha}`,
+        `npx nx print-affected --select=projects --files=${changedFiles.join(
+          ',',
+        )}`,
         {
           encoding: 'utf-8',
           cwd: git.cwd,

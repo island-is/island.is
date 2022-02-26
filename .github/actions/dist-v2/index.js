@@ -90950,25 +90950,38 @@ class LocalRunner {
         this.octokit = octokit;
     }
     calculateDistance(git, currentSha, olderSha) {
-        const log = app.extend('calculate-distance');
-        log(`Calculating distance between current: ${currentSha} and ${olderSha}`);
-        try {
-            const printAffected = (0,external_child_process_.execSync)(`npx nx print-affected --select=projects --head=${currentSha} --base=${olderSha}`, {
-                encoding: 'utf-8',
-                cwd: git.cwd,
-                shell: git.shell,
-            });
-            let affectedComponents = printAffected
-                .split(',')
-                .map((s) => s.trim())
-                .filter((c) => c.length > 0);
-            log(`Affected components are ${affectedComponents.length}: ${affectedComponents.join(',')}`);
-            return Promise.resolve(affectedComponents);
-        }
-        catch (e) {
-            log('Error getting affected components: %O', e);
-            throw e;
-        }
+        return __awaiter(this, void 0, void 0, function* () {
+            const log = app.extend('calculate-distance');
+            log(`Calculating distance between current: ${currentSha} and ${olderSha}`);
+            const diffNames = yield git.git('diff', '--name-only', currentSha, olderSha);
+            const changedFiles = [
+                // @ts-ignore
+                ...new Set(diffNames
+                    .split('\n')
+                    .map((l) => l.trim())
+                    .filter((s) => s.length > 0)),
+            ];
+            log(`Changed files: ${changedFiles.join(',')}`);
+            if (changedFiles.length === 0)
+                return Promise.resolve([]);
+            try {
+                const printAffected = (0,external_child_process_.execSync)(`npx nx print-affected --select=projects --files=${changedFiles.join(',')}`, {
+                    encoding: 'utf-8',
+                    cwd: git.cwd,
+                    shell: git.shell,
+                });
+                let affectedComponents = printAffected
+                    .split(',')
+                    .map((s) => s.trim())
+                    .filter((c) => c.length > 0);
+                log(`Affected components are ${affectedComponents.length}: ${affectedComponents.join(',')}`);
+                return Promise.resolve(affectedComponents);
+            }
+            catch (e) {
+                log('Error getting affected components: %O', e);
+                throw e;
+            }
+        });
     }
     getLastGoodBranchBuildRun(branch, candidateCommits) {
         var e_1, _a;

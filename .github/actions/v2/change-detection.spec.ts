@@ -434,13 +434,13 @@ async function calculateDistance(
   currentSha: string,
   olderSha: string,
 ): Promise<string[]> {
-  const diffNames = await git.git('diff', '--name-status', currentSha, olderSha)
+  const diffNames = await git.git('diff', '--name-only', currentSha, olderSha)
   return [
     // @ts-ignore
     ...new Set(
       diffNames
         .split('\n')
-        .map((l) => l.replace('D\t', '').trim().split('/')[0])
+        .map((l) => l.trim().split('/')[0])
         .filter((s) => s.length > 0),
     ),
   ]
