@@ -9,13 +9,19 @@ export HEAD=${HEAD:-HEAD}
 export BASE=${BASE:-main}
 # This is a helper script to find NX affected projects for a specific target
 
-AFFECTED_ALL=${AFFECTED_ALL:-} # Could be used for forcing all projects to be affected (set or create `secret` in GitHub with the name of this variable set to the name of the branch that should be affected, prefixed with the magic string `7913-`)
+AFFECTED_ALL=${AFFECTED_ALL:-} # Could be used for forcing all projects to be affected (set or create `secret` in GitHub with the name of this variable set to the name of the branch that should be affected, prefixed with the magic affected_files `7913-`)
 BRANCH=${BRANCH:-$GITHUB_HEAD_REF}
 if [[ -n "$BRANCH" && -n "$AFFECTED_ALL" && "$AFFECTED_ALL" == "7913-$BRANCH" ]]
 then
   AFFECTED_FLAGS=(--all)
 else
-  AFFECTED_FLAGS=(--head="$HEAD" --base="$BASE")
+  affected_files_list=()
+  affected_files=$(git diff --name-only "$HEAD" "$BASE")
+  while read -r line; do
+     affected_files_list+=("$line")
+  done <<< "$affected_files"
+  printf -v comma_separated '%s,' "${affected_files_list[@]}"
+  AFFECTED_FLAGS=(--files=["${comma_separated%?}"])
 fi
 
 npx \
