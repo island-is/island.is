@@ -30,7 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 0
+          fetch-depth: 1500
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
@@ -46,9 +46,18 @@ jobs:
           git branch --show-current
           git rev-parse --abbrev-ref HEAD
 
-      - name: Dumping event on dist
+      - name: Checking out relevant branches
         run: |
-          cp $GITHUB_EVENT_PATH event.json
+          git checkout $GITHUB_HEAD_REF
+          git checkout $GITHUB_BASE_REF
+          git checkout $GITHUB_SHA
+          git config --global user.email "ci@island.is"
+          git config --global user.name "CI Bot"
+
+          BASE_SHA=$(git merge-base HEAD $GITHUB_BASE_REF)
+          HEAD_SHA=$(git merge-base HEAD $GITHUB_HEAD_REF)
+          echo Current base SHA is $BASE_SHA and head SHA is $HEAD_SHA
+          echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
 
       - name: Keep PR run event
         uses: actions/upload-artifact@v2
@@ -91,20 +100,12 @@ jobs:
 
       - run: |
           echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
-          export GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
-          git checkout $GITHUB_HEAD_REF
-          git checkout $GITHUB_BASE_REF
-          git checkout $GITHUB_SHA
-          git config --global user.email "ci@island.is"
-          git config --global user.name "CI Bot"
           export HEAD_REF="$GITHUB_HEAD_REF"
           export BASE_REF="$GITHUB_BASE_REF"
           export PR_REF=$GITHUB_SHA
           which git
           export SHELL=/usr/bin/bash
           source ./scripts/ci/00_prepare-base-tags.sh
-          ls -la /usr/bin
-          which sh
           git checkout $GITHUB_SHA
           echo "BASE=$BASE" >> $GITHUB_ENV
         env:
