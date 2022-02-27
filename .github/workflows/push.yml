@@ -256,13 +256,12 @@ jobs:
             export HEAD_REF="$GITHUB_HEAD_REF"
             export BASE_REF="$GITHUB_BASE_REF"
             export PR_REF=$GITHUB_SHA
-            export WORKFLOW_ID=push
           else
             export HEAD_REF="$GIT_BRANCH"
             export BASE_REF="$GIT_BASE_BRANCH"
             export PR_REF="not used"
-            export WORKFLOW_ID=push
           fi
+          export WORKFLOW_ID=push
           export SHELL=/usr/bin/bash
           source ./scripts/ci/00_prepare-base-tags.sh
           git checkout $GITHUB_SHA
