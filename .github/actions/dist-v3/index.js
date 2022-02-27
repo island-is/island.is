@@ -34914,7 +34914,7 @@ var unzip = __nccwpck_require__(1639);
 const app = src_default()('change-detection:io');
 const repository = process.env.GITHUB_REPOSITORY || '/';
 const [owner, repo] = repository.split('/');
-const filterSkippedSuccessBuilds = (run, jobName, stepName) => {
+const hasFinishedSuccessfulJob = (run, jobName, stepName) => {
     const jobs = run;
     const successJob = jobs.find((job) => job.name === jobName);
     if (successJob) {
@@ -34928,11 +34928,11 @@ class LocalRunner {
     constructor(octokit) {
         this.octokit = octokit;
     }
-    calculateDistance(git, currentSha, olderSha) {
+    getChangedComponents(git, sha1, sha2) {
         return modules_awaiter(this, void 0, void 0, function* () {
             const log = app.extend('calculate-distance');
-            log(`Calculating distance between current: ${currentSha} and ${olderSha}`);
-            const diffNames = yield git.git('diff', '--name-only', currentSha, olderSha);
+            log(`Calculating distance between ${sha1} and ${sha2}`);
+            const diffNames = yield git.git('diff', '--name-only', sha1, sha2);
             const changedFiles = [
                 // @ts-ignore
                 ...new Set(diffNames
@@ -34942,7 +34942,7 @@ class LocalRunner {
             ];
             log(`Changed files: ${changedFiles.join(',')}`);
             if (changedFiles.length === 0)
-                return Promise.resolve([]);
+                return [];
             try {
                 const printAffected = (0,external_child_process_.execSync)(`npx nx print-affected --select=projects --files=${changedFiles.join(',')}`, {
                     encoding: 'utf-8',
@@ -34954,7 +34954,7 @@ class LocalRunner {
                     .map((s) => s.trim())
                     .filter((c) => c.length > 0);
                 log(`Affected components are ${affectedComponents.length}: ${affectedComponents.join(',')}`);
-                return Promise.resolve(affectedComponents);
+                return affectedComponents;
             }
             catch (e) {
                 log('Error getting affected components: %O', e);
@@ -34966,7 +34966,7 @@ class LocalRunner {
         var e_1, _a;
         return modules_awaiter(this, void 0, void 0, function* () {
             const branchName = branch.replace('origin/', '');
-            app(`Getting last good branch(push) build for branch ${branchName}`);
+            app(`Getting last good branch (push) build for branch ${branchName} with workflow ${workflowId}`);
             const runsIterator = this.octokit.paginate.iterator('GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs', {
                 owner,
                 repo,
@@ -34975,13 +34975,13 @@ class LocalRunner {
                 event: 'push',
                 status: 'success',
             });
-            const runs = [];
+            const workflowRuns = [];
             try {
                 for (var runsIterator_1 = __asyncValues(runsIterator), runsIterator_1_1; runsIterator_1_1 = yield runsIterator_1.next(), !runsIterator_1_1.done;) {
                     const workflow_runs = runsIterator_1_1.value;
                     app(`Retrieved ${workflow_runs.data.length} workflow runs`);
-                    runs.push(...workflow_runs.data.filter((run) => candidateCommits.includes(run.head_sha.slice(0, 7))));
-                    if (runs.length > 10)
+                    workflowRuns.push(...workflow_runs.data.filter((run) => candidateCommits.includes(run.head_sha.slice(0, 7))));
+                    if (workflowRuns.length > 10)
                         break;
                 }
             }
@@ -34992,8 +34992,8 @@ class LocalRunner {
                 }
                 finally { if (e_1) throw e_1.error; }
             }
-            app(`Got GHA information for ${runs.length} workflows`);
-            let sorted = runs
+            app(`Got GHA information for ${workflowRuns.length} workflows`);
+            let sortedWorkflowRuns = workflowRuns
                 .map(({ run_number, head_sha, head_branch, jobs_url }) => ({
                 run_number,
                 sha: head_sha,
@@ -35001,22 +35001,22 @@ class LocalRunner {
                 jobs_url,
             }))
                 .sort((a, b) => b.run_number - a.run_number);
-            for (const run of sorted) {
+            for (const run of sortedWorkflowRuns) {
                 app(`Considering ${run.run_number} with ${run.sha} on ${run.branch}`);
                 const jobs = yield this.getJobs(`GET ${run.jobs_url}`);
-                if (filterSkippedSuccessBuilds(jobs, this.getJobName(workflowId), 'Announce success')) {
+                if (hasFinishedSuccessfulJob(jobs, LocalRunner.getJobName(workflowId), 'Announce success')) {
                     app(`Run number ${run.run_number} matches success criteria`);
                     return { head_commit: run.sha, run_nr: run.run_number };
                 }
                 else {
-                    app(`Not satisfied ${run.run_number} with ${run.sha} on ${run.branch}`);
+                    app(`Not satisfied success criteria for run ${run.run_number} with ${run.sha} on ${run.branch}`);
                 }
             }
             app(`Done iterating over runs, nothing good found`);
             return undefined;
         });
     }
-    getJobName(workflowId) {
+    static getJobName(workflowId) {
         switch (workflowId) {
             case 'pullrequest':
                 return 'success';
@@ -35030,7 +35030,7 @@ class LocalRunner {
         var e_2, _a;
         return modules_awaiter(this, void 0, void 0, function* () {
             const branchName = branch.replace('origin/', '');
-            app(`Getting last good PR(pull_request) run for branch ${branchName}`);
+            app(`Getting last good PR (pull_request) run for branch ${branchName} with workflow ${workflowId}`);
             const runsIterator = this.octokit.paginate.iterator('GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs', {
                 owner,
                 repo,
@@ -35039,13 +35039,13 @@ class LocalRunner {
                 event: 'pull_request',
                 status: 'success',
             });
-            const runs = [];
+            const workflowRuns = [];
             try {
                 for (var runsIterator_2 = __asyncValues(runsIterator), runsIterator_2_1; runsIterator_2_1 = yield runsIterator_2.next(), !runsIterator_2_1.done;) {
                     const workflow_runs = runsIterator_2_1.value;
                     app(`Retrieved ${workflow_runs.data.length} workflow runs`);
-                    runs.push(...workflow_runs.data);
-                    if (runs.length > 10)
+                    workflowRuns.push(...workflow_runs.data);
+                    if (workflowRuns.length > 10)
                         break;
                 }
             }
@@ -35056,8 +35056,8 @@ class LocalRunner {
                 }
                 finally { if (e_2) throw e_2.error; }
             }
-            app(`Got GHA information for ${runs.length} workflows`);
-            let sorted = runs
+            app(`Got GHA information for ${workflowRuns.length} workflows`);
+            let sortedWorkflowRuns = workflowRuns
                 .map(({ run_number, head_sha, head_branch, jobs_url, pull_requests, id, }) => ({
                 run_id: id,
                 run_number,
@@ -35067,12 +35067,10 @@ class LocalRunner {
                 pull_requests,
             }))
                 .sort((a, b) => b.run_number - a.run_number);
-            for (const run of sorted) {
+            for (const run of sortedWorkflowRuns) {
                 app(`Considering ${run.run_number} with ${run.sha} on ${run.branch}`);
                 const jobs = yield this.getJobs(`GET ${run.jobs_url}`);
-                if (filterSkippedSuccessBuilds(jobs, this.getJobName(workflowId), 'Announce success')) {
-                    let headCommit = run.pull_requests[0].head.sha;
-                    let baseCommit = run.pull_requests[0].base.sha;
+                if (hasFinishedSuccessfulJob(jobs, LocalRunner.getJobName(workflowId), 'Announce success')) {
                     app(`Run number ${run.run_number} matches success criteria`);
                     app(`Looking for PR metadata`);
                     const artifacts = yield this.octokit.actions.listWorkflowRunArtifacts({
@@ -35202,7 +35200,7 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
                 log(`Branch checked out`);
                 const mergeCommitSha = yield git.merge(prRun.head_commit);
                 log(`Simulated previous PR merge commit`);
-                const distance = yield githubApi.calculateDistance(git, currentChange.hash, mergeCommitSha);
+                const distance = yield githubApi.getChangedComponents(git, currentChange.hash, mergeCommitSha);
                 log(`Affected components since candidate PR run are ${distance}`);
                 prBuilds.push({
                     distance: diffWeight(distance),
@@ -35219,7 +35217,7 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
         const baseCommits = yield getCommits(git, prBranch, baseBranch, 'HEAD~1');
         const baseGoodBuilds = yield githubApi.getLastGoodBranchBuildRun(baseBranch, 'push', baseCommits);
         if (baseGoodBuilds) {
-            let affectedComponents = yield githubApi.calculateDistance(git, currentChange.hash, baseGoodBuilds.head_commit);
+            let affectedComponents = yield githubApi.getChangedComponents(git, currentChange.hash, baseGoodBuilds.head_commit);
             prBuilds.push({
                 distance: diffWeight(affectedComponents),
                 hash: baseGoodBuilds.head_commit,

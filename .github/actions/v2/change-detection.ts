@@ -122,7 +122,7 @@ export async function findBestGoodRefPR(
       log(`Branch checked out`)
       const mergeCommitSha = await git.merge(prRun.head_commit)
       log(`Simulated previous PR merge commit`)
-      const distance = await githubApi.calculateDistance(
+      const distance = await githubApi.getChangedComponents(
         git,
         currentChange.hash,
         mergeCommitSha,
@@ -148,7 +148,7 @@ export async function findBestGoodRefPR(
     baseCommits,
   )
   if (baseGoodBuilds) {
-    let affectedComponents = await githubApi.calculateDistance(
+    let affectedComponents = await githubApi.getChangedComponents(
       git,
       currentChange.hash,
       baseGoodBuilds.head_commit,

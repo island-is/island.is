@@ -19,7 +19,7 @@ const repository = process.env.GITHUB_REPOSITORY || '/'
 const [owner, repo] = repository.split('/')
 export type ActionsListJobsForWorkflowRunResponseData = Endpoints['GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs']['response']['data']
 
-const filterSkippedSuccessBuilds = (
+const hasFinishedSuccessfulJob = (
   run: ActionsListJobsForWorkflowRunResponseData['jobs'],
   jobName: string,
   stepName: string,
@@ -37,14 +37,14 @@ const filterSkippedSuccessBuilds = (
 
 export class LocalRunner implements GitActionStatus {
   constructor(private octokit: Octokit) {}
-  async calculateDistance(
+  async getChangedComponents(
     git: SimpleGit,
-    currentSha: string,
-    olderSha: string,
+    sha1: string,
+    sha2: string,
   ): Promise<string[]> {
     const log = app.extend('calculate-distance')
-    log(`Calculating distance between current: ${currentSha} and ${olderSha}`)
-    const diffNames = await git.git('diff', '--name-only', currentSha, olderSha)
+    log(`Calculating distance between ${sha1} and ${sha2}`)
+    const diffNames = await git.git('diff', '--name-only', sha1, sha2)
     const changedFiles = [
       // @ts-ignore
       ...new Set(
@@ -57,7 +57,7 @@ export class LocalRunner implements GitActionStatus {
 
     log(`Changed files: ${changedFiles.join(',')}`)
 
-    if (changedFiles.length === 0) return Promise.resolve([])
+    if (changedFiles.length === 0) return []
     try {
       const printAffected = execSync(
         `npx nx print-affected --select=projects --files=${changedFiles.join(
@@ -78,7 +78,7 @@ export class LocalRunner implements GitActionStatus {
           affectedComponents.length
         }: ${affectedComponents.join(',')}`,
       )
-      return Promise.resolve(affectedComponents)
+      return affectedComponents
     } catch (e) {
       log('Error getting affected components: %O', e)
       throw e
@@ -91,7 +91,9 @@ export class LocalRunner implements GitActionStatus {
     candidateCommits: string[],
   ): Promise<BranchWorkflow | undefined> {
     const branchName = branch.replace('origin/', '')
-    app(`Getting last good branch(push) build for branch ${branchName}`)
+    app(
+      `Getting last good branch (push) build for branch ${branchName} with workflow ${workflowId}`,
+    )
 
     const runsIterator = this.octokit.paginate.iterator(
       'GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs',
@@ -105,19 +107,19 @@ export class LocalRunner implements GitActionStatus {
       },
     )
 
-    const runs: ActionsListWorkflowRunsForRepoResponseData['workflow_runs'] = []
+    const workflowRuns: ActionsListWorkflowRunsForRepoResponseData['workflow_runs'] = []
     for await (const workflow_runs of runsIterator) {
       app(`Retrieved ${workflow_runs.data.length} workflow runs`)
-      runs.push(
+      workflowRuns.push(
         ...workflow_runs.data.filter((run) =>
           candidateCommits.includes(run.head_sha.slice(0, 7)),
         ),
       )
-      if (runs.length > 10) break
+      if (workflowRuns.length > 10) break
     }
-    app(`Got GHA information for ${runs.length} workflows`)
+    app(`Got GHA information for ${workflowRuns.length} workflows`)
 
-    let sorted = runs
+    let sortedWorkflowRuns = workflowRuns
       .map(({ run_number, head_sha, head_branch, jobs_url }) => ({
         run_number,
         sha: head_sha,
@@ -126,27 +128,29 @@ export class LocalRunner implements GitActionStatus {
       }))
       .sort((a, b) => b.run_number - a.run_number)
 
-    for (const run of sorted) {
+    for (const run of sortedWorkflowRuns) {
       app(`Considering ${run.run_number} with ${run.sha} on ${run.branch}`)
       const jobs = await this.getJobs(`GET ${run.jobs_url}`)
       if (
-        filterSkippedSuccessBuilds(
+        hasFinishedSuccessfulJob(
           jobs,
-          this.getJobName(workflowId),
+          LocalRunner.getJobName(workflowId),
           'Announce success',
         )
       ) {
         app(`Run number ${run.run_number} matches success criteria`)
         return { head_commit: run.sha, run_nr: run.run_number }
       } else {
-        app(`Not satisfied ${run.run_number} with ${run.sha} on ${run.branch}`)
+        app(
+          `Not satisfied success criteria for run ${run.run_number} with ${run.sha} on ${run.branch}`,
+        )
       }
     }
     app(`Done iterating over runs, nothing good found`)
     return undefined
   }
 
-  private getJobName(workflowId: WorkflowID): string {
+  private static getJobName(workflowId: WorkflowID): string {
     switch (workflowId) {
       case 'pullrequest':
         return 'success'
@@ -163,7 +167,9 @@ export class LocalRunner implements GitActionStatus {
     commits: string[],
   ): Promise<PRWorkflow | undefined> {
     const branchName = branch.replace('origin/', '')
-    app(`Getting last good PR(pull_request) run for branch ${branchName}`)
+    app(
+      `Getting last good PR (pull_request) run for branch ${branchName} with workflow ${workflowId}`,
+    )
     const runsIterator = this.octokit.paginate.iterator(
       'GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs',
       {
@@ -176,15 +182,15 @@ export class LocalRunner implements GitActionStatus {
       },
     )
 
-    const runs: ActionsListWorkflowRunsForRepoResponseData['workflow_runs'] = []
+    const workflowRuns: ActionsListWorkflowRunsForRepoResponseData['workflow_runs'] = []
     for await (const workflow_runs of runsIterator) {
       app(`Retrieved ${workflow_runs.data.length} workflow runs`)
-      runs.push(...workflow_runs.data)
-      if (runs.length > 10) break
+      workflowRuns.push(...workflow_runs.data)
+      if (workflowRuns.length > 10) break
     }
-    app(`Got GHA information for ${runs.length} workflows`)
+    app(`Got GHA information for ${workflowRuns.length} workflows`)
 
-    let sorted = runs
+    let sortedWorkflowRuns = workflowRuns
       .map(
         ({
           run_number,
@@ -204,18 +210,16 @@ export class LocalRunner implements GitActionStatus {
       )
       .sort((a, b) => b.run_number - a.run_number)
 
-    for (const run of sorted) {
+    for (const run of sortedWorkflowRuns) {
       app(`Considering ${run.run_number} with ${run.sha} on ${run.branch}`)
       const jobs = await this.getJobs(`GET ${run.jobs_url}`)
       if (
-        filterSkippedSuccessBuilds(
+        hasFinishedSuccessfulJob(
           jobs,
-          this.getJobName(workflowId),
+          LocalRunner.getJobName(workflowId),
           'Announce success',
         )
       ) {
-        let headCommit = run.pull_requests[0].head.sha
-        let baseCommit = run.pull_requests[0].base.sha
         app(`Run number ${run.run_number} matches success criteria`)
 
         app(`Looking for PR metadata`)
@@ -267,6 +271,7 @@ export class LocalRunner implements GitActionStatus {
     app(`Done iterating over PR runs, nothing good found`)
     return undefined
   }
+
   private async getJobs(
     jobs_url: string,
   ): Promise<ActionsListJobsForWorkflowRunResponseData['jobs']> {

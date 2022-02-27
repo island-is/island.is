@@ -25,7 +25,7 @@ export interface GitActionStatus {
     workflowId: WorkflowID,
     candidateCommits: string[],
   ): Promise<BranchWorkflow | undefined>
-  calculateDistance(
+  getChangedComponents(
     git: SimpleGit,
     currentSha: string,
     bashSha: string,

@@ -32,7 +32,7 @@ describe('Change detection', () => {
     git = new SimpleGit(path, process.env.SHELL)
     const r = await git.git('init', '.')
     githubApi = Substitute.for<GitActionStatus>()
-    githubApi.calculateDistance(Arg.all()).mimicks(calculateDistance)
+    githubApi.getChangedComponents(Arg.all()).mimicks(getChangedComponents)
 
     makeChange = async (
       git: SimpleGit,
@@ -140,7 +140,7 @@ describe('Change detection', () => {
         branch: headBranch,
       })
       expect(
-        await calculateDistance(git, (actual as Incremental).ref, mergeSha),
+        await getChangedComponents(git, (actual as Incremental).ref, mergeSha),
       ).toStrictEqual([])
     })
     it('prefer lighter branch run over heavier PR run', async () => {
@@ -471,7 +471,7 @@ describe('Change detection', () => {
   })
 })
 
-async function calculateDistance(
+async function getChangedComponents(
   git: SimpleGit,
   currentSha: string,
   olderSha: string,
@@ -492,10 +492,10 @@ const mkdirAsync = promisify(mkdir)
 
 async function makeChangeWithContent(
   git: SimpleGit,
-  changeset: { path: string; content: string }[],
+  changeSet: { path: string; content: string }[],
   message: string,
 ): Promise<string> {
-  for (const change of changeset) {
+  for (const change of changeSet) {
     await writeFile(change.path, change.content)
     await git.add(change.path)
   }
@@ -504,7 +504,7 @@ async function makeChangeWithContent(
 }
 
 async function makeChangeGlobal(
-  component: 'a' | 'b' | 'c' | 'd' | 'e' | Component[],
+  component: Component | Component[],
   path: string,
   git: SimpleGit,
   message: string,
