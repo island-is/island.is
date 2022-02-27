@@ -50,7 +50,11 @@ export class SimpleGit {
   }
   checkoutLocalBranch = this._method('checkout', '-b')
   checkoutBranch = this._method('checkout', '-b')
-  merge = this._method('merge')
+  async merge(head: string) {
+    await this.git('merge', head)
+    const commit = await this.log({ maxCount: 1 })
+    return commit.latest.hash
+  }
   checkout = this._method('checkout')
   async log(params: { maxCount: number }) {
     const out = await this.git(

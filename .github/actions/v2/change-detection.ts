@@ -5,13 +5,13 @@ import Debug from 'debug'
 import { execSync } from 'child_process'
 
 const app = Debug('change-detection')
-type LastGoodBuild =
-  | {
-      sha: string
-      run_number: number
-      branch: string
-    }
-  | 'rebuild'
+export type Incremental = {
+  sha: string
+  run_number: number
+  branch: string
+  ref: string
+}
+export type LastGoodBuild = Incremental | 'rebuild'
 
 export async function findBestGoodRefBranch(
   commitScore: (services) => number,
@@ -42,6 +42,7 @@ export async function findBestGoodRefBranch(
       sha: builds.head_commit,
       run_number: builds.run_nr,
       branch: headBranch,
+      ref: builds.head_commit,
     }
 
   const baseCommits = await githubApi.getLastGoodBranchBuildRun(
@@ -50,6 +51,7 @@ export async function findBestGoodRefBranch(
   )
   if (baseCommits)
     return {
+      ref: baseCommits.head_commit,
       sha: baseCommits.head_commit,
       run_number: baseCommits.run_nr,
       branch: baseBranch,
@@ -100,6 +102,7 @@ export async function findBestGoodRefPR(
     hash: string
     run_nr: number
     branch: string
+    ref: string
   }[] = []
   if (prRun) {
     log(`Found a PR run candidate: ${JSON.stringify(prRun)}`)
@@ -108,14 +111,13 @@ export async function findBestGoodRefPR(
       const tempBranch = `${headBranch}-${Math.round(Math.random() * 1000000)}`
       await git.checkoutBranch(tempBranch, prRun.base_commit)
       log(`Branch checked out`)
-      await git.merge(prRun.head_commit)
+      const lastMerge = await git.merge(prRun.head_commit)
       log(`Simulated previous PR merge commit`)
-      const lastMerge = await git.log({ maxCount: 1 })
-      const lastMergeCommit = lastMerge.latest
+      const lastMergeCommit = lastMerge
       const distance = await githubApi.calculateDistance(
         git,
         currentChange.hash,
-        lastMergeCommit.hash,
+        lastMergeCommit,
       )
       log(`Affected components since candidate PR run are ${distance}`)
       prBuilds.push({
@@ -123,6 +125,7 @@ export async function findBestGoodRefPR(
         hash: prRun.head_commit,
         run_nr: prRun.run_nr,
         branch: headBranch,
+        ref: lastMergeCommit,
       })
     } finally {
       await git.checkout(prBranch)
@@ -146,6 +149,7 @@ export async function findBestGoodRefPR(
       hash: baseGoodBuilds.head_commit,
       run_nr: baseGoodBuilds.run_nr,
       branch: baseBranch,
+      ref: baseGoodBuilds.head_commit,
     })
   }
   prBuilds.sort((a, b) => (a.distance > b.distance ? 1 : -1))
@@ -154,6 +158,7 @@ export async function findBestGoodRefPR(
       sha: prBuilds[0].hash,
       run_number: prBuilds[0].run_nr,
       branch: prBuilds[0].branch.replace('origin/', ''),
+      ref: prBuilds[0].ref,
     }
   return 'rebuild'
 }

@@ -1,7 +1,11 @@
 // import simpleGit, { SimpleGit } from 'simple-git'
 import { mkdtemp, writeFile } from 'fs/promises'
 import { join } from 'path'
-import { findBestGoodRefBranch, findBestGoodRefPR } from './change-detection'
+import {
+  findBestGoodRefBranch,
+  findBestGoodRefPR,
+  Incremental,
+} from './change-detection'
 import { Arg, Substitute, SubstituteOf } from '@fluffy-spoon/substitute'
 import { existsSync, mkdir } from 'fs'
 import { promisify } from 'util'
@@ -48,6 +52,7 @@ describe('Change detection', () => {
     let f2: string
     let f3: string
     let forkSha: string
+    let mergeSha: string
     beforeEach(async () => {
       await git.checkoutLocalBranch(baseBranch)
       await makeChange(git, 'a', 'A-good')
@@ -69,6 +74,9 @@ describe('Change detection', () => {
         ['a', 'b', 'c', 'd', 'e'],
         'D2-good',
       )
+      await git.checkoutBranch('pr1', mainSha1)
+      mergeSha = await git.merge(fixGoodSha)
+
       await git.checkoutBranch(prBranch, baseBranch)
       await git.mergeFromTo(headBranch, prBranch)
     })
@@ -93,6 +101,7 @@ describe('Change detection', () => {
         sha: mainGoodBeforeBadSha,
         run_number: 2,
         branch: baseBranch,
+        ref: mainGoodBeforeBadSha,
       })
     })
 
@@ -110,25 +119,6 @@ describe('Change detection', () => {
         .getLastGoodBranchBuildRun(baseBranch, Arg.any())
         .resolves(undefined)
 
-      const mergeBaseCommit = await git.raw(
-        'merge-base',
-        headBranch,
-        baseBranch,
-      )
-      expect(mergeBaseCommit.slice(0, 7)).toBe(forkSha)
-      const commits = (
-        await git.raw(
-          'rev-list',
-          '--date-order',
-          '--max-count=300',
-          'HEAD',
-          `${mergeBaseCommit.trim()}`,
-        )
-      )
-        .split('\n')
-        .filter((s) => s.length > 0)
-        .map((c) => c.substr(0, 7))
-
       let actual = await findBestGoodRefPR(
         (services) => services.length,
         git,
@@ -137,11 +127,15 @@ describe('Change detection', () => {
         baseBranch,
         prBranch,
       )
-      expect(actual).toStrictEqual({
+
+      expect(actual).toMatchObject({
         sha: fixGoodSha,
         run_number: 2,
         branch: headBranch,
       })
+      expect(
+        await calculateDistance(git, (actual as Incremental).ref, mergeSha),
+      ).toStrictEqual([])
     })
     it('prefer lighter branch run over heavier PR run', async () => {
       githubApi
@@ -168,10 +162,11 @@ describe('Change detection', () => {
         baseBranch,
         prBranch,
       )
-      expect(actual).toStrictEqual({
+      expect(actual).toMatchObject({
         sha: majorChangeSha,
         run_number: 3,
         branch: baseBranch,
+        ref: majorChangeSha,
       })
     })
     it('should trigger a full rebuild if no good commits found neither on PR nor on base branch', async () => {
@@ -201,6 +196,8 @@ describe('Change detection', () => {
     const hotfixBranch = 'hotfix-123'
     const pr = 'pr-hotfix'
     let hotfix1: string
+    let mergeSha1: string
+    let mergeSha2: string
     beforeEach(async () => {
       await git.checkoutLocalBranch(mainBranch)
       mainGoodBeforeBadSha = await makeChange(git, 'a', 'A-good')
@@ -217,6 +214,13 @@ describe('Change detection', () => {
       await git.checkout(releaseBranch)
       hotfix2 = await makeChange(git, 'd', 'D1-good')
       hotfix3 = await makeChange(git, ['a', 'b', 'c', 'd', 'e'], 'D2-good')
+
+      await git.checkoutBranch('pr1', hotfix1)
+      mergeSha1 = await git.merge(fixGoodSha)
+      await git.checkoutBranch('pr3', hotfix1)
+      mergeSha1 = await git.merge(fixGoodSha)
+      await git.checkoutBranch('pr2', hotfix2)
+      mergeSha2 = await git.merge(fixGoodSha)
 
       await git.checkoutBranch(prBranch, releaseBranch)
       await git.mergeFromTo(hotfixBranch, prBranch)
@@ -242,6 +246,7 @@ describe('Change detection', () => {
         sha: mainGoodBeforeBadSha,
         run_number: 2,
         branch: releaseBranch,
+        ref: mainGoodBeforeBadSha,
       })
     })
 
@@ -274,6 +279,7 @@ describe('Change detection', () => {
         sha: hotfix3,
         run_number: 3,
         branch: releaseBranch,
+        ref: hotfix3,
       })
     })
     it('prefer lighter branch run over heavier PR run', async () => {
@@ -305,6 +311,7 @@ describe('Change detection', () => {
         sha: hotfix3,
         run_number: 3,
         branch: releaseBranch,
+        ref: hotfix3,
       })
     })
   })
@@ -342,7 +349,12 @@ describe('Change detection', () => {
           headBranch,
           baseBranch,
         ),
-      ).toStrictEqual({ sha: hotfix1, run_number: 2, branch: headBranch })
+      ).toStrictEqual({
+        sha: hotfix1,
+        run_number: 2,
+        branch: headBranch,
+        ref: hotfix1,
+      })
     })
     it('should take base branch commits if no good on head branch', async () => {
       githubApi
@@ -364,6 +376,7 @@ describe('Change detection', () => {
         sha: goodBeforeBadSha,
         run_number: 1,
         branch: baseBranch,
+        ref: goodBeforeBadSha,
       })
     })
     it('should trigger a full rebuild if no good commits found neither on head nor base branch', async () => {
@@ -409,6 +422,7 @@ describe('Change detection', () => {
         sha: goodBeforeBadSha,
         run_number: 1,
         branch: baseBranch,
+        ref: goodBeforeBadSha,
       })
     })
     it('should trigger a full rebuild if no good commits found neither on head nor base branch', async () => {

@@ -35154,10 +35154,12 @@ function findBestGoodRefBranch(commitScore, git, githubApi, headBranch, baseBran
                 sha: builds.head_commit,
                 run_number: builds.run_nr,
                 branch: headBranch,
+                ref: builds.head_commit,
             };
         const baseCommits = yield githubApi.getLastGoodBranchBuildRun(baseBranch, commits);
         if (baseCommits)
             return {
+                ref: baseCommits.head_commit,
                 sha: baseCommits.head_commit,
                 run_number: baseCommits.run_nr,
                 branch: baseBranch,
@@ -35191,17 +35193,17 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
                 const tempBranch = `${headBranch}-${Math.round(Math.random() * 1000000)}`;
                 yield git.checkoutBranch(tempBranch, prRun.base_commit);
                 log(`Branch checked out`);
-                yield git.merge(prRun.head_commit);
+                const lastMerge = yield git.merge(prRun.head_commit);
                 log(`Simulated previous PR merge commit`);
-                const lastMerge = yield git.log({ maxCount: 1 });
-                const lastMergeCommit = lastMerge.latest;
-                const distance = yield githubApi.calculateDistance(git, currentChange.hash, lastMergeCommit.hash);
+                const lastMergeCommit = lastMerge;
+                const distance = yield githubApi.calculateDistance(git, currentChange.hash, lastMergeCommit);
                 log(`Affected components since candidate PR run are ${distance}`);
                 prBuilds.push({
                     distance: diffWeight(distance),
                     hash: prRun.head_commit,
                     run_nr: prRun.run_nr,
                     branch: headBranch,
+                    ref: lastMergeCommit,
                 });
             }
             finally {
@@ -35217,6 +35219,7 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
                 hash: baseGoodBuilds.head_commit,
                 run_nr: baseGoodBuilds.run_nr,
                 branch: baseBranch,
+                ref: baseGoodBuilds.head_commit,
             });
         }
         prBuilds.sort((a, b) => (a.distance > b.distance ? 1 : -1));
@@ -35225,6 +35228,7 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
                 sha: prBuilds[0].hash,
                 run_number: prBuilds[0].run_nr,
                 branch: prBuilds[0].branch.replace('origin/', ''),
+                ref: prBuilds[0].ref,
             };
         return 'rebuild';
     });
@@ -35251,7 +35255,6 @@ class SimpleGit {
         this.init = this._method('init', '.');
         this.checkoutLocalBranch = this._method('checkout', '-b');
         this.checkoutBranch = this._method('checkout', '-b');
-        this.merge = this._method('merge');
         this.checkout = this._method('checkout');
     }
     get shell() {
@@ -35291,6 +35294,13 @@ class SimpleGit {
             yield this.git('commit', '-m', message);
             const lastMessage = yield this.log({ maxCount: 1 });
             return lastMessage.latest.hash;
+        });
+    }
+    merge(head) {
+        return modules_awaiter(this, void 0, void 0, function* () {
+            yield this.git('merge', head);
+            const commit = yield this.log({ maxCount: 1 });
+            return commit.latest.hash;
         });
     }
     log(params) {
