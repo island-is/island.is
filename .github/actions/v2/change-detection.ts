@@ -13,7 +13,7 @@ export type Incremental = {
 export type LastGoodBuild = Incremental | 'rebuild'
 
 export async function findBestGoodRefBranch(
-  commitScore: (services) => number,
+  commitScore: (services: string[]) => number,
   git: SimpleGit,
   githubApi: GitActionStatus,
   headBranch: string,
@@ -88,7 +88,7 @@ async function getCommits(
 }
 
 export async function findBestGoodRefPR(
-  diffWeight: (services) => number,
+  diffWeight: (services: string[]) => number,
   git: SimpleGit,
   githubApi: GitActionStatus,
   headBranch: string,

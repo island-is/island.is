@@ -91023,7 +91023,7 @@ class LocalRunner {
             for (const run of sorted) {
                 app(`Considering ${run.run_number} with ${run.sha} on ${run.branch}`);
                 const jobs = yield this.getJobs(`GET ${run.jobs_url}`);
-                if (filterSkippedSuccessBuilds(jobs, 'push-success', 'Announce success')) {
+                if (filterSkippedSuccessBuilds(jobs, this.getJobName(workflowId), 'Announce success')) {
                     app(`Run number ${run.run_number} matches success criteria`);
                     return { head_commit: run.sha, run_nr: run.run_number };
                 }
@@ -91034,6 +91034,16 @@ class LocalRunner {
             app(`Done iterating over runs, nothing good found`);
             return undefined;
         });
+    }
+    getJobName(workflowId) {
+        switch (workflowId) {
+            case 'pullrequest':
+                return 'success';
+            case 'push':
+                return 'push-success';
+            default:
+                throw new Error(`Unexpected workflow ID`);
+        }
     }
     getLastGoodPRRun(branch, workflowId, commits) {
         var e_2, _a;
@@ -91079,7 +91089,7 @@ class LocalRunner {
             for (const run of sorted) {
                 app(`Considering ${run.run_number} with ${run.sha} on ${run.branch}`);
                 const jobs = yield this.getJobs(`GET ${run.jobs_url}`);
-                if (filterSkippedSuccessBuilds(jobs, 'success', 'Announce success')) {
+                if (filterSkippedSuccessBuilds(jobs, this.getJobName(workflowId), 'Announce success')) {
                     let headCommit = run.pull_requests[0].head.sha;
                     let baseCommit = run.pull_requests[0].base.sha;
                     app(`Run number ${run.run_number} matches success criteria`);

@@ -11,7 +11,6 @@ import { Octokit } from '@octokit/rest'
 
 import { ActionsListWorkflowRunsForRepoResponseData } from '../detection'
 import { Endpoints } from '@octokit/types'
-import { join } from 'path'
 import Debug from 'debug'
 import * as unzipper from 'unzipper'
 const app = Debug('change-detection:io')
@@ -131,7 +130,11 @@ export class LocalRunner implements GitActionStatus {
       app(`Considering ${run.run_number} with ${run.sha} on ${run.branch}`)
       const jobs = await this.getJobs(`GET ${run.jobs_url}`)
       if (
-        filterSkippedSuccessBuilds(jobs, 'push-success', 'Announce success')
+        filterSkippedSuccessBuilds(
+          jobs,
+          this.getJobName(workflowId),
+          'Announce success',
+        )
       ) {
         app(`Run number ${run.run_number} matches success criteria`)
         return { head_commit: run.sha, run_nr: run.run_number }
@@ -141,6 +144,17 @@ export class LocalRunner implements GitActionStatus {
     }
     app(`Done iterating over runs, nothing good found`)
     return undefined
+  }
+
+  private getJobName(workflowId: WorkflowID): string {
+    switch (workflowId) {
+      case 'pullrequest':
+        return 'success'
+      case 'push':
+        return 'push-success'
+      default:
+        throw new Error(`Unexpected workflow ID`)
+    }
   }
 
   async getLastGoodPRRun(
@@ -193,7 +207,13 @@ export class LocalRunner implements GitActionStatus {
     for (const run of sorted) {
       app(`Considering ${run.run_number} with ${run.sha} on ${run.branch}`)
       const jobs = await this.getJobs(`GET ${run.jobs_url}`)
-      if (filterSkippedSuccessBuilds(jobs, 'success', 'Announce success')) {
+      if (
+        filterSkippedSuccessBuilds(
+          jobs,
+          this.getJobName(workflowId),
+          'Announce success',
+        )
+      ) {
         let headCommit = run.pull_requests[0].head.sha
         let baseCommit = run.pull_requests[0].base.sha
         app(`Run number ${run.run_number} matches success criteria`)

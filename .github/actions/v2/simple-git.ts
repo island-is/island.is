@@ -28,7 +28,7 @@ export class SimpleGit {
       this._log(`StdOut: ${stdout}`)
       this._log(`StdErr: ${stderr}`)
       return Promise.resolve(stdout)
-    } catch (e) {
+    } catch (e: any) {
       this._log(`Error, in: ${command}`)
       this._log(`Error, out: ${e.message}`)
 
