@@ -256,7 +256,7 @@ jobs:
             export HEAD_REF="$GITHUB_HEAD_REF"
             export BASE_REF="$GITHUB_BASE_REF"
             export PR_REF=$GITHUB_SHA
-            export WORKFLOW_ID=pullrequest
+            export WORKFLOW_ID=push
           else
             export HEAD_REF="$GIT_BRANCH"
             export BASE_REF="$GIT_BASE_BRANCH"
