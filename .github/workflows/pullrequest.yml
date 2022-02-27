@@ -97,8 +97,8 @@ jobs:
           export HEAD_REF="$GITHUB_HEAD_REF"
           export BASE_REF="$GITHUB_BASE_REF"
           export PR_REF=$GITHUB_SHA
-          which git
           export SHELL=/usr/bin/bash
+          export WORKFLOW_ID=pullrequest
           source ./scripts/ci/00_prepare-base-tags.sh
           git checkout $GITHUB_SHA
           echo "BASE=$BASE" >> $GITHUB_ENV

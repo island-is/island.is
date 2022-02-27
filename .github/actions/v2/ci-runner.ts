@@ -2,6 +2,8 @@ import { LocalRunner } from './ci-io'
 import { findBestGoodRefBranch, findBestGoodRefPR } from './change-detection'
 import { Octokit } from '@octokit/action'
 import { SimpleGit } from './simple-git'
+import { WorkflowID } from './git-action-status'
+
 ;(async () => {
   const runner = new LocalRunner(new Octokit())
   let git = new SimpleGit(process.env.REPO_ROOT, process.env.SHELL)
@@ -16,6 +18,7 @@ import { SimpleGit } from './simple-git'
           process.env.HEAD_REF,
           process.env.BASE_REF,
           process.env.PR_REF,
+          process.env.WORKFLOW_ID as WorkflowID,
         )
       : await findBestGoodRefBranch(
           diffWeight,
@@ -23,6 +26,7 @@ import { SimpleGit } from './simple-git'
           runner,
           process.env.HEAD_REF,
           process.env.BASE_REF,
+          process.env.WORKFLOW_ID as WorkflowID,
         )
 
   if (rev === 'rebuild') {

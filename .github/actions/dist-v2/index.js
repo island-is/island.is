@@ -90933,8 +90933,6 @@ var unzip = __nccwpck_require__(1639);
 const app = src_default()('change-detection:io');
 const repository = process.env.GITHUB_REPOSITORY || '/';
 const [owner, repo] = repository.split('/');
-const workflow_file_name = 'push.yml';
-const pr_file_name = 'pullrequest.yml';
 const filterSkippedSuccessBuilds = (run, jobName, stepName) => {
     const jobs = run;
     const successJob = jobs.find((job) => job.name === jobName);
@@ -90983,7 +90981,7 @@ class LocalRunner {
             }
         });
     }
-    getLastGoodBranchBuildRun(branch, candidateCommits) {
+    getLastGoodBranchBuildRun(branch, workflowId, candidateCommits) {
         var e_1, _a;
         return __awaiter(this, void 0, void 0, function* () {
             const branchName = branch.replace('origin/', '');
@@ -90992,7 +90990,7 @@ class LocalRunner {
                 owner,
                 repo,
                 branch: branchName,
-                workflow_id: workflow_file_name,
+                workflow_id: `${workflowId}.yml`,
                 event: 'push',
                 status: 'success',
             });
@@ -91037,7 +91035,7 @@ class LocalRunner {
             return undefined;
         });
     }
-    getLastGoodPRRun(branch, commits) {
+    getLastGoodPRRun(branch, workflowId, commits) {
         var e_2, _a;
         return __awaiter(this, void 0, void 0, function* () {
             const branchName = branch.replace('origin/', '');
@@ -91046,7 +91044,7 @@ class LocalRunner {
                 owner,
                 repo,
                 branch: branchName,
-                workflow_id: pr_file_name,
+                workflow_id: `${workflowId}.yml`,
                 event: 'pull_request',
                 status: 'success',
             });
@@ -91157,17 +91155,17 @@ class LocalRunner {
 
 
 const change_detection_app = src_default()('change-detection');
-function findBestGoodRefBranch(commitScore, git, githubApi, headBranch, baseBranch) {
+function findBestGoodRefBranch(commitScore, git, githubApi, headBranch, baseBranch, workflowId) {
     return __awaiter(this, void 0, void 0, function* () {
         const log = change_detection_app.extend('findBestGoodRefBranch');
         log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`);
-        const mergeCommit = yield git.raw('merge-base', baseBranch, headBranch);
-        change_detection_app(`Merge commit is ${mergeCommit}`);
-        const commits = (yield git.raw('rev-list', '--date-order', '--max-count=50', 'HEAD~1', `${mergeCommit.trim()}`))
+        const mergeBase = yield git.raw('merge-base', baseBranch, headBranch);
+        change_detection_app(`Merge base is ${mergeBase}`);
+        const commits = (yield git.raw('rev-list', '--date-order', '--max-count=300', 'HEAD~1', `${mergeBase.trim()}`))
             .split('\n')
             .filter((s) => s.length > 0)
             .map((c) => c.substr(0, 7));
-        const builds = yield githubApi.getLastGoodBranchBuildRun(headBranch, commits);
+        const builds = yield githubApi.getLastGoodBranchBuildRun(headBranch, workflowId, commits);
         if (builds)
             return {
                 sha: builds.head_commit,
@@ -91175,7 +91173,7 @@ function findBestGoodRefBranch(commitScore, git, githubApi, headBranch, baseBran
                 branch: headBranch,
                 ref: builds.head_commit,
             };
-        const baseCommits = yield githubApi.getLastGoodBranchBuildRun(baseBranch, commits);
+        const baseCommits = yield githubApi.getLastGoodBranchBuildRun(baseBranch, workflowId, commits);
         if (baseCommits)
             return {
                 ref: baseCommits.head_commit,
@@ -91196,33 +91194,31 @@ function getCommits(git, headBranch, baseBranch, head) {
         return commits;
     });
 }
-function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, prBranch) {
+function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, prBranch, workflowId) {
     return __awaiter(this, void 0, void 0, function* () {
         const log = change_detection_app.extend('findBestGoodRefPR');
         log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`);
         const lastChanges = yield git.log({ maxCount: 1 });
         const currentChange = lastChanges.latest;
         const prCommits = yield getCommits(git, headBranch, baseBranch, 'HEAD');
-        const prRun = yield githubApi.getLastGoodPRRun(headBranch, prCommits);
+        const prRun = yield githubApi.getLastGoodPRRun(headBranch, workflowId, prCommits);
         const prBuilds = [];
         if (prRun) {
             log(`Found a PR run candidate: ${JSON.stringify(prRun)}`);
-            // dump()
             try {
                 const tempBranch = `${headBranch}-${Math.round(Math.random() * 1000000)}`;
                 yield git.checkoutBranch(tempBranch, prRun.base_commit);
                 log(`Branch checked out`);
-                const lastMerge = yield git.merge(prRun.head_commit);
+                const mergeCommitSha = yield git.merge(prRun.head_commit);
                 log(`Simulated previous PR merge commit`);
-                const lastMergeCommit = lastMerge;
-                const distance = yield githubApi.calculateDistance(git, currentChange.hash, lastMergeCommit);
+                const distance = yield githubApi.calculateDistance(git, currentChange.hash, mergeCommitSha);
                 log(`Affected components since candidate PR run are ${distance}`);
                 prBuilds.push({
                     distance: diffWeight(distance),
                     hash: prRun.head_commit,
                     run_nr: prRun.run_nr,
                     branch: headBranch,
-                    ref: lastMergeCommit,
+                    ref: mergeCommitSha,
                 });
             }
             finally {
@@ -91230,7 +91226,7 @@ function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, p
             }
         }
         const baseCommits = yield getCommits(git, prBranch, baseBranch, 'HEAD~1');
-        const baseGoodBuilds = yield githubApi.getLastGoodBranchBuildRun(baseBranch, baseCommits);
+        const baseGoodBuilds = yield githubApi.getLastGoodBranchBuildRun(baseBranch, 'push', baseCommits);
         if (baseGoodBuilds) {
             let affectedComponents = yield githubApi.calculateDistance(git, currentChange.hash, baseGoodBuilds.head_commit);
             prBuilds.push({
@@ -91356,8 +91352,8 @@ class SimpleGit {
     let git = new SimpleGit(process.env.REPO_ROOT, process.env.SHELL);
     const diffWeight = (s) => s.length;
     const rev = process.env.GITHUB_EVENT_NAME === 'pull_request'
-        ? yield findBestGoodRefPR(diffWeight, git, runner, process.env.HEAD_REF, process.env.BASE_REF, process.env.PR_REF)
-        : yield findBestGoodRefBranch(diffWeight, git, runner, process.env.HEAD_REF, process.env.BASE_REF);
+        ? yield findBestGoodRefPR(diffWeight, git, runner, process.env.HEAD_REF, process.env.BASE_REF, process.env.PR_REF, process.env.WORKFLOW_ID)
+        : yield findBestGoodRefBranch(diffWeight, git, runner, process.env.HEAD_REF, process.env.BASE_REF, process.env.WORKFLOW_ID);
     if (rev === 'rebuild') {
         console.log(`Full rebuild needed`);
     }

@@ -4,6 +4,7 @@ import {
   BranchWorkflow,
   GitActionStatus,
   PRWorkflow,
+  WorkflowID,
 } from './git-action-status'
 import { execSync } from 'child_process'
 import { Octokit } from '@octokit/rest'
@@ -17,8 +18,6 @@ const app = Debug('change-detection:io')
 
 const repository = process.env.GITHUB_REPOSITORY || '/'
 const [owner, repo] = repository.split('/')
-const workflow_file_name = 'push.yml'
-const pr_file_name = 'pullrequest.yml'
 export type ActionsListJobsForWorkflowRunResponseData = Endpoints['GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs']['response']['data']
 
 const filterSkippedSuccessBuilds = (
@@ -89,6 +88,7 @@ export class LocalRunner implements GitActionStatus {
 
   async getLastGoodBranchBuildRun(
     branch: string,
+    workflowId: WorkflowID,
     candidateCommits: string[],
   ): Promise<BranchWorkflow | undefined> {
     const branchName = branch.replace('origin/', '')
@@ -100,7 +100,7 @@ export class LocalRunner implements GitActionStatus {
         owner,
         repo,
         branch: branchName,
-        workflow_id: workflow_file_name,
+        workflow_id: `${workflowId}.yml`,
         event: 'push',
         status: 'success',
       },
@@ -145,6 +145,7 @@ export class LocalRunner implements GitActionStatus {
 
   async getLastGoodPRRun(
     branch: string,
+    workflowId: WorkflowID,
     commits: string[],
   ): Promise<PRWorkflow | undefined> {
     const branchName = branch.replace('origin/', '')
@@ -155,7 +156,7 @@ export class LocalRunner implements GitActionStatus {
         owner,
         repo,
         branch: branchName,
-        workflow_id: pr_file_name,
+        workflow_id: `${workflowId}.yml`,
         event: 'pull_request',
         status: 'success',
       },

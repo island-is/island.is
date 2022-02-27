@@ -1,8 +1,7 @@
 // import { SimpleGit } from 'simple-git'
 import { SimpleGit } from './simple-git'
-import { GitActionStatus } from './git-action-status'
+import { GitActionStatus, WorkflowID } from './git-action-status'
 import Debug from 'debug'
-import { execSync } from 'child_process'
 
 const app = Debug('change-detection')
 export type Incremental = {
@@ -19,24 +18,29 @@ export async function findBestGoodRefBranch(
   githubApi: GitActionStatus,
   headBranch: string,
   baseBranch: string,
+  workflowId: WorkflowID,
 ): Promise<LastGoodBuild> {
   const log = app.extend('findBestGoodRefBranch')
   log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`)
-  const mergeCommit = await git.raw('merge-base', baseBranch, headBranch)
-  app(`Merge commit is ${mergeCommit}`)
+  const mergeBase = await git.raw('merge-base', baseBranch, headBranch)
+  app(`Merge base is ${mergeBase}`)
   const commits = (
     await git.raw(
       'rev-list',
       '--date-order',
-      '--max-count=50',
+      '--max-count=300',
       'HEAD~1',
-      `${mergeCommit.trim()}`,
+      `${mergeBase.trim()}`,
     )
   )
     .split('\n')
     .filter((s) => s.length > 0)
     .map((c) => c.substr(0, 7))
-  const builds = await githubApi.getLastGoodBranchBuildRun(headBranch, commits)
+  const builds = await githubApi.getLastGoodBranchBuildRun(
+    headBranch,
+    workflowId,
+    commits,
+  )
   if (builds)
     return {
       sha: builds.head_commit,
@@ -47,6 +51,7 @@ export async function findBestGoodRefBranch(
 
   const baseCommits = await githubApi.getLastGoodBranchBuildRun(
     baseBranch,
+    workflowId,
     commits,
   )
   if (baseCommits)
@@ -89,6 +94,7 @@ export async function findBestGoodRefPR(
   headBranch: string,
   baseBranch: string,
   prBranch: string,
+  workflowId: WorkflowID,
 ): Promise<LastGoodBuild> {
   const log = app.extend('findBestGoodRefPR')
   log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`)
@@ -96,7 +102,11 @@ export async function findBestGoodRefPR(
   const currentChange = lastChanges.latest
   const prCommits = await getCommits(git, headBranch, baseBranch, 'HEAD')
 
-  const prRun = await githubApi.getLastGoodPRRun(headBranch, prCommits)
+  const prRun = await githubApi.getLastGoodPRRun(
+    headBranch,
+    workflowId,
+    prCommits,
+  )
   const prBuilds: {
     distance: number
     hash: string
@@ -106,18 +116,16 @@ export async function findBestGoodRefPR(
   }[] = []
   if (prRun) {
     log(`Found a PR run candidate: ${JSON.stringify(prRun)}`)
-    // dump()
     try {
       const tempBranch = `${headBranch}-${Math.round(Math.random() * 1000000)}`
       await git.checkoutBranch(tempBranch, prRun.base_commit)
       log(`Branch checked out`)
-      const lastMerge = await git.merge(prRun.head_commit)
+      const mergeCommitSha = await git.merge(prRun.head_commit)
       log(`Simulated previous PR merge commit`)
-      const lastMergeCommit = lastMerge
       const distance = await githubApi.calculateDistance(
         git,
         currentChange.hash,
-        lastMergeCommit,
+        mergeCommitSha,
       )
       log(`Affected components since candidate PR run are ${distance}`)
       prBuilds.push({
@@ -125,7 +133,7 @@ export async function findBestGoodRefPR(
         hash: prRun.head_commit,
         run_nr: prRun.run_nr,
         branch: headBranch,
-        ref: lastMergeCommit,
+        ref: mergeCommitSha,
       })
     } finally {
       await git.checkout(prBranch)
@@ -136,6 +144,7 @@ export async function findBestGoodRefPR(
 
   const baseGoodBuilds = await githubApi.getLastGoodBranchBuildRun(
     baseBranch,
+    'push',
     baseCommits,
   )
   if (baseGoodBuilds) {

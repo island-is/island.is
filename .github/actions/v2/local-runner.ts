@@ -19,6 +19,7 @@ import { SimpleGit } from './simple-git'
     `infra/new-ci-change-detector`,
     'main',
     `origin/pr/6665`,
+    'pullrequest',
   )
   if (rev === 'rebuild') {
     console.log(`Full rebuild needed`)

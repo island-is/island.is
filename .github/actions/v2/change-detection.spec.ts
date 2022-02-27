@@ -81,10 +81,13 @@ describe('Change detection', () => {
       await git.mergeFromTo(headBranch, prBranch)
     })
     it('should use last good branch run when no PR runs available', async () => {
-      githubApi.getLastGoodPRRun(headBranch, Arg.any()).resolves(undefined)
+      githubApi
+        .getLastGoodPRRun(headBranch, 'pullrequest', Arg.any())
+        .resolves(undefined)
       githubApi
         .getLastGoodBranchBuildRun(
           baseBranch,
+          'push',
           Arg.is((commits) => commits.includes(mainGoodBeforeBadSha)),
         )
         .resolves({ head_commit: mainGoodBeforeBadSha, run_nr: 2 })
@@ -96,6 +99,7 @@ describe('Change detection', () => {
         headBranch,
         baseBranch,
         prBranch,
+        'pullrequest',
       )
       expect(actual).toStrictEqual({
         sha: mainGoodBeforeBadSha,
@@ -109,6 +113,7 @@ describe('Change detection', () => {
       githubApi
         .getLastGoodPRRun(
           headBranch,
+          'pullrequest',
           Arg.is(
             (commits) =>
               commits.includes(fixGoodSha) && commits.includes(mainSha1),
@@ -116,7 +121,7 @@ describe('Change detection', () => {
         )
         .resolves({ head_commit: fixGoodSha, base_commit: mainSha1, run_nr: 2 })
       githubApi
-        .getLastGoodBranchBuildRun(baseBranch, Arg.any())
+        .getLastGoodBranchBuildRun(baseBranch, 'push', Arg.any())
         .resolves(undefined)
 
       let actual = await findBestGoodRefPR(
@@ -126,6 +131,7 @@ describe('Change detection', () => {
         headBranch,
         baseBranch,
         prBranch,
+        'pullrequest',
       )
 
       expect(actual).toMatchObject({
@@ -141,6 +147,7 @@ describe('Change detection', () => {
       githubApi
         .getLastGoodPRRun(
           headBranch,
+          'pullrequest',
           Arg.is(
             (commits) =>
               commits.includes(fixGoodSha) && commits.includes(mainSha1),
@@ -150,6 +157,7 @@ describe('Change detection', () => {
       githubApi
         .getLastGoodBranchBuildRun(
           baseBranch,
+          'push',
           Arg.is((commits) => commits.includes(majorChangeSha)),
         )
         .resolves({ head_commit: majorChangeSha, run_nr: 3 })
@@ -161,6 +169,7 @@ describe('Change detection', () => {
         headBranch,
         baseBranch,
         prBranch,
+        'pullrequest',
       )
       expect(actual).toMatchObject({
         sha: majorChangeSha,
@@ -170,9 +179,11 @@ describe('Change detection', () => {
       })
     })
     it('should trigger a full rebuild if no good commits found neither on PR nor on base branch', async () => {
-      githubApi.getLastGoodPRRun(headBranch, Arg.any()).resolves(undefined)
       githubApi
-        .getLastGoodBranchBuildRun(baseBranch, Arg.any())
+        .getLastGoodPRRun(headBranch, 'pullrequest', Arg.any())
+        .resolves(undefined)
+      githubApi
+        .getLastGoodBranchBuildRun(baseBranch, 'push', Arg.any())
         .resolves(undefined)
 
       let actual = await findBestGoodRefPR(
@@ -182,6 +193,7 @@ describe('Change detection', () => {
         headBranch,
         baseBranch,
         prBranch,
+        'pullrequest',
       )
       expect(actual).toBe('rebuild')
     })
@@ -226,10 +238,13 @@ describe('Change detection', () => {
       await git.mergeFromTo(hotfixBranch, prBranch)
     })
     it('should use last good branch from main when no good runs on base or head branch', async () => {
-      githubApi.getLastGoodPRRun(hotfixBranch, Arg.any()).resolves(undefined)
+      githubApi
+        .getLastGoodPRRun(hotfixBranch, 'pullrequest', Arg.any())
+        .resolves(undefined)
       githubApi
         .getLastGoodBranchBuildRun(
           releaseBranch,
+          'push',
           Arg.is((commits) => commits.includes(mainGoodBeforeBadSha)),
         )
         .resolves({ head_commit: mainGoodBeforeBadSha, run_nr: 2 })
@@ -241,6 +256,7 @@ describe('Change detection', () => {
         hotfixBranch,
         releaseBranch,
         prBranch,
+        'pullrequest',
       )
       expect(actual).toStrictEqual({
         sha: mainGoodBeforeBadSha,
@@ -254,6 +270,7 @@ describe('Change detection', () => {
       githubApi
         .getLastGoodPRRun(
           hotfixBranch,
+          'pullrequest',
           Arg.is(
             (commits) =>
               commits.includes(fixGoodSha) && commits.includes(hotfix1),
@@ -263,6 +280,7 @@ describe('Change detection', () => {
       githubApi
         .getLastGoodBranchBuildRun(
           releaseBranch,
+          'push',
           Arg.is((commits) => commits.includes(hotfix3)),
         )
         .resolves({ head_commit: hotfix3, run_nr: 3 })
@@ -274,6 +292,7 @@ describe('Change detection', () => {
         hotfixBranch,
         releaseBranch,
         prBranch,
+        'pullrequest',
       )
       expect(actual).toStrictEqual({
         sha: hotfix3,
@@ -286,6 +305,7 @@ describe('Change detection', () => {
       githubApi
         .getLastGoodPRRun(
           hotfixBranch,
+          'pullrequest',
           Arg.is(
             (commits) =>
               commits.includes(fixGoodSha) && commits.includes(hotfix2),
@@ -295,6 +315,7 @@ describe('Change detection', () => {
       githubApi
         .getLastGoodBranchBuildRun(
           releaseBranch,
+          'push',
           Arg.is((commits) => commits.includes(hotfix3)),
         )
         .resolves({ head_commit: hotfix3, run_nr: 3 })
@@ -306,6 +327,7 @@ describe('Change detection', () => {
         hotfixBranch,
         releaseBranch,
         prBranch,
+        'pullrequest',
       )
       expect(actual).toStrictEqual({
         sha: hotfix3,
@@ -332,11 +354,12 @@ describe('Change detection', () => {
     })
     it('should prefer head branch commits over base branch ones', async () => {
       githubApi
-        .getLastGoodBranchBuildRun(baseBranch, Arg.any())
+        .getLastGoodBranchBuildRun(baseBranch, 'push', Arg.any())
         .resolves({ head_commit: goodBeforeBadSha, run_nr: 1 })
       githubApi
         .getLastGoodBranchBuildRun(
           headBranch,
+          'push',
           Arg.is((commits) => commits.includes(hotfix1)),
         )
         .resolves({ head_commit: hotfix1, run_nr: 2 })
@@ -348,6 +371,7 @@ describe('Change detection', () => {
           githubApi,
           headBranch,
           baseBranch,
+          'push',
         ),
       ).toStrictEqual({
         sha: hotfix1,
@@ -358,10 +382,10 @@ describe('Change detection', () => {
     })
     it('should take base branch commits if no good on head branch', async () => {
       githubApi
-        .getLastGoodBranchBuildRun(baseBranch, Arg.any())
+        .getLastGoodBranchBuildRun(baseBranch, 'push', Arg.any())
         .resolves({ head_commit: goodBeforeBadSha, run_nr: 1 })
       githubApi
-        .getLastGoodBranchBuildRun(headBranch, Arg.any())
+        .getLastGoodBranchBuildRun(headBranch, 'push', Arg.any())
         .resolves(undefined)
 
       expect(
@@ -371,6 +395,7 @@ describe('Change detection', () => {
           githubApi,
           headBranch,
           baseBranch,
+          'push',
         ),
       ).toStrictEqual({
         sha: goodBeforeBadSha,
@@ -381,7 +406,7 @@ describe('Change detection', () => {
     })
     it('should trigger a full rebuild if no good commits found neither on head nor base branch', async () => {
       githubApi
-        .getLastGoodBranchBuildRun(baseBranch, Arg.any())
+        .getLastGoodBranchBuildRun(baseBranch, 'push', Arg.any())
         .resolves(undefined)
 
       expect(
@@ -391,6 +416,7 @@ describe('Change detection', () => {
           githubApi,
           baseBranch,
           baseBranch,
+          'push',
         ),
       ).toBe('rebuild')
     })
@@ -407,7 +433,7 @@ describe('Change detection', () => {
     })
     it('should take last good branch build', async () => {
       githubApi
-        .getLastGoodBranchBuildRun(baseBranch, Arg.any())
+        .getLastGoodBranchBuildRun(baseBranch, 'push', Arg.any())
         .resolves({ head_commit: goodBeforeBadSha, run_nr: 1 })
 
       expect(
@@ -417,6 +443,7 @@ describe('Change detection', () => {
           githubApi,
           headBranch,
           baseBranch,
+          'push',
         ),
       ).toStrictEqual({
         sha: goodBeforeBadSha,
@@ -427,7 +454,7 @@ describe('Change detection', () => {
     })
     it('should trigger a full rebuild if no good commits found neither on head nor base branch', async () => {
       githubApi
-        .getLastGoodBranchBuildRun(baseBranch, Arg.any())
+        .getLastGoodBranchBuildRun(baseBranch, 'push', Arg.any())
         .resolves(undefined)
 
       expect(
@@ -437,6 +464,7 @@ describe('Change detection', () => {
           githubApi,
           baseBranch,
           baseBranch,
+          'push',
         ),
       ).toBe('rebuild')
     })
