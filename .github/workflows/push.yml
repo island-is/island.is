@@ -160,7 +160,7 @@ jobs:
           echo "Branch is '${GIT_BRANCH}'"
 
       - name: Checking out relevant branches
-        if: env.GITHUB_EVENT_NAME == 'pullrequest'
+        if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
         run: |
           git checkout $GITHUB_HEAD_REF
           git checkout $GITHUB_BASE_REF
@@ -175,7 +175,7 @@ jobs:
 
       - name: Keep PR run event
         uses: actions/upload-artifact@v2
-        if: env.GITHUB_EVENT_NAME == 'pullrequest'
+        if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
         with:
           name: pr-event
           path: event.json
@@ -220,7 +220,7 @@ jobs:
         name: Preparing HEAD tag
 
       - run: |
-          if [[ "$GITHUB_EVENT_NAME" == "pullrequest" ]]; then
+          if [[ "${{needs.pre-checks.outputs.PRE_CHECK}}" == 'feature-deploy' ]]; then
             export HEAD_REF="$GITHUB_HEAD_REF"
             export BASE_REF="$GITHUB_BASE_REF"
             export PR_REF=$GITHUB_SHA
