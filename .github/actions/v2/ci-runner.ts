@@ -3,7 +3,6 @@ import { findBestGoodRefBranch, findBestGoodRefPR } from './change-detection'
 import { Octokit } from '@octokit/action'
 import { SimpleGit } from './simple-git'
 import { WorkflowID } from './git-action-status'
-
 ;(async () => {
   const runner = new LocalRunner(new Octokit())
   let git = new SimpleGit(process.env.REPO_ROOT, process.env.SHELL)
