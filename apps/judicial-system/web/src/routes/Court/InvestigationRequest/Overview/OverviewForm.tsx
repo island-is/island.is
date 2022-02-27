@@ -137,11 +137,7 @@ const OverviewForm: React.FC<Props> = (props) => {
                       Málsatvik
                     </Text>
                   </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.caseFacts}
-                    </span>
-                  </Text>
+                  <Text whiteSpace="breakSpaces">{workingCase.caseFacts}</Text>
                 </Box>
               )}
               {workingCase.legalArguments && (
@@ -151,10 +147,8 @@ const OverviewForm: React.FC<Props> = (props) => {
                       Lagarök
                     </Text>
                   </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.legalArguments}
-                    </span>
+                  <Text whiteSpace="breakSpaces">
+                    {workingCase.legalArguments}
                   </Text>
                 </Box>
               )}
@@ -174,11 +168,7 @@ const OverviewForm: React.FC<Props> = (props) => {
                       Athugasemdir vegna málsmeðferðar
                     </Text>
                   </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.comments}
-                    </span>
-                  </Text>
+                  <Text whiteSpace="breakSpaces">{workingCase.comments}</Text>
                 </Box>
               )}
               {workingCase.caseFilesComments && (
@@ -188,10 +178,8 @@ const OverviewForm: React.FC<Props> = (props) => {
                       Athugasemdir vegna rannsóknargagna
                     </Text>
                   </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.caseFilesComments}
-                    </span>
+                  <Text whiteSpace="breakSpaces">
+                    {workingCase.caseFilesComments}
                   </Text>
                 </>
               )}

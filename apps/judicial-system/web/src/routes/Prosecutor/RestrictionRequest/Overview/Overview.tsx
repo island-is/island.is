@@ -19,6 +19,7 @@ import {
   FormContentContainer,
   CaseFileList,
   CaseInfo,
+  AccordionListItem,
 } from '@island.is/judicial-system-web/src/components'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system/formatters'
 import {
@@ -34,6 +35,7 @@ import {
   requestCourtDate,
 } from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import CommentsAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
 import type { CaseLegalProvisions } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 import * as styles from './Overview.css'
@@ -233,11 +235,7 @@ export const Overview: React.FC = () => {
               id="id_1"
               label="Lagaákvæði sem brot varða við"
             >
-              <Text>
-                <span className={styles.breakSpaces}>
-                  {workingCase.lawsBroken}
-                </span>
-              </Text>
+              <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
             </AccordionItem>
             <AccordionItem
               labelVariant="h3"
@@ -283,61 +281,18 @@ export const Overview: React.FC = () => {
               label="Greinargerð um málsatvik og lagarök"
             >
               {workingCase.caseFacts && (
-                <Box marginBottom={2}>
-                  <Box marginBottom={2}>
-                    <Text variant="h5">Málsatvik</Text>
-                  </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.caseFacts}
-                    </span>
-                  </Text>
-                </Box>
+                <AccordionListItem title="Málsatvik">
+                  <Text whiteSpace="breakSpaces">{workingCase.caseFacts}</Text>
+                </AccordionListItem>
               )}
               {workingCase.legalArguments && (
-                <Box marginBottom={2}>
-                  <Box marginBottom={2}>
-                    <Text variant="h5">Lagarök</Text>
-                  </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.legalArguments}
-                    </span>
+                <AccordionListItem title="Lagarök">
+                  <Text whiteSpace="breakSpaces">
+                    {workingCase.legalArguments}
                   </Text>
-                </Box>
+                </AccordionListItem>
               )}
             </AccordionItem>
-            {(Boolean(workingCase.comments) ||
-              Boolean(workingCase.caseFilesComments)) && (
-              <AccordionItem id="id_5" label="Athugasemdir" labelVariant="h3">
-                {Boolean(workingCase.comments) && (
-                  <Box marginBottom={workingCase.caseFilesComments ? 3 : 0}>
-                    <Box marginBottom={1}>
-                      <Text variant="h4" as="h4">
-                        Athugasemdir vegna málsmeðferðar
-                      </Text>
-                    </Box>
-                    <Text>
-                      <span className={styles.breakSpaces}>
-                        {workingCase.comments}
-                      </span>
-                    </Text>
-                  </Box>
-                )}
-                {Boolean(workingCase.caseFilesComments) && (
-                  <>
-                    <Text variant="h4" as="h4">
-                      Athugasemdir vegna rannsóknargagna
-                    </Text>
-                    <Text>
-                      <span className={styles.breakSpaces}>
-                        {workingCase.caseFilesComments}
-                      </span>
-                    </Text>
-                  </>
-                )}
-              </AccordionItem>
-            )}
             <AccordionItem
               id="id_6"
               label={`Rannsóknargögn ${`(${
@@ -352,6 +307,10 @@ export const Overview: React.FC = () => {
                 />
               </Box>
             </AccordionItem>
+            {(Boolean(workingCase.comments) ||
+              Boolean(workingCase.caseFilesComments)) && (
+              <CommentsAccordionItem workingCase={workingCase} />
+            )}
           </Accordion>
         </Box>
         <Box className={styles.prosecutorContainer}>
