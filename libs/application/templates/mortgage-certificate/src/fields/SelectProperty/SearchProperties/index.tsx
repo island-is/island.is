@@ -1,6 +1,12 @@
 import React, { FC, useState } from 'react'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
-import { Box, Text, Input, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  Input,
+  Button,
+  AlertMessage,
+} from '@island.is/island-ui/core'
 import { PropertyTable } from '../PropertyTable'
 import { PropertyDetail } from '../../../types/schema'
 import { gql, useLazyQuery } from '@apollo/client'
@@ -23,6 +29,7 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
 }) => {
   const [hasInitialized, setHasInitialized] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [showSearchError, setShowSearchError] = useState<boolean>(false)
   const [searchStr, setSearchStr] = useState('')
   const [foundProperty, setFoundProperty] = useState<
     PropertyDetail | undefined
@@ -39,12 +46,14 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
       setIsLoading(false)
     },
     onError() {
+      setShowSearchError(true)
       setIsLoading(false)
     },
   })
 
   const handleClickSearch = () => {
     setFoundProperty(undefined)
+    setShowSearchError(false)
     setIsLoading(true)
     runQuery()
   }
@@ -97,6 +106,14 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
           selectedPropertyNumber={selectedPropertyNumber}
         />
       )}
+
+      <Box paddingTop={3} hidden={!showSearchError}>
+        <AlertMessage
+          type="error"
+          title="Eign fannst ekki"
+          message="Ekki fannst nein eign með þessu fasteignanúmeri"
+        />
+      </Box>
     </Box>
   )
 }

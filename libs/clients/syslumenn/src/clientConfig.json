@@ -7,7 +7,7 @@
     "version": "v1"
   },
   "host": "api.syslumenn.is",
-  "basePath": "/test",
+  "basePath": "/dev",
   "schemes": ["https"],
   "produces": ["text/plain", "application/json", "text/json"],
   "paths": {
@@ -998,10 +998,10 @@
         ]
       }
     },
-    "/api/Vedbokarvottord": {
+    "/v1/Vedbandayfirlit": {
       "post": {
         "tags": ["Syslumenn"],
-        "operationId": "Vedbokarvottord_Post",
+        "operationId": "Vedbandayfirlit_Post",
         "consumes": [
           "application/json-patch+json",
           "application/json",

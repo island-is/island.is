@@ -184,10 +184,12 @@ export class SyslumennService {
 
     const contentBase64 =
       (
-        await api.vedbokarvottordPost({
+        await api.vedbandayfirlitPost({
+          //TODOx
+          // await api.vedbokarvottordPost({
           skilabod: {
             audkenni: id,
-            fastanumer: '2066490',
+            fastanumer: realEstateNumber,
             tegundAndlags: TegundAndlags.NUMBER_0, // 0 = Real estate
           },
         })
@@ -210,14 +212,12 @@ export class SyslumennService {
       return {
         exists: certificate.contentBase64.length !== 0,
         hasKMarking: true, //TODOx
-        tmpContentBase64: certificate.contentBase64,
       }
     } catch (exception) {
       console.log(exception)
       return {
         exists: false,
         hasKMarking: false, //TODOx
-        tmpContentBase64: '',
       }
     }
   }

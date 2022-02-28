@@ -97,5 +97,4 @@ export interface MortgageCertificate {
 export interface MortgageCertificateValidation {
   exists: boolean
   hasKMarking: boolean
-  tmpContentBase64: string //TODOx remove
 }
