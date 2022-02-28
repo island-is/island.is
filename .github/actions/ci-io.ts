@@ -1,4 +1,3 @@
-// import { SimpleGit } from 'simple-git'
 import { SimpleGit } from './simple-git'
 import {
   BranchWorkflow,
@@ -44,7 +43,7 @@ export class LocalRunner implements GitActionStatus {
   ): Promise<string[]> {
     const log = app.extend('calculate-distance')
     log(`Calculating distance between ${sha1} and ${sha2}`)
-    const diffNames = await git.git('diff', '--name-only', sha1, sha2)
+    const diffNames = await git.raw('diff', '--name-only', sha1, sha2)
     const changedFiles = [
       // @ts-ignore
       ...new Set(

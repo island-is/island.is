@@ -1,4 +1,3 @@
-// import { SimpleGit } from 'simple-git'
 import { SimpleGit } from './simple-git'
 import { GitActionStatus, WorkflowID } from './git-action-status'
 import Debug from 'debug'
@@ -87,6 +86,16 @@ async function getCommits(
   return commits
 }
 
+/***
+ * Discovers the best(latest) successful PR workflow or base branch workflow that is related to the current commit
+ * @param diffWeight - method to measure the weight of the difference from the current commit
+ * @param git - git interface
+ * @param githubApi - GitHub/DigitalIceland specific api
+ * @param headBranch - name of head branch of the PRs
+ * @param baseBranch - name of the base branch
+ * @param prBranch
+ * @param workflowId
+ */
 export async function findBestGoodRefPR(
   diffWeight: (services: string[]) => number,
   git: SimpleGit,
@@ -98,8 +107,7 @@ export async function findBestGoodRefPR(
 ): Promise<LastGoodBuild> {
   const log = app.extend('findBestGoodRefPR')
   log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`)
-  const lastChanges = await git.log({ maxCount: 1 })
-  const currentChange = lastChanges.latest
+  const lastCommitSha = await git.lastCommit()
   const prCommits = await getCommits(git, headBranch, baseBranch, 'HEAD')
 
   const prRun = await githubApi.getLastGoodPRRun(
@@ -124,7 +132,7 @@ export async function findBestGoodRefPR(
       log(`Simulated previous PR merge commit`)
       const distance = await githubApi.getChangedComponents(
         git,
-        currentChange.hash,
+        lastCommitSha,
         mergeCommitSha,
       )
       log(`Affected components since candidate PR run are ${distance}`)
@@ -150,7 +158,7 @@ export async function findBestGoodRefPR(
   if (baseGoodBuilds) {
     let affectedComponents = await githubApi.getChangedComponents(
       git,
-      currentChange.hash,
+      lastCommitSha,
       baseGoodBuilds.head_commit,
     )
     prBuilds.push({

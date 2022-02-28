@@ -1,4 +1,3 @@
-// import simpleGit, { SimpleGit } from 'simple-git'
 import { mkdtemp, writeFile } from 'fs/promises'
 import { join } from 'path'
 import {
@@ -30,7 +29,7 @@ describe('Change detection', () => {
   beforeEach(async () => {
     path = await mkdtemp(`${__dirname}/test-data/repo`)
     git = new SimpleGit(path, process.env.SHELL)
-    const r = await git.git('init', '.')
+    const r = await git.raw('init', '.')
     githubApi = Substitute.for<GitActionStatus>()
     githubApi.getChangedComponents(Arg.all()).mimicks(getChangedComponents)
 
@@ -476,7 +475,7 @@ async function getChangedComponents(
   currentSha: string,
   olderSha: string,
 ): Promise<string[]> {
-  const diffNames = await git.git('diff', '--name-only', currentSha, olderSha)
+  const diffNames = await git.raw('diff', '--name-only', currentSha, olderSha)
   return [
     // @ts-ignore
     ...new Set(

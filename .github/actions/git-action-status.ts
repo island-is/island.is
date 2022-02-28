@@ -1,4 +1,3 @@
-// import { SimpleGit } from 'simple-git'
 import { SimpleGit } from './simple-git'
 
 export interface PRWorkflow {

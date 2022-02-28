@@ -1,8 +1,8 @@
 import Debug from 'debug'
-import { execSync, exec as ex, spawn as sp } from 'child_process'
+import { exec as ex } from 'child_process'
 import { promisify } from 'util'
+
 const exec = promisify(ex)
-const spawn = promisify(sp)
 
 export class SimpleGit {
   constructor(
@@ -16,7 +16,7 @@ export class SimpleGit {
   public get cwd() {
     return this._cwd
   }
-  async git(...args: string[]) {
+  private async git(...args: string[]) {
     const command = `git ${args.join(' ')}`
     try {
       this._log(`In: ${command}`)
@@ -35,31 +35,31 @@ export class SimpleGit {
       return Promise.reject(e)
     }
   }
-  private _method(...name: string[]) {
+  private _curriedCommand(...name: string[]) {
     return (...args: string[]) => {
       return this.git(...name, ...args)
     }
   }
   raw = this.git
-  add = this._method('add')
-  init = this._method('init', '.')
+  add = this._curriedCommand('add')
+  init = this._curriedCommand('init', '.')
   async commit(message: string) {
     await this.git('commit', '-m', message)
-    const lastMessage = await this.log({ maxCount: 1 })
-    return lastMessage.latest.hash
+    const lastMessage = await this.lastCommit()
+    return lastMessage
   }
-  checkoutLocalBranch = this._method('checkout', '-b')
-  checkoutBranch = this._method('checkout', '-b')
+  checkoutLocalBranch = this._curriedCommand('checkout', '-b')
+  checkoutBranch = this._curriedCommand('checkout', '-b')
   async merge(head: string) {
     await this.git('merge', head)
-    const commit = await this.log({ maxCount: 1 })
-    return commit.latest.hash
+    const commit = await this.lastCommit()
+    return commit
   }
-  checkout = this._method('checkout')
-  async log(params: { maxCount: number }) {
+  checkout = this._curriedCommand('checkout')
+  async lastCommit() {
     const out = await this.git(
       'log',
-      `-n ${params.maxCount}`,
+      `-n 1`,
       `--pretty=format:'{"commit": "%H",  "abbreviated_commit": "%h",  "tree": "%T", "abbreviated_tree": "%t", "parent": "%P", "abbreviated_parent": "%p", "refs": "%D", "date": "%aD"}'`,
     )
 
@@ -70,9 +70,7 @@ export class SimpleGit {
       .map((s) => ({
         hash: s.commit as string,
       }))
-    return {
-      latest: logs[0],
-    }
+    return logs[0].hash
   }
   async mergeFromTo(from: string, to: string) {
     await this.git('checkout', to)
