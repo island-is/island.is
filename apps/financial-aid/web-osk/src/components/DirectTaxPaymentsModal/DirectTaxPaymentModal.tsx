@@ -41,7 +41,6 @@ const DirectTaxPaymentModal = ({
         }
       }}
     >
-      {/* <TaxBreakdown items={items} /> */}
       {({
         closeModal,
       }: {
