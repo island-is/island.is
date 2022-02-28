@@ -122,5 +122,5 @@ ReadOnly.args = {
   name: 'Test13',
   backgroundColor: 'blue',
   readOnly: true,
-  value: 'Read only have transparent backgrounds',
+  value: 'Read only have a transparent background',
 }
