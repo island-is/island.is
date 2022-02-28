@@ -17,7 +17,7 @@ import {
   HomeCircumstances,
 } from '@island.is/financial-aid/shared/lib'
 
-import { routes } from '../../lib/constants'
+import { Routes } from '../../lib/constants'
 import { SummaryBlock, DescriptionText } from '../index'
 import {
   formatAddress,
@@ -102,7 +102,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         </GridRow>
       </Box>
 
-      <SummaryBlock editAction={() => goToScreen?.(routes.INRELATIONSHIP)}>
+      <SummaryBlock editAction={() => goToScreen?.(Routes.INRELATIONSHIP)}>
         <Text fontWeight="semiBold">
           {formatMessage(m.inRelationship.general.sectionTitle)}
         </Text>
@@ -111,7 +111,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         <Text>TODO</Text>
       </SummaryBlock>
 
-      <SummaryBlock editAction={() => goToScreen?.(routes.HOMECIRCUMSTANCES)}>
+      <SummaryBlock editAction={() => goToScreen?.(Routes.HOMECIRCUMSTANCES)}>
         <Text fontWeight="semiBold">
           {formatMessage(m.homeCircumstancesForm.general.sectionTitle)}
         </Text>
@@ -127,7 +127,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         )}
       </SummaryBlock>
 
-      <SummaryBlock editAction={() => goToScreen?.(routes.STUDENT)}>
+      <SummaryBlock editAction={() => goToScreen?.(Routes.STUDENT)}>
         <Text fontWeight="semiBold">
           {formatMessage(m.studentForm.general.sectionTitle)}
         </Text>
@@ -141,7 +141,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         )}
       </SummaryBlock>
 
-      <SummaryBlock editAction={() => goToScreen?.(routes.EMPLOYMENT)}>
+      <SummaryBlock editAction={() => goToScreen?.(Routes.EMPLOYMENT)}>
         <Text fontWeight="semiBold">
           {formatMessage(m.employmentForm.general.sectionTitle)}
         </Text>
@@ -157,7 +157,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         )}
       </SummaryBlock>
 
-      <SummaryBlock editAction={() => goToScreen?.(routes.INCOME)}>
+      <SummaryBlock editAction={() => goToScreen?.(Routes.INCOME)}>
         <Text fontWeight="semiBold">
           {formatMessage(m.incomeForm.general.sectionTitle)}
         </Text>
@@ -167,7 +167,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         </Text>
       </SummaryBlock>
 
-      <SummaryBlock editAction={() => goToScreen?.(routes.PERSONALTAXCREDIT)}>
+      <SummaryBlock editAction={() => goToScreen?.(Routes.PERSONALTAXCREDIT)}>
         <Text fontWeight="semiBold">
           {formatMessage(m.summaryForm.formInfo.personalTaxCreditTitle)}
         </Text>
@@ -180,7 +180,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         )}
       </SummaryBlock>
 
-      <SummaryBlock editAction={() => goToScreen?.(routes.BANKINFO)}>
+      <SummaryBlock editAction={() => goToScreen?.(Routes.BANKINFO)}>
         <Text fontWeight="semiBold">
           {formatMessage(m.bankInfoForm.general.sectionTitle)}
         </Text>
@@ -188,7 +188,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         <Text>{formatBankInfo(answers?.bankInfo)}</Text>
       </SummaryBlock>
 
-      <SummaryBlock editAction={() => goToScreen?.(routes.CONTACTINFO)}>
+      <SummaryBlock editAction={() => goToScreen?.(Routes.CONTACTINFO)}>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
             <Text fontWeight="semiBold">
@@ -207,7 +207,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         </GridRow>
       </SummaryBlock>
 
-      <SummaryBlock editAction={() => goToScreen?.(routes.INCOME)}>
+      <SummaryBlock editAction={() => goToScreen?.(Routes.INCOME)}>
         <Text fontWeight="semiBold">
           {/* TODO files   */}
           Gögn
