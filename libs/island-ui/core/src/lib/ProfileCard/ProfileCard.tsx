@@ -2,6 +2,7 @@ import React, { FC } from 'react'
 import { Box } from '../Box/Box'
 import { Button } from '../Button/Button'
 import { Link } from '../Link/Link'
+import { Stack } from '../Stack/Stack'
 import { Text } from '../Text/Text'
 import * as styles from './ProfileCard.css'
 
@@ -20,7 +21,7 @@ export interface ProfileCardProps {
   /**
    * Usually job description
    */
-  description?: string
+  description?: string | string[]
   /**
    * 100% height
    */
@@ -50,6 +51,15 @@ export const ProfileCard: FC<ProfileCardProps> = ({
   if (heightFull) {
     conditionalProps.height = 'full'
   }
+  let strings: string[] = []
+  if (description) {
+    if (typeof description === 'string') {
+      strings = [description]
+    } else if (Array.isArray(description)) {
+      strings = description.filter((x) => x)
+    }
+  }
+
   return (
     <Box
       borderRadius="large"
@@ -71,7 +81,11 @@ export const ProfileCard: FC<ProfileCardProps> = ({
             {title}
           </Text>
         )}
-        {description && <Text variant={size}>{description}</Text>}
+        <Stack space={0}>
+          {strings.map((x) => {
+            return <Text variant={size}>{x}</Text>
+          })}
+        </Stack>
         {link && (
           <Box paddingTop={2}>
             <Link href={link.url}>
