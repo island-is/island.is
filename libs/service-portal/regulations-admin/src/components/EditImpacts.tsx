@@ -130,8 +130,13 @@ export const EditImpacts = () => {
   const closeModal = (reload?: boolean) => {
     setChooseType(undefined)
     if (reload) {
+      // updateState('impacts', CLEAR_PREVIOUSLY_CREATED_EMPTY_IMPACT)
       document.location.reload()
     }
+  }
+
+  const onClickChange = () => {
+    setChooseType('change')
   }
 
   const escClick = useCallback((e) => {
@@ -198,7 +203,7 @@ export const EditImpacts = () => {
                     variant="ghost"
                     icon="document"
                     iconType="outline"
-                    onClick={() => setChooseType('change')}
+                    onClick={onClickChange} // () => updateState('impacts', makeDraftChangeForm({}))
                     // disabled={!!draft.impacts[selRegOption.value]}
                   >
                     {t(impactMsgs.chooseType_change)}

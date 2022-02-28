@@ -160,21 +160,6 @@ export type DraftingState = {
 
 // -----------------------------
 
-export type DraftingImpactState = {
-  /** Users split into "authors" and "editors" (with publishing privileges) */
-  isEditor: boolean
-  /** Info about the currently active step in the editing UI */
-  step: StepNav
-  /** The form containing the RegulationDraft and its impacts */
-  impactDraft: DraftChangeForm
-  /** true while saving the draft */
-  saving?: boolean
-  /** "Toastable" errror that occur during loading/saving/etc. */
-  error?: { message: MessageDescriptor | string; error?: Error }
-}
-
-// -----------------------------
-
 export type RegDraftFormSimpleProps = Extract<
   keyof RegDraftForm,
   | 'title'
@@ -191,6 +176,7 @@ export type RegDraftFormSimpleProps = Extract<
   | 'draftingNotes'
   | 'authors'
   | 'name'
+  // | 'impacts'
 >
 // -----------------------------
 
@@ -261,30 +247,6 @@ export type Action =
       impactId: DraftImpactId | undefined
     }
 
-export type ImpactAction =
-  | {
-      type: 'IMPACT_APPENDIX_ADD'
-    }
-  | ({
-      type: 'IMPACT_APPENDIX_SET_PROP'
-      idx: number
-    } & AppendixFieldNameValuePair)
-  | {
-      type: 'IMPACT_APPENDIX_MOVE_UP'
-      idx: number
-    }
-  | {
-      type: 'IMPACT_APPENDIX_DELETE'
-      idx: number
-    }
-  | {
-      type: 'IMPACT_SAVING_STATUS'
-    }
-  | {
-      type: 'IMPACT_SAVING_STATUS_DONE'
-      error?: DraftingImpactState['error']
-    }
-
 // TODO: Implement appendix actions for DraftChanges
 // TODO: Also Implement revocation action for DraftChange appendixes
 // | {
@@ -294,7 +256,5 @@ export type ImpactAction =
 //   }
 
 export type ActionName = Action['type']
-
-export type ImpactActionName = ImpactAction['type']
 
 export type UpdateAction = Extract<Action, { type: 'UPDATE_PROP' }>

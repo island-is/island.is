@@ -11,7 +11,12 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import React, { useEffect, useMemo, useState } from 'react'
-import { DraftChangeForm, RegDraftForm } from '../../state/types'
+import {
+  AppendixDraftForm,
+  AppendixFormSimpleProps,
+  DraftChangeForm,
+  RegDraftForm,
+} from '../../state/types'
 import {
   HTMLText,
   PlainText,
@@ -38,7 +43,7 @@ import { fHtml, fText, makeDraftAppendixForm } from '../../state/makeFields'
 import { ImpactHistory } from './ImpactHistory'
 import { Effects } from '../../types'
 import { Appendixes } from '../Appendixes'
-import { useImpactDraftingState } from '../../state/useImpactDraftingState'
+import { tidyUp, updateFieldValue } from '../../state/validations'
 /* ---------------------------------------------------------------------------------------------------------------- */
 
 export type HTMLBoxProps = BoxProps & {
@@ -65,7 +70,6 @@ type EditChangeProp = {
 
 export const EditChange = (props: EditChangeProp) => {
   const { draft, change, closeModal, readOnly } = props
-  const { actions, impactDraft } = useImpactDraftingState()
   const [activeChange, setActiveChange] = useState(change) // Áhrifafærslan sem er verið að breyta
   const [activeRegulation, setActiveRegulation] = useState<
     Regulation | undefined
@@ -203,6 +207,84 @@ export const EditChange = (props: EditChangeProp) => {
     ).length
   }
 
+  // TODO: This could be better placed in the state reducer
+  const localActions = {
+    moveAppendixUp: (idx: number) => {
+      const appendixes = activeChange.appendixes
+      const prevIdx = idx - 1
+      const appendix = appendixes[idx]
+      const prevAppendix = appendixes[prevIdx]
+      if (appendix && prevAppendix) {
+        appendixes[prevIdx] = appendix
+        appendixes[idx] = prevAppendix
+
+        setActiveChange({
+          ...activeChange,
+          appendixes: appendixes,
+        })
+      }
+    },
+
+    setAppendixProp: <Prop extends AppendixFormSimpleProps>(
+      idx: number,
+      name: Prop,
+      value: AppendixDraftForm[Prop]['value'],
+    ) => {
+      const appendixes = activeChange.appendixes
+      let appendix = appendixes[idx]
+      if (appendix) {
+        const field = appendix[name]
+        // @ts-expect-error VSCode says no error, but if you remove this line, the build will fail. FML
+        value = tidyUp[field.type || '_'](value)
+
+        updateFieldValue(field, value, true)
+
+        const newAppendix = {
+          ...appendix,
+          [name]: value,
+        }
+
+        appendix = newAppendix
+        const newAppendixes = appendixes
+
+        setActiveChange({
+          ...activeChange,
+          appendixes: newAppendixes,
+        })
+      }
+    },
+
+    deleteAppendix: (idx: number) => {
+      const appendixes = activeChange.appendixes
+      if (appendixes[idx]) {
+        appendixes.splice(idx, 1)
+      }
+
+      setActiveChange({
+        ...activeChange,
+        appendixes: appendixes,
+      })
+    },
+
+    addAppendix: () => {
+      const appendixes = activeChange.appendixes
+      appendixes.push(
+        makeDraftAppendixForm(
+          { title: '', text: '' },
+          String(appendixes.length),
+        ),
+      )
+
+      setActiveChange({
+        ...activeChange,
+        appendixes: appendixes,
+      })
+    },
+
+    revokeAppendix: (idx: number, revoked: boolean) => undefined,
+  }
+
+  console.log('activeChange.appendixes', activeChange.appendixes)
   return (
     <LayoverModal closeModal={closeModal} id="EditChangeModal">
       {draft && (
@@ -285,12 +367,13 @@ export const EditChange = (props: EditChangeProp) => {
                   </Text>
                   <EditorInput
                     label=""
-                    baseText={regulation?.text}
+                    baseText={activeRegulation?.text}
                     value={activeChange.text.value}
                     onChange={(newValue) => changeRegulationText(newValue)}
                     draftId={draft.id}
                     isImpact={true}
                     error={undefined}
+                    readOnly={readOnly}
                   />
                 </Box>
               </GridColumn>
@@ -301,15 +384,10 @@ export const EditChange = (props: EditChangeProp) => {
                 <Text fontWeight="semiBold" paddingBottom="p2">
                   Viðaukar
                 </Text>
-                <EditorInput
-                  label=""
-                  baseText={activeRegulation?.text}
-                  value={activeChange.text.value}
-                  onChange={(newValue) => changeRegulationText(newValue)}
+                <Appendixes
                   draftId={draft.id}
-                  isImpact={true}
-                  error={undefined}
-                  readOnly={readOnly}
+                  appendixes={activeChange.appendixes}
+                  actions={localActions}
                 />
               </GridColumn>
             </>
