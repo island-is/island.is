@@ -51,7 +51,6 @@ export interface Applicant {
   fullName: string
   address: Address
   spouse?: Spouse
-  // folderId: UUID
 }
 
 export interface CurrentApplication {
