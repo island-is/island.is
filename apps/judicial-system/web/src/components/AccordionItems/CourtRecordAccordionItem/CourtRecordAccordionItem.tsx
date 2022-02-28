@@ -9,14 +9,13 @@ import {
   formatRequestCaseType,
 } from '@island.is/judicial-system/formatters'
 import {
-  Gender,
   isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 import { closedCourt, core } from '@island.is/judicial-system-web/messages'
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { courtRecordAccordion as m } from '@island.is/judicial-system-web/messages/Core/courtRecordAccordion'
 import type { Case } from '@island.is/judicial-system/types'
-import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 
@@ -49,7 +48,7 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
       id="courtRecordAccordionItem"
       label="Þingbók"
       labelVariant="h3"
-      labelUse="h2"
+      labelUse="h3"
     >
       <AccordionListItem
         title={formatMessage(m.sections.timeAndLocation.title)}
