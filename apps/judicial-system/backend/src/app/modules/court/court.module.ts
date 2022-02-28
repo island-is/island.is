@@ -8,7 +8,7 @@ import { CourtService } from './court.service'
 
 @Module({
   imports: [CourtClientModule],
-  providers: [{ provide: DATE_FACTORY, useFactory: today }, CourtService],
+  providers: [{ provide: DATE_FACTORY, useFactory: () => today }, CourtService],
   exports: [CourtService],
 })
 export class CourtModule {}
