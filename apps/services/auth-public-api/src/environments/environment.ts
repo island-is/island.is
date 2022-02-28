@@ -51,7 +51,7 @@ const prodConfig = {
   },
   auth: {
     audience: '@island.is',
-    issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL ?? '',
   },
   port: 3333,
   rsk: {

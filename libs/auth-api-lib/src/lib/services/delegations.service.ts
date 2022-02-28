@@ -86,51 +86,57 @@ export class DelegationsService {
    */
   async create(
     user: User,
-    delegation: CreateDelegationDTO,
+    createDelegation: CreateDelegationDTO,
     authMiddlewareOptions: AuthMiddlewareOptions,
   ): Promise<DelegationDTO | null> {
-    if (delegation.toNationalId === user.nationalId) {
+    if (createDelegation.toNationalId === user.nationalId) {
       throw new BadRequestException(`Can not create delegation to self.`)
     }
 
-    if (!(await this.validateScopesAccess(user, delegation.scopes))) {
+    if (!(await this.validateScopesAccess(user, createDelegation.scopes))) {
       throw new BadRequestException(
         'User does not have access to the requested scopes.',
       )
     }
 
-    if (!this.validateScopesPeriod(delegation.scopes)) {
+    if (!this.validateScopesPeriod(createDelegation.scopes)) {
       throw new BadRequestException(
-        'If scope validTo property is provided it must be in the future',
+        'When scope validTo property is provided it must be in the future',
       )
     }
 
-    if (
-      await this.findByRelationship(user.nationalId, delegation.toNationalId)
-    ) {
-      throw new ConflictException(
-        'Delegation exists. Please use PUT method to update.',
-      )
+    let delegation = await this.findByRelationship(
+      user,
+      createDelegation.toNationalId,
+    )
+
+    if (!delegation) {
+      const [fromDisplayName, toName] = await Promise.all([
+        this.getUserName(user),
+        this.getPersonName(
+          createDelegation.toNationalId,
+          user,
+          authMiddlewareOptions,
+        ),
+      ])
+
+      delegation = await this.delegationModel.create({
+        id: uuid(),
+        fromNationalId: user.nationalId,
+        toNationalId: createDelegation.toNationalId,
+        fromDisplayName,
+        toName,
+      })
     }
 
-    const [fromDisplayName, toName] = await Promise.all([
-      this.getUserName(user),
-      this.getPersonName(delegation.toNationalId, user, authMiddlewareOptions),
-    ])
+    // If createDelegation.scopes are empty then this will remove all the scopes the user has accesss to
+    delegation.delegationScopes = await this.delegationScopeService.createOrUpdate(
+      delegation.id,
+      user.scope,
+      createDelegation.scopes,
+    )
 
-    this.logger.debug('Creating a new delegation')
-    const id = uuid()
-    await this.delegationModel.create({
-      id,
-      fromNationalId: user.nationalId,
-      toNationalId: delegation.toNationalId,
-      fromDisplayName,
-      toName,
-    })
-    if (delegation.scopes && delegation.scopes.length > 0) {
-      await this.delegationScopeService.createMany(id, delegation.scopes)
-    }
-    return this.findById(user, id)
+    return delegation.toDTO()
   }
 
   /**
@@ -165,10 +171,12 @@ export class DelegationsService {
 
     this.logger.debug(`Updating delegation ${delegation.id}`)
 
-    await this.delegationScopeService.delete(delegationId, user.scope)
-    if (input.scopes && input.scopes.length > 0) {
-      await this.delegationScopeService.createMany(delegationId, input.scopes)
-    }
+    await this.delegationScopeService.createOrUpdate(
+      delegationId,
+      user.scope,
+      input.scopes,
+    )
+
     return this.findById(user, delegationId)
   }
 
@@ -194,14 +202,9 @@ export class DelegationsService {
    * Finds a single delegation for a user.
    * @param nationalId Id of the user to find the delegation from.
    * @param id Id of the delegation to find.
-   * @param valid Filter which scopes to return.
    * @returns
    */
-  async findById(
-    user: User,
-    id: string,
-    valid = DelegationValidity.ALL,
-  ): Promise<DelegationDTO | null> {
+  async findById(user: User, id: string): Promise<DelegationDTO | null> {
     this.logger.debug(`Finding a delegation with id ${id}`)
     const delegation = await this.delegationModel.findOne({
       where: {
@@ -216,7 +219,9 @@ export class DelegationsService {
           model: DelegationScope,
           as: 'delegationScopes',
           required: false,
-          where: this.getScopeValidWhereClause(valid),
+          where: this.getScopeValidWhereClause(
+            DelegationValidity.INCLUDE_FUTURE,
+          ),
           include: [
             {
               model: ApiScope,
@@ -242,13 +247,13 @@ export class DelegationsService {
   /**
    * Finds all delegations a user has created.
    * @param nationalId The id of the user to find all delegations from
-   * @param isValid Flag to indicate if to filter by validTo to find only valid delegations
+   * @param validity Enum values to indicate the validity of the scopes
    * @param otherUser The id of a user to find a specific delegation given to
    * @returns
    */
   async findAllOutgoing(
     user: User,
-    valid: DelegationValidity,
+    validity: DelegationValidity,
     otherUser?: string,
   ): Promise<DelegationDTO[]> {
     const delegationWhere: { fromNationalId: string; toNationalId?: string } = {
@@ -273,8 +278,8 @@ export class DelegationsService {
               },
             },
           ],
-          required: valid !== DelegationValidity.ALL,
-          where: this.getScopeValidWhereClause(valid),
+          required: validity !== DelegationValidity.ALL,
+          where: this.getScopeValidWhereClause(validity),
         },
       ],
     })
@@ -294,19 +299,14 @@ export class DelegationsService {
     }
 
     return delegations
-      .filter(
-        (d) =>
-          // Allow empty scopes if otherUser is set
-          otherUser ||
-          // Allow empty scopes if date validation or explicit grant filtered out scopes
-          !d.delegationScopes ||
-          d.delegationScopes.length < 1 ||
-          // Otherwise the user must have at least access to one of the scopes
-          d.delegationScopes.some((s) =>
-            this.checkIfScopeAllowed(s, user.scope),
-          ),
+      .filter((d) =>
+        // The user must have access to at least one scope in the delegation
+        d.delegationScopes?.some((s) =>
+          this.checkIfScopeAllowed(s, user.scope),
+        ),
       )
       .map((d) => {
+        // Filter out scopes the user does not have access to
         d.delegationScopes = d.delegationScopes?.filter((s) =>
           this.checkIfScopeAllowed(s, user.scope),
         )
@@ -348,15 +348,15 @@ export class DelegationsService {
    * @param toNationalId
    * @returns
    */
-  async findByRelationship(
-    fromNationalId: string,
+  private async findByRelationship(
+    user: User,
     toNationalId: string,
   ): Promise<Delegation | null> {
     const today = startOfDay(new Date())
     const delegation = await this.delegationModel.findOne({
       where: {
+        fromNationalId: user.nationalId,
         toNationalId: toNationalId,
-        fromNationalId: fromNationalId,
       },
       include: [
         {
@@ -370,6 +370,12 @@ export class DelegationsService {
         },
       ],
     })
+
+    if (delegation) {
+      delegation.delegationScopes = delegation.delegationScopes?.filter((s) =>
+        this.checkIfScopeAllowed(s, user.scope),
+      )
+    }
 
     return delegation
   }
@@ -585,11 +591,11 @@ export class DelegationsService {
   /**
    * Constructs a where clause to use for DelegationScopes to filter
    * by a validity on the validFrom and validTo properties.
-   * @param valid Controls the validFrom and validTo where clauses
+   * @param validity Controls the validFrom and validTo where clauses
    * @returns
    */
   private getScopeValidWhereClause(
-    valid: DelegationValidity,
+    validity: DelegationValidity,
   ): WhereOptions | undefined {
     let scopesWhere: WhereOptions | undefined
     const startOfToday = startOfDay(new Date())
@@ -603,14 +609,14 @@ export class DelegationsService {
       },
     }
 
-    if (valid === DelegationValidity.NOW) {
+    if (validity === DelegationValidity.NOW) {
       scopesWhere = {
         validFrom: { [Op.lte]: startOfToday },
         ...futureValidToWhere,
       }
-    } else if (valid === DelegationValidity.INCLUDE_FUTURE) {
+    } else if (validity === DelegationValidity.INCLUDE_FUTURE) {
       scopesWhere = futureValidToWhere
-    } else if (valid === DelegationValidity.PAST) {
+    } else if (validity === DelegationValidity.PAST) {
       scopesWhere = {
         validTo: {
           [Op.lt]: startOfToday,

@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   Body,
-  ConflictException,
   Controller,
   Delete,
   Get,
@@ -13,7 +12,6 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import startOfDay from 'date-fns/startOfDay'
 
 import { Documentation } from '@island.is/nest/swagger'
 import {
@@ -22,9 +20,7 @@ import {
   DelegationDTO,
   DelegationsService,
   DelegationValidity,
-  ResourcesService,
   UpdateDelegationDTO,
-  UpdateDelegationScopeDTO,
 } from '@island.is/auth-api-lib'
 import {
   AuthMiddlewareOptions,
@@ -70,7 +66,7 @@ export class MeDelegationsController {
             default: DelegationDirection.OUTGOING,
           },
         },
-        valid: {
+        validity: {
           required: false,
           schema: {
             enum: Object.values(DelegationValidity),
@@ -93,7 +89,7 @@ export class MeDelegationsController {
   async findAll(
     @CurrentUser() user: User,
     @Query('direction') direction: DelegationDirection,
-    @Query('valid') valid: DelegationValidity = DelegationValidity.ALL,
+    @Query('validity') validity: DelegationValidity = DelegationValidity.ALL,
     @Query('otherUser') otherUser?: string,
   ): Promise<DelegationDTO[]> {
     if (direction !== DelegationDirection.OUTGOING) {
@@ -102,7 +98,7 @@ export class MeDelegationsController {
       )
     }
 
-    return this.delegationsService.findAllOutgoing(user, valid, otherUser)
+    return this.delegationsService.findAllOutgoing(user, validity, otherUser)
   }
 
   @Scopes(AuthScope.readDelegations)
@@ -119,15 +115,6 @@ export class MeDelegationsController {
           description: 'Delegation ID.',
         },
       },
-      query: {
-        valid: {
-          required: false,
-          schema: {
-            enum: Object.values(DelegationValidity),
-            default: DelegationValidity.ALL,
-          },
-        },
-      },
     },
   })
   @Audit<DelegationDTO>({
@@ -136,12 +123,10 @@ export class MeDelegationsController {
   async findOne(
     @CurrentUser() user: User,
     @Param('delegationId') delegationId: string,
-    @Query('valid') valid: DelegationValidity = DelegationValidity.ALL,
   ): Promise<DelegationDTO | null> {
     const delegation = await this.delegationsService.findById(
       user,
       delegationId,
-      valid,
     )
 
     if (!delegation) {

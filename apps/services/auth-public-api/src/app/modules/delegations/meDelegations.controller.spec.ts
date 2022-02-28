@@ -181,7 +181,6 @@ describe('MeDelegationsController', () => {
                 mockDelegations.validOutgoing.id,
                 mockDelegations.futureValidOutgoing.id,
                 mockDelegations.expiredOutgoing.id,
-                mockDelegations.notAllowedOutgoing.id,
                 mockDelegations.withOneNotAllowedOutgoing.id,
               ],
             },
@@ -212,7 +211,7 @@ describe('MeDelegationsController', () => {
 
         // Assert
         expect(res.status).toEqual(200)
-        expect(res.body).toHaveLength(5)
+        expect(res.body).toHaveLength(4)
         expectMatchingObject(res.body, expectedModels)
       })
 
@@ -272,7 +271,7 @@ describe('MeDelegationsController', () => {
         expect(res.body).toHaveLength(0)
       })
 
-      it('should return all valid delegations with direction=outgoing&valid=now', async () => {
+      it('should return all valid delegations with direction=outgoing&validity=now', async () => {
         // Arrange
         await delegationModel.bulkCreate(Object.values(mockDelegations), {
           include: [
@@ -310,7 +309,7 @@ describe('MeDelegationsController', () => {
 
         // Act
         const res = await server.get(
-          `${path}?direction=outgoing&valid=${DelegationValidity.NOW}`,
+          `${path}?direction=outgoing&validity=${DelegationValidity.NOW}`,
         )
 
         // Sort before asserting
@@ -323,7 +322,7 @@ describe('MeDelegationsController', () => {
         expectMatchingObject(res.body, expectedModels)
       })
 
-      it('should return all valid delegations with direction=outgoing&valid=includeFuture', async () => {
+      it('should return all valid delegations with direction=outgoing&validity=includeFuture', async () => {
         // Arrange
         await delegationModel.bulkCreate(Object.values(mockDelegations), {
           include: [
@@ -362,7 +361,7 @@ describe('MeDelegationsController', () => {
 
         // Act
         const res = await server.get(
-          `${path}?direction=outgoing&valid=${DelegationValidity.INCLUDE_FUTURE}`,
+          `${path}?direction=outgoing&validity=${DelegationValidity.INCLUDE_FUTURE}`,
         )
 
         // Sort delegation before asserting
@@ -375,7 +374,7 @@ describe('MeDelegationsController', () => {
         expectMatchingObject(res.body, expectedModels)
       })
 
-      it('should return all expired delegations with direction=outgoing&valid=past', async () => {
+      it('should return all expired delegations with direction=outgoing&validity=past', async () => {
         // Arrange
         await delegationModel.bulkCreate(Object.values(mockDelegations), {
           include: [
@@ -401,7 +400,7 @@ describe('MeDelegationsController', () => {
 
         // Act
         const res = await server.get(
-          `${path}?direction=outgoing&valid=${DelegationValidity.PAST}`,
+          `${path}?direction=outgoing&validity=${DelegationValidity.PAST}`,
         )
 
         // Assert
@@ -445,7 +444,7 @@ describe('MeDelegationsController', () => {
         expectMatchingObject(res.body, expectedModel)
       })
 
-      it('should return an array with single delegation and empty scopes for otherUser even though user has access to none of the scopes', async () => {
+      it('should return no delegation for otherUser when user has access to none of the scopes', async () => {
         // Arrange
         const expectedModel = await delegationModel.create(
           createDelegation({
@@ -472,8 +471,8 @@ describe('MeDelegationsController', () => {
 
         // Assert
         expect(res.status).toEqual(200)
-        expect(res.body).toHaveLength(1)
-        expectMatchingObject(res.body, [expectedModel.toDTO()])
+        expect(res.body).toHaveLength(0)
+        expectMatchingObject(res.body, [])
       })
 
       it('should return an empty array when filtered to specific otherUser and no delegation exists', async () => {
@@ -693,7 +692,7 @@ describe('MeDelegationsController', () => {
         expectMatchingObject(res.body, expectedModel.toDTO())
       })
 
-      it('can filter future scopes for delegation that exists for auth user', async () => {
+      it('should filter expired scopes for delegation that exists for auth user', async () => {
         // Arrange
         await delegationModel.bulkCreate(Object.values(mockDelegations), {
           include: [
@@ -787,33 +786,6 @@ describe('MeDelegationsController', () => {
         },
       )
 
-      it('should return 409 Conflict when existing delegation relationship exists', async () => {
-        // Arrange
-        const model = {
-          toNationalId: nationalRegistryUser.kennitala,
-          scopes: [
-            {
-              name: Scopes[0].name,
-              type: ScopeType.ApiScope,
-              validTo: addDays(today, 1),
-            },
-          ],
-        }
-        await server.post(path).send(model)
-
-        // Act
-        const res = await server.post(path).send(model)
-
-        // Assert
-        expect(res.status).toEqual(409)
-        expect(res.body).toMatchObject({
-          status: 409,
-          type: 'https://httpstatuses.com/409',
-          title: 'Conflict',
-          detail: 'Delegation exists. Please use PUT method to update.',
-        })
-      })
-
       it('should return 400 Bad Request when scope is not allowed for delegation', async () => {
         // Arrange
         const model = {
@@ -893,7 +865,7 @@ describe('MeDelegationsController', () => {
           type: 'https://httpstatuses.com/400',
           title: 'Bad Request',
           detail:
-            'If scope validTo property is provided it must be in the future',
+            'When scope validTo property is provided it must be in the future',
         })
       })
 

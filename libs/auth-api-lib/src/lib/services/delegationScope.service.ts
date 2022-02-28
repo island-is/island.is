@@ -29,6 +29,20 @@ export class DelegationScopeService {
     private identityResourceModel: typeof IdentityResource,
   ) {}
 
+  async createOrUpdate(
+    delegationId: string,
+    allowedScopes: string[],
+    scopes?: UpdateDelegationScopeDTO[],
+  ): Promise<DelegationScope[]> {
+    await this.delete(delegationId, allowedScopes)
+
+    if (scopes && scopes.length > 0) {
+      return this.createMany(delegationId, scopes)
+    }
+
+    return []
+  }
+
   async createMany(
     delegationId: string,
     scopes: UpdateDelegationScopeDTO[],

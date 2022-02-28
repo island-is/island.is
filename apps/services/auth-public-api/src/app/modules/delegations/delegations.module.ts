@@ -12,7 +12,14 @@ import {
   ApiScopeUserAccess,
   ApiScopeUserClaim,
   Client,
+  ClientAllowedCorsOrigin,
   ClientAllowedScope,
+  ClientClaim,
+  ClientGrantType,
+  ClientIdpRestrictions,
+  ClientPostLogoutRedirectUri,
+  ClientRedirectUri,
+  ClientSecret,
   Delegation,
   DELEGATIONS_AUTH_CONFIG,
   DelegationScope,
@@ -22,14 +29,15 @@ import {
   IdentityResource,
   IdentityResourceUserClaim,
   ResourcesService,
-  ClientAllowedCorsOrigin,
-  ClientPostLogoutRedirectUri,
-  ClientRedirectUri,
-  ClientIdpRestrictions,
-  ClientSecret,
-  ClientGrantType,
-  ClientClaim,
 } from '@island.is/auth-api-lib'
+import {
+  PersonalRepresentative,
+  PersonalRepresentativeRight,
+  PersonalRepresentativeRightType,
+  PersonalRepresentativeScopePermission,
+  PersonalRepresentativeService,
+  PersonalRepresentativeType,
+} from '@island.is/auth-api-lib/personal-representative'
 import { AuthConfig } from '@island.is/auth-nest-tools'
 import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 import { RskProcuringClientModule } from '@island.is/clients/rsk/procuring'
@@ -39,14 +47,6 @@ import { ProblemModule } from '@island.is/nest/problem'
 import { environment } from '../../../environments'
 import { ActorDelegationsController } from './actorDelegations.controller'
 import { MeDelegationsController } from './meDelegations.controller'
-import {
-  PersonalRepresentative,
-  PersonalRepresentativeRight,
-  PersonalRepresentativeRightType,
-  PersonalRepresentativeScopePermission,
-  PersonalRepresentativeService,
-  PersonalRepresentativeType,
-} from '@island.is/auth-api-lib/personal-representative'
 
 const delegationAuthConfig: AuthConfig = environment.auth
 
