@@ -33,11 +33,4 @@ describe('Pdf request', () => {
       )
     })
   })
-
-  describe('Valid input', () => {
-    test('Should return request', () => {
-      const value = pdfRequest('', '', '', '0000000000', 1999)
-      expect(typeof value).toBe('string')
-    })
-  })
 })
