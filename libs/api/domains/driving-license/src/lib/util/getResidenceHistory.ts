@@ -39,7 +39,7 @@ export const getResidenceHistory = (
             municipalityCode: residence.address.municipalityCode || undefined,
           },
           country: residence.country,
-          dateOfChange: residence.dateOfChange,
+          dateOfChange: new Date(residence.dateOfChange),
         }
     })
     const countryResidency = computeCountryResidence(res as Residence[])

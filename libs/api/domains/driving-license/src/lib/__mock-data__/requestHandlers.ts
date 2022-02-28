@@ -9,6 +9,7 @@ import CanApplyWithResultSuccess from './canApplyWithResultSuccess.json'
 import CanApplyWithResultFail from './canApplyWithResultFail.json'
 import Teachers from './teachers.json'
 import RecsidenceHistory from './residenceHistory.json'
+import type { User } from '@island.is/auth-nest-tools'
 
 export const MOCK_NATIONAL_ID = '0'
 export const MOCK_NATIONAL_ID_EXPIRED = '1'
@@ -19,16 +20,15 @@ export const MOCK_USER = {
   scope: ['test-scope-1'],
   client_id: 'test-client',
   actor: {
-    nationalId: '1234564321',
+    nationalId: '1',
     delegationType: 'Custom',
     scope: ['test-scope-2'],
   },
-  authorization: "",
-  client: "",
-  act: "undefined",
-  ip: "",
-  userAgent: "string"
-}
+  authorization: '',
+  client: '',
+  ip: '',
+  userAgent: 'string',
+} as User
 
 const url = (path: string) => {
   return new URL(path, 'http://localhost').toString()
@@ -159,12 +159,11 @@ export const requestHandlers = [
   }),
 
   rest.get(url('/api/v1/einstaklingar/:nationalId/buseta'), (req, res, ctx) => {
+    console.log('HELOO')
     const isExpired = req.params.nationalId === MOCK_NATIONAL_ID_EXPIRED
     return res(
       ctx.status(isExpired ? 400 : 200),
-      ctx.json(
-        isExpired ? undefined : RecsidenceHistory,
-      ),
+      ctx.json(isExpired ? undefined : RecsidenceHistory),
     )
   }),
 ]
