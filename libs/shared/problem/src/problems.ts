@@ -22,6 +22,16 @@ export interface ValidationFailedProblem extends BaseProblem {
   fields: ValidationFailedFields
 }
 
+export type ActorValidationFailedFields = {
+  delegatedUser: string
+  actor: string
+}
+
+export interface ActorValidationFailedProblem extends BaseProblem {
+  type: ProblemType.ACTOR_VALIDATION_FAILED
+  fields: ActorValidationFailedFields
+}
+
 // Should be avoided whenever possible in favour of typed problems.
 export interface UnknownProblem extends BaseProblem {
   [key: string]: unknown
