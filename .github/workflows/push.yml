@@ -271,7 +271,8 @@ jobs:
         name: Preparing BASE tags
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GIT_BINARY: /usr/bin/git
+          HTML_URL: ${{ github.event.pull_request.html_url }}
+          ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1

@@ -20,7 +20,8 @@ fi
 LAST_GOOD_BUILD_DOCKER_BRANCH_TAG=$(echo "${LAST_GOOD_BUILD_BRANCH}" | tr "/." "-" )
 export LAST_GOOD_BUILD_DOCKER_TAG=${LAST_GOOD_BUILD_RUN_NUMBER}_${LAST_GOOD_BUILD_DOCKER_BRANCH_TAG}_${LAST_GOOD_BUILD_SHA:0:7}
 if [[ "$BUILD_REF" == "null" || "$BUILD_REF" == "" ]]; then
-    BASE=$(git rev-list --max-parents=0 HEAD)
+    curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"Change detection failed for $HTML_URL\"}" "$ISSUE_REPORTING_SLACK_WEBHOOK_URL"
+    exit 1
 else
     BASE="$BUILD_REF"
 fi
