@@ -25,7 +25,6 @@ import { PaymentModule } from '../payment/payment.module'
 import { ApplicationLifeCycleService } from './lifecycle/application-lifecycle.service'
 import { LoggingModule } from '@island.is/logging'
 import { TemplateApiApplicationService } from './template-api.service'
-import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 
 let BullModule: DynamicModule
 
@@ -66,7 +65,6 @@ if (process.env.INIT_SCHEMA === 'true') {
     SigningModule.register(environment.signingOptions),
     CmsTranslationsModule,
     LoggingModule,
-    NationalRegistryXRoadModule,
   ],
   controllers: [ApplicationController],
   providers: [
