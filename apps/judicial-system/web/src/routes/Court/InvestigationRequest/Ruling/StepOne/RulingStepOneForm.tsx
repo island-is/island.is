@@ -19,7 +19,6 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -28,6 +27,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isRulingStepOneValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { icRulingStepOne as m } from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system/consts'
 
 interface Props {
   workingCase: Case
