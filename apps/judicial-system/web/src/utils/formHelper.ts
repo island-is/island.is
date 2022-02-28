@@ -1,6 +1,9 @@
-import type { Case, UpdateCase } from '@island.is/judicial-system/types'
 import formatISO from 'date-fns/formatISO'
-import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
+
+import { formatDate } from '@island.is/judicial-system/formatters'
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
+import type { Case, UpdateCase } from '@island.is/judicial-system/types'
+
 import {
   padTimeWithZero,
   parseArray,

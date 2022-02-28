@@ -111,7 +111,7 @@ export const UploadedFile = ({
   }
 
   const truncateInMiddle = (str: string) => {
-    if (str.length > 70) {
+    if (str.length > 40) {
       const nrOfCharacters = width / 25
       return `${str.slice(0, nrOfCharacters)}...${str.slice(-nrOfCharacters)}`
     } else {
@@ -200,7 +200,9 @@ export const UploadedFile = ({
           )}
         </Box>
       )}
-      {file.percent && <UploadingIndicator percent={file.percent} />}
+      {file.percent !== undefined && (
+        <UploadingIndicator percent={file.percent} />
+      )}
     </Box>
   )
 }

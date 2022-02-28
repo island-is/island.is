@@ -69,6 +69,10 @@ const devConfig = {
   },
   deepLinks: {
     completedCaseOverviewUrl: 'http://localhost:4200/krafa/yfirlit/',
+    prosecutorRestrictionCaseOverviewUrl:
+      'http://localhost:4200/krafa/stadfesta/',
+    prosecutorInvestigationCaseOverviewUrl:
+      'http://localhost:4200/krafa/rannsoknarheimild/stadfesta/',
   },
 }
 
@@ -236,6 +240,10 @@ const prodConfig = {
   },
   deepLinks: {
     completedCaseOverviewUrl: process.env.COMPLETED_CASE_OVERVIEW_URL,
+    prosecutorRestrictionCaseOverviewUrl:
+      process.env.PROSECUTOR_RESTRICTION_CASE_OVERVIEW_URL,
+    prosecutorInvestigationCaseOverviewUrl:
+      process.env.PROSECUTOR_INVESTIGATION_CASE_OVERVIEW_URL,
   },
 }
 
