@@ -12,7 +12,7 @@ export const Pending: FC<FieldBaseProps> = ({
 }) => {
   const { externalData } = application
   const applicationId = application.id
-  const [kMarked, setKMarked] = useState<boolean>(true)
+  const [kMarked, setKMarked] = useState<boolean>(false)
   const [certificate, setCertificate] = useState<boolean>(true)
   const [submitError, setSubmitError] = useState<boolean>(false)
 
