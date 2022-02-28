@@ -10,9 +10,6 @@ interface SearchItemProps extends ItemCmpProps {
 
 export const SearchItem: FC<SearchItemProps & { loading?: boolean }> = ({
   active,
-  selected,
-  colored,
-  white,
   nationalId,
   query,
   name,
@@ -28,8 +25,8 @@ export const SearchItem: FC<SearchItemProps & { loading?: boolean }> = ({
       role="button"
       background={active ? 'white' : 'blue100'}
       display="flex"
-      flexDirection={["column", "row"]}
-      justifyContent={["flexStart", "spaceBetween"]}
+      flexDirection={['column', 'row']}
+      justifyContent={['flexStart', 'spaceBetween']}
     >
       <Text
         variant="h4"
@@ -37,11 +34,12 @@ export const SearchItem: FC<SearchItemProps & { loading?: boolean }> = ({
         color={active ? 'blue400' : undefined}
       >
         {splitCompanyName.map((elem, index) => (
-          <span style={{ textTransform: 'capitalize' }} key={`name-${elem}-${index}`}>
+          <span
+            style={{ textTransform: 'capitalize' }}
+            key={`name-${elem}-${index}`}
+          >
             <strong>{elem}</strong>
-            {index + 1 < splitCompanyName.length ? (
-              <span>{query}</span>
-            ) : null}
+            {index + 1 < splitCompanyName.length ? <span>{query}</span> : null}
           </span>
         ))}
       </Text>
@@ -53,9 +51,7 @@ export const SearchItem: FC<SearchItemProps & { loading?: boolean }> = ({
         {splitNationalId.map((elem, index) => (
           <span key={`nationalId-${elem}-${index}`}>
             <strong>{elem}</strong>
-            {index + 1 < splitNationalId.length ? (
-              <span>{query}</span>
-            ) : null}
+            {index + 1 < splitNationalId.length ? <span>{query}</span> : null}
           </span>
         ))}
       </Text>

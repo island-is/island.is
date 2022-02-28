@@ -1,41 +1,49 @@
-import React, { FC, useState, useCallback, useEffect } from 'react'
+import React, { FC, useState, useCallback } from 'react'
 import { FieldBaseProps, getErrorViaPath } from '@island.is/application/core'
-import { AlertBanner, AlertMessage, AsyncSearch, AsyncSearchOption, Box, Text, } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  AsyncSearch,
+  AsyncSearchOption,
+  Box,
+} from '@island.is/island-ui/core'
 import { Controller, useFormContext } from 'react-hook-form'
 import { SearchItem } from './SearchItem'
-import { debounce } from 'lodash'
+import debounce from 'lodash/debounce'
 import { useLazyQuery } from '@apollo/client'
 import { COMPANY_REGISTRY_COMPANIES } from './searchQuery'
+import kennitala from 'kennitala'
+import { useLocale } from '@island.is/localization'
+import { employer, error } from '../../lib/messages'
 
-interface Props extends FieldBaseProps { }
-
-export const CompanySearch: FC<Props> = ({ field, errors = {}, application }) => {
+export const CompanySearch: FC<FieldBaseProps> = ({
+  field,
+  errors = {},
+  application,
+}) => {
+  const { formatMessage } = useLocale()
   const { clearErrors, setValue } = useFormContext()
   const defaultAnswer = { value: '', label: '' }
   const { id } = field
-  const error = getErrorViaPath(errors, id)
-  const initialValue = (application.answers[id] || { ...defaultAnswer }) as { value: string, label: string }
+  const initialValue = (application.answers[id] || { ...defaultAnswer }) as {
+    value: string
+    label: string
+  }
   const [searchQuery, setSearchQuery] = useState('')
-  const [search, { loading, data }] = useLazyQuery(COMPANY_REGISTRY_COMPANIES);
-  const debouncer = useCallback(debounce(search, 1), []);
+  const [search, { loading, data }] = useLazyQuery(COMPANY_REGISTRY_COMPANIES)
+  const debouncer = useCallback(debounce(search, 1), [searchQuery])
 
-  const errorMessage = errors ? getErrorViaPath(
-    errors,
-    'correctedEmployer.nationalId',
-  ) : null;
+  // Validations
+  const errorMessage = errors
+    ? getErrorViaPath(errors, 'correctedEmployer.nationalId')
+    : null
+  const noResultsFound =
+    data?.companyRegistryCompanies?.data?.length === 0 &&
+    !loading &&
+    searchQuery.trim().length > 0
+  const invalidNationalId =
+    !kennitala.isValid(searchQuery) && !loading && searchQuery.length === 10
 
-  const noResultsFound = data?.companyRegistryCompanies?.data?.length === 0 && !loading && searchQuery.trim().length > 0;
-
-  console.log('noResultsFound', noResultsFound)
-  console.log('answers', application.answers)
-  console.log('Error', errors)
-
-
-
-
-  const onSelect = (
-    selection: AsyncSearchOption | null,
-  ) => {
+  const onSelect = (selection: AsyncSearchOption | null) => {
     const { value, label } = selection || {}
     if (value && label) {
       setValue(id, { nationalId: value, label })
@@ -45,20 +53,22 @@ export const CompanySearch: FC<Props> = ({ field, errors = {}, application }) =>
   const onInputChange = (inputValue: string) => {
     setValue(id, { nationalId: '', label: '' })
     clearErrors(id)
-    const query = inputValue?.trim() || ""
+    const query = inputValue?.trim() || ''
     setSearchQuery(query)
     debouncer({
       variables: {
         input: {
           searchTerm: query,
-          first: 100
-        }
-      }
+          first: 100,
+        },
+      },
     })
   }
 
-
-  const getSearchOptions = (query: string, response: { data: { name: string, nationalId: string }[] } = { data: [] }) => {
+  const getSearchOptions = (
+    query: string,
+    response: { data: { name: string; nationalId: string }[] } = { data: [] },
+  ) => {
     const { data } = response
     const options = data?.map(({ name, nationalId }) => ({
       label: name,
@@ -71,42 +81,56 @@ export const CompanySearch: FC<Props> = ({ field, errors = {}, application }) =>
           nationalId={nationalId}
           query={query}
         />
-      )
+      ),
     }))
     return options || []
   }
 
   return (
-    <>
-      <Box marginTop={[2, 4]}>
-        <Controller
-          name={`${id}`}
-          defaultValue={initialValue}
-          render={({ onChange, value }) => {
-            return (
-              <>
-                <AsyncSearch
-                  loading={loading}
-                  options={getSearchOptions(searchQuery, data?.companyRegistryCompanies)}
-                  size="large"
-                  placeholder="Sláðu inn nafn eða kennitölu"
-                  colored
-                  inputValue={searchQuery}
-                  label="Leitaðu af fyrirtæki"
-                  onInputValueChange={(query) => onInputChange(query)}
-                  initialInputValue={initialValue.label}
-                  onChange={(selection) => onSelect(selection)}
-                />
-              </>
-            )
-          }}
-        />
-        {(errorMessage || noResultsFound) && (
-          <Box marginTop={[2, 2]}>
-            <AlertMessage type="error" title={'Bingo'} message="Vinsamlegast athugaðu hvort að það er rétt slegið inn." />
-          </Box>
-        )}
-      </Box >
-    </>
+    <Box marginTop={[2, 4]}>
+      <Controller
+        name={`${id}`}
+        defaultValue={initialValue}
+        render={() => {
+          return (
+            <AsyncSearch
+              loading={loading}
+              options={getSearchOptions(
+                searchQuery,
+                data?.companyRegistryCompanies,
+              )}
+              size="large"
+              placeholder={formatMessage(
+                employer.labels.searchCompanyPlaceholer,
+              )}
+              colored
+              inputValue={searchQuery}
+              label={formatMessage(employer.labels.searchCompany)}
+              onInputValueChange={(query) => onInputChange(query)}
+              initialInputValue={initialValue.label}
+              onChange={(selection) => onSelect(selection)}
+            />
+          )
+        }}
+      />
+      {invalidNationalId && (
+        <Box marginTop={[2, 2]}>
+          <AlertMessage
+            type="error"
+            title={formatMessage(error.invalidNationalIdTitle)}
+            message={formatMessage(error.invalidNationalIdMessage)}
+          />
+        </Box>
+      )}
+      {(errorMessage || noResultsFound) && !invalidNationalId && (
+        <Box marginTop={[2, 2]}>
+          <AlertMessage
+            type="error"
+            title={formatMessage(error.noCompanyResultsTitle)}
+            message={formatMessage(error.noCompanyResultsMessage)}
+          />
+        </Box>
+      )}
+    </Box>
   )
 }
