@@ -6,8 +6,8 @@ import {
   Employment,
   formatPhoneNumber,
   formatNationalId,
-  sanitizeNationalId,
   DirectTaxPayment,
+  sanitizeOnlyNumbers,
 } from '@island.is/financial-aid/shared/lib'
 import { calcAge } from './formHelper'
 
@@ -20,7 +20,7 @@ export const getApplicant = (application: Application) => {
     {
       title: 'Kennitala',
       content: formatNationalId(application.nationalId),
-      link: '/leit?search=' + sanitizeNationalId(application.nationalId),
+      link: '/leit?search=' + sanitizeOnlyNumbers(application.nationalId),
     },
     {
       title: 'Sími',
