@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { m } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { msg } from '../../../../../lib/messages'
@@ -20,7 +20,7 @@ import {
   useDeleteIslykillValue,
 } from '@island.is/service-portal/graphql'
 import { sharedMessages } from '@island.is/shared/translations'
-import { parseNumber, parseFullNumber } from '../../../../../utils/phoneHelper'
+import { parseFullNumber } from '../../../../../utils/phoneHelper'
 import * as styles from './Phone.css'
 
 interface Props {
@@ -52,11 +52,7 @@ export const InputPhone: FC<Props> = ({
     loading: deleteLoading,
   } = useDeleteIslykillValue()
   const { formatMessage } = useLocale()
-  const {
-    createSmsVerification,
-    createLoading,
-    confirmLoading,
-  } = useVerifySms()
+  const { createSmsVerification, createLoading } = useVerifySms()
   const [telInternal, setTelInternal] = useState(mobile)
   const [telToVerify, setTelToVerify] = useState(mobile)
 
@@ -64,13 +60,23 @@ export const InputPhone: FC<Props> = ({
 
   const [telVerifyCreated, setTelVerifyCreated] = useState(false)
   const [verificationValid, setVerificationValid] = useState(false)
-  const [verificationLoading, setVerificationLoading] = useState(false)
   const [deleteSuccess, setDeleteSuccess] = useState(false)
+
+  const [resendBlock, setResendBlock] = useState(false)
 
   const [formErrors, setErrors] = useState<FormErrors>({
     mobile: undefined,
     code: undefined,
   })
+
+  useEffect(() => {
+    if (resendBlock) {
+      const timer = setTimeout(() => {
+        setResendBlock(false)
+      }, 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [resendBlock])
 
   useEffect(() => {
     if (mobile && mobile.length > 0) {
@@ -93,6 +99,8 @@ export const InputPhone: FC<Props> = ({
     try {
       const telValue = data.tel ?? ''
 
+      setResendBlock(true)
+
       const response = await createSmsVerification({
         mobilePhoneNumber: telValue,
       })
@@ -107,6 +115,7 @@ export const InputPhone: FC<Props> = ({
       }
     } catch (err) {
       console.error(`createSmsVerification error: ${err}`)
+      setResendBlock(false)
       setErrors({ ...formErrors, mobile: formatMessage(m.somethingWrong) })
     }
   }
@@ -117,8 +126,6 @@ export const InputPhone: FC<Props> = ({
       defaultMessage: 'Villa í staðfestingu kóða. Vinsamlegast reynið aftur.',
     })
     try {
-      setVerificationLoading(true)
-
       const codeValue = data.code ?? ''
       const formValues = getValues()
       const telValue = formValues?.tel
@@ -128,14 +135,12 @@ export const InputPhone: FC<Props> = ({
           mobilePhoneNumber: `+354-${telToVerify}`,
           smsCode: codeValue,
         }).then(() => {
-          setVerificationLoading(false)
           setVerificationValid(true)
         })
       }
       setErrors({ ...formErrors, code: undefined })
     } catch (err) {
       console.error(`confirmSmsVerification error: ${err}`)
-      setVerificationLoading(false)
       setErrors({ ...formErrors, code: codeError })
     }
   }
@@ -156,7 +161,6 @@ export const InputPhone: FC<Props> = ({
       setDeleteSuccess(true)
       setErrors({ ...formErrors, code: undefined })
     } catch (err) {
-      setVerificationLoading(false)
       setErrors({ ...formErrors, code: emailError })
     }
   }
@@ -235,7 +239,7 @@ export const InputPhone: FC<Props> = ({
                   {telVerifyCreated ? (
                     <Button
                       variant="text"
-                      disabled={verificationValid || disabled}
+                      disabled={verificationValid || disabled || resendBlock}
                       size="small"
                       onClick={
                         telInternal
@@ -351,7 +355,7 @@ export const InputPhone: FC<Props> = ({
                   flexDirection="column"
                   paddingTop={2}
                 >
-                  {!verificationLoading &&
+                  {!saveLoading &&
                     (verificationValid ? (
                       <Icon
                         icon="checkmarkCircle"
@@ -372,7 +376,7 @@ export const InputPhone: FC<Props> = ({
                         </Button>
                       </button>
                     ))}
-                  {verificationLoading && <LoadingDots />}
+                  {saveLoading && <LoadingDots />}
                 </Box>
               </Column>
             </Columns>

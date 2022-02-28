@@ -48,11 +48,7 @@ export const InputEmail: FC<Props> = ({
     loading: deleteLoading,
   } = useDeleteIslykillValue()
   const { formatMessage } = useLocale()
-  const {
-    createEmailVerification,
-    loading: codeLoading,
-    createLoading,
-  } = useVerifyEmail()
+  const { createEmailVerification, createLoading } = useVerifyEmail()
   const [emailInternal, setEmailInternal] = useState(email)
   const [emailToVerify, setEmailToVerify] = useState(email)
 
@@ -60,13 +56,23 @@ export const InputEmail: FC<Props> = ({
 
   const [emailVerifyCreated, setEmailVerifyCreated] = useState(false)
   const [verificationValid, setVerificationValid] = useState(false)
-  const [verificationLoading, setVerificationLoading] = useState(false)
   const [deleteSuccess, setDeleteSuccess] = useState(false)
+
+  const [resendBlock, setResendBlock] = useState(false)
 
   const [formErrors, setErrors] = useState<FormErrors>({
     email: undefined,
     code: undefined,
   })
+
+  useEffect(() => {
+    if (resendBlock) {
+      const timer = setTimeout(() => {
+        setResendBlock(false)
+      }, 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [resendBlock])
 
   useEffect(() => {
     if (email && email.length > 0) {
@@ -95,6 +101,7 @@ export const InputEmail: FC<Props> = ({
     try {
       const emailValue = data.email ?? ''
 
+      setResendBlock(true)
       const response = await createEmailVerification({
         email: emailValue,
       })
@@ -109,6 +116,7 @@ export const InputEmail: FC<Props> = ({
       }
     } catch (err) {
       console.error(`createEmailVerification error: ${err}`)
+      setResendBlock(false)
       setErrors({ ...formErrors, email: emailError })
     }
   }
@@ -120,8 +128,6 @@ export const InputEmail: FC<Props> = ({
     })
 
     try {
-      setVerificationLoading(true)
-
       const codeValue = data.code ?? ''
       const formValues = getValues()
       const emailValue = formValues?.email
@@ -131,14 +137,12 @@ export const InputEmail: FC<Props> = ({
           email: emailToVerify,
           emailCode: codeValue,
         }).then(() => {
-          setVerificationLoading(false)
           setVerificationValid(true)
         })
       }
       setErrors({ ...formErrors, code: undefined })
     } catch (err) {
       console.error(`confirmEmailVerification error: ${err}`)
-      setVerificationLoading(false)
       setErrors({ ...formErrors, code: codeError })
     }
   }
@@ -159,7 +163,6 @@ export const InputEmail: FC<Props> = ({
       setDeleteSuccess(true)
       setErrors({ ...formErrors, code: undefined })
     } catch (err) {
-      setVerificationLoading(false)
       setErrors({ ...formErrors, code: emailError })
     }
   }
@@ -211,7 +214,7 @@ export const InputEmail: FC<Props> = ({
                     <Button
                       variant="text"
                       size="small"
-                      disabled={verificationValid || disabled}
+                      disabled={verificationValid || disabled || resendBlock}
                       onClick={
                         emailInternal
                           ? () =>
@@ -327,7 +330,7 @@ export const InputEmail: FC<Props> = ({
                   flexDirection="column"
                   paddingTop={2}
                 >
-                  {!verificationLoading &&
+                  {!saveLoading &&
                     (verificationValid ? (
                       <Icon
                         icon="checkmarkCircle"
@@ -348,7 +351,7 @@ export const InputEmail: FC<Props> = ({
                         </Button>
                       </button>
                     ))}
-                  {verificationLoading && <LoadingDots />}
+                  {saveLoading && <LoadingDots />}
                 </Box>
               </Column>
             </Columns>
