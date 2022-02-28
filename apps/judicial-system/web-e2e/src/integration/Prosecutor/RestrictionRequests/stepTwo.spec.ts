@@ -1,11 +1,16 @@
 import {
+  STEP_THREE_ROUTE,
+  STEP_TWO_ROUTE,
+} from '@island.is/judicial-system/consts'
+import {
   makeCustodyCase,
   makeCourt,
   makeProsecutor,
 } from '@island.is/judicial-system/formatters'
+
 import { intercept } from '../../../utils'
 
-describe('/krafa/fyrirtaka/:id', () => {
+describe(`${STEP_TWO_ROUTE}/:id`, () => {
   beforeEach(() => {
     const caseData = makeCustodyCase()
     const caseDataAddition = {
@@ -15,7 +20,7 @@ describe('/krafa/fyrirtaka/:id', () => {
     }
 
     cy.stubAPIResponses()
-    cy.visit('/krafa/fyrirtaka/test_id')
+    cy.visit(`${STEP_TWO_ROUTE}/test_id`)
 
     intercept(caseDataAddition)
   })
@@ -75,6 +80,6 @@ describe('/krafa/fyrirtaka/:id', () => {
     cy.getByTestid('reqCourtDate-time').clear().type('1333')
     cy.getByTestid('continueButton').click()
     cy.getByTestid('modalSecondaryButton').click()
-    cy.url().should('include', '/krafa/domkrofur-og-lagaakvaedi/test_id')
+    cy.url().should('include', STEP_THREE_ROUTE)
   })
 })

@@ -30,12 +30,11 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
-import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import { icRulingStepTwo as m } from '@island.is/judicial-system-web/messages'
 import { isRulingStepTwoValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import type { Case } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-
+import * as Constants from '@island.is/judicial-system/consts'
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
@@ -552,7 +551,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                     autoComplete="off"
                     defaultValue={formatDate(
                       workingCase.courtEndTime,
-                      TIME_FORMAT,
+                      Constants.TIME_FORMAT,
                     )}
                     errorMessage={courtDocumentEndEM}
                     hasError={courtDocumentEndEM !== ''}
