@@ -1,6 +1,7 @@
 import {
   Application,
   ApplicationEventType,
+  ApplicationState,
   getState,
 } from '@island.is/financial-aid/shared/lib'
 import { Box, Button, Text } from '@island.is/island-ui/core'
@@ -42,7 +43,7 @@ const ApplicationHeader = ({
 
     await changeApplicationState(
       application.id,
-      application.state,
+      ApplicationState.INPROGRESS,
       ApplicationEventType.ASSIGNCASE,
     )
       .then((updatedApplication) => {
@@ -119,7 +120,8 @@ const ApplicationHeader = ({
 
       <Box display="flex" marginBottom={8}>
         <Box display="flex" marginRight={1}>
-          {application.staff?.name && (
+          {application.staff?.name &&
+          application.state !== ApplicationState.NEW ? (
             <>
               <Box marginRight={1}>
                 <Text variant="small" fontWeight="semiBold" color="dark300">
@@ -130,10 +132,11 @@ const ApplicationHeader = ({
                 <Text variant="small">{application.staff.name}</Text>
               </Box>
             </>
+          ) : (
+            <button onClick={assignEmployee} className={styles.button}>
+              Sjá um
+            </button>
           )}
-          <button onClick={assignEmployee} className={styles.button}>
-            Sjá um
-          </button>
           <Text variant="small">·</Text>
         </Box>
 
