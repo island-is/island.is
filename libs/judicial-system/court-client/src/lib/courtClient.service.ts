@@ -10,7 +10,7 @@ import {
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { ConfigType } from '@island.is/nest/config'
+import type { ConfigType } from '@island.is/nest/config'
 import {
   createXRoadAPIPath,
   XRoadMemberClass,
