@@ -5,7 +5,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 ROOT="$DIR/../.."
 
 tempRepo=$(mktemp -d 2>/dev/null || mktemp -d -t 'mytmpdir')
-cp -r "$ROOT/.github/actions/dist-v2/." "$tempRepo"
+cp -r "$ROOT/.github/actions/dist/." "$tempRepo"
 
 LAST_GOOD_BUILD=$(DEBUG="*" REPO_ROOT="$ROOT" node $tempRepo/index.js)
 LAST_GOOD_BUILD_SHA=$(echo "$LAST_GOOD_BUILD" | jq -r '.sha')

@@ -7,8 +7,6 @@
   "license": "MIT",
   "scripts": {
     "build": "./node_modules/.bin/ncc build ./main.ts -o ./dist",
-    "build-v2": "./node_modules/.bin/ncc build ./v2/ci-runner.ts -o ./dist-v2",
-    "build-v3": "./node_modules/.bin/ncc build ./v2/local-runner.ts -o ./dist-v3",
     "test": "./node_modules/.bin/jest"
   },
   "dependencies": {
