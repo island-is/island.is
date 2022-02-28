@@ -3,12 +3,14 @@ import {
   SequelizeModuleOptions,
   SequelizeOptionsFactory,
 } from '@nestjs/sequelize'
-import { SequelizeOptions } from 'sequelize-typescript'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { getOptions } from '@island.is/nest/sequelize'
 
-import * as databaseConfig from '../../sequelize.config.js'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import * as dbConfig from '../../sequelize.config.js'
 
 @Injectable()
 export class SequelizeConfigService implements SequelizeOptionsFactory {
@@ -18,39 +20,11 @@ export class SequelizeConfigService implements SequelizeOptionsFactory {
   ) {}
 
   createSequelizeOptions(): SequelizeModuleOptions {
-    let config
-    switch (process.env.NODE_ENV) {
-      case 'test':
-        config = databaseConfig.test
-        break
-      case 'production':
-        config = databaseConfig.production
-        break
-      default:
-        config = databaseConfig.development
-    }
-
+    const env = process.env.NODE_ENV || 'development'
+    const config = (dbConfig as { [key: string]: object })[env]
     return {
       ...config,
-      dialect: config.dialect as SequelizeOptions['dialect'],
-      define: {
-        underscored: true,
-        timestamps: true,
-        createdAt: 'created',
-        updatedAt: 'modified',
-      },
-      dialectOptions: {
-        useUTC: true,
-      },
-      pool: {
-        max: 5,
-        min: 0,
-        acquire: 30000,
-        idle: 10000,
-      },
-      logging: false,
-      autoLoadModels: true,
-      synchronize: false,
+      ...getOptions({ logger: this.logger }),
     }
   }
 }

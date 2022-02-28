@@ -23,6 +23,8 @@ import {
   PdfRow,
   PoliceRequestAccordionItem,
   RulingAccordionItem,
+  CommentsAccordionItem,
+  CaseFilesAccordionItem,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealDecision,
@@ -47,7 +49,6 @@ import { UserContext } from '@island.is/judicial-system-web/src/components/UserP
 import { core } from '@island.is/judicial-system-web/messages'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import CaseFilesAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CaseFilesAccordionItem/CaseFilesAccordionItem'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
 import * as Constants from '@island.is/judicial-system/consts'
 import AppealSection from './Components/AppealSection/AppealSection'
@@ -346,12 +347,16 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                   user={user}
                 />
               )}
+              {(Boolean(workingCase.comments) ||
+                Boolean(workingCase.caseFilesComments)) && (
+                <CommentsAccordionItem workingCase={workingCase} />
+              )}
             </Accordion>
           </Box>
           <Box marginBottom={7}>
             <BlueBox>
               <Box marginBottom={2} textAlign="center">
-                <Text as="h2" variant="h3">
+                <Text as="h3" variant="h3">
                   {formatMessage(m.conclusionTitle)}
                 </Text>
               </Box>
@@ -370,7 +375,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         </>
       )}
       <Box marginBottom={10}>
-        <Text as="h2" variant="h3" marginBottom={5}>
+        <Text as="h3" variant="h3" marginBottom={5}>
           {formatMessage(m.caseDocuments)}
         </Text>
         <Box marginBottom={2}>
