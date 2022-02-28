@@ -6,6 +6,7 @@ import {
   Employment,
   formatPhoneNumber,
   formatNationalId,
+  DirectTaxPayment,
   sanitizeOnlyNumbers,
 } from '@island.is/financial-aid/shared/lib'
 import { calcAge } from './formHelper'
@@ -131,6 +132,41 @@ export const getApplicantSpouse = (application: Application) => {
     {
       title: 'Athugasemd',
       other: application.spouseFormComment,
+    },
+  ]
+}
+
+export const getDirectTaxPayments = (directTaxPayments: DirectTaxPayment[]) => {
+  const totalSalary = directTaxPayments.reduce(
+    (n, { totalSalary }) => n + totalSalary,
+    0,
+  )
+
+  return [
+    {
+      title: 'Samtals heildarlaun',
+      content: totalSalary.toLocaleString('de-DE'),
+    },
+    {
+      title: 'Meðaltal',
+      content: Math.floor(
+        totalSalary / directTaxPayments.length,
+      ).toLocaleString('de-DE'),
+    },
+    {
+      title: 'Persónuafsláttur meðaltal',
+      content: (
+        directTaxPayments.reduce(
+          (n, { personalAllowance }) => n + personalAllowance,
+          0,
+        ) / directTaxPayments.length
+      ).toLocaleString('de-DE'),
+    },
+    {
+      title: 'Samtals staðgreiðsla',
+      content: directTaxPayments
+        .reduce((n, { withheldAtSource }) => n + withheldAtSource, 0)
+        .toLocaleString('de-DE'),
     },
   ]
 }
