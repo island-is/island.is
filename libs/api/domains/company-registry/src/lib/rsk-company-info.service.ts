@@ -101,7 +101,6 @@ export class RskCompanyInfoService {
       fetchSize: limit,
       fetchOffset: +decodeBase64(offset) ?? 0,
     })
-
     if (
       !searchResults.items ||
       !searchResults?.count ||
