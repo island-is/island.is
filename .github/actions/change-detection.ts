@@ -11,6 +11,16 @@ export type Incremental = {
 }
 export type LastGoodBuild = Incremental | 'rebuild'
 
+/***
+ * Discovers the best(latest) successful branch workflow or base branch workflow that is related to the current commit
+ * @param commitScore - method to measure the weight of the difference from the current commit
+ * @param git - git interface
+ * @param githubApi - GitHub/DigitalIceland specific api
+ * @param headBranch - name of head branch of the PRs
+ * @param baseBranch - name of the base branch
+ * @param workflowId - workflow that is triggering the discovery process
+ *
+ */
 export async function findBestGoodRefBranch(
   commitScore: (services: string[]) => number,
   git: SimpleGit,
@@ -64,18 +74,27 @@ export async function findBestGoodRefBranch(
   return 'rebuild'
 }
 
+/***
+ * Gets the last N commits reachable by head or base branch
+ * @param git - git interface
+ * @param headBranch - reference to head branch
+ * @param baseBranch - reference to base branch
+ * @param head - reference to head commit
+ * @param maxCount - maximum commit count
+ */
 async function getCommits(
   git: SimpleGit,
   headBranch: string,
   baseBranch: string,
   head: string,
+  maxCount: number = 300,
 ): Promise<string[]> {
   const mergeBaseCommit = await git.raw('merge-base', headBranch, baseBranch)
   const commits = (
     await git.raw(
       'rev-list',
       '--date-order',
-      '--max-count=300',
+      `--max-count=${maxCount}`,
       head,
       `${mergeBaseCommit.trim()}`,
     )
@@ -93,8 +112,8 @@ async function getCommits(
  * @param githubApi - GitHub/DigitalIceland specific api
  * @param headBranch - name of head branch of the PRs
  * @param baseBranch - name of the base branch
- * @param prBranch
- * @param workflowId
+ * @param prBranch - branch/reference of the merge commit of the PR
+ * @param workflowId - workflow that is triggering the discovery process
  */
 export async function findBestGoodRefPR(
   diffWeight: (services: string[]) => number,

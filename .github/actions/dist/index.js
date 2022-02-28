@@ -91163,6 +91163,16 @@ class LocalRunner {
 
 
 const change_detection_app = src_default()('change-detection');
+/***
+ * Discovers the best(latest) successful branch workflow or base branch workflow that is related to the current commit
+ * @param commitScore - method to measure the weight of the difference from the current commit
+ * @param git - git interface
+ * @param githubApi - GitHub/DigitalIceland specific api
+ * @param headBranch - name of head branch of the PRs
+ * @param baseBranch - name of the base branch
+ * @param workflowId - workflow that is triggering the discovery process
+ *
+ */
 function findBestGoodRefBranch(commitScore, git, githubApi, headBranch, baseBranch, workflowId) {
     return __awaiter(this, void 0, void 0, function* () {
         const log = change_detection_app.extend('findBestGoodRefBranch');
@@ -91192,10 +91202,18 @@ function findBestGoodRefBranch(commitScore, git, githubApi, headBranch, baseBran
         return 'rebuild';
     });
 }
-function getCommits(git, headBranch, baseBranch, head) {
+/***
+ * Gets the last N commits reachable by head or base branch
+ * @param git - git interface
+ * @param headBranch - reference to head branch
+ * @param baseBranch - reference to base branch
+ * @param head - reference to head commit
+ * @param maxCount - maximum commit count
+ */
+function getCommits(git, headBranch, baseBranch, head, maxCount = 300) {
     return __awaiter(this, void 0, void 0, function* () {
         const mergeBaseCommit = yield git.raw('merge-base', headBranch, baseBranch);
-        const commits = (yield git.raw('rev-list', '--date-order', '--max-count=300', head, `${mergeBaseCommit.trim()}`))
+        const commits = (yield git.raw('rev-list', '--date-order', `--max-count=${maxCount}`, head, `${mergeBaseCommit.trim()}`))
             .split('\n')
             .filter((s) => s.length > 0)
             .map((c) => c.substr(0, 7));
@@ -91209,8 +91227,8 @@ function getCommits(git, headBranch, baseBranch, head) {
  * @param githubApi - GitHub/DigitalIceland specific api
  * @param headBranch - name of head branch of the PRs
  * @param baseBranch - name of the base branch
- * @param prBranch
- * @param workflowId
+ * @param prBranch - branch/reference of the merge commit of the PR
+ * @param workflowId - workflow that is triggering the discovery process
  */
 function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, prBranch, workflowId) {
     return __awaiter(this, void 0, void 0, function* () {
