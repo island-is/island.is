@@ -27,7 +27,7 @@ export const MOCK_USER = {
   authorization: '',
   client: '',
   ip: '',
-  userAgent: 'string',
+  userAgent: '',
 } as User
 
 const url = (path: string) => {
@@ -159,7 +159,6 @@ export const requestHandlers = [
   }),
 
   rest.get(url('/api/v1/einstaklingar/:nationalId/buseta'), (req, res, ctx) => {
-    console.log('HELOO')
     const isExpired = req.params.nationalId === MOCK_NATIONAL_ID_EXPIRED
     return res(
       ctx.status(isExpired ? 400 : 200),
