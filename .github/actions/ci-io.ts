@@ -13,7 +13,7 @@ import Debug from 'debug'
 import * as unzipper from 'unzipper'
 const app = Debug('change-detection:io')
 
-const repository = process.env.GITHUB_REPOSITORY || '/'
+const repository = process.env.GITHUB_REPOSITORY || 'island-is/island.is'
 const [owner, repo] = repository.split('/')
 export type ActionsListWorkflowRunsForRepoResponseData = Endpoints['GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs']['response']['data']
 export type ActionsListJobsForWorkflowRunResponseData = Endpoints['GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs']['response']['data']
