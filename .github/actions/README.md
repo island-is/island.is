@@ -65,4 +65,4 @@ from both the head and the base branch. PR builds specifically incorporate both 
 deployments that use parts from the `main` line as well as provide with more accurate presentation of feature status as
 it would be when merged to the base branch.
 
-This script takes care of this aggressively incremental change detection. More details about this coming soon. 
+This script takes care of this aggressively incremental change detection. More details about this coming soon.
