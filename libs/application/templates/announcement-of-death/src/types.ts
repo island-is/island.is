@@ -9,3 +9,9 @@ export interface ElectPersonType {
   electedPersonNationalId?: string
   lookupError?: boolean
 }
+
+export interface EstateMember {
+  name: string
+  nationalId: string
+  relation: string
+}

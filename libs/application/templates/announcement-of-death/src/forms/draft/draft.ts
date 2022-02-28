@@ -18,13 +18,15 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { subSectionDelegate } from './subSectionDelegate'
+import { subSectionInfo } from './subSectionInfo'
+import { subSectionInheritance } from './subSectionInheritance'
 import { format as formatNationalId } from 'kennitala'
-import { NationalRegistryUser, UserProfile } from '../types/schema'
-import { m } from '../lib/messages'
-import { RoleConfirmationEnum } from '../types'
-import CoatOfArms from '../assets/CoatOfArms'
+import { NationalRegistryUser, UserProfile } from '../../types/schema'
+import { m } from '../../lib/messages'
+import { RoleConfirmationEnum } from '../../types'
+import CoatOfArms from '../../assets/CoatOfArms'
 
-export const getApplication = (): Form => {
+export const draft = (): Form => {
   return buildForm({
     id: 'AnnouncementOfDeathApplicationDraftForm',
     title: '', // m.applicationTitle,
@@ -33,6 +35,11 @@ export const getApplication = (): Form => {
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
     children: [
+      buildSection({
+        id: 'info',
+        title: 'Upplýsingar',
+        children: [subSectionInheritance, subSectionInfo],
+      }),
       buildSection({
         id: 'externalData',
         title: m.dataCollectionTitle,
