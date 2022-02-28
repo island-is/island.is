@@ -52,10 +52,6 @@ const autoSchemaFile = environment.production
     CmsTranslationsModule,
     PoliceModule,
     ProblemModule.forRoot({ logAllErrors: true }),
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [courtClientModuleConfig],
-    }),
   ],
 })
 export class AppModule {}
