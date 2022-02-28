@@ -7,6 +7,8 @@ import {
   buildSubmitField,
   buildSubSection,
   buildSection,
+  buildDescriptionField,
+  buildMultiField,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
 
@@ -24,24 +26,45 @@ export const PendingRejectedTryAgain: Form = buildForm({
       id: 'pending',
       title: 'Eign',
       children: [
-        buildCustomField({
-          component: 'PendingRejectedTryAgain',
-          id: 'PendingRejectedTryAgain',
-          title: '',
-          description: '',
-        }),
-        buildSubmitField({
-          id: 'submit',
-          placement: 'footer',
-          title: m.continue,
-          refetchApplicationAfterSubmit: true,
-          actions: [
-            {
-              event: DefaultEvents.PAYMENT,
-              name: m.continue,
-              type: 'primary',
-            },
+        buildMultiField({
+          id: 'selectRealEstate.info',
+          title: m.selectRealEstateTitle,
+          space: 1,
+          children: [
+            buildDescriptionField({
+              id: 'PendingRejectedTryAgainDescription',
+              title: '',
+              description: m.pendingRejectedTryAgainDescription,
+            }),
+            buildCustomField({
+              component: 'PendingRejectedTryAgain',
+              id: 'PendingRejectedTryAgain',
+              title: '',
+              description: '',
+            }),
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: m.continue,
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: DefaultEvents.PAYMENT,
+                  name: m.continue,
+                  type: 'primary',
+                },
+              ],
+            }),
           ],
+        }),
+        buildDescriptionField({
+          id: 'final',
+          title: 'Takk',
+          description: () => {
+            return {
+              ...m.outroMessage,
+            }
+          },
         }),
       ],
     }),

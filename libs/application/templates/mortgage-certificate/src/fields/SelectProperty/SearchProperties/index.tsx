@@ -85,12 +85,11 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
             onChange={(e) => setSearchStr(e.target.value)}
           />
         </Box>
-        <Box>
+        <Box style={{ minWidth: 'fit-content' }}>
           <Button
             disabled={isLoading}
             onClick={() => handleClickSearch()}
             variant="ghost"
-            style={{ minWidth: 156, paddingLeft: 20, paddingRight: 20 }}
           >
             Leita að eign
           </Button>

@@ -13,7 +13,11 @@ import {
 import { generateSyslumennNotifyErrorEmail } from './emailGenerators/syslumennNotifyError'
 import { generateSyslumennSubmitRequestErrorEmail } from './emailGenerators/syslumennSubmitRequestError'
 import { Application } from '@island.is/application/core'
-import { NationalRegistry, UserProfile } from './types'
+import {
+  NationalRegistry,
+  UserProfile,
+  SubmitRequestToSyslumennResult,
+} from './types'
 import { ChargeItemCode } from '@island.is/shared/constants'
 
 @Injectable()
@@ -104,7 +108,9 @@ export class MortgageCertificateSubmissionService {
     return sealedDocument
   }
 
-  async submitRequestSyslumenn(application: Application) {
+  async submitRequestToSyslumenn({
+    application,
+  }: TemplateApiModuleActionProps): Promise<SubmitRequestToSyslumennResult> {
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistry
     const userProfileData = application.externalData.userProfile
@@ -134,6 +140,10 @@ export class MortgageCertificateSubmissionService {
         )
         return undefined
       })
+
+    return {
+      hasSentRequest: true,
+    }
   }
 
   private async notifySyslumenn(

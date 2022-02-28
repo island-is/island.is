@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react'
-import { FieldBaseProps } from '@island.is/application/core'
+import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import {
   Box,
   Text,
@@ -10,12 +10,9 @@ import {
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { MCEvents } from '../../lib/constants'
 import { useMutation } from '@apollo/client'
+import { PropertyDetail } from '../../types/schema'
 
-export const PendingRejected: FC<FieldBaseProps> = ({
-  application,
-  field,
-  refetch,
-}) => {
+export const PendingRejected: FC<FieldBaseProps> = ({ application, field }) => {
   const { externalData } = application
   const { answers } = application
 
@@ -23,8 +20,12 @@ export const PendingRejected: FC<FieldBaseProps> = ({
     onError: (e) => console.error(e.message),
   })
 
-  if (answers.firstTime > 0) {
-    return submitApplication({
+  if (
+    (externalData?.submitRequestToSyslumenn?.data as {
+      hasSentRequest: boolean
+    }).hasSentRequest
+  ) {
+    submitApplication({
       variables: {
         input: {
           id: application.id,
@@ -32,16 +33,13 @@ export const PendingRejected: FC<FieldBaseProps> = ({
           answers: application.answers,
         },
       },
-    }).then(({ data, errors } = {}) => {
-      if (data && !errors?.length) {
-        // Takes them to the next state (which loads the relevant form)
-
-        refetch?.()
-      } else {
-        return Promise.reject()
-      }
     })
   }
+
+  var selectedProperty = (getValueViaPath(
+    application.answers,
+    'selectProperty',
+  ) as { property: PropertyDetail; isFromSearch: boolean }).property
 
   return (
     <Box>
@@ -57,7 +55,10 @@ export const PendingRejected: FC<FieldBaseProps> = ({
         marginBottom={5}
       >
         <Text fontWeight="semiBold">Valin fasteign</Text>
-        <Text>F2025780 - Meistaravellir 31, 107 Reykjavík</Text>
+        <Text>
+          {selectedProperty.propertyNumber}{' '}
+          {selectedProperty.defaultAddress?.display}
+        </Text>
       </Box>
       <Box marginBottom={5}>
         <AlertMessage

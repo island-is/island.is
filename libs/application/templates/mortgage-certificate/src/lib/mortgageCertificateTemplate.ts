@@ -151,6 +151,9 @@ const template: ApplicationTemplate<
           },
           progress: 0.25,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: ApiActions.submitRequestToSyslumenn,
+          },
           roles: [
             {
               id: Roles.APPLICANT,

@@ -14,3 +14,7 @@ export interface UserProfile {
   email: string
   mobilePhoneNumber: string
 }
+
+export interface SubmitRequestToSyslumennResult {
+  hasSentRequest: boolean
+}

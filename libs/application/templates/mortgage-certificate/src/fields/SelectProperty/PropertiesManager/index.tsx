@@ -19,7 +19,7 @@ export const PropertiesManager: FC<FieldBaseProps> = ({
 }) => {
   const { externalData } = application
   const { id } = field
-  const { setValue } = useFormContext()
+  const { setValue, getValues } = useFormContext()
 
   const [errorMsg, setErrorMsg] = useState<string>('Villa hefur komið upp')
   const [submitApplication] = useMutation(SUBMIT_APPLICATION, {
@@ -51,13 +51,14 @@ export const PropertiesManager: FC<FieldBaseProps> = ({
     }
   }
 
-  const handleNext: any = (e) => {
+  const handleNext: any = () => {
     submitApplication({
       variables: {
         input: {
           id: application.id,
           event: MCEvents.PENDING,
-          answers: application.answers,
+          // save selected property in answers
+          answers: { ...application.answers, ...getValues() },
         },
       },
     }).then(({ data, errors } = {}) => {

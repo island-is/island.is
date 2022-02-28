@@ -12,90 +12,86 @@ export const Pending: FC<FieldBaseProps> = ({
 }) => {
   const { externalData } = application
   const applicationId = application.id
-  const [kMarked, setKMarked] = useState<boolean>(false)
-  const [certificate, setCertificate] = useState<boolean>(true)
-  const [submitError, setSubmitError] = useState<boolean>(false)
+
+  const validationData = externalData.validateMortgageCertificate.data as {
+    exists: boolean
+    hasKMarking: boolean
+  }
+  const certificateExists = validationData.exists
+  const hasKMarking = validationData.hasKMarking
 
   const [submitApplication] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => console.error(e.message),
   })
 
-  useEffect(() => {
-    // no k mark nor certificate we go to draft
-    if (!kMarked && !certificate) {
-      submitApplication({
-        variables: {
-          input: {
-            id: applicationId,
-            event: MCEvents.ERROR,
-            answers: application.answers,
-          },
+  // no certificate found, we go to draft
+  if (!certificateExists) {
+    submitApplication({
+      variables: {
+        input: {
+          id: applicationId,
+          event: MCEvents.ERROR,
+          answers: application.answers,
         },
+      },
+    })
+      .then(({ data, errors } = {}) => {
+        if (data && !errors?.length) {
+          // Takes them to the next state (which loads the relevant form)
+
+          refetch?.()
+        } else {
+          return Promise.reject()
+        }
       })
-        .then(({ data, errors } = {}) => {
-          if (data && !errors?.length) {
-            // Takes them to the next state (which loads the relevant form)
+      .catch(() => {})
+  }
 
-            refetch?.()
-          } else {
-            return Promise.reject()
-          }
-        })
-        .catch(() => {
-          setSubmitError(true)
-        })
-    }
-
-    // no certificate found we send to error state
-    if (!kMarked && certificate) {
-      submitApplication({
-        variables: {
-          input: {
-            id: applicationId,
-            event: MCEvents.PENDING_REJECTED,
-            answers: application.answers,
-          },
+  // certificate found, but no k marking found, we send to error state
+  if (certificateExists && !hasKMarking) {
+    submitApplication({
+      variables: {
+        input: {
+          id: applicationId,
+          event: MCEvents.PENDING_REJECTED,
+          answers: application.answers,
         },
+      },
+    })
+      .then(({ data, errors } = {}) => {
+        if (data && !errors?.length) {
+          // Takes them to the next state (which loads the relevant form)
+
+          refetch?.()
+        } else {
+          return Promise.reject()
+        }
       })
-        .then(({ data, errors } = {}) => {
-          if (data && !errors?.length) {
-            // Takes them to the next state (which loads the relevant form)
+      .catch(() => {})
+  }
 
-            refetch?.()
-          } else {
-            return Promise.reject()
-          }
-        })
-        .catch(() => {
-          setSubmitError(true)
-        })
-    }
-
-    if (kMarked && certificate) {
-      // otherwise if all is good we send him to payment state
-      submitApplication({
-        variables: {
-          input: {
-            id: applicationId,
-            event: DefaultEvents.PAYMENT,
-            answers: application.answers,
-          },
+  // otherwise if all is good, we send him to payment state
+  if (certificateExists && hasKMarking) {
+    submitApplication({
+      variables: {
+        input: {
+          id: applicationId,
+          event: DefaultEvents.PAYMENT,
+          answers: application.answers,
         },
-      })
-        .then(({ data, errors } = {}) => {
-          if (data && !errors?.length) {
-            // Takes them to the next state (which loads the relevant form)
+      },
+    })
+      .then(({ data, errors } = {}) => {
+        if (data && !errors?.length) {
+          // Takes them to the next state (which loads the relevant form)
 
-            refetch?.()
-          } else {
-            return Promise.reject()
-          }
-        })
-        .catch(() => {
-          setSubmitError(true)
-        })
-    }
-  }, [kMarked, certificate])
+          refetch?.()
+        } else {
+          return Promise.reject()
+        }
+      })
+      .catch(() => {})
+  }
 
   return (
     <Box
