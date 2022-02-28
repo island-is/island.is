@@ -573,7 +573,6 @@ export class DelegationsService {
 
     const allowedScopes = await this.getClientAllowedScopes(user)
 
-    //return this.transformAndFilter(results, user, DelegationDirection.INCOMING)
     return delegations
       .filter((d) =>
         d.delegationScopes?.some((s) =>
