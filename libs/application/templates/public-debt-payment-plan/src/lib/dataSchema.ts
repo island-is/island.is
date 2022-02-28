@@ -55,7 +55,6 @@ export const PublicDebtPaymentPlanSchema = z.object({
     isCorrectInfo: z.enum([YES, NO]),
   }),
   correctedEmployer: CorrectedEmployerSchema,
-
   paymentPlanContext: z.object({
     isFulfilled: z.boolean().refine((x) => x),
     activePayment: z.string().optional(),
