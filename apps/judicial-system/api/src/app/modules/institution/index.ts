@@ -1,1 +1,1 @@
-export { InstitutionModule } from './institution.module'
+export { Institution } from './institution.model'

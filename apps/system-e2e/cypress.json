@@ -13,5 +13,9 @@
   "chromeWebSecurity": false,
   "viewportWidth": 1024,
   "viewportHeight": 768,
-  "projectId": "xw5cuj"
+  "projectId": "xw5cuj",
+  "retries": {
+    "runMode": 2,
+    "openMode": 0
+  }
 }

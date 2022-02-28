@@ -20,10 +20,7 @@ import {
   CaseFileList,
   CaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  TIME_FORMAT,
-  formatRequestedCustodyRestrictions,
-} from '@island.is/judicial-system/formatters'
+import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system/formatters'
 import {
   ProsecutorSubsections,
   Sections,
@@ -38,8 +35,7 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import type { CaseLegalProvisions } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-
+import * as Constants from '@island.is/judicial-system/consts'
 import * as styles from './Overview.css'
 
 export const Overview: React.FC = () => {
@@ -63,37 +59,24 @@ export const Overview: React.FC = () => {
       return
     }
 
-    try {
-      const shouldSubmitCase = workingCase.state === CaseState.DRAFT
+    const shouldSubmitCase = workingCase.state === CaseState.DRAFT
 
-      const caseSubmitted = shouldSubmitCase
-        ? await transitionCase(
-            workingCase,
-            CaseTransition.SUBMIT,
-            setWorkingCase,
-          )
-        : workingCase.state !== CaseState.NEW
+    const caseSubmitted = shouldSubmitCase
+      ? await transitionCase(workingCase, CaseTransition.SUBMIT, setWorkingCase)
+      : workingCase.state !== CaseState.NEW
 
-      const notificationSent = caseSubmitted
-        ? await sendNotification(
-            workingCase.id,
-            NotificationType.READY_FOR_COURT,
-          )
-        : false
+    const notificationSent = caseSubmitted
+      ? await sendNotification(workingCase.id, NotificationType.READY_FOR_COURT)
+      : false
 
-      // An SMS should have been sent
-      if (notificationSent) {
-        setModalText(formatMessage(rcOverview.sections.modal.notificationSent))
-      } else {
-        setModalText(
-          formatMessage(rcOverview.sections.modal.notificationNotSent),
-        )
-      }
-
-      setModalVisible(true)
-    } catch (e) {
-      // TODO: Handle error
+    // An SMS should have been sent
+    if (notificationSent) {
+      setModalText(formatMessage(rcOverview.sections.modal.notificationSent))
+    } else {
+      setModalText(formatMessage(rcOverview.sections.modal.notificationNotSent))
     }
+
+    setModalVisible(true)
   }
 
   useEffect(() => {
@@ -170,7 +153,7 @@ export const Overview: React.FC = () => {
                     '',
                 )} eftir kl. ${formatDate(
                   workingCase.requestedCourtDate,
-                  TIME_FORMAT,
+                  Constants.TIME_FORMAT,
                 )}`,
               },
               ...(workingCase.registrar
@@ -202,12 +185,15 @@ export const Overview: React.FC = () => {
                       ) ?? '',
                     )} kl. ${formatDate(
                       workingCase.parentCase.validToDate,
-                      TIME_FORMAT,
+                      Constants.TIME_FORMAT,
                     )}`
                   : workingCase.arrestDate
                   ? `${capitalize(
                       formatDate(workingCase.arrestDate, 'PPPP', true) ?? '',
-                    )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`
+                    )} kl. ${formatDate(
+                      workingCase.arrestDate,
+                      Constants.TIME_FORMAT,
+                    )}`
                   : 'Var ekki skráður',
               },
               ...(workingCase.courtDate
@@ -216,7 +202,10 @@ export const Overview: React.FC = () => {
                       title: formatMessage(core.confirmedCourtDate),
                       value: `${capitalize(
                         formatDate(workingCase.courtDate, 'PPPP', true) ?? '',
-                      )} kl. ${formatDate(workingCase.courtDate, TIME_FORMAT)}`,
+                      )} kl. ${formatDate(
+                        workingCase.courtDate,
+                        Constants.TIME_FORMAT,
+                      )}`,
                     },
                   ]
                 : []),
