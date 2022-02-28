@@ -47,8 +47,6 @@ import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
 
 import * as styles from './OrganizationWrapper.css'
 
-import * as styles from './OrganizationWrapper.css'
-
 interface NavigationData {
   title: string
   activeItemTitle?: string

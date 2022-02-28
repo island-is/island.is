@@ -1,14 +1,11 @@
 {
   "extends": "../../../../tsconfig.base.json",
-<<<<<<< HEAD:libs/clients/rsk/procuring/tsconfig.json
-=======
   "compilerOptions": {
     "jsx": "react",
     "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true
   },
->>>>>>> d25de23201040e67dfb8941bdf53cae13b47466e:libs/application/templates/example-payment/tsconfig.json
   "files": [],
   "include": [],
   "references": [

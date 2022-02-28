@@ -88,7 +88,6 @@ export class UserService {
     } = await this.flightService.countThisYearsFlightLegsByNationalId(
       user.nationalId,
     )
-
     let meetsADSRequirements = false
 
     if (this.flightService.isADSPostalCode(user.postalcode)) {
@@ -132,48 +131,6 @@ export class UserService {
       used: used,
       total,
     }
-  }
-
-  private async individualMeetsADSRequirements(
-    user: NationalRegistryUser,
-    auth: AuthUser,
-  ): Promise<boolean> {
-    if (this.flightService.isADSPostalCode(user.postalcode)) {
-      return true
-    }
-
-    // Not valid if child is over 18 || We already checked user postal code so we avoid calling forsjaForeldri with same kennitala
-    if (
-      kennitala.info(user.nationalId).age >= 18 ||
-      user.nationalId === auth.nationalId
-    ) {
-      return false
-    }
-
-    // User(child) doesn't live in ADS-postalcodes but is under 18 years
-    const custodians = await this.personApiWithAuth(auth)
-      .einstaklingarGetForsjaForeldri(<EinstaklingarGetForsjaForeldriRequest>{
-        id: auth.nationalId,
-        barn: user.nationalId,
-      })
-      .catch(this.handle404)
-
-    if (custodians === undefined) {
-      return false
-    }
-
-    for (const custodian of custodians) {
-      const personCustodian = await this.nationalRegistryService.getUser(
-        custodian,
-      )
-      if (
-        personCustodian &&
-        this.flightService.isADSPostalCode(personCustodian.postalcode)
-      ) {
-        return true
-      }
-    }
-    return false
   }
 
   private async getUserByNationalId<T>(
