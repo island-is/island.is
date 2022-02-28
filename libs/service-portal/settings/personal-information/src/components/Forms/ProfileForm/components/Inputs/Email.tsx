@@ -206,23 +206,45 @@ export const InputEmail: FC<Props> = ({
               paddingTop={2}
             >
               {!createLoading && !deleteLoading && (
-                <Button
-                  variant="text"
-                  size="small"
-                  disabled={verificationValid || disabled}
-                  onClick={() =>
-                    handleSendEmailVerification({ email: getValues().email })
-                  }
-                >
-                  {emailInternal
-                    ? emailVerifyCreated
-                      ? formatMessage({
-                          id: 'sp.settings:resend',
-                          defaultMessage: 'Endursenda',
-                        })
-                      : buttonText
-                    : formatMessage(msg.saveEmptyChange)}
-                </Button>
+                <>
+                  {emailVerifyCreated ? (
+                    <Button
+                      variant="text"
+                      size="small"
+                      disabled={verificationValid || disabled}
+                      onClick={
+                        emailInternal
+                          ? () =>
+                              handleSendEmailVerification({
+                                email: getValues().email,
+                              })
+                          : () => saveEmptyChange()
+                      }
+                    >
+                      {emailInternal
+                        ? formatMessage({
+                            id: 'sp.settings:resend',
+                            defaultMessage: 'Endursenda',
+                          })
+                        : formatMessage(msg.saveEmptyChange)}
+                    </Button>
+                  ) : (
+                    <button
+                      type="submit"
+                      disabled={verificationValid || disabled}
+                    >
+                      <Button
+                        variant="text"
+                        size="small"
+                        disabled={verificationValid || disabled}
+                      >
+                        {emailInternal
+                          ? buttonText
+                          : formatMessage(msg.saveEmptyChange)}
+                      </Button>
+                    </button>
+                  )}
+                </>
               )}
               {(createLoading || deleteLoading) && <LoadingDots />}
             </Box>

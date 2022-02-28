@@ -231,17 +231,45 @@ export const InputPhone: FC<Props> = ({
               paddingTop={2}
             >
               {!createLoading && !deleteLoading && (
-                <button type="submit" disabled={verificationValid || disabled}>
-                  <Button
-                    variant="text"
-                    disabled={verificationValid || disabled}
-                    size="small"
-                  >
-                    {telInternal
-                      ? buttonText
-                      : formatMessage(msg.saveEmptyChange)}
-                  </Button>
-                </button>
+                <>
+                  {telVerifyCreated ? (
+                    <Button
+                      variant="text"
+                      disabled={verificationValid || disabled}
+                      size="small"
+                      onClick={
+                        telInternal
+                          ? () =>
+                              handleSendTelVerification({
+                                tel: getValues().tel,
+                              })
+                          : () => saveEmptyChange()
+                      }
+                    >
+                      {telInternal
+                        ? formatMessage({
+                            id: 'sp.settings:resend',
+                            defaultMessage: 'Endursenda',
+                          })
+                        : formatMessage(msg.saveEmptyChange)}
+                    </Button>
+                  ) : (
+                    <button
+                      type="submit"
+                      disabled={verificationValid || disabled}
+                    >
+                      <Button
+                        variant="text"
+                        size="small"
+                        disabled={verificationValid || disabled}
+                      >
+                        {telInternal
+                          ? buttonText
+                          : formatMessage(msg.saveEmptyChange)}
+                      </Button>
+                    </button>
+                  )}
+                </>
               )}
               {(createLoading || deleteLoading) && <LoadingDots />}
             </Box>
