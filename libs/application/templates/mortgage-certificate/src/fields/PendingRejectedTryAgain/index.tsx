@@ -39,6 +39,8 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
     })
   }
 
+  //TODOx þarf að validatate hvort notandi má halda áfram
+
   var selectedProperty = (getValueViaPath(
     application.answers,
     'selectProperty',
@@ -46,10 +48,6 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
 
   return (
     <Box>
-      <Text variant="h2" marginBottom={4}>
-        Upplýsingar um eign
-      </Text>
-
       <Box
         borderRadius="standard"
         background={'blue100'}

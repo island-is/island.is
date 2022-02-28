@@ -28,7 +28,7 @@ export const PendingRejectedTryAgain: Form = buildForm({
       children: [
         buildMultiField({
           id: 'selectRealEstate.info',
-          title: m.selectRealEstateTitle,
+          title: 'Upplýsingar um eign',
           space: 1,
           children: [
             buildDescriptionField({
