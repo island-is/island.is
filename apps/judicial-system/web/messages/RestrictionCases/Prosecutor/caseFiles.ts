@@ -81,13 +81,6 @@ export const rcCaseFiles = {
         description:
           'Notaður sem villuskilaboð í LÖKE gagnapakkanum á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
-      errorMessage: {
-        id:
-          'judicial.system.restriction_cases:case_files.police_case_files.error_message',
-        defaultMessage: 'Upp kom óvænt kerfisvilla',
-        description:
-          'Notaður sem villuskilaboð í LÖKE gagnapakkanum á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
-      },
       allFilesUploadedMessage: {
         id:
           'judicial.system.restriction_cases:case_files.police_case_files.all_files_uploaded',
