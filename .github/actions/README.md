@@ -56,21 +56,13 @@ those are executed.
 
 ## The challenge
 
-We would like to re-integrated on each
+In the context of monorepo, such as we are, re-building and re-integrating the code at every step fully is very
+expensive (and only getting more so over time) in all kinds of ways and is therefore impractical. We are employing a
+process where we re-integrate and re-build only the components that have changed from the last successful build.
 
-```mermaid
-graph BT
-    subgraph main
-    M1:::goodBuild -->|A| M2:::badBuild --> M3:::goodBuild
-    end
-    subgraph head
-    M2 --> F1 --> F2
-    end
-    subgraph PR
-    F2 --> PR1
-    M3 --> PR1:::merge
-    end
-    classDef goodBuild fill:green;
-    classDef badBuild fill:red;
-    classDef merge fill:orange;
-```
+This is extra tricky when we have a PR since it is being re-build on pushes on the head branch but integrates changes
+from both the head and the base branch. PR builds specifically incorporate both changes and that supports feature
+deployments that use parts from the `main` line as well as provide with more accurate presentation of feature status as
+it would be when merged to the base branch.
+
+This script takes care of this aggressively incremental change detection. More details about this coming soon. 
