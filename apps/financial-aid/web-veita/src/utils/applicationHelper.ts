@@ -4,10 +4,9 @@ import {
   HomeCircumstances,
   getEmploymentStatus,
   Employment,
-  insertAt,
   formatPhoneNumber,
   formatNationalId,
-  sanitizeNationalId,
+  sanitizeOnlyNumbers,
 } from '@island.is/financial-aid/shared/lib'
 import { calcAge } from './formHelper'
 
@@ -20,7 +19,7 @@ export const getApplicant = (application: Application) => {
     {
       title: 'Kennitala',
       content: formatNationalId(application.nationalId),
-      link: '/leit?search=' + sanitizeNationalId(application.nationalId),
+      link: '/leit?search=' + sanitizeOnlyNumbers(application.nationalId),
     },
     {
       title: 'Sími',
