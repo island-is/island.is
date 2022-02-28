@@ -149,7 +149,7 @@ export class CourtService {
     courtId: string,
     type: CaseType,
     policeCaseNumber: string,
-    isExtension?: boolean,
+    isExtension: boolean,
   ): Promise<string> {
     let subType = subTypes[type]
     if (Array.isArray(subType)) {

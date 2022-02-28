@@ -5,27 +5,9 @@ import each from 'jest-each'
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 import { CaseType } from '@island.is/judicial-system/types'
 
+import { randomBoolean, randomDate, randomEnum } from '../../../test'
 import { subTypes } from '../court.service'
 import { createTestingCourtModule } from './createTestingCourtModule'
-
-const randomDate = () => {
-  const earliest = new Date()
-  const latest = new Date(2999, 11, 31)
-  return new Date(
-    earliest.getTime() +
-      Math.random() * (latest.getTime() - earliest.getTime()),
-  )
-}
-
-function randomEnum<T>(anEnum: T): T[keyof T] {
-  const enumValues = (Object.keys(anEnum)
-    .map((n) => Number.parseInt(n))
-    .filter((n) => !Number.isNaN(n)) as unknown) as T[keyof T][]
-  const randomIndex = Math.floor(Math.random() * enumValues.length)
-  const randomEnumValue = enumValues[randomIndex]
-
-  return randomEnumValue
-}
 
 interface Then {
   result: string
@@ -36,7 +18,7 @@ type GivenWhenThen = (
   courtId: string,
   type: CaseType,
   policeCaseNumber: string,
-  isExtension?: boolean,
+  isExtension: boolean,
 ) => Promise<Then>
 
 describe('CourtService - Create court case', () => {
@@ -60,7 +42,7 @@ describe('CourtService - Create court case', () => {
       courtId: string,
       type: CaseType,
       policeCaseNumber: string,
-      isExtension?: boolean,
+      isExtension: boolean,
     ) => {
       const then = {} as Then
 
@@ -97,9 +79,10 @@ describe('CourtService - Create court case', () => {
   `.describe('court case created for $type', ({ type }) => {
     const courtId = uuid()
     const policeCaseNumber = uuid()
+    const isExtension = false
 
     beforeEach(async () => {
-      await givenWhenThen(courtId, type, policeCaseNumber)
+      await givenWhenThen(courtId, type, policeCaseNumber, isExtension)
     })
 
     it('should create a court case', () => {
@@ -121,9 +104,10 @@ describe('CourtService - Create court case', () => {
   `.describe('extendable court case created for $type', ({ type }) => {
     const courtId = uuid()
     const policeCaseNumber = uuid()
+    const isExtension = false
 
     beforeEach(async () => {
-      await givenWhenThen(courtId, type, policeCaseNumber)
+      await givenWhenThen(courtId, type, policeCaseNumber, isExtension)
     })
 
     it('should create a court case', () => {
@@ -145,9 +129,10 @@ describe('CourtService - Create court case', () => {
   `.describe('extended court case created for $type', ({ type }) => {
     const courtId = uuid()
     const policeCaseNumber = uuid()
+    const isExtension = true
 
     beforeEach(async () => {
-      await givenWhenThen(courtId, type, policeCaseNumber, true)
+      await givenWhenThen(courtId, type, policeCaseNumber, isExtension)
     })
 
     it('should create a court case', () => {
@@ -167,13 +152,14 @@ describe('CourtService - Create court case', () => {
     const type = randomEnum(CaseType)
     const policeCaseNumber = uuid()
     const courtCaseNumber = uuid()
+    const isExtension = randomBoolean()
     let then: Then
 
     beforeEach(async () => {
       const mockCreateCase = mockCourtClientService.createCase as jest.Mock
       mockCreateCase.mockResolvedValueOnce(courtCaseNumber)
 
-      then = await givenWhenThen(courtId, type, policeCaseNumber)
+      then = await givenWhenThen(courtId, type, policeCaseNumber, isExtension)
     })
 
     it('should return a court case number', () => {
@@ -185,13 +171,14 @@ describe('CourtService - Create court case', () => {
     const courtId = uuid()
     const type = randomEnum(CaseType)
     const policeCaseNumber = uuid()
+    const isExtension = randomBoolean()
     let then: Then
 
     beforeEach(async () => {
       const mockCreateCase = mockCourtClientService.createCase as jest.Mock
       mockCreateCase.mockRejectedValueOnce(new Error('Some error'))
 
-      then = await givenWhenThen(courtId, type, policeCaseNumber)
+      then = await givenWhenThen(courtId, type, policeCaseNumber, isExtension)
     })
 
     it('should throw Error', () => {
