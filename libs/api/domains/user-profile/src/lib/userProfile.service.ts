@@ -167,7 +167,14 @@ export class UserProfileService {
         throw new ForbiddenError('Updating value verification invalid')
       }
 
-      if (islyklarData.nationalId) {
+      if (islyklarData.noUserFound) {
+        await this.islyklarService
+          .createIslykillSettings(user.nationalId, {
+            email: emailVerified ? input.email : undefined,
+            mobile: mobileVerified ? input.mobilePhoneNumber : undefined,
+          })
+          .catch(handleError)
+      } else {
         await this.islyklarService
           .updateIslykillSettings(user.nationalId, {
             email: emailVerified ? input.email : islyklarData.email,
@@ -177,13 +184,6 @@ export class UserProfileService {
             bankInfo: islyklarData.bankInfo,
             canNudge: islyklarData.canNudge,
           }) // Current version does not return the updated user in the response.
-          .catch(handleError)
-      } else {
-        await this.islyklarService
-          .createIslykillSettings(user.nationalId, {
-            email: emailVerified ? input.email : undefined,
-            mobile: mobileVerified ? input.mobilePhoneNumber : undefined,
-          }) // Current version does not return the newly created user in the response.
           .catch(handleError)
       }
     } else {
@@ -243,7 +243,18 @@ export class UserProfileService {
         throw new ForbiddenError('Updating value verification invalid')
       }
 
-      if (islyklarData.nationalId) {
+      if (islyklarData.noUserFound) {
+        await this.islyklarService
+          .createIslykillSettings(user.nationalId, {
+            email:
+              input.email && emailVerified ? input.email : islyklarData.email,
+            mobile:
+              input.mobilePhoneNumber && mobileVerified
+                ? input.mobilePhoneNumber
+                : islyklarData.mobile,
+          })
+          .catch(handleError)
+      } else {
         await this.islyklarService
           .updateIslykillSettings(user.nationalId, {
             email:
@@ -254,18 +265,7 @@ export class UserProfileService {
                 : islyklarData.mobile,
             canNudge: input.canNudge ?? islyklarData.canNudge,
             bankInfo: input.bankInfo ?? islyklarData.bankInfo,
-          }) // Current version does not return the updated user in the response.
-          .catch(handleError)
-      } else {
-        await this.islyklarService
-          .createIslykillSettings(user.nationalId, {
-            email:
-              input.email && emailVerified ? input.email : islyklarData.email,
-            mobile:
-              input.mobilePhoneNumber && mobileVerified
-                ? input.mobilePhoneNumber
-                : islyklarData.mobile,
-          }) // Current version does not return the newly created user in the response.
+          })
           .catch(handleError)
       }
     } else {
@@ -290,7 +290,14 @@ export class UserProfileService {
     const islyklarData = await this.islyklarService.getIslykillSettings(
       user.nationalId,
     )
-    if (islyklarData.nationalId) {
+    if (islyklarData.noUserFound) {
+      await this.islyklarService
+        .createIslykillSettings(user.nationalId, {
+          email: undefined,
+          mobile: undefined,
+        })
+        .catch(handleError)
+    } else {
       await this.islyklarService
         .updateIslykillSettings(user.nationalId, {
           email: input.email ? undefined : islyklarData.email,
@@ -299,20 +306,18 @@ export class UserProfileService {
           bankInfo: islyklarData.bankInfo,
         })
         .catch(handleError)
-    } else {
-      await this.islyklarService
-        .createIslykillSettings(user.nationalId, {
-          email: undefined,
-          mobile: undefined,
-        })
-        .catch(handleError)
     }
 
-    const profile = await this.userProfileApiWithAuth(
-      user,
-    ).userProfileControllerFindOneByNationalId({
-      nationalId: user.nationalId,
-    })
+    const profile = await this.userProfileApiWithAuth(user)
+      .userProfileControllerFindOneByNationalId({
+        nationalId: user.nationalId,
+      })
+      .catch((e) => {
+        if (e.status === 404) {
+          return null
+        }
+        handleError(e)
+      })
 
     const profileUpdate = {
       emailStatus: input.email ? DataStatus.EMPTY : DataStatus.NOT_VERIFIED,
@@ -321,7 +326,7 @@ export class UserProfileService {
         : DataStatus.NOT_VERIFIED,
     }
 
-    if (profile.nationalId) {
+    if (profile) {
       await this.userProfileApiWithAuth(user)
         .userProfileControllerUpdate({
           nationalId: user.nationalId,

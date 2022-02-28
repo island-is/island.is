@@ -92,6 +92,10 @@ export class IslykillService {
       mobile,
     }
 
+    if (!email && !mobile) {
+      inputUserData.canNudge = false
+    }
+
     const errorMsg = 'Unable to create islykill settings for user'
     const apiData = await this.islyklarApi
       .islyklarPost({

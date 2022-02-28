@@ -207,6 +207,8 @@ export class UserProfileController {
           mobileStatus: DataStatus.VERIFIED,
           mobilePhoneNumberVerified: phoneVerified.confirmed,
         }
+      } else {
+        throw new ForbiddenException()
       }
     }
 
@@ -222,6 +224,8 @@ export class UserProfileController {
           emailStatus: DataStatus.VERIFIED,
           emailVerified: emailVerified.confirmed,
         }
+      } else {
+        throw new ForbiddenException()
       }
     }
 
