@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
+import differenceInMonths from 'date-fns/differenceInMonths'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { ApolloError, ForbiddenError } from 'apollo-server-express'
 import {
@@ -23,6 +24,8 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { IslykillService } from './islykill.service'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 import { DataStatus } from './types/dataStatus.enum'
+
+export const MAX_OUT_OF_DATE_MONTHS = 6
 
 // eslint-disable-next-line
 const handleError = (error: any) => {
@@ -74,6 +77,48 @@ export class UserProfileService {
     } catch (error) {
       logger.error(JSON.stringify(error))
       return null
+    }
+  }
+
+  async getUserProfileStatus(user: User) {
+    /**
+     * this.getUserProfile can be a bit slower with the addition of islyklar data call.
+     * getUserProfileStatus can be used for a check if the userprofile exists, or if the userdata is old
+     * Old userdata can mean a user will be prompted to verify their info in the UI.
+     */
+    try {
+      const profile = await this.userProfileApiWithAuth(
+        user,
+      ).userProfileControllerFindOneByNationalId({
+        nationalId: user.nationalId,
+      })
+
+      /**
+       * If user has empty email or tel data
+       * Then the user will be prompted every 6 months (MAX_OUT_OF_DATE_MONTHS)
+       * to verify if they want to keep their info empty
+       */
+      const emptyMail = profile?.emailStatus === 'EMPTY'
+      const emptyMobile = profile?.mobileStatus === 'EMPTY'
+      const modifiedProfileDate = profile?.modified
+      const dateNow = new Date()
+      const dateModified = new Date(modifiedProfileDate)
+      const diffInMonths = differenceInMonths(dateNow, dateModified)
+      const diffOutOfDate = diffInMonths >= MAX_OUT_OF_DATE_MONTHS
+      const outOfDateEmailMobile = (emptyMail || emptyMobile) && diffOutOfDate
+
+      return {
+        hasData: !!modifiedProfileDate,
+        hasModifiedDateLate: outOfDateEmailMobile,
+      }
+    } catch (error) {
+      if (error.status === 404) {
+        return {
+          hasData: false,
+          hasModifiedDateLate: true,
+        }
+      }
+      handleError(error)
     }
   }
 
