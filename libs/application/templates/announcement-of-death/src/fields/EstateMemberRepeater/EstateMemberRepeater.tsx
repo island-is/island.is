@@ -44,7 +44,7 @@ export const EstateMemberRepeater: FC<FieldBaseProps> = ({
   const relationOptions = getRelationOptions()
 
   return (
-    <Box marginTop={3}>
+    <Box marginTop={2}>
       <GridRow>
         <GridColumn span={['12/12', '12/12', '6/12']} paddingBottom={3}>
           <ProfileCard
@@ -62,7 +62,7 @@ export const EstateMemberRepeater: FC<FieldBaseProps> = ({
         const foreignCitizenshipField = `${fieldIndex}.foreignCitizenship`
 
         return (
-          <Box position="relative" key={field.id} marginTop={3}>
+          <Box position="relative" key={field.id} marginTop={2}>
             <Box position="absolute" className={styles.removeFieldButton}>
               <Button
                 variant="ghost"
@@ -146,7 +146,7 @@ export const EstateMemberRepeater: FC<FieldBaseProps> = ({
           </Box>
         )
       })}
-      <Box marginTop={3}>
+      <Box marginTop={1}>
         <Button
           variant="text"
           icon="add"

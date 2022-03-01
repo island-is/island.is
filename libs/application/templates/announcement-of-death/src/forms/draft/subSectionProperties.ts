@@ -10,24 +10,22 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 
-export const subSectionInheritance = buildSubSection({
-  id: 'inheritanceStep',
-  title: 'Erfðir',
+export const subSectionProperties = buildSubSection({
+  id: 'propertiesStep',
+  title: 'Eignir',
   children: [
     buildMultiField({
-      id: 'inheritanceTitle',
-      title: 'Erfðir',
+      id: 'propertiesTitle',
+      title: 'Eignir',
       description:
-        'Erfðaréttur byggist á frændsemi, ættleiðingu, hjúskap og erfðaskrá hins látna. Eignir hins látna renna til ríkissjóðs ef engir erfingjar eru til staðar.',
+        'Hér skaltu lista niður upplýsingar um helstu eignir í dánarbúi. Eignir ber að tilkynna til Sýslumanns innan 30 daga frá dánardegi.',
       space: 1,
       children: [
         buildDescriptionField({
-          id: 'knowledgeOfWillsTitle',
-          title: 'Vitneskja um erfðir',
+          id: 'realEstatesAndLandsTitle',
+          title: 'Fasteignir og lóðir',
           titleVariant: 'h3',
           description: '',
-          tooltip:
-            'Ef fleiri en ein erfðaskrá eru til staðar og allar teljast gildar samkvæmt lögum er það sú yngsta sem fara skal eftir, ef þær stangast á.',
         }),
         buildKeyValueField({
           label: 'Erfðaskrá í vörslu sýslumanns',
@@ -42,7 +40,7 @@ export const subSectionInheritance = buildSubSection({
         buildDescriptionField({
           id: 'knowledgeOfOtherWillsTitle',
           title: 'Vitneskja um aðra erfðaskrá',
-          space: 2,
+          space: 3,
           titleVariant: 'h4',
           description: '',
         }),

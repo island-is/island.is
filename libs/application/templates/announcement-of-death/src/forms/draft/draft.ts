@@ -25,6 +25,7 @@ import { NationalRegistryUser, UserProfile } from '../../types/schema'
 import { m } from '../../lib/messages'
 import { RoleConfirmationEnum } from '../../types'
 import CoatOfArms from '../../assets/CoatOfArms'
+import { subSectionProperties } from './subSectionProperties'
 
 export const draft = (): Form => {
   return buildForm({
@@ -38,7 +39,7 @@ export const draft = (): Form => {
       buildSection({
         id: 'info',
         title: 'Upplýsingar',
-        children: [subSectionInheritance, subSectionInfo],
+        children: [subSectionProperties, subSectionInheritance, subSectionInfo],
       }),
       buildSection({
         id: 'externalData',
