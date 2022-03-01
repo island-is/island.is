@@ -105,7 +105,7 @@ export const Application: Form = buildForm({
           title: m.incomeFilesForm.general.sectionTitle,
           children: [
             buildCustomField({
-              id: routes.INCOMEFILES,
+              id: Routes.INCOMEFILES,
               title: m.incomeFilesForm.general.pageTitle,
               component: 'IncomeFilesForm',
             }),
@@ -116,7 +116,7 @@ export const Application: Form = buildForm({
           title: m.taxReturnForm.general.sectionTitle,
           children: [
             buildCustomField({
-              id: routes.TAXRETURNFILES,
+              id: Routes.TAXRETURNFILES,
               title: m.taxReturnForm.general.pageTitle,
               component: 'TaxReturnFilesForm',
             }),
