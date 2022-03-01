@@ -129,8 +129,6 @@ export const RulingStepOne: React.FC = () => {
       if (theCase.legalArguments) {
         autofill('courtLegalArguments', theCase.legalArguments, theCase)
       }
-
-      setWorkingCase(theCase)
     }
 
     if (
@@ -232,6 +230,8 @@ export const RulingStepOne: React.FC = () => {
         theCase,
       )
     }
+
+    setWorkingCase(theCase)
   }, [
     autofill,
     autofillBoolean,
