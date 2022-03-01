@@ -22,3 +22,6 @@ export function hasSpouse(context: ApplicationContext) {
     answers.relationshipStatus.unregisteredCohabitation === ApproveOptions.Yes
   )
 }
+
+export const encodeFilenames = (filename: string) =>
+  encodeURI(filename.normalize().replace(/ +/g, '_'))

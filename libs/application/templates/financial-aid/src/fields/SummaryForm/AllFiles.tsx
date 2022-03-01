@@ -3,7 +3,9 @@ import { UploadFile, Box, Icon, Text } from '@island.is/island-ui/core'
 
 import { useMutation } from '@apollo/client'
 import { CreateSignedUrlMutation } from '../../lib/useFileUpload'
-import { encodeFilename } from '@island.is/financial-aid/shared/lib'
+import { encodeFilenames } from '../../lib/utils'
+
+import * as styles from '../Shared.css'
 
 interface Props {
   taxFiles?: UploadFile[]
@@ -26,7 +28,7 @@ const AllFiles = ({ taxFiles, incomeFiles, applicationId }: Props) => {
                 createSignedUrlMutation({
                   variables: {
                     input: {
-                      fileName: encodeFilename(file.name.normalize()),
+                      fileName: encodeFilenames(file.name),
                       folder: applicationId,
                     },
                   },
@@ -38,6 +40,7 @@ const AllFiles = ({ taxFiles, incomeFiles, applicationId }: Props) => {
               target="_blank"
               download
               rel="noreferrer noopener"
+              className={styles.filesButtons}
             >
               <Box
                 display="flex"

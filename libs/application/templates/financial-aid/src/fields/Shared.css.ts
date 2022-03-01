@@ -15,6 +15,14 @@ export const formAppear = style({
   maxHeight: '400px',
 })
 
+export const filesButtons = style({
+  selectors: {
+    '&:hover': {
+      cursor: 'pointer',
+    },
+  },
+})
+
 export const summaryBlockChild = style({
   minWidth: '50%',
   '@media': {

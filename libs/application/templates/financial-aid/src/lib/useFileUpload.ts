@@ -1,12 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { UploadFile } from '@island.is/island-ui/core'
-import {
-  encodeFilename,
-  FileType,
-  SignedUrl,
-} from '@island.is/financial-aid/shared/lib'
+import { FileType, SignedUrl } from '@island.is/financial-aid/shared/lib'
 import { gql } from '@apollo/client'
+import { encodeFilenames } from './utils'
 
 export const CreateSignedUrlMutation = gql`
   mutation getSignedUrl($input: GetSignedUrlInput!) {
@@ -70,7 +67,7 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
     }
 
     newUploadFiles.forEach(async (file) => {
-      const signedUrl = await createSignedUrl(file.name.normalize())
+      const signedUrl = await createSignedUrl(file.name)
 
       if (signedUrl) {
         file.key = signedUrl.key
@@ -95,7 +92,7 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
       const { data: presignedUrlData } = await createSignedUrlMutation({
         variables: {
           input: {
-            fileName: encodeFilename(filename),
+            fileName: encodeFilenames(filename),
             folder: folderId,
           },
         },
