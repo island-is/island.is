@@ -26,8 +26,7 @@ import { CaseData } from '@island.is/judicial-system-web/src/types'
 import { requests as m } from '@island.is/judicial-system-web/messages/Core/requests'
 import useSections from '@island.is/judicial-system-web/src/utils/hooks/useSections'
 import type { Case } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-
+import * as Constants from '@island.is/judicial-system/consts'
 import ActiveRequests from './ActiveRequests'
 import PastRequests from './PastRequests'
 import * as styles from './Requests.css'
@@ -68,7 +67,12 @@ export const Requests: React.FC = () => {
     },
   })
 
-  const { transitionCase, sendNotification } = useCase()
+  const {
+    transitionCase,
+    isTransitioningCase,
+    sendNotification,
+    isSendingNotification,
+  } = useCase()
   const { formatMessage } = useIntl()
 
   const resCases = data?.cases
@@ -242,6 +246,9 @@ export const Requests: React.FC = () => {
                     <ActiveRequests
                       cases={activeCases}
                       onRowClick={handleRowClick}
+                      isDeletingCase={
+                        isTransitioningCase || isSendingNotification
+                      }
                       onDeleteCase={deleteCase}
                     />
                   )

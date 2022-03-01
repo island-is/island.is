@@ -33,7 +33,7 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
   <Box paddingTop={paddingTop}>
     <GridContainer position="none">
       <Box
-        id={contentId || 'main-content'}
+        {...(contentId && { id: contentId })}
         display="flex"
         flexDirection="row"
         height="full"

@@ -20,82 +20,83 @@ export const icCourtRecord = {
           'Notaður sem sjálfgefinn texti í "Mættir eru" textaboxi á þingbókar skrefi í rannsóknarheimildum þegar það eru margir varnaraðilar',
       },
     }),
-    accusedBookings: defineMessages({
+    sessionBookings: defineMessages({
       title: {
         id:
-          'judicial.system.investigation_cases:court_record.accused_bookings.title',
-        defaultMessage: 'Bókanir um varnaraðila',
+          'judicial.system.investigation_cases:court_record.session_bookings.title',
+        defaultMessage: 'Bókanir fyrir úrskurð',
         description:
-          'Notaður sem titill fyrir "Bókarnir um varnaraðila" hlutann í rannsóknarheimildum.',
+          'Notaður sem titill fyrir "Bókarnir fyrir úrskurð" hlutann í rannsóknarheimildum.',
       },
       label: {
         id:
-          'judicial.system.investigation_cases:court_record.accused_bookings.label',
-        defaultMessage: 'Afstaða varnaraðila og aðrar bókanir',
+          'judicial.system.investigation_cases:court_record.session_bookings.label',
+        defaultMessage: 'Afstaða varnaraðila, málflutningur og aðrar bókanir',
         description:
-          'Notaður sem titill í "Afstaða varnaraðila og aðrar bókanir" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
+          'Notaður sem titill í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
       },
       placeholder: {
         id:
-          'judicial.system.investigation_cases:court_record.accused_bookings.placeholder',
-        defaultMessage: 'Nánari útlistun á afstöðu sakbornings',
+          'judicial.system.investigation_cases:court_record.session_bookings.placeholder',
+        defaultMessage:
+          'Nánari útlistun á afstöðu sakbornings, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér...',
         description:
-          'Notaður sem skýritexti í "Afstaða varnaraðila og aðrar bókanir" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
+          'Notaður sem skýritexti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
       },
       tooltip: {
         id:
-          'judicial.system.investigation_cases:court_record.accused_bookings.tooltip-2',
+          'judicial.system.investigation_cases:court_record.session_bookings.tooltip-2',
         defaultMessage:
-          'Hér er hægt að bóka í þingbók um réttindi og afstöðu varnaraðila, ásamt bókunum t.d. um verjanda og túlk. Hægt er að sleppa öllum bókunum hér, t.d. ef varnaraðili er ekki viðstaddur.',
+          'Hér er hægt að bóka í þingbók um réttindi og afstöðu varnaraðila, ásamt bókunum t.d. um verjanda og túlk. Auk þess er málflutningur bókaður hér',
         description:
-          'Notaður sem upplýsingatexti í upplýsingasvæði við "Afstaða varnaraðila og aðrar bókanir" svæðið í rannsóknarheimildum.',
+          'Notaður sem upplýsingatexti í upplýsingasvæði við "Afstaða varnaraðila, málflutningur og aðrar bókanir" svæðið í rannsóknarheimildum.',
       },
       autofillRightToRemainSilent: {
         id:
-          'judicial.system.investigation_cases:court_record.accused_bookings.autofill_right_to_remain_silent',
+          'judicial.system.investigation_cases:court_record.session_bookings.autofill_right_to_remain_silent',
         defaultMessage:
           'Varnaraðila er bent á að honum sé óskylt að svara spurningum er varða brot það sem honum er gefið að sök, sbr. 2. mgr. 113. gr. laga nr. 88/2008. Sakborningur er enn fremur áminntur um sannsögli kjósi hann að tjá sig um sakarefnið, sbr. 1. mgr. 114. gr. sömu laga.',
         description:
-          'Sjálfgefinn texti í "Afstaða kærða og aðrar bókanir" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
+          'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
       },
       autofillCourtDocumentOne: {
         id:
-          'judicial.system.investigation_cases:court_record.accused_bookings.autofill_court_document_one',
+          'judicial.system.investigation_cases:court_record.session_bookings.autofill_court_document_one',
         defaultMessage: 'Varnaraðila er kynnt krafa á dómskjali nr. 1.',
         description:
-          'Sjálfgefinn texti í "Afstaða kærða og aðrar bókanir" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
+          'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
       },
       autofillAccusedPlea: {
         id:
-          'judicial.system.investigation_cases:court_record.accused_bookings.autofill_accused_plea',
+          'judicial.system.investigation_cases:court_record.session_bookings.autofill_accused_plea',
         defaultMessage:
           'Varnaraðili mótmælir kröfunni / Varnaraðili samþykkir kröfuna',
         description:
-          'Sjálfgefinn texti í "Afstaða kærða og aðrar bókanir" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
+          'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
       },
       autofillDefender: {
         id:
-          'judicial.system.investigation_cases:court_record.accused_bookings.autofill_defender',
+          'judicial.system.investigation_cases:court_record.session_bookings.autofill_defender',
         defaultMessage:
           '{defender} lögmaður er skipaður verjandi varnaraðila að hans ósk.',
         description:
-          'Sjálfgefinn texti í "Afstaða kærða og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
+          'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
       autofillTranslator: {
         id:
-          'judicial.system.investigation_cases:court_record.accused_bookings.autofill_translator',
+          'judicial.system.investigation_cases:court_record.session_bookings.autofill_translator',
         defaultMessage:
           '{translator} túlkar fyrir varnaraðila það sem fram fer í þinghaldinu.',
         description:
-          'Sjálfgefinn texti í "Afstaða kærða og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
+          'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
       autofillSpokeperson: {
         id:
-          'judicial.system.investigation_cases:court_record.accused_bookings.autofill_spokeperson',
+          'judicial.system.investigation_cases:court_record.session_bookings.autofill_spokeperson',
         defaultMessage:
           'Í dóminn er mætt/ur {spokesperson} lögmaður sem dómari skipar nú til að gæta hagsmuna þess aðila sem krafan beinist að. Hann/hún hefur undirritað heit skv. 2. mgr. 84. gr. laga númer 88/2008 um meðferð sakamála.',
         description:
-          'Sjálfgefinn texti í "Afstaða kærða og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
+          'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
     }),
     courtLocation: defineMessages({

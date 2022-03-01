@@ -14,11 +14,13 @@ export const LatestNewsSlice: React.FC<SliceProps> = ({
 }) => {
   return (
     <Box
+      width="full"
+      overflow="hidden"
       component="section"
       background="purple100"
       paddingTop={[5, 5, 8]}
       paddingBottom={[2, 2, 5]}
-      aria-labelledby="categories-title"
+      aria-labelledby="news-items-title"
     >
       <GridContainer>
         <NewsItems

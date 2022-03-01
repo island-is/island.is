@@ -14,6 +14,9 @@ import {
   DataUploadResponse,
   Homestay,
   OperatingLicense,
+  PaginatedOperatingLicenses,
+  PaginationInfo,
+  SyslumennApiPaginationInfo,
   Person,
   Attachment,
   CertificateInfoResponse,
@@ -94,10 +97,12 @@ export const mapOperatingLicense = (
   street: operatingLicense.gata,
   postalCode: operatingLicense.postnumer,
   type: operatingLicense.tegund,
-  validUntil: operatingLicense.gildirTil
-    ? operatingLicense.gildirTil.toLocaleString()
-    : '',
+  type2: operatingLicense.tegund2,
+  restaurantType: operatingLicense.tegundVeitingastadar,
+  validFrom: operatingLicense.gildirFra,
+  validTo: operatingLicense.gildirTil,
   licenseHolder: operatingLicense.leyfishafi,
+  licenseResponsible: operatingLicense.abyrgdarmadur,
   category: operatingLicense.flokkur,
   outdoorLicense: operatingLicense.leyfiTilUtiveitinga,
   alcoholWeekdayLicense: operatingLicense.afgrAfgengisVirkirdagar,
@@ -106,6 +111,35 @@ export const mapOperatingLicense = (
     operatingLicense.afgrAfgengisVirkirdagarUtiveitingar,
   alcoholWeekendOutdoorLicense:
     operatingLicense.afgrAfgengisAdfaranottFridagaUtiveitingar,
+  maximumNumberOfGuests: operatingLicense.hamarksfjoldiGesta,
+  numberOfDiningGuests: operatingLicense.fjoldiGestaIVeitingum,
+})
+
+export const mapPaginationInfo = (
+  paginationInfoHeaderJSON: string,
+): PaginationInfo => {
+  const paginationInfoFromHeader: SyslumennApiPaginationInfo = JSON.parse(
+    paginationInfoHeaderJSON,
+  )
+  return {
+    pageSize: paginationInfoFromHeader.PageSize,
+    pageNumber: paginationInfoFromHeader.PageNumber,
+    totalCount: paginationInfoFromHeader.TotalCount,
+    totalPages: paginationInfoFromHeader.TotalPages,
+    currentPage: paginationInfoFromHeader.CurrentPage,
+    hasNext: paginationInfoFromHeader.HasNext,
+    hasPrevious: paginationInfoFromHeader.HasPrevious,
+  }
+}
+
+export const mapPaginatedOperatingLicenses = (
+  searchQuery: string,
+  paginationInfoHeaderJSON: string,
+  results: VirkLeyfi[],
+): PaginatedOperatingLicenses => ({
+  paginationInfo: mapPaginationInfo(paginationInfoHeaderJSON),
+  searchQuery: searchQuery,
+  results: (results ?? []).map(mapOperatingLicense),
 })
 
 export function constructUploadDataObject(

@@ -3,9 +3,9 @@ import {
   VHSUCCESS,
   VHFAIL,
   SYSLUMENN_AUCTION,
-  OPERATING_LICENSE,
   DATA_UPLOAD,
   OPERATING_LICENSE_SERVICE_RES,
+  OPERATING_LICENSE_PAGINATION_INFO_SERVICE_RES,
 } from './responses'
 
 const url = (path: string) => {
@@ -46,7 +46,14 @@ export const requestHandlers = [
   rest.get(url('/api/VirkLeyfi/:id'), (req, res, ctx) => {
     const success = req.params.id ? true : false
     if (success) {
-      return res(ctx.status(200), ctx.json(OPERATING_LICENSE_SERVICE_RES))
+      return res(
+        ctx.status(200),
+        ctx.json(OPERATING_LICENSE_SERVICE_RES),
+        ctx.set(
+          'x-pagination',
+          JSON.stringify(OPERATING_LICENSE_PAGINATION_INFO_SERVICE_RES),
+        ),
+      )
     } else {
       return res(ctx.status(401), ctx.json(VHFAIL))
     }
