@@ -24,4 +24,4 @@ export function hasSpouse(context: ApplicationContext) {
 }
 
 export const encodeFilenames = (filename: string) =>
-  encodeURI(filename.normalize().replace(/ +/g, '_'))
+  filename && encodeURI(filename.normalize().replace(/ +/g, '_'))
