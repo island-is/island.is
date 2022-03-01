@@ -24,9 +24,15 @@ registerEnumType(DelegationType, { name: 'AuthDelegationType' })
         return LegalGuardianDelegation
       case DelegationType.ProcurationHolder:
         return ProcuringHolderDelegation
+      case DelegationType.PersonalRepresentative:
+        return PersonalRepresentativeDelegation
       case DelegationType.Custom:
         return CustomDelegation
     }
+    const exhaustiveCheck = (param: never) => {
+      throw new Error(`Missing interfaceType ${param}`)
+    }
+    exhaustiveCheck(delegation.type)
   },
 })
 export abstract class Delegation {
@@ -55,6 +61,11 @@ export class LegalGuardianDelegation extends Delegation {}
   implements: Delegation,
 })
 export class ProcuringHolderDelegation extends Delegation {}
+
+@ObjectType('AuthPersonalRepresentativeDelegation', {
+  implements: Delegation,
+})
+export class PersonalRepresentativeDelegation extends Delegation {}
 
 @ObjectType('AuthCustomDelegation', {
   implements: Delegation,
