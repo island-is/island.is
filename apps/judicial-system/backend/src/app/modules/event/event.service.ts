@@ -87,7 +87,6 @@ export class EventService {
           blocks: [
             {
               type: 'section',
-              // color: '#2eb886',
               text: {
                 type: 'mrkdwn',
                 text: `*${caseEvent[event]}:*\n>${typeText}\n>${prosecutionText}\n>${courtText}${extraText}`,
@@ -102,6 +101,33 @@ export class EventService {
         `Failed to post event ${event} for case ${theCase.id}`,
         { error },
       )
+    }
+  }
+
+  postErrorEvent(message: string, reason: Error) {
+    try {
+      if (!environment.events.errorUrl) {
+        return
+      }
+
+      fetch(`${environment.events.errorUrl}`, {
+        method: 'POST',
+        headers: { 'Content-type': 'application/json' },
+        body: JSON.stringify({
+          blocks: [
+            {
+              type: 'section',
+              text: {
+                type: 'mrkdwn',
+                text: `*${message}:*\n>${JSON.stringify(reason)}`,
+              },
+            },
+          ],
+        }),
+      })
+    } catch (error) {
+      // Tolerate failure, but log error
+      this.logger.error(`Failed to post an error event`, { error })
     }
   }
 }
