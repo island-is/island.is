@@ -7,6 +7,8 @@ import {
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import { MortgageCertificateService } from '../mortgageCertificate.service'
+import { MortgageCertificateValidationModel } from './models'
+import { ValidateMortgageCertificateInput } from './dto/validateMortgageCertificate.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -15,13 +17,12 @@ export class MainResolver {
     private readonly mortgageCertificateService: MortgageCertificateService,
   ) {}
 
-  // @Query(() => Boolean)
-  // async mortgageCertificateValidation(
-  //   // @CurrentUser() user: User,
-  //   @Args('propertyNumber') propertyNumber: string,
-  // ) {
-  //   return await this.mortgageCertificateService.validateMortgageCertificate(
-  //     propertyNumber,
-  //   )
-  // }
+  @Query(() => MortgageCertificateValidationModel)
+  async validateMortgageCertificate(
+    @Args('input') input: ValidateMortgageCertificateInput,
+  ) {
+    return await this.mortgageCertificateService.validateMortgageCertificate(
+      input.propertyNumber,
+    )
+  }
 }

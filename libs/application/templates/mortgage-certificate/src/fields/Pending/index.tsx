@@ -26,86 +26,42 @@ export const Pending: FC<FieldBaseProps> = ({
     onError: (e) => console.error(e.message),
   })
 
+  const handleStateChangeAndRefetch = (newStateName: string) => {
+    if (stateName !== newStateName) {
+      setStateName(newStateName)
+
+      submitApplication({
+        variables: {
+          input: {
+            id: applicationId,
+            event: newStateName,
+            answers: application.answers,
+          },
+        },
+      })
+        .then(({ data, errors } = {}) => {
+          if (data && !errors?.length) {
+            // Takes them to the next state (which loads the relevant form)
+            refetch?.()
+          } else {
+            return Promise.reject()
+          }
+        })
+        .catch(() => {})
+    }
+  }
+
   // no certificate found, we go to draft
-  if (!certificateExists && stateName !== MCEvents.ERROR) {
-    // to make sure you only call submitApplication once
-    setStateName(MCEvents.ERROR)
-
-    submitApplication({
-      variables: {
-        input: {
-          id: applicationId,
-          event: MCEvents.ERROR,
-          answers: application.answers,
-        },
-      },
-    })
-      .then(({ data, errors } = {}) => {
-        if (data && !errors?.length) {
-          // Takes them to the next state (which loads the relevant form)
-
-          refetch?.()
-        } else {
-          return Promise.reject()
-        }
-      })
-      .catch(() => {})
+  if (!certificateExists) {
+    handleStateChangeAndRefetch(MCEvents.ERROR)
   }
-
   // certificate found, but no k marking found, we send to error state
-  if (
-    certificateExists &&
-    !hasKMarking &&
-    stateName !== MCEvents.PENDING_REJECTED
-  ) {
-    // to make sure you only call submitApplication once
-    setStateName(MCEvents.PENDING_REJECTED)
-
-    submitApplication({
-      variables: {
-        input: {
-          id: applicationId,
-          event: MCEvents.PENDING_REJECTED,
-          answers: application.answers,
-        },
-      },
-    })
-      .then(({ data, errors } = {}) => {
-        if (data && !errors?.length) {
-          // Takes them to the next state (which loads the relevant form)
-
-          refetch?.()
-        } else {
-          return Promise.reject()
-        }
-      })
-      .catch(() => {})
+  else if (certificateExists && !hasKMarking) {
+    handleStateChangeAndRefetch(MCEvents.PENDING_REJECTED)
   }
-
   // otherwise if all is good, we send him to payment state
-  if (certificateExists && hasKMarking && stateName !== DefaultEvents.PAYMENT) {
-    // to make sure you only call submitApplication once
-    setStateName(DefaultEvents.PAYMENT)
-
-    submitApplication({
-      variables: {
-        input: {
-          id: applicationId,
-          event: DefaultEvents.PAYMENT,
-          answers: application.answers,
-        },
-      },
-    })
-      .then(({ data, errors } = {}) => {
-        if (data && !errors?.length) {
-          // Takes them to the next state (which loads the relevant form)
-
-          refetch?.()
-        } else {
-          return Promise.reject()
-        }
-      })
-      .catch(() => {})
+  else if (certificateExists && hasKMarking) {
+    handleStateChangeAndRefetch(DefaultEvents.PAYMENT)
   }
 
   return (

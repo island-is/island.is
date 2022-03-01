@@ -10,7 +10,7 @@ import {
 import { PropertyTable } from '../PropertyTable'
 import { PropertyDetail } from '../../../types/schema'
 import { gql, useLazyQuery } from '@apollo/client'
-import { SEARCH_REAL_ESTATE_QUERY } from '../../../graphql/queries'
+import { SEARCH_PROPERTIES_QUERY } from '../../../graphql/queries'
 import { m } from '../../../lib/messages'
 import { useLocale } from '@island.is/localization'
 
@@ -31,8 +31,8 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
 }) => {
   const { formatMessage } = useLocale()
   const [hasInitialized, setHasInitialized] = useState<boolean>(false)
-  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [showSearchError, setShowSearchError] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [searchStr, setSearchStr] = useState('')
   const [foundProperty, setFoundProperty] = useState<
     PropertyDetail | undefined

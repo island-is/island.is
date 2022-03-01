@@ -57,15 +57,6 @@ export const PendingRejectedTryAgain: Form = buildForm({
             }),
           ],
         }),
-        buildDescriptionField({
-          id: 'final',
-          title: 'Takk',
-          description: () => {
-            return {
-              ...m.outroMessage,
-            }
-          },
-        }),
       ],
     }),
     buildSection({

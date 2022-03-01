@@ -214,7 +214,7 @@ export class SyslumennService {
 
       return {
         exists: certificate.contentBase64.length !== 0,
-        hasKMarking: false, //TODOx vantar info frá syslumenn
+        hasKMarking: true, //TODOx vantar info frá syslumenn
         property: property,
       }
     } catch (exception) {

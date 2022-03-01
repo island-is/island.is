@@ -361,7 +361,7 @@ export const m = defineMessages({
     description:
       'You will be notified by email [email address] after the review and can then try again and complete your application.',
   },
-  minarSidur: {
+  mysites: {
     id: 'mc.mysites',
     defaultMessage: 'Mínar síður',
     description: 'My sites',

@@ -23,7 +23,7 @@ export const PropertiesManager: FC<FieldBaseProps> = ({
   const { id } = field
   const { setValue, getValues } = useFormContext()
   const { formatMessage } = useLocale()
-  const [errorMsg, setErrorMsg] = useState<string>('Villa hefur komið upp')
+  const [errorMsg, setErrorMsg] = useState<string>('') // TODOx ('Villa hefur komið upp')
   const [submitApplication] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => console.error(e.message),
   })
@@ -91,7 +91,6 @@ export const PropertiesManager: FC<FieldBaseProps> = ({
               }}
               selectedPropertyNumber={value}
             />
-            {/* TODOx bara birta villuskilaboð ef það var villa */}
             <Box paddingBottom={5}>
               {errorMsg.length > 0 && (
                 <AlertMessage

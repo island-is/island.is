@@ -17,7 +17,7 @@ import { m } from '../../lib/messages'
 export const PendingRejected: FC<FieldBaseProps> = ({ application, field }) => {
   const { externalData } = application
   const { answers } = application
-  const formatMessage = useLocale()
+  const { formatMessage } = useLocale()
 
   const [stateName, setStateName] = useState<string>(MCEvents.PENDING_REJECTED)
 
@@ -25,24 +25,28 @@ export const PendingRejected: FC<FieldBaseProps> = ({ application, field }) => {
     onError: (e) => console.error(e.message),
   })
 
-  if (
-    (externalData?.submitRequestToSyslumenn?.data as {
-      hasSentRequest: boolean
-    }).hasSentRequest &&
-    stateName !== MCEvents.PENDING_REJECTED_TRY_AGAIN
-  ) {
-    // to make sure you only call submitApplication once
-    setStateName(MCEvents.PENDING_REJECTED_TRY_AGAIN)
+  const handleStateChange = (newStateName: string) => {
+    if (stateName !== newStateName) {
+      setStateName(newStateName)
 
-    submitApplication({
-      variables: {
-        input: {
-          id: application.id,
-          event: MCEvents.PENDING_REJECTED_TRY_AGAIN,
-          answers: application.answers,
+      submitApplication({
+        variables: {
+          input: {
+            id: application.id,
+            event: newStateName,
+            answers: application.answers,
+          },
         },
-      },
-    })
+      })
+    }
+  }
+
+  const hasSentRequest = (externalData?.submitRequestToSyslumenn?.data as {
+    hasSentRequest: boolean
+  }).hasSentRequest
+
+  if (hasSentRequest) {
+    handleStateChange(MCEvents.PENDING_REJECTED_TRY_AGAIN)
   }
 
   const selectedProperty = (externalData.validateMortgageCertificate.data as {
