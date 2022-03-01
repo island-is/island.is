@@ -16,7 +16,7 @@ const IncomeFilesForm = ({ application }: FAFieldBaseProps) => {
       </Text>
       <Files
         fileKey="incomeFiles"
-        uploadFiles={answers?.incomeFiles}
+        uploadFiles={answers.incomeFiles}
         folderId={id}
       />
     </>

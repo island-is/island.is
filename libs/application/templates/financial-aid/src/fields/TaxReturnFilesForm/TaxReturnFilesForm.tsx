@@ -20,7 +20,7 @@ const TaxReturnFilesForm = ({ application }: FAFieldBaseProps) => {
 
       <Files
         fileKey="taxReturnFiles"
-        uploadFiles={answers?.taxReturnFiles}
+        uploadFiles={answers.taxReturnFiles}
         folderId={id}
       />
       <Text as="h2" variant="h3" marginBottom={2}>
