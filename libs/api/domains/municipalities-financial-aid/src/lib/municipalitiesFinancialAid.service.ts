@@ -74,9 +74,6 @@ export class MunicipalitiesFinancialAidService {
         return res
       })
       .catch((error) => {
-        if (error.status === 404) {
-          return null
-        }
         throw error
       })
   }
