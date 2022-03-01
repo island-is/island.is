@@ -76,7 +76,7 @@ export function DownloadDraftButton({ draftId }: Props) {
         toast.error(t(editorMsgs.signedDocumentDownloadFreshError))
       }
     }
-  }, [called, data, userInfo?.access_token, t])
+  }, [called, data, userInfo?.access_token])
 
   const onClick = async () => {
     downloadRegulation()

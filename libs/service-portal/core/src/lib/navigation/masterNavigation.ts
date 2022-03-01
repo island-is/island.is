@@ -180,11 +180,11 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           icon: 'settings',
         },
         children: [
-          {
-            name: m.regulationAdminEdit,
-            path: ServicePortalPath.RegulationsAdminEdit,
-            navHide: true,
-          },
+          // {
+          //   name: m.regulationAdminEdit,
+          //   path: ServicePortalPath.RegulationsAdminEdit,
+          //   navHide: true,
+          // },
           // // Laterz...
           // {
           //   name: m.regulationAdminMinistries,
