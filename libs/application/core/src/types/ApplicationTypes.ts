@@ -18,6 +18,7 @@ export enum ApplicationTypes {
   P_SIGN = 'PSign',
   CRIMINAL_RECORD = 'CriminalRecord',
   EXAMPLE_PAYMENT = 'ExamplePayment',
+  DRIVING_SCHOOL_CONFIRMATION = 'DrivingSchoolConfirmation',
 }
 
 export const ApplicationConfigurations = {
@@ -96,5 +97,13 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.EXAMPLE_PAYMENT]: {
     slug: 'greida',
     translation: 'ep.application',
+  },
+  [ApplicationTypes.EXAMPLE_PAYMENT]: {
+    slug: 'greida',
+    translation: 'ep.application',
+  },
+  [ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION]: {
+    slug: 'okuskoli',
+    translation: 'dsc.application',
   },
 }
