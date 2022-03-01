@@ -32,7 +32,6 @@ type autofillProperties = Pick<
   | 'demands'
   | 'courtAttendees'
   | 'prosecutorDemands'
-  | 'litigationPresentations'
   | 'courtStartDate'
   | 'courtCaseFacts'
   | 'courtLegalArguments'
@@ -42,7 +41,7 @@ type autofillProperties = Pick<
   | 'conclusion'
   | 'courtDate'
   | 'courtLocation'
-  | 'accusedBookings'
+  | 'sessionBookings'
   | 'ruling'
   | 'endOfSessionBookings'
 >
@@ -164,15 +163,7 @@ const useCase = () => {
       try {
         if (isCreatingCourtCase === false) {
           const { data, errors } = await createCourtCaseMutation({
-            variables: {
-              input: {
-                caseId: workingCase.id,
-                courtId: workingCase.court?.id,
-                type: workingCase.type,
-                policeCaseNumber: workingCase.policeCaseNumber,
-                isExtension: Boolean(workingCase.parentCase?.id),
-              },
-            },
+            variables: { input: { caseId: workingCase.id } },
           })
 
           if (data?.createCourtCase?.courtCaseNumber && !errors) {
@@ -258,6 +249,7 @@ const useCase = () => {
     () => async (
       id: string,
       notificationType: NotificationType,
+      eventOnly?: boolean,
     ): Promise<boolean> => {
       try {
         const { data } = await sendNotificationMutation({
@@ -265,6 +257,7 @@ const useCase = () => {
             input: {
               caseId: id,
               type: notificationType,
+              eventOnly,
             },
           },
         })
