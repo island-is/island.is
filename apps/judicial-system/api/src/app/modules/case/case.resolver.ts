@@ -37,6 +37,7 @@ import { RequestSignatureInput } from './dto/requestSignature.input'
 import { SignatureConfirmationQueryInput } from './dto/signatureConfirmation.input'
 import { CaseQueryInput } from './dto/case.input'
 import { ExtendCaseInput } from './dto/extendCase.input'
+import { CreateCourtCaseInput } from './dto/createCourtCase.input'
 import { Case } from './models/case.model'
 import { Notification } from './models/notification.model'
 import { RequestSignatureResponse } from './models/requestSignature.response'
@@ -252,6 +253,23 @@ export class CaseResolver {
       AuditedAction.EXTEND_CASE,
       backendApi.extendCase(input.id),
       (theCase) => theCase.id,
+    )
+  }
+
+  @Mutation(() => Case, { nullable: true })
+  createCourtCase(
+    @Args('input', { type: () => CreateCourtCaseInput })
+    input: CreateCourtCaseInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+  ): Promise<Case> {
+    this.logger.debug(`Creating court case for case ${input.caseId}`)
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.CREATE_COURT_CASE,
+      backendApi.createCourtCase(input.caseId),
+      input.caseId,
     )
   }
 

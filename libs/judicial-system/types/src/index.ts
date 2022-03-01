@@ -61,7 +61,6 @@ export type {
   TransitionCase,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
-  CreateCourtCase,
 } from './lib/case'
 
 export type {

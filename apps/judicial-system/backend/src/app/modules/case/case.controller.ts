@@ -515,4 +515,20 @@ export class CaseController {
 
     return extendedCase
   }
+
+  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @RolesRules(judgeRule, registrarRule)
+  @Post('case/:caseId/court')
+  @ApiCreatedResponse({
+    type: Case,
+    description: 'Creates a court case associated with an existing case',
+  })
+  async createCourtCase(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+  ): Promise<Case> {
+    this.logger.debug(`Creating a court case for case ${caseId}`)
+
+    return this.caseService.createCourtCase(theCase)
+  }
 }

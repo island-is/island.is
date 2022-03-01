@@ -44,7 +44,7 @@ const FileList = ({ className, files }: Props) => {
   return (
     <Box className={cn({ [`${className}`]: true })} marginBottom={2}>
       <>
-        {files.map((item, index) => {
+        {files.map((item, index: number) => {
           return (
             <button
               className={cn({
