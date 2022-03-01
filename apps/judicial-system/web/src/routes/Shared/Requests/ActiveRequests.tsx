@@ -31,11 +31,12 @@ import * as styles from './Requests.css'
 interface Props {
   cases: Case[]
   onRowClick: (id: string) => void
+  isDeletingCase: boolean
   onDeleteCase?: (caseToDelete: Case) => Promise<void>
 }
 
 const ActiveRequests: React.FC<Props> = (props) => {
-  const { cases, onRowClick, onDeleteCase } = props
+  const { cases, onRowClick, isDeletingCase, onDeleteCase } = props
 
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
@@ -343,6 +344,7 @@ const ActiveRequests: React.FC<Props> = (props) => {
               <Button
                 colorScheme="destructive"
                 size="small"
+                loading={isDeletingCase}
                 onClick={(evt) => {
                   evt.stopPropagation()
                   setRequestToRemoveIndex(undefined)
