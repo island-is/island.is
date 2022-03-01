@@ -284,4 +284,96 @@ export const m = defineMessages({
     description:
       'Here is information from the Property Registry about your real estate, lands and plots that you are a registered owner of. Please check the property for which you are applying for a mortgage certificate.',
   },
+  errorSheriffApiTitle: {
+    id: 'mc.application.errorSherrifApi.title',
+    defaultMessage: 'Villa hefur komið upp á milli ísland.is og sýslumanna',
+    description:
+      "An error has occurred between ísland.is and the sheriff's office",
+  },
+  errorSheriffApiMessage: {
+    id: 'mc.application.errorSherrifApi.message',
+    defaultMessage: 'Vinsamlega reyndu aftur síðar',
+    description: 'Please try again later',
+  },
+  propertyNumber: {
+    id: 'property.number',
+    defaultMessage: 'Fasteignarnúmer',
+    description: 'Property number',
+  },
+  propertyMarking: {
+    id: 'property.marking',
+    defaultMessage: 'Merking',
+    description: 'Marking',
+  },
+  propertyDescription: {
+    id: 'property.description',
+    defaultMessage: 'Lýsing',
+    description: 'Description',
+  },
+  propertyConstructionYear: {
+    id: 'property.constructionYear',
+    defaultMessage: 'Byggingarár',
+    description: 'Construction year',
+  },
+  propertyShownSize: {
+    id: 'property.shownSize',
+    defaultMessage: 'Birt stærð',
+    description: 'Shown size',
+  },
+  propertySearch: {
+    id: 'property.search',
+    defaultMessage: 'Leita að eign',
+    description: 'Search properties',
+  },
+  propertyNotFoundTitle: {
+    id: 'property.notFoundTitle',
+    defaultMessage: 'Eign fannst ekki',
+    description: 'Property not found',
+  },
+  propertyNotFoundMessage: {
+    id: 'property.notFoundMessage',
+    defaultMessage: 'Ekki fannst nein eign með þessu fasteignanúmeri',
+    description: 'No property was found with this property number',
+  },
+  propertyErrorCertificateTitle: {
+    id: 'property.certificateErrorTitle',
+    defaultMessage: 'Ekki tókst að sækja veðbókavottorð fyrir þessa eign',
+    description: 'Failed to retrieve mortgage certificate for this property',
+  },
+  propertyErrorCertificateMessage: {
+    id: 'property.certificateErrorMessage',
+    defaultMessage:
+      'Því miður getum við ekki sótt rafrænt veðbókarvottorð fyrir valda eign þar skráning á viðkomandi eign þarnast uppfærslu. Sýslumanni í því umdæmi sem eignin er í verður send beiðni um lagfæringu, þú munt fá tilkynningu (á netfang) að yfirferð lokinni og getur þá reynt aftur.',
+    description:
+      'Sorry, we are unable to download an electronic mortgage certificate for the selected property as the listing of the property in question needs updating. The district commissioner of the property in which the property is located will be sent a request for repairs, you will be notified (by email) after the inspection and can then try again.',
+  },
+  propertyErrorCertificateSheriffTitle: {
+    id: 'property.certificateErrorMessage',
+    defaultMessage:
+      'Beiðni um lagfæringu á veðbókarvottorði hefur verið send sýslumanni',
+    description:
+      'A request for correction of the mortgage certificate has been sent to the district commissioner',
+  },
+  propertyErrorCertificateSheriffMessage: {
+    id: 'property.certificateErrorMessage',
+    defaultMessage:
+      'Þú munt fá tilkynningu á netfangið [netfang] að yfirferð lokinni og getur þá reynt aftur og klárað umsóknina þína.',
+    description:
+      'You will be notified by email [email address] after the review and can then try again and complete your application.',
+  },
+  minarSidur: {
+    id: 'mc.mysites',
+    defaultMessage: 'Mínar síður',
+    description: 'My sites',
+  },
+  property: {
+    id: 'mc.property',
+    defaultMessage: 'Eign',
+    description: 'Property',
+  },
+  requestForProcessing: {
+    id: 'mc.requestForProcessing',
+    defaultMessage: 'Beiðni um vinnslu',
+    description: 'Request for processing',
+  },
 })

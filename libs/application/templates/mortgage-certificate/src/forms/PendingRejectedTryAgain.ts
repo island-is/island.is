@@ -28,7 +28,7 @@ export const PendingRejectedTryAgain: Form = buildForm({
       children: [
         buildMultiField({
           id: 'selectRealEstate.info',
-          title: 'Upplýsingar um eign',
+          title: m.selectRealEstateTitle,
           space: 1,
           children: [
             buildDescriptionField({
@@ -70,12 +70,12 @@ export const PendingRejectedTryAgain: Form = buildForm({
     }),
     buildSection({
       id: 'payment',
-      title: 'Greiðsla',
+      title: m.payment,
       children: [],
     }),
     buildSection({
       id: 'payment',
-      title: 'Staðfesting',
+      title: m.confirmation,
       children: [],
     }),
   ],

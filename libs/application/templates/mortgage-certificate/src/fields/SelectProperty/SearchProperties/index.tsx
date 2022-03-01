@@ -11,6 +11,8 @@ import { PropertyTable } from '../PropertyTable'
 import { PropertyDetail } from '../../../types/schema'
 import { gql, useLazyQuery } from '@apollo/client'
 import { SEARCH_REAL_ESTATE_QUERY } from '../../../graphql/queries'
+import { m } from '../../../lib/messages'
+import { useLocale } from '@island.is/localization'
 
 interface SearchPropertiesProps {
   selectHandler: (property: PropertyDetail | undefined) => void
@@ -27,6 +29,7 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
   selectHandler,
   selectedPropertyNumber,
 }) => {
+  const { formatMessage } = useLocale()
   const [hasInitialized, setHasInitialized] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [showSearchError, setShowSearchError] = useState<boolean>(false)
@@ -91,7 +94,7 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
             onClick={() => handleClickSearch()}
             variant="ghost"
           >
-            Leita að eign
+            {formatMessage(m.propertySearch)}
           </Button>
         </Box>
       </Box>
@@ -109,8 +112,8 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
       <Box paddingTop={3} hidden={!showSearchError}>
         <AlertMessage
           type="error"
-          title="Eign fannst ekki"
-          message="Ekki fannst nein eign með þessu fasteignanúmeri"
+          title={formatMessage(m.propertyNotFoundTitle)}
+          message={formatMessage(m.propertyNotFoundMessage)}
         />
       </Box>
     </Box>

@@ -58,7 +58,7 @@ export const MortgageCertificateForm: Form = buildForm({
     }),
     buildSection({
       id: 'selectRealEstate',
-      title: 'Eign',
+      title: m.property,
       children: [
         buildMultiField({
           id: 'selectRealEstate.info',

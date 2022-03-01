@@ -6,11 +6,13 @@ import { RegisteredProperties } from '../RegisteredProperties'
 import { SearchProperties } from '../SearchProperties'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { MCEvents } from '../../../lib/constants'
+import { useLocale } from '@island.is/localization'
 import {
   PropertyOverviewWithDetail,
   PropertyDetail,
 } from '../../../types/schema'
 import { AlertMessage, Divider, Button, Box } from '@island.is/island-ui/core'
+import { m } from '../../../lib/messages'
 
 export const PropertiesManager: FC<FieldBaseProps> = ({
   application,
@@ -20,7 +22,7 @@ export const PropertiesManager: FC<FieldBaseProps> = ({
   const { externalData } = application
   const { id } = field
   const { setValue, getValues } = useFormContext()
-
+  const { formatMessage } = useLocale()
   const [errorMsg, setErrorMsg] = useState<string>('Villa hefur komið upp')
   const [submitApplication] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => console.error(e.message),
@@ -112,8 +114,8 @@ export const PropertiesManager: FC<FieldBaseProps> = ({
               {errorMsg.length > 0 && (
                 <AlertMessage
                   type="error"
-                  title="Villa hefur komið upp á milli ísland.is og sýslumanna"
-                  message="Vinsamlega reyndu aftur síðar."
+                  title={formatMessage(m.errorSheriffApiTitle)}
+                  message={formatMessage(m.errorSheriffApiMessage)}
                 />
               )}
             </Box>
@@ -125,7 +127,7 @@ export const PropertiesManager: FC<FieldBaseProps> = ({
               display="flex"
             >
               <Button onClick={(e: any) => handleNext(e)} icon="arrowForward">
-                Áfram
+                {formatMessage(m.continue)}
               </Button>
             </Box>
           </>

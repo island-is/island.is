@@ -2,6 +2,8 @@ import React, { FC } from 'react'
 import { Box, Text, Table as T, RadioButton } from '@island.is/island-ui/core'
 import { FieldBaseProps } from '@island.is/application/core'
 import { PropertyDetail } from '../../../types/schema'
+import { useLocale } from '@island.is/localization'
+import { m } from '../../../lib/messages'
 
 interface PropertyTableProps {
   selectHandler: (property: PropertyDetail | undefined) => void
@@ -23,6 +25,8 @@ export const PropertyTable: FC<
 
   const unitOfUse = (propertyInfo?.unitsOfUse?.unitsOfUse || [])[0]
 
+  const { formatMessage } = useLocale()
+
   return (
     <>
       <Box paddingY={2}>
@@ -34,19 +38,21 @@ export const PropertyTable: FC<
             <T.Row>
               <T.HeadData></T.HeadData>
               <T.HeadData>
-                <TableHeadText text="Fasteignarnúmer" />
+                <TableHeadText text={formatMessage(m.propertyNumber)} />
               </T.HeadData>
               <T.HeadData>
-                <TableHeadText text="Merking" />
+                <TableHeadText text={formatMessage(m.propertyMarking)} />
               </T.HeadData>
               <T.HeadData>
-                <TableHeadText text="Lýsing" />
+                <TableHeadText text={formatMessage(m.propertyDescription)} />
               </T.HeadData>
               <T.HeadData>
-                <TableHeadText text="Byggingarár" />
+                <TableHeadText
+                  text={formatMessage(m.propertyConstructionYear)}
+                />
               </T.HeadData>
               <T.HeadData>
-                <TableHeadText text="Birt stærð" />
+                <TableHeadText text={formatMessage(m.propertyShownSize)} />
               </T.HeadData>
             </T.Row>
           </T.Head>

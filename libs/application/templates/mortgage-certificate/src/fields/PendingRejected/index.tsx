@@ -11,11 +11,13 @@ import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { MCEvents } from '../../lib/constants'
 import { useMutation } from '@apollo/client'
 import { PropertyDetail } from '../../types/schema'
+import { useLocale } from '@island.is/localization'
+import { m } from '../../lib/messages'
 
 export const PendingRejected: FC<FieldBaseProps> = ({ application, field }) => {
   const { externalData } = application
   const { answers } = application
-
+  const formatMessage = useLocale()
   const [submitApplication] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => console.error(e.message),
   })
@@ -63,21 +65,21 @@ export const PendingRejected: FC<FieldBaseProps> = ({ application, field }) => {
       <Box marginBottom={5}>
         <AlertMessage
           type="warning"
-          title="Ekki tókst að sækja veðbókavottorð fyrir þessa eign"
-          message="Því miður getum við ekki sótt rafrænt veðbókarvottorð fyrir valda eign þar skráning á viðkomandi eign þarnast uppfærslu. Sýslumanni í því umdæmi sem eignin er í verður send beiðni um lagfæringu, þú munt fá tilkynningu (á netfang) að yfirferð lokinni og getur þá reynt aftur."
+          title={formatMessage(m.propertyErrorCertificateTitle)}
+          message={formatMessage(m.propertyErrorCertificateMessage)}
         />
       </Box>
       <Box marginBottom={5}>
         <AlertMessage
           type="success"
-          title="Beiðni um lagfæringu á veðbókarvottorði hefur verið send sýslumanni"
-          message="Þú munt fá tilkynningu á netfangið [netfang] að yfirferð lokinni og getur þá reynt aftur og klárað umsóknina þína."
+          title={formatMessage(m.propertyErrorCertificateSheriffTitle)}
+          message={formatMessage(m.propertyErrorCertificateSheriffMessage)}
         />
       </Box>
       <Box display="flex" justifyContent={'flexEnd'}>
         <Link href="https://minarsidur.island.is/">
           <Button variant="primary" icon="arrowForward">
-            Mínar síður
+            {formatMessage(m.mysites)}
           </Button>
         </Link>
       </Box>

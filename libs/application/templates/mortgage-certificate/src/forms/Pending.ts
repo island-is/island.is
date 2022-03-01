@@ -21,7 +21,7 @@ export const Pending: Form = buildForm({
     }),
     buildSection({
       id: 'pending',
-      title: 'Eign',
+      title: m.property,
       children: [
         buildCustomField({
           component: 'Pending',
@@ -33,12 +33,12 @@ export const Pending: Form = buildForm({
     }),
     buildSection({
       id: 'paymentInfo',
-      title: 'Greiðsla',
+      title: m.payment,
       children: [],
     }),
     buildSection({
       id: 'confirmation',
-      title: 'Staðfesting',
+      title: m.confirmation,
       children: [],
     }),
   ],

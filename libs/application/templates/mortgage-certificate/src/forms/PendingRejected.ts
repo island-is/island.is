@@ -22,11 +22,11 @@ export const PendingRejected: Form = buildForm({
     }),
     buildSection({
       id: 'pending',
-      title: 'Eign',
+      title: m.property,
       children: [
         buildSubSection({
           id: 'pending.ticket',
-          title: 'Beiðni um vinnslu',
+          title: m.requestForProcessing,
           children: [
             buildCustomField({
               component: 'PendingRejected',
@@ -40,12 +40,12 @@ export const PendingRejected: Form = buildForm({
     }),
     buildSection({
       id: 'payment',
-      title: 'Greiðsla',
+      title: m.payment,
       children: [],
     }),
     buildSection({
       id: 'payment',
-      title: 'Staðfesting',
+      title: m.confirmation,
       children: [],
     }),
   ],
