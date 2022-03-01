@@ -1,5 +1,3 @@
-import type { CourtClientServiceOptions } from '@island.is/judicial-system/court-client'
-
 const devConfig = {
   production: false,
   auth: {
@@ -52,13 +50,6 @@ const devConfig = {
     clientCert: process.env.XROAD_CLIENT_CERT ?? '',
     clientKey: process.env.XROAD_CLIENT_KEY ?? '',
     clientCa: process.env.XROAD_CLIENT_PEM ?? '',
-  },
-  courtClientOptions: {
-    apiPath: process.env.XROAD_COURT_API_PATH ?? '',
-    memberCode: process.env.XROAD_COURT_MEMBER_CODE ?? '',
-    serviceOptions: JSON.parse(
-      process.env.XROAD_COURTS_CREDENTIALS ?? '{}',
-    ) as CourtClientServiceOptions,
   },
   policeServiceOptions: {
     apiPath: process.env.XROAD_POLICE_API_PATH ?? '',
@@ -152,23 +143,24 @@ if (process.env.NODE_ENV === 'production') {
   if (!process.env.XROAD_CLIENT_PEM) {
     throw new Error('Missing XROAD_CLIENT_PEM environment.')
   }
-  if (!process.env.XROAD_COURT_API_PATH) {
-    throw new Error('Missing XROAD_COURT_API_PATH environment.')
-  }
-  if (!process.env.XROAD_COURT_MEMBER_CODE) {
-    throw new Error('Missing XROAD_COURT_MEMBER_CODE environment.')
-  }
   if (!process.env.XROAD_POLICE_API_PATH) {
     throw new Error('Missing XROAD_POLICE_API_PATH environment.')
   }
   if (!process.env.XROAD_POLICE_MEMBER_CODE) {
     throw new Error('Missing XROAD_POLICE_MEMBER_CODE environment.')
   }
-  if (!process.env.XROAD_COURTS_CREDENTIALS) {
-    throw new Error('Missing XROAD_COURTS_CREDENTIALS environment.')
-  }
   if (!process.env.COMPLETED_CASE_OVERVIEW_URL) {
     throw new Error('Missing COMPLETED_CASE_OVERVIEW_URL environment.')
+  }
+  if (!process.env.PROSECUTOR_RESTRICTION_CASE_OVERVIEW_URL) {
+    throw new Error(
+      'Missing PROSECUTOR_RESTRICTION_CASE_OVERVIEW_URL environment.',
+    )
+  }
+  if (!process.env.PROSECUTOR_INVESTIGATION_CASE_OVERVIEW_URL) {
+    throw new Error(
+      'Missing PROSECUTOR_INVESTIGATION_CASE_OVERVIEW_URL environment.',
+    )
   }
 }
 
@@ -223,13 +215,6 @@ const prodConfig = {
     clientCert: process.env.XROAD_CLIENT_CERT ?? '',
     clientKey: process.env.XROAD_CLIENT_KEY ?? '',
     clientCa: process.env.XROAD_CLIENT_PEM ?? '',
-  },
-  courtClientOptions: {
-    apiPath: process.env.XROAD_COURT_API_PATH ?? '',
-    memberCode: process.env.XROAD_COURT_MEMBER_CODE ?? '',
-    serviceOptions: JSON.parse(
-      process.env.XROAD_COURTS_CREDENTIALS ?? '{}',
-    ) as CourtClientServiceOptions,
   },
   policeServiceOptions: {
     apiPath: process.env.XROAD_POLICE_API_PATH ?? '',
