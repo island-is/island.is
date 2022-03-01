@@ -89,7 +89,7 @@ export const CompanySearch: FC<FieldBaseProps> = ({
   return (
     <Box marginTop={[2, 4]}>
       <Controller
-        name={`${id}`}
+        name={id}
         defaultValue={initialValue}
         render={() => {
           return (
