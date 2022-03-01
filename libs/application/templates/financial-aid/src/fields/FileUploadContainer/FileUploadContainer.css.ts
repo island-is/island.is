@@ -7,5 +7,5 @@ export const errorMessage = style({
   transition: 'max-height 250ms ease',
 })
 export const showErrorMessage = style({
-  maxHeight: theme.spacing[7],
+  maxHeight: theme.spacing[5],
 })
