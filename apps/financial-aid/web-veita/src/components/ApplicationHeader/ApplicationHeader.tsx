@@ -43,7 +43,9 @@ const ApplicationHeader = ({
 
     await changeApplicationState(
       application.id,
-      ApplicationState.INPROGRESS,
+      application.state === ApplicationState.NEW
+        ? ApplicationState.INPROGRESS
+        : application.state,
       ApplicationEventType.ASSIGNCASE,
     )
       .then((updatedApplication) => {
@@ -120,8 +122,7 @@ const ApplicationHeader = ({
 
       <Box display="flex" marginBottom={8}>
         <Box display="flex" marginRight={1}>
-          {application.staff?.name &&
-          application.state !== ApplicationState.NEW ? (
+          {application.staff?.name && (
             <>
               <Box marginRight={1}>
                 <Text variant="small" fontWeight="semiBold" color="dark300">
@@ -132,11 +133,10 @@ const ApplicationHeader = ({
                 <Text variant="small">{application.staff.name}</Text>
               </Box>
             </>
-          ) : (
-            <button onClick={assignEmployee} className={styles.button}>
-              Sjá um
-            </button>
           )}
+          <button onClick={assignEmployee} className={styles.button}>
+            Sjá um
+          </button>
           <Text variant="small">·</Text>
         </Box>
 
