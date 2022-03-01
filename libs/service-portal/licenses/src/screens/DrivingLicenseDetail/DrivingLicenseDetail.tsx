@@ -87,7 +87,7 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
                 {formatMessage({
                   id: 'sp.driving-license:driving-license-description',
                   defaultMessage:
-                    'Með ökuskírteini er veitt leyfi til að stjórna ökutæki í ákveðnum réttindaflokkum. Hér birtast réttindi þín og gildistími þeirra.',
+                    'Hér birtast upplýsingar um ökuskírteini þitt ásam þeim ökuréttidnum sem þú ert með í gildi á hverjum tíma.',
                 })}
               </Text>
             </Stack>
@@ -261,7 +261,7 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
                     expireDate={toDate(
                       new Date(item.gildirTil).getTime().toString(),
                     )}
-                    category={item.nr?.trim()}
+                    category={item.nr}
                   >
                     {item.nr &&
                       ReactHtmlParser(mapCategory(item.nr.trim()).text ?? '')}
