@@ -26,7 +26,7 @@ const AllFiles = ({ taxFiles, incomeFiles, applicationId }: Props) => {
                 createSignedUrlMutation({
                   variables: {
                     input: {
-                      fileName: encodeFilename(file.name),
+                      fileName: encodeFilename(file.name.normalize()),
                       folder: applicationId,
                     },
                   },
