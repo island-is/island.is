@@ -5,14 +5,25 @@ import {
   ApplicationStateSchema,
   DefaultEvents,
   ApplicationConfigurations,
+  Application,
 } from '@island.is/application/core'
+
+import { assign } from 'xstate'
 
 import { Roles, ApplicationStates, ONE_DAY, ONE_MONTH } from './constants'
 
 import { application } from './messages'
 import { dataSchema } from './dataSchema'
+import { hasSpouse } from './utils'
+import { FAApplication } from '..'
 
 type Events = { type: DefaultEvents.SUBMIT }
+
+const oneMonthLifeCycle = {
+  shouldBeListed: true,
+  shouldBePruned: true,
+  whenToPrune: ONE_MONTH,
+}
 
 const FinancialAidTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -57,11 +68,7 @@ const FinancialAidTemplate: ApplicationTemplate<
       [ApplicationStates.DRAFT]: {
         meta: {
           name: application.name.defaultMessage,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            whenToPrune: ONE_MONTH,
-          },
+          lifecycle: oneMonthLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -75,12 +82,87 @@ const FinancialAidTemplate: ApplicationTemplate<
             },
           ],
         },
+        on: {
+          SUBMIT: [
+            { target: ApplicationStates.SPOUSE, cond: hasSpouse },
+            { target: ApplicationStates.SUBMITTED },
+          ],
+        },
+      },
+      [ApplicationStates.SPOUSE]: {
+        entry: 'assignToSpouse',
+        meta: {
+          name: application.name.defaultMessage,
+          lifecycle: oneMonthLifeCycle,
+          roles: [
+            {
+              id: Roles.SPOUSE,
+              formLoader: () =>
+                import('../forms/Spouse').then((module) =>
+                  Promise.resolve(module.Spouse),
+                ),
+            },
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/WaitingForSpouse').then((module) =>
+                  Promise.resolve(module.WaitingForSpouse),
+                ),
+            },
+          ],
+        },
+      },
+      [ApplicationStates.SUBMITTED]: {
+        meta: {
+          name: application.name.defaultMessage,
+          lifecycle: oneMonthLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT || Roles.SPOUSE,
+              formLoader: () =>
+                import('../forms/Submitted').then((module) =>
+                  Promise.resolve(module.Submitted),
+                ),
+            },
+          ],
+        },
       },
     },
   },
+  stateMachineOptions: {
+    actions: {
+      assignToSpouse: assign((context) => {
+        const {
+          externalData,
+          answers,
+        } = (context.application as unknown) as FAApplication
+        const { applicant } = externalData.nationalRegistry.data
+        const spouse =
+          applicant.spouse?.nationalId ||
+          answers.relationshipStatus.spouseNationalId
 
-  mapUserToRole() {
-    return Roles.APPLICANT
+        if (spouse) {
+          return {
+            ...context,
+            application: {
+              ...context.application,
+              assignees: [spouse],
+            },
+          }
+        }
+        return { ...context }
+      }),
+    },
+  },
+
+  mapUserToRole(id: string, application: Application) {
+    if (id === application.applicant) {
+      return Roles.APPLICANT
+    }
+    if (application.assignees.includes(id)) {
+      return Roles.SPOUSE
+    }
+    return undefined
   },
 }
 

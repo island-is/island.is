@@ -1,15 +1,18 @@
 import {
   buildCustomField,
   buildForm,
+  buildMultiField,
   buildSection,
+  buildSubmitField,
   buildSubSection,
+  DefaultEvents,
   Form,
   FormModes,
 } from '@island.is/application/core'
 import { ApproveOptions, ExternalData } from '../lib/types'
 
 import * as m from '../lib/messages'
-import { routes } from '../lib/constants'
+import { Routes } from '../lib/constants'
 
 export const Application: Form = buildForm({
   id: 'FinancialAidApplication',
@@ -27,7 +30,7 @@ export const Application: Form = buildForm({
           title: m.inRelationship.general.sectionTitle,
           children: [
             buildCustomField({
-              id: routes.INRELATIONSHIP,
+              id: Routes.INRELATIONSHIP,
               title: m.inRelationship.general.pageTitle,
               component: 'InRelationshipForm',
             }),
@@ -51,7 +54,7 @@ export const Application: Form = buildForm({
           title: m.homeCircumstancesForm.general.sectionTitle,
           children: [
             buildCustomField({
-              id: routes.HOMECIRCUMSTANCES,
+              id: Routes.HOMECIRCUMSTANCES,
               title: m.homeCircumstancesForm.general.pageTitle,
               component: 'HomeCircumstancesForm',
             }),
@@ -62,7 +65,7 @@ export const Application: Form = buildForm({
           title: m.studentForm.general.sectionTitle,
           children: [
             buildCustomField({
-              id: routes.STUDENT,
+              id: Routes.STUDENT,
               title: m.studentForm.general.pageTitle,
               component: 'StudentForm',
             }),
@@ -73,7 +76,7 @@ export const Application: Form = buildForm({
           title: m.employmentForm.general.sectionTitle,
           children: [
             buildCustomField({
-              id: routes.EMPLOYMENT,
+              id: Routes.EMPLOYMENT,
               title: m.employmentForm.general.pageTitle,
               component: 'EmploymentForm',
             }),
@@ -86,11 +89,11 @@ export const Application: Form = buildForm({
       title: m.section.finances,
       children: [
         buildSubSection({
-          id: routes.INCOME,
+          id: Routes.INCOME,
           title: m.incomeForm.general.sectionTitle,
           children: [
             buildCustomField({
-              id: routes.INCOME,
+              id: Routes.INCOME,
               title: m.incomeForm.general.pageTitle,
               component: 'IncomeForm',
             }),
@@ -124,7 +127,7 @@ export const Application: Form = buildForm({
           title: m.personalTaxCreditForm.general.sectionTitle,
           children: [
             buildCustomField({
-              id: routes.PERSONALTAXCREDIT,
+              id: Routes.PERSONALTAXCREDIT,
               title: m.personalTaxCreditForm.general.pageTitle,
               component: 'PersonalTaxCreditForm',
             }),
@@ -135,7 +138,7 @@ export const Application: Form = buildForm({
           title: m.bankInfoForm.general.sectionTitle,
           children: [
             buildCustomField({
-              id: routes.BANKINFO,
+              id: Routes.BANKINFO,
               title: m.bankInfoForm.general.pageTitle,
               component: 'BankInfoForm',
             }),
@@ -148,7 +151,7 @@ export const Application: Form = buildForm({
       title: m.contactInfo.general.sectionTitle,
       children: [
         buildCustomField({
-          id: routes.CONTACTINFO,
+          id: Routes.CONTACTINFO,
           title: m.contactInfo.general.pageTitle,
           component: 'ContactInfo',
         }),
@@ -158,10 +161,27 @@ export const Application: Form = buildForm({
       id: 'summaryForm',
       title: m.summaryForm.general.sectionTitle,
       children: [
-        buildCustomField({
+        buildMultiField({
           id: 'summaryForm',
           title: m.summaryForm.general.pageTitle,
-          component: 'SummaryForm',
+          children: [
+            buildCustomField({
+              id: 'summaryForm',
+              title: m.summaryForm.general.pageTitle,
+              component: 'SummaryForm',
+            }),
+            buildSubmitField({
+              id: 'submitApplication',
+              title: '',
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: m.summaryForm.general.submit,
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
         }),
       ],
     }),
