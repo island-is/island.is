@@ -8,13 +8,13 @@ import { encodeFilenames } from '../../lib/utils'
 import * as styles from '../Shared.css'
 
 interface Props {
-  taxFiles?: UploadFile[]
-  incomeFiles?: UploadFile[]
+  taxFiles: UploadFile[]
+  incomeFiles: UploadFile[]
   applicationId: string
 }
 
 const AllFiles = ({ taxFiles, incomeFiles, applicationId }: Props) => {
-  const allFiles = taxFiles?.concat(incomeFiles ?? [])
+  const allFiles = taxFiles.concat(incomeFiles)
 
   const [createSignedUrlMutation] = useMutation(CreateSignedUrlMutation)
 

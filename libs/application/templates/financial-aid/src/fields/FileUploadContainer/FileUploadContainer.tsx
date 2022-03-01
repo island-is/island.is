@@ -1,10 +1,9 @@
 import React, { ReactNode } from 'react'
+import { useIntl } from 'react-intl'
 import { Text, Box, GridRow, GridColumn } from '@island.is/island-ui/core'
+import { filesText } from '../../lib/messages'
 import cn from 'classnames'
 import * as styles from './FileUploadContainer.css'
-import { useIntl } from 'react-intl'
-import { filesText } from '../../lib/messages'
-
 interface Props {
   children: ReactNode
   hasError?: boolean
@@ -21,8 +20,7 @@ const FileUploadContainer = ({ children, hasError = false }: Props) => {
       >
         <Box marginBottom={[1, 1, 2]}>{children}</Box>
         <div
-          className={cn({
-            [`${styles.errorMessage}`]: true,
+          className={cn(styles.errorMessage, {
             [`${styles.showErrorMessage}`]: hasError,
           })}
         >

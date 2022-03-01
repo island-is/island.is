@@ -57,16 +57,14 @@ export const useFileUpload = (formFiles: UploadFile[], folderId: string) => {
     _setFiles(files)
   }
 
-  const onChange = (newFiles: File[], isRetry?: boolean) => {
+  const onChange = (newFiles: UploadFile[], isRetry?: boolean) => {
     setUploadErrorMessage(undefined)
 
-    const newUploadFiles = newFiles as UploadFile[]
-
     if (!isRetry) {
-      setFiles([...newUploadFiles, ...files])
+      setFiles([...newFiles, ...files])
     }
 
-    newUploadFiles.forEach(async (file) => {
+    newFiles.forEach(async (file) => {
       const signedUrl = await createSignedUrl(file.name)
 
       if (signedUrl) {

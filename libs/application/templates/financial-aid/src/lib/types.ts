@@ -1,5 +1,6 @@
 import { Application, FieldBaseProps } from '@island.is/application/core'
 import { Municipality } from '@island.is/financial-aid/shared/lib'
+import { UploadFile } from '@island.is/island-ui/core'
 import { answersSchema } from './dataSchema'
 
 export enum DataProviderTypes {
@@ -36,9 +37,14 @@ export type NestedType<T> = {
     : string
 }
 
+export interface OverrideAnswerSchema extends answersSchema {
+  incomeFiles: UploadFile[]
+  taxReturnFiles: UploadFile[]
+}
+
 export type FAApplication = Override<
   Application,
-  { answers: answersSchema; externalData: ExternalData }
+  { answers: OverrideAnswerSchema; externalData: ExternalData }
 >
 
 export type FAFieldBaseProps = Override<

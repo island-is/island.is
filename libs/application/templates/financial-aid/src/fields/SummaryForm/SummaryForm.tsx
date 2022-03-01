@@ -217,8 +217,8 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         <Text fontWeight="semiBold">Gögn</Text>
 
         <AllFiles
-          taxFiles={answers?.taxReturnFiles}
-          incomeFiles={answers?.incomeFiles}
+          taxFiles={answers.taxReturnFiles}
+          incomeFiles={answers.incomeFiles}
           applicationId={id}
         />
       </SummaryBlock>

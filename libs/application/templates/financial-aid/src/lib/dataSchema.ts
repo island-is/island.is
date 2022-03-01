@@ -117,8 +117,6 @@ export const dataSchema = z.object({
       params: error.validation.phone,
     }),
   }),
-  incomeFiles: z.array(z.any().optional()).optional(),
-  taxReturnFiles: z.array(z.any().optional()).optional(),
 })
 
 export type answersSchema = z.infer<typeof dataSchema>
