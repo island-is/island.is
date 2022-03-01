@@ -38,7 +38,7 @@ export const LicensesOverview: ServicePortalModuleComponent = () => {
           intro={defineMessage({
             id: 'sp.licenses:intro',
             defaultMessage:
-              'Hér gefur að líta núverandi skírteini þín og gildistíma þeirra.',
+              'Hér gefur að líta á núverandi skírteini og réttindi þín. Til að byrja með geturu fundið ökuréttindi þín og kannað stöðu stöðu þeirra. Unnið er að því að bæta við fleiri skírteinum og réttindum eins og bólusetningarskírteini og vegabréfi.',
           })}
         />
       </Box>
