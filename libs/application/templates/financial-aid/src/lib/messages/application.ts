@@ -68,18 +68,23 @@ export const input = defineMessages({
 
 export const filesText = defineMessages({
   header: {
-    id: 'fa.application:section.files.header',
+    id: 'fa.application:section.filesText.header',
     defaultMessage: 'Dragðu gögn hingað',
     description: 'File upload header',
   },
   description: {
-    id: 'fa.application:section.files.description',
+    id: 'fa.application:section.filesText.description',
     defaultMessage: 'Tekið er við öllum hefðbundnum skráargerðum',
     description: 'File upload description',
   },
   buttonLabel: {
-    id: 'fa.application:section.files.buttonLabel',
+    id: 'fa.application:section.filesText.buttonLabel',
     defaultMessage: 'Bættu við gögnum',
     description: 'File upload button label',
+  },
+  errorMessage: {
+    id: 'fa.application:section.filesText.errorMessage',
+    defaultMessage: 'Þú þarft að hlaða upp gögnum',
+    description: 'Error message when user has to upload files',
   },
 })

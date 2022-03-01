@@ -4,7 +4,7 @@ import { UploadFile } from '@island.is/island-ui/core'
 import { FileType, SignedUrl } from '@island.is/financial-aid/shared/lib'
 import { gql } from '@apollo/client'
 
-const CreateSignedUrlMutation = gql`
+export const CreateSignedUrlMutation = gql`
   mutation getSignedUrl($input: GetSignedUrlInput!) {
     getSignedUrl(input: $input) {
       url

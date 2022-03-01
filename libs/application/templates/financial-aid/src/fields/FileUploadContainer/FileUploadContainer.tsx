@@ -2,6 +2,8 @@ import React, { ReactNode } from 'react'
 import { Text, Box, GridRow, GridColumn } from '@island.is/island-ui/core'
 import cn from 'classnames'
 import * as styles from './FileUploadContainer.css'
+import { useIntl } from 'react-intl'
+import { filesText } from '../../lib/messages'
 
 interface Props {
   children: ReactNode
@@ -9,6 +11,8 @@ interface Props {
 }
 
 const FileUploadContainer = ({ children, hasError = false }: Props) => {
+  const { formatMessage } = useIntl()
+
   return (
     <GridRow marginBottom={3}>
       <GridColumn
@@ -23,7 +27,7 @@ const FileUploadContainer = ({ children, hasError = false }: Props) => {
           })}
         >
           <Text color="red600" fontWeight="semiBold" variant="small">
-            Þú þarft að hlaða upp gögnum
+            {formatMessage(filesText.errorMessage)}
           </Text>
         </div>
       </GridColumn>

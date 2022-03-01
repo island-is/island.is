@@ -4,9 +4,7 @@ import {
   Box,
   GridColumn,
   GridRow,
-  Icon,
   Input,
-  UploadFile,
 } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 import { Controller, useFormContext } from 'react-hook-form'
@@ -28,16 +26,15 @@ import {
   getMessageEmploymentStatus,
   getMessageHomeCircumstances,
 } from '../../lib/formatters'
+import AllFiles from './AllFiles'
 
 const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
-  const { answers, externalData } = application
+  const { id, answers, externalData } = application
 
   const { setValue } = useFormContext()
 
   const formCommentId = 'formComment'
-
-  const allFiles = answers?.taxReturnFiles?.concat(answers?.incomeFiles)
 
   return (
     <>
@@ -219,35 +216,11 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       >
         <Text fontWeight="semiBold">Gögn</Text>
 
-        {allFiles &&
-          allFiles.map((file: UploadFile, index) => {
-            return (
-              <a
-                href={`/${file.key}`}
-                key={`file-` + index}
-                target="_blank"
-                download
-                rel="noreferrer noopener"
-              >
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  marginBottom="smallGutter"
-                >
-                  <Box marginRight={1} display="flex" alignItems="center">
-                    <Icon
-                      color="blue400"
-                      icon="document"
-                      size="small"
-                      type="outline"
-                    />
-                  </Box>
-
-                  <Text>{file.name}</Text>
-                </Box>
-              </a>
-            )
-          })}
+        <AllFiles
+          taxFiles={answers?.taxReturnFiles}
+          incomeFiles={answers?.incomeFiles}
+          applicationId={id}
+        />
       </SummaryBlock>
 
       <Text as="h3" variant="h3">
