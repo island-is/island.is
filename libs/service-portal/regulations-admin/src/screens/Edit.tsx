@@ -126,7 +126,7 @@ const EditScreen = () => {
         </GridColumn>
       </GridRow>
 
-      <SaveDeleteButtons wrap />
+      {state.step.name !== 'publish' && <SaveDeleteButtons wrap />}
       <step.Component />
       <DraftingNotes />
       <ButtonBar />
