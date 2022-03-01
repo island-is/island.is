@@ -119,7 +119,7 @@ export class EventService {
               type: 'section',
               text: {
                 type: 'mrkdwn',
-                text: `*${message}:*\n>${JSON.stringify(reason)}`,
+                text: `*:sos: ${message}:*\n>${JSON.stringify(reason)}`,
               },
             },
           ],
