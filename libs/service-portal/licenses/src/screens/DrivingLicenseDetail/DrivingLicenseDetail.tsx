@@ -256,7 +256,7 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
                     expireDate={toDate(
                       new Date(item.gildirTil).getTime().toString(),
                     )}
-                    category={item.nr}
+                    category={item.nr?.trim()}
                   >
                     {item.nr &&
                       ReactHtmlParser(mapCategory(item.nr.trim()).text ?? '')}
