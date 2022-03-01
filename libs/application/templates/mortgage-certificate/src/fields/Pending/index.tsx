@@ -20,12 +20,17 @@ export const Pending: FC<FieldBaseProps> = ({
   const certificateExists = validationData.exists
   const hasKMarking = validationData.hasKMarking
 
+  const [stateName, setStateName] = useState<string>(MCEvents.PENDING)
+
   const [submitApplication] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => console.error(e.message),
   })
 
   // no certificate found, we go to draft
-  if (!certificateExists) {
+  if (!certificateExists && stateName !== MCEvents.ERROR) {
+    // to make sure you only call submitApplication once
+    setStateName(MCEvents.ERROR)
+
     submitApplication({
       variables: {
         input: {
@@ -48,7 +53,14 @@ export const Pending: FC<FieldBaseProps> = ({
   }
 
   // certificate found, but no k marking found, we send to error state
-  if (certificateExists && !hasKMarking) {
+  if (
+    certificateExists &&
+    !hasKMarking &&
+    stateName !== MCEvents.PENDING_REJECTED
+  ) {
+    // to make sure you only call submitApplication once
+    setStateName(MCEvents.PENDING_REJECTED)
+
     submitApplication({
       variables: {
         input: {
@@ -71,7 +83,10 @@ export const Pending: FC<FieldBaseProps> = ({
   }
 
   // otherwise if all is good, we send him to payment state
-  if (certificateExists && hasKMarking) {
+  if (certificateExists && hasKMarking && stateName !== DefaultEvents.PAYMENT) {
+    // to make sure you only call submitApplication once
+    setStateName(DefaultEvents.PAYMENT)
+
     submitApplication({
       variables: {
         input: {

@@ -1,27 +1,8 @@
-export const SEARCH_REAL_ESTATE_QUERY = `
-  query SearchRealEstateQuery($input: GetRealEstateInput!) {
-    assetsDetail(input: $input) {
+export const MY_PROPERTIES_QUERY = `
+query GetMyPropertiesQuery($input: GetMultiPropertyInput!) {
+  assetsOverviewWithDetail(input: $input) {
+    properties {
       propertyNumber
-      defaultAddress {
-        display
-      }
-      unitsOfUse {
-        unitsOfUse {
-          marking
-          displaySize
-          buildYearDisplay
-          explanation
-        }
-      }
-    }
-  }
-`
-
-export const MY_REAL_ESTATES_QUERY = `
-  query GetMyRealEstatesQuery($input: GetMultiPropertyInput!) {
-    assetsOverviewWithDetail(input: $input) {
-      properties {
-        propertyNumber
         defaultAddress {
           display
         }
@@ -36,71 +17,23 @@ export const MY_REAL_ESTATES_QUERY = `
       }
     }
   }
-`
+  `
 
-/*export const MY_REAL_ESTATES_QUERY = `
-  query GetMyRealEstatesQuery($input: GetMultiPropertyInput!) {
-    assetsOverviewWithDetail(input: $input) {
-      properties {
+export const SEARCH_PROPERTIES_QUERY = `
+    query SearchPropertiesQuery($input: SearchForPropertyInput!) {
+      searchForProperty(input: $input) {
         propertyNumber
         defaultAddress {
-          locationNumber
-          postNumber
-          municipality
-          propertyNumber
           display
-          displayShort
-        }
-        appraisal {
-          activeAppraisal
-          plannedAppraisal
-          activeStructureAppraisal
-          plannedStructureAppraisal
-          activePlotAssessment
-          plannedPlotAssessment
-          activeYear
-          plannedYear
-        }
-        registeredOwners {
-          registeredOwners {
-            name
-            ssn
-            ownership
-            purchaseDate
-            grantDisplay
-          }
         }
         unitsOfUse {
           unitsOfUse {
-            propertyNumber
-            unitOfUseNumber
             marking
-            usageDisplay
             displaySize
             buildYearDisplay
-            fireAssessment
             explanation
-            appraisal {
-              activeAppraisal
-              plannedAppraisal
-              activeStructureAppraisal
-              plannedStructureAppraisal
-              activePlotAssessment
-              plannedPlotAssessment
-              activeYear
-              plannedYear
-            }
-            address {
-              locationNumber
-              postNumber
-              municipality
-              propertyNumber
-              display
-              displayShort
-            }
           }
         }
       }
     }
-  }
-`*/
+  `

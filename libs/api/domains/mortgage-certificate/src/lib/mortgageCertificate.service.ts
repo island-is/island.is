@@ -10,16 +10,16 @@ export class MortgageCertificateService {
   constructor(private readonly syslumennService: SyslumennService) {}
 
   async getMortgageCertificate(
-    realEstateNumber: string,
+    propertyNumber: string,
   ): Promise<MortgageCertificate> {
-    return await this.syslumennService.getMortgageCertificate(realEstateNumber)
+    return await this.syslumennService.getMortgageCertificate(propertyNumber)
   }
 
   async validateMortgageCertificate(
-    realEstateNumber: string,
+    propertyNumber: string,
   ): Promise<MortgageCertificateValidation> {
     return await this.syslumennService.validateMortgageCertificate(
-      realEstateNumber,
+      propertyNumber,
     )
   }
 }

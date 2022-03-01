@@ -18,10 +18,10 @@ export class MainResolver {
   // @Query(() => Boolean)
   // async mortgageCertificateValidation(
   //   // @CurrentUser() user: User,
-  //   @Args('realEstateNumber') realEstateNumber: string,
+  //   @Args('propertyNumber') propertyNumber: string,
   // ) {
   //   return await this.mortgageCertificateService.validateMortgageCertificate(
-  //     realEstateNumber,
+  //     propertyNumber,
   //   )
   // }
 }

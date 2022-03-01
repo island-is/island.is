@@ -23,28 +23,11 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
     onError: (e) => console.error(e.message),
   })
 
-  if (
-    (externalData?.submitRequestToSyslumenn?.data as {
-      hasSentRequest: boolean
-    }).hasSentRequest
-  ) {
-    submitApplication({
-      variables: {
-        input: {
-          id: application.id,
-          event: MCEvents.PENDING_REJECTED_TRY_AGAIN,
-          answers: application.answers,
-        },
-      },
-    })
-  }
-
   //TODOx þarf að validatate hvort notandi má halda áfram
 
-  var selectedProperty = (getValueViaPath(
-    application.answers,
-    'selectProperty',
-  ) as { property: PropertyDetail; isFromSearch: boolean }).property
+  const selectedProperty = (externalData.validateMortgageCertificate.data as {
+    property?: PropertyDetail
+  })?.property
 
   return (
     <Box>
@@ -57,8 +40,8 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
       >
         <Text fontWeight="semiBold">Valin fasteign</Text>
         <Text>
-          {selectedProperty.propertyNumber}{' '}
-          {selectedProperty.defaultAddress?.display}
+          {selectedProperty?.propertyNumber}{' '}
+          {selectedProperty?.defaultAddress?.display}
         </Text>
       </Box>
       {/* <Box display="flex" justifyContent={'flexEnd'}>

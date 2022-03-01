@@ -16,35 +16,12 @@ import { m } from './messages'
 
 const MortgageCertificateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  selectProperty: z.object({
-    property: z
-      .object({
-        propertyNumber: z.string(),
-        defaultAddress: z
-          .object({
-            display: z.string().optional(),
-          })
-          .optional(),
-        unitsOfUse: z
-          .object({
-            unitsOfUse: z
-              .array(
-                z
-                  .object({
-                    marking: z.string().optional(),
-                    displaySize: z.number().optional(),
-                    buildYearDisplay: z.string().optional(),
-                    explanation: z.string().optional(),
-                  })
-                  .optional(),
-              )
-              .optional(),
-          })
-          .optional(),
-      })
-      .optional(),
-    isFromSearch: z.boolean().optional(),
-  }),
+  selectProperty: z
+    .object({
+      propertyNumber: z.string().optional(),
+      isFromSearch: z.boolean().optional(),
+    })
+    .optional(),
 })
 
 const template: ApplicationTemplate<
