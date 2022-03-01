@@ -119,7 +119,7 @@ export interface DateField extends BaseField {
 export interface DescriptionField extends BaseField {
   readonly type: FieldTypes.DESCRIPTION
   component: FieldComponents.DESCRIPTION
-  readonly description: FormText
+  readonly description?: FormText
   tooltip?: FormText
   space?: BoxProps['paddingTop']
   titleVariant?: TitleVariants

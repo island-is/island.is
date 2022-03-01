@@ -23,20 +23,24 @@ export const DescriptionFormField: FC<{
           {formatText(field.title, application, formatMessage)}
         </Text>
       )}
-      <Text>
-        <Markdown>
-          {formatText(field.description, application, formatMessage)}
-        </Markdown>
-        {field.tooltip && (
-          <>
-            {' '}
-            <Tooltip
-              placement="top"
-              text={formatText(field.tooltip, application, formatMessage)}
-            />
-          </>
-        )}
-      </Text>
+      {(field.description || field.tooltip) && (
+        <Text>
+          {field.description && (
+            <Markdown>
+              {formatText(field.description, application, formatMessage)}
+            </Markdown>
+          )}
+          {field.tooltip && (
+            <>
+              {' '}
+              <Tooltip
+                placement="top"
+                text={formatText(field.tooltip, application, formatMessage)}
+              />
+            </>
+          )}
+        </Text>
+      )}
     </Box>
   )
 }
