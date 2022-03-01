@@ -3,6 +3,8 @@ import { GraphQLModule } from '@nestjs/graphql'
 
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { ProblemModule } from '@island.is/nest/problem'
+import { ConfigModule } from '@island.is/nest/config'
+import { courtClientModuleConfig } from '@island.is/judicial-system/court-client'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 import { AuditTrailModule } from '@island.is/judicial-system/audit-trail'
 
@@ -14,11 +16,10 @@ import {
   CaseModule,
   FileModule,
   InstitutionModule,
-  CourtModule,
   FeatureModule,
   PoliceModule,
   DefendantModule,
-} from './modules/'
+} from './modules'
 
 const debug = !environment.production
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -44,14 +45,13 @@ const autoSchemaFile = environment.production
     AuthModule,
     UserModule,
     CaseModule,
+    DefendantModule,
     FileModule,
     InstitutionModule,
-    CourtModule,
     FeatureModule,
     CmsTranslationsModule,
     PoliceModule,
     ProblemModule.forRoot({ logAllErrors: true }),
-    DefendantModule,
   ],
 })
 export class AppModule {}

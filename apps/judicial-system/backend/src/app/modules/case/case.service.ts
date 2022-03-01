@@ -818,4 +818,15 @@ export class CaseService {
       )
     }
   }
+
+  async createCourtCase(theCase: Case): Promise<Case> {
+    const courtCaseNumber = await this.courtService.createCourtCase(
+      theCase.courtId ?? '',
+      theCase.type,
+      theCase.policeCaseNumber,
+      Boolean(theCase.parentCaseId),
+    )
+
+    return this.update(theCase.id, { courtCaseNumber }, true) as Promise<Case>
+  }
 }
