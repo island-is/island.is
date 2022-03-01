@@ -7,6 +7,7 @@ import {
   buildTextField,
   buildSubSection,
   buildCustomField,
+  buildCheckboxField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 
@@ -25,44 +26,50 @@ export const subSectionProperties = buildSubSection({
           id: 'realEstatesAndLandsTitle',
           title: 'Fasteignir og lóðir',
           titleVariant: 'h3',
-          description: '',
-        }),
-        buildKeyValueField({
-          label: 'Erfðaskrá í vörslu sýslumanns',
-          value: 'Já',
-          width: 'half',
-        }),
-        buildKeyValueField({
-          label: 'Kaupmáli',
-          value: 'Nei',
-          width: 'half',
-        }),
-        buildDescriptionField({
-          id: 'knowledgeOfOtherWillsTitle',
-          title: 'Vitneskja um aðra erfðaskrá',
-          space: 3,
-          titleVariant: 'h4',
-          description: '',
-        }),
-        buildTextField({
-          id: 'knowledgeOfOtherWillsDescription',
-          title: 'Lýsing',
-          variant: 'textarea',
-          backgroundColor: 'blue',
-          placeholder:
-            'Skráðu hér inn ef vitneskja er um erfðaskrá annars staðar',
-        }),
-        buildDescriptionField({
-          id: 'membersOfEstateTitle',
-          title: 'Aðilar dánarbús',
-          space: 2,
-          titleVariant: 'h4',
-          description: '',
         }),
         buildCustomField({
+          title: 'realEstateAndLandsRepeater',
+          id: 'realEstateAndLandsRepeater',
+          component: 'RealEstateAndLandsRepeater',
+        }),
+        buildDescriptionField({
+          id: 'vehiclesTitle',
+          title: 'Ökutæki',
+          space: 5,
+          titleVariant: 'h3',
+        }),
+        buildCustomField({
+          title: 'Vehicles!',
+          id: 'vehicles',
+          component: 'VehiclesRepeater',
+        }),
+        buildDescriptionField({
+          id: 'otherPropertiesTitle',
+          title: 'Aðrar eignir',
+          titleVariant: 'h3',
+          description: 'Merktu við þá reiti sem að eiga við þetta ferli.',
+          space: 5,
+        }),
+        buildCheckboxField({
+          id: 'otherProperties',
           title: '',
-          id: 'estateMembers',
-          component: 'EstateMemberRepeater',
+          large: false,
+          backgroundColor: 'white',
+          doesNotRequireAnswer: true,
+          options: [
+            {
+              label: 'Bankareikningar, verðbréf, hlutabréf',
+              value: 'option1',
+            },
+            {
+              label: 'Eigin rekstur',
+              value: 'option2',
+            },
+            {
+              label: 'Búseturéttur',
+              value: 'option3',
+            },
+          ],
         }),
       ],
     }),

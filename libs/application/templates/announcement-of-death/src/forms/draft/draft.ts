@@ -20,12 +20,12 @@ import {
 import { subSectionDelegate } from './subSectionDelegate'
 import { subSectionInfo } from './subSectionInfo'
 import { subSectionInheritance } from './subSectionInheritance'
+import { subSectionProperties } from './subSectionProperties'
 import { format as formatNationalId } from 'kennitala'
 import { NationalRegistryUser, UserProfile } from '../../types/schema'
 import { m } from '../../lib/messages'
 import { RoleConfirmationEnum } from '../../types'
 import CoatOfArms from '../../assets/CoatOfArms'
-import { subSectionProperties } from './subSectionProperties'
 
 export const draft = (): Form => {
   return buildForm({

@@ -22,3 +22,13 @@ export interface EstateMember {
   relation: RelationEnum
   hasForeignCitizenship?: boolean
 }
+
+export interface Property {
+  propertyNumber: string
+  address?: string
+}
+
+export interface Vehicle {
+  vehicleNumber: string
+  address?: string
+}
