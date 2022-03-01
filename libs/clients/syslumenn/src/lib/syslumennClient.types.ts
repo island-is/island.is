@@ -1,4 +1,4 @@
-import { PropertyDetail } from '@island.is/api/schema'
+import { PropertyDetail } from '@island.is/api/domains/assets'
 
 export interface SyslumennAuction {
   office: string

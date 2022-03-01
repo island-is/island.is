@@ -4,13 +4,13 @@ import {
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
 import { PropertyOverviewWithDetail } from '../types/schema'
-import { MY_REAL_ESTATES_QUERY } from '../graphql/queries'
+import { MY_PROPERTIES_QUERY } from '../graphql/queries'
 
 export class NationalRegistryRealEstateProvider extends BasicDataProvider {
   readonly type = 'NationalRegistryRealEstate'
 
   async provide(): Promise<PropertyOverviewWithDetail> {
-    const query = MY_REAL_ESTATES_QUERY
+    const query = MY_PROPERTIES_QUERY
     return this.useGraphqlGateway<PropertyOverviewWithDetail>(query, {
       input: { cursor: '1' },
     })

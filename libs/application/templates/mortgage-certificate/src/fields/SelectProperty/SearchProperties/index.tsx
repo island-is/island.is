@@ -10,7 +10,7 @@ import {
 import { PropertyTable } from '../PropertyTable'
 import { PropertyDetail } from '../../../types/schema'
 import { gql, useLazyQuery } from '@apollo/client'
-import { SEARCH_REAL_ESTATE_QUERY } from '../../../graphql/queries'
+import { SEARCH_PROPERTIES_QUERY } from '../../../graphql/queries'
 
 interface SearchPropertiesProps {
   selectHandler: (property: PropertyDetail | undefined) => void
@@ -18,7 +18,7 @@ interface SearchPropertiesProps {
 }
 
 export const searchRealEstateMutation = gql`
-  ${SEARCH_REAL_ESTATE_QUERY}
+  ${SEARCH_PROPERTIES_QUERY}
 `
 
 export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
@@ -38,11 +38,11 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
   const [runQuery] = useLazyQuery(searchRealEstateMutation, {
     variables: {
       input: {
-        assetId: searchStr,
+        propertyNumber: searchStr,
       },
     },
     onCompleted(result) {
-      setFoundProperty(result.assetsDetail)
+      setFoundProperty(result.searchForProperty)
       setIsLoading(false)
     },
     onError() {

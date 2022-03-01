@@ -30,7 +30,7 @@ import { SyslumennClientConfig } from './syslumennClient.config'
 import type { ConfigType } from '@island.is/nest/config'
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { PropertyDetail } from '@island.is/api/schema'
+import { PropertyDetail } from '@island.is/api/domains/assets'
 
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -227,9 +227,7 @@ export class SyslumennService {
   }
 
   //TODOx need new endpoint from syslumenn
-  private async getPropertyDetails(
-    propertyNumber: string,
-  ): Promise<PropertyDetail> {
+  async getPropertyDetails(propertyNumber: string): Promise<PropertyDetail> {
     return {
       propertyNumber: propertyNumber,
       defaultAddress: {

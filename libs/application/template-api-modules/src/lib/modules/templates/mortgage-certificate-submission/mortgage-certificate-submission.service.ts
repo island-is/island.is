@@ -19,7 +19,6 @@ import {
   SubmitRequestToSyslumennResult,
 } from './types'
 import { ChargeItemCode } from '@island.is/shared/constants'
-import { PropertyDetail } from '@island.is/api/schema'
 
 @Injectable()
 export class MortgageCertificateSubmissionService {

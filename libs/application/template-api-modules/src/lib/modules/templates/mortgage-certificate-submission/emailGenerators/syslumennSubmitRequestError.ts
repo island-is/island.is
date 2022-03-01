@@ -1,7 +1,7 @@
 import { EmailTemplateGenerator } from '../../../../types'
 import { NationalRegistry } from '../types'
 import { getValueViaPath } from '@island.is/application/core'
-import { PropertyDetail } from '@island.is/api/schema'
+import { PropertyDetail } from '@island.is/api/domains/assets'
 
 export const generateSyslumennSubmitRequestErrorEmail: EmailTemplateGenerator = (
   props,
