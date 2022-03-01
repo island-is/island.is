@@ -1,3 +1,5 @@
+import { PropertyDetail } from '@island.is/api/schema'
+
 export interface SyslumennAuction {
   office: string
   location: string
@@ -97,4 +99,5 @@ export interface MortgageCertificate {
 export interface MortgageCertificateValidation {
   exists: boolean
   hasKMarking: boolean
+  property?: PropertyDetail
 }

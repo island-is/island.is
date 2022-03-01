@@ -19,6 +19,7 @@ import {
   SubmitRequestToSyslumennResult,
 } from './types'
 import { ChargeItemCode } from '@island.is/shared/constants'
+import { PropertyDetail } from '@island.is/api/schema'
 
 @Injectable()
 export class MortgageCertificateSubmissionService {
@@ -75,18 +76,22 @@ export class MortgageCertificateSubmissionService {
   async validateMortgageCertificate({
     application,
   }: TemplateApiModuleActionProps): Promise<MortgageCertificateValidation> {
-    const applicantSsn = application.applicant
+    const propertyNumber = (application.answers.selectProperty as {
+      propertyNumber: string
+    }).propertyNumber
     return await this.mortgageCertificateService.validateMortgageCertificate(
-      applicantSsn,
+      propertyNumber,
     )
   }
 
   async getMortgageCertificate({
     application,
   }: TemplateApiModuleActionProps): Promise<MortgageCertificate> {
-    const applicantSsn = application.applicant
+    const propertyNumber = (application.answers.selectProperty as {
+      propertyNumer: string
+    }).propertyNumer
     const document = await this.mortgageCertificateService.getMortgageCertificate(
-      applicantSsn,
+      propertyNumber,
     )
 
     // Call sýslumaður to get the document sealed before handing it over to the user
@@ -106,44 +111,6 @@ export class MortgageCertificateSubmissionService {
     await this.notifySyslumenn(application, sealedDocument)
 
     return sealedDocument
-  }
-
-  async submitRequestToSyslumenn({
-    application,
-  }: TemplateApiModuleActionProps): Promise<SubmitRequestToSyslumennResult> {
-    const nationalRegistryData = application.externalData.nationalRegistry
-      ?.data as NationalRegistry
-    const userProfileData = application.externalData.userProfile
-      ?.data as UserProfile
-    const person: Person = {
-      name: nationalRegistryData?.fullName,
-      ssn: nationalRegistryData?.nationalId,
-      phoneNumber: userProfileData?.mobilePhoneNumber,
-      email: userProfileData?.email,
-      homeAddress: nationalRegistryData?.address.streetAddress,
-      postalCode: nationalRegistryData?.address.postalCode,
-      city: nationalRegistryData?.address.city,
-      signed: true,
-      type: PersonType.MortgageCertificateApplicant,
-    }
-    const persons: Person[] = [person]
-    const extraData: { [key: string]: string } = {}
-    const uploadDataName =
-      'Umsókn um lagfæringu á veðbókarvottorði frá Ísland.is'
-    const uploadDataId = 'VedbokavottordVilla1.0'
-    await this.syslumennService
-      .uploadData(persons, undefined, extraData, uploadDataName, uploadDataId)
-      .catch(async () => {
-        await this.sharedTemplateAPIService.sendEmail(
-          generateSyslumennSubmitRequestErrorEmail,
-          (application as unknown) as Application,
-        )
-        return undefined
-      })
-
-    return {
-      hasSentRequest: true,
-    }
   }
 
   private async notifySyslumenn(
@@ -188,5 +155,43 @@ export class MortgageCertificateSubmissionService {
         )
         return undefined
       })
+  }
+
+  async submitRequestToSyslumenn({
+    application,
+  }: TemplateApiModuleActionProps): Promise<SubmitRequestToSyslumennResult> {
+    const nationalRegistryData = application.externalData.nationalRegistry
+      ?.data as NationalRegistry
+    const userProfileData = application.externalData.userProfile
+      ?.data as UserProfile
+    const person: Person = {
+      name: nationalRegistryData?.fullName,
+      ssn: nationalRegistryData?.nationalId,
+      phoneNumber: userProfileData?.mobilePhoneNumber,
+      email: userProfileData?.email,
+      homeAddress: nationalRegistryData?.address.streetAddress,
+      postalCode: nationalRegistryData?.address.postalCode,
+      city: nationalRegistryData?.address.city,
+      signed: true,
+      type: PersonType.MortgageCertificateApplicant,
+    }
+    const persons: Person[] = [person]
+    const extraData: { [key: string]: string } = {}
+    const uploadDataName =
+      'Umsókn um lagfæringu á veðbókarvottorði frá Ísland.is'
+    const uploadDataId = 'VedbokavottordVilla1.0'
+    await this.syslumennService
+      .uploadData(persons, undefined, extraData, uploadDataName, uploadDataId)
+      .catch(async () => {
+        await this.sharedTemplateAPIService.sendEmail(
+          generateSyslumennSubmitRequestErrorEmail,
+          (application as unknown) as Application,
+        )
+        return undefined
+      })
+
+    return {
+      hasSentRequest: true,
+    }
   }
 }

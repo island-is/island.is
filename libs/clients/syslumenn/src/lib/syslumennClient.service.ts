@@ -30,6 +30,7 @@ import { SyslumennClientConfig } from './syslumennClient.config'
 import type { ConfigType } from '@island.is/nest/config'
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { PropertyDetail } from '@island.is/api/schema'
 
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -178,18 +179,18 @@ export class SyslumennService {
   }
 
   async getMortgageCertificate(
-    realEstateNumber: string,
+    propertyNumber: string,
   ): Promise<MortgageCertificate> {
     const { id, api } = await this.createApi()
 
     const contentBase64 =
       (
         await api.vedbandayfirlitPost({
-          //TODOx
+          //TODOx vantar frá syslumenn
           // await api.vedbokarvottordPost({
           skilabod: {
             audkenni: id,
-            fastanumer: realEstateNumber,
+            fastanumer: propertyNumber,
             tegundAndlags: TegundAndlags.NUMBER_0, // 0 = Real estate
           },
         })
@@ -203,22 +204,47 @@ export class SyslumennService {
   }
 
   async validateMortgageCertificate(
-    realEstateNumber: string,
+    propertyNumber: string,
   ): Promise<MortgageCertificateValidation> {
     try {
+      const property = await this.getPropertyDetails(propertyNumber)
+
       // Note: this function will throw an error if something goes wrong
-      const certificate = await this.getMortgageCertificate(realEstateNumber)
+      const certificate = await this.getMortgageCertificate(propertyNumber)
 
       return {
         exists: certificate.contentBase64.length !== 0,
-        hasKMarking: true, //TODOx
+        hasKMarking: false, //TODOx vantar info frá syslumenn
+        property: property,
       }
     } catch (exception) {
       console.log(exception)
       return {
         exists: false,
-        hasKMarking: false, //TODOx
+        hasKMarking: false, //TODOx vantar info frá syslumenn
       }
+    }
+  }
+
+  //TODOx need new endpoint from syslumenn
+  private async getPropertyDetails(
+    propertyNumber: string,
+  ): Promise<PropertyDetail> {
+    return {
+      propertyNumber: propertyNumber,
+      defaultAddress: {
+        display: '<Heimilisfang>',
+      },
+      unitsOfUse: {
+        unitsOfUse: [
+          {
+            marking: '<Merking>',
+            displaySize: 123.4,
+            buildYearDisplay: '<Ártal>',
+            explanation: '<Lýsing>',
+          },
+        ],
+      },
     }
   }
 }

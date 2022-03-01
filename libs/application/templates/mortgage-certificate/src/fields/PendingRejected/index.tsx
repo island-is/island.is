@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import {
   Box,
@@ -16,6 +16,8 @@ export const PendingRejected: FC<FieldBaseProps> = ({ application, field }) => {
   const { externalData } = application
   const { answers } = application
 
+  const [stateName, setStateName] = useState<string>(MCEvents.PENDING_REJECTED)
+
   const [submitApplication] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => console.error(e.message),
   })
@@ -23,8 +25,12 @@ export const PendingRejected: FC<FieldBaseProps> = ({ application, field }) => {
   if (
     (externalData?.submitRequestToSyslumenn?.data as {
       hasSentRequest: boolean
-    }).hasSentRequest
+    }).hasSentRequest &&
+    stateName !== MCEvents.PENDING_REJECTED_TRY_AGAIN
   ) {
+    // to make sure you only call submitApplication once
+    setStateName(MCEvents.PENDING_REJECTED_TRY_AGAIN)
+
     submitApplication({
       variables: {
         input: {
@@ -36,10 +42,9 @@ export const PendingRejected: FC<FieldBaseProps> = ({ application, field }) => {
     })
   }
 
-  var selectedProperty = (getValueViaPath(
-    application.answers,
-    'selectProperty',
-  ) as { property: PropertyDetail; isFromSearch: boolean }).property
+  const selectedProperty = (externalData.validateMortgageCertificate.data as {
+    property?: PropertyDetail
+  })?.property
 
   return (
     <Box>
@@ -56,8 +61,8 @@ export const PendingRejected: FC<FieldBaseProps> = ({ application, field }) => {
       >
         <Text fontWeight="semiBold">Valin fasteign</Text>
         <Text>
-          {selectedProperty.propertyNumber}{' '}
-          {selectedProperty.defaultAddress?.display}
+          {selectedProperty?.propertyNumber}{' '}
+          {selectedProperty?.defaultAddress?.display}
         </Text>
       </Box>
       <Box marginBottom={5}>
