@@ -17,7 +17,7 @@ const getFixtureFromRequest: KeyMapping<string, { fixture: string }> = {
   getNationalRegistryUserQuery: { fixture: 'nationalRegistryUserQuery' },
   GetMunicipalityQuery: { fixture: 'municipalityQuery' },
   createApplication: { fixture: 'createApplicationMutation' },
-  personalTaxReturnQuery: { fixture: 'personalTaxReturnQuery' },
+  gatherTaxDataQuery: { fixture: 'gatherTaxDataQuery' },
 }
 
 const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {

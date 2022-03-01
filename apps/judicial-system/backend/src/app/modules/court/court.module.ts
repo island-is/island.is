@@ -1,31 +1,14 @@
 import { Module } from '@nestjs/common'
 
-import {
-  createXRoadAPIPath,
-  XRoadMemberClass,
-} from '@island.is/shared/utils/server'
 import { CourtClientModule } from '@island.is/judicial-system/court-client'
 
-import { environment } from '../../../environments'
+import { DATE_FACTORY, today } from '../../factories'
+
 import { CourtService } from './court.service'
 
 @Module({
-  imports: [
-    CourtClientModule.register({
-      xRoadPath: createXRoadAPIPath(
-        environment.xRoad.basePathWithEnv,
-        XRoadMemberClass.GovernmentInstitution,
-        environment.courtClientOptions.memberCode,
-        environment.courtClientOptions.apiPath,
-      ),
-      xRoadClient: environment.xRoad.clientId,
-      clientCert: environment.xRoad.clientCert,
-      clientKey: environment.xRoad.clientKey,
-      clientCa: environment.xRoad.clientCa,
-      serviceOptions: environment.courtClientOptions.serviceOptions,
-    }),
-  ],
-  providers: [CourtService],
+  imports: [CourtClientModule],
+  providers: [{ provide: DATE_FACTORY, useFactory: () => today }, CourtService],
   exports: [CourtService],
 })
 export class CourtModule {}

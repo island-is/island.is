@@ -50,11 +50,7 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
 
     beforeEach(async () => {
       personalTaxReturnInPdf = mockPersonalTaxReturnApi.personalTaxReturnInPdf as jest.Mock
-      personalTaxReturnInPdf.mockResolvedValue({
-        success: false,
-        errorText: '',
-        content: '',
-      })
+      personalTaxReturnInPdf.mockRejectedValueOnce({})
 
       createSignedUrl = mockFileService.createSignedUrl as jest.Mock
 
@@ -69,7 +65,7 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
       const lastYear = new Date().getFullYear() - 1
       expect(personalTaxReturnInPdf).toHaveBeenCalledWith(
         user.nationalId,
-        lastYear.toString(),
+        lastYear,
       )
     })
 
@@ -77,7 +73,7 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
       const twoYearsAgo = new Date().getFullYear() - 2
       expect(personalTaxReturnInPdf).toHaveBeenCalledWith(
         user.nationalId,
-        twoYearsAgo.toString(),
+        twoYearsAgo,
       )
     })
 
@@ -127,7 +123,7 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
     it('should call personal tax return api with last year', () => {
       expect(personalTaxReturnInPdf).toHaveBeenCalledWith(
         user.nationalId,
-        lastYear.toString(),
+        lastYear,
       )
     })
 
@@ -152,9 +148,11 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
 
     it('should return correct values', () => {
       expect(then.result).toEqual({
-        key: signedUrl.key,
-        name: `Framtal_${user.nationalId}_${lastYear}.pdf`,
-        size: Base64.atob(content).length,
+        personalTaxReturn: {
+          key: signedUrl.key,
+          name: `Framtal_${user.nationalId}_${lastYear}.pdf`,
+          size: Base64.atob(content).length,
+        },
       })
     })
   })
@@ -198,7 +196,7 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
     it('should call personal tax return api with last year', () => {
       expect(personalTaxReturnInPdf).toHaveBeenCalledWith(
         user.nationalId,
-        lastYear.toString(),
+        lastYear,
       )
     })
 
