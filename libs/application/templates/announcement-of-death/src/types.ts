@@ -3,6 +3,13 @@ export enum RoleConfirmationEnum {
   DELEGATE = 'delegate',
 }
 
+export enum RelationEnum {
+  PARENT = 'parent',
+  CHILD = 'child',
+  SIBLING = 'sibling',
+  SPOUSE = 'spouse',
+}
+
 export interface ElectPersonType {
   roleConfirmation: RoleConfirmationEnum
   electedPersonName?: string
@@ -11,7 +18,7 @@ export interface ElectPersonType {
 }
 
 export interface EstateMember {
-  name: string
   nationalId: string
-  relation: string
+  relation: RelationEnum
+  hasForeignCitizenship?: boolean
 }
