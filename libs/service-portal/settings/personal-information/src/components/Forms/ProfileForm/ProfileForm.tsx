@@ -144,6 +144,14 @@ export const ProfileForm: FC<Props> = ({
     }
   }
 
+  const dropSideEffects = async () => {
+    if (emailDirty && telDirty) {
+      await submitEmptyEmailAndTel()
+    } else {
+      await migratedUserUpdate()
+    }
+  }
+
   return (
     <GridContainer>
       <GridRow marginBottom={10}>
@@ -214,8 +222,8 @@ export const ProfileForm: FC<Props> = ({
           {showDropModal && onCloseOverlay && (
             <DropModal
               type={showDropModal}
-              onDrop={submitEmptyEmailAndTel}
-              loading={updateLoading || deleteLoading}
+              onDrop={dropSideEffects}
+              loading={updateLoading || deleteLoading || userLoading}
               onClose={() => {
                 onCloseDropModal && onCloseDropModal()
                 setShowDropModal(undefined)
