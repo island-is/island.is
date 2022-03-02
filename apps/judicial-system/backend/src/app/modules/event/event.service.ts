@@ -139,7 +139,7 @@ export class EventService {
                 type: 'mrkdwn',
                 text: `${
                   errorEmojis[Math.floor(Math.random() * errorEmojis.length)]
-                } *${message}:*\n>${JSON.stringify(reason)}`,
+                } ${message}:\n>${JSON.stringify(reason)}`,
               },
             },
           ],

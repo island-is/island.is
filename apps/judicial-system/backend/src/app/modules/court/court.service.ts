@@ -135,8 +135,8 @@ export class CourtService {
     fileType: string,
     content: Buffer,
   ): Promise<string> {
-    return this.uploadStream(courtId, fileName, fileType, content).then(
-      (streamId) =>
+    return this.uploadStream(courtId, fileName, fileType, content)
+      .then((streamId) =>
         this.courtClientService.createDocument(courtId ?? '', {
           caseNumber: courtCaseNumber ?? '',
           subject,
@@ -144,7 +144,15 @@ export class CourtService {
           streamID: streamId,
           caseFolder: 'Gögn málsins',
         }),
-    )
+      )
+      .catch((reason) => {
+        this.eventService.postErrorEvent(
+          `*Failed to create a court document:*\n- courtId: ${courtId}\n- courtCaseNumber: ${courtCaseNumber}\n- subject: ${subject}\n- fileName: ${fileName}\n- fileType: ${fileType}`,
+          reason,
+        )
+
+        throw reason
+      })
   }
 
   async createCourtCase(
@@ -169,7 +177,7 @@ export class CourtService {
       })
       .catch((reason) => {
         this.eventService.postErrorEvent(
-          'Failed to create a court case',
+          `*Failed to create a court case:*\n- courtId: ${courtId}\n- type: ${type}\n- policeCaseNumber: ${policeCaseNumber}\n- isExtension: ${isExtension}`,
           reason,
         )
 
