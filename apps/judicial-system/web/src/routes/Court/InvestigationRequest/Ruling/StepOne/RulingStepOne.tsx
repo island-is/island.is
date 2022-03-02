@@ -9,6 +9,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 
 import RulingStepOneForm from './RulingStepOneForm'
+import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 
 const RulingStepOne = () => {
   const {
@@ -34,9 +35,13 @@ const RulingStepOne = () => {
       if (workingCase.legalArguments) {
         autofill('courtLegalArguments', workingCase.legalArguments, workingCase)
       }
-
-      setWorkingCase(workingCase)
     }
+
+    if (isAcceptingCaseDecision(workingCase.decision) && workingCase.demands) {
+      autofill('conclusion', workingCase.demands, workingCase)
+    }
+
+    setWorkingCase(workingCase)
   }, [autofill, isCaseUpToDate, setWorkingCase, workingCase])
 
   return (
