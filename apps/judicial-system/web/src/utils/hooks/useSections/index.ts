@@ -11,8 +11,7 @@ import { caseResult } from '@island.is/judicial-system-web/src/components/PageLa
 import { sections } from '@island.is/judicial-system-web/messages/Core/sections'
 import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-
+import * as Constants from '@island.is/judicial-system/consts'
 import {
   isAccusedStepValidRC,
   isCourtHearingArrangemenstStepValidRC,
@@ -22,8 +21,8 @@ import {
   isDefendantStepValidIC,
   isHearingArrangementsStepValidIC,
   isHearingArrangementsStepValidRC,
-  isOverviewStepValidIC,
-  isOverviewStepValidRC,
+  isReceptionAndAssignmentStepValidRC,
+  isReceptionAndAssignmentStepValidIC,
   isPoliceDemandsStepValidIC,
   isPoliceDemandsStepValidRC,
   isPoliceReportStepValidIC,
@@ -234,8 +233,17 @@ const useSections = () => {
       children: [
         {
           type: 'SUB_SECTION',
+          name: formatMessage(sections.courtSection.receptionAndAssignment),
+          href: `${Constants.IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`,
+        },
+        {
+          type: 'SUB_SECTION',
           name: formatMessage(sections.investigationCaseCourtSection.overview),
-          href: `${Constants.IC_OVERVIEW_ROUTE}/${id}`,
+          href:
+            (activeSubSection && activeSubSection > 1) ||
+            isReceptionAndAssignmentStepValidIC(workingCase)
+              ? `${Constants.IC_OVERVIEW_ROUTE}/${id}`
+              : undefined,
         },
         {
           type: 'SUB_SECTION',
@@ -243,8 +251,8 @@ const useSections = () => {
             sections.investigationCaseCourtSection.hearingArrangements,
           ),
           href:
-            (activeSubSection && activeSubSection > 1) ||
-            isOverviewStepValidIC(workingCase)
+            (activeSubSection && activeSubSection > 2) ||
+            isReceptionAndAssignmentStepValidIC(workingCase)
               ? `${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${id}`
               : undefined,
         },
@@ -254,9 +262,9 @@ const useSections = () => {
             sections.investigationCaseCourtSection.courtRecord,
           ),
           href:
-            (activeSubSection && activeSubSection > 2) ||
+            (activeSubSection && activeSubSection > 3) ||
             (hasCourtPermission(workingCase, user) &&
-              isOverviewStepValidIC(workingCase) &&
+              isReceptionAndAssignmentStepValidIC(workingCase) &&
               isCourtHearingArrangementsStepValidIC(workingCase))
               ? `${Constants.IC_COURT_RECORD_ROUTE}/${id}`
               : undefined,
@@ -267,9 +275,9 @@ const useSections = () => {
             sections.investigationCaseCourtSection.rulingStepOne,
           ),
           href:
-            (activeSubSection && activeSubSection > 3) ||
+            (activeSubSection && activeSubSection > 4) ||
             (hasCourtPermission(workingCase, user) &&
-              isOverviewStepValidIC(workingCase) &&
+              isReceptionAndAssignmentStepValidIC(workingCase) &&
               isCourtHearingArrangementsStepValidIC(workingCase) &&
               isCourtRecordStepValidIC(workingCase))
               ? `${Constants.IC_RULING_STEP_ONE_ROUTE}/${id}`
@@ -281,9 +289,9 @@ const useSections = () => {
             sections.investigationCaseCourtSection.rulingStepTwo,
           ),
           href:
-            (activeSubSection && activeSubSection > 4) ||
+            (activeSubSection && activeSubSection > 5) ||
             (hasCourtPermission(workingCase, user) &&
-              isOverviewStepValidIC(workingCase) &&
+              isReceptionAndAssignmentStepValidIC(workingCase) &&
               isCourtHearingArrangementsStepValidIC(workingCase) &&
               isCourtRecordStepValidIC(workingCase) &&
               isRulingStepOneValidIC(workingCase))
@@ -297,7 +305,7 @@ const useSections = () => {
           ),
           href:
             hasCourtPermission(workingCase, user) &&
-            isOverviewStepValidIC(workingCase) &&
+            isReceptionAndAssignmentStepValidIC(workingCase) &&
             isCourtHearingArrangementsStepValidIC(workingCase) &&
             isCourtRecordStepValidIC(workingCase) &&
             isRulingStepOneValidIC(workingCase) &&
@@ -321,15 +329,24 @@ const useSections = () => {
       children: [
         {
           type: 'SUB_SECTION',
+          name: formatMessage(sections.courtSection.receptionAndAssignment),
+          href: `${Constants.RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`,
+        },
+        {
+          type: 'SUB_SECTION',
           name: formatMessage(sections.courtSection.overview),
-          href: `${Constants.COURT_SINGLE_REQUEST_BASE_ROUTE}/${id}`,
+          href:
+            (activeSubSection && activeSubSection > 1) ||
+            isReceptionAndAssignmentStepValidRC(workingCase)
+              ? `${Constants.OVERVIEW_ROUTE}/${id}`
+              : undefined,
         },
         {
           type: 'SUB_SECTION',
           name: formatMessage(sections.courtSection.hearingArrangements),
           href:
-            (activeSubSection && activeSubSection > 1) ||
-            isOverviewStepValidRC(workingCase)
+            (activeSubSection && activeSubSection > 2) ||
+            isReceptionAndAssignmentStepValidRC(workingCase)
               ? `${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`
               : undefined,
         },
@@ -337,9 +354,9 @@ const useSections = () => {
           type: 'SUB_SECTION',
           name: formatMessage(sections.courtSection.courtRecord),
           href:
-            (activeSubSection && activeSubSection > 2) ||
+            (activeSubSection && activeSubSection > 3) ||
             (hasCourtPermission(workingCase, user) &&
-              isOverviewStepValidRC(workingCase) &&
+              isReceptionAndAssignmentStepValidRC(workingCase) &&
               isCourtHearingArrangemenstStepValidRC(workingCase))
               ? `${Constants.COURT_RECORD_ROUTE}/${id}`
               : undefined,
@@ -348,9 +365,9 @@ const useSections = () => {
           type: 'SUB_SECTION',
           name: formatMessage(sections.courtSection.rulingStepOne),
           href:
-            (activeSubSection && activeSubSection > 3) ||
+            (activeSubSection && activeSubSection > 4) ||
             (hasCourtPermission(workingCase, user) &&
-              isOverviewStepValidRC(workingCase) &&
+              isReceptionAndAssignmentStepValidRC(workingCase) &&
               isCourtHearingArrangemenstStepValidRC(workingCase) &&
               isCourtRecordStepValidRC(workingCase))
               ? `${Constants.RULING_STEP_ONE_ROUTE}/${id}`
@@ -360,9 +377,9 @@ const useSections = () => {
           type: 'SUB_SECTION',
           name: formatMessage(sections.courtSection.rulingStepTwo),
           href:
-            (activeSubSection && activeSubSection > 4) ||
+            (activeSubSection && activeSubSection > 5) ||
             (hasCourtPermission(workingCase, user) &&
-              isOverviewStepValidRC(workingCase) &&
+              isReceptionAndAssignmentStepValidRC(workingCase) &&
               isCourtHearingArrangemenstStepValidRC(workingCase) &&
               isCourtRecordStepValidRC(workingCase) &&
               isRulingStepOneValidRC(workingCase))
@@ -374,7 +391,7 @@ const useSections = () => {
           name: formatMessage(sections.courtSection.conclusion),
           href:
             hasCourtPermission(workingCase, user) &&
-            isOverviewStepValidRC(workingCase) &&
+            isReceptionAndAssignmentStepValidRC(workingCase) &&
             isCourtHearingArrangemenstStepValidRC(workingCase) &&
             isCourtRecordStepValidRC(workingCase) &&
             isRulingStepOneValidRC(workingCase) &&

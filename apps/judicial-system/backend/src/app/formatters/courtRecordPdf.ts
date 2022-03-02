@@ -167,17 +167,11 @@ function constructRestrictionCourtRecordPdf(
       }),
     ),
   )
-
-  if (theCase.accusedBookings) {
-    addEmptyLines(doc)
-    addNormalJustifiedText(doc, theCase.accusedBookings)
-  }
-
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    theCase.litigationPresentations ??
-      formatMessage(courtRecord.missingLitigationPresentations),
+    theCase.sessionBookings ??
+      formatMessage(courtRecord.missingSessionBookings),
   )
   setLineGap(doc, 3)
   addEmptyLines(doc, 2)
@@ -417,17 +411,11 @@ function constructInvestigationCourtRecordPdf(
       }),
     ),
   )
-
-  if (theCase.accusedBookings) {
-    addEmptyLines(doc)
-    addNormalJustifiedText(doc, theCase.accusedBookings)
-  }
-
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    theCase.litigationPresentations ??
-      formatMessage(courtRecord.missingLitigationPresentations),
+    theCase.sessionBookings ??
+      formatMessage(courtRecord.missingSessionBookings),
   )
   setLineGap(doc, 3)
   addEmptyLines(doc, 2)
