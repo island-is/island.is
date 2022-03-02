@@ -1,23 +1,24 @@
-import {
-  Column,
-  DataType,
-  CreatedAt,
-  UpdatedAt,
-  Model,
-  Table,
-  PrimaryKey,
-  ForeignKey,
-} from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
-import { PersonalRepresentativeRightType } from '../../personal-representative/entities/models/personal-representative-right-type.model'
-import { ApiScope } from './api-scope.model'
+import {
+  BelongsTo,
+  Column,
+  CreatedAt,
+  DataType,
+  ForeignKey,
+  Model,
+  PrimaryKey,
+  Table,
+  UpdatedAt,
+} from 'sequelize-typescript'
+import { ApiScope } from '../../../entities/models/api-scope.model'
+import { PersonalRepresentativeRightType } from './personal-representative-right-type.model'
 
 @Table({
   tableName: 'personal_representative_scope_permission',
   indexes: [
     {
       unique: true,
-      fields: ['rightTypeCode', 'apiScopeName'],
+      fields: ['right_type_code', 'api_scope_name'],
     },
   ],
 })
@@ -54,4 +55,7 @@ export class PersonalRepresentativeScopePermission extends Model<PersonalReprese
   @UpdatedAt
   @ApiProperty()
   readonly modified?: Date
+
+  @BelongsTo(() => PersonalRepresentativeRightType)
+  rightType!: PersonalRepresentativeRightType
 }
