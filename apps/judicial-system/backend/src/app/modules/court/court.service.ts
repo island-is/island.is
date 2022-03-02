@@ -3,7 +3,7 @@ import formatISO from 'date-fns/formatISO'
 import { Inject, Injectable } from '@nestjs/common'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
-import type { CaseType } from '@island.is/judicial-system/types'
+import type { CaseType, User } from '@island.is/judicial-system/types'
 
 import { DATE_FACTORY } from '../../factories'
 import { EventService } from '../event'
@@ -52,7 +52,7 @@ export class CourtService {
   ) {}
 
   private uploadStream(
-    courtId: string | undefined,
+    courtId: string,
     fileName: string,
     contentType: string,
     content: Buffer,
@@ -64,14 +64,16 @@ export class CourtService {
   }
 
   async createRequest(
-    courtId: string | undefined,
-    courtCaseNumber: string | undefined,
+    user: User,
+    caseId: string,
+    courtId: string,
+    courtCaseNumber: string,
     content: Buffer,
   ): Promise<string> {
     return this.uploadStream(courtId, 'Krafa.pdf', 'application/pdf', content)
       .then((streamId) =>
-        this.courtClientService.createDocument(courtId ?? '', {
-          caseNumber: courtCaseNumber ?? '',
+        this.courtClientService.createDocument(courtId, {
+          caseNumber: courtCaseNumber,
           subject: 'Krafa',
           fileName: 'Krafa.pdf',
           streamID: streamId,
@@ -80,7 +82,7 @@ export class CourtService {
       )
       .catch((reason) => {
         this.eventService.postErrorEvent(
-          `*Failed to create a court request:*\n- courtId: ${courtId}\n- courtCaseNumber: ${courtCaseNumber}`,
+          `*Failed to create a court request:*\n- caseId: ${caseId}\n- actor: ${user.name}\n- institution: ${user.institution?.name}\n- courtId: ${courtId}\n- courtCaseNumber: ${courtCaseNumber}`,
           reason,
         )
 
@@ -89,8 +91,10 @@ export class CourtService {
   }
 
   async createCourtRecord(
-    courtId: string | undefined,
-    courtCaseNumber: string | undefined,
+    user: User,
+    caseId: string,
+    courtId: string,
+    courtCaseNumber: string,
     fileName: string,
     content: Buffer,
   ): Promise<string> {
@@ -101,8 +105,8 @@ export class CourtService {
       content,
     )
       .then((streamId) =>
-        this.courtClientService.createThingbok(courtId ?? '', {
-          caseNumber: courtCaseNumber ?? '',
+        this.courtClientService.createThingbok(courtId, {
+          caseNumber: courtCaseNumber,
           subject: fileName,
           fileName: `${fileName}.pdf`,
           streamID: streamId,
@@ -110,7 +114,7 @@ export class CourtService {
       )
       .catch((reason) => {
         this.eventService.postErrorEvent(
-          `*Failed to create a court record:*\n- courtId: ${courtId}\n- courtCaseNumber: ${courtCaseNumber}\n- fileName: ${fileName}`,
+          `*Failed to create a court record:*\n- caseId: ${caseId}\n- actor: ${user.name}\n- institution: ${user.institution?.name}\n- courtId: ${courtId}\n- courtCaseNumber: ${courtCaseNumber}\n- fileName: ${fileName}`,
           reason,
         )
 
@@ -119,8 +123,10 @@ export class CourtService {
   }
 
   async createRuling(
-    courtId: string | undefined,
-    courtCaseNumber: string | undefined,
+    user: User,
+    caseId: string,
+    courtId: string,
+    courtCaseNumber: string,
     fileName: string,
     content: Buffer,
   ): Promise<string> {
@@ -132,7 +138,7 @@ export class CourtService {
     )
       .then((streamId) =>
         this.courtClientService.createDocument(courtId ?? '', {
-          caseNumber: courtCaseNumber ?? '',
+          caseNumber: courtCaseNumber,
           subject: fileName,
           fileName: `${fileName}.pdf`,
           streamID: streamId,
@@ -141,7 +147,7 @@ export class CourtService {
       )
       .catch((reason) => {
         this.eventService.postErrorEvent(
-          `*Failed to create a court ruling:*\n- courtId: ${courtId}\n- courtCaseNumber: ${courtCaseNumber}\n- fileName: ${fileName}`,
+          `*Failed to create a court ruling:*\n- caseId: ${caseId}\n- actor: ${user.name}\n- institution: ${user.institution?.name}\n- courtId: ${courtId}\n- courtCaseNumber: ${courtCaseNumber}\n- fileName: ${fileName}`,
           reason,
         )
 
@@ -150,8 +156,10 @@ export class CourtService {
   }
 
   async createDocument(
-    courtId: string | undefined,
-    courtCaseNumber: string | undefined,
+    user: User,
+    caseId: string,
+    courtId: string,
+    courtCaseNumber: string,
     subject: string,
     fileName: string,
     fileType: string,
@@ -159,8 +167,8 @@ export class CourtService {
   ): Promise<string> {
     return this.uploadStream(courtId, fileName, fileType, content)
       .then((streamId) =>
-        this.courtClientService.createDocument(courtId ?? '', {
-          caseNumber: courtCaseNumber ?? '',
+        this.courtClientService.createDocument(courtId, {
+          caseNumber: courtCaseNumber,
           subject,
           fileName,
           streamID: streamId,
@@ -169,7 +177,7 @@ export class CourtService {
       )
       .catch((reason) => {
         this.eventService.postErrorEvent(
-          `*Failed to create a court document:*\n- courtId: ${courtId}\n- courtCaseNumber: ${courtCaseNumber}\n- subject: ${subject}\n- fileName: ${fileName}\n- fileType: ${fileType}`,
+          `*Failed to create a court document:*\n- caseId: ${caseId}\n- actor: ${user.name}\n- institution: ${user.institution?.name}\n- courtId: ${courtId}\n- courtCaseNumber: ${courtCaseNumber}\n- subject: ${subject}\n- fileName: ${fileName}\n- fileType: ${fileType}`,
           reason,
         )
 
@@ -178,6 +186,8 @@ export class CourtService {
   }
 
   async createCourtCase(
+    user: User,
+    caseId: string,
     courtId: string,
     type: CaseType,
     policeCaseNumber: string,
@@ -199,7 +209,7 @@ export class CourtService {
       })
       .catch((reason) => {
         this.eventService.postErrorEvent(
-          `*Failed to create a court case:*\n- courtId: ${courtId}\n- type: ${type}\n- policeCaseNumber: ${policeCaseNumber}\n- isExtension: ${isExtension}`,
+          `*Failed to create a court case:*\n- caseId: ${caseId}\n- actor: ${user.name}\n- institution: ${user.institution?.name}\n- courtId: ${courtId}\n- type: ${type}\n- policeCaseNumber: ${policeCaseNumber}\n- isExtension: ${isExtension}`,
           reason,
         )
 
