@@ -28,4 +28,10 @@ export const error = defineMessages({
     description:
       'Error message when a required field has not pressed a radio option',
   },
+  feeProviderError: {
+    id: 'gfl.application:error.feeProviderError',
+    defaultMessage:
+      'Villa kom upp við að sækja verðskrá hjá Fjársýslunni fyrir Fiskistofu',
+    description: 'Error came up',
+  },
 })

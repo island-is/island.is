@@ -8,21 +8,15 @@ import {
   ApplicationTypes,
   DefaultEvents,
 } from '@island.is/application/core'
-import { States } from '../constants'
+import { Events, States, Roles } from '../constants'
 import { GeneralFishingLicenseSchema } from './dataSchema'
 import { application } from './messages'
-import * as z from 'zod'
-
-enum Roles {
-  APPLICANT = 'applicant',
-}
-
-type GeneralFishingLicenseEvent = { type: DefaultEvents.SUBMIT }
+import { ApiActions } from '../shared'
 
 const GeneralFishingLicenseTemplate: ApplicationTemplate<
   ApplicationContext,
-  ApplicationStateSchema<GeneralFishingLicenseEvent>,
-  GeneralFishingLicenseEvent
+  ApplicationStateSchema<Events>,
+  Events
 > = {
   type: ApplicationTypes.GENERAL_FISHING_LICENSE,
   name: application.general.name,
@@ -48,21 +42,67 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
+              formLoader: async () =>
+                await import(
+                  '../forms/GeneralFishingLicenseForm/index'
+                ).then((val) => Promise.resolve(val.GeneralFishingLicenseForm)),
+              actions: [
+                {
+                  event: DefaultEvents.PAYMENT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              read: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
+          [DefaultEvents.REJECT]: {
+            target: States.DECLINED,
+          },
+        },
+      },
+      [States.PAYMENT]: {
+        meta: {
+          name: 'Payment state',
+          actionCard: {
+            description: application.labels.actionCardPayment,
+          },
+          progress: 0.9,
+          // Application is only suppose to live for an hour while building it, change later
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 3600 * 1000,
+          },
+          onEntry: {
+            apiModuleAction: ApiActions.createCharge,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/GeneralFishingLicenseForm/index').then((val) =>
-                  Promise.resolve(val.GeneralFishingLicenseForm),
+                import('../forms/GeneralFishingLicensePaymentForm').then(
+                  (val) => val.GeneralFishingLicensePaymentForm,
                 ),
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
+                {
+                  event: DefaultEvents.ABORT,
+                  name: 'Hætta við',
+                  type: 'reject',
+                },
               ],
               write: 'all',
             },
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.SUBMITTED,
-          },
+          [DefaultEvents.SUBMIT]: { target: States.SUBMITTED },
+          [DefaultEvents.ABORT]: { target: States.DRAFT },
         },
       },
       [States.SUBMITTED]: {
@@ -75,6 +115,9 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
             shouldBePruned: true,
             whenToPrune: 3600 * 1000,
           },
+          onEntry: {
+            apiModuleAction: ApiActions.submitApplication,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -84,9 +127,34 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
                 ).then((val) =>
                   Promise.resolve(val.GeneralFishingLicenseSubmittedForm),
                 ),
+              read: 'all',
             },
           ],
         },
+        type: 'final' as const,
+      },
+      [States.DECLINED]: {
+        meta: {
+          name: 'Declined',
+          progress: 1,
+          // Application is only suppose to live for an hour while building it, change later
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 3600 * 1000,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/GeneralFishingLicenseDeclinedForm').then(
+                  (val) => val.GeneralFishingLicenseDeclinedForm,
+                ),
+              read: 'all',
+            },
+          ],
+        },
+        type: 'final' as const,
       },
     },
   },

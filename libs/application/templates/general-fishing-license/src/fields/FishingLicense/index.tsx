@@ -15,6 +15,7 @@ import { queryFishingLicense } from '../../graphql/queries'
 import { RadioController } from '@island.is/shared/form-fields'
 import { fishingLicense, shipSelection } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
+import { FishingLicenseEnum } from '../../types'
 
 export const FishingLicense: FC<FieldBaseProps> = ({
   application,
@@ -67,7 +68,7 @@ export const FishingLicense: FC<FieldBaseProps> = ({
         <Text variant="h4" marginBottom={3}>
           {formatMessage(fishingLicense.labels.radioButtonTitle)}
         </Text>
-        {loading ? (
+        {/* loading ? (
           <LoadingDots large color="gradient" />
         ) : (
           <RadioController
@@ -91,7 +92,23 @@ export const FishingLicense: FC<FieldBaseProps> = ({
               },
             )}
           />
-        )}
+            ) */}
+        {
+          // Temporary until fishing license are ready from service
+          <RadioController
+            id={field.id}
+            largeButtons
+            backgroundColor="blue"
+            error={errors && getErrorViaPath(errors, field.id)}
+            options={[
+              {
+                value: FishingLicenseEnum.CATCHLIMIT,
+                label: formatMessage(fishingLicense.labels.catchMark),
+                tooltip: formatMessage(fishingLicense.tooltips.catchMark),
+              },
+            ]}
+          />
+        }
       </Box>
     </>
   )
