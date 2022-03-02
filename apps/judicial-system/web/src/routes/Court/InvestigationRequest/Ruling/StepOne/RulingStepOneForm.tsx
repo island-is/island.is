@@ -48,7 +48,8 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
 
   const [courtCaseFactsEM, setCourtCaseFactsEM] = useState<string>('')
   const [courtLegalArgumentsEM, setCourtLegalArgumentsEM] = useState<string>('')
-  const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState('')
+  const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState<string>('')
+  const [conclusionEM, setConclusionEM] = useState<string>('')
 
   return (
     <>
@@ -269,20 +270,25 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
               removeTabsValidateAndSet(
                 'conclusion',
                 event.target.value,
-                [],
+                ['empty'],
                 workingCase,
                 setWorkingCase,
+                conclusionEM,
+                setConclusionEM,
               )
             }
             onBlur={(event) =>
               validateAndSendToServer(
                 'conclusion',
                 event.target.value,
-                [],
+                ['empty'],
                 workingCase,
                 updateCase,
+                setConclusionEM,
               )
             }
+            hasError={conclusionEM !== ''}
+            errorMessage={conclusionEM}
             rows={7}
             autoExpand={{ on: true, maxHeight: 300 }}
             textarea
