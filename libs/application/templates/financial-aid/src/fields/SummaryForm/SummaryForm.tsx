@@ -27,14 +27,51 @@ import {
   getMessageHomeCircumstances,
 } from '../../lib/formatters'
 import AllFiles from './AllFiles'
+import useApplication from '../../lib/hooks/useApplication'
 
-const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
+const SummaryForm = ({
+  application,
+  goToScreen,
+  setBeforeSubmitCallback,
+}: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { id, answers, externalData } = application
 
   const { setValue } = useFormContext()
 
   const formCommentId = 'formComment'
+
+  const { createApplication } = useApplication()
+
+  // setBeforeSubmitCallback &&
+  //   setBeforeSubmitCallback(async () => {
+  //     console.log('hello')
+  //     await createApplication(application)
+
+  //     // if (!pdfUrl) {
+  //     //   return [false, 'no pdf url']
+  //     // }
+  //     // dispatchFileSignature({ type: FileSignatureActionTypes.REQUEST })
+  //     // const documentToken = await requestFileSignature({
+  //     //   variables: {
+  //     //     input: {
+  //     //       id: application.id,
+  //     //       type: pdfType,
+  //     //     },
+  //     //   },
+  //     // })
+  //     //   .then((response) => {
+  //     //     return response.data?.requestFileSignature?.documentToken
+  //     //   })
+  //     //   .catch((error: ApolloError) => {
+  //     //     dispatchFileSignature({
+  //     //       type: FileSignatureActionTypes.ERROR,
+  //     //       status: FileSignatureStatus.REQUEST_ERROR,
+  //     //       error: error.graphQLErrors[0].extensions?.code ?? 500,
+  //     //     })
+  //     //   })
+  //     return [false, 'Failed to update application']
+  //   })
 
   return (
     <>

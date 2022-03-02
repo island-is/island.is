@@ -33,16 +33,22 @@ const Confirmation = ({ application, refetch }: FAFieldBaseProps) => {
       <Box marginTop={2}>
         <DescriptionText text={confirmation.nextSteps.content} />
       </Box>
-      <Text as="h3" variant="h3" marginTop={[4, 4, 5]}>
-        {formatMessage(confirmation.sharedLink.title)}
-      </Text>
-      <Box marginTop={2}>
-        <CopyUrl
-          inputLabel={formatMessage(copyUrl.inputLabel)}
-          buttonLabel={formatMessage(copyUrl.buttonLabel)}
-          successMessage={formatMessage(copyUrl.successMessage)}
-        />
-      </Box>
+
+      {externalData.nationalRegistry?.data?.applicant?.spouse && (
+        <>
+          <Text as="h3" variant="h3" marginTop={[4, 4, 5]}>
+            {formatMessage(confirmation.sharedLink.title)}
+          </Text>
+          <Box marginTop={2}>
+            <CopyUrl
+              inputLabel={formatMessage(copyUrl.inputLabel)}
+              buttonLabel={formatMessage(copyUrl.buttonLabel)}
+              successMessage={formatMessage(copyUrl.successMessage)}
+            />
+          </Box>
+        </>
+      )}
+
       <Text as="h3" variant="h3" marginTop={[4, 4, 5]}>
         {formatMessage(confirmation.links.title)}
       </Text>
