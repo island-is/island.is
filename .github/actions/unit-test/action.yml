@@ -49,7 +49,7 @@ runs:
       shell: bash
 
     - name: Upload coverage reports
-      run: ./scripts/ci/run-in-parallel.sh 50_upload-coverage
+      run: ./scripts/ci/run-in-parallel.sh 50_upload-coverage || true # If for some reason codecov is down, we can still build. This is not a perfect solution though.
       shell: bash
       env:
         CODECOV_TOKEN: ${{ inputs.codecov-token }}
