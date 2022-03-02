@@ -49,6 +49,8 @@ import { Discount, DiscountService } from '../discount'
 import { AuthGuard } from '../common'
 import { NationalRegistryService } from '../nationalRegistry'
 import type { HttpRequest } from '../../app.types'
+import * as kennitala from 'kennitala'
+import { MAX_AGE_LIMIT } from '../nationalRegistry/nationalRegistry.service'
 
 @ApiTags('Flights')
 @Controller('api/public')
@@ -221,7 +223,10 @@ export class PublicFlightController {
 
     // TODO: this is a quickly made temporary hotfix and should be rewritten
     // along when the nationalregistry module is rewritten for the client V2 completely
-    if (!meetsADSRequirements) {
+    if (
+      !meetsADSRequirements &&
+      kennitala.info(discount.nationalId).age < MAX_AGE_LIMIT
+    ) {
       const userCustodiansCacheKey = `userService_${discount.nationalId}_custodians`
       const cacheValue = await this.cacheManager.get(userCustodiansCacheKey)
 
