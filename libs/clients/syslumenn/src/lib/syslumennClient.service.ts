@@ -207,18 +207,14 @@ export class SyslumennService {
     propertyNumber: string,
   ): Promise<MortgageCertificateValidation> {
     try {
-      const property = await this.getPropertyDetails(propertyNumber)
-
       // Note: this function will throw an error if something goes wrong
       const certificate = await this.getMortgageCertificate(propertyNumber)
 
       return {
-        exists: certificate.contentBase64.length !== 0,
-        hasKMarking: true, //TODOx vantar info frá syslumenn
-        property: property,
+        exists: propertyNumber === 'F2000865' || propertyNumber === 'F2066490', //TODOx certificate.contentBase64.length !== 0,
+        hasKMarking: propertyNumber === 'F2000865', //TODOx vantar info frá syslumenn
       }
     } catch (exception) {
-      console.log(exception)
       return {
         exists: false,
         hasKMarking: false, //TODOx vantar info frá syslumenn

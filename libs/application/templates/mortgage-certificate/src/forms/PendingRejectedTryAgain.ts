@@ -5,7 +5,6 @@ import {
   FormModes,
   DefaultEvents,
   buildSubmitField,
-  buildSubSection,
   buildSection,
   buildDescriptionField,
   buildMultiField,

@@ -99,5 +99,4 @@ export interface MortgageCertificate {
 export interface MortgageCertificateValidation {
   exists: boolean
   hasKMarking: boolean
-  property?: PropertyDetail
 }

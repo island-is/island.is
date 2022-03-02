@@ -1,10 +1,10 @@
 import { DefaultEvents } from '@island.is/application/core'
 
 export enum MCEvents {
-  PENDING = 'PENDING',
+  //PENDING = 'PENDING',
   PENDING_REJECTED = 'PENDING_REJECTED',
   PENDING_REJECTED_TRY_AGAIN = 'PENDING_REJECTED_TRY_AGAIN',
-  ERROR = 'ERROR',
+  //ERROR = 'ERROR',
 }
 
 export type Events =
@@ -12,10 +12,10 @@ export type Events =
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.PAYMENT }
   | { type: DefaultEvents.REJECT }
-  | { type: MCEvents.PENDING }
+  //| { type: MCEvents.PENDING }
   | { type: MCEvents.PENDING_REJECTED }
   | { type: MCEvents.PENDING_REJECTED_TRY_AGAIN }
-  | { type: MCEvents.ERROR }
+//| { type: MCEvents.ERROR }
 
 export enum States {
   DRAFT = 'draft',

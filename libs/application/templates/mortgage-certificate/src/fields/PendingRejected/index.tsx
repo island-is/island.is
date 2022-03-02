@@ -1,5 +1,5 @@
-import React, { FC, useEffect, useState } from 'react'
-import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
+import React, { FC, useState } from 'react'
+import { FieldBaseProps } from '@island.is/application/core'
 import {
   Box,
   Text,
@@ -16,24 +16,23 @@ import { m } from '../../lib/messages'
 
 export const PendingRejected: FC<FieldBaseProps> = ({ application, field }) => {
   const { externalData } = application
-  const { answers } = application
   const { formatMessage } = useLocale()
 
-  const [stateName, setStateName] = useState<string>(MCEvents.PENDING_REJECTED)
+  const [runEvent, setRunEvent] = useState<string | undefined>(undefined)
 
   const [submitApplication] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => console.error(e.message),
   })
 
-  const handleStateChange = (newStateName: string) => {
-    if (stateName !== newStateName) {
-      setStateName(newStateName)
+  const handleStateChange = (newRunEvent: string) => {
+    if (runEvent !== newRunEvent) {
+      setRunEvent(newRunEvent)
 
       submitApplication({
         variables: {
           input: {
             id: application.id,
-            event: newStateName,
+            event: newRunEvent,
             answers: application.answers,
           },
         },
@@ -49,9 +48,8 @@ export const PendingRejected: FC<FieldBaseProps> = ({ application, field }) => {
     handleStateChange(MCEvents.PENDING_REJECTED_TRY_AGAIN)
   }
 
-  const selectedProperty = (externalData.validateMortgageCertificate?.data as {
-    property: PropertyDetail
-  })?.property
+  const selectedProperty = externalData.getPropertyDetails
+    ?.data as PropertyDetail
 
   return (
     <Box>

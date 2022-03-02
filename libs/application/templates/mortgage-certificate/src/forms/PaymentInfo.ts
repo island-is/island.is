@@ -6,8 +6,6 @@ import {
   buildSubmitField,
   Form,
   FormModes,
-  buildExternalDataProvider,
-  buildDataProviderItem,
   buildCustomField,
   DefaultEvents,
 } from '@island.is/application/core'

@@ -8,7 +8,6 @@ import {
   Attachment,
   PersonType,
   MortgageCertificate,
-  MortgageCertificateValidation,
 } from '@island.is/clients/syslumenn'
 import { generateSyslumennNotifyErrorEmail } from './emailGenerators/syslumennNotifyError'
 import { generateSyslumennSubmitRequestErrorEmail } from './emailGenerators/syslumennSubmitRequestError'
@@ -19,6 +18,7 @@ import {
   SubmitRequestToSyslumennResult,
 } from './types'
 import { ChargeItemCode } from '@island.is/shared/constants'
+import { PropertyDetail } from '@island.is/api/domains/assets'
 
 @Injectable()
 export class MortgageCertificateSubmissionService {
@@ -72,15 +72,13 @@ export class MortgageCertificateSubmissionService {
     }
   }
 
-  async validateMortgageCertificate({
+  async getPropertyDetails({
     application,
-  }: TemplateApiModuleActionProps): Promise<MortgageCertificateValidation> {
+  }: TemplateApiModuleActionProps): Promise<PropertyDetail> {
     const propertyNumber = (application.answers.selectProperty as {
       propertyNumber: string
     }).propertyNumber
-    return await this.mortgageCertificateService.validateMortgageCertificate(
-      propertyNumber,
-    )
+    return await this.syslumennService.getPropertyDetails(propertyNumber)
   }
 
   async getMortgageCertificate({

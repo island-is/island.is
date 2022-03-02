@@ -3,16 +3,13 @@ import {
   buildDescriptionField,
   buildMultiField,
   buildSection,
-  buildSubmitField,
   Form,
   FormModes,
   buildExternalDataProvider,
   buildDataProviderItem,
   buildCustomField,
-  DefaultEvents,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
-import { MCEvents } from '../lib/constants'
 
 export const MortgageCertificateForm: Form = buildForm({
   id: 'MortgageCertificateFormDraft',
@@ -73,7 +70,7 @@ export const MortgageCertificateForm: Form = buildForm({
             buildCustomField({
               id: 'selectProperty',
               title: '',
-              component: 'PropertiesManager',
+              component: 'SelectProperty',
             }),
           ],
         }),

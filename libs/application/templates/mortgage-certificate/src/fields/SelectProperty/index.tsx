@@ -1,51 +1,47 @@
-import React, { FC, useState } from 'react'
-import { FieldBaseProps, DefaultEvents } from '@island.is/application/core'
-import {
-  Box,
-  Text,
-  AlertMessage,
-  Button,
-  Divider,
-} from '@island.is/island-ui/core'
-import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
+import React, { FC, useEffect, useState } from 'react'
 import { useMutation } from '@apollo/client'
-import { PropertyDetail } from '../../types/schema'
-import { gql, useLazyQuery } from '@apollo/client'
-import { VALIDATE_MORTGAGE_CERTIFICATE_QUERY } from '../../graphql/queries'
+import { useFormContext } from 'react-hook-form'
+import { FieldBaseProps, DefaultEvents } from '@island.is/application/core'
+import { Box, AlertMessage, Divider, Button } from '@island.is/island-ui/core'
+import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
+import { MCEvents } from '../../lib/constants'
+import { PropertiesManager } from './PropertiesManager'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
+import { gql, useLazyQuery } from '@apollo/client'
+import { VALIDATE_MORTGAGE_CERTIFICATE_QUERY } from '../../graphql/queries'
 
 export const validateCertificateMutation = gql`
   ${VALIDATE_MORTGAGE_CERTIFICATE_QUERY}
 `
 
-export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
+export const SelectProperty: FC<FieldBaseProps> = ({
   application,
   field,
   refetch,
 }) => {
-  const { externalData } = application
-
-  const { formatMessage } = useLocale()
   const [showErrorMsg, setShowErrorMsg] = useState<boolean>(false)
   const [runEvent, setRunEvent] = useState<string | undefined>(undefined)
+
+  const { formatMessage } = useLocale()
+  const { getValues } = useFormContext()
+
   const [submitApplication] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => console.error(e.message),
   })
 
-  const selectedProperty = externalData.getPropertyDetails
-    ?.data as PropertyDetail
-
   const handleStateChangeAndRefetch = (newRunEvent: string) => {
     if (runEvent !== newRunEvent) {
       setRunEvent(newRunEvent)
+
+      const updatedAnswers = { ...application.answers, ...getValues() }
 
       submitApplication({
         variables: {
           input: {
             id: application.id,
             event: newRunEvent,
-            answers: application.answers,
+            answers: updatedAnswers,
           },
         },
       })
@@ -62,11 +58,6 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
   }
 
   const [runQuery, { loading }] = useLazyQuery(validateCertificateMutation, {
-    variables: {
-      input: {
-        propertyNumber: selectedProperty?.propertyNumber,
-      },
-    },
     onCompleted(result) {
       setShowErrorMsg(false)
 
@@ -75,9 +66,16 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
         hasKMarking: boolean
       }
 
-      if (!exists || !hasKMarking) {
+      // no certificate found, we go to draft
+      if (!exists) {
         setShowErrorMsg(true)
-      } else {
+      }
+      // certificate found, but no k marking found, we send to error state
+      else if (exists && !hasKMarking) {
+        handleStateChangeAndRefetch(MCEvents.PENDING_REJECTED)
+      }
+      // otherwise if all is good, we send him to payment state
+      else if (exists && hasKMarking) {
         handleStateChangeAndRefetch(DefaultEvents.PAYMENT)
       }
     },
@@ -87,33 +85,29 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
     fetchPolicy: 'no-cache',
   })
 
-  const handleClickValidateMortgageCertificate = () => {
-    runQuery()
+  const handleNext: any = () => {
+    const updatedAnswers = { ...application.answers, ...getValues() }
+    const selectedPropertyNumber = (updatedAnswers.selectProperty as {
+      propertyNumber: string
+    })?.propertyNumber
+
+    runQuery({
+      variables: { input: { propertyNumber: selectedPropertyNumber } },
+    })
   }
 
   return (
-    <Box>
-      <Box
-        borderRadius="standard"
-        background={'blue100'}
-        paddingX={2}
-        paddingY={1}
-        marginBottom={5}
-      >
-        <Text fontWeight="semiBold">Valin fasteign</Text>
-        <Text>
-          {selectedProperty?.propertyNumber}{' '}
-          {selectedProperty?.defaultAddress?.display}
-        </Text>
+    <>
+      <PropertiesManager application={application} field={field} />
+      <Box paddingBottom={5}>
+        {showErrorMsg && (
+          <AlertMessage
+            type="error"
+            title={formatMessage(m.errorSheriffApiTitle)}
+            message={formatMessage(m.errorSheriffApiMessage)}
+          />
+        )}
       </Box>
-      <Box paddingBottom={3} hidden={loading || !showErrorMsg}>
-        <AlertMessage
-          type="error"
-          title="Ekki gekk að sækja vottorð fyrir þessa eign"
-          message="Vinsamlega hafðu samband við sýslumann, það er búið að senda inn beiðni um leiðréttingu"
-        />
-      </Box>
-
       <Divider />
       <Box
         paddingTop={5}
@@ -122,13 +116,13 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
         display="flex"
       >
         <Button
-          onClick={() => handleClickValidateMortgageCertificate()}
-          disabled={loading}
+          onClick={(e: any) => handleNext(e)}
           icon="arrowForward"
+          disabled={loading}
         >
           {formatMessage(m.continue)}
         </Button>
       </Box>
-    </Box>
+    </>
   )
 }

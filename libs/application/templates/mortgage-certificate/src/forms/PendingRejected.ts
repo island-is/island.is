@@ -3,8 +3,6 @@ import {
   buildCustomField,
   Form,
   FormModes,
-  DefaultEvents,
-  buildSubmitField,
   buildSubSection,
   buildSection,
 } from '@island.is/application/core'

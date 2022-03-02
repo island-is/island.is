@@ -57,7 +57,7 @@ const template: ApplicationTemplate<
             whenToPrune: 24 * 3600 * 1000,
           },
           onExit: {
-            apiModuleAction: ApiActions.validateMortgageCertificate,
+            apiModuleAction: ApiActions.getPropertyDetails,
           },
           roles: [
             {
@@ -68,7 +68,7 @@ const template: ApplicationTemplate<
                 ),
               actions: [
                 {
-                  event: MCEvents.PENDING,
+                  event: DefaultEvents.PAYMENT,
                   name: 'Staðfesta',
                   type: 'primary',
                 },
@@ -78,42 +78,8 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [MCEvents.PENDING]: { target: States.PENDING },
-          [DefaultEvents.SUBMIT]: { target: States.PENDING },
-        },
-      },
-      [States.PENDING]: {
-        meta: {
-          name: 'Sækja veðbókarvottorð',
-          actionCard: {
-            tag: {
-              label: m.actionCardDraft,
-              variant: 'blue',
-            },
-          },
-          progress: 0.25,
-          lifecycle: {
-            shouldBeListed: false,
-            shouldBePruned: true,
-            // Applications that stay in this state for 24 hours will be pruned automatically
-            whenToPrune: 24 * 3600 * 1000,
-          },
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/Pending').then((val) => val.Pending),
-              actions: [
-                { event: DefaultEvents.SUBMIT, name: 'Áfram', type: 'primary' },
-              ],
-              write: 'all',
-            },
-          ],
-        },
-        on: {
           [DefaultEvents.PAYMENT]: { target: States.PAYMENT_INFO },
           [MCEvents.PENDING_REJECTED]: { target: States.PENDING_REJECTED },
-          [MCEvents.ERROR]: { target: States.DRAFT },
           [DefaultEvents.SUBMIT]: { target: States.PAYMENT_INFO },
         },
       },
