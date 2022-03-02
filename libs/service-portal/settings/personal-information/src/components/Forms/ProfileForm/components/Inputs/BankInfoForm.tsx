@@ -16,7 +16,7 @@ import { InputController } from '@island.is/shared/form-fields'
 import { useForm } from 'react-hook-form'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { BankInfoTypes } from '../../../ProfileForm/types/form'
-import * as styles from './BankInfo.css'
+import * as styles from './ProfileForms.css'
 
 interface Props {
   bankInfo?: BankInfoTypes
@@ -80,8 +80,8 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
 
   return (
     <form onSubmit={handleSubmit(submitFormData)}>
-      <Columns collapseBelow="sm" alignY="center">
-        <Column width="5/12">
+      <Box display="flex" flexWrap="wrap" alignItems="center">
+        <Box marginRight={3} className={styles.formContainer}>
           <Columns alignY="center">
             <Column width="content">
               <Box className={styles.bank}>
@@ -195,26 +195,23 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
               </Column>
             </Columns>
           ) : null}
-        </Column>
-        <Column width="7/12">
-          <Box
-            display="flex"
-            alignItems="flexStart"
-            flexDirection="column"
-            marginLeft={3}
-            paddingTop={2}
-          >
-            {!loading && (
-              <button disabled={inputPristine} type="submit">
-                <Button disabled={inputPristine} variant="text" size="small">
-                  {formatMessage(msg.buttonAccountSave)}
-                </Button>
-              </button>
-            )}
-            {loading && <LoadingDots />}
-          </Box>
-        </Column>
-      </Columns>
+        </Box>
+        <Box
+          display="flex"
+          alignItems="flexStart"
+          flexDirection="column"
+          paddingTop={2}
+        >
+          {!loading && (
+            <button disabled={inputPristine} type="submit">
+              <Button disabled={inputPristine} variant="text" size="small">
+                {formatMessage(msg.buttonAccountSave)}
+              </Button>
+            </button>
+          )}
+          {loading && <LoadingDots />}
+        </Box>
+      </Box>
     </form>
   )
 }

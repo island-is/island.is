@@ -13,6 +13,7 @@ import { useUpdateOrCreateUserProfile } from '@island.is/service-portal/graphql'
 import { msg } from '../../../../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Controller, useForm } from 'react-hook-form'
+import * as styles from './ProfileForms.css'
 
 interface Props {
   canNudge: boolean
@@ -55,9 +56,9 @@ export const Nudge: FC<Props> = ({ canNudge }) => {
 
   return (
     <form onSubmit={handleSubmit(submitFormData)}>
-      <Columns alignY="center">
+      <Columns collapseBelow="sm" alignY="center">
         <Column width="content">
-          <Box display="flex" alignItems="center">
+          <Box marginRight={3} display="flex" alignItems="center">
             <Controller
               name="canNudge"
               control={control}
@@ -91,7 +92,7 @@ export const Nudge: FC<Props> = ({ canNudge }) => {
             display="flex"
             alignItems="flexStart"
             flexDirection="column"
-            marginLeft={3}
+            className={styles.nudgeSave}
           >
             {!loading && (
               <button disabled={inputPristine} type="submit">

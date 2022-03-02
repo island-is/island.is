@@ -9,7 +9,6 @@ import {
   Columns,
   Column,
   Input,
-  Icon,
   Text,
   LoadingDots,
 } from '@island.is/island-ui/core'
@@ -21,7 +20,7 @@ import {
 } from '@island.is/service-portal/graphql'
 import { sharedMessages } from '@island.is/shared/translations'
 import { parseFullNumber } from '../../../../../utils/phoneHelper'
-import * as styles from './Phone.css'
+import * as styles from './ProfileForms.css'
 
 interface Props {
   buttonText: string
@@ -186,8 +185,8 @@ export const InputPhone: FC<Props> = ({
           telInternal ? handleSendTelVerification : saveEmptyChange,
         )}
       >
-        <Columns collapseBelow="sm" alignY="center">
-          <Column width="5/12">
+        <Box display="flex" flexWrap="wrap" alignItems="center">
+          <Box marginRight={3} width="full" className={styles.formContainer}>
             <Columns>
               <Column width="content">
                 <Box className={styles.countryCodeInput}>
@@ -242,69 +241,64 @@ export const InputPhone: FC<Props> = ({
                 />
               </Column>
             </Columns>
-          </Column>
-          <Column width="7/12">
-            <Box
-              display="flex"
-              alignItems="flexStart"
-              flexDirection="column"
-              marginLeft={3}
-              paddingTop={2}
-            >
-              {!createLoading && !deleteLoading && (
-                <>
-                  {telVerifyCreated ? (
+          </Box>
+          <Box
+            display="flex"
+            alignItems="flexStart"
+            flexDirection="column"
+            paddingTop={2}
+          >
+            {!createLoading && !deleteLoading && (
+              <>
+                {telVerifyCreated ? (
+                  <Button
+                    variant="text"
+                    disabled={
+                      verificationValid ||
+                      disabled ||
+                      resendBlock ||
+                      inputPristine
+                    }
+                    size="small"
+                    onClick={
+                      telInternal
+                        ? () =>
+                            handleSendTelVerification({
+                              tel: getValues().tel,
+                            })
+                        : () => saveEmptyChange()
+                    }
+                  >
+                    {telInternal
+                      ? telInternal === telToVerify
+                        ? formatMessage({
+                            id: 'sp.settings:resend',
+                            defaultMessage: 'Endursenda',
+                          })
+                        : buttonText
+                      : formatMessage(msg.saveEmptyChange)}
+                  </Button>
+                ) : (
+                  <button
+                    type="submit"
+                    disabled={verificationValid || disabled || inputPristine}
+                  >
                     <Button
                       variant="text"
-                      disabled={
-                        verificationValid ||
-                        disabled ||
-                        resendBlock ||
-                        inputPristine
-                      }
                       size="small"
-                      onClick={
-                        telInternal
-                          ? () =>
-                              handleSendTelVerification({
-                                tel: getValues().tel,
-                              })
-                          : () => saveEmptyChange()
-                      }
-                    >
-                      {telInternal
-                        ? telInternal === telToVerify
-                          ? formatMessage({
-                              id: 'sp.settings:resend',
-                              defaultMessage: 'Endursenda',
-                            })
-                          : buttonText
-                        : formatMessage(msg.saveEmptyChange)}
-                    </Button>
-                  ) : (
-                    <button
-                      type="submit"
                       disabled={verificationValid || disabled || inputPristine}
                     >
-                      <Button
-                        variant="text"
-                        size="small"
-                        disabled={
-                          verificationValid || disabled || inputPristine
-                        }
-                      >
-                        {telInternal
-                          ? buttonText
-                          : formatMessage(msg.saveEmptyChange)}
-                      </Button>
-                    </button>
-                  )}
-                </>
-              )}
-              {(createLoading || deleteLoading) && <LoadingDots />}
-            </Box>
-          </Column>
-        </Columns>
+                      {telInternal
+                        ? buttonText
+                        : formatMessage(msg.saveEmptyChange)}
+                    </Button>
+                  </button>
+                )}
+              </>
+            )}
+            {(createLoading || deleteLoading) && <LoadingDots />}
+          </Box>
+        </Box>
       </form>
       {telVerifyCreated && !inputPristine && (
         <Box marginTop={3}>
@@ -316,8 +310,8 @@ export const InputPhone: FC<Props> = ({
             })}
           </Text>
           <form onSubmit={handleSubmit(handleConfirmCode)}>
-            <Columns alignY="center">
-              <Column width="5/12">
+            <Box display="flex" flexWrap="wrap" alignItems="flexStart">
+              <Box className={styles.codeInput} marginRight={3}>
                 <InputController
                   control={control}
                   backgroundColor="blue"
@@ -342,35 +336,30 @@ export const InputPhone: FC<Props> = ({
                     },
                   }}
                 />
-              </Column>
-              <Column width="content">
-                <Box
-                  marginLeft={3}
-                  display="flex"
-                  alignItems="flexEnd"
-                  flexDirection="column"
-                  paddingTop={2}
-                >
-                  {!saveLoading && (
-                    <button
-                      type="submit"
+              </Box>
+              <Box
+                display="flex"
+                alignItems="flexStart"
+                flexDirection="column"
+                paddingTop={4}
+              >
+                {!saveLoading && (
+                  <button
+                    type="submit"
+                    disabled={!codeInternal || disabled || verificationValid}
+                  >
+                    <Button
+                      variant="text"
+                      size="small"
                       disabled={!codeInternal || disabled || verificationValid}
                     >
-                      <Button
-                        variant="text"
-                        size="small"
-                        disabled={
-                          !codeInternal || disabled || verificationValid
-                        }
-                      >
-                        {formatMessage(m.confirmCode)}
-                      </Button>
-                    </button>
-                  )}
-                  {saveLoading && <LoadingDots />}
-                </Box>
-              </Column>
-            </Columns>
+                      {formatMessage(m.confirmCode)}
+                    </Button>
+                  </button>
+                )}
+                {saveLoading && <LoadingDots />}
+              </Box>
+            </Box>
           </form>
         </Box>
       )}
