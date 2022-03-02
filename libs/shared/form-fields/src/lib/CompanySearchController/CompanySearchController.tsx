@@ -5,7 +5,10 @@ import {
   AsyncSearchOption,
   Box,
   AlertMessage,
+  InputError,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { coreErrorMessages } from '@island.is/application/core'
 
 interface Props {
   invalidNationalIdError?: boolean
@@ -40,7 +43,9 @@ export const CompanySearchController: FC<Props> = ({
   onInputChange,
   setLabelToDataSchema = true,
 }) => {
+  console.log(invalidNationalIdError)
   const { clearErrors, setValue } = useFormContext()
+  const { formatMessage } = useLocale()
   return (
     <>
       <Controller
@@ -84,16 +89,20 @@ export const CompanySearchController: FC<Props> = ({
         }}
       />
       {invalidNationalIdError && (
-        <div id={`${id}-error`} aria-live="assertive">
-          {'Ógild kennitala'}
-        </div>
+        <InputError
+          errorMessage={formatMessage(coreErrorMessages.invalidNationalId)}
+        />
       )}
       {noResultsFound && (
         <Box marginTop={[2, 2]}>
           <AlertMessage
             type="error"
-            title={'Engar niðurstöður fundust hjá fyrirtækjaskrá'}
-            message={'Vinsamlegast athugaðu hvort að rétt var slegið inn.'}
+            title={formatMessage(
+              coreErrorMessages.noCompanySearchResultsFoundTitle,
+            )}
+            message={formatMessage(
+              coreErrorMessages.noCompanySearchResultsFoundMessage,
+            )}
           />
         </Box>
       )}

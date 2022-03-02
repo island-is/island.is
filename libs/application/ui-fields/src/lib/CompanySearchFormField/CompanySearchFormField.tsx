@@ -86,7 +86,7 @@ export const CompanySearchFormField: FC<Props> = ({ application, field }) => {
   return (
     <Box marginTop={[2, 4]}>
       <CompanySearchController
-        invalidNationalIdError={!noResultsFound && invalidNationalId}
+        invalidNationalIdError={invalidNationalId}
         noResultsFound={noResultsFound && !invalidNationalId}
         id={id}
         defaultValue={initialValue}
