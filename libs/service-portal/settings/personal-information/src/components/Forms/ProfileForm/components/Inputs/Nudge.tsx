@@ -16,10 +16,16 @@ import { Controller, useForm } from 'react-hook-form'
 import * as styles from './ProfileForms.css'
 
 interface Props {
-  canNudge: boolean
+  refuseMail: boolean
 }
 
-export const Nudge: FC<Props> = ({ canNudge }) => {
+/**
+ * This component will look a little strange.
+ * The requirements for the user is to see in the UI a checkbox:
+ * "Refuse nudge" while the value in the db is of "Accept nudge (canNudge)"
+ * So we need to get the value and set it to the opposite of the db value.
+ */
+export const Nudge: FC<Props> = ({ refuseMail }) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
   const { control, handleSubmit, getValues } = useForm()
@@ -28,25 +34,25 @@ export const Nudge: FC<Props> = ({ canNudge }) => {
 
   useEffect(() => {
     checkSetPristineInput()
-  }, [canNudge])
+  }, [refuseMail])
 
   const { updateOrCreateUserProfile, loading } = useUpdateOrCreateUserProfile()
 
   const checkSetPristineInput = () => {
-    const localForm = getValues().canNudge
+    const localForm = getValues().refuseMail
 
-    if (localForm && localForm === canNudge) {
+    if (localForm === refuseMail) {
       setInputPristine(true)
     } else {
       setInputPristine(false)
     }
   }
 
-  const submitFormData = async (data: { canNudge: boolean }) => {
+  const submitFormData = async (data: { refuseMail: boolean }) => {
     try {
       setSubmitError(undefined)
       await updateOrCreateUserProfile({
-        canNudge: data.canNudge,
+        canNudge: !data.refuseMail,
       }).then(() => setInputPristine(true))
     } catch (err) {
       console.error(`updateOrCreateUserProfile error: ${err}`)
@@ -60,19 +66,19 @@ export const Nudge: FC<Props> = ({ canNudge }) => {
         <Column width="content">
           <Box marginRight={3} display="flex" alignItems="center">
             <Controller
-              name="canNudge"
+              name="refuseMail"
               control={control}
-              defaultValue={canNudge}
+              defaultValue={refuseMail}
               render={({ onChange, value }) => (
                 <Checkbox
-                  name="canNudge"
+                  name="refuseMail"
                   onChange={(e) => {
                     onChange(e.target.checked)
                     checkSetPristineInput()
                   }}
                   label={formatMessage({
                     id: 'sp.settings:nudge-checkbox-label',
-                    defaultMessage: 'Virkja hnipp',
+                    defaultMessage: 'Afþakka tölvupóst',
                   })}
                   hasError={!!submitError}
                   errorMessage={submitError}

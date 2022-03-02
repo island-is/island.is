@@ -163,6 +163,27 @@ export const ProfileForm: FC<Props> = ({
               />
             )}
           </InputSection>
+          {showDetails && (
+            <InputSection
+              title={formatMessage(m.refuseEmailTitle)}
+              loading={userLoading}
+              text={formatMessage(msg.editNudgeText)}
+            >
+              {!userLoading && (
+                <Nudge
+                  refuseMail={
+                    /**
+                     * This checkbox block is being displayed as the opposite of canNudge.
+                     * Details inside <Nudge />
+                     */
+                    typeof userProfile?.canNudge === 'boolean'
+                      ? !userProfile.canNudge
+                      : true
+                  }
+                />
+              )}
+            </InputSection>
+          )}
           <InputSection
             title={formatMessage(m.telNumber)}
             text={formatMessage(msg.editTelText)}
@@ -190,19 +211,11 @@ export const ProfileForm: FC<Props> = ({
               )}
             </InputSection>
           )}
-          {showDetails && (
-            <InputSection
-              title={formatMessage(m.nudge)}
-              loading={userLoading}
-              text={formatMessage(msg.editNudgeText)}
-            >
-              {!userLoading && <Nudge canNudge={!!userProfile?.canNudge} />}
-            </InputSection>
-          )}
           {showDropModal && onCloseOverlay && (
             <DropModal
               type={showDropModal}
               onDrop={submitEmptyEmailAndTel}
+              loading={updateLoading || deleteLoading}
               onClose={() => {
                 onCloseDropModal && onCloseDropModal()
                 setShowDropModal(undefined)

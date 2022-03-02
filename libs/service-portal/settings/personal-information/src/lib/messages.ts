@@ -8,7 +8,7 @@ export const msg = defineMessages({
   editEmailText: {
     id: 'sp.settings:edit-email-text',
     defaultMessage:
-      'Vinsamlega settu inn netfangið þitt. Við komum til með að senda á þig staðfestingar og tilkynningar.',
+      'Þegar þú vistar netfang komum við til með að senda þér staðfestingarkóða með tölvupósti til að tryggja það að netfangið sé rétt skráð. Ef staðfestingar póstur berst ekki er gott að kanna hvort hann sé í möppu fyrir ruslpóst. Staðfestingarkóðann seturu inn hér að neðan til staðfestingar um að þú hafir fengið hann sendann.',
   },
   saveTel: {
     id: 'sp.settings:save-tel',
@@ -17,7 +17,7 @@ export const msg = defineMessages({
   editTelText: {
     id: 'sp.settings:edit-tel-text',
     defaultMessage:
-      'Við komum til með að senda á þig staðfestingar og tilkynningar og því er gott að vera með rétt númer skráð. Endilega skráðu númerið þitt hér fyrir neðan og við sendum þér öryggiskóða til staðfestingar.',
+      'Þegar þú vistar símanúmer komum við til með að senda þér staðfestingarkóða með SMS til að tryggja það að símanúmerið sé rétt skráð. Staðfestingarkóðann seturu inn hér að neðan til staðfestingar um að þú hafir fengið hann sendann.',
   },
   editBankInfoText: {
     id: 'sp.settings:edit-bankInfo-text',
@@ -28,55 +28,44 @@ export const msg = defineMessages({
   },
   editNudgeText: {
     id: 'sp.settings:edit-nudge-text',
-    defaultMessage: `
-    Hér getur þú gert breytingar á hnipp möguleikum. 
-    Hnipp stillingar segja til um hvort þú viljir að Island.is láti 
-    þig vita þegar eitthvað markvert gerist.
-  `,
+    defaultMessage: `Við munum senda þér tölvupóst þegar þú færð markvisst skjal í pósthólfið þitt.`,
   },
   overlayIntro: {
     id: 'sp.settings:overlay-intro-text',
-    defaultMessage: `Vinsamlegast farðu vel yfir allar neðangreindar upplýsingar, gakktu í
-    skugga um að þær séu réttar og gerðu breytingar ef þörf krefur.`,
+    defaultMessage: `Við komum til með að senda á þig mikilvægar tilkynningar og því er gott að vera með netfang og síma rétt skráð.`,
   },
   dropModalAllTitle: {
     id: 'sp.settings:dropmodal-all-title',
-    defaultMessage:
-      'Ertu alveg viss um að þú viljir ekki skrá netfang og/eða síma?',
+    defaultMessage: 'Engar upplýsingar skráðar',
   },
   dropModalAllText: {
     id: 'sp.settings:dropmodal-all-text',
-    defaultMessage: `Ertu viss um þú viljir halda áfram án þess að skrá símanúmer eða
-    netfang? Við komum til með að senda á þig staðfestingar og tilkynningar
-    og því er gott að vera með rétt númer og netfang skráð`,
+    defaultMessage:
+      'Við komum til með að senda á þig staðfestingar og tilkynningar og því er gott að vera með netfang og símanúmer skráð.',
   },
   dropModalEmailTitle: {
     id: 'sp.settings:dropmodal-email-title',
-    defaultMessage: 'Ertu alveg viss um að þú viljir ekki skrá netfang?',
+    defaultMessage: 'Engar netfangs upplýsingar skráðar',
   },
   dropModalEmailText: {
     id: 'sp.settings:dropmodal-email-text',
-    defaultMessage: `Ertu viss um þú viljir halda áfram án þess að skrá
-    netfang? Við komum til með að senda á þig staðfestingar og tilkynningar
-    og því er gott að vera með rétt netfang skráð`,
+    defaultMessage: `Við komum til með að senda á þig staðfestingar og tilkynningar og því er gott að vera með netfang skráð.`,
   },
   dropModalTelTitle: {
     id: 'sp.settings:dropmodal-tel-title',
-    defaultMessage: 'Ertu alveg viss um að þú viljir ekki skrá síma?',
+    defaultMessage: 'Engar símanúmers upplýsingar skráðar',
   },
   dropModalTelText: {
     id: 'sp.settings:dropmodal-tel-text',
-    defaultMessage: `Ertu viss um þú viljir halda áfram án þess að skrá
-    síma? Við komum til með að senda á þig staðfestingar og tilkynningar
-    og því er gott að vera með rétt símanúmer skráð`,
+    defaultMessage: `Við komum til með að senda á þig staðfestingar og tilkynningar og því er gott að vera með símanúmer skráð.`,
   },
   dropModalContinue: {
     id: 'sp.settings:dropmodal-continue-button',
-    defaultMessage: 'Ég vil skrá upplýsingar',
+    defaultMessage: 'Skrá',
   },
   dropModalDrop: {
     id: 'sp.settings:dropmodal-drop-button',
-    defaultMessage: 'Ég vil halda áfram',
+    defaultMessage: 'Vil ekki skrá',
   },
   errorOnlyNumbers: {
     id: 'sp.settings:only-numbers-allowed',
