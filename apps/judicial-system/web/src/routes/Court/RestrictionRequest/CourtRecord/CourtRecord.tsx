@@ -22,6 +22,7 @@ import {
   DateTime,
   HideableText,
   TimeInputField,
+  PdfButton,
 } from '@island.is/judicial-system-web/src/components'
 import {
   capitalize,
@@ -197,7 +198,7 @@ export const CourtRecord: React.FC = () => {
             }),
           },
         )}`
-
+        console.log(isAcceptingCaseDecision(theCase.decision))
         if (
           isAcceptingCaseDecision(theCase.decision) ||
           theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
@@ -905,7 +906,7 @@ export const CourtRecord: React.FC = () => {
             />
           </Box>
         </Box>
-        <Box marginBottom={10}>
+        <Box marginBottom={5}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
               Þinghald
@@ -958,11 +959,18 @@ export const CourtRecord: React.FC = () => {
             </GridRow>
           </GridContainer>
         </Box>
+        <Box marginBottom={10}>
+          <PdfButton
+            caseId={workingCase.id}
+            title={formatMessage(core.pdfButtonRulingShortVersion)}
+            pdfType="courtRecord"
+          />
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
-          nextUrl={`${Constants.RULING_STEP_ONE_ROUTE}/${id}`}
+          nextUrl={`${Constants.RULING_ROUTE}/${id}`}
           nextIsDisabled={!isCourtRecordStepValidRC(workingCase)}
         />
       </FormContentContainer>

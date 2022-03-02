@@ -249,7 +249,7 @@ export const Ruling: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.RULING_STEP_ONE}
+      activeSubSection={CourtSubsections.RULING}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -647,8 +647,8 @@ export const Ruling: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`}
-          nextUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${id}`}
+          previousUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
+          nextUrl={`${Constants.COURT_RECORD_ROUTE}/${id}`}
           nextIsDisabled={!isRulingValidRC(workingCase)}
         />
       </FormContentContainer>

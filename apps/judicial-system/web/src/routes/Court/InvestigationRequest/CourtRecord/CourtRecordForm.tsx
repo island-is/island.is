@@ -19,6 +19,7 @@ import {
   FormContentContainer,
   FormFooter,
   HideableText,
+  PdfButton,
   TimeInputField,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -662,7 +663,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             />
           </Box>
         </Box>
-        <Box marginBottom={10}>
+        <Box marginBottom={5}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
               Þinghald
@@ -715,12 +716,19 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             </GridRow>
           </GridContainer>
         </Box>
+        <Box marginBottom={10}>
+          <PdfButton
+            caseId={workingCase.id}
+            title={formatMessage(core.pdfButtonRulingShortVersion)}
+            pdfType="courtRecord"
+          />
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoading}
-          nextUrl={`${Constants.IC_RULING_STEP_ONE_ROUTE}/${workingCase.id}`}
+          nextUrl={`${Constants.IC_RULING_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isCourtRecordStepValidIC(workingCase)}
         />
       </FormContentContainer>

@@ -50,7 +50,7 @@ const Ruling = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.RULING_STEP_ONE}
+      activeSubSection={CourtSubsections.RULING}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >

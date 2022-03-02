@@ -27,9 +27,8 @@ export enum CourtSubsections {
   JUDGE_OVERVIEW = 1,
   HEARING_ARRANGEMENTS = 2,
   COURT_RECORD = 3,
-  RULING_STEP_ONE = 4,
-  RULING_STEP_TWO = 5,
-  CONFIRMATION = 6,
+  RULING = 4,
+  CONFIRMATION = 5,
 }
 
 export type ReactSelectOption = { label: string; value: string | number }
