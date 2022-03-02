@@ -233,14 +233,12 @@ export class PublicFlightController {
             custodian,
           )
 
-          if (custodianInfo) {
-            const custodianMeetsRequirements = this.flightService.isADSPostalCode(
-              custodianInfo.postalcode,
-            )
-            if (custodianMeetsRequirements) {
-              meetsADSRequirements = true
-              break
-            }
+          if (
+            custodianInfo &&
+            this.flightService.isADSPostalCode(custodianInfo.postalcode)
+          ) {
+            meetsADSRequirements = true
+            break
           }
         }
       }
