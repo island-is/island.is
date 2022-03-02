@@ -235,7 +235,7 @@ export const isRulingStepOneValidRC = (workingCase: Case) => {
   )
 }
 
-export const isRulingStepOneValidIC = (workingCase: Case) => {
+export const isRulingValidIC = (workingCase: Case) => {
   return (
     validate(workingCase.prosecutorDemands || '', 'empty').isValid &&
     validate(workingCase.courtCaseFacts || '', 'empty').isValid &&

@@ -7,11 +7,11 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-
-import RulingStepOneForm from './RulingStepOneForm'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 
-const RulingStepOne = () => {
+import RulingForm from './RulingForm'
+
+const Ruling = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -54,7 +54,7 @@ const RulingStepOne = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <RulingStepOneForm
+      <RulingForm
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
         isLoading={isLoadingWorkingCase}
@@ -64,4 +64,4 @@ const RulingStepOne = () => {
   )
 }
 
-export default RulingStepOne
+export default Ruling

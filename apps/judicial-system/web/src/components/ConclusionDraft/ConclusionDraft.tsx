@@ -8,7 +8,7 @@ import {
   RulingInput,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  icRulingStepOne,
+  icRuling,
   rcRulingStepOne,
 } from '@island.is/judicial-system-web/messages'
 
@@ -46,7 +46,7 @@ const ConclusionDraft: React.FC<Props> = (props) => {
                       ? 'gæsluvarðhald'
                       : 'farbann',
                 })
-              : formatMessage(icRulingStepOne.sections.decision.acceptLabel)
+              : formatMessage(icRuling.sections.decision.acceptLabel)
           }
           rejectedLabelText={
             isRestrictionCase(workingCase.type)
@@ -56,16 +56,14 @@ const ConclusionDraft: React.FC<Props> = (props) => {
                       ? 'gæsluvarðhald'
                       : 'farbann',
                 })
-              : formatMessage(icRulingStepOne.sections.decision.rejectLabel)
+              : formatMessage(icRuling.sections.decision.rejectLabel)
           }
           partiallyAcceptedLabelText={`${
             isRestrictionCase(workingCase.type)
               ? formatMessage(
                   rcRulingStepOne.sections.decision.partiallyAcceptLabel,
                 )
-              : formatMessage(
-                  icRulingStepOne.sections.decision.partiallyAcceptLabel,
-                )
+              : formatMessage(icRuling.sections.decision.partiallyAcceptLabel)
           }`}
           dismissLabelText={
             isRestrictionCase(workingCase.type)
@@ -75,7 +73,7 @@ const ConclusionDraft: React.FC<Props> = (props) => {
                       ? 'gæsluvarðhald'
                       : 'farbann',
                 })
-              : formatMessage(icRulingStepOne.sections.decision.dismissLabel)
+              : formatMessage(icRuling.sections.decision.dismissLabel)
           }
           acceptingAlternativeTravelBanLabelText={formatMessage(
             rcRulingStepOne.sections.decision

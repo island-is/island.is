@@ -27,7 +27,7 @@ import {
   isPoliceDemandsStepValidRC,
   isPoliceReportStepValidIC,
   isPoliceReportStepValidRC,
-  isRulingStepOneValidIC,
+  isRulingValidIC,
   isRulingStepOneValidRC,
   isRulingStepTwoValidIC,
   isRulingStepTwoValidRC,
@@ -271,9 +271,7 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: formatMessage(
-            sections.investigationCaseCourtSection.rulingStepOne,
-          ),
+          name: formatMessage(sections.investigationCaseCourtSection.ruling),
           href:
             (activeSubSection && activeSubSection > 4) ||
             (hasCourtPermission(workingCase, user) &&
@@ -294,7 +292,7 @@ const useSections = () => {
               isReceptionAndAssignmentStepValidIC(workingCase) &&
               isCourtHearingArrangementsStepValidIC(workingCase) &&
               isCourtRecordStepValidIC(workingCase) &&
-              isRulingStepOneValidIC(workingCase))
+              isRulingValidIC(workingCase))
               ? `${Constants.IC_RULING_STEP_TWO_ROUTE}/${id}`
               : undefined,
         },
@@ -308,7 +306,7 @@ const useSections = () => {
             isReceptionAndAssignmentStepValidIC(workingCase) &&
             isCourtHearingArrangementsStepValidIC(workingCase) &&
             isCourtRecordStepValidIC(workingCase) &&
-            isRulingStepOneValidIC(workingCase) &&
+            isRulingValidIC(workingCase) &&
             isRulingStepTwoValidIC(workingCase)
               ? `${Constants.IC_CONFIRMATION_ROUTE}/${id}`
               : undefined,
@@ -363,7 +361,7 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: formatMessage(sections.courtSection.rulingStepOne),
+          name: formatMessage(sections.courtSection.ruling),
           href:
             (activeSubSection && activeSubSection > 4) ||
             (hasCourtPermission(workingCase, user) &&
