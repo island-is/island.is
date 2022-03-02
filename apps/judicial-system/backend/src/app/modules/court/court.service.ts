@@ -6,6 +6,7 @@ import { CourtClientService } from '@island.is/judicial-system/court-client'
 import type { CaseType } from '@island.is/judicial-system/types'
 
 import { DATE_FACTORY } from '../../factories'
+import { EventService } from '../event'
 
 // Maps case types to sub types in the court system
 export const subTypes = {
@@ -47,6 +48,7 @@ export class CourtService {
   constructor(
     @Inject(DATE_FACTORY) private readonly today: () => Date,
     private readonly courtClientService: CourtClientService,
+    private readonly eventService: EventService,
   ) {}
 
   private uploadStream(
@@ -145,7 +147,7 @@ export class CourtService {
     )
   }
 
-  createCourtCase(
+  async createCourtCase(
     courtId: string,
     type: CaseType,
     policeCaseNumber: string,
@@ -156,13 +158,22 @@ export class CourtService {
       subType = subType[isExtension ? 1 : 0]
     }
 
-    return this.courtClientService.createCase(courtId, {
-      caseType: 'R - Rannsóknarmál',
-      subtype: subType,
-      status: 'Skráð',
-      receivalDate: formatISO(this.today(), { representation: 'date' }),
-      basedOn: 'Rannsóknarhagsmunir',
-      sourceNumber: policeCaseNumber,
-    })
+    return this.courtClientService
+      .createCase(courtId, {
+        caseType: 'R - Rannsóknarmál',
+        subtype: subType,
+        status: 'Skráð',
+        receivalDate: formatISO(this.today(), { representation: 'date' }),
+        basedOn: 'Rannsóknarhagsmunir',
+        sourceNumber: policeCaseNumber,
+      })
+      .catch((reason) => {
+        this.eventService.postErrorEvent(
+          'Failed to create a court case',
+          reason,
+        )
+
+        throw reason
+      })
   }
 }
