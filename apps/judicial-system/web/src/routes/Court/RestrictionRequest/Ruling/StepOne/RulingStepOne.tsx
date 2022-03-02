@@ -426,6 +426,19 @@ export const RulingStepOne: React.FC = () => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
+              {formatMessage(m.sections.ruling.title)}
+            </Text>
+          </Box>
+          <RulingInput
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+            isCaseUpToDate={isCaseUpToDate}
+            isRequired
+          />
+        </Box>
+        <Box component="section" marginBottom={5}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
               {`${formatMessage(m.sections.decision.title)} `}
               <Text as="span" fontWeight="semiBold" color="red600">
                 *
@@ -471,19 +484,6 @@ export const RulingStepOne: React.FC = () => {
               )}
             />
           </Box>
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.ruling.title)}
-            </Text>
-          </Box>
-          <RulingInput
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-            isCaseUpToDate={isCaseUpToDate}
-            isRequired
-          />
         </Box>
         {workingCase.decision &&
           workingCase.decision !== CaseDecision.REJECTING &&
