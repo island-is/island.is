@@ -2,24 +2,6 @@ import { defineMessages } from 'react-intl'
 
 export const icCourtRecord = {
   sections: {
-    courtAttendees: defineMessages({
-      defendantNotPresentAutofill: {
-        id:
-          'judicial.system.investigation_cases:court_record.court_attendees.defendant_not_present_autofill_v1',
-        defaultMessage:
-          'Varnaraðili er ekki viðstaddur sbr. 104. gr. laga 88/2008 um meðferð sakamála.',
-        description:
-          'Notaður sem sjálfgefinn texti í "Mættir eru" textaboxi á þingbókar skrefi í rannsóknarheimildum',
-      },
-      multipleDefendantNotPresentAutofill: {
-        id:
-          'judicial.system.investigation_cases:court_record.court_attendees.multiple_defendant_not_present_autofill',
-        defaultMessage:
-          'Varnaraðilar eru ekki viðstaddir sbr. 104. gr. laga 88/2008 um meðferð sakamála.',
-        description:
-          'Notaður sem sjálfgefinn texti í "Mættir eru" textaboxi á þingbókar skrefi í rannsóknarheimildum þegar það eru margir varnaraðilar',
-      },
-    }),
     sessionBookings: defineMessages({
       title: {
         id:
@@ -74,6 +56,14 @@ export const icCourtRecord = {
         description:
           'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
       },
+      autofillAllPresent: {
+        id:
+          'judicial.system.investigation_cases:court_record.session_bookings.autofill_all_present',
+        defaultMessage:
+          'Sækjanda og verjanda varnaraðila er gefinn kostur á að tjá sig um kröfuna. Verjandi krefst þess að kröfunni verði hafnað.\n\nMálið er tekið til úrskurðar.\n\nÍ málinu er kveðinn upp úrskurður.',
+        description:
+          'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í rannsóknarheimildum þegar varnaraðili mætir.',
+      },
       autofillDefender: {
         id:
           'judicial.system.investigation_cases:court_record.session_bookings.autofill_defender',
@@ -94,9 +84,33 @@ export const icCourtRecord = {
         id:
           'judicial.system.investigation_cases:court_record.session_bookings.autofill_spokeperson',
         defaultMessage:
-          'Í dóminn er mætt/ur {spokesperson} lögmaður sem dómari skipar nú til að gæta hagsmuna þess aðila sem krafan beinist að. Hann/hún hefur undirritað heit skv. 2. mgr. 84. gr. laga númer 88/2008 um meðferð sakamála.',
+          'Dómari hefur fallist á að krafan hljóti meðferð fyrir dómi án þess að varnaraðili verði kvaddur/kvödd á dómþing, sbr. 1. mgr. 104. gr. laga nr. 88/2008.\n\nSækjanda og talsmanni varnaraðila er gefinn kostur á að tjá sig um kröfuna. Talsmaður varnaraðila mótmælir kröfunni og krefst þess að kröfunni verði hafnað en til vara að aðgerðinni verði markaður skemmri tími. Þá krefst talsmaður þóknunar fyrir sín störf.\n\nMálið er tekið til úrskurðar.\n\nÍ málinu er kveðinn upp úrskurður.',
         description:
           'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      autofillProsecutor: {
+        id:
+          'judicial.system.investigation_cases:court_record.session_bookings.autofill_prosecutor',
+        defaultMessage:
+          'Dómari hefur fallist á að krafan hljóti meðferð fyrir dómi án þess að varnaraðili verði kvaddur/kvödd á dómþing, sbr. 1. mgr. 104. gr. laga nr. 88/2008.\n\nSækjanda er gefinn kostur á að tjá sig um kröfuna.',
+        description:
+          'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum þegar varnaraðili er ekki kvaddur fyrir dómþing.',
+      },
+      autofillRestrainingOrder: {
+        id:
+          'judicial.system.investigation_cases:court_record.session_bookings.autofill_restraining_order',
+        defaultMessage:
+          'Sækjanda, réttargæslumanni og verjanda varnaraðila  er gefinn kostur á að tjá sig um kröfuna. Verjandi krefst þess að kröfunni verði hafnað en til vara að nálgunnarbanni verði markaður skemmri tími. Þá krefjast verjandi og réttargæslumaður þóknunar sér til handa.\n\nMálið er tekið til úrskurðar.\n\nÍ málinu er kveðinn upp úrskurður.',
+        description:
+          'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í nálgunarbannsmálum.',
+      },
+      autofillAutopsy: {
+        id:
+          'judicial.system.investigation_cases:court_record.session_bookings.autofill_autopsy',
+        defaultMessage:
+          'Ekki er sótt þing af hálfu varnaraðila.\n\nSækjanda er gefinn kostur á að tjá sig um kröfuna.\n\nMálið er tekið til úrskurðar.\n\nÍ málinu er kveðinn upp úrskurður.',
+        description:
+          'Sjálfgefinn texti í "Afstaða varnaraðila, málflutningur og aðrar bókanir" textaboxi á þingbókar skrefi í krufningarmálum.',
       },
     }),
     courtLocation: defineMessages({

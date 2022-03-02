@@ -230,27 +230,30 @@ export const CourtRecord: React.FC = () => {
             theCase,
           )
         }
-      } else if (
-        theCase.type === CaseType.TRAVEL_BAN &&
-        isAcceptingCaseDecision(theCase.decision)
-      ) {
-        const travelBanRestrictions = formatTravelBanRestrictions(
-          theCase.defendants && theCase.defendants.length > 0
-            ? theCase.defendants[0].gender
-            : undefined,
-          theCase.requestedCustodyRestrictions,
-          theCase.requestedOtherRestrictions,
-        )
+      } else if (theCase.type === CaseType.TRAVEL_BAN) {
+        autofillSessionBookings += `\n\n${formatMessage(
+          m.sections.sessionBookings.autofillPresentationsTravelBan,
+        )}`
 
-        autofill(
-          'endOfSessionBookings',
-          `${
-            travelBanRestrictions && `${travelBanRestrictions}\n\n`
-          }${formatMessage(m.sections.custodyRestrictions.disclaimer, {
-            caseType: 'farbannsins',
-          })}`,
-          theCase,
-        )
+        if (isAcceptingCaseDecision(theCase.decision)) {
+          const travelBanRestrictions = formatTravelBanRestrictions(
+            theCase.defendants && theCase.defendants.length > 0
+              ? theCase.defendants[0].gender
+              : undefined,
+            theCase.requestedCustodyRestrictions,
+            theCase.requestedOtherRestrictions,
+          )
+
+          autofill(
+            'endOfSessionBookings',
+            `${
+              travelBanRestrictions && `${travelBanRestrictions}\n\n`
+            }${formatMessage(m.sections.custodyRestrictions.disclaimer, {
+              caseType: 'farbannsins',
+            })}`,
+            theCase,
+          )
+        }
       }
 
       autofill('sessionBookings', autofillSessionBookings, theCase)
