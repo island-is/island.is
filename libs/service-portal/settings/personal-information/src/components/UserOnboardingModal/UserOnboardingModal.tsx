@@ -64,6 +64,7 @@ const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {
               onCloseDropModal={() => setCanDropOverlay(false)}
               canDrop={canDropOverlay}
               setFormLoading={(val: boolean) => setFormLoadingState(val)}
+              showIntroTitle
             />
             <Columns>
               <Column width="9/12">
