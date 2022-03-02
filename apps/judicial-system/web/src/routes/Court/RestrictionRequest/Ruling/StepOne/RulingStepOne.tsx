@@ -73,7 +73,11 @@ export const RulingStepOne: React.FC = () => {
     courtLegalArgumentsErrorMessage,
     setCourtLegalArgumentsErrorMessage,
   ] = useState<string>('')
-  const [prosecutorDemandsErrorMessage, setProsecutorDemandsMessage] = useState(
+  const [
+    prosecutorDemandsErrorMessage,
+    setProsecutorDemandsMessage,
+  ] = useState<string>('')
+  const [conclusionErrorMessage, setConclusionErrorMessage] = useState<string>(
     '',
   )
 
@@ -611,20 +615,25 @@ export const RulingStepOne: React.FC = () => {
               removeTabsValidateAndSet(
                 'conclusion',
                 event.target.value,
-                [],
+                ['empty'],
                 workingCase,
                 setWorkingCase,
+                conclusionErrorMessage,
+                setConclusionErrorMessage,
               )
             }
             onBlur={(event) =>
               validateAndSendToServer(
                 'conclusion',
                 event.target.value,
-                [],
+                ['empty'],
                 workingCase,
                 updateCase,
+                setConclusionErrorMessage,
               )
             }
+            hasError={conclusionErrorMessage !== ''}
+            errorMessage={conclusionErrorMessage}
             textarea
             required
             rows={7}
