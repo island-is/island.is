@@ -15,7 +15,13 @@ if [[ -n "$BRANCH" && -n "$AFFECTED_ALL" && "$AFFECTED_ALL" == "7913-$BRANCH" ]]
 then
   AFFECTED_FLAGS=(--all)
 else
-  AFFECTED_FLAGS=(--head="$HEAD" --base="$BASE")
+  affected_files_list=()
+  affected_files=$(git diff --name-only "$HEAD" "$BASE")
+  while read -r line; do
+     affected_files_list+=("$line")
+  done <<< "$affected_files"
+  printf -v comma_separated '%s,' "${affected_files_list[@]}"
+  AFFECTED_FLAGS=(--files=["${comma_separated%?}"])
 fi
 
 npx \
