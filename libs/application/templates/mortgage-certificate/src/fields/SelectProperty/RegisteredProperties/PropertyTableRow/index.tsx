@@ -1,0 +1,48 @@
+import React, { FC } from 'react'
+import { Table as T, RadioButton } from '@island.is/island-ui/core'
+import { FieldBaseProps } from '@island.is/application/core'
+import { PropertyDetail } from '../../../../types/schema'
+import { useLocale } from '@island.is/localization'
+
+interface PropertyTableRowProps {
+  selectHandler: (property: PropertyDetail | undefined) => void
+  propertyInfo: PropertyDetail | undefined
+  selectedPropertyNumber: string | undefined
+}
+
+export const PropertyTableRow: FC<
+  FieldBaseProps & PropertyTableRowProps & PropertyDetail
+> = ({
+  application,
+  field,
+  selectHandler,
+  propertyInfo,
+  selectedPropertyNumber,
+}) => {
+  const { id } = field
+
+  const unitOfUse = (propertyInfo?.unitsOfUse?.unitsOfUse || [])[0]
+
+  return (
+    <T.Row>
+      <T.Data>
+        <RadioButton
+          id={id}
+          name={`${id}`}
+          checked={
+            propertyInfo?.propertyNumber === selectedPropertyNumber
+              ? true
+              : false
+          }
+          onChange={() => {
+            selectHandler(propertyInfo)
+          }}
+        />
+      </T.Data>
+      <T.Data>{propertyInfo?.propertyNumber}</T.Data>
+      <T.Data>{unitOfUse?.marking}</T.Data>
+      <T.Data>{unitOfUse?.explanation}</T.Data>
+      <T.Data>{propertyInfo?.defaultAddress?.display}</T.Data>
+    </T.Row>
+  )
+}

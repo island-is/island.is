@@ -100,7 +100,7 @@ export const SelectProperty: FC<FieldBaseProps> = ({
     <>
       <PropertiesManager application={application} field={field} />
       <Box paddingBottom={5}>
-        {showErrorMsg && (
+        {!loading && showErrorMsg && (
           <AlertMessage
             type="error"
             title={formatMessage(m.errorSheriffApiTitle)}

@@ -7,7 +7,7 @@ import {
   Button,
   AlertMessage,
 } from '@island.is/island-ui/core'
-import { PropertyTable } from '../PropertyTable'
+import { PropertyTable } from './PropertyTable'
 import { PropertyDetail } from '../../../types/schema'
 import { gql, useLazyQuery } from '@apollo/client'
 import { SEARCH_PROPERTIES_QUERY } from '../../../graphql/queries'

@@ -320,6 +320,11 @@ export const m = defineMessages({
     defaultMessage: 'Birt stærð',
     description: 'Shown size',
   },
+  propertyAddress: {
+    id: 'property.address',
+    defaultMessage: 'Heimilisfang',
+    description: 'Address',
+  },
   propertySearch: {
     id: 'property.search',
     defaultMessage: 'Leita að eign',
