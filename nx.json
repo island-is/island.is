@@ -59,7 +59,8 @@
       "implicitDependencies": ["air-discount-scheme-web"]
     },
     "api": {
-      "tags": []
+      "tags": [],
+      "implicitDependencies": ["application-ui-fields"]
     },
     "api-catalogue-consts": {
       "tags": []
