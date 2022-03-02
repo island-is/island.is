@@ -9,7 +9,7 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
-import { ExternalData } from '../lib/types'
+import { ApproveOptions, ExternalData } from '../lib/types'
 
 import * as m from '../lib/messages'
 import { Routes } from '../lib/constants'
@@ -96,6 +96,29 @@ export const Application: Form = buildForm({
               id: Routes.INCOME,
               title: m.incomeForm.general.pageTitle,
               component: 'IncomeForm',
+            }),
+          ],
+        }),
+        buildSubSection({
+          condition: (answers) => answers.income === ApproveOptions.Yes,
+          id: 'incomeFiles',
+          title: m.incomeFilesForm.general.sectionTitle,
+          children: [
+            buildCustomField({
+              id: Routes.INCOMEFILES,
+              title: m.incomeFilesForm.general.pageTitle,
+              component: 'IncomeFilesForm',
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'taxReturnFilesForm',
+          title: m.taxReturnForm.general.sectionTitle,
+          children: [
+            buildCustomField({
+              id: Routes.TAXRETURNFILES,
+              title: m.taxReturnForm.general.pageTitle,
+              component: 'TaxReturnFilesForm',
             }),
           ],
         }),
