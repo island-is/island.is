@@ -161,6 +161,12 @@ export const icCourtRecord = {
           'Notað sem útskýringar texti í "Dómskjöl" textaboxi á þingbókar skrefi í rannsóknarheimildum.',
       },
     }),
+    conclusion: {
+      id: 'judicial.system.investigation_cases:court_record.conclusion.title',
+      defaultMessage: 'Úrskurðarorð',
+      description:
+        'Notaður sem titill fyrir "Úrskurðarorð" hlutann á þingbókar skrefi í rannsóknarheimildum.',
+    },
     appealDecision: defineMessages({
       title: {
         id:

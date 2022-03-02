@@ -26,8 +26,8 @@ export enum CourtSubsections {
   RECEPTION_AND_ASSIGNMENT = 0,
   JUDGE_OVERVIEW = 1,
   HEARING_ARRANGEMENTS = 2,
-  COURT_RECORD = 3,
-  RULING = 4,
+  RULING = 3,
+  COURT_RECORD = 4,
   CONFIRMATION = 5,
 }
 

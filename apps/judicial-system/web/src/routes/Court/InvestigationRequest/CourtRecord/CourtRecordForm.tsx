@@ -249,6 +249,18 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             />
           </Box>
         </Box>
+        {workingCase.conclusion && (
+          <Box component="section" marginBottom={8}>
+            <Box marginBottom={2}>
+              <Text as="h3" variant="h3">
+                {formatMessage(m.sections.conclusion)}
+              </Text>
+            </Box>
+            <BlueBox>
+              <Text>{workingCase.conclusion}</Text>
+            </BlueBox>
+          </Box>
+        )}
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">

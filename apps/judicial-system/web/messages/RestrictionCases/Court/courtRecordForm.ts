@@ -114,6 +114,12 @@ export const rcCourtRecord = {
           'Notaður sem upplýsingatexti í "Hvar var dómþing haldið?" textaboxi á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
     }),
+    conclusion: {
+      id: 'judicial.system.restriction_cases:court_record.conclusion.title',
+      defaultMessage: 'Úrskurðarorð',
+      description:
+        'Notaður sem titill fyrir "Úrskurðarorð" hlutann á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
+    },
     appealDecision: defineMessages({
       title: {
         id:
