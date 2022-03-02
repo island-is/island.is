@@ -17,6 +17,10 @@ import { DelegationScope } from './delegationScope.model'
 registerEnumType(DelegationProvider, { name: 'AuthDelegationProvider' })
 registerEnumType(DelegationType, { name: 'AuthDelegationType' })
 
+const exhaustiveCheck = (param: never) => {
+  throw new Error(`Missing interfaceType ${param}`)
+}
+
 @InterfaceType('AuthDelegation', {
   resolveType(delegation: Delegation) {
     switch (delegation.type) {
@@ -28,11 +32,9 @@ registerEnumType(DelegationType, { name: 'AuthDelegationType' })
         return PersonalRepresentativeDelegation
       case DelegationType.Custom:
         return CustomDelegation
+      default:
+        exhaustiveCheck(delegation.type)
     }
-    const exhaustiveCheck = (param: never) => {
-      throw new Error(`Missing interfaceType ${param}`)
-    }
-    exhaustiveCheck(delegation.type)
   },
 })
 export abstract class Delegation {
