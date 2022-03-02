@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import {
   Box,
   Button,
@@ -25,11 +25,34 @@ interface Props {
 export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
-  const { control, handleSubmit, errors } = useForm()
-  const [inputSuccess, setInputSuccess] = useState<boolean>(false)
+  const { control, handleSubmit, errors, getValues } = useForm()
+  const [inputPristine, setInputPristine] = useState<boolean>(false)
   const [submitError, setSubmitError] = useState<string>()
 
   const { updateOrCreateUserProfile, loading } = useUpdateOrCreateUserProfile()
+
+  useEffect(() => {
+    checkSetPristineInput()
+  }, [bankInfo])
+
+  const onInputChange = () => {
+    setSubmitError(undefined)
+    checkSetPristineInput()
+  }
+
+  const checkSetPristineInput = () => {
+    const localForm = {
+      bank: getValues().bank,
+      l: getValues().l,
+      account: getValues().account,
+    }
+
+    if (stringifyBankData(bankInfo) === stringifyBankData(localForm)) {
+      setInputPristine(true)
+    } else {
+      setInputPristine(false)
+    }
+  }
 
   const submitFormData = async (data: BankInfoTypes) => {
     try {
@@ -39,7 +62,7 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
       if (bankData) {
         await updateOrCreateUserProfile({
           bankInfo: bankData,
-        }).then(() => setInputSuccess(true))
+        }).then(() => setInputPristine(true))
       } else {
         setSubmitError(formatMessage(msg.errorBankInfoService))
       }
@@ -54,10 +77,11 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
     errors.l?.message ||
     errors.bank?.message ||
     submitError
+
   return (
     <form onSubmit={handleSubmit(submitFormData)}>
       <Columns collapseBelow="sm" alignY="center">
-        <Column width="9/12">
+        <Column width="5/12">
           <Columns alignY="center">
             <Column width="content">
               <Box className={styles.bank}>
@@ -71,10 +95,11 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
                   label={formatMessage(msg.inputBankLabel)}
                   defaultValue={bankInfo?.bank || ''}
                   required={false}
-                  disabled={inputSuccess}
+                  disabled={loading}
                   size="xs"
                   error={errors.bank?.message || submitError ? '' : undefined}
-                  onChange={() => setSubmitError(undefined)}
+                  onChange={onInputChange}
+                  icon={inputPristine ? 'checkmark' : undefined}
                   rules={{
                     maxLength: {
                       value: 4,
@@ -104,10 +129,11 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
                   label={formatMessage(msg.inputLedgerLabel)}
                   defaultValue={bankInfo?.l || ''}
                   required={false}
-                  disabled={inputSuccess}
+                  disabled={loading}
+                  icon={inputPristine ? 'checkmark' : undefined}
                   size="xs"
                   error={errors.l?.message || submitError ? '' : undefined}
-                  onChange={() => setSubmitError(undefined)}
+                  onChange={onInputChange}
                   rules={{
                     maxLength: {
                       value: 2,
@@ -135,14 +161,15 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
                   format="######"
                   placeholder="000000"
                   label={formatMessage(msg.inputAccountNrLabel)}
+                  icon={inputPristine ? 'checkmark' : undefined}
                   defaultValue={bankInfo?.account || ''}
                   required={false}
-                  disabled={inputSuccess}
+                  disabled={loading}
                   size="xs"
                   error={
                     errors.account?.message || submitError ? '' : undefined
                   }
-                  onChange={() => setSubmitError(undefined)}
+                  onChange={onInputChange}
                   rules={{
                     maxLength: {
                       value: 6,
@@ -169,42 +196,25 @@ export const BankInfoForm: FC<Props> = ({ bankInfo }) => {
             </Columns>
           ) : null}
         </Column>
-        <Column width="3/12">
+        <Column width="7/12">
           <Box
             display="flex"
-            alignItems="flexEnd"
+            alignItems="flexStart"
             flexDirection="column"
+            marginLeft={3}
             paddingTop={2}
           >
-            {!loading && !inputSuccess && (
-              <button type="submit">
-                <Button variant="text" size="small">
+            {!loading && (
+              <button disabled={inputPristine} type="submit">
+                <Button disabled={inputPristine} variant="text" size="small">
                   {formatMessage(msg.buttonAccountSave)}
                 </Button>
               </button>
             )}
             {loading && <LoadingDots />}
-            {inputSuccess && (
-              <Icon icon="checkmarkCircle" color="mint600" type="filled" />
-            )}
           </Box>
         </Column>
       </Columns>
-      {inputSuccess && (
-        <Columns alignY="center">
-          <Column>
-            <Box paddingTop={1}>
-              <Button
-                onClick={() => setInputSuccess(false)}
-                variant="text"
-                size="small"
-              >
-                {formatMessage(msg.buttonChange)}
-              </Button>
-            </Box>
-          </Column>
-        </Columns>
-      )}
     </form>
   )
 }

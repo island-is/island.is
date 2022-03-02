@@ -58,9 +58,9 @@ export const InputPhone: FC<Props> = ({
 
   const [codeInternal, setCodeInternal] = useState('')
 
+  const [inputPristine, setInputPristine] = useState(false)
   const [telVerifyCreated, setTelVerifyCreated] = useState(false)
   const [verificationValid, setVerificationValid] = useState(false)
-  const [deleteSuccess, setDeleteSuccess] = useState(false)
 
   const [resendBlock, setResendBlock] = useState(false)
 
@@ -82,6 +82,7 @@ export const InputPhone: FC<Props> = ({
     if (mobile && mobile.length > 0) {
       setTelInternal(mobile)
     }
+    checkSetPristineInput()
   }, [mobile])
 
   useEffect(() => {
@@ -93,6 +94,7 @@ export const InputPhone: FC<Props> = ({
     } else {
       telDirty(true)
     }
+    checkSetPristineInput()
   }, [telInternal])
 
   const handleSendTelVerification = async (data: { tel: string }) => {
@@ -135,6 +137,7 @@ export const InputPhone: FC<Props> = ({
           mobilePhoneNumber: `+354-${telToVerify}`,
           smsCode: codeValue,
         }).then(() => {
+          setInputPristine(true)
           setVerificationValid(true)
         })
       }
@@ -158,10 +161,21 @@ export const InputPhone: FC<Props> = ({
       })
 
       setVerificationValid(true)
-      setDeleteSuccess(true)
+      setInputPristine(true)
       setErrors({ ...formErrors, code: undefined })
     } catch (err) {
       setErrors({ ...formErrors, code: emailError })
+    }
+  }
+
+  const checkSetPristineInput = () => {
+    if (getValues().tel === mobile) {
+      setInputPristine(true)
+
+      setTelVerifyCreated(false)
+    } else {
+      setInputPristine(false)
+      setVerificationValid(false)
     }
   }
 
@@ -173,7 +187,7 @@ export const InputPhone: FC<Props> = ({
         )}
       >
         <Columns collapseBelow="sm" alignY="center">
-          <Column width="9/12">
+          <Column width="5/12">
             <Columns>
               <Column width="content">
                 <Box className={styles.countryCodeInput}>
@@ -200,8 +214,8 @@ export const InputPhone: FC<Props> = ({
                   type="tel"
                   format="### ####"
                   required={false}
-                  defaultValue={mobile}
-                  disabled={verificationValid || disabled}
+                  icon={inputPristine ? 'checkmark' : undefined}
+                  disabled={disabled}
                   size="xs"
                   rules={{
                     minLength: {
@@ -219,19 +233,22 @@ export const InputPhone: FC<Props> = ({
                   }}
                   label={formatMessage(sharedMessages.phoneNumber)}
                   placeholder={formatMessage(sharedMessages.phoneNumber)}
-                  onChange={(inp) =>
+                  onChange={(inp) => {
                     setTelInternal(parseFullNumber(inp.target.value || ''))
-                  }
+                    setErrors({ ...formErrors, mobile: undefined })
+                  }}
                   error={errors.tel?.message || formErrors.mobile}
+                  defaultValue={mobile}
                 />
               </Column>
             </Columns>
           </Column>
-          <Column width="3/12">
+          <Column width="7/12">
             <Box
               display="flex"
-              alignItems="flexEnd"
+              alignItems="flexStart"
               flexDirection="column"
+              marginLeft={3}
               paddingTop={2}
             >
               {!createLoading && !deleteLoading && (
@@ -239,7 +256,12 @@ export const InputPhone: FC<Props> = ({
                   {telVerifyCreated ? (
                     <Button
                       variant="text"
-                      disabled={verificationValid || disabled || resendBlock}
+                      disabled={
+                        verificationValid ||
+                        disabled ||
+                        resendBlock ||
+                        inputPristine
+                      }
                       size="small"
                       onClick={
                         telInternal
@@ -251,21 +273,25 @@ export const InputPhone: FC<Props> = ({
                       }
                     >
                       {telInternal
-                        ? formatMessage({
-                            id: 'sp.settings:resend',
-                            defaultMessage: 'Endursenda',
-                          })
+                        ? telInternal === telToVerify
+                          ? formatMessage({
+                              id: 'sp.settings:resend',
+                              defaultMessage: 'Endursenda',
+                            })
+                          : buttonText
                         : formatMessage(msg.saveEmptyChange)}
                     </Button>
                   ) : (
                     <button
                       type="submit"
-                      disabled={verificationValid || disabled}
+                      disabled={verificationValid || disabled || inputPristine}
                     >
                       <Button
                         variant="text"
                         size="small"
-                        disabled={verificationValid || disabled}
+                        disabled={
+                          verificationValid || disabled || inputPristine
+                        }
                       >
                         {telInternal
                           ? buttonText
@@ -279,40 +305,8 @@ export const InputPhone: FC<Props> = ({
             </Box>
           </Column>
         </Columns>
-        {verificationValid && (
-          <Columns alignY="center">
-            <Column>
-              <Box paddingTop={1}>
-                <Button
-                  onClick={() => {
-                    setTelVerifyCreated(false)
-                    setVerificationValid(false)
-                    setDeleteSuccess(false)
-                  }}
-                  variant="text"
-                  size="small"
-                  disabled={disabled}
-                >
-                  {formatMessage(msg.buttonChange)}
-                </Button>
-              </Box>
-            </Column>
-            {deleteSuccess ? (
-              <Column width="content">
-                <Box
-                  marginLeft={3}
-                  display="flex"
-                  alignItems="flexStart"
-                  flexDirection="column"
-                >
-                  <Icon icon="checkmarkCircle" color="mint600" type="filled" />
-                </Box>
-              </Column>
-            ) : null}
-          </Columns>
-        )}
       </form>
-      {telVerifyCreated && (
+      {telVerifyCreated && !inputPristine && (
         <Box marginTop={3}>
           <Text variant="medium" marginBottom={2}>
             {formatMessage({
@@ -335,9 +329,11 @@ export const InputPhone: FC<Props> = ({
                   defaultValue=""
                   error={errors.code?.message || formErrors.code}
                   disabled={verificationValid || disabled}
+                  icon={verificationValid ? 'checkmark' : undefined}
                   size="xs"
                   onChange={(inp) => {
                     setCodeInternal(inp.target.value)
+                    setErrors({ ...formErrors, code: undefined })
                   }}
                   rules={{
                     required: {
@@ -355,27 +351,22 @@ export const InputPhone: FC<Props> = ({
                   flexDirection="column"
                   paddingTop={2}
                 >
-                  {!saveLoading &&
-                    (verificationValid ? (
-                      <Icon
-                        icon="checkmarkCircle"
-                        color="mint600"
-                        type="filled"
-                      />
-                    ) : (
-                      <button
-                        type="submit"
-                        disabled={!codeInternal || disabled}
+                  {!saveLoading && (
+                    <button
+                      type="submit"
+                      disabled={!codeInternal || disabled || verificationValid}
+                    >
+                      <Button
+                        variant="text"
+                        size="small"
+                        disabled={
+                          !codeInternal || disabled || verificationValid
+                        }
                       >
-                        <Button
-                          variant="text"
-                          size="small"
-                          disabled={!codeInternal || disabled}
-                        >
-                          {formatMessage(m.confirmCode)}
-                        </Button>
-                      </button>
-                    ))}
+                        {formatMessage(m.confirmCode)}
+                      </Button>
+                    </button>
+                  )}
                   {saveLoading && <LoadingDots />}
                 </Box>
               </Column>

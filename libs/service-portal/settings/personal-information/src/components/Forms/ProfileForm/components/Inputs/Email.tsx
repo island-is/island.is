@@ -8,7 +8,6 @@ import {
   Button,
   Columns,
   Column,
-  Icon,
   Text,
   LoadingDots,
 } from '@island.is/island-ui/core'
@@ -54,9 +53,9 @@ export const InputEmail: FC<Props> = ({
 
   const [codeInternal, setCodeInternal] = useState('')
 
+  const [inputPristine, setInputPristine] = useState(false)
   const [emailVerifyCreated, setEmailVerifyCreated] = useState(false)
   const [verificationValid, setVerificationValid] = useState(false)
-  const [deleteSuccess, setDeleteSuccess] = useState(false)
 
   const [resendBlock, setResendBlock] = useState(false)
 
@@ -78,6 +77,7 @@ export const InputEmail: FC<Props> = ({
     if (email && email.length > 0) {
       setEmailInternal(email)
     }
+    checkSetPristineInput()
   }, [email])
 
   useEffect(() => {
@@ -137,6 +137,7 @@ export const InputEmail: FC<Props> = ({
           email: emailToVerify,
           emailCode: codeValue,
         }).then(() => {
+          setInputPristine(true)
           setVerificationValid(true)
         })
       }
@@ -160,10 +161,21 @@ export const InputEmail: FC<Props> = ({
       })
 
       setVerificationValid(true)
-      setDeleteSuccess(true)
+      setInputPristine(true)
       setErrors({ ...formErrors, code: undefined })
     } catch (err) {
       setErrors({ ...formErrors, code: emailError })
+    }
+  }
+
+  const checkSetPristineInput = () => {
+    if (getValues().email === email) {
+      setInputPristine(true)
+
+      setEmailVerifyCreated(false)
+    } else {
+      setInputPristine(false)
+      setVerificationValid(false)
     }
   }
 
@@ -175,7 +187,7 @@ export const InputEmail: FC<Props> = ({
         )}
       >
         <Columns collapseBelow="sm" alignY="center">
-          <Column width="9/12">
+          <Column width="5/12">
             <InputController
               control={control}
               backgroundColor="blue"
@@ -183,7 +195,8 @@ export const InputEmail: FC<Props> = ({
               name="email"
               required={false}
               type="email"
-              disabled={verificationValid || disabled}
+              icon={inputPristine ? 'checkmark' : undefined}
+              disabled={disabled}
               rules={{
                 pattern: {
                   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
@@ -194,18 +207,23 @@ export const InputEmail: FC<Props> = ({
                 },
               }}
               label={formatMessage(m.email)}
-              onChange={(inp) => setEmailInternal(inp.target.value)}
+              onChange={(inp) => {
+                setEmailInternal(inp.target.value)
+                setErrors({ ...formErrors, email: undefined })
+                checkSetPristineInput()
+              }}
               placeholder={formatMessage(m.email)}
               error={errors.email?.message || formErrors.email}
               size="xs"
               defaultValue={email}
             />
           </Column>
-          <Column width="3/12">
+          <Column width="7/12">
             <Box
               display="flex"
-              alignItems="flexEnd"
+              alignItems="flexStart"
               flexDirection="column"
+              marginLeft={3}
               paddingTop={2}
             >
               {!createLoading && !deleteLoading && (
@@ -214,7 +232,12 @@ export const InputEmail: FC<Props> = ({
                     <Button
                       variant="text"
                       size="small"
-                      disabled={verificationValid || disabled || resendBlock}
+                      disabled={
+                        verificationValid ||
+                        disabled ||
+                        resendBlock ||
+                        inputPristine
+                      }
                       onClick={
                         emailInternal
                           ? () =>
@@ -225,21 +248,25 @@ export const InputEmail: FC<Props> = ({
                       }
                     >
                       {emailInternal
-                        ? formatMessage({
-                            id: 'sp.settings:resend',
-                            defaultMessage: 'Endursenda',
-                          })
+                        ? emailInternal === emailToVerify
+                          ? formatMessage({
+                              id: 'sp.settings:resend',
+                              defaultMessage: 'Endursenda',
+                            })
+                          : buttonText
                         : formatMessage(msg.saveEmptyChange)}
                     </Button>
                   ) : (
                     <button
                       type="submit"
-                      disabled={verificationValid || disabled}
+                      disabled={verificationValid || disabled || inputPristine}
                     >
                       <Button
                         variant="text"
                         size="small"
-                        disabled={verificationValid || disabled}
+                        disabled={
+                          verificationValid || disabled || inputPristine
+                        }
                       >
                         {emailInternal
                           ? buttonText
@@ -253,40 +280,8 @@ export const InputEmail: FC<Props> = ({
             </Box>
           </Column>
         </Columns>
-        {verificationValid && (
-          <Columns alignY="center">
-            <Column>
-              <Box paddingTop={1}>
-                <Button
-                  onClick={() => {
-                    setEmailVerifyCreated(false)
-                    setVerificationValid(false)
-                    setDeleteSuccess(false)
-                  }}
-                  variant="text"
-                  size="small"
-                  disabled={disabled}
-                >
-                  {formatMessage(msg.buttonChange)}
-                </Button>
-              </Box>
-            </Column>
-            {deleteSuccess ? (
-              <Column width="content">
-                <Box
-                  marginLeft={3}
-                  display="flex"
-                  alignItems="flexStart"
-                  flexDirection="column"
-                >
-                  <Icon icon="checkmarkCircle" color="mint600" type="filled" />
-                </Box>
-              </Column>
-            ) : null}
-          </Columns>
-        )}
       </form>
-      {emailVerifyCreated && (
+      {emailVerifyCreated && !inputPristine && (
         <Box marginTop={3}>
           <Text variant="medium" marginBottom={2}>
             {formatMessage({
@@ -310,9 +305,11 @@ export const InputEmail: FC<Props> = ({
                   defaultValue=""
                   error={errors.code?.message || formErrors.code}
                   disabled={verificationValid || disabled}
+                  icon={verificationValid ? 'checkmark' : undefined}
                   size="xs"
                   onChange={(inp) => {
                     setCodeInternal(inp.target.value)
+                    setErrors({ ...formErrors, code: undefined })
                   }}
                   rules={{
                     required: {
@@ -330,27 +327,22 @@ export const InputEmail: FC<Props> = ({
                   flexDirection="column"
                   paddingTop={2}
                 >
-                  {!saveLoading &&
-                    (verificationValid ? (
-                      <Icon
-                        icon="checkmarkCircle"
-                        color="mint600"
-                        type="filled"
-                      />
-                    ) : (
-                      <button
-                        type="submit"
-                        disabled={!codeInternal || disabled}
+                  {!saveLoading && (
+                    <button
+                      type="submit"
+                      disabled={!codeInternal || disabled || verificationValid}
+                    >
+                      <Button
+                        variant="text"
+                        size="small"
+                        disabled={
+                          !codeInternal || disabled || verificationValid
+                        }
                       >
-                        <Button
-                          variant="text"
-                          size="small"
-                          disabled={!codeInternal || disabled}
-                        >
-                          {formatMessage(m.confirmCode)}
-                        </Button>
-                      </button>
-                    ))}
+                        {formatMessage(m.confirmCode)}
+                      </Button>
+                    </button>
+                  )}
                   {saveLoading && <LoadingDots />}
                 </Box>
               </Column>
