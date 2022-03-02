@@ -509,6 +509,11 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
   global('h3', {
     marginTop: '2.25rem',
   })
+  global('a', {
+    fontWeight: typography.regular,
+    color: color.blue400,
+    pointerEvents: 'none', // hax to prevent link clicks :/
+  })
 
   global('.section__title', {
     marginTop: '3rem',
