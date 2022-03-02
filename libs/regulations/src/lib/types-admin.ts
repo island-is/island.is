@@ -135,6 +135,7 @@ export type DraftRegulationChange = {
   name: DraftImpactName
   regTitle: PlainText
   date?: ISODate
+  minDate?: Date
   title: PlainText
   dropped?: boolean
 } & Pick<Regulation, 'text' | 'appendixes' | 'comments'>

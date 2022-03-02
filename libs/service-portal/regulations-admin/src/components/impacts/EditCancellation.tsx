@@ -127,7 +127,7 @@ export const EditCancellation = (props: EditCancellationProp) => {
         <GridRow>
           <GridColumn
             span={['12/12', '12/12', '12/12', '6/12']}
-            offset={['0', '0', '0', '2/12']}
+            offset={['0', '0', '0', '1/12']}
           >
             <ImpactModalTitle
               impact={activeCancellation}

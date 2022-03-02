@@ -109,7 +109,9 @@ export const makeDraftChangeForm = (
   type: 'amend',
   name: change.name,
   regTitle: change.regTitle,
-  date: fDate(change.date && new Date(change.date)),
+  date: fDate(change.date && new Date(change.date), undefined, {
+    min: change.minDate,
+  }),
   title: fText(change.title, true),
   text: fHtml(change.text, true),
   appendixes: change.appendixes.map((a, i) =>

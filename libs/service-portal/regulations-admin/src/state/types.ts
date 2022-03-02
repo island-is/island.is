@@ -82,6 +82,7 @@ type DraftImpactBaseFields<
   Pick<ImpactType, 'id' | 'type' | 'name'>
 > & {
   date: DateDraftField
+  minDate?: Date
   regTitle: string
   error?: MessageDescriptor | string
 }

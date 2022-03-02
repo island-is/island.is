@@ -76,7 +76,7 @@ export const EditChange = (props: EditChangeProp) => {
   >() // Target reglugerðin sem á að breyta
   const [showEditor, setShowEditor] = useState(false)
   const today = toISODate(new Date())
-
+  const minDate = toISODate(activeChange.minDate) ?? today
   const [createDraftRegulationChange] = useMutation(
     CREATE_DRAFT_REGULATION_CHANGE,
   )
@@ -87,11 +87,12 @@ export const EditChange = (props: EditChangeProp) => {
   // TODO: we need to refetch the regulation when activeChange.date is changed
   const { data: regulation } = useGetRegulationFromApiQuery(
     change.name,
-    toISODate(change.date.value) ?? undefined,
+    minDate,
   )
   useEffect(() => {
     setActiveRegulation(regulation)
   }, [regulation])
+
   const { data: draftImpacts } = useGetRegulationImpactsQuery(activeChange.name)
 
   const { effects } = useMemo(() => {
@@ -123,7 +124,7 @@ export const EditChange = (props: EditChangeProp) => {
   }, [activeRegulation])
 
   useEffect(() => {
-    setShowEditor(!!activeChange.date.value && !!activeRegulation)
+    setShowEditor(!!activeRegulation)
   }, [activeChange.date.value, activeRegulation])
 
   const changeDate = (newDate: Date | undefined) => {
@@ -284,7 +285,6 @@ export const EditChange = (props: EditChangeProp) => {
     revokeAppendix: (idx: number, revoked: boolean) => undefined,
   }
 
-  console.log('activeChange.appendixes', activeChange.appendixes)
   return (
     <LayoverModal closeModal={closeModal} id="EditChangeModal">
       {draft && (
@@ -307,7 +307,7 @@ export const EditChange = (props: EditChangeProp) => {
         <GridRow>
           <GridColumn
             span={['12/12', '12/12', '12/12', '6/12']}
-            offset={['0', '0', '0', '2/12']}
+            offset={['0', '0', '0', '1/12']}
           >
             <ImpactModalTitle
               type="edit"

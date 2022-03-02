@@ -5,12 +5,11 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDraftingState } from '../state/useDraftingState'
 import { impactMsgs } from '../messages'
 import { useLocale } from '@island.is/localization'
-import { prettyName, RegulationType } from '@island.is/regulations'
+import { prettyName, RegulationType, toISODate } from '@island.is/regulations'
 import {
   DraftImpactName,
   DraftRegulationCancelId,
   DraftRegulationChangeId,
-  RegulationDraftId,
 } from '@island.is/regulations/admin'
 
 import { useRegulationListQuery } from '../utils/dataHooks'
@@ -32,6 +31,7 @@ import {
 } from '../state/makeFields'
 import { EditChange } from './impacts/EditChange'
 import lastItem from 'lodash/last'
+import { useGetMinDates } from '../utils/hooks'
 
 export type SelRegOption = Option & {
   value?: DraftImpactName | ''
@@ -93,7 +93,8 @@ const useAffectedRegulations = (
 // ---------------------------------------------------------------------------
 
 export const EditImpacts = () => {
-  const { draft, activeImpact, actions } = useDraftingState()
+  const { draft, actions } = useDraftingState()
+  const impactMinDates = useGetMinDates(draft.impacts)
   const t = useLocale().formatMessage
 
   const { goToStep } = actions
@@ -244,6 +245,9 @@ export const EditImpacts = () => {
                 type: 'amend',
                 id: '' as DraftRegulationChangeId, // no ID available at this stage
                 name: selRegOption.value as DraftImpactName,
+                minDate: impactMinDates.find(
+                  (x) => x.name === (selRegOption.value as DraftImpactName),
+                )?.minDate,
                 regTitle: selRegOption.label,
                 title: '',
                 text: '',

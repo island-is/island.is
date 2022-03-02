@@ -28,7 +28,7 @@ export const ImpactDate = (props: ImpactDateProps) => {
         locale="is"
         label={t(impactMsgs.effectiveDate)}
         placeholderText={t(impactMsgs.effectiveDate_default)}
-        minDate={date.min || today}
+        minDate={date.min ?? today}
         maxDate={date.max}
         selected={date.value}
         handleChange={onChange}
