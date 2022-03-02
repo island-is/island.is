@@ -27,7 +27,7 @@ const Files = ({ uploadFiles, fileKey, folderId, hasError = false }: Props) => {
     onRetry,
   } = useFileUpload(uploadFiles, folderId)
 
-  const stringifyFile = (file: UploadFile) => {
+  const fileToObject = (file: UploadFile) => {
     return {
       key: file.key,
       name: file.name,
@@ -41,7 +41,7 @@ const Files = ({ uploadFiles, fileKey, folderId, hasError = false }: Props) => {
     const formFiles = files
       .filter((f) => f.status === 'done')
       .map((f) => {
-        return stringifyFile(f)
+        return fileToObject(f)
       })
     setValue(fileKey, formFiles)
   }, [files])
