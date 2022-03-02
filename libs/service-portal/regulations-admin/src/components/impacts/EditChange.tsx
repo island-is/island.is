@@ -45,6 +45,7 @@ import { Effects } from '../../types'
 import { Appendixes } from '../Appendixes'
 import { tidyUp, updateFieldValue } from '../../state/validations'
 import { useGetMinDateByName } from '../../utils/hooks'
+import { DraftRegulationChange } from '@island.is/regulations/admin'
 /* ---------------------------------------------------------------------------------------------------------------- */
 
 export type HTMLBoxProps = BoxProps & {
@@ -76,6 +77,11 @@ export const EditChange = (props: EditChangeProp) => {
     Regulation | undefined
   >() // Target reglugerðin sem á að breyta
   const minDate = useGetMinDateByName(draft.impacts, change.name)
+  const [
+    mostFutureDraftImpact,
+    setMostFutureDraftImpact,
+  ] = useState<DraftRegulationChange>()
+
   const [showEditor, setShowEditor] = useState(false)
   const today = toISODate(new Date())
   const [createDraftRegulationChange] = useMutation(
@@ -111,21 +117,8 @@ export const EditChange = (props: EditChangeProp) => {
   }, [activeRegulation, today])
 
   useEffect(() => {
-    if (!change.id && !activeChange.title.value && activeRegulation) {
-      setActiveChange({
-        ...activeChange,
-        text: fHtml(activeRegulation.text, true),
-        title: fText(activeRegulation.title),
-        appendixes: activeRegulation.appendixes.map((a, i) =>
-          makeDraftAppendixForm(a, String(i)),
-        ),
-      })
-    }
-  }, [activeRegulation])
-
-  useEffect(() => {
-    setShowEditor(!!activeRegulation)
-  }, [activeChange.date.value, activeRegulation])
+    setShowEditor(!!activeRegulation && !!activeChange)
+  }, [activeRegulation, activeChange])
 
   const changeDate = (newDate: Date | undefined) => {
     setActiveChange({
@@ -285,6 +278,47 @@ export const EditChange = (props: EditChangeProp) => {
     revokeAppendix: (idx: number, revoked: boolean) => undefined,
   }
 
+  useEffect(() => {
+    const draft =
+      draftImpacts &&
+      draftImpacts.length > 0 &&
+      (draftImpacts?.reduce((prev, next) => {
+        if (prev.date && next.date)
+          if (
+            new Date(prev.date.toString()).getTime() <=
+            new Date(next.date.toString()).getTime()
+          ) {
+            return next
+          } else {
+            return prev
+          }
+        return next
+      }) as DraftRegulationChange)
+
+    if (draft) {
+      //setMostFutureDraftImpact(draft)
+      setActiveChange({
+        ...activeChange,
+        text: fHtml(draft.text, true),
+        title: fText(draft.title),
+        appendixes: draft.appendixes.map((a, i) =>
+          makeDraftAppendixForm(a, String(i)),
+        ),
+      })
+    } else {
+      if (!change.id && !activeChange.title.value && activeRegulation) {
+        setActiveChange({
+          ...activeChange,
+          text: fHtml(activeRegulation.text, true),
+          title: fText(activeRegulation.title),
+          appendixes: activeRegulation.appendixes.map((a, i) =>
+            makeDraftAppendixForm(a, String(i)),
+          ),
+        })
+      }
+    }
+  }, [draftImpacts, activeRegulation])
+
   return (
     <LayoverModal closeModal={closeModal} id="EditChangeModal">
       {draft && (
@@ -368,7 +402,13 @@ export const EditChange = (props: EditChangeProp) => {
                   </Text>
                   <EditorInput
                     label=""
-                    baseText={activeRegulation?.text}
+                    baseText={
+                      activeRegulation?.text
+
+                      // mostFutureDraftImpact
+                      //   ? mostFutureDraftImpact.text
+                      //   : activeRegulation?.text
+                    }
                     value={activeChange.text.value}
                     onChange={(newValue) => changeRegulationText(newValue)}
                     draftId={draft.id}

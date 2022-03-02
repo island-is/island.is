@@ -83,7 +83,7 @@ export const classes: EditorClasses = {
   toolbar: style({
     position: 'sticky',
     top: 0,
-    zIndex: 1,
+    zIndex: 0,
 
     margin: 0,
     padding: '0 3px',
@@ -396,6 +396,22 @@ export const impactClasses: EditorClasses = Object.assign(classes, {
     padding: theme.spacing[3],
     paddingTop: theme.spacing[2],
     pointerEvents: 'none',
+  }),
+
+  toolbar: style({
+    position: 'sticky',
+    top: 0,
+    zIndex: 1,
+
+    margin: 0,
+    padding: '0 3px',
+    boxShadow: '0 10px 10px -10px rgba(0,0,0, 0.25)',
+
+    ...themeUtils.responsiveStyle({
+      md: {
+        top: 0,
+      },
+    }),
   }),
 })
 
