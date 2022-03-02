@@ -24,6 +24,8 @@ export const PropertyTable: FC<
 
   const unitOfUse = (propertyInfo?.unitsOfUse?.unitsOfUse || [])[0]
 
+  const propertyNumber = propertyInfo?.propertyNumber || ''
+
   const { formatMessage } = useLocale()
 
   return (
@@ -59,19 +61,15 @@ export const PropertyTable: FC<
             <T.Row>
               <T.Data>
                 <RadioButton
-                  id={id}
-                  name={`${id}`}
-                  checked={
-                    propertyInfo?.propertyNumber === selectedPropertyNumber
-                      ? true
-                      : false
-                  }
+                  id={propertyNumber}
+                  name={propertyNumber}
+                  checked={propertyNumber === selectedPropertyNumber}
                   onChange={() => {
                     selectHandler(propertyInfo)
                   }}
                 />
               </T.Data>
-              <T.Data>{propertyInfo?.propertyNumber}</T.Data>
+              <T.Data>{propertyNumber}</T.Data>
               <T.Data>{unitOfUse?.marking}</T.Data>
               <T.Data>{unitOfUse?.explanation}</T.Data>
               <T.Data>{unitOfUse?.buildYearDisplay}</T.Data>
