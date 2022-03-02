@@ -94,7 +94,6 @@ const useAffectedRegulations = (
 
 export const EditImpacts = () => {
   const { draft, actions } = useDraftingState()
-  const impactMinDates = useGetMinDates(draft.impacts)
   const t = useLocale().formatMessage
 
   const { goToStep } = actions
@@ -157,7 +156,6 @@ export const EditImpacts = () => {
   if (loading) {
     return null
   }
-
   return (
     <>
       <Box marginBottom={3} className={s.explainerText}>
@@ -245,9 +243,6 @@ export const EditImpacts = () => {
                 type: 'amend',
                 id: '' as DraftRegulationChangeId, // no ID available at this stage
                 name: selRegOption.value as DraftImpactName,
-                minDate: impactMinDates.find(
-                  (x) => x.name === (selRegOption.value as DraftImpactName),
-                )?.minDate,
                 regTitle: selRegOption.label,
                 title: '',
                 text: '',

@@ -11,11 +11,12 @@ const today = new Date()
 export type ImpactDateProps = {
   impact: DraftImpactForm
   size?: 'full' | 'half'
+  minDate?: Date
   onChange: (newValue: Date | undefined) => void
 }
 
 export const ImpactDate = (props: ImpactDateProps) => {
-  const { impact, onChange, size = 'half' } = props
+  const { impact, onChange, size = 'half', minDate } = props
 
   const date = impact.date
 
@@ -28,7 +29,7 @@ export const ImpactDate = (props: ImpactDateProps) => {
         locale="is"
         label={t(impactMsgs.effectiveDate)}
         placeholderText={t(impactMsgs.effectiveDate_default)}
-        minDate={date.min ?? today}
+        minDate={minDate ?? date.min}
         maxDate={date.max}
         selected={date.value}
         handleChange={onChange}

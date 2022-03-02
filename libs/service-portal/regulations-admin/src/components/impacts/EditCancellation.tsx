@@ -23,6 +23,7 @@ import {
   CREATE_DRAFT_REGULATION_CANCEL,
   UPDATE_DRAFT_REGULATION_CANCEL,
 } from './impactQueries'
+import { useGetMinDateByName } from '../../utils/hooks'
 
 type EditCancellationProp = {
   draft: RegDraftForm
@@ -33,11 +34,12 @@ type EditCancellationProp = {
 export const EditCancellation = (props: EditCancellationProp) => {
   const { draft, cancellation, closeModal } = props
   const [activeCancellation, setActiveCancellation] = useState(cancellation)
+  const minDate = useGetMinDateByName(draft.impacts, cancellation.name)
   const today = toISODate(new Date())
 
   const { data: regulation } = useGetRegulationFromApiQuery(
     cancellation.name,
-    toISODate(cancellation.date.value) ?? undefined,
+    toISODate(minDate) ?? today,
   )
 
   const { effects } = useMemo(() => {
@@ -134,6 +136,7 @@ export const EditCancellation = (props: EditCancellationProp) => {
               name={activeCancellation.name}
               title={activeCancellation.regTitle}
               type={'cancel'}
+              minDate={minDate}
               tag={
                 regulation?.type && {
                   first: 'Brottfelling reglugerðar',

@@ -18,10 +18,11 @@ export type ImpactModalTitleProps = {
   name: string
   onChangeDate: (newDate: Date | undefined) => void
   impact: DraftImpactForm
+  minDate?: Date
 }
 
 export const ImpactModalTitle = (props: ImpactModalTitleProps) => {
-  const { type, tag, title, name, onChangeDate, impact } = props
+  const { type, tag, title, name, onChangeDate, impact, minDate } = props
 
   return (
     <Box paddingY={4}>
@@ -57,6 +58,7 @@ export const ImpactModalTitle = (props: ImpactModalTitleProps) => {
       <ImpactDate
         impact={impact}
         size="full"
+        minDate={minDate}
         onChange={(newDate) => onChangeDate(newDate)}
       />
     </Box>

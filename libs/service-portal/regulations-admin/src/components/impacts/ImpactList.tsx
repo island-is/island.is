@@ -214,9 +214,6 @@ export const ImpactList = (props: ImpactListProps) => {
                 id: chooseType.impact.id,
                 name: chooseType.impact.name,
                 date: toISODate(chooseType.impact.date.value) ?? undefined,
-                minDate: impactMinDates.find(
-                  (x) => x.name === chooseType.impact?.name,
-                )?.minDate,
                 regTitle: chooseType.impact.regTitle,
                 title: chooseType.impact.title.value,
                 text: chooseType.impact.text.value,

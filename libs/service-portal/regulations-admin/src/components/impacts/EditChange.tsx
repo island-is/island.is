@@ -44,6 +44,7 @@ import { ImpactHistory } from './ImpactHistory'
 import { Effects } from '../../types'
 import { Appendixes } from '../Appendixes'
 import { tidyUp, updateFieldValue } from '../../state/validations'
+import { useGetMinDateByName } from '../../utils/hooks'
 /* ---------------------------------------------------------------------------------------------------------------- */
 
 export type HTMLBoxProps = BoxProps & {
@@ -74,9 +75,9 @@ export const EditChange = (props: EditChangeProp) => {
   const [activeRegulation, setActiveRegulation] = useState<
     Regulation | undefined
   >() // Target reglugerðin sem á að breyta
+  const minDate = useGetMinDateByName(draft.impacts, change.name)
   const [showEditor, setShowEditor] = useState(false)
   const today = toISODate(new Date())
-  const minDate = toISODate(activeChange.minDate) ?? today
   const [createDraftRegulationChange] = useMutation(
     CREATE_DRAFT_REGULATION_CHANGE,
   )
@@ -84,10 +85,9 @@ export const EditChange = (props: EditChangeProp) => {
     UPDATE_DRAFT_REGULATION_CHANGE,
   )
 
-  // TODO: we need to refetch the regulation when activeChange.date is changed
   const { data: regulation } = useGetRegulationFromApiQuery(
     change.name,
-    minDate,
+    toISODate(minDate) ?? today,
   )
   useEffect(() => {
     setActiveRegulation(regulation)
@@ -314,6 +314,7 @@ export const EditChange = (props: EditChangeProp) => {
               title={activeChange.regTitle}
               name={activeChange.name}
               impact={activeChange}
+              minDate={minDate}
               onChangeDate={changeDate}
               tag={{
                 first: 'Textabreyting reglugerðar',
