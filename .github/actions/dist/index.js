@@ -91177,12 +91177,7 @@ function findBestGoodRefBranch(commitScore, git, githubApi, headBranch, baseBran
     return __awaiter(this, void 0, void 0, function* () {
         const log = change_detection_app.extend('findBestGoodRefBranch');
         log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`);
-        const mergeBase = yield git.raw('merge-base', baseBranch, headBranch);
-        change_detection_app(`Merge base is ${mergeBase}`);
-        const commits = (yield git.raw('rev-list', '--date-order', '--max-count=300', 'HEAD~1', `${mergeBase.trim()}`))
-            .split('\n')
-            .filter((s) => s.length > 0)
-            .map((c) => c.substr(0, 7));
+        const commits = yield getCommits(git, headBranch, baseBranch, 'HEAD~1');
         const builds = yield githubApi.getLastGoodBranchBuildRun(headBranch, workflowId, commits);
         if (builds)
             return {

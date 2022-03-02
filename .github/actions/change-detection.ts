@@ -31,20 +31,7 @@ export async function findBestGoodRefBranch(
 ): Promise<LastGoodBuild> {
   const log = app.extend('findBestGoodRefBranch')
   log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`)
-  const mergeBase = await git.raw('merge-base', baseBranch, headBranch)
-  app(`Merge base is ${mergeBase}`)
-  const commits = (
-    await git.raw(
-      'rev-list',
-      '--date-order',
-      '--max-count=300',
-      'HEAD~1',
-      `${mergeBase.trim()}`,
-    )
-  )
-    .split('\n')
-    .filter((s) => s.length > 0)
-    .map((c) => c.substr(0, 7))
+  const commits = await getCommits(git, headBranch, baseBranch, 'HEAD~1')
   const builds = await githubApi.getLastGoodBranchBuildRun(
     headBranch,
     workflowId,
