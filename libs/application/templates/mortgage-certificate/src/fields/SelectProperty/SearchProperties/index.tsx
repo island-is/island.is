@@ -19,7 +19,7 @@ interface SearchPropertiesProps {
   selectedPropertyNumber: string | undefined
 }
 
-export const searchRealEstateMutation = gql`
+export const searchPropertiesMutation = gql`
   ${SEARCH_PROPERTIES_QUERY}
 `
 
@@ -37,7 +37,7 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
     PropertyDetail | undefined
   >(undefined)
 
-  const [runQuery, { loading }] = useLazyQuery(searchRealEstateMutation, {
+  const [runQuery, { loading }] = useLazyQuery(searchPropertiesMutation, {
     onCompleted(result) {
       setShowSearchError(false)
 

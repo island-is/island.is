@@ -41,16 +41,16 @@ export const PendingRejected: FC<FieldBaseProps> = ({ application, field }) => {
     }
   }
 
-  const hasSentRequest = (externalData?.submitRequestToSyslumenn?.data as {
+  const hasSentRequest = (externalData.submitRequestToSyslumenn?.data as {
     hasSentRequest: boolean
-  }).hasSentRequest
+  })?.hasSentRequest
 
   if (hasSentRequest) {
     handleStateChange(MCEvents.PENDING_REJECTED_TRY_AGAIN)
   }
 
-  const selectedProperty = (externalData.validateMortgageCertificate.data as {
-    property?: PropertyDetail
+  const selectedProperty = (externalData.validateMortgageCertificate?.data as {
+    property: PropertyDetail
   })?.property
 
   return (

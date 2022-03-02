@@ -13,12 +13,12 @@ export const Pending: FC<FieldBaseProps> = ({
   const { externalData } = application
   const applicationId = application.id
 
-  const validationData = externalData.validateMortgageCertificate.data as {
+  const validationData = externalData.validateMortgageCertificate?.data as {
     exists: boolean
     hasKMarking: boolean
   }
-  const certificateExists = validationData.exists
-  const hasKMarking = validationData.hasKMarking
+  const certificateExists = validationData?.exists
+  const hasKMarking = validationData?.hasKMarking
 
   const [stateName, setStateName] = useState<string>(MCEvents.PENDING)
 

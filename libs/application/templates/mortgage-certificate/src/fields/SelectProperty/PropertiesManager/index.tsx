@@ -7,10 +7,7 @@ import { SearchProperties } from '../SearchProperties'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { MCEvents } from '../../../lib/constants'
 import { useLocale } from '@island.is/localization'
-import {
-  PropertyOverviewWithDetail,
-  PropertyDetail,
-} from '../../../types/schema'
+import { PropertyDetail } from '../../../types/schema'
 import { AlertMessage, Divider, Button, Box } from '@island.is/island-ui/core'
 import { m } from '../../../lib/messages'
 
@@ -23,14 +20,22 @@ export const PropertiesManager: FC<FieldBaseProps> = ({
   const { id } = field
   const { setValue, getValues } = useFormContext()
   const { formatMessage } = useLocale()
-  const [errorMsg, setErrorMsg] = useState<string>('') // TODOx ('Villa hefur komið upp')
+  const [showErrorMsg, setShowErrorMsg] = useState<boolean>(false)
   const [submitApplication] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => console.error(e.message),
   })
 
   const myProperties =
-    (externalData.nationalRegistryRealEstate
-      ?.data as PropertyOverviewWithDetail).properties || []
+    (externalData.nationalRegistryRealEstate?.data as {
+      properties: [PropertyDetail]
+    })?.properties || []
+
+  const selectedPropertyNumber = getValueViaPath(
+    application.answers,
+    'selectProperty.propertyNumber',
+  ) as string
+
+  const defaultProperty = myProperties[0]
 
   const handleNext: any = () => {
     submitApplication({
@@ -52,14 +57,6 @@ export const PropertiesManager: FC<FieldBaseProps> = ({
       }
     })
   }
-
-  const selectedPropertyNumber = getValueViaPath(
-    application.answers,
-    'selectProperty.propertyNumber',
-  ) as string
-
-  const defaultProperty = myProperties[0]
-
   return (
     <Controller
       name="selectProperty.propertyNumber"
@@ -92,7 +89,7 @@ export const PropertiesManager: FC<FieldBaseProps> = ({
               selectedPropertyNumber={value}
             />
             <Box paddingBottom={5}>
-              {errorMsg.length > 0 && (
+              {showErrorMsg && (
                 <AlertMessage
                   type="error"
                   title={formatMessage(m.errorSheriffApiTitle)}

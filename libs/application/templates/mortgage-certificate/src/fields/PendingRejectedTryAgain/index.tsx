@@ -21,7 +21,7 @@ import { VALIDATE_MORTGAGE_CERTIFICATE_QUERY } from '../../graphql/queries'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 
-export const searchRealEstateMutation = gql`
+export const validateCertificateMutation = gql`
   ${VALIDATE_MORTGAGE_CERTIFICATE_QUERY}
 `
 
@@ -42,8 +42,8 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
     onError: (e) => console.error(e.message),
   })
 
-  const selectedProperty = (externalData.validateMortgageCertificate.data as {
-    property?: PropertyDetail
+  const selectedProperty = (externalData.validateMortgageCertificate?.data as {
+    property: PropertyDetail
   })?.property
 
   const handleStateChangeAndRefetch = (newStateName: string) => {
@@ -71,7 +71,7 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
     }
   }
 
-  const [runQuery, { loading }] = useLazyQuery(searchRealEstateMutation, {
+  const [runQuery, { loading }] = useLazyQuery(validateCertificateMutation, {
     variables: {
       input: {
         propertyNumber: selectedProperty?.propertyNumber,

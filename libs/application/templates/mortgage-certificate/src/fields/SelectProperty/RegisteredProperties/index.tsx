@@ -1,10 +1,7 @@
 import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import { PropertyTable } from '../PropertyTable'
-import {
-  PropertyOverviewWithDetail,
-  PropertyDetail,
-} from '../../../types/schema'
+import { PropertyDetail } from '../../../types/schema'
 
 interface RegisteredPropertiesProps {
   selectHandler: (property: PropertyDetail | undefined) => void
@@ -15,13 +12,14 @@ export const RegisteredProperties: FC<
   FieldBaseProps & RegisteredPropertiesProps
 > = ({ application, field, selectHandler, selectedPropertyNumber }) => {
   const { externalData } = application
-  const properties =
-    (externalData.nationalRegistryRealEstate
-      ?.data as PropertyOverviewWithDetail)?.properties || []
+  const myProperties =
+    (externalData.nationalRegistryRealEstate?.data as {
+      properties: [PropertyDetail]
+    })?.properties || []
 
   return (
     <>
-      {properties.map((p: PropertyDetail) => {
+      {myProperties.map((p: PropertyDetail) => {
         return (
           <PropertyTable
             application={application}
