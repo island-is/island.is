@@ -1,0 +1,70 @@
+import {
+  Meta,
+  Story,
+  Canvas,
+  ArgsTable,
+  Description,
+  Source,
+} from '@storybook/addon-docs'
+import { dedent } from 'ts-dedent'
+
+import { CompanySearchFormField } from './CompanySearchFormField'
+
+export const createMockApplication = (data = {}) => ({
+  id: '123',
+  assignees: [],
+  state: data.state || 'draft',
+  applicant: '111111-3000',
+  typeId: data.typeId || 'ExampleForm',
+  modified: new Date(),
+  created: new Date(),
+  attachments: {},
+  answers: data.answers || {},
+  externalData: data.externalData || {},
+})
+
+<Meta
+  title="Application System/CompanySearchFormField"
+  component={CompanySearchFormField}
+/>
+
+# CompanySearchFormField
+
+### Usage in a template
+
+You can create a CompanySearchFormField using the following function `buildCompanySearchField`
+
+<Source
+  language="typescript"
+  code={dedent(`
+    buildCompanySearchField({
+      id: 'field.id',
+      title: 'Field title',
+      placeholder: 'Field placeholder',
+      setLabelToDataSchema: true,
+    })`)}
+/>
+
+The previous configuration object will result in the following component:
+
+<Canvas>
+  <Story name="Default" height="400px">
+    <CompanySearchFormField
+      application={createMockApplication()}
+      field={{
+        id: 'field.id',
+        title: 'Field title',
+        placeholder: 'Field placeholder',
+        setLabelToDataSchema: true,
+      }}
+    />
+  </Story>
+</Canvas>
+
+You can also use this field into a custom component by using `<CompanySearchFormField field={...} />` with the configuration object defined above.
+
+# Props
+
+## CompanySearchFormField
+
+<ArgsTable of={CompanySearchFormField} />

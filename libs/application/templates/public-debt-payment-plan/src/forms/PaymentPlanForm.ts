@@ -1,5 +1,6 @@
 import { PaymentScheduleDebts } from '@island.is/api/schema'
 import {
+  buildCompanySearchField,
   buildCustomField,
   buildDataProviderItem,
   buildDescriptionField,
@@ -272,7 +273,7 @@ export const PaymentPlanForm: Form = buildForm({
             return (
               debts?.find((x) => x.type === 'Wagedection') !== undefined &&
               (_formValue as PublicDebtPaymentPlan).employer?.isCorrectInfo ===
-              NO
+                NO
             )
           },
           children: [
@@ -282,11 +283,16 @@ export const PaymentPlanForm: Form = buildForm({
               doesNotRequireAnswer: true,
               component: 'EmployerInfoDescription',
             }),
-            buildCustomField({
+            buildCompanySearchField({
+              id: 'correctedEmployer',
+              title: employer.labels.searchCompany,
+              placeholder: employer.labels.searchCompanyPlaceholer,
+            }),
+            /* buildCustomField({
               id: 'correctedEmployer',
               title: '',
               component: 'CompanySearch',
-            }),
+            }), */
           ],
         }),
       ],

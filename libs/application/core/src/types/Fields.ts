@@ -150,7 +150,7 @@ export interface CompanySearchField extends BaseField {
   readonly type: FieldTypes.COMPANY_SEARCH
   component: FieldComponents.COMPANY_SEARCH
   placeholder?: FormText
-  backgroundColor?: InputBackgroundColor
+  setLabelToDataSchema?: boolean
 }
 
 export interface AsyncSelectField extends BaseField {
