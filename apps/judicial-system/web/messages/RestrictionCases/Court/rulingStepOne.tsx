@@ -162,5 +162,52 @@ export const rcRulingStepOne = {
           'Notaður sem texti sem segir til um einangrun á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
     }),
+    conclusion: defineMessages({
+      title: {
+        id:
+          'judicial.system.restriction_cases:ruling_step_one.conclusion.title',
+        defaultMessage: 'Úrskurðarorð',
+        description:
+          'Notaður sem titill fyrir "Úrskurðarorð" hlutann á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      label: {
+        id:
+          'judicial.system.restriction_cases:ruling_step_one.conclusion.label',
+        defaultMessage: 'Úrskurðarorð',
+        description:
+          'Notaður sem titill fyrir "Úrskurðarorð" innsláttarsvæði á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      placeholder: {
+        id:
+          'judicial.system.restriction_cases:ruling_step_one.conclusion.placeholder',
+        defaultMessage: 'Hver eru úrskurðarorðin',
+        description:
+          'Notaður sem placeholder fyrir "Úrskurðarorð" innsláttarsvæði á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      dismissingAutofill: {
+        id:
+          'judicial.system.restriction_cases:ruling_step_one.conclusion.dismissing_autofill',
+        defaultMessage:
+          'Kröfu um að {genderedAccused}, {accusedName}, sæti{extensionSuffix} {caseType} er vísað frá.',
+        description:
+          'Notaður sem sjálfgefinn texti í "Úrskurðarorð" textaboxi þegar kröfu er vísað frá á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      rejectingAutofill: {
+        id:
+          'judicial.system.restriction_cases:ruling_step_one.conclusion.rejecting_autofillv1',
+        defaultMessage:
+          'Kröfu um að {genderedAccused}, {accusedName}{accusedNationalId}sæti{extensionSuffix} {caseType} er hafnað.',
+        description:
+          'Notaður sem sjálfgefinn texti í "Úrskurðarorð" textaboxi þegar kröfu er hafnað á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+      acceptingAutofill: {
+        id:
+          'judicial.system.restriction_cases:ruling_step_one.conclusion.accepting_autofillv1',
+        defaultMessage:
+          '{genderedAccused}, {accusedName}{accusedNationalId}skal sæta {caseTypeAndExtensionSuffix}, þó ekki lengur en til {validToDate}.{isolationSuffix}',
+        description:
+          'Notaður sem sjálfgefinn texti í "Úrskurðarorð" textaboxi þegar krafa er samþykkt á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
+      },
+    }),
   },
 }
