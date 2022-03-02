@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class PersonalTaxReturnResponse {
+class PersonalTaxReturn {
   @Field(() => String)
   key!: string
 
@@ -10,4 +10,10 @@ export class PersonalTaxReturnResponse {
 
   @Field(() => Number)
   size!: number
+}
+
+@ObjectType()
+export class PersonalTaxReturnResponse {
+  @Field(() => PersonalTaxReturn, { nullable: true })
+  personalTaxReturn?: PersonalTaxReturn
 }

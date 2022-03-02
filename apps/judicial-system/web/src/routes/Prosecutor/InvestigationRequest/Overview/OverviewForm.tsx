@@ -5,6 +5,7 @@ import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
 import { CaseState } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import {
+  AccordionListItem,
   CaseFileList,
   CaseInfo,
   FormContentContainer,
@@ -177,32 +178,21 @@ const OverviewForm: React.FC<Props> = (props) => {
               label="Greinargerð um málsatvik og lagarök"
             >
               {workingCase.caseFacts && (
-                <Box marginBottom={2}>
-                  <Box marginBottom={2}>
-                    <Text variant="h5">Málsatvik</Text>
-                  </Box>
+                <AccordionListItem title="Málsatvik">
                   <Text whiteSpace="breakSpaces">{workingCase.caseFacts}</Text>
-                </Box>
+                </AccordionListItem>
               )}
               {workingCase.legalArguments && (
-                <Box marginBottom={2}>
-                  <Box marginBottom={2}>
-                    <Text variant="h5">Lagarök</Text>
-                  </Box>
+                <AccordionListItem title="Lagarök">
                   <Text whiteSpace="breakSpaces">
                     {workingCase.legalArguments}
                   </Text>
-                </Box>
+                </AccordionListItem>
               )}
               {workingCase.requestProsecutorOnlySession && (
-                <Box marginBottom={2}>
-                  <Box marginBottom={2}>
-                    <Text variant="h5" as="h5">
-                      Beiðni um dómþing að varnaraðila fjarstöddum
-                    </Text>
-                  </Box>
+                <AccordionListItem title="Beiðni um dómþing að varnaraðila fjarstöddum">
                   <Text>{workingCase.prosecutorOnlySessionRequest}</Text>
-                </Box>
+                </AccordionListItem>
               )}
             </AccordionItem>
             <AccordionItem

@@ -68,6 +68,7 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       SECRET_TOKEN: '/k8s/judicial-system/SECRET_TOKEN',
       CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN',
       EVENT_URL: '/k8s/judicial-system/EVENT_URL',
+      ERROR_EVENT_URL: '/k8s/judicial-system/ERROR_EVENT_URL',
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
