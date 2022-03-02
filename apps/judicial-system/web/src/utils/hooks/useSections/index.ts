@@ -28,9 +28,7 @@ import {
   isPoliceReportStepValidIC,
   isPoliceReportStepValidRC,
   isRulingValidIC,
-  isRulingStepOneValidRC,
-  isRulingStepTwoValidIC,
-  isRulingStepTwoValidRC,
+  isRulingValidRC,
 } from '../../validate'
 
 interface Section {
@@ -284,21 +282,6 @@ const useSections = () => {
         {
           type: 'SUB_SECTION',
           name: formatMessage(
-            sections.investigationCaseCourtSection.rulingStepTwo,
-          ),
-          href:
-            (activeSubSection && activeSubSection > 5) ||
-            (hasCourtPermission(workingCase, user) &&
-              isReceptionAndAssignmentStepValidIC(workingCase) &&
-              isCourtHearingArrangementsStepValidIC(workingCase) &&
-              isCourtRecordStepValidIC(workingCase) &&
-              isRulingValidIC(workingCase))
-              ? `${Constants.IC_RULING_STEP_TWO_ROUTE}/${id}`
-              : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
-          name: formatMessage(
             sections.investigationCaseCourtSection.conclusion,
           ),
           href:
@@ -306,8 +289,7 @@ const useSections = () => {
             isReceptionAndAssignmentStepValidIC(workingCase) &&
             isCourtHearingArrangementsStepValidIC(workingCase) &&
             isCourtRecordStepValidIC(workingCase) &&
-            isRulingValidIC(workingCase) &&
-            isRulingStepTwoValidIC(workingCase)
+            isRulingValidIC(workingCase)
               ? `${Constants.IC_CONFIRMATION_ROUTE}/${id}`
               : undefined,
         },
@@ -373,27 +355,13 @@ const useSections = () => {
         },
         {
           type: 'SUB_SECTION',
-          name: formatMessage(sections.courtSection.rulingStepTwo),
-          href:
-            (activeSubSection && activeSubSection > 5) ||
-            (hasCourtPermission(workingCase, user) &&
-              isReceptionAndAssignmentStepValidRC(workingCase) &&
-              isCourtHearingArrangemenstStepValidRC(workingCase) &&
-              isCourtRecordStepValidRC(workingCase) &&
-              isRulingStepOneValidRC(workingCase))
-              ? `${Constants.RULING_STEP_TWO_ROUTE}/${id}`
-              : undefined,
-        },
-        {
-          type: 'SUB_SECTION',
           name: formatMessage(sections.courtSection.conclusion),
           href:
             hasCourtPermission(workingCase, user) &&
             isReceptionAndAssignmentStepValidRC(workingCase) &&
             isCourtHearingArrangemenstStepValidRC(workingCase) &&
             isCourtRecordStepValidRC(workingCase) &&
-            isRulingStepOneValidRC(workingCase) &&
-            isRulingStepTwoValidRC(workingCase)
+            isRulingValidRC(workingCase)
               ? `${Constants.CONFIRMATION_ROUTE}/${id}`
               : undefined,
         },

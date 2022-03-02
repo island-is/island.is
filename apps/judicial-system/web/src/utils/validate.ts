@@ -224,7 +224,7 @@ export const isCourtRecordStepValidIC = (workingCase: Case) => {
   )
 }
 
-export const isRulingStepOneValidRC = (workingCase: Case) => {
+export const isRulingValidRC = (workingCase: Case) => {
   return (
     validate(workingCase.prosecutorDemands || '', 'empty').isValid &&
     validate(workingCase.courtCaseFacts || '', 'empty').isValid &&
@@ -243,22 +243,6 @@ export const isRulingValidIC = (workingCase: Case) => {
     validate(workingCase.decision || '', 'empty').isValid &&
     validate(workingCase.ruling || '', 'empty').isValid &&
     validate(workingCase.conclusion || '', 'empty').isValid
-  )
-}
-
-export const isRulingStepTwoValidRC = (workingCase: Case) => {
-  return (
-    workingCase.accusedAppealDecision &&
-    workingCase.prosecutorAppealDecision &&
-    validate(workingCase.courtEndTime || '', 'date-format').isValid
-  )
-}
-
-export const isRulingStepTwoValidIC = (workingCase: Case) => {
-  return (
-    workingCase.accusedAppealDecision &&
-    workingCase.prosecutorAppealDecision &&
-    validate(workingCase.courtEndTime || '', 'date-format').isValid
   )
 }
 

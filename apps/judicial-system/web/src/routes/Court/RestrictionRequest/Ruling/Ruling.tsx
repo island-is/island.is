@@ -30,7 +30,7 @@ import {
   Gender,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
-import { isRulingStepOneValidRC } from '@island.is/judicial-system-web/src/utils/validate'
+import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   CourtSubsections,
   Sections,
@@ -44,10 +44,7 @@ import {
 import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import {
-  core,
-  rcRulingStepOne as m,
-} from '@island.is/judicial-system-web/messages'
+import { core, rcRuling as m } from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   capitalize,
@@ -56,7 +53,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import * as Constants from '@island.is/judicial-system/consts'
 
-export const RulingStepOne: React.FC = () => {
+export const Ruling: React.FC = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -652,11 +649,11 @@ export const RulingStepOne: React.FC = () => {
         <FormFooter
           previousUrl={`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`}
           nextUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${id}`}
-          nextIsDisabled={!isRulingStepOneValidRC(workingCase)}
+          nextIsDisabled={!isRulingValidRC(workingCase)}
         />
       </FormContentContainer>
     </PageLayout>
   )
 }
 
-export default RulingStepOne
+export default Ruling
