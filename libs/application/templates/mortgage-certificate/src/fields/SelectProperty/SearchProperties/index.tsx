@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import {
   Box,
@@ -32,33 +32,24 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
   const { formatMessage } = useLocale()
   const [hasInitialized, setHasInitialized] = useState<boolean>(false)
   const [showSearchError, setShowSearchError] = useState<boolean>(false)
-  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [searchStr, setSearchStr] = useState('')
   const [foundProperty, setFoundProperty] = useState<
     PropertyDetail | undefined
   >(undefined)
 
-  const [runQuery] = useLazyQuery(searchRealEstateMutation, {
-    variables: {
-      input: {
-        propertyNumber: searchStr,
-      },
-    },
+  const [runQuery, { loading }] = useLazyQuery(searchRealEstateMutation, {
     onCompleted(result) {
+      setShowSearchError(false)
+
       setFoundProperty(result.searchForProperty)
-      setIsLoading(false)
     },
     onError() {
       setShowSearchError(true)
-      setIsLoading(false)
     },
   })
 
   const handleClickSearch = () => {
-    setFoundProperty(undefined)
-    setShowSearchError(false)
-    setIsLoading(true)
-    runQuery()
+    runQuery({ variables: { input: { propertyNumber: searchStr } } })
   }
 
   var selectProperty = getValueViaPath(
@@ -90,7 +81,7 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
         </Box>
         <Box style={{ minWidth: 'fit-content' }}>
           <Button
-            disabled={isLoading}
+            disabled={loading}
             onClick={() => handleClickSearch()}
             variant="ghost"
           >
@@ -98,7 +89,7 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
           </Button>
         </Box>
       </Box>
-      {foundProperty !== undefined && (
+      {!loading && foundProperty !== undefined && (
         <PropertyTable
           application={application}
           field={field}
@@ -109,7 +100,7 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
         />
       )}
 
-      <Box paddingTop={3} hidden={!showSearchError}>
+      <Box paddingTop={3} hidden={loading || !showSearchError}>
         <AlertMessage
           type="error"
           title={formatMessage(m.propertyNotFoundTitle)}

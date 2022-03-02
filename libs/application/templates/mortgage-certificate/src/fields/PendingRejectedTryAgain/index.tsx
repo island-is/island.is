@@ -18,6 +18,8 @@ import { useMutation } from '@apollo/client'
 import { PropertyDetail } from '../../types/schema'
 import { gql, useLazyQuery } from '@apollo/client'
 import { VALIDATE_MORTGAGE_CERTIFICATE_QUERY } from '../../graphql/queries'
+import { useLocale } from '@island.is/localization'
+import { m } from '../../lib/messages'
 
 export const searchRealEstateMutation = gql`
   ${VALIDATE_MORTGAGE_CERTIFICATE_QUERY}
@@ -31,8 +33,8 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
   const { externalData } = application
   const { answers } = application
 
+  const { formatMessage } = useLocale()
   const [showSearchError, setShowSearchError] = useState<boolean>(false)
-  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [stateName, setStateName] = useState<string>(
     MCEvents.PENDING_REJECTED_TRY_AGAIN,
   )
@@ -69,13 +71,15 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
     }
   }
 
-  const [runQuery] = useLazyQuery(searchRealEstateMutation, {
+  const [runQuery, { loading }] = useLazyQuery(searchRealEstateMutation, {
     variables: {
       input: {
         propertyNumber: selectedProperty?.propertyNumber,
       },
     },
     onCompleted(result) {
+      setShowSearchError(false)
+
       const { exists, hasKMarking } = result.validateMortgageCertificate as {
         exists: boolean
         hasKMarking: boolean
@@ -86,18 +90,14 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
       } else {
         handleStateChangeAndRefetch(DefaultEvents.PAYMENT)
       }
-
-      setIsLoading(false)
     },
     onError() {
       setShowSearchError(true)
-      setIsLoading(false)
     },
+    fetchPolicy: 'no-cache',
   })
 
   const handleClickValidateMortgageCertificate = () => {
-    setShowSearchError(false)
-    setIsLoading(true)
     runQuery()
   }
 
@@ -116,7 +116,7 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
           {selectedProperty?.defaultAddress?.display}
         </Text>
       </Box>
-      <Box paddingBottom={3} hidden={!showSearchError}>
+      <Box paddingBottom={3} hidden={loading || !showSearchError}>
         <AlertMessage
           type="error"
           title="Ekki gekk að sækja vottorð fyrir þessa eign"
@@ -133,10 +133,10 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
       >
         <Button
           onClick={() => handleClickValidateMortgageCertificate()}
-          disabled={isLoading}
+          disabled={loading}
           icon="arrowForward"
         >
-          Áfram
+          {formatMessage(m.continue)}
         </Button>
       </Box>
     </Box>
