@@ -2,19 +2,37 @@ import { Column, Columns, Divider, Text } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
+import { PropertyDetail } from '../../types/schema'
 
 export const OverviewPaymentCharge: FC<FieldBaseProps> = ({ application }) => {
   const { externalData } = application
+
   const item = externalData.payment.data as {
     priceAmount: number
     chargeItemName: string
   }
+
+  const selectedProperty = externalData.getPropertyDetails
+    ?.data as PropertyDetail
+
   return (
     <Box paddingTop="smallGutter">
+      <Box
+        borderRadius="standard"
+        background={'blue100'}
+        paddingX={2}
+        paddingY={1}
+        marginBottom={5}
+      >
+        <Text fontWeight="semiBold">Til greiðslu vegna fasteignar</Text>
+        <Text>
+          {selectedProperty?.propertyNumber}{' '}
+          {selectedProperty?.defaultAddress?.display}
+        </Text>
+      </Box>
       <Columns alignY="bottom" space="gutter">
         <Column>
           <Box marginBottom="gutter">
-            <Text variant="h4">Til greiðslu</Text>
             <Text marginTop="smallGutter">{item?.chargeItemName}</Text>
           </Box>
         </Column>
