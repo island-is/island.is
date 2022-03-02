@@ -225,21 +225,21 @@ export class VerificationService {
             {
               component: 'Image',
               context: {
-                src: pathToAsset('digital-services.jpg'),
-                alt: 'Manneskja skoðar snjallsíma - myndskreyting',
+                src: pathToAsset('logo.jpg'),
+                alt: 'Ísland.is logo',
               },
             },
             {
               component: 'Heading',
-              context: { copy: 'Staðfesting á netfangi' },
+              context: { copy: 'Staðfesting á netfangi', small: true },
             },
             {
               component: 'Copy',
               context: { copy: 'Öryggiskóðinn þinn', small: true },
             },
             {
-              component: 'Copy',
-              context: { copy: verification.hash, style: 'bold' },
+              component: 'Heading',
+              context: { copy: verification.hash },
             },
             {
               component: 'Copy',

@@ -1,5 +1,10 @@
 import { join } from 'path'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 export const pathToAsset = (file: string) => {
-  return join(__dirname, `./assets/images/${file}`)
+  if (isRunningOnEnvironment('local')) {
+    return join(__dirname, `./assets/images/${file}`)
+  }
+
+  return join(__dirname, `./images/${file}`)
 }

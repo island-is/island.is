@@ -8346,6 +8346,11 @@
                 "glob": "sequelize.config.js",
                 "input": "apps/services/user-profile",
                 "output": "./"
+              },
+              {
+                "glob": "*",
+                "input": "apps/services/user-profile/src/assets/images",
+                "output": "./images"
               }
             ],
             "maxWorkers": 2
