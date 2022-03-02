@@ -239,6 +239,7 @@ export class PublicFlightController {
             )
             if (custodianMeetsRequirements) {
               meetsADSRequirements = true
+              break
             }
           }
         }
