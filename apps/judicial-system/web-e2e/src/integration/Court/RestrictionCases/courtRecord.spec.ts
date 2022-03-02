@@ -4,8 +4,8 @@ import {
   makeProsecutor,
 } from '@island.is/judicial-system/formatters'
 import {
+  CONFIRMATION_ROUTE,
   COURT_RECORD_ROUTE,
-  RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
 
 import { intercept } from '../../../utils'
@@ -144,6 +144,6 @@ describe(`${COURT_RECORD_ROUTE}/:id`, () => {
     cy.getByTestid('courtEndTime').type('11:00')
     cy.getByTestid('continueButton').should('not.be.disabled')
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', `${RULING_ROUTE}/test_id_stadfest`)
+    cy.url().should('include', `${CONFIRMATION_ROUTE}/test_id_stadfest`)
   })
 })

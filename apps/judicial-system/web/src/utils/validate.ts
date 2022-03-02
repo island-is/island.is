@@ -208,22 +208,6 @@ export const isCourtHearingArrangementsStepValidIC = (workingCase: Case) => {
   )
 }
 
-export const isCourtRecordStepValidRC = (workingCase: Case) => {
-  return (
-    validate(workingCase.courtStartDate || '', 'date-format').isValid &&
-    validate(workingCase.courtLocation || '', 'empty').isValid &&
-    validate(workingCase.sessionBookings || '', 'empty').isValid
-  )
-}
-
-export const isCourtRecordStepValidIC = (workingCase: Case) => {
-  return (
-    validate(workingCase.courtStartDate || '', 'date-format').isValid &&
-    validate(workingCase.courtLocation || '', 'empty').isValid &&
-    validate(workingCase.sessionBookings || '', 'empty').isValid
-  )
-}
-
 export const isRulingValidRC = (workingCase: Case) => {
   return (
     validate(workingCase.prosecutorDemands || '', 'empty').isValid &&
@@ -243,6 +227,32 @@ export const isRulingValidIC = (workingCase: Case) => {
     validate(workingCase.decision || '', 'empty').isValid &&
     validate(workingCase.ruling || '', 'empty').isValid &&
     validate(workingCase.conclusion || '', 'empty').isValid
+  )
+}
+
+export const isCourtRecordStepValidRC = (workingCase: Case) => {
+  return (
+    validate(workingCase.courtStartDate || '', 'date-format').isValid &&
+    validate(workingCase.courtLocation || '', 'empty').isValid &&
+    validate(workingCase.sessionBookings || '', 'empty').isValid &&
+    workingCase.accusedAppealDecision &&
+    workingCase.prosecutorAppealDecision &&
+    validate(workingCase.endOfSessionBookings || '', 'empty').isValid &&
+    validate(workingCase.courtEndTime || '', 'empty').isValid &&
+    validate(workingCase.courtEndTime || '', 'date-format').isValid
+  )
+}
+
+export const isCourtRecordStepValidIC = (workingCase: Case) => {
+  return (
+    validate(workingCase.courtStartDate || '', 'date-format').isValid &&
+    validate(workingCase.courtLocation || '', 'empty').isValid &&
+    validate(workingCase.sessionBookings || '', 'empty').isValid &&
+    workingCase.accusedAppealDecision &&
+    workingCase.prosecutorAppealDecision &&
+    validate(workingCase.endOfSessionBookings || '', 'empty').isValid &&
+    validate(workingCase.courtEndTime || '', 'empty').isValid &&
+    validate(workingCase.courtEndTime || '', 'date-format').isValid
   )
 }
 

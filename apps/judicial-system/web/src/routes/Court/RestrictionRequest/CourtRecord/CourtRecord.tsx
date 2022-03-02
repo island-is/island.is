@@ -981,8 +981,8 @@ export const CourtRecord: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
-          nextUrl={`${Constants.RULING_ROUTE}/${id}`}
+          previousUrl={`${Constants.RULING_ROUTE}/${workingCase.id}`}
+          nextUrl={`${Constants.CONFIRMATION_ROUTE}/${id}`}
           nextIsDisabled={!isCourtRecordStepValidRC(workingCase)}
         />
       </FormContentContainer>

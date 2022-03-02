@@ -10,8 +10,8 @@ import {
   makeProsecutor,
 } from '@island.is/judicial-system/formatters'
 import {
+  IC_CONFIRMATION_ROUTE,
   IC_COURT_RECORD_ROUTE,
-  IC_RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
 
 import { intercept } from '../../../utils'
@@ -186,6 +186,6 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
 
     cy.getByTestid('sessionBookings').type(faker.lorem.words(5))
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', IC_RULING_ROUTE)
+    cy.url().should('include', IC_CONFIRMATION_ROUTE)
   })
 })
