@@ -165,6 +165,10 @@ export const CourtRecord: React.FC = () => {
             }),
           },
         )}`
+      } else if (theCase.type === CaseType.TRAVEL_BAN) {
+        autofillSessionBookings += `\n\n${formatMessage(
+          m.sections.sessionBookings.autofillPresentationsTravelBan,
+        )}`
       }
 
       autofill('sessionBookings', autofillSessionBookings, theCase)
