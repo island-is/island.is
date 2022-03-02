@@ -57,6 +57,7 @@ const devConfig = {
   },
   events: {
     url: process.env.EVENT_URL,
+    errorUrl: process.env.ERROR_EVENT_URL,
   },
   deepLinks: {
     completedCaseOverviewUrl: 'http://localhost:4200/krafa/yfirlit/',
@@ -222,6 +223,7 @@ const prodConfig = {
   },
   events: {
     url: process.env.EVENT_URL,
+    errorUrl: process.env.ERROR_EVENT_URL,
   },
   deepLinks: {
     completedCaseOverviewUrl: process.env.COMPLETED_CASE_OVERVIEW_URL,

@@ -42,7 +42,6 @@ import {
   capitalize,
   formatCustodyRestrictions,
   formatDate,
-  formatNationalId,
   formatTravelBanRestrictions,
 } from '@island.is/judicial-system/formatters'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -82,106 +81,6 @@ export const RulingStepTwo: React.FC = () => {
   useEffect(() => {
     if (isCaseUpToDate) {
       const theCase = workingCase
-      const isolationEndsBeforeValidToDate =
-        theCase.validToDate &&
-        theCase.isolationToDate &&
-        new Date(theCase.validToDate) > new Date(theCase.isolationToDate)
-
-      if (theCase.defendants && theCase.defendants.length > 0) {
-        const accusedSuffix =
-          theCase.defendants[0].gender === Gender.MALE ? 'i' : 'a'
-
-        autofill(
-          'conclusion',
-          theCase.decision === CaseDecision.DISMISSING
-            ? formatMessage(m.sections.conclusion.dismissingAutofill, {
-                genderedAccused: formatMessage(core.accused, {
-                  suffix: accusedSuffix,
-                }),
-                accusedName: theCase.defendants[0].name,
-                extensionSuffix:
-                  theCase.parentCase &&
-                  isAcceptingCaseDecision(theCase.parentCase.decision)
-                    ? ' áframhaldandi'
-                    : '',
-                caseType:
-                  theCase.type === CaseType.CUSTODY
-                    ? 'gæsluvarðhaldi'
-                    : 'farbanni',
-              })
-            : theCase.decision === CaseDecision.REJECTING
-            ? formatMessage(m.sections.conclusion.rejectingAutofill, {
-                genderedAccused: formatMessage(core.accused, {
-                  suffix: accusedSuffix,
-                }),
-                accusedName: theCase.defendants[0].name,
-                accusedNationalId: theCase.defendants[0].noNationalId
-                  ? ', '
-                  : `, kt. ${formatNationalId(
-                      theCase.defendants[0].nationalId ?? '',
-                    )}, `,
-                extensionSuffix:
-                  theCase.parentCase &&
-                  isAcceptingCaseDecision(theCase.parentCase.decision)
-                    ? ' áframhaldandi'
-                    : '',
-                caseType:
-                  theCase.type === CaseType.CUSTODY
-                    ? 'gæsluvarðhaldi'
-                    : 'farbanni',
-              })
-            : formatMessage(m.sections.conclusion.acceptingAutofill, {
-                genderedAccused: capitalize(
-                  formatMessage(core.accused, {
-                    suffix: accusedSuffix,
-                  }),
-                ),
-                accusedName: theCase.defendants[0].name,
-                accusedNationalId: theCase.defendants[0].noNationalId
-                  ? ', '
-                  : `, kt. ${formatNationalId(
-                      theCase.defendants[0].nationalId ?? '',
-                    )}, `,
-                caseTypeAndExtensionSuffix:
-                  theCase.decision === CaseDecision.ACCEPTING ||
-                  theCase.decision === CaseDecision.ACCEPTING_PARTIALLY
-                    ? `${
-                        theCase.parentCase &&
-                        isAcceptingCaseDecision(theCase.parentCase.decision)
-                          ? 'áframhaldandi '
-                          : ''
-                      }${
-                        theCase.type === CaseType.CUSTODY
-                          ? 'gæsluvarðhaldi'
-                          : 'farbanni'
-                      }`
-                    : // decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                      'farbanni',
-                validToDate: `${formatDate(theCase.validToDate, 'PPPPp')
-                  ?.replace('dagur,', 'dagsins')
-                  ?.replace(' kl.', ', kl.')}`,
-                isolationSuffix:
-                  isAcceptingCaseDecision(theCase.decision) &&
-                  workingCase.isCustodyIsolation
-                    ? ` ${capitalize(
-                        formatMessage(core.accused, {
-                          suffix: accusedSuffix,
-                        }),
-                      )} skal sæta einangrun ${
-                        isolationEndsBeforeValidToDate
-                          ? `ekki lengur en til ${formatDate(
-                              theCase.isolationToDate,
-                              'PPPPp',
-                            )
-                              ?.replace('dagur,', 'dagsins')
-                              ?.replace(' kl.', ', kl.')}.`
-                          : 'á meðan á gæsluvarðhaldinu stendur.'
-                      }`
-                    : '',
-              }),
-          theCase,
-        )
-      }
 
       if (
         theCase.type === CaseType.CUSTODY &&
@@ -259,44 +158,6 @@ export const RulingStepTwo: React.FC = () => {
         </Box>
         <Box component="section" marginBottom={7}>
           <CaseInfo workingCase={workingCase} userRole={user?.role} />
-        </Box>
-        <Box component="section" marginBottom={8}>
-          <Box marginBottom={6}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                {formatMessage(m.sections.conclusion.title)}
-              </Text>
-            </Box>
-            <Input
-              name="conclusion"
-              data-testid="conclusion"
-              label={formatMessage(m.sections.conclusion.label)}
-              value={workingCase.conclusion || ''}
-              placeholder={formatMessage(m.sections.conclusion.placeholder)}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'conclusion',
-                  event.target.value,
-                  [],
-                  workingCase,
-                  setWorkingCase,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'conclusion',
-                  event.target.value,
-                  [],
-                  workingCase,
-                  updateCase,
-                )
-              }
-              textarea
-              required
-              rows={7}
-              autoExpand={{ on: true, maxHeight: 300 }}
-            />
-          </Box>
         </Box>
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
