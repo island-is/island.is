@@ -1,4 +1,4 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -10,6 +10,9 @@ import { UseGuards } from '@nestjs/common'
 import { MunicipalitiesFinancialAidService } from './municipalitiesFinancialAid.service'
 import { MunicipalityModel } from './models/municipality.model'
 import { MunicipalityQueryInput } from './models/municipality.input'
+import { SignedUrlModel } from './models/signedUrl.model'
+import { GetSignedUrlInput } from './dto/getSignedUrl.input'
+import { FileControllerCreateSignedUrlRequest } from '@island.is/clients/municipalities-financial-aid'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -34,6 +37,18 @@ export class MunicipalitiesFinancialAidResolver {
     @CurrentUser() user: User,
   ): Promise<MunicipalityModel | null> {
     return await this.municipalitiesFinancialAidService.municipalityInfoForFinancialAId(
+      user,
+      input,
+    )
+  }
+
+  @Mutation(() => SignedUrlModel)
+  getSignedUrl(
+    @Args('input', { type: () => GetSignedUrlInput })
+    input: GetSignedUrlInput,
+    @CurrentUser() user: User,
+  ): Promise<SignedUrlModel | null> {
+    return this.municipalitiesFinancialAidService.municipalitiesFinancialAidCreateSignedUrl(
       user,
       input,
     )

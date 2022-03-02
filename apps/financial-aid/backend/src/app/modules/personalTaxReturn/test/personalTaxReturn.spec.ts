@@ -43,7 +43,7 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
   })
 
   describe('Personal Tax Return Api fails', () => {
-    const user = { nationalId: '0', folder: '' } as User
+    const user = { nationalId: '0', folder: '', name: '' } as User
     let personalTaxReturnInPdf: jest.Mock
     let createSignedUrl: jest.Mock
     let then: Then
@@ -91,7 +91,7 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
   })
 
   describe('Personal Tax Return Api succeeds', () => {
-    const user = { nationalId: '0', folder: '' } as User
+    const user = { nationalId: '0', folder: '', name: '' } as User
     let personalTaxReturnInPdf: jest.Mock
     let createSignedUrl: jest.Mock
     let mockFetch: jest.Mock
@@ -133,7 +133,7 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
 
     it('should call file service with correct params', () => {
       expect(createSignedUrl).toHaveBeenCalledWith(
-        user.folder,
+        'todo',
         `Framtal_${user.nationalId}_${lastYear}.pdf`,
       )
     })
@@ -160,7 +160,7 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
   })
 
   describe('Fetch fails', () => {
-    const user = { nationalId: '0', folder: '' } as User
+    const user = { nationalId: '0', folder: '', name: '' } as User
     let personalTaxReturnInPdf: jest.Mock
     let createSignedUrl: jest.Mock
     let mockFetch: jest.Mock
@@ -204,7 +204,7 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
 
     it('should call file service with correct params', () => {
       expect(createSignedUrl).toHaveBeenCalledWith(
-        user.folder,
+        'todo',
         `Framtal_${user.nationalId}_${lastYear}.pdf`,
       )
     })

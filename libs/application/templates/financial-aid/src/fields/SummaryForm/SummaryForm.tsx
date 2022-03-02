@@ -4,7 +4,6 @@ import {
   Box,
   GridColumn,
   GridRow,
-  Icon,
   Input,
 } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
@@ -27,10 +26,11 @@ import {
   getMessageEmploymentStatus,
   getMessageHomeCircumstances,
 } from '../../lib/formatters'
+import AllFiles from './AllFiles'
 
 const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
-  const { answers, externalData } = application
+  const { id, answers, externalData } = application
 
   const { setValue } = useFormContext()
 
@@ -75,7 +75,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
                 {formatMessage(m.summaryForm.userInfo.name)}
               </Text>
               <Text>
-                {externalData.nationalRegistry.data?.applicant?.fullName}
+                {externalData.nationalRegistry?.data?.applicant?.fullName}
               </Text>
             </Box>
           </GridColumn>
@@ -85,7 +85,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
                 {formatMessage(m.summaryForm.userInfo.nationalId)}
               </Text>
               <Text>
-                {externalData?.nationalRegistry.data?.applicant?.nationalId}
+                {externalData?.nationalRegistry?.data?.applicant?.nationalId}
               </Text>
             </Box>
           </GridColumn>
@@ -95,7 +95,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
                 {formatMessage(m.summaryForm.userInfo.address)}
               </Text>
               <Text>
-                {formatAddress(externalData.nationalRegistry.data?.applicant)}
+                {formatAddress(externalData.nationalRegistry?.data?.applicant)}
               </Text>
             </Box>
           </GridColumn>
@@ -207,19 +207,20 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         </GridRow>
       </SummaryBlock>
 
-      <SummaryBlock editAction={() => goToScreen?.(Routes.INCOME)}>
-        <Text fontWeight="semiBold">
-          {/* TODO files   */}
-          Gögn
-        </Text>
-        {/* TODO files pages */}
-        <Box display="flex">
-          <Box marginRight={1} display="flex" alignItems="center">
-            <Icon color="blue400" icon="document" size="small" type="outline" />
-          </Box>
+      <SummaryBlock
+        editAction={() =>
+          answers.income === ApproveOptions.Yes
+            ? goToScreen?.(Routes.INCOMEFILES)
+            : goToScreen?.(Routes.TAXRETURNFILES)
+        }
+      >
+        <Text fontWeight="semiBold">Gögn</Text>
 
-          <Text>filename todo</Text>
-        </Box>
+        <AllFiles
+          taxFiles={answers.taxReturnFiles}
+          incomeFiles={answers.incomeFiles}
+          applicationId={id}
+        />
       </SummaryBlock>
 
       <Text as="h3" variant="h3">
