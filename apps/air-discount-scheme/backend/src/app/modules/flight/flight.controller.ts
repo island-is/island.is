@@ -13,6 +13,7 @@ import {
   ForbiddenException,
   Inject,
   forwardRef,
+  CACHE_MANAGER,
 } from '@nestjs/common'
 import {
   ApiOkResponse,
@@ -56,6 +57,7 @@ import type { HttpRequest } from '../../app.types'
 export class PublicFlightController {
   constructor(
     private readonly flightService: FlightService,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
     @Inject(forwardRef(() => DiscountService))
     private readonly discountService: DiscountService,
     private readonly nationalRegistryService: NationalRegistryService,
@@ -213,9 +215,36 @@ export class PublicFlightController {
       )
     }
 
-    const meetsADSRequirements = this.flightService.isADSPostalCode(
+    let meetsADSRequirements = this.flightService.isADSPostalCode(
       user.postalcode,
     )
+
+    // TODO: this is a quickly made temporary hotfix and should be rewritten
+    // along when the nationalregistry module is rewritten for the client V2 completely
+    if (!meetsADSRequirements) {
+      const userCustodiansCacheKey = `userService_${discount.nationalId}_custodians`
+      const cacheValue = await this.cacheManager.get(userCustodiansCacheKey)
+
+      if (cacheValue) {
+        const custodians = cacheValue.custodians
+
+        for (const custodian of custodians) {
+          const custodianInfo = await this.nationalRegistryService.getUser(
+            custodian,
+          )
+
+          if (custodianInfo) {
+            const custodianMeetsRequirements = this.flightService.isADSPostalCode(
+              custodianInfo.postalcode,
+            )
+            if (custodianMeetsRequirements) {
+              meetsADSRequirements = true
+            }
+          }
+        }
+      }
+    }
+
     if (!meetsADSRequirements) {
       throw new ForbiddenException('User postalcode does not meet conditions')
     }
