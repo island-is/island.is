@@ -10,6 +10,8 @@ import {
   FormInfo,
   FormComment,
   ContactInfo,
+  DirectTaxPaymentCell,
+  DirectTaxPaymentsModal,
 } from '@island.is/financial-aid-web/osk/src/components'
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 import { useRouter } from 'next/router'
@@ -38,6 +40,7 @@ const SpouseSummary = () => {
 
   const [isVisible, setIsVisible] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const [formError, setFormError] = useState({
     status: false,
@@ -118,6 +121,11 @@ const SpouseSummary = () => {
 
         <FormInfo info={formInfoOverview} error={formError.status} />
 
+        <DirectTaxPaymentCell
+          setIsModalOpen={setIsModalOpen}
+          directTaxPayments={form?.directTaxPayments}
+        />
+
         <ContactInfo
           phone={form.phoneNumber}
           email={form.emailAddress}
@@ -137,6 +145,15 @@ const SpouseSummary = () => {
             {formError.message}
           </Text>
         </div>
+        {form.directTaxPayments.length > 0 && (
+          <DirectTaxPaymentsModal
+            items={form.directTaxPayments}
+            isVisible={isModalOpen}
+            onVisibilityChange={(isOpen) => {
+              setIsModalOpen(isOpen)
+            }}
+          />
+        )}
         <CancelModal
           isVisible={isVisible}
           setIsVisible={(isModalVisible) => {

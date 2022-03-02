@@ -163,15 +163,7 @@ const useCase = () => {
       try {
         if (isCreatingCourtCase === false) {
           const { data, errors } = await createCourtCaseMutation({
-            variables: {
-              input: {
-                caseId: workingCase.id,
-                courtId: workingCase.court?.id,
-                type: workingCase.type,
-                policeCaseNumber: workingCase.policeCaseNumber,
-                isExtension: Boolean(workingCase.parentCase?.id),
-              },
-            },
+            variables: { input: { caseId: workingCase.id } },
           })
 
           if (data?.createCourtCase?.courtCaseNumber && !errors) {
@@ -326,7 +318,7 @@ const useCase = () => {
 
   const autofill = useMemo(
     () => (key: keyof autofillProperties, value: string, workingCase: Case) => {
-      if (!workingCase[key]) {
+      if (workingCase[key] === undefined || workingCase[key] === null) {
         workingCase[key] = value
 
         if (workingCase[key]) {
