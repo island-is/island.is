@@ -14,10 +14,11 @@ import {
   Employment,
   getNextPeriod,
   HomeCircumstances,
+  estimatedBreakDown,
 } from '@island.is/financial-aid/shared/lib'
 
 import { Routes } from '../../lib/constants'
-import { SummaryBlock, DescriptionText } from '../index'
+import { SummaryBlock, DescriptionText, Breakdown } from '../index'
 import {
   formatAddress,
   formatBankInfo,
@@ -61,13 +62,23 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         <DescriptionText text={m.summaryForm.general.description} />
       </Box>
 
-      <Box>{/* TODO Breakdown */}</Box>
+      {externalData.nationalRegistry && (
+        <Box marginTop={[4, 4, 5]}>
+          {/* TODO get aid amount */}
+          <Breakdown calculations={estimatedBreakDown(10, true)} />
+        </Box>
+      )}
 
-      <Box marginTop={2}>
+      <Box marginTop={[4, 4, 5]}>
         <DescriptionText text={m.summaryForm.general.calculationsOverview} />
       </Box>
 
-      <Box paddingY={[4, 4, 5]} borderTopWidth="standard" borderColor="blue300">
+      <Box
+        paddingY={[4, 4, 5]}
+        marginTop={4}
+        borderTopWidth="standard"
+        borderColor="blue300"
+      >
         <GridRow marginBottom={3}>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <Box>
