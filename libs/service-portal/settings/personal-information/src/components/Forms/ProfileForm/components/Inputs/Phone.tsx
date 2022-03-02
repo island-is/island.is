@@ -357,7 +357,11 @@ export const InputPhone: FC<Props> = ({
                     </Button>
                   </button>
                 )}
-                {saveLoading && <LoadingDots />}
+                {saveLoading && (
+                  <Box marginTop={1}>
+                    <LoadingDots />
+                  </Box>
+                )}
               </Box>
             </Box>
           </form>
