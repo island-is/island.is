@@ -5,13 +5,14 @@ import { requestHandlers } from './__mock-data__/requestHandlers'
 import {
   VHSUCCESS,
   OPERATING_LICENSE,
+  OPERATING_LICENSE_PAGINATION_INFO_SERVICE_RES,
   DATA_UPLOAD,
 } from './__mock-data__/responses'
 import {
   mapHomestay,
   mapSyslumennAuction,
-  mapOperatingLicense,
   mapDataUploadResponse,
+  mapPaginatedOperatingLicenses,
 } from './syslumennClient.utils'
 import { SYSLUMENN_AUCTION } from './__mock-data__/responses'
 import { PersonType } from './syslumennClient.types'
@@ -97,7 +98,11 @@ describe('SyslumennService', () => {
     it('should return operating license', async () => {
       const response = await service.getOperatingLicenses()
       expect(response).toStrictEqual(
-        (OPERATING_LICENSE ?? []).map(mapOperatingLicense),
+        mapPaginatedOperatingLicenses(
+          '',
+          JSON.stringify(OPERATING_LICENSE_PAGINATION_INFO_SERVICE_RES),
+          OPERATING_LICENSE,
+        ),
       )
     })
   })

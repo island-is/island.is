@@ -15,6 +15,7 @@ import {
   ApplicationState,
   FamilyStatus,
   CreateApplicationFile,
+  DirectTaxPayment,
 } from '@island.is/financial-aid/shared/lib'
 
 export class CreateApplicationDto {
@@ -151,4 +152,8 @@ export class CreateApplicationDto {
   @IsString()
   @ApiProperty()
   readonly streetName: string
+
+  @IsArray()
+  @ApiProperty()
+  readonly directTaxPayments: DirectTaxPayment[]
 }

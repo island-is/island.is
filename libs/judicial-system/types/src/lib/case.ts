@@ -263,12 +263,6 @@ export interface SignatureConfirmationResponse {
   message?: string
 }
 
-export interface CreateCourtCase {
-  type: CaseType
-  policeCaseNumber: string
-  isExtension: boolean
-}
-
 export const restrictionCases = [CaseType.CUSTODY, CaseType.TRAVEL_BAN]
 
 export const investigationCases = [

@@ -1,7 +1,7 @@
 import {
   SyslumennAuction,
   Homestay,
-  OperatingLicense,
+  PaginatedOperatingLicenses,
   CertificateInfoResponse,
   DistrictCommissionerAgencies,
   DataUploadResponse,
@@ -11,14 +11,19 @@ import {
 import {
   mapSyslumennAuction,
   mapHomestay,
-  mapOperatingLicense,
+  mapPaginatedOperatingLicenses,
   mapCertificateInfo,
   mapDistrictCommissionersAgenciesResponse,
   mapDataUploadResponse,
   constructUploadDataObject,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
-import { SyslumennApi, SvarSkeyti, Configuration } from '../../gen/fetch'
+import {
+  SyslumennApi,
+  SvarSkeyti,
+  Configuration,
+  VirkLeyfiGetRequest,
+} from '../../gen/fetch'
 import { SyslumennClientConfig } from './syslumennClient.config'
 import type { ConfigType } from '@island.is/nest/config'
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
@@ -92,13 +97,49 @@ export class SyslumennService {
     return (syslumennAuctions ?? []).map(mapSyslumennAuction)
   }
 
-  async getOperatingLicenses(): Promise<OperatingLicense[]> {
+  async getOperatingLicenses(
+    searchQuery?: string,
+    pageNumber?: number,
+    pageSize?: number,
+  ): Promise<PaginatedOperatingLicenses> {
+    // Prepare client request
     const { id, api } = await this.createApi()
-    const operatingLicenses = await api.virkLeyfiGet({
-      audkenni: id,
-    })
+    const params: VirkLeyfiGetRequest = { audkenni: id }
+    if (searchQuery) {
+      params.searchBy = searchQuery
+    }
+    if (pageNumber) {
+      params.pageNumber = pageNumber
+    }
+    if (pageSize) {
+      params.pageSize = pageSize
+    }
 
-    return (operatingLicenses ?? []).map(mapOperatingLicense)
+    // Do the client request.
+    const virkLeyfiApiResponse = await api.virkLeyfiGetRaw(params)
+
+    // Custom response header for Pagination Info
+    const HEADER_KEY_PAGINATION_INFO = 'x-pagination'
+    const paginationInfo = virkLeyfiApiResponse.raw.headers.get(
+      HEADER_KEY_PAGINATION_INFO,
+    )
+    if (!paginationInfo) {
+      throw new Error(
+        'Syslumenn API did not return pagination info for operating licences.',
+      )
+    }
+
+    // Custom response header for Searcy By
+    const HEADER_KEY_SEARCH_BY = 'x-searchby'
+    const searchBy = decodeURIComponent(
+      virkLeyfiApiResponse.raw.headers.get(HEADER_KEY_SEARCH_BY) ?? '',
+    )
+
+    return mapPaginatedOperatingLicenses(
+      searchBy,
+      paginationInfo,
+      await virkLeyfiApiResponse.value(),
+    )
   }
 
   async sealCriminalRecord(criminalRecord: string): Promise<SvarSkeyti> {

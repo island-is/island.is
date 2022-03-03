@@ -17,6 +17,10 @@ import { DelegationScope } from './delegationScope.model'
 registerEnumType(DelegationProvider, { name: 'AuthDelegationProvider' })
 registerEnumType(DelegationType, { name: 'AuthDelegationType' })
 
+const exhaustiveCheck = (param: never) => {
+  throw new Error(`Missing interfaceType ${param}`)
+}
+
 @InterfaceType('AuthDelegation', {
   resolveType(delegation: Delegation) {
     switch (delegation.type) {
@@ -24,8 +28,12 @@ registerEnumType(DelegationType, { name: 'AuthDelegationType' })
         return LegalGuardianDelegation
       case DelegationType.ProcurationHolder:
         return ProcuringHolderDelegation
+      case DelegationType.PersonalRepresentative:
+        return PersonalRepresentativeDelegation
       case DelegationType.Custom:
         return CustomDelegation
+      default:
+        exhaustiveCheck(delegation.type)
     }
   },
 })
@@ -55,6 +63,11 @@ export class LegalGuardianDelegation extends Delegation {}
   implements: Delegation,
 })
 export class ProcuringHolderDelegation extends Delegation {}
+
+@ObjectType('AuthPersonalRepresentativeDelegation', {
+  implements: Delegation,
+})
+export class PersonalRepresentativeDelegation extends Delegation {}
 
 @ObjectType('AuthCustomDelegation', {
   implements: Delegation,
