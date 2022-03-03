@@ -1,16 +1,17 @@
 import {
+  ApplicationTypes,
+  buildDescriptionField,
   buildDividerField,
   buildForm,
   buildMultiField,
   buildSection,
-  buildDescriptionField,
-  buildTextField,
-  Form,
-  ApplicationTypes,
-  Comparators,
-  FormModes,
   buildSubmitField,
+  buildTextField,
+  Comparators,
+  Form,
+  FormModes,
 } from '@island.is/application/core'
+
 import { m } from './messages'
 
 export const ReviewApplication: Form = buildForm({

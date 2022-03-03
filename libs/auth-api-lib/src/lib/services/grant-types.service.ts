@@ -1,9 +1,11 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { GrantType } from '../entities/models/grant-type.model'
+
 import { GrantTypeDTO } from '../entities/dto/grant-type.dto'
+import { GrantType } from '../entities/models/grant-type.model'
 
 @Injectable()
 export class GrantTypeService {

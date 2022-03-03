@@ -1,12 +1,14 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { Service as IService } from '@island.is/api-catalogue/types'
 import { IsArray, IsEnum, IsObject, IsString } from 'class-validator'
+
 import {
   AccessCategory,
   DataCategory,
   PricingCategory,
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
+import { Service as IService } from '@island.is/api-catalogue/types'
+
 import { ServiceEnvironment } from './serviceEnvironment.model'
 
 @ObjectType()

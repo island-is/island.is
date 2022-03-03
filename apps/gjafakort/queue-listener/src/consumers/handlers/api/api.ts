@@ -1,8 +1,8 @@
 import fetch from 'isomorphic-unfetch'
 import timeoutSignal from 'timeout-signal'
 
-import { ProcessingError } from '../errors'
 import { environment } from '../../../environments'
+import { ProcessingError } from '../errors'
 
 const SEVEN_SECONDS_TIMEOUT = 7 * 1000
 const { applicationUrl } = environment

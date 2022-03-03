@@ -1,14 +1,16 @@
 import { DynamicModule, HttpModule } from '@nestjs/common'
+
 import { Configuration, OrganisationsApi, ProvidersApi } from '../../gen/fetch'
-import { DocumentProviderResolver } from './document-provider.resolver'
-import { DocumentProviderService } from './document-provider.service'
-import { DocumentProviderClientProd } from './client/documentProviderClientProd'
+
 import {
-  DocumentProviderConfig,
   DOCUMENT_PROVIDER_CLIENT_CONFIG_PROD,
   DOCUMENT_PROVIDER_CLIENT_CONFIG_TEST,
+  DocumentProviderConfig,
 } from './client/documentProviderClientConfig'
+import { DocumentProviderClientProd } from './client/documentProviderClientProd'
 import { DocumentProviderClientTest } from './client/documentProviderClientTest'
+import { DocumentProviderResolver } from './document-provider.resolver'
+import { DocumentProviderService } from './document-provider.service'
 
 export interface Config extends DocumentProviderConfig {
   documentsServiceBasePath: string

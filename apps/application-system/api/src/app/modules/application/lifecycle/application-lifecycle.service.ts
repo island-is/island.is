@@ -1,10 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common'
+import AmazonS3URI from 'amazon-s3-uri'
+
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import { Application } from '../application.model'
 import { ApplicationService } from '../application.service'
 import { AwsService } from '../files'
-import AmazonS3URI from 'amazon-s3-uri'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 
 export interface AttachmentMetaData {
   s3key: string

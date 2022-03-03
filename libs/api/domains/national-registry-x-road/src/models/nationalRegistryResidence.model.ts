@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+
 import { NationalRegistryAddress } from './nationalRegistryAddress.model'
 
 @ObjectType()

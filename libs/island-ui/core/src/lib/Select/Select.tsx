@@ -1,28 +1,31 @@
 import React from 'react'
-import cn from 'classnames'
 import ReactSelect, {
-  OptionsType,
-  GroupedOptionsType,
   ActionMeta,
-  ValueType,
   createFilter,
+  GroupedOptionsType,
+  OptionsType,
+  ValueType,
 } from 'react-select'
-import { Config } from 'react-select/src/filters'
 import CreatableReactSelect from 'react-select/creatable'
 import { formatGroupLabel } from 'react-select/src/builtins'
+import { Config } from 'react-select/src/filters'
+import cn from 'classnames'
+
+import { InputBackgroundColor } from '../Input/types'
+
 import {
-  Option,
-  Menu,
-  IndicatorsContainer,
   Control,
+  customStyles,
   DropdownIndicator,
+  IndicatorsContainer,
   Input,
+  Menu,
+  Option,
   Placeholder,
   SingleValue,
   ValueContainer,
-  customStyles,
 } from './Components'
-import { InputBackgroundColor } from '../Input/types'
+
 import * as styles from './Select.css'
 
 interface AriaError {

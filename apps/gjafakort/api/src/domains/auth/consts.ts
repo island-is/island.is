@@ -1,12 +1,13 @@
 import { CookieOptions } from 'express'
 
 import {
-  REDIRECT_COOKIE_NAME,
-  CSRF_COOKIE_NAME,
   ACCESS_TOKEN_COOKIE_NAME,
+  CSRF_COOKIE_NAME,
+  REDIRECT_COOKIE_NAME,
 } from '@island.is/gjafakort/consts'
 
 import { environment } from '../../environments'
+
 import { Cookie } from './types'
 
 export const JWT_EXPIRES_IN_SECONDS = 1800

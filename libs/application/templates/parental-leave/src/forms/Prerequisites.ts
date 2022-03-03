@@ -17,10 +17,10 @@ import {
 } from '@island.is/application/core'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
-import { parentalLeaveFormMessages } from '../lib/messages'
 import Logo from '../assets/Logo'
+import { NO, ParentalRelations,YES } from '../constants'
+import { parentalLeaveFormMessages } from '../lib/messages'
 import { isEligibleForParentalLeave } from '../lib/parentalLeaveUtils'
-import { NO, YES, ParentalRelations } from '../constants'
 
 const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
 

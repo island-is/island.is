@@ -1,14 +1,15 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
-  IsNotEmpty,
-  IsString,
-  IsOptional,
+  IsBoolean,
   IsEmail,
   IsEnum,
-  IsBoolean,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
 } from 'class-validator'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { Locale } from '../types/localeTypes'
+
 import { DataStatus } from '../types/dataStatusTypes'
+import { Locale } from '../types/localeTypes'
 
 export class CreateUserProfileDto {
   @IsNotEmpty()

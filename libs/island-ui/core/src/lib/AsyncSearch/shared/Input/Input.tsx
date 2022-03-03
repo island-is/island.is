@@ -1,8 +1,9 @@
 import React, { forwardRef, InputHTMLAttributes } from 'react'
 import cn from 'classnames'
-import * as styles from './Input.css'
 
 import { AsyncSearchSizes } from '../../AsyncSearch'
+
+import * as styles from './Input.css'
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   isOpen?: boolean

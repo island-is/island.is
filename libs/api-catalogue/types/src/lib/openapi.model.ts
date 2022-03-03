@@ -1,13 +1,14 @@
-import { DataCategory, PricingCategory } from '@island.is/api-catalogue/consts'
 import {
-  InfoObject,
-  ServerObject,
-  PathsObject,
   ComponentsObject,
-  SecurityRequirementObject,
-  TagObject,
   ExternalDocumentationObject,
+  InfoObject,
+  PathsObject,
+  SecurityRequirementObject,
+  ServerObject,
+  TagObject,
 } from 'openapi3-ts'
+
+import { DataCategory, PricingCategory } from '@island.is/api-catalogue/consts'
 
 export interface OpenApi {
   openapi: string

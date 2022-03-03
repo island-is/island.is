@@ -1,16 +1,18 @@
+import addDays from 'date-fns/addDays'
+import format from 'date-fns/format'
+
 import {
   Application,
   ApplicationStatus,
   ApplicationTypes,
 } from '@island.is/application/core'
-import addDays from 'date-fns/addDays'
-import format from 'date-fns/format'
 
 import { minimumPeriodStartBeforeExpectedDateOfBirth } from '../config'
 import { ParentalRelations } from '../constants'
+import { NO, StartDateOptions } from '../constants'
+
 import { answerValidators, VALIDATE_LATEST_PERIOD } from './answerValidators'
 import { errorMessages } from './messages'
-import { NO, StartDateOptions } from '../constants'
 
 const dateFormat = 'yyyy-MM-dd'
 const DEFAULT_DOB = '2021-01-15'

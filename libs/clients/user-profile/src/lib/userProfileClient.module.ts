@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+
 import { UserProfileApi } from '../../gen/fetch'
 
 import { UserProfileApiProvider } from './apiConfiguration'

@@ -1,6 +1,8 @@
+import '@testing-library/jest-dom'
+
 import React from 'react'
 import { render } from '@testing-library/react'
-import '@testing-library/jest-dom'
+
 import { useAuth } from './AuthContext'
 import { MockedAuthenticator } from './MockedAuthenticator'
 

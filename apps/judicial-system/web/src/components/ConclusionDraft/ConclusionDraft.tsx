@@ -1,16 +1,17 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
+
 import { Box, Text } from '@island.is/island-ui/core'
-import { CaseType, isRestrictionCase } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
-import {
-  Decision,
-  RulingInput,
-} from '@island.is/judicial-system-web/src/components'
+import { CaseType, isRestrictionCase } from '@island.is/judicial-system/types'
 import {
   icRulingStepOne,
   rcRulingStepOne,
 } from '@island.is/judicial-system-web/messages'
+import {
+  Decision,
+  RulingInput,
+} from '@island.is/judicial-system-web/src/components'
 
 interface Props {
   workingCase: Case

@@ -1,11 +1,12 @@
-import { Module, DynamicModule } from '@nestjs/common'
+import { DynamicModule,Module } from '@nestjs/common'
 
-import { MainResolver, QualityPhotoResolver } from './graphql'
-import { DrivingLicenseService } from './drivingLicense.service'
 import {
-  DrivingLicenseApiModule,
   DrivingLicenseApiConfig,
+  DrivingLicenseApiModule,
 } from '@island.is/clients/driving-license'
+
+import { DrivingLicenseService } from './drivingLicense.service'
+import { MainResolver, QualityPhotoResolver } from './graphql'
 
 export interface Config {
   clientConfig: DrivingLicenseApiConfig

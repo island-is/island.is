@@ -1,11 +1,11 @@
 import React, { FC } from 'react'
 import format from 'date-fns/format'
+
 import { Application, formatText } from '@island.is/application/core'
+import { Table } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
-
-import { Table } from '@island.is/application/ui-components'
 import { formatIsk } from '../../lib/parentalLeaveUtils'
 import { Payment } from '../../types'
 

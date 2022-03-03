@@ -1,6 +1,7 @@
 import React from 'react'
-import { Box, Button } from '@island.is/island-ui/core'
 import { CSVLink } from 'react-csv'
+
+import { Box, Button } from '@island.is/island-ui/core'
 
 interface ExportCSVProps {
   data: string | object[]

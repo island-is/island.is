@@ -1,5 +1,5 @@
-import { Base, JudicialSystem } from '../../../../infra/src/dsl/xroad'
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { Base, JudicialSystem } from '../../../../infra/src/dsl/xroad'
 
 const postgresInfo = {
   passwordSecret: '/k8s/judicial-system/DB_PASSWORD',

@@ -1,20 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
+
 import type { User } from '@island.is/auth-nest-tools'
-import {
-  TeachingRightsStatus,
-  StudentInformation,
-  Juristiction,
-  NewDrivingLicenseInput,
-  NewDrivingLicenseResult,
-  NewDrivingAssessmentResult,
-  RequirementKey,
-  ApplicationEligibility,
-  DrivingLicenseCategory,
-  QualityPhotoResult,
-  DrivingLicenseApplicationType,
-  NewTemporaryDrivingLicenseInput,
-  ApplicationEligibilityRequirement,
-} from './drivingLicense.type'
 import {
   CanApplyErrorCodeBFull,
   CanApplyErrorCodeBTemporary,
@@ -23,15 +9,32 @@ import {
   DrivingLicenseApi,
   Teacher,
 } from '@island.is/clients/driving-license'
+import { FetchError } from '@island.is/clients/middlewares'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import { StudentAssessment } from '..'
+
 import {
   BLACKLISTED_JURISTICTION,
   DRIVING_ASSESSMENT_MAX_AGE,
 } from './util/constants'
 import sortTeachers from './util/sortTeachers'
-import { StudentAssessment } from '..'
-import { FetchError } from '@island.is/clients/middlewares'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
+import {
+  ApplicationEligibility,
+  ApplicationEligibilityRequirement,
+  DrivingLicenseApplicationType,
+  DrivingLicenseCategory,
+  Juristiction,
+  NewDrivingAssessmentResult,
+  NewDrivingLicenseInput,
+  NewDrivingLicenseResult,
+  NewTemporaryDrivingLicenseInput,
+  QualityPhotoResult,
+  RequirementKey,
+  StudentInformation,
+  TeachingRightsStatus,
+} from './drivingLicense.type'
 
 const LOGTAG = '[api-domains-driving-license]'
 

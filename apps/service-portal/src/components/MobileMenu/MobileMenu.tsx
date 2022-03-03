@@ -1,15 +1,18 @@
 import React, { ReactElement, useRef } from 'react'
+
 import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { ISLAND_IS_URL } from '@island.is/service-portal/constants'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { m } from '@island.is/service-portal/core'
+import { useListDocuments } from '@island.is/service-portal/graphql'
+
 import useNavigation from '../../hooks/useNavigation/useNavigation'
 import { ActionType } from '../../store/actions'
 import { useStore } from '../../store/stateProvider'
 import ModuleNavigation from '../Sidebar/ModuleNavigation'
+
 import * as styles from './MobileMenu.css'
-import { useListDocuments } from '@island.is/service-portal/graphql'
 
 const MobileMenu = (): ReactElement | null => {
   const ref = useRef(null)

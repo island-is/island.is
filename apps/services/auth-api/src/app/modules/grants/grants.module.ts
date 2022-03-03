@@ -1,7 +1,9 @@
-import { GrantsController } from './grants.controller'
 import { Module } from '@nestjs/common'
-import { Grant, GrantsService } from '@island.is/auth-api-lib'
 import { SequelizeModule } from '@nestjs/sequelize'
+
+import { Grant, GrantsService } from '@island.is/auth-api-lib'
+
+import { GrantsController } from './grants.controller'
 
 @Module({
   imports: [SequelizeModule.forFeature([Grant])],

@@ -1,15 +1,15 @@
 import { months } from './const'
 import { AidName, AmountModal, ApplicationFiltersEnum } from './enums'
 import {
-  HomeCircumstances,
-  ApplicationState,
-  Employment,
   ApplicationEventType,
+  ApplicationState,
   ApplicationStateUrl,
-  FileType,
-  RolesRule,
+  Employment,
   FamilyStatus,
+  FileType,
+  HomeCircumstances,
   MartialStatusType,
+  RolesRule,
 } from './enums'
 import {
   Aid,

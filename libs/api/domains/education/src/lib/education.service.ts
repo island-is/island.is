@@ -1,18 +1,18 @@
-import { Injectable, Inject } from '@nestjs/common'
-import { uuid } from 'uuidv4'
+import { Inject,Injectable } from '@nestjs/common'
 import * as kennitala from 'kennitala'
 import flatten from 'lodash/flatten'
+import { uuid } from 'uuidv4'
 
 import type { User } from '@island.is/auth-nest-tools'
 import {
-  MMSApi,
   Grade,
-  GradeTypeResult,
   GradeResult,
+  GradeTypeResult,
+  MMSApi,
 } from '@island.is/clients/mms'
 import {
-  NationalRegistryApi,
   ISLFjolskyldan,
+  NationalRegistryApi,
 } from '@island.is/clients/national-registry-v1'
 
 import type { Config } from './education.module'
@@ -21,8 +21,8 @@ import {
   ExamFamilyOverview,
   ExamResult,
 } from './education.type'
-import { S3Service } from './s3.service'
 import { getYearInterval } from './education.utils'
+import { S3Service } from './s3.service'
 
 const ADULT_AGE_LIMIT = 18
 

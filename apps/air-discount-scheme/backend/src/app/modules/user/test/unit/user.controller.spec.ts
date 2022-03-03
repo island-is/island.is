@@ -1,9 +1,9 @@
 import { Test } from '@nestjs/testing'
 
-import { AirlineUser } from '../../user.model'
+import { Discount,DiscountService } from '../../../discount'
 import { PublicUserController } from '../../user.controller'
+import { AirlineUser } from '../../user.model'
 import { UserService } from '../../user.service'
-import { DiscountService, Discount } from '../../../discount'
 
 const airlineUser: AirlineUser = {
   nationalId: '1326487905',

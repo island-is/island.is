@@ -1,11 +1,14 @@
 import React, { FC } from 'react'
-import { NotificationCard as Card } from '../mockNotifications'
-import { Box, Stack, Button, Tag, Text } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
-import * as styles from './Notificationcard.css'
 import cn from 'classnames'
+
+import { Box, Button, Stack, Tag, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
+
+import { NotificationCard as Card } from '../mockNotifications'
+
+import * as styles from './Notificationcard.css'
 
 interface Props {
   card: Card

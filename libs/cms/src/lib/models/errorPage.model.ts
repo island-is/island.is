@@ -1,5 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+
 import { IErrorPage } from '../generated/contentfulTypes'
+
 import { Html, mapHtml } from './html.model'
 
 @ObjectType()

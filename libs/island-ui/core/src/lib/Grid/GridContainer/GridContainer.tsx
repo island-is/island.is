@@ -1,6 +1,8 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
+
 import { Box } from '../../Box/Box'
+
 import * as styles from './GridContainer.css'
 
 type position = 'relative' | 'fixed' | 'absolute'

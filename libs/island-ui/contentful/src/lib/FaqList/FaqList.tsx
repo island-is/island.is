@@ -1,12 +1,13 @@
 import React, { FC } from 'react'
 import slugify from '@sindresorhus/slugify'
+
+import { richText,Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
-  Stack,
-  Text,
   Accordion,
   AccordionItem,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
-import { Slice as SliceType, richText } from '@island.is/island-ui/contentful'
 
 export interface FaqListProps {
   title: string

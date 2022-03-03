@@ -1,22 +1,24 @@
 import { Test } from '@nestjs/testing'
-import { EducationService } from './education.service'
-import { LoggingModule } from '@island.is/logging'
-import type { Config } from './education.module'
-import {
-  MyFamilyMock,
-  ADULT1,
-  ADULT2,
-  CHILD1,
-  CHILD2,
-} from './__mock-data__/my-family'
+import * as kennitala from 'kennitala'
+import Soap from 'soap'
+
+import { MMSApi } from '@island.is/clients/mms'
 import {
   ISLFjolskyldan,
   NationalRegistryApi,
 } from '@island.is/clients/national-registry-v1'
-import { MMSApi } from '@island.is/clients/mms'
+import { LoggingModule } from '@island.is/logging'
+
+import {
+  ADULT1,
+  ADULT2,
+  CHILD1,
+  CHILD2,
+  MyFamilyMock,
+} from './__mock-data__/my-family'
+import type { Config } from './education.module'
+import { EducationService } from './education.service'
 import { S3Service } from './s3.service'
-import Soap from 'soap'
-import * as kennitala from 'kennitala'
 
 jest.mock('kennitala')
 

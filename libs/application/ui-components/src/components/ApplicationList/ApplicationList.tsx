@@ -2,14 +2,14 @@ import React from 'react'
 import { MessageDescriptor } from '@formatjs/intl'
 import format from 'date-fns/format'
 
-import { ActionCard, Stack } from '@island.is/island-ui/core'
 import {
+  ActionCardTag,
   Application,
   ApplicationStatus,
   coreMessages,
   getSlugFromType,
-  ActionCardTag,
 } from '@island.is/application/core'
+import { ActionCard, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
 

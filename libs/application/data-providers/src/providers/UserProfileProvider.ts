@@ -3,7 +3,6 @@ import {
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
-
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 /** This data provider fetches email and phone number information from user profile service and resolves even though the user has not set it up in my pages **/

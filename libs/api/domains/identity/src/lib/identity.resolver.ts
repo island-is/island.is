@@ -1,17 +1,17 @@
-import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
+import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 
-import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import {
   NationalRegistryService,
   NationalRegistryUser,
 } from '@island.is/api/domains/national-registry'
 import type { User } from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 
-import { IdentityType } from './identity.type'
 import { IdentityInput } from './identity.input'
 import { IdentityService } from './identity.service'
-import { Identity, IdentityPerson, IdentityCompany } from './models'
+import { IdentityType } from './identity.type'
+import { Identity, IdentityCompany,IdentityPerson } from './models'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Identity)

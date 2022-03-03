@@ -1,5 +1,6 @@
-import { IsString, IsNotEmpty } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
+import { IsNotEmpty,IsString } from 'class-validator'
+
 import { ClientBaseDTO } from './base/client-base.dto'
 
 export class ClientDTO extends ClientBaseDTO {

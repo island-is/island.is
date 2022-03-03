@@ -1,14 +1,14 @@
 import React, { FC } from 'react'
 
-import { Application, RecordObject, Field } from '@island.is/application/core'
+import { Application, Field,RecordObject } from '@island.is/application/core'
+import { DataValue } from '@island.is/application/ui-components'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { DataValue } from '@island.is/application/ui-components'
 
-import { parentalLeaveFormMessages } from '../../lib/messages'
-import { useUnion as useUnionOptions } from '../../hooks/useUnion'
-import { usePensionFund as usePensionFundOptions } from '../../hooks/usePensionFund'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
+import { usePensionFund as usePensionFundOptions } from '../../hooks/usePensionFund'
+import { useUnion as useUnionOptions } from '../../hooks/useUnion'
+import { parentalLeaveFormMessages } from '../../lib/messages'
 import { getSelectOptionLabel } from '../../lib/parentalLeaveClientUtils'
 
 interface ScreenProps {

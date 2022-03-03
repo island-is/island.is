@@ -1,12 +1,12 @@
 import React, { FC } from 'react'
-import { useFormContext, Controller } from 'react-hook-form'
+import { Controller,useFormContext } from 'react-hook-form'
 
 import {
-  RadioButton,
-  GridRow,
   GridColumn,
-  InputError,
+  GridRow,
   InputBackgroundColor,
+  InputError,
+  RadioButton,
 } from '@island.is/island-ui/core'
 
 interface Option {

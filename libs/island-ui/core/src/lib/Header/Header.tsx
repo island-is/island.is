@@ -1,11 +1,13 @@
 import React, { ReactElement, ReactNode } from 'react'
 
-import { Logo } from '../Logo/Logo'
 import { Box } from '../Box/Box'
-import { Text } from '../Text/Text'
 import { Hidden } from '../Hidden/Hidden'
-import { UserMenu } from './UserMenu/UserMenu'
 import { Inline } from '../Inline/Inline'
+import { Logo } from '../Logo/Logo'
+import { Text } from '../Text/Text'
+
+import { UserMenu } from './UserMenu/UserMenu'
+
 import * as styles from './Header.css'
 
 export interface HeaderProps {

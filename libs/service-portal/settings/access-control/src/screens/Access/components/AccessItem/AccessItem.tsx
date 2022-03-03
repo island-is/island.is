@@ -2,17 +2,18 @@ import React, { useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import cs from 'classnames'
 
-import { Table as T, Text, Box } from '@island.is/island-ui/core'
 import { AuthCustomDelegation } from '@island.is/api/schema'
+import { Box,Table as T, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { tableStyles } from '@island.is/service-portal/core'
 import {
   CheckboxController,
   DatePickerController,
 } from '@island.is/shared/form-fields'
-import { useLocale } from '@island.is/localization'
 
 import type { Scope } from '../../Access'
+
 import * as styles from './AccessItem.css'
-import { tableStyles } from '@island.is/service-portal/core'
 
 type TableDataProps = React.ComponentProps<typeof T.Data>
 

@@ -1,3 +1,5 @@
+import React, { FC, useState } from 'react'
+
 import {
   DefaultEvents,
   FieldBaseProps,
@@ -6,10 +8,11 @@ import {
 import { Box, Button, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
-import React, { FC, useState } from 'react'
+
 import { inReview, overview, thirdPartyComment } from '../../lib/messages'
 import { ReviewApprovalEnum } from '../../types'
 import { FormOverview } from '../FormOverview'
+
 import { ConfirmationModal } from './ConfirmationModal'
 
 interface FormOverviewInReviewProps {

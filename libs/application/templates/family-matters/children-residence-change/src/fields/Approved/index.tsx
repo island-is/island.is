@@ -1,7 +1,9 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { Box, Text } from '@island.is/island-ui/core'
+
 import { DescriptionText } from '@island.is/application/templates/family-matters-core/components'
+import { Box, Text } from '@island.is/island-ui/core'
+
 import { approved } from '../../lib/messages'
 
 const Approved = () => {

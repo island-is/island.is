@@ -1,11 +1,12 @@
 import React, { FC } from 'react'
 
-import { Icon } from '../../Icon/Icon'
-import { Text } from '../../Text/Text'
 import { Box } from '../../Box/Box'
-import { SectionNumberColumn } from '../SectionNumberColumn/SectionNumberColumn'
-import * as styles from './SubSectionItem.css'
+import { Icon } from '../../Icon/Icon'
 import { Link } from '../../Link/Link'
+import { Text } from '../../Text/Text'
+import { SectionNumberColumn } from '../SectionNumberColumn/SectionNumberColumn'
+
+import * as styles from './SubSectionItem.css'
 
 interface SubSectionItemProps {
   currentState: 'active' | 'previous' | 'next'

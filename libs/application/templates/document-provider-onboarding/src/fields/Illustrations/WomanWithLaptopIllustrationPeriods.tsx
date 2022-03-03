@@ -1,6 +1,8 @@
 import React, { FC } from 'react'
+
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
+
 import WomanWithLaptopIllustration from './WomanWithLaptopIllustration'
 
 // TODO this will be moved into a reusable library

@@ -1,26 +1,27 @@
 import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
 
+import { FormatMessage } from '@island.is/cms-translations'
 import {
   capitalize,
   formatCustodyRestrictions,
   formatDate,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
-import { FormatMessage } from '@island.is/cms-translations'
 import { Gender } from '@island.is/judicial-system/types'
 
 import { environment } from '../../environments'
-import { Case } from '../modules/case'
 import { core, custodyNotice } from '../messages'
+import { Case } from '../modules/case'
+
 import {
   addEmptyLines,
+  addFooter,
   addHugeHeading,
   addLargeHeading,
   addMediumText,
   addNormalText,
   setLineGap,
-  addFooter,
   setTitle,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'

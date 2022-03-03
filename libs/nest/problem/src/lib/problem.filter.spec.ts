@@ -1,7 +1,8 @@
-import { ValidationFailed } from './ValidationFailed'
-import { CreateRequest, setup } from './test/setup'
-import { expectGraphqlProblem } from './test/expectGraphqlProblem'
 import { ProblemType } from '@island.is/shared/problem'
+
+import { expectGraphqlProblem } from './test/expectGraphqlProblem'
+import { CreateRequest, setup } from './test/setup'
+import { ValidationFailed } from './ValidationFailed'
 
 const handler = () => {
   throw new ValidationFailed({ field: 'error' })

@@ -1,5 +1,5 @@
-import { IsJWT, IsString, IsOptional } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { IsJWT, IsOptional,IsString } from 'class-validator'
 
 export class GetFinanceDocumentDto {
   @IsJWT()

@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common'
+
 import { buildOpenApi } from '@island.is/infra-nest-server'
 import { QueueModule } from '@island.is/message-queue'
-import { openApi } from './openApi'
+
 import { NotificationsController } from './app/modules/notifications/notifications.controller'
+import { openApi } from './openApi'
 
 @Module({
   imports: [

@@ -1,21 +1,23 @@
 import { Injectable } from '@nestjs/common'
-import {
-  ElasticService,
-  TagAggregationResponse,
-  TypeAggregationResponse,
-  ProcessEntryAggregationResponse,
-} from '@island.is/content-search-toolkit'
-import { logger } from '@island.is/logging'
-import { SearchResult } from './models/searchResult.model'
-import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
-import { TagCount } from './models/tagCount'
-import { SearcherInput } from './dto/searcher.input'
-import { WebSearchAutocompleteInput } from './dto/webSearchAutocomplete.input'
-import { TypeCount } from './models/typeCount'
+
 import {
   ElasticsearchIndexLocale,
   getElasticsearchIndex,
 } from '@island.is/content-search-index-manager'
+import {
+  ElasticService,
+  ProcessEntryAggregationResponse,
+  TagAggregationResponse,
+  TypeAggregationResponse,
+} from '@island.is/content-search-toolkit'
+import { logger } from '@island.is/logging'
+
+import { SearcherInput } from './dto/searcher.input'
+import { WebSearchAutocompleteInput } from './dto/webSearchAutocomplete.input'
+import { SearchResult } from './models/searchResult.model'
+import { TagCount } from './models/tagCount'
+import { TypeCount } from './models/typeCount'
+import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
 
 @Injectable()
 export class ContentSearchService {

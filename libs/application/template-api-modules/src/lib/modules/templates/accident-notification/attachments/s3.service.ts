@@ -1,7 +1,8 @@
-import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import AmazonS3URI from 'amazon-s3-uri'
 import { S3 } from 'aws-sdk'
+
+import { logger } from '@island.is/logging'
 
 @Injectable()
 export class S3Service {

@@ -1,6 +1,8 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ID,ObjectType } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
+
 import { EndorsementListTagsEnum } from '../enums/endorsementListTags.enum'
+
 import { Endorsement } from './endorsement.model'
 
 @ObjectType()

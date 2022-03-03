@@ -1,9 +1,11 @@
-import { ClaimsService, Claim } from '@island.is/auth-api-lib'
 import { Controller, Get, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
+
 import { AuthAdminScope } from '@island.is/auth/scopes'
+import { Claim,ClaimsService } from '@island.is/auth-api-lib'
+import { IdsUserGuard, Scopes,ScopesGuard } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
+
 import { environment } from '../../../environments/'
 
 @UseGuards(IdsUserGuard, ScopesGuard)

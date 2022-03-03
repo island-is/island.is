@@ -1,13 +1,15 @@
 import fs from 'fs'
-import path from 'path'
-import util from 'util'
 import get from 'lodash/get'
 import set from 'lodash/set'
-import { KibanaService } from '@island.is/content-search-toolkit'
+import path from 'path'
+import util from 'util'
+
 import {
   KibanaSavedObject,
   LocalKibanaSavedObject,
 } from '@island.is/content-search-indexer/types'
+import { KibanaService } from '@island.is/content-search-toolkit'
+
 import { environment } from '../../environments/environment'
 
 const { configPath } = environment

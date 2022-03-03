@@ -1,7 +1,7 @@
+export type { LinkResolverResponse, LinkType } from './useLinkResolver'
 export {
   linkResolver,
+  pathIsRoute,
   typeResolver,
   useLinkResolver,
-  pathIsRoute,
 } from './useLinkResolver'
-export type { LinkResolverResponse, LinkType } from './useLinkResolver'

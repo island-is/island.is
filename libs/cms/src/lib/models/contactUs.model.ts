@@ -1,6 +1,8 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
-import { IContactUs } from '../generated/contentfulTypes'
+import { Field, ID,ObjectType } from '@nestjs/graphql'
+
 import { SystemMetadata } from '@island.is/shared/types'
+
+import { IContactUs } from '../generated/contentfulTypes'
 
 @ObjectType()
 export class ContactUs {

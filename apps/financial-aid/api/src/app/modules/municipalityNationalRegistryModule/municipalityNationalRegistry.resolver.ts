@@ -1,5 +1,7 @@
 import { UseGuards } from '@nestjs/common'
-import { Resolver, Query, ResolveField, Parent, Context } from '@nestjs/graphql'
+import { Context,Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+
+import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
@@ -9,7 +11,7 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
-import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
+
 import { Person } from './models/person.model'
 import { UserSpouse } from './models/userSpouse.model'
 

@@ -1,4 +1,5 @@
 import { buildCustomField, buildSection } from '@island.is/application/core'
+
 import { conclusion } from '../../lib/messages'
 
 export const conclusionSection = buildSection({

@@ -1,19 +1,22 @@
 import React, { FC } from 'react'
-import { Table as T } from '@island.is/island-ui/core'
+import cn from 'classnames'
 import { User } from 'oidc-client'
-import {
-  FinanceStatusOrganizationType,
-  FinanceStatusDetailsType,
-} from '../../screens/FinanceStatus/FinanceStatusData.types'
-import { Box, Text, Columns, Column, Button } from '@island.is/island-ui/core'
-import { exportGjoldSundurlidunFile } from '../../utils/filesGjoldSundurlidun'
-import amountFormat from '../../utils/amountFormat'
-import { formSubmit } from '../../utils/documentFormSubmission'
+
+import { Table as T } from '@island.is/island-ui/core'
+import { Box, Button,Column, Columns, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
-import cn from 'classnames'
-import * as styles from './FinanceStatusDetailTable.css'
 import { tableStyles } from '@island.is/service-portal/core'
+
+import {
+  FinanceStatusDetailsType,
+  FinanceStatusOrganizationType,
+} from '../../screens/FinanceStatus/FinanceStatusData.types'
+import amountFormat from '../../utils/amountFormat'
+import { formSubmit } from '../../utils/documentFormSubmission'
+import { exportGjoldSundurlidunFile } from '../../utils/filesGjoldSundurlidun'
+
+import * as styles from './FinanceStatusDetailTable.css'
 interface Props {
   organization: FinanceStatusOrganizationType
   financeStatusDetails: FinanceStatusDetailsType

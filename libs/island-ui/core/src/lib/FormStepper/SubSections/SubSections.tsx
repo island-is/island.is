@@ -1,10 +1,11 @@
-import React, { FC, useRef, useState, useEffect } from 'react'
+import React, { FC, useEffect,useRef, useState } from 'react'
 import useComponentSize from '@rehooks/component-size'
 import cn from 'classnames'
 
 import { Box } from '../../Box/Box'
 import { SubSectionItem } from '../SubSectionItem/SubSectionItem'
 import * as types from '../types'
+
 import * as styles from './SubSections.css'
 
 export const SubSections: FC<{

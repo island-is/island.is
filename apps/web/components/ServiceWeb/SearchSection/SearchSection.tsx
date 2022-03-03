@@ -1,6 +1,8 @@
 import React from 'react'
-import { Box, Text, Hidden } from '@island.is/island-ui/core'
+
+import { Box, Hidden,Text } from '@island.is/island-ui/core'
 import { ServiceWebSearchInput } from '@island.is/web/components'
+
 import { TextModes } from '../types'
 
 import * as styles from './SearchSection.css'

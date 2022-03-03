@@ -1,20 +1,22 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { ValidationFailed } from '@island.is/nest/problem'
-import { EmailService } from '@island.is/email-service'
+import { SendMailOptions } from 'nodemailer'
+
 import { ZendeskService } from '@island.is/clients/zendesk'
 import { ContentfulRepository, localeMap } from '@island.is/cms'
+import { EmailService } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { SendMailOptions } from 'nodemailer'
+import { ValidationFailed } from '@island.is/nest/problem'
+
 import { ContactUsInput } from './dto/contactUs.input'
-import { TellUsAStoryInput } from './dto/tellUsAStory.input'
 import {
   ServiceWebFormsInput,
   ServiceWebFormsInputWithInstitutionEmail,
 } from './dto/serviceWebForms.input'
+import { TellUsAStoryInput } from './dto/tellUsAStory.input'
 import { getTemplate as getContactUsTemplate } from './emailTemplates/contactUs'
-import { getTemplate as getTellUsAStoryTemplate } from './emailTemplates/tellUsAStory'
 import { getTemplate as getServiceWebFormsTemplate } from './emailTemplates/serviceWebForms'
+import { getTemplate as getTellUsAStoryTemplate } from './emailTemplates/tellUsAStory'
 
 type SendEmailInput =
   | ContactUsInput

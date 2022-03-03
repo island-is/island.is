@@ -1,6 +1,7 @@
-import { IsEnum, IsNotEmpty } from 'class-validator'
-import { ApplicationTypes } from '@island.is/application/core'
 import { ApiProperty } from '@nestjs/swagger'
+import { IsEnum, IsNotEmpty } from 'class-validator'
+
+import { ApplicationTypes } from '@island.is/application/core'
 
 export class CreateApplicationDto {
   @IsNotEmpty()

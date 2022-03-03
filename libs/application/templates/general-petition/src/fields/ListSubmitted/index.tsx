@@ -1,11 +1,13 @@
 import React, { FC } from 'react'
+
 import { FieldBaseProps } from '@island.is/application/core'
-import { Box, Text } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
 import { Approved } from '@island.is/application/ui-components'
 import { CopyLink } from '@island.is/application/ui-components'
-import { m } from '../../lib/messages'
+import { Box, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+
 import School from '../../assets/School'
+import { m } from '../../lib/messages'
 
 const ListSubmited: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()

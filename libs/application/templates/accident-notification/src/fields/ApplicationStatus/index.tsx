@@ -1,4 +1,7 @@
+import React, { FC, useCallback, useEffect } from 'react'
+import { useFormContext } from 'react-hook-form'
 import { useMutation, useQuery } from '@apollo/client'
+
 import { AccidentNotificationStatus } from '@island.is/api/schema'
 import {
   FieldBaseProps,
@@ -14,8 +17,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { FC, useCallback, useEffect } from 'react'
-import { useFormContext } from 'react-hook-form'
+
 import { AccidentNotificationAnswers } from '../..'
 import { States } from '../../constants'
 import { getAccidentStatusQuery } from '../../hooks/useLazyStatusOfNotification'
@@ -25,16 +27,17 @@ import {
   getErrorMessageForMissingDocuments,
   hasReceivedAllDocuments,
   isInjuredAndRepresentativeOfCompanyOrInstitute,
-  shouldRequestReview,
   isUniqueAssignee,
+  shouldRequestReview,
 } from '../../utils'
 import { hasReceivedConfirmation } from '../../utils/hasReceivedConfirmation'
-import { StatusStep } from './StatusStep'
+
 import {
   AccidentNotificationStatusEnum,
   ApplicationStatusProps,
   Steps,
 } from './StatusStep/types'
+import { StatusStep } from './StatusStep'
 
 export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
   goToScreen,

@@ -1,16 +1,18 @@
 import React, { FC } from 'react'
+import { MessageDescriptor } from '@formatjs/intl'
 import cn from 'classnames'
-import { useLocale } from '@island.is/localization'
+
 import {
   Application,
-  formatText,
   coreMessages,
+  formatText,
 } from '@island.is/application/core'
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+
+import { m } from '../../../lib/messages'
 
 import * as styles from './ReviewSection.css'
-import { MessageDescriptor } from '@formatjs/intl'
-import { m } from '../../../lib/messages'
 
 export enum ReviewSectionState {
   inProgress = 'In progress',

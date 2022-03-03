@@ -3,6 +3,7 @@ import {
   PricingCategory,
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
+
 import { ExternalLinks } from './externalLinks.model'
 import { XroadIdentifier } from './xroadIdentifier.model'
 

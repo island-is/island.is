@@ -1,7 +1,9 @@
 import React, { FC } from 'react'
-import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
-import { Input, Box } from '@island.is/island-ui/core'
 import { useFormContext } from 'react-hook-form'
+
+import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
+import { Box,Input } from '@island.is/island-ui/core'
+
 import { MissingInfoType } from '../../types'
 
 const HiddenDateField: FC<FieldBaseProps> = ({ application }) => {

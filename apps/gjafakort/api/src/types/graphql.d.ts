@@ -1,9 +1,9 @@
 import {
-  FerdalagAPI,
   ApplicationAPI,
+  FerdalagAPI,
+  NovaAPI,
   RskAPI,
   YayAPI,
-  NovaAPI,
 } from '../services'
 
 export type User = {

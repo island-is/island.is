@@ -1,15 +1,17 @@
-import { Inject, Injectable, CACHE_MANAGER, HttpService } from '@nestjs/common'
+import { CACHE_MANAGER, HttpService,Inject, Injectable } from '@nestjs/common'
 import * as kennitala from 'kennitala'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  NationalRegistryGeneralLookupResponse,
-  NationalRegistryFamilyLookupResponse,
-  NationalRegistryUser,
-  FamilyMember,
-} from './nationalRegistry.types'
+
 import { environment } from '../../../environments'
+
+import {
+  FamilyMember,
+  NationalRegistryFamilyLookupResponse,
+  NationalRegistryGeneralLookupResponse,
+  NationalRegistryUser,
+} from './nationalRegistry.types'
 
 export const ONE_MONTH = 2592000 // seconds
 export const CACHE_KEY = 'nationalRegistry'

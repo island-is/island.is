@@ -1,9 +1,9 @@
 import {
-  Field,
-  MultiField,
   ExternalDataProvider,
-  Repeater,
+  Field,
   FormNode,
+  MultiField,
+  Repeater,
   Schema,
 } from '@island.is/application/core'
 

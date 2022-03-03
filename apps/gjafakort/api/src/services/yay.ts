@@ -1,6 +1,6 @@
-import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
-import md5 from 'crypto-js/md5'
+import { RequestOptions,RESTDataSource } from 'apollo-datasource-rest'
 import Base64 from 'crypto-js/enc-base64'
+import md5 from 'crypto-js/md5'
 
 import { logger } from '@island.is/logging'
 

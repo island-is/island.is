@@ -1,22 +1,25 @@
+import orderBy from 'lodash/orderBy'
+
+import { createStore, faker } from '@island.is/shared/mocking'
+
+import { Article } from '../../types'
+
 import {
+  alertBanner as createAlertBanner,
   article,
   articleCategory,
-  alertBanner as createAlertBanner,
-  menu as createMenu,
-  groupedMenu as createGroupedMenu,
-  news,
-  lifeEvent,
-  frontPageSlider,
   articleGroup,
   articleSubgroup,
   featured,
-  genericPage,
-  referenceLink,
   frontpage as createFrontpage,
+  frontPageSlider,
+  genericPage,
+  groupedMenu as createGroupedMenu,
+  lifeEvent,
+  menu as createMenu,
+  news,
+  referenceLink,
 } from './factories'
-import orderBy from 'lodash/orderBy'
-import { Article } from '../../types'
-import { createStore, faker } from '@island.is/shared/mocking'
 
 export const store = createStore(() => {
   faker.seed(100)

@@ -1,11 +1,4 @@
 import {
-  BypassAuth,
-  CurrentUser,
-  Scopes,
-  ScopesGuard,
-} from '@island.is/auth-nest-tools'
-import { Audit, AuditService } from '@island.is/nest/audit'
-import {
   Body,
   Controller,
   Delete,
@@ -15,34 +8,44 @@ import {
   ParseUUIDPipe,
   Post,
   Query,
-  UseInterceptors,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
 import {
   ApiBody,
   ApiCreatedResponse,
+  ApiExtraModels,
   ApiNoContentResponse,
   ApiOAuth2,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
-  ApiTags,
-  ApiExtraModels,
   ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger'
+
+import { EndorsementsScope } from '@island.is/auth/scopes'
+import type { User } from '@island.is/auth-nest-tools'
+import {
+  BypassAuth,
+  CurrentUser,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
+import { Audit, AuditService } from '@island.is/nest/audit'
+import { PaginationDto } from '@island.is/nest/pagination'
+
 import { environment } from '../../../environments'
 import { EndorsementList } from '../endorsementList/endorsementList.model'
 import { EndorsementListByIdPipe } from '../endorsementList/pipes/endorsementListById.pipe'
+
 import { EndorsementDto } from './dto/endorsement.dto'
-import { Endorsement } from './models/endorsement.model'
-import { EndorsementService } from './endorsement.service'
-import { EndorsementsScope } from '@island.is/auth/scopes'
-import type { User } from '@island.is/auth-nest-tools'
-import { PaginationDto } from '@island.is/nest/pagination'
+import { ExistsEndorsementResponse } from './dto/existsEndorsement.response'
 import { PaginatedEndorsementDto } from './dto/paginatedEndorsement.dto'
 import { EndorsementInterceptor } from './interceptors/endorsement.interceptor'
 import { PaginatedEndorsementInterceptor } from './interceptors/paginatedEndorsement.interceptor'
-import { ExistsEndorsementResponse } from './dto/existsEndorsement.response'
+import { Endorsement } from './models/endorsement.model'
+import { EndorsementService } from './endorsement.service'
 
 const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
 @Audit({

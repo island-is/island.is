@@ -1,17 +1,19 @@
 import {
-  ApplicationTemplate,
-  ApplicationContext,
-  ApplicationStateSchema,
-  ApplicationTypes,
-  ApplicationRole,
-  DefaultStateLifeCycle,
   Application,
+  ApplicationContext,
+  ApplicationRole,
+  ApplicationStateSchema,
+  ApplicationTemplate,
+  ApplicationTypes,
   DefaultEvents,
+  DefaultStateLifeCycle,
 } from '@island.is/application/core'
-import { Events, States, Roles } from './constants'
-import { dataSchema } from './dataSchema'
+
 import { m } from '../lib/messages'
+
+import { Events, Roles,States } from './constants'
 import { ApiActions } from './constants'
+import { dataSchema } from './dataSchema'
 
 const PSignTemplate: ApplicationTemplate<
   ApplicationContext,

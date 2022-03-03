@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import { Kennitala, LawChapter, Ministry, RegName, Regulation } from './types'
 import {
-  DB_RegulationDraft,
-  DBx_Regulation,
   DB_DraftRegulationCancel,
   DB_DraftRegulationChange,
+  DB_RegulationDraft,
+  DBx_Regulation,
   DraftingStatus,
   RegulationDraftId,
 } from './types-admin-database'
-import { RegName, Kennitala, LawChapter, Ministry, Regulation } from './types'
 
 export type {
   DraftingStatus,
-  RegulationDraftId,
-  DraftRegulationChangeId,
   DraftRegulationCancelId,
+  DraftRegulationChangeId,
+  RegulationDraftId,
 } from './types-admin-database'
 
 declare const _EmailAddress__Brand: unique symbol

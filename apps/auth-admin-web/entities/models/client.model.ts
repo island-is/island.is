@@ -1,11 +1,11 @@
-import { ClientAllowedScope } from './client-allowed-scope.model'
 import { ClientAllowedCorsOrigin } from './client-allowed-cors-origin.model'
+import { ClientAllowedScope } from './client-allowed-scope.model'
+import { ClientClaim } from './client-claim.model'
+import { ClientGrantType } from './client-grant-type.model'
+import { ClientIdpRestrictions } from './client-idp-restrictions.model'
 import { ClientPostLogoutRedirectUri } from './client-post-logout-redirect-uri.model'
 import { ClientRedirectUri } from './client-redirect-uri.model'
-import { ClientIdpRestrictions } from './client-idp-restrictions.model'
 import { ClientSecret } from './client-secret.model'
-import { ClientGrantType } from './client-grant-type.model'
-import { ClientClaim } from './client-claim.model'
 
 export class Client {
   clientId!: string

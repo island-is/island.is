@@ -1,14 +1,14 @@
 import {
-  buildForm,
+  Application,
   buildDescriptionField,
+  buildForm,
+  buildKeyValueField,
   buildMultiField,
   buildSection,
   buildSubmitField,
+  coreMessages,
   Form,
   FormModes,
-  coreMessages,
-  Application,
-  buildKeyValueField,
   getValueViaPath,
 } from '@island.is/application/core'
 

@@ -1,8 +1,10 @@
+import React, { useState } from 'react'
+import format from 'date-fns/format'
+
 import { PaymentSchedulePayment } from '@island.is/api/schema'
 import { Box, Button, Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import format from 'date-fns/format'
-import React, { useState } from 'react'
+
 import { paymentPlanTable } from '../../lib/messages'
 import { formatIsk } from '../../lib/paymentPlanUtils'
 

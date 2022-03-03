@@ -1,22 +1,24 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
-  Column,
-  DataType,
-  Model,
-  Table,
-  CreatedAt,
-  UpdatedAt,
-  HasMany,
-  HasOne,
   AfterCreate,
   AfterUpdate,
+  Column,
+  CreatedAt,
+  DataType,
+  HasMany,
+  HasOne,
+  Model,
+  Table,
+  UpdatedAt,
 } from 'sequelize-typescript'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+
+import { EntityTypes } from '../enums/EntityTypes'
+
+import { AdministrativeContact } from './administrativeContact.model'
+import { Changelog } from './changelog.model'
+import { Helpdesk } from './helpdesk.model'
 import { Provider } from './provider.model'
 import { TechnicalContact } from './technicalContact.model'
-import { AdministrativeContact } from './administrativeContact.model'
-import { Helpdesk } from './helpdesk.model'
-import { Changelog } from './changelog.model'
-import { EntityTypes } from '../enums/EntityTypes'
 
 @Table({
   tableName: 'organisation',

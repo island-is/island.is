@@ -1,10 +1,12 @@
+import React, { FC } from 'react'
+import { MessageDescriptor } from 'react-intl'
+import cn from 'classnames'
+
 import { Box, Bullet, BulletList, Text } from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
-import React, { FC } from 'react'
-import { MessageDescriptor } from 'react-intl'
+
 import * as styles from './FormOverview.css'
-import cn from 'classnames'
 
 interface ValueLineProps {
   label: string | MessageDescriptor

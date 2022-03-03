@@ -7,6 +7,7 @@ import {
   buildSubmitField,
   DefaultEvents,
 } from '@island.is/application/core'
+
 import { UPLOAD_ACCEPT } from '../../constants'
 import { addDocuments } from '../../lib/messages'
 import {

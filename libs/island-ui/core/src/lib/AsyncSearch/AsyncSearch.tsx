@@ -1,23 +1,26 @@
 import React, {
-  forwardRef,
-  useState,
-  ReactElement,
-  HTMLProps,
   ButtonHTMLAttributes,
+  forwardRef,
+  HTMLProps,
   LabelHTMLAttributes,
+  ReactElement,
   ReactNode,
   useContext,
+  useState,
 } from 'react'
+import cn from 'classnames'
 import Downshift, { DownshiftProps } from 'downshift'
 import { ControllerStateAndHelpers } from 'downshift/typings'
-import cn from 'classnames'
+
 import { helperStyles } from '@island.is/island-ui/theme'
+
+import { ColorSchemeContext } from '../context'
+import { Icon } from '../IconRC/Icon'
+
 import { Input, InputProps } from './shared/Input/Input'
+import { Item } from './shared/Item/Item'
 import { Label } from './shared/Label/Label'
 import { Menu, MenuProps } from './shared/Menu/Menu'
-import { Item } from './shared/Item/Item'
-import { Icon } from '../IconRC/Icon'
-import { ColorSchemeContext } from '../context'
 
 import * as styles from './AsyncSearch.css'
 

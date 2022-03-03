@@ -1,9 +1,11 @@
 import React from 'react'
-import { m, ServicePortalModuleComponent } from '@island.is/service-portal/core'
-import { useLocale } from '@island.is/localization'
-import { ErrorScreen } from '../ErrorScreen/ErrorScreen'
 import { useLocation } from 'react-router-dom'
+
+import { useLocale } from '@island.is/localization'
+import { m, ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { servicePortalMasterNavigation } from '@island.is/service-portal/core'
+
+import { ErrorScreen } from '../ErrorScreen/ErrorScreen'
 
 export const AccessDenied: ServicePortalModuleComponent = () => {
   const { formatMessage } = useLocale()

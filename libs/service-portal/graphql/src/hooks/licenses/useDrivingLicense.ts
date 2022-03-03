@@ -1,10 +1,12 @@
-import { useQuery } from '@apollo/client'
-import { GenericUserLicenseStatus, Query } from '@island.is/api/schema'
-import { Locale } from 'locale'
 import { useEffect, useState } from 'react'
+import { useQuery } from '@apollo/client'
+import { Locale } from 'locale'
+
+import { GenericUserLicenseStatus, Query } from '@island.is/api/schema'
+import { DrivingLicenseType } from '@island.is/service-portal/core'
+
 import { useUserProfile } from '../..'
 import { GET_GENERIC_LICENSE } from '../../lib/queries/getDrivingLicense'
-import { DrivingLicenseType } from '@island.is/service-portal/core'
 
 interface GetDrivingLicenseProps {
   data?: DrivingLicenseType

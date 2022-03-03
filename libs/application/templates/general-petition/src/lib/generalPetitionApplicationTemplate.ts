@@ -1,13 +1,15 @@
 import {
-  ApplicationTemplate,
-  ApplicationTypes,
+  Application,
   ApplicationContext,
   ApplicationStateSchema,
-  Application,
+  ApplicationTemplate,
+  ApplicationTypes,
   DefaultEvents,
   DefaultStateLifeCycle,
 } from '@island.is/application/core'
-import { ApiModuleActions, States, Roles } from '../constants'
+
+import { ApiModuleActions, Roles,States } from '../constants'
+
 import { GeneralPetitionSchema } from './dataSchema'
 
 type Events = { type: DefaultEvents.SUBMIT }

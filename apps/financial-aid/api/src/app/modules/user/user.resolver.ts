@@ -1,17 +1,17 @@
-import { Context, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
+import { Context, Query, ResolveField, Resolver } from '@nestjs/graphql'
 
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import type { Staff, User } from '@island.is/financial-aid/shared/lib'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Staff, User } from '@island.is/financial-aid/shared/lib'
 
-import { UserModel } from './user.model'
-
-import { StaffModel } from '../staff/models'
-import { CurrentUser } from '../decorators'
 import { BackendAPI } from '../../../services'
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { CurrentUser } from '../decorators'
+import { StaffModel } from '../staff/models'
+
 import { SpouseModel } from './spouseModel.model'
+import { UserModel } from './user.model'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => UserModel)

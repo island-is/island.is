@@ -1,7 +1,10 @@
-import { Box, Button, Tag, Text } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
-import * as styles from './ReviewSection.css'
+
+import { Box, Button, Tag, Text } from '@island.is/island-ui/core'
+
 import { ReviewSectionProps } from './types'
+
+import * as styles from './ReviewSection.css'
 
 export const StatusStep: FC<ReviewSectionProps> = ({
   title,

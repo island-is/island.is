@@ -1,15 +1,17 @@
-import { Colors } from '@island.is/island-ui/theme'
+import { FormatInputValueFunction } from 'react-number-format'
+import { ApolloClient } from '@apollo/client'
+
 import type {
+  BoxProps,
   DatePickerBackgroundColor,
   InputBackgroundColor,
-  BoxProps,
 } from '@island.is/island-ui/core/types'
-import { ApolloClient } from '@apollo/client'
-import { FormText, FormTextArray, FormItem } from './Form'
-import { Condition } from './Condition'
-import { CallToAction } from './StateMachine'
+import { Colors } from '@island.is/island-ui/theme'
+
 import { Application } from './Application'
-import { FormatInputValueFunction } from 'react-number-format'
+import { Condition } from './Condition'
+import { FormItem,FormText, FormTextArray } from './Form'
+import { CallToAction } from './StateMachine'
 
 export type RecordObject<T = unknown> = Record<string, T>
 export type MaybeWithApplicationAndField<T> =

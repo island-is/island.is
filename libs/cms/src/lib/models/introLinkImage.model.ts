@@ -1,8 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+
 import { IIntroLinkImage } from '../generated/contentfulTypes'
-import { mapReferenceLink, ReferenceLink } from './referenceLink.model'
+
 import { Html, mapHtml } from './html.model'
 import { Image, mapImage } from './image.model'
+import { mapReferenceLink, ReferenceLink } from './referenceLink.model'
 
 @ObjectType()
 export class IntroLinkImage {

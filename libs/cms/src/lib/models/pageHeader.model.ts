@@ -1,7 +1,9 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+
 import { IPageHeader, ITimeline } from '../generated/contentfulTypes'
+
 import { Link, mapLink } from './link.model'
-import { TimelineSlice, mapTimelineSlice } from './timelineSlice.model'
+import { mapTimelineSlice,TimelineSlice } from './timelineSlice.model'
 
 @ObjectType()
 export class PageHeader {

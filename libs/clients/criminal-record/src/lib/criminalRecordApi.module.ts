@@ -1,10 +1,13 @@
 import { DynamicModule } from '@nestjs/common'
+
 import {
   createEnhancedFetch,
   EnhancedFetchOptions,
 } from '@island.is/clients/middlewares'
+
+import { Configuration,CrimeCertificateApi } from '../../gen/fetch'
+
 import { CriminalRecordApi } from './criminalRecordApi.service'
-import { CrimeCertificateApi, Configuration } from '../../gen/fetch'
 
 export interface CriminalRecordApiConfig {
   xroadBaseUrl: string

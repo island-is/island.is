@@ -1,44 +1,47 @@
-import React, { useState, useCallback } from 'react'
-import { useQuery, gql } from '@apollo/client'
-import {
-  Text,
-  Box,
-  Stack,
-  Columns,
-  Column,
-  Button,
-  Select,
-  Pagination,
-  Option,
-  DatePicker,
-  Input,
-  GridRow,
-  GridColumn,
-  LoadingDots,
-  Hidden,
-} from '@island.is/island-ui/core'
-import { useListDocuments } from '@island.is/service-portal/graphql'
-import {
-  useScrollToRefOnUpdate,
-  ServicePortalModuleComponent,
-} from '@island.is/service-portal/core'
-import { Document } from '@island.is/api/schema'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { ValueType } from 'react-select'
-import { defineMessage } from 'react-intl'
-import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
-import { useLocation } from 'react-router-dom'
-import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql'
-import { m } from '@island.is/service-portal/core'
+import React, { useCallback,useState } from 'react'
 import AnimateHeight from 'react-animate-height'
-import DocumentLine from '../../components/DocumentLine/DocumentLine'
-import getOrganizationLogoUrl from '../../utils/getOrganizationLogoUrl'
+import { defineMessage } from 'react-intl'
+import { useLocation } from 'react-router-dom'
+import { ValueType } from 'react-select'
+import { gql,useQuery } from '@apollo/client'
+import * as Sentry from '@sentry/react'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
-import isEqual from 'lodash/isEqual'
 import isWithinInterval from 'date-fns/isWithinInterval'
 import startOfTomorrow from 'date-fns/startOfTomorrow'
-import * as Sentry from '@sentry/react'
+import isEqual from 'lodash/isEqual'
+
+import { Document } from '@island.is/api/schema'
+import {
+  Box,
+  Button,
+  Column,
+  Columns,
+  DatePicker,
+  GridColumn,
+  GridRow,
+  Hidden,
+  Input,
+  LoadingDots,
+  Option,
+  Pagination,
+  Select,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
+import {
+  ServicePortalModuleComponent,
+  useScrollToRefOnUpdate,
+} from '@island.is/service-portal/core'
+import { m } from '@island.is/service-portal/core'
+import { useListDocuments } from '@island.is/service-portal/graphql'
+import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql'
+
+import DocumentLine from '../../components/DocumentLine/DocumentLine'
+import getOrganizationLogoUrl from '../../utils/getOrganizationLogoUrl'
+
 import * as styles from './Overview.css'
 
 const defaultCategory = { label: 'Allar stofnanir', value: '' }

@@ -1,5 +1,7 @@
 import { Catch } from '@nestjs/common'
+
 import { Problem, ProblemType } from '@island.is/shared/problem'
+
 import { BaseProblemFilter } from './base-problem.filter'
 
 @Catch(Error)

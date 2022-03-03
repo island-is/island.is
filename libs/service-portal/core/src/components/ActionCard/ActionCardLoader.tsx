@@ -1,10 +1,11 @@
 import React, { FC } from 'react'
+
 import {
   Box,
-  Stack,
-  Columns,
   Column,
+  Columns,
   SkeletonLoader,
+  Stack,
 } from '@island.is/island-ui/core'
 
 interface Props {

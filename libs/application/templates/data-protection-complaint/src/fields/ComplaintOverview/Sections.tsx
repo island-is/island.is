@@ -1,13 +1,16 @@
 import React, { FC } from 'react'
-import { complaint, info } from '../../lib/messages'
+
+import { useLocale } from '@island.is/localization'
+
 import { DataProtectionComplaint } from '../../lib/dataSchema'
+import { complaint, info } from '../../lib/messages'
+import { ComplaineeTable } from '../ComplaineeRepeater/ComplaineeTable'
+
 import {
   SectionHeading,
   subjectOfComplaintValueLabelMapper,
   ValueLine,
 } from './Shared'
-import { ComplaineeTable } from '../ComplaineeRepeater/ComplaineeTable'
-import { useLocale } from '@island.is/localization'
 
 export const Applicant: FC<{ answers: DataProtectionComplaint }> = ({
   answers,

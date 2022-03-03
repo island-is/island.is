@@ -1,6 +1,6 @@
 import { ApplicationContext } from '@island.is/application/core'
 
-import { YES, NO } from '../constants'
+import { NO,YES } from '../constants'
 import { requiresOtherParentApproval } from '../lib/parentalLeaveUtils'
 
 export function hasEmployer(context: ApplicationContext) {

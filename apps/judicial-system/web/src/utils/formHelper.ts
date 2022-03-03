@@ -1,7 +1,7 @@
 import formatISO from 'date-fns/formatISO'
 
-import { formatDate } from '@island.is/judicial-system/formatters'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import type { Case, UpdateCase } from '@island.is/judicial-system/types'
 
 import {

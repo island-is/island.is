@@ -1,9 +1,9 @@
 import { ReactNode, useContext } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
-import { PrimitiveType, FormatXMLElementFn } from 'intl-messageformat'
 import format from 'date-fns/format'
-import is from 'date-fns/locale/is'
 import en from 'date-fns/locale/en-US'
+import is from 'date-fns/locale/is'
+import { FormatXMLElementFn,PrimitiveType } from 'intl-messageformat'
 
 import { LocaleContext } from './LocaleContext'
 

@@ -2,17 +2,17 @@ import React, { FC, useMemo } from 'react'
 import HtmlParser from 'react-html-parser'
 
 import {
+  buildFieldOptions,
   FieldBaseProps,
   formatText,
   getValueViaPath,
   RadioField,
-  buildFieldOptions,
 } from '@island.is/application/core'
+import { Box,Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Text, Box } from '@island.is/island-ui/core'
 import {
-  RadioController,
   FieldDescription,
+  RadioController,
 } from '@island.is/shared/form-fields'
 
 import { getDefaultValue } from '../../getDefaultValue'

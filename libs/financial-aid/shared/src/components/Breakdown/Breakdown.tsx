@@ -1,5 +1,6 @@
 import React from 'react'
-import { Text, Box } from '@island.is/island-ui/core'
+
+import { Box,Text } from '@island.is/island-ui/core'
 
 import { Calculations } from '../../lib/interfaces'
 

@@ -1,10 +1,12 @@
 import { useMutation } from '@apollo/client'
+
 import {
   CreateUserProfileInput,
   Mutation,
   MutationCreateProfileArgs,
 } from '@island.is/api/schema'
 import { Locale } from '@island.is/shared/types'
+
 import { CREATE_USER_PROFILE } from '../../lib/mutations/createUserProfile'
 import { USER_PROFILE } from '../../lib/queries/getUserProfile'
 

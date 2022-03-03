@@ -1,6 +1,5 @@
-import { IsBoolean, IsNotEmpty, IsString } from 'class-validator'
-
 import { ApiProperty } from '@nestjs/swagger'
+import { IsBoolean, IsNotEmpty, IsString } from 'class-validator'
 
 import type { UserRole } from '@island.is/judicial-system/types'
 

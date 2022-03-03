@@ -1,4 +1,5 @@
 import React, { FC } from 'react'
+
 import { FocusableBox, LinkCard } from '@island.is/island-ui/core'
 
 export interface AssetLinkProps {

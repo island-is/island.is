@@ -4,11 +4,11 @@ import {
   DataProviderResult,
 } from '@island.is/application/core'
 import { ExternalData } from '@island.is/application/core'
-import { Locale } from '@island.is/shared/types'
 import { User } from '@island.is/auth-nest-tools'
+import { Locale } from '@island.is/shared/types'
 
-import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
 import { environment } from '../../../../environments'
+import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
 
 class NotImplemented extends BasicDataProvider {
   provide(): Promise<unknown> {

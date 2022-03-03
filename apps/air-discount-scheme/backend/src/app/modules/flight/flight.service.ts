@@ -1,18 +1,20 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Sequelize } from 'sequelize-typescript'
-import { Op } from 'sequelize'
 import * as kennitala from 'kennitala'
+import { Op } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
   Actions,
   Airlines,
   States,
 } from '@island.is/air-discount-scheme/consts'
-import { FlightLegSummary } from './flight.types'
-import { Flight, FlightLeg, financialStateMachine } from './flight.model'
-import { CreateFlightBody, GetFlightLegsBody } from './dto'
+
 import { NationalRegistryUser } from '../nationalRegistry'
+
+import { CreateFlightBody, GetFlightLegsBody } from './dto'
+import { financialStateMachine,Flight, FlightLeg } from './flight.model'
+import { FlightLegSummary } from './flight.types'
 
 export const ADS_POSTAL_CODES = {
   Reykhólahreppur: 380,

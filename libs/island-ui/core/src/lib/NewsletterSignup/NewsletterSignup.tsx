@@ -1,12 +1,13 @@
 import * as React from 'react'
-import { Text } from '../Text/Text'
-import { Input } from '../Input/Input'
+
+import { AlertMessage } from '../AlertMessage/AlertMessage'
+import { Box } from '../Box/Box'
 import { Button } from '../Button/Button'
+import { Hidden } from '../Hidden/Hidden'
+import { Input } from '../Input/Input'
+import { Text } from '../Text/Text'
 
 import * as styles from './NewsletterSignup.css'
-import { Box } from '../Box/Box'
-import { Hidden } from '../Hidden/Hidden'
-import { AlertMessage } from '../AlertMessage/AlertMessage'
 
 type ColorVariant = 'white' | 'blue'
 type State = 'default' | 'error' | 'success'

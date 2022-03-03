@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react'
-import LocalizationUtils from '../../utils/localization.utils'
-import { Localization } from '../../entities/common/Localization'
+import React, { useEffect,useState } from 'react'
+
 import { Environment } from '../../entities/common/Environment'
+import { Localization } from '../../entities/common/Localization'
+import LocalizationUtils from '../../utils/localization.utils'
+
 import { EnvironmentUtils } from './../../utils/environment.utils'
 
 const ShowEnvironment: React.FC = () => {

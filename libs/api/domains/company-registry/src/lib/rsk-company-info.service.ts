@@ -1,18 +1,20 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
-import { RskCompany } from './models/rskCompany.model'
+
 import {
   GetCompanyApi,
   SearchCompanyRegistryApi,
 } from '@island.is/clients/rsk/company-registry'
-import { RskCompanyFormOfOperation } from './models/rskCompanyFormOfOperation.model'
-import { RskCompanyVat } from './models/rskCompanyVat.model'
-import { RskCompanyAddress } from './models/rskCompanyAddress.model'
-import { RskCompanyRelatedParty } from './models/rskCompanyRelatedParty.model'
-import { RskCompanyClassification } from './models/rskCompanyClassification.model'
-import { RskCompanySearchItems } from './models/rskCompanySearchItems.model'
-import { decodeBase64, toBase64 } from './rsk-company-info.utils'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import { RskCompany } from './models/rskCompany.model'
+import { RskCompanyAddress } from './models/rskCompanyAddress.model'
+import { RskCompanyClassification } from './models/rskCompanyClassification.model'
+import { RskCompanyFormOfOperation } from './models/rskCompanyFormOfOperation.model'
+import { RskCompanyRelatedParty } from './models/rskCompanyRelatedParty.model'
+import { RskCompanySearchItems } from './models/rskCompanySearchItems.model'
+import { RskCompanyVat } from './models/rskCompanyVat.model'
+import { decodeBase64, toBase64 } from './rsk-company-info.utils'
 
 @Injectable()
 export class RskCompanyInfoService {

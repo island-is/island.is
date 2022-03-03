@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+
 import { RskCompanyClassification } from './rskCompanyClassification.model'
 
 @ObjectType()

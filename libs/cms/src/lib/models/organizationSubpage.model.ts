@@ -1,14 +1,15 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 import { IOrganizationSubpage } from '../generated/contentfulTypes'
-import { Link, mapLink } from './link.model'
-import { mapOrganizationPage, OrganizationPage } from './organizationPage.model'
-import { Image, mapImage } from './image.model'
 import {
   mapDocument,
   safelyMapSliceUnion,
   SliceUnion,
 } from '../unions/slice.union'
+
+import { Image, mapImage } from './image.model'
+import { Link, mapLink } from './link.model'
+import { mapOrganizationPage, OrganizationPage } from './organizationPage.model'
 
 @ObjectType()
 export class OrganizationSubpage {

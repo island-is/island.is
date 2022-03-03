@@ -1,5 +1,6 @@
 import React, { FC } from 'react'
-import { TextProps, Link } from '@island.is/island-ui/core'
+
+import { Link,TextProps } from '@island.is/island-ui/core'
 
 interface HyperlinkProps {
   href?: string

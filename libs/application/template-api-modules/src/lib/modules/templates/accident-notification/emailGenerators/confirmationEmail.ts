@@ -1,6 +1,8 @@
+import { SendMailOptions } from 'nodemailer'
+
 import { ApplicationConfigurations } from '@island.is/application/core'
 import { AccidentNotificationAnswers } from '@island.is/application/templates/accident-notification'
-import { SendMailOptions } from 'nodemailer'
+
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../accident-notification.utils'
 

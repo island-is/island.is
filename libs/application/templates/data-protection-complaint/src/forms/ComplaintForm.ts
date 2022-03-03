@@ -16,6 +16,7 @@ import {
   FormModes,
   FormValue,
 } from '@island.is/application/core'
+
 import { DataProtectionComplaint, OnBehalf } from '../lib/dataSchema'
 import {
   application,

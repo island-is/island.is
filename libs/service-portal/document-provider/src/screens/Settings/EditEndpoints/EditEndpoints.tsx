@@ -1,12 +1,14 @@
 import React from 'react'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
-import { useLocale } from '@island.is/localization'
+
 import { Box, Text, toast } from '@island.is/island-ui/core'
-import { m } from '../../../lib/messages'
+import { useLocale } from '@island.is/localization'
+import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
+
 import {
   EndpointsForm,
   EndpointsFormData,
 } from '../../../components/Forms/EndpointsForm'
+import { m } from '../../../lib/messages'
 
 const EditEndpoints: ServicePortalModuleComponent = ({ userInfo }) => {
   const { formatMessage } = useLocale()

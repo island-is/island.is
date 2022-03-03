@@ -4,6 +4,7 @@ import {
   FasteignirApi,
   LyklarApi,
 } from '../../gen/fetch'
+
 import { ApiConfiguration } from './apiConfiguration'
 
 export const exportedApis = [EinstaklingarApi, FasteignirApi, LyklarApi].map(

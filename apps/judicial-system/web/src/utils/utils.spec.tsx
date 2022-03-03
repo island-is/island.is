@@ -3,10 +3,10 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import { CaseTransition, Gender } from '@island.is/judicial-system/types'
-import { getShortGender, isDirty } from './stepHelper'
-import { validate } from './validate'
 
 import * as formatters from './formatters'
+import { getShortGender, isDirty } from './stepHelper'
+import { validate } from './validate'
 
 describe('Formatters utils', () => {
   describe('Parse array', () => {

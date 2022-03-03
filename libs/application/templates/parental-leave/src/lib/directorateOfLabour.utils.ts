@@ -1,15 +1,17 @@
-import differenceInMonths from 'date-fns/differenceInMonths'
+import addDays from 'date-fns/addDays'
 import differenceInCalendarMonths from 'date-fns/differenceInCalendarMonths'
 import differenceInDays from 'date-fns/differenceInDays'
-import isSameMonth from 'date-fns/isSameMonth'
+import differenceInMonths from 'date-fns/differenceInMonths'
 import getDaysInMonth from 'date-fns/getDaysInMonth'
-import addDays from 'date-fns/addDays'
 import isSameDay from 'date-fns/isSameDay'
+import isSameMonth from 'date-fns/isSameMonth'
+
 import {
   ParentalLeave,
   ParentalLeaveEntitlement,
   ParentalLeavePeriod,
 } from '@island.is/api/domains/directorate-of-labour'
+
 import { errorMessages } from './messages'
 
 // VMST rule for the number of days in each month of the year

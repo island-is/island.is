@@ -1,11 +1,12 @@
 import { ForbiddenError } from 'apollo-server-express'
 
-import { CompanyApplication } from '@island.is/gjafakort/types'
 import { ApplicationStates } from '@island.is/gjafakort/consts'
+import { CompanyApplication } from '@island.is/gjafakort/types'
+
+import { CompanyApplication as CompanyApplicationGQL } from '../../types'
+import { authorize } from '../auth'
 
 import * as companyService from './service'
-import { authorize } from '../auth'
-import { CompanyApplication as CompanyApplicationGQL } from '../../types'
 
 const formatApplication = (
   application: CompanyApplication,

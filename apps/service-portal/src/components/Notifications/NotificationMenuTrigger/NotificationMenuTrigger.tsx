@@ -1,9 +1,11 @@
 import React, { FC, useRef } from 'react'
-import { Button, Box } from '@island.is/island-ui/core'
-import { useStore } from '../../../store/stateProvider'
-import { ActionType, MenuState } from '../../../store/actions'
-import NotificationMenu from '../NotificationMenu/NotificationMenu'
 import { useClickAway } from 'react-use'
+
+import { Box,Button } from '@island.is/island-ui/core'
+
+import { ActionType, MenuState } from '../../../store/actions'
+import { useStore } from '../../../store/stateProvider'
+import NotificationMenu from '../NotificationMenu/NotificationMenu'
 
 const NotificationMenuTrigger: FC<{}> = () => {
   const ref = useRef<HTMLElement>(null)

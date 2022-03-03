@@ -1,6 +1,8 @@
 import { Catch } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
+
 import { HttpProblem } from '@island.is/shared/problem'
+
 import { BaseProblemFilter } from './base-problem.filter'
 
 const errorInfo: Record<string, { title: string; status: number }> = {

@@ -1,4 +1,5 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ID,ObjectType } from '@nestjs/graphql'
+
 import { RskCompanyAddress } from './rskCompanyAddress.model'
 import { RskCompanyFormOfOperation } from './rskCompanyFormOfOperation.model'
 import { RskCompanyRelatedParty } from './rskCompanyRelatedParty.model'

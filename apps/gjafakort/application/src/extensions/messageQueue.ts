@@ -1,7 +1,7 @@
 import express from 'express'
 
-import MessageQueue from '@island.is/message-queue'
 import { ApplicationExchange } from '@island.is/gjafakort/types'
+import MessageQueue from '@island.is/message-queue'
 
 import { environment } from '../environments'
 

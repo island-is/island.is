@@ -3,15 +3,16 @@ import set from 'lodash/set'
 import { Application, FormValue } from '@island.is/application/core'
 
 import { ParentalRelations } from '../../constants'
+
 import {
-  getChildrenAndExistingApplications,
   applicationsToExistingChildApplication,
+  getChildrenAndExistingApplications,
 } from './Children-utils'
 import {
-  ChildInformationWithoutRights,
-  PregnancyStatus,
-  ChildrenWithoutRightsAndExistingApplications,
   ChildInformation,
+  ChildInformationWithoutRights,
+  ChildrenWithoutRightsAndExistingApplications,
+  PregnancyStatus,
 } from './types'
 
 let id = 0

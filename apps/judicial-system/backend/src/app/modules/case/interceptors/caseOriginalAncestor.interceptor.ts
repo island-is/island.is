@@ -1,5 +1,3 @@
-import { Observable } from 'rxjs'
-
 import {
   CallHandler,
   ExecutionContext,
@@ -7,6 +5,7 @@ import {
   InternalServerErrorException,
   NestInterceptor,
 } from '@nestjs/common'
+import { Observable } from 'rxjs'
 
 import { CaseService } from '../case.service'
 

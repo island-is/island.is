@@ -2,11 +2,11 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { Defendant } from '@island.is/judicial-system/types'
 import {
   capitalize,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
+import { Defendant } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 
 import * as styles from './InfoCard.css'

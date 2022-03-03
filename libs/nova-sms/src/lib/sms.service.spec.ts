@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing'
 
 import { LoggingModule } from '@island.is/logging'
 
-import { NovaError, SmsService, SMS_OPTIONS } from './sms.service'
+import { NovaError, SMS_OPTIONS,SmsService } from './sms.service'
 
 const testLogin = 'Login'
 const testToken = 'Test Token'

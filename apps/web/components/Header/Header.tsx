@@ -1,24 +1,26 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC, useContext } from 'react'
+
 import {
-  Logo,
-  Columns,
-  Column,
   Box,
   Button,
-  Hidden,
-  ResponsiveSpace,
-  GridContainer,
-  GridColumn,
-  GridRow,
-  ColorSchemeContext,
-  FocusableBox,
   ButtonTypes,
+  ColorSchemeContext,
+  Column,
+  Columns,
+  FocusableBox,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Hidden,
   Link,
+  Logo,
+  ResponsiveSpace,
 } from '@island.is/island-ui/core'
-import { useI18n } from '@island.is/web/i18n'
 import { FixedNav, SearchInput } from '@island.is/web/components'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useI18n } from '@island.is/web/i18n'
+
 import { LanguageToggler } from '../LanguageToggler'
 import { Menu } from '../Menu/Menu'
 

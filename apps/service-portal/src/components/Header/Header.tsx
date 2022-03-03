@@ -1,22 +1,25 @@
 import React, { FC, useState } from 'react'
+import { Link } from 'react-router-dom'
+
+import { useAuth } from '@island.is/auth/react'
 import {
   Box,
-  Hidden,
   Button,
-  Logo,
   FocusableBox,
+  Hidden,
   Icon,
+  Logo,
 } from '@island.is/island-ui/core'
-import * as styles from './Header.css'
-import { ServicePortalPath } from '@island.is/service-portal/core'
-import { UserLanguageSwitcher } from '@island.is/shared/components'
 import { useLocale } from '@island.is/localization'
-import { UserMenu } from '@island.is/shared/components'
-import { useStore } from '../../store/stateProvider'
-import { ActionType } from '../../store/actions'
+import { ServicePortalPath } from '@island.is/service-portal/core'
 import { m } from '@island.is/service-portal/core'
-import { Link } from 'react-router-dom'
-import { useAuth } from '@island.is/auth/react'
+import { UserLanguageSwitcher } from '@island.is/shared/components'
+import { UserMenu } from '@island.is/shared/components'
+
+import { ActionType } from '../../store/actions'
+import { useStore } from '../../store/stateProvider'
+
+import * as styles from './Header.css'
 
 export const Header: FC<{}> = () => {
   const { formatMessage } = useLocale()

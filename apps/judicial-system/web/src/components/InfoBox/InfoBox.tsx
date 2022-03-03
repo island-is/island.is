@@ -1,6 +1,8 @@
 import React from 'react'
 import cn from 'classnames'
+
 import { Box, Icon, Text } from '@island.is/island-ui/core'
+
 import * as styles from './InfoBox.css'
 
 interface Props {

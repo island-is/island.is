@@ -8,12 +8,15 @@
   removed and the subArticle model made to reference the article model
   directly
 */
-import { Field, ObjectType, ID } from '@nestjs/graphql'
-import { IArticle } from '../generated/contentfulTypes'
+import { Field, ID,ObjectType } from '@nestjs/graphql'
+
 import { SystemMetadata } from '@island.is/shared/types'
+
+import { IArticle } from '../generated/contentfulTypes'
+
+import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
 import { ArticleGroup, mapArticleGroup } from './articleGroup.model'
 import { mapOrganization, Organization } from './organization.model'
-import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
 
 @ObjectType()
 export class ArticleReference {

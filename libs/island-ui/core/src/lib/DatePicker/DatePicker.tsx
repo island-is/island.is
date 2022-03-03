@@ -1,26 +1,28 @@
 import * as React from 'react'
-import { useEffect, useRef, useState, forwardRef } from 'react'
-import cn from 'classnames'
+import { forwardRef,useEffect, useRef, useState } from 'react'
 import {
   default as ReactDatePicker,
-  registerLocale,
   ReactDatePickerProps,
+  registerLocale,
 } from 'react-datepicker'
+import cn from 'classnames'
 import getYear from 'date-fns/getYear'
-import is from 'date-fns/locale/is'
 import en from 'date-fns/locale/en-US'
-import { dateFormat } from '@island.is/shared/constants'
-import { VisuallyHidden } from 'reakit'
+import is from 'date-fns/locale/is'
 import range from 'lodash/range'
+import { VisuallyHidden } from 'reakit'
+
+import { dateFormat } from '@island.is/shared/constants'
 
 import { Icon } from '../IconRC/Icon'
+import { Input } from '../Input/Input'
+import { InputProps } from '../Input/types'
 import { Text } from '../Text/Text'
+
+import { DatePickerCustomHeaderProps,DatePickerProps } from './types'
 
 import * as styles from './DatePicker.css'
 import * as coreStyles from './react-datepicker.css'
-import { Input } from '../Input/Input'
-import { InputProps } from '../Input/types'
-import { DatePickerProps, DatePickerCustomHeaderProps } from './types'
 
 const languageConfig = {
   is: {

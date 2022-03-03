@@ -4,15 +4,17 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
+
 import { LogreglanLogo } from '../../assets'
 import { m } from '../../lib/messages'
-import { subSectionTempInfo } from './subSectionTempInfo'
+
+import { subSectionDelivery } from './subSectionDelivery'
+import { subSectionHealthDeclaration } from './subSectionHealthDeclaration'
 import { subSectionOtherCountry } from './subSectionOtherCountry'
 import { subSectionOtherCountryDirections } from './subSectionOtherCountryDirections'
 import { subSectionQualityPhoto } from './subSectionQualityPhoto'
-import { subSectionDelivery } from './subSectionDelivery'
-import { subSectionHealthDeclaration } from './subSectionHealthDeclaration'
 import { subSectionSummary } from './subSectionSummary'
+import { subSectionTempInfo } from './subSectionTempInfo'
 
 export const draft: Form = buildForm({
   id: 'DrivingLicenseApplicationDraftForm',

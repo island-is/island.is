@@ -1,8 +1,8 @@
-import { Logger } from 'winston'
 import CircuitBreaker from 'opossum'
+import { Logger } from 'winston'
 
-import { FetchAPI } from './nodeFetch'
 import { FetchError } from './FetchError'
+import { FetchAPI } from './nodeFetch'
 
 export interface CircuitBreakerOptions {
   treat400ResponsesAsErrors: boolean

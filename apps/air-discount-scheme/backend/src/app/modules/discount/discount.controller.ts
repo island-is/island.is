@@ -1,22 +1,23 @@
 import {
   Controller,
+  forwardRef,
+  Get,
+  Inject,
+  NotFoundException,
   Param,
   Post,
-  Get,
-  NotFoundException,
-  Inject,
-  forwardRef,
 } from '@nestjs/common'
 import { ApiExcludeEndpoint } from '@nestjs/swagger'
 
+import { FlightService } from '../flight'
+import { NationalRegistryService } from '../nationalRegistry'
+
 import { Discount } from './discount.model'
+import { DiscountService } from './discount.service'
 import {
   CreateDiscountCodeParams,
   GetCurrentDiscountByNationalIdParams,
 } from './dto'
-import { DiscountService } from './discount.service'
-import { NationalRegistryService } from '../nationalRegistry'
-import { FlightService } from '../flight'
 
 @Controller('api/private')
 export class PrivateDiscountController {

@@ -1,37 +1,37 @@
+import { UseGuards } from '@nestjs/common'
 import {
   Args,
-  Query,
-  Resolver,
   Mutation,
-  ResolveField,
   Parent,
+  Query,
+  ResolveField,
+  Resolver,
 } from '@nestjs/graphql'
-import { BypassAuth } from '@island.is/auth-nest-tools'
+
 import type { User } from '@island.is/auth-nest-tools'
+import { BypassAuth } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
-import { UseGuards } from '@nestjs/common'
-import { Endorsement } from './models/endorsement.model'
-import { EndorsementSystemService } from './endorsementSystem.service'
-import { FindEndorsementListInput } from './dto/findEndorsementList.input'
+
 import { CreateEndorsementInput } from './dto/createEndorsement.input'
-import { EndorsementList } from './models/endorsementList.model'
 import { CreateEndorsementListDto } from './dto/createEndorsementList.input'
-import { EndorsementBulkCreate } from './models/endorsementBulkCreate.model'
+import { EndorsementPaginationInput } from './dto/endorsementPagination.input'
 import { ExistsEndorsementResponse } from './dto/existsEndorsement.response'
-import {
-  UpdateEndorsementListInput,
-  UpdateEndorsementListDto,
-} from './dto/updateEndorsementList.input'
+import { FindEndorsementListInput } from './dto/findEndorsementList.input'
+import { OpenListInput } from './dto/openList.input'
 import { PaginatedEndorsementInput } from './dto/paginatedEndorsement.input'
 import { PaginatedEndorsementResponse } from './dto/paginatedEndorsement.response'
-
 import { PaginatedEndorsementListInput } from './dto/paginatedEndorsementList.input'
 import { PaginatedEndorsementListResponse } from './dto/paginatedEndorsementList.response'
-
-import { EndorsementPaginationInput } from './dto/endorsementPagination.input'
-import { OpenListInput } from './dto/openList.input'
-import { sendPdfEmailResponse } from './dto/sendPdfEmail.response'
 import { sendPdfEmailInput } from './dto/sendPdfEmail.input'
+import { sendPdfEmailResponse } from './dto/sendPdfEmail.response'
+import {
+  UpdateEndorsementListDto,
+  UpdateEndorsementListInput,
+} from './dto/updateEndorsementList.input'
+import { Endorsement } from './models/endorsement.model'
+import { EndorsementBulkCreate } from './models/endorsementBulkCreate.model'
+import { EndorsementList } from './models/endorsementList.model'
+import { EndorsementSystemService } from './endorsementSystem.service'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => EndorsementList)
@@ -39,7 +39,7 @@ export class EndorsementSystemResolver {
   constructor(private endorsementSystemService: EndorsementSystemService) {}
 
   @ResolveField('ownerName', () => String, { nullable: true })
-  resolveOwnerName(@Parent() list: EndorsementList): Promise<String | null> {
+  resolveOwnerName(@Parent() list: EndorsementList): Promise<string | null> {
     return this.endorsementSystemService.endorsementListControllerGetOwnerName({
       listId: list.id,
     })

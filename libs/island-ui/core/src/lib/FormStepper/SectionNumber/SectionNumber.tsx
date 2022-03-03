@@ -1,10 +1,12 @@
 import React, { FC } from 'react'
+
 import { Colors } from '@island.is/island-ui/theme'
 
 import { Box } from '../../Box/Box'
 import { Icon } from '../../IconRC/Icon'
 import { SectionNumberColumn } from '../SectionNumberColumn/SectionNumberColumn'
 import * as types from '../types'
+
 import * as styles from './SectionNumber.css'
 
 const bulletColors = {

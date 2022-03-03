@@ -1,9 +1,11 @@
-import { testServer, TestServerOptions } from '@island.is/infra-nest-server'
-import { getConnectionToken } from '@nestjs/sequelize'
 import { INestApplication, Type } from '@nestjs/common'
+import { getConnectionToken } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
-import { AppModule } from '../src/app/app.module'
+
+import { testServer, TestServerOptions } from '@island.is/infra-nest-server'
 import { logger } from '@island.is/logging'
+
+import { AppModule } from '../src/app/app.module'
 
 export let app: INestApplication
 let sequelize: Sequelize

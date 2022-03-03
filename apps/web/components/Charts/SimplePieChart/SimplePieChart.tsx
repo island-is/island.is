@@ -1,20 +1,22 @@
 import React from 'react'
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  ResponsiveContainer,
-  TooltipProps,
-  Legend,
-} from 'recharts'
-import * as styles from './SimplePieChart.css'
 import cn from 'classnames'
 import {
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  TooltipProps,
+} from 'recharts'
+
+import {
   COLORS,
-  RenderLegend,
   renderCustomizedLabel,
+  RenderLegend,
 } from '../sharedChartComponents'
+
+import * as styles from './SimplePieChart.css'
 
 interface CustomTooltipProps extends TooltipProps<string, number> {
   sum: number

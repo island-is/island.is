@@ -1,10 +1,11 @@
 import {
   BasicDataProvider,
-  SuccessfulDataProviderResult,
   FailedDataProviderResult,
+  SuccessfulDataProviderResult,
 } from '@island.is/application/core'
-import { CertificateInfoResponse } from '../types/schema'
+
 import { m } from '../lib/messages'
+import { CertificateInfoResponse } from '../types/schema'
 
 export class DoctorsNoteProvider extends BasicDataProvider {
   type = 'DoctorsNoteProvider'

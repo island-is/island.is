@@ -1,10 +1,12 @@
 import React, { FC } from 'react'
-import { FieldBaseProps } from '@island.is/application/core'
-import { Box, Text } from '@island.is/island-ui/core'
-import { m } from '../../lib/messages'
-import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
+
+import { FieldBaseProps } from '@island.is/application/core'
+import { Box, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+
+import { m } from '../../lib/messages'
 
 const Overview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()

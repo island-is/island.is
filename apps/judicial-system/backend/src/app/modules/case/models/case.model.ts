@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
   BelongsTo,
   Column,
@@ -11,22 +12,20 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 
-import { ApiProperty } from '@nestjs/swagger'
-
 import {
-  CaseState,
-  CaseLegalProvisions,
   CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseLegalProvisions,
+  CaseState,
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
+import { Defendant } from '../../defendant'
 import { CaseFile } from '../../file'
 import { Institution } from '../../institution'
 import { User } from '../../user'
-import { Defendant } from '../../defendant'
 
 @Table({
   tableName: 'case',

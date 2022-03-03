@@ -1,8 +1,9 @@
 import { UseGuards } from '@nestjs/common'
-import { Query, Args } from '@nestjs/graphql'
+import { Args,Query } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
-import type { User } from '@island.is/auth-nest-tools'
+
 import { ApiScope } from '@island.is/auth/scopes'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
   IdsAuthGuard,
@@ -11,15 +12,17 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
+
 import {
-  GetRealEstateInput,
-  GetPagingTypes,
   GetMultiPropertyInput,
+  GetPagingTypes,
+  GetRealEstateInput,
 } from '../dto/getRealEstateInput.input'
-import { PropertyOwnersModel } from '../models/propertyOwners.model'
-import { UnitsOfUseModel } from '../models/propertyUnitsOfUse.model'
 import { PropertyDetail } from '../models/propertyDetail.model'
 import { PropertyOverview } from '../models/propertyOverview.model'
+import { PropertyOwnersModel } from '../models/propertyOwners.model'
+import { UnitsOfUseModel } from '../models/propertyUnitsOfUse.model'
+
 import { AssetsXRoadService } from './api-domains-assets.service'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)

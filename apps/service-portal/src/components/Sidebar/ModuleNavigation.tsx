@@ -1,17 +1,20 @@
 import React, { FC, useEffect, useState } from 'react'
+import AnimateHeight from 'react-animate-height'
+import { useLocation } from 'react-router-dom'
+
+import { Box, Divider, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { servicePortalOutboundLink } from '@island.is/plausible'
 import {
   ServicePortalNavigationItem,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
-import { Box, Divider, Text } from '@island.is/island-ui/core'
-import { useLocation } from 'react-router-dom'
-import AnimateHeight from 'react-animate-height'
-import { useLocale } from '@island.is/localization'
-import NavItem from './NavItem/NavItem'
-import SubNavModal from './SubNavModal'
-import { servicePortalOutboundLink } from '@island.is/plausible'
+
 import { useStore } from '../../store/stateProvider'
+
+import NavItem from './NavItem/NavItem'
 import SubNav from './NavItem/SubNav'
+import SubNavModal from './SubNavModal'
 
 interface Props {
   nav: ServicePortalNavigationItem

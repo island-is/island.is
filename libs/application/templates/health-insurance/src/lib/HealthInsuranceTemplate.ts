@@ -1,16 +1,18 @@
 import {
-  ApplicationTemplate,
-  ApplicationTypes,
+  Application,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
-  Application,
+  ApplicationTemplate,
+  ApplicationTypes,
   DefaultEvents,
   DefaultStateLifeCycle,
 } from '@island.is/application/core'
-import { API_MODULE } from '../shared'
-import { answerValidators } from './answerValidators'
+
 import { m } from '../forms/messages'
+import { API_MODULE } from '../shared'
+
+import { answerValidators } from './answerValidators'
 import { HealthInsuranceSchema } from './dataSchema'
 
 type Events = { type: DefaultEvents.SUBMIT }

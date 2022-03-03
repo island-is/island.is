@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+
 import { INumberBullet } from '../generated/contentfulTypes'
 
 @ObjectType()

@@ -1,9 +1,9 @@
-import { uuid } from 'uuidv4'
-
 import { BadRequestException } from '@nestjs/common'
+import { uuid } from 'uuidv4'
 
 import { CreateFileDto } from '../dto/createFile.dto'
 import { CaseFile } from '../models/file.model'
+
 import { createTestingFileModule } from './createTestingFileModule'
 
 interface Then {

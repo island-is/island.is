@@ -1,14 +1,16 @@
 import React from 'react'
-import { Text, Box, Stack, Button } from '@island.is/island-ui/core'
-import { useListDocuments } from '@island.is/service-portal/graphql'
+import { Link } from 'react-router-dom'
+
+import { Box, Button,Stack, Text } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ServicePortalModuleComponent,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { ActionCardLoader } from '@island.is/service-portal/core'
-import { Link } from 'react-router-dom'
+import { useListDocuments } from '@island.is/service-portal/graphql'
+
 import DocumentCard from '../components/DocumentCard/DocumentCard'
-import { useLocale, useNamespaces } from '@island.is/localization'
 
 const maxDocuments = 2
 

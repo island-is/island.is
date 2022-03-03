@@ -1,4 +1,5 @@
 import { FormValue } from '@island.is/application/core'
+
 import { isUniqueAssignee } from './isUniqueAssignee'
 describe('isUniqueAssignee', () => {
   // Gervimenn nationalIds:

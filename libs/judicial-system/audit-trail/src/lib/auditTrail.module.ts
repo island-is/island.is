@@ -1,9 +1,9 @@
 import { DynamicModule, Global } from '@nestjs/common'
 
 import {
+  AUDIT_TRAIL_OPTIONS,
   AuditTrailOptions,
   AuditTrailService,
-  AUDIT_TRAIL_OPTIONS,
 } from './auditTrail.service'
 
 @Global()

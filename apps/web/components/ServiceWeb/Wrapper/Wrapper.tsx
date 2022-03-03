@@ -1,16 +1,17 @@
-import React, { FC, useEffect, useState, createContext } from 'react'
+import React, { createContext,FC, useEffect, useState } from 'react'
 import Head from 'next/head'
-import { Box } from '@island.is/island-ui/core'
 
-import { Organization } from '@island.is/web/graphql/schema'
+import { Box } from '@island.is/island-ui/core'
 import {
-  ServiceWebSearchSection,
-  ServiceWebHeader,
   ServiceWebBackground,
   ServiceWebDynamicFooter,
+  ServiceWebHeader,
+  ServiceWebSearchSection,
 } from '@island.is/web/components'
-import { BackgroundVariations, Options, TextModes } from '../types'
+import { Organization } from '@island.is/web/graphql/schema'
+
 import config from '../config'
+import { BackgroundVariations, Options, TextModes } from '../types'
 
 import * as styles from './Wrapper.css'
 

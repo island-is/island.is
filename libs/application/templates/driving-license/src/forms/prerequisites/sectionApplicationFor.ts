@@ -4,6 +4,7 @@ import {
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
+
 import { CurrentLicenseProviderResult } from '../../dataProviders/CurrentLicenseProvider'
 import { m } from '../../lib/messages'
 import { B_FULL, B_TEMP } from '../../shared'

@@ -1,18 +1,20 @@
 import { Inject, Injectable } from '@nestjs/common'
+
 import {
   DrivingLicenseService,
   NewDrivingLicenseResult,
 } from '@island.is/api/domains/driving-license'
-
-import { SharedTemplateApiService } from '../../shared'
-import { TemplateApiModuleActionProps } from '../../../types'
 import { FormValue, getValueViaPath } from '@island.is/application/core'
-import {
-  generateDrivingLicenseSubmittedEmail,
-  generateDrivingAssessmentApprovalEmail,
-} from './emailGenerators'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import { TemplateApiModuleActionProps } from '../../../types'
+import { SharedTemplateApiService } from '../../shared'
+
+import {
+  generateDrivingAssessmentApprovalEmail,
+  generateDrivingLicenseSubmittedEmail,
+} from './emailGenerators'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')

@@ -1,12 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
-  IsString,
-  IsOptional,
   IsArray,
   IsDateString,
+  IsOptional,
+  IsString,
   ValidateNested,
 } from 'class-validator'
+
 import {
   DelegationScopeDTO,
   UpdateDelegationScopeDTO,

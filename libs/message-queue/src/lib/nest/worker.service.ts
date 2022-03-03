@@ -1,11 +1,13 @@
-import assert from 'assert'
 import { Injectable, OnModuleDestroy } from '@nestjs/common'
 import { Message } from '@aws-sdk/client-sqs'
+import assert from 'assert'
+
 import type { Logger } from '@island.is/logging'
-import { QueueService } from './queue.service'
-import type { Queue, Job } from './types'
-import { clamp } from './utils'
+
 import { ClientService } from './client.service'
+import { QueueService } from './queue.service'
+import type { Job,Queue } from './types'
+import { clamp } from './utils'
 
 type MessageHandler<T> = (handler: T, job: Job) => Promise<void>
 

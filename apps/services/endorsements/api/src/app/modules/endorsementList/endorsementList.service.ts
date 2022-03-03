@@ -1,28 +1,31 @@
 import {
+  BadRequestException,
   Inject,
   Injectable,
   NotFoundException,
-  BadRequestException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import getStream from 'get-stream'
+import PDFDocument from 'pdfkit'
 import { Op } from 'sequelize'
+
+import { EndorsementsScope } from '@island.is/auth/scopes'
+import type { User } from '@island.is/auth-nest-tools'
+import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
+import { EmailService } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { EndorsementList } from './endorsementList.model'
-import { EndorsementListDto } from './dto/endorsementList.dto'
-import { Endorsement } from '../endorsement/models/endorsement.model'
-import { ChangeEndorsmentListClosedDateDto } from './dto/changeEndorsmentListClosedDate.dto'
-import { UpdateEndorsementListDto } from './dto/updateEndorsementList.dto'
 import { paginate } from '@island.is/nest/pagination'
+
 import environment, {
   ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS,
 } from '../../../environments/environment'
-import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
-import type { User } from '@island.is/auth-nest-tools'
-import { EndorsementsScope } from '@island.is/auth/scopes'
-import { EmailService } from '@island.is/email-service'
-import PDFDocument from 'pdfkit'
-import getStream from 'get-stream'
+import { Endorsement } from '../endorsement/models/endorsement.model'
+
+import { ChangeEndorsmentListClosedDateDto } from './dto/changeEndorsmentListClosedDate.dto'
+import { EndorsementListDto } from './dto/endorsementList.dto'
+import { UpdateEndorsementListDto } from './dto/updateEndorsementList.dto'
+import { EndorsementList } from './endorsementList.model'
 
 interface CreateInput extends EndorsementListDto {
   owner: string

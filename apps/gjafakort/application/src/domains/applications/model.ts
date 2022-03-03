@@ -1,9 +1,10 @@
-import { Model, DataTypes } from 'sequelize'
+import { DataTypes,Model } from 'sequelize'
 
 import {
-  ApplicationTypes,
   ApplicationStates,
+  ApplicationTypes,
 } from '@island.is/gjafakort/consts'
+
 import { sequelize } from '../../extensions'
 import { model as AuditLog } from '../audit'
 

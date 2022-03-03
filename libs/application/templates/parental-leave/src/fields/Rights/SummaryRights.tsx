@@ -2,18 +2,18 @@ import React from 'react'
 
 import { Application } from '@island.is/application/core'
 import { DataValue } from '@island.is/application/ui-components'
-import { useLocale } from '@island.is/localization'
 import { Box, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 
+import { YES } from '../../constants'
+import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
+import { daysToMonths } from '../../lib/directorateOfLabour.utils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
   getAvailablePersonalRightsInMonths,
   getAvailableRightsInMonths,
   getSelectedChild,
 } from '../../lib/parentalLeaveUtils'
-import { daysToMonths } from '../../lib/directorateOfLabour.utils'
-import { YES } from '../../constants'
-import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 
 interface SummaryRightsProps {
   application: Application

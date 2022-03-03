@@ -3,9 +3,8 @@ import React, { ReactNode, useState } from 'react'
 import { Box } from '../../Box/Box'
 import { Button } from '../../Button/Button'
 import { Hidden } from '../../Hidden/Hidden'
-
-import { UserDropdown } from '../UserDropdown/UserDropdown'
 import { UserAvatar } from '../../UserAvatar/UserAvatar'
+import { UserDropdown } from '../UserDropdown/UserDropdown'
 
 interface UserMenuProps {
   authenticated?: boolean

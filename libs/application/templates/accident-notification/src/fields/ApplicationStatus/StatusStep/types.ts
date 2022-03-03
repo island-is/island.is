@@ -1,5 +1,6 @@
-import { TagVariant } from '@island.is/island-ui/core'
 import { MessageDescriptor } from '@formatjs/intl'
+
+import { TagVariant } from '@island.is/island-ui/core'
 
 export interface ActionProps {
   title: string

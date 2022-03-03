@@ -1,15 +1,16 @@
 import React, { FC } from 'react'
 import { useHistory } from 'react-router-dom'
-import { Box, Button, ButtonTypes, GridColumn } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+
 import {
   Application,
+  CallToAction,
+  coreMessages,
   formatText,
   FormModes,
   SubmitField,
-  coreMessages,
-  CallToAction,
 } from '@island.is/application/core'
+import { Box, Button, ButtonTypes, GridColumn } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 
 import * as styles from './ScreenFooter.css'
 

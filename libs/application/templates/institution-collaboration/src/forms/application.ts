@@ -1,18 +1,19 @@
 import {
+  buildCustomField,
+  buildFileUploadField,
   buildForm,
   buildMultiField,
   buildSection,
+  buildSubmitField,
   buildSubSection,
   buildTextField,
+  Comparators,
   Form,
   FormModes,
-  buildCustomField,
-  buildSubmitField,
-  buildFileUploadField,
-  Comparators,
 } from '@island.is/application/core'
+
+import { FILE_SIZE_LIMIT,YES } from '../constants'
 import { institutionApplicationMessages as m } from '../lib/messages'
-import { YES, FILE_SIZE_LIMIT } from '../constants'
 
 export const application: Form = buildForm({
   id: 'InstitutionCollaborationApplicationForm',

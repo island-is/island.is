@@ -1,33 +1,35 @@
-import React, { FC, ReactNode, ReactElement } from 'react'
-import { Document, Node, BLOCKS, INLINES } from '@contentful/rich-text-types'
+import React, { FC, ReactElement,ReactNode } from 'react'
+import { RenderNode } from '@contentful/rich-text-react-renderer'
+import { BLOCKS, Document, INLINES,Node } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
+
 import {
-  Text,
-  BulletList,
-  Bullet,
-  ButtonDeprecated as Button,
-  Box,
   Accordion,
   AccordionItem,
   Blockquote,
+  Box,
+  BoxProps,
+  Bullet,
+  BulletList,
+  ButtonDeprecated as Button,
+  GridColumn,
   GridContainer,
   GridRow,
-  GridColumn,
   IconTypesDeprecated,
-  BoxProps,
+  Text,
 } from '@island.is/island-ui/core'
-import RichText from '../RichText/RichText'
-import EmbeddedVideo, {
-  EmbeddedVideoProps,
-} from '../EmbeddedVideo/EmbeddedVideo'
-import Statistics from '../Statistics/Statistics'
-import Paragraph from '../Paragraph/Paragraph'
+
 import Background from '../Background/Background'
 import BorderedContent, {
   BorderedContentProps,
 } from '../BorderedContent/BorderedContent'
+import EmbeddedVideo, {
+  EmbeddedVideoProps,
+} from '../EmbeddedVideo/EmbeddedVideo'
 import Hyperlink from '../Hyperlink/Hyperlink'
-import { RenderNode } from '@contentful/rich-text-react-renderer'
+import Paragraph from '../Paragraph/Paragraph'
+import RichText from '../RichText/RichText'
+import Statistics from '../Statistics/Statistics'
 
 const ContentWrap: FC = ({ children }) => (
   <GridRow>

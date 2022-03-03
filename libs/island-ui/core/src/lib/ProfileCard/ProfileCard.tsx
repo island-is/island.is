@@ -1,8 +1,10 @@
 import React, { FC } from 'react'
+
 import { Box } from '../Box/Box'
 import { Button } from '../Button/Button'
 import { Link } from '../Link/Link'
 import { Text } from '../Text/Text'
+
 import * as styles from './ProfileCard.css'
 
 /**

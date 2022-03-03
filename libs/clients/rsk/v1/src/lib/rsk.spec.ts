@@ -1,13 +1,15 @@
-import { rest } from 'msw'
 import { Test } from '@nestjs/testing'
+import { Base64 } from 'js-base64'
+import { rest } from 'msw'
+
 import { startMocking } from '@island.is/shared/mocking'
+
 import {
   CompanyRegistryMember,
+  RSK_OPTIONS,
   RSKCompaniesResponse,
   RSKService,
-  RSK_OPTIONS,
 } from './rsk'
-import { Base64 } from 'js-base64'
 
 // MOCK START
 enum expectedResult {

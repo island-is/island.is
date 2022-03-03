@@ -1,14 +1,15 @@
-import { uuid } from 'uuidv4'
 import { Transaction } from 'sequelize/types'
+import { uuid } from 'uuidv4'
 
 import { CaseType, User as TUser } from '@island.is/judicial-system/types'
 
-import { createTestingCaseModule } from './createTestingCaseModule'
 import { Defendant, DefendantService } from '../../defendant'
-import { User } from '../../user'
 import { Institution } from '../../institution'
+import { User } from '../../user'
 import { CreateCaseDto } from '../dto/createCase.dto'
 import { Case } from '../models/case.model'
+
+import { createTestingCaseModule } from './createTestingCaseModule'
 
 interface Then {
   result: Case

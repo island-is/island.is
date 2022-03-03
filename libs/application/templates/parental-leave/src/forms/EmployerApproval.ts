@@ -1,15 +1,15 @@
 import {
   buildCustomField,
-  buildForm,
   buildDescriptionField,
+  buildForm,
   buildMultiField,
   buildSection,
   buildSubmitField,
+  buildSubSection,
+  buildTextField,
+  coreMessages,
   Form,
   FormModes,
-  coreMessages,
-  buildTextField,
-  buildSubSection,
 } from '@island.is/application/core'
 
 import Logo from '../assets/Logo'

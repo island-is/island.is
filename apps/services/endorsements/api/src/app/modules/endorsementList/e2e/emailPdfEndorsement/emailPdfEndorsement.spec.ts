@@ -1,8 +1,11 @@
-import { EndorsementsScope } from '@island.is/auth/scopes'
-import { errorExpectedStructure } from '../../../../../../test/testHelpers'
 import request from 'supertest'
+
+import { EndorsementsScope } from '@island.is/auth/scopes'
+
 import { getAuthenticatedApp } from '../../../../../../test/setup'
-import { authNationalId, listYouOwnListId, listYouDoNotOwnListId } from './seed'
+import { errorExpectedStructure } from '../../../../../../test/testHelpers'
+
+import { authNationalId, listYouDoNotOwnListId,listYouOwnListId } from './seed'
 
 const invalidEmail = 'NOT_A_VALID_EMAIL_ADDRESS.is'
 const validEmail = 'rafn@juni.is' // valid whitelisted

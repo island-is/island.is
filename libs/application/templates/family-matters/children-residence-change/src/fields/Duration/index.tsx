@@ -1,5 +1,7 @@
 import React from 'react'
+
 import { Duration } from '@island.is/application/templates/family-matters-core/fields'
+
 import { duration } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
 

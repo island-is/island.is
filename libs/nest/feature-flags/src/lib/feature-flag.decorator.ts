@@ -1,4 +1,5 @@
 import { SetMetadata } from '@nestjs/common'
+
 import { Features } from '@island.is/feature-flags'
 
 export const FEATURE_FLAG_KEY = 'featureFlag'

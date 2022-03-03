@@ -1,5 +1,6 @@
-import { dedent } from 'ts-dedent'
 import get from 'lodash/get'
+import { dedent } from 'ts-dedent'
+
 import { getSlugFromType } from '@island.is/application/core'
 
 import { EmailTemplateGenerator } from '../../../../types'

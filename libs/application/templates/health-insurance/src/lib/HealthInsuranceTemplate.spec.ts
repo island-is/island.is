@@ -1,12 +1,13 @@
 import {
   Application,
+  ApplicationStatus,
   ApplicationTemplateHelper,
   ApplicationTypes,
-  ExternalData,
   DefaultEvents,
+  ExternalData,
   FormValue,
-  ApplicationStatus,
 } from '@island.is/application/core'
+
 import HealthInsuranceTemplate from './HealthInsuranceTemplate'
 
 function buildApplication(data: {

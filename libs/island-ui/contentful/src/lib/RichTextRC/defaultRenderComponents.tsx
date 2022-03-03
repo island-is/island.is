@@ -1,20 +1,22 @@
 import React from 'react'
+
+import { Hidden } from '@island.is/island-ui/core'
 import {
   CompanyList,
   CompanyListConnected,
   GeneralPetitionLists,
 } from '@island.is/shared/connected'
-import { Image } from '../Image/Image'
-import FaqList from '../FaqList/FaqList'
-import { Statistics } from '../Statistics/Statistics'
+
 import { AssetLink } from '../AssetLink/AssetLink'
-import { Hidden } from '@island.is/island-ui/core'
-import { ProcessEntry } from '../ProcessEntry/ProcessEntry'
-import EmbeddedVideo from '../EmbeddedVideo/EmbeddedVideo'
-import { SectionWithImage } from '../SectionWithImage/SectionWithImage'
-import { TeamList } from '../TeamList/TeamList'
 import { ContactUs } from '../ContactUs/ContactUs'
+import EmbeddedVideo from '../EmbeddedVideo/EmbeddedVideo'
+import FaqList from '../FaqList/FaqList'
+import { Image } from '../Image/Image'
 import { Location } from '../Location/Location'
+import { ProcessEntry } from '../ProcessEntry/ProcessEntry'
+import { SectionWithImage } from '../SectionWithImage/SectionWithImage'
+import { Statistics } from '../Statistics/Statistics'
+import { TeamList } from '../TeamList/TeamList'
 
 const renderConnectedComponent = (slice) => {
   const data = slice.json

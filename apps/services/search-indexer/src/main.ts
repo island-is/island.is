@@ -1,4 +1,5 @@
 import { bootstrap } from '@island.is/infra-nest-server'
+
 import { AppModule } from './app/app.module'
 export { default as migrateAws } from './migrate/migrateAws'
 export { default as migrateElastic } from './migrate/migrateElastic'

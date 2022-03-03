@@ -5,6 +5,7 @@ import {
   ExternalData,
   FormValue,
 } from '@island.is/application/core'
+
 import { prerequisitesFailed } from './paymentPlanUtils'
 
 function buildApplication(data?: {

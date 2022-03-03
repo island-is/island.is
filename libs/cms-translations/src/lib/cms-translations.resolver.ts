@@ -3,11 +3,11 @@ import graphqlTypeJson from 'graphql-type-json'
 
 import { Locale } from '@island.is/shared/types'
 
+import { GetTranslationsInput } from './dto/getTranslationsInput'
 import {
   CmsTranslationsService,
   TranslationsDict,
 } from './cms-translations.service'
-import { GetTranslationsInput } from './dto/getTranslationsInput'
 
 @Resolver()
 export class CmsTranslationsResolver {

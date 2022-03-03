@@ -1,7 +1,7 @@
 import type { Defendant } from './defendant'
+import type { CaseFile } from './file'
 import type { Institution } from './institution'
 import type { Notification } from './notification'
-import type { CaseFile } from './file'
 import type { User } from './user'
 
 export enum CaseType {

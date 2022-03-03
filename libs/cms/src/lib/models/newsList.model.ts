@@ -1,4 +1,5 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
+
 import { News } from './news.model'
 
 @ObjectType()

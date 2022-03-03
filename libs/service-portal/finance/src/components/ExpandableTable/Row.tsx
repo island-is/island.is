@@ -1,18 +1,20 @@
-import React, { useState, useCallback, FC } from 'react'
-import { useLocale } from '@island.is/localization'
-import { ApolloError } from '@apollo/client'
+import React, { FC,useCallback, useState } from 'react'
 import AnimateHeight from 'react-animate-height'
+import { ApolloError } from '@apollo/client'
+
 import {
   Box,
-  Text,
+  Button,
+  Hidden,
   LoadingDots,
   Table as T,
-  Hidden,
-  Button,
+  Text,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
-import * as styles from './ExpandableTable.css'
 import { tableStyles } from '@island.is/service-portal/core'
+
+import * as styles from './ExpandableTable.css'
 
 interface Props {
   data: Array<{ value: string | number; align?: 'left' | 'right' }>

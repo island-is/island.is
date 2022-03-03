@@ -1,5 +1,5 @@
-import { IsString, IsNumber, IsDate, IsObject } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
+import { IsDate, IsNumber, IsObject,IsString } from 'class-validator'
 
 export class CreatePaymentDto {
   @IsString()

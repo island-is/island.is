@@ -1,4 +1,5 @@
 import { style } from '@vanilla-extract/css'
+
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 import {
   SERVICE_PORTAL_HEADER_HEIGHT_LG,

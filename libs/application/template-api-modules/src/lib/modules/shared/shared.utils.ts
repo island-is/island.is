@@ -1,5 +1,5 @@
-import jwt from 'jsonwebtoken'
 import { ConfigService } from '@nestjs/config'
+import jwt from 'jsonwebtoken'
 
 import { Application } from '@island.is/application/core'
 

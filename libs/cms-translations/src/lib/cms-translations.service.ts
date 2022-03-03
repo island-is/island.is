@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 import memoize from 'memoizee'
 
-import { logger } from '@island.is/logging'
 import { ContentfulRepository } from '@island.is/cms'
+import { logger } from '@island.is/logging'
 import { Locale } from '@island.is/shared/types'
 
 export type TranslationsDict = Record<string, string>

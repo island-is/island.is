@@ -1,6 +1,5 @@
-import { IsBoolean, IsEnum, IsOptional } from 'class-validator'
-
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { IsBoolean, IsEnum, IsOptional } from 'class-validator'
 
 import { NotificationType } from '@island.is/judicial-system/types'
 

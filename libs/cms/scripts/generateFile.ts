@@ -1,10 +1,10 @@
 import { ContentType } from 'contentful'
+import { existsSync,writeFileSync } from 'fs'
 import upperFirst from 'lodash/upperFirst'
-import { writeFileSync, existsSync } from 'fs'
 
-import { getModel } from './generateModel'
-import { getMapper } from './generateMapper'
 import { Args } from './contentType'
+import { getMapper } from './generateMapper'
+import { getModel } from './generateModel'
 
 export interface Imports {
   nestjs: string[]

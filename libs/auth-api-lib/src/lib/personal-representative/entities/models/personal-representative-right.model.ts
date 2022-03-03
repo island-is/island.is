@@ -1,15 +1,16 @@
-import {
-  Column,
-  DataType,
-  CreatedAt,
-  UpdatedAt,
-  Model,
-  Table,
-  PrimaryKey,
-  ForeignKey,
-  BelongsTo,
-} from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
+import {
+  BelongsTo,
+  Column,
+  CreatedAt,
+  DataType,
+  ForeignKey,
+  Model,
+  PrimaryKey,
+  Table,
+  UpdatedAt,
+} from 'sequelize-typescript'
+
 import { PersonalRepresentative } from './personal-representative.model'
 import { PersonalRepresentativeRightType } from './personal-representative-right-type.model'
 

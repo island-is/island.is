@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client'
+
 import { GetSingleEndorsement } from '../graphql/queries'
 import { ExistsEndorsementResponse } from '../types/schema'
 

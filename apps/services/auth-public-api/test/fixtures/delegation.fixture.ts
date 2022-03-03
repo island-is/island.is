@@ -1,6 +1,6 @@
-import * as faker from 'faker'
 import addDays from 'date-fns/addDays'
 import startOfDay from 'date-fns/startOfDay'
+import * as faker from 'faker'
 
 import { Delegation, DelegationScope } from '@island.is/auth-api-lib'
 

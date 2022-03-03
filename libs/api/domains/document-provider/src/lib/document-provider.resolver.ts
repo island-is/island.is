@@ -1,37 +1,37 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import type { User } from '@island.is/auth-nest-tools'
 import {
+  CurrentUser,
   IdsUserGuard,
   ScopesGuard,
-  CurrentUser,
 } from '@island.is/auth-nest-tools'
 import { logger } from '@island.is/logging'
+import { AuditService } from '@island.is/nest/audit'
 
-import { DocumentProviderService } from './document-provider.service'
-import {
-  ClientCredentials,
-  AudienceAndScope,
-  TestResult,
-  Organisation,
-  Contact,
-  Helpdesk,
-  ProviderStatistics,
-} from './models'
-import {
-  RunEndpointTestsInput,
-  UpdateEndpointInput,
-  CreateProviderInput,
-  UpdateContactInput,
-  UpdateHelpdeskInput,
-  CreateContactInput,
-  CreateHelpdeskInput,
-  StatisticsInput,
-} from './dto'
 import { UpdateOrganisationInput } from './dto/updateOrganisation.input'
 import { AdminGuard } from './utils/admin.guard'
-import { AuditService } from '@island.is/nest/audit'
+import { DocumentProviderService } from './document-provider.service'
+import {
+  CreateContactInput,
+  CreateHelpdeskInput,
+  CreateProviderInput,
+  RunEndpointTestsInput,
+  StatisticsInput,
+  UpdateContactInput,
+  UpdateEndpointInput,
+  UpdateHelpdeskInput,
+} from './dto'
+import {
+  AudienceAndScope,
+  ClientCredentials,
+  Contact,
+  Helpdesk,
+  Organisation,
+  ProviderStatistics,
+  TestResult,
+} from './models'
 
 const namespace = '@island.is/api/document-provider'
 

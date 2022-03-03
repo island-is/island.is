@@ -2,6 +2,7 @@ import 'isomorphic-fetch'
 
 import { writeFileSync } from 'fs'
 import { format, resolveConfig } from 'prettier'
+
 import { logger } from '@island.is/logging'
 
 const targetFileName = 'libs/cms/src/lib/generated/contentfulTypes.d.ts'

@@ -1,4 +1,5 @@
 import faker from 'faker'
+
 import { factory } from './factory'
 
 interface Obj {

@@ -1,17 +1,20 @@
 import React, { FC, Suspense, useCallback, useMemo } from 'react'
-import { Box, Text } from '@island.is/island-ui/core'
-import { useStore } from '../../store/stateProvider'
-import {
-  ServicePortalWidget,
-  ServicePortalModule,
-} from '@island.is/service-portal/core'
-import WidgetLoading from './WidgetLoading/WidgetLoading'
-import { useModuleProps } from '../../hooks/useModuleProps/useModuleProps'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
-import Greeting from '../../components/Greeting/Greeting'
 import { User } from 'oidc-client'
+
+import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import {
+  ServicePortalModule,
+  ServicePortalWidget,
+} from '@island.is/service-portal/core'
+
+import Greeting from '../../components/Greeting/Greeting'
+import { useModuleProps } from '../../hooks/useModuleProps/useModuleProps'
+import { useStore } from '../../store/stateProvider'
+
 import { WidgetErrorBoundary } from './WidgetError/WidgetError'
+import WidgetLoading from './WidgetLoading/WidgetLoading'
 
 const Widget: FC<{
   widget: ServicePortalWidget

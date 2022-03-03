@@ -1,9 +1,9 @@
 import set from 'lodash/set'
 
 import {
-  ApplicationWithAttachments as Application,
   ApplicationStatus,
   ApplicationTypes,
+  ApplicationWithAttachments as Application,
 } from '@island.is/application/core'
 import {
   getSelectedChild,
@@ -12,15 +12,15 @@ import {
   YES,
 } from '@island.is/application/templates/parental-leave'
 
+import { apiConstants } from './constants'
 import {
-  getPersonalAllowance,
   getEmployer,
   getPensionFund,
+  getPersonalAllowance,
   getPrivatePensionFundRatio,
-  getRightsCode,
   getRatio,
+  getRightsCode,
 } from './parental-leave.utils'
-import { apiConstants } from './constants'
 
 let id = 0
 const createApplicationBase = (): Application => ({

@@ -1,6 +1,7 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { AccidentNotificationAnswers } from '..'
+
 import { WorkAccidentTypeEnum } from '../types'
+import { AccidentNotificationAnswers } from '..'
 
 export const isOfWorkAccidentType = (
   answers: Partial<AccidentNotificationAnswers>,

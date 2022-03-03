@@ -1,5 +1,6 @@
-import { createResolvers } from './createResolvers'
 import { buildSchema, graphql } from 'graphql'
+
+import { createResolvers } from './createResolvers'
 
 describe('createResolvers', () => {
   const schema = buildSchema(`

@@ -9,12 +9,12 @@ import {
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 
+import { ResourceDto } from './dto/resource.dto'
 import { Resource } from './resource.model'
 import { ResourceService } from './resource.service'
-import { ResourceDto } from './dto/resource.dto'
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
 
 // Optionally for Scope authorization add ScopeGuard and then @Scopes(...) on each action
 @UseGuards(IdsUserGuard)

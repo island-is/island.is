@@ -1,4 +1,8 @@
 import { DynamicModule } from '@nestjs/common'
+
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { logger } from '@island.is/logging'
+
 import {
   CaseApi,
   ClientsApi,
@@ -8,10 +12,8 @@ import {
   SecurityApi,
 } from '../gen/fetch/dev'
 
-import { logger } from '@island.is/logging'
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { TokenMiddleware } from './data-protection-complaint-client.middleware'
 import { CLIENT_CONFIG, DataProtectionComplaintClientConfig } from './config'
+import { TokenMiddleware } from './data-protection-complaint-client.middleware'
 
 export class ClientsDataProtectionComplaintModule {
   static register(config: DataProtectionComplaintClientConfig): DynamicModule {

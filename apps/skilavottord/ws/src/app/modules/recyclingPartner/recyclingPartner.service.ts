@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { RecyclingPartnerModel } from './recyclingPartner.model'
 import {
   CreateRecyclingPartnerInput,
   UpdateRecyclingPartnerInput,
 } from './recyclingPartner.input'
+import { RecyclingPartnerModel } from './recyclingPartner.model'
 
 @Injectable()
 export class RecyclingPartnerService {

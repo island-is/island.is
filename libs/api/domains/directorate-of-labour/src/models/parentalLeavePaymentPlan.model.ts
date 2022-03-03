@@ -1,4 +1,4 @@
-import { Field, ObjectType, Float } from '@nestjs/graphql'
+import { Field, Float,ObjectType } from '@nestjs/graphql'
 
 import { ParentalLeavePeriod } from './parentalLeavePeriod.model'
 

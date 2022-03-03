@@ -1,5 +1,6 @@
 import React, { FC, useRef } from 'react'
-import { Box, Input, Button } from '@island.is/island-ui/core'
+
+import { Box, Button,Input } from '@island.is/island-ui/core'
 
 export interface CopyToClipboardInputProps {
   inputLabel: string

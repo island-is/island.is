@@ -1,9 +1,12 @@
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
-import { Audit } from '@island.is/nest/audit'
 import { Context, Query } from '@nestjs/graphql'
-import { PersonalTaxReturnResponse, DirectTaxPaymentsResponse } from './models/'
+
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { Audit } from '@island.is/nest/audit'
+
 import BackendAPI from '../../../services/backend'
+
+import { DirectTaxPaymentsResponse,PersonalTaxReturnResponse } from './models/'
 
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/personal-tax-return' })

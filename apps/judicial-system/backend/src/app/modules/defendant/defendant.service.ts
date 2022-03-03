@@ -1,5 +1,3 @@
-import { Transaction } from 'sequelize/types'
-
 import {
   Inject,
   Injectable,
@@ -7,9 +5,10 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { Transaction } from 'sequelize/types'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'

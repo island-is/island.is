@@ -1,8 +1,8 @@
-import { months } from './const'
-
 import React from 'react'
-import { NationalRegistryData } from './interfaces'
+
+import { months } from './const'
 import { StaffRole } from './enums'
+import { NationalRegistryData } from './interfaces'
 
 export const getFileType = (fileName: string) => {
   return fileName?.substring(fileName.lastIndexOf('.') + 1)

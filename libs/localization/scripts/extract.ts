@@ -1,18 +1,19 @@
-import { readFileSync } from 'fs'
-import glob from 'glob'
-import spawn from 'cross-spawn'
 import { createClient } from 'contentful-management'
 import { Entry } from 'contentful-management/dist/typings/entities/entry'
+import spawn from 'cross-spawn'
+import { readFileSync } from 'fs'
+import glob from 'glob'
+
 import { logger } from '@island.is/logging'
 
 import {
+  createDefaultsObject,
   createStringsObject,
-  updateDefaultsObject,
   DEFAULT_LOCALE,
   Locales,
-  updateStringsObject,
   MessageDict,
-  createDefaultsObject,
+  updateDefaultsObject,
+  updateStringsObject,
 } from './utils'
 
 const {

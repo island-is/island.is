@@ -1,14 +1,17 @@
 import * as express from 'express'
-import environment from '../environments/environment'
+
 import { logger } from '@island.is/logging'
+
+import environment from '../environments/environment'
+
+import { cache, s3 } from './external'
 import {
   error,
-  getContentInfo,
-  uploadChunkStream,
   getCacheId,
+  getContentInfo,
   GetContentInfoError,
+  uploadChunkStream,
 } from './utils'
-import { cache, s3 } from './external'
 
 const { bucket } = environment
 

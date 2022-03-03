@@ -1,3 +1,5 @@
+import { Inject, Injectable } from '@nestjs/common'
+
 import { getValueViaPath } from '@island.is/application/core'
 import {
   AccidentNotificationAnswers,
@@ -5,11 +7,20 @@ import {
   utils,
 } from '@island.is/application/templates/accident-notification'
 import { DocumentApi } from '@island.is/clients/health-insurance-v2'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { Inject, Injectable } from '@nestjs/common'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
+
+import { AccidentNotificationAttachmentProvider } from './attachments/applicationAttachmentProvider'
+import {
+  attachmentStatusToAttachmentRequests,
+  filterOutAlreadySentDocuments,
+  getAddAttachmentSentDocumentHashList,
+  getApplicationAttachmentStatus,
+} from './attachments/attachment.utils'
+import { AccidentNotificationAttachment } from './types/attachments'
 import {
   applictionAnswersToXml,
   getApplicationDocumentId,
@@ -21,14 +32,6 @@ import {
   generateAssignReviewerEmail,
   generateConfirmationEmail,
 } from './emailGenerators'
-import { AccidentNotificationAttachmentProvider } from './attachments/applicationAttachmentProvider'
-import {
-  attachmentStatusToAttachmentRequests,
-  filterOutAlreadySentDocuments,
-  getAddAttachmentSentDocumentHashList,
-  getApplicationAttachmentStatus,
-} from './attachments/attachment.utils'
-import { AccidentNotificationAttachment } from './types/attachments'
 
 const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
 

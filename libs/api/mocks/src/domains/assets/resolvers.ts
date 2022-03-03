@@ -1,4 +1,5 @@
 import { Resolvers } from '../../types'
+
 import { store } from './store'
 
 export const resolvers: Resolvers = {

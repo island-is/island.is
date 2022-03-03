@@ -1,9 +1,12 @@
+import React, { FC, useEffect } from 'react'
+import { useFieldArray } from 'react-hook-form'
+
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import React, { FC, useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
+
 import { informationAboutInstitution } from '../../lib/messages'
-import { useFieldArray } from 'react-hook-form'
+
 import { ContactRepeaterItem } from './ContactRepeaterItem'
 
 export type ContactField = {
@@ -63,8 +66,7 @@ export const ContactRepeater: FC<FieldBaseProps> = ({
         )
       })}
       {fields.length < 2 && (
-        <>
-          <Box marginY={3}>
+        <Box marginY={3}>
             <Button
               variant="ghost"
               icon="add"
@@ -77,7 +79,6 @@ export const ContactRepeater: FC<FieldBaseProps> = ({
               )}
             </Button>
           </Box>
-        </>
       )}
     </Box>
   )

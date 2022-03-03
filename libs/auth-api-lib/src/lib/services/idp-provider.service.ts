@@ -1,10 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { IdpProviderDTO } from '../entities/dto/idp-provider.dto'
-import { IdpProvider } from '../entities/models/idp-provider.model'
+import { Sequelize } from 'sequelize'
+
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Sequelize } from 'sequelize'
+
+import { IdpProviderDTO } from '../entities/dto/idp-provider.dto'
+import { IdpProvider } from '../entities/models/idp-provider.model'
 
 @Injectable()
 export class IdpProviderService {

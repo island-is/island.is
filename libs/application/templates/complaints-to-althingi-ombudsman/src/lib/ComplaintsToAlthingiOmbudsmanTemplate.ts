@@ -9,6 +9,7 @@ import {
   DefaultEvents,
   DefaultStateLifeCycle,
 } from '@island.is/application/core'
+
 import { ComplaintsToAlthingiOmbudsmanSchema } from './dataSchema'
 
 const States = {

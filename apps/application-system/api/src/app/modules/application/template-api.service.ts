@@ -1,11 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { ApplicationService } from './application.service'
+import { uuid } from 'uuidv4'
+
 import { ApplicationWithAttachments } from '@island.is/application/core'
 import { BaseTemplateApiApplicationService } from '@island.is/application/template-api-modules'
-import { uuid } from 'uuidv4'
-import { AwsService } from './files'
+
 import type { ApplicationConfig } from './application.configuration'
 import { APPLICATION_CONFIG } from './application.configuration'
+import { ApplicationService } from './application.service'
+import { AwsService } from './files'
 
 @Injectable()
 export class TemplateApiApplicationService extends BaseTemplateApiApplicationService {

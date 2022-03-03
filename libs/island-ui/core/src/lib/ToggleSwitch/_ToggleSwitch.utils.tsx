@@ -1,7 +1,7 @@
-import * as s from './ToggleSwitch.css'
-
 import React from 'react'
 import cn from 'classnames'
+
+import * as s from './ToggleSwitch.css'
 
 type TogglerElms = HTMLAnchorElement | HTMLButtonElement | HTMLInputElement
 

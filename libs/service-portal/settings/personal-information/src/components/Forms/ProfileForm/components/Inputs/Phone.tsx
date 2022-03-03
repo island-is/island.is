@@ -1,26 +1,29 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useEffect,useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { m } from '@island.is/service-portal/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { msg } from '../../../../../lib/messages'
+
 import {
   Box,
   Button,
-  Columns,
   Column,
-  Input,
+  Columns,
   Icon,
-  Text,
+  Input,
   LoadingDots,
+  Text,
 } from '@island.is/island-ui/core'
-import { InputController } from '@island.is/shared/form-fields'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { m } from '@island.is/service-portal/core'
 import {
-  useVerifySms,
-  useUpdateOrCreateUserProfile,
   useDeleteIslykillValue,
+  useUpdateOrCreateUserProfile,
+  useVerifySms,
 } from '@island.is/service-portal/graphql'
+import { InputController } from '@island.is/shared/form-fields'
 import { sharedMessages } from '@island.is/shared/translations'
+
+import { msg } from '../../../../../lib/messages'
 import { parseNumber } from '../../../../../utils/phoneHelper'
+
 import * as styles from './Phone.css'
 
 interface Props {

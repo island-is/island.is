@@ -1,15 +1,17 @@
-import { healthInsurance } from './health-insurance'
+import { Test } from '@nestjs/testing'
+
 import type { Logger } from '@island.is/logging'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { Test } from '@nestjs/testing'
+
+import { BucketService } from './bucket/bucket.service'
+import { VistaSkjalModel } from './graphql/models'
+import { healthInsurance } from './health-insurance'
 import {
+  HEALTH_INSURANCE_CONFIG,
   HealthInsuranceAPI,
   HealthInsuranceConfig,
-  HEALTH_INSURANCE_CONFIG,
 } from './soap'
 import { VistaSkjalInput } from './types'
-import { VistaSkjalModel } from './graphql/models'
-import { BucketService } from './bucket/bucket.service'
 
 describe('healthInsurance', () => {
   it('should work', () => {

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 
-import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
+import { SharedTemplateApiService } from '../../shared'
 
 import { generateApplicationApprovedEmail } from './emailGenerators'
 

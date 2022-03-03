@@ -1,12 +1,15 @@
 import React from 'react'
-import I18n, { isLocale } from './I18n'
-import { NextPage, NextPageContext, NextComponentType } from 'next'
-import { ApolloClient } from '@apollo/client/core'
 import { NormalizedCacheObject } from '@apollo/client/cache'
-import { GET_NAMESPACE_QUERY } from '../screens/queries'
-import { GetNamespaceQuery, QueryGetNamespaceArgs } from '../graphql/schema'
-import { Locale } from '@island.is/shared/types'
+import { ApolloClient } from '@apollo/client/core'
+import { NextComponentType,NextPage, NextPageContext } from 'next'
+
 import { defaultLanguage } from '@island.is/shared/constants'
+import { Locale } from '@island.is/shared/types'
+
+import { GetNamespaceQuery, QueryGetNamespaceArgs } from '../graphql/schema'
+import { GET_NAMESPACE_QUERY } from '../screens/queries'
+
+import I18n, { isLocale } from './I18n'
 
 export const getLocaleFromPath = (path = ''): Locale => {
   const maybeLocale = path.split('/').find(Boolean)

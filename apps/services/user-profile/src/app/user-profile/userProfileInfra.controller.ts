@@ -1,14 +1,17 @@
-import { InfraController } from '@island.is/infra-nest-server'
 import {
-  InternalServerErrorException,
   BadRequestException,
   Controller,
   Get,
+  InternalServerErrorException,
 } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
-import { Readiness } from './dto/readinessDto'
 import dns from 'dns'
+
+import { InfraController } from '@island.is/infra-nest-server'
+
 import { SequelizeConfigService } from '../sequelizeConfig.service'
+
+import { Readiness } from './dto/readinessDto'
 
 @Controller()
 export class UserProfileInfraController extends InfraController {

@@ -1,13 +1,14 @@
 import React, { useState } from 'react'
-import { MessageDescriptor, useIntl, IntlFormatters } from 'react-intl'
-import { CheckboxController } from '@island.is/shared/form-fields'
-import { Box, Text } from '@island.is/island-ui/core'
-import { Child } from '@island.is/application/templates/family-matters-core/types'
+import { IntlFormatters,MessageDescriptor, useIntl } from 'react-intl'
+
 import {
   DescriptionText,
   InfoBanner,
 } from '@island.is/application/templates/family-matters-core/components'
+import { Child } from '@island.is/application/templates/family-matters-core/types'
 import { sortChildrenByAge } from '@island.is/application/templates/family-matters-core/utils'
+import { Box, Text } from '@island.is/island-ui/core'
+import { CheckboxController } from '@island.is/shared/form-fields'
 
 const shouldBeDisabled = (
   children: Child[],

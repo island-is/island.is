@@ -1,15 +1,16 @@
 import React from 'react'
 import { useMeasure } from 'react-use'
+
 import {
-  Text,
   Box,
   Button,
   FocusableBox,
   Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import { BackgroundImage } from '@island.is/web/components'
-import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { Image } from '@island.is/web/graphql/schema'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 import * as styles from './NewsCard.css'
 

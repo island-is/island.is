@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+
 import { paginate } from '@island.is/nest/pagination'
 
+import { RecyclingPartnerModel } from '../recyclingPartner'
 import {
   RecyclingRequestModel,
   RecyclingRequestTypes,
 } from '../recyclingRequest'
-import { RecyclingPartnerModel } from '../recyclingPartner'
+
 import { VehicleModel } from './vehicle.model'
 
 @Injectable()

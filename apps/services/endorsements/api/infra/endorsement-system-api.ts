@@ -1,11 +1,11 @@
-import {
-  Base,
-  NationalRegistry,
-  Client,
-} from '../../../../../infra/src/dsl/xroad'
 import { ref, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 import { settings } from '../../../../../infra/src/dsl/settings'
 import { PostgresInfo } from '../../../../../infra/src/dsl/types/input-types'
+import {
+  Base,
+  Client,
+  NationalRegistry,
+} from '../../../../../infra/src/dsl/xroad'
 
 const postgresInfo: PostgresInfo = {
   passwordSecret: '/k8s/services-endorsements-api/DB_PASSWORD',

@@ -9,9 +9,10 @@ import {
   m,
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
+import { useDrivingLicense } from '@island.is/service-portal/graphql'
+
 import LicenseCards from '../../components/LicenseCards/LicenseCards'
 import { LicenseLoader } from '../../components/LicenseLoader/LicenseLoader'
-import { useDrivingLicense } from '@island.is/service-portal/graphql'
 
 export const LicensesOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.licenses')

@@ -1,10 +1,12 @@
 import { DynamicModule, Module } from '@nestjs/common'
+
 import {
-  PaymentScheduleServiceOptions,
   PaymentScheduleAPI,
+  PaymentScheduleServiceOptions,
 } from '@island.is/clients/payment-schedule'
-import { PaymentScheduleResolver } from './graphql/payment-schedule.resolver'
 import { PaymentScheduleClientModule } from '@island.is/clients/payment-schedule'
+
+import { PaymentScheduleResolver } from './graphql/payment-schedule.resolver'
 import { PaymentScheduleService } from './payment-schedule.service'
 
 @Module({})

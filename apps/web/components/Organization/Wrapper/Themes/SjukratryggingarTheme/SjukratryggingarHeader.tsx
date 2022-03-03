@@ -1,5 +1,5 @@
-import { OrganizationPage } from '@island.is/web/graphql/schema'
 import React from 'react'
+
 import {
   Box,
   GridContainer,
@@ -7,9 +7,11 @@ import {
   Link,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './SjukratryggingarHeader.css'
-import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+import { OrganizationPage } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+
+import * as styles from './SjukratryggingarHeader.css'
 
 interface HeaderProps {
   organizationPage: OrganizationPage

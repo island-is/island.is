@@ -1,5 +1,6 @@
-import { Query } from '@island.is/web/graphql/schema'
 import React, { useMemo, useState } from 'react'
+
+import { richText, SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   Button,
@@ -8,7 +9,8 @@ import {
   GridRow,
   Text,
 } from '@island.is/island-ui/core'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { Query } from '@island.is/web/graphql/schema'
+
 import * as style from './Stepper.css'
 
 interface Option {

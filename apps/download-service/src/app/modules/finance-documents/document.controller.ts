@@ -3,14 +3,14 @@ import {
   Controller,
   Header,
   Inject,
+  Param,
   Post,
   Res,
-  Param,
   UseGuards,
 } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
-import { FinanceClientService } from '@island.is/clients/finance'
+
 import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -19,6 +19,8 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
+import { FinanceClientService } from '@island.is/clients/finance'
+
 import { GetFinanceDocumentDto } from './dto/getFinanceDocument.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)

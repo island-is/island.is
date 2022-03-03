@@ -5,10 +5,13 @@ import {
   HttpStatus,
   Query,
 } from '@nestjs/common'
-import { IndexingService } from './indexing.service'
+
 import { logger } from '@island.is/logging'
+
 import { environment } from '../environments/environment'
+
 import { SyncInput } from './dto/syncInput.input'
+import { IndexingService } from './indexing.service'
 
 @Controller('')
 export class IndexingController {

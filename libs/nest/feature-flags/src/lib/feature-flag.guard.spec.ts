@@ -1,19 +1,20 @@
-import request from 'supertest'
 import { Controller, Get, INestApplication, UseGuards } from '@nestjs/common'
+import { GraphQLModule, Query, Resolver } from '@nestjs/graphql'
 import { Test } from '@nestjs/testing'
-import { ConfigModule } from '@island.is/nest/config'
+import request from 'supertest'
+
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
+import { ConfigModule } from '@island.is/nest/config'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 
 import {
-  FeatureFlagGuard,
-  FeatureFlag,
-  Features,
-  FeatureFlagModule,
-  FeatureFlagConfig,
   FEATURE_FLAG_CLIENT,
+  FeatureFlag,
+  FeatureFlagConfig,
+  FeatureFlagGuard,
+  FeatureFlagModule,
+  Features,
 } from '../'
-import { GraphQLModule, Query, Resolver } from '@nestjs/graphql'
 
 const testUser = createCurrentUser()
 const testFeature = 'test' as Features

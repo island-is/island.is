@@ -1,12 +1,14 @@
-import { Injectable, Inject, OnApplicationBootstrap } from '@nestjs/common'
-import { InjectWorker, WorkerService } from '@island.is/message-queue'
-import { Message } from './dto/createNotification.dto'
+import { Inject, Injectable, OnApplicationBootstrap } from '@nestjs/common'
+
+import { FetchError } from '@island.is/clients/middlewares'
+import { UserProfileApi } from '@island.is/clients/user-profile'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { UserProfileApi } from '@island.is/clients/user-profile'
-import { NotificationDispatchService } from './notificationDispatch.service'
+import { InjectWorker, WorkerService } from '@island.is/message-queue'
+
+import { Message } from './dto/createNotification.dto'
 import { MessageProcessorService } from './messageProcessor.service'
-import { FetchError } from '@island.is/clients/middlewares'
+import { NotificationDispatchService } from './notificationDispatch.service'
 
 const notFoundHandler = (e: unknown) => {
   if (e instanceof FetchError && e.status === 404) {

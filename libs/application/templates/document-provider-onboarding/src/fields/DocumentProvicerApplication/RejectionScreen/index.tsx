@@ -1,11 +1,12 @@
 import React, { FC } from 'react'
-import { useLocale } from '@island.is/localization'
-import { Box, Text } from '@island.is/island-ui/core'
+
 import {
   FieldBaseProps,
-  getValueViaPath,
   formatText,
+  getValueViaPath,
 } from '@island.is/application/core'
+import { Box, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 
 import { m } from '../../../forms/messages'
 

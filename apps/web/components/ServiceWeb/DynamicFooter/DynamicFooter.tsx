@@ -1,12 +1,12 @@
 import React from 'react'
-import { Organization } from '@island.is/web/graphql/schema'
 
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
-  OrganizationFooter,
   footerEnabled,
+  OrganizationFooter,
   ServiceWebFooter,
 } from '@island.is/web/components'
+import { Organization } from '@island.is/web/graphql/schema'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 interface DynamicFooterProps {
   organization: Organization

@@ -1,18 +1,19 @@
 import React, { FC } from 'react'
-import {
-  Box,
-  Text,
-  Button,
-  GridRow,
-  GridColumn,
-  LoadingDots,
-  GridColumnProps,
-  Tooltip,
-  ResponsiveSpace,
-} from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 import { Link } from 'react-router-dom'
+
+import {
+  Box,
+  Button,
+  GridColumn,
+  GridColumnProps,
+  GridRow,
+  LoadingDots,
+  ResponsiveSpace,
+  Text,
+  Tooltip,
+} from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { servicePortalOutboundLink } from '@island.is/plausible'
 import { sharedMessages } from '@island.is/shared/translations'
 

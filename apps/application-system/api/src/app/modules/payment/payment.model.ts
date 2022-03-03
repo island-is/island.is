@@ -1,13 +1,14 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   Column,
+  CreatedAt,
   DataType,
+  ForeignKey,
   Model,
   Table,
-  ForeignKey,
-  CreatedAt,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+
 import { Application } from '../application/application.model'
 
 @Table({

@@ -1,17 +1,19 @@
 import React, { FC } from 'react'
+import { MessageDescriptor } from 'react-intl'
+
 import {
   Box,
-  Text,
-  GridRow,
   GridColumn,
-  LoadingDots,
   GridColumnProps,
+  GridRow,
+  LoadingDots,
+  Text,
   Tooltip,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { MessageDescriptor } from 'react-intl'
-import * as styles from './Parents.css'
 import { Maybe } from '@island.is/service-portal/graphql'
+
+import * as styles from './Parents.css'
 
 interface Props {
   label: MessageDescriptor | string

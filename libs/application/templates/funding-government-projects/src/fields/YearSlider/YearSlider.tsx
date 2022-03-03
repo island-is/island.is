@@ -1,15 +1,17 @@
+import React, { useState } from 'react'
+import { Controller, useFormContext } from 'react-hook-form'
+
 import {
   FieldBaseProps,
   formatText,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Controller, useFormContext } from 'react-hook-form'
 import { Box, Text } from '@island.is/island-ui/core'
-import React, { useState } from 'react'
-import { useLocale } from '@island.is/localization'
-import Slider from '../components/Slider/Slider'
-import { shared } from '../../lib/messages'
 import { theme } from '@island.is/island-ui/theme'
+import { useLocale } from '@island.is/localization'
+
+import { shared } from '../../lib/messages'
+import Slider from '../components/Slider/Slider'
 
 const minYears = 5
 const maxYears = 10

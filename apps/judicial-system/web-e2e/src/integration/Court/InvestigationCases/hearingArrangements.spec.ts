@@ -1,14 +1,14 @@
 import faker from 'faker'
 
-import { Case, CaseState } from '@island.is/judicial-system/types'
-import {
-  makeInvestigationCase,
-  makeCourt,
-} from '@island.is/judicial-system/formatters'
 import {
   IC_COURT_HEARING_ARRANGEMENTS_ROUTE,
   IC_COURT_RECORD_ROUTE,
 } from '@island.is/judicial-system/consts'
+import {
+  makeCourt,
+  makeInvestigationCase,
+} from '@island.is/judicial-system/formatters'
+import { Case, CaseState } from '@island.is/judicial-system/types'
 
 import { intercept } from '../../../utils'
 

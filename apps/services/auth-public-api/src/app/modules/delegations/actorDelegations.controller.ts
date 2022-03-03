@@ -16,6 +16,13 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
 
+import { AuthScope } from '@island.is/auth/scopes'
+import {
+  DelegationDirection,
+  DelegationDTO,
+  DelegationsService,
+} from '@island.is/auth-api-lib'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   ActorScopes,
   AuthMiddlewareOptions,
@@ -23,14 +30,7 @@ import {
   IdsUserGuard,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import type { User } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
-import {
-  DelegationDirection,
-  DelegationDTO,
-  DelegationsService,
-} from '@island.is/auth-api-lib'
-import { AuthScope } from '@island.is/auth/scopes'
 import { HttpProblemResponse } from '@island.is/nest/problem'
 
 import { environment } from '../../../environments'

@@ -1,6 +1,7 @@
 import React, { FC, ReactNode, useState } from 'react'
 import cn from 'classnames'
 
+import { coreMessages } from '@island.is/application/core'
 import {
   Box,
   Button,
@@ -9,7 +10,6 @@ import {
   GridRow,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { coreMessages } from '@island.is/application/core'
 
 import * as styles from './ReviewGroup.css'
 

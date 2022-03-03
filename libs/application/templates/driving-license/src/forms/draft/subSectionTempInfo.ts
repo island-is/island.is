@@ -1,16 +1,17 @@
 import {
   buildDescriptionField,
-  buildMultiField,
-  buildKeyValueField,
-  buildSelectField,
   buildDividerField,
-  buildTextField,
+  buildKeyValueField,
+  buildMultiField,
+  buildSelectField,
   buildSubSection,
+  buildTextField,
 } from '@island.is/application/core'
-import { NationalRegistryUser, Teacher } from '../../types/schema'
+
 import { m } from '../../lib/messages'
-import { B_TEMP } from '../../shared/constants'
 import { isApplicationForCondition } from '../../lib/utils'
+import { B_TEMP } from '../../shared/constants'
+import { NationalRegistryUser, Teacher } from '../../types/schema'
 
 export const subSectionTempInfo = buildSubSection({
   id: 'infoStep',

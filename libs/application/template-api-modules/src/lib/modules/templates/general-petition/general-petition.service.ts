@@ -1,15 +1,18 @@
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
+
+import { getValueViaPath } from '@island.is/application/core'
+import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
+
 import {
   EndorsementListApi,
-  EndorsementMetadataDtoFieldEnum,
   EndorsementListTagsEnum,
+  EndorsementMetadataDtoFieldEnum,
 } from './gen/fetch/endorsements'
-import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
-import { getValueViaPath } from '@island.is/application/core'
 
 const CREATE_ENDORSEMENT_LIST_QUERY = `
   mutation EndorsementSystemCreateEndorsementList($input: CreateEndorsementListDto!) {

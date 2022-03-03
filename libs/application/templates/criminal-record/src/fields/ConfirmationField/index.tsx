@@ -1,21 +1,23 @@
+import React, { FC, useState } from 'react'
+
+import { FieldBaseProps, formatText } from '@island.is/application/core'
 import {
   AlertMessage,
   Button,
-  TopicCard,
+  Divider,
   Link,
   LinkContext,
-  Text,
-  Divider,
   PdfViewer,
+  Text,
+  TopicCard,
 } from '@island.is/island-ui/core'
-
-import React, { FC, useState } from 'react'
-import { useLocale } from '@island.is/localization'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
-import { m } from '../../lib/messages'
-import * as styles from './ConfirmationField.css'
+import { useLocale } from '@island.is/localization'
+
 import { Bus } from '../../assets'
+import { m } from '../../lib/messages'
+
+import * as styles from './ConfirmationField.css'
 
 type ConfirmationFieldProps = {
   field: {

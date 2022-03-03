@@ -1,11 +1,13 @@
 import React from 'react'
 import { useFieldArray } from 'react-hook-form'
+
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import {
   CheckboxController,
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
+
 import { CRCFieldBaseProps } from '../../types'
 
 const MockChildren = ({ application, field }: CRCFieldBaseProps) => {

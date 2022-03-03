@@ -1,14 +1,16 @@
 import { HttpService, Inject, Injectable } from '@nestjs/common'
 import { AxiosRequestConfig } from 'axios'
-import {
-  CategoriesResponse,
-  DocumentDTO,
-  CustomersDocumentRequest,
-  ListDocumentsResponse,
-} from './models'
-import { DocumentOauthConnection } from './document.connection'
+
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import { DocumentOauthConnection } from './document.connection'
+import {
+  CategoriesResponse,
+  CustomersDocumentRequest,
+  DocumentDTO,
+  ListDocumentsResponse,
+} from './models'
 
 export const DOCUMENT_CLIENT_CONFIG = 'DOCUMENT_CLIENT_CONFIG'
 

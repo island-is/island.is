@@ -1,11 +1,12 @@
-import eachDayOfInterval from 'date-fns/eachDayOfInterval'
 import addDays from 'date-fns/addDays'
 import addMonths from 'date-fns/addMonths'
-import parseISO from 'date-fns/parseISO'
-import differenceInMonths from 'date-fns/differenceInMonths'
 import differenceInDays from 'date-fns/differenceInDays'
+import differenceInMonths from 'date-fns/differenceInMonths'
+import eachDayOfInterval from 'date-fns/eachDayOfInterval'
+import parseISO from 'date-fns/parseISO'
 import round from 'lodash/round'
 
+import type { FamilyMember } from '@island.is/api/domains/national-registry'
 import {
   Application,
   ExternalData,
@@ -15,30 +16,29 @@ import {
   getValueViaPath,
   Option,
 } from '@island.is/application/core'
-import type { FamilyMember } from '@island.is/api/domains/national-registry'
 
-import { parentalLeaveFormMessages } from '../lib/messages'
-import { TimelinePeriod } from '../fields/components/Timeline/Timeline'
 import {
-  YES,
-  NO,
   MANUAL,
+  NO,
+  ParentalRelations,
   SPOUSE,
   StartDateOptions,
-  ParentalRelations,
   TransferRightsOption,
+  YES,
 } from '../constants'
-import { SchemaFormValues } from '../lib/dataSchema'
 import { PregnancyStatusAndRightsResults } from '../dataProviders/Children/Children'
-import {
-  calculatePeriodLength,
-  daysToMonths,
-} from '../lib/directorateOfLabour.utils'
 import {
   ChildInformation,
   ChildrenAndExistingApplications,
 } from '../dataProviders/Children/types'
-import { YesOrNo, Period, PersonInformation } from '../types'
+import { TimelinePeriod } from '../fields/components/Timeline/Timeline'
+import { SchemaFormValues } from '../lib/dataSchema'
+import {
+  calculatePeriodLength,
+  daysToMonths,
+} from '../lib/directorateOfLabour.utils'
+import { parentalLeaveFormMessages } from '../lib/messages'
+import { Period, PersonInformation,YesOrNo } from '../types'
 
 export function getExpectedDateOfBirth(
   application: Application,

@@ -1,15 +1,18 @@
-import React, { FC, useRef, useState, useEffect } from 'react'
+import React, { FC, useEffect,useRef, useState } from 'react'
+import { useWindowSize } from 'react-use'
 import useComponentSize from '@rehooks/component-size'
 import cn from 'classnames'
 
+import { theme as islandUITheme } from '@island.is/island-ui/theme'
+
 import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
+
 import { SectionNumber } from './SectionNumber/SectionNumber'
 import { SubSections } from './SubSections/SubSections'
-import { theme as islandUITheme } from '@island.is/island-ui/theme'
-import * as styles from './FormStepperSection.css'
 import * as types from './types'
-import { useWindowSize } from 'react-use'
+
+import * as styles from './FormStepperSection.css'
 
 function getSubSectionsInSection(
   section: types.FormStepperSection,

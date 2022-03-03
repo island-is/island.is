@@ -1,9 +1,10 @@
 import React, { ReactNode } from 'react'
+
 import {
   Box,
+  GridColumn,
   GridContainer,
   GridRow,
-  GridColumn,
 } from '@island.is/island-ui/core'
 
 interface SubpageMainProps {

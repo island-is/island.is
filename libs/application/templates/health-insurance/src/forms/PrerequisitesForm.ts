@@ -1,20 +1,22 @@
 import {
   buildCustomField,
   buildDataProviderItem,
+  buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
   buildMultiField,
   buildSection,
+  buildSubmitField,
+  ExternalData,
   Form,
   FormModes,
   FormValue,
-  ExternalData,
-  buildSubmitField,
-  buildDescriptionField,
 } from '@island.is/application/core'
-import { m } from './messages'
+
 import Logo from '../assets/Logo'
 import { prerequisitesFailed } from '../healthInsuranceUtils'
+
+import { m } from './messages'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',

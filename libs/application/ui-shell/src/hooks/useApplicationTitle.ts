@@ -1,13 +1,15 @@
-import { useLocale } from '@island.is/localization'
+import { MessageDescriptor } from 'react-intl'
+
 import {
   formatText,
   getSubSectionsInSection,
   Section,
   SubSection,
 } from '@island.is/application/core'
-import { MessageDescriptor } from 'react-intl'
+import { useLocale } from '@island.is/localization'
 
 import { ApplicationUIState } from '../reducer/ReducerTypes'
+
 import { useDocumentTitle } from './useDocumentTitle'
 
 type FormatMessage = (

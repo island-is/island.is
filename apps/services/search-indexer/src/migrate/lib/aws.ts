@@ -1,9 +1,12 @@
 import AWS from 'aws-sdk'
+import { DomainPackageStatus,PackageStatus } from 'aws-sdk/clients/es'
 import { PutObjectRequest } from 'aws-sdk/clients/s3'
-import { PackageStatus, DomainPackageStatus } from 'aws-sdk/clients/es'
+
 import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 import { logger } from '@island.is/logging'
+
 import { environment } from '../../environments/environment'
+
 import { Dictionary } from './dictionary'
 
 AWS.config.update({ region: environment.awsRegion })

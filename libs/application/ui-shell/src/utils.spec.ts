@@ -1,15 +1,4 @@
 import {
-  extractAnswersToSubmitFromScreen,
-  isJSONObject,
-  parseMessage,
-} from './utils'
-import {
-  ExternalDataProviderScreen,
-  FieldDef,
-  MultiFieldScreen,
-  RepeaterScreen,
-} from './types'
-import {
   buildExternalDataProvider,
   buildMultiField,
   buildRepeater,
@@ -17,6 +6,18 @@ import {
   Field,
   FormValue,
 } from '@island.is/application/core'
+
+import {
+  ExternalDataProviderScreen,
+  FieldDef,
+  MultiFieldScreen,
+  RepeaterScreen,
+} from './types'
+import {
+  extractAnswersToSubmitFromScreen,
+  isJSONObject,
+  parseMessage,
+} from './utils'
 
 describe('ui-shell-utils', () => {
   describe('extractAnswersOnScreen', () => {

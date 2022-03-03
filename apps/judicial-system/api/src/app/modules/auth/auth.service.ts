@@ -1,6 +1,5 @@
-import fetch from 'isomorphic-fetch'
-
 import { Injectable } from '@nestjs/common'
+import fetch from 'isomorphic-fetch'
 
 import type { User } from '@island.is/judicial-system/types'
 

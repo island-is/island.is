@@ -1,8 +1,9 @@
 import CachePolicy from 'http-cache-semantics'
 
 import { FetchAPI, Headers, HeadersInit, Request, Response } from '../nodeFetch'
-import { CacheEntry, CacheMiddlewareConfig, CachePolicyInternal } from './types'
+
 import { CacheResponse } from './CacheResponse'
+import { CacheEntry, CacheMiddlewareConfig, CachePolicyInternal } from './types'
 
 const DEBUG_NAMES = (process.env.ENHANCED_FETCH_DEBUG_CACHE ?? '')
   .split(',')

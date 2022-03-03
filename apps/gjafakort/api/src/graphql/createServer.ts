@@ -3,19 +3,20 @@ import { ApolloServerPlugin } from 'apollo-server-plugin-base'
 import { DocumentNode } from 'graphql'
 import merge from 'lodash/merge'
 
-import { logger } from '@island.is/logging'
 import { createApolloCache } from '@island.is/cache'
+import { logger } from '@island.is/logging'
 
+import { ACCESS_TOKEN_COOKIE,verifyToken } from '../domains'
 import { environment } from '../environments'
-import { verifyToken, ACCESS_TOKEN_COOKIE } from '../domains'
-import { Resolvers, GraphQLContext, DataSource } from '../types'
 import {
   ApplicationAPI,
   FerdalagAPI,
+  NovaAPI,
   RskAPI,
   YayAPI,
-  NovaAPI,
 } from '../services'
+import { DataSource,GraphQLContext, Resolvers } from '../types'
+
 import rootTypeDefs from './typeDefs'
 
 const { production, redis } = environment

@@ -6,11 +6,11 @@ import {
   registerEnumType,
 } from '@nestjs/graphql'
 
+import { Identity } from '@island.is/api/domains/identity'
 import {
   DelegationProvider,
   DelegationType,
 } from '@island.is/clients/auth-public-api'
-import { Identity } from '@island.is/api/domains/identity'
 
 import { DelegationScope } from './delegationScope.model'
 

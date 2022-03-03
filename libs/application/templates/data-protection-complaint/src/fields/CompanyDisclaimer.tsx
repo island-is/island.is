@@ -1,7 +1,9 @@
-import { Button, Link, Text } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
-import { useLocale } from '@island.is/localization'
+
 import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { Button, Link, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+
 import { info } from '../lib/messages'
 
 export const CompanyDisclaimer: FC<FieldBaseProps> = ({ application }) => {

@@ -1,5 +1,6 @@
 import faker from 'faker'
 
+import { IC_POLICE_CONFIRMATION_ROUTE } from '@island.is/judicial-system/consts'
 import {
   investigationCaseAccusedAddress,
   investigationCaseAccusedName,
@@ -7,7 +8,6 @@ import {
   makeProsecutor,
 } from '@island.is/judicial-system/formatters'
 import { Case } from '@island.is/judicial-system/types'
-import { IC_POLICE_CONFIRMATION_ROUTE } from '@island.is/judicial-system/consts'
 
 import { intercept } from '../../../utils'
 

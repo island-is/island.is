@@ -1,7 +1,9 @@
-import { styleVariants, style, globalStyle } from '@vanilla-extract/css'
+import { globalStyle,style, styleVariants } from '@vanilla-extract/css'
 import * as CSS from 'csstype'
+
 import { theme } from '@island.is/island-ui/theme'
 import { responsiveStyleMap } from '@island.is/island-ui/vanilla-extract-utils'
+
 import { mapToStyleProperty } from '../../utils/mapToStyleProperty'
 
 export type TextVariants =

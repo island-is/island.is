@@ -1,9 +1,10 @@
 import {
-  buildForm,
   buildCustomField,
+  buildForm,
   Form,
   FormModes,
 } from '@island.is/application/core'
+
 import { m } from '../lib/messages'
 
 export const declined: Form = buildForm({

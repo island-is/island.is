@@ -1,13 +1,15 @@
 import React, { FC } from 'react'
 
-import { Box, ContentBlock, AlertMessage } from '@island.is/island-ui/core'
 import {
   Application,
   FieldBaseProps,
   formatText,
 } from '@island.is/application/core'
-import { m } from '../../lib/messages'
+import { AlertMessage,Box, ContentBlock } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+
+import { m } from '../../lib/messages'
+
 import { useQualityPhoto } from './hooks/useQualityPhoto'
 
 interface QualityPhotoData {

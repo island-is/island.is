@@ -1,17 +1,18 @@
 import React from 'react'
-import { useQuery, gql } from '@apollo/client'
+import { gql,useQuery } from '@apollo/client'
 
 import { Query } from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
-  Stack,
-  Text,
   GridColumn,
   GridRow,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { ServicePortalModuleComponent, m } from '@island.is/service-portal/core'
+import { m,ServicePortalModuleComponent } from '@island.is/service-portal/core'
+
 import { FamilyMemberCard } from '../../components/FamilyMemberCard/FamilyMemberCard'
 import { FamilyMemberCardLoader } from '../../components/FamilyMemberCard/FamilyMemberCardLoader'
 import { NATIONAL_REGISTRY_CHILDREN } from '../../lib/queries/getNationalChildren'

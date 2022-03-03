@@ -1,9 +1,12 @@
 import React, { FC } from 'react'
+
 import { FieldBaseProps, formatText } from '@island.is/application/core'
-import { Box, Stack, Text, Divider } from '@island.is/island-ui/core'
 import { getValueViaPath } from '@island.is/application/core'
+import { Box, Divider,Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+
 import { institutionApplicationMessages as m } from '../../lib/messages'
+
 import { Attachments } from './attachments'
 
 const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {

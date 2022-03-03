@@ -1,20 +1,23 @@
 import { Injectable } from '@nestjs/common'
-import { TemplateApiModuleActionProps } from '../../../types'
-import {
-  SyslumennService,
-  Person,
-  Attachment,
-  PersonType,
-  DataUploadResponse,
-} from '@island.is/clients/syslumenn'
-import { NationalRegistry } from './types'
+import AmazonS3URI from 'amazon-s3-uri'
+import { S3 } from 'aws-sdk'
+
 import {
   ApplicationWithAttachments as Application,
   getValueViaPath,
 } from '@island.is/application/core'
-import AmazonS3URI from 'amazon-s3-uri'
-import { S3 } from 'aws-sdk'
+import {
+  Attachment,
+  DataUploadResponse,
+  Person,
+  PersonType,
+  SyslumennService,
+} from '@island.is/clients/syslumenn'
+
+import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
+
+import { NationalRegistry } from './types'
 
 export const QUALITY_PHOTO = `
 query HasQualityPhoto {

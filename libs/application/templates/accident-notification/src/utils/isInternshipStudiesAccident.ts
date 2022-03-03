@@ -1,4 +1,5 @@
 import { FormValue, getValueViaPath } from '@island.is/application/core'
+
 import { StudiesAccidentTypeEnum } from '../types'
 
 export const isInternshipStudiesAccident = (formValue: FormValue) => {

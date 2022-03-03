@@ -1,12 +1,14 @@
+import { Type, ValidationPipe } from '@nestjs/common'
+import { Test, TestingModule } from '@nestjs/testing'
+import { TestingModuleBuilder } from '@nestjs/testing/testing-module.builder'
+
 import {
   IdsAuthGuard,
   IdsUserGuard,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { Type, ValidationPipe } from '@nestjs/common'
+
 import { InfraModule } from './infra/infra.module'
-import { Test, TestingModule } from '@nestjs/testing'
-import { TestingModuleBuilder } from '@nestjs/testing/testing-module.builder'
 
 export type TestServerOptions = {
   /**

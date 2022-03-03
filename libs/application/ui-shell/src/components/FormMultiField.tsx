@@ -1,21 +1,22 @@
 import React, { FC } from 'react'
 
-import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import {
   Application,
+  FieldTypes,
   formatText,
   FormValue,
-  FieldTypes,
   RecordObject,
   SetBeforeSubmitCallback,
   SetFieldLoadingState,
 } from '@island.is/application/core'
-import { FieldDescription } from '@island.is/shared/form-fields'
+import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { FieldDescription } from '@island.is/shared/form-fields'
+
+import { FieldDef, MultiFieldScreen } from '../types'
 
 import ConditionHandler from './ConditionHandler'
 import FormField from './FormField'
-import { FieldDef, MultiFieldScreen } from '../types'
 
 const IGNORED_HALF_TYPES: FieldTypes[] = [FieldTypes.RADIO]
 

@@ -1,5 +1,6 @@
-import APIResponse from '../entities/common/APIResponse'
 import { BehaviorSubject } from 'rxjs'
+
+import APIResponse from '../entities/common/APIResponse'
 
 export class ApiStatusStore {
   constructor() {

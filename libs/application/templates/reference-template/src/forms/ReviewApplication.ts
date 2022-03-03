@@ -1,8 +1,8 @@
 import {
   buildCheckboxField,
+  buildDescriptionField,
   buildDividerField,
   buildForm,
-  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -11,6 +11,7 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
+
 import { m } from '../lib/messages'
 
 export const ReviewApplication: Form = buildForm({

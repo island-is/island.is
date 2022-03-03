@@ -1,9 +1,11 @@
 import React, { FC } from 'react'
+import { Controller,useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
-import { ServicePortalPath } from '@island.is/service-portal/core'
-import { useForm, Controller } from 'react-hook-form'
+
+import { Box, Button,Input, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Box, Stack, Input, Button } from '@island.is/island-ui/core'
+import { ServicePortalPath } from '@island.is/service-portal/core'
+
 import { m } from '../../lib/messages'
 
 export interface EndpointsFormData {

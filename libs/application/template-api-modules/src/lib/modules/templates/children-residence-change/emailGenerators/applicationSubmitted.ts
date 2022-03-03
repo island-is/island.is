@@ -1,12 +1,14 @@
-import { getSlugFromType } from '@island.is/application/core'
 import { SendMailOptions } from 'nodemailer'
 
+import { getSlugFromType } from '@island.is/application/core'
+
 import { EmailTemplateGeneratorProps } from '../../../../types'
+
 import {
   DistrictCommissionerLogo,
   fontStyles,
-  ulStyles,
   liStyles,
+  ulStyles,
 } from './consts'
 
 interface ApplicationSubmittedEmail {

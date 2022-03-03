@@ -1,60 +1,61 @@
 import React, { useContext } from 'react'
-import { useRouter } from 'next/router'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select/src/types'
+import { useRouter } from 'next/router'
 
 import {
   Accordion,
+  AlertMessage,
   Box,
   Button,
+  Divider,
   Select,
+  Stack,
   Tag,
   Text,
   Tooltip,
-  Stack,
-  Divider,
-  AlertMessage,
 } from '@island.is/island-ui/core'
+import * as Constants from '@island.is/judicial-system/consts'
 import {
-  BlueBox,
-  CourtRecordAccordionItem,
-  FormContentContainer,
-  InfoCard,
-  PdfRow,
-  PoliceRequestAccordionItem,
-  RulingAccordionItem,
-  CommentsAccordionItem,
-  CaseFilesAccordionItem,
-} from '@island.is/judicial-system-web/src/components'
+  capitalize,
+  caseTypes,
+  getShortRestrictionByValue,
+} from '@island.is/judicial-system/formatters'
 import {
+  Case,
   CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseState,
   CaseType,
   InstitutionType,
-  isRestrictionCase,
-  isInvestigationCase,
-  UserRole,
   isAcceptingCaseDecision,
-  Case,
+  isInvestigationCase,
+  isRestrictionCase,
+  UserRole,
 } from '@island.is/judicial-system/types'
-import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import {
-  capitalize,
-  caseTypes,
-  getShortRestrictionByValue,
-} from '@island.is/judicial-system/formatters'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { core } from '@island.is/judicial-system-web/messages'
-import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
-import * as Constants from '@island.is/judicial-system/consts'
-import AppealSection from './Components/AppealSection/AppealSection'
-import { SignedDocument } from './Components/SignedDocument'
-import CaseDates from './Components/CaseDates/CaseDates'
+import {
+  BlueBox,
+  CaseFilesAccordionItem,
+  CommentsAccordionItem,
+  CourtRecordAccordionItem,
+  FormContentContainer,
+  InfoCard,
+  PdfRow,
+  PoliceRequestAccordionItem,
+  RulingAccordionItem,
+} from '@island.is/judicial-system-web/src/components'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
+import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/utils/stepHelper'
+
+import AppealSection from './Components/AppealSection/AppealSection'
+import CaseDates from './Components/CaseDates/CaseDates'
+import { SignedDocument } from './Components/SignedDocument'
 
 interface Props {
   workingCase: Case

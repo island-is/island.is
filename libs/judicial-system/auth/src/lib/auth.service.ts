@@ -1,6 +1,5 @@
-import { sign } from 'jsonwebtoken'
-
 import { Inject, Injectable } from '@nestjs/common'
+import { sign } from 'jsonwebtoken'
 
 import { EXPIRES_IN_SECONDS } from '@island.is/judicial-system/consts'
 import type { User } from '@island.is/judicial-system/types'

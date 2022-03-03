@@ -1,12 +1,14 @@
 import React, { FC } from 'react'
+import { useQuery } from '@apollo/client'
+import { User } from 'oidc-client'
+
+import { Query } from '@island.is/api/schema'
+import { SkeletonLoader } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
-import DocumentScreen from '../../components/DocumentScreen/DocumentScreen'
-import { User } from 'oidc-client'
-import { SkeletonLoader } from '@island.is/island-ui/core'
-import { Query } from '@island.is/api/schema'
-import { useQuery } from '@apollo/client'
 import { GET_TAPS_QUERY } from '@island.is/service-portal/graphql'
+
+import DocumentScreen from '../../components/DocumentScreen/DocumentScreen'
 
 interface Props {
   userInfo: User

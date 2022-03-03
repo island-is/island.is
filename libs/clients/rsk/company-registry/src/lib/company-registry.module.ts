@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+
 import { GetCompanyApiProvider } from './GetCompanyApiProvider'
 import { SearchCompanyRegistryApiProvider } from './SearchCompanyRegistryApiProvider'
 import { ServiceInformationApiProvider } from './ServiceInformationApiProvider'

@@ -1,3 +1,9 @@
+import React, { useState } from 'react'
+import { useFormContext } from 'react-hook-form'
+import { FieldErrors, FieldValues } from 'react-hook-form/dist/types/form'
+import { gql, useQuery } from '@apollo/client'
+import kennitala from 'kennitala'
+
 import {
   FieldBaseProps,
   formatText,
@@ -6,12 +12,8 @@ import {
 import { Box, LoadingDots, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
-import React, { useState } from 'react'
+
 import { employer, error as errorMessage } from '../../lib/messages'
-import { gql, useQuery } from '@apollo/client'
-import kennitala from 'kennitala'
-import { useFormContext } from 'react-hook-form'
-import { FieldErrors, FieldValues } from 'react-hook-form/dist/types/form'
 
 const GET_COMPANY_BY_NATIONAL_ID = gql`
   query getCompanyByNationalId($input: RskCompanyInfoInput!) {

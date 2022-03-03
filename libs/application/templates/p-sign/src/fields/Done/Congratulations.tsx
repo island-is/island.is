@@ -1,13 +1,15 @@
 import React from 'react'
-import { Box, ContentBlock, AlertMessage } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+
 import {
   CustomField,
   FieldBaseProps,
   formatText,
 } from '@island.is/application/core'
-import { m } from '../../lib/messages'
+import { AlertMessage,Box, ContentBlock } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+
 import School from '../../assets/School'
+import { m } from '../../lib/messages'
 
 interface PropTypes extends FieldBaseProps {
   field: CustomField

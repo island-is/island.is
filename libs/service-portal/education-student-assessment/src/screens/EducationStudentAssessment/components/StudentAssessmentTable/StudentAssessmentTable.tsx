@@ -1,5 +1,9 @@
 import React, { Fragment } from 'react'
+import { defineMessage } from 'react-intl'
 import { useParams } from 'react-router-dom'
+import { gql, useQuery } from '@apollo/client'
+
+import { Query } from '@island.is/api/schema'
 import {
   Box,
   SkeletonLoader,
@@ -7,11 +11,8 @@ import {
   Text,
   TextProps,
 } from '@island.is/island-ui/core'
-import { EmptyState, m } from '@island.is/service-portal/core'
-import { defineMessage } from 'react-intl'
-import { gql, useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
+import { EmptyState, m } from '@island.is/service-portal/core'
 
 const EducationExamResultQuery = gql`
   query EducationExamResultQuery($familyIndex: Int!) {

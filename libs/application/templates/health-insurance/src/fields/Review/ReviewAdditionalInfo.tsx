@@ -1,21 +1,23 @@
 import React, { FC } from 'react'
+
 import { formatText } from '@island.is/application/core'
 import {
   Box,
   Bullet,
   BulletList,
+  Input,
   Stack,
   Text,
-  Input,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { AdditionalInfoType, ReviewFieldProps } from '../../types'
-import { m } from '../../forms/messages'
 import {
   FieldDescription,
   RadioController,
 } from '@island.is/shared/form-fields'
+
+import { m } from '../../forms/messages'
 import { NO, YES } from '../../shared'
+import { AdditionalInfoType, ReviewFieldProps } from '../../types'
 
 interface Props extends ReviewFieldProps {
   additionalInfo: AdditionalInfoType

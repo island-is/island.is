@@ -1,7 +1,7 @@
 export {
-  prosecutorRule,
+  adminRule,
   judgeRule,
+  prosecutorRule,
   registrarRule,
   staffRule,
-  adminRule,
 } from './rolesRules'

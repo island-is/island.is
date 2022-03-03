@@ -1,9 +1,11 @@
 import React from 'react'
-import { Box } from '@island.is/island-ui/core'
-import { Application, formatText } from '@island.is/application/core'
 import { gql, useQuery } from '@apollo/client'
-import { m } from '../../lib/messages'
+
+import { Application, formatText } from '@island.is/application/core'
+import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+
+import { m } from '../../lib/messages'
 
 interface UploadedPhotoProps {
   application: Application

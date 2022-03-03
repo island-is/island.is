@@ -1,6 +1,8 @@
 import React from 'react'
-import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
+
 import { DescriptionText } from '@island.is/application/templates/family-matters-core/components'
+import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
+
 import { contractRejected } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
 import { ContractRejectedContainer } from '../components'

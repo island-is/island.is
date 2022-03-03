@@ -1,5 +1,20 @@
 import { UseGuards } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+
+import { ApiScope } from '@island.is/auth/scopes'
+import type { User } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
+import { Audit } from '@island.is/nest/audit'
+
+import { PaymentScheduleService } from '../payment-schedule.service'
+
+import { UpdateCurrentEmployerInput } from './dto/updateCurrentEmployerInput'
+import { UpdateCurrentEmployerResponse } from './models/updateCurrentEmployer.model'
 import { GetInitialScheduleInput, GetScheduleDistributionInput } from './dto'
 import {
   PaymentScheduleConditions,
@@ -8,18 +23,6 @@ import {
   PaymentScheduleEmployer,
   PaymentScheduleInitialSchedule,
 } from './models'
-import { Audit } from '@island.is/nest/audit'
-import { ApiScope } from '@island.is/auth/scopes'
-import {
-  CurrentUser,
-  IdsUserGuard,
-  Scopes,
-  ScopesGuard,
-} from '@island.is/auth-nest-tools'
-import type { User } from '@island.is/auth-nest-tools'
-import { PaymentScheduleService } from '../payment-schedule.service'
-import { UpdateCurrentEmployerInput } from './dto/updateCurrentEmployerInput'
-import { UpdateCurrentEmployerResponse } from './models/updateCurrentEmployer.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)

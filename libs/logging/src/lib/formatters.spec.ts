@@ -1,5 +1,5 @@
-import { MESSAGE } from 'triple-beam'
 import { TransformableInfo } from 'logform'
+import { MESSAGE } from 'triple-beam'
 
 import { maskNationalIdFormatter } from './formatters'
 

@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { mock } from 'jest-mock-extended'
-import { AuditService } from './audit.service'
 import { Test, TestingModule } from '@nestjs/testing'
-import { AuditInterceptor } from './audit.interceptor'
-import { Audit } from './audit.decorator'
-import { getCurrentAuth } from '@island.is/auth-nest-tools'
+import { mock } from 'jest-mock-extended'
 import { of } from 'rxjs'
+
+import { getCurrentAuth } from '@island.is/auth-nest-tools'
+
+import { Audit } from './audit.decorator'
+import { AuditInterceptor } from './audit.interceptor'
+import { AuditService } from './audit.service'
 import MockInstance = jest.MockInstance
 
 jest.mock('@island.is/auth-nest-tools', () => ({

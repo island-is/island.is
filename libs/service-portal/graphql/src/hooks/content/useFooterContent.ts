@@ -1,5 +1,7 @@
 import { useQuery } from '@apollo/client'
+
 import { Menu, Query, QueryGetMenuArgs } from '@island.is/api/schema'
+
 import { GET_MENU } from '../../lib/queries/getMenu'
 
 const getVariables = (name: string, lang: string) => ({

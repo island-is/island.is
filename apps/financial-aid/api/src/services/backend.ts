@@ -1,36 +1,35 @@
+import { Injectable } from '@nestjs/common'
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 
-import { Injectable } from '@nestjs/common'
-
 import {
-  Application,
-  Municipality,
-  UpdateApplication,
-  CreateApplication,
-  GetSignedUrl,
-  SignedUrl,
-  CreateApplicationEvent,
-  ApplicationFilters,
-  CreateFilesResponse,
   apiBasePath,
+  Application,
+  ApplicationFilters,
   ApplicationStateUrl,
-  UpdateApplicationTableResponseType,
-  UpdateStaff,
-  UpdateMunicipalityActivity,
-  Staff,
-  CreateStaff,
+  CreateApplication,
+  CreateApplicationEvent,
+  CreateFilesResponse,
   CreateMunicipality,
+  CreateStaff,
+  GetSignedUrl,
+  Municipality,
+  SignedUrl,
+  Staff,
+  UpdateApplication,
+  UpdateApplicationTableResponseType,
+  UpdateMunicipalityActivity,
+  UpdateStaff,
 } from '@island.is/financial-aid/shared/lib'
 
-import { environment } from '../environments'
 import { CreateApplicationFilesInput } from '../app/modules/file/dto'
-import { CreateStaffInput } from '../app/modules/staff'
-import { SpouseModel } from '../app/modules/user'
 import { UpdateMunicipalityInput } from '../app/modules/municipality/dto'
 import {
   DirectTaxPaymentsResponse,
   PersonalTaxReturnResponse,
 } from '../app/modules/personalTaxReturn/models'
+import { CreateStaffInput } from '../app/modules/staff'
+import { SpouseModel } from '../app/modules/user'
+import { environment } from '../environments'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {

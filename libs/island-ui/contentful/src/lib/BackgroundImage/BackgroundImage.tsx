@@ -1,7 +1,9 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useEffect,useState } from 'react'
 import cn from 'classnames'
-import { BoxProps, Box } from '@island.is/island-ui/core'
-import { theme, Colors } from '@island.is/island-ui/theme'
+
+import { Box,BoxProps } from '@island.is/island-ui/core'
+import { Colors,theme } from '@island.is/island-ui/theme'
+
 import * as styles from './BackgroundImage.css'
 
 export type BackgroundImageProps = {

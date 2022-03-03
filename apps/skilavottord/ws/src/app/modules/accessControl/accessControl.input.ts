@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 
-import { AccessControlRole } from './accessControl.model'
 import type { AccessControlRoleType } from './accessControl.model'
+import { AccessControlRole } from './accessControl.model'
 
 @InputType()
 export class CreateAccessControlInput {

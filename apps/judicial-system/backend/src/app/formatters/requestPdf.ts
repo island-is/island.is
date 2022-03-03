@@ -2,20 +2,22 @@ import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
 
 import { FormatMessage } from '@island.is/cms-translations'
-import { CaseType, isRestrictionCase } from '@island.is/judicial-system/types'
 import {
-  caseTypes,
-  formatNationalId,
   capitalize,
+  caseTypes,
   formatDate,
+  formatNationalId,
 } from '@island.is/judicial-system/formatters'
+import { CaseType, isRestrictionCase } from '@island.is/judicial-system/types'
 
 import { environment } from '../../environments'
+import { core,request as m } from '../messages'
 import { Case } from '../modules/case'
-import { request as m, core } from '../messages'
+
 import { formatLegalProvisions } from './formatters'
 import {
   addEmptyLines,
+  addFooter,
   addHugeHeading,
   addLargeHeading,
   addLargeText,
@@ -23,7 +25,6 @@ import {
   addMediumText,
   addNormalText,
   setLineGap,
-  addFooter,
   setTitle,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'

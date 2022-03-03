@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common'
-import { CriminalRecord } from './criminalRecordApi.types'
+
 import { CrimeCertificateApi } from '../../gen/fetch'
+
+import { CriminalRecord } from './criminalRecordApi.types'
 
 @Injectable()
 export class CriminalRecordApi {
@@ -20,7 +22,7 @@ export class CriminalRecordApi {
     return record
   }
 
-  public async validateCriminalRecord(ssn: string): Promise<Boolean> {
+  public async validateCriminalRecord(ssn: string): Promise<boolean> {
     // Note: this function will throw an error if something goes wrong
     const record = await this.getCriminalRecord(ssn)
 

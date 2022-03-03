@@ -1,12 +1,14 @@
-import { Observable } from 'rxjs'
-import { map } from 'rxjs/operators'
 import {
+  CallHandler,
+  ExecutionContext,
   Injectable,
   NestInterceptor,
-  ExecutionContext,
-  CallHandler,
 } from '@nestjs/common'
+import { Observable } from 'rxjs'
+import { map } from 'rxjs/operators'
+
 import { Endorsement } from '../models/endorsement.model'
+
 import { maskEndorsement } from './endorsement.mask'
 
 @Injectable()

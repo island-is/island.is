@@ -1,4 +1,5 @@
 import { Headers, Response } from 'node-fetch'
+
 import { UnknownProblem } from '@island.is/shared/problem'
 
 export class FetchError extends Error {

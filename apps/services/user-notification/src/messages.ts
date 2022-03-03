@@ -1,4 +1,5 @@
 import { defineMessages } from '@formatjs/intl'
+
 import { MessageTypes } from './app/modules/notifications/types'
 
 export default {

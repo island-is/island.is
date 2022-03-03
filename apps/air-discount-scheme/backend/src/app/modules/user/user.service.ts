@@ -1,24 +1,27 @@
-import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
-import { AirlineUser, User } from './user.model'
+import { CACHE_MANAGER,Inject, Injectable } from '@nestjs/common'
+import * as kennitala from 'kennitala'
+
 import { Fund } from '@island.is/air-discount-scheme/types'
-import { FlightService } from '../flight'
-import {
-  NationalRegistryService,
-  NationalRegistryUser,
-} from '../nationalRegistry'
 import {
   AuthMiddleware,
   AuthMiddlewareOptions,
   User as AuthUser,
 } from '@island.is/auth-nest-tools'
+import { FetchError } from '@island.is/clients/middlewares'
 import {
   EinstaklingarApi,
   EinstaklingarGetForsjaForeldriRequest,
   EinstaklingarGetForsjaRequest,
 } from '@island.is/clients/national-registry-v2'
+
 import environment from '../../../environments/environment'
-import * as kennitala from 'kennitala'
-import { FetchError } from '@island.is/clients/middlewares'
+import { FlightService } from '../flight'
+import {
+  NationalRegistryService,
+  NationalRegistryUser,
+} from '../nationalRegistry'
+
+import { AirlineUser, User } from './user.model'
 
 const ONE_WEEK = 604800 // seconds
 const CACHE_KEY = 'userService'

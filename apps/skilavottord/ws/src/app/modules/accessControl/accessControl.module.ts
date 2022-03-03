@@ -1,11 +1,11 @@
-import { Global, Module, forwardRef } from '@nestjs/common'
+import { forwardRef,Global, Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import { AuthModule } from '../auth/auth.module'
 
-import { AccessControlService } from './accessControl.service'
 import { AccessControlModel } from './accessControl.model'
 import { AccessControlResolver } from './accessControl.resolver'
+import { AccessControlService } from './accessControl.service'
 
 @Global()
 @Module({

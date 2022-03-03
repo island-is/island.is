@@ -1,19 +1,19 @@
 import React from 'react'
-import { ApolloProvider } from '@apollo/client'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import { ApolloProvider } from '@apollo/client'
 
 import { initializeClient } from '@island.is/application/graphql'
-import { LocaleProvider } from '@island.is/localization'
 import { ErrorShell, HeaderInfoProvider } from '@island.is/application/ui-shell'
-import { defaultLanguage } from '@island.is/shared/constants'
 import { Authenticator } from '@island.is/auth/react'
+import { LocaleProvider } from '@island.is/localization'
+import { FeatureFlagProvider } from '@island.is/react/feature-flags'
+import { defaultLanguage } from '@island.is/shared/constants'
 
+import { Layout } from '../components/Layout/Layout'
+import { environment } from '../environments'
 import { Application } from '../routes/Application'
 import { Applications } from '../routes/Applications'
 import { AssignApplication } from '../routes/AssignApplication'
-import { Layout } from '../components/Layout/Layout'
-import { environment } from '../environments'
-import { FeatureFlagProvider } from '@island.is/react/feature-flags'
 
 export const App = () => (
   <ApolloProvider client={initializeClient(environment.baseApiUrl)}>

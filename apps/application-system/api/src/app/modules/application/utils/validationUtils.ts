@@ -1,22 +1,23 @@
 import {
+  BadRequestException,
+  ForbiddenException,
+  UnauthorizedException,
+} from '@nestjs/common'
+
+import {
   Application,
   ApplicationTemplateHelper,
   FormatMessage,
   FormValue,
   validateAnswers,
 } from '@island.is/application/core'
-import {
-  BadRequestException,
-  ForbiddenException,
-  UnauthorizedException,
-} from '@nestjs/common'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
-import { Unwrap } from '@island.is/shared/types'
 import { logger } from '@island.is/logging'
 import { ValidationFailed } from '@island.is/nest/problem'
+import { Unwrap } from '@island.is/shared/types'
 
-import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
 import { environment } from '../../../../environments'
+import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
 
 const isRunningOnProductionEnvironment =
   environment.production === true &&

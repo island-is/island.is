@@ -5,13 +5,13 @@ import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Bullet, BulletList, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
-import { parentalLeaveFormMessages } from '../../lib/messages'
+import { NO } from '../../constants'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
+import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
   otherParentApprovalDescription,
   requiresOtherParentApproval,
 } from '../../lib/parentalLeaveUtils'
-import { NO } from '../../constants'
 
 import * as styles from './ConclusionImageScreen.css'
 

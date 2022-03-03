@@ -1,8 +1,9 @@
-import type { User } from '@island.is/judicial-system/types'
-import { gql, useQuery } from '@apollo/client'
 import React, { createContext, useEffect, useState } from 'react'
-import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
+import { gql, useQuery } from '@apollo/client'
 import Cookies from 'js-cookie'
+
+import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
+import type { User } from '@island.is/judicial-system/types'
 
 interface UserProvider {
   isAuthenticated?: boolean

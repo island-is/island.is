@@ -1,13 +1,13 @@
-import get from 'lodash/get'
 import parse from 'date-fns/parse'
 import parseISO from 'date-fns/parseISO'
-import { logger } from '@island.is/logging'
+import get from 'lodash/get'
 
 import { ApplicationWithAttachments as Application } from '@island.is/application/core'
 import {
   ApplyHealthInsuranceInputs,
   VistaSkjalInput,
 } from '@island.is/health-insurance'
+import { logger } from '@island.is/logging'
 
 const extractAnswer = <T>(object: unknown, key: string): T | null => {
   const value = get(object, key, null) as T | null | undefined

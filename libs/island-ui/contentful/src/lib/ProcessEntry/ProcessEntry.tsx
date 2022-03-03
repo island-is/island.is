@@ -1,13 +1,15 @@
 import React, { FC } from 'react'
+
 import {
-  Text,
-  Button,
   Box,
-  Link,
+  BoxProps,
+  Button,
   ButtonProps,
   ButtonTypes,
-  BoxProps,
+  Link,
+  Text,
 } from '@island.is/island-ui/core'
+
 import IframeModal from '../IframeModal/IframeModal'
 
 import * as styles from './ProcessEntry.css'

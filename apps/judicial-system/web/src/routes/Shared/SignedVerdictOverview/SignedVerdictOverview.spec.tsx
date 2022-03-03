@@ -1,8 +1,12 @@
 import React from 'react'
-import { render, waitFor, screen } from '@testing-library/react'
 import { MockedProvider } from '@apollo/client/testing'
+import { render, screen,waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
+import { UserProvider } from '@island.is/judicial-system-web/src/components'
+import FormProvider from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import {
   mockCaseQueries,
   mockInstitutionsQuery,
@@ -11,11 +15,7 @@ import {
   mockProsecutorQuery,
   mockProsecutorWonderWomanQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import { UserProvider } from '@island.is/judicial-system-web/src/components'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import { LocaleProvider } from '@island.is/localization'
-import FormProvider from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 
 import { SignedVerdictOverview } from './SignedVerdictOverview'
 

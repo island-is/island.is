@@ -1,5 +1,6 @@
-import { ServerSideFeature } from './types'
 import { FeatureNames as ServerSideFeatureNames } from '../../../../infra/src/dsl/features'
+
+import { ServerSideFeature } from './types'
 
 export class ServerSideFeatures implements ServerSideFeature {
   input?: string

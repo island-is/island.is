@@ -1,17 +1,17 @@
+import { Inject, Injectable } from '@nestjs/common'
 import { caching } from 'cache-manager'
 import redisStore from 'cache-manager-ioredis'
-import { Inject, Injectable } from '@nestjs/common'
 
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import { createRedisCluster } from '@island.is/cache'
-import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
-import type { ConfigType } from '@island.is/nest/config'
 import {
   buildCacheControl,
   createEnhancedFetch,
   FetchError,
 } from '@island.is/clients/middlewares'
+import type { ConfigType } from '@island.is/nest/config'
+import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
 
 import {
   Configuration,
@@ -20,6 +20,7 @@ import {
   ResponseDetailed,
   ResponseSimple,
 } from '../../gen/fetch'
+
 import { RskProcuringClientConfig } from './RskProcuringClientConfig'
 
 @Injectable()

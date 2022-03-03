@@ -1,19 +1,20 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ID,ObjectType } from '@nestjs/graphql'
 
 import { IOrganizationPage } from '../generated/contentfulTypes'
-import { mapOrganization, Organization } from './organization.model'
-import { LinkGroup, mapLinkGroup } from './linkGroup.model'
-import { Link, mapLink } from './link.model'
-import { Image, mapImage } from './image.model'
 import { safelyMapSliceUnion, SliceUnion } from '../unions/slice.union'
+
+import { AlertBanner, mapAlertBanner } from './alertBanner.model'
 import { FooterItem, mapFooterItem } from './footerItem.model'
-import { mapSidebarCard, SidebarCard } from './sidebarCard.model'
+import { GenericTag, mapGenericTag } from './genericTag.model'
+import { Image, mapImage } from './image.model'
+import { Link, mapLink } from './link.model'
+import { LinkGroup, mapLinkGroup } from './linkGroup.model'
+import { mapOrganization, Organization } from './organization.model'
 import {
   mapOrganizationTheme,
   OrganizationTheme,
 } from './organizationTheme.model'
-import { GenericTag, mapGenericTag } from './genericTag.model'
-import { AlertBanner, mapAlertBanner } from './alertBanner.model'
+import { mapSidebarCard, SidebarCard } from './sidebarCard.model'
 
 @ObjectType()
 export class OrganizationPage {

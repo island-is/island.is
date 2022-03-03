@@ -1,10 +1,11 @@
+import { lazy } from 'react'
+
 import { ApiScope } from '@island.is/auth/scopes'
 import {
+  m,
   ServicePortalModule,
   ServicePortalPath,
-  m,
 } from '@island.is/service-portal/core'
-import { lazy } from 'react'
 
 export const wipModule: ServicePortalModule = {
   name: 'Í vinnslu',

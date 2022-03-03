@@ -1,14 +1,16 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { throwError } from 'rxjs'
+import { Op } from 'sequelize'
+
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Op } from 'sequelize'
+
+import { ApiScopeUserDTO } from '../entities/dto/api-scope-user.dto'
+import { ApiScopeUserAccessDTO } from '../entities/dto/api-scope-user-access.dto'
+import { ApiScopeUserUpdateDTO } from '../entities/dto/api-scope-user-update.dto'
 import { ApiScopeUser } from '../entities/models/api-scope-user.model'
 import { ApiScopeUserAccess } from '../entities/models/api-scope-user-access.model'
-import { ApiScopeUserDTO } from '../entities/dto/api-scope-user.dto'
-import { ApiScopeUserUpdateDTO } from '../entities/dto/api-scope-user-update.dto'
-import { ApiScopeUserAccessDTO } from '../entities/dto/api-scope-user-access.dto'
-import { throwError } from 'rxjs'
 
 @Injectable()
 export class AccessService {

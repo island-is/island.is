@@ -1,7 +1,9 @@
-import { Args, Resolver, Mutation } from '@nestjs/graphql'
+import { Args, Mutation,Resolver } from '@nestjs/graphql'
 import { S3 } from 'aws-sdk'
-import { PresignedPost } from './presignedPost.model'
+
 import { FileStorageService } from '@island.is/file-storage'
+
+import { PresignedPost } from './presignedPost.model'
 
 @Resolver()
 export class FileUploadResolver {

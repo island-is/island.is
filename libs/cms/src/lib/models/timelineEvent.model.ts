@@ -1,5 +1,7 @@
-import { Field, ObjectType, ID, Int } from '@nestjs/graphql'
+import { Field, ID, Int,ObjectType } from '@nestjs/graphql'
+
 import { ITimelineEvent } from '../generated/contentfulTypes'
+
 import { Html, mapHtml } from './html.model'
 
 @ObjectType()

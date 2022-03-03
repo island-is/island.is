@@ -1,8 +1,10 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ID,ObjectType } from '@nestjs/graphql'
+
 import { ILifeEventPage } from '../generated/contentfulTypes'
-import { Image, mapImage } from './image.model'
-import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
+
+import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
+import { Image, mapImage } from './image.model'
 
 @ObjectType()
 export class LifeEventPage {

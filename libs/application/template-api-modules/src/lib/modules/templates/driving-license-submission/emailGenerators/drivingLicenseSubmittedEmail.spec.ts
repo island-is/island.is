@@ -1,18 +1,19 @@
-import type { User } from '@island.is/auth-nest-tools'
 import {
   ApplicationStatus,
   ApplicationTypes,
 } from '@island.is/application/core'
+import type { User } from '@island.is/auth-nest-tools'
 import { Message } from '@island.is/email-service'
+import { faker } from '@island.is/shared/mocking'
 import {
   createApplication,
   createCurrentUser,
 } from '@island.is/testing/fixtures'
-import { faker } from '@island.is/shared/mocking'
+
+import { EmailTemplateGeneratorProps } from '../../../../types'
 
 import { generateDrivingLicenseSubmittedEmail } from './drivingLicenseSubmittedEmail'
 import { EmailComplete, EmailHeader, EmailRequirements } from './EmailUi'
-import { EmailTemplateGeneratorProps } from '../../../../types'
 
 let id = 0
 

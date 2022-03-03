@@ -1,8 +1,10 @@
 import React from 'react'
-import * as styles from './SkeletonLoader.css'
-import { Stack, StackProps } from '../Stack/Stack'
+
 import { Box } from '../Box/Box'
 import type { BoxProps } from '../Box/types'
+import { Stack, StackProps } from '../Stack/Stack'
+
+import * as styles from './SkeletonLoader.css'
 
 export interface SkeletonLoaderProps {
   /**

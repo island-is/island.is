@@ -1,9 +1,11 @@
 import { useMutation } from '@apollo/client'
+
 import {
   Mutation,
-  MutationCreateSmsVerificationArgs,
   MutationConfirmSmsVerificationArgs,
+  MutationCreateSmsVerificationArgs,
 } from '@island.is/api/schema'
+
 import { CONFIRM_SMS_VERIFICATION } from '../../lib/mutations/confirmSmsVerification'
 import { CREATE_SMS_VERIFICATION } from '../../lib/mutations/createSmsVerification'
 import { USER_PROFILE } from '../../lib/queries/getUserProfile'

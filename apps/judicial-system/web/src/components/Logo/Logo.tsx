@@ -1,6 +1,9 @@
 import React, { useContext } from 'react'
+
 import { Box } from '@island.is/island-ui/core'
+
 import { UserContext } from '../UserProvider/UserProvider'
+
 import LandWightsLogo from './LandWightsLogo'
 
 import * as styles from './Logo.css'

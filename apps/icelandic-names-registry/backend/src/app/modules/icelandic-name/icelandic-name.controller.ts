@@ -20,20 +20,22 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger'
+
 import { ApiScope } from '@island.is/auth/scopes'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
   IdsUserGuard,
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import type { User } from '@island.is/auth-nest-tools'
 import { AuditService } from '@island.is/nest/audit'
 
 import { NationalIdGuard } from '../../common'
-import { IcelandicNameService } from './icelandic-name.service'
+
+import { CreateIcelandicNameBodyDto,UpdateIcelandicNameBodyDto } from './dto'
 import { IcelandicName } from './icelandic-name.model'
-import { UpdateIcelandicNameBodyDto, CreateIcelandicNameBodyDto } from './dto'
+import { IcelandicNameService } from './icelandic-name.service'
 
 @Controller('api/icelandic-names-registry')
 @ApiTags('icelandic-names-registry')

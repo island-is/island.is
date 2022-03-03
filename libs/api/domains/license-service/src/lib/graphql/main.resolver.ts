@@ -1,33 +1,35 @@
-import { ApiScope } from '@island.is/auth/scopes'
+import { UseGuards } from '@nestjs/common'
 import {
   Args,
+  Field,
+  InputType,
+  Mutation,
   Query,
   Resolver,
-  InputType,
-  Field,
-  Mutation,
 } from '@nestjs/graphql'
-import { UseGuards } from '@nestjs/common'
+import { IsArray, IsBoolean, IsOptional } from 'class-validator'
+
+import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
-  IdsUserGuard,
-  ScopesGuard,
   CurrentUser,
+  IdsUserGuard,
   Scopes,
+  ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { IsBoolean, IsArray, IsOptional } from 'class-validator'
 import type { Locale } from '@island.is/shared/types'
 
+import {
+  GenericLicenseType,
+  GenericLicenseTypeType,
+} from '../licenceService.type'
 import { LicenseServiceService } from '../licenseService.service'
+
 import {
   GenericPkPass,
   GenericPkPassVerification,
   GenericUserLicense,
 } from './genericLicense.model'
-import {
-  GenericLicenseType,
-  GenericLicenseTypeType,
-} from '../licenceService.type'
 
 @InputType()
 export class GetGenericLicensesInput {

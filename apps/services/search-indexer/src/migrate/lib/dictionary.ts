@@ -1,8 +1,11 @@
-import fetch from 'node-fetch'
 import flatten from 'lodash/flatten'
+import fetch from 'node-fetch'
+
 import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 import { logger } from '@island.is/logging'
+
 import { environment } from '../../environments/environment'
+
 import { AwsEsPackage } from './aws'
 
 // Analyzers name must not exceed 20 in length and must satisfy this pattern [a-z][a-z0-9\\-]+

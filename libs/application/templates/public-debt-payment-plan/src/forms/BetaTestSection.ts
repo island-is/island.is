@@ -1,4 +1,5 @@
 import { buildCustomField, buildSection } from '@island.is/application/core'
+
 import { betaTest } from '../lib/messages'
 
 // Should only be here with the soft release, remove on official release.

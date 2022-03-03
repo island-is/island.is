@@ -1,5 +1,6 @@
 import { Field, InputType, registerEnumType } from '@nestjs/graphql'
 import { IsEnum } from 'class-validator'
+
 import { EndorsementListControllerFindByTagsTagsEnum } from '../../../gen/fetch/apis/EndorsementListApi'
 
 registerEnumType(EndorsementListControllerFindByTagsTagsEnum, {

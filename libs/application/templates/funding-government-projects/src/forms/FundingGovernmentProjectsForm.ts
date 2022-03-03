@@ -1,24 +1,25 @@
 import {
+  buildCustomField,
+  buildFileUploadField,
   buildForm,
+  buildMultiField,
   buildSection,
+  buildSubmitField,
+  buildTextField,
+  DefaultEvents,
   Form,
   FormModes,
-  buildCustomField,
-  buildTextField,
-  buildMultiField,
-  buildFileUploadField,
-  DefaultEvents,
-  buildSubmitField,
 } from '@island.is/application/core'
+
 import { Logo } from '../assets/Logo'
 import {
-  section,
   application,
   definitionOfApplicant,
-  project,
-  overview,
-  submitted,
   informationAboutInstitution,
+  overview,
+  project,
+  section,
+  submitted,
 } from '../lib/messages'
 
 const FILE_SIZE_LIMIT = 10000000

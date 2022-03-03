@@ -1,20 +1,21 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ID,ObjectType } from '@nestjs/graphql'
 
 import type {
   Case as TCase,
   CaseAppealDecision,
-  CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseLegalProvisions,
   CaseState,
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
+import { CaseFile } from '../../file'
 import { Institution } from '../../institution'
 import { User } from '../../user'
-import { CaseFile } from '../../file'
+
 import { Notification } from './notification.model'
 
 @ObjectType()

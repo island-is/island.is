@@ -1,4 +1,8 @@
+import React, { useEffect } from 'react'
 import { gql, useMutation } from '@apollo/client'
+import * as Sentry from '@sentry/react'
+import kennitala from 'kennitala'
+
 import {
   PaymentScheduleConditions,
   PaymentScheduleDebts,
@@ -12,9 +16,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import * as Sentry from '@sentry/react'
-import kennitala from 'kennitala'
-import React, { useEffect } from 'react'
+
 import { employer } from '../../lib/messages'
 import { formatIsk } from '../../lib/paymentPlanUtils'
 

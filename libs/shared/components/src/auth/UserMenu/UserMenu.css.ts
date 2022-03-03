@@ -1,6 +1,7 @@
 import { keyframes, style } from '@vanilla-extract/css'
-import { spacing, theme, themeUtils } from '@island.is/island-ui/theme'
 import { StyleWithSelectors } from '@vanilla-extract/css/dist/declarations/src/types'
+
+import { spacing, theme, themeUtils } from '@island.is/island-ui/theme'
 import {
   SERVICE_PORTAL_HEADER_HEIGHT_SM,
   zIndex,

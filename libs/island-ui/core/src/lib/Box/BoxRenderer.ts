@@ -1,6 +1,7 @@
 import { ReactElement } from 'react'
 
 import { renderBackgroundProvider } from '../context'
+
 import { useBoxStyles, UseBoxStylesProps } from './useBoxStyles'
 
 export interface BoxRendererProps extends UseBoxStylesProps {

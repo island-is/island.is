@@ -1,29 +1,29 @@
+import { UseGuards } from '@nestjs/common'
 import {
   Args,
+  ID,
   Mutation,
   Parent,
   Query,
   ResolveField,
-  ID,
   Resolver,
 } from '@nestjs/graphql'
-import { UseGuards } from '@nestjs/common'
 import * as kennitala from 'kennitala'
 
-import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { Identity, IdentityService } from '@island.is/api/domains/identity'
 import type { User } from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import type { DelegationDTO } from '@island.is/clients/auth-public-api'
 
+import { ActorDelegationsService } from '../actorDelegations.service'
 import {
-  UpdateDelegationInput,
-  DeleteDelegationInput,
   CreateDelegationInput,
   DelegationInput,
+  DeleteDelegationInput,
+  UpdateDelegationInput,
 } from '../dto'
-import { Delegation } from '../models'
 import { MeDelegationsService } from '../meDelegations.service'
-import { ActorDelegationsService } from '../actorDelegations.service'
+import { Delegation } from '../models'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Delegation)

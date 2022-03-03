@@ -1,13 +1,14 @@
 import {
-  BasicDataProvider,
   Application,
-  SuccessfulDataProviderResult,
+  BasicDataProvider,
   FailedDataProviderResult,
   getValueViaPath,
+  SuccessfulDataProviderResult,
 } from '@island.is/application/core'
-import { m } from '../lib/messages'
+
 import { DrivingLicenseFakeData, YES } from '../lib/constants'
-import { Eligibility, DrivingLicense } from '../types/schema'
+import { m } from '../lib/messages'
+import { DrivingLicense,Eligibility } from '../types/schema'
 
 export interface CurrentLicenseProviderResult {
   currentLicense: Eligibility['name'] | null

@@ -8,9 +8,10 @@ import {
 
 import { BaseTemplateAPIModuleConfig } from '../../../types'
 import { SharedTemplateAPIModule } from '../../shared'
+
 import {
-  ParentalLeaveService,
   APPLICATION_ATTACHMENT_BUCKET,
+  ParentalLeaveService,
 } from './parental-leave.service'
 
 const XROAD_VMST_MEMBER_CODE = process.env.XROAD_VMST_MEMBER_CODE ?? ''

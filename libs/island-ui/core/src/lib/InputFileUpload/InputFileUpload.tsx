@@ -3,14 +3,15 @@ import { useDropzone } from 'react-dropzone'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
 
-import * as styles from './InputFileUpload.css'
+import { Colors,theme } from '@island.is/island-ui/theme'
 
 import { Box } from '../Box/Box'
-import { Text } from '../Text/Text'
 import { Button } from '../Button/Button'
-import { theme, Colors } from '@island.is/island-ui/theme'
 import { Icon } from '../IconRC/Icon'
 import { Icon as IconTypes } from '../IconRC/iconMap'
+import { Text } from '../Text/Text'
+
+import * as styles from './InputFileUpload.css'
 
 export type UploadFileStatus = 'error' | 'done' | 'uploading'
 

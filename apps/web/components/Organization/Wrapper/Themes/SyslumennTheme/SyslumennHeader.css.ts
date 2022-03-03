@@ -1,4 +1,5 @@
 import { style } from '@vanilla-extract/css'
+
 import { blueberry100, themeUtils } from '@island.is/island-ui/theme'
 
 export const headerBg = style({

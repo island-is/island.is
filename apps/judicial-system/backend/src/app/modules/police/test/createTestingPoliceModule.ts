@@ -1,13 +1,13 @@
 import { Test } from '@nestjs/testing'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { environment } from '../../../../environments'
 import { AwsS3Service } from '../../aws-s3'
 import { CaseService } from '../../case'
-import { PoliceService } from '../police.service'
 import { PoliceController } from '../police.controller'
+import { PoliceService } from '../police.service'
 
 jest.mock('../../aws-s3/awsS3.service.ts')
 jest.mock('../../case/case.service.ts')

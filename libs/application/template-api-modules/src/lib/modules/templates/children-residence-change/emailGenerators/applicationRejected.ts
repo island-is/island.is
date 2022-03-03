@@ -1,12 +1,13 @@
-import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
 import { CRCApplication } from '@island.is/application/templates/children-residence-change'
+import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
 
 import { EmailTemplateGenerator } from '../../../../types'
+
 import {
   DistrictCommissionerLogo,
   fontStyles,
-  ulStyles,
   liStyles,
+  ulStyles,
 } from './consts'
 
 export const applicationRejectedEmail: EmailTemplateGenerator = (props) => {

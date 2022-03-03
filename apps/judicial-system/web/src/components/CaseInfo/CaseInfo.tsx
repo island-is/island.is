@@ -2,9 +2,9 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { core } from '@island.is/judicial-system-web/messages'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { Case, UserRole } from '@island.is/judicial-system/types'
+import { core } from '@island.is/judicial-system-web/messages'
 
 interface Props {
   workingCase: Case

@@ -1,23 +1,24 @@
 import React from 'react'
 import { defineMessage } from 'react-intl'
-import { useQuery, gql } from '@apollo/client'
+import { gql,useQuery } from '@apollo/client'
 
 import { Query } from '@island.is/api/schema'
 import {
-  Text,
   Box,
-  Stack,
-  GridRow,
-  GridColumn,
   Divider,
+  GridColumn,
+  GridRow,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   formatNationalId,
+  m,
   ServicePortalModuleComponent,
   UserInfoLine,
-  m,
 } from '@island.is/service-portal/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+
 import {
   natRegGenderMessageDescriptorRecord,
   natRegMaritalStatusMessageDescriptorRecord,

@@ -1,10 +1,10 @@
+import { useEffect, useRef } from 'react'
 import {
   DocumentNode,
   OperationVariables,
   QueryHookOptions,
   useQuery,
 } from '@apollo/client'
-import { useEffect, useRef } from 'react'
 
 import useLocale from './useLocale'
 

@@ -1,28 +1,29 @@
-import React, { FC, useEffect, useState, useCallback } from 'react'
+import React, { FC, useCallback,useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import format from 'date-fns/format'
 import * as Sentry from '@sentry/react'
+import format from 'date-fns/format'
 
 import {
-  FieldBaseProps,
-  RecordObject,
   extractRepeaterIndexFromField,
+  FieldBaseProps,
   NO_ANSWER,
+  RecordObject,
 } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
 
-import Slider from '../components/Slider'
+import { usageMaxMonths, usageMinMonths } from '../../config'
+import { DATE_FORMAT,StartDateOptions } from '../../constants'
+import { errorMessages, parentalLeaveFormMessages } from '../../lib/messages'
 import {
-  getApplicationAnswers,
   calculateEndDateForPeriodWithStartAndLength,
   calculatePeriodLengthInMonths,
+  getApplicationAnswers,
 } from '../../lib/parentalLeaveUtils'
-import { errorMessages, parentalLeaveFormMessages } from '../../lib/messages'
-import { usageMaxMonths, usageMinMonths } from '../../config'
-import { StartDateOptions, DATE_FORMAT } from '../../constants'
+import Slider from '../components/Slider'
+
 import * as styles from './Duration.css'
 
 const DEFAULT_PERIOD_LENGTH = usageMinMonths

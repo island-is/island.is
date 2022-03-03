@@ -1,10 +1,11 @@
-import React, { FC, createContext, useContext, useMemo } from 'react'
+import React, { createContext, FC, useContext, useMemo } from 'react'
+
+import { useAuth } from '@island.is/auth/react'
 import {
   createClient,
   FeatureFlagClient,
   FeatureFlagUser,
 } from '@island.is/feature-flags'
-import { useAuth } from '@island.is/auth/react'
 
 const FeatureFlagContext = createContext<FeatureFlagClient>({
   getValue: (_, defaultValue) => Promise.resolve(defaultValue),

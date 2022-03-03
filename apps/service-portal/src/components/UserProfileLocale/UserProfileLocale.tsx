@@ -1,9 +1,10 @@
-import { useLazyQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
-import { useLocale, useNamespaces, isLocale } from '@island.is/localization'
-import { USER_PROFILE } from '@island.is/service-portal/graphql'
 import { useEffect } from 'react'
+import { useLazyQuery } from '@apollo/client'
+
+import { Query } from '@island.is/api/schema'
 import { useAuth } from '@island.is/auth/react'
+import { isLocale,useLocale, useNamespaces } from '@island.is/localization'
+import { USER_PROFILE } from '@island.is/service-portal/graphql'
 
 /**
  * If the user has set a preferred language in his user

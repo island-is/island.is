@@ -1,7 +1,7 @@
 import { buildSchema } from 'graphql'
 
-import { handle } from './handle'
 import { createResolvers } from './createResolvers'
+import { handle } from './handle'
 
 describe('handle', () => {
   const schema = buildSchema(`

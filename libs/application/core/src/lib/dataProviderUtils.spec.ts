@@ -1,7 +1,8 @@
-import { callDataProviders } from './dataProviderUtils'
-import { BasicDataProvider } from '../types/BasicDataProvider'
-import { ApplicationTypes } from '../types/ApplicationTypes'
 import { Application, ApplicationStatus } from '../types/Application'
+import { ApplicationTypes } from '../types/ApplicationTypes'
+import { BasicDataProvider } from '../types/BasicDataProvider'
+
+import { callDataProviders } from './dataProviderUtils'
 
 class ExampleProviderThatAlwaysFails extends BasicDataProvider {
   readonly type = 'ExampleFails'

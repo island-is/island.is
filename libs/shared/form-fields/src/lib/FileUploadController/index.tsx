@@ -1,27 +1,27 @@
-import React, { FC, useState, useReducer, useEffect } from 'react'
-import { useFormContext, Controller } from 'react-hook-form'
+import React, { FC, useEffect,useReducer, useState } from 'react'
+import { Controller,useFormContext } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
 
 import {
-  getValueViaPath,
   Application,
   coreErrorMessages,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
-  InputFileUpload,
-  UploadFile,
-  fileToObject,
-} from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import {
-  CREATE_UPLOAD_URL,
   ADD_ATTACHMENT,
+  CREATE_UPLOAD_URL,
   DELETE_ATTACHMENT,
 } from '@island.is/application/graphql'
 import { InputImageUpload } from '@island.is/application/ui-components'
+import {
+  fileToObject,
+  InputFileUpload,
+  UploadFile,
+} from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 
-import { uploadFileToS3 } from './utils'
 import { Action, ActionTypes } from './types'
+import { uploadFileToS3 } from './utils'
 
 type UploadFileAnswer = {
   name: string

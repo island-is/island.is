@@ -1,11 +1,12 @@
 import { PaymentCatalogItem } from '@island.is/api/schema'
 import {
-  SuccessfulDataProviderResult,
   FailedDataProviderResult,
+  SuccessfulDataProviderResult,
 } from '@island.is/application/core'
 import { PaymentCatalogProvider } from '@island.is/application/data-providers'
-import { m } from '../lib/messages'
 import { ChargeItemCode } from '@island.is/shared/constants'
+
+import { m } from '../lib/messages'
 
 const CHARGE_ITEM_CODE = ChargeItemCode.CRIMINAL_RECORD
 const SYSLUMADUR_NATIONAL_ID = '6509142520'

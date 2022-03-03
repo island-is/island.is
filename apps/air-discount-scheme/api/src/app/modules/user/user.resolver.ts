@@ -1,20 +1,22 @@
-import { Query, Resolver, Context, ResolveField, Parent } from '@nestjs/graphql'
+import { Inject } from '@nestjs/common'
+import { UseGuards } from '@nestjs/common'
+import { Context, Parent,Query, ResolveField, Resolver } from '@nestjs/graphql'
 
 import type { User as TUser } from '@island.is/air-discount-scheme/types'
 import {
   Flight,
   FlightLeg as TFlightLeg,
 } from '@island.is/air-discount-scheme/types'
-import { FlightLeg } from '../flightLeg'
-import { CurrentUser } from '../decorators'
-import type { AuthUser } from '../auth/types'
-import { User } from './models'
-import { Inject } from '@nestjs/common'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
-import { UseGuards } from '@nestjs/common'
+
 import { getRole } from '../auth/roles'
+import type { AuthUser } from '../auth/types'
+import { CurrentUser } from '../decorators'
+import { FlightLeg } from '../flightLeg'
+
+import { User } from './models'
 
 @Resolver(() => User)
 export class UserResolver {

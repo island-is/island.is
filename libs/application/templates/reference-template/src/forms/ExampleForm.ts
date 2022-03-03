@@ -1,7 +1,8 @@
 import {
   buildCheckboxField,
-  buildForm,
   buildDescriptionField,
+  buildFileUploadField,
+  buildForm,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -12,10 +13,10 @@ import {
   Form,
   FormModes,
   FormValue,
-  buildFileUploadField,
 } from '@island.is/application/core'
-import { ApiActions } from '../shared'
+
 import { m } from '../lib/messages'
+import { ApiActions } from '../shared'
 
 export const ExampleForm: Form = buildForm({
   id: 'ExampleFormDraft',

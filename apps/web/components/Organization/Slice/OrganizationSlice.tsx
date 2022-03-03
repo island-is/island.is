@@ -1,9 +1,10 @@
 import React from 'react'
-import { Slice } from '@island.is/web/graphql/schema'
-import { Namespace } from '@island.is/api/schema'
 import dynamic from 'next/dynamic'
+
+import { Namespace } from '@island.is/api/schema'
 import { GridColumn, GridContainer, GridRow } from '@island.is/island-ui/core'
 import { RichText } from '@island.is/web/components'
+import { Slice } from '@island.is/web/graphql/schema'
 
 const DistrictsSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.DistrictsSlice),

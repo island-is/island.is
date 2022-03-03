@@ -9,6 +9,7 @@ import {
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
+
 import {
   queryPaymentScheduleConditions,
   queryPaymentScheduleDebts,

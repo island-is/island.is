@@ -1,42 +1,43 @@
-import { Test } from '@nestjs/testing'
 import { ConfigService } from '@nestjs/config'
+import { Test } from '@nestjs/testing'
+import addDays from 'date-fns/addDays'
 import get from 'lodash/get'
 import set from 'lodash/set'
-import addDays from 'date-fns/addDays'
 
 import {
-  ApplicationWithAttachments as Application,
   ApplicationStatus,
   ApplicationTypes,
+  ApplicationWithAttachments as Application,
 } from '@island.is/application/core'
-import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
-  ParentalLeaveApi,
-  Period as VmstPeriod,
-  ParentalLeaveGetPeriodLengthRequest,
-  ParentalLeaveGetPeriodEndDateRequest,
-  PeriodLengthResponse,
-  PeriodEndDateResponse,
-} from '@island.is/clients/vmst'
-import {
-  StartDateOptions,
-  YES,
+  calculatePeriodLength,
   NO,
   Period,
-  calculatePeriodLength,
+  StartDateOptions,
+  YES,
 } from '@island.is/application/templates/parental-leave'
+import {
+  ParentalLeaveApi,
+  ParentalLeaveGetPeriodEndDateRequest,
+  ParentalLeaveGetPeriodLengthRequest,
+  Period as VmstPeriod,
+  PeriodEndDateResponse,
+  PeriodLengthResponse,
+} from '@island.is/clients/vmst'
 import { EmailService } from '@island.is/email-service'
+import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import { SharedTemplateApiService } from '../../shared'
 import {
   BaseTemplateApiApplicationService,
   TemplateApiModuleActionProps,
 } from '../../../types'
+import { SharedTemplateApiService } from '../../shared'
+
+import { apiConstants } from './constants'
 import {
   APPLICATION_ATTACHMENT_BUCKET,
   ParentalLeaveService,
 } from './parental-leave.service'
-import { apiConstants } from './constants'
 
 const nationalId = '1234564321'
 let id = 0

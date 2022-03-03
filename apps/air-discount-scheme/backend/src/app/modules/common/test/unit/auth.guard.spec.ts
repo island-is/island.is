@@ -1,5 +1,5 @@
-import { AuthGuard } from '../../auth.guard'
 import { environment } from '../../../../../environments'
+import { AuthGuard } from '../../auth.guard'
 
 const { airlineApiKeys } = environment
 

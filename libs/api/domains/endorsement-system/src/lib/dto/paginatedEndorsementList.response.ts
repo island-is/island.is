@@ -1,6 +1,8 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql'
-import { PageInfoResponse } from './pageInfo.response'
+
 import { EndorsementList } from '../models/endorsementList.model'
+
+import { PageInfoResponse } from './pageInfo.response'
 
 @ObjectType()
 export class PaginatedEndorsementListResponse {

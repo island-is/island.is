@@ -1,16 +1,17 @@
 import React, { Children } from 'react'
 import flattenChildren from 'react-keyed-flatten-children'
-import { Box } from '../Box/Box'
-import { ResponsiveSpace, UseBoxStylesProps } from '../Box/useBoxStyles'
+
 import {
   useNegativeMarginLeft,
   useNegativeMarginTop,
 } from '../../hooks/useNegativeMargin/useNegativeMargin'
-import { ReactNodeNoStrings } from '../private/ReactNodeNoStrings'
 import {
-  resolveCollapsibleAlignmentProps,
   CollapsibleAlignmentProps,
+  resolveCollapsibleAlignmentProps,
 } from '../../utils/collapsibleAlignmentProps'
+import { Box } from '../Box/Box'
+import { ResponsiveSpace, UseBoxStylesProps } from '../Box/useBoxStyles'
+import { ReactNodeNoStrings } from '../private/ReactNodeNoStrings'
 
 export interface InlineProps extends CollapsibleAlignmentProps {
   space?: ResponsiveSpace

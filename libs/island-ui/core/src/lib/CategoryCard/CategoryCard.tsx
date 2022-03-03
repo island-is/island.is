@@ -1,14 +1,14 @@
-import React, { ReactElement, ReactNode, forwardRef } from 'react'
-import cn from 'classnames'
-import { ObjectFitProperty } from 'csstype'
+import React, { forwardRef,ReactElement, ReactNode } from 'react'
 import { useMeasure } from 'react-use'
 import { UseMeasureRef } from 'react-use/lib/useMeasure'
+import cn from 'classnames'
+import { ObjectFitProperty } from 'csstype'
 
 import { Box } from '../Box/Box'
 import { FocusableBox } from '../FocusableBox/FocusableBox'
+import { Hyphen } from '../Hyphen/Hyphen'
 import { Inline } from '../Inline/Inline'
 import { Tag, TagProps } from '../Tag/Tag'
-import { Hyphen } from '../Hyphen/Hyphen'
 import { Text, TextProps } from '../Text/Text'
 
 import * as styles from './CategoryCard.css'

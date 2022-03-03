@@ -1,18 +1,20 @@
 import React from 'react'
 import { defineMessage } from 'react-intl'
-import { useNamespaces, useLocale } from '@island.is/localization'
 import { gql, useQuery } from '@apollo/client'
+
 import { Query } from '@island.is/api/schema'
-import { Box, AlertBanner } from '@island.is/island-ui/core'
+import { AlertBanner,Box } from '@island.is/island-ui/core'
+import { useLocale,useNamespaces } from '@island.is/localization'
 import {
-  ServicePortalModuleComponent,
+  EmptyState,
   IntroHeader,
   m,
-  EmptyState,
+  ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
-import AssetListCards from '../../components/AssetListCards'
-import AssetDisclaimer from '../../components/AssetDisclaimer'
+
 import { AssetCardLoader } from '../../components/AssetCardLoader'
+import AssetDisclaimer from '../../components/AssetDisclaimer'
+import AssetListCards from '../../components/AssetListCards'
 import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
 
 const GetRealEstateQuery = gql`

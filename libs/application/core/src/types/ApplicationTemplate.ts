@@ -1,15 +1,16 @@
 import { EventObject, MachineConfig } from 'xstate'
 import { MachineOptions, StatesConfig } from 'xstate/lib/types'
 
+import { AnswerValidator } from '../validation/AnswerValidator'
+
 import { Application } from './Application'
+import { ApplicationTypes } from './ApplicationTypes'
+import { Schema, StaticText } from './Form'
 import {
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
 } from './StateMachine'
-import { ApplicationTypes } from './ApplicationTypes'
-import { Schema, StaticText } from './Form'
-import { AnswerValidator } from '../validation/AnswerValidator'
 
 export interface ApplicationTemplate<
   TContext extends ApplicationContext,

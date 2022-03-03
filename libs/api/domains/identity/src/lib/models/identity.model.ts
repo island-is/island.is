@@ -1,10 +1,10 @@
 import {
-  Field,
   Extensions,
+  Field,
+  ID,
+  InterfaceType,
   MiddlewareContext,
   ObjectType,
-  InterfaceType,
-  ID,
   registerEnumType,
 } from '@nestjs/graphql'
 
@@ -12,6 +12,7 @@ import { NationalRegistryUser } from '@island.is/api/domains/national-registry'
 import type { GraphQLContext } from '@island.is/auth-nest-tools'
 
 import { IdentityType } from '../identity.type'
+
 import { Address } from './address.model'
 
 registerEnumType(IdentityType, { name: 'IdentityType' })

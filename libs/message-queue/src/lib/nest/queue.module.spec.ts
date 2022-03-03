@@ -1,11 +1,12 @@
 import { INestApplication, Injectable } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
-import { QueueModule } from './queue.module'
-import { clientConfig, makeQueueConfig, deleteQueues } from './testHelpers'
+
 import { InjectWorker } from './decorators'
-import { WorkerService } from './worker.service'
-import { getQueueServiceToken } from './utils'
+import { QueueModule } from './queue.module'
 import { QueueService } from './queue.service'
+import { clientConfig, deleteQueues,makeQueueConfig } from './testHelpers'
+import { getQueueServiceToken } from './utils'
+import { WorkerService } from './worker.service'
 
 beforeEach(deleteQueues)
 

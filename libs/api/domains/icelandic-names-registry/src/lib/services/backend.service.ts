@@ -1,10 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { DataSourceConfig } from 'apollo-datasource'
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
+
 import type { IcelandicNamesRegistryOptions } from '@island.is/icelandic-names-registry-types'
 import {
-  IcelandicName,
   ICELANDIC_NAMES_REGISTRY_OPTIONS,
+  IcelandicName,
 } from '@island.is/icelandic-names-registry-types'
 
 import { CreateIcelandicNameInput } from '../dto/icelandic-name.input.dto'

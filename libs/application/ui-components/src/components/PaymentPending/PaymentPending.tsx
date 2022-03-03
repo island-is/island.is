@@ -1,13 +1,15 @@
 import React, { FC, useEffect } from 'react'
+
 import {
   Application,
-  DefaultEvents,
-  FieldBaseProps,
   coreErrorMessages,
   coreMessages,
+  DefaultEvents,
+  FieldBaseProps,
 } from '@island.is/application/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import { useSubmitApplication, usePaymentStatus, useMsg } from './hooks'
+
+import { useMsg,usePaymentStatus, useSubmitApplication } from './hooks'
 import { getRedirectUrl, isComingFromRedirect } from './util'
 
 export interface PaymentPendingProps {

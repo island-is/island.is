@@ -1,3 +1,5 @@
+import { Injectable } from '@nestjs/common'
+import Bottleneck from 'bottleneck'
 import {
   ContentfulClientApi,
   createClient,
@@ -5,17 +7,17 @@ import {
   Entry,
   SyncCollection,
 } from 'contentful'
-import Bottleneck from 'bottleneck'
-import environment from '../environments/environment'
-import { logger } from '@island.is/logging'
-import { Injectable } from '@nestjs/common'
-import { ElasticService } from '@island.is/content-search-toolkit'
 import flatten from 'lodash/flatten'
-import { SyncOptions } from '@island.is/content-search-indexer/types'
+
 import {
   ElasticsearchIndexLocale,
   getElasticsearchIndex,
 } from '@island.is/content-search-index-manager'
+import { SyncOptions } from '@island.is/content-search-indexer/types'
+import { ElasticService } from '@island.is/content-search-toolkit'
+import { logger } from '@island.is/logging'
+
+import environment from '../environments/environment'
 
 interface SyncerResult {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

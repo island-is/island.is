@@ -1,8 +1,8 @@
-import { factory, faker } from '@island.is/shared/mocking'
 import {
   ApplicationStatus,
   DataProviderResult,
 } from '@island.is/application/core'
+import { factory, faker } from '@island.is/shared/mocking'
 
 import { Application } from '../../types'
 

@@ -1,1 +1,1 @@
-export { randomDate, randomBoolean, randomEnum } from './random'
+export { randomBoolean, randomDate, randomEnum } from './random'

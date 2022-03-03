@@ -1,14 +1,15 @@
 import React from 'react'
 import { useMeasure } from 'react-use'
+
 import {
   Box,
-  Stack,
-  Text,
   FocusableBox,
   Hyphen,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
-// import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 
+// import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 import * as styles from './DataLinkCard.css'
 
 export interface DataLinkCardProps {

@@ -1,9 +1,11 @@
 import React from 'react'
+
 import { Box, Button, Select } from '@island.is/island-ui/core'
-import { User, Locale } from '@island.is/shared/types'
 import { useLocale } from '@island.is/localization'
-import { useUpdateUserProfileMutation } from '../../../gen/graphql'
 import { sharedMessages } from '@island.is/shared/translations'
+import { Locale,User } from '@island.is/shared/types'
+
+import { useUpdateUserProfileMutation } from '../../../gen/graphql'
 
 export const UserLanguageSwitcher = ({
   user,

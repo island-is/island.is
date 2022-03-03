@@ -1,38 +1,41 @@
-import React, { useState, useEffect } from 'react'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
-import { useQuery, useLazyQuery } from '@apollo/client'
+import React, { useEffect,useState } from 'react'
+import { useLazyQuery,useQuery } from '@apollo/client'
+import format from 'date-fns/format'
 import sub from 'date-fns/sub'
+
 import { Query } from '@island.is/api/schema'
+import {
+  AlertBanner,
+  Box,
+  Button,
+  DatePicker,
+  GridColumn,
+  GridRow,
+  Hidden,
+  Input,
+  Select,
+  SkeletonLoader,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
+import { m } from '@island.is/service-portal/core'
 import {
   GET_CUSTOMER_CHARGETYPE,
   GET_CUSTOMER_RECORDS,
   GET_TAPS_QUERY,
 } from '@island.is/service-portal/graphql'
-import format from 'date-fns/format'
+
+import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import FinanceTransactionsTable from '../../components/FinanceTransactionsTable/FinanceTransactionsTable'
+import { exportHreyfingarFile } from '../../utils/filesHreyfingar'
+import { transactionFilter } from '../../utils/simpleFilter'
+
 import {
   CustomerChargeType,
   CustomerRecords,
 } from './FinanceTransactionsData.types'
-import DropdownExport from '../../components/DropdownExport/DropdownExport'
-import { m } from '@island.is/service-portal/core'
-import {
-  Box,
-  Text,
-  Stack,
-  GridRow,
-  GridColumn,
-  DatePicker,
-  SkeletonLoader,
-  Select,
-  AlertBanner,
-  Hidden,
-  Input,
-  Button,
-} from '@island.is/island-ui/core'
-import { exportHreyfingarFile } from '../../utils/filesHreyfingar'
-import { transactionFilter } from '../../utils/simpleFilter'
-import { useLocale, useNamespaces } from '@island.is/localization'
 
 const ALL_CHARGE_TYPES = 'ALL_CHARGE_TYPES'
 

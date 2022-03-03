@@ -1,15 +1,16 @@
 import React, { FC } from 'react'
+
 import { FieldBaseProps, formatText } from '@island.is/application/core'
-import { Box, BulletList, Bullet } from '@island.is/island-ui/core'
+import { Box, Bullet,BulletList } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+
 import { definitionOfApplicant } from '../../lib/messages'
 
 export const DefinitionOfApplicant: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
 
   return (
-    <>
-      <Box marginTop={3}>
+    <Box marginTop={3}>
         <BulletList type="ul">
           <Bullet>
             {formatText(
@@ -34,6 +35,5 @@ export const DefinitionOfApplicant: FC<FieldBaseProps> = ({ application }) => {
           </Bullet>
         </BulletList>
       </Box>
-    </>
   )
 }

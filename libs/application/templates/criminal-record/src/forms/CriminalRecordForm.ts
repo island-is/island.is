@@ -1,16 +1,17 @@
 import {
-  buildForm,
+  buildCustomField,
+  buildDataProviderItem,
   buildDescriptionField,
+  buildExternalDataProvider,
+  buildForm,
   buildMultiField,
   buildSection,
   buildSubmitField,
+  DefaultEvents,
   Form,
   FormModes,
-  buildExternalDataProvider,
-  buildDataProviderItem,
-  buildCustomField,
-  DefaultEvents,
 } from '@island.is/application/core'
+
 import { m } from '../lib/messages'
 
 export const CriminalRecordForm: Form = buildForm({

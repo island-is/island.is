@@ -1,4 +1,5 @@
 import { gql } from '@apollo/client'
+
 import { dataFragment } from '../fragments/license'
 export const GET_DRIVING_LICENSE = gql`
   query DrivingLicenseQuery {

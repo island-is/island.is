@@ -1,12 +1,12 @@
-export * from './lib/data-protection-complaint.module'
 export {
   CaseApi,
   ClientsApi,
-  CreateQuickCaseRequest,
   CreateCaseRequest,
-  Metadata,
-  LinkedContact,
+  CreateQuickCaseRequest,
   DocumentInfo,
+  LinkedContact,
+  Metadata,
 } from './gen/fetch/dev'
-export { TokenMiddleware } from './lib/data-protection-complaint-client.middleware'
 export { DataProtectionComplaintClientConfig } from './lib/config/'
+export * from './lib/data-protection-complaint.module'
+export { TokenMiddleware } from './lib/data-protection-complaint-client.middleware'

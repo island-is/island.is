@@ -1,12 +1,12 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
   Column,
+  CreatedAt,
   DataType,
   Model,
   Table,
-  CreatedAt,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
 
 @Table({
   tableName: 'sms_verification',

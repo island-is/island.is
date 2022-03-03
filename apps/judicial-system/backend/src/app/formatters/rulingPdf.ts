@@ -8,19 +8,20 @@ import {
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
-import { Case } from '../modules/case'
 import { ruling } from '../messages'
+import { Case } from '../modules/case'
+
 import {
-  addFooter,
   addCoatOfArms,
+  addEmptyLines,
+  addFooter,
   addLargeHeading,
   addMediumHeading,
+  addNormalCenteredText,
+  addNormalJustifiedText,
+  addNormalText,
   setLineGap,
   setTitle,
-  addEmptyLines,
-  addNormalText,
-  addNormalJustifiedText,
-  addNormalCenteredText,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
 

@@ -1,7 +1,10 @@
 import { DynamicModule } from '@nestjs/common'
+
 import { ClientsDocumentProviderModule } from '@island.is/clients/document-provider'
-import { SharedTemplateAPIModule } from '../../shared'
+
 import { BaseTemplateAPIModuleConfig } from '../../../types'
+import { SharedTemplateAPIModule } from '../../shared'
+
 import { DocumentProviderOnboardingService } from './document-provider-onboarding.service'
 
 const SERVICE_DOCUMENTS_BASEPATH =

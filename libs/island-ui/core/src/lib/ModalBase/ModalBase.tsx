@@ -1,22 +1,23 @@
 import React, {
   FC,
-  Ref,
   forwardRef,
-  useState,
-  useLayoutEffect,
   ReactElement,
+  Ref,
   useEffect,
+  useLayoutEffect,
+  useState,
 } from 'react'
 import cn from 'classnames'
 import {
-  useDialogState,
   Dialog as BaseDialog,
   DialogBackdrop,
   DialogDisclosure,
   DialogProps,
+  useDialogState,
 } from 'reakit/Dialog'
-import * as styles from './ModalBase.css'
 import { DisclosureProps } from 'reakit/ts'
+
+import * as styles from './ModalBase.css'
 
 interface BackdropDivProps {
   backdropWhite?: ModalBaseProps['backdropWhite']

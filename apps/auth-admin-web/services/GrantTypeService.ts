@@ -1,5 +1,6 @@
 import { GrantTypeDTO } from '../entities/dtos/grant-type.dto'
 import { GrantType } from '../entities/models/grant-type.model'
+
 import { BaseService } from './BaseService'
 
 export class GrantTypeService extends BaseService {

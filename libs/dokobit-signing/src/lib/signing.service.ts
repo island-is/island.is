@@ -1,11 +1,10 @@
-import FormData from 'form-data'
-import fetch from 'node-fetch'
-import { DataSource } from 'apollo-datasource'
-import { Base64 } from 'js-base64'
-import { createHash } from 'crypto'
-
-import { Injectable, Inject } from '@nestjs/common'
+import { Inject,Injectable } from '@nestjs/common'
 import { ApiProperty } from '@nestjs/swagger'
+import { DataSource } from 'apollo-datasource'
+import { createHash } from 'crypto'
+import FormData from 'form-data'
+import { Base64 } from 'js-base64'
+import fetch from 'node-fetch'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'

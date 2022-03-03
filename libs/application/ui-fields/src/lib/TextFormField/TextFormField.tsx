@@ -7,11 +7,11 @@ import {
   TextField,
 } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
-import {
-  InputController,
-  FieldDescription,
-} from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
+import {
+  FieldDescription,
+  InputController,
+} from '@island.is/shared/form-fields'
 
 import { getDefaultValue } from '../../getDefaultValue'
 

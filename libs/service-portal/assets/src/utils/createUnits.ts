@@ -1,17 +1,19 @@
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
+import { format as formatKennitala } from 'kennitala'
 import chunk from 'lodash/chunk'
 import isNumber from 'lodash/isNumber'
-import { format as formatKennitala } from 'kennitala'
-import amountFormat from './amountFormat'
-import { messages } from '../lib/messages'
-import { FormatMessage } from '@island.is/application/core'
 
 import {
+  PropertyLocation,
   PropertyOwner,
   UnitOfUse,
-  PropertyLocation,
 } from '@island.is/api/schema'
-import is from 'date-fns/locale/is'
-import format from 'date-fns/format'
+import { FormatMessage } from '@island.is/application/core'
+
+import { messages } from '../lib/messages'
+
+import amountFormat from './amountFormat'
 
 const ownersArray = (data: PropertyOwner[] | undefined) => {
   const ownerArray = data?.map((owner) => {
@@ -89,4 +91,4 @@ const unitsArray = (
     }
   })
 
-export { unitsArray, ownersArray }
+export { ownersArray,unitsArray }

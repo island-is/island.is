@@ -1,4 +1,5 @@
-import { Document, TopLevelBlock, BLOCKS } from '@contentful/rich-text-types'
+import { BLOCKS,Document, TopLevelBlock } from '@contentful/rich-text-types'
+
 import { factory, faker } from '@island.is/shared/mocking'
 
 export const heading = factory<TopLevelBlock>({

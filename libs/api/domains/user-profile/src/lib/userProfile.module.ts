@@ -1,13 +1,15 @@
 import { DynamicModule } from '@nestjs/common'
-import { Configuration, UserProfileApi } from '@island.is/clients/user-profile'
-import { UserProfileResolver } from './userProfile.resolver'
-import { UserProfileService } from './userProfile.service'
-import { IslykillService } from './islykill.service'
-import { FeatureFlagModule } from '@island.is/nest/feature-flags'
+
 import {
   IslykillApiModule,
   IslykillApiModuleConfig,
 } from '@island.is/clients/islykill'
+import { Configuration, UserProfileApi } from '@island.is/clients/user-profile'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
+
+import { IslykillService } from './islykill.service'
+import { UserProfileResolver } from './userProfile.resolver'
+import { UserProfileService } from './userProfile.service'
 
 export interface Config {
   userProfileServiceBasePath: string

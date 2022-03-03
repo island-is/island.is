@@ -1,11 +1,13 @@
 import React, { FC } from 'react'
+
 import { formatText } from '@island.is/application/core'
 import { Box, Bullet, BulletList, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+
+import { m } from '../../forms/messages'
 import { MissingInfoType, ReviewFieldProps } from '../../types'
 import AgentComment from '../AgentComment/AgentComment'
 import MissingInfoRemarks from '../MissingInfoRemarks/MissingInfoRemarks'
-import { m } from '../../forms/messages'
 
 interface Props extends ReviewFieldProps {
   missingInfo: MissingInfoType

@@ -1,12 +1,12 @@
+import { createParamDecorator, ExecutionContext } from '@nestjs/common'
+import { GqlExecutionContext } from '@nestjs/graphql'
+import { AuthenticationError } from 'apollo-server-express'
+import { decode } from 'jsonwebtoken'
+
 import {
   IDENTITY_SERVER_SESSION_TOKEN_COOKIE_NAME,
   User,
 } from '@island.is/financial-aid/shared/lib'
-
-import { createParamDecorator, ExecutionContext } from '@nestjs/common'
-import { AuthenticationError } from 'apollo-server-express'
-import { GqlExecutionContext } from '@nestjs/graphql'
-import { decode } from 'jsonwebtoken'
 
 export const CurrentUser = createParamDecorator(
   (_: unknown, context: ExecutionContext): User => {

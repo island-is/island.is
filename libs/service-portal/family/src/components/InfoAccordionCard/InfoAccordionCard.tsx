@@ -1,10 +1,11 @@
 import React, { FC } from 'react'
+
 import {
   AccordionCard,
   Box,
-  Stack,
-  Columns,
   Column,
+  Columns,
+  Stack,
   Text,
 } from '@island.is/island-ui/core'
 

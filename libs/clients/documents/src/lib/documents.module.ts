@@ -1,8 +1,9 @@
 import { DynamicModule, HttpModule, Module } from '@nestjs/common'
+
 import {
+  DOCUMENT_CLIENT_CONFIG,
   DocumentClient,
   DocumentClientConfig,
-  DOCUMENT_CLIENT_CONFIG,
 } from './documentClient'
 
 @Module({

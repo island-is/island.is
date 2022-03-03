@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import {
+  DNSHealthIndicator,
+  HealthCheckError,
+  HealthCheckService,
   HealthIndicator,
   HealthIndicatorResult,
-  HealthCheckError,
-  DNSHealthIndicator,
-  HealthCheckService,
 } from '@nestjs/terminus'
 import dns from 'dns'
 

@@ -1,8 +1,8 @@
-import { Query, Parent, Resolver, ResolveField } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
+import { Parent, Query, ResolveField,Resolver } from '@nestjs/graphql'
 
 import type { User } from '@island.is/auth-nest-tools'
-import { IdsUserGuard, CurrentUser } from '@island.is/auth-nest-tools'
+import { CurrentUser,IdsUserGuard } from '@island.is/auth-nest-tools'
 import type { ApiScope as IApiScope } from '@island.is/clients/auth-public-api'
 
 import { ApiScopeService } from '../apiScope.service'

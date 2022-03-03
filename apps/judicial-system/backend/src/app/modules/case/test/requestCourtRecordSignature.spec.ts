@@ -1,11 +1,11 @@
-import { uuid } from 'uuidv4'
-import { Response } from 'express'
-
 import { ForbiddenException } from '@nestjs/common'
+import { Response } from 'express'
+import { uuid } from 'uuidv4'
 
 import { User } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
+
 import { createTestingCaseModule } from './createTestingCaseModule'
 
 interface MockResponse extends Response {

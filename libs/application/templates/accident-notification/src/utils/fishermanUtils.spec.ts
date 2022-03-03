@@ -1,9 +1,11 @@
 import { FormValue } from '@island.is/application/core'
+
 import {
   AccidentTypeEnum,
   FishermanWorkplaceAccidentLocationEnum,
   WorkAccidentTypeEnum,
 } from '../types'
+
 import { isAboardShip, isFishermanAccident } from './fishermanUtils'
 describe('isFishermanAccident', () => {
   const fishermanAccident: FormValue = {

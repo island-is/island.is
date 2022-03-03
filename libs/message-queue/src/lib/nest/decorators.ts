@@ -1,4 +1,5 @@
 import { Inject } from '@nestjs/common'
+
 import { getQueueServiceToken, getWorkerServiceToken } from './utils'
 
 export const InjectQueue = (name: string): ParameterDecorator =>

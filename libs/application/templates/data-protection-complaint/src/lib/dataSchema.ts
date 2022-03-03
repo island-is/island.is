@@ -1,7 +1,10 @@
-import { DefaultEvents } from '@island.is/application/core'
 import * as kennitala from 'kennitala'
 import * as z from 'zod'
+
+import { DefaultEvents } from '@island.is/application/core'
+
 import { NO, YES } from '../shared'
+
 import { error } from './messages/error'
 
 export enum OnBehalf {

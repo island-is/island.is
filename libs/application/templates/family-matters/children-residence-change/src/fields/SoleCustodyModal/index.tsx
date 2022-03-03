@@ -1,9 +1,11 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
+
 import {
   DescriptionText,
   ErrorModal,
 } from '@island.is/application/templates/family-matters-core/components'
+
 import { soleCustody } from '../../lib/messages'
 
 const SoleCustodyModal = () => {

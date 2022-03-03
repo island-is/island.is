@@ -1,18 +1,21 @@
 import React, { FC } from 'react'
-import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useForm } from 'react-hook-form'
-import { useLocale } from '@island.is/localization'
-import { m } from '../../lib/messages'
-import { DocumentProviderInput } from './DocumentProviderInput'
+
 import { Contact } from '@island.is/api/schema'
+import { Box, Button, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+
+import { m } from '../../lib/messages'
+import {
+  CreateContactInput,
+  useCreateTechnicalContact,
+} from '../../shared/useCreateTechnicalContact'
 import {
   ContactInput,
   useUpdateTechnicalContact,
 } from '../../shared/useUpdateTechnicalContact'
-import {
-  useCreateTechnicalContact,
-  CreateContactInput,
-} from '../../shared/useCreateTechnicalContact'
+
+import { DocumentProviderInput } from './DocumentProviderInput'
 
 interface Props {
   technicalContact?: Contact | null

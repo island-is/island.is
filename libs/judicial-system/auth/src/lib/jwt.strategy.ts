@@ -1,8 +1,7 @@
-import { Strategy } from 'passport-jwt'
-import { Request } from 'express'
-
-import { Injectable, Inject } from '@nestjs/common'
+import { Inject,Injectable } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
+import { Request } from 'express'
+import { Strategy } from 'passport-jwt'
 
 import type { User } from '@island.is/judicial-system/types'
 

@@ -1,6 +1,8 @@
 import { MessageDescriptor } from 'react-intl'
+
 import { m, requirementsMessages } from '../../lib/messages'
 import { ApplicationEligibility, RequirementKey } from '../../types/schema'
+
 import { ReviewSectionState, Step } from './ReviewSection'
 
 export const extractReasons = (eligibility: ApplicationEligibility): Step[] => {

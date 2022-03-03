@@ -1,21 +1,24 @@
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { EmailVerification } from './emailVerification.model'
-import { randomInt, randomBytes } from 'crypto'
+import { randomBytes,randomInt } from 'crypto'
 import addMilliseconds from 'date-fns/addMilliseconds'
-import { ConfirmEmailDto } from './dto/confirmEmailDto'
+
+import { EmailService } from '@island.is/email-service'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { SmsService } from '@island.is/nova-sms'
+
+import environment from '../../environments/environment'
+import { CreateUserProfileDto } from '../user-profile/dto/createUserProfileDto'
 import { UserProfile } from '../user-profile/userProfile.model'
 import { UserProfileService } from '../user-profile/userProfile.service'
-import { SmsVerification } from './smsVerification.model'
-import { CreateUserProfileDto } from '../user-profile/dto/createUserProfileDto'
-import { SmsService } from '@island.is/nova-sms'
-import { EmailService } from '@island.is/email-service'
-import environment from '../../environments/environment'
-import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
-import { ConfirmSmsDto } from './dto/confirmSmsDto'
+
 import { ConfirmationDtoResponse } from './dto/confirmationResponseDto'
+import { ConfirmEmailDto } from './dto/confirmEmailDto'
+import { ConfirmSmsDto } from './dto/confirmSmsDto'
+import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
+import { EmailVerification } from './emailVerification.model'
+import { SmsVerification } from './smsVerification.model'
 
 export const SMS_VERIFICATION_MAX_AGE = 5 * 60 * 1000
 export const SMS_VERIFICATION_MAX_TRIES = 5

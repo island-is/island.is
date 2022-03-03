@@ -1,9 +1,11 @@
 import { DynamicModule, Module } from '@nestjs/common'
+
 import {
+  REGULATIONS_OPTIONS,
   RegulationsService,
   RegulationsServiceOptions,
-  REGULATIONS_OPTIONS,
 } from '@island.is/clients/regulations'
+
 import { RegulationsResolver } from './api-domains-regulations.resolver'
 
 @Module({})

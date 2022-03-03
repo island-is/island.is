@@ -1,7 +1,10 @@
 import { DynamicModule } from '@nestjs/common'
-import { Configuration, DocumentApi } from '../../gen/fetch'
-import { HealthInsuranceV2Options } from './clients-health-insurance-v2.config'
+
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
+
+import { Configuration, DocumentApi } from '../../gen/fetch'
+
+import { HealthInsuranceV2Options } from './clients-health-insurance-v2.config'
 
 export class HealthInsuranceV2Client {
   static register(options: HealthInsuranceV2Options): DynamicModule {

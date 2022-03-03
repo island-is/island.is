@@ -1,13 +1,15 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { Op } from 'sequelize'
+
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { PersonalRepresentativeAccess } from '../entities/models/personal-representative-access.model'
-import { PersonalRepresentativeAccessDTO } from '../entities/dto/personal-representative-access.dto'
+import { paginate } from '@island.is/nest/pagination'
+
 import { PaginatedPersonalRepresentativeAccessDto } from '../entities/dto/paginated-personal-representative-access.dto'
 import { PaginationWithNationalIdsDto } from '../entities/dto/pagination-with-national-ids.dto'
-import { paginate } from '@island.is/nest/pagination'
-import { Op } from 'sequelize'
+import { PersonalRepresentativeAccessDTO } from '../entities/dto/personal-representative-access.dto'
+import { PersonalRepresentativeAccess } from '../entities/models/personal-representative-access.model'
 
 @Injectable()
 export class PersonalRepresentativeAccessService {

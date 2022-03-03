@@ -1,6 +1,7 @@
-import { styleVariants, style } from '@vanilla-extract/css'
+import { style,styleVariants } from '@vanilla-extract/css'
 import mapValues from 'lodash/mapValues'
-import { themeUtils, Theme, theme } from '@island.is/island-ui/theme'
+
+import { Theme, theme,themeUtils } from '@island.is/island-ui/theme'
 
 const ColumnRange = [
   '12/12',

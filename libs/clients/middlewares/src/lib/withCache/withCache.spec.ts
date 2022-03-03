@@ -5,6 +5,7 @@ import {
   buildCacheControl,
   CacheControlOptions,
 } from '@island.is/clients/middlewares'
+
 import {
   EnhancedFetchTestEnv,
   fakeResponse,

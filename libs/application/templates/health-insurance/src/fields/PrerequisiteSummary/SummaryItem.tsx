@@ -1,9 +1,10 @@
 import React, { FC } from 'react'
+import HtmlParser from 'react-html-parser'
+
+import { Application } from '@island.is/application/core'
 import { Box, Button, Icon, Tag, Text } from '@island.is/island-ui/core'
 
 import * as styles from './SummaryItem.css'
-import { Application } from '@island.is/application/core'
-import HtmlParser from 'react-html-parser'
 
 export enum SummaryItemState {
   requiresAction = 'Requires action',

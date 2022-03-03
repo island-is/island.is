@@ -1,9 +1,11 @@
 import { ArgumentsHost, ExceptionFilter, Inject } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 import { Response } from 'express'
-import { Problem } from '@island.is/shared/problem'
+
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Problem } from '@island.is/shared/problem'
+
 import type { ProblemOptions } from './problem.options'
 import { PROBLEM_OPTIONS } from './problem.options'
 import { ProblemError } from './ProblemError'

@@ -1,5 +1,6 @@
 import * as kennitala from 'kennitala'
 import * as z from 'zod'
+
 import { NO, YES } from '../constants'
 import {
   AccidentTypeEnum,
@@ -11,13 +12,14 @@ import {
   PowerOfAttorneyUploadEnum,
   ProfessionalAthleteAccidentLocationEnum,
   RescueWorkAccidentLocationEnum,
+  ReviewApprovalEnum,
   StudiesAccidentLocationEnum,
   StudiesAccidentTypeEnum,
   WhoIsTheNotificationForEnum,
   WorkAccidentTypeEnum,
-  ReviewApprovalEnum,
 } from '../types'
 import { isValid24HFormatTime } from '../utils'
+
 import { error } from './messages/error'
 
 export enum OnBehalf {

@@ -1,9 +1,12 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ID,ObjectType } from '@nestjs/graphql'
+
+import { SystemMetadata } from '@island.is/shared/types'
+
 import { IVidspyrnaPage } from '../generated/contentfulTypes'
+import { mapDocument, SliceUnion } from '../unions/slice.union'
+
 import { AdgerdirTag, mapAdgerdirTag } from './adgerdirTag.model'
 import { mapProcessEntry, ProcessEntry } from './processEntry.model'
-import { mapDocument, SliceUnion } from '../unions/slice.union'
-import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
 export class AdgerdirPage {

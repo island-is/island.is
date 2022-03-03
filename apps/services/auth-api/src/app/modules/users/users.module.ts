@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { UserIdentitiesController } from './user-identities.controller'
+
 import {
-  UserIdentity,
   Claim,
   UserIdentitiesService,
+  UserIdentity,
 } from '@island.is/auth-api-lib'
+
+import { UserIdentitiesController } from './user-identities.controller'
 
 @Module({
   imports: [SequelizeModule.forFeature([Claim, UserIdentity])],

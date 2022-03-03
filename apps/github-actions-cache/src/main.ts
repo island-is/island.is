@@ -1,4 +1,8 @@
 import * as express from 'express'
+
+import { monkeyPatchServerLogging } from '@island.is/logging'
+
+import { authMiddleware } from './app/auth'
 import {
   commitCache,
   reserveCache,
@@ -6,8 +10,6 @@ import {
   uploadChunk,
 } from './app/handlers'
 import { healthCheck, livenessCheck } from './app/health'
-import { authMiddleware } from './app/auth'
-import { monkeyPatchServerLogging } from '@island.is/logging'
 
 monkeyPatchServerLogging()
 

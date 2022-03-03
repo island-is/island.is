@@ -1,10 +1,11 @@
 import { Dispatch, useEffect, useState } from 'react'
+import { useHistory } from 'react-router-dom'
+
 import {
   Action,
   ActionTypes,
   ApplicationUIState,
 } from '../reducer/ReducerTypes'
-import { useHistory } from 'react-router-dom'
 
 interface HistoryState {
   state: string

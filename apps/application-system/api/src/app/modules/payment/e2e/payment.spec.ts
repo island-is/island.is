@@ -1,12 +1,13 @@
-import { faker } from '@island.is/shared/mocking'
-import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
-import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
+import request from 'supertest'
+
 import { ApplicationScope } from '@island.is/auth/scopes'
+import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
+import { PaymentAPI } from '@island.is/clients/payment'
+import { faker } from '@island.is/shared/mocking'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 
 import { setup } from '../../../../../test/setup'
-import { PaymentAPI } from '@island.is/clients/payment'
 import { CreateChargeInput } from '../dto/createChargeInput.dto'
 import { PaymentService } from '../payment.service'
 

@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common'
 
-import { ElasticService } from '@island.is/content-search-toolkit'
-import { logger } from '@island.is/logging'
 import { CmsSyncService } from '@island.is/cms'
+import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
 import {
   ContentSearchImporter,
   SyncOptions,
 } from '@island.is/content-search-indexer/types'
-import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
+import { ElasticService } from '@island.is/content-search-toolkit'
+import { logger } from '@island.is/logging'
 
 @Injectable()
 export class IndexingService {

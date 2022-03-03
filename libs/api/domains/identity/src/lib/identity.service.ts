@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import * as kennitala from 'kennitala'
 
-import { User } from '@island.is/auth-nest-tools'
 import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
+import { User } from '@island.is/auth-nest-tools'
 
 import { IdentityType } from './identity.type'
 import { Identity } from './models'

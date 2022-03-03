@@ -1,22 +1,25 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useEffect,useState } from 'react'
+
+import { GridColumn, GridContainer,GridRow } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
-import { GridRow, GridColumn, GridContainer } from '@island.is/island-ui/core'
-import { parseNumber } from '../../../utils/phoneHelper'
 import {
-  useUserProfile,
   useUpdateOrCreateUserProfile,
+  useUserProfile,
 } from '@island.is/service-portal/graphql'
-import { OnboardingIntro } from './components/Intro'
-import { InputSection } from './components/InputSection'
-import { InputEmail } from './components/Inputs/Email'
-import { InputPhone } from './components/Inputs/Phone'
+
+import { msg } from '../../../lib/messages'
+import { bankInfoObject } from '../../../utils/bankInfoHelper'
+import { parseNumber } from '../../../utils/phoneHelper'
+
 import { DropModal } from './components/DropModal'
 import { BankInfoForm } from './components/Inputs/BankInfoForm'
+import { InputEmail } from './components/Inputs/Email'
 import { Nudge } from './components/Inputs/Nudge'
-import { msg } from '../../../lib/messages'
+import { InputPhone } from './components/Inputs/Phone'
+import { InputSection } from './components/InputSection'
+import { OnboardingIntro } from './components/Intro'
 import { DropModalType } from './types/form'
-import { bankInfoObject } from '../../../utils/bankInfoHelper'
 
 interface Props {
   onCloseOverlay?: () => void

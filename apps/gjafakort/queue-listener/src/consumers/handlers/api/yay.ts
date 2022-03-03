@@ -3,6 +3,7 @@ import md5 from 'crypto-js/md5'
 import { CompanyApplication, UserApplication } from '@island.is/gjafakort/types'
 
 import { environment } from '../../../environments'
+
 import { request } from './api'
 
 const {

@@ -1,5 +1,6 @@
-import { rest } from 'msw'
 import { GraphQLSchema } from 'graphql'
+import { rest } from 'msw'
+
 import { Resolvers } from './createResolvers'
 import { handle } from './handle'
 

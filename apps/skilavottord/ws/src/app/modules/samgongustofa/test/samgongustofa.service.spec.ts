@@ -1,16 +1,16 @@
+import { HttpModule, HttpService } from '@nestjs/common'
+import { Test } from '@nestjs/testing'
 import { AxiosResponse } from 'axios'
 import { of } from 'rxjs'
-import { Test } from '@nestjs/testing'
-import { HttpModule, HttpService } from '@nestjs/common'
 
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
-  RecyclingRequestService,
   RecyclingRequestModel,
+  RecyclingRequestService,
 } from '../../recyclingRequest'
-
 import { SamgongustofaService } from '../samgongustofa.service'
+
 import { MockData } from './mock-data'
 
 const recyclingRequestModel = ({

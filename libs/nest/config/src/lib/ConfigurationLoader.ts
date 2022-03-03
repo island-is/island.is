@@ -1,14 +1,15 @@
 import { ZodError } from 'zod'
+
 import { ServerSideFeatureClient } from '@island.is/feature-flags'
 import { logger } from '@island.is/logging'
 
-import { ConfigDefinition, Configuration, EnvLoader } from './types'
-import { InvalidConfiguration } from './InvalidConfiguration'
 import {
   ConfigurationError,
   ConfigurationValidationError,
 } from './ConfigurationError'
+import { InvalidConfiguration } from './InvalidConfiguration'
 import { Issues, IssueType } from './Issues'
+import { ConfigDefinition, Configuration, EnvLoader } from './types'
 
 export class ConfigurationLoader<T> implements EnvLoader {
   private allowDevFallback = process.env.NODE_ENV !== 'production'

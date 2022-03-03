@@ -1,4 +1,3 @@
-import { ApiScope } from '@island.is/auth/scopes'
 import {
   Body,
   Controller,
@@ -15,28 +14,30 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger'
+
+import { ApiScope } from '@island.is/auth/scopes'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
   IdsUserGuard,
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import type { User } from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 
-import { Organisation } from '../models/organisation.model'
+import { environment } from '../../../../environments'
 import { DocumentProviderService } from '../document-provider.service'
+import { CreateContactDto } from '../dto/createContact.dto'
+import { CreateHelpdeskDto } from '../dto/createHelpdesk.dto'
 import { CreateOrganisationDto } from '../dto/createOrganisation.dto'
+import { UpdateContactDto } from '../dto/updateContact.dto'
+import { UpdateHelpdeskDto } from '../dto/updateHelpdesk.dto'
 import { UpdateOrganisationDto } from '../dto/updateOrganisation.dto'
 import { AdministrativeContact } from '../models/administrativeContact.model'
-import { CreateContactDto } from '../dto/createContact.dto'
-import { UpdateContactDto } from '../dto/updateContact.dto'
-import { TechnicalContact } from '../models/technicalContact.model'
 import { Helpdesk } from '../models/helpdesk.model'
-import { CreateHelpdeskDto } from '../dto/createHelpdesk.dto'
-import { UpdateHelpdeskDto } from '../dto/updateHelpdesk.dto'
+import { Organisation } from '../models/organisation.model'
 import { Provider } from '../models/provider.model'
-import { environment } from '../../../../environments'
+import { TechnicalContact } from '../models/technicalContact.model'
 
 const namespace = `${environment.audit.defaultNamespace}/organisations`
 

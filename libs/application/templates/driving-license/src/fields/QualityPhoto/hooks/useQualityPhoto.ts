@@ -1,6 +1,8 @@
+import { ApolloError,useQuery } from '@apollo/client'
+
 import { Application, getValueViaPath } from '@island.is/application/core'
+
 import { QUALITY_PHOTO } from './queries.graphql'
-import { useQuery, ApolloError } from '@apollo/client'
 
 export interface QualityPhotoType {
   qualityPhoto: string | null

@@ -1,3 +1,6 @@
+import faker from 'faker'
+import request from 'supertest'
+
 import {
   ApiScope,
   DelegationDTO,
@@ -16,8 +19,7 @@ import {
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
-import faker from 'faker'
-import request from 'supertest'
+
 import { setupWithAuth } from '../../../../test/setup'
 import {
   getFakeName,

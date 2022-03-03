@@ -1,5 +1,7 @@
 import React, { FC } from 'react'
-import { Text, Box } from '@island.is/island-ui/core'
+
+import { Box,Text } from '@island.is/island-ui/core'
+
 import { simpleSpacing } from '../ContentContainer/ContentContainer'
 
 export const Paragraph: FC = ({ children }) => {

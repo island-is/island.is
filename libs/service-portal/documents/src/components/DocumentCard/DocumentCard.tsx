@@ -1,13 +1,15 @@
 import React, { FC, useState } from 'react'
-import { ActionCard, Modal } from '@island.is/service-portal/core'
-import { Document, DocumentDetails } from '@island.is/api/schema'
-import { GET_DOCUMENT, client } from '@island.is/service-portal/graphql'
-import { useLocale } from '@island.is/localization'
-import * as styles from './DocumentCard.css'
-import { toast, Text, Stack, Button, Box } from '@island.is/island-ui/core'
 import { useLocation } from 'react-router-dom'
-import { documentsOpenDocument } from '@island.is/plausible'
 import * as Sentry from '@sentry/react'
+
+import { Document, DocumentDetails } from '@island.is/api/schema'
+import { Box,Button, Stack, Text, toast } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { documentsOpenDocument } from '@island.is/plausible'
+import { ActionCard, Modal } from '@island.is/service-portal/core'
+import { client,GET_DOCUMENT } from '@island.is/service-portal/graphql'
+
+import * as styles from './DocumentCard.css'
 
 const base64ToArrayBuffer = (base64Pdf: string) => {
   const binaryString = window.atob(base64Pdf)

@@ -1,6 +1,8 @@
 import {
   BadRequestException,
+  Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Param,
@@ -8,8 +10,6 @@ import {
   Put,
   Query,
   UseGuards,
-  Delete,
-  Body,
 } from '@nestjs/common'
 import {
   ApiOkResponse,
@@ -17,21 +17,23 @@ import {
   ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger'
+
+import { AuthAdminScope } from '@island.is/auth/scopes'
 import {
   GrantType,
-  GrantTypeService,
   GrantTypeDTO,
+  GrantTypeService,
   PagedRowsDto,
 } from '@island.is/auth-api-lib'
 import type { User } from '@island.is/auth-nest-tools'
 import {
-  IdsUserGuard,
-  ScopesGuard,
-  Scopes,
   CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { AuthAdminScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
+
 import { environment } from '../../../environments/'
 
 const namespace = `${environment.audit.defaultNamespace}/grant-type`

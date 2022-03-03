@@ -1,4 +1,5 @@
 import type { ApolloError } from '@apollo/client'
+
 import { Problem } from '../Problem'
 
 export const findProblemInApolloError = (

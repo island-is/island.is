@@ -1,9 +1,10 @@
-import { writeFileSync } from 'fs'
-import { NestFactory } from '@nestjs/core'
-import { logger, LoggingModule } from '@island.is/logging'
-import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger'
 import { Type } from '@nestjs/common'
+import { NestFactory } from '@nestjs/core'
+import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger'
+import { writeFileSync } from 'fs'
 import yaml from 'js-yaml'
+
+import { logger, LoggingModule } from '@island.is/logging'
 
 import { InfraModule } from './infra/infra.module'
 

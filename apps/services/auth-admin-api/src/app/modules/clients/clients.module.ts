@@ -1,32 +1,34 @@
 import { Module } from '@nestjs/common'
-import { ClientsController } from './clients.controller'
+import { SequelizeModule } from '@nestjs/sequelize'
+
 import {
+  AccessService,
+  ApiScope,
+  ApiScopeUser,
+  ApiScopeUserAccess,
   Client,
-  ClientAllowedScope,
   ClientAllowedCorsOrigin,
+  ClientAllowedScope,
+  ClientClaim,
+  ClientGrantType,
+  ClientIdpRestrictions,
   ClientPostLogoutRedirectUri,
   ClientRedirectUri,
-  ClientIdpRestrictions,
   ClientSecret,
-  ClientGrantType,
   ClientsService,
-  ClientClaim,
-  ApiScope,
   IdentityResource,
-  AccessService,
   IdpProvider,
-  ApiScopeUserAccess,
-  ApiScopeUser,
 } from '@island.is/auth-api-lib'
-import { SequelizeModule } from '@nestjs/sequelize'
-import { IdpRestrictionController } from './idp-restriction.controller'
-import { CorsController } from './cors.controller'
-import { RedirectUriController } from './redirect-uri.controller'
-import { ClientGrantTypeController } from './client-grant-type.controller'
+
 import { ClientAllowedScopeController } from './client-allowed-scope.controller'
 import { ClientClaimController } from './client-claim.controller'
+import { ClientGrantTypeController } from './client-grant-type.controller'
 import { ClientPostLogoutRedirectUriController } from './client-post-logout-redirect-uri.controller'
 import { ClientSecretController } from './client-secret.controller'
+import { ClientsController } from './clients.controller'
+import { CorsController } from './cors.controller'
+import { IdpRestrictionController } from './idp-restriction.controller'
+import { RedirectUriController } from './redirect-uri.controller'
 
 @Module({
   imports: [

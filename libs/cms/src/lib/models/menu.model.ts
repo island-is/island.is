@@ -1,5 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+
 import { IMenu } from '../generated/contentfulTypes'
+
 import { Link, mapLink } from './link.model'
 import {
   mapMenuLinkWithChildren,

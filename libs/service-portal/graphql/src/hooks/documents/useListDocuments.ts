@@ -1,7 +1,9 @@
 import { useQuery } from '@apollo/client'
-import { Document, Query } from '@island.is/api/schema'
-import { LIST_DOCUMENTS } from '../../lib/queries/listDocuments'
 import uniqBy from 'lodash/uniqBy'
+
+import { Document, Query } from '@island.is/api/schema'
+
+import { LIST_DOCUMENTS } from '../../lib/queries/listDocuments'
 interface UseListDocumentsProps {
   data: {
     documents: Document[]

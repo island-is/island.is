@@ -1,5 +1,6 @@
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
+
 import { ScheduleType } from '@island.is/clients/payment-schedule'
-import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 
 import { PaymentScheduleCharge } from './chargeType.model'
 

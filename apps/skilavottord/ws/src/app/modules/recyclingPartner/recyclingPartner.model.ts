@@ -1,13 +1,13 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import {
   Column,
-  DataType,
-  Model,
-  Table,
   CreatedAt,
-  UpdatedAt,
+  DataType,
   HasMany,
+  Model,
   PrimaryKey,
+  Table,
+  UpdatedAt,
 } from 'sequelize-typescript'
 
 import { RecyclingRequestModel } from '../recyclingRequest'

@@ -1,18 +1,21 @@
+import { Entropy } from 'entropy-string'
 import { Router } from 'express'
 import { body, query, validationResult } from 'express-validator'
 import jwt from 'jsonwebtoken'
-import { Entropy } from 'entropy-string'
-import IslandisLogin, { VerifyResult } from '@island.is/login'
-import { uuid } from 'uuidv4'
 import kennitala from 'kennitala'
+import { uuid } from 'uuidv4'
 
-import { logger } from '@island.is/logging'
 import {
   SSN_IS_NOT_A_PERSON,
   USER_NOT_OLD_ENOUGH,
 } from '@island.is/gjafakort/consts'
+import { logger } from '@island.is/logging'
+import IslandisLogin, { VerifyResult } from '@island.is/login'
 
+import { environment } from '../../environments'
+import { getVersionConfiguration } from '../../services'
 import { Credentials } from '../../types'
+
 import {
   ACCESS_TOKEN_COOKIE,
   CSRF_COOKIE,
@@ -20,8 +23,6 @@ import {
   ONE_HOUR,
   REDIRECT_COOKIE,
 } from './consts'
-import { environment } from '../../environments'
-import { getVersionConfiguration } from '../../services'
 
 const router = Router()
 

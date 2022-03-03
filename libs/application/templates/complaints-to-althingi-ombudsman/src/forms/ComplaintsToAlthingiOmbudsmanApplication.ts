@@ -15,27 +15,28 @@ import {
   FormModes,
   FormValue,
 } from '@island.is/application/core'
+
 import Logo from '../assets/Logo'
 import {
+  attachments,
   complainedFor,
   complainee,
   complaintDescription,
   complaintInformation,
+  confirmation,
+  courtAction,
   dataProvider,
   information,
-  section,
-  attachments,
-  courtAction,
-  shared,
   preexistingComplaint,
-  confirmation,
+  section,
+  shared,
 } from '../lib/messages'
 import {
   ComplainedForTypes,
   ComplaineeTypes,
-  YES,
   NO,
   OmbudsmanComplaintTypeEnum,
+  YES,
 } from '../shared/constants'
 import {
   getComplaintType,

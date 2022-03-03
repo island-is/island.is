@@ -1,6 +1,8 @@
 import { Catch, HttpException } from '@nestjs/common'
-import { BaseProblemFilter } from './base-problem.filter'
+
 import { HttpProblem } from '@island.is/shared/problem'
+
+import { BaseProblemFilter } from './base-problem.filter'
 
 type ErrorResponse = string | { message: string; error?: string }
 

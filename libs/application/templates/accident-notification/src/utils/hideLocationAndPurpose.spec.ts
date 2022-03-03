@@ -1,8 +1,10 @@
 import { FormValue } from '@island.is/application/core'
+
 import {
   GeneralWorkplaceAccidentLocationEnum,
   StudiesAccidentLocationEnum,
 } from '../types'
+
 import { hideLocationAndPurpose } from './hideLocationAndPurpose'
 describe('hideLocationAndPurpose', () => {
   const accidentLocationAtWorkplace: FormValue = {

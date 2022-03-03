@@ -1,8 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
-import { FasteignirApi } from '@island.is/clients/assets'
-import { AuthMiddleware } from '@island.is/auth-nest-tools'
+
 import type { Auth, User } from '@island.is/auth-nest-tools'
+import { AuthMiddleware } from '@island.is/auth-nest-tools'
+import { FasteignirApi } from '@island.is/clients/assets'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 

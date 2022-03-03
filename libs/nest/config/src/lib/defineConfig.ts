@@ -1,6 +1,7 @@
 import { registerAs } from '@nestjs/config'
-import { ConfigDefinition, ConfigFactory } from './types'
+
 import { ConfigurationLoader } from './ConfigurationLoader'
+import { ConfigDefinition, ConfigFactory } from './types'
 
 export const defineConfig = <T extends Record<string, any>>(
   definition: ConfigDefinition<T>,

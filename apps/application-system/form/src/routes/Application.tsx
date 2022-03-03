@@ -1,10 +1,10 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
 
-import { ApplicationForm, ErrorShell } from '@island.is/application/ui-shell'
-import { useLocale } from '@island.is/localization'
 import { coreMessages } from '@island.is/application/core'
+import { ApplicationForm, ErrorShell } from '@island.is/application/ui-shell'
 import { useAuth } from '@island.is/auth/react'
+import { useLocale } from '@island.is/localization'
 
 export const Application = () => {
   const { slug, id } = useParams<{ slug: string; id: string }>()

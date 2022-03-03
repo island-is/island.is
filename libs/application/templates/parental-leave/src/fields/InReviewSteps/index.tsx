@@ -1,24 +1,25 @@
 import React, { FC, useState } from 'react'
-import format from 'date-fns/format'
 import { useMutation } from '@apollo/client'
+import format from 'date-fns/format'
 
-import { useLocale } from '@island.is/localization'
-import { dateFormat } from '@island.is/shared/constants'
 import { FieldBaseProps } from '@island.is/application/core'
-import { Box, Button, Text } from '@island.is/island-ui/core'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { handleServerError } from '@island.is/application/ui-components'
+import { Box, Button, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { dateFormat } from '@island.is/shared/constants'
 
-import ReviewSection, { ReviewSectionState } from './ReviewSection'
-import { Review } from '../Review/Review'
+import { NO, States as ApplicationStates } from '../../constants'
+import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
   getExpectedDateOfBirth,
   otherParentApprovalDescription,
   requiresOtherParentApproval,
 } from '../../lib/parentalLeaveUtils'
-import { NO, States as ApplicationStates } from '../../constants'
-import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
+import { Review } from '../Review/Review'
+
+import ReviewSection, { ReviewSectionState } from './ReviewSection'
 
 type StateMapEntry = { [key: string]: ReviewSectionState }
 

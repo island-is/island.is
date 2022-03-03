@@ -6,6 +6,7 @@ import {
   buildSection,
   buildSubSection,
 } from '@island.is/application/core'
+
 import { externalData } from '../../lib/messages'
 import { DataProviderTypes } from '../../types'
 

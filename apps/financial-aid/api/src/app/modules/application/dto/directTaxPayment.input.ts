@@ -1,6 +1,5 @@
-import { Allow } from 'class-validator'
-
 import { Field, InputType } from '@nestjs/graphql'
+import { Allow } from 'class-validator'
 
 import { DirectTaxPayment } from '@island.is/financial-aid/shared/lib'
 

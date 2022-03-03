@@ -1,11 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
-  IsString,
   IsDate,
+  IsDateString,
   IsEnum,
   IsOptional,
-  IsDateString,
+  IsString,
 } from 'class-validator'
 
 export enum ScopeType {

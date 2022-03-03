@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express'
+import { NextFunction,Request, Response } from 'express'
 
 /**
  * SwaggerModule in NestJS uses swagger-ui-express which utilises the express.static

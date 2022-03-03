@@ -1,3 +1,6 @@
+import React, { useRef,useState } from 'react'
+import { useKey } from 'react-use'
+
 import {
   Box,
   Button,
@@ -7,11 +10,11 @@ import {
   TagVariant,
   Text,
 } from '@island.is/island-ui/core'
-import React, { useState, useRef } from 'react'
-import { useKey } from 'react-use'
 import type { Case } from '@island.is/judicial-system/types'
 import { parseArray } from '@island.is/judicial-system-web/src/utils/formatters'
+
 import BlueBox from '../BlueBox/BlueBox'
+
 import * as styles from './CourtDocuments.css'
 interface CourtDocumentsProps {
   title: string

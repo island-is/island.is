@@ -1,5 +1,5 @@
-import { IsString, IsBoolean, IsNotEmpty, IsOptional } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
+import { IsBoolean, IsNotEmpty, IsOptional,IsString } from 'class-validator'
 
 export class ApiScopesDTO {
   @IsBoolean()

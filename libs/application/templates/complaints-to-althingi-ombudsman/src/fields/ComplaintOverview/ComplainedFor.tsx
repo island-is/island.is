@@ -1,6 +1,8 @@
+import React, { FC } from 'react'
+
 import { ReviewGroup } from '@island.is/application/ui-components'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
-import React, { FC } from 'react'
+
 import { ComplaintsToAlthingiOmbudsman } from '../../lib/dataSchema'
 import {
   complainedFor as complainedForMessages,
@@ -8,6 +10,7 @@ import {
 } from '../../lib/messages'
 import { ComplainedForTypes } from '../../shared'
 import { mapComplainedForToMessage } from '../../utils'
+
 import { ValueLine } from './ValueLine'
 
 type Props = {

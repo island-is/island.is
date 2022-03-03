@@ -1,17 +1,20 @@
 import React, { FC } from 'react'
-import { m } from '../../forms/messages'
+
 import { FieldBaseProps, getSlugFromType } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
-import SummaryItem from './SummaryItem'
-import {
-  hasHealthInsurance,
-  hasActiveDraftApplication,
-  hasPendingApplications,
-  hasNoIcelandicAddress,
-  getOldestDraftApplicationId,
-} from '../../healthInsuranceUtils'
 import { useLocale } from '@island.is/localization'
+
 import { Applications } from '../../dataProviders/APIDataTypes'
+import { m } from '../../forms/messages'
+import {
+  getOldestDraftApplicationId,
+  hasActiveDraftApplication,
+  hasHealthInsurance,
+  hasNoIcelandicAddress,
+  hasPendingApplications,
+} from '../../healthInsuranceUtils'
+
+import SummaryItem from './SummaryItem'
 
 const PrerequisiteSummary: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()

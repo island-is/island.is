@@ -1,6 +1,8 @@
 import * as React from 'react'
 import cn from 'classnames'
+
 import { Box } from '../Box/Box'
+
 import * as styles from './ProgressMeter.css'
 
 export type ProgressMeterVariant = 'blue' | 'red' | 'rose' | 'mint'

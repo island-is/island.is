@@ -1,20 +1,21 @@
 import React from 'react'
 
-import { RadioController } from '@island.is/shared/form-fields'
-import { useLocale } from '@island.is/localization'
-import {
-  Box,
-  Stack,
-  Text,
-  GridRow,
-  GridColumn,
-} from '@island.is/island-ui/core'
 import {
   CustomField,
   FieldBaseProps,
-  getValueViaPath,
   formatText,
+  getValueViaPath,
 } from '@island.is/application/core'
+import {
+  Box,
+  GridColumn,
+  GridRow,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { RadioController } from '@island.is/shared/form-fields'
+
 import { m } from '../lib/messages'
 
 interface PropTypes extends FieldBaseProps {

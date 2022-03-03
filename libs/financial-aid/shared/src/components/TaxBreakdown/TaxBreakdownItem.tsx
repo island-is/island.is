@@ -1,7 +1,10 @@
 import React from 'react'
-import { Text, Box } from '@island.is/island-ui/core'
-import * as styles from './TaxBreakdown.css'
+
+import { Box,Text } from '@island.is/island-ui/core'
+
 import { taxBreakDownHeaders } from './TaxBreakdown'
+
+import * as styles from './TaxBreakdown.css'
 
 interface Props {
   headline: string

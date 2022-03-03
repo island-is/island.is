@@ -1,6 +1,7 @@
-import * as z from 'zod'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { YES, NO } from './constants'
+import * as z from 'zod'
+
+import { NO,YES } from './constants'
 
 const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 const isValidEmail = (value: string) => emailRegex.test(value)

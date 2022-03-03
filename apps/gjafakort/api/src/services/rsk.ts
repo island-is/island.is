@@ -1,4 +1,4 @@
-import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
+import { RequestOptions,RESTDataSource } from 'apollo-datasource-rest'
 import { Base64 } from 'js-base64'
 
 import { logger } from '@island.is/logging'

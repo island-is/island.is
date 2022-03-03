@@ -1,8 +1,9 @@
-import merge from 'lodash/merge'
 import isArray from 'lodash/isArray'
+import merge from 'lodash/merge'
+
+import { model as AuditLog } from '../audit'
 
 import Application from './model'
-import { model as AuditLog } from '../audit'
 
 export const getApplicationByIssuerAndType = (
   issuerSSN: string,

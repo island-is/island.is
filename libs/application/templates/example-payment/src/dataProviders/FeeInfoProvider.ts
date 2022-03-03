@@ -1,9 +1,10 @@
 import { PaymentCatalogItem } from '@island.is/api/schema'
 import {
-  SuccessfulDataProviderResult,
   FailedDataProviderResult,
+  SuccessfulDataProviderResult,
 } from '@island.is/application/core'
 import { PaymentCatalogProvider } from '@island.is/application/data-providers'
+
 import { m } from '../lib/messages'
 
 export class FeeInfoProvider extends PaymentCatalogProvider {

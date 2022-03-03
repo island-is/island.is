@@ -1,19 +1,19 @@
 import React, { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import { RadioFormField } from '@island.is/application/ui-fields'
 import {
+  CustomField,
   FieldBaseProps,
   FieldComponents,
-  CustomField,
   FieldTypes,
 } from '@island.is/application/core'
+import { RadioFormField } from '@island.is/application/ui-fields'
 import { useLocale } from '@island.is/localization'
 
-import { parentalLeaveFormMessages, errorMessages } from '../../lib/messages'
-import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
 import { maxDaysToGiveOrReceive } from '../../config'
-import { YES, NO, TransferRightsOption } from '../../constants'
+import { NO, TransferRightsOption,YES } from '../../constants'
+import { errorMessages,parentalLeaveFormMessages } from '../../lib/messages'
+import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
 import { YesOrNo } from '../../types'
 
 const getDefaultValue = (

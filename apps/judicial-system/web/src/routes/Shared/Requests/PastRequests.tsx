@@ -2,7 +2,14 @@ import React, { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import parseISO from 'date-fns/parseISO'
 
-import { Box, Text, Tag } from '@island.is/island-ui/core'
+import { Box, Tag,Text } from '@island.is/island-ui/core'
+import {
+  capitalize,
+  caseTypes,
+  formatDate,
+  formatNationalId,
+} from '@island.is/judicial-system/formatters'
+import type { Case } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
   CaseDecision,
@@ -12,18 +19,12 @@ import {
   isInvestigationCase,
   UserRole,
 } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import {
-  capitalize,
-  caseTypes,
-  formatDate,
-  formatNationalId,
-} from '@island.is/judicial-system/formatters'
-import { Table } from '@island.is/judicial-system-web/src/components'
 import { core, requests } from '@island.is/judicial-system-web/messages'
+import { Table } from '@island.is/judicial-system-web/src/components'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 
 import { getAppealDate, mapCaseStateToTagVariant } from './utils'
+
 import * as styles from './Requests.css'
 
 interface Props {

@@ -1,14 +1,15 @@
-import { ObjectType, Field, ID } from '@nestjs/graphql'
+import { Field, ID,ObjectType } from '@nestjs/graphql'
 import {
-  Document,
-  BLOCKS,
-  TopLevelBlock,
   Block,
+  BLOCKS,
+  Document,
   Inline,
   Text,
+  TopLevelBlock,
 } from '@contentful/rich-text-types'
-import graphqlTypeJson from 'graphql-type-json'
 import { RichTextContent } from 'contentful'
+import graphqlTypeJson from 'graphql-type-json'
+
 import { SliceUnion } from '../unions/slice.union'
 
 type RichText = Block | Inline | Text

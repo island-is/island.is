@@ -1,4 +1,8 @@
+import React from 'react'
+import { useHistory } from 'react-router-dom'
 import { useMutation } from '@apollo/client'
+import * as Sentry from '@sentry/react'
+
 import {
   PaymentScheduleConditions,
   PaymentScheduleDebts,
@@ -20,10 +24,9 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import * as Sentry from '@sentry/react'
-import React from 'react'
-import { useHistory } from 'react-router-dom'
+
 import { errorModal } from '../../lib/messages'
+
 import * as styles from './PrerequisitesErrorModal.css'
 
 interface ErrorMessageProps {

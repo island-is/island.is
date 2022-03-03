@@ -1,19 +1,20 @@
-import { ApiScope } from '@island.is/auth/scopes'
 import { UseGuards } from '@nestjs/common'
-import { Resolver, Query } from '@nestjs/graphql'
+import { Query,Resolver } from '@nestjs/graphql'
 
+import { ApiScope } from '@island.is/auth/scopes'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import {
-  IdsUserGuard,
-  ScopesGuard,
   CurrentUser,
+  IdsUserGuard,
   Scopes,
+  ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 
-import { NationalRegistryChild } from './models'
 import { NationalRegistryService } from '../nationalRegistry.service'
 import { FamilyChild } from '../types'
+
+import { NationalRegistryChild } from './models'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)

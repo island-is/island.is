@@ -1,9 +1,10 @@
 import React from 'react'
+
+import { Box, Column, Columns, Text } from '@island.is/island-ui/core'
 import {
-  ServicePortalModuleComponent,
   EventCard,
+  ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
-import { Box, Columns, Column, Text } from '@island.is/island-ui/core'
 
 const AssetsCards: ServicePortalModuleComponent = () => {
   return (

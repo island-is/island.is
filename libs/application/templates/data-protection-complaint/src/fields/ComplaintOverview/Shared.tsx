@@ -1,10 +1,12 @@
 import React, { FC } from 'react'
+import { MessageDescriptor } from '@formatjs/intl'
+
 import { Box, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { complaint, info, sharedFields } from '../../lib/messages'
+
 import { OnBehalf } from '../../lib/dataSchema'
+import { complaint, info, sharedFields } from '../../lib/messages'
 import { NO, SubjectOfComplaint, YES } from '../../shared'
-import { MessageDescriptor } from '@formatjs/intl'
 
 export const onBehalfValueLabelMapper = {
   [OnBehalf.MYSELF]: info.labels.myself,

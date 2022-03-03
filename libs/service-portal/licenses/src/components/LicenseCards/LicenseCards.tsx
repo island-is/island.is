@@ -1,8 +1,10 @@
 import React, { FC } from 'react'
-import { useNamespaces } from '@island.is/localization'
+
 import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
-import { DrivingLicense } from '../DrivingLicense/DrivingLicense'
+import { useNamespaces } from '@island.is/localization'
 import { DrivingLicenseType } from '@island.is/service-portal/core'
+
+import { DrivingLicense } from '../DrivingLicense/DrivingLicense'
 interface Props {
   data: DrivingLicenseType
 }

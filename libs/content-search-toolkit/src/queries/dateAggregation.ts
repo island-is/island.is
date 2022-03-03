@@ -1,4 +1,5 @@
 import { DateAggregationInput, elasticTagField } from '../types'
+
 import { TagQuery, tagQuery } from './tagQuery'
 
 export const dateAggregationQuery = ({

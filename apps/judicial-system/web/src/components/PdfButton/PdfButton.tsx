@@ -1,5 +1,6 @@
-import { Button } from '@island.is/island-ui/core'
 import React from 'react'
+
+import { Button } from '@island.is/island-ui/core'
 import { api } from '@island.is/judicial-system-web/src/services'
 
 interface Props {

@@ -1,11 +1,13 @@
 import { createApplication } from '@island.is/testing/fixtures'
+
 import { NO, YES } from '../constants'
+
 import {
-  isVisible,
-  isApplicationForCondition,
-  needsHealthCertificateCondition,
   allowFakeCondition,
   hasCompletedPrerequisitesStep,
+  isApplicationForCondition,
+  isVisible,
+  needsHealthCertificateCondition,
 } from './formUtils'
 
 describe('isVisible', () => {

@@ -1,8 +1,10 @@
 import { gql } from '@apollo/client'
+
 import {
   GetScheduleDistributionInput,
   PaymentScheduleDistribution,
 } from '@island.is/api/schema'
+
 import { useLazyQuery } from './useLazyQuery'
 
 const query = gql`

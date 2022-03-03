@@ -1,13 +1,14 @@
 import * as React from 'react'
 import { AllHTMLAttributes, forwardRef, ReactNode } from 'react'
+import cn from 'classnames'
 import { Button as ReaButton } from 'reakit/Button'
 import { As } from 'reakit-utils/types'
-import cn from 'classnames'
 
 import { Box } from '../Box/Box'
-import * as styles from './Button.css'
 import { Icon } from '../IconRC/Icon'
 import { Icon as IconType, Type } from '../IconRC/iconMap'
+
+import * as styles from './Button.css'
 
 // TODO: refine types, ex. if circle is true there should be no children. and filter variants with conditional types
 

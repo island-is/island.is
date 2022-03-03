@@ -1,28 +1,30 @@
 import { Inject } from '@nestjs/common'
 import {
-  Controller,
-  Post,
   BadRequestException,
-  Req,
+  Controller,
   HttpCode,
+  Post,
+  Req,
 } from '@nestjs/common'
 import {
-  ApiOkResponse,
   ApiBody,
   ApiExtraModels,
+  ApiOkResponse,
   getSchemaPath,
 } from '@nestjs/swagger'
 import { validate, ValidationError } from 'class-validator'
 import { Request } from 'express'
+
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { InjectQueue, QueueService } from '@island.is/message-queue'
+
 import {
-  NewDocumentMessage,
   Message,
+  NewDocumentMessage,
   TypeValidator,
   ValidatorTypeMap,
 } from './dto/createNotification.dto'
-import { InjectQueue, QueueService } from '@island.is/message-queue'
 import { CreateNotificationResponse } from './dto/createNotification.response'
 
 const throwIfError = (errors: ValidationError[]): void => {

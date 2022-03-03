@@ -1,5 +1,5 @@
-import { Base, Client } from '../../../../infra/src/dsl/xroad'
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { Base, Client } from '../../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (): ServiceBuilder<'xroad-collector'> =>
   service('xroad-collector')

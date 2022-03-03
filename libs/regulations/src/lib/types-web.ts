@@ -1,4 +1,4 @@
-import { Year, ISODate, RegName, Ministry } from './types'
+import { ISODate, Ministry,RegName, Year } from './types'
 
 // Years
 export type RegulationYears = ReadonlyArray<Year>

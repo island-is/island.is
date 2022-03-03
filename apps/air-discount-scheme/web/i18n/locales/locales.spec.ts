@@ -1,6 +1,6 @@
-import { Translation } from './translation'
-import is from './is.json'
 import en from './en.json'
+import is from './is.json'
+import { Translation } from './translation'
 
 const DEFAULT_TRANSLATION = is
 const TRANSLATIONS = [is, en]

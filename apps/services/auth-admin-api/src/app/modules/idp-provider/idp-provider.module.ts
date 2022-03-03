@@ -1,12 +1,14 @@
-import {
-  IdpProvider,
-  IdpProviderService,
-  AccessService,
-  ApiScopeUserAccess,
-  ApiScopeUser,
-} from '@island.is/auth-api-lib'
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
+
+import {
+  AccessService,
+  ApiScopeUser,
+  ApiScopeUserAccess,
+  IdpProvider,
+  IdpProviderService,
+} from '@island.is/auth-api-lib'
+
 import { IdpProviderController } from './idp-provider.controller'
 
 @Module({

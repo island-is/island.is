@@ -1,30 +1,32 @@
-import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
-import flatten from 'lodash/flatten'
+import { Entry } from 'contentful'
 import { hashElement } from 'folder-hash'
+import flatten from 'lodash/flatten'
+
+import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
 import {
   ContentSearchImporter,
   MappedData,
   SyncOptions,
   SyncResponse,
 } from '@island.is/content-search-indexer/types'
-import { ArticleSyncService } from './importers/article.service'
-import { SubArticleSyncService } from './importers/subArticle.service'
-import { ContentfulService } from './contentful.service'
-import { LifeEventsPageSyncService } from './importers/lifeEventsPage.service'
-import { ArticleCategorySyncService } from './importers/articleCategory.service'
-import { NewsSyncService } from './importers/news.service'
-import { Entry } from 'contentful'
 import { ElasticService } from '@island.is/content-search-toolkit'
+import { logger } from '@island.is/logging'
+
 import { AdgerdirPageSyncService } from './importers/adgerdirPage'
-import { MenuSyncService } from './importers/menu.service'
+import { ArticleSyncService } from './importers/article.service'
+import { ArticleCategorySyncService } from './importers/articleCategory.service'
+import { FrontpageSyncService } from './importers/frontpage.service'
 import { GroupedMenuSyncService } from './importers/groupedMenu.service'
-import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
+import { LifeEventsPageSyncService } from './importers/lifeEventsPage.service'
+import { LinkSyncService } from './importers/link.service'
+import { MenuSyncService } from './importers/menu.service'
+import { NewsSyncService } from './importers/news.service'
 import { OrganizationPageSyncService } from './importers/organizationPage.service'
 import { OrganizationSubpageSyncService } from './importers/organizationSubpage.service'
-import { FrontpageSyncService } from './importers/frontpage.service'
+import { SubArticleSyncService } from './importers/subArticle.service'
 import { SupportQNASyncService } from './importers/supportQNA.service'
-import { LinkSyncService } from './importers/link.service'
+import { ContentfulService } from './contentful.service'
 
 export interface PostSyncOptions {
   folderHash: string

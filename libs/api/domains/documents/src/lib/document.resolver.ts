@@ -1,21 +1,21 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 
+import { DocumentsScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
-  IdsUserGuard,
-  ScopesGuard,
   CurrentUser,
+  IdsUserGuard,
   Scopes,
+  ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { DocumentsScope } from '@island.is/auth/scopes'
 import { AuditService } from '@island.is/nest/audit'
 
-import { DocumentService } from './document.service'
-import { Document } from './models/document.model'
 import { GetDocumentInput } from './dto/getDocumentInput'
-import { DocumentDetails } from './models/documentDetails.model'
+import { Document } from './models/document.model'
 import { DocumentCategory } from './models/documentCategory.model'
+import { DocumentDetails } from './models/documentDetails.model'
+import { DocumentService } from './document.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()

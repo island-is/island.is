@@ -1,9 +1,12 @@
-import { dedent } from 'ts-dedent'
-import { EmailTemplateGeneratorProps } from '../../../../types'
-import { applicationOverviewTemplate } from './applicationOverviewTemplate'
 import { SendMailOptions } from 'nodemailer'
+import { dedent } from 'ts-dedent'
+
 import { getValueViaPath } from '@island.is/application/core'
+
+import { EmailTemplateGeneratorProps } from '../../../../types'
 import { InstitutionAttachment, NodemailAttachment } from '../types'
+
+import { applicationOverviewTemplate } from './applicationOverviewTemplate'
 
 interface ConfirmationEmail {
   (

@@ -1,6 +1,7 @@
 import { CompanyApplication } from '@island.is/gjafakort/types'
 
 import { environment } from '../../../environments'
+
 import { request } from './api'
 
 const {

@@ -1,19 +1,22 @@
+import { Module } from '@nestjs/common'
+import { APP_GUARD } from '@nestjs/core'
+import { SequelizeModule } from '@nestjs/sequelize'
+
 import {
   AuthConfig,
   AuthModule,
   IdsUserGuard,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { APP_GUARD } from '@nestjs/core'
+import { LoggingModule } from '@island.is/logging'
 import { AuditModule, AuditOptions } from '@island.is/nest/audit'
-import { Module } from '@nestjs/common'
-import { SequelizeModule } from '@nestjs/sequelize'
+
 import { environment } from '../environments'
+
+import { AccessGuard } from './guards/accessGuard/access.guard'
 import { EndorsementModule } from './modules/endorsement/endorsement.module'
 import { EndorsementListModule } from './modules/endorsementList/endorsementList.module'
 import { SequelizeConfigService } from './sequelizeConfig.service'
-import { AccessGuard } from './guards/accessGuard/access.guard'
-import { LoggingModule } from '@island.is/logging'
 
 @Module({
   imports: [

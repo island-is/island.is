@@ -1,9 +1,10 @@
-import { Module, HttpModule } from '@nestjs/common'
+import { HttpModule,Module } from '@nestjs/common'
 import { Base64 } from 'js-base64'
 
 import { environment } from '../../../environments'
-import { NationalRegistryService } from './nationalRegistry.service'
 import { CacheModule } from '../cache'
+
+import { NationalRegistryService } from './nationalRegistry.service'
 
 const { nationalRegistry } = environment
 

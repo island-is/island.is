@@ -1,6 +1,6 @@
 export * from './CategoriesResponse'
 export * from './CategoryDTO'
+export * from './CustomersDocumentRequest'
 export * from './DocumentDTO'
 export * from './DocumentInfoDTO'
 export * from './ListDocumentsResponse'
-export * from './CustomersDocumentRequest'

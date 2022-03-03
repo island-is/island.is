@@ -1,5 +1,3 @@
-import { Grant, GrantDto, GrantsService } from '@island.is/auth-api-lib'
-import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import {
   BadRequestException,
   Body,
@@ -14,6 +12,9 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+
+import { Grant, GrantDto, GrantsService } from '@island.is/auth-api-lib'
+import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('grants')

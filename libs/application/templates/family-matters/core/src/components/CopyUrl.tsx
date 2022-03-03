@@ -1,5 +1,7 @@
-import React, { useEffect, useState, useRef } from 'react'
-import { Text, Box, Button, Input, toast } from '@island.is/island-ui/core'
+import React, { useEffect, useRef,useState } from 'react'
+
+import { Box, Button, Input, Text, toast } from '@island.is/island-ui/core'
+
 import * as styles from './CopyUrl.css'
 
 interface Props {

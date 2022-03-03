@@ -9,10 +9,8 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common'
-import { ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger'
+import { ApiCreatedResponse,ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import {
   CurrentHttpUser,
   JwtAuthGuard,
@@ -20,8 +18,11 @@ import {
   RolesRules,
   TokenGuard,
 } from '@island.is/judicial-system/auth'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { adminRule } from '../../guards'
+
 import { CreateUserDto } from './dto/createUser.dto'
 import { UpdateUserDto } from './dto/updateUser.dto'
 import { User } from './user.model'

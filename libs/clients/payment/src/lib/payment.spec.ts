@@ -1,11 +1,13 @@
-import { rest } from 'msw'
 import { Test } from '@nestjs/testing'
-import { startMocking } from '@island.is/shared/mocking'
-import { PaymentAPI } from './payment'
 import { Base64 } from 'js-base64'
+import { rest } from 'msw'
+
+import { ChargeItemCode } from '@island.is/shared/constants'
+import { startMocking } from '@island.is/shared/mocking'
+
+import { PaymentAPI } from './payment'
 import type { Catalog } from './payment.type'
 import { PAYMENT_OPTIONS } from './payment.type'
-import { ChargeItemCode } from '@island.is/shared/constants'
 
 // MOCK START
 enum expectedResult {

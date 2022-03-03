@@ -1,4 +1,5 @@
 import { RankEvaluationInput } from '../types'
+
 import { searchQuery } from './search'
 
 export const rankEvaluationQuery = ({

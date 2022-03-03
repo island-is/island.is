@@ -1,4 +1,5 @@
 import React from 'react'
+
 import {
   Box,
   Bullet,
@@ -8,6 +9,7 @@ import {
   Link,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+
 import { submitted } from '../../lib/messages'
 import { CompanyIllustration } from '../Illustrations/CompanyIllustration'
 

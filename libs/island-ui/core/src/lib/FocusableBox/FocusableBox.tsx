@@ -1,19 +1,20 @@
 import React, {
-  ElementType,
   AllHTMLAttributes,
+  ElementType,
   forwardRef,
-  useContext,
   Ref,
+  useContext,
 } from 'react'
-import cn from 'classnames'
 import { useToggle } from 'react-use'
-import { Link } from '../Link/Link'
+import cn from 'classnames'
+
 import { Box } from '../Box/Box'
 import { UseBoxStylesProps } from '../Box/useBoxStyles'
 import {
   ColorSchemeContext,
   ColorSchemes,
 } from '../context/ColorSchemeContext/ColorSchemeContext'
+import { Link } from '../Link/Link'
 
 import * as styles from './FocusableBox.css'
 

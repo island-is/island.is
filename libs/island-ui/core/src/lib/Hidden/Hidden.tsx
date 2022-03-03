@@ -1,11 +1,12 @@
 import React, { ReactNode } from 'react'
 
-import { Box } from '../Box/Box'
-import * as styleRefs from './Hidden.css'
 import {
   resolveResponsiveRangeProps,
   ResponsiveRangeProps,
 } from '../../utils/responsiveRangeProps'
+import { Box } from '../Box/Box'
+
+import * as styleRefs from './Hidden.css'
 
 export interface HiddenProps extends ResponsiveRangeProps {
   children: ReactNode

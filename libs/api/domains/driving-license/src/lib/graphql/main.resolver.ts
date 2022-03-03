@@ -1,26 +1,29 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
+import { Args, Query, Resolver } from '@nestjs/graphql'
+
 import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
-  IdsUserGuard,
-  ScopesGuard,
   CurrentUser,
+  IdsUserGuard,
   Scopes,
+  ScopesGuard,
 } from '@island.is/auth-nest-tools'
+
 import { DrivingLicenseService } from '../drivingLicense.service'
 export * from '@island.is/nest/audit'
+import { AuditService } from '@island.is/nest/audit'
+
 import {
+  ApplicationEligibility,
+  ApplicationEligibilityInput,
   DrivingLicense,
   HasTeachingRights,
-  StudentInformationResult,
-  ApplicationEligibility,
   Juristiction,
   StudentAssessment,
-  ApplicationEligibilityInput,
+  StudentInformationResult,
   Teacher,
 } from './models'
-import { AuditService } from '@island.is/nest/audit'
 
 const namespace = '@island.is/api/driving-license'
 

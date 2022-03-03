@@ -1,4 +1,4 @@
-import { YES, NO } from './constants'
+import { NO,YES } from './constants'
 
 export interface PersonInformation {
   fullName: string

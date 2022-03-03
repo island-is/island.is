@@ -1,23 +1,25 @@
 import React, { ComponentType } from 'react'
-import cn from 'classnames'
 import {
   components,
+  ControlProps,
+  IndicatorContainerProps,
+  IndicatorProps,
+  InputProps,
   MenuProps,
   OptionProps,
-  IndicatorContainerProps,
-  ControlProps,
-  InputProps,
   PlaceholderProps,
-  ValueContainerProps,
-  SingleValueProps,
-  IndicatorProps,
   Props,
+  SingleValueProps,
   StylesConfig,
+  ValueContainerProps,
 } from 'react-select'
+import cn from 'classnames'
+
 import { Icon } from '../../IconRC/Icon'
-import * as styles from '../Select.css'
-import { SelectProps, Option as ReactSelectOption } from '../Select'
 import { labelSizes } from '../../Input/Input.mixins'
+import { Option as ReactSelectOption,SelectProps } from '../Select'
+
+import * as styles from '../Select.css'
 
 export const Menu = (props: MenuProps<ReactSelectOption>) => (
   <components.Menu className={styles.menu} {...props} />

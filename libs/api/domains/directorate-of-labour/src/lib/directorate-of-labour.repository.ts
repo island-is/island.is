@@ -1,25 +1,26 @@
 import { Inject, Injectable } from '@nestjs/common'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import addDays from 'date-fns/addDays'
+import differenceInDays from 'date-fns/differenceInDays'
+import format from 'date-fns/format'
+
 import {
-  UnionApi,
-  Union,
+  ParentalLeave,
+  ParentalLeaveApi,
   PensionApi,
   PensionFund,
   PregnancyApi,
-  ParentalLeaveApi,
-  ParentalLeave,
+  Union,
+  UnionApi,
 } from '@island.is/clients/vmst'
-import format from 'date-fns/format'
-import addDays from 'date-fns/addDays'
-import differenceInDays from 'date-fns/differenceInDays'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { PregnancyStatus } from '../models/pregnancyStatus.model'
-import { ParentalLeavePeriod } from '../models/parentalLeavePeriod.model'
 import { ParentalLeaveEntitlement } from '../models/parentalLeaveEntitlement.model'
 import { ParentalLeavePaymentPlan } from '../models/parentalLeavePaymentPlan.model'
+import { ParentalLeavePeriod } from '../models/parentalLeavePeriod.model'
 import { ParentalLeavePeriodEndDate } from '../models/parentalLeavePeriodEndDate.model'
 import { ParentalLeavePeriodLength } from '../models/parentalLeavePeriodLength.model'
+import { PregnancyStatus } from '../models/pregnancyStatus.model'
 
 const isRunningInDevelopment = process.env.NODE_ENV === 'development'
 const df = 'yyyy-MM-dd'

@@ -1,7 +1,9 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { Text, Box } from '@island.is/island-ui/core'
+
 import { DescriptionText } from '@island.is/application/templates/family-matters-core/components'
+import { Box,Text } from '@island.is/island-ui/core'
+
 import { contractRejected } from '../../lib/messages'
 
 interface Props {

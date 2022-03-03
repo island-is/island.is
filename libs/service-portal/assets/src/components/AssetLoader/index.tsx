@@ -1,5 +1,6 @@
 import React from 'react'
-import { Box, Columns, Column, SkeletonLoader } from '@island.is/island-ui/core'
+
+import { Box, Column, Columns, SkeletonLoader } from '@island.is/island-ui/core'
 
 const AssetLoader = () => {
   return (

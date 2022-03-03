@@ -1,11 +1,12 @@
 import {
   ApplicationTypes,
-  buildForm,
   buildCustomField,
+  buildForm,
   buildMultiField,
   Form,
   FormModes,
 } from '@island.is/application/core'
+
 import { m } from './messages'
 
 export const Finished: Form = buildForm({

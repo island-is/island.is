@@ -1,23 +1,23 @@
 import { DynamicModule } from '@nestjs/common'
 
-import { HealthInsuranceModule as HealthInsuranceMod } from '@island.is/health-insurance'
-
-import {
-  HealthInsuranceAccidentNotificationResolver,
-  HealthInsuranceResolver,
-} from './graphql'
-import { BucketService } from './bucket.service'
-import { HealthInsuranceService } from './healthInsurance.service'
-import {
-  HealthInsuranceAPI,
-  HealthInsuranceConfig,
-  HEALTH_INSURANCE_CONFIG,
-} from './soap'
 import {
   HealthInsuranceV2Client,
   HealthInsuranceV2Options,
 } from '@island.is/clients/health-insurance-v2'
+import { HealthInsuranceModule as HealthInsuranceMod } from '@island.is/health-insurance'
+
 import { AccidentNotificationService } from './accident-notification.service'
+import { BucketService } from './bucket.service'
+import {
+  HealthInsuranceAccidentNotificationResolver,
+  HealthInsuranceResolver,
+} from './graphql'
+import { HealthInsuranceService } from './healthInsurance.service'
+import {
+  HEALTH_INSURANCE_CONFIG,
+  HealthInsuranceAPI,
+  HealthInsuranceConfig,
+} from './soap'
 
 export interface HealthInsuranceOptions {
   soapConfig: HealthInsuranceConfig

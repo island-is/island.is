@@ -1,14 +1,14 @@
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { environment } from '../../../../environments'
 import { CaseService } from '../../case'
-import { Defendant } from '../models/defendant.model'
-import { DefendantService } from '../defendant.service'
 import { DefendantController } from '../defendant.controller'
+import { DefendantService } from '../defendant.service'
+import { Defendant } from '../models/defendant.model'
 
 jest.mock('../../case/case.service.ts')
 

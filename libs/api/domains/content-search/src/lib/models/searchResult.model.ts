@@ -1,14 +1,14 @@
 import { createUnionType, Field, Int, ObjectType } from '@nestjs/graphql'
 
 import {
+  AdgerdirPage,
   Article,
   LifeEventPage,
-  News,
-  AdgerdirPage,
-  SubArticle,
-  OrganizationSubpage,
-  SupportQNA,
   Link,
+  News,
+  OrganizationSubpage,
+  SubArticle,
+  SupportQNA,
 } from '@island.is/cms'
 
 import { TagCount } from './tagCount'

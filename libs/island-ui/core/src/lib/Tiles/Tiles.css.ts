@@ -1,6 +1,7 @@
 import { styleVariants } from '@vanilla-extract/css'
 import mapValues from 'lodash/mapValues'
-import { themeUtils, Theme } from '@island.is/island-ui/theme'
+
+import { Theme,themeUtils } from '@island.is/island-ui/theme'
 
 const columnsWidths = {
   1: '100%',

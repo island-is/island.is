@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { IcelandicName } from './icelandic-name.model'
 import { IcelandicNameController } from './icelandic-name.controller'
+import { IcelandicName } from './icelandic-name.model'
 import { IcelandicNameService } from './icelandic-name.service'
 
 @Module({

@@ -1,15 +1,15 @@
+import {
+  CallHandler,
+  ExecutionContext,
+  Injectable,
+  NestInterceptor,
+} from '@nestjs/common'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 
-import {
-  Injectable,
-  NestInterceptor,
-  ExecutionContext,
-  CallHandler,
-} from '@nestjs/common'
+import { PaginatedEndorsementListDto } from '../dto/paginatedEndorsementList.dto'
 
 import { maskEndorsementList } from './endorsementList.mask'
-import { PaginatedEndorsementListDto } from '../dto/paginatedEndorsementList.dto'
 
 @Injectable()
 export class EndorsementListsInterceptor implements NestInterceptor {

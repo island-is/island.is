@@ -1,11 +1,11 @@
 import React, { SyntheticEvent, useCallback, useReducer, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-
-import { getAuthSettings, getUserManager } from '../userManager'
-import { ActionType, initialState, reducer } from './Authenticator.state'
-
 import type { History } from 'history'
+
 import { AuthSettings } from '../AuthSettings'
+import { getAuthSettings, getUserManager } from '../userManager'
+
+import { ActionType, initialState, reducer } from './Authenticator.state'
 
 export interface SessionInfo {
   // Message detailing if the request was processed OK, no session detected or with failure.

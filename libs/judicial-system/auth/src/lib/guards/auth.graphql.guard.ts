@@ -1,8 +1,7 @@
-import { AuthenticationError } from 'apollo-server-express'
-
-import { Injectable, ExecutionContext } from '@nestjs/common'
+import { ExecutionContext,Injectable } from '@nestjs/common'
 import { GqlExecutionContext } from '@nestjs/graphql'
 import { AuthGuard } from '@nestjs/passport'
+import { AuthenticationError } from 'apollo-server-express'
 
 import type { User } from '@island.is/judicial-system/types'
 

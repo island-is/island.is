@@ -1,4 +1,5 @@
 import { DynamicModule } from '@nestjs/common'
+
 import { Configuration, OrganisationsApi } from '../../gen/fetch'
 
 export interface DocumentProviderModuleConfig {

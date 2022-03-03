@@ -1,3 +1,5 @@
+import React, { FC } from 'react'
+
 import {
   Application,
   formatText,
@@ -11,7 +13,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { FC } from 'react'
+
 import { institutionApplicationMessages as m } from '../../lib/messages'
 
 interface Props {

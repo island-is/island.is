@@ -1,10 +1,13 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+
+import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
+import { SystemMetadata } from '@island.is/shared/types'
+
 import { GetNewsInput } from '../dto/getNews.input'
 import { ILatestNewsSlice } from '../generated/contentfulTypes'
-import { News } from './news.model'
-import { SystemMetadata } from '@island.is/shared/types'
-import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
+
 import { mapGenericTag } from './genericTag.model'
+import { News } from './news.model'
 
 @ObjectType()
 export class LatestNewsSlice {

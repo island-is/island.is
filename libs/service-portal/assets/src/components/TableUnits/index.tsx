@@ -1,7 +1,8 @@
 import React, { FC } from 'react'
-import { m, tableStyles } from '@island.is/service-portal/core'
+
+import { Box, Button, Table as T,Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Text, Box, Button, Table as T } from '@island.is/island-ui/core'
+import { m, tableStyles } from '@island.is/service-portal/core'
 
 interface Props {
   tables?: {

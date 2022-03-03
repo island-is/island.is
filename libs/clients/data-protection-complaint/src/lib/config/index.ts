@@ -1,1 +1,1 @@
-export { DataProtectionComplaintClientConfig, CLIENT_CONFIG } from './config'
+export { CLIENT_CONFIG,DataProtectionComplaintClientConfig } from './config'

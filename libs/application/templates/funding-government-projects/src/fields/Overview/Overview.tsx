@@ -1,14 +1,16 @@
+import React from 'react'
 import { MessageDescriptor } from '@formatjs/intl'
+
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React from 'react'
+
+import { FundingGovernmentProjects } from '../../lib/dataSchema'
 import {
   definitionOfApplicant,
-  project,
   informationAboutInstitution,
+  project,
 } from '../../lib/messages'
-import { FundingGovernmentProjects } from '../../lib/dataSchema'
 
 interface ValueLineProps {
   title?: MessageDescriptor | string

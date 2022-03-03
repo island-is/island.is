@@ -1,7 +1,9 @@
-import { Bullet, Link } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { MessageDescriptor } from 'react-intl'
+
+import { Bullet, Link } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+
 import * as styles from '../AgreementDescription/AgreementDescription.css'
 
 interface AgreementDescriptionBulletProps {

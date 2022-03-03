@@ -1,11 +1,12 @@
 import { DynamicModule, HttpModule } from '@nestjs/common'
 
-import { FamilyMemberResolver, UserResolver, ChildResolver } from './graphql'
-import { NationalRegistryService } from './nationalRegistry.service'
 import {
   NationalRegistryApi,
   NationalRegistryConfig,
 } from '@island.is/clients/national-registry-v1'
+
+import { ChildResolver,FamilyMemberResolver, UserResolver } from './graphql'
+import { NationalRegistryService } from './nationalRegistry.service'
 
 export interface Config {
   nationalRegistry: NationalRegistryConfig

@@ -1,10 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Resource } from './resource.model'
-import { ResourceDto } from './dto/resource.dto'
+import { Counter } from 'prom-client'
+
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Counter } from 'prom-client'
+
+import { ResourceDto } from './dto/resource.dto'
+import { Resource } from './resource.model'
 
 @Injectable()
 export class ResourceService {

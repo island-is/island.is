@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+
 import { FeatureFlagUser } from '@island.is/feature-flags'
 
 import { useFeatureFlagClient } from './context'

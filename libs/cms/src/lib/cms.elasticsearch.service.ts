@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+
 import {
   dateResolution,
   ElasticService,
@@ -7,17 +8,18 @@ import {
   SortField,
   sortRule,
 } from '@island.is/content-search-toolkit'
-import { ArticleCategory } from './models/articleCategory.model'
-import { Article } from './models/article.model'
-import { News } from './models/news.model'
-import { GetNewsInput } from './dto/getNews.input'
+
 import { GetArticlesInput } from './dto/getArticles.input'
-import { NewsList } from './models/newsList.model'
-import { GetNewsDatesInput } from './dto/getNewsDates.input'
-import { Menu } from './models/menu.model'
 import { GetMenuInput } from './dto/getMenu.input'
-import { GetSingleMenuInput } from './dto/getSingleMenu.input'
+import { GetNewsInput } from './dto/getNews.input'
+import { GetNewsDatesInput } from './dto/getNewsDates.input'
 import { GetOrganizationSubpageInput } from './dto/getOrganizationSubpage.input'
+import { GetSingleMenuInput } from './dto/getSingleMenu.input'
+import { Article } from './models/article.model'
+import { ArticleCategory } from './models/articleCategory.model'
+import { Menu } from './models/menu.model'
+import { News } from './models/news.model'
+import { NewsList } from './models/newsList.model'
 import { OrganizationSubpage } from './models/organizationSubpage.model'
 
 @Injectable()

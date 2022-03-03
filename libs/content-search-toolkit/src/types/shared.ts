@@ -1,5 +1,6 @@
-import { MappedData } from '@island.is/content-search-indexer/types'
 import { registerEnumType } from '@nestjs/graphql'
+
+import { MappedData } from '@island.is/content-search-indexer/types'
 
 export enum SortDirection {
   DESC = 'desc',

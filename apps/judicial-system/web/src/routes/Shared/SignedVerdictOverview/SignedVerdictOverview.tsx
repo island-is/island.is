@@ -1,14 +1,18 @@
 import React, { ReactNode, useContext, useEffect, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
-import { useLazyQuery } from '@apollo/client'
-import { useRouter } from 'next/router'
-import { ValueType } from 'react-select/src/types'
 import { useIntl } from 'react-intl'
+import { ValueType } from 'react-select/src/types'
+import { useLazyQuery } from '@apollo/client'
 import compareAsc from 'date-fns/compareAsc'
-import formatISO from 'date-fns/formatISO'
 import differenceInMilliseconds from 'date-fns/differenceInMilliseconds'
+import formatISO from 'date-fns/formatISO'
 import subMilliseconds from 'date-fns/subMilliseconds'
+import { AnimatePresence, motion } from 'framer-motion'
+import { useRouter } from 'next/router'
 
+import { Box, Input, Text } from '@island.is/island-ui/core'
+import * as Constants from '@island.is/judicial-system/consts'
+import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
+import type { Case } from '@island.is/judicial-system/types'
 import {
   CaseDecision,
   CaseState,
@@ -20,33 +24,29 @@ import {
   SignatureConfirmationResponse,
   UserRole,
 } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
+import { CaseQuery } from '@island.is/judicial-system-web/graphql'
+import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
 import {
-  FormFooter,
-  PageLayout,
-  FormContentContainer,
-  Modal,
-  DateTime,
   BlueBox,
+  DateTime,
+  FormContentContainer,
+  FormFooter,
+  Modal,
+  PageLayout,
 } from '@island.is/judicial-system-web/src/components'
+import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import {
+  CaseData,
+  ReactSelectOption,
+} from '@island.is/judicial-system-web/src/types'
 import {
   parseNull,
   parseString,
 } from '@island.is/judicial-system-web/src/utils/formatters'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  CaseData,
-  ReactSelectOption,
-} from '@island.is/judicial-system-web/src/types'
-import { Box, Input, Text } from '@island.is/island-ui/core'
-import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
-import { CaseQuery } from '@island.is/judicial-system-web/graphql'
-import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system/consts'
-import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
 import SignedVerdictOverviewForm from './SignedVerdictOverviewForm'

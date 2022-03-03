@@ -1,11 +1,13 @@
 import React, { FC } from 'react'
+
 import {
+  ArrowLink,
   Box,
   ModalBase,
-  Text,
   Stack,
-  ArrowLink,
+  Text,
 } from '@island.is/island-ui/core'
+
 import * as styles from './ErrorModal.css'
 
 interface LinkProp {

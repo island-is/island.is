@@ -1,4 +1,5 @@
 import { Controller, Get, Query } from '@nestjs/common'
+
 import { MetricInput } from './dto/metricInput'
 import { MetricsService } from './metrics.service'
 

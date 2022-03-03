@@ -1,14 +1,14 @@
-import { uuid } from 'uuidv4'
-
 import { BadRequestException, NotFoundException } from '@nestjs/common'
+import { uuid } from 'uuidv4'
 
 import { CaseFileState } from '@island.is/judicial-system/types'
 
-import { CourtService } from '../../court'
-import { Case } from '../../case'
 import { AwsS3Service } from '../../aws-s3'
+import { Case } from '../../case'
+import { CourtService } from '../../court'
 import { CaseFile } from '../models/file.model'
 import { UploadFileToCourtResponse } from '../models/uploadFileToCourt.response'
+
 import { createTestingFileModule } from './createTestingFileModule'
 
 interface Then {

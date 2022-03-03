@@ -1,7 +1,7 @@
 import {
-  SuccessfulDataProviderResult,
-  FailedDataProviderResult,
   coreErrorMessages,
+  FailedDataProviderResult,
+  SuccessfulDataProviderResult,
 } from '@island.is/application/core'
 import { HasQualityPhotoProvider } from '@island.is/application/data-providers'
 

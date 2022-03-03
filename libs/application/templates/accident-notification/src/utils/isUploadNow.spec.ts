@@ -1,8 +1,10 @@
 import { FormValue } from '@island.is/application/core'
+
 import {
   PowerOfAttorneyUploadEnum,
   WhoIsTheNotificationForEnum,
 } from '../types'
+
 import { isUploadNow } from './isUploadNow'
 
 describe('isUploadNow', () => {

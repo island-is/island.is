@@ -1,15 +1,17 @@
 import React, { useRef } from 'react'
+
 import {
-  Button,
-  Menu as MenuUI,
-  Link,
-  ButtonTypes,
   Box,
+  Button,
+  ButtonTypes,
+  Link,
+  Menu as MenuUI,
 } from '@island.is/island-ui/core'
-import { useI18n } from '@island.is/web/i18n'
+import { SearchInput } from '@island.is/web/components'
 import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { SearchInput } from '@island.is/web/components'
+import { useI18n } from '@island.is/web/i18n'
+
 import { LanguageToggler } from '../LanguageToggler'
 
 interface MegaMenuLink {

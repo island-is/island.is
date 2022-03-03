@@ -1,5 +1,6 @@
-import { DelegationDTO } from '@island.is/auth-api-lib'
 import request, { CallbackHandler } from 'supertest'
+
+import { DelegationDTO } from '@island.is/auth-api-lib'
 
 export const getRequestMethod = (
   server: request.SuperTest<request.Test>,

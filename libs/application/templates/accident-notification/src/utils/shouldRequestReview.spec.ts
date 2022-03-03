@@ -1,5 +1,6 @@
-import { AccidentNotificationAnswers } from '..'
 import { AccidentTypeEnum, WorkAccidentTypeEnum } from '../types'
+import { AccidentNotificationAnswers } from '..'
+
 import { shouldRequestReview } from './shouldRequestReview'
 describe('shouldRequestReview', () => {
   const agricultureAccident: Partial<AccidentNotificationAnswers> = {

@@ -1,16 +1,16 @@
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { environment } from '../../../../environments'
-import { CourtService } from '../../court'
 import { AwsS3Service } from '../../aws-s3'
 import { CaseService } from '../../case'
-import { CaseFile } from '../models/file.model'
-import { FileService } from '../file.service'
+import { CourtService } from '../../court'
 import { FileController } from '../file.controller'
+import { FileService } from '../file.service'
+import { CaseFile } from '../models/file.model'
 
 jest.mock('../../aws-s3/awsS3.service.ts')
 jest.mock('../../court/court.service.ts')

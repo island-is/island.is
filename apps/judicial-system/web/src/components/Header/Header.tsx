@@ -1,12 +1,14 @@
 import React, { useContext } from 'react'
-import { Logo, Text, Box, Button } from '@island.is/island-ui/core'
-import { useRouter } from 'next/router'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
-import { api } from '@island.is/judicial-system-web/src/services'
-import { UserContext } from '../UserProvider/UserProvider'
-import { UserRole } from '@island.is/judicial-system/types'
+import { Box, Button,Logo, Text } from '@island.is/island-ui/core'
 import * as Constants from '@island.is/judicial-system/consts'
+import { UserRole } from '@island.is/judicial-system/types'
+import { api } from '@island.is/judicial-system-web/src/services'
+
+import { UserContext } from '../UserProvider/UserProvider'
+
 import * as styles from './Header.css'
 
 const Header: React.FC = () => {

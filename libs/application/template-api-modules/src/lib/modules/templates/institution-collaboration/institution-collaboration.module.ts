@@ -1,9 +1,12 @@
 import { DynamicModule } from '@nestjs/common'
-import { SharedTemplateAPIModule } from '../../shared'
-import { BaseTemplateAPIModuleConfig } from '../../../types'
-import { InstitutionCollaborationService } from './institution-collaboration.service'
-import { INSTITUTION_COLLABORATION_CONFIG } from './config/institutionApplicationServiceConfig'
+
 import { FileStorageModule } from '@island.is/file-storage'
+
+import { BaseTemplateAPIModuleConfig } from '../../../types'
+import { SharedTemplateAPIModule } from '../../shared'
+
+import { INSTITUTION_COLLABORATION_CONFIG } from './config/institutionApplicationServiceConfig'
+import { InstitutionCollaborationService } from './institution-collaboration.service'
 
 const applicationRecipientName =
   process.env.INSTITUTION_APPLICATION_RECIPIENT_NAME ?? ''

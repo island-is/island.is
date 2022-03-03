@@ -1,10 +1,13 @@
-import { dedent } from 'ts-dedent'
-import { EmailTemplateGeneratorProps } from '../../../../types'
-import { applicationOverviewTemplate } from './applicationOverviewTemplate'
 import { SendMailOptions } from 'nodemailer'
+import { dedent } from 'ts-dedent'
+
 import { getValueViaPath } from '@island.is/application/core'
-import { FundingAttachment, NodemailAttachment } from '../types'
 import { FundingGovernmentProjectsAnswers } from '@island.is/application/templates/funding-government-projects'
+
+import { EmailTemplateGeneratorProps } from '../../../../types'
+import { FundingAttachment, NodemailAttachment } from '../types'
+
+import { applicationOverviewTemplate } from './applicationOverviewTemplate'
 
 interface ConfirmationEmail {
   (

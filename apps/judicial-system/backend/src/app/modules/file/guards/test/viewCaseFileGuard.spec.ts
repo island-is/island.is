@@ -1,10 +1,9 @@
-import each from 'jest-each'
-
 import {
   ExecutionContext,
   ForbiddenException,
   InternalServerErrorException,
 } from '@nestjs/common'
+import each from 'jest-each'
 
 import { CaseState, User, UserRole } from '@island.is/judicial-system/types'
 

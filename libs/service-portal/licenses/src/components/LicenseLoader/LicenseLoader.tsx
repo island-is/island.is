@@ -1,4 +1,5 @@
 import React, { FC } from 'react'
+
 import { Box, SkeletonLoader } from '@island.is/island-ui/core'
 
 export const LicenseLoader: FC = () => {

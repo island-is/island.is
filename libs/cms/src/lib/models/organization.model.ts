@@ -1,9 +1,10 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ID,ObjectType } from '@nestjs/graphql'
 
 import { IOrganization } from '../generated/contentfulTypes'
-import { Image, mapImage } from './image.model'
-import { OrganizationTag, mapOrganizationTag } from './organizationTag.model'
+
 import { FooterItem, mapFooterItem } from './footerItem.model'
+import { Image, mapImage } from './image.model'
+import { mapOrganizationTag,OrganizationTag } from './organizationTag.model'
 
 @ObjectType()
 export class Organization {

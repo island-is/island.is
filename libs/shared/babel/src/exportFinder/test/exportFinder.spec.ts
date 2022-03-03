@@ -1,5 +1,6 @@
-import exportFinder from '../exportFinder'
 import * as path from 'path'
+
+import exportFinder from '../exportFinder'
 
 describe('exportFinder', () => {
   it('finds all exports', () => {

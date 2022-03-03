@@ -1,9 +1,9 @@
 import { Application } from '../types/Application'
-import { DataProviderResult } from '../types/DataProviderResult'
 import {
   BasicDataProvider,
   CustomTemplateFindQuery,
 } from '../types/BasicDataProvider'
+import { DataProviderResult } from '../types/DataProviderResult'
 import { FormatMessage } from '../types/Form'
 
 export interface FulfilledPromise<T> {

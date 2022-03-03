@@ -1,14 +1,14 @@
 import { parse } from '@babel/parser'
 import {
+  Declaration,
+  ExportAllDeclaration,
   ExportDefaultDeclaration,
   ExportNamedDeclaration,
-  ExportAllDeclaration,
-  Declaration,
   File,
 } from '@babel/types'
-import { sync as resolveSync } from 'resolve'
 import { readFileSync } from 'fs'
 import * as path from 'path'
+import { sync as resolveSync } from 'resolve'
 
 const barf = (msg: string) => {
   throw new Error('exportFinder: ' + msg)

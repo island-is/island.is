@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
-import { logger } from '@island.is/logging'
-import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { ApolloError, ForbiddenError } from 'apollo-server-express'
+
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
   ConfirmationDtoResponse,
   CreateUserProfileDto,
@@ -10,19 +10,21 @@ import {
   UserProfileControllerCreateRequest,
   UserProfileControllerUpdateRequest,
 } from '@island.is/clients/user-profile'
-import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
-import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
-import { CreateUserProfileInput } from './dto/createUserProfileInput'
-import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
-import { CreateEmailVerificationInput } from './dto/createEmalVerificationInput'
-import { ConfirmSmsVerificationInput } from './dto/confirmSmsVerificationInput'
+import { logger } from '@island.is/logging'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
+
 import { ConfirmEmailVerificationInput } from './dto/confirmEmailVerificationInput'
+import { ConfirmSmsVerificationInput } from './dto/confirmSmsVerificationInput'
+import { CreateEmailVerificationInput } from './dto/createEmalVerificationInput'
+import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
+import { CreateUserProfileInput } from './dto/createUserProfileInput'
 import { DeleteIslykillValueInput } from './dto/deleteIslykillValueInput'
-import { UserProfile } from './userProfile.model'
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { IslykillService } from './islykill.service'
+import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
+import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
 import { DataStatus } from './types/dataStatus.enum'
+import { IslykillService } from './islykill.service'
+import { UserProfile } from './userProfile.model'
 
 // eslint-disable-next-line
 const handleError = (error: any) => {

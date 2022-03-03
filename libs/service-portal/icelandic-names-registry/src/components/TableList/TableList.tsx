@@ -5,22 +5,21 @@ import {
   Button,
   DropdownMenu,
   Icon,
-  Text,
   Table as T,
+  Text,
 } from '@island.is/island-ui/core'
 
 import {
+  NameStatusStringColors,
   NameStatusStrings,
   NameTypeStrings,
-  NameStatusStringColors,
 } from '../../constants'
-import { IcelandicNameType } from '../../types'
-
 import {
   GetIcelandicNameBySearchQuery,
   GetIcelandicNameBySearchQueryVariables,
 } from '../../graphql/schema'
 import { GET_ICELANDIC_NAME_BY_SEARCH } from '../../queries'
+import { IcelandicNameType } from '../../types'
 
 import * as styles from './TableList.css'
 

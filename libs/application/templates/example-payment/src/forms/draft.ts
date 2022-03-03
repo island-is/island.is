@@ -1,6 +1,6 @@
 import {
-  buildExternalDataProvider,
   buildDataProviderItem,
+  buildExternalDataProvider,
   buildMultiField,
   buildRadioField,
   buildSubmitField,
@@ -12,6 +12,7 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
+
 import * as m from '../lib/messages'
 import { chargeItemCodeRadioOptions } from '../lib/utils/chargeItemCodeRadioOptions'
 

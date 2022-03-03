@@ -1,15 +1,16 @@
 import React, { FC } from 'react'
-import {
-  Text,
-  Box,
-  GridRow,
-  GridColumn,
-  ArrowLink,
-} from '@island.is/island-ui/core'
-import { m } from '@island.is/service-portal/core'
-import { Link } from 'react-router-dom'
-import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
+import { Link } from 'react-router-dom'
+
+import {
+  ArrowLink,
+  Box,
+  GridColumn,
+  GridRow,
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { m } from '@island.is/service-portal/core'
 
 interface UserInfoOverviewItemComponent {
   heading: MessageDescriptor | string

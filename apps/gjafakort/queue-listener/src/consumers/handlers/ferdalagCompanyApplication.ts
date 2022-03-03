@@ -1,12 +1,12 @@
-import { logger } from '@island.is/logging'
 import {
   ApplicationExchange,
   CompanyApplication,
   CompanyApplicationRoutingKey,
 } from '@island.is/gjafakort/types'
+import { logger } from '@island.is/logging'
 
-import { RoutingKeyError } from './errors'
 import { ferdalagApi, postApplicationAuditLog } from './api'
+import { RoutingKeyError } from './errors'
 
 export const exchangeName: ApplicationExchange = 'gjafakort-application-updates'
 

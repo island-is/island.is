@@ -1,15 +1,16 @@
 import React from 'react'
-import { Text, Box, UploadFile } from '@island.is/island-ui/core'
-import * as styles from './FileList.css'
+import { gql, useLazyQuery } from '@apollo/client'
 import cn from 'classnames'
 import format from 'date-fns/format'
+
 import {
   ApplicationFile,
   getFileSizeInKilo,
   getFileType,
 } from '@island.is/financial-aid/shared/lib'
+import { Box, Text, UploadFile } from '@island.is/island-ui/core'
 
-import { gql, useLazyQuery } from '@apollo/client'
+import * as styles from './FileList.css'
 
 export const GetSignedUrlQuery = gql`
   query GetSignedUrlQuery($input: GetSignedUrlForIdInput!) {

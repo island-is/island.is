@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
 import { ServerError, useMutation } from '@apollo/client'
-import { GraphQLError } from 'graphql'
 import * as Sentry from '@sentry/react'
+import { GraphQLError } from 'graphql'
 import qs from 'qs'
 
-import { ErrorShell, LoadingShell } from '@island.is/application/ui-shell'
+import { coreErrorMessages,getSlugFromType } from '@island.is/application/core'
 import { ASSIGN_APPLICATION } from '@island.is/application/graphql'
-import { getSlugFromType, coreErrorMessages } from '@island.is/application/core'
+import { ErrorShell, LoadingShell } from '@island.is/application/ui-shell'
 
 const parseGraphQLError = (
   error?: GraphQLError,

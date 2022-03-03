@@ -1,10 +1,12 @@
 import { Provider } from '@nestjs/common'
-import { ServiceInformationApi } from './gen/fetch'
+
 import {
   ConfigType,
   LazyDuringDevScope,
   XRoadConfig,
 } from '@island.is/nest/config'
+
+import { ServiceInformationApi } from './gen/fetch'
 import { CompanyRegistryConfig } from './company-registry.config'
 import { CompanyRegistryApiFactoryConfig } from './company-registry-factory.config'
 

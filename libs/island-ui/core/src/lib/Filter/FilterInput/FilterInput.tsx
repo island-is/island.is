@@ -1,7 +1,8 @@
 import React from 'react'
+
 import { ResponsiveProp } from '../../../utils/responsiveProp'
-import { InputBackgroundColor } from '../../Input/types'
 import { Input } from '../../Input/Input'
+import { InputBackgroundColor } from '../../Input/types'
 
 export interface FilterInputProps {
   name: string

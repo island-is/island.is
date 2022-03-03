@@ -1,10 +1,12 @@
-import { Box, RadioButton } from '@island.is/island-ui/core'
-import { CaseDecision, CaseType } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
 import React from 'react'
-import { BlueBox } from '..'
+
+import { Box, RadioButton } from '@island.is/island-ui/core'
+import type { Case } from '@island.is/judicial-system/types'
+import { CaseDecision, CaseType } from '@island.is/judicial-system/types'
+
 import { setAndSendToServer } from '../../utils/formHelper'
 import { useCase } from '../../utils/hooks'
+import { BlueBox } from '..'
 
 interface Props {
   workingCase: Case

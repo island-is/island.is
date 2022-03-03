@@ -2,11 +2,12 @@ import { ContentType, FieldValidation } from 'contentful'
 import { createClient } from 'contentful-management'
 import { Environment } from 'contentful-management/dist/typings/entities/environment'
 import flattenDeep from 'lodash/flatMapDeep'
+
 import { logger } from '@island.is/logging'
 
+import { codegenContentful } from './codegenContentful'
 import { execShellCommand } from './execShellCommand'
 import { generateFile } from './generateFile'
-import { codegenContentful } from './codegenContentful'
 
 export interface LinkContentType {
   id: string

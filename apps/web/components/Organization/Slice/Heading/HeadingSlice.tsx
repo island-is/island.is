@@ -1,7 +1,8 @@
 import React from 'react'
-import { HeadingSlice as HeadlingSliceSchema } from '@island.is/web/graphql/schema'
+
 import { Box } from '@island.is/island-ui/core'
 import { Heading } from '@island.is/web/components'
+import { HeadingSlice as HeadlingSliceSchema } from '@island.is/web/graphql/schema'
 
 interface SliceProps {
   slice: HeadlingSliceSchema

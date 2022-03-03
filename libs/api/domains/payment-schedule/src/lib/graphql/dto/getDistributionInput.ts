@@ -1,5 +1,6 @@
-import { ScheduleType } from '@island.is/clients/payment-schedule'
 import { Field, InputType } from '@nestjs/graphql'
+
+import { ScheduleType } from '@island.is/clients/payment-schedule'
 
 @InputType()
 export class GetScheduleDistributionInput {

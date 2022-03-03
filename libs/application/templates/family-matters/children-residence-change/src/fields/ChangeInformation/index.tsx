@@ -1,11 +1,13 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { Box, Text } from '@island.is/island-ui/core'
-import {
-  formatAddress,
-  childrenResidenceInfo,
-} from '@island.is/application/templates/family-matters-core/utils'
+
 import { DescriptionText } from '@island.is/application/templates/family-matters-core/components'
+import {
+  childrenResidenceInfo,
+  formatAddress,
+} from '@island.is/application/templates/family-matters-core/utils'
+import { Box, Text } from '@island.is/island-ui/core'
+
 import { newResidence } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
 

@@ -1,7 +1,9 @@
-import express, { Router, Request, Response, NextFunction } from 'express'
+import express, { NextFunction,Request, Response, Router } from 'express'
 import { collectDefaultMetrics, Histogram } from 'prom-client'
-import { metricsApp } from './metrics-publisher'
+
 import { logger } from '@island.is/logging'
+
+import { metricsApp } from './metrics-publisher'
 
 type RunServerParams = {
   routes: Router

@@ -1,4 +1,5 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ID,ObjectType } from '@nestjs/graphql'
+
 import { EndorsementListOpen } from './endorsementListOpen.model'
 import { EndorsementMetadata } from './endorsementMetadata.model'
 

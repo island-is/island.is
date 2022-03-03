@@ -1,18 +1,20 @@
-import {
-  Column,
-  DataType,
-  Model,
-  Table,
-  CreatedAt,
-  BelongsTo,
-  UpdatedAt,
-  PrimaryKey,
-  ForeignKey,
-} from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
-import { Delegation } from './delegation.model'
+import {
+  BelongsTo,
+  Column,
+  CreatedAt,
+  DataType,
+  ForeignKey,
+  Model,
+  PrimaryKey,
+  Table,
+  UpdatedAt,
+} from 'sequelize-typescript'
+
 import { DelegationScopeDTO } from '../dto/delegation-scope.dto'
+
 import { ApiScope } from './api-scope.model'
+import { Delegation } from './delegation.model'
 import { IdentityResource } from './identity-resource.model'
 
 @Table({

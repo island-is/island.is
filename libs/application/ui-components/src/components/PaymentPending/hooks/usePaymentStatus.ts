@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ApolloError, useQuery } from '@apollo/client'
+
 import { PAYMENT_STATUS } from '@island.is/application/graphql'
 
 // TODO: import type from somewhere - This is a copy of the type exposed by the graphql api

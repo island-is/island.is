@@ -1,4 +1,4 @@
-import { ResponsiveProp, mapResponsiveProp } from './responsiveProp'
+import { mapResponsiveProp,ResponsiveProp } from './responsiveProp'
 
 export type Align = 'left' | 'center' | 'right'
 export type AlignY = 'top' | 'center' | 'bottom'

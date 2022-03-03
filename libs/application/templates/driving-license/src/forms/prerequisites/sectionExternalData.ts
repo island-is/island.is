@@ -1,8 +1,9 @@
 import {
-  buildExternalDataProvider,
   buildDataProviderItem,
+  buildExternalDataProvider,
   buildSubSection,
 } from '@island.is/application/core'
+
 import { m } from '../../lib/messages'
 
 export const sectionExternalData = buildSubSection({

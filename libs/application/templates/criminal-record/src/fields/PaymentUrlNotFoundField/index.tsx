@@ -1,8 +1,10 @@
 import React, { FC } from 'react'
+
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
-import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
+
+import { m } from '../../lib/messages'
 
 export const PaymentUrlNotFoundField: FC<FieldBaseProps> = ({
   application,

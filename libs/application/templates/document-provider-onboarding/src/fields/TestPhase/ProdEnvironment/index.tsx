@@ -1,17 +1,18 @@
 import React, { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { gql, useMutation } from '@apollo/client'
+
 import {
   FieldBaseProps,
   formatText,
   getValueViaPath,
 } from '@island.is/application/core'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 
-import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 import { m } from '../../../forms/messages'
+import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 
 export const createProviderMutation = gql`
   mutation CreateProvider($input: CreateProviderInput!) {

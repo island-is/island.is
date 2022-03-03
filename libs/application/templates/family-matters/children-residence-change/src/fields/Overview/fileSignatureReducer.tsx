@@ -1,4 +1,5 @@
 import { MessageDescriptor } from '@formatjs/intl'
+
 import { signatureModal } from '../../lib/messages'
 
 export enum FileSignatureStatus {

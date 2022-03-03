@@ -1,11 +1,14 @@
-import { Injectable, Inject } from '@nestjs/common'
+import { Inject,Injectable } from '@nestjs/common'
 import * as firebaseAdmin from 'firebase-admin'
+
+import { UserProfileApi } from '@island.is/clients/user-profile'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import { FIREBASE_PROVIDER } from '../../../constants'
+
 import { Notification } from './types'
 import { isDefined } from './utils'
-import { FIREBASE_PROVIDER } from '../../../constants'
-import { UserProfileApi } from '@island.is/clients/user-profile'
 
 export class PushNotificationError extends Error {
   constructor(public readonly firebaseErrors: firebaseAdmin.FirebaseError[]) {

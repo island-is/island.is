@@ -1,11 +1,12 @@
 import React, { FC } from 'react'
 import { MemoryRouter } from 'react-router-dom'
-import { screen, render, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import { UserManagerEvents } from 'oidc-client'
 
-import { Authenticator } from './Authenticator'
 import { configureMock } from '../userManager'
+
 import { useAuth } from './AuthContext'
+import { Authenticator } from './Authenticator'
 
 const Wrapper: FC = ({ children }) => <MemoryRouter>{children}</MemoryRouter>
 const Greeting = () => {

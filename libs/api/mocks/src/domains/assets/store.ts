@@ -1,12 +1,13 @@
+import { PropertyDetail } from '@island.is/api/schema'
 import { createStore } from '@island.is/shared/mocking'
+
 import {
-  singleProperty,
   assetDetail,
   paginatedConfirmedOwners,
   paginatedUnitsOfUse,
   pagingData,
+  singleProperty,
 } from './factories'
-import { PropertyDetail } from '@island.is/api/schema'
 
 export const store = createStore(() => {
   const properties = singleProperty.list(20)

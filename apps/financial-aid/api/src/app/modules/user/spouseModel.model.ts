@@ -1,5 +1,6 @@
-import { Spouse } from '@island.is/financial-aid/shared/lib'
 import { Field, ObjectType } from '@nestjs/graphql'
+
+import { Spouse } from '@island.is/financial-aid/shared/lib'
 
 @ObjectType()
 export class SpouseModel implements Spouse {

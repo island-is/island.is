@@ -1,6 +1,7 @@
-import { downloadFile } from './downloadFile'
 import { CustomerRecordsDetails } from '../screens/FinanceTransactions/FinanceTransactionsData.types'
+
 import { hreyfingarHeaders } from './dataHeaders'
+import { downloadFile } from './downloadFile'
 const name = 'Hreyfingar'
 
 const getDataArray = (data: Array<any>) =>

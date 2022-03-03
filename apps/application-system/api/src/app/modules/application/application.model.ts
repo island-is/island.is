@@ -1,3 +1,4 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
@@ -6,10 +7,10 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+
 import {
-  ApplicationTypes,
   ApplicationStatus,
+  ApplicationTypes,
 } from '@island.is/application/core'
 
 @Table({

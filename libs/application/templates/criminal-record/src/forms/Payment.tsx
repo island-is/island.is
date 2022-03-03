@@ -1,15 +1,16 @@
-import { m } from '../lib/messages'
 import {
-  buildForm,
+  buildCustomField,
   buildDescriptionField,
+  buildForm,
+  buildMultiField,
   buildSection,
+  buildSubmitField,
   DefaultEvents,
   Form,
   FormModes,
-  buildCustomField,
-  buildMultiField,
-  buildSubmitField,
 } from '@island.is/application/core'
+
+import { m } from '../lib/messages'
 
 type CreateChargeData = {
   data: {

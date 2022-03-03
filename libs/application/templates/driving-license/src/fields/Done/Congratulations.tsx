@@ -1,20 +1,22 @@
 import React from 'react'
 
 import {
-  Box,
-  ContentBlock,
-  Text,
-  AlertMessage,
-} from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import {
   CustomField,
   FieldBaseProps,
   formatText,
 } from '@island.is/application/core'
+import {
+  AlertMessage,
+  Box,
+  ContentBlock,
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+
 import { m } from '../../lib/messages'
-import WarningSection, { Step } from './WarningSection'
 import { hasYes } from '../../lib/utils'
+
+import WarningSection, { Step } from './WarningSection'
 
 interface ReasonsProps {
   key: string

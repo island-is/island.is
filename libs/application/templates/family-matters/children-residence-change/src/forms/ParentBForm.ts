@@ -1,15 +1,16 @@
 import {
-  buildForm,
-  buildSection,
-  Form,
-  FormModes,
   buildCustomField,
+  buildForm,
   buildMultiField,
+  buildSection,
   buildSubmitField,
   buildSubSection,
   DefaultEvents,
+  Form,
+  FormModes,
 } from '@island.is/application/core'
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
+
 import { contactInfoParentBIds } from '../fields/ContactInfoParentB'
 import { ApproveContract } from '../lib/dataSchema'
 import * as m from '../lib/messages'

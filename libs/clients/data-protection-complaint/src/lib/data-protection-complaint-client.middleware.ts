@@ -1,11 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { CLIENT_CONFIG, DataProtectionComplaintClientConfig } from './config'
+
 import {
   FetchParams,
   Middleware,
   RequestContext,
   SecurityApi,
 } from '../gen/fetch/dev'
+
+import { CLIENT_CONFIG, DataProtectionComplaintClientConfig } from './config'
 
 @Injectable()
 export class TokenMiddleware implements Middleware {

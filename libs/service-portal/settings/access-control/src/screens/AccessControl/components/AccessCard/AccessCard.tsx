@@ -3,13 +3,13 @@ import { Link } from 'react-router-dom'
 import format from 'date-fns/format'
 
 import {
-  Box,
-  Text,
-  Stack,
   ArrowLink,
-  Tag,
-  Inline,
+  Box,
   Icon,
+  Inline,
+  Stack,
+  Tag,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 

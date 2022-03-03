@@ -1,4 +1,5 @@
 import { DocumentByMetaDataInput } from '../types'
+
 import { tagQuery } from './tagQuery'
 
 // TODO: Make inclusivity optional

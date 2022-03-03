@@ -1,17 +1,18 @@
-import {
-  ApplicationStatus,
-  ApplicationTypes,
-} from '@island.is/application/core'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Expose } from 'class-transformer'
 import {
+  IsArray,
   IsDate,
   IsEnum,
   IsNumber,
   IsObject,
   IsString,
-  IsArray,
 } from 'class-validator'
+
+import {
+  ApplicationStatus,
+  ApplicationTypes,
+} from '@island.is/application/core'
 
 class ActionCardTag {
   @ApiPropertyOptional()

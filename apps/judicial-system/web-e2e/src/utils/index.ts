@@ -1,5 +1,6 @@
-import { Case } from '@island.is/judicial-system/types'
 import { CyHttpMessages } from 'cypress/types/net-stubbing'
+
+import { Case } from '@island.is/judicial-system/types'
 
 export const intercept = (res: Case) => {
   cy.intercept('POST', '**/api/graphql', (req) => {

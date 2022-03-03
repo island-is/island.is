@@ -1,6 +1,11 @@
+import { Logger } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
-import { DrivingLicenseService } from './drivingLicense.service'
+import { createLogger } from 'winston'
+
 import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
+import { logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { startMocking } from '@island.is/shared/mocking'
+
 import {
   MOCK_NATIONAL_ID,
   MOCK_NATIONAL_ID_EXPIRED,
@@ -8,10 +13,7 @@ import {
   MOCK_NATIONAL_ID_TEACHER,
   requestHandlers,
 } from './__mock-data__/requestHandlers'
-import { startMocking } from '@island.is/shared/mocking'
-import { createLogger } from 'winston'
-import { logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { Logger } from '@nestjs/common'
+import { DrivingLicenseService } from './drivingLicense.service'
 
 startMocking(requestHandlers)
 

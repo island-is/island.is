@@ -1,10 +1,11 @@
 import { forwardRef, Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { CaseModule, CourtModule, AwsS3Module } from '../index'
+import { AwsS3Module,CaseModule, CourtModule } from '../index'
+
 import { CaseFile } from './models/file.model'
-import { FileService } from './file.service'
 import { FileController } from './file.controller'
+import { FileService } from './file.service'
 
 @Module({
   imports: [

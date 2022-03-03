@@ -15,7 +15,7 @@ import {
 import { ApiTags } from '@nestjs/swagger'
 import startOfDay from 'date-fns/startOfDay'
 
-import { Documentation } from '@island.is/nest/swagger'
+import { AuthScope } from '@island.is/auth/scopes'
 import {
   CreateDelegationDTO,
   DelegationDirection,
@@ -26,6 +26,7 @@ import {
   UpdateDelegationDTO,
   UpdateDelegationScopeDTO,
 } from '@island.is/auth-api-lib'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   AuthMiddlewareOptions,
   CurrentUser,
@@ -33,15 +34,14 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { AuthScope } from '@island.is/auth/scopes'
-import type { User } from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
+  FeatureFlag,
   FeatureFlagGuard,
   Features,
-  FeatureFlag,
 } from '@island.is/nest/feature-flags'
 import { HttpProblemResponse } from '@island.is/nest/problem'
+import { Documentation } from '@island.is/nest/swagger'
 
 import { environment } from '../../../environments'
 

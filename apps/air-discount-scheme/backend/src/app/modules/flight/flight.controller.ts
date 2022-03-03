@@ -1,30 +1,50 @@
 import {
+  BadRequestException,
+  Body,
+  CACHE_MANAGER,
+  Controller,
+  Delete,
+  ForbiddenException,
+  forwardRef,
   Get,
   HttpCode,
-  Body,
-  Controller,
+  Inject,
+  NotFoundException,
   Param,
   Post,
-  Delete,
-  UseGuards,
   Req,
-  NotFoundException,
-  BadRequestException,
-  ForbiddenException,
-  Inject,
-  forwardRef,
-  CACHE_MANAGER,
+  UseGuards,
 } from '@nestjs/common'
 import {
-  ApiOkResponse,
   ApiBearerAuth,
   ApiCreatedResponse,
-  ApiNoContentResponse,
   ApiExcludeEndpoint,
-  ApiTags,
+  ApiNoContentResponse,
+  ApiOkResponse,
   ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger'
+import * as kennitala from 'kennitala'
 
+import type { HttpRequest } from '../../app.types'
+import { AuthGuard } from '../common'
+import { Discount, DiscountService } from '../discount'
+import { NationalRegistryService } from '../nationalRegistry'
+import { MAX_AGE_LIMIT } from '../nationalRegistry/nationalRegistry.service'
+
+import {
+  CheckFlightBody,
+  CheckFlightParams,
+  ConfirmInvoiceBody,
+  CreateFlightBody,
+  CreateFlightParams,
+  DeleteFlightLegParams,
+  DeleteFlightParams,
+  FlightViewModel,
+  GetFlightLegsBody,
+  GetFlightParams,
+  GetUserFlightsParams,
+} from './dto'
 import { Flight, FlightLeg } from './flight.model'
 import {
   AKUREYRI_FLIGHT_CODES,
@@ -32,25 +52,6 @@ import {
   FlightService,
   REYKJAVIK_FLIGHT_CODES,
 } from './flight.service'
-import {
-  FlightViewModel,
-  CreateFlightBody,
-  GetFlightParams,
-  GetFlightLegsBody,
-  ConfirmInvoiceBody,
-  CreateFlightParams,
-  GetUserFlightsParams,
-  DeleteFlightParams,
-  DeleteFlightLegParams,
-  CheckFlightParams,
-  CheckFlightBody,
-} from './dto'
-import { Discount, DiscountService } from '../discount'
-import { AuthGuard } from '../common'
-import { NationalRegistryService } from '../nationalRegistry'
-import type { HttpRequest } from '../../app.types'
-import * as kennitala from 'kennitala'
-import { MAX_AGE_LIMIT } from '../nationalRegistry/nationalRegistry.service'
 
 @ApiTags('Flights')
 @Controller('api/public')

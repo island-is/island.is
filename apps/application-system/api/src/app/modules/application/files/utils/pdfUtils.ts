@@ -1,5 +1,6 @@
-import { PdfConstants } from './constants'
 import PDFDocument from 'pdfkit'
+
+import { PdfConstants } from './constants'
 
 export const formatSsn = (ssn: string) => {
   return ssn.replace(/(\d{6})(\d+)/, '$1-$2')

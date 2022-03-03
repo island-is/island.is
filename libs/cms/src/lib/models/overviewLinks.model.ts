@@ -1,8 +1,10 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { IOverviewLinks } from '../generated/contentfulTypes'
-import { Link, mapLink } from './link.model'
-import { IntroLinkImage, mapIntroLinkImage } from './introLinkImage.model'
 import { SystemMetadata } from 'api-cms-domain'
+
+import { IOverviewLinks } from '../generated/contentfulTypes'
+
+import { IntroLinkImage, mapIntroLinkImage } from './introLinkImage.model'
+import { Link, mapLink } from './link.model'
 
 @ObjectType()
 export class OverviewLinks {

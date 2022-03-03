@@ -3,10 +3,10 @@ import Markdown from 'markdown-to-jsx'
 
 import {
   Application,
-  formatText,
   DescriptionField,
+  formatText,
 } from '@island.is/application/core'
-import { Text, Tooltip, Box } from '@island.is/island-ui/core'
+import { Box,Text, Tooltip } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 export const DescriptionFormField: FC<{

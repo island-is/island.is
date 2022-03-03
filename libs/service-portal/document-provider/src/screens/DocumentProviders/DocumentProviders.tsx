@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
-import { useLocale } from '@island.is/localization'
+import { gql, useQuery } from '@apollo/client'
+
+import { Organisation } from '@island.is/api/schema'
 import {
   Box,
   DatePicker,
@@ -8,11 +9,13 @@ import {
   GridRow,
   Text,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
+
 import { m } from '../../lib/messages'
-import { gql, useQuery } from '@apollo/client'
-import { Organisation } from '@island.is/api/schema'
-import { DocumentProvidersSearch } from './DocumentProvidersSearch'
+
 import { DocumentProvidersDashboard } from './DocumentProvidersDashboard'
+import { DocumentProvidersSearch } from './DocumentProvidersSearch'
 
 export type OrganisationPreview = Pick<
   Organisation,

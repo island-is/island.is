@@ -1,3 +1,6 @@
+import React, { useState } from 'react'
+import AnimateHeight from 'react-animate-height'
+
 import { PaymentScheduleDebts } from '@island.is/api/schema'
 import {
   Box,
@@ -10,9 +13,9 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { useState } from 'react'
-import AnimateHeight from 'react-animate-height'
+
 import { paymentPlan } from '../../../lib/messages/paymentPlan'
+
 import * as styles from './PaymentPlanCard.css'
 
 interface Props {

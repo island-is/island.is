@@ -1,22 +1,24 @@
-import CircuitBreaker from 'opossum'
 import nodeFetch from 'node-fetch'
+import CircuitBreaker from 'opossum'
 import { Logger } from 'winston'
-import { logger as defaultLogger } from '@island.is/logging'
+
 import { DogStatsD } from '@island.is/infra-metrics'
-import { withTimeout } from './withTimeout'
-import { withMetrics } from './withMetrics'
+import { logger as defaultLogger } from '@island.is/logging'
+
+import { CacheConfig } from './withCache/types'
+import { withCache } from './withCache/withCache'
 import { FetchAPI as NodeFetchAPI } from './nodeFetch'
 import { EnhancedFetchAPI } from './types'
 import { withAuth } from './withAuth'
 import { AutoAuthOptions, withAutoAuth } from './withAutoAuth'
-import { withErrors } from './withErrors'
 import { withCircuitBreaker } from './withCircuitBreaker'
 import {
   ClientCertificateOptions,
   withClientCertificate,
 } from './withClientCertificate'
-import { withCache } from './withCache/withCache'
-import { CacheConfig } from './withCache/types'
+import { withErrors } from './withErrors'
+import { withMetrics } from './withMetrics'
+import { withTimeout } from './withTimeout'
 
 export interface EnhancedFetchOptions {
   // The name of this fetch function, used in logs and opossum stats.

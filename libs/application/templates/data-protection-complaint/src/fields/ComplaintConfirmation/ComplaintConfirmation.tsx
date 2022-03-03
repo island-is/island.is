@@ -1,11 +1,14 @@
-import { FieldBaseProps } from '@island.is/application/core'
-import { Box, Button, Text, Link } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
+
+import { FieldBaseProps } from '@island.is/application/core'
+import { Box, Button, Link,Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+
 import useGeneratePdfUrl from '../../hooks/useGeneratePdfUrl'
 import { confirmation } from '../../lib/messages/confirmation'
 import { SubmittedApplicationData } from '../../shared'
 import { CompanyIllustration } from '../Illustrations/CompanyIllustration'
+
 import * as styles from './ComplaintConfirmation.css'
 
 export const ComplaintConfirmation: FC<FieldBaseProps> = ({ application }) => {

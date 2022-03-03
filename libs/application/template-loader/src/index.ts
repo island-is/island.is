@@ -1,18 +1,20 @@
+import { FC } from 'react'
+import { EventObject } from 'xstate'
+
 import {
-  ApplicationTypes,
-  ApplicationTemplate,
   Application,
   ApplicationContext,
   ApplicationStateMeta,
   ApplicationStateSchema,
+  ApplicationTemplate,
   ApplicationTemplateHelper,
+  ApplicationTypes,
+  BasicDataProvider,
   FieldBaseProps,
   RepeaterProps,
-  BasicDataProvider,
 } from '@island.is/application/core'
-import { EventObject } from 'xstate'
+
 import templateLoaders from './lib/templateLoaders'
-import { FC } from 'react'
 
 type UIFields = Record<string, FC<FieldBaseProps | RepeaterProps>>
 type TemplateLibraryModule = {

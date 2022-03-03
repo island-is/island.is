@@ -1,5 +1,6 @@
 import { literal, Op, WhereOptions } from 'sequelize'
 
+import type { Case as TCase,User } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
   CaseDecision,
@@ -11,7 +12,6 @@ import {
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
-import type { User, Case as TCase } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
 

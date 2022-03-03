@@ -1,6 +1,7 @@
 import React, { FC, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { Box, Stack, Input, Checkbox } from '@island.is/island-ui/core'
+
+import { Box, Checkbox,Input, Stack } from '@island.is/island-ui/core'
 
 interface Props {
   id: string

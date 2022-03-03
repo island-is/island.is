@@ -1,29 +1,32 @@
-import { Injectable, Inject } from '@nestjs/common'
-import { TemplateApiModuleActionProps } from '../../../types'
-import {
-  SyslumennService,
-  Person,
-  Attachment,
-  PersonType,
-} from '@island.is/clients/syslumenn'
-import {
-  getSelectedChildrenFromExternalData,
-  formatDate,
-  childrenResidenceInfo,
-} from '@island.is/application/templates/family-matters-core/utils'
-import { Override } from '@island.is/application/templates/family-matters-core/types'
-import { CRCApplication } from '@island.is/application/templates/children-residence-change'
+import { Inject,Injectable } from '@nestjs/common'
 import { S3 } from 'aws-sdk'
+
+import { Application } from '@island.is/application/core'
+import { CRCApplication } from '@island.is/application/templates/children-residence-change'
+import { Override } from '@island.is/application/templates/family-matters-core/types'
+import {
+  childrenResidenceInfo,
+  formatDate,
+  getSelectedChildrenFromExternalData,
+} from '@island.is/application/templates/family-matters-core/utils'
+import {
+  Attachment,
+  Person,
+  PersonType,
+  SyslumennService,
+} from '@island.is/clients/syslumenn'
+import { SmsService } from '@island.is/nova-sms'
+
+import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
+
+import { applicationRejectedEmail } from './emailGenerators/applicationRejected'
 import {
   generateApplicationSubmittedEmail,
   generateSyslumennNotificationEmail,
   transferRequestedEmail,
 } from './emailGenerators'
-import { Application } from '@island.is/application/core'
-import { SmsService } from '@island.is/nova-sms'
 import { syslumennDataFromPostalCode } from './utils'
-import { applicationRejectedEmail } from './emailGenerators/applicationRejected'
 
 export const PRESIGNED_BUCKET = 'PRESIGNED_BUCKET'
 

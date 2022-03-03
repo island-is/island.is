@@ -1,4 +1,5 @@
 import { globalStyle } from '@vanilla-extract/css'
+
 import { theme } from '@island.is/island-ui/theme'
 const { color, typography, border } = theme
 

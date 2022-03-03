@@ -2,18 +2,18 @@ import React, { FC, useMemo } from 'react'
 import HtmlParser from 'react-html-parser'
 
 import {
+  buildFieldOptions,
   CheckboxField,
   FieldBaseProps,
   formatText,
   getValueViaPath,
-  buildFieldOptions,
 } from '@island.is/application/core'
-import { Text, Box } from '@island.is/island-ui/core'
+import { Box,Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import {
   CheckboxController,
   FieldDescription,
 } from '@island.is/shared/form-fields'
-import { useLocale } from '@island.is/localization'
 
 import { getDefaultValue } from '../../getDefaultValue'
 

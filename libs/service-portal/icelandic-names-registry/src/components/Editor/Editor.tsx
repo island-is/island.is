@@ -1,40 +1,41 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { useMutation, gql } from '@apollo/client'
+import { gql,useMutation } from '@apollo/client'
+
 import {
   Box,
-  Input,
-  Text,
-  ModalBase,
   Button,
-  ToastContainer,
-  toast,
+  Input,
+  ModalBase,
   Stack,
+  Text,
+  toast,
+  ToastContainer,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
-import EditForm from '../EditForm/EditForm'
-import TableList from '../TableList/TableList'
-import ConfirmModal from '../ConfirmModal/ConfirmModal'
-import { m } from '../../lib/messages'
 import {
-  UpdateIcelandicNameMutationMutation,
-  UpdateIcelandicNameMutationMutationVariables,
+  CreateIcelandicNameInput,
   CreateIcelandicNameMutationMutation,
   CreateIcelandicNameMutationMutationVariables,
+  DeleteIcelandicNameByIdInput,
   DeleteIcelandicNameMutationMutation,
   DeleteIcelandicNameMutationMutationVariables,
-  CreateIcelandicNameInput,
-  DeleteIcelandicNameByIdInput,
   GetIcelandicNameBySearchQuery,
   GetIcelandicNameBySearchQueryVariables,
+  UpdateIcelandicNameMutationMutation,
+  UpdateIcelandicNameMutationMutationVariables,
 } from '../../graphql/schema'
+import { m } from '../../lib/messages'
 import {
-  UPDATE_ICELANDIC_NAME_MUTATION,
   CREATE_ICELANDIC_NAME_MUTATION,
   DELETE_ICELANDIC_NAME_MUTATION,
+  UPDATE_ICELANDIC_NAME_MUTATION,
 } from '../../mutations'
 import { GET_ICELANDIC_NAME_BY_SEARCH } from '../../queries'
 import { IcelandicNameType } from '../../types'
+import ConfirmModal from '../ConfirmModal/ConfirmModal'
+import EditForm from '../EditForm/EditForm'
+import TableList from '../TableList/TableList'
 
 import * as styles from './Editor.css'
 

@@ -1,11 +1,13 @@
-import { ServiceDetail as IServiceDetail } from '@island.is/api-catalogue/types'
-import {
-  PricingCategory,
-  DataCategory,
-  TypeCategory,
-} from '@island.is/api-catalogue/consts'
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { IsEnum, IsObject, IsString } from 'class-validator'
+
+import {
+  DataCategory,
+  PricingCategory,
+  TypeCategory,
+} from '@island.is/api-catalogue/consts'
+import { ServiceDetail as IServiceDetail } from '@island.is/api-catalogue/types'
+
 import { ExternalLinks } from './externalLinks.model'
 import { XroadIdentifier } from './xroadIdentifier.model'
 

@@ -1,2 +1,2 @@
-export * from './lib/schema'
 export * from './lib/context'
+export * from './lib/schema'

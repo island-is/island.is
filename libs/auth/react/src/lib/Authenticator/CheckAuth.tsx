@@ -1,6 +1,7 @@
 import React, { FC, useEffect } from 'react'
 
 import { getAuthSettings } from '../userManager'
+
 import { useAuth } from './AuthContext'
 import AuthenticatorLoadingScreen from './AuthenticatorLoadingScreen'
 import { CheckIdpSession } from './CheckIdpSession'

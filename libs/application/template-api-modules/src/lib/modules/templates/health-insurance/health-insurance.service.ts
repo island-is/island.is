@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common'
+
+import { HealthInsuranceAPI } from '@island.is/health-insurance'
 import { logger } from '@island.is/logging'
 
-import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
+import { SharedTemplateApiService } from '../../shared'
+
 import { transformApplicationToHealthInsuranceDTO } from './health-insurance.utils'
-import { HealthInsuranceAPI } from '@island.is/health-insurance'
 
 @Injectable()
 export class HealthInsuranceService {

@@ -1,10 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import {
   Column,
+  CreatedAt,
   DataType,
   Model,
   Table,
-  CreatedAt,
   UpdatedAt,
 } from 'sequelize-typescript'
 

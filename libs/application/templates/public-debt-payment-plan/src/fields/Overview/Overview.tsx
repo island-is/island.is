@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from 'react'
+
 import {
   PaymentScheduleEmployer,
   PaymentSchedulePayment,
@@ -18,16 +20,18 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { useEffect, useState } from 'react'
+
 import { overview } from '../../lib/messages'
 import { formatIsk } from '../../lib/paymentPlanUtils'
 import {
-  NatRegResult,
-  PaymentPlan,
   Applicant,
   CorrectedEmployer,
+  NatRegResult,
+  PaymentPlan,
 } from '../../types'
+
 import { DistributionTable } from './DistributionTabel'
+
 import * as styles from './Overview.css'
 
 export const Overview = ({ application, goToScreen }: FieldBaseProps) => {

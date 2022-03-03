@@ -1,14 +1,15 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
   DataType,
+  HasMany,
   Model,
+  PrimaryKey,
   Table,
   UpdatedAt,
-  HasMany,
-  PrimaryKey,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
+
 import { ApiScopeUserAccess } from './api-scope-user-access.model'
 
 @Table({

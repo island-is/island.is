@@ -3,8 +3,8 @@ import {
   STEP_TWO_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
-  makeCustodyCase,
   makeCourt,
+  makeCustodyCase,
   makeProsecutor,
 } from '@island.is/judicial-system/formatters'
 

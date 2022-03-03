@@ -1,4 +1,5 @@
 import { defineMessages } from 'react-intl'
+
 import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
 
 // Strings for select court component

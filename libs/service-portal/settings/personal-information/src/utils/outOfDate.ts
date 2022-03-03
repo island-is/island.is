@@ -1,5 +1,6 @@
-import { UserProfile } from '@island.is/api/schema'
 import differenceInMonths from 'date-fns/differenceInMonths'
+
+import { UserProfile } from '@island.is/api/schema'
 
 export const outOfDate = (getUserProfile: UserProfile) => {
   const emptyMail = getUserProfile?.emailStatus === 'EMPTY'

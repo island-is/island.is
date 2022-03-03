@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
-import * as AWS from 'aws-sdk'
-import { uuid } from 'uuidv4'
 import AmazonS3URI from 'amazon-s3-uri'
+import * as AWS from 'aws-sdk'
 import kebabCase from 'lodash/kebabCase'
+import { uuid } from 'uuidv4'
 
 import type { FileStorageConfig } from './file-storage.configuration'
 import { FILE_STORAGE_CONFIG } from './file-storage.configuration'

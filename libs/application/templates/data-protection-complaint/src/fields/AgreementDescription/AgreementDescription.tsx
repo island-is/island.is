@@ -1,7 +1,10 @@
+import React, { FC } from 'react'
+
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Stack } from '@island.is/island-ui/core'
-import React, { FC } from 'react'
+
 import { delimitation } from '../../lib/messages'
+
 import { AgreementDescriptionBullet } from './AgreementDescriptionBullet'
 
 export const AgreementDescription: FC<FieldBaseProps> = () => {

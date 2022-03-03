@@ -1,7 +1,9 @@
 import React, { FC } from 'react'
+
+import { Box,Divider, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
-import { Text, Divider, Box } from '@island.is/island-ui/core'
+
 import { msg } from '../../../../lib/messages'
 
 interface Props {

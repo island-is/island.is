@@ -1,22 +1,23 @@
 import {
-  buildMultiField,
   buildCheckboxField,
   buildCustomField,
+  buildMultiField,
   buildRadioField,
-  FormValue,
   buildSubSection,
+  FormValue,
   getValueViaPath,
 } from '@island.is/application/core'
+
+import { NO, YES } from '../../lib/constants'
 import { m } from '../../lib/messages'
 import { HasQualityPhotoData } from '../../lib/types'
-import { NO, YES } from '../../lib/constants'
-import { B_FULL } from '../../shared/constants'
 import {
   hasNoDrivingLicenseInOtherCountry,
   hasYes,
   isApplicationForCondition,
   isVisible,
 } from '../../lib/utils'
+import { B_FULL } from '../../shared/constants'
 
 export const subSectionQualityPhoto = buildSubSection({
   id: 'photoStep',

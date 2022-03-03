@@ -1,6 +1,7 @@
-import { PropertyLocation } from './propertyUnitsOfUse.model'
-import { PagingData } from './propertyOwners.model'
 import { Field, ObjectType } from '@nestjs/graphql'
+
+import { PagingData } from './propertyOwners.model'
+import { PropertyLocation } from './propertyUnitsOfUse.model'
 
 @ObjectType()
 export class SimpleProperties {

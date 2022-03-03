@@ -1,6 +1,5 @@
-import { Allow } from 'class-validator'
-
 import { Field, InputType } from '@nestjs/graphql'
+import { Allow } from 'class-validator'
 
 import type { CreatePresignedPost } from '@island.is/judicial-system/types'
 

@@ -1,12 +1,14 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
+import { IsOptional } from 'class-validator'
+
 import {
   AccessCategory,
-  PricingCategory,
   DataCategory,
-  TypeCategory,
   Environment,
+  PricingCategory,
+  TypeCategory,
 } from '@island.is/api-catalogue/consts'
-import { IsOptional } from 'class-validator'
+
 import { PageInfo } from './pageInfo.model'
 import { Service } from './service.model'
 

@@ -1,9 +1,10 @@
-import { downloadFile } from './downloadFile'
 import {
-  FinanceStatusDetailsType,
   FinanceStatusDetailsChangeItem,
+  FinanceStatusDetailsType,
 } from '../screens/FinanceStatus/FinanceStatusData.types'
+
 import { gjoldSundurlidunHeaders } from './dataHeaders'
+import { downloadFile } from './downloadFile'
 
 export const exportGjoldSundurlidunFile = async (
   data: FinanceStatusDetailsType,

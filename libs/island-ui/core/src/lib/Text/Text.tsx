@@ -1,20 +1,23 @@
-import { Colors } from '@island.is/island-ui/theme'
+import React, { forwardRef,useContext } from 'react'
 import cn from 'classnames'
-import React, { useContext, forwardRef } from 'react'
+
+import { Colors } from '@island.is/island-ui/theme'
+
 import { Box } from '../Box/Box'
 import { ResponsiveSpace } from '../Box/useBoxStyles'
 import { LinkContext } from '../context'
+
 import {
-  variantStyles,
   base,
   colors,
   defaultFontWeights,
   defaultLineHeights,
   fontWeight as fontWeightStyles,
   lineHeight as lineHeightStyles,
+  strikethrough as strikethroughStyle,
   TextVariants,
   truncate as truncateStyle,
-  strikethrough as strikethroughStyle,
+  variantStyles,
   whiteSpace as whiteSpaceStyle,
 } from './Text.css'
 

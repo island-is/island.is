@@ -1,14 +1,14 @@
 import React, { ReactElement } from 'react'
-import { FocusableBox } from '../FocusableBox/FocusableBox'
-import { Button } from '../Button/Button'
-import { Box } from '../Box/Box'
-import { Text } from '../Text/Text'
-import { Icon } from '../IconRC/Icon'
 
+import { Box } from '../Box/Box'
+import { Button } from '../Button/Button'
+import { FocusableBox } from '../FocusableBox/FocusableBox'
+import { GridColumn } from '../Grid/GridColumn/GridColumn'
 import { GridContainer } from '../Grid/GridContainer/GridContainer'
 import { GridRow } from '../Grid/GridRow/GridRow'
-import { GridColumn } from '../Grid/GridColumn/GridColumn'
+import { Icon } from '../IconRC/Icon'
 import { ModalBase } from '../ModalBase/ModalBase'
+import { Text } from '../Text/Text'
 
 import * as styles from './DialogPrompt.css'
 

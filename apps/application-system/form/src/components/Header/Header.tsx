@@ -1,12 +1,12 @@
 import React, { FC, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 
+import { useHeaderInfo } from '@island.is/application/ui-shell'
 import {
   Box,
   GridContainer,
   Header as UIHeader,
 } from '@island.is/island-ui/core'
-import { useHeaderInfo } from '@island.is/application/ui-shell'
 import { UserMenu } from '@island.is/shared/components'
 
 import { fixSvgUrls } from '../../utils'

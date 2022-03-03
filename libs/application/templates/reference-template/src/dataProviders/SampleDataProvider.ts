@@ -1,6 +1,6 @@
 import {
-  BasicDataProvider,
   Application,
+  BasicDataProvider,
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
 

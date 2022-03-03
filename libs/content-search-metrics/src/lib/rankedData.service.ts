@@ -1,5 +1,6 @@
-import { RankEvaluationInput, Rating } from '@island.is/content-search-toolkit'
 import { Injectable } from '@nestjs/common'
+
+import { RankEvaluationInput, Rating } from '@island.is/content-search-toolkit'
 
 const termsTestData = {
   bál: {

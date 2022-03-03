@@ -1,5 +1,6 @@
 import React, { FC } from 'react'
-import { Box, Text, Icon } from '@island.is/island-ui/core'
+
+import { Box, Icon,Text } from '@island.is/island-ui/core'
 
 export interface Props {
   title: string

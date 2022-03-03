@@ -1,5 +1,6 @@
 import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+
 import {
   FieldBaseProps,
   formatText,
@@ -7,6 +8,7 @@ import {
 } from '@island.is/application/core'
 import { Box, Checkbox } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+
 import { m } from '../../forms/messages'
 
 const ConfirmCheckbox: FC<FieldBaseProps> = ({ error, field, application }) => {

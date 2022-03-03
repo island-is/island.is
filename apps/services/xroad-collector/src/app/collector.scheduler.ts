@@ -1,5 +1,7 @@
-import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
+
+import { logger } from '@island.is/logging'
+
 import { RestServiceCollector } from './restservicecollector.service'
 
 @Injectable()

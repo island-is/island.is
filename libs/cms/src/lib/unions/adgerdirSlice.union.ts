@@ -1,5 +1,6 @@
 import { createUnionType } from '@nestjs/graphql'
 import { ApolloError } from 'apollo-server-express'
+
 import {
   IVidspyrnaFeaturedNews,
   IVidspyrnaFlokkur,

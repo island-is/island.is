@@ -1,7 +1,9 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+
 import { IVidspyrnaFlokkur } from '../generated/contentfulTypes'
-import { Image, mapImage } from './image.model'
+
 import { AdgerdirPage, mapAdgerdirPage } from './adgerdirPage.model'
+import { Image, mapImage } from './image.model'
 
 @ObjectType()
 export class AdgerdirGroupSlice {

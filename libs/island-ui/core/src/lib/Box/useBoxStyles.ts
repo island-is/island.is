@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { ElementType } from 'react'
 import classnames from 'classnames'
+
 import { theme } from '@island.is/island-ui/theme'
 
 import {
   resolveResponsiveProp,
   ResponsiveProp,
 } from '../../utils/responsiveProp'
+
 import * as resetStyleRefs from '../../styles/reset.css'
 import * as styleRefs from './useBoxStyles.css'
 

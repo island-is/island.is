@@ -1,15 +1,17 @@
 import React, { FC } from 'react'
-import { useForm, Controller } from 'react-hook-form'
+import { Controller,useForm } from 'react-hook-form'
+
 import {
   Box,
+  Button,
+  DatePicker,
   GridColumn,
   GridRow,
-  Select,
   Input,
-  DatePicker,
-  Button,
+  Select,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+
 import { m } from '../../lib/messages'
 
 export type CategoryFormOption = {

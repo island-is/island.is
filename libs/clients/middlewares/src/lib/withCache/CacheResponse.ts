@@ -1,4 +1,5 @@
 import { HeadersInit, Response } from '../nodeFetch'
+
 import { CachePolicyInternal } from './types'
 
 export class CacheResponse {

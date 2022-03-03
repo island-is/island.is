@@ -1,13 +1,13 @@
 import { Test } from '@nestjs/testing'
 
-import { DiscountService } from '../../discount.service'
-import { Discount } from '../../discount.model'
-import { PrivateDiscountController } from '../../discount.controller'
+import { FlightService } from '../../../flight'
 import {
   NationalRegistryService,
   NationalRegistryUser,
 } from '../../../nationalRegistry'
-import { FlightService } from '../../../flight'
+import { PrivateDiscountController } from '../../discount.controller'
+import { Discount } from '../../discount.model'
+import { DiscountService } from '../../discount.service'
 
 describe('DiscountController', () => {
   let privateDiscountController: PrivateDiscountController

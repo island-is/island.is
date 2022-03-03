@@ -1,12 +1,14 @@
+import { Injectable } from '@nestjs/common'
+
+import { ProviderType } from '@island.is/api-catalogue/consts'
 import { Provider, Providers } from '@island.is/api-catalogue/types'
+import { logger } from '@island.is/logging'
+
 import {
   MetaservicesApi,
   XroadIdentifier,
   XroadIdentifierIdObjectTypeEnum,
 } from '../../gen/fetch/xrd'
-import { ProviderType } from '@island.is/api-catalogue/consts'
-import { logger } from '@island.is/logging'
-import { Injectable } from '@nestjs/common'
 
 @Injectable()
 export class ProviderService {

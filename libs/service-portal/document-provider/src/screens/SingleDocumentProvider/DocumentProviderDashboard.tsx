@@ -1,9 +1,11 @@
 import React from 'react'
+
+import { Box,GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { GridRow, GridColumn, Box } from '@island.is/island-ui/core'
+
 import { StatisticBox } from '../../components/StatisticBox/StatisticBox'
-import { useGetProviderStatistics } from '../../shared/useGetProviderStatistics'
 import { m } from '../../lib/messages'
+import { useGetProviderStatistics } from '../../shared/useGetProviderStatistics'
 
 interface Props {
   organisationId: string

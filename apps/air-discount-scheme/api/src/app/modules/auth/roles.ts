@@ -1,6 +1,8 @@
-import environment from '../../../environments/environment'
-import { AuthUser } from './types'
 import { Role } from '@island.is/air-discount-scheme/types'
+
+import environment from '../../../environments/environment'
+
+import { AuthUser } from './types'
 
 const {
   accessGroups: { developers = '', admins = '' },

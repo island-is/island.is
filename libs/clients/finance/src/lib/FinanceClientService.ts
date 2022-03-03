@@ -1,5 +1,15 @@
 import { Inject } from '@nestjs/common'
 import isEmpty from 'lodash/isEmpty'
+
+import { Auth } from '@island.is/auth-nest-tools'
+import {
+  createEnhancedFetch,
+  EnhancedFetchAPI,
+} from '@island.is/clients/middlewares'
+import type { ConfigType } from '@island.is/nest/config'
+import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
+
+import { FinanceClientConfig } from './FinanceClientConfig'
 import {
   CustomerChargeType,
   CustomerRecords,
@@ -9,14 +19,6 @@ import {
   FinanceStatusDetails,
   TapsControlTypes,
 } from './types'
-import {
-  createEnhancedFetch,
-  EnhancedFetchAPI,
-} from '@island.is/clients/middlewares'
-import { Auth } from '@island.is/auth-nest-tools'
-import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
-import type { ConfigType } from '@island.is/nest/config'
-import { FinanceClientConfig } from './FinanceClientConfig'
 
 export class FinanceClientService {
   baseURL: string

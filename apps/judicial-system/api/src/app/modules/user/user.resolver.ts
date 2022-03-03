@@ -1,19 +1,20 @@
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
-import type { User as TUser } from '@island.is/judicial-system/types'
-import {
-  CurrentGraphQlUser,
-  JwtGraphQlAuthGuard,
-} from '@island.is/judicial-system/auth'
 import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
+import {
+  CurrentGraphQlUser,
+  JwtGraphQlAuthGuard,
+} from '@island.is/judicial-system/auth'
+import type { User as TUser } from '@island.is/judicial-system/types'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { BackendApi } from '../../data-sources'
+
 import { CreateUserInput } from './dto/createUser.input'
 import { UpdateUserInput } from './dto/updateUser.input'
 import { UserQueryInput } from './dto/user.input'

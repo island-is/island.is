@@ -1,29 +1,33 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { useWindowSize } from 'react-use'
+import { QueryResult } from '@apollo/client'
+import cn from 'classnames'
+import * as kennitala from 'kennitala'
+
 import {
   Box,
-  Text,
-  ModalBase,
-  UserAvatar,
-  Icon,
-  GridContainer,
   Divider,
+  GridContainer,
   Hidden,
+  Icon,
+  ModalBase,
+  Text,
+  UserAvatar,
 } from '@island.is/island-ui/core'
-import { User } from '@island.is/shared/types'
-import { sharedMessages, userMessages } from '@island.is/shared/translations'
+import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
-import * as styles from './UserMenu.css'
+import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
+import { sharedMessages, userMessages } from '@island.is/shared/translations'
+import { User } from '@island.is/shared/types'
+
+import { useActorDelegationsQuery } from '../../../gen/graphql'
+
 import { UserDelegations } from './UserDelegations'
 import { UserDropdownItem } from './UserDropdownItem'
-import { UserProfileInfo } from './UserProfileInfo'
-import * as kennitala from 'kennitala'
-import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
-import { useActorDelegationsQuery } from '../../../gen/graphql'
-import { QueryResult } from '@apollo/client'
 import { UserLanguageSwitcher } from './UserLanguageSwitcher'
-import cn from 'classnames'
-import { theme } from '@island.is/island-ui/theme'
-import { useWindowSize } from 'react-use'
+import { UserProfileInfo } from './UserProfileInfo'
+
+import * as styles from './UserMenu.css'
 
 interface UserDropdownProps {
   user: User

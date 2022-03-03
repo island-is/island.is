@@ -1,13 +1,15 @@
+import { buildSection, buildSubSection } from '@island.is/application/core'
+
+import { buildTextField } from '../lib/fieldBuilders'
+import { FormValue } from '../types/Application'
 import {
   AllOrAny,
   Comparators,
   Condition,
   SingleConditionCheck,
 } from '../types/Condition'
-import { FormValue } from '../types/Application'
-import { buildTextField } from '../lib/fieldBuilders'
+
 import { shouldShowFormItem } from './conditionUtils'
-import { buildSection, buildSubSection } from '@island.is/application/core'
 
 describe('conditions', () => {
   it('should show a field which has no condition whatsoever', () => {

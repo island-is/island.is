@@ -1,6 +1,7 @@
-import { logger } from '@island.is/logging'
-import { UserApplication } from '@island.is/gjafakort/types'
 import { ApplicationStates } from '@island.is/gjafakort/consts'
+import { UserApplication } from '@island.is/gjafakort/types'
+import { logger } from '@island.is/logging'
+
 import cache from '../../extensions/cache'
 import {
   ApplicationAPI,

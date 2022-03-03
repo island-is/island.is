@@ -1,15 +1,17 @@
+import CircuitBreaker from 'opossum'
+import { SetOptional } from 'type-fest'
+
 import {
   createEnhancedFetch,
   EnhancedFetchAPI,
   EnhancedFetchOptions,
   Request,
 } from '@island.is/clients/middlewares'
-import { Logger } from '@island.is/logging'
-import CircuitBreaker from 'opossum'
-import { SetOptional } from 'type-fest'
-import { Response, FetchAPI as NodeFetchAPI } from '../src/lib/nodeFetch'
-import { TokenResponse, TokenType } from '../src/lib/withAutoAuth'
 import { DogStatsD } from '@island.is/infra-metrics'
+import { Logger } from '@island.is/logging'
+
+import { FetchAPI as NodeFetchAPI,Response } from '../src/lib/nodeFetch'
+import { TokenResponse, TokenType } from '../src/lib/withAutoAuth'
 jest.mock('@island.is/infra-metrics')
 
 export interface EnhancedFetchTestEnv {

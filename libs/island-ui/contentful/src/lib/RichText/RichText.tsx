@@ -1,9 +1,9 @@
 import React, { FC, useMemo } from 'react'
-import { Document } from '@contentful/rich-text-types'
 import {
   documentToReactComponents,
   Options,
 } from '@contentful/rich-text-react-renderer'
+import { Document } from '@contentful/rich-text-types'
 
 export interface RichTextProps extends Options {
   document?: string | Document

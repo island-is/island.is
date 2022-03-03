@@ -1,7 +1,7 @@
 import { Logger } from 'winston'
 
-import { FetchAPI, FetchMiddlewareOptions } from './nodeFetch'
 import { FetchError } from './FetchError'
+import { FetchAPI, FetchMiddlewareOptions } from './nodeFetch'
 
 interface ErrorOptions extends FetchMiddlewareOptions {
   name: string

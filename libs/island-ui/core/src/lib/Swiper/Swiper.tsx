@@ -1,5 +1,6 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import cn from 'classnames'
+
 import { theme } from '@island.is/island-ui/theme'
 
 import * as styles from './Swiper.css'

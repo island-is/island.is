@@ -1,9 +1,10 @@
+import { createClient, DataGovernance,IJSAutoPollOptions } from 'configcat-js'
+
 import {
   FeatureFlagClient,
-  FeatureFlagUser,
   FeatureFlagClientProps,
+  FeatureFlagUser,
 } from './types'
-import { createClient, IJSAutoPollOptions, DataGovernance } from 'configcat-js'
 
 export class Client implements FeatureFlagClient {
   private configcat: ReturnType<typeof createClient>

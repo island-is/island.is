@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common'
-import { Locale } from '@island.is/shared/types'
-import { StaticText } from '@island.is/application/core'
 import { createIntl, createIntlCache, IntlShape } from '@formatjs/intl'
+
+import { StaticText } from '@island.is/application/core'
 import { logger } from '@island.is/logging'
+import { Locale } from '@island.is/shared/types'
 
 import { CmsTranslationsService } from './cms-translations.service'
 

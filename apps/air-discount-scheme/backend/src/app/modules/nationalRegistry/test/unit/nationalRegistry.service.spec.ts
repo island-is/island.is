@@ -1,18 +1,19 @@
+import { CACHE_MANAGER,HttpModule, HttpService } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
-import { HttpModule, HttpService, CACHE_MANAGER } from '@nestjs/common'
 import { AxiosResponse } from 'axios'
 import { of } from 'rxjs'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import { environment } from '../../../../../environments'
 import {
-  NationalRegistryService,
   CACHE_KEY,
+  NationalRegistryService,
   ONE_MONTH,
 } from '../../nationalRegistry.service'
 import {
-  NationalRegistryGeneralLookupResponse,
   NationalRegistryFamilyLookupResponse,
+  NationalRegistryGeneralLookupResponse,
   NationalRegistryUser,
 } from '../../nationalRegistry.types'
 

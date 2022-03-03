@@ -8,10 +8,10 @@
  */
 
 export type { BoxProps } from './src/lib/Box/types'
-export type { InputBackgroundColor, InputProps } from './src/lib/Input/types'
 export type {
   DatePickerBackgroundColor,
   DatePickerProps,
 } from './src/lib/DatePicker/types'
-export type { ResponsiveProp } from './src/utils/responsiveProp'
 export type { GridColumns } from './src/lib/Grid/GridColumn/GridColumn.css'
+export type { InputBackgroundColor, InputProps } from './src/lib/Input/types'
+export type { ResponsiveProp } from './src/utils/responsiveProp'

@@ -1,10 +1,12 @@
+import React, { FC, useCallback, useEffect, useState } from 'react'
+import { Controller, useFormContext } from 'react-hook-form'
+
 import { IsHealthInsuredInput } from '@island.is/api/schema'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { DatePickerController } from '@island.is/shared/form-fields'
-import React, { FC, useCallback, useEffect, useState } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
+
 import { NO, YES } from '../../constants'
 import { useLazyIsHealthInsured } from '../../hooks/useLazyIsHealthInsured'
 import { AccidentNotification } from '../../lib/dataSchema'

@@ -1,31 +1,32 @@
 import React, { useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
-import localeIS from 'date-fns/locale/is'
 import format from 'date-fns/format'
+import localeIS from 'date-fns/locale/is'
 import parseISO from 'date-fns/parseISO'
 
-import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
+import { Box, Button,Icon, Tag, Text } from '@island.is/island-ui/core'
+import {
+  capitalize,
+  caseTypes,
+  formatNationalId,
+} from '@island.is/judicial-system/formatters'
+import type { Case } from '@island.is/judicial-system/types'
 import {
   CaseState,
   isInvestigationCase,
   UserRole,
 } from '@island.is/judicial-system/types'
+import { core, requests } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   directionType,
   sortableTableColumn,
   SortConfig,
 } from '@island.is/judicial-system-web/src/types'
-import {
-  capitalize,
-  caseTypes,
-  formatNationalId,
-} from '@island.is/judicial-system/formatters'
-import { core, requests } from '@island.is/judicial-system-web/messages'
-import type { Case } from '@island.is/judicial-system/types'
 
 import { mapCaseStateToTagVariant } from './utils'
+
 import * as styles from './Requests.css'
 
 interface Props {

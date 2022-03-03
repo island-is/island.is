@@ -1,21 +1,24 @@
 import React, { FC, useState } from 'react'
+import { useForm } from 'react-hook-form'
+
 import {
   Box,
   Button,
-  Columns,
   Column,
+  Columns,
   Icon,
-  LoadingDots,
   InputError,
+  LoadingDots,
 } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import { useUpdateOrCreateUserProfile } from '@island.is/service-portal/graphql'
-import { stringifyBankData } from '../../../../../utils/bankInfoHelper'
-import { msg } from '../../../../../lib/messages'
 import { InputController } from '@island.is/shared/form-fields'
-import { useForm } from 'react-hook-form'
-import { useLocale, useNamespaces } from '@island.is/localization'
+
+import { msg } from '../../../../../lib/messages'
+import { stringifyBankData } from '../../../../../utils/bankInfoHelper'
 import { BankInfoTypes } from '../../../ProfileForm/types/form'
+
 import * as styles from './BankInfo.css'
 
 interface Props {

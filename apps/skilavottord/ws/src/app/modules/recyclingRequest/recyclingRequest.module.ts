@@ -1,14 +1,14 @@
-import { Module, HttpModule, forwardRef } from '@nestjs/common'
+import { forwardRef,HttpModule, Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { VehicleModule } from '../vehicle/vehicle.module'
+import { FjarsyslaModule } from '../fjarsysla/fjarsysla.module'
 import { RecyclingPartnerModule } from '../recyclingPartner/recyclingPartner.module'
 import { SamgongustofaModule } from '../samgongustofa/samgongustofa.module'
-import { FjarsyslaModule } from '../fjarsysla/fjarsysla.module'
+import { VehicleModule } from '../vehicle/vehicle.module'
 
 import { RecyclingRequestModel } from './recyclingRequest.model'
-import { RecyclingRequestService } from './recyclingRequest.service'
 import { RecyclingRequestResolver } from './recyclingRequest.resolver'
+import { RecyclingRequestService } from './recyclingRequest.service'
 
 @Module({
   imports: [

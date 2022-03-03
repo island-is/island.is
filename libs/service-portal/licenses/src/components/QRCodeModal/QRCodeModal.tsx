@@ -1,18 +1,20 @@
 import React, { FC, useEffect, useState } from 'react'
-import * as styles from './QRCodeModal.css'
+import { useMutation } from '@apollo/client'
+
 import {
   Box,
-  ModalBase,
   Button,
+  ModalBase,
+  SkeletonLoader,
   Tag,
   Text,
-  SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useUserProfile } from '@island.is/service-portal/graphql'
-import { Locale } from '@island.is/shared/types'
-import { useMutation } from '@apollo/client'
 import { CREATE_PK_PASS } from '@island.is/service-portal/graphql'
+import { Locale } from '@island.is/shared/types'
+
+import * as styles from './QRCodeModal.css'
 interface Props {
   id: string
   onCloseModal: () => void

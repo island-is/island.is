@@ -1,15 +1,16 @@
-import { Inject, NotFoundException, forwardRef } from '@nestjs/common'
-import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
+import { forwardRef,Inject, NotFoundException } from '@nestjs/common'
+import { Args, Mutation,Query, Resolver } from '@nestjs/graphql'
 
-import { Authorize, Role, CurrentUser, User } from '../auth'
+import { Authorize, CurrentUser, Role, User } from '../auth'
+import { SamgongustofaService } from '../samgongustofa'
 import { VehicleModel } from '../vehicle'
+
 import {
   RecyclingRequestModel,
-  RecyclingRequestTypes,
   RecyclingRequestResponse,
+  RecyclingRequestTypes,
 } from './recyclingRequest.model'
 import { RecyclingRequestService } from './recyclingRequest.service'
-import { SamgongustofaService } from '../samgongustofa'
 
 @Authorize()
 @Resolver(() => RecyclingRequestModel)

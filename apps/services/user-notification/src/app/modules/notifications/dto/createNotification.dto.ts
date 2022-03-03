@@ -1,6 +1,8 @@
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator'
+
 import { IsNationalId } from '@island.is/nest/validators'
+
 import { MessageTypes } from '../types'
 
 export class TypeValidator {

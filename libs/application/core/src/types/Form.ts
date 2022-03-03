@@ -1,13 +1,13 @@
 import { Dispatch, SetStateAction } from 'react'
+import { MessageDescriptor } from 'react-intl'
 import { GraphQLError } from 'graphql'
 import { ZodObject } from 'zod'
-import { MessageDescriptor } from 'react-intl'
 
-import type { BoxProps } from '@island.is/island-ui/core/types'
 import { Field, RecordObject } from '@island.is/application/core'
+import type { BoxProps } from '@island.is/island-ui/core/types'
 
-import { Condition } from './Condition'
 import { Application } from './Application'
+import { Condition } from './Condition'
 
 export type BeforeSubmitCallback = () => Promise<[true, null] | [false, string]>
 

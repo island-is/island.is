@@ -1,16 +1,19 @@
-import { Reflector } from '@nestjs/core'
 import {
-  Injectable,
   CanActivate,
   ExecutionContext,
   Inject,
+  Injectable,
   MethodNotAllowedException,
 } from '@nestjs/common'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { AccessGroup } from './access.enum'
-import { ACCESS_GROUP_KEY } from './access.decorator'
-import { EndorsementListService } from '../../modules/endorsementList/endorsementList.service'
+import { Reflector } from '@nestjs/core'
+
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import { EndorsementListService } from '../../modules/endorsementList/endorsementList.service'
+
+import { ACCESS_GROUP_KEY } from './access.decorator'
+import { AccessGroup } from './access.enum'
 
 /**
  * This exists to limit access to trusted individuals

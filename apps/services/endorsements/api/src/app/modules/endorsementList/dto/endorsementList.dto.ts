@@ -1,16 +1,18 @@
+import { ApiProperty } from '@nestjs/swagger'
+import { Type } from 'class-transformer'
 import {
+  IsArray,
+  IsBoolean,
+  IsDate,
   IsEnum,
+  IsObject,
   IsOptional,
   IsString,
   ValidateNested,
-  IsArray,
-  IsObject,
-  IsBoolean,
-  IsDate,
 } from 'class-validator'
-import { Type } from 'class-transformer'
-import { ApiProperty } from '@nestjs/swagger'
+
 import { EndorsementTag } from '../constants'
+
 import { EndorsementMetadataDto } from './endorsementMetadata.dto'
 export class EndorsementListDto {
   @ApiProperty()

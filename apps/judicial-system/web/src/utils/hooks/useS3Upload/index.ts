@@ -1,19 +1,19 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
+import { useMutation } from '@apollo/client'
 
 import { UploadFile } from '@island.is/island-ui/core'
+import {
+  Case,
+  PresignedPost,
+  UploadPoliceCaseFileResponse,
+} from '@island.is/judicial-system/types'
 import {
   CreateFileMutation,
   CreatePresignedPostMutation,
   DeleteFileMutation,
   UploadPoliceCaseFileMutation,
 } from '@island.is/judicial-system-web/graphql'
-import {
-  Case,
-  PresignedPost,
-  UploadPoliceCaseFileResponse,
-} from '@island.is/judicial-system/types'
 import { errors } from '@island.is/judicial-system-web/messages'
 
 export const useS3Upload = (workingCase: Case) => {

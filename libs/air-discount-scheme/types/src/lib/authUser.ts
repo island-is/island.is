@@ -1,4 +1,5 @@
 import { FlightLeg } from '..'
+
 import { Fund } from './user'
 
 export enum Role {

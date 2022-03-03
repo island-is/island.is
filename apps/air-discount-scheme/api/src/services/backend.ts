@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common'
-import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
+import { RequestOptions,RESTDataSource } from 'apollo-datasource-rest'
 
-import { Discount, User, Flight } from '@island.is/air-discount-scheme/types'
+import { Discount, Flight,User } from '@island.is/air-discount-scheme/types'
+
 import { environment } from '../environments'
 
 @Injectable()

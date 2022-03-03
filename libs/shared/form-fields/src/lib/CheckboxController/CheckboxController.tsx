@@ -1,12 +1,13 @@
 import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+
 import {
   Checkbox,
-  InputError,
-  GridRow,
   GridColumn,
-  Stack,
+  GridRow,
   InputBackgroundColor,
+  InputError,
+  Stack,
 } from '@island.is/island-ui/core'
 
 type CheckboxProps = React.ComponentProps<typeof Checkbox>

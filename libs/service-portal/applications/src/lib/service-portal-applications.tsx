@@ -1,5 +1,6 @@
 import React from 'react'
 import { Route, Switch } from 'react-router-dom'
+
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 
 const OpenApplications = () => <h1>Opnar umsóknir</h1>

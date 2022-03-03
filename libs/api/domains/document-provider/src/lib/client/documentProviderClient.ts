@@ -3,7 +3,7 @@ import { AxiosRequestConfig } from 'axios'
 
 import { DocumentOauthConnection } from './documentProvider.connection'
 import { DocumentProviderClientConfig } from './documentProviderClientConfig'
-import { ClientCredentials, AudienceAndScope, TestResult } from './models'
+import { AudienceAndScope, ClientCredentials, TestResult } from './models'
 
 export const DOCUMENT_PROVIDER_CLIENT_CONFIG = 'DOCUMENT_PROVIDER_CLIENT_CONFIG'
 

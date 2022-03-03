@@ -1,6 +1,6 @@
-import { Application } from 'express'
-import { ApolloServerPlugin } from 'apollo-server-plugin-base'
 import * as Sentry from '@sentry/node'
+import { ApolloServerPlugin } from 'apollo-server-plugin-base'
+import { Application } from 'express'
 
 import { environment } from '../environments'
 

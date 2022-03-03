@@ -1,9 +1,10 @@
+import { dedent } from 'ts-dedent'
+
 import { Application } from '@island.is/application/core'
 import {
-  messages,
   FundingGovernmentProjectsAnswers,
+  messages,
 } from '@island.is/application/templates/funding-government-projects'
-import { dedent } from 'ts-dedent'
 
 export const applicationOverviewTemplate = (
   application: Application,

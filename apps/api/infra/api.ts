@@ -1,7 +1,9 @@
 import { ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
+import { settings } from '../../../infra/src/dsl/settings'
 import {
   Base,
   Client,
+  CriminalRecord,
   DrivingLicense,
   Education,
   Finance,
@@ -9,12 +11,10 @@ import {
   Labor,
   NationalRegistry,
   Payment,
-  Properties,
   PaymentSchedule,
-  CriminalRecord,
+  Properties,
   RskCompanyInfo,
 } from '../../../infra/src/dsl/xroad'
-import { settings } from '../../../infra/src/dsl/settings'
 
 export const serviceSetup = (services: {
   appSystemApi: ServiceBuilder<'application-system-api'>

@@ -1,5 +1,5 @@
-import { uuid } from 'uuidv4'
 import { Transaction } from 'sequelize/types'
+import { uuid } from 'uuidv4'
 
 import {
   CaseCustodyRestrictions,
@@ -9,11 +9,12 @@ import {
   User as TUser,
 } from '@island.is/judicial-system/types'
 
-import { createTestingCaseModule } from './createTestingCaseModule'
-import { DefendantService, Defendant } from '../../defendant'
-import { User } from '../../user'
+import { Defendant,DefendantService } from '../../defendant'
 import { Institution } from '../../institution'
+import { User } from '../../user'
 import { Case } from '../models/case.model'
+
+import { createTestingCaseModule } from './createTestingCaseModule'
 
 interface Then {
   result: Case

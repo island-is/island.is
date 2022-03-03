@@ -1,29 +1,31 @@
 import React, { useEffect } from 'react'
+import { Controller,useForm } from 'react-hook-form'
+import { useIsomorphicLayoutEffect,useWindowSize } from 'react-use'
 import { useQuery } from '@apollo/client'
 import { Document } from '@contentful/rich-text-types'
 import gql from 'graphql-tag'
-import { useForm, Controller } from 'react-hook-form'
+
 import {
-  Text,
   Box,
-  Input,
   ButtonDeprecated as Button,
-  Select,
-  DatePicker,
-  Stack,
   Checkbox,
-  GridRow,
+  DatePicker,
   GridColumn,
+  GridRow,
+  Input,
   Option,
-  ToastContainer,
+  Select,
+  Stack,
+  Text,
   toast,
+  ToastContainer,
 } from '@island.is/island-ui/core'
-import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import { Locale } from '@island.is/shared/types'
 
+import { richText,Slice as SliceType } from '../..'
 import BackgroundImage from '../BackgroundImage/BackgroundImage'
-import { Slice as SliceType, richText } from '../..'
+
 import * as styles from './TellUsAStoryFrom.css'
 
 export const GET_ORGANIZATIONS_QUERY = gql`

@@ -2,6 +2,7 @@ import React, { FC } from 'react'
 
 import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
+
 import * as styles from './Blockquote.css'
 
 export const Blockquote: FC = ({ children }) => (

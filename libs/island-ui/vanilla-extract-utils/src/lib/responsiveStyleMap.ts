@@ -1,6 +1,6 @@
 import { style } from '@vanilla-extract/css'
-import isObject from 'lodash/isObject'
 import * as CSS from 'csstype'
+import isObject from 'lodash/isObject'
 
 import { theme } from '@island.is/island-ui/theme'
 

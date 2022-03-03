@@ -1,13 +1,15 @@
 import * as React from 'react'
 import {
-  ToastContainer as ToastifyContainer,
-  toast as toastify,
   Slide,
+  toast as toastify,
+  ToastContainer as ToastifyContainer,
 } from 'react-toastify'
 import cn from 'classnames'
+
 import { Box } from '../Box/Box'
 import { Icon } from '../Icon/Icon'
 import { Text } from '../Text/Text'
+
 import * as toastStyles from './Toast.css'
 
 interface ToastProps {

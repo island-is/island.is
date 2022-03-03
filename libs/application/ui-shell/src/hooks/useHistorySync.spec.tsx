@@ -1,17 +1,20 @@
 import React, { FC } from 'react'
-import { ApplicationUIState } from '../reducer/ReducerTypes'
+import { Router } from 'react-router-dom'
+import { act, renderHook } from '@testing-library/react-hooks'
+import { createMemoryHistory } from 'history'
+import * as z from 'zod'
+
 import {
   ApplicationStatus,
   ApplicationTypes,
   buildForm,
   buildTextField,
 } from '@island.is/application/core'
-import * as z from 'zod'
+
 import { initializeReducer } from '../reducer/ApplicationFormReducer'
+import { ApplicationUIState } from '../reducer/ReducerTypes'
+
 import { useHistorySync } from './useHistorySync'
-import { Router } from 'react-router-dom'
-import { createMemoryHistory } from 'history'
-import { act, renderHook } from '@testing-library/react-hooks'
 
 describe('useHistorySync', () => {
   let applicationState: ApplicationUIState

@@ -1,6 +1,6 @@
-import { Case, CaseDecision } from '@island.is/judicial-system/types'
-import { makeCustodyCase } from '@island.is/judicial-system/formatters'
 import { CONFIRMATION_ROUTE } from '@island.is/judicial-system/consts'
+import { makeCustodyCase } from '@island.is/judicial-system/formatters'
+import { Case, CaseDecision } from '@island.is/judicial-system/types'
 
 import { intercept } from '../../../utils'
 

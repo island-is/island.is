@@ -6,16 +6,16 @@ import {
   ApplicationConfigurations,
   FieldBaseProps,
 } from '@island.is/application/core'
+import { Box, Button } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import {
   FieldDescription,
   RadioController,
 } from '@island.is/shared/form-fields'
-import { Box, Button } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
 
-import { parentalLeaveFormMessages } from '../../lib/messages'
-import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 import { ParentalRelations } from '../../constants'
+import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
+import { parentalLeaveFormMessages } from '../../lib/messages'
 
 const ChildSelector: FC<FieldBaseProps> = ({
   application,

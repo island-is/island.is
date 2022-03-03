@@ -1,19 +1,21 @@
 import {
-  ApplicationTemplate,
-  ApplicationTypes,
   ApplicationContext,
   ApplicationStateSchema,
-  DefaultStateLifeCycle,
+  ApplicationTemplate,
+  ApplicationTypes,
   DefaultEvents,
+  DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { FeatureFlagClient } from '@island.is/feature-flags'
+
 import { ApiActions } from '../shared'
-import { Events, States, Roles } from './constants'
+
+import { Events, Roles,States } from './constants'
 import { dataSchema } from './dataSchema'
 import {
-  getApplicationFeatureFlags,
   DrivingLicenseFeatureFlags,
+  getApplicationFeatureFlags,
 } from './getApplicationFeatureFlags'
 import { m } from './messages'
 import { hasCompletedPrerequisitesStep } from './utils'

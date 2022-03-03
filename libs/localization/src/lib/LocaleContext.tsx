@@ -1,11 +1,12 @@
-import React, { createContext, useState, useEffect, ReactNode } from 'react'
+import React, { createContext, ReactNode,useEffect, useState } from 'react'
 import { IntlProvider } from 'react-intl'
 import { useApolloClient } from '@apollo/client/react'
 import gql from 'graphql-tag'
 import difference from 'lodash/difference'
 import isEmpty from 'lodash/isEmpty'
-import { Locale } from '@island.is/shared/types'
+
 import { defaultLanguage, supportedLocales } from '@island.is/shared/constants'
+import { Locale } from '@island.is/shared/types'
 
 import { polyfill } from './polyfills'
 

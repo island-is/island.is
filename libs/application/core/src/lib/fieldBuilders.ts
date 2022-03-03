@@ -3,29 +3,29 @@ import { Colors } from '@island.is/island-ui/theme'
 import { Application } from '../types/Application'
 import { Condition } from '../types/Condition'
 import {
+  AsyncSelectField,
   BaseField,
   CheckboxField,
   CustomField,
   DateField,
+  DescriptionField,
   DividerField,
-  KeyValueField,
+  Field,
   FieldComponents,
   FieldTypes,
   FieldWidth,
   FileUploadField,
-  DescriptionField,
+  KeyValueField,
+  MaybeWithApplicationAndField,
   Option,
   RadioField,
-  SubmitField,
-  SelectField,
-  TextField,
-  MaybeWithApplicationAndField,
-  AsyncSelectField,
   RecordObject,
-  Field,
+  SelectField,
+  SubmitField,
+  TextField,
 } from '../types/Fields'
-import { CallToAction } from '../types/StateMachine'
 import { FormText, FormTextArray } from '../types/Form'
+import { CallToAction } from '../types/StateMachine'
 
 const extractCommonFields = (
   data: Omit<BaseField, 'type' | 'component' | 'children'>,

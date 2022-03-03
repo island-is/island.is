@@ -1,5 +1,5 @@
-import Redis, { ClusterNode, RedisOptions, ClusterOptions } from 'ioredis'
 import { RedisClusterCache } from 'apollo-server-cache-redis'
+import Redis, { ClusterNode, ClusterOptions,RedisOptions } from 'ioredis'
 
 import { logger } from '@island.is/logging'
 

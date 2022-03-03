@@ -1,14 +1,14 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
 
-import { Payload } from './payload.model'
-
 import {
-  GenericLicenseType,
-  GenericUserLicenseStatus,
-  GenericUserLicenseFetchStatus,
   GenericLicenseProviderId,
+  GenericLicenseType,
+  GenericUserLicenseFetchStatus,
   GenericUserLicensePkPassStatus,
+  GenericUserLicenseStatus,
 } from '../licenceService.type'
+
+import { Payload } from './payload.model'
 
 registerEnumType(GenericLicenseType, {
   name: 'GenericLicenseType',

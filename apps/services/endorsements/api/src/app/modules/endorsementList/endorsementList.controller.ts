@@ -12,42 +12,44 @@ import {
 } from '@nestjs/common'
 import {
   ApiBody,
+  ApiExtraModels,
   ApiOAuth2,
   ApiOkResponse,
+  ApiOperation,
   ApiParam,
   ApiTags,
-  ApiExtraModels,
-  ApiOperation,
   IntersectionType,
 } from '@nestjs/swagger'
-import { Audit } from '@island.is/nest/audit'
-import { EndorsementList } from './endorsementList.model'
-import { EndorsementListService } from './endorsementList.service'
-import { EndorsementListDto } from './dto/endorsementList.dto'
-import { FindEndorsementListByTagsDto } from './dto/findEndorsementListsByTags.dto'
-import { ChangeEndorsmentListClosedDateDto } from './dto/changeEndorsmentListClosedDate.dto'
-import { UpdateEndorsementListDto } from './dto/updateEndorsementList.dto'
+
+import { EndorsementsScope } from '@island.is/auth/scopes'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   BypassAuth,
   CurrentUser,
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { EndorsementListByIdPipe } from './pipes/endorsementListById.pipe'
+import { Audit } from '@island.is/nest/audit'
+import { PaginationDto } from '@island.is/nest/pagination'
+
 import { environment } from '../../../environments'
-import { EndorsementsScope } from '@island.is/auth/scopes'
-import type { User } from '@island.is/auth-nest-tools'
 import { HasAccessGroup } from '../../guards/accessGuard/access.decorator'
 import { AccessGroup } from '../../guards/accessGuard/access.enum'
-
-import { PaginationDto } from '@island.is/nest/pagination'
-import { PaginatedEndorsementListDto } from './dto/paginatedEndorsementList.dto'
 import { PaginatedEndorsementDto } from '../endorsement/dto/paginatedEndorsement.dto'
+
+import { ChangeEndorsmentListClosedDateDto } from './dto/changeEndorsmentListClosedDate.dto'
+import { emailDto } from './dto/email.dto'
+import { EndorsementListDto } from './dto/endorsementList.dto'
+import { FindEndorsementListByTagsDto } from './dto/findEndorsementListsByTags.dto'
+import { PaginatedEndorsementListDto } from './dto/paginatedEndorsementList.dto'
 import { SearchQueryDto } from './dto/searchQuery.dto'
+import { sendPdfEmailResponse } from './dto/sendPdfEmail.response'
+import { UpdateEndorsementListDto } from './dto/updateEndorsementList.dto'
 import { EndorsementListInterceptor } from './interceptors/endorsementList.interceptor'
 import { EndorsementListsInterceptor } from './interceptors/endorsementLists.interceptor'
-import { emailDto } from './dto/email.dto'
-import { sendPdfEmailResponse } from './dto/sendPdfEmail.response'
+import { EndorsementListByIdPipe } from './pipes/endorsementListById.pipe'
+import { EndorsementList } from './endorsementList.model'
+import { EndorsementListService } from './endorsementList.service'
 
 export class FindTagPaginationComboDto extends IntersectionType(
   FindEndorsementListByTagsDto,

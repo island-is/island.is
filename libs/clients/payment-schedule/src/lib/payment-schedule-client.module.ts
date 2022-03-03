@@ -1,8 +1,11 @@
 import { DynamicModule, Module } from '@nestjs/common'
 import { Base64 } from 'js-base64'
-import { Configuration, DefaultApi } from '../gen/fetch'
-import { PaymentScheduleServiceOptions } from './types'
+
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
+
+import { Configuration, DefaultApi } from '../gen/fetch'
+
+import { PaymentScheduleServiceOptions } from './types'
 
 @Module({})
 export class PaymentScheduleClientModule {

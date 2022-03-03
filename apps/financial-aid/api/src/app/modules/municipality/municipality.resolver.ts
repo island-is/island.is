@@ -1,30 +1,29 @@
+import { Inject, UseGuards } from '@nestjs/common'
 import {
-  Query,
-  Resolver,
-  Context,
   Args,
+  Context,
   Mutation,
-  ResolveField,
   Parent,
+  Query,
+  ResolveField,
+  Resolver,
 } from '@nestjs/graphql'
 
-import { Inject, UseGuards } from '@nestjs/common'
-
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import type { Municipality, Staff } from '@island.is/financial-aid/shared/lib'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { BackendAPI } from '../../../services'
+import { StaffModel } from '../staff/models'
 
-import { MunicipalityModel } from './models'
 import {
-  MunicipalityActivityInput,
   CreateMunicipalityInput,
+  MunicipalityActivityInput,
   MunicipalityQueryInput,
   UpdateMunicipalityInput,
 } from './dto'
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
-import type { Municipality, Staff } from '@island.is/financial-aid/shared/lib'
-import { StaffModel } from '../staff/models'
+import { MunicipalityModel } from './models'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => MunicipalityModel)

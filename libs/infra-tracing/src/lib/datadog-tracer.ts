@@ -1,8 +1,8 @@
-import { maskNationalId } from '@island.is/shared/pii'
-
 import tracer from 'dd-trace'
 import { isPerson } from 'kennitala'
 import { Span } from 'opentracing'
+
+import { maskNationalId } from '@island.is/shared/pii'
 
 const PII_MASKING_ALWAYS_ON =
   process.env.DD_PII_MASKING_DISABLED_ON_FAILURE !== 'true'

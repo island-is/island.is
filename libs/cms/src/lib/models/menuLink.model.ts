@@ -1,5 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+
 import { IMenuLink } from '../generated/contentfulTypes'
+
 import { mapReferenceLink, ReferenceLink } from './referenceLink.model'
 
 @ObjectType()

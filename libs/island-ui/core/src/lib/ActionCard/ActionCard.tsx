@@ -1,15 +1,17 @@
 import * as React from 'react'
+
 import { Box } from '../Box/Box'
 import { Button, ButtonSizes, ButtonTypes } from '../Button/Button'
-import { Tag, TagVariant } from '../Tag/Tag'
-import { Text } from '../Text/Text'
-import { Tooltip } from '../Tooltip/Tooltip'
+import { Hidden } from '../Hidden/Hidden'
 import {
   ProgressMeter,
   ProgressMeterVariant,
 } from '../ProgressMeter/ProgressMeter'
+import { Tag, TagVariant } from '../Tag/Tag'
+import { Text } from '../Text/Text'
+import { Tooltip } from '../Tooltip/Tooltip'
+
 import * as styles from './ActionCard.css'
-import { Hidden } from '../Hidden/Hidden'
 
 type ActionCardProps = {
   date?: string

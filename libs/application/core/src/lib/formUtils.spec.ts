@@ -1,16 +1,10 @@
 import {
-  extractRepeaterIndexFromField,
-  formatText,
-  getFormNodeLeaves,
-  getValueViaPath,
-  mergeAnswers,
-} from './formUtils'
-import {
   Application,
+  ApplicationStatus,
   ApplicationTypes,
   buildCheckboxField,
-  buildForm,
   buildDescriptionField,
+  buildForm,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -19,8 +13,15 @@ import {
   Form,
   StaticText,
   TextField,
-  ApplicationStatus,
 } from '@island.is/application/core'
+
+import {
+  extractRepeaterIndexFromField,
+  formatText,
+  getFormNodeLeaves,
+  getValueViaPath,
+  mergeAnswers,
+} from './formUtils'
 
 const ExampleForm: Form = buildForm({
   id: ApplicationTypes.EXAMPLE,

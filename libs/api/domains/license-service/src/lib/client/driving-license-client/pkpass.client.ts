@@ -1,8 +1,10 @@
+import { Cache as CacheManager } from 'cache-manager'
 import FormData from 'form-data'
 import fetch, { Response } from 'node-fetch'
 
-import { Cache as CacheManager } from 'cache-manager'
 import type { Logger } from '@island.is/logging'
+
+import { Config } from '../../licenseService.module'
 
 import {
   PkPassPayload,
@@ -12,8 +14,6 @@ import {
   PkPassServiceVerifyDriversLicenseResponse,
   PkPassVerifyResult,
 } from './pkpass.type'
-
-import { Config } from '../../licenseService.module'
 
 /** Set TTL to less than given expiry from service */
 const DEFAULT_CACHE_TOKEN_EXPIRY_DELTA_IN_MS = 2000

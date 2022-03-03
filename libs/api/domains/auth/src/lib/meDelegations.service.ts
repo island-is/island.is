@@ -9,13 +9,13 @@ import {
   MeDelegationsControllerFindOneValidEnum,
 } from '@island.is/clients/auth-public-api'
 
+import { DelegationByOtherUserInput } from './dto/delegationByOtherUser.input'
 import {
   CreateDelegationInput,
   DelegationInput,
   DeleteDelegationInput,
   UpdateDelegationInput,
 } from './dto'
-import { DelegationByOtherUserInput } from './dto/delegationByOtherUser.input'
 
 const ignore404 = (e: Response) => {
   if (e.status !== 404) {

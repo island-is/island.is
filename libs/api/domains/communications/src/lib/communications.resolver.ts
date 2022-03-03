@@ -1,10 +1,10 @@
-import { Args, Resolver, Mutation } from '@nestjs/graphql'
-import { CommunicationsService } from './communications.service'
-import { ContactUsInput } from './dto/contactUs.input'
-import { TellUsAStoryInput } from './dto/tellUsAStory.input'
-import { ServiceWebFormsInput } from './dto/serviceWebForms.input'
+import { Args, Mutation,Resolver } from '@nestjs/graphql'
 
+import { ContactUsInput } from './dto/contactUs.input'
+import { ServiceWebFormsInput } from './dto/serviceWebForms.input'
+import { TellUsAStoryInput } from './dto/tellUsAStory.input'
 import { CommunicationResponse } from './models/communicationResponse.model'
+import { CommunicationsService } from './communications.service'
 
 @Resolver()
 export class CommunicationsResolver {

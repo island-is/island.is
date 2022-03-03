@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
@@ -6,8 +7,6 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-
-import { ApiProperty } from '@nestjs/swagger'
 
 import { InstitutionType } from '@island.is/judicial-system/types'
 

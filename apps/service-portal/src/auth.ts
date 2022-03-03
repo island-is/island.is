@@ -1,12 +1,12 @@
 import { configure, configureMock } from '@island.is/auth/react'
 import {
+  ApiScope,
   ApplicationScope,
   AuthScope,
-  UserProfileScope,
-  NationalRegistryScope,
-  EndorsementsScope,
   DocumentsScope,
-  ApiScope,
+  EndorsementsScope,
+  NationalRegistryScope,
+  UserProfileScope,
 } from '@island.is/auth/scopes'
 
 import { environment } from './environments'

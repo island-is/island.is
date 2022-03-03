@@ -1,12 +1,12 @@
 import { DynamicModule } from '@nestjs/common'
 
-import { SharedTemplateAPIModule } from '../../shared'
-
-import { BaseTemplateAPIModuleConfig } from '../../../types'
-
-import { CriminalRecordSubmissionService } from './criminal-record-submission.service'
 import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 import { SyslumennClientModule } from '@island.is/clients/syslumenn'
+
+import { BaseTemplateAPIModuleConfig } from '../../../types'
+import { SharedTemplateAPIModule } from '../../shared'
+
+import { CriminalRecordSubmissionService } from './criminal-record-submission.service'
 
 export class CriminalRecordSubmissionModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {

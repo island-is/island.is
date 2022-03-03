@@ -1,9 +1,9 @@
+import { CaseController } from '../case.controller'
 import {
   judgeUpdateRule,
   prosecutorUpdateRule,
   registrarUpdateRule,
 } from '../guards/rolesRules'
-import { CaseController } from '../case.controller'
 
 describe('CaseController - Update rules', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

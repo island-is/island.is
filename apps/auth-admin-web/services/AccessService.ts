@@ -1,5 +1,6 @@
 import { ApiScopeUserDTO } from '../entities/dtos/api-scope-user.dto'
 import { ApiScopeUser } from '../entities/models/api-scope-user.model'
+
 import { BaseService } from './BaseService'
 
 export class AccessService extends BaseService {

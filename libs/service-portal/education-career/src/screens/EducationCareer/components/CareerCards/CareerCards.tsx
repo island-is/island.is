@@ -1,17 +1,18 @@
 import React from 'react'
+import { defineMessage } from 'react-intl'
+import { Link } from 'react-router-dom'
 import { gql, useQuery } from '@apollo/client'
 
-import { Box, Button, SkeletonLoader, Text } from '@island.is/island-ui/core'
-import { Link } from 'react-router-dom'
 import { Query } from '@island.is/api/schema'
+import { Box, Button, SkeletonLoader, Text } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  ServicePortalPath,
   EducationCard,
   EmptyState,
+  ServicePortalPath,
 } from '@island.is/service-portal/core'
+
 import * as styles from './CareerCards.css'
-import { defineMessage } from 'react-intl'
-import { useLocale, useNamespaces } from '@island.is/localization'
 
 const EducationExamFamilyOverviewsQuery = gql`
   query EducationExamFamilyOverviewsQuery {

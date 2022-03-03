@@ -1,17 +1,20 @@
+import React, { FC } from 'react'
+
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import {
   AccordionCard,
   AlertMessage,
   Box,
   Bullet,
-  Link,
   BulletList,
+  Link,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { FC } from 'react'
+
 import { FamilyIllustration } from '../../assets'
-import { conclusion, betaTest } from '../../lib/messages'
+import { betaTest,conclusion } from '../../lib/messages'
+
 import * as styles from '../DescriptionWithLink/descriptionWithLink.css'
 
 export const FormConclusion: FC<FieldBaseProps> = ({ application, field }) => {

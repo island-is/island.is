@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios'
+
 import { IdentityServer } from '../utils/ids.constants'
 
 export class TokenService {

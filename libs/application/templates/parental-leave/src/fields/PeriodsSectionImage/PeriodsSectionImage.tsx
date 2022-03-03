@@ -1,7 +1,9 @@
 import React, { FC } from 'react'
+
 import { FieldBaseProps } from '@island.is/application/core'
-import ManWithStrollerIllustration from './ManWithStrollerIllustration'
 import { Box } from '@island.is/island-ui/core'
+
+import ManWithStrollerIllustration from './ManWithStrollerIllustration'
 
 // TODO later move the illustrations from the web project and into a reusable library
 const PeriodsSectionImage: FC<FieldBaseProps> = () => {

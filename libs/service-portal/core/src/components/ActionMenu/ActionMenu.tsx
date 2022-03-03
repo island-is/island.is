@@ -1,6 +1,8 @@
-import React, { FC, useState, useRef } from 'react'
+import React, { FC, useRef,useState } from 'react'
 import { useClickAway } from 'react-use'
+
 import { Box, Stack } from '@island.is/island-ui/core'
+
 import * as styles from './ActionMenu.css'
 
 interface ActionMenuItemProps {

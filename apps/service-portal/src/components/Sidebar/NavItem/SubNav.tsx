@@ -1,8 +1,11 @@
+import React, { FC } from 'react'
+
 import { Box, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { ServicePortalNavigationItem } from '@island.is/service-portal/core'
-import React, { FC } from 'react'
+
 import SubNavItem from './SubNavItem'
+
 import * as styles from '../Sidebar.css'
 interface Props {
   navChildren?: ServicePortalNavigationItem[]

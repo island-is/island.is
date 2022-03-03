@@ -1,5 +1,6 @@
-import { IsNotEmpty, IsString, IsArray, ArrayNotEmpty } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
+import { ArrayNotEmpty,IsArray, IsNotEmpty, IsString } from 'class-validator'
+
 import { PersonalRepresentativeDTO } from './personal-representative.dto'
 
 export class PersonalRepresentativePublicDTO {

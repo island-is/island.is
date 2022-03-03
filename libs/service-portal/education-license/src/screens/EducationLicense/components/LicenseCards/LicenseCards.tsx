@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react'
-import { gql, useQuery, useMutation } from '@apollo/client'
+import React, { useEffect,useState } from 'react'
+import { gql, useMutation,useQuery } from '@apollo/client'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 
-import { Query, Mutation, EducationLicense } from '@island.is/api/schema'
+import { EducationLicense,Mutation, Query } from '@island.is/api/schema'
 import {
   Box,
   Button,
-  SkeletonLoader,
   ModalBase,
+  SkeletonLoader,
   Stack,
   Text,
 } from '@island.is/island-ui/core'

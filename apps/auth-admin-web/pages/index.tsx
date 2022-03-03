@@ -1,11 +1,13 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import Link from 'next/link'
 import React, { useEffect } from 'react'
-import ContentWrapper from '../components/Layout/ContentWrapper'
-import { isLoggedIn } from './../utils/auth.utils'
+import Link from 'next/link'
 import { useSession } from 'next-auth/client'
+
+import ContentWrapper from '../components/Layout/ContentWrapper'
 import { SessionInfo } from '../entities/common/SessionInfo'
 import LocalizationUtils from '../utils/localization.utils'
+
+import { isLoggedIn } from './../utils/auth.utils'
 
 const Home: React.FC = () => {
   const [session, loading] = useSession()

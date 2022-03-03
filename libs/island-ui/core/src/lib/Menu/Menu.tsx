@@ -1,19 +1,21 @@
 import React, { ReactElement, ReactNode, useState } from 'react'
-import cn from 'classnames'
 import AnimateHeight from 'react-animate-height'
-import { ModalBase, ModalBaseProps } from '../ModalBase/ModalBase'
-import { Button } from '../Button/Button'
+import cn from 'classnames'
 
-import * as styles from './Menu.css'
-import { Logo } from '../Logo/Logo'
-import { Input } from '../Input/Input'
 import { Box } from '../Box/Box'
-import { Text, getTextStyles } from '../Text/Text'
-import Img from './Img'
+import { useBoxStyles } from '../Box/useBoxStyles'
+import { Button } from '../Button/Button'
+import { GridColumn } from '../Grid/GridColumn/GridColumn'
 import { GridContainer } from '../Grid/GridContainer/GridContainer'
 import { GridRow } from '../Grid/GridRow/GridRow'
-import { GridColumn } from '../Grid/GridColumn/GridColumn'
-import { useBoxStyles } from '../Box/useBoxStyles'
+import { Input } from '../Input/Input'
+import { Logo } from '../Logo/Logo'
+import { ModalBase, ModalBaseProps } from '../ModalBase/ModalBase'
+import { getTextStyles,Text } from '../Text/Text'
+
+import Img from './Img'
+
+import * as styles from './Menu.css'
 
 type RenderLinkObj = {
   className: string

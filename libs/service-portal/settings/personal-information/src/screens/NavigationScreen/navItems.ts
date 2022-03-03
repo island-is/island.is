@@ -1,9 +1,10 @@
+import { defineMessage } from 'react-intl'
+
 import {
+  m,
   NavigationScreenItem,
   ServicePortalPath,
-  m,
 } from '@island.is/service-portal/core'
-import { defineMessage } from 'react-intl'
 
 export const navScreenItems: NavigationScreenItem[] = [
   {

@@ -1,15 +1,7 @@
-import {
-  providerToString,
-  Provider,
-  Service,
-  OpenApi,
-  XroadIdentifier,
-} from '@island.is/api-catalogue/types'
 import { Injectable } from '@nestjs/common'
-import { RestMetaservicesApi } from '../../gen/fetch/xrd-rest'
-import { logger } from '@island.is/logging'
 import YamlParser from 'js-yaml'
 import union from 'lodash/union'
+
 import {
   AccessCategory,
   DataCategory,
@@ -19,10 +11,21 @@ import {
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
 import {
-  serviceIdSort,
+  OpenApi,
+  Provider,
+  providerToString,
+  Service,
+  XroadIdentifier,
+} from '@island.is/api-catalogue/types'
+import { logger } from '@island.is/logging'
+
+import { RestMetaservicesApi } from '../../gen/fetch/xrd-rest'
+
+import {
   exceptionHandler,
   parseServiceCode,
   parseVersionNumber,
+  serviceIdSort,
 } from './utils'
 
 @Injectable()

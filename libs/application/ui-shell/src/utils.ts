@@ -1,3 +1,6 @@
+import get from 'lodash/get'
+import pick from 'lodash/pick'
+
 import {
   DataProviderItem,
   ExternalData,
@@ -8,9 +11,8 @@ import {
   RecordObject,
   SubmitField,
 } from '@island.is/application/core'
+
 import { FormScreen } from './types'
-import pick from 'lodash/pick'
-import get from 'lodash/get'
 
 export function verifyExternalData(
   externalData: ExternalData,

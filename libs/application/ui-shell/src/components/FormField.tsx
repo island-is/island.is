@@ -1,12 +1,13 @@
 import React, { FC } from 'react'
+
 import {
   Application,
   Field,
   FieldBaseProps,
   getErrorViaPath,
   RecordObject,
-  SetFieldLoadingState,
   SetBeforeSubmitCallback,
+  SetFieldLoadingState,
 } from '@island.is/application/core'
 
 import { useFields } from '../context/FieldContext'

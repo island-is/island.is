@@ -1,5 +1,6 @@
+import { Field, ID,ObjectType } from '@nestjs/graphql'
+
 import { DocumentInfoDTO } from '@island.is/clients/documents'
-import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 @ObjectType()
 export class Document {

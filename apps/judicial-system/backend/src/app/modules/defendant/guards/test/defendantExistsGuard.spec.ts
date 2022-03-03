@@ -1,13 +1,12 @@
-import { uuid } from 'uuidv4'
-
 import {
   BadRequestException,
   ExecutionContext,
   NotFoundException,
 } from '@nestjs/common'
+import { uuid } from 'uuidv4'
 
-import { createTestingDefendantModule } from '../../test/createTestingDefendantModule'
 import { Defendant } from '../../models/defendant.model'
+import { createTestingDefendantModule } from '../../test/createTestingDefendantModule'
 import { DefendantExistsGuard } from '../defendantExists.guard'
 
 interface Then {

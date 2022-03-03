@@ -1,18 +1,21 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { Box, Text } from '@island.is/island-ui/core'
+
 import { PdfTypes } from '@island.is/application/core'
 import {
-  DescriptionText,
   BorderedAccordion,
+  DescriptionText,
   PdfLink,
 } from '@island.is/application/templates/family-matters-core/components'
 import { useGeneratePdfUrl } from '@island.is/application/templates/family-matters-core/hooks'
-import { parentBConfirmation, contract } from '../../lib/messages'
-import { confirmationIllustration } from '../Shared.css'
-import { ContractOverview } from '../components'
+import { Box, Text } from '@island.is/island-ui/core'
+
 import { CRCFieldBaseProps } from '../..'
 import { Roles } from '../../lib/constants'
+import { contract,parentBConfirmation } from '../../lib/messages'
+import { ContractOverview } from '../components'
+
+import { confirmationIllustration } from '../Shared.css'
 
 const ParentBConfirmation = ({ application }: CRCFieldBaseProps) => {
   const pdfType = PdfTypes.CHILDREN_RESIDENCE_CHANGE

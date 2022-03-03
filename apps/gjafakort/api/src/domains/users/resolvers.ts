@@ -1,15 +1,17 @@
-import { logger } from '@island.is/logging'
-import { UserInputError, ApolloError } from 'apollo-server-express'
+import { ApolloError,UserInputError } from 'apollo-server-express'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
-import { ConfirmCodeError } from './errors'
-import { authorize } from '../auth'
-import * as userService from './service'
+import { logger } from '@island.is/logging'
+
 import {
-  CreateUserApplicationInput,
   ConfirmMobileInput,
+  CreateUserApplicationInput,
   VerifyUserApplicationInput,
 } from '../../types'
+import { authorize } from '../auth'
+
+import { ConfirmCodeError } from './errors'
+import * as userService from './service'
 
 const validateMobile = (mobile: string) => {
   const ICELAND_COUNTRY_CODE = 'IS'

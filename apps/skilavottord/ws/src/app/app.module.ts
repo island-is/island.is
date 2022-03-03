@@ -4,19 +4,20 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { BASE_PATH } from '@island.is/skilavottord/consts'
 
+import { environment } from '../environments'
+
 import {
   AccessControlModule,
   AuthModule,
-  GdprModule,
-  VehicleModule,
-  RecyclingRequestModule,
-  RecyclingPartnerModule,
-  VehicleOwnerModule,
-  SamgongustofaModule,
   FjarsyslaModule,
+  GdprModule,
+  RecyclingPartnerModule,
+  RecyclingRequestModule,
+  SamgongustofaModule,
+  VehicleModule,
+  VehicleOwnerModule,
 } from './modules'
 import { SequelizeConfigService } from './sequelizeConfig.service'
-import { environment } from '../environments'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'

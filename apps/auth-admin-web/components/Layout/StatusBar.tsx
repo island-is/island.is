@@ -1,7 +1,8 @@
-import { ApiStatusStore } from './../../store/ApiStatusStore'
 import React, { useEffect, useState } from 'react'
-import APIResponse from './../../entities/common/APIResponse'
 import { BehaviorSubject } from 'rxjs'
+
+import APIResponse from './../../entities/common/APIResponse'
+import { ApiStatusStore } from './../../store/ApiStatusStore'
 
 const StatusBar: React.FC = () => {
   const status$ = React.useRef(new BehaviorSubject(null))

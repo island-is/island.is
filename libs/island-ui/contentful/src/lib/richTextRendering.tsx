@@ -1,44 +1,46 @@
-import React, { ReactNode, Fragment } from 'react'
-import {
-  Document,
-  Block,
-  Inline,
-  BLOCKS,
-  INLINES,
-  MARKS,
-} from '@contentful/rich-text-types'
-import { Asset } from 'contentful'
+import React, { Fragment,ReactNode } from 'react'
 import {
   documentToReactComponents,
   RenderMark,
 } from '@contentful/rich-text-react-renderer'
-import { CompanyList, CompanyListConnected } from '@island.is/shared/connected'
-import { Image, ImageProps } from './Image/Image'
-import FaqList, { FaqListProps } from './FaqList/FaqList'
-import { Statistics, StatisticsProps } from './Statistics/Statistics'
-import Hyperlink from './Hyperlink/Hyperlink'
-import { AssetLink, AssetLinkProps } from './AssetLink/AssetLink'
 import {
-  Text,
-  TextProps,
+  Block,
+  BLOCKS,
+  Document,
+  Inline,
+  INLINES,
+  MARKS,
+} from '@contentful/rich-text-types'
+import slugify from '@sindresorhus/slugify'
+import { Asset } from 'contentful'
+
+import {
   Blockquote,
   Box,
-  ResponsiveSpace,
   Hidden,
+  ResponsiveSpace,
+  Text,
+  TextProps,
 } from '@island.is/island-ui/core'
-import { ProcessEntry, ProcessEntryProps } from './ProcessEntry/ProcessEntry'
+import { CompanyList, CompanyListConnected } from '@island.is/shared/connected'
+
+import { AssetLink, AssetLinkProps } from './AssetLink/AssetLink'
+import { ContactUs, ContactUsProps } from './ContactUs/ContactUs'
 import EmbeddedVideo, {
   EmbeddedVideoProps,
 } from './EmbeddedVideo/EmbeddedVideo'
-import StaticHtml from './StaticHtml/StaticHtml'
-import slugify from '@sindresorhus/slugify'
+import FaqList, { FaqListProps } from './FaqList/FaqList'
+import Hyperlink from './Hyperlink/Hyperlink'
+import { Image, ImageProps } from './Image/Image'
+import { Location, LocationProps } from './Location/Location'
+import { ProcessEntry, ProcessEntryProps } from './ProcessEntry/ProcessEntry'
 import {
   SectionWithImage,
   SectionWithImageProps,
 } from './SectionWithImage/SectionWithImage'
+import StaticHtml from './StaticHtml/StaticHtml'
+import { Statistics, StatisticsProps } from './Statistics/Statistics'
 import { TeamList, TeamListProps } from './TeamList/TeamList'
-import { ContactUs, ContactUsProps } from './ContactUs/ContactUs'
-import { Location, LocationProps } from './Location/Location'
 import { TellUsAStoryFormProps } from './TellUsAStoryForm/TellUsAStoryForm'
 
 type HtmlSlice = { __typename: 'Html'; id: string; document: Document }

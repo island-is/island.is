@@ -1,21 +1,23 @@
-import { AuthScope } from '@island.is/auth/scopes'
-import {
-  PersonalRepresentativeService,
-  PersonalRepresentativePublicDTO,
-} from '@island.is/auth-api-lib/personal-representative'
 import {
   BadRequestException,
   Controller,
-  UseGuards,
   Get,
   Inject,
   Query,
+  UseGuards,
 } from '@nestjs/common'
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger'
-import { Documentation } from '@island.is/nest/swagger'
-import { Audit } from '@island.is/nest/audit'
-import { environment } from '../../../environments'
+import { ApiBearerAuth,ApiTags } from '@nestjs/swagger'
+
+import { AuthScope } from '@island.is/auth/scopes'
+import {
+  PersonalRepresentativePublicDTO,
+  PersonalRepresentativeService,
+} from '@island.is/auth-api-lib/personal-representative'
 import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { Audit } from '@island.is/nest/audit'
+import { Documentation } from '@island.is/nest/swagger'
+
+import { environment } from '../../../environments'
 
 const namespace = `${environment.audit.defaultNamespace}/personal-representatives`
 

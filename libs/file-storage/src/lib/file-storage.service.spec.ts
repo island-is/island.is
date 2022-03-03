@@ -1,9 +1,10 @@
 import { Test } from '@nestjs/testing'
-import { FileStorageService } from './file-storage.service'
+
 import {
   FILE_STORAGE_CONFIG,
   FileStorageConfig,
 } from './file-storage.configuration'
+import { FileStorageService } from './file-storage.service'
 
 describe('FileStorageService', () => {
   let service: FileStorageService

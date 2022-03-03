@@ -1,12 +1,16 @@
 import React, { FC } from 'react'
-import * as styles from './NotificationMenu.css'
-import { Box, Text, Stack } from '@island.is/island-ui/core'
-import { notifications } from './mockNotifications'
-import NotificationCard from './NotificationCard/NotificationCard'
-import { MenuState } from '../../../store/actions'
-import { Menu } from '@island.is/service-portal/core'
+
+import { Box, Stack,Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { Menu } from '@island.is/service-portal/core'
 import { m } from '@island.is/service-portal/core'
+
+import { MenuState } from '../../../store/actions'
+
+import NotificationCard from './NotificationCard/NotificationCard'
+import { notifications } from './mockNotifications'
+
+import * as styles from './NotificationMenu.css'
 
 interface Props {
   state: MenuState

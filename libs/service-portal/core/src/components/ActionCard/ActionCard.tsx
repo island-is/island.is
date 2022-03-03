@@ -1,13 +1,14 @@
 import React, { FC } from 'react'
+import format from 'date-fns/format'
+
 import {
   Box,
   Button,
-  Text,
+  FocusableBox,
   Link,
   LoadingDots,
-  FocusableBox,
+  Text,
 } from '@island.is/island-ui/core'
-import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
 
 import * as styles from './ActionCard.css'

@@ -1,11 +1,14 @@
-import { MappedData } from '@island.is/content-search-indexer/types'
-import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { Entry } from 'contentful'
 import isCircular from 'is-circular'
+
+import { MappedData } from '@island.is/content-search-indexer/types'
+import { logger } from '@island.is/logging'
+
 import { ISubArticle } from '../../generated/contentfulTypes'
 import { mapSubArticle } from '../../models/subArticle.model'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
+
 import {
   createTerms,
   extractStringsFromObject,

@@ -1,6 +1,7 @@
-import { TranslationService, Translation } from '@island.is/auth-api-lib'
 import { Controller, Get, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+
+import { Translation,TranslationService } from '@island.is/auth-api-lib'
 import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)

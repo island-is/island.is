@@ -1,11 +1,13 @@
-import { AccessController } from './access.controller'
 import { Module } from '@nestjs/common'
+import { SequelizeModule } from '@nestjs/sequelize'
+
 import {
   AccessService,
   ApiScopeUser,
   ApiScopeUserAccess,
 } from '@island.is/auth-api-lib'
-import { SequelizeModule } from '@nestjs/sequelize'
+
+import { AccessController } from './access.controller'
 
 @Module({
   imports: [SequelizeModule.forFeature([ApiScopeUser, ApiScopeUserAccess])],

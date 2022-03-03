@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+
 import { Contact } from './contact.model'
 import { Helpdesk } from './helpdesk.model'
 import { Provider } from './provider.model'

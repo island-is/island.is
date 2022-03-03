@@ -1,4 +1,5 @@
 import { Claim } from '../entities/models/claim.model'
+
 import { BaseService } from './BaseService'
 
 export class ClaimService extends BaseService {

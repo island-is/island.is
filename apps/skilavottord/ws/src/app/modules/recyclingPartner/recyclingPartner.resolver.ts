@@ -1,15 +1,15 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { ConflictException, NotFoundException } from '@nestjs/common'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import { Authorize, Role } from '../auth'
 
-import { RecyclingPartnerModel } from './recyclingPartner.model'
-import { RecyclingPartnerService } from './recyclingPartner.service'
 import {
   CreateRecyclingPartnerInput,
   RecyclingPartnerInput,
   UpdateRecyclingPartnerInput,
 } from './recyclingPartner.input'
+import { RecyclingPartnerModel } from './recyclingPartner.model'
+import { RecyclingPartnerService } from './recyclingPartner.service'
 
 @Authorize()
 @Resolver(() => RecyclingPartnerModel)

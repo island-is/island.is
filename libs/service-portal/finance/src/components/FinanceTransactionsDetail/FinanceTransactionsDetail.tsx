@@ -1,11 +1,13 @@
 import React, { FC } from 'react'
+
 import {
   Box,
-  Text,
+  GridColumn,
   GridContainer,
   GridRow,
-  GridColumn,
+  Text,
 } from '@island.is/island-ui/core'
+
 import * as styles from './FinanceTransactionsDetail.css'
 
 interface Props {

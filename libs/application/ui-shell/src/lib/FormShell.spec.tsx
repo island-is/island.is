@@ -1,20 +1,22 @@
-import React from 'react'
-import { act, render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
+
+import React from 'react'
+import { ApolloProvider } from '@apollo/client'
+import { act, render, screen } from '@testing-library/react'
 import * as z from 'zod'
 
-import { FormShell } from './FormShell'
 import {
   Application,
-  ApplicationTypes,
-  buildForm,
-  buildDescriptionField,
-  Form,
   ApplicationStatus,
+  ApplicationTypes,
+  buildDescriptionField,
+  buildForm,
+  Form,
 } from '@island.is/application/core'
 import { initializeClient } from '@island.is/application/graphql'
-import { ApolloProvider } from '@apollo/client'
 import { LocaleProvider } from '@island.is/localization'
+
+import { FormShell } from './FormShell'
 
 describe(' FormShell', () => {
   const applicant = '1111112219'

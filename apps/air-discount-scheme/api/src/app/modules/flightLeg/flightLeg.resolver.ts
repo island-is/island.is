@@ -1,3 +1,4 @@
+import { UseGuards } from '@nestjs/common'
 import {
   Args,
   Context,
@@ -9,13 +10,14 @@ import {
 } from '@nestjs/graphql'
 
 import type { FlightLeg as TFlightLeg } from '@island.is/air-discount-scheme/types'
-import { FlightLegsInput, ConfirmInvoiceInput } from './dto'
-import { FlightLeg } from './flightLeg.model'
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
-import { UseGuards } from '@nestjs/common'
-import { Roles } from '../decorators/roles.decorator'
 import { Role } from '@island.is/air-discount-scheme/types'
+import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+
 import { RolesGuard } from '../auth/roles.guard'
+import { Roles } from '../decorators/roles.decorator'
+
+import { ConfirmInvoiceInput,FlightLegsInput } from './dto'
+import { FlightLeg } from './flightLeg.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes('@vegagerdin.is/air-discount-scheme-scope')

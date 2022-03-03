@@ -1,12 +1,14 @@
-import {
-  BasicDataProvider,
-  Application,
-  SuccessfulDataProviderResult,
-  FailedDataProviderResult,
-} from '@island.is/application/core'
-import { info } from 'kennitala'
-import { m } from '../lib/messages'
 import { MessageDescriptor } from '@formatjs/intl'
+import { info } from 'kennitala'
+
+import {
+  Application,
+  BasicDataProvider,
+  FailedDataProviderResult,
+  SuccessfulDataProviderResult,
+} from '@island.is/application/core'
+
+import { m } from '../lib/messages'
 
 export class CriminalRecordProvider extends BasicDataProvider {
   type = 'CriminalRecordProvider'

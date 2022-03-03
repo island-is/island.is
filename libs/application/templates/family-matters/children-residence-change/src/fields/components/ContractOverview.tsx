@@ -1,16 +1,19 @@
 import React from 'react'
-import { Text, Box } from '@island.is/island-ui/core'
-import { CRCApplication } from '../../types'
 import { useIntl } from 'react-intl'
+
+import { DescriptionText } from '@island.is/application/templates/family-matters-core/components'
 import {
   childrenResidenceInfo,
   formatDate,
   formatPhoneNumber,
 } from '@island.is/application/templates/family-matters-core/utils'
-import { DescriptionText } from '@island.is/application/templates/family-matters-core/components'
-import * as m from '../../lib/messages'
-import TransferOverview from './TransferOverview'
+import { Box,Text } from '@island.is/island-ui/core'
+
 import { Roles } from '../../lib/constants'
+import * as m from '../../lib/messages'
+import { CRCApplication } from '../../types'
+
+import TransferOverview from './TransferOverview'
 
 interface Props {
   application: CRCApplication

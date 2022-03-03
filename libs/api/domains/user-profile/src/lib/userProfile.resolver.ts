@@ -1,25 +1,27 @@
+import { UseGuards } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { ConfirmEmailVerificationInput } from './dto/confirmEmailVerificationInput'
-import { ConfirmSmsVerificationInput } from './dto/confirmSmsVerificationInput'
-import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
-import { CreateEmailVerificationInput } from './dto/createEmalVerificationInput'
-import { CreateUserProfileInput } from './dto/createUserProfileInput'
-import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
-import { DeleteIslykillValueInput } from './dto/deleteIslykillValueInput'
-import { UserProfile } from './userProfile.model'
-import { ConfirmResponse, Response } from './response.model'
-import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
-import { UserProfileService } from './userProfile.service'
+
 import type { User } from '@island.is/auth-nest-tools'
 import {
+  CurrentUser,
   IdsUserGuard,
   ScopesGuard,
-  CurrentUser,
 } from '@island.is/auth-nest-tools'
-import { UseGuards } from '@nestjs/common'
-import { UserDeviceToken } from './userDeviceToken.model'
-import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
+
+import { ConfirmEmailVerificationInput } from './dto/confirmEmailVerificationInput'
+import { ConfirmSmsVerificationInput } from './dto/confirmSmsVerificationInput'
+import { CreateEmailVerificationInput } from './dto/createEmalVerificationInput'
+import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
+import { CreateUserProfileInput } from './dto/createUserProfileInput'
+import { DeleteIslykillValueInput } from './dto/deleteIslykillValueInput'
 import { DeleteTokenResponse } from './dto/deleteTokenResponse'
+import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
+import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
+import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
+import { ConfirmResponse, Response } from './response.model'
+import { UserDeviceToken } from './userDeviceToken.model'
+import { UserProfile } from './userProfile.model'
+import { UserProfileService } from './userProfile.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()

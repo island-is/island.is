@@ -1,7 +1,10 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
-import { ITabSection } from '../generated/contentfulTypes'
+import { Field, ID,ObjectType } from '@nestjs/graphql'
+
 import { SystemMetadata } from '@island.is/shared/types'
-import { TabContent, mapTabContent } from './tabContent.model'
+
+import { ITabSection } from '../generated/contentfulTypes'
+
+import { mapTabContent,TabContent } from './tabContent.model'
 
 @ObjectType()
 export class TabSection {

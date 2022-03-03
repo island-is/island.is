@@ -1,15 +1,17 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   Column,
+  CreatedAt,
   DataType,
+  ForeignKey,
   Model,
   Table,
-  CreatedAt,
   UpdatedAt,
-  ForeignKey,
 } from 'sequelize-typescript'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { Organisation } from './organisation.model'
+
 import { EntityTypes } from '../enums/EntityTypes'
+
+import { Organisation } from './organisation.model'
 
 @Table({
   tableName: 'changelog',

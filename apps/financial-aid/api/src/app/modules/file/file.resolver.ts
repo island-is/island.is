@@ -1,17 +1,18 @@
-import { Args, Context, Mutation, Resolver, Query } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
+import { Args, Context, Mutation, Query,Resolver } from '@nestjs/graphql'
 
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { BackendAPI } from '../../../services'
+
 import {
   CreateApplicationFilesInput,
   GetSignedUrlForIdInput,
   GetSignedUrlInput,
 } from './dto'
-import { SignedUrlModel, CreateFilesModel } from './models'
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import { CreateFilesModel,SignedUrlModel } from './models'
 
 @UseGuards(IdsUserGuard)
 @Resolver()

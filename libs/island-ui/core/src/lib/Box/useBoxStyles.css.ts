@@ -1,6 +1,7 @@
 import { style, styleVariants } from '@vanilla-extract/css'
 import { Properties } from 'csstype'
 import omit from 'lodash/omit'
+
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 import { mapToStyleProperty } from '../../utils/mapToStyleProperty'

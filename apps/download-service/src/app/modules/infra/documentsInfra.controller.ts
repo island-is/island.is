@@ -1,9 +1,12 @@
-import { InfraController } from '@island.is/infra-nest-server'
 import { BadRequestException, Controller, Get } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
-import { environment } from '../../../environments'
-import { Readiness } from './dto/readinessDto'
 import dns from 'dns'
+
+import { InfraController } from '@island.is/infra-nest-server'
+
+import { environment } from '../../../environments'
+
+import { Readiness } from './dto/readinessDto'
 
 @Controller()
 export class DocumentsInfraController extends InfraController {

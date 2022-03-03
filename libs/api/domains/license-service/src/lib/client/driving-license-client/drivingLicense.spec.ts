@@ -1,4 +1,5 @@
 import { GenericUserLicensePkPassStatus } from '../../licenceService.type'
+
 import { GenericDrivingLicenseApi } from './drivingLicenseService.api'
 import { GenericDrivingLicenseResponse } from './genericDrivingLicense.type'
 

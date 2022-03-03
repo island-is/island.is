@@ -1,19 +1,21 @@
 import React, { FC, useState } from 'react'
-import { FieldBaseProps } from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
+
+import { FieldBaseProps } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
-import { parentalLeaveFormMessages } from '../../lib/messages'
-import Slider from '../components/Slider'
-import BoxChart, { BoxChartKey } from '../components/BoxChart'
-import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
+
 import {
-  maxDaysToGiveOrReceive,
-  defaultMonths,
   daysInMonth,
+  defaultMonths,
+  maxDaysToGiveOrReceive,
 } from '../../config'
 import { YES } from '../../constants'
+import { parentalLeaveFormMessages } from '../../lib/messages'
+import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
+import BoxChart, { BoxChartKey } from '../components/BoxChart'
+import Slider from '../components/Slider'
 
 const GiveDaysSlider: FC<FieldBaseProps> = ({ field, application }) => {
   const { id } = field

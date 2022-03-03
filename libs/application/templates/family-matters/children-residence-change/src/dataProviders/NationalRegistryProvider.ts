@@ -4,6 +4,7 @@ import {
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
 import { NationalRegistry } from '@island.is/application/templates/family-matters-core/types'
+
 import { DataProviderTypes } from '../types'
 
 export class NationalRegistryProvider extends BasicDataProvider {

@@ -1,14 +1,16 @@
 import React, { FC, useState } from 'react'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { Modal } from '@island.is/service-portal/core'
+
 import {
-  Text,
-  Button,
   Box,
+  Button,
   GridColumn,
   GridRow,
   Hidden,
+  Text,
 } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { Modal } from '@island.is/service-portal/core'
+
 import { msg } from '../../../../lib/messages'
 
 interface Props {

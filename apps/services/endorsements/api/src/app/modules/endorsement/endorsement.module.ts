@@ -1,16 +1,19 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { Endorsement } from './models/endorsement.model'
-import { EndorsementController } from './endorsement.controller'
-import { EndorsementService } from './endorsement.service'
-import { EndorsementList } from '../endorsementList/endorsementList.model'
-import { EndorsementListService } from '../endorsementList/endorsementList.service'
-import { environment } from '../../../environments'
+
 import {
   NationalRegistryApi,
   NationalRegistryConfig,
 } from '@island.is/clients/national-registry-v1'
 import { EmailModule } from '@island.is/email-service'
+
+import { environment } from '../../../environments'
+import { EndorsementList } from '../endorsementList/endorsementList.model'
+import { EndorsementListService } from '../endorsementList/endorsementList.service'
+
+import { Endorsement } from './models/endorsement.model'
+import { EndorsementController } from './endorsement.controller'
+import { EndorsementService } from './endorsement.service'
 
 export interface Config {
   nationalRegistry: NationalRegistryConfig

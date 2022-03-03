@@ -1,7 +1,9 @@
-import { logger } from '@island.is/logging'
 import * as express from 'express'
 import jwt from 'jsonwebtoken'
 import jwksClient from 'jwks-rsa'
+
+import { logger } from '@island.is/logging'
+
 import { error } from './utils'
 
 const secretClient = jwksClient({

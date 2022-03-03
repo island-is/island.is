@@ -1,12 +1,13 @@
 import React, { FC, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
+
 import { formatText, getValueViaPath } from '@island.is/application/core'
 import {
+  Box,
   GridColumn,
   GridRow,
   Input,
   Stack,
-  Box,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -15,17 +16,18 @@ import {
   FileUploadController,
   RadioController,
 } from '@island.is/shared/form-fields'
-import TextWithTooltip from '../TextWithTooltip/TextWithTooltip'
-import { YES, NO, FILE_SIZE_LIMIT } from '../../shared'
+
 import { m } from '../../forms/messages'
+import {
+  extractKeyFromStringObject,
+  requireConfirmationOfResidency,
+} from '../../healthInsuranceUtils'
+import { FILE_SIZE_LIMIT,NO, YES } from '../../shared'
 import {
   FormerInsurance as FormerInsuranceType,
   ReviewFieldProps,
 } from '../../types'
-import {
-  requireConfirmationOfResidency,
-  extractKeyFromStringObject,
-} from '../../healthInsuranceUtils'
+import TextWithTooltip from '../TextWithTooltip/TextWithTooltip'
 
 const FormerInsurance: FC<ReviewFieldProps> = ({
   application,

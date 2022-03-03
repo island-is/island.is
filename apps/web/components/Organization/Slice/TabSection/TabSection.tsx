@@ -1,11 +1,12 @@
 import React from 'react'
-import { TabSection } from '@island.is/web/graphql/schema'
-import { Box, GridColumn, GridRow, Tabs, Text } from '@island.is/island-ui/core'
-import * as styles from '@island.is/web/screens/Organization/Organization.css'
+
 import {
   renderSlices,
   Slice as SliceType,
 } from '@island.is/island-ui/contentful'
+import { Box, GridColumn, GridRow, Tabs, Text } from '@island.is/island-ui/core'
+import { TabSection } from '@island.is/web/graphql/schema'
+import * as styles from '@island.is/web/screens/Organization/Organization.css'
 
 interface SliceProps {
   slice: TabSection

@@ -1,10 +1,11 @@
 import {
+  buildCustomField,
   buildForm,
   buildSection,
   Form,
-  buildCustomField,
 } from '@island.is/application/core'
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
+
 import * as m from '../lib/messages'
 
 export const ApplicationApproved: Form = buildForm({

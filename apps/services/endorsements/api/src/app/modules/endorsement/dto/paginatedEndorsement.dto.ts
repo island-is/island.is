@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { Endorsement } from '../models/endorsement.model'
+
 import { PageInfoDto } from '@island.is/nest/pagination'
+
+import { Endorsement } from '../models/endorsement.model'
 
 export class PaginatedEndorsementDto {
   @ApiProperty()

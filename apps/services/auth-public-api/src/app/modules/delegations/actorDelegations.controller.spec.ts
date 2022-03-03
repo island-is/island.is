@@ -1,6 +1,7 @@
-import request from 'supertest'
 import { getModelToken } from '@nestjs/sequelize'
+import request from 'supertest'
 
+import { AuthScope } from '@island.is/auth/scopes'
 import {
   ApiScope,
   Delegation,
@@ -8,7 +9,12 @@ import {
   DelegationScope,
   DelegationType,
 } from '@island.is/auth-api-lib'
-import { AuthScope } from '@island.is/auth/scopes'
+import {
+  PersonalRepresentative,
+  PersonalRepresentativeRight,
+  PersonalRepresentativeRightType,
+  PersonalRepresentativeType,
+} from '@island.is/auth-api-lib/personal-representative'
 import {
   createCurrentUser,
   createNationalRegistryUser,
@@ -24,12 +30,6 @@ import {
 } from '../../../../test/setup'
 import { TestEndpointOptions } from '../../../../test/types'
 import { expectMatchingObject, getRequestMethod } from '../../../../test/utils'
-import {
-  PersonalRepresentative,
-  PersonalRepresentativeRight,
-  PersonalRepresentativeRightType,
-  PersonalRepresentativeType,
-} from '@island.is/auth-api-lib/personal-representative'
 
 const today = new Date('2021-11-12')
 const user = createCurrentUser({

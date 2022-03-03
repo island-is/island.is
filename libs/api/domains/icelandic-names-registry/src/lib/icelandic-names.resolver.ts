@@ -1,19 +1,20 @@
-import { Args, Directive, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
+import { Args, Directive, Mutation, Query, Resolver } from '@nestjs/graphql'
+
 import type { User } from '@island.is/auth-nest-tools'
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 
-import { BackendAPI } from './services'
-import { IcelandicName } from './models/icelandicName.model'
 import {
+  CreateIcelandicNameInput,
+  DeleteIcelandicNameByIdInput,
   GetIcelandicNameByIdInput,
   GetIcelandicNameByInitialLetterInput,
   GetIcelandicNameBySearchInput,
-  CreateIcelandicNameInput,
   UpdateIcelandicNameInput,
-  DeleteIcelandicNameByIdInput,
 } from './dto/icelandic-name.input.dto'
 import { DeleteNameResponse } from './dto/icelandic-name.response.dto'
+import { IcelandicName } from './models/icelandicName.model'
+import { BackendAPI } from './services'
 
 const cacheControlDirective = () => `@cacheControl(maxAge: 0)`
 

@@ -1,5 +1,7 @@
 import { FormValue, getValueViaPath } from '@island.is/application/core'
+
 import { AccidentTypeEnum, WorkAccidentTypeEnum } from '../types'
+
 import { isWorkAccident } from './isWorkAccident'
 
 // Specific case check here since the accident can be a sports accident if he picks sports in the first question where

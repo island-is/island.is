@@ -1,13 +1,13 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
   Column,
+  CreatedAt,
   DataType,
   Model,
-  Table,
-  CreatedAt,
-  UpdatedAt,
   PrimaryKey,
+  Table,
+  UpdatedAt,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
 
 @Table({
   tableName: 'grant_type',

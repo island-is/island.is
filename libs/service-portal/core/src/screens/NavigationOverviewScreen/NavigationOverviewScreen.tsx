@@ -1,3 +1,7 @@
+import React, { FC } from 'react'
+import { MessageDescriptor } from 'react-intl'
+import { Link } from 'react-router-dom'
+
 import {
   ArrowLink,
   Box,
@@ -5,12 +9,10 @@ import {
   GridRow,
   Text,
 } from '@island.is/island-ui/core'
-import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
-import { MessageDescriptor } from 'react-intl'
-import { Link } from 'react-router-dom'
-import * as styles from './NavigationOverviewScreen.css'
 import { m } from '@island.is/service-portal/core'
+
+import * as styles from './NavigationOverviewScreen.css'
 
 interface Props {
   title: MessageDescriptor

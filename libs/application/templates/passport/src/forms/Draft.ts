@@ -2,9 +2,10 @@ import {
   buildCheckboxField,
   buildDataProviderItem,
   buildDateField,
+  buildDescriptionField,
+  buildDividerField,
   buildExternalDataProvider,
   buildForm,
-  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -12,10 +13,10 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
-  buildDividerField,
   Form,
   FormModes,
 } from '@island.is/application/core'
+
 import { m } from './messages'
 
 export const Draft: Form = buildForm({

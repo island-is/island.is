@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
-import { Box, Button, Text } from '@island.is/island-ui/core'
 import copyToClipboard from 'copy-to-clipboard'
+
+import { Box, Button, Text } from '@island.is/island-ui/core'
 
 interface CopyLinkProps {
   linkUrl: string

@@ -1,23 +1,24 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { ProblemModule } from '@island.is/nest/problem'
-import { ConfigModule } from '@island.is/nest/config'
-import { courtClientModuleConfig } from '@island.is/judicial-system/court-client'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
+import { courtClientModuleConfig } from '@island.is/judicial-system/court-client'
+import { ConfigModule } from '@island.is/nest/config'
+import { ProblemModule } from '@island.is/nest/problem'
 
 import { environment } from '../environments'
+
 import {
+  AwsS3Module,
   CaseModule,
+  CourtModule,
   DefendantModule,
-  UserModule,
-  InstitutionModule,
+  EventModule,
   FileModule,
+  InstitutionModule,
   NotificationModule,
   PoliceModule,
-  CourtModule,
-  AwsS3Module,
-  EventModule,
+  UserModule,
 } from './modules'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 

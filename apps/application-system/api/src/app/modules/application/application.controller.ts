@@ -1,102 +1,103 @@
+import { InjectQueue } from '@nestjs/bull'
 import {
+  BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
+  Optional,
   Param,
+  ParseUUIDPipe,
   Post,
   Put,
-  Delete,
-  ParseUUIDPipe,
-  BadRequestException,
-  UseInterceptors,
-  Optional,
   Query,
-  UseGuards,
   UnauthorizedException,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
-import omit from 'lodash/omit'
-import { InjectQueue } from '@nestjs/bull'
-import { Queue } from 'bull'
 import {
   ApiCreatedResponse,
+  ApiHeader,
   ApiOkResponse,
   ApiParam,
-  ApiTags,
-  ApiHeader,
   ApiQuery,
+  ApiTags,
 } from '@nestjs/swagger'
+import { Queue } from 'bull'
+import omit from 'lodash/omit'
+
 import {
+  ApplicationStatus,
+  ApplicationTemplateAPIAction,
+  ApplicationTemplateHelper,
+  ApplicationTypes,
   ApplicationWithAttachments as BaseApplication,
   callDataProviders,
-  ApplicationTypes,
-  FormValue,
-  ApplicationTemplateHelper,
-  ExternalData,
-  ApplicationTemplateAPIAction,
-  PdfTypes,
-  ApplicationStatus,
   CustomTemplateFindQuery,
+  ExternalData,
+  FormValue,
+  PdfTypes,
 } from '@island.is/application/core'
-import type { Unwrap, Locale } from '@island.is/shared/types'
-import type { User } from '@island.is/auth-nest-tools'
-import {
-  IdsUserGuard,
-  ScopesGuard,
-  Scopes,
-  CurrentUser,
-} from '@island.is/auth-nest-tools'
-import { ApplicationScope } from '@island.is/auth/scopes'
+import { DefaultEvents,mergeAnswers } from '@island.is/application/core'
+import { TemplateAPIService } from '@island.is/application/template-api-modules'
 import {
   getApplicationDataProviders,
   getApplicationTemplateByTypeId,
   getApplicationTranslationNamespaces,
 } from '@island.is/application/template-loader'
-import { TemplateAPIService } from '@island.is/application/template-api-modules'
-import { mergeAnswers, DefaultEvents } from '@island.is/application/core'
+import { ApplicationScope } from '@island.is/auth/scopes'
+import type { User } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 import { IntlService } from '@island.is/cms-translations'
 import { Audit, AuditService } from '@island.is/nest/audit'
+import { Documentation } from '@island.is/nest/swagger'
+import type { Locale,Unwrap } from '@island.is/shared/types'
 
-import { ApplicationService } from './application.service'
-import { FileService } from './files/file.service'
-import { CreateApplicationDto } from './dto/createApplication.dto'
-import { UpdateApplicationDto } from './dto/updateApplication.dto'
 import { AddAttachmentDto } from './dto/addAttachment.dto'
+import { ApplicationResponseDto } from './dto/application.response.dto'
+import { AssignApplicationDto } from './dto/assignApplication.dto'
+import { CreateApplicationDto } from './dto/createApplication.dto'
 import { DeleteAttachmentDto } from './dto/deleteAttachment.dto'
 import { GeneratePdfDto } from './dto/generatePdf.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
+import { PresignedUrlResponseDto } from './dto/presignedUrl.response.dto'
 import { RequestFileSignatureDto } from './dto/requestFileSignature.dto'
+import { RequestFileSignatureResponseDto } from './dto/requestFileSignature.response.dto'
+import { UpdateApplicationDto } from './dto/updateApplication.dto'
+import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
 import { UploadSignedFileDto } from './dto/uploadSignedFile.dto'
+import { UploadSignedFileResponseDto } from './dto/uploadSignedFile.response.dto'
+import { FileService } from './files/file.service'
+import { ApplicationSerializer } from './tools/application.serializer'
+import { ApplicationAccessService } from './tools/applicationAccess.service'
+import { getApplicationLifecycle } from './utils/application'
+import { CurrentLocale } from './utils/currentLocale'
 import {
   buildDataProviders,
   buildExternalData,
 } from './utils/externalDataUtils'
+import { verifyToken } from './utils/tokenUtils'
 import {
+  isTemplateReady,
   validateApplicationSchema,
   validateIncomingAnswers,
   validateIncomingExternalDataProviders,
-  validateThatTemplateIsReady,
-  isTemplateReady,
   validateThatApplicationIsReady,
+  validateThatTemplateIsReady,
 } from './utils/validationUtils'
-import { ApplicationSerializer } from './tools/application.serializer'
-import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
-import { ApplicationResponseDto } from './dto/application.response.dto'
-import { PresignedUrlResponseDto } from './dto/presignedUrl.response.dto'
-import { RequestFileSignatureResponseDto } from './dto/requestFileSignature.response.dto'
-import { UploadSignedFileResponseDto } from './dto/uploadSignedFile.response.dto'
-import { AssignApplicationDto } from './dto/assignApplication.dto'
-import { verifyToken } from './utils/tokenUtils'
-import { getApplicationLifecycle } from './utils/application'
+import { Application } from './application.model'
+import { ApplicationService } from './application.service'
 import {
   DecodedAssignmentToken,
   StateChangeResult,
   TemplateAPIModuleActionResult,
 } from './types'
-import { ApplicationAccessService } from './tools/applicationAccess.service'
-import { CurrentLocale } from './utils/currentLocale'
-import { Application } from './application.model'
-import { Documentation } from '@island.is/nest/swagger'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('applications')

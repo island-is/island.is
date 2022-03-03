@@ -5,6 +5,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { VehicleModel } from '../vehicle'
+
 import { VehicleOwnerModel } from './vehicleOwner.model'
 
 @Injectable()

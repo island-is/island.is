@@ -1,24 +1,24 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useEffect,useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import {
+  extractRepeaterIndexFromField,
   FieldBaseProps,
   NO_ANSWER,
-  extractRepeaterIndexFromField,
 } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import {
   FieldDescription,
   RadioController,
 } from '@island.is/shared/form-fields'
-import { useLocale } from '@island.is/localization'
 
-import {
-  getExpectedDateOfBirth,
-  getApplicationAnswers,
-} from '../../lib/parentalLeaveUtils'
-import { parentalLeaveFormMessages } from '../../lib/messages'
 import { StartDateOptions } from '../../constants'
+import { parentalLeaveFormMessages } from '../../lib/messages'
+import {
+  getApplicationAnswers,
+  getExpectedDateOfBirth,
+} from '../../lib/parentalLeaveUtils'
 
 type ValidAnswers = StartDateOptions | undefined
 

@@ -1,5 +1,3 @@
-import MsgQueue, { Channel } from '@island.is/message-queue'
-import { logger } from '@island.is/logging'
 import {
   ApplicationExchange,
   CompanyApplication,
@@ -7,10 +5,13 @@ import {
   UserApplication,
   UserApplicationRoutingKey,
 } from '@island.is/gjafakort/types'
+import { logger } from '@island.is/logging'
+import MsgQueue, { Channel } from '@island.is/message-queue'
 
 import { environment } from '../environments'
-import { companyHandlers, userHandlers } from './handlers'
 import { sentryErrorHandler } from '../extensions'
+
+import { companyHandlers, userHandlers } from './handlers'
 
 const { production } = environment
 

@@ -1,7 +1,6 @@
+import { Inject,Injectable } from '@nestjs/common'
 import { DataSourceConfig } from 'apollo-datasource'
-import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
-
-import { Injectable, Inject } from '@nestjs/common'
+import { RequestOptions,RESTDataSource } from 'apollo-datasource-rest'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'

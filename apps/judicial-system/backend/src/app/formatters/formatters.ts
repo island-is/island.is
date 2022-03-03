@@ -1,17 +1,17 @@
 import {
+  caseTypes,
   formatDate,
+  formatGender,
   formatNationalId,
   laws,
-  formatGender,
-  caseTypes,
 } from '@island.is/judicial-system/formatters'
+import type { Gender } from '@island.is/judicial-system/types'
 import {
   CaseLegalProvisions,
   CaseType,
   isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
-import type { Gender } from '@island.is/judicial-system/types'
 
 function legalProvisionsOrder(p: CaseLegalProvisions) {
   switch (p) {

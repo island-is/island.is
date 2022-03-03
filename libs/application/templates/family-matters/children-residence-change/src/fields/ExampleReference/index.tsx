@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { FieldBaseProps /* Field */ } from '@island.is/application/core'
 
 // Only needed when using additional props other than FieldBaseProps

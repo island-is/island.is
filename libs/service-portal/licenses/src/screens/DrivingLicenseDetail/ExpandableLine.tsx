@@ -1,5 +1,6 @@
-import React, { FC, useCallback, useEffect, useState, useRef } from 'react'
-import { useNamespaces } from '@island.is/localization'
+import React, { FC, useCallback, useEffect, useRef,useState } from 'react'
+import AnimateHeight from 'react-animate-height'
+
 import {
   Box,
   Divider,
@@ -7,11 +8,12 @@ import {
   Icon,
   Text,
 } from '@island.is/island-ui/core'
+import { useNamespaces } from '@island.is/localization'
+
+import LicenseIcon from '../../components/LicenseIcon/LicenseIcon'
+import { mapCategory } from '../../utils/dataMapper'
 
 import * as styles from '../../components/DrivingLicense/DrivingLicense.css'
-import { mapCategory } from '../../utils/dataMapper'
-import LicenseIcon from '../../components/LicenseIcon/LicenseIcon'
-import AnimateHeight from 'react-animate-height'
 
 interface Props {
   licenseIssued?: string

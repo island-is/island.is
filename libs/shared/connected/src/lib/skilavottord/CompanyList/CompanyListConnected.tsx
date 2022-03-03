@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { ApolloClient, useQuery, InMemoryCache, HttpLink } from '@apollo/client'
+import { ApolloClient, HttpLink,InMemoryCache, useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 
 import CompanyList from './CompanyList'

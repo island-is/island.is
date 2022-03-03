@@ -1,9 +1,10 @@
+import * as faker from 'faker'
+
 import {
-  ApplicationWithAttachments as Application,
   ApplicationStatus,
   ApplicationTypes,
+  ApplicationWithAttachments as Application,
 } from '@island.is/application/core'
-import * as faker from 'faker'
 
 export const createApplication = (
   overrides?: Partial<Application>,

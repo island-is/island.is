@@ -1,7 +1,10 @@
 import React, { FC } from 'react'
-import { Box, Text, Hyphen } from '@island.is/island-ui/core'
-import { m } from '../lib/messages'
+
+import { Box, Hyphen,Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+
+import { m } from '../lib/messages'
+
 import CoatOfArms from './CoatOfArms'
 
 const Logo: FC = () => {

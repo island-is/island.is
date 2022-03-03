@@ -1,13 +1,14 @@
 import React, { FC } from 'react'
+import { MessageDescriptor } from '@formatjs/intl'
 import cn from 'classnames'
-import { useLocale } from '@island.is/localization'
+
 import {
   Application,
-  formatText,
   coreMessages,
+  formatText,
 } from '@island.is/application/core'
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
-import { MessageDescriptor } from '@formatjs/intl'
+import { useLocale } from '@island.is/localization'
 
 import * as styles from './WarningSection.css'
 

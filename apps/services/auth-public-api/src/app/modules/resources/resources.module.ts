@@ -1,20 +1,22 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
+
 import {
-  IdentityResource,
-  IdentityResourceUserClaim,
-  ApiScope,
-  ApiScopeUserClaim,
   ApiResource,
-  ApiResourceUserClaim,
   ApiResourceScope,
   ApiResourceSecret,
-  ApiScopeUserAccess,
-  ApiScopeUser,
+  ApiResourceUserClaim,
+  ApiScope,
   ApiScopeGroup,
+  ApiScopeUser,
+  ApiScopeUserAccess,
+  ApiScopeUserClaim,
   Domain,
+  IdentityResource,
+  IdentityResourceUserClaim,
   ResourcesService,
 } from '@island.is/auth-api-lib'
+
 import { ScopesController } from './scopes.controller'
 
 @Module({

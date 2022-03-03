@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { Box, Icon } from '@island.is/island-ui/core'
 
 const InfoBanner = ({ children }: { children: React.ReactNode }) => {

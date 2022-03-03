@@ -1,13 +1,14 @@
 import React, { FC } from 'react'
 import { gql, useLazyQuery } from '@apollo/client'
 import { User } from 'oidc-client'
+
+import { ExpandRow } from '../../components/ExpandableTable'
+import FinanceStatusDetailTable from '../../components/FinanceStatusDetailTable/FinanceStatusDetailTable'
 import {
-  FinanceStatusOrganizationType,
   FinanceStatusDetailsType,
   FinanceStatusOrganizationChargeType,
+  FinanceStatusOrganizationType,
 } from '../../screens/FinanceStatus/FinanceStatusData.types'
-import FinanceStatusDetailTable from '../../components/FinanceStatusDetailTable/FinanceStatusDetailTable'
-import { ExpandRow } from '../../components/ExpandableTable'
 import amountFormat from '../../utils/amountFormat'
 
 const GetFinanceStatusDetailsQuery = gql`

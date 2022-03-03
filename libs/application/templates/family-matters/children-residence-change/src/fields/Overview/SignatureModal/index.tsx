@@ -1,17 +1,20 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
+
 import {
   Box,
-  Text,
-  ModalBase,
-  Logo,
-  SkeletonLoader,
-  Icon,
   Button,
+  Icon,
+  Logo,
+  ModalBase,
+  SkeletonLoader,
+  Text,
 } from '@island.is/island-ui/core'
+
 import { signatureModal } from '../../../lib/messages'
 import { FileSignatureStatus, ReducerState } from '../fileSignatureReducer'
+
 import * as styles from './Modal.css'
 
 interface SignatureModalProps {

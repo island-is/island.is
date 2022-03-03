@@ -1,65 +1,68 @@
 import React, { useEffect, useState } from 'react'
+import { RewriteFrames } from '@sentry/integrations'
+import * as Sentry from '@sentry/node'
+import Cookies from 'js-cookie'
+import { NextComponentType, NextPageContext } from 'next'
+import getConfig from 'next/config'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
+
 import {
-  Page,
-  Box,
-  FooterLinkProps,
-  Footer,
   AlertBanner,
   AlertBannerVariants,
-  Hidden,
+  Box,
   ButtonTypes,
   ColorSchemeContext,
   ColorSchemes,
+  Footer,
+  FooterLinkProps,
+  Hidden,
+  Page,
 } from '@island.is/island-ui/core'
-import getConfig from 'next/config'
-import { NextComponentType, NextPageContext } from 'next'
-import { Screen, GetInitialPropsContext } from '../types'
-import Cookies from 'js-cookie'
-import * as Sentry from '@sentry/node'
-import { RewriteFrames } from '@sentry/integrations'
+import { Locale } from '@island.is/shared/types'
 import { userMonitoring } from '@island.is/user-monitoring'
-import { useRouter } from 'next/router'
 import {
   Header,
   Main,
   PageLoader,
   SkipToMainContent,
 } from '@island.is/web/components'
-import { GET_GROUPED_MENU_QUERY } from '../screens/queries/Menu'
-import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
-import {
-  GetGroupedMenuQuery,
-  GetNamespaceQuery,
-  QueryGetNamespaceArgs,
-  ContentLanguage,
-  GetAlertBannerQuery,
-  QueryGetAlertBannerArgs,
-  GetArticleCategoriesQuery,
-  QueryGetArticleCategoriesArgs,
-  QueryGetGroupedMenuArgs,
-  Menu,
-} from '../graphql/schema'
+import { stringHash } from '@island.is/web/utils/stringHash'
+
 import { GlobalContextProvider } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
-import { useI18n } from '../i18n'
-import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { environment } from '../environments'
+import {
+  ContentLanguage,
+  GetAlertBannerQuery,
+  GetArticleCategoriesQuery,
+  GetGroupedMenuQuery,
+  GetNamespaceQuery,
+  Menu,
+  QueryGetAlertBannerArgs,
+  QueryGetArticleCategoriesArgs,
+  QueryGetGroupedMenuArgs,
+  QueryGetNamespaceArgs,
+} from '../graphql/schema'
 import { useNamespace } from '../hooks'
+import {
+  linkResolver as LinkResolver,
+  LinkType,
+  pathIsRoute,
+  useLinkResolver,
+} from '../hooks/useLinkResolver'
+import { useI18n } from '../i18n'
+import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
+import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
+import { GET_GROUPED_MENU_QUERY } from '../screens/queries/Menu'
+import { GetInitialPropsContext,Screen } from '../types'
 import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
 } from '../utils/processMenuData'
-import { Locale } from '@island.is/shared/types'
-import {
-  LinkType,
-  useLinkResolver,
-  linkResolver as LinkResolver,
-  pathIsRoute,
-} from '../hooks/useLinkResolver'
-import { stringHash } from '@island.is/web/utils/stringHash'
 
 import Illustration from './Illustration'
+
 import * as styles from './main.css'
 
 const { publicRuntimeConfig = {} } = getConfig() ?? {}

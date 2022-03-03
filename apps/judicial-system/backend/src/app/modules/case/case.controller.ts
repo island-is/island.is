@@ -1,39 +1,38 @@
-import { Response } from 'express'
-
 import {
+  BadRequestException,
   Body,
   Controller,
+  ForbiddenException,
   Get,
+  Header,
+  HttpException,
+  Inject,
   Param,
   Post,
   Put,
-  ForbiddenException,
   Query,
   Res,
-  Header,
   UseGuards,
-  BadRequestException,
-  HttpException,
-  Inject,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { Response } from 'express'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import {
   DokobitError,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
-import { IntegratedCourts } from '@island.is/judicial-system/consts'
-import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
   JwtAuthGuard,
-  RolesRules,
   RolesGuard,
+  RolesRules,
   TokenGuard,
 } from '@island.is/judicial-system/auth'
+import { IntegratedCourts } from '@island.is/judicial-system/consts'
+import type { User } from '@island.is/judicial-system/types'
+import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   judgeRule,
@@ -41,12 +40,17 @@ import {
   registrarRule,
   staffRule,
 } from '../../guards'
-import { UserService } from '../user'
 import { CaseEvent, EventService } from '../event'
+import { UserService } from '../user'
+
+import { CreateCaseDto } from './dto/createCase.dto'
+import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
+import { TransitionCaseDto } from './dto/transitionCase.dto'
+import { UpdateCaseDto } from './dto/updateCase.dto'
+import { CurrentCase } from './guards/case.decorator'
 import { CaseExistsGuard } from './guards/caseExists.guard'
 import { CaseReadGuard } from './guards/caseRead.guard'
 import { CaseWriteGuard } from './guards/caseWrite.guard'
-import { CurrentCase } from './guards/case.decorator'
 import {
   judgeTransitionRule,
   judgeUpdateRule,
@@ -55,10 +59,6 @@ import {
   registrarTransitionRule,
   registrarUpdateRule,
 } from './guards/rolesRules'
-import { CreateCaseDto } from './dto/createCase.dto'
-import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
-import { TransitionCaseDto } from './dto/transitionCase.dto'
-import { UpdateCaseDto } from './dto/updateCase.dto'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'

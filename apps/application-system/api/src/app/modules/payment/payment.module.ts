@@ -1,16 +1,18 @@
 import { DynamicModule, Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
+
+import { PAYMENT_OPTIONS,PaymentAPI } from '@island.is/clients/payment'
+import { PaymentServiceOptions } from '@island.is/clients/payment'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { AuditModule } from '@island.is/nest/audit'
 
-import { Payment } from './payment.model'
-import { PaymentController } from './payment.controller'
-import { PaymentCallbackController } from './payment-callback.controller'
-import { PaymentService } from './payment.service'
 import { environment } from '../../../environments'
-import { PaymentAPI, PAYMENT_OPTIONS } from '@island.is/clients/payment'
-import { PaymentServiceOptions } from '@island.is/clients/payment'
 import { Application } from '../application/application.model'
+
+import { PaymentController } from './payment.controller'
+import { Payment } from './payment.model'
+import { PaymentService } from './payment.service'
+import { PaymentCallbackController } from './payment-callback.controller'
 
 export interface Config {
   clientConfig: PaymentServiceOptions

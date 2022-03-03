@@ -1,7 +1,8 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { IsObject } from 'class-validator'
-import { GenericLicenseDataFieldType } from '../licenceService.type'
 import graphqlTypeJson from 'graphql-type-json'
+
+import { GenericLicenseDataFieldType } from '../licenceService.type'
 
 registerEnumType(GenericLicenseDataFieldType, {
   name: 'GenericLicenseDataFieldType',

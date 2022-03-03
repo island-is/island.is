@@ -1,8 +1,10 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+
 import { IGenericOverviewPage } from '../generated/contentfulTypes'
+
 import { Html, mapHtml } from './html.model'
-import { Menu, mapMenu } from './menu.model'
 import { IntroLinkImage, mapIntroLinkImage } from './introLinkImage.model'
+import { mapMenu,Menu } from './menu.model'
 
 @ObjectType()
 export class GenericOverviewPage {

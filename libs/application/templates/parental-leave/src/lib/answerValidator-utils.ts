@@ -1,17 +1,17 @@
+import addDays from 'date-fns/addDays'
+import addMonths from 'date-fns/addMonths'
+import isValid from 'date-fns/isValid'
 import isWithinInterval from 'date-fns/isWithinInterval'
 import parseISO from 'date-fns/parseISO'
-import addMonths from 'date-fns/addMonths'
-import addDays from 'date-fns/addDays'
 import subtractDays from 'date-fns/subDays'
-import isValid from 'date-fns/isValid'
+
 import {
   AnswerValidationError,
   Application,
-  StaticTextObject,
   NO_ANSWER,
+  StaticTextObject,
 } from '@island.is/application/core'
-import { StartDateOptions, YES, NO } from '../constants'
-import { getExpectedDateOfBirth } from './parentalLeaveUtils'
+
 import {
   minimumPeriodStartBeforeExpectedDateOfBirth,
   minimumRatio,
@@ -19,9 +19,11 @@ import {
   usageMaxMonths,
   usageMinMonths,
 } from '../config'
-import { errorMessages } from './messages'
-
+import { NO,StartDateOptions, YES } from '../constants'
 import { Period } from '../types'
+
+import { errorMessages } from './messages'
+import { getExpectedDateOfBirth } from './parentalLeaveUtils'
 
 const hasBeenAnswered = (answer: unknown) => answer !== undefined
 

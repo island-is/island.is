@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react'
-import {
-  ServicePortalNavigationItem,
-  servicePortalMasterNavigation,
-  ServicePortalRoute,
-} from '@island.is/service-portal/core'
+import { useEffect,useState } from 'react'
 import cloneDeep from 'lodash/cloneDeep'
 import { User } from 'oidc-client'
+
 import { useAuth } from '@island.is/auth/react'
+import {
+  servicePortalMasterNavigation,
+  ServicePortalNavigationItem,
+  ServicePortalRoute,
+} from '@island.is/service-portal/core'
 
 import { useStore } from '../../store/stateProvider'
 

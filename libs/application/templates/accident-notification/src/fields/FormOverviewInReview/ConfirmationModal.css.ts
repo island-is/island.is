@@ -1,5 +1,6 @@
-import { theme } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
+
+import { theme } from '@island.is/island-ui/theme'
 
 export const background = style({
   filter: `drop-shadow(0 4px 70px rgba(0, 97, 255, 0.1))`,

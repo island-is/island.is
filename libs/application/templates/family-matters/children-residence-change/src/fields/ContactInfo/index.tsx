@@ -1,12 +1,14 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { Box, Text, InputError } from '@island.is/island-ui/core'
-import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
+
 import {
+  ContactInfoRow,
   DescriptionText,
   InfoBanner,
-  ContactInfoRow,
 } from '@island.is/application/templates/family-matters-core/components'
+import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
+import { Box, InputError,Text } from '@island.is/island-ui/core'
+
 import { contactInfo } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
 

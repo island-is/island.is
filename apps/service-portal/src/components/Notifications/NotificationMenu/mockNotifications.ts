@@ -1,5 +1,6 @@
-import { ServicePortalPath } from '@island.is/service-portal/core'
 import { defineMessage, MessageDescriptor } from 'react-intl'
+
+import { ServicePortalPath } from '@island.is/service-portal/core'
 import { m } from '@island.is/service-portal/core'
 
 export interface NotificationCard {

@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common'
-import { Client, ApiResponse } from '@elastic/elasticsearch'
-import * as AWS from 'aws-sdk'
+import { ApiResponse,Client } from '@elastic/elasticsearch'
 import AwsConnector from 'aws-elasticsearch-connector'
-import { environment } from '../environments/environments'
+import * as AWS from 'aws-sdk'
+
 import { Service } from '@island.is/api-catalogue/types'
-import { SearchResponse } from '@island.is/shared/types'
-import { searchQuery } from './queries/search.model'
 import { logger } from '@island.is/logging'
+import { SearchResponse } from '@island.is/shared/types'
+
+import { environment } from '../environments/environments'
+
+import { searchQuery } from './queries/search.model'
 
 const { elastic } = environment
 

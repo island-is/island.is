@@ -1,13 +1,13 @@
 import React, { FC, useMemo } from 'react'
 
 import {
-  SubmitField,
   FieldBaseProps,
   formatText,
+  SubmitField,
 } from '@island.is/application/core'
-import { Text, Box } from '@island.is/island-ui/core'
-import { RadioController } from '@island.is/shared/form-fields'
+import { Box,Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { RadioController } from '@island.is/shared/form-fields'
 
 interface Props extends FieldBaseProps {
   field: SubmitField

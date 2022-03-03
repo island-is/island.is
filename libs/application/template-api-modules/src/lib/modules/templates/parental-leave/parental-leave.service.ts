@@ -1,36 +1,37 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { S3 } from 'aws-sdk'
-import format from 'date-fns/format'
 import addDays from 'date-fns/addDays'
+import format from 'date-fns/format'
 import cloneDeep from 'lodash/cloneDeep'
 
+import { Application, getValueViaPath } from '@island.is/application/core'
+import {
+  getApplicationAnswers,
+  getAvailablePersonalRightsInDays,
+  getAvailableRightsInDays,
+  StartDateOptions,
+  YES,
+} from '@island.is/application/templates/parental-leave'
 import type { Attachment, Period } from '@island.is/clients/vmst'
 import { ParentalLeaveApi } from '@island.is/clients/vmst'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Application, getValueViaPath } from '@island.is/application/core'
-import {
-  getApplicationAnswers,
-  getAvailableRightsInDays,
-  getAvailablePersonalRightsInDays,
-  YES,
-  StartDateOptions,
-} from '@island.is/application/templates/parental-leave'
 
-import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
+import { SharedTemplateApiService } from '../../shared'
+
+import { apiConstants } from './constants'
 import {
-  generateAssignOtherParentApplicationEmail,
-  generateAssignEmployerApplicationEmail,
-  generateOtherParentRejected,
   generateApplicationApprovedByEmployerEmail,
   generateApplicationApprovedByEmployerToEmployerEmail,
+  generateAssignEmployerApplicationEmail,
+  generateAssignOtherParentApplicationEmail,
+  generateOtherParentRejected,
 } from './emailGenerators'
 import {
-  transformApplicationToParentalLeaveDTO,
   getRatio,
+  transformApplicationToParentalLeaveDTO,
 } from './parental-leave.utils'
-import { apiConstants } from './constants'
 
 interface VMSTError {
   type: string

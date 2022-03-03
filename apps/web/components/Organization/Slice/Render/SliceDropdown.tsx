@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { Slice } from '@island.is/web/graphql/schema'
-import { OrganizationSlice } from '@island.is/web/components'
+import slugify from '@sindresorhus/slugify'
+import { useRouter } from 'next/router'
+
 import {
   GridColumn,
   GridContainer,
@@ -8,8 +9,8 @@ import {
   Option,
   Select,
 } from '@island.is/island-ui/core'
-import { useRouter } from 'next/router'
-import slugify from '@sindresorhus/slugify'
+import { OrganizationSlice } from '@island.is/web/components'
+import { Slice } from '@island.is/web/graphql/schema'
 
 interface SliceProps {
   slices: Slice[]

@@ -1,17 +1,18 @@
 import React, { FC } from 'react'
+import { FetchResult } from '@apollo/client'
 import { GraphQLError } from 'graphql'
+
 import {
-  RepeaterProps,
-  getValueViaPath,
   Application,
+  getValueViaPath,
   RecordObject,
+  RepeaterProps,
   SetBeforeSubmitCallback,
   SetFieldLoadingState,
 } from '@island.is/application/core'
 
 import { useFields } from '../context/FieldContext'
 import { RepeaterScreen } from '../types'
-import { FetchResult } from '@apollo/client'
 
 type RepeaterItems = unknown[]
 

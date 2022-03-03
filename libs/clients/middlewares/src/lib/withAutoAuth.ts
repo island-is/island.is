@@ -1,14 +1,15 @@
 import { caching } from 'cache-manager'
 import { Logger } from 'winston'
+
 import { buildCacheControl } from './withCache/buildCacheControl'
 import { CacheConfig } from './withCache/types'
 import { createEnhancedFetch } from './createEnhancedFetch'
 import {
   FetchAPI,
+  Headers,
   Request,
   RequestInfo,
   RequestInit,
-  Headers,
 } from './nodeFetch'
 
 export interface AutoAuthTokenExchangeOptions {

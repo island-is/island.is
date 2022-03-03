@@ -1,8 +1,10 @@
 import { Controller, Get, Module } from '@nestjs/common'
-import request, { Test } from 'supertest'
-import { testServer } from '@island.is/infra-nest-server'
 import { GraphQLModule, Query, Resolver } from '@nestjs/graphql'
+import request, { Test } from 'supertest'
+
+import { testServer } from '@island.is/infra-nest-server'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+
 import { ProblemModule } from '../problem.module'
 import { ProblemOptions } from '../problem.options'
 

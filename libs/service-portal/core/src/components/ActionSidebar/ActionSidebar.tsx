@@ -1,7 +1,9 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useEffect,useState } from 'react'
 import cn from 'classnames'
-import * as styles from './ActionSidebar.css'
+
 import { Box, Button } from '@island.is/island-ui/core'
+
+import * as styles from './ActionSidebar.css'
 
 interface Props {
   isActive: boolean

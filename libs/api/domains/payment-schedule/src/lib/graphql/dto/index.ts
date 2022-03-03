@@ -1,2 +1,2 @@
-export { GetInitialScheduleInput } from './getInitialScheduleInput'
 export { GetScheduleDistributionInput } from './getDistributionInput'
+export { GetInitialScheduleInput } from './getInitialScheduleInput'

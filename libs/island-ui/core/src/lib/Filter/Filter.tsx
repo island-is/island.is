@@ -1,11 +1,13 @@
 import React, { createContext, FC, ReactNode } from 'react'
 import { Dialog, DialogDisclosure, useDialogState } from 'reakit/Dialog'
-import { usePopoverState, Popover, PopoverDisclosure } from 'reakit/Popover'
+import { Popover, PopoverDisclosure,usePopoverState } from 'reakit/Popover'
+
 import { Box } from '../Box/Box'
 import { Button } from '../Button/Button'
 import { Inline } from '../Inline/Inline'
 import { Stack } from '../Stack/Stack'
 import { Text } from '../Text/Text'
+
 import * as styles from './Filter.css'
 
 export interface FilterProps {

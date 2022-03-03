@@ -1,2 +1,2 @@
-export * from './lib/startMetricServer'
 export * from './lib/dogStatsD'
+export * from './lib/startMetricServer'

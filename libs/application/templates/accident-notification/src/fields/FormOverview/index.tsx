@@ -1,3 +1,10 @@
+import React, { FC } from 'react'
+import cn from 'classnames'
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
+import parseISO from 'date-fns/parseISO'
+import kennitala from 'kennitala'
+
 import {
   FieldBaseProps,
   formatText,
@@ -12,12 +19,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import cn from 'classnames'
-import format from 'date-fns/format'
-import is from 'date-fns/locale/is'
-import parseISO from 'date-fns/parseISO'
-import kennitala from 'kennitala'
-import React, { FC } from 'react'
+
 import { States, YES } from '../../constants'
 import { AccidentNotification } from '../../lib/dataSchema'
 import {
@@ -55,8 +57,10 @@ import {
   isWorkAccident,
   returnMissingDocumentsList,
 } from '../../utils'
-import * as styles from './FormOverview.css'
+
 import { FileValueLine, ValueLine } from './ValueLine'
+
+import * as styles from './FormOverview.css'
 
 interface SubmittedApplicationData {
   data?: {

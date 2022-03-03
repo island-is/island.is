@@ -1,4 +1,5 @@
 import { FormValue, getValueViaPath } from '@island.is/application/core'
+
 import {
   PowerOfAttorneyUploadEnum,
   WhoIsTheNotificationForEnum,

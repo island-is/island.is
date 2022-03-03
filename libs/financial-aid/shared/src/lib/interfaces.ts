@@ -1,14 +1,14 @@
 import {
-  HomeCircumstances,
-  ApplicationState,
-  FileType,
-  Employment,
+  AidType,
   ApplicationEventType,
+  ApplicationState,
+  ApplicationStateUrl,
+  Employment,
+  FamilyStatus,
+  FileType,
+  HomeCircumstances,
   RolesRule,
   StaffRole,
-  ApplicationStateUrl,
-  FamilyStatus,
-  AidType,
   UserType,
 } from './enums'
 

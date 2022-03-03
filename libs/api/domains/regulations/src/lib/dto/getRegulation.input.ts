@@ -1,8 +1,3 @@
-import type { ISODate, RegQueryName } from '@island.is/regulations'
-import {
-  RegulationViewTypes,
-  RegulationOriginalDates,
-} from '@island.is/regulations/web'
 import { Field, InputType, registerEnumType } from '@nestjs/graphql'
 import {
   IsBoolean,
@@ -12,6 +7,12 @@ import {
   Length,
   Matches,
 } from 'class-validator'
+
+import type { ISODate, RegQueryName } from '@island.is/regulations'
+import {
+  RegulationOriginalDates,
+  RegulationViewTypes,
+} from '@island.is/regulations/web'
 
 const reRegQueryName = /^\d{4}-\d{4}$/
 

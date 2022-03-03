@@ -1,5 +1,7 @@
-import { testServer, TestServerOptions } from '@island.is/infra-nest-server'
 import { INestApplication } from '@nestjs/common'
+
+import { testServer, TestServerOptions } from '@island.is/infra-nest-server'
+
 import { AppModule } from '../src/app/app.module'
 
 export let app: INestApplication

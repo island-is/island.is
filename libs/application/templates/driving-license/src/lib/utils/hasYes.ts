@@ -1,4 +1,5 @@
 import { Answer } from '@island.is/application/core'
+
 import { YES } from '../constants'
 
 export const hasYes = (answer: Answer) => {

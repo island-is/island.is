@@ -1,6 +1,5 @@
-import { IsString, IsOptional, IsBoolean } from 'class-validator'
-
 import { ApiPropertyOptional } from '@nestjs/swagger'
+import { IsBoolean,IsOptional, IsString } from 'class-validator'
 
 import { Gender } from '@island.is/judicial-system/types'
 

@@ -1,6 +1,8 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { IBigBulletList } from '../generated/contentfulTypes'
+
 import { SystemMetadata } from '@island.is/shared/types'
+
+import { IBigBulletList } from '../generated/contentfulTypes'
 import {
   BulletEntryUnion,
   mapBulletEntryUnion,

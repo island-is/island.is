@@ -1,6 +1,8 @@
 import React from 'react'
+
 import { Box, Text } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
+
 import { CRCFieldBaseProps } from '../../types'
 
 const applicantDefault = {

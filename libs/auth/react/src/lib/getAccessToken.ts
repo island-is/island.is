@@ -1,5 +1,5 @@
-import { getUserManager } from './userManager'
 import { tinyMemoize } from './utils/tinyMemoize'
+import { getUserManager } from './userManager'
 
 // Should not use access tokens that are expired or just about to expire.
 // Get a new one just in case.

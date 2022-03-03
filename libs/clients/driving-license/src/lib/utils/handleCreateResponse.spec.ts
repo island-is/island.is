@@ -1,5 +1,6 @@
-import { handleCreateResponse } from './handleCreateResponse'
 import * as faker from 'faker'
+
+import { handleCreateResponse } from './handleCreateResponse'
 
 describe('handleCreateResponse', () => {
   it('should handle documented response type', () => {

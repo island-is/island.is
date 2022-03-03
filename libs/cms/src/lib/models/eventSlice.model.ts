@@ -1,10 +1,10 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { SystemMetadata } from 'api-cms-domain'
 
 import { IEventSlice } from '../generated/contentfulTypes'
 
-import { Link, mapLink } from './link.model'
-import { SystemMetadata } from 'api-cms-domain'
 import { Image, mapImage } from './image.model'
+import { Link, mapLink } from './link.model'
 
 @ObjectType()
 export class EventSlice {

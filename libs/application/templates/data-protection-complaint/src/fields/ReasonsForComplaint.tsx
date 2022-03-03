@@ -1,19 +1,21 @@
-import { Box, Text } from '@island.is/island-ui/core'
 import React, { FC, useState } from 'react'
+import { useFormContext } from 'react-hook-form'
+
 import {
   FieldBaseProps,
   FieldComponents,
   FieldTypes,
-  getValueViaPath,
   getErrorViaPath,
+  getValueViaPath,
 } from '@island.is/application/core'
-import { useFormContext } from 'react-hook-form'
 import {
   CheckboxFormField,
   TextFormField,
 } from '@island.is/application/ui-fields'
-import { SubjectOfComplaint } from '../shared'
+import { Box, Text } from '@island.is/island-ui/core'
+
 import { complaint } from '../lib/messages'
+import { SubjectOfComplaint } from '../shared'
 
 export const ReasonsForComplaint: FC<FieldBaseProps> = ({
   field,

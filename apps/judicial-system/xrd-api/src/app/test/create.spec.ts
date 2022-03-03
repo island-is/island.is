@@ -1,13 +1,13 @@
+import { BadGatewayException, BadRequestException } from '@nestjs/common'
 import fetch from 'isomorphic-fetch'
 import { uuid } from 'uuidv4'
-
-import { BadGatewayException, BadRequestException } from '@nestjs/common'
 
 import { Case as TCase } from '@island.is/judicial-system/types'
 
 import { environment } from '../../environments'
 import { CreateCaseDto } from '../app.dto'
 import { Case } from '../app.model'
+
 import { createTestingAppModule } from './createTestingAppModule'
 
 jest.mock('isomorphic-fetch')

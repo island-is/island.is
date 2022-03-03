@@ -1,7 +1,3 @@
-import { Includeable, OrderItem, Transaction } from 'sequelize/types'
-import { Sequelize } from 'sequelize-typescript'
-import { Attachment } from 'nodemailer/lib/mailer'
-
 import {
   BadRequestException,
   Inject,
@@ -10,9 +6,10 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { Attachment } from 'nodemailer/lib/mailer'
+import { Includeable, OrderItem, Transaction } from 'sequelize/types'
+import { Sequelize } from 'sequelize-typescript'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import {
   DokobitError,
@@ -21,32 +18,35 @@ import {
 } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
 import { IntegratedCourts } from '@island.is/judicial-system/consts'
+import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   isRestrictionCase,
   SessionArrangements,
   UserRole,
 } from '@island.is/judicial-system/types'
-import type { User as TUser } from '@island.is/judicial-system/types'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { environment } from '../../../environments'
 import {
-  getRequestPdfAsBuffer,
-  getRulingPdfAsString,
   getCasefilesPdfAsString,
-  writeFile,
-  getRulingPdfAsBuffer,
-  getCustodyNoticePdfAsBuffer,
-  stripHtmlTags,
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
+  getCustodyNoticePdfAsBuffer,
+  getRequestPdfAsBuffer,
+  getRulingPdfAsBuffer,
+  getRulingPdfAsString,
+  stripHtmlTags,
+  writeFile,
 } from '../../formatters'
 import { courtUpload, notifications as m } from '../../messages'
-import { FileService } from '../file'
-import { DefendantService, Defendant } from '../defendant'
-import { Institution } from '../institution'
-import { User, UserService } from '../user'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
+import { Defendant,DefendantService } from '../defendant'
+import { FileService } from '../file'
+import { Institution } from '../institution'
+import { User, UserService } from '../user'
+
 import { CreateCaseDto } from './dto/createCase.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'

@@ -1,49 +1,52 @@
-import React, { ReactNode, useEffect, useState, useMemo } from 'react'
+import React, { ReactNode, useEffect, useMemo,useState } from 'react'
 import { useWindowSize } from 'react-use'
-import { useRouter } from 'next/router'
-import NextLink from 'next/link'
 import getConfig from 'next/config'
-import { theme } from '@island.is/island-ui/theme'
-import { LayoutProps } from '@island.is/web/layouts/main'
-import {
-  Image,
-  Organization,
-  OrganizationPage,
-} from '@island.is/web/graphql/schema'
+import NextLink from 'next/link'
+import { useRouter } from 'next/router'
+
 import {
   Box,
   BreadCrumbItem,
   Breadcrumbs,
+  Button,
   GridColumn,
   GridContainer,
   GridRow,
+  Inline,
   Link,
   Navigation,
   NavigationItem,
   ProfileCard,
   Stack,
   Text,
-  Button,
-  Inline,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import {
   ChatPanel,
   HeadWithSocialSharing,
   Sticky,
 } from '@island.is/web/components'
-import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { SyslumennHeader, SyslumennFooter } from './Themes/SyslumennTheme'
 import {
-  SjukratryggingarHeader,
-  SjukratryggingarFooter,
-} from './Themes/SjukratryggingarTheme'
-import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
+  Image,
+  Organization,
+  OrganizationPage,
+} from '@island.is/web/graphql/schema'
+import { LayoutProps } from '@island.is/web/layouts/main'
+import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+
+import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
+
 import { DefaultHeader } from './Themes/DefaultTheme'
+import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
+import {
+  SjukratryggingarFooter,
+  SjukratryggingarHeader,
+} from './Themes/SjukratryggingarTheme'
+import { SyslumennFooter,SyslumennHeader } from './Themes/SyslumennTheme'
 import {
   UtlendingastofnunFooter,
   UtlendingastofnunHeader,
 } from './Themes/UtlendingastofnunTheme'
-import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
 
 import * as styles from './OrganizationWrapper.css'
 

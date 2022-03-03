@@ -1,11 +1,12 @@
 import { rest } from 'msw'
+
 import {
-  VHSUCCESS,
-  VHFAIL,
-  SYSLUMENN_AUCTION,
   DATA_UPLOAD,
-  OPERATING_LICENSE_SERVICE_RES,
   OPERATING_LICENSE_PAGINATION_INFO_SERVICE_RES,
+  OPERATING_LICENSE_SERVICE_RES,
+  SYSLUMENN_AUCTION,
+  VHFAIL,
+  VHSUCCESS,
 } from './responses'
 
 const url = (path: string) => {

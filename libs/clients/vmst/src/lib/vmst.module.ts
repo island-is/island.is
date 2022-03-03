@@ -11,6 +11,7 @@ import {
   PregnancyApi,
   UnionApi,
 } from '../../gen/fetch'
+
 import { createWrappedFetchWithLogging } from './utils'
 
 const isRunningOnProduction = isRunningOnEnvironment('production')

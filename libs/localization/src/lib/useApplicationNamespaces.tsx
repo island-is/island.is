@@ -1,6 +1,6 @@
 import {
-  ApplicationTypes,
   ApplicationConfigurations,
+  ApplicationTypes,
 } from '@island.is/application/core'
 
 import { useNamespaces } from './useNamespaces'

@@ -1,10 +1,10 @@
-import {
-  BasicDataProvider,
-  Application,
-  SuccessfulDataProviderResult,
-  FailedDataProviderResult,
-} from '@island.is/application/core'
 import { HasTeachingRights } from '@island.is/api/schema'
+import {
+  Application,
+  BasicDataProvider,
+  FailedDataProviderResult,
+  SuccessfulDataProviderResult,
+} from '@island.is/application/core'
 
 export class TeachingRightsProvider extends BasicDataProvider {
   type = 'TeachingRightsProvider'

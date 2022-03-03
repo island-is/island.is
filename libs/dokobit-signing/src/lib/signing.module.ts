@@ -1,9 +1,9 @@
 import { DynamicModule } from '@nestjs/common'
 
 import {
+  SIGNING_OPTIONS,
   SigningService,
   SigningServiceOptions,
-  SIGNING_OPTIONS,
 } from './signing.service'
 
 export class SigningModule {

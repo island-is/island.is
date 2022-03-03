@@ -1,15 +1,18 @@
+import * as z from 'zod'
+
 import {
-  ApplicationTemplate,
-  ApplicationTypes,
+  Application,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
+  ApplicationTemplate,
+  ApplicationTypes,
   DefaultEvents,
-  Application,
   DefaultStateLifeCycle,
 } from '@island.is/application/core'
-import * as z from 'zod'
-import { YES, NO } from '../constants'
+
+import { NO,YES } from '../constants'
+
 import { institutionApplicationMessages as m } from './messages'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.ABORT }

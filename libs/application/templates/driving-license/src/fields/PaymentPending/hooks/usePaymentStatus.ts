@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ApolloError, useQuery } from '@apollo/client'
+
 import { PAYMENT_STATUS } from './queries.graphql'
 
 export interface PaymentStatus {

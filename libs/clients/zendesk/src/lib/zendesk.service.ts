@@ -1,5 +1,6 @@
 import { Inject } from '@nestjs/common'
 import axios from 'axios'
+
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 

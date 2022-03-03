@@ -1,8 +1,9 @@
 import { SearchInput } from '../types'
+
+import { processAggregationQuery } from './processAggregation'
 import { tagAggregationQueryFragment } from './tagAggregation'
 import { TagQuery, tagQuery } from './tagQuery'
 import { typeAggregationQuery } from './typeAggregation'
-import { processAggregationQuery } from './processAggregation'
 
 export const searchQuery = (
   {

@@ -1,9 +1,10 @@
 import { ServiceId } from '../../gen/fetch/xrd-rest'
+
 import {
+  parseServiceCode,
+  parseVersionNumber,
   serviceIdSort,
   SortOrder,
-  parseVersionNumber,
-  parseServiceCode,
 } from './utils'
 
 const serviceId1: ServiceId = { serviceCode: 'thjodskra-v1' }

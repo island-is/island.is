@@ -1,27 +1,27 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
+  ForeignKey,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
-  HasMany,
-  BelongsTo,
-  ForeignKey,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
+import { createMachine } from 'xstate'
 
+import {
+  Actions,
+  Airlines,
+  States,
+} from '@island.is/air-discount-scheme/consts'
 import type {
   Flight as TFlight,
   FlightLeg as TFlightLeg,
   UserInfo,
 } from '@island.is/air-discount-scheme/types'
-import {
-  Actions,
-  States,
-  Airlines,
-} from '@island.is/air-discount-scheme/consts'
-import { createMachine } from 'xstate'
 
 export const financialStateMachine = createMachine({
   id: 'flight_leg_financial_state_machine',

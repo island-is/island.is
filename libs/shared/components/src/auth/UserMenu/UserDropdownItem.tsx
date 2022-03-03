@@ -1,9 +1,9 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 import { Box, Icon, IconProps } from '@island.is/island-ui/core'
 
 import * as styles from './UserMenu.css'
-import { Link } from 'react-router-dom'
 
 interface UserDropdownItemProps {
   text: string

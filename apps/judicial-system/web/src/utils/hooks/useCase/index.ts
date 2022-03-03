@@ -1,31 +1,31 @@
 import { useMemo } from 'react'
-import { useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
+import { useMutation } from '@apollo/client'
 
+import { toast } from '@island.is/island-ui/core'
+import type {
+  Case,
+  CaseTransition,
+  NotificationType,
+  RequestSignatureResponse,
+  SendNotificationResponse,
+  SessionArrangements,
+  UpdateCase,
+} from '@island.is/judicial-system/types'
+import { errors } from '@island.is/judicial-system-web/messages'
 import {
   parseString,
   parseTransition,
 } from '@island.is/judicial-system-web/src/utils/formatters'
-import type {
-  NotificationType,
-  SendNotificationResponse,
-  Case,
-  CaseTransition,
-  RequestSignatureResponse,
-  UpdateCase,
-  SessionArrangements,
-} from '@island.is/judicial-system/types'
-import { toast } from '@island.is/island-ui/core'
-import { errors } from '@island.is/judicial-system-web/messages'
 
 import { CreateCaseMutation } from './createCaseGql'
 import { CreateCourtCaseMutation } from './createCourtCaseGql'
-import { UpdateCaseMutation } from './updateCaseGql'
+import { ExtendCaseMutation } from './extendCaseGql'
+import { RequestCourtRecordSignatureMutation } from './requestCourtRecordSignatureGql'
+import { RequestRulingSignatureMutation } from './requestRulingSignatureGql'
 import { SendNotificationMutation } from './sendNotificationGql'
 import { TransitionCaseMutation } from './transitionCaseGql'
-import { RequestRulingSignatureMutation } from './requestRulingSignatureGql'
-import { RequestCourtRecordSignatureMutation } from './requestCourtRecordSignatureGql'
-import { ExtendCaseMutation } from './extendCaseGql'
+import { UpdateCaseMutation } from './updateCaseGql'
 
 type autofillProperties = Pick<
   Case,

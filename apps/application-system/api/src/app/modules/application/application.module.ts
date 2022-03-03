@@ -1,30 +1,32 @@
-import { DynamicModule, Global, Module } from '@nestjs/common'
 import { BullModule as NestBullModule } from '@nestjs/bull'
+import { DynamicModule, Global, Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { FileStorageModule } from '@island.is/file-storage'
-import { createRedisCluster } from '@island.is/cache'
+
 import { TemplateAPIModule } from '@island.is/application/template-api-modules'
 import { AuthModule } from '@island.is/auth-nest-tools'
+import { createRedisCluster } from '@island.is/cache'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { SigningModule } from '@island.is/dokobit-signing'
+import { FileStorageModule } from '@island.is/file-storage'
+import { LoggingModule } from '@island.is/logging'
 import { AuditModule } from '@island.is/nest/audit'
 
-import { Application } from './application.model'
-import { ApplicationController } from './application.controller'
-import { ApplicationService } from './application.service'
-import { FileService } from './files/file.service'
-import { AwsService } from './files/aws.service'
-import { UploadProcessor } from './upload.processor'
 import { environment } from '../../../environments'
+import { PaymentModule } from '../payment/payment.module'
+
+import { AwsService } from './files/aws.service'
+import { FileService } from './files/file.service'
+import { ApplicationLifeCycleService } from './lifecycle/application-lifecycle.service'
+import { ApplicationAccessService } from './tools/applicationAccess.service'
 import {
   APPLICATION_CONFIG,
   ApplicationConfig,
 } from './application.configuration'
-import { ApplicationAccessService } from './tools/applicationAccess.service'
-import { PaymentModule } from '../payment/payment.module'
-import { ApplicationLifeCycleService } from './lifecycle/application-lifecycle.service'
-import { LoggingModule } from '@island.is/logging'
+import { ApplicationController } from './application.controller'
+import { Application } from './application.model'
+import { ApplicationService } from './application.service'
 import { TemplateApiApplicationService } from './template-api.service'
+import { UploadProcessor } from './upload.processor'
 
 let BullModule: DynamicModule
 

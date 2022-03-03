@@ -1,6 +1,3 @@
-import fetch, { Headers } from 'node-fetch'
-import { Request, Response } from 'express'
-
 import {
   Controller,
   Get,
@@ -11,20 +8,23 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common'
+import { Request, Response } from 'express'
+import fetch, { Headers } from 'node-fetch'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
-import {
-  CurrentHttpUser,
-  JwtInjectBearerAuthGuard,
-} from '@island.is/judicial-system/auth'
 import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
+import {
+  CurrentHttpUser,
+  JwtInjectBearerAuthGuard,
+} from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { environment } from '../../../environments'
+
 import { FileExeption } from './file.exception'
 
 @UseGuards(JwtInjectBearerAuthGuard)

@@ -4,6 +4,7 @@ import {
   buildRadioField,
   buildSubSection,
 } from '@island.is/application/core'
+
 import { NO, YES } from '../../lib/constants'
 import { allowFakeCondition } from '../../lib/utils'
 

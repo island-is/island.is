@@ -1,17 +1,16 @@
-import { uuid } from 'uuidv4'
-import { Base64 } from 'js-base64'
-import { Agent } from 'https'
-import fetch from 'isomorphic-fetch'
-
 import {
   BadGatewayException,
   Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
+import { Agent } from 'https'
+import fetch from 'isomorphic-fetch'
+import { Base64 } from 'js-base64'
+import { uuid } from 'uuidv4'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   createXRoadAPIPath,
   XRoadMemberClass,
@@ -19,6 +18,7 @@ import {
 
 import { environment } from '../../../environments'
 import { AwsS3Service } from '../aws-s3'
+
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'

@@ -1,16 +1,17 @@
 import React from 'react'
+
+import { Image, richText, SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   Button,
   GridColumn,
   GridContainer,
   GridRow,
+  Link,
   Stack,
   Text,
-  Link,
 } from '@island.is/island-ui/core'
 import { OverviewLinks } from '@island.is/web/graphql/schema'
-import { Image, richText, SliceType } from '@island.is/island-ui/contentful'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 interface SliceProps {

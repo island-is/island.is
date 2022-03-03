@@ -1,37 +1,37 @@
-import IslandisLogin, { VerifyResult } from '@island.is/login'
-import { Entropy } from 'entropy-string'
-import { uuid } from 'uuidv4'
-import { CookieOptions, Request, Response } from 'express'
-
 import {
   Body,
   Controller,
   Get,
   Inject,
   Post,
-  Res,
   Query,
   Req,
+  Res,
 } from '@nestjs/common'
+import { Entropy } from 'entropy-string'
+import { CookieOptions, Request, Response } from 'express'
+import { uuid } from 'uuidv4'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
-import {
-  CSRF_COOKIE_NAME,
-  ACCESS_TOKEN_COOKIE_NAME,
-  EXPIRES_IN_MILLISECONDS,
-} from '@island.is/judicial-system/consts'
-import { UserRole } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
-import { SharedAuthService } from '@island.is/judicial-system/auth'
 import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
+import { SharedAuthService } from '@island.is/judicial-system/auth'
+import {
+  ACCESS_TOKEN_COOKIE_NAME,
+  CSRF_COOKIE_NAME,
+  EXPIRES_IN_MILLISECONDS,
+} from '@island.is/judicial-system/consts'
+import type { User } from '@island.is/judicial-system/types'
+import { UserRole } from '@island.is/judicial-system/types'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import IslandisLogin, { VerifyResult } from '@island.is/login'
 
 import { environment } from '../../../environments'
-import { AuthUser, Cookie } from './auth.types'
+
 import { AuthService } from './auth.service'
+import { AuthUser, Cookie } from './auth.types'
 
 const { samlEntryPoint } = environment.auth
 

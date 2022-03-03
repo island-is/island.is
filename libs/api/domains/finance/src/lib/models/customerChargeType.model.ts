@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+
 import { CustomerChargeTypeItem } from './customerChargeTypeItem.model'
 
 @ObjectType()

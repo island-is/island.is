@@ -1,7 +1,9 @@
 import yargs from 'yargs'
-import { logger } from '@island.is/logging'
-import * as kibana from './lib/kibana'
+
 import * as indexManager from '@island.is/content-search-index-manager'
+import { logger } from '@island.is/logging'
+
+import * as kibana from './lib/kibana'
 
 class App {
   async run() {

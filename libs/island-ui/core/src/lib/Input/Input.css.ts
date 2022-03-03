@@ -1,8 +1,10 @@
 import { style, styleVariants } from '@vanilla-extract/css'
-import { Theme, theme, themeUtils } from '@island.is/island-ui/theme'
-import * as mixins from './Input.mixins'
-import omit from 'lodash/omit'
 import mapValues from 'lodash/mapValues'
+import omit from 'lodash/omit'
+
+import { Theme, theme, themeUtils } from '@island.is/island-ui/theme'
+
+import * as mixins from './Input.mixins'
 
 export const containerDisabled = style({
   opacity: 0.5,

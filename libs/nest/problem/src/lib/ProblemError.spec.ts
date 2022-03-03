@@ -1,6 +1,8 @@
 import { BadRequestException, HttpException } from '@nestjs/common'
+
+import { Problem,ProblemType } from '@island.is/shared/problem'
+
 import { ProblemError } from './ProblemError'
-import { ProblemType, Problem } from '@island.is/shared/problem'
 
 describe('ProblemError', () => {
   it('supports basic problem details', () => {

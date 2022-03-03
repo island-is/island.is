@@ -1,38 +1,40 @@
-import {
-  buildForm,
-  buildSection,
-  Form,
-  FormModes,
-  buildExternalDataProvider,
-  buildDataProviderItem,
-  buildMultiField,
-  Application,
-  buildCustomField,
-  buildRadioField,
-  buildDescriptionField,
-  FormValue,
-  buildSelectField,
-  buildDividerField,
-  buildKeyValueField,
-  buildSubmitField,
-  DefaultEvents,
-  buildFileUploadField,
-  buildTextField,
-  buildDateField,
-  getValueViaPath,
-} from '@island.is/application/core'
-import type { User } from '@island.is/api/domains/national-registry'
-import { format as formatNationalId } from 'kennitala'
-import {
-  NationalRegistryUser,
-  UserProfile,
-  DistrictCommissionerAgencies,
-} from '../types/schema'
-import { m } from '../lib/messages'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
+import { format as formatNationalId } from 'kennitala'
+
+import type { User } from '@island.is/api/domains/national-registry'
+import {
+  Application,
+  buildCustomField,
+  buildDataProviderItem,
+  buildDateField,
+  buildDescriptionField,
+  buildDividerField,
+  buildExternalDataProvider,
+  buildFileUploadField,
+  buildForm,
+  buildKeyValueField,
+  buildMultiField,
+  buildRadioField,
+  buildSection,
+  buildSelectField,
+  buildSubmitField,
+  buildTextField,
+  DefaultEvents,
+  Form,
+  FormModes,
+  FormValue,
+  getValueViaPath,
+} from '@island.is/application/core'
+
 import { HasQualityPhotoData } from '../fields/QualityPhoto/hooks/useQualityPhoto'
 import { UPLOAD_ACCEPT } from '../lib/constants'
+import { m } from '../lib/messages'
+import {
+  DistrictCommissionerAgencies,
+  NationalRegistryUser,
+  UserProfile,
+} from '../types/schema'
 
 export const getApplication = (): Form => {
   return buildForm({

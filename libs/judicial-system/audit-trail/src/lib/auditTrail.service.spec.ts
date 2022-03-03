@@ -1,14 +1,13 @@
+import { Test, TestingModule } from '@nestjs/testing'
 import { mock } from 'jest-mock-extended'
 
-import { Test, TestingModule } from '@nestjs/testing'
-
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  AUDIT_TRAIL_OPTIONS,
   AuditedAction,
   AuditTrailService,
-  AUDIT_TRAIL_OPTIONS,
 } from './auditTrail.service'
 
 jest.mock('@island.is/logging', () => {

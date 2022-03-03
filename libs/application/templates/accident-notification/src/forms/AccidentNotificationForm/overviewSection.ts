@@ -5,6 +5,7 @@ import {
   buildSubmitField,
   DefaultEvents,
 } from '@island.is/application/core'
+
 import { overview } from '../../lib/messages'
 
 export const overviewSection = buildSection({

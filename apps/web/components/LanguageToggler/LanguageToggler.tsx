@@ -1,23 +1,24 @@
-import React, { useContext, ReactElement, useState, FC } from 'react'
-import { useRouter } from 'next/router'
+import React, { FC,ReactElement, useContext, useState } from 'react'
 import { useApolloClient } from '@apollo/client/react'
+import { useRouter } from 'next/router'
+
 import {
   Button,
-  ButtonTypes,
-  Hidden,
-  DialogPrompt,
   ButtonProps,
+  ButtonTypes,
+  DialogPrompt,
+  Hidden,
 } from '@island.is/island-ui/core'
-import { useI18n } from '@island.is/web/i18n'
 import { Locale } from '@island.is/shared/types'
-import { GET_CONTENT_SLUG } from '@island.is/web/screens/queries/Article'
 import { GlobalContext } from '@island.is/web/context'
 import {
   GetContentSlugQuery,
   GetContentSlugQueryVariables,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
-import { useLinkResolver, LinkType } from '@island.is/web/hooks/useLinkResolver'
+import { LinkType,useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useI18n } from '@island.is/web/i18n'
+import { GET_CONTENT_SLUG } from '@island.is/web/screens/queries/Article'
 
 type LanguageTogglerProps = {
   dialogId?: string

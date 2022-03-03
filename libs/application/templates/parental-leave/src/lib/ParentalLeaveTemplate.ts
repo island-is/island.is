@@ -1,42 +1,43 @@
-import { assign } from 'xstate'
+import cloneDeep from 'lodash/cloneDeep'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
-import cloneDeep from 'lodash/cloneDeep'
+import { assign } from 'xstate'
 
 import {
+  Application,
+  ApplicationConfigurations,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
-  ApplicationTypes,
   ApplicationTemplate,
-  Application,
+  ApplicationTypes,
   DefaultEvents,
   DefaultStateLifeCycle,
-  ApplicationConfigurations,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 
 import {
-  YES,
   API_MODULE_ACTIONS,
-  States,
-  ParentalRelations,
-  NO,
   MANUAL,
+  NO,
+  ParentalRelations,
   SPOUSE,
+  States,
+  YES,
 } from '../constants'
-import { dataSchema } from './dataSchema'
-import { answerValidators } from './answerValidators'
-import { parentalLeaveFormMessages, statesMessages } from './messages'
-import {
-  hasEmployer,
-  needsOtherParentApproval,
-} from './parentalLeaveTemplateUtils'
 import {
   getApplicationAnswers,
   getOtherParentId,
   getSelectedChild,
 } from '../lib/parentalLeaveUtils'
+
+import { answerValidators } from './answerValidators'
+import { dataSchema } from './dataSchema'
+import { parentalLeaveFormMessages, statesMessages } from './messages'
+import {
+  hasEmployer,
+  needsOtherParentApproval,
+} from './parentalLeaveTemplateUtils'
 
 type Events =
   | { type: DefaultEvents.APPROVE }

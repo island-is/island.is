@@ -3,34 +3,35 @@ import streamBuffers from 'stream-buffers'
 
 import { FormatMessage } from '@island.is/cms-translations'
 import {
+  capitalize,
+  formatAppeal,
+  formatDate,
+  formatNationalId,
+  formatRequestCaseType,
+  lowercase,
+} from '@island.is/judicial-system/formatters'
+import {
   completedCaseStates,
   isRestrictionCase,
   SessionArrangements,
   User,
 } from '@island.is/judicial-system/types'
-import {
-  capitalize,
-  formatDate,
-  lowercase,
-  formatAppeal,
-  formatRequestCaseType,
-  formatNationalId,
-} from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
-import { Case } from '../modules/case'
 import { courtRecord } from '../messages'
+import { Case } from '../modules/case'
+
 import {
-  addFooter,
   addCoatOfArms,
+  addEmptyLines,
+  addFooter,
   addLargeHeading,
   addMediumHeading,
+  addNormalCenteredText,
+  addNormalJustifiedText,
+  addNormalText,
   setLineGap,
   setTitle,
-  addEmptyLines,
-  addNormalText,
-  addNormalJustifiedText,
-  addNormalCenteredText,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
 

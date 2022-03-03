@@ -1,6 +1,7 @@
 import { Resolvers } from '../../types'
-import { store } from './store'
+
 import { application, externalData } from './factories'
+import { store } from './store'
 
 export const resolvers: Resolvers = {
   Slice: {

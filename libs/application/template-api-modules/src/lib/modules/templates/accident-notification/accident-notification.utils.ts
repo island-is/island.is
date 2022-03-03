@@ -1,21 +1,23 @@
+import { join } from 'path'
+
 import { Application, getValueViaPath } from '@island.is/application/core'
 import {
   accidentLocationLabelMapper,
   AccidentNotificationAnswers,
   AccidentTypeEnum,
+  Applicant,
   CompanyInfo,
   FishermanWorkplaceAccidentShipLocationEnum,
   RepresentativeInfo,
   StudiesAccidentTypeEnum,
   SubmittedApplicationData,
+  utils,
   WhoIsTheNotificationForEnum,
   WorkAccidentTypeEnum,
-  Applicant,
   YesOrNo,
-  utils,
 } from '@island.is/application/templates/accident-notification'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import { join } from 'path'
+
 import {
   ApplicationSubmit,
   Atvinnurekandi,

@@ -21,15 +21,6 @@ import {
   IdentityResourceUserClaim,
   ResourcesService,
 } from '@island.is/auth-api-lib'
-import { AuthConfig } from '@island.is/auth-nest-tools'
-import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
-import { RskProcuringClientModule } from '@island.is/clients/rsk/procuring'
-import { FeatureFlagModule } from '@island.is/nest/feature-flags'
-import { ProblemModule } from '@island.is/nest/problem'
-
-import { environment } from '../../../environments'
-import { ActorDelegationsController } from './actorDelegations.controller'
-import { MeDelegationsController } from './meDelegations.controller'
 import {
   PersonalRepresentative,
   PersonalRepresentativeRight,
@@ -38,6 +29,16 @@ import {
   PersonalRepresentativeService,
   PersonalRepresentativeType,
 } from '@island.is/auth-api-lib/personal-representative'
+import { AuthConfig } from '@island.is/auth-nest-tools'
+import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
+import { RskProcuringClientModule } from '@island.is/clients/rsk/procuring'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
+import { ProblemModule } from '@island.is/nest/problem'
+
+import { environment } from '../../../environments'
+
+import { ActorDelegationsController } from './actorDelegations.controller'
+import { MeDelegationsController } from './meDelegations.controller'
 
 const delegationAuthConfig: AuthConfig = environment.auth
 

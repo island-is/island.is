@@ -1,5 +1,6 @@
 import { UseGuards } from '@nestjs/common'
-import { Resolver, Query, ResolveField, Parent, Context } from '@nestjs/graphql'
+import { Context,Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+
 import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -12,9 +13,10 @@ import {
 import { Audit } from '@island.is/nest/audit'
 
 import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
-import { NationalRegistryXRoadService } from './nationalRegistryXRoad.service'
 import { NationalRegistryResidence } from '../models/nationalRegistryResidence.model'
 import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
+
+import { NationalRegistryXRoadService } from './nationalRegistryXRoad.service'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)

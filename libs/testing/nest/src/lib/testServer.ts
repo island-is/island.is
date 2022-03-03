@@ -1,4 +1,4 @@
-import { ValidationPipe, INestApplication, Type } from '@nestjs/common'
+import { INestApplication, Type,ValidationPipe } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { TestingModuleBuilder } from '@nestjs/testing/testing-module.builder'
 

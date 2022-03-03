@@ -1,6 +1,9 @@
 import React, { FC } from 'react'
+
 import { ActionSidebar } from '@island.is/service-portal/core'
+
 import ExternalFormDirect from '../../components/forms/ExternalFormDirect/ExternalFormDirect'
+
 import { UserInfoSidebarType } from './UserInfo'
 
 interface Props {

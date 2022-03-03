@@ -1,5 +1,7 @@
 import { FormValue } from '@island.is/application/core'
+
 import { WhoIsTheNotificationForEnum } from '../types'
+
 import { isReportingOnBehalfOfEmployee } from './isReportingOnBehalfOfEmployee'
 describe('isReportingOnBehalfOfEmployee', () => {
   const onBehalfOfEmployee: FormValue = {

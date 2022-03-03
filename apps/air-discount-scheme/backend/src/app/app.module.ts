@@ -1,14 +1,17 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { NationalRegistryModule as ADSNationalRegistryModule } from './modules/nationalRegistry'
+
+import { AuthModule as AuthNestModule } from '@island.is/auth-nest-tools'
+import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
+import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
+
+import { environment } from '../environments'
+
 import { DiscountModule } from './modules/discount'
 import { FlightModule } from './modules/flight'
+import { NationalRegistryModule as ADSNationalRegistryModule } from './modules/nationalRegistry'
 import { UserModule } from './modules/user'
 import { SequelizeConfigService } from './sequelizeConfig.service'
-import { environment } from '../environments'
-import { AuthModule as AuthNestModule } from '@island.is/auth-nest-tools'
-import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
-import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 
 @Module({
   imports: [

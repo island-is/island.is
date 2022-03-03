@@ -1,19 +1,13 @@
+import * as kennitala from 'kennitala'
 import get from 'lodash/get'
+
+import { Application } from '@island.is/application/core'
 import {
-  Agency,
-  ComplaintPDF,
-  ContactInfo,
-  ContactRole,
-  TargetOfComplaint,
-} from './models'
-import {
+  DataProtectionComplaint,
   OnBehalf,
   SubjectOfComplaint,
-  DataProtectionComplaint,
   yesNoValueLabelMapper,
 } from '@island.is/application/templates/data-protection-complaint'
-import { Application } from '@island.is/application/core'
-import * as kennitala from 'kennitala'
 import {
   CreateCaseRequest,
   CreateQuickCaseRequest,
@@ -21,7 +15,15 @@ import {
   LinkedContact,
   Metadata,
 } from '@island.is/clients/data-protection-complaint'
+
 import { subjectOfComplaintToGoProValues } from './mappers/complaintCategoryMapper'
+import {
+  Agency,
+  ComplaintPDF,
+  ContactInfo,
+  ContactRole,
+  TargetOfComplaint,
+} from './models'
 
 const extractAnswer = <T>(
   object: unknown,

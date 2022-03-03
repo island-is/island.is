@@ -1,7 +1,7 @@
 import React, { FC, PropsWithChildren, ReactElement, useState } from 'react'
 import { Row, useTable } from 'react-table'
 
-import { Box, Text, Table as T } from '@island.is/island-ui/core'
+import { Box, Table as T,Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 
 type column<T> = {

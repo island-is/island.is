@@ -1,13 +1,16 @@
 import { useMutation } from '@apollo/client'
+
 import {
   Mutation,
   MutationUpdateProfileArgs,
   UpdateUserProfileInput,
 } from '@island.is/api/schema'
-import { UPDATE_USER_PROFILE } from '../../lib/mutations/updateUserProfile'
 import { Locale } from '@island.is/shared/types'
-import { useUserProfile } from './useUserProfile'
+
+import { UPDATE_USER_PROFILE } from '../../lib/mutations/updateUserProfile'
 import { USER_PROFILE } from '../../lib/queries/getUserProfile'
+
+import { useUserProfile } from './useUserProfile'
 
 export type UpdateUserProfileData = {
   email?: string

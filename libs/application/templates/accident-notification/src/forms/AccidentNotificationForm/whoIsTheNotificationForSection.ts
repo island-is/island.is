@@ -9,6 +9,7 @@ import {
   buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
+
 import { UPLOAD_ACCEPT, YES } from '../../constants'
 import {
   childInCustody,

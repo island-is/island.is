@@ -1,8 +1,8 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
-
-import { ApiScopeGroup } from './apiScopeGroup.model'
+import { Field, ID,ObjectType } from '@nestjs/graphql'
 
 import { ScopeType } from '@island.is/clients/auth-public-api'
+
+import { ApiScopeGroup } from './apiScopeGroup.model'
 
 @ObjectType('AuthApiScope')
 export class ApiScope {

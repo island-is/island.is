@@ -1,26 +1,26 @@
-import { AuthScope } from '@island.is/auth/scopes'
-import {
-  PersonalRepresentativeType,
-  PersonalRepresentativeTypeDTO,
-  PaginatedPersonalRepresentativeTypeDto,
-  PersonalRepresentativeTypeService,
-} from '@island.is/auth-api-lib/personal-representative'
 import {
   BadRequestException,
   Body,
   Controller,
-  UseGuards,
   Delete,
   Get,
+  Inject,
   NotFoundException,
   Param,
   Post,
   Put,
-  Inject,
   Query,
+  UseGuards,
 } from '@nestjs/common'
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger'
-import { Documentation } from '@island.is/nest/swagger'
+import { ApiBearerAuth,ApiTags } from '@nestjs/swagger'
+
+import { AuthScope } from '@island.is/auth/scopes'
+import {
+  PaginatedPersonalRepresentativeTypeDto,
+  PersonalRepresentativeType,
+  PersonalRepresentativeTypeDTO,
+  PersonalRepresentativeTypeService,
+} from '@island.is/auth-api-lib/personal-representative'
 import type { Auth } from '@island.is/auth-nest-tools'
 import {
   CurrentAuth,
@@ -28,9 +28,11 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { environment } from '../../../environments'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { PaginationDto } from '@island.is/nest/pagination'
+import { Documentation } from '@island.is/nest/swagger'
+
+import { environment } from '../../../environments'
 
 const namespace = `${environment.audit.defaultNamespace}/personal-representative-types`
 

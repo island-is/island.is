@@ -1,4 +1,5 @@
 import React, { MouseEventHandler } from 'react'
+
 import {
   Box,
   Icon,
@@ -6,6 +7,7 @@ import {
   Link,
   UserAvatar,
 } from '@island.is/island-ui/core'
+
 import * as styles from './UserMenu.css'
 
 type ColorScheme = 'blue' | 'purple'

@@ -1,8 +1,10 @@
 import React from 'react'
-import { Box, Text, Stack, ActionCard, Link } from '@island.is/island-ui/core'
-import { useRouter } from 'next/router'
-import { useGetPetitionLists } from './useGetPetitionLists'
 import format from 'date-fns/format'
+import { useRouter } from 'next/router'
+
+import { ActionCard, Box, Link,Stack, Text } from '@island.is/island-ui/core'
+
+import { useGetPetitionLists } from './useGetPetitionLists'
 
 const formatDate = (date: string) => {
   try {

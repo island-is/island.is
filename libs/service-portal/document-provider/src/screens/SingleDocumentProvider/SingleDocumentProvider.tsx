@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
-import { useLocale } from '@island.is/localization'
+import { useLocation, useParams } from 'react-router-dom'
+
 import {
   Box,
   DatePicker,
@@ -8,15 +8,18 @@ import {
   GridRow,
   Text,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
+
 import { m } from '../../lib/messages'
-import { useLocation, useParams } from 'react-router-dom'
-import { DocumentProviderOrganisationForm } from './DocumentProviderOrganisationForm'
-import { OrganisationPreview } from '../DocumentProviders/DocumentProviders'
-import { DocumentProviderTechnicalContactForm } from './DocumentProviderTechnicalContactForm'
-import { DocumentProviderAdministrativeContactForm } from './DocumentProviderAdministrativeContactForm'
-import { DocumentProviderHelpDeskForm } from './DocumentProviderHelpDeskForm'
-import { DocumentProviderDashboard } from './DocumentProviderDashboard'
 import { useGetOrganisation } from '../../shared/useGetOrganisation'
+import { OrganisationPreview } from '../DocumentProviders/DocumentProviders'
+
+import { DocumentProviderAdministrativeContactForm } from './DocumentProviderAdministrativeContactForm'
+import { DocumentProviderDashboard } from './DocumentProviderDashboard'
+import { DocumentProviderHelpDeskForm } from './DocumentProviderHelpDeskForm'
+import { DocumentProviderOrganisationForm } from './DocumentProviderOrganisationForm'
+import { DocumentProviderTechnicalContactForm } from './DocumentProviderTechnicalContactForm'
 //TODO fix breadcrumbs so you can go back to DocmentProviders site
 export const IsFetchingProviderOrganisationContext = React.createContext(false)
 

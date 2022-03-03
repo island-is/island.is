@@ -2,6 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 import { ISubpageHeader } from '../generated/contentfulTypes'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
+
 import { Image, mapImage } from './image.model'
 
 @ObjectType()

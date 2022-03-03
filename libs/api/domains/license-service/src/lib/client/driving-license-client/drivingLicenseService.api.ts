@@ -1,16 +1,14 @@
+import { Inject,Injectable } from '@nestjs/common'
+import { Cache as CacheManager } from 'cache-manager'
 import compareAsc from 'date-fns/compareAsc'
+import format from 'date-fns/format'
+import * as kennitala from 'kennitala'
 import fetch, { Response } from 'node-fetch'
 
-import * as kennitala from 'kennitala'
-import format from 'date-fns/format'
-import { Cache as CacheManager } from 'cache-manager'
-import { Injectable, Inject } from '@nestjs/common'
+import { User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { User } from '@island.is/auth-nest-tools'
 
-import { GenericDrivingLicenseResponse } from './genericDrivingLicense.type'
-import { parseDrivingLicensePayload } from './drivingLicenseMappers'
 import {
   CONFIG_PROVIDER,
   GenericLicenseClient,
@@ -21,6 +19,9 @@ import {
   PkPassVerificationError,
 } from '../../licenceService.type'
 import { Config } from '../../licenseService.module'
+
+import { parseDrivingLicensePayload } from './drivingLicenseMappers'
+import { GenericDrivingLicenseResponse } from './genericDrivingLicense.type'
 import { PkPassClient } from './pkpass.client'
 import { PkPassPayload } from './pkpass.type'
 

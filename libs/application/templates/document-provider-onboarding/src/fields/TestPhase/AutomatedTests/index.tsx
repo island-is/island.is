@@ -1,24 +1,26 @@
 import React, { FC, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { gql, useMutation } from '@apollo/client'
+
 import {
   FieldBaseProps,
   formatText,
   getValueViaPath,
 } from '@island.is/application/core'
 import {
+  AlertMessage,
   Box,
+  Button,
+  ContentBlock,
   GridColumn,
   GridContainer,
   GridRow,
   Input,
   Text,
-  Button,
-  AlertMessage,
-  ContentBlock,
 } from '@island.is/island-ui/core'
-import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
+import { FieldDescription } from '@island.is/shared/form-fields'
+
 import { m } from '../../../forms/messages'
 
 export const runEndpointTestsMutation = gql`

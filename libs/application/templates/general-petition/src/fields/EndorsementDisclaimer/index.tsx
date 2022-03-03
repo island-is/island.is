@@ -1,17 +1,20 @@
 import React, { FC, useState } from 'react'
+import { useMutation, useQuery } from '@apollo/client'
+import format from 'date-fns/format'
+
 import { FieldBaseProps } from '@island.is/application/core'
-import { Text, Box, Button, Input, toast } from '@island.is/island-ui/core'
-import { m } from '../../lib/messages'
+import { Box, Button, Input, Text, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { CheckboxController } from '@island.is/shared/form-fields'
-import { useMutation, useQuery } from '@apollo/client'
-import EndorsementApproved from '../EndorsementApproved'
-import { useHasEndorsed } from '../../hooks/useHasEndorsed'
-import { useGetSinglePetitionList } from '../../hooks/useGetSinglePetitionList'
-import { GetFullName } from '../../graphql/queries'
+
 import { EndorseList } from '../../graphql/mutations'
-import format from 'date-fns/format'
+import { GetFullName } from '../../graphql/queries'
+import { useGetSinglePetitionList } from '../../hooks/useGetSinglePetitionList'
+import { useHasEndorsed } from '../../hooks/useHasEndorsed'
+import { m } from '../../lib/messages'
 import { EndorsementList } from '../../types/schema'
+import EndorsementApproved from '../EndorsementApproved'
+
 import Skeleton from './Skeleton'
 
 const EndorsementDisclaimer: FC<FieldBaseProps> = ({ application }) => {

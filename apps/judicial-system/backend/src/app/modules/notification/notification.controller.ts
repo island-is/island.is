@@ -9,10 +9,6 @@ import {
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
-import { UserRole, NotificationType } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
   JwtAuthGuard,
@@ -21,6 +17,10 @@ import {
   RolesRules,
   RulesType,
 } from '@island.is/judicial-system/auth'
+import type { User } from '@island.is/judicial-system/types'
+import { NotificationType,UserRole } from '@island.is/judicial-system/types'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { judgeRule, prosecutorRule, registrarRule } from '../../guards'
 import {
@@ -30,6 +30,7 @@ import {
   CaseWriteGuard,
   CurrentCase,
 } from '../case'
+
 import { SendNotificationDto } from './dto/sendNotification.dto'
 import { Notification } from './models/notification.model'
 import { SendNotificationResponse } from './models/sendNotification.resopnse'

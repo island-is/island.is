@@ -1,17 +1,19 @@
 import { createStore } from '@island.is/shared/mocking'
+
 import {
   CustomerChargeType,
   CustomerRecords,
   DocumentsListModel,
 } from '../../types'
+
 import {
-  getFinanceStatusData,
-  getFinanceStatusDetailsData,
   getCustomerChargeTypeData,
   getCustomerRecordsData,
+  getCustomerTapControlData,
   getDocumentsListData,
   getFinanceDocumentData,
-  getCustomerTapControlData,
+  getFinanceStatusData,
+  getFinanceStatusDetailsData,
 } from './static'
 
 export const store = createStore(() => {

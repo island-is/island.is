@@ -1,10 +1,12 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { Box } from '@island.is/island-ui/core'
+
 import {
-  DescriptionText,
   ContactInfoRow,
+  DescriptionText,
 } from '@island.is/application/templates/family-matters-core/components'
+import { Box } from '@island.is/island-ui/core'
+
 import { contactInfo } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
 

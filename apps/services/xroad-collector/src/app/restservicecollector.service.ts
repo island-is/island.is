@@ -1,10 +1,12 @@
-import { ElasticService } from '@island.is/api-catalogue/elastic'
 import { Injectable } from '@nestjs/common'
+
+import { ElasticService } from '@island.is/api-catalogue/elastic'
 import { ProviderService } from '@island.is/api-catalogue/services'
-import { ServiceCollector } from './servicecollector.interface'
-import { logger } from '@island.is/logging'
 import { RestMetadataService } from '@island.is/api-catalogue/services'
 import { Provider, providerToString } from '@island.is/api-catalogue/types'
+import { logger } from '@island.is/logging'
+
+import { ServiceCollector } from './servicecollector.interface'
 
 @Injectable()
 export class RestServiceCollector implements ServiceCollector {

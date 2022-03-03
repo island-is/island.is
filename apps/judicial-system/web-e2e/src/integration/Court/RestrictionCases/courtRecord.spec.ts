@@ -1,12 +1,12 @@
-import { Case } from '@island.is/judicial-system/types'
-import {
-  makeCustodyCase,
-  makeProsecutor,
-} from '@island.is/judicial-system/formatters'
 import {
   COURT_RECORD_ROUTE,
   RULING_STEP_ONE_ROUTE,
 } from '@island.is/judicial-system/consts'
+import {
+  makeCustodyCase,
+  makeProsecutor,
+} from '@island.is/judicial-system/formatters'
+import { Case } from '@island.is/judicial-system/types'
 
 import { intercept } from '../../../utils'
 

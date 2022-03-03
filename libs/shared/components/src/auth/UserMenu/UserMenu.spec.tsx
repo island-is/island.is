@@ -1,26 +1,30 @@
+import '@testing-library/jest-dom'
+
 import React, { FC, ReactNode } from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
+import { MockedProvider } from '@apollo/client/testing'
 import {
+  act,
+  fireEvent,
+  getByRole,
+  getByText,
   render,
   screen,
-  fireEvent,
-  act,
-  getByText,
-  getByRole,
 } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import { MockedProvider } from '@apollo/client/testing'
-import { LocaleProvider, LocaleContext } from '@island.is/localization'
+
 import { MockedAuthenticator, MockUser } from '@island.is/auth/react'
+import { LocaleContext,LocaleProvider } from '@island.is/localization'
 import {
   Features,
   MockedFeatureFlagProvider,
 } from '@island.is/react/feature-flags'
-import { UserMenu } from './UserMenu'
-import { ACTOR_DELEGATIONS } from './actorDelegations.graphql'
+
 import { ActorDelegationsQuery } from '../../../gen/graphql'
-import { USER_PROFILE } from './userProfile.graphql'
 import { GetUserProfileQuery } from '../../../gen/graphql'
+
+import { ACTOR_DELEGATIONS } from './actorDelegations.graphql'
+import { UserMenu } from './UserMenu'
+import { USER_PROFILE } from './userProfile.graphql'
 
 const delegation = {
   name: 'Phil',

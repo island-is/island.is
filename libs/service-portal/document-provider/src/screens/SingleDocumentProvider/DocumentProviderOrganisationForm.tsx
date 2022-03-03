@@ -1,15 +1,18 @@
 import React, { FC } from 'react'
-import { Box, Text, Button } from '@island.is/island-ui/core'
 import { useForm } from 'react-hook-form'
-import { useLocale } from '@island.is/localization'
-import { m } from '../../lib/messages'
-import { DocumentProviderInput } from './DocumentProviderInput'
+
 import { Organisation } from '@island.is/api/schema'
+import { Box, Button,Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+
+import { m } from '../../lib/messages'
 import {
+  OnCompletedArgumentsType,
   OrganisationInput,
   useUpdateOrganisation,
-  OnCompletedArgumentsType,
 } from '../../shared/useUpdateOrganisation'
+
+import { DocumentProviderInput } from './DocumentProviderInput'
 
 interface Props {
   organisation: Organisation

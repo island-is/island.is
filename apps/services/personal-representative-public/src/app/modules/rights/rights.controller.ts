@@ -1,3 +1,14 @@
+import {
+  Controller,
+  Get,
+  Inject,
+  NotFoundException,
+  Param,
+  Query,
+  UseGuards,
+} from '@nestjs/common'
+import { ApiBearerAuth,ApiTags } from '@nestjs/swagger'
+
 import { AuthScope } from '@island.is/auth/scopes'
 import {
   PaginatedPersonalRepresentativeRightTypeDto,
@@ -5,19 +16,10 @@ import {
   PersonalRepresentativeRightTypeService,
 } from '@island.is/auth-api-lib/personal-representative'
 import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
-import {
-  Controller,
-  UseGuards,
-  Get,
-  NotFoundException,
-  Param,
-  Inject,
-  Query,
-} from '@nestjs/common'
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger'
-import { Documentation } from '@island.is/nest/swagger'
 import { Audit } from '@island.is/nest/audit'
 import { PaginationDto } from '@island.is/nest/pagination'
+import { Documentation } from '@island.is/nest/swagger'
+
 import { environment } from '../../../environments'
 
 const namespace = `${environment.audit.defaultNamespace}/rights`

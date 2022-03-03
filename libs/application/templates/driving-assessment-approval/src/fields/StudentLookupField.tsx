@@ -1,6 +1,9 @@
 import React, { FC } from 'react'
-import { useQuery, gql } from '@apollo/client'
 import { useWatch } from 'react-hook-form'
+import { gql,useQuery } from '@apollo/client'
+import * as kennitala from 'kennitala'
+
+import { StudentInformationResult } from '@island.is/api/schema'
 import {
   CustomField,
   FieldBaseProps,
@@ -8,9 +11,8 @@ import {
 } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import * as kennitala from 'kennitala'
+
 import { m } from '../lib/messages'
-import { StudentInformationResult } from '@island.is/api/schema'
 
 const QUERY = gql`
   query studentInfo($nationalId: String!) {

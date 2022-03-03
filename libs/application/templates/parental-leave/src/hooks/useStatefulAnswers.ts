@@ -1,5 +1,6 @@
-import { Application } from '@island.is/application/core'
 import { Dispatch, SetStateAction, useState } from 'react'
+
+import { Application } from '@island.is/application/core'
 
 import {
   ApplicationAnswers,

@@ -1,28 +1,30 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
-import {
-  EndorsementApi,
-  EndorsementListApi,
-  EndorsementControllerCreateRequest,
-  EndorsementControllerDeleteRequest,
-  EndorsementListControllerCreateRequest,
-  EndorsementListControllerUpdateRequest,
-  EndorsementListControllerFindOneRequest,
-  EndorsementControllerFindAllRequest,
-  EndorsementControllerFindByAuthRequest,
-  EndorsementListControllerFindByTagsRequest,
-  EndorsementListControllerFindEndorsementsRequest,
-  EndorsementListControllerGetGeneralPetitionListRequest,
-  EndorsementListControllerGetGeneralPetitionListsRequest,
-  EndorsementListControllerCloseRequest,
-  EndorsementListControllerOpenRequest,
-  EndorsementListControllerLockRequest,
-  EndorsementListControllerUnlockRequest,
-  EndorsementListControllerEmailEndorsementsPDFRequest,
-} from '../../gen/fetch'
+
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import {
+  EndorsementApi,
+  EndorsementControllerCreateRequest,
+  EndorsementControllerDeleteRequest,
+  EndorsementControllerFindAllRequest,
+  EndorsementControllerFindByAuthRequest,
+  EndorsementListApi,
+  EndorsementListControllerCloseRequest,
+  EndorsementListControllerCreateRequest,
+  EndorsementListControllerEmailEndorsementsPDFRequest,
+  EndorsementListControllerFindByTagsRequest,
+  EndorsementListControllerFindEndorsementsRequest,
+  EndorsementListControllerFindOneRequest,
+  EndorsementListControllerGetGeneralPetitionListRequest,
+  EndorsementListControllerGetGeneralPetitionListsRequest,
+  EndorsementListControllerLockRequest,
+  EndorsementListControllerOpenRequest,
+  EndorsementListControllerUnlockRequest,
+  EndorsementListControllerUpdateRequest,
+} from '../../gen/fetch'
 
 @Injectable()
 export class EndorsementSystemService {

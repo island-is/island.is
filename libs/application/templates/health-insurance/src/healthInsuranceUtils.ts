@@ -1,9 +1,10 @@
-import { ExternalData } from '@island.is/application/core'
 import { Address } from '@island.is/api/schema'
+import { ExternalData } from '@island.is/application/core'
+
 import { Applications } from './dataProviders/APIDataTypes'
-import { NordicCountriesCountryCode } from './shared'
-import { EU } from './lib/EU'
 import { EFTA } from './lib/EFTA'
+import { EU } from './lib/EU'
+import { NordicCountriesCountryCode } from './shared'
 
 const sortApplicationsByDateAscending = (applications: Applications[]) => {
   const sortedApplications = applications

@@ -1,4 +1,7 @@
 import { Injectable } from '@nestjs/common'
+
+import * as v1 from '../v1'
+import * as v2 from '../v2'
 import {
   CanApplyErrorCodeBFull,
   CanApplyForCategoryResult,
@@ -6,14 +9,13 @@ import {
   Juristiction,
   QualityPhoto,
 } from '..'
-import * as v1 from '../v1'
-import * as v2 from '../v2'
+
+import { handleCreateResponse } from './utils/handleCreateResponse'
 import {
   CanApplyErrorCodeBTemporary,
   DriversLicense,
   Teacher,
 } from './drivingLicenseApi.types'
-import { handleCreateResponse } from './utils/handleCreateResponse'
 
 const DRIVING_LICENSE_SUCCESSFUL_RESPONSE_VALUE = ''
 

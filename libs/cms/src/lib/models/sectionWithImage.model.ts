@@ -1,8 +1,11 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
-import { ISectionWithImage } from '../generated/contentfulTypes'
-import { Image, mapImage } from './image.model'
-import { Html, mapHtml } from './html.model'
+import { Field, ID,ObjectType } from '@nestjs/graphql'
+
 import { SystemMetadata } from '@island.is/shared/types'
+
+import { ISectionWithImage } from '../generated/contentfulTypes'
+
+import { Html, mapHtml } from './html.model'
+import { Image, mapImage } from './image.model'
 
 @ObjectType()
 export class SectionWithImage {

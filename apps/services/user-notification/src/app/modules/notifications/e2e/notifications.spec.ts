@@ -1,17 +1,19 @@
-import request from 'supertest'
 import { INestApplication, Injectable } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
-import { NotificationsController } from '../notifications.controller'
-import { NotificationsWorkerService } from '../notificationsWorker.service'
-import { Message } from '../dto/createNotification.dto'
+import request from 'supertest'
+
 import { LoggingModule } from '@island.is/logging'
-import { environment } from '../../../../environments/environment'
 import {
   getQueueServiceToken,
   QueueModule,
   QueueService,
 } from '@island.is/message-queue'
 import { InjectWorker, WorkerService } from '@island.is/message-queue'
+
+import { environment } from '../../../../environments/environment'
+import { Message } from '../dto/createNotification.dto'
+import { NotificationsController } from '../notifications.controller'
+import { NotificationsWorkerService } from '../notificationsWorker.service'
 import { MessageTypes } from '../types'
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))

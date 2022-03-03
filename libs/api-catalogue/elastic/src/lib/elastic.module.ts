@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+
 import { ElasticService } from './elastic.service'
 
 @Module({

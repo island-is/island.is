@@ -1,34 +1,34 @@
 import React, { FC, useEffect } from 'react'
 import { useMutation } from '@apollo/client'
 
+import { FieldBaseProps,RepeaterProps } from '@island.is/application/core'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
-import { RepeaterProps, FieldBaseProps } from '@island.is/application/core'
 import {
+  AlertMessage,
   Box,
   Button,
+  ContentBlock,
   Inline,
   Tooltip,
-  ContentBlock,
-  AlertMessage,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { FieldDescription } from '@island.is/shared/form-fields'
 import {
   findProblemInApolloError,
   ProblemType,
 } from '@island.is/shared/problem'
-import { useLocale } from '@island.is/localization'
-import { FieldDescription } from '@island.is/shared/form-fields'
 
-import { Timeline } from '../components/Timeline/Timeline'
-import {
-  formatPeriods,
-  getAvailableRightsInDays,
-  getExpectedDateOfBirth,
-  getApplicationAnswers,
-} from '../../lib/parentalLeaveUtils'
-import { parentalLeaveFormMessages } from '../../lib/messages'
 import { States } from '../../constants'
 import { useDaysAlreadyUsed } from '../../hooks/useDaysAlreadyUsed'
 import { useRemainingRights } from '../../hooks/useRemainingRights'
+import { parentalLeaveFormMessages } from '../../lib/messages'
+import {
+  formatPeriods,
+  getApplicationAnswers,
+  getAvailableRightsInDays,
+  getExpectedDateOfBirth,
+} from '../../lib/parentalLeaveUtils'
+import { Timeline } from '../components/Timeline/Timeline'
 
 type FieldProps = FieldBaseProps & {
   field?: {

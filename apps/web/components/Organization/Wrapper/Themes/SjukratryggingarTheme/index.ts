@@ -1,2 +1,2 @@
-export * from './SjukratryggingarHeader'
 export * from './SjukratryggingarFooter'
+export * from './SjukratryggingarHeader'

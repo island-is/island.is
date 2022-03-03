@@ -1,3 +1,16 @@
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
+import startOfDay from 'date-fns/startOfDay'
+import uniqBy from 'lodash/uniqBy'
+import { Op, WhereOptions } from 'sequelize'
+import { uuid } from 'uuidv4'
+
 import type { AuthConfig, User } from '@island.is/auth-nest-tools'
 import {
   AuthMiddleware,
@@ -16,18 +29,7 @@ import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
-import startOfDay from 'date-fns/startOfDay'
-import uniqBy from 'lodash/uniqBy'
-import { Op, WhereOptions } from 'sequelize'
-import { uuid } from 'uuidv4'
+
 import {
   CreateDelegationDTO,
   DelegationDTO,
@@ -36,11 +38,12 @@ import {
   UpdateDelegationDTO,
 } from '../entities/dto/delegation.dto'
 import { ApiScope } from '../entities/models/api-scope.model'
-import { DelegationScope } from '../entities/models/delegation-scope.model'
 import { Delegation } from '../entities/models/delegation.model'
+import { DelegationScope } from '../entities/models/delegation-scope.model'
 import { PersonalRepresentativeService } from '../personal-representative'
 import type { PersonalRepresentativeDTO } from '../personal-representative/entities/dto/personal-representative.dto'
 import { DelegationValidity } from '../types/delegationValidity'
+
 import { DelegationScopeService } from './delegationScope.service'
 
 export const DELEGATIONS_AUTH_CONFIG = 'DELEGATIONS_AUTH_CONFIG'

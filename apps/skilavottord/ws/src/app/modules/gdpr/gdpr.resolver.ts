@@ -1,9 +1,9 @@
-import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
+import { Args, Mutation,Query, Resolver } from '@nestjs/graphql'
 
 import { Authorize, CurrentUser, User } from '../auth'
 
-import { GdprService } from './gdpr.service'
 import { GdprModel } from './gdpr.model'
+import { GdprService } from './gdpr.service'
 
 @Authorize()
 @Resolver(() => GdprModel)

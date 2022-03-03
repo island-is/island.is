@@ -1,6 +1,5 @@
-import { S3 } from 'aws-sdk'
-
 import { Injectable } from '@nestjs/common'
+import { S3 } from 'aws-sdk'
 
 import { environment } from '../../../environments'
 

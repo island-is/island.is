@@ -1,11 +1,12 @@
-import { Module, DynamicModule } from '@nestjs/common'
+import { DynamicModule,Module } from '@nestjs/common'
 
-import { MainResolver } from './graphql'
-import { CriminalRecordService } from './criminalRecord.service'
 import {
-  CriminalRecordApiModule,
   CriminalRecordApiConfig,
+  CriminalRecordApiModule,
 } from '@island.is/clients/criminal-record'
+
+import { CriminalRecordService } from './criminalRecord.service'
+import { MainResolver } from './graphql'
 
 export interface Config {
   clientConfig: CriminalRecordApiConfig

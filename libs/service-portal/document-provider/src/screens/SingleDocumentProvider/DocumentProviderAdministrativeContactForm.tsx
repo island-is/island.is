@@ -1,14 +1,17 @@
 import React, { FC } from 'react'
-import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useForm } from 'react-hook-form'
-import { useLocale } from '@island.is/localization'
-import { m } from '../../lib/messages'
-import { DocumentProviderInput } from './DocumentProviderInput'
+
 import { Contact } from '@island.is/api/schema'
-import { useUpdateAdministrativeContact } from '../../shared/useUpdateAdministrativeContact'
+import { Box, Button, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+
+import { m } from '../../lib/messages'
 import { useCreateAdministrativeContact } from '../../shared/useCreateAdministrativeContact'
-import { ContactInput } from '../../shared/useUpdateTechnicalContact'
 import { CreateContactInput } from '../../shared/useCreateTechnicalContact'
+import { useUpdateAdministrativeContact } from '../../shared/useUpdateAdministrativeContact'
+import { ContactInput } from '../../shared/useUpdateTechnicalContact'
+
+import { DocumentProviderInput } from './DocumentProviderInput'
 interface Props {
   administrativeContact?: Contact | null
   organisationId: string

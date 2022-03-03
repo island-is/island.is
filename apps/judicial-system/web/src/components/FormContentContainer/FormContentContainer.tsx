@@ -1,5 +1,7 @@
 import React from 'react'
+
 import { GridColumn } from '@island.is/island-ui/core'
+
 import * as styles from './FormContentContainer.css'
 
 interface Props {

@@ -1,11 +1,14 @@
 import { DynamicModule } from '@nestjs/common'
+
 import {
   createEnhancedFetch,
   EnhancedFetchOptions,
 } from '@island.is/clients/middlewares'
-import { DrivingLicenseApi } from './drivingLicenseApi.service'
+
 import { ApiV1, ConfigV1 } from '../v1'
 import { ApiV2, ConfigV2 } from '../v2'
+
+import { DrivingLicenseApi } from './drivingLicenseApi.service'
 
 export interface DrivingLicenseApiConfig {
   xroadBaseUrl: string

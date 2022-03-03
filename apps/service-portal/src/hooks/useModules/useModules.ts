@@ -1,12 +1,12 @@
 import { useEffect } from 'react'
 
 import { useAuth } from '@island.is/auth/react'
-import { ServicePortalModule } from '@island.is/service-portal/core'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { ServicePortalModule } from '@island.is/service-portal/core'
 
-import { useStore } from '../../store/stateProvider'
 import { ActionType } from '../../store/actions'
 import { featureFlaggedModules, ModuleKeys } from '../../store/modules'
+import { useStore } from '../../store/stateProvider'
 
 export const useModules = () => {
   const featureFlagClient = useFeatureFlagClient()

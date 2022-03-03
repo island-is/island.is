@@ -1,9 +1,11 @@
 import React, { ReactElement, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import AuthenticatorLoadingScreen from './AuthenticatorLoadingScreen'
-import AuthenticatorErrorScreen from './AuthenticatorErrorScreen'
+
 import { getUserManager } from '../userManager'
+
 import { ActionType, AuthDispatch } from './Authenticator.state'
+import AuthenticatorErrorScreen from './AuthenticatorErrorScreen'
+import AuthenticatorLoadingScreen from './AuthenticatorLoadingScreen'
 
 interface Props {
   authDispatch: AuthDispatch

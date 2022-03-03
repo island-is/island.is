@@ -1,25 +1,27 @@
-import { Test } from '@nestjs/testing'
 import { ConfigService } from '@nestjs/config'
-import {
-  ApplicationWithAttachments as Application,
-  ApplicationStatus,
-  ApplicationTypes,
-} from '@island.is/application/core'
-import { logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { EmailService } from '@island.is/email-service'
-import { SharedTemplateApiService } from '../../shared'
-import { BaseTemplateApiApplicationService } from '../../../types'
-import { AccidentNotificationService } from './accident-notification.service'
-import { AccidentNotificationAttachmentProvider } from './attachments/applicationAttachmentProvider'
-import { ApplicationAttachmentService } from './attachments/applicationAttachment.service'
-import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
-import { DocumentApi } from '@island.is/clients/health-insurance-v2'
-import { createCurrentUser } from '@island.is/testing/fixtures'
+import { Test } from '@nestjs/testing'
 import { S3 } from 'aws-sdk'
-
 import get from 'lodash/get'
 import set from 'lodash/set'
+
+import {
+  ApplicationStatus,
+  ApplicationTypes,
+  ApplicationWithAttachments as Application,
+} from '@island.is/application/core'
+import { DocumentApi } from '@island.is/clients/health-insurance-v2'
+import { EmailService } from '@island.is/email-service'
+import { logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { createCurrentUser } from '@island.is/testing/fixtures'
+
+import { BaseTemplateApiApplicationService } from '../../../types'
+import { SharedTemplateApiService } from '../../shared'
+
+import { ApplicationAttachmentService } from './attachments/applicationAttachment.service'
+import { AccidentNotificationAttachmentProvider } from './attachments/applicationAttachmentProvider'
 import { S3Service } from './attachments/s3.service'
+import { AccidentNotificationService } from './accident-notification.service'
+import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
 const nationalId = '1234564321'
 let id = 0
 

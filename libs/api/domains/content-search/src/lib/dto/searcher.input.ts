@@ -7,6 +7,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator'
+
 import { ContentLanguage } from '../enums/contentLanguage.enum'
 import { SearchableContentTypes } from '../enums/searchableContentTypes'
 import { SearchableTags } from '../enums/searchableTags'

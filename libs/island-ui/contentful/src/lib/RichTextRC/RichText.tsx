@@ -1,26 +1,28 @@
 import React, { Fragment, ReactNode } from 'react'
-import { Document } from '@contentful/rich-text-types'
 import {
   documentToReactComponents,
   Options,
 } from '@contentful/rich-text-react-renderer'
+import { Document } from '@contentful/rich-text-types'
+
+import { Box } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 
-import { ImageProps } from '../Image/Image'
-import { FaqListProps } from '../FaqList/FaqList'
-import { StatisticsProps } from '../Statistics/Statistics'
 import { AssetLinkProps } from '../AssetLink/AssetLink'
-import { ProcessEntryProps } from '../ProcessEntry/ProcessEntry'
-import { EmbeddedVideoProps } from '../EmbeddedVideo/EmbeddedVideo'
-import { SectionWithImageProps } from '../SectionWithImage/SectionWithImage'
-import { TeamListProps } from '../TeamList/TeamList'
 import { ContactUsProps } from '../ContactUs/ContactUs'
+import { EmbeddedVideoProps } from '../EmbeddedVideo/EmbeddedVideo'
+import { FaqListProps } from '../FaqList/FaqList'
+import { ImageProps } from '../Image/Image'
 import { LocationProps } from '../Location/Location'
+import { ProcessEntryProps } from '../ProcessEntry/ProcessEntry'
+import { SectionWithImageProps } from '../SectionWithImage/SectionWithImage'
+import { StatisticsProps } from '../Statistics/Statistics'
+import { TeamListProps } from '../TeamList/TeamList'
 import { TellUsAStoryFormProps } from '../TellUsAStoryForm/TellUsAStoryForm'
-import { defaultRenderNode } from './defaultRenderNode'
-import { defaultRenderMark } from './defaultRenderMark'
+
 import { defaultRenderComponent } from './defaultRenderComponents'
-import { Box } from '@island.is/island-ui/core'
+import { defaultRenderMark } from './defaultRenderMark'
+import { defaultRenderNode } from './defaultRenderNode'
 
 type HtmlSlice = { __typename: 'Html'; id: string; document: Document }
 type FaqListSlice = { __typename: 'FaqList'; id: string } & FaqListProps

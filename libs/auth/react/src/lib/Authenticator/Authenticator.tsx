@@ -3,13 +3,14 @@ import { Route, Switch, useHistory } from 'react-router-dom'
 import type { History } from 'history'
 import type { User } from 'oidc-client'
 
+import { AuthSettings } from '../AuthSettings'
+import { getAuthSettings, getUserManager } from '../userManager'
+
+import { AuthContext } from './AuthContext'
+import { ActionType, initialState, reducer } from './Authenticator.state'
+import { CheckAuth } from './CheckAuth'
 import OidcSignIn from './OidcSignIn'
 import OidcSilentSignIn from './OidcSilentSignIn'
-import { getAuthSettings, getUserManager } from '../userManager'
-import { ActionType, initialState, reducer } from './Authenticator.state'
-import { AuthContext } from './AuthContext'
-import { CheckAuth } from './CheckAuth'
-import { AuthSettings } from '../AuthSettings'
 
 interface Props {
   /**

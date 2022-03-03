@@ -1,16 +1,16 @@
+import { Field, InputType } from '@nestjs/graphql'
 import { Allow } from 'class-validator'
 
-import { Field, InputType } from '@nestjs/graphql'
-
 import {
-  CreateApplication,
-  HomeCircumstances,
-  Employment,
   ApplicationState,
+  CreateApplication,
+  Employment,
   FamilyStatus,
+  HomeCircumstances,
 } from '@island.is/financial-aid/shared/lib'
 
 import { CreateApplicationFileInput } from '../../file/dto'
+
 import { DirectTaxPaymentInput } from './directTaxPayment.input'
 
 @InputType()

@@ -1,6 +1,6 @@
-import { Query, Resolver, Args } from '@nestjs/graphql'
+import { Args,Query, Resolver } from '@nestjs/graphql'
 
-import { Authorize, CurrentUser, User, Role } from '../auth'
+import { Authorize, CurrentUser, Role,User } from '../auth'
 
 import { Fjarsysla } from './fjarsysla.model'
 import { FjarsyslaService } from './fjarsysla.service'

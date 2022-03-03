@@ -1,9 +1,12 @@
 import request from 'supertest'
+
+import { EndorsementsScope } from '@island.is/auth/scopes'
+
+import { getAuthenticatedApp } from '../../../../../../test/setup'
 import { errorExpectedStructure } from '../../../../../../test/testHelpers'
 import { EndorsementTag } from '../../constants'
-import { getAuthenticatedApp } from '../../../../../../test/setup'
+
 import { authNationalId } from './seed'
-import { EndorsementsScope } from '@island.is/auth/scopes'
 
 describe('findByTagsEndorsementList', () => {
   it(`GET /endorsement-list?tags should return validation error when called with a non existing tag`, async () => {

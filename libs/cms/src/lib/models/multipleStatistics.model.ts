@@ -1,8 +1,11 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { IMultipleStatistics } from '../generated/contentfulTypes'
+
 import { SystemMetadata } from '@island.is/shared/types'
-import { Statistics, mapStatistics } from './statistics.model'
+
+import { IMultipleStatistics } from '../generated/contentfulTypes'
+
 import { Link, mapLink } from './link.model'
+import { mapStatistics,Statistics } from './statistics.model'
 
 @ObjectType()
 export class MultipleStatistics {

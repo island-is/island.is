@@ -1,6 +1,6 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ID,ObjectType } from '@nestjs/graphql'
 
-import { Gender, FamilyRelation } from '../../types'
+import { FamilyRelation,Gender } from '../../types'
 
 @ObjectType()
 export class NationalRegistryFamilyMember {

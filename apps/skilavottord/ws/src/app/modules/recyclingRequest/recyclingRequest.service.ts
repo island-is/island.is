@@ -1,23 +1,24 @@
-import { Inject, Injectable, HttpService, forwardRef } from '@nestjs/common'
+import { forwardRef,HttpService, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import format from 'date-fns/format'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { User } from '../auth'
 import { environment } from '../../../environments'
+import { User } from '../auth'
 import { FjarsyslaService } from '../fjarsysla'
 import { RecyclingPartnerService } from '../recyclingPartner'
 import { VehicleInformation } from '../samgongustofa'
+import { VehicleModel,VehicleService } from '../vehicle'
+
 import {
   RecyclingRequestModel,
-  RecyclingRequestTypes,
   RecyclingRequestResponse,
+  RecyclingRequestTypes,
   RequestErrors,
   RequestStatus,
 } from './recyclingRequest.model'
-import { VehicleService, VehicleModel } from '../vehicle'
 
 @Injectable()
 export class RecyclingRequestService {

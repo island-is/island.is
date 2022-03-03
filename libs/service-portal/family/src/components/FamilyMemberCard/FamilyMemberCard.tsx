@@ -1,13 +1,14 @@
-import { ActionCard, Box, Button, Text, Stack } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import {
-  formatNationalId,
-  ServicePortalPath,
-  m,
-} from '@island.is/service-portal/core'
 import React, { FC } from 'react'
 import { defineMessage } from 'react-intl'
 import { useHistory } from 'react-router-dom'
+
+import { ActionCard, Box, Button, Stack,Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import {
+  formatNationalId,
+  m,
+  ServicePortalPath,
+} from '@island.is/service-portal/core'
 
 interface Props {
   title: string

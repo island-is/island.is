@@ -1,2 +1,2 @@
-export * from './serviceCenters'
 export * from './postalCodes'
+export * from './serviceCenters'

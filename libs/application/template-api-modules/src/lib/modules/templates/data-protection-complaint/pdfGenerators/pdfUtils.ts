@@ -1,5 +1,6 @@
-import { PdfConstants } from './constants'
 import PDFDocument from 'pdfkit'
+
+import { PdfConstants } from './constants'
 
 const addToDoc = (
   font: string,

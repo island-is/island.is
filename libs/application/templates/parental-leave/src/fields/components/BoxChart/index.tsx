@@ -1,11 +1,11 @@
 import React from 'react'
 import cn from 'classnames'
 
+import { Application, formatText, FormText } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 
 import * as styles from './BoxChart.css'
-import { Application, formatText, FormText } from '@island.is/application/core'
-import { useLocale } from '@island.is/localization'
 
 type boxStyle = 'blue' | 'green' | 'gray' | 'greenWithLines' | 'grayWithLines'
 

@@ -1,14 +1,16 @@
 /** @deprecated ButtonDeprecated has been deprecated in favor of Button */
-import React, { forwardRef, ReactNode, FC, useContext } from 'react'
+import React, { FC, forwardRef, ReactNode, useContext } from 'react'
 import cn from 'classnames'
+
+import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
+
 import { Box } from '../Box/Box'
-import { Inline } from '../Inline/Inline'
-import { IconTypes, Icon as IconComponent } from '../Icon/Icon'
 import { ColorSchemeContext } from '../context'
+import { Icon as IconComponent,IconTypes } from '../Icon/Icon'
+import { Inline } from '../Inline/Inline'
+import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
 
 import * as styles from './Button.css'
-import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
-import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 
 export type ButtonSize = 'small' | 'medium' | 'large'
 export type ButtonVariant = 'normal' | 'ghost' | 'redGhost' | 'text' | 'menu'

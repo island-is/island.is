@@ -1,6 +1,7 @@
-import { setup } from '../../../../../../test/setup'
+import { CACHE_MANAGER,INestApplication } from '@nestjs/common'
 import request from 'supertest'
-import { INestApplication, CACHE_MANAGER } from '@nestjs/common'
+
+import { setup } from '../../../../../../test/setup'
 import { NationalRegistryService } from '../../../nationalRegistry'
 
 let app: INestApplication

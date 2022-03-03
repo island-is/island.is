@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common'
-import { ApiCatalogue } from './models/catalogue.model'
-import { GetApiCatalogueInput } from './dto/catalogue.input'
+
 import { ElasticService } from '@island.is/api-catalogue/elastic'
 import { RestMetadataService } from '@island.is/api-catalogue/services'
-import { GetOpenApiInput } from './dto/openapi.input'
-import { OpenApi } from './models/openapi.model'
 import { logger } from '@island.is/logging'
+
+import { GetApiCatalogueInput } from './dto/catalogue.input'
+import { GetOpenApiInput } from './dto/openapi.input'
+import { ApiCatalogue } from './models/catalogue.model'
+import { OpenApi } from './models/openapi.model'
 import { Service } from './models/service.model'
 
 @Injectable()

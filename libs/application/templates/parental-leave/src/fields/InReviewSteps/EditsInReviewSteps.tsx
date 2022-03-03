@@ -1,18 +1,16 @@
 import React, { FC } from 'react'
-
-import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
-import ReviewSection, { ReviewSectionState } from './ReviewSection'
-
-import { parentalLeaveFormMessages } from '../../lib/messages'
-
-import { getExpectedDateOfBirth } from '../../lib/parentalLeaveUtils'
+import { useLocale } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
 
 import { States as ApplicationStates } from '../../constants'
+import { parentalLeaveFormMessages } from '../../lib/messages'
+import { getExpectedDateOfBirth } from '../../lib/parentalLeaveUtils'
+
+import ReviewSection, { ReviewSectionState } from './ReviewSection'
 type StateMapEntry = { [key: string]: ReviewSectionState }
 type StatesMap = {
   employer: StateMapEntry

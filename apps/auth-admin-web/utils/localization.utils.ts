@@ -1,6 +1,6 @@
-import englishTranslations from '../i18n/locales/en.json'
 import { Localization } from '../entities/common/Localization'
 import { LOCALE_KEY } from '../i18n/locales'
+import englishTranslations from '../i18n/locales/en.json'
 
 // export type Translation = ITranslation
 // export { englishTranslations }

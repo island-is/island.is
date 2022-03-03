@@ -1,6 +1,7 @@
-import type { Year } from '@island.is/regulations'
 import { Field, InputType, Int } from '@nestjs/graphql'
 import { IsNumber, IsOptional, Max, Min } from 'class-validator'
+
+import type { Year } from '@island.is/regulations'
 
 @InputType()
 export class GetRegulationsSearchInput {

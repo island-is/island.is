@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react'
-import { useForm, FormProvider, Controller } from 'react-hook-form'
+import { Controller,FormProvider, useForm } from 'react-hook-form'
 
 import {
   Box,
-  Text,
-  Divider,
   Button,
-  Input,
-  Select,
   Checkbox,
-  GridRow,
-  Option,
-  GridContainer,
+  Divider,
   GridColumn,
+  GridContainer,
+  GridRow,
+  Input,
+  Option,
+  Select,
+  Text,
 } from '@island.is/island-ui/core'
 
-import { IcelandicNameType } from '../../types'
 import { NameStatusStrings, NameTypeStrings } from '../../constants'
+import { IcelandicNameType } from '../../types'
 
 interface PropTypes {
   closeModal: () => void

@@ -1,13 +1,15 @@
-import React, { FC, useState, useEffect, ReactNode, createContext } from 'react'
-import cn from 'classnames'
+import React, { createContext,FC, ReactNode, useEffect, useState } from 'react'
 import AnimateHeight from 'react-animate-height'
-import { useMenuState, Menu, MenuButton, MenuStateReturn } from 'reakit/Menu'
-import { theme, Colors } from '@island.is/island-ui/theme'
-import { Text } from '../Text/Text'
+import cn from 'classnames'
+import { Menu, MenuButton, MenuStateReturn,useMenuState } from 'reakit/Menu'
+
+import { Colors,theme } from '@island.is/island-ui/theme'
+
 import { Box } from '../Box/Box'
 import { BoxProps } from '../Box/types'
 import { FocusableBox } from '../FocusableBox/FocusableBox'
 import { Icon } from '../IconRC/Icon'
+import { Text } from '../Text/Text'
 
 import * as styles from './Navigation.css'
 

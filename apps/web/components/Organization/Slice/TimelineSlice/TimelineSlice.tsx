@@ -1,4 +1,10 @@
-import React, { useRef, useState, useEffect, useMemo, Fragment } from 'react'
+import React, { Fragment,useEffect, useMemo, useRef, useState } from 'react'
+import ReactDOM from 'react-dom'
+import { flatten } from '@nestjs/common'
+import cn from 'classnames'
+import Link from 'next/link'
+
+import { renderSlices, SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   Button,
@@ -14,14 +20,10 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { TimelineSlice as Timeline } from '@island.is/web/graphql/schema'
-import cn from 'classnames'
-import * as timelineStyles from './TimelineSlice.css'
-import * as eventStyles from './Event.css'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import Link from 'next/link'
-import ReactDOM from 'react-dom'
-import { renderSlices, SliceType } from '@island.is/island-ui/contentful'
-import { flatten } from '@nestjs/common'
+
+import * as eventStyles from './Event.css'
+import * as timelineStyles from './TimelineSlice.css'
 
 function setDefault<K, V>(map: Map<K, V>, key: K, value: V): V {
   if (!map.has(key)) map.set(key, value)

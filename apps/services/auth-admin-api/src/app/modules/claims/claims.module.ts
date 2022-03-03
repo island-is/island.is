@@ -1,13 +1,15 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { ClaimsController } from './claims.controller'
+
 import {
+  AccessService,
+  ApiScopeUser,
+  ApiScopeUserAccess,
   Claim,
   ClaimsService,
-  AccessService,
-  ApiScopeUserAccess,
-  ApiScopeUser,
 } from '@island.is/auth-api-lib'
+
+import { ClaimsController } from './claims.controller'
 
 @Module({
   imports: [

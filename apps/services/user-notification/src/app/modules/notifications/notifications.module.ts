@@ -1,22 +1,25 @@
 import { Module } from '@nestjs/common'
 import * as firebaseAdmin from 'firebase-admin'
-import { LoggingModule } from '@island.is/logging'
+
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import * as userProfile from '@island.is/clients/user-profile'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
-import { environment } from '../../../environments/environment'
+import { LoggingModule } from '@island.is/logging'
 import { QueueModule } from '@island.is/message-queue'
+
+import { FIREBASE_PROVIDER } from '../../../constants'
+import { environment } from '../../../environments/environment'
+
+import {
+  APP_PROTOCOL,
+  MessageProcessorService,
+} from './messageProcessor.service'
+import { NotificationDispatchService } from './notificationDispatch.service'
 import { NotificationsController } from './notifications.controller'
 import {
   IS_RUNNING_AS_WORKER,
   NotificationsWorkerService,
 } from './notificationsWorker.service'
-import { NotificationDispatchService } from './notificationDispatch.service'
-import {
-  APP_PROTOCOL,
-  MessageProcessorService,
-} from './messageProcessor.service'
-import { FIREBASE_PROVIDER } from '../../../constants'
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import * as userProfile from '@island.is/clients/user-profile'
 
 @Module({
   imports: [

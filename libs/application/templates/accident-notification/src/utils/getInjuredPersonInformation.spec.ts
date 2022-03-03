@@ -1,4 +1,5 @@
 import { FormValue } from '@island.is/application/core'
+
 import { getInjuredPersonInformation } from './getInjuredPersonInformation'
 
 describe('getInjuredPersonInformation', () => {

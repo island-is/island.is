@@ -1,6 +1,8 @@
 import React from 'react'
-import { Box } from '@island.is/island-ui/core'
+
 import { DescriptionText } from '@island.is/application/templates/family-matters-core/components'
+import { Box } from '@island.is/island-ui/core'
+
 import { rejected } from '../../lib/messages'
 
 const Rejected = () => {

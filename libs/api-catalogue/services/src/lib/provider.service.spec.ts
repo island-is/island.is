@@ -1,5 +1,7 @@
 import { Test } from '@nestjs/testing'
+
 import { Providers } from '@island.is/api-catalogue/types'
+
 import {
   ClientList,
   ListClientsRequest,

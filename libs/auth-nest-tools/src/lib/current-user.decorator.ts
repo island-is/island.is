@@ -3,10 +3,11 @@ import {
   ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common'
+
 import { logger } from '@island.is/logging'
 
-import { User } from './user'
 import { getRequest } from './getRequest'
+import { User } from './user'
 
 export const getCurrentUser = (context: ExecutionContext): User => {
   const request = getRequest(context)

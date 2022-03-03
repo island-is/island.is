@@ -1,20 +1,22 @@
 import React, { FC } from 'react'
 import { useLazyQuery } from '@apollo/client'
-import { useLocale } from '@island.is/localization'
-import { m } from '@island.is/service-portal/core'
-import { Query, UnitsOfUseModel, PropertyLocation } from '@island.is/api/schema'
+
+import { PropertyLocation,Query, UnitsOfUseModel } from '@island.is/api/schema'
 import {
-  Text,
-  Table as T,
-  Column,
-  Columns,
   Box,
   Button,
+  Column,
+  Columns,
+  Table as T,
+  Text,
 } from '@island.is/island-ui/core'
-import { unitsArray } from '../../utils/createUnits'
+import { useLocale } from '@island.is/localization'
+import { m } from '@island.is/service-portal/core'
+import { tableStyles } from '@island.is/service-portal/core'
+
 import { GET_UNITS_OF_USE_QUERY } from '../../lib/queries'
 import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
-import { tableStyles } from '@island.is/service-portal/core'
+import { unitsArray } from '../../utils/createUnits'
 interface Props {
   units: UnitsOfUseModel
   locationData?: PropertyLocation | null

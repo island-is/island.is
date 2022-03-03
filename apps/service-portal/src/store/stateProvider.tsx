@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useReducer, Dispatch } from 'react'
-import { StoreState, initialState } from './store'
+import React, { createContext, Dispatch,useContext, useReducer } from 'react'
+
 import { Action } from './actions'
+import { initialState,StoreState } from './store'
 export const StateContext = createContext<[StoreState, Dispatch<Action>]>([
   initialState,
   () => null,

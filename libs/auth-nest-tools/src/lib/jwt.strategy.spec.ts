@@ -1,6 +1,7 @@
-import { JwtStrategy } from './jwt.strategy'
 import { Request } from 'express'
+
 import { JwtPayload } from './jwt.payload'
+import { JwtStrategy } from './jwt.strategy'
 
 describe('JwtStrategy#validate', () => {
   let jwtStrategy: JwtStrategy

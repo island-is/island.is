@@ -1,18 +1,20 @@
-import React, { useState, useEffect } from 'react'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
-import { useLocale } from '@island.is/localization'
+import React, { useEffect,useState } from 'react'
+
 import {
-  GridRow,
-  GridColumn,
-  Box,
-  Text,
   AlertMessage,
+  Box,
+  GridColumn,
+  GridRow,
+  Text,
 } from '@island.is/island-ui/core'
-import { StatisticBox } from '../../components/StatisticBox/StatisticBox'
+import { useLocale } from '@island.is/localization'
+import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
+
 import {
   StatisticForm,
   StatisticFormData,
 } from '../../components/Forms/StatisticForm'
+import { StatisticBox } from '../../components/StatisticBox/StatisticBox'
 import { m } from '../../lib/messages'
 
 const Dashboard: ServicePortalModuleComponent = ({ userInfo }) => {

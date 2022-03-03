@@ -1,11 +1,11 @@
-export { ServiceWebSearchSection } from './SearchSection'
+export { ServiceWebBackground } from './Background'
+export { ServiceWebDynamicFooter } from './DynamicFooter'
+export { ServiceWebFooter } from './Footer'
+export { ServiceWebStandardForm } from './Forms'
 export { ServiceWebHeader } from './Header'
 export {
-  ServiceWebSearchInput,
   ServiceWebModifySearchTerms,
+  ServiceWebSearchInput,
 } from './SearchInput'
-export { ServiceWebStandardForm } from './Forms'
-export { ServiceWebFooter } from './Footer'
-export { ServiceWebDynamicFooter } from './DynamicFooter'
-export { ServiceWebBackground } from './Background'
-export { ServiceWebWrapper, ServiceWebContext } from './Wrapper'
+export { ServiceWebSearchSection } from './SearchSection'
+export { ServiceWebContext,ServiceWebWrapper } from './Wrapper'

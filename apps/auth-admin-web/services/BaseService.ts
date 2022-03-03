@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import APIResponse from '../entities/common/APIResponse'
-import api from './api'
-import { ApiStatusStore } from '../store/ApiStatusStore'
 import { getSession } from 'next-auth/client'
+
+import APIResponse from '../entities/common/APIResponse'
+import { ApiStatusStore } from '../store/ApiStatusStore'
+
+import api from './api'
 
 export class BaseService {
   protected static async GET(path: string): Promise<any | null> {

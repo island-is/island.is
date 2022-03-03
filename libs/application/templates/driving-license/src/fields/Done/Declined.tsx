@@ -1,9 +1,11 @@
 import React from 'react'
 
+import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+
 import { m } from '../../lib/messages'
+
 import WarningSection from './WarningSection'
 
 export const Declined = ({ application }: FieldBaseProps): JSX.Element => {

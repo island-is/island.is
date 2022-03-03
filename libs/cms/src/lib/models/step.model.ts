@@ -1,7 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { SystemMetadata } from 'api-cms-domain'
 
 import { IStep } from '../generated/contentfulTypes'
-import { SystemMetadata } from 'api-cms-domain'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
 
 @ObjectType()

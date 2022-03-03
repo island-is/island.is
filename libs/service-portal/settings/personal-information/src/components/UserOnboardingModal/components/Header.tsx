@@ -1,4 +1,6 @@
 import React from 'react'
+
+import { useAuth } from '@island.is/auth/react'
 import {
   Box,
   Button,
@@ -9,7 +11,6 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { UserLanguageSwitcher } from '@island.is/shared/components'
-import { useAuth } from '@island.is/auth/react'
 interface OnboardingHeaderProps {
   dropOnboarding: () => void
 }

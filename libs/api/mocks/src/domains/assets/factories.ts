@@ -1,14 +1,14 @@
-import { factory, faker } from '@island.is/shared/mocking'
 import {
-  PropertyLocation,
-  SimpleProperties,
   Appraisal,
-  PropertyOwner,
-  UnitOfUse,
   PropertyDetail,
+  PropertyLocation,
+  PropertyOwner,
   PropertyOwnersModel,
+  SimpleProperties,
+  UnitOfUse,
   UnitsOfUseModel,
 } from '@island.is/api/schema'
+import { factory, faker } from '@island.is/shared/mocking'
 
 const townArray = [
   'Reykjavík',

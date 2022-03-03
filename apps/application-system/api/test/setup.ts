@@ -1,7 +1,9 @@
-import { testServer, TestServerOptions } from '@island.is/infra-nest-server'
-import { getConnectionToken } from '@nestjs/sequelize'
 import { INestApplication, Type } from '@nestjs/common'
+import { getConnectionToken } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
+
+import { testServer, TestServerOptions } from '@island.is/infra-nest-server'
+
 import { AppModule } from '../src/app/app.module'
 
 // Give jest a bit more time when running application-system tests. Jest lazily transforms dynamically imported files.

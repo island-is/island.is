@@ -4,6 +4,7 @@ import {
   PricingCategory,
   TypeCategory,
 } from '@island.is/api-catalogue/consts'
+
 import { ServiceEnvironment } from './serviceEnvironment.model'
 
 export interface Service {

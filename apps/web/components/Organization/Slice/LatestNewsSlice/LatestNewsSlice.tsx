@@ -1,7 +1,8 @@
 import React from 'react'
-import { LatestNewsSlice as LatestNewsSliceSchema } from '@island.is/web/graphql/schema'
-import { NewsItems } from '@island.is/web/components'
+
 import { Box, GridContainer } from '@island.is/island-ui/core'
+import { NewsItems } from '@island.is/web/components'
+import { LatestNewsSlice as LatestNewsSliceSchema } from '@island.is/web/graphql/schema'
 
 interface SliceProps {
   slice: LatestNewsSliceSchema

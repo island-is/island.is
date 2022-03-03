@@ -1,5 +1,6 @@
-import { SkeletonLoader, Stack } from '@island.is/island-ui/core'
 import React from 'react'
+
+import { SkeletonLoader, Stack } from '@island.is/island-ui/core'
 
 export function SettingsFormsLoader({
   numberOfLoaders,

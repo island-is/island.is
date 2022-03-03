@@ -1,9 +1,9 @@
 import React from 'react'
 import cn from 'classnames'
 
-import * as styles from './Item.css'
-
 import { AsyncSearchOption } from '../../AsyncSearch'
+
+import * as styles from './Item.css'
 
 interface Props {
   isSelected: boolean

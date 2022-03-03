@@ -1,8 +1,9 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 import { IFooterItem } from '../generated/contentfulTypes'
-import { Link, mapLink } from './link.model'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
+
+import { Link, mapLink } from './link.model'
 
 @ObjectType()
 export class FooterItem {

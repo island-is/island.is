@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op, WhereOptions } from 'sequelize'
+
 import {
+  ApplicationStatus,
   ExternalData,
   FormValue,
-  ApplicationStatus,
 } from '@island.is/application/core'
 
-import { Application } from './application.model'
 import { CreateApplicationDto } from './dto/createApplication.dto'
-
+import { Application } from './application.model'
 import { ApplicationLifecycle } from './types'
 
 const applicationIsNotSetToBePruned = () => ({

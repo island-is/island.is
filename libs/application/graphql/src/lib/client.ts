@@ -1,12 +1,13 @@
-import fetch from 'cross-fetch'
 import {
   ApolloClient,
-  InMemoryCache,
-  HttpLink,
   ApolloLink,
+  HttpLink,
+  InMemoryCache,
 } from '@apollo/client'
 import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
+import fetch from 'cross-fetch'
+
 import { authLink } from '@island.is/auth/react'
 
 const retryLink = new RetryLink()

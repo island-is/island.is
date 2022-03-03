@@ -1,14 +1,15 @@
 import get from 'lodash/get'
 import isArray from 'lodash/isArray'
+
 import {
   ExternalData,
   ExternalDataProvider,
   Field,
+  FieldTypes,
   findSectionIndex,
   findSubSectionIndex,
   Form,
   FormItemTypes,
-  FieldTypes,
   FormLeaf,
   FormNode,
   FormValue,

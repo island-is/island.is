@@ -1,6 +1,8 @@
-import { FieldBaseProps } from '@island.is/application/core'
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
+
+import { FieldBaseProps } from '@island.is/application/core'
+
 import { AccidentNotification } from '../../lib/dataSchema'
 import { isInjuredAndRepresentativeOfCompanyOrInstitute } from '../../utils'
 

@@ -1,5 +1,7 @@
-import { EndorsementsScope } from '@island.is/auth/scopes'
 import { DocumentBuilder } from '@nestjs/swagger'
+
+import { EndorsementsScope } from '@island.is/auth/scopes'
+
 import { environment } from './environments'
 
 export const openApi = new DocumentBuilder()

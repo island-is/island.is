@@ -1,18 +1,19 @@
-import { Query } from '@island.is/api/schema'
+import { lazy } from 'react'
+import * as Sentry from '@sentry/react'
 import differenceInMonths from 'date-fns/differenceInMonths'
+
+import { Query } from '@island.is/api/schema'
 import { UserProfileScope } from '@island.is/auth/scopes'
 import {
+  m,
+  ServicePortalGlobalComponent,
   ServicePortalModule,
   ServicePortalPath,
   ServicePortalRoute,
-  ServicePortalGlobalComponent,
-  m,
 } from '@island.is/service-portal/core'
 import { USER_PROFILE } from '@island.is/service-portal/graphql'
-import { outOfDate } from '../src/utils/outOfDate'
 
-import { lazy } from 'react'
-import * as Sentry from '@sentry/react'
+import { outOfDate } from '../src/utils/outOfDate'
 
 export const personalInformationModule: ServicePortalModule = {
   name: 'Persónuupplýsingar',

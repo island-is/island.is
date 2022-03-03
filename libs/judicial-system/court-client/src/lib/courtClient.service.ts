@@ -1,15 +1,14 @@
-import https, { Agent } from 'https'
-import fetch from 'isomorphic-fetch'
-
 import {
   BadGatewayException,
   Inject,
   Injectable,
   UnsupportedMediaTypeException,
 } from '@nestjs/common'
+import https, { Agent } from 'https'
+import fetch from 'isomorphic-fetch'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 import {
   createXRoadAPIPath,
@@ -17,20 +16,21 @@ import {
 } from '@island.is/shared/utils/server'
 
 import {
-  Configuration,
-  FetchParams,
-  RequestContext,
   AuthenticateApi,
   AuthenticateRequest,
+  Configuration,
   CreateCaseApi,
   CreateCaseData,
   CreateDocumentApi,
   CreateDocumentData,
   CreateThingbokApi,
   CreateThingbokRequest,
+  FetchParams,
+  RequestContext,
 } from '../../gen/fetch'
-import { UploadStreamApi } from './uploadStreamApi'
+
 import { courtClientModuleConfig } from './courtClient.config'
+import { UploadStreamApi } from './uploadStreamApi'
 
 function injectAgentMiddleware(agent: Agent) {
   return async (context: RequestContext): Promise<FetchParams> => {

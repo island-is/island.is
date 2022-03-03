@@ -2,10 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
-import { Box, AccordionItem, Button } from '@island.is/island-ui/core'
-import { UploadState } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
-import { UploadStateMessage } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/Components/UploadStateMessage'
-import { useCourtUpload } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
+import { AccordionItem, Box, Button } from '@island.is/island-ui/core'
 import {
   Case,
   CaseState,
@@ -15,6 +12,9 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 import { caseFilesAccordion as m } from '@island.is/judicial-system-web/messages/Core/caseFilesAccordion'
+import { UploadStateMessage } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/Components/UploadStateMessage'
+import { UploadState } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
+import { useCourtUpload } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 
 import { CaseFileList, InfoBox } from '../..'
 

@@ -1,8 +1,10 @@
 import { useEffect } from 'react'
-import { toast } from '@island.is/island-ui/core'
 import { gql, useQuery } from '@apollo/client'
+
 import { ProviderStatistics, StatisticsInput } from '@island.is/api/schema'
+import { toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+
 import { m } from '../lib/messages'
 
 export const getStatisticsTotal = gql`

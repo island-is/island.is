@@ -1,5 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { IsOptional, IsString } from 'class-validator'
+
 import { CreateContactInput } from './createContact.input'
 import { CreateHelpdeskInput } from './createHelpdesk.input'
 

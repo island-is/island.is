@@ -6,11 +6,11 @@ import {
   formatText,
 } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import {
   FieldDescription,
   FileUploadController,
 } from '@island.is/shared/form-fields'
-import { useLocale } from '@island.is/localization'
 
 interface Props extends FieldBaseProps {
   field: FileUploadField

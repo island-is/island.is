@@ -1,20 +1,21 @@
 import React, {
-  useState,
-  useRef,
-  useEffect,
-  TouchEventHandler,
   FC,
   ReactNode,
+  TouchEventHandler,
+  useEffect,
+  useRef,
+  useState,
 } from 'react'
-import cn from 'classnames'
 import { useWindowSize } from 'react-use'
+import cn from 'classnames'
+
 import {
   Box,
   Button,
   Hidden,
   Inline,
-  Text,
   Logo,
+  Text,
 } from '@island.is/island-ui/core'
 
 import * as styles from './SimpleSlider.css'

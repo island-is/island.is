@@ -3,19 +3,21 @@
 import React from 'react'
 import cn from 'classnames'
 
-import {
-  variantStyles,
-  base,
-  VariantTypes,
-  colors,
-  truncate as truncateStyle,
-  links as linksStyle,
-  fontWeight as fontWeightStyles,
-  defaultFontWeights,
-} from './Typography.css'
 import { Colors } from '@island.is/island-ui/theme'
-import { ResponsiveSpace } from '../Box/useBoxStyles'
+
 import { Box } from '../Box/Box'
+import { ResponsiveSpace } from '../Box/useBoxStyles'
+
+import {
+  base,
+  colors,
+  defaultFontWeights,
+  fontWeight as fontWeightStyles,
+  links as linksStyle,
+  truncate as truncateStyle,
+  variantStyles,
+  VariantTypes,
+} from './Typography.css'
 
 export interface TypographyProps {
   id?: string

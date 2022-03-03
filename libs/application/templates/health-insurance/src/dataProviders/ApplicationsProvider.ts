@@ -1,9 +1,10 @@
 import {
-  BasicDataProvider,
-  SuccessfulDataProviderResult,
-  FailedDataProviderResult,
   ApplicationTypes,
+  BasicDataProvider,
+  FailedDataProviderResult,
+  SuccessfulDataProviderResult,
 } from '@island.is/application/core'
+
 import { Applications } from './APIDataTypes'
 
 export class ApplicationsProvider extends BasicDataProvider {

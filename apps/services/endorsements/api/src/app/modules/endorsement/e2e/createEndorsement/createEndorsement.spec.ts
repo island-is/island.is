@@ -1,10 +1,13 @@
-import { EndorsementsScope } from '@island.is/auth/scopes'
 import request from 'supertest'
+
+import { EndorsementsScope } from '@island.is/auth/scopes'
+
+import { getAuthenticatedApp } from '../../../../../../test/setup'
 import {
   errorExpectedStructure,
   metaDataResponse,
 } from '../../../../../../test/testHelpers'
-import { getAuthenticatedApp } from '../../../../../../test/setup'
+
 import { authNationalId } from './seed'
 
 describe('createEndorsement', () => {

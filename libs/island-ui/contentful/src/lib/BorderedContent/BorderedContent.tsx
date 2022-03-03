@@ -1,4 +1,5 @@
 import React, { FC, ReactNode } from 'react'
+
 import { Box } from '@island.is/island-ui/core'
 
 import * as styles from './BorderedContent.css'

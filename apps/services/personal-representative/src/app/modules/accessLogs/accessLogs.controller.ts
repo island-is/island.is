@@ -1,15 +1,17 @@
+import { Controller, Get, Inject, Query,UseGuards } from '@nestjs/common'
+import { ApiBearerAuth,ApiTags } from '@nestjs/swagger'
+
 import { AuthScope } from '@island.is/auth/scopes'
 import {
-  PersonalRepresentativeAccessService,
   PaginatedPersonalRepresentativeAccessDto,
   PaginationWithNationalIdsDto,
+  PersonalRepresentativeAccessService,
 } from '@island.is/auth-api-lib/personal-representative'
-import { Controller, UseGuards, Get, Inject, Query } from '@nestjs/common'
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger'
-import { Documentation } from '@island.is/nest/swagger'
 import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
-import { environment } from '../../../environments'
 import { Audit } from '@island.is/nest/audit'
+import { Documentation } from '@island.is/nest/swagger'
+
+import { environment } from '../../../environments'
 
 const namespace = `${environment.audit.defaultNamespace}/access-logs`
 

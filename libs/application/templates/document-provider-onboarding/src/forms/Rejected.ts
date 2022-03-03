@@ -6,6 +6,7 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
+
 import { m } from './messages'
 export const Rejected: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,

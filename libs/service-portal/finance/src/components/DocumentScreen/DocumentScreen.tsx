@@ -1,33 +1,36 @@
-import React, { useState, useEffect, FC } from 'react'
+import React, { FC,useEffect, useState } from 'react'
 import { gql, useLazyQuery } from '@apollo/client'
-import { dateFormat } from '@island.is/shared/constants'
 import format from 'date-fns/format'
 import sub from 'date-fns/sub'
+import { User } from 'oidc-client'
+
 import { Table as T } from '@island.is/island-ui/core'
 import {
-  Box,
-  Text,
-  Columns,
-  Column,
-  Stack,
-  GridRow,
-  GridColumn,
-  DatePicker,
-  Button,
   AlertBanner,
-  SkeletonLoader,
-  Pagination,
-  Input,
+  Box,
+  Button,
+  Column,
+  Columns,
+  DatePicker,
+  GridColumn,
+  GridRow,
   Hidden,
+  Input,
+  Pagination,
+  SkeletonLoader,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
-import { DocumentsListItemTypes } from './DocumentScreen.types'
-import amountFormat from '../../utils/amountFormat'
-import { billsFilter } from '../../utils/simpleFilter'
-import { formSubmit } from '../../utils/documentFormSubmission'
-import { User } from 'oidc-client'
 import { tableStyles } from '@island.is/service-portal/core'
+import { dateFormat } from '@island.is/shared/constants'
+
+import amountFormat from '../../utils/amountFormat'
+import { formSubmit } from '../../utils/documentFormSubmission'
+import { billsFilter } from '../../utils/simpleFilter'
+
+import { DocumentsListItemTypes } from './DocumentScreen.types'
 
 const ITEMS_ON_PAGE = 20
 

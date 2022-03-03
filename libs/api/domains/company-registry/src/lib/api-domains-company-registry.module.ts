@@ -1,11 +1,13 @@
 import { DynamicModule, Module } from '@nestjs/common'
+
+import { CompanyRegistryClientModule } from '@island.is/clients/rsk/company-registry'
 import {
+  RSK_OPTIONS,
   RSKService,
   RSKServiceOptions,
-  RSK_OPTIONS,
 } from '@island.is/clients/rsk/v1'
+
 import { CompanyRegistryResolver } from './api-domains-company-registry.resolver'
-import { CompanyRegistryClientModule } from '@island.is/clients/rsk/company-registry'
 import { RskCompanyInfoService } from './rsk-company-info.service'
 
 @Module({})

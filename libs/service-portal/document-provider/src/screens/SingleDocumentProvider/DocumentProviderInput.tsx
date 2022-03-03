@@ -1,12 +1,14 @@
 import React, { FC, useContext } from 'react'
-import { Box, Input, SkeletonLoader } from '@island.is/island-ui/core'
-import { Controller, Control } from 'react-hook-form'
-import { IsFetchingProviderOrganisationContext } from './SingleDocumentProvider'
+import { Control,Controller } from 'react-hook-form'
 import {
   Validate,
   ValidationRule,
   ValidationValueMessage,
 } from 'react-hook-form/dist/types/form'
+
+import { Box, Input, SkeletonLoader } from '@island.is/island-ui/core'
+
+import { IsFetchingProviderOrganisationContext } from './SingleDocumentProvider'
 
 type ControllerRules = Partial<{
   required: string | boolean | ValidationValueMessage<boolean>

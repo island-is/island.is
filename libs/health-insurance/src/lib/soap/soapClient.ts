@@ -1,5 +1,7 @@
-import { logger } from '@island.is/logging'
 import * as Soap from 'soap'
+
+import { logger } from '@island.is/logging'
+
 import { XRoadVariables } from './dto'
 
 /*

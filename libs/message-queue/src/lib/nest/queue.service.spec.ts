@@ -1,8 +1,9 @@
 import { logger } from '@island.is/logging'
+
 import { ClientService } from './client.service'
 import { QueueService } from './queue.service'
-import { DAY, MINUTE } from './time'
 import { clientConfig, deleteQueues, makeQueueConfig } from './testHelpers'
+import { DAY, MINUTE } from './time'
 
 beforeEach(deleteQueues)
 

@@ -1,16 +1,20 @@
 import React, { FC, useEffect, useState } from 'react'
-import { Box, Stack, Logo, Icon } from '@island.is/island-ui/core'
-import { ActionType } from '../../store/actions'
-import { ServicePortalPath } from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
-import { useStore } from '../../store/stateProvider'
-import ModuleNavigation from './ModuleNavigation'
-import useNavigation from '../../hooks/useNavigation/useNavigation'
-import * as styles from './Sidebar.css'
-import cn from 'classnames'
 import { useWindowSize } from 'react-use'
+import cn from 'classnames'
+
+import { Box, Icon,Logo, Stack } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { ServicePortalPath } from '@island.is/service-portal/core'
 import { useListDocuments } from '@island.is/service-portal/graphql'
+
+import useNavigation from '../../hooks/useNavigation/useNavigation'
+import { ActionType } from '../../store/actions'
+import { useStore } from '../../store/stateProvider'
+
+import ModuleNavigation from './ModuleNavigation'
+
+import * as styles from './Sidebar.css'
 
 export const Sidebar: FC<{}> = () => {
   const navigation = useNavigation()

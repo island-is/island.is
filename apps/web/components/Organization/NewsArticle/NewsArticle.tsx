@@ -1,4 +1,10 @@
 import React from 'react'
+
+import {
+  Image,
+  richText,
+  Slice as SliceType,
+} from '@island.is/island-ui/contentful'
 import {
   Box,
   GridColumn,
@@ -8,18 +14,13 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Main, SidebarBox, Sticky } from '@island.is/web/components'
+import { useNamespace } from '@island.is/web/hooks'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 import {
   GetNamespaceQuery,
   GetSingleNewsItemQuery,
 } from '../../../graphql/schema'
-import {
-  richText,
-  Slice as SliceType,
-  Image,
-} from '@island.is/island-ui/contentful'
-import { useNamespace } from '@island.is/web/hooks'
 
 interface NewsArticleProps {
   newsItem: GetSingleNewsItemQuery['getSingleNews']

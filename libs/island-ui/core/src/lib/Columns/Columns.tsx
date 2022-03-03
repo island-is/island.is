@@ -1,13 +1,14 @@
 import React, { createContext, ReactElement } from 'react'
-import { Box } from '../Box/Box'
-import { ColumnProps } from '../Column/Column'
-import { Space, ResponsiveSpace } from '../Box/useBoxStyles'
+
 import { useNegativeMarginLeft } from '../../hooks/useNegativeMargin/useNegativeMargin'
-import { normaliseResponsiveProp } from '../../utils/responsiveProp'
 import {
-  resolveCollapsibleAlignmentProps,
   CollapsibleAlignmentProps,
+  resolveCollapsibleAlignmentProps,
 } from '../../utils/collapsibleAlignmentProps'
+import { normaliseResponsiveProp } from '../../utils/responsiveProp'
+import { Box } from '../Box/Box'
+import { ResponsiveSpace,Space } from '../Box/useBoxStyles'
+import { ColumnProps } from '../Column/Column'
 
 type CollapsibleAlignmentChildProps = ReturnType<
   typeof resolveCollapsibleAlignmentProps

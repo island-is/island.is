@@ -12,10 +12,11 @@ import {
   XRoadConfig,
 } from '@island.is/nest/config'
 
-import { DocumentController } from './modules/documents/document.controller'
-import { DocumentsInfraController } from './modules/infra/documentsInfra.controller'
-import { FinanceDocumentController } from './modules/finance-documents/document.controller'
 import { environment } from '../environments'
+
+import { DocumentController } from './modules/documents/document.controller'
+import { FinanceDocumentController } from './modules/finance-documents/document.controller'
+import { DocumentsInfraController } from './modules/infra/documentsInfra.controller'
 
 @Module({
   controllers: [

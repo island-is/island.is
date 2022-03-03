@@ -1,8 +1,8 @@
-import request from 'supertest'
 import { getModelToken } from '@nestjs/sequelize'
+import request from 'supertest'
 
-import { ApiScope } from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
+import { ApiScope } from '@island.is/auth-api-lib'
 import {
   createCurrentUser,
   createNationalRegistryUser,

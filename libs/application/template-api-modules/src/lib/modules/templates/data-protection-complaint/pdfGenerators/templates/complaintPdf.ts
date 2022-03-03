@@ -1,7 +1,15 @@
-import { ComplaintPDF } from '../../models'
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
+import parseISO from 'date-fns/parseISO'
 
 import { Application } from '@island.is/application/core'
+import { OnBehalf } from '@island.is/application/templates/data-protection-complaint'
+import { DocumentInfo } from '@island.is/clients/data-protection-complaint'
+
 import { applicationToComplaintPDF } from '../../data-protection-utils'
+import { ComplaintPDF } from '../../models'
+import { dataProtectionLogo } from '../assets/logo'
+import { PdfConstants } from '../constants'
 import { generatePdf } from '../pdfGenerator'
 import {
   addformFieldAndValue,
@@ -12,13 +20,6 @@ import {
   formatSsn,
   setPageHeader,
 } from '../pdfUtils'
-import { PdfConstants } from '../constants'
-import { dataProtectionLogo } from '../assets/logo'
-import format from 'date-fns/format'
-import parseISO from 'date-fns/parseISO'
-import is from 'date-fns/locale/is'
-import { OnBehalf } from '@island.is/application/templates/data-protection-complaint'
-import { DocumentInfo } from '@island.is/clients/data-protection-complaint'
 
 export async function generateComplaintPdf(
   application: Application,

@@ -10,32 +10,33 @@ import {
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import {
   JwtAuthGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { judgeRule, prosecutorRule, registrarRule } from '../../guards'
 import {
   Case,
-  CaseNotCompletedGuard,
-  CurrentCase,
   CaseExistsGuard,
+  CaseNotCompletedGuard,
   CaseReadGuard,
   CaseReceivedGuard,
   CaseWriteGuard,
+  CurrentCase,
 } from '../case'
-import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
-import { CurrentCaseFile } from './guards/caseFile.decorator'
-import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
+
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
-import { PresignedPost } from './models/presignedPost.model'
-import { CaseFile } from './models/file.model'
+import { CurrentCaseFile } from './guards/caseFile.decorator'
+import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
+import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
 import { DeleteFileResponse } from './models/deleteFile.response'
+import { CaseFile } from './models/file.model'
+import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { FileService } from './file.service'

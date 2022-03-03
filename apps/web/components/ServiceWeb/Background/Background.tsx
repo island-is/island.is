@@ -1,7 +1,9 @@
 import React, { ReactNode, useEffect, useState } from 'react'
 import cn from 'classnames'
 import dynamic from 'next/dynamic'
+
 import { Hidden } from '@island.is/island-ui/core'
+
 import { BackgroundProps } from '../types'
 
 import * as styles from './Background.css'

@@ -6,8 +6,8 @@ import * as appUtils from './utils'
 export const getDataProviders = () => import('./dataProviders/')
 export const getFields = () => import('./fields')
 
-export * from './types'
 export * from './shared'
+export * from './types'
 
 export type AccidentNotificationAnswers = AccidentNotification
 

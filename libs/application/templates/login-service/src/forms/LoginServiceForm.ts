@@ -1,24 +1,25 @@
 import {
-  buildForm,
-  buildSection,
-  Form,
-  FormModes,
+  buildCheckboxField,
   buildCustomField,
+  buildForm,
   buildMultiField,
-  buildTextField,
+  buildSection,
   buildSelectField,
   buildSubmitField,
+  buildTextField,
   DefaultEvents,
-  buildCheckboxField,
+  Form,
+  FormModes,
 } from '@island.is/application/core'
+
 import {
-  section,
-  application,
-  terms,
   applicant,
-  technicalAnnouncements,
+  application,
   overview,
+  section,
   submitted,
+  technicalAnnouncements,
+  terms,
 } from '../lib/messages'
 import { TYPE_OF_OPERATION, YES } from '../shared/constants'
 

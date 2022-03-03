@@ -1,14 +1,16 @@
 import {
-  ApplicationTemplate,
-  ApplicationTypes,
   ApplicationContext,
   ApplicationStateSchema,
-  DefaultStateLifeCycle,
+  ApplicationTemplate,
+  ApplicationTypes,
   DefaultEvents,
+  DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
+
 import { ApiActions } from '../shared'
-import { Events, States, Roles } from './constants'
+
+import { Events, Roles,States } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 

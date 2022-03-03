@@ -1,4 +1,5 @@
 import { AllHTMLAttributes, ElementType } from 'react'
+
 import { UseBoxStylesProps } from './useBoxStyles'
 
 export interface BoxProps

@@ -1,5 +1,7 @@
 import React from 'react'
+
 import { Box } from '../Box/Box'
+
 import * as styleRefs from './Divider.css'
 
 export interface DividerProps {

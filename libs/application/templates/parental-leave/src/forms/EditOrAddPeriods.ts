@@ -14,8 +14,8 @@ import {
 import Logo from '../assets/Logo'
 import { parentalLeaveFormMessages } from '../lib/messages'
 import {
-  getApplicationAnswers,
   getAllPeriodDates,
+  getApplicationAnswers,
 } from '../lib/parentalLeaveUtils'
 
 export const EditOrAddPeriods: Form = buildForm({

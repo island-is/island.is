@@ -9,6 +9,7 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
+
 import { m } from './messages'
 
 export const MissingInfoForm: Form = buildForm({

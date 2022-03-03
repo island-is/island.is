@@ -1,6 +1,7 @@
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { ConfigType } from '@island.is/nest/config'
-import { UserProfileApi, Configuration } from '../../gen/fetch'
+
+import { Configuration,UserProfileApi } from '../../gen/fetch'
 
 import { UserProfileClientConfig } from './userProfileClient.config'
 

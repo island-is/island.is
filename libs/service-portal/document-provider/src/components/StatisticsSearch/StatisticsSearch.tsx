@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
+
 import {
+  AsyncSearch,
   Box,
   GridColumn,
   GridRow,
   Select,
-  AsyncSearch,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+
 import { m } from '../../lib/messages'
 
 export type CategoryFormOption = {

@@ -6,10 +6,10 @@ import { DocumentOauthConnection } from './documentProvider.connection'
 import type { DocumentProviderClientConfig } from './documentProviderClientConfig'
 import { DOCUMENT_PROVIDER_CLIENT_CONFIG_PROD } from './documentProviderClientConfig'
 import {
-  ClientCredentials,
   AudienceAndScope,
-  TestResult,
+  ClientCredentials,
   Statistics,
+  TestResult,
 } from './models'
 
 interface StatisticPayload {

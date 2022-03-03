@@ -2,11 +2,11 @@ import express from 'express'
 
 import { logger } from '@island.is/logging'
 
-import { issuerRoutes, applicationRoutes } from './domains'
+import { applicationRoutes,issuerRoutes } from './domains'
 import {
   setupMessageQueue,
-  setupSentryRequestHandler,
   setupSentryErrorHandler,
+  setupSentryRequestHandler,
 } from './extensions'
 
 const app = express()

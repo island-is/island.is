@@ -1,6 +1,7 @@
-import isEqual from 'lodash/isEqual'
 import type { StyleRule } from '@vanilla-extract/css'
+import isEqual from 'lodash/isEqual'
 import omit from 'lodash/omit'
+
 import * as color from './colors'
 
 export const UNIT = 8

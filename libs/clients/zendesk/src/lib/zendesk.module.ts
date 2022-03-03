@@ -1,9 +1,9 @@
 import { DynamicModule } from '@nestjs/common'
 
 import {
+  ZENDESK_OPTIONS,
   ZendeskService,
   ZendeskServiceOptions,
-  ZENDESK_OPTIONS,
 } from './zendesk.service'
 
 export class ZendeskModule {

@@ -1,8 +1,9 @@
 import { DynamicModule, Global, Module } from '@nestjs/common'
-import { AuditService } from './audit.service'
-import { AUDIT_OPTIONS, AuditOptions } from './audit.options'
-import { AuditInterceptor } from './audit.interceptor'
 import { APP_INTERCEPTOR } from '@nestjs/core'
+
+import { AuditInterceptor } from './audit.interceptor'
+import { AUDIT_OPTIONS, AuditOptions } from './audit.options'
+import { AuditService } from './audit.service'
 
 @Global()
 @Module({

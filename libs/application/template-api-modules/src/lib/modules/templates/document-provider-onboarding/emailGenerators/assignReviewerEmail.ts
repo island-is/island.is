@@ -1,5 +1,6 @@
 import get from 'lodash/get'
 import { dedent } from 'ts-dedent'
+
 import { AssignmentEmailTemplateGenerator } from '../../../../types'
 
 export const generateAssignReviewerEmail: AssignmentEmailTemplateGenerator = (

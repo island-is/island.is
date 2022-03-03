@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 import { ISupportCategory } from '../generated/contentfulTypes'
+
 import { mapOrganization, Organization } from './organization.model'
 
 @ObjectType()

@@ -1,5 +1,7 @@
 import { FormValue } from '@island.is/application/core'
+
 import { AccidentTypeEnum, WorkAccidentTypeEnum } from '../types'
+
 import { isProfessionalAthleteAccident } from './isProfessionalAthleteAccident'
 
 describe('isProfessionalAthleteAccident', () => {

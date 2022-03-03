@@ -1,9 +1,9 @@
-import { Module, HttpModule, forwardRef } from '@nestjs/common'
+import { forwardRef,HttpModule, Module } from '@nestjs/common'
 
 import { RecyclingRequestModule } from '../recyclingRequest/recyclingRequest.module'
 
-import { SamgongustofaService } from './samgongustofa.service'
 import { SamgongustofaResolver } from './samgongustofa.resolver'
+import { SamgongustofaService } from './samgongustofa.service'
 
 @Module({
   imports: [HttpModule, forwardRef(() => RecyclingRequestModule)],

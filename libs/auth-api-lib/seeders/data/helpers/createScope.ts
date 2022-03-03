@@ -1,6 +1,7 @@
 import { QueryInterface } from 'sequelize'
-import { DbScope } from './types'
+
 import { safeBulkInsert } from './safeBulkInsert'
+import { DbScope } from './types'
 
 interface ScopeOptions {
   /**

@@ -1,8 +1,8 @@
 import React from 'react'
-import { PlausiblePageviewDetail } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import { useParams } from 'react-router-dom'
-import { useQuery, gql } from '@apollo/client'
+import { gql,useQuery } from '@apollo/client'
+
 import { Query } from '@island.is/api/schema'
 import {
   Box,
@@ -12,15 +12,16 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { PlausiblePageviewDetail } from '@island.is/service-portal/core'
 import {
   formatNationalId,
+  m,
   NotFound,
   ServicePortalModuleComponent,
-  UserInfoLine,
-  m,
   ServicePortalPath,
+  UserInfoLine,
 } from '@island.is/service-portal/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
 
 const NationalRegistryCurrentUserQuery = gql`
   query NationalRegistryCurrentUserQuery {

@@ -1,7 +1,9 @@
-import { ProblemType } from '@island.is/shared/problem'
 import { ForbiddenError } from 'apollo-server-express'
-import { CreateRequest, setup } from './test/setup'
+
+import { ProblemType } from '@island.is/shared/problem'
+
 import { expectGraphqlProblem } from './test/expectGraphqlProblem'
+import { CreateRequest, setup } from './test/setup'
 
 const handler = () => {
   throw new ForbiddenError('User does not access.')

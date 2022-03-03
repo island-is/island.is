@@ -1,31 +1,31 @@
 import React, { FC, useMemo, useState } from 'react'
+import { useFormContext } from 'react-hook-form'
 import { FieldErrors, FieldValues } from 'react-hook-form/dist/types/form'
 import parseISO from 'date-fns/parseISO'
-import { useFormContext } from 'react-hook-form'
 
 import {
+  CustomField,
+  extractRepeaterIndexFromField,
   FieldBaseProps,
   FieldComponents,
-  CustomField,
   FieldTypes,
   SelectOption,
   StaticTextObject,
-  extractRepeaterIndexFromField,
 } from '@island.is/application/core'
 import { SelectFormField } from '@island.is/application/ui-fields'
+import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
-import { Box } from '@island.is/island-ui/core'
 
+import { StartDateOptions } from '../../constants'
+import { useRemainingRights } from '../../hooks/useRemainingRights'
 import {
-  calculatePeriodLength,
   calculateMaxPercentageForPeriod,
   calculateMinPercentageForPeriod,
+  calculatePeriodLength,
 } from '../../lib/directorateOfLabour.utils'
-import { parentalLeaveFormMessages, errorMessages } from '../../lib/messages'
+import { errorMessages,parentalLeaveFormMessages } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
-import { useRemainingRights } from '../../hooks/useRemainingRights'
-import { StartDateOptions } from '../../constants'
 
 type FieldBaseAndCustomField = FieldBaseProps & CustomField
 

@@ -1,4 +1,4 @@
-import { style, keyframes } from '@vanilla-extract/css'
+import { keyframes,style } from '@vanilla-extract/css'
 
 export const isLoadingContainer = style({
   opacity: 0.85,

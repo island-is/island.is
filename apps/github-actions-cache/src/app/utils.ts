@@ -1,8 +1,8 @@
-import * as express from 'express'
 import { S3 } from 'aws-sdk'
-import { logger } from '@island.is/logging'
-
+import * as express from 'express'
 import stream from 'stream'
+
+import { logger } from '@island.is/logging'
 
 export const error = (res: express.Response, error: string, status = 400) => {
   logger.warn(`Sending error "${error}" with status ${status}`)

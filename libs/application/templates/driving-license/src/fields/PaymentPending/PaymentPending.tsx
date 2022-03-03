@@ -1,4 +1,5 @@
 import React, { FC, useEffect } from 'react'
+
 import {
   CustomField,
   DefaultEvents,
@@ -6,8 +7,10 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
+
 import { m } from '../../lib/messages'
-import { useSubmitApplication, usePaymentStatus, useMsg } from './hooks'
+
+import { useMsg,usePaymentStatus, useSubmitApplication } from './hooks'
 import { getRedirectUrl, isComingFromRedirect } from './util'
 
 export interface Props extends FieldBaseProps {

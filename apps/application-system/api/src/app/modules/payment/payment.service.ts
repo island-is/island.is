@@ -1,18 +1,21 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Payment } from './payment.model'
+import { ApolloError } from 'apollo-server-express'
 import { Op } from 'sequelize'
-import { PaymentAPI, PAYMENT_OPTIONS } from '@island.is/clients/payment'
+
+import type { User } from '@island.is/auth-nest-tools'
 import type {
   Charge,
-  PaymentServiceOptions,
   Item,
+  PaymentServiceOptions,
 } from '@island.is/clients/payment'
-import type { User } from '@island.is/auth-nest-tools'
-import { CreateChargeResult } from './payment.type'
+import { PAYMENT_OPTIONS,PaymentAPI } from '@island.is/clients/payment'
 import { logger } from '@island.is/logging'
-import { ApolloError } from 'apollo-server-express'
+
 import { Application as ApplicationModel } from '../application/application.model'
+
+import { Payment } from './payment.model'
+import { CreateChargeResult } from './payment.type'
 
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))

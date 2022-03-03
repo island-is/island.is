@@ -1,8 +1,10 @@
 import React, { FC } from 'react'
+import { useFormContext } from 'react-hook-form'
+
 import { formatText, getValueViaPath } from '@island.is/application/core'
 import { Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useFormContext } from 'react-hook-form'
+
 import { m } from '../../forms/messages'
 import { MissingInfoType, ReviewFieldProps } from '../../types'
 

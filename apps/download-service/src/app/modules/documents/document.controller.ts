@@ -3,15 +3,14 @@ import {
   Controller,
   Header,
   Inject,
+  Param,
   Post,
   Res,
-  Param,
   UseGuards,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { GetDocumentDto } from './dto/getDocument.dto'
 import { Response } from 'express'
-import { DocumentClient } from '@island.is/clients/documents'
+
 import { DocumentsScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -20,6 +19,9 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
+import { DocumentClient } from '@island.is/clients/documents'
+
+import { GetDocumentDto } from './dto/getDocument.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(DocumentsScope.main)

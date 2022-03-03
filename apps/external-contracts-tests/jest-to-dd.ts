@@ -1,5 +1,5 @@
-import { StatsD } from 'hot-shots'
 import { readFileSync } from 'fs'
+import { StatsD } from 'hot-shots'
 import { resolve } from 'path'
 
 // this is not in use yet, but will be part of the next phase in this development

@@ -1,20 +1,21 @@
 import { UseGuards } from '@nestjs/common'
-import { Resolver, Query, ResolveField, Parent } from '@nestjs/graphql'
+import { Parent,Query, ResolveField, Resolver } from '@nestjs/graphql'
 import * as kennitala from 'kennitala'
 
 import { ApiScope } from '@island.is/auth/scopes'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import {
-  IdsUserGuard,
-  ScopesGuard,
   CurrentUser,
+  IdsUserGuard,
   Scopes,
+  ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 
-import { NationalRegistryUser, Citizenship } from './models'
 import { NationalRegistryService } from '../nationalRegistry.service'
 import { User } from '../types'
+
+import { Citizenship,NationalRegistryUser } from './models'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)

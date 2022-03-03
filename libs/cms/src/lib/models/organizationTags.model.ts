@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+
 import { OrganizationTag } from './organizationTag.model'
 
 @ObjectType()

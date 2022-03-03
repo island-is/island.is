@@ -1,5 +1,7 @@
-import { Field, FieldBaseProps } from '@island.is/application/core'
 import React, { FC } from 'react'
+
+import { Field, FieldBaseProps } from '@island.is/application/core'
+
 import BoxChart, { BoxChartProps } from '../components/BoxChart'
 
 interface BoxChartFieldWrapperProps extends FieldBaseProps {

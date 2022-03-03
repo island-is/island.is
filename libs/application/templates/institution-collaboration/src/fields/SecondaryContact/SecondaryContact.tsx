@@ -1,11 +1,14 @@
 import React, { FC } from 'react'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
-import { Box, Text, Stack, Icon, Button } from '@island.is/island-ui/core'
 import { useFormContext } from 'react-hook-form'
-import { YES, NO } from '../../constants'
-import * as styles from './SecondaryContact.css'
+
+import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { Box, Button,Icon, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+
+import { NO,YES } from '../../constants'
 import { institutionApplicationMessages as m } from '../../lib/messages'
+
+import * as styles from './SecondaryContact.css'
 const SecondaryContact: FC<FieldBaseProps> = ({ field, application }) => {
   const { setValue, getValues } = useFormContext()
   const { formatMessage } = useLocale()

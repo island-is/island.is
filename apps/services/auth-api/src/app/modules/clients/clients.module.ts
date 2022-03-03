@@ -1,22 +1,24 @@
 import { Module } from '@nestjs/common'
-import { ClientsController } from './clients.controller'
-import { OriginsController } from './origins.controller'
+import { SequelizeModule } from '@nestjs/sequelize'
+
 import {
+  ApiScope,
   Client,
-  ClientAllowedScope,
   ClientAllowedCorsOrigin,
+  ClientAllowedScope,
+  ClientClaim,
+  ClientGrantType,
+  ClientIdpRestrictions,
   ClientPostLogoutRedirectUri,
   ClientRedirectUri,
-  ClientIdpRestrictions,
   ClientSecret,
-  ClientGrantType,
   ClientsService,
-  ClientClaim,
-  IdpProvider,
-  ApiScope,
   IdentityResource,
+  IdpProvider,
 } from '@island.is/auth-api-lib'
-import { SequelizeModule } from '@nestjs/sequelize'
+
+import { ClientsController } from './clients.controller'
+import { OriginsController } from './origins.controller'
 
 @Module({
   imports: [

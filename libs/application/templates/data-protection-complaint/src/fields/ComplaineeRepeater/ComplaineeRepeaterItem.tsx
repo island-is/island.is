@@ -1,3 +1,6 @@
+import React, { FC, useState } from 'react'
+import { ArrayField } from 'react-hook-form'
+
 import {
   Application,
   formatText,
@@ -15,11 +18,12 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController, RadioController } from '@island.is/shared/form-fields'
-import React, { FC, useState } from 'react'
-import { ArrayField } from 'react-hook-form'
+
 import { complaint, sharedFields } from '../../lib/messages'
 import { NO, YES } from '../../shared'
+
 import { ComplaineeField } from './ComplaineeRepeater'
+
 import * as styles from './ComplaineeRepeater.css'
 
 interface Props {

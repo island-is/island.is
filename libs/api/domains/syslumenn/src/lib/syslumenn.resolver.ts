@@ -1,14 +1,8 @@
-import { Args, Directive, Query, Resolver } from '@nestjs/graphql'
-import { GetHomestaysInput } from './dto/getHomestays.input'
-import { GetOperatingLicensesInput } from './dto/getOperatingLicenses.input'
-import { Homestay } from './models/homestay'
-import { SyslumennAuction } from './models/syslumennAuction'
-import { SyslumennService } from '@island.is/clients/syslumenn'
-import { PaginatedOperatingLicenses } from './models/paginatedOperatingLicenses'
-import { CertificateInfoResponse } from './models/certificateInfo'
-import { DistrictCommissionerAgencies } from './models/districtCommissionerAgencies'
 import { UseGuards } from '@nestjs/common'
+import { Args, Directive, Query, Resolver } from '@nestjs/graphql'
+
 import { ApiScope } from '@island.is/auth/scopes'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   BypassAuth,
   CurrentUser,
@@ -16,7 +10,15 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import type { User } from '@island.is/auth-nest-tools'
+import { SyslumennService } from '@island.is/clients/syslumenn'
+
+import { GetHomestaysInput } from './dto/getHomestays.input'
+import { GetOperatingLicensesInput } from './dto/getOperatingLicenses.input'
+import { CertificateInfoResponse } from './models/certificateInfo'
+import { DistrictCommissionerAgencies } from './models/districtCommissionerAgencies'
+import { Homestay } from './models/homestay'
+import { PaginatedOperatingLicenses } from './models/paginatedOperatingLicenses'
+import { SyslumennAuction } from './models/syslumennAuction'
 
 const cacheTime = process.env.CACHE_TIME || 300
 

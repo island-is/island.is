@@ -1,8 +1,10 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ID,ObjectType } from '@nestjs/graphql'
+
+import { ConnectionDiscountCode } from '@island.is/air-discount-scheme/types'
 
 import { User } from '../user'
+
 import { ConnectionDiscountCode as GQLConnectionDiscountCode } from './connectionDiscountCode.model'
-import { ConnectionDiscountCode } from '@island.is/air-discount-scheme/types'
 
 @ObjectType()
 export class Discount {

@@ -1,3 +1,5 @@
+import React, { FC } from 'react'
+
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import {
   AccordionCard,
@@ -9,9 +11,9 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { FC } from 'react'
+
 import { Illustration } from '../../assets'
-import { conclusion, betaTest } from '../../lib/messages'
+import { betaTest,conclusion } from '../../lib/messages'
 
 export const FormConclusion: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()

@@ -1,13 +1,16 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ID,ObjectType } from '@nestjs/graphql'
+
+import { SystemMetadata } from '@island.is/shared/types'
+
 import { IVidspyrnaFrontpage } from '../generated/contentfulTypes'
-import { Image, mapImage } from './image.model'
-import { mapDocument, SliceUnion } from '../unions/slice.union'
 import {
   AdgerdirSliceUnion,
   mapAdgerdirSliceUnion,
 } from '../unions/adgerdirSlice.union'
-import { SystemMetadata } from '@island.is/shared/types'
+import { mapDocument, SliceUnion } from '../unions/slice.union'
+
+import { Image, mapImage } from './image.model'
 
 @ObjectType()
 export class AdgerdirFrontpage {

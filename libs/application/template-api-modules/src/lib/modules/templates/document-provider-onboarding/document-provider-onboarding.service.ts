@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common'
 import get from 'lodash/get'
 
-import { logger } from '@island.is/logging'
 import { OrganisationsApi } from '@island.is/clients/document-provider'
+import { logger } from '@island.is/logging'
 
-import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
+import { SharedTemplateApiService } from '../../shared'
+
 import {
-  generateAssignReviewerEmail,
   generateApplicationApprovedEmail,
   generateApplicationRejectedEmail,
+  generateAssignReviewerEmail,
 } from './emailGenerators'
 
 interface Contact {

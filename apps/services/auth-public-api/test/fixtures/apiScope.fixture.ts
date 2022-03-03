@@ -1,4 +1,5 @@
 import * as faker from 'faker'
+
 import { ApiScopesDTO } from '@island.is/auth-api-lib'
 
 /**

@@ -1,19 +1,19 @@
 import React, { FC } from 'react'
 
-import { Box, Text } from '@island.is/island-ui/core'
 import { Application } from '@island.is/application/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
-import BoxChart, { BoxChartKey } from '../components/BoxChart'
-import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
-  maxDaysToGiveOrReceive,
   defaultMonths,
-  minMonths,
+  maxDaysToGiveOrReceive,
   maxMonths,
+  minMonths,
 } from '../../config'
 import { YES } from '../../constants'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
+import { parentalLeaveFormMessages } from '../../lib/messages'
+import BoxChart, { BoxChartKey } from '../components/BoxChart'
 
 interface YourRightsBoxChartProps {
   application: Application

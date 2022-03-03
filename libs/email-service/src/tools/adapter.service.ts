@@ -1,16 +1,17 @@
-import { readFileSync } from 'fs'
-import { basename, extname } from 'path'
-import { Attachment } from 'nodemailer/lib/mailer'
 import { Inject, Injectable } from '@nestjs/common'
-import handlebars from 'handlebars'
+import { readFileSync } from 'fs'
 import glob from 'glob'
+import handlebars from 'handlebars'
 import juice from 'juice'
+import { Attachment } from 'nodemailer/lib/mailer'
+import { basename, extname } from 'path'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { ImageComponent, Template } from '../types'
+
 import registerHelpers from './helpers'
 
 @Injectable()

@@ -1,22 +1,25 @@
 import React, { FC, useEffect } from 'react'
-import { useLocale } from '@island.is/localization'
+import { useFieldArray } from 'react-hook-form'
+import get from 'lodash/get'
+
 import {
   FieldBaseProps,
   formatText,
   getErrorViaPath,
 } from '@island.is/application/core'
-import get from 'lodash/get'
-import { InputController } from '@island.is/shared/form-fields'
 import {
   Box,
-  Text,
+  Button,
   GridColumn,
   GridRow,
-  Button,
+  Text,
 } from '@island.is/island-ui/core'
-import { useFieldArray } from 'react-hook-form'
-import * as styles from './CommissionFieldRepeater.css'
+import { useLocale } from '@island.is/localization'
+import { InputController } from '@island.is/shared/form-fields'
+
 import { info } from '../../lib/messages'
+
+import * as styles from './CommissionFieldRepeater.css'
 
 type PersonField = {
   name: string

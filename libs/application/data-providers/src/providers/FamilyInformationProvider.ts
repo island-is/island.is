@@ -1,10 +1,9 @@
+import { FamilyMember } from '@island.is/api/domains/national-registry'
 import {
   BasicDataProvider,
-  SuccessfulDataProviderResult,
   FailedDataProviderResult,
+  SuccessfulDataProviderResult,
 } from '@island.is/application/core'
-
-import { FamilyMember } from '@island.is/api/domains/national-registry'
 
 export class FamilyInformationProvider extends BasicDataProvider {
   type = 'FamilyInformationProvider'

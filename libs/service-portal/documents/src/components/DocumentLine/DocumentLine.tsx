@@ -1,16 +1,18 @@
 import React, { FC } from 'react'
-import { Document } from '@island.is/api/schema'
-import { useLocale } from '@island.is/localization'
-import { Text, Box, GridRow, GridColumn, Link } from '@island.is/island-ui/core'
-import format from 'date-fns/format'
-import { dateFormat } from '@island.is/shared/constants'
-import * as styles from './DocumentLine.css'
-import { User } from 'oidc-client'
-import cn from 'classnames'
-import { m } from '@island.is/service-portal/core'
-import { getAccessToken } from '@island.is/auth/react'
 import { useWindowSize } from 'react-use'
+import cn from 'classnames'
+import format from 'date-fns/format'
+import { User } from 'oidc-client'
+
+import { Document } from '@island.is/api/schema'
+import { getAccessToken } from '@island.is/auth/react'
+import { Box, GridColumn, GridRow, Link,Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { useLocale } from '@island.is/localization'
+import { m } from '@island.is/service-portal/core'
+import { dateFormat } from '@island.is/shared/constants'
+
+import * as styles from './DocumentLine.css'
 
 interface Props {
   documentLine: Document

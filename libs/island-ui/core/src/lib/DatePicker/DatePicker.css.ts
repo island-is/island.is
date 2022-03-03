@@ -1,5 +1,7 @@
-import { style, styleVariants, globalStyle } from '@vanilla-extract/css'
+import { globalStyle,style, styleVariants } from '@vanilla-extract/css'
+
 import { theme, themeUtils } from '@island.is/island-ui/theme'
+
 import * as mixins from '../Input/Input.mixins'
 
 export const root = style({

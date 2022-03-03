@@ -9,9 +9,11 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
+
 import { EndorsementList } from '../../endorsementList/endorsementList.model'
-import { EndorsementMetadata } from './endorsementMetadata.model'
+
 import { EndorsementListOpen } from './endorsementListOpen.model'
+import { EndorsementMetadata } from './endorsementMetadata.model'
 
 @Table({
   tableName: 'endorsement',

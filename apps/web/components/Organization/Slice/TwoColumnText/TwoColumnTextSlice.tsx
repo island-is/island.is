@@ -1,5 +1,6 @@
 import React from 'react'
-import { TwoColumnText } from '@island.is/web/graphql/schema'
+
+import { richText, SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   GridColumn,
@@ -8,7 +9,7 @@ import {
   Hidden,
   Text,
 } from '@island.is/island-ui/core'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
+import { TwoColumnText } from '@island.is/web/graphql/schema'
 
 interface SliceProps {
   slice: TwoColumnText

@@ -1,6 +1,8 @@
 import { getSlugFromType } from '@island.is/application/core'
 import { CRCApplication } from '@island.is/application/templates/children-residence-change'
+
 import { EmailTemplateGenerator } from '../../../../types'
+
 import { DistrictCommissionerLogo, fontStyles } from './consts'
 
 export const transferRequestedEmail: EmailTemplateGenerator = (props) => {

@@ -1,6 +1,8 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+
 import { IGroupedMenu } from '../generated/contentfulTypes'
-import { Menu, mapMenu } from './menu.model'
+
+import { mapMenu,Menu } from './menu.model'
 
 @ObjectType()
 export class GroupedMenu {

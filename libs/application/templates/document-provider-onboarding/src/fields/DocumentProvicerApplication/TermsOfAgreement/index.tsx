@@ -1,13 +1,14 @@
 import React, { FC } from 'react'
-import { useFormContext, Controller } from 'react-hook-form'
+import { Controller,useFormContext } from 'react-hook-form'
+
 import {
   FieldBaseProps,
-  getValueViaPath,
   formatText,
+  getValueViaPath,
 } from '@island.is/application/core'
-import { Box, Checkbox, Button, Link } from '@island.is/island-ui/core'
-import { FieldDescription } from '@island.is/shared/form-fields'
+import { Box, Button, Checkbox, Link } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { FieldDescription } from '@island.is/shared/form-fields'
 
 import { m } from '../../../forms/messages'
 

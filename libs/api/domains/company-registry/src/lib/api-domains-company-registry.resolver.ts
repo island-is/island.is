@@ -1,24 +1,25 @@
-import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
+import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+
 import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
-  IdsUserGuard,
-  ScopesGuard,
   CurrentUser,
+  IdsUserGuard,
   Scopes,
+  ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { RSKService } from '@island.is/clients/rsk/v1'
-import { Audit } from '@island.is/nest/audit'
-
-import { CurrentUserCompanies } from './models/currentUserCompanies.model'
-import { RskCompany, RskCompanyInfo } from './models/rskCompany.model'
-import { RskCompanyInfoInput } from './dto/RskCompanyInfo.input'
-import { RskCompanyInfoService } from './rsk-company-info.service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { RskCompanySearchItems } from './models/rskCompanySearchItems.model'
+import { Audit } from '@island.is/nest/audit'
+
+import { RskCompanyInfoInput } from './dto/RskCompanyInfo.input'
 import { RskCompanyInfoSearchInput } from './dto/RskCompanyInfoSearch.input'
+import { CurrentUserCompanies } from './models/currentUserCompanies.model'
+import { RskCompany, RskCompanyInfo } from './models/rskCompany.model'
+import { RskCompanySearchItems } from './models/rskCompanySearchItems.model'
+import { RskCompanyInfoService } from './rsk-company-info.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)

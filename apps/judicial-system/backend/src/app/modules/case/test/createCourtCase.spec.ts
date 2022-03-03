@@ -3,12 +3,13 @@ import { uuid } from 'uuidv4'
 import { CaseType } from '@island.is/judicial-system/types'
 
 import { randomEnum } from '../../../test'
-import { createTestingCaseModule } from './createTestingCaseModule'
 import { CourtService } from '../../court'
 import { Defendant } from '../../defendant'
-import { User } from '../../user'
 import { Institution } from '../../institution'
+import { User } from '../../user'
 import { Case } from '../models/case.model'
+
+import { createTestingCaseModule } from './createTestingCaseModule'
 
 interface Then {
   result: Case

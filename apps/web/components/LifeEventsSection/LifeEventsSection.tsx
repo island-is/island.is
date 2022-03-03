@@ -1,8 +1,9 @@
 import React from 'react'
-import { Text, GridContainer } from '@island.is/island-ui/core'
+
+import { GridContainer,Text } from '@island.is/island-ui/core'
 import { GridItems, IconTitleCard } from '@island.is/web/components'
-import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { GetFrontpageQuery } from '@island.is/web/graphql/schema'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 interface LifeEventsSectionProps {
   heading: string

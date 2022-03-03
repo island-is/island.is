@@ -1,5 +1,7 @@
 import { useIntl } from 'react-intl'
 
+import * as Constants from '@island.is/judicial-system/consts'
+import { capitalize } from '@island.is/judicial-system/formatters'
 import {
   Case,
   CaseType,
@@ -7,11 +9,10 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
-import { caseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import { sections } from '@island.is/judicial-system-web/messages/Core/sections'
 import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
-import { capitalize } from '@island.is/judicial-system/formatters'
-import * as Constants from '@island.is/judicial-system/consts'
+import { caseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
+
 import {
   isAccusedStepValidRC,
   isCourtHearingArrangemenstStepValidRC,
@@ -21,12 +22,12 @@ import {
   isDefendantStepValidIC,
   isHearingArrangementsStepValidIC,
   isHearingArrangementsStepValidRC,
-  isReceptionAndAssignmentStepValidRC,
-  isReceptionAndAssignmentStepValidIC,
   isPoliceDemandsStepValidIC,
   isPoliceDemandsStepValidRC,
   isPoliceReportStepValidIC,
   isPoliceReportStepValidRC,
+  isReceptionAndAssignmentStepValidIC,
+  isReceptionAndAssignmentStepValidRC,
   isRulingStepOneValidIC,
   isRulingStepOneValidRC,
   isRulingStepTwoValidIC,

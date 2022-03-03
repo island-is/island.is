@@ -1,13 +1,15 @@
 import React, { FC } from 'react'
+import { useQuery } from '@apollo/client'
+
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
-import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
+import { FieldDescription } from '@island.is/shared/form-fields'
 
-import PaymentsTable from './PaymentsTable'
-import { useQuery } from '@apollo/client'
 import { getExpectedDateOfBirth } from '../../lib/parentalLeaveUtils'
+
 import { getEstimatedPayments } from './estimatedPaymentsQuery'
+import PaymentsTable from './PaymentsTable'
 
 import * as styles from './PaymentSchedule.css'
 

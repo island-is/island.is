@@ -1,2 +1,2 @@
-export * from './UtlendingastofnunHeader'
 export * from './UtlendingastofnunFooter'
+export * from './UtlendingastofnunHeader'

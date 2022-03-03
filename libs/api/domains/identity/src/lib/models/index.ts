@@ -1,2 +1,2 @@
 export { Address } from './address.model'
-export { Identity, IdentityPerson, IdentityCompany } from './identity.model'
+export { Identity, IdentityCompany,IdentityPerson } from './identity.model'

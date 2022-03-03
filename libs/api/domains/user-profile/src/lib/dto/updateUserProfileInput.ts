@@ -1,13 +1,14 @@
 import { Field, InputType } from '@nestjs/graphql'
 import {
-  IsString,
-  IsOptional,
+  IsBoolean,
   IsEmail,
   IsEnum,
-  IsBoolean,
+  IsOptional,
+  IsString,
 } from 'class-validator'
-import { Locale } from '../types/locales.enum'
+
 import { DataStatus } from '../types/dataStatus.enum'
+import { Locale } from '../types/locales.enum'
 
 @InputType()
 export class UpdateUserProfileInput {

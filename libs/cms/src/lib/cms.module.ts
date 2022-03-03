@@ -1,15 +1,17 @@
 import { Module } from '@nestjs/common'
-import { ElasticService } from '@island.is/content-search-toolkit'
 import { TerminusModule } from '@nestjs/terminus'
-import {
-  CmsResolver,
-  ArticleResolver,
-  LatestNewsSliceResolver,
-} from './cms.resolver'
+
+import { ElasticService } from '@island.is/content-search-toolkit'
+
 import { CmsContentfulService } from './cms.contentful.service'
-import { ContentfulRepository } from './contentful.repository'
 import { CmsElasticsearchService } from './cms.elasticsearch.service'
 import { CmsHealthIndicator } from './cms.health'
+import {
+  ArticleResolver,
+  CmsResolver,
+  LatestNewsSliceResolver,
+} from './cms.resolver'
+import { ContentfulRepository } from './contentful.repository'
 
 @Module({
   imports: [TerminusModule],

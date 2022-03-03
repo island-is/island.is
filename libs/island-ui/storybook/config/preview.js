@@ -1,6 +1,6 @@
 import React from 'react'
-import { IntlProvider } from 'react-intl'
 import { FormProvider, useForm } from 'react-hook-form'
+import { IntlProvider } from 'react-intl'
 import { ApolloProvider } from '@apollo/client'
 
 export const parameters = {

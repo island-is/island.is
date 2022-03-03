@@ -1,26 +1,26 @@
-import { join } from 'path'
 import get from 'lodash/get'
+import { join } from 'path'
 
-import {
-  ParentalLeave,
-  Period,
-  Employer,
-  Union,
-  PensionFund,
-  Attachment,
-} from '@island.is/clients/vmst'
 import { Application } from '@island.is/application/core'
 import {
-  getSelectedChild,
+  applicantIsMale,
   getApplicationAnswers,
-  getSpouse,
-  ParentalRelations,
-  YES,
-  Period as AnswerPeriod,
   getApplicationExternalData,
   getOtherParentId,
-  applicantIsMale,
+  getSelectedChild,
+  getSpouse,
+  ParentalRelations,
+  Period as AnswerPeriod,
+  YES,
 } from '@island.is/application/templates/parental-leave'
+import {
+  Attachment,
+  Employer,
+  ParentalLeave,
+  PensionFund,
+  Period,
+  Union,
+} from '@island.is/clients/vmst'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { apiConstants } from './constants'

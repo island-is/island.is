@@ -1,5 +1,6 @@
-import { IsString } from 'class-validator'
 import { Field, ObjectType } from '@nestjs/graphql'
+import { IsString } from 'class-validator'
+
 import { XroadIdentifier as IXroadIdentifier } from '@island.is/api-catalogue/types'
 
 @ObjectType()

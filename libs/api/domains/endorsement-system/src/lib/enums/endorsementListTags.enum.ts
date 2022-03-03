@@ -1,4 +1,5 @@
 import { registerEnumType } from '@nestjs/graphql'
+
 import { EndorsementListTagsEnum } from '../../../gen/fetch'
 
 registerEnumType(EndorsementListTagsEnum, {

@@ -1,10 +1,11 @@
 import * as kennitala from 'kennitala'
 
-import { GenericDrivingLicenseResponse } from './genericDrivingLicense.type'
 import {
   GenericLicenseDataFieldType,
   GenericUserLicensePayload,
 } from '../../licenceService.type'
+
+import { GenericDrivingLicenseResponse } from './genericDrivingLicense.type'
 
 export const parseDrivingLicensePayload = (
   licenses: GenericDrivingLicenseResponse[],

@@ -1,13 +1,15 @@
 import React, { FC, useState } from 'react'
 import format from 'date-fns/format'
-import { Table as T, Box, Pagination } from '@island.is/island-ui/core'
+import sortBy from 'lodash/sortBy'
+
+import { Box, Pagination,Table as T } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
-import sortBy from 'lodash/sortBy'
 import { dateFormat } from '@island.is/shared/constants'
-import amountFormat from '../../utils/amountFormat'
-import { ExpandRow, ExpandHeader } from '../../components/ExpandableTable'
+
+import { ExpandHeader,ExpandRow } from '../../components/ExpandableTable'
 import { CustomerRecordsDetails } from '../../screens/FinanceTransactions/FinanceTransactionsData.types'
+import amountFormat from '../../utils/amountFormat'
 import FinanceTransactionsDetail from '../FinanceTransactionsDetail/FinanceTransactionsDetail'
 
 const ITEMS_ON_PAGE = 20

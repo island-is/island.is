@@ -5,15 +5,18 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Endorsement } from './models/endorsement.model'
+import { Op, UniqueConstraintError } from 'sequelize'
+
+import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { EndorsementList } from '../endorsementList/endorsementList.model'
-import { Op, UniqueConstraintError } from 'sequelize'
-import { EndorsementTag } from '../endorsementList/constants'
 import { paginate } from '@island.is/nest/pagination'
+
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
-import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
+import { EndorsementTag } from '../endorsementList/constants'
+import { EndorsementList } from '../endorsementList/endorsementList.model'
+
+import { Endorsement } from './models/endorsement.model'
 
 interface FindEndorsementInput {
   listId: string

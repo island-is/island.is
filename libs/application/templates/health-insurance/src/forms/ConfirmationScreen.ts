@@ -5,8 +5,10 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
-import { m } from './messages'
+
 import Logo from '../assets/Logo'
+
+import { m } from './messages'
 
 export const HealthInsuranceConfirmation: Form = buildForm({
   id: 'HealthInsuranceConfirmation',

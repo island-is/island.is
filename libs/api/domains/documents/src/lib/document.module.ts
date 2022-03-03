@@ -1,8 +1,10 @@
 import { DynamicModule } from '@nestjs/common'
+
+import { DocumentsClientModule } from '@island.is/clients/documents'
+
+import { DocumentsConfig } from './types/documents.config'
 import { DocumentResolver } from './document.resolver'
 import { DocumentService } from './document.service'
-import { DocumentsClientModule } from '@island.is/clients/documents'
-import { DocumentsConfig } from './types/documents.config'
 import { DocumentBuilder } from './documentBuilder'
 
 export class DocumentModule {

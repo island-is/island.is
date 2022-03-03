@@ -1,17 +1,18 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
   DataType,
+  HasMany,
   Model,
+  PrimaryKey,
   Table,
   UpdatedAt,
-  HasMany,
-  PrimaryKey,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
+
+import { ApiResourceScope } from './api-resource-scope.model'
 import { ApiResourceSecret } from './api-resource-secret.model'
 import { ApiResourceUserClaim } from './api-resource-user-claim.model'
-import { ApiResourceScope } from './api-resource-scope.model'
 
 @Table({
   tableName: 'api_resource',

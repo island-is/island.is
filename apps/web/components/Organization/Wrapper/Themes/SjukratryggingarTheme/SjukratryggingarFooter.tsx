@@ -1,5 +1,7 @@
 import React from 'react'
-import { FooterItem } from '@island.is/web/graphql/schema'
+import { BLOCKS } from '@contentful/rich-text-types'
+
+import { richText, SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   GridColumn,
@@ -7,9 +9,9 @@ import {
   GridRow,
   Text,
 } from '@island.is/island-ui/core'
+import { FooterItem } from '@island.is/web/graphql/schema'
+
 import * as styles from './SjukratryggingarFooter.css'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
-import { BLOCKS } from '@contentful/rich-text-types'
 
 interface FooterProps {
   title: string

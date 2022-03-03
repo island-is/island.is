@@ -1,9 +1,10 @@
 import React, { FC } from 'react'
+
 import {
   Box,
   BoxProps,
-  ResponsiveSpace,
   ContentBlock,
+  ResponsiveSpace,
 } from '@island.is/island-ui/core'
 
 export const simpleSpacing = [2, 2, 3] as ResponsiveSpace

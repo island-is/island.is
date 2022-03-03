@@ -1,22 +1,24 @@
+import { format as formatKennitala } from 'kennitala'
 import get from 'lodash/get'
+
 import {
-  buildForm,
+  buildCheckboxField,
+  buildCustomField,
+  buildDataProviderItem,
   buildDescriptionField,
+  buildDividerField,
+  buildExternalDataProvider,
+  buildForm,
+  buildKeyValueField,
   buildMultiField,
   buildSection,
   buildSubmitField,
-  buildCheckboxField,
+  buildTextField,
   Form,
   FormModes,
-  buildExternalDataProvider,
-  buildKeyValueField,
-  buildTextField,
-  buildDataProviderItem,
-  buildCustomField,
-  buildDividerField,
 } from '@island.is/application/core'
+
 import { m } from '../lib/messages'
-import { format as formatKennitala } from 'kennitala'
 
 export const FormPrimary: Form = buildForm({
   id: 'PrerequisitesDraft',

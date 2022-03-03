@@ -1,4 +1,3 @@
-import merge from 'lodash/merge'
 import {
   defaultFieldResolver,
   defaultTypeResolver,
@@ -6,6 +5,7 @@ import {
   GraphQLScalarType,
   GraphQLTypeResolver,
 } from 'graphql'
+import merge from 'lodash/merge'
 
 export type ResolverMap = Record<
   string,

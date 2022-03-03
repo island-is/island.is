@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common'
+
 import {
   ElasticService,
   GroupedRankEvaluationResponse,
   rankEvaluationMetrics,
 } from '@island.is/content-search-toolkit'
-import { RankedDataService, searchTermsUnion } from './rankedData.service'
+
 import { MetricInput } from './dto/metricInput'
+import { RankedDataService, searchTermsUnion } from './rankedData.service'
 
 type additionalFields = 'testCase' | 'legends'
 

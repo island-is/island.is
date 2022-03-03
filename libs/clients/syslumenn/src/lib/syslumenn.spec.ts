@@ -1,24 +1,25 @@
 import { Test } from '@nestjs/testing'
-import { SyslumennService } from './syslumennClient.service'
+
+import { SyslumennClientModule } from '@island.is/clients/syslumenn'
+import { ConfigModule,defineConfig } from '@island.is/nest/config'
 import { startMocking } from '@island.is/shared/mocking'
+
 import { requestHandlers } from './__mock-data__/requestHandlers'
 import {
-  VHSUCCESS,
+  DATA_UPLOAD,
   OPERATING_LICENSE,
   OPERATING_LICENSE_PAGINATION_INFO_SERVICE_RES,
-  DATA_UPLOAD,
+  VHSUCCESS,
 } from './__mock-data__/responses'
-import {
-  mapHomestay,
-  mapSyslumennAuction,
-  mapDataUploadResponse,
-  mapPaginatedOperatingLicenses,
-} from './syslumennClient.utils'
 import { SYSLUMENN_AUCTION } from './__mock-data__/responses'
+import { SyslumennService } from './syslumennClient.service'
 import { PersonType } from './syslumennClient.types'
-import { SyslumennClientModule } from '@island.is/clients/syslumenn'
-
-import { defineConfig, ConfigModule } from '@island.is/nest/config'
+import {
+  mapDataUploadResponse,
+  mapHomestay,
+  mapPaginatedOperatingLicenses,
+  mapSyslumennAuction,
+} from './syslumennClient.utils'
 
 const YEAR = 2021
 const PERSON = [

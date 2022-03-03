@@ -1,11 +1,14 @@
 import React, { FC } from 'react'
-import { Text, Box, Tiles, Inline, Tag } from '@island.is/island-ui/core'
-import { m } from '@island.is/service-portal/core'
-import * as styles from './NavigationScreen.css'
-import { Link } from 'react-router-dom'
-import Card from './Card/Card'
 import { MessageDescriptor } from 'react-intl'
+import { Link } from 'react-router-dom'
+
+import { Box, Inline, Tag,Text, Tiles } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { m } from '@island.is/service-portal/core'
+
+import Card from './Card/Card'
+
+import * as styles from './NavigationScreen.css'
 
 export interface NavigationScreenItem {
   name: string | MessageDescriptor

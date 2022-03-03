@@ -1,8 +1,10 @@
-import { MappedData } from '@island.is/content-search-indexer/types'
-import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { Entry } from 'contentful'
 import isCircular from 'is-circular'
+
+import { MappedData } from '@island.is/content-search-indexer/types'
+import { logger } from '@island.is/logging'
+
 import { IVidspyrnaPage } from '../../generated/contentfulTypes'
 import { mapAdgerdirPage } from '../../models/adgerdirPage.model'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
@@ -10,8 +12,8 @@ import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import {
   createTerms,
   extractStringsFromObject,
-  numberOfProcessEntries,
   numberOfLinks,
+  numberOfProcessEntries,
 } from './utils'
 
 @Injectable()

@@ -1,5 +1,7 @@
 import { FormValue } from '@island.is/application/core'
+
 import { AccidentTypeEnum, WhoIsTheNotificationForEnum } from '../types'
+
 import { getAccidentTypeOptions } from './getAccidentTypeOptions'
 
 describe('getAccidentTypeOptions', () => {

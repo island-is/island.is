@@ -3,8 +3,8 @@ import {
   buildSection,
   buildTextField,
 } from '@island.is/application/core'
-import { AccidentNotification } from '../../lib/dataSchema'
 
+import { AccidentNotification } from '../../lib/dataSchema'
 import { applicantInformation } from '../../lib/messages'
 
 export const applicantInformationSection = buildSection({

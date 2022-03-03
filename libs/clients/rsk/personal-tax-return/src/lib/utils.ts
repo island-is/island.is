@@ -1,5 +1,6 @@
-import { logger } from '@island.is/logging'
 import { PreconditionFailedException } from '@nestjs/common'
+
+import { logger } from '@island.is/logging'
 
 export const sanitizeInput = (
   input: string,

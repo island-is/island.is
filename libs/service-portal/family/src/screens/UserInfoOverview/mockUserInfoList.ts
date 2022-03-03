@@ -1,6 +1,7 @@
-import { ServicePortalPath, m } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import { MessageDescriptor } from 'react-intl'
+
+import { m,ServicePortalPath } from '@island.is/service-portal/core'
 
 export type UserInfoItem = {
   heading: MessageDescriptor | string

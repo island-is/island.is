@@ -1,19 +1,20 @@
-import { Injectable, Inject } from '@nestjs/common'
+import { Inject,Injectable } from '@nestjs/common'
 
-import { SharedTemplateApiService } from '../../shared'
-import { TemplateApiModuleActionProps } from '../../../types'
-
-import {
-  generateApplicationEmail,
-  generateConfirmationEmail,
-} from './emailGenerators'
-import type { InstitutionCollaborationConfig } from './config/institutionApplicationServiceConfig'
-import { INSTITUTION_COLLABORATION_CONFIG } from './config/institutionApplicationServiceConfig'
-import { FileStorageService } from '@island.is/file-storage'
 import {
   ApplicationWithAttachments as Application,
   getValueViaPath,
 } from '@island.is/application/core'
+import { FileStorageService } from '@island.is/file-storage'
+
+import { TemplateApiModuleActionProps } from '../../../types'
+import { SharedTemplateApiService } from '../../shared'
+
+import type { InstitutionCollaborationConfig } from './config/institutionApplicationServiceConfig'
+import { INSTITUTION_COLLABORATION_CONFIG } from './config/institutionApplicationServiceConfig'
+import {
+  generateApplicationEmail,
+  generateConfirmationEmail,
+} from './emailGenerators'
 import { InstitutionAttachment } from './types'
 
 @Injectable()

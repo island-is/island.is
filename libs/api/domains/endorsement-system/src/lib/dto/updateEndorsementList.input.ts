@@ -1,5 +1,6 @@
 import { Field, InputType, PickType } from '@nestjs/graphql'
 import { IsUUID } from 'class-validator'
+
 import { CreateEndorsementListDto } from './createEndorsementList.input'
 
 @InputType()

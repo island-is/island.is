@@ -1,5 +1,6 @@
-import { environment } from './environment/environment'
 import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
+
+import { environment } from './environment/environment'
 
 export const IDENTITY_SERVER_SESSION_TOKEN_COOKIE_NAME =
   environment.idsCookieName

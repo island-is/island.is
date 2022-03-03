@@ -1,14 +1,15 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
   DataType,
+  ForeignKey,
   Model,
+  PrimaryKey,
   Table,
   UpdatedAt,
-  ForeignKey,
-  PrimaryKey,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
+
 import { Client } from './client.model'
 import { GrantType } from './grant-type.model'
 

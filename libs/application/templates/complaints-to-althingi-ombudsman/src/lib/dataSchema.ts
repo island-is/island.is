@@ -1,6 +1,7 @@
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as z from 'zod'
+
 import {
   ComplainedForTypes,
   ComplaineeTypes,
@@ -8,6 +9,7 @@ import {
   OmbudsmanComplaintTypeEnum,
   YES,
 } from '../shared'
+
 import { error } from './messages/error'
 
 const FileSchema = z.object({

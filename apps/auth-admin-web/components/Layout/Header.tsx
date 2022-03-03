@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/client'
+import React, { useEffect,useState } from 'react'
 import { useRouter } from 'next/router'
-import { isLoggedIn, login, logout } from '../../utils/auth.utils'
-import { SessionInfo } from './../../entities/common/SessionInfo'
-import LocalizationUtils from '../../utils/localization.utils'
+import { useSession } from 'next-auth/client'
+
 import { Localization } from '../../entities/common/Localization'
+import { isLoggedIn, login, logout } from '../../utils/auth.utils'
+import LocalizationUtils from '../../utils/localization.utils'
+
+import { SessionInfo } from './../../entities/common/SessionInfo'
 
 const Header: React.FC = () => {
   const [session, loading] = useSession()

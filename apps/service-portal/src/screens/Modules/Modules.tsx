@@ -1,16 +1,19 @@
 import React, { FC, Suspense } from 'react'
 import { Route, Switch } from 'react-router-dom'
-import {
-  ServicePortalRoute,
-  NotFound,
-  AccessDenied,
-} from '@island.is/service-portal/core'
-import { useStore } from '../../store/stateProvider'
-import ModuleErrorScreen, { ModuleErrorBoundary } from './ModuleErrorScreen'
-import { Box } from '@island.is/island-ui/core'
-import { useModuleProps } from '../../hooks/useModuleProps/useModuleProps'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { User } from 'oidc-client'
+
+import { Box } from '@island.is/island-ui/core'
+import {
+  AccessDenied,
+  NotFound,
+  ServicePortalRoute,
+} from '@island.is/service-portal/core'
+
+import { useModuleProps } from '../../hooks/useModuleProps/useModuleProps'
+import { useStore } from '../../store/stateProvider'
+
+import ModuleErrorScreen, { ModuleErrorBoundary } from './ModuleErrorScreen'
 
 const RouteComponent: FC<{
   route: ServicePortalRoute

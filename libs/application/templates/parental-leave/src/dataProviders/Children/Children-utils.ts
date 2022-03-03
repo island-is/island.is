@@ -6,11 +6,12 @@ import {
   getSelectedChild,
   getTransferredDays,
 } from '../../lib/parentalLeaveUtils'
+
 import {
   ChildInformation,
+  ChildrenWithoutRightsAndExistingApplications,
   ExistingChildApplication,
   PregnancyStatus,
-  ChildrenWithoutRightsAndExistingApplications,
 } from './types'
 
 // We do not require hasRights or remainingDays in this step

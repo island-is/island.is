@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { ExternalLinks as IExternalLinks } from '@island.is/api-catalogue/types'
 import { IsString } from 'class-validator'
+
+import { ExternalLinks as IExternalLinks } from '@island.is/api-catalogue/types'
 
 @ObjectType()
 export class ExternalLinks implements IExternalLinks {

@@ -2,8 +2,9 @@ import {
   NavigationScreenItem,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
-import { m } from '../../lib/messages'
 import { m as spm } from '@island.is/service-portal/core'
+
+import { m } from '../../lib/messages'
 
 export const navScreenItems: NavigationScreenItem[] = [
   {

@@ -1,11 +1,12 @@
 import {
+  buildCustomField,
   buildForm,
   buildSection,
   Form,
   FormModes,
-  buildCustomField,
 } from '@island.is/application/core'
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
+
 import * as m from '../lib/messages'
 
 function rejectedForm(id: string): Form {

@@ -1,4 +1,5 @@
 import { Dispatch } from 'react'
+
 import { User } from '@island.is/shared/types'
 
 export type AuthState =

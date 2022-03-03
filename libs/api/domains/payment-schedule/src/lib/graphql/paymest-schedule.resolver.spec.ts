@@ -1,8 +1,11 @@
-import { User } from '@island.is/auth-nest-tools'
-import { DefaultApi, ScheduleType } from '@island.is/clients/payment-schedule'
 import { Logger } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
+
+import { User } from '@island.is/auth-nest-tools'
+import { DefaultApi, ScheduleType } from '@island.is/clients/payment-schedule'
+
 import { PaymentScheduleService } from '../payment-schedule.service'
+
 import { PaymentScheduleResolver } from './payment-schedule.resolver'
 
 describe('PaymentScheduleResolver', () => {

@@ -1,12 +1,4 @@
 import {
-  TranslationService,
-  TranslationDTO,
-  Translation,
-  LanguageDTO,
-  Language,
-  PagedRowsDto,
-} from '@island.is/auth-api-lib'
-import {
   Body,
   Controller,
   Delete,
@@ -24,15 +16,25 @@ import {
   ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger'
+
+import { AuthAdminScope } from '@island.is/auth/scopes'
+import {
+  Language,
+  LanguageDTO,
+  PagedRowsDto,
+  Translation,
+  TranslationDTO,
+  TranslationService,
+} from '@island.is/auth-api-lib'
 import type { User } from '@island.is/auth-nest-tools'
 import {
-  IdsUserGuard,
-  ScopesGuard,
-  Scopes,
   CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { AuthAdminScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
+
 import { environment } from '../../../environments/'
 
 const namespace = `${environment.audit.defaultNamespace}/translation`

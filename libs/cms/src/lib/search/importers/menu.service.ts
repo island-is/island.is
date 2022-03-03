@@ -1,7 +1,9 @@
-import { MappedData } from '@island.is/content-search-indexer/types'
-import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { Entry } from 'contentful'
+
+import { MappedData } from '@island.is/content-search-indexer/types'
+import { logger } from '@island.is/logging'
+
 import { IMenu } from '../../generated/contentfulTypes'
 import { mapMenu } from '../../models/menu.model'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'

@@ -1,5 +1,6 @@
-import { Field, Int, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ID,Int, ObjectType } from '@nestjs/graphql'
 import { Asset } from 'contentful'
+
 import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()

@@ -1,29 +1,33 @@
 import React, { useState } from 'react'
-import { useDrivingLicense } from '@island.is/service-portal/graphql'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import ReactHtmlParser from 'react-html-parser'
+import { defineMessage } from 'react-intl'
+import { info } from 'kennitala'
+
 import {
+  AlertBanner,
   Box,
+  Button,
   Divider,
   GridColumn,
   GridRow,
   Icon,
   Stack,
   Text,
-  Button,
-  AlertBanner,
 } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ServicePortalModuleComponent,
   UserInfoLine,
 } from '@island.is/service-portal/core'
-import { defineMessage } from 'react-intl'
-import { isExpired, toDate } from '../../utils/dateUtils'
-import { mapCategory } from '../../utils/dataMapper'
-import ReactHtmlParser from 'react-html-parser'
-import ExpandableLine from './ExpandableLine'
-import * as styles from '../../components/DrivingLicense/DrivingLicense.css'
+import { useDrivingLicense } from '@island.is/service-portal/graphql'
+
 import QRCodeModal from '../../components/QRCodeModal/QRCodeModal'
-import { info } from 'kennitala'
+import { mapCategory } from '../../utils/dataMapper'
+import { isExpired, toDate } from '../../utils/dateUtils'
+
+import ExpandableLine from './ExpandableLine'
+
+import * as styles from '../../components/DrivingLicense/DrivingLicense.css'
 
 const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.driving-license')

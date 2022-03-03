@@ -5,13 +5,13 @@ export const getFields = () => import('./fields/')
 
 export default DataProtectionComplaintTemplate
 
+export { DataProtectionComplaint } from './lib/dataSchema'
 export {
+  NO,
   OnBehalf,
+  onBehalfValueLabelMapper,
   SubjectOfComplaint,
   subjectOfComplaintValueLabelMapper,
-  onBehalfValueLabelMapper,
   YES,
-  NO,
   yesNoValueLabelMapper,
 } from './shared'
-export { DataProtectionComplaint } from './lib/dataSchema'

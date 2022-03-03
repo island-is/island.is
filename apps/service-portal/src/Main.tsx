@@ -1,4 +1,6 @@
 import '@island.is/api/mocks'
+import './auth'
+
 import React from 'react'
 import ReactDOM from 'react-dom'
 import * as Sentry from '@sentry/react'
@@ -9,9 +11,8 @@ import {
   isRunningOnEnvironment,
 } from '@island.is/shared/utils'
 
-import './auth'
-import { environment } from './environments'
 import App from './app/App'
+import { environment } from './environments'
 
 const activeEnvironment = getActiveEnvironment()
 

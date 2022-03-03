@@ -1,6 +1,7 @@
 import { Article, LifeEventPage, News, Resolvers } from '../../types'
-import { filterItem, getTagCounts } from './utils'
 import { store } from '../cms'
+
+import { filterItem, getTagCounts } from './utils'
 
 export const resolvers: Resolvers = {
   Items: {

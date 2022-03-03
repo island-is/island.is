@@ -1,30 +1,32 @@
 import React from 'react'
-import { PlausiblePageviewDetail } from '@island.is/service-portal/core'
-import { useParams } from 'react-router-dom'
 import { defineMessage } from 'react-intl'
-import { useQuery, useLazyQuery } from '@apollo/client'
-import { Query, PropertyOwner } from '@island.is/api/schema'
-import { useNamespaces, useLocale } from '@island.is/localization'
+import { useParams } from 'react-router-dom'
+import { useLazyQuery,useQuery } from '@apollo/client'
+
+import { PropertyOwner,Query } from '@island.is/api/schema'
 import { Box } from '@island.is/island-ui/core'
+import { useLocale,useNamespaces } from '@island.is/localization'
+import { PlausiblePageviewDetail } from '@island.is/service-portal/core'
 import {
-  ServicePortalModuleComponent,
-  ServicePortalPath,
   IntroHeader,
   NotFound,
+  ServicePortalModuleComponent,
+  ServicePortalPath,
 } from '@island.is/service-portal/core'
-import TableUnits from '../../components/TableUnits'
+
+import AssetDisclaimer from '../../components/AssetDisclaimer'
 import AssetGrid from '../../components/AssetGrid'
 import AssetLoader from '../../components/AssetLoader'
-import AssetDisclaimer from '../../components/AssetDisclaimer'
-import amountFormat from '../../utils/amountFormat'
-import { ownersArray } from '../../utils/createUnits'
+import DetailHeader from '../../components/DetailHeader'
+import TableUnits from '../../components/TableUnits'
 import { messages } from '../../lib/messages'
 import {
-  GET_SINGLE_PROPERTY_QUERY,
   GET_PROPERTY_OWNERS_QUERY,
+  GET_SINGLE_PROPERTY_QUERY,
 } from '../../lib/queries'
-import DetailHeader from '../../components/DetailHeader'
+import amountFormat from '../../utils/amountFormat'
 import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
+import { ownersArray } from '../../utils/createUnits'
 
 export const AssetsOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.assets')

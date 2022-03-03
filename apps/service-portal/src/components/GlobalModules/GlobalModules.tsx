@@ -1,13 +1,15 @@
+import React, { FC, Suspense, useState } from 'react'
+import { useDeepCompareEffect } from 'react-use'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { User } from 'oidc-client'
+
 import {
   ServicePortalGlobalComponent,
   ServicePortalModule,
 } from '@island.is/service-portal/core'
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
-import { User } from 'oidc-client'
-import React, { FC, Suspense, useState } from 'react'
+
 import { useModuleProps } from '../../hooks/useModuleProps/useModuleProps'
 import { useStore } from '../../store/stateProvider'
-import { useDeepCompareEffect } from 'react-use'
 
 const GlobalComponent: FC<{
   component: ServicePortalGlobalComponent

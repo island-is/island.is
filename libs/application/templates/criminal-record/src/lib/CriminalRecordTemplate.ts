@@ -1,17 +1,20 @@
+import * as z from 'zod'
+
 import {
-  ApplicationTemplate,
-  ApplicationTypes,
+  Application,
+  ApplicationConfigurations,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
-  Application,
+  ApplicationTemplate,
+  ApplicationTypes,
   DefaultEvents,
   DefaultStateLifeCycle,
-  ApplicationConfigurations,
 } from '@island.is/application/core'
-import { Events, States, Roles } from './constants'
-import * as z from 'zod'
+
 import { ApiActions } from '../shared'
+
+import { Events, Roles,States } from './constants'
 import { m } from './messages'
 
 const CriminalRecordSchema = z.object({

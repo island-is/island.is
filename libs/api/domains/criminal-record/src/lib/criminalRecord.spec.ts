@@ -1,13 +1,15 @@
 import { Test } from '@nestjs/testing'
-import { CriminalRecordService } from './criminalRecord.service'
+import { createLogger } from 'winston'
+
 import { CriminalRecordApiModule } from '@island.is/clients/criminal-record'
+import { startMocking } from '@island.is/shared/mocking'
+
 import {
   MOCK_NATIONAL_ID,
   MOCK_NATIONAL_ID_NOT_EXISTS,
   requestHandlers,
 } from './__mock-data__/requestHandlers'
-import { startMocking } from '@island.is/shared/mocking'
-import { createLogger } from 'winston'
+import { CriminalRecordService } from './criminalRecord.service'
 
 startMocking(requestHandlers)
 

@@ -1,11 +1,12 @@
 import {
-  BasicDataProvider,
-  SuccessfulDataProviderResult,
-  FailedDataProviderResult,
   Application,
+  BasicDataProvider,
   CustomTemplateFindQuery,
+  FailedDataProviderResult,
   StaticText,
+  SuccessfulDataProviderResult,
 } from '@island.is/application/core'
+
 import { States } from '../lib/constants'
 import { m } from '../lib/messages'
 

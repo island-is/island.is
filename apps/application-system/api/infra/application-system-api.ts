@@ -1,16 +1,16 @@
+import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { PostgresInfo } from '../../../../infra/src/dsl/types/input-types'
 import {
   Base,
   Client,
+  CriminalRecord,
+  DataProtectionComplaint,
   DrivingLicense,
   HealthInsurance,
   Labor,
   Payment,
   PaymentSchedule,
-  CriminalRecord,
-  DataProtectionComplaint,
 } from '../../../../infra/src/dsl/xroad'
-import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
-import { PostgresInfo } from '../../../../infra/src/dsl/types/input-types'
 
 const postgresInfo: PostgresInfo = {
   passwordSecret: '/k8s/application-system/api/DB_PASSWORD',

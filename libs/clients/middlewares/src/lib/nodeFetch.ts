@@ -1,11 +1,12 @@
 import {
-  Request as NodeFetchRequest,
-  RequestInfo as NodeRequestInfo,
   Headers,
   HeadersInit,
+  Request as NodeFetchRequest,
+  RequestInfo as NodeRequestInfo,
   RequestInit as NodeFetchRequestInit,
   Response,
 } from 'node-fetch'
+
 import { Auth } from '@island.is/auth-nest-tools'
 
 class Request extends NodeFetchRequest {
@@ -35,12 +36,12 @@ interface FetchMiddlewareOptions {
 }
 
 export {
+  FetchAPI,
+  FetchMiddlewareOptions,
   Headers,
   HeadersInit,
   Request,
   RequestInfo,
   RequestInit,
   Response,
-  FetchAPI,
-  FetchMiddlewareOptions,
 }

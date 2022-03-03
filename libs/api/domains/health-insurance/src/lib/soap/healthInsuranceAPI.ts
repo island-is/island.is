@@ -1,23 +1,25 @@
 import {
-  InternalServerErrorException,
   Inject,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { logger } from '@island.is/logging'
 import { format } from 'date-fns' // eslint-disable-line no-restricted-imports
 
+import { SoapClient, VistaSkjalInput } from '@island.is/health-insurance'
+import { logger } from '@island.is/logging'
+
+import { BucketService } from '../bucket.service'
+import { VistaSkjalModel } from '../graphql/models'
+
 import {
-  GetSjukratryggdurTypeDto,
-  GetFaUmsoknSjukratryggingTypeDto,
-  GetVistaSkjalDtoType,
-  GetVistaSkjalBody,
   Fylgiskjal,
   Fylgiskjol,
+  GetFaUmsoknSjukratryggingTypeDto,
+  GetSjukratryggdurTypeDto,
+  GetVistaSkjalBody,
+  GetVistaSkjalDtoType,
 } from './dto'
-import { SoapClient, VistaSkjalInput } from '@island.is/health-insurance'
-import { VistaSkjalModel } from '../graphql/models'
-import { BucketService } from '../bucket.service'
 
 export const HEALTH_INSURANCE_CONFIG = 'HEALTH_INSURANCE_CONFIG'
 

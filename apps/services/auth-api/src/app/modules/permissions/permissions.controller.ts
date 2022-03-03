@@ -1,9 +1,4 @@
 import {
-  AccessService,
-  ResourcesService,
-  ApiScope,
-} from '@island.is/auth-api-lib'
-import {
   Controller,
   Get,
   ParseArrayPipe,
@@ -11,13 +6,19 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+
+import {
+  AccessService,
+  ApiScope,
+  ResourcesService,
+} from '@island.is/auth-api-lib'
 import type { User } from '@island.is/auth-nest-tools'
 import {
+  CurrentUser,
+  IdsAuthGuard,
   IdsUserGuard,
   Scopes,
   ScopesGuard,
-  CurrentUser,
-  IdsAuthGuard,
 } from '@island.is/auth-nest-tools'
 
 @ApiTags('permissions')

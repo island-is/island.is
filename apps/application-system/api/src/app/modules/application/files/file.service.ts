@@ -1,26 +1,29 @@
 import {
+  BadRequestException,
   Inject,
   Injectable,
-  NotFoundException,
-  BadRequestException,
-  RequestTimeoutException,
   InternalServerErrorException,
+  NotFoundException,
+  RequestTimeoutException,
 } from '@nestjs/common'
+import AmazonS3URI from 'amazon-s3-uri'
+
 import { PdfTypes } from '@island.is/application/core'
-import { Application } from './../application.model'
-import { SigningService } from '@island.is/dokobit-signing'
-import {
-  BucketTypePrefix,
-  DokobitFileName,
-  DokobitErrorCodes,
-} from './utils/constants'
-import { AwsService } from './aws.service'
-import { getOtherParentInformation } from '@island.is/application/templates/family-matters-core/utils'
 import { CRCApplication } from '@island.is/application/templates/children-residence-change'
+import { getOtherParentInformation } from '@island.is/application/templates/family-matters-core/utils'
+import { SigningService } from '@island.is/dokobit-signing'
+
 import type { ApplicationConfig } from '../application.configuration'
 import { APPLICATION_CONFIG } from '../application.configuration'
+
+import { Application } from './../application.model'
+import {
+  BucketTypePrefix,
+  DokobitErrorCodes,
+  DokobitFileName,
+} from './utils/constants'
+import { AwsService } from './aws.service'
 import { generateResidenceChangePdf } from './pdfGenerators'
-import AmazonS3URI from 'amazon-s3-uri'
 
 @Injectable()
 export class FileService {

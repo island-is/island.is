@@ -1,6 +1,6 @@
-import { IsNotEmpty, IsString, IsDate, IsOptional } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
+import { IsDate, IsNotEmpty, IsOptional,IsString } from 'class-validator'
 
 export class PersonalRepresentativeRightTypeDTO {
   @IsString()

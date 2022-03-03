@@ -1,5 +1,5 @@
-import { Application } from 'express'
 import * as Sentry from '@sentry/node'
+import { Application } from 'express'
 
 import { environment } from '../environments'
 

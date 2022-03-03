@@ -1,4 +1,5 @@
 import UserIdentity from '../entities/models/user-identity.model'
+
 import { BaseService } from './BaseService'
 
 export class UserService extends BaseService {

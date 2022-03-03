@@ -1,4 +1,7 @@
 import React from 'react'
+import Link from 'next/link'
+
+import { richText, SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   BoxProps,
@@ -7,8 +10,6 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { OneColumnText } from '@island.is/web/graphql/schema'
-import Link from 'next/link'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
 
 interface SliceProps {
   slice: OneColumnText

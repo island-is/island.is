@@ -2,14 +2,14 @@ import React, { FC, useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import * as Sentry from '@sentry/react'
 
-import { APPLICATION_APPLICATION } from '@island.is/application/graphql'
 import {
   Application,
   ApplicationTemplateHelper,
+  coreMessages,
   Form,
   Schema,
-  coreMessages,
 } from '@island.is/application/core'
+import { APPLICATION_APPLICATION } from '@island.is/application/graphql'
 import {
   getApplicationTemplateByTypeId,
   getApplicationUIFields,
@@ -17,11 +17,12 @@ import {
 import { useApplicationNamespaces, useLocale } from '@island.is/localization'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
-import { RefetchProvider } from '../context/RefetchContext'
-import { FieldProvider, useFields } from '../context/FieldContext'
-import { LoadingShell } from '../components/LoadingShell'
-import { FormShell } from './FormShell'
 import { ErrorShell } from '../components/ErrorShell'
+import { LoadingShell } from '../components/LoadingShell'
+import { FieldProvider, useFields } from '../context/FieldContext'
+import { RefetchProvider } from '../context/RefetchContext'
+
+import { FormShell } from './FormShell'
 
 const ApplicationLoader: FC<{
   applicationId: string

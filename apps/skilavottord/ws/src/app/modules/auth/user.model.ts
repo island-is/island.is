@@ -1,4 +1,4 @@
-import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 
 export enum Role {
   developer = 'developer',

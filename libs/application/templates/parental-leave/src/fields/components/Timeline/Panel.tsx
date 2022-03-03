@@ -6,7 +6,9 @@ import { Box, Icon, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { parentalLeaveFormMessages } from '../../../lib/messages'
+
 import { TimelinePeriod } from './Timeline'
+
 import * as styles from './Panel.css'
 
 export const Panel: FC<{

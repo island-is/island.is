@@ -1,20 +1,22 @@
 import React, { ReactNode, useContext, useEffect } from 'react'
 
 import {
+  AlertBanner,
   Box,
+  FormStepper,
+  GridColumn,
   GridContainer,
   GridRow,
-  GridColumn,
-  FormStepper,
-  AlertBanner,
 } from '@island.is/island-ui/core'
-import { CaseType, UserRole, Case } from '@island.is/judicial-system/types'
-import { Sections } from '@island.is/judicial-system-web/src/types'
 import * as Constants from '@island.is/judicial-system/consts'
-import { UserContext } from '../UserProvider/UserProvider'
+import { Case,CaseType, UserRole } from '@island.is/judicial-system/types'
+import { Sections } from '@island.is/judicial-system-web/src/types'
+
+import useSections from '../../utils/hooks/useSections'
 import Logo from '../Logo/Logo'
 import Skeleton from '../Skeleton/Skeleton'
-import useSections from '../../utils/hooks/useSections'
+import { UserContext } from '../UserProvider/UserProvider'
+
 import * as styles from './PageLayout.css'
 
 interface PageProps {

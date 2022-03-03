@@ -1,12 +1,14 @@
+import { Provider } from '@nestjs/common'
+
 import {
   ConfigType,
   LazyDuringDevScope,
   XRoadConfig,
 } from '@island.is/nest/config'
-import { Provider } from '@nestjs/common'
-import { CompanyRegistryApiFactoryConfig } from './company-registry-factory.config'
-import { CompanyRegistryConfig } from './company-registry.config'
+
 import { SearchCompanyRegistryApi } from './gen/fetch'
+import { CompanyRegistryConfig } from './company-registry.config'
+import { CompanyRegistryApiFactoryConfig } from './company-registry-factory.config'
 
 export const SearchCompanyRegistryApiProvider: Provider<SearchCompanyRegistryApi> = {
   provide: SearchCompanyRegistryApi,

@@ -1,9 +1,11 @@
 import React, { FC } from 'react'
-import { useForm, Controller } from 'react-hook-form'
-import { useLocale } from '@island.is/localization'
-import { Box, Stack, Input, Button } from '@island.is/island-ui/core'
-import { m } from '../../lib/messages'
+import { Controller,useForm } from 'react-hook-form'
+
 import { Contact } from '@island.is/api/schema'
+import { Box, Button,Input, Stack } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+
+import { m } from '../../lib/messages'
 import {
   ContactInput,
   useUpdateTechnicalContact,

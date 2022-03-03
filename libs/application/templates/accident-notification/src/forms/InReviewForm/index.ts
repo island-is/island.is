@@ -1,6 +1,8 @@
 import { buildForm, Form } from '@island.is/application/core'
+
 import Logo from '../../assets/Logo'
 import { inReview } from '../../lib/messages'
+
 import { addAttachmentsSection } from './addAttachmentsSection'
 import { applicationStatusSection } from './applicationStatusSection'
 import { inReviewOverviewSection } from './inReviewOverviewSection'

@@ -1,35 +1,37 @@
-import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
+import { UseGuards } from '@nestjs/common'
+import { Args, Mutation,Query, Resolver } from '@nestjs/graphql'
+
 import type { User } from '@island.is/auth-nest-tools'
 import {
+  CurrentUser,
   IdsUserGuard,
   ScopesGuard,
-  CurrentUser,
 } from '@island.is/auth-nest-tools'
-import { UseGuards } from '@nestjs/common'
 import type { Locale } from '@island.is/shared/types'
 
-import { ApplicationService } from './application.service'
-import { Application, ApplicationPayment } from './application.model'
-import { CreateApplicationInput } from './dto/createApplication.input'
-import { UpdateApplicationInput } from './dto/updateApplication.input'
-import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
+import { CreatePaymentResponseDto } from '../../gen/fetch'
+
 import { AddAttachmentInput } from './dto/addAttachment.input'
-import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
-import { SubmitApplicationInput } from './dto/submitApplication.input'
-import { AssignApplicationInput } from './dto/assignApplication.input'
-import { GeneratePdfInput } from './dto/generatePdf.input'
-import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
-import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
-import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
 import { ApplicationApplicationInput } from './dto/applicationApplication.input'
 import { ApplicationApplicationsInput } from './dto/applicationApplications.input'
-import { RequestFileSignatureResponse } from './dto/requestFileSignature.response'
-import { PresignedUrlResponse } from './dto/presignedUrl.response'
-import { UploadSignedFileResponse } from './dto/uploadSignedFile.response'
-import { ApplicationPaymentChargeInput } from './dto/applicationPaymentCharge.input'
 import { ApplicationPaymentChargeResponse } from './dto/applicationPaymentCharge'
-import { CreatePaymentResponseDto } from '../../gen/fetch'
+import { ApplicationPaymentChargeInput } from './dto/applicationPaymentCharge.input'
+import { AssignApplicationInput } from './dto/assignApplication.input'
 import { AttachmentPresignedUrlInput } from './dto/AttachmentPresignedUrl.input'
+import { CreateApplicationInput } from './dto/createApplication.input'
+import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
+import { GeneratePdfInput } from './dto/generatePdf.input'
+import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
+import { PresignedUrlResponse } from './dto/presignedUrl.response'
+import { RequestFileSignatureInput } from './dto/requestFileSignature.input'
+import { RequestFileSignatureResponse } from './dto/requestFileSignature.response'
+import { SubmitApplicationInput } from './dto/submitApplication.input'
+import { UpdateApplicationInput } from './dto/updateApplication.input'
+import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
+import { UploadSignedFileInput } from './dto/uploadSignedFile.input'
+import { UploadSignedFileResponse } from './dto/uploadSignedFile.response'
+import { Application, ApplicationPayment } from './application.model'
+import { ApplicationService } from './application.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()

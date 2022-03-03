@@ -1,6 +1,7 @@
-import path from 'path'
-import exportFinder from './exportFinder/exportFinder'
 import memoize from 'lodash/memoize'
+import path from 'path'
+
+import exportFinder from './exportFinder/exportFinder'
 
 const exportFinderCached = memoize(exportFinder)
 

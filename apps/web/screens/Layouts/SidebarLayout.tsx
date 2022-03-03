@@ -1,14 +1,15 @@
 import React, { FC, ReactNode } from 'react'
+import cn from 'classnames'
+
 import {
   Box,
+  GridColumn,
   GridContainer,
   GridRow,
-  GridColumn,
   ResponsiveSpace,
 } from '@island.is/island-ui/core'
 
 import * as styles from './SidebarLayout.css'
-import cn from 'classnames'
 
 interface SidebarLayoutProps {
   sidebarContent: ReactNode

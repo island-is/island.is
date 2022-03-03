@@ -1,10 +1,10 @@
 import React, { MouseEventHandler } from 'react'
 
 import { Box } from '../Box/Box'
-import { Text } from '../Text/Text'
-import { Tag } from '../Tag/Tag'
-import { Link } from '../Link/Link'
 import { FocusableBox } from '../FocusableBox/FocusableBox'
+import { Link } from '../Link/Link'
+import { Tag } from '../Tag/Tag'
+import { Text } from '../Text/Text'
 
 type ColorScheme = 'blue' | 'red'
 

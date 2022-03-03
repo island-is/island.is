@@ -1,5 +1,6 @@
-import { dedent } from 'ts-dedent'
 import { SendMailOptions } from 'nodemailer'
+import { dedent } from 'ts-dedent'
+
 import { TellUsAStoryInput } from '../dto/tellUsAStory.input'
 import { environment } from '../environments/environment'
 

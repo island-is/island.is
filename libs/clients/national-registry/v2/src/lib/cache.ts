@@ -1,12 +1,13 @@
 import { caching } from 'cache-manager'
 import redisStore from 'cache-manager-ioredis'
-import { ConfigType } from '@island.is/nest/config'
+
 import { createRedisCluster } from '@island.is/cache'
 import {
   buildCacheControl,
   CacheConfig,
   Request,
 } from '@island.is/clients/middlewares'
+import { ConfigType } from '@island.is/nest/config'
 
 import { NationalRegistryClientConfig } from './nationalRegistryClient.config'
 

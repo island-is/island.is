@@ -10,21 +10,22 @@ import {
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import {
   JwtAuthGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { prosecutorRule } from '../../guards'
 import { CaseExistsGuard, CaseWriteGuard } from '../case'
-import { DefendantExistsGuard } from './guards/defendantExists.guard'
+
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
-import { DeleteDefendantResponse } from './models/delete.response'
+import { DefendantExistsGuard } from './guards/defendantExists.guard'
 import { Defendant } from './models/defendant.model'
+import { DeleteDefendantResponse } from './models/delete.response'
 import { DefendantService } from './defendant.service'
 
 @UseGuards(JwtAuthGuard, RolesGuard)

@@ -1,6 +1,9 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { ICardSection } from '../generated/contentfulTypes'
+
 import { SystemMetadata } from '@island.is/shared/types'
+
+import { ICardSection } from '../generated/contentfulTypes'
+
 import { LinkCard, mapLinkCard } from './linkCard.model'
 
 @ObjectType()

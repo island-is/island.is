@@ -1,8 +1,10 @@
 import React from 'react'
-import { useIntl } from 'react-intl'
-import { Box, Input } from '@island.is/island-ui/core'
 import { Controller, useFormContext } from 'react-hook-form'
+import { useIntl } from 'react-intl'
+
 import { DescriptionText } from '@island.is/application/templates/family-matters-core/components'
+import { Box, Input } from '@island.is/island-ui/core'
+
 import { reason } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
 

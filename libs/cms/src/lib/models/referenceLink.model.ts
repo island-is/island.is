@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+
 import { ILinkUrl } from '../generated/contentfulTypes'
 import { PageTypes } from '../unions/page.union'
 

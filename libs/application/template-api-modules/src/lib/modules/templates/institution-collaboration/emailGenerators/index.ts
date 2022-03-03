@@ -1,2 +1,2 @@
-export * from './applicationEmail'
 export * from './applicationConfirmationEmail'
+export * from './applicationEmail'

@@ -1,10 +1,11 @@
 import React from 'react'
+import { defineMessage } from 'react-intl'
+
 import {
   InfoScreen,
-  ServicePortalModuleComponent,
   m,
+  ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
-import { defineMessage } from 'react-intl'
 
 export const PaymentOverview: ServicePortalModuleComponent = () => {
   return (

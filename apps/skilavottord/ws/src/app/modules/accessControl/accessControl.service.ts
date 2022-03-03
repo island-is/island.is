@@ -1,15 +1,15 @@
-import { InjectModel } from '@nestjs/sequelize'
 import { Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
 
 import { RecyclingPartnerModel } from '../recyclingPartner'
 
-import { AccessControlModel, AccessControlRole } from './accessControl.model'
 import {
   CreateAccessControlInput,
   DeleteAccessControlInput,
   UpdateAccessControlInput,
 } from './accessControl.input'
+import { AccessControlModel, AccessControlRole } from './accessControl.model'
 
 @Injectable()
 export class AccessControlService {

@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { AssetsClientModule } from '@island.is/clients/assets'
 

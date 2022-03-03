@@ -1,7 +1,7 @@
 export { AccessControlModule } from './accessControl/accessControl.module'
 export { AuthModule } from './auth/auth.module'
-export { GdprModule } from './gdpr/gdpr.module'
 export { FjarsyslaModule } from './fjarsysla/fjarsysla.module'
+export { GdprModule } from './gdpr/gdpr.module'
 export { RecyclingPartnerModule } from './recyclingPartner/recyclingPartner.module'
 export { RecyclingRequestModule } from './recyclingRequest/recyclingRequest.module'
 export { SamgongustofaModule } from './samgongustofa/samgongustofa.module'

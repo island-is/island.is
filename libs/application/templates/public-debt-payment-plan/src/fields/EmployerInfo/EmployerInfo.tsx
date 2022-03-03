@@ -1,9 +1,10 @@
+import React from 'react'
+import * as Sentry from '@sentry/react'
+import { format as formatKennitala } from 'kennitala'
+
 import { PaymentScheduleEmployer } from '@island.is/api/schema'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
-import * as Sentry from '@sentry/react'
-import { format as formatKennitala } from 'kennitala'
-import React from 'react'
 
 export const EmployerInfo = ({ application }: FieldBaseProps) => {
   const employerInfo = getValueViaPath(

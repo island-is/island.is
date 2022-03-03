@@ -1,5 +1,5 @@
-import { ConfigType } from '@island.is/nest/config'
 import { createClient } from '@island.is/feature-flags'
+import { ConfigType } from '@island.is/nest/config'
 
 import { FeatureFlagConfig } from './feature-flag.config'
 

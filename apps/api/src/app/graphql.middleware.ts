@@ -1,4 +1,4 @@
-import { FieldMiddleware, NextFn, MiddlewareContext } from '@nestjs/graphql'
+import { FieldMiddleware, MiddlewareContext,NextFn } from '@nestjs/graphql'
 
 export const maskOutFieldsMiddleware: FieldMiddleware = async (
   ctx: MiddlewareContext,

@@ -1,16 +1,17 @@
 import { HttpService, Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
-import { PersonalTaxReturnConfig } from './personalTaxReturn.config'
 import * as xml2js from 'xml2js'
-import { directTaxPaymentRequest, pdfRequest } from './requests'
-import { Period } from './interfaces'
-import { DirectTaxPaymentDto, PdfDto } from './dto'
-import { DirectTaxPaymentResponse, PdfResponse } from './responses'
+import { parseBooleans, parseNumbers } from 'xml2js/lib/processors'
+
 import {
   directTaxPaymentResponseToDto,
   pdfResponseToDto,
 } from './transformers/transformers'
-import { parseBooleans, parseNumbers } from 'xml2js/lib/processors'
+import { DirectTaxPaymentDto, PdfDto } from './dto'
+import { Period } from './interfaces'
+import { PersonalTaxReturnConfig } from './personalTaxReturn.config'
+import { directTaxPaymentRequest, pdfRequest } from './requests'
+import { DirectTaxPaymentResponse, PdfResponse } from './responses'
 
 @Injectable()
 export class PersonalTaxReturnApi {

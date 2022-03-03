@@ -1,42 +1,43 @@
 import React, { ReactNode, useEffect, useState } from 'react'
-import { useLazyQuery } from '@apollo/client'
 import {
-  useForm,
   Controller,
-  ValidationRules,
-  useFormContext,
   FormProvider,
+  useForm,
+  useFormContext,
+  ValidationRules,
 } from 'react-hook-form'
-import { useDebounce } from 'react-use'
 import { FormatInputValueFunction } from 'react-number-format'
+import { useDebounce } from 'react-use'
+import { useLazyQuery } from '@apollo/client'
+import orderBy from 'lodash/orderBy'
 
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { InputController } from '@island.is/shared/form-fields'
+import { Organizations, SupportCategory } from '@island.is/api/schema'
 import {
   Box,
+  Button,
   GridColumn,
   GridContainer,
   GridRow,
-  Select,
-  Button,
-  Option,
   Input,
-  Text,
-  LinkContext,
   Link,
-  Stack,
+  LinkContext,
   LoadingDots,
+  Option,
+  Select,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
-import { Organizations, SupportCategory } from '@island.is/api/schema'
-import { GET_SUPPORT_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
+import { InputController } from '@island.is/shared/form-fields'
 import {
   GetSupportSearchResultsQuery,
   GetSupportSearchResultsQueryVariables,
   SearchableContentTypes,
   SupportQna,
 } from '@island.is/web/graphql/schema'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { GET_SUPPORT_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
+
 import { ModifySearchTerms } from '../../SearchInput/SearchInput'
-import orderBy from 'lodash/orderBy'
 
 type FormState = {
   message: string

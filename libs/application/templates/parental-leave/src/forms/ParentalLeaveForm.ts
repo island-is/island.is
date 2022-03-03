@@ -21,22 +21,12 @@ import {
   NO_ANSWER,
 } from '@island.is/application/core'
 
-import { parentalLeaveFormMessages } from '../lib/messages'
+import Logo from '../assets/Logo'
 import {
-  getExpectedDateOfBirth,
-  getOtherParentOptions,
-  getAllPeriodDates,
-  getSelectedChild,
-  requiresOtherParentApproval,
-  getApplicationAnswers,
-  allowOtherParent,
-  getLastValidPeriodEndDate,
-} from '../lib/parentalLeaveUtils'
-import {
-  GetPensionFunds,
-  GetUnions,
-  GetPrivatePensionFunds,
-} from '../graphql/queries'
+  defaultMonths,
+  minimumPeriodStartBeforeExpectedDateOfBirth,
+  minPeriodDays,
+} from '../config'
 import {
   FILE_SIZE_LIMIT,
   MANUAL,
@@ -45,12 +35,22 @@ import {
   StartDateOptions,
   YES,
 } from '../constants'
-import Logo from '../assets/Logo'
 import {
-  defaultMonths,
-  minimumPeriodStartBeforeExpectedDateOfBirth,
-  minPeriodDays,
-} from '../config'
+  GetPensionFunds,
+  GetPrivatePensionFunds,
+  GetUnions,
+} from '../graphql/queries'
+import { parentalLeaveFormMessages } from '../lib/messages'
+import {
+  allowOtherParent,
+  getAllPeriodDates,
+  getApplicationAnswers,
+  getExpectedDateOfBirth,
+  getLastValidPeriodEndDate,
+  getOtherParentOptions,
+  getSelectedChild,
+  requiresOtherParentApproval,
+} from '../lib/parentalLeaveUtils'
 import {
   GetPensionFundsQuery,
   GetPrivatePensionFundsQuery,

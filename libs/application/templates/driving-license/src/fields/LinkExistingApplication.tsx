@@ -1,16 +1,17 @@
 import React, { FC } from 'react'
+import { useHistory } from 'react-router-dom'
 
-import { useLocale } from '@island.is/localization'
-import { Box, Text } from '@island.is/island-ui/core'
 import {
-  FieldBaseProps,
-  getValueViaPath,
-  formatText,
   Application,
+  FieldBaseProps,
+  formatText,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { ApplicationList } from '@island.is/application/ui-components'
+import { Box, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+
 import { m } from '../lib/messages'
-import { useHistory } from 'react-router-dom'
 
 export const LinkExistingApplication: FC<FieldBaseProps> = ({
   application,

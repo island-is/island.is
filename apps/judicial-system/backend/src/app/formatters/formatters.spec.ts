@@ -1,25 +1,25 @@
 import { makeProsecutor } from '@island.is/judicial-system/formatters'
 import {
   CaseLegalProvisions,
-  Gender,
   CaseType,
+  Gender,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
 import {
-  formatProsecutorCourtDateEmailNotification,
-  formatLegalProvisions,
   formatCourtHeadsUpSmsNotification,
   formatCourtReadyForCourtSmsNotification,
-  formatPrisonCourtDateEmailNotification,
-  stripHtmlTags,
-  formatDefenderCourtDateEmailNotification,
-  formatPrisonRulingEmailNotification,
-  formatCourtRevokedSmsNotification,
-  formatPrisonRevokedEmailNotification,
-  formatDefenderRevokedEmailNotification,
-  formatProsecutorReceivedByCourtSmsNotification,
   formatCourtResubmittedToCourtSmsNotification,
+  formatCourtRevokedSmsNotification,
+  formatDefenderCourtDateEmailNotification,
+  formatDefenderRevokedEmailNotification,
+  formatLegalProvisions,
+  formatPrisonCourtDateEmailNotification,
+  formatPrisonRevokedEmailNotification,
+  formatPrisonRulingEmailNotification,
+  formatProsecutorCourtDateEmailNotification,
+  formatProsecutorReceivedByCourtSmsNotification,
+  stripHtmlTags,
 } from './formatters'
 
 describe('formatLegalProvisions', () => {

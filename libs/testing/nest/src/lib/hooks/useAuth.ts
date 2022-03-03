@@ -1,9 +1,9 @@
 import { TestingModuleBuilder } from '@nestjs/testing/testing-module.builder'
 
 import {
+  Auth,
   IdsAuthGuard,
   IdsUserGuard,
-  Auth,
   MockAuthGuard,
 } from '@island.is/auth-nest-tools'
 

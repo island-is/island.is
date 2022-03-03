@@ -1,33 +1,36 @@
-import {
-  SyslumennAuction,
-  Homestay,
-  PaginatedOperatingLicenses,
-  CertificateInfoResponse,
-  DistrictCommissionerAgencies,
-  DataUploadResponse,
-  Person,
-  Attachment,
-} from './syslumennClient.types'
-import {
-  mapSyslumennAuction,
-  mapHomestay,
-  mapPaginatedOperatingLicenses,
-  mapCertificateInfo,
-  mapDistrictCommissionersAgenciesResponse,
-  mapDataUploadResponse,
-  constructUploadDataObject,
-} from './syslumennClient.utils'
-import { Injectable, Inject } from '@nestjs/common'
-import {
-  SyslumennApi,
-  SvarSkeyti,
-  Configuration,
-  VirkLeyfiGetRequest,
-} from '../../gen/fetch'
-import { SyslumennClientConfig } from './syslumennClient.config'
-import type { ConfigType } from '@island.is/nest/config'
+import { Inject,Injectable } from '@nestjs/common'
+
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import type { ConfigType } from '@island.is/nest/config'
+
+import {
+  Configuration,
+  SvarSkeyti,
+  SyslumennApi,
+  VirkLeyfiGetRequest,
+} from '../../gen/fetch'
+
+import { SyslumennClientConfig } from './syslumennClient.config'
+import {
+  Attachment,
+  CertificateInfoResponse,
+  DataUploadResponse,
+  DistrictCommissionerAgencies,
+  Homestay,
+  PaginatedOperatingLicenses,
+  Person,
+  SyslumennAuction,
+} from './syslumennClient.types'
+import {
+  constructUploadDataObject,
+  mapCertificateInfo,
+  mapDataUploadResponse,
+  mapDistrictCommissionersAgenciesResponse,
+  mapHomestay,
+  mapPaginatedOperatingLicenses,
+  mapSyslumennAuction,
+} from './syslumennClient.utils'
 
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 

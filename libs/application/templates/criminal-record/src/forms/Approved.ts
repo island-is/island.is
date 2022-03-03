@@ -1,12 +1,13 @@
 import {
-  buildForm,
   buildCustomField,
+  buildForm,
+  buildSection,
   Form,
   FormModes,
-  buildSection,
 } from '@island.is/application/core'
-import { m } from '../lib/messages'
+
 import Logo from '../assets/Logo'
+import { m } from '../lib/messages'
 
 export const Approved: Form = buildForm({
   id: 'ApprovedApplicationForm',

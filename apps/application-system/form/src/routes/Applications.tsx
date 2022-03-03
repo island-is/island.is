@@ -1,21 +1,22 @@
 import React, { FC, useEffect } from 'react'
+import { useHistory,useParams } from 'react-router-dom'
 import { useMutation } from '@apollo/client'
-import { useParams, useHistory } from 'react-router-dom'
 import isEmpty from 'lodash/isEmpty'
-import {
-  CREATE_APPLICATION,
-  APPLICATION_APPLICATIONS,
-} from '@island.is/application/graphql'
-import {
-  Text,
-  Box,
-  Page,
-  Button,
-  GridContainer,
-} from '@island.is/island-ui/core'
+
 import { coreMessages, getTypeFromSlug } from '@island.is/application/core'
+import {
+  APPLICATION_APPLICATIONS,
+  CREATE_APPLICATION,
+} from '@island.is/application/graphql'
 import { ApplicationList } from '@island.is/application/ui-components'
 import { ErrorShell } from '@island.is/application/ui-shell'
+import {
+  Box,
+  Button,
+  GridContainer,
+  Page,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   useApplicationNamespaces,
   useLocale,

@@ -8,6 +8,7 @@ import {
   ApplicationTypes,
   DefaultEvents,
 } from '@island.is/application/core'
+
 import { PublicDebtPaymentPlanSchema } from './dataSchema'
 import { application } from './messages'
 

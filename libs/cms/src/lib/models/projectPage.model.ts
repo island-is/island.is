@@ -1,4 +1,4 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ID,ObjectType } from '@nestjs/graphql'
 
 import { IProjectPage } from '../generated/contentfulTypes'
 import {
@@ -6,11 +6,12 @@ import {
   safelyMapSliceUnion,
   SliceUnion,
 } from '../unions/slice.union'
+
 import { GenericTag, mapGenericTag } from './genericTag.model'
+import { Image,mapImage } from './image.model'
+import { LinkGroup, mapLinkGroup } from './linkGroup.model'
 import { mapProjectSubpage, ProjectSubpage } from './projectSubpage.model'
 import { mapStepper, Stepper } from './stepper.model'
-import { mapImage, Image } from './image.model'
-import { LinkGroup, mapLinkGroup } from './linkGroup.model'
 
 @ObjectType()
 export class ProjectPage {

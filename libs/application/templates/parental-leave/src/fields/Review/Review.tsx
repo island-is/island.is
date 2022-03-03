@@ -4,46 +4,46 @@ import has from 'lodash/has'
 
 import {
   Application,
-  formatAndParseAsHTML,
   buildFieldOptions,
-  RecordObject,
   Field,
+  formatAndParseAsHTML,
+  RecordObject,
 } from '@island.is/application/core'
-import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
-import {
-  InputController,
-  RadioController,
-  SelectController,
-} from '@island.is/shared/form-fields'
-import { useLocale } from '@island.is/localization'
 import {
   DataValue,
   Label,
   RadioValue,
   ReviewGroup,
 } from '@island.is/application/ui-components'
-
+import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import {
-  getOtherParentOptions,
-  getSelectedChild,
-  requiresOtherParentApproval,
-  getApplicationExternalData,
-  getOtherParentId,
-  getOtherParentName,
-} from '../../lib/parentalLeaveUtils'
+  InputController,
+  RadioController,
+  SelectController,
+} from '@island.is/shared/form-fields'
+
+import { MANUAL, NO, ParentalRelations,SPOUSE, YES } from '../../constants'
+import { usePensionFund as usePensionFundOptions } from '../../hooks/usePensionFund'
+import { usePrivatePensionFund as usePrivatePensionFundOptions } from '../../hooks/usePrivatePensionFund'
+import { useStatefulAnswers } from '../../hooks/useStatefulAnswers'
+import { useUnion as useUnionOptions } from '../../hooks/useUnion'
 // TODO: Bring back payment calculation info, once we have an api
 // import PaymentsTable from '../PaymentSchedule/PaymentsTable'
 // import { getEstimatedPayments } from '../PaymentSchedule/estimatedPaymentsQuery'
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { YES, NO, MANUAL, SPOUSE, ParentalRelations } from '../../constants'
+import { getSelectOptionLabel } from '../../lib/parentalLeaveClientUtils'
+import {
+  getApplicationExternalData,
+  getOtherParentId,
+  getOtherParentName,
+  getOtherParentOptions,
+  getSelectedChild,
+  requiresOtherParentApproval,
+} from '../../lib/parentalLeaveUtils'
 import { YesOrNo } from '../../types'
 import { SummaryTimeline } from '../components/SummaryTimeline/SummaryTimeline'
 import { SummaryRights } from '../Rights/SummaryRights'
-import { useUnion as useUnionOptions } from '../../hooks/useUnion'
-import { usePrivatePensionFund as usePrivatePensionFundOptions } from '../../hooks/usePrivatePensionFund'
-import { usePensionFund as usePensionFundOptions } from '../../hooks/usePensionFund'
-import { useStatefulAnswers } from '../../hooks/useStatefulAnswers'
-import { getSelectOptionLabel } from '../../lib/parentalLeaveClientUtils'
 
 type ValidOtherParentAnswer = typeof NO | typeof MANUAL | undefined
 

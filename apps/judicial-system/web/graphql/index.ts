@@ -1,2 +1,2 @@
-export * from './sharedGql'
 export { default as client } from './client'
+export * from './sharedGql'

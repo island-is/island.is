@@ -2,9 +2,9 @@ import { ContentType, Field } from 'contentful'
 import upperFirst from 'lodash/upperFirst'
 
 import {
-  getLinkContentTypes,
-  getFirstLevelContentType,
   Args,
+  getFirstLevelContentType,
+  getLinkContentTypes,
 } from './contentType'
 import { Imports } from './generateFile'
 

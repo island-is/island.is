@@ -1,11 +1,13 @@
 import { DynamicModule } from '@nestjs/common'
-import { SharedTemplateAPIModule } from '../../shared'
+
 import { BaseTemplateAPIModuleConfig } from '../../../types'
-import { GeneralPetitionService } from './general-petition.service'
+import { SharedTemplateAPIModule } from '../../shared'
+
 import {
   Configuration as endorsementConfig,
   EndorsementListApi,
 } from './gen/fetch/endorsements'
+import { GeneralPetitionService } from './general-petition.service'
 
 export class GeneralPetitionModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {

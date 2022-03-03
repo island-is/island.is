@@ -1,13 +1,13 @@
-import { Module, DynamicModule } from '@nestjs/common'
+import { DynamicModule,Module } from '@nestjs/common'
 
-import { XRoadConfig, MMSApi } from '@island.is/clients/mms'
+import { MMSApi,XRoadConfig } from '@island.is/clients/mms'
 import {
   NationalRegistryApi,
   NationalRegistryConfig,
 } from '@island.is/clients/national-registry-v1'
 
-import { MainResolver } from './graphql'
 import { EducationService } from './education.service'
+import { MainResolver } from './graphql'
 import { S3Service } from './s3.service'
 
 export interface Config {

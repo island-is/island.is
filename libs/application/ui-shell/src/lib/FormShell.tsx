@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useReducer } from 'react'
-import cn from 'classnames'
 import * as Sentry from '@sentry/react'
+import cn from 'classnames'
 
 import {
   Application,
@@ -17,18 +17,19 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
-import Screen from '../components/Screen'
+import { ErrorShell } from '../components/ErrorShell'
 import FormStepper from '../components/FormStepper'
+import Screen from '../components/Screen'
+import { useHeaderInfo } from '../context/HeaderInfoProvider'
+import { useApplicationTitle } from '../hooks/useApplicationTitle'
+import { useHistorySync } from '../hooks/useHistorySync'
 import {
   ApplicationReducer,
   initializeReducer,
 } from '../reducer/ApplicationFormReducer'
 import { ActionTypes } from '../reducer/ReducerTypes'
-import { useHistorySync } from '../hooks/useHistorySync'
-import { useApplicationTitle } from '../hooks/useApplicationTitle'
-import { useHeaderInfo } from '../context/HeaderInfoProvider'
+
 import * as styles from './FormShell.css'
-import { ErrorShell } from '../components/ErrorShell'
 
 export const FormShell: FC<{
   application: Application

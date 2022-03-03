@@ -12,6 +12,7 @@ import {
 } from '@island.is/nest/config'
 
 import { Configuration, FasteignirApi } from '../../gen/fetch'
+
 import { AssetsClientConfig } from './assets.config'
 
 export const PropertiesApiProvider: Provider<FasteignirApi> = {

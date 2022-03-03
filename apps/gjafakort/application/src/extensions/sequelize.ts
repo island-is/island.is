@@ -1,4 +1,5 @@
 import { Sequelize } from 'sequelize'
+
 import * as databaseConfig from '../../sequelize.config.js'
 
 let config

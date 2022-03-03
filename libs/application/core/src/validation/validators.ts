@@ -1,9 +1,12 @@
-import { ZodSuberror } from 'zod/lib/src/ZodError'
-import isNumber from 'lodash/isNumber'
 import has from 'lodash/has'
-import set from 'lodash/set'
+import isNumber from 'lodash/isNumber'
 import merge from 'lodash/merge'
+import set from 'lodash/set'
+import { ZodSuberror } from 'zod/lib/src/ZodError'
 
+import { coreErrorMessages } from '../lib/messages'
+import { Answer, FormValue } from '../types/Application'
+import { RecordObject } from '../types/Fields'
 import {
   FormatMessage,
   Schema,
@@ -11,10 +14,8 @@ import {
   StaticTextObject,
   ValidationRecord,
 } from '../types/Form'
-import { Answer, FormValue } from '../types/Application'
-import { coreErrorMessages } from '../lib/messages'
+
 import { AnswerValidationError } from './AnswerValidator'
-import { RecordObject } from '../types/Fields'
 
 function populateError(
   currentError: ValidationRecord = {},

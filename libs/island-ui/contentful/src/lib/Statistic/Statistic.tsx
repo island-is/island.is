@@ -1,5 +1,7 @@
 import React, { FC } from 'react'
+
 import { Box, Text } from '@island.is/island-ui/core'
+
 import * as styles from './Statistic.css'
 
 export interface StatisticProps {

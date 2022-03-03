@@ -1,34 +1,36 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useContext,useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useQuery, useLazyQuery } from '@apollo/client'
+import { useLazyQuery,useQuery } from '@apollo/client'
 import router from 'next/router'
 
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
-import {
-  DropdownMenu,
-  Loading,
-  Logo,
-} from '@island.is/judicial-system-web/src/components'
+import * as Constants from '@island.is/judicial-system/consts'
+import type { Case } from '@island.is/judicial-system/types'
 import {
   CaseState,
   CaseTransition,
   completedCaseStates,
   InstitutionType,
-  NotificationType,
   isRestrictionCase,
+  NotificationType,
   UserRole,
 } from '@island.is/judicial-system/types'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { CaseData } from '@island.is/judicial-system-web/src/types'
 import { requests as m } from '@island.is/judicial-system-web/messages/Core/requests'
+import {
+  DropdownMenu,
+  Loading,
+  Logo,
+} from '@island.is/judicial-system-web/src/components'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import { CaseData } from '@island.is/judicial-system-web/src/types'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import useSections from '@island.is/judicial-system-web/src/utils/hooks/useSections'
-import type { Case } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system/consts'
+import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
+
 import ActiveRequests from './ActiveRequests'
 import PastRequests from './PastRequests'
+
 import * as styles from './Requests.css'
 
 // Credit for sorting solution: https://www.smashingmagazine.com/2020/03/sortable-tables-react/

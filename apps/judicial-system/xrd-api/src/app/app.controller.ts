@@ -1,12 +1,12 @@
 import { Body, Controller, Inject, Post } from '@nestjs/common'
 import { ApiCreatedResponse } from '@nestjs/swagger'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { AppService } from './app.service'
 import { CreateCaseDto } from './app.dto'
 import { Case } from './app.model'
+import { AppService } from './app.service'
 
 @Controller('api/v1')
 export class AppController {

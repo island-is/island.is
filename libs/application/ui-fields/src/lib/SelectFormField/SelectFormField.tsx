@@ -1,17 +1,17 @@
 import React, { FC, useMemo } from 'react'
 
 import {
+  buildFieldOptions,
   FieldBaseProps,
   formatText,
   SelectField,
-  buildFieldOptions,
 } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
-import {
-  SelectController,
-  FieldDescription,
-} from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
+import {
+  FieldDescription,
+  SelectController,
+} from '@island.is/shared/form-fields'
 
 import { getDefaultValue } from '../../getDefaultValue'
 

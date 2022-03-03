@@ -1,4 +1,5 @@
 import { keyframes, style } from '@vanilla-extract/css'
+
 import { zIndex } from '@island.is/service-portal/constants'
 
 const overlayAnimation = keyframes({

@@ -1,9 +1,10 @@
 import React from 'react'
+import { MockedProvider } from '@apollo/client/testing'
 import { render, screen } from '@testing-library/react'
 
-import InfoCard from './InfoCard'
 import { LocaleProvider } from '@island.is/localization'
-import { MockedProvider } from '@apollo/client/testing'
+
+import InfoCard from './InfoCard'
 
 describe('InfoCard', () => {
   test('should display the assigned defender name if that info is provided even though the defender email is not', async () => {

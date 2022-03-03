@@ -1,18 +1,12 @@
 import { FormValue, getValueViaPath } from '@island.is/application/core'
-import {
-  isGeneralWorkplaceAccident,
-  isStudiesAccident,
-  isFishermanAccident,
-  isProfessionalAthleteAccident,
-  isRescueWorkAccident,
-} from './'
+
 import {
   companyInfo,
   fishingCompanyInfo,
+  representativeInfo,
   rescueSquadInfo,
   schoolInfo,
   sportsClubInfo,
-  representativeInfo,
 } from '../lib/messages'
 import {
   AccidentTypeEnum,
@@ -21,7 +15,15 @@ import {
   WorkAccidentTypeEnum,
   YesOrNo,
 } from '../types'
+
 import { isHomeActivitiesAccident } from './isHomeActivitiesAccident'
+import {
+  isFishermanAccident,
+  isGeneralWorkplaceAccident,
+  isProfessionalAthleteAccident,
+  isRescueWorkAccident,
+  isStudiesAccident,
+} from './'
 
 interface WorkplaceData {
   companyInfo: CompanyInfo

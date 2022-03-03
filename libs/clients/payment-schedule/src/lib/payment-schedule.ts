@@ -2,21 +2,22 @@ import { Inject } from '@nestjs/common'
 import { DataSourceConfig } from 'apollo-datasource'
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 import { Base64 } from 'js-base64'
+
 import {
   Conditions,
+  ConditionsResponse,
   DebtSchedules,
   DebtSchedulesResponse,
-  Employer,
-  WageDeductionResponse,
-  PaymentScheduleServiceOptions,
-  PAYMENT_SCHEDULE_OPTIONS,
   DistributionInitialPosition,
   DistributionInitialPositionRequest,
   DistributionInitialPositionResponse,
+  Employer,
+  PAYMENT_SCHEDULE_OPTIONS,
   PaymentDistribution,
   PaymentDistributionRequest,
   PaymentDistributionResponse,
-  ConditionsResponse,
+  PaymentScheduleServiceOptions,
+  WageDeductionResponse,
 } from './types'
 
 export class PaymentScheduleAPI extends RESTDataSource {

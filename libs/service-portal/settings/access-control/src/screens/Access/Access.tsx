@@ -1,37 +1,38 @@
 import React from 'react'
-import { gql, useQuery, useMutation } from '@apollo/client'
-import { useParams, useHistory } from 'react-router-dom'
-import { useForm, FormProvider } from 'react-hook-form'
+import { FormProvider,useForm } from 'react-hook-form'
 import { defineMessage } from 'react-intl'
+import { useHistory,useParams } from 'react-router-dom'
+import { gql, useMutation,useQuery } from '@apollo/client'
 
 import {
-  Box,
-  Inline,
-  Text,
-  Stack,
-  Button,
-  Table as T,
-  SkeletonLoader,
-  Divider,
-  ModalBase,
-  toast,
-} from '@island.is/island-ui/core'
-import {
-  Query,
-  Mutation,
-  AuthCustomDelegation,
   AuthApiScope,
   AuthApiScopeGroup,
+  AuthCustomDelegation,
+  Mutation,
+  Query,
 } from '@island.is/api/schema'
+import {
+  Box,
+  Button,
+  Divider,
+  Inline,
+  ModalBase,
+  SkeletonLoader,
+  Stack,
+  Table as T,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import {
   IntroHeader,
   m as coreMessages,
   NotFound,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
-import { useLocale } from '@island.is/localization'
 
 import { AuthDelegationsQuery } from '../AccessControl'
+
 import { AccessItem } from './components'
 
 import * as styles from './Access.css'

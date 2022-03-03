@@ -1,16 +1,18 @@
 import React, { FC, useEffect, useState } from 'react'
-import { useQuery, gql, useMutation } from '@apollo/client'
+import { gql, useMutation,useQuery } from '@apollo/client'
+
 import {
   CustomField,
+  DefaultEvents,
   FieldBaseProps,
   formatText,
-  DefaultEvents,
 } from '@island.is/application/core'
-import { Box, Button, Text } from '@island.is/island-ui/core'
-import { m } from '../lib/messages'
-import { useLocale } from '@island.is/localization'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
+import { Box, Button, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+
 import { Company } from '../assets'
+import { m } from '../lib/messages'
 
 const QUERY = gql`
   query status($applicationId: String!) {

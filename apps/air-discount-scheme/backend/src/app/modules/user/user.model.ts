@@ -2,9 +2,10 @@ import { ApiProperty } from '@nestjs/swagger'
 
 import type {
   BaseUser as TBaseUser,
-  User as TUser,
   Fund as TFund,
+  User as TUser,
 } from '@island.is/air-discount-scheme/types'
+
 import { NationalRegistryUser } from '../nationalRegistry'
 
 class Fund implements TFund {

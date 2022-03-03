@@ -1,8 +1,10 @@
 import React from 'react'
+import { gql, useMutation } from '@apollo/client'
+
+import { Contact } from '@island.is/api/schema'
 import { toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Contact } from '@island.is/api/schema'
-import { gql, useMutation } from '@apollo/client'
+
 import { m } from '../lib/messages'
 
 const UPDATE_TECHNICAL_CONTACT_MUTATION = gql`

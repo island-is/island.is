@@ -1,17 +1,19 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
+
 import { DocumentApi } from '@island.is/clients/health-insurance-v2'
-import {
-  HealthInsuranceAccidentNotificationAttachmentTypes as AttachmentTypes,
-  HealthInsuranceAccidentNotificationConfirmationTypes as ConfirmationTypes,
-  HealthInsuranceAccidentNotificationStatusTypes as StatusTypes,
-} from './types'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
   AccidentNotificationAttachment,
   AccidentNotificationConfirmation,
   AccidentNotificationStatus,
 } from './graphql/models'
+import {
+  HealthInsuranceAccidentNotificationAttachmentTypes as AttachmentTypes,
+  HealthInsuranceAccidentNotificationConfirmationTypes as ConfirmationTypes,
+  HealthInsuranceAccidentNotificationStatusTypes as StatusTypes,
+} from './types'
 
 const mapStatus = (statusId: number) => {
   switch (statusId) {

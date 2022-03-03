@@ -1,5 +1,6 @@
-import * as z from 'zod'
 import { isValid } from 'kennitala'
+import * as z from 'zod'
+
 import { YES } from '../shared/constants'
 
 export const LoginServiceSchema = z.object({

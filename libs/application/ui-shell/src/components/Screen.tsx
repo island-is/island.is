@@ -7,49 +7,51 @@ import React, {
   useRef,
   useState,
 } from 'react'
+import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
+import { useWindowSize } from 'react-use'
 import { ApolloError, useMutation } from '@apollo/client'
+import deepmerge from 'deepmerge'
+
 import {
-  Application,
   Answer,
+  Application,
+  BeforeSubmitCallback,
   ExternalData,
+  formatText,
   FormItemTypes,
   FormModes,
   FormValue,
-  Schema,
-  formatText,
   mergeAnswers,
-  BeforeSubmitCallback,
+  Schema,
 } from '@island.is/application/core'
+import {
+  SUBMIT_APPLICATION,
+  UPDATE_APPLICATION,
+} from '@island.is/application/graphql'
+import { handleServerError } from '@island.is/application/ui-components'
 import {
   Box,
   GridColumn,
   Text,
   ToastContainer,
 } from '@island.is/island-ui/core'
-import {
-  SUBMIT_APPLICATION,
-  UPDATE_APPLICATION,
-} from '@island.is/application/graphql'
-import deepmerge from 'deepmerge'
-import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
-import { useLocale } from '@island.is/localization'
-import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import { useLocale } from '@island.is/localization'
 import {
   findProblemInApolloError,
   ProblemType,
 } from '@island.is/shared/problem'
-import { handleServerError } from '@island.is/application/ui-components'
 
-import { FormScreen, ResolverContext } from '../types'
-import FormMultiField from './FormMultiField'
-import FormField from './FormField'
-import { resolver } from '../validation/resolver'
-import FormRepeater from './FormRepeater'
-import FormExternalDataProvider from './FormExternalDataProvider'
-import { extractAnswersToSubmitFromScreen, findSubmitField } from '../utils'
-import ScreenFooter from './ScreenFooter'
 import RefetchContext from '../context/RefetchContext'
+import { FormScreen, ResolverContext } from '../types'
+import { extractAnswersToSubmitFromScreen, findSubmitField } from '../utils'
+import { resolver } from '../validation/resolver'
+
+import FormExternalDataProvider from './FormExternalDataProvider'
+import FormField from './FormField'
+import FormMultiField from './FormMultiField'
+import FormRepeater from './FormRepeater'
+import ScreenFooter from './ScreenFooter'
 
 type ScreenProps = {
   activeScreenIndex: number

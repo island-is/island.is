@@ -1,6 +1,8 @@
-import { Module, DynamicModule, Type } from '@nestjs/common'
-import { InfraController } from './infra.controller'
+import { DynamicModule, Module, Type } from '@nestjs/common'
+
 import { LoggingModule } from '@island.is/logging'
+
+import { InfraController } from './infra.controller'
 
 interface InfraModuleOptions {
   appModule: Type<any>

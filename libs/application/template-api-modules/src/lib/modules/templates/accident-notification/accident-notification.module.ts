@@ -1,13 +1,16 @@
 import { DynamicModule } from '@nestjs/common'
-import { SharedTemplateAPIModule } from '../../shared'
-import { BaseTemplateAPIModuleConfig } from '../../../types'
-import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
-import { AccidentNotificationService } from './accident-notification.service'
+import { S3 } from 'aws-sdk'
+
 import { HealthInsuranceV2Client } from '@island.is/clients/health-insurance-v2'
+
+import { BaseTemplateAPIModuleConfig } from '../../../types'
+import { SharedTemplateAPIModule } from '../../shared'
+
 import { ApplicationAttachmentService } from './attachments/applicationAttachment.service'
 import { AccidentNotificationAttachmentProvider } from './attachments/applicationAttachmentProvider'
-import { S3 } from 'aws-sdk'
 import { S3Service } from './attachments/s3.service'
+import { AccidentNotificationService } from './accident-notification.service'
+import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
 
 const applicationRecipientName =
   process.env.ACCIDENT_NOTIFICATION_APPLICATION_RECIPIENT_NAME ?? ''

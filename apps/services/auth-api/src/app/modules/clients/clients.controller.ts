@@ -1,5 +1,3 @@
-import { Client, ClientsService } from '@island.is/auth-api-lib'
-import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import {
   BadRequestException,
   Controller,
@@ -9,6 +7,9 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+
+import { Client, ClientsService } from '@island.is/auth-api-lib'
+import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('clients')

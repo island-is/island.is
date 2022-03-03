@@ -1,7 +1,9 @@
-import { Body, Controller, Param, Post, ParseUUIDPipe } from '@nestjs/common'
+import { Body, Controller, Param, ParseUUIDPipe,Post } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Payment } from './payment.model'
+
 import type { Callback } from '@island.is/api/domains/payment'
+
+import { Payment } from './payment.model'
 
 @Controller()
 export class PaymentCallbackController {

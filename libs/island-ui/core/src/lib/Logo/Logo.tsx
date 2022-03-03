@@ -1,8 +1,7 @@
 import React, { forwardRef } from 'react'
+import cn from 'classnames'
 
 import * as styles from './Logo.css'
-
-import cn from 'classnames'
 
 interface LogoProps {
   id?: string

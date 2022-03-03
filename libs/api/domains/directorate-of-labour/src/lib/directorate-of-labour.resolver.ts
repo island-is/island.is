@@ -1,28 +1,30 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
+import { Args, Query, Resolver } from '@nestjs/graphql'
+
 import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
+  CurrentUser,
   IdsAuthGuard,
   IdsUserGuard,
-  ScopesGuard,
   Scopes,
-  CurrentUser,
+  ScopesGuard,
 } from '@island.is/auth-nest-tools'
 
-import { Union } from '../models/union.model'
-import { PensionFund } from '../models/pensionFund.model'
-import { ParentalLeaveEntitlement } from '../models/parentalLeaveEntitlement.model'
-import { ParentalLeavePaymentPlan } from '../models/parentalLeavePaymentPlan.model'
-import { PregnancyStatus } from '../models/pregnancyStatus.model'
-import { ParentalLeave } from '../models/parentalLeave.model'
-import { ParentalLeavePeriodEndDate } from '../models/parentalLeavePeriodEndDate.model'
-import { ParentalLeavePeriodLength } from '../models/parentalLeavePeriodLength.model'
+import { GetParentalLeavesApplicationPaymentPlanInput } from '../dto/getParentalLeavesApplicationPaymentPlan.input'
 import { GetParentalLeavesEntitlementsInput } from '../dto/getParentalLeavesEntitlements.input'
 import { GetParentalLeavesEstimatedPaymentPlanInput } from '../dto/getParentalLeavesEstimatedPaymentPlan.input'
-import { GetParentalLeavesApplicationPaymentPlanInput } from '../dto/getParentalLeavesApplicationPaymentPlan.input'
 import { GetParentalLeavesPeriodEndDateInput } from '../dto/getParentalLeavesPeriodEndDate.input'
 import { GetParentalLeavesPeriodLengthInput } from '../dto/getParentalLeavesPeriodLength.input'
+import { ParentalLeave } from '../models/parentalLeave.model'
+import { ParentalLeaveEntitlement } from '../models/parentalLeaveEntitlement.model'
+import { ParentalLeavePaymentPlan } from '../models/parentalLeavePaymentPlan.model'
+import { ParentalLeavePeriodEndDate } from '../models/parentalLeavePeriodEndDate.model'
+import { ParentalLeavePeriodLength } from '../models/parentalLeavePeriodLength.model'
+import { PensionFund } from '../models/pensionFund.model'
+import { PregnancyStatus } from '../models/pregnancyStatus.model'
+import { Union } from '../models/union.model'
+
 import { DirectorateOfLabourService } from './directorate-of-labour.service'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)

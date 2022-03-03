@@ -1,14 +1,15 @@
 import { buildForm, Form, FormModes } from '@island.is/application/core'
+
 import Logo from '../../assets/Logo'
 import { application } from '../../lib/messages'
 
 import { aboutTheAccidentSection } from './aboutTheAccidentSection'
 import { applicantInformationSection } from './applicantInformationSection'
+import { betaTestSection } from './betaTestSection'
 import { conclusionSection } from './conclusionSection'
 import { externalDataSection } from './externalDataSection'
 import { overviewSection } from './overviewSection'
 import { whoIsTheNotificationForSection } from './whoIsTheNotificationForSection'
-import { betaTestSection } from './betaTestSection'
 
 export const AccidentNotificationForm: Form = buildForm({
   id: 'AccidentNotificationForm',

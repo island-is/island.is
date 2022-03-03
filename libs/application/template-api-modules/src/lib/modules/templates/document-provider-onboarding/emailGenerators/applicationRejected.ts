@@ -1,5 +1,5 @@
-import { dedent } from 'ts-dedent'
 import get from 'lodash/get'
+import { dedent } from 'ts-dedent'
 
 import { EmailTemplateGenerator } from '../../../../types'
 

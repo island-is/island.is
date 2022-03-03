@@ -1,17 +1,19 @@
 import {
-  ApplicationTemplate,
-  ApplicationTypes,
+  Application,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
-  Application,
+  ApplicationTemplate,
+  ApplicationTypes,
   DefaultEvents,
   DefaultStateLifeCycle,
 } from '@island.is/application/core'
+
+import { States } from '../constants'
+import { Roles, TEMPLATE_API_ACTIONS } from '../shared'
+
 import { DataProtectionComplaintSchema } from './dataSchema'
 import { application } from './messages'
-import { Roles, TEMPLATE_API_ACTIONS } from '../shared'
-import { States } from '../constants'
 
 type DataProtectionComplaintEvent = { type: DefaultEvents.SUBMIT }
 

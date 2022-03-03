@@ -1,19 +1,20 @@
 import React, { FC, useMemo } from 'react'
 
 import {
-  FieldBaseProps,
-  DateField,
-  formatText,
-  MaybeWithApplicationAndField,
   Application,
+  DateField,
+  FieldBaseProps,
+  formatText,
   getValueViaPath,
+  MaybeWithApplicationAndField,
 } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import {
   DatePickerController,
   FieldDescription,
 } from '@island.is/shared/form-fields'
-import { useLocale } from '@island.is/localization'
+
 import { getDefaultValue } from '../../getDefaultValue'
 
 interface Props extends FieldBaseProps {

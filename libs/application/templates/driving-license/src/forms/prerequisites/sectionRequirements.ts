@@ -5,6 +5,7 @@ import {
   buildSubSection,
   DefaultEvents,
 } from '@island.is/application/core'
+
 import { m } from '../../lib/messages'
 
 export const sectionRequirements = buildSubSection({

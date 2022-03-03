@@ -1,8 +1,9 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 import { IAuction } from '../generated/contentfulTypes'
-import { mapOrganization, Organization } from './organization.model'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
+
+import { mapOrganization, Organization } from './organization.model'
 
 @ObjectType()
 export class Auction {

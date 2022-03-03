@@ -1,11 +1,13 @@
-import { testServer, TestServerOptions } from '@island.is/infra-nest-server'
-import { getConnectionToken } from '@nestjs/sequelize'
 import { INestApplication, Type } from '@nestjs/common'
+import { getConnectionToken } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
-import { AppModule } from '../src/app/app.module'
+
 import { EndorsementsScope } from '@island.is/auth/scopes'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
+import { testServer, TestServerOptions } from '@island.is/infra-nest-server'
 import { startMocking } from '@island.is/shared/mocking'
+
+import { AppModule } from '../src/app/app.module'
 
 export let app: INestApplication
 let sequelize: Sequelize

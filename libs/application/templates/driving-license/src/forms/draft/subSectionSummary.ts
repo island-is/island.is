@@ -1,25 +1,27 @@
+import { format as formatKennitala } from 'kennitala'
+
+import { StudentAssessment } from '@island.is/api/schema'
 import {
-  buildDescriptionField,
-  buildMultiField,
-  buildKeyValueField,
-  buildSubmitField,
   buildCheckboxField,
+  buildDescriptionField,
   buildDividerField,
+  buildKeyValueField,
+  buildMultiField,
+  buildSubmitField,
+  buildSubSection,
   DefaultEvents,
   StaticText,
-  buildSubSection,
 } from '@island.is/application/core'
-import { NationalRegistryUser, UserProfile } from '../../types/schema'
-import { m } from '../../lib/messages'
-import { format as formatKennitala } from 'kennitala'
-import { StudentAssessment } from '@island.is/api/schema'
+
 import { YES } from '../../lib/constants'
-import { B_TEMP } from '../../shared/constants'
+import { m } from '../../lib/messages'
 import {
   hasNoDrivingLicenseInOtherCountry,
   hasYes,
   needsHealthCertificateCondition,
 } from '../../lib/utils'
+import { B_TEMP } from '../../shared/constants'
+import { NationalRegistryUser, UserProfile } from '../../types/schema'
 
 export const subSectionSummary = buildSubSection({
   id: 'overview',

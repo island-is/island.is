@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
+import { gql } from '@apollo/client'
 
 import {
   Municipality,
   useAsyncLazyQuery,
 } from '@island.is/financial-aid/shared/lib'
-import { gql } from '@apollo/client'
 
 const MunicipalityQuery = gql`
   query GetMunicipalityQuery($input: MunicipalityQueryInput!) {

@@ -1,7 +1,6 @@
-import { Base64 } from 'js-base64'
-import { createHash } from 'crypto'
-
 import { Test, TestingModule } from '@nestjs/testing'
+import { createHash } from 'crypto'
+import { Base64 } from 'js-base64'
 
 import { LoggingModule } from '@island.is/logging'
 

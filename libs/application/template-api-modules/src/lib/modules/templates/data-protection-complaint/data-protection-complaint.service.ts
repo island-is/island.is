@@ -1,15 +1,18 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { TemplateApiModuleActionProps } from '../../../types'
-import { applicationToCaseRequest } from './data-protection-utils'
+
 import {
   CaseApi,
   TokenMiddleware,
 } from '@island.is/clients/data-protection-complaint'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { PdfFileProvider } from './attachments/providers/pdfFileProvider'
-import { ApplicationAttachmentProvider } from './attachments/providers/applicationAttachmentProvider'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
+
+import { ApplicationAttachmentProvider } from './attachments/providers/applicationAttachmentProvider'
+import { PdfFileProvider } from './attachments/providers/pdfFileProvider'
+import { applicationToCaseRequest } from './data-protection-utils'
 
 @Injectable()
 export class DataProtectionComplaintService {

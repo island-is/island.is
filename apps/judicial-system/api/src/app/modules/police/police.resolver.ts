@@ -1,8 +1,6 @@
 import { Inject, UseGuards } from '@nestjs/common'
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import {
   AuditedAction,
   AuditTrailService,
@@ -12,8 +10,11 @@ import {
   JwtGraphQlAuthGuard,
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { BackendApi } from '../../data-sources'
+
 import { PoliceCaseFilesQueryInput } from './dto/policeCaseFiles.input'
 import { UploadPoliceCaseFileInput } from './dto/uploadPoliceCaseFile.input'
 import { PoliceCaseFile } from './models/policeCaseFile.model'

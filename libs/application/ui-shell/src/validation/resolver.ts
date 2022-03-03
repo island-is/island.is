@@ -1,9 +1,10 @@
+import { ResolverError, ResolverResult } from 'react-hook-form/dist/types/form'
+
 import {
   FormatMessage,
   FormValue,
   validateAnswers,
 } from '@island.is/application/core'
-import { ResolverError, ResolverResult } from 'react-hook-form/dist/types/form'
 
 import { ResolverContext } from '../types'
 

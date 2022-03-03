@@ -1,6 +1,6 @@
+import FormData from 'form-data'
 import http, { Agent } from 'http'
 import request from 'request'
-import FormData from 'form-data'
 
 class HttpError extends Error {
   constructor(

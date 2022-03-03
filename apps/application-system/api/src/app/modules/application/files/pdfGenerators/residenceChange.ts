@@ -1,26 +1,29 @@
-import streamBuffers from 'stream-buffers'
 import format from 'date-fns/format'
-import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
+import parseISO from 'date-fns/parseISO'
+import streamBuffers from 'stream-buffers'
+
+import { CRCApplication } from '@island.is/application/templates/children-residence-change'
 import {
+  childrenResidenceInfo,
   formatAddress,
   formatDate,
   getSelectedChildrenFromExternalData,
-  childrenResidenceInfo,
   sortChildrenByAge,
 } from '@island.is/application/templates/family-matters-core/utils'
-import { CRCApplication } from '@island.is/application/templates/children-residence-change'
+
 import { PdfConstants } from '../utils/constants'
 import { DistrictCommissionerLogo } from '../utils/districtCommissionerLogo'
 import {
   addHeader,
+  addLogo,
+  addSubheader,
   addSubtitle,
   addValue,
-  addSubheader,
   formatSsn,
   newDocument,
-  addLogo,
 } from '../utils/pdfUtils'
+
 import { addLegalEffect } from './familyMatters'
 
 const TEMPORARY = 'temporary'

@@ -1,16 +1,16 @@
-import { Test } from '@nestjs/testing'
+import { CACHE_MANAGER } from '@nestjs/common'
 import { getModelToken } from '@nestjs/sequelize'
+import { Test } from '@nestjs/testing'
 
-import { PublicFlightController } from '../../flight.controller'
-import { FlightService } from '../../flight.service'
-import { CreateFlightBody } from '../../dto'
-import { Flight } from '../../flight.model'
-import { DiscountService, Discount } from '../../../discount'
+import { Discount,DiscountService } from '../../../discount'
 import {
   NationalRegistryService,
   NationalRegistryUser,
 } from '../../../nationalRegistry'
-import { CACHE_MANAGER } from '@nestjs/common'
+import { CreateFlightBody } from '../../dto'
+import { PublicFlightController } from '../../flight.controller'
+import { Flight } from '../../flight.model'
+import { FlightService } from '../../flight.service'
 
 describe('PublicFlightController', () => {
   let publicFlightController: PublicFlightController

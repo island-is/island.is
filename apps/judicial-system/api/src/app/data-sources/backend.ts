@@ -1,39 +1,37 @@
+import { Injectable } from '@nestjs/common'
+import { DataSource, DataSourceConfig } from 'apollo-datasource'
 import { Request } from 'express'
 
-import { DataSource, DataSourceConfig } from 'apollo-datasource'
-
-import { Injectable } from '@nestjs/common'
-
-import { ProblemError } from '@island.is/nest/problem'
 import type {
   Case,
+  CaseFile,
   CreateCase,
+  CreateDefendant,
   CreateFile,
   CreatePresignedPost,
+  CreateUser,
+  Defendant,
+  DeleteDefendantResponse,
   DeleteFileResponse,
-  CaseFile,
+  Institution,
+  Notification,
+  PoliceCaseFile,
   PresignedPost,
   RequestSignatureResponse,
+  SendNotification,
+  SendNotificationResponse,
   SignatureConfirmationResponse,
   SignedUrl,
   TransitionCase,
   UpdateCase,
-  Institution,
-  User,
-  CreateUser,
-  UpdateUser,
-  Notification,
-  SendNotification,
-  SendNotificationResponse,
-  UploadFileToCourtResponse,
-  PoliceCaseFile,
-  UploadPoliceCaseFileResponse,
-  UploadPoliceCaseFile,
-  CreateDefendant,
-  Defendant,
   UpdateDefendant,
-  DeleteDefendantResponse,
+  UpdateUser,
+  UploadFileToCourtResponse,
+  UploadPoliceCaseFile,
+  UploadPoliceCaseFileResponse,
+  User,
 } from '@island.is/judicial-system/types'
+import { ProblemError } from '@island.is/nest/problem'
 
 import { environment } from '../../environments'
 

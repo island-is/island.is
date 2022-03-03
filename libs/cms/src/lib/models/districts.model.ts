@@ -1,9 +1,10 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { SystemMetadata } from 'api-cms-domain'
 
 import { IDistricts } from '../generated/contentfulTypes'
+
 import { Image, mapImage } from './image.model'
 import { Link, mapLink } from './link.model'
-import { SystemMetadata } from 'api-cms-domain'
 
 @ObjectType()
 export class Districts {

@@ -1,23 +1,24 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { isUuid } from 'uuidv4'
+
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { Provider } from './models/provider.model'
-import { CreateProviderDto } from './dto/createProvider.dto'
+import { CreateContactDto } from './dto/createContact.dto'
+import { CreateHelpdeskDto } from './dto/createHelpdesk.dto'
 import { CreateOrganisationDto } from './dto/createOrganisation.dto'
-import { Organisation } from './models/organisation.model'
+import { CreateProviderDto } from './dto/createProvider.dto'
+import { UpdateContactDto } from './dto/updateContact.dto'
+import { UpdateHelpdeskDto } from './dto/updateHelpdesk.dto'
 import { UpdateOrganisationDto } from './dto/updateOrganisation.dto'
 import { UpdateProviderDto } from './dto/updateProvider.dto'
-import { CreateContactDto } from './dto/createContact.dto'
 import { AdministrativeContact } from './models/administrativeContact.model'
-import { UpdateContactDto } from './dto/updateContact.dto'
-import { TechnicalContact } from './models/technicalContact.model'
-import { Helpdesk } from './models/helpdesk.model'
-import { CreateHelpdeskDto } from './dto/createHelpdesk.dto'
-import { UpdateHelpdeskDto } from './dto/updateHelpdesk.dto'
 import { Changelog } from './models/changelog.model'
+import { Helpdesk } from './models/helpdesk.model'
+import { Organisation } from './models/organisation.model'
+import { Provider } from './models/provider.model'
+import { TechnicalContact } from './models/technicalContact.model'
 
 @Injectable()
 export class DocumentProviderService {

@@ -2,23 +2,24 @@ import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 
 import { CmsTranslationsModule } from '@island.is/cms-translations'
-import { ProblemModule } from '@island.is/nest/problem'
-import { ConfigModule } from '@island.is/nest/config'
-import { courtClientModuleConfig } from '@island.is/judicial-system/court-client'
-import { SharedAuthModule } from '@island.is/judicial-system/auth'
 import { AuditTrailModule } from '@island.is/judicial-system/audit-trail'
+import { SharedAuthModule } from '@island.is/judicial-system/auth'
+import { courtClientModuleConfig } from '@island.is/judicial-system/court-client'
+import { ConfigModule } from '@island.is/nest/config'
+import { ProblemModule } from '@island.is/nest/problem'
 
 import { environment } from '../environments'
+
 import { BackendApi } from './data-sources/backend'
 import {
   AuthModule,
-  UserModule,
   CaseModule,
+  DefendantModule,
+  FeatureModule,
   FileModule,
   InstitutionModule,
-  FeatureModule,
   PoliceModule,
-  DefendantModule,
+  UserModule,
 } from './modules'
 
 const debug = !environment.production

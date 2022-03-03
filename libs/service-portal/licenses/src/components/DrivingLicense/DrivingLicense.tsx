@@ -1,11 +1,14 @@
 import React, { useState } from 'react'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { Box, Button, Hidden, Tag, Text } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
-import * as styles from './DrivingLicense.css'
-import { getExpiresIn, toDate } from '../../utils/dateUtils'
+
+import { Box, Button, Hidden, Tag, Text } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { ServicePortalPath } from '@island.is/service-portal/core'
+
 import QRCodeModal from '../../components/QRCodeModal/QRCodeModal'
+import { getExpiresIn, toDate } from '../../utils/dateUtils'
+
+import * as styles from './DrivingLicense.css'
 
 export const DrivingLicense = ({
   id,

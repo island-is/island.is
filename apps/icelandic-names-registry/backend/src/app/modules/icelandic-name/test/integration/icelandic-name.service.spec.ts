@@ -1,9 +1,10 @@
 import { INestApplication } from '@nestjs/common'
 
 import { NameType, StatusType } from '@island.is/icelandic-names-registry-types'
+
 import { setup } from '../../../../../../test/setup'
-import { IcelandicNameService } from '../../icelandic-name.service'
 import { CreateIcelandicNameBodyDto } from '../../dto'
+import { IcelandicNameService } from '../../icelandic-name.service'
 
 let app: INestApplication
 let icelandicNameService: IcelandicNameService

@@ -1,11 +1,12 @@
-import { ExtractJwt, Strategy } from 'passport-jwt'
-import { PassportStrategy } from '@nestjs/passport'
 import { Injectable } from '@nestjs/common'
+import { PassportStrategy } from '@nestjs/passport'
 import { Request } from 'express'
 import { passportJwtSecret } from 'jwks-rsa'
+import { ExtractJwt, Strategy } from 'passport-jwt'
+
+import { Auth } from './auth'
 import type { AuthConfig } from './auth.module'
 import { JwtPayload } from './jwt.payload'
-import { Auth } from './auth'
 
 const AUTH_BODY_FIELD_NAME = '__accessToken'
 const JWKS_URI = '/.well-known/openid-configuration/jwks'

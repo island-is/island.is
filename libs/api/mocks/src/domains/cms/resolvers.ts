@@ -1,6 +1,9 @@
-import { SystemMetadata } from '@island.is/shared/types'
 import orderBy from 'lodash/orderBy'
+
+import { SystemMetadata } from '@island.is/shared/types'
+
 import { Resolvers } from '../../types'
+
 import { store } from './store'
 import { getDatePrefix } from './utils'
 

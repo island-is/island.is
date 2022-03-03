@@ -1,11 +1,10 @@
-import { decode } from 'jsonwebtoken'
-
 import {
   ExecutionContext,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
+import { decode } from 'jsonwebtoken'
 
 import type { User } from '@island.is/judicial-system/types'
 

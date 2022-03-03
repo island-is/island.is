@@ -1,6 +1,8 @@
-import { application } from './factories'
-import { CurrentUserCompanies, NationalRegistryFamilyMember } from '../../types'
 import { createStore, faker } from '@island.is/shared/mocking'
+
+import { CurrentUserCompanies, NationalRegistryFamilyMember } from '../../types'
+
+import { application } from './factories'
 
 export const store = createStore(() => {
   faker.seed(100)

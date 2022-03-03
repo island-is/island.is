@@ -1,14 +1,14 @@
-import express from 'express'
 import cookieParser from 'cookie-parser'
+import express from 'express'
 
 import { logger } from '@island.is/logging'
 
+import { authRoutes, resolvers, typeDefs } from './domains'
 import {
   apolloServerSentryPlugin,
-  setupSentryRequestHandler,
   setupSentryErrorHandler,
+  setupSentryRequestHandler,
 } from './extensions'
-import { authRoutes, resolvers, typeDefs } from './domains'
 import { createServer } from './graphql'
 
 const app = express()

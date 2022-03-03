@@ -1,10 +1,11 @@
 import { style } from '@vanilla-extract/css'
+
+import { theme } from '@island.is/island-ui/theme'
 import {
   SERVICE_PORTAL_HEADER_HEIGHT_LG,
   SERVICE_PORTAL_HEADER_HEIGHT_SM,
   zIndex,
 } from '@island.is/service-portal/constants'
-import { theme } from '@island.is/island-ui/theme'
 
 export const header = style({
   position: 'fixed',

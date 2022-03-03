@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Claim } from '../entities/models/claim.model'
 import { Sequelize } from 'sequelize-typescript'
+
+import { Claim } from '../entities/models/claim.model'
 
 @Injectable()
 export class ClaimsService {

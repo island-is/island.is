@@ -1,3 +1,3 @@
-import { User, Flight } from '@island.is/air-discount-scheme/types'
+import { Flight,User } from '@island.is/air-discount-scheme/types'
 
 export type FlightWithUser = Flight & { user: User }

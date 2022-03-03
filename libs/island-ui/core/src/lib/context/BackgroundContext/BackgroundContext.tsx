@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactElement } from 'react'
+import React, { createContext, ReactElement,useContext } from 'react'
 
 import { BoxProps } from '../../Box/types'
 

@@ -1,4 +1,5 @@
-import React, { FC, ReactNode, useContext, ChangeEvent } from 'react'
+import React, { ChangeEvent,FC, ReactNode, useContext } from 'react'
+
 import { Accordion } from '../../Accordion/Accordion'
 import {
   AccordionCard,
@@ -7,8 +8,8 @@ import {
 import { Box } from '../../Box/Box'
 import { Button } from '../../Button/Button'
 import { Checkbox } from '../../Checkbox/Checkbox'
-import { RadioButton } from '../../RadioButton/RadioButton'
 import { Inline } from '../../Inline/Inline'
+import { RadioButton } from '../../RadioButton/RadioButton'
 import { Stack } from '../../Stack/Stack'
 import { FilterContext } from '../Filter'
 

@@ -2,8 +2,8 @@ import { ContentType, Field } from 'contentful'
 import uniq from 'lodash/uniq'
 import upperFirst from 'lodash/upperFirst'
 
+import { Args,getFirstLevelContentType } from './contentType'
 import { Imports } from './generateFile'
-import { getFirstLevelContentType, Args } from './contentType'
 import { pushOnce } from './generateModel'
 
 const validationsToMapperFunction = (

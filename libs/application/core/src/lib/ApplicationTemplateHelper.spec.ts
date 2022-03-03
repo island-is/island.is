@@ -1,13 +1,15 @@
-import * as z from 'zod'
 import set from 'lodash/set'
-import { ApplicationTemplateHelper } from './ApplicationTemplateHelper'
-import { ApplicationTemplate } from '../types/ApplicationTemplate'
+import * as z from 'zod'
+
+import { buildForm, DefaultStateLifeCycle } from '@island.is/application/core'
+
 import {
   Application,
   ApplicationStatus,
   ExternalData,
   FormValue,
 } from '../types/Application'
+import { ApplicationTemplate } from '../types/ApplicationTemplate'
 import { ApplicationTypes } from '../types/ApplicationTypes'
 import {
   ApplicationContext,
@@ -15,7 +17,8 @@ import {
   ApplicationStateSchema,
   ApplicationTemplateAPIAction,
 } from '../types/StateMachine'
-import { buildForm, DefaultStateLifeCycle } from '@island.is/application/core'
+
+import { ApplicationTemplateHelper } from './ApplicationTemplateHelper'
 
 const createMockApplication = (
   data: {

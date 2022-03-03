@@ -1,14 +1,14 @@
-import { Injectable, Inject } from '@nestjs/common'
+import { Inject,Injectable } from '@nestjs/common'
 
-import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
+import { SharedTemplateApiService } from '../../shared'
 
+import type { LoginServiceConfig } from './config/loginServiceConfig'
+import { LOGIN_SERVICE_CONFIG } from './config/loginServiceConfig'
 import {
   generateApplicationEmail,
   generateConfirmationEmail,
 } from './emailGenerators'
-import type { LoginServiceConfig } from './config/loginServiceConfig'
-import { LOGIN_SERVICE_CONFIG } from './config/loginServiceConfig'
 
 @Injectable()
 export class LoginServiceService {

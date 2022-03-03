@@ -1,14 +1,14 @@
 import {
+  Event,
   EventObject,
   Machine,
-  Event,
   StateNodeConfig,
   StateSchema,
 } from 'xstate'
 import { AnyEventObject, MachineOptions, StateMachine } from 'xstate/lib/types'
 
+import { ActionCardTag,Application } from './Application'
 import { FormLoader, FormText, StaticText } from './Form'
-import { Application, ActionCardTag } from './Application'
 
 export type ApplicationRole = 'applicant' | 'assignee' | string
 

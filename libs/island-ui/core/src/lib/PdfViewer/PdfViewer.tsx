@@ -1,10 +1,12 @@
 import React, { FC, useEffect, useState } from 'react'
-import { Box } from '../Box/Box'
-import type { Document, Page, Outline, pdfjs } from 'react-pdf'
-import * as styles from './PdfViewer.css'
-import { Pagination } from '../Pagination/Pagination'
-import { LoadingDots } from '../LoadingDots/LoadingDots'
+import type { Document, Outline, Page, pdfjs } from 'react-pdf'
+
 import { AlertMessage } from '../AlertMessage/AlertMessage'
+import { Box } from '../Box/Box'
+import { LoadingDots } from '../LoadingDots/LoadingDots'
+import { Pagination } from '../Pagination/Pagination'
+
+import * as styles from './PdfViewer.css'
 
 export interface PdfViewerProps {
   file: string

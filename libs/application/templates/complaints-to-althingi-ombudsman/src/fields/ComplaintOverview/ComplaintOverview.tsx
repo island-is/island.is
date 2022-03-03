@@ -1,18 +1,21 @@
-import { FieldBaseProps } from '@island.is/application/core'
-import { Box, GridRow, GridColumn } from '@island.is/island-ui/core'
-import { ReviewGroup } from '@island.is/application/ui-components'
 import React, { FC } from 'react'
+
+import { FieldBaseProps } from '@island.is/application/core'
+import { ReviewGroup } from '@island.is/application/ui-components'
+import { Box, GridColumn,GridRow } from '@island.is/island-ui/core'
+
 import { ComplaintsToAlthingiOmbudsman } from '../../lib/dataSchema'
 import {
+  complaintInformation,
   complaintOverview,
   information,
-  complaintInformation,
 } from '../../lib/messages'
-import { ValueLine } from './ValueLine'
+import { OmbudsmanComplaintTypeEnum } from '../../shared'
+import { yesNoMessageMapper } from '../../utils'
+
 import { ComplainedFor } from './ComplainedFor'
 import { ComplaintInformation } from './ComplaintInformation'
-import { yesNoMessageMapper } from '../../utils'
-import { OmbudsmanComplaintTypeEnum } from '../../shared'
+import { ValueLine } from './ValueLine'
 
 type Props = FieldBaseProps & { field: { props: { isEditable: boolean } } }
 

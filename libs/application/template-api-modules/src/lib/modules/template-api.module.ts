@@ -1,8 +1,10 @@
 import { DynamicModule } from '@nestjs/common'
+
+import { BaseTemplateAPIModuleConfig } from '../types'
+
+import { TemplateAPIService } from './template-api.service'
 // Imports of custom template API modules
 import { modules } from './templates'
-import { BaseTemplateAPIModuleConfig } from '../types'
-import { TemplateAPIService } from './template-api.service'
 
 export class TemplateAPIModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {

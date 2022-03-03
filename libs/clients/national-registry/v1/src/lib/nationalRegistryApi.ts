@@ -1,17 +1,18 @@
 import { InternalServerErrorException, NotFoundException } from '@nestjs/common'
-import Soap from 'soap'
-
 import isEmpty from 'lodash/isEmpty'
 import isObject from 'lodash/isObject'
+import Soap from 'soap'
+
 import type { User } from '@island.is/auth-nest-tools'
 import { logger } from '@island.is/logging'
+
 import {
-  GetViewISLFjolskyldanDto,
-  GetViewISLEinstaklingurDto,
   GetViewISLBorninMinDto,
-  ISLFjolskyldan,
+  GetViewISLEinstaklingurDto,
+  GetViewISLFjolskyldanDto,
   ISLBorninMin,
   ISLEinstaklingur,
+  ISLFjolskyldan,
 } from './dto'
 import { SoapClient } from './soapClient'
 

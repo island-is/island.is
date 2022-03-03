@@ -1,18 +1,19 @@
 import {
-  buildTextField,
+  buildCustomField,
+  buildDataProviderItem,
+  buildDateField,
+  buildExternalDataProvider,
   buildForm,
   buildMultiField,
   buildSection,
-  buildCustomField,
   buildSubmitField,
+  buildTextField,
   Form,
   FormModes,
-  buildExternalDataProvider,
-  buildDataProviderItem,
-  buildDateField,
 } from '@island.is/application/core'
-import { m } from '../lib/messages'
+
 import Logo from '../assets/Logo'
+import { m } from '../lib/messages'
 
 export const PetitionApplicationForm: Form = buildForm({
   id: 'PetitionApplicationForm',

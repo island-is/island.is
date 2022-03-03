@@ -1,17 +1,18 @@
 import { UseGuards } from '@nestjs/common'
-import { Resolver, Query, Args } from '@nestjs/graphql'
+import { Args,Query, Resolver } from '@nestjs/graphql'
 
 import { ApiScope } from '@island.is/auth/scopes'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import {
-  IdsUserGuard,
-  ScopesGuard,
   CurrentUser,
+  IdsUserGuard,
   Scopes,
+  ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { AuditService } from '@island.is/nest/audit'
 
 import { HealthInsuranceService } from '../healthInsurance.service'
+
 import { IsHealthInsuredInput } from './dto'
 
 const namespace = '@island.is/api/health-insurance'

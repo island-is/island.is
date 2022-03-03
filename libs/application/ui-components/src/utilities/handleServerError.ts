@@ -1,8 +1,9 @@
 import { ApolloError } from '@apollo/client'
 import * as Sentry from '@sentry/react'
+
 import { coreMessages, MessageFormatter } from '@island.is/application/core'
-import { findProblemInApolloError } from '@island.is/shared/problem'
 import { toast } from '@island.is/island-ui/core'
+import { findProblemInApolloError } from '@island.is/shared/problem'
 
 export function handleServerError(
   error: ApolloError,

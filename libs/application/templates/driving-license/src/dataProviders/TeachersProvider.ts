@@ -1,10 +1,10 @@
+import { Teacher } from '@island.is/api/schema'
 import {
   BasicDataProvider,
-  SuccessfulDataProviderResult,
-  FailedDataProviderResult,
   coreErrorMessages,
+  FailedDataProviderResult,
+  SuccessfulDataProviderResult,
 } from '@island.is/application/core'
-import { Teacher } from '@island.is/api/schema'
 
 export class TeachersProvider extends BasicDataProvider {
   type = 'TeachersProvider'

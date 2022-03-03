@@ -1,4 +1,3 @@
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   BadRequestException,
   Inject,
@@ -7,12 +6,15 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { CreateUserProfileDto } from './dto/createUserProfileDto'
-import { UpdateUserProfileDto } from './dto/updateUserProfileDto'
-import { UserProfile } from './userProfile.model'
+
 import { User } from '@island.is/auth-nest-tools'
-import { UserDeviceTokens } from './userDeviceTokens.model'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import { CreateUserProfileDto } from './dto/createUserProfileDto'
 import { DeviceTokenDto } from './dto/deviceToken.dto'
+import { UpdateUserProfileDto } from './dto/updateUserProfileDto'
+import { UserDeviceTokens } from './userDeviceTokens.model'
+import { UserProfile } from './userProfile.model'
 
 @Injectable()
 export class UserProfileService {

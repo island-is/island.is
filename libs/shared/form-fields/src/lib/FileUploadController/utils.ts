@@ -1,6 +1,6 @@
 import { UploadFile } from '@island.is/island-ui/core'
 
-import { S3UploadResponse, ActionTypes, Action } from './types'
+import { Action,ActionTypes, S3UploadResponse } from './types'
 
 export const uploadFileToS3 = (
   file: UploadFile,

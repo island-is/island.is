@@ -1,5 +1,5 @@
-import { decode } from 'jsonwebtoken'
 import axios from 'axios'
+import { decode } from 'jsonwebtoken'
 
 export const checkExpiry = (
   accessToken: string,

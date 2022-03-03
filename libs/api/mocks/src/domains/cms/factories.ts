@@ -1,4 +1,13 @@
 import {
+  factory,
+  faker,
+  simpleFactory,
+  slugify,
+  title,
+} from '@island.is/shared/mocking'
+import { SystemMetadata } from '@island.is/shared/types'
+
+import {
   AlertBanner,
   Article,
   ArticleCategory,
@@ -21,15 +30,8 @@ import {
   Slice,
   SubArticle,
 } from '../../types'
+
 import { wysiwyg } from './richtext'
-import {
-  factory,
-  slugify,
-  simpleFactory,
-  faker,
-  title,
-} from '@island.is/shared/mocking'
-import { SystemMetadata } from '@island.is/shared/types'
 
 export const referenceLink = factory<ReferenceLink>({
   slug: () => faker.lorem.slug(),

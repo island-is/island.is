@@ -1,6 +1,5 @@
-import each from 'jest-each'
-
 import { ForbiddenException } from '@nestjs/common'
+import each from 'jest-each'
 
 import { CaseState, CaseTransition } from '@island.is/judicial-system/types'
 

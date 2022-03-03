@@ -1,15 +1,15 @@
-import { Test } from '@nestjs/testing'
 import { getModelToken } from '@nestjs/sequelize'
+import { Test } from '@nestjs/testing'
 
 import { User } from '@island.is/auth-nest-tools'
-import { AuditModule } from '@island.is/nest/audit'
 import { NameType, StatusType } from '@island.is/icelandic-names-registry-types'
 import { LOGGER_PROVIDER, LoggingModule } from '@island.is/logging'
+import { AuditModule } from '@island.is/nest/audit'
 
-import { IcelandicNameController } from '../../icelandic-name.controller'
-import { IcelandicNameService } from '../../icelandic-name.service'
-import { IcelandicName } from '../../icelandic-name.model'
 import { CreateIcelandicNameBodyDto } from '../../dto'
+import { IcelandicNameController } from '../../icelandic-name.controller'
+import { IcelandicName } from '../../icelandic-name.model'
+import { IcelandicNameService } from '../../icelandic-name.service'
 
 describe('IcelandicNameController', () => {
   let icelandicNameController: IcelandicNameController

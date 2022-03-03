@@ -4,6 +4,7 @@ import {
   MeDelegationsApi,
   ScopesApi,
 } from '../../gen/fetch'
+
 import { ApiConfiguration } from './apiConfiguration'
 
 export const exportedApis = [

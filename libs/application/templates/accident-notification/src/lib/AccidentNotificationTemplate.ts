@@ -1,3 +1,6 @@
+import set from 'lodash/set'
+import { assign } from 'xstate'
+
 import {
   Application,
   ApplicationConfigurations,
@@ -9,12 +12,12 @@ import {
   DefaultEvents,
   getValueViaPath,
 } from '@island.is/application/core'
-import set from 'lodash/set'
-import { assign } from 'xstate'
-import { AccidentTypeEnum, ReviewApprovalEnum } from '..'
+
 import { States } from '../constants'
 import { ApiActions } from '../shared'
 import { WhoIsTheNotificationForEnum } from '../types'
+import { AccidentTypeEnum, ReviewApprovalEnum } from '..'
+
 import { AccidentNotificationSchema } from './dataSchema'
 import { application } from './messages'
 

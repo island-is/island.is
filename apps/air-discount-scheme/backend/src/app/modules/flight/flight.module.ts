@@ -1,15 +1,16 @@
 import { forwardRef, Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { Flight, FlightLeg } from './flight.model'
-import {
-  PublicFlightController,
-  PrivateFlightController,
-} from './flight.controller'
-import { FlightService } from './flight.service'
+import { CacheModule } from '../cache'
 import { DiscountModule } from '../discount'
 import { NationalRegistryModule } from '../nationalRegistry'
-import { CacheModule } from '../cache'
+
+import {
+  PrivateFlightController,
+  PublicFlightController,
+} from './flight.controller'
+import { Flight, FlightLeg } from './flight.model'
+import { FlightService } from './flight.service'
 
 @Module({
   imports: [

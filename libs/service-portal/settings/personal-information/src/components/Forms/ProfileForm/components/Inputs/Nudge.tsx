@@ -1,18 +1,20 @@
 import React, { FC, useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+
 import {
   Box,
   Button,
-  Columns,
+  Checkbox,
   Column,
+  Columns,
   Icon,
   LoadingDots,
-  Checkbox,
 } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import { useUpdateOrCreateUserProfile } from '@island.is/service-portal/graphql'
+
 import { msg } from '../../../../../lib/messages'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { Controller, useForm } from 'react-hook-form'
 
 interface Props {
   canNudge: boolean

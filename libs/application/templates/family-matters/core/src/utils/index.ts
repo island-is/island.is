@@ -1,10 +1,11 @@
-import parse from 'date-fns/parse'
 import format from 'date-fns/format'
-import is from 'date-fns/locale/is'
 import enGB from 'date-fns/locale/en-GB'
-import sortBy from 'lodash/sortBy'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import is from 'date-fns/locale/is'
+import parse from 'date-fns/parse'
 import kennitala from 'kennitala'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import sortBy from 'lodash/sortBy'
+
 import { Address, Child, NationalRegistry, Person } from '../types'
 
 export const formatSsn = (ssn: string) => {

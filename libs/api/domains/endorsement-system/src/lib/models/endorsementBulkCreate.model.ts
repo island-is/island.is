@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+
 import { Endorsement } from './endorsement.model'
 import { NationalIdError } from './nationalIdError.model'
 

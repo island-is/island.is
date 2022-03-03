@@ -1,17 +1,21 @@
 import React from 'react'
+import { QueryResult } from '@apollo/client'
+
 import {
+  Box,
+  Divider,
+  SkeletonLoader,
   Stack,
   Text,
-  SkeletonLoader,
-  Divider,
-  Box,
 } from '@island.is/island-ui/core'
-import { User } from '@island.is/shared/types'
 import { useLocale } from '@island.is/localization'
 import { userMessages } from '@island.is/shared/translations'
+import { User } from '@island.is/shared/types'
+
 import { ActorDelegationsQuery } from '../../../gen/graphql'
+
 import { UserTopicCard } from './UserTopicCard'
-import { QueryResult } from '@apollo/client'
+
 import * as styles from './UserMenu.css'
 interface UserDelegationsProps {
   user: User

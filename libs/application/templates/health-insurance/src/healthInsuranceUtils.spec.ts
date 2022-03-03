@@ -1,10 +1,11 @@
 import { Application, ApplicationTypes } from '@island.is/application/core'
 import { faker } from '@island.is/shared/mocking'
+
 import { Applications } from './dataProviders/APIDataTypes'
 import {
+  getDraftApplications,
   getOldestDraftApplicationId,
   hasActiveDraftApplication,
-  getDraftApplications,
 } from './healthInsuranceUtils'
 
 describe('Health insurance utils', () => {

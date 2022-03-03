@@ -1,14 +1,15 @@
+import faker from 'faker'
+
 import {
   Case,
-  Gender,
   CaseState,
   CaseType,
+  Gender,
   Institution,
   InstitutionType,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
-import faker from 'faker'
 
 export const investigationCaseAccusedName = `${faker.name.firstName()} ${faker.name.lastName()}`
 export const investigationCaseAccusedAddress = faker.address.streetAddress()

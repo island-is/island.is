@@ -1,5 +1,6 @@
-import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 import path from 'path'
+
+import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 
 export interface Environment {
   elasticNode: string

@@ -1,23 +1,25 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useEffect,useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { m } from '@island.is/service-portal/core'
-import { msg } from '../../../../../lib/messages'
-import { useLocale, useNamespaces } from '@island.is/localization'
+
 import {
   Box,
   Button,
-  Columns,
   Column,
+  Columns,
   Icon,
-  Text,
   LoadingDots,
+  Text,
 } from '@island.is/island-ui/core'
-import { InputController } from '@island.is/shared/form-fields'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { m } from '@island.is/service-portal/core'
 import {
-  useVerifyEmail,
-  useUpdateOrCreateUserProfile,
   useDeleteIslykillValue,
+  useUpdateOrCreateUserProfile,
+  useVerifyEmail,
 } from '@island.is/service-portal/graphql'
+import { InputController } from '@island.is/shared/form-fields'
+
+import { msg } from '../../../../../lib/messages'
 
 interface Props {
   buttonText: string

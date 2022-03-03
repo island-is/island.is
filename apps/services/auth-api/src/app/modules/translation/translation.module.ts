@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
+
 import {
-  TranslationService,
-  Translation,
   Language,
+  Translation,
+  TranslationService,
 } from '@island.is/auth-api-lib'
+
 import { TranslationController } from './translation.controller'
 
 @Module({

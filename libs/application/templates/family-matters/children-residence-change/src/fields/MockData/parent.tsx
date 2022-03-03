@@ -1,7 +1,9 @@
-import React, { useEffect, useCallback } from 'react'
+import React, { useCallback,useEffect } from 'react'
 import { useFieldArray } from 'react-hook-form'
+
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
+
 import { CRCFieldBaseProps } from '../../types'
 
 const parentBDefaults = {

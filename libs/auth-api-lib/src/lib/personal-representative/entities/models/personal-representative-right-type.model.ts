@@ -1,16 +1,18 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
   DataType,
+  HasMany,
   Model,
+  PrimaryKey,
   Table,
   UpdatedAt,
-  PrimaryKey,
-  HasMany,
 } from 'sequelize-typescript'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { PersonalRepresentativeRight } from './personal-representative-right.model'
+
 import { PersonalRepresentativeRightTypeDTO } from '../dto/personal-representative-right-type.dto'
+
+import { PersonalRepresentativeRight } from './personal-representative-right.model'
 
 @Table({
   tableName: 'personal_representative_right_type',

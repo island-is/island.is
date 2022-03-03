@@ -1,7 +1,8 @@
+import * as indexManager from '@island.is/content-search-index-manager'
 import { logger } from '@island.is/logging'
+
 import * as aws from './lib/aws'
 import * as dictionary from './lib/dictionary'
-import * as indexManager from '@island.is/content-search-index-manager'
 
 class App {
   async run(): Promise<boolean> {

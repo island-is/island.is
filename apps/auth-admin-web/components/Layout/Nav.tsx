@@ -2,11 +2,13 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { isLoggedIn } from '../../utils/auth.utils'
 import { useSession } from 'next-auth/client'
-import { SessionInfo } from './../../entities/common/SessionInfo'
+
 import { Localization } from '../../entities/common/Localization'
+import { isLoggedIn } from '../../utils/auth.utils'
 import LocalizationUtils from '../../utils/localization.utils'
+
+import { SessionInfo } from './../../entities/common/SessionInfo'
 import { RoleUtils } from './../../utils/role.utils'
 
 const Nav: React.FC = () => {

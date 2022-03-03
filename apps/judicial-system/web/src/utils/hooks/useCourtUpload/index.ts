@@ -1,11 +1,12 @@
+import { useEffect, useState } from 'react'
 import { ApolloError, useMutation } from '@apollo/client'
-import { UploadFileToCourtMutation } from '@island.is/judicial-system-web/graphql'
+
 import {
   Case,
   CaseFile as TCaseFile,
   CaseFileState,
 } from '@island.is/judicial-system/types'
-import { useEffect, useState } from 'react'
+import { UploadFileToCourtMutation } from '@island.is/judicial-system-web/graphql'
 
 export type CaseFileStatus =
   | 'not-uploaded'

@@ -1,21 +1,21 @@
 import {
+  createUnionType,
   Field,
   ObjectType,
-  createUnionType,
   registerEnumType,
 } from '@nestjs/graphql'
 import {
-  Column,
-  DataType,
-  Model,
-  Table,
-  ForeignKey,
-  CreatedAt,
-  UpdatedAt,
   BelongsTo,
-  IsUUID,
-  PrimaryKey,
+  Column,
+  CreatedAt,
+  DataType,
   Default,
+  ForeignKey,
+  IsUUID,
+  Model,
+  PrimaryKey,
+  Table,
+  UpdatedAt,
 } from 'sequelize-typescript'
 
 import { RecyclingPartnerModel } from '../recyclingPartner'

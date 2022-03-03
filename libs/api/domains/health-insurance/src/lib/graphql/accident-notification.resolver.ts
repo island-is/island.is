@@ -1,13 +1,16 @@
 import { Inject, UseGuards } from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
-import { Audit } from '@island.is/nest/audit'
+
 import { ApiScope } from '@island.is/auth/scopes'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Audit } from '@island.is/nest/audit'
+
+import { AccidentNotificationService } from '../accident-notification.service'
+
 import { HealthInsuranceAccidentStatusInput } from './dto/accidentStatus.input'
 import { AccidentNotificationStatus } from './models/accidentNotificationStatus.model'
-import { AccidentNotificationService } from '../accident-notification.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)

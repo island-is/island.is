@@ -1,5 +1,6 @@
 import React, { FC, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+
 import { CustomField, FieldBaseProps } from '@island.is/application/core'
 import {
   AsyncSearch,

@@ -1,9 +1,10 @@
-import jwt from 'jsonwebtoken'
 import { AuthenticationError, ForbiddenError } from 'apollo-server-express'
+import jwt from 'jsonwebtoken'
 
-import { GraphQLContext, User, Credentials } from '../../types'
-import { Permissions } from './types'
 import { environment } from '../../environments'
+import { Credentials,GraphQLContext, User } from '../../types'
+
+import { Permissions } from './types'
 
 const {
   accessGroups: { developers = '', admins = '', testers = '' },

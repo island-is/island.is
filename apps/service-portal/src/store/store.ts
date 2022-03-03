@@ -1,10 +1,12 @@
+import uniqBy from 'lodash/uniqBy'
+
 import {
   ServicePortalModule,
   ServicePortalRoute,
 } from '@island.is/service-portal/core'
-import uniqBy from 'lodash/uniqBy'
-import { modules, ModuleKeys } from './modules'
+
 import { Action, ActionType, AsyncActionState, MenuState } from './actions'
+import { ModuleKeys,modules } from './modules'
 
 export interface StoreState {
   modules: Record<ModuleKeys, ServicePortalModule>

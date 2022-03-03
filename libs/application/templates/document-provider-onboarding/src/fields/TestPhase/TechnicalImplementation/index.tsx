@@ -1,13 +1,15 @@
 import React, { FC } from 'react'
+import { Controller,useFormContext } from 'react-hook-form'
+
 import {
   FieldBaseProps,
-  getValueViaPath,
   formatText,
+  getValueViaPath,
 } from '@island.is/application/core'
-import { m } from '../../../forms/messages'
-import { useFormContext, Controller } from 'react-hook-form'
-import { Box, Text, Checkbox } from '@island.is/island-ui/core'
+import { Box, Checkbox,Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+
+import { m } from '../../../forms/messages'
 
 const TestPhaseInfoScreen: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()

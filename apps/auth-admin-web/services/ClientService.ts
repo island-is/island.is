@@ -8,6 +8,7 @@ import { ClientRedirectUriDTO } from '../entities/dtos/client-redirect-uri.dto'
 import { ClientSecretDTO } from '../entities/dtos/client-secret.dto'
 import { IdpRestrictionDTO } from '../entities/dtos/idp-restriction.dto'
 import { ApiScope } from '../entities/models/api-scope.model'
+import { Client } from '../entities/models/client.model'
 import { ClientAllowedCorsOrigin } from '../entities/models/client-allowed-cors-origin.model'
 import { ClientAllowedScope } from '../entities/models/client-allowed-scope.model'
 import { ClientClaim } from '../entities/models/client-claim.model'
@@ -16,8 +17,8 @@ import { ClientIdpRestrictions } from '../entities/models/client-idp-restriction
 import { ClientPostLogoutRedirectUri } from '../entities/models/client-post-logout-redirect-uri.model'
 import { ClientRedirectUri } from '../entities/models/client-redirect-uri.model'
 import { ClientSecret } from '../entities/models/client-secret.model'
-import { Client } from '../entities/models/client.model'
 import { IdpProvider } from '../entities/models/IdpProvider.model'
+
 import { BaseService } from './BaseService'
 
 export class ClientService extends BaseService {

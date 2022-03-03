@@ -1,17 +1,17 @@
 import {
-  Case,
-  CaseLegalProvisions,
-  CaseCustodyRestrictions,
-  CaseState,
-} from '@island.is/judicial-system/types'
+  HEARING_ARRANGEMENTS_ROUTE,
+  OVERVIEW_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   makeCustodyCase,
   makeProsecutor,
 } from '@island.is/judicial-system/formatters'
 import {
-  HEARING_ARRANGEMENTS_ROUTE,
-  OVERVIEW_ROUTE,
-} from '@island.is/judicial-system/consts'
+  Case,
+  CaseCustodyRestrictions,
+  CaseLegalProvisions,
+  CaseState,
+} from '@island.is/judicial-system/types'
 
 import { intercept } from '../../../utils'
 

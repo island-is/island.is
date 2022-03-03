@@ -1,19 +1,19 @@
 import React from 'react'
+import { useHistory,useLocation } from 'react-router-dom'
 import { gql, useQuery } from '@apollo/client'
-import { useLocation, useHistory } from 'react-router-dom'
 import * as kennitala from 'kennitala'
 
+import { AuthCustomDelegation,Query } from '@island.is/api/schema'
 import {
   Box,
-  SkeletonLoader,
-  GridRow,
-  GridColumn,
-  Stack,
   Button,
+  GridColumn,
+  GridRow,
+  SkeletonLoader,
+  Stack,
 } from '@island.is/island-ui/core'
-import { Query, AuthCustomDelegation } from '@island.is/api/schema'
-import { EmptyImage } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
+import { EmptyImage } from '@island.is/service-portal/core'
 
 import { AccessCard } from '../AccessCard'
 

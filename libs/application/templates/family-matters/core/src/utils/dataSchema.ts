@@ -1,5 +1,5 @@
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { MessageDescriptor } from '@formatjs/intl'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as z from 'zod'
 
 const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i

@@ -1,14 +1,16 @@
 import React, { FC } from 'react'
-import * as styles from './Location.css'
+
 import {
   Box,
-  Text,
-  Stack,
+  GridColumn,
   GridContainer,
   GridRow,
-  GridColumn,
   Logo,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
+
+import * as styles from './Location.css'
 
 export interface LocationProps {
   title: string

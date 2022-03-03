@@ -1,5 +1,6 @@
-import { isNumber, sanitizeInput } from '../utils'
 import * as NationalId from 'kennitala'
+
+import { isNumber, sanitizeInput } from '../utils'
 
 export const pdfRequest = (
   agentNationalId: string,

@@ -1,9 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { IntlService } from '@island.is/cms-translations'
-import { Message } from './dto/createNotification.dto'
-import { Notification, MessageTypes } from './types'
-import messages from '../../../messages'
+
 import { UserProfile } from '@island.is/clients/user-profile'
+import { IntlService } from '@island.is/cms-translations'
+
+import messages from '../../../messages'
+
+import { Message } from './dto/createNotification.dto'
+import { MessageTypes,Notification } from './types'
 
 export const APP_PROTOCOL = Symbol('APP_PROTOCOL')
 export interface MessageProcessorServiceConfig {

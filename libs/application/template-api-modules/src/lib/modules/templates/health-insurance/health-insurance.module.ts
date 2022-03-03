@@ -1,12 +1,12 @@
 import { DynamicModule } from '@nestjs/common'
-import { HealthInsuranceModule as HealthInsuranceMod } from '@island.is/health-insurance'
 
-// This is a shared module that gives you access to common methods
-import { SharedTemplateAPIModule } from '../../shared'
+import { HealthInsuranceModule as HealthInsuranceMod } from '@island.is/health-insurance'
 
 // The base config that template api modules are registered with by default
 // (configurable inside `template-api.module.ts`)
 import { BaseTemplateAPIModuleConfig } from '../../../types'
+// This is a shared module that gives you access to common methods
+import { SharedTemplateAPIModule } from '../../shared'
 
 // Here you import your module service
 import { HealthInsuranceService } from './health-insurance.service'

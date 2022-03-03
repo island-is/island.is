@@ -1,9 +1,4 @@
 import {
-  ClientsService,
-  ClientSecretDTO,
-  ClientSecret,
-} from '@island.is/auth-api-lib'
-import {
   BadRequestException,
   Body,
   Controller,
@@ -12,15 +7,22 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
+
+import { AuthAdminScope } from '@island.is/auth/scopes'
+import {
+  ClientSecret,
+  ClientSecretDTO,
+  ClientsService,
+} from '@island.is/auth-api-lib'
 import type { User } from '@island.is/auth-nest-tools'
 import {
-  IdsUserGuard,
-  ScopesGuard,
-  Scopes,
   CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { AuthAdminScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
+
 import { environment } from '../../../environments'
 
 const namespace = `${environment.audit.defaultNamespace}/client-secret`

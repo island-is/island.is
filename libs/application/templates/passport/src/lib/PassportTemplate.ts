@@ -1,13 +1,14 @@
+import * as z from 'zod'
+
 import {
-  ApplicationTemplate,
-  ApplicationTypes,
+  Application,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
-  Application,
+  ApplicationTemplate,
+  ApplicationTypes,
   DefaultStateLifeCycle,
 } from '@island.is/application/core'
-import * as z from 'zod'
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
 

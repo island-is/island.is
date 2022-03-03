@@ -1,10 +1,10 @@
 import React, { createContext, useState } from 'react'
 
-import { ReactNodeNoStrings } from '../private/ReactNodeNoStrings'
 import { Box } from '../Box/Box'
-import { Stack } from '../Stack/Stack'
-import { Divider } from '../Divider/Divider'
 import { BoxProps } from '../Box/types'
+import { Divider } from '../Divider/Divider'
+import { ReactNodeNoStrings } from '../private/ReactNodeNoStrings'
+import { Stack } from '../Stack/Stack'
 
 interface AccordionContextValue {
   toggledId: string

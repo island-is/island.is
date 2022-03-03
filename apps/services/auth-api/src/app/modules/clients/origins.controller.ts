@@ -1,9 +1,4 @@
 import {
-  ClientAllowedCorsOrigin,
-  ClientsService,
-} from '@island.is/auth-api-lib'
-import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
-import {
   BadRequestException,
   Controller,
   Get,
@@ -11,6 +6,12 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+
+import {
+  ClientAllowedCorsOrigin,
+  ClientsService,
+} from '@island.is/auth-api-lib'
+import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('clients')

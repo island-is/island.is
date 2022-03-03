@@ -1,14 +1,16 @@
 import { DynamicModule, Module } from '@nestjs/common'
+
 import { Logger, LOGGER_PROVIDER, LoggingModule } from '@island.is/logging'
-import { Config } from './types'
+
 import { ClientService } from './client.service'
 import { QueueService } from './queue.service'
-import { WorkerService } from './worker.service'
+import { Config } from './types'
 import {
   getClientServiceToken,
   getQueueServiceToken,
   getWorkerServiceToken,
 } from './utils'
+import { WorkerService } from './worker.service'
 
 @Module({})
 export class QueueModule {

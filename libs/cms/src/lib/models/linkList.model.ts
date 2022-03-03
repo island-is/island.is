@@ -1,5 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+
 import { ILinkList } from '../generated/contentfulTypes'
+
 import { Link, mapLink } from './link.model'
 
 @ObjectType()

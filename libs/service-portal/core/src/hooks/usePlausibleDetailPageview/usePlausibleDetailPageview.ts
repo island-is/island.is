@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+
 import { ServicePortalPath } from '@island.is/service-portal/core'
 
 // Custom location helper for dynamic paths in service portal: https://plausible.io/docs/custom-locations

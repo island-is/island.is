@@ -4,18 +4,19 @@ import React, {
   ReactElement,
   Ref,
   useEffect,
-  useState,
   useLayoutEffect,
   useRef,
+  useState,
 } from 'react'
-import { Box, Icon, Text } from '@island.is/island-ui/core'
 import {
-  useDialogState,
   Dialog,
-  DialogDisclosure,
   DialogBackdrop,
+  DialogDisclosure,
   DialogProps,
+  useDialogState,
 } from 'reakit/Dialog'
+
+import { Box, Icon, Text } from '@island.is/island-ui/core'
 
 import * as styles from './IframeModal.css'
 

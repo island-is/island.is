@@ -1,7 +1,8 @@
 import { ReactDatePickerProps } from 'react-datepicker'
-import { dateFormat } from '@island.is/shared/constants'
-import is from 'date-fns/locale/is'
 import en from 'date-fns/locale/en-US'
+import is from 'date-fns/locale/is'
+
+import { dateFormat } from '@island.is/shared/constants'
 
 import { Icon as IconType, Type } from '../IconRC/iconMap'
 

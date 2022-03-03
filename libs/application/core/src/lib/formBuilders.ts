@@ -1,15 +1,15 @@
 import { MessageDescriptor } from 'react-intl'
 
 import {
+  DataProviderItem,
+  DataProviderPermissionItem,
+  ExternalDataProvider,
   Form,
   FormItemTypes,
   MultiField,
-  ExternalDataProvider,
   Repeater,
   Section,
   SubSection,
-  DataProviderItem,
-  DataProviderPermissionItem,
 } from '../types/Form'
 
 export function buildForm(data: Omit<Form, 'type'>): Form {

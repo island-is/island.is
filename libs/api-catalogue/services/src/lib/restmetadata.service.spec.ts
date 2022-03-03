@@ -1,11 +1,13 @@
 import { ProviderType } from '@island.is/api-catalogue/consts'
 import { Provider } from '@island.is/api-catalogue/types'
+
 import {
   GetOpenAPIRequest,
   MethodList,
   RestMetaservicesApi,
   ServiceId,
 } from '../../gen/fetch/xrd-rest'
+
 import { RestMetadataService } from './restmetadata.service'
 
 const providerToServiceId = (

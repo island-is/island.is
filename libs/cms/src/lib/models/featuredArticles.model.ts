@@ -1,10 +1,10 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { SystemMetadata } from 'api-cms-domain'
 
 import { IFeaturedArticles } from '../generated/contentfulTypes'
 
-import { SystemMetadata } from 'api-cms-domain'
-import { Image, mapImage } from './image.model'
 import { Article, mapArticle } from './article.model'
+import { Image, mapImage } from './image.model'
 import { Link, mapLink } from './link.model'
 
 @ObjectType()

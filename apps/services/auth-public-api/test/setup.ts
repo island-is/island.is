@@ -2,34 +2,35 @@ import { getModelToken } from '@nestjs/sequelize'
 import { TestingModuleBuilder } from '@nestjs/testing'
 
 import {
-  testServer,
-  useDatabase,
-  useAuth,
-  TestApp,
-} from '@island.is/testing/nest'
-import { createCurrentUser } from '@island.is/testing/fixtures'
-import {
-  EinstaklingarApi,
-  Einstaklingsupplysingar,
-} from '@island.is/clients/national-registry-v2'
-import {
   ApiScope,
   DelegationConfig,
   DelegationsService,
   SequelizeConfigService,
 } from '@island.is/auth-api-lib'
-
-import { AppModule } from '../src/app/app.module'
 import { User } from '@island.is/auth-nest-tools'
 import {
-  createMockEinstaklingurApi,
-  RskProcuringClientMock,
-  FeatureFlagServiceMock,
-} from './mocks'
-import { createApiScope } from './fixtures'
+  EinstaklingarApi,
+  Einstaklingsupplysingar,
+} from '@island.is/clients/national-registry-v2'
 import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
-import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { ConfigType } from '@island.is/nest/config'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { createCurrentUser } from '@island.is/testing/fixtures'
+import {
+  TestApp,
+  testServer,
+  useAuth,
+  useDatabase,
+} from '@island.is/testing/nest'
+
+import { AppModule } from '../src/app/app.module'
+
+import { createApiScope } from './fixtures'
+import {
+  createMockEinstaklingurApi,
+  FeatureFlagServiceMock,
+  RskProcuringClientMock,
+} from './mocks'
 
 export interface ScopeSetupOptions {
   name: string

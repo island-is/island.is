@@ -1,7 +1,8 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { SystemMetadata } from 'api-cms-domain'
 
 import { IAccordionSlice } from '../generated/contentfulTypes'
-import { SystemMetadata } from 'api-cms-domain'
+
 import { mapOneColumnText, OneColumnText } from './oneColumnText.model'
 
 @ObjectType()

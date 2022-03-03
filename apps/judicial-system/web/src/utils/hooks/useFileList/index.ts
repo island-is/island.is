@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
+
 import { GetSignedUrlQuery } from '@island.is/judicial-system-web/graphql/sharedGql'
 
 interface Parameters {

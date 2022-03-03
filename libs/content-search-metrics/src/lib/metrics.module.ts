@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common'
+
 import { ElasticService } from '@island.is/content-search-toolkit'
-import { MetricsService } from './metrics.service'
+
 import { MetricsController } from './metrics.controller'
+import { MetricsService } from './metrics.service'
 import { RankedDataService } from './rankedData.service'
 
 @Module({

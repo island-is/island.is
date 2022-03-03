@@ -1,12 +1,13 @@
 import React, { ReactElement } from 'react'
-import {
-  useMenuState,
-  Menu,
-  MenuItem,
-  MenuButton,
-  MenuStateReturn,
-} from 'reakit/Menu'
 import cn from 'classnames'
+import {
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuStateReturn,
+  useMenuState,
+} from 'reakit/Menu'
+
 import { useBoxStyles } from '../Box/useBoxStyles'
 import { Button, ButtonProps } from '../Button/Button'
 import { getTextStyles } from '../Text/Text'

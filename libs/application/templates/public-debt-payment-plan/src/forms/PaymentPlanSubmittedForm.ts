@@ -5,6 +5,7 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
+
 import { application, conclusion, section } from '../lib/messages'
 
 export const PaymentPlanSubmittedForm: Form = buildForm({

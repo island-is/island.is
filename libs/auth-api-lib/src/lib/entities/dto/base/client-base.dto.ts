@@ -1,11 +1,11 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
-  IsString,
   IsBoolean,
+  IsNotEmpty,
   IsNumber,
   IsOptional,
-  IsNotEmpty,
+  IsString,
 } from 'class-validator'
-import { ApiProperty } from '@nestjs/swagger'
 
 export abstract class ClientBaseDTO {
   @IsString()

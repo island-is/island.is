@@ -1,10 +1,11 @@
 import React from 'react'
 import { Redirect } from 'react-router-dom'
-import {
-  ServicePortalPath,
-  ServicePortalModuleComponent,
-} from '@island.is/service-portal/core'
+
 import { useNamespaces } from '@island.is/localization'
+import {
+  ServicePortalModuleComponent,
+  ServicePortalPath,
+} from '@island.is/service-portal/core'
 
 export const FinanceOverview: ServicePortalModuleComponent = () => {
   useNamespaces('sp.finance')

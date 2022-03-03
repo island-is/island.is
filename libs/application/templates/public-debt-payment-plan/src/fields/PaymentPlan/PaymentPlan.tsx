@@ -1,3 +1,7 @@
+import React, { useCallback, useEffect, useState } from 'react'
+import { useFormContext } from 'react-hook-form'
+import HtmlParser from 'react-html-parser'
+
 import {
   GetScheduleDistributionInput,
   PaymentScheduleDebts,
@@ -12,9 +16,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { RadioController } from '@island.is/shared/form-fields'
-import React, { useCallback, useEffect, useState } from 'react'
-import { useFormContext } from 'react-hook-form'
-import HtmlParser from 'react-html-parser'
+
 import { useLazyDistribution } from '../../hooks/useLazyDistribution'
 import { shared } from '../../lib/messages'
 import { paymentPlan } from '../../lib/messages/paymentPlan'
@@ -33,8 +35,10 @@ import {
 import { PaymentPlanTable } from '../components/PaymentPlanTable/PaymentPlanTable'
 import { PlanSlider } from '../components/PlanSlider/PlanSlider'
 import { PaymentPlanCard } from '../PaymentPlanList/PaymentPlanCard/PaymentPlanCard'
-import * as styles from './PaymentPlan.css'
+
 import { useDebouncedSliderValues } from './useDebouncedSliderValues'
+
+import * as styles from './PaymentPlan.css'
 
 // An array might not work for this schema
 // Might need to define specific fields for each one

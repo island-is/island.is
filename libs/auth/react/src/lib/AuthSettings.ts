@@ -1,4 +1,5 @@
 import { UserManagerSettings, WebStorageStateStore } from 'oidc-client'
+
 import { storageFactory } from './storageFactory'
 
 export interface AuthSettings extends Omit<UserManagerSettings, 'scope'> {

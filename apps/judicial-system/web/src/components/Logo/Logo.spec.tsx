@@ -1,13 +1,13 @@
 import React from 'react'
 import { Router } from 'react-router-dom'
-import { createMemoryHistory } from 'history'
-import { render, screen } from '@testing-library/react'
 import { MockedProvider } from '@apollo/client/testing'
+import { render, screen } from '@testing-library/react'
+import { createMemoryHistory } from 'history'
 
 import * as Constants from '@island.is/judicial-system/consts'
 
-import UserProvider from '../UserProvider/UserProvider'
 import { mockJudgeQuery } from '../../utils/mocks'
+import UserProvider from '../UserProvider/UserProvider'
 
 import Logo from './Logo'
 

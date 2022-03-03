@@ -1,11 +1,12 @@
+import addDays from 'date-fns/addDays'
+import parseISO from 'date-fns/parseISO'
+
 import { TagVariant } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseCustodyRestrictions,
   Gender,
 } from '@island.is/judicial-system/types'
-import parseISO from 'date-fns/parseISO'
-import addDays from 'date-fns/addDays'
 
 /**
  * A value is considered dirty if it's a string, either an empty string or not.

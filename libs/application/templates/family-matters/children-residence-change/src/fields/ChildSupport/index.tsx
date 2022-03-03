@@ -1,7 +1,9 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { Terms } from '@island.is/application/templates/family-matters-core/fields'
+
 import { DescriptionText } from '@island.is/application/templates/family-matters-core/components'
+import { Terms } from '@island.is/application/templates/family-matters-core/fields'
+
 import { childSupport } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
 

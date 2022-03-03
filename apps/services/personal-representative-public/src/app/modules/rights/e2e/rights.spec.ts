@@ -1,16 +1,18 @@
+import request from 'supertest'
+
+import { AuthScope } from '@island.is/auth/scopes'
+import {
+  PersonalRepresentativeRightType,
+  PersonalRepresentativeRightTypeService,
+} from '@island.is/auth-api-lib/personal-representative'
+import { createCurrentUser } from '@island.is/testing/fixtures'
+import { TestApp } from '@island.is/testing/nest'
+
 import {
   setupWithAuth,
   setupWithoutAuth,
   setupWithoutScope,
 } from '../../../../../test/setup'
-import request from 'supertest'
-import { TestApp } from '@island.is/testing/nest'
-import {
-  PersonalRepresentativeRightTypeService,
-  PersonalRepresentativeRightType,
-} from '@island.is/auth-api-lib/personal-representative'
-import { AuthScope } from '@island.is/auth/scopes'
-import { createCurrentUser } from '@island.is/testing/fixtures'
 
 const path = '/v1/rights'
 

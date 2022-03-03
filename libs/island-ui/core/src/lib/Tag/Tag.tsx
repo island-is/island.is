@@ -1,9 +1,10 @@
 import React, { FC, forwardRef, ReactNode } from 'react'
 import cn from 'classnames'
 
-import { Text } from '../Text/Text'
-import { Hyphen } from '../Hyphen/Hyphen'
 import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
+
+import { Hyphen } from '../Hyphen/Hyphen'
+import { Text } from '../Text/Text'
 
 import * as styles from './Tag.css'
 

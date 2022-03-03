@@ -1,7 +1,7 @@
-import { Module, HttpModule } from '@nestjs/common'
+import { HttpModule,Module } from '@nestjs/common'
 
-import { FjarsyslaService } from './fjarsysla.service'
 import { FjarsyslaResolver } from './fjarsysla.resolver'
+import { FjarsyslaService } from './fjarsysla.service'
 
 @Module({
   imports: [HttpModule],

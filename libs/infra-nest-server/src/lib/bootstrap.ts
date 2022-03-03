@@ -1,26 +1,28 @@
 import '@island.is/infra-tracing'
-import { NestFactory } from '@nestjs/core'
-import cookieParser from 'cookie-parser'
+
 import {
   INestApplication,
+  NestInterceptor,
   Type,
   ValidationPipe,
-  NestInterceptor,
 } from '@nestjs/common'
+import { NestFactory } from '@nestjs/core'
+import { NestExpressApplication } from '@nestjs/platform-express'
 import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger'
+import cookieParser from 'cookie-parser'
+import * as fs from 'fs'
 import yaml from 'js-yaml'
 import * as yargs from 'yargs'
-import * as fs from 'fs'
-import { NestExpressApplication } from '@nestjs/platform-express'
 
+import { startMetricServer } from '@island.is/infra-metrics'
 import {
   logger,
   LoggingModule,
   monkeyPatchServerLogging,
 } from '@island.is/logging'
-import { startMetricServer } from '@island.is/infra-metrics'
-import { httpRequestDurationMiddleware } from './httpRequestDurationMiddleware'
+
 import { InfraModule } from './infra/infra.module'
+import { httpRequestDurationMiddleware } from './httpRequestDurationMiddleware'
 import { swaggerRedirectMiddleware } from './swaggerMiddlewares'
 
 type RunServerOptions = {

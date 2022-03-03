@@ -1,13 +1,14 @@
-import fetch from 'node-fetch'
-import FormData from 'form-data'
-import * as AWS from 'aws-sdk'
-import aws4 from 'aws4'
-import util from 'util'
-import fs from 'fs'
 import { Injectable } from '@nestjs/common'
-import { logger } from '@island.is/logging'
-import { KibanaSavedObject } from '@island.is/content-search-indexer/types'
+import * as AWS from 'aws-sdk'
 import { arnType } from 'aws-sdk/clients/sts'
+import aws4 from 'aws4'
+import FormData from 'form-data'
+import fs from 'fs'
+import fetch from 'node-fetch'
+import util from 'util'
+
+import { KibanaSavedObject } from '@island.is/content-search-indexer/types'
+import { logger } from '@island.is/logging'
 
 import { environment } from '../environments/environment'
 

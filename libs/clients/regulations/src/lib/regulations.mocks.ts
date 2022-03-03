@@ -1,12 +1,12 @@
 import {
   HTMLText,
   ISODate,
+  MinistryList,
   MinistrySlug,
   RegName,
   RegQueryName,
   Regulation,
   RegulationRedirect,
-  MinistryList,
   Year,
 } from '@island.is/regulations'
 import {

@@ -1,24 +1,23 @@
-import { Sequelize } from 'sequelize-typescript'
-
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
+import { Sequelize } from 'sequelize-typescript'
 
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { IntlService } from '@island.is/cms-translations'
 import { SigningService } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
+import { Logger,LOGGER_PROVIDER } from '@island.is/logging'
 
 import { environment } from '../../../../environments'
-import { CourtService } from '../../court'
-import { EventService } from '../../event'
-import { UserService } from '../../user'
-import { FileService } from '../../file'
 import { AwsS3Service } from '../../aws-s3'
+import { CourtService } from '../../court'
 import { DefendantService } from '../../defendant'
-import { Case } from '../models/case.model'
-import { CaseService } from '../case.service'
+import { EventService } from '../../event'
+import { FileService } from '../../file'
+import { UserService } from '../../user'
 import { CaseController } from '../case.controller'
+import { CaseService } from '../case.service'
+import { Case } from '../models/case.model'
 
 jest.mock('@island.is/dokobit-signing')
 jest.mock('@island.is/email-service')

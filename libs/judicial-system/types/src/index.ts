@@ -1,70 +1,62 @@
-export { Feature } from './lib/feature'
-
-export { Gender } from './lib/defendant'
 export type {
-  Defendant,
+  Case,
+  CreateCase,
+  RequestSignatureResponse,
+  SignatureConfirmationResponse,
+  TransitionCase,
+  UpdateCase,
+} from './lib/case'
+export {
+  CaseAppealDecision,
+  CaseCustodyRestrictions,
+  CaseDecision,
+  CaseLegalProvisions,
+  CaseState,
+  CaseTransition,
+  CaseType,
+  completedCaseStates,
+  hasCaseBeenAppealed,
+  investigationCases,
+  isAcceptingCaseDecision,
+  isCaseTypeWithMultipleDefendantsSupport,
+  isInvestigationCase,
+  isRestrictionCase,
+  restrictionCases,
+  SessionArrangements,
+} from './lib/case'
+export type {
   CreateDefendant,
-  UpdateDefendant,
+  Defendant,
   DeleteDefendantResponse,
+  UpdateDefendant,
 } from './lib/defendant'
-
-export { InstitutionType } from './lib/institution'
+export { Gender } from './lib/defendant'
+export { Feature } from './lib/feature'
+export type {
+  CaseFile,
+  CreateFile,
+  CreatePresignedPost,
+  DeleteFile,
+  DeleteFileResponse,
+  GetSignedUrl,
+  PresignedPost,
+  SignedUrl,
+  UploadFileToCourt,
+  UploadFileToCourtResponse,
+} from './lib/file'
+export { CaseFileState } from './lib/file'
 export type { Institution } from './lib/institution'
-
-export { NotificationType } from './lib/notification'
+export { InstitutionType } from './lib/institution'
 export type {
   Notification,
   SendNotification,
   SendNotificationResponse,
 } from './lib/notification'
-
-export { CaseFileState } from './lib/file'
-
-export type {
-  PresignedPost,
-  CreatePresignedPost,
-  DeleteFile,
-  DeleteFileResponse,
-  GetSignedUrl,
-  SignedUrl,
-  UploadFileToCourt,
-  UploadFileToCourtResponse,
-  CaseFile,
-  CreateFile,
-} from './lib/file'
-
-export { UserRole, courtRoles } from './lib/user'
-export type { User, CreateUser, UpdateUser } from './lib/user'
-
-export {
-  CaseType,
-  CaseState,
-  CaseTransition,
-  CaseLegalProvisions,
-  CaseCustodyRestrictions,
-  CaseAppealDecision,
-  CaseDecision,
-  SessionArrangements,
-  restrictionCases,
-  investigationCases,
-  isRestrictionCase,
-  isInvestigationCase,
-  isAcceptingCaseDecision,
-  completedCaseStates,
-  hasCaseBeenAppealed,
-  isCaseTypeWithMultipleDefendantsSupport,
-} from './lib/case'
-export type {
-  Case,
-  CreateCase,
-  UpdateCase,
-  TransitionCase,
-  RequestSignatureResponse,
-  SignatureConfirmationResponse,
-} from './lib/case'
-
+export { NotificationType } from './lib/notification'
 export type {
   PoliceCaseFile,
   UploadPoliceCaseFile,
   UploadPoliceCaseFileResponse,
 } from './lib/policeFile'
+export type { CreateUser, UpdateUser,User } from './lib/user'
+export { courtRoles,UserRole } from './lib/user'

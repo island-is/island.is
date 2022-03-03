@@ -1,9 +1,11 @@
 import React from 'react'
 import cn from 'classnames'
+
 import { Colors } from '@island.is/island-ui/theme'
 
-import * as styles from './Icon.css'
 import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
+
+import * as styles from './Icon.css'
 
 export type IconTypes =
   | 'alert'

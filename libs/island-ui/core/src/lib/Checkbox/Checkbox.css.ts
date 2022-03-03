@@ -1,8 +1,10 @@
 import { style } from '@vanilla-extract/css'
+
 import { theme } from '@island.is/island-ui/theme'
+
 import {
-  inputErrorState,
   errorMessage as inputErrorMessage,
+  inputErrorState,
 } from '../Input/Input.mixins'
 
 export const checkMarkWidth = theme.spacing[2]

@@ -1,39 +1,40 @@
 import {
+  Body,
   Controller,
+  Get,
+  InternalServerErrorException,
+  NotFoundException,
   Param,
+  ParseUUIDPipe,
   Post,
   UseGuards,
-  Get,
-  ParseUUIDPipe,
-  Body,
-  NotFoundException,
-  InternalServerErrorException,
 } from '@nestjs/common'
-
+import { InjectModel } from '@nestjs/sequelize'
 import {
   ApiCreatedResponse,
-  ApiParam,
-  ApiTags,
   ApiHeader,
   ApiOkResponse,
+  ApiParam,
+  ApiTags,
 } from '@nestjs/swagger'
+
 import { PaymentType as BasePayment } from '@island.is/application/core'
+import { ApplicationScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
-  IdsUserGuard,
-  ScopesGuard,
-  Scopes,
   CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { ApplicationScope } from '@island.is/auth/scopes'
+import { PaymentAPI } from '@island.is/clients/payment'
 import { AuditService } from '@island.is/nest/audit'
+
+import { CreateChargeInput } from './dto/createChargeInput.dto'
+import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
 import { CreatePaymentResponseDto } from './dto'
-import { InjectModel } from '@nestjs/sequelize'
 import { Payment } from './payment.model'
 import { PaymentService } from './payment.service'
-import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
-import { CreateChargeInput } from './dto/createChargeInput.dto'
-import { PaymentAPI } from '@island.is/clients/payment'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('payments')

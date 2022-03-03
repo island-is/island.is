@@ -3,6 +3,7 @@ import {
   ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common'
+
 import { logger } from '@island.is/logging'
 
 import { Auth } from './auth'

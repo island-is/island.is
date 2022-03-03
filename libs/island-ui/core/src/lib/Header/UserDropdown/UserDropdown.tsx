@@ -2,13 +2,14 @@ import React, { Dispatch, ReactNode, SetStateAction } from 'react'
 
 import { Box } from '../../Box/Box'
 import { Button } from '../../Button/Button'
+import { GridContainer } from '../../Grid/GridContainer/GridContainer'
+import { Icon } from '../../IconRC/Icon'
+import { ModalBase } from '../../ModalBase/ModalBase'
 import { Select } from '../../Select/Select'
 import { Stack } from '../../Stack/Stack'
 import { Text } from '../../Text/Text'
-import { ModalBase } from '../../ModalBase/ModalBase'
 import { UserAvatar } from '../../UserAvatar/UserAvatar'
-import { Icon } from '../../IconRC/Icon'
-import { GridContainer } from '../../Grid/GridContainer/GridContainer'
+
 import * as styles from './UserDropdown.css'
 
 interface UserDropdownProps {

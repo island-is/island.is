@@ -5,6 +5,7 @@ import {
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
+
 import { m } from '../../lib/messages'
 
 export const sectionExistingApplication = buildSubSection({

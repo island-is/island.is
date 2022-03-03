@@ -1,7 +1,8 @@
-import request from 'supertest'
-import addDays from 'date-fns/addDays'
 import { getModelToken } from '@nestjs/sequelize'
+import addDays from 'date-fns/addDays'
+import request from 'supertest'
 
+import { AuthScope } from '@island.is/auth/scopes'
 import {
   ApiScope,
   CreateDelegationDTO,
@@ -12,25 +13,25 @@ import {
   ScopeType,
 } from '@island.is/auth-api-lib'
 import { AuthDelegationType } from '@island.is/auth-nest-tools'
-import { TestApp } from '@island.is/testing/nest'
 import {
   createCurrentUser,
   createNationalRegistryUser,
 } from '@island.is/testing/fixtures'
-import { AuthScope } from '@island.is/auth/scopes'
+import { TestApp } from '@island.is/testing/nest'
+
+import { createDelegation } from '../../../../test/fixtures'
 import {
   Scopes,
   setupWithAuth,
   setupWithoutAuth,
   setupWithoutPermission,
 } from '../../../../test/setup'
-import { createDelegation } from '../../../../test/fixtures'
+import { TestEndpointOptions } from '../../../../test/types'
 import {
   expectMatchingObject,
   getRequestMethod,
   sortDelegations,
 } from '../../../../test/utils'
-import { TestEndpointOptions } from '../../../../test/types'
 
 const user = createCurrentUser({
   nationalId: '1122334455',

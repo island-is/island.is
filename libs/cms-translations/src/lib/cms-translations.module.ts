@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common'
 
 import { CmsModule } from '@island.is/cms'
 
-import { CmsTranslationsService } from './cms-translations.service'
 import { CmsTranslationsResolver } from './cms-translations.resolver'
+import { CmsTranslationsService } from './cms-translations.service'
 import { IntlService } from './intl.service'
 
 @Module({

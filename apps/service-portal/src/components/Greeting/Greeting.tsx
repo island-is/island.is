@@ -1,4 +1,8 @@
 import React, { FC } from 'react'
+import { gql,useQuery } from '@apollo/client'
+
+import { Query } from '@island.is/api/schema'
+import { useAuth } from '@island.is/auth/react'
 import {
   Box,
   Button,
@@ -7,10 +11,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useAuth } from '@island.is/auth/react'
 import { LEGACY_MY_PAGES_URL } from '@island.is/service-portal/constants'
-import { useQuery, gql } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
 import { m } from '@island.is/service-portal/core'
 
 const NationalRegistryUserQuery = gql`

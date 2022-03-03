@@ -1,16 +1,18 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
+
+import { AuthModule } from '@island.is/auth-nest-tools'
 import { CmsModule } from '@island.is/cms'
 
-import {
-  UserModule,
-  DiscountModule,
-  FlightModule,
-  FlightLegModule,
-} from './modules'
-import { BackendAPI } from '../services'
 import { environment } from '../environments'
-import { AuthModule } from '@island.is/auth-nest-tools'
+import { BackendAPI } from '../services'
+
+import {
+  DiscountModule,
+  FlightLegModule,
+  FlightModule,
+  UserModule,
+} from './modules'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'

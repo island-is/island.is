@@ -1,8 +1,10 @@
 import { DynamicModule } from '@nestjs/common'
-import { SharedTemplateAPIModule } from '../../shared'
+
 import { BaseTemplateAPIModuleConfig } from '../../../types'
-import { LoginServiceService } from './login-service.service'
+import { SharedTemplateAPIModule } from '../../shared'
+
 import { LOGIN_SERVICE_CONFIG } from './config/loginServiceConfig'
+import { LoginServiceService } from './login-service.service'
 
 const applicationRecipientName =
   process.env.LOGIN_SERVICE_APPLICATION_RECIPIENT_NAME ?? ''

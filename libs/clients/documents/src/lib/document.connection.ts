@@ -1,6 +1,8 @@
 import axios from 'axios'
 import qs from 'qs'
+
 import { logger } from '@island.is/logging'
+
 import { DocumentClientConfig } from './documentClient'
 
 export interface OauthConnectionResponse {

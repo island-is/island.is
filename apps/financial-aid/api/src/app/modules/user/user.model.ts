@@ -1,8 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-import { User, RolesRule } from '@island.is/financial-aid/shared/lib'
+import { RolesRule,User } from '@island.is/financial-aid/shared/lib'
 
 import { StaffModel } from '../staff'
+
 import { SpouseModel } from './spouseModel.model'
 
 @ObjectType()

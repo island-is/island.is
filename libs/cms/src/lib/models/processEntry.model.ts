@@ -1,6 +1,8 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { IProcessEntry } from '../generated/contentfulTypes'
+
 import { SystemMetadata } from '@island.is/shared/types'
+
+import { IProcessEntry } from '../generated/contentfulTypes'
 
 @ObjectType()
 export class ProcessEntry {

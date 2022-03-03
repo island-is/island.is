@@ -1,12 +1,14 @@
 import { Router } from 'express'
-import { param, body, validationResult, query } from 'express-validator'
+import { body, param, query,validationResult } from 'express-validator'
 
 import {
-  ApplicationTypes,
   ApplicationStates,
+  ApplicationTypes,
 } from '@island.is/gjafakort/consts'
-import * as applicationService from './service'
+
 import { service as auditService } from '../audit'
+
+import * as applicationService from './service'
 
 const router = Router()
 

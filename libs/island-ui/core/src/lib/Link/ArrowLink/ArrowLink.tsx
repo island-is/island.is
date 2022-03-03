@@ -1,9 +1,11 @@
 import React from 'react'
-import { Link, LinkColor } from '../Link'
-import * as styles from './ArrowLink.css'
-import { Icon } from '../../Icon/Icon'
+
 import { Box } from '../../Box/Box'
+import { Icon } from '../../Icon/Icon'
 import { Text } from '../../Text/Text'
+import { Link, LinkColor } from '../Link'
+
+import * as styles from './ArrowLink.css'
 
 interface ArrowLinkProps {
   href?: string

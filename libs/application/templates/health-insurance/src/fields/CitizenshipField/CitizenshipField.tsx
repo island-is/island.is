@@ -1,8 +1,10 @@
 import React, { FC, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
+
+import { Citizenship } from '@island.is/api/schema'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Box, Input } from '@island.is/island-ui/core'
-import { Citizenship } from '@island.is/api/schema'
+
 import { ExternalDataNationalRegistry } from '../../types'
 
 const CitizenshipField: FC<FieldBaseProps> = ({ field, application }) => {

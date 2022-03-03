@@ -1,20 +1,21 @@
 import React, { useMemo } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { useMeasure } from 'react-use'
+import { useQuery } from '@apollo/client'
 import cn from 'classnames'
-import * as styles from './InputImageUpload.css'
+import gql from 'graphql-tag'
 
 import {
   Box,
-  Text,
   Button,
   Icon,
-  ProgressMeter,
   IconMapType,
+  ProgressMeter,
+  Text,
 } from '@island.is/island-ui/core'
-import { theme, Colors } from '@island.is/island-ui/theme'
-import { useQuery } from '@apollo/client'
-import gql from 'graphql-tag'
+import { Colors,theme } from '@island.is/island-ui/theme'
+
+import * as styles from './InputImageUpload.css'
 
 export type UploadImageStatus = 'error' | 'done' | 'uploading'
 

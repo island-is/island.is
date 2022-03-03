@@ -1,4 +1,5 @@
 import { logger } from '@island.is/logging'
+
 import { ServiceId } from '../../gen/fetch/xrd-rest'
 
 const SEPERATOR = '-'

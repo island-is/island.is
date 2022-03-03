@@ -1,19 +1,20 @@
 import React from 'react'
+import * as Sentry from '@sentry/react'
+
+import { ApplicationList as List } from '@island.is/application/ui-components'
+import {
+  Box,
+  GridColumn,
+  GridRow,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCardLoader,
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
-import {
-  Text,
-  Box,
-  Stack,
-  GridRow,
-  GridColumn,
-} from '@island.is/island-ui/core'
 import { useApplications } from '@island.is/service-portal/graphql'
-import { ApplicationList as List } from '@island.is/application/ui-components'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import * as Sentry from '@sentry/react'
 
 import { m } from '../../lib/messages'
 

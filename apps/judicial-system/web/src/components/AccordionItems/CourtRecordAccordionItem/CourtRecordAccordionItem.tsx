@@ -1,21 +1,21 @@
 import React from 'react'
-import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 
+import { AccordionItem,Box, Text } from '@island.is/island-ui/core'
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import {
   capitalize,
   formatAppeal,
   formatDate,
   formatRequestCaseType,
 } from '@island.is/judicial-system/formatters'
+import type { Case } from '@island.is/judicial-system/types'
 import {
   isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 import { closedCourt, core } from '@island.is/judicial-system-web/messages'
-import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { courtRecordAccordion as m } from '@island.is/judicial-system-web/messages/Core/courtRecordAccordion'
-import type { Case } from '@island.is/judicial-system/types'
 
 import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 

@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { Accordion, AccordionItem, Box } from '@island.is/island-ui/core'
 
 interface Props {

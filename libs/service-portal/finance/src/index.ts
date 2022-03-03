@@ -1,14 +1,15 @@
+import { lazy } from 'react'
+import * as Sentry from '@sentry/react'
+
 import { Query } from '@island.is/api/schema'
 import { ApiScope } from '@island.is/auth/scopes'
 import {
+  m,
   ServicePortalModule,
   ServicePortalPath,
   ServicePortalRoute,
-  m,
 } from '@island.is/service-portal/core'
 import { GET_TAPS_QUERY } from '@island.is/service-portal/graphql'
-import * as Sentry from '@sentry/react'
-import { lazy } from 'react'
 
 const tabRoutes = {
   transactions: {

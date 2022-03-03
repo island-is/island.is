@@ -1,6 +1,8 @@
 import React, { FC } from 'react'
-import { Box, Text, Inline } from '@island.is/island-ui/core'
+
+import { Box, Inline,Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+
 import { m } from '../../lib/messages'
 
 interface Props {

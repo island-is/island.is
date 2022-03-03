@@ -1,15 +1,15 @@
-export { routes as authRoutes, verifyToken, ACCESS_TOKEN_COOKIE } from './auth'
+export { ACCESS_TOKEN_COOKIE,routes as authRoutes, verifyToken } from './auth'
 
+import { resolvers as authResolvers, typeDefs as authTypeDefs } from './auth'
+import {
+  resolvers as commonResolvers,
+  typeDefs as commonTypeDefs,
+} from './common'
 import {
   resolvers as companyResolvers,
   typeDefs as companyTypeDefs,
 } from './companies'
 import { resolvers as userResolvers, typeDefs as userTypeDefs } from './users'
-import {
-  resolvers as commonResolvers,
-  typeDefs as commonTypeDefs,
-} from './common'
-import { resolvers as authResolvers, typeDefs as authTypeDefs } from './auth'
 
 export const resolvers = [
   companyResolvers,

@@ -1,12 +1,13 @@
 import React, { FC, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+
 import {
-  Button,
   Box,
+  Button,
+  Checkbox,
+  LinkContext,
   Stack,
   Text,
-  LinkContext,
-  Checkbox,
 } from '@island.is/island-ui/core'
 
 import * as styles from './EmbeddedVideo.css'

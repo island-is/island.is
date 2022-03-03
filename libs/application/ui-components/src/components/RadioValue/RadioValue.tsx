@@ -1,10 +1,11 @@
 import React from 'react'
 
+import { coreMessages } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { coreMessages } from '@island.is/application/core'
 
 import { Label } from '../Label/Label'
+
 import * as styles from './RadioValue.css'
 
 interface RadioValueProps {

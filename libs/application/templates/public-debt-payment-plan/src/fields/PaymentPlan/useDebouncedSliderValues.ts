@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useDebounce } from 'react-use'
+
 import { PaymentModeState } from '../../types'
 
 export const useDebouncedSliderValues = (

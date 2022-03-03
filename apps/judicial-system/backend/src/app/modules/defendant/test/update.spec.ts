@@ -2,6 +2,7 @@ import { uuid } from 'uuidv4'
 
 import { UpdateDefendantDto } from '../dto/updateDefendant.dto'
 import { Defendant } from '../models/defendant.model'
+
 import { createTestingDefendantModule } from './createTestingDefendantModule'
 
 interface Then {

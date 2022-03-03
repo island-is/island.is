@@ -1,32 +1,35 @@
 import React, {
-  useState,
-  useRef,
-  useEffect,
   useCallback,
   useContext,
+  useEffect,
+  useRef,
+  useState,
 } from 'react'
 import FocusLock from 'react-focus-lock'
 import { RemoveScroll } from 'react-remove-scroll'
 import { useKey, useWindowSize } from 'react-use'
 import cn from 'classnames'
+
 import {
-  Text,
-  Icon,
-  Hidden,
-  Link,
+  Box,
   Button,
+  FocusableBox,
+  GridColumn,
   GridContainer,
   GridRow,
-  GridColumn,
-  Box,
-  FocusableBox,
+  Hidden,
+  Icon,
+  Link,
   Logo,
+  Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { MenuTabsContext } from '@island.is/web/context/MenuTabsContext/MenuTabsContext'
 import { useI18n } from '@island.is/web/i18n'
-import { SearchInput } from '../SearchInput/SearchInput'
+
 import { LanguageToggler } from '../LanguageToggler'
+import { SearchInput } from '../SearchInput/SearchInput'
+
 import * as styles from './SideMenu.css'
 
 interface TabLink {

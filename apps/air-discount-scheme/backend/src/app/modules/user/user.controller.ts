@@ -1,31 +1,33 @@
 import {
-  Controller,
-  Param,
-  Get,
-  UseGuards,
-  NotFoundException,
   BadRequestException,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  UseGuards,
 } from '@nestjs/common'
 import {
   ApiBearerAuth,
+  ApiExcludeEndpoint,
   ApiOkResponse,
   ApiTags,
-  ApiExcludeEndpoint,
 } from '@nestjs/swagger'
 
-import { GetUserByDiscountCodeParams, GetUserRelationsParams } from './dto'
-import { UserService } from './user.service'
-import { AirlineUser, User } from './user.model'
-import { DiscountService } from '../discount'
-import { FlightService } from '../flight'
-import { AuthGuard } from '../common'
+import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
   IdsUserGuard,
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import type { User as AuthUser } from '@island.is/auth-nest-tools'
+
+import { AuthGuard } from '../common'
+import { DiscountService } from '../discount'
+import { FlightService } from '../flight'
+
+import { GetUserByDiscountCodeParams, GetUserRelationsParams } from './dto'
+import { AirlineUser, User } from './user.model'
+import { UserService } from './user.service'
 
 @ApiTags('Users')
 @Controller('api/public')

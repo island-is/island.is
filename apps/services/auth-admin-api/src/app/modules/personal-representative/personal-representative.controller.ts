@@ -1,4 +1,27 @@
 import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  forwardRef,
+  Get,
+  Inject,
+  NotFoundException,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common'
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger'
+
+import { AuthAdminScope } from '@island.is/auth/scopes'
+import {
   PersonalRepresentativeScopePermission,
   PersonalRepresentativeScopePermissionDTO,
   PersonalRepresentativeScopePermissionService,
@@ -8,37 +31,16 @@ import {
   PersonalRepresentativeRightType,
   PersonalRepresentativeRightTypeService,
 } from '@island.is/auth-api-lib/personal-representative'
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  UseGuards,
-  Delete,
-  Get,
-  NotFoundException,
-  Param,
-  Post,
-  Inject,
-  Query,
-  forwardRef,
-} from '@nestjs/common'
-import {
-  ApiOperation,
-  ApiCreatedResponse,
-  ApiOkResponse,
-  ApiTags,
-  ApiQuery,
-} from '@nestjs/swagger'
 import type { User } from '@island.is/auth-nest-tools'
 import {
-  IdsUserGuard,
-  ScopesGuard,
-  Scopes,
   CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
+
 import { environment } from '../../../environments/'
-import { AuthAdminScope } from '@island.is/auth/scopes'
 
 const namespace = `${environment.audit.defaultNamespace}/personal-representative`
 

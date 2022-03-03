@@ -1,8 +1,8 @@
 import {
-  BasicDataProvider,
   Application,
-  SuccessfulDataProviderResult,
+  BasicDataProvider,
   FailedDataProviderResult,
+  SuccessfulDataProviderResult,
 } from '@island.is/application/core'
 
 export class JuristictionProvider extends BasicDataProvider {

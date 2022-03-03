@@ -1,12 +1,15 @@
-import { ApplicationWithAttachments as Application } from '@island.is/application/core'
 import { Injectable } from '@nestjs/common'
+import { createHash } from 'crypto'
 import path from 'path'
-import { ApplicationAttachmentService } from './applicationAttachment.service'
+
+import { ApplicationWithAttachments as Application } from '@island.is/application/core'
+
 import {
   AccidentNotificationAttachment,
   AccidentNotificationAttachmentGatherRequest,
 } from '../types/attachments'
-import { createHash } from 'crypto'
+
+import { ApplicationAttachmentService } from './applicationAttachment.service'
 
 @Injectable()
 export class AccidentNotificationAttachmentProvider {

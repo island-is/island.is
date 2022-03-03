@@ -1,18 +1,20 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
+  BelongsTo,
   Column,
   CreatedAt,
-  BelongsTo,
   DataType,
+  HasMany,
   Model,
+  PrimaryKey,
   Table,
   UpdatedAt,
-  HasMany,
-  PrimaryKey,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
-import { IdentityResourceUserClaim } from './identity-resource-user-claim.model'
-import { DelegationScope } from './delegation-scope.model'
+
 import { IdentityResourcesDTO } from '../dto/identity-resources.dto'
+
+import { DelegationScope } from './delegation-scope.model'
+import { IdentityResourceUserClaim } from './identity-resource-user-claim.model'
 
 @Table({
   tableName: 'identity_resource',

@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing'
 
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { CourtClientService } from '@island.is/judicial-system/court-client'
+import { Logger,LOGGER_PROVIDER } from '@island.is/logging'
 
 import { DATE_FACTORY } from '../../../factories'
 import { EventService } from '../../event'

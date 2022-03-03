@@ -1,11 +1,13 @@
+import { Inject, Injectable } from '@nestjs/common'
+import { createHash } from 'crypto'
+import { TransformableInfo } from 'logform'
 import winston from 'winston'
 import WinstonCloudWatch from 'winston-cloudwatch'
-import { TransformableInfo } from 'logform'
-import { createHash } from 'crypto'
-import { Inject, Injectable } from '@nestjs/common'
+
+import type { Auth } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Auth } from '@island.is/auth-nest-tools'
+
 import type { AuditOptions } from './audit.options'
 import { AUDIT_OPTIONS } from './audit.options'
 

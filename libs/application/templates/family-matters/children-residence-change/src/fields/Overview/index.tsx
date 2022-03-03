@@ -1,30 +1,34 @@
 import React, { useReducer } from 'react'
+import { useFormContext } from 'react-hook-form'
 import { useIntl } from 'react-intl'
-import { useMutation, ApolloError } from '@apollo/client'
+import { ApolloError,useMutation } from '@apollo/client'
 import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
-import { useFormContext } from 'react-hook-form'
+
 import { PdfTypes } from '@island.is/application/core'
-import { Box, Button } from '@island.is/island-ui/core'
-import { CheckboxController } from '@island.is/shared/form-fields'
 import {
   REQUEST_FILE_SIGNATURE,
   UPLOAD_SIGNED_FILE,
 } from '@island.is/application/graphql'
-import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
 import { DescriptionText } from '@island.is/application/templates/family-matters-core/components'
 import { useGeneratePdfUrl } from '@island.is/application/templates/family-matters-core/hooks'
-import * as m from '../../lib/messages'
+import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
+import { Box, Button } from '@island.is/island-ui/core'
+import { CheckboxController } from '@island.is/shared/form-fields'
+
 import { Roles } from '../../lib/constants'
-import {
-  fileSignatureReducer,
-  initialFileSignatureState,
-  FileSignatureActionTypes,
-  FileSignatureStatus,
-} from './fileSignatureReducer'
-import SignatureModal from './SignatureModal'
+import * as m from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
 import { ContractOverview } from '../components'
+
+import {
+  FileSignatureActionTypes,
+  fileSignatureReducer,
+  FileSignatureStatus,
+  initialFileSignatureState,
+} from './fileSignatureReducer'
+import SignatureModal from './SignatureModal'
+
 import * as style from '../Shared.css'
 
 const confirmContractTerms = 'confirmContract.terms'

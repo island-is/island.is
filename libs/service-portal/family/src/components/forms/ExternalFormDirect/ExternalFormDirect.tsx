@@ -1,5 +1,6 @@
 import React, { FC } from 'react'
-import { Box, Tag, Stack, Text, Button } from '@island.is/island-ui/core'
+
+import { Box, Button,Stack, Tag, Text } from '@island.is/island-ui/core'
 
 interface Props {
   label: string

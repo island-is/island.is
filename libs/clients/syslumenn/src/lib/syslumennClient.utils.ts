@@ -1,27 +1,29 @@
+import { uuid } from 'uuidv4'
+
 import {
+  AdiliTegund,
+  EmbaettiOgStarfsstodvar,
+  Skilabod,
+  SyslMottakaGognPostRequest,
   Uppbod,
   VirkarHeimagistingar,
   VirkLeyfi,
   VottordSkeyti,
-  EmbaettiOgStarfsstodvar,
-  Skilabod,
-  SyslMottakaGognPostRequest,
-  AdiliTegund,
 } from '../../gen/fetch'
-import { uuid } from 'uuidv4'
+
 import {
-  SyslumennAuction,
+  Attachment,
+  CertificateInfoResponse,
   DataUploadResponse,
+  DistrictCommissionerAgencies,
   Homestay,
   OperatingLicense,
   PaginatedOperatingLicenses,
   PaginationInfo,
-  SyslumennApiPaginationInfo,
   Person,
-  Attachment,
-  CertificateInfoResponse,
-  DistrictCommissionerAgencies,
   PersonType,
+  SyslumennApiPaginationInfo,
+  SyslumennAuction,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 

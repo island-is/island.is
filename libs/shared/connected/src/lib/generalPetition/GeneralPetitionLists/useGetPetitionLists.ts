@@ -1,5 +1,5 @@
-import gql from 'graphql-tag'
 import { useQuery } from '@apollo/client'
+import gql from 'graphql-tag'
 
 interface PetitionListResponse {
   endorsementSystemGetGeneralPetitionLists: any

@@ -1,5 +1,5 @@
-import fs from 'fs'
 import { DynamicModule } from '@nestjs/common'
+import fs from 'fs'
 
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { logger } from '@island.is/logging'

@@ -1,5 +1,6 @@
-import { theme } from '@island.is/island-ui/theme'
 import { style, styleVariants } from '@vanilla-extract/css'
+
+import { theme } from '@island.is/island-ui/theme'
 import { hexToRgba } from '@island.is/island-ui/utils'
 
 export const backdrop = style({

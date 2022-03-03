@@ -1,7 +1,9 @@
 import React, { FC } from 'react'
+
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box, Bullet, BulletList, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+
 import InstitutionIllustration from '../../assets/InstitutionIllustration'
 import { confirmation } from '../../lib/messages'
 

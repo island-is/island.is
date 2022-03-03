@@ -2,14 +2,13 @@
 // Refactoring old `any`s creates issues that I will tackle in another PR
 // So disabling the check for now
 
-import deepmerge from 'deepmerge'
-import isArray from 'lodash/isArray'
-import get from 'lodash/get'
 import HtmlParser from 'react-html-parser'
+import deepmerge from 'deepmerge'
+import get from 'lodash/get'
+import isArray from 'lodash/isArray'
 
-import { shouldShowFormItem } from './conditionUtils'
-import { Field, RecordObject } from '../types/Fields'
 import { Application, ExternalData, FormValue } from '../types/Application'
+import { Field, RecordObject } from '../types/Fields'
 import {
   Form,
   FormItemTypes,
@@ -22,6 +21,8 @@ import {
   StaticTextObject,
   SubSection,
 } from '../types/Form'
+
+import { shouldShowFormItem } from './conditionUtils'
 
 const containsArray = (obj: RecordObject) => {
   let contains = false

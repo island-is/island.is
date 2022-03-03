@@ -1,7 +1,9 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
-import * as styles from './Menu.css'
+
 import { Box, Icon } from '@island.is/island-ui/core'
+
+import * as styles from './Menu.css'
 
 interface Props {
   isOpen: boolean

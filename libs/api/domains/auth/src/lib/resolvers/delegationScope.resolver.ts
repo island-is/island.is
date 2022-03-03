@@ -1,4 +1,4 @@
-import { Parent, Resolver, ResolveField } from '@nestjs/graphql'
+import { Parent, ResolveField,Resolver } from '@nestjs/graphql'
 
 import type { DelegationScopeDTO } from '@island.is/clients/auth-public-api'
 import { ScopeType } from '@island.is/clients/auth-public-api'

@@ -1,5 +1,6 @@
 import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
+
 import { PdfConstants } from './constants'
 
 type generatePdfBody<T> = (template: T, doc: PDFKit.PDFDocument) => void

@@ -1,13 +1,15 @@
-import { UserProfileService, IndividuaInfoDTO } from '@island.is/auth-api-lib'
+import { Controller, Get, UseGuards } from '@nestjs/common'
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+
+import { IndividuaInfoDTO,UserProfileService } from '@island.is/auth-api-lib'
 import type { User } from '@island.is/auth-nest-tools'
 import {
+  CurrentUser,
   IdsUserGuard,
   Scopes,
   ScopesGuard,
-  CurrentUser,
 } from '@island.is/auth-nest-tools'
-import { Controller, Get, UseGuards } from '@nestjs/common'
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+
 import { environment } from '../../../environments'
 
 @UseGuards(IdsUserGuard, ScopesGuard)

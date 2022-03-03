@@ -1,4 +1,5 @@
 import * as React from 'react'
+
 import { SvgProps as SVGRProps } from '../Icon'
 
 const SvgAttach = ({

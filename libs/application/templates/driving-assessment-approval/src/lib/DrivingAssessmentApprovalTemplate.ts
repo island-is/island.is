@@ -1,13 +1,15 @@
+import * as kennitala from 'kennitala'
+import * as z from 'zod'
+
 import {
-  ApplicationTemplate,
-  ApplicationTypes,
+  ApplicationConfigurations,
   ApplicationContext,
   ApplicationStateSchema,
+  ApplicationTemplate,
+  ApplicationTypes,
   DefaultEvents,
-  ApplicationConfigurations,
 } from '@island.is/application/core'
-import * as z from 'zod'
-import * as kennitala from 'kennitala'
+
 import { ApiActions } from '../shared'
 
 import { m } from './messages'

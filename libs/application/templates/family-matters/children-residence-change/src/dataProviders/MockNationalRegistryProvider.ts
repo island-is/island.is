@@ -4,14 +4,14 @@ import {
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
-
 import {
-  Person,
+  Child,
   NationalRegistry,
   Override,
-  Child,
+  Person,
 } from '@island.is/application/templates/family-matters-core/types'
-import { DataProviderTypes, CRCApplication } from '../types'
+
+import { CRCApplication,DataProviderTypes } from '../types'
 
 type SoleCustodyChild = Override<Child, { otherParent: Person | null }>
 

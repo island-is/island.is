@@ -1,20 +1,19 @@
+import { CacheModule,DynamicModule, Module } from '@nestjs/common'
 import { Cache as CacheManager } from 'cache-manager'
-import { Module, DynamicModule, CacheModule } from '@nestjs/common'
+
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import { LicenseServiceService } from './licenseService.service'
-
-import { MainResolver } from './graphql/main.resolver'
-
 import { GenericDrivingLicenseApi } from './client/driving-license-client'
+import { MainResolver } from './graphql/main.resolver'
 import {
   CONFIG_PROVIDER,
+  GENERIC_LICENSE_FACTORY,
   GenericLicenseClient,
   GenericLicenseMetadata,
   GenericLicenseProviderId,
   GenericLicenseType,
-  GENERIC_LICENSE_FACTORY,
 } from './licenceService.type'
+import { LicenseServiceService } from './licenseService.service'
 
 export interface Config {
   xroad: {

@@ -1,10 +1,11 @@
 import { Children, ReactNode } from 'react'
+
+import { Align, alignToFlexAlign, AlignY,alignYToFlexAlign } from './align'
+import { normaliseResponsiveProp,ResponsiveProp } from './responsiveProp'
 import {
-  ResponsiveRangeProps,
   resolveResponsiveRangeProps,
+  ResponsiveRangeProps,
 } from './responsiveRangeProps'
-import { ResponsiveProp, normaliseResponsiveProp } from './responsiveProp'
-import { Align, alignToFlexAlign, alignYToFlexAlign, AlignY } from './align'
 
 function invertAlignment<Alignment extends string>(alignment: Alignment) {
   if (alignment === 'flexStart') {

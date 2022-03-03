@@ -1,10 +1,10 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
 
 import {
-  Travel as TTravel,
-  RangeInput,
-  PeriodInput,
   FlightLegsInput as TFlightLegsInput,
+  PeriodInput,
+  RangeInput,
+  Travel as TTravel,
 } from '@island.is/air-discount-scheme/types'
 
 @InputType()

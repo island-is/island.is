@@ -1,9 +1,10 @@
 import React, { FC } from 'react'
 
-import { BulletList, Bullet } from '@island.is/island-ui/core'
-import { formatText, Application } from '@island.is/application/core'
-import { m } from '../../../lib/messages'
+import { Application,formatText } from '@island.is/application/core'
+import { Bullet,BulletList } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+
+import { m } from '../../../lib/messages'
 
 interface BulletsData {
   application: Application

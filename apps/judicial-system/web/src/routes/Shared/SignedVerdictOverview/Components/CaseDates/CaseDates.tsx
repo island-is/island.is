@@ -1,15 +1,15 @@
 import React from 'react'
 
+import { Box, Button, IconMapIcon, Text } from '@island.is/island-ui/core'
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   Case,
-  CaseState,
   CaseDecision,
+  CaseState,
   CaseType,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
-import { formatDate } from '@island.is/judicial-system/formatters'
-import { Box, Button, IconMapIcon, Text } from '@island.is/island-ui/core'
-import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 
 import * as styles from './CaseDates.css'
 

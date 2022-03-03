@@ -1,8 +1,22 @@
 import React, { FC, useState } from 'react'
-import { useMutation } from '@apollo/client'
 import { Controller, useFormContext } from 'react-hook-form'
+import { useMutation } from '@apollo/client'
 import Markdown from 'markdown-to-jsx'
 
+import {
+  coreErrorMessages,
+  coreMessages,
+  DataProviderItem,
+  DataProviderPermissionItem,
+  DataProviderResult,
+  ExternalData,
+  FormValue,
+  getValueViaPath,
+  RecordObject,
+  SetBeforeSubmitCallback,
+  StaticText,
+} from '@island.is/application/core'
+import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import {
   AlertMessage,
   Box,
@@ -11,20 +25,6 @@ import {
   InputError,
   Text,
 } from '@island.is/island-ui/core'
-import {
-  DataProviderItem,
-  DataProviderPermissionItem,
-  DataProviderResult,
-  ExternalData,
-  FormValue,
-  getValueViaPath,
-  coreMessages,
-  RecordObject,
-  SetBeforeSubmitCallback,
-  coreErrorMessages,
-  StaticText,
-} from '@island.is/application/core'
-import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
 
 import { ExternalDataProviderScreen } from '../types'

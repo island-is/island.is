@@ -1,10 +1,11 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common'
+import { CanActivate, ExecutionContext,Injectable } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
+
 import { getRequest } from '@island.is/auth-nest-tools'
 import { Features } from '@island.is/feature-flags'
 
-import { FeatureFlagService } from './feature-flag.service'
 import { FEATURE_FLAG_KEY } from './feature-flag.decorator'
+import { FeatureFlagService } from './feature-flag.service'
 
 @Injectable()
 export class FeatureFlagGuard implements CanActivate {

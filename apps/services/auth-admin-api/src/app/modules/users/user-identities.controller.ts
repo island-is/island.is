@@ -1,9 +1,4 @@
 import {
-  UserIdentitiesService,
-  UserIdentity,
-  ActiveDTO,
-} from '@island.is/auth-api-lib'
-import {
   BadRequestException,
   Body,
   Controller,
@@ -14,9 +9,16 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
+
 import { AuthAdminScope } from '@island.is/auth/scopes'
+import {
+  ActiveDTO,
+  UserIdentitiesService,
+  UserIdentity,
+} from '@island.is/auth-api-lib'
+import { IdsUserGuard, Scopes,ScopesGuard } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
+
 import { environment } from '../../../environments/'
 
 const namespace = `${environment.audit.defaultNamespace}/user-identities`

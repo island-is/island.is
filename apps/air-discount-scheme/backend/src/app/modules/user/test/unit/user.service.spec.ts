@@ -1,15 +1,17 @@
+import { CACHE_MANAGER } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
-import { User } from '../../user.model'
-import { UserService } from '../../user.service'
-import { FlightService } from '../../../flight'
-import { NationalRegistryService } from '../../../nationalRegistry'
+
+import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import {
-  NationalRegistryClientModule,
   NationalRegistryClientConfig,
+  NationalRegistryClientModule,
 } from '@island.is/clients/national-registry-v2'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
-import type { User as AuthUser } from '@island.is/auth-nest-tools'
-import { CACHE_MANAGER } from '@nestjs/common'
+
+import { FlightService } from '../../../flight'
+import { NationalRegistryService } from '../../../nationalRegistry'
+import { User } from '../../user.model'
+import { UserService } from '../../user.service'
 
 const user: User = {
   nationalId: '1326487905',

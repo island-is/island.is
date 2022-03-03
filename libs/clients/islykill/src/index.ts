@@ -1,2 +1,2 @@
-export * from './lib/islykill.module'
 export * from '../gen/fetch'
+export * from './lib/islykill.module'

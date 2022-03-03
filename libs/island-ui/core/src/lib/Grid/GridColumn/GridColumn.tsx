@@ -1,15 +1,17 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
+
 import { theme } from '@island.is/island-ui/theme'
 
-import { Box } from '../../Box/Box'
-import { ResponsiveSpace } from '../../Box/useBoxStyles'
 import {
   resolveResponsiveProp,
   ResponsiveProp,
 } from '../../../utils/responsiveProp'
-import * as styles from './GridColumn.css'
 import { resolveResponsiveRangeProps } from '../../../utils/responsiveRangeProps'
+import { Box } from '../../Box/Box'
+import { ResponsiveSpace } from '../../Box/useBoxStyles'
+
+import * as styles from './GridColumn.css'
 
 type Breakpoint = keyof typeof theme['breakpoints']
 type position = 'relative' | 'fixed' | 'absolute' | 'static'

@@ -1,8 +1,9 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
-import { Observable } from 'rxjs'
 import { Reflector } from '@nestjs/core'
+import { Observable } from 'rxjs'
+
 import { getRequest } from './getRequest'
-import { SCOPES_KEY, ACTOR_SCOPES_KEY } from './scopes.decorator'
+import { ACTOR_SCOPES_KEY,SCOPES_KEY } from './scopes.decorator'
 
 @Injectable()
 export class ScopesGuard implements CanActivate {

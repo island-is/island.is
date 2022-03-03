@@ -1,7 +1,10 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { IStatistics } from '../generated/contentfulTypes'
+
 import { SystemMetadata } from '@island.is/shared/types'
-import { Statistic, mapStatistic } from './statistic.model'
+
+import { IStatistics } from '../generated/contentfulTypes'
+
+import { mapStatistic,Statistic } from './statistic.model'
 
 @ObjectType()
 export class Statistics {

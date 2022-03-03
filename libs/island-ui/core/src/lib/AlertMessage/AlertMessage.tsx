@@ -1,10 +1,12 @@
 import * as React from 'react'
-import { Text } from '../Text/Text'
+
+import { Colors } from '@island.is/island-ui/theme'
+
+import { Box } from '../Box/Box'
 import { Icon } from '../IconRC/Icon'
 import { Icon as IconType } from '../IconRC/iconMap'
-import { Colors } from '@island.is/island-ui/theme'
-import { Box } from '../Box/Box'
 import { Stack } from '../Stack/Stack'
+import { Text } from '../Text/Text'
 
 export type AlertMessageType = 'error' | 'info' | 'success' | 'warning'
 

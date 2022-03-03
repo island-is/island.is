@@ -15,6 +15,7 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
+
 import { Logo } from '../assets'
 import {
   application,
@@ -34,6 +35,7 @@ import {
   paymentPlanIndexKeyMapper,
   PublicDebtPaymentPlan,
 } from '../types'
+
 import { betaTestSection } from './BetaTestSection'
 
 // Builds a payment plan step that exists of two custom fields:

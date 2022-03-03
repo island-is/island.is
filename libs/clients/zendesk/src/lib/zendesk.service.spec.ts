@@ -3,6 +3,7 @@ import { rest } from 'msw'
 import { setupServer } from 'msw/node'
 
 import { Logger } from '@island.is/logging'
+
 import { ZendeskService } from './zendesk.service'
 
 const testOptions = {

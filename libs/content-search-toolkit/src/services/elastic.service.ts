@@ -1,41 +1,43 @@
-import { Client } from '@elastic/elasticsearch'
-import merge from 'lodash/merge'
-import * as AWS from 'aws-sdk'
-import AwsConnector from 'aws-elasticsearch-connector'
 import { Injectable } from '@nestjs/common'
+import { Client } from '@elastic/elasticsearch'
+import AwsConnector from 'aws-elasticsearch-connector'
+import * as AWS from 'aws-sdk'
+import merge from 'lodash/merge'
+
+import { MappedData } from '@island.is/content-search-indexer/types'
 import { logger } from '@island.is/logging'
-import { autocompleteTermQuery } from '../queries/autocomplete'
-import { searchQuery } from '../queries/search'
-import { documentByMetaDataQuery } from '../queries/documentByMetaData'
-import {
-  AutocompleteTermInput,
-  SearchInput,
-  TagAggregationResponse,
-  DocumentByMetaDataInput,
-  DateAggregationInput,
-  DateAggregationResponse,
-  AutocompleteTermResponse,
-  TagAggregationInput,
-  SyncRequest,
-  TypeAggregationInput,
-  TypeAggregationResponse,
-  RankEvaluationInput,
-  GroupedRankEvaluationResponse,
-  rankEvaluationMetrics,
-  ProcessEntryAggregationResponse,
-} from '../types'
 import {
   DeleteByQueryResponse,
   GetByIdResponse,
   RankEvaluationResponse,
   SearchResponse,
 } from '@island.is/shared/types'
-import { MappedData } from '@island.is/content-search-indexer/types'
+
 import { environment } from '../environments/environment'
+import { autocompleteTermQuery } from '../queries/autocomplete'
 import { dateAggregationQuery } from '../queries/dateAggregation'
+import { documentByMetaDataQuery } from '../queries/documentByMetaData'
+import { rankEvaluationQuery } from '../queries/rankEvaluation'
+import { searchQuery } from '../queries/search'
 import { tagAggregationQuery } from '../queries/tagAggregation'
 import { typeAggregationQuery } from '../queries/typeAggregation'
-import { rankEvaluationQuery } from '../queries/rankEvaluation'
+import {
+  AutocompleteTermInput,
+  AutocompleteTermResponse,
+  DateAggregationInput,
+  DateAggregationResponse,
+  DocumentByMetaDataInput,
+  GroupedRankEvaluationResponse,
+  ProcessEntryAggregationResponse,
+  RankEvaluationInput,
+  rankEvaluationMetrics,
+  SearchInput,
+  SyncRequest,
+  TagAggregationInput,
+  TagAggregationResponse,
+  TypeAggregationInput,
+  TypeAggregationResponse,
+} from '../types'
 
 type RankResultMap<T extends string> = Record<string, RankEvaluationResponse<T>>
 

@@ -1,5 +1,6 @@
-import { logger } from '@island.is/logging'
 import * as Soap from 'soap'
+
+import { logger } from '@island.is/logging'
 
 export class SoapClient {
   static async generateClient(

@@ -1,5 +1,7 @@
 import request from 'supertest'
+
 import { EndorsementsScope } from '@island.is/auth/scopes'
+
 import { getAuthenticatedApp } from '../../../../../../test/setup'
 import { errorExpectedStructure } from '../../../../../../test/testHelpers'
 import { EndorsementTag } from '../../constants'

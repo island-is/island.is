@@ -1,8 +1,10 @@
 import * as React from 'react'
-import NextLink, { LinkProps as NextLinkProps } from 'next/link'
 import cn from 'classnames'
-import * as styles from './Link.css'
+import NextLink, { LinkProps as NextLinkProps } from 'next/link'
+
 import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
+
+import * as styles from './Link.css'
 
 export type LinkColor = 'white' | 'blue400' | 'blue600'
 export type UnderlineVisibility = 'always' | 'hover'

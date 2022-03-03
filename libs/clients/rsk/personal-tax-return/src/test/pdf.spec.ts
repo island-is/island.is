@@ -1,4 +1,5 @@
 import { PreconditionFailedException } from '@nestjs/common'
+
 import { pdfRequest } from './../lib/requests/pdf'
 
 describe('Pdf request', () => {

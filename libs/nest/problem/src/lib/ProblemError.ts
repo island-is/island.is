@@ -1,4 +1,5 @@
 import { HttpException } from '@nestjs/common'
+
 import { HttpProblem, Problem } from '@island.is/shared/problem'
 
 type HttpExceptionResponse = string | { message: string; error?: string }

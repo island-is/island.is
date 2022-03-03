@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+
 import { ApplicationEligibilityRequirement } from './applicationEligibilityRequirement.model'
 
 @ObjectType()

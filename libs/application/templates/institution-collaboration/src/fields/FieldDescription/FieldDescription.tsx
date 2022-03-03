@@ -1,7 +1,8 @@
 import React, { FC } from 'react'
-import { Stack, Box, Text } from '@island.is/island-ui/core'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { MessageDescriptor } from 'react-intl'
+
+import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 type FieldDescriptionProps = FieldBaseProps & {

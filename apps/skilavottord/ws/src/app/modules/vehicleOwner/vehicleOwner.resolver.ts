@@ -1,4 +1,4 @@
-import { Args, Resolver, Mutation } from '@nestjs/graphql'
+import { Args, Mutation,Resolver } from '@nestjs/graphql'
 
 import { Authorize, CurrentUser, User } from '../auth'
 

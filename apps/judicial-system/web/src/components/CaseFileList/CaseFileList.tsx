@@ -1,15 +1,17 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
+
 import { Box, Text, UploadedFile, UploadFile } from '@island.is/island-ui/core'
 import {
   CaseFile as TCaseFile,
   CaseFileState,
 } from '@island.is/judicial-system/types'
-import { Modal } from '..'
-import { useFileList } from '../../utils/hooks'
 import { caseFiles as m } from '@island.is/judicial-system-web/messages/Core/caseFiles'
+
+import { useFileList } from '../../utils/hooks'
 import { CaseFile } from '../../utils/hooks/useCourtUpload'
+import { Modal } from '..'
 
 interface Props {
   caseId: string

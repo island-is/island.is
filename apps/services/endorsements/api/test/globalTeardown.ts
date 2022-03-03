@@ -1,5 +1,5 @@
-import { register } from 'tsconfig-paths'
 import { execSync } from 'child_process'
+import { register } from 'tsconfig-paths'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const tsConfig = require(`../${require('../tsconfig.json').extends}`)

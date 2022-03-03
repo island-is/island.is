@@ -1,14 +1,15 @@
-import { AppModule } from '../src/app/app.module'
-import {
-  testServer,
-  useDatabase,
-  TestApp,
-  useAuth,
-} from '@island.is/testing/nest'
 import { SequelizeConfigService } from '@island.is/auth-api-lib/personal-representative'
 import { User } from '@island.is/auth-nest-tools'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import { createCurrentUser } from '@island.is/testing/fixtures'
+import {
+  TestApp,
+  testServer,
+  useAuth,
+  useDatabase,
+} from '@island.is/testing/nest'
+
+import { AppModule } from '../src/app/app.module'
 
 interface SetupOptions {
   user: User

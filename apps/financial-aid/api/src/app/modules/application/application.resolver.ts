@@ -1,29 +1,31 @@
-import { Query, Resolver, Context, Mutation, Args } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { BackendAPI } from '../../../services'
+import { Args,Context, Mutation, Query, Resolver } from '@nestjs/graphql'
 
-import {
-  ApplicationFiltersModel,
-  ApplicationModel,
-  UpdateApplicationTableResponse,
-} from './models'
-import {
-  CreateApplicationInput,
-  UpdateApplicationInput,
-  CreateApplicationEventInput,
-  UpdateApplicationInputTable,
-  ApplicationInput,
-  AllApplicationInput,
-  ApplicationSearchInput,
-} from './dto'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import {
   Application,
   ApplicationFilters,
   UpdateApplicationTableResponseType,
 } from '@island.is/financial-aid/shared/lib'
-import { IdsUserGuard } from '@island.is/auth-nest-tools'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import { BackendAPI } from '../../../services'
+
+import {
+  AllApplicationInput,
+  ApplicationInput,
+  ApplicationSearchInput,
+  CreateApplicationEventInput,
+  CreateApplicationInput,
+  UpdateApplicationInput,
+  UpdateApplicationInputTable,
+} from './dto'
+import {
+  ApplicationFiltersModel,
+  ApplicationModel,
+  UpdateApplicationTableResponse,
+} from './models'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => ApplicationModel)

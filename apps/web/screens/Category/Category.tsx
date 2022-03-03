@@ -1,49 +1,51 @@
-import React, { useEffect, useState, useRef } from 'react'
-import { useRouter } from 'next/router'
-import Head from 'next/head'
+import React, { useEffect, useRef,useState } from 'react'
 import intersection from 'lodash/intersection'
+import Head from 'next/head'
 import NextLink from 'next/link'
+import { useRouter } from 'next/router'
+
 import {
-  Text,
-  Stack,
-  Box,
-  Link,
-  Breadcrumbs,
   AccordionCard,
-  TopicCard,
-  FocusableBox,
-  Navigation,
-  LinkContext,
+  Box,
+  Breadcrumbs,
   Button,
+  FocusableBox,
+  Link,
+  LinkContext,
+  Navigation,
+  Stack,
+  Text,
+  TopicCard,
 } from '@island.is/island-ui/core'
 import { Card, Sticky } from '@island.is/web/components'
+import { useNamespace } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { Screen } from '@island.is/web/types'
+import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
 import {
-  GET_NAMESPACE_QUERY,
   GET_ARTICLES_QUERY,
   GET_CATEGORIES_QUERY,
   GET_LIFE_EVENTS_IN_CATEGORY_QUERY,
+  GET_NAMESPACE_QUERY,
 } from '@island.is/web/screens/queries'
-import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
-import { useNamespace } from '@island.is/web/hooks'
-import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { Screen } from '@island.is/web/types'
+import { CustomNextError } from '@island.is/web/units/errors'
+
 import {
+  ArticleGroup,
+  ContentLanguage,
+  GetArticleCategoriesQuery,
+  GetArticlesQuery,
   GetLifeEventsInCategoryQuery,
   GetNamespaceQuery,
-  GetArticlesQuery,
-  QueryGetArticlesArgs,
-  ContentLanguage,
-  QueryGetNamespaceArgs,
-  GetArticleCategoriesQuery,
-  QueryGetArticleCategoriesArgs,
-  QueryGetLifeEventsInCategoryArgs,
   Image,
-  ArticleGroup,
+  QueryGetArticleCategoriesArgs,
+  QueryGetArticlesArgs,
+  QueryGetLifeEventsInCategoryArgs,
+  QueryGetNamespaceArgs,
 } from '../../graphql/schema'
-import { CustomNextError } from '@island.is/web/units/errors'
-import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
 
 type Articles = GetArticlesQuery['getArticles']
 type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']

@@ -1,14 +1,16 @@
 import {
   Application,
+  ApplicationStatus,
   ApplicationTemplateHelper,
   ApplicationTypes,
+  DefaultEvents,
   ExternalData,
   FormValue,
-  DefaultEvents,
-  ApplicationStatus,
 } from '@island.is/application/core'
-import ParentalLeaveTemplate from './ParentalLeaveTemplate'
+
 import { SPOUSE, States as ApplicationStates, YES } from '../constants'
+
+import ParentalLeaveTemplate from './ParentalLeaveTemplate'
 
 function buildApplication(data: {
   answers?: FormValue

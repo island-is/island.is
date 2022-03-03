@@ -1,13 +1,14 @@
 import React from 'react'
-import { MailingListSignupSlice as MailingListSignupSliceSchema } from '@island.is/web/graphql/schema'
+
+import { Namespace } from '@island.is/api/schema'
 import {
   Box,
   GridColumn,
   GridContainer,
   GridRow,
 } from '@island.is/island-ui/core'
-import { Namespace } from '@island.is/api/schema'
 import { MailingListSignup, NameSignupForm } from '@island.is/web/components'
+import { MailingListSignupSlice as MailingListSignupSliceSchema } from '@island.is/web/graphql/schema'
 
 interface SliceProps {
   slice: MailingListSignupSliceSchema

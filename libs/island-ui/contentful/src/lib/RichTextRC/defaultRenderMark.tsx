@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react'
-import { MARKS } from '@contentful/rich-text-types'
 import { RenderMark } from '@contentful/rich-text-react-renderer'
+import { MARKS } from '@contentful/rich-text-types'
 
 export const defaultRenderMark: Readonly<RenderMark> = {
   [MARKS.BOLD]: (text: ReactNode) => <strong>{text}</strong>,

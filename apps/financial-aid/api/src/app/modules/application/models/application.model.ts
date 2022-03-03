@@ -1,18 +1,19 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ID,ObjectType } from '@nestjs/graphql'
 
 import {
   Application,
-  HomeCircumstances,
-  Employment,
   ApplicationState,
+  Employment,
   FamilyStatus,
+  HomeCircumstances,
 } from '@island.is/financial-aid/shared/lib'
 
+import { AmountModel } from '../../amount'
 import { ApplicationFileModel } from '../../file'
 import { StaffModel } from '../../staff'
-import { ApplicationEventModel, ApplicationFiltersModel } from './index'
-import { AmountModel } from '../../amount'
+
 import { DirectTaxPaymentModel } from './directTaxPayments.model'
+import { ApplicationEventModel, ApplicationFiltersModel } from './index'
 
 @ObjectType()
 export class ApplicationModel implements Application {

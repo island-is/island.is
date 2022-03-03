@@ -1,19 +1,19 @@
 import React from 'react'
+import { defineMessage,MessageDescriptor } from 'react-intl'
 import { Link } from 'react-router-dom'
-import { MessageDescriptor, defineMessage } from 'react-intl'
 
 import {
-  Text,
-  Box,
-  Stack,
-  Inline,
-  Tag,
   ArrowLink,
-  GridRow,
+  Box,
   GridColumn,
+  GridRow,
+  Inline,
+  Stack,
+  Tag,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { ServicePortalPath, m } from '@island.is/service-portal/core'
+import { m,ServicePortalPath } from '@island.is/service-portal/core'
 
 type Data = {
   heading: MessageDescriptor | string

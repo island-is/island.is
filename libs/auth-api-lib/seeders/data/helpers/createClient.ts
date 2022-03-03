@@ -1,7 +1,8 @@
 import { QueryInterface } from 'sequelize'
+
 import { getCurrentEnvValue, ValueOrEnved } from './env'
-import { DbClient } from './types'
 import { safeBulkInsert } from './safeBulkInsert'
+import { DbClient } from './types'
 
 type GrantType =
   | 'authorization_code'

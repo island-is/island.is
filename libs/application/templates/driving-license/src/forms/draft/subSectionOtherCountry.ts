@@ -1,13 +1,14 @@
 import {
-  buildMultiField,
   buildCheckboxField,
+  buildMultiField,
   buildRadioField,
   buildSubSection,
 } from '@island.is/application/core'
-import { m } from '../../lib/messages'
+
 import { NO, YES } from '../../lib/constants'
-import { B_TEMP } from '../../shared/constants'
+import { m } from '../../lib/messages'
 import { hasYes, isApplicationForCondition } from '../../lib/utils'
+import { B_TEMP } from '../../shared/constants'
 
 export const subSectionOtherCountry = buildSubSection({
   id: 'otherCountry',

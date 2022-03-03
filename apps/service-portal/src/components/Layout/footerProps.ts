@@ -1,6 +1,7 @@
-import { ServicePortalFooterContent } from '@island.is/service-portal/graphql'
-import { m } from '@island.is/service-portal/core'
 import { MessageDescriptor } from 'react-intl'
+
+import { m } from '@island.is/service-portal/core'
+import { ServicePortalFooterContent } from '@island.is/service-portal/graphql'
 
 type FormatMessage = (
   descriptor: string | MessageDescriptor,

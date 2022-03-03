@@ -1,17 +1,18 @@
 import React, { FC, useState } from 'react'
+
 import {
   FieldBaseProps,
   getValueViaPath,
   ValidAnswers,
 } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
-import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
+import { RadioController } from '@island.is/shared/form-fields'
 
-import BoxChart, { BoxChartKey } from '../components/BoxChart'
-import { parentalLeaveFormMessages } from '../../lib/messages'
 import { defaultMonths, maxMonths } from '../../config'
-import { YES, NO } from '../../constants'
+import { NO,YES } from '../../constants'
+import { parentalLeaveFormMessages } from '../../lib/messages'
+import BoxChart, { BoxChartKey } from '../components/BoxChart'
 
 const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
   const { formatMessage } = useLocale()

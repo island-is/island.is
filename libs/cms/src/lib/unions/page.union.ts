@@ -1,16 +1,8 @@
 import { createUnionType } from '@nestjs/graphql'
-import { Article, mapArticle } from '../models/article.model'
-import { mapSubArticle, SubArticle } from '../models/subArticle.model'
-import { LifeEventPage, mapLifeEventPage } from '../models/lifeEventPage.model'
-import { AdgerdirPage, mapAdgerdirPage } from '../models/adgerdirPage.model'
-import {
-  mapOrganizationPage,
-  OrganizationPage,
-} from '../models/organizationPage.model'
-import {
-  AdgerdirFrontpage,
-  mapAdgerdirFrontpage,
-} from '../models/adgerdirFrontpage.model'
+import { ApolloError } from 'apollo-server-express'
+
+import { mapOrganizationSubpage, OrganizationSubpage } from '@island.is/cms'
+
 import {
   IArticle,
   IArticleCategory,
@@ -22,13 +14,23 @@ import {
   IVidspyrnaFrontpage,
   IVidspyrnaPage,
 } from '../generated/contentfulTypes'
-import { ApolloError } from 'apollo-server-express'
-import { mapNews, News } from '../models/news.model'
+import {
+  AdgerdirFrontpage,
+  mapAdgerdirFrontpage,
+} from '../models/adgerdirFrontpage.model'
+import { AdgerdirPage, mapAdgerdirPage } from '../models/adgerdirPage.model'
+import { Article, mapArticle } from '../models/article.model'
 import {
   ArticleCategory,
   mapArticleCategory,
 } from '../models/articleCategory.model'
-import { mapOrganizationSubpage, OrganizationSubpage } from '@island.is/cms'
+import { LifeEventPage, mapLifeEventPage } from '../models/lifeEventPage.model'
+import { mapNews, News } from '../models/news.model'
+import {
+  mapOrganizationPage,
+  OrganizationPage,
+} from '../models/organizationPage.model'
+import { mapSubArticle, SubArticle } from '../models/subArticle.model'
 
 export type PageTypes =
   | IArticle

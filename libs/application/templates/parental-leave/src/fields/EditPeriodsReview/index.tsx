@@ -4,12 +4,12 @@ import { Application } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
-import { Timeline } from '../components/Timeline/Timeline'
+import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
   formatPeriods,
   getExpectedDateOfBirth,
 } from '../../lib/parentalLeaveUtils'
-import { parentalLeaveFormMessages } from '../../lib/messages'
+import { Timeline } from '../components/Timeline/Timeline'
 
 interface ReviewScreenProps {
   application: Application

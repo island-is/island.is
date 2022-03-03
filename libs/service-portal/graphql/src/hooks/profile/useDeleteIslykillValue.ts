@@ -1,11 +1,14 @@
 import { useMutation } from '@apollo/client'
+
 import {
+  DeleteIslykillValueInput,
   Mutation,
   MutationDeleteIslykillValueArgs,
-  DeleteIslykillValueInput,
 } from '@island.is/api/schema'
-import { useUserProfile } from './useUserProfile'
+
 import { UPDATE_ISLYKILL_DELETE_INPUT } from '../../lib/mutations/updateIslykillSettings'
+
+import { useUserProfile } from './useUserProfile'
 
 export type DeleteIslykillValue = {
   email?: boolean

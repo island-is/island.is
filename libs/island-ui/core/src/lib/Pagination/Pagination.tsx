@@ -1,9 +1,12 @@
-import React, { ReactNode, Fragment, FC, useMemo } from 'react'
+import React, { FC, Fragment, ReactNode, useMemo } from 'react'
 import cn from 'classnames'
 import uniq from 'lodash/uniq'
+
 import { Colors } from '@island.is/island-ui/theme'
-import { Icon, IconTypes } from '../Icon/Icon'
+
 import { Box } from '../Box/Box'
+import { Icon, IconTypes } from '../Icon/Icon'
+
 import * as styles from './Pagination.css'
 
 type ColorMap = Record<keyof typeof styles.variants, Colors>

@@ -1,10 +1,12 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
+
+import { SystemMetadata } from '@island.is/shared/types'
+
 import {
   ISliceConnectedComponent,
   ISliceConnectedComponentFields,
 } from '../generated/contentfulTypes'
-import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
 export class ConnectedComponent {

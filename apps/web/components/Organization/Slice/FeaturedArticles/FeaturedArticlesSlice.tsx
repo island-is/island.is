@@ -1,5 +1,7 @@
 import React from 'react'
-import { FeaturedArticles } from '@island.is/web/graphql/schema'
+import { useWindowSize } from 'react-use'
+
+import { Namespace } from '@island.is/api/schema'
 import {
   Box,
   Button,
@@ -11,12 +13,12 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './FeaturedArticlesSlice.css'
-import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { useNamespace } from '@island.is/web/hooks'
-import { Namespace } from '@island.is/api/schema'
-import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import { FeaturedArticles } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+
+import * as styles from './FeaturedArticlesSlice.css'
 
 interface SliceProps {
   slice: FeaturedArticles

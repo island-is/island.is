@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { ResponsiveSpace, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'

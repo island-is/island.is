@@ -1,4 +1,5 @@
 import { FormValue } from '@island.is/application/core'
+
 import { isDateOlderThanAYear } from './isDateOlderThanAYear'
 describe('isDateOlderThanAYear', () => {
   const yesterday = new Date()

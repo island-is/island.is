@@ -1,6 +1,8 @@
 import { useContext } from 'react'
+
 import { defaultLanguage } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
+
 import { I18nContext, isLocale } from '../../i18n/I18n'
 
 export interface LinkResolverResponse {

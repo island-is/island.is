@@ -1,11 +1,13 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+
 import { IFrontpage } from '../generated/contentfulTypes'
+
 import { Featured, mapFeatured } from './featured.model'
 import { FrontpageSlider, mapFrontpageSlider } from './frontpageSlider.model'
+import { Image, mapImage } from './image.model'
 import { LifeEventPage, mapLifeEventPage } from './lifeEventPage.model'
 import { LinkList, mapLinkList } from './linkList.model'
 import { mapNamespace, Namespace } from './namespace.model'
-import { Image, mapImage } from './image.model'
 
 @ObjectType()
 export class Frontpage {

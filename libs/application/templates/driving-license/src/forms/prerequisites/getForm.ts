@@ -4,13 +4,15 @@ import {
   Form,
   FormModes,
 } from '@island.is/application/core'
+
 import { LogreglanLogo } from '../../assets'
 import { m } from '../../lib/messages'
-import { sectionFakeData } from './sectionFakeData'
-import { sectionExternalData } from './sectionExternalData'
+
 import { sectionApplicationFor } from './sectionApplicationFor'
-import { sectionRequirements } from './sectionRequirements'
 import { sectionExistingApplication } from './sectionExistingApplication'
+import { sectionExternalData } from './sectionExternalData'
+import { sectionFakeData } from './sectionFakeData'
+import { sectionRequirements } from './sectionRequirements'
 
 export const getForm = ({
   allowFakeData = false,

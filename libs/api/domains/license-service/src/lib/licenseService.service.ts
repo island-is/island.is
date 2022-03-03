@@ -1,27 +1,28 @@
-import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
+import { CACHE_MANAGER,Inject, Injectable } from '@nestjs/common'
 import { Cache as CacheManager } from 'cache-manager'
 import add from 'date-fns/add'
 import compareAsc from 'date-fns/compareAsc'
+
+import { User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { User } from '@island.is/auth-nest-tools'
-import {
-  GenericUserLicense,
-  GenericLicenseTypeType,
-  GENERIC_LICENSE_FACTORY,
-  GenericLicenseType,
-  GenericLicenseClient,
-  GenericLicenseMetadata,
-  GenericLicenseUserdata,
-  GenericUserLicenseFetchStatus,
-  GenericUserLicenseStatus,
-  GenericLicenseCached,
-  GenericLicenseUserdataExternal,
-  PkPassVerification,
-  GenericUserLicensePkPassStatus,
-} from './licenceService.type'
 import { Locale } from '@island.is/shared/types'
 
+import {
+  GENERIC_LICENSE_FACTORY,
+  GenericLicenseCached,
+  GenericLicenseClient,
+  GenericLicenseMetadata,
+  GenericLicenseType,
+  GenericLicenseTypeType,
+  GenericLicenseUserdata,
+  GenericLicenseUserdataExternal,
+  GenericUserLicense,
+  GenericUserLicenseFetchStatus,
+  GenericUserLicensePkPassStatus,
+  GenericUserLicenseStatus,
+  PkPassVerification,
+} from './licenceService.type'
 import { AVAILABLE_LICENSES } from './licenseService.module'
 
 const CACHE_KEY = 'licenseService'

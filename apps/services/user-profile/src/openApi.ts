@@ -1,5 +1,7 @@
 import { DocumentBuilder } from '@nestjs/swagger'
+
 import { UserProfileScope } from '@island.is/auth/scopes'
+
 import { environment } from './environments'
 
 export const openApi = new DocumentBuilder()

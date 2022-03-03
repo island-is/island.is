@@ -1,8 +1,9 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ID,ObjectType } from '@nestjs/graphql'
 
 import { UserInfo as TUserInfo } from '@island.is/air-discount-scheme/types'
-import { User } from '../user'
+
 import { FlightLeg } from '../flightLeg'
+import { User } from '../user'
 
 @ObjectType()
 export class UserInfo implements TUserInfo {

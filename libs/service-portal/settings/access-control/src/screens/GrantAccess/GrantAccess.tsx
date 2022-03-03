@@ -1,32 +1,33 @@
 import React, { useEffect, useState } from 'react'
-import cn from 'classnames'
-import { gql, useMutation, useLazyQuery } from '@apollo/client'
-import { useForm, Controller, ValidationRules } from 'react-hook-form'
-import { useHistory } from 'react-router-dom'
+import { Controller, useForm, ValidationRules } from 'react-hook-form'
 import { defineMessage } from 'react-intl'
+import { useHistory } from 'react-router-dom'
+import { gql, useLazyQuery,useMutation } from '@apollo/client'
+import cn from 'classnames'
 import * as kennitala from 'kennitala'
-import { sharedMessages } from '@island.is/shared/translations'
 
-import {
-  Box,
-  Input,
-  Button,
-  Icon,
-  Text,
-  GridRow,
-  GridColumn,
-  toast,
-} from '@island.is/island-ui/core'
-import { InputController } from '@island.is/shared/form-fields'
 import { Mutation, Query } from '@island.is/api/schema'
 import {
-  IntroHeader,
-  ServicePortalPath,
-  m,
-} from '@island.is/service-portal/core'
+  Box,
+  Button,
+  GridColumn,
+  GridRow,
+  Icon,
+  Input,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import {
+  IntroHeader,
+  m,
+  ServicePortalPath,
+} from '@island.is/service-portal/core'
+import { InputController } from '@island.is/shared/form-fields'
+import { sharedMessages } from '@island.is/shared/translations'
 
 import { AuthDelegationsQuery } from '../AccessControl'
+
 import * as styles from './GrantAccess.css'
 
 const CreateAuthDelegationMutation = gql`

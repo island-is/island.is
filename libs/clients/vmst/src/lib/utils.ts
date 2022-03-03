@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-fetch'
+
 import { logger } from '@island.is/logging'
 
 export const createWrappedFetchWithLogging = (

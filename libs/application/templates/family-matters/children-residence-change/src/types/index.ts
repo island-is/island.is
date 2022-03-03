@@ -1,10 +1,11 @@
 import { Application, FieldBaseProps } from '@island.is/application/core'
 import {
-  MockData,
   ExternalData,
-  Override,
+  MockData,
   NestedType,
+  Override,
 } from '@island.is/application/templates/family-matters-core/types'
+
 import { answersSchema } from '../lib/dataSchema'
 
 // We are using mockData that is not defined in the zod schema

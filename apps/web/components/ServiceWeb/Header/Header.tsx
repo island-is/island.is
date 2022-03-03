@@ -1,26 +1,28 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import NextLink from 'next/link'
 import cn from 'classnames'
+import NextLink from 'next/link'
+
 import {
   Box,
   Column,
   Columns,
+  getTextStyles,
   GridColumn,
   GridContainer,
   GridRow,
   Hidden,
+  Link,
   Logo,
   ResponsiveSpace,
-  Link,
-  getTextStyles,
 } from '@island.is/island-ui/core'
 import {
   ServiceWebContext,
   ServiceWebSearchInput,
 } from '@island.is/web/components'
-import { TextModes } from '../types'
 import { linkResolver } from '@island.is/web/hooks'
+
+import { TextModes } from '../types'
 
 import * as styles from './Header.css'
 

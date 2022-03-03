@@ -1,15 +1,17 @@
 import {
+  CallHandler,
+  ExecutionContext,
   Injectable,
   NestInterceptor,
-  ExecutionContext,
-  CallHandler,
 } from '@nestjs/common'
+import { Reflector } from '@nestjs/core'
 import { Observable } from 'rxjs'
 import { tap } from 'rxjs/operators'
-import { AuditService, AuditTemplate } from './audit.service'
-import { Reflector } from '@nestjs/core'
-import { AUDIT_METADATA_KEY } from './audit.decorator'
+
 import { getCurrentAuth } from '@island.is/auth-nest-tools'
+
+import { AUDIT_METADATA_KEY } from './audit.decorator'
+import { AuditService, AuditTemplate } from './audit.service'
 
 @Injectable()
 export class AuditInterceptor implements NestInterceptor {

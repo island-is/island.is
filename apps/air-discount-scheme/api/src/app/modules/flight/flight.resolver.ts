@@ -1,8 +1,9 @@
 import { Parent, ResolveField, Resolver } from '@nestjs/graphql'
 
+import { User } from '../user'
+
 import { Flight } from './flight.model'
 import type { FlightWithUser } from './flight.types'
-import { User } from '../user'
 
 @Resolver(() => Flight)
 export class FlightResolver {

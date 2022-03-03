@@ -1,10 +1,11 @@
+import { Field, ObjectType } from '@nestjs/graphql'
+
+import { PropertyOwnersModel } from './propertyOwners.model'
 import {
-  PropertyLocation,
   Appraisal,
+  PropertyLocation,
   UnitsOfUseModel,
 } from './propertyUnitsOfUse.model'
-import { PropertyOwnersModel } from './propertyOwners.model'
-import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class PropertyDetail {

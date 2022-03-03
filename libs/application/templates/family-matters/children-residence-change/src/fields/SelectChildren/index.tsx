@@ -1,5 +1,7 @@
 import React from 'react'
+
 import { SelectChildren } from '@island.is/application/templates/family-matters-core/fields'
+
 import { selectChildren } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
 

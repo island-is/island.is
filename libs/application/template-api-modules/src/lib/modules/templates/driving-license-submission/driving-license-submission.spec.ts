@@ -1,25 +1,26 @@
+import { ConfigService } from '@nestjs/config'
 import { Test } from '@nestjs/testing'
-import { logger, LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  createCurrentUser,
-  createApplication,
-} from '@island.is/testing/fixtures'
 
+import { DrivingLicenseService } from '@island.is/api/domains/driving-license'
 import {
   Application,
   ApplicationStatus,
   ApplicationTypes,
 } from '@island.is/application/core'
-
-import { SharedTemplateApiService } from '../../shared'
-import { DrivingLicenseSubmissionService } from './driving-license-submission.service'
 import {
   AdapterService,
-  EmailService,
   EMAIL_OPTIONS,
+  EmailService,
 } from '@island.is/email-service'
-import { DrivingLicenseService } from '@island.is/api/domains/driving-license'
-import { ConfigService } from '@nestjs/config'
+import { logger, LOGGER_PROVIDER } from '@island.is/logging'
+import {
+  createApplication,
+  createCurrentUser,
+} from '@island.is/testing/fixtures'
+
+import { SharedTemplateApiService } from '../../shared'
+
+import { DrivingLicenseSubmissionService } from './driving-license-submission.service'
 
 describe('DrivingLicenseSubmissionService', () => {
   let drivingLicenseSubmissionService: DrivingLicenseSubmissionService

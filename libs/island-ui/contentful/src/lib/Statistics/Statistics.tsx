@@ -1,7 +1,10 @@
 import React, { FC } from 'react'
+
+import { Box } from '@island.is/island-ui/core'
+
 import Background from '../Background/Background'
 import { Statistic, StatisticProps } from '../Statistic/Statistic'
-import { Box } from '@island.is/island-ui/core'
+
 import * as styles from './Statistics.css'
 
 export interface StatisticsProps {

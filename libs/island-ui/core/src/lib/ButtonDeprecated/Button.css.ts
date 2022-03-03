@@ -1,4 +1,5 @@
-import { styleVariants, style, globalStyle } from '@vanilla-extract/css'
+import { globalStyle,style, styleVariants } from '@vanilla-extract/css'
+
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 const speed = '150ms'

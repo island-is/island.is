@@ -1,8 +1,8 @@
-export { GetVistaSkjalDtoType } from './getVistaSkjalDto.dto'
+export type { ApplyHealthInsuranceInputs } from './applyHealthInsuranceInputs.dto'
 export {
-  GetVistaSkjalBody,
   Fylgiskjal,
   Fylgiskjol,
+  GetVistaSkjalBody,
 } from './getVistaSkjalBody.dto'
+export { GetVistaSkjalDtoType } from './getVistaSkjalDto.dto'
 export type { XRoadVariables } from './xroadVariable.dto'
-export type { ApplyHealthInsuranceInputs } from './applyHealthInsuranceInputs.dto'

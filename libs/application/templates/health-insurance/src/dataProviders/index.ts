@@ -1,7 +1,7 @@
+export { ApplicationsProvider } from './ApplicationsProvider'
 export { HealthInsuranceProvider } from './HealthInsuranceProvider'
 export { PendingApplications } from './PendingApplications'
-export { ApplicationsProvider } from './ApplicationsProvider'
 export {
-  UserProfileProvider,
   NationalRegistryProvider,
+  UserProfileProvider,
 } from '@island.is/application/data-providers'

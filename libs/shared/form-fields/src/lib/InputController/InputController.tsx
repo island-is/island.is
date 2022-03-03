@@ -1,7 +1,8 @@
 import React, { FC } from 'react'
-import { Input, Icon, InputBackgroundColor } from '@island.is/island-ui/core'
-import { Controller, Control, ValidationRules } from 'react-hook-form'
+import { Control, Controller, ValidationRules } from 'react-hook-form'
 import NumberFormat, { FormatInputValueFunction } from 'react-number-format'
+
+import { Icon, Input, InputBackgroundColor } from '@island.is/island-ui/core'
 
 interface Props {
   autoFocus?: boolean

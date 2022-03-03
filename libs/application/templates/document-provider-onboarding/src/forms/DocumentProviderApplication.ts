@@ -1,15 +1,16 @@
 import {
+  ApplicationTypes,
+  buildCustomField,
+  buildDividerField,
   buildForm,
   buildMultiField,
   buildSection,
+  buildSubmitField,
   buildTextField,
   Form,
-  ApplicationTypes,
   FormModes,
-  buildSubmitField,
-  buildCustomField,
-  buildDividerField,
 } from '@island.is/application/core'
+
 import { m } from './messages'
 
 export const DocumentProviderOnboarding: Form = buildForm({

@@ -1,14 +1,16 @@
 import { Test } from '@nestjs/testing'
-import { createApplication } from '@island.is/testing/fixtures'
-import { ApplicationLifeCycleService } from '../application-lifecycle.service'
-import { ApplicationService } from '../../application.service'
+
 import { ApplicationWithAttachments as Application } from '@island.is/application/core'
-import { AwsService } from '../../files/aws.service'
-import {
-  ApplicationConfig,
-  APPLICATION_CONFIG,
-} from '../../application.configuration'
 import { LoggingModule } from '@island.is/logging'
+import { createApplication } from '@island.is/testing/fixtures'
+
+import {
+  APPLICATION_CONFIG,
+  ApplicationConfig,
+} from '../../application.configuration'
+import { ApplicationService } from '../../application.service'
+import { AwsService } from '../../files/aws.service'
+import { ApplicationLifeCycleService } from '../application-lifecycle.service'
 let lifeCycleService: ApplicationLifeCycleService
 let awsService: AwsService
 

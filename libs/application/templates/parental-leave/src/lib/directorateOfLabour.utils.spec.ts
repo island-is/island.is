@@ -1,12 +1,12 @@
 import getDaysInMonth from 'date-fns/getDaysInMonth'
 
 import {
-  calculateNumberOfDaysForOnePeriod,
-  calculateRemainingNumberOfDays,
-  calculatePeriodLength,
-  daysToMonths,
-  DAYS_IN_MONTH,
   calculateMaxPercentageForPeriod,
+  calculateNumberOfDaysForOnePeriod,
+  calculatePeriodLength,
+  calculateRemainingNumberOfDays,
+  DAYS_IN_MONTH,
+  daysToMonths,
 } from './directorateOfLabour.utils'
 
 describe('monthsToDays', () => {

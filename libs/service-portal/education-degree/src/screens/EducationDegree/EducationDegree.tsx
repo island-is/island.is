@@ -4,6 +4,7 @@ import { defineMessage } from 'react-intl'
 import { Box } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
 import { IntroHeader } from '@island.is/service-portal/core'
+
 import { DegreeCards } from './components/DegreeCards'
 
 function EducationDegree(): JSX.Element {

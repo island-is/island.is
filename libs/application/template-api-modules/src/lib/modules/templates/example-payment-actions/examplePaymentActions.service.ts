@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common'
-import { SharedTemplateApiService } from '../../shared'
-import { TemplateApiModuleActionProps } from '../../../types'
+
 import { getValueViaPath } from '@island.is/application/core'
 import { Item } from '@island.is/clients/payment'
+
+import { TemplateApiModuleActionProps } from '../../../types'
+import { SharedTemplateApiService } from '../../shared'
 
 @Injectable()
 export class ExamplePaymentActionsService {

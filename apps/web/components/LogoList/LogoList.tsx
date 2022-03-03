@@ -1,13 +1,15 @@
 import React from 'react'
+import cn from 'classnames'
+
 import {
-  Text,
   Box,
   GridColumn,
   GridContainer,
   GridRow,
+  Text,
 } from '@island.is/island-ui/core'
+
 import * as styles from './LogoList.css'
-import cn from 'classnames'
 
 export interface LogoListProps {
   title: string

@@ -1,5 +1,7 @@
 import { Answer } from '@island.is/application/core'
-import { YES, NO } from '../constants'
+
+import { NO,YES } from '../constants'
+
 import { hasYes } from './hasYes'
 
 type YesOrNo = typeof YES | typeof NO

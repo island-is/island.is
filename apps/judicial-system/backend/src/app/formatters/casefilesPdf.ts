@@ -3,12 +3,13 @@ import streamBuffers from 'stream-buffers'
 
 import { environment } from '../../environments'
 import { Case } from '../modules/case'
+
 import {
+  addFooter,
   addHugeHeading,
   addLargeHeading,
   addNumberedList,
   setLineGap,
-  addFooter,
   setTitle,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'

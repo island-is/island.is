@@ -1,7 +1,8 @@
 import {
-  ServicePortalRoute,
   ServicePortalModule,
+  ServicePortalRoute,
 } from '@island.is/service-portal/core'
+
 import { ModuleKeys } from './modules'
 
 export type MenuState = 'open' | 'closed'

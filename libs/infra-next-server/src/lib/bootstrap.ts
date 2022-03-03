@@ -1,11 +1,14 @@
 import '@island.is/infra-tracing'
-import next from 'next'
-import { logger, monkeyPatchServerLogging } from '@island.is/logging'
-import { startMetricServer } from '@island.is/infra-metrics'
+
 import createExpressApp, { Express } from 'express'
+import type { Config } from 'http-proxy-middleware'
+import next from 'next'
+
+import { startMetricServer } from '@island.is/infra-metrics'
+import { logger, monkeyPatchServerLogging } from '@island.is/logging'
+
 import { getNextConfig } from './config'
 import { setupProxy } from './proxy'
-import type { Config } from 'http-proxy-middleware'
 
 type BootstrapOptions = {
   /**

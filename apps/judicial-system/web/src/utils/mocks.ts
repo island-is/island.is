@@ -1,23 +1,23 @@
+import type { UpdateCase, User } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
-  CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseDecision,
   CaseFileState,
-  Gender,
+  CaseLegalProvisions,
   CaseState,
   CaseType,
+  Gender,
   InstitutionType,
   UserRole,
 } from '@island.is/judicial-system/types'
-import type { UpdateCase, User } from '@island.is/judicial-system/types'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { CurrentUserQuery } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import { UpdateCaseMutation } from '@island.is/judicial-system-web/src/utils/hooks/useCase/updateCaseGql'
 import {
   InstitutionsQuery,
   UsersQuery,
 } from '@island.is/judicial-system-web/src/utils/mutations'
-import { UpdateCaseMutation } from '@island.is/judicial-system-web/src/utils/hooks/useCase/updateCaseGql'
 
 export const mockCourt = {
   id: 'court_id',

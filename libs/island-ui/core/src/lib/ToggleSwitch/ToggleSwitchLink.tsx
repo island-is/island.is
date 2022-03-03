@@ -1,6 +1,8 @@
 import React, { MouseEvent, useEffect, useState } from 'react'
-import { Link } from '../Link/Link'
 import { LinkProps } from 'next/link'
+
+import { Link } from '../Link/Link'
+
 import {
   getContainerClass,
   getInteractiveProps,

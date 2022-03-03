@@ -1,7 +1,9 @@
 import React, { FC } from 'react'
+
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box, Button, Link } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+
 import { terms } from '../../lib/messages'
 
 export const TermsOfAgreement: FC<FieldBaseProps> = ({ application }) => {

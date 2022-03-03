@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { Box, Hidden } from '@island.is/island-ui/core'
+
 import { useAuth } from '@island.is/auth/react'
+import { Box, Hidden } from '@island.is/island-ui/core'
+
 import { UserButton } from './UserButton'
 import { UserDropdown } from './UserDropdown'
 import { UserLanguageSwitcher } from './UserLanguageSwitcher'

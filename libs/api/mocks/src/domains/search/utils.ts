@@ -1,3 +1,5 @@
+import sortBy from 'lodash/sortBy'
+
 import {
   Article,
   Items,
@@ -6,7 +8,6 @@ import {
   SearcherInput,
   TagCount,
 } from '../../types'
-import sortBy from 'lodash/sortBy'
 
 export function getTagCounts(filteredItems: Items[]) {
   const tagMap = filteredItems.reduce<{ [key: string]: TagCount }>(

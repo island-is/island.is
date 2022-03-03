@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import { createClient, EntryCollection, ContentfulClientApi } from 'contentful'
+import { ContentfulClientApi,createClient, EntryCollection } from 'contentful'
+
 import { logger } from '@island.is/logging'
 
 const space = '8k0h54kbe6bj'

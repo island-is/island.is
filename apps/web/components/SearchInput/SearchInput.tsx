@@ -1,44 +1,45 @@
 import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
   forwardRef,
   ReactElement,
+  useCallback,
+  useEffect,
   useReducer,
+  useRef,
+  useState,
 } from 'react'
-import Downshift from 'downshift'
 import { useMeasure } from 'react-use'
-import { useRouter } from 'next/router'
 import { useApolloClient } from '@apollo/client/react'
-import {
-  GET_SEARCH_RESULTS_QUERY,
-  GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
-} from '@island.is/web/screens/queries'
+import Downshift from 'downshift'
+import { useRouter } from 'next/router'
+
 import {
   AsyncSearchInput,
   AsyncSearchSizes,
   Box,
-  Text,
-  Stack,
   Link,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 import {
-  GetSearchResultsQuery,
-  QuerySearchResultsArgs,
-  ContentLanguage,
-  QueryWebSearchAutocompleteArgs,
-  AutocompleteTermResultsQuery,
   Article,
-  SubArticle,
-  SearchableContentTypes,
+  AutocompleteTermResultsQuery,
+  ContentLanguage,
+  GetSearchResultsQuery,
   LifeEventPage,
   News,
+  QuerySearchResultsArgs,
+  QueryWebSearchAutocompleteArgs,
+  SearchableContentTypes,
+  SubArticle,
 } from '@island.is/web/graphql/schema'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import {
+  GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
+  GET_SEARCH_RESULTS_QUERY,
+} from '@island.is/web/screens/queries'
 
 import * as styles from './SearchInput.css'
-import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 const DEBOUNCE_TIMER = 150
 const STACK_WIDTH = 400

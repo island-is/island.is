@@ -1,4 +1,4 @@
-import { StatsD, ClientOptions } from 'hot-shots'
+import { ClientOptions,StatsD } from 'hot-shots'
 
 export class DogStatsD extends StatsD {
   constructor(options: ClientOptions = {}) {

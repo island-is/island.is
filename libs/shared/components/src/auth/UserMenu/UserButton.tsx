@@ -1,14 +1,16 @@
 import React from 'react'
+
 import {
+  Box,
   Button,
   Hidden,
   Inline,
   UserAvatar,
-  Box,
 } from '@island.is/island-ui/core'
-import { User } from '@island.is/shared/types'
 import { useLocale } from '@island.is/localization'
 import { userMessages } from '@island.is/shared/translations'
+import { User } from '@island.is/shared/types'
+
 import * as styles from './UserMenu.css'
 
 interface UserButtonProps {

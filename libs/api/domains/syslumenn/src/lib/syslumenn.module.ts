@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common'
-import { SyslumennResolver } from './syslumenn.resolver'
+
 import { SyslumennClientModule } from '@island.is/clients/syslumenn'
+
+import { SyslumennResolver } from './syslumenn.resolver'
 
 @Module({
   imports: [SyslumennClientModule],

@@ -1,18 +1,20 @@
-import React, { useState, useRef, forwardRef, useLayoutEffect } from 'react'
+import React, { forwardRef, useLayoutEffect,useRef, useState } from 'react'
 import cn from 'classnames'
 
-import * as styles from './Input.css'
-import { Box } from '../Box/Box'
-import { Tooltip } from '../Tooltip/Tooltip'
-import { Icon } from '../IconRC/Icon'
 import { resolveResponsiveProp } from '../../utils/responsiveProp'
+import { Box } from '../Box/Box'
 import { UseBoxStylesProps } from '../Box/useBoxStyles'
+import { Icon } from '../IconRC/Icon'
+import { Tooltip } from '../Tooltip/Tooltip'
+
 import {
+  AriaError,
   InputBackgroundColor,
   InputComponentProps,
   InputProps,
-  AriaError,
 } from './types'
+
+import * as styles from './Input.css'
 
 function setRefs<T>(ref: React.Ref<T>, value: T) {
   if (typeof ref === 'function') {

@@ -1,5 +1,7 @@
 import { FormValue } from '@island.is/application/core'
+
 import { WhoIsTheNotificationForEnum } from '../types'
+
 import { isReportingOnBehalfOfInjured } from './isReportingOnBehalfOfInjured'
 
 describe('isReportingOnBehalfOfInjured', () => {

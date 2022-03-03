@@ -1,12 +1,13 @@
 import {
+  CallHandler,
+  ExecutionContext,
   Injectable,
   NestInterceptor,
-  ExecutionContext,
-  CallHandler,
 } from '@nestjs/common'
 import { instanceToPlain, plainToInstance } from 'class-transformer'
-import { map } from 'rxjs/operators'
 import { Observable } from 'rxjs'
+import { map } from 'rxjs/operators'
+
 import {
   Application as BaseApplication,
   ApplicationTemplateHelper,
@@ -16,9 +17,9 @@ import {
   getApplicationTemplateByTypeId,
   getApplicationTranslationNamespaces,
 } from '@island.is/application/template-loader'
+import { getCurrentUser } from '@island.is/auth-nest-tools'
 import { IntlService } from '@island.is/cms-translations'
 import { Locale } from '@island.is/shared/types'
-import { getCurrentUser } from '@island.is/auth-nest-tools'
 
 import { Application } from '../application.model'
 import { ApplicationResponseDto } from '../dto/application.response.dto'

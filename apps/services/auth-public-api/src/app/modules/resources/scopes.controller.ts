@@ -1,10 +1,3 @@
-import { ResourcesService, ApiScope } from '@island.is/auth-api-lib'
-import {
-  CurrentUser,
-  IdsUserGuard,
-  Scopes,
-  ScopesGuard,
-} from '@island.is/auth-nest-tools'
 import { Controller, Get, UseGuards } from '@nestjs/common'
 import {
   ApiForbiddenResponse,
@@ -13,7 +6,15 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger'
+
+import { ApiScope,ResourcesService } from '@island.is/auth-api-lib'
 import type { User } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('scopes')
 @Controller('v1/scopes')

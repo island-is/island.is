@@ -1,7 +1,9 @@
 import React from 'react'
-import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
-import { Text, Box } from '@island.is/island-ui/core'
+
+import { Box,Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+
 import { EmptyImage } from './EmptyImage'
 
 interface Props {

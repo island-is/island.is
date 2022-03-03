@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql'
+import { IsObject,IsOptional, IsString } from 'class-validator'
 import graphqlTypeJson from 'graphql-type-json'
-import { IsString, IsOptional, IsObject } from 'class-validator'
 
 @InputType()
 export class UpdateApplicationInput {

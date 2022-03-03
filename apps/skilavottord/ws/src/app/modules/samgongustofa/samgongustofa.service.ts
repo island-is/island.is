@@ -1,4 +1,4 @@
-import { Injectable, HttpService, Inject, forwardRef } from '@nestjs/common'
+import { forwardRef,HttpService, Inject, Injectable } from '@nestjs/common'
 import * as xml2js from 'xml2js'
 
 import type { Logger } from '@island.is/logging'
@@ -6,6 +6,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { environment } from '../../../environments'
 import { RecyclingRequestService } from '../recyclingRequest'
+
 import { VehicleInformation } from './samgongustofa.model'
 
 @Injectable()

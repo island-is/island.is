@@ -1,12 +1,12 @@
-import get from 'lodash/get'
 import format from 'date-fns/format'
-
-import { Message } from '@island.is/email-service'
+import get from 'lodash/get'
 
 import type { Period } from '@island.is/application/templates/parental-leave'
+import { Message } from '@island.is/email-service'
+import { dateFormat } from '@island.is/shared/constants'
+
 import { EmailTemplateGenerator } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
-import { dateFormat } from '@island.is/shared/constants'
 
 // TODO handle translations
 export const generateApplicationApprovedByEmployerToEmployerEmail: EmailTemplateGenerator = (

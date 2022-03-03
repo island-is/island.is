@@ -1,3 +1,5 @@
+import { useCallback, useEffect, useState } from 'react'
+
 import {
   GetScheduleDistributionInput,
   PaymentScheduleConditions,
@@ -5,7 +7,7 @@ import {
   PaymentScheduleDistribution,
 } from '@island.is/api/schema'
 import { ExternalData } from '@island.is/application/core'
-import { useCallback, useEffect, useState } from 'react'
+
 import { useLazyDistribution } from '../hooks/useLazyDistribution'
 import { PaymentDistribution, PaymentPlanExternalData } from '../types'
 

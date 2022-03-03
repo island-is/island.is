@@ -1,10 +1,11 @@
 import {
   Application,
+  ApplicationStatus,
   ApplicationTemplateHelper,
   ApplicationTypes,
   DefaultEvents,
-  ApplicationStatus,
 } from '@island.is/application/core'
+
 import { States } from './constants'
 import CriminalRecordTemplate from './CriminalRecordTemplate'
 

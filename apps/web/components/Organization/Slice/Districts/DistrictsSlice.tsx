@@ -1,5 +1,5 @@
 import React from 'react'
-import { Districts } from '@island.is/web/graphql/schema'
+
 import {
   Box,
   Button,
@@ -8,6 +8,8 @@ import {
   Link,
   Text,
 } from '@island.is/island-ui/core'
+import { Districts } from '@island.is/web/graphql/schema'
+
 import * as styles from './DistrictsSlice.css'
 
 interface SliceProps {

@@ -1,10 +1,4 @@
 import {
-  UserIdentitiesService,
-  UserIdentity,
-  UserIdentityDto,
-} from '@island.is/auth-api-lib'
-import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
-import {
   Body,
   Controller,
   Get,
@@ -14,6 +8,13 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+
+import {
+  UserIdentitiesService,
+  UserIdentity,
+  UserIdentityDto,
+} from '@island.is/auth-api-lib'
+import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('user-identities')

@@ -1,88 +1,90 @@
 import { createUnionType } from '@nestjs/graphql'
+import { Block,BLOCKS, Document } from '@contentful/rich-text-types'
 import { ApolloError } from 'apollo-server-express'
-import { Document, BLOCKS, Block } from '@contentful/rich-text-types'
+
 import { logger } from '@island.is/logging'
+
 import {
-  ITimeline,
-  IMailingListSignup,
-  ISectionHeading,
-  ICardSection,
-  IStorySection,
-  ILogoListSlice,
-  ILatestNewsSlice,
+  IAccordionSlice,
   IBigBulletList,
-  IStatistics,
-  IProcessEntry,
-  IFaqList,
-  ISliceConnectedComponent,
+  ICardSection,
+  IContactUs,
+  IDistricts,
   IEmbeddedVideo,
+  IEventSlice,
+  IFaqList,
+  IFeaturedArticles,
+  ILatestNewsSlice,
+  ILogoListSlice,
+  IMailingListSignup,
+  IMultipleStatistics,
+  IOneColumnText,
+  IOverviewLinks,
+  IProcessEntry,
+  ISectionHeading,
   ISectionWithImage,
+  ISliceConnectedComponent,
+  IStatistics,
+  IStorySection,
   ITabSection,
   ITeamList,
-  IContactUs,
   ITellUsAStory,
-  IDistricts,
-  IFeaturedArticles,
-  IOneColumnText,
+  ITimeline,
   ITwoColumnText,
-  IMultipleStatistics,
-  IAccordionSlice,
-  IOverviewLinks,
-  IEventSlice,
 } from '../generated/contentfulTypes'
-import { Image, mapImage } from '../models/image.model'
-import { Asset, mapAsset } from '../models/asset.model'
-import {
-  MailingListSignupSlice,
-  mapMailingListSignup,
-} from '../models/mailingListSignupSlice.model'
-import { mapTimelineSlice, TimelineSlice } from '../models/timelineSlice.model'
-import { HeadingSlice, mapHeadingSlice } from '../models/headingSlice.model'
-import { mapStorySlice, StorySlice } from '../models/storySlice.model'
-import { LinkCardSlice, mapLinkCardSlice } from '../models/linkCardSlice.model'
-import {
-  LatestNewsSlice,
-  mapLatestNewsSlice,
-} from '../models/latestNewsSlice.model'
-import { LogoListSlice, mapLogoListSlice } from '../models/logoListSlice.model'
-import {
-  BulletListSlice,
-  mapBulletListSlice,
-} from '../models/bulletListSlice.model'
-import { mapStatistics, Statistics } from '../models/statistics.model'
-import { Html, mapHtml } from '../models/html.model'
-import { mapProcessEntry, ProcessEntry } from '../models/processEntry.model'
-import { FaqList, mapFaqList } from '../models/faqList.model'
-import {
-  ConnectedComponent,
-  mapConnectedComponent,
-} from '../models/connectedComponent.model'
-import { EmbeddedVideo, mapEmbeddedVideo } from '../models/embeddedVideo.model'
-import {
-  mapSectionWithImage,
-  SectionWithImage,
-} from '../models/sectionWithImage.model'
-import { mapTabSection, TabSection } from '../models/tabSection.model'
-import { mapTeamList, TeamList } from '../models/teamList.model'
-import { ContactUs, mapContactUs } from '../models/contactUs.model'
-import { mapTellUsAStory, TellUsAStory } from '../models/tellUsAStory.model'
-import { Districts, mapDistricts } from '../models/districts.model'
-import {
-  FeaturedArticles,
-  mapFeaturedArticles,
-} from '../models/featuredArticles.model'
-import { mapTwoColumnText, TwoColumnText } from '../models/twoColumnText.model'
-import { mapOneColumnText, OneColumnText } from '../models/oneColumnText.model'
 import {
   AccordionSlice,
   mapAccordionSlice,
 } from '../models/accordionSlice.model'
-import { mapOverviewLinks, OverviewLinks } from '../models/overviewLinks.model'
+import { Asset, mapAsset } from '../models/asset.model'
+import {
+  BulletListSlice,
+  mapBulletListSlice,
+} from '../models/bulletListSlice.model'
+import {
+  ConnectedComponent,
+  mapConnectedComponent,
+} from '../models/connectedComponent.model'
+import { ContactUs, mapContactUs } from '../models/contactUs.model'
+import { Districts, mapDistricts } from '../models/districts.model'
+import { EmbeddedVideo, mapEmbeddedVideo } from '../models/embeddedVideo.model'
+import { EventSlice, mapEventSlice } from '../models/eventSlice.model'
+import { FaqList, mapFaqList } from '../models/faqList.model'
+import {
+  FeaturedArticles,
+  mapFeaturedArticles,
+} from '../models/featuredArticles.model'
+import { HeadingSlice, mapHeadingSlice } from '../models/headingSlice.model'
+import { Html, mapHtml } from '../models/html.model'
+import { Image, mapImage } from '../models/image.model'
+import {
+  LatestNewsSlice,
+  mapLatestNewsSlice,
+} from '../models/latestNewsSlice.model'
+import { LinkCardSlice, mapLinkCardSlice } from '../models/linkCardSlice.model'
+import { LogoListSlice, mapLogoListSlice } from '../models/logoListSlice.model'
+import {
+  MailingListSignupSlice,
+  mapMailingListSignup,
+} from '../models/mailingListSignupSlice.model'
 import {
   mapMultipleStatistics,
   MultipleStatistics,
 } from '../models/multipleStatistics.model'
-import { EventSlice, mapEventSlice } from '../models/eventSlice.model'
+import { mapOneColumnText, OneColumnText } from '../models/oneColumnText.model'
+import { mapOverviewLinks, OverviewLinks } from '../models/overviewLinks.model'
+import { mapProcessEntry, ProcessEntry } from '../models/processEntry.model'
+import {
+  mapSectionWithImage,
+  SectionWithImage,
+} from '../models/sectionWithImage.model'
+import { mapStatistics, Statistics } from '../models/statistics.model'
+import { mapStorySlice, StorySlice } from '../models/storySlice.model'
+import { mapTabSection, TabSection } from '../models/tabSection.model'
+import { mapTeamList, TeamList } from '../models/teamList.model'
+import { mapTellUsAStory, TellUsAStory } from '../models/tellUsAStory.model'
+import { mapTimelineSlice, TimelineSlice } from '../models/timelineSlice.model'
+import { mapTwoColumnText, TwoColumnText } from '../models/twoColumnText.model'
 
 type SliceTypes =
   | ITimeline

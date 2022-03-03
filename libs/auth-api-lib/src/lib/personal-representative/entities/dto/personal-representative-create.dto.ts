@@ -1,12 +1,12 @@
-import {
-  IsNotEmpty,
-  IsString,
-  IsDateString,
-  IsOptional,
-  IsArray,
-  ArrayNotEmpty,
-} from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsDateString,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator'
 
 export class PersonalRepresentativeCreateDTO {
   @IsString()

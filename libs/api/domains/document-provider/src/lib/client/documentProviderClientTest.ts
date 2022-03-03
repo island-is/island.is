@@ -4,7 +4,7 @@ import { AxiosRequestConfig } from 'axios'
 import { DocumentOauthConnection } from './documentProvider.connection'
 import type { DocumentProviderClientConfig } from './documentProviderClientConfig'
 import { DOCUMENT_PROVIDER_CLIENT_CONFIG_TEST } from './documentProviderClientConfig'
-import { ClientCredentials, AudienceAndScope, TestResult } from './models'
+import { AudienceAndScope, ClientCredentials, TestResult } from './models'
 
 @Injectable()
 export class DocumentProviderClientTest {

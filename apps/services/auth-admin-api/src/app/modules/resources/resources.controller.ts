@@ -1,26 +1,4 @@
 import {
-  ApiResource,
-  ApiScope,
-  ApiScopeUserClaim,
-  ApiScopesDTO,
-  IdentityResource,
-  IdentityResourcesDTO,
-  ResourcesService,
-  IdentityResourceUserClaim,
-  ApiResourcesDTO,
-  ApiResourceSecretDTO,
-  ApiResourceSecret,
-  ApiResourceScope,
-  ApiResourceAllowedScopeDTO,
-  ApiResourceUserClaim,
-  UserClaimDTO,
-  ApiScopeGroup,
-  ApiScopeGroupDTO,
-  PagedRowsDto,
-  Domain,
-  DomainDTO,
-} from '@island.is/auth-api-lib'
-import {
   BadRequestException,
   Body,
   Controller,
@@ -39,15 +17,39 @@ import {
   ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger'
+
+import { AuthAdminScope } from '@island.is/auth/scopes'
+import {
+  ApiResource,
+  ApiResourceAllowedScopeDTO,
+  ApiResourceScope,
+  ApiResourcesDTO,
+  ApiResourceSecret,
+  ApiResourceSecretDTO,
+  ApiResourceUserClaim,
+  ApiScope,
+  ApiScopeGroup,
+  ApiScopeGroupDTO,
+  ApiScopesDTO,
+  ApiScopeUserClaim,
+  Domain,
+  DomainDTO,
+  IdentityResource,
+  IdentityResourcesDTO,
+  IdentityResourceUserClaim,
+  PagedRowsDto,
+  ResourcesService,
+  UserClaimDTO,
+} from '@island.is/auth-api-lib'
 import type { User } from '@island.is/auth-nest-tools'
 import {
-  IdsUserGuard,
-  ScopesGuard,
-  Scopes,
   CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { AuthAdminScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
+
 import { environment } from '../../../environments/'
 
 const namespace = `${environment.audit.defaultNamespace}/resources`

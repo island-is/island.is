@@ -1,18 +1,21 @@
 import { Injectable } from '@nestjs/common'
-import { SharedTemplateApiService } from '../../shared'
-import { TemplateApiModuleActionProps } from '../../../types'
+
 import { CriminalRecordService } from '@island.is/api/domains/criminal-record'
+import { ApplicationWithAttachments as Application } from '@island.is/application/core'
 import { CriminalRecord } from '@island.is/clients/criminal-record'
 import {
-  SyslumennService,
-  Person,
   Attachment,
+  Person,
   PersonType,
+  SyslumennService,
 } from '@island.is/clients/syslumenn'
-import { generateSyslumennNotificationEmail } from './emailGenerators/syslumennNotification'
-import { ApplicationWithAttachments as Application } from '@island.is/application/core'
-import { NationalRegistry, UserProfile } from './types'
 import { ChargeItemCode } from '@island.is/shared/constants'
+
+import { TemplateApiModuleActionProps } from '../../../types'
+import { SharedTemplateApiService } from '../../shared'
+
+import { generateSyslumennNotificationEmail } from './emailGenerators/syslumennNotification'
+import { NationalRegistry, UserProfile } from './types'
 
 @Injectable()
 export class CriminalRecordSubmissionService {

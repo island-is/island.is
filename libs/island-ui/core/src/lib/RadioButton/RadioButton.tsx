@@ -1,12 +1,13 @@
 import React from 'react'
 import cn from 'classnames'
 
-import { Text } from '../Text/Text'
-import { Tooltip } from '../Tooltip/Tooltip'
-import * as styles from './RadioButton.css'
-import { InputBackgroundColor } from '../Input/types'
 import { Box } from '../Box/Box'
 import { BoxProps } from '../Box/types'
+import { InputBackgroundColor } from '../Input/types'
+import { Text } from '../Text/Text'
+import { Tooltip } from '../Tooltip/Tooltip'
+
+import * as styles from './RadioButton.css'
 
 export interface RadioButtonProps {
   name?: string

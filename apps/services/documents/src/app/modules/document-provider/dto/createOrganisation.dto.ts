@@ -1,5 +1,6 @@
-import { IsNotEmpty, IsOptional, IsString, IsEmail } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { IsEmail,IsNotEmpty, IsOptional, IsString } from 'class-validator'
+
 import { CreateContactDto } from './createContact.dto'
 import { CreateHelpdeskDto } from './createHelpdesk.dto'
 

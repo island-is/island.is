@@ -1,7 +1,7 @@
-import { Test } from '@nestjs/testing'
 import { CACHE_MANAGER } from '@nestjs/common'
+import { Test } from '@nestjs/testing'
 
-import { DiscountService, DISCOUNT_CODE_LENGTH } from '../../discount.service'
+import { DISCOUNT_CODE_LENGTH,DiscountService } from '../../discount.service'
 
 describe('DiscountService', () => {
   let discountService: DiscountService

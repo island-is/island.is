@@ -1,7 +1,8 @@
-import { Problem } from '@island.is/shared/problem'
 import { Logger } from '@island.is/logging'
-import { ProblemError } from './ProblemError'
+import { Problem } from '@island.is/shared/problem'
+
 import { CreateRequest, setup } from './test/setup'
+import { ProblemError } from './ProblemError'
 
 describe('BaseProblemFilter', () => {
   describe('default loggging', () => {

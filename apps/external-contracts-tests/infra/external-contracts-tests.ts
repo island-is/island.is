@@ -1,6 +1,6 @@
 import { service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
-import { Base, NationalRegistry } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
+import { Base, NationalRegistry } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (): ServiceBuilder<'external-contracts-tests'> => {
   return service('external-contracts-tests')

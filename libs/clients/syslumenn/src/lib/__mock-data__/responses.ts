@@ -1,8 +1,8 @@
 import {
+  Skilabod,
   Uppbod,
   VirkarHeimagistingar,
   VirkLeyfi,
-  Skilabod,
 } from '../../../gen/fetch'
 import { SyslumennApiPaginationInfo } from '../syslumennClient.types'
 

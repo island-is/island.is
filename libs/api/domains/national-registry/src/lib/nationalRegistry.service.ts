@@ -1,18 +1,19 @@
-import * as kennitala from 'kennitala'
 import { Injectable } from '@nestjs/common'
+import * as kennitala from 'kennitala'
 
 import {
-  FamilyMember,
+  ISLFjolskyldan,
+  NationalRegistryApi,
+} from '@island.is/clients/national-registry-v1'
+
+import {
   FamilyChild,
-  User,
+  FamilyMember,
+  FamilyRelation,
   Gender,
   MaritalStatus,
-  FamilyRelation,
+  User,
 } from './types'
-import {
-  NationalRegistryApi,
-  ISLFjolskyldan,
-} from '@island.is/clients/national-registry-v1'
 
 @Injectable()
 export class NationalRegistryService {

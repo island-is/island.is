@@ -1,29 +1,30 @@
-import isEmpty from 'lodash/isEmpty'
 import isArray from 'lodash/isArray'
+import isEmpty from 'lodash/isEmpty'
 
 import {
-  Application,
-  AnswerValidator,
-  getValueViaPath,
   Answer,
+  AnswerValidationError,
+  AnswerValidator,
+  Application,
   buildValidationError,
   coreErrorMessages,
+  getValueViaPath,
   StaticText,
   StaticTextObject,
-  AnswerValidationError,
 } from '@island.is/application/core'
 
-import { Period } from '../types'
 import { NO, YES } from '../constants'
+import { filterValidPeriods } from '../lib/parentalLeaveUtils'
+import { Period } from '../types'
+
+import { validatePeriod } from './answerValidator-utils'
 import { isValidEmail } from './isValidEmail'
 import { errorMessages } from './messages'
 import {
-  getExpectedDateOfBirth,
   calculateDaysUsedByPeriods,
   getAvailableRightsInDays,
+  getExpectedDateOfBirth,
 } from './parentalLeaveUtils'
-import { filterValidPeriods } from '../lib/parentalLeaveUtils'
-import { validatePeriod } from './answerValidator-utils'
 
 const EMPLOYER = 'employer'
 // When attempting to continue from the periods repeater main screen

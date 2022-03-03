@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { useFormContext } from 'react-hook-form'
-import { InputController } from '@island.is/shared/form-fields'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
+
 import { GridColumn, GridContainer, GridRow } from '@island.is/island-ui/core'
+import { InputController } from '@island.is/shared/form-fields'
 
 interface InputField {
   id: string

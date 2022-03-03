@@ -1,16 +1,18 @@
 import {
-  getValueViaPath,
-  FormValue,
   ApplicationContext,
+  FormValue,
+  getValueViaPath,
 } from '@island.is/application/core'
-import { m } from '../messages'
-import { ConditionFn } from '../types'
-import { NO, YES } from '../constants'
+
 import {
-  DrivingLicenseApplicationFor,
   B_FULL,
   B_TEMP,
+  DrivingLicenseApplicationFor,
 } from '../../shared/constants'
+import { NO, YES } from '../constants'
+import { m } from '../messages'
+import { ConditionFn } from '../types'
+
 import { hasYes } from './hasYes'
 
 export const allowFakeCondition = (result = YES) => (answers: FormValue) =>

@@ -9,11 +9,13 @@ import {
   buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
+
 import { NO, UPLOAD_ACCEPT, YES } from '../../constants'
 import {
   accidentDetails,
   accidentLocation,
   accidentType,
+  addDocuments,
   application,
   companyInfo,
   fatalAccident,
@@ -22,12 +24,11 @@ import {
   hindrances,
   injuredPersonInformation,
   locationAndPurpose,
+  representativeInfo,
   rescueSquadInfo,
   schoolInfo,
   sportsClubInfo,
   workMachine,
-  representativeInfo,
-  addDocuments,
 } from '../../lib/messages'
 import { attachments } from '../../lib/messages/attachments'
 import {

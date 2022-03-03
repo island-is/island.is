@@ -1,9 +1,10 @@
 import React, { useMemo } from 'react'
 import Hypher from 'hypher'
+
 import { Locale } from '@island.is/shared/types'
 
-import is from './patterns/is'
 import en from './patterns/en'
+import is from './patterns/is'
 
 type HyphenateText = (
   content: string,

@@ -1,10 +1,12 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
+
+import { ResponsiveProp } from '../../../utils/responsiveProp'
 import { Box } from '../../Box/Box'
 import { BoxProps } from '../../Box/types'
-import * as styles from './GridRow.css'
-import { ResponsiveProp } from '../../../utils/responsiveProp'
+
 import { flexDirection, justifyContent } from '../../Box/useBoxStyles.css'
+import * as styles from './GridRow.css'
 
 interface Props {
   className?: string

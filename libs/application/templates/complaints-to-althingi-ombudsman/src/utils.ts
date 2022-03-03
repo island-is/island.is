@@ -1,5 +1,7 @@
 import { Answer } from '@island.is/application/core'
+
 import { shared } from './lib/messages'
+import { complainedFor } from './lib/messages'
 import {
   ComplainedForTypes,
   ComplaineeTypes,
@@ -7,7 +9,6 @@ import {
   OmbudsmanComplaintTypeEnum,
   YES,
 } from './shared/constants'
-import { complainedFor } from './lib/messages'
 
 export const isGovernmentComplainee = (answers: Answer) => {
   return (

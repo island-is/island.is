@@ -1,19 +1,21 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
-  Column,
-  DataType,
-  Model,
-  Table,
-  CreatedAt,
-  UpdatedAt,
-  BelongsTo,
-  ForeignKey,
   AfterCreate,
   AfterUpdate,
+  BelongsTo,
+  Column,
+  CreatedAt,
+  DataType,
+  ForeignKey,
+  Model,
+  Table,
+  UpdatedAt,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
-import { Organisation } from './organisation.model'
+
 import { EntityTypes } from '../enums/EntityTypes'
+
 import { Changelog } from './changelog.model'
+import { Organisation } from './organisation.model'
 
 @Table({ tableName: 'provider' })
 export class Provider extends Model<Provider> {

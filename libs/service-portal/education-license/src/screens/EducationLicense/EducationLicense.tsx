@@ -5,6 +5,7 @@ import { Box } from '@island.is/island-ui/core'
 import { useNamespaces } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import { IntroHeader } from '@island.is/service-portal/core'
+
 import { LicenseCards } from './components/LicenseCards'
 
 function EducationLicense(): JSX.Element {

@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
+
 import {
+  AccessService,
+  ApiScopeUser,
+  ApiScopeUserAccess,
   GrantType,
   GrantTypeService,
-  AccessService,
-  ApiScopeUserAccess,
-  ApiScopeUser,
 } from '@island.is/auth-api-lib'
+
 import { GrantTypeController } from './grant-types.controller'
 
 @Module({

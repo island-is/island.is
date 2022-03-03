@@ -1,11 +1,11 @@
-import { AuthScope } from '@island.is/auth/scopes'
 import { lazy } from 'react'
 
+import { AuthScope } from '@island.is/auth/scopes'
 import {
+  m,
   ServicePortalModule,
   ServicePortalPath,
   ServicePortalRoute,
-  m,
 } from '@island.is/service-portal/core'
 
 export const accessControlModule: ServicePortalModule = {

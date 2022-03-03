@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import { Input } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 
+import { Input } from '@island.is/island-ui/core'
 import { Case, isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import { ruling as m } from '@island.is/judicial-system-web/messages'
 
-import { useCase } from '../../utils/hooks'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '../../utils/formHelper'
+import { useCase } from '../../utils/hooks'
 
 interface Props {
   workingCase: Case

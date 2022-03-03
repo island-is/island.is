@@ -1,3 +1,5 @@
+import { TestingModuleBuilder } from '@nestjs/testing'
+
 import { SequelizeConfigService } from '@island.is/auth-api-lib'
 import { IdsUserGuard, MockAuthGuard, User } from '@island.is/auth-nest-tools'
 import { EinstaklingarApi } from '@island.is/clients/national-registry-v2'
@@ -10,7 +12,7 @@ import {
   useAuth,
   useDatabase,
 } from '@island.is/testing/nest'
-import { TestingModuleBuilder } from '@nestjs/testing'
+
 import { AppModule } from '../src/app/app.module'
 
 class mockEinstaklingarApi {

@@ -1,6 +1,5 @@
-import formatISO from 'date-fns/formatISO'
-
 import { Inject, Injectable } from '@nestjs/common'
+import formatISO from 'date-fns/formatISO'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 import type { CaseType } from '@island.is/judicial-system/types'

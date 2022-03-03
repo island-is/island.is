@@ -1,10 +1,10 @@
 import {
-  BasicDataProvider,
-  SuccessfulDataProviderResult,
-  FailedDataProviderResult,
   Application,
+  BasicDataProvider,
   coreErrorMessages,
+  FailedDataProviderResult,
   getValueViaPath,
+  SuccessfulDataProviderResult,
 } from '@island.is/application/core'
 import { HasQualityPhotoProvider } from '@island.is/application/data-providers'
 

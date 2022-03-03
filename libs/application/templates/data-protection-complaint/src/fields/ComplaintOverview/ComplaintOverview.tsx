@@ -1,21 +1,18 @@
 import React, { FC } from 'react'
+
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+
+import { DataProtectionComplaint } from '../../lib/dataSchema'
 import {
   delimitation,
+  externalData,
   info,
   overview,
   section,
-  externalData,
 } from '../../lib/messages'
-import { DataProtectionComplaint } from '../../lib/dataSchema'
-import {
-  SectionHeading,
-  ValueLine,
-  yesNoValueLabelMapper,
-  onBehalfValueLabelMapper,
-} from './Shared'
+
 import {
   Applicant,
   Commissions,
@@ -23,6 +20,12 @@ import {
   Complaint,
   OrganizationOrInstitution,
 } from './Sections'
+import {
+  onBehalfValueLabelMapper,
+  SectionHeading,
+  ValueLine,
+  yesNoValueLabelMapper,
+} from './Shared'
 
 export const ComplaintOverview: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()

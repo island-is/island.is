@@ -1,18 +1,19 @@
-import assert from 'assert'
 import { Injectable } from '@nestjs/common'
 import {
-  SQSClient,
-  SQSClientConfig,
   CreateQueueCommand,
   DeleteMessageBatchCommand,
   GetQueueAttributesCommand,
   GetQueueUrlCommand,
+  Message,
   PurgeQueueCommand,
   ReceiveMessageCommand,
   SendMessageCommand,
   SetQueueAttributesCommand,
-  Message,
+  SQSClient,
+  SQSClientConfig,
 } from '@aws-sdk/client-sqs'
+import assert from 'assert'
+
 import type { Logger } from '@island.is/logging'
 
 @Injectable()

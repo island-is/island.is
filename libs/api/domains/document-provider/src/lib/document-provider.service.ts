@@ -1,28 +1,30 @@
 import { Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
+
+import type { Auth } from '@island.is/auth-nest-tools'
+import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import { logger } from '@island.is/logging'
 
+import { OrganisationsApi, ProvidersApi } from '../../gen/fetch'
+
+import { DocumentProviderClientProd } from './client/documentProviderClientProd'
+import { DocumentProviderClientTest } from './client/documentProviderClientTest'
+import {
+  CreateContactInput,
+  CreateHelpdeskInput,
+  UpdateContactInput,
+  UpdateHelpdeskInput,
+  UpdateOrganisationInput,
+} from './dto'
 import {
   AudienceAndScope,
   ClientCredentials,
   Contact,
-  TestResult,
-  Organisation,
   Helpdesk,
+  Organisation,
   ProviderStatistics,
+  TestResult,
 } from './models'
-import { DocumentProviderClientTest } from './client/documentProviderClientTest'
-import { DocumentProviderClientProd } from './client/documentProviderClientProd'
-import {
-  UpdateOrganisationInput,
-  UpdateContactInput,
-  UpdateHelpdeskInput,
-  CreateContactInput,
-  CreateHelpdeskInput,
-} from './dto'
-import { OrganisationsApi, ProvidersApi } from '../../gen/fetch'
-import type { Auth } from '@island.is/auth-nest-tools'
-import { AuthMiddleware } from '@island.is/auth-nest-tools'
 
 // eslint-disable-next-line
 const handleError = (error: any) => {

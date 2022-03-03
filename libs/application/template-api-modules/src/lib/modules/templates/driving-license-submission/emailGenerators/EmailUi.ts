@@ -1,10 +1,11 @@
+import { DrivingLicenseApplicationType } from '@island.is/api/domains/driving-license'
 import type {
-  ImageComponent,
-  HeadingComponent,
   CopyComponent,
+  HeadingComponent,
+  ImageComponent,
   ListComponent,
 } from '@island.is/email-service'
-import { DrivingLicenseApplicationType } from '@island.is/api/domains/driving-license'
+
 import { m } from './messages'
 import { pathToAsset } from './utils'
 

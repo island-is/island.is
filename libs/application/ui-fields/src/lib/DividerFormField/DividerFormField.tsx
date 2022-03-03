@@ -1,11 +1,11 @@
 import React, { FC } from 'react'
 
 import {
+  Application,
   DividerField,
   formatText,
-  Application,
 } from '@island.is/application/core'
-import { Box, Text, Divider } from '@island.is/island-ui/core'
+import { Box, Divider,Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 export const DividerFormField: FC<{

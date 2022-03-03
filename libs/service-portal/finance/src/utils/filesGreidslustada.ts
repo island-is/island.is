@@ -1,10 +1,12 @@
-import { downloadFile } from './downloadFile'
 import flatten from 'lodash/flatten'
+
 import {
   FinanceStatusDataType,
   FinanceStatusOrganizationType,
 } from '../screens/FinanceStatus/FinanceStatusData.types'
+
 import { greidsluStadaHeaders } from './dataHeaders'
+import { downloadFile } from './downloadFile'
 const name = 'Staða ríkissjóður stofnanir'
 
 const getDataArray = (data: FinanceStatusDataType) =>

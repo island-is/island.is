@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common'
 
 import { environment } from '../../../environments'
-import { AuthService } from './auth.service'
+
 import { AuthController } from './auth.controller'
+import { AuthService } from './auth.service'
 
 const { audience: audienceUrl } = environment.auth
 

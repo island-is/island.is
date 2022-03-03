@@ -3,10 +3,10 @@
 import {
   HTMLText,
   ISODate,
-  PlainText,
-  RegName,
   LawChapterSlug,
   MinistrySlug,
+  PlainText,
+  RegName,
   RegulationType,
 } from './types'
 

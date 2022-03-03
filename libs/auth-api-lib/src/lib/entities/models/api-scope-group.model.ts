@@ -1,16 +1,17 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
+  ForeignKey,
+  HasMany,
   Model,
+  PrimaryKey,
   Table,
   UpdatedAt,
-  PrimaryKey,
-  HasMany,
-  BelongsTo,
-  ForeignKey,
 } from 'sequelize-typescript'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+
 import { ApiScope } from './api-scope.model'
 import { Domain } from './domain.model'
 

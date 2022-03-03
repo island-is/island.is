@@ -1,13 +1,13 @@
-import fetch from 'isomorphic-fetch'
-import { uuid } from 'uuidv4'
-import { Base64 } from 'js-base64'
-
 import { BadGatewayException, NotFoundException } from '@nestjs/common'
+import fetch from 'isomorphic-fetch'
+import { Base64 } from 'js-base64'
+import { uuid } from 'uuidv4'
 
 import { AwsS3Service } from '../../aws-s3'
-import { UploadPoliceCaseFileResponse } from '../models/uploadPoliceCaseFile.response'
-import { createTestingPoliceModule } from './createTestingPoliceModule'
 import { UploadPoliceCaseFileDto } from '../dto/uploadPoliceCaseFile.dto'
+import { UploadPoliceCaseFileResponse } from '../models/uploadPoliceCaseFile.response'
+
+import { createTestingPoliceModule } from './createTestingPoliceModule'
 
 jest.mock('isomorphic-fetch')
 

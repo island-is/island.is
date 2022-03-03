@@ -1,28 +1,31 @@
-import { Injectable, Inject } from '@nestjs/common'
+import { Inject,Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { EmailService } from '@island.is/email-service'
+import { S3 } from 'aws-sdk'
+
 import {
   Application,
   ApplicationWithAttachments,
   GraphqlGatewayResponse,
 } from '@island.is/application/core'
+import { EmailService } from '@island.is/email-service'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
-  BaseTemplateAPIModuleConfig,
-  EmailTemplateGenerator,
   AssignmentEmailTemplateGenerator,
   AttachmentEmailTemplateGenerator,
   BaseTemplateApiApplicationService,
+  BaseTemplateAPIModuleConfig,
+  EmailTemplateGenerator,
 } from '../../types'
-import { createAssignToken, getConfigValue } from './shared.utils'
+
 import {
   PAYMENT_QUERY,
   PAYMENT_STATUS_QUERY,
   PaymentChargeData,
   PaymentStatusData,
 } from './shared.queries'
-import { S3 } from 'aws-sdk'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { createAssignToken, getConfigValue } from './shared.utils'
 
 @Injectable()
 export class SharedTemplateApiService {

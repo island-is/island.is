@@ -1,4 +1,5 @@
 import { ProblemType, ValidationFailedFields } from '@island.is/shared/problem'
+
 import { ProblemError } from './ProblemError'
 
 export class ValidationFailed extends ProblemError {

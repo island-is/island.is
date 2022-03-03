@@ -1,15 +1,18 @@
 import React from 'react'
-import { BLOCKS, INLINES } from '@contentful/rich-text-types'
-import { Asset } from 'contentful'
 import { RenderNode } from '@contentful/rich-text-react-renderer'
+import { BLOCKS, INLINES } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
+import { Asset } from 'contentful'
+
 import {
-  getTextStyles,
   Blockquote,
-  ResponsiveSpace,
   Box,
+  getTextStyles,
+  ResponsiveSpace,
 } from '@island.is/island-ui/core'
+
 import Hyperlink from '../Hyperlink/Hyperlink'
+
 import * as styles from './RichText.css'
 
 const defaultHeaderMargins: {

@@ -1,15 +1,17 @@
-import request from 'supertest'
-import { createCurrentUser } from '@island.is/testing/fixtures'
-import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
-import { ApplicationScope } from '@island.is/auth/scopes'
 import { INestApplication } from '@nestjs/common'
-import { setup } from '../../../../../../test/setup'
-import { ApplicationLifeCycleService } from '../application-lifecycle.service'
+import request from 'supertest'
+
 import { ApplicationTypes } from '@island.is/application/core'
-import * as utils from '../../utils/application'
-import { AwsService } from '../../files/aws.service'
-import { EmailService } from '@island.is/email-service'
+import { ApplicationScope } from '@island.is/auth/scopes'
+import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import { ContentfulRepository } from '@island.is/cms'
+import { EmailService } from '@island.is/email-service'
+import { createCurrentUser } from '@island.is/testing/fixtures'
+
+import { setup } from '../../../../../../test/setup'
+import { AwsService } from '../../files/aws.service'
+import * as utils from '../../utils/application'
+import { ApplicationLifeCycleService } from '../application-lifecycle.service'
 
 let app: INestApplication
 let server: request.SuperTest<request.Test>

@@ -1,12 +1,12 @@
-import { uuid } from 'uuidv4'
-import each from 'jest-each'
-
 import { ForbiddenException } from '@nestjs/common'
+import each from 'jest-each'
+import { uuid } from 'uuidv4'
 
 import { User } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
 import { SignatureConfirmationResponse } from '../models/signatureConfirmation.response'
+
 import { createTestingCaseModule } from './createTestingCaseModule'
 
 interface Then {

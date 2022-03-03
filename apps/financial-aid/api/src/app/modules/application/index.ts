@@ -1,2 +1,2 @@
-export { ApplicationModel } from './models'
 export { ApplicationModule } from './application.module'
+export { ApplicationModel } from './models'

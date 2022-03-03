@@ -1,8 +1,9 @@
 import {
-  useApolloClient,
   ApolloClient,
   NormalizedCacheObject,
+  useApolloClient,
 } from '@apollo/client'
+
 import { useAuth } from '@island.is/auth/react'
 
 export const useModuleProps = () => {

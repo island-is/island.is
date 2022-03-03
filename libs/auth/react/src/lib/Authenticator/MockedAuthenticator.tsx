@@ -1,6 +1,8 @@
 import React, { FC } from 'react'
-import { AuthContext, defaultAuthContext } from './AuthContext'
+
 import { createMockUser, MockUser } from '../createMockUser'
+
+import { AuthContext, defaultAuthContext } from './AuthContext'
 
 interface MockedAuthenticatorProps {
   user?: MockUser

@@ -1,13 +1,15 @@
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { BackendAPI } from '../../../services'
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
 
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
-import { StaffModel } from './models'
-import { StaffInput, UpdateStaffInput, CreateStaffInput } from './dto'
 import type { Staff } from '@island.is/financial-aid/shared/lib'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import { BackendAPI } from '../../../services'
+
+import { CreateStaffInput,StaffInput, UpdateStaffInput } from './dto'
+import { StaffModel } from './models'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => StaffModel)

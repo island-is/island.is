@@ -1,40 +1,39 @@
-import { Sequelize } from 'sequelize-typescript'
+import { INestApplication, Type } from '@nestjs/common'
+import { getConnectionToken } from '@nestjs/sequelize'
 import { execSync } from 'child_process'
+import { Sequelize } from 'sequelize-typescript'
 import request from 'supertest'
 
-import { getConnectionToken } from '@nestjs/sequelize'
-import { INestApplication, Type } from '@nestjs/common'
-
 import { testServer } from '@island.is/infra-nest-server'
-import {
-  CaseState,
-  CaseTransition,
-  CaseLegalProvisions,
-  CaseCustodyRestrictions,
-  CaseAppealDecision,
-  CaseDecision,
-  NotificationType,
-  CaseType,
-  UserRole,
-  SessionArrangements,
-} from '@island.is/judicial-system/types'
+import { SharedAuthService } from '@island.is/judicial-system/auth'
+import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import type {
-  User as TUser,
   Case as TCase,
   Institution as TInstitution,
+  User as TUser,
 } from '@island.is/judicial-system/types'
-import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
-import { SharedAuthService } from '@island.is/judicial-system/auth'
+import {
+  CaseAppealDecision,
+  CaseCustodyRestrictions,
+  CaseDecision,
+  CaseLegalProvisions,
+  CaseState,
+  CaseTransition,
+  CaseType,
+  NotificationType,
+  SessionArrangements,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
-import { environment } from '../src/environments'
 import { AppModule } from '../src/app/app.module'
-import { Institution } from '../src/app/modules/institution'
-import { User } from '../src/app/modules/user'
 import { Case } from '../src/app/modules/case'
+import { Institution } from '../src/app/modules/institution'
 import {
   Notification,
   SendNotificationResponse,
 } from '../src/app/modules/notification'
+import { User } from '../src/app/modules/user'
+import { environment } from '../src/environments'
 
 interface CUser extends TUser {
   institutionId: string

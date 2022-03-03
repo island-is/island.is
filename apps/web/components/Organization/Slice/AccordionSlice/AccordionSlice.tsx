@@ -1,4 +1,6 @@
 import React from 'react'
+
+import { richText, SliceType } from '@island.is/island-ui/contentful'
 import {
   Accordion,
   AccordionCard,
@@ -11,8 +13,8 @@ import {
   AccordionSlice as AccordionSliceSchema,
   Html,
 } from '@island.is/web/graphql/schema'
+
 import * as styles from './AccordionSlice.css'
-import { richText, SliceType } from '@island.is/island-ui/contentful'
 
 interface SliceProps {
   slice: AccordionSliceSchema

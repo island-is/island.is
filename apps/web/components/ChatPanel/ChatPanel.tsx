@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import cn from 'classnames'
-import { FocusableBox, Text } from '@island.is/island-ui/core'
-import { config, endpoints } from './config'
 import { useWindowSize } from 'react-use'
+import cn from 'classnames'
+
+import { FocusableBox, Text } from '@island.is/island-ui/core'
+
+import { config, endpoints } from './config'
+
 import * as styles from './ChatPanel.css'
 
 declare global {

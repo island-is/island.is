@@ -6,47 +6,48 @@ import {
 import { InjectModel } from '@nestjs/sequelize'
 import { ICalendar } from 'datebook'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
-import { SmsService } from '@island.is/nova-sms'
 import { EmailService } from '@island.is/email-service'
 import { IntegratedCourts } from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
-  NotificationType,
-  isRestrictionCase,
   isInvestigationCase,
+  isRestrictionCase,
+  NotificationType,
   SessionArrangements,
   User,
 } from '@island.is/judicial-system/types'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { SmsService } from '@island.is/nova-sms'
 
 import { environment } from '../../../environments'
 import {
-  formatProsecutorCourtDateEmailNotification,
   formatCourtHeadsUpSmsNotification,
-  formatPrisonCourtDateEmailNotification,
   formatCourtReadyForCourtSmsNotification,
-  getRequestPdfAsString,
-  formatDefenderCourtDateEmailNotification,
-  stripHtmlTags,
-  formatPrisonRulingEmailNotification,
-  formatCourtRevokedSmsNotification,
-  formatPrisonRevokedEmailNotification,
-  formatDefenderRevokedEmailNotification,
-  getRequestPdfAsBuffer,
-  getCustodyNoticePdfAsString,
-  formatProsecutorReceivedByCourtSmsNotification,
   formatCourtResubmittedToCourtSmsNotification,
+  formatCourtRevokedSmsNotification,
+  formatDefenderCourtDateEmailNotification,
+  formatDefenderRevokedEmailNotification,
+  formatPrisonCourtDateEmailNotification,
+  formatPrisonRevokedEmailNotification,
+  formatPrisonRulingEmailNotification,
+  formatProsecutorCourtDateEmailNotification,
+  formatProsecutorReceivedByCourtSmsNotification,
   getCourtRecordPdfAsString,
+  getCustodyNoticePdfAsString,
+  getRequestPdfAsBuffer,
+  getRequestPdfAsString,
+  stripHtmlTags,
 } from '../../formatters'
-import { notifications, core } from '../../messages'
+import { core,notifications } from '../../messages'
 import { Case } from '../case'
 import { CourtService } from '../court'
 import { CaseEvent, EventService } from '../event'
+
 import { SendNotificationDto } from './dto/sendNotification.dto'
 import { Notification } from './models/notification.model'
 import { SendNotificationResponse } from './models/sendNotification.resopnse'

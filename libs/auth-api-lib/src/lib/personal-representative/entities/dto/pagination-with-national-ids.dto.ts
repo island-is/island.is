@@ -1,6 +1,7 @@
-import { PaginationDto } from '@island.is/nest/pagination'
 import { ApiProperty } from '@nestjs/swagger'
-import { IsString, IsOptional } from 'class-validator'
+import { IsOptional,IsString } from 'class-validator'
+
+import { PaginationDto } from '@island.is/nest/pagination'
 
 export class PaginationWithNationalIdsDto extends PaginationDto {
   @IsOptional()

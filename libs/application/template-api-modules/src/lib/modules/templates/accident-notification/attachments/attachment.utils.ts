@@ -3,19 +3,20 @@ import {
   ReviewAddAttachmentData,
   SubmittedApplicationData,
 } from '@island.is/application/templates/accident-notification'
-import { AccidentNotificationAttachmentStatus } from '../types/applicationStatus'
+
 import {
-  AccidentNotificationAttachment,
-  AccidentNotificationAttachmentGatherRequest,
-} from '../types/attachments'
-import {
+  additionalFilesFromReviewerRequest,
   additionalFilesRequest,
   allAttachmentRequestConfig,
   injuryCertificateRequest,
   policeReportRequest,
   powerOfAttorneyRequest,
-  additionalFilesFromReviewerRequest,
 } from '../config'
+import { AccidentNotificationAttachmentStatus } from '../types/applicationStatus'
+import {
+  AccidentNotificationAttachment,
+  AccidentNotificationAttachmentGatherRequest,
+} from '../types/attachments'
 
 export const attachmentStatusToAttachmentRequests = (
   receivedAttachments?: AccidentNotificationAttachmentStatus,

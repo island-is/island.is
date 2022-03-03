@@ -1,9 +1,10 @@
 import React, { FC } from 'react'
 import { Button } from 'reakit/Button'
-import { Text } from '../Text/Text'
+
 import { Box } from '../Box/Box'
 import { FocusableBox } from '../FocusableBox/FocusableBox'
 import { Stack } from '../Stack/Stack'
+import { Text } from '../Text/Text'
 
 interface Props {
   tableOfContentsTitle: string

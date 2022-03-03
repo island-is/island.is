@@ -2,8 +2,9 @@ import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { ConfigType, XRoadConfig } from '@island.is/nest/config'
 
 import { Configuration } from '../../gen/fetch'
-import { NationalRegistryClientConfig } from './nationalRegistryClient.config'
+
 import { getCache } from './cache'
+import { NationalRegistryClientConfig } from './nationalRegistryClient.config'
 
 export const ApiConfiguration = {
   provide: 'NationalRegistryClientApiConfiguration',

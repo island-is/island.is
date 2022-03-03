@@ -1,5 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+
 import { ISidebarCard } from '../generated/contentfulTypes'
+
 import { Link, mapLink } from './link.model'
 
 @ObjectType()

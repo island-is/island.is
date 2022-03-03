@@ -1,8 +1,11 @@
-import { Module, DynamicModule } from '@nestjs/common'
+import { DynamicModule,Module } from '@nestjs/common'
+
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
+
+import { ApplicationsApi, Configuration,PaymentsApi } from '../../gen/fetch'
+
 import { ApplicationResolver } from './application.resolver'
 import { ApplicationService } from './application.service'
-import { ApplicationsApi, PaymentsApi, Configuration } from '../../gen/fetch'
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
 
 export interface Config {
   baseApiUrl: string

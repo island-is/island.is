@@ -1,10 +1,12 @@
+import * as z from 'zod'
+
 import {
   validateContactInfo,
   validateCounterParty,
   validateTerms,
 } from '@island.is/application/templates/family-matters-core/utils/dataSchema'
+
 import { error } from './messages/index'
-import * as z from 'zod'
 
 enum Duration {
   Permanent = 'permanent',

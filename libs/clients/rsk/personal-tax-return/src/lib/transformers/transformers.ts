@@ -1,5 +1,5 @@
-import { PdfResponse, DirectTaxPaymentResponse } from '../responses'
-import { PdfDto, DirectTaxPaymentDto } from '../dto'
+import { DirectTaxPaymentDto,PdfDto } from '../dto'
+import { DirectTaxPaymentResponse,PdfResponse } from '../responses'
 
 export function pdfResponseToDto(response: PdfResponse): PdfDto {
   const result =

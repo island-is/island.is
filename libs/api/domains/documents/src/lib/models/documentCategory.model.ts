@@ -1,4 +1,5 @@
-import { ObjectType, Field, ID } from '@nestjs/graphql'
+import { Field, ID,ObjectType } from '@nestjs/graphql'
+
 import { CategoryDTO } from '@island.is/clients/documents'
 
 @ObjectType()

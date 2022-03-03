@@ -1,4 +1,4 @@
-import { Field, ObjectType, Float } from '@nestjs/graphql'
+import { Field, Float,ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class ParentalLeavePregnancyStatus {
@@ -6,5 +6,5 @@ export class ParentalLeavePregnancyStatus {
   hasActivePregnancy!: boolean
 
   @Field(() => String)
-  expectedDateOfBirth!: String
+  expectedDateOfBirth!: string
 }

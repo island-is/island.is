@@ -1,14 +1,15 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
   DataType,
+  HasMany,
   Model,
+  PrimaryKey,
   Table,
   UpdatedAt,
-  PrimaryKey,
-  HasMany,
 } from 'sequelize-typescript'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+
 import { PersonalRepresentative } from './personal-representative.model'
 
 @Table({

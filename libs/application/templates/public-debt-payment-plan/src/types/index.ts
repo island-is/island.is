@@ -1,3 +1,5 @@
+import * as z from 'zod'
+
 import {
   PaymentScheduleConditions,
   PaymentScheduleDebts,
@@ -6,13 +8,13 @@ import {
   PaymentScheduleType,
 } from '@island.is/api/schema'
 import { SuccessfulDataProviderResult } from '@island.is/application/core'
-import * as z from 'zod'
+
 import {
-  PaymentPlanSchema,
-  PublicDebtPaymentPlanSchema,
   ApplicantSchema,
   CorrectedEmployerSchema,
+  PaymentPlanSchema,
   PaymentPlansSchema,
+  PublicDebtPaymentPlanSchema,
 } from '../lib/dataSchema'
 import { AMOUNT, MONTHS } from '../shared/constants'
 

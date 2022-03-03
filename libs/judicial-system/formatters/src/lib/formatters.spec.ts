@@ -1,19 +1,18 @@
+import * as Constants from '@island.is/judicial-system/consts'
 import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
-  Gender,
   CaseType,
+  Gender,
 } from '@island.is/judicial-system/types'
 
-import * as Constants from '@island.is/judicial-system/consts'
-
 import {
-  formatDate,
-  formatRequestedCustodyRestrictions,
   capitalize,
-  formatGender,
-  formatCustodyRestrictions,
   formatAppeal,
+  formatCustodyRestrictions,
+  formatDate,
+  formatGender,
+  formatRequestedCustodyRestrictions,
 } from './formatters'
 
 describe('formatDate', () => {

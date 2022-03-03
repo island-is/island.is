@@ -1,13 +1,15 @@
+import { CACHE_MANAGER,Inject, Injectable } from '@nestjs/common'
 import { uuid } from 'uuidv4'
-import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
 
-import { Discount } from './discount.model'
+import { ConnectionDiscountCode } from '@island.is/air-discount-scheme/types'
+
 import { Flight } from '../flight'
 import {
   CONNECTING_FLIGHT_GRACE_PERIOD,
   REYKJAVIK_FLIGHT_CODES,
 } from '../flight/flight.service'
-import { ConnectionDiscountCode } from '@island.is/air-discount-scheme/types'
+
+import { Discount } from './discount.model'
 
 interface CachedDiscount {
   discountCode: string

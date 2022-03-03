@@ -1,4 +1,5 @@
 import * as z from 'zod'
+
 import { defineConfig } from '@island.is/nest/config'
 
 const schema = z.object({

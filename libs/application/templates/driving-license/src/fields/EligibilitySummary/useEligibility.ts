@@ -1,9 +1,12 @@
-import { m } from '../../lib/messages'
+import { gql,useQuery } from '@apollo/client'
+
 import { Application, getValueViaPath } from '@island.is/application/core'
-import { ApplicationEligibility } from '../../types/schema'
-import { useQuery, gql } from '@apollo/client'
+
 import { DrivingLicenseFakeData, YES } from '../../lib/constants'
-import { DrivingLicenseApplicationFor, B_FULL } from '../../shared/constants'
+import { m } from '../../lib/messages'
+import { B_FULL,DrivingLicenseApplicationFor } from '../../shared/constants'
+import { ApplicationEligibility } from '../../types/schema'
+
 import { fakeEligibility } from './fakeEligibility'
 
 const QUERY = gql`

@@ -1,8 +1,8 @@
 import {
   getActiveCategory,
+  getHashArr,
   getHashString,
   updateHashArray,
-  getHashArr,
 } from './Category'
 
 describe('Update hash array', () => {

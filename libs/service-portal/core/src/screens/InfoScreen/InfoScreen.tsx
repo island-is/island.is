@@ -1,20 +1,22 @@
+import React, { FC } from 'react'
+import { MessageDescriptor } from 'react-intl'
+
 import {
-  Link,
   Box,
   Bullet,
   BulletList,
   GridColumn,
   GridRow,
-  Inline,
   Icon,
+  Inline,
+  Link,
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
-import { MessageDescriptor } from 'react-intl'
 import { servicePortalOutboundLink } from '@island.is/plausible'
 import { m } from '@island.is/service-portal/core'
+
 import * as styles from './InfoScreen.css'
 interface Props {
   title: MessageDescriptor

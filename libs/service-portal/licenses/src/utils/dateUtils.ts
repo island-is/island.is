@@ -1,4 +1,5 @@
 import format from 'date-fns/format'
+
 import { dateFormat } from '@island.is/shared/constants'
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000

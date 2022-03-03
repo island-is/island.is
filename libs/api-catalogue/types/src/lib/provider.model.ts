@@ -1,4 +1,5 @@
 import { ProviderType } from '@island.is/api-catalogue/consts'
+
 import { XroadIdentifier } from './xroadIdentifier.model'
 
 export interface Provider {

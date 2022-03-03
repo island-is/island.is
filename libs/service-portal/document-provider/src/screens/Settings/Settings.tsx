@@ -1,11 +1,14 @@
 import React from 'react'
+
+import { useNamespaces } from '@island.is/localization'
 import {
   NavigationScreen,
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
-import { navScreenItems } from './navItems'
-import { useNamespaces } from '@island.is/localization'
+
 import { m } from '../../lib/messages'
+
+import { navScreenItems } from './navItems'
 
 const Settings: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.document-provider')

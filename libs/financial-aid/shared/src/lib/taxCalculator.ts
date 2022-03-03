@@ -18,6 +18,7 @@ export interface TaxInfo {
   taxPercentage: number
 }
 import format from 'date-fns/format'
+
 import { Amount, Calculations } from './interfaces'
 
 const currentYear = format(new Date(), 'yyyy')

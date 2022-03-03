@@ -1,17 +1,18 @@
 import React, { FC, useState } from 'react'
+import { Controller,useFormContext } from 'react-hook-form'
 import { gql, useMutation } from '@apollo/client'
-import { useFormContext, Controller } from 'react-hook-form'
+
 import {
   FieldBaseProps,
   formatText,
   getValueViaPath,
 } from '@island.is/application/core'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
-import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
+import { FieldDescription } from '@island.is/shared/form-fields'
 
-import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 import { m } from '../../../forms/messages'
+import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
 
 export const updateEndpointMutation = gql`
   mutation UpdateEndpoint($input: UpdateEndpointInput!) {

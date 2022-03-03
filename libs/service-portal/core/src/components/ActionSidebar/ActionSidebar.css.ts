@@ -1,6 +1,7 @@
 import { keyframes, style } from '@vanilla-extract/css'
-import { zIndex } from '@island.is/service-portal/constants'
+
 import { themeUtils } from '@island.is/island-ui/theme'
+import { zIndex } from '@island.is/service-portal/constants'
 
 export const actionSidebarTransitionTiming = 400
 

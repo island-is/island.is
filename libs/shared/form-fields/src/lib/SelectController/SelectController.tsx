@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { Select, Option, InputBackgroundColor } from '@island.is/island-ui/core'
+
+import { InputBackgroundColor,Option, Select } from '@island.is/island-ui/core'
 
 interface Props {
   error?: string

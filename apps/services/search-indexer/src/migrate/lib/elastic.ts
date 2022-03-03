@@ -1,10 +1,6 @@
 import { NestFactory } from '@nestjs/core'
-import { logger } from '@island.is/logging'
-import { ElasticService } from '@island.is/content-search-toolkit'
-import {
-  MappedData,
-  SyncOptions,
-} from '@island.is/content-search-indexer/types'
+import { SearchResponse } from 'elastic'
+
 import {
   ElasticsearchIndexLocale,
   getIndexTemplate,
@@ -14,11 +10,17 @@ import {
   IndexingService,
 } from '@island.is/content-search-indexer'
 import {
+  MappedData,
+  SyncOptions,
+} from '@island.is/content-search-indexer/types'
+import {
   MetricsModule,
   MetricsService,
 } from '@island.is/content-search-metrics'
+import { ElasticService } from '@island.is/content-search-toolkit'
+import { logger } from '@island.is/logging'
+
 import { AwsEsPackage } from './aws'
-import { SearchResponse } from 'elastic'
 
 const esService = new ElasticService()
 

@@ -1,11 +1,10 @@
+import { Inject, Injectable } from '@nestjs/common'
+import { createHash } from 'crypto'
 import winston from 'winston'
 import WinstonCloudWatch from 'winston-cloudwatch'
-import { createHash } from 'crypto'
 
-import { Inject, Injectable } from '@nestjs/common'
-
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 export enum AuditedAction {
   LOGIN = 'LOGIN',

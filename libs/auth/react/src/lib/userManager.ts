@@ -1,7 +1,7 @@
 import { User, UserManager } from 'oidc-client'
 
-import { AuthSettings, mergeAuthSettings } from './AuthSettings'
 import { toStringScope } from './utils/toStringScope'
+import { AuthSettings, mergeAuthSettings } from './AuthSettings'
 import { createMockUser, MockUser } from './createMockUser'
 
 let authSettings: AuthSettings | null = null

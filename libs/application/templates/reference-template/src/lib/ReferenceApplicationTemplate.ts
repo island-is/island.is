@@ -1,19 +1,21 @@
+import * as kennitala from 'kennitala'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import * as z from 'zod'
+
 import {
-  ApplicationTemplate,
-  ApplicationTypes,
+  Application,
+  ApplicationConfigurations,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
-  Application,
+  ApplicationTemplate,
+  ApplicationTypes,
   DefaultEvents,
   DefaultStateLifeCycle,
-  ApplicationConfigurations,
 } from '@island.is/application/core'
-import * as z from 'zod'
-import * as kennitala from 'kennitala'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 import { ApiActions } from '../shared'
+
 import { m } from './messages'
 
 const States = {

@@ -1,7 +1,8 @@
-import { IsString, IsOptional, IsEnum, IsBoolean } from 'class-validator'
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { Locale } from '../types/localeTypes'
+import { IsBoolean,IsEnum, IsOptional, IsString } from 'class-validator'
+
 import { DataStatus } from '../types/dataStatusTypes'
+import { Locale } from '../types/localeTypes'
 
 export class UpdateUserProfileDto {
   @IsOptional()

@@ -3,9 +3,10 @@
  * This is only a minimal backend to get started.
  */
 
-import { bootstrap } from '@island.is/infra-nest-server'
 import { NestFactory } from '@nestjs/core'
 import yargs from 'yargs'
+
+import { bootstrap } from '@island.is/infra-nest-server'
 
 import { AppModule } from './app/app.module'
 import { ApplicationLifeCycleService } from './app/modules/application/lifecycle/application-lifecycle.service'

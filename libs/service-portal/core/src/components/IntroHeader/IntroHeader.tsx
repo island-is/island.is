@@ -1,13 +1,14 @@
 import React from 'react'
-import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
+
 import {
+  Box,
   GridColumn,
   GridRow,
-  Text,
-  Box,
   Hidden,
+  Text,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 interface Props {
   title: MessageDescriptor | string

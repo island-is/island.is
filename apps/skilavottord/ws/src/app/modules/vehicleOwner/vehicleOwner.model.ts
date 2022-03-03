@@ -1,12 +1,12 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import {
   Column,
+  CreatedAt,
   DataType,
+  HasMany,
   Model,
   Table,
-  CreatedAt,
   UpdatedAt,
-  HasMany,
 } from 'sequelize-typescript'
 
 import { VehicleModel } from '../vehicle'

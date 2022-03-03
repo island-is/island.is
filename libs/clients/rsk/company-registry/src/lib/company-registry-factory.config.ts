@@ -1,4 +1,5 @@
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
+
 import { Configuration } from './gen/fetch'
 
 export const CompanyRegistryApiFactoryConfig = (

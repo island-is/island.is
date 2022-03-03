@@ -1,5 +1,6 @@
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
+
 import { formatText, getValueViaPath } from '@island.is/application/core'
 import {
   Box,
@@ -10,6 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
+
 import { m } from '../../forms/messages'
 import {
   ExternalDataNationalRegistry,

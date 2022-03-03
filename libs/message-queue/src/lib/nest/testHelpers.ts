@@ -1,10 +1,11 @@
-import { Queue } from './types'
-import { DAY, MINUTE } from './time'
 import {
   DeleteQueueCommand,
   ListQueuesCommand,
   SQSClient,
 } from '@aws-sdk/client-sqs'
+
+import { DAY, MINUTE } from './time'
+import { Queue } from './types'
 
 if (!process.env.SQS_ENDPOINT) {
   throw new Error('sqs endpoint not set')

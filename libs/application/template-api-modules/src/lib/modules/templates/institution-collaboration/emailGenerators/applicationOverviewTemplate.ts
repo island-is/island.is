@@ -1,6 +1,7 @@
+import { dedent } from 'ts-dedent'
+
 import { Application, getValueViaPath } from '@island.is/application/core'
 import { messages } from '@island.is/application/templates/institution-collaboration'
-import { dedent } from 'ts-dedent'
 
 export const applicationOverviewTemplate = (
   application: Application,

@@ -1,26 +1,17 @@
-import { UserProfileScope } from '@island.is/auth/scopes'
-import type { User } from '@island.is/auth-nest-tools'
 import {
-  CurrentUser,
-  Scopes,
-  ScopesGuard,
-  IdsUserGuard,
-} from '@island.is/auth-nest-tools'
-import { Audit, AuditService } from '@island.is/nest/audit'
-import {
+  BadRequestException,
   Body,
+  ConflictException,
   Controller,
+  Delete,
+  ForbiddenException,
   Get,
-  Put,
+  HttpCode,
   NotFoundException,
   Param,
   Post,
-  ConflictException,
+  Put,
   UseGuards,
-  ForbiddenException,
-  BadRequestException,
-  HttpCode,
-  Delete,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
@@ -31,20 +22,31 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger'
+
+import { UserProfileScope } from '@island.is/auth/scopes'
+import type { User } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
+import { Audit, AuditService } from '@island.is/nest/audit'
+
 import { ConfirmationDtoResponse } from './dto/confirmationResponseDto'
 import { ConfirmEmailDto } from './dto/confirmEmailDto'
 import { ConfirmSmsDto } from './dto/confirmSmsDto'
-import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
 import { CreateEmailVerificationDto } from './dto/createEmailVerificationDto'
+import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
 import { CreateUserProfileDto } from './dto/createUserProfileDto'
 import { DeleteTokenResponseDto } from './dto/deleteTokenResponseDto'
 import { DeviceTokenDto } from './dto/deviceToken.dto'
 import { UpdateUserProfileDto } from './dto/updateUserProfileDto'
 import { UserDeviceTokenDto } from './dto/userDeviceToken.dto'
+import { DataStatus } from './types/dataStatusTypes'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 import { VerificationService } from './verification.service'
-import { DataStatus } from './types/dataStatusTypes'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('User Profile')

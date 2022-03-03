@@ -1,8 +1,10 @@
+import { Inject, Injectable } from '@nestjs/common'
+
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { DefaultApi, ScheduleType } from '@island.is/clients/payment-schedule'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject, Injectable } from '@nestjs/common'
+
 import {
   GetInitialScheduleInput,
   GetScheduleDistributionInput,

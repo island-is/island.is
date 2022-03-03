@@ -1,10 +1,10 @@
 /// <reference path="../../../support/index.d.ts" />
-import { Case, CaseDecision, CaseType } from '@island.is/judicial-system/types'
-import { makeCustodyCase } from '@island.is/judicial-system/formatters'
 import {
   RULING_STEP_ONE_ROUTE,
   RULING_STEP_TWO_ROUTE,
 } from '@island.is/judicial-system/consts'
+import { makeCustodyCase } from '@island.is/judicial-system/formatters'
+import { Case, CaseDecision, CaseType } from '@island.is/judicial-system/types'
 
 import { intercept } from '../../../utils'
 

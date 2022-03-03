@@ -1,5 +1,7 @@
-import { PageInfoDto } from '@island.is/nest/pagination'
 import { ApiProperty } from '@nestjs/swagger'
+
+import { PageInfoDto } from '@island.is/nest/pagination'
+
 import { PersonalRepresentativeRightType } from '../models/personal-representative-right-type.model'
 
 export class PaginatedPersonalRepresentativeRightTypeDto {

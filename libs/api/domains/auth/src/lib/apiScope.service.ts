@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { ScopesApi, ApiScope } from '@island.is/clients/auth-public-api'
+import { ApiScope,ScopesApi } from '@island.is/clients/auth-public-api'
 
 @Injectable()
 export class ApiScopeService {

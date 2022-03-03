@@ -1,7 +1,10 @@
 import { DynamicModule } from '@nestjs/common'
-import { SharedTemplateAPIModule } from '../../shared'
-import { BaseTemplateAPIModuleConfig } from '../../../types'
+
 import { FileStorageModule } from '@island.is/file-storage'
+
+import { BaseTemplateAPIModuleConfig } from '../../../types'
+import { SharedTemplateAPIModule } from '../../shared'
+
 import { FUNDING_GOVERNMENT_PROJECTS_CONFIG } from './config/fundingFovernmentProjectsConfig'
 import { FundingGovernmentProjectsService } from './funding-government-projects.service'
 

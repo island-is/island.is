@@ -1,11 +1,13 @@
 import React, { FC } from 'react'
-import Background from '../Background/Background'
+
 import {
   Box,
   GridColumn,
   GridRow,
   ProfileCard,
 } from '@island.is/island-ui/core'
+
+import Background from '../Background/Background'
 
 export interface TeamListProps {
   teamMembers: { title: string; name: string; image: { url: string } }[]

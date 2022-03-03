@@ -1,6 +1,8 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { IEmbeddedVideo } from '../generated/contentfulTypes'
+
 import { SystemMetadata } from '@island.is/shared/types'
+
+import { IEmbeddedVideo } from '../generated/contentfulTypes'
 
 @ObjectType()
 export class EmbeddedVideo {

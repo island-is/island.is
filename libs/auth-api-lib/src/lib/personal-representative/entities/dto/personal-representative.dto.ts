@@ -1,16 +1,18 @@
-import {
-  IsNotEmpty,
-  IsString,
-  IsDate,
-  IsOptional,
-  IsArray,
-  ArrayNotEmpty,
-} from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import { PersonalRepresentativeRightTypeDTO } from './personal-representative-right-type.dto'
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsDate,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator'
+
 import { PersonalRepresentative } from '../models/personal-representative.model'
+
 import { PersonalRepresentativePublicDTO } from './personal-representative-public.dto'
+import { PersonalRepresentativeRightTypeDTO } from './personal-representative-right-type.dto'
 
 export class PersonalRepresentativeDTO {
   @IsString()

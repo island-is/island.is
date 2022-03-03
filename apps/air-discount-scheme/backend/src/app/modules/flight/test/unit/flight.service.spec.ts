@@ -1,8 +1,8 @@
-import { Test } from '@nestjs/testing'
 import { getModelToken } from '@nestjs/sequelize'
+import { Test } from '@nestjs/testing'
 
-import { FlightService, ADS_POSTAL_CODES } from '../../flight.service'
 import { Flight, FlightLeg } from '../../flight.model'
+import { ADS_POSTAL_CODES,FlightService } from '../../flight.service'
 
 describe('PublicFlightController', () => {
   let flightService: FlightService

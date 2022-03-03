@@ -7,8 +7,8 @@ import {
   FormValue,
 } from '@island.is/application/core'
 
-import { FieldDef, MultiFieldScreen } from '../types'
 import { convertMultiFieldToScreen } from '../reducer/reducerUtils'
+import { FieldDef, MultiFieldScreen } from '../types'
 
 // Use this component to optimize performance for applying conditions in response to form value changes for multifields
 export const ConditionHandler: FC<{

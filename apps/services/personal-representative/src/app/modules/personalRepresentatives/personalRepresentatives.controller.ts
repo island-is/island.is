@@ -1,27 +1,26 @@
-import { AuthScope } from '@island.is/auth/scopes'
-import {
-  PaginatedPersonalRepresentativeDto,
-  PersonalRepresentativeDTO,
-  PersonalRepresentativeCreateDTO,
-  PersonalRepresentativeService,
-  PaginationWithNationalIdsDto,
-} from '@island.is/auth-api-lib/personal-representative'
 import {
   BadRequestException,
   Body,
   Controller,
-  UseGuards,
   Delete,
   Get,
+  Inject,
   NotFoundException,
   Param,
   Post,
-  Inject,
   Query,
+  UseGuards,
 } from '@nestjs/common'
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger'
-import { Documentation } from '@island.is/nest/swagger'
-import { isNationalIdValid } from '@island.is/financial-aid/shared/lib'
+import { ApiBearerAuth,ApiTags } from '@nestjs/swagger'
+
+import { AuthScope } from '@island.is/auth/scopes'
+import {
+  PaginatedPersonalRepresentativeDto,
+  PaginationWithNationalIdsDto,
+  PersonalRepresentativeCreateDTO,
+  PersonalRepresentativeDTO,
+  PersonalRepresentativeService,
+} from '@island.is/auth-api-lib/personal-representative'
 import type { Auth } from '@island.is/auth-nest-tools'
 import {
   CurrentAuth,
@@ -29,8 +28,11 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { environment } from '../../../environments'
+import { isNationalIdValid } from '@island.is/financial-aid/shared/lib'
 import { Audit, AuditService } from '@island.is/nest/audit'
+import { Documentation } from '@island.is/nest/swagger'
+
+import { environment } from '../../../environments'
 
 const namespace = `${environment.audit.defaultNamespace}/personal-representative`
 

@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common'
 
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
-  DelegationDTO,
-  ActorDelegationsControllerFindAllDirectionEnum,
   ActorDelegationsApi,
+  ActorDelegationsControllerFindAllDirectionEnum,
+  DelegationDTO,
 } from '@island.is/clients/auth-public-api'
 
 @Injectable()

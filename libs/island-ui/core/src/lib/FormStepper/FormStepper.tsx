@@ -3,8 +3,10 @@ import cn from 'classnames'
 
 import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
+
 import { FormStepperSection } from './FormStepperSection'
 import * as types from './types'
+
 import * as styles from './FormStepper.css'
 
 export const FormStepper: FC<{

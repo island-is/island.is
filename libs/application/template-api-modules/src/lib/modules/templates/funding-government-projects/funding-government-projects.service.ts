@@ -1,19 +1,20 @@
-import { Injectable, Inject } from '@nestjs/common'
+import { Inject,Injectable } from '@nestjs/common'
 
-import { SharedTemplateApiService } from '../../shared'
-import { TemplateApiModuleActionProps } from '../../../types'
-
-import {
-  generateApplicationEmail,
-  generateConfirmationEmail,
-} from './emailGenerators'
-import type { FundingGovernmentProjectsConfig } from './config/fundingFovernmentProjectsConfig'
-import { FUNDING_GOVERNMENT_PROJECTS_CONFIG } from './config/fundingFovernmentProjectsConfig'
-import { FileStorageService } from '@island.is/file-storage'
 import {
   ApplicationWithAttachments as Application,
   getValueViaPath,
 } from '@island.is/application/core'
+import { FileStorageService } from '@island.is/file-storage'
+
+import { TemplateApiModuleActionProps } from '../../../types'
+import { SharedTemplateApiService } from '../../shared'
+
+import type { FundingGovernmentProjectsConfig } from './config/fundingFovernmentProjectsConfig'
+import { FUNDING_GOVERNMENT_PROJECTS_CONFIG } from './config/fundingFovernmentProjectsConfig'
+import {
+  generateApplicationEmail,
+  generateConfirmationEmail,
+} from './emailGenerators'
 import { FundingAttachment } from './types'
 
 @Injectable()

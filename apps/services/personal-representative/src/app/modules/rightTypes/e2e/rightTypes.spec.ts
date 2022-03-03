@@ -1,3 +1,10 @@
+import request from 'supertest'
+
+import { AuthScope } from '@island.is/auth/scopes'
+import { PersonalRepresentativeRightType } from '@island.is/auth-api-lib/personal-representative'
+import { createCurrentUser } from '@island.is/testing/fixtures'
+import { TestApp } from '@island.is/testing/nest'
+
 import {
   setupWithAuth,
   setupWithoutAuth,
@@ -8,11 +15,6 @@ import {
   getRequestMethod,
 } from '../../../../../test/testHelpers'
 import { TestEndpointOptions } from '../../../../../test/types'
-import request from 'supertest'
-import { TestApp } from '@island.is/testing/nest'
-import { PersonalRepresentativeRightType } from '@island.is/auth-api-lib/personal-representative'
-import { createCurrentUser } from '@island.is/testing/fixtures'
-import { AuthScope } from '@island.is/auth/scopes'
 
 const scopes = ['@island.is/scope0', '@island.is/scope1']
 const user = createCurrentUser({

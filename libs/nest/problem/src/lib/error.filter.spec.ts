@@ -1,8 +1,9 @@
-import { HttpProblem, ProblemType } from '@island.is/shared/problem'
 import { Logger } from '@island.is/logging'
-import { ProblemError } from './ProblemError'
-import { CreateRequest, setup } from './test/setup'
+import { HttpProblem, ProblemType } from '@island.is/shared/problem'
+
 import { expectGraphqlProblem } from './test/expectGraphqlProblem'
+import { CreateRequest, setup } from './test/setup'
+import { ProblemError } from './ProblemError'
 
 describe('ErrorFilter', () => {
   let request: CreateRequest

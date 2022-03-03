@@ -1,5 +1,5 @@
-import { SuccessfulDataProviderResult } from '@island.is/application/core'
 import { Juristiction, NationalRegistryUser } from '@island.is/api/schema'
+import { SuccessfulDataProviderResult } from '@island.is/application/core'
 
 export interface ExternalDataNationalRegistry
   extends SuccessfulDataProviderResult {

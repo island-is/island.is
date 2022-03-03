@@ -1,8 +1,10 @@
-import { Box, Button, Divider, Inline, Text } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
+
+import { Box, Button, Divider, Inline, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+
 import { complaint, sharedFields } from '../../lib/messages'
-import { YES, NO } from '../../shared'
+import { NO,YES } from '../../shared'
 
 interface Props {
   name: string

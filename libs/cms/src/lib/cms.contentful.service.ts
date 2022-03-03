@@ -1,75 +1,77 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { logger } from '@island.is/logging'
-import { ApolloError } from 'apollo-server-express'
 import { Injectable } from '@nestjs/common'
+import { ApolloError } from 'apollo-server-express'
 import sortBy from 'lodash/sortBy'
+
+import { logger } from '@island.is/logging'
+
+import { GetAlertBannerInput } from './dto/getAlertBanner.input'
+import { GetContentSlugInput } from './dto/getContentSlug.input'
+import { GetErrorPageInput } from './dto/getErrorPage.input'
+import { GetFrontpageInput } from './dto/getFrontpage.input'
+import { GetGenericOverviewPageInput } from './dto/getGenericOverviewPage.input'
+import { GetGenericPageInput } from './dto/getGenericPage.input'
+import { GetOpenDataPageInput } from './dto/getOpenDataPage.input'
+import { GetOpenDataSubpageInput } from './dto/getOpenDataSubpage.input'
+import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
+import { GetSupportCategoriesInput } from './dto/getSupportCategories.input'
+import { GetSupportCategoriesInOrganizationInput } from './dto/getSupportCategoriesInOrganization.input'
+import { GetSupportCategoryInput } from './dto/getSupportCategory.input'
+import { GetSupportQNAsInput } from './dto/getSupportQNAs.input'
+import { GetSupportQNAsInCategoryInput } from './dto/getSupportQNAsInCategory.input'
 import * as types from './generated/contentfulTypes'
-import { Article, mapArticle } from './models/article.model'
-import { ContentSlug, TextFieldLocales } from './models/contentSlug.model'
-import { GenericPage, mapGenericPage } from './models/genericPage.model'
-import {
-  GenericOverviewPage,
-  mapGenericOverviewPage,
-} from './models/genericOverviewPage.model'
-import { News, mapNews } from './models/news.model'
+import { IProjectPage } from './generated/contentfulTypes'
 import {
   AdgerdirFrontpage,
   mapAdgerdirFrontpage,
 } from './models/adgerdirFrontpage.model'
-import { AdgerdirPages } from './models/adgerdirPages.model'
 import { AdgerdirPage, mapAdgerdirPage } from './models/adgerdirPage.model'
-import { GetContentSlugInput } from './dto/getContentSlug.input'
-import { GetGenericPageInput } from './dto/getGenericPage.input'
-import { GetGenericOverviewPageInput } from './dto/getGenericOverviewPage.input'
-import { Namespace, mapNamespace } from './models/namespace.model'
-import { Menu, mapMenu } from './models/menu.model'
-import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
-import { AdgerdirTags } from './models/adgerdirTags.model'
-import { Organization } from './models/organization.model'
-import { Organizations } from './models/organizations.model'
+import { AdgerdirPages } from './models/adgerdirPages.model'
 import { mapAdgerdirTag } from './models/adgerdirTag.model'
-import { mapOrganization } from './models/organization.model'
-import { OrganizationTags } from './models/organizationTags.model'
-import { mapOrganizationTag } from './models/organizationTag.model'
-import { ContentfulRepository, localeMap } from './contentful.repository'
-import { GetAlertBannerInput } from './dto/getAlertBanner.input'
+import { AdgerdirTags } from './models/adgerdirTags.model'
 import { AlertBanner, mapAlertBanner } from './models/alertBanner.model'
-import { mapUrl, Url } from './models/url.model'
-import { mapTellUsAStory, TellUsAStory } from './models/tellUsAStory.model'
-import { GetSubpageHeaderInput } from './dto/getSubpageHeader.input'
-import { mapSubpageHeader, SubpageHeader } from './models/subpageHeader.model'
+import { Article, mapArticle } from './models/article.model'
+import { Auction, mapAuction } from './models/auction.model'
+import { ContentSlug, TextFieldLocales } from './models/contentSlug.model'
+import { ErrorPage, mapErrorPage } from './models/errorPage.model'
+import { Frontpage,mapFrontpage } from './models/frontpage.model'
+import {
+  GenericOverviewPage,
+  mapGenericOverviewPage,
+} from './models/genericOverviewPage.model'
+import { GenericPage, mapGenericPage } from './models/genericPage.model'
+import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
+import { mapMenu,Menu } from './models/menu.model'
+import { mapNamespace,Namespace } from './models/namespace.model'
+import { mapNews,News } from './models/news.model'
+import { mapOpenDataPage,OpenDataPage } from './models/openDataPage.model'
+import {
+  mapOpenDataSubpage,
+  OpenDataSubpage,
+} from './models/openDataSubpage.model'
+import { Organization } from './models/organization.model'
+import { mapOrganization } from './models/organization.model'
+import {
+  mapOrganizationPage,
+  OrganizationPage,
+} from './models/organizationPage.model'
+import { Organizations } from './models/organizations.model'
 import {
   mapOrganizationSubpage,
   OrganizationSubpage,
 } from './models/organizationSubpage.model'
-import { GetErrorPageInput } from './dto/getErrorPage.input'
-import { ErrorPage, mapErrorPage } from './models/errorPage.model'
-import {
-  OrganizationPage,
-  mapOrganizationPage,
-} from './models/organizationPage.model'
-import { Auction, mapAuction } from './models/auction.model'
-import { mapFrontpage, Frontpage } from './models/frontpage.model'
-import { GetFrontpageInput } from './dto/getFrontpage.input'
-import { OpenDataPage, mapOpenDataPage } from './models/openDataPage.model'
-import { GetOpenDataPageInput } from './dto/getOpenDataPage.input'
-import {
-  OpenDataSubpage,
-  mapOpenDataSubpage,
-} from './models/openDataSubpage.model'
-import { GetOpenDataSubpageInput } from './dto/getOpenDataSubpage.input'
+import { mapOrganizationTag } from './models/organizationTag.model'
+import { OrganizationTags } from './models/organizationTags.model'
 import { mapProjectPage, ProjectPage } from './models/projectPage.model'
-import { IProjectPage } from './generated/contentfulTypes'
-import { GetSupportQNAsInput } from './dto/getSupportQNAs.input'
-import { mapSupportQNA, SupportQNA } from './models/supportQNA.model'
-import { GetSupportCategoryInput } from './dto/getSupportCategory.input'
+import { mapSubpageHeader, SubpageHeader } from './models/subpageHeader.model'
 import {
   mapSupportCategory,
   SupportCategory,
 } from './models/supportCategory.model'
-import { GetSupportQNAsInCategoryInput } from './dto/getSupportQNAsInCategory.input'
-import { GetSupportCategoriesInput } from './dto/getSupportCategories.input'
-import { GetSupportCategoriesInOrganizationInput } from './dto/getSupportCategoriesInOrganization.input'
+import { mapSupportQNA, SupportQNA } from './models/supportQNA.model'
+import { mapTellUsAStory, TellUsAStory } from './models/tellUsAStory.model'
+import { mapUrl, Url } from './models/url.model'
+import { ContentfulRepository, localeMap } from './contentful.repository'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {

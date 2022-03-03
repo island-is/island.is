@@ -1,15 +1,15 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import {
+  AllowNull,
+  BelongsTo,
   Column,
+  CreatedAt,
   DataType,
+  ForeignKey,
+  HasMany,
   Model,
   Table,
-  ForeignKey,
-  CreatedAt,
   UpdatedAt,
-  BelongsTo,
-  HasMany,
-  AllowNull,
 } from 'sequelize-typescript'
 
 import { PageInfo } from '../../graphql'

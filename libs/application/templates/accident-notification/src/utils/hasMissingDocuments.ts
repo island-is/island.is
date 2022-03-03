@@ -3,7 +3,7 @@ import {
   getValueViaPath,
   MessageFormatter,
 } from '@island.is/application/core'
-import { AttachmentsEnum, FileType, WhoIsTheNotificationForEnum } from '..'
+
 import { YES } from '../constants'
 import { AccidentNotification } from '../lib/dataSchema'
 import { attachments } from '../lib/messages'
@@ -12,6 +12,8 @@ import {
   AccidentNotifTypes,
   YesOrNo,
 } from '../types'
+import { AttachmentsEnum, FileType, WhoIsTheNotificationForEnum } from '..'
+
 import { isFatalAccident } from './isFatalAccident'
 import { isReportingOnBehalfSelf } from './isReportingBehalfOfSelf'
 import { isReportingOnBehalfOfEmployee } from './isReportingOnBehalfOfEmployee'

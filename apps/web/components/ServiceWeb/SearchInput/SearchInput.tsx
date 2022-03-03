@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
 import { useDebounce } from 'react-use'
 import { useLazyQuery } from '@apollo/client'
+import { useRouter } from 'next/router'
 
 import {
   AsyncSearch,
   AsyncSearchOption,
   AsyncSearchProps,
-  Text,
   Box,
+  Text,
 } from '@island.is/island-ui/core'
-import { GET_SUPPORT_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
   GetSupportSearchResultsQuery,
   GetSupportSearchResultsQueryVariables,
   SearchableContentTypes,
   SupportQna,
 } from '@island.is/web/graphql/schema'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { GET_SUPPORT_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
 
 interface SearchInputProps {
   title?: string

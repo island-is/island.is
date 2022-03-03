@@ -1,17 +1,18 @@
 import {
   buildDescriptionField,
-  buildMultiField,
-  buildKeyValueField,
-  buildSelectField,
   buildDividerField,
+  buildKeyValueField,
+  buildMultiField,
+  buildSelectField,
   buildSubSection,
 } from '@island.is/application/core'
-import { Juristiction, NationalRegistryUser } from '../../types/schema'
+
 import { m } from '../../lib/messages'
 import {
   chooseDistrictCommissionerDescription,
   hasNoDrivingLicenseInOtherCountry,
 } from '../../lib/utils'
+import { Juristiction, NationalRegistryUser } from '../../types/schema'
 
 export const subSectionDelivery = buildSubSection({
   id: 'user',

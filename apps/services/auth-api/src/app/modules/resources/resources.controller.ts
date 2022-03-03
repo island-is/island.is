@@ -1,11 +1,4 @@
 import {
-  ApiResource,
-  ApiScope,
-  IdentityResource,
-  ResourcesService,
-} from '@island.is/auth-api-lib'
-import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
-import {
   BadRequestException,
   Controller,
   Get,
@@ -14,6 +7,14 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger'
+
+import {
+  ApiResource,
+  ApiScope,
+  IdentityResource,
+  ResourcesService,
+} from '@island.is/auth-api-lib'
+import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('resources')

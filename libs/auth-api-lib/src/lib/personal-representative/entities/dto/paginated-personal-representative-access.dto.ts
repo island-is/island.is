@@ -1,5 +1,7 @@
-import { PageInfoDto } from '@island.is/nest/pagination'
 import { ApiProperty } from '@nestjs/swagger'
+
+import { PageInfoDto } from '@island.is/nest/pagination'
+
 import { PersonalRepresentativeAccess } from '../models/personal-representative-access.model'
 
 export class PaginatedPersonalRepresentativeAccessDto {

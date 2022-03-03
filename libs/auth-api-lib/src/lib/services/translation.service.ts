@@ -1,13 +1,15 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { Op } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
+
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Sequelize } from 'sequelize-typescript'
-import { Translation } from '../entities/models/translation.model'
-import { Language } from '../entities/models/language.model'
-import { TranslationDTO } from '../entities/dto/translation.dto'
+
 import { LanguageDTO } from '../entities/dto/language.dto'
-import { Op } from 'sequelize'
+import { TranslationDTO } from '../entities/dto/translation.dto'
+import { Language } from '../entities/models/language.model'
+import { Translation } from '../entities/models/translation.model'
 
 @Injectable()
 export class TranslationService {

@@ -1,6 +1,6 @@
 import { DynamicModule } from '@nestjs/common'
 
-import { SmsService, SmsServiceOptions, SMS_OPTIONS } from './sms.service'
+import { SMS_OPTIONS,SmsService, SmsServiceOptions } from './sms.service'
 
 export class SmsModule {
   static register(options: SmsServiceOptions): DynamicModule {

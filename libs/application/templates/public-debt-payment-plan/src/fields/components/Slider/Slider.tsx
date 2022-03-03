@@ -1,7 +1,10 @@
-import { Box, Text } from '@island.is/island-ui/core'
-import useComponentSize from '@rehooks/component-size'
 import React, { CSSProperties, FC, useEffect, useRef, useState } from 'react'
+import useComponentSize from '@rehooks/component-size'
+
+import { Box, Text } from '@island.is/island-ui/core'
+
 import { useDrag } from '../utils'
+
 import * as styles from './Slider.css'
 
 interface TooltipProps {

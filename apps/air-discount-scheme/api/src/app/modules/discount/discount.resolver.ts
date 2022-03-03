@@ -1,19 +1,21 @@
-import { Context, Query, Parent, ResolveField, Resolver } from '@nestjs/graphql'
+import { UseGuards } from '@nestjs/common'
+import { Context, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 
 import {
   Discount as TDiscount,
   User as TUser,
 } from '@island.is/air-discount-scheme/types'
-import { Discount } from './discount.model'
-import { User } from '../user'
-import {
-  IdsUserGuard,
-  ScopesGuard,
-  CurrentUser,
-  Scopes,
-} from '@island.is/auth-nest-tools'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
-import { UseGuards } from '@nestjs/common'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
+
+import { User } from '../user'
+
+import { Discount } from './discount.model'
 
 type DiscountWithTUser = Discount & { user: TUser }
 

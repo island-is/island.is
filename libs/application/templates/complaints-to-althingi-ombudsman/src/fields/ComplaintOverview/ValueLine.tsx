@@ -1,7 +1,8 @@
-import { MessageDescriptor } from 'react-intl'
 import React, { FC } from 'react'
-import { useLocale } from '@island.is/localization'
+import { MessageDescriptor } from 'react-intl'
+
 import { Box, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 
 export const ValueLine: FC<{
   label: string | MessageDescriptor

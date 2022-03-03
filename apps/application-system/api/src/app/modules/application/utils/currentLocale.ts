@@ -1,4 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common'
+
 import { Locale } from '@island.is/shared/types'
 
 export const getCurrentLocale = (context: ExecutionContext): Locale => {

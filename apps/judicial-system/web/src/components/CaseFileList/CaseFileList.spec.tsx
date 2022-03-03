@@ -1,9 +1,10 @@
 import React from 'react'
+import { MockedProvider } from '@apollo/client/testing'
 import { render, screen } from '@testing-library/react'
 
-import CaseFileList from './CaseFileList'
-import { MockedProvider } from '@apollo/client/testing'
 import { LocaleProvider } from '@island.is/localization'
+
+import CaseFileList from './CaseFileList'
 
 describe('CaseFileList', () => {
   it('should say that there are no files associated with a case if there are no files', async () => {

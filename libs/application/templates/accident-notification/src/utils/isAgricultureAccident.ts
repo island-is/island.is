@@ -1,5 +1,7 @@
 import { FormValue, getValueViaPath } from '@island.is/application/core'
+
 import { WorkAccidentTypeEnum } from '../types'
+
 import { isWorkAccident } from './isWorkAccident'
 
 // As this is a second question the user is asked there is a case where he could go back and select home activities and keep the agriculture type.

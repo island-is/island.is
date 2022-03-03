@@ -1,11 +1,12 @@
-import {
-  BasicDataProvider,
-  Application,
-  SuccessfulDataProviderResult,
-  FailedDataProviderResult,
-} from '@island.is/application/core'
-import { DrivingLicenseFakeData, YES } from '../lib/constants'
 import { StudentAssessment } from '@island.is/api/schema'
+import {
+  Application,
+  BasicDataProvider,
+  FailedDataProviderResult,
+  SuccessfulDataProviderResult,
+} from '@island.is/application/core'
+
+import { DrivingLicenseFakeData, YES } from '../lib/constants'
 
 export class DrivingAssessmentProvider extends BasicDataProvider {
   type = 'DrivingAssessmentProvider'

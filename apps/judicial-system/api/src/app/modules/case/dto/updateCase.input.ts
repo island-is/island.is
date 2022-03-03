@@ -1,15 +1,14 @@
-import { Allow } from 'class-validator'
-
 import { Field, InputType } from '@nestjs/graphql'
+import { Allow } from 'class-validator'
 
 import type {
   CaseAppealDecision,
-  CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseDecision,
-  UpdateCase,
+  CaseLegalProvisions,
   CaseType,
   SessionArrangements,
+  UpdateCase,
 } from '@island.is/judicial-system/types'
 
 @InputType()

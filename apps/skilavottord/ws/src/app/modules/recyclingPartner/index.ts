@@ -1,6 +1,6 @@
 export {
-  RecyclingPartnerInput,
   CreateRecyclingPartnerInput,
+  RecyclingPartnerInput,
   UpdateRecyclingPartnerInput,
 } from './recyclingPartner.input'
 export { RecyclingPartnerModel } from './recyclingPartner.model'

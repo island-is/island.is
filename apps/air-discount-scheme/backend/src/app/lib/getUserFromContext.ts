@@ -1,7 +1,9 @@
-import { environment as env } from '../../environments'
-import { AuthUser } from '@island.is/air-discount-scheme/types'
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common'
 import { decode } from 'jsonwebtoken'
+
+import { AuthUser } from '@island.is/air-discount-scheme/types'
+
+import { environment as env } from '../../environments'
 
 export const getUserFromContext = (
   context: ExecutionContext & { contextType?: string },

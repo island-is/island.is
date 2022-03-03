@@ -1,36 +1,37 @@
-import {
-  BasicDataProvider,
-  SuccessfulDataProviderResult,
-  FailedDataProviderResult,
-  Application,
-  CustomTemplateFindQuery,
-  getValueViaPath,
-  StaticText,
-} from '@island.is/application/core'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import * as Sentry from '@sentry/react'
 
-import type {
-  ChildInformation,
-  ChildrenAndExistingApplications,
-  ChildrenWithoutRightsAndExistingApplications,
-} from './types'
-import {
-  applicationsToChildInformation,
-  getChildrenAndExistingApplications,
-  getChildrenFromMockData,
-} from './Children-utils'
-import { States, YES, NO, ParentalRelations } from '../../constants'
 import {
   ParentalLeave,
   ParentalLeaveEntitlement,
   PregnancyStatus,
 } from '@island.is/api/domains/directorate-of-labour'
+import {
+  Application,
+  BasicDataProvider,
+  CustomTemplateFindQuery,
+  FailedDataProviderResult,
+  getValueViaPath,
+  StaticText,
+  SuccessfulDataProviderResult,
+} from '@island.is/application/core'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
-import { parentalLeaveFormMessages } from '../../lib/messages'
+import { NO, ParentalRelations,States, YES } from '../../constants'
 import { calculateRemainingNumberOfDays } from '../../lib/directorateOfLabour.utils'
+import { parentalLeaveFormMessages } from '../../lib/messages'
 import { getSelectedChild } from '../../lib/parentalLeaveUtils'
 import { YesOrNo } from '../../types'
+
+import {
+  applicationsToChildInformation,
+  getChildrenAndExistingApplications,
+  getChildrenFromMockData,
+} from './Children-utils'
+import type {
+  ChildInformation,
+  ChildrenAndExistingApplications,
+  ChildrenWithoutRightsAndExistingApplications,
+} from './types'
 
 export interface PregnancyStatusAndRightsResults {
   childrenAndExistingApplications: ChildrenAndExistingApplications

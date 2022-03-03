@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect,useState } from 'react'
 import { useFormik } from 'formik'
 import jsonp from 'jsonp'
+
 import { Box, NewsletterSignup } from '@island.is/island-ui/core'
-import { isValidEmail } from '@island.is/web/utils/isValidEmail'
 import { GetNamespaceQuery } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
+import { isValidEmail } from '@island.is/web/utils/isValidEmail'
 
 type FormState = {
   type: 'default' | 'error' | 'success'

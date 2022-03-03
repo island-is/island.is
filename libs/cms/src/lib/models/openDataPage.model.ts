@@ -1,11 +1,14 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+
+import { SystemMetadata } from '@island.is/shared/types'
+
 import { IOpenDataPage } from '../generated/contentfulTypes'
 import * as types from '../generated/contentfulTypes'
-import { SystemMetadata } from '@island.is/shared/types'
+
+import { GraphCard, mapGraphCard } from './graphCard.model'
 import { Image, mapImage } from './image.model'
 import { LinkCardSlice, mapLinkCardSlice } from './linkCardSlice.model'
-import { GraphCard, mapGraphCard } from './graphCard.model'
-import { StatisticsCard, mapStatisticsCard } from './statisticsCard.model'
+import { mapStatisticsCard,StatisticsCard } from './statisticsCard.model'
 
 @ObjectType()
 export class OpenDataPage {

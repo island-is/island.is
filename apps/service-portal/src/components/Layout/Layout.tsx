@@ -1,26 +1,29 @@
 import React, { FC, useEffect, useState } from 'react'
-import Header from '../Header/Header'
-import Sidebar from '../Sidebar/Sidebar'
+import { RemoveScroll } from 'react-remove-scroll'
+import { useLocation } from 'react-router-dom'
+import cn from 'classnames'
+
 import {
   Box,
+  GridColumn,
+  GridContainer,
+  GridRow,
   Hidden,
   ToastContainer,
-  GridContainer,
-  GridColumn,
-  GridRow,
 } from '@island.is/island-ui/core'
-import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
-import * as styles from './Layout.css'
-import AuthOverlay from '../Loaders/AuthOverlay/AuthOverlay'
-import useRoutes from '../../hooks/useRoutes/useRoutes'
-import { useModules } from '../../hooks/useModules/useModules'
-import { useScrollTopOnUpdate } from '@island.is/service-portal/core'
-import { useLocation } from 'react-router-dom'
-import MobileMenu from '../MobileMenu/MobileMenu'
 import { useNamespaces } from '@island.is/localization'
+import { useScrollTopOnUpdate } from '@island.is/service-portal/core'
+
+import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
+import { useModules } from '../../hooks/useModules/useModules'
+import useRoutes from '../../hooks/useRoutes/useRoutes'
 import { useStore } from '../../store/stateProvider'
-import { RemoveScroll } from 'react-remove-scroll'
-import cn from 'classnames'
+import Header from '../Header/Header'
+import AuthOverlay from '../Loaders/AuthOverlay/AuthOverlay'
+import MobileMenu from '../MobileMenu/MobileMenu'
+import Sidebar from '../Sidebar/Sidebar'
+
+import * as styles from './Layout.css'
 
 const Layout: FC = ({ children }) => {
   useRoutes()

@@ -1,8 +1,10 @@
-import { join } from 'path'
 import fs from 'fs'
+import { join } from 'path'
 import util from 'util'
+
 import { createTestingEmailModule } from '../../lib/test/createTestingEmailModule'
 import { AdapterService } from '../adapter.service'
+
 import example from './example'
 
 const writeFile = util.promisify(fs.writeFile)

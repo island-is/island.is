@@ -1,8 +1,9 @@
 import { unique } from 'shorthash'
+
 import { Locale } from '@island.is/shared/types'
 
-import { template as isIndexTemplate } from './index-templates/template-is'
 import { template as enIndexTemplate } from './index-templates/template-en'
+import { template as isIndexTemplate } from './index-templates/template-is'
 import { config } from './config'
 
 export type ElasticsearchIndexLocale = Locale

@@ -1,11 +1,11 @@
 import { lazy } from 'react'
+import { defineMessage } from 'react-intl'
 
 import { ApiScope } from '@island.is/auth/scopes'
 import {
   ServicePortalModule,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
-import { defineMessage } from 'react-intl'
 
 export const licensesModule: ServicePortalModule = {
   name: defineMessage({

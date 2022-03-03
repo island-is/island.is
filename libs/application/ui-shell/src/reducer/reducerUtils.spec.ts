@@ -1,14 +1,16 @@
 import {
-  buildForm,
+  buildCustomField,
   buildDescriptionField,
+  buildForm,
   buildMultiField,
   buildRepeater,
   buildSection,
   buildSubSection,
   buildTextField,
   CustomField,
-  buildCustomField,
 } from '@island.is/application/core'
+
+import { FormScreen, MultiFieldScreen, RepeaterScreen } from '../types'
 
 import {
   convertFormToScreens,
@@ -17,7 +19,6 @@ import {
   screenHasBeenAnswered,
   screenRequiresAnswer,
 } from './reducerUtils'
-import { FormScreen, MultiFieldScreen, RepeaterScreen } from '../types'
 
 describe('reducerUtils', () => {
   describe('find current screen', () => {

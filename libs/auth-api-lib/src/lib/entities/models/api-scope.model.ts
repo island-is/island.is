@@ -1,21 +1,23 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
+  ForeignKey,
+  HasMany,
   Model,
+  PrimaryKey,
   Table,
   UpdatedAt,
-  HasMany,
-  PrimaryKey,
-  ForeignKey,
-  BelongsTo,
 } from 'sequelize-typescript'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { ApiScopeUserClaim } from './api-scope-user-claim.model'
-import { ApiScopeGroup } from './api-scope-group.model'
-import { ApiScopesDTO } from '../dto/api-scopes.dto'
-import { DelegationScope } from './delegation-scope.model'
+
 import { PersonalRepresentativeScopePermission } from '../../personal-representative/entities/models/personal-representative-scope-permission.model'
+import { ApiScopesDTO } from '../dto/api-scopes.dto'
+
+import { ApiScopeGroup } from './api-scope-group.model'
+import { ApiScopeUserClaim } from './api-scope-user-claim.model'
+import { DelegationScope } from './delegation-scope.model'
 @Table({
   tableName: 'api_scope',
 })

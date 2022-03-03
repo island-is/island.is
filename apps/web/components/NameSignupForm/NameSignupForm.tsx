@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-import { isValidEmail } from '@island.is/web/utils/isValidEmail'
 import { useFormik } from 'formik'
+import jsonp from 'jsonp'
+
 import {
   Box,
   Button,
@@ -12,13 +13,14 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './NameSignupForm.css'
 import {
   MailingListSignupSlice,
   Namespace,
 } from '@island.is/web/graphql/schema'
-import jsonp from 'jsonp'
 import { useNamespace } from '@island.is/web/hooks'
+import { isValidEmail } from '@island.is/web/utils/isValidEmail'
+
+import * as styles from './NameSignupForm.css'
 
 interface FormProps {
   email?: string

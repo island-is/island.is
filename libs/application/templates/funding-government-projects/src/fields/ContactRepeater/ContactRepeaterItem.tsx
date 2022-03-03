@@ -1,3 +1,6 @@
+import React, { FC } from 'react'
+import { ArrayField } from 'react-hook-form'
+
 import {
   Application,
   formatText,
@@ -5,13 +8,14 @@ import {
   RecordObject,
 } from '@island.is/application/core'
 import { Box, Button, Stack } from '@island.is/island-ui/core'
-import { InputController } from '@island.is/shared/form-fields'
-import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
+import { InputController } from '@island.is/shared/form-fields'
+
 import { informationAboutInstitution } from '../../lib/messages'
-import { ArrayField } from 'react-hook-form'
-import * as styles from './ContactRepeater.css'
+
 import { ContactField } from './ContactRepeater'
+
+import * as styles from './ContactRepeater.css'
 
 interface Props {
   id: string

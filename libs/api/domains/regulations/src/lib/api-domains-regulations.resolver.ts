@@ -3,20 +3,21 @@ import graphqlTypeJson from 'graphql-type-json'
 
 import { RegulationsService } from '@island.is/clients/regulations'
 import {
-  RegulationSearchResults,
-  RegulationYears,
-  RegulationListItem,
-} from '@island.is/regulations/web'
-import {
+  LawChapter,
+  LawChapterTree,
+  MinistryList,
   Regulation,
   RegulationDiff,
   RegulationRedirect,
-  MinistryList,
-  LawChapter,
-  LawChapterTree,
 } from '@island.is/regulations'
-import { GetRegulationsInput } from './dto/getRegulations.input'
+import {
+  RegulationListItem,
+  RegulationSearchResults,
+  RegulationYears,
+} from '@island.is/regulations/web'
+
 import { GetRegulationInput } from './dto/getRegulation.input'
+import { GetRegulationsInput } from './dto/getRegulations.input'
 import { GetRegulationsLawChaptersInput } from './dto/getRegulationsLawChapters.input'
 import { GetRegulationsSearchInput } from './dto/getRegulationsSearch.input'
 

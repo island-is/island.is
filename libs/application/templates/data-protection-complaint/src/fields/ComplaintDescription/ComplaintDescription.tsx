@@ -1,3 +1,5 @@
+import React, { ChangeEvent, FC, useState } from 'react'
+
 import {
   FieldBaseProps,
   getErrorViaPath,
@@ -6,7 +8,7 @@ import {
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
-import React, { ChangeEvent, FC, useState } from 'react'
+
 import { complaint, sharedFields } from '../../lib/messages'
 
 const calcWordCount = (value: string) =>

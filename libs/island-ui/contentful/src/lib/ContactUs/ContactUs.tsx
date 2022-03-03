@@ -1,15 +1,16 @@
 import React, { FC, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+
 import {
-  Text,
-  Stack,
-  Input,
-  GridRow,
-  GridColumn,
   Box,
   Button,
-  ToastContainer,
+  GridColumn,
+  GridRow,
+  Input,
+  Stack,
+  Text,
   toast,
+  ToastContainer,
 } from '@island.is/island-ui/core'
 
 export interface ContactUsFormState {

@@ -8,9 +8,11 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
+
 import { Endorsement } from '../endorsement/models/endorsement.model'
-import { EndorsementTag } from './constants'
+
 import { EndorsementMetadataDto } from './dto/endorsementMetadata.dto'
+import { EndorsementTag } from './constants'
 
 @Table({
   tableName: 'endorsement_list',

@@ -1,12 +1,15 @@
-import { Box, IconProps, Icon } from '@island.is/island-ui/core'
-import { ServicePortalPath } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
-import * as styles from './NavItem.css'
 import { Link } from 'react-router-dom'
-import { useStore } from '../../../store/stateProvider'
 import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
 import cn from 'classnames'
+
+import { Box, Icon,IconProps } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
+import { ServicePortalPath } from '@island.is/service-portal/core'
+
+import { useStore } from '../../../store/stateProvider'
+
+import * as styles from './NavItem.css'
 
 interface ChevronProps {
   expanded?: boolean

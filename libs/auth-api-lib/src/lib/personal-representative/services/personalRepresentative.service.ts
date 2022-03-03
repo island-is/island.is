@@ -1,17 +1,19 @@
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { paginate } from '@island.is/nest/pagination'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op, WhereOptions } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
+
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { paginate } from '@island.is/nest/pagination'
+
 import { PaginatedPersonalRepresentativeDto } from '../entities/dto/paginated-personal-representative.dto'
 import { PaginationWithNationalIdsDto } from '../entities/dto/pagination-with-national-ids.dto'
-import { PersonalRepresentativeCreateDTO } from '../entities/dto/personal-representative-create.dto'
 import { PersonalRepresentativeDTO } from '../entities/dto/personal-representative.dto'
-import { PersonalRepresentativeRightType } from '../entities/models/personal-representative-right-type.model'
-import { PersonalRepresentativeRight } from '../entities/models/personal-representative-right.model'
+import { PersonalRepresentativeCreateDTO } from '../entities/dto/personal-representative-create.dto'
 import { PersonalRepresentative } from '../entities/models/personal-representative.model'
+import { PersonalRepresentativeRight } from '../entities/models/personal-representative-right.model'
+import { PersonalRepresentativeRightType } from '../entities/models/personal-representative-right-type.model'
 
 @Injectable()
 export class PersonalRepresentativeService {

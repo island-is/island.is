@@ -1,10 +1,11 @@
-import { Module, forwardRef } from '@nestjs/common'
+import { forwardRef,Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { VehicleModel } from './vehicle.model'
-import { VehicleService } from './vehicle.service'
-import { VehicleResolver } from './vehicle.resolver'
 import { SamgongustofaModule } from '../samgongustofa/samgongustofa.module'
+
+import { VehicleModel } from './vehicle.model'
+import { VehicleResolver } from './vehicle.resolver'
+import { VehicleService } from './vehicle.service'
 
 @Module({
   imports: [

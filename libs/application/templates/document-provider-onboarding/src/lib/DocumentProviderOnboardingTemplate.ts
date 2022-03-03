@@ -1,17 +1,19 @@
-import { assign } from 'xstate'
-import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import { assign } from 'xstate'
+import * as z from 'zod'
+
 import {
+  Application,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
-  ApplicationTypes,
   ApplicationTemplate,
-  Application,
+  ApplicationTypes,
   DefaultEvents,
   DefaultStateLifeCycle,
 } from '@island.is/application/core'
+
 import { API_MODULE_ACTIONS } from '../../constants'
 
 type Events =

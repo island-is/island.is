@@ -5,8 +5,9 @@ import {
   DefaultEvents,
   ExternalData,
 } from '@island.is/application/core'
-import GeneralPetitionApplicationTemplate from './generalPetitionApplicationTemplate'
 import { createApplication } from '@island.is/testing/fixtures'
+
+import GeneralPetitionApplicationTemplate from './generalPetitionApplicationTemplate'
 
 describe('General petition application template', () => {
   describe('state transitions', () => {

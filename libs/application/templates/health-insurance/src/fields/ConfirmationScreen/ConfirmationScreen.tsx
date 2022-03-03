@@ -1,10 +1,12 @@
 import React, { FC } from 'react'
+import Markdown from 'markdown-to-jsx'
+
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box, Bullet, BulletList, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../forms/messages'
-import Markdown from 'markdown-to-jsx'
+
 import ManOnBenchIllustration from '../../assets/ManOnBenchIllustration'
+import { m } from '../../forms/messages'
 
 const ConfirmationScreen: FC<FieldBaseProps> = ({ field, application }) => {
   const { formatMessage } = useLocale()

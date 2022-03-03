@@ -1,10 +1,10 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { SystemMetadata } from 'api-cms-domain'
 
 import { ITwoColumnText } from '../generated/contentfulTypes'
+import { mapDocument, SliceUnion } from '../unions/slice.union'
 
 import { Link, mapLink } from './link.model'
-import { SystemMetadata } from 'api-cms-domain'
-import { mapDocument, SliceUnion } from '../unions/slice.union'
 
 @ObjectType()
 export class TwoColumnText {

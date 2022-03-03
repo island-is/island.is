@@ -1,5 +1,6 @@
 import { Field, InputType, registerEnumType } from '@nestjs/graphql'
-import { IsString, IsEnum } from 'class-validator'
+import { IsEnum,IsString } from 'class-validator'
+
 import { UploadSignedFileDtoTypeEnum } from '../../../gen/fetch'
 
 registerEnumType(UploadSignedFileDtoTypeEnum, {

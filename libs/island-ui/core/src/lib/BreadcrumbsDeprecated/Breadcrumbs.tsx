@@ -1,10 +1,13 @@
 /** @deprecated BreadcrumbsDeprecated has been deprecated in favor of BreadCrumbs */
-import React, { FC, Children } from 'react'
-import { Text } from '../Text/Text'
-import { Icon } from '../Icon/Icon'
+import React, { Children,FC } from 'react'
+
 import { Colors } from '@island.is/island-ui/theme'
-import * as styles from './Breadcrumbs.css'
+
+import { Icon } from '../Icon/Icon'
 import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
+import { Text } from '../Text/Text'
+
+import * as styles from './Breadcrumbs.css'
 
 interface BreadcrumbsProps {
   label?: string

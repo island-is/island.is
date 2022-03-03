@@ -1,6 +1,7 @@
-import { literal, Op } from 'sequelize'
 import each from 'jest-each'
+import { literal, Op } from 'sequelize'
 
+import type { User } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
   CaseDecision,
@@ -10,9 +11,9 @@ import {
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
+
 import { getCasesQueryFilter, isCaseBlockedFromUser } from './case.filters'
 
 describe('isCaseBlockedFromUser', () => {

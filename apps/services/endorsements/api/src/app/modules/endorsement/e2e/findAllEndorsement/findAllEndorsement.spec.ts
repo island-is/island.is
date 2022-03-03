@@ -1,10 +1,13 @@
 import request from 'supertest'
-import { getAuthenticatedApp } from '../../../../../../test/setup'
-import { Endorsement } from '../../models/endorsement.model'
-import { errorExpectedStructure } from '../../../../../../test/testHelpers'
-import { authNationalId } from './seed'
+
 import { EndorsementsScope } from '@island.is/auth/scopes'
+
+import { getAuthenticatedApp } from '../../../../../../test/setup'
+import { errorExpectedStructure } from '../../../../../../test/testHelpers'
 import { PaginatedEndorsementDto } from '../../dto/paginatedEndorsement.dto'
+import { Endorsement } from '../../models/endorsement.model'
+
+import { authNationalId } from './seed'
 
 describe('findAllEndorsement', () => {
   it(`GET /endorsement-list/:listId/endorsement should fail and return 403 error if scope is missing`, async () => {

@@ -1,7 +1,10 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { IStorySection } from '../generated/contentfulTypes'
+
 import { SystemMetadata } from '@island.is/shared/types'
-import { Story, mapStory } from './story.model'
+
+import { IStorySection } from '../generated/contentfulTypes'
+
+import { mapStory,Story } from './story.model'
 
 @ObjectType()
 export class StorySlice {

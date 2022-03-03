@@ -1,4 +1,5 @@
 import { complaint, info, sharedFields } from '../lib/messages'
+
 import { NO, OnBehalf, SubjectOfComplaint, YES } from './constants'
 
 export const onBehalfValueLabelMapper = {

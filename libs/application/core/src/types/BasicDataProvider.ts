@@ -1,14 +1,16 @@
-import fetch from 'isomorphic-fetch'
 import { GraphQLError } from 'graphql'
-import { Locale } from '@island.is/shared/types'
+import fetch from 'isomorphic-fetch'
+
 import { User } from '@island.is/auth-nest-tools'
+import { Locale } from '@island.is/shared/types'
+
+import { coreErrorMessages } from '../lib/messages'
 
 import { Application } from './Application'
 import {
   FailedDataProviderResult,
   SuccessfulDataProviderResult,
 } from './DataProviderResult'
-import { coreErrorMessages } from '../lib/messages'
 
 export type CustomTemplateFindQuery = (where: {
   [key: string]: string

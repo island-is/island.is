@@ -1,10 +1,13 @@
-import { Box, Inline, Tag, Text } from '@island.is/island-ui/core'
-import { m } from '@island.is/service-portal/core'
-import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { MessageDescriptor } from 'react-intl'
-import * as styles from './Card.css'
+
+import { Box, Inline, Tag, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { m } from '@island.is/service-portal/core'
+
 import WipCard from './WipCard'
+
+import * as styles from './Card.css'
 
 interface Props {
   title: string | MessageDescriptor

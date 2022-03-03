@@ -1,10 +1,10 @@
-import { logger } from '@island.is/logging'
-import { CompanyApplication } from '@island.is/gjafakort/types'
 import { ApplicationStates } from '@island.is/gjafakort/consts'
+import { CompanyApplication } from '@island.is/gjafakort/types'
+import { logger } from '@island.is/logging'
 
+import { ApplicationAPI } from '../../services'
 import { CreateCompanyApplicationInput } from '../../types'
 import { DataSource } from '../../types'
-import { ApplicationAPI } from '../../services'
 
 const APPLICATION_TYPE = 'gjafakort'
 

@@ -1,8 +1,9 @@
-import { User } from '../user/models/user.model'
-import { environment } from '../../../environments'
 import { createParamDecorator, ExecutionContext } from '@nestjs/common'
 import { GqlExecutionContext } from '@nestjs/graphql'
 import { decode } from 'jsonwebtoken'
+
+import { environment } from '../../../environments'
+import { User } from '../user/models/user.model'
 
 export const CurrentUser = createParamDecorator(
   (_: unknown, context: ExecutionContext): User => {

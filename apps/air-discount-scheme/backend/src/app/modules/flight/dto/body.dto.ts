@@ -1,23 +1,23 @@
-import {
-  IsOptional,
-  IsObject,
-  IsEnum,
-  IsArray,
-  ArrayMinSize,
-  ValidateNested,
-  IsString,
-  IsNumber,
-  IsISO8601,
-} from 'class-validator'
-import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
+import { Type } from 'class-transformer'
+import {
+  ArrayMinSize,
+  IsArray,
+  IsEnum,
+  IsISO8601,
+  IsNumber,
+  IsObject,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator'
 
 import { Airlines, States } from '@island.is/air-discount-scheme/consts'
 import type {
-  Travel,
-  RangeInput,
-  PeriodInput,
   FlightLegsInput,
+  PeriodInput,
+  RangeInput,
+  Travel,
 } from '@island.is/air-discount-scheme/types'
 
 export class CreateFlightLegBody {

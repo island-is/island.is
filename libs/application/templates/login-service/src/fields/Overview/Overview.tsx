@@ -1,8 +1,10 @@
+import React from 'react'
 import { MessageDescriptor } from '@formatjs/intl'
+
 import { FieldBaseProps, formatText } from '@island.is/application/core'
 import { Box, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React from 'react'
+
 import { LoginService } from '../../lib/dataSchema'
 import { applicant, technicalAnnouncements, terms } from '../../lib/messages'
 

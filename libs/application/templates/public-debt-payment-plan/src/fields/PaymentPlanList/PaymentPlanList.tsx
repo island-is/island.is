@@ -1,11 +1,14 @@
+import React from 'react'
+
 import { PaymentScheduleDebts } from '@island.is/api/schema'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React from 'react'
+
 import { paymentPlan } from '../../lib/messages/paymentPlan'
 import { getPaymentPlanIds, getPaymentPlanKeyById } from '../../shared/utils'
 import { PaymentPlans } from '../../types'
+
 import { PaymentPlanCard } from './PaymentPlanCard/PaymentPlanCard'
 
 export const PaymentPlanList = ({

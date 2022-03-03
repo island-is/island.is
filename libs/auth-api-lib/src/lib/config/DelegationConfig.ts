@@ -2,6 +2,7 @@ import * as z from 'zod'
 
 import { AuthScope } from '@island.is/auth/scopes'
 import { defineConfig } from '@island.is/nest/config'
+
 import { DelegationType } from '../entities/dto/delegation.dto'
 
 const schema = z.object({

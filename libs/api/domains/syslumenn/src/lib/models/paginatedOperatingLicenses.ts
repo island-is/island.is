@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+
 import { OperatingLicense } from './operatingLicense'
 import { PaginationInfo } from './paginationInfo'
 

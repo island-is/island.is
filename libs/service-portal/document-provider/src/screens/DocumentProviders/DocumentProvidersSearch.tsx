@@ -1,16 +1,19 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect,useState } from 'react'
 import { useHistory } from 'react-router-dom'
+
 import {
-  Box,
-  Text,
-  Input,
   ActionCard,
+  Box,
+  Input,
   Pagination,
+  Text,
 } from '@island.is/island-ui/core'
-import { ServicePortalPath } from '@island.is/service-portal/core'
-import { OrganisationPreview } from './DocumentProviders'
-import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
+import { ServicePortalPath } from '@island.is/service-portal/core'
+
+import { m } from '../../lib/messages'
+
+import { OrganisationPreview } from './DocumentProviders'
 
 interface Props {
   organisationsPreview: OrganisationPreview[]

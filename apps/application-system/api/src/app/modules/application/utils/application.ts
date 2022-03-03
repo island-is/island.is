@@ -1,8 +1,8 @@
 import addMilliseconds from 'date-fns/addMilliseconds'
 
 import { Application, DefaultStateLifeCycle } from '@island.is/application/core'
-import { Unwrap } from '@island.is/shared/types'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
+import { Unwrap } from '@island.is/shared/types'
 
 import { ApplicationLifecycle } from '../types'
 

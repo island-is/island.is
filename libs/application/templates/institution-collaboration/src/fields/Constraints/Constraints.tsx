@@ -1,13 +1,16 @@
 import React, { FC } from 'react'
+
 import {
   FieldBaseProps,
-  getValueViaPath,
   formatText,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { Box, Stack } from '@island.is/island-ui/core'
-import ConstraintController from './ConstraintController'
 import { useLocale } from '@island.is/localization'
+
 import { institutionApplicationMessages as m } from '../../lib/messages'
+
+import ConstraintController from './ConstraintController'
 const Constraints: FC<FieldBaseProps> = ({ field, application }) => {
   const { formatMessage } = useLocale()
 

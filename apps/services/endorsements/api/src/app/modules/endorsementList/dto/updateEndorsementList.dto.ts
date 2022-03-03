@@ -1,6 +1,6 @@
-import { IsOptional, IsString, IsDate } from 'class-validator'
-import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
+import { Type } from 'class-transformer'
+import { IsDate,IsOptional, IsString } from 'class-validator'
 
 export class UpdateEndorsementListDto {
   @ApiProperty()

@@ -1,14 +1,15 @@
 import {
-  ApplicationTemplate,
-  ApplicationTypes,
+  Application,
+  ApplicationConfigurations,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
-  Application,
+  ApplicationTemplate,
+  ApplicationTypes,
   DefaultEvents,
   DefaultStateLifeCycle,
-  ApplicationConfigurations,
 } from '@island.is/application/core'
+
 import { LoginServiceSchema } from './dataSchema'
 import { application } from './messages'
 

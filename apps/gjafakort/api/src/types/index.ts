@@ -1,2 +1,2 @@
-export * from './schema'
 export * from './graphql'
+export * from './schema'

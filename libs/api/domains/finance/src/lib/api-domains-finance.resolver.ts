@@ -1,30 +1,30 @@
-import { Query, Resolver, Args } from '@nestjs/graphql'
 import { ForbiddenException, Inject, UseGuards } from '@nestjs/common'
+import { Args,Query, Resolver } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
 
 import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
-  IdsUserGuard,
-  ScopesGuard,
   CurrentUser,
+  IdsUserGuard,
   Scopes,
+  ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { FinanceClientService } from '@island.is/clients/finance'
 import { Audit } from '@island.is/nest/audit'
-import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
+import { DownloadServiceConfig } from '@island.is/nest/config'
 
-import { GetFinancialOverviewInput } from './dto/getOverview.input'
+import { GetAnnualStatusDocumentInput } from './dto/getAnnualStatusDocument.input'
 import { GetCustomerRecordsInput } from './dto/getCustomerRecords.input'
 import { GetDocumentsListInput } from './dto/getDocumentsList.input'
 import { GetFinanceDocumentInput } from './dto/getFinanceDocument.input'
-import { GetAnnualStatusDocumentInput } from './dto/getAnnualStatusDocument.input'
+import { GetFinancialOverviewInput } from './dto/getOverview.input'
 import { CustomerChargeType } from './models/customerChargeType.model'
-import { FinanceDocumentModel } from './models/financeDocument.model'
+import { CustomerRecords } from './models/customerRecords.model'
 import { CustomerTapsControlModel } from './models/customerTapsControl.model'
 import { DocumentsListModel } from './models/documentsList.model'
-import { CustomerRecords } from './models/customerRecords.model'
+import { FinanceDocumentModel } from './models/financeDocument.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.financeOverview)

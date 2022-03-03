@@ -4,8 +4,8 @@ import { Airlines } from '@island.is/air-discount-scheme/consts'
 
 import { setup } from '../../../../../../test/setup'
 import { NationalRegistryUser } from '../../../nationalRegistry'
-import { FlightService } from '../../flight.service'
 import { CreateFlightBody } from '../../dto'
+import { FlightService } from '../../flight.service'
 
 let app: INestApplication
 let flightService: FlightService

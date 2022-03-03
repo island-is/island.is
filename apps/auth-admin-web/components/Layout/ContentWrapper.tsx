@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react'
+
+import { LOCALE_KEY } from './../../i18n/locales'
 import Header from './Header'
 import Nav from './Nav'
-import StatusBar from './StatusBar'
-import { LOCALE_KEY } from './../../i18n/locales'
 import ShowEnvironment from './ShowEnvironment'
+import StatusBar from './StatusBar'
 
 const ContentWrapper: React.FC = ({ children }) => {
   useEffect(() => {

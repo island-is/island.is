@@ -1,10 +1,12 @@
 import React from 'react'
 import cn from 'classnames'
-import { Text } from '../Text/Text'
-import { Icon } from '../IconRC/Icon'
-import { Tooltip } from '../Tooltip/Tooltip'
+
 import { Box } from '../Box/Box'
+import { Icon } from '../IconRC/Icon'
 import { InputBackgroundColor } from '../Input/types'
+import { Text } from '../Text/Text'
+import { Tooltip } from '../Tooltip/Tooltip'
+
 import * as styles from './Checkbox.css'
 
 export interface CheckboxProps {

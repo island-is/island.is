@@ -1,10 +1,13 @@
+import yargs from 'yargs'
+
+import * as indexManager from '@island.is/content-search-index-manager'
 import { logger } from '@island.is/logging'
+
 import { environment } from '../environments/environment'
+
 import * as aws from './lib/aws'
 import * as dictionary from './lib/dictionary'
 import * as elastic from './lib/elastic'
-import * as indexManager from '@island.is/content-search-index-manager'
-import yargs from 'yargs'
 
 const { locales } = environment
 

@@ -1,8 +1,10 @@
-import { Link, Text } from '@island.is/island-ui/core'
 import React, { FC } from 'react'
-import { useLocale } from '@island.is/localization'
+
 import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { Link, Text } from '@island.is/island-ui/core'
 import { Box } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+
 import * as styles from './descriptionWithLink.css'
 
 type DescriptionLinkProps = {

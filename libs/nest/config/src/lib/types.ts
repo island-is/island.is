@@ -1,4 +1,5 @@
 import { ZodType } from 'zod'
+
 import { ServerSideFeatureNames } from '@island.is/feature-flags'
 
 export interface EnvLoader {

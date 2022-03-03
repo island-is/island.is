@@ -1,4 +1,4 @@
-import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 import {
   BelongsTo,
   Column,
@@ -9,8 +9,8 @@ import {
   Table,
 } from 'sequelize-typescript'
 
-import { RecyclingPartnerModel } from '../recyclingPartner'
 import { Role } from '../auth'
+import { RecyclingPartnerModel } from '../recyclingPartner'
 
 export const { citizen, ...AccessControlRole } = Role
 export type AccessControlRoleType = Exclude<Role, typeof Role.citizen>

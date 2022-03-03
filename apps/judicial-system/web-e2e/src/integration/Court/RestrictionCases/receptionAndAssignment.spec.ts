@@ -1,12 +1,12 @@
 import {
+  OVERVIEW_ROUTE,
+  RECEPTION_AND_ASSIGNMENT_ROUTE,
+} from '@island.is/judicial-system/consts'
+import {
   makeCourt,
   makeCustodyCase,
 } from '@island.is/judicial-system/formatters'
 import { CaseState } from '@island.is/judicial-system/types'
-import {
-  OVERVIEW_ROUTE,
-  RECEPTION_AND_ASSIGNMENT_ROUTE,
-} from '@island.is/judicial-system/consts'
 
 import { intercept } from '../../../utils'
 

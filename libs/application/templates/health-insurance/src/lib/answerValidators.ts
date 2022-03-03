@@ -1,15 +1,16 @@
 import {
-  Application,
   AnswerValidator,
-  getValueViaPath,
+  Application,
   buildValidationError,
+  getValueViaPath,
 } from '@island.is/application/core'
-import { Status, FormerInsurance, Applicant } from '../types'
-import { NO, YES, StatusTypes } from '../shared'
+
 import {
   requireConfirmationOfResidency,
   requireWaitingPeriod,
 } from '../healthInsuranceUtils'
+import { NO, StatusTypes,YES } from '../shared'
+import { Applicant,FormerInsurance, Status } from '../types'
 
 const STATUS = 'status'
 const FORMER_INSURANCE = 'formerInsurance'

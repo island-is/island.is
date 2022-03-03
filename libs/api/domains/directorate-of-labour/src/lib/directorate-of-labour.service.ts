@@ -1,14 +1,16 @@
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
-import { Union, PensionFund } from '@island.is/clients/vmst'
 
-import { ParentalLeavePeriod } from '../models/parentalLeavePeriod.model'
+import { PensionFund,Union } from '@island.is/clients/vmst'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import { ParentalLeave } from '../models/parentalLeave.model'
 import { ParentalLeaveEntitlement } from '../models/parentalLeaveEntitlement.model'
 import { ParentalLeavePaymentPlan } from '../models/parentalLeavePaymentPlan.model'
+import { ParentalLeavePeriod } from '../models/parentalLeavePeriod.model'
 import { PregnancyStatus } from '../models/pregnancyStatus.model'
-import { ParentalLeave } from '../models/parentalLeave.model'
+
 import { DirectorateOfLabourRepository } from './directorate-of-labour.repository'
 
 @Injectable()

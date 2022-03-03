@@ -1,21 +1,25 @@
 import React, { useState } from 'react'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
+import { useLocation } from 'react-router-dom'
+
 import {
-  ModalBase,
-  GridRow,
+  Box,
+  Button,
+  Column,
+  Columns,
   GridColumn,
   GridContainer,
-  Button,
-  Box,
-  Columns,
-  Column,
+  GridRow,
+  ModalBase,
 } from '@island.is/island-ui/core'
-import { m } from '@island.is/service-portal/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { servicePortalCloseOnBoardingModal } from '@island.is/plausible'
-import { useLocation } from 'react-router-dom'
-import { OnboardingHeader } from './components/Header'
+import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
+import { m } from '@island.is/service-portal/core'
+
 import ProfileForm from '../Forms/ProfileForm/ProfileForm'
+
+import { OnboardingHeader } from './components/Header'
+
 import * as styles from './UserOnboardingModal.css'
 
 const UserOnboardingModal: ServicePortalModuleComponent = ({ userInfo }) => {

@@ -1,3 +1,5 @@
+import { Inject, Injectable } from '@nestjs/common'
+
 import { Application, getValueViaPath } from '@island.is/application/core'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
@@ -7,8 +9,9 @@ import {
 } from '@island.is/clients/payment-schedule'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject, Injectable } from '@nestjs/common'
+
 import { TemplateApiModuleActionProps } from '../../../types'
+
 import {
   PublicDebtPaymentPlanPayment,
   PublicDebtPaymentPlanPaymentCollection,

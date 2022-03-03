@@ -1,12 +1,13 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
-import { useLocale } from '@island.is/localization'
+
 import {
   Application,
-  formatText,
   coreMessages,
+  formatText,
 } from '@island.is/application/core'
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 
 import * as styles from './ReviewSection.css'
 

@@ -1,9 +1,11 @@
 import React from 'react'
+
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { UserDropdownItem } from './UserDropdownItem'
-import { m } from '@island.is/service-portal/core'
 import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
+import { m } from '@island.is/service-portal/core'
+
+import { UserDropdownItem } from './UserDropdownItem'
 
 export const UserProfileInfo = ({ onClick }: { onClick: () => void }) => {
   const { formatMessage } = useLocale()

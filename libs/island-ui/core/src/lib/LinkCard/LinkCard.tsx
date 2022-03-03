@@ -1,13 +1,15 @@
 /** @deprecated LinkCard has been deprecated in favor of TopicCard */
 
-import React, { forwardRef, ComponentPropsWithRef } from 'react'
+import React, { ComponentPropsWithRef,forwardRef } from 'react'
 import cn from 'classnames'
+
 import { Box } from '../Box/Box'
 import { BoxProps } from '../Box/types'
-import { Text } from '../Text/Text'
-import { Tag, TagVariant, TagProps } from '../Tag/Tag'
-import * as styles from './LinkCard.css'
 import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
+import { Tag, TagProps,TagVariant } from '../Tag/Tag'
+import { Text } from '../Text/Text'
+
+import * as styles from './LinkCard.css'
 
 export interface LinkCardProps extends ComponentPropsWithRef<'div'> {
   onClick?: () => void

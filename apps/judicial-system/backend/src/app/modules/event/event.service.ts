@@ -1,14 +1,13 @@
+import { Inject, Injectable } from '@nestjs/common'
 import fetch from 'isomorphic-fetch'
 
-import { Inject, Injectable } from '@nestjs/common'
-
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import {
   capitalize,
   caseTypes,
   formatDate,
 } from '@island.is/judicial-system/formatters'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { environment } from '../../../environments'
 import { Case } from '../case'

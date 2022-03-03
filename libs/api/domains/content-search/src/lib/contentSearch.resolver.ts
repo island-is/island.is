@@ -1,9 +1,10 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
-import { ContentSearchService } from './contentSearch.service'
+
 import { SearcherInput } from './dto/searcher.input'
 import { WebSearchAutocompleteInput } from './dto/webSearchAutocomplete.input'
 import { SearchResult } from './models/searchResult.model'
 import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
+import { ContentSearchService } from './contentSearch.service'
 
 @Resolver()
 export class ContentSearchResolver {

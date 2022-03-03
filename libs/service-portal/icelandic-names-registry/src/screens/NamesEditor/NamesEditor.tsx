@@ -1,6 +1,8 @@
 import React from 'react'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
+
 import { Box } from '@island.is/island-ui/core'
+import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
+
 import Editor from '../../components/Editor/Editor'
 
 const NamesEditor: ServicePortalModuleComponent = () => {

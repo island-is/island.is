@@ -1,11 +1,12 @@
 import { DynamicModule, Global } from '@nestjs/common'
-import { PassportModule } from '@nestjs/passport'
 import { JwtModule } from '@nestjs/jwt'
+import { PassportModule } from '@nestjs/passport'
+
 import { EXPIRES_IN_SECONDS } from '@island.is/judicial-system/consts'
 
+import { SharedAuthService } from './auth.service'
 import { SECRET_TOKEN } from './guards'
 import { JwtStrategy } from './jwt.strategy'
-import { SharedAuthService } from './auth.service'
 
 export interface SharedAuthModuleOptions {
   jwtSecret: string

@@ -1,8 +1,9 @@
 import React, { FC } from 'react'
+import { MessageDescriptor } from 'react-intl'
+
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
-import { MessageDescriptor } from 'react-intl'
 
 interface Props {
   name: string | MessageDescriptor

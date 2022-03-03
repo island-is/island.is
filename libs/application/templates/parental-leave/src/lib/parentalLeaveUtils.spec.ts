@@ -1,5 +1,6 @@
-import set from 'lodash/set'
 import addDays from 'date-fns/addDays'
+import set from 'lodash/set'
+
 import {
   Application,
   ApplicationStatus,
@@ -8,20 +9,21 @@ import {
   FormValue,
 } from '@island.is/application/core'
 
-import { NO, MANUAL, ParentalRelations } from '../constants'
+import { MANUAL, NO, ParentalRelations } from '../constants'
 import { ChildInformation } from '../dataProviders/Children/types'
+import { PersonInformation } from '../types'
+
 import {
+  applicantIsMale,
+  calculateEndDateForPeriodWithStartAndLength,
+  calculatePeriodLengthInMonths,
   formatIsk,
   getAvailableRightsInMonths,
   getExpectedDateOfBirth,
+  getOtherParentId,
   getSelectedChild,
   getTransferredDays,
-  getOtherParentId,
-  calculateEndDateForPeriodWithStartAndLength,
-  calculatePeriodLengthInMonths,
-  applicantIsMale,
 } from './parentalLeaveUtils'
-import { PersonInformation } from '../types'
 
 function buildApplication(data?: {
   answers?: FormValue

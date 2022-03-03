@@ -1,4 +1,4 @@
-import React, { PureComponent, FC } from 'react'
+import React, { FC,PureComponent } from 'react'
 import * as Sentry from '@sentry/react'
 
 import { Box, Text } from '@island.is/island-ui/core'

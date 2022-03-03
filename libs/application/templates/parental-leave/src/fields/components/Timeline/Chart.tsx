@@ -1,20 +1,22 @@
 import React, { FC, useRef } from 'react'
-import format from 'date-fns/format'
-import subMonths from 'date-fns/subMonths'
-import eachDayOfInterval from 'date-fns/eachDayOfInterval'
-import toDate from 'date-fns/toDate'
-import closestIndexTo from 'date-fns/closestIndexTo'
-import isSameDay from 'date-fns/isSameDay'
 import addMonths from 'date-fns/addMonths'
+import closestIndexTo from 'date-fns/closestIndexTo'
+import eachDayOfInterval from 'date-fns/eachDayOfInterval'
 import endOfMonth from 'date-fns/endOfMonth'
+import format from 'date-fns/format'
+import isSameDay from 'date-fns/isSameDay'
 import parseISO from 'date-fns/parseISO'
+import subMonths from 'date-fns/subMonths'
+import toDate from 'date-fns/toDate'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 
 import { useDrag } from '../utils'
-import * as styles from './Chart.css'
+
 import { TimelinePeriod } from './Timeline'
+
+import * as styles from './Chart.css'
 
 const ChartMonths: FC<{
   initDate: Date
