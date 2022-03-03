@@ -287,7 +287,7 @@ export class ApplicationModel extends Model<Application> {
   @Column({
     type: DataType.UUID,
     allowNull: true,
-    unique: true
+    unique: true,
   })
   @ApiProperty()
   applicationId: string
