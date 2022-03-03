@@ -1,57 +1,36 @@
-import { findLastGoodBuild, WorkflowQueries } from './detection'
+import { LocalRunner } from './ci-io'
+import { findBestGoodRefBranch, findBestGoodRefPR } from './change-detection'
 import { Octokit } from '@octokit/action'
-// For local development
-// import { Octokit } from '@octokit/rest'
+import { SimpleGit } from './simple-git'
+import { WorkflowID } from './git-action-status'
+;(async () => {
+  const runner = new LocalRunner(new Octokit())
+  let git = new SimpleGit(process.env.REPO_ROOT!, process.env.SHELL!)
 
-const repository = process.env.GITHUB_REPOSITORY || '/'
-const [owner, repo] = repository.split('/')
-const workflow_file_name = 'push.yml'
-const octokit = new Octokit()
-// For local development
-//   {
-//   auth: process.env.GITHUB_TOKEN,
-// }
+  const diffWeight = (s: string[]) => s.length
+  const rev =
+    process.env.GITHUB_EVENT_NAME === 'pull_request'
+      ? await findBestGoodRefPR(
+          diffWeight,
+          git,
+          runner,
+          process.env.HEAD_REF!,
+          process.env.BASE_REF!,
+          process.env.PR_REF!,
+          process.env.WORKFLOW_ID! as WorkflowID,
+        )
+      : await findBestGoodRefBranch(
+          diffWeight,
+          git,
+          runner,
+          process.env.HEAD_REF!,
+          process.env.BASE_REF!,
+          process.env.WORKFLOW_ID! as WorkflowID,
+        )
 
-class GitHubWorkflowQueries implements WorkflowQueries {
-  async getData(branch: string) {
-    return (
-      await octokit.request(
-        'GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs',
-        {
-          owner,
-          repo,
-          branch,
-          workflow_id: workflow_file_name,
-          status: 'success',
-        },
-      )
-    ).data
+  if (rev === 'rebuild') {
+    console.log(`Full rebuild needed`)
+  } else {
+    console.log(JSON.stringify(rev))
   }
-
-  async getJobs(jobs_url: string) {
-    return (await octokit.request(jobs_url)).data
-  }
-}
-
-var readline = require('readline')
-var rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-  terminal: false,
-})
-
-const shas: string[] = []
-
-rl.on('line', function (line) {
-  shas.push(line)
-})
-
-rl.on('close', async function () {
-  const result = await findLastGoodBuild(
-    shas,
-    process.env.BRANCH || process.env.GIT_BRANCH,
-    process.env.BASE_BRANCH || 'main',
-    new GitHubWorkflowQueries(),
-  )
-  console.log(JSON.stringify(result))
-})
+})()
