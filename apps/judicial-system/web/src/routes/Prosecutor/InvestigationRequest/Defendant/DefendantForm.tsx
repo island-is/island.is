@@ -28,8 +28,7 @@ import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/for
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { defendant as m } from '@island.is/judicial-system-web/messages'
-import * as constants from '@island.is/judicial-system-web/src/utils/constants'
-
+import * as constants from '@island.is/judicial-system/consts'
 import LokeCaseNumber from '../../SharedComponents/LokeCaseNumber/LokeCaseNumber'
 import DefendantInfo from '../../SharedComponents/DefendantInfo/DefendantInfo'
 
@@ -86,9 +85,12 @@ const DefendantForm: React.FC<Props> = (props) => {
   const handleDeleteDefendant = async (defendant: Defendant) => {
     if (workingCase.defendants && workingCase.defendants.length > 1) {
       if (workingCase.id) {
-        const { data } = await deleteDefendant(workingCase.id, defendant.id)
+        const defendantDeleted = await deleteDefendant(
+          workingCase.id,
+          defendant.id,
+        )
 
-        if (data?.deleteDefendant.deleted && workingCase.defendants) {
+        if (defendantDeleted && workingCase.defendants) {
           removeDefendantFromState(defendant)
         } else {
           // TODO: handle error
@@ -108,6 +110,24 @@ const DefendantForm: React.FC<Props> = (props) => {
         ),
       })
     }
+  }
+
+  const handleCreateDefendantClick = async () => {
+    if (workingCase.id) {
+      const defendantId = await createDefendant(workingCase.id, {
+        gender: undefined,
+        name: '',
+        address: '',
+        nationalId: '',
+        citizenship: '',
+      })
+
+      createEmptyDefendant(defendantId)
+    } else {
+      createEmptyDefendant()
+    }
+
+    window.scrollTo(0, document.body.scrollHeight)
   }
 
   const createEmptyDefendant = (defendantId?: string) => {
@@ -253,22 +273,7 @@ const DefendantForm: React.FC<Props> = (props) => {
                 <Button
                   variant="ghost"
                   icon="add"
-                  onClick={async () => {
-                    if (workingCase.id) {
-                      const { data } = await createDefendant(workingCase.id, {
-                        gender: undefined,
-                        name: '',
-                        address: '',
-                        nationalId: '',
-                        citizenship: '',
-                      })
-                      createEmptyDefendant(data?.createDefendant.id)
-                    } else {
-                      createEmptyDefendant()
-                    }
-
-                    window.scrollTo(0, document.body.scrollHeight)
-                  }}
+                  onClick={handleCreateDefendantClick}
                   disabled={workingCase.defendants?.some(
                     (defendant) =>
                       (!isBusiness(defendant.nationalId) &&

@@ -4,46 +4,33 @@ import { pdfRequest } from './../lib/requests/pdf'
 describe('Pdf request', () => {
   describe('Invalid input - throws error', () => {
     test('year is too long', () => {
-      expect(() => pdfRequest('', '', '0000000000', '19999')).toThrowError(
+      expect(() => pdfRequest('', '', '', '0000000000', 19999)).toThrowError(
         PreconditionFailedException,
       )
     })
 
     test('year is too short', () => {
-      expect(() => pdfRequest('', '', '0000000000', '199')).toThrowError(
-        PreconditionFailedException,
-      )
-    })
-
-    test('year has non numeric values', () => {
-      expect(() => pdfRequest('', '', '0000000000', '199$')).toThrowError(
+      expect(() => pdfRequest('', '', '', '0000000000', 199)).toThrowError(
         PreconditionFailedException,
       )
     })
 
     test('nationalId is too long', () => {
-      expect(() => pdfRequest('', '', '00000000001', '1999')).toThrowError(
+      expect(() => pdfRequest('', '', '', '00000000001', 1999)).toThrowError(
         PreconditionFailedException,
       )
     })
 
     test('nationalId is too short', () => {
-      expect(() => pdfRequest('', '', '000000000', '1999')).toThrowError(
+      expect(() => pdfRequest('', '', '', '000000000', 1999)).toThrowError(
         PreconditionFailedException,
       )
     })
 
     test('nationalId has non numeric value', () => {
-      expect(() => pdfRequest('', '', '000000000!', '1999')).toThrowError(
+      expect(() => pdfRequest('', '', '', '000000000!', 1999)).toThrowError(
         PreconditionFailedException,
       )
-    })
-  })
-
-  describe('Valid input', () => {
-    test('Should return request', () => {
-      const value = pdfRequest('', '', '0000000000', '1999')
-      expect(typeof value).toBe('string')
     })
   })
 })
