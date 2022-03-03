@@ -290,5 +290,5 @@ export class ApplicationModel extends Model<Application> {
     unique: true,
   })
   @ApiProperty()
-  applicationId: string
+  applicationSystemId: string
 }

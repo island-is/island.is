@@ -129,5 +129,5 @@ export class CreateApplicationInput implements CreateApplication {
 
   @Allow()
   @Field({ nullable: true })
-  readonly applicationId?: string
+  readonly applicationSystemId?: string
 }

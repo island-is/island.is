@@ -214,7 +214,7 @@ export interface CreateApplication {
   postalCode?: string
   city?: string
   municipalityCode?: string
-  applicationId?: string
+  applicationSystemId?: string
 }
 
 export interface ApplicantEmailData {
@@ -294,7 +294,7 @@ export interface Application {
   city?: string
   municipalityCode?: string
   directTaxPayments: DirectTaxPayment[]
-  applicationId?: string
+  applicationSystemId?: string
 }
 
 export interface GetSignedUrlForId {

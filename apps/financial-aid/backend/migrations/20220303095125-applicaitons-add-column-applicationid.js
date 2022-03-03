@@ -6,7 +6,7 @@ module.exports = {
       Promise.all([
         queryInterface.addColumn(
           'applications',
-          'application_id',
+          'application_system_id',
           {
             type: Sequelize.UUID,
             allowNull: true,
@@ -21,7 +21,7 @@ module.exports = {
   down: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction((t) =>
       Promise.all([
-        queryInterface.removeColumn('applications', 'application_id', {
+        queryInterface.removeColumn('applications', 'application_system_id', {
           transaction: t,
         }),
       ]),

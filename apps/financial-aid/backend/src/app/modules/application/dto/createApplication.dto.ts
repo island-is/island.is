@@ -161,5 +161,5 @@ export class CreateApplicationDto {
   @IsOptional()
   @IsUUID()
   @ApiProperty()
-  readonly applicationId: string
+  readonly applicationSystemId: string
 }
