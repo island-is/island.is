@@ -556,6 +556,16 @@ export class Case extends Model<Case> {
   courtCaseFacts?: string
 
   /**********
+   * Introduction to the case
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiProperty()
+  introduction?: string
+
+  /**********
    * The legal arguments presented by the prosecutor - autofilled from legalArguments -
    * possibly modified by the court
    **********/

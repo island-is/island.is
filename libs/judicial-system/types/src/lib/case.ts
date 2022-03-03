@@ -144,6 +144,7 @@ export interface Case {
   courtDocuments?: string[]
   sessionBookings?: string
   courtCaseFacts?: string
+  introduction?: string
   courtLegalArguments?: string
   ruling?: string
   decision?: CaseDecision
@@ -228,6 +229,7 @@ export interface UpdateCase {
   courtDocuments?: string[]
   sessionBookings?: string
   courtCaseFacts?: string
+  introduction?: string
   courtLegalArguments?: string
   ruling?: string
   decision?: CaseDecision
