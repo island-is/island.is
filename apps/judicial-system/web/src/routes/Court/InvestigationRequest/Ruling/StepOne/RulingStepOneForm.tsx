@@ -7,6 +7,7 @@ import {
   Decision,
   FormContentContainer,
   FormFooter,
+  PdfButton,
   PoliceRequestAccordionItem,
   RulingInput,
 } from '@island.is/judicial-system-web/src/components'
@@ -19,15 +20,18 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isRulingStepOneValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-import { icRulingStepOne as m } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  icRulingStepOne as m,
+} from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system/consts'
 
 interface Props {
   workingCase: Case
@@ -44,7 +48,8 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
 
   const [courtCaseFactsEM, setCourtCaseFactsEM] = useState<string>('')
   const [courtLegalArgumentsEM, setCourtLegalArgumentsEM] = useState<string>('')
-  const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState('')
+  const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState<string>('')
+  const [conclusionEM, setConclusionEM] = useState<string>('')
 
   return (
     <>
@@ -89,7 +94,9 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
             name="prosecutorDemands"
             label={formatMessage(m.sections.prosecutorDemands.label)}
             value={workingCase.prosecutorDemands || ''}
-            placeholder={formatMessage(m.sections.prosecutorDemands.label)}
+            placeholder={formatMessage(
+              m.sections.prosecutorDemands.placeholder,
+            )}
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'prosecutorDemands',
@@ -115,6 +122,7 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
             hasError={prosecutorDemandsEM !== ''}
             textarea
             rows={7}
+            autoExpand={{ on: true, maxHeight: 300 }}
             required
           />
         </Box>
@@ -159,6 +167,7 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
               hasError={courtCaseFactsEM !== ''}
               textarea
               rows={16}
+              autoExpand={{ on: true, maxHeight: 600 }}
               required
             />
           </Box>
@@ -206,9 +215,23 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
               hasError={courtLegalArgumentsEM !== ''}
               textarea
               rows={16}
+              autoExpand={{ on: true, maxHeight: 600 }}
               required
             />
           </Box>
+        </Box>
+        <Box component="section" marginBottom={5}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              {formatMessage(m.sections.ruling.title)}
+            </Text>
+          </Box>
+          <RulingInput
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+            isCaseUpToDate={isCaseUpToDate}
+            isRequired
+          />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
@@ -232,17 +255,51 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
             />
           </Box>
         </Box>
-        <Box component="section" marginBottom={8}>
+        <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {formatMessage(m.sections.ruling.title)}
+              {formatMessage(m.sections.conclusion.title)}
             </Text>
           </Box>
-          <RulingInput
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-            isCaseUpToDate={isCaseUpToDate}
-            isRequired
+          <Input
+            name="conclusion"
+            label={formatMessage(m.sections.conclusion.label)}
+            placeholder={formatMessage(m.sections.conclusion.placeholder)}
+            value={workingCase.conclusion || ''}
+            onChange={(event) =>
+              removeTabsValidateAndSet(
+                'conclusion',
+                event.target.value,
+                ['empty'],
+                workingCase,
+                setWorkingCase,
+                conclusionEM,
+                setConclusionEM,
+              )
+            }
+            onBlur={(event) =>
+              validateAndSendToServer(
+                'conclusion',
+                event.target.value,
+                ['empty'],
+                workingCase,
+                updateCase,
+                setConclusionEM,
+              )
+            }
+            hasError={conclusionEM !== ''}
+            errorMessage={conclusionEM}
+            rows={7}
+            autoExpand={{ on: true, maxHeight: 300 }}
+            textarea
+            required
+          />
+        </Box>
+        <Box marginBottom={10}>
+          <PdfButton
+            caseId={workingCase.id}
+            title={formatMessage(core.pdfButtonRuling)}
+            pdfType="ruling"
           />
         </Box>
       </FormContentContainer>

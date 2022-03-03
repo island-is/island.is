@@ -11,6 +11,12 @@ import { Op } from 'sequelize'
 import { ApiScope } from '../entities/models/api-scope.model'
 import { IdentityResource } from '../entities/models/identity-resource.model'
 import startOfDay from 'date-fns/startOfDay'
+import {
+  PersonalRepresentative,
+  PersonalRepresentativeRight,
+  PersonalRepresentativeRightType,
+  PersonalRepresentativeScopePermission,
+} from '../personal-representative'
 
 @Injectable()
 export class DelegationScopeService {
@@ -104,6 +110,7 @@ export class DelegationScopeService {
 
   async findAllProcurationScopes(): Promise<string[]> {
     const apiScopes = await this.apiScopeModel.findAll({
+      attributes: ['name'],
       where: {
         grantToProcuringHolders: true,
         alsoForDelegatedUser: false,
@@ -111,6 +118,7 @@ export class DelegationScopeService {
     })
 
     const identityResources = await this.identityResourceModel.findAll({
+      attributes: ['name'],
       where: {
         grantToProcuringHolders: true,
         alsoForDelegatedUser: false,
@@ -125,6 +133,7 @@ export class DelegationScopeService {
 
   async findAllLegalGuardianScopes(): Promise<string[]> {
     const apiScopes = await this.apiScopeModel.findAll({
+      attributes: ['name'],
       where: {
         grantToLegalGuardians: true,
         alsoForDelegatedUser: false,
@@ -132,6 +141,7 @@ export class DelegationScopeService {
     })
 
     const identityResources = await this.identityResourceModel.findAll({
+      attributes: ['name'],
       where: {
         grantToLegalGuardians: true,
         alsoForDelegatedUser: false,
@@ -144,14 +154,68 @@ export class DelegationScopeService {
     ]
   }
 
+  async findPersonalRepresentativeScopes(
+    toNationalId: string,
+    fromNationalId: string,
+  ): Promise<string[]> {
+    const apiScopes = await this.apiScopeModel.findAll({
+      attributes: ['name'],
+      where: {
+        enabled: true,
+        grantToPersonalRepresentatives: true,
+        alsoForDelegatedUser: false,
+      },
+      include: [
+        {
+          model: PersonalRepresentativeScopePermission,
+          required: true,
+          include: [
+            {
+              model: PersonalRepresentativeRightType,
+              required: true,
+              where: {
+                validFrom: {
+                  [Op.or]: { [Op.eq]: null, [Op.lt]: new Date() },
+                },
+                validTo: {
+                  [Op.or]: { [Op.eq]: null, [Op.gt]: new Date() },
+                },
+              },
+              include: [
+                {
+                  model: PersonalRepresentativeRight,
+                  required: true,
+                  include: [
+                    {
+                      model: PersonalRepresentative,
+                      required: true,
+                      where: {
+                        nationalIdPersonalRepresentative: toNationalId,
+                        nationalIdRepresentedPerson: fromNationalId,
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    })
+
+    return apiScopes.map((s) => s.name)
+  }
+
   async findAllAutomaticScopes(): Promise<string[]> {
     const apiScopes = await this.apiScopeModel.findAll({
+      attributes: ['name'],
       where: {
         automaticDelegationGrant: true,
       },
     })
 
     const identityResources = await this.identityResourceModel.findAll({
+      attributes: ['name'],
       where: {
         automaticDelegationGrant: true,
       },

@@ -9,6 +9,7 @@ import {
 } from '@island.is/clients/national-registry-v2'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
+import { CACHE_MANAGER } from '@nestjs/common'
 
 const user: User = {
   nationalId: '1326487905',
@@ -54,6 +55,13 @@ describe('UserService', () => {
           provide: NationalRegistryService,
           useClass: jest.fn(() => ({
             getUser: () => ({}),
+          })),
+        },
+        {
+          provide: CACHE_MANAGER,
+          useClass: jest.fn(() => ({
+            get: () => ({}),
+            set: () => ({}),
           })),
         },
       ],

@@ -1,27 +1,23 @@
 import faker from 'faker'
 
-import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
+import { Case, CaseState } from '@island.is/judicial-system/types'
 import {
   makeInvestigationCase,
   makeCourt,
 } from '@island.is/judicial-system/formatters'
+import {
+  IC_COURT_HEARING_ARRANGEMENTS_ROUTE,
+  IC_COURT_RECORD_ROUTE,
+} from '@island.is/judicial-system/consts'
 
 import { intercept } from '../../../utils'
 
-describe('/domur/rannsoknarheimild/fyrirtaka/:id', () => {
+describe(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   beforeEach(() => {
     cy.login()
-    const caseData = makeInvestigationCase()
-    const caseDataAddition: Case = {
-      ...caseData,
-      court: makeCourt(),
-      requestedCourtDate: '2020-09-16T19:50:08.033Z',
-      state: CaseState.RECEIVED,
-    }
 
     cy.stubAPIResponses()
-
-    intercept(caseDataAddition)
+    cy.visit(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/test_id_stadfest`)
   })
 
   it('should display case comments', () => {
@@ -32,7 +28,6 @@ describe('/domur/rannsoknarheimild/fyrirtaka/:id', () => {
       comments: comment,
     }
 
-    cy.visit('/domur/rannsoknarheimild/fyrirtaka/test_id_stadfest')
     intercept(caseDataAddition)
 
     cy.contains(comment)
@@ -42,19 +37,13 @@ describe('/domur/rannsoknarheimild/fyrirtaka/:id', () => {
     const caseData = makeInvestigationCase()
     const caseDataAddition: Case = {
       ...caseData,
-      // judge: makeJudge(),
       court: makeCourt(),
       requestedCourtDate: '2020-09-16T19:50:08.033Z',
       state: CaseState.RECEIVED,
     }
 
-    cy.visit('/domur/rannsoknarheimild/fyrirtaka/test_id_stadfest')
     intercept(caseDataAddition)
 
-    cy.getByTestid('select-judge').click()
-    cy.get('#react-select-judge-option-0').click()
-    cy.getByTestid('select-registrar').click()
-    cy.get('#react-select-registrar-option-0').click()
     cy.get('[name="session-arrangements-all-present"]').click()
     cy.getByTestid('courtroom').type('1337')
     cy.getByTestid('continueButton').click()
@@ -70,15 +59,12 @@ describe('/domur/rannsoknarheimild/fyrirtaka/:id', () => {
       state: CaseState.RECEIVED,
     }
 
-    cy.visit('/domur/rannsoknarheimild/fyrirtaka/test_id_stadfest')
     intercept(caseDataAddition)
 
-    cy.getByTestid('select-judge').click()
-    cy.get('#react-select-judge-option-0').click()
     cy.get('[name="session-arrangements-all-present"]').click()
     cy.getByTestid('continueButton').should('not.be.disabled')
     cy.getByTestid('continueButton').click()
     cy.getByTestid('modalSecondaryButton').click()
-    cy.url().should('include', '/domur/rannsoknarheimild/thingbok')
+    cy.url().should('include', IC_COURT_RECORD_ROUTE)
   })
 })

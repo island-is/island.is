@@ -48,6 +48,10 @@ export interface InputComponentProps {
    */
   fixedFocusState?: boolean
   autoComplete?: 'on' | 'off'
+  autoExpand?: {
+    on: boolean
+    maxHeight?: number
+  }
 }
 
 export interface InputProps extends InputComponentProps {
