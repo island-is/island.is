@@ -77,13 +77,13 @@ export const EditChange = (props: EditChangeProp) => {
     Regulation | undefined
   >() // Target reglugerðin sem á að breyta
   const minDate = useGetMinDateByName(draft.impacts, change.name)
-  const [
-    mostFutureDraftImpact,
-    setMostFutureDraftImpact,
-  ] = useState<DraftRegulationChange>()
+  const [baseValue, setBaseValue] = useState<
+    Regulation | DraftRegulationChange
+  >() // Base regulation to display in diff mode
 
   const [showEditor, setShowEditor] = useState(false)
   const today = toISODate(new Date())
+
   const [createDraftRegulationChange] = useMutation(
     CREATE_DRAFT_REGULATION_CHANGE,
   )
@@ -91,15 +91,16 @@ export const EditChange = (props: EditChangeProp) => {
     UPDATE_DRAFT_REGULATION_CHANGE,
   )
 
+  const { data: draftImpacts } = useGetRegulationImpactsQuery(activeChange.name)
   const { data: regulation } = useGetRegulationFromApiQuery(
     change.name,
-    toISODate(minDate) ?? today,
+    toISODate(minDate) || today,
   )
+
   useEffect(() => {
     setActiveRegulation(regulation)
+    setBaseValue(regulation)
   }, [regulation])
-
-  const { data: draftImpacts } = useGetRegulationImpactsQuery(activeChange.name)
 
   const { effects } = useMemo(() => {
     const effects = activeRegulation?.history.reduce<Effects>(
@@ -116,9 +117,48 @@ export const EditChange = (props: EditChangeProp) => {
     }
   }, [activeRegulation, today])
 
+  console.log('effects', effects)
   useEffect(() => {
-    setShowEditor(!!activeRegulation && !!activeChange)
-  }, [activeRegulation, activeChange])
+    const draft =
+      draftImpacts &&
+      draftImpacts.length > 0 &&
+      (draftImpacts?.reduce((prev, next) => {
+        if (prev.date && next.date)
+          if (
+            new Date(prev.date.toString()).getTime() <=
+            new Date(next.date.toString()).getTime()
+          ) {
+            return next
+          } else {
+            return prev
+          }
+        return next
+      }) as DraftRegulationChange)
+
+    console.log('draftImpacts', draftImpacts)
+    console.log('draft', draft)
+    if (draft) {
+      setBaseValue(draft)
+      setActiveChange({
+        ...activeChange,
+        text: fHtml(draft.text, true),
+        title: fText(draft.title),
+        appendixes: draft.appendixes.map((a, i) =>
+          makeDraftAppendixForm(a, String(i)),
+        ),
+      })
+    } else if (!change.id && !activeChange.title.value && activeRegulation) {
+      setActiveChange({
+        ...activeChange,
+        text: fHtml(activeRegulation.text, true),
+        title: fText(activeRegulation.title),
+        appendixes: activeRegulation.appendixes.map((a, i) =>
+          makeDraftAppendixForm(a, String(i)),
+        ),
+      })
+    }
+    setShowEditor(!!activeRegulation && !!draftImpacts)
+  }, [activeRegulation, draftImpacts])
 
   const changeDate = (newDate: Date | undefined) => {
     setActiveChange({
@@ -278,47 +318,6 @@ export const EditChange = (props: EditChangeProp) => {
     revokeAppendix: (idx: number, revoked: boolean) => undefined,
   }
 
-  useEffect(() => {
-    const draft =
-      draftImpacts &&
-      draftImpacts.length > 0 &&
-      (draftImpacts?.reduce((prev, next) => {
-        if (prev.date && next.date)
-          if (
-            new Date(prev.date.toString()).getTime() <=
-            new Date(next.date.toString()).getTime()
-          ) {
-            return next
-          } else {
-            return prev
-          }
-        return next
-      }) as DraftRegulationChange)
-
-    if (draft) {
-      //setMostFutureDraftImpact(draft)
-      setActiveChange({
-        ...activeChange,
-        text: fHtml(draft.text, true),
-        title: fText(draft.title),
-        appendixes: draft.appendixes.map((a, i) =>
-          makeDraftAppendixForm(a, String(i)),
-        ),
-      })
-    } else {
-      if (!change.id && !activeChange.title.value && activeRegulation) {
-        setActiveChange({
-          ...activeChange,
-          text: fHtml(activeRegulation.text, true),
-          title: fText(activeRegulation.title),
-          appendixes: activeRegulation.appendixes.map((a, i) =>
-            makeDraftAppendixForm(a, String(i)),
-          ),
-        })
-      }
-    }
-  }, [draftImpacts, activeRegulation])
-
   return (
     <LayoverModal closeModal={closeModal} id="EditChangeModal">
       {draft && (
@@ -389,9 +388,9 @@ export const EditChange = (props: EditChangeProp) => {
                     readOnly={readOnly}
                     error={undefined}
                   />
-                  {activeChange.title.value !== activeRegulation?.title && (
+                  {activeChange.title.value !== baseValue?.title && (
                     <MiniDiff
-                      older={activeRegulation?.title || ''}
+                      older={baseValue?.title || ''}
                       newer={activeChange.title.value}
                     />
                   )}
@@ -402,13 +401,7 @@ export const EditChange = (props: EditChangeProp) => {
                   </Text>
                   <EditorInput
                     label=""
-                    baseText={
-                      activeRegulation?.text
-
-                      // mostFutureDraftImpact
-                      //   ? mostFutureDraftImpact.text
-                      //   : activeRegulation?.text
-                    }
+                    baseText={baseValue?.text}
                     value={activeChange.text.value}
                     onChange={(newValue) => changeRegulationText(newValue)}
                     draftId={draft.id}
