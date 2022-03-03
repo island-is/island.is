@@ -27,8 +27,10 @@ import { requests as m } from '@island.is/judicial-system-web/messages/Core/requ
 import useSections from '@island.is/judicial-system-web/src/utils/hooks/useSections'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
+
 import ActiveRequests from './ActiveRequests'
 import PastRequests from './PastRequests'
+import TableSkeleton from './TableSkeleton'
 import * as styles from './Requests.css'
 
 // Credit for sorting solution: https://www.smashingmagazine.com/2020/03/sortable-tables-react/
@@ -187,31 +189,35 @@ export const Requests: React.FC = () => {
 
   return (
     <div className={styles.requestsContainer}>
-      {user && (
-        <div className={styles.logoContainer}>
-          <Logo />
-          {isProsecutor && (
-            <DropdownMenu
-              menuLabel="Tegund kröfu"
-              icon="add"
-              items={[
-                {
-                  href: Constants.STEP_ONE_CUSTODY_REQUEST_ROUTE,
-                  title: 'Gæsluvarðhald',
-                },
-                {
-                  href: Constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE,
-                  title: 'Farbann',
-                },
-                {
-                  href: Constants.NEW_IC_ROUTE,
-                  title: 'Rannsóknarheimild',
-                },
-              ]}
-              title="Stofna nýja kröfu"
-            />
-          )}
-        </div>
+      {loading ? (
+        <TableSkeleton />
+      ) : (
+        user && (
+          <div className={styles.logoContainer}>
+            <Logo />
+            {isProsecutor && (
+              <DropdownMenu
+                menuLabel="Tegund kröfu"
+                icon="add"
+                items={[
+                  {
+                    href: Constants.STEP_ONE_CUSTODY_REQUEST_ROUTE,
+                    title: 'Gæsluvarðhald',
+                  },
+                  {
+                    href: Constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE,
+                    title: 'Farbann',
+                  },
+                  {
+                    href: Constants.NEW_IC_ROUTE,
+                    title: 'Rannsóknarheimild',
+                  },
+                ]}
+                title="Stofna nýja kröfu"
+              />
+            )}
+          </div>
+        )
       )}
       {activeCases || pastCases ? (
         <>
@@ -223,7 +229,7 @@ export const Requests: React.FC = () => {
                  * Safari has a bug that doesn't allow that. See more
                  * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
                  */}
-                <Text variant="h3" id="activeRequestsTableCaption">
+                <Text variant="h3" id="activeCasesTableCaption">
                   {formatMessage(
                     isPrisonUser
                       ? m.sections.activeRequests.prisonStaffUsers.title
@@ -280,7 +286,7 @@ export const Requests: React.FC = () => {
              * Safari has a bug that doesn't allow that. See more
              * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
              */}
-            <Text variant="h3" id="activeRequestsTableCaption">
+            <Text variant="h3" id="activeCasesTableCaption">
               {formatMessage(
                 isHighCourtUser
                   ? m.sections.pastRequests.highCourtUsers.title
