@@ -48,12 +48,13 @@ export const notifications = {
       description:
         'Notaður sem texti í pósti til sækjanda vegna undirritunar úrskúrðar ef ekki tókst að vista úrskurð í AWS S3',
     },
-    courtBodyAttachment: {
+    courtBody: {
       id:
         'judicial.system.backend:notifications.signed_ruling.court_body_attachment',
-      defaultMessage: 'Ekki tókst að vista meðfylgjandi skjal í Auði.',
+      defaultMessage:
+        'Ekki tókst að vista þingbók og/eða úrskurð í máli {courtCaseNumber} í Auði.<br /><br />Skjöl málsins eru aðengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
       description:
-        'Notaður sem texti í pósti til dómara og dómritara vegna undirritunar úrskúrðar ef ekki tókst að vista úrskurð í Auði',
+        'Notaður sem texti í pósti til dómara og dómritara vegna undirritunar úrskúrðar ef ekki tókst að vista þingbók eða úrskurð í Auði',
     },
     defenderBodyAttachment: {
       id:

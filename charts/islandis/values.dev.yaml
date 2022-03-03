@@ -1575,6 +1575,7 @@ user-notification-worker:
     - 'node'
   enabled: true
   env:
+    CONTENTFUL_HOST: 'preview.contentful.com'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     IDENTITY_SERVER_PATH: 'https://identity-server.dev01.devland.is'
     MAIN_QUEUE_NAME: 'user-notification'

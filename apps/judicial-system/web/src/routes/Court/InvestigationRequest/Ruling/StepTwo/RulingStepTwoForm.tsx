@@ -59,42 +59,6 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={7}>
           <CaseInfo workingCase={workingCase} userRole={user?.role} />
         </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.conclusion.title)}
-            </Text>
-          </Box>
-
-          <Input
-            name="conclusion"
-            label={formatMessage(m.sections.conclusion.label)}
-            placeholder={formatMessage(m.sections.conclusion.placeholder)}
-            value={workingCase.conclusion || ''}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'conclusion',
-                event.target.value,
-                [],
-                workingCase,
-                setWorkingCase,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'conclusion',
-                event.target.value,
-                [],
-                workingCase,
-                updateCase,
-              )
-            }
-            rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
-            textarea
-            required
-          />
-        </Box>
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
