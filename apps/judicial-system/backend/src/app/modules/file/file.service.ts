@@ -11,7 +11,8 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { CaseFileState, User } from '@island.is/judicial-system/types'
+import { CaseFileState } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import { writeFile } from '../../formatters'
