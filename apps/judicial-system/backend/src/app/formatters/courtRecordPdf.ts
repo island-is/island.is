@@ -14,7 +14,6 @@ import {
   lowercase,
   formatAppeal,
   formatRequestCaseType,
-  formatNationalId,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
