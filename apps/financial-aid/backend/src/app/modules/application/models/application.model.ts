@@ -275,7 +275,7 @@ export class ApplicationModel extends Model<Application> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: true,
+    allowNull: false,
   })
   @ApiProperty()
   municipalityCode: string

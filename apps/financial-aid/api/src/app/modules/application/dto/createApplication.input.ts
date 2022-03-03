@@ -116,8 +116,8 @@ export class CreateApplicationInput implements CreateApplication {
   readonly streetName?: string
 
   @Allow()
-  @Field({ nullable: true })
-  readonly municipalityCode?: string
+  @Field()
+  readonly municipalityCode!: string
 
   @Allow()
   @Field({ nullable: true })
