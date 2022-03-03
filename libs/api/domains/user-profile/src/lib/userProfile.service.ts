@@ -173,6 +173,8 @@ export class UserProfileService {
       locale: input.locale as string,
       smsCode: input.smsCode,
       emailCode: input.emailCode,
+      emailStatus: input.emailStatus,
+      mobileStatus: input.mobileStatus,
 
       /**
        *  Mobile and email will be within islykill service
