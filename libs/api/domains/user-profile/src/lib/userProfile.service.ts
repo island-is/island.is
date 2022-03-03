@@ -47,10 +47,6 @@ export class UserProfileService {
 
   async getIslykillProfile(user: User) {
     try {
-      const islyklarData = await this.islyklarService.getIslykillSettings(
-        user.nationalId,
-      )
-
       const feature = await this.featureFlagService.getValue(
         Features.personalInformation,
         false,
@@ -59,6 +55,10 @@ export class UserProfileService {
       if (!feature) {
         return null
       }
+
+      const islyklarData = await this.islyklarService.getIslykillSettings(
+        user.nationalId,
+      )
 
       return {
         nationalId: user.nationalId,

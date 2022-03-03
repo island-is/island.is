@@ -49,7 +49,6 @@ export const personalInformationModule: ServicePortalModule = {
       const profileExists = userProfileStatus?.hasData
       const dateDiffLate = userProfileStatus?.hasModifiedDateLate
 
-      // If the user profile is empty or has not been modified for 3 months, we render the onboarding modal
       const userDataShowModal = !profileExists || dateDiffLate
       if (
         // true
