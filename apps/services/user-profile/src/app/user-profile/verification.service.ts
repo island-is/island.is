@@ -16,7 +16,7 @@ import environment from '../../environments/environment'
 import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
 import { ConfirmSmsDto } from './dto/confirmSmsDto'
 import { ConfirmationDtoResponse } from './dto/confirmationResponseDto'
-import { pathToAsset } from './utils/pathToAsset'
+import { CodeEmailTemplate } from '../../assets/emails/template'
 
 export const SMS_VERIFICATION_MAX_AGE = 5 * 60 * 1000
 export const SMS_VERIFICATION_MAX_TRIES = 5
@@ -219,44 +219,7 @@ export class VerificationService {
           },
         ],
         subject: `Staðfesting á netfangi á Ísland.is`,
-        template: {
-          title: 'Staðfesting á netfangi',
-          body: [
-            {
-              component: 'Image',
-              context: {
-                src: pathToAsset('logo.jpg'),
-                alt: 'Ísland.is logo',
-              },
-            },
-            {
-              component: 'Heading',
-              context: { copy: 'Staðfesting á netfangi', small: true },
-            },
-            {
-              component: 'Copy',
-              context: { copy: 'Öryggiskóðinn þinn', small: true },
-            },
-            {
-              component: 'Heading',
-              context: { copy: verification.hash },
-            },
-            {
-              component: 'Copy',
-              context: {
-                copy:
-                  'Þetta er öryggiskóðinn þinn til staðfestingar á netfangi. Hann eyðist sjálfkrafa eftir 5mín, eftir þann tíma þarftu að láta senda nýjan í sama ferli og þú varst að fara gegnum.',
-              },
-            },
-            {
-              component: 'Copy',
-              context: {
-                copy:
-                  'Vinsamlegst hunsaðu þennan póst ef þú varst ekki að skrá netfangið þitt á Mínum síðum.',
-              },
-            },
-          ],
-        },
+        html: CodeEmailTemplate(verification.hash),
       })
     } catch (exception) {
       this.logger.error(exception)
