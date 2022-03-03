@@ -8,6 +8,17 @@ This library was generated with [Nx](https://nx.dev).
 
 Run `nx test api-domains-user-profile` to execute the unit tests via [Jest](https://jestjs.io).
 
+## Development
+
+To run this in development, you will need to start the service.
+
+```bash
+yarn start services-user-profile
+```
+
+To locally develop the islyklar service, you will need the islyklar.p12 file. The file is not part of the parameter store, so you will need to get it from the code-owners of this service.
+_Islyklar file is not a requirement to run the user-profile._
+
 ## Islyklar and Userprofile
 
 With the addition of the islyklar service, the userprofile service will be a little different.
