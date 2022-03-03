@@ -229,7 +229,7 @@ export const Requests: React.FC = () => {
                  * Safari has a bug that doesn't allow that. See more
                  * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
                  */}
-                <Text variant="h3" id="activeRequestsTableCaption">
+                <Text variant="h3" id="activeCasesTableCaption">
                   {formatMessage(
                     isPrisonUser
                       ? m.sections.activeRequests.prisonStaffUsers.title
@@ -286,7 +286,7 @@ export const Requests: React.FC = () => {
              * Safari has a bug that doesn't allow that. See more
              * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
              */}
-            <Text variant="h3" id="activeRequestsTableCaption">
+            <Text variant="h3" id="activeCasesTableCaption">
               {formatMessage(
                 isHighCourtUser
                   ? m.sections.pastRequests.highCourtUsers.title
