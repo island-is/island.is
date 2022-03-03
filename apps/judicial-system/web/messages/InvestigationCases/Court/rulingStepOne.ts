@@ -139,5 +139,28 @@ export const icRulingStepOne = {
           'Notaður sem titill fyrir "Niðurstaða" hlutann á úrskurðar skrefi í rannsóknarheimildum.',
       },
     }),
+    conclusion: defineMessages({
+      title: {
+        id:
+          'judicial.system.investigation_cases:ruling_step_one.conclusion.title',
+        defaultMessage: 'Úrskurðarorð',
+        description:
+          'Notaður sem titill fyrir "Úrskurðarorð" hlutann á úrskurðar skrefi í rannsóknarheimildum.',
+      },
+      label: {
+        id:
+          'judicial.system.investigation_cases:ruling_step_one.conclusion.label',
+        defaultMessage: 'Úrskurðarorð',
+        description:
+          'Notaður sem titill fyrir "Úrskurðarorð" innsláttarsvæði á úrskurðar skrefi í rannsóknarheimildum.',
+      },
+      placeholder: {
+        id:
+          'judicial.system.investigation_cases:ruling_step_one.conclusion.placeholder',
+        defaultMessage: 'Hver eru úrskurðarorðin',
+        description:
+          'Notaður sem placeholder fyrir "Úrskurðarorð" innsláttarsvæði á úrskurðar skrefi í rannsóknarheimildum.',
+      },
+    }),
   },
 }

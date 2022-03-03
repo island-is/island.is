@@ -10,6 +10,7 @@ import {
   NationalRegistryService,
   NationalRegistryUser,
 } from '../../../nationalRegistry'
+import { CACHE_MANAGER } from '@nestjs/common'
 
 describe('PublicFlightController', () => {
   let publicFlightController: PublicFlightController
@@ -66,6 +67,15 @@ describe('PublicFlightController', () => {
           provide: NationalRegistryService,
           useClass: jest.fn(() => ({
             getUser: () => ({}),
+          })),
+        },
+        {
+          provide: CACHE_MANAGER,
+          useClass: jest.fn(() => ({
+            get: () => ({}),
+            set: () => ({}),
+            del: () => ({}),
+            ttl: () => ({}),
           })),
         },
       ],

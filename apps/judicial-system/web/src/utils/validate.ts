@@ -230,7 +230,8 @@ export const isRulingStepOneValidRC = (workingCase: Case) => {
     validate(workingCase.courtCaseFacts || '', 'empty').isValid &&
     validate(workingCase.courtLegalArguments || '', 'empty').isValid &&
     validate(workingCase.decision || '', 'empty').isValid &&
-    validate(workingCase.ruling || '', 'empty').isValid
+    validate(workingCase.ruling || '', 'empty').isValid &&
+    validate(workingCase.conclusion || '', 'empty').isValid
   )
 }
 
@@ -240,7 +241,8 @@ export const isRulingStepOneValidIC = (workingCase: Case) => {
     validate(workingCase.courtCaseFacts || '', 'empty').isValid &&
     validate(workingCase.courtLegalArguments || '', 'empty').isValid &&
     validate(workingCase.decision || '', 'empty').isValid &&
-    validate(workingCase.ruling || '', 'empty').isValid
+    validate(workingCase.ruling || '', 'empty').isValid &&
+    validate(workingCase.conclusion || '', 'empty').isValid
   )
 }
 
@@ -248,7 +250,6 @@ export const isRulingStepTwoValidRC = (workingCase: Case) => {
   return (
     workingCase.accusedAppealDecision &&
     workingCase.prosecutorAppealDecision &&
-    validate(workingCase.conclusion || '', 'empty').isValid &&
     validate(workingCase.courtEndTime || '', 'date-format').isValid
   )
 }
@@ -257,7 +258,6 @@ export const isRulingStepTwoValidIC = (workingCase: Case) => {
   return (
     workingCase.accusedAppealDecision &&
     workingCase.prosecutorAppealDecision &&
-    validate(workingCase.conclusion || '', 'empty').isValid &&
     validate(workingCase.courtEndTime || '', 'date-format').isValid
   )
 }
