@@ -130,6 +130,9 @@
       "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
       "@island.is/api/mocks-react": ["libs/api/mocks/src/react.ts"],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
+      "@island.is/application/api/core": [
+        "libs/application/api/core/src/index.ts"
+      ],
       "@island.is/application/core": ["libs/application/core/src/index.ts"],
       "@island.is/application/core/polyfills": [
         "libs/application/core/src/lib/polyfills.ts"
@@ -139,9 +142,6 @@
       ],
       "@island.is/application/graphql": [
         "libs/application/graphql/src/index.ts"
-      ],
-      "@island.is/application/nest/application": [
-        "libs/application/nest/application/src/index.ts"
       ],
       "@island.is/application/template-api-modules": [
         "libs/application/template-api-modules/src/index.ts"

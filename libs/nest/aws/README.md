@@ -1,3 +1,5 @@
+<!-- gitbook-navigation: "Aws" -->
+
 # Nest Aws
 
 This library was generated with [Nx](https://nx.dev).

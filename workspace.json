@@ -1493,6 +1493,27 @@
         }
       }
     },
+    "application-api-core": {
+      "root": "libs/application/api/core",
+      "sourceRoot": "libs/application/api/core/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/application/api/core/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/application/api/core"],
+          "options": {
+            "jestConfig": "libs/application/api/core/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "application-core": {
       "root": "libs/application/core",
       "sourceRoot": "libs/application/core/src",
@@ -1580,27 +1601,6 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/application/graphql"]
-        }
-      }
-    },
-    "application-nest-application": {
-      "root": "libs/application/nest/application",
-      "sourceRoot": "libs/application/nest/application/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/application/nest/application/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/application/nest/application"],
-          "options": {
-            "jestConfig": "libs/application/nest/application/jest.config.js",
-            "passWithNoTests": true
-          }
         }
       }
     },

@@ -22,7 +22,7 @@ import { PaymentModule } from '../payment/payment.module'
 import { LoggingModule } from '@island.is/logging'
 import { TemplateApiApplicationService } from './template-api.service'
 import { AwsModule } from '@island.is/nest/aws'
-import { ApplicationModule } from '@island.is/application/nest/application'
+import { ApplicationApiCoreModule } from '@island.is/application/api/core'
 
 let BullModule: DynamicModule
 
@@ -56,7 +56,7 @@ if (process.env.INIT_SCHEMA === 'true') {
       ...environment.templateApi,
       applicationService: TemplateApiApplicationService,
     }),
-    ApplicationModule,
+    ApplicationApiCoreModule,
     AwsModule,
     FileStorageModule.register(environment.fileStorage),
     BullModule,
@@ -75,4 +75,4 @@ if (process.env.INIT_SCHEMA === 'true') {
     ApplicationAccessService,
   ],
 })
-export class ApplicationsModule {}
+export class ApplicationModule {}

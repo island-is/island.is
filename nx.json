@@ -160,6 +160,9 @@
     "api-schema": {
       "tags": []
     },
+    "application-api-core": {
+      "tags": []
+    },
     "application-core": {
       "tags": []
     },
@@ -167,9 +170,6 @@
       "tags": []
     },
     "application-graphql": {
-      "tags": []
-    },
-    "application-nest-application": {
       "tags": []
     },
     "application-system-api": {

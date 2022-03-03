@@ -4,7 +4,7 @@ import {
   BaseTemplateApiApplicationService,
   TemplateAPIConfig,
 } from '@island.is/application/template-api-modules'
-import { ApplicationService } from '@island.is/application/nest/application'
+import { ApplicationService } from '@island.is/application/api/core'
 import { AwsService } from '@island.is/nest/aws'
 import { ConfigService } from '@nestjs/config'
 import { uuid } from 'uuidv4'

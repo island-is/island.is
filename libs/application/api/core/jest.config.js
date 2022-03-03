@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'application-nest-application',
+  displayName: 'application-api-core',
   preset: '../../../../jest.preset.js',
   globals: {
     'ts-jest': {
@@ -11,5 +11,5 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../../coverage/libs/application/nest/application',
+  coverageDirectory: '../../../../coverage/libs/application/api/core',
 }

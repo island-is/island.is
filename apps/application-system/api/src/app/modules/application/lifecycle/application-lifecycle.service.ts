@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import {
   ApplicationService,
   Application,
-} from '@island.is/application/nest/application'
+} from '@island.is/application/api/core'
 import { AwsService } from '@island.is/nest/aws'
 import AmazonS3URI from 'amazon-s3-uri'
 import { LOGGER_PROVIDER } from '@island.is/logging'

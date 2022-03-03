@@ -1,6 +1,6 @@
 import { OnQueueCompleted, Process, Processor } from '@nestjs/bull'
 import { Job } from 'bull'
-import { ApplicationService } from '@island.is/application/nest/application'
+import { ApplicationService } from '@island.is/application/api/core'
 import { FileStorageService } from '@island.is/file-storage'
 import { Inject } from '@nestjs/common'
 import type { ApplicationConfig } from './application.configuration'

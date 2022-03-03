@@ -10,14 +10,13 @@ import {
 import { ProblemModule } from '@island.is/nest/problem'
 
 import { SequelizeConfigService } from './sequelizeConfig.service'
-import { ApplicationsModule } from './modules/application/application.module'
-
+import { ApplicationModule } from './modules/application/application.module'
 @Module({
   imports: [
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
-    ApplicationsModule,
+    ApplicationModule,
     ProblemModule,
     ConfigModule.forRoot({
       isGlobal: true,
