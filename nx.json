@@ -60,7 +60,6 @@
     },
     "api": {
       "tags": [],
-      "implicitDependencies": ["application-ui-fields"]
     },
     "api-catalogue-consts": {
       "tags": []
@@ -486,7 +485,7 @@
     },
     "island-ui-storybook": {
       "tags": [],
-      "implicitDependencies": ["island-ui-core"]
+      "implicitDependencies": ["island-ui-core", "application-ui-fields"]
     },
     "island-ui-theme": {
       "tags": []
