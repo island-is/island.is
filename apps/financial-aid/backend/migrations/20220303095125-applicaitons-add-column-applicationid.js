@@ -10,7 +10,7 @@ module.exports = {
           {
             type: Sequelize.UUID,
             allowNull: true,
-            unique: true,
+            unique: false,
           },
           { transaction: t },
         ),
