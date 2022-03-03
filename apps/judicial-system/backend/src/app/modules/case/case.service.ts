@@ -830,6 +830,7 @@ export class CaseService {
               this.defendantService.create(
                 caseId,
                 {
+                  noNationalId: defendant.noNationalId,
                   nationalId: defendant.nationalId,
                   name: defendant.name,
                   gender: defendant.gender,
