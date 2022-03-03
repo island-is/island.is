@@ -75,7 +75,7 @@ export class Organisation extends Model<Organisation> {
 
   @HasOne(() => AdministrativeContact)
   @ApiPropertyOptional()
-  administrativeContact?: AdministrativeContact
+  administrativeContact?: any
 
   @HasOne(() => TechnicalContact)
   @ApiPropertyOptional()
