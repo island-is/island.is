@@ -113,6 +113,7 @@ export class AuditService {
       meta,
       ip: auth.ip,
       userAgent: auth.userAgent,
+      appVersion: process.env.APP_VERSION,
     }
 
     return this.useDevLogger ? { message: 'Audit record', ...message } : message

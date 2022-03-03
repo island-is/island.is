@@ -7,7 +7,8 @@ import { UserRole } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import { Institution } from '../institution'
-import { CreateUserDto, UpdateUserDto } from './dto'
+import { CreateUserDto } from './dto/createUser.dto'
+import { UpdateUserDto } from './dto/updateUser.dto'
 import { User } from './user.model'
 
 @Injectable()

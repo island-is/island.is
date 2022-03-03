@@ -30,12 +30,11 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
-import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import { icRulingStepTwo as m } from '@island.is/judicial-system-web/messages'
 import { isRulingStepTwoValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import type { Case } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-
+import * as Constants from '@island.is/judicial-system/consts'
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
@@ -59,41 +58,6 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
         </Box>
         <Box component="section" marginBottom={7}>
           <CaseInfo workingCase={workingCase} userRole={user?.role} />
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.conclusion.title)}
-            </Text>
-          </Box>
-
-          <Input
-            name="conclusion"
-            label={formatMessage(m.sections.conclusion.label)}
-            placeholder={formatMessage(m.sections.conclusion.placeholder)}
-            value={workingCase.conclusion || ''}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'conclusion',
-                event.target.value,
-                [],
-                workingCase,
-                setWorkingCase,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'conclusion',
-                event.target.value,
-                [],
-                workingCase,
-                updateCase,
-              )
-            }
-            rows={7}
-            textarea
-            required
-          />
         </Box>
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
@@ -289,6 +253,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                   }
                   textarea
                   rows={7}
+                  autoExpand={{ on: true, maxHeight: 300 }}
                 />
               </BlueBox>
             </Box>
@@ -463,6 +428,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                   }
                   textarea
                   rows={7}
+                  autoExpand={{ on: true, maxHeight: 300 }}
                 />
               </Box>
             </BlueBox>
@@ -502,6 +468,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                 )
               }
               rows={16}
+              autoExpand={{ on: true, maxHeight: 600 }}
               textarea
             />
           </Box>
@@ -548,7 +515,7 @@ const RulingStepTwoForm: React.FC<Props> = (props) => {
                     autoComplete="off"
                     defaultValue={formatDate(
                       workingCase.courtEndTime,
-                      TIME_FORMAT,
+                      Constants.TIME_FORMAT,
                     )}
                     errorMessage={courtDocumentEndEM}
                     hasError={courtDocumentEndEM !== ''}

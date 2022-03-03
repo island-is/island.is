@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
 import { ActionModal } from '@island.is/financial-aid-web/veita/src/components'
 import { StaffMutation } from '@island.is/financial-aid-web/veita/graphql'
-import { useMutation } from '@apollo/client'
+import { ApolloError, useMutation } from '@apollo/client'
 import { isEmailValid, StaffRole } from '@island.is/financial-aid/shared/lib'
 import cn from 'classnames'
 
@@ -21,7 +21,7 @@ interface newUsersModalState {
   staffName: string
   staffEmail: string
   hasError: boolean
-  hasSubmitError: boolean
+  errorMessage?: string
   roles: StaffRole[]
 }
 
@@ -39,7 +39,7 @@ const NewUserModal = ({
     staffName: '',
     staffEmail: '',
     hasError: false,
-    hasSubmitError: false,
+    errorMessage: undefined,
     roles: predefinedRoles,
   })
   const [createStaff] = useMutation(StaffMutation)
@@ -83,7 +83,14 @@ const NewUserModal = ({
         onStaffCreated()
       })
     } catch (e) {
-      setState({ ...state, hasSubmitError: true })
+      setState({
+        ...state,
+        errorMessage:
+          (e as ApolloError).graphQLErrors[0]?.extensions?.response.status ===
+          400
+            ? 'Mögulega er notandi með þessa kennitölu til nú þegar'
+            : 'Eitthvað fór úrskeiðis, vinsamlega reynið aftur síðar',
+      })
     }
   }
 
@@ -92,8 +99,8 @@ const NewUserModal = ({
       isVisible={isVisible}
       setIsVisible={setIsVisible}
       header={'Nýr notandi'}
-      hasError={state.hasSubmitError}
-      errorMessage={'Eitthvað fór úrskeiðis, vinsamlega reynið aftur síðar'}
+      hasError={state.errorMessage !== undefined}
+      errorMessage={state.errorMessage}
       submitButtonText={'Stofna notanda'}
       onSubmit={submit}
     >

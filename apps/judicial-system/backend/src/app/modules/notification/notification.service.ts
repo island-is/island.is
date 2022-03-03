@@ -47,8 +47,9 @@ import { notifications, core } from '../../messages'
 import { Case } from '../case'
 import { CourtService } from '../court'
 import { CaseEvent, EventService } from '../event'
-import { SendNotificationDto } from './dto'
-import { Notification, SendNotificationResponse } from './models'
+import { SendNotificationDto } from './dto/sendNotification.dto'
+import { Notification } from './models/notification.model'
+import { SendNotificationResponse } from './models/sendNotification.resopnse'
 
 interface Recipient {
   address?: string
@@ -347,6 +348,12 @@ export class NotificationService {
         caseType,
         courtName: court?.name,
         policeCaseNumber,
+        linkStart: `<a href="${
+          isRestrictionCase(theCase.type)
+            ? environment.deepLinks.prosecutorRestrictionCaseOverviewUrl
+            : environment.deepLinks.prosecutorInvestigationCaseOverviewUrl
+        }${theCase.id}">`,
+        linkEnd: '</a>',
       },
     )
 
@@ -531,7 +538,14 @@ export class NotificationService {
 
   private async sendCourtDateNotifications(
     theCase: Case,
+    eventOnly?: boolean,
   ): Promise<SendNotificationResponse> {
+    this.eventService.postEvent(CaseEvent.SCHEDULE_COURT_DATE, theCase)
+
+    if (eventOnly) {
+      return { notificationSent: false }
+    }
+
     const promises: Promise<Recipient>[] = [
       this.sendCourtDateEmailNotificationToProsecutor(theCase),
     ]
@@ -558,10 +572,6 @@ export class NotificationService {
       NotificationType.COURT_DATE,
       recipients,
     )
-
-    if (result.notificationSent) {
-      this.eventService.postEvent(CaseEvent.SCHEDULE_COURT_DATE, theCase)
-    }
 
     return result
   }
@@ -897,7 +907,7 @@ export class NotificationService {
       case NotificationType.RECEIVED_BY_COURT:
         return this.sendReceivedByCourtNotifications(theCase)
       case NotificationType.COURT_DATE:
-        return this.sendCourtDateNotifications(theCase)
+        return this.sendCourtDateNotifications(theCase, notification.eventOnly)
       case NotificationType.RULING:
         return this.sendRulingNotifications(theCase)
       case NotificationType.MODIFIED:

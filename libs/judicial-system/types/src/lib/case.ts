@@ -142,8 +142,7 @@ export interface Case {
   courtAttendees?: string
   prosecutorDemands?: string
   courtDocuments?: string[]
-  accusedBookings?: string
-  litigationPresentations?: string
+  sessionBookings?: string
   courtCaseFacts?: string
   courtLegalArguments?: string
   ruling?: string
@@ -227,8 +226,7 @@ export interface UpdateCase {
   courtAttendees?: string
   prosecutorDemands?: string
   courtDocuments?: string[]
-  accusedBookings?: string
-  litigationPresentations?: string
+  sessionBookings?: string
   courtCaseFacts?: string
   courtLegalArguments?: string
   ruling?: string
@@ -263,12 +261,6 @@ export interface SignatureConfirmationResponse {
   documentSigned: boolean
   code?: number
   message?: string
-}
-
-export interface CreateCourtCase {
-  type: CaseType
-  policeCaseNumber: string
-  isExtension: boolean
 }
 
 export const restrictionCases = [CaseType.CUSTODY, CaseType.TRAVEL_BAN]
