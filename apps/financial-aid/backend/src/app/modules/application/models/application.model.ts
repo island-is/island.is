@@ -283,4 +283,12 @@ export class ApplicationModel extends Model<Application> {
   @HasMany(() => DirectTaxPaymentModel, 'applicationId')
   @ApiProperty({ type: DirectTaxPaymentModel, isArray: true })
   directTaxPayments: DirectTaxPaymentModel[]
+
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+    unique: true
+  })
+  @ApiProperty()
+  applicationId: string
 }
