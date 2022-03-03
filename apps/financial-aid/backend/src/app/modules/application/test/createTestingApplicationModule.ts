@@ -13,10 +13,12 @@ import { ApplicationEventService } from '../../applicationEvent/applicationEvent
 import { MunicipalityService } from '../../municipality/municipality.service'
 import { AmountService } from '../../amount/amount.service'
 import { AuditService } from '@island.is/nest/audit'
+import { DirectTaxPaymentService } from '../../directTaxPayment'
 
 jest.mock('@island.is/email-service')
 jest.mock('../../file/file.service.ts')
 jest.mock('../../staff/staff.service.ts')
+jest.mock('../../directTaxPayment')
 jest.mock('../../applicationEvent/applicationEvent.service.ts')
 jest.mock('../../municipality/municipality.service.ts')
 jest.mock('../../amount/amount.service.ts')
@@ -35,6 +37,7 @@ export const createTestingApplicationModule = async () => {
       MunicipalityService,
       AmountService,
       AuditService,
+      DirectTaxPaymentService,
       {
         provide: getModelToken(ApplicationModel),
         useValue: {
@@ -63,6 +66,10 @@ export const createTestingApplicationModule = async () => {
 
   const fileService = applicationModule.get<FileService>(FileService)
 
+  const directTaxPaymentService = applicationModule.get<DirectTaxPaymentService>(
+    DirectTaxPaymentService,
+  )
+
   const staffService = applicationModule.get<StaffService>(StaffService)
 
   const amountService = applicationModule.get<AmountService>(AmountService)
@@ -87,5 +94,6 @@ export const createTestingApplicationModule = async () => {
     applicationEventService,
     municipalityService,
     emailService,
+    directTaxPaymentService,
   }
 }

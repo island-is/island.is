@@ -93,7 +93,7 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
         </Box>
       }
       labelVariant="h3"
-      labelUse="h2"
+      labelUse="h3"
     >
       <CaseFileList
         caseId={workingCase.id}
