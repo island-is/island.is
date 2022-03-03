@@ -265,6 +265,7 @@ const PastRequests: React.FC<Props> = (props) => {
 
   return (
     <Table
+      testid="pastCasesTable"
       columns={pastRequestsColumns}
       data={pastRequestsData ?? []}
       handleRowClick={onRowClick}
