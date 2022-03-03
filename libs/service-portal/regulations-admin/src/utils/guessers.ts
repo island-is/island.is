@@ -152,5 +152,8 @@ export const findRegulationType = (
     return
   }
   const amendingTitleRe = /^Reglugerð um (?:\(?\d+\.\)? )?breyting(?:u|ar) á .*reglugerð(?:um)?(?: |$)/i
-  return amendingTitleRe.test(title) ? 'amending' : 'base'
+  const repellingTitleRe = /^Reglugerð um (að fella úr gildi reglugerð|brottfellingu reglugerða(?:r)?)/i
+  return amendingTitleRe.test(title) || repellingTitleRe.test(title)
+    ? 'amending'
+    : 'base'
 }
