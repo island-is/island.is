@@ -185,6 +185,11 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
     intercept(caseDataAddition)
 
     cy.getByTestid('sessionBookings').type(faker.lorem.words(5))
+    cy.get('#prosecutor-appeal').check()
+    cy.get('#accused-appeal').check()
+    cy.getByTestid('endOfSessionBookings').type(faker.lorem.words(5))
+    cy.getByTestid('courtEndTime').type('11:00')
+    cy.getByTestid('continueButton').should('not.be.disabled')
     cy.getByTestid('continueButton').click()
     cy.url().should('include', IC_CONFIRMATION_ROUTE)
   })
