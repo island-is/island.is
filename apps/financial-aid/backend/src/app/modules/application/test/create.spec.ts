@@ -298,7 +298,7 @@ describe('ApplicationController - Create', () => {
       homeCircumstancesCustom: '',
       employmentCustom: '',
       directTaxPayments: [],
-      applicationSystemId: ''
+      applicationSystemId: '',
     }
     const user: User = {
       nationalId: '0000000000',
@@ -406,7 +406,7 @@ describe('ApplicationController - Create', () => {
       homeCircumstancesCustom: '',
       employmentCustom: '',
       directTaxPayments: [],
-      applicationSystemId: ''
+      applicationSystemId: '',
     }
     const user: User = {
       nationalId: '0000000000',
@@ -585,7 +585,7 @@ describe('ApplicationController - Create', () => {
       homeCircumstancesCustom: '',
       employmentCustom: '',
       directTaxPayments: [],
-      applicationSystemId: ''
+      applicationSystemId: '',
     }
     const user: User = {
       nationalId: '0000000000',
