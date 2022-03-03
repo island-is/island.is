@@ -148,16 +148,15 @@ export class FinanceResolver {
     return this.financeService.getCustomerTapControl(user.nationalId, user)
   }
 
-  @Query(() => PaymentScheduleModel, { nullable: true })
+  @Query(() => PaymentScheduleModel)
   @Audit()
   async getPaymentSchedule(@CurrentUser() user: User) {
     return this.financeService.getPaymentSchedules(user.nationalId, user)
   }
 
-  @Query(() => DebtStatusModel, { nullable: true })
+  @Query(() => graphqlTypeJson)
   @Audit()
   async getDebtStatus(@CurrentUser() user: User) {
-    console.log('AAAAAAAA', user)
     return this.financeService.getDebtStatus(user.nationalId, user)
   }
 }

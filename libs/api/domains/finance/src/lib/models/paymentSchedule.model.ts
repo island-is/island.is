@@ -1,34 +1,39 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class PaymentScheduleModel {
-  @Field()
-  nationalId!: string
-
-  @Field(() => [PaymentSchedule])
-  paymentSchedule!: PaymentSchedule[]
-}
-
-@ObjectType()
 export class PaymentSchedule {
   @Field()
   approvalDate!: string
 
   @Field()
-  scheduleType!: string
+  paymentCount!: string
 
   @Field()
   scheduleName!: string
 
   @Field()
-  paymentCount!: string
+  scheduleNumber!: string
 
   @Field()
   scheduleStatus!: string
 
   @Field()
-  scheduleNumber!: string
+  scheduleType!: string
 
   @Field()
-  totalAmount!: string
+  totalAmount!: number
+}
+@ObjectType()
+export class PaymentScheduleData {
+  @Field()
+  nationalId!: string
+
+  @Field(() => [PaymentSchedule])
+  paymentSchedules!: PaymentSchedule[]
+}
+
+@ObjectType()
+export class PaymentScheduleModel {
+  @Field(() => PaymentScheduleData)
+  myPaymentSchedule!: PaymentScheduleData
 }

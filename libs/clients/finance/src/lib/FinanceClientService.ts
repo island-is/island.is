@@ -173,20 +173,19 @@ export class FinanceClientService {
   }
 
   async getPaymentSchedules(
-    nationalID: string,
+    nationalId: string,
     auth: Auth,
   ): Promise<PaymentScheduleType | null> {
-    return this.get<PaymentScheduleType>(
+    const res = await this.get<PaymentScheduleType>(
       `/myPaymentSchedules`,
-      { nationalID },
+      { nationalId },
       auth,
     )
+    return res
   }
 
-  async getDebtStatus(
-    nationalID: string,
-    auth: Auth,
-  ): Promise<DebtStatusType | null> {
-    return this.get<DebtStatusType>(`/myDebtStatus`, { nationalID }, auth)
+  async getDebtStatus(nationalId: string, auth: Auth): Promise<any | null> {
+    const res = await this.get<any>(`/myDebtStatus`, { nationalId }, auth)
+    return res
   }
 }

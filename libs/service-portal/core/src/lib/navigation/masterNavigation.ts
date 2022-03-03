@@ -189,6 +189,10 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.FinanceBills,
           },
           {
+            name: 'Greiðsluáætlun',
+            path: ServicePortalPath.FinanceSchedule,
+          },
+          {
             name: m.financeEmployeeClaims,
             path: ServicePortalPath.FinanceEmployeeClaims,
           },

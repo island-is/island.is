@@ -56,6 +56,12 @@ export const financeModule: ServicePortalModule = {
         render: () => lazy(() => import('./screens/FinanceBills')),
       },
       {
+        name: m.financeSchedule,
+        path: ServicePortalPath.FinanceSchedule,
+        enabled: true,
+        render: () => lazy(() => import('./screens/FinanceSchedule')),
+      },
+      {
         ...tabRoutes.transactions,
         enabled: userInfo.scopes.includes(ApiScope.financeOverview),
       },
