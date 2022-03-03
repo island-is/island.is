@@ -122,10 +122,23 @@ export class EventService {
     }
   }
 
-  postErrorEvent(message: string, reason: Error) {
+  postErrorEvent(
+    message: string,
+    info: { [key: string]: string | boolean | undefined },
+    reason: Error,
+  ) {
     try {
       if (!environment.events.errorUrl) {
         return
+      }
+
+      let infoText = ''
+
+      if (info) {
+        let property: keyof typeof info
+        for (property in info) {
+          infoText = `${infoText}${property}: ${info[property]}\n`
+        }
       }
 
       fetch(`${environment.events.errorUrl}`, {
@@ -139,7 +152,7 @@ export class EventService {
                 type: 'mrkdwn',
                 text: `${
                   errorEmojis[Math.floor(Math.random() * errorEmojis.length)]
-                } ${message}:\n>${JSON.stringify(reason)}`,
+                } *${message}:*\n${infoText}>${JSON.stringify(reason)}`,
               },
             },
           ],

@@ -82,7 +82,14 @@ export class CourtService {
       )
       .catch((reason) => {
         this.eventService.postErrorEvent(
-          `*Failed to create a court request:*\n- caseId: ${caseId}\n- actor: ${user.name}\n- institution: ${user.institution?.name}\n- courtId: ${courtId}\n- courtCaseNumber: ${courtCaseNumber}`,
+          'Failed to create a court request',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            courtId,
+            courtCaseNumber,
+          },
           reason,
         )
 
@@ -114,7 +121,15 @@ export class CourtService {
       )
       .catch((reason) => {
         this.eventService.postErrorEvent(
-          `*Failed to create a court record:*\n- caseId: ${caseId}\n- actor: ${user.name}\n- institution: ${user.institution?.name}\n- courtId: ${courtId}\n- courtCaseNumber: ${courtCaseNumber}\n- fileName: ${fileName}`,
+          'Failed to create a court record',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            courtId,
+            courtCaseNumber,
+            fileName,
+          },
           reason,
         )
 
@@ -147,7 +162,15 @@ export class CourtService {
       )
       .catch((reason) => {
         this.eventService.postErrorEvent(
-          `*Failed to create a court ruling:*\n- caseId: ${caseId}\n- actor: ${user.name}\n- institution: ${user.institution?.name}\n- courtId: ${courtId}\n- courtCaseNumber: ${courtCaseNumber}\n- fileName: ${fileName}`,
+          'Failed to create a court ruling',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            courtId,
+            courtCaseNumber,
+            fileName,
+          },
           reason,
         )
 
@@ -177,7 +200,17 @@ export class CourtService {
       )
       .catch((reason) => {
         this.eventService.postErrorEvent(
-          `*Failed to create a court document:*\n- caseId: ${caseId}\n- actor: ${user.name}\n- institution: ${user.institution?.name}\n- courtId: ${courtId}\n- courtCaseNumber: ${courtCaseNumber}\n- subject: ${subject}\n- fileName: ${fileName}\n- fileType: ${fileType}`,
+          'Failed to create a court document',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            courtId,
+            courtCaseNumber,
+            subject,
+            fileName,
+            fileType,
+          },
           reason,
         )
 
@@ -209,7 +242,16 @@ export class CourtService {
       })
       .catch((reason) => {
         this.eventService.postErrorEvent(
-          `*Failed to create a court case:*\n- caseId: ${caseId}\n- actor: ${user.name}\n- institution: ${user.institution?.name}\n- courtId: ${courtId}\n- type: ${type}\n- policeCaseNumber: ${policeCaseNumber}\n- isExtension: ${isExtension}`,
+          'Failed to create a court case',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            courtId,
+            type,
+            policeCaseNumber,
+            isExtension,
+          },
           reason,
         )
 
