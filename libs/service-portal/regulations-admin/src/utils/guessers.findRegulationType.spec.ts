@@ -113,6 +113,75 @@ describe('findRegulationType', () => {
       ),
     ).toEqual('base')
   })
+
+  it('detects "brottfellingarreglugerð" by title', () => {
+    expect(
+      findRegulationType(
+        'Reglugerð um að fella úr gildi reglugerð um bréfaskipti, símtöl og heimsóknir til afplánunarfanga',
+      ),
+    ).toEqual('amending')
+    expect(
+      findRegulationType(
+        'Reglugerð um brottfellingu ýmissa reglugerða, reglna og auglýsinga með stoð í lögum um almannatryggingar og lögum um félagslega aðstoð.',
+      ),
+    ).toEqual('amending')
+    expect(
+      findRegulationType(
+        'Reglugerð um brottfellingu reglugerða á sviði heilbrigðismála',
+      ),
+    ).toEqual('amending')
+    expect(
+      findRegulationType(
+        'Reglugerð um brottfellingu reglugerðar um starfsmannaráð sjúkrahúsa nr. 413/1973, með síðari breytingu.',
+      ),
+    ).toEqual('amending')
+
+    // Some regulations, like the "Byggingareglugerð" have a title thta doesn't start with the words "Reglugerð um …"
+    expect(
+      findRegulationType(
+        'Reglugerð um brottfellingu Byggingareglugerðar nr. 112/2012',
+      ),
+    ).toEqual('amending')
+
+    // Imaginary variaants that still should work (becaus we are nice people)
+    expect(
+      findRegulationType(
+        'Reglugerð um brottfellingar á ýmsum reglugerðum á sviði jólasveinasmála',
+      ),
+    ).toEqual('amending')
+    expect(
+      findRegulationType(
+        'Reglugerð um að fella úr gildi ýmsar reglugerðir um jólasveina',
+      ),
+    ).toEqual('amending')
+    expect(
+      findRegulationType(
+        'Reglugerð um að fella úr gildi reglugerð nr. 123/2021 um jólasveina',
+      ),
+    ).toEqual('amending')
+    expect(
+      findRegulationType(
+        'Reglugerð um að fella úr gildi Byggingaregðugerð nr. 112 frá árinu 2012',
+      ),
+    ).toEqual('amending')
+
+    // So close, but not brottfellingarreglugerðir
+    expect(
+      findRegulationType('Reglugerð um að fella úr gildi reglur um Byggingar'),
+    ).toEqual('base')
+    expect(
+      findRegulationType(
+        'Reglugerð um brottfellingu alls kyns Evróputilskipana',
+      ),
+    ).toEqual('base')
+    expect(
+      findRegulationType(
+        'Reglugerð um Reglugerð um gildistöku reglugerðar framkvæmdastjórnarinnar' +
+          ' (ESB) nr. 605/2010 um skilyrði varðandi heilbrigði dýra og manna' +
+          ' og brottfellingu reglugerðar nr. 734/2014 um svipuð mál',
+      ),
+    ).toEqual('base')
+  })
 })
 
 // ===========================================================================
