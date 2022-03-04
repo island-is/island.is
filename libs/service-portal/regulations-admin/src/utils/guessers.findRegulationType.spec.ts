@@ -115,6 +115,7 @@ describe('findRegulationType', () => {
   })
 
   it('detects "brottfellingarreglugerð" by title', () => {
+    // Actual examples
     expect(
       findRegulationType(
         'Reglugerð um að fella úr gildi reglugerð um bréfaskipti, símtöl og heimsóknir til afplánunarfanga',
