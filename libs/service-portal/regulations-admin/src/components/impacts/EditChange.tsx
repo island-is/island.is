@@ -8,7 +8,7 @@ import {
   GridColumn,
   Text,
 } from '@island.is/island-ui/core'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import {
   AppendixDraftForm,
   AppendixFormSimpleProps,
