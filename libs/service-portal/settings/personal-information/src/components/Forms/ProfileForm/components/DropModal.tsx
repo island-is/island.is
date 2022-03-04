@@ -15,10 +15,9 @@ interface Props {
   onClose: () => void
   onDrop: () => void
   type: 'tel' | 'mail' | 'all'
-  loading?: boolean
 }
 
-export const DropModal: FC<Props> = ({ onClose, onDrop, type, loading }) => {
+export const DropModal: FC<Props> = ({ onClose, onDrop, type }) => {
   const [closeModal, setCloseModal] = useState(false)
   const { formatMessage } = useLocale()
   useNamespaces('sp.settings')
@@ -76,12 +75,7 @@ export const DropModal: FC<Props> = ({ onClose, onDrop, type, loading }) => {
               </Button>
             </Box>
             <Box>
-              <Button
-                loading={loading}
-                onClick={onDrop}
-                variant="ghost"
-                size="small"
-              >
+              <Button onClick={onDrop} variant="ghost" size="small">
                 {formatMessage(msg.dropModalDrop)}
               </Button>
             </Box>

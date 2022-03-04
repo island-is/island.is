@@ -37,12 +37,9 @@ export const truncate = async () => {
   )
 }
 
-export const setup = async (
-  module: Type<any>,
-  options?: Partial<TestServerOptions>,
-) => {
+export const setup = async (options?: Partial<TestServerOptions>) => {
   app = await testServer({
-    appModule: module,
+    appModule: AppModule,
     ...options,
   })
   sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)

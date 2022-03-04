@@ -41,13 +41,11 @@ export class UpdateUserProfileDto {
   @IsOptional()
   @IsString()
   @IsEnum(DataStatus)
-  @ApiPropertyOptional()
   readonly emailStatus?: DataStatus
 
   @IsOptional()
   @IsString()
   @IsEnum(DataStatus)
-  @ApiPropertyOptional()
   readonly mobileStatus?: DataStatus
 
   @IsOptional()

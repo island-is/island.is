@@ -41,7 +41,6 @@ export const subTypes = {
   TELECOMMUNICATIONS: 'Upplýsingar um fjarskiptasamskipti',
   INTERNET_USAGE: 'Upplýsingar um vefnotkun',
   ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'Rannsókn á rafrænum gögnum',
-  VIDEO_RECORDING_EQUIPMENT: 'Annað',
 }
 
 @Injectable()

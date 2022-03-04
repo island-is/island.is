@@ -8,7 +8,7 @@ export const msg = defineMessages({
   editEmailText: {
     id: 'sp.settings:edit-email-text',
     defaultMessage:
-      'Þegar þú vistar netfang komum við til með að senda þér staðfestingarkóða með tölvupósti til að tryggja það að netfangið sé rétt skráð. Ef staðfestingar póstur berst ekki er gott að kanna hvort hann sé í möppu fyrir ruslpóst. Staðfestingarkóðann seturu inn hér að neðan til staðfestingar um að þú hafir fengið hann sendann.',
+      'Vinsamlega settu inn netfangið þitt. Við komum til með að senda á þig staðfestingar og tilkynningar.',
   },
   saveTel: {
     id: 'sp.settings:save-tel',
@@ -17,7 +17,7 @@ export const msg = defineMessages({
   editTelText: {
     id: 'sp.settings:edit-tel-text',
     defaultMessage:
-      'Þegar þú vistar símanúmer komum við til með að senda þér staðfestingarkóða með SMS til að tryggja það að símanúmerið sé rétt skráð. Staðfestingarkóðann seturu inn hér að neðan til staðfestingar um að þú hafir fengið hann sendann.',
+      'Við komum til með að senda á þig staðfestingar og tilkynningar og því er gott að vera með rétt númer skráð. Endilega skráðu númerið þitt hér fyrir neðan og við sendum þér öryggiskóða til staðfestingar.',
   },
   editBankInfoText: {
     id: 'sp.settings:edit-bankInfo-text',
@@ -28,44 +28,55 @@ export const msg = defineMessages({
   },
   editNudgeText: {
     id: 'sp.settings:edit-nudge-text',
-    defaultMessage: `Við munum senda þér tölvupóst þegar þú færð markvisst skjal í pósthólfið þitt.`,
+    defaultMessage: `
+    Hér getur þú gert breytingar á hnipp möguleikum. 
+    Hnipp stillingar segja til um hvort þú viljir að Island.is láti 
+    þig vita þegar eitthvað markvert gerist.
+  `,
   },
   overlayIntro: {
     id: 'sp.settings:overlay-intro-text',
-    defaultMessage: `Við komum til með að senda á þig mikilvægar tilkynningar og því er gott að vera með netfang og síma rétt skráð.`,
+    defaultMessage: `Vinsamlegast farðu vel yfir allar neðangreindar upplýsingar, gakktu í
+    skugga um að þær séu réttar og gerðu breytingar ef þörf krefur.`,
   },
   dropModalAllTitle: {
     id: 'sp.settings:dropmodal-all-title',
-    defaultMessage: 'Engar upplýsingar skráðar',
+    defaultMessage:
+      'Ertu alveg viss um að þú viljir ekki skrá netfang og/eða síma?',
   },
   dropModalAllText: {
     id: 'sp.settings:dropmodal-all-text',
-    defaultMessage:
-      'Við komum til með að senda á þig staðfestingar og tilkynningar og því er gott að vera með netfang og símanúmer skráð.',
+    defaultMessage: `Ertu viss um þú viljir halda áfram án þess að skrá símanúmer eða
+    netfang? Við komum til með að senda á þig staðfestingar og tilkynningar
+    og því er gott að vera með rétt númer og netfang skráð`,
   },
   dropModalEmailTitle: {
     id: 'sp.settings:dropmodal-email-title',
-    defaultMessage: 'Engar netfangs upplýsingar skráðar',
+    defaultMessage: 'Ertu alveg viss um að þú viljir ekki skrá netfang?',
   },
   dropModalEmailText: {
     id: 'sp.settings:dropmodal-email-text',
-    defaultMessage: `Við komum til með að senda á þig staðfestingar og tilkynningar og því er gott að vera með netfang skráð.`,
+    defaultMessage: `Ertu viss um þú viljir halda áfram án þess að skrá
+    netfang? Við komum til með að senda á þig staðfestingar og tilkynningar
+    og því er gott að vera með rétt netfang skráð`,
   },
   dropModalTelTitle: {
     id: 'sp.settings:dropmodal-tel-title',
-    defaultMessage: 'Engar símanúmers upplýsingar skráðar',
+    defaultMessage: 'Ertu alveg viss um að þú viljir ekki skrá síma?',
   },
   dropModalTelText: {
     id: 'sp.settings:dropmodal-tel-text',
-    defaultMessage: `Við komum til með að senda á þig staðfestingar og tilkynningar og því er gott að vera með símanúmer skráð.`,
+    defaultMessage: `Ertu viss um þú viljir halda áfram án þess að skrá
+    síma? Við komum til með að senda á þig staðfestingar og tilkynningar
+    og því er gott að vera með rétt símanúmer skráð`,
   },
   dropModalContinue: {
     id: 'sp.settings:dropmodal-continue-button',
-    defaultMessage: 'Skrá',
+    defaultMessage: 'Ég vil skrá upplýsingar',
   },
   dropModalDrop: {
     id: 'sp.settings:dropmodal-drop-button',
-    defaultMessage: 'Vil ekki skrá',
+    defaultMessage: 'Ég vil halda áfram',
   },
   errorOnlyNumbers: {
     id: 'sp.settings:only-numbers-allowed',
@@ -82,10 +93,6 @@ export const msg = defineMessages({
   errorAccountInputMaxLength: {
     id: 'sp.settings:bankInfo-account-required-length-msg',
     defaultMessage: `Reikningsnúmer er í mesta lagi 6 stafir.`,
-  },
-  errorBankInfoService: {
-    id: 'sp.settings:bankInfo-service',
-    defaultMessage: `Villa við að vista þennan reikning á þína kennitölu`,
   },
   inputBankLabel: {
     id: 'sp.settings:bankInfo-input-bank',

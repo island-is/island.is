@@ -13,7 +13,6 @@ import { ContentfulRepository } from '@island.is/cms'
 import { setup } from '../../../../../test/setup'
 import { environment } from '../../../../environments'
 import { FileService } from '../files/file.service'
-import { AppModule } from '../../../app.module'
 
 let app: INestApplication
 
@@ -56,7 +55,7 @@ const nationalId = '1234564321'
 let server: request.SuperTest<request.Test>
 
 beforeAll(async () => {
-  app = await setup(AppModule, {
+  app = await setup({
     override: (builder) =>
       builder
         .overrideProvider(ContentfulRepository)

@@ -81,7 +81,6 @@ describe('CourtService - Create court case', () => {
     ${CaseType.INTERNET_USAGE}
     ${CaseType.RESTRAINING_ORDER}
     ${CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION}
-    ${CaseType.VIDEO_RECORDING_EQUIPMENT}
     ${CaseType.OTHER}
   `.describe('court case created for $type', ({ type }) => {
     const user = {} as User

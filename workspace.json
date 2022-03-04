@@ -1516,27 +1516,6 @@
         }
       }
     },
-    "application-api-core": {
-      "root": "libs/application/api/core",
-      "sourceRoot": "libs/application/api/core/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/application/api/core/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/application/api/core"],
-          "options": {
-            "jestConfig": "libs/application/api/core/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "application-core": {
       "root": "libs/application/core",
       "sourceRoot": "libs/application/core/src",
@@ -6318,27 +6297,6 @@
           "outputs": ["coverage/libs/nest/audit"],
           "options": {
             "jestConfig": "libs/nest/audit/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
-    "nest-aws": {
-      "root": "libs/nest/aws",
-      "sourceRoot": "libs/nest/aws/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["libs/nest/aws/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/nest/aws"],
-          "options": {
-            "jestConfig": "libs/nest/aws/jest.config.js",
             "passWithNoTests": true
           }
         }

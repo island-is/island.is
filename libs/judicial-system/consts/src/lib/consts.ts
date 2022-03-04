@@ -53,20 +53,16 @@ export const ICaseTypes = [
         value: CaseType.BODY_SEARCH,
       },
       {
-        label: 'Myndupptökubúnaði komið fyrir',
-        value: CaseType.VIDEO_RECORDING_EQUIPMENT,
-      },
-      {
         label: 'Nálgunarbann',
         value: CaseType.RESTRAINING_ORDER,
       },
       {
-        label: 'Rannsókn á rafrænum gögnum',
-        value: CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
-      },
-      {
         label: 'Upplýsingar um vefnotkun',
         value: CaseType.INTERNET_USAGE,
+      },
+      {
+        label: 'Rannsókn á rafrænum gögnum',
+        value: CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
       },
       {
         label: 'Annað',

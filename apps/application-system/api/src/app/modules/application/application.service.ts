@@ -1,13 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op, WhereOptions, Sequelize } from 'sequelize'
+import { Op, WhereOptions } from 'sequelize'
 import {
   ExternalData,
   FormValue,
   ApplicationStatus,
 } from '@island.is/application/core'
+
 import { Application } from './application.model'
-import { ApplicationLifecycle } from '@island.is/application/core'
+import { CreateApplicationDto } from './dto/createApplication.dto'
+
+import { ApplicationLifecycle } from './types'
 
 const applicationIsNotSetToBePruned = () => ({
   [Op.or]: [
@@ -24,24 +27,11 @@ const applicationIsNotSetToBePruned = () => ({
   ],
 })
 
-const applicationByNationalId = (id: string, nationalId?: string) => ({
-  id,
-  ...(nationalId
-    ? {
-        [Op.or]: [
-          { applicant: nationalId },
-          { assignees: { [Op.contains]: [nationalId] } },
-        ],
-      }
-    : {}),
-})
-
 @Injectable()
 export class ApplicationService {
   constructor(
     @InjectModel(Application)
     private applicationModel: typeof Application,
-    private sequelize: Sequelize,
   ) {}
 
   async findOneById(
@@ -49,47 +39,17 @@ export class ApplicationService {
     nationalId?: string,
   ): Promise<Application | null> {
     return this.applicationModel.findOne({
-      where: applicationByNationalId(id, nationalId),
-    })
-  }
-
-  async updateAttachment(
-    id: string,
-    nationalId: string,
-    key: string,
-    url: string,
-  ) {
-    return await this.sequelize.transaction(async (transaction) => {
-      const existingApplication = await this.applicationModel.findOne({
-        where: applicationByNationalId(id, nationalId),
-        transaction,
-        lock: transaction.LOCK.UPDATE,
-      })
-
-      if (!existingApplication) {
-        throw new NotFoundException(
-          `An application with the id ${id} does not exist`,
-        )
-      }
-
-      const [
-        numberOfAffectedRows,
-        [updatedApplication],
-      ] = await this.applicationModel.update(
-        {
-          attachments: {
-            ...existingApplication.attachments,
-            [key]: url,
-          },
-        },
-        {
-          where: { id },
-          returning: true,
-          transaction,
-        },
-      )
-
-      return { numberOfAffectedRows, updatedApplication }
+      where: {
+        id,
+        ...(nationalId
+          ? {
+              [Op.or]: [
+                { applicant: nationalId },
+                { assignees: { [Op.contains]: [nationalId] } },
+              ],
+            }
+          : {}),
+      },
     })
   }
 
@@ -166,20 +126,7 @@ export class ApplicationService {
     }
   }
 
-  async create(
-    application: Partial<
-      Pick<
-        Application,
-        | 'answers'
-        | 'applicant'
-        | 'assignees'
-        | 'attachments'
-        | 'state'
-        | 'status'
-        | 'typeId'
-      >
-    >,
-  ): Promise<Application> {
+  async create(application: CreateApplicationDto): Promise<Application> {
     return this.applicationModel.create(application)
   }
 

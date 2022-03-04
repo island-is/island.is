@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useState } from 'react'
 import {
   Box,
   Button,
@@ -13,47 +13,26 @@ import { useUpdateOrCreateUserProfile } from '@island.is/service-portal/graphql'
 import { msg } from '../../../../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Controller, useForm } from 'react-hook-form'
-import * as styles from './ProfileForms.css'
 
 interface Props {
-  refuseMail: boolean
+  canNudge: boolean
 }
 
-/**
- * This component will look a little strange.
- * The requirements for the user is to see in the UI a checkbox:
- * "Refuse nudge" while the value in the db is of "Accept nudge (canNudge)"
- * So we need to get the value and set it to the opposite of the db value.
- */
-export const Nudge: FC<Props> = ({ refuseMail }) => {
+export const Nudge: FC<Props> = ({ canNudge }) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
-  const { control, handleSubmit, getValues } = useForm()
-  const [inputPristine, setInputPristine] = useState<boolean>(false)
+  const { control, handleSubmit } = useForm()
+  const [inputSuccess, setInputSuccess] = useState<boolean>(false)
   const [submitError, setSubmitError] = useState<string>()
-
-  useEffect(() => {
-    checkSetPristineInput()
-  }, [refuseMail])
 
   const { updateOrCreateUserProfile, loading } = useUpdateOrCreateUserProfile()
 
-  const checkSetPristineInput = () => {
-    const localForm = getValues().refuseMail
-
-    if (localForm === refuseMail) {
-      setInputPristine(true)
-    } else {
-      setInputPristine(false)
-    }
-  }
-
-  const submitFormData = async (data: { refuseMail: boolean }) => {
+  const submitFormData = async (data: { canNudge: boolean }) => {
     try {
       setSubmitError(undefined)
       await updateOrCreateUserProfile({
-        canNudge: !data.refuseMail,
-      }).then(() => setInputPristine(true))
+        canNudge: data.canNudge,
+      }).then(() => setInputSuccess(true))
     } catch (err) {
       console.error(`updateOrCreateUserProfile error: ${err}`)
       setSubmitError(formatMessage(m.somethingWrong))
@@ -62,52 +41,50 @@ export const Nudge: FC<Props> = ({ refuseMail }) => {
 
   return (
     <form onSubmit={handleSubmit(submitFormData)}>
-      <Columns collapseBelow="sm" alignY="center">
-        <Column width="content">
-          <Box marginRight={3} display="flex" alignItems="center">
-            <Controller
-              name="refuseMail"
-              control={control}
-              defaultValue={refuseMail}
-              render={({ onChange, value }) => (
-                <Checkbox
-                  name="refuseMail"
-                  onChange={(e) => {
-                    onChange(e.target.checked)
-                    checkSetPristineInput()
-                  }}
-                  label={formatMessage({
-                    id: 'sp.settings:nudge-checkbox-label',
-                    defaultMessage: 'Afþakka tölvupóst',
-                  })}
-                  hasError={!!submitError}
-                  errorMessage={submitError}
-                  checked={value}
-                />
-              )}
-            />
-            <Box marginLeft={3}>
-              {inputPristine && (
-                <Icon icon="checkmark" color="blue300" type="filled" />
-              )}
-            </Box>
-          </Box>
+      <Columns alignY="center">
+        <Column width="8/12">
+          <Controller
+            name="canNudge"
+            control={control}
+            defaultValue={canNudge}
+            render={({ onChange, value }) => (
+              <Checkbox
+                name="canNudge"
+                onChange={(e) => {
+                  onChange(e.target.checked)
+                  if (inputSuccess) {
+                    setInputSuccess(false)
+                  }
+                }}
+                label={formatMessage({
+                  id: 'sp.settings:nudge-checkbox-label',
+                  defaultMessage: 'Virkja hnipp',
+                })}
+                hasError={!!submitError}
+                errorMessage={submitError}
+                checked={value}
+              />
+            )}
+          />
         </Column>
-        <Column width="10/12">
+        <Column width="4/12">
           <Box
             display="flex"
-            alignItems="flexStart"
+            alignItems="flexEnd"
             flexDirection="column"
-            className={styles.nudgeSave}
+            paddingTop={2}
           >
-            {!loading && (
-              <button disabled={inputPristine} type="submit">
-                <Button disabled={inputPristine} variant="text" size="small">
+            {!loading && !inputSuccess && (
+              <button type="submit">
+                <Button variant="text" size="small">
                   {formatMessage(msg.saveSettings)}
                 </Button>
               </button>
             )}
             {loading && <LoadingDots />}
+            {inputSuccess && (
+              <Icon icon="checkmarkCircle" color="mint600" type="filled" />
+            )}
           </Box>
         </Column>
       </Columns>

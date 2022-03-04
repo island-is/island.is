@@ -140,16 +140,7 @@
 /libs/api/domains/syslumenn/                                                                       @island-is/stefna
 /libs/clients/syslumenn/                                                                           @island-is/stefna @island-is/juni
 
-/apps/services/search-indexer/                                                                     @island-is/stefna @island-is/juni
-/apps/web/screens/Organization/                                                                    @island-is/stefna
-/apps/web/components/Organization/                                                                 @island-is/stefna
-/libs/content-search-toolkit/                                                                      @island-is/stefna @island-is/juni
-/libs/content-search-index-manager/                                                                @island-is/stefna @island-is/juni
-/libs/content-search-metrics/                                                                      @island-is/stefna @island-is/juni
-/libs/content-search-indexer/                                                                      @island-is/stefna @island-is/juni
-/libs/api/domains/content-search/                                                                  @island-is/stefna @island-is/juni
-/libs/api/domains/syslumenn/                                                                       @island-is/stefna
-/libs/clients/syslumenn/                                                                           @island-is/stefna @island-is/juni
+/libs/island-ui/                                                                                   @island-is/island-ui
 
 /.github/actions/                                                                                  @island-is/devops
 /.github/workflows/                                                                                @island-is/devops

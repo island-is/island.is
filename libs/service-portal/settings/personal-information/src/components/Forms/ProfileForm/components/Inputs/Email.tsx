@@ -3,20 +3,26 @@ import { useForm } from 'react-hook-form'
 import { m } from '@island.is/service-portal/core'
 import { msg } from '../../../../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { Box, Button, Text, LoadingDots } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Columns,
+  Column,
+  Icon,
+  Text,
+  LoadingDots,
+} from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import {
   useVerifyEmail,
   useUpdateOrCreateUserProfile,
   useDeleteIslykillValue,
 } from '@island.is/service-portal/graphql'
-import * as styles from './ProfileForms.css'
 
 interface Props {
   buttonText: string
   email: string
   emailDirty: (isDirty: boolean) => void
-  disabled?: boolean
 }
 
 interface FormErrors {
@@ -24,12 +30,7 @@ interface FormErrors {
   code: string | undefined
 }
 
-export const InputEmail: FC<Props> = ({
-  buttonText,
-  email,
-  disabled,
-  emailDirty,
-}) => {
+export const InputEmail: FC<Props> = ({ buttonText, email, emailDirty }) => {
   useNamespaces('sp.settings')
   const { handleSubmit, control, errors, getValues } = useForm()
   const {
@@ -41,17 +42,20 @@ export const InputEmail: FC<Props> = ({
     loading: deleteLoading,
   } = useDeleteIslykillValue()
   const { formatMessage } = useLocale()
-  const { createEmailVerification, createLoading } = useVerifyEmail()
+  const {
+    createEmailVerification,
+    loading: codeLoading,
+    createLoading,
+  } = useVerifyEmail()
   const [emailInternal, setEmailInternal] = useState(email)
   const [emailToVerify, setEmailToVerify] = useState(email)
 
   const [codeInternal, setCodeInternal] = useState('')
 
-  const [inputPristine, setInputPristine] = useState(false)
   const [emailVerifyCreated, setEmailVerifyCreated] = useState(false)
   const [verificationValid, setVerificationValid] = useState(false)
-
-  const [resendBlock, setResendBlock] = useState(false)
+  const [verificationLoading, setVerificationLoading] = useState(false)
+  const [deleteSuccess, setDeleteSuccess] = useState(false)
 
   const [formErrors, setErrors] = useState<FormErrors>({
     email: undefined,
@@ -59,19 +63,9 @@ export const InputEmail: FC<Props> = ({
   })
 
   useEffect(() => {
-    if (resendBlock) {
-      const timer = setTimeout(() => {
-        setResendBlock(false)
-      }, 5000)
-      return () => clearTimeout(timer)
-    }
-  }, [resendBlock])
-
-  useEffect(() => {
     if (email && email.length > 0) {
       setEmailInternal(email)
     }
-    checkSetPristineInput()
   }, [email])
 
   useEffect(() => {
@@ -95,7 +89,6 @@ export const InputEmail: FC<Props> = ({
     try {
       const emailValue = data.email ?? ''
 
-      setResendBlock(true)
       const response = await createEmailVerification({
         email: emailValue,
       })
@@ -110,7 +103,6 @@ export const InputEmail: FC<Props> = ({
       }
     } catch (err) {
       console.error(`createEmailVerification error: ${err}`)
-      setResendBlock(false)
       setErrors({ ...formErrors, email: emailError })
     }
   }
@@ -122,6 +114,8 @@ export const InputEmail: FC<Props> = ({
     })
 
     try {
+      setVerificationLoading(true)
+
       const codeValue = data.code ?? ''
       const formValues = getValues()
       const emailValue = formValues?.email
@@ -131,13 +125,14 @@ export const InputEmail: FC<Props> = ({
           email: emailToVerify,
           emailCode: codeValue,
         }).then(() => {
-          setInputPristine(true)
+          setVerificationLoading(false)
           setVerificationValid(true)
         })
       }
       setErrors({ ...formErrors, code: undefined })
     } catch (err) {
       console.error(`confirmEmailVerification error: ${err}`)
+      setVerificationLoading(false)
       setErrors({ ...formErrors, code: codeError })
     }
   }
@@ -155,21 +150,11 @@ export const InputEmail: FC<Props> = ({
       })
 
       setVerificationValid(true)
-      setInputPristine(true)
+      setDeleteSuccess(true)
       setErrors({ ...formErrors, code: undefined })
     } catch (err) {
+      setVerificationLoading(false)
       setErrors({ ...formErrors, code: emailError })
-    }
-  }
-
-  const checkSetPristineInput = () => {
-    if (getValues().email === email) {
-      setInputPristine(true)
-
-      setEmailVerifyCreated(false)
-    } else {
-      setInputPristine(false)
-      setVerificationValid(false)
     }
   }
 
@@ -180,8 +165,8 @@ export const InputEmail: FC<Props> = ({
           emailInternal ? handleSendEmailVerification : saveEmptyChange,
         )}
       >
-        <Box display="flex" flexWrap="wrap" alignItems="center">
-          <Box marginRight={3} width="full" className={styles.formContainer}>
+        <Columns collapseBelow="sm" alignY="center">
+          <Column width="9/12">
             <InputController
               control={control}
               backgroundColor="blue"
@@ -189,8 +174,7 @@ export const InputEmail: FC<Props> = ({
               name="email"
               required={false}
               type="email"
-              icon={inputPristine ? 'checkmark' : undefined}
-              disabled={disabled}
+              disabled={verificationValid}
               rules={{
                 pattern: {
                   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
@@ -201,46 +185,29 @@ export const InputEmail: FC<Props> = ({
                 },
               }}
               label={formatMessage(m.email)}
-              onChange={(inp) => {
-                setEmailInternal(inp.target.value)
-                setErrors({ ...formErrors, email: undefined })
-                checkSetPristineInput()
-              }}
+              onChange={(inp) => setEmailInternal(inp.target.value)}
               placeholder={formatMessage(m.email)}
               error={errors.email?.message || formErrors.email}
               size="xs"
               defaultValue={email}
             />
-          </Box>
-          <Box
-            display="flex"
-            alignItems="flexStart"
-            flexDirection="column"
-            paddingTop={2}
-          >
-            {!createLoading && !deleteLoading && (
-              <>
-                {emailVerifyCreated ? (
+          </Column>
+          <Column width="3/12">
+            <Box
+              display="flex"
+              alignItems="flexEnd"
+              flexDirection="column"
+              paddingTop={2}
+            >
+              {!createLoading && !deleteLoading && (
+                <button type="submit" disabled={verificationValid}>
                   <Button
                     variant="text"
                     size="small"
-                    disabled={
-                      verificationValid ||
-                      disabled ||
-                      resendBlock ||
-                      inputPristine
-                    }
-                    onClick={
-                      emailInternal
-                        ? () =>
-                            handleSendEmailVerification({
-                              email: getValues().email,
-                            })
-                        : () => saveEmptyChange()
-                    }
+                    disabled={verificationValid}
                   >
                     {emailInternal
-                      ? emailInternal === emailToVerify
+                      ? emailVerifyCreated
                         ? formatMessage({
                             id: 'sp.settings:resend',
                             defaultMessage: 'Endursenda',
@@ -248,29 +215,45 @@ export const InputEmail: FC<Props> = ({
                         : buttonText
                       : formatMessage(msg.saveEmptyChange)}
                   </Button>
-                ) : (
-                  <button
-                    type="submit"
-                    disabled={verificationValid || disabled || inputPristine}
-                  >
-                    <Button
-                      variant="text"
-                      size="small"
-                      disabled={verificationValid || disabled || inputPristine}
-                    >
-                      {emailInternal
-                        ? buttonText
-                        : formatMessage(msg.saveEmptyChange)}
-                    </Button>
-                  </button>
-                )}
-              </>
-            )}
-            {(createLoading || deleteLoading) && <LoadingDots />}
-          </Box>
-        </Box>
+                </button>
+              )}
+              {(createLoading || deleteLoading) && <LoadingDots />}
+            </Box>
+          </Column>
+        </Columns>
+        {verificationValid && (
+          <Columns alignY="center">
+            <Column>
+              <Box paddingTop={1}>
+                <Button
+                  onClick={() => {
+                    setEmailVerifyCreated(false)
+                    setVerificationValid(false)
+                    setDeleteSuccess(false)
+                  }}
+                  variant="text"
+                  size="small"
+                >
+                  {formatMessage(msg.buttonChange)}
+                </Button>
+              </Box>
+            </Column>
+            {deleteSuccess ? (
+              <Column width="content">
+                <Box
+                  marginLeft={3}
+                  display="flex"
+                  alignItems="flexStart"
+                  flexDirection="column"
+                >
+                  <Icon icon="checkmarkCircle" color="mint600" type="filled" />
+                </Box>
+              </Column>
+            ) : null}
+          </Columns>
+        )}
       </form>
-      {emailVerifyCreated && !inputPristine && (
+      {emailVerifyCreated && (
         <Box marginTop={3}>
           <Text variant="medium" marginBottom={2}>
             {formatMessage({
@@ -281,8 +264,8 @@ export const InputEmail: FC<Props> = ({
           </Text>
 
           <form onSubmit={handleSubmit(handleConfirmCode)}>
-            <Box display="flex" flexWrap="wrap" alignItems="flexStart">
-              <Box className={styles.codeInput} marginRight={3}>
+            <Columns alignY="center">
+              <Column width="5/12">
                 <InputController
                   control={control}
                   backgroundColor="blue"
@@ -293,12 +276,10 @@ export const InputEmail: FC<Props> = ({
                   placeholder={formatMessage(m.verificationCode)}
                   defaultValue=""
                   error={errors.code?.message || formErrors.code}
-                  disabled={verificationValid || disabled}
-                  icon={verificationValid ? 'checkmark' : undefined}
+                  disabled={verificationValid}
                   size="xs"
                   onChange={(inp) => {
                     setCodeInternal(inp.target.value)
-                    setErrors({ ...formErrors, code: undefined })
                   }}
                   rules={{
                     required: {
@@ -307,34 +288,37 @@ export const InputEmail: FC<Props> = ({
                     },
                   }}
                 />
-              </Box>
-              <Box
-                display="flex"
-                alignItems="flexStart"
-                flexDirection="column"
-                paddingTop={4}
-              >
-                {!saveLoading && (
-                  <button
-                    type="submit"
-                    disabled={!codeInternal || disabled || verificationValid}
-                  >
-                    <Button
-                      variant="text"
-                      size="small"
-                      disabled={!codeInternal || disabled || verificationValid}
-                    >
-                      {formatMessage(m.confirmCode)}
-                    </Button>
-                  </button>
-                )}
-                {saveLoading && (
-                  <Box marginTop={1}>
-                    <LoadingDots />
-                  </Box>
-                )}
-              </Box>
-            </Box>
+              </Column>
+              <Column width="content">
+                <Box
+                  marginLeft={3}
+                  display="flex"
+                  alignItems="flexEnd"
+                  flexDirection="column"
+                  paddingTop={2}
+                >
+                  {!verificationLoading &&
+                    (verificationValid ? (
+                      <Icon
+                        icon="checkmarkCircle"
+                        color="mint600"
+                        type="filled"
+                      />
+                    ) : (
+                      <button type="submit" disabled={!codeInternal}>
+                        <Button
+                          variant="text"
+                          size="small"
+                          disabled={!codeInternal}
+                        >
+                          {formatMessage(m.confirmCode)}
+                        </Button>
+                      </button>
+                    ))}
+                  {verificationLoading && <LoadingDots />}
+                </Box>
+              </Column>
+            </Columns>
           </form>
         </Box>
       )}

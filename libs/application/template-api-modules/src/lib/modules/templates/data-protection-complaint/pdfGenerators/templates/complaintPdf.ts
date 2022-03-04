@@ -118,6 +118,13 @@ function dpcApplicationPdf(
     )
   }
 
+  addSubheader('Yfir hverju er kvartað í meginatriðum?', doc)
+  addValue(
+    complaint.description,
+    doc,
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.NO_LINE_GAP,
+  )
   doc.end()
 }
 

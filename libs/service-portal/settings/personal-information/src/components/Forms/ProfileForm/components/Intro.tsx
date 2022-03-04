@@ -6,29 +6,24 @@ import { msg } from '../../../../lib/messages'
 
 interface Props {
   name: string
-  showIntroTitle?: boolean
 }
 
-export const OnboardingIntro: FC<Props> = ({ name, showIntroTitle }) => {
+export const OnboardingIntro: FC<Props> = ({ name }) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
   return (
     <Box>
-      {showIntroTitle && (
-        <>
-          <Text
-            variant="eyebrow"
-            marginBottom={2}
-            fontWeight="semiBold"
-            color="purple400"
-          >
-            {formatMessage(m.hi)},
-          </Text>
-          <Text variant="h2" as="h1" marginBottom={1}>
-            {name}
-          </Text>
-        </>
-      )}
+      <Text
+        variant="eyebrow"
+        marginBottom={2}
+        fontWeight="semiBold"
+        color="purple400"
+      >
+        {formatMessage(m.hi)},
+      </Text>
+      <Text variant="h2" as="h1" marginBottom={1}>
+        {name}
+      </Text>
       <Text marginBottom={4}>{formatMessage(msg.overlayIntro)}</Text>
       <Divider />
     </Box>
