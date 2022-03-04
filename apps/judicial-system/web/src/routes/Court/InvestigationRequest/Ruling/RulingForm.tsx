@@ -25,11 +25,8 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isRulingStepOneValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-import {
-  core,
-  icRulingStepOne as m,
-} from '@island.is/judicial-system-web/messages'
+import { isRulingValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import { core, icRuling as m } from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 
@@ -40,7 +37,7 @@ interface Props {
   isCaseUpToDate: boolean
 }
 
-const RulingStepOneForm: React.FC<Props> = (props) => {
+const RulingForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading, isCaseUpToDate } = props
   const { user } = useContext(UserContext)
   const { updateCase } = useCase()
@@ -305,14 +302,14 @@ const RulingStepOneForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`}
+          previousUrl={`${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoading}
-          nextUrl={`${Constants.IC_RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!isRulingStepOneValidIC(workingCase)}
+          nextUrl={`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`}
+          nextIsDisabled={!isRulingValidIC(workingCase)}
         />
       </FormContentContainer>
     </>
   )
 }
 
-export default RulingStepOneForm
+export default RulingForm
