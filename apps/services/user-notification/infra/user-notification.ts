@@ -52,6 +52,16 @@ export const userNotificationWorkerSetup = (services: {
       SERVICE_USER_PROFILE_BASEPATH: ref(
         (ctx) => `http://${ctx.svc(services.userProfileApi)}`,
       ),
+      USER_NOTIFICATION_APP_PROTOCOL: {
+        dev: 'is.island.app.dev',
+        staging: 'is.island.app.staging',
+        prod: 'is.island.app',
+      },
+      CONTENTFUL_HOST: {
+        dev: 'preview.contentful.com',
+        staging: 'cdn.contentful.com',
+        prod: 'cdn.contentful.com',
+      },
     })
     .secrets({
       FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials',
@@ -59,6 +69,7 @@ export const userNotificationWorkerSetup = (services: {
         '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID',
       USER_NOTIFICATION_CLIENT_SECRET:
         '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET',
+      CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN',
     })
     .liveness('/liveness')
     .readiness('/liveness')

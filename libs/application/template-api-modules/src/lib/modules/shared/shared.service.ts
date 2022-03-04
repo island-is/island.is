@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config'
 import { EmailService } from '@island.is/email-service'
 import {
   Application,
+  ApplicationWithAttachments,
   GraphqlGatewayResponse,
 } from '@island.is/application/core'
 import {
@@ -10,6 +11,7 @@ import {
   EmailTemplateGenerator,
   AssignmentEmailTemplateGenerator,
   AttachmentEmailTemplateGenerator,
+  BaseTemplateApiApplicationService,
 } from '../../types'
 import { createAssignToken, getConfigValue } from './shared.utils'
 import {
@@ -18,14 +20,20 @@ import {
   PaymentChargeData,
   PaymentStatusData,
 } from './shared.queries'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class SharedTemplateApiService {
   constructor(
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
     @Inject(EmailService)
     private readonly emailService: EmailService,
     @Inject(ConfigService)
     private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
+    @Inject(BaseTemplateApiApplicationService)
+    private readonly applicationService: BaseTemplateApiApplicationService,
   ) {}
 
   async sendEmail(
@@ -152,7 +160,7 @@ export class SharedTemplateApiService {
     authorization: string,
     applicationId: string,
     chargeItemCode: string,
-  ) {
+  ): Promise<PaymentChargeData['applicationPaymentCharge']> {
     return this.makeGraphqlQuery<PaymentChargeData>(
       authorization,
       PAYMENT_QUERY,
@@ -173,7 +181,11 @@ export class SharedTemplateApiService {
       .then((res) => res.json())
       .then(({ errors, data }) => {
         if (errors && errors.length) {
-          throw new Error('Creating the payment charge failed')
+          this.logger.error('Graphql errors', {
+            errors,
+          })
+
+          throw new Error('Graphql errors present')
         }
 
         if (!data?.applicationPaymentCharge) {
@@ -204,5 +216,23 @@ export class SharedTemplateApiService {
       .then(({ data }) => {
         return data?.applicationPaymentStatus
       })
+  }
+
+  async addAttachment(
+    application: ApplicationWithAttachments,
+    fileName: string,
+    buffer: Buffer,
+    uploadParameters?: {
+      ContentType?: string
+      ContentDisposition?: string
+      ContentEncoding?: string
+    },
+  ): Promise<string> {
+    return this.applicationService.saveAttachmentToApplicaton(
+      application,
+      fileName,
+      buffer,
+      uploadParameters,
+    )
   }
 }

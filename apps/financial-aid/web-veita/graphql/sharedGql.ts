@@ -4,6 +4,7 @@ export const ApplicationQuery = gql`
   query GetApplicationQuery($input: ApplicationInput!) {
     application(input: $input) {
       id
+      applicationSystemId
       nationalId
       created
       modified
@@ -67,6 +68,15 @@ export const ApplicationQuery = gql`
           description
           amount
         }
+      }
+      directTaxPayments {
+        totalSalary
+        payerNationalId
+        personalAllowance
+        withheldAtSource
+        month
+        year
+        userType
       }
     }
   }
@@ -196,6 +206,15 @@ export const ApplicationEventMutation = gql`
         staffNationalId
         staffName
       }
+      directTaxPayments {
+        totalSalary
+        payerNationalId
+        personalAllowance
+        withheldAtSource
+        month
+        year
+        userType
+      }
     }
   }
 `
@@ -269,6 +288,15 @@ export const UpdateApplicationMutation = gql`
       staff {
         name
         municipalityId
+      }
+      directTaxPayments {
+        totalSalary
+        payerNationalId
+        personalAllowance
+        withheldAtSource
+        month
+        year
+        userType
       }
       amount {
         aidAmount

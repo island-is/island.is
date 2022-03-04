@@ -10,5 +10,9 @@
   "video": false,
   "videosFolder": "../../dist/cypress/apps/auth-admin-web-e2e/videos",
   "screenshotsFolder": "../../dist/cypress/apps/auth-admin-web-e2e/screenshots",
-  "chromeWebSecurity": false
+  "chromeWebSecurity": false,
+  "retries": {
+    "runMode": 2,
+    "openMode": 0
+  }
 }

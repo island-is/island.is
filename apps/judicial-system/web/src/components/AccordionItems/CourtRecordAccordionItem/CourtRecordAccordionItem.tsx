@@ -6,15 +6,14 @@ import {
   capitalize,
   formatAppeal,
   formatDate,
-  TIME_FORMAT,
   formatRequestCaseType,
 } from '@island.is/judicial-system/formatters'
 import {
-  Gender,
   isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 import { closedCourt, core } from '@island.is/judicial-system-web/messages'
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { courtRecordAccordion as m } from '@island.is/judicial-system-web/messages/Core/courtRecordAccordion'
 import type { Case } from '@island.is/judicial-system/types'
 
@@ -49,6 +48,7 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
       id="courtRecordAccordionItem"
       label="Þingbók"
       labelVariant="h3"
+      labelUse="h3"
     >
       <AccordionListItem
         title={formatMessage(m.sections.timeAndLocation.title)}
@@ -108,27 +108,11 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
           })}
         </Text>
       </AccordionListItem>
-      {workingCase.accusedBookings?.trim() && (
-        <AccordionListItem
-          title={formatMessage(m.sections.accusedBookings.title, {
-            accusedType: isRestrictionCase(workingCase.type)
-              ? formatMessage(core.accused, {
-                  suffix:
-                    workingCase.defendants &&
-                    workingCase.defendants.length > 0 &&
-                    workingCase.defendants[0].gender === Gender.FEMALE
-                      ? 'u'
-                      : 'a',
-                })
-              : formatMessage(core.defendant, { suffix: 'a' }),
-          })}
-          breakSpaces
-        >
-          <Text>{workingCase.accusedBookings.trim()}</Text>
-        </AccordionListItem>
-      )}
-      <AccordionListItem title="Málflutningur" breakSpaces>
-        <Text>{workingCase.litigationPresentations}</Text>
+      <AccordionListItem
+        title={formatMessage(m.sections.sessionBookings.title)}
+        breakSpaces
+      >
+        <Text>{workingCase.sessionBookings}</Text>
       </AccordionListItem>
       {isRestrictionCase(workingCase.type) && (
         <Box marginBottom={3}>

@@ -75,7 +75,7 @@ function SvgComponent(props) {
           y2={457.212}
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#FF4C84" />
+          <stop offset={0} stopColor="#FF4C84" />
           <stop offset={0.353} stopColor="#B569B7" />
           <stop offset={0.656} stopColor="#7D7EDE" />
           <stop offset={0.88} stopColor="#5A8BF6" />

@@ -19,6 +19,7 @@ export enum CaseType {
   INTERNET_USAGE = 'INTERNET_USAGE',
   RESTRAINING_ORDER = 'RESTRAINING_ORDER',
   ELECTRONIC_DATA_DISCOVERY_INVESTIGATION = 'ELECTRONIC_DATA_DISCOVERY_INVESTIGATION',
+  VIDEO_RECORDING_EQUIPMENT = 'VIDEO_RECORDING_EQUIPMENT',
   OTHER = 'OTHER',
 }
 
@@ -28,6 +29,7 @@ export const caseTypesWithMultipleDefendants = [
   CaseType.SOUND_RECORDING_EQUIPMENT,
   CaseType.PHONE_TAPPING,
   CaseType.TRACKING_EQUIPMENT,
+  CaseType.VIDEO_RECORDING_EQUIPMENT,
 ]
 
 export enum CaseState {
@@ -142,8 +144,7 @@ export interface Case {
   courtAttendees?: string
   prosecutorDemands?: string
   courtDocuments?: string[]
-  accusedBookings?: string
-  litigationPresentations?: string
+  sessionBookings?: string
   courtCaseFacts?: string
   courtLegalArguments?: string
   ruling?: string
@@ -172,7 +173,7 @@ export interface Case {
   childCase?: Case
   notifications?: Notification[]
   caseFiles?: CaseFile[]
-  isMasked?: boolean
+  caseModifiedExplanation?: string
 }
 
 export interface CreateCase {
@@ -227,8 +228,7 @@ export interface UpdateCase {
   courtAttendees?: string
   prosecutorDemands?: string
   courtDocuments?: string[]
-  accusedBookings?: string
-  litigationPresentations?: string
+  sessionBookings?: string
   courtCaseFacts?: string
   courtLegalArguments?: string
   ruling?: string
@@ -246,6 +246,7 @@ export interface UpdateCase {
   prosecutorPostponedAppealDate?: string
   registrarId?: string
   judgeId?: string
+  caseModifiedExplanation?: string
 }
 
 export interface TransitionCase {
@@ -264,12 +265,6 @@ export interface SignatureConfirmationResponse {
   message?: string
 }
 
-export interface CreateCourtCase {
-  type: CaseType
-  policeCaseNumber: string
-  isExtension: boolean
-}
-
 export const restrictionCases = [CaseType.CUSTODY, CaseType.TRAVEL_BAN]
 
 export const investigationCases = [
@@ -285,6 +280,7 @@ export const investigationCases = [
   CaseType.INTERNET_USAGE,
   CaseType.RESTRAINING_ORDER,
   CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
+  CaseType.VIDEO_RECORDING_EQUIPMENT,
   CaseType.OTHER,
 ]
 

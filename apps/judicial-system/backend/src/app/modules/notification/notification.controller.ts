@@ -12,7 +12,9 @@ import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { UserRole, NotificationType } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 import {
+  CurrentHttpUser,
   JwtAuthGuard,
   RolesGuard,
   RolesRule,
@@ -25,12 +27,12 @@ import {
   Case,
   CaseExistsGuard,
   CaseReadGuard,
-  CaseService,
   CaseWriteGuard,
   CurrentCase,
 } from '../case'
-import { SendNotificationDto } from './dto'
-import { Notification, SendNotificationResponse } from './models'
+import { SendNotificationDto } from './dto/sendNotification.dto'
+import { Notification } from './models/notification.model'
+import { SendNotificationResponse } from './models/sendNotification.resopnse'
 import { NotificationService } from './notification.service'
 
 // Allows prosecutors to send heads-up and ready-for-court notifications
@@ -41,6 +43,7 @@ const prosecutorNotificationRule = {
   dtoFieldValues: [
     NotificationType.HEADS_UP,
     NotificationType.READY_FOR_COURT,
+    NotificationType.MODIFIED,
     NotificationType.REVOKED,
   ],
 } as RolesRule
@@ -54,6 +57,7 @@ const judgeNotificationRule = {
     NotificationType.RECEIVED_BY_COURT,
     NotificationType.COURT_DATE,
     NotificationType.RULING,
+    NotificationType.MODIFIED,
   ],
 } as RolesRule
 
@@ -65,6 +69,7 @@ const registrarNotificationRule = {
   dtoFieldValues: [
     NotificationType.RECEIVED_BY_COURT,
     NotificationType.COURT_DATE,
+    NotificationType.MODIFIED,
   ],
 } as RolesRule
 
@@ -73,7 +78,6 @@ const registrarNotificationRule = {
 @ApiTags('notifications')
 export class NotificationController {
   constructor(
-    private readonly caseService: CaseService,
     private readonly notificationService: NotificationService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -91,6 +95,7 @@ export class NotificationController {
   })
   async sendCaseNotification(
     @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Body() notification: SendNotificationDto,
   ): Promise<SendNotificationResponse> {
@@ -98,7 +103,11 @@ export class NotificationController {
       `Sending ${notification.type} notification for case ${caseId}`,
     )
 
-    return this.notificationService.sendCaseNotification(notification, theCase)
+    return this.notificationService.sendCaseNotification(
+      notification,
+      theCase,
+      user,
+    )
   }
 
   @UseGuards(CaseReadGuard)

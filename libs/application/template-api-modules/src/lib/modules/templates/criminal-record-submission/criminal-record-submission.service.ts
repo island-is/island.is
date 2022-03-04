@@ -125,7 +125,6 @@ export class CriminalRecordSubmissionService {
 
     const uploadDataName = 'Umsókn um sakavottorð frá Ísland.is'
     const uploadDataId = 'Sakavottord2.0'
-    const syslumennEmail = 'vefur@syslumenn.is'
 
     await this.syslumennService
       .uploadData(persons, attachment, extraData, uploadDataName, uploadDataId)
@@ -133,8 +132,6 @@ export class CriminalRecordSubmissionService {
         await this.sharedTemplateAPIService.sendEmail(
           generateSyslumennNotifyErrorEmail,
           (application as unknown) as Application,
-          Buffer.from(record.contentBase64, 'base64').toString('binary'),
-          syslumennEmail,
         )
         return undefined
       })

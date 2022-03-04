@@ -12,10 +12,12 @@ export const CaseQuery = gql`
       policeCaseNumber
       defendants {
         id
+        noNationalId
         nationalId
         name
         gender
         address
+        citizenship
       }
       defenderName
       defenderEmail
@@ -79,8 +81,7 @@ export const CaseQuery = gql`
       courtAttendees
       prosecutorDemands
       courtDocuments
-      accusedBookings
-      litigationPresentations
+      sessionBookings
       courtCaseFacts
       courtLegalArguments
       ruling
@@ -137,7 +138,7 @@ export const CaseQuery = gql`
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
-      isMasked
+      caseModifiedExplanation
     }
   }
 `

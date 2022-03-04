@@ -5,9 +5,9 @@ import { Base64 } from 'js-base64'
 import { BadGatewayException, NotFoundException } from '@nestjs/common'
 
 import { AwsS3Service } from '../../aws-s3'
-import { UploadPoliceCaseFileResponse } from '../models'
+import { UploadPoliceCaseFileResponse } from '../models/uploadPoliceCaseFile.response'
 import { createTestingPoliceModule } from './createTestingPoliceModule'
-import { UploadPoliceCaseFileDto } from '../dto'
+import { UploadPoliceCaseFileDto } from '../dto/uploadPoliceCaseFile.dto'
 
 jest.mock('isomorphic-fetch')
 
@@ -89,7 +89,7 @@ describe('PoliceController - Upload police case file', () => {
 
     it('should updload the file to ASW S3', () => {
       expect(mockPutObject).toHaveBeenCalledWith(
-        expect.stringMatching(new RegExp(`^${caseId}/.{36}/test.txt$`)),
+        expect.stringMatching(new RegExp(`^uploads/${caseId}/.{36}/test.txt$`)),
         'Test content',
       )
     })
@@ -117,7 +117,9 @@ describe('PoliceController - Upload police case file', () => {
 
     it('should updload the file to ASW S3', () => {
       expect(then.result).toEqual({
-        key: expect.stringMatching(new RegExp(`^${caseId}/.{36}/test.txt$`)),
+        key: expect.stringMatching(
+          new RegExp(`^uploads/${caseId}/.{36}/test.txt$`),
+        ),
         size: 12,
       })
     })

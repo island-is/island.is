@@ -1,6 +1,9 @@
-import type { Case, UpdateCase } from '@island.is/judicial-system/types'
 import formatISO from 'date-fns/formatISO'
-import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
+
+import { formatDate } from '@island.is/judicial-system/formatters'
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
+import type { Case, UpdateCase } from '@island.is/judicial-system/types'
+
 import {
   padTimeWithZero,
   parseArray,
@@ -14,20 +17,15 @@ import { validate, Validation } from './validate'
 
 export const removeTabsValidateAndSet = (
   field: string,
-  evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  value: string,
   validations: Validation[],
   theCase: Case,
   setCase: (value: React.SetStateAction<Case>) => void,
   errorMessage?: string,
   setErrorMessage?: (value: React.SetStateAction<string>) => void,
 ) => {
-  let value: string
-
-  if (evt.target.value.includes('\t')) {
-    value = replaceTabs(evt.target.value)
-    evt.target.value = value
-  } else {
-    value = evt.target.value
+  if (value.includes('\t')) {
+    value = replaceTabs(value)
   }
 
   validateAndSet(
@@ -126,48 +124,6 @@ export const validateAndSetTime = (
 
 export const setAndSendDateToServer = (
   field: string,
-  currentValue: string | undefined,
-  date: Date | null,
-  theCase: Case,
-  required: boolean,
-  setCase: (value: React.SetStateAction<Case>) => void,
-  updateCase: (id: string, updateCase: UpdateCase) => void,
-  setErrorMessage?: (value: React.SetStateAction<string>) => void,
-) => {
-  if (required && date === null && setErrorMessage) {
-    setErrorMessage('Reitur má ekki vera tómur')
-  }
-
-  let formattedDate = null
-
-  if (date !== null) {
-    if (setErrorMessage) {
-      setErrorMessage('')
-    }
-
-    const currentRepresentation = currentValue?.includes('T')
-      ? 'complete'
-      : 'date'
-
-    formattedDate = formatISO(date, {
-      representation: currentRepresentation,
-    })
-  }
-
-  setCase({
-    ...theCase,
-    [field]: formattedDate,
-  })
-
-  if (theCase.id !== '') {
-    updateCase(theCase.id, {
-      [field]: formattedDate,
-    })
-  }
-}
-
-export const newSetAndSendDateToServer = (
-  field: string,
   date: Date | undefined,
   isValid: boolean,
   theCase: Case,
@@ -249,16 +205,13 @@ export const setAndSendToServer = (
   setCase: (value: React.SetStateAction<Case>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
-  let stringValue = ''
-
   setCase({
     ...theCase,
     [field]: value,
   })
   if (theCase.id !== '') {
     if (typeof value === 'string') {
-      stringValue = value
-      return updateCase(theCase.id, parseString(field, stringValue))
+      return updateCase(theCase.id, parseString(field, value))
     } else if (typeof value === 'boolean') {
       return updateCase(theCase.id, parseBoolean(field, value))
     } else {

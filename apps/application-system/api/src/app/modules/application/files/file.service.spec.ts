@@ -1,12 +1,12 @@
 import { Test } from '@nestjs/testing'
 import { FileService } from './file.service'
 import { SigningModule, SigningService } from '@island.is/dokobit-signing'
-import { AwsService } from './aws.service'
+import { AwsService } from '@island.is/nest/aws'
 import * as pdf from './pdfGenerators'
-import { Application } from './../application.model'
+import { Application } from '@island.is/application/api/core'
 import { ApplicationTypes, PdfTypes } from '@island.is/application/core'
 import { LoggingModule } from '@island.is/logging'
-import { NotFoundException, BadRequestException } from '@nestjs/common'
+import { NotFoundException } from '@nestjs/common'
 import {
   APPLICATION_CONFIG,
   ApplicationConfig,
@@ -119,7 +119,7 @@ describe('FileService', () => {
 
     jest
       .spyOn(awsService, 'uploadFile')
-      .mockImplementation(() => Promise.resolve())
+      .mockImplementation(() => Promise.resolve('url'))
 
     jest
       .spyOn(awsService, 'getPresignedUrl')
@@ -158,6 +158,11 @@ describe('FileService', () => {
       Buffer.from('buffer'),
       bucket,
       fileName,
+      {
+        ContentEncoding: 'base64',
+        ContentDisposition: 'inline',
+        ContentType: 'application/pdf',
+      },
     )
 
     expect(awsService.getPresignedUrl).toHaveBeenCalledWith(bucket, fileName)

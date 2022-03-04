@@ -11,6 +11,15 @@ import {
   ApiScopeUser,
   ApiScopeUserAccess,
   ApiScopeUserClaim,
+  Client,
+  ClientAllowedCorsOrigin,
+  ClientAllowedScope,
+  ClientClaim,
+  ClientGrantType,
+  ClientIdpRestrictions,
+  ClientPostLogoutRedirectUri,
+  ClientRedirectUri,
+  ClientSecret,
   Delegation,
   DELEGATIONS_AUTH_CONFIG,
   DelegationScope,
@@ -21,16 +30,23 @@ import {
   IdentityResourceUserClaim,
   ResourcesService,
 } from '@island.is/auth-api-lib'
+import {
+  PersonalRepresentative,
+  PersonalRepresentativeRight,
+  PersonalRepresentativeRightType,
+  PersonalRepresentativeScopePermission,
+  PersonalRepresentativeService,
+  PersonalRepresentativeType,
+} from '@island.is/auth-api-lib/personal-representative'
 import { AuthConfig } from '@island.is/auth-nest-tools'
 import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
-import { RskModule } from '@island.is/clients/rsk/v2'
+import { RskProcuringClientModule } from '@island.is/clients/rsk/procuring'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
 
 import { environment } from '../../../environments'
 import { ActorDelegationsController } from './actorDelegations.controller'
 import { MeDelegationsController } from './meDelegations.controller'
-import { RskConfig } from './rsk.config'
 
 const delegationAuthConfig: AuthConfig = environment.auth
 
@@ -48,11 +64,25 @@ const delegationAuthConfig: AuthConfig = environment.auth
       ApiScopeUserAccess,
       ApiScopeUser,
       ApiScopeGroup,
+      Client,
+      ClientAllowedCorsOrigin,
+      ClientAllowedScope,
+      ClientClaim,
+      ClientGrantType,
+      ClientIdpRestrictions,
+      ClientPostLogoutRedirectUri,
+      ClientRedirectUri,
+      ClientSecret,
       Domain,
       Delegation,
       DelegationScope,
+      PersonalRepresentative,
+      PersonalRepresentativeType,
+      PersonalRepresentativeRight,
+      PersonalRepresentativeRightType,
+      PersonalRepresentativeScopePermission,
     ]),
-    RskModule.register(RskConfig),
+    RskProcuringClientModule,
     NationalRegistryClientModule,
     FeatureFlagModule,
     ProblemModule,
@@ -62,6 +92,7 @@ const delegationAuthConfig: AuthConfig = environment.auth
     DelegationsService,
     DelegationScopeService,
     ResourcesService,
+    PersonalRepresentativeService,
     {
       provide: DELEGATIONS_AUTH_CONFIG,
       useValue: delegationAuthConfig,

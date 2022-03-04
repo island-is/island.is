@@ -17,6 +17,7 @@ import {
   CriminalRecordSubmissionService,
   DataProtectionComplaintService,
   PSignSubmissionService,
+  ExamplePaymentActionsService,
   MortgageCertificateSubmissionService,
 } from './templates'
 
@@ -54,6 +55,7 @@ export class TemplateAPIService {
     private readonly criminalRecordSubmissionService: CriminalRecordSubmissionService,
     private readonly dataProtectionComplaintService: DataProtectionComplaintService,
     private readonly pSignSubmissionService: PSignSubmissionService,
+    private readonly examplePaymentActionsService: ExamplePaymentActionsService,
     private readonly mortgageCertificateSubmissionService: MortgageCertificateSubmissionService,
   ) {}
 
@@ -74,6 +76,7 @@ export class TemplateAPIService {
       | CriminalRecordSubmissionService
       | DataProtectionComplaintService
       | PSignSubmissionService
+      | ExamplePaymentActionsService
       | MortgageCertificateSubmissionService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
@@ -181,6 +184,11 @@ export class TemplateAPIService {
       case ApplicationTypes.P_SIGN:
         return this.tryRunningActionOnService(
           this.pSignSubmissionService,
+          action,
+        )
+      case ApplicationTypes.EXAMPLE_PAYMENT:
+        return this.tryRunningActionOnService(
+          this.examplePaymentActionsService,
           action,
         )
       case ApplicationTypes.MORTGAGE_CERTIFICATE:

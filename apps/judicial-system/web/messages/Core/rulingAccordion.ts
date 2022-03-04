@@ -38,15 +38,6 @@ export const rulingAccordion = {
           'Notaður sem titill fyrir "Málsatvik" hlutanum í úrskurðar fellilista í öllum málategundum.',
       },
     }),
-    requestProsecutorOnlySession: defineMessages({
-      title: {
-        id:
-          'judicial.system.core:ruling_accordion.request_prosecutor_only_session.title',
-        defaultMessage: 'Beiðni um dómþing að varnaraðila fjarstöddum',
-        description:
-          'Notaður sem titill fyrir "Beiðni um dómþing að varnaraðila fjarstöddum" hlutanum í úrskurðar fellilista í öllum málategundum.',
-      },
-    }),
     ruling: defineMessages({
       title: {
         id: 'judicial.system.core:ruling_accordion.ruling.title',

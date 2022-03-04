@@ -27,20 +27,20 @@ jest.mock('winston-cloudwatch', () => {
 
 const defaultNamespace = '@test.is'
 
-const auth: User = {
+const auth = {
   nationalId: '1234567890',
   actor: {
     nationalId: '2234567890',
-    scope: [],
   },
-  scope: [],
-  authorization: '',
   client: 'test-client',
   ip: '12.12.12.12',
   userAgent: 'Test agent',
-}
+} as User
+
+const appVersion = '101_main_4593096'
 
 describe('AuditService against Cloudwatch', () => {
+  const OLD_ENV = process.env
   const genericLogger = mock<Logger>()
   let service: AuditService
   let spy: SpyInstance<Logger> = jest.spyOn(auditLog, 'info')
@@ -66,6 +66,7 @@ describe('AuditService against Cloudwatch', () => {
 
     spy = jest.spyOn(auditLog, 'info')
     service = module.get<AuditService>(AuditService)
+    process.env = { ...OLD_ENV, APP_VERSION: appVersion }
   })
 
   // Cleanup
@@ -103,6 +104,7 @@ describe('AuditService against Cloudwatch', () => {
       meta,
       ip: auth.ip,
       userAgent: auth.userAgent,
+      appVersion: appVersion,
     })
   })
 
@@ -150,6 +152,7 @@ describe('AuditService against Cloudwatch', () => {
       action: `${defaultNamespace}#${action}`,
       ip: auth.ip,
       userAgent: auth.userAgent,
+      appVersion: appVersion,
     })
   })
 
@@ -189,6 +192,7 @@ describe('AuditService against Cloudwatch', () => {
       client: [auth.client],
       action: `${defaultNamespace}#${action}`,
       ip: auth.ip,
+      appVersion: appVersion,
     })
   })
 
@@ -222,6 +226,7 @@ describe('AuditService against Cloudwatch', () => {
       meta,
       ip: auth.ip,
       userAgent: auth.userAgent,
+      appVersion: appVersion,
     })
   })
 })
@@ -278,6 +283,7 @@ describe('AuditService in development', () => {
       meta,
       ip: auth.ip,
       userAgent: auth.userAgent,
+      appVersion: appVersion,
     })
   })
 })

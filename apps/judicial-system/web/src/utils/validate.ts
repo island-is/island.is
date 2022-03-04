@@ -1,14 +1,34 @@
 // TODO: Add tests
-import { Case, CaseType } from '@island.is/judicial-system/types'
+import { Case, CaseType, User } from '@island.is/judicial-system/types'
+
+import { isBusiness } from './stepHelper'
 
 export type Validation =
   | 'empty'
   | 'time-format'
   | 'police-casenumber-format'
   | 'national-id'
+  | 'date-of-birth'
   | 'email-format'
   | 'phonenumber'
   | 'date-format'
+
+const someDefendantIsInvalid = (workingCase: Case) => {
+  return (
+    workingCase.defendants &&
+    workingCase.defendants.some(
+      (defendant) =>
+        (!isBusiness(defendant.nationalId) && !defendant.gender) ||
+        !validate(defendant.nationalId || '', 'empty').isValid ||
+        !validate(
+          defendant.nationalId || '',
+          defendant.noNationalId ? 'date-of-birth' : 'national-id',
+        ).isValid ||
+        !validate(defendant.name || '', 'empty').isValid ||
+        !validate(defendant.address || '', 'empty').isValid,
+    )
+  )
+}
 
 export const validate = (value: string, validation: Validation) => {
   if (!value && validation === 'empty') {
@@ -45,6 +65,14 @@ export const getRegexByValidation = (validation: Validation) => {
         regex: new RegExp(/^\d{6}(-?\d{4})?$/g),
         errorMessage: 'Dæmi: 000000-0000',
       }
+    case 'date-of-birth': {
+      return {
+        regex: new RegExp(
+          /^(0[1-9]|[12][0-9]|3[01])[.](0[1-9]|1[012])[.](19|20)\d\d$/g,
+        ),
+        errorMessage: 'Dæmi: 00.00.0000',
+      }
+    }
     case 'email-format':
       return {
         regex: new RegExp(/^$|^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g),
@@ -71,10 +99,7 @@ export const isAccusedStepValidRC = (workingCase: Case) => {
       .isValid &&
     workingCase.defendants &&
     workingCase.defendants.length > 0 &&
-    workingCase.defendants[0].gender &&
-    validate(workingCase.defendants[0].nationalId || '', 'empty').isValid &&
-    validate(workingCase.defendants[0].nationalId || '', 'national-id')
-      .isValid &&
+    !someDefendantIsInvalid(workingCase) &&
     validate(workingCase.defendants[0].name || '', 'empty').isValid &&
     validate(workingCase.defendants[0].address || '', 'empty').isValid &&
     (workingCase.type === CaseType.CUSTODY
@@ -87,17 +112,6 @@ export const isAccusedStepValidRC = (workingCase: Case) => {
 }
 
 export const isDefendantStepValidIC = (workingCase: Case) => {
-  const someDefendantIsInvalid =
-    workingCase.defendants &&
-    workingCase.defendants.some(
-      (defendant) =>
-        !defendant.gender ||
-        !validate(defendant.nationalId || '', 'empty').isValid ||
-        !validate(defendant.nationalId || '', 'national-id').isValid ||
-        !validate(defendant.name || '', 'empty').isValid ||
-        !validate(defendant.address || '', 'empty').isValid,
-    )
-
   return (
     validate(workingCase.policeCaseNumber, 'empty').isValid &&
     validate(workingCase.policeCaseNumber, 'police-casenumber-format')
@@ -105,7 +119,7 @@ export const isDefendantStepValidIC = (workingCase: Case) => {
     workingCase.type &&
     workingCase.defendants &&
     workingCase.defendants.length > 0 &&
-    !someDefendantIsInvalid &&
+    !someDefendantIsInvalid(workingCase) &&
     validate(workingCase.defenderEmail || '', 'email-format').isValid &&
     validate(workingCase.defenderPhoneNumber || '', 'phonenumber').isValid
   )
@@ -163,28 +177,56 @@ export const isPoliceReportStepValidIC = (workingCase: Case) => {
   )
 }
 
-export const isOverviewStepValidRC = (workingCase: Case) => {
-  return validate(workingCase.courtCaseNumber || '', 'empty').isValid
+export const isReceptionAndAssignmentStepValidRC = (workingCase: Case) => {
+  return (
+    validate(workingCase.courtCaseNumber || '', 'empty').isValid &&
+    workingCase.judge
+  )
 }
 
-export const isOverviewStepValidIC = (workingCase: Case) => {
-  return validate(workingCase.courtCaseNumber || '', 'empty').isValid
+export const isReceptionAndAssignmentStepValidIC = (workingCase: Case) => {
+  return (
+    validate(workingCase.courtCaseNumber || '', 'empty').isValid &&
+    workingCase.judge
+  )
 }
 
 export const isCourtHearingArrangemenstStepValidRC = (workingCase: Case) => {
   return (
     validate(workingCase.defenderEmail || '', 'email-format').isValid &&
     validate(workingCase.defenderPhoneNumber || '', 'phonenumber').isValid &&
-    validate(workingCase.courtDate || '', 'date-format').isValid &&
-    workingCase.judge
+    validate(workingCase.courtDate || '', 'date-format').isValid
   )
 }
 
 export const isCourtHearingArrangementsStepValidIC = (workingCase: Case) => {
   return (
-    workingCase.judge &&
     workingCase.sessionArrangements &&
-    validate(workingCase.courtDate || '', 'date-format').isValid
+    validate(workingCase.courtDate || '', 'date-format').isValid &&
+    validate(workingCase.defenderEmail || '', 'email-format').isValid &&
+    validate(workingCase.defenderPhoneNumber || '', 'phonenumber').isValid
+  )
+}
+
+export const isRulingValidRC = (workingCase: Case) => {
+  return (
+    validate(workingCase.prosecutorDemands || '', 'empty').isValid &&
+    validate(workingCase.courtCaseFacts || '', 'empty').isValid &&
+    validate(workingCase.courtLegalArguments || '', 'empty').isValid &&
+    validate(workingCase.decision || '', 'empty').isValid &&
+    validate(workingCase.ruling || '', 'empty').isValid &&
+    validate(workingCase.conclusion || '', 'empty').isValid
+  )
+}
+
+export const isRulingValidIC = (workingCase: Case) => {
+  return (
+    validate(workingCase.prosecutorDemands || '', 'empty').isValid &&
+    validate(workingCase.courtCaseFacts || '', 'empty').isValid &&
+    validate(workingCase.courtLegalArguments || '', 'empty').isValid &&
+    validate(workingCase.decision || '', 'empty').isValid &&
+    validate(workingCase.ruling || '', 'empty').isValid &&
+    validate(workingCase.conclusion || '', 'empty').isValid
   )
 }
 
@@ -192,7 +234,12 @@ export const isCourtRecordStepValidRC = (workingCase: Case) => {
   return (
     validate(workingCase.courtStartDate || '', 'date-format').isValid &&
     validate(workingCase.courtLocation || '', 'empty').isValid &&
-    validate(workingCase.litigationPresentations || '', 'empty').isValid
+    validate(workingCase.sessionBookings || '', 'empty').isValid &&
+    workingCase.accusedAppealDecision &&
+    workingCase.prosecutorAppealDecision &&
+    validate(workingCase.endOfSessionBookings || '', 'empty').isValid &&
+    validate(workingCase.courtEndTime || '', 'empty').isValid &&
+    validate(workingCase.courtEndTime || '', 'date-format').isValid
   )
 }
 
@@ -200,44 +247,24 @@ export const isCourtRecordStepValidIC = (workingCase: Case) => {
   return (
     validate(workingCase.courtStartDate || '', 'date-format').isValid &&
     validate(workingCase.courtLocation || '', 'empty').isValid &&
-    validate(workingCase.litigationPresentations || '', 'empty').isValid
-  )
-}
-
-export const isRulingStepOneValidRC = (workingCase: Case) => {
-  return (
-    validate(workingCase.prosecutorDemands || '', 'empty').isValid &&
-    validate(workingCase.courtCaseFacts || '', 'empty').isValid &&
-    validate(workingCase.courtLegalArguments || '', 'empty').isValid &&
-    validate(workingCase.decision || '', 'empty').isValid &&
-    validate(workingCase.ruling || '', 'empty').isValid
-  )
-}
-
-export const isRulingStepOneValidIC = (workingCase: Case) => {
-  return (
-    validate(workingCase.prosecutorDemands || '', 'empty').isValid &&
-    validate(workingCase.courtCaseFacts || '', 'empty').isValid &&
-    validate(workingCase.courtLegalArguments || '', 'empty').isValid &&
-    validate(workingCase.decision || '', 'empty').isValid &&
-    validate(workingCase.ruling || '', 'empty').isValid
-  )
-}
-
-export const isRulingStepTwoValidRC = (workingCase: Case) => {
-  return (
+    validate(workingCase.sessionBookings || '', 'empty').isValid &&
     workingCase.accusedAppealDecision &&
     workingCase.prosecutorAppealDecision &&
-    validate(workingCase.conclusion || '', 'empty').isValid &&
+    validate(workingCase.endOfSessionBookings || '', 'empty').isValid &&
+    validate(workingCase.courtEndTime || '', 'empty').isValid &&
     validate(workingCase.courtEndTime || '', 'date-format').isValid
   )
 }
 
-export const isRulingStepTwoValidIC = (workingCase: Case) => {
+export const isAdminUserFormValid = (user: User) => {
   return (
-    workingCase.accusedAppealDecision &&
-    workingCase.prosecutorAppealDecision &&
-    validate(workingCase.conclusion || '', 'empty').isValid &&
-    validate(workingCase.courtEndTime || '', 'date-format').isValid
+    validate(user.name, 'empty').isValid &&
+    validate(user.nationalId, 'empty').isValid &&
+    validate(user.nationalId, 'national-id').isValid &&
+    user.institution &&
+    validate(user.title, 'empty').isValid &&
+    validate(user.mobileNumber, 'empty').isValid &&
+    validate(user.email, 'empty').isValid &&
+    validate(user.email, 'email-format').isValid
   )
 }

@@ -30,8 +30,7 @@ import { rcRequestedHearingArrangements } from '@island.is/judicial-system-web/m
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import type { User } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-
+import * as Constants from '@island.is/judicial-system/consts'
 import StepTwoForm from './StepTwoForm'
 
 export const StepTwo: React.FC = () => {

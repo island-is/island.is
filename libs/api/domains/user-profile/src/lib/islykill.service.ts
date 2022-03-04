@@ -4,6 +4,7 @@ import { User } from '@island.is/auth-nest-tools'
 
 import { IslykillSettings } from './models/islykillSettings.model'
 import { UpdateIslykillSettings } from './models/updateIslykillSettings.model'
+import { CreateIslykillSettings } from './models/createIslykillSettings.model'
 
 @Injectable()
 export class IslykillService {
@@ -83,17 +84,13 @@ export class IslykillService {
 
   async createIslykillSettings(
     nationalId: User['nationalId'],
-    {
-      email,
-      mobile,
-      canNudge,
-    }: { email?: string; mobile?: string; canNudge?: boolean },
-  ) {
+    { email, mobile }: { email?: string; mobile?: string },
+  ): Promise<CreateIslykillSettings> {
     const inputUserData: PublicUser = {
       ssn: nationalId,
       email,
       mobile,
-      canNudge,
+      canNudge: true, // When creating an account, the default value of canNudge should always be true.
     }
 
     const errorMsg = 'Unable to create islykill settings for user'

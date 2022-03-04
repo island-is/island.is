@@ -9,6 +9,7 @@ import {
   ApplicationStateUrl,
   FamilyStatus,
   AidType,
+  UserType,
 } from './enums'
 
 export interface GetSignedUrl {
@@ -213,6 +214,7 @@ export interface CreateApplication {
   postalCode?: string
   city?: string
   municipalityCode?: string
+  applicationSystemId?: string
 }
 
 export interface ApplicantEmailData {
@@ -225,6 +227,7 @@ export interface ApplicantEmailData {
   applicationLink: string
   applicantEmail: string
   municipality: Municipality
+  applicationLinkText: string
 }
 
 export interface ApplicationFilters {
@@ -234,6 +237,22 @@ export interface ApplicationFilters {
   Rejected: number
   Approved: number
   MyCases: number
+}
+
+export interface PersonalTaxReturn {
+  key: string
+  name: string
+  size: number
+}
+
+export interface DirectTaxPayment {
+  totalSalary: number
+  payerNationalId: string
+  personalAllowance: number
+  withheldAtSource: number
+  month: number
+  year: number
+  userType?: UserType
 }
 
 export interface Application {
@@ -274,6 +293,8 @@ export interface Application {
   postalCode?: string
   city?: string
   municipalityCode?: string
+  directTaxPayments: DirectTaxPayment[]
+  applicationSystemId?: string
 }
 
 export interface GetSignedUrlForId {
@@ -283,7 +304,8 @@ export interface GetSignedUrlForId {
 export interface Spouse {
   hasPartnerApplied: boolean
   hasFiles: boolean
-  spouseName?: string
+  applicantName: string
+  applicantSpouseEmail: string
 }
 
 export interface UpdateApplicationTableResponseType {

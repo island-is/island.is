@@ -11,6 +11,7 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 
 import { CreateApplicationFileInput } from '../../file/dto'
+import { DirectTaxPaymentInput } from './directTaxPayment.input'
 
 @InputType()
 export class CreateApplicationInput implements CreateApplication {
@@ -121,4 +122,12 @@ export class CreateApplicationInput implements CreateApplication {
   @Allow()
   @Field({ nullable: true })
   readonly postalCode?: string
+
+  @Allow()
+  @Field(() => [DirectTaxPaymentInput])
+  readonly directTaxPayments!: DirectTaxPaymentInput[]
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly applicationSystemId?: string
 }

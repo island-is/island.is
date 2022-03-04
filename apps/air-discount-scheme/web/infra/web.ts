@@ -7,12 +7,20 @@ export const serviceSetup = (services: {
     .namespace('air-discount-scheme')
     .env({
       API_URL: ref((h) => `http://${h.svc(services.adsApi)}`),
+      IDENTITY_SERVER_ISSUER_DOMAIN: {
+        dev: 'identity-server.dev01.devland.is',
+        staging: 'identity-server.staging01.devland.is',
+        prod: 'innskra.island.is',
+      },
+      NEXTAUTH_URL: {
+        dev: 'https://loftbru.dev01.devland.is',
+        staging: 'https://loftbru.staging01.devland.is',
+        prod: 'https://loftbru.island.is',
+      },
     })
     .secrets({
-      NEXTAUTH_URL: '/k8s/air-discount-scheme/NEXTAUTH_URL',
       IDENTITY_SERVER_SECRET:
         '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET',
-      IDENTITY_SERVER_DOMAIN: '/k8s/air-discount-scheme/IDENTITY_SERVER_DOMAIN',
       SENTRY_DSN: '/k8s/air-discount-scheme-api/SENTRY_DSN',
     })
 
