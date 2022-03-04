@@ -289,9 +289,7 @@ describe(`${RULING_ROUTE}/:id`, () => {
 
     cy.wait('@gqlCaseQuery')
     cy.getByTestid('introduction')
-      .contains(
-        'Mál þetta var þingfest og tekið til úrskurðar 22. desember 2020.',
-      )
+      .contains('Mál þetta var tekið til úrskurðar 22. desember 2020.')
       .clear()
     cy.clickOutside()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
