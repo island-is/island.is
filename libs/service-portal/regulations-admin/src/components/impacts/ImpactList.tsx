@@ -8,12 +8,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import {
-  Appendix,
-  prettyName,
-  RegName,
-  toISODate,
-} from '@island.is/regulations'
+import { prettyName, RegName } from '@island.is/regulations'
 import { impactMsgs } from '../../messages'
 import {
   DraftImpactForm,
@@ -28,8 +23,6 @@ import {
   DELETE_DRAFT_REGULATION_CHANGE,
 } from './impactQueries'
 import ConfirmModal from '../ConfirmModal/ConfirmModal'
-import { useGetMinDates } from '../../utils/hooks'
-import { makeDraftChangeForm } from '../../state/makeFields'
 
 // ---------------------------------------------------------------------------
 
@@ -42,7 +35,6 @@ export type ImpactListProps = {
 
 export const ImpactList = (props: ImpactListProps) => {
   const { draft, impacts, title, titleEmpty } = props
-  const impactMinDates = useGetMinDates(draft.impacts)
 
   const { formatMessage, formatDateFns } = useLocale()
   const t = formatMessage
@@ -208,23 +200,7 @@ export const ImpactList = (props: ImpactListProps) => {
           {chooseType?.impact?.type === 'amend' && (
             <EditChange
               draft={draft}
-              //change={chooseType.impact}
-              change={makeDraftChangeForm({
-                type: 'amend',
-                id: chooseType.impact.id,
-                name: chooseType.impact.name,
-                date: toISODate(chooseType.impact.date.value) ?? undefined,
-                regTitle: chooseType.impact.regTitle,
-                title: chooseType.impact.title.value,
-                text: chooseType.impact.text.value,
-                appendixes: chooseType.impact.appendixes.map((item) => {
-                  return {
-                    title: item.title.value,
-                    text: item.text.value,
-                  } as Appendix
-                }),
-                comments: chooseType.impact.comments.value,
-              })}
+              change={chooseType.impact}
               readOnly={chooseType.readonly}
               closeModal={closeModal}
             />

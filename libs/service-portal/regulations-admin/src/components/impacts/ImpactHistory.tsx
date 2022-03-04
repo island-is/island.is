@@ -1,83 +1,28 @@
-import React, { Fragment, useMemo } from 'react'
-import sortBy from 'lodash/sortBy'
+import React from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import { ImpactListItem } from './ImpactListItem'
-import { Effects } from '../../types'
-import { DraftImpactForm } from '../../state/types'
+import { nameToSlug, prettyName } from '@island.is/regulations'
 import {
-  ISODate,
-  nameToSlug,
-  prettyName,
-  RegName,
-  toISODate,
-} from '@island.is/regulations'
-import {
-  DraftImpact,
+  DraftImpactName,
   RegulationDraftId,
   RegulationHistoryItemAdmin,
 } from '@island.is/regulations/admin'
-import { useLocale } from '@island.is/localization'
 import * as s from './Impacts.css'
 
 export type ImpactHistoryProps = {
-  effects?: Effects
-  activeImpact?: DraftImpactForm
-  draftImpacts?: DraftImpact[]
-  draftId?: RegulationDraftId
+  allFutureEffects: RegulationHistoryItemAdmin[]
+  targetName: DraftImpactName
+  draftId: RegulationDraftId
 }
 
 export const ImpactHistory = (props: ImpactHistoryProps) => {
-  const { effects, activeImpact, draftImpacts, draftId } = props
-  const { formatDateFns } = useLocale()
+  const { allFutureEffects, targetName, draftId } = props
 
   const hasMismatchId = (effect: RegulationHistoryItemAdmin) => {
     return !!(effect.changingId && draftId && effect.changingId !== draftId)
   }
 
-  const targetName = activeImpact?.name as RegName
-  const activeImpactDate = activeImpact?.date?.value
-
-  const allFutureEffects = useMemo(() => {
-    if (!activeImpact) return []
-
-    const futureEffects: RegulationHistoryItemAdmin[] =
-      effects?.future.map((f) => ({ ...f, origin: 'api', id: 'api' })) ?? []
-
-    const draftImpactsArray: RegulationHistoryItemAdmin[] =
-      draftImpacts?.map((i) => ({
-        id: i.id,
-        changingId: i.changingId,
-        date: i.date,
-        name: i.name,
-        title: i.regTitle,
-        effect: i.type,
-        origin: i.id === activeImpact.id ? 'self' : 'admin',
-      })) ?? []
-
-    const futureEffectArray = [...futureEffects, ...draftImpactsArray]
-
-    if (!draftImpactsArray.find((i) => i.id === activeImpact.id)) {
-      futureEffectArray.push({
-        date: toISODate(activeImpactDate ? activeImpactDate : new Date()),
-        name: targetName,
-        title: 'active',
-        effect: 'repeal',
-        origin: 'self',
-        id: 'self',
-      })
-    }
-
-    return sortBy(futureEffectArray, (o) => o.date)
-  }, [
-    activeImpact,
-    activeImpactDate,
-    targetName,
-    draftImpacts,
-    effects?.future,
-    formatDateFns,
-  ])
-
-  if (!activeImpact) {
+  if (!allFutureEffects?.length || !targetName) {
     return null
   }
 

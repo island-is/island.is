@@ -7,15 +7,13 @@ import {
   GridRow,
   Divider,
 } from '@island.is/island-ui/core'
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { DraftCancelForm, RegDraftForm } from '../../state/types'
-// import { useDraftingState } from '../../state/useDraftingState'
 import { toISODate } from '@island.is/regulations'
 import {
   useGetRegulationFromApiQuery,
   useGetRegulationImpactsQuery,
 } from '../../utils/dataHooks'
-import { Effects } from '../../types'
 import { ImpactHistory } from './ImpactHistory'
 import { LayoverModal } from './LayoverModal'
 import { ImpactModalTitle } from './ImpactModalTitle'
@@ -23,7 +21,7 @@ import {
   CREATE_DRAFT_REGULATION_CANCEL,
   UPDATE_DRAFT_REGULATION_CANCEL,
 } from './impactQueries'
-import { useGetMinDateByName } from '../../utils/hooks'
+import { useGetRegulationHistory } from '../../utils/hooks'
 
 type EditCancellationProp = {
   draft: RegDraftForm
@@ -34,28 +32,13 @@ type EditCancellationProp = {
 export const EditCancellation = (props: EditCancellationProp) => {
   const { draft, cancellation, closeModal } = props
   const [activeCancellation, setActiveCancellation] = useState(cancellation)
-  const minDate = useGetMinDateByName(draft.impacts, cancellation.name)
-  const today = toISODate(new Date())
+  const today = new Date()
+  const [minDate, setMinDate] = useState(today)
 
   const { data: regulation } = useGetRegulationFromApiQuery(
     cancellation.name,
-    toISODate(minDate) ?? today,
+    toISODate(minDate),
   )
-
-  const { effects } = useMemo(() => {
-    const effects = regulation?.history.reduce<Effects>(
-      (obj, item, i) => {
-        const arr = item.date > today ? obj.future : obj.past
-        arr.push(item)
-        return obj
-      },
-      { past: [], future: [] },
-    )
-
-    return {
-      effects,
-    }
-  }, [regulation, today])
 
   const [createDraftRegulationCancel] = useMutation(
     CREATE_DRAFT_REGULATION_CANCEL,
@@ -67,6 +50,19 @@ export const EditCancellation = (props: EditCancellationProp) => {
   const { data: draftImpacts } = useGetRegulationImpactsQuery(
     activeCancellation.name,
   )
+
+  const { allFutureEffects, hasImpactMismatch } = useGetRegulationHistory(
+    regulation,
+    activeCancellation,
+    draftImpacts,
+    draft.id,
+    minDate,
+  )
+
+  useEffect(() => {
+    const lastDay = allFutureEffects.slice(-1)?.[0]?.date
+    setMinDate(lastDay ? new Date(lastDay) : today)
+  }, [allFutureEffects, today])
 
   const changeCancelDate = (newDate: Date | undefined) => {
     setActiveCancellation({
@@ -117,12 +113,6 @@ export const EditCancellation = (props: EditCancellationProp) => {
     closeModal(true)
   }
 
-  const hasImpactMismatch = () => {
-    return !!draftImpacts?.filter(
-      (draftImpact) => draftImpact.changingId !== draft.id,
-    ).length
-  }
-
   return (
     <LayoverModal closeModal={closeModal} id="EditCancelationModal">
       <GridContainer>
@@ -155,11 +145,10 @@ export const EditCancellation = (props: EditCancellationProp) => {
             span={['12/12', '12/12', '12/12', '10/12', '8/12']}
             offset={['0', '0', '0', '1/12', '2/12']}
           >
-            {effects?.future && (
+            {allFutureEffects && (
               <ImpactHistory
-                effects={effects}
-                activeImpact={activeCancellation}
-                draftImpacts={draftImpacts}
+                allFutureEffects={allFutureEffects}
+                targetName={activeCancellation.name}
                 draftId={draft.id}
               />
             )}
@@ -190,7 +179,7 @@ export const EditCancellation = (props: EditCancellationProp) => {
                 onClick={saveCancellation}
                 size="small"
                 icon="arrowForward"
-                disabled={hasImpactMismatch()}
+                disabled={hasImpactMismatch}
               >
                 Vista brottfellingu
               </Button>

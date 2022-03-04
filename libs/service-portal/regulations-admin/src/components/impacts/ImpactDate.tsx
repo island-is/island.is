@@ -4,8 +4,6 @@ import { impactMsgs } from '../../messages'
 import { DraftImpactForm } from '../../state/types'
 import { useLocale } from '@island.is/localization'
 
-const today = new Date()
-
 // ---------------------------------------------------------------------------
 
 export type ImpactDateProps = {

@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDraftingState } from '../state/useDraftingState'
 import { impactMsgs } from '../messages'
 import { useLocale } from '@island.is/localization'
-import { prettyName, RegulationType, toISODate } from '@island.is/regulations'
+import { prettyName, RegulationType } from '@island.is/regulations'
 import {
   DraftImpactName,
   DraftRegulationCancelId,
@@ -31,7 +31,6 @@ import {
 } from '../state/makeFields'
 import { EditChange } from './impacts/EditChange'
 import lastItem from 'lodash/last'
-import { useGetMinDates } from '../utils/hooks'
 
 export type SelRegOption = Option & {
   value?: DraftImpactName | ''
@@ -202,8 +201,7 @@ export const EditImpacts = () => {
                     variant="ghost"
                     icon="document"
                     iconType="outline"
-                    onClick={onClickChange} // () => updateState('impacts', makeDraftChangeForm({}))
-                    // disabled={!!draft.impacts[selRegOption.value]}
+                    onClick={onClickChange}
                   >
                     {t(impactMsgs.chooseType_change)}
                   </Button>
@@ -215,7 +213,6 @@ export const EditImpacts = () => {
                 icon="fileTrayFull"
                 iconType="outline"
                 onClick={() => setChooseType('cancel')}
-                // disabled={!!draft.impacts[selRegOption.value]}
               >
                 {t(impactMsgs.chooseType_cancel)}
               </Button>

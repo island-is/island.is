@@ -6,11 +6,9 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
-  BoxProps,
-  FocusableBox,
   Text,
 } from '@island.is/island-ui/core'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   AppendixDraftForm,
   AppendixFormSimpleProps,
@@ -41,25 +39,9 @@ import * as s from './Impacts.css'
 import { ReferenceText } from './ReferenceText'
 import { fHtml, fText, makeDraftAppendixForm } from '../../state/makeFields'
 import { ImpactHistory } from './ImpactHistory'
-import { Effects } from '../../types'
 import { Appendixes } from '../Appendixes'
 import { tidyUp, updateFieldValue } from '../../state/validations'
-import { useGetMinDateByName } from '../../utils/hooks'
-import { DraftRegulationChange } from '@island.is/regulations/admin'
-/* ---------------------------------------------------------------------------------------------------------------- */
-
-export type HTMLBoxProps = BoxProps & {
-  html: HTMLText
-  dangerouslySetInnerHTML?: undefined
-}
-
-export const HTMLBox = (props: HTMLBoxProps) => {
-  const { html, ...boxProps } = props
-  return React.createElement(Box, {
-    ...boxProps,
-    dangerouslySetInnerHTML: { __html: html },
-  })
-}
+import { useGetRegulationHistory } from '../../utils/hooks'
 
 /* ---------------------------------------------------------------------------------------------------------------- */
 
@@ -76,13 +58,8 @@ export const EditChange = (props: EditChangeProp) => {
   const [activeRegulation, setActiveRegulation] = useState<
     Regulation | undefined
   >() // Target reglugerðin sem á að breyta
-  const minDate = useGetMinDateByName(draft.impacts, change.name)
-  const [baseValue, setBaseValue] = useState<
-    Regulation | DraftRegulationChange
-  >() // Base regulation to display in diff mode
-
-  const [showEditor, setShowEditor] = useState(false)
-  const today = toISODate(new Date())
+  const today = new Date()
+  const [minDate, setMinDate] = useState(today)
 
   const [createDraftRegulationChange] = useMutation(
     CREATE_DRAFT_REGULATION_CHANGE,
@@ -91,63 +68,30 @@ export const EditChange = (props: EditChangeProp) => {
     UPDATE_DRAFT_REGULATION_CHANGE,
   )
 
-  const { data: draftImpacts } = useGetRegulationImpactsQuery(activeChange.name)
   const { data: regulation } = useGetRegulationFromApiQuery(
     change.name,
-    toISODate(minDate) || today,
+    toISODate(minDate),
+  )
+  useEffect(() => {
+    setActiveRegulation(regulation)
+  }, [regulation])
+  const { data: draftImpacts } = useGetRegulationImpactsQuery(activeChange.name)
+
+  const { allFutureEffects, hasImpactMismatch } = useGetRegulationHistory(
+    regulation,
+    activeChange,
+    draftImpacts,
+    draft.id,
+    minDate,
   )
 
   useEffect(() => {
-    setActiveRegulation(regulation)
-    setBaseValue(regulation)
-  }, [regulation])
+    const lastDay = allFutureEffects.slice(-1)?.[0]?.date
+    setMinDate(lastDay ? new Date(lastDay) : today)
+  }, [allFutureEffects])
 
-  const { effects } = useMemo(() => {
-    const effects = activeRegulation?.history.reduce<Effects>(
-      (obj, item) => {
-        const arr = item.date > today ? obj.future : obj.past
-        arr.push(item)
-        return obj
-      },
-      { past: [], future: [] },
-    )
-
-    return {
-      effects,
-    }
-  }, [activeRegulation, today])
-
-  console.log('effects', effects)
   useEffect(() => {
-    const draft =
-      draftImpacts &&
-      draftImpacts.length > 0 &&
-      (draftImpacts?.reduce((prev, next) => {
-        if (prev.date && next.date)
-          if (
-            new Date(prev.date.toString()).getTime() <=
-            new Date(next.date.toString()).getTime()
-          ) {
-            return next
-          } else {
-            return prev
-          }
-        return next
-      }) as DraftRegulationChange)
-
-    console.log('draftImpacts', draftImpacts)
-    console.log('draft', draft)
-    if (draft) {
-      setBaseValue(draft)
-      setActiveChange({
-        ...activeChange,
-        text: fHtml(draft.text, true),
-        title: fText(draft.title),
-        appendixes: draft.appendixes.map((a, i) =>
-          makeDraftAppendixForm(a, String(i)),
-        ),
-      })
-    } else if (!change.id && !activeChange.title.value && activeRegulation) {
+    if (!change.id && !activeChange.title.value && activeRegulation) {
       setActiveChange({
         ...activeChange,
         text: fHtml(activeRegulation.text, true),
@@ -157,8 +101,7 @@ export const EditChange = (props: EditChangeProp) => {
         ),
       })
     }
-    setShowEditor(!!activeRegulation && !!draftImpacts)
-  }, [activeRegulation, draftImpacts])
+  }, [activeRegulation])
 
   const changeDate = (newDate: Date | undefined) => {
     setActiveChange({
@@ -233,12 +176,6 @@ export const EditChange = (props: EditChangeProp) => {
     }
 
     closeModal(true)
-  }
-
-  const hasImpactMismatch = () => {
-    return !!draftImpacts?.filter(
-      (draftImpact) => draftImpact.changingId !== draft.id,
-    ).length
   }
 
   // TODO: This could be better placed in the state reducer
@@ -340,7 +277,7 @@ export const EditChange = (props: EditChangeProp) => {
         <GridRow>
           <GridColumn
             span={['12/12', '12/12', '12/12', '6/12']}
-            offset={['0', '0', '0', '1/12']}
+            offset={['0', '0', '0', '2/12']}
           >
             <ImpactModalTitle
               type="edit"
@@ -361,71 +298,66 @@ export const EditChange = (props: EditChangeProp) => {
             span={['12/12', '12/12', '12/12', '10/12', '8/12']}
             offset={['0', '0', '0', '1/12', '2/12']}
           >
-            {effects?.future && (
+            {allFutureEffects.length && (
               <ImpactHistory
-                effects={effects}
-                activeImpact={activeChange}
-                draftImpacts={draftImpacts}
+                allFutureEffects={allFutureEffects}
+                targetName={activeChange.name}
                 draftId={draft.id}
               />
             )}
           </GridColumn>
         </GridRow>
         <GridRow>
-          {showEditor && (
-            <>
-              <GridColumn
-                span={['12/12', '12/12', '12/12', '10/12', '8/12']}
-                offset={['0', '0', '0', '1/12', '2/12']}
-              >
-                <Box marginBottom={3}>
-                  <MagicTextarea
-                    label="Titill reglugerðar"
-                    name="title"
-                    value={activeChange.title.value}
-                    onChange={(newValue) => changeRegulationTitle(newValue)}
-                    required
-                    readOnly={readOnly}
-                    error={undefined}
-                  />
-                  {activeChange.title.value !== baseValue?.title && (
-                    <MiniDiff
-                      older={baseValue?.title || ''}
-                      newer={activeChange.title.value}
-                    />
-                  )}
-                </Box>
-                <Box marginBottom={4} position="relative">
-                  <Text fontWeight="semiBold" paddingBottom="p2">
-                    Uppfærður texti
-                  </Text>
-                  <EditorInput
-                    label=""
-                    baseText={baseValue?.text}
-                    value={activeChange.text.value}
-                    onChange={(newValue) => changeRegulationText(newValue)}
-                    draftId={draft.id}
-                    isImpact={true}
-                    error={undefined}
-                    readOnly={readOnly}
-                  />
-                </Box>
-              </GridColumn>
-              <GridColumn
-                span={['12/12', '12/12', '12/12', '10/12', '8/12']}
-                offset={['0', '0', '0', '1/12', '2/12']}
-              >
-                <Text fontWeight="semiBold" paddingBottom="p2">
-                  Viðaukar
-                </Text>
-                <Appendixes
-                  draftId={draft.id}
-                  appendixes={activeChange.appendixes}
-                  actions={localActions}
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '10/12', '8/12']}
+            offset={['0', '0', '0', '1/12', '2/12']}
+          >
+            <Box marginBottom={3}>
+              <MagicTextarea
+                label="Titill reglugerðar"
+                name="title"
+                value={activeChange.title.value}
+                onChange={(newValue) => changeRegulationTitle(newValue)}
+                required
+                readOnly={readOnly}
+                error={undefined}
+              />
+              {activeChange.title.value !== activeRegulation?.title && (
+                <MiniDiff
+                  older={activeRegulation?.title || ''}
+                  newer={activeChange.title.value}
                 />
-              </GridColumn>
-            </>
-          )}
+              )}
+            </Box>
+            <Box marginBottom={4} position="relative">
+              <Text fontWeight="semiBold" paddingBottom="p2">
+                Uppfærður texti
+              </Text>
+              <EditorInput
+                label=""
+                baseText={activeRegulation?.text}
+                value={activeChange.text.value}
+                onChange={(newValue) => changeRegulationText(newValue)}
+                draftId={draft.id}
+                isImpact={true}
+                error={undefined}
+                readOnly={readOnly}
+              />
+            </Box>
+          </GridColumn>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '10/12', '8/12']}
+            offset={['0', '0', '0', '1/12', '2/12']}
+          >
+            <Text fontWeight="semiBold" paddingBottom="p2">
+              Viðaukar
+            </Text>
+            <Appendixes
+              draftId={draft.id}
+              appendixes={activeChange.appendixes}
+              actions={localActions}
+            />
+          </GridColumn>
         </GridRow>
         <GridRow>
           <GridColumn
@@ -452,7 +384,7 @@ export const EditChange = (props: EditChangeProp) => {
                 onClick={saveChange}
                 size="small"
                 icon="arrowForward"
-                disabled={hasImpactMismatch()}
+                disabled={hasImpactMismatch}
               >
                 Vista textabreytingu
               </Button>
