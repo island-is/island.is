@@ -1,8 +1,4 @@
 import React, { ReactNode, useMemo } from 'react'
-import { useRouter } from 'next/router'
-import NextLink from 'next/link'
-import getConfig from 'next/config'
-import { LayoutProps } from '@island.is/web/layouts/main'
 import {
   Image,
   Organization,
@@ -25,6 +21,7 @@ import {
   Button,
   Inline,
 } from '@island.is/island-ui/core'
+import NextLink from 'next/link'
 import {
   ChatPanel,
   HeadWithSocialSharing,
@@ -39,14 +36,15 @@ import {
 } from './Themes/SjukratryggingarTheme'
 import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
 import { DefaultHeader } from './Themes/DefaultTheme'
+import getConfig from 'next/config'
 import {
   UtlendingastofnunFooter,
   UtlendingastofnunHeader,
 } from './Themes/UtlendingastofnunTheme'
 import { endpoints as chatPanelEndpoints } from '../../ChatPanel/config'
-import { OrganizationAlert } from '../OrganizationAlert/OrganizationAlert'
-
+import { useRouter } from 'next/router'
 import * as styles from './OrganizationWrapper.css'
+import { LayoutProps } from '@island.is/web/layouts/main'
 
 interface NavigationData {
   title: string
@@ -292,7 +290,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
 
   const activeNavigationItemTitle = useMemo(
     () => getActiveNavigationItemTitle(navigationData.items, router.asPath),
-    [navigationData.items, router.asPath],
+    [router.asPath],
   )
 
   const metaTitleSuffix =
@@ -312,13 +310,6 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
       />
       <OrganizationHeader organizationPage={organizationPage} />
       <Main>
-        {organizationPage.alertBanner && (
-          <OrganizationAlert
-            alertBanner={organizationPage.alertBanner}
-            centered={true}
-            marginTop={10}
-          />
-        )}
         {!minimal && (
           <SidebarLayout
             paddingTop={[2, 2, 9]}

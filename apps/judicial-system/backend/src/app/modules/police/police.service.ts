@@ -96,7 +96,7 @@ export class PoliceService {
     const base64 = await res.json()
     const pdf = Base64.atob(base64)
 
-    const key = `uploads/${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
+    const key = `${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
 
     await this.awsS3Service.putObject(key, pdf)
 

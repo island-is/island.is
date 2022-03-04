@@ -62,7 +62,7 @@ const Completed = ({ apolloState }: PropTypes) => {
     },
   )
 
-  const recyclingRequests = data?.skilavottordUserRecyclingRequest || []
+  const recyclingRequests = data?.skilavottordRecyclingRequest || []
   const car = apolloState[`VehicleInformation:${id}`]
 
   useEffect(() => {

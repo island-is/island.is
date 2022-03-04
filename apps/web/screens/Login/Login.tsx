@@ -7,8 +7,11 @@ import {
   Link,
   Text,
   Icon,
+  BulletList,
+  Bullet,
   ContentBlock,
   Button,
+  Tag,
   Hidden,
 } from '@island.is/island-ui/core'
 import { SvgLogin } from '@island.is/web/components'
@@ -27,6 +30,32 @@ interface LoginProps {
 
 const LoginPage: Screen<LoginProps> = ({ namespace }) => {
   const n = useNamespace(namespace)
+
+  const oldListItems: string[] = n('gomluSidurList', [
+    'Sjá Pósthólf',
+    'Þínar Upplýsingar',
+    'Fjármál',
+    'Starfsleyfi kennara',
+    'Samræmd könnunarpróf',
+  ])
+
+  const newListItems: string[] = n('nyjuSidurList', [
+    'Sjá Pósthólf',
+    'Þínar Upplýsingar',
+    'Fjármál',
+    'Starfsleyfi kennara',
+    'Samræmd könnunarpróf',
+  ])
+
+  const newListItemsArray = Array.isArray(newListItems) ? newListItems : []
+  const oldListItemsArray = Array.isArray(oldListItems) ? oldListItems : []
+
+  const oldHalf = Math.ceil(oldListItemsArray.length / 2)
+  const oldFirstHalf = oldListItemsArray.slice(0, oldHalf)
+  const oldSecondHalf = oldListItemsArray.slice(
+    oldHalf,
+    oldListItemsArray.length,
+  )
 
   const minarsidurLink = '/minarsidur/postholf'
 
@@ -59,19 +88,14 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
               span={['12/12', '12/12', '6/12']}
               paddingBottom={[3, 3, 4]}
             >
+              <Tag disabled>{n('nyjuSidurTag', 'Beta útgáfa')}</Tag>
               <Text as="h2" variant="h1" marginBottom="p3" marginTop="p1">
-                {n('nyjuSidurTitle', 'Mínar síður Ísland.is')}
+                {n('nyjuSidurTitle', 'Ný útgáfa af mínum síðum á island.is')}
               </Text>
               <Text as="p" variant="default" marginBottom="p5">
                 {n(
                   'nyjuSidurText',
-                  'Gefnar hafa verið út nýjar Mínar síður sem eru hannaðar með þarfir notanda að leiðarljósi og aukið öryggi í innskráningu. Þessi nýja útgáfa er fyrsta skrefið í átt að betri þjónustu og aðgengi notenda að gögnum frá hinu opinbera.',
-                )}
-              </Text>
-              <Text as="p" variant="default" marginBottom={5}>
-                {n(
-                  'nyjuSidurSubText',
-                  'Eldri útgáfa af Mínum síðum er enn aðgengileg fyrir notendur Íslykils.',
+                  'Ný útgáfa minna síðna á ísland.is. Hér er um að ræða beta útgáfu að nýjum mínum síðum, ekki eru allir möguleikar sem eru á gömlu mínum síðum í boði hér ennþá.',
                 )}
               </Text>
               <div>
@@ -81,17 +105,21 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
                   href={minarsidurLink}
                   onClick={trackAndNavigateNew}
                 >
-                  <Button as="span">{n('nyjuSidurLink', 'Innskráning')}</Button>
+                  <Button as="span">
+                    {n('nyjuSidurLink', 'Fara á nýju mínar síður')}
+                  </Button>
                 </a>
                 <Link
                   href="//minarsidur.island.is/"
                   color="blue400"
+                  underline="normal"
+                  underlineVisibility="always"
                   onClick={() => webLoginButtonSelect('Old')}
                   newTab
+                  className={styles.link}
                 >
-                  <Button variant="text" icon="open" iconType="outline">
-                    {n('gomluSidurLink', 'Innskráning með Íslykli')}
-                  </Button>
+                  {n('gomluSidurLink', 'Fara á gömlu mínar síður')}{' '}
+                  <Icon icon="open" type="outline" />
                 </Link>
               </div>
             </GridColumn>
@@ -108,6 +136,60 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
                   <SvgLogin />
                 </Box>
               </Hidden>
+            </GridColumn>
+            <GridColumn
+              span={['12/12', '12/12', '5/12']}
+              paddingBottom={[3, 3, 4]}
+            >
+              <Box flexDirection="column" display="flex">
+                {newListItemsArray.length > 0 ? (
+                  <Box marginTop={[1, 0]}>
+                    <Text as="h3" variant="h3" marginBottom="p3">
+                      {n('nyjuSidurListTitle', 'Á nýjum mínum síðum')}
+                    </Text>
+                    <BulletList type="ul">
+                      {newListItemsArray.map((li) => (
+                        <Bullet key={li}>{li}</Bullet>
+                      ))}
+                    </BulletList>
+                  </Box>
+                ) : null}
+              </Box>
+            </GridColumn>
+            <GridColumn
+              span={['12/12', '12/12', '7/12']}
+              paddingBottom={[3, 3, 4]}
+            >
+              <Box flexDirection="column" display="flex">
+                {oldListItemsArray.length > 0 ? (
+                  <Box marginTop={[1, 0]}>
+                    <Text as="h3" variant="h3" marginBottom="p3">
+                      {n('gomluSidurListTitle', 'Á gömlu mínum síðum')}
+                    </Text>
+                    <GridContainer>
+                      <GridRow>
+                        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                          <BulletList type="ul">
+                            {oldFirstHalf.map((li) => (
+                              <Bullet key={li}>{li}</Bullet>
+                            ))}
+                          </BulletList>
+                        </GridColumn>
+                        <GridColumn
+                          paddingTop={[1, 1, 1, 0]}
+                          span={['12/12', '12/12', '12/12', '7/12']}
+                        >
+                          <BulletList type="ul">
+                            {oldSecondHalf.map((li) => (
+                              <Bullet key={li}>{li}</Bullet>
+                            ))}
+                          </BulletList>
+                        </GridColumn>
+                      </GridRow>
+                    </GridContainer>
+                  </Box>
+                ) : null}
+              </Box>
             </GridColumn>
           </GridRow>
         </GridContainer>

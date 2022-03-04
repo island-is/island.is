@@ -90,18 +90,4 @@ export class UserProfile extends Model<UserProfile> {
   })
   @ApiProperty()
   documentNotifications!: boolean
-
-  @Column({
-    type: DataType.ENUM('NOT_DEFINED', 'NOT_VERIFIED', 'VERIFIED', 'EMPTY'),
-    defaultValue: 'NOT_DEFINED',
-  })
-  @ApiProperty()
-  emailStatus?: string
-
-  @Column({
-    type: DataType.ENUM('NOT_DEFINED', 'NOT_VERIFIED', 'VERIFIED', 'EMPTY'),
-    defaultValue: 'NOT_DEFINED',
-  })
-  @ApiProperty()
-  mobileStatus?: string
 }

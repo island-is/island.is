@@ -3,7 +3,6 @@ import {
   ElasticService,
   TagAggregationResponse,
   TypeAggregationResponse,
-  ProcessEntryAggregationResponse,
 } from '@island.is/content-search-toolkit'
 import { logger } from '@island.is/logging'
 import { SearchResult } from './models/searchResult.model'
@@ -25,42 +24,22 @@ export class ContentSearchService {
     return getElasticsearchIndex(lang)
   }
 
-  mapProcessEntryAggregations(
-    aggregations: ProcessEntryAggregationResponse,
-  ): number | undefined {
-    if (!aggregations?.processEntryCount) {
-      return
-    }
-    let total = 0
-    for (const bucket of aggregations.processEntryCount.buckets) {
-      total += bucket.doc_count * (bucket.key === 0 ? 0 : 1)
-    }
-    return total
-  }
-
-  mapTagAggregations(
-    aggregations: TagAggregationResponse,
-  ): TagCount[] | undefined {
+  mapTagAggregations(aggregations: TagAggregationResponse): TagCount[] {
     if (!aggregations?.group) {
-      return
+      return null
     }
     return aggregations.group.filtered.count.buckets.map<TagCount>(
-      (tagObject) => {
-        return {
-          key: tagObject.key,
-          count: tagObject.doc_count.toString(),
-          value: tagObject.value.buckets?.[0]?.key ?? '', // value of tag is always the first value here we provide default value since value is optional
-          type: tagObject.type.buckets?.[0]?.key ?? '',
-        }
-      },
+      (tagObject) => ({
+        key: tagObject.key,
+        count: tagObject.doc_count.toString(),
+        value: tagObject.value.buckets?.[0]?.key ?? '', // value of tag is always the first value here we provide default value since value is optional
+      }),
     )
   }
 
-  mapTypeAggregations(
-    aggregations: TypeAggregationResponse,
-  ): TypeCount[] | undefined {
+  mapTypeAggregations(aggregations: TypeAggregationResponse): TypeCount[] {
     if (!aggregations?.typeCount) {
-      return
+      return null
     }
     return aggregations.typeCount.buckets.map<TypeCount>((tagObject) => ({
       key: tagObject.key,
@@ -77,17 +56,12 @@ export class ContentSearchService {
     return {
       total: body.hits.total.value,
       // we map data when it goes into the index we can return it without mapping it here
-      items: body.hits.hits.map((item) =>
-        JSON.parse(item._source.response ?? '[]'),
-      ),
+      items: body.hits.hits.map((item) => JSON.parse(item._source.response)),
       tagCounts: this.mapTagAggregations(
         body.aggregations as TagAggregationResponse,
       ),
       typesCount: this.mapTypeAggregations(
         body.aggregations as TypeAggregationResponse,
-      ),
-      processEntryCount: this.mapProcessEntryAggregations(
-        body.aggregations as ProcessEntryAggregationResponse,
       ),
     }
   }

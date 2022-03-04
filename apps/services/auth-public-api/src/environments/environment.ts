@@ -51,7 +51,7 @@ const prodConfig = {
   },
   auth: {
     audience: '@island.is',
-    issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
+    issuer: process.env.IDS_ISSUER,
   },
   port: 3333,
   rsk: {
@@ -76,7 +76,7 @@ const prodConfig = {
     authMiddlewareOptions: {
       forwardUserInfo: false,
       tokenExchangeOptions: {
-        issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
+        issuer: process.env.IDS_ISSUER,
         clientId: '@island.is/clients/national-registry',
         clientSecret: process.env.NATIONAL_REGISTRY_IDS_CLIENT_SECRET,
         scope: 'openid @skra.is/individuals api_resource.scope', // TODO: remove api_resource.scope

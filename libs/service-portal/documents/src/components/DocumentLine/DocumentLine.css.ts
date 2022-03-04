@@ -1,15 +1,6 @@
 import { keyframes, style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
-export const unopenedWrapper = style({
-  backgroundColor: 'unset',
-  ...themeUtils.responsiveStyle({
-    sm: {
-      backgroundColor: '#FBFBFC',
-    },
-  }),
-})
-
 export const modalButtonWrapper = style({
   ...themeUtils.responsiveStyle({
     sm: {
@@ -23,7 +14,11 @@ export const modalButtonWrapper = style({
 
 export const line = style({
   fontSize: theme.typography.baseFontSize,
-  borderBottom: `1px solid ${theme.color.blue100}`,
+  ...themeUtils.responsiveStyle({
+    sm: {
+      borderBottom: `1px solid ${theme.color.blue200}`,
+    },
+  }),
 })
 
 export const button = style({
@@ -45,12 +40,12 @@ export const unopened = style({
 })
 
 export const sender = style({
-  fontWeight: theme.typography.light,
-  fontSize: 14,
+  fontWeight: theme.typography.regular,
+  fontSize: theme.typography.baseFontSize,
   ...themeUtils.responsiveStyle({
-    md: {
-      fontWeight: theme.typography.regular,
-      fontSize: theme.typography.baseFontSize,
+    sm: {
+      fontWeight: theme.typography.light,
+      fontSize: 16,
     },
   }),
 })

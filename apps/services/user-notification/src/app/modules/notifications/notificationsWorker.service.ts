@@ -40,8 +40,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
   async run() {
     await this.worker.run<Message>(
       async (message, job): Promise<void> => {
-        const messageId = job.id
-        this.logger.info('Message received by worker', { messageId })
+        this.logger.debug(`Got message id=${job.id}`, message)
 
         const profile = await this.userProfileApi
           .userTokenControllerFindOneByNationalId({
@@ -51,7 +50,9 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
         // can't send message if user has no user profile
         if (!profile) {
-          this.logger.info('No user profile found for user', { messageId })
+          this.logger.debug(
+            `No user profile found for user ${message.recipient}`,
+          )
           return
         }
 
@@ -59,9 +60,8 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         if (
           !this.messageProcessor.shouldSendNotification(message.type, profile)
         ) {
-          this.logger.info(
-            'User does not have notifications enabled this message type',
-            { messageId },
+          this.logger.debug(
+            `User ${message.recipient} does not have notifications enabled for message type "${message.type}"`,
           )
           return
         }
@@ -71,11 +71,10 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
           profile,
         )
 
-        await this.notificationDispatch.sendPushNotification({
-          nationalId: profile.nationalId,
+        await this.notificationDispatch.sendPushNotification(
           notification,
-          messageId,
-        })
+          profile.nationalId,
+        )
       },
     )
   }

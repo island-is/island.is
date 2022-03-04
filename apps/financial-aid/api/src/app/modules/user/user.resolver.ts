@@ -1,4 +1,4 @@
-import { Context, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { Context, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'

@@ -1,4 +1,5 @@
 import React, { ReactNode, useContext, useEffect } from 'react'
+import { useIntl } from 'react-intl'
 
 import {
   Box,
@@ -8,15 +9,16 @@ import {
   FormStepper,
   AlertBanner,
 } from '@island.is/island-ui/core'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import { CaseType, UserRole, Case } from '@island.is/judicial-system/types'
 import { Sections } from '@island.is/judicial-system-web/src/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { signedVerdictOverview } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
 
 import { UserContext } from '../UserProvider/UserProvider'
 import Logo from '../Logo/Logo'
-import Skeleton from '../Skeleton/Skeleton'
-import useSections from '../../utils/hooks/useSections'
+import { getSections } from './utils'
 import * as styles from './PageLayout.css'
+import Skeleton from '../Skeleton/Skeleton'
 
 interface PageProps {
   children: ReactNode
@@ -39,7 +41,13 @@ const PageLayout: React.FC<PageProps> = ({
   showSidepanel = true,
 }) => {
   const { user } = useContext(UserContext)
-  const { getSections } = useSections()
+  const { formatMessage } = useIntl()
+  const sections = getSections(
+    { dismissedTitle: formatMessage(signedVerdictOverview.dismissedTitle) },
+    workingCase,
+    activeSubSection,
+    user,
+  )
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -98,12 +106,8 @@ const PageLayout: React.FC<PageProps> = ({
                     sections={
                       activeSection === Sections.EXTENSION ||
                       activeSection === Sections.JUDGE_EXTENSION
-                        ? getSections(workingCase, activeSubSection, user)
-                        : getSections(
-                            workingCase,
-                            activeSubSection,
-                            user,
-                          ).filter((_, index) => index <= 2)
+                        ? sections
+                        : sections.filter((_, index) => index <= 2)
                     }
                     formName={
                       workingCase?.type === CaseType.CUSTODY

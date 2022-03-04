@@ -110,7 +110,7 @@ export const SearchInput = ({
     if (organizationSlug && categorySlug) {
       Router.push({
         pathname: `${
-          linkResolver('serviceweb').href
+          linkResolver('helpdesk').href
         }/${organizationSlug}/${categorySlug}`,
         query: { q: slug },
       })
@@ -176,7 +176,7 @@ export const SearchInput = ({
     <AsyncSearch
       size={size}
       colored={colored}
-      key="island-serviceweb"
+      key="island-helpdesk"
       placeholder={placeholder}
       options={options}
       loading={busy}
@@ -195,7 +195,7 @@ export const SearchInput = ({
         }
 
         Router.push({
-          pathname: linkResolver('servicewebsearch').href,
+          pathname: linkResolver('helpdesksearch').href,
           query: { q: value },
         })
       }}

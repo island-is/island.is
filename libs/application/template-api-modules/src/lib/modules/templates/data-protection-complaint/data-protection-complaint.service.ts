@@ -9,7 +9,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { PdfFileProvider } from './attachments/providers/pdfFileProvider'
 import { ApplicationAttachmentProvider } from './attachments/providers/applicationAttachmentProvider'
-import { SharedTemplateApiService } from '../../shared'
 
 @Injectable()
 export class DataProtectionComplaintService {
@@ -19,7 +18,6 @@ export class DataProtectionComplaintService {
     private readonly tokenMiddleware: TokenMiddleware,
     private readonly applicationAttachmentProvider: ApplicationAttachmentProvider,
     private readonly pdfFileProvider: PdfFileProvider,
-    private readonly sharedService: SharedTemplateApiService,
   ) {}
 
   get caseApiWithAuth() {
@@ -28,24 +26,8 @@ export class DataProtectionComplaintService {
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
     try {
-      const complaintPdf = await this.pdfFileProvider.getApplicationPdf(
-        application,
-        'kvörtun',
-      )
-
-      if (!complaintPdf?.content) throw new Error('No pdf content')
-
-      const key = await this.sharedService.addAttachment(
-        application,
-        'kvörtun.pdf',
-        complaintPdf.fileBuffer,
-        {
-          ContentType: 'application/pdf',
-        },
-      )
-
       const attachments = [
-        complaintPdf,
+        ...(await this.pdfFileProvider.getFiles(application, 'kvörtun')),
         ...(await this.applicationAttachmentProvider.getFiles(
           ['complaint.documents', 'commissions.documents'],
           application,
@@ -57,13 +39,9 @@ export class DataProtectionComplaintService {
         attachments,
       )
 
-      await this.caseApiWithAuth.createCase({
+      const newCase = await this.caseApiWithAuth.createCase({
         requestData: caseRequest,
       })
-
-      return {
-        applicationPdfKey: key,
-      }
     } catch (error) {
       this.logger.error('Error submitting', error)
 

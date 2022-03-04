@@ -4,10 +4,12 @@ import {
   prettyName,
   isPlural,
   interpolate,
-  LawChapterTree,
-  MinistryList,
 } from '@island.is/regulations'
-import { RegulationSearchResults } from '@island.is/regulations/web'
+import {
+  RegulationLawChapterTree,
+  RegulationMinistryList,
+  RegulationSearchResults,
+} from '@island.is/regulations/web'
 import { RegulationHomeTexts } from '../../components/Regulations/RegulationTexts.types'
 
 import React, { useEffect, useState, useRef } from 'react'
@@ -64,8 +66,8 @@ export type RegulationsHomeProps = {
   introText: GetSubpageHeaderQuery['getSubpageHeader']
   searchQuery: RegulationSearchFilters
   years: ReadonlyArray<number>
-  ministries: MinistryList
-  lawChapters: LawChapterTree
+  ministries: RegulationMinistryList
+  lawChapters: RegulationLawChapterTree
   doSearch: boolean
 }
 
@@ -313,7 +315,9 @@ RegulationsHome.getInitialProps = async (ctx) => {
       .query<GetRegulationsMinistriesQuery>({
         query: GET_REGULATIONS_MINISTRIES_QUERY,
       })
-      .then((res) => res.data?.getRegulationsMinistries as MinistryList),
+      .then(
+        (res) => res.data?.getRegulationsMinistries as RegulationMinistryList,
+      ),
 
     apolloClient
       .query<
@@ -327,7 +331,10 @@ RegulationsHome.getInitialProps = async (ctx) => {
           },
         },
       })
-      .then((res) => res.data?.getRegulationsLawChapters as LawChapterTree),
+      .then(
+        (res) =>
+          res.data?.getRegulationsLawChapters as RegulationLawChapterTree,
+      ),
   ])
 
   return {

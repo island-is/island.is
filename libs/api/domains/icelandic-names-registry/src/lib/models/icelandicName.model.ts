@@ -25,19 +25,19 @@ export class IcelandicName implements TIcelandicName {
   @IsEnum(StatusType)
   status!: StatusType | null
 
-  @Field(() => Boolean, { nullable: true })
+  @Field({ nullable: true })
   @IsBoolean()
   visible!: boolean | null
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   @IsString()
   description!: string | null
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   @IsString()
   verdict!: string | null
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   @IsString()
   url!: string | null
 

@@ -88,7 +88,7 @@ const OverviewForm: React.FC<Props> = (props) => {
         <InfoCard
           data={[
             {
-              title: formatMessage(core.prosecutor),
+              title: 'Embætti',
               value: `${
                 workingCase.creatingProsecutor?.institution?.name ??
                 'Ekki skráð'
@@ -103,18 +103,15 @@ const OverviewForm: React.FC<Props> = (props) => {
                 TIME_FORMAT,
               )}`,
             },
-            {
-              title: formatMessage(core.prosecutorPerson),
-              value: workingCase.prosecutor?.name,
-            },
+            { title: 'Ákærandi', value: workingCase.prosecutor?.name },
             {
               title: workingCase.parentCase
                 ? `${
                     workingCase.type === CaseType.CUSTODY
-                      ? formatMessage(core.pastCustody)
-                      : formatMessage(core.pastTravelBan)
+                      ? 'Fyrri gæsla'
+                      : 'Fyrra farbann'
                   }`
-                : formatMessage(core.arrestDate),
+                : 'Tími handtöku',
               value: workingCase.parentCase
                 ? `${capitalize(
                     formatDate(

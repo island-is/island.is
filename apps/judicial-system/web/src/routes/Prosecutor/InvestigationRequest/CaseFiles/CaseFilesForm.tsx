@@ -348,7 +348,7 @@ const CaseFilesForm: React.FC<Props> = (props) => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'caseFilesComments',
-                  event.target.value,
+                  event,
                   [],
                   workingCase,
                   setWorkingCase,

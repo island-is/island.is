@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
-import { FocusableBox, Text } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
 import { config, endpoints } from './config'
 import { useWindowSize } from 'react-use'
 import * as styles from './ChatPanel.css'
@@ -74,9 +74,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({
 
   return (
     <div className={cn(styles.root, { [styles.hidden]: !showButton })}>
-      <FocusableBox
-        component="button"
-        tabIndex={0}
+      <div
         className={cn(styles.message, pushUp && styles.messagePushUp)}
         onClick={() => {
           window.boost.chatPanel.show()
@@ -87,7 +85,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({
         </Text>
         <div className={styles.messageArrow} />
         <div className={styles.messageArrowBorder} />
-      </FocusableBox>
+      </div>
     </div>
   )
 }

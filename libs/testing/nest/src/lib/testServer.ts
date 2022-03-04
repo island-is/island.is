@@ -8,8 +8,8 @@ type CleanUp = () => Promise<void> | undefined
 
 export type TestApp = INestApplication & { cleanUp: CleanUp }
 
-export type TestServerOptions = {
-  appModule: Type<any>
+export type TestServerOptions<AppModule> = {
+  appModule: AppModule
   override?: (builder: TestingModuleBuilder) => TestingModuleBuilder
   hooks?: {
     override?: (builder: TestingModuleBuilder) => TestingModuleBuilder
@@ -17,11 +17,11 @@ export type TestServerOptions = {
   }[]
 }
 
-export const testServer = async ({
+export const testServer = async <AppModule extends Type<any>>({
   appModule,
   hooks = [],
   override,
-}: TestServerOptions): Promise<TestApp> => {
+}: TestServerOptions<AppModule>): Promise<TestApp> => {
   let builder = Test.createTestingModule({
     imports: [InfraModule.forRoot({ appModule })],
   })

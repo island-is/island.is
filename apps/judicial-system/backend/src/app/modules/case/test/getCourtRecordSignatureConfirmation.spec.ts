@@ -56,7 +56,7 @@ describe('CaseController - Get court record signature confirmation', () => {
     assignedRole
     ${'judgeId'}
     ${'registrarId'}
-  `.describe('given an assigned role', ({ assignedRole }) => {
+  `.describe('given an assigne role', ({ assignedRole }) => {
     const userId = uuid()
     const user = { id: userId } as User
     const caseId = uuid()

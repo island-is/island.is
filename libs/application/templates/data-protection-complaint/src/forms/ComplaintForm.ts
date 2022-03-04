@@ -517,10 +517,72 @@ export const ComplaintForm: Form = buildForm({
               description: complaint.general.subjectOfComplaintPageDescription,
               space: 3,
               children: [
-                buildCustomField({
-                  component: 'ReasonsForComplaint',
-                  id: 'subjectOfComplaint.checkboxAndInput',
+                buildCheckboxField({
+                  id: 'subjectOfComplaint.values',
                   title: '',
+                  options: [
+                    {
+                      label: complaint.labels.subjectAuthorities,
+                      value: SubjectOfComplaint.WITH_AUTHORITIES,
+                    },
+                    {
+                      label: complaint.labels.subjectLackOfEducation,
+                      value: SubjectOfComplaint.LACK_OF_EDUCATION,
+                    },
+                    {
+                      label: complaint.labels.subjectSocialMedia,
+                      value: SubjectOfComplaint.SOCIAL_MEDIA,
+                    },
+                    {
+                      label: complaint.labels.subjectRequestForAccess,
+                      value: SubjectOfComplaint.REQUEST_FOR_ACCESS,
+                    },
+                    {
+                      label: complaint.labels.subjectRightOfObjection,
+                      value: SubjectOfComplaint.RIGHTS_OF_OBJECTION,
+                    },
+                    {
+                      label: complaint.labels.subjectEmail,
+                      value: SubjectOfComplaint.EMAIL,
+                    },
+                    {
+                      label: complaint.labels.subjectNationalId,
+                      value: SubjectOfComplaint.NATIONAL_ID,
+                    },
+                    {
+                      label: complaint.labels.subjectEmailInWorkplace,
+                      value: SubjectOfComplaint.EMAIL_IN_WORKPLACE,
+                    },
+                    {
+                      label: complaint.labels.subjectUnauthorizedPublication,
+                      value: SubjectOfComplaint.UNAUTHORIZED_PUBLICATION,
+                    },
+                    {
+                      label: complaint.labels.subjectVanskilaskra,
+                      value: SubjectOfComplaint.VANSKILASKRA,
+                    },
+                    {
+                      label: complaint.labels.subjectVideoRecording,
+                      value: SubjectOfComplaint.VIDEO_RECORDINGS,
+                    },
+                    {
+                      label: complaint.labels.subjectOtherOther,
+                      value: SubjectOfComplaint.OTHER,
+                    },
+                  ],
+                  large: true,
+                }),
+                buildTextField({
+                  id: 'subjectOfComplaint.somethingElse',
+                  title: complaint.labels.subjectSomethingElse,
+                  placeholder: complaint.labels.subjectSomethingElsePlaceholder,
+                  backgroundColor: 'blue',
+                  condition: (formValue) => {
+                    const values =
+                      ((formValue.subjectOfComplaint as FormValue)
+                        ?.values as string[]) || []
+                    return values.includes('other')
+                  },
                 }),
               ],
             }),

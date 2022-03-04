@@ -11,20 +11,16 @@ import {
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
-import { request as m, core } from '../messages'
+import { restrictionRequest as m, core } from '../messages'
 import { Case } from '../modules/case/models'
 import { formatLegalProvisions } from './formatters'
 import {
-  addEmptyLines,
-  addHugeHeading,
-  addLargeHeading,
-  addLargeText,
-  addMediumPlusHeading,
-  addMediumText,
-  addNormalText,
-  setLineGap,
-  addFooter,
-  setTitle,
+  baseFontSize,
+  hugeFontSize,
+  largeFontSize,
+  mediumFontSize,
+  mediumPlusFontSize,
+  setPageNumbers,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
 
@@ -43,8 +39,6 @@ function constructRestrictionRequestPdf(
     bufferPages: true,
   })
 
-  const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
-
   const title = formatMessage(m.heading, {
     caseType:
       theCase.type === CaseType.CUSTODY
@@ -52,141 +46,146 @@ function constructRestrictionRequestPdf(
         : formatMessage(core.caseType.travelBan),
   })
 
-  setTitle(doc, title)
-  setLineGap(doc, 8)
-  addHugeHeading(doc, title, 'Helvetica-Bold')
-  addLargeHeading(
-    doc,
-    theCase.prosecutor?.institution?.name ?? formatMessage(m.noDistrict),
-    'Helvetica',
-  )
-  addMediumPlusHeading(
-    doc,
-    `${formatDate(theCase.created, 'PPP')} - Mál nr. ${
-      theCase.policeCaseNumber
-    }`,
-  )
-  setLineGap(doc, 40)
-  addMediumPlusHeading(
-    doc,
-    `${formatMessage(m.baseInfo.court)} ${theCase.court?.name}`,
-  )
-  setLineGap(doc, 8)
-  addLargeText(
-    doc,
-    capitalize(
-      formatMessage(core.defendant, {
-        suffix:
-          theCase.defendants && theCase.defendants.length > 1 ? 'ar' : 'i',
-      }),
-    ),
-    'Helvetica-Bold',
-  )
-  setLineGap(doc, 4)
+  if (doc.info) {
+    doc.info['Title'] = title
+  }
+
+  const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
+
+  doc
+    .font('Helvetica-Bold')
+    .fontSize(hugeFontSize)
+    .lineGap(8)
+    .text(title, { align: 'center' })
+    .font('Helvetica')
+    .fontSize(largeFontSize)
+    .text(
+      theCase.prosecutor?.institution?.name ?? formatMessage(m.noDistrict),
+      { align: 'center' },
+    )
+    .fontSize(mediumPlusFontSize)
+    .text(
+      `${formatDate(theCase.created, 'PPP')} - Mál nr. ${
+        theCase.policeCaseNumber
+      }`,
+      { align: 'center' },
+    )
+    .lineGap(40)
+    .text(`${formatMessage(m.baseInfo.court)} ${theCase.court?.name}`, {
+      align: 'center',
+    })
+    .font('Helvetica-Bold')
+    .fontSize(mediumFontSize)
+    .lineGap(8)
+    .text(
+      capitalize(
+        formatMessage(core.defendant, {
+          suffix:
+            theCase.defendants && theCase.defendants.length > 1 ? 'ar' : 'i',
+        }),
+      ),
+    )
+    .font('Helvetica')
+    .fontSize(baseFontSize)
+    .lineGap(4)
 
   theCase.defendants?.forEach((defendant, index) => {
     if (index > 0) {
-      addEmptyLines(doc)
+      doc.text(' ')
     }
 
-    addNormalText(
-      doc,
-      `${formatMessage(
-        defendant.noNationalId ? m.baseInfo.dateOfBirth : m.baseInfo.nationalId,
-      )} ${
-        defendant.noNationalId
-          ? defendant.nationalId
-          : formatNationalId(defendant.nationalId ?? '')
-      }`,
-      'Helvetica',
-    )
-    addNormalText(
-      doc,
-      `${formatMessage(m.baseInfo.fullName)} ${defendant.name ?? ''}`,
-    )
-    addNormalText(
-      doc,
-      `${formatMessage(m.baseInfo.address)} ${defendant.address ?? ''}`,
-    )
+    doc
+      .text(
+        `${formatMessage(m.baseInfo.nationalId)} ${formatNationalId(
+          defendant.nationalId ?? '',
+        )}`,
+      )
+      .text(`${formatMessage(m.baseInfo.fullName)} ${defendant.name ?? ''}`)
+      .text(`${formatMessage(m.baseInfo.address)} ${defendant.address ?? ''}`)
   })
 
   if (theCase.defendants && theCase.defendants.length > 1) {
-    addEmptyLines(doc)
+    doc.text(' ')
   }
 
-  addNormalText(
-    doc,
-    formatMessage(m.baseInfo.defender, {
-      defenderName:
-        theCase.defenderName && !theCase.defenderIsSpokesperson
-          ? theCase.defenderName
-          : formatMessage(m.baseInfo.noDefender),
-    }),
-    'Helvetica',
-  )
-  addEmptyLines(doc)
-  setLineGap(doc, 8)
-  addMediumText(doc, formatMessage(m.demands.heading), 'Helvetica-Bold')
-  setLineGap(doc, 6)
-  addNormalText(
-    doc,
-    theCase.demands ?? formatMessage(m.demands.noDemands),
-    'Helvetica',
-  )
-  addEmptyLines(doc)
-  setLineGap(doc, 8)
-  addMediumText(doc, formatMessage(m.lawsBroken.heading), 'Helvetica-Bold')
-  setLineGap(doc, 6)
-  addNormalText(
-    doc,
-    theCase.lawsBroken ?? formatMessage(m.lawsBroken.noLawsBroken),
-    'Helvetica',
-  )
-  addEmptyLines(doc)
-  setLineGap(doc, 8)
-  addMediumText(doc, formatMessage(m.legalBasis.heading), 'Helvetica-Bold')
-  setLineGap(doc, 6)
-  addNormalText(
-    doc,
-    formatLegalProvisions(theCase.legalProvisions, theCase.legalBasis),
-    'Helvetica',
-  )
-  addEmptyLines(doc)
-  setLineGap(doc, 8)
-  addLargeText(
-    doc,
-    formatMessage(m.factsAndArguments.heading),
-    'Helvetica-Bold',
-  )
-  addMediumText(doc, formatMessage(m.factsAndArguments.facts))
-  setLineGap(doc, 6)
-  addNormalText(
-    doc,
-    theCase.caseFacts ?? formatMessage(m.factsAndArguments.noFacts),
-    'Helvetica',
-  )
-  addEmptyLines(doc)
-  setLineGap(doc, 8)
-  addMediumText(
-    doc,
-    formatMessage(m.factsAndArguments.arguments),
-    'Helvetica-Bold',
-  )
-  setLineGap(doc, 6)
-  addNormalText(
-    doc,
-    theCase.legalArguments ?? formatMessage(m.factsAndArguments.noArguments),
-    'Helvetica',
-  )
-  addEmptyLines(doc)
-  addNormalText(
-    doc,
-    `${theCase.prosecutor?.name ?? formatMessage(m.prosecutor.noProsecutor)} ${
-      theCase.prosecutor?.title ?? ''
-    }`,
-    'Helvetica-Bold',
-  )
-  addFooter(doc)
+  doc
+    .text(
+      formatMessage(m.baseInfo.defender, {
+        defenderName:
+          theCase.defenderName && !theCase.defenderIsSpokesperson
+            ? theCase.defenderName
+            : formatMessage(m.baseInfo.noDefender),
+      }),
+    )
+    .text(' ')
+    .font('Helvetica-Bold')
+    .fontSize(mediumFontSize)
+    .lineGap(8)
+    .text(formatMessage(m.demands.heading))
+    .font('Helvetica')
+    .fontSize(baseFontSize)
+    .text(theCase.demands ?? formatMessage(m.demands.noDemands), {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+    .text(' ')
+    .font('Helvetica-Bold')
+    .fontSize(mediumFontSize)
+    .lineGap(8)
+    .text(formatMessage(m.lawsBroken.heading))
+    .font('Helvetica')
+    .fontSize(baseFontSize)
+    .text(theCase.lawsBroken ?? formatMessage(m.lawsBroken.noLawsBroken), {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+    .text(' ')
+    .font('Helvetica-Bold')
+    .fontSize(mediumFontSize)
+    .lineGap(8)
+    .text(formatMessage(m.legalBasis.heading))
+    .font('Helvetica')
+    .fontSize(baseFontSize)
+    .text(formatLegalProvisions(theCase.legalProvisions, theCase.legalBasis), {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+    .text(' ')
+    .font('Helvetica-Bold')
+    .fontSize(largeFontSize)
+    .lineGap(8)
+    .text(formatMessage(m.factsAndArguments.heading))
+    .fontSize(mediumFontSize)
+    .text(formatMessage(m.factsAndArguments.facts))
+    .font('Helvetica')
+    .fontSize(baseFontSize)
+    .text(theCase.caseFacts ?? formatMessage(m.factsAndArguments.noFacts), {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+    .text(' ')
+    .font('Helvetica-Bold')
+    .fontSize(mediumFontSize)
+    .lineGap(8)
+    .text(formatMessage(m.factsAndArguments.arguments))
+    .font('Helvetica')
+    .fontSize(baseFontSize)
+    .text(
+      theCase.legalArguments ?? formatMessage(m.factsAndArguments.noArguments),
+      {
+        lineGap: 6,
+        paragraphGap: 0,
+      },
+    )
+    .text(' ')
+    .font('Helvetica-Bold')
+    .text(
+      `${
+        theCase.prosecutor?.name ?? formatMessage(m.prosecutor.noProsecutor)
+      } ${theCase.prosecutor?.title ?? ''}`,
+    )
+
+  setPageNumbers(doc)
 
   doc.end()
 
@@ -208,178 +207,192 @@ function constructInvestigationRequestPdf(
     bufferPages: true,
   })
 
-  const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
-
   const title = formatMessage(m.heading, {
     caseType: formatMessage(core.caseType.investigate),
   })
 
-  setTitle(doc, title)
-  setLineGap(doc, 8)
-  addHugeHeading(doc, title, 'Helvetica-Bold')
-  addLargeHeading(
-    doc,
-    theCase.prosecutor?.institution?.name ?? formatMessage(m.noDistrict),
-    'Helvetica',
-  )
-  addMediumPlusHeading(
-    doc,
-    `${formatDate(theCase.created, 'PPP')} - Mál nr. ${
-      theCase.policeCaseNumber
-    }`,
-  )
-  setLineGap(doc, 40)
-  addMediumPlusHeading(
-    doc,
-    `${formatMessage(m.baseInfo.court)} ${theCase.court?.name}`,
-  )
-  setLineGap(doc, 8)
-  addLargeText(
-    doc,
-    capitalize(
-      formatMessage(core.defendant, {
-        suffix:
-          theCase.defendants && theCase.defendants.length > 1 ? 'ar' : 'i',
-      }),
-    ),
-    'Helvetica-Bold',
-  )
-  setLineGap(doc, 4)
+  if (doc.info) {
+    doc.info['Title'] = title
+  }
+
+  const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
+
+  doc
+    .font('Helvetica-Bold')
+    .fontSize(hugeFontSize)
+    .lineGap(8)
+    .text(title, { align: 'center' })
+    .font('Helvetica')
+    .fontSize(largeFontSize)
+    .text(
+      theCase.prosecutor?.institution?.name ?? formatMessage(m.noDistrict),
+      { align: 'center' },
+    )
+    .fontSize(mediumPlusFontSize)
+    .text(
+      `${formatDate(theCase.created, 'PPP')} - Mál nr. ${
+        theCase.policeCaseNumber
+      }`,
+      { align: 'center' },
+    )
+    .lineGap(40)
+    .text(`${formatMessage(m.baseInfo.court)} ${theCase.court?.name}`, {
+      align: 'center',
+    })
+    .font('Helvetica-Bold')
+    .fontSize(largeFontSize)
+    .lineGap(8)
+    .text(
+      capitalize(
+        formatMessage(core.defendant, {
+          suffix:
+            theCase.defendants && theCase.defendants.length > 1 ? 'ar' : 'i',
+        }),
+      ),
+    )
+    .font('Helvetica')
+    .fontSize(baseFontSize)
+    .lineGap(4)
 
   theCase.defendants?.forEach((defendant, index) => {
     if (index > 0) {
-      addEmptyLines(doc)
+      doc.text(' ')
     }
 
-    addNormalText(
-      doc,
-      `${formatMessage(
-        defendant.noNationalId ? m.baseInfo.dateOfBirth : m.baseInfo.nationalId,
-      )} ${
-        defendant.noNationalId
-          ? defendant.nationalId
-          : formatNationalId(defendant.nationalId ?? '')
-      }`,
-      'Helvetica',
-    )
-    addNormalText(
-      doc,
-      `${formatMessage(m.baseInfo.fullName)} ${defendant.name ?? ''}`,
-    )
-    addNormalText(
-      doc,
-      `${formatMessage(m.baseInfo.address)} ${defendant.address ?? ''}`,
-    )
+    doc
+      .text(
+        `${formatMessage(m.baseInfo.nationalId)} ${formatNationalId(
+          defendant.nationalId ?? '',
+        )}`,
+      )
+      .text(`${formatMessage(m.baseInfo.fullName)} ${defendant.name ?? ''}`)
+      .text(`${formatMessage(m.baseInfo.address)} ${defendant.address ?? ''}`)
   })
 
   if (theCase.defenderName && !theCase.defenderIsSpokesperson) {
     if (theCase.defendants && theCase.defendants.length > 1) {
-      addEmptyLines(doc)
+      doc.text(' ')
     }
 
-    addNormalText(
-      doc,
+    doc.text(
       formatMessage(m.baseInfo.defender, {
         defenderName: theCase.defenderName,
       }),
-      'Helvetica',
     )
   }
 
-  addEmptyLines(doc)
-  setLineGap(doc, 8)
-  addMediumText(doc, formatMessage(m.description.heading), 'Helvetica-Bold')
-  setLineGap(doc, 4)
-  addNormalText(
-    doc,
-    capitalize(
-      theCase.type === CaseType.OTHER
-        ? formatMessage(core.caseType.investigate)
-        : caseTypes[theCase.type],
-    ),
-    'Helvetica',
-  )
+  doc
+    .text(' ')
+    .font('Helvetica-Bold')
+    .fontSize(mediumFontSize)
+    .lineGap(8)
+    .text(formatMessage(m.description.heading))
+    .font('Helvetica')
+    .fontSize(baseFontSize)
+    .lineGap(4)
+    .text(
+      capitalize(
+        theCase.type === CaseType.OTHER
+          ? formatMessage(core.caseType.investigate)
+          : caseTypes[theCase.type],
+      ),
+    )
 
   if (theCase.description && theCase.description.trim()) {
-    addNormalText(doc, theCase.description)
+    doc
+      .font('Helvetica')
+      .fontSize(baseFontSize)
+      .lineGap(4)
+      .text(theCase.description)
   }
 
-  addEmptyLines(doc)
-  setLineGap(doc, 8)
-  addMediumText(doc, formatMessage(m.demands.heading), 'Helvetica-Bold')
-  setLineGap(doc, 6)
-  addNormalText(
-    doc,
-    theCase.demands ?? formatMessage(m.demands.noDemands),
-    'Helvetica',
-  )
-  addEmptyLines(doc)
-  setLineGap(doc, 8)
-  addMediumText(doc, formatMessage(m.lawsBroken.heading), 'Helvetica-Bold')
-  setLineGap(doc, 6)
-  addNormalText(
-    doc,
-    theCase.lawsBroken ?? formatMessage(m.lawsBroken.noLawsBroken),
-    'Helvetica',
-  )
-  addEmptyLines(doc)
-  setLineGap(doc, 8)
-  addMediumText(doc, formatMessage(m.legalBasis.heading), 'Helvetica-Bold')
-  setLineGap(doc, 6)
-  addNormalText(
-    doc,
-    theCase.legalBasis ?? formatMessage(m.legalBasis.noLegalBasis),
-    'Helvetica',
-  )
-  addEmptyLines(doc)
-  setLineGap(doc, 8)
-  addLargeText(
-    doc,
-    formatMessage(m.factsAndArguments.heading),
-    'Helvetica-Bold',
-  )
-  addMediumText(doc, formatMessage(m.factsAndArguments.facts))
-  setLineGap(doc, 6)
-  addNormalText(
-    doc,
-    theCase.caseFacts ?? formatMessage(m.factsAndArguments.noFacts),
-    'Helvetica',
-  )
-  addEmptyLines(doc)
-  setLineGap(doc, 8)
-  addMediumText(
-    doc,
-    formatMessage(m.factsAndArguments.arguments),
-    'Helvetica-Bold',
-  )
-  setLineGap(doc, 6)
-  addNormalText(
-    doc,
-    theCase.legalArguments ?? formatMessage(m.factsAndArguments.noArguments),
-    'Helvetica',
-  )
-  addEmptyLines(doc)
+  doc
+    .text(' ')
+    .font('Helvetica-Bold')
+    .fontSize(mediumFontSize)
+    .lineGap(8)
+    .text(formatMessage(m.demands.heading))
+    .font('Helvetica')
+    .fontSize(baseFontSize)
+    .text(theCase.demands ?? formatMessage(m.demands.noDemands), {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+    .text(' ')
+    .font('Helvetica-Bold')
+    .fontSize(mediumFontSize)
+    .lineGap(8)
+    .text(formatMessage(m.lawsBroken.heading))
+    .font('Helvetica')
+    .fontSize(baseFontSize)
+    .text(theCase.lawsBroken ?? formatMessage(m.lawsBroken.noLawsBroken), {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+    .text(' ')
+    .font('Helvetica-Bold')
+    .fontSize(mediumFontSize)
+    .lineGap(8)
+    .text(formatMessage(m.legalBasis.heading))
+    .font('Helvetica')
+    .fontSize(baseFontSize)
+    .text(theCase.legalBasis ?? formatMessage(m.legalBasis.noLegalBasis), {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+    .text(' ')
+    .font('Helvetica-Bold')
+    .fontSize(largeFontSize)
+    .lineGap(8)
+    .text(formatMessage(m.factsAndArguments.heading))
+    .fontSize(mediumFontSize)
+    .text(formatMessage(m.factsAndArguments.facts))
+    .font('Helvetica')
+    .fontSize(baseFontSize)
+    .text(theCase.caseFacts ?? formatMessage(m.factsAndArguments.noFacts), {
+      lineGap: 6,
+      paragraphGap: 0,
+    })
+    .text(' ')
+    .font('Helvetica-Bold')
+    .fontSize(mediumFontSize)
+    .lineGap(8)
+    .text(formatMessage(m.factsAndArguments.arguments))
+    .font('Helvetica')
+    .fontSize(baseFontSize)
+    .text(
+      theCase.legalArguments ?? formatMessage(m.factsAndArguments.noArguments),
+      {
+        lineGap: 6,
+        paragraphGap: 0,
+      },
+    )
+    .text(' ')
 
   if (theCase.requestProsecutorOnlySession) {
-    setLineGap(doc, 8)
-    addMediumText(
-      doc,
-      formatMessage(m.requestProsecutorOnlySession),
-      'Helvetica-Bold',
-    )
-    setLineGap(doc, 6)
-    addNormalText(doc, theCase.prosecutorOnlySessionRequest ?? '', 'Helvetica')
-    addEmptyLines(doc)
+    doc
+      .font('Helvetica-Bold')
+      .fontSize(mediumFontSize)
+      .lineGap(8)
+      .text(formatMessage(m.requestProsecutorOnlySession))
+      .font('Helvetica')
+      .fontSize(baseFontSize)
+      .text(theCase.prosecutorOnlySessionRequest ?? '', {
+        lineGap: 6,
+        paragraphGap: 0,
+      })
+      .text(' ')
   }
 
-  addNormalText(
-    doc,
-    `${theCase.prosecutor?.name ?? formatMessage(m.prosecutor.noProsecutor)} ${
-      theCase.prosecutor?.title ?? ''
-    }`,
-    'Helvetica-Bold',
-  )
-  addFooter(doc)
+  doc
+    .font('Helvetica-Bold')
+    .text(
+      `${
+        theCase.prosecutor?.name ?? formatMessage(m.prosecutor.noProsecutor)
+      } ${theCase.prosecutor?.title ?? ''}`,
+    )
+
+  setPageNumbers(doc)
 
   doc.end()
 

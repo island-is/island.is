@@ -34,12 +34,7 @@ export const LanguageToggler = ({
   const client = useApolloClient()
   const Router = useRouter()
   const [showDialog, setShowDialog] = useState<boolean>(false)
-  const {
-    pageContentfulId,
-    subpageContentfulId,
-    resolveLinkTypeLocally,
-    globalNamespace,
-  } = useContext(GlobalContext)
+  const { contentfulId, globalNamespace } = useContext(GlobalContext)
   const { activeLocale, locale, t } = useI18n()
   const gn = useNamespace(globalNamespace)
   const otherLanguage = (activeLocale === 'en' ? 'is' : 'en') as Locale
@@ -50,10 +45,8 @@ export const LanguageToggler = ({
       return null
     }
 
-    const pathWithoutQueryParams = Router.asPath.split('?')[0]
-
-    if (!pageContentfulId) {
-      const { type } = typeResolver(pathWithoutQueryParams, true)
+    if (!contentfulId) {
+      const { type } = typeResolver(Router.asPath.split('?')[0], true)
       const pagePath = linkResolver(type, [], otherLanguage).href
 
       if (pagePath === '/404') {
@@ -61,57 +54,20 @@ export const LanguageToggler = ({
       } else {
         return Router.push(pagePath)
       }
+    } else {
+      await getContentSlug(contentfulId).then((res) => {
+        const slug = res.data?.getContentSlug?.slug
+        const type = res.data?.getContentSlug?.type as LinkType
+
+        if (type && slug?.[otherLanguage]) {
+          return goToOtherLanguagePage(
+            linkResolver(type, [slug[otherLanguage]], otherLanguage).href,
+          )
+        }
+
+        setShowDialog(true)
+      })
     }
-
-    // Create queries that fetch slug information from Contentful
-    const queries = [pageContentfulId, subpageContentfulId]
-      .filter(Boolean)
-      .map((id) => getContentSlug(id))
-
-    const responses = await Promise.all(queries)
-
-    const slugs = []
-    let index = 0
-
-    for (const res of responses) {
-      const slug = res.data?.getContentSlug?.slug
-
-      if (!slug) {
-        break
-      }
-
-      slugs.push(slug)
-
-      index += 1
-      const atLastResponse = index === responses.length
-      if (!atLastResponse) continue
-
-      const title = res.data?.getContentSlug?.title
-      let type = res.data?.getContentSlug?.type as LinkType
-
-      if (resolveLinkTypeLocally) {
-        type = typeResolver(pathWithoutQueryParams).type
-      }
-
-      // Some content models are set up such that a slug is generated from the title
-      // Unfortunately, Contentful generates slug for both locales which frequently
-      // results in bogus english content. Therefore we check whether the other language has a title as well.
-      if (
-        type &&
-        slugs.every((s) => s?.[otherLanguage]) &&
-        title?.[otherLanguage]
-      ) {
-        return goToOtherLanguagePage(
-          linkResolver(
-            type,
-            slugs.map((s) => s[otherLanguage]),
-            otherLanguage,
-          ).href,
-        )
-      }
-    }
-
-    setShowDialog(true)
   }
 
   const goToOtherLanguagePage = (path) => {

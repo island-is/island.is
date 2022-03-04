@@ -35,16 +35,14 @@ import { ConfirmationDtoResponse } from './dto/confirmationResponseDto'
 import { ConfirmEmailDto } from './dto/confirmEmailDto'
 import { ConfirmSmsDto } from './dto/confirmSmsDto'
 import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
-import { CreateEmailVerificationDto } from './dto/createEmailVerificationDto'
 import { CreateUserProfileDto } from './dto/createUserProfileDto'
 import { DeleteTokenResponseDto } from './dto/deleteTokenResponseDto'
 import { DeviceTokenDto } from './dto/deviceToken.dto'
 import { UpdateUserProfileDto } from './dto/updateUserProfileDto'
-import { UserDeviceTokenDto } from './dto/userDeviceToken.dto'
+import { UserDeviceTokensDto } from './dto/userDeviceTokens.dto'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 import { VerificationService } from './verification.service'
-import { DataStatus } from './types/dataStatusTypes'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('User Profile')
@@ -115,39 +113,24 @@ export class UserProfileController {
     }
 
     if (userProfileDto.email) {
-      const emailVerified = await this.verificationService.confirmEmail(
-        { hash: userProfileDto.emailCode },
-        user.nationalId,
+      await this.verificationService.createEmailVerification(
+        userProfileDto.nationalId,
+        userProfileDto.email,
       )
-
-      if (emailVerified.confirmed) {
-        await this.verificationService.removeEmailVerification(
-          userProfileDto.nationalId,
-        )
-        userProfileDto = {
-          ...userProfileDto,
-          emailStatus: DataStatus.VERIFIED,
-          emailVerified: emailVerified.confirmed,
-        }
-      }
     }
 
     if (userProfileDto.mobilePhoneNumber) {
-      const phoneVerified = await this.verificationService.confirmSms(
-        { code: userProfileDto.smsCode },
-        user.nationalId,
+      const phoneVerified = await this.verificationService.isPhoneNumberVerified(
+        userProfileDto,
       )
-
-      if (phoneVerified.confirmed) {
+      userProfileDto = {
+        ...userProfileDto,
+        mobilePhoneNumberVerified: phoneVerified,
+      }
+      if (phoneVerified) {
         await this.verificationService.removeSmsVerification(
           userProfileDto.nationalId,
         )
-
-        userProfileDto = {
-          ...userProfileDto,
-          emailStatus: DataStatus.VERIFIED,
-          mobilePhoneNumberVerified: phoneVerified.confirmed,
-        }
       }
     }
 
@@ -186,38 +169,31 @@ export class UserProfileController {
     const updatedFields = Object.keys(userProfileToUpdate)
     userProfileToUpdate = {
       ...userProfileToUpdate,
-      mobileStatus: DataStatus.NOT_VERIFIED,
-      emailStatus: DataStatus.NOT_VERIFIED,
+      emailVerified: profile.emailVerified,
+      mobilePhoneNumberVerified: profile.mobilePhoneNumberVerified,
     }
 
     if (userProfileToUpdate.mobilePhoneNumber) {
-      const phoneVerified = await this.verificationService.confirmSms(
-        { code: userProfileToUpdate.smsCode },
-        user.nationalId,
+      const { mobilePhoneNumber } = userProfileToUpdate
+      const phoneVerified = await this.verificationService.isPhoneNumberVerified(
+        { nationalId, mobilePhoneNumber },
       )
 
-      if (phoneVerified.confirmed) {
-        userProfileToUpdate = {
-          ...userProfileToUpdate,
-          mobileStatus: DataStatus.VERIFIED,
-          mobilePhoneNumberVerified: phoneVerified.confirmed,
-        }
+      userProfileToUpdate = {
+        ...userProfileToUpdate,
+        mobilePhoneNumberVerified: phoneVerified,
       }
     }
 
-    if (userProfileToUpdate.email) {
-      const emailVerified = await this.verificationService.confirmEmail(
-        { hash: userProfileToUpdate.emailCode },
-        user.nationalId,
+    if (
+      userProfileToUpdate.email &&
+      userProfileToUpdate.email !== profile.email
+    ) {
+      await this.verificationService.createEmailVerification(
+        nationalId,
+        userProfileToUpdate.email,
       )
-
-      if (emailVerified.confirmed) {
-        userProfileToUpdate = {
-          ...userProfileToUpdate,
-          emailStatus: DataStatus.VERIFIED,
-          emailVerified: emailVerified.confirmed,
-        }
-      }
+      userProfileToUpdate = { ...userProfileToUpdate, emailVerified: false }
     }
 
     const {
@@ -274,28 +250,6 @@ export class UserProfileController {
 
   @Scopes(UserProfileScope.write)
   @ApiSecurity('oauth2', [UserProfileScope.write])
-  @Post('emailVerification/')
-  @HttpCode(204)
-  @ApiNoContentResponse()
-  @Audit()
-  async createEmailVerification(
-    @Body()
-    emailVerification: CreateEmailVerificationDto,
-    @CurrentUser()
-    user: User,
-  ): Promise<void> {
-    if (emailVerification.nationalId != user.nationalId) {
-      throw new ForbiddenException()
-    }
-
-    await this.verificationService.createEmailVerification(
-      emailVerification.nationalId,
-      emailVerification.email,
-    )
-  }
-
-  @Scopes(UserProfileScope.write)
-  @ApiSecurity('oauth2', [UserProfileScope.write])
   @Post('confirmEmail/:nationalId')
   @ApiParam({
     name: 'nationalId',
@@ -324,7 +278,7 @@ export class UserProfileController {
         action: 'confirmEmail',
         resources: profile.nationalId,
       },
-      this.verificationService.confirmEmail(confirmEmailDto, nationalId),
+      this.verificationService.confirmEmail(confirmEmailDto, profile),
     )
   }
 
@@ -385,7 +339,7 @@ export class UserProfileController {
   @ApiOperation({
     summary: 'Adds a device token for notifications for a user device ',
   })
-  @ApiOkResponse({ type: UserDeviceTokenDto })
+  @ApiOkResponse({ type: UserDeviceTokensDto })
   @Scopes(UserProfileScope.write)
   @ApiSecurity('oauth2', [UserProfileScope.write])
   @Post('userProfile/:nationalId/device-tokens')
@@ -394,11 +348,12 @@ export class UserProfileController {
     nationalId: string,
     @CurrentUser() user: User,
     @Body() body: DeviceTokenDto,
-  ): Promise<UserDeviceTokenDto> {
+  ): Promise<UserDeviceTokensDto> {
     if (nationalId != user.nationalId) {
       throw new BadRequestException()
     } else {
-      return await this.userProfileService.addDeviceToken(body, user)
+      body.nationalId = user.nationalId
+      return await this.userProfileService.addDeviceToken(body)
     }
   }
 

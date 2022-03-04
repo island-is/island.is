@@ -49,8 +49,6 @@ const Defendant = () => {
                 name: defendant.name,
                 address: defendant.address,
                 nationalId: defendant.nationalId,
-                noNationalId: defendant.noNationalId,
-                citizenship: defendant.citizenship,
               },
             )
           } else {
@@ -59,8 +57,6 @@ const Defendant = () => {
               name: defendant.name,
               address: defendant.address,
               nationalId: defendant.nationalId,
-              noNationalId: defendant.noNationalId,
-              citizenship: defendant.citizenship,
             })
           }
         })

@@ -47,7 +47,7 @@ export const generateJobsForFeature = (
             env: [
               {
                 name: 'PGHOST',
-                value: host.writer,
+                value: host,
               },
               {
                 name: 'PGDATABASE',
@@ -90,7 +90,7 @@ export const generateJobsForFeature = (
     containers.push({
       name: 'noop',
       securityContext,
-      image: 'public.ecr.aws/runecast/busybox:1.35.0',
+      image: 'public.ecr.aws/runecast/busybox:1.32.1',
       command: [
         'sh',
         '-c',

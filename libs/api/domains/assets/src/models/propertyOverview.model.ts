@@ -6,19 +6,19 @@ import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType()
 export class SimpleProperties {
   @Field({ nullable: true })
-  propertyNumber?: string
+  propertyNumber?: string | undefined
 
   @Field(() => PropertyLocation, { nullable: true })
-  defaultAddress?: PropertyLocation
+  defaultAddress?: PropertyLocation | undefined
 }
 
 @ObjectType()
 export class PropertyOverview {
   @Field(() => [SimpleProperties], { nullable: true })
-  properties?: SimpleProperties[]
+  properties?: SimpleProperties[] | undefined
 
   @Field({ nullable: true })
-  paging?: PagingData
+  paging?: PagingData | null
 }
 
 @ObjectType()

@@ -19,7 +19,6 @@ export const SkilavottordUserQuery = gql`
       name
       nationalId
       role
-      partnerId
     }
   }
 `

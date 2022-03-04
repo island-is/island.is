@@ -13,7 +13,6 @@ import {
   AidModule,
   AmountModule,
   DeductionFactorsModule,
-  PersonalTaxReturnModule,
 } from './modules'
 
 import { SequelizeConfigService } from './sequelizeConfig.service'
@@ -32,7 +31,6 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     FileModule,
     ApplicationEventModule,
     AidModule,
-    PersonalTaxReturnModule,
     AuditModule.forRoot(environment.audit),
   ],
 })

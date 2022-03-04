@@ -1,6 +1,16 @@
 import { Query, Resolver, Args } from '@nestjs/graphql'
-import { ForbiddenException, Inject, UseGuards } from '@nestjs/common'
+import { GetFinancialOverviewInput } from './dto/getOverview.input'
+import { GetCustomerRecordsInput } from './dto/getCustomerRecords.input'
+import { GetDocumentsListInput } from './dto/getDocumentsList.input'
+import { GetFinanceDocumentInput } from './dto/getFinanceDocument.input'
+import { GetAnnualStatusDocumentInput } from './dto/getAnnualStatusDocument.input'
+import { ForbiddenException, UseGuards } from '@nestjs/common'
 import graphqlTypeJson from 'graphql-type-json'
+import { CustomerChargeType } from './models/customerChargeType.model'
+import { FinanceDocumentModel } from './models/financeDocument.model'
+import { CustomerTapsControlModel } from './models/customerTapsControl.model'
+import { DocumentsListModel } from './models/documentsList.model'
+import { CustomerRecords } from './models/customerRecords.model'
 
 import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
@@ -10,46 +20,23 @@ import {
   CurrentUser,
   Scopes,
 } from '@island.is/auth-nest-tools'
-import { FinanceClientService } from '@island.is/clients/finance'
 import { Audit } from '@island.is/nest/audit'
-import { DownloadServiceConfig } from '@island.is/nest/config'
-import type { ConfigType } from '@island.is/nest/config'
-
-import { GetFinancialOverviewInput } from './dto/getOverview.input'
-import { GetCustomerRecordsInput } from './dto/getCustomerRecords.input'
-import { GetDocumentsListInput } from './dto/getDocumentsList.input'
-import { GetFinanceDocumentInput } from './dto/getFinanceDocument.input'
-import { GetAnnualStatusDocumentInput } from './dto/getAnnualStatusDocument.input'
-import { CustomerChargeType } from './models/customerChargeType.model'
-import { FinanceDocumentModel } from './models/financeDocument.model'
-import { CustomerTapsControlModel } from './models/customerTapsControl.model'
-import { DocumentsListModel } from './models/documentsList.model'
-import { CustomerRecords } from './models/customerRecords.model'
+import { FinanceService } from '@island.is/clients/finance'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.financeOverview)
 @Resolver()
 @Audit({ namespace: '@island.is/api/finance' })
 export class FinanceResolver {
-  constructor(
-    private financeService: FinanceClientService,
-    @Inject(DownloadServiceConfig.KEY)
-    private readonly downloadServiceConfig: ConfigType<
-      typeof DownloadServiceConfig
-    >,
-  ) {}
+  constructor(private FinanceService: FinanceService) {}
 
   @Query(() => graphqlTypeJson)
   @Audit()
   async getFinanceStatus(@CurrentUser() user: User) {
-    const financeStatus = await this.financeService.getFinanceStatus(
+    return this.FinanceService.getFinanceStatus(
       user.nationalId,
-      user,
+      user.authorization,
     )
-    return {
-      ...financeStatus,
-      downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/finance/`,
-    }
   }
 
   @Query(() => graphqlTypeJson, { nullable: true })
@@ -58,18 +45,21 @@ export class FinanceResolver {
     @CurrentUser() user: User,
     @Args('input') input: GetFinancialOverviewInput,
   ) {
-    return this.financeService.getFinanceStatusDetails(
+    return this.FinanceService.getFinanceStatusDetails(
       user.nationalId,
-      input.orgID,
+      input.OrgID,
       input.chargeTypeID,
-      user,
+      user.authorization,
     )
   }
 
   @Query(() => CustomerChargeType, { nullable: true })
   @Audit()
   async getCustomerChargeType(@CurrentUser() user: User) {
-    return this.financeService.getCustomerChargeType(user.nationalId, user)
+    return this.FinanceService.getCustomerChargeType(
+      user.nationalId,
+      user.authorization,
+    )
   }
 
   @Query(() => CustomerRecords, { nullable: true })
@@ -78,12 +68,12 @@ export class FinanceResolver {
     @CurrentUser() user: User,
     @Args('input') input: GetCustomerRecordsInput,
   ) {
-    return this.financeService.getCustomerRecords(
+    return this.FinanceService.getCustomerRecords(
       user.nationalId,
       input.chargeTypeID,
       input.dayFrom,
       input.dayTo,
-      user,
+      user.authorization,
     )
   }
 
@@ -101,17 +91,13 @@ export class FinanceResolver {
       throw new ForbiddenException()
     }
 
-    const documentsList = await this.financeService.getDocumentsList(
+    return this.FinanceService.getDocumentsList(
       user.nationalId,
       input.dayFrom,
       input.dayTo,
       input.listPath,
-      user,
+      user.authorization,
     )
-    return {
-      ...documentsList,
-      downloadServiceURL: `${this.downloadServiceConfig.baseUrl}/download/v1/finance/`,
-    }
   }
 
   @Query(() => FinanceDocumentModel, { nullable: true })
@@ -120,10 +106,10 @@ export class FinanceResolver {
     @CurrentUser() user: User,
     @Args('input') input: GetFinanceDocumentInput,
   ) {
-    return this.financeService.getFinanceDocument(
+    return this.FinanceService.getFinanceDocument(
       user.nationalId,
       input.documentID,
-      user,
+      user.authorization,
     )
   }
 
@@ -133,16 +119,19 @@ export class FinanceResolver {
     @CurrentUser() user: User,
     @Args('input') input: GetAnnualStatusDocumentInput,
   ) {
-    return this.financeService.getAnnualStatusDocument(
+    return this.FinanceService.getAnnualStatusDocument(
       user.nationalId,
       input.year,
-      user,
+      user.authorization,
     )
   }
 
   @Query(() => CustomerTapsControlModel, { nullable: true })
   @Audit()
   async getCustomerTapControl(@CurrentUser() user: User) {
-    return this.financeService.getCustomerTapControl(user.nationalId, user)
+    return this.FinanceService.getCustomerTapControl(
+      user.nationalId,
+      user.authorization,
+    )
   }
 }

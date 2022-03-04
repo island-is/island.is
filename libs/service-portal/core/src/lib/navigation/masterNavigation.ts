@@ -92,6 +92,10 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             name: m.parentalLeave,
             path: ServicePortalPath.ParentalLeave,
           },
+          {
+            name: m.drivingLicense,
+            path: ServicePortalPath.DrivingLicense,
+          },
         ],
       },
       // Menntun
@@ -161,6 +165,15 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
       },
 
+      {
+        name: m.licenses,
+        path: ServicePortalPath.LicensesRoot,
+        icon: {
+          type: 'outline',
+          icon: 'business',
+        },
+      },
+
       // Fasteignir
       {
         name: m.realEstate,
@@ -216,6 +229,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       // Stillingar - hidden from nav
       {
         name: m.settings,
+        path: ServicePortalPath.SettingsRoot,
         navHide: true,
         children: [
           {
@@ -231,7 +245,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.SettingsAccessControlAccess,
           },
           {
-            name: m.mySettings,
+            name: m.personalInformation,
             path: ServicePortalPath.SettingsPersonalInformation,
           },
           {
@@ -249,23 +263,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           {
             name: m.language,
             path: ServicePortalPath.SettingsPersonalInformationEditLanguage,
-          },
-        ],
-      },
-      // Mín skírteini
-      {
-        name: m.licenses,
-        path: ServicePortalPath.LicensesRoot,
-
-        icon: {
-          type: 'outline',
-          icon: 'wallet',
-        },
-        children: [
-          {
-            navHide: true,
-            name: m.drivingLicense,
-            path: ServicePortalPath.LicensesDrivingDetail,
           },
         ],
       },

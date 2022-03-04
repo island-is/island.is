@@ -159,11 +159,6 @@ export interface GenericLicenseClient<LicenseType> {
     data?: LicenseType,
   ) => Promise<string | null>
 
-  getPkPassQRCode: (
-    nationalId: string,
-    data?: LicenseType,
-  ) => Promise<string | null>
-
   verifyPkPass: (data: string) => Promise<PkPassVerification | null>
 }
 

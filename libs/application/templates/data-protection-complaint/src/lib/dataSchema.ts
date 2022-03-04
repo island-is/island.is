@@ -53,16 +53,16 @@ export const DataProtectionComplaintSchema = z.object({
   }),
   approveExternalData: z.boolean().refine((p) => p),
   inCourtProceedings: z.enum([YES, NO]).refine((p) => p === NO, {
-    params: error.inCourtProceedings,
+    message: error.inCourtProceedings.defaultMessage,
   }),
   concernsMediaCoverage: z.enum([YES, NO]).refine((p) => p === NO, {
-    params: error.concernsMediaCoverage,
+    message: error.concernsMediaCoverage.defaultMessage,
   }),
   concernsBanMarking: z.enum([YES, NO]).refine((p) => p === NO, {
-    params: error.concernsBanMarking,
+    message: error.concernsBanMarking.defaultMessage,
   }),
   concernsLibel: z.enum([YES, NO]).refine((p) => p === NO, {
-    params: error.concernsLibel,
+    message: error.concernsLibel.defaultMessage,
   }),
   concernsPersonalDataConflict: z.enum([YES, NO]),
   info: z.object({
@@ -120,14 +120,11 @@ export const DataProtectionComplaintSchema = z.object({
   subjectOfComplaint: z.object({
     values: z.array(z.string()).optional(),
     somethingElse: z.string().optional(),
-    somethingElseValue: z.string().refine((x) => x.trim().length > 0, {
-      params: error.required,
-    }),
   }),
   complaint: z.object({
     description: z
       .string()
-      .nonempty()
+      .nonempty(error.required.defaultMessage)
       .refine((x) => !!x, { params: error.required })
       .refine((x) => x?.split(' ').filter((item) => item).length <= 500, {
         params: error.wordCountReached,

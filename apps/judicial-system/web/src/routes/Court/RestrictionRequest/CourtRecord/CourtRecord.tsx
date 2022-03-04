@@ -24,7 +24,7 @@ import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
   setAndSendToServer,
-  setAndSendDateToServer,
+  newSetAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -74,6 +74,15 @@ export const CourtRecord: React.FC = () => {
           attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}`
         }
 
+        if (wc.defendants && wc.defendants.length > 0) {
+          attendees += `\n${wc.defendants[0].name} ${formatMessage(
+            core.accused,
+            {
+              suffix: wc.defendants[0].gender === Gender.MALE ? 'i' : 'a',
+            },
+          )}`
+        }
+
         if (wc.defenderName) {
           attendees += `\n${wc.defenderName} skipaður verjandi ${formatMessage(
             core.accused,
@@ -90,15 +99,6 @@ export const CourtRecord: React.FC = () => {
 
         if (wc.translator) {
           attendees += `\n${wc.translator} túlkur`
-        }
-
-        if (wc.defendants && wc.defendants.length > 0) {
-          attendees += `\n${wc.defendants[0].name} ${formatMessage(
-            core.accused,
-            {
-              suffix: wc.defendants[0].gender === Gender.MALE ? 'i' : 'a',
-            },
-          )}`
         }
 
         return attendees
@@ -204,7 +204,7 @@ export const CourtRecord: React.FC = () => {
                 maxDate={new Date()}
                 selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
-                  setAndSendDateToServer(
+                  newSetAndSendDateToServer(
                     'courtStartDate',
                     date,
                     valid,
@@ -227,7 +227,7 @@ export const CourtRecord: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'courtLocation',
-                  event.target.value,
+                  event,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -278,7 +278,7 @@ export const CourtRecord: React.FC = () => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'courtAttendees',
-                event.target.value,
+                event,
                 ['empty'],
                 workingCase,
                 setWorkingCase,
@@ -349,7 +349,7 @@ export const CourtRecord: React.FC = () => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'accusedBookings',
-                event.target.value,
+                event,
                 [],
                 workingCase,
                 setWorkingCase,
@@ -384,7 +384,7 @@ export const CourtRecord: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'litigationPresentations',
-                  event.target.value,
+                  event,
                   ['empty'],
                   workingCase,
                   setWorkingCase,

@@ -4,12 +4,7 @@ import { ValueType } from 'react-select/src/types'
 
 import type { Case, Institution, User } from '@island.is/judicial-system/types'
 import { Box, Input, Text, Checkbox } from '@island.is/island-ui/core'
-import {
-  removeTabsValidateAndSet,
-  setAndSendDateToServer,
-  setAndSendToServer,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
+import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -20,6 +15,7 @@ import {
   CaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import { rcRequestedHearingArrangements } from '@island.is/judicial-system-web/messages'
+import { useCaseFormHelper } from '@island.is/judicial-system-web/src/utils/useFormHelper'
 import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
@@ -53,6 +49,11 @@ const StepTwoForm: React.FC<Props> = (props) => {
   } = props
   const { formatMessage } = useIntl()
   const { updateCase } = useCase()
+  const {
+    validateAndSendToServer,
+    setField,
+    setAndSendToServer,
+  } = useCaseFormHelper(workingCase, setWorkingCase, {})
 
   return (
     <>
@@ -91,15 +92,7 @@ const StepTwoForm: React.FC<Props> = (props) => {
                     .prosecutorId ?? workingCase.prosecutor?.id)
               }
               checked={workingCase.isHeightenedSecurityLevel}
-              onChange={(event) =>
-                setAndSendToServer(
-                  'isHeightenedSecurityLevel',
-                  event.target.checked,
-                  workingCase,
-                  setWorkingCase,
-                  updateCase,
-                )
-              }
+              onChange={(event) => setAndSendToServer(event.target)}
               large
               filled
             />
@@ -126,7 +119,7 @@ const StepTwoForm: React.FC<Props> = (props) => {
               maxDate={new Date()}
               selectedDate={workingCase.arrestDate}
               onChange={(date: Date | undefined, valid: boolean) => {
-                setAndSendDateToServer(
+                newSetAndSendDateToServer(
                   'arrestDate',
                   date,
                   valid,
@@ -142,7 +135,7 @@ const StepTwoForm: React.FC<Props> = (props) => {
           <RequestCourtDate
             workingCase={workingCase}
             onChange={(date: Date | undefined, valid: boolean) =>
-              setAndSendDateToServer(
+              newSetAndSendDateToServer(
                 'requestedCourtDate',
                 date,
                 valid,
@@ -172,24 +165,8 @@ const StepTwoForm: React.FC<Props> = (props) => {
               rcRequestedHearingArrangements.sections.translator.placeholder,
             )}
             value={workingCase.translator || ''}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'translator',
-                event.target.value,
-                [],
-                workingCase,
-                setWorkingCase,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'translator',
-                event.target.value,
-                [],
-                workingCase,
-                updateCase,
-              )
-            }
+            onChange={(event) => setField(event.target)}
+            onBlur={(event) => validateAndSendToServer(event.target)}
           />
         </Box>
       </FormContentContainer>

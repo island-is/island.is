@@ -1,12 +1,8 @@
+import { ISODate, prettyName, RegQueryName } from '@island.is/regulations'
 import {
-  ISODate,
-  prettyName,
-  RegQueryName,
   Regulation,
-  RegulationDiff,
   RegulationRedirect,
-} from '@island.is/regulations'
-import {
+  RegulationDiff,
   RegulationOriginalDates,
   RegulationViewTypes,
 } from '@island.is/regulations/web'

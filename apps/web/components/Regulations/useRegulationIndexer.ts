@@ -1,8 +1,5 @@
-import {
-  Regulation,
-  RegulationMaybeDiff,
-  HTMLText,
-} from '@island.is/regulations'
+import { HTMLText } from '@hugsmidjan/regulations-editor/types'
+import { Regulation, RegulationMaybeDiff } from '@island.is/regulations/web'
 import { NamespaceGetter } from '@island.is/web/hooks'
 import { useMemo } from 'react'
 

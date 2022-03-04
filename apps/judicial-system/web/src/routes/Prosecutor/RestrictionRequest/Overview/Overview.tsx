@@ -133,23 +133,23 @@ export const Overview: React.FC = () => {
           <InfoCard
             data={[
               {
-                title: formatMessage(core.policeCaseNumber),
+                title: 'LÖKE málsnúmer',
                 value: workingCase.policeCaseNumber,
               },
               ...(workingCase.courtCaseNumber
                 ? [
                     {
-                      title: formatMessage(core.courtCaseNumber),
+                      title: 'Málsnúmer héraðsdóms',
                       value: workingCase.courtCaseNumber,
                     },
                   ]
                 : []),
               {
-                title: formatMessage(core.court),
+                title: 'Dómstóll',
                 value: workingCase.court?.name,
               },
               {
-                title: formatMessage(core.prosecutor),
+                title: 'Embætti',
                 value: `${
                   workingCase.creatingProsecutor?.institution?.name ??
                   'Ekki skráð'
@@ -158,7 +158,7 @@ export const Overview: React.FC = () => {
               ...(workingCase.judge
                 ? [
                     {
-                      title: formatMessage(core.judge),
+                      title: 'Dómari',
                       value: workingCase.judge.name,
                     },
                   ]
@@ -176,23 +176,20 @@ export const Overview: React.FC = () => {
               ...(workingCase.registrar
                 ? [
                     {
-                      title: formatMessage(core.registrar),
+                      title: 'Dómritari',
                       value: workingCase.registrar.name,
                     },
                   ]
                 : []),
-              {
-                title: formatMessage(core.prosecutorPerson),
-                value: workingCase.prosecutor?.name,
-              },
+              { title: 'Ákærandi', value: workingCase.prosecutor?.name },
               {
                 title: workingCase.parentCase
                   ? `${
                       workingCase.type === CaseType.CUSTODY
-                        ? formatMessage(core.pastCustody)
-                        : formatMessage(core.pastTravelBan)
+                        ? 'Fyrri gæsla'
+                        : 'Fyrra farbann'
                     }`
-                  : formatMessage(core.arrestDate),
+                  : 'Tími handtöku',
                 value: workingCase.parentCase
                   ? `${capitalize(
                       formatDate(
@@ -213,7 +210,7 @@ export const Overview: React.FC = () => {
               ...(workingCase.courtDate
                 ? [
                     {
-                      title: formatMessage(core.confirmedCourtDate),
+                      title: 'Staðfestur fyrirtökutími',
                       value: `${capitalize(
                         formatDate(workingCase.courtDate, 'PPPP', true) ?? '',
                       )} kl. ${formatDate(workingCase.courtDate, TIME_FORMAT)}`,

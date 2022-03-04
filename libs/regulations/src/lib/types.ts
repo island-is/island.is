@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-export * from '@island.is/regulations-tools/types'
+export * from '@hugsmidjan/regulations-editor/types'
 
 declare const _Kennitala__Brand: unique symbol
 /** Icelandic national census id number  */

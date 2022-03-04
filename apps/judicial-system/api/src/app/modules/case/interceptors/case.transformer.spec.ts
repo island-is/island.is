@@ -66,6 +66,17 @@ describe('transformCase', () => {
         // Assert
         expect(res.isHeightenedSecurityLevel).toBe(transformedValue)
       })
+
+      it(`should transform ${originalValue} isMasked to ${transformedValue}`, () => {
+        // Arrange
+        const theCase = { isMasked: originalValue } as Case
+
+        // Act
+        const res = transformCase(theCase)
+
+        // Assert
+        expect(res.isMasked).toBe(transformedValue)
+      })
     },
   )
 

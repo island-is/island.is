@@ -27,16 +27,16 @@ export class PagingData {
 @ObjectType()
 export class PropertyOwner {
   @Field({ nullable: true })
-  name?: string
+  name?: string | undefined
 
   @Field({ nullable: true })
-  ssn?: string
+  ssn?: string | undefined
 
   @Field({ nullable: true })
   ownership?: number
 
   @Field({ nullable: true })
-  purchaseDate?: Date
+  purchaseDate?: Date | undefined
 
   @Field({ nullable: true })
   grantDisplay?: string

@@ -20,9 +20,6 @@ export class Defendant implements TDefendant {
   readonly caseId!: string
 
   @Field({ nullable: true })
-  readonly noNationalId?: boolean
-
-  @Field({ nullable: true })
   readonly nationalId?: string
 
   @Field({ nullable: true })
@@ -33,7 +30,4 @@ export class Defendant implements TDefendant {
 
   @Field({ nullable: true })
   readonly address?: string
-
-  @Field({ nullable: true })
-  readonly citizenship?: string
 }

@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { FieldErrors, FieldValues } from 'react-hook-form/dist/types/form'
 import parseISO from 'date-fns/parseISO'
 import { useFormContext } from 'react-hook-form'
@@ -18,7 +18,6 @@ import { FieldDescription } from '@island.is/shared/form-fields'
 import { Box } from '@island.is/island-ui/core'
 
 import {
-  calculatePeriodLength,
   calculateMaxPercentageForPeriod,
   calculateMinPercentageForPeriod,
 } from '../../lib/directorateOfLabour.utils'
@@ -44,9 +43,7 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
   const { rawPeriods } = getApplicationAnswers(application.answers)
   const currentIndex = extractRepeaterIndexFromField(field)
   const currentPeriod = rawPeriods[currentIndex]
-  const [selectedValue, setSelectedValue] = useState(currentPeriod.ratio)
-  const [canChooseRemainingDays, setCanChooseRemainingDays] = useState(false)
-  const [maxPercentageValue, setMaxPercentageValue] = useState<string>()
+  const [options, setOptions] = useState<SelectOption<string>[]>([])
 
   const remainingRights = useRemainingRights(application)
 
@@ -60,7 +57,7 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
     error = errors?.[fieldId]
   }
 
-  const options: SelectOption<string>[] = useMemo(() => {
+  useEffect(() => {
     const start = parseISO(currentPeriod.startDate)
     const end = parseISO(currentPeriod.endDate)
 
@@ -76,7 +73,7 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
         type: 'error',
         message: formatMessage(errorMessages.periodsRatioImpossible),
       })
-      return []
+      return
     }
 
     const minPercentage = Math.round(rawMinPercentage * 100)
@@ -87,7 +84,7 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
         type: 'error',
         message: formatMessage(errorMessages.periodsRatioCalculationImpossible),
       })
-      return []
+      return
     }
 
     const options = new Array(maxPercentage - minPercentage + 1)
@@ -97,44 +94,12 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
         label: `${maxPercentage - index}%`,
       }))
 
-    const periodLengthWithMaxPercentage = calculatePeriodLength(
-      start,
-      end,
-      maxPercentage / 100,
-    )
-
-    if (
-      periodLengthWithMaxPercentage < remainingRights &&
-      maxPercentage < 100
-    ) {
-      setCanChooseRemainingDays(true)
-      const max = `${maxPercentage + 1}`
-      setMaxPercentageValue(max)
-
-      options.splice(0, 0, {
-        value: max,
-        label: formatMessage(
-          parentalLeaveFormMessages.duration.fullyUsedRatio,
-          { maxPercentage: max },
-        ),
-      })
-    }
-
-    return options
+    setOptions(options)
   }, [])
-
-  const onSelect = (option: SelectOption) => {
-    const value = option.value as string
-
-    setSelectedValue(value)
-  }
 
   if (currentIndex < 0) {
     return null
   }
-
-  const isUsingAllRemainingDays =
-    canChooseRemainingDays && selectedValue === maxPercentageValue
 
   return (
     <>
@@ -158,25 +123,14 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
           options,
           backgroundColor: 'blue',
           defaultValue: null,
-          onSelect,
         }}
       />
-
       {currentPeriod.firstPeriodStart === undefined && (
         <input
           type="hidden"
           ref={register}
           name={`periods[${currentIndex}].firstPeriodStart`}
           value={StartDateOptions.SPECIFIC_DATE}
-        />
-      )}
-
-      {isUsingAllRemainingDays && (
-        <input
-          type="hidden"
-          ref={register}
-          name={`periods[${currentIndex}].daysToUse`}
-          value={remainingRights}
         />
       )}
     </>

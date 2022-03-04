@@ -21,7 +21,6 @@ const RulingAccordionItem: React.FC<Props> = ({
       id="rulingAccordionItem"
       label={formatMessage(m.heading)}
       labelVariant="h3"
-      labelUse="h2"
       startExpanded={startExpanded}
     >
       <Box component="section">

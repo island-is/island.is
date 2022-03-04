@@ -22,7 +22,6 @@ import {
   RankEvaluationInput,
   GroupedRankEvaluationResponse,
   rankEvaluationMetrics,
-  ProcessEntryAggregationResponse,
 } from '../types'
 import {
   DeleteByQueryResponse,
@@ -288,9 +287,7 @@ export class ElasticService {
     return this.findByQuery<
       SearchResponse<
         MappedData,
-        | TagAggregationResponse
-        | TypeAggregationResponse
-        | ProcessEntryAggregationResponse
+        TagAggregationResponse | TypeAggregationResponse
       >,
       typeof requestBody
     >(index, requestBody)

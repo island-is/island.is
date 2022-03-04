@@ -17,7 +17,7 @@ import {
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  setAndSendDateToServer,
+  newSetAndSendDateToServer,
   removeTabsValidateAndSet,
   setCheckboxAndSendToServer,
   validateAndSendToServer,
@@ -103,7 +103,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
                 minDate={new Date()}
                 selectedDate={workingCase.requestedValidToDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
-                  setAndSendDateToServer(
+                  newSetAndSendDateToServer(
                     'requestedValidToDate',
                     date,
                     valid,
@@ -166,7 +166,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'lawsBroken',
-                  event.target.value,
+                  event,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -232,7 +232,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'legalBasis',
-                  event.target.value,
+                  event,
                   [],
                   workingCase,
                   setWorkingCase,
@@ -337,7 +337,7 @@ const StepThreeForm: React.FC<Props> = (props) => {
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'requestedOtherRestrictions',
-                    event.target.value,
+                    event,
                     [],
                     workingCase,
                     setWorkingCase,

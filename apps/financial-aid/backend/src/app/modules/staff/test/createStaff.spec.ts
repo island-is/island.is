@@ -193,7 +193,7 @@ describe('StaffController - createStaff', () => {
 
     it('should throw error', () => {
       expect(then.error).toBeInstanceOf(Error)
-      expect(then.error.message).toBe('Cannot create staff')
+      expect(then.error.message).toBe('Some error')
     })
   })
 })

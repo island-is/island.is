@@ -315,7 +315,6 @@ export function formatDefenderRevokedEmailNotification(
   type: CaseType,
   defendantNationalId?: string,
   defendantName?: string,
-  defendantNoNationalId?: boolean,
   court?: string,
   courtDate?: Date,
 ): string {
@@ -332,11 +331,9 @@ export function formatDefenderRevokedEmailNotification(
       : 'Krafa um rannsóknarheimild'
   } sem taka átti fyrir hjá ${courtText} ${courtDateText}, hefur verið afturkölluð.<br /><br />Sakborningur: ${
     defendantName ?? 'Nafn ekki skráð'
-  }, ${defendantNoNationalId ? 'fd.' : 'kt.'} ${
-    defendantNoNationalId
-      ? defendantNationalId
-      : formatNationalId(defendantNationalId ?? 'ekki skráð')
-  }.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.`
+  }, kt. ${formatNationalId(
+    defendantNationalId ?? 'ekki skráð',
+  )}.<br /><br />Dómstóllinn hafði skráð þig sem verjanda sakbornings.`
 }
 
 export function stripHtmlTags(html: string): string {

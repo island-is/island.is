@@ -5,36 +5,16 @@ import {
   ServicePortalModule,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
-import { defineMessage } from 'react-intl'
 
 export const licensesModule: ServicePortalModule = {
-  name: defineMessage({
-    id: 'sp.licenses:nav-title',
-    defaultMessage: 'Skírteini',
-  }),
+  name: 'Skilríki',
   widgets: () => [],
   routes: ({ userInfo }) => [
     {
-      name: defineMessage({
-        id: 'sp.licenses:main-your-licenses',
-        defaultMessage: 'Þín skírteini',
-      }),
+      name: 'Skilríki',
       path: ServicePortalPath.LicensesRoot,
       enabled: userInfo.scopes.includes(ApiScope.internal),
-      render: () =>
-        lazy(() => import('./screens/LicensesOverview/LicensesOverview')),
-    },
-    {
-      name: defineMessage({
-        id: 'sp.licenses:driver-license-title',
-        defaultMessage: 'Ökuréttindi',
-      }),
-      path: ServicePortalPath.LicensesDrivingDetail,
-      enabled: userInfo.scopes.includes(ApiScope.internal),
-      render: () =>
-        lazy(() =>
-          import('./screens/DrivingLicenseDetail/DrivingLicenseDetail'),
-        ),
+      render: () => lazy(() => import('./screens/Licenses')),
     },
   ],
 }

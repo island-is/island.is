@@ -88,18 +88,13 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
     }
   }, [error])
 
-  const headerTitle = n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
-  const pageTitle = `${
-    institutionSlug && organization && organization.title
-      ? organization.title + ' | '
-      : ''
-  }${headerTitle}`
+  const pageTitle = `${n('serviceWeb', 'Þjónustuvefur')} Ísland.is`
 
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
-      headerTitle={headerTitle}
+      headerTitle={pageTitle}
       institutionSlug={institutionSlug}
       organization={organization}
       organizationTitle={organizationTitle}
@@ -119,18 +114,15 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                       <Breadcrumbs
                         items={[
                           {
-                            title: n(
-                              'assistanceForIslandIs',
-                              'Aðstoð fyrir Ísland.is',
-                            ),
-                            typename: 'serviceweb',
-                            href: linkResolver('serviceweb').href,
+                            title: n('serviceWeb', 'Þjónustuvefur'),
+                            typename: 'helpdesk',
+                            href: linkResolver('helpdesk').href,
                           },
                           {
                             title: organization.title,
-                            typename: 'serviceweb',
+                            typename: 'helpdesk',
                             href: `${
-                              linkResolver('serviceweb').href
+                              linkResolver('helpdesk').href
                             }/${institutionSlug}`,
                           },
                           {
@@ -165,7 +157,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                           }}
                         >
                           <Text truncate>
-                            <a href={linkResolver('serviceweb').href}>
+                            <a href={linkResolver('helpdesk').href}>
                               <Button
                                 preTextIcon="arrowBack"
                                 preTextIconType="filled"
@@ -173,10 +165,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                                 type="button"
                                 variant="text"
                               >
-                                {n(
-                                  'assistanceForIslandIs',
-                                  'Aðstoð fyrir Ísland.is',
-                                )}
+                                {n('serviceWeb', 'Þjónustuvefur')}
                               </Button>
                             </a>
                           </Text>

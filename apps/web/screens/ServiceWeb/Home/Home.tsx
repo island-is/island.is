@@ -57,15 +57,10 @@ const Home: Screen<HomeProps> = ({
   const n = useNamespace(namespace)
   const institutionSlug = getSlugPart(Router.asPath, 2)
 
-  const headerTitle = n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
   const logoUrl = organization?.logo?.url ?? ''
   const searchTitle = n('canWeAssist', 'Getum við aðstoðað?')
-  const pageTitle = `${
-    institutionSlug && organization && organization.title
-      ? organization.title + ' | '
-      : ''
-  }${headerTitle}`
+  const pageTitle = `${n('serviceWeb', 'Þjónustuvefur')} Ísland.is`
 
   const hasContent = !!supportCategories?.length
 
@@ -74,7 +69,7 @@ const Home: Screen<HomeProps> = ({
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
-      headerTitle={headerTitle}
+      headerTitle={pageTitle}
       institutionSlug={institutionSlug}
       logoUrl={logoUrl}
       organization={organization}
@@ -111,7 +106,7 @@ const Home: Screen<HomeProps> = ({
                           description={description}
                           link={
                             {
-                              href: `/adstod/${organization.slug}/${slug}`,
+                              href: `/thjonustuvefur/${organization.slug}/${slug}`,
                             } as LinkResolverResponse
                           }
                         />

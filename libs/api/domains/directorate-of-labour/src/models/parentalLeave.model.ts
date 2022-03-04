@@ -16,15 +16,15 @@ export class ParentalLeave {
 
   @Field(() => String, { nullable: true })
   @IsOptional()
-  otherParentId?: string
+  otherParentId?: string | null
 
   @Field(() => String, { nullable: true })
   @IsOptional()
-  expectedDateOfBirth?: string
+  expectedDateOfBirth?: string | null
 
   @Field(() => String, { nullable: true })
   @IsOptional()
-  dateOfBirth?: string
+  dateOfBirth?: string | null
 
   @Field(() => String)
   email!: string
@@ -46,9 +46,9 @@ export class ParentalLeave {
 
   @Field(() => String, { nullable: true })
   @IsOptional()
-  rightsCode?: string
+  rightsCode?: string | null
 
   @Field(() => [ParentalLeaveAttachment], { nullable: true })
   @IsOptional()
-  attachments?: ParentalLeaveAttachment[]
+  attachments?: ParentalLeaveAttachment[] | null
 }

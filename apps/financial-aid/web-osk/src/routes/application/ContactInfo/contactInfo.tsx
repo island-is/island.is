@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState, useContext } from 'react'
 import { Text, Input, Box } from '@island.is/island-ui/core'
 
 import {
@@ -13,11 +13,9 @@ import {
   NavigationProps,
   isEmailValid,
 } from '@island.is/financial-aid/shared/lib'
-import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const ContactInfo = () => {
   const router = useRouter()
-  const { user } = useContext(AppContext)
 
   const { form, updateForm } = useContext(FormContext)
   const [hasError, setHasError] = useState(false)
@@ -46,13 +44,6 @@ const ContactInfo = () => {
     }
   }
 
-  useEffect(() => {
-    updateForm({
-      ...form,
-      emailAddress: form.emailAddress || user?.spouse?.applicantSpouseEmail,
-    })
-  }, [])
-
   return (
     <>
       <ContentContainer>
@@ -75,6 +66,7 @@ const ContactInfo = () => {
             value={form?.emailAddress}
             onChange={(event) => {
               setHasError(false)
+
               updateForm({ ...form, emailAddress: event.target.value })
             }}
             backgroundColor="blue"
@@ -93,6 +85,7 @@ const ContactInfo = () => {
             value={form?.phoneNumber}
             onChange={(event) => {
               setHasError(false)
+
               updateForm({ ...form, phoneNumber: event.target.value })
             }}
             backgroundColor="blue"

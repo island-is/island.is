@@ -74,33 +74,35 @@ export class MunicipalityService {
             t,
           )
         }),
-      ).then(async (res) => {
-        municipality.individualAidId = this.findAidTypeId(
-          res,
-          AidType.INDIVIDUAL,
-        )
-        municipality.cohabitationAidId = this.findAidTypeId(
-          res,
-          AidType.COHABITATION,
-        )
-
-        return await this.staffService
-          .createStaff(
-            admin,
-            {
-              municipalityId: municipality.municipalityId,
-              municipalityName: municipality.name,
-            },
-            currentUser,
-            t,
-            true,
+      )
+        .then(async (res) => {
+          municipality.individualAidId = this.findAidTypeId(
+            res,
+            AidType.INDIVIDUAL,
           )
-          .then(() => {
-            return this.municipalityModel.create(municipality, {
-              transaction: t,
+          municipality.cohabitationAidId = this.findAidTypeId(
+            res,
+            AidType.COHABITATION,
+          )
+
+          return await this.staffService
+            .createStaff(
+              admin,
+              {
+                municipalityId: municipality.municipalityId,
+                municipalityName: municipality.name,
+              },
+              currentUser,
+              t,
+              true,
+            )
+            .then(() => {
+              return this.municipalityModel.create(municipality, {
+                transaction: t,
+              })
             })
-          })
-      })
+        })
+        .catch((err) => err)
     })
   }
 

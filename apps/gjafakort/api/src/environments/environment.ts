@@ -22,8 +22,8 @@ const devConfig = {
     ttl: TEN_MINUTES,
   },
   rsk: {
-    url: process.env.RSK_URL,
-    username: process.env.RSK_USERNAME,
+    url: 'https://thjonusta-s.rsk.is/api',
+    username: 'rf_api_island.is',
     password: process.env.RSK_API_PASSWORD,
     ttl: TEN_MINUTES,
   },

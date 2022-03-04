@@ -6,7 +6,6 @@ import { Query } from '@island.is/api/schema'
 import {
   GET_CUSTOMER_CHARGETYPE,
   GET_CUSTOMER_RECORDS,
-  GET_TAPS_QUERY,
 } from '@island.is/service-portal/graphql'
 import format from 'date-fns/format'
 import FinanceTransactionsTable from '../../components/FinanceTransactionsTable/FinanceTransactionsTable'
@@ -19,6 +18,8 @@ import { m } from '@island.is/service-portal/core'
 import {
   Box,
   Text,
+  Columns,
+  Column,
   Stack,
   GridRow,
   GridColumn,
@@ -73,8 +74,6 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
     GET_CUSTOMER_RECORDS,
   )
 
-  const { loading: tabLoading } = useQuery<Query>(GET_TAPS_QUERY)
-
   useEffect(() => {
     if (toDate && fromDate && dropdownSelect) {
       loadCustomerRecords({
@@ -113,10 +112,6 @@ const FinanceTransactions: ServicePortalModuleComponent = () => {
     label: item.name,
     value: item.id,
   }))
-
-  if (tabLoading) {
-    return <SkeletonLoader space={1} height={30} repeat={4} />
-  }
 
   return (
     <Box marginBottom={[6, 6, 10]}>

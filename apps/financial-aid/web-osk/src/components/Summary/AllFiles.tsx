@@ -5,21 +5,16 @@ import { useRouter } from 'next/router'
 import * as styles from './summary.css'
 
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
-import { encodeFilename, Routes } from '@island.is/financial-aid/shared/lib'
-import { useMutation } from '@apollo/client'
-import { CreateSignedUrlMutation } from '@island.is/financial-aid-web/osk/graphql'
+import { Routes } from '@island.is/financial-aid/shared/lib'
 
 const AllFiles = () => {
   const router = useRouter()
 
   const { form } = useContext(FormContext)
 
-  const [createSignedUrlMutation] = useMutation(CreateSignedUrlMutation)
-
   const allFiles = form.incomeFiles
     .concat(form.taxReturnFiles)
     .concat(form.otherFiles)
-    .concat(form.taxReturnFromRskFile)
 
   return (
     <Box
@@ -36,15 +31,7 @@ const AllFiles = () => {
             if (file) {
               return (
                 <a
-                  onClick={() =>
-                    createSignedUrlMutation({
-                      variables: {
-                        input: { fileName: encodeFilename(file.name) },
-                      },
-                    }).then((response) => {
-                      window.open(response.data?.getSignedUrl.url)
-                    })
-                  }
+                  href={file.name}
                   key={`file-` + index}
                   className={styles.filesButtons}
                   target="_blank"

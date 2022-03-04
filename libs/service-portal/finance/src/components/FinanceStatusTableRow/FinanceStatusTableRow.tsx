@@ -42,7 +42,7 @@ const FinanceStatusTableRow: FC<Props> = ({
         getDetailsQuery({
           variables: {
             input: {
-              orgID: organization.id,
+              OrgID: organization.id,
               chargeTypeID: chargeType.id,
             },
           },

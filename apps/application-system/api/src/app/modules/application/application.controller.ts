@@ -27,7 +27,7 @@ import {
   ApiQuery,
 } from '@nestjs/swagger'
 import {
-  ApplicationWithAttachments as BaseApplication,
+  Application as BaseApplication,
   callDataProviders,
   ApplicationTypes,
   FormValue,
@@ -96,7 +96,6 @@ import {
 import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { CurrentLocale } from './utils/currentLocale'
 import { Application } from './application.model'
-import { Documentation } from '@island.is/nest/swagger'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('applications')
@@ -1007,49 +1006,5 @@ export class ApplicationController {
     })
 
     return { url }
-  }
-
-  @Get('applications/:id/attachments/:attachmentKey/presigned-url')
-  @Scopes(ApplicationScope.read)
-  @Documentation({
-    description: 'Gets a presigned url for attachments',
-    response: { status: 200, type: PresignedUrlResponseDto },
-    request: {
-      query: {},
-      params: {
-        id: {
-          type: 'string',
-          description: 'application id',
-          required: true,
-        },
-        attachmentKey: {
-          type: 'string',
-          description: 'key for attachment',
-          required: true,
-        },
-      },
-    },
-  })
-  async getAttachmentPresignedURL(
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @Param('attachmentKey') attachmentKey: string,
-    @CurrentUser() user: User,
-  ): Promise<PresignedUrlResponseDto> {
-    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
-      id,
-      user.nationalId,
-    )
-
-    if (!existingApplication.attachments) {
-      throw new NotFoundException('Attachments not found')
-    }
-
-    try {
-      const str = attachmentKey as keyof typeof existingApplication.attachments
-      const fileName = existingApplication.attachments[str]
-      return await this.fileService.getAttachmentPresignedURL(fileName)
-    } catch (error) {
-      throw new NotFoundException('Attachment not found')
-    }
   }
 }

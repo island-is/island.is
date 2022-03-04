@@ -85,13 +85,9 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
                 accusedName: workingCase.defendants
                   .map(
                     (defendant) =>
-                      `${defendant.name} ${
-                        defendant.noNationalId ? 'fd.' : 'kt.'
-                      } ${
-                        defendant.noNationalId
-                          ? defendant.nationalId
-                          : formatNationalId(defendant.nationalId ?? '')
-                      }`,
+                      `${defendant.name} kt. ${formatNationalId(
+                        defendant.nationalId ?? '',
+                      )}`,
                   )
                   .toString()
                   .replace(/,/g, ', '),
@@ -139,7 +135,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'demands',
-                event.target.value,
+                event,
                 ['empty'],
                 workingCase,
                 setWorkingCase,
@@ -183,7 +179,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'lawsBroken',
-                event.target.value,
+                event,
                 ['empty'],
                 workingCase,
                 setWorkingCase,
@@ -225,7 +221,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'legalBasis',
-                event.target.value,
+                event,
                 ['empty'],
                 workingCase,
                 setWorkingCase,

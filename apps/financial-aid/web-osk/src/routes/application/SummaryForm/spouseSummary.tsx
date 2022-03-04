@@ -90,7 +90,7 @@ const SpouseSummary = () => {
         }
       })
       .catch((e) => {
-        errorHandling('Obbobbob eitthvað fór úrskeiðis')
+        errorHandling('Obbobbob einhvað fór úrskeiðis')
       })
   }
 

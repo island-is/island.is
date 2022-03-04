@@ -122,16 +122,15 @@ export class MainResolver {
     locale: Locale = 'is',
     @Args('input') input: GeneratePkPassInput,
   ): Promise<GenericPkPass> {
-    const {
-      pkpassUrl,
-      pkpassQRCode,
-    } = await this.licenseServiceService.generatePkPass(
+    const pkpassUrl = await this.licenseServiceService.generatePkPass(
       user.nationalId,
       locale,
       input.licenseType,
     )
 
-    return { pkpassUrl, pkpassQRCode }
+    return {
+      pkpassUrl,
+    }
   }
 
   @Mutation(() => GenericPkPassVerification)

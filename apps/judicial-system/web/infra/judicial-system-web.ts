@@ -1,4 +1,5 @@
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
+import { MissingSetting } from '../../../../infra/src/dsl/types/input-types'
 
 export const serviceSetup = (services: {
   api: ServiceBuilder<'judicial-system-api'>
@@ -12,10 +13,6 @@ export const serviceSetup = (services: {
         prod: 'https://rettarvorslugatt.island.is',
       },
       INTERNAL_API_URL: ref((h) => `http://${h.svc(services.api)}`),
-    })
-    .secrets({
-      NATIONAL_REGISTRY_API_KEY:
-        '/k8s/judicial-system/NATIONAL_REGISTRY_API_KEY',
     })
     .liveness('/liveness')
     .readiness('/readiness')

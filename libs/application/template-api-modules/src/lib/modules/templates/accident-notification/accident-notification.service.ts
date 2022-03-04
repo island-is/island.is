@@ -10,8 +10,11 @@ import type { Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
+import { AttachmentProvider } from './accident-notification-attachments.provider'
 import {
   applictionAnswersToXml,
+  attachmentStatusToAttachmentRequests,
+  getApplicationAttachmentStatus,
   getApplicationDocumentId,
   whiteListedErrorCodes,
 } from './accident-notification.utils'
@@ -21,14 +24,6 @@ import {
   generateAssignReviewerEmail,
   generateConfirmationEmail,
 } from './emailGenerators'
-import { AccidentNotificationAttachmentProvider } from './attachments/applicationAttachmentProvider'
-import {
-  attachmentStatusToAttachmentRequests,
-  filterOutAlreadySentDocuments,
-  getAddAttachmentSentDocumentHashList,
-  getApplicationAttachmentStatus,
-} from './attachments/attachment.utils'
-import { AccidentNotificationAttachment } from './types/attachments'
 
 const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
 
@@ -39,7 +34,7 @@ export class AccidentNotificationService {
     @Inject(ACCIDENT_NOTIFICATION_CONFIG)
     private accidentConfig: AccidentNotificationConfig,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly attachmentProvider: AccidentNotificationAttachmentProvider,
+    private readonly attachmentProvider: AttachmentProvider,
     private readonly documentApi: DocumentApi,
   ) {}
 
@@ -47,12 +42,10 @@ export class AccidentNotificationService {
     try {
       const requests = attachmentStatusToAttachmentRequests()
 
-      const attachments = await this.attachmentProvider.getFiles(
-        requests,
+      const attachments = await this.attachmentProvider.gatherAllAttachments(
         application,
+        requests,
       )
-
-      const fileHashList = attachments.map((attachment) => attachment.hash)
 
       const answers = application.answers as AccidentNotificationAnswers
       const xml = applictionAnswersToXml(answers, attachments)
@@ -83,7 +76,6 @@ export class AccidentNotificationService {
       }
       return {
         documentId: ihiDocumentID,
-        sentDocuments: fileHashList,
       }
     } catch (e) {
       this.logger.error('Error submitting application to SÍ', e)
@@ -112,62 +104,30 @@ export class AccidentNotificationService {
       const attachmentStatus = getApplicationAttachmentStatus(application)
       const requests = attachmentStatusToAttachmentRequests(attachmentStatus)
 
-      const attachments = await this.attachmentProvider.getFiles(
+      const attachments = await this.attachmentProvider.gatherAllAttachments(
+        application,
         requests,
-        application,
-      )
-
-      const newAttachments = filterOutAlreadySentDocuments(
-        attachments,
-        application,
       )
 
       const documentId = getApplicationDocumentId(application)
 
-      const promises = newAttachments.map((attachment) =>
-        this.sendAttachment(attachment, documentId),
+      const promises = attachments.map((attachment) =>
+        this.documentApi.documentDocumentAttachment({
+          documentAttachment: {
+            attachmentBody: attachment.content,
+            attachmentType: attachment.attachmentType,
+            title: attachment.name,
+          },
+          ihiDocumentID: documentId,
+        }),
       )
 
-      const successfulAttachments = (await Promise.all(promises)).filter(
-        (x) => x !== null,
-      )
-
-      return {
-        sentDocuments: [
-          ...getAddAttachmentSentDocumentHashList(application),
-          ...successfulAttachments,
-        ],
-      }
+      await Promise.all(promises)
     } catch (e) {
       this.logger.error('Error adding attachment to SÍ', e)
       throw new Error('Villa kom upp við að bæta við viðhengi.')
     }
   }
-
-  /**
-   * Sends the attachment to SÍ and returns the document hash on success and null on failure
-   * @param attachment attachment to send
-   */
-  private async sendAttachment(
-    attachment: AccidentNotificationAttachment,
-    documentId: number,
-  ): Promise<string | null> {
-    try {
-      await this.documentApi.documentDocumentAttachment({
-        documentAttachment: {
-          attachmentBody: attachment.content,
-          attachmentType: attachment.attachmentType,
-          title: attachment.name,
-        },
-        ihiDocumentID: documentId,
-      })
-      return attachment.hash
-    } catch (e) {
-      this.logger.error('Error sending document to SÍ', e)
-      return null
-    }
-  }
-
   async reviewApplication({ application }: TemplateApiModuleActionProps) {
     try {
       const documentId = getApplicationDocumentId(application)

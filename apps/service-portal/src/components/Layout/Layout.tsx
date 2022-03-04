@@ -20,7 +20,7 @@ import MobileMenu from '../MobileMenu/MobileMenu'
 import { useNamespaces } from '@island.is/localization'
 import { useStore } from '../../store/stateProvider'
 import { RemoveScroll } from 'react-remove-scroll'
-import cn from 'classnames'
+import { getLayout } from './helpers'
 
 const Layout: FC = ({ children }) => {
   useRoutes()
@@ -44,18 +44,15 @@ const Layout: FC = ({ children }) => {
       <Hidden below="md">
         <Sidebar />
       </Hidden>
-      <Box
-        overflow="hidden"
-        className={cn(
-          styles.layoutWrapper,
-          sidebarState === 'closed' && styles.layoutWrapperWide,
-        )}
-        paddingBottom={7}
-      >
+      <Box overflow="hidden" className={styles.layoutWrapper} paddingBottom={7}>
         <Box as="main">
           <GridContainer>
             <GridRow>
-              <GridColumn span={'12/12'} className={styles.layoutGrid}>
+              <GridColumn
+                span={getLayout(pathname, sidebarState).span}
+                offset={getLayout(pathname, sidebarState).offset}
+                className={styles.layoutGrid}
+              >
                 <ContentBreadcrumbs />
                 <div>{children}</div>
               </GridColumn>

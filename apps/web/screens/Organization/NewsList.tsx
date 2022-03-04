@@ -44,8 +44,6 @@ import {
 } from '../../graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '../../hooks/useLinkResolver'
-import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 
 const PERPAGE = 10
 
@@ -76,8 +74,6 @@ const NewsList: Screen<NewsListProps> = ({
   const { linkResolver } = useLinkResolver()
   const { getMonthByIndex } = useDateUtils()
   const n = useNamespace(namespace)
-  useContentfulId(organizationPage.id)
-  useLocalLinkTypeResolver()
 
   const currentNavItem =
     organizationPage.menuLinks.find(

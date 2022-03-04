@@ -116,11 +116,9 @@ export const RulingStepTwo: React.FC = () => {
                   suffix: accusedSuffix,
                 }),
                 accusedName: theCase.defendants[0].name,
-                accusedNationalId: theCase.defendants[0].noNationalId
-                  ? ', '
-                  : `, kt. ${formatNationalId(
-                      theCase.defendants[0].nationalId ?? '',
-                    )}, `,
+                accusedNationalId: formatNationalId(
+                  theCase.defendants[0].nationalId ?? '',
+                ),
                 extensionSuffix:
                   theCase.parentCase &&
                   isAcceptingCaseDecision(theCase.parentCase.decision)
@@ -138,11 +136,9 @@ export const RulingStepTwo: React.FC = () => {
                   }),
                 ),
                 accusedName: theCase.defendants[0].name,
-                accusedNationalId: theCase.defendants[0].noNationalId
-                  ? ', '
-                  : `, kt. ${formatNationalId(
-                      theCase.defendants[0].nationalId ?? '',
-                    )}, `,
+                accusedNationalId: formatNationalId(
+                  theCase.defendants[0].nationalId ?? '',
+                ),
                 caseTypeAndExtensionSuffix:
                   theCase.decision === CaseDecision.ACCEPTING ||
                   theCase.decision === CaseDecision.ACCEPTING_PARTIALLY
@@ -277,7 +273,7 @@ export const RulingStepTwo: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'conclusion',
-                  event.target.value,
+                  event,
                   [],
                   workingCase,
                   setWorkingCase,
@@ -518,7 +514,7 @@ export const RulingStepTwo: React.FC = () => {
                   onChange={(event) =>
                     removeTabsValidateAndSet(
                       'accusedAppealAnnouncement',
-                      event.target.value,
+                      event,
                       [],
                       workingCase,
                       setWorkingCase,
@@ -692,7 +688,7 @@ export const RulingStepTwo: React.FC = () => {
                   onChange={(event) =>
                     removeTabsValidateAndSet(
                       'prosecutorAppealAnnouncement',
-                      event.target.value,
+                      event,
                       [],
                       workingCase,
                       setWorkingCase,
@@ -732,7 +728,7 @@ export const RulingStepTwo: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'endOfSessionBookings',
-                  event.target.value,
+                  event,
                   [],
                   workingCase,
                   setWorkingCase,

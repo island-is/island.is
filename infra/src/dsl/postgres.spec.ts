@@ -29,8 +29,6 @@ describe('Postgres', () => {
         DB_USER: 'service_portal_api',
         DB_NAME: 'service_portal_api',
         DB_HOST: 'a',
-        DB_REPLICAS_HOST: 'a',
-        NODE_OPTIONS: '--max-old-space-size=208',
         SERVERSIDE_FEATURES_ON: '',
       })
     })

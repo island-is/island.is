@@ -1,21 +1,11 @@
 import { Module } from '@nestjs/common'
-
-import { AuthModule } from '@island.is/auth-nest-tools'
-import { DocumentsClientModule } from '@island.is/clients/documents'
-import {
-  FinanceClientConfig,
-  FinanceClientModule,
-} from '@island.is/clients/finance'
-import {
-  ConfigModule,
-  IdsClientConfig,
-  XRoadConfig,
-} from '@island.is/nest/config'
-
 import { DocumentController } from './modules/documents/document.controller'
 import { DocumentsInfraController } from './modules/infra/documentsInfra.controller'
 import { FinanceDocumentController } from './modules/finance-documents/document.controller'
+import { DocumentsClientModule } from '@island.is/clients/documents'
+import { FinanceModule } from '@island.is/api/domains/finance'
 import { environment } from '../environments'
+import { AuthModule } from '@island.is/auth-nest-tools'
 
 @Module({
   controllers: [
@@ -31,10 +21,12 @@ import { environment } from '../environments'
       clientSecret: environment.documentService.clientSecret,
       tokenUrl: environment.documentService.tokenUrl,
     }),
-    FinanceClientModule,
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [FinanceClientConfig, IdsClientConfig, XRoadConfig],
+    FinanceModule.register({
+      xroadApiPath: environment.fjarmalDomain.xroadApiPath,
+      xroadBaseUrl: environment.xroad.baseUrl,
+      xroadClientId: environment.xroad.clientId,
+      ttl: environment.fjarmalDomain.ttl,
+      downloadServiceBaseUrl: '',
     }),
   ],
   providers: [],

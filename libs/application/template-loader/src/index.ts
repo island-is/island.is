@@ -25,28 +25,18 @@ const loadedTemplateLibs: Record<string, TemplateLibraryModule> = {}
 async function loadTemplateLib(
   templateId: ApplicationTypes,
 ): Promise<TemplateLibraryModule> {
-  const hasLoadedTemplateLib = Object.prototype.hasOwnProperty.call(
-    loadedTemplateLibs,
-    templateId,
-  )
-  if (hasLoadedTemplateLib) {
-    return loadedTemplateLibs[templateId]
+  const loadedTemplateLib = loadedTemplateLibs[templateId]
+  if (loadedTemplateLib !== undefined) {
+    return loadedTemplateLib
   }
-
-  const hasTemplateLoader =
-    Object.prototype.hasOwnProperty.call(templateLoaders, templateId) &&
-    typeof templateLoaders[templateId] === 'function'
-  if (!hasTemplateLoader) {
-    throw new Error(`No template exists with id ${templateId}`)
-  }
-
   try {
-    const templateLoader = templateLoaders[templateId]
-    const templateLib = (await templateLoader()) as TemplateLibraryModule
+    const templateLib = (await templateLoaders[
+      templateId
+    ]()) as TemplateLibraryModule
     loadedTemplateLibs[templateId] = templateLib
     return templateLib
   } catch (e) {
-    throw new Error(`Could not load template with id ${templateId}`)
+    return Promise.reject(`Could not load template with id ${templateId}`)
   }
 }
 

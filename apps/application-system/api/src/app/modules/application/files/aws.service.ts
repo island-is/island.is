@@ -25,21 +25,17 @@ export class AwsService {
     content: Buffer,
     bucket: string,
     fileName: string,
-    uploadParameters?: {
-      ContentType?: string
-      ContentDisposition?: string
-      ContentEncoding?: string
-    },
-  ): Promise<string> {
+  ): Promise<void> {
     const uploadParams = {
       Bucket: bucket,
       Key: fileName,
+      ContentEncoding: 'base64',
+      ContentDisposition: 'inline',
+      ContentType: 'application/pdf',
       Body: content,
-      ...uploadParameters,
     }
 
-    const { Location: url } = await this.s3.upload(uploadParams).promise()
-    return url
+    await this.s3.upload(uploadParams).promise()
   }
 
   async getPresignedUrl(bucket: string, fileName: string): Promise<string> {
@@ -53,7 +49,7 @@ export class AwsService {
     return await this.s3.getSignedUrlPromise('getObject', presignedUrlParams)
   }
 
-  public async fileExists(bucket: string, fileName: string): Promise<boolean> {
+  async fileExists(bucket: string, fileName: string): Promise<boolean> {
     return await this.s3
       .headObject({ Bucket: bucket, Key: fileName })
       .promise()
@@ -61,14 +57,5 @@ export class AwsService {
         () => true,
         () => false,
       )
-  }
-
-  public async deleteObject(bucket: string, key: string) {
-    await this.s3
-      .deleteObject({
-        Bucket: bucket,
-        Key: key,
-      })
-      .promise()
   }
 }

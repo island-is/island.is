@@ -24,7 +24,6 @@ export const CasesQuery = gql`
         id
         nationalId
         name
-        noNationalId
       }
       validToDate
       decision

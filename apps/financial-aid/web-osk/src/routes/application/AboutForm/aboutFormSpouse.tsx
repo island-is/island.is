@@ -7,7 +7,6 @@ import {
   nextMonth,
 } from '@island.is/financial-aid/shared/lib'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
-import { PrivacyPolicyAccordion } from '@island.is/financial-aid-web/osk/src/components'
 
 const AboutFormSpouse = () => {
   const { user } = useContext(AppContext)
@@ -25,11 +24,9 @@ const AboutFormSpouse = () => {
 
       <Text variant="intro" fontWeight="light" marginBottom={3}>
         Svo hægt sé að klára umsóknina þurfum við að fá þig til að hlaða upp{' '}
-        <strong>tekjugögnum</strong> til að reikna út fjárhagsaðstoð til
-        útgreiðslu í byrjun {months[nextMonth()]}.
+        <strong>tekju- og skattagögnum</strong> til að reikna út fjárhagsaðstoð
+        til útgreiðslu í byrjun {months[nextMonth()]}.
       </Text>
-
-      <PrivacyPolicyAccordion municipalityHomePage={undefined} />
     </>
   )
 }

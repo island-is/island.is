@@ -1,5 +1,5 @@
 import React from 'react'
-import { RegulationMaybeDiff } from '@island.is/regulations'
+import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import { RegulationsSidebarBox } from './RegulationsSidebarBox'
 import { RegulationPageTexts } from './RegulationTexts.types'
 import { useRegulationEffectPrepper } from './RegulationChangelog'

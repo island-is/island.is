@@ -9,16 +9,16 @@ import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType()
 export class PropertyDetail {
   @Field(() => UnitsOfUseModel, { nullable: true })
-  unitsOfUse?: UnitsOfUseModel
+  unitsOfUse?: UnitsOfUseModel | null
 
   @Field(() => PropertyOwnersModel, { nullable: true })
-  registeredOwners?: PropertyOwnersModel
+  registeredOwners?: PropertyOwnersModel | null
 
   @Field(() => Appraisal, { nullable: true })
-  appraisal?: Appraisal
+  appraisal?: Appraisal | null
 
   @Field(() => PropertyLocation, { nullable: true })
-  defaultAddress?: PropertyLocation
+  defaultAddress?: PropertyLocation | undefined
 
   @Field({ nullable: true })
   propertyNumber?: string

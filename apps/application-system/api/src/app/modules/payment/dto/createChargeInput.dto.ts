@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator'
+import { IsString, IsObject } from 'class-validator'
 
 export class CreateChargeInput {
   @IsString()

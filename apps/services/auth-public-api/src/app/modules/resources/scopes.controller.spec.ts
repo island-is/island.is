@@ -1,5 +1,4 @@
 import request from 'supertest'
-import { getModelToken } from '@nestjs/sequelize'
 
 import { ApiScope } from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
@@ -20,7 +19,7 @@ import { getRequestMethod } from '../../../../test/utils'
 
 const user = createCurrentUser({
   nationalId: '1122334455',
-  scope: [AuthScope.readDelegations, Scopes[0].name, Scopes[3].name],
+  scope: [AuthScope.readDelegations, Scopes[0].name],
 })
 const userName = 'Tester Tests'
 const nationalRegistryUser = createNationalRegistryUser({
@@ -43,7 +42,7 @@ describe('ScopesController', () => {
       server = request(app.getHttpServer())
 
       // Get reference on delegation and delegationScope models to seed DB
-      apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
+      apiScopeModel = app.get<typeof ApiScope>('ApiScopeRepository')
     })
 
     afterAll(async () => {
@@ -89,66 +88,6 @@ describe('ScopesController', () => {
       expect(res.status).toEqual(200)
       expect(res.body).toHaveLength(0)
     })
-  })
-
-  it('should return some scope only for procuring holder delegations', async () => {
-    // Arrange
-    const app = await setupWithAuth({
-      user: {
-        ...user,
-        actor: {
-          nationalId: user.nationalId,
-          delegationType: 'ProcurationHolder',
-          scope: [],
-        },
-      },
-      userName,
-      nationalRegistryUser,
-    })
-    const apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
-    const expectedScopes = await apiScopeModel.findAll({
-      where: {
-        name: [Scopes[0].name, Scopes[3].name],
-      },
-    })
-
-    // Act
-    const res = await request(app.getHttpServer()).get('/v1/scopes')
-
-    // Assert
-    expect(res.status).toEqual(200)
-    expect(res.body).toHaveLength(2)
-    expect(res.body).toMatchObject(expectedScopes.map((scope) => scope.toDTO()))
-  })
-
-  it('should not return some scope for custom delegations', async () => {
-    // Arrange
-    const app = await setupWithAuth({
-      user: {
-        ...user,
-        actor: {
-          nationalId: user.nationalId,
-          delegationType: 'Custom',
-          scope: [],
-        },
-      },
-      userName,
-      nationalRegistryUser,
-    })
-    const apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
-    const expectedScopes = await apiScopeModel.findAll({
-      where: {
-        name: [Scopes[0].name],
-      },
-    })
-
-    // Act
-    const res = await request(app.getHttpServer()).get('/v1/scopes')
-
-    // Assert
-    expect(res.status).toEqual(200)
-    expect(res.body).toHaveLength(1)
-    expect(res.body).toMatchObject(expectedScopes.map((scope) => scope.toDTO()))
   })
 
   describe('withoutAuth and permissions', () => {

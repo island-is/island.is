@@ -7,62 +7,39 @@ export type NamespaceType = {
 
 export interface GlobalContextProps {
   globalNamespace: NamespaceType
-  isServiceWeb?: boolean
-  pageContentfulId: string
-  subpageContentfulId?: string
-  resolveLinkTypeLocally?: boolean
+  contentfulId: string
   setGlobalNamespace: (ns: NamespaceType) => void
-  setContentfulId: (pageId: string, subpageId?: string) => void
-  setResolveLinkTypeLocally: (localResolution: boolean) => void
+  setContentfulId: (id: string) => void
 }
 
 export interface GlobalContextProviderProps {
   namespace?: NamespaceType
-  isServiceWeb?: boolean
 }
 
 export const GlobalContext = createContext<GlobalContextProps>({
   globalNamespace: {},
-  pageContentfulId: '',
-  subpageContentfulId: '',
-  resolveLinkTypeLocally: false,
+  contentfulId: '',
   setGlobalNamespace: () => null,
   setContentfulId: () => null,
-  setResolveLinkTypeLocally: () => null,
 })
 
 export const GlobalContextProvider: FC<GlobalContextProviderProps> = ({
   namespace = {},
-  isServiceWeb = false,
   children,
 }) => {
-  const setContentfulId = (pageId: string, subpageId?: string) => {
-    setState((prevState) => ({
-      ...prevState,
-      pageContentfulId: pageId,
-      subpageContentfulId: subpageId,
-    }))
+  const setContentfulId = (id: string) => {
+    setState({ ...state, contentfulId: id })
   }
 
   const setGlobalNamespace = (ns: NamespaceType) => {
-    setState((prevState) => ({ ...prevState, globalNamespace: ns }))
+    setState({ ...state, globalNamespace: ns })
   }
 
-  const setResolveLinkTypeLocally = (localResolution: boolean) => {
-    setState((prevState) => ({
-      ...prevState,
-      resolveLinkTypeLocally: localResolution,
-    }))
-  }
-
-  const initialState: GlobalContextProps = {
+  const initialState = {
     globalNamespace: namespace,
-    isServiceWeb,
-    pageContentfulId: '',
-    subpageContentfulId: '',
+    contentfulId: '',
     setGlobalNamespace,
     setContentfulId,
-    setResolveLinkTypeLocally,
   }
 
   const [state, setState] = useState(initialState)

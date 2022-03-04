@@ -36,8 +36,7 @@
     "@protobufjs/inquire",
     "@protobufjs/path",
     "@protobufjs/pool",
-    "@protobufjs/utf8",
-    "pseudomap"
+    "@protobufjs/utf8"
   ],
   "keepNames": true
 }

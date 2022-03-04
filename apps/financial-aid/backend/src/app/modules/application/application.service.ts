@@ -77,11 +77,12 @@ export class ApplicationService {
         )
       : false
 
+    const spouseName = application ? application.name : ''
+
     return {
       hasPartnerApplied: Boolean(application),
       hasFiles: Boolean(files),
-      applicantName: application ? application.name : '',
-      applicantSpouseEmail: application?.spouseEmail ?? '',
+      spouseName: spouseName,
     }
   }
 
@@ -187,16 +188,9 @@ export class ApplicationService {
           model: AmountModel,
           as: 'amount',
           include: [{ model: DeductionFactorsModel, as: 'deductionFactors' }],
-          separate: true,
-          order: [['created', 'DESC']],
-          limit: 1,
         },
       ],
     })
-
-    if (application?.amount) {
-      application.setDataValue('amount', application.amount['0'])
-    }
 
     return application
   }
@@ -361,7 +355,10 @@ export class ApplicationService {
     await this.applicationEventService.create({
       applicationId: id,
       eventType: update.event,
-      comment: update?.rejection || update?.comment,
+      comment:
+        update?.rejection ||
+        update?.amount?.finalAmount.toLocaleString('de-DE') ||
+        update?.comment,
       staffName: staff?.name,
       staffNationalId: staff?.nationalId,
     })

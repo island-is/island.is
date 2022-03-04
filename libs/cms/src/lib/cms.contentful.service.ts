@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common'
 import sortBy from 'lodash/sortBy'
 import * as types from './generated/contentfulTypes'
 import { Article, mapArticle } from './models/article.model'
-import { ContentSlug, TextFieldLocales } from './models/contentSlug.model'
+import { ContentSlug, ContentSlugLocales } from './models/contentSlug.model'
 import { GenericPage, mapGenericPage } from './models/genericPage.model'
 import {
   GenericOverviewPage,
@@ -398,33 +398,24 @@ export class CmsContentfulService {
   }: GetContentSlugInput): Promise<ContentSlug | null> {
     const result = await this.contentfulRepository
       .getClient()
-      .getEntry<{
-        slug: Record<string, string>
-        title: Record<string, string>
-      }>(id, {
+      .getEntry<{ slug: Record<string, string> }>(id, {
         locale: '*',
         include: 1,
       })
       .catch(errorHandler('getContentSlug'))
 
-    let slugs: TextFieldLocales = { is: '', en: '' }
-    let titles: TextFieldLocales = { is: '', en: '' }
+    let slugs: ContentSlugLocales = { is: '', en: '' }
 
-    if (result?.fields?.slug && result?.fields.title) {
-      ;({ slugs, titles } = Object.keys(localeMap).reduce(
-        (obj, k) => {
-          obj.slugs[k] = result?.fields?.slug?.[localeMap[k]] ?? ''
-          obj.titles[k] = result?.fields?.title?.[localeMap[k]] ?? ''
-          return obj
-        },
-        { slugs: {} as typeof localeMap, titles: {} as typeof localeMap },
-      ))
+    if (result?.fields?.slug) {
+      slugs = Object.keys(localeMap).reduce((obj, k) => {
+        obj[k] = result?.fields?.slug?.[localeMap[k]] ?? ''
+        return obj
+      }, {} as typeof localeMap)
     }
 
     return {
       id: result?.sys?.id,
       slug: slugs,
-      title: titles,
       type: result?.sys?.contentType?.sys?.id ?? '',
     }
   }

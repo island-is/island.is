@@ -59,8 +59,7 @@ const SubPage: Screen<SubPageProps> = ({
 
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
-
-  useContentfulId(organizationPage.id, subpage.id)
+  useContentfulId(organizationPage.id)
 
   const pageUrl = `${organizationPage.slug}/${subpage.slug}`
   const parentSubpageUrl = `${organizationPage.slug}/${subpage.parentSubpage}`

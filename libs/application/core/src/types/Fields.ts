@@ -99,7 +99,6 @@ export interface CheckboxField extends BaseField {
   large?: boolean
   strong?: boolean
   backgroundColor?: InputBackgroundColor
-  onSelect?: ((s: string[]) => void) | undefined
 }
 
 export interface DateField extends BaseField {
@@ -166,7 +165,6 @@ export interface TextField extends BaseField {
   suffix?: string
   rows?: number
   required?: boolean
-  onChange?: (...event: any[]) => void
 }
 
 export interface FileUploadField extends BaseField {
@@ -179,7 +177,6 @@ export interface FileUploadField extends BaseField {
   readonly uploadMultiple?: boolean
   readonly uploadAccept?: string
   readonly maxSize?: number
-  readonly forImageUpload?: boolean
 }
 
 export interface SubmitField extends BaseField {

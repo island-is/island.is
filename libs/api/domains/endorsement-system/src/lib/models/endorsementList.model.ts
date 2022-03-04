@@ -11,7 +11,7 @@ export class EndorsementList {
   @Field()
   title!: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   description!: string | null
 
   @Field(() => Date)

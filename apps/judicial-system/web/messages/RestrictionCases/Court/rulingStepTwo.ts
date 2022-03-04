@@ -40,17 +40,17 @@ export const rcRulingStepTwo = {
       },
       rejectingAutofill: {
         id:
-          'judicial.system.restriction_cases:ruling_step_two.conclusion.rejecting_autofillv1',
+          'judicial.system.restriction_cases:ruling_step_two.conclusion.rejecting_autofill',
         defaultMessage:
-          'Kröfu um að {genderedAccused}, {accusedName}{accusedNationalId}sæti{extensionSuffix} {caseType} er hafnað.',
+          'Kröfu um að {genderedAccused}, {accusedName}, kt. {accusedNationalId}, sæti{extensionSuffix} {caseType} er hafnað.',
         description:
           'Notaður sem sjálfgefinn texti í "Úrskurðarorð" textaboxi þegar kröfu er hafnað á úrskurðar og kæru skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
       acceptingAutofill: {
         id:
-          'judicial.system.restriction_cases:ruling_step_two.conclusion.accepting_autofillv1',
+          'judicial.system.restriction_cases:ruling_step_two.conclusion.accepting_autofill',
         defaultMessage:
-          '{genderedAccused}, {accusedName}{accusedNationalId}skal sæta {caseTypeAndExtensionSuffix}, þó ekki lengur en til {validToDate}.{isolationSuffix}',
+          '{genderedAccused}, {accusedName}, kt. {accusedNationalId}, skal sæta {caseTypeAndExtensionSuffix}, þó ekki lengur en til {validToDate}.{isolationSuffix}',
         description:
           'Notaður sem sjálfgefinn texti í "Úrskurðarorð" textaboxi þegar krafa er samþykkt á úrskurðar og kæru skrefi í gæsluvarðhalds- og farbannsmálum.',
       },

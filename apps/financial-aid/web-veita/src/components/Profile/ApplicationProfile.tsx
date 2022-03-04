@@ -64,7 +64,7 @@ const ApplicationProfile = ({
     if (application && municipality && application.homeCircumstances) {
       return aidCalculator(
         application.homeCircumstances,
-        showSpouseData[application.familyStatus]
+        application.spouseNationalId
           ? municipality.cohabitationAid
           : municipality.individualAid,
       )
@@ -203,9 +203,8 @@ const ApplicationProfile = ({
           applicationId={application.id}
           currentState={application.state}
           homeCircumstances={application.homeCircumstances}
-          familyStatus={application.familyStatus}
+          spouseNationalId={application.spouseNationalId}
           setIsLoading={setIsLoading}
-          applicationCreated={application.created}
         />
       )}
 

@@ -832,14 +832,4 @@ export class Case extends Model<Case> {
   @HasMany(() => CaseFile, 'caseId')
   @ApiProperty({ type: CaseFile, isArray: true })
   caseFiles?: CaseFile[]
-
-  /**********
-   * The explanation given for a modification of a case's validTo or isolationTo dates
-   **********/
-  @Column({
-    type: DataType.TEXT,
-    allowNull: true,
-  })
-  @ApiProperty()
-  caseModifiedExplanation?: string
 }

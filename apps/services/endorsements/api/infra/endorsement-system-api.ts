@@ -42,11 +42,6 @@ export const serviceSetup = (services: {}): ServiceBuilder<'endorsement-system-a
         staging: 'development@island.is',
         prod: 'noreply@island.is',
       },
-      IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
-        staging: 'https://identity-server.staging01.devland.is',
-        prod: 'https://innskra.island.is',
-      },
     })
     .secrets({
       SOFFIA_HOST_URL: '/k8s/endorsement-system-api/SOFFIA_HOST_URL',

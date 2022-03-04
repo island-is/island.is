@@ -2,36 +2,23 @@ import { Test } from '@nestjs/testing'
 import { ConfigService } from '@nestjs/config'
 import get from 'lodash/get'
 import set from 'lodash/set'
-import addDays from 'date-fns/addDays'
 
 import {
-  ApplicationWithAttachments as Application,
+  Application,
   ApplicationStatus,
   ApplicationTypes,
 } from '@island.is/application/core'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  ParentalLeaveApi,
-  Period as VmstPeriod,
-  ParentalLeaveGetPeriodLengthRequest,
-  ParentalLeaveGetPeriodEndDateRequest,
-  PeriodLengthResponse,
-  PeriodEndDateResponse,
-} from '@island.is/clients/vmst'
+import { ParentalLeaveApi } from '@island.is/clients/vmst'
 import {
   StartDateOptions,
   YES,
   NO,
-  Period,
-  calculatePeriodLength,
 } from '@island.is/application/templates/parental-leave'
 import { EmailService } from '@island.is/email-service'
 
 import { SharedTemplateApiService } from '../../shared'
-import {
-  BaseTemplateApiApplicationService,
-  TemplateApiModuleActionProps,
-} from '../../../types'
+import { TemplateApiModuleActionProps } from '../../../types'
 import {
   APPLICATION_ATTACHMENT_BUCKET,
   ParentalLeaveService,
@@ -134,54 +121,17 @@ describe('ParentalLeaveService', () => {
               Promise.resolve({
                 id: '1337',
               }),
-            parentalLeaveGetPeriodLength: ({
-              startDate,
-              endDate,
-              percentage,
-            }: ParentalLeaveGetPeriodLengthRequest): Promise<PeriodLengthResponse> =>
+            parentalLeaveGetPeriodLength: () =>
               Promise.resolve({
-                periodLength:
-                  startDate && endDate
-                    ? calculatePeriodLength(
-                        startDate,
-                        endDate,
-                        Number(percentage) / 100,
-                      )
-                    : 0,
+                periodLength: 225,
               }),
-            parentalLeaveGetPeriodEndDate: ({
-              startDate,
-              percentage,
-              length,
-            }: ParentalLeaveGetPeriodEndDateRequest): Promise<PeriodEndDateResponse> => {
-              if (!startDate) {
-                throw new Error(
-                  'parentalLeaveGetPeriodEndDate: missing start date',
-                )
-              }
-
-              const ratio = Number(percentage) / 100
-              const goalLength = Number(length)
-              let calculatedLength = 0
-              let currentDate = startDate
-
-              while (calculatedLength <= goalLength) {
-                const nextDate = addDays(currentDate, 1)
-                calculatedLength = calculatePeriodLength(
-                  startDate,
-                  nextDate,
-                  ratio,
-                )
-
-                if (calculatedLength <= goalLength) {
-                  currentDate = nextDate
-                }
-              }
-
-              return Promise.resolve({
-                periodEndDate: currentDate,
-              })
-            },
+            parentalLeaveGetPeriodEndDate: ({ length }: { length: string }) =>
+              Promise.resolve({
+                periodEndDate:
+                  Number(length) === 45
+                    ? new Date('2022-01-01T00:00:00')
+                    : new Date('2021-11-16T00:00:00.000Z'),
+              }),
           })),
         },
         {
@@ -191,10 +141,6 @@ describe('ParentalLeaveService', () => {
         {
           provide: EmailService,
           useClass: MockEmailService,
-        },
-        {
-          provide: BaseTemplateApiApplicationService,
-          useValue: {},
         },
         SharedTemplateApiService,
         {
@@ -220,7 +166,7 @@ describe('ParentalLeaveService', () => {
         {
           from: '2021-05-17',
           to: '2021-11-16',
-          ratio: '100',
+          ratio: 100,
           approved: false,
           paid: false,
           rightsCodePeriod: null,
@@ -228,7 +174,7 @@ describe('ParentalLeaveService', () => {
         {
           from: '2021-11-17',
           to: '2022-01-01',
-          ratio: '100',
+          ratio: 100,
           approved: false,
           paid: false,
           rightsCodePeriod: apiConstants.rights.receivingRightsId,
@@ -255,7 +201,7 @@ describe('ParentalLeaveService', () => {
         {
           from: 'date_of_birth',
           to: '2021-11-16',
-          ratio: '100',
+          ratio: 100,
           approved: false,
           paid: false,
           rightsCodePeriod: null,
@@ -263,53 +209,12 @@ describe('ParentalLeaveService', () => {
         {
           from: '2021-11-17',
           to: '2022-01-01',
-          ratio: '100',
+          ratio: 100,
           approved: false,
           paid: false,
           rightsCodePeriod: apiConstants.rights.receivingRightsId,
         },
       ])
-    })
-
-    it('should change period ratio to D<number_of_days> when using .daysToUse', async () => {
-      const application = createApplication()
-
-      const startDate = new Date(2022, 9, 10)
-      const endDate = new Date(2023, 0, 9)
-      const ratio = 0.59
-
-      const originalPeriods: Period[] = [
-        {
-          startDate: startDate.toISOString().split('T')[0],
-          endDate: endDate.toISOString().split('T')[0],
-          ratio: `${ratio * 100}`,
-          firstPeriodStart: StartDateOptions.ESTIMATED_DATE_OF_BIRTH,
-          daysToUse: calculatePeriodLength(
-            startDate,
-            endDate,
-            ratio,
-          ).toString(),
-        },
-      ]
-
-      set(application.answers, 'periods', originalPeriods)
-
-      const expectedPeriods: VmstPeriod[] = [
-        {
-          approved: false,
-          from: originalPeriods[0].startDate,
-          to: originalPeriods[0].endDate,
-          paid: false,
-          ratio: `D${originalPeriods[0].daysToUse}`,
-          rightsCodePeriod: null,
-        },
-      ]
-      const res = await parentalLeaveService.createPeriodsDTO(
-        application,
-        nationalId,
-      )
-
-      expect(res).toEqual(expectedPeriods)
     })
   })
 

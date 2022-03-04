@@ -41,15 +41,10 @@ export class NotificationDispatchService {
     private userProfileApi: UserProfileApi,
   ) {}
 
-  async sendPushNotification({
-    notification,
-    nationalId,
-    messageId,
-  }: {
-    notification: Notification
-    nationalId: string
-    messageId: string
-  }): Promise<void> {
+  async sendPushNotification(
+    notification: Notification,
+    nationalId: string,
+  ): Promise<void> {
     const deviceTokensResponse = await this.userProfileApi.userTokenControllerGetDeviceTokens(
       { nationalId },
     )
@@ -57,9 +52,7 @@ export class NotificationDispatchService {
     const tokens = deviceTokensResponse.map((token) => token.deviceToken)
 
     if (tokens.length === 0) {
-      this.logger.info('No push-notification tokens found for user', {
-        messageId,
-      })
+      this.logger.debug(`No push-notification tokens found for ${nationalId}`)
       return
     }
 
@@ -97,20 +90,11 @@ export class NotificationDispatchService {
     // log otherwise
     for (const r of responses) {
       if (r.error && isTokenError(r.error)) {
-        this.logger.info('Invalid/outdated push notification token', {
-          error: r.error,
-          messageId,
-        })
+        this.logger.debug('Invalid/outdated push notification token', r.error)
       } else if (r.error) {
-        this.logger.error('Push notification error', {
-          error: r.error,
-          messageId,
-        })
+        this.logger.error('Push notification error', r.error)
       } else {
-        this.logger.info(`Push notification success`, {
-          firebaseMessageId: r.messageId,
-          messageId,
-        })
+        this.logger.debug(`Push notification success: ${r.messageId}`)
       }
     }
   }

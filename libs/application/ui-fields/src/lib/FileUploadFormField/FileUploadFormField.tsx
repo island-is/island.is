@@ -30,7 +30,6 @@ export const FileUploadFormField: FC<Props> = ({
     uploadMultiple,
     uploadAccept,
     maxSize,
-    forImageUpload,
   } = field
 
   const { formatMessage } = useLocale()
@@ -62,7 +61,6 @@ export const FileUploadFormField: FC<Props> = ({
           multiple={uploadMultiple}
           accept={uploadAccept}
           maxSize={maxSize}
-          forImageUpload={forImageUpload}
         />
       </Box>
     </div>

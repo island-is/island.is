@@ -3,8 +3,6 @@ import { EnvironmentConfigs } from './dsl/types/charts'
 export const Envs: EnvironmentConfigs = {
   dev: {
     auroraHost: 'postgres-applications.internal',
-    auroraReplica:
-      'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com',
     domain: 'dev01.devland.is',
     type: 'dev',
     featuresOn: [],
@@ -19,6 +17,8 @@ export const Envs: EnvironmentConfigs = {
           PORT: '3333',
           name: 'dev',
           AUDIT_GROUP_NAME: '/island-is/audit-log',
+          IDENTITY_SERVER_ISSUER_URL:
+            'https://identity-server.dev01.devland.is',
         },
         image: {
           tag: 'latest_master',
@@ -47,6 +47,8 @@ export const Envs: EnvironmentConfigs = {
           PORT: '3333',
           name: 'staging',
           AUDIT_GROUP_NAME: '/island-is/audit-log',
+          IDENTITY_SERVER_ISSUER_URL:
+            'https://identity-server.staging01.devland.is',
         },
         image: {
           tag: 'latest_master',
@@ -75,6 +77,7 @@ export const Envs: EnvironmentConfigs = {
           PORT: '3333',
           name: 'prod',
           AUDIT_GROUP_NAME: '/island-is/audit-log',
+          IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is',
         },
         image: {
           tag: 'latest_master',

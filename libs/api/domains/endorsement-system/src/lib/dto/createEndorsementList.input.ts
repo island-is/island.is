@@ -25,7 +25,7 @@ export class CreateEndorsementListDto {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  description?: string
+  description!: string | null
 
   @Field(() => [MetadataInput])
   @ValidateNested({ each: true })

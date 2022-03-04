@@ -3,21 +3,22 @@ import {
   YES,
 } from '@island.is/application/templates/data-protection-complaint'
 
-export interface ComplaintPDF {
+export interface ComplaintDto {
   applicantInfo: {
     name: string
     nationalId: string
   }
   onBehalf: string //"myself | myself and others | others | stofnanir og felagsamtok",
   agency: {
+    files: string[]
     persons: Agency[]
   } | null
   contactInfo: ContactInfo
   targetsOfComplaint: TargetOfComplaint[]
   complaintCategories: string[]
-  somethingElse: string
   description: string
-  submitDate: Date
+  attachments: []
+  applicationPdf: string
 }
 
 export interface ContactInfo {

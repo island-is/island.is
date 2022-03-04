@@ -1,3 +1,4 @@
+import { PaymentScheduleAPI } from '@island.is/clients/payment-schedule'
 import { UseGuards } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { GetInitialScheduleInput, GetScheduleDistributionInput } from './dto'

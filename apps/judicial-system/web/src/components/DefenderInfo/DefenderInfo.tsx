@@ -292,7 +292,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'defenderEmail',
-                event.target.value,
+                event,
                 ['email-format'],
                 workingCase,
                 setWorkingCase,
@@ -320,7 +320,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'defenderPhoneNumber',
-                event.target.value,
+                event,
                 ['phonenumber'],
                 workingCase,
                 setWorkingCase,

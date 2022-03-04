@@ -31,7 +31,7 @@ import {
   UserData,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  setAndSendDateToServer,
+  newSetAndSendDateToServer,
   removeTabsValidateAndSet,
   setAndSendToServer,
   validateAndSendToServer,
@@ -127,16 +127,6 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
   return (
     <>
       <FormContentContainer>
-        {workingCase.requestProsecutorOnlySession &&
-          workingCase.prosecutorOnlySessionRequest && (
-            <Box marginBottom={workingCase.comments ? 2 : 5}>
-              <AlertMessage
-                type="warning"
-                title={formatMessage(m.requestProsecutorOnlySession)}
-                message={workingCase.prosecutorOnlySessionRequest}
-              />
-            </Box>
-          )}
         {workingCase.comments && (
           <Box marginBottom={5}>
             <AlertMessage
@@ -297,7 +287,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                   selectedDate={workingCase.courtDate}
                   minDate={new Date()}
                   onChange={(date: Date | undefined, valid: boolean) => {
-                    setAndSendDateToServer(
+                    newSetAndSendDateToServer(
                       'courtDate',
                       date,
                       valid,
@@ -320,7 +310,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'courtRoom',
-                    event.target.value,
+                    event,
                     [],
                     workingCase,
                     setWorkingCase,
@@ -352,6 +342,16 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
           onNextButtonClick={handleNextButtonClick}
           nextIsLoading={isLoading}
           nextIsDisabled={!isCourtHearingArrangementsStepValidIC(workingCase)}
+          hideNextButton={
+            user.id !== workingCase.judge?.id &&
+            user.id !== workingCase.registrar?.id
+          }
+          infoBoxText={
+            user.id !== workingCase.judge?.id &&
+            user.id !== workingCase.registrar?.id
+              ? formatMessage(m.footer.infoPanelForRestrictedAccess)
+              : undefined
+          }
         />
       </FormContentContainer>
       {modalVisible && (

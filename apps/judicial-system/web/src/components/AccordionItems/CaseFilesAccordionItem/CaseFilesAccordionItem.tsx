@@ -8,9 +8,7 @@ import { UploadStateMessage } from '@island.is/judicial-system-web/src/routes/Sh
 import { useCourtUpload } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 import {
   Case,
-  CaseState,
   completedCaseStates,
-  courtRoles,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -36,31 +34,26 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
   const canCaseFilesBeOpened = () => {
     const isAppealGracePeriodExpired = workingCase.isAppealGracePeriodExpired
 
-    const canProsecutorOpen =
+    const isProsecutorWithAccess =
       user.role === UserRole.PROSECUTOR &&
       user.institution?.id === workingCase.creatingProsecutor?.institution?.id
 
-    const canCourtRoleOpen =
-      courtRoles.includes(user.role) &&
-      [
-        CaseState.SUBMITTED,
-        CaseState.RECEIVED,
-        ...completedCaseStates,
-      ].includes(workingCase.state)
-
-    return (
-      !isAppealGracePeriodExpired && (canProsecutorOpen || canCourtRoleOpen)
+    const isCourtRoleWithAccess = completedCaseStates.includes(
+      workingCase.state,
     )
-  }
+      ? user.role === UserRole.JUDGE || user.role === UserRole.REGISTRAR
+      : (user.role === UserRole.JUDGE && workingCase.judge?.id === user.id) ||
+        (user.role === UserRole.REGISTRAR &&
+          workingCase.registrar?.id === user.id)
 
-  const canCaseFilesBeUploaded = () => {
-    const isAppealGracePeriodExpired = workingCase.isAppealGracePeriodExpired
-
-    const canCourtRoleUpload =
-      courtRoles.includes(user.role) &&
-      [CaseState.RECEIVED, ...completedCaseStates].includes(workingCase.state)
-
-    return !isAppealGracePeriodExpired && canCourtRoleUpload
+    if (
+      !isAppealGracePeriodExpired &&
+      (isProsecutorWithAccess || isCourtRoleWithAccess)
+    ) {
+      return true
+    } else {
+      return false
+    }
   }
 
   return (
@@ -72,7 +65,7 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
             workingCase.caseFiles ? workingCase.caseFiles.length : 0
           })`}
 
-          {canCaseFilesBeUploaded() && (
+          {user && [UserRole.JUDGE, UserRole.REGISTRAR].includes(user.role) && (
             <AnimatePresence>
               {uploadState === UploadState.UPLOAD_ERROR && (
                 <UploadStateMessage
@@ -93,7 +86,6 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
         </Box>
       }
       labelVariant="h3"
-      labelUse="h2"
     >
       <CaseFileList
         caseId={workingCase.id}
@@ -109,7 +101,7 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
           ])
         }
       />
-      {canCaseFilesBeUploaded() && (
+      {user && [UserRole.JUDGE, UserRole.REGISTRAR].includes(user?.role) && (
         <Box display="flex" justifyContent="flexEnd">
           {(workingCase.caseFiles || []).length === 0 ? null : uploadState ===
             UploadState.NONE_CAN_BE_UPLOADED ? (

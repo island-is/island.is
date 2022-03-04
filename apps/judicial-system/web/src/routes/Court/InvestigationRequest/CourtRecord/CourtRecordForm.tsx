@@ -17,7 +17,7 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 import {
-  setAndSendDateToServer,
+  newSetAndSendDateToServer,
   removeTabsValidateAndSet,
   setAndSendToServer,
   validateAndSendToServer,
@@ -79,7 +79,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
                 maxDate={new Date()}
                 selectedDate={workingCase.courtStartDate}
                 onChange={(date: Date | undefined, valid: boolean) => {
-                  setAndSendDateToServer(
+                  newSetAndSendDateToServer(
                     'courtStartDate',
                     date,
                     valid,
@@ -102,7 +102,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'courtLocation',
-                  event.target.value,
+                  event,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -153,7 +153,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'courtAttendees',
-                event.target.value,
+                event,
                 [],
                 workingCase,
                 setWorkingCase,
@@ -210,7 +210,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'accusedBookings',
-                  event.target.value,
+                  event,
                   [],
                   workingCase,
                   setWorkingCase,
@@ -246,7 +246,7 @@ const CourtRecordForm: React.FC<Props> = (props) => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'litigationPresentations',
-                  event.target.value,
+                  event,
                   ['empty'],
                   workingCase,
                   setWorkingCase,

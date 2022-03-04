@@ -19,7 +19,7 @@ export class GdprResolver {
     return true
   }
 
-  @Query(() => GdprModel, { nullable: true })
+  @Query(() => GdprModel)
   async skilavottordGdpr(@CurrentUser() user: User): Promise<GdprModel> {
     return await this.gdprService.findByNationalId(user.nationalId)
   }

@@ -30,7 +30,7 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
         staging: 'cdn.contentful.com',
         prod: 'cdn.contentful.com',
       },
-      COMPLETED_CASE_OVERVIEW_URL: {
+      OVERVIEW_URL: {
         dev: 'https://judicial-system.dev01.devland.is/krafa/yfirlit/',
         staging: 'https://judicial-system.staging01.devland.is/krafa/yfirlit/',
         prod: 'https://rettarvorslugatt.island.is/krafa/yfirlit/',

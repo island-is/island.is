@@ -6,7 +6,6 @@ export interface SearchInput {
   page?: number
   types?: string[]
   tags?: Omit<elasticTagField, 'value'>[]
-  countTag?: string[]
+  countTag?: string
   countTypes?: boolean
-  countProcessEntry?: boolean
 }

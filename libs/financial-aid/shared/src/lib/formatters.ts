@@ -172,6 +172,14 @@ export const getActiveTypeForStatus: KeyMapping<ApplicationState, string> = {
   Approved: 'Approved',
 }
 
+export const isSpouseDataNeeded: KeyMapping<FamilyStatus, boolean> = {
+  NotCohabitation: false,
+  Cohabitation: true,
+  UnregisteredCohabitation: false,
+  Married: true,
+  MarriedNotLivingTogether: true,
+}
+
 export const showSpouseData: KeyMapping<FamilyStatus, boolean> = {
   Cohabitation: true,
   UnregisteredCohabitation: true,
@@ -241,7 +249,6 @@ export const getApplicantEmailDataFromEventType = (
           title: 'Fjárhagsaðstoð Umsókn móttekin',
           header: `Umsókn þín fyrir ${getPeriod.month} er móttekin og er nú í vinnslu`,
           content: `Umsóknin verður afgreidd eins fljótt og hægt er. Þú færð annan tölvupóst þegar vinnsla klárast eða ef okkur vantar einhver gögn frá þér.<br><br>Þú getur fylgst með stöðu umsóknarinnar á <a href="${applicationLink}" target="_blank"> <b>stöðusíðu umsóknarinnar</b></a>.`,
-          applicationLinkText: 'Skoða stöðu umsóknar',
           applicationChange: 'Umsókn móttekin og í vinnslu',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,
@@ -253,13 +260,11 @@ export const getApplicantEmailDataFromEventType = (
 
     case ApplicationEventType.DATANEEDED:
       return {
-        subject:
-          'Þú þarft að skila gögnum svo hægt sé að klára að vinna umsóknina',
+        subject: 'Okkur vantar gögn til að klára að vinna úr umsókninni',
         data: {
           title: 'Fjárhagsaðstoð Umsókn vantar gögn',
-          header: `Þú þarft að skila gögnum svo hægt sé að klára að vinna umsóknina`,
-          content: `Til að klára umsóknina verður þú að senda okkur <strong>${typeOfDataNeeded}</strong>. Þú getur sent okkur gögnin á <a href="${applicationLink}" target="_blank">þinni stöðusíðu</a>`,
-          applicationLinkText: 'Bæta við gögnum',
+          header: `Okkur vantar gögn til að klára að vinna úr umsókninni`,
+          content: `Við þurfum að sjá <strong>${typeOfDataNeeded}</strong>. Smelltu á hnappinn til að heimsækja þína stöðusíðu þar sem þú getur sent okkur gögn.`,
           applicationChange: 'Umsóknin bíður eftir gögnum',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,
@@ -275,8 +280,7 @@ export const getApplicantEmailDataFromEventType = (
         data: {
           title: 'Fjárhagsaðstoð Umsókn synjað',
           header: 'Umsókn þinni um aðstoð hefur verið synjað',
-          content: `Umsókn þinni um fjárhagsaðstoð í ${getPeriod.month} hefur verið synjað <b>${rejectionComment}</b>. Þú getur kynnt þér nánar <a href="${municipality.rulesHomepage}" target="_blank">reglur um fjárhagsaðstoð.</a>`,
-          applicationLinkText: 'Opna stöðusíðu',
+          content: `${rejectionComment}`,
           applicationChange: 'Umsókn synjað',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,
@@ -288,13 +292,12 @@ export const getApplicantEmailDataFromEventType = (
 
     case ApplicationEventType.APPROVED:
       return {
-        subject: 'Umsóknin þín er samþykkt og lokaupphæð tilbúin',
+        subject: 'Umsóknin þín er samþykkt og áætlun er tilbúin',
         data: {
           title: 'Fjárhagsaðstoð Umsókn samþykkt',
-          header: 'Umsóknin þín er samþykkt og lokaupphæð er tilbúin',
-          content: `Umsóknin þín um fjárhagsaðstoð í ${getPeriod.month} er samþykkt`,
-          applicationLinkText: 'Skoða lokaupphæð',
-          applicationChange: 'Umsóknin er samþykkt',
+          header: 'Umsóknin þín er samþykkt og áætlun er tilbúin',
+          content: `Umsóknin þín um fjárhagsaðstoð í ${getPeriod.month} er samþykkt en athugaðu að hún byggir á tekjum og öðrum þáttum sem kunna að koma upp í ${getPeriod.month} og getur því tekið breytingum.`,
+          applicationChange: 'Umsóknin er samþykkt og áætlun liggur fyrir',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,
           applicationLink,
@@ -305,12 +308,15 @@ export const getApplicantEmailDataFromEventType = (
 
     case 'SPOUSE':
       return {
-        subject: `Þú þarft að skila inn gögnum fyrir umsókn maka þíns um fjárhagsaðstoð`,
+        subject: `Þú þarft að skila inn gögnum fyrir umsókn maka þíns um fjárhagsaðstoð hjá ${municipality.name}`,
         data: {
           title: 'Fjárhagsaðstoð Umsókn móttekin',
-          header: `Þú þarft að skila inn gögnum fyrir umsókn maka þíns um fjárhagsaðstoð`,
-          content: `Maki þinn hefur sótt um fjárhagsaðstoð fyrir ${getPeriod.month}. Svo hægt sé að reikna út fjárhagsaðstoðina og klára umsóknina þarft þú að <a href="${applicationLink}" target="_blank">senda okkur tekju- og skattagögn.</a>`,
-          applicationLinkText: 'Bæta við gögnum',
+          header: `Þú þarft að skila inn gögnum fyrir umsókn maka þíns um fjárhagsaðstoð hjá ${municipality.name}`,
+          content: `Maki þinn hefur sótt um fjárhagsaðstoð fyrir ${
+            getPeriod.month
+          } mánuð. Svo hægt sé að klára umsóknina þurfum við að fá þig til að hlaða upp tekju- og skattagögnum til að reikna út fjárhagsaðstoð til útgreiðslu í byrjun ${
+            months[nextMonth(createdDate.getMonth())]
+          }.`,
           applicationChange: 'Umsókn bíður eftir gögnum frá maka',
           applicationMonth: getPeriod.month,
           applicationYear: getPeriod.year,

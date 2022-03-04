@@ -12,9 +12,6 @@ export class SupportSubCategory {
 
   @Field()
   slug!: string
-
-  @Field()
-  importance!: number
 }
 
 export const mapSupportSubCategory = ({
@@ -23,5 +20,4 @@ export const mapSupportSubCategory = ({
   title: fields.title,
   description: fields.description ?? '',
   slug: fields.slug,
-  importance: fields.importance ?? 0,
 })

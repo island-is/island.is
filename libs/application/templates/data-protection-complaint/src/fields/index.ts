@@ -9,4 +9,3 @@ export { ComplaintDescription } from './ComplaintDescription/ComplaintDescriptio
 export { ComplaintDocumentHeading } from './ComplaintDocumentHeading'
 export { AgreementDescription } from './AgreementDescription'
 export { CommissionDocument } from './CommissionDocument'
-export { ReasonsForComplaint } from './ReasonsForComplaint'

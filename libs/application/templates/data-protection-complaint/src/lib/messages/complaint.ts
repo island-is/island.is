@@ -177,7 +177,7 @@ export const complaint = {
     },
     subjectSomethingElse: {
       id: 'dpac.application:section.complaint.labels.subjectSomethingElse',
-      defaultMessage: 'Hvað varðar kvörtunin?',
+      defaultMessage: 'Hvað varðar kvörtunin',
       description: 'Subject Something else field label',
     },
     subjectSomethingElsePlaceholder: {

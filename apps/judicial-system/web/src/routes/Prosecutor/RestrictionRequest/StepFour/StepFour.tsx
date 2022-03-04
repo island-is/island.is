@@ -66,11 +66,9 @@ export const StepFour: React.FC = () => {
           'demands',
           `${formatMessage(rcReportForm.sections.demands.autofill, {
             accusedName: theCase.defendants[0].name,
-            accusedNationalId: theCase.defendants[0].noNationalId
-              ? ' '
-              : `, kt. ${formatNationalId(
-                  theCase.defendants[0].nationalId ?? '',
-                )}, `,
+            accusedNationalId: formatNationalId(
+              theCase.defendants[0].nationalId ?? '',
+            ),
             extensionSuffix:
               theCase.parentCase &&
               isAcceptingCaseDecision(theCase.parentCase.decision)
@@ -146,7 +144,7 @@ export const StepFour: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'demands',
-                  event.target.value,
+                  event,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -195,7 +193,7 @@ export const StepFour: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'caseFacts',
-                  event.target.value,
+                  event,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -246,7 +244,7 @@ export const StepFour: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'legalArguments',
-                  event.target.value,
+                  event,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -291,7 +289,7 @@ export const StepFour: React.FC = () => {
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'comments',
-                    event.target.value,
+                    event,
                     [],
                     workingCase,
                     setWorkingCase,

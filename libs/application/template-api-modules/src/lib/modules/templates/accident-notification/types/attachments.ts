@@ -2,7 +2,6 @@ export interface AccidentNotificationAttachment {
   content: string
   attachmentType: AttachmentTypeEnum
   name: string
-  hash: string
 }
 
 export interface AccidentNotificationAttachmentGatherRequest {

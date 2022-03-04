@@ -1,6 +1,4 @@
 export { ConfigModule } from '@nestjs/config'
-export { DownloadServiceConfig } from './lib/configurations/DownloadServiceConfig'
-export { IdsClientConfig } from './lib/configurations/IdsClientConfig'
 export { XRoadConfig } from './lib/configurations/XRoadConfig'
 export { defineConfig } from './lib/defineConfig'
 export { LazyDuringDevScope } from './lib/LazyDuringDevScope'

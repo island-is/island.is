@@ -22,7 +22,13 @@ export class CompanyRegistryModule {
         },
         RSKService,
       ],
-      imports: [CompanyRegistryClientModule],
+      imports: [
+        CompanyRegistryClientModule.register({
+          xRoadBaseUrl: config.xRoadBaseUrl,
+          xRoadProviderId: config.xRoadProviderId,
+          xRoadClientId: config.xRoadClientId,
+        }),
+      ],
     }
   }
 }

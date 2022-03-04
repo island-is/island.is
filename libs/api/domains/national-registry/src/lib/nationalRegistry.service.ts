@@ -119,7 +119,6 @@ export class NationalRegistryService {
         homeAddress: familyChild.Logheimili,
         municipality: familyChild.Sveitarfelag,
         postal: familyChild.Postaritun,
-        fate: familyChild.Afdrif,
       }))
       .sort((a, b) => {
         return (

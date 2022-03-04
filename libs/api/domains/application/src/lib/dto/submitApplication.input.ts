@@ -6,11 +6,11 @@ import graphqlTypeJson from 'graphql-type-json'
 export class SubmitApplicationInput {
   @Field((type) => String)
   @IsString()
-  id!: string
+  id: string
 
   @Field((type) => String)
   @IsString()
-  event!: string
+  event: string
 
   @Field((type) => graphqlTypeJson, { nullable: true })
   @IsObject()

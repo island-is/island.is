@@ -27,8 +27,8 @@ import {
   generateApplicationApprovedByEmployerToEmployerEmail,
 } from './emailGenerators'
 import {
+  getEmployer,
   transformApplicationToParentalLeaveDTO,
-  getRatio,
 } from './parental-leave.utils'
 import { apiConstants } from './constants'
 
@@ -156,7 +156,6 @@ export class ParentalLeaveService {
 
     for (const [index, period] of answers.entries()) {
       const isFirstPeriod = index === 0
-      const isUsingNumberOfDays = period.daysToUse !== undefined
 
       // If a period doesn't have both startDate or endDate we skip it
       if (!isFirstPeriod && (!period.startDate || !period.endDate)) {
@@ -165,25 +164,17 @@ export class ParentalLeaveService {
 
       const startDate = new Date(period.startDate)
       const endDate = new Date(period.endDate)
+      const getPeriodLength = await this.parentalLeaveApi.parentalLeaveGetPeriodLength(
+        { nationalRegistryId, startDate, endDate, percentage: period.ratio },
+      )
 
-      let periodLength = 0
-
-      if (isUsingNumberOfDays) {
-        periodLength = Number(period.daysToUse)
-      } else {
-        const getPeriodLength = await this.parentalLeaveApi.parentalLeaveGetPeriodLength(
-          { nationalRegistryId, startDate, endDate, percentage: period.ratio },
+      if (getPeriodLength.periodLength === undefined) {
+        throw new Error(
+          `Could not calculate length of period from ${period.startDate} to ${period.endDate}`,
         )
-
-        if (getPeriodLength.periodLength === undefined) {
-          throw new Error(
-            `Could not calculate length of period from ${period.startDate} to ${period.endDate}`,
-          )
-        }
-
-        periodLength = Number(getPeriodLength.periodLength ?? 0)
       }
 
+      const periodLength = Number(getPeriodLength.periodLength ?? 0)
       const numberOfDaysSpentAfterPeriod =
         numberOfDaysAlreadySpent + periodLength
 
@@ -209,11 +200,7 @@ export class ParentalLeaveService {
               ? apiConstants.actualDateOfBirth
               : period.startDate,
           to: period.endDate,
-          ratio: getRatio(
-            period.ratio,
-            periodLength.toString(),
-            isUsingNumberOfDays,
-          ),
+          ratio: Number(period.ratio),
           approved: false,
           paid: false,
           rightsCodePeriod: null,
@@ -226,11 +213,7 @@ export class ParentalLeaveService {
               ? apiConstants.actualDateOfBirth
               : period.startDate,
           to: period.endDate,
-          ratio: getRatio(
-            period.ratio,
-            periodLength.toString(),
-            isUsingNumberOfDays,
-          ),
+          ratio: Number(period.ratio),
           approved: false,
           paid: false,
           rightsCodePeriod: apiConstants.rights.receivingRightsId,
@@ -264,11 +247,7 @@ export class ParentalLeaveService {
               ? apiConstants.actualDateOfBirth
               : period.startDate,
           to: format(getNormalPeriodEndDate.periodEndDate, df),
-          ratio: getRatio(
-            period.ratio,
-            daysLeftOfPersonalRights.toString(),
-            isUsingNumberOfDays,
-          ),
+          ratio: Number(period.ratio),
           approved: false,
           paid: false,
           rightsCodePeriod: null,
@@ -300,11 +279,7 @@ export class ParentalLeaveService {
         periods.push({
           from: format(transferredPeriodStartDate, df),
           to: format(getTransferredPeriodEndDate.periodEndDate, df),
-          ratio: getRatio(
-            period.ratio,
-            lengthOfPeriodUsingTransferredDays.toString(),
-            isUsingNumberOfDays,
-          ),
+          ratio: Number(period.ratio),
           approved: false,
           paid: false,
           rightsCodePeriod: apiConstants.rights.receivingRightsId,

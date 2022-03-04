@@ -21,7 +21,7 @@ export class DocumentsListItem {
   type!: string
 
   @Field(() => String, { nullable: true })
-  note?: string
+  note?: string | null
 
   @Field()
   sender!: string

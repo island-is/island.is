@@ -2,8 +2,9 @@ import { SystemMetadata } from '@island.is/shared/types'
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { ISubArticle } from '../generated/contentfulTypes'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
+import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
 import { ArticleReference, mapArticleReference } from './articleReference'
-import { mapStepper, Stepper } from './stepper.model'
+
 @ObjectType()
 export class SubArticle {
   @Field(() => ID)
@@ -23,9 +24,6 @@ export class SubArticle {
 
   @Field({ nullable: true })
   showTableOfContents?: boolean
-
-  @Field(() => Stepper, { nullable: true })
-  stepper!: Stepper | null
 }
 
 export const mapSubArticle = ({
@@ -39,5 +37,4 @@ export const mapSubArticle = ({
   parent: fields.parent?.fields && mapArticleReference(fields.parent),
   body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
   showTableOfContents: fields.showTableOfContents ?? false,
-  stepper: fields.stepper ? mapStepper(fields.stepper) : null,
 })

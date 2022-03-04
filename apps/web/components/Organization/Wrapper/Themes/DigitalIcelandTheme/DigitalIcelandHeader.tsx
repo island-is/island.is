@@ -67,22 +67,17 @@ export const DigitalIcelandHeader: React.FC<HeaderProps> = ({
           </GridRow>
         </GridContainer>
       </Box>
-
       <Box display={['block', 'block', 'none']} textAlign="center">
-        {!!organizationPage.organization.logo && (
-          <Link
-            href={
-              linkResolver('organizationpage', [organizationPage.slug]).href
-            }
-            className={styles.iconCircle}
-          >
-            <img
-              src={organizationPage.organization.logo.url}
-              className={styles.headerLogo}
-              alt=""
-            />
-          </Link>
-        )}
+        <Link
+          href={linkResolver('organizationpage', [organizationPage.slug]).href}
+          className={styles.iconCircle}
+        >
+          <img
+            src={organizationPage.organization.logo.url}
+            className={styles.headerLogo}
+            alt=""
+          />
+        </Link>
         <Text variant="h1" marginTop={2}>
           {organizationPage.title}
         </Text>

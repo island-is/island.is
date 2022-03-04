@@ -7,4 +7,7 @@ export class RskCompanyFormOfOperation {
 
   @Field(() => String)
   name!: string
+
+  @Field(() => String)
+  suffix!: string
 }

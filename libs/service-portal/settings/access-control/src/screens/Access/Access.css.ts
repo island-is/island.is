@@ -33,5 +33,5 @@ export const datePickerFix = style({})
 
 globalStyle(`${datePickerFix} > div`, {
   marginBottom: theme.spacing['10'],
-  overflow: 'auto',
+  overflow: 'visible',
 })

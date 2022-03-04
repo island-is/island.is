@@ -1,6 +1,6 @@
 import { defineMessages } from '@formatjs/intl'
 
-export const notifications = {
+export const notificationMessages = {
   readyForCourt: defineMessages({
     prosecutorHtml: {
       id:
@@ -18,19 +18,11 @@ export const notifications = {
       description:
         'Notaður sem titill í pósti til hagaðila vegna undirritunar úrskúrðar',
     },
-    rulingAttachment: {
-      id:
-        'judicial.system.backend:notifications.signed_ruling.ruling_attachment',
-      defaultMessage: 'Úrskurður {courtCaseNumber}.pdf',
+    attachment: {
+      id: 'judicial.system.backend:notifications.signed_ruling.attachment',
+      defaultMessage: 'Þingbók og úrskurður {courtCaseNumber}.pdf',
       description:
-        'Notaður sem nafn á úrskurðarviðhengi í pósti til hagaðila vegna undirritunar úrskúrðar',
-    },
-    courtRecordAttachment: {
-      id:
-        'judicial.system.backend:notifications.signed_ruling.court_record_attachment',
-      defaultMessage: 'Þingbók {courtCaseNumber}.pdf',
-      description:
-        'Notaður sem nafn á þingbókarviðhengi í pósti til hagaðila vegna undirritunar úrskúrðar',
+        'Notaður sem nafn á viðhengi í pósti til hagaðila vegna undirritunar úrskúrðar',
     },
     prosecutorBodyS3: {
       id:
@@ -62,28 +54,6 @@ export const notifications = {
         '{courtName} hefur sent þér endurrit úr þingbók í máli {courtCaseNumber} ásamt úrskurði dómara í heild sinni í meðfylgjandi viðhengi.',
       description:
         'Notaður sem texti í pósti til verjanda/talsmanns vegna undirritunar úrskúrðar',
-    },
-  }),
-  modified: defineMessages({
-    subject: {
-      id: 'judicial.system.backend:notifications.modified.subject',
-      defaultMessage: 'Gæsluvarðhaldsmál {courtCaseNumber}',
-      description:
-        'Notaður sem titill á tölvupósti vegna breytingar á lengd gæslu/einangrunar þar sem {courtCaseNumber} er málsnúmer dómstóls.',
-    },
-    html: {
-      id: 'judicial.system.backend:notifications.modified.html',
-      defaultMessage:
-        '{actorInstitution}, {actorName} {actorTitle}, hefur uppfært lengd gæslu í máli {courtCaseNumber}. Sjá {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.<br /><br />Lok gæslu: {validToDate}.',
-      description:
-        'Notaður sem texti í tölvupósti vegna breytingar á lengd gæslu þar sem ekki var úrskurðað í einangrun.',
-    },
-    isolationHtml: {
-      id: 'judicial.system.backend:notifications.modified.isolation_html',
-      defaultMessage:
-        '{actorInstitution}, {actorName} {actorTitle}, hefur uppfært lengd gæslu/einangrunar í máli {courtCaseNumber}. Sjá {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.<br /><br />Lok gæslu: {validToDate}.<br /><br />Lok einangrunar: {isolationToDate}.',
-      description:
-        'Notaður sem texti í tölvupósti vegna breytingar á lengd gæslu/einangrunar þar sem úrskurðað var í einangrun.',
     },
   }),
 }

@@ -17,11 +17,7 @@ import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layout
 import { Sidenav, NotFound } from '@island.is/skilavottord-web/components'
 import { UserContext } from '@island.is/skilavottord-web/context'
 import { hasPermission } from '@island.is/skilavottord-web/auth/utils'
-import {
-  Query,
-  Role,
-  Vehicle,
-} from '@island.is/skilavottord-web/graphql/schema'
+import { Query, Role } from '@island.is/skilavottord-web/graphql/schema'
 
 import { CarsTable, RecyclingCompanyImage } from './components'
 
@@ -69,7 +65,7 @@ const Overview: FC = () => {
     if (loading) return
     const observer = new IntersectionObserver(
       (entries) => {
-        const { hasNextPage, endCursor } = pageInfo || {}
+        const { hasNextPage, endCursor } = pageInfo
         if (entries[0].isIntersecting && hasNextPage) {
           fetchMore({
             variables: { after: endCursor },
@@ -83,12 +79,9 @@ const Overview: FC = () => {
               return {
                 skilavottordAllDeregisteredVehicles: {
                   ...newResults,
-                  items: [
-                    ...prevResults?.items,
-                    ...(newResults?.items as Vehicle[]),
-                  ],
+                  items: [...prevResults?.items, ...newResults?.items],
                 },
-              } as Query
+              }
             },
           })
         }
@@ -182,7 +175,7 @@ const Overview: FC = () => {
         </Box>
         <Stack space={3}>
           <Text variant="h3">{t.subtitles.deregistered}</Text>
-          {vehicles && vehicles.length > 0 ? (
+          {vehicles?.length > 0 ? (
             <>
               <CarsTable titles={t.table} vehicles={vehicles} />
 

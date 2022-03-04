@@ -9,7 +9,7 @@ export class EndorsementListOpen {
   @Field()
   title!: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   description!: string | null
 
   @Field(() => [EndorsementListOpenTagsEnum], { nullable: true })

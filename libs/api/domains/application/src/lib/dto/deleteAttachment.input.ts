@@ -5,9 +5,9 @@ import { IsString } from 'class-validator'
 export class DeleteAttachmentInput {
   @Field((type) => String)
   @IsString()
-  id!: string
+  id: string
 
   @Field((type) => String)
   @IsString()
-  key!: string
+  key: string
 }

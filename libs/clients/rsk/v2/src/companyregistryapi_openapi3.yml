@@ -1,0 +1,345 @@
+openapi: 3.0.1
+info:
+  title: 'Company registry '
+  description: REST API for company registry
+  version: "1.0"
+servers:
+- url: https://thjonusta-s.rsk.is/
+  description: URL to TEST environment
+- url: https://thjonusta.rsk.is/
+  description: URL to PRODUCTION environment
+paths:
+  /{Kennitala}/companies:
+    get:
+      description: Skilar öllum félögum sem innsend kennitala tilheyrir.
+      operationId: apicompanyregistrymembersKennitalacompanies_GET_1
+      parameters:
+      - name: Kennitala
+        in: path
+        description: Tíu stafa kennitala, getur verið kennitala einstaklings eða lögaðila.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/apicompanyregistrymembersKennitalacompanies_GET_response'
+        401:
+          description: Access Denied
+          content: {}
+  /api/companyregistry/companies/{Kennitala}/certificate:
+    get:
+      operationId: apicompanyregistrycompaniesKennitalacertificate_GET_2
+      parameters:
+      - name: Kennitala
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/apicompanyregistrycompaniesKennitalacertificate_GET_response'
+        401:
+          description: Access Denied
+          content: {}
+  /api/companyregistry/companies/{Kennitala}/annual_accounts/defaults:
+    get:
+      operationId: apicompanyregistrycompaniesKennitalaannual_accountsdefaults_GET_3
+      parameters:
+      - name: Kennitala
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/apicompanyregistrycompaniesKennitalaannual_accountsdefaults_GET_response'
+        401:
+          description: Access Denied
+          content: {}
+  /api/companyregistry/companies/{Kennitala}/beneficial_owner/status:
+    get:
+      operationId: apicompanyregistrycompaniesKennitalabeneficial_ownerstatus_GET_4
+      parameters:
+      - name: Kennitala
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/apicompanyregistrycompaniesKennitalabeneficial_ownerstatus_GET_response'
+        401:
+          description: Access Denied
+          content: {}
+  /api/companyregistry/companies/{Kennitala}/returns:
+    get:
+      operationId: apicompanyregistrycompaniesKennitalareturns_GET_5
+      parameters:
+      - name: Kennitala
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/apicompanyregistrycompaniesKennitalareturns_GET_response'
+        401:
+          description: Access Denied
+          content: {}
+  /api/companyregistry/companies/{Kennitala}/revenue_and_expense:
+    get:
+      operationId: apicompanyregistrycompaniesKennitalarevenue_and_expense_GET_6
+      parameters:
+      - name: Kennitala
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/apicompanyregistrycompaniesKennitalarevenue_and_expense_GET_response'
+        401:
+          description: Access Denied
+          content: {}
+  /api/companyregistry/companies/{Kennitala}/salary:
+    get:
+      operationId: apicompanyregistrycompaniesKennitalasalary_GET_7
+      parameters:
+      - name: Kennitala
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/apicompanyregistrycompaniesKennitalasalary_GET_response'
+        401:
+          description: Access Denied
+          content: {}
+  /api/companyregistry/companies/{Kennitala}/vat/turnover:
+    get:
+      operationId: apicompanyregistrycompaniesKennitalavatturnover_GET_8
+      parameters:
+      - name: Kennitala
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/apicompanyregistrycompaniesKennitalavatturnover_GET_response'
+        401:
+          description: Access Denied
+          content: {}
+  /api/companyregistry/companies/{Kennitala}/members/procurators:
+    get:
+      operationId: apicompanyregistrycompaniesKennitalamembersprocurators_GET_9
+      parameters:
+      - name: Kennitala
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/apicompanyregistrycompaniesKennitalamembersprocurators_GET_response'
+        401:
+          description: Access Denied
+          content: {}
+  /api/companyregistry/companies/{Kennitala}/primary_bank:
+    get:
+      operationId: apicompanyregistrycompaniesKennitalaprimary_bank_GET_10
+      parameters:
+      - name: Kennitala
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/apicompanyregistrycompaniesKennitalaprimary_bank_GET_response'
+        401:
+          description: Access Denied
+          content: {}
+components:
+  schemas:
+    apicompanyregistrycompaniesKennitalaannual_accountsdefaults_GET_response:
+      required:
+      - DefaultYears
+      type: object
+      properties:
+        DefaultYears:
+          type: array
+          items:
+            type: string
+    apicompanyregistrycompaniesKennitalamembersprocurators_GET_response:
+      required:
+      - Procurators
+      type: object
+      properties:
+        Procurators:
+          type: array
+          items:
+            type: string
+    apicompanyregistrymembersKennitalacompanies_GET_response:
+      type: object
+      properties:
+        MemberCompanies:
+          type: array
+          items:
+            $ref: '#/components/schemas/memberCompanies'
+    apicompanyregistrycompaniesKennitalaprimary_bank_GET_response:
+      required:
+      - Kennitala
+      - Nafn
+      type: object
+      properties:
+        Kennitala:
+          type: string
+        Nafn:
+          type: string
+    apicompanyregistrycompaniesKennitalacertificate_GET_response:
+      required:
+      - Base64PdfCertificate
+      type: object
+      properties:
+        Base64PdfCertificate:
+          type: string
+    apicompanyregistrycompaniesKennitalavatturnover_GET_response:
+      required:
+      - VskVelta2019
+      - VskVelta2020
+      type: object
+      properties:
+        VskVelta2019:
+          type: string
+        VskVelta2020:
+          type: string
+    apicompanyregistrycompaniesKennitalasalary_GET_response:
+      required:
+      - Laun2019
+      - Laun2020
+      type: object
+      properties:
+        Laun2019:
+          type: string
+        Laun2020:
+          type: string
+    apicompanyregistrycompaniesKennitalabeneficial_ownerstatus_GET_response:
+      required:
+      - HasSubmitted
+      type: object
+      properties:
+        HasSubmitted:
+          type: string
+    apicompanyregistrycompaniesKennitalareturns_GET_response:
+      required:
+      - ReturnsPastThreeYears
+      type: object
+      properties:
+        ReturnsPastThreeYears:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaxReturnsPast3Years'
+    TaxReturnsPast3Years:
+      required:
+      - Ar
+      - Gjald
+      - SkattTegund
+      - Timabil
+      - VskNumer
+      type: object
+      properties:
+        Ar:
+          type: string
+        SkattTegund:
+          type: string
+        Timabil:
+          type: string
+        Gjald:
+          type: string
+        VskNumer:
+          type: string
+    apicompanyregistrycompaniesKennitalarevenue_and_expense_GET_response:
+      required:
+      - Kostnadur
+      - Tekjur
+      type: object
+      properties:
+        Kostnadur:
+          type: string
+        Tekjur:
+          type: string
+    memberCompanies:
+      required:
+      - ErProkuruhafi
+      - ErStjorn
+      - Kennitala
+      - Nafn
+      - Rekstarform
+      - StadaAdila
+      type: object
+      properties:
+        ErStjorn:
+          type: string
+          description: Rofi sem segir til um hvort hlutverk innsendrar kennitölu tilheyrir
+            stjórn eða ekki. Möguleg gildi eru "0" eða "1".
+        Kennitala:
+          type: string
+          description: Kennitala félagsins sem innsend kennitala tilheyrir
+        StadaAdila:
+          type: string
+          description: Hlutverkið sem innsend kennitala gegnir innan félagsins.
+            T.d. "Stjórnarformaður".
+        Rekstarform:
+          type: string
+          description: Rekstrarform félagsins sem innsend kennitala tilheyrir. T.d.
+            "E1".
+        ErProkuruhafi:
+          type: string
+          description: Rofi sem segir til um hvort hlutverk innsendrar kennitölu prókúruhafi
+            eða ekki. Möguleg gildi eru "0" eða "1".
+        Nafn:
+          type: string
+          description: Nafn félagsins sem innsend kennitala tilheyrir
+      description: Listi af félögum sem innsend kennitala tilheyrir.

@@ -9,8 +9,6 @@ import CircuitBreaker from 'opossum'
 import { SetOptional } from 'type-fest'
 import { Response, FetchAPI as NodeFetchAPI } from '../src/lib/nodeFetch'
 import { TokenResponse, TokenType } from '../src/lib/withAutoAuth'
-import { DogStatsD } from '@island.is/infra-metrics'
-jest.mock('@island.is/infra-metrics')
 
 export interface EnhancedFetchTestEnv {
   enhancedFetch: EnhancedFetchAPI
@@ -22,7 +20,6 @@ export interface EnhancedFetchTestEnv {
     warn: jest.Mock
     error: jest.Mock
   }
-  metricsClient: DogStatsD
 }
 
 export const fakeAuthentication = 'Bearer TestToken'
@@ -74,8 +71,6 @@ export const setupTestEnv = (
     return fetch(input, init)
   }
 
-  const metricsClient = new DogStatsD()
-
   const enhancedFetch = createEnhancedFetch({
     name: 'test',
     fetch: dynamicFetch,
@@ -85,7 +80,6 @@ export const setupTestEnv = (
       volumeThreshold: 0,
       ...(override?.circuitBreaker as CircuitBreaker.Options),
     },
-    metricsClient,
   })
 
   return {
@@ -93,6 +87,5 @@ export const setupTestEnv = (
     fetch,
     authFetch,
     logger,
-    metricsClient,
   }
 }

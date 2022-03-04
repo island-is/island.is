@@ -27,8 +27,8 @@ const devConfig = {
 }
 
 if (process.env.NODE_ENV === 'production') {
-  if (!process.env.IDENTITY_SERVER_ISSUER_URL) {
-    throw new Error('Missing IDENTITY_SERVER_ISSUER_URL environment.')
+  if (!process.env.IDS_ISSUER) {
+    throw new Error('Missing IDS_ISSUER environment.')
   }
 }
 
@@ -37,7 +37,7 @@ const prodConfig = {
   auth: {
     audience: '@identityserver.api',
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    issuer: process.env.IDENTITY_SERVER_ISSUER_URL!,
+    issuer: process.env.IDS_ISSUER!,
   },
   port: 3333,
   rsk: {

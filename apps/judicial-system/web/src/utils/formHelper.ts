@@ -14,15 +14,20 @@ import { validate, Validation } from './validate'
 
 export const removeTabsValidateAndSet = (
   field: string,
-  value: string,
+  evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   validations: Validation[],
   theCase: Case,
   setCase: (value: React.SetStateAction<Case>) => void,
   errorMessage?: string,
   setErrorMessage?: (value: React.SetStateAction<string>) => void,
 ) => {
-  if (value.includes('\t')) {
-    value = replaceTabs(value)
+  let value: string
+
+  if (evt.target.value.includes('\t')) {
+    value = replaceTabs(evt.target.value)
+    evt.target.value = value
+  } else {
+    value = evt.target.value
   }
 
   validateAndSet(
@@ -120,6 +125,48 @@ export const validateAndSetTime = (
 }
 
 export const setAndSendDateToServer = (
+  field: string,
+  currentValue: string | undefined,
+  date: Date | null,
+  theCase: Case,
+  required: boolean,
+  setCase: (value: React.SetStateAction<Case>) => void,
+  updateCase: (id: string, updateCase: UpdateCase) => void,
+  setErrorMessage?: (value: React.SetStateAction<string>) => void,
+) => {
+  if (required && date === null && setErrorMessage) {
+    setErrorMessage('Reitur má ekki vera tómur')
+  }
+
+  let formattedDate = null
+
+  if (date !== null) {
+    if (setErrorMessage) {
+      setErrorMessage('')
+    }
+
+    const currentRepresentation = currentValue?.includes('T')
+      ? 'complete'
+      : 'date'
+
+    formattedDate = formatISO(date, {
+      representation: currentRepresentation,
+    })
+  }
+
+  setCase({
+    ...theCase,
+    [field]: formattedDate,
+  })
+
+  if (theCase.id !== '') {
+    updateCase(theCase.id, {
+      [field]: formattedDate,
+    })
+  }
+}
+
+export const newSetAndSendDateToServer = (
   field: string,
   date: Date | undefined,
   isValid: boolean,

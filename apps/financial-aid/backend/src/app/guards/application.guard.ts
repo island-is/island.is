@@ -20,7 +20,7 @@ export class ApplicationGuard implements CanActivate {
     }
 
     const application = await this.applicationService.findById(
-      request.params.id || request.body.applicationId,
+      request.params.id,
       user.service,
     )
 

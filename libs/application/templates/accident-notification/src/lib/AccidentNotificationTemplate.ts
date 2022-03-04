@@ -141,7 +141,6 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           },
           onEntry: {
             apiModuleAction: ApiActions.addAttachment,
-            shouldPersistToExternalData: true,
           },
 
           roles: [

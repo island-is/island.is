@@ -12,5 +12,5 @@ module.exports = {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
     '../../../../coverage/libs/api/domains/mortgage-certificate',
-  testEnvironment: 'jest-environment-node',
+    testEnvironment: 'jest-environment-node',
 }

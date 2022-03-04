@@ -30,3 +30,9 @@ export interface DrivingLicenseFakeData {
   qualityPhoto?: YesOrNo
   currentLicense?: FakeCurrentLicense
 }
+
+export const EphemeralStateLifeCycle: StateLifeCycle = {
+  shouldBeListed: false,
+  shouldBePruned: true,
+  whenToPrune: 24 * 3600 * 1000,
+}

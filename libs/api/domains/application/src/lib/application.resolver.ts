@@ -29,7 +29,6 @@ import { UploadSignedFileResponse } from './dto/uploadSignedFile.response'
 import { ApplicationPaymentChargeInput } from './dto/applicationPaymentCharge.input'
 import { ApplicationPaymentChargeResponse } from './dto/applicationPaymentCharge'
 import { CreatePaymentResponseDto } from '../../gen/fetch'
-import { AttachmentPresignedUrlInput } from './dto/AttachmentPresignedUrl.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -177,13 +176,5 @@ export class ApplicationResolver {
     @CurrentUser() user: User,
   ): Promise<PresignedUrlResponse> {
     return this.applicationService.presignedUrl(input, user)
-  }
-
-  @Query(() => PresignedUrlResponse, { nullable: true })
-  attachmentPresignedURL(
-    @Args('input') input: AttachmentPresignedUrlInput,
-    @CurrentUser() user: User,
-  ): Promise<PresignedUrlResponse> {
-    return this.applicationService.attachmentPresignedURL(input, user)
   }
 }

@@ -39,7 +39,6 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
         caseType: formatRequestCaseType(workingCase.type),
       })}
       labelVariant="h3"
-      labelUse="h2"
     >
       <Box marginBottom={2}>
         <Text variant="h4" as="h4">
@@ -55,19 +54,11 @@ const PoliceRequestAccordionItem: React.FC<Props> = ({
           <Box key={index}>
             <Box marginBottom={1}>
               <Text>
-                {`${formatMessage(
-                  defendant.noNationalId ? core.dateOfBirth : core.nationalId,
-                )}: ${
-                  defendant.noNationalId
-                    ? defendant.nationalId
-                    : formatNationalId(defendant.nationalId ?? '')
-                }`}
+                Kennitala: {formatNationalId(defendant.nationalId ?? '')}
               </Text>
             </Box>
             <Box marginBottom={1}>
-              <Text>{`${formatMessage(core.fullName)}: ${
-                defendant.name
-              }`}</Text>
+              <Text>Fullt nafn: {defendant.name}</Text>
             </Box>
             <Box marginBottom={3}>
               <Text>Lögheimili: {defendant.address}</Text>

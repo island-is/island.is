@@ -1,8 +1,5 @@
-import { EmailModule, EmailServiceOptions } from '@island.is/email-service'
-import {
-  ZendeskModule,
-  ZendeskServiceOptions,
-} from '@island.is/clients/zendesk'
+import { EmailModule } from '@island.is/email-service'
+import { ZendeskModule } from '@island.is/clients/zendesk'
 import { Module } from '@nestjs/common'
 import { CommunicationsResolver } from './communications.resolver'
 import { CommunicationsService } from './communications.service'
@@ -10,8 +7,8 @@ import { environment } from './environments/environment'
 
 @Module({
   imports: [
-    EmailModule.register(environment.emailOptions as EmailServiceOptions),
-    ZendeskModule.register(environment.zendeskOptions as ZendeskServiceOptions),
+    EmailModule.register(environment.emailOptions),
+    ZendeskModule.register(environment.zendeskOptions),
   ],
   providers: [CommunicationsResolver, CommunicationsService],
 })

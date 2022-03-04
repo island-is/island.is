@@ -3,7 +3,7 @@ import { Sequelize } from 'sequelize-typescript'
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { IntlService } from '@island.is/cms-translations'
 import { SigningService } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
@@ -76,15 +76,11 @@ export const createTestingCaseModule = async () => {
 
   const userService = caseModule.get<UserService>(UserService)
 
-  const awsS3Service = caseModule.get<AwsS3Service>(AwsS3Service)
-
   const defendantService = caseModule.get<DefendantService>(DefendantService)
-
-  const logger = caseModule.get<Logger>(LOGGER_PROVIDER)
 
   const sequelize = caseModule.get<Sequelize>(Sequelize)
 
-  const caseModel = caseModule.get<typeof Case>(getModelToken(Case))
+  const caseModel = await caseModule.get<typeof Case>(getModelToken(Case))
 
   const caseService = caseModule.get<CaseService>(CaseService)
 
@@ -92,9 +88,7 @@ export const createTestingCaseModule = async () => {
 
   return {
     userService,
-    awsS3Service,
     defendantService,
-    logger,
     sequelize,
     caseModel,
     caseService,

@@ -19,7 +19,6 @@ const createRandomApiScope = (): ApiScopesDTO => {
     allowExplicitDelegationGrant: true,
     automaticDelegationGrant: false,
     alsoForDelegatedUser: false,
-    grantToPersonalRepresentatives: false,
   }
 }
 

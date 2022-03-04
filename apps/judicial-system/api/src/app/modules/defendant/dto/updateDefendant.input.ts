@@ -16,10 +16,6 @@ export class UpdateDefendantInput implements UpdateDefendant {
 
   @Allow()
   @Field({ nullable: true })
-  readonly noNationalId?: boolean
-
-  @Allow()
-  @Field({ nullable: true })
   readonly nationalId?: string
 
   @Allow()
@@ -33,8 +29,4 @@ export class UpdateDefendantInput implements UpdateDefendant {
   @Allow()
   @Field({ nullable: true })
   readonly address?: string
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly citizenship?: string
 }

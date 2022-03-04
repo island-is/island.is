@@ -117,8 +117,8 @@ export const active = style({
       color: theme.color.red600,
     },
     [`&${variants.blue}`]: {
-      backgroundColor: theme.color.blue400,
-      color: theme.color.white,
+      backgroundColor: theme.color.white,
+      color: theme.color.blue400,
     },
     [`&${variants.blueberry}`]: {
       backgroundColor: theme.color.white,

@@ -8,7 +8,6 @@ import {
 } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Locale } from '../types/localeTypes'
-import { DataStatus } from '../types/dataStatusTypes'
 
 export class CreateUserProfileDto {
   @IsNotEmpty()
@@ -35,28 +34,4 @@ export class CreateUserProfileDto {
   @IsOptional()
   @IsBoolean()
   readonly mobilePhoneNumberVerified?: boolean
-
-  @IsOptional()
-  @IsBoolean()
-  readonly emailVerified?: boolean
-
-  @IsOptional()
-  @IsString()
-  @IsEnum(DataStatus)
-  readonly emailStatus?: DataStatus
-
-  @IsOptional()
-  @IsString()
-  @IsEnum(DataStatus)
-  readonly mobileStatus?: DataStatus
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly emailCode?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly smsCode?: string
 }

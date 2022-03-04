@@ -26,7 +26,7 @@ const TimeLineContainer = ({
 }: Props) => {
   const eventData = getEventData(event, applicantName, spouseName)
 
-  const eventCreated = format(new Date(event.created), 'dd/MM/yyyy HH:mm')
+  const eventCreated = format(new Date(event.created), 'dd/MM/yyyy HH:MM')
 
   return (
     <>

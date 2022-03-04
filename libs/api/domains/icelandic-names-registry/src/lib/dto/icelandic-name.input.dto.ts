@@ -55,11 +55,11 @@ export class CreateIcelandicNameInput {
 
   @Field(() => String, { nullable: true })
   @IsOptional()
-  verdict?: string
+  verdict?: string | null
 
   @Field(() => String, { nullable: true })
   @IsOptional()
-  description?: string
+  description?: string | null
 
   @Field()
   @IsBoolean()
@@ -67,7 +67,7 @@ export class CreateIcelandicNameInput {
 
   @Field(() => String, { nullable: true })
   @IsOptional()
-  url?: string
+  url!: string | null
 }
 
 @InputType()

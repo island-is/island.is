@@ -1,6 +1,4 @@
-const isProd = process.env.NODE_ENV === 'production'
-
-if (isProd) {
+if (process.env.NODE_ENV === 'production') {
   if (!process.env.BACKEND_URL) {
     throw new Error('Missing BACKEND_URL environment.')
   }
@@ -16,7 +14,9 @@ const devConfig = {
     admins: process.env.ADMINS,
   },
   identityServerAuth: {
-    issuer: 'https://identity-server.dev01.devland.is',
+    issuer: process.env.IDENTITY_SERVER_DOMAIN
+      ? `https://${process.env.IDENTITY_SERVER_DOMAIN}`
+      : 'https://identity-server.dev01.devland.is',
     audience: '@vegagerdin.is',
   },
   auth: {
@@ -37,7 +37,9 @@ const prodConfig = {
     admins: process.env.ADMINS,
   },
   identityServerAuth: {
-    issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
+    issuer: process.env.IDENTITY_SERVER_DOMAIN
+      ? `https://${process.env.IDENTITY_SERVER_DOMAIN}`
+      : '',
     audience: '@vegagerdin.is',
   },
   auth: {
@@ -48,4 +50,4 @@ const prodConfig = {
   backendUrl: process.env.BACKEND_URL ?? 'http://localhost:4248',
 }
 
-export default isProd ? prodConfig : devConfig
+export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig

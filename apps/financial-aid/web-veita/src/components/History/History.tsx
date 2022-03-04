@@ -11,7 +11,7 @@ import {
 
 import {
   ChatElement,
-  TimeLineComment,
+  StaffComment,
   TimeLineContainer,
 } from '@island.is/financial-aid-web/veita/src/components'
 
@@ -58,11 +58,8 @@ const History = ({
               applicantName={applicantName}
               spouseName={spouseName}
             >
-              <TimeLineComment
-                isVisable={
-                  item.eventType === ApplicationEventType.STAFFCOMMENT ||
-                  item.eventType === ApplicationEventType.APPROVED
-                }
+              <StaffComment
+                isVisable={item.eventType === ApplicationEventType.STAFFCOMMENT}
                 comment={item.comment}
               />
 
@@ -70,8 +67,7 @@ const History = ({
                 isVisable={
                   item.eventType === ApplicationEventType.FILEUPLOAD ||
                   item.eventType === ApplicationEventType.SPOUSEFILEUPLOAD ||
-                  item.eventType === ApplicationEventType.DATANEEDED ||
-                  item.eventType == ApplicationEventType.REJECTED
+                  item.eventType === ApplicationEventType.DATANEEDED
                 }
                 comment={item.comment}
               />

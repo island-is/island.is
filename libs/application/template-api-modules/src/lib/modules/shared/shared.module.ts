@@ -1,10 +1,7 @@
 import { DynamicModule } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { EmailModule } from '@island.is/email-service'
-import {
-  BaseTemplateAPIModuleConfig,
-  BaseTemplateApiApplicationService,
-} from '../../types'
+import { BaseTemplateAPIModuleConfig } from '../../types'
 import { SharedTemplateApiService } from './shared.service'
 
 export class SharedTemplateAPIModule {
@@ -19,13 +16,7 @@ export class SharedTemplateAPIModule {
         }),
         EmailModule.register(config.emailOptions),
       ],
-      providers: [
-        SharedTemplateApiService,
-        {
-          provide: BaseTemplateApiApplicationService,
-          useClass: config.applicationService,
-        },
-      ],
+      providers: [SharedTemplateApiService],
       exports: [SharedTemplateApiService],
     }
   }

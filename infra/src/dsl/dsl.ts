@@ -66,16 +66,6 @@ export class ServiceBuilder<ServiceType> implements Service {
         privileged: false,
         allowPrivilegeEscalation: false,
       },
-      resources: {
-        limits: {
-          memory: '256Mi',
-          cpu: '200m',
-        },
-        requests: {
-          memory: '128Mi',
-          cpu: '100m',
-        },
-      },
       xroadConfig: [],
       files: [],
     }
@@ -196,6 +186,18 @@ export class ServiceBuilder<ServiceType> implements Service {
 
   resources(res: Resources) {
     this.serviceDef.resources = res
+    if (res.limits && res.limits.memory) {
+      if (this.serviceDef.env.NODE_OPTIONS) {
+        throw new Error(
+          'NODE_OPTIONS already set. At the moment of writing, there is no known use case for this, so this might need to be revisited in the future.',
+        )
+      }
+      this.env({
+        NODE_OPTIONS: `--max-old-space-size=${
+          parseInt(res.limits.memory, 10) - 48
+        }`,
+      })
+    }
     return this
   }
 

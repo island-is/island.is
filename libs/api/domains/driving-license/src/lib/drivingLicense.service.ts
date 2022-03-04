@@ -46,9 +46,7 @@ export class DrivingLicenseService {
     nationalId: User['nationalId'],
   ): Promise<DriversLicense | null> {
     try {
-      return await this.drivingLicenseApi.getCurrentLicense({
-        nationalId,
-      })
+      return await this.drivingLicenseApi.getCurrentLicense({ nationalId })
     } catch (e) {
       return this.handleGetLicenseError(e)
     }

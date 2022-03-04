@@ -36,7 +36,7 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  setAndSendDateToServer,
+  newSetAndSendDateToServer,
   removeTabsValidateAndSet,
   validateAndSendToServer,
   setAndSendToServer,
@@ -188,7 +188,7 @@ export const RulingStepOne: React.FC = () => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'prosecutorDemands',
-                event.target.value,
+                event,
                 ['empty'],
                 workingCase,
                 setWorkingCase,
@@ -232,7 +232,7 @@ export const RulingStepOne: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'courtCaseFacts',
-                  event.target.value,
+                  event,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -279,7 +279,7 @@ export const RulingStepOne: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'courtLegalArguments',
-                  event.target.value,
+                  event,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -394,7 +394,7 @@ export const RulingStepOne: React.FC = () => {
                 selectedDate={workingCase.validToDate}
                 minDate={new Date()}
                 onChange={(date: Date | undefined, valid: boolean) => {
-                  setAndSendDateToServer(
+                  newSetAndSendDateToServer(
                     'validToDate',
                     date,
                     valid,
@@ -464,7 +464,7 @@ export const RulingStepOne: React.FC = () => {
                       : undefined
                   }
                   onChange={(date: Date | undefined, valid: boolean) => {
-                    setAndSendDateToServer(
+                    newSetAndSendDateToServer(
                       'isolationToDate',
                       date,
                       valid,

@@ -58,13 +58,9 @@ describe('View Case File Guard', () => {
 
   each`
     role | state
-    ${UserRole.REGISTRAR} | ${CaseState.SUBMITTED}
-    ${UserRole.REGISTRAR} | ${CaseState.RECEIVED}
     ${UserRole.REGISTRAR} | ${CaseState.ACCEPTED}
     ${UserRole.REGISTRAR} | ${CaseState.REJECTED}
     ${UserRole.REGISTRAR} | ${CaseState.DISMISSED}
-    ${UserRole.JUDGE} | ${CaseState.SUBMITTED}
-    ${UserRole.JUDGE} | ${CaseState.RECEIVED}
     ${UserRole.JUDGE} | ${CaseState.ACCEPTED}
     ${UserRole.JUDGE} | ${CaseState.REJECTED}
     ${UserRole.JUDGE} | ${CaseState.DISMISSED}
@@ -91,8 +87,10 @@ describe('View Case File Guard', () => {
     role | state
     ${UserRole.REGISTRAR} | ${CaseState.NEW}
     ${UserRole.REGISTRAR} | ${CaseState.DRAFT}
+    ${UserRole.REGISTRAR} | ${CaseState.SUBMITTED}
     ${UserRole.JUDGE} | ${CaseState.NEW}
     ${UserRole.JUDGE} | ${CaseState.DRAFT}
+    ${UserRole.JUDGE} | ${CaseState.SUBMITTED}
   `.describe(
     'registrars and judges can not view case files of unreceived cases',
     ({ role, state }) => {
@@ -108,10 +106,80 @@ describe('View Case File Guard', () => {
 
       it('should throw ForbiddenException', () => {
         expect(then.error).toBeInstanceOf(ForbiddenException)
-        expect(then.error.message).toBe(`Forbidden for ${role}`)
+        expect(then.error.message).toBe(`Forbidden for ${role.toLowerCase()}s`)
       })
     },
   )
+
+  describe('assigned registrars can view case files of received cases', () => {
+    const userId = uuid()
+    const user = { id: userId, role: UserRole.REGISTRAR } as User
+    const theCase = { state: CaseState.RECEIVED, registrarId: userId } as Case
+    let then: Then
+
+    beforeEach(() => {
+      mockRequest.mockImplementationOnce(() => ({ user, case: theCase }))
+
+      then = givenWhenThen()
+    })
+
+    it('should activate', () => {
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('assigned judges can view case files of received cases', () => {
+    const userId = uuid()
+    const user = { id: userId, role: UserRole.JUDGE } as User
+    const theCase = { state: CaseState.RECEIVED, judgeId: userId } as Case
+    let then: Then
+
+    beforeEach(() => {
+      mockRequest.mockImplementationOnce(() => ({ user, case: theCase }))
+
+      then = givenWhenThen()
+    })
+
+    it('should activate', () => {
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('unassigned registrars can not view case files of received cases', () => {
+    const userId = uuid()
+    const user = { id: userId, role: UserRole.REGISTRAR } as User
+    const theCase = { state: CaseState.RECEIVED } as Case
+    let then: Then
+
+    beforeEach(() => {
+      mockRequest.mockImplementationOnce(() => ({ user, case: theCase }))
+
+      then = givenWhenThen()
+    })
+
+    it('should throw ForbiddenException', () => {
+      expect(then.error).toBeInstanceOf(ForbiddenException)
+      expect(then.error.message).toBe('Forbidden for registrars')
+    })
+  })
+
+  describe('unassigned judges can not view case files of received cases', () => {
+    const userId = uuid()
+    const user = { id: userId, role: UserRole.JUDGE } as User
+    const theCase = { state: CaseState.RECEIVED } as Case
+    let then: Then
+
+    beforeEach(() => {
+      mockRequest.mockImplementationOnce(() => ({ user, case: theCase }))
+
+      then = givenWhenThen()
+    })
+
+    it('should throw ForbiddenException', () => {
+      expect(then.error).toBeInstanceOf(ForbiddenException)
+      expect(then.error.message).toBe('Forbidden for judges')
+    })
+  })
 
   each`
     role

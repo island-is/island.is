@@ -1,1 +1,0 @@
-export { AgreementDescription } from './AgreementDescription'

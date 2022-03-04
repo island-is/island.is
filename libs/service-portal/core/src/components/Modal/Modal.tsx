@@ -15,33 +15,39 @@ export const Modal: FC<Props> = ({
   onCloseModal,
 }) => {
   const handleOnVisibilityChange = (isVisible: boolean) => {
-    !isVisible && onCloseModal()
+    !isVisible && onCloseModal && onCloseModal()
   }
   return (
-    <ModalBase
-      baseId={id}
-      initialVisibility={true}
-      className={styles.modal}
-      toggleClose={toggleClose}
-      onVisibilityChange={handleOnVisibilityChange}
-    >
-      {({ closeModal }: { closeModal: () => void }) => (
-        <Box background="white" paddingY={[3, 6, 12]} paddingX={[3, 6, 12, 15]}>
-          <Box className={styles.closeButton}>
-            <Button
-              circle
-              colorScheme="negative"
-              icon="close"
-              onClick={() => {
-                closeModal()
-              }}
-              size="large"
-            />
+    <>
+      <ModalBase
+        baseId={id}
+        initialVisibility={true}
+        className={styles.modal}
+        toggleClose={toggleClose}
+        onVisibilityChange={handleOnVisibilityChange}
+      >
+        {({ closeModal }: { closeModal: () => void }) => (
+          <Box
+            background="white"
+            paddingY={[3, 6, 12]}
+            paddingX={[3, 6, 12, 15]}
+          >
+            <Box className={styles.closeButton}>
+              <Button
+                circle
+                colorScheme="negative"
+                icon="close"
+                onClick={() => {
+                  closeModal()
+                }}
+                size="large"
+              />
+            </Box>
+            {children}
           </Box>
-          {children}
-        </Box>
-      )}
-    </ModalBase>
+        )}
+      </ModalBase>
+    </>
   )
 }
 

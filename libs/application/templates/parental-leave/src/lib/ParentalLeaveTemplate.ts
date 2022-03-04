@@ -13,7 +13,6 @@ import {
   DefaultEvents,
   DefaultStateLifeCycle,
   ApplicationConfigurations,
-  EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 
 import {
@@ -74,7 +73,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         ],
         meta: {
           name: States.PREREQUISITES,
-          lifecycle: EphemeralStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: false,
+            shouldBePruned: true,
+            whenToPrune: 24 * 3600 * 1000,
+          },
           progress: 0.25,
           roles: [
             {

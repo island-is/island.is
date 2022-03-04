@@ -73,9 +73,6 @@ export const serializeService: SerializeMethod = (
     },
     env: {
       SERVERSIDE_FEATURES_ON: uberChart.env.featuresOn.join(','),
-      NODE_OPTIONS: `--max-old-space-size=${
-        parseInt(serviceDef.resources.limits.memory, 10) - 48
-      }`,
     },
     secrets: {},
     healthCheck: {
@@ -102,11 +99,8 @@ export const serializeService: SerializeMethod = (
   }
 
   // resources
-  result.resources = serviceDef.resources
-  if (serviceDef.env.NODE_OPTIONS) {
-    throw new Error(
-      'NODE_OPTIONS already set. At the moment of writing, there is no known use case for this, so this might need to be revisited in the future.',
-    )
+  if (serviceDef.resources) {
+    result.resources = serviceDef.resources
   }
 
   // replicas
@@ -266,7 +260,7 @@ export const serializeService: SerializeMethod = (
             ...acc,
             [`${ingressName}-alb`]: ingress,
           }
-        } catch (e: any) {
+        } catch (e) {
           addToErrors([e.message])
           return acc
         }
@@ -313,14 +307,11 @@ export const resolveDbHost = (
         break
       }
       case 'success': {
-        return { writer: resolved.value, reader: resolved.value }
+        return resolved.value
       }
     }
   } else {
-    return {
-      writer: uberChart.env.auroraHost,
-      reader: uberChart.env.auroraReplica ?? uberChart.env.auroraHost,
-    }
+    return uberChart.env.auroraHost
   }
 }
 
@@ -381,9 +372,7 @@ function serializePostgres(
   env['DB_USER'] = postgres.username ?? postgresIdentifier(serviceDef.name)
   env['DB_NAME'] = postgres.name ?? postgresIdentifier(serviceDef.name)
   try {
-    const { reader, writer } = resolveDbHost(postgres, uberChart, service)
-    env['DB_HOST'] = writer
-    env['DB_REPLICAS_HOST'] = reader
+    env['DB_HOST'] = resolveDbHost(postgres, uberChart, service)
   } catch (e) {
     errors.push(
       `Could not resolve DB_HOST variable for service: ${serviceDef.name}`,
@@ -442,16 +431,6 @@ function serializeContainerRuns(
     let result: ContainerRunHelm = {
       command: [c.command],
       args: c.args,
-      resources: {
-        limits: {
-          memory: '256Mi',
-          cpu: '200m',
-        },
-        requests: {
-          memory: '128Mi',
-          cpu: '100m',
-        },
-      },
     }
     if (c.resources) {
       result.resources = c.resources

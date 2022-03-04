@@ -35,8 +35,7 @@ export const CurrentUserQuery = gql`
       spouse {
         hasPartnerApplied
         hasFiles
-        applicantName
-        applicantSpouseEmail
+        spouseName
       }
       currentApplicationId
     }
@@ -129,16 +128,6 @@ export const NationalRegistryUserQuery = gql`
         maritalStatus
         name
       }
-    }
-  }
-`
-
-export const PersonalTaxReturnQuery = gql`
-  query personalTaxReturnQuery {
-    municipalitiesPersonalTaxReturn {
-      key
-      name
-      size
     }
   }
 `

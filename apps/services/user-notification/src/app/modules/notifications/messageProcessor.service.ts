@@ -1,22 +1,15 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { IntlService } from '@island.is/cms-translations'
 import { Message } from './dto/createNotification.dto'
 import { Notification, MessageTypes } from './types'
 import messages from '../../../messages'
 import { UserProfile } from '@island.is/clients/user-profile'
 
-export const APP_PROTOCOL = Symbol('APP_PROTOCOL')
-export interface MessageProcessorServiceConfig {
-  appProtocol: string
-}
+const appProtocol = 'is.island.app'
 
 @Injectable()
 export class MessageProcessorService {
-  constructor(
-    private intlService: IntlService,
-    @Inject(APP_PROTOCOL)
-    private readonly appProtocol: string,
-  ) {}
+  constructor(private intlService: IntlService) {}
 
   shouldSendNotification(type: MessageTypes, profile: UserProfile): boolean {
     switch (type) {
@@ -46,7 +39,7 @@ export class MessageProcessorService {
           title: t.formatMessage(title, formatArgs),
           body: t.formatMessage(body, formatArgs),
           category: 'NEW_DOCUMENT',
-          appURI: `${this.appProtocol}://inbox/${message.documentId}`,
+          appURI: `${appProtocol}://document/${message.documentId}`,
         }
       }
     }

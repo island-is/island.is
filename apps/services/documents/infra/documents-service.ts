@@ -12,13 +12,6 @@ export const serviceSetup = (): ServiceBuilder<'services-documents'> =>
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres: postgresInfo,
     })
-    .env({
-      IDENTITY_SERVER_ISSUER_URL: {
-        dev: 'https://identity-server.dev01.devland.is',
-        staging: 'https://identity-server.staging01.devland.is',
-        prod: 'https://innskra.island.is',
-      },
-    })
     .liveness('/liveness')
     .readiness('/readiness')
     .postgres(postgresInfo)

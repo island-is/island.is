@@ -13,10 +13,6 @@ export {
   formatCourtResubmittedToCourtSmsNotification,
 } from './formatters'
 export { getRequestPdfAsString, getRequestPdfAsBuffer } from './requestPdf'
-export {
-  getCourtRecordPdfAsString,
-  getCourtRecordPdfAsBuffer,
-} from './courtRecordPdf'
 export { getRulingPdfAsString, getRulingPdfAsBuffer } from './rulingPdf'
 export { getCasefilesPdfAsString } from './casefilesPdf'
 export {

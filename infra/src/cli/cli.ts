@@ -1,7 +1,7 @@
 import yargs from 'yargs/yargs'
 import { renderEnv } from './render-env'
 import { renderUrls } from './render-urls'
-import { renderSecrets, renderSecretsCommand } from './render-secrets'
+import { renderSecrets } from './render-secrets'
 import { ChartName, ChartNames, OpsEnvNames } from '../uber-charts/all-charts'
 import { OpsEnv } from '../dsl/types/input-types'
 
@@ -35,7 +35,7 @@ yargs(process.argv.slice(2))
       return yargs.option('service', { demandOption: true })
     },
     async (argv) => {
-      await renderSecretsCommand(argv.service as string)
+      await renderSecrets(argv.service as string)
     },
   )
   .demandCommand(1)

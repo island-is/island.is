@@ -62,7 +62,7 @@ const RulingInput: React.FC<Props> = (props) => {
       onChange={(event) =>
         removeTabsValidateAndSet(
           'ruling',
-          event.target.value,
+          event,
           ['empty'],
           workingCase,
           setWorkingCase,

@@ -72,12 +72,9 @@ export class UserProfileService {
   }
 
   // CREATE TOKEN
-  async addDeviceToken(body: DeviceTokenDto, user: User) {
+  async addDeviceToken(body: DeviceTokenDto) {
     try {
-      return await this.userDeviceTokensModel.create({
-        ...body,
-        nationalId: user.nationalId,
-      })
+      return await this.userDeviceTokensModel.create(body)
     } catch (e) {
       throw new BadRequestException(e.errors)
     }

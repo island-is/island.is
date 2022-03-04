@@ -42,7 +42,7 @@ const LinkComponent = ({
 }
 
 interface Props {
-  text: MessageDescriptor | string
+  text: MessageDescriptor
   format?: { [key: string]: string | number }
   textProps?: TextProps
 }
@@ -57,7 +57,7 @@ const headingOverride = {
 
 const DescriptionText = ({ text, format, textProps }: Props) => {
   const { formatMessage } = useIntl()
-  const markdown = typeof text === 'string' ? text : formatMessage(text, format)
+  const markdown = formatMessage(text, format)
   // markdown-to-jsx is able to handle this in most cases but when using 'formatMessage'
   // it does not work for some reason. That is the reason for this special handling here.
   // We will take a look at this later with the localization team.

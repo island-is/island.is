@@ -96,10 +96,6 @@ const useNavigationTree = (hasIncome: boolean) => {
 
   const spouseSection: FormStepperSection[] = [
     {
-      name: 'Gagnaöflun',
-      url: Routes.application,
-    },
-    {
       name: 'Upplýsingar',
       url: Routes.form.info,
     },

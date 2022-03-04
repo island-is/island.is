@@ -52,7 +52,7 @@ export const Wrapper: FC<WrapperProps> = ({
     textMode: 'dark',
   })
   const [textMode, setTextMode] = useState<TextModes>('light')
-  const showSearchSection = searchTitle && organizationTitle
+  const showSearchSection = searchTitle && logoUrl && organizationTitle
 
   useEffect(() => {
     if (institutionSlug in config) {
@@ -68,7 +68,6 @@ export const Wrapper: FC<WrapperProps> = ({
     <>
       <Head>
         <title>{pageTitle}</title>
-        <meta name="robots" content="noindex, nofollow" />
       </Head>
       <ServiceWebContext.Provider value={{ textMode, institutionSlug }}>
         <ServiceWebHeader

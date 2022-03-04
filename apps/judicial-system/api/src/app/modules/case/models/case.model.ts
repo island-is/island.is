@@ -248,5 +248,5 @@ export class Case implements TCase {
   readonly caseFiles?: CaseFile[]
 
   @Field({ nullable: true })
-  readonly caseModifiedExplanation?: string
+  readonly isMasked?: boolean
 }

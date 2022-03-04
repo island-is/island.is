@@ -325,22 +325,9 @@ export const m = defineMessages({
     id: 'service.portal:detail-info',
     defaultMessage: 'Nánari upplýsingar',
   },
-  myRegistration: {
-    id: 'service.portal:my-registration',
-    defaultMessage: 'Mín skráning',
-  },
-  baseInfo: {
-    id: 'service.portal:base-info',
-    defaultMessage: 'Grunnupplýsingar',
-  },
-
   family: {
     id: 'service.portal:family',
     defaultMessage: 'Fjölskyldan',
-  },
-  familyNumber: {
-    id: 'service.portal:family-number',
-    defaultMessage: 'Fjölskyldunúmer',
   },
   endorsements: {
     id: 'service.portal:endorsements',
@@ -368,7 +355,7 @@ export const m = defineMessages({
   },
   licenses: {
     id: 'service.portal:licenses',
-    defaultMessage: 'Skírteini',
+    defaultMessage: 'Skilríki',
   },
   finance: {
     id: 'service.portal:finance',
@@ -414,10 +401,6 @@ export const m = defineMessages({
   settings: {
     id: 'service.portal:settings',
     defaultMessage: 'Stillingar',
-  },
-  mySettings: {
-    id: 'service.portal:my-settings',
-    defaultMessage: 'Mínar stillingar',
   },
   delegation: {
     id: 'service.portal:delegation',
@@ -531,7 +514,7 @@ export const m = defineMessages({
   },
   personalInformation: {
     id: 'service.portal:personalInformation',
-    defaultMessage: 'Mínar stillingar',
+    defaultMessage: 'Persónuupplýsingar',
   },
   language: {
     id: 'service.portal:language',
@@ -539,7 +522,7 @@ export const m = defineMessages({
   },
   confirmCode: {
     id: 'service.portal:confirm-code',
-    defaultMessage: 'Staðfesta kóða',
+    defaultMessage: 'Senda staðfestingarkóða',
   },
   telNumber: {
     id: 'service.portal:tel',
@@ -572,10 +555,6 @@ export const m = defineMessages({
   finishLater: {
     id: 'service.portal:finish-later',
     defaultMessage: 'Klára seinna',
-  },
-  bankInfoRequired: {
-    id: 'service.portal:bank-info-required',
-    defaultMessage: 'Skylda er að fylla inn alla reiti fyrir bankaupplýsingar',
   },
   digitalIceland: {
     id: 'service.portal:digital-iceland',
@@ -626,10 +605,6 @@ export const m = defineMessages({
   islykill: {
     id: 'service.portal:islykill',
     defaultMessage: 'Íslykill',
-  },
-  saveInfo: {
-    id: 'service.portal:saveInfo',
-    defaultMessage: 'Vista upplýsingar',
   },
   altText: {
     id: 'service.portal:alt-text',

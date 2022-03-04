@@ -27,15 +27,18 @@ jest.mock('winston-cloudwatch', () => {
 
 const defaultNamespace = '@test.is'
 
-const auth = {
+const auth: User = {
   nationalId: '1234567890',
   actor: {
     nationalId: '2234567890',
+    scope: [],
   },
+  scope: [],
+  authorization: '',
   client: 'test-client',
   ip: '12.12.12.12',
   userAgent: 'Test agent',
-} as User
+}
 
 describe('AuditService against Cloudwatch', () => {
   const genericLogger = mock<Logger>()

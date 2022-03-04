@@ -5,7 +5,7 @@ import { IsString } from 'class-validator'
 export class GetFinancialOverviewInput {
   @Field()
   @IsString()
-  orgID!: string
+  OrgID!: string
 
   @Field()
   @IsString()

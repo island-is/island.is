@@ -15,10 +15,6 @@ export type UpdateUserProfileData = {
   mobilePhoneNumber?: string
   canNudge?: boolean
   bankInfo?: string
-  emailStatus?: string
-  mobileStatus?: string
-  emailCode?: string
-  smsCode?: string
 }
 
 export const useUpdateUserProfile = () => {
@@ -48,10 +44,6 @@ export const useUpdateUserProfile = () => {
     if (data.mobilePhoneNumber) input.mobilePhoneNumber = data.mobilePhoneNumber
     if (data.canNudge !== undefined) input.canNudge = data.canNudge
     if (data.bankInfo) input.bankInfo = data.bankInfo
-    if (data.emailStatus) input.emailStatus = data.emailStatus
-    if (data.mobileStatus) input.mobileStatus = data.mobileStatus
-    if (data.emailCode) input.emailCode = data.emailCode
-    if (data.smsCode) input.smsCode = data.smsCode
 
     return updateUserProfileMutation({
       variables: {

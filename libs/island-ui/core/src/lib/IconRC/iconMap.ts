@@ -59,7 +59,6 @@ export type Icon =
   | 'warning'
   | 'reload'
   | 'remove'
-  | 'QRCode'
 
 export default {
   filled: {
@@ -122,7 +121,6 @@ export default {
     reload: 'Reload',
     remove: 'Remove',
     time: 'Time',
-    QRCode: 'QRCodeOutline',
   },
   outline: {
     accessibility: 'AccessibilityOutline',
@@ -184,6 +182,5 @@ export default {
     reload: 'ReloadOutline',
     remove: 'Remove',
     time: 'TimeOutline',
-    QRCode: 'QRCodeOutline',
   },
 }

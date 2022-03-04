@@ -2,11 +2,12 @@ import { generateYamlForEnv } from '../dsl/serialize-to-yaml'
 import { UberChart } from '../dsl/uber-chart'
 import { Envs } from '../environments'
 import { charts } from '../uber-charts/all-charts'
-import { SSM } from '@aws-sdk/client-ssm'
+import { SSM } from 'aws-sdk'
 
 const API_INITIALIZATION_OPTIONS = {
   region: 'eu-west-1',
-  maxAttempts: 10,
+  maxRetries: 10,
+  retryDelayOptions: { base: 200 },
 }
 
 const EXCLUDED_ENVIRONMENT_NAMES = [
@@ -16,19 +17,6 @@ const EXCLUDED_ENVIRONMENT_NAMES = [
 ]
 
 const client = new SSM(API_INITIALIZATION_OPTIONS)
-
-export const renderSecretsCommand = async (service: string) => {
-  renderSecrets(service).catch((error) => {
-    if (error.name === 'CredentialsProviderError') {
-      console.error(
-        'Could not load AWS credentials from any providers. Did you forget to configure environment variables, aws profile or run `aws sso login`?',
-      )
-    } else {
-      console.error(error)
-    }
-    process.exit(1)
-  })
-}
 
 export const renderSecrets = async (service: string) => {
   const urls: string[] = []
@@ -69,7 +57,7 @@ const getParams = async (
 
   const allParams = await Promise.all(
     chunks.map((Names) =>
-      client.getParameters({ Names, WithDecryption: true }),
+      client.getParameters({ Names, WithDecryption: true }).promise(),
     ),
   )
   return allParams

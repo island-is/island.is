@@ -6,15 +6,15 @@ import {
   ISODate,
   RegQueryName,
   Year,
-  Regulation,
-  RegulationDiff,
-  LawChapterTree,
-  MinistryList,
-  RegulationRedirect,
 } from '@island.is/regulations'
 import {
+  Regulation,
+  RegulationDiff,
+  RegulationLawChapterTree,
   RegulationListItem,
+  RegulationMinistryList,
   RegulationOriginalDates,
+  RegulationRedirect,
   RegulationSearchResults,
   RegulationViewTypes,
   RegulationYears,
@@ -109,15 +109,15 @@ export class RegulationsService extends RESTDataSource {
     return response
   }
 
-  async getRegulationsMinistries(): Promise<MinistryList | null> {
-    const response = await this.get<MinistryList | null>(`ministries`)
+  async getRegulationsMinistries(): Promise<RegulationMinistryList | null> {
+    const response = await this.get<RegulationMinistryList | null>(`ministries`)
     return response
   }
 
   async getRegulationsLawChapters(
     tree: boolean,
-  ): Promise<LawChapterTree | null> {
-    const response = await this.get<LawChapterTree | null>(
+  ): Promise<RegulationLawChapterTree | null> {
+    const response = await this.get<RegulationLawChapterTree | null>(
       `lawchapters${tree ? '/tree' : ''}`,
     )
     return response

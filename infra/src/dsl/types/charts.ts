@@ -9,7 +9,6 @@ export interface UberChartType {
 
 export interface EnvironmentConfig {
   auroraHost: string
-  auroraReplica?: string
   domain: string
   releaseName: string
   defaultMaxReplicas: number

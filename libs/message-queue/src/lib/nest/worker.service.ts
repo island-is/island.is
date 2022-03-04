@@ -73,7 +73,7 @@ export class WorkerService implements OnModuleDestroy {
     messages: Message[],
     messageHandler: MessageHandler<T>,
   ) {
-    this.logger.info(`Processing ${messages.length} message(s)`)
+    this.logger.debug(`Processing ${messages.length} message(s)`)
 
     const results: boolean[] = await Promise.all(
       messages.map(async (msg) => {
@@ -83,7 +83,7 @@ export class WorkerService implements OnModuleDestroy {
           await messageHandler(JSON.parse(msg.Body ?? ''), job)
           return true
         } catch (e) {
-          this.logger.error('Worker exception', e, { messageId: msg.MessageId })
+          this.logger.error(e)
           return false
         }
       }),
@@ -96,7 +96,7 @@ export class WorkerService implements OnModuleDestroy {
   private async deleteMessageBatch(messages: Message[]) {
     if (messages.length === 0) return
 
-    this.logger.info(`Confirming delivery of ${messages.length} message(s)`)
+    this.logger.debug(`Confirming delivery of ${messages.length} message(s)`)
     await this.client.deleteMessages(this.queue.url, messages)
   }
 

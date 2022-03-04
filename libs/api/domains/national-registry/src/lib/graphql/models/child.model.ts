@@ -73,7 +73,4 @@ export class NationalRegistryChild {
 
   @Field(() => String, { nullable: true })
   postal?: string
-
-  @Field(() => String, { nullable: true })
-  fate?: string
 }

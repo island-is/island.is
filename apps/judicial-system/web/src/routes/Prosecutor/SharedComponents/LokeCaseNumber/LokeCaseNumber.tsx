@@ -39,7 +39,7 @@ const LokeCaseNumber: React.FC<Props> = (props) => {
         onChange={(event) =>
           removeTabsValidateAndSet(
             'policeCaseNumber',
-            event.target.value,
+            event,
             ['empty', 'police-casenumber-format'],
             workingCase,
             setWorkingCase,

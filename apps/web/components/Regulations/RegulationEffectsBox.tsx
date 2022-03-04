@@ -1,11 +1,8 @@
 import React from 'react'
 import * as s from './RegulationsSidebarBox.css'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
-import {
-  interpolate,
-  prettyName,
-  RegulationMaybeDiff,
-} from '@island.is/regulations'
+import { interpolate, prettyName } from '@island.is/regulations'
+import { RegulationMaybeDiff } from '@island.is/regulations/web'
 import {
   RegulationsSidebarBox,
   RegulationsSidebarLink,

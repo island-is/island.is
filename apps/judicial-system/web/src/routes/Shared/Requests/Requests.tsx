@@ -18,13 +18,19 @@ import {
   isRestrictionCase,
   UserRole,
 } from '@island.is/judicial-system/types'
+import {
+  getCustodyAndTravelBanProsecutorSection,
+  getInvestigationCaseProsecutorSection,
+  getInvestigationCaseCourtSections,
+  getCourtSections,
+  findLastValidStep,
+} from '@island.is/judicial-system-web/src/utils/sections'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseData } from '@island.is/judicial-system-web/src/types'
 import { requests as m } from '@island.is/judicial-system-web/messages/Core/requests'
-import useSections from '@island.is/judicial-system-web/src/utils/hooks/useSections'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
@@ -38,14 +44,6 @@ export const Requests: React.FC = () => {
   const [pastCases, setPastCases] = useState<Case[]>()
 
   const { user } = useContext(UserContext)
-  const {
-    findLastValidStep,
-    getCourtSections,
-    getInvestigationCaseCourtSections,
-    getCustodyAndTravelBanProsecutorSection,
-    getInvestigationCaseProsecutorSection,
-  } = useSections()
-
   const isProsecutor = user?.role === UserRole.PROSECUTOR
   const isJudge = user?.role === UserRole.JUDGE
   const isRegistrar = user?.role === UserRole.REGISTRAR

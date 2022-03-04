@@ -16,18 +16,18 @@ export class GetPagingTypes {
 
   @IsString()
   @Field({ nullable: true })
-  cursor?: string
+  cursor?: string | null
 
   @Field({ nullable: true })
-  limit?: number
+  limit?: number | null
 }
 
 @InputType()
 export class GetMultiPropertyInput {
   @IsString()
   @Field({ nullable: true })
-  cursor?: string
+  cursor?: string | null
 
   @Field({ nullable: true })
-  limit?: number
+  limit?: number | null
 }

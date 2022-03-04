@@ -8,12 +8,12 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
-import { TemplateApiModuleActionProps } from '../../../types'
 import {
   PublicDebtPaymentPlanPayment,
   PublicDebtPaymentPlanPaymentCollection,
   PublicDebtPaymentPlanPrerequisites,
-} from './types'
+  TemplateApiModuleActionProps,
+} from '../../../types'
 
 @Injectable()
 export class PublicDebtPaymentPlanTemplateService {

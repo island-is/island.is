@@ -61,7 +61,7 @@ describe('FileController - Upload case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const key = `${caseId}/${uuid()}/test.txt`
     const caseFile = {
       id: fileId,
       state: CaseFileState.STORED_IN_RVG,
@@ -84,7 +84,7 @@ describe('FileController - Upload case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const key = `${caseId}/${uuid()}/test.txt`
     const caseFile = {
       id: fileId,
       state: CaseFileState.STORED_IN_RVG,
@@ -108,8 +108,7 @@ describe('FileController - Upload case file to court', () => {
   describe('file upload to court', () => {
     const caseId = uuid()
     const courtId = uuid()
-    const courtCaseNumber = 'R-999/2021'
-    const theCase = { id: caseId, courtId, courtCaseNumber } as Case
+    const theCase = { id: caseId, courtId } as Case
     const fileId = uuid()
     const fileName = 'test.txt'
     const fileType = 'text/plain'
@@ -120,10 +119,10 @@ describe('FileController - Upload case file to court', () => {
       state: CaseFileState.STORED_IN_RVG,
     } as CaseFile
     const content = Buffer.from('Test content')
-    let mockCreateDocument: jest.Mock
+    let mockUploadStream: jest.Mock
 
     beforeEach(async () => {
-      mockCreateDocument = mockCourtService.createDocument as jest.Mock
+      mockUploadStream = mockCourtService.uploadStream as jest.Mock
       const mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
       mockObjectExists.mockResolvedValueOnce(true)
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
@@ -133,13 +132,50 @@ describe('FileController - Upload case file to court', () => {
     })
 
     it('should upload the file to court', () => {
+      expect(mockUploadStream).toHaveBeenLastCalledWith(
+        courtId,
+        fileName,
+        fileType,
+        content,
+      )
+    })
+  })
+
+  describe('document creation at court', () => {
+    const caseId = uuid()
+    const courtId = uuid()
+    const courtCaseNumber = 'R-999/2021'
+    const theCase = { id: caseId, courtId, courtCaseNumber } as Case
+    const fileId = uuid()
+    const fileName = 'test.txt'
+    const caseFile = {
+      id: fileId,
+      name: fileName,
+      state: CaseFileState.STORED_IN_RVG,
+    } as CaseFile
+    const content = Buffer.from('Test content')
+    const streamId = uuid()
+    let mockCreateDocument: jest.Mock
+
+    beforeEach(async () => {
+      mockCreateDocument = mockCourtService.createDocument as jest.Mock
+      const mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
+      mockObjectExists.mockResolvedValueOnce(true)
+      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
+      mockGetObject.mockResolvedValueOnce(content)
+      const mockUploadStream = mockCourtService.uploadStream as jest.Mock
+      mockUploadStream.mockResolvedValueOnce(streamId)
+
+      await givenWhenThen(caseId, fileId, theCase, caseFile)
+    })
+
+    it('should create a document in court', () => {
       expect(mockCreateDocument).toHaveBeenCalledWith(
         courtId,
         courtCaseNumber,
         fileName,
         fileName,
-        fileType,
-        content,
+        streamId,
       )
     })
   })
@@ -180,7 +216,7 @@ describe('FileController - Upload case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const key = `${caseId}/${uuid()}/test.txt`
     const caseFile = {
       id: fileId,
       state: CaseFileState.STORED_IN_RVG,
@@ -388,6 +424,34 @@ describe('FileController - Upload case file to court', () => {
   })
 
   describe('file upload to court fails', () => {
+    const caseId = uuid()
+    const theCase = { id: caseId } as Case
+    const fileId = uuid()
+    const caseFile = {
+      id: fileId,
+      state: CaseFileState.STORED_IN_RVG,
+    } as CaseFile
+    const content = Buffer.from('Test content')
+    let then: Then
+
+    beforeEach(async () => {
+      const mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
+      mockObjectExists.mockResolvedValueOnce(true)
+      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
+      mockGetObject.mockResolvedValueOnce(content)
+      const mockUploadStream = mockCourtService.uploadStream as jest.Mock
+      mockUploadStream.mockRejectedValueOnce(new Error('Some error'))
+
+      then = await givenWhenThen(caseId, fileId, theCase, caseFile)
+    })
+
+    it('should throw error', () => {
+      expect(then.error).toBeInstanceOf(Error)
+      expect(then.error.message).toBe('Some error')
+    })
+  })
+
+  describe('document creation at court fails', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
