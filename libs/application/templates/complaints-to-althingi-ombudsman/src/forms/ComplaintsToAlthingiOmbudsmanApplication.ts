@@ -39,6 +39,7 @@ import {
   YES,
   NO,
   OmbudsmanComplaintTypeEnum,
+  UPLOAD_ACCEPT,
 } from '../shared/constants'
 import {
   getComplaintType,
@@ -276,6 +277,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                 id: 'complainedForInformation.titleField',
                 title: complainedFor.information.fieldTitle,
                 component: 'FieldTitle',
+                doesNotRequireAnswer: true,
               },
               {
                 marginTop: 7,
@@ -296,6 +298,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                 id: 'complainedForInformation.uploadTitleField',
                 title: complainedFor.labels.powerOfAttorney,
                 component: 'FieldTitle',
+                doesNotRequireAnswer: true,
               },
               {
                 marginTop: 7,
@@ -306,6 +309,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               id: 'complainedForInformation.powerOfAttorney',
               title: '',
               introduction: '',
+              uploadAccept: UPLOAD_ACCEPT,
               uploadHeader: attachments.uploadHeader,
               uploadDescription: attachments.uploadDescription,
               uploadButtonLabel: attachments.uploadButtonLabel,
@@ -373,6 +377,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                   title: complaintInformation.alertMessageTitle,
                   component: 'FieldAlertMessage',
                   description: complaintInformation.decisionAlertMessage,
+                  doesNotRequireAnswer: true,
                   condition: (answers) =>
                     getComplaintType(answers) ===
                     OmbudsmanComplaintTypeEnum.DECISION,
@@ -382,6 +387,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                   title: complaintInformation.alertMessageTitle,
                   component: 'FieldAlertMessage',
                   description: complaintInformation.proceedingsAlertMessage,
+                  doesNotRequireAnswer: true,
                   condition: (answers) =>
                     getComplaintType(answers) ===
                     OmbudsmanComplaintTypeEnum.PROCEEDINGS,
@@ -486,6 +492,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               title: preexistingComplaint.alertMessage.title,
               component: 'FieldAlertMessage',
               description: preexistingComplaint.alertMessage.description,
+              doesNotRequireAnswer: true,
               condition: (answers) => answers.preexistingComplaint === YES,
             }),
           ],
@@ -508,6 +515,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               title: courtAction.alertTitle,
               description: courtAction.alertText,
               component: 'FieldAlertMessage',
+              doesNotRequireAnswer: true,
               condition: (answers) => answers.courtActionAnswer === YES,
             }),
           ],
@@ -541,6 +549,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
                 id: 'overview',
                 title: complaintOverview.general.title,
                 component: 'ComplaintOverview',
+                doesNotRequireAnswer: true,
               },
               { isEditable: true },
             ),
@@ -567,6 +576,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
           id: 'successfulSubmission',
           title: confirmation.general.sectionTitle,
           component: 'ConfirmationScreen',
+          doesNotRequireAnswer: true,
         }),
       ],
     }),
