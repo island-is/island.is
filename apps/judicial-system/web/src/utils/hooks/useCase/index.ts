@@ -318,7 +318,7 @@ const useCase = () => {
 
   const autofill = useMemo(
     () => (key: keyof autofillProperties, value: string, workingCase: Case) => {
-      if (!workingCase[key]) {
+      if (workingCase[key] === undefined || workingCase[key] === null) {
         workingCase[key] = value
 
         if (workingCase[key]) {

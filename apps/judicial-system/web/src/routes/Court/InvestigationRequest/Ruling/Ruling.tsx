@@ -1,18 +1,17 @@
 import React, { useContext, useEffect } from 'react'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
-import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import {
   CourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 
-import RulingStepTwoForm from './RulingStepTwoForm'
+import RulingForm from './RulingForm'
 
-const RulingStepTwo = () => {
+const Ruling = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -20,7 +19,6 @@ const RulingStepTwo = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
-  const { user } = useContext(UserContext)
 
   const { autofill } = useCase()
 
@@ -30,15 +28,20 @@ const RulingStepTwo = () => {
 
   useEffect(() => {
     if (isCaseUpToDate) {
-      if (
-        isAcceptingCaseDecision(workingCase.decision) &&
-        workingCase.demands
-      ) {
-        autofill('conclusion', workingCase.demands, workingCase)
+      if (workingCase.caseFacts) {
+        autofill('courtCaseFacts', workingCase.caseFacts, workingCase)
       }
 
-      setWorkingCase(workingCase)
+      if (workingCase.legalArguments) {
+        autofill('courtLegalArguments', workingCase.legalArguments, workingCase)
+      }
     }
+
+    if (isAcceptingCaseDecision(workingCase.decision) && workingCase.demands) {
+      autofill('conclusion', workingCase.demands, workingCase)
+    }
+
+    setWorkingCase(workingCase)
   }, [autofill, isCaseUpToDate, setWorkingCase, workingCase])
 
   return (
@@ -47,18 +50,18 @@ const RulingStepTwo = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.RULING_STEP_TWO}
+      activeSubSection={CourtSubsections.RULING}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <RulingStepTwoForm
+      <RulingForm
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
         isLoading={isLoadingWorkingCase}
-        user={user}
+        isCaseUpToDate={isCaseUpToDate}
       />
     </PageLayout>
   )
 }
 
-export default RulingStepTwo
+export default Ruling
