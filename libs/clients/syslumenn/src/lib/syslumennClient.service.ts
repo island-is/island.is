@@ -199,6 +199,7 @@ export class SyslumennService {
     return certificate
   }
 
+  //TODOx update check for exists and hasKMarking when endpoint from Syslumenn works
   async validateMortgageCertificate(
     propertyNumber: string,
   ): Promise<MortgageCertificateValidation> {
@@ -207,13 +208,13 @@ export class SyslumennService {
       const certificate = await this.getMortgageCertificate(propertyNumber)
 
       return {
-        exists: propertyNumber === 'F2000865' || propertyNumber === 'F2066490', //TODOx certificate.contentBase64.length !== 0,
-        hasKMarking: propertyNumber === 'F2000865', //TODOx vantar info frá syslumenn
+        exists: certificate.contentBase64.length !== 0,
+        hasKMarking: true,
       }
     } catch (exception) {
       return {
         exists: false,
-        hasKMarking: false, //TODOx vantar info frá syslumenn
+        hasKMarking: false,
       }
     }
   }

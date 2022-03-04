@@ -36,7 +36,7 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.MortgageCertificate.translation,
   ],
   dataSchema: MortgageCertificateSchema,
-  //readyForProduction: true, //TODOx
+  readyForProduction: true,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
