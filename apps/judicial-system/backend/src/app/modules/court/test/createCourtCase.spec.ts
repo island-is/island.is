@@ -3,7 +3,7 @@ import formatISO from 'date-fns/formatISO'
 import each from 'jest-each'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
-import { CaseType } from '@island.is/judicial-system/types'
+import { CaseType, User } from '@island.is/judicial-system/types'
 
 import { randomBoolean, randomDate, randomEnum } from '../../../test'
 import { subTypes } from '../court.service'
@@ -15,6 +15,8 @@ interface Then {
 }
 
 type GivenWhenThen = (
+  user: User,
+  caseId: string,
   courtId: string,
   type: CaseType,
   policeCaseNumber: string,
@@ -39,6 +41,8 @@ describe('CourtService - Create court case', () => {
     mockToday.mockReturnValueOnce(date)
 
     givenWhenThen = async (
+      user: User,
+      caseId: string,
       courtId: string,
       type: CaseType,
       policeCaseNumber: string,
@@ -48,6 +52,8 @@ describe('CourtService - Create court case', () => {
 
       try {
         then.result = await courtService.createCourtCase(
+          user,
+          caseId,
           courtId,
           type,
           policeCaseNumber,
@@ -77,12 +83,21 @@ describe('CourtService - Create court case', () => {
     ${CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION}
     ${CaseType.OTHER}
   `.describe('court case created for $type', ({ type }) => {
+    const user = {} as User
+    const caseId = uuid()
     const courtId = uuid()
     const policeCaseNumber = uuid()
     const isExtension = false
 
     beforeEach(async () => {
-      await givenWhenThen(courtId, type, policeCaseNumber, isExtension)
+      await givenWhenThen(
+        user,
+        caseId,
+        courtId,
+        type,
+        policeCaseNumber,
+        isExtension,
+      )
     })
 
     it('should create a court case', () => {
@@ -102,12 +117,21 @@ describe('CourtService - Create court case', () => {
     ${CaseType.CUSTODY}
     ${CaseType.TRAVEL_BAN}
   `.describe('extendable court case created for $type', ({ type }) => {
+    const user = {} as User
+    const caseId = uuid()
     const courtId = uuid()
     const policeCaseNumber = uuid()
     const isExtension = false
 
     beforeEach(async () => {
-      await givenWhenThen(courtId, type, policeCaseNumber, isExtension)
+      await givenWhenThen(
+        user,
+        caseId,
+        courtId,
+        type,
+        policeCaseNumber,
+        isExtension,
+      )
     })
 
     it('should create a court case', () => {
@@ -127,12 +151,21 @@ describe('CourtService - Create court case', () => {
     ${CaseType.CUSTODY}
     ${CaseType.TRAVEL_BAN}
   `.describe('extended court case created for $type', ({ type }) => {
+    const user = {} as User
+    const caseId = uuid()
     const courtId = uuid()
     const policeCaseNumber = uuid()
     const isExtension = true
 
     beforeEach(async () => {
-      await givenWhenThen(courtId, type, policeCaseNumber, isExtension)
+      await givenWhenThen(
+        user,
+        caseId,
+        courtId,
+        type,
+        policeCaseNumber,
+        isExtension,
+      )
     })
 
     it('should create a court case', () => {
@@ -148,6 +181,8 @@ describe('CourtService - Create court case', () => {
   })
 
   describe('court case number returned', () => {
+    const user = {} as User
+    const caseId = uuid()
     const courtId = uuid()
     const type = randomEnum(CaseType)
     const policeCaseNumber = uuid()
@@ -159,7 +194,14 @@ describe('CourtService - Create court case', () => {
       const mockCreateCase = mockCourtClientService.createCase as jest.Mock
       mockCreateCase.mockResolvedValueOnce(courtCaseNumber)
 
-      then = await givenWhenThen(courtId, type, policeCaseNumber, isExtension)
+      then = await givenWhenThen(
+        user,
+        caseId,
+        courtId,
+        type,
+        policeCaseNumber,
+        isExtension,
+      )
     })
 
     it('should return a court case number', () => {
@@ -168,6 +210,8 @@ describe('CourtService - Create court case', () => {
   })
 
   describe('create court case failes', () => {
+    const user = {} as User
+    const caseId = uuid()
     const courtId = uuid()
     const type = randomEnum(CaseType)
     const policeCaseNumber = uuid()
@@ -178,7 +222,14 @@ describe('CourtService - Create court case', () => {
       const mockCreateCase = mockCourtClientService.createCase as jest.Mock
       mockCreateCase.mockRejectedValueOnce(new Error('Some error'))
 
-      then = await givenWhenThen(courtId, type, policeCaseNumber, isExtension)
+      then = await givenWhenThen(
+        user,
+        caseId,
+        courtId,
+        type,
+        policeCaseNumber,
+        isExtension,
+      )
     })
 
     it('should throw Error', () => {
