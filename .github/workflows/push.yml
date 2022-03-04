@@ -26,7 +26,7 @@ env:
 jobs:
   pre-checks:
     name: Check if job should run
-    runs-on: self-hosted
+    runs-on: ec2-runners
     env:
       CREATE_PATTERNS: ^release/
     outputs:
@@ -362,7 +362,7 @@ jobs:
     needs:
       - prepare
     if: needs.prepare.outputs.TEST_CHUNKS
-    runs-on: self-hosted
+    runs-on: ec2-runners
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
