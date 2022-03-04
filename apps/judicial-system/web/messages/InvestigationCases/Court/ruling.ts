@@ -24,14 +24,14 @@ export const icRuling = {
       placeholder: {
         id:
           'judicial.system.investigation_cases:ruling.introduction.placeholder',
-        defaultMessage: 'Hver eru aðfararorðin?',
+        defaultMessage:
+          'Hér er m.a. unnt að greina frá því hvaða dag krafa var tekin fyrir og/eða tekin til úrskurðar.',
         description:
           'Notaður sem skýritexti fyrir í "Aðfararorð" textabox á úrskurðar skrefi í rannsóknarheimildum.',
       },
       autofill: {
         id: 'judicial.system.investigation_cases:ruling.introduction.autofill',
-        defaultMessage:
-          'Mál þetta var þingfest og tekið til úrskurðar {courtStartDate}',
+        defaultMessage: 'Mál þetta var tekið til úrskurðar {courtStartDate}.',
         description:
           'Notaður sem sjálfgefinn texti í "Aðfararorð" textabox á úrskurðar skrefi í rannsóknarheimildum.',
       },

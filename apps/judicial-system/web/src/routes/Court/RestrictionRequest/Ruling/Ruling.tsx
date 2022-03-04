@@ -105,7 +105,7 @@ export const Ruling: React.FC = () => {
       autofill(
         'introduction',
         formatMessage(m.sections.introduction.autofill, {
-          courtStartDate: `${formatDate(theCase.courtStartDate, 'PPP')}.`,
+          courtStartDate: formatDate(theCase.courtStartDate, 'PPP'),
         }),
         theCase,
       )

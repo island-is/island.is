@@ -35,7 +35,7 @@ const Ruling = () => {
       autofill(
         'introduction',
         formatMessage(m.sections.introduction.autofill, {
-          courtStartDate: `${formatDate(workingCase.courtStartDate, 'PPP')}.`,
+          courtStartDate: formatDate(workingCase.courtStartDate, 'PPP'),
         }),
         workingCase,
       )
