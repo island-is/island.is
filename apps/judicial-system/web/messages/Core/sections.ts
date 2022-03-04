@@ -125,19 +125,12 @@ export const sections = {
       description:
         'Notaður sem texti fyrir Þingbók skref í hliðarstiku í rannsóknarheimildum hjá héraðsdómum',
     },
-    rulingStepOne: {
+    ruling: {
       id:
-        'judicial.system.core:sections.investigation_case_court_section.ruling_step_one',
+        'judicial.system.core:sections.investigation_case_court_section.ruling',
       defaultMessage: 'Úrskurður',
       description:
         'Notaður sem texti fyrir Úrskurður skref í hliðarstiku í rannsóknarheimildum hjá héraðsdómum',
-    },
-    rulingStepTwo: {
-      id:
-        'judicial.system.core:sections.investigation_case_court_section.ruling_step_two',
-      defaultMessage: 'Úrskurðarorð',
-      description:
-        'Notaður sem texti fyrir Úrskurðarorð skref í hliðarstiku í rannsóknarheimildum hjá héraðsdómum',
     },
     conclusion: {
       id:
@@ -179,17 +172,11 @@ export const sections = {
       description:
         'Notaður sem texti fyrir Þingbók skref í hliðarstiku í gæslu- og farbannsmálum hjá héraðsdómum',
     },
-    rulingStepOne: {
-      id: 'judicial.system.core:sections.court_section.ruling_step_one',
+    ruling: {
+      id: 'judicial.system.core:sections.court_section.ruling',
       defaultMessage: 'Úrskurður',
       description:
         'Notaður sem texti fyrir Úrskurður skref í hliðarstiku í gæslu- og farbannsmálum hjá héraðsdómum',
-    },
-    rulingStepTwo: {
-      id: 'judicial.system.core:sections.court_section.ruling_step_two',
-      defaultMessage: 'Úrskurðarorð',
-      description:
-        'Notaður sem texti fyrir Úrskurðarorð skref í hliðarstiku í gæslu- og farbannsmálum hjá héraðsdómum',
     },
     conclusion: {
       id: 'judicial.system.core:sections.court_section.conclusion',
