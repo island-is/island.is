@@ -132,6 +132,7 @@ export class CaseController {
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
     @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Body() caseToUpdate: UpdateCaseDto,
   ): Promise<Case | null> {
@@ -183,7 +184,7 @@ export class CaseController {
     ) {
       // TODO: Find a better place for this
       // No need to wait for the upload
-      this.caseService.uploadRequestPdfToCourt(updatedCase)
+      this.caseService.uploadRequestPdfToCourt(updatedCase, user)
     }
 
     return updatedCase
@@ -487,6 +488,7 @@ export class CaseController {
 
     return this.caseService.getRulingSignatureConfirmation(
       theCase,
+      user,
       documentToken,
     )
   }
@@ -525,10 +527,11 @@ export class CaseController {
   })
   async createCourtCase(
     @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
   ): Promise<Case> {
     this.logger.debug(`Creating a court case for case ${caseId}`)
 
-    return this.caseService.createCourtCase(theCase)
+    return this.caseService.createCourtCase(theCase, user)
   }
 }

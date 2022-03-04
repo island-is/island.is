@@ -12,6 +12,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { CaseFileState } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import { writeFile } from '../../formatters'
@@ -63,6 +64,8 @@ export class FileService {
 
   private async throttleUploadStream(
     file: CaseFile,
+    user: User,
+    caseId: string,
     courtId?: string,
     courtCaseNumber?: string,
   ): Promise<string> {
@@ -77,8 +80,10 @@ export class FileService {
     }
 
     return this.courtService.createDocument(
-      courtId,
-      courtCaseNumber,
+      user,
+      caseId,
+      courtId ?? '',
+      courtCaseNumber ?? '',
       file.name,
       file.name,
       file.type,
@@ -179,9 +184,11 @@ export class FileService {
   }
 
   async uploadCaseFileToCourt(
-    courtId: string | undefined,
-    courtCaseNumber: string | undefined,
+    user: User,
     file: CaseFile,
+    caseId: string,
+    courtId?: string,
+    courtCaseNumber?: string,
   ): Promise<UploadFileToCourtResponse> {
     if (file.state === CaseFileState.STORED_IN_COURT) {
       throw new BadRequestException(
@@ -205,7 +212,13 @@ export class FileService {
       throw new NotFoundException(`File ${file.id} does not exists in AWS S3`)
     }
 
-    this.throttle = this.throttleUploadStream(file, courtId, courtCaseNumber)
+    this.throttle = this.throttleUploadStream(
+      file,
+      user,
+      caseId,
+      courtId,
+      courtCaseNumber,
+    )
 
     const documentId = await this.throttle
 

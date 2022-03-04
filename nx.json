@@ -160,6 +160,9 @@
     "api-schema": {
       "tags": []
     },
+    "application-api-core": {
+      "tags": []
+    },
     "application-core": {
       "tags": []
     },
@@ -543,6 +546,9 @@
       "tags": []
     },
     "nest-audit": {
+      "tags": []
+    },
+    "nest-aws": {
       "tags": []
     },
     "nest-config": {
