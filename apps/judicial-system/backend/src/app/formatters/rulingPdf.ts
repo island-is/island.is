@@ -65,12 +65,7 @@ function constructRulingPdf(
     }),
   )
   setLineGap(doc, 1)
-  addNormalJustifiedText(
-    doc,
-    formatMessage(ruling.intro, {
-      courtStartDate: formatDate(theCase.courtStartDate, 'PPP'),
-    }),
-  )
+  addNormalJustifiedText(doc, theCase.introduction ?? '')
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
