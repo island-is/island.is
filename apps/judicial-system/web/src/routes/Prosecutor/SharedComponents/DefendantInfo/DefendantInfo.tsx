@@ -90,12 +90,12 @@ const DefendantInfo: React.FC<Props> = (props) => {
   }
 
   useEffect(() => {
-    if (personError || personData?.items.length === 0) {
+    if (personError || (personData && personData.items?.length === 0)) {
       setNationalIdNotFound(true)
       return
     }
 
-    if (personData && personData.items.length > 0) {
+    if (personData && personData.items && personData.items.length > 0) {
       setAccusedNameErrorMessage('')
       setAccusedAddressErrorMessage('')
       setNationalIdErrorMessage('')
@@ -110,12 +110,12 @@ const DefendantInfo: React.FC<Props> = (props) => {
   }, [personData])
 
   useEffect(() => {
-    if (businessError || businessData?.items.length === 0) {
+    if (businessError || (businessData && businessData.items?.length === 0)) {
       setNationalIdNotFound(true)
       return
     }
 
-    if (businessData && businessData.items.length > 0) {
+    if (businessData && businessData.items && businessData.items.length > 0) {
       setAccusedNameErrorMessage('')
       setAccusedAddressErrorMessage('')
       setNationalIdErrorMessage('')

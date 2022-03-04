@@ -13,10 +13,12 @@ import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import {
+  CurrentHttpUser,
   JwtAuthGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import type { User } from '@island.is/judicial-system/types'
 
 import { judgeRule, prosecutorRule, registrarRule } from '../../guards'
 import {
@@ -28,19 +30,16 @@ import {
   CaseReceivedGuard,
   CaseWriteGuard,
 } from '../case'
-import {
-  CaseFileExistsGuard,
-  CurrentCaseFile,
-  ViewCaseFileGuard,
-} from './guards'
-import { CreateFileDto, CreatePresignedPostDto } from './dto'
-import {
-  PresignedPost,
-  CaseFile,
-  DeleteFileResponse,
-  SignedUrl,
-  UploadFileToCourtResponse,
-} from './models'
+import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
+import { CurrentCaseFile } from './guards/caseFile.decorator'
+import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
+import { CreateFileDto } from './dto/createFile.dto'
+import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
+import { PresignedPost } from './models/presignedPost.model'
+import { CaseFile } from './models/file.model'
+import { DeleteFileResponse } from './models/deleteFile.response'
+import { SignedUrl } from './models/signedUrl.model'
+import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { FileService } from './file.service'
 
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -159,15 +158,18 @@ export class FileController {
   uploadCaseFileToCourt(
     @Param('caseId') caseId: string,
     @Param('fileId') fileId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @CurrentCaseFile() caseFile: CaseFile,
   ): Promise<UploadFileToCourtResponse> {
     this.logger.debug(`Uploading file ${fileId} of case ${caseId} to court`)
 
     return this.fileService.uploadCaseFileToCourt(
+      user,
+      caseFile,
+      caseId,
       theCase.courtId,
       theCase.courtCaseNumber,
-      caseFile,
     )
   }
 }

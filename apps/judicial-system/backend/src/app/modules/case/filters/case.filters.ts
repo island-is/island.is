@@ -13,7 +13,7 @@ import {
 } from '@island.is/judicial-system/types'
 import type { User, Case as TCase } from '@island.is/judicial-system/types'
 
-import { Case } from '../models'
+import { Case } from '../models/case.model'
 
 function getBlockedStates(
   role: UserRole,

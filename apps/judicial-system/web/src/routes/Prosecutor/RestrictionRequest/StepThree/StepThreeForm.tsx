@@ -36,8 +36,7 @@ import { isPoliceDemandsStepValidRC } from '@island.is/judicial-system-web/src/u
 import { rcDemands } from '@island.is/judicial-system-web/messages/RestrictionCases/Prosecutor/demandsForm'
 import { core } from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-
+import * as Constants from '@island.is/judicial-system/consts'
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>

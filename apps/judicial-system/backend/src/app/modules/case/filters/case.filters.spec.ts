@@ -12,8 +12,8 @@ import {
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 
+import { Case } from '../models/case.model'
 import { getCasesQueryFilter, isCaseBlockedFromUser } from './case.filters'
-import { Case } from '../models'
 
 describe('isCaseBlockedFromUser', () => {
   each`
@@ -467,6 +467,7 @@ describe('isCaseBlockedFromUser', () => {
     ${CaseType.INTERNET_USAGE}
     ${CaseType.RESTRAINING_ORDER}
     ${CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION}
+    ${CaseType.VIDEO_RECORDING_EQUIPMENT}
     ${CaseType.OTHER}
   `.describe('given an accepted $type case', ({ type }) => {
     each`

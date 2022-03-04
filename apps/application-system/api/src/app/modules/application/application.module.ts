@@ -1,6 +1,5 @@
-import { DynamicModule, Global, Module } from '@nestjs/common'
+import { DynamicModule, Module } from '@nestjs/common'
 import { BullModule as NestBullModule } from '@nestjs/bull'
-import { SequelizeModule } from '@nestjs/sequelize'
 import { FileStorageModule } from '@island.is/file-storage'
 import { createRedisCluster } from '@island.is/cache'
 import { TemplateAPIModule } from '@island.is/application/template-api-modules'
@@ -9,11 +8,9 @@ import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { SigningModule } from '@island.is/dokobit-signing'
 import { AuditModule } from '@island.is/nest/audit'
 
-import { Application } from './application.model'
 import { ApplicationController } from './application.controller'
-import { ApplicationService } from './application.service'
+
 import { FileService } from './files/file.service'
-import { AwsService } from './files/aws.service'
 import { UploadProcessor } from './upload.processor'
 import { environment } from '../../../environments'
 import {
@@ -22,9 +19,10 @@ import {
 } from './application.configuration'
 import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { PaymentModule } from '../payment/payment.module'
-import { ApplicationLifeCycleService } from './lifecycle/application-lifecycle.service'
 import { LoggingModule } from '@island.is/logging'
 import { TemplateApiApplicationService } from './template-api.service'
+import { AwsModule } from '@island.is/nest/aws'
+import { ApplicationApiCoreModule } from '@island.is/application/api/core'
 
 let BullModule: DynamicModule
 
@@ -47,7 +45,6 @@ if (process.env.INIT_SCHEMA === 'true') {
   })
 }
 
-@Global()
 @Module({
   imports: [
     PaymentModule.register({
@@ -59,7 +56,8 @@ if (process.env.INIT_SCHEMA === 'true') {
       ...environment.templateApi,
       applicationService: TemplateApiApplicationService,
     }),
-    SequelizeModule.forFeature([Application]),
+    ApplicationApiCoreModule,
+    AwsModule,
     FileStorageModule.register(environment.fileStorage),
     BullModule,
     SigningModule.register(environment.signingOptions),
@@ -68,17 +66,13 @@ if (process.env.INIT_SCHEMA === 'true') {
   ],
   controllers: [ApplicationController],
   providers: [
-    ApplicationService,
     FileService,
     UploadProcessor,
     {
       provide: APPLICATION_CONFIG,
       useValue: environment.application as ApplicationConfig,
     },
-    AwsService,
     ApplicationAccessService,
-    ApplicationLifeCycleService,
   ],
-  exports: [ApplicationService, APPLICATION_CONFIG, AwsService],
 })
 export class ApplicationModule {}

@@ -38,7 +38,7 @@ import type {
 import { environment } from '../../environments'
 
 @Injectable()
-export class BackendAPI extends DataSource<{ req: Request }> {
+export class BackendApi extends DataSource<{ req: Request }> {
   private headers!: { [key: string]: string }
 
   initialize(config: DataSourceConfig<{ req: Request }>): void {
@@ -170,6 +170,10 @@ export class BackendAPI extends DataSource<{ req: Request }> {
     return this.post(`case/${id}/extend`)
   }
 
+  createCourtCase(id: string): Promise<Case> {
+    return this.post(`case/${id}/court`)
+  }
+
   getCaseNotifications(id: string): Promise<Notification[]> {
     return this.get(`case/${id}/notifications`)
   }
@@ -238,4 +242,4 @@ export class BackendAPI extends DataSource<{ req: Request }> {
   }
 }
 
-export default BackendAPI
+export default BackendApi
