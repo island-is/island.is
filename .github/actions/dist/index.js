@@ -90943,6 +90943,8 @@ const hasFinishedSuccessfulJob = (run, jobName, stepName) => {
     }
     return false;
 };
+// took this from https://www.w3resource.com/javascript-exercises/fundamental/javascript-fundamental-exercise-265.php
+const chunk = (arr, size) => Array.from({ length: Math.ceil(arr.length / size) }, (v, i) => arr.slice(i * size, i * size + size));
 class LocalRunner {
     constructor(octokit) {
         this.octokit = octokit;
@@ -90963,12 +90965,17 @@ class LocalRunner {
             if (changedFiles.length === 0)
                 return [];
             try {
-                const printAffected = (0,external_child_process_.execSync)(`npx nx print-affected --select=projects --files=${changedFiles.join(',')}`, {
+                const printAffected = (0,external_child_process_.spawnSync)(`npx`, [
+                    `nx`,
+                    `print-affected`,
+                    `--select=projects`,
+                    ...chunk(changedFiles, 20).map((chunk) => `--files=${chunk.join(',')}`),
+                ], {
                     encoding: 'utf-8',
                     cwd: git.cwd,
                     shell: git.shell,
                 });
-                let affectedComponents = printAffected
+                let affectedComponents = printAffected.stdout
                     .split(',')
                     .map((s) => s.trim())
                     .filter((c) => c.length > 0);

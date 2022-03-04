@@ -53,16 +53,20 @@ export const ICaseTypes = [
         value: CaseType.BODY_SEARCH,
       },
       {
+        label: 'Myndupptökubúnaði komið fyrir',
+        value: CaseType.VIDEO_RECORDING_EQUIPMENT,
+      },
+      {
         label: 'Nálgunarbann',
         value: CaseType.RESTRAINING_ORDER,
       },
       {
-        label: 'Upplýsingar um vefnotkun',
-        value: CaseType.INTERNET_USAGE,
-      },
-      {
         label: 'Rannsókn á rafrænum gögnum',
         value: CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
+      },
+      {
+        label: 'Upplýsingar um vefnotkun',
+        value: CaseType.INTERNET_USAGE,
       },
       {
         label: 'Annað',
@@ -108,8 +112,7 @@ export const IC_OVERVIEW_ROUTE = '/domur/rannsoknarheimild/yfirlit'
 export const IC_COURT_HEARING_ARRANGEMENTS_ROUTE =
   '/domur/rannsoknarheimild/fyrirtaka'
 export const IC_COURT_RECORD_ROUTE = '/domur/rannsoknarheimild/thingbok'
-export const IC_RULING_STEP_ONE_ROUTE = '/domur/rannsoknarheimild/urskurdur'
-export const IC_RULING_STEP_TWO_ROUTE = '/domur/rannsoknarheimild/urskurdarord'
+export const IC_RULING_ROUTE = '/domur/rannsoknarheimild/urskurdur'
 export const IC_CONFIRMATION_ROUTE = '/domur/rannsoknarheimild/stadfesta'
 
 // Court
@@ -117,8 +120,7 @@ export const RECEPTION_AND_ASSIGNMENT_ROUTE = '/domur/mottaka'
 export const OVERVIEW_ROUTE = '/domur/krafa'
 export const HEARING_ARRANGEMENTS_ROUTE = '/domur/fyrirtokutimi'
 export const COURT_RECORD_ROUTE = '/domur/thingbok'
-export const RULING_STEP_ONE_ROUTE = '/domur/urskurdur'
-export const RULING_STEP_TWO_ROUTE = '/domur/urskurdarord'
+export const RULING_ROUTE = '/domur/urskurdur'
 export const CONFIRMATION_ROUTE = '/domur/stadfesta'
 
 // Feedback
