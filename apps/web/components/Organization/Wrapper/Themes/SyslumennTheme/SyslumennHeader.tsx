@@ -35,27 +35,29 @@ export const SyslumennHeader: React.FC<HeaderProps> = ({
             )
           }
         >
-          <Hidden above="sm">
-            <Link
-              href={
-                linkResolver('organizationpage', [organizationPage.slug]).href
-              }
-              className={styles.iconCircle}
-            >
-              <img
-                src={organizationPage.organization.logo.url}
-                className={styles.headerLogo}
-                alt=""
-              />
-            </Link>
-          </Hidden>
+          {!!organizationPage.organization.logo && (
+            <Hidden above="sm">
+              <Link
+                href={
+                  linkResolver('organizationpage', [organizationPage.slug]).href
+                }
+                className={styles.iconCircle}
+              >
+                <img
+                  src={organizationPage.organization.logo.url}
+                  className={styles.headerLogo}
+                  alt=""
+                />
+              </Link>
+            </Hidden>
+          )}
           <Box marginTop={[2, 2, 6]} textAlign={['center', 'center', 'right']}>
             <Link
               href={
                 linkResolver('organizationpage', [organizationPage.slug]).href
               }
             >
-              <Text variant="h1" color="white">
+              <Text variant="h1" as="h1" color="white">
                 {organizationPage.title}
               </Text>
             </Link>

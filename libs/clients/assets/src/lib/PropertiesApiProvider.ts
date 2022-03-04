@@ -35,8 +35,7 @@ export const PropertiesApiProvider: Provider<FasteignirApi> = {
             )
             return nodeFetch(request)
           },
-        } as EnhancedFetchOptions),
-        // TODO: Remove ^ "as EnhancedFetchOptions" after making API projects strict TS.
+        }),
         basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
         headers: {
           'X-Road-Client': xroadConfig.xRoadClient,

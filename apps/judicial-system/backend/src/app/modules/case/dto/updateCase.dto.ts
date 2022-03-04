@@ -221,12 +221,7 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly accusedBookings?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly litigationPresentations?: string
+  readonly sessionBookings?: string
 
   @IsOptional()
   @IsString()
@@ -312,4 +307,9 @@ export class UpdateCaseDto {
   @IsUUID()
   @ApiPropertyOptional()
   readonly registrarId?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly caseModifiedExplanation?: string
 }

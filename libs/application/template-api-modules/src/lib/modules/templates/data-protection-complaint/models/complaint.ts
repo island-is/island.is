@@ -1,24 +1,26 @@
 import {
   NO,
+  OnBehalf,
   YES,
 } from '@island.is/application/templates/data-protection-complaint'
+import { DocumentInfo } from '@island.is/clients/data-protection-complaint'
 
-export interface ComplaintDto {
+export interface ComplaintPDF {
   applicantInfo: {
     name: string
     nationalId: string
   }
-  onBehalf: string //"myself | myself and others | others | stofnanir og felagsamtok",
+  onBehalf: OnBehalf //"myself | myself and others | others | stofnanir og felagsamtok",
   agency: {
-    files: string[]
     persons: Agency[]
   } | null
   contactInfo: ContactInfo
   targetsOfComplaint: TargetOfComplaint[]
   complaintCategories: string[]
+  somethingElse: string
   description: string
-  attachments: []
-  applicationPdf: string
+  submitDate: Date
+  attachments: string[]
 }
 
 export interface ContactInfo {
@@ -35,7 +37,7 @@ export interface ContactInfo {
 export interface TargetOfComplaint {
   name: string
   address: string
-  nationalId: string
+  nationalId?: string
   operatesWithinEurope: typeof YES | typeof NO
   countryOfOperation: string
 }

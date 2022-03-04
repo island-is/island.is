@@ -18,24 +18,19 @@ import {
   isRestrictionCase,
   UserRole,
 } from '@island.is/judicial-system/types'
-import {
-  getCustodyAndTravelBanProsecutorSection,
-  getInvestigationCaseProsecutorSection,
-  getInvestigationCaseCourtSections,
-  getCourtSections,
-  findLastValidStep,
-} from '@island.is/judicial-system-web/src/utils/sections'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseData } from '@island.is/judicial-system-web/src/types'
 import { requests as m } from '@island.is/judicial-system-web/messages/Core/requests'
+import useSections from '@island.is/judicial-system-web/src/utils/hooks/useSections'
 import type { Case } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import * as Constants from '@island.is/judicial-system/consts'
 
 import ActiveRequests from './ActiveRequests'
 import PastRequests from './PastRequests'
+import TableSkeleton from './TableSkeleton'
 import * as styles from './Requests.css'
 
 // Credit for sorting solution: https://www.smashingmagazine.com/2020/03/sortable-tables-react/
@@ -44,6 +39,14 @@ export const Requests: React.FC = () => {
   const [pastCases, setPastCases] = useState<Case[]>()
 
   const { user } = useContext(UserContext)
+  const {
+    findLastValidStep,
+    getCourtSections,
+    getInvestigationCaseCourtSections,
+    getCustodyAndTravelBanProsecutorSection,
+    getInvestigationCaseProsecutorSection,
+  } = useSections()
+
   const isProsecutor = user?.role === UserRole.PROSECUTOR
   const isJudge = user?.role === UserRole.JUDGE
   const isRegistrar = user?.role === UserRole.REGISTRAR
@@ -66,7 +69,12 @@ export const Requests: React.FC = () => {
     },
   })
 
-  const { transitionCase, sendNotification } = useCase()
+  const {
+    transitionCase,
+    isTransitioningCase,
+    sendNotification,
+    isSendingNotification,
+  } = useCase()
   const { formatMessage } = useIntl()
 
   const resCases = data?.cases
@@ -181,31 +189,35 @@ export const Requests: React.FC = () => {
 
   return (
     <div className={styles.requestsContainer}>
-      {user && (
-        <div className={styles.logoContainer}>
-          <Logo />
-          {isProsecutor && (
-            <DropdownMenu
-              menuLabel="Tegund kröfu"
-              icon="add"
-              items={[
-                {
-                  href: Constants.STEP_ONE_CUSTODY_REQUEST_ROUTE,
-                  title: 'Gæsluvarðhald',
-                },
-                {
-                  href: Constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE,
-                  title: 'Farbann',
-                },
-                {
-                  href: Constants.NEW_IC_ROUTE,
-                  title: 'Rannsóknarheimild',
-                },
-              ]}
-              title="Stofna nýja kröfu"
-            />
-          )}
-        </div>
+      {loading ? (
+        <TableSkeleton />
+      ) : (
+        user && (
+          <div className={styles.logoContainer}>
+            <Logo />
+            {isProsecutor && (
+              <DropdownMenu
+                menuLabel="Tegund kröfu"
+                icon="add"
+                items={[
+                  {
+                    href: Constants.STEP_ONE_CUSTODY_REQUEST_ROUTE,
+                    title: 'Gæsluvarðhald',
+                  },
+                  {
+                    href: Constants.STEP_ONE_NEW_TRAVEL_BAN_ROUTE,
+                    title: 'Farbann',
+                  },
+                  {
+                    href: Constants.NEW_IC_ROUTE,
+                    title: 'Rannsóknarheimild',
+                  },
+                ]}
+                title="Stofna nýja kröfu"
+              />
+            )}
+          </div>
+        )
       )}
       {activeCases || pastCases ? (
         <>
@@ -217,7 +229,7 @@ export const Requests: React.FC = () => {
                  * Safari has a bug that doesn't allow that. See more
                  * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
                  */}
-                <Text variant="h3" id="activeRequestsTableCaption">
+                <Text variant="h3" id="activeCasesTableCaption">
                   {formatMessage(
                     isPrisonUser
                       ? m.sections.activeRequests.prisonStaffUsers.title
@@ -240,6 +252,9 @@ export const Requests: React.FC = () => {
                     <ActiveRequests
                       cases={activeCases}
                       onRowClick={handleRowClick}
+                      isDeletingCase={
+                        isTransitioningCase || isSendingNotification
+                      }
                       onDeleteCase={deleteCase}
                     />
                   )
@@ -271,7 +286,7 @@ export const Requests: React.FC = () => {
              * Safari has a bug that doesn't allow that. See more
              * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
              */}
-            <Text variant="h3" id="activeRequestsTableCaption">
+            <Text variant="h3" id="activeCasesTableCaption">
               {formatMessage(
                 isHighCourtUser
                   ? m.sections.pastRequests.highCourtUsers.title

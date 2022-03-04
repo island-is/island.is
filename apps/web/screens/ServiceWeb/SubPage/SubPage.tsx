@@ -9,6 +9,7 @@ import {
   QueryGetNamespaceArgs,
   QueryGetOrganizationArgs,
   QueryGetSupportQnAsInCategoryArgs,
+  SupportQna,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
@@ -38,6 +39,10 @@ import { getSlugPart } from '../utils'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import groupBy from 'lodash/groupBy'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
+
+export interface Dictionary<T> {
+  [index: string]: T
+}
 
 interface SubPageProps {
   organization?: Organization
@@ -71,21 +76,28 @@ const SubPage: Screen<SubPageProps> = ({
     (supportQNA) => supportQNA.subCategory.title,
   )
 
+  const sortedSupportSubCategoryTitles = getSortedSupportSubCategoryTitles(
+    supportQNAsBySubCategory,
+  )
+
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
-  const pageTitle = `${n('serviceWeb', 'Þjónustuvefur')} Ísland.is`
+  const pageTitle = `${categoryTitle ? categoryTitle + ' | ' : ''}${n(
+    'assistanceForIslandIs',
+    'Aðstoð fyrir Ísland.is',
+  )}`
 
   const mobileBackButtonText = questionSlug
     ? `${organizationTitle}: ${categoryTitle}`
     : `${organizationTitle}`
 
   const mobileBackButtonLink = `${
-    linkResolver('helpdesk').href
+    linkResolver('serviceweb').href
   }/${organizationSlug}${questionSlug ? `/${categorySlug}` : ''}`
 
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
-      headerTitle={pageTitle}
+      headerTitle={n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')}
       institutionSlug={institutionSlug}
       organization={organization}
       organizationTitle={organizationTitle}
@@ -105,24 +117,27 @@ const SubPage: Screen<SubPageProps> = ({
                       <Breadcrumbs
                         items={[
                           {
-                            title: n('serviceWeb', 'Þjónustuvefur'),
-                            typename: 'helpdesk',
-                            href: linkResolver('helpdesk').href,
+                            title: n(
+                              'assistanceForIslandIs',
+                              'Aðstoð fyrir Ísland.is',
+                            ),
+                            typename: 'serviceweb',
+                            href: linkResolver('serviceweb').href,
                           },
                           {
                             title: organization.title,
-                            typename: 'helpdesk',
+                            typename: 'serviceweb',
                             href: `${
-                              linkResolver('helpdesk').href
+                              linkResolver('serviceweb').href
                             }/${organizationSlug}`,
                           },
                           {
                             title: `${categoryTitle}`,
-                            typename: 'helpdesk',
+                            typename: 'serviceweb',
                             isTag: true,
                             ...(questionSlug && {
                               href: `${
-                                linkResolver('helpdesk').href
+                                linkResolver('serviceweb').href
                               }/${organizationSlug}/${categorySlug}`,
                             }),
                           },
@@ -198,42 +213,47 @@ const SubPage: Screen<SubPageProps> = ({
 
                     <ContentBlock>
                       <Box paddingY={[1, 2]} marginTop={6}>
-                        {Object.keys(supportQNAsBySubCategory).map(
-                          (subcat, key) => {
-                            const subCategoryDescription =
-                              supportQNAsBySubCategory[subcat][0].subCategory
-                                .description ?? ''
-                            return (
-                              <Box marginBottom={3} key={key}>
-                                <AccordionCard
-                                  id="id_1"
-                                  label={subcat}
-                                  visibleContent={
-                                    <Text>{subCategoryDescription}</Text>
-                                  }
-                                >
-                                  <Box marginTop={3}>
-                                    <Stack space={2}>
-                                      {supportQNAsBySubCategory[subcat].map(
-                                        ({ title, slug }, index) => {
-                                          return (
-                                            <Box key={index}>
-                                              <TopicCard
-                                                href={`/thjonustuvefur/${organizationSlug}/${categorySlug}?&q=${slug}`}
-                                              >
-                                                {title}
-                                              </TopicCard>
-                                            </Box>
-                                          )
-                                        },
-                                      )}
-                                    </Stack>
-                                  </Box>
-                                </AccordionCard>
-                              </Box>
-                            )
-                          },
-                        )}
+                        {sortedSupportSubCategoryTitles.map((subcat, key) => {
+                          const subCategoryDescription =
+                            supportQNAsBySubCategory[subcat][0].subCategory
+                              ?.description ?? ''
+
+                          const subCategorySupportQNAs =
+                            supportQNAsBySubCategory[subcat]
+                          subCategorySupportQNAs.sort(
+                            (a, b) => b?.importance - a?.importance,
+                          )
+
+                          return (
+                            <Box marginBottom={3} key={key}>
+                              <AccordionCard
+                                id="id_1"
+                                label={subcat}
+                                visibleContent={
+                                  <Text>{subCategoryDescription}</Text>
+                                }
+                              >
+                                <Box marginTop={3}>
+                                  <Stack space={2}>
+                                    {subCategorySupportQNAs.map(
+                                      ({ title, slug }, index) => {
+                                        return (
+                                          <Box key={index}>
+                                            <TopicCard
+                                              href={`/adstod/${organizationSlug}/${categorySlug}?&q=${slug}`}
+                                            >
+                                              {title}
+                                            </TopicCard>
+                                          </Box>
+                                        )
+                                      },
+                                    )}
+                                  </Stack>
+                                </Box>
+                              </AccordionCard>
+                            </Box>
+                          )
+                        })}
                       </Box>
                     </ContentBlock>
                   </GridColumn>
@@ -302,6 +322,27 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     supportQNAs: supportQNAs?.data?.getSupportQNAsInCategory,
     questionSlug,
   }
+}
+
+const getSortedSupportSubCategoryTitles = (
+  supportQNAsBySubCategory: Dictionary<SupportQna[]>,
+) => {
+  const titles = Object.keys(supportQNAsBySubCategory)
+
+  titles.sort((a, b) => {
+    const subCategoryA = supportQNAsBySubCategory[a]
+    const subCategoryB = supportQNAsBySubCategory[b]
+
+    if (subCategoryA.length === 0) return 1
+    if (subCategoryB.length === 0) return -1
+
+    return (
+      subCategoryB[0].subCategory?.importance -
+      subCategoryA[0].subCategory?.importance
+    )
+  })
+
+  return titles
 }
 
 export default withMainLayout(SubPage, {

@@ -3,7 +3,8 @@ import { uuid } from 'uuidv4'
 import { CaseFileState } from '@island.is/judicial-system/types'
 
 import { AwsS3Service } from '../../aws-s3'
-import { CaseFile, DeleteFileResponse } from '../models'
+import { CaseFile } from '../models/file.model'
+import { DeleteFileResponse } from '../models/deleteFile.response'
 import { createTestingFileModule } from './createTestingFileModule'
 
 interface Then {
@@ -71,7 +72,7 @@ describe('FileController - Delete case file', () => {
   describe('AWS S3 removal', () => {
     const caseId = uuid()
     const fileId = uuid()
-    const key = `${uuid()}/${uuid()}/test.txt`
+    const key = `uploads/${uuid()}/${uuid()}/test.txt`
     const caseFile = {
       id: fileId,
       state: CaseFileState.STORED_IN_RVG,

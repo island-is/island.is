@@ -91,6 +91,9 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
           content {
             ...HtmlFields
           }
+          serviceWebContent {
+            ...HtmlFields
+          }
           link {
             text
             url
@@ -140,6 +143,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
 export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
   query GetOrganizationSubpage($input: GetOrganizationSubpageInput!) {
     getOrganizationSubpage(input: $input) {
+      id
       title
       slug
       description {
@@ -233,18 +237,42 @@ export const GET_SYSLUMENN_AUCTIONS_QUERY = gql`
 `
 
 export const GET_OPERATING_LICENSES_QUERY = gql`
-  query GetOperatingLicenses {
-    getOperatingLicenses {
-      location
-      name
-      street
-      postalCode
-      validUntil
-      type
-      category
-      issuedBy
-      licenseHolder
-      licenseNumber
+  query GetOperatingLicenses($input: GetOperatingLicensesInput!) {
+    getOperatingLicenses(input: $input) {
+      paginationInfo {
+        pageSize
+        pageNumber
+        totalCount
+        totalPages
+        currentPage
+        hasNext
+        hasPrevious
+      }
+      searchQuery
+      results {
+        id
+        issuedBy
+        licenseNumber
+        location
+        name
+        street
+        postalCode
+        type
+        type2
+        restaurantType
+        validFrom
+        validTo
+        licenseHolder
+        licenseResponsible
+        category
+        outdoorLicense
+        alcoholWeekdayLicense
+        alcoholWeekendLicense
+        alcoholWeekdayOutdoorLicense
+        alcoholWeekendOutdoorLicense
+        maximumNumberOfGuests
+        numberOfDiningGuests
+      }
     }
   }
 `

@@ -27,6 +27,10 @@ import { CreateApplicationFilesInput } from '../app/modules/file/dto'
 import { CreateStaffInput } from '../app/modules/staff'
 import { SpouseModel } from '../app/modules/user'
 import { UpdateMunicipalityInput } from '../app/modules/municipality/dto'
+import {
+  DirectTaxPaymentsResponse,
+  PersonalTaxReturnResponse,
+} from '../app/modules/personalTaxReturn/models'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
@@ -163,6 +167,14 @@ class BackendAPI extends RESTDataSource {
 
   getNumberOfStaffForMunicipality(municipalityId: string): Promise<number> {
     return this.get(`staff/municipality/${municipalityId}`)
+  }
+
+  getPersonalTaxReturn(): Promise<PersonalTaxReturnResponse> {
+    return this.get('personalTaxReturn')
+  }
+
+  getDirectTaxPayments(): Promise<DirectTaxPaymentsResponse> {
+    return this.get('personalTaxReturn/directTaxPayments')
   }
 }
 

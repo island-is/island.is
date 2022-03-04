@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
 import {
   Page,
@@ -55,6 +55,7 @@ import {
   LinkType,
   useLinkResolver,
   linkResolver as LinkResolver,
+  pathIsRoute,
 } from '../hooks/useLinkResolver'
 import { stringHash } from '@island.is/web/utils/stringHash'
 
@@ -65,6 +66,8 @@ const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
 const IS_MOCK =
   process.env.NODE_ENV !== 'production' && process.env.API_MOCKS === 'true'
+
+const SHOULD_LINK_TO_SERVICE_WEB = false
 
 const absoluteUrl = (req, setLocalhost) => {
   let protocol = 'https:'
@@ -99,6 +102,7 @@ export interface LayoutProps {
   footerTagsMenu?: FooterLinkProps[]
   namespace: Record<string, string | string[]>
   alertBannerContent?: GetAlertBannerQuery['getAlertBanner']
+  organizationAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   respOrigin
   megaMenuData
 }
@@ -152,6 +156,7 @@ const Layout: NextComponentType<
   footerMiddleMenu,
   namespace,
   alertBannerContent,
+  organizationAlertBannerContent,
   respOrigin,
   children,
   megaMenuData,
@@ -198,9 +203,28 @@ const Layout: NextComponentType<
     },
   ]
 
-  const alertBannerId = `alert-${stringHash(
-    JSON.stringify(alertBannerContent),
-  )}`
+  const [alertBanners, setAlertBanners] = useState([])
+
+  useEffect(() => {
+    setAlertBanners(
+      [
+        {
+          bannerId: `alert-${stringHash(
+            JSON.stringify(alertBannerContent ?? {}),
+          )}`,
+          ...alertBannerContent,
+        },
+        {
+          bannerId: `organization-alert-${stringHash(
+            JSON.stringify(organizationAlertBannerContent ?? {}),
+          )}`,
+          ...organizationAlertBannerContent,
+        },
+      ].filter(
+        (banner) => !Cookies.get(banner.bannerId) && banner?.showAlertBanner,
+      ),
+    )
+  }, [alertBannerContent, organizationAlertBannerContent])
 
   const preloadedFonts = [
     '/fonts/ibm-plex-sans-v7-latin-300.woff2',
@@ -210,8 +234,14 @@ const Layout: NextComponentType<
     '/fonts/ibm-plex-sans-v7-latin-600.woff2',
   ]
 
+  const isServiceWeb = pathIsRoute(asPath, 'serviceweb')
+
   return (
-    <GlobalContextProvider namespace={namespace}>
+    <GlobalContextProvider
+      namespace={namespace}
+      shouldLinkToServiceWeb={SHOULD_LINK_TO_SERVICE_WEB}
+      isServiceWeb={isServiceWeb}
+    >
       <Page component="div">
         <Head>
           {preloadedFonts.map((href, index) => {
@@ -293,30 +323,33 @@ const Layout: NextComponentType<
         <SkipToMainContent
           title={n('skipToMainContent', 'Fara beint í efnið')}
         />
-        {!Cookies.get(alertBannerId) && alertBannerContent.showAlertBanner && (
+
+        {alertBanners.map((banner) => (
           <AlertBanner
-            title={alertBannerContent.title}
-            description={alertBannerContent.description}
+            key={banner.bannerId}
+            title={banner.title}
+            description={banner.description}
             link={{
-              ...(!!alertBannerContent.link &&
-                !!alertBannerContent.linkTitle && {
-                  href: linkResolver(alertBannerContent.link.type as LinkType, [
-                    alertBannerContent.link.slug,
+              ...(!!banner.link &&
+                !!banner.linkTitle && {
+                  href: linkResolver(banner.link.type as LinkType, [
+                    banner.link.slug,
                   ]).href,
-                  title: alertBannerContent.linkTitle,
+                  title: banner.linkTitle,
                 }),
             }}
-            variant={alertBannerContent.bannerVariant as AlertBannerVariants}
-            dismissable={alertBannerContent.isDismissable}
+            variant={banner.bannerVariant as AlertBannerVariants}
+            dismissable={banner.isDismissable}
             onDismiss={() => {
-              if (alertBannerContent.dismissedForDays !== 0) {
-                Cookies.set(alertBannerId, 'hide', {
-                  expires: alertBannerContent.dismissedForDays,
+              if (banner.dismissedForDays !== 0) {
+                Cookies.set(banner.bannerId, 'hide', {
+                  expires: banner.dismissedForDays,
                 })
               }
             }}
           />
-        )}
+        ))}
+
         <PageLoader />
         <MenuTabsContext.Provider
           value={{
@@ -345,7 +378,13 @@ const Layout: NextComponentType<
             )}
             <Footer
               topLinks={footerUpperInfo}
-              topLinksContact={footerUpperContact}
+              {...(activeLocale === 'is'
+                ? {
+                    linkToHelpWeb: SHOULD_LINK_TO_SERVICE_WEB
+                      ? linkResolver('serviceweb').href
+                      : '',
+                  }
+                : { topLinksContact: footerUpperContact })}
               bottomLinks={footerLowerMenu}
               middleLinks={footerMiddleMenu}
               bottomLinksTitle={t.siteExternalTitle}
@@ -471,6 +510,7 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
       })
       .then((res) => res.data.getGroupedMenu),
   ])
+
   const alertBannerId = `alert-${stringHash(JSON.stringify(alertBanner))}`
   const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
 
@@ -597,8 +637,18 @@ export const withMainLayout = <T,>(
     const themeConfig: Partial<LayoutProps> =
       'themeConfig' in componentProps ? componentProps['themeConfig'] : {}
 
+    const organizationAlertBannerContent: GetAlertBannerQuery['getAlertBanner'] =
+      'organizationPage' in componentProps
+        ? componentProps['organizationPage']['alertBanner']
+        : undefined
+
     return {
-      layoutProps: { ...layoutProps, ...layoutConfig, ...themeConfig },
+      layoutProps: {
+        ...layoutProps,
+        ...layoutConfig,
+        ...themeConfig,
+        organizationAlertBannerContent,
+      },
       componentProps,
     }
   }

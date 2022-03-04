@@ -1,16 +1,15 @@
 import React, { useState } from 'react'
+import { PlausiblePageviewDetail } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import { useQuery, gql } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import {
   Box,
-  Button,
   Divider,
   GridColumn,
   GridRow,
   LoadingDots,
-  GridContainer,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -20,10 +19,12 @@ import {
   ServicePortalModuleComponent,
   UserInfoLine,
   m,
+  ServicePortalPath,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Parents } from '../../components/Parents/Parents'
 import ChildRegistrationModal from './ChildRegistrationModal'
+
 import { NATIONAL_REGISTRY_CHILDREN } from '../../lib/queries/getNationalChildren'
 
 const dataNotFoundMessage = defineMessage({
@@ -41,9 +42,11 @@ const FamilyMember: ServicePortalModuleComponent = ({ userInfo }) => {
   const [modalOpen, setModalOpen] = useState(false)
   const { formatMessage } = useLocale()
 
-  const { data, loading, error, called } = useQuery<Query>(
-    NATIONAL_REGISTRY_CHILDREN,
+  PlausiblePageviewDetail(
+    ServicePortalPath.FamilyMember.replace(':nationalId', 'child'),
   )
+
+  const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_CHILDREN)
   const { nationalRegistryChildren } = data || {}
 
   const { nationalId }: { nationalId: string | undefined } = useParams()
@@ -112,18 +115,9 @@ const FamilyMember: ServicePortalModuleComponent = ({ userInfo }) => {
         />
         <Divider />
         <UserInfoLine
-          label={formatMessage(m.legalResidence)}
+          label={defineMessage(m.legalResidence)}
           content={person?.homeAddress || '...'}
           loading={loading}
-          editLink={
-            !isChild
-              ? {
-                  title: editLink,
-                  external: true,
-                  url: 'https://www.skra.is/folk/flutningur',
-                }
-              : undefined
-          }
         />
         <Divider />
         <Box marginY={3} />

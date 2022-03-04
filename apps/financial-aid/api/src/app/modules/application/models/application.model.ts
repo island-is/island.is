@@ -12,6 +12,7 @@ import { ApplicationFileModel } from '../../file'
 import { StaffModel } from '../../staff'
 import { ApplicationEventModel, ApplicationFiltersModel } from './index'
 import { AmountModel } from '../../amount'
+import { DirectTaxPaymentModel } from './directTaxPayments.model'
 
 @ObjectType()
 export class ApplicationModel implements Application {
@@ -125,4 +126,10 @@ export class ApplicationModel implements Application {
 
   @Field({ nullable: true })
   readonly municipalityCode?: string
+
+  @Field(() => [DirectTaxPaymentModel])
+  readonly directTaxPayments!: DirectTaxPaymentModel[]
+
+  @Field({ nullable: true })
+  readonly applicationSystemId?: string
 }

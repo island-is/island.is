@@ -7,7 +7,6 @@ import {
   LoadingDots,
   GridColumnProps,
   Tooltip,
-  Hidden,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
@@ -27,7 +26,6 @@ interface Props {
 
 export const Parents: FC<Props> = ({
   label,
-  content,
   loading,
   title,
   parent1,

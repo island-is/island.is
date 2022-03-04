@@ -27,6 +27,12 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
     .postgres(postgresInfo)
     .serviceAccount('application-system-api-worker')
     .env({
+      IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system',
+      IDENTITY_SERVER_ISSUER_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
       REDIS_URL_NODE_01: {
         dev:
           'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
@@ -36,7 +42,10 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
           'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
       },
     })
+    .xroad(Base, Client)
     .secrets({
+      IDENTITY_SERVER_CLIENT_SECRET:
+        '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET',
       SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST',
       SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME',
       SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD',
@@ -58,6 +67,11 @@ export const serviceSetup = (services: {
     .serviceAccount(serviceAccount)
     .env({
       EMAIL_REGION: 'eu-west-1',
+      IDENTITY_SERVER_ISSUER_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
       REDIS_URL_NODE_01: {
         dev:
           'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
@@ -102,6 +116,7 @@ export const serviceSetup = (services: {
         staging: 'Gunnar Ingi',
         prod: 'Stafrænt Ísland',
       },
+      IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system',
       FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_EMAIL_ADDRESS: {
         dev: 'gunnar.ingi@fjr.is',
         staging: 'gunnar.ingi@fjr.is',
@@ -156,6 +171,8 @@ export const serviceSetup = (services: {
       EMAIL_FROM_NAME: '/k8s/application-system/api/EMAIL_FROM_NAME',
       EMAIL_REPLY_TO: '/k8s/application-system/api/EMAIL_REPLY_TO',
       EMAIL_REPLY_TO_NAME: '/k8s/application-system/api/EMAIL_REPLY_TO_NAME',
+      IDENTITY_SERVER_CLIENT_SECRET:
+        '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET',
       DOCUMENT_PROVIDER_ONBOARDING_REVIEWER:
         '/k8s/application-system/api/DOCUMENT_PROVIDER_ONBOARDING_REVIEWER',
       SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME',

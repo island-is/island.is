@@ -34,6 +34,7 @@ interface Props {
   editColumnSpan?: GridColumnProps['span']
   editLink?: EditLink
   title?: string
+  titlePadding?: ResponsiveSpace
   tooltip?: string
   paddingY?: ResponsiveSpace
   paddingBottom?: ResponsiveSpace
@@ -49,6 +50,7 @@ export const UserInfoLine: FC<Props> = ({
   loading,
   editLink,
   title,
+  titlePadding = 2,
   tooltip,
   paddingY = 2,
   paddingBottom,
@@ -66,11 +68,12 @@ export const UserInfoLine: FC<Props> = ({
       paddingRight={4}
     >
       {title && (
-        <Text variant="eyebrow" paddingBottom={2}>
+        <Text variant="eyebrow" paddingBottom={titlePadding}>
           {title}
         </Text>
       )}
-      <GridRow align={['flexStart', 'center']}>
+
+      <GridRow align="flexStart">
         <GridColumn order={1} span={labelColumnSpan}>
           <Box
             display="flex"

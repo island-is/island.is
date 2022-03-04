@@ -2,12 +2,14 @@ import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
 
 import { environment } from '../../environments'
-import { Case } from '../modules/case/models'
+import { Case } from '../modules/case'
 import {
-  baseFontSize,
-  hugeFontSize,
-  largeFontSize,
-  setPageNumbers,
+  addHugeHeading,
+  addLargeHeading,
+  addNumberedList,
+  setLineGap,
+  addFooter,
+  setTitle,
 } from './pdfHelpers'
 import { writeFile } from './writeFile'
 
@@ -25,31 +27,20 @@ function constructCasefilesPdf(
     bufferPages: true,
   })
 
-  if (doc.info) {
-    doc.info['Title'] = `Rannsóknargögn ${theCase.courtCaseNumber}`
-  }
-
   const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
 
-  doc
-    .font('Helvetica-Bold')
-    .fontSize(hugeFontSize)
-    .lineGap(8)
-    .text('Rannsóknargögn', { align: 'center' })
-    .font('Helvetica')
-    .fontSize(largeFontSize)
-    .lineGap(40)
-    .text(
-      `Mál nr. ${theCase.courtCaseNumber} - LÖKE nr. ${theCase.policeCaseNumber}`,
-      { align: 'center' },
-    )
-    .lineGap(8)
-    .fontSize(baseFontSize)
-    .list(theCase.caseFiles?.map((file) => file.name) ?? [], {
-      listType: 'numbered',
-    })
-
-  setPageNumbers(doc)
+  setTitle(doc, `Rannsóknargögn ${theCase.courtCaseNumber}`)
+  setLineGap(doc, 8)
+  addHugeHeading(doc, 'Rannsóknargögn', 'Helvetica-Bold')
+  setLineGap(doc, 40)
+  addLargeHeading(
+    doc,
+    `Mál nr. ${theCase.courtCaseNumber} - LÖKE nr. ${theCase.policeCaseNumber}`,
+    'Helvetica',
+  )
+  setLineGap(doc, 8)
+  addNumberedList(doc, theCase.caseFiles?.map((file) => file.name) ?? [])
+  addFooter(doc)
 
   doc.end()
 

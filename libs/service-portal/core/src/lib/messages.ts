@@ -368,7 +368,7 @@ export const m = defineMessages({
   },
   licenses: {
     id: 'service.portal:licenses',
-    defaultMessage: 'Skilríki',
+    defaultMessage: 'Skírteini',
   },
   finance: {
     id: 'service.portal:finance',
@@ -414,6 +414,10 @@ export const m = defineMessages({
   settings: {
     id: 'service.portal:settings',
     defaultMessage: 'Stillingar',
+  },
+  mySettings: {
+    id: 'service.portal:my-settings',
+    defaultMessage: 'Mínar stillingar',
   },
   delegation: {
     id: 'service.portal:delegation',
@@ -531,7 +535,7 @@ export const m = defineMessages({
   },
   personalInformation: {
     id: 'service.portal:personalInformation',
-    defaultMessage: 'Persónuupplýsingar',
+    defaultMessage: 'Mínar stillingar',
   },
   language: {
     id: 'service.portal:language',
@@ -539,7 +543,7 @@ export const m = defineMessages({
   },
   confirmCode: {
     id: 'service.portal:confirm-code',
-    defaultMessage: 'Senda staðfestingarkóða',
+    defaultMessage: 'Staðfesta kóða',
   },
   telNumber: {
     id: 'service.portal:tel',
@@ -572,6 +576,10 @@ export const m = defineMessages({
   finishLater: {
     id: 'service.portal:finish-later',
     defaultMessage: 'Klára seinna',
+  },
+  bankInfoRequired: {
+    id: 'service.portal:bank-info-required',
+    defaultMessage: 'Skylda er að fylla inn alla reiti fyrir bankaupplýsingar',
   },
   digitalIceland: {
     id: 'service.portal:digital-iceland',
@@ -622,6 +630,10 @@ export const m = defineMessages({
   islykill: {
     id: 'service.portal:islykill',
     defaultMessage: 'Íslykill',
+  },
+  saveInfo: {
+    id: 'service.portal:saveInfo',
+    defaultMessage: 'Vista upplýsingar',
   },
   altText: {
     id: 'service.portal:alt-text',

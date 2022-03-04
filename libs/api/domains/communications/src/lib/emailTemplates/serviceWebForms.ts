@@ -4,97 +4,98 @@ import { environment } from '../environments/environment'
 
 type StringOrNull = string | null
 
-type CategoryEmails = {
+type Categories =
   /**
    * Fjölskyldumál
    */
-  '4vQ4htPOAZvzcXBcjx06SH': StringOrNull
+  | '4vQ4htPOAZvzcXBcjx06SH'
   /**
    * Skírteini
    */
-  '7nWhQCER920RakQ7BZpEmV': StringOrNull
+  | '7nWhQCER920RakQ7BZpEmV'
   /**
    * Andlát og dánarbú
    */
-  '2TkJynZlamqTHdjUziXDG0': StringOrNull
+  | '2TkJynZlamqTHdjUziXDG0'
   /**
    * Þinglýsingar, staðfestingar og skráningar
    */
-  '6K9stHLAB2mEyGqtqjnXxf': StringOrNull
+  | '6K9stHLAB2mEyGqtqjnXxf'
   /**
    * Gjöld og innheimta
    */
-  '5u2M09Kw3p1Spva1GSuAzB': StringOrNull
+  | '5u2M09Kw3p1Spva1GSuAzB'
   /**
    * Löggildingar
    */
-  WrQIftmx61sHJMoIr1QRW: StringOrNull
+  | 'WrQIftmx61sHJMoIr1QRW'
   /**
    * Vottorð
    */
-  '76Expbwtudon1Gz5lrKOit': StringOrNull
+  | '76Expbwtudon1Gz5lrKOit'
   /**
    * Lögráðamál
    */
-  '4tvRkPgKP3kerbyRJDvaWF': StringOrNull
+  | '4tvRkPgKP3kerbyRJDvaWF'
   /**
    * Önnur þjónusta sýslumanna
    */
-  '4LNbNB3GvH3RcoIGpuZKhG': StringOrNull
+  | '4LNbNB3GvH3RcoIGpuZKhG'
   /**
    * Leyfi
    */
-  '7HbSNTUHJReJ2GPeT1ni1C': StringOrNull
+  | '7HbSNTUHJReJ2GPeT1ni1C'
   /**
    * Fullnustugerðir
    */
-  '7LkzuYSzqwM7k8fJyeRbm6': StringOrNull
+  | '7LkzuYSzqwM7k8fJyeRbm6'
   /**
    * Default/fallback email address
    */
-  default: StringOrNull
-}
+  | 'default'
 
-type Syslumenn = {
+type Syslumenn =
   /**
    * Sýslumaðurinn i Vestmannaeyjum
    */
-  '145ctmpqLPrOM7rHZIpC6F': CategoryEmails
+  | '145ctmpqLPrOM7rHZIpC6F'
   /**
    * Sýslumaðurinn á Norðurlandi eystra
    */
-  '12JLsyDmODBfZedYPOQXtX': CategoryEmails
+  | '12JLsyDmODBfZedYPOQXtX'
   /**
    * Sýslumaðurinn á Austurlandi
    */
-  Xnes7x1ccvBvuZxInRXDm: CategoryEmails
+  | 'Xnes7x1ccvBvuZxInRXDm'
   /**
    * Sýslumaðurinn á Vesturlandi
    */
-  '43KqapFNoM9m4MNXXc8UPU': CategoryEmails
+  | '43KqapFNoM9m4MNXXc8UPU'
   /**
    * Sýslumaðurinn á höfuðborgarsvæðinu
    */
-  '6puIJvhGxFBzxExVHxi5sr': CategoryEmails
+  | '6puIJvhGxFBzxExVHxi5sr'
   /**
    * Sýslumaðurinn á Suðurnesjum
    */
-  cRCuTTXXSrpBj27nBiLbc: CategoryEmails
+  | 'cRCuTTXXSrpBj27nBiLbc'
   /**
    * Sýslumaðurinn á Suðurlandi
    */
-  '2uyNnLcRooCNk7u6CMpsIv': CategoryEmails
+  | '2uyNnLcRooCNk7u6CMpsIv'
   /**
    * Sýslumaðurinn á Norðurlandi vestra
    */
-  ZefqpCw4y5oy9lREilQY3: CategoryEmails
+  | 'ZefqpCw4y5oy9lREilQY3'
   /**
    * Sýslumaðurinn á Vestfjörðum
    */
-  '5MDZoq1DGsJospUnQz4y98': CategoryEmails
-}
+  | '5MDZoq1DGsJospUnQz4y98'
 
-export const syslumennEmails: Syslumenn = {
+export const syslumennEmails: Record<
+  Syslumenn,
+  Record<Categories, StringOrNull>
+> = {
   '145ctmpqLPrOM7rHZIpC6F': {
     '4vQ4htPOAZvzcXBcjx06SH': 'vestmannaeyjar.fjolskylda@syslumenn.is',
     '7nWhQCER920RakQ7BZpEmV': 'vestmannaeyjar.vegabref@syslumenn.is',
@@ -233,17 +234,20 @@ export const getTemplate = (
   let toAddress = institutionEmail
 
   if (syslumadurId) {
-    const emailList = syslumennEmails[syslumadurId]
+    const emailList = syslumennEmails[syslumadurId as Syslumenn]
 
     if (emailList) {
-      toAddress = emailList[categoryId] ?? emailList.default ?? institutionEmail
+      toAddress =
+        emailList[categoryId as Categories] ??
+        emailList.default ??
+        institutionEmail
     }
   }
 
   return {
     from: {
       name: input.name,
-      address: environment.emailOptions.sendFrom,
+      address: environment.emailOptions.sendFrom!,
     },
     replyTo: {
       name: input.name,
@@ -251,7 +255,7 @@ export const getTemplate = (
     },
     to: [
       {
-        name: 'Þjónustuvefur',
+        name: 'Ísland.is aðstoð',
         address: toAddress,
       },
     ],

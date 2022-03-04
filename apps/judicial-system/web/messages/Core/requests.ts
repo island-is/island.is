@@ -26,12 +26,12 @@ export const requests = {
             description:
               'Notaður sem titill fyrir staða dálk í lista yfir kröfur í vinnslu.',
           }),
-          created: defineMessage({
+          date: defineMessage({
             id:
-              'judicial.system.core:requests.active_requests.table.headers.created',
-            defaultMessage: 'Krafa stofnuð',
+              'judicial.system.core:requests.active_requests.table.headers.date',
+            defaultMessage: 'Stofnað/Fyrirtaka',
             description:
-              'Notaður sem titill fyrir krafa stofnuð dálk í lista yfir kröfur í vinnslu.',
+              'Notaður sem titill fyrir dagsetningardálk í lista yfir óafgreiddar kröfur í vinnslu.',
           }),
         },
       },
@@ -40,19 +40,19 @@ export const requests = {
         defaultMessage: 'Kröfur í vinnslu',
         description: 'Notaður sem titill í fyrsta málalista á heimaskjá.',
       }),
-      infoContainerTitle: {
+      infoContainerTitle: defineMessage({
         id:
           'judicial.system.core:requests.active_requests.info_container_title',
         defaultMessage: 'Engar kröfur í vinnslu.',
         description:
           'Notaður sem titill í upplýsingasvæði sem segir að engin virk mál fundust á heimaskjá.',
-      },
-      infoContainerText: {
+      }),
+      infoContainerText: defineMessage({
         id: 'judicial.system.core:requests.active_requests.info_container_text',
         defaultMessage: 'Allar kröfur hafa verið afgreiddar.',
         description:
           'Notaður sem texti í upplýsingasvæði sem segir að engin virk mál fundust á heimaskjá fangelsisstarfsmanna.',
-      },
+      }),
       prisonStaffUsers: defineMessages({
         title: {
           id:
@@ -122,18 +122,18 @@ export const requests = {
         defaultMessage: 'Afgreiddar kröfur',
         description: 'Notaður sem titill í seinni málalista á heimaskjá.',
       }),
-      infoContainerTitle: {
+      infoContainerTitle: defineMessage({
         id: 'judicial.system.core:requests.past_requests.info_container_title',
         defaultMessage: 'Engar kröfur hafa verið afgreiddar.',
         description:
           'Notaður sem titill í upplýsingasvæði sem segir að engin afgreidd mál fundust á heimaskjá.',
-      },
-      infoContainerText: {
+      }),
+      infoContainerText: defineMessage({
         id: 'judicial.system.core:requests.past_requests.info_container_text',
         defaultMessage: 'Allar kröfur eru í vinnslu.',
         description:
           'Notaður sem texti í upplýsingasvæði sem segir að engin afgreidd mál fundust á heimaskjá.',
-      },
+      }),
       highCourtUsers: defineMessages({
         title: {
           id:

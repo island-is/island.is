@@ -12,7 +12,6 @@ import {
   capitalize,
   formatDate,
   formatRequestedCustodyRestrictions,
-  TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import CaseFilesAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CaseFilesAccordionItem/CaseFilesAccordionItem'
@@ -25,38 +24,20 @@ import type {
   Case,
   CaseLegalProvisions,
 } from '@island.is/judicial-system/types'
+import * as constants from '@island.is/judicial-system/consts'
 
-import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
 import * as styles from './Overview.css'
 
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
-  handleCreateCourtCase: (wc: Case) => void
-  createCourtCaseSuccess: boolean
-  setCreateCourtCaseSuccess: React.Dispatch<React.SetStateAction<boolean>>
-  courtCaseNumberEM: string
-  setCourtCaseNumberEM: React.Dispatch<React.SetStateAction<string>>
   setIsDraftingConclusion: React.Dispatch<
     React.SetStateAction<boolean | undefined>
   >
-  isCreatingCourtCase: boolean
-  receiveCase: (wc: Case, courtCaseNumber: string) => void
 }
 
 const OverviewForm: React.FC<Props> = (props) => {
-  const {
-    workingCase,
-    setWorkingCase,
-    handleCreateCourtCase,
-    createCourtCaseSuccess,
-    setCreateCourtCaseSuccess,
-    courtCaseNumberEM,
-    setCourtCaseNumberEM,
-    setIsDraftingConclusion,
-    isCreatingCourtCase,
-    receiveCase,
-  } = props
+  const { workingCase, setWorkingCase, setIsDraftingConclusion } = props
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
@@ -71,24 +52,11 @@ const OverviewForm: React.FC<Props> = (props) => {
           }`}
         </Text>
       </Box>
-      <Box component="section" marginBottom={6}>
-        <CourtCaseNumber
-          workingCase={workingCase}
-          setWorkingCase={setWorkingCase}
-          courtCaseNumberEM={courtCaseNumberEM}
-          setCourtCaseNumberEM={setCourtCaseNumberEM}
-          createCourtCaseSuccess={createCourtCaseSuccess}
-          setCreateCourtCaseSuccess={setCreateCourtCaseSuccess}
-          handleCreateCourtCase={handleCreateCourtCase}
-          isCreatingCourtCase={isCreatingCourtCase}
-          receiveCase={receiveCase}
-        />
-      </Box>
       <Box component="section" marginBottom={5}>
         <InfoCard
           data={[
             {
-              title: 'Embætti',
+              title: formatMessage(core.prosecutor),
               value: `${
                 workingCase.creatingProsecutor?.institution?.name ??
                 'Ekki skráð'
@@ -100,18 +68,21 @@ const OverviewForm: React.FC<Props> = (props) => {
                 formatDate(workingCase.requestedCourtDate, 'PPPP', true) ?? '',
               )} eftir kl. ${formatDate(
                 workingCase.requestedCourtDate,
-                TIME_FORMAT,
+                constants.TIME_FORMAT,
               )}`,
             },
-            { title: 'Ákærandi', value: workingCase.prosecutor?.name },
+            {
+              title: formatMessage(core.prosecutorPerson),
+              value: workingCase.prosecutor?.name,
+            },
             {
               title: workingCase.parentCase
                 ? `${
                     workingCase.type === CaseType.CUSTODY
-                      ? 'Fyrri gæsla'
-                      : 'Fyrra farbann'
+                      ? formatMessage(core.pastCustody)
+                      : formatMessage(core.pastTravelBan)
                   }`
-                : 'Tími handtöku',
+                : formatMessage(core.arrestDate),
               value: workingCase.parentCase
                 ? `${capitalize(
                     formatDate(
@@ -121,12 +92,15 @@ const OverviewForm: React.FC<Props> = (props) => {
                     ) ?? '',
                   )} kl. ${formatDate(
                     workingCase.parentCase.validToDate,
-                    TIME_FORMAT,
+                    constants.TIME_FORMAT,
                   )}`
                 : workingCase.arrestDate
                 ? `${capitalize(
                     formatDate(workingCase.arrestDate, 'PPPP', true) ?? '',
-                  )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`
+                  )} kl. ${formatDate(
+                    workingCase.arrestDate,
+                    constants.TIME_FORMAT,
+                  )}`
                 : 'Var ekki skráður',
             },
           ]}
@@ -154,11 +128,7 @@ const OverviewForm: React.FC<Props> = (props) => {
                 Lagaákvæði sem brot varða við
               </Text>
             </Box>
-            <Text>
-              <span className={styles.breakSpaces}>
-                {workingCase.lawsBroken}
-              </span>
-            </Text>
+            <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
           </Box>
           <Box data-testid="legalProvisions">
             <Box marginBottom={1}>
@@ -214,11 +184,7 @@ const OverviewForm: React.FC<Props> = (props) => {
                     Málsatvik
                   </Text>
                 </Box>
-                <Text>
-                  <span className={styles.breakSpaces}>
-                    {workingCase.caseFacts}
-                  </span>
-                </Text>
+                <Text whiteSpace="breakSpaces">{workingCase.caseFacts}</Text>
               </Box>
             )}
             {workingCase.legalArguments && (
@@ -228,10 +194,8 @@ const OverviewForm: React.FC<Props> = (props) => {
                     Lagarök
                   </Text>
                 </Box>
-                <Text>
-                  <span className={styles.breakSpaces}>
-                    {workingCase.legalArguments}
-                  </span>
+                <Text whiteSpace="breakSpaces">
+                  {workingCase.legalArguments}
                 </Text>
               </Box>
             )}
@@ -251,11 +215,7 @@ const OverviewForm: React.FC<Props> = (props) => {
                     Athugasemdir vegna málsmeðferðar
                   </Text>
                 </Box>
-                <Text>
-                  <span className={styles.breakSpaces}>
-                    {workingCase.comments}
-                  </span>
-                </Text>
+                <Text whiteSpace="breakSpaces">{workingCase.comments}</Text>
               </Box>
             )}
             {workingCase.caseFilesComments && (
@@ -265,10 +225,8 @@ const OverviewForm: React.FC<Props> = (props) => {
                     Athugasemdir vegna rannsóknargagna
                   </Text>
                 </Box>
-                <Text>
-                  <span className={styles.breakSpaces}>
-                    {workingCase.caseFilesComments}
-                  </span>
+                <Text whiteSpace="breakSpaces">
+                  {workingCase.caseFilesComments}
                 </Text>
               </>
             )}

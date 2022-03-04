@@ -10,7 +10,7 @@ export const createMockEinstaklingurApi = (
     }
 
     einstaklingarGetEinstaklingur() {
-      return nationalRegistryUser
+      return Promise.resolve(nationalRegistryUser)
     }
 
     einstaklingarGetForsja(): string[] {

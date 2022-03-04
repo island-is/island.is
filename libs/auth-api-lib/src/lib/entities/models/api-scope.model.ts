@@ -15,6 +15,7 @@ import { ApiScopeUserClaim } from './api-scope-user-claim.model'
 import { ApiScopeGroup } from './api-scope-group.model'
 import { ApiScopesDTO } from '../dto/api-scopes.dto'
 import { DelegationScope } from './delegation-scope.model'
+import { PersonalRepresentativeScopePermission } from '../../personal-representative/entities/models/personal-representative-scope-permission.model'
 @Table({
   tableName: 'api_scope',
 })
@@ -165,6 +166,9 @@ export class ApiScope extends Model<ApiScope> {
 
   @HasMany(() => DelegationScope)
   delegationScopes?: DelegationScope[]
+
+  @HasMany(() => PersonalRepresentativeScopePermission)
+  personalRepresentativeScopePermissions?: PersonalRepresentativeScopePermission[]
 
   toDTO(): ApiScopesDTO {
     return {

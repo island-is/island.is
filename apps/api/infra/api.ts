@@ -102,6 +102,12 @@ export const serviceSetup = (services: {
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api',
       XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000',
       XROAD_PROPERTIES_TIMEOUT: '20000',
+      SYSLUMENN_TIMEOUT: '30000',
+      IDENTITY_SERVER_ISSUER_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
     })
 
     .secrets({
