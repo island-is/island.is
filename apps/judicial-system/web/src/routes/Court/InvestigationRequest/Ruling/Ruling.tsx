@@ -1,4 +1,5 @@
 import React, { useContext, useEffect } from 'react'
+import { useIntl } from 'react-intl'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import {
@@ -8,6 +9,8 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
+import { formatDate } from '@island.is/judicial-system/formatters'
+import { icRuling as m } from '@island.is/judicial-system-web/messages'
 
 import RulingForm from './RulingForm'
 
@@ -21,6 +24,7 @@ const Ruling = () => {
   } = useContext(FormContext)
 
   const { autofill } = useCase()
+  const { formatMessage } = useIntl()
 
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
@@ -28,6 +32,14 @@ const Ruling = () => {
 
   useEffect(() => {
     if (isCaseUpToDate) {
+      autofill(
+        'introduction',
+        formatMessage(m.sections.introduction.autofill, {
+          courtStartDate: `${formatDate(workingCase.courtStartDate, 'PPP')}.`,
+        }),
+        workingCase,
+      )
+
       if (workingCase.caseFacts) {
         autofill('courtCaseFacts', workingCase.caseFacts, workingCase)
       }
@@ -42,7 +54,7 @@ const Ruling = () => {
     }
 
     setWorkingCase(workingCase)
-  }, [autofill, isCaseUpToDate, setWorkingCase, workingCase])
+  }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])
 
   return (
     <PageLayout
