@@ -48,6 +48,7 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
   }
 
   const { age } = info(data?.kennitala ?? userInfo.profile.nationalId)
+
   const renewalLink =
     age >= 70
       ? 'https://island.is/endurnyjun-oekuskirteina-fyrir-70-ara-og-eldri'
@@ -82,7 +83,7 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
                 {formatMessage({
                   id: 'sp.driving-license:driving-license-description',
                   defaultMessage:
-                    'Hér birtast upplýsingar um ökuskírteini þitt ásam þeim ökuréttidnum sem þú ert með í gildi á hverjum tíma.',
+                    'Með ökuskírteini er veitt leyfi til að stjórna ökutæki í ákveðnum réttindaflokkum. Hér birtast réttindi þín og gildistími þeirra.',
                 })}
               </Text>
             </Stack>
@@ -169,11 +170,13 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
               label={licenseExpireText}
               renderContent={() => (
                 <Box display="flex" alignItems="center">
-                  {toDate(
-                    loading
-                      ? ''
-                      : new Date(data.gildirTil).getTime().toString(),
-                  )}
+                  <Text>
+                    {toDate(
+                      loading
+                        ? ''
+                        : new Date(data.gildirTil).getTime().toString(),
+                    )}
+                  </Text>
                   <Box
                     marginLeft={2}
                     display="flex"
