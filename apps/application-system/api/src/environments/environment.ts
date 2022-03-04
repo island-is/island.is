@@ -17,6 +17,7 @@ const devConfig = {
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
     audience: '@island.is',
+    allowClientNationalId: true,
   },
   templateApi: {
     clientLocationOrigin: 'http://localhost:4242/umsoknir',

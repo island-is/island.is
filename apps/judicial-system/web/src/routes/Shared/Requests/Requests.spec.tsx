@@ -396,9 +396,9 @@ describe('Requests', () => {
         </MockedProvider>,
       )
 
-      expect(await waitFor(() => screen.getAllByRole('table').length)).toEqual(
-        1,
-      )
+      await waitFor(() => {
+        expect(screen.getByTestId('pastCasesTable')).toBeInTheDocument()
+      })
     })
   })
 
@@ -417,9 +417,9 @@ describe('Requests', () => {
         </MockedProvider>,
       )
 
-      expect(await waitFor(() => screen.getAllByRole('table').length)).toEqual(
-        2,
-      )
+      await waitFor(() => {
+        expect(screen.getAllByRole('table').length).toEqual(2)
+      })
     })
   })
 

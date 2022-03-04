@@ -108,7 +108,7 @@ const ActiveRequests: React.FC<Props> = (props) => {
   return (
     <table
       className={styles.table}
-      data-testid="custody-request-table"
+      data-testid="activeCasesTable"
       aria-describedby="activeRequestsTableCaption"
     >
       <thead className={styles.thead}>
