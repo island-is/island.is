@@ -7,7 +7,7 @@ import {
   GridRow,
   Divider,
 } from '@island.is/island-ui/core'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { DraftCancelForm, RegDraftForm } from '../../state/types'
 import { toISODate } from '@island.is/regulations'
 import {
@@ -32,7 +32,7 @@ type EditCancellationProp = {
 export const EditCancellation = (props: EditCancellationProp) => {
   const { draft, cancellation, closeModal } = props
   const [activeCancellation, setActiveCancellation] = useState(cancellation)
-  const today = new Date()
+  const today = useMemo(() => new Date(), [])
   const [minDate, setMinDate] = useState(today)
 
   const { data: regulation } = useGetRegulationFromApiQuery(

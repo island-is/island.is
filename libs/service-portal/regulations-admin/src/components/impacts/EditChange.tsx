@@ -58,7 +58,7 @@ export const EditChange = (props: EditChangeProp) => {
   const [activeRegulation, setActiveRegulation] = useState<
     Regulation | undefined
   >() // Target reglugerðin sem á að breyta
-  const today = new Date()
+  const today = useMemo(() => new Date(), [])
   const [minDate, setMinDate] = useState(today)
 
   const [createDraftRegulationChange] = useMutation(
