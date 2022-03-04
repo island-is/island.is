@@ -1,8 +1,7 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { useAuth } from '@island.is/auth/react'
-import { ACTOR_DELEGATIONS } from '@island.is/application/graphql'
-import { useHistory } from 'react-router-dom'
+import { APPLICANT_DELEGATIONS } from '@island.is/application/graphql'
 import {
   Text,
   Box,
@@ -13,7 +12,8 @@ import {
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { ApplicationTypes } from '@island.is/application/core'
 import { LoadingShell } from './LoadingShell'
-import { ValidationFailedProblem } from '@island.is/shared/problem'
+import { ActorValidationFailedProblem, findProblemInApolloError, ProblemType } from '@island.is/shared/problem'
+import { ErrorShell } from './ErrorShell'
 
 type Delegation = {
   type: string
@@ -25,18 +25,18 @@ type Delegation = {
 interface DelegationsScreenProps {
   type: ApplicationTypes
   setDelegationsChecked: Dispatch<SetStateAction<boolean>>
-  problem: ValidationFailedProblem
+  applicationId: string
 }
 
 export const DelegationsScreen = ({
   type,
   setDelegationsChecked,
-  problem,
+  applicationId,
 }: DelegationsScreenProps) => {
   const [allowedDelegations, setAllowedDelegations] = useState<string[]>()
   const [applicant, setApplicant] = useState<Delegation>()
 
-  const { switchUser, userInfo: user } = useAuth()
+  const { switchUser} = useAuth()
 
   // Check if template supports delegations
   useEffect(() => {
@@ -46,30 +46,45 @@ export const DelegationsScreen = ({
         if (template.allowedDelegations) {
           setAllowedDelegations(template.allowedDelegations)
         }
+      } else {
+        setDelegationsChecked(true)
       }
     }
     checkDelegations()
   }, [type])
 
   // Only check if user has delegations if the template supports delegations
-  const { data: delegations } = useQuery(ACTOR_DELEGATIONS, {
-    skip: !allowedDelegations,
-  })
+  const { data: delegations, error, loading  } = useQuery(
+    APPLICANT_DELEGATIONS, {
+      variables: {
+        input: {
+          id: applicationId,
+        },
+      },
+      // Setting this so that refetch causes a re-render
+      // https://github.com/apollographql/react-apollo/issues/321#issuecomment-599087392
+      // We want to refetch after setting the application back to 'draft', so that
+      // it loads the correct form for the 'draft' state.
+      skip: !applicationId,
+    })
+  
 
   // Check if user has the delegations of the delegation types the application supports
   useEffect(() => {
-    if (delegations && allowedDelegations) {
+    const foundError = findProblemInApolloError(error)
+    if (delegations && allowedDelegations && foundError?.type === ProblemType.ACTOR_VALIDATION_FAILED) {
+      const problem: ActorValidationFailedProblem  = foundError
       // Does the actor have delegation for the applicant of the application
       const found: Delegation = delegations.authActorDelegations.find(
         (delegation: Delegation) =>
-          delegation.from.nationalId === problem.fields.applicant &&
+          delegation.from.nationalId === problem.fields.delegatedUser &&
           allowedDelegations.includes(delegation.type), // &&
         // problem.fields.delegationType === delegation.type,
       )
       if (!found) setDelegationsChecked(true)
       setApplicant(found)
     }
-  }, [delegations, allowedDelegations, problem])
+  }, [delegations, allowedDelegations, error])
 
   const handleClick = (nationalId?: string) => {
     // history.push(`../${applicationId}/?delegationChecked=true`)
@@ -77,76 +92,35 @@ export const DelegationsScreen = ({
     else setDelegationsChecked(true)
   }
   // TODO: Set delegated user as default, are the others disabled?
-  if (delegations && user) {
+  if (!loading && applicant) {
     return (
       <Page>
         <GridContainer>
           <Box>
             <Box marginTop={5} marginBottom={5}>
-              <Text variant="h1">?essi ums'okn .</Text>
+              <Text variant="h1">
+                Þessi umsókn var hafinn fyrir {applicant.from.name}
+              </Text>
             </Box>
+
             <Box
               marginTop={5}
               marginBottom={5}
               display="flex"
               justifyContent="flexEnd"
+              key={applicant.from.nationalId}
             >
-              <Text variant="h1">
-                {user.profile.actor
-                  ? user.profile.actor.name
-                  : user.profile.name}
-              </Text>
-              <Button
-                onClick={() =>
-                  handleClick(
-                    user.profile.actor
-                      ? user.profile.actor.nationalId
-                      : undefined,
-                  )
-                }
-              >
-                Skipta um notenda
+              <Text variant="h1">{applicant.from.name}</Text>
+              <Button onClick={() => handleClick(applicant.from.nationalId)}>
+                Halda áfram
               </Button>
             </Box>
-            {delegations.authActorDelegations.map((delegation: Delegation) => {
-              if (
-                allowedDelegations &&
-                allowedDelegations.includes(delegation.type)
-              ) {
-                return (
-                  <Box
-                    marginTop={5}
-                    marginBottom={5}
-                    display="flex"
-                    justifyContent="flexEnd"
-                    key={delegation.from.nationalId}
-                  >
-                    <Text variant="h1">{delegation.from.name}</Text>
-                    <Button
-                      disabled={
-                        delegation.from.nationalId ===
-                        applicant?.from.nationalId
-                          ? false
-                          : true
-                      }
-                      onClick={() =>
-                        handleClick(
-                          user.profile.nationalId != delegation.from.nationalId
-                            ? delegation.from.nationalId
-                            : undefined,
-                        )
-                      }
-                    >
-                      Skipta um notenda
-                    </Button>
-                  </Box>
-                )
-              }
-            })}
           </Box>
         </GridContainer>
       </Page>
     )
   }
+  if(error) return <ErrorShell />
+  
   return <LoadingShell />
 }

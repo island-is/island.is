@@ -11,3 +11,13 @@ export const ACTOR_DELEGATIONS = gql`
     }
   }
 `
+export const APPLICANT_DELEGATIONS = gql`
+query delegationApplicantApplication(
+  $input: delegationApplicantApplication!
+
+) {
+  delegationApplicantApplication(input: $input) {
+    data
+  }
+}
+`

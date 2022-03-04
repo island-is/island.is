@@ -11,6 +11,7 @@ import { ProblemModule } from '@island.is/nest/problem'
 
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ApplicationModule } from './modules/application/application.module'
+import { AuthPublicApiClientConfig } from '@island.is/clients/auth-public-api'
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { ApplicationModule } from './modules/application/application.module'
     ProblemModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [IdsClientConfig, SyslumennClientConfig, XRoadConfig],
+      load: [IdsClientConfig, SyslumennClientConfig, XRoadConfig, AuthPublicApiClientConfig],
     }),
   ],
 })

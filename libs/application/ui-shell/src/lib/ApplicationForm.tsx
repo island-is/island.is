@@ -60,9 +60,8 @@ const ApplicationLoader: FC<{
   }
 
   if (!applicationId || error) {
-    const problem = findProblemInApolloError(error)
-    if (
-      problem?.type === ProblemType.VALIDATION_FAILED &&
+    
+    if (applicationId &&
       !delegationsChecked &&
       type
     ) {
@@ -70,7 +69,7 @@ const ApplicationLoader: FC<{
         <DelegationsScreen
           type={type}
           setDelegationsChecked={setDelegationsChecked}
-          problem={problem}
+          applicationId={applicationId}
         />
       )
     }

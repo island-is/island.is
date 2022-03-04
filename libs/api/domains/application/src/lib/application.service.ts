@@ -21,6 +21,7 @@ import { GetPresignedUrlInput } from './dto/getPresignedUrl.input'
 import { ApplicationPayment } from './application.model'
 import { AttachmentPresignedUrlInput } from './dto/AttachmentPresignedUrl.input'
 
+
 @Injectable()
 export class ApplicationService {
   constructor(
@@ -36,6 +37,8 @@ export class ApplicationService {
     return this._applicationPaymentApi.withMiddleware(new AuthMiddleware(auth))
   }
 
+
+
   async findOne(id: string, auth: Auth, locale: Locale) {
     return await this.applicationApiWithAuth(auth).applicationControllerFindOne(
       {
@@ -43,6 +46,19 @@ export class ApplicationService {
         locale,
       },
     )
+  }
+
+  async findDelegationApplicant(id: string, auth: Auth) {
+    // const delegations= await this.delegationsApiWithAuth(auth).actorDelegationsControllerFindAll({
+    //   direction: ActorDelegationsControllerFindAllDirectionEnum.Incoming,
+    // })
+    
+
+    // return ""
+    return await !!this.applicationApiWithAuth(auth).applicationControllerFindDelegatedApplicant(
+      {
+        id
+      })
   }
 
   async getPaymentStatus(

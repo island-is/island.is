@@ -24,6 +24,7 @@ import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { PaymentModule } from '../payment/payment.module'
 import { ApplicationLifeCycleService } from './lifecycle/application-lifecycle.service'
 import { LoggingModule } from '@island.is/logging'
+import { AuthPublicApiClientModule } from '@island.is/clients/auth-public-api'
 
 let BullModule: DynamicModule
 
@@ -60,6 +61,7 @@ if (process.env.INIT_SCHEMA === 'true') {
     SigningModule.register(environment.signingOptions),
     CmsTranslationsModule,
     LoggingModule,
+    AuthPublicApiClientModule,
   ],
   controllers: [ApplicationController],
   providers: [
