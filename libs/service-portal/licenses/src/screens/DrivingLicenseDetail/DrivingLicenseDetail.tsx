@@ -141,7 +141,7 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
                 id: 'sp.driving-license:license-base-info',
                 defaultMessage: 'Grunnupplýsingar ökuskírteinis',
               })}
-              label={defineMessage({
+              label={formatMessage({
                 id: 'sp.driving-license:license-number',
                 defaultMessage: 'Númer',
               })}
@@ -167,7 +167,7 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
             <Divider />
             <UserInfoLine
               label={licenseExpireText}
-              content={
+              renderContent={() => (
                 <Box display="flex" alignItems="center">
                   {toDate(
                     loading
@@ -209,7 +209,7 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
                     </Text>
                   </Box>
                 </Box>
-              }
+              )}
               loading={loading}
               paddingBottom={1}
               labelColumnSpan={['1/1', '6/12']}
@@ -247,7 +247,7 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
               }) => {
                 return (
                   <ExpandableLine
-                    key={item.id}
+                    key={item.nr}
                     licenseIssued={licenseIssuedText}
                     licenseExpire={licenseExpireText}
                     issuedDate={toDate(
