@@ -2,13 +2,13 @@
 import { Case, CaseDecision, CaseType } from '@island.is/judicial-system/types'
 import { makeCustodyCase } from '@island.is/judicial-system/formatters'
 import {
-  RULING_STEP_ONE_ROUTE,
-  RULING_STEP_TWO_ROUTE,
+  COURT_RECORD_ROUTE,
+  RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
 
 import { intercept } from '../../../utils'
 
-describe(`${RULING_STEP_ONE_ROUTE}/:id`, () => {
+describe(`${RULING_ROUTE}/:id`, () => {
   beforeEach(() => {
     cy.stubAPIResponses()
   })
@@ -20,7 +20,7 @@ describe(`${RULING_STEP_ONE_ROUTE}/:id`, () => {
       decision: CaseDecision.REJECTING,
     }
 
-    cy.visit(`${RULING_STEP_ONE_ROUTE}/conclusion_rejected`)
+    cy.visit(`${RULING_ROUTE}/conclusion_rejected`)
 
     intercept(caseDataAddition)
 
@@ -38,7 +38,7 @@ describe(`${RULING_STEP_ONE_ROUTE}/:id`, () => {
       validToDate: '2020-12-22T11:23:00.000Z',
     }
 
-    cy.visit(`${RULING_STEP_ONE_ROUTE}/conclusion_accepted_without_isolation`)
+    cy.visit(`${RULING_ROUTE}/conclusion_accepted_without_isolation`)
 
     intercept(caseDataAddition)
 
@@ -57,7 +57,7 @@ describe(`${RULING_STEP_ONE_ROUTE}/:id`, () => {
       validToDate: '2020-12-22T11:23:00.000Z',
     }
 
-    cy.visit(`${RULING_STEP_ONE_ROUTE}/conclusion_accepted_with_isolation`)
+    cy.visit(`${RULING_ROUTE}/conclusion_accepted_with_isolation`)
 
     intercept(caseDataAddition)
 
@@ -78,7 +78,7 @@ describe(`${RULING_STEP_ONE_ROUTE}/:id`, () => {
     }
 
     cy.visit(
-      `${RULING_STEP_ONE_ROUTE}/conclusion_accepted_with_isolation_isolation_ends_before_custody`,
+      `${RULING_ROUTE}/conclusion_accepted_with_isolation_isolation_ends_before_custody`,
     )
 
     intercept(caseDataAddition)
@@ -97,9 +97,7 @@ describe(`${RULING_STEP_ONE_ROUTE}/:id`, () => {
       validToDate: '2021-01-29T13:03:03.000Z',
     }
 
-    cy.visit(
-      `${RULING_STEP_ONE_ROUTE}/conclusion_rejected_with_alternative_travel_ban`,
-    )
+    cy.visit(`${RULING_ROUTE}/conclusion_rejected_with_alternative_travel_ban`)
 
     intercept(caseDataAddition)
 
@@ -120,7 +118,7 @@ describe(`${RULING_STEP_ONE_ROUTE}/:id`, () => {
       },
     }
 
-    cy.visit(`${RULING_STEP_ONE_ROUTE}/conclusion_rejected_extension`)
+    cy.visit(`${RULING_ROUTE}/conclusion_rejected_extension`)
 
     intercept(caseDataAddition)
 
@@ -142,7 +140,7 @@ describe(`${RULING_STEP_ONE_ROUTE}/:id`, () => {
     }
 
     cy.visit(
-      `${RULING_STEP_ONE_ROUTE}/conclusion_rejected_extension_previous_decision_travel_ban`,
+      `${RULING_ROUTE}/conclusion_rejected_extension_previous_decision_travel_ban`,
     )
 
     intercept(caseDataAddition)
@@ -165,7 +163,7 @@ describe(`${RULING_STEP_ONE_ROUTE}/:id`, () => {
       validToDate: '2020-12-22T11:23:00.000Z',
     }
 
-    cy.visit(`${RULING_STEP_ONE_ROUTE}/conclusion_accepted_extension`)
+    cy.visit(`${RULING_ROUTE}/conclusion_accepted_extension`)
 
     intercept(caseDataAddition)
 
@@ -188,7 +186,7 @@ describe(`${RULING_STEP_ONE_ROUTE}/:id`, () => {
     }
 
     cy.visit(
-      `${RULING_STEP_ONE_ROUTE}/conclusion_accepted_extension_previous_decision_travel_ban`,
+      `${RULING_ROUTE}/conclusion_accepted_extension_previous_decision_travel_ban`,
     )
 
     intercept(caseDataAddition)
@@ -212,7 +210,7 @@ describe(`${RULING_STEP_ONE_ROUTE}/:id`, () => {
     }
 
     cy.visit(
-      `${RULING_STEP_ONE_ROUTE}/conclusion_rejected_extension_accepted_alternative_travel_ban`,
+      `${RULING_ROUTE}/conclusion_rejected_extension_accepted_alternative_travel_ban`,
     )
 
     intercept(caseDataAddition)
@@ -231,7 +229,7 @@ describe(`${RULING_STEP_ONE_ROUTE}/:id`, () => {
       decision: CaseDecision.REJECTING,
     }
 
-    cy.visit(`${RULING_STEP_ONE_ROUTE}/conclusion_rejected_travel_ban`)
+    cy.visit(`${RULING_ROUTE}/conclusion_rejected_travel_ban`)
 
     intercept(caseDataAddition)
 
@@ -250,7 +248,7 @@ describe(`${RULING_STEP_ONE_ROUTE}/:id`, () => {
       validToDate: '2020-12-22T11:23:00.000Z',
     }
 
-    cy.visit(`${RULING_STEP_ONE_ROUTE}/conclusion_accepted_travel_ban`)
+    cy.visit(`${RULING_ROUTE}/conclusion_accepted_travel_ban`)
 
     intercept(caseDataAddition)
 
@@ -269,7 +267,7 @@ describe(`${RULING_STEP_ONE_ROUTE}/:id`, () => {
       demands:
         'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
     }
-    cy.visit(`${RULING_STEP_ONE_ROUTE}/test_id_stadfest`)
+    cy.visit(`${RULING_ROUTE}/test_id_stadfest`)
 
     intercept(caseDataAddition)
 
@@ -287,7 +285,7 @@ describe(`${RULING_STEP_ONE_ROUTE}/:id`, () => {
       demands:
         'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
     }
-    cy.visit(`${RULING_STEP_ONE_ROUTE}/test_id_stadfest`)
+    cy.visit(`${RULING_ROUTE}/test_id_stadfest`)
 
     intercept(caseDataAddition)
 
@@ -311,7 +309,7 @@ describe(`${RULING_STEP_ONE_ROUTE}/:id`, () => {
       demands:
         'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
     }
-    cy.visit(`${RULING_STEP_ONE_ROUTE}/test_id_stadfest`)
+    cy.visit(`${RULING_ROUTE}/test_id_stadfest`)
 
     intercept(caseDataAddition)
 
@@ -331,7 +329,7 @@ describe(`${RULING_STEP_ONE_ROUTE}/:id`, () => {
       decision: CaseDecision.ACCEPTING,
       isCustodyIsolation: true,
     }
-    cy.visit(`${RULING_STEP_ONE_ROUTE}/test_id_stadfest`)
+    cy.visit(`${RULING_ROUTE}/test_id_stadfest`)
 
     intercept(caseDataAddition)
 
@@ -349,13 +347,13 @@ describe(`${RULING_STEP_ONE_ROUTE}/:id`, () => {
       demands:
         'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
     }
-    cy.visit(`${RULING_STEP_ONE_ROUTE}/test_id_stadfest`)
+    cy.visit(`${RULING_ROUTE}/test_id_stadfest`)
 
     intercept(caseDataAddition)
 
     cy.getByTestid('ruling').type('lorem')
     cy.get('#case-decision-accepting').check()
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', RULING_STEP_TWO_ROUTE)
+    cy.url().should('include', COURT_RECORD_ROUTE)
   })
 })

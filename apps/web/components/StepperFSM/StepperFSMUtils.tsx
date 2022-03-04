@@ -8,6 +8,8 @@ import {
 
 import { Step, Stepper } from '@island.is/api/schema'
 
+const sourceNamespacesThatNeedToBeSorted = ['Countries']
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type StepperState = State<
   any,
@@ -275,7 +277,11 @@ const resolveStepType = (step: Step): string => {
 const getStepOptions = (
   step: Step,
   lang = 'en',
-  optionsFromNamespace: { slug: string; data: [] }[] = null,
+  optionsFromNamespace: {
+    slug: string
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data: Record<string, any>[]
+  }[] = null,
 ): StepOption[] => {
   if (!step || step.config === '') return []
   const stepConfig: StepConfig = JSON.parse(step.config) as StepConfig
@@ -285,7 +291,7 @@ const getStepOptions = (
       (value) => value.slug === step.slug,
     )
     if (!stepOptions || !stepOptions.data) return []
-    return stepOptions.data.map((o) => {
+    const parsedOptions = stepOptions.data.map((o) => {
       const {
         labelFieldEN,
         labelFieldIS,
@@ -323,6 +329,16 @@ const getStepOptions = (
         slug: o[optionSlugField],
       }
     })
+
+    if (
+      sourceNamespacesThatNeedToBeSorted.includes(
+        stepConfig.optionsFromSource?.sourceNamespace,
+      )
+    ) {
+      parsedOptions.sort((a, b) => a.label?.localeCompare(b.label))
+    }
+
+    return parsedOptions
   }
 
   if (!stepConfig.options) return []
@@ -357,7 +373,7 @@ const stepContainsQuestion = (step: Step) => {
 }
 
 const getStepQuestion = (step: Step): string => {
-  if (stepContainsQuestion(step)) {
+  if (stepContainsQuestion(step) && step.subtitle[0].__typename === 'Html') {
     return step.subtitle[0].document.content[0].content[0].value
   }
   return ''
