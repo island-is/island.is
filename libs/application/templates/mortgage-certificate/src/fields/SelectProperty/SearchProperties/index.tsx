@@ -40,11 +40,11 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
   const [runQuery, { loading }] = useLazyQuery(searchPropertiesMutation, {
     onCompleted(result) {
       setShowSearchError(false)
-
       setFoundProperty(result.searchForProperty)
     },
     onError() {
       setShowSearchError(true)
+      setFoundProperty(undefined)
     },
   })
 

@@ -183,18 +183,14 @@ export class SyslumennService {
   ): Promise<MortgageCertificate> {
     const { id, api } = await this.createApi()
 
-    const contentBase64 =
-      (
-        await api.vedbandayfirlitPost({
-          //TODOx vantar frá syslumenn
-          // await api.vedbokarvottordPost({
-          skilabod: {
-            audkenni: id,
-            fastanumer: propertyNumber,
-            tegundAndlags: TegundAndlags.NUMBER_0, // 0 = Real estate
-          },
-        })
-      ).vedbandayfirlitPDFSkra || ''
+    const res = await api.vedbokarvottordPost({
+      skilabod: {
+        audkenni: id,
+        fastanumer: propertyNumber,
+        tegundAndlags: TegundAndlags.NUMBER_0, // 0 = Real estate
+      },
+    })
+    const contentBase64 = res.vedbandayfirlitPDFSkra || ''
 
     const certificate: MortgageCertificate = {
       contentBase64: contentBase64,
@@ -222,23 +218,39 @@ export class SyslumennService {
     }
   }
 
-  //TODOx need new endpoint from syslumenn
   async getPropertyDetails(propertyNumber: string): Promise<PropertyDetail> {
-    return {
-      propertyNumber: propertyNumber,
-      defaultAddress: {
-        display: '<Heimilisfang>',
+    const { id, api } = await this.createApi()
+
+    const res = await api.vedbokavottordRegluverkPost({
+      skilabod: {
+        audkenni: id,
+        fastanumer:
+          propertyNumber[0] == 'F'
+            ? propertyNumber.substring(1, propertyNumber.length)
+            : propertyNumber,
+        tegundAndlags: TegundAndlags.NUMBER_0, // 0 = Real estate
       },
-      unitsOfUse: {
-        unitsOfUse: [
-          {
-            marking: '<Merking>',
-            displaySize: 123.4,
-            buildYearDisplay: '<Ártal>',
-            explanation: '<Lýsing>',
-          },
-        ],
-      },
+    })
+
+    if (res.length > 0) {
+      return {
+        propertyNumber: propertyNumber,
+        defaultAddress: {
+          display: res[0].heiti, // + ', <Póstnúmer>'
+        },
+        unitsOfUse: {
+          unitsOfUse: [
+            {
+              //marking: '<Merking>',
+              //displaySize: <Birt stærð>,
+              //buildYearDisplay: '<Ártal>',
+              explanation: res[0].notkun,
+            },
+          ],
+        },
+      }
+    } else {
+      throw new Error()
     }
   }
 }
