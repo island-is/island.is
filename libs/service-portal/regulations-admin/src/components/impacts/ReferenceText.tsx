@@ -13,8 +13,6 @@ import {
 } from '@island.is/regulations-tools/utils'
 import * as s from './Impacts.css'
 import * as ed from '../Editor.css'
-import { Link } from '@island.is/island-ui/core'
-import { taskUrl } from '../../utils/routing'
 
 type ReferenceTextProps = {
   baseName: RegName

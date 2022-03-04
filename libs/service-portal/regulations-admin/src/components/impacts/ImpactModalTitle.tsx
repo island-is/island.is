@@ -1,8 +1,6 @@
 import React from 'react'
 import { Box, Button, Tag, Text } from '@island.is/island-ui/core'
-import { impactMsgs } from '../../messages'
 import { DraftImpactForm } from '../../state/types'
-import { useLocale } from '@island.is/localization'
 import { nameToSlug, RegName } from '@island.is/regulations'
 import { ImpactDate } from './ImpactDate'
 
@@ -19,10 +17,20 @@ export type ImpactModalTitleProps = {
   onChangeDate: (newDate: Date | undefined) => void
   impact: DraftImpactForm
   minDate?: Date
+  readOnly?: boolean
 }
 
 export const ImpactModalTitle = (props: ImpactModalTitleProps) => {
-  const { type, tag, title, name, onChangeDate, impact, minDate } = props
+  const {
+    type,
+    tag,
+    title,
+    name,
+    onChangeDate,
+    impact,
+    minDate,
+    readOnly,
+  } = props
 
   return (
     <Box paddingY={4}>
@@ -60,6 +68,7 @@ export const ImpactModalTitle = (props: ImpactModalTitleProps) => {
         size="full"
         minDate={minDate}
         onChange={(newDate) => onChangeDate(newDate)}
+        readOnly={readOnly}
       />
     </Box>
   )

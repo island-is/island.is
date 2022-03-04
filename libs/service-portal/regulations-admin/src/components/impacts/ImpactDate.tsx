@@ -11,10 +11,11 @@ export type ImpactDateProps = {
   size?: 'full' | 'half'
   minDate?: Date
   onChange: (newValue: Date | undefined) => void
+  readOnly?: boolean
 }
 
 export const ImpactDate = (props: ImpactDateProps) => {
-  const { impact, onChange, size = 'half', minDate } = props
+  const { impact, onChange, size = 'half', minDate, readOnly } = props
 
   const date = impact.date
 
@@ -29,13 +30,14 @@ export const ImpactDate = (props: ImpactDateProps) => {
         placeholderText={t(impactMsgs.effectiveDate_default)}
         minDate={minDate ?? date.min}
         maxDate={date.max}
-        selected={date.value}
+        selected={date.value || minDate}
         handleChange={onChange}
         hasError={!!date.error}
         errorMessage={date.error && t(date.error)}
         backgroundColor="blue"
+        disabled={readOnly}
       />
-      {!!date.value && (
+      {!readOnly && !!date.value && (
         <Button
           size="small"
           variant="text"

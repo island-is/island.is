@@ -286,6 +286,7 @@ export const EditChange = (props: EditChangeProp) => {
               impact={activeChange}
               minDate={minDate}
               onChangeDate={changeDate}
+              readOnly={readOnly}
               tag={{
                 first: 'Textabreyting reglugerðar',
                 second: 'Stofnreglugerð',
@@ -380,14 +381,16 @@ export const EditChange = (props: EditChangeProp) => {
               >
                 Til baka
               </Button>
-              <Button
-                onClick={saveChange}
-                size="small"
-                icon="arrowForward"
-                disabled={hasImpactMismatch}
-              >
-                Vista textabreytingu
-              </Button>
+              {!readOnly && (
+                <Button
+                  onClick={saveChange}
+                  size="small"
+                  icon="arrowForward"
+                  disabled={hasImpactMismatch || readOnly}
+                >
+                  Vista textabreytingu
+                </Button>
+              )}
             </Box>
           </GridColumn>
         </GridRow>

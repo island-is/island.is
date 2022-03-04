@@ -5,7 +5,6 @@ import { Box, Button } from '@island.is/island-ui/core'
 import { buttonsMsgs as msg } from '../messages'
 import { useLocale } from '@island.is/localization'
 import { useDraftingState } from '../state/useDraftingState'
-// import { SaveDeleteButtons } from './SaveDeleteButtons'
 
 export const ButtonBar = () => {
   const { step, actions } = useDraftingState()
