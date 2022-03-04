@@ -22,11 +22,11 @@ const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
   dataSchema: dataSchema,
   readyForProduction: false,
   stateMachineConfig: {
-    initial: States.REGISTRY,
+    initial: States.CONFIRM,
     states: {
-      [States.REGISTRY]: {
+      [States.CONFIRM]: {
         meta: {
-          name: 'Registrations',
+          name: 'Confirmations',
           actionCard: {
             title: m.applicationTitle,
           },
@@ -43,7 +43,7 @@ const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
           },
           roles: [
             {
-              id: Roles.INSTRUCTOR,
+              id: Roles.SCHOOL_EMPLOYEE,
               formLoader: () =>
                 import('../forms/drivingSchoolConfirmtation').then((val) =>
                   Promise.resolve(val.getDrivingSchoolConfirmation()),
@@ -67,7 +67,7 @@ const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
     application: Application,
   ): ApplicationRole | undefined {
     if (application.applicant === nationalId) {
-      return Roles.INSTRUCTOR
+      return Roles.SCHOOL_EMPLOYEE
     }
   },
 }

@@ -98,10 +98,6 @@ export const ApplicationConfigurations = {
     slug: 'greida',
     translation: 'ep.application',
   },
-  [ApplicationTypes.EXAMPLE_PAYMENT]: {
-    slug: 'greida',
-    translation: 'ep.application',
-  },
   [ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION]: {
     slug: 'okuskoli',
     translation: 'dsc.application',

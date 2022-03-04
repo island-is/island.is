@@ -3,10 +3,10 @@ import { DefaultEvents } from '@island.is/application/core'
 export type Events = { type: DefaultEvents.SUBMIT }
 
 export enum States {
-  REGISTRY = 'REGISTRY',
+  CONFIRM = 'CONFIRM',
 }
 export enum Roles {
-  INSTRUCTOR = 'instructor',
+  SCHOOL_EMPLOYEE = 'school_employee',
 }
 
 export const YES = 'yes'
