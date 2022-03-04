@@ -126,4 +126,8 @@ export class CreateApplicationInput implements CreateApplication {
   @Allow()
   @Field(() => [DirectTaxPaymentInput])
   readonly directTaxPayments!: DirectTaxPaymentInput[]
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly applicationSystemId?: string
 }
