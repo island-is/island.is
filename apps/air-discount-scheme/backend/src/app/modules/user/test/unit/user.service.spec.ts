@@ -72,13 +72,6 @@ describe('UserService', () => {
         }),
         NationalRegistryClientModule,
       ],
-      imports: [
-        ConfigModule.forRoot({
-          isGlobal: true,
-          load: [XRoadConfig, NationalRegistryClientConfig],
-        }),
-        NationalRegistryClientModule,
-      ],
     }).compile()
 
     userService = moduleRef.get<UserService>(UserService)

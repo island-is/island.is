@@ -63,16 +63,6 @@ describe(NEW_IC_ROUTE, () => {
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
-  it('should require a valid accused date of birth if the user does not have a national id', () => {
-    cy.get('[type="checkbox"]').check()
-    cy.getByTestid('nationalId').type('0').blur()
-    cy.getByTestid('inputErrorMessage').contains('Dæmi: 00.00.0000')
-    cy.getByTestid('nationalId').clear().blur()
-    cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
-    cy.getByTestid('nationalId').clear().type('01.01.2000')
-    cy.getByTestid('inputErrorMessage').should('not.exist')
-  })
-
   it('should require a valid accused name', () => {
     cy.getByTestid('accusedName').click().blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
