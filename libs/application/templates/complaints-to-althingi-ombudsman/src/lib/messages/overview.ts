@@ -2,6 +2,11 @@ import { defineMessages } from 'react-intl'
 
 export const complaintOverview = {
   general: defineMessages({
+    title: {
+      id: 'ctao.application:overview.general.title',
+      defaultMessage: 'Kvörtun og undirritun',
+      description: 'Overview of application',
+    },
     noAttachments: {
       id: 'ctao.application:overview.noAttachments',
       defaultMessage: 'Engin fylgiskjöl',
@@ -79,6 +84,11 @@ export const complaintOverview = {
       id: 'ctao.application:overview.label.complaintType',
       defaultMessage: 'Kvörtunin varðar',
       description: 'Label for complaint type',
+    },
+    submit: {
+      id: 'ctao.application:overview.labels.submit',
+      defaultMessage: 'Staðfesta',
+      description: 'Submit button text',
     },
   }),
 }

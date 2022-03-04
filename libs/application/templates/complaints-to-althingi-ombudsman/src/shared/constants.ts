@@ -14,3 +14,7 @@ export enum ComplainedForTypes {
 }
 export const YES = 'yes'
 export const NO = 'no'
+
+export enum ApiActions {
+  submitApplication = 'submitApplication',
+}

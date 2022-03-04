@@ -9,8 +9,10 @@ import {
   buildMultiField,
   buildRadioField,
   buildSection,
+  buildSubmitField,
   buildSubSection,
   buildTextField,
+  DefaultEvents,
   Form,
   FormModes,
   FormValue,
@@ -29,6 +31,7 @@ import {
   shared,
   preexistingComplaint,
   confirmation,
+  complaintOverview,
 } from '../lib/messages'
 import {
   ComplainedForTypes,
@@ -94,7 +97,6 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               title: information.aboutTheComplainer.name,
               backgroundColor: 'white',
               disabled: true,
-              width: 'half',
               defaultValue: (application: Application) =>
                 (application.externalData?.nationalRegistry?.data as {
                   fullName?: string
@@ -291,7 +293,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
             }),
             buildCustomField(
               {
-                id: 'complainedForInformation.titleField',
+                id: 'complainedForInformation.uploadTitleField',
                 title: complainedFor.labels.powerOfAttorney,
                 component: 'FieldTitle',
               },
@@ -530,14 +532,31 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
       id: 'section.overview',
       title: section.complaintOverview,
       children: [
-        buildCustomField(
-          {
-            id: 'overview',
-            title: 'Kvörtun og undirritun',
-            component: 'ComplaintOverview',
-          },
-          { isEditable: true },
-        ),
+        buildMultiField({
+          id: 'overview.multifield',
+          title: complaintOverview.general.title,
+          children: [
+            buildCustomField(
+              {
+                id: 'overview',
+                title: complaintOverview.general.title,
+                component: 'ComplaintOverview',
+              },
+              { isEditable: true },
+            ),
+            buildSubmitField({
+              id: 'overview.submit',
+              title: '',
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: complaintOverview.labels.submit,
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
+        }),
       ],
     }),
     buildSection({
