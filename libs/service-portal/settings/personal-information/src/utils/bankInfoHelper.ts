@@ -12,9 +12,10 @@ export const formatBankInfo = (bankInfo: string) => {
 }
 
 export const stringifyBankData = (obj: any) => {
-  const bank = obj.bank.padStart(4, '0')
-  const account = obj.account.padStart(6, '0')
-  const stringifyBankInfo = `${bank}-${obj.l}-${account}`
+  const bank = obj?.bank?.padStart(4, '0') ?? ''
+  const account = obj?.account?.padStart(6, '0') ?? ''
+  const l = obj?.l ?? ''
+  const stringifyBankInfo = `${bank}-${l}-${account}`
   const formatted = formatBankInfo(stringifyBankInfo)
   return formatted
 }

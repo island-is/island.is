@@ -998,6 +998,50 @@
         ]
       }
     },
+    "/v1/Vedbandayfirlit": {
+      "post": {
+        "tags": ["Syslumenn"],
+        "operationId": "Vedbandayfirlit_Post",
+        "consumes": [
+          "application/json-patch+json",
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "parameters": [
+          {
+            "name": "skilabod",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/VedbandayfirlitSkeyti"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/VedbandayfirlitSvarSkeyti"
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "NotFound",
+            "schema": {
+              "$ref": "#/definitions/VedbandayfirlitSvarSkeyti"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
     "/Version": {
       "get": {
         "tags": ["Syslumenn"],
@@ -1220,6 +1264,12 @@
         "tegund": {
           "type": "string"
         },
+        "tegund2": {
+          "type": "string"
+        },
+        "tegundVeitingastadar": {
+          "type": "string"
+        },
         "gildirFra": {
           "type": "string",
           "format": "date-time"
@@ -1251,6 +1301,14 @@
         },
         "afgr_Afgengis_Adfaranott_Fridaga_Utiveitingar": {
           "type": "string"
+        },
+        "hamarksfjoldiGesta": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "fjoldiGestaIVeitingum": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -1576,7 +1634,7 @@
     },
     "EventType": {
       "type": "integer",
-      "description": "",
+      "description": "0 = AllSigned",
       "x-enumNames": ["AllSigned"],
       "enum": [0]
     },
@@ -1689,7 +1747,7 @@
     },
     "AdiliTegund": {
       "type": "integer",
-      "description": "",
+      "description": "0 = Malshefjandi\n1 = Gagnadili\n2 = Barn",
       "x-enumNames": ["Malshefjandi", "Gagnadili", "Barn"],
       "enum": [0, 1, 2]
     },
@@ -1720,6 +1778,41 @@
           "type": "string"
         }
       }
+    },
+    "VedbandayfirlitSvarSkeyti": {
+      "type": "object",
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "skilabod": {
+          "type": "string"
+        },
+        "vedbandayfirlitPDFSkra": {
+          "type": "string"
+        }
+      }
+    },
+    "VedbandayfirlitSkeyti": {
+      "type": "object",
+      "required": ["tegundAndlags"],
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "fastanumer": {
+          "type": "string"
+        },
+        "tegundAndlags": {
+          "$ref": "#/definitions/TegundAndlags"
+        }
+      }
+    },
+    "TegundAndlags": {
+      "type": "integer",
+      "description": "0 = Fasteign\n1 = Okutaeki\n2 = Skip\n3 = Lausafe\n4 = Loftfar",
+      "x-enumNames": ["Fasteign", "Okutaeki", "Skip", "Lausafe", "Loftfar"],
+      "enum": [0, 1, 2, 3, 4]
     }
   },
   "securityDefinitions": {

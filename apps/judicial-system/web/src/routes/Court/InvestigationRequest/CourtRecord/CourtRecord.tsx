@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
-import { SessionArrangements } from '@island.is/judicial-system/types'
+import { CaseType, SessionArrangements } from '@island.is/judicial-system/types'
 import {
   CourtSubsections,
   Sections,
@@ -66,16 +66,6 @@ const CourtRecord = () => {
                 },
               )}`
             })
-          } else {
-            if (wc.defendants.length > 1) {
-              attendees += `\n${formatMessage(
-                m.sections.courtAttendees.multipleDefendantNotPresentAutofill,
-              )}`
-            } else {
-              attendees += `\n${formatMessage(
-                m.sections.courtAttendees.defendantNotPresentAutofill,
-              )}`
-            }
           }
         }
 
@@ -108,7 +98,21 @@ const CourtRecord = () => {
         autofill('prosecutorDemands', theCase.demands, theCase)
       }
 
-      if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+      if (theCase.type === CaseType.RESTRAINING_ORDER) {
+        autofill(
+          'sessionBookings',
+          formatMessage(m.sections.sessionBookings.autofillRestrainingOrder),
+          theCase,
+        )
+      } else if (theCase.type === CaseType.AUTOPSY) {
+        autofill(
+          'sessionBookings',
+          formatMessage(m.sections.sessionBookings.autofillAutopsy),
+          theCase,
+        )
+      } else if (
+        theCase.sessionArrangements === SessionArrangements.ALL_PRESENT
+      ) {
         let autofillSessionBookings = ''
 
         if (theCase.defenderName) {
@@ -133,22 +137,27 @@ const CourtRecord = () => {
           m.sections.sessionBookings.autofillRightToRemainSilent,
         )}\n\n${formatMessage(
           m.sections.sessionBookings.autofillCourtDocumentOne,
-        )}\n\n${formatMessage(m.sections.sessionBookings.autofillAccusedPlea)}`
+        )}\n\n${formatMessage(
+          m.sections.sessionBookings.autofillAccusedPlea,
+        )}\n\n${formatMessage(m.sections.sessionBookings.autofillAllPresent)}`
 
         autofill('sessionBookings', autofillSessionBookings, theCase)
-      }
-
-      if (
+      } else if (
         theCase.sessionArrangements ===
           SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
-        theCase.defenderIsSpokesperson &&
-        theCase.defenderName
+        theCase.defenderIsSpokesperson
       ) {
         autofill(
           'sessionBookings',
-          formatMessage(m.sections.sessionBookings.autofillSpokeperson, {
-            spokesperson: theCase.defenderName,
-          }),
+          formatMessage(m.sections.sessionBookings.autofillSpokeperson),
+          theCase,
+        )
+      } else if (
+        theCase.sessionArrangements === SessionArrangements.PROSECUTOR_PRESENT
+      ) {
+        autofill(
+          'sessionBookings',
+          formatMessage(m.sections.sessionBookings.autofillProsecutor),
           theCase,
         )
       }
