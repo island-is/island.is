@@ -12,11 +12,13 @@ import {
   showSpouseData,
   AmountModal,
   getAidAmountModalInfo,
+  UserType,
 } from '@island.is/financial-aid/shared/lib'
 
 import format from 'date-fns/format'
 
 import {
+  CollapsibleProfileUnit,
   ProfileUnit,
   StateModal,
   AidAmountModal,
@@ -30,8 +32,10 @@ import {
   getApplicant,
   getApplicantMoreInfo,
   getApplicantSpouse,
+  getDirectTaxPayments,
   getNationalRegistryInfo,
 } from '@island.is/financial-aid-web/veita/src/utils/applicationHelper'
+import { TaxBreakdown } from '@island.is/financial-aid/shared/components'
 
 interface ApplicationProps {
   application: Application
@@ -132,6 +136,16 @@ const ApplicationProfile = ({
     application?.amount,
   )
 
+  const applicantDirectPayments =
+    application.directTaxPayments.filter(
+      (d) => d.userType === UserType.APPLICANT,
+    ) ?? []
+
+  const spouseDirectPayments =
+    application.directTaxPayments.filter(
+      (d) => d.userType === UserType.SPOUSE,
+    ) ?? []
+
   return (
     <>
       <Box
@@ -160,27 +174,49 @@ const ApplicationProfile = ({
           className={`contentUp delay-75`}
         />
 
+        {applicantDirectPayments.length > 0 && (
+          <CollapsibleProfileUnit
+            heading="Upplýsingar um staðgreiðslu"
+            info={getDirectTaxPayments(applicantDirectPayments)}
+            className={`contentUp delay-75`}
+          >
+            <TaxBreakdown items={applicantDirectPayments} />
+          </CollapsibleProfileUnit>
+        )}
+
         {showSpouseData[application.familyStatus] && (
-          <ProfileUnit
+          <CollapsibleProfileUnit
             heading="Maki"
             info={applicantSpouse}
-            className={`contentUp delay-75`}
+            className={`contentUp delay-100`}
           />
         )}
 
-        <ProfileUnit
+        {spouseDirectPayments.length > 0 && (
+          <CollapsibleProfileUnit
+            heading="Upplýsingar um staðgreiðslu maka"
+            info={getDirectTaxPayments(spouseDirectPayments)}
+            className={`contentUp delay-125`}
+          >
+            <TaxBreakdown items={spouseDirectPayments} />
+          </CollapsibleProfileUnit>
+        )}
+
+        <CollapsibleProfileUnit
           heading="Umsóknarferli"
           info={applicantMoreInfo}
-          className={`contentUp delay-100`}
+          className={`contentUp delay-125`}
         />
 
-        <ProfileUnit
+        <CollapsibleProfileUnit
           heading="Þjóðskrá"
           info={nationalRegistryInfo}
-          className={`contentUp delay-100`}
+          className={`contentUp delay-125`}
         />
 
-        <FilesListWithHeaderContainer applicationFiles={application.files} />
+        {application.files && (
+          <FilesListWithHeaderContainer applicationFiles={application.files} />
+        )}
 
         <CommentSection
           className={`contentUp delay-125 ${styles.widthAlmostFull}`}

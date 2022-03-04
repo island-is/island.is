@@ -114,7 +114,7 @@ const FileUpload = () => {
             <AlertMessage
               type="warning"
               title="Athugasemd frá vinnsluaðila"
-              message={fileComment.comment}
+              message={`Til að klára umsóknina verður þú að senda ${fileComment.comment}.`}
             />
           </Box>
         )}

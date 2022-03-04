@@ -1,3 +1,4 @@
+import { getModelToken } from '@nestjs/sequelize'
 import request from 'supertest'
 import { getModelToken } from '@nestjs/sequelize'
 
@@ -6,6 +7,7 @@ import {
   Delegation,
   DelegationDTO,
   DelegationScope,
+  DelegationType,
 } from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
 import {
@@ -14,7 +16,7 @@ import {
 } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
 
-import { createDelegation } from '../../../../test/fixtures'
+import { createClient, createDelegation } from '../../../../test/fixtures'
 import {
   Scopes,
   setupWithAuth,
@@ -23,11 +25,19 @@ import {
 } from '../../../../test/setup'
 import { TestEndpointOptions } from '../../../../test/types'
 import { expectMatchingObject, getRequestMethod } from '../../../../test/utils'
+import {
+  PersonalRepresentative,
+  PersonalRepresentativeRight,
+  PersonalRepresentativeRightType,
+  PersonalRepresentativeType,
+} from '@island.is/auth-api-lib/personal-representative'
 
 const today = new Date('2021-11-12')
+const client = createClient({ clientId: '@island.is/webapp' })
 const user = createCurrentUser({
   nationalId: '1122334455',
   scope: [AuthScope.actorDelegations, Scopes[0].name],
+  client: client.clientId,
 })
 const userName = 'Tester Tests'
 const nationalRegistryUser = createNationalRegistryUser({
@@ -51,6 +61,10 @@ describe('ActorDelegationsController', () => {
         user,
         userName,
         nationalRegistryUser,
+        client: {
+          props: client,
+          scopes: Scopes.slice(0, 4).map((s) => s.name),
+        },
       })
       server = request(app.getHttpServer())
 
@@ -63,7 +77,7 @@ describe('ActorDelegationsController', () => {
       await app.cleanUp()
     })
 
-    beforeEach(async () => {
+    afterEach(async () => {
       await delegationModel.destroy({
         where: {},
         cascade: true,
@@ -76,7 +90,7 @@ describe('ActorDelegationsController', () => {
       const path = '/v1/actor/delegations'
       const query = '?direction=incoming'
 
-      it('returns only valid delegations', async () => {
+      it('should return only valid delegations', async () => {
         // Arrange
         const models = await delegationModel.bulkCreate(
           [
@@ -109,7 +123,58 @@ describe('ActorDelegationsController', () => {
         expectMatchingObject(res.body[0], expectedModel)
       })
 
-      it('returns 400 BadRequest if required query paramter is missing', async () => {
+      it('should return only delegations with scopes the client has access to', async () => {
+        // Arrange
+        const expectedModel = (
+          await delegationModel.create(
+            createDelegation({
+              fromNationalId: nationalRegistryUser.kennitala,
+              toNationalId: user.nationalId,
+              scopes: [Scopes[0].name, Scopes[5].name],
+              today,
+            }),
+            {
+              include: [{ model: DelegationScope, as: 'delegationScopes' }],
+            },
+          )
+        ).toDTO()
+        // The expected model should not contain the scope from the other org
+        expectedModel.scopes = expectedModel.scopes?.filter(
+          (s) => s.scopeName === Scopes[0].name,
+        )
+
+        // Act
+        const res = await server.get(`${path}${query}`)
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(1)
+        expectMatchingObject(res.body[0], expectedModel)
+      })
+
+      it('should return no delegation when the client does not have access to any scope', async () => {
+        // Arrange
+        await delegationModel.create(
+          createDelegation({
+            fromNationalId: nationalRegistryUser.kennitala,
+            toNationalId: user.nationalId,
+            scopes: [Scopes[5].name],
+            today,
+          }),
+          {
+            include: [{ model: DelegationScope, as: 'delegationScopes' }],
+          },
+        )
+
+        // Act
+        const res = await server.get(`${path}${query}`)
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(0)
+      })
+
+      it('should return 400 BadRequest if required query paramter is missing', async () => {
         // Act
         const res = await server.get(path)
 
@@ -191,6 +256,119 @@ describe('ActorDelegationsController', () => {
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(1)
         expectMatchingObject(res.body, expectedModels)
+      })
+
+      describe('when user is a personal representative with one representee', () => {
+        let prModel: typeof PersonalRepresentative
+        let prRightsModel: typeof PersonalRepresentativeRight
+        let prRightTypeModel: typeof PersonalRepresentativeRightType
+        let prTypeModel: typeof PersonalRepresentativeType
+
+        let response: request.Response
+        let body: DelegationDTO[]
+
+        beforeAll(async () => {
+          prTypeModel = app.get<typeof PersonalRepresentativeType>(
+            'PersonalRepresentativeTypeRepository',
+          )
+          prModel = app.get<typeof PersonalRepresentative>(
+            'PersonalRepresentativeRepository',
+          )
+          prRightTypeModel = app.get<typeof PersonalRepresentativeRightType>(
+            'PersonalRepresentativeRightTypeRepository',
+          )
+          prRightsModel = app.get<typeof PersonalRepresentativeRight>(
+            'PersonalRepresentativeRightRepository',
+          )
+
+          const prType = await prTypeModel.create({
+            code: 'prTypeCode',
+            name: 'prTypeName',
+            description: 'prTypeDescription',
+          })
+
+          const pr = await prModel.create({
+            nationalIdPersonalRepresentative: user.nationalId,
+            nationalIdRepresentedPerson: nationalRegistryUser.kennitala,
+            personalRepresentativeTypeCode: prType.code,
+            contractId: '1',
+            externalUserId: '1',
+          })
+
+          const prRightType = await prRightTypeModel.create({
+            code: 'prRightType',
+            description: 'prRightTypeDescription',
+          })
+
+          await prRightsModel.create({
+            rightTypeCode: prRightType.code,
+            personalRepresentativeId: pr.id,
+          })
+
+          response = await server.get(`${path}${query}`)
+          body = response.body
+        })
+
+        it('should have a an OK return status', () => {
+          expect(response.status).toEqual(200)
+        })
+
+        it('should return a single entity', () => {
+          expect(body.length).toEqual(1)
+        })
+
+        it('should have the nationalId of the user as the representer', () => {
+          expect(
+            body.some((d) => d.toNationalId === user.nationalId),
+          ).toBeTruthy()
+        })
+
+        it('should have the nationalId of the correct representee', () => {
+          expect(
+            body.some(
+              (d) => d.fromNationalId === nationalRegistryUser.kennitala,
+            ),
+          ).toBeTruthy()
+        })
+
+        it('should have the name of the correct representee', () => {
+          expect(
+            body.some((d) => d.fromName === nationalRegistryUser.nafn),
+          ).toBeTruthy()
+        })
+
+        it('should have the delegation type claim of PersonalRepresentative', () => {
+          expect(
+            body.some((d) => d.type === DelegationType.PersonalRepresentative),
+          ).toBeTruthy()
+        })
+
+        afterAll(async () => {
+          await prRightsModel.destroy({
+            where: {},
+            cascade: true,
+            truncate: true,
+            force: true,
+          })
+          await prRightTypeModel.destroy({
+            where: {},
+            cascade: true,
+            truncate: true,
+            force: true,
+          })
+          await prModel.destroy({
+            where: {},
+            cascade: true,
+            truncate: true,
+            force: true,
+          })
+          await prTypeModel.destroy({
+            where: {},
+            cascade: true,
+            truncate: true,
+            force: true,
+          })
+        })
       })
     })
   })

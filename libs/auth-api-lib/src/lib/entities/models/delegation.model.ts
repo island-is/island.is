@@ -8,8 +8,12 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
+import {
+  DelegationDTO,
+  DelegationProvider,
+  DelegationType,
+} from '../dto/delegation.dto'
 import { DelegationScope } from './delegation-scope.model'
-import { DelegationDTO, DelegationProvider, DelegationType } from '../../..'
 
 @Table({
   tableName: 'delegation',

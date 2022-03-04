@@ -181,6 +181,16 @@ const message = {
 [Email example](https://github.com/island-is/island.is/blob/main/libs/application/template-api-modules/src/lib/modules/templates/parental-leave/emailGenerators/assignEmployerEmail.ts) for the parental leave application.
 {% endhint %}
 
+## Generate an example email template into an html file
+
+If you are curious to see what your template will look like or simply want to play around with the template components you can modify `libs/email-service/src/tools/generate-html/example.ts` and then run:
+
+```bash
+yarn nx run email-service:generate-html
+```
+
+Once generated, the output html file will appear in `libs/email-service/src/tools/generate-html/output`
+
 ### Under the hood
 
 It is based on [Foundation emails template](https://github.com/foundation/foundation-emails) and Handlebars to create each components. The foundation based styles has been minified and is coming from [here](https://github.com/jeremybarbet/foundation-emails/tree/master). Is has been minified and embed within `foundation.hbs` to avoid adding heavy CSS preprocessor/pipeline to handle everything. We are using [Juice](https://github.com/Automattic/juice) to inline the styles within the HTML, not because we like inline CSS, but because emails.

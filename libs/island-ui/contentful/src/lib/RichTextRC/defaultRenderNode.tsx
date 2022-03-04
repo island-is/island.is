@@ -163,8 +163,34 @@ export const defaultRenderNode: RenderNode = {
         return entry.fields.url ? (
           <Hyperlink href={entry.fields.url}>{children}</Hyperlink>
         ) : null
+      case 'organizationPage': {
+        const prefix = getOrganizationPrefix(entry.sys?.locale)
+        return entry.fields.slug ? (
+          <Hyperlink href={`/${prefix}/${entry.fields.slug}`}>
+            {children}
+          </Hyperlink>
+        ) : null
+      }
+      case 'organizationSubpage': {
+        const prefix = getOrganizationPrefix(entry.sys?.locale)
+        return entry.fields.slug &&
+          entry.fields.organizationPage?.fields?.slug ? (
+          <Hyperlink
+            href={`/${prefix}/${entry.fields.organizationPage.fields.slug}/${entry.fields.slug}`}
+          >
+            {children}
+          </Hyperlink>
+        ) : null
+      }
       default:
         return null
     }
   },
+}
+
+const getOrganizationPrefix = (locale: string) => {
+  if (locale && !locale.includes('is')) {
+    return 'o'
+  }
+  return 's'
 }

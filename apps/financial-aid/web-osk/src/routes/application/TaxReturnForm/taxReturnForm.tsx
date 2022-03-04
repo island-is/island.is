@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { Text, LinkContext, AlertMessage, Box } from '@island.is/island-ui/core'
+import { Text, AlertMessage, Box } from '@island.is/island-ui/core'
 
 import {
   ContentContainer,
@@ -12,6 +12,7 @@ import { useRouter } from 'next/router'
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
 import { NavigationProps } from '@island.is/financial-aid/shared/lib'
+import { getTaxFormContent } from './taxFormContent'
 
 const TaxReturnForm = () => {
   const router = useRouter()
@@ -29,8 +30,15 @@ const TaxReturnForm = () => {
   }
 
   const taxReturnFetchFailed = form.taxReturnFromRskFile.length === 0
+  const directTaxPaymentsFetchedFailed = form.directTaxPayments.length === 0
 
-  const content = getContent(taxReturnFetchFailed)
+  const taxDataGatheringFailed =
+    taxReturnFetchFailed && directTaxPaymentsFetchedFailed
+
+  const content = getTaxFormContent(
+    taxReturnFetchFailed,
+    directTaxPaymentsFetchedFailed,
+  )
 
   return (
     <>
@@ -39,12 +47,12 @@ const TaxReturnForm = () => {
           Skattagögn
         </Text>
 
-        {taxReturnFetchFailed && (
+        {taxDataGatheringFailed && (
           <Box marginBottom={4}>
             <AlertMessage
-              type="warning"
-              title="Ekki tókst að sækja skattframtal"
-              message="Þú getur hlaðið upp skattframtalinu þínu hérna ásamt staðgreiðsluskrá"
+              type="error"
+              title="Ekki tókst að sækja skattframtal og staðgreiðsluskrá"
+              message="Það náðist ekki tenging við Skattinn"
             />
           </Box>
         )}
@@ -59,46 +67,7 @@ const TaxReturnForm = () => {
           uploadFiles={form.taxReturnFiles}
         />
 
-        {taxReturnFetchFailed && (
-          <>
-            <Text as="h2" variant="h3" marginBottom={2}>
-              Hvar finn ég staðfest afrit af mínu skattframtali?
-            </Text>
-
-            <LinkContext.Provider
-              value={{
-                linkRenderer: (href, children) => (
-                  <a
-                    style={{
-                      color: '#0061ff',
-                    }}
-                    href={href}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    {children}
-                  </a>
-                ),
-              }}
-            >
-              <Text marginBottom={[3, 3, 5]}>
-                Á vef Skattsins finnur þú{' '}
-                <a href="https://www.skatturinn.is/einstaklingar/framtal-og-alagning/stadfest-afrit-framtals/">
-                  leiðbeiningar
-                </a>{' '}
-                um hvernig sækja má staðfest afrit skattframtals.
-              </Text>
-            </LinkContext.Provider>
-          </>
-        )}
-
-        <Text as="h2" variant="h3" marginBottom={2}>
-          Hvar finn ég staðfestingarskjal úr staðgreiðsluskrá?
-        </Text>
-        <Text marginBottom={[3, 3, 10]}>
-          Eftir að þú hefur innskráð þig á Þjónustuvef Skattsins ferð þú í
-          Almennt → Staðgreiðsluskrá RSK → Sækja PDF.
-        </Text>
+        {content.info}
       </ContentContainer>
 
       <Footer

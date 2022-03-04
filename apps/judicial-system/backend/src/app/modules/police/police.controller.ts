@@ -27,8 +27,9 @@ import {
   CaseOriginalAncestorInterceptor,
   CurrentCase,
 } from '../case'
-import { UploadPoliceCaseFileDto } from './dto'
-import { PoliceCaseFile, UploadPoliceCaseFileResponse } from './models'
+import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
+import { PoliceCaseFile } from './models/policeCaseFile.model'
+import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { PoliceService } from './police.service'
 
 @UseGuards(
