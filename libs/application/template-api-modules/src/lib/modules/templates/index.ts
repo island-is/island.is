@@ -13,11 +13,8 @@ import { GeneralPetitionModule } from './general-petition/general-petition.modul
 import { CriminalRecordSubmissionModule } from './criminal-record-submission/criminal-record-submission.module'
 import { DataProtectionComplaintModule } from './data-protection-complaint/data-protection-complaint.module'
 import { PSignSubmissionModule } from './p-sign-submission/p-sign-submission.module'
-<<<<<<< HEAD
-import { MortgageCertificateSubmissionModule } from './mortgage-certificate-submission/mortgage-certificate-submission.module'
-=======
 import { ExamplePaymentActionsModule } from './example-payment-actions/examplePaymentActions.module'
->>>>>>> main
+import { MortgageCertificateSubmissionModule } from './mortgage-certificate-submission/mortgage-certificate-submission.module'
 
 export const modules = [
   ReferenceTemplateModule,

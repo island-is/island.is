@@ -38,7 +38,6 @@ import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
 import { AssetsClientConfig } from '@island.is/clients/assets'
 import { AuthPublicApiClientConfig } from '@island.is/clients/auth-public-api'
 import { FinanceClientConfig } from '@island.is/clients/finance'
-import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 import { AuditModule } from '@island.is/nest/audit'
 import {
   ConfigModule,
