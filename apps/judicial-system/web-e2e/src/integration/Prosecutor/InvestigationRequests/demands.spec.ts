@@ -1,19 +1,15 @@
 import faker from 'faker'
 
 import { makeInvestigationCase } from '@island.is/judicial-system/formatters'
-import {
-  IC_POLICE_DEMANDS_ROUTE,
-  IC_POLICE_REPORT_ROUTE,
-} from '@island.is/judicial-system/consts'
 
 import { intercept } from '../../../utils'
 
-describe(`${IC_POLICE_DEMANDS_ROUTE}/:id`, () => {
+describe('/krafa/rannsoknarheimild/domkrofur-og-lagaakvaedi/:id', () => {
   beforeEach(() => {
     const caseData = makeInvestigationCase()
 
     cy.stubAPIResponses()
-    cy.visit(`${IC_POLICE_DEMANDS_ROUTE}/test_id`)
+    cy.visit('/krafa/rannsoknarheimild/domkrofur-og-lagaakvaedi/test_id')
 
     intercept(caseData)
   })
@@ -44,6 +40,6 @@ describe(`${IC_POLICE_DEMANDS_ROUTE}/:id`, () => {
     cy.getByTestid('lawsBroken').type(faker.lorem.words(5))
     cy.getByTestid('legalBasis').type(faker.lorem.words(5))
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', IC_POLICE_REPORT_ROUTE)
+    cy.url().should('include', '/krafa/rannsoknarheimild/greinargerd')
   })
 })

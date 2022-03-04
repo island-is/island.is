@@ -13,7 +13,7 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import type { User } from '@island.is/judicial-system/types'
 
-import { BackendApi } from '../../data-sources'
+import { BackendAPI } from '../../../services'
 import { Institution } from './institution.model'
 
 @UseGuards(JwtGraphQlAuthGuard)
@@ -28,7 +28,7 @@ export class InstitutionResolver {
   @Query(() => [Institution], { nullable: true })
   institutions(
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Institution[]> {
     this.logger.debug('Getting all institutions')
 

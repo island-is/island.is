@@ -66,7 +66,6 @@ describe('ApplicationController - Get by id', () => {
       usePersonalTaxCredit: false,
       state: ApplicationState.NEW,
       familyStatus: FamilyStatus.COHABITATION,
-      directTaxPayments: [],
     }
     let then: Then
 

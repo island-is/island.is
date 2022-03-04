@@ -21,7 +21,6 @@ interface TableProps<T extends object> {
   showLessLabel?: string
   className?: string
   sortableColumnIds?: ReadonlyArray<string>
-  testid?: string
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -37,7 +36,6 @@ const Table = <T extends object>(
     showLessLabel = 'See less',
     className,
     sortableColumnIds,
-    testid,
   } = props
   const [isExpanded, setExpanded] = useState<boolean>(false)
   const tableInstance = useTable<T>({ columns, data }, useSortBy)
@@ -126,11 +124,7 @@ const Table = <T extends object>(
   return (
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore - 'CSSProperties | undefined' is not assignable to type 'React.CSSProperties | undefined' ?
-    <table
-      {...getTableProps()}
-      className={cn(styles.table, className)}
-      data-testid={testid}
-    >
+    <table {...getTableProps()} className={cn(styles.table, className)}>
       <thead className={styles.header}>
         {headerGroups.map((headerGroup) => (
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment

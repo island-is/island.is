@@ -24,14 +24,9 @@ const IncomeFilesForm = () => {
 
   const errorCheck = () => {
     if (navigation?.nextUrl) {
-      router.push(navigation.nextUrl)
+      router.push(navigation?.nextUrl)
     }
   }
-
-  const periodText =
-    form.directTaxPayments.length > 0
-      ? 'Við þurfum að sjá gögn um tekjur í síðasta mánuði.'
-      : 'Við þurfum að sjá gögn um tekjur í þessum og síðustu tvo mánuði.'
 
   return (
     <>
@@ -40,9 +35,9 @@ const IncomeFilesForm = () => {
           Tekjugögn
         </Text>
         <Text marginBottom={[3, 3, 5]}>
-          {periodText} Þú getur smellt mynd af launaseðlum eða öðrum
-          tekjugögnum, nálgast gögn í heimabankanum eða hjá þeirri stofnun sem
-          þú fékkst tekjur frá.
+          Við þurfum að sjá gögn um tekjur í þessum og síðustu tvo mánuði. Þú
+          getur smellt mynd af launaseðlum eða öðrum tekjugögnum, nálgast gögn í
+          heimabankanum eða hjá þeirri stofnun sem þú fékkst tekjur frá.
         </Text>
         <Files
           header="Dragðu gögn hingað"

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Head from 'next/head'
 import {
   Page,
@@ -67,8 +67,6 @@ const { publicRuntimeConfig = {} } = getConfig() ?? {}
 const IS_MOCK =
   process.env.NODE_ENV !== 'production' && process.env.API_MOCKS === 'true'
 
-const SHOULD_LINK_TO_SERVICE_WEB = false
-
 const absoluteUrl = (req, setLocalhost) => {
   let protocol = 'https:'
   let host = req
@@ -102,7 +100,6 @@ export interface LayoutProps {
   footerTagsMenu?: FooterLinkProps[]
   namespace: Record<string, string | string[]>
   alertBannerContent?: GetAlertBannerQuery['getAlertBanner']
-  organizationAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   respOrigin
   megaMenuData
 }
@@ -156,7 +153,6 @@ const Layout: NextComponentType<
   footerMiddleMenu,
   namespace,
   alertBannerContent,
-  organizationAlertBannerContent,
   respOrigin,
   children,
   megaMenuData,
@@ -203,28 +199,9 @@ const Layout: NextComponentType<
     },
   ]
 
-  const [alertBanners, setAlertBanners] = useState([])
-
-  useEffect(() => {
-    setAlertBanners(
-      [
-        {
-          bannerId: `alert-${stringHash(
-            JSON.stringify(alertBannerContent ?? {}),
-          )}`,
-          ...alertBannerContent,
-        },
-        {
-          bannerId: `organization-alert-${stringHash(
-            JSON.stringify(organizationAlertBannerContent ?? {}),
-          )}`,
-          ...organizationAlertBannerContent,
-        },
-      ].filter(
-        (banner) => !Cookies.get(banner.bannerId) && banner?.showAlertBanner,
-      ),
-    )
-  }, [alertBannerContent, organizationAlertBannerContent])
+  const alertBannerId = `alert-${stringHash(
+    JSON.stringify(alertBannerContent),
+  )}`
 
   const preloadedFonts = [
     '/fonts/ibm-plex-sans-v7-latin-300.woff2',
@@ -237,11 +214,7 @@ const Layout: NextComponentType<
   const isServiceWeb = pathIsRoute(asPath, 'serviceweb')
 
   return (
-    <GlobalContextProvider
-      namespace={namespace}
-      shouldLinkToServiceWeb={SHOULD_LINK_TO_SERVICE_WEB}
-      isServiceWeb={isServiceWeb}
-    >
+    <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
       <Page component="div">
         <Head>
           {preloadedFonts.map((href, index) => {
@@ -323,33 +296,30 @@ const Layout: NextComponentType<
         <SkipToMainContent
           title={n('skipToMainContent', 'Fara beint í efnið')}
         />
-
-        {alertBanners.map((banner) => (
+        {!Cookies.get(alertBannerId) && alertBannerContent.showAlertBanner && (
           <AlertBanner
-            key={banner.bannerId}
-            title={banner.title}
-            description={banner.description}
+            title={alertBannerContent.title}
+            description={alertBannerContent.description}
             link={{
-              ...(!!banner.link &&
-                !!banner.linkTitle && {
-                  href: linkResolver(banner.link.type as LinkType, [
-                    banner.link.slug,
+              ...(!!alertBannerContent.link &&
+                !!alertBannerContent.linkTitle && {
+                  href: linkResolver(alertBannerContent.link.type as LinkType, [
+                    alertBannerContent.link.slug,
                   ]).href,
-                  title: banner.linkTitle,
+                  title: alertBannerContent.linkTitle,
                 }),
             }}
-            variant={banner.bannerVariant as AlertBannerVariants}
-            dismissable={banner.isDismissable}
+            variant={alertBannerContent.bannerVariant as AlertBannerVariants}
+            dismissable={alertBannerContent.isDismissable}
             onDismiss={() => {
-              if (banner.dismissedForDays !== 0) {
-                Cookies.set(banner.bannerId, 'hide', {
-                  expires: banner.dismissedForDays,
+              if (alertBannerContent.dismissedForDays !== 0) {
+                Cookies.set(alertBannerId, 'hide', {
+                  expires: alertBannerContent.dismissedForDays,
                 })
               }
             }}
           />
-        ))}
-
+        )}
         <PageLoader />
         <MenuTabsContext.Provider
           value={{
@@ -379,11 +349,7 @@ const Layout: NextComponentType<
             <Footer
               topLinks={footerUpperInfo}
               {...(activeLocale === 'is'
-                ? {
-                    linkToHelpWeb: SHOULD_LINK_TO_SERVICE_WEB
-                      ? linkResolver('serviceweb').href
-                      : '',
-                  }
+                ? { linkToHelpWeb: linkResolver('serviceweb').href }
                 : { topLinksContact: footerUpperContact })}
               bottomLinks={footerLowerMenu}
               middleLinks={footerMiddleMenu}
@@ -637,18 +603,8 @@ export const withMainLayout = <T,>(
     const themeConfig: Partial<LayoutProps> =
       'themeConfig' in componentProps ? componentProps['themeConfig'] : {}
 
-    const organizationAlertBannerContent: GetAlertBannerQuery['getAlertBanner'] =
-      'organizationPage' in componentProps
-        ? componentProps['organizationPage']['alertBanner']
-        : undefined
-
     return {
-      layoutProps: {
-        ...layoutProps,
-        ...layoutConfig,
-        ...themeConfig,
-        organizationAlertBannerContent,
-      },
+      layoutProps: { ...layoutProps, ...layoutConfig, ...themeConfig },
       componentProps,
     }
   }

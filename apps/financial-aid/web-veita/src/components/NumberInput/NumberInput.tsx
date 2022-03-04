@@ -10,7 +10,6 @@ interface Props {
   placeholder?: string
   value?: string
   hasError?: boolean
-  errorMessage?: string
 }
 
 export default function NumberInput({
@@ -22,7 +21,6 @@ export default function NumberInput({
   placeholder,
   value,
   hasError = false,
-  errorMessage,
 }: Props) {
   const sanitizeNumber = (n: string) => n.replace(/[^\d]/g, '')
   const formatNumber = (n?: string) =>
@@ -53,7 +51,6 @@ export default function NumberInput({
       backgroundColor="blue"
       onChange={handleChange}
       hasError={hasError}
-      errorMessage={errorMessage}
     />
   )
 }

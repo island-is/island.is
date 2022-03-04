@@ -180,7 +180,11 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly sessionBookings?: string
+  readonly accusedBookings?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly litigationPresentations?: string
 
   @Allow()
   @Field({ nullable: true })

@@ -3,7 +3,7 @@ import { Colors } from '@island.is/island-ui/theme'
 
 import { Box } from '../Box/Box'
 import * as styles from './AlertBanner.css'
-import { Icon, IconMapIcon } from '../IconRC/Icon'
+import { Icon, IconTypes } from '../Icon/Icon'
 import { Text } from '../Text/Text'
 import { LinkContext } from '../context/LinkContext/LinkContext'
 import { Link } from '../Link/Link'
@@ -19,7 +19,7 @@ type VariantStyle = {
   background: Colors
   borderColor: Colors
   iconColor?: Colors
-  icon?: IconMapIcon
+  icon?: IconTypes
 }
 
 type VariantStyles = {
@@ -35,25 +35,25 @@ const variantStyles: VariantStyles = {
     background: 'red100',
     borderColor: 'red200',
     iconColor: 'red400',
-    icon: 'warning',
+    icon: 'alert',
   },
   info: {
     background: 'blue100',
     borderColor: 'blue200',
     iconColor: 'blue400',
-    icon: 'informationCircle',
+    icon: 'info',
   },
   success: {
     background: 'mint100',
     borderColor: 'mint200',
     iconColor: 'mint400',
-    icon: 'checkmark',
+    icon: 'check',
   },
   warning: {
     background: 'yellow200',
     borderColor: 'yellow400',
     iconColor: 'yellow600',
-    icon: 'warning',
+    icon: 'alert',
   },
 }
 
@@ -70,7 +70,7 @@ export interface AlertBannerProps {
     title: string
   }
   /**
-   * Fires when banner gets dismissed, useful for keeping track in storage that the user has dismissed the banner if we don't want it to show up again on page reload
+   * Fires when banner gets dismissed, usefull for keeping track in storage that the user has dismissed the banner if we don't want it to show up again on page reload
    */
   onDismiss?: () => void
 }
@@ -109,7 +109,7 @@ export const AlertBanner: FC<AlertBannerProps> = ({
           marginRight={[0, 0, 0, 2]}
           marginBottom={[2, 2, 2, 0]}
         >
-          <Icon icon={variant.icon} color={variant.iconColor} />
+          <Icon type={variant.icon} color={variant.iconColor} />
         </Box>
       )}
       {title && (
@@ -163,7 +163,7 @@ export const AlertBanner: FC<AlertBannerProps> = ({
               }
             }}
           >
-            <Icon icon="close" color="dark400" />
+            <Icon type="close" color="dark400" width={14} />
           </button>
         </Box>
       )}

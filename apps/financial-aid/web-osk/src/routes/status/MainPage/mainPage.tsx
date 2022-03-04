@@ -1,12 +1,18 @@
 import React, { useContext, useEffect } from 'react'
-import { Text, LoadingDots } from '@island.is/island-ui/core'
+import {
+  Text,
+  Box,
+  BulletList,
+  Bullet,
+  LoadingDots,
+  Link,
+} from '@island.is/island-ui/core'
 
 import {
   Approved,
   ContentContainer,
   Footer,
   InProgress,
-  MoreActions,
   Rejected,
   Timeline,
 } from '@island.is/financial-aid-web/osk/src/components'
@@ -81,10 +87,33 @@ const MainPage = () => {
         )}
         {loading && <LoadingDots />}
 
-        <MoreActions
-          homepage={municipality?.homepage}
-          email={municipality?.email}
-        />
+        <Text as="h4" variant="h3" marginBottom={2} marginTop={[3, 3, 7]}>
+          Frekari aðgerðir í boði
+        </Text>
+        <Box marginBottom={[5, 5, 10]}>
+          <BulletList type={'ul'} space={2}>
+            <Bullet>
+              <Link
+                href={municipality?.homepage ?? ''}
+                color="blue400"
+                underline="normal"
+                underlineVisibility="always"
+              >
+                <b>Upplýsingar um fjárhagsaðstoð</b>
+              </Link>
+            </Bullet>
+            <Bullet>
+              <Link
+                href={`mailto: ${municipality?.email}`}
+                color="blue400"
+                underline="normal"
+                underlineVisibility="always"
+              >
+                <b> Hafa samband</b>
+              </Link>
+            </Bullet>
+          </BulletList>
+        </Box>
       </ContentContainer>
       <Footer
         onPrevButtonClick={() => {

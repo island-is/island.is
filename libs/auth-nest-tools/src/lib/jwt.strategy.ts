@@ -45,9 +45,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(request: Request, payload: JwtPayload): Promise<Auth> {
     const actor = payload.actor
 
-    if (this.config.allowClientNationalId && payload.client_nationalId) {
-      payload.nationalId = payload.client_nationalId
-    }
     return {
       nationalId: payload.nationalId,
       scope: this.parseScopes(payload.scope),

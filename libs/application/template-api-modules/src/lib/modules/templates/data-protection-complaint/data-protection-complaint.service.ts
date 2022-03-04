@@ -28,15 +28,9 @@ export class DataProtectionComplaintService {
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
     try {
-      const attachedFiles = await this.applicationAttachmentProvider.getFiles(
-        ['complaint.documents', 'commissions.documents'],
-        application,
-      )
-
       const complaintPdf = await this.pdfFileProvider.getApplicationPdf(
         application,
         'kvörtun',
-        attachedFiles,
       )
 
       if (!complaintPdf?.content) throw new Error('No pdf content')
@@ -50,7 +44,13 @@ export class DataProtectionComplaintService {
         },
       )
 
-      const attachments = [complaintPdf, ...attachedFiles]
+      const attachments = [
+        complaintPdf,
+        ...(await this.applicationAttachmentProvider.getFiles(
+          ['complaint.documents', 'commissions.documents'],
+          application,
+        )),
+      ]
 
       const caseRequest = await applicationToCaseRequest(
         application,

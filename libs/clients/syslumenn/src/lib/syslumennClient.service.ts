@@ -1,7 +1,7 @@
 import {
   SyslumennAuction,
   Homestay,
-  PaginatedOperatingLicenses,
+  OperatingLicense,
   CertificateInfoResponse,
   DistrictCommissionerAgencies,
   DataUploadResponse,
@@ -13,7 +13,7 @@ import {
 import {
   mapSyslumennAuction,
   mapHomestay,
-  mapPaginatedOperatingLicenses,
+  mapOperatingLicense,
   mapCertificateInfo,
   mapDistrictCommissionersAgenciesResponse,
   mapDataUploadResponse,
@@ -24,7 +24,6 @@ import {
   SyslumennApi,
   SvarSkeyti,
   Configuration,
-  VirkLeyfiGetRequest,
   TegundAndlags,
 } from '../../gen/fetch'
 import { SyslumennClientConfig } from './syslumennClient.config'
@@ -101,49 +100,13 @@ export class SyslumennService {
     return (syslumennAuctions ?? []).map(mapSyslumennAuction)
   }
 
-  async getOperatingLicenses(
-    searchQuery?: string,
-    pageNumber?: number,
-    pageSize?: number,
-  ): Promise<PaginatedOperatingLicenses> {
-    // Prepare client request
+  async getOperatingLicenses(): Promise<OperatingLicense[]> {
     const { id, api } = await this.createApi()
-    const params: VirkLeyfiGetRequest = { audkenni: id }
-    if (searchQuery) {
-      params.searchBy = searchQuery
-    }
-    if (pageNumber) {
-      params.pageNumber = pageNumber
-    }
-    if (pageSize) {
-      params.pageSize = pageSize
-    }
+    const operatingLicenses = await api.virkLeyfiGet({
+      audkenni: id,
+    })
 
-    // Do the client request.
-    const virkLeyfiApiResponse = await api.virkLeyfiGetRaw(params)
-
-    // Custom response header for Pagination Info
-    const HEADER_KEY_PAGINATION_INFO = 'x-pagination'
-    const paginationInfo = virkLeyfiApiResponse.raw.headers.get(
-      HEADER_KEY_PAGINATION_INFO,
-    )
-    if (!paginationInfo) {
-      throw new Error(
-        'Syslumenn API did not return pagination info for operating licences.',
-      )
-    }
-
-    // Custom response header for Searcy By
-    const HEADER_KEY_SEARCH_BY = 'x-searchby'
-    const searchBy = decodeURIComponent(
-      virkLeyfiApiResponse.raw.headers.get(HEADER_KEY_SEARCH_BY) ?? '',
-    )
-
-    return mapPaginatedOperatingLicenses(
-      searchBy,
-      paginationInfo,
-      await virkLeyfiApiResponse.value(),
-    )
+    return (operatingLicenses ?? []).map(mapOperatingLicense)
   }
 
   async sealDocument(document: string): Promise<SvarSkeyti> {

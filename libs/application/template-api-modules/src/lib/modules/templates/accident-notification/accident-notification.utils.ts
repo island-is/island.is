@@ -176,13 +176,13 @@ const accident = (answers: AccidentNotificationAnswers): Slys => {
       (getValueViaPath(answers, 'locationAndPurpose?.location') as string) ??
       '',
     lysingerindis: (getValueViaPath(answers, 'accidentLocation') as string)
-      ? accidentLocationLabelMapper(
+      ? accidentLocationLabelMapper[
           getValueViaPath(
             answers,
             'accidentLocation.answer',
-          ) as keyof typeof accidentLocationLabelMapper,
-        )
-      : undefined,
+          ) as keyof typeof accidentLocationLabelMapper
+        ]
+      : '',
   }
 
   switch (

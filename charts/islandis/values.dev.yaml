@@ -527,11 +527,6 @@ application-system-api-worker:
     NODE_OPTIONS: '--max-old-space-size=208'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379'
     SERVERSIDE_FEATURES_ON: ''
-    XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
-    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
-    XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
-    XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
-    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   grantNamespaces:
     - 'nginx-ingress-internal'
     - 'islandis'
@@ -1575,7 +1570,6 @@ user-notification-worker:
     - 'node'
   enabled: true
   env:
-    CONTENTFUL_HOST: 'preview.contentful.com'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     IDENTITY_SERVER_PATH: 'https://identity-server.dev01.devland.is'
     MAIN_QUEUE_NAME: 'user-notification'

@@ -26,7 +26,6 @@ interface Props {
   rows?: number
   format?: string | FormatInputValueFunction
   required?: boolean
-  readOnly?: boolean
   maxLength?: number
   size?: 'xs' | 'sm' | 'md'
 }
@@ -59,7 +58,6 @@ export const InputController: FC<Props> = ({
   suffix,
   rows,
   required,
-  readOnly,
   maxLength,
   size = 'md',
 }) => {
@@ -72,7 +70,6 @@ export const InputController: FC<Props> = ({
           id={id}
           icon={icon}
           disabled={disabled}
-          readOnly={readOnly}
           placeholder={placeholder}
           label={label}
           type="text"
@@ -107,7 +104,6 @@ export const InputController: FC<Props> = ({
           id={id}
           icon={icon}
           disabled={disabled}
-          readOnly={readOnly}
           backgroundColor={backgroundColor}
           placeholder={placeholder}
           label={label}
@@ -139,7 +135,6 @@ export const InputController: FC<Props> = ({
           icon={icon}
           id={id}
           disabled={disabled}
-          readOnly={readOnly}
           backgroundColor={backgroundColor}
           placeholder={placeholder}
           label={label}
@@ -169,7 +164,6 @@ export const InputController: FC<Props> = ({
           id={id}
           value={value}
           disabled={disabled}
-          readOnly={readOnly}
           icon={icon}
           placeholder={placeholder}
           label={label}

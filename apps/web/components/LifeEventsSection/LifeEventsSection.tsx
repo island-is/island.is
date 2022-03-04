@@ -20,7 +20,7 @@ export const LifeEventsSection = ({
   return (
     <>
       <GridContainer>
-        <Text variant="h3" as="h2" id={headingId}>
+        <Text variant="h3" id={headingId}>
           {heading}
         </Text>
       </GridContainer>

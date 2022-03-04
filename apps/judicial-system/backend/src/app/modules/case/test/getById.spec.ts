@@ -1,6 +1,6 @@
 import { uuid } from 'uuidv4'
 
-import { Case } from '../models/case.model'
+import { Case } from '../models'
 import { createTestingCaseModule } from './createTestingCaseModule'
 
 interface Then {

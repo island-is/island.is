@@ -19,9 +19,11 @@ import {
   FormContentContainer,
   CaseFileList,
   CaseInfo,
-  AccordionListItem,
 } from '@island.is/judicial-system-web/src/components'
-import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system/formatters'
+import {
+  TIME_FORMAT,
+  formatRequestedCustodyRestrictions,
+} from '@island.is/judicial-system/formatters'
 import {
   ProsecutorSubsections,
   Sections,
@@ -35,9 +37,9 @@ import {
   requestCourtDate,
 } from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import CommentsAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
 import type { CaseLegalProvisions } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
 import * as styles from './Overview.css'
 
 export const Overview: React.FC = () => {
@@ -61,24 +63,37 @@ export const Overview: React.FC = () => {
       return
     }
 
-    const shouldSubmitCase = workingCase.state === CaseState.DRAFT
+    try {
+      const shouldSubmitCase = workingCase.state === CaseState.DRAFT
 
-    const caseSubmitted = shouldSubmitCase
-      ? await transitionCase(workingCase, CaseTransition.SUBMIT, setWorkingCase)
-      : workingCase.state !== CaseState.NEW
+      const caseSubmitted = shouldSubmitCase
+        ? await transitionCase(
+            workingCase,
+            CaseTransition.SUBMIT,
+            setWorkingCase,
+          )
+        : workingCase.state !== CaseState.NEW
 
-    const notificationSent = caseSubmitted
-      ? await sendNotification(workingCase.id, NotificationType.READY_FOR_COURT)
-      : false
+      const notificationSent = caseSubmitted
+        ? await sendNotification(
+            workingCase.id,
+            NotificationType.READY_FOR_COURT,
+          )
+        : false
 
-    // An SMS should have been sent
-    if (notificationSent) {
-      setModalText(formatMessage(rcOverview.sections.modal.notificationSent))
-    } else {
-      setModalText(formatMessage(rcOverview.sections.modal.notificationNotSent))
+      // An SMS should have been sent
+      if (notificationSent) {
+        setModalText(formatMessage(rcOverview.sections.modal.notificationSent))
+      } else {
+        setModalText(
+          formatMessage(rcOverview.sections.modal.notificationNotSent),
+        )
+      }
+
+      setModalVisible(true)
+    } catch (e) {
+      // TODO: Handle error
     }
-
-    setModalVisible(true)
   }
 
   useEffect(() => {
@@ -155,7 +170,7 @@ export const Overview: React.FC = () => {
                     '',
                 )} eftir kl. ${formatDate(
                   workingCase.requestedCourtDate,
-                  Constants.TIME_FORMAT,
+                  TIME_FORMAT,
                 )}`,
               },
               ...(workingCase.registrar
@@ -187,15 +202,12 @@ export const Overview: React.FC = () => {
                       ) ?? '',
                     )} kl. ${formatDate(
                       workingCase.parentCase.validToDate,
-                      Constants.TIME_FORMAT,
+                      TIME_FORMAT,
                     )}`
                   : workingCase.arrestDate
                   ? `${capitalize(
                       formatDate(workingCase.arrestDate, 'PPPP', true) ?? '',
-                    )} kl. ${formatDate(
-                      workingCase.arrestDate,
-                      Constants.TIME_FORMAT,
-                    )}`
+                    )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`
                   : 'Var ekki skráður',
               },
               ...(workingCase.courtDate
@@ -204,10 +216,7 @@ export const Overview: React.FC = () => {
                       title: formatMessage(core.confirmedCourtDate),
                       value: `${capitalize(
                         formatDate(workingCase.courtDate, 'PPPP', true) ?? '',
-                      )} kl. ${formatDate(
-                        workingCase.courtDate,
-                        Constants.TIME_FORMAT,
-                      )}`,
+                      )} kl. ${formatDate(workingCase.courtDate, TIME_FORMAT)}`,
                     },
                   ]
                 : []),
@@ -235,7 +244,11 @@ export const Overview: React.FC = () => {
               id="id_1"
               label="Lagaákvæði sem brot varða við"
             >
-              <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
+              <Text>
+                <span className={styles.breakSpaces}>
+                  {workingCase.lawsBroken}
+                </span>
+              </Text>
             </AccordionItem>
             <AccordionItem
               labelVariant="h3"
@@ -281,18 +294,61 @@ export const Overview: React.FC = () => {
               label="Greinargerð um málsatvik og lagarök"
             >
               {workingCase.caseFacts && (
-                <AccordionListItem title="Málsatvik">
-                  <Text whiteSpace="breakSpaces">{workingCase.caseFacts}</Text>
-                </AccordionListItem>
+                <Box marginBottom={2}>
+                  <Box marginBottom={2}>
+                    <Text variant="h5">Málsatvik</Text>
+                  </Box>
+                  <Text>
+                    <span className={styles.breakSpaces}>
+                      {workingCase.caseFacts}
+                    </span>
+                  </Text>
+                </Box>
               )}
               {workingCase.legalArguments && (
-                <AccordionListItem title="Lagarök">
-                  <Text whiteSpace="breakSpaces">
-                    {workingCase.legalArguments}
+                <Box marginBottom={2}>
+                  <Box marginBottom={2}>
+                    <Text variant="h5">Lagarök</Text>
+                  </Box>
+                  <Text>
+                    <span className={styles.breakSpaces}>
+                      {workingCase.legalArguments}
+                    </span>
                   </Text>
-                </AccordionListItem>
+                </Box>
               )}
             </AccordionItem>
+            {(Boolean(workingCase.comments) ||
+              Boolean(workingCase.caseFilesComments)) && (
+              <AccordionItem id="id_5" label="Athugasemdir" labelVariant="h3">
+                {Boolean(workingCase.comments) && (
+                  <Box marginBottom={workingCase.caseFilesComments ? 3 : 0}>
+                    <Box marginBottom={1}>
+                      <Text variant="h4" as="h4">
+                        Athugasemdir vegna málsmeðferðar
+                      </Text>
+                    </Box>
+                    <Text>
+                      <span className={styles.breakSpaces}>
+                        {workingCase.comments}
+                      </span>
+                    </Text>
+                  </Box>
+                )}
+                {Boolean(workingCase.caseFilesComments) && (
+                  <>
+                    <Text variant="h4" as="h4">
+                      Athugasemdir vegna rannsóknargagna
+                    </Text>
+                    <Text>
+                      <span className={styles.breakSpaces}>
+                        {workingCase.caseFilesComments}
+                      </span>
+                    </Text>
+                  </>
+                )}
+              </AccordionItem>
+            )}
             <AccordionItem
               id="id_6"
               label={`Rannsóknargögn ${`(${
@@ -307,10 +363,6 @@ export const Overview: React.FC = () => {
                 />
               </Box>
             </AccordionItem>
-            {(Boolean(workingCase.comments) ||
-              Boolean(workingCase.caseFilesComments)) && (
-              <CommentsAccordionItem workingCase={workingCase} />
-            )}
           </Accordion>
         </Box>
         <Box className={styles.prosecutorContainer}>

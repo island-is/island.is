@@ -6,15 +6,13 @@ import { EmailModule } from '@island.is/email-service'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 
 import { environment } from '../../../environments'
-import {
-  DefendantModule,
-  UserModule,
-  FileModule,
-  CourtModule,
-  AwsS3Module,
-  EventModule,
-} from '../index'
-import { Case } from './models/case.model'
+import { DefendantModule } from '../defendant/defendant.module'
+import { UserModule } from '../user'
+import { FileModule } from '../file'
+import { AwsS3Module } from '../aws-s3'
+import { CourtModule } from '../court'
+import { EventModule } from '../event'
+import { Case } from './models'
 import { CaseController } from './case.controller'
 import { CaseService } from './case.service'
 
@@ -22,14 +20,14 @@ import { CaseService } from './case.service'
   imports: [
     SigningModule.register(environment.signingOptions),
     EmailModule.register(environment.emailOptions),
-    CmsTranslationsModule,
     forwardRef(() => DefendantModule),
-    forwardRef(() => UserModule),
+    UserModule,
     forwardRef(() => FileModule),
-    forwardRef(() => CourtModule),
-    forwardRef(() => AwsS3Module),
-    forwardRef(() => EventModule),
+    AwsS3Module,
+    CourtModule,
     SequelizeModule.forFeature([Case]),
+    CmsTranslationsModule,
+    EventModule,
   ],
   providers: [CaseService],
   controllers: [CaseController],

@@ -396,9 +396,9 @@ describe('Requests', () => {
         </MockedProvider>,
       )
 
-      await waitFor(() => {
-        expect(screen.getByTestId('pastCasesTable')).toBeInTheDocument()
-      })
+      expect(await waitFor(() => screen.getAllByRole('table').length)).toEqual(
+        1,
+      )
     })
   })
 
@@ -417,9 +417,9 @@ describe('Requests', () => {
         </MockedProvider>,
       )
 
-      await waitFor(() => {
-        expect(screen.getAllByRole('table').length).toEqual(2)
-      })
+      expect(await waitFor(() => screen.getAllByRole('table').length)).toEqual(
+        2,
+      )
     })
   })
 
@@ -492,7 +492,7 @@ describe('Requests', () => {
         </MockedProvider>,
       )
 
-      userEvent.click(await screen.findByText('Stofnað/Fyrirtaka'))
+      userEvent.click(await screen.findByText('Krafa stofnuð'))
 
       const tableRows = await screen.findAllByTestId(
         'custody-requests-table-row',
@@ -519,7 +519,7 @@ describe('Requests', () => {
         </MockedProvider>,
       )
 
-      userEvent.dblClick(await screen.findByText('Stofnað/Fyrirtaka'))
+      userEvent.dblClick(await screen.findByText('Krafa stofnuð'))
 
       const tableRows = await screen.findAllByTestId(
         'custody-requests-table-row',

@@ -2,8 +2,7 @@ import { CanActivate } from '@nestjs/common'
 
 import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
 
-import { CaseExistsGuard } from '../guards/caseExists.guard'
-import { CaseWriteGuard } from '../guards/caseWrite.guard'
+import { CaseExistsGuard, CaseWriteGuard } from '../guards'
 import { CaseController } from '../case.controller'
 
 describe('CaseController - Get ruling signature confirmation guards', () => {

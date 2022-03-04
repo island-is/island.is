@@ -41,6 +41,7 @@ const FormInfo = ({ info, error }: Props) => {
 
               <Button
                 icon="pencil"
+                iconType="filled"
                 variant="utility"
                 onClick={() => {
                   router.push(item.url)

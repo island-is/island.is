@@ -83,7 +83,6 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
       sidebarContent={
         WITH_SEARCH.includes(organizationPage.slug) && (
           <SearchBox
-            id="sidebar"
             organizationPage={organizationPage}
             placeholder={n('searchServices', 'Leitaðu að þjónustu')}
             noResultsText={n(

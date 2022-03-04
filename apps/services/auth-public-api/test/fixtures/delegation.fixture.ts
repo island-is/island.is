@@ -3,7 +3,6 @@ import addDays from 'date-fns/addDays'
 import startOfDay from 'date-fns/startOfDay'
 
 import { Delegation, DelegationScope } from '@island.is/auth-api-lib'
-import { createNationalId } from '@island.is/testing/fixtures'
 
 export interface CreateDelegationOptions {
   fromNationalId: string
@@ -28,6 +27,15 @@ export type CreateDelegation = Pick<
   Delegation,
   'id' | 'fromNationalId' | 'fromDisplayName' | 'toNationalId' | 'toName'
 > & { delegationScopes: CreateDelegationScope[] }
+
+const createRandomNationalId = (): string => {
+  return faker.datatype
+    .number({
+      min: 10000000000,
+      max: 9999999999,
+    })
+    .toString()
+}
 
 /**
  * Private helper to create a DelegationScope with random values.
@@ -55,9 +63,9 @@ const createRandomDelegation = (): CreateDelegation => {
 
   return {
     id,
-    fromNationalId: createNationalId(),
+    fromNationalId: createRandomNationalId(),
     fromDisplayName: faker.random.word(),
-    toNationalId: createNationalId(),
+    toNationalId: createRandomNationalId(),
     toName: faker.random.word(),
     delegationScopes: [createRandomDelegationScope(id)],
   }

@@ -1,11 +1,14 @@
 import React, { useState } from 'react'
+import { ValueType } from 'react-select'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
   Box,
+  Select,
   Text,
   Tooltip,
+  Option,
   Input,
   RadioButton,
   AlertMessage,
@@ -21,7 +24,12 @@ import {
 import {
   NotificationType,
   SessionArrangements,
+  UserRole,
 } from '@island.is/judicial-system/types'
+import {
+  ReactSelectOption,
+  UserData,
+} from '@island.is/judicial-system-web/src/types'
 import {
   setAndSendDateToServer,
   removeTabsValidateAndSet,
@@ -30,23 +38,79 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 import { icHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import type { Case, User } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
 
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  isLoading: boolean
+  users: UserData
   user: User
 }
 
 const HearingArrangementsForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, user } = props
+  const { workingCase, setWorkingCase, isLoading, users, user } = props
   const [modalVisible, setModalVisible] = useState(false)
   const { updateCase, sendNotification, isSendingNotification } = useCase()
   const { formatMessage } = useIntl()
   const router = useRouter()
+
+  const setJudge = (id: string) => {
+    if (workingCase) {
+      setAndSendToServer('judgeId', id, workingCase, setWorkingCase, updateCase)
+
+      const judge = users?.users.find((j) => j.id === id)
+
+      setWorkingCase({ ...workingCase, judge: judge })
+    }
+  }
+
+  const setRegistrar = (id?: string) => {
+    if (workingCase) {
+      setAndSendToServer(
+        'registrarId',
+        id,
+        workingCase,
+        setWorkingCase,
+        updateCase,
+      )
+
+      const registrar = users?.users.find((r) => r.id === id)
+
+      setWorkingCase({ ...workingCase, registrar })
+    }
+  }
+
+  const judges = (users?.users ?? [])
+    .filter(
+      (user: User) =>
+        user.role === UserRole.JUDGE &&
+        user.institution?.id === workingCase?.court?.id,
+    )
+    .map((judge: User) => {
+      return { label: judge.name, value: judge.id }
+    })
+
+  const registrars = (users?.users ?? [])
+    .filter(
+      (user: User) =>
+        user.role === UserRole.REGISTRAR &&
+        user.institution?.id === workingCase?.court?.id,
+    )
+    .map((registrar: User) => {
+      return { label: registrar.name, value: registrar.id }
+    })
+
+  const defaultJudge = judges?.find(
+    (judge: Option) => judge.value === workingCase?.judge?.id,
+  )
+
+  const defaultRegistrar = registrars?.find(
+    (registrar: Option) => registrar.value === workingCase?.registrar?.id,
+  )
 
   const handleNextButtonClick = () => {
     if (
@@ -90,6 +154,50 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={7}>
           <CaseInfo workingCase={workingCase} userRole={user.role} />
         </Box>
+        <Box component="section" marginBottom={5}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              {`${formatMessage(m.sections.setJudge.title)} `}
+              <Tooltip text={formatMessage(m.sections.setJudge.tooltip)} />
+            </Text>
+          </Box>
+          <Select
+            name="judge"
+            label="Veldu dómara"
+            placeholder="Velja héraðsdómara"
+            value={defaultJudge}
+            options={judges}
+            onChange={(selectedOption: ValueType<ReactSelectOption>) =>
+              setJudge((selectedOption as ReactSelectOption).value.toString())
+            }
+            required
+          />
+        </Box>
+        <Box component="section" marginBottom={5}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              {`${formatMessage(m.sections.setRegistrar.title)} `}
+              <Tooltip text={formatMessage(m.sections.setRegistrar.tooltip)} />
+            </Text>
+          </Box>
+          <Select
+            name="registrar"
+            label="Veldu dómritara"
+            placeholder="Velja dómritara"
+            value={defaultRegistrar}
+            options={registrars}
+            onChange={(selectedOption: ValueType<ReactSelectOption>) => {
+              if (selectedOption) {
+                setRegistrar(
+                  (selectedOption as ReactSelectOption).value.toString(),
+                )
+              } else {
+                setRegistrar(undefined)
+              }
+            }}
+            isClearable
+          />
+        </Box>
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
@@ -115,15 +223,13 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                   SessionArrangements.ALL_PRESENT
                 }
                 onChange={() => {
-                  setWorkingCase({
-                    ...workingCase,
-                    sessionArrangements: SessionArrangements.ALL_PRESENT,
-                    defenderIsSpokesperson: false,
-                  })
-                  updateCase(workingCase.id, {
-                    sessionArrangements: SessionArrangements.ALL_PRESENT,
-                    defenderIsSpokesperson: false,
-                  })
+                  setAndSendToServer(
+                    'sessionArrangements',
+                    SessionArrangements.ALL_PRESENT,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
                 }}
                 large
                 backgroundColor="white"
@@ -141,17 +247,13 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                   SessionArrangements.ALL_PRESENT_SPOKESPERSON
                 }
                 onChange={() => {
-                  setWorkingCase({
-                    ...workingCase,
-                    sessionArrangements:
-                      SessionArrangements.ALL_PRESENT_SPOKESPERSON,
-                    defenderIsSpokesperson: true,
-                  })
-                  updateCase(workingCase.id, {
-                    sessionArrangements:
-                      SessionArrangements.ALL_PRESENT_SPOKESPERSON,
-                    defenderIsSpokesperson: true,
-                  })
+                  setAndSendToServer(
+                    'sessionArrangements',
+                    SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
                 }}
                 large
                 backgroundColor="white"
@@ -237,21 +339,18 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             </BlueBox>
           </Box>
         </Box>
-        {(workingCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
-          workingCase.sessionArrangements ===
-            SessionArrangements.ALL_PRESENT_SPOKESPERSON) && (
-          <Box component="section" marginBottom={8}>
-            <DefenderInfo
-              workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
-            />
-          </Box>
-        )}
+        <Box component="section" marginBottom={8}>
+          <DefenderInfo
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
+          />
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${Constants.IC_OVERVIEW_ROUTE}/${workingCase.id}`}
           onNextButtonClick={handleNextButtonClick}
+          nextIsLoading={isLoading}
           nextIsDisabled={!isCourtHearingArrangementsStepValidIC(workingCase)}
         />
       </FormContentContainer>
@@ -279,8 +378,6 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             }
           }}
           handleSecondaryButtonClick={() => {
-            sendNotification(workingCase.id, NotificationType.COURT_DATE, true)
-
             router.push(`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`)
           }}
           primaryButtonText={formatMessage(m.modal.primaryButtonText)}

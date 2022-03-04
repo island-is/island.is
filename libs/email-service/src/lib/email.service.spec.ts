@@ -1,8 +1,11 @@
 import { join } from 'path'
+import { Test } from '@nestjs/testing'
+
+import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { Message } from '../types'
-import { EmailService } from './email.service'
-import { createTestingEmailModule } from './test/createTestingEmailModule'
+import { AdapterService } from '../tools/adapter.service'
+import { EmailService, EMAIL_OPTIONS } from './email.service'
 
 const testAccount = {
   smtp: {
@@ -42,7 +45,23 @@ describe('EmailService', () => {
   let emailService: EmailService
 
   beforeEach(async () => {
-    const module = await createTestingEmailModule()
+    const module = await Test.createTestingModule({
+      providers: [
+        EmailService,
+        {
+          provide: EMAIL_OPTIONS,
+          useValue: {
+            useTestAccount: true,
+          },
+        },
+        {
+          provide: LOGGER_PROVIDER,
+          useValue: logger,
+        },
+        AdapterService,
+      ],
+    }).compile()
+
     emailService = module.get(EmailService)
   })
 

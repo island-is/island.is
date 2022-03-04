@@ -7,11 +7,10 @@ import {
   makeProsecutor,
 } from '@island.is/judicial-system/formatters'
 import { Case } from '@island.is/judicial-system/types'
-import { IC_POLICE_CONFIRMATION_ROUTE } from '@island.is/judicial-system/consts'
 
 import { intercept } from '../../../utils'
 
-describe(`${IC_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
+describe('/krafa/rannsoknarheimild/stadfesta/:id', () => {
   const demands = faker.lorem.paragraph()
   const defenderName = faker.name.findName()
   const defenderEmail = faker.internet.email()
@@ -31,7 +30,7 @@ describe(`${IC_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
     }
 
     cy.stubAPIResponses()
-    cy.visit(`${IC_POLICE_CONFIRMATION_ROUTE}/test_id`)
+    cy.visit('/krafa/rannsoknarheimild/stadfesta/test_id')
 
     intercept(caseDataAddition)
   })

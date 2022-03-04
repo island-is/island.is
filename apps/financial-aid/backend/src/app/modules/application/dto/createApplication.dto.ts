@@ -5,7 +5,6 @@ import {
   IsBoolean,
   IsArray,
   IsNumber,
-  IsUUID,
 } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
@@ -16,7 +15,6 @@ import {
   ApplicationState,
   FamilyStatus,
   CreateApplicationFile,
-  DirectTaxPayment,
 } from '@island.is/financial-aid/shared/lib'
 
 export class CreateApplicationDto {
@@ -153,13 +151,4 @@ export class CreateApplicationDto {
   @IsString()
   @ApiProperty()
   readonly streetName: string
-
-  @IsArray()
-  @ApiProperty()
-  readonly directTaxPayments: DirectTaxPayment[]
-
-  @IsOptional()
-  @IsUUID()
-  @ApiProperty()
-  readonly applicationSystemId: string
 }

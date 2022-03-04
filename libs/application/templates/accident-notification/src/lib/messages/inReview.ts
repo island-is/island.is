@@ -22,12 +22,12 @@ export const inReview = {
   alertMessage: defineMessages({
     reviewApproved: {
       id: 'an.application:inReview.alertMessage.reviewApproved',
-      defaultMessage: 'Tilkynning móttekin.',
+      defaultMessage: 'Tilkynning hefur verið samþykkt.',
       description: 'Application has been approved',
     },
     reviewRejected: {
       id: 'an.application:inReview.alertMessage.reviewRejected',
-      defaultMessage: 'Tilkynningu hefur verið andmælt.',
+      defaultMessage: 'Tilkynning hefur verið andmælt.',
       description: 'Application has been rejected',
     },
   }),
@@ -137,13 +137,6 @@ export const inReview = {
       defaultMessage:
         'Þegar öll nauðsynleg gögn hafa borist, fara Sjúkratryggingar Íslands yfir umsókn og er þá afstaða tekin til bótaskyldu.',
       description: 'Summary for sjukratrygging section in review',
-    },
-    summaryDone: {
-      id: 'an.application:inReview.sjukratrygging.summaryDone',
-      defaultMessage:
-        'Öll nauðsynleg gögn hafa borist, Sjúkratryggingar munu fara yfir umsoknina og taka afstöðu til bótaskyldu.',
-      description:
-        'Summary when all attachments have been delivered for sjukratrygging section in review',
     },
   }),
   infoMessages: defineMessages({

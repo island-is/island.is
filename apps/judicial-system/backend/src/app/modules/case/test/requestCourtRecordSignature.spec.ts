@@ -5,7 +5,7 @@ import { ForbiddenException } from '@nestjs/common'
 
 import { User } from '@island.is/judicial-system/types'
 
-import { Case } from '../models/case.model'
+import { Case } from '../models'
 import { createTestingCaseModule } from './createTestingCaseModule'
 
 interface MockResponse extends Response {

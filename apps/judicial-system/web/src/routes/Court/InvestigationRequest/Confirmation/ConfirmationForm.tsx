@@ -20,7 +20,8 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import type { Case, User } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
 interface Props {
   workingCase: Case
   user: User
@@ -98,7 +99,7 @@ const Confirmation: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`}
+          previousUrl={`${Constants.IC_RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
           nextUrl={Constants.REQUEST_LIST_ROUTE}
           nextIsLoading={isLoading}
           nextButtonText={formatMessage(

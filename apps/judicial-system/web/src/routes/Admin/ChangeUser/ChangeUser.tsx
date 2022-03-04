@@ -1,16 +1,15 @@
 import React, { useEffect } from 'react'
-import { useMutation, useQuery } from '@apollo/client'
-import { useRouter } from 'next/router'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
+import type { User } from '@island.is/judicial-system/types'
+import { useMutation, useQuery } from '@apollo/client'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   UpdateUserMutation,
   UserQuery,
 } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
-import type { User } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system/consts'
-
+import { useRouter } from 'next/router'
 import UserForm from '../UserForm/UserForm'
 
 interface UserData {

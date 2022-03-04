@@ -15,10 +15,8 @@ interface SliceProps {
 }
 
 export const TwoColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
-  const labelId = 'sliceTitle-' + slice.id
-
   return (
-    <section key={slice.id} aria-labelledby={labelId}>
+    <section key={slice.id} aria-labelledby={'sliceTitle-' + slice.id}>
       <GridContainer>
         <Box
           borderTopWidth="standard"
@@ -32,7 +30,7 @@ export const TwoColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
               paddingBottom={2}
               hiddenBelow="md"
             >
-              <Text variant="h2" as="h2" id={labelId}>
+              <Text variant="h2" as="h2" id={'sliceTitle-' + slice.id}>
                 {slice.leftTitle}
               </Text>
             </GridColumn>
@@ -50,26 +48,22 @@ export const TwoColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
           </GridRow>
           <GridRow>
             <GridColumn span={['12/12', '12/12', '6/12']}>
-              {slice.leftTitle && (
-                <Hidden above="sm">
-                  <Text variant="h2" as="h2">
-                    {slice.leftTitle}
-                  </Text>
-                </Hidden>
-              )}
+              <Hidden above="sm">
+                <Text variant="h2" as="h2">
+                  {slice.leftTitle}
+                </Text>
+              </Hidden>
               {richText(slice.leftContent as SliceType[])}
             </GridColumn>
             <GridColumn
               span={['12/12', '12/12', '6/12']}
               paddingTop={[4, 4, 0]}
             >
-              {slice.rightTitle && (
-                <Hidden above="sm">
-                  <Text variant="h2" as="h2">
-                    {slice.rightTitle}
-                  </Text>
-                </Hidden>
-              )}
+              <Hidden above="sm">
+                <Text variant="h2" as="h2">
+                  {slice.rightTitle}
+                </Text>
+              </Hidden>
               {richText(slice.rightContent as SliceType[])}
             </GridColumn>
           </GridRow>

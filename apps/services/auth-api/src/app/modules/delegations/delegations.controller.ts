@@ -53,13 +53,6 @@ export class DelegationsController {
         scopes = await this.delegationScopeService.findAllLegalGuardianScopes()
         break
       }
-      case DelegationType.PersonalRepresentative: {
-        scopes = await this.delegationScopeService.findPersonalRepresentativeScopes(
-          user.nationalId,
-          fromNationalId,
-        )
-        break
-      }
       case DelegationType.Custom: {
         const result = await this.delegationScopeService.findAllValidCustomScopesTo(
           user.nationalId,

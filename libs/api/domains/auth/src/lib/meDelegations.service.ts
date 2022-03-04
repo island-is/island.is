@@ -5,7 +5,8 @@ import {
   DelegationDTO,
   MeDelegationsApi,
   MeDelegationsControllerFindAllDirectionEnum,
-  MeDelegationsControllerFindAllValidityEnum,
+  MeDelegationsControllerFindAllValidEnum,
+  MeDelegationsControllerFindOneValidEnum,
 } from '@island.is/clients/auth-public-api'
 
 import {
@@ -33,7 +34,7 @@ export class MeDelegationsService {
   getDelegations(user: User): Promise<DelegationDTO[]> {
     return this.delegationsApiWithAuth(user).meDelegationsControllerFindAll({
       direction: MeDelegationsControllerFindAllDirectionEnum.Outgoing,
-      validity: MeDelegationsControllerFindAllValidityEnum.IncludeFuture,
+      valid: MeDelegationsControllerFindAllValidEnum.IncludeFuture,
     })
   }
 
@@ -42,7 +43,10 @@ export class MeDelegationsService {
     { delegationId }: DelegationInput,
   ): Promise<DelegationDTO | null> {
     const delegation = await this.delegationsApiWithAuth(user)
-      .meDelegationsControllerFindOne({ delegationId })
+      .meDelegationsControllerFindOne({
+        delegationId,
+        valid: MeDelegationsControllerFindOneValidEnum.IncludeFuture,
+      })
       .catch(ignore404)
 
     if (!delegation) {

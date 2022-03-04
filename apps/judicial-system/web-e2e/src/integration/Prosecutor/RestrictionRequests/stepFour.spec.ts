@@ -1,17 +1,12 @@
-import {
-  STEP_FIVE_ROUTE,
-  STEP_FOUR_ROUTE,
-} from '@island.is/judicial-system/consts'
 import { makeCustodyCase } from '@island.is/judicial-system/formatters'
-
 import { intercept } from '../../../utils'
 
-describe(`${STEP_FOUR_ROUTE}/:id`, () => {
+describe('/krafa/greinagerd/:id', () => {
   beforeEach(() => {
     const caseData = makeCustodyCase()
 
     cy.stubAPIResponses()
-    cy.visit(`${STEP_FOUR_ROUTE}/test_id`)
+    cy.visit('/krafa/greinargerd/test_id')
 
     intercept(caseData)
   })
@@ -34,6 +29,6 @@ describe(`${STEP_FOUR_ROUTE}/:id`, () => {
     cy.get('[name=caseFacts]').type('lorem ipsum')
     cy.get('[name=legalArguments]').type('lorem ipsum')
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', STEP_FIVE_ROUTE)
+    cy.url().should('include', '/krafa/rannsoknargogn/test_id')
   })
 })

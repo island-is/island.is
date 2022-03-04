@@ -1,4 +1,4 @@
-import { Case } from '../models/case.model'
+import { Case } from '../models'
 
 const threeDays = 3 * 24 * 60 * 60 * 1000
 const sevenDays = 7 * 24 * 60 * 60 * 1000

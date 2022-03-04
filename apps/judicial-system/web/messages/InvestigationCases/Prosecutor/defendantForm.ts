@@ -7,6 +7,22 @@ export const defendant = {
     description:
       'Notaður sem titill á sakbornings skrefi í rannsóknarheimildum.',
   }),
+  receivedAlert: defineMessages({
+    title: {
+      id: 'judicial.system.investigation_cases:defendant.received_alert.title',
+      defaultMessage: 'Athugið',
+      description:
+        'Notaður sem titill í upplýsingarboxi á varnaraðila skrefi í rannsóknarheimildum.',
+    },
+    message: {
+      id:
+        'judicial.system.investigation_cases:defendant.received_alert.message',
+      defaultMessage:
+        'Hægt er að breyta efni kröfunnar og bæta við rannsóknargögnum eftir að hún hefur verið send dómstól en til að breytingar skili sér í dómskjalið sem verður til hliðsjónar í þinghaldinu þarf að smella á Endursenda kröfu á skjánum Yfirlit kröfu.',
+      description:
+        'Notaður sem skilaboð í upplýsingarboxi á varnaraðila skrefi í rannsóknarheimildum.',
+    },
+  }),
   sections: {
     investigationType: {
       heading: defineMessage({

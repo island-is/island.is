@@ -1,8 +1,8 @@
 import { uuid } from 'uuidv4'
 import { Response } from 'express'
 
-import { getRequestPdfAsBuffer } from '../../../formatters'
-import { Case } from '../models/case.model'
+import { getRequestPdfAsBuffer } from '../../../formatters/requestPdf'
+import { Case } from '../models'
 import { createTestingCaseModule } from './createTestingCaseModule'
 
 jest.mock('../../../formatters/requestPdf')

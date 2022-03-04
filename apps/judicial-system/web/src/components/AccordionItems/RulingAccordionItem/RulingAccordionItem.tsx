@@ -1,11 +1,9 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-
 import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
-import { rulingAccordion as m } from '@island.is/judicial-system-web/messages/Core/rulingAccordion'
 import type { Case } from '@island.is/judicial-system/types'
-
-import { AccordionListItem } from '../..'
+import { rulingAccordion as m } from '@island.is/judicial-system-web/messages/Core/rulingAccordion'
+import * as style from './RulingAccordionItem.css'
 
 interface Props {
   workingCase: Case
@@ -23,7 +21,7 @@ const RulingAccordionItem: React.FC<Props> = ({
       id="rulingAccordionItem"
       label={formatMessage(m.heading)}
       labelVariant="h3"
-      labelUse="h3"
+      labelUse="h2"
       startExpanded={startExpanded}
     >
       <Box component="section">
@@ -32,24 +30,36 @@ const RulingAccordionItem: React.FC<Props> = ({
             {formatMessage(m.title)}
           </Text>
         </Box>
-        <AccordionListItem
-          title={formatMessage(m.sections.prosecutorDemands.title)}
-        >
+        <Box marginBottom={1}>
+          <Text variant="eyebrow" color="blue400">
+            {formatMessage(m.sections.prosecutorDemands.title)}
+          </Text>
+        </Box>
+        <Box marginBottom={2}>
           <Text>{workingCase.prosecutorDemands}</Text>
-        </AccordionListItem>
-        <AccordionListItem
-          title={formatMessage(m.sections.courtCaseFacts.title)}
-        >
+        </Box>
+        <Box marginBottom={1}>
+          <Text variant="eyebrow" color="blue400">
+            {formatMessage(m.sections.courtCaseFacts.title)}
+          </Text>
+        </Box>
+        <Box marginBottom={2}>
           <Text>{workingCase.courtCaseFacts}</Text>
-        </AccordionListItem>
-        <AccordionListItem
-          title={formatMessage(m.sections.courtLegalArguments.title)}
-        >
+        </Box>
+        <Box marginBottom={1}>
+          <Text variant="eyebrow" color="blue400">
+            {formatMessage(m.sections.courtLegalArguments.title)}
+          </Text>
+        </Box>
+        <Box marginBottom={2}>
           <Text>{workingCase.courtLegalArguments}</Text>
-        </AccordionListItem>
-        <AccordionListItem title={formatMessage(m.sections.ruling.title)}>
-          <Text whiteSpace="breakSpaces">{workingCase.ruling}</Text>
-        </AccordionListItem>
+        </Box>
+        <Text variant="eyebrow" color="blue400">
+          {formatMessage(m.sections.ruling.title)}
+        </Text>
+        <Text>
+          <span className={style.breakSpaces}>{workingCase.ruling}</span>
+        </Text>
       </Box>
     </AccordionItem>
   )

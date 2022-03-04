@@ -5,7 +5,16 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import {
+  ApiBadRequestResponse,
+  ApiForbiddenResponse,
+  ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger'
 
 import {
   ActorScopes,
@@ -22,9 +31,9 @@ import {
   DelegationsService,
 } from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
+import { HttpProblemResponse } from '@island.is/nest/problem'
 
 import { environment } from '../../../environments'
-import { Documentation } from '@island.is/nest/swagger'
 
 const namespace = '@island.is/auth-public-api/actor/delegations'
 
@@ -37,20 +46,21 @@ export class ActorDelegationsController {
 
   @ActorScopes(AuthScope.actorDelegations)
   @Get()
-  @Documentation({
+  @ApiOkResponse({ type: [DelegationDTO] })
+  @ApiBadRequestResponse({ type: HttpProblemResponse })
+  @ApiForbiddenResponse({ type: HttpProblemResponse })
+  @ApiUnauthorizedResponse({ type: HttpProblemResponse })
+  @ApiInternalServerErrorResponse()
+  @ApiOperation({
     description: `Finds all incoming delegations for the signed in user or actor.
 			Including the custom delegations as well as natural delegations from NationalRegistry and CompanyRegistry.`,
-    response: { status: 200, type: [DelegationDTO] },
-    request: {
-      query: {
-        direction: {
-          required: true,
-          schema: {
-            enum: ['incoming'],
-            default: 'incoming',
-          },
-        },
-      },
+  })
+  @ApiQuery({
+    name: 'direction',
+    required: true,
+    schema: {
+      enum: ['incoming'],
+      default: 'incoming',
     },
   })
   @Audit<DelegationDTO[]>({

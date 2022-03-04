@@ -8,9 +8,5 @@
   "video": false,
   "videosFolder": "../../dist/cypress/apps/service-portal-e2e/videos",
   "screenshotsFolder": "../../dist/cypress/apps/service-portal-e2e/screenshots",
-  "chromeWebSecurity": false,
-  "retries": {
-    "runMode": 2,
-    "openMode": 0
-  }
+  "chromeWebSecurity": false
 }

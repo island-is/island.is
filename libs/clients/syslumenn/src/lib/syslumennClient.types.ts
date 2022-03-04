@@ -44,51 +44,14 @@ export interface OperatingLicense {
   street?: string
   postalCode?: string
   type?: string
-  type2?: string
-  restaurantType?: string
-  validFrom?: Date
-  validTo?: Date
+  validUntil?: string
   licenseHolder?: string
-  licenseResponsible?: string
   category?: string
   outdoorLicense?: string
   alcoholWeekdayLicense?: string
   alcoholWeekendLicense?: string
   alcoholWeekdayOutdoorLicense?: string
   alcoholWeekendOutdoorLicense?: string
-  maximumNumberOfGuests?: number
-  numberOfDiningGuests?: number
-}
-
-/**
- * The Syslumenn API provides pagination information in a custom header as a
- * JSON string. The OpenAPI specification currently does not define this object,
- * therefore we define it here.
- */
-export interface SyslumennApiPaginationInfo {
-  PageSize?: number
-  PageNumber?: number
-  TotalCount?: number
-  TotalPages?: number
-  CurrentPage?: number
-  HasNext?: boolean
-  HasPrevious?: boolean
-}
-
-export interface PaginationInfo {
-  pageSize?: number
-  pageNumber?: number
-  totalCount?: number
-  totalPages?: number
-  currentPage?: number
-  hasNext?: boolean
-  hasPrevious?: boolean
-}
-
-export interface PaginatedOperatingLicenses {
-  searchQuery: string
-  paginationInfo: PaginationInfo
-  results: OperatingLicense[]
 }
 
 export interface CertificateInfoResponse {

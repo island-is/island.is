@@ -65,22 +65,6 @@ const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
 }
 
 Cypress.Commands.add('stubAPIResponses', () => {
-  cy.intercept(
-    'GET',
-    '**/api/nationalRegistry/getBusinessesByNationalId**',
-    (req) => {
-      req.reply({ fixture: 'nationalRegistryBusinessesResponse' })
-    },
-  ).as('getBusinessesByNationalId')
-
-  cy.intercept(
-    'GET',
-    '**/api/nationalRegistry/getPersonByNationalId**',
-    (req) => {
-      req.reply({ fixture: 'nationalRegistryPersonResponse' })
-    },
-  ).as('getPersonByNationalId')
-
   cy.intercept('POST', '**/api/graphql', (req) => {
     req.reply(getFixtureFor(req))
   })

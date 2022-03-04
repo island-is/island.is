@@ -8,7 +8,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
-import { Case } from '../modules/case'
+import { Case } from '../modules/case/models'
 import { ruling } from '../messages'
 import {
   addFooter,
@@ -90,7 +90,7 @@ function constructRulingPdf(
             index === 0
               ? ''
               : index + 1 === theCase.defendants?.length
-              ? ', og'
+              ? ' og'
               : ','
           } ${defendant.name ?? '-'}, ${
             defendant.noNationalId ? 'fd.' : 'kt.'

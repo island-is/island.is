@@ -23,8 +23,6 @@ import {
   PdfRow,
   PoliceRequestAccordionItem,
   RulingAccordionItem,
-  CommentsAccordionItem,
-  CaseFilesAccordionItem,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealDecision,
@@ -49,8 +47,10 @@ import { UserContext } from '@island.is/judicial-system-web/src/components/UserP
 import { core } from '@island.is/judicial-system-web/messages'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import CaseFilesAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CaseFilesAccordionItem/CaseFilesAccordionItem'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
 import AppealSection from './Components/AppealSection/AppealSection'
 import { SignedDocument } from './Components/SignedDocument'
 import CaseDates from './Components/CaseDates/CaseDates'
@@ -156,7 +156,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             Til baka
           </Button>
         </Box>
-        <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
+        <Box display="flex" justifyContent="spaceBetween" marginBottom={5}>
           <Box>
             <Box marginBottom={1}>
               <Text as="h1" variant="h1">
@@ -165,22 +165,21 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             </Box>
           </Box>
           <Box display="flex" flexDirection="column">
-            {workingCase.type === CaseType.CUSTODY &&
-              workingCase.isCustodyIsolation && (
-                <Box marginBottom={1}>
-                  <Tag
-                    variant={getRestrictionTagVariant(
-                      CaseCustodyRestrictions.ISOLATION,
-                    )}
-                    outlined
-                    disabled
-                  >
-                    {getShortRestrictionByValue(
-                      CaseCustodyRestrictions.ISOLATION,
-                    )}
-                  </Tag>
-                </Box>
-              )}
+            {workingCase.isCustodyIsolation && (
+              <Box marginBottom={1}>
+                <Tag
+                  variant={getRestrictionTagVariant(
+                    CaseCustodyRestrictions.ISOLATION,
+                  )}
+                  outlined
+                  disabled
+                >
+                  {getShortRestrictionByValue(
+                    CaseCustodyRestrictions.ISOLATION,
+                  )}
+                </Tag>
+              </Box>
+            )}
             {
               // Custody restrictions
               isAcceptingCaseDecision(workingCase.decision) &&
@@ -290,20 +289,20 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
               title: formatMessage(core.judge),
               value: workingCase.judge?.name,
             },
+            ...(workingCase.registrar
+              ? [
+                  {
+                    title: formatMessage(core.registrar),
+                    value: workingCase.registrar?.name,
+                  },
+                ]
+              : []),
             // Conditionally add this field based on case type
             ...(isInvestigationCase(workingCase.type)
               ? [
                   {
                     title: formatMessage(core.caseType),
                     value: capitalize(caseTypes[workingCase.type]),
-                  },
-                ]
-              : []),
-            ...(workingCase.registrar
-              ? [
-                  {
-                    title: formatMessage(core.registrar),
-                    value: workingCase.registrar?.name,
                   },
                 ]
               : []),
@@ -347,10 +346,6 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                   user={user}
                 />
               )}
-              {(Boolean(workingCase.comments) ||
-                Boolean(workingCase.caseFilesComments)) && (
-                <CommentsAccordionItem workingCase={workingCase} />
-              )}
             </Accordion>
           </Box>
           <Box marginBottom={7}>
@@ -375,7 +370,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         </>
       )}
       <Box marginBottom={10}>
-        <Text as="h3" variant="h3" marginBottom={5}>
+        <Text as="h2" variant="h3" marginBottom={5}>
           {formatMessage(m.caseDocuments)}
         </Text>
         <Box marginBottom={2}>
@@ -443,8 +438,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           <Box marginBottom={9}>
             <Box marginBottom={3}>
               <Text variant="h3">
-                {formatMessage(m.sections.shareCase.title)}{' '}
-                <Tooltip text={formatMessage(m.sections.shareCase.info)} />
+                Opna mál fyrir öðru embætti{' '}
+                <Tooltip text="Hægt er að gefa öðru embætti aðgang að málinu. Viðkomandi embætti getur skoðað málið og farið fram á framlengingu." />
               </Text>
             </Box>
             <BlueBox>
@@ -452,10 +447,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                 <Box flexGrow={1} marginRight={2}>
                   <Select
                     name="sharedWithProsecutorsOfficeId"
-                    label={formatMessage(m.sections.shareCase.label)}
-                    placeholder={formatMessage(
-                      m.sections.shareCase.placeholder,
-                    )}
+                    label="Veldu embætti"
+                    placeholder="Velja embætti sem tekur við málinu"
                     size="sm"
                     icon={
                       workingCase.sharedWithProsecutorsOffice
@@ -502,8 +495,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                   }
                 >
                   {workingCase.sharedWithProsecutorsOffice
-                    ? formatMessage(m.sections.shareCase.close)
-                    : formatMessage(m.sections.shareCase.open)}
+                    ? 'Loka aðgangi'
+                    : 'Opna mál'}
                 </Button>
               </Box>
             </BlueBox>

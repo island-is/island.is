@@ -3,7 +3,7 @@ import { BasicDataProvider } from '@island.is/application/core'
 
 export abstract class PaymentCatalogProvider extends BasicDataProvider {
   async getCatalogForOrganization(
-    organizationId?: string,
+    organizationId: string,
   ): Promise<PaymentCatalogItem[] | null> {
     const query = `
       query PaymentCatalogProvider($input: PaymentCatalogInput!) {

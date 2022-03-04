@@ -29,7 +29,8 @@ import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/for
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { icRequestedHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import type { User } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
 import HearingArrangementsForms from './HearingArrangementsForm'
 
 const HearingArrangements = () => {

@@ -2,23 +2,21 @@ import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import { ProblemModule } from '@island.is/nest/problem'
-import { ConfigModule } from '@island.is/nest/config'
-import { courtClientModuleConfig } from '@island.is/judicial-system/court-client'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../environments'
 import {
   CaseModule,
-  DefendantModule,
-  UserModule,
-  InstitutionModule,
-  FileModule,
-  NotificationModule,
-  PoliceModule,
   CourtModule,
-  AwsS3Module,
+  FileModule,
+  InstitutionModule,
+  NotificationModule,
+  UserModule,
   EventModule,
+  PoliceModule,
+  AwsS3Module,
 } from './modules'
+import { DefendantModule } from './modules/defendant/defendant.module'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 
 @Module({
@@ -30,21 +28,17 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
       jwtSecret: environment.auth.jwtSecret,
       secretToken: environment.auth.secretToken,
     }),
-    CaseModule,
-    DefendantModule,
     UserModule,
+    CaseModule,
+    NotificationModule,
     InstitutionModule,
     FileModule,
-    NotificationModule,
-    PoliceModule,
     CourtModule,
-    AwsS3Module,
     EventModule,
+    PoliceModule,
+    AwsS3Module,
     ProblemModule.forRoot({ logAllErrors: true }),
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [courtClientModuleConfig],
-    }),
+    DefendantModule,
   ],
 })
 export class AppModule {}

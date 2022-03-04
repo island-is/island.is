@@ -27,14 +27,14 @@ import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
 
 import { environment } from '../src/environments'
-import { AppModule } from '../src/app/app.module'
+import { AppModule } from '../src/app'
 import { Institution } from '../src/app/modules/institution'
 import { User } from '../src/app/modules/user'
 import { Case } from '../src/app/modules/case'
 import {
   Notification,
   SendNotificationResponse,
-} from '../src/app/modules/notification'
+} from '../src/app/modules/notification/models'
 
 interface CUser extends TUser {
   institutionId: string
@@ -188,7 +188,8 @@ function remainingJudgeCaseData() {
     courtAttendees: 'Court Attendees',
     prosecutorDemands: 'Police Demands',
     courtDocuments: ['Þingskjal 1', 'Þingskjal 2'],
-    sessionBookings: 'Session Bookings',
+    accusedBookings: 'Accused Plea',
+    litigationPresentations: 'Litigation Presentations',
     courtCaseFacts: 'Court Case Facts',
     courtLegalArguments: 'Court Legal Arguments',
     ruling: 'Ruling',
@@ -417,7 +418,10 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.courtDocuments ?? null).toStrictEqual(
     caseTwo.courtDocuments ?? null,
   )
-  expect(caseOne.sessionBookings ?? null).toBe(caseTwo.sessionBookings ?? null)
+  expect(caseOne.accusedBookings ?? null).toBe(caseTwo.accusedBookings ?? null)
+  expect(caseOne.litigationPresentations ?? null).toBe(
+    caseTwo.litigationPresentations ?? null,
+  )
   expect(caseOne.courtCaseFacts ?? null).toBe(caseTwo.courtCaseFacts ?? null)
   expect(caseOne.courtLegalArguments ?? null).toBe(
     caseTwo.courtLegalArguments ?? null,
@@ -495,7 +499,7 @@ describe('Institution', () => {
       .send()
       .expect(200)
       .then((response) => {
-        expect(response.body.length).toBe(14)
+        expect(response.body.length).toBe(9)
       })
   })
 })

@@ -51,6 +51,14 @@ const unitsArray = (
             value: unit.unitOfUseNumber || '',
           },
           {
+            title: `${formatMessage(messages.appraisal)} ${
+              unit?.appraisal?.activeYear
+            }`,
+            value: unit.appraisal?.activeAppraisal
+              ? amountFormat(unit.appraisal?.activeAppraisal)
+              : '',
+          },
+          {
             title: formatMessage(messages.location),
             value: locationData?.displayShort || '',
             detail: locationData?.locationNumber
@@ -58,6 +66,14 @@ const unitsArray = (
                   locationData?.locationNumber
                 }`
               : undefined,
+          },
+          {
+            title: `${formatMessage(messages.appraisal)} ${
+              unit?.appraisal?.plannedYear
+            }`,
+            value: unit?.appraisal?.plannedAppraisal
+              ? amountFormat(unit.appraisal.plannedAppraisal)
+              : '',
           },
           {
             title: formatMessage(messages.marking),

@@ -15,14 +15,12 @@ import {
 export enum DelegationType {
   LegalGuardian = 'LegalGuardian',
   ProcurationHolder = 'ProcurationHolder',
-  PersonalRepresentative = 'PersonalRepresentative',
   Custom = 'Custom',
 }
 
 export enum DelegationProvider {
   NationalRegistry = 'thjodskra',
   CompanyRegistry = 'fyrirtaekjaskra',
-  PersonalRepresentativeRegistry = 'talsmannagrunnur',
   Custom = 'delegationdb',
 }
 

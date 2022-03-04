@@ -15,7 +15,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  CourtSubsections,
+  JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
@@ -31,7 +31,8 @@ import {
   core,
   rcConfirmation as m,
 } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
 export const Confirmation: React.FC = () => {
   const {
     workingCase,
@@ -65,13 +66,17 @@ export const Confirmation: React.FC = () => {
     }
 
     // Request ruling signature to get control code
-    const requestRulingSignatureResponse = await requestRulingSignature(
-      workingCase.id,
-    )
-    if (requestRulingSignatureResponse) {
-      setRequestRulingSignatureResponse(requestRulingSignatureResponse)
-      setModalVisible(true)
-    } else {
+    try {
+      const requestRulingSignatureResponse = await requestRulingSignature(
+        workingCase.id,
+      )
+      if (requestRulingSignatureResponse) {
+        setRequestRulingSignatureResponse(requestRulingSignatureResponse)
+        setModalVisible(true)
+      } else {
+        // TODO: Handle error
+      }
+    } catch (e) {
       // TODO: Handle error
     }
   }
@@ -82,7 +87,7 @@ export const Confirmation: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.CONFIRMATION}
+      activeSubSection={JudgeSubsections.CONFIRMATION}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -150,7 +155,7 @@ export const Confirmation: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`}
+          previousUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
           nextUrl={Constants.REQUEST_LIST_ROUTE}
           nextButtonText={formatMessage(
             workingCase.decision === CaseDecision.ACCEPTING

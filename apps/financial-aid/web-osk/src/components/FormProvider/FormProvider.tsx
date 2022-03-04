@@ -5,7 +5,7 @@ import {
   Employment,
   FamilyStatus,
   FormSpouse,
-  DirectTaxPayment,
+  FileType,
 } from '@island.is/financial-aid/shared/lib'
 import { UploadFile } from '@island.is/island-ui/core'
 
@@ -38,7 +38,6 @@ export interface Form {
   familyStatus?: FamilyStatus
   spouse?: FormSpouse
   phoneNumber?: string
-  directTaxPayments: DirectTaxPayment[]
 }
 
 export const initialState = {
@@ -47,7 +46,6 @@ export const initialState = {
   taxReturnFiles: [],
   taxReturnFromRskFile: [],
   otherFiles: [],
-  directTaxPayments: [],
 }
 
 interface FormProvider {
@@ -87,8 +85,6 @@ const FormProvider = ({ children }: Props) => {
       incomeFiles: [],
       taxReturnFiles: [],
       otherFiles: [],
-      taxReturnFromRskFile: [],
-      directTaxPayments: [],
     })
   }
 

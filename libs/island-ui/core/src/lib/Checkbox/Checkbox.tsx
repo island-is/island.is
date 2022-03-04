@@ -1,7 +1,7 @@
 import React from 'react'
 import cn from 'classnames'
 import { Text } from '../Text/Text'
-import { Icon } from '../IconRC/Icon'
+import { Icon } from '../Icon/Icon'
 import { Tooltip } from '../Tooltip/Tooltip'
 import { Box } from '../Box/Box'
 import { InputBackgroundColor } from '../Input/types'
@@ -94,7 +94,11 @@ export const Checkbox = ({
             [styles.checkboxDisabled]: disabled,
           })}
         >
-          <Icon icon="checkmark" color={checked ? 'white' : 'transparent'} />
+          <Icon
+            type="check"
+            width={styles.checkMarkWidth}
+            color={checked ? 'white' : 'transparent'}
+          />
         </div>
         <span className={styles.labelText}>
           <Text

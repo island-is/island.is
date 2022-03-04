@@ -1,7 +1,6 @@
 export enum ServicePortalPath {
   // Mínar síður
   MinarSidurRoot = '/',
-  MinarSidurPath = '/minarsidur',
   MinarSidurSignInOidc = '/signin-oidc',
   MinarSidurSilentSignInOidc = '/silent/signin-oidc',
 

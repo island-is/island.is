@@ -1,10 +1,14 @@
+import { ApolloError, ServerError } from '@apollo/client'
 import { onError, ErrorResponse } from '@apollo/client/link/error'
 
-import { api } from '@island.is/judicial-system-web/src/services'
+import {
+  api,
+  NotificationService,
+} from '@island.is/judicial-system-web/src/services'
 
 export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
   if (networkError) {
-    return
+    return NotificationService.onNetworkError(networkError as ServerError)
   }
 
   if (graphQLErrors) {
@@ -19,7 +23,9 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
         case 'FORBIDDEN':
           return
         default:
-          return
+          return NotificationService.onGraphQLError({
+            graphQLErrors,
+          } as ApolloError)
       }
     })
   }

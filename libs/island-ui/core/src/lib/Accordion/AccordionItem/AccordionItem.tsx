@@ -123,74 +123,71 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
     return (
       <Box>
         <Box position="relative" display="flex">
-          <Box component={labelUse} width="full" display="flex">
-            <Box
-              ref={forwardedRef}
-              component="button"
-              type="button"
-              cursor="pointer"
-              className={[styles.button, useVirtualTouchable()]}
-              outline="none"
-              width="full"
-              textAlign="left"
-              aria-controls={id}
-              aria-expanded={expanded}
-              onFocus={onFocus}
-              onBlur={onBlur}
-              onClick={onClick ? onClick : handleToggle}
-            >
-              <Columns space={2} alignY="center" as="span">
-                <Column>
-                  <Box
-                    component="span"
-                    height="full"
-                    width="full"
-                    display="flex"
-                    alignItems="center"
-                  >
-                    <Text variant={labelVariant} as="span" color={labelColor}>
-                      {label}
-                    </Text>
+          <Box
+            ref={forwardedRef}
+            component="button"
+            type="button"
+            cursor="pointer"
+            className={[styles.button, useVirtualTouchable()]}
+            outline="none"
+            width="full"
+            textAlign="left"
+            aria-controls={id}
+            aria-expanded={expanded}
+            onFocus={onFocus}
+            onBlur={onBlur}
+            onClick={onClick ? onClick : handleToggle}
+          >
+            <Columns space={2} alignY="center">
+              <Column>
+                <Box
+                  height="full"
+                  width="full"
+                  display="flex"
+                  alignItems="center"
+                >
+                  <Text variant={labelVariant} as={labelUse} color={labelColor}>
+                    {label}
+                  </Text>
+                </Box>
+                {visibleContent && (
+                  <Box paddingTop={2}>
+                    <Text>{visibleContent}</Text>
                   </Box>
-                  {visibleContent && (
-                    <Box paddingTop={2}>
-                      <Text>{visibleContent}</Text>
-                    </Box>
+                )}
+              </Column>
+              <Column width="content">
+                <div
+                  className={cn(
+                    styles.plusIconWrap,
+                    styles.iconWrapVariants[iconVariant],
                   )}
-                </Column>
-                <Column width="content">
-                  <span
-                    className={cn(
-                      styles.plusIconWrap,
-                      styles.iconWrapVariants[iconVariant],
-                    )}
+                >
+                  <div
+                    className={cn(styles.icon, styles.removeIcon, {
+                      [styles.showRemoveIcon]: expanded,
+                    })}
                   >
-                    <span
-                      className={cn(styles.icon, styles.removeIcon, {
-                        [styles.showRemoveIcon]: expanded,
-                      })}
-                    >
-                      <Icon
-                        icon="remove"
-                        size={iconVariant === 'default' ? 'large' : 'small'}
-                        color="currentColor"
-                      />
-                    </span>
-                    <span
-                      className={cn(styles.icon, styles.addIcon, {
-                        [styles.hideAddIcon]: expanded,
-                      })}
-                    >
-                      <Icon
-                        icon="add"
-                        size={iconVariant === 'default' ? 'large' : 'small'}
-                        color="currentColor"
-                      />
-                    </span>
-                  </span>
-                </Column>
-              </Columns>
-            </Box>
+                    <Icon
+                      icon="remove"
+                      size={iconVariant === 'default' ? 'large' : 'small'}
+                      color="currentColor"
+                    />
+                  </div>
+                  <div
+                    className={cn(styles.icon, styles.addIcon, {
+                      [styles.hideAddIcon]: expanded,
+                    })}
+                  >
+                    <Icon
+                      icon="add"
+                      size={iconVariant === 'default' ? 'large' : 'small'}
+                      color="currentColor"
+                    />
+                  </div>
+                </div>
+              </Column>
+            </Columns>
           </Box>
           <Overlay className={[styles.focusRing, hideFocusRingsClassName]} />
         </Box>

@@ -276,10 +276,7 @@ export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
       tagVariant:
         tagMapperApplicationStatus[currentAccidentStatus.status].variant,
       title: formatMessage(inReview.sjukratrygging.title),
-      description:
-        hasReviewerSubmitted && hasReceivedAllDocuments(answers)
-          ? formatMessage(inReview.sjukratrygging.summaryDone)
-          : formatMessage(inReview.sjukratrygging.summary),
+      description: formatMessage(inReview.sjukratrygging.summary),
       hasActionMessage: false,
     },
   ] as Steps[]

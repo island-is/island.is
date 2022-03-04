@@ -11,8 +11,8 @@ import {
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
-import { Case } from '../modules/case'
 import { request as m, core } from '../messages'
+import { Case } from '../modules/case/models'
 import { formatLegalProvisions } from './formatters'
 import {
   addEmptyLines,

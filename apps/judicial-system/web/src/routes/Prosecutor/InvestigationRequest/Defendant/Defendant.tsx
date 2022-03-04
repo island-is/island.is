@@ -10,7 +10,8 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import type { Case } from '@island.is/judicial-system/types'
-import * as constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system-web/src/utils/constants'
+
 import DefendantForm from './DefendantForm'
 
 const Defendant = () => {

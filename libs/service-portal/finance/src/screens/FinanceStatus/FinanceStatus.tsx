@@ -115,6 +115,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                       onClick: () =>
                         formSubmit(
                           `${financeStatusData.downloadServiceURL}${previousYear}`,
+                          userInfo.access_token,
                           true,
                         ),
                     },
@@ -125,6 +126,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
                       onClick: () =>
                         formSubmit(
                           `${financeStatusData.downloadServiceURL}${twoYearsAgo}`,
+                          userInfo.access_token,
                           true,
                         ),
                     },

@@ -23,8 +23,8 @@ import {
   Param,
   Post,
   Put,
-  Query,
   Inject,
+  Query,
 } from '@nestjs/common'
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'

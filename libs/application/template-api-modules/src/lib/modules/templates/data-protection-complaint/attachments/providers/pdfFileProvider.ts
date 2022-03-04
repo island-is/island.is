@@ -8,9 +8,8 @@ export class PdfFileProvider {
   public async getApplicationPdf(
     application: Application,
     filename: string,
-    attachedFiles: DocumentInfo[],
   ): Promise<DocumentInfo & { fileBuffer: Buffer }> {
-    const buffer = await generateComplaintPdf(application, attachedFiles)
+    const buffer = await generateComplaintPdf(application)
     const doc = {
       content: buffer.toString('base64'),
       fileName: `${filename}.pdf`,

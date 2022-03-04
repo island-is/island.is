@@ -12,12 +12,11 @@ import {
   mockProsecutorWonderWomanQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { UserProvider } from '@island.is/judicial-system-web/src/components'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
 import { LocaleProvider } from '@island.is/localization'
-import FormProvider from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 
 import { SignedVerdictOverview } from './SignedVerdictOverview'
+import FormProvider from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 
 window.scrollTo = jest.fn()
 
@@ -328,7 +327,7 @@ describe('Signed Verdict Overview route', () => {
 
     test('should have the correct subtitle', async () => {
       const validToDate = '2020-09-25T19:50:08.033Z'
-      const courtEndTime = '2020-09-19T17:50:08.033Z'
+      const rulingDate = '2020-09-20T17:50:08.033Z'
 
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
@@ -357,8 +356,8 @@ describe('Signed Verdict Overview route', () => {
 
       expect(
         await screen.findByText(
-          `Úrskurðað ${formatDate(courtEndTime, 'PPP')} kl. ${formatDate(
-            courtEndTime,
+          `Úrskurðað ${formatDate(rulingDate, 'PPP')} kl. ${formatDate(
+            rulingDate,
             TIME_FORMAT,
           )}`,
         ),
@@ -604,7 +603,7 @@ describe('Signed Verdict Overview route', () => {
 
       test('should have the correct subtitle', async () => {
         const dateInPast = '2020-09-24T19:50:08.033Z'
-        const courtEndTime = '2020-09-16T19:51:28.224Z'
+        const rulingDate = '2020-09-20T17:50:08.033Z'
 
         const useRouter = jest.spyOn(require('next/router'), 'useRouter')
         useRouter.mockImplementation(() => ({
@@ -633,8 +632,8 @@ describe('Signed Verdict Overview route', () => {
 
         expect(
           await screen.findByText(
-            `Úrskurðað ${formatDate(courtEndTime, 'PPP')} kl. ${formatDate(
-              courtEndTime,
+            `Úrskurðað ${formatDate(rulingDate, 'PPP')} kl. ${formatDate(
+              rulingDate,
               TIME_FORMAT,
             )}`,
           ),
@@ -857,7 +856,7 @@ describe('Signed Verdict Overview route', () => {
         pathname: '/krafa/test_id_2',
       }))
       const date = '2020-09-25T19:50:08.033Z'
-      const courtEndTime = '2020-09-16T17:50:08.033Z'
+      const rulingDate = '2020-09-20T17:50:08.033Z'
 
       render(
         <MockedProvider
@@ -880,8 +879,8 @@ describe('Signed Verdict Overview route', () => {
 
       expect(
         await screen.findByText(
-          `Úrskurðað ${formatDate(courtEndTime, 'PPP')} kl. ${formatDate(
-            courtEndTime,
+          `Úrskurðað ${formatDate(rulingDate, 'PPP')} kl. ${formatDate(
+            rulingDate,
             TIME_FORMAT,
           )}`,
         ),
@@ -998,7 +997,7 @@ describe('Signed Verdict Overview route', () => {
 
     test('should have the correct subtitle', async () => {
       const dateInPast = '2020-09-24T19:50:08.033Z'
-      const courtEndTime = '2020-09-16T19:51:28.224Z'
+      const rulingDate = '2020-09-20T17:50:08.033Z'
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_8' },
@@ -1026,8 +1025,8 @@ describe('Signed Verdict Overview route', () => {
 
       expect(
         await screen.findByText(
-          `Úrskurðað ${formatDate(courtEndTime, 'PPP')} kl. ${formatDate(
-            courtEndTime,
+          `Úrskurðað ${formatDate(rulingDate, 'PPP')} kl. ${formatDate(
+            rulingDate,
             TIME_FORMAT,
           )}`,
         ),

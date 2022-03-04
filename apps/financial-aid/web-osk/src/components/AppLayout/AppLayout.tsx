@@ -1,5 +1,4 @@
 import React, { ReactNode, useContext, useEffect } from 'react'
-import { useRouter } from 'next/router'
 import { Box, GridContainer } from '@island.is/island-ui/core'
 
 import * as styles from './AppLayout.css'
@@ -12,7 +11,6 @@ import {
 
 import cn from 'classnames'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
-import { Routes } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   children: ReactNode
@@ -20,22 +18,10 @@ interface Props {
 
 const AppLayout = ({ children }: Props) => {
   const { isAuthenticated, user, loadingUser } = useContext(AppContext)
-  const router = useRouter()
 
   useEffect(() => {
     document.title = 'Fjárhagsaðstoð'
   }, [])
-
-  const isUserLoggedIn = isAuthenticated && user
-  const shouldRedirect = router.pathname.startsWith(Routes.application)
-  const shouldRouteToStatus =
-    user?.spouse?.hasFiles ||
-    (user?.currentApplicationId && !user?.spouse?.hasPartnerApplied)
-
-  if (isUserLoggedIn && shouldRedirect && shouldRouteToStatus) {
-    router.push(Routes.statusPage(user.currentApplicationId as string))
-    return null
-  }
 
   if (isAuthenticated === false || user === undefined || loadingUser) {
     return <Skeleton />

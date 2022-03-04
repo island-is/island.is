@@ -104,7 +104,7 @@ const MunicipalityProfile = ({
         ]
       case AidTypeHomeCircumstances.REGISTEREDLEASE:
         return [
-          TextTableItem(headline, 'Leiga með þinglýstan leigusamning'),
+          TextTableItem(headline, 'Leiga með þinglýstum leigusamning'),
           TextTableItem(
             smallText,
             municipality.individualAid.registeredRenting,
@@ -116,7 +116,7 @@ const MunicipalityProfile = ({
         ]
       case AidTypeHomeCircumstances.UNREGISTEREDLEASE:
         return [
-          TextTableItem(headline, 'Leiga með óþinglýstan leigusamning'),
+          TextTableItem(headline, 'Býr eða leigir án þinglýsts leigusamnings'),
           TextTableItem(
             smallText,
             municipality.individualAid.unregisteredRenting,
@@ -125,15 +125,6 @@ const MunicipalityProfile = ({
             smallText,
             municipality.cohabitationAid.unregisteredRenting,
           ),
-        ]
-      case AidTypeHomeCircumstances.WITHOTHERS:
-        return [
-          TextTableItem(
-            headline,
-            'Býr eða leigir hjá öðrum án þinglýsts leigusamnings',
-          ),
-          TextTableItem(smallText, municipality.individualAid.withOthers),
-          TextTableItem(smallText, municipality.cohabitationAid.withOthers),
         ]
       case AidTypeHomeCircumstances.WITHPARENTS:
         return [

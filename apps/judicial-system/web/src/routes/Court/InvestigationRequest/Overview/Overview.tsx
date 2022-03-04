@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import {
-  CourtSubsections,
+  JudgeSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
@@ -28,7 +28,7 @@ const Overview = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={CourtSubsections.JUDGE_OVERVIEW}
+      activeSubSection={JudgeSubsections.JUDGE_OVERVIEW}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >

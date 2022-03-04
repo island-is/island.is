@@ -1,7 +1,6 @@
 export const PdfConstants = {
   BOLD_FONT: 'Helvetica-Bold',
   NORMAL_FONT: 'Helvetica',
-  FORM_FIELD_WIDTH: 150,
   HEADER_FONT_SIZE: 26,
   SMALL_FONT_SIZE: 8,
   VALUE_FONT_SIZE: 12,

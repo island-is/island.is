@@ -2,14 +2,10 @@ import faker from 'faker'
 
 import { makeInvestigationCase } from '@island.is/judicial-system/formatters'
 import { Case } from '@island.is/judicial-system/types'
-import {
-  IC_CASE_FILES_ROUTE,
-  IC_POLICE_REPORT_ROUTE,
-} from '@island.is/judicial-system/consts'
 
 import { intercept } from '../../../utils'
 
-describe(`${IC_POLICE_REPORT_ROUTE}/:id`, () => {
+describe('/krafa/rannsoknarheimild/greinargerd/:id', () => {
   const demands = faker.lorem.paragraph()
 
   beforeEach(() => {
@@ -20,7 +16,7 @@ describe(`${IC_POLICE_REPORT_ROUTE}/:id`, () => {
     }
 
     cy.stubAPIResponses()
-    cy.visit(`${IC_POLICE_REPORT_ROUTE}/test_id`)
+    cy.visit('/krafa/rannsoknarheimild/greinargerd/test_id')
 
     intercept(caseDataAddition)
   })
@@ -53,6 +49,6 @@ describe(`${IC_POLICE_REPORT_ROUTE}/:id`, () => {
     cy.getByTestid('caseFacts').type(faker.lorem.words(5))
     cy.getByTestid('legalArguments').type(faker.lorem.words(5))
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', IC_CASE_FILES_ROUTE)
+    cy.url().should('include', '/krafa/rannsoknarheimild/rannsoknargogn')
   })
 })

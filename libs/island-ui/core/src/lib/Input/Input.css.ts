@@ -9,10 +9,6 @@ export const containerDisabled = style({
   backgroundColor: 'transparent',
 })
 
-export const readOnly = style({
-  backgroundColor: 'transparent',
-})
-
 export const noLabel = style({})
 
 export const container = style({
@@ -80,7 +76,6 @@ export const label = style({
   ...mixins.label,
   selectors: {
     [`${hasError} &`]: mixins.labelErrorState,
-    [`${readOnly} &`]: mixins.labelReadOnly,
   },
 })
 
@@ -138,4 +133,8 @@ export const iconExtraSmall = style({
       },
     },
   }),
+})
+
+export const disabled = style({
+  opacity: 0.5,
 })

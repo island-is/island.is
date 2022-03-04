@@ -7,7 +7,10 @@ import {
   Decision,
   RulingInput,
 } from '@island.is/judicial-system-web/src/components'
-import { icRuling, rcRuling } from '@island.is/judicial-system-web/messages'
+import {
+  icRulingStepOne,
+  rcRulingStepOne,
+} from '@island.is/judicial-system-web/messages'
 
 interface Props {
   workingCase: Case
@@ -37,41 +40,46 @@ const ConclusionDraft: React.FC<Props> = (props) => {
           setWorkingCase={setWorkingCase}
           acceptedLabelText={
             isRestrictionCase(workingCase.type)
-              ? formatMessage(rcRuling.sections.decision.acceptLabel, {
+              ? formatMessage(rcRulingStepOne.sections.decision.acceptLabel, {
                   caseType:
                     workingCase.type === CaseType.CUSTODY
                       ? 'gæsluvarðhald'
                       : 'farbann',
                 })
-              : formatMessage(icRuling.sections.decision.acceptLabel)
+              : formatMessage(icRulingStepOne.sections.decision.acceptLabel)
           }
           rejectedLabelText={
             isRestrictionCase(workingCase.type)
-              ? formatMessage(rcRuling.sections.decision.rejectLabel, {
+              ? formatMessage(rcRulingStepOne.sections.decision.rejectLabel, {
                   caseType:
                     workingCase.type === CaseType.CUSTODY
                       ? 'gæsluvarðhald'
                       : 'farbann',
                 })
-              : formatMessage(icRuling.sections.decision.rejectLabel)
+              : formatMessage(icRulingStepOne.sections.decision.rejectLabel)
           }
           partiallyAcceptedLabelText={`${
             isRestrictionCase(workingCase.type)
-              ? formatMessage(rcRuling.sections.decision.partiallyAcceptLabel)
-              : formatMessage(icRuling.sections.decision.partiallyAcceptLabel)
+              ? formatMessage(
+                  rcRulingStepOne.sections.decision.partiallyAcceptLabel,
+                )
+              : formatMessage(
+                  icRulingStepOne.sections.decision.partiallyAcceptLabel,
+                )
           }`}
           dismissLabelText={
             isRestrictionCase(workingCase.type)
-              ? formatMessage(rcRuling.sections.decision.dismissLabel, {
+              ? formatMessage(rcRulingStepOne.sections.decision.dismissLabel, {
                   caseType:
                     workingCase.type === CaseType.CUSTODY
                       ? 'gæsluvarðhald'
                       : 'farbann',
                 })
-              : formatMessage(icRuling.sections.decision.dismissLabel)
+              : formatMessage(icRulingStepOne.sections.decision.dismissLabel)
           }
           acceptingAlternativeTravelBanLabelText={formatMessage(
-            rcRuling.sections.decision.acceptingAlternativeTravelBanLabel,
+            rcRulingStepOne.sections.decision
+              .acceptingAlternativeTravelBanLabel,
           )}
         />
       </Box>

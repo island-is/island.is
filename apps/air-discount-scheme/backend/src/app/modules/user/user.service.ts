@@ -1,4 +1,4 @@
-import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { AirlineUser, User } from './user.model'
 import { Fund } from '@island.is/air-discount-scheme/types'
 import { FlightService } from '../flight'
@@ -20,22 +20,13 @@ import environment from '../../../environments/environment'
 import * as kennitala from 'kennitala'
 import { FetchError } from '@island.is/clients/middlewares'
 
-const ONE_WEEK = 604800 // seconds
-const CACHE_KEY = 'userService'
-const MAX_AGE_LIMIT = 18
-
 @Injectable()
 export class UserService {
   constructor(
     private readonly flightService: FlightService,
     private readonly nationalRegistryService: NationalRegistryService,
     private readonly nationalRegistryIndividualsApi: EinstaklingarApi,
-    @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
   ) {}
-
-  private getCacheKey(nationalId: string, suffix: 'custodians'): string {
-    return `${CACHE_KEY}_${nationalId}_${suffix}`
-  }
 
   personApiWithAuth(authUser: AuthUser) {
     return this.nationalRegistryIndividualsApi.withMiddleware(
@@ -60,23 +51,6 @@ export class UserService {
     return response
   }
 
-  async getCustodians(
-    auth: AuthUser,
-    childNationalId: string,
-  ): Promise<Array<string>> {
-    const response = await this.personApiWithAuth(auth)
-      .einstaklingarGetForsjaForeldri(<EinstaklingarGetForsjaForeldriRequest>{
-        id: auth.nationalId,
-        barn: childNationalId,
-      })
-      .catch(this.handle404)
-
-    if (response === undefined) {
-      return []
-    }
-    return response
-  }
-
   private async getFund(
     user: NationalRegistryUser,
     auth?: AuthUser,
@@ -88,42 +62,15 @@ export class UserService {
     } = await this.flightService.countThisYearsFlightLegsByNationalId(
       user.nationalId,
     )
+
     let meetsADSRequirements = false
-
-    if (this.flightService.isADSPostalCode(user.postalcode)) {
-      meetsADSRequirements = true
-    } else if (kennitala.info(user.nationalId).age < MAX_AGE_LIMIT) {
-      // NationalId is a minor and doesn't live in ADS postal codes.
-      const cacheKey = this.getCacheKey(user.nationalId, 'custodians')
-      const cacheValue = await this.cacheManager.get(cacheKey)
-      let custodians = undefined
-
-      if (cacheValue) {
-        // We need cache incase we come here from publicApi without auth
-        custodians = cacheValue.custodians
-      } else if (auth) {
-        // We have access to auth if a user is logged in
-        custodians = [
-          auth.nationalId,
-          ...(await this.getCustodians(auth, user.nationalId)),
-        ]
-        await this.cacheManager.set(cacheKey, { custodians }, { ttl: ONE_WEEK })
-      }
-
-      // Check child custodians if they have valid ADS postal code.
-      if (custodians) {
-        for (const custodian of custodians) {
-          const personCustodian = await this.nationalRegistryService.getUser(
-            custodian,
-          )
-          if (
-            personCustodian &&
-            this.flightService.isADSPostalCode(personCustodian.postalcode)
-          ) {
-            meetsADSRequirements = true
-          }
-        }
-      }
+    if (auth) {
+      meetsADSRequirements = await this.individualMeetsADSRequirements(
+        user,
+        auth,
+      )
+    } else {
+      meetsADSRequirements = this.flightService.isADSPostalCode(user.postalcode)
     }
 
     return {

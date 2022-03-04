@@ -24,6 +24,40 @@ export const icHearingArrangements = {
     description: 'Notaður sem titill á fyrirtöku skrefi í rannsóknarheimildum.',
   }),
   sections: {
+    setJudge: defineMessages({
+      title: {
+        id:
+          'judicial.system.investigation_cases:hearing_arrangements.set_judge.title',
+        defaultMessage: 'Dómari',
+        description:
+          'Notaður sem titll fyrir "dómari" hlutann á fyrirtöku skrefi í rannsóknarheimildum.',
+      },
+      tooltip: {
+        id:
+          'judicial.system.investigation_cases:hearing_arrangements.set_judge.tooltip',
+        defaultMessage:
+          'Dómarinn sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupóst. Eingöngu skráður dómari getur svo undirritað úrskurð.',
+        description:
+          'Notaður sem upplýsingatexti í upplýsingasvæði við "dómari" titlinn á fyrirtöku skrefi í rannsóknarheimildum.',
+      },
+    }),
+    setRegistrar: defineMessages({
+      title: {
+        id:
+          'judicial.system.investigation_cases:hearing_arrangements.set_registrar.title',
+        defaultMessage: 'Dómritari',
+        description:
+          'Notaður sem titll fyrir "Dómritari" hlutann á fyrirtöku skrefi í rannsóknarheimildum.',
+      },
+      tooltip: {
+        id:
+          'judicial.system.investigation_cases:hearing_arrangements.set_registrar.tooltip',
+        defaultMessage:
+          'Dómritari sem er valinn hér verður skráður á málið og mun fá tilkynningar sendar í tölvupósti.',
+        description:
+          'Notaður sem upplýsingatexti í upplýsingasvæði við "dómritari" titlinn á fyrirtöku skrefi í rannsóknarheimildum.',
+      },
+    }),
     sessionArrangements: {
       heading: defineMessage({
         id:
@@ -77,8 +111,8 @@ export const icHearingArrangements = {
     defender: defineMessages({
       title: {
         id:
-          'judicial.system.investigation_cases:hearing_arrangements.defender.title_v1',
-        defaultMessage: '{defenderType}',
+          'judicial.system.investigation_cases:hearing_arrangements.defender.title',
+        defaultMessage: 'Verjandi/talsmaður',
         description:
           'Notaður sem titill fyrir "Verjandi/talsmaður" hlutann á fyrirtöku skrefi í rannsóknarheimildum.',
       },
@@ -178,6 +212,16 @@ export const icHearingArrangements = {
       defaultMessage: 'Já, senda núna',
       description:
         'Notaður sem texti í "Já, senda núna" takkann í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum.',
+    },
+  }),
+  footer: defineMessages({
+    infoPanelForRestrictedAccess: {
+      id:
+        'judicial.system.investigation_cases:hearing_arrangements.footer.info_panel_for_restricted_access',
+      defaultMessage:
+        'Aðeins skráður dómari og dómritari geta haldið áfram í þingbók og úrskurð fyrir rannsóknarheimildir.',
+      description:
+        'Notaður sem texti sem birtist í staðinn fyrir halda áfram takka á fyrirtöku skrefi í rannsóknarheimildum ef notandi hefur ekki aðgang að málinu.',
     },
   }),
 }

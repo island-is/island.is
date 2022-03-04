@@ -2,7 +2,7 @@ import PDFDocument from 'pdfkit'
 import streamBuffers from 'stream-buffers'
 
 import { environment } from '../../environments'
-import { Case } from '../modules/case'
+import { Case } from '../modules/case/models'
 import {
   addHugeHeading,
   addLargeHeading,

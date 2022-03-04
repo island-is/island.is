@@ -12,22 +12,33 @@ import { useRouter } from 'next/router'
 
 import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
-import { NavigationProps, Routes } from '@island.is/financial-aid/shared/lib'
+import {
+  FileType,
+  NavigationProps,
+  PersonalTaxReturn,
+  Routes,
+  useAsyncLazyQuery,
+} from '@island.is/financial-aid/shared/lib'
 
+import { PersonalTaxReturnQuery } from '@island.is/financial-aid-web/osk/graphql'
 import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
 import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
-import useTaxData from '@island.is/financial-aid-web/osk/src/utils/hooks/useTaxData'
+import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
 const SpouseDataGathering = () => {
   const router = useRouter()
   const { user } = useContext(AppContext)
+  const { form, updateForm } = useContext(FormContext)
 
   const [accept, setAccept] = useState(false)
   const [hasError, setHasError] = useState(false)
   const [error, setError] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const gatherTaxData = useTaxData()
+  const personalTaxReturnQuery = useAsyncLazyQuery<{
+    municipalitiesPersonalTaxReturn: PersonalTaxReturn
+  }>(PersonalTaxReturnQuery)
+
   const logOut = useLogOut()
 
   const navigation: NavigationProps = useFormNavigation(
@@ -43,7 +54,23 @@ const SpouseDataGathering = () => {
     setError(false)
     setLoading(true)
 
-    await gatherTaxData()
+    const { data: personalTaxReturn } = await personalTaxReturnQuery({}).catch(
+      () => {
+        return { data: undefined }
+      },
+    )
+
+    if (personalTaxReturn) {
+      updateForm({
+        ...form,
+        taxReturnFromRskFile: [
+          {
+            ...personalTaxReturn.municipalitiesPersonalTaxReturn,
+          },
+        ],
+      })
+    }
+
     setLoading(false)
 
     router.push(navigation?.nextUrl ?? Routes.form.info)

@@ -5,7 +5,6 @@ import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
 import { CaseState } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import {
-  AccordionListItem,
   CaseFileList,
   CaseInfo,
   FormContentContainer,
@@ -17,6 +16,7 @@ import {
   capitalize,
   caseTypes,
   formatDate,
+  TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
@@ -24,8 +24,7 @@ import {
   requestCourtDate,
   icOverview,
 } from '@island.is/judicial-system-web/messages'
-import CommentsAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import * as styles from './Overview.css'
 
@@ -96,7 +95,7 @@ const OverviewForm: React.FC<Props> = (props) => {
                     '',
                 )} eftir kl. ${formatDate(
                   workingCase.requestedCourtDate,
-                  Constants.TIME_FORMAT,
+                  TIME_FORMAT,
                 )}`,
               },
               ...(workingCase.registrar
@@ -121,10 +120,7 @@ const OverviewForm: React.FC<Props> = (props) => {
                       title: formatMessage(core.confirmedCourtDate),
                       value: `${capitalize(
                         formatDate(workingCase.courtDate, 'PPPP', true) ?? '',
-                      )} kl. ${formatDate(
-                        workingCase.courtDate,
-                        Constants.TIME_FORMAT,
-                      )}`,
+                      )} kl. ${formatDate(workingCase.courtDate, TIME_FORMAT)}`,
                     },
                   ]
                 : []),
@@ -163,7 +159,11 @@ const OverviewForm: React.FC<Props> = (props) => {
               id="id_1"
               label="Lagaákvæði sem brot varða við"
             >
-              <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
+              <Text>
+                <span className={styles.breakSpaces}>
+                  {workingCase.lawsBroken}
+                </span>
+              </Text>
             </AccordionItem>
             <AccordionItem
               labelVariant="h3"
@@ -178,23 +178,71 @@ const OverviewForm: React.FC<Props> = (props) => {
               label="Greinargerð um málsatvik og lagarök"
             >
               {workingCase.caseFacts && (
-                <AccordionListItem title="Málsatvik">
-                  <Text whiteSpace="breakSpaces">{workingCase.caseFacts}</Text>
-                </AccordionListItem>
+                <Box marginBottom={2}>
+                  <Box marginBottom={2}>
+                    <Text variant="h5">Málsatvik</Text>
+                  </Box>
+                  <Text>
+                    <span className={styles.breakSpaces}>
+                      {workingCase.caseFacts}
+                    </span>
+                  </Text>
+                </Box>
               )}
               {workingCase.legalArguments && (
-                <AccordionListItem title="Lagarök">
-                  <Text whiteSpace="breakSpaces">
-                    {workingCase.legalArguments}
+                <Box marginBottom={2}>
+                  <Box marginBottom={2}>
+                    <Text variant="h5">Lagarök</Text>
+                  </Box>
+                  <Text>
+                    <span className={styles.breakSpaces}>
+                      {workingCase.legalArguments}
+                    </span>
                   </Text>
-                </AccordionListItem>
+                </Box>
               )}
               {workingCase.requestProsecutorOnlySession && (
-                <AccordionListItem title="Beiðni um dómþing að varnaraðila fjarstöddum">
+                <Box marginBottom={2}>
+                  <Box marginBottom={2}>
+                    <Text variant="h5" as="h5">
+                      Beiðni um dómþing að varnaraðila fjarstöddum
+                    </Text>
+                  </Box>
                   <Text>{workingCase.prosecutorOnlySessionRequest}</Text>
-                </AccordionListItem>
+                </Box>
               )}
             </AccordionItem>
+            {(Boolean(workingCase.comments) ||
+              Boolean(workingCase.caseFilesComments)) && (
+              <AccordionItem id="id_5" label="Athugasemdir" labelVariant="h3">
+                {Boolean(workingCase.comments) && (
+                  <Box marginBottom={workingCase.caseFilesComments ? 3 : 0}>
+                    <Box marginBottom={1}>
+                      <Text variant="h4" as="h4">
+                        Athugasemdir vegna málsmeðferðar
+                      </Text>
+                    </Box>
+                    <Text>
+                      <span className={styles.breakSpaces}>
+                        {workingCase.comments}
+                      </span>
+                    </Text>
+                  </Box>
+                )}
+                {Boolean(workingCase.caseFilesComments) && (
+                  <>
+                    <Text variant="h4" as="h4">
+                      Athugasemdir vegna rannsóknargagna
+                    </Text>
+                    <Text>
+                      <span className={styles.breakSpaces}>
+                        {workingCase.caseFilesComments}
+                      </span>
+                    </Text>
+                  </>
+                )}
+              </AccordionItem>
+            )}
             <AccordionItem
               id="id_6"
               label={`Rannsóknargögn ${`(${
@@ -209,10 +257,6 @@ const OverviewForm: React.FC<Props> = (props) => {
                 />
               </Box>
             </AccordionItem>
-            {(Boolean(workingCase.comments) ||
-              Boolean(workingCase.caseFilesComments)) && (
-              <CommentsAccordionItem workingCase={workingCase} />
-            )}
           </Accordion>
         </Box>
         <Box className={styles.prosecutorContainer}>

@@ -44,13 +44,13 @@ export class PaymentService {
     return this.paymentModel
       .findOne({
         where: {
-          application_id: applicationId,
+          [Op.and]: [{ application_id: applicationId }, { fulfilled: true }],
         },
       })
       .catch(handleError)
   }
 
-  public makePaymentUrl(docNum: string): string {
+  private makePaymentUrl(docNum: string): string {
     return `${this.paymentConfig.arkBaseUrl}/quickpay/pay?doc_num=${docNum}`
   }
 
@@ -94,7 +94,6 @@ export class PaymentService {
     }
 
     const result = await this.paymentApi.createCharge(charge)
-
     return {
       ...result,
       paymentUrl: this.makePaymentUrl(result.user4),

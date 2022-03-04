@@ -1,9 +1,7 @@
-import { STEP_ONE_CUSTODY_REQUEST_ROUTE } from '@island.is/judicial-system/consts'
-
-describe(STEP_ONE_CUSTODY_REQUEST_ROUTE, () => {
+describe('/krafa/ny/gaesluvardhald', () => {
   beforeEach(() => {
     cy.stubAPIResponses()
-    cy.visit(STEP_ONE_CUSTODY_REQUEST_ROUTE)
+    cy.visit('/krafa/ny/gaesluvardhald')
   })
 
   it('should require a valid police case number', () => {
@@ -15,6 +13,21 @@ describe(STEP_ONE_CUSTODY_REQUEST_ROUTE, () => {
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
+  it.skip('should require the accused gender be selected', () => {
+    cy.getByTestid('policeCaseNumber').type('00000000000')
+    cy.getByTestid('nationalId').type('0000000000')
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000)
+    cy.getByTestid('nationalId').blur()
+    cy.getByTestid('accusedName').type('Donald Duck')
+    cy.getByTestid('accusedAddress').type('Batcave 1337')
+    cy.getByTestid('leadInvestigator').type('John Doe')
+    cy.getByTestid('continueButton').should('be.disabled')
+    cy.getByTestid('select-defendantGender').click()
+    cy.get('#react-select-defendantGender-option-0').click()
+    cy.getByTestid('continueButton').should('not.be.disabled')
+  })
+
   it('should require a valid accused national id if the user has a national id', () => {
     cy.getByTestid('nationalId').type('0').blur()
     cy.getByTestid('inputErrorMessage').contains('Dæmi: 000000-0000')
@@ -22,14 +35,6 @@ describe(STEP_ONE_CUSTODY_REQUEST_ROUTE, () => {
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('nationalId').clear().type('0000000000')
     cy.getByTestid('inputErrorMessage').should('not.exist')
-  })
-
-  it('should autofill name, address and gender after getting person by national id in national registry', () => {
-    cy.getByTestid('nationalId').type('1111111111')
-    cy.wait('@getPersonByNationalId')
-    cy.getByTestid('accusedAddress').should('have.value', 'Jokersway 90')
-    cy.getByTestid('accusedName').should('have.value', 'The Joker')
-    cy.getByTestid('select-defendantGender').should('contain', 'Karl')
   })
 
   it('should require a valid accused date of birth if the user does not have a national id', () => {
@@ -59,7 +64,8 @@ describe(STEP_ONE_CUSTODY_REQUEST_ROUTE, () => {
   it.skip('should not allow users to move forward if they entered an invalid defender email address', () => {
     cy.getByTestid('policeCaseNumber').type('00000000000')
     cy.getByTestid('nationalId').type('0000000000')
-    cy.wait('@getPersonByNationalId')
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000)
     cy.getByTestid('nationalId').blur()
     cy.getByTestid('accusedName').type('Donald Duck')
     cy.getByTestid('accusedAddress').type('Batcave 1337')

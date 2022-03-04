@@ -35,7 +35,6 @@ class MockPaymentApi {
   }
 }
 
-// TODO: mock the client instead - we are essentially not testing the service
 class MockPaymentService {
   async findApplicationById() {
     return {
@@ -61,14 +60,9 @@ class MockPaymentService {
     }
   }
 
-  makePaymentUrl() {
-    return 'asdf'
-  }
-
   async findPaymentByApplicationId() {
     return {
       fulfilled: true,
-      user4: 'amazing-user4-code-for-url',
     }
   }
 }

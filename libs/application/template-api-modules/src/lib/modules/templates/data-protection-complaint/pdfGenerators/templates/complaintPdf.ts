@@ -4,7 +4,6 @@ import { Application } from '@island.is/application/core'
 import { applicationToComplaintPDF } from '../../data-protection-utils'
 import { generatePdf } from '../pdfGenerator'
 import {
-  addformFieldAndValue,
   addHeader,
   addLogo,
   addSubheader,
@@ -17,14 +16,11 @@ import { dataProtectionLogo } from '../assets/logo'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
-import { OnBehalf } from '@island.is/application/templates/data-protection-complaint'
-import { DocumentInfo } from '@island.is/clients/data-protection-complaint'
 
 export async function generateComplaintPdf(
   application: Application,
-  attachedFiles: DocumentInfo[],
 ): Promise<Buffer> {
-  const dto = applicationToComplaintPDF(application, attachedFiles)
+  const dto = applicationToComplaintPDF(application)
   return await generatePdf<ComplaintPDF>(dto, dpcApplicationPdf)
 }
 
@@ -44,36 +40,80 @@ function dpcApplicationPdf(
 
   addHeader('Kvörtun til Persónuverndar', doc)
 
-  renderContactsAndComplainees(complaint, doc)
+  addSubheader('Fyrir hvern er kvörtunin send', doc)
+  addValue(
+    complaint.onBehalf,
+    doc,
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.LARGE_LINE_GAP,
+  )
 
+  addSubheader('Tengiliður', doc)
+
+  addValue(
+    `${complaint.contactInfo.name}, kt. ${formatSsn(
+      complaint.contactInfo.nationalId,
+    )}`,
+    doc,
+  )
+
+  addValue(
+    `${complaint.contactInfo.address}, ${complaint.contactInfo.postalCode} ${complaint.contactInfo.city}`,
+    doc,
+  )
+
+  addValue(
+    `s. ${complaint.contactInfo.phone}, ${complaint.contactInfo.email}`,
+    doc,
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.LARGE_LINE_GAP,
+  )
+
+  if (complaint.agency?.persons?.length) {
+    addSubheader('Kvartendur', doc)
+    complaint.agency.persons.map((person, i, persons) => {
+      const linegap =
+        i === persons.length - 1
+          ? PdfConstants.LARGE_LINE_GAP
+          : PdfConstants.SMALL_LINE_GAP
+      addValue(
+        `${person.name} kt. ${person.nationalId}`,
+        doc,
+        PdfConstants.NORMAL_FONT,
+        linegap,
+      )
+    })
+  }
   addSubheader(
     'Upplýsingar um fyrirtæki, stofnun eða einstakling sem kvartað er yfir',
     doc,
   )
   complaint.targetsOfComplaint.map((c, i) => {
-    addformFieldAndValue('Nafn', c.name, doc, PdfConstants.SMALL_LINE_GAP)
-    if (c.nationalId) {
-      addformFieldAndValue(
-        'Kt.',
-        formatSsn(c.nationalId),
+    const linegap =
+      i === complaint.targetsOfComplaint.length - 1
+        ? PdfConstants.LARGE_LINE_GAP
+        : PdfConstants.SMALL_LINE_GAP
+    addValue(
+      `${c.name}, kt. ${formatSsn(c.nationalId)}, ${c.address}`,
+      doc,
+      PdfConstants.NORMAL_FONT,
+      PdfConstants.NO_LINE_GAP,
+    )
+    if (c.operatesWithinEurope === 'yes') {
+      addValue(
+        `Er með starfsemi innan Evrópu : ${c.countryOfOperation}`,
         doc,
-        PdfConstants.SMALL_LINE_GAP,
+        PdfConstants.NORMAL_FONT,
+        linegap,
+      )
+    } else {
+      addValue(
+        'Ekki vitað eða starfar ekki innan Evrópu',
+        doc,
+        PdfConstants.NORMAL_FONT,
+        linegap,
       )
     }
-    addformFieldAndValue(
-      'Heimilisfang',
-      c.address,
-      doc,
-      PdfConstants.SMALL_LINE_GAP,
-    )
-    const operatesWithinEuropeAnswer =
-      c.operatesWithinEurope === 'yes' ? c.countryOfOperation : 'Ekki vitað/nei'
-    addformFieldAndValue(
-      'Starfsemi innan Evrópu?',
-      operatesWithinEuropeAnswer,
-      doc,
-      PdfConstants.LARGE_LINE_GAP,
-    )
   })
 
   addSubheader('Efni kvörtunar', doc)
@@ -92,26 +132,7 @@ function dpcApplicationPdf(
   )
   if (complaint.somethingElse) {
     addValue(
-      `Annað hvað? : ${complaint.somethingElse}`,
-      doc,
-      PdfConstants.NORMAL_FONT,
-      PdfConstants.LARGE_LINE_GAP,
-    )
-  }
-
-  addSubheader('Yfir hverju er kvartað í meginatriðum?', doc)
-  addValue(
-    complaint.description,
-    doc,
-    PdfConstants.NORMAL_FONT,
-    PdfConstants.SMALL_LINE_GAP,
-  )
-  doc.moveDown()
-  if (complaint.attachments.length > 0) {
-    addSubheader('Fylgiskjöl', doc)
-
-    addValue(
-      complaint.attachments.join(),
+      complaint.somethingElse,
       doc,
       PdfConstants.NORMAL_FONT,
       PdfConstants.LARGE_LINE_GAP,
@@ -126,86 +147,4 @@ function dpcApplicationPdf(
     PdfConstants.NO_LINE_GAP,
   )
   doc.end()
-}
-
-function renderContactsAndComplainees(
-  complaint: ComplaintPDF,
-  doc: PDFKit.PDFDocument,
-): void {
-  const contactHeading =
-    complaint.onBehalf === OnBehalf.MYSELF ||
-    OnBehalf.ORGANIZATION_OR_INSTITUTION
-      ? 'Kvartandi'
-      : 'Kvartendur'
-  addSubheader(contactHeading, doc)
-
-  renderAgencyComplainees(complaint, doc)
-
-  if (
-    complaint.onBehalf !== OnBehalf.MYSELF ||
-    OnBehalf.ORGANIZATION_OR_INSTITUTION
-  ) {
-    addSubheader('Tengiliður', doc)
-  }
-
-  addformFieldAndValue(
-    'Nafn',
-    complaint.contactInfo.name,
-    doc,
-    PdfConstants.SMALL_LINE_GAP,
-  )
-  addformFieldAndValue(
-    'Kt.',
-    complaint.contactInfo.nationalId,
-    doc,
-    PdfConstants.SMALL_LINE_GAP,
-  )
-
-  addformFieldAndValue(
-    'Heimilisfang',
-    `${complaint.contactInfo.address}, ${complaint.contactInfo.postalCode} ${complaint.contactInfo.city}`,
-    doc,
-    PdfConstants.SMALL_LINE_GAP,
-  )
-
-  addformFieldAndValue(
-    'Sími',
-    complaint.contactInfo.phone,
-    doc,
-    PdfConstants.SMALL_LINE_GAP,
-  )
-
-  addformFieldAndValue(
-    'Netfang',
-    complaint.contactInfo.email,
-    doc,
-    PdfConstants.LARGE_LINE_GAP,
-  )
-}
-
-function renderAgencyComplainees(
-  complaint: ComplaintPDF,
-  doc: PDFKit.PDFDocument,
-): void {
-  if (complaint.onBehalf === OnBehalf.MYSELF_AND_OR_OTHERS) {
-    complaint.agency?.persons.push({
-      name: complaint.contactInfo.name,
-      nationalId: complaint.contactInfo.nationalId,
-    })
-  }
-
-  if (complaint.agency?.persons?.length) {
-    complaint.agency.persons.map((person, i, persons) => {
-      const linegap =
-        i === persons.length - 1
-          ? PdfConstants.LARGE_LINE_GAP
-          : PdfConstants.SMALL_LINE_GAP
-      addValue(
-        `${person.name} kt. ${person.nationalId}`,
-        doc,
-        PdfConstants.NORMAL_FONT,
-        linegap,
-      )
-    })
-  }
 }

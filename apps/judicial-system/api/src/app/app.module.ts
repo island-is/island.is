@@ -3,23 +3,22 @@ import { GraphQLModule } from '@nestjs/graphql'
 
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { ProblemModule } from '@island.is/nest/problem'
-import { ConfigModule } from '@island.is/nest/config'
-import { courtClientModuleConfig } from '@island.is/judicial-system/court-client'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 import { AuditTrailModule } from '@island.is/judicial-system/audit-trail'
 
 import { environment } from '../environments'
-import { BackendApi } from './data-sources/backend'
+import { BackendAPI } from '../services'
 import {
   AuthModule,
   UserModule,
   CaseModule,
   FileModule,
   InstitutionModule,
+  CourtModule,
   FeatureModule,
   PoliceModule,
-  DefendantModule,
-} from './modules'
+} from './modules/'
+import { DefendantModule } from './modules/defendant/defendant.module'
 
 const debug = !environment.production
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -35,7 +34,7 @@ const autoSchemaFile = environment.production
       autoSchemaFile,
       path: '/api/graphql',
       context: ({ req }) => ({ req }),
-      dataSources: () => ({ backendApi: new BackendApi() }),
+      dataSources: () => ({ backendApi: new BackendAPI() }),
     }),
     SharedAuthModule.register({
       jwtSecret: environment.auth.jwtSecret,
@@ -45,13 +44,14 @@ const autoSchemaFile = environment.production
     AuthModule,
     UserModule,
     CaseModule,
-    DefendantModule,
     FileModule,
     InstitutionModule,
+    CourtModule,
     FeatureModule,
     CmsTranslationsModule,
     PoliceModule,
     ProblemModule.forRoot({ logAllErrors: true }),
+    DefendantModule,
   ],
 })
 export class AppModule {}

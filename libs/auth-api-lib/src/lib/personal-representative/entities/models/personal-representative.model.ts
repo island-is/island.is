@@ -18,14 +18,6 @@ import { PersonalRepresentativePublicDTO } from '../dto/personal-representative-
 
 @Table({
   tableName: 'personal_representative',
-  indexes: [
-    {
-      fields: ['national_id_personal_representative'],
-    },
-    {
-      fields: ['national_id_represented_person'],
-    },
-  ],
 })
 export class PersonalRepresentative extends Model<PersonalRepresentative> {
   @PrimaryKey

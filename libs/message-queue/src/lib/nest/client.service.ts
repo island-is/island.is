@@ -44,16 +44,23 @@ export class ClientService {
     )
   }
 
-  async receiveMessages(url: string, { maxNumMessages = 10 } = {}) {
-    const { Messages: messages = [] } = await this.client.send(
-      new ReceiveMessageCommand({
-        QueueUrl: url,
-        MaxNumberOfMessages: maxNumMessages, // max allowed = 10
-        WaitTimeSeconds: 20, // max allowed = 20
-      }),
-    )
+  async receiveMessages(
+    url: string,
+    { maxNumMessages = 10, returnEmpty = false } = {},
+  ) {
+    for (;;) {
+      const { Messages: messages = [] } = await this.client.send(
+        new ReceiveMessageCommand({
+          QueueUrl: url,
+          MaxNumberOfMessages: maxNumMessages, // max allowed = 10
+          WaitTimeSeconds: 20, // max allowed = 20
+        }),
+      )
 
-    return messages
+      if (returnEmpty || messages.length > 0) {
+        return messages
+      }
+    }
   }
 
   async deleteMessages(url: string, messages: Message[]) {

@@ -6,11 +6,7 @@ import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 
 import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
-import {
-  CaseState,
-  isInvestigationCase,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { CaseState, UserRole } from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   directionType,
@@ -31,12 +27,11 @@ import * as styles from './Requests.css'
 interface Props {
   cases: Case[]
   onRowClick: (id: string) => void
-  isDeletingCase: boolean
   onDeleteCase?: (caseToDelete: Case) => Promise<void>
 }
 
 const ActiveRequests: React.FC<Props> = (props) => {
-  const { cases, onRowClick, isDeletingCase, onDeleteCase } = props
+  const { cases, onRowClick, onDeleteCase } = props
 
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
@@ -44,45 +39,44 @@ const ActiveRequests: React.FC<Props> = (props) => {
   const isCourtRole =
     user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR
 
-  const [sortConfig, setSortConfig] = useState<SortConfig>({
-    column: 'createdAt',
-    direction: 'descending',
-  })
-
+  const [sortConfig, setSortConfig] = useState<SortConfig>()
   // The index of requset that's about to be removed
   const [requestToRemoveIndex, setRequestToRemoveIndex] = useState<number>()
 
   useMemo(() => {
-    if (cases && sortConfig) {
-      cases.sort((a: Case, b: Case) => {
+    const sortedCases = cases ?? []
+
+    if (sortConfig) {
+      sortedCases.sort((a: Case, b: Case) => {
         // Credit: https://stackoverflow.com/a/51169
         return sortConfig.direction === 'ascending'
           ? (sortConfig.column === 'defendant' &&
             a.defendants &&
             a.defendants.length > 0
-              ? a.defendants[0].name ?? ''
-              : b['courtDate'] + a['created']
+              ? a.defendants[0].name || ''
+              : '' + a['created']
             ).localeCompare(
               sortConfig.column === 'defendant' &&
                 b.defendants &&
                 b.defendants.length > 0
-                ? b.defendants[0].name ?? ''
-                : a['courtDate'] + b['created'],
+                ? b.defendants[0].name || ''
+                : '' + b['created'],
             )
           : (sortConfig.column === 'defendant' &&
             b.defendants &&
             b.defendants.length > 0
-              ? b.defendants[0].name ?? ''
-              : a['courtDate'] + b['created']
+              ? b.defendants[0].name || ''
+              : '' + b['created']
             ).localeCompare(
               sortConfig.column === 'defendant' &&
                 a.defendants &&
                 a.defendants.length > 0
-                ? a.defendants[0].name ?? ''
-                : b['courtDate'] + a['created'],
+                ? a.defendants[0].name || ''
+                : '' + a['created'],
             )
       })
     }
+    return sortedCases
   }, [cases, sortConfig])
 
   const requestSort = (column: sortableTableColumn) => {
@@ -108,7 +102,7 @@ const ActiveRequests: React.FC<Props> = (props) => {
   return (
     <table
       className={styles.table}
-      data-testid="activeCasesTable"
+      data-testid="custody-request-table"
       aria-describedby="activeRequestsTableCaption"
     >
       <thead className={styles.thead}>
@@ -172,7 +166,7 @@ const ActiveRequests: React.FC<Props> = (props) => {
             >
               <Text fontWeight="regular">
                 {formatMessage(
-                  requests.sections.activeRequests.table.headers.date,
+                  requests.sections.activeRequests.table.headers.created,
                 )}
               </Text>
               <Box
@@ -269,9 +263,7 @@ const ActiveRequests: React.FC<Props> = (props) => {
                   mapCaseStateToTagVariant(
                     c.state,
                     isCourtRole,
-                    isInvestigationCase(c.type),
                     c.isValidToDateInThePast,
-                    c.courtDate,
                   ).color
                 }
                 outlined
@@ -281,36 +273,17 @@ const ActiveRequests: React.FC<Props> = (props) => {
                   mapCaseStateToTagVariant(
                     c.state,
                     isCourtRole,
-                    isInvestigationCase(c.type),
                     c.isValidToDateInThePast,
-                    c.courtDate,
                   ).text
                 }
               </Tag>
             </td>
             <td className={styles.td}>
-              {c.courtDate ? (
-                <>
-                  <Text>
-                    <Box component="span" className={styles.blockColumn}>
-                      {capitalize(
-                        format(parseISO(c.courtDate), 'EEEE d. LLLL y', {
-                          locale: localeIS,
-                        }),
-                      ).replace('dagur', 'd.')}
-                    </Box>
-                  </Text>
-                  <Text as="span" variant="small">
-                    kl. {format(parseISO(c.courtDate), 'kk:mm')}
-                  </Text>
-                </>
-              ) : (
-                <Text as="span">
-                  {format(parseISO(c.created), 'd.M.y', {
-                    locale: localeIS,
-                  })}
-                </Text>
-              )}
+              <Text as="span">
+                {format(parseISO(c.created), 'd.M.y', {
+                  locale: localeIS,
+                })}
+              </Text>
             </td>
             <td className={cn(styles.td, 'secondLast')}>
               {isProsecutor &&
@@ -344,7 +317,6 @@ const ActiveRequests: React.FC<Props> = (props) => {
               <Button
                 colorScheme="destructive"
                 size="small"
-                loading={isDeletingCase}
                 onClick={(evt) => {
                   evt.stopPropagation()
                   setRequestToRemoveIndex(undefined)

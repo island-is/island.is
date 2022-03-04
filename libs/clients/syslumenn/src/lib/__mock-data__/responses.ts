@@ -4,7 +4,6 @@ import {
   VirkLeyfi,
   Skilabod,
 } from '../../../gen/fetch'
-import { SyslumennApiPaginationInfo } from '../syslumennClient.types'
 
 export const VHSUCCESS = [
   {
@@ -66,16 +65,6 @@ export const OPERATING_LICENSE = [
     afgrAfgengisAdfaranottFridagaUtiveitingar: 'string',
   },
 ] as VirkLeyfi[]
-
-export const OPERATING_LICENSE_PAGINATION_INFO_SERVICE_RES = {
-  PageSize: 10,
-  PageNumber: 1,
-  TotalCount: 50,
-  TotalPages: 5,
-  CurrentPage: 1,
-  HasNext: true,
-  HasPrevious: false,
-} as SyslumennApiPaginationInfo
 
 export const OPERATING_LICENSE_SERVICE_RES = [
   {

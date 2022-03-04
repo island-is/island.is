@@ -8,7 +8,7 @@ import {
   CallHandler,
 } from '@nestjs/common'
 
-import { Case } from '../models/case.model'
+import { Case } from '../models'
 import { transformCase } from './case.transformer'
 
 @Injectable()

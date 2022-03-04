@@ -133,24 +133,12 @@ export const NationalRegistryUserQuery = gql`
   }
 `
 
-export const GatherTaxDataQuery = gql`
-  query gatherTaxDataQuery {
+export const PersonalTaxReturnQuery = gql`
+  query personalTaxReturnQuery {
     municipalitiesPersonalTaxReturn {
-      personalTaxReturn {
-        key
-        name
-        size
-      }
-    }
-    municipalitiesDirectTaxPayments {
-      directTaxPayments {
-        totalSalary
-        payerNationalId
-        personalAllowance
-        withheldAtSource
-        month
-        year
-      }
+      key
+      name
+      size
     }
   }
 `

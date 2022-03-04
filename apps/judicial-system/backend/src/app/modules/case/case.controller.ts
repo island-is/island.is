@@ -43,10 +43,12 @@ import {
 } from '../../guards'
 import { UserService } from '../user'
 import { CaseEvent, EventService } from '../event'
-import { CaseExistsGuard } from './guards/caseExists.guard'
-import { CaseReadGuard } from './guards/caseRead.guard'
-import { CaseWriteGuard } from './guards/caseWrite.guard'
-import { CurrentCase } from './guards/case.decorator'
+import {
+  CaseExistsGuard,
+  CaseReadGuard,
+  CaseWriteGuard,
+  CurrentCase,
+} from './guards'
 import {
   judgeTransitionRule,
   judgeUpdateRule,
@@ -55,13 +57,14 @@ import {
   registrarTransitionRule,
   registrarUpdateRule,
 } from './guards/rolesRules'
-import { CreateCaseDto } from './dto/createCase.dto'
-import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
-import { TransitionCaseDto } from './dto/transitionCase.dto'
-import { UpdateCaseDto } from './dto/updateCase.dto'
-import { Case } from './models/case.model'
-import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
-import { transitionCase } from './state/case.state'
+import {
+  CreateCaseDto,
+  InternalCreateCaseDto,
+  TransitionCaseDto,
+  UpdateCaseDto,
+} from './dto'
+import { Case, SignatureConfirmationResponse } from './models'
+import { transitionCase } from './state'
 import { CaseService } from './case.service'
 
 @Controller('api')
@@ -132,7 +135,6 @@ export class CaseController {
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
     @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Body() caseToUpdate: UpdateCaseDto,
   ): Promise<Case | null> {
@@ -184,7 +186,7 @@ export class CaseController {
     ) {
       // TODO: Find a better place for this
       // No need to wait for the upload
-      this.caseService.uploadRequestPdfToCourt(updatedCase, user)
+      this.caseService.uploadRequestPdfToCourt(updatedCase)
     }
 
     return updatedCase
@@ -488,7 +490,6 @@ export class CaseController {
 
     return this.caseService.getRulingSignatureConfirmation(
       theCase,
-      user,
       documentToken,
     )
   }
@@ -516,22 +517,5 @@ export class CaseController {
     this.eventService.postEvent(CaseEvent.EXTEND, extendedCase as Case)
 
     return extendedCase
-  }
-
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
-  @RolesRules(judgeRule, registrarRule)
-  @Post('case/:caseId/court')
-  @ApiCreatedResponse({
-    type: Case,
-    description: 'Creates a court case associated with an existing case',
-  })
-  async createCourtCase(
-    @Param('caseId') caseId: string,
-    @CurrentHttpUser() user: User,
-    @CurrentCase() theCase: Case,
-  ): Promise<Case> {
-    this.logger.debug(`Creating a court case for case ${caseId}`)
-
-    return this.caseService.createCourtCase(theCase, user)
   }
 }

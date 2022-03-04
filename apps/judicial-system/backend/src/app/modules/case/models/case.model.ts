@@ -23,10 +23,10 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system/types'
 
-import { CaseFile } from '../../file'
+import { CaseFile } from '../../file/models/file.model'
 import { Institution } from '../../institution'
 import { User } from '../../user'
-import { Defendant } from '../../defendant'
+import { Defendant } from '../../defendant/models/defendant.model'
 
 @Table({
   tableName: 'case',
@@ -535,14 +535,24 @@ export class Case extends Model<Case> {
   courtDocuments?: string[]
 
   /**********
-   * Bookings during court session
+   * Bookings about the accused
    **********/
   @Column({
     type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
-  sessionBookings?: string
+  accusedBookings?: string
+
+  /**********
+   * The presentations for both parties
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiProperty()
+  litigationPresentations?: string
 
   /**********
    * The case facts as seen by the prosecutor - autofilled from caseFacts - possibly modified

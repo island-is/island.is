@@ -13,17 +13,21 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import type { User } from '@island.is/judicial-system/types'
 
-import { BackendApi } from '../../data-sources'
-import { CreateFileInput } from './dto/createFile.input'
-import { CreatePresignedPostInput } from './dto/createPresignedPost.input'
-import { DeleteFileInput } from './dto/deleteFile.input'
-import { GetSignedUrlInput } from './dto/getSignedUrl.input'
-import { UploadFileToCourtInput } from './dto/uploadFileToCourt.input'
-import { PresignedPost } from './models/presignedPost.model'
-import { CaseFile } from './models/file.model'
-import { DeleteFileResponse } from './models/deleteFile.response'
-import { SignedUrl } from './models/signedUrl.model'
-import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
+import { BackendAPI } from '../../../services'
+import {
+  CreateFileInput,
+  CreatePresignedPostInput,
+  DeleteFileInput,
+  GetSignedUrlInput,
+  UploadFileToCourtInput,
+} from './dto'
+import {
+  PresignedPost,
+  CaseFile,
+  DeleteFileResponse,
+  SignedUrl,
+  UploadFileToCourtResponse,
+} from './models'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver()
@@ -39,7 +43,7 @@ export class FileResolver {
     @Args('input', { type: () => CreatePresignedPostInput })
     input: CreatePresignedPostInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<PresignedPost> {
     const { caseId, ...createPresignedPost } = input
 
@@ -58,7 +62,7 @@ export class FileResolver {
     @Args('input', { type: () => GetSignedUrlInput })
     input: GetSignedUrlInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<SignedUrl> {
     const { caseId, id } = input
 
@@ -77,7 +81,7 @@ export class FileResolver {
     @Args('input', { type: () => DeleteFileInput })
     input: DeleteFileInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<DeleteFileResponse> {
     const { caseId, id } = input
 
@@ -96,7 +100,7 @@ export class FileResolver {
     @Args('input', { type: () => CreateFileInput })
     input: CreateFileInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<CaseFile> {
     const { caseId, ...createFile } = input
 
@@ -115,7 +119,7 @@ export class FileResolver {
     @Args('input', { type: () => UploadFileToCourtInput })
     input: UploadFileToCourtInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<UploadFileToCourtResponse> {
     const { caseId, id } = input
 

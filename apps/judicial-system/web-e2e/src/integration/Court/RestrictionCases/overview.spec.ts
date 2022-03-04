@@ -8,14 +8,9 @@ import {
   makeCustodyCase,
   makeProsecutor,
 } from '@island.is/judicial-system/formatters'
-import {
-  HEARING_ARRANGEMENTS_ROUTE,
-  OVERVIEW_ROUTE,
-} from '@island.is/judicial-system/consts'
-
 import { intercept } from '../../../utils'
 
-describe(`${OVERVIEW_ROUTE}/:id`, () => {
+describe('/domur/krafa/:id', () => {
   beforeEach(() => {
     const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
@@ -36,7 +31,7 @@ describe(`${OVERVIEW_ROUTE}/:id`, () => {
     }
 
     cy.stubAPIResponses()
-    cy.visit(`${OVERVIEW_ROUTE}/test_id_stadfest`)
+    cy.visit('/domur/krafa/test_id_stadfest')
 
     intercept(caseDataAddition)
   })
@@ -57,6 +52,13 @@ describe(`${OVERVIEW_ROUTE}/:id`, () => {
     )
   })
 
+  it('should require a valid case id', () => {
+    cy.getByTestid('courtCaseNumber').click().blur()
+    cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
+    cy.getByTestid('courtCaseNumber').type('R-X/2021')
+    cy.getByTestid('inputErrorMessage').should('not.exist')
+  })
+
   it('should display the correct demands, laws broken, legal provisions, and custody restriction', () => {
     cy.contains(
       'Þess er krafist að Donald Duck, kt. 000000-0000, sæti gæsluvarðhaldi með úrskurði Héraðsdóms Reykjavíkur, til miðvikudagsins 16. september 2020, kl. 19:50, og verði gert að sæta einangrun á meðan á varðhaldi stendur.',
@@ -74,7 +76,8 @@ describe(`${OVERVIEW_ROUTE}/:id`, () => {
   })
 
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
+    cy.getByTestid('courtCaseNumber').type('R-X/2021')
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', HEARING_ARRANGEMENTS_ROUTE)
+    cy.url().should('include', '/domur/fyrirtokutimi/test_id_stadfest')
   })
 })

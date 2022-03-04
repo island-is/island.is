@@ -44,6 +44,7 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
   })
 
   const toggleModal = () => {
+    console.log('toggleModal', !modalOpen)
     setModalOpen(!modalOpen)
   }
 
@@ -259,7 +260,7 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
                     category={item.nr}
                   >
                     {item.nr &&
-                      ReactHtmlParser(mapCategory(item.nr.trim()).text ?? '')}
+                      ReactHtmlParser(mapCategory(item.nr).text ?? '')}
                   </ExpandableLine>
                 )
               },

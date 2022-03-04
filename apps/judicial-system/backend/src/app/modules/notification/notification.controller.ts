@@ -30,9 +30,8 @@ import {
   CaseWriteGuard,
   CurrentCase,
 } from '../case'
-import { SendNotificationDto } from './dto/sendNotification.dto'
-import { Notification } from './models/notification.model'
-import { SendNotificationResponse } from './models/sendNotification.resopnse'
+import { SendNotificationDto } from './dto'
+import { Notification, SendNotificationResponse } from './models'
 import { NotificationService } from './notification.service'
 
 // Allows prosecutors to send heads-up and ready-for-court notifications

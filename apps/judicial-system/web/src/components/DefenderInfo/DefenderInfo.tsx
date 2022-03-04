@@ -7,6 +7,7 @@ import {
   Box,
   Checkbox,
   Input,
+  RadioButton,
   Select,
   Text,
   Tooltip,
@@ -33,6 +34,8 @@ import {
   setAndSendToServer,
 } from '../../utils/formHelper'
 import { UserContext } from '../UserProvider/UserProvider'
+
+import * as styles from './DefenderInfo.css'
 
 interface Props {
   workingCase: Case
@@ -195,15 +198,50 @@ const DefenderInfo: React.FC<Props> = (props) => {
         marginBottom={2}
       >
         <Text as="h3" variant="h3">
-          {`${formatMessage(getTranslations().title, {
-            defenderType: workingCase.defenderIsSpokesperson
-              ? 'Talsmaður'
-              : 'Verjandi',
-          })} `}
+          {`${formatMessage(getTranslations().title)} `}
           {renderTooltip()}
         </Text>
       </Box>
       <BlueBox>
+        {(user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR) &&
+          isInvestigationCase(workingCase.type) && (
+            <div className={styles.defenderOptions}>
+              <RadioButton
+                name="defender-type-defender"
+                id="defender-type-defender"
+                label="Verjandi"
+                checked={workingCase.defenderIsSpokesperson === false}
+                onChange={() => {
+                  setAndSendToServer(
+                    'defenderIsSpokesperson',
+                    false,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }}
+                large
+                backgroundColor="white"
+              />
+              <RadioButton
+                name="defender-type-spokesperson"
+                id="defender-type-spokesperson"
+                label="Talsmaður"
+                checked={workingCase.defenderIsSpokesperson === true}
+                onChange={() => {
+                  setAndSendToServer(
+                    'defenderIsSpokesperson',
+                    true,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }}
+                large
+                backgroundColor="white"
+              />
+            </div>
+          )}
         <Box marginBottom={2}>
           <Select
             name="defenderName"

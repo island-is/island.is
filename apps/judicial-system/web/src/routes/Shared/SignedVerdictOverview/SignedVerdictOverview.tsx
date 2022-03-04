@@ -41,12 +41,15 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  formatDate,
+  TIME_FORMAT,
+} from '@island.is/judicial-system/formatters'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
-import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system/consts'
-import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
+import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
 import SignedVerdictOverviewForm from './SignedVerdictOverviewForm'
@@ -185,8 +188,8 @@ export const SignedVerdictOverview: React.FC = () => {
     }
 
     // Request court record signature to get control code
-    requestCourtRecordSignature(workingCase.id).then(
-      (requestCourtRecordSignatureResponse) => {
+    requestCourtRecordSignature(workingCase.id)
+      .then((requestCourtRecordSignatureResponse) => {
         setRequestCourtRecordSignatureResponse(
           requestCourtRecordSignatureResponse,
         )
@@ -198,8 +201,11 @@ export const SignedVerdictOverview: React.FC = () => {
             },
           },
         })
-      },
-    )
+      })
+      .catch((reason) => {
+        // TODO: Handle error
+        console.log(reason)
+      })
   }
 
   const handleCaseExtension = async () => {
@@ -213,15 +219,22 @@ export const SignedVerdictOverview: React.FC = () => {
           )
         }
       } else {
-        await extendCase(workingCase.id).then((extendedCase) => {
-          if (extendedCase) {
-            if (isRestrictionCase(extendedCase.type)) {
-              router.push(`${Constants.STEP_ONE_ROUTE}/${extendedCase.id}`)
-            } else {
-              router.push(`${Constants.IC_DEFENDANT_ROUTE}/${extendedCase.id}`)
+        await extendCase(workingCase.id)
+          .then((extendedCase) => {
+            if (extendedCase) {
+              if (isRestrictionCase(extendedCase.type)) {
+                router.push(`${Constants.STEP_ONE_ROUTE}/${extendedCase.id}`)
+              } else {
+                router.push(
+                  `${Constants.IC_DEFENDANT_ROUTE}/${extendedCase.id}`,
+                )
+              }
             }
-          }
-        })
+          })
+          .catch((reason) => {
+            // TODO: Handle error
+            console.log(reason)
+          })
       }
     }
   }
@@ -285,7 +298,7 @@ export const SignedVerdictOverview: React.FC = () => {
         'PPPP',
       )?.replace('dagur,', 'dagsins')} kl. ${formatDate(
         modifiedValidToDate?.value,
-        Constants.TIME_FORMAT,
+        TIME_FORMAT,
       )}`
     } else if (validToDateChanged || isolationToDateChanged) {
       if (validToDateChanged) {
@@ -294,7 +307,7 @@ export const SignedVerdictOverview: React.FC = () => {
           'PPPP',
         )?.replace('dagur,', 'dagsins')} kl. ${formatDate(
           modifiedValidToDate?.value,
-          Constants.TIME_FORMAT,
+          TIME_FORMAT,
         )}. `
       }
 
@@ -304,7 +317,7 @@ export const SignedVerdictOverview: React.FC = () => {
           'PPPP',
         )?.replace('dagur,', 'dagsins')} kl. ${formatDate(
           modifiedIsolationToDate?.value,
-          Constants.TIME_FORMAT,
+          TIME_FORMAT,
         )}.`
       }
     }
@@ -375,16 +388,14 @@ export const SignedVerdictOverview: React.FC = () => {
       if (workingCase.sharedWithProsecutorsOffice) {
         setSharedCaseModal({
           open: true,
-          title: formatMessage(m.sections.shareCaseModal.closeTitle, {
-            courtCaseNumber: workingCase.courtCaseNumber,
-          }),
+          title: `Mál ${workingCase.courtCaseNumber} er nú lokað öðrum en upprunalegu embætti`,
           text: (
-            <MarkdownWrapper
-              text={m.sections.shareCaseModal.closeText}
-              format={{
-                prosecutorsOffice: workingCase.sharedWithProsecutorsOffice.name,
-              }}
-            />
+            <Text>
+              <Text fontWeight="semiBold" as="span">
+                {workingCase.sharedWithProsecutorsOffice.name}
+              </Text>{' '}
+              hefur ekki lengur aðgang að málinu.
+            </Text>
           ),
         })
 
@@ -398,16 +409,14 @@ export const SignedVerdictOverview: React.FC = () => {
       } else {
         setSharedCaseModal({
           open: true,
-          title: formatMessage(m.sections.shareCaseModal.openTitle, {
-            courtCaseNumber: workingCase.courtCaseNumber,
-          }),
+          title: `Mál ${workingCase.courtCaseNumber} hefur verið opnað fyrir öðru embætti`,
           text: (
-            <MarkdownWrapper
-              text={m.sections.shareCaseModal.openText}
-              format={{
-                prosecutorsOffice: (institution as ReactSelectOption).label,
-              }}
-            />
+            <Text>
+              <Text fontWeight="semiBold" as="span">
+                {(institution as ReactSelectOption).label}
+              </Text>{' '}
+              hefur nú fengið aðgang að málinu.
+            </Text>
           ),
         })
 
@@ -420,18 +429,15 @@ export const SignedVerdictOverview: React.FC = () => {
             created: new Date().toString(),
             modified: new Date().toString(),
           },
-          isHeightenedSecurityLevel: workingCase.isHeightenedSecurityLevel
-            ? false
-            : workingCase.isHeightenedSecurityLevel,
         })
 
-        updateCase(workingCase.id, {
-          sharedWithProsecutorsOfficeId: (institution as ReactSelectOption)
-            .value as string,
-          isHeightenedSecurityLevel: workingCase.isHeightenedSecurityLevel
-            ? false
-            : workingCase.isHeightenedSecurityLevel,
-        })
+        updateCase(
+          workingCase.id,
+          parseString(
+            'sharedWithProsecutorsOfficeId',
+            (institution as ReactSelectOption).value as string,
+          ),
+        )
       }
     }
   }
@@ -519,7 +525,7 @@ export const SignedVerdictOverview: React.FC = () => {
       workingCase.caseModifiedExplanation ? '<br/><br/>' : ''
     }${capitalize(formatDate(now, 'PPPP', true) || '')} kl. ${formatDate(
       now,
-      Constants.TIME_FORMAT,
+      TIME_FORMAT,
     )} - ${user?.name} ${user?.title}, ${
       user?.institution?.name
     }<br/>Ástæða: ${reason}`
@@ -624,9 +630,7 @@ export const SignedVerdictOverview: React.FC = () => {
         <Modal
           title={shareCaseModal.title}
           text={shareCaseModal.text}
-          primaryButtonText={formatMessage(
-            m.sections.shareCaseModal.buttonClose,
-          )}
+          primaryButtonText="Loka glugga"
           handlePrimaryButtonClick={() => setSharedCaseModal(undefined)}
         />
       )}

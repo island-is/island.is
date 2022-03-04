@@ -4,10 +4,10 @@ import {
   HomeCircumstances,
   getEmploymentStatus,
   Employment,
+  insertAt,
   formatPhoneNumber,
   formatNationalId,
-  DirectTaxPayment,
-  sanitizeOnlyNumbers,
+  sanitizeNationalId,
 } from '@island.is/financial-aid/shared/lib'
 import { calcAge } from './formHelper'
 
@@ -20,7 +20,7 @@ export const getApplicant = (application: Application) => {
     {
       title: 'Kennitala',
       content: formatNationalId(application.nationalId),
-      link: '/leit?search=' + sanitizeOnlyNumbers(application.nationalId),
+      link: '/leit?search=' + sanitizeNationalId(application.nationalId),
     },
     {
       title: 'Sími',
@@ -132,41 +132,6 @@ export const getApplicantSpouse = (application: Application) => {
     {
       title: 'Athugasemd',
       other: application.spouseFormComment,
-    },
-  ]
-}
-
-export const getDirectTaxPayments = (directTaxPayments: DirectTaxPayment[]) => {
-  const totalSalary = directTaxPayments.reduce(
-    (n, { totalSalary }) => n + totalSalary,
-    0,
-  )
-
-  return [
-    {
-      title: 'Samtals heildarlaun',
-      content: totalSalary.toLocaleString('de-DE'),
-    },
-    {
-      title: 'Meðaltal',
-      content: Math.floor(
-        totalSalary / directTaxPayments.length,
-      ).toLocaleString('de-DE'),
-    },
-    {
-      title: 'Persónuafsláttur meðaltal',
-      content: (
-        directTaxPayments.reduce(
-          (n, { personalAllowance }) => n + personalAllowance,
-          0,
-        ) / directTaxPayments.length
-      ).toLocaleString('de-DE'),
-    },
-    {
-      title: 'Samtals staðgreiðsla',
-      content: directTaxPayments
-        .reduce((n, { withheldAtSource }) => n + withheldAtSource, 0)
-        .toLocaleString('de-DE'),
     },
   ]
 }

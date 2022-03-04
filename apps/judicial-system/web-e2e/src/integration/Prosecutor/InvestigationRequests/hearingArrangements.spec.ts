@@ -1,16 +1,11 @@
 import {
-  IC_HEARING_ARRANGEMENTS_ROUTE,
-  IC_POLICE_DEMANDS_ROUTE,
-} from '@island.is/judicial-system/consts'
-import {
   makeCourt,
   makeInvestigationCase,
   makeProsecutor,
 } from '@island.is/judicial-system/formatters'
-
 import { intercept } from '../../../utils'
 
-describe(`${IC_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
+describe('/krafa/rannsoknarheimild/fyrirtaka/:id', () => {
   beforeEach(() => {
     const caseData = makeInvestigationCase()
     const caseDataAddition = {
@@ -21,7 +16,7 @@ describe(`${IC_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
 
     cy.setCookie('judicial-system.csrf', 'test')
     cy.stubAPIResponses()
-    cy.visit(`${IC_HEARING_ARRANGEMENTS_ROUTE}/test_id`)
+    cy.visit('/krafa/rannsoknarheimild/fyrirtaka/test_id')
 
     intercept(caseDataAddition)
   })
@@ -63,6 +58,9 @@ describe(`${IC_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
     cy.getByTestid('reqCourtDate-time').clear().type('1333')
     cy.getByTestid('continueButton').click()
     cy.getByTestid('modalSecondaryButton').click()
-    cy.url().should('include', IC_POLICE_DEMANDS_ROUTE)
+    cy.url().should(
+      'include',
+      '/krafa/rannsoknarheimild/domkrofur-og-lagaakvaedi',
+    )
   })
 })

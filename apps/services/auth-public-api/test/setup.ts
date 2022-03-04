@@ -14,8 +14,6 @@ import {
 } from '@island.is/clients/national-registry-v2'
 import {
   ApiScope,
-  Client,
-  ClientAllowedScope,
   DelegationConfig,
   DelegationsService,
   SequelizeConfigService,
@@ -28,7 +26,7 @@ import {
   RskProcuringClientMock,
   FeatureFlagServiceMock,
 } from './mocks'
-import { createApiScope, CreateClient } from './fixtures'
+import { createApiScope } from './fixtures'
 import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { ConfigType } from '@island.is/nest/config'
@@ -38,17 +36,11 @@ export interface ScopeSetupOptions {
   allowExplicitDelegationGrant?: boolean
 }
 
-export interface ClientSetupOptions {
-  props: CreateClient
-  scopes?: string[]
-}
-
 interface SetupOptions {
   user: User
   userName: string
   nationalRegistryUser: Einstaklingsupplysingar
   scopes?: ScopeSetupOptions[]
-  client?: ClientSetupOptions
 }
 
 export const Scopes: ScopeSetupOptions[] = [
@@ -69,14 +61,6 @@ export const Scopes: ScopeSetupOptions[] = [
     // Only allowed for companies, one level deep
     name: '@island.is/scope3',
   },
-  {
-    // Test user has access to
-    name: '@island.is/scope4',
-  },
-  {
-    // Scope for another org
-    name: '@otherorg.is/scope5',
-  },
 ]
 
 const delegationConfig: ConfigType<typeof DelegationConfig> = {
@@ -94,7 +78,6 @@ export const setupWithAuth = async ({
   userName,
   nationalRegistryUser,
   scopes = Scopes,
-  client,
 }: SetupOptions): Promise<TestApp> => {
   // Setup app with authentication and database
   const app = await testServer({
@@ -118,23 +101,6 @@ export const setupWithAuth = async ({
   // Add scopes in the "system" to use for delegation setup
   const apiScopeModel = app.get<typeof ApiScope>(getModelToken(ApiScope))
   await apiScopeModel.bulkCreate(scopes.map((scope) => createApiScope(scope)))
-
-  if (client) {
-    const clientModel = app.get<typeof Client>(getModelToken(Client))
-    await clientModel.create(client.props)
-
-    if (client.scopes) {
-      const clientAllowedScopesModel = app.get<typeof ClientAllowedScope>(
-        getModelToken(ClientAllowedScope),
-      )
-      await clientAllowedScopesModel.bulkCreate(
-        client.scopes?.map((s) => ({
-          scopeName: s,
-          clientId: client.props.clientId,
-        })),
-      )
-    }
-  }
 
   // Mock the name of the authentication user
   jest

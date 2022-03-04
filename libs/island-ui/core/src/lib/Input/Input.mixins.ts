@@ -226,10 +226,6 @@ export const labelDisabledEmptyInput = {
   color: theme.color.blue300,
 }
 
-export const labelReadOnly = {
-  color: theme.color.dark400,
-}
-
 // Textarea state
 export const textarea = {
   fontSize: 16,

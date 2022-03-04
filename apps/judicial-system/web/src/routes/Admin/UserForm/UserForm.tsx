@@ -22,7 +22,8 @@ import {
   Validation,
 } from '../../../utils/validate'
 import * as styles from './UserForm.css'
-import * as constants from '@island.is/judicial-system/consts'
+import * as constants from '@island.is/judicial-system-web/src/utils/constants'
+
 type ExtendedOption = ReactSelectOption & { institution: Institution }
 
 interface Props {

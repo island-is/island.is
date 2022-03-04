@@ -15,8 +15,8 @@ import { EventService } from '../../event'
 import { UserService } from '../../user'
 import { FileService } from '../../file'
 import { AwsS3Service } from '../../aws-s3'
-import { DefendantService } from '../../defendant'
-import { Case } from '../models/case.model'
+import { DefendantService } from '../../defendant/defendant.service'
+import { Case } from '../models'
 import { CaseService } from '../case.service'
 import { CaseController } from '../case.controller'
 
@@ -74,8 +74,6 @@ export const createTestingCaseModule = async () => {
     ],
   }).compile()
 
-  const courtService = caseModule.get<CourtService>(CourtService)
-
   const userService = caseModule.get<UserService>(UserService)
 
   const awsS3Service = caseModule.get<AwsS3Service>(AwsS3Service)
@@ -93,7 +91,6 @@ export const createTestingCaseModule = async () => {
   const caseController = caseModule.get<CaseController>(CaseController)
 
   return {
-    courtService,
     userService,
     awsS3Service,
     defendantService,

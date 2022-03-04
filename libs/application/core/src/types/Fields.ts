@@ -76,7 +76,6 @@ export enum FieldTypes {
   DIVIDER = 'DIVIDER',
   KEY_VALUE = 'KEY_VALUE',
   ASYNC_SELECT = 'ASYNC_SELECT',
-  PAYMENT_PENDING = 'PAYMENT_PENDING',
 }
 
 export enum FieldComponents {
@@ -91,7 +90,6 @@ export enum FieldComponents {
   KEY_VALUE = 'KeyValueFormField',
   SUBMIT = 'SubmitFormField',
   ASYNC_SELECT = 'AsyncSelectFormField',
-  PAYMENT_PENDING = 'PaymentPendingField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -159,7 +157,6 @@ export interface TextField extends BaseField {
   readonly type: FieldTypes.TEXT
   component: FieldComponents.TEXT
   disabled?: boolean
-  readOnly?: boolean
   minLength?: number
   maxLength?: number
   placeholder?: FormText

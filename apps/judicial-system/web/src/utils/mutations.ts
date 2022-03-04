@@ -30,7 +30,6 @@ export const CasesQuery = gql`
       decision
       isValidToDateInThePast
       courtCaseNumber
-      courtDate
       rulingDate
       courtEndTime
       accusedAppealDecision

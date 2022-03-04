@@ -24,7 +24,8 @@ export class SequelizeConfigService implements SequelizeOptionsFactory {
     const config = (dbConfig as { [key: string]: object })[env]
     return {
       ...config,
-      ...getOptions({ logger: this.logger, recycleConnections: true }),
+      ...getOptions(),
+      logging: (message) => this.logger.debug(message),
     }
   }
 }

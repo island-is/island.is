@@ -360,7 +360,7 @@ const Search: Screen<CategoryProps> = ({
       selected: state.query.category,
       singleOption: true,
       filters: countResults.tagCounts
-        .filter((x) => x.value.trim() && x.type === 'category')
+        .filter((x) => x.type === 'category')
         .map(({ key, value }) => ({
           label: value,
           value: key,
@@ -372,7 +372,7 @@ const Search: Screen<CategoryProps> = ({
       selected: state.query.organization,
       singleOption: true,
       filters: countResults.tagCounts
-        .filter((x) => x.value.trim() && x.type === 'organization')
+        .filter((x) => x.type === 'organization')
         .map(({ key, value }) => ({
           label: value,
           value: key,

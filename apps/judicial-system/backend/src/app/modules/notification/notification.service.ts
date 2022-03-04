@@ -47,9 +47,8 @@ import { notifications, core } from '../../messages'
 import { Case } from '../case'
 import { CourtService } from '../court'
 import { CaseEvent, EventService } from '../event'
-import { SendNotificationDto } from './dto/sendNotification.dto'
-import { Notification } from './models/notification.model'
-import { SendNotificationResponse } from './models/sendNotification.resopnse'
+import { SendNotificationDto } from './dto'
+import { Notification, SendNotificationResponse } from './models'
 
 interface Recipient {
   address?: string
@@ -226,18 +225,13 @@ export class NotificationService {
     }
   }
 
-  private async uploadRequestPdfToCourt(
-    theCase: Case,
-    user: User,
-  ): Promise<void> {
+  private async uploadRequestPdfToCourt(theCase: Case): Promise<void> {
     const requestPdf = await getRequestPdfAsBuffer(theCase, this.formatMessage)
 
     try {
       await this.courtService.createRequest(
-        user,
-        theCase.id,
-        theCase.courtId ?? '',
-        theCase.courtCaseNumber ?? '',
+        theCase.courtId,
+        theCase.courtCaseNumber,
         requestPdf,
       )
     } catch (error) {
@@ -353,12 +347,6 @@ export class NotificationService {
         caseType,
         courtName: court?.name,
         policeCaseNumber,
-        linkStart: `<a href="${
-          isRestrictionCase(theCase.type)
-            ? environment.deepLinks.prosecutorRestrictionCaseOverviewUrl
-            : environment.deepLinks.prosecutorInvestigationCaseOverviewUrl
-        }${theCase.id}">`,
-        linkEnd: '</a>',
       },
     )
 
@@ -372,7 +360,6 @@ export class NotificationService {
 
   private async sendReadyForCourtNotifications(
     theCase: Case,
-    user: User,
   ): Promise<SendNotificationResponse> {
     // TODO: Ignore failed notifications
     const notification = await this.notificationModel.findOne({
@@ -393,7 +380,7 @@ export class NotificationService {
       theCase.courtCaseNumber
     ) {
       // No need to wait
-      this.uploadRequestPdfToCourt(theCase, user)
+      this.uploadRequestPdfToCourt(theCase)
     }
 
     if (notification) {
@@ -544,14 +531,7 @@ export class NotificationService {
 
   private async sendCourtDateNotifications(
     theCase: Case,
-    eventOnly?: boolean,
   ): Promise<SendNotificationResponse> {
-    this.eventService.postEvent(CaseEvent.SCHEDULE_COURT_DATE, theCase)
-
-    if (eventOnly) {
-      return { notificationSent: false }
-    }
-
     const promises: Promise<Recipient>[] = [
       this.sendCourtDateEmailNotificationToProsecutor(theCase),
     ]
@@ -578,6 +558,10 @@ export class NotificationService {
       NotificationType.COURT_DATE,
       recipients,
     )
+
+    if (result.notificationSent) {
+      this.eventService.postEvent(CaseEvent.SCHEDULE_COURT_DATE, theCase)
+    }
 
     return result
   }
@@ -909,11 +893,11 @@ export class NotificationService {
       case NotificationType.HEADS_UP:
         return this.sendHeadsUpNotifications(theCase)
       case NotificationType.READY_FOR_COURT:
-        return this.sendReadyForCourtNotifications(theCase, user)
+        return this.sendReadyForCourtNotifications(theCase)
       case NotificationType.RECEIVED_BY_COURT:
         return this.sendReceivedByCourtNotifications(theCase)
       case NotificationType.COURT_DATE:
-        return this.sendCourtDateNotifications(theCase, notification.eventOnly)
+        return this.sendCourtDateNotifications(theCase)
       case NotificationType.RULING:
         return this.sendRulingNotifications(theCase)
       case NotificationType.MODIFIED:

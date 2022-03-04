@@ -81,7 +81,8 @@ export const CaseQuery = gql`
       courtAttendees
       prosecutorDemands
       courtDocuments
-      sessionBookings
+      accusedBookings
+      litigationPresentations
       courtCaseFacts
       courtLegalArguments
       ruling

@@ -52,13 +52,13 @@ export const courtRecordAccordion = {
           'Notaður sem texti undir "Úrskurðarorð" hlutanum í þingbókarfellilistanum.',
       },
     }),
-    sessionBookings: defineMessages({
+    accusedBookings: defineMessages({
       title: {
         id:
-          'judicial.system.core:court_record_accordion.session_bookings.title',
-        defaultMessage: 'Bókanir fyrir úrskurð',
+          'judicial.system.core:court_record_accordion.accused_bookings.title',
+        defaultMessage: 'Bókanir um {accusedType}',
         description:
-          'Notaður sem titill fyrir "Bókarnir fyrir úrskurð" hlutann í þingbókarfellilistanum.',
+          'Notaður sem titill fyrir "Bókarnir um ..." hlutann í þingbókarfellilistanum.',
       },
     }),
     appealDecision: defineMessages({

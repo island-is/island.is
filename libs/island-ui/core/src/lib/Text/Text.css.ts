@@ -123,20 +123,6 @@ export const defaultLineHeights = styleVariants(
   mapToStyleProperty(defaultLineHeightsMap, 'lineHeight'),
 )
 
-export const whiteSpace = {
-  ...styleVariants(
-    {
-      normal: { whiteSpace: 'normal' },
-      nowrap: { whiteSpace: 'nowrap' },
-      pre: { whiteSpace: 'pre' },
-      preWrap: { whiteSpace: 'pre-wrap' },
-      preLine: { whiteSpace: 'pre-line' },
-      breakSpaces: { whiteSpace: 'break-spaces' },
-    },
-    'whiteSpace',
-  ),
-}
-
 export const variants: Variants = {
   default: {
     fontSize: availableFontSizes.sm,

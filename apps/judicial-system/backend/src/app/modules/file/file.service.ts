@@ -12,19 +12,19 @@ import { InjectModel } from '@nestjs/sequelize'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { CaseFileState } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import { writeFile } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
-import { CreateFileDto } from './dto/createFile.dto'
-import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
-import { PresignedPost } from './models/presignedPost.model'
-import { CaseFile } from './models/file.model'
-import { DeleteFileResponse } from './models/deleteFile.response'
-import { SignedUrl } from './models/signedUrl.model'
-import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
+import { CreateFileDto, CreatePresignedPostDto } from './dto'
+import {
+  PresignedPost,
+  CaseFile,
+  DeleteFileResponse,
+  SignedUrl,
+  UploadFileToCourtResponse,
+} from './models'
 
 // Files are stored in AWS S3 under a key which has the following format:
 // uploads/<uuid>/<uuid>/<filename>
@@ -64,8 +64,6 @@ export class FileService {
 
   private async throttleUploadStream(
     file: CaseFile,
-    user: User,
-    caseId: string,
     courtId?: string,
     courtCaseNumber?: string,
   ): Promise<string> {
@@ -80,10 +78,8 @@ export class FileService {
     }
 
     return this.courtService.createDocument(
-      user,
-      caseId,
-      courtId ?? '',
-      courtCaseNumber ?? '',
+      courtId,
+      courtCaseNumber,
       file.name,
       file.name,
       file.type,
@@ -184,11 +180,9 @@ export class FileService {
   }
 
   async uploadCaseFileToCourt(
-    user: User,
+    courtId: string | undefined,
+    courtCaseNumber: string | undefined,
     file: CaseFile,
-    caseId: string,
-    courtId?: string,
-    courtCaseNumber?: string,
   ): Promise<UploadFileToCourtResponse> {
     if (file.state === CaseFileState.STORED_IN_COURT) {
       throw new BadRequestException(
@@ -212,13 +206,7 @@ export class FileService {
       throw new NotFoundException(`File ${file.id} does not exists in AWS S3`)
     }
 
-    this.throttle = this.throttleUploadStream(
-      file,
-      user,
-      caseId,
-      courtId,
-      courtCaseNumber,
-    )
+    this.throttle = this.throttleUploadStream(file, courtId, courtCaseNumber)
 
     const documentId = await this.throttle
 

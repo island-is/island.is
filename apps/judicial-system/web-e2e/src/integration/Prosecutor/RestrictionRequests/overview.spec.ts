@@ -4,11 +4,9 @@ import {
   makeCourt,
   makeProsecutor,
 } from '@island.is/judicial-system/formatters'
-import { STEP_SIX_ROUTE } from '@island.is/judicial-system/consts'
-
 import { intercept } from '../../../utils'
 
-describe(`${STEP_SIX_ROUTE}/:id`, () => {
+describe('/krafa/stadfesta/:id', () => {
   beforeEach(() => {
     const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
@@ -30,7 +28,7 @@ describe(`${STEP_SIX_ROUTE}/:id`, () => {
     }
 
     cy.stubAPIResponses()
-    cy.visit(`${STEP_SIX_ROUTE}/test_id_stadfesta`)
+    cy.visit('/krafa/stadfesta/test_id_stadfesta')
 
     intercept(caseDataAddition)
   })

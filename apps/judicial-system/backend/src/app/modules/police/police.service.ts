@@ -19,9 +19,8 @@ import {
 
 import { environment } from '../../../environments'
 import { AwsS3Service } from '../aws-s3'
-import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
-import { PoliceCaseFile } from './models/policeCaseFile.model'
-import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
+import { UploadPoliceCaseFileDto } from './dto'
+import { PoliceCaseFile, UploadPoliceCaseFileResponse } from './models'
 
 @Injectable()
 export class PoliceService {

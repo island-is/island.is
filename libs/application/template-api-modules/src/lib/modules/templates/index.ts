@@ -13,7 +13,6 @@ import { GeneralPetitionModule } from './general-petition/general-petition.modul
 import { CriminalRecordSubmissionModule } from './criminal-record-submission/criminal-record-submission.module'
 import { DataProtectionComplaintModule } from './data-protection-complaint/data-protection-complaint.module'
 import { PSignSubmissionModule } from './p-sign-submission/p-sign-submission.module'
-import { ExamplePaymentActionsModule } from './example-payment-actions/examplePaymentActions.module'
 import { MortgageCertificateSubmissionModule } from './mortgage-certificate-submission/mortgage-certificate-submission.module'
 
 export const modules = [
@@ -32,7 +31,6 @@ export const modules = [
   CriminalRecordSubmissionModule,
   DataProtectionComplaintModule,
   PSignSubmissionModule,
-  ExamplePaymentActionsModule,
   MortgageCertificateSubmissionModule,
 ]
 
@@ -51,5 +49,4 @@ export { GeneralPetitionService } from './general-petition/general-petition.serv
 export { CriminalRecordSubmissionService } from './criminal-record-submission/criminal-record-submission.service'
 export { DataProtectionComplaintService } from './data-protection-complaint/data-protection-complaint.service'
 export { PSignSubmissionService } from './p-sign-submission/p-sign-submission.service'
-export { ExamplePaymentActionsService } from './example-payment-actions/examplePaymentActions.service'
 export { MortgageCertificateSubmissionService } from './mortgage-certificate-submission/mortgage-certificate-submission.service'

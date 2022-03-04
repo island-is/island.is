@@ -7,10 +7,10 @@ import {
 } from '@nestjs/common'
 
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
-import { Defendant } from '../../../defendant'
+import { Defendant } from '../../../defendant/models/defendant.model'
 import { Institution } from '../../../institution'
 import { User } from '../../../user'
-import { Case } from '../../models/case.model'
+import { Case } from '../../models'
 import { CaseExistsGuard } from '../caseExists.guard'
 
 interface Then {

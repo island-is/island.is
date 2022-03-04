@@ -33,11 +33,8 @@ import {
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
-import {
-  errors,
-  rcCaseFiles as m,
-} from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system/consts'
+import { rcCaseFiles as m } from '@island.is/judicial-system-web/messages'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import { PoliceCaseFilesData } from './StepFive'
 import { PoliceCaseFilesMessageBox } from '../../SharedComponents/PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
@@ -244,7 +241,9 @@ export const StepFiveForm: React.FC<Props> = (props) => {
                     <PoliceCaseFilesMessageBox
                       icon="close"
                       iconColor="red400"
-                      message={formatMessage(errors.general)}
+                      message={formatMessage(
+                        m.sections.policeCaseFiles.errorMessage,
+                      )}
                     />
                   )
                 ) : policeCaseFiles?.files.length === 0 ? (
@@ -377,7 +376,6 @@ export const StepFiveForm: React.FC<Props> = (props) => {
               }
               textarea
               rows={7}
-              autoExpand={{ on: true, maxHeight: 300 }}
             />
           </Box>
         </Box>

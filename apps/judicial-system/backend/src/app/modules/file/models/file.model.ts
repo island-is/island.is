@@ -12,7 +12,6 @@ import { ApiProperty } from '@nestjs/swagger'
 
 import { CaseFileState } from '@island.is/judicial-system/types'
 
-// TODO Find a way to import from an index file
 import { Case } from '../../case/models/case.model'
 
 @Table({

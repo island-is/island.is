@@ -31,7 +31,8 @@ import {
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import type { Case } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system/consts'
+import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+
 export const StepFour: React.FC = () => {
   const {
     workingCase,
@@ -164,7 +165,6 @@ export const StepFour: React.FC = () => {
                 )
               }
               rows={7}
-              autoExpand={{ on: true, maxHeight: 300 }}
               textarea
               required
             />
@@ -215,7 +215,6 @@ export const StepFour: React.FC = () => {
               }
               required
               rows={14}
-              autoExpand={{ on: true, maxHeight: 600 }}
               textarea
             />
           </Box>
@@ -268,7 +267,6 @@ export const StepFour: React.FC = () => {
               required
               textarea
               rows={14}
-              autoExpand={{ on: true, maxHeight: 600 }}
             />
           </Box>
           <Box component="section" marginBottom={7}>
@@ -310,7 +308,6 @@ export const StepFour: React.FC = () => {
                 }
                 textarea
                 rows={7}
-                autoExpand={{ on: true, maxHeight: 300 }}
               />
             </Box>
           </Box>

@@ -1,4 +1,4 @@
-import { defineMessage, defineMessages } from 'react-intl'
+import { defineMessage } from 'react-intl'
 
 export const requestCourtDate = {
   heading: defineMessage({
@@ -14,7 +14,7 @@ export const requestCourtDate = {
     description:
       'Notaður sem upplýsingatexti í upplýsingasvæði við "ósk um fyrirtökudag og tíma" fyrirsögnina á sakbornings skrefi í gæsluvarðhalds-, farbannsmálum og í rannsóknarheimildum.',
   }),
-  dateInput: defineMessages({
+  dateInput: defineMessage({
     timeLabel: {
       id: 'judicial.system.core:requested_court_date.date_input.time_label',
       defaultMessage: 'Ósk um tíma (kk:mm)',

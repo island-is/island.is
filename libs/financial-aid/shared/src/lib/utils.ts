@@ -39,15 +39,15 @@ export const formatPhoneNumber = (phoneNumber: string) => {
 export const formatNationalId = (nationalId: string) =>
   insertAt(nationalId.replace('-', ''), '-', 6) || '-'
 
+export const sanitizeNationalId = (nationalId: string) =>
+  nationalId?.replace(/[^0-9]/g, '')
+
 export const isNationalIdValid = (nationalId: string): boolean => {
   return (
-    sanitizeOnlyNumbers(nationalId).length === 10 &&
-    isNaN(Number(sanitizeOnlyNumbers(nationalId))) === false
+    sanitizeNationalId(nationalId).length === 10 &&
+    isNaN(Number(sanitizeNationalId(nationalId))) === false
   )
 }
-
-export const sanitizeOnlyNumbers = (value: string) =>
-  value?.replace(/[^0-9]/g, '')
 
 export const isEmailValid = (emailAddress?: string) => {
   if (emailAddress) {

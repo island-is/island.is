@@ -83,19 +83,11 @@ TextareaRequired.args = {
   rows: 4,
 }
 
-export const BlueBackgroundColor = Template.bind({})
-BlueBackgroundColor.args = {
-  label: 'This is the label',
-  placeholder: 'Blue background',
-  name: 'Test9',
-  backgroundColor: 'blue',
-}
-
 export const ResponsiveBackgroundColor = Template.bind({})
 ResponsiveBackgroundColor.args = {
   label: 'This is the label',
   placeholder: 'Try change the window size',
-  name: 'Test10',
+  name: 'Test9',
   backgroundColor: ['white', 'blue', 'white', 'blue', 'white'],
 }
 
@@ -103,7 +95,7 @@ export const WithLabelAbove = Template.bind({})
 WithLabelAbove.args = {
   label: 'This is the above label',
   placeholder: 'This is the placeholder',
-  name: 'Test11',
+  name: 'Test10',
   size: 'xs',
 }
 
@@ -111,16 +103,6 @@ export const Disabled = Template.bind({})
 Disabled.args = {
   label: 'This is the label',
   placeholder: 'This is the placeholder',
-  name: 'Test12',
+  name: 'Test10',
   disabled: true,
-}
-
-export const ReadOnly = Template.bind({})
-ReadOnly.args = {
-  label: 'Read only label',
-  placeholder: 'Read only',
-  name: 'Test13',
-  backgroundColor: 'blue',
-  readOnly: true,
-  value: 'Read only have a transparent background',
 }

@@ -39,8 +39,7 @@ So the payment flow goes as follows:
 
 ## Implementation
 
-Best thing you can do is look at the
-[example application](/libs/application/templates/example-payment/) for figuring
+Best thing you can do is look at the driving license application state management for figuring
 out how to implement payments. Here comes a brief overview of the main parts:
 
 ### 1. FeeInfoProvider
@@ -90,7 +89,7 @@ creating the charge and handling the post-payment stage.
   },
 ```
 
-### 3. Ensuring payment has been completed
+### 3. Insuring payment has been completed
 
 Both in terms of past-application history compatibility and in terms of absolute safety
 that something unpaid doesn't go, we'd recommend that you check whether the application

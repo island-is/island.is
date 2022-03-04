@@ -45,7 +45,7 @@ export class DrivingLicenseSubmissionService {
     )
 
     // last chance to validate before the user receives a dummy
-    if (!response?.paymentUrl) {
+    if (!response.paymentUrl) {
       throw new Error('paymentUrl missing in response')
     }
 

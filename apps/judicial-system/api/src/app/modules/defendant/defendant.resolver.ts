@@ -14,7 +14,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
-import { BackendApi } from '../../data-sources'
+import { BackendAPI } from '../../../services'
 import { CreateDefendantInput } from './dto/createDefendant.input'
 import { UpdateDefendantInput } from './dto/updateDefendant.input'
 import { DeleteDefendantInput } from './dto/deleteDefendant.input'
@@ -35,7 +35,7 @@ export class DefendantResolver {
     @Args('input', { type: () => CreateDefendantInput })
     input: CreateDefendantInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Defendant> {
     const { caseId, ...createDefendant } = input
     this.logger.debug(`Creating a new defendant for case ${caseId}`)
@@ -53,7 +53,7 @@ export class DefendantResolver {
     @Args('input', { type: () => UpdateDefendantInput })
     input: UpdateDefendantInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<Defendant> {
     const { caseId, defendantId, ...updateDefendant } = input
     this.logger.debug(`Updating defendant ${defendantId} for case ${caseId}`)
@@ -71,7 +71,7 @@ export class DefendantResolver {
     @Args('input', { type: () => DeleteDefendantInput })
     input: DeleteDefendantInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
   ): Promise<DeleteDefendantResponse> {
     const { caseId, defendantId } = input
     this.logger.debug(`Deleting defendant ${defendantId} for case ${caseId}`)

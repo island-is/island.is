@@ -4,8 +4,6 @@ import { Sequelize } from 'sequelize-typescript'
 import { Dialect } from 'sequelize/types'
 import { TestingModuleBuilder } from '@nestjs/testing/testing-module.builder'
 
-import { getOptions } from '@island.is/nest/sequelize'
-
 import { TestApp } from '../testServer'
 
 type Database = Extract<Dialect, 'postgres' | 'sqlite'>
@@ -22,7 +20,23 @@ interface UseDatabase {
 }
 
 const sharedConfig: SequelizeModuleOptions = {
-  ...getOptions(),
+  define: {
+    underscored: true,
+    timestamps: true,
+    createdAt: 'created',
+    updatedAt: 'modified',
+  },
+  dialectOptions: {
+    useUTC: true,
+  },
+  pool: {
+    max: 5,
+    min: 0,
+    acquire: 30000,
+    idle: 10000,
+  },
+  logging: false,
+  autoLoadModels: true,
   synchronize: true,
 }
 

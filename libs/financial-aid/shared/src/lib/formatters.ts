@@ -1,5 +1,5 @@
-import { months } from './const'
-import { AidName, AmountModal, ApplicationFiltersEnum } from './enums'
+import { months, nextMonth } from './const'
+import { AmountModal, ApplicationFiltersEnum } from './enums'
 import {
   HomeCircumstances,
   ApplicationState,
@@ -454,13 +454,4 @@ export const martialStatusTypeFromMartialCode = (
     default:
       return MartialStatusType.SINGLE
   }
-}
-
-export const aidDescriptionFromName: KeyMapping<AidName, string> = {
-  ownPlace: 'Eigið húsnæði',
-  registeredRenting: 'Leiga með þinglýstan leigusamning',
-  unregisteredRenting: 'Leiga með óþinglýstan leigusamning',
-  withOthers: 'Býr eða leigir hjá öðrum án þinglýsts leigusamnings',
-  livesWithParents: 'Býr hjá foreldrum',
-  unknown: 'Annað',
 }

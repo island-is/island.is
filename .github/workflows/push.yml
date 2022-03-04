@@ -132,7 +132,7 @@ jobs:
 
       - name: Check node version
         run: |
-          node -v
+          node -v 
           ls -l `which node`
 
       - name: Cleanup disk space
@@ -159,28 +159,6 @@ jobs:
           echo "Base branch is '${GIT_BASE_BRANCH}'"
           echo "Branch is '${GIT_BRANCH}'"
 
-      - name: Checking out relevant branches
-        if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
-        run: |
-          git checkout $GITHUB_HEAD_REF
-          git checkout $GITHUB_BASE_REF
-          git checkout $GITHUB_SHA
-          git config --global user.email "ci@island.is"
-          git config --global user.name "CI Bot"
-
-          BASE_SHA=$(git merge-base HEAD $GITHUB_BASE_REF)
-          HEAD_SHA=$(git merge-base HEAD $GITHUB_HEAD_REF)
-          echo Current base SHA is $BASE_SHA and head SHA is $HEAD_SHA
-          echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
-
-      - name: Keep PR run event
-        uses: actions/upload-artifact@v2
-        if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
-        with:
-          name: pr-event
-          path: event.json
-          retention-days: 60
-
       - name: Generate docker image tag
         id: docker_tags
         run: |
@@ -197,27 +175,26 @@ jobs:
           echo "::set-output name=DOCKER_TAG::${DOCKER_TAG}"
           echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
 
-      - name: Send Slack notification
-        id: slack
-        if: "startsWith(env.GIT_BASE_BRANCH, 'release/')"
-        uses: 8398a7/action-slack@v3
-        with:
-          status: custom
-          fields: repo,message # selectable (default: repo,message)
-          custom_payload: |
-            {
-              attachments: [{
-                color: 'good',
-                text: `Monorepo Release Tag is: ${process.env.DOCKER_TAG}`,
-              }]
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_RELEASE_WEBHOOK_URL }} # required
-
       - run: |
+          if [[ "$GITHUB_HEAD_REF" == "" ]]; then
             echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
+          else
+            git fetch origin $GITHUB_HEAD_REF
+            HEAD=$(git rev-parse origin/$GITHUB_HEAD_REF)
+            echo "Resolved HEAD as $HEAD for PR"
+            echo "HEAD=$HEAD" >> $GITHUB_ENV
+          fi
         id: git_nx_head
         name: Preparing HEAD tag
+
+      - run: |
+          source ./scripts/ci/00_prepare-base-tags.sh
+          echo "BASE=$BASE" >> $GITHUB_ENV
+          echo "::set-output name=LAST_GOOD_BUILD_DOCKER_TAG::${LAST_GOOD_BUILD_DOCKER_TAG}"
+        id: git_nx_base
+        name: Preparing BASE tags
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Calculate cache key for node_modules
         id: calculate_node_modules_hash
@@ -235,44 +212,6 @@ jobs:
           export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-files-generated
           echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
           echo "::set-output name=generated-files-cache-key::$GENERATED_FILES_KEY"
-
-      - name: Cache for NodeJS dependencies - host OS
-        id: node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: node_modules
-          key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
-
-      - name: Check cache success
-        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Building NodeJS dependencies
-        if: steps.node-modules.outputs.cache-hit != 'true'
-        run: ./scripts/ci/10_prepare-host-deps.sh
-
-      - run: |
-          if [[ "${{needs.pre-checks.outputs.PRE_CHECK}}" == 'feature-deploy' ]]; then
-            export HEAD_REF="$GITHUB_HEAD_REF"
-            export BASE_REF="$GITHUB_BASE_REF"
-            export PR_REF=$GITHUB_SHA
-          else
-            export HEAD_REF="$GIT_BRANCH"
-            export BASE_REF="$GIT_BASE_BRANCH"
-            export PR_REF="not used"
-          fi
-          export WORKFLOW_ID=push
-          export SHELL=/usr/bin/bash
-          source ./scripts/ci/00_prepare-base-tags.sh
-          git checkout $GITHUB_SHA
-          echo "BASE=$BASE" >> $GITHUB_ENV
-          echo "::set-output name=LAST_GOOD_BUILD_DOCKER_TAG::${LAST_GOOD_BUILD_DOCKER_TAG}"
-        id: git_nx_base
-        name: Preparing BASE tags
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HTML_URL: ${{ github.event.pull_request.html_url }}
-          ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -304,6 +243,21 @@ jobs:
       - name: Building NodeJS dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true' || steps.cache-deps-base.outputs.cache-hit != 'true'
         run: ./scripts/ci/10_prepare-docker-deps.sh
+
+      - name: Cache for NodeJS dependencies - host OS
+        id: node-modules
+        continue-on-error: true
+        uses: ./.github/actions/cache
+        with:
+          path: node_modules
+          key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
+
+      - name: Check cache success
+        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
+
+      - name: Building NodeJS dependencies
+        if: steps.node-modules.outputs.cache-hit != 'true'
+        run: ./scripts/ci/10_prepare-host-deps.sh
 
       - name: set BRANCH env var
         run: echo "BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
@@ -345,6 +299,8 @@ jobs:
       - name: Prepare deployment targets
         id: deploy_map
         if: needs.pre-checks.outputs.PRE_CHECK != 'push'
+        env:
+          BASE: 'origin/main'
         run: |
           CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-cypress docker-jest)
           echo "CHUNKS: '$CHUNKS'"

@@ -18,7 +18,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
-import { Case } from '../modules/case'
+import { Case } from '../modules/case/models'
 import { courtRecord } from '../messages'
 import {
   addFooter,
@@ -122,7 +122,13 @@ function constructRestrictionCourtRecordPdf(
               : index + 1 === theCase.defendants?.length
               ? ' og'
               : ','
-          } ${defendant.name ?? '-'}`,
+          } ${defendant.name ?? '-'}, ${
+            defendant.noNationalId ? 'fd.' : 'kt.'
+          } ${
+            defendant.noNationalId
+              ? defendant.nationalId
+              : formatNationalId(defendant.nationalId ?? '-')
+          }`,
         '',
       ) ?? ` ${courtRecord.missingDefendants}`
     }.`,
@@ -167,11 +173,17 @@ function constructRestrictionCourtRecordPdf(
       }),
     ),
   )
+
+  if (theCase.accusedBookings) {
+    addEmptyLines(doc)
+    addNormalJustifiedText(doc, theCase.accusedBookings)
+  }
+
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    theCase.sessionBookings ??
-      formatMessage(courtRecord.missingSessionBookings),
+    theCase.litigationPresentations ??
+      formatMessage(courtRecord.missingLitigationPresentations),
   )
   setLineGap(doc, 3)
   addEmptyLines(doc, 2)
@@ -364,9 +376,15 @@ function constructInvestigationCourtRecordPdf(
             index === 0
               ? ''
               : index + 1 === theCase.defendants?.length
-              ? ' og'
+              ? ', og'
               : ','
-          } ${defendant.name ?? '-'}`,
+          } ${defendant.name ?? '-'}, ${
+            defendant.noNationalId ? 'fd.' : 'kt.'
+          } ${
+            defendant.noNationalId
+              ? defendant.nationalId
+              : formatNationalId(defendant.nationalId ?? '-')
+          }`,
         '',
       ) ?? ` ${courtRecord.missingDefendants}`
     }.`,
@@ -411,11 +429,17 @@ function constructInvestigationCourtRecordPdf(
       }),
     ),
   )
+
+  if (theCase.accusedBookings) {
+    addEmptyLines(doc)
+    addNormalJustifiedText(doc, theCase.accusedBookings)
+  }
+
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    theCase.sessionBookings ??
-      formatMessage(courtRecord.missingSessionBookings),
+    theCase.litigationPresentations ??
+      formatMessage(courtRecord.missingLitigationPresentations),
   )
   setLineGap(doc, 3)
   addEmptyLines(doc, 2)
