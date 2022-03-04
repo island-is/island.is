@@ -13,37 +13,12 @@ import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import Skeleton from './Skeleton'
 import { Application } from '@island.is/application/core'
+import { student } from './mock.js'
 
-const student = {
-  name: 'Lorem',
-  ssn: '1111111111',
-  book: {
-    id: '1',
-    totalLessonCount: 5,
-    teachersAndLessons: [],
-    drivingSchoolExams: [
-      {
-        schoolTypeName: 'Ökuskóli 1 - Netökuskóli Mjódd',
-      },
-    ],
-    testResults: [
-      {
-        testTypeName: 'Ökuskóli 1',
-      },
-    ],
-  },
-}
-
-interface Props {
-  application: Application
-  studentSsn: string
-  setShowTable: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
+const ViewStudent = () => {
   const { formatMessage } = useLocale()
 
-  const [minutes, setMinutes] = useState(30)
+  const [school, setSchool] = useState(0)
   const [date, setDate] = useState<string>('')
   const [dateError, setDateError] = useState(false)
 
@@ -53,16 +28,20 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
         <>
           <GridRow marginBottom={3}>
             <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
-              <Text variant="h4">{formatMessage(m.viewStudentName)}</Text>
+              <Text variant="h4">
+                {formatMessage(m.confirmationSectionName)}
+              </Text>
               <Text variant="default">{student.name}</Text>
             </GridColumn>
             <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
-              <Text variant="h4">{formatMessage(m.viewStudentNationalId)}</Text>
+              <Text variant="h4">
+                {formatMessage(m.confirmationSectionNationalId)}
+              </Text>
               <Text variant="default">{student.ssn}</Text>
             </GridColumn>
             <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
               <Text variant="h4">
-                {formatMessage(m.viewStudentCompleteHours)}
+                {formatMessage(m.confirmationSectionCompleteHours)}
               </Text>
               <Text variant="default">
                 {student.book?.totalLessonCount ?? 0}
@@ -73,7 +52,7 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
           <GridRow marginBottom={5}>
             <GridColumn span={['12/12', '6/12']}>
               <Text variant="h4">
-                {formatMessage(m.viewStudentCompleteSchools)}
+                {formatMessage(m.confirmationSectionCompleteSchools)}
               </Text>
               {student.book?.drivingSchoolExams?.map((school, key) => {
                 return (
@@ -94,14 +73,17 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
               <DatePicker
                 size="sm"
                 hasError={dateError}
-                errorMessage={formatMessage(m.errorOnMissingDate)}
                 handleChange={(date) => {
                   setDate(format(date, 'yyyy-MM-dd'))
                   setDateError(false)
                 }}
-                label={'Áfanga lauk'}
+                label={formatMessage(
+                  m.confirmationSectionSelectDatePlaceholder,
+                )}
                 locale="is"
-                placeholderText={'Veldu dagsetningu'}
+                placeholderText={formatMessage(
+                  m.confirmationSectionSelectDateLabel,
+                )}
                 required
                 selected={date ? new Date(date) : null}
               />
@@ -110,7 +92,9 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
 
           <GridRow marginBottom={5}>
             <GridColumn span={'12/12'} paddingBottom={2}>
-              <Text variant="h4">{'Veldu skóla'}</Text>
+              <Text variant="h4">
+                {formatMessage(m.confirmationSectionSelectSchool)}
+              </Text>
             </GridColumn>
 
             {drivingSchools.map((item, index) => {
@@ -124,9 +108,9 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
                     name={'options-' + index}
                     label={item.label}
                     value={item.value}
-                    checked={item.value === minutes}
+                    checked={item.value === school}
                     onChange={() => {
-                      setMinutes(item.value)
+                      setSchool(item.value)
                     }}
                     large
                   />

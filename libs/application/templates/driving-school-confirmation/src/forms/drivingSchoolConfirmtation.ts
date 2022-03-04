@@ -41,32 +41,35 @@ export const getDrivingSchoolConfirmation = (): Form => {
       }),
       buildMultiField({
         id: 'studentsInfo',
-        title: 'Upplýsingar um ökunema',
+        title: m.studentInfoTitle,
         children: [
           buildTextField({
             id: 'nationalId',
-            title: 'Kennitala umsækjanda',
+            title: m.studentInfoNationalId,
             width: 'half',
-            backgroundColor: 'white',
+            backgroundColor: 'blue',
+            format: '######-####',
+            required: true,
           }),
           buildTextField({
             id: 'email',
-            title: 'Netfang umsækjanda',
+            title: m.studentInfoEmail,
             width: 'half',
-            backgroundColor: 'white',
+            backgroundColor: 'blue',
+            variant: 'email',
           }),
         ],
       }),
       buildSection({
         id: 'confirmSchoolSection',
-        title: 'Staðfesta áfanga',
+        title: m.confirmationSectionTitle,
         children: [
           buildMultiField({
             id: 'students',
-            title: 'Staðfesta ökuskóla',
+            title: m.confirmationSectionTitle,
             children: [
               buildCustomField({
-                title: 'Staðfesta ökuskóla',
+                title: m.confirmationSectionTitle,
                 id: 'student',
                 component: 'ViewStudent',
               }),
@@ -75,9 +78,9 @@ export const getDrivingSchoolConfirmation = (): Form => {
         ],
       }),
       buildCustomField({
-        id: 'listSubmitted',
+        id: 'schoolConfirmed',
         title: '',
-        component: 'ListSubmitted',
+        component: 'SchoolConfirmed',
       }),
     ],
   })
