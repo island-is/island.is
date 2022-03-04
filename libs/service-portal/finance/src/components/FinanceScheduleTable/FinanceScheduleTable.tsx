@@ -1,21 +1,24 @@
 import React, { FC, useState } from 'react'
 import format from 'date-fns/format'
-import { Table as T, Box, Pagination, Text } from '@island.is/island-ui/core'
+import {
+  Table as T,
+  Box,
+  Pagination,
+  Text,
+  Button,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import sortBy from 'lodash/sortBy'
 import { dateFormat } from '@island.is/shared/constants'
 import { ExpandRow, ExpandHeader } from '../../components/ExpandableTable'
-import {
-  FinancePaymentScheduleArray,
-  FinancePaymentScheduleItem,
-} from '../../screens/FinanceSchedule/FinanceSchedule.types'
 import FinanceScheduleDetailTable from './FinanceScheduleDetailTable'
-
+import { PaymentSchedule } from '@island.is/api/schema'
+import * as s from './FinanceScheduleTable.css'
 const ITEMS_ON_PAGE = 20
 
 interface Props {
-  recordsArray: Array<FinancePaymentScheduleItem>
+  recordsArray: PaymentSchedule[]
 }
 
 const getType = (type: string) => {
@@ -54,24 +57,34 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
   const datedArray = recordsArray.map((x) => {
     return {
       ...x,
-      approvalDate: dateParse(x.approvalDate),
-      scheduleStatus: getType(x.scheduleStatus),
+      approvalDate:
+        x.approvalDate.length > 0
+          ? format(dateParse(x.approvalDate), dateFormat.is)
+          : '',
     }
   })
+  datedArray
+    .sort((a, b) => compare(a.scheduleStatus, b.scheduleStatus))
+    .reverse()
 
-  datedArray.sort((a, b) =>
-    compare(b.approvalDate.getTime(), a.approvalDate.getTime()),
+  const buttons = (date: string | Date) => (
+    <Box display="flex" flexDirection="row" alignItems="center">
+      <Button size="small" variant="text" icon={date === '' ? 'pencil' : 'eye'}>
+        {date === '' ? 'Samþykkja' : 'Skoða'}
+      </Button>
+      <Box marginX={2} className={s.line} />
+      <Button size="small" variant="text" icon="document">
+        PDF
+      </Button>
+    </Box>
   )
-  datedArray.sort((a, b) => compare(a.scheduleStatus, b.scheduleStatus))
 
   return (
     <>
-      <Text variant="h5" as="h2" paddingBottom={1}>
-        {'Virkar greiðsluáætlanir'}
-      </Text>
       <T.Table>
         <ExpandHeader
           data={[
+            { value: '' },
             {
               value: formatMessage({
                 id: 'sp.finance-schedule:created-date',
@@ -105,11 +118,11 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
               key={`finance-schedule-row-${i}`}
               onExpandCallback={() => console.log('EXPAND')}
               data={[
-                { value: format(x.approvalDate, dateFormat.is) },
+                { value: x.approvalDate },
                 { value: x.totalAmount },
                 { value: x.paymentCount },
-                { value: x.scheduleStatus },
-                { value: 'Samþykkja | PDF' },
+                { value: getType(x.scheduleStatus) },
+                { value: buttons(x.approvalDate), align: 'right' },
               ]}
             >
               <Box>THIS COMES LATER</Box>

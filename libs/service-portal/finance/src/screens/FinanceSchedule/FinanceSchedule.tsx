@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import { useQuery, gql } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
+import { PaymentSchedule, Query } from '@island.is/api/schema'
 import { GET_TAPS_QUERY } from '@island.is/service-portal/graphql'
 import { m } from '@island.is/service-portal/core'
 import {
@@ -71,9 +71,9 @@ const FinanceSchedule: ServicePortalModuleComponent = () => {
 
   console.log('paymentStatus:', paymentSchedulesData)
 
-  const recordsData: Array<FinancePaymentScheduleItem> =
+  const recordsData: Array<PaymentSchedule> =
     paymentSchedulesData?.getPaymentSchedule?.myPaymentSchedule
-      .paymentSchedules || {}
+      ?.paymentSchedules || []
   // const debtData: any = debtStatusData?.getDebtStatus?.myDebtStatus || {}
 
   if (tabLoading) {
@@ -113,7 +113,7 @@ const FinanceSchedule: ServicePortalModuleComponent = () => {
               <SkeletonLoader space={1} height={40} repeat={5} />
             </Box>
           )}
-          {recordsData.length === 0 &&
+          {recordsData.length <= 0 &&
             !paymentSchedulesLoading &&
             !paymentSchedulesError && (
               <AlertBanner

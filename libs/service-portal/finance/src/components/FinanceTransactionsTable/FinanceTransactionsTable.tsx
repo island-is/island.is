@@ -29,6 +29,7 @@ const FinanceTransactionsTable: FC<Props> = ({ recordsArray }) => {
       <T.Table>
         <ExpandHeader
           data={[
+            { value: '' },
             { value: formatMessage(m.date) },
             { value: formatMessage(m.chargeType) },
             { value: formatMessage(m.feeItem) },

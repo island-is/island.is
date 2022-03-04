@@ -53,44 +53,22 @@ const ExpandableLine: FC<Props> = ({
   return (
     <>
       <T.Row>
-        {data.map((item, i) => (
-          <T.Data
-            key={i}
-            box={{
-              background: fullClose || loading ? 'transparent' : 'blue100',
-              borderColor: fullClose || loading ? 'blue200' : 'blue100',
-              position: 'relative',
-            }}
-            style={tableStyles}
-          >
-            {!fullClose && i === 0 && !loading ? (
-              <div className={styles.line} />
-            ) : null}
-            <Text variant={last ? 'eyebrow' : 'medium'} as="span">
-              <div
-                className={
-                  item.align === 'right' ? styles.financeTd : undefined
-                }
-              >
-                {item.value}
-              </div>
-            </Text>
-          </T.Data>
-        ))}
         <T.Data
           box={{
-            alignItems: 'flexEnd',
+            alignItems: 'flexStart',
             background: fullClose || loading ? 'transparent' : 'blue100',
             borderColor: fullClose || loading ? 'blue200' : 'blue100',
             printHidden: true,
+            position: 'relative',
           }}
           style={tableStyles}
         >
+          {!fullClose && !loading ? <div className={styles.line} /> : null}
           {!last && !loading && (
             <Box
               display="flex"
               alignItems="center"
-              justifyContent="flexEnd"
+              justifyContent="flexStart"
               onClick={onExpandButton}
               cursor="pointer"
             >
@@ -119,6 +97,27 @@ const ExpandableLine: FC<Props> = ({
             </Box>
           )}
         </T.Data>
+        {data.map((item, i) => (
+          <T.Data
+            key={i}
+            box={{
+              background: fullClose || loading ? 'transparent' : 'blue100',
+              borderColor: fullClose || loading ? 'blue200' : 'blue100',
+              position: 'relative',
+            }}
+            style={tableStyles}
+          >
+            <Text variant={last ? 'eyebrow' : 'medium'} as="span">
+              <div
+                className={
+                  item.align === 'right' ? styles.financeTd : undefined
+                }
+              >
+                {item.value}
+              </div>
+            </Text>
+          </T.Data>
+        ))}
       </T.Row>
       <T.Row>
         <T.Data
