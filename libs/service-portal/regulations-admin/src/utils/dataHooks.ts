@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useHistory } from 'react-router'
 import { Query } from '@island.is/api/schema'
 import { gql, useQuery, useMutation, ApolloError } from '@apollo/client'
@@ -11,19 +11,14 @@ import {
 import {
   ISODate,
   LawChapter,
-  LawChapterSlug,
   MinistryList,
   nameToSlug,
-  PlainText,
   RegName,
   Regulation,
   RegulationOptionList,
 } from '@island.is/regulations'
-import { ShippedSummary, DraftSummary } from '@island.is/regulations/admin'
+import { ShippedSummary } from '@island.is/regulations/admin'
 import { getEditUrl } from './routing'
-import { DraftImpactForm } from '../state/types'
-
-// import { APPLICATION_APPLICATIONS } from '../../lib/queries/applicationApplications'
 
 type QueryResult<T> =
   | {
@@ -336,6 +331,12 @@ export const useGetRegulationFromApiQuery = (
   if (!data) {
     return {
       error: error || new Error(`Error fetching regulation`),
+    }
+  }
+  // TODO: handle RegulationRedirect?
+  if ('redirectUrl' in data.getRegulationFromApi) {
+    return {
+      error: new Error(`redirect`),
     }
   }
   return {

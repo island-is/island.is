@@ -1,4 +1,9 @@
-import { RegName, Regulation, toISODate } from '@island.is/regulations'
+import {
+  RegName,
+  Regulation,
+  RegulationRedirect,
+  toISODate,
+} from '@island.is/regulations'
 import {
   DraftImpact,
   RegulationDraftId,
@@ -26,7 +31,7 @@ export const useGetRegulationHistory = (
 ) => {
   const targetName = activeImpact?.name as RegName
   const activeImpactDate = activeImpact?.date?.value
-  const today = toISODate(new Date())
+  const today = useMemo(() => toISODate(new Date()), [])
 
   const { effects } = useMemo(() => {
     const effects = regulation?.history.reduce<Effects>(

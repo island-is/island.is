@@ -127,9 +127,7 @@ export class RegulationsAdminResolver {
   }
 
   @Query(() => graphqlTypeJson)
-  getRegulationFromApi(
-    @Args('input') input: GetRegulationFromApiInput,
-  ): Promise<any> {
+  getRegulationFromApi(@Args('input') input: GetRegulationFromApiInput) {
     return this.regulationsService.getRegulationOnDate(
       input.date ? RegulationViewTypes.d : RegulationViewTypes.current,
       nameToSlug(input.regulation),
