@@ -24,7 +24,7 @@ export const icRuling = {
       placeholder: {
         id:
           'judicial.system.investigation_cases:ruling.introduction.placeholder',
-        defaultMessage: 'Aðfararorð',
+        defaultMessage: 'Hver eru aðfararorðin?',
         description:
           'Notaður sem skýritexti fyrir í "Aðfararorð" textabox á úrskurðar skrefi í rannsóknarheimildum.',
       },
