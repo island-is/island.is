@@ -4,6 +4,7 @@ export const ApplicationQuery = gql`
   query GetApplicationQuery($input: ApplicationInput!) {
     application(input: $input) {
       id
+      applicationSystemId
       nationalId
       created
       modified

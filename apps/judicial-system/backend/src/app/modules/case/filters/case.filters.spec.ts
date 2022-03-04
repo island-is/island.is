@@ -467,6 +467,7 @@ describe('isCaseBlockedFromUser', () => {
     ${CaseType.INTERNET_USAGE}
     ${CaseType.RESTRAINING_ORDER}
     ${CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION}
+    ${CaseType.VIDEO_RECORDING_EQUIPMENT}
     ${CaseType.OTHER}
   `.describe('given an accepted $type case', ({ type }) => {
     each`
