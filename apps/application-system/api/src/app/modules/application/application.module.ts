@@ -25,6 +25,7 @@ import { PaymentModule } from '../payment/payment.module'
 import { ApplicationLifeCycleService } from './lifecycle/application-lifecycle.service'
 import { LoggingModule } from '@island.is/logging'
 import { TemplateApiApplicationService } from './template-api.service'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 let BullModule: DynamicModule
 
@@ -64,6 +65,7 @@ if (process.env.INIT_SCHEMA === 'true') {
     BullModule,
     SigningModule.register(environment.signingOptions),
     CmsTranslationsModule,
+    FeatureFlagModule,
     LoggingModule,
   ],
   controllers: [ApplicationController],

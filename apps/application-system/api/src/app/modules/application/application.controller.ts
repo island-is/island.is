@@ -71,14 +71,7 @@ import {
   buildDataProviders,
   buildExternalData,
 } from './utils/externalDataUtils'
-import {
-  validateApplicationSchema,
-  validateIncomingAnswers,
-  validateIncomingExternalDataProviders,
-  validateThatTemplateIsReady,
-  isTemplateReady,
-  validateThatApplicationIsReady,
-} from './utils/validationUtils'
+import { ApplicationValidationService } from './tools/applicationTemplateValidation.service'
 import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
 import { ApplicationResponseDto } from './dto/application.response.dto'
@@ -115,6 +108,7 @@ export class ApplicationController {
     private readonly templateAPIService: TemplateAPIService,
     private readonly fileService: FileService,
     private readonly auditService: AuditService,
+    private readonly validationService: ApplicationValidationService,
     private readonly applicationAccessService: ApplicationAccessService,
     @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
     private intlService: IntlService,
@@ -136,7 +130,9 @@ export class ApplicationController {
       user.nationalId,
     )
 
-    await validateThatApplicationIsReady(existingApplication as BaseApplication)
+    await this.validationService.validateThatApplicationIsReady(
+      existingApplication as BaseApplication,
+    )
 
     return existingApplication
   }
@@ -203,7 +199,7 @@ export class ApplicationController {
         application.typeId,
       )
 
-      if (isTemplateReady(applicationTemplate)) {
+      if (this.validationService.isTemplateReady(applicationTemplate)) {
         templateTypeToIsReady[application.typeId] = true
         filteredApplications.push(application)
       } else {
@@ -344,7 +340,7 @@ export class ApplicationController {
       )
     }
 
-    validateThatTemplateIsReady(template)
+    this.validationService.validateThatTemplateIsReady(template)
 
     const assignees = [user.nationalId]
 
@@ -403,7 +399,7 @@ export class ApplicationController {
     const newAnswers = application.answers as FormValue
     const intl = await this.intlService.useIntl(namespaces, locale)
 
-    await validateIncomingAnswers(
+    await this.validationService.validateIncomingAnswers(
       existingApplication as BaseApplication,
       newAnswers,
       user.nationalId,
@@ -411,7 +407,7 @@ export class ApplicationController {
       intl.formatMessage,
     )
 
-    await validateApplicationSchema(
+    await this.validationService.validateApplicationSchema(
       existingApplication,
       newAnswers,
       intl.formatMessage,
@@ -456,7 +452,7 @@ export class ApplicationController {
       user.nationalId,
     )
 
-    await validateIncomingExternalDataProviders(
+    await this.validationService.validateIncomingExternalDataProviders(
       existingApplication as BaseApplication,
       externalDataDto,
       user.nationalId,
@@ -538,7 +534,7 @@ export class ApplicationController {
     )
     const intl = await this.intlService.useIntl(namespaces, locale)
 
-    const permittedAnswers = await validateIncomingAnswers(
+    const permittedAnswers = await this.validationService.validateIncomingAnswers(
       existingApplication as BaseApplication,
       newAnswers,
       user.nationalId,
@@ -546,7 +542,7 @@ export class ApplicationController {
       intl.formatMessage,
     )
 
-    await validateApplicationSchema(
+    await this.validationService.validateApplicationSchema(
       existingApplication as BaseApplication,
       permittedAnswers,
       intl.formatMessage,
