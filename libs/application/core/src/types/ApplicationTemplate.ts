@@ -17,6 +17,7 @@ export interface ApplicationTemplate<
   TEvents extends EventObject
 > {
   readonly readyForProduction?: boolean
+  readonly featureFlag?: string
   readonly type: ApplicationTypes
   readonly name: StaticText
   readonly institution?: StaticText
