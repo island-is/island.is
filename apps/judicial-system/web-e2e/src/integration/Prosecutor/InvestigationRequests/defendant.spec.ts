@@ -1,7 +1,9 @@
-describe('/krafa/ny/gaesluvardhald', () => {
+import { NEW_IC_ROUTE } from '@island.is/judicial-system/consts'
+
+describe(NEW_IC_ROUTE, () => {
   beforeEach(() => {
     cy.stubAPIResponses()
-    cy.visit('/krafa/ny/rannsoknarheimild')
+    cy.visit(NEW_IC_ROUTE)
   })
 
   it('should require a valid police case number', () => {

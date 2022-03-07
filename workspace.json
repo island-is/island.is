@@ -1493,6 +1493,27 @@
         }
       }
     },
+    "application-api-core": {
+      "root": "libs/application/api/core",
+      "sourceRoot": "libs/application/api/core/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/application/api/core/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/application/api/core"],
+          "options": {
+            "jestConfig": "libs/application/api/core/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "application-core": {
       "root": "libs/application/core",
       "sourceRoot": "libs/application/core/src",
@@ -2187,6 +2208,41 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "graphql-codegen --config libs/application/templates/driving-license/codegen.yml"
+          }
+        }
+      }
+    },
+    "application-templates-example-payment": {
+      "root": "libs/application/templates/example-payment",
+      "sourceRoot": "libs/application/templates/example-payment/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/application/templates/example-payment/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/application/templates/example-payment"],
+          "options": {
+            "jestConfig": "libs/application/templates/example-payment/jest.config.js",
+            "passWithNoTests": false
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/example-payment/src/**/*.{js,ts,tsx}'"
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/example-payment/codegen.yml"
           }
         }
       }
@@ -4049,6 +4105,12 @@
               "libs/email-service/tsconfig.spec.json"
             ],
             "exclude": ["**/node_modules/**", "!libs/email-service/**/*"]
+          }
+        },
+        "generate-html": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "cross-env NODE_ENV=development yarn ts-node -P libs/email-service/tsconfig.json libs/email-service/src/tools/generate-html/generate-html.ts"
           }
         },
         "test": {
@@ -6190,6 +6252,27 @@
           "outputs": ["coverage/libs/nest/audit"],
           "options": {
             "jestConfig": "libs/nest/audit/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "nest-aws": {
+      "root": "libs/nest/aws",
+      "sourceRoot": "libs/nest/aws/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/nest/aws/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/nest/aws"],
+          "options": {
+            "jestConfig": "libs/nest/aws/jest.config.js",
             "passWithNoTests": true
           }
         }

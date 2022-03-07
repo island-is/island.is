@@ -22,12 +22,12 @@ export enum ProsecutorSubsections {
   PROSECUTOR_OVERVIEW = 5,
 }
 
-export enum JudgeSubsections {
-  JUDGE_OVERVIEW = 0,
-  HEARING_ARRANGEMENTS = 1,
-  COURT_RECORD = 2,
-  RULING_STEP_ONE = 3,
-  RULING_STEP_TWO = 4,
+export enum CourtSubsections {
+  RECEPTION_AND_ASSIGNMENT = 0,
+  JUDGE_OVERVIEW = 1,
+  HEARING_ARRANGEMENTS = 2,
+  RULING = 3,
+  COURT_RECORD = 4,
   CONFIRMATION = 5,
 }
 
@@ -183,11 +183,13 @@ interface NationalRegistryMeta {
 }
 
 export interface NationalRegistryResponsePerson {
-  items: NationalRegistryPerson[]
-  meta: NationalRegistryMeta
+  items?: NationalRegistryPerson[]
+  meta?: NationalRegistryMeta
+  error?: string
 }
 
 export interface NationalRegistryResponseBusiness {
-  items: NationalRegistryBusiness[]
-  meta: NationalRegistryMeta
+  items?: NationalRegistryBusiness[]
+  meta?: NationalRegistryMeta
+  error?: string
 }
