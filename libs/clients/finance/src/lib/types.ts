@@ -101,6 +101,29 @@ export type PaymentScheduleType = {
   }
 }
 
+export type PaymentScheduleDetailPayment = {
+  payAmount: number
+  payAmountAccumulated: number
+  payDate: string
+  payExplanation: string
+}
+
+export type PaymentScheduleDetail = {
+  paidAmount: number
+  paidAmountAccumulated: number
+  paidDate: string
+  paymentNumber: string
+  payments: PaymentScheduleDetailPayment[]
+  plannedAmount: number
+  plannedAmountAccumulated: number
+  plannedDate: string
+}
+
+export type PaymentScheduleDetailType = {
+  myDetailedSchedules: {
+    myDetailedSchedule: PaymentScheduleDetail[]
+  }
+}
 export type DebtStatus = {
   totalAmount: number
   approvedSchedule: number

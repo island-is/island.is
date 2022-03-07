@@ -12,10 +12,41 @@ import { m } from '@island.is/service-portal/core'
 import sortBy from 'lodash/sortBy'
 import { dateFormat } from '@island.is/shared/constants'
 import { ExpandRow, ExpandHeader } from '../../components/ExpandableTable'
-import FinanceScheduleDetailTable from './FinanceScheduleDetailTable'
-import { PaymentSchedule } from '@island.is/api/schema'
+import FinanceScheduleDetailTable from '../FinanceScheduleDetailTable/FinanceScheduleDetailTable'
+import {
+  DetailedSchedule,
+  PaymentSchedule,
+  PaymentScheduleDetailModel,
+  Query,
+} from '@island.is/api/schema'
 import * as s from './FinanceScheduleTable.css'
+import { gql, useQuery } from '@apollo/client'
+import { dateParse } from '../../utils/dateUtils'
 const ITEMS_ON_PAGE = 20
+
+export const GET_FINANCE_PAYMENT_SCHEDULE_BY_ID = gql`
+  query getPaymentScheduleByIdQuery($input: GetFinancePaymentScheduleInput!) {
+    getPaymentScheduleById(input: $input) {
+      myDetailedSchedules {
+        myDetailedSchedule {
+          paidDate
+          paidAmount
+          paidAmountAccumulated
+          paymentNumber
+          payments {
+            payAmount
+            payAmountAccumulated
+            payDate
+            payExplanation
+          }
+          plannedAmount
+          plannedAmountAccumulated
+          plannedDate
+        }
+      }
+    }
+  }
+`
 
 interface Props {
   recordsArray: PaymentSchedule[]
@@ -33,13 +64,6 @@ const getType = (type: string) => {
       return 'Í gildi'
   }
 }
-
-const dateParse = (startDate: string) => {
-  const year = +startDate.substring(0, 4)
-  const month = +startDate.substring(4, 6)
-  const day = +startDate.substring(6, 8)
-  return new Date(year, month, day)
-}
 const compare = function (a: any, b: any) {
   if (a > b) return +1
   if (a < b) return -1
@@ -48,6 +72,18 @@ const compare = function (a: any, b: any) {
 const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
   const [page, setPage] = useState(1)
   const { formatMessage } = useLocale()
+
+  const { data, loading, error } = useQuery<Query>(
+    GET_FINANCE_PAYMENT_SCHEDULE_BY_ID,
+    {
+      variables: {
+        input: { scheduleNumber: '001' },
+      },
+    },
+  )
+
+  const paymentDetailData: Array<DetailedSchedule> =
+    data?.getPaymentScheduleById.myDetailedSchedules.myDetailedSchedule || []
 
   const totalPages =
     recordsArray.length > ITEMS_ON_PAGE
@@ -109,7 +145,7 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
                 defaultMessage: 'Staða',
               }),
             },
-            { value: '' },
+            { value: '', align: 'right' },
           ]}
         />
         <T.Body>
@@ -125,41 +161,14 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
                 { value: buttons(x.approvalDate), align: 'right' },
               ]}
             >
-              <Box>THIS COMES LATER</Box>
-              {/* <FinanceScheduleDetailTable /> */}
+              {!loading && !error && (
+                <FinanceScheduleDetailTable data={paymentDetailData} />
+              )}
             </ExpandRow>
           ))}
         </T.Body>
       </T.Table>
-      {/* <ExpandRow
-      key={chargeType.id}
-      onExpandCallback={() =>
-        getDetailsQuery({
-          variables: {
-            input: {
-              orgID: organization.id,
-              chargeTypeID: chargeType.id,
-            },
-          },
-        })
-      }
-      data={[
-        { value: chargeType.name },
-        { value: organization.name },
-        { value: amountFormat(chargeType.totals), align: 'right' },
-      ]}
-      loading={loading}
-      error={error}
-    >
-      {financeStatusDetails?.chargeItemSubjects?.length > 0 ? (
-        <FinanceStatusDetailTable
-          organization={organization}
-          financeStatusDetails={financeStatusDetails}
-          downloadURL={downloadURL}
-          userInfo={userInfo}
-        />
-      ) : null}
-    </ExpandRow> */}
+
       {totalPages > 0 ? (
         <Box paddingTop={8}>
           <Pagination

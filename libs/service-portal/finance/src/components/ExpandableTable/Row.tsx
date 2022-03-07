@@ -15,7 +15,10 @@ import * as styles from './ExpandableTable.css'
 import { tableStyles } from '@island.is/service-portal/core'
 
 interface Props {
-  data: Array<{ value: string | number; align?: 'left' | 'right' }>
+  data: Array<{
+    value: string | number | React.ReactElement
+    align?: 'left' | 'right'
+  }>
   last?: boolean
   loading?: boolean
   error?: ApolloError
@@ -55,7 +58,7 @@ const ExpandableLine: FC<Props> = ({
       <T.Row>
         <T.Data
           box={{
-            alignItems: 'flexStart',
+            alignItems: 'flexEnd',
             background: fullClose || loading ? 'transparent' : 'blue100',
             borderColor: fullClose || loading ? 'blue200' : 'blue100',
             printHidden: true,

@@ -3,13 +3,13 @@ import isEmpty from 'lodash/isEmpty'
 import {
   CustomerChargeType,
   CustomerRecords,
-  DebtStatusType,
   DocumentsListTypes,
   DocumentTypes,
   FinanceStatus,
   FinanceStatusDetails,
   PaymentScheduleType,
   TapsControlTypes,
+  PaymentScheduleDetailType,
 } from './types'
 import {
   createEnhancedFetch,
@@ -179,6 +179,19 @@ export class FinanceClientService {
     const res = await this.get<PaymentScheduleType>(
       `/myPaymentSchedules`,
       { nationalId },
+      auth,
+    )
+    return res
+  }
+
+  async getPaymentScheduleById(
+    nationalId: string,
+    scheduleNumber: string,
+    auth: Auth,
+  ): Promise<PaymentScheduleDetailType | null> {
+    const res = await this.get<PaymentScheduleDetailType>(
+      `/myDetailedSchedule`,
+      { nationalId, scheduleNumber },
       auth,
     )
     return res

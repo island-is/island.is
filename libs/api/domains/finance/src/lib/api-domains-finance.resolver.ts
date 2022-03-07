@@ -25,8 +25,12 @@ import { FinanceDocumentModel } from './models/financeDocument.model'
 import { CustomerTapsControlModel } from './models/customerTapsControl.model'
 import { DocumentsListModel } from './models/documentsList.model'
 import { CustomerRecords } from './models/customerRecords.model'
-import { PaymentScheduleModel } from './models/paymentSchedule.model'
+import {
+  PaymentScheduleDetailModel,
+  PaymentScheduleModel,
+} from './models/paymentSchedule.model'
 import { DebtStatusModel } from './models/debtStatus.model'
+import { GetFinancePaymentScheduleInput } from './dto/getFinancePaymentSchedule.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.financeOverview)
@@ -158,5 +162,18 @@ export class FinanceResolver {
   @Audit()
   async getDebtStatus(@CurrentUser() user: User) {
     return this.financeService.getDebtStatus(user.nationalId, user)
+  }
+
+  @Query(() => PaymentScheduleDetailModel)
+  @Audit()
+  async getPaymentScheduleById(
+    @CurrentUser() user: User,
+    @Args('input') input: GetFinancePaymentScheduleInput,
+  ) {
+    return this.financeService.getPaymentScheduleById(
+      user.nationalId,
+      input.scheduleNumber,
+      user,
+    )
   }
 }
