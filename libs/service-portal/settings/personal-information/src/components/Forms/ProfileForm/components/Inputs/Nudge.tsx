@@ -86,28 +86,31 @@ export const Nudge: FC<Props> = ({ refuseMail }) => {
                 />
               )}
             />
-            <Box marginLeft={3}>
-              {inputPristine && (
-                <Icon icon="checkmark" color="blue300" type="filled" />
-              )}
-            </Box>
           </Box>
         </Column>
         <Column width="10/12">
           <Box
-            display="flex"
-            alignItems="flexStart"
-            flexDirection="column"
             className={styles.nudgeSave}
+            display="flex"
+            alignItems="center"
+            justifyContent="flexStart"
+            marginLeft={2}
           >
-            {!loading && (
-              <button disabled={inputPristine} type="submit">
-                <Button disabled={inputPristine} variant="text" size="small">
-                  {formatMessage(msg.saveSettings)}
-                </Button>
-              </button>
-            )}
-            {loading && <LoadingDots />}
+            <Box display="flex" alignItems="center" marginRight={1}>
+              {inputPristine && (
+                <Icon icon="checkmark" color="blue300" type="filled" />
+              )}
+            </Box>
+            <Box display="flex" alignItems="flexStart" flexDirection="column">
+              {!loading && (
+                <button disabled={inputPristine} type="submit">
+                  <Button disabled={inputPristine} variant="text" size="small">
+                    {formatMessage(msg.saveSettings)}
+                  </Button>
+                </button>
+              )}
+              {loading && <LoadingDots />}
+            </Box>
           </Box>
         </Column>
       </Columns>

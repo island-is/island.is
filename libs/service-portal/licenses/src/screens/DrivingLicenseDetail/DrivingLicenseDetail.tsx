@@ -13,7 +13,9 @@ import {
   AlertBanner,
 } from '@island.is/island-ui/core'
 import {
+  PlausiblePageviewDetail,
   ServicePortalModuleComponent,
+  ServicePortalPath,
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
@@ -31,6 +33,9 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
   const [modalOpen, setModalOpen] = useState(false)
   const { data, loading, error } = useDrivingLicense()
 
+  PlausiblePageviewDetail(
+    ServicePortalPath.LicensesDrivingDetail.replace(':id', 'detail'),
+  )
   const licenseExpired = data && isExpired(new Date(), new Date(data.gildirTil))
 
   const licenseIssuedText = formatMessage({
@@ -48,6 +53,7 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
   }
 
   const { age } = info(data?.kennitala ?? userInfo.profile.nationalId)
+
   const renewalLink =
     age >= 70
       ? 'https://island.is/endurnyjun-oekuskirteina-fyrir-70-ara-og-eldri'
@@ -82,7 +88,7 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
                 {formatMessage({
                   id: 'sp.driving-license:driving-license-description',
                   defaultMessage:
-                    'Hér birtast upplýsingar um ökuskírteini þitt ásam þeim ökuréttidnum sem þú ert með í gildi á hverjum tíma.',
+                    'Með ökuskírteini er veitt leyfi til að stjórna ökutæki í ákveðnum réttindaflokkum. Hér birtast réttindi þín og gildistími þeirra.',
                 })}
               </Text>
             </Stack>
@@ -141,7 +147,7 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
                 id: 'sp.driving-license:license-base-info',
                 defaultMessage: 'Grunnupplýsingar ökuskírteinis',
               })}
-              label={defineMessage({
+              label={formatMessage({
                 id: 'sp.driving-license:license-number',
                 defaultMessage: 'Númer',
               })}
@@ -167,13 +173,15 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
             <Divider />
             <UserInfoLine
               label={licenseExpireText}
-              content={
+              renderContent={() => (
                 <Box display="flex" alignItems="center">
-                  {toDate(
-                    loading
-                      ? ''
-                      : new Date(data.gildirTil).getTime().toString(),
-                  )}
+                  <Text>
+                    {toDate(
+                      loading
+                        ? ''
+                        : new Date(data.gildirTil).getTime().toString(),
+                    )}
+                  </Text>
                   <Box
                     marginLeft={2}
                     display="flex"
@@ -209,7 +217,7 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
                     </Text>
                   </Box>
                 </Box>
-              }
+              )}
               loading={loading}
               paddingBottom={1}
               labelColumnSpan={['1/1', '6/12']}
@@ -247,7 +255,7 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
               }) => {
                 return (
                   <ExpandableLine
-                    key={item.id}
+                    key={item.nr}
                     licenseIssued={licenseIssuedText}
                     licenseExpire={licenseExpireText}
                     issuedDate={toDate(
@@ -256,7 +264,7 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
                     expireDate={toDate(
                       new Date(item.gildirTil).getTime().toString(),
                     )}
-                    category={item.nr}
+                    category={item.nr?.trim()}
                   >
                     {item.nr &&
                       ReactHtmlParser(mapCategory(item.nr.trim()).text ?? '')}
