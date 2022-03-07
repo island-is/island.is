@@ -53,6 +53,7 @@ interface StepperProps {
   backLabel?: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   optionsFromNamespace: { slug: string; data: Record<string, any>[] }[]
+  scrollUpWhenNextStepAppears?: boolean
 }
 
 interface StepOptionSelectItem {
@@ -148,7 +149,11 @@ const StepperFSMWrapper = (
   return Component
 }
 
-const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
+const StepperFSM = ({
+  stepper,
+  optionsFromNamespace,
+  scrollUpWhenNextStepAppears = true,
+}: StepperProps) => {
   const router = useRouter()
   const { activeLocale } = useI18n()
 
@@ -322,7 +327,9 @@ const StepperFSM = ({ stepper, optionsFromNamespace }: StepperProps) => {
                   answers: `${previousAnswers}${selectedOption.slug}`,
                 },
               })
-              .then(() => window.scrollTo(0, 0))
+              .then(() => {
+                if (scrollUpWhenNextStepAppears) window.scrollTo(0, 0)
+              })
 
             if (!transitionWorked) {
               setTransitionErrorMessage(

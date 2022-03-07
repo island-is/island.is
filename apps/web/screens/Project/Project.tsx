@@ -333,10 +333,13 @@ const ProjectPage: Screen<PageProps> = ({
         )}
         {content && richText(content)}
         {!subpage && projectPage.stepper && (
-          <StepperFSM
-            stepper={projectPage.stepper}
-            optionsFromNamespace={stepOptionsFromNamespace}
-          />
+          <Box marginTop={6}>
+            <StepperFSM
+              scrollUpWhenNextStepAppears={false}
+              stepper={projectPage.stepper}
+              optionsFromNamespace={stepOptionsFromNamespace}
+            />
+          </Box>
         )}
         {!renderSlicesAsTabs &&
           (subpage ?? projectPage).slices.map((slice) =>
