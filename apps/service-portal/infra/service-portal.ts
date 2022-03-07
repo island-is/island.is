@@ -5,6 +5,15 @@ export const serviceSetup = (services: {}): ServiceBuilder<'service-portal'> =>
     .namespace('service-portal')
     .liveness('/liveness')
     .readiness('/readiness')
+    .replicaCount({
+      default: 2,
+      max: 20,
+      min: 2,
+    })
+    .resources({
+      limits: { cpu: '400m', memory: '512Mi' },
+      requests: { cpu: '200m', memory: '256Mi' },
+    })
     .env({
       BASEPATH: '/minarsidur',
       SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: {
