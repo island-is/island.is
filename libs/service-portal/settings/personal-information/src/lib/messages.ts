@@ -8,7 +8,7 @@ export const msg = defineMessages({
   editEmailText: {
     id: 'sp.settings:edit-email-text',
     defaultMessage:
-      'Þegar þú vistar netfang komum við til með að senda þér staðfestingarkóða með tölvupósti til að tryggja það að netfangið sé rétt skráð. Ef staðfestingar póstur berst ekki er gott að kanna hvort hann sé í möppu fyrir ruslpóst. Staðfestingarkóðann seturu inn hér að neðan til staðfestingar um að þú hafir fengið hann sendann.',
+      'Með því að skrá netfangið þitt tryggir þú að tilkynningar berist til þín. Það netfang bætist sömuleiðis sjálfkrafa við allar umsóknir þínar á Ísland.is.',
   },
   saveTel: {
     id: 'sp.settings:save-tel',
@@ -17,18 +17,16 @@ export const msg = defineMessages({
   editTelText: {
     id: 'sp.settings:edit-tel-text',
     defaultMessage:
-      'Þegar þú vistar símanúmer komum við til með að senda þér staðfestingarkóða með SMS til að tryggja það að símanúmerið sé rétt skráð. Staðfestingarkóðann seturu inn hér að neðan til staðfestingar um að þú hafir fengið hann sendann.',
+      'Með því að skrá símanúmerið þitt bætist það sjálfkrafa við allar umsóknir þínar á Ísland.is.',
   },
   editBankInfoText: {
     id: 'sp.settings:edit-bankInfo-text',
-    defaultMessage: `
-    Hér getur þú gert breytingar á þeim bankareikningi
-    sem þú vilt nota í kerfum island.is.
-  `,
+    defaultMessage:
+      'Hér getur þú gert breytingar á þeim bankareikningi sem þú vilt að Fjársýsla ríkisins noti til endurgreiðslu.',
   },
   editNudgeText: {
     id: 'sp.settings:edit-nudge-text',
-    defaultMessage: `Við munum senda þér tölvupóst þegar þú færð markvisst skjal í pósthólfið þitt.`,
+    defaultMessage: `Stofnanir munu senda þér tilkynningu þegar þín bíða mikilvæg skilaboð í pósthólfinu.`,
   },
   overlayIntro: {
     id: 'sp.settings:overlay-intro-text',
