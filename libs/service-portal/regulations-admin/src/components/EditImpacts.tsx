@@ -5,7 +5,12 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDraftingState } from '../state/useDraftingState'
 import { impactMsgs } from '../messages'
 import { useLocale } from '@island.is/localization'
-import { prettyName, RegulationType } from '@island.is/regulations'
+import {
+  nameToSlug,
+  prettyName,
+  RegName,
+  RegulationType,
+} from '@island.is/regulations'
 import {
   DraftImpactName,
   DraftRegulationCancelId,
@@ -20,6 +25,7 @@ import {
   Button,
   Divider,
   Inline,
+  Link,
   Option,
   Select,
   Text,
@@ -35,6 +41,7 @@ import lastItem from 'lodash/last'
 export type SelRegOption = Option & {
   value?: DraftImpactName | ''
   type: RegulationType | ''
+  migrated?: boolean
 }
 
 const useAffectedRegulations = (
@@ -63,6 +70,7 @@ const useAffectedRegulations = (
               ' – ' +
               reg.title +
               (reg.repealed ? ` (${repealedText})` : ''),
+            migrated: reg.migrated,
           }
         }
         return {
@@ -187,10 +195,29 @@ export const EditImpacts = () => {
           <Text variant="h4" as="h4" marginBottom={[2, 2, 3, 4]}>
             {t(impactMsgs.chooseType)}
           </Text>
-          {lastItem(draft.impacts[selRegOption.value])?.type === 'repeal' ? (
+          {!selRegOption.migrated ? (
+            <Inline align="center">
+              <h3>
+                Villa:{' '}
+                <Link
+                  href={`https://island.is/reglugerdir/nr/${nameToSlug(
+                    selRegOption.value as RegName,
+                  )}`}
+                  color={'blue400'}
+                  underlineVisibility={'hover'}
+                  newTab
+                >
+                  Reglugerð {selRegOption.value}
+                </Link>{' '}
+                hefur ekki verið flutt á island.is.
+                <br /> Vinsamlegast hafið samband við ritstjóra.
+              </h3>
+            </Inline>
+          ) : lastItem(draft.impacts[selRegOption.value])?.type === 'repeal' ? (
             <Inline align="center">
               <Text variant="h5" as="h5">
-                Reglugerð er með virka brottfellingu
+                Reglugerð er með virka brottfellingu og því ekki hægt að skrá
+                frekari áhrifafærslur.
               </Text>
             </Inline>
           ) : (
