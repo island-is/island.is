@@ -22,6 +22,7 @@ export const UkraineProjectHeader = ({
 
   return (
     <Box className={styles.headerBg}>
+      <div className={styles.hands}></div>
       <GridContainer>
         <GridRow>
           <GridColumn
