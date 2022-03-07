@@ -3,10 +3,10 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { EmailVerification } from './emailVerification.model'
-import { randomInt, randomBytes } from 'crypto'
+import { randomInt } from 'crypto'
 import addMilliseconds from 'date-fns/addMilliseconds'
 import { ConfirmEmailDto } from './dto/confirmEmailDto'
-import { UserProfile } from '../user-profile/userProfile.model'
+import { join } from 'path'
 import { UserProfileService } from '../user-profile/userProfile.service'
 import { SmsVerification } from './smsVerification.model'
 import { CreateUserProfileDto } from '../user-profile/dto/createUserProfileDto'
@@ -16,7 +16,6 @@ import environment from '../../environments/environment'
 import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
 import { ConfirmSmsDto } from './dto/confirmSmsDto'
 import { ConfirmationDtoResponse } from './dto/confirmationResponseDto'
-import { pathToAsset } from './utils/pathToAsset'
 
 export const SMS_VERIFICATION_MAX_AGE = 5 * 60 * 1000
 export const SMS_VERIFICATION_MAX_TRIES = 5
@@ -225,7 +224,7 @@ export class VerificationService {
             {
               component: 'Image',
               context: {
-                src: pathToAsset('logo.jpg'),
+                src: join(__dirname, `./assets/images/islandis.jpg`),
                 alt: 'Ísland.is logo',
               },
             },
