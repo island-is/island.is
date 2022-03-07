@@ -6,7 +6,6 @@ import {
   ApplicationStateSchema,
   Application,
   DefaultEvents,
-  DefaultStateLifeCycle,
   ApplicationConfigurations,
 } from '@island.is/application/core'
 import { Events, States, Roles, MCEvents } from './constants'
@@ -93,7 +92,12 @@ const template: ApplicationTemplate<
             },
           },
           progress: 0.25,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            // Applications that stay in this state for 3x30 days (approx. 3 months) will be pruned automatically
+            whenToPrune: 3 * 30 * 24 * 3600 * 1000,
+          },
           onEntry: {
             apiModuleAction: ApiActions.submitRequestToSyslumenn,
           },
@@ -126,7 +130,12 @@ const template: ApplicationTemplate<
             },
           },
           progress: 0.25,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            // Applications that stay in this state for 3x30 days (approx. 3 months) will be pruned automatically
+            whenToPrune: 3 * 30 * 24 * 3600 * 1000,
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -193,7 +202,12 @@ const template: ApplicationTemplate<
             },
           },
           progress: 0.8,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            // Applications that stay in this state for 24 hours will be pruned automatically
+            whenToPrune: 24 * 3600 * 1000,
+          },
           onEntry: {
             apiModuleAction: ApiActions.createCharge,
           },
@@ -221,7 +235,12 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Completed',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            // Applications that stay in this state for 3x30 days (approx. 3 months) will be pruned automatically
+            whenToPrune: 3 * 30 * 24 * 3600 * 1000,
+          },
           actionCard: {
             tag: {
               label: m.actionCardDone,
