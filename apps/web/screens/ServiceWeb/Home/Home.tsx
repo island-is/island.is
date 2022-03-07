@@ -57,10 +57,18 @@ const Home: Screen<HomeProps> = ({
   const n = useNamespace(namespace)
   const institutionSlug = getSlugPart(Router.asPath, 2)
 
-  const headerTitle = n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')
+  const institutionSlugContainsMannaudstorg = institutionSlug.includes(
+    'mannaudstorg',
+  )
+
+  const headerTitle = institutionSlugContainsMannaudstorg
+    ? 'Aðstoð fyrir mannauðstorg'
+    : n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
   const logoUrl = organization?.logo?.url ?? ''
-  const searchTitle = n('canWeAssist', 'Getum við aðstoðað?')
+  const searchTitle = institutionSlugContainsMannaudstorg
+    ? 'Velkomin á mannauðstorg'
+    : n('canWeAssist', 'Getum við aðstoðað?')
   const pageTitle = `${
     institutionSlug && organization && organization.title
       ? organization.title + ' | '
@@ -80,6 +88,11 @@ const Home: Screen<HomeProps> = ({
       organization={organization}
       organizationTitle={organizationTitle}
       searchTitle={searchTitle}
+      searchPlaceholder={
+        institutionSlugContainsMannaudstorg
+          ? 'Leita á mannauðstorgi'
+          : undefined
+      }
     >
       {hasContent && (
         <ServiceWebContext.Consumer>

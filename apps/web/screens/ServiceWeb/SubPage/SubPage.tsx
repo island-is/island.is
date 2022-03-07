@@ -31,6 +31,7 @@ import {
   Link,
   LinkContext,
   Button,
+  BreadCrumbItem,
 } from '@island.is/island-ui/core'
 import { ServiceWebWrapper } from '@island.is/web/components'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
@@ -94,6 +95,32 @@ const SubPage: Screen<SubPageProps> = ({
     linkResolver('serviceweb').href
   }/${organizationSlug}${questionSlug ? `/${categorySlug}` : ''}`
 
+  const getBreadcrumbItems = () => {
+    const breadcrumbItems: BreadCrumbItem[] = []
+    if (!institutionSlug.includes('mannaudstorg'))
+      breadcrumbItems.push({
+        title: n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
+        typename: 'serviceweb',
+        href: linkResolver('serviceweb').href,
+      })
+    breadcrumbItems.push({
+      title: organization.title,
+      typename: 'serviceweb',
+      href: `${linkResolver('serviceweb').href}/${organizationSlug}`,
+    })
+    breadcrumbItems.push({
+      title: `${categoryTitle}`,
+      typename: 'serviceweb',
+      isTag: true,
+      ...(questionSlug && {
+        href: `${
+          linkResolver('serviceweb').href
+        }/${organizationSlug}/${categorySlug}`,
+      }),
+    })
+    return breadcrumbItems
+  }
+
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
@@ -115,33 +142,7 @@ const SubPage: Screen<SubPageProps> = ({
                   <GridColumn span="12/12" paddingBottom={[2, 2, 4]}>
                     <Box display={['none', 'none', 'block']} printHidden>
                       <Breadcrumbs
-                        items={[
-                          {
-                            title: n(
-                              'assistanceForIslandIs',
-                              'Aðstoð fyrir Ísland.is',
-                            ),
-                            typename: 'serviceweb',
-                            href: linkResolver('serviceweb').href,
-                          },
-                          {
-                            title: organization.title,
-                            typename: 'serviceweb',
-                            href: `${
-                              linkResolver('serviceweb').href
-                            }/${organizationSlug}`,
-                          },
-                          {
-                            title: `${categoryTitle}`,
-                            typename: 'serviceweb',
-                            isTag: true,
-                            ...(questionSlug && {
-                              href: `${
-                                linkResolver('serviceweb').href
-                              }/${organizationSlug}/${categorySlug}`,
-                            }),
-                          },
-                        ]}
+                        items={getBreadcrumbItems()}
                         renderLink={(link, { href }) => {
                           return (
                             <NextLink href={href} passHref>
