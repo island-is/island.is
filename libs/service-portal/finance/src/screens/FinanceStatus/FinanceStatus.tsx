@@ -161,6 +161,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
               <T.Table>
                 <ExpandHeader
                   data={[
+                    { value: '', align: 'left' },
                     { value: formatMessage(m.feeCategory) },
                     { value: formatMessage(m.guardian) },
                     { value: formatMessage(m.status), align: 'right' },
