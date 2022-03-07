@@ -17,9 +17,9 @@ import { join } from 'path'
     (s) => s.length,
     git,
     runner,
-    `infra/new-ci-change-detector`,
+    `core/sort-imports`,
     'main',
-    `origin/pr/6665`,
+    `origin/pr/6637`,
     'pullrequest',
   )
   if (rev === 'rebuild') {
