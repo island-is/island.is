@@ -20,7 +20,7 @@ export const licensesModule: ServicePortalModule = {
         defaultMessage: 'Þín skírteini',
       }),
       path: ServicePortalPath.LicensesRoot,
-      enabled: userInfo.scopes.includes(ApiScope.internal),
+      enabled: userInfo.scopes.includes(ApiScope.licenses),
       render: () =>
         lazy(() => import('./screens/LicensesOverview/LicensesOverview')),
     },
@@ -30,7 +30,7 @@ export const licensesModule: ServicePortalModule = {
         defaultMessage: 'Ökuréttindi',
       }),
       path: ServicePortalPath.LicensesDrivingDetail,
-      enabled: userInfo.scopes.includes(ApiScope.internal),
+      enabled: userInfo.scopes.includes(ApiScope.licenses),
       render: () =>
         lazy(() =>
           import('./screens/DrivingLicenseDetail/DrivingLicenseDetail'),

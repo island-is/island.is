@@ -76,79 +76,86 @@ export const ProfileForm: FC<Props> = ({
     }
   }, [canDrop])
 
+  const closeAllModals = () => {
+    if (onCloseOverlay && setFormLoading) {
+      onCloseOverlay()
+      setFormLoading(false)
+    }
+  }
+
   const migratedUserUpdate = async () => {
-    if (onCloseOverlay) {
-      const refetchUserProfile = await refetch()
-      const userProfileData = refetchUserProfile?.data?.getUserProfile
-      const hasModification = userProfileData?.modified
+    const refetchUserProfile = await refetch()
+    const userProfileData = refetchUserProfile?.data?.getUserProfile
+    const hasModification = userProfileData?.modified
 
-      const hasEmailNoVerification =
-        userProfileData?.emailStatus === DataStatus.NOT_VERIFIED &&
-        userProfile?.email
-      const hasTelNoVerification =
-        userProfileData?.mobileStatus === DataStatus.NOT_VERIFIED &&
-        userProfile?.mobilePhoneNumber
+    const hasEmailNoVerification =
+      userProfileData?.emailStatus === DataStatus.NOT_VERIFIED &&
+      userProfile?.email
+    const hasTelNoVerification =
+      userProfileData?.mobileStatus === DataStatus.NOT_VERIFIED &&
+      userProfile?.mobilePhoneNumber
 
-      // If user is migrating. Then process migration, else close modal without action.
-      if (
-        (hasEmailNoVerification || hasTelNoVerification) &&
-        !hasModification
-      ) {
-        try {
-          /**
-           * If email is present in data, but has status of 'NOT_VERIFIED',
-           * And the user has no modification date in the userprofile data,
-           * This implies a MIGRATED user. Therefore set the status to 'VERIFIED',
-           * After asking the user to verify the data themselves.
-           */
-          await updateOrCreateUserProfile({
-            ...(hasEmailNoVerification && { emailStatus: DataStatus.VERIFIED }),
-            ...(hasTelNoVerification && { mobileStatus: DataStatus.VERIFIED }),
-          }).then(() => onCloseOverlay())
-        } catch {
-          // do nothing
-          onCloseOverlay()
-        }
-      } else {
-        onCloseOverlay()
+    // If user is migrating. Then process migration, else close modal without action.
+    if ((hasEmailNoVerification || hasTelNoVerification) && !hasModification) {
+      try {
+        /**
+         * If email is present in data, but has status of 'NOT_VERIFIED',
+         * And the user has no modification date in the userprofile data,
+         * This implies a MIGRATED user. Therefore set the status to 'VERIFIED',
+         * After asking the user to verify the data themselves.
+         */
+        await updateOrCreateUserProfile({
+          ...(hasEmailNoVerification && { emailStatus: DataStatus.VERIFIED }),
+          ...(hasTelNoVerification && { mobileStatus: DataStatus.VERIFIED }),
+        }).then(() => closeAllModals())
+      } catch {
+        // do nothing
+        closeAllModals()
       }
+    } else {
+      closeAllModals()
     }
   }
 
   const submitEmptyEmailAndTel = async () => {
-    if (onCloseOverlay) {
-      const refetchUserProfile = await refetch()
-      const userProfileData = refetchUserProfile?.data?.getUserProfile
-      const hasModification = userProfileData?.modified
+    const refetchUserProfile = await refetch()
+    const userProfileData = refetchUserProfile?.data?.getUserProfile
+    const hasModification = userProfileData?.modified
 
-      const emptyProfile = userProfileData === null || !hasModification
-      if (emptyProfile && emailDirty && telDirty) {
-        /**
-         * If the user has no email or tel data, and the inputs are empty,
-         * We will save the email and mobilePhoneNumber as undefined
-         * With a status of 'EMPTY'. This implies empty values by the user's choice.
-         * After asking the user to verify that they are updating their profile with empty fields.
-         */
-        try {
-          await deleteIslykillValue({
-            email: true,
-            mobilePhoneNumber: true,
-          }).then(() => onCloseOverlay())
-        } catch {
-          // do nothing
-          onCloseOverlay()
-        }
-      } else {
-        onCloseOverlay()
+    const emptyProfile = userProfileData === null || !hasModification
+    if (emptyProfile && emailDirty && telDirty) {
+      /**
+       * If the user has no email or tel data, and the inputs are empty,
+       * We will save the email and mobilePhoneNumber as undefined
+       * With a status of 'EMPTY'. This implies empty values by the user's choice.
+       * After asking the user to verify that they are updating their profile with empty fields.
+       */
+      try {
+        await deleteIslykillValue({
+          email: true,
+          mobilePhoneNumber: true,
+        }).then(() => closeAllModals())
+      } catch {
+        // do nothing
+        closeAllModals()
       }
+    } else {
+      closeAllModals()
     }
   }
 
   const dropSideEffects = async () => {
-    if (emailDirty && telDirty) {
-      await submitEmptyEmailAndTel()
-    } else {
-      await migratedUserUpdate()
+    try {
+      if (setFormLoading) {
+        setFormLoading(true)
+      }
+      if (emailDirty && telDirty) {
+        await submitEmptyEmailAndTel()
+      } else {
+        await migratedUserUpdate()
+      }
+    } catch (e) {
+      closeAllModals()
     }
   }
 
