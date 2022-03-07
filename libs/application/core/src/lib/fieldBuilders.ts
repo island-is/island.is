@@ -102,7 +102,13 @@ export function buildDateField(
 export function buildDescriptionField(
   data: Omit<DescriptionField, 'type' | 'component' | 'children'>,
 ): DescriptionField {
-  const { titleVariant = 'h2', description, tooltip, space } = data
+  const {
+    titleVariant = 'h2',
+    description,
+    tooltip,
+    titleTooltip,
+    space,
+  } = data
   return {
     ...extractCommonFields(data),
     doesNotRequireAnswer: true,
@@ -110,6 +116,7 @@ export function buildDescriptionField(
     description,
     titleVariant,
     tooltip,
+    titleTooltip,
     space,
     type: FieldTypes.DESCRIPTION,
     component: FieldComponents.DESCRIPTION,

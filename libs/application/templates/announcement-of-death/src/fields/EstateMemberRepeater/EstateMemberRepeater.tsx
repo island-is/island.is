@@ -33,7 +33,6 @@ export const EstateMemberRepeater: FC<FieldBaseProps> = ({
   const { formatMessage } = useLocale()
   const { fields, append, remove } = useFieldArray<EstateMember>({ name: id })
 
-  console.log('application', application)
   const handleAddMember = () =>
     append({
       nationalId: '1122334455',
@@ -118,7 +117,7 @@ export const EstateMemberRepeater: FC<FieldBaseProps> = ({
                   id={nameField}
                   name={nameField}
                   label="Nafn"
-                  disabled
+                  readOnly
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -126,7 +125,7 @@ export const EstateMemberRepeater: FC<FieldBaseProps> = ({
                   id={custodianField}
                   name={custodianField}
                   label="Forsjáraðili"
-                  disabled
+                  readOnly
                 />
               </GridColumn>
               <GridColumn span="1/1" paddingBottom={2}>

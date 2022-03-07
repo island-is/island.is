@@ -1,0 +1,1 @@
+export { FilesRecipientCard } from './FilesRecipientCard'

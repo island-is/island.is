@@ -32,8 +32,6 @@ export const VehiclesRepeater: FC<FieldBaseProps> = ({
   const { formatMessage } = useLocale()
   const { fields, append, remove } = useFieldArray<Property>({ name: id })
 
-  console.log('application', application)
-
   const handleAddVehicle = () =>
     append({
       propertyNumber: 'F2012397',

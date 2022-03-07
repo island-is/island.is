@@ -121,6 +121,7 @@ export interface DescriptionField extends BaseField {
   component: FieldComponents.DESCRIPTION
   readonly description?: FormText
   tooltip?: FormText
+  titleTooltip?: FormText
   space?: BoxProps['paddingTop']
   titleVariant?: TitleVariants
 }

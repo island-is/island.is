@@ -1,5 +1,3 @@
-import { MessageDescriptor } from 'react-intl'
-
 import {
   Form,
   FormItemTypes,

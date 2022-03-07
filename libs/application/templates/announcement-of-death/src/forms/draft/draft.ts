@@ -15,7 +15,6 @@ import {
   buildSubmitField,
   DefaultEvents,
   getValueViaPath,
-  buildTextField,
 } from '@island.is/application/core'
 import { subSectionDelegate } from './subSectionDelegate'
 import { subSectionInfo } from './subSectionInfo'
@@ -26,6 +25,7 @@ import { NationalRegistryUser, UserProfile } from '../../types/schema'
 import { m } from '../../lib/messages'
 import { RoleConfirmationEnum } from '../../types'
 import CoatOfArms from '../../assets/CoatOfArms'
+import { subSectionFiles } from './subSectionFiles'
 
 export const draft = (): Form => {
   return buildForm({
@@ -36,38 +36,6 @@ export const draft = (): Form => {
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
     children: [
-      buildSection({
-        id: 'info',
-        title: 'Upplýsingar',
-        children: [subSectionProperties, subSectionInheritance, subSectionInfo],
-      }),
-      buildSection({
-        id: 'externalData',
-        title: m.dataCollectionTitle,
-        children: [
-          buildExternalDataProvider({
-            id: 'approveExternalData',
-            title: m.dataCollectionTitle,
-            subTitle: m.dataCollectionSubtitle,
-            description: m.dataCollectionDescription,
-            checkboxLabel: m.dataCollectionCheckboxLabel,
-            dataProviders: [
-              buildDataProviderItem({
-                id: 'nationalRegistry',
-                type: 'NationalRegistryProvider',
-                title: m.dataCollectionNationalRegistryTitle,
-                subTitle: m.dataCollectionNationalRegistrySubtitle,
-              }),
-              buildDataProviderItem({
-                id: 'userProfile',
-                type: 'UserProfileProvider',
-                title: m.dataCollectionUserProfileTitle,
-                subTitle: m.dataCollectionUserProfileSubtitle,
-              }),
-            ],
-          }),
-        ],
-      }),
       buildSection({
         id: 'roleConfirmation',
         title: m.roleConfirmationSectionTitle,
@@ -106,6 +74,43 @@ export const draft = (): Form => {
             ],
           }),
           subSectionDelegate,
+        ],
+      }),
+      buildSection({
+        id: 'externalData',
+        title: m.dataCollectionTitle,
+        children: [
+          buildExternalDataProvider({
+            id: 'approveExternalData',
+            title: m.dataCollectionTitle,
+            subTitle: m.dataCollectionSubtitle,
+            description: m.dataCollectionDescription,
+            checkboxLabel: m.dataCollectionCheckboxLabel,
+            dataProviders: [
+              buildDataProviderItem({
+                id: 'nationalRegistry',
+                type: 'NationalRegistryProvider',
+                title: m.dataCollectionNationalRegistryTitle,
+                subTitle: m.dataCollectionNationalRegistrySubtitle,
+              }),
+              buildDataProviderItem({
+                id: 'userProfile',
+                type: 'UserProfileProvider',
+                title: m.dataCollectionUserProfileTitle,
+                subTitle: m.dataCollectionUserProfileSubtitle,
+              }),
+            ],
+          }),
+        ],
+      }),
+      buildSection({
+        id: 'info',
+        title: 'Upplýsingar',
+        children: [
+          subSectionInfo,
+          subSectionInheritance,
+          subSectionProperties,
+          subSectionFiles,
         ],
       }),
       buildSection({

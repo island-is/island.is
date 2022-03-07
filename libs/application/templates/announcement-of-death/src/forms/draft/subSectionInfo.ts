@@ -1,9 +1,7 @@
 import {
   buildDescriptionField,
   buildMultiField,
-  buildKeyValueField,
   buildSelectField,
-  buildDividerField,
   buildTextField,
   buildSubSection,
 } from '@island.is/application/core'
@@ -24,7 +22,6 @@ export const subSectionInfo = buildSubSection({
           id: 'hinnLatniTitle',
           title: 'Hinn látni',
           titleVariant: 'h4',
-          description: '',
         }),
         buildTextField({
           id: 'deceasedName',
@@ -32,7 +29,7 @@ export const subSectionInfo = buildSubSection({
           placeholder: '',
           backgroundColor: 'white',
           width: 'half',
-          disabled: true,
+          readOnly: true,
         }),
         buildTextField({
           id: 'deceasedNationalId',
@@ -40,7 +37,7 @@ export const subSectionInfo = buildSubSection({
           placeholder: '',
           backgroundColor: 'white',
           width: 'half',
-          disabled: true,
+          readOnly: true,
         }),
         buildTextField({
           id: 'deceasedDateAnnouned',
@@ -48,7 +45,7 @@ export const subSectionInfo = buildSubSection({
           placeholder: '',
           backgroundColor: 'white',
           width: 'half',
-          disabled: true,
+          readOnly: true,
         }),
         buildTextField({
           id: 'deceasedMaritalStatus',
@@ -56,14 +53,13 @@ export const subSectionInfo = buildSubSection({
           placeholder: '',
           backgroundColor: 'white',
           width: 'half',
-          disabled: true,
+          readOnly: true,
         }),
         buildDescriptionField({
           id: 'tilkynnandiTitle',
           title: 'Tilkynnandi',
           space: 5,
           titleVariant: 'h4',
-          description: '',
         }),
         buildTextField({
           id: 'applicantName',
@@ -71,7 +67,7 @@ export const subSectionInfo = buildSubSection({
           placeholder: '',
           backgroundColor: 'white',
           width: 'half',
-          disabled: true,
+          readOnly: true,
         }),
         buildTextField({
           id: 'applicantNationalId',
@@ -79,7 +75,7 @@ export const subSectionInfo = buildSubSection({
           placeholder: '',
           backgroundColor: 'white',
           width: 'half',
-          disabled: true,
+          readOnly: true,
         }),
         buildTextField({
           id: 'applicantAnnouncementDate',
@@ -87,7 +83,7 @@ export const subSectionInfo = buildSubSection({
           placeholder: '',
           backgroundColor: 'white',
           width: 'half',
-          disabled: true,
+          readOnly: true,
         }),
         buildTextField({
           id: 'applicantPhone',

@@ -21,6 +21,19 @@ export const DescriptionFormField: FC<{
       {showFieldName && (
         <Text variant={field.titleVariant}>
           {formatText(field.title, application, formatMessage)}
+          {field.titleTooltip && (
+            <>
+              {' '}
+              <Tooltip
+                placement="top"
+                text={formatText(
+                  field.titleTooltip,
+                  application,
+                  formatMessage,
+                )}
+              />
+            </>
+          )}
         </Text>
       )}
       {(field.description || field.tooltip) && (

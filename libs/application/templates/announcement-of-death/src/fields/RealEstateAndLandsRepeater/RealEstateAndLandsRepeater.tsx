@@ -32,8 +32,6 @@ export const RealEstateAndLandsRepeater: FC<FieldBaseProps> = ({
   const { formatMessage } = useLocale()
   const { fields, append, remove } = useFieldArray<Property>({ name: id })
 
-  console.log('application', application)
-
   const handleAddProperty = () =>
     append({
       propertyNumber: 'F2012397',

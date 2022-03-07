@@ -2,8 +2,6 @@ import {
   buildDescriptionField,
   buildMultiField,
   buildKeyValueField,
-  buildSelectField,
-  buildDividerField,
   buildTextField,
   buildSubSection,
   buildCustomField,
@@ -25,8 +23,7 @@ export const subSectionInheritance = buildSubSection({
           id: 'knowledgeOfWillsTitle',
           title: 'Vitneskja um erfðir',
           titleVariant: 'h3',
-          description: '',
-          tooltip:
+          titleTooltip:
             'Ef fleiri en ein erfðaskrá eru til staðar og allar teljast gildar samkvæmt lögum er það sú yngsta sem fara skal eftir, ef þær stangast á.',
         }),
         buildKeyValueField({
@@ -44,7 +41,6 @@ export const subSectionInheritance = buildSubSection({
           title: 'Vitneskja um aðra erfðaskrá',
           space: 2,
           titleVariant: 'h4',
-          description: '',
         }),
         buildTextField({
           id: 'knowledgeOfOtherWillsDescription',
@@ -59,7 +55,6 @@ export const subSectionInheritance = buildSubSection({
           title: 'Aðilar dánarbús',
           space: 2,
           titleVariant: 'h4',
-          description: '',
         }),
         buildCustomField({
           title: '',
