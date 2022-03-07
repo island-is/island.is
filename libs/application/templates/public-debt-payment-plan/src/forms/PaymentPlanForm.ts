@@ -288,11 +288,6 @@ export const PaymentPlanForm: Form = buildForm({
               title: employer.labels.searchCompany,
               placeholder: employer.labels.searchCompanyPlaceholer,
             }),
-            /* buildCustomField({
-              id: 'correctedEmployer',
-              title: '',
-              component: 'CompanySearch',
-            }), */
           ],
         }),
       ],

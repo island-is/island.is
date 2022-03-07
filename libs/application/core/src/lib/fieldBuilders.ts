@@ -179,7 +179,7 @@ export function buildAsyncSelectField(
 export function buildCompanySearchField(
   data: Omit<CompanySearchField, 'type' | 'component' | 'children'>,
 ): CompanySearchField {
-  const { placeholder } = data
+  const { placeholder, useMockOptions } = data
 
   return {
     ...extractCommonFields(data),
@@ -187,6 +187,7 @@ export function buildCompanySearchField(
     placeholder,
     type: FieldTypes.COMPANY_SEARCH,
     component: FieldComponents.COMPANY_SEARCH,
+    useMockOptions,
   }
 }
 

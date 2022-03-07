@@ -151,6 +151,7 @@ export interface CompanySearchField extends BaseField {
   component: FieldComponents.COMPANY_SEARCH
   placeholder?: FormText
   setLabelToDataSchema?: boolean
+  useMockOptions?: boolean
 }
 
 export interface AsyncSelectField extends BaseField {
