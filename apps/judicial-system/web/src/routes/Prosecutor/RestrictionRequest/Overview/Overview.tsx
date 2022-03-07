@@ -38,6 +38,7 @@ import { FormContext } from '@island.is/judicial-system-web/src/components/FormP
 import CommentsAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
 import type { CaseLegalProvisions } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
+
 import * as styles from './Overview.css'
 
 export const Overview: React.FC = () => {
