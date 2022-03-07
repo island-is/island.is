@@ -73,22 +73,31 @@ export const DrivingLicense = ({
             >
               {expiresIn && (
                 <Box paddingRight={1} paddingTop={[1, 0]}>
-                  <Tag disabled variant="red">
-                    {formatMessage({
-                      id: 'sp.driving-license:expires-in',
-                      defaultMessage: 'Rennur út innan ',
-                    })}
-                    {Math.round(expiresIn.value)}
-                    {expiresIn.key === 'months'
-                      ? formatMessage({
-                          id: 'sp.driving-license:months',
-                          defaultMessage: ' mánaða',
-                        })
-                      : formatMessage({
-                          id: 'sp.driving-license:days',
-                          defaultMessage: ' daga',
-                        })}
-                  </Tag>
+                  {expiresIn.value <= 0 ? (
+                    <Tag disabled variant="red">
+                      {formatMessage({
+                        id: 'sp.driving-license:expired',
+                        defaultMessage: 'Útrunnið',
+                      })}
+                    </Tag>
+                  ) : (
+                    <Tag disabled variant="red">
+                      {formatMessage({
+                        id: 'sp.driving-license:expires-in',
+                        defaultMessage: 'Rennur út innan ',
+                      })}
+                      {Math.round(expiresIn.value)}
+                      {expiresIn.key === 'months'
+                        ? formatMessage({
+                            id: 'sp.driving-license:months',
+                            defaultMessage: ' mánaða',
+                          })
+                        : formatMessage({
+                            id: 'sp.driving-license:days',
+                            defaultMessage: ' daga',
+                          })}
+                    </Tag>
+                  )}
                 </Box>
               )}
               <Box paddingTop={expiresIn ? [1, 1, 0] : undefined}>
