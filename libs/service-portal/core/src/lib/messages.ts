@@ -537,9 +537,9 @@ export const m = defineMessages({
     id: 'service.portal:language',
     defaultMessage: 'Tungumál',
   },
-  confirmCode: {
-    id: 'service.portal:confirm-code',
-    defaultMessage: 'Staðfesta kóða',
+  codeConfirmation: {
+    id: 'service.portal:code-confirmation',
+    defaultMessage: 'Staðfesta',
   },
   telNumber: {
     id: 'service.portal:tel',
