@@ -1071,7 +1071,7 @@ service-portal:
   enabled: true
   env:
     BASEPATH: '/minarsidur'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   grantNamespaces:
@@ -1104,15 +1104,15 @@ service-portal:
   namespace: 'service-portal'
   replicaCount:
     default: 2
-    max: 10
+    max: 20
     min: 2
   resources:
     limits:
+      cpu: '400m'
+      memory: '512Mi'
+    requests:
       cpu: '200m'
       memory: '256Mi'
-    requests:
-      cpu: '100m'
-      memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
