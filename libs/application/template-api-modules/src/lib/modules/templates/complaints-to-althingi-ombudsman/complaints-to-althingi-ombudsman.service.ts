@@ -1,6 +1,7 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
+import { chownSync } from 'fs'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
 import {
@@ -32,7 +33,7 @@ export class ComplaintsToAlthingiOmbudsmanTemplateService {
       return null
     } catch (error) {
       this.logger.error(
-        'Failed to send complaints to althingi ombudsman application',
+        'Failed to send complaints to althingi ombudsman',
         error,
       )
       throw error

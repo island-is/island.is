@@ -218,13 +218,11 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
             return radio === ComplainedForTypes.SOMEONEELSE
           },
           children: [
-            // TODO: find out what is suppose to be required
             buildTextField({
               id: 'complainedForInformation.name',
               title: information.aboutTheComplainer.name,
               backgroundColor: 'blue',
               required: true,
-              width: 'half',
             }),
             buildTextField({
               id: 'complainedForInformation.ssn',
@@ -460,6 +458,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
             buildRadioField({
               id: 'appeals',
               title: complaintInformation.appealsHeader,
+              width: 'half',
               options: [
                 { label: shared.general.yes, value: YES },
                 { label: shared.general.no, value: NO },

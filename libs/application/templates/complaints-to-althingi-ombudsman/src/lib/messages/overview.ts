@@ -15,25 +15,15 @@ export const complaintOverview = {
     },
   }),
   labels: defineMessages({
-    nationalRegistry: {
-      id: 'ctao.application:overview.label.nationalRegistry',
-      defaultMessage: 'Upplýsingar úr Þjóðskrá',
-      description: 'Label for national registry',
+    externalDataTitle: {
+      id: 'ctao.application:overview.label.externalDataTitle',
+      defaultMessage: 'Gangaöflun',
+      description: 'Label for external data usage',
     },
-    nationalRegistryText: {
-      id: 'ctao.application:overview.label.nationalRegistryText',
-      defaultMessage: 'Nafn, kennitala, símanúmer, netfang',
-      description: 'Text for national registry',
-    },
-    notificationConsentTitle: {
-      id: 'ctao.application:overview.label.notificationConsentTitle',
-      defaultMessage: 'Samþykki fyrir tilkynningar',
-      description: 'Title for notification consent',
-    },
-    notificationConsentText: {
-      id: 'ctao.application:overview.label.notificationConsentText',
-      defaultMessage: 'Send verða til þín skilaboð um stöðu mála osfrv.',
-      description: 'Text for notification consent',
+    externalDataText: {
+      id: 'ctao.application:overview.label.externalDataText',
+      defaultMessage: 'Ég skil að ofangreindra gagna verður aflað',
+      description: 'Text for external data usage',
     },
     complainedFor: {
       id: 'ctao.application:overview.label.complainedFor',
@@ -59,6 +49,11 @@ export const complaintOverview = {
       id: 'ctao.application:overview.label.courtAction',
       defaultMessage: 'Lagt fyrir dómstóla',
       description: 'Label for the court action answer',
+    },
+    courtActionSecond: {
+      id: 'ctao.application:overview.label.courtActionSecond',
+      defaultMessage: 'Hefur málið verið lagt fyrir dómstóla?',
+      description: 'Label for the court action second answer',
     },
     powerOfAttorney: {
       id: 'ctao.application:overview.label.powerOfAttorney',
@@ -89,6 +84,21 @@ export const complaintOverview = {
       id: 'ctao.application:overview.labels.submit',
       defaultMessage: 'Staðfesta',
       description: 'Submit button text',
+    },
+    complaintDocument: {
+      id: 'ctao.application:overview.labels.complaintDocument',
+      defaultMessage: 'Kvörtun',
+      description: 'Complaint document label',
+    },
+    complaintNoDocuments: {
+      id: 'ctao.application:overview.labels.complaintNoDocuments',
+      defaultMessage: 'Engum fylgiskjölum var skilað',
+      description: 'No Complaint document label',
+    },
+    complainedForDocument: {
+      id: 'ctao.application:overview.labels.complainedForDocument',
+      defaultMessage: 'Umboð frá kvörtunaraðila',
+      description: 'Complained for document label',
     },
   }),
 }
