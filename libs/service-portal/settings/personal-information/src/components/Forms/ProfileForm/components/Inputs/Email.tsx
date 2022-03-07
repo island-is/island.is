@@ -206,7 +206,7 @@ export const InputEmail: FC<Props> = ({
                 setErrors({ ...formErrors, email: undefined })
                 checkSetPristineInput()
               }}
-              placeholder={formatMessage(m.email)}
+              placeholder="nafn@island.is"
               error={errors.email?.message || formErrors.email}
               size="xs"
               defaultValue={email}
@@ -290,7 +290,7 @@ export const InputEmail: FC<Props> = ({
                   name="code"
                   format="######"
                   label={formatMessage(m.verificationCode)}
-                  placeholder={formatMessage(m.verificationCode)}
+                  placeholder="123456"
                   defaultValue=""
                   error={errors.code?.message || formErrors.code}
                   disabled={verificationValid || disabled}

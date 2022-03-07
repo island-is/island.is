@@ -539,7 +539,7 @@ export const m = defineMessages({
   },
   codeConfirmation: {
     id: 'service.portal:code-confirmation',
-    defaultMessage: 'Vista',
+    defaultMessage: 'Staðfesta',
   },
   telNumber: {
     id: 'service.portal:tel',
