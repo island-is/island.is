@@ -3,7 +3,7 @@
 # Order is important; the last matching pattern takes the most precedence.
 # Make sure that team names are correct or everything stops working.
 
-# Organisation name is      @island-is, not @island.is
+# Organisation name is @island-is, not @island.is
 
 # Fallback. If there is no owner, assign to core maintainers.
 *                                                                                                  @island-is/core
