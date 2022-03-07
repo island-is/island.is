@@ -15,7 +15,7 @@ export const generateSyslumennNotifyErrorEmail: EmailTemplateGenerator = (
   const nationalRegistryData = application.externalData.nationalRegistry
     ?.data as NationalRegistry
 
-  var selectedProperty = getValueViaPath(
+  const selectedProperty = getValueViaPath(
     application.answers,
     'selectProperty.property',
   ) as { propertyNumber: string }

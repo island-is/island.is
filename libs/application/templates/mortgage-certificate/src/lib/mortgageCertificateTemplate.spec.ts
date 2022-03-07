@@ -24,7 +24,6 @@ function buildApplication(
     typeId: ApplicationTypes.MORTGAGE_CERTIFICATE,
     created: new Date(),
     modified: new Date(),
-    attachments: {},
     answers: {},
     state,
     externalData: {},
@@ -34,9 +33,23 @@ function buildApplication(
 
 describe('Mortgage certificate Application Template', () => {
   describe('state transitions', () => {
-    it('should transition from draft to payment', () => {
+    it('should transition from draft to payment info', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication(),
+        MortgageCertificateTemplate,
+      )
+      const [hasChanged, newState] = helper.changeState({
+        type: DefaultEvents.PAYMENT,
+      })
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe(States.PAYMENT_INFO)
+    })
+
+    it('should transition from payment info to payment', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          state: States.PAYMENT_INFO,
+        }),
         MortgageCertificateTemplate,
       )
       const [hasChanged, newState] = helper.changeState({

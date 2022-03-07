@@ -45,16 +45,14 @@ export const SelectProperty: FC<FieldBaseProps> = ({
             answers: updatedAnswers,
           },
         },
+      }).then(({ data, errors } = {}) => {
+        if (data && !errors?.length) {
+          // Takes them to the next state (which loads the relevant form)
+          refetch?.()
+        } else {
+          return Promise.reject()
+        }
       })
-        .then(({ data, errors } = {}) => {
-          if (data && !errors?.length) {
-            // Takes them to the next state (which loads the relevant form)
-            refetch?.()
-          } else {
-            return Promise.reject()
-          }
-        })
-        .catch(() => {})
     }
   }
 

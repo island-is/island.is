@@ -52,7 +52,7 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
     runQuery({ variables: { input: { propertyNumber: searchStr } } })
   }
 
-  var selectProperty = getValueViaPath(
+  const selectProperty = getValueViaPath(
     application.answers,
     'selectProperty',
   ) as { property: PropertyDetail; isFromSearch: boolean }
