@@ -68,13 +68,19 @@ export const DrivingLicense = ({
             >
               {expiresIn && (
                 <Box paddingRight={1} paddingTop={[1, 0]}>
-                  <Tag disabled variant="red">
-                    {formatMessage(m.expiresIn)}
-                    {Math.round(expiresIn.value)}
-                    {expiresIn.key === 'months'
-                      ? formatMessage(m.months)
-                      : formatMessage(m.days)}
-                  </Tag>
+                  {expiresIn.value <= 0 ? (
+                    <Tag disabled variant="red">
+                      {formatMessage(m.isExpired)}
+                    </Tag>
+                  ) : (
+                    <Tag disabled variant="red">
+                      {formatMessage(m.expiresIn)}
+                      {Math.round(expiresIn.value)}
+                      {expiresIn.key === 'months'
+                        ? formatMessage(m.months)
+                        : formatMessage(m.days)}
+                    </Tag>
+                  )}
                 </Box>
               )}
               <Box paddingTop={expiresIn ? [1, 1, 0] : undefined}>

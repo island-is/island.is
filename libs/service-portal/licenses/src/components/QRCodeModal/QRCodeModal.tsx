@@ -96,7 +96,7 @@ export const QRCodeModal: FC<Props> = ({
           <PkPass licenseType="DriversLicense" />
         </Box>
         <Box marginRight={7} marginY={2}>
-          <Tag>
+          <Tag disabled>
             {formatMessage(m.validUntil)}
             {expires}
           </Tag>
