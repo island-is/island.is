@@ -258,6 +258,8 @@ export class DrivingLicenseService {
         nationalIdTeacher: input.teacherNationalId,
         nationalIdApplicant: nationalId,
         sendLicenseInMail: false,
+        email: input.email,
+        phone: input.phone,
       },
     )
 
