@@ -6,11 +6,8 @@ import {
   FormValue,
   ApplicationStatus,
 } from '@island.is/application/core'
-
 import { Application } from './application.model'
-import { CreateApplicationDto } from './dto/createApplication.dto'
-
-import { ApplicationLifecycle } from './types'
+import { ApplicationLifecycle } from '@island.is/application/core'
 
 const applicationIsNotSetToBePruned = () => ({
   [Op.or]: [
@@ -169,7 +166,20 @@ export class ApplicationService {
     }
   }
 
-  async create(application: CreateApplicationDto): Promise<Application> {
+  async create(
+    application: Partial<
+      Pick<
+        Application,
+        | 'answers'
+        | 'applicant'
+        | 'assignees'
+        | 'attachments'
+        | 'state'
+        | 'status'
+        | 'typeId'
+      >
+    >,
+  ): Promise<Application> {
     return this.applicationModel.create(application)
   }
 

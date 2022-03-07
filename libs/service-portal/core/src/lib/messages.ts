@@ -557,6 +557,10 @@ export const m = defineMessages({
     id: 'service.portal:nudge-info',
     defaultMessage: 'Hnipp',
   },
+  refuseEmailTitle: {
+    id: 'service.portal:refuse-email-title',
+    defaultMessage: 'Tölvupóstur',
+  },
   nextStep: {
     id: 'service.portal:next-step',
     defaultMessage: 'Næsta skref',
