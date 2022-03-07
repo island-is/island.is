@@ -83,56 +83,55 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
               })}
             </Text>
           </GridColumn>
-          {financeStatusData.organizations?.length > 0 ? (
-            <Box display="flex" marginLeft="auto" marginTop={1}>
-              <GridColumn>
-                <Button
-                  colorScheme="default"
-                  icon="print"
-                  iconType="filled"
-                  onClick={() => window.print()}
-                  preTextIconType="filled"
-                  size="default"
-                  type="button"
-                  variant="utility"
-                >
-                  {formatMessage(m.print)}
-                </Button>
-              </GridColumn>
-              <GridColumn>
-                <DropdownExport
-                  onGetCSV={() =>
-                    exportGreidslustadaFile(financeStatusData, 'csv')
-                  }
-                  onGetExcel={() =>
-                    exportGreidslustadaFile(financeStatusData, 'xlsx')
-                  }
-                  dropdownItems={[
-                    {
-                      title: formatMessage(endOfYearMessage, {
-                        year: previousYear,
-                      }),
-                      onClick: () =>
-                        formSubmit(
-                          `${financeStatusData.downloadServiceURL}${previousYear}`,
-                          true,
-                        ),
-                    },
-                    {
-                      title: formatMessage(endOfYearMessage, {
-                        year: twoYearsAgo,
-                      }),
-                      onClick: () =>
-                        formSubmit(
-                          `${financeStatusData.downloadServiceURL}${twoYearsAgo}`,
-                          true,
-                        ),
-                    },
-                  ]}
-                />
-              </GridColumn>
-            </Box>
-          ) : null}
+
+          <Box display="flex" marginLeft="auto" marginTop={1}>
+            <GridColumn>
+              <Button
+                colorScheme="default"
+                icon="print"
+                iconType="filled"
+                onClick={() => window.print()}
+                preTextIconType="filled"
+                size="default"
+                type="button"
+                variant="utility"
+              >
+                {formatMessage(m.print)}
+              </Button>
+            </GridColumn>
+            <GridColumn>
+              <DropdownExport
+                onGetCSV={() =>
+                  exportGreidslustadaFile(financeStatusData, 'csv')
+                }
+                onGetExcel={() =>
+                  exportGreidslustadaFile(financeStatusData, 'xlsx')
+                }
+                dropdownItems={[
+                  {
+                    title: formatMessage(endOfYearMessage, {
+                      year: previousYear,
+                    }),
+                    onClick: () =>
+                      formSubmit(
+                        `${financeStatusData.downloadServiceURL}${previousYear}`,
+                        true,
+                      ),
+                  },
+                  {
+                    title: formatMessage(endOfYearMessage, {
+                      year: twoYearsAgo,
+                    }),
+                    onClick: () =>
+                      formSubmit(
+                        `${financeStatusData.downloadServiceURL}${twoYearsAgo}`,
+                        true,
+                      ),
+                  },
+                ]}
+              />
+            </GridColumn>
+          </Box>
         </GridRow>
         <Box marginTop={[3, 4, 4, 4, 5]}>
           {loading && (
