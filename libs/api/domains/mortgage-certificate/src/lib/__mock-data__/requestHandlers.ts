@@ -14,7 +14,7 @@ export const requestHandlers = [
       ctx.json({ accessToken: '123', audkenni: '123' }),
     )
   }),
-  rest.post(url('/v1/Vedbandayfirlit'), (req, res, ctx) => {
+  rest.post(url('/v1/Vedbokarvottord'), (req, res, ctx) => {
     var { fastanumer } = req.body as {
       fastanumer?: string
     }

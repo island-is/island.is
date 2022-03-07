@@ -34,6 +34,7 @@ export const SelectProperty: FC<FieldBaseProps> = ({
     if (runEvent !== newRunEvent) {
       setRunEvent(newRunEvent)
 
+      // save newly added values to answers
       const updatedAnswers = { ...application.answers, ...getValues() }
 
       submitApplication({
@@ -66,7 +67,7 @@ export const SelectProperty: FC<FieldBaseProps> = ({
         hasKMarking: boolean
       }
 
-      // no certificate found, we go to draft
+      // no certificate found, we stay in draft
       if (!exists) {
         setShowErrorMsg(true)
       }

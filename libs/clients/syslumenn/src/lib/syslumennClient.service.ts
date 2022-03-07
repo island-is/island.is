@@ -223,7 +223,10 @@ export class SyslumennService {
     const res = await api.vedbokarvottordPost({
       skilabod: {
         audkenni: id,
-        fastanumer: propertyNumber,
+        fastanumer:
+          propertyNumber[0] == 'F'
+            ? propertyNumber.substring(1, propertyNumber.length)
+            : propertyNumber,
         tegundAndlags: TegundAndlags.NUMBER_0, // 0 = Real estate
       },
     })
@@ -236,7 +239,6 @@ export class SyslumennService {
     return certificate
   }
 
-  //TODOx update check for exists and hasKMarking when endpoint from Syslumenn works
   async validateMortgageCertificate(
     propertyNumber: string,
   ): Promise<MortgageCertificateValidation> {
@@ -244,9 +246,15 @@ export class SyslumennService {
       // Note: this function will throw an error if something goes wrong
       const certificate = await this.getMortgageCertificate(propertyNumber)
 
+      const exists = certificate.contentBase64.length !== 0
+      const hasKMarking =
+        exists &&
+        certificate.contentBase64 !== 'Precondition Required' &&
+        certificate.contentBase64 === btoa(atob(certificate.contentBase64))
+
       return {
-        exists: certificate.contentBase64.length !== 0,
-        hasKMarking: true,
+        exists: exists,
+        hasKMarking: hasKMarking,
       }
     } catch (exception) {
       return {

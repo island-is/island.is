@@ -1,7 +1,6 @@
 import { EmailTemplateGenerator } from '../../../../types'
 import { NationalRegistry } from '../types'
 import { getValueViaPath } from '@island.is/application/core'
-import { PropertyDetail } from '@island.is/api/domains/assets'
 
 export const generateSyslumennNotifyErrorEmail: EmailTemplateGenerator = (
   props,
@@ -19,7 +18,7 @@ export const generateSyslumennNotifyErrorEmail: EmailTemplateGenerator = (
   var selectedProperty = getValueViaPath(
     application.answers,
     'selectProperty.property',
-  ) as PropertyDetail
+  ) as { propertyNumber: string }
 
   const subject = 'Umsókn um veðbókarvottorð'
   const body = `

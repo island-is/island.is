@@ -1,5 +1,3 @@
-import { PropertyDetail } from '@island.is/api/domains/assets'
-
 export interface SyslumennAuction {
   office: string
   location: string
