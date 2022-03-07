@@ -30,38 +30,11 @@ export const computeCountryResidence = (history: Residence[]) => {
   // account for complicated residence histories overlapping the current year, etc
   // Note: current > yearAgo check is not necessary.. it
   for (const { dateOfChange, country } of sorted) {
-    console.log(country, dateOfChange)
     const current = Math.max(dateOfChange.getTime(), yearAgo)
-    console.log(
-      'CURRENT = ',
-      'Math.round((',
-      new Date(lastTime),
-      ' -',
-      new Date(current),
-      ') / DAY',
-      DAY,
-      ')',
-    )
     const period = Math.round((lastTime - current) / DAY)
-    console.log(
-      'const period = Math.round((',
-      new Date(lastTime),
-      '-',
-      new Date(current),
-      ') / DAY',
-      DAY,
-      ')',
-    )
     timeByCountry[country] = (timeByCountry[country] || 0) + period
-    console.log(
-      'timeByCountry[country] = (timeByCountry[country]',
-      timeByCountry[country],
-      ' || 0) + period',
-      period,
-    )
     lastTime = current
-    console.log('lastTime = current =', new Date(current))
   }
-  console.log(timeByCountry)
+
   return timeByCountry
 }
