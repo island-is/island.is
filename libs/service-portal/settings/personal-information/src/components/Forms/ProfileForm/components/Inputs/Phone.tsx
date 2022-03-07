@@ -353,7 +353,7 @@ export const InputPhone: FC<Props> = ({
                       size="small"
                       disabled={!codeInternal || disabled || verificationValid}
                     >
-                      {formatMessage(m.confirmCode)}
+                      {formatMessage(m.codeConfirmation)}
                     </Button>
                   </button>
                 )}
