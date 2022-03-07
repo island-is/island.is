@@ -1,17 +1,18 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
+import { ApplicationFileModel } from './file.model'
+import { ApplicationEventModel } from './applicationEvent.model'
+import { AmountModel } from './amount.model'
+
 import {
-  ApplicationModelHomeCircumstancesEnum,
   ApplicationModelEmploymentEnum,
-  ApplicationModelStateEnum,
-  ApplicationFileModel,
-  ApplicationEventModel,
-  AmountModel,
   ApplicationModelFamilyStatusEnum,
+  ApplicationModelHomeCircumstancesEnum,
+  ApplicationModelStateEnum,
 } from '@island.is/clients/municipalities-financial-aid'
 
 @ObjectType()
-export class Application {
+export class ApplicationModel {
   @Field(() => ID)
   readonly id!: string
 
@@ -78,16 +79,16 @@ export class Application {
   @Field(() => String)
   readonly state!: ApplicationModelStateEnum
 
-  @Field(() => Array)
+  @Field(() => [ApplicationFileModel], { nullable: true })
   readonly files?: ApplicationFileModel[]
 
   @Field({ nullable: true })
   readonly rejection?: string
 
-  @Field(() => Array, { nullable: true })
+  @Field(() => [ApplicationEventModel], { nullable: true })
   readonly applicationEvents?: ApplicationEventModel[]
 
-  @Field({ nullable: true })
+  @Field(() => AmountModel, { nullable: true })
   readonly amount?: AmountModel | null
 
   @Field({ nullable: true })

@@ -8,17 +8,16 @@ import {
   ApplicationState,
   FamilyStatus,
 } from '@island.is/financial-aid/shared/lib'
-
 import { CreateApplicationFileInput } from './createFile.input'
 
 @InputType()
-export class CreateApplicationInput {
+export class CreateMunicipalitiesApplicationInput {
   @Allow()
   @Field()
   readonly name!: string
 
   @Allow()
-  @Field()
+  @Field({ nullable: true })
   readonly phoneNumber!: string
 
   @Allow()
@@ -82,7 +81,7 @@ export class CreateApplicationInput {
   readonly state!: ApplicationState
 
   @Allow()
-  @Field(() => [String])
+  @Field(() => [CreateApplicationFileInput])
   readonly files!: string[]
 
   @Allow()

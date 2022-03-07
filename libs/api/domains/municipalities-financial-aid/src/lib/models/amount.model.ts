@@ -11,7 +11,7 @@ export class AmountModel {
   readonly aidAmount!: number
 
   @Field({ nullable: true })
-  readonly income?: number
+  readonly income!: number
 
   @Field()
   readonly personalTaxCredit!: number
@@ -26,5 +26,5 @@ export class AmountModel {
   readonly finalAmount!: number
 
   @Field(() => [DeductionFactorsModel], { nullable: true })
-  readonly deductionFactors?: DeductionFactorsModel[]
+  readonly deductionFactors!: DeductionFactorsModel[]
 }

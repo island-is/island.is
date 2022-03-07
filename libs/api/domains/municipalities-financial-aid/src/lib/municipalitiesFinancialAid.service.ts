@@ -3,17 +3,12 @@ import type { Auth } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
   ApplicationApi,
-  GetSignedUrlDto,
   MunicipalityApi,
   FilesApi,
-  FileControllerCreateSignedUrlRequest,
-  CreateFilesModelFromJSON,
-  CreateApplicationDto,
 } from '@island.is/clients/municipalities-financial-aid'
 import { MunicipalityQueryInput } from './models/municipality.input'
-import { SignedUrlModel } from './models/signedUrl.model'
 import { GetSignedUrlInput } from './dto/getSignedUrl.input'
-import { CreateApplicationInput } from './dto/createApplication.input'
+import { CreateMunicipalitiesApplicationInput } from './dto/createApplication.input'
 
 @Injectable()
 export class MunicipalitiesFinancialAidService {
@@ -82,7 +77,7 @@ export class MunicipalitiesFinancialAidService {
 
   async municipalitiesFinancialAidCreateApplication(
     auth: Auth,
-    application: CreateApplicationInput,
+    application: CreateMunicipalitiesApplicationInput,
   ) {
     return await this.applicationApiWithAuth(auth)
       .applicationControllerCreate({ createApplicationDto: application })

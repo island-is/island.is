@@ -279,6 +279,14 @@ export class ApplicationService {
       await Promise.all(promises)
     }
 
+    if (appModel.getDataValue('files') === undefined) {
+      appModel.setDataValue('files', [])
+    }
+
+    if (appModel.getDataValue('applicationEvents') === undefined) {
+      appModel.setDataValue('applicationEvents', [])
+    }
+
     await this.createApplicationEmails(application, appModel)
 
     return appModel

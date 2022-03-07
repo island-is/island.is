@@ -13,8 +13,7 @@ import { MunicipalityQueryInput } from './models/municipality.input'
 import { SignedUrlModel } from './models/signedUrl.model'
 import { GetSignedUrlInput } from './dto/getSignedUrl.input'
 import { CreateMunicipalitiesApplicationInput } from './dto/createApplication.input'
-import { ApplicationModel as xApplicationModel } from './models/application.model'
-import { ApplicationModel } from '@island.is/clients/municipalities-financial-aid'
+import { ApplicationModel } from './models/application.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -56,7 +55,7 @@ export class MunicipalitiesFinancialAidResolver {
     )
   }
 
-  @Mutation(() => xApplicationModel, { nullable: true })
+  @Mutation(() => ApplicationModel, { nullable: true })
   createMunicipalitiesApplication(
     @Args('input', { type: () => CreateMunicipalitiesApplicationInput })
     input: CreateMunicipalitiesApplicationInput,

@@ -1,9 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-import { DeductionFactors } from '@island.is/financial-aid/shared/lib'
-
 @ObjectType()
-export class DeductionFactorsModel implements DeductionFactors {
+export class DeductionFactorsModel {
   @Field()
   readonly amount!: number
 

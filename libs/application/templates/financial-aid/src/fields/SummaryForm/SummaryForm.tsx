@@ -43,35 +43,36 @@ const SummaryForm = ({
 
   const { createApplication } = useApplication()
 
-  // setBeforeSubmitCallback &&
-  //   setBeforeSubmitCallback(async () => {
-  //     console.log('hello')
-  //     await createApplication(application)
+  setBeforeSubmitCallback &&
+    setBeforeSubmitCallback(async () => {
+      await createApplication(application).then((response) => {
+        return response
+      })
 
-  //     // if (!pdfUrl) {
-  //     //   return [false, 'no pdf url']
-  //     // }
-  //     // dispatchFileSignature({ type: FileSignatureActionTypes.REQUEST })
-  //     // const documentToken = await requestFileSignature({
-  //     //   variables: {
-  //     //     input: {
-  //     //       id: application.id,
-  //     //       type: pdfType,
-  //     //     },
-  //     //   },
-  //     // })
-  //     //   .then((response) => {
-  //     //     return response.data?.requestFileSignature?.documentToken
-  //     //   })
-  //     //   .catch((error: ApolloError) => {
-  //     //     dispatchFileSignature({
-  //     //       type: FileSignatureActionTypes.ERROR,
-  //     //       status: FileSignatureStatus.REQUEST_ERROR,
-  //     //       error: error.graphQLErrors[0].extensions?.code ?? 500,
-  //     //     })
-  //     //   })
-  //     return [false, 'Failed to update application']
-  //   })
+      // if (!pdfUrl) {
+      //   return [false, 'no pdf url']
+      // }
+      // dispatchFileSignature({ type: FileSignatureActionTypes.REQUEST })
+      // const documentToken = await requestFileSignature({
+      //   variables: {
+      //     input: {
+      //       id: application.id,
+      //       type: pdfType,
+      //     },
+      //   },
+      // })
+      //   .then((response) => {
+      //     return response.data?.requestFileSignature?.documentToken
+      //   })
+      //   .catch((error: ApolloError) => {
+      //     dispatchFileSignature({
+      //       type: FileSignatureActionTypes.ERROR,
+      //       status: FileSignatureStatus.REQUEST_ERROR,
+      //       error: error.graphQLErrors[0].extensions?.code ?? 500,
+      //     })
+      //   })
+      return [false, 'Failed to update application']
+    })
 
   return (
     <>
