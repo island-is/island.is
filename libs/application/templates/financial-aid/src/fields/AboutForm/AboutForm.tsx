@@ -7,7 +7,7 @@ import { currentMonth } from '@island.is/financial-aid/shared/lib'
 import { DescriptionText, PrivacyPolicyAccordion } from '..'
 
 const AboutForm = () => {
-  // TODO 
+  // TODO
   // - send correct props to accordion
 
   const { formatMessage } = useIntl()
@@ -23,7 +23,10 @@ const AboutForm = () => {
         <DescriptionText text={aboutForm.bulletList.content} />
       </Box>
 
-      <PrivacyPolicyAccordion municipalityPageName='reykjavik.is' municipalityPageUrl='https://reykjavik.is/' />
+      <PrivacyPolicyAccordion
+        municipalityPageName="reykjavik.is"
+        municipalityPageUrl="https://reykjavik.is/"
+      />
     </>
   )
 }

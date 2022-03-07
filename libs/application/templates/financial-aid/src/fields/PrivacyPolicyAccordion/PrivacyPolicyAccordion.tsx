@@ -9,7 +9,10 @@ interface Props {
   municipalityPageUrl: string
 }
 
-const PrivacyPolicyAccordion = ({ municipalityPageName, municipalityPageUrl }: Props) => {
+const PrivacyPolicyAccordion = ({
+  municipalityPageName,
+  municipalityPageUrl,
+}: Props) => {
   const { formatMessage } = useIntl()
 
   return (
