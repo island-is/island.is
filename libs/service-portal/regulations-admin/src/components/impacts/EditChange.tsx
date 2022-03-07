@@ -75,7 +75,7 @@ export const EditChange = (props: EditChangeProp) => {
   useEffect(() => {
     setActiveRegulation(regulation)
   }, [regulation])
-  const { data: draftImpacts } = useGetRegulationImpactsQuery(activeChange.name)
+  const { data: draftImpacts } = useGetRegulationImpactsQuery(change.name)
 
   const { allFutureEffects, hasImpactMismatch } = useGetRegulationHistory(
     regulation,
