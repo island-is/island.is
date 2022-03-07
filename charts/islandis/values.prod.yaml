@@ -1128,7 +1128,7 @@ service-portal-api:
     DB_USER: 'service_portal_api'
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
-    NODE_OPTIONS: '--max-old-space-size=464'
+    NODE_OPTIONS: '--max-old-space-size=976'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SERVICE_PORTAL_BASE_URL: 'https://island.is/minarsidur'
   grantNamespaces:
@@ -1155,13 +1155,12 @@ service-portal-api:
         command:
           - 'npx'
         resources:
-          resources:
-            limits:
-              cpu: '400m'
-              memory: '512Mi'
-            requests:
-              cpu: '100m'
-              memory: '256Mi'
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '100m'
+            memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'service_portal_api'
@@ -1179,11 +1178,11 @@ service-portal-api:
     min: 2
   resources:
     limits:
+      cpu: '800m'
+      memory: '1024Mi'
+    requests:
       cpu: '400m'
       memory: '512Mi'
-    requests:
-      cpu: '200m'
-      memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'

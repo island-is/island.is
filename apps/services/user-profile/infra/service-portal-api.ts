@@ -34,9 +34,14 @@ export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
     })
     .liveness('/liveness')
     .readiness('/readiness')
+    .replicaCount({
+      default: 2,
+      max: 30,
+      min: 2
+    })
     .resources({
-      limits: { cpu: '400m', memory: '512Mi' },
-      requests: { cpu: '100m', memory: '256Mi' },
+      limits: { cpu: '800m', memory: '1024Mi' },
+      requests: { cpu: '400m', memory: '512Mi' },
     })
     .postgres({ passwordSecret: '/k8s/service-portal/api/DB_PASSWORD' })
     .grantNamespaces('nginx-ingress-external', 'islandis', 'user-notification')
