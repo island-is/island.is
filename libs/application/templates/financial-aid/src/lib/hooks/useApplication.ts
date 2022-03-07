@@ -9,8 +9,10 @@ import {
 import { UploadFile } from '@island.is/island-ui/core'
 
 export const CreateApplicationMutation = gql`
-  mutation createApplication($input: CreateApplicationInput!) {
-    createApplication(input: $input) {
+  mutation createMunicipalitiesApplication(
+    $input: CreateMunicipalitiesApplicationInput!
+  ) {
+    createMunicipalitiesApplication(input: $input) {
       id
     }
   }

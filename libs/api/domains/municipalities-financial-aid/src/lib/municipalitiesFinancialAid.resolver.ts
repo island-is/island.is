@@ -12,9 +12,9 @@ import { MunicipalityModel } from './models/municipality.model'
 import { MunicipalityQueryInput } from './models/municipality.input'
 import { SignedUrlModel } from './models/signedUrl.model'
 import { GetSignedUrlInput } from './dto/getSignedUrl.input'
+import { CreateMunicipalitiesApplicationInput } from './dto/createApplication.input'
+import { ApplicationModel as xApplicationModel } from './models/application.model'
 import { ApplicationModel } from '@island.is/clients/municipalities-financial-aid'
-import { CreateApplicationInput } from './dto/createApplication.input'
-import { Application } from './models/application.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -56,16 +56,15 @@ export class MunicipalitiesFinancialAidResolver {
     )
   }
 
-  // @Mutation(() => Application, { nullable: true })
-  // createApplication(
-  //   @Args('input', { type: () => CreateApplicationInput })
-  //   input: CreateApplicationInput,
-  //   @CurrentUser() user: User,
-  // ): Promise<ApplicationModel | undefined> {
-  //   return Promise.resolve(undefined)
-  //   // return this.municipalitiesFinancialAidService.municipalitiesFinancialAidCreateApplication(
-  //   //   user,
-  //   //   input,
-  //   // )
-  // }
+  @Mutation(() => xApplicationModel, { nullable: true })
+  createMunicipalitiesApplication(
+    @Args('input', { type: () => CreateMunicipalitiesApplicationInput })
+    input: CreateMunicipalitiesApplicationInput,
+    @CurrentUser() user: User,
+  ): Promise<ApplicationModel | null> {
+    return this.municipalitiesFinancialAidService.municipalitiesFinancialAidCreateApplication(
+      user,
+      input,
+    )
+  }
 }
