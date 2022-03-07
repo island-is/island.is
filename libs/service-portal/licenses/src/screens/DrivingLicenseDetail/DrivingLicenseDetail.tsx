@@ -13,7 +13,9 @@ import {
   AlertBanner,
 } from '@island.is/island-ui/core'
 import {
+  PlausiblePageviewDetail,
   ServicePortalModuleComponent,
+  ServicePortalPath,
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
@@ -31,6 +33,9 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
   const [modalOpen, setModalOpen] = useState(false)
   const { data, loading, error } = useDrivingLicense()
 
+  PlausiblePageviewDetail(
+    ServicePortalPath.LicensesDrivingDetail.replace(':id', 'detail'),
+  )
   const licenseExpired = data && isExpired(new Date(), new Date(data.gildirTil))
 
   const licenseIssuedText = formatMessage({
