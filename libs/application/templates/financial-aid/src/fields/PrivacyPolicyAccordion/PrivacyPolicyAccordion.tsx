@@ -14,7 +14,7 @@ const PrivacyPolicyAccordion = ({ municipalityPageName, municipalityPageUrl }: P
 
   return (
     <>
-      <Text as="h3" variant="h3" marginBottom={2} marginTop={5}>
+      <Text as="h3" variant="h3" marginBottom={2}>
         {formatMessage(privacyPolicyAccordion.general.sectionTitle)}
       </Text>
       <Accordion singleExpand>

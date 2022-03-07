@@ -1,12 +1,15 @@
 import React from 'react'
-import { Text, Accordion, AccordionItem, Box } from '@island.is/island-ui/core'
+import { Text, Box } from '@island.is/island-ui/core'
 import { aboutForm } from '../../lib/messages'
 import { useIntl } from 'react-intl'
 
 import { currentMonth } from '@island.is/financial-aid/shared/lib'
-import { DescriptionText } from '..'
+import { DescriptionText, PrivacyPolicyAccordion } from '..'
 
 const AboutForm = () => {
+  // TODO 
+  // - send correct props to accordion
+
   const { formatMessage } = useIntl()
 
   return (
@@ -16,28 +19,11 @@ const AboutForm = () => {
           currentMonth: currentMonth(),
         })}
       </Text>
-      <Box marginBottom={3}>
+      <Box marginBottom={5}>
         <DescriptionText text={aboutForm.bulletList.content} />
       </Box>
 
-      <Text as="h2" variant="h3" marginBottom={2} marginTop={5}>
-        {formatMessage(aboutForm.personalInformation.sectionTitle)}
-      </Text>
-
-      <Accordion singleExpand>
-        <AccordionItem
-          id="id_1"
-          label={formatMessage(aboutForm.personalInformation.accordionTitle)}
-        >
-          <DescriptionText
-            text={aboutForm.personalInformation.accordionAbout}
-            format={{
-              homePageName: 'slóð sveitarfélags',
-              homePageNameUrl: '',
-            }}
-          />
-        </AccordionItem>
-      </Accordion>
+      <PrivacyPolicyAccordion municipalityPageName='reykjavik.is' municipalityPageUrl='https://reykjavik.is/' />
     </>
   )
 }

@@ -1,5 +1,6 @@
 import React from 'react'
 import { currentMonth, months, nextMonth } from '@island.is/financial-aid/shared/lib'
+import { Box } from '@island.is/island-ui/core'
 import { aboutSpouseForm } from '../../lib/messages'
 import { DescriptionText, PrivacyPolicyAccordion } from '..'
 
@@ -15,7 +16,9 @@ const AboutSpouseForm = () => {
         currentMonth: currentMonth(),
         nextMonth: months[nextMonth()]
       }} />
-      <PrivacyPolicyAccordion municipalityPageName='reykjavik.is' municipalityPageUrl='https://reykjavik.is/' />
+      <Box marginTop={5}>
+        <PrivacyPolicyAccordion municipalityPageName='reykjavik.is' municipalityPageUrl='https://reykjavik.is/' />
+      </Box>
     </>
   )
 }
