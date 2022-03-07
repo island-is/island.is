@@ -25,7 +25,7 @@ interface NationalRegistryAddress {
   municipalityCode?: string | null
 }
 
-export const getResidenceHistory = (
+export const hasResidenceHistory = (
   history: NationalRegistryResidence[] | undefined,
 ) => {
   if (history) {
@@ -43,7 +43,7 @@ export const getResidenceHistory = (
         }
     })
     const countryResidency = computeCountryResidence(res as Residence[])
-    return countryResidency ? countryResidency['IS'] >= 180 : false
+    return countryResidency ? countryResidency['IS'] >= 185 : false
   }
   return false
 }
