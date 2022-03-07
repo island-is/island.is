@@ -23,7 +23,6 @@ const ExpandableLine: FC<Props> = ({ data }) => {
             </Text>
           </T.HeadData>
         ))}
-        <T.HeadData box={{ printHidden: true }}></T.HeadData>
       </T.Row>
     </T.Head>
   )
