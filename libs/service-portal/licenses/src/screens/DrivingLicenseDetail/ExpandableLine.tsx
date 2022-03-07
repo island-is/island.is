@@ -45,7 +45,7 @@ const ExpandableLine: FC<Props> = ({
 
   useEffect(() => {
     if (!closed)
-      ref.current?.scrollIntoView({ block: 'end', behavior: 'smooth' })
+      ref.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
   }, [closed])
 
   function onExpandButton() {
