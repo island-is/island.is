@@ -51,7 +51,8 @@ interface StepperProps {
   startAgainLabel?: string
   answerLabel?: string
   backLabel?: string
-  optionsFromNamespace: { slug: string; data: [] }[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  optionsFromNamespace: { slug: string; data: Record<string, any>[] }[]
 }
 
 interface StepOptionSelectItem {
