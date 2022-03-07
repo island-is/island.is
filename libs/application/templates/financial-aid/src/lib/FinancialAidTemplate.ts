@@ -123,6 +123,8 @@ const FinancialAidTemplate: ApplicationTemplate<
                 import('../forms/Submitted').then((module) =>
                   Promise.resolve(module.Submitted),
                 ),
+              // TODO: Limit this
+              read: 'all',
             },
           ],
         },

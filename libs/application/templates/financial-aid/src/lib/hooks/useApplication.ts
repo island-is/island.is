@@ -93,11 +93,11 @@ const useApplication = () => {
         })
 
         if (data) {
-          return data
+          return data.createMunicipalitiesApplication.id
         }
       }
     },
-    [],
+    [createApplicationMutation],
   )
   return { createApplication }
 }

@@ -39,6 +39,11 @@ export const summaryForm = {
       defaultMessage: 'Senda umsókn',
       description: 'Summary form submit application button',
     },
+    errorMessage: {
+      id: 'fa.application:section.summaryForm.general.errorMessage',
+      defaultMessage: 'Obbobbob eitthvað fór úrskeiðis',
+      description: 'Summary form when fails to submit application',
+    },
   }),
   userInfo: defineMessages({
     name: {

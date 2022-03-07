@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   Text,
   Box,
@@ -29,6 +29,9 @@ import {
 import AllFiles from './AllFiles'
 import useApplication from '../../lib/hooks/useApplication'
 
+import cn from 'classnames'
+import * as styles from './../Shared.css'
+
 const SummaryForm = ({
   application,
   goToScreen,
@@ -36,6 +39,7 @@ const SummaryForm = ({
 }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { id, answers, externalData } = application
+  const [formError, setFormError] = useState(false)
 
   const { setValue } = useFormContext()
 
@@ -45,32 +49,19 @@ const SummaryForm = ({
 
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
-      await createApplication(application).then((response) => {
-        return response
-      })
+      const createApp = await createApplication(application)
+        .then((response) => {
+          externalData.veita.data.currentApplicationId = response
+          return true
+        })
+        .catch(() => {
+          setFormError(true)
+          return false
+        })
 
-      // if (!pdfUrl) {
-      //   return [false, 'no pdf url']
-      // }
-      // dispatchFileSignature({ type: FileSignatureActionTypes.REQUEST })
-      // const documentToken = await requestFileSignature({
-      //   variables: {
-      //     input: {
-      //       id: application.id,
-      //       type: pdfType,
-      //     },
-      //   },
-      // })
-      //   .then((response) => {
-      //     return response.data?.requestFileSignature?.documentToken
-      //   })
-      //   .catch((error: ApolloError) => {
-      //     dispatchFileSignature({
-      //       type: FileSignatureActionTypes.ERROR,
-      //       status: FileSignatureStatus.REQUEST_ERROR,
-      //       error: error.graphQLErrors[0].extensions?.code ?? 500,
-      //     })
-      //   })
+      if (createApp) {
+        return [true, null]
+      }
       return [false, 'Failed to update application']
     })
 
@@ -265,7 +256,7 @@ const SummaryForm = ({
         {formatMessage(m.summaryForm.formInfo.formCommentLabel)}
       </Text>
 
-      <Box marginTop={[3, 3, 4]}>
+      <Box marginTop={[3, 3, 4]} marginBottom={4}>
         <Controller
           name={formCommentId}
           defaultValue={answers?.formComment}
@@ -290,6 +281,15 @@ const SummaryForm = ({
             )
           }}
         />
+      </Box>
+      <Box
+        className={cn(styles.errorMessage, {
+          [`${styles.showErrorMessage}`]: formError,
+        })}
+      >
+        <Text color="red600" fontWeight="semiBold" variant="small">
+          {formatMessage(m.summaryForm.general.errorMessage)}
+        </Text>
       </Box>
     </>
   )
