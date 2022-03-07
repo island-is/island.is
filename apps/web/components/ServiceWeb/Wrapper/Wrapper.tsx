@@ -35,6 +35,7 @@ interface WrapperProps {
   searchTitle?: string
   organizationTitle?: string
   smallBackground?: boolean
+  searchPlaceholder?: string
 }
 
 export const Wrapper: FC<WrapperProps> = ({
@@ -46,6 +47,7 @@ export const Wrapper: FC<WrapperProps> = ({
   searchTitle,
   organizationTitle,
   smallBackground,
+  searchPlaceholder,
   children,
 }) => {
   const [options, setOptions] = useState<Options>({
@@ -91,6 +93,7 @@ export const Wrapper: FC<WrapperProps> = ({
               logoUrl={logoUrl}
               title={searchTitle}
               textMode={textMode}
+              searchPlaceholder={searchPlaceholder}
             />
           </Box>
         )}
