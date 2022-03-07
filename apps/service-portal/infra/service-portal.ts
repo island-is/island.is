@@ -8,7 +8,7 @@ export const serviceSetup = (services: {}): ServiceBuilder<'service-portal'> =>
     .replicaCount({
       default: 2,
       max: 20,
-      min: 2
+      min: 2,
     })
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
