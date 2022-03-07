@@ -1155,12 +1155,13 @@ service-portal-api:
         command:
           - 'npx'
         resources:
-          limits:
-            cpu: '200m'
-            memory: '256Mi'
-          requests:
-            cpu: '100m'
-            memory: '128Mi'
+          resources:
+            limits:
+              cpu: '400m'
+              memory: '512Mi'
+            requests:
+              cpu: '100m'
+              memory: '256Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'service_portal_api'
@@ -1174,14 +1175,14 @@ service-portal-api:
     fsGroup: 65534
   replicaCount:
     default: 2
-    max: 10
+    max: 30
     min: 2
   resources:
     limits:
       cpu: '400m'
       memory: '512Mi'
     requests:
-      cpu: '100m'
+      cpu: '200m'
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
