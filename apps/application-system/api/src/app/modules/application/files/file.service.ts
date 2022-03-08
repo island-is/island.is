@@ -7,14 +7,14 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 import { PdfTypes } from '@island.is/application/core'
-import { Application } from './../application.model'
+import { Application } from '@island.is/application/api/core'
 import { SigningService } from '@island.is/dokobit-signing'
 import {
   BucketTypePrefix,
   DokobitFileName,
   DokobitErrorCodes,
 } from './utils/constants'
-import { AwsService } from './aws.service'
+import { AwsService } from '@island.is/nest/aws'
 import { getOtherParentInformation } from '@island.is/application/templates/family-matters-core/utils'
 import { CRCApplication } from '@island.is/application/templates/children-residence-change'
 import type { ApplicationConfig } from '../application.configuration'
