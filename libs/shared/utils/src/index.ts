@@ -5,3 +5,4 @@
 export { getStaticEnv } from './lib/getStaticEnv'
 export { isRunningOnEnvironment, getActiveEnvironment } from './lib/environment'
 export { shouldLinkOpenInNewWindow } from './lib/shouldLinkOpenInNewWindow'
+export { formatNationalId } from './lib/formatNationalId'
