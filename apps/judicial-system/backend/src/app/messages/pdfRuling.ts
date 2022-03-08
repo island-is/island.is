@@ -17,12 +17,6 @@ export const ruling = {
     description:
       'Notað sem undirsögn á úrskurði þar sem {caseNumber} er númer á máli. {caseNumber} er sjálfkrafa bætt við í kóða.',
   }),
-  intro: defineMessage({
-    id: 'judicial.system.backend:pdf.ruling.intro',
-    defaultMessage:
-      'Mál þetta var þingfest og tekið til úrskurðar {courtStartDate}',
-    description: 'Notaður sem upphafstexti í úrskurði.',
-  }),
   prosecutorIs: defineMessage({
     id: 'judicial.system.backend:pdf.ruling.prosecutor_is',
     defaultMessage: 'Sóknaraðili er',
