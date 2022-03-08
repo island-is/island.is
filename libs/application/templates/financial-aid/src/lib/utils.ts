@@ -35,6 +35,5 @@ export function hasActiveCurrentApplication(context: ApplicationContext) {
     externalData,
     'veita.data',
   ) as CurrentApplication
-
-  return dataProvider.currentApplicationId === undefined
+  return !Boolean(dataProvider.currentApplicationId)
 }
