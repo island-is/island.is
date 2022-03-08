@@ -7,6 +7,12 @@ import {
 } from 'xstate'
 
 import { Step, Stepper } from '@island.is/api/schema'
+import {
+  GetNamespaceQuery,
+  QueryGetNamespaceArgs,
+} from '@island.is/web/graphql/schema'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
 
 const sourceNamespacesThatNeedToBeSorted = ['Countries']
 
@@ -379,6 +385,47 @@ const getStepQuestion = (step: Step): string => {
   return ''
 }
 
+const getStepOptionsFromUIConfiguration = async (
+  stepper: Stepper,
+  apolloClient: ApolloClient<NormalizedCacheObject>,
+) => {
+  const stepOptions: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data: Record<string, any>[]
+    slug: string
+  }[] = []
+
+  const queries = stepper.steps.map((step) => {
+    const stepOptionsNameSpace = getStepOptionsSourceNamespace(step as Step)
+    if (!stepOptionsNameSpace) return null
+    return apolloClient
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: stepOptionsNameSpace,
+            lang: 'is',
+          },
+        },
+      })
+      .then((content) => {
+        // map data here to reduce data processing in component
+        return JSON.parse(content.data.getNamespace.fields)
+      })
+  })
+
+  const dataArray = await Promise.all(queries)
+
+  for (let i = 0; i < dataArray.length; i += 1) {
+    stepOptions.push({
+      slug: stepper.steps[i].slug,
+      data: dataArray[i],
+    })
+  }
+
+  return stepOptions.filter(Boolean)
+}
+
 export { STEP_TYPES }
 export {
   getStepBySlug,
@@ -387,6 +434,7 @@ export {
   getStepperMachine,
   resolveStepType,
   getStepOptions,
+  getStepOptionsFromUIConfiguration,
   getStepQuestion,
   getStepOptionsSourceNamespace,
   getCurrentStepAndStepType,

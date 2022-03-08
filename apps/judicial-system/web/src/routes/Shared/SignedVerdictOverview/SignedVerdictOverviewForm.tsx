@@ -43,6 +43,7 @@ import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/uti
 import {
   capitalize,
   caseTypes,
+  formatDate,
   getShortRestrictionByValue,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
@@ -55,6 +56,7 @@ import AppealSection from './Components/AppealSection/AppealSection'
 import { SignedDocument } from './Components/SignedDocument'
 import CaseDates from './Components/CaseDates/CaseDates'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 
 interface Props {
   workingCase: Case
@@ -161,6 +163,16 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             <Box marginBottom={1}>
               <Text as="h1" variant="h1">
                 {titleForCase(workingCase)}
+              </Text>
+            </Box>
+            <Box>
+              <Text variant="h5">
+                {formatMessage(m.rulingDateLabel, {
+                  courtEndTime: `${formatDate(
+                    workingCase.courtEndTime,
+                    'PPP',
+                  )} kl. ${formatDate(workingCase.courtEndTime, TIME_FORMAT)}`,
+                })}
               </Text>
             </Box>
           </Box>

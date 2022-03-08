@@ -83,7 +83,7 @@ const FinanceStatus: ServicePortalModuleComponent = ({ userInfo }) => {
               })}
             </Text>
           </GridColumn>
-          {financeStatusData.organizations?.length > 0 ? (
+          {financeStatusData.organizations?.length > 0 || financeStatusZero ? (
             <Box display="flex" marginLeft="auto" marginTop={1}>
               <GridColumn>
                 <Button

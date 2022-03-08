@@ -37,6 +37,7 @@ export const nudgeSave = style({
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {
       marginTop: theme.spacing['2'],
+      marginLeft: 0,
     },
   },
 })
