@@ -60,7 +60,10 @@ const ApplicationLoader: FC<{
   }
 
   if (!applicationId || error) {
-    
+    console.log("TO DELEGATIONS", applicationId,
+      delegationsChecked,
+      type
+    )
     if (applicationId &&
       !delegationsChecked &&
       type

@@ -186,12 +186,12 @@ export class ApplicationResolver {
   ): Promise<PresignedUrlResponse> {
     return this.applicationService.attachmentPresignedURL(input, user)
   }
-  @Query(() => Boolean)
+  @Query(() => Application)
   delegationApplicantApplication(
 
     @Args('input') input: ApplicationApplicationInput,
     @CurrentUser() user: User,
-  ): Promise<boolean> {
+    ): Promise<Application> {
     return this.applicationService.findDelegationApplicant(input.id, user)
   }
 

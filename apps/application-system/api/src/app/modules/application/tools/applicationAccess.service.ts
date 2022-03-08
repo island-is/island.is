@@ -42,23 +42,26 @@ export class ApplicationAccessService {
     ).actorDelegationsControllerFindAll({
       direction: ActorDelegationsControllerFindAllDirectionEnum.Incoming,
     })
-    console.log("DELEGATIONS", delegations)
+    console.log('DELEGATIONS', delegations)
     const nationalIds: string[] = delegations.map(
       (delegation: DelegationDTO) => delegation.fromNationalId,
     )
-    console.log("national", nationalIds)
+    console.log('national', nationalIds)
     const actorApplication = await this.applicationService.findDelegatedApplicant(
       id,
       nationalIds,
     )
     if (actorApplication) {
-      console.log("actorAPLL")
+      if (actorApplication.applicant === auth['nationalId']) {
+        return actorApplication
+      }
+      console.log("APPLICANT", actorApplication.applicant)
       throw new ActorValidationFailed({
         delegatedUser: actorApplication.applicant,
-        actor: auth.nationalId || "",
+        actor: auth.nationalId || '',
       })
     }
-    console.log("ITS THE 404 FOR ME")
+    console.log('ITS THE 404 FOR ME')
     throw new NotFoundException(
       `An application with the id ${id} does not exist`,
     )

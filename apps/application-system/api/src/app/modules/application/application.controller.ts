@@ -145,20 +145,19 @@ export class ApplicationController {
 
   @Scopes(ApplicationScope.read)
   @Get('applications/delegated/:id')
-  @ApiOkResponse({} )
-  // @Audit<ApplicationResponseDto>({
-  //   resources: (app) => app.id,
-  // })
+  @ApiOkResponse({ type: ApplicationResponseDto })
+  @Audit<ApplicationResponseDto>({
+    resources: (app) => app.id,
+  })
   async findDelegatedApplicant(
     @Param('id', new ParseUUIDPipe()) id: string,
     @CurrentUser() user: User,
-  ): Promise<void> {
-    await this.applicationAccessService.findOneByIdAndDelegations(
+    ): Promise<ApplicationResponseDto> {
+    return await this.applicationAccessService.findOneByIdAndDelegations(
       id,
       user,
     )
 
-    return 
   }
 
   @Scopes(ApplicationScope.read)

@@ -49,13 +49,7 @@ export class ApplicationService {
   }
 
   async findDelegationApplicant(id: string, auth: Auth) {
-    // const delegations= await this.delegationsApiWithAuth(auth).actorDelegationsControllerFindAll({
-    //   direction: ActorDelegationsControllerFindAllDirectionEnum.Incoming,
-    // })
-    
-
-    // return ""
-    return await !!this.applicationApiWithAuth(auth).applicationControllerFindDelegatedApplicant(
+    return await this.applicationApiWithAuth(auth).applicationControllerFindDelegatedApplicant(
       {
         id
       })

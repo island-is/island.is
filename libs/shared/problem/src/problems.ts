@@ -29,7 +29,7 @@ export type ActorValidationFailedFields = {
 
 export interface ActorValidationFailedProblem extends BaseProblem {
   type: ProblemType.ACTOR_VALIDATION_FAILED
-  fields: ActorValidationFailedFields
+  fields: ValidationFailedFields
 }
 
 // Should be avoided whenever possible in favour of typed problems.

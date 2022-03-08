@@ -71,7 +71,9 @@ export const DelegationsScreen = ({
 
   // Check if user has the delegations of the delegation types the application supports
   useEffect(() => {
-    const foundError = findProblemInApolloError(error)
+    console.log("ERROR", error)
+    const foundError = findProblemInApolloError(error, [ProblemType.ACTOR_VALIDATION_FAILED])
+    console.log(foundError)
     if (delegations && allowedDelegations && foundError?.type === ProblemType.ACTOR_VALIDATION_FAILED) {
       const problem: ActorValidationFailedProblem  = foundError
       // Does the actor have delegation for the applicant of the application
