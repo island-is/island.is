@@ -40,7 +40,7 @@ const useApplication = () => {
 
   const createApplication = useMemo(
     () => async (application: FAApplication): Promise<string | undefined> => {
-      const { id, answers, externalData } = application
+      const { answers, externalData } = application
 
       if (isCreatingApplication === false) {
         const files = formatFiles(
