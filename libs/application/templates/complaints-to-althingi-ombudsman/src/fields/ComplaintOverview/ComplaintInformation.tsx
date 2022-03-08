@@ -47,7 +47,7 @@ export const ComplaintInformation: FC<Props> = ({
         </GridColumn>
       </GridRow>
       <GridRow>
-        <GridColumn span='9/12'>
+        <GridColumn span="9/12">
           <ValueLine
             label={complaintOverview.labels.complaintDescription}
             value={description}
