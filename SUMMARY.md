@@ -199,6 +199,7 @@
 - [React Libraries](libs/react/README.md)
   - [Feature Flags](libs/react/feature-flags/README.md)
 - [Regulations](libs/regulations/README.md)
+- [Residence History](libs/residence-history/README.md)
 - [Service Portal](libs/service-portal/README.md)
   - [Core](libs/service-portal/core/README.md)
 - [Shared](libs/shared/README.md)

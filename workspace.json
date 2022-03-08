@@ -6735,6 +6735,27 @@
         }
       }
     },
+    "residence-history": {
+      "root": "libs/residence-history",
+      "sourceRoot": "libs/residence-history/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/residence-history/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/residence-history"],
+          "options": {
+            "jestConfig": "libs/residence-history/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "service-portal": {
       "root": "apps/service-portal",
       "sourceRoot": "apps/service-portal/src",
