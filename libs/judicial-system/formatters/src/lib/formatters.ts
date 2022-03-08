@@ -90,6 +90,7 @@ export const caseTypes = {
   INTERNET_USAGE: 'upplýsingar um vefnotkun',
   RESTRAINING_ORDER: 'nálgunarbann',
   ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'rannsókn á rafrænum gögnum',
+  VIDEO_RECORDING_EQUIPMENT: 'myndupptökubúnaði komið fyrir',
   OTHER: 'annað',
 }
 
