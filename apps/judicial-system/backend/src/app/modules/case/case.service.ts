@@ -29,6 +29,7 @@ import {
 import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
+import { now } from '../../factories'
 import {
   getRequestPdfAsBuffer,
   getRulingPdfAsString,
@@ -722,7 +723,7 @@ export class CaseService {
       theCase.id,
       {
         courtRecordSignatoryId: user.id,
-        courtRecordSignatureDate: new Date(),
+        courtRecordSignatureDate: now(),
       } as UpdateCaseDto,
       false,
     )
@@ -785,7 +786,7 @@ export class CaseService {
     await this.update(
       theCase.id,
       {
-        rulingDate: new Date(),
+        rulingDate: now(),
       } as UpdateCaseDto,
       false,
     )
