@@ -282,14 +282,11 @@ export class SyslumennService {
       return {
         propertyNumber: propertyNumber,
         defaultAddress: {
-          display: res[0].heiti, // + ', <Póstnúmer>'
+          display: res[0].heiti,
         },
         unitsOfUse: {
           unitsOfUse: [
             {
-              //marking: '<Merking>',
-              //displaySize: <Birt stærð>,
-              //buildYearDisplay: '<Ártal>',
               explanation: res[0].notkun,
             },
           ],
