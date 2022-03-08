@@ -12,8 +12,13 @@ import {
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { ApplicationTypes } from '@island.is/application/core'
 import { LoadingShell } from './LoadingShell'
-import { ActorValidationFailedProblem, findProblemInApolloError, ProblemType } from '@island.is/shared/problem'
+import {
+  ActorValidationFailedProblem,
+  findProblemInApolloError,
+  ProblemType,
+} from '@island.is/shared/problem'
 import { ErrorShell } from './ErrorShell'
+import {DelegationDTO} from '@island.is/clients/auth-public-api'
 
 type Delegation = {
   type: string
@@ -34,9 +39,9 @@ export const DelegationsScreen = ({
   applicationId,
 }: DelegationsScreenProps) => {
   const [allowedDelegations, setAllowedDelegations] = useState<string[]>()
-  const [applicant, setApplicant] = useState<Delegation>()
+  const [applicant, setApplicant] = useState<DelegationDTO>()
 
-  const { switchUser} = useAuth()
+  const { switchUser } = useAuth()
 
   // Check if template supports delegations
   useEffect(() => {
@@ -54,8 +59,9 @@ export const DelegationsScreen = ({
   }, [type])
 
   // Only check if user has delegations if the template supports delegations
-  const { data: delegations, error, loading  } = useQuery(
-    APPLICANT_DELEGATIONS, {
+  const {  error: delegationCheckError, loading } = useQuery(
+    APPLICANT_DELEGATIONS,
+    {
       variables: {
         input: {
           id: applicationId,
@@ -66,34 +72,37 @@ export const DelegationsScreen = ({
       // We want to refetch after setting the application back to 'draft', so that
       // it loads the correct form for the 'draft' state.
       skip: !applicationId,
-    })
-  
+    },
+  )
 
   // Check if user has the delegations of the delegation types the application supports
   useEffect(() => {
-    console.log("ERROR", error)
-    const foundError = findProblemInApolloError(error, [ProblemType.ACTOR_VALIDATION_FAILED])
-    console.log(foundError)
-    if (delegations && allowedDelegations && foundError?.type === ProblemType.ACTOR_VALIDATION_FAILED) {
-      const problem: ActorValidationFailedProblem  = foundError
+    const foundError = findProblemInApolloError(delegationCheckError as any, [
+      ProblemType.ACTOR_VALIDATION_FAILED,
+    ])
+    if (
+      allowedDelegations &&
+      foundError?.type === ProblemType.ACTOR_VALIDATION_FAILED
+    ) {
+      const problem: ActorValidationFailedProblem = foundError
+
       // Does the actor have delegation for the applicant of the application
-      const found: Delegation = delegations.authActorDelegations.find(
-        (delegation: Delegation) =>
-          delegation.from.nationalId === problem.fields.delegatedUser &&
-          allowedDelegations.includes(delegation.type), // &&
-        // problem.fields.delegationType === delegation.type,
+      const found = problem.fields.delegations.find(
+        (delegation: DelegationDTO) =>
+          delegation.fromNationalId === problem.fields.delegatedUser &&
+          allowedDelegations.includes(delegation.type), 
       )
+
+
       if (!found) setDelegationsChecked(true)
       setApplicant(found)
     }
-  }, [delegations, allowedDelegations, error])
+  }, [allowedDelegations, delegationCheckError])
 
   const handleClick = (nationalId?: string) => {
-    // history.push(`../${applicationId}/?delegationChecked=true`)
     if (nationalId) switchUser(nationalId)
     else setDelegationsChecked(true)
   }
-  // TODO: Set delegated user as default, are the others disabled?
   if (!loading && applicant) {
     return (
       <Page>
@@ -101,7 +110,7 @@ export const DelegationsScreen = ({
           <Box>
             <Box marginTop={5} marginBottom={5}>
               <Text variant="h1">
-                Þessi umsókn var hafinn fyrir {applicant.from.name}
+                Þessi umsókn var hafinn fyrir {applicant.fromName}
               </Text>
             </Box>
 
@@ -110,10 +119,10 @@ export const DelegationsScreen = ({
               marginBottom={5}
               display="flex"
               justifyContent="flexEnd"
-              key={applicant.from.nationalId}
+              key={applicant.fromNationalId}
             >
-              <Text variant="h1">{applicant.from.name}</Text>
-              <Button onClick={() => handleClick(applicant.from.nationalId)}>
+              <Text variant="h1">{applicant.fromName}</Text>
+              <Button onClick={() => handleClick(applicant.fromNationalId)}>
                 Halda áfram
               </Button>
             </Box>
@@ -122,7 +131,6 @@ export const DelegationsScreen = ({
       </Page>
     )
   }
-  if(error) return <ErrorShell />
-  
+
   return <LoadingShell />
 }

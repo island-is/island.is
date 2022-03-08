@@ -57,13 +57,12 @@ export class ApplicationService {
     id: string,
     nationalIds?: string[],
   ): Promise<Application | null> {
-    const nids =  ["1111111119","0101303019","0102491479"]
     return this.applicationModel.findOne({
       where: {
         id,
-        ...(nids
+        ...(nationalIds
           ? {
-              [Op.or]: { applicant: { [Op.in]: nids } },
+              [Op.or]: { applicant: { [Op.in]: nationalIds } },
             }
           : {}),
       },
