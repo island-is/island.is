@@ -3,7 +3,6 @@ import { Test } from '@nestjs/testing'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 
-import { DATE_FACTORY } from '../../../factories'
 import { EventService } from '../../event'
 import { CourtService } from '../court.service'
 
@@ -23,7 +22,6 @@ export const createTestingCourtModule = async () => {
           error: jest.fn(),
         },
       },
-      { provide: DATE_FACTORY, useFactory: jest.fn },
       CourtService,
     ],
   }).compile()
@@ -32,9 +30,7 @@ export const createTestingCourtModule = async () => {
     CourtClientService,
   )
 
-  const today = courtModule.get(DATE_FACTORY)
-
   const courtService = courtModule.get<CourtService>(CourtService)
 
-  return { courtClientService, today, courtService }
+  return { courtClientService, courtService }
 }
