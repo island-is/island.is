@@ -248,12 +248,14 @@ export class AssetsXRoadService {
     cursor?: string | null,
   ): Promise<any | null> {
     const getRealEstatesRes = await this.getRealEstates(auth, cursor)
+
     if (getRealEstatesRes && getRealEstatesRes.properties) {
       return {
         paging: getRealEstatesRes.paging,
-        properties: getRealEstatesRes.properties.map(
-          async (item: { propertyNumber: string }) =>
-            await this.getRealEstateDetail(item.propertyNumber, auth),
+        properties: await Promise.all(
+          getRealEstatesRes.properties.map((item: { propertyNumber: string }) =>
+            this.getRealEstateDetail(item.propertyNumber, auth),
+          ),
         ),
       }
     }

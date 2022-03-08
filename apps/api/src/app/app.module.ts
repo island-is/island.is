@@ -243,7 +243,7 @@ const autoSchemaFile = environment.production
         xroadPath: environment.criminalRecord.xroadPath!,
       },
     }),
-    MortgageCertificateModule.register(),
+    MortgageCertificateModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [

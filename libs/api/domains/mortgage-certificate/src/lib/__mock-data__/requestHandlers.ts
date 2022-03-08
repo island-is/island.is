@@ -24,7 +24,7 @@ export const requestHandlers = [
     ) {
       return res(
         ctx.status(200),
-        ctx.json({ vedbandayfirlitPDFSkra: 'c29tZWNvbnRlbnQ=' }), // btoa('somecontent')
+        ctx.json({ vedbandayfirlitPDFSkra: 'c29tZWNvbnRlbnQ=' }),
       )
     } else if (
       fastanumer ===

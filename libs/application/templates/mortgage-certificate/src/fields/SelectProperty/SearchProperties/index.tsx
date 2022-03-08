@@ -81,7 +81,7 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
         </Box>
         <Box style={{ minWidth: 'fit-content' }}>
           <Button
-            disabled={loading}
+            disabled={loading || !searchStr}
             onClick={() => handleClickSearch()}
             variant="ghost"
           >
