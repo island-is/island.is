@@ -144,7 +144,7 @@ export class CreateApplicationDto {
   @ApiProperty()
   readonly postalCode: string
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @ApiProperty()
   readonly municipalityCode: string
