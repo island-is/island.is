@@ -4,7 +4,6 @@ import { useIntl } from 'react-intl'
 import { CaseType } from '@island.is/judicial-system/types'
 import {
   AccordionListItem,
-  CaseFileList,
   CommentsAccordionItem,
   FormContentContainer,
   InfoCard,
@@ -34,8 +33,6 @@ import type {
   CaseLegalProvisions,
 } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
-
-import * as styles from './Overview.css'
 
 interface Props {
   workingCase: Case
@@ -197,22 +194,6 @@ const OverviewForm: React.FC<Props> = (props) => {
                     </Text>
                   </AccordionListItem>
                 )}
-              </AccordionItem>
-            )}
-            {(workingCase.comments || workingCase.caseFilesComments) && (
-              <AccordionItem
-                id="id_6"
-                label={`Rannsóknargögn ${`(${
-                  workingCase.caseFiles ? workingCase.caseFiles.length : 0
-                })`}`}
-                labelVariant="h3"
-              >
-                <Box marginY={3}>
-                  <CaseFileList
-                    caseId={workingCase.id}
-                    files={workingCase.caseFiles ?? []}
-                  />
-                </Box>
               </AccordionItem>
             )}
             {(Boolean(workingCase.comments) ||
