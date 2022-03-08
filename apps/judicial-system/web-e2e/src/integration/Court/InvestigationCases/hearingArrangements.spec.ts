@@ -5,15 +5,19 @@ import {
   makeInvestigationCase,
   makeCourt,
 } from '@island.is/judicial-system/formatters'
+import {
+  IC_COURT_HEARING_ARRANGEMENTS_ROUTE,
+  IC_RULING_ROUTE,
+} from '@island.is/judicial-system/consts'
 
 import { intercept } from '../../../utils'
 
-describe('/domur/rannsoknarheimild/fyrirtaka/:id', () => {
+describe(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   beforeEach(() => {
     cy.login()
 
     cy.stubAPIResponses()
-    cy.visit('/domur/rannsoknarheimild/fyrirtaka/test_id_stadfest')
+    cy.visit(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/test_id_stadfest`)
   })
 
   it('should display case comments', () => {
@@ -33,7 +37,6 @@ describe('/domur/rannsoknarheimild/fyrirtaka/:id', () => {
     const caseData = makeInvestigationCase()
     const caseDataAddition: Case = {
       ...caseData,
-      // judge: makeJudge(),
       court: makeCourt(),
       requestedCourtDate: '2020-09-16T19:50:08.033Z',
       state: CaseState.RECEIVED,
@@ -41,10 +44,6 @@ describe('/domur/rannsoknarheimild/fyrirtaka/:id', () => {
 
     intercept(caseDataAddition)
 
-    cy.getByTestid('select-judge').click()
-    cy.get('#react-select-judge-option-0').click()
-    cy.getByTestid('select-registrar').click()
-    cy.get('#react-select-registrar-option-0').click()
     cy.get('[name="session-arrangements-all-present"]').click()
     cy.getByTestid('courtroom').type('1337')
     cy.getByTestid('continueButton').click()
@@ -62,12 +61,10 @@ describe('/domur/rannsoknarheimild/fyrirtaka/:id', () => {
 
     intercept(caseDataAddition)
 
-    cy.getByTestid('select-judge').click()
-    cy.get('#react-select-judge-option-0').click()
     cy.get('[name="session-arrangements-all-present"]').click()
     cy.getByTestid('continueButton').should('not.be.disabled')
     cy.getByTestid('continueButton').click()
     cy.getByTestid('modalSecondaryButton').click()
-    cy.url().should('include', '/domur/rannsoknarheimild/thingbok')
+    cy.url().should('include', IC_RULING_ROUTE)
   })
 })

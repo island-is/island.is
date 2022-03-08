@@ -226,13 +226,18 @@ export class NotificationService {
     }
   }
 
-  private async uploadRequestPdfToCourt(theCase: Case): Promise<void> {
+  private async uploadRequestPdfToCourt(
+    theCase: Case,
+    user: User,
+  ): Promise<void> {
     const requestPdf = await getRequestPdfAsBuffer(theCase, this.formatMessage)
 
     try {
       await this.courtService.createRequest(
-        theCase.courtId,
-        theCase.courtCaseNumber,
+        user,
+        theCase.id,
+        theCase.courtId ?? '',
+        theCase.courtCaseNumber ?? '',
         requestPdf,
       )
     } catch (error) {
@@ -348,6 +353,12 @@ export class NotificationService {
         caseType,
         courtName: court?.name,
         policeCaseNumber,
+        linkStart: `<a href="${
+          isRestrictionCase(theCase.type)
+            ? environment.deepLinks.prosecutorRestrictionCaseOverviewUrl
+            : environment.deepLinks.prosecutorInvestigationCaseOverviewUrl
+        }${theCase.id}">`,
+        linkEnd: '</a>',
       },
     )
 
@@ -361,6 +372,7 @@ export class NotificationService {
 
   private async sendReadyForCourtNotifications(
     theCase: Case,
+    user: User,
   ): Promise<SendNotificationResponse> {
     // TODO: Ignore failed notifications
     const notification = await this.notificationModel.findOne({
@@ -381,7 +393,7 @@ export class NotificationService {
       theCase.courtCaseNumber
     ) {
       // No need to wait
-      this.uploadRequestPdfToCourt(theCase)
+      this.uploadRequestPdfToCourt(theCase, user)
     }
 
     if (notification) {
@@ -532,7 +544,14 @@ export class NotificationService {
 
   private async sendCourtDateNotifications(
     theCase: Case,
+    eventOnly?: boolean,
   ): Promise<SendNotificationResponse> {
+    this.eventService.postEvent(CaseEvent.SCHEDULE_COURT_DATE, theCase)
+
+    if (eventOnly) {
+      return { notificationSent: false }
+    }
+
     const promises: Promise<Recipient>[] = [
       this.sendCourtDateEmailNotificationToProsecutor(theCase),
     ]
@@ -559,10 +578,6 @@ export class NotificationService {
       NotificationType.COURT_DATE,
       recipients,
     )
-
-    if (result.notificationSent) {
-      this.eventService.postEvent(CaseEvent.SCHEDULE_COURT_DATE, theCase)
-    }
 
     return result
   }
@@ -894,11 +909,11 @@ export class NotificationService {
       case NotificationType.HEADS_UP:
         return this.sendHeadsUpNotifications(theCase)
       case NotificationType.READY_FOR_COURT:
-        return this.sendReadyForCourtNotifications(theCase)
+        return this.sendReadyForCourtNotifications(theCase, user)
       case NotificationType.RECEIVED_BY_COURT:
         return this.sendReceivedByCourtNotifications(theCase)
       case NotificationType.COURT_DATE:
-        return this.sendCourtDateNotifications(theCase)
+        return this.sendCourtDateNotifications(theCase, notification.eventOnly)
       case NotificationType.RULING:
         return this.sendRulingNotifications(theCase)
       case NotificationType.MODIFIED:

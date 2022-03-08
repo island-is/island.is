@@ -535,24 +535,14 @@ export class Case extends Model<Case> {
   courtDocuments?: string[]
 
   /**********
-   * Bookings about the accused
+   * Bookings during court session
    **********/
   @Column({
     type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
-  accusedBookings?: string
-
-  /**********
-   * The presentations for both parties
-   **********/
-  @Column({
-    type: DataType.TEXT,
-    allowNull: true,
-  })
-  @ApiProperty()
-  litigationPresentations?: string
+  sessionBookings?: string
 
   /**********
    * The case facts as seen by the prosecutor - autofilled from caseFacts - possibly modified

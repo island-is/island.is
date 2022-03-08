@@ -97,6 +97,11 @@ export enum AmountModal {
   PROVIDED = 'Provided',
 }
 
+export enum UserType {
+  APPLICANT = 'Applicant',
+  SPOUSE = 'Spouse',
+}
+
 export enum AidName {
   OWNPLACE = 'ownPlace',
   REGISTEREDRENTING = 'registeredRenting',

@@ -10,6 +10,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from './createTestingCaseModule'
+import { randomDate } from '../../../test'
 import { DefendantService, Defendant } from '../../defendant'
 import { User } from '../../user'
 import { Institution } from '../../institution'
@@ -82,7 +83,7 @@ describe('CaseController - Extend', () => {
     const legalArguments = 'This is why custody is needed'
     const requestProsecutorOnlySession = false
     const prosecutorOnlySessionRequest = 'The prosecutors wants an exclusive'
-    const rulingDate = new Date()
+    const rulingDate = randomDate()
     const theCase = {
       id: caseId,
       type,
@@ -160,7 +161,7 @@ describe('CaseController - Extend', () => {
     const legalArguments = 'This is why custody is needed'
     const requestProsecutorOnlySession = false
     const prosecutorOnlySessionRequest = 'The prosecutors wants an exclusive'
-    const initialRulingDate = new Date()
+    const initialRulingDate = randomDate()
     const theCase = {
       id: caseId,
       type,

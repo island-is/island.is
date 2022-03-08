@@ -9,26 +9,17 @@ import {
   PdfButton,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseState,
-  CaseTransition,
-  NotificationType,
-} from '@island.is/judicial-system/types'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
   capitalize,
   caseTypes,
   formatDate,
-  TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
-import { isOverviewStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import CaseFilesAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CaseFilesAccordionItem/CaseFilesAccordionItem'
 import type { Case } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import * as Constants from '@island.is/judicial-system/consts'
 
 import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
-import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
 import * as styles from './Overview.css'
 
 interface Props {
@@ -40,49 +31,10 @@ interface Props {
 
 const OverviewForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading, isCaseUpToDate } = props
-  const [courtCaseNumberEM, setCourtCaseNumberEM] = useState<string>('')
-  const [createCourtCaseSuccess, setCreateCourtCaseSuccess] = useState<boolean>(
-    false,
-  )
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
 
   const { user } = useContext(UserContext)
-  const {
-    createCourtCase,
-    isCreatingCourtCase,
-    transitionCase,
-    isTransitioningCase,
-    sendNotification,
-  } = useCase()
   const { formatMessage } = useIntl()
-
-  const receiveCase = async (workingCase: Case, courtCaseNumber: string) => {
-    if (workingCase.state === CaseState.SUBMITTED && !isTransitioningCase) {
-      // Transition case from SUBMITTED to RECEIVED when courtCaseNumber is set
-      const received = await transitionCase(
-        { ...workingCase, courtCaseNumber },
-        CaseTransition.RECEIVE,
-        setWorkingCase,
-      )
-
-      if (received) {
-        sendNotification(workingCase.id, NotificationType.RECEIVED_BY_COURT)
-      }
-    }
-  }
-
-  const handleCreateCourtCase = async (workingCase: Case) => {
-    const courtCaseNumber = await createCourtCase(
-      workingCase,
-      setWorkingCase,
-      setCourtCaseNumberEM,
-    )
-
-    if (courtCaseNumber !== '') {
-      setCreateCourtCaseSuccess(true)
-      receiveCase(workingCase, courtCaseNumber)
-    }
-  }
 
   return (
     <>
@@ -91,19 +43,6 @@ const OverviewForm: React.FC<Props> = (props) => {
           <Text as="h1" variant="h1">
             Yfirlit kröfu um rannsóknarheimild
           </Text>
-        </Box>
-        <Box component="section" marginBottom={6}>
-          <CourtCaseNumber
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-            courtCaseNumberEM={courtCaseNumberEM}
-            setCourtCaseNumberEM={setCourtCaseNumberEM}
-            createCourtCaseSuccess={createCourtCaseSuccess}
-            setCreateCourtCaseSuccess={setCreateCourtCaseSuccess}
-            handleCreateCourtCase={handleCreateCourtCase}
-            isCreatingCourtCase={isCreatingCourtCase}
-            receiveCase={receiveCase}
-          />
         </Box>
         <Box component="section" marginBottom={5}>
           <InfoCard
@@ -126,7 +65,7 @@ const OverviewForm: React.FC<Props> = (props) => {
                     '',
                 )} eftir kl. ${formatDate(
                   workingCase.requestedCourtDate,
-                  TIME_FORMAT,
+                  Constants.TIME_FORMAT,
                 )}`,
               },
               {
@@ -198,11 +137,7 @@ const OverviewForm: React.FC<Props> = (props) => {
                       Málsatvik
                     </Text>
                   </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.caseFacts}
-                    </span>
-                  </Text>
+                  <Text whiteSpace="breakSpaces">{workingCase.caseFacts}</Text>
                 </Box>
               )}
               {workingCase.legalArguments && (
@@ -212,10 +147,8 @@ const OverviewForm: React.FC<Props> = (props) => {
                       Lagarök
                     </Text>
                   </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.legalArguments}
-                    </span>
+                  <Text whiteSpace="breakSpaces">
+                    {workingCase.legalArguments}
                   </Text>
                 </Box>
               )}
@@ -235,11 +168,7 @@ const OverviewForm: React.FC<Props> = (props) => {
                       Athugasemdir vegna málsmeðferðar
                     </Text>
                   </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.comments}
-                    </span>
-                  </Text>
+                  <Text whiteSpace="breakSpaces">{workingCase.comments}</Text>
                 </Box>
               )}
               {workingCase.caseFilesComments && (
@@ -249,10 +178,8 @@ const OverviewForm: React.FC<Props> = (props) => {
                       Athugasemdir vegna rannsóknargagna
                     </Text>
                   </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.caseFilesComments}
-                    </span>
+                  <Text whiteSpace="breakSpaces">
+                    {workingCase.caseFilesComments}
                   </Text>
                 </>
               )}
@@ -297,10 +224,9 @@ const OverviewForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={Constants.REQUEST_LIST_ROUTE}
+          previousUrl={`${Constants.IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoading}
           nextUrl={`${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!isOverviewStepValidIC(workingCase)}
         />
       </FormContentContainer>
     </>

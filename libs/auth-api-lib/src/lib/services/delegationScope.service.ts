@@ -29,6 +29,20 @@ export class DelegationScopeService {
     private identityResourceModel: typeof IdentityResource,
   ) {}
 
+  async createOrUpdate(
+    delegationId: string,
+    allowedScopes: string[],
+    scopes?: UpdateDelegationScopeDTO[],
+  ): Promise<DelegationScope[]> {
+    await this.delete(delegationId, allowedScopes)
+
+    if (scopes && scopes.length > 0) {
+      return this.createMany(delegationId, scopes)
+    }
+
+    return []
+  }
+
   async createMany(
     delegationId: string,
     scopes: UpdateDelegationScopeDTO[],
@@ -56,11 +70,11 @@ export class DelegationScopeService {
 
   async delete(
     delegationId: string,
-    scopeName?: string | null,
+    scopeNames?: string[] | null,
   ): Promise<number> {
-    if (scopeName) {
+    if (scopeNames) {
       return this.delegationScopeModel.destroy({
-        where: { delegationId: delegationId, scopeName: scopeName },
+        where: { delegationId: delegationId, scopeName: scopeNames },
       })
     }
 
