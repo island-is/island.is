@@ -9,7 +9,6 @@ import { FAFieldBaseProps } from '../../lib/types'
 
 const AboutForm = ({ application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
-  const { data } = application.externalData.nationalRegistry
 
   return (
     <>
@@ -23,7 +22,7 @@ const AboutForm = ({ application }: FAFieldBaseProps) => {
       </Box>
 
       <PrivacyPolicyAccordion
-        municipalityPageUrl={data.municipality.homepage || ''}
+        municipalityPageUrl={application.externalData.nationalRegistry.data.municipality.homepage || ''}
       />
     </>
   )
