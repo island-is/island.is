@@ -9,6 +9,7 @@ import {
   QueryGetOrganizationArgs,
   QueryGetSupportCategoriesInOrganizationArgs,
   QueryGetSupportQnAsArgs,
+  SearchableTags,
   SupportCategory,
 } from '@island.is/web/graphql/schema'
 import {
@@ -57,16 +58,16 @@ const Home: Screen<HomeProps> = ({
   const n = useNamespace(namespace)
   const institutionSlug = getSlugPart(Router.asPath, 2)
 
-  const institutionSlugContainsMannaudstorg = institutionSlug.includes(
+  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
     'mannaudstorg',
   )
 
-  const headerTitle = institutionSlugContainsMannaudstorg
+  const headerTitle = institutionSlugBelongsToMannaudstorg
     ? 'Aðstoð fyrir mannauðstorg'
     : n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
   const logoUrl = organization?.logo?.url ?? ''
-  const searchTitle = institutionSlugContainsMannaudstorg
+  const searchTitle = institutionSlugBelongsToMannaudstorg
     ? 'Velkomin á mannauðstorg'
     : n('canWeAssist', 'Getum við aðstoðað?')
   const pageTitle = `${
@@ -79,6 +80,10 @@ const Home: Screen<HomeProps> = ({
 
   const sortedSupportCategories = sortSupportCategories(supportCategories)
 
+  const searchTags = institutionSlugBelongsToMannaudstorg
+    ? [{ key: 'mannaudstorg', type: SearchableTags.Organization }]
+    : undefined
+
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
@@ -89,10 +94,11 @@ const Home: Screen<HomeProps> = ({
       organizationTitle={organizationTitle}
       searchTitle={searchTitle}
       searchPlaceholder={
-        institutionSlugContainsMannaudstorg
+        institutionSlugBelongsToMannaudstorg
           ? 'Leita á mannauðstorgi'
           : undefined
       }
+      searchTags={searchTags}
     >
       {hasContent && (
         <ServiceWebContext.Consumer>

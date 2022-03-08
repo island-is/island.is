@@ -95,9 +95,13 @@ const SubPage: Screen<SubPageProps> = ({
     linkResolver('serviceweb').href
   }/${organizationSlug}${questionSlug ? `/${categorySlug}` : ''}`
 
+  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
+    'mannaudstorg',
+  )
+
   const getBreadcrumbItems = () => {
     const breadcrumbItems: BreadCrumbItem[] = []
-    if (!institutionSlug.includes('mannaudstorg'))
+    if (!institutionSlugBelongsToMannaudstorg)
       breadcrumbItems.push({
         title: n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
         typename: 'serviceweb',
@@ -124,11 +128,20 @@ const SubPage: Screen<SubPageProps> = ({
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
-      headerTitle={n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')}
+      headerTitle={
+        institutionSlugBelongsToMannaudstorg
+          ? 'Aðstoð fyrir mannauðstorg'
+          : n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')
+      }
       institutionSlug={institutionSlug}
       organization={organization}
       organizationTitle={organizationTitle}
       smallBackground
+      searchPlaceholder={
+        institutionSlugBelongsToMannaudstorg
+          ? 'Leita á mannauðstorgi'
+          : undefined
+      }
     >
       <Box marginY={[3, 3, 10]}>
         <GridContainer>
@@ -260,9 +273,11 @@ const SubPage: Screen<SubPageProps> = ({
                   </GridColumn>
                 </GridRow>
               </GridContainer>
-              <Box marginTop={[10, 10, 20]}>
-                <ContactBanner slug={institutionSlug} />
-              </Box>
+              {!institutionSlugBelongsToMannaudstorg && (
+                <Box marginTop={[10, 10, 20]}>
+                  <ContactBanner slug={institutionSlug} />
+                </Box>
+              )}
             </GridColumn>
           </GridRow>
         </GridContainer>
