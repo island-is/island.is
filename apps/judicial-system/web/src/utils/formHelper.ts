@@ -16,7 +16,7 @@ import {
 import { validate, Validation } from './validate'
 
 export const removeTabsValidateAndSet = (
-  field: string,
+  field: keyof UpdateCase,
   value: string,
   validations: Validation[],
   theCase: Case,
@@ -70,7 +70,7 @@ export const validateAndSetErrorMessage = (
 }
 
 export const validateAndSet = (
-  field: string,
+  field: keyof UpdateCase,
   value: string,
   validations: Validation[],
   theCase: Case,
@@ -87,7 +87,7 @@ export const validateAndSet = (
 }
 
 export const validateAndSetTime = (
-  field: string,
+  field: keyof UpdateCase,
   currentValue: string | undefined,
   time: string,
   validations: Validation[],
@@ -123,7 +123,7 @@ export const validateAndSetTime = (
 }
 
 export const setAndSendDateToServer = (
-  field: string,
+  field: keyof UpdateCase,
   date: Date | undefined,
   isValid: boolean,
   theCase: Case,
@@ -155,7 +155,7 @@ export const setAndSendDateToServer = (
 }
 
 export const validateAndSendToServer = (
-  field: string,
+  field: keyof UpdateCase,
   value: string,
   validations: Validation[],
   theCase: Case,
@@ -170,7 +170,7 @@ export const validateAndSendToServer = (
 }
 
 export const validateAndSendTimeToServer = (
-  field: string,
+  field: keyof UpdateCase,
   currentValue: string | undefined,
   time: string,
   validations: Validation[],
@@ -199,7 +199,7 @@ export const validateAndSendTimeToServer = (
 }
 
 export const setAndSendToServer = (
-  field: string,
+  field: keyof UpdateCase,
   value: string | boolean | undefined,
   theCase: Case,
   setCase: (value: React.SetStateAction<Case>) => void,
@@ -221,7 +221,7 @@ export const setAndSendToServer = (
 }
 
 export const setCheckboxAndSendToServer = (
-  field: string,
+  field: keyof UpdateCase,
   value: string,
   theCase: Case,
   setCase: (value: React.SetStateAction<Case>) => void,
