@@ -21,7 +21,6 @@ export const JudgeOverview: React.FC = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
-    isCaseUpToDate,
   } = useContext(FormContext)
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
 
@@ -56,7 +55,6 @@ export const JudgeOverview: React.FC = () => {
       <DraftConclusionModal
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
-        isCaseUpToDate={isCaseUpToDate}
         isDraftingConclusion={isDraftingConclusion}
         setIsDraftingConclusion={setIsDraftingConclusion}
       />
