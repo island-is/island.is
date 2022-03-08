@@ -66,7 +66,10 @@ function constructRulingPdf(
     }),
   )
   setLineGap(doc, 1)
-  addNormalJustifiedText(doc, theCase.introduction ?? '')
+  addNormalJustifiedText(
+    doc,
+    theCase.introduction ?? formatMessage(ruling.missingIntroduction),
+  )
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
