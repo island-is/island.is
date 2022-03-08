@@ -1,13 +1,10 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
-import { chownSync } from 'fs'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
-import {
-  ComplaintsToAlthingiOmbudsmanConfig,
-  COMPLAINTS_TO_ALTHINGI_OMBUDSMAN_CONFIG,
-} from './config'
+import { COMPLAINTS_TO_ALTHINGI_OMBUDSMAN_CONFIG } from './config'
+import type { ComplaintsToAlthingiOmbudsmanConfig } from './config'
 import { generateConfirmationEmail } from './emailGenerators'
 
 @Injectable()
