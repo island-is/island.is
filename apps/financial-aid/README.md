@@ -66,3 +66,4 @@ and make sure the environment variables `XROAD_BASE_PATH_WITH_ENV`, `XROAD_TJODS
 ## Code owners and maintainers
 
 - [Kolibri](https://github.com/orgs/island-is/teams/kolibri-robin-hood)
+
