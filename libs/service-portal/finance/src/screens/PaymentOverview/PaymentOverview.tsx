@@ -22,26 +22,26 @@ export const PaymentOverview: ServicePortalModuleComponent = () => {
         title: m.incoming,
         items: [
           defineMessage({
-            id: 'sp.assets:inc-1',
+            id: 'sp.finance:inc-1',
             defaultMessage:
               'Yfirlit og hægt verður að greiða öll opinber gjöld',
           }),
           defineMessage({
-            id: 'sp.assets:inc-2',
+            id: 'sp.finance:inc-2',
             defaultMessage: 'Ganga frá skattskýrsla og sjá eldi skattskýrslur',
           }),
           defineMessage({
-            id: 'sp.assets:inc-3',
+            id: 'sp.finance:inc-3',
             defaultMessage: 'Sjá yfirlit og ráðstafa séreignarsparnaði',
           }),
         ],
       }}
       institutionTitle={defineMessage({
-        id: 'sp.assets:institution',
+        id: 'sp.finance:institution',
         defaultMessage: 'Samgöngustofa',
       })}
       institutionDescription={defineMessage({
-        id: 'sp.assets:institution-description',
+        id: 'sp.finance:institution-description',
         defaultMessage: `
           Vinnumálastofnun heyrir undir félagsmálráðuneytið og fer m.a. með
           yfirstjórn vinnumiðlunar í landinu og daglega afgreiðslu
@@ -51,7 +51,7 @@ export const PaymentOverview: ServicePortalModuleComponent = () => {
       })}
       institutionHref="https://www.samgongustofa.is/"
       institutionLinkTitle={defineMessage({
-        id: 'sp.assets:institution:link-title',
+        id: 'sp.finance:institution-link-title',
         defaultMessage: 'Vefur samgöngustofu - www.samgongustofa.is/',
       })}
       figure="/assets/images/working.jpg"
