@@ -51,13 +51,18 @@ export const PkPass = ({ expireDate }: PkPassProps) => {
     getCode()
   }, [])
 
+  const clickLink = () => {
+    const link = document.getElementById('pkpass-url')
+    link?.setAttribute('href', pkpassUrl ?? '')
+    link?.click()
+  }
+
   useEffect(() => {
-    if (!loading && pkpassUrl && displayLoader) {
-      const link = document.getElementById('pkpass-url')
-      link?.setAttribute('href', pkpassUrl)
-      link?.click()
+    if (!loading && displayLoader && pkpassUrl) {
+      clickLink()
+      setDisplayLoader(false)
     }
-  }, [displayLoader, pkpassUrl])
+  }, [displayLoader, loading, pkpassUrl])
 
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState(false)
@@ -109,7 +114,7 @@ export const PkPass = ({ expireDate }: PkPassProps) => {
           size="small"
           icon={displayLoader ? undefined : 'QRCode'}
           iconType="outline"
-          onClick={() => (loading ? setDisplayLoader(true) : null)}
+          onClick={() => (loading ? setDisplayLoader(true) : clickLink())}
         >
           {formatMessage(m.sendToPhone)}{' '}
           {displayLoader && (
@@ -121,9 +126,13 @@ export const PkPass = ({ expireDate }: PkPassProps) => {
       )}
 
       <Box display="none">
-        <a id="pkpass-url" href={pkpassUrl ?? ''}>
-          {' '}
-          {formatMessage(m.sendToPhone)}{' '}
+        <a
+          id="pkpass-url"
+          href={pkpassUrl ?? ''}
+          target="_blank"
+          rel="noreferrer"
+        >
+          {formatMessage(m.sendToPhone)}
         </a>
       </Box>
     </>
