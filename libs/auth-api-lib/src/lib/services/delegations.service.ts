@@ -40,6 +40,7 @@ import {
   UpdateDelegationDTO,
 } from '../entities/dto/delegation.dto'
 import { ApiScope } from '../entities/models/api-scope.model'
+import { Client } from '../entities/models/client.model'
 import { ClientAllowedScope } from '../entities/models/client-allowed-scope.model'
 import { DelegationScope } from '../entities/models/delegation-scope.model'
 import { Delegation } from '../entities/models/delegation.model'
@@ -48,6 +49,14 @@ import type { PersonalRepresentativeDTO } from '../personal-representative/entit
 import { DelegationValidity } from '../types/delegationValidity'
 import { DelegationScopeService } from './delegationScope.service'
 import { ResourcesService } from './resources.service'
+
+type ClientDelegationInfo = Pick<
+  Client,
+  | 'supportsDelegation'
+  | 'supportsLegalGuardians'
+  | 'supportsProcuringHolders'
+  | 'supportsPersonalRepresentatives'
+>
 
 export const DELEGATIONS_AUTH_CONFIG = 'DELEGATIONS_AUTH_CONFIG'
 
@@ -58,6 +67,8 @@ export class DelegationsService {
   constructor(
     @InjectModel(Delegation)
     private delegationModel: typeof Delegation,
+    @InjectModel(Client)
+    private clientModel: typeof Client,
     @InjectModel(ClientAllowedScope)
     private clientAllowedScopeModel: typeof ClientAllowedScope,
     @Inject(DELEGATIONS_AUTH_CONFIG)
@@ -329,15 +340,30 @@ export class DelegationsService {
     user: User,
     authMiddlewareOptions: AuthMiddlewareOptions,
   ): Promise<DelegationDTO[]> {
-    const [wards, companies, custom, represented] = await Promise.all([
-      this.findAllWardsIncoming(user, authMiddlewareOptions),
-      this.findAllCompaniesIncoming(user),
-      this.findAllValidCustomIncoming(user),
-      this.findAllRepresentedPersonsIncoming(user, authMiddlewareOptions),
-    ])
+    const client = await this.getClientDelegationInfo(user)
+
+    const delegationPromises = []
+
+    if (!client || client.supportsLegalGuardians) {
+      delegationPromises.push(
+        this.findAllWardsIncoming(user, authMiddlewareOptions),
+      )
+    }
+    if (!client || client.supportsProcuringHolders) {
+      delegationPromises.push(this.findAllCompaniesIncoming(user))
+    }
+    if (!client || client.supportsDelegation) {
+      delegationPromises.push(this.findAllValidCustomIncoming(user))
+    }
+    if (!client || client.supportsPersonalRepresentatives) {
+      delegationPromises.push(
+        this.findAllRepresentedPersonsIncoming(user, authMiddlewareOptions),
+      )
+    }
+    const delegationSets = await Promise.all(delegationPromises)
 
     return uniqBy(
-      [...wards, ...companies, ...custom, ...represented],
+      ([] as DelegationDTO[]).concat(...delegationSets),
       'fromNationalId',
     ).filter((delegation) => delegation.fromNationalId !== user.nationalId)
   }
@@ -636,6 +662,19 @@ export class DelegationsService {
         allowedScopes.includes(scope.identityResourceName)) ||
       false
     )
+  }
+
+  private getClientDelegationInfo(
+    user: User,
+  ): Promise<ClientDelegationInfo | null> {
+    return this.clientModel.findByPk(user.client, {
+      attributes: [
+        'supportsLegalGuardians',
+        'supportsProcuringHolders',
+        'supportsDelegation',
+        'supportsPersonalRepresentatives',
+      ],
+    })
   }
 
   private async getClientAllowedScopes(user: User) {
