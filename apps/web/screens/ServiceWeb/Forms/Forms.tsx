@@ -15,6 +15,7 @@ import {
   LinkContext,
   Link,
   Button,
+  BreadCrumbItem,
 } from '@island.is/island-ui/core'
 import { useNamespace, useLinkResolver } from '@island.is/web/hooks'
 import {
@@ -34,6 +35,7 @@ import {
   SupportCategory,
   Organization,
   QueryGetOrganizationsArgs,
+  SearchableTags,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
@@ -96,14 +98,52 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
       : ''
   }${headerTitle}`
 
+  const getBreadcrumbItems = () => {
+    const breadcrumbItems: BreadCrumbItem[] = []
+    if (!institutionSlugBelongsToMannaudstorg)
+      breadcrumbItems.push({
+        title: n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
+        typename: 'serviceweb',
+        href: linkResolver('serviceweb').href,
+      })
+    breadcrumbItems.push({
+      title: organization.title,
+      typename: 'serviceweb',
+      href: `${linkResolver('serviceweb').href}/${institutionSlug}`,
+    })
+    breadcrumbItems.push({
+      title: 'Hafðu samband',
+      isTag: true,
+    })
+    return breadcrumbItems
+  }
+
+  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
+    'mannaudstorg',
+  )
+
+  const searchTags = institutionSlugBelongsToMannaudstorg
+    ? [{ key: 'mannaudstorg', type: SearchableTags.Organization }]
+    : undefined
+
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
-      headerTitle={headerTitle}
+      headerTitle={
+        institutionSlugBelongsToMannaudstorg
+          ? 'Aðstoð fyrir mannauðstorg'
+          : headerTitle
+      }
       institutionSlug={institutionSlug}
       organization={organization}
       organizationTitle={organizationTitle}
       smallBackground
+      searchPlaceholder={
+        institutionSlugBelongsToMannaudstorg
+          ? 'Leita á mannauðstorgi'
+          : undefined
+      }
+      searchTags={searchTags}
     >
       <Box marginY={[3, 3, 10]} marginBottom={10}>
         <GridContainer>
@@ -117,27 +157,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                   <GridColumn span="12/12" paddingBottom={[2, 2, 4]}>
                     <Box display={['none', 'none', 'block']} printHidden>
                       <Breadcrumbs
-                        items={[
-                          {
-                            title: n(
-                              'assistanceForIslandIs',
-                              'Aðstoð fyrir Ísland.is',
-                            ),
-                            typename: 'serviceweb',
-                            href: linkResolver('serviceweb').href,
-                          },
-                          {
-                            title: organization.title,
-                            typename: 'serviceweb',
-                            href: `${
-                              linkResolver('serviceweb').href
-                            }/${institutionSlug}`,
-                          },
-                          {
-                            title: 'Hafðu samband',
-                            isTag: true,
-                          },
-                        ]}
+                        items={getBreadcrumbItems()}
                         renderLink={(link, { href }) => {
                           return (
                             <NextLink href={href} passHref>
