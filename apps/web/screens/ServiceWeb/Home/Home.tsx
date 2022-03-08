@@ -139,20 +139,22 @@ const Home: Screen<HomeProps> = ({
                   )}
                 </SimpleStackedSlider>
               </Box>
-              <Box marginY={[7, 10, 10]}>
-                <GridContainer>
-                  <GridRow>
-                    <GridColumn
-                      offset={[null, null, null, '1/12']}
-                      span={['12/12', '12/12', '12/12', '10/12']}
-                    >
-                      <Box marginY={[10, 10, 20]}>
-                        <ContactBanner slug={institutionSlug} />
-                      </Box>
-                    </GridColumn>
-                  </GridRow>
-                </GridContainer>
-              </Box>
+              {!institutionSlugBelongsToMannaudstorg && (
+                <Box marginY={[7, 10, 10]}>
+                  <GridContainer>
+                    <GridRow>
+                      <GridColumn
+                        offset={[null, null, null, '1/12']}
+                        span={['12/12', '12/12', '12/12', '10/12']}
+                      >
+                        <Box marginY={[10, 10, 20]}>
+                          <ContactBanner slug={institutionSlug} />
+                        </Box>
+                      </GridColumn>
+                    </GridRow>
+                  </GridContainer>
+                </Box>
+              )}
             </>
           )}
         </ServiceWebContext.Consumer>

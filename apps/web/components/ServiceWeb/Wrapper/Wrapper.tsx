@@ -98,7 +98,6 @@ export const Wrapper: FC<WrapperProps> = ({
               title={searchTitle}
               textMode={textMode}
               searchPlaceholder={searchPlaceholder}
-              institutionSlug={institutionSlug}
               searchTags={searchTags}
             />
           </Box>

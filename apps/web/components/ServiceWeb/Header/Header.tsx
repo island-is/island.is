@@ -21,9 +21,9 @@ import {
 } from '@island.is/web/components'
 import { TextModes } from '../types'
 import { linkResolver } from '@island.is/web/hooks'
+import { Tag } from '@island.is/web/graphql/schema'
 
 import * as styles from './Header.css'
-import { Tag } from '@island.is/web/graphql/schema'
 
 interface HeaderProps {
   title?: string
