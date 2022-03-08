@@ -5,12 +5,10 @@ import { privacyPolicyAccordion } from '../../lib/messages'
 import { DescriptionText } from '..'
 
 interface Props {
-  municipalityPageName: string
   municipalityPageUrl: string
 }
 
 const PrivacyPolicyAccordion = ({
-  municipalityPageName,
   municipalityPageUrl,
 }: Props) => {
   const { formatMessage } = useIntl()
@@ -28,7 +26,6 @@ const PrivacyPolicyAccordion = ({
           <DescriptionText
             text={privacyPolicyAccordion.general.accordionAbout}
             format={{
-              homePageName: municipalityPageName,
               homePageNameUrl: municipalityPageUrl,
             }}
           />
