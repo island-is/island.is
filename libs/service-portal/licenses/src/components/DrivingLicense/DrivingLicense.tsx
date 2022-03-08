@@ -73,7 +73,10 @@ export const DrivingLicense = ({
                   </Tag>
                 ) : (
                   <Tag disabled variant="red">
-                    {formatMessage(m.expiresIn)} {Math.round(expiresIn.value)}{' '}
+                    {formatMessage(m.expiresIn)}
+                    {'\xa0'}
+                    {Math.round(expiresIn.value)}
+                    {'\xa0'}
                     {expiresIn.key === 'months'
                       ? formatMessage(m.months)
                       : formatMessage(m.days)}
@@ -83,7 +86,8 @@ export const DrivingLicense = ({
             )}
             <Box paddingTop={expiresIn ? [1, 1, 0] : undefined}>
               <Tag disabled variant="blue">
-                {formatMessage(m.validUntil)}{' '}
+                {formatMessage(m.validUntil)}
+                {'\xa0'}
                 {toDate(new Date(expireDate).getTime().toString())}
               </Tag>
             </Box>

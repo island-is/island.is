@@ -49,7 +49,9 @@ export const QRCodeModal: FC<Props> = ({
         </Box>
         <Box marginRight={7} marginY={2}>
           <Tag disabled>
-            {formatMessage(m.validUntil)} {expires}
+            {formatMessage(m.validUntil)}
+            {'\xa0'}
+            {expires}
           </Tag>
           <Box marginY={1}>
             <Text variant="h3">{formatMessage(m.sendLicenseToPhone)}</Text>

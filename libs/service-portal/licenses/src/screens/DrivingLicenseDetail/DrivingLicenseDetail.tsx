@@ -11,6 +11,7 @@ import {
   Text,
   Button,
   AlertBanner,
+  Link,
 } from '@island.is/island-ui/core'
 import {
   PlausiblePageviewDetail,
@@ -79,31 +80,16 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
               )}
             />
             <Box className={styles.line} marginX={3} />
-            <Box
-              display="flex"
-              cursor="pointer"
-              color="blue400"
-              className={styles.QRCode}
-            >
-              <a
-                href={renewalLink}
-                className={styles.link}
-                rel="noreferrer"
-                target="_blank"
+            <Link href={renewalLink}>
+              <Button
+                variant="text"
+                size="small"
+                icon="open"
+                iconType="outline"
               >
-                <Box display="flex" flexDirection="row">
-                  {formatMessage(m.renewDrivingLicense)}
-                  <Box marginLeft={1} className={styles.icon}>
-                    <Icon
-                      icon="open"
-                      type="outline"
-                      color="blue400"
-                      size="small"
-                    />
-                  </Box>
-                </Box>
-              </a>
-            </Box>
+                {formatMessage(m.renewDrivingLicense)}
+              </Button>
+            </Link>
           </Box>
           <UserInfoLine
             title={formatMessage(m.drivingLicenseBaseInfo)}

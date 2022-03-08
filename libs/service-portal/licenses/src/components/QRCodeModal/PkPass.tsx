@@ -3,6 +3,7 @@ import * as styles from './QRCodeModal.css'
 import {
   Box,
   Button,
+  Hidden,
   Link,
   LoadingDots,
   SkeletonLoader,
@@ -24,6 +25,7 @@ type PkPassProps = {
 export const PkPass = ({ expireDate }: PkPassProps) => {
   const [pkpassQRCode, setPkpassQRCode] = useState<string | null>(null)
   const [pkpassUrl, setPkpassUrl] = useState<string | null>(null)
+  const [displayLoader, setDisplayLoader] = useState<boolean>(false)
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
   const [generatePkPass, { loading }] = useMutation(CREATE_PK_PASS)
@@ -48,6 +50,14 @@ export const PkPass = ({ expireDate }: PkPassProps) => {
     }
     getCode()
   }, [])
+
+  useEffect(() => {
+    if (!loading && pkpassUrl && displayLoader) {
+      const link = document.getElementById('pkpass-url')
+      link?.setAttribute('href', pkpassUrl)
+      link?.click()
+    }
+  }, [displayLoader, pkpassUrl])
 
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState(false)
@@ -93,13 +103,29 @@ export const PkPass = ({ expireDate }: PkPassProps) => {
           )}
         </>
       )}
-      {isMobile && pkpassUrl && (
-        <Link href={pkpassUrl}>
-          <Button variant="text" size="small" icon="QRCode" iconType="outline">
-            {formatMessage(m.sendToPhone)}
-          </Button>
-        </Link>
+      {isMobile && (
+        <Button
+          variant="text"
+          size="small"
+          icon={displayLoader ? undefined : 'QRCode'}
+          iconType="outline"
+          onClick={() => (loading ? setDisplayLoader(true) : null)}
+        >
+          {formatMessage(m.sendToPhone)}{' '}
+          {displayLoader && (
+            <span className={styles.loader}>
+              <LoadingDots single />
+            </span>
+          )}
+        </Button>
       )}
+
+      <Box display="none">
+        <a id="pkpass-url" href={pkpassUrl ?? ''}>
+          {' '}
+          {formatMessage(m.sendToPhone)}{' '}
+        </a>
+      </Box>
     </>
   )
 }
