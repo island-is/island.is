@@ -9,6 +9,7 @@ import {
 
 import { environment } from '../../environments'
 import { Case } from '../modules/case'
+import { now } from '../factories'
 import { ruling } from '../messages'
 import {
   addFooter,
@@ -55,7 +56,7 @@ function constructRulingPdf(
   setLineGap(doc, 2)
   addMediumHeading(
     doc,
-    `${title} ${formatDate(theCase.rulingDate ?? new Date(), 'PPP')}`,
+    `${title} ${formatDate(theCase.rulingDate ?? now(), 'PPP')}`,
   )
   setLineGap(doc, 30)
   addMediumHeading(

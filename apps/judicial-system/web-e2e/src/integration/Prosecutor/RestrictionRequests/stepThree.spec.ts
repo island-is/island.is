@@ -1,12 +1,17 @@
+import {
+  STEP_FOUR_ROUTE,
+  STEP_THREE_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { makeCustodyCase } from '@island.is/judicial-system/formatters'
+
 import { intercept } from '../../../utils'
 
-describe('/krafa/domkrofur-og-lagaakvaedi/:id', () => {
+describe(`${STEP_THREE_ROUTE}/:id`, () => {
   beforeEach(() => {
     const caseData = makeCustodyCase()
 
     cy.stubAPIResponses()
-    cy.visit('/krafa/domkrofur-og-lagaakvaedi/test_id')
+    cy.visit(`${STEP_THREE_ROUTE}/test_id`)
 
     intercept(caseData)
   })
@@ -49,6 +54,6 @@ describe('/krafa/domkrofur-og-lagaakvaedi/:id', () => {
     cy.getByTestid('lawsBroken').type('Lorem ipsum')
     cy.getByTestid('checkbox').first().click()
     cy.getByTestid('continueButton').click()
-    cy.url().should('include', '/krafa/greinargerd/test_id')
+    cy.url().should('include', STEP_FOUR_ROUTE)
   })
 })

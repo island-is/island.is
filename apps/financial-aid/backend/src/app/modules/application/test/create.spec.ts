@@ -7,6 +7,7 @@ import {
   HomeCircumstances,
   Municipality,
   User,
+  UserType,
 } from '@island.is/financial-aid/shared/lib'
 import { ForbiddenException } from '@nestjs/common'
 import { firstDateOfMonth } from '@island.is/financial-aid/shared/lib'
@@ -18,6 +19,7 @@ import { MunicipalityService } from '../../municipality/municipality.service'
 import { CreateApplicationDto } from '../dto'
 import { ApplicationModel } from '../models/application.model'
 import { createTestingApplicationModule } from './createTestingApplicationModule'
+import { DirectTaxPaymentService } from '../../directTaxPayment'
 
 interface Then {
   result: ApplicationModel
@@ -36,6 +38,7 @@ describe('ApplicationController - Create', () => {
   let mockFileService: FileService
   let mockEmailService: EmailService
   let mockMunicipalityService: MunicipalityService
+  let mockDirectTaxPaymentService: DirectTaxPaymentService
 
   beforeEach(async () => {
     const {
@@ -45,6 +48,7 @@ describe('ApplicationController - Create', () => {
       fileService,
       emailService,
       municipalityService,
+      directTaxPaymentService,
     } = await createTestingApplicationModule()
 
     mockApplicationModel = applicationModel
@@ -52,6 +56,7 @@ describe('ApplicationController - Create', () => {
     mockFileService = fileService
     mockEmailService = emailService
     mockMunicipalityService = municipalityService
+    mockDirectTaxPaymentService = directTaxPaymentService
 
     givenWhenThen = async (
       user: User,
@@ -105,6 +110,8 @@ describe('ApplicationController - Create', () => {
       municipalityCode: '',
       streetName: '',
       homeCircumstancesCustom: '',
+      directTaxPayments: [],
+      applicationSystemId: '',
     }
 
     beforeEach(async () => {
@@ -140,7 +147,7 @@ describe('ApplicationController - Create', () => {
     })
   })
 
-  describe('application created without spouse and without files', () => {
+  describe('application created without spouse, without direct tax payments and without files', () => {
     let then: Then
 
     const id = uuid()
@@ -178,6 +185,8 @@ describe('ApplicationController - Create', () => {
       streetName: '',
       homeCircumstancesCustom: '',
       employmentCustom: '',
+      directTaxPayments: [],
+      applicationSystemId: '',
     }
 
     const municipality: Municipality = {
@@ -218,6 +227,10 @@ describe('ApplicationController - Create', () => {
 
     it('should not call file service', () => {
       expect(mockFileService.createFile).not.toHaveBeenCalled()
+    })
+
+    it('should not call direct tax payment service', () => {
+      expect(mockDirectTaxPaymentService.create).not.toHaveBeenCalled()
     })
 
     it('should call municipality service with municipality code', () => {
@@ -286,6 +299,8 @@ describe('ApplicationController - Create', () => {
       streetName: '',
       homeCircumstancesCustom: '',
       employmentCustom: '',
+      directTaxPayments: [],
+      applicationSystemId: '',
     }
 
     const municipality: Municipality = {
@@ -391,6 +406,8 @@ describe('ApplicationController - Create', () => {
       streetName: '',
       homeCircumstancesCustom: '',
       employmentCustom: '',
+      directTaxPayments: [],
+      applicationSystemId: '',
     }
 
     const appModel = {
@@ -424,6 +441,105 @@ describe('ApplicationController - Create', () => {
 
     it('should call file service twice', () => {
       expect(mockFileService.createFile).toBeCalledTimes(2)
+    })
+  })
+
+  describe('application created with direct tax payments', () => {
+    let then: Then
+
+    const id = uuid()
+
+    const application: CreateApplicationDto = {
+      state: ApplicationState.NEW,
+      name: 'Tester',
+      phoneNumber: '',
+      email: 'Some mail',
+      homeCircumstances: HomeCircumstances.UNKNOWN,
+      employment: Employment.WORKING,
+      student: false,
+      studentCustom: '',
+      usePersonalTaxCredit: false,
+      bankNumber: '',
+      ledger: '',
+      accountNumber: '',
+      interview: false,
+      hasIncome: false,
+      formComment: '',
+      files: undefined,
+      amount: 0,
+      spouseName: undefined,
+      spouseNationalId: undefined,
+      spouseEmail: undefined,
+      familyStatus: FamilyStatus.COHABITATION,
+      city: '',
+      postalCode: '',
+      municipalityCode: '3',
+      streetName: '',
+      homeCircumstancesCustom: '',
+      employmentCustom: '',
+      directTaxPayments: [
+        {
+          totalSalary: 1,
+          payerNationalId: 'payer-national-id',
+          personalAllowance: 2,
+          withheldAtSource: 3,
+          month: 4,
+          year: 2022,
+          userType: UserType.APPLICANT,
+        },
+        {
+          totalSalary: 5,
+          payerNationalId: 'spouse-payer-national-id',
+          personalAllowance: 6,
+          withheldAtSource: 7,
+          month: 8,
+          year: 2022,
+          userType: UserType.SPOUSE,
+        },
+      ],
+      applicationSystemId: '',
+    }
+    const user: User = {
+      nationalId: '0000000000',
+      name: 'The User',
+      folder: uuid(),
+      service: RolesRule.OSK,
+    }
+
+    const appModel = {
+      id,
+      state: application.state,
+      created: new Date(),
+      email: application.email,
+    }
+
+    beforeEach(async () => {
+      const mockCreate = mockApplicationModel.create as jest.Mock
+      mockCreate.mockReturnValueOnce(appModel)
+
+      const mockFindApplication = mockApplicationModel.findOne as jest.Mock
+      mockFindApplication.mockReturnValueOnce(null)
+
+      then = await givenWhenThen(user, application)
+    })
+
+    it('should call direct tax payment service with payments', () => {
+      application.directTaxPayments.map((d) => {
+        expect(mockDirectTaxPaymentService.create).toHaveBeenCalledWith({
+          applicationId: id,
+          totalSalary: d.totalSalary,
+          payerNationalId: d.payerNationalId,
+          personalAllowance: d.personalAllowance,
+          withheldAtSource: d.withheldAtSource,
+          month: d.month,
+          year: d.year,
+          userType: d.userType,
+        })
+      })
+    })
+
+    it('should call direct tax payment service twice', () => {
+      expect(mockDirectTaxPaymentService.create).toBeCalledTimes(2)
     })
   })
 
@@ -468,6 +584,8 @@ describe('ApplicationController - Create', () => {
       streetName: '',
       homeCircumstancesCustom: '',
       employmentCustom: '',
+      directTaxPayments: [],
+      applicationSystemId: '',
     }
 
     const appModel = {
@@ -525,6 +643,8 @@ describe('ApplicationController - Create', () => {
       streetName: '',
       homeCircumstancesCustom: '',
       employmentCustom: '',
+      directTaxPayments: [],
+      applicationSystemId: '',
     }
 
     beforeEach(async () => {

@@ -25,9 +25,13 @@ export const GET_PROJECT_PAGE_QUERY = gql`
         ...AllSlices
       }
       stepper {
+        id
+        title
         steps {
+          id
           title
           slug
+          stepType
           subtitle {
             ...HtmlFields
           }
@@ -36,7 +40,9 @@ export const GET_PROJECT_PAGE_QUERY = gql`
           }
           isAnswer
           options
+          config
         }
+        config
       }
       slices {
         ...AllSlices
