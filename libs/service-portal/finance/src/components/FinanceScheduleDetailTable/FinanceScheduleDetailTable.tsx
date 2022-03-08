@@ -89,13 +89,13 @@ const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
                   align: 'left',
                 },
                 {
-                  value: format(dateParse(row.plannedDate), dateFormat.is),
+                  value: row.plannedDate, //format(dateParse(row.plannedDate), dateFormat.is),
                   align: 'left',
                 },
                 { value: row.plannedAmount, align: 'left' },
                 { value: row.paidAmount, align: 'left' },
                 {
-                  value: format(dateParse(row.paidDate), dateFormat.is),
+                  value: row.paidDate, // format(dateParse(row.paidDate), dateFormat.is),
                   align: 'left',
                 },
               ].map((item, ii) => (

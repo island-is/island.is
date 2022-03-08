@@ -20,7 +20,7 @@ import {
   Query,
 } from '@island.is/api/schema'
 import * as s from './FinanceScheduleTable.css'
-import { gql, useQuery } from '@apollo/client'
+import { gql, useLazyQuery, useQuery } from '@apollo/client'
 import { dateParse } from '../../utils/dateUtils'
 const ITEMS_ON_PAGE = 20
 
@@ -73,17 +73,25 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
   const [page, setPage] = useState(1)
   const { formatMessage } = useLocale()
 
-  const { data, loading, error } = useQuery<Query>(
-    GET_FINANCE_PAYMENT_SCHEDULE_BY_ID,
-    {
-      variables: {
-        input: { scheduleNumber: '001' },
-      },
-    },
-  )
+  // const { data, loading, error } = useQuery<Query>(
+  //   GET_FINANCE_PAYMENT_SCHEDULE_BY_ID,
+  //   {
+  //     variables: {
+  //       input: { scheduleNumber: '001' },
+  //     },
+  //   },
+  // )
+
+  const [
+    getPaymentScheduleById,
+    { loading, error, ...detailsQuery },
+  ] = useLazyQuery(GET_FINANCE_PAYMENT_SCHEDULE_BY_ID)
+
+  console.log('data by id ', detailsQuery)
 
   const paymentDetailData: Array<DetailedSchedule> =
-    data?.getPaymentScheduleById.myDetailedSchedules.myDetailedSchedule || []
+    detailsQuery?.data?.getPaymentScheduleById.myDetailedSchedules
+      .myDetailedSchedule || []
 
   const totalPages =
     recordsArray.length > ITEMS_ON_PAGE
@@ -152,7 +160,13 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
           {datedArray.map((x, i) => (
             <ExpandRow
               key={`finance-schedule-row-${i}`}
-              onExpandCallback={() => console.log('EXPAND')}
+              onExpandCallback={() =>
+                getPaymentScheduleById({
+                  variables: {
+                    input: { scheduleNumber: x.scheduleNumber },
+                  },
+                })
+              }
               data={[
                 { value: x.approvalDate },
                 { value: x.totalAmount },

@@ -66,7 +66,7 @@ export class DetailedSchedule {
   @Field()
   paymentNumber!: string
 
-  @Field(() => [AccumulatedPayments])
+  @Field(() => [AccumulatedPayments], { nullable: true })
   payments!: AccumulatedPayments[]
 
   @Field()
