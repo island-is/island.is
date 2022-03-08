@@ -18,6 +18,8 @@ export const RegisteredProperties: FC<
       properties: [PropertyDetail]
     })?.properties || []
 
+  // remove this comment
+
   return (
     <PropertyTable
       application={application}
