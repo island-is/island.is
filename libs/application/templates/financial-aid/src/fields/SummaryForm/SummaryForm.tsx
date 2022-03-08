@@ -50,15 +50,13 @@ const SummaryForm = ({
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
       const createApp = await createApplication(application)
-        .then((response) => {
-          externalData.veita.data.currentApplicationId = response
+        .then(() => {
           return true
         })
         .catch(() => {
           setFormError(true)
           return false
         })
-
       if (createApp) {
         return [true, null]
       }

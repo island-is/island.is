@@ -55,7 +55,7 @@ const useApplication = () => {
               phoneNumber: answers.contactInfo.phone,
               email: answers.contactInfo.email,
               homeCircumstances: answers.homeCircumstances.type,
-              homeCircumstancesCustom: answers.homeCircumstances.custom ?? '',
+              homeCircumstancesCustom: answers.homeCircumstances.custom,
               student: Boolean(
                 answers.student.isStudent === ApproveOptions.Yes,
               ),
@@ -68,17 +68,18 @@ const useApplication = () => {
               ledger: answers.bankInfo.ledger,
               accountNumber: answers.bankInfo.accountNumber,
               employment: answers.employment.type,
-              employmentCustom: answers.employment.custom ?? '',
+              employmentCustom: answers.employment.custom,
               formComment: answers.formComment,
               state: ApplicationState.NEW,
               files: files,
-              // spouseNationalId:
-              //   externalData.nationalRegistry.data.applicant.spouse?.nationalId ??
-              //   answers.relationshipStatus?.spouseNationalId,
-              // spouseEmail:
-              //   answers.spouse.email ?? answers.relationshipStatus.spouseEmail,
-              // spouseName:
-              //   externalData.nationalRegistry.data.applicant.spouse?.name,
+              spouseNationalId:
+                externalData.nationalRegistry.data.applicant.spouse
+                  ?.nationalId || answers.relationshipStatus?.spouseNationalId,
+              spouseEmail:
+                answers.spouse?.email ||
+                answers.relationshipStatus?.spouseEmail,
+              spouseName:
+                externalData.nationalRegistry.data.applicant.spouse?.name,
               familyStatus: FamilyStatus.COHABITATION,
               streetName:
                 externalData.nationalRegistry.data.applicant.address.streetName,

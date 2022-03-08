@@ -279,10 +279,10 @@ export class ApplicationService {
       await Promise.all(promises)
     }
 
+    //For application system to map to json
     if (appModel.getDataValue('files') === undefined) {
       appModel.setDataValue('files', [])
     }
-
     if (appModel.getDataValue('applicationEvents') === undefined) {
       appModel.setDataValue('applicationEvents', [])
     }

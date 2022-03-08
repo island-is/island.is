@@ -1,14 +1,13 @@
 import React from 'react'
-import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { FAFieldBaseProps } from '../../lib/types'
 import { useIntl } from 'react-intl'
 import { confirmation, copyUrl } from '../../lib/messages'
 import { DescriptionText, ConfirmationSectionImage, CopyUrl } from '..'
 
-const Confirmation = ({ application, refetch }: FAFieldBaseProps) => {
+const Confirmation = ({ application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { externalData } = application
-
   return (
     <>
       <Box marginTop={[4, 4, 5]}>
