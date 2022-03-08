@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import {
   Text,
   Box,
@@ -15,6 +15,10 @@ import {
   getNextPeriod,
   HomeCircumstances,
   estimatedBreakDown,
+  aidCalculator,
+  martialStatusTypeFromMartialCode,
+  MartialStatusType,
+  FamilyStatus,
 } from '@island.is/financial-aid/shared/lib'
 
 import { Routes } from '../../lib/constants'
@@ -26,6 +30,7 @@ import {
   getMessageApproveOptionsForIncome,
   getMessageEmploymentStatus,
   getMessageHomeCircumstances,
+  getMessageFamilyStatus,
 } from '../../lib/formatters'
 import AllFiles from './AllFiles'
 
@@ -36,6 +41,36 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { setValue } = useFormContext()
 
   const formCommentId = 'formComment'
+
+  const aidAmount = useMemo(() => {
+    if (
+      externalData.nationalRegistry?.data?.municipality &&
+      answers.homeCircumstances
+    ) {
+      return aidCalculator(
+        answers.homeCircumstances.type,
+        martialStatusTypeFromMartialCode(
+          externalData.nationalRegistry?.data?.applicant?.spouse?.maritalStatus,
+        ) === MartialStatusType.SINGLE
+          ? externalData.nationalRegistry?.data?.municipality?.individualAid
+          : externalData.nationalRegistry?.data?.municipality?.cohabitationAid,
+      )
+    }
+  }, [externalData.nationalRegistry?.data?.municipality])
+
+  const findFamilyStatus = () => {
+    switch (true) {
+      case martialStatusTypeFromMartialCode(
+        externalData.nationalRegistry?.data?.applicant?.spouse?.maritalStatus,
+      ) === MartialStatusType.MARRIED:
+        return FamilyStatus.MARRIED
+      case answers?.relationshipStatus?.unregisteredCohabitation ===
+        ApproveOptions.Yes:
+        return FamilyStatus.UNREGISTERED_COBAHITATION
+      default:
+        return FamilyStatus.NOT_COHABITATION
+    }
+  }
 
   return (
     <>
@@ -62,10 +97,14 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         <DescriptionText text={m.summaryForm.general.description} />
       </Box>
 
-      {externalData.nationalRegistry && (
+      {aidAmount && (
         <Box marginTop={[4, 4, 5]}>
-          {/* TODO get aid amount */}
-          <Breakdown calculations={estimatedBreakDown(10, true)} />
+          <Breakdown
+            calculations={estimatedBreakDown(
+              aidAmount,
+              answers.personalTaxCredit === ApproveOptions.Yes,
+            )}
+          />
         </Box>
       )}
 
@@ -118,8 +157,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
           {formatMessage(m.inRelationship.general.sectionTitle)}
         </Text>
 
-        {/* TODO  relationship status  */}
-        <Text>TODO</Text>
+        <Text>{formatMessage(getMessageFamilyStatus[findFamilyStatus()])}</Text>
       </SummaryBlock>
 
       <SummaryBlock editAction={() => goToScreen?.(Routes.HOMECIRCUMSTANCES)}>

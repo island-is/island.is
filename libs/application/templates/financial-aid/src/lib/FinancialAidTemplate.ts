@@ -14,7 +14,7 @@ import { Roles, ApplicationStates, ONE_DAY, ONE_MONTH } from './constants'
 
 import { application } from './messages'
 import { dataSchema } from './dataSchema'
-import { hasSpouse } from './utils'
+import { hasSpouse, isMuncipalityRegistered } from './utils'
 import { FAApplication } from '..'
 
 type Events = { type: DefaultEvents.SUBMIT }
@@ -61,7 +61,10 @@ const FinancialAidTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: [{ target: ApplicationStates.DRAFT, cond: () => true }],
+          SUBMIT: [
+            { target: ApplicationStates.DRAFT, cond: isMuncipalityRegistered },
+            { target: ApplicationStates.MUNCIPALITYNOTREGISTERED },
+          ],
           // TODO: Add other states here depending on data received from Veita and þjóðskrá
         },
       },
@@ -123,6 +126,33 @@ const FinancialAidTemplate: ApplicationTemplate<
                 import('../forms/Submitted').then((module) =>
                   Promise.resolve(module.Submitted),
                 ),
+            },
+          ],
+        },
+      },
+      [ApplicationStates.MUNCIPALITYNOTREGISTERED]: {
+        meta: {
+          name: application.name.defaultMessage,
+          lifecycle: {
+            shouldBeListed: false,
+            shouldBePruned: true,
+            whenToPrune: ONE_DAY,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/MuncipalityNotRegistered').then((module) =>
+                  Promise.resolve(module.MuncipalityNotRegistered),
+                ),
+              write: {
+                answers: ['approveExternalData'],
+                externalData: ['nationalRegistry'],
+              },
+              read: {
+                answers: ['approveExternalData'],
+                externalData: ['nationalRegistry'],
+              },
             },
           ],
         },

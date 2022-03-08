@@ -88,3 +88,33 @@ export const filesText = defineMessages({
     description: 'Error message when user has to upload files',
   },
 })
+
+export const familystatus = defineMessages({
+  cohabitation: {
+    id: 'fa.application:section.familystatus.cohabitation',
+    defaultMessage: 'Í sambúð',
+    description: 'Family status when applicant/spouse is in cohabitation',
+  },
+  married: {
+    id: 'fa.application:section.familystatus.married',
+    defaultMessage: 'Gift',
+    description: 'Family status when applicant/spouse is married',
+  },
+  marriedNotLivingTogether: {
+    id: 'fa.application:section.familystatus.marriedNotLivingTogether',
+    defaultMessage: 'Hjón ekki í samvistum',
+    description:
+      'Family status when applicant/spouse is married but not living together',
+  },
+  unregisteredCohabitation: {
+    id: 'fa.application:section.familystatus.unregisteredCohabitation',
+    defaultMessage: 'Óskráð sambúð',
+    description:
+      'Family status when applicant/spouse is in unregistered cohabitation',
+  },
+  notCohabitation: {
+    id: 'fa.application:section.familystatus.notCohabitation',
+    defaultMessage: 'Ekki í sambúð',
+    description: 'Family status when applicant is in not cohabitation',
+  },
+})

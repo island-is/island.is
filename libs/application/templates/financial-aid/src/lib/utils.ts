@@ -1,7 +1,11 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as kennitala from 'kennitala'
-import { ApplicationContext } from '@island.is/application/core'
+import {
+  ApplicationContext,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { ApproveOptions, FAApplication } from '..'
+import { Municipality } from '@island.is/financial-aid/shared/lib'
 
 const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 export const isValidEmail = (value: string) => emailRegex.test(value)
@@ -21,6 +25,16 @@ export function hasSpouse(context: ApplicationContext) {
     Boolean(externalData.nationalRegistry?.data?.applicant?.spouse) ||
     answers.relationshipStatus.unregisteredCohabitation === ApproveOptions.Yes
   )
+}
+
+export function isMuncipalityRegistered(context: ApplicationContext) {
+  const { externalData } = context.application
+
+  const municipality = getValueViaPath(
+    externalData,
+    `nationalRegistry.data.municipality.`,
+  ) as Municipality | null
+  return municipality !== null
 }
 
 export const encodeFilenames = (filename: string) =>
