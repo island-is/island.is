@@ -13,6 +13,7 @@ import { useUserProfile } from '@island.is/service-portal/graphql'
 import { Locale } from '@island.is/shared/types'
 import { useMutation } from '@apollo/client'
 import { CREATE_PK_PASS } from '@island.is/service-portal/graphql'
+import { m } from '../../lib/messages'
 interface Props {
   id: string
   onCloseModal: () => void
@@ -51,10 +52,7 @@ const PkPass = ({ licenseType }: PkPassProps) => {
         <Box>
           <img
             src={pkpassQRCode}
-            alt={formatMessage({
-              id: 'sp.driving-license:QR-code-alt-text',
-              defaultMessage: 'QR code for driving license',
-            })}
+            alt={formatMessage(m.qrCodeAltText)}
             className={styles.code}
           />
         </Box>
@@ -99,27 +97,13 @@ export const QRCodeModal: FC<Props> = ({
         </Box>
         <Box marginRight={7} marginY={2}>
           <Tag disabled>
-            {formatMessage({
-              id: 'sp.driving-license:valid-until',
-              defaultMessage: 'Í gildi til ',
-            })}
+            {formatMessage(m.validUntil)}
             {expires}
           </Tag>
           <Box marginY={1}>
-            <Text variant="h3">
-              {formatMessage({
-                id: 'sp.driving-license:send-license-to-phone',
-                defaultMessage: 'Senda ökuskírteini í síma',
-              })}
-            </Text>
+            <Text variant="h3">{formatMessage(m.sendLicenseToPhone)}</Text>
           </Box>
-          <Text>
-            {formatMessage({
-              id: 'sp.driving-license:send-license-to-phone-text',
-              defaultMessage:
-                'Skannaðu QR kóðann hér til hliðar til að fá stafrænt ökuskírteini sent í símann þinn.',
-            })}
-          </Text>
+          <Text>{formatMessage(m.qrCodeText)}</Text>
         </Box>
       </Box>
     </ModalBase>
