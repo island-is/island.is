@@ -10,46 +10,46 @@ export const requests = {
               'judicial.system.core:requests.active_requests.table.headers.case_number',
             defaultMessage: 'Málsnr.',
             description:
-              'Notaður sem titill fyrir málsnúmer dálk í lista yfir kröfur í vinnslu.',
+              'Notaður sem titill fyrir málsnúmer dálk í lista yfir mál í vinnslu.',
           }),
           type: defineMessage({
             id:
               'judicial.system.core:requests.active_requests.table.headers.type',
             defaultMessage: 'Tegund',
             description:
-              'Notaður sem titill fyrir tegund dálk í lista yfir kröfur í vinnslu.',
+              'Notaður sem titill fyrir tegund dálk í lista yfir mál í vinnslu.',
           }),
           state: defineMessage({
             id:
               'judicial.system.core:requests.active_requests.table.headers.state',
             defaultMessage: 'Staða',
             description:
-              'Notaður sem titill fyrir staða dálk í lista yfir kröfur í vinnslu.',
+              'Notaður sem titill fyrir staða dálk í lista yfir mál í vinnslu.',
           }),
           date: defineMessage({
             id:
               'judicial.system.core:requests.active_requests.table.headers.date',
             defaultMessage: 'Stofnað/Fyrirtaka',
             description:
-              'Notaður sem titill fyrir dagsetningardálk í lista yfir óafgreiddar kröfur í vinnslu.',
+              'Notaður sem titill fyrir dagsetningardálk í lista yfir óafgreidd mál í vinnslu.',
           }),
         },
       },
       title: defineMessage({
         id: 'judicial.system.core:requests.active_requests.title',
-        defaultMessage: 'Kröfur í vinnslu',
+        defaultMessage: 'Mál í vinnslu',
         description: 'Notaður sem titill í fyrsta málalista á heimaskjá.',
       }),
       infoContainerTitle: defineMessage({
         id:
           'judicial.system.core:requests.active_requests.info_container_title',
-        defaultMessage: 'Engar kröfur í vinnslu.',
+        defaultMessage: 'Engin mál í vinnslu.',
         description:
           'Notaður sem titill í upplýsingasvæði sem segir að engin virk mál fundust á heimaskjá.',
       }),
       infoContainerText: defineMessage({
         id: 'judicial.system.core:requests.active_requests.info_container_text',
-        defaultMessage: 'Allar kröfur hafa verið afgreiddar.',
+        defaultMessage: 'Öll mál hafa verið afgreidd.',
         description:
           'Notaður sem texti í upplýsingasvæði sem segir að engin virk mál fundust á heimaskjá fangelsisstarfsmanna.',
       }),
@@ -92,45 +92,45 @@ export const requests = {
               'judicial.system.core:requests.past_requests.table.headers.case_number',
             defaultMessage: 'Málsnr.',
             description:
-              'Notaður sem titill fyrir málsnúmer dálk í lista yfir afgreiddar kröfur.',
+              'Notaður sem titill fyrir málsnúmer dálk í lista yfir afgreidd mál.',
           }),
           type: defineMessage({
             id:
               'judicial.system.core:requests.past_requests.table.headers.type',
             defaultMessage: 'Tegund',
             description:
-              'Notaður sem titill fyrir tegund dálk í lista yfir afgreiddar kröfur.',
+              'Notaður sem titill fyrir tegund dálk í lista yfir afgreidd mál.',
           }),
           state: defineMessage({
             id:
               'judicial.system.core:requests.past_requests.table.headers.state',
             defaultMessage: 'Staða',
             description:
-              'Notaður sem titill fyrir staða dálk í lista yfir afgreiddar kröfur.',
+              'Notaður sem titill fyrir staða dálk í lista yfir afgreidd mál.',
           }),
           duration: defineMessage({
             id:
               'judicial.system.core:requests.past_requests.table.headers.duration',
             defaultMessage: 'Gildistími',
             description:
-              'Notaður sem titill fyrir gildistíma dálk í lista yfir afgreiddar kröfur.',
+              'Notaður sem titill fyrir gildistíma dálk í lista yfir afgreidd mál.',
           }),
         },
       },
       title: defineMessage({
         id: 'judicial.system.core:requests.past_requests.title',
-        defaultMessage: 'Afgreiddar kröfur',
+        defaultMessage: 'Afgreidd mál',
         description: 'Notaður sem titill í seinni málalista á heimaskjá.',
       }),
       infoContainerTitle: defineMessage({
         id: 'judicial.system.core:requests.past_requests.info_container_title',
-        defaultMessage: 'Engar kröfur hafa verið afgreiddar.',
+        defaultMessage: 'Engin mál hafa verið afgreidd.',
         description:
           'Notaður sem titill í upplýsingasvæði sem segir að engin afgreidd mál fundust á heimaskjá.',
       }),
       infoContainerText: defineMessage({
         id: 'judicial.system.core:requests.past_requests.info_container_text',
-        defaultMessage: 'Allar kröfur eru í vinnslu.',
+        defaultMessage: 'Öll mál eru í vinnslu.',
         description:
           'Notaður sem texti í upplýsingasvæði sem segir að engin afgreidd mál fundust á heimaskjá.',
       }),
