@@ -1,19 +1,9 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC } from 'react'
 import * as styles from './QRCodeModal.css'
-import {
-  Box,
-  ModalBase,
-  Button,
-  Tag,
-  Text,
-  SkeletonLoader,
-} from '@island.is/island-ui/core'
+import { Box, ModalBase, Button, Tag, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useUserProfile } from '@island.is/service-portal/graphql'
-import { Locale } from '@island.is/shared/types'
-import { useMutation } from '@apollo/client'
-import { CREATE_PK_PASS } from '@island.is/service-portal/graphql'
 import { m } from '../../lib/messages'
+import { PkPass } from './PkPass'
 interface Props {
   id: string
   onCloseModal: () => void
@@ -21,49 +11,11 @@ interface Props {
   expires?: string
 }
 
-type PkPassProps = {
-  licenseType: string
-}
-
-const PkPass = ({ licenseType }: PkPassProps) => {
-  const [pkpassQRCode, setPkpassQRCode] = useState<string | null>(null)
-  const { data: userProfile } = useUserProfile()
-  const locale = (userProfile?.locale as Locale) ?? 'is'
-  const [generatePkPass, { loading }] = useMutation(CREATE_PK_PASS)
-  const { formatMessage } = useLocale()
-
-  useEffect(() => {
-    const getCode = async () => {
-      const response = await generatePkPass({
-        variables: { locale, input: { licenseType } },
-      })
-
-      if (!response.errors) {
-        setPkpassQRCode(response?.data?.generatePkPass?.pkpassQRCode ?? null)
-      }
-    }
-    getCode()
-  }, [])
-
-  return (
-    <>
-      {loading && <SkeletonLoader width="100%" height={158} />}
-      {pkpassQRCode && (
-        <Box>
-          <img
-            src={pkpassQRCode}
-            alt={formatMessage(m.qrCodeAltText)}
-            className={styles.code}
-          />
-        </Box>
-      )}
-    </>
-  )
-}
 export const QRCodeModal: FC<Props> = ({
   id,
   toggleClose,
   expires,
+  children,
   onCloseModal,
 }) => {
   const { formatMessage } = useLocale()
@@ -93,12 +45,11 @@ export const QRCodeModal: FC<Props> = ({
           />
         </Box>
         <Box className={styles.code} marginRight={3}>
-          <PkPass licenseType="DriversLicense" />
+          {children}
         </Box>
         <Box marginRight={7} marginY={2}>
           <Tag disabled>
-            {formatMessage(m.validUntil)}
-            {expires}
+            {formatMessage(m.validUntil)} {expires}
           </Tag>
           <Box marginY={1}>
             <Text variant="h3">{formatMessage(m.sendLicenseToPhone)}</Text>
