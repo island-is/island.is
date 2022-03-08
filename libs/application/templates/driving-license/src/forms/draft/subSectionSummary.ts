@@ -39,7 +39,7 @@ export const subSectionSummary = buildSubSection({
           refetchApplicationAfterSubmit: true,
           actions: [
             {
-              event: DefaultEvents.SUBMIT,
+              event: DefaultEvents.PAYMENT,
               name: m.continue,
               type: 'primary',
             },
