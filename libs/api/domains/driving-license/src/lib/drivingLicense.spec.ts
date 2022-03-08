@@ -304,6 +304,8 @@ describe('DrivingLicenseService', () => {
           needsToPresentHealthCertificate: false,
           needsToPresentQualityPhoto: false,
           teacherNationalId: MOCK_NATIONAL_ID_TEACHER,
+          email: 'mock@email.com',
+          phone: '9999999',
         },
       )
 
@@ -322,6 +324,8 @@ describe('DrivingLicenseService', () => {
           needsToPresentHealthCertificate: false,
           needsToPresentQualityPhoto: true,
           teacherNationalId: MOCK_NATIONAL_ID_TEACHER,
+          email: 'mock@email.com',
+          phone: '9999999',
         })
         .catch((e) => expect(e).toBeTruthy())
     })
