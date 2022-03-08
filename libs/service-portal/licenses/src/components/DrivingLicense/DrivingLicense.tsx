@@ -6,6 +6,7 @@ import * as styles from './DrivingLicense.css'
 import { getExpiresIn, toDate } from '../../utils/dateUtils'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import QRCodeModal from '../../components/QRCodeModal/QRCodeModal'
+import { m } from '../../lib/messages'
 
 export const DrivingLicense = ({
   id,
@@ -14,7 +15,7 @@ export const DrivingLicense = ({
   id: string
   expireDate: string
 }) => {
-  useNamespaces('sp.driving-license')
+  useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const [modalOpen, setModalOpen] = useState(false)
   const [currentDate] = useState(new Date())
@@ -39,10 +40,7 @@ export const DrivingLicense = ({
           <img
             className={styles.image}
             src={drivingLicenceImg}
-            alt={formatMessage({
-              id: 'sp.driving-license:license',
-              defaultMessage: 'Ökuréttindi',
-            })}
+            alt={formatMessage(m.drivingLicense)}
           />
         </Hidden>
         <Box
@@ -58,10 +56,7 @@ export const DrivingLicense = ({
             alignItems="flexStart"
           >
             <Text variant="h4" as="h2">
-              {formatMessage({
-                id: 'sp.driving-license:license',
-                defaultMessage: 'Ökuréttindi',
-              })}
+              {formatMessage(m.drivingLicense)}
             </Text>
             <Box
               display="flex"
@@ -73,30 +68,24 @@ export const DrivingLicense = ({
             >
               {expiresIn && (
                 <Box paddingRight={1} paddingTop={[1, 0]}>
-                  <Tag disabled variant="red">
-                    {formatMessage({
-                      id: 'sp.driving-license:expires-in',
-                      defaultMessage: 'Rennur út innan ',
-                    })}
-                    {Math.round(expiresIn.value)}
-                    {expiresIn.key === 'months'
-                      ? formatMessage({
-                          id: 'sp.driving-license:months',
-                          defaultMessage: ' mánaða',
-                        })
-                      : formatMessage({
-                          id: 'sp.driving-license:days',
-                          defaultMessage: ' daga',
-                        })}
-                  </Tag>
+                  {expiresIn.value <= 0 ? (
+                    <Tag disabled variant="red">
+                      {formatMessage(m.isExpired)}
+                    </Tag>
+                  ) : (
+                    <Tag disabled variant="red">
+                      {formatMessage(m.expiresIn)}
+                      {Math.round(expiresIn.value)}
+                      {expiresIn.key === 'months'
+                        ? formatMessage(m.months)
+                        : formatMessage(m.days)}
+                    </Tag>
+                  )}
                 </Box>
               )}
               <Box paddingTop={expiresIn ? [1, 1, 0] : undefined}>
                 <Tag disabled variant="blue">
-                  {formatMessage({
-                    id: 'sp.driving-license:valid-until',
-                    defaultMessage: 'Í gildi til ',
-                  })}
+                  {formatMessage(m.validUntil)}
                   {toDate(new Date(expireDate).getTime().toString())}
                 </Tag>
               </Box>
@@ -111,10 +100,7 @@ export const DrivingLicense = ({
           >
             <Box className={styles.flexShrink}>
               <Text>
-                {formatMessage({
-                  id: 'sp.driving-license:license-number',
-                  defaultMessage: 'Númer ökuskírteinis',
-                })}
+                {formatMessage(m.drivingLicenseNumber)}
                 {' - '}
                 {id}
               </Text>
@@ -134,10 +120,7 @@ export const DrivingLicense = ({
                 iconType="outline"
                 onClick={toggleModal}
               >
-                {formatMessage({
-                  id: 'sp.driving-license:send-to-phone',
-                  defaultMessage: 'Senda í síma',
-                })}
+                {formatMessage(m.sendToPhone)}
               </Button>
               <Hidden below="sm">
                 <Box className={styles.line} marginLeft={2} marginRight={2} />
@@ -152,10 +135,7 @@ export const DrivingLicense = ({
               >
                 <Box paddingTop={[1, 0]}>
                   <Button variant="text" size="small" icon="arrowForward">
-                    {formatMessage({
-                      id: 'sp.driving-license:see-more',
-                      defaultMessage: 'Skoða upplýsingar',
-                    })}
+                    {formatMessage(m.seeDetails)}
                   </Button>
                 </Box>
               </Link>

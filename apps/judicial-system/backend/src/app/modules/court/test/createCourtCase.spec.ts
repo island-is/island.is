@@ -6,8 +6,11 @@ import { CourtClientService } from '@island.is/judicial-system/court-client'
 import { CaseType, User } from '@island.is/judicial-system/types'
 
 import { randomBoolean, randomDate, randomEnum } from '../../../test'
+import { now } from '../../../factories'
 import { subTypes } from '../court.service'
 import { createTestingCourtModule } from './createTestingCourtModule'
+
+jest.mock('../../../factories')
 
 interface Then {
   result: string
@@ -31,13 +34,12 @@ describe('CourtService - Create court case', () => {
   beforeEach(async () => {
     const {
       courtClientService,
-      today,
       courtService,
     } = await createTestingCourtModule()
 
     mockCourtClientService = courtClientService
 
-    const mockToday = today as jest.Mock
+    const mockToday = now as jest.Mock
     mockToday.mockReturnValueOnce(date)
 
     givenWhenThen = async (
