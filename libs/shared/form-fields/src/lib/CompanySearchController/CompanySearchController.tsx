@@ -43,7 +43,6 @@ export const CompanySearchController: FC<Props> = ({
   onInputChange,
   setLabelToDataSchema = true,
 }) => {
-  console.log(invalidNationalIdError)
   const { clearErrors, setValue } = useFormContext()
   const { formatMessage } = useLocale()
   return (
