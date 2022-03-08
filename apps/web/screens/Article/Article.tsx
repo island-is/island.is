@@ -44,7 +44,6 @@ import {
   GetSingleArticleQuery,
   QueryGetSingleArticleArgs,
   Organization,
-  Step,
 } from '@island.is/web/graphql/schema'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -59,8 +58,7 @@ import { Locale } from '@island.is/shared/types'
 import { useScrollPosition } from '../../hooks/useScrollPosition'
 import { scrollTo } from '../../hooks/useScrollSpy'
 import StepperFSM from '../../components/StepperFSM/StepperFSM'
-import { getStepOptionsSourceNamespace } from '../../components/StepperFSM/StepperFSMUtils'
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { getStepOptionsFromUIConfiguration } from '../../components/StepperFSM/StepperFSMUtils'
 import * as styles from './Article.css'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
@@ -289,13 +287,13 @@ export interface ArticleProps {
   article: Article
   namespace: GetNamespaceQuery['getNamespace']
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  subArticleStepOptions: { data: Record<string, any>[]; slug: string }[]
+  stepOptionsFromNamespace: { data: Record<string, any>[]; slug: string }[]
 }
 
 const ArticleScreen: Screen<ArticleProps> = ({
   article,
   namespace,
-  subArticleStepOptions,
+  stepOptionsFromNamespace,
 }) => {
   const { activeLocale } = useI18n()
   const portalRef = useRef()
@@ -540,7 +538,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
             {subArticle && subArticle.stepper && (
               <StepperFSM
                 stepper={subArticle.stepper}
-                optionsFromNamespace={subArticleStepOptions}
+                optionsFromNamespace={stepOptionsFromNamespace}
               />
             )}
             <AppendedArticleComponents article={article} />
@@ -655,59 +653,20 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
     throw new CustomNextError(404, 'Article not found')
   }
 
-  // The stepper in the subArticle can have steps that need data from a namespace
-  const subArticleStepOptions = await getSubArticleStepOptions(
-    subArticle,
-    apolloClient,
-  )
+  // The stepper in the subArticle can have steps that need data from a namespace (UI configuration)
+  let stepOptionsFromNamespace = []
+
+  if (subArticle && subArticle.stepper)
+    stepOptionsFromNamespace = await getStepOptionsFromUIConfiguration(
+      subArticle.stepper,
+      apolloClient,
+    )
 
   return {
     article,
     namespace,
-    subArticleStepOptions,
+    stepOptionsFromNamespace,
   }
-}
-
-const getSubArticleStepOptions = async (
-  subArticle: SubArticle,
-  apolloClient: ApolloClient<NormalizedCacheObject>,
-) => {
-  const subArticleStepOptions: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    data: Record<string, any>[]
-    slug: string
-  }[] = []
-  if (subArticle && subArticle.stepper) {
-    const queries = subArticle.stepper.steps.map((step) => {
-      const stepOptionsNameSpace = getStepOptionsSourceNamespace(step as Step)
-      if (!stepOptionsNameSpace) return null
-      return apolloClient
-        .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
-          query: GET_NAMESPACE_QUERY,
-          variables: {
-            input: {
-              namespace: stepOptionsNameSpace,
-              lang: 'is',
-            },
-          },
-        })
-        .then((content) => {
-          // map data here to reduce data processing in component
-          return JSON.parse(content.data.getNamespace.fields)
-        })
-    })
-
-    const dataArray = await Promise.all(queries)
-
-    for (let i = 0; i < dataArray.length; i += 1) {
-      subArticleStepOptions.push({
-        slug: subArticle.stepper.steps[i].slug,
-        data: dataArray[i],
-      })
-    }
-  }
-
-  return subArticleStepOptions
 }
 
 export default withMainLayout(ArticleScreen)

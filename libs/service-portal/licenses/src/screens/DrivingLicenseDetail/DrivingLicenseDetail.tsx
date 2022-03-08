@@ -13,7 +13,9 @@ import {
   AlertBanner,
 } from '@island.is/island-ui/core'
 import {
+  PlausiblePageviewDetail,
   ServicePortalModuleComponent,
+  ServicePortalPath,
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
@@ -24,24 +26,18 @@ import ExpandableLine from './ExpandableLine'
 import * as styles from '../../components/DrivingLicense/DrivingLicense.css'
 import QRCodeModal from '../../components/QRCodeModal/QRCodeModal'
 import { info } from 'kennitala'
+import { m } from '../../lib/messages'
 
 const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
-  useNamespaces('sp.driving-license')
+  useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const [modalOpen, setModalOpen] = useState(false)
   const { data, loading, error } = useDrivingLicense()
 
+  PlausiblePageviewDetail(
+    ServicePortalPath.LicensesDrivingDetail.replace(':id', 'detail'),
+  )
   const licenseExpired = data && isExpired(new Date(), new Date(data.gildirTil))
-
-  const licenseIssuedText = formatMessage({
-    id: 'sp.driving-license:license-issued',
-    defaultMessage: 'Útgáfudagur',
-  })
-
-  const licenseExpireText = formatMessage({
-    id: 'sp.driving-license:license-expire',
-    defaultMessage: 'Lokadagur',
-  })
 
   const toggleModal = () => {
     setModalOpen(!modalOpen)
@@ -54,17 +50,12 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
       ? 'https://island.is/endurnyjun-oekuskirteina-fyrir-70-ara-og-eldri'
       : 'https://island.is/endurnyjun-okuskirteina'
 
-  const errorFetchText = defineMessage({
-    id: 'sp.licenses:error-fetch-detail',
-    defaultMessage: 'Ekki tókst að sækja gögn um ökuskírteini',
-  })
-
   return (
     <>
       {error && !loading && (
         <Box>
           <AlertBanner
-            description={formatMessage(errorFetchText)}
+            description={formatMessage(m.errorFetchingDrivingLicense)}
             variant="error"
           />
         </Box>
@@ -74,17 +65,10 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
           <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
             <Stack space={1}>
               <Text variant="h3" as="h1" paddingTop={0}>
-                {formatMessage({
-                  id: 'sp.driving-license:driving-license-title',
-                  defaultMessage: 'Ökuréttindin þín',
-                })}
+                {formatMessage(m.yourDrivingLicense)}
               </Text>
               <Text as="p" variant="default">
-                {formatMessage({
-                  id: 'sp.driving-license:driving-license-description',
-                  defaultMessage:
-                    'Með ökuskírteini er veitt leyfi til að stjórna ökutæki í ákveðnum réttindaflokkum. Hér birtast réttindi þín og gildistími þeirra.',
-                })}
+                {formatMessage(m.drivingLicenseDescription)}
               </Text>
             </Stack>
           </GridColumn>
@@ -101,10 +85,7 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
                 iconType="outline"
                 onClick={toggleModal}
               >
-                {formatMessage({
-                  id: 'sp.driving-license:send-to-phone',
-                  defaultMessage: 'Senda í síma',
-                })}
+                {formatMessage(m.sendToPhone)}
               </Button>
               <Box className={styles.line} marginX={3} />
               <Box
@@ -120,11 +101,7 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
                   target="_blank"
                 >
                   <Box display="flex" flexDirection="row">
-                    {formatMessage({
-                      id: 'sp.driving-license:renew-license',
-                      defaultMessage: 'Endurnýja ökuskírteini',
-                    })}
-
+                    {formatMessage(m.renewDrivingLicense)}
                     <Box marginLeft={1} className={styles.icon}>
                       <Icon
                         icon="open"
@@ -138,14 +115,8 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
               </Box>
             </Box>
             <UserInfoLine
-              title={formatMessage({
-                id: 'sp.driving-license:license-base-info',
-                defaultMessage: 'Grunnupplýsingar ökuskírteinis',
-              })}
-              label={formatMessage({
-                id: 'sp.driving-license:license-number',
-                defaultMessage: 'Númer',
-              })}
+              title={formatMessage(m.drivingLicenseBaseInfo)}
+              label={defineMessage(m.number)}
               content={data?.id.toString()}
               loading={loading}
               titlePadding={3}
@@ -155,7 +126,7 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
             />
             <Divider />
             <UserInfoLine
-              label={licenseIssuedText}
+              label={m.issueDate}
               content={
                 data &&
                 toDate(new Date(data.utgafuDagsetning).getTime().toString())
@@ -167,7 +138,7 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
             />
             <Divider />
             <UserInfoLine
-              label={licenseExpireText}
+              label={m.expireDate}
               renderContent={() => (
                 <Box display="flex" alignItems="center">
                   <Text>
@@ -201,14 +172,8 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
                     </Box>
                     <Text variant="eyebrow">
                       {licenseExpired
-                        ? formatMessage({
-                            id: 'sp.driving-license:is-expired',
-                            defaultMessage: 'Útrunnið',
-                          })
-                        : formatMessage({
-                            id: 'sp.driving-license:is-valid',
-                            defaultMessage: 'Í gildi',
-                          })}
+                        ? formatMessage(m.isExpired)
+                        : formatMessage(m.isValid)}
                     </Text>
                   </Box>
                 </Box>
@@ -220,10 +185,7 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
             />
             <Divider />
             <UserInfoLine
-              label={formatMessage({
-                id: 'sp.driving-license:issued-by',
-                defaultMessage: 'Nafn útgefanda',
-              })}
+              label={formatMessage(m.issuedBy)}
               content={data.nafnUtgafustadur}
               loading={loading}
               paddingBottom={1}
@@ -234,10 +196,7 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
             <Box marginY={3} />
             <Box position="relative" paddingTop={1} paddingRight={4}>
               <Text variant="eyebrow">
-                {formatMessage({
-                  id: 'sp.driving-license:license-categories-title',
-                  defaultMessage: 'Réttindaflokkar',
-                })}
+                {formatMessage(m.licenseCategories)}
               </Text>
             </Box>
 
@@ -251,8 +210,8 @@ const DrivingLicenseDetail: ServicePortalModuleComponent = ({ userInfo }) => {
                 return (
                   <ExpandableLine
                     key={item.nr}
-                    licenseIssued={licenseIssuedText}
-                    licenseExpire={licenseExpireText}
+                    licenseIssued={formatMessage(m.issueDate)}
+                    licenseExpire={formatMessage(m.expireDate)}
                     issuedDate={toDate(
                       new Date(item.utgafuDags).getTime().toString(),
                     )}

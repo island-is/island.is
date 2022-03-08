@@ -6735,6 +6735,27 @@
         }
       }
     },
+    "residence-history": {
+      "root": "libs/residence-history",
+      "sourceRoot": "libs/residence-history/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/residence-history/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/residence-history"],
+          "options": {
+            "jestConfig": "libs/residence-history/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "service-portal": {
       "root": "apps/service-portal",
       "sourceRoot": "apps/service-portal/src",
@@ -7518,6 +7539,12 @@
           "options": {
             "jestConfig": "libs/service-portal/licenses/jest.config.js",
             "passWithNoTests": true
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/licenses/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
           }
         }
       }
