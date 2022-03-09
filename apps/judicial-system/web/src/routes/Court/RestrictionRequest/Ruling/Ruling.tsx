@@ -52,6 +52,7 @@ import {
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
 import * as Constants from '@island.is/judicial-system/consts'
+import { useRulingAutofill } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
 
 export const Ruling: React.FC = () => {
   const {
@@ -92,6 +93,8 @@ export const Ruling: React.FC = () => {
   useEffect(() => {
     document.title = 'Úrskurður - Réttarvörslugátt'
   }, [])
+
+  useRulingAutofill(isCaseUpToDate, workingCase)
 
   useEffect(() => {
     const theCase = workingCase
