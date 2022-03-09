@@ -84,7 +84,7 @@ export const SjukratryggingarFooter: React.FC<FooterProps> = ({
                   className={styles.footerSecondRow}
                 >
                   <Box>
-                    {richText((footerItems[4].content ?? []) as SliceType[], {
+                    {richText((footerItems?.[4].content ?? []) as SliceType[], {
                       renderNode: {
                         [BLOCKS.PARAGRAPH]: (_node, children) => (
                           <Text variant="small" color="dark400" marginY={1}>
