@@ -5,7 +5,7 @@ import {
   PRWorkflow,
   WorkflowID,
 } from './git-action-status'
-import { execSync } from 'child_process'
+import { execSync, spawnSync } from 'child_process'
 import { Octokit } from '@octokit/rest'
 
 import { Endpoints } from '@octokit/types'
@@ -34,6 +34,12 @@ const hasFinishedSuccessfulJob = (
   return false
 }
 
+// took this from https://www.w3resource.com/javascript-exercises/fundamental/javascript-fundamental-exercise-265.php
+export const chunk = <ElementType>(arr: ElementType[], size: number) =>
+  Array.from({ length: Math.ceil(arr.length / size) }, (v, i) =>
+    arr.slice(i * size, i * size + size),
+  )
+
 export class LocalRunner implements GitActionStatus {
   constructor(private octokit: Octokit) {}
   async getChangedComponents(
@@ -58,17 +64,23 @@ export class LocalRunner implements GitActionStatus {
 
     if (changedFiles.length === 0) return []
     try {
-      const printAffected = execSync(
-        `npx nx print-affected --select=projects --files=${changedFiles.join(
-          ',',
-        )}`,
+      const printAffected = spawnSync(
+        `npx`,
+        [
+          `nx`,
+          `print-affected`,
+          `--select=projects`,
+          ...chunk(changedFiles, 20).map(
+            (chunk) => `--files=${chunk.join(',')}`,
+          ),
+        ],
         {
           encoding: 'utf-8',
           cwd: git.cwd,
           shell: git.shell,
         },
       )
-      let affectedComponents = printAffected
+      let affectedComponents = printAffected.stdout
         .split(',')
         .map((s) => s.trim())
         .filter((c) => c.length > 0)

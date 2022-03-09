@@ -275,7 +275,7 @@ export class ApplicationModel extends Model<Application> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: true,
+    allowNull: false,
   })
   @ApiProperty()
   municipalityCode: string
@@ -283,4 +283,12 @@ export class ApplicationModel extends Model<Application> {
   @HasMany(() => DirectTaxPaymentModel, 'applicationId')
   @ApiProperty({ type: DirectTaxPaymentModel, isArray: true })
   directTaxPayments: DirectTaxPaymentModel[]
+
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+    unique: false,
+  })
+  @ApiProperty()
+  applicationSystemId: string
 }

@@ -14,11 +14,11 @@ import {
   lowercase,
   formatAppeal,
   formatRequestCaseType,
-  formatNationalId,
 } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../environments'
 import { Case } from '../modules/case'
+import { now } from '../factories'
 import { courtRecord } from '../messages'
 import {
   addFooter,
@@ -268,7 +268,7 @@ function constructRestrictionCourtRecordPdf(
       ? formatMessage(courtRecord.smallPrint, {
           actorName: user.name,
           actorInstitution: user.institution?.name,
-          date: formatDate(new Date(), 'PPPp'),
+          date: formatDate(now(), 'PPPp'),
         })
       : undefined,
   )
@@ -515,7 +515,7 @@ function constructInvestigationCourtRecordPdf(
       ? formatMessage(courtRecord.smallPrint, {
           actorName: user.name,
           actorInstitution: user.institution?.name,
-          date: formatDate(new Date(), 'PPPp'),
+          date: formatDate(now(), 'PPPp'),
         })
       : undefined,
   )

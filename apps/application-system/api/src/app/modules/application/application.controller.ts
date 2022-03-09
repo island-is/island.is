@@ -57,7 +57,7 @@ import { mergeAnswers, DefaultEvents } from '@island.is/application/core'
 import { IntlService } from '@island.is/cms-translations'
 import { Audit, AuditService } from '@island.is/nest/audit'
 
-import { ApplicationService } from './application.service'
+import { ApplicationService } from '@island.is/application/api/core'
 import { FileService } from './files/file.service'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
@@ -95,7 +95,7 @@ import {
 } from './types'
 import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { CurrentLocale } from './utils/currentLocale'
-import { Application } from './application.model'
+import { Application } from '@island.is/application/api/core'
 import { Documentation } from '@island.is/nest/swagger'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -790,24 +790,19 @@ export class ApplicationController {
     @Body() input: AddAttachmentDto,
     @CurrentUser() user: User,
   ): Promise<ApplicationResponseDto> {
-    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
-      id,
-      user.nationalId,
-    )
     const { key, url } = input
 
-    const { updatedApplication } = await this.applicationService.update(
-      existingApplication.id,
-      {
-        attachments: {
-          ...existingApplication.attachments,
-          [key]: url,
-        },
-      },
+    const {
+      updatedApplication,
+    } = await this.applicationService.updateAttachment(
+      id,
+      user.nationalId,
+      key,
+      url,
     )
 
     await this.uploadQueue.add('upload', {
-      applicationId: existingApplication.id,
+      applicationId: updatedApplication.id,
       nationalId: user.nationalId,
       attachmentUrl: url,
     })

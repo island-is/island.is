@@ -87,22 +87,10 @@ export const Confirmation: React.FC = () => {
       notFound={caseNotFound}
     >
       <FormContentContainer>
-        <Box marginBottom={1}>
+        <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             Yfirlit úrskurðar
           </Text>
-        </Box>
-        <Box display="flex" marginBottom={7}>
-          <Box marginRight={2}>
-            <Text variant="small">{`Krafa stofnuð: ${formatDate(
-              workingCase.created,
-              'P',
-            )}`}</Text>
-          </Box>
-          <Text variant="small">{`Þinghald: ${formatDate(
-            workingCase.courtStartDate,
-            'P',
-          )}`}</Text>
         </Box>
         <Box component="section" marginBottom={7}>
           <CaseInfo workingCase={workingCase} userRole={user?.role} />
@@ -150,7 +138,7 @@ export const Confirmation: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
+          previousUrl={`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`}
           nextUrl={Constants.REQUEST_LIST_ROUTE}
           nextButtonText={formatMessage(
             workingCase.decision === CaseDecision.ACCEPTING

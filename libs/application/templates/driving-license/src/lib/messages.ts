@@ -594,6 +594,11 @@ export const m = defineMessages({
     defaultMessage: 'Netfangið þitt',
     description: 'Your email',
   },
+  informationYourPhone: {
+    id: 'dl.application:informationYourPhone',
+    defaultMessage: 'Símanúmerið þitt',
+    description: 'Your phone number',
+  },
   drivingInstructor: {
     id: 'dl.application:drivingInstructor',
     defaultMessage: 'Ökukennari',
