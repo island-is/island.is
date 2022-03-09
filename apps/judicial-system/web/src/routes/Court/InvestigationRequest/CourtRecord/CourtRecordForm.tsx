@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useDebounce } from 'react-use'
 
 import {
   Box,
@@ -68,6 +69,26 @@ const CourtRecordForm: React.FC<Props> = (props) => {
 
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
+
+  useDebounce(
+    () => {
+      updateCase(workingCase.id, {
+        courtAttendees: workingCase.courtAttendees,
+        sessionBookings: workingCase.sessionBookings,
+        accusedAppealAnnouncement: workingCase.accusedAppealAnnouncement,
+        prosecutorAppealAnnouncement: workingCase.prosecutorAppealAnnouncement,
+        endOfSessionBookings: workingCase.endOfSessionBookings,
+      })
+    },
+    2000,
+    [
+      workingCase.courtAttendees,
+      workingCase.sessionBookings,
+      workingCase.accusedAppealAnnouncement,
+      workingCase.prosecutorAppealAnnouncement,
+      workingCase.endOfSessionBookings,
+    ],
+  )
 
   return (
     <>

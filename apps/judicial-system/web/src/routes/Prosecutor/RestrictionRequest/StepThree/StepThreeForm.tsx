@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useDebounce } from 'react-use'
 
 import { Box, Text, Input, Checkbox } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -51,6 +52,22 @@ const StepThreeForm: React.FC<Props> = (props) => {
 
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
+
+  useDebounce(
+    () => {
+      updateCase(workingCase.id, {
+        lawsBroken: workingCase.lawsBroken,
+        legalBasis: workingCase.legalBasis,
+        requestedOtherRestrictions: workingCase.requestedOtherRestrictions,
+      })
+    },
+    2000,
+    [
+      workingCase.lawsBroken,
+      workingCase.legalBasis,
+      workingCase.requestedOtherRestrictions,
+    ],
+  )
 
   return (
     <>

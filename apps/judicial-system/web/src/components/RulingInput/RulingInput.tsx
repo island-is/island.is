@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Input } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
+import { useDebounce } from 'react-use'
 
 import { Case, isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import { ruling as m } from '@island.is/judicial-system-web/messages'
@@ -30,6 +31,14 @@ const RulingInput: React.FC<Props> = (props) => {
   const { updateCase, autofill } = useCase()
   const { formatMessage } = useIntl()
   const [rulingErrorMessage, setRulingErrorMessage] = useState('')
+
+  useDebounce(
+    () => {
+      updateCase(workingCase.id, { ruling: workingCase.ruling })
+    },
+    2000,
+    [workingCase.ruling],
+  )
 
   useEffect(() => {
     if (isCaseUpToDate) {

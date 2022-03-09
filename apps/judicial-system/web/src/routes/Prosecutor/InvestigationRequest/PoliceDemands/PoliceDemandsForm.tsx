@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
+import { useDebounce } from 'react-use'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import {
@@ -70,6 +71,18 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
   const [demandsEM, setDemandsEM] = useState<string>('')
   const [lawsBrokenEM, setLawsBrokenEM] = useState<string>('')
   const [legalBasisEM, setLegalBasisEM] = useState<string>('')
+
+  useDebounce(
+    () => {
+      updateCase(workingCase.id, {
+        demands: workingCase.demands,
+        lawsBroken: workingCase.lawsBroken,
+        legalBasis: workingCase.legalBasis,
+      })
+    },
+    2000,
+    [workingCase.demands, workingCase.lawsBroken, workingCase.legalBasis],
+  )
 
   useEffect(() => {
     if (isCaseUpToDate) {

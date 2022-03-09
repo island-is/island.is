@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useDebounce } from 'react-use'
 
 import {
   CaseFileList,
@@ -47,6 +48,24 @@ const RulingForm: React.FC<Props> = (props) => {
   const [courtLegalArgumentsEM, setCourtLegalArgumentsEM] = useState<string>('')
   const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState<string>('')
   const [conclusionEM, setConclusionEM] = useState<string>('')
+
+  useDebounce(
+    () => {
+      updateCase(workingCase.id, {
+        prosecutorDemands: workingCase.prosecutorDemands,
+        courtCaseFacts: workingCase.courtCaseFacts,
+        courtLegalArguments: workingCase.courtLegalArguments,
+        conclusion: workingCase.conclusion,
+      })
+    },
+    2000,
+    [
+      workingCase.prosecutorDemands,
+      workingCase.courtCaseFacts,
+      workingCase.courtLegalArguments,
+      workingCase.conclusion,
+    ],
+  )
 
   return (
     <>

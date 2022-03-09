@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
+import { useDebounce } from 'react-use'
 
 import {
   Accordion,
@@ -84,6 +85,24 @@ export const Ruling: React.FC = () => {
   const { user } = useContext(UserContext)
   const { updateCase, autofill, autofillBoolean } = useCase()
   const { formatMessage } = useIntl()
+
+  useDebounce(
+    () => {
+      updateCase(workingCase.id, {
+        prosecutorDemands: workingCase.prosecutorDemands,
+        courtCaseFacts: workingCase.courtCaseFacts,
+        courtLegalArguments: workingCase.courtLegalArguments,
+        conclusion: workingCase.conclusion,
+      })
+    },
+    2000,
+    [
+      workingCase.prosecutorDemands,
+      workingCase.courtCaseFacts,
+      workingCase.courtLegalArguments,
+      workingCase.conclusion,
+    ],
+  )
 
   useEffect(() => {
     document.title = 'Úrskurður - Réttarvörslugátt'

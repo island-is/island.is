@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useDebounce } from 'react-use'
 
 import { Box, Checkbox, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import {
@@ -34,6 +35,24 @@ const PoliceReportForm: React.FC<Props> = (props) => {
 
   const [caseFactsEM, setCaseFactsEM] = useState<string>('')
   const [legalArgumentsEM, setLegalArgumentsEM] = useState<string>('')
+
+  useDebounce(
+    () => {
+      updateCase(workingCase.id, {
+        caseFacts: workingCase.caseFacts,
+        legalArguments: workingCase.legalArguments,
+        prosecutorOnlySessionRequest: workingCase.prosecutorOnlySessionRequest,
+        comments: workingCase.comments,
+      })
+    },
+    2000,
+    [
+      workingCase.caseFacts,
+      workingCase.legalArguments,
+      workingCase.prosecutorOnlySessionRequest,
+      workingCase.comments,
+    ],
+  )
 
   useEffect(() => {
     const defaultProsecutorOnlySessionRequest = formatMessage(

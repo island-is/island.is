@@ -53,6 +53,7 @@ export const FormContext = createContext<FormProvider>({
 const FormProvider = ({ children }: Props) => {
   const router = useRouter()
   const id = router.query.id
+
   const caseType = router.pathname.includes('farbann')
     ? CaseType.TRAVEL_BAN
     : router.pathname.includes('gaesluvardhald')
@@ -64,7 +65,6 @@ const FormProvider = ({ children }: Props) => {
   const [state, setState] = useState<ProviderState>()
   const [caseId, setCaseId] = useState<string>()
   const [path, setPath] = useState<string>()
-
   const [workingCase, setWorkingCase] = useState<Case>({
     ...initialState,
     type: caseType,

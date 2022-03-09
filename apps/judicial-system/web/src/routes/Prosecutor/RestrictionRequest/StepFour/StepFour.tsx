@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useDebounce } from 'react-use'
 
 import { Text, Box, Input, Tooltip } from '@island.is/island-ui/core'
 import {
@@ -32,6 +33,7 @@ import { UserContext } from '@island.is/judicial-system-web/src/components/UserP
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
+
 export const StepFour: React.FC = () => {
   const {
     workingCase,
@@ -51,6 +53,24 @@ export const StepFour: React.FC = () => {
   const { formatMessage } = useIntl()
 
   const { updateCase, autofill } = useCase()
+
+  useDebounce(
+    () => {
+      updateCase(workingCase.id, {
+        demands: workingCase.demands,
+        caseFacts: workingCase.caseFacts,
+        legalArguments: workingCase.legalArguments,
+        comments: workingCase.comments,
+      })
+    },
+    2000,
+    [
+      workingCase.demands,
+      workingCase.caseFacts,
+      workingCase.legalArguments,
+      workingCase.comments,
+    ],
+  )
 
   useEffect(() => {
     document.title = 'Greinargerð - Réttarvörslugátt'
