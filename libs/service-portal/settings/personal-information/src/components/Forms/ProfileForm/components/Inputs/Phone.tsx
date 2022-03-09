@@ -231,7 +231,7 @@ export const InputPhone: FC<Props> = ({
                     },
                   }}
                   label={formatMessage(sharedMessages.phoneNumber)}
-                  placeholder={formatMessage(sharedMessages.phoneNumber)}
+                  placeholder="000 0000"
                   onChange={(inp) => {
                     setTelInternal(parseFullNumber(inp.target.value || ''))
                     setErrors({ ...formErrors, mobile: undefined })
@@ -319,7 +319,7 @@ export const InputPhone: FC<Props> = ({
                   name="code"
                   format="######"
                   label={formatMessage(m.verificationCode)}
-                  placeholder={formatMessage(m.verificationCode)}
+                  placeholder="123456"
                   defaultValue=""
                   error={errors.code?.message || formErrors.code}
                   disabled={verificationValid || disabled}
@@ -353,7 +353,7 @@ export const InputPhone: FC<Props> = ({
                       size="small"
                       disabled={!codeInternal || disabled || verificationValid}
                     >
-                      {formatMessage(m.confirmCode)}
+                      {formatMessage(m.codeConfirmation)}
                     </Button>
                   </button>
                 )}
