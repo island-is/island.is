@@ -9,7 +9,6 @@ if (require.main === module || !environment.production) {
     name: 'services-endorsements-api',
     openApi,
     port: 4246,
-    swaggerPath: '',
     stripNonClassValidatorInputs: false,
   })
 }
