@@ -21,6 +21,10 @@ import * as Constants from '@island.is/judicial-system/consts'
 
 import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
 import * as styles from './Overview.css'
+import {
+  UploadState,
+  useCourtUpload,
+} from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 
 interface Props {
   workingCase: Case
@@ -35,6 +39,7 @@ const OverviewForm: React.FC<Props> = (props) => {
 
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
+  const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
 
   return (
     <>
@@ -227,6 +232,7 @@ const OverviewForm: React.FC<Props> = (props) => {
           previousUrl={`${Constants.IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoading}
           nextUrl={`${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
+          nextIsDisabled={uploadState === UploadState.UPLOADING}
         />
       </FormContentContainer>
     </>
