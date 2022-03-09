@@ -6,6 +6,7 @@ import {
   Input,
   Button,
   AlertMessage,
+  ArrowLink,
 } from '@island.is/island-ui/core'
 import { PropertyTable } from './PropertyTable'
 import { PropertyDetail } from '../../../types/schema'
@@ -65,10 +66,21 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
   }
 
   return (
-    <Box paddingY={2}>
-      <Text paddingY={2} variant={'h4'}>
-        Hér að neðan getur þú einnig leitað í fasteignanúmerum annarra eigna
-      </Text>
+    <>
+      <Box paddingY={2}>
+        <Text paddingY={2} variant={'h4'}>
+          Hér að neðan getur þú einnig leitað í fasteignanúmerum annarra eigna
+        </Text>
+        <Text>
+          Hér getur þú nálgast
+          <Box display="inlineBlock" marginLeft="smallGutter">
+            <ArrowLink href="https://skra.is/default.aspx?pageid=d5db1b6d-0650-11e6-943c-005056851dd2">
+              nánari uppýsingar um eignina á skrá
+            </ArrowLink>
+          </Box>
+        </Text>
+      </Box>
+
       <Box display="flex" flexDirection="row">
         <Box width="full" marginRight={2}>
           <Input
@@ -107,6 +119,6 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
           message={formatMessage(m.propertyNotFoundMessage)}
         />
       </Box>
-    </Box>
+    </>
   )
 }
