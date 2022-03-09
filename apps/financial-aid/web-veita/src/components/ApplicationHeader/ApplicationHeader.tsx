@@ -61,11 +61,12 @@ const ApplicationHeader = ({
   return (
     <Box className={`contentUp ${styles.widthAlmostFull} `}>
       <Box
-        marginBottom={3}
+        paddingBottom={3}
         display="flex"
         justifyContent="spaceBetween"
         alignItems="center"
         width="full"
+        className="no-print"
       >
         <Button
           colorScheme="default"
@@ -106,18 +107,20 @@ const ApplicationHeader = ({
           </Text>
         </Box>
 
-        <Button
-          colorScheme="default"
-          icon="pencil"
-          iconType="filled"
-          onClick={onClickApplicationState}
-          preTextIconType="filled"
-          size="small"
-          type="button"
-          variant="ghost"
-        >
-          Breyta stöðu
-        </Button>
+        <Box className="no-print">
+          <Button
+            colorScheme="default"
+            icon="pencil"
+            iconType="filled"
+            onClick={onClickApplicationState}
+            preTextIconType="filled"
+            size="small"
+            type="button"
+            variant="ghost"
+          >
+            Breyta stöðu
+          </Button>
+        </Box>
       </Box>
 
       <Box display="flex" marginBottom={8}>
@@ -135,18 +138,29 @@ const ApplicationHeader = ({
                 </Box>
               </>
             )}
-          <button onClick={assignEmployee} className={styles.button}>
+          <button
+            onClick={assignEmployee}
+            className={`${styles.button} no-print`}
+          >
             Sjá um
           </button>
-          <Text variant="small">·</Text>
+
+          <Box className="no-print">
+            {' '}
+            <Text variant="small">·</Text>
+          </Box>
         </Box>
 
-        <Box marginRight={1}>
+        <Box marginRight={1} className="no-print">
           <Text variant="small" fontWeight="semiBold" color="dark300">
             Aldur umsóknar
           </Text>
         </Box>
-        <Text variant="small">{calcDifferenceInDate(application.created)}</Text>
+        <Box className="no-print">
+          <Text variant="small">
+            {calcDifferenceInDate(application.created)}
+          </Text>
+        </Box>
       </Box>
     </Box>
   )

@@ -180,3 +180,21 @@ input[type='number'] {
 .showErrorMessage {
   opacity: 1;
 }
+
+@media print {
+  .no-print,
+  .no-print * {
+    display: none !important;
+  }
+}
+
+@media print {
+  @page {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  body {
+    padding-top: 32px;
+    padding-bottom: 32px;
+  }
+}
