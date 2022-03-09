@@ -1,6 +1,7 @@
 import { createLogger, format, LoggerOptions, transports } from 'winston'
 import { utilities } from 'nest-winston'
 
+import { SentryTransport } from './transports'
 import { maskNationalIdFormatter } from './formatters'
 
 // Default log settings for debug mode
@@ -23,7 +24,7 @@ if (process.env.NODE_ENV === 'production') {
   )
 }
 
-const logTransports = [new transports.Console()]
+const logTransports = [new transports.Console(), new SentryTransport()]
 
 export const logger = createLogger({
   level: logLevel,
