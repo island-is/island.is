@@ -75,7 +75,12 @@ const FinanceScheduleTableRow: FC<Props> = ({ paymentSchedule }) => {
           value: (
             /**TODO: Add PDF download link */
             <Box display="flex" flexDirection="row" alignItems="center">
-              <Button size="small" variant="text" icon="document">
+              <Button
+                size="small"
+                variant="text"
+                icon="document"
+                iconType="outline"
+              >
                 PDF
               </Button>
             </Box>

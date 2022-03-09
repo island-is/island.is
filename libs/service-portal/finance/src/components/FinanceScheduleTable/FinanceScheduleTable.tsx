@@ -75,7 +75,7 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
           ]}
         />
         <T.Body>
-          {datedArray.map((x, i) => (
+          {datedArray.map((x) => (
             <FinanceScheduleTableRow
               key={x.scheduleNumber}
               paymentSchedule={x}
