@@ -48,6 +48,5 @@ export const handsMobile = style({
   left: '50%',
   transform: 'translateX(-50%)',
   pointerEvents: 'none',
-  margin: '0 auto',
   maxHeight: '150px',
 })
