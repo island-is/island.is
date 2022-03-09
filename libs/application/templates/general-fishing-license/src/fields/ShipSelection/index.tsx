@@ -50,8 +50,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({
       if (ship.fishingLicenses.length !== 0) {
         continue
       }
-      if (ship.deprivations.length > 0) return undefined
-      const isExpired = ship.seaworthiness.validTo < new Date()
+      const isExpired = new Date(ship.seaworthiness.validTo) < new Date()
       const seaworthinessDate = format(
         parseISO(ship.seaworthiness.validTo),
         'dd.MM.yy',
@@ -82,7 +81,7 @@ export const ShipSelection: FC<FieldBaseProps> = ({
                   title={formatMessage(shipSelection.labels.expired, {
                     date: seaworthinessDate,
                   })}
-                  message="something whatnot"
+                  message={formatMessage(shipSelection.labels.expiredMessage)}
                 />
               </Box>
             )}

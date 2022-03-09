@@ -55,6 +55,7 @@ export class GeneralFishingLicenseProvider extends BasicDataProvider {
 
   handleError(error: Error | unknown) {
     Sentry.captureException(error)
+    console.log('Error in provider: ', error)
     return Promise.reject('Failed to fetch data')
   }
 }

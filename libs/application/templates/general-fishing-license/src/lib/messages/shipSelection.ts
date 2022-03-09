@@ -64,6 +64,12 @@ export const shipSelection = {
       defaultMessage: 'Útrunnið {date}',
       description: 'Expired label',
     },
+    expiredMessage: {
+      id: 'gfl.application:shipSelection.labels.expiredMessage',
+      defaultMessage:
+        'Vinsamlegast hafðu samband við Samgöngustofu til þess að endurnýja haffærin',
+      description: 'Expired message',
+    },
   }),
   tags: defineMessages({
     noFishingLicensesFound: {

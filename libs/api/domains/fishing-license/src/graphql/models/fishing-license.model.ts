@@ -8,7 +8,6 @@ export class FishingLicense {
   fishingLicenseInfo!: FishingLicenseInfo
   @Field()
   answer!: boolean //todo should this be named answer
-  //todo should this be named answer
   @Field(() => [FishingLicenseReason])
   reasons!: FishingLicenseReason[]
 }

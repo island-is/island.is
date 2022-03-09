@@ -21,7 +21,8 @@
             "description": "Skipaskrárnúmer",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer",
+              "format": "int32"
             }
           }
         ],
@@ -199,7 +200,7 @@
         "tags": ["Umsoknir"],
         "summary": "Býr til veiðileyfi umsókn.",
         "requestBody": {
-          "description": "Object á veiðileyfi umsókn",
+          "description": "Veiðileyfi umsókn",
           "content": {
             "application/json": {
               "schema": {
@@ -224,17 +225,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Umsokn"
+                  "$ref": "#/components/schemas/UmsoknResponse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Umsokn"
+                  "$ref": "#/components/schemas/UmsoknResponse"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Umsokn"
+                  "$ref": "#/components/schemas/UmsoknResponse"
                 }
               }
             }
@@ -391,17 +392,16 @@
   "components": {
     "schemas": {
       "Astaeda": {
+        "required": ["leidbeining", "lysing"],
         "type": "object",
         "properties": {
           "lysing": {
             "type": "string",
-            "description": "Lýsing á ástæðun höfnunar.",
-            "nullable": true
+            "description": "Lýsing á ástæðun höfnunar."
           },
           "leidbeining": {
             "type": "string",
-            "description": "Leiðbeining á hvernig skal lagfæra höfnun.",
-            "nullable": true
+            "description": "Leiðbeining á hvernig skal lagfæra höfnun."
           }
         },
         "additionalProperties": false
@@ -457,12 +457,12 @@
         "additionalProperties": false
       },
       "Skip": {
+        "required": ["einkenni", "heimahofn", "skipanafn", "sviptingar"],
         "type": "object",
         "properties": {
           "skipanafn": {
             "type": "string",
-            "description": "Nafn skipsins.",
-            "nullable": true
+            "description": "Nafn skipsins."
           },
           "skipaskrarnumer": {
             "type": "integer",
@@ -471,8 +471,7 @@
           },
           "einkenni": {
             "type": "string",
-            "description": "Einkennisstafir og einkennisnúmer skips með bandstriki á milli.",
-            "nullable": true
+            "description": "Einkennisstafir og einkennisnúmer skips með bandstriki á milli."
           },
           "bruttotonn": {
             "type": "number",
@@ -487,8 +486,7 @@
           },
           "heimahofn": {
             "type": "string",
-            "description": "Heimahöfn skips.",
-            "nullable": true
+            "description": "Heimahöfn skips."
           },
           "haffaeri": {
             "$ref": "#/components/schemas/Haffaeri"
@@ -498,8 +496,7 @@
             "items": {
               "$ref": "#/components/schemas/Svipting"
             },
-            "description": "Listi af sviptingum.",
-            "nullable": true
+            "description": "Listi af sviptingum."
           },
           "veidileyfi": {
             "type": "array",
@@ -527,6 +524,7 @@
         "additionalProperties": false
       },
       "Svipting": {
+        "required": ["skyring"],
         "type": "object",
         "properties": {
           "iGildi": {
@@ -542,8 +540,7 @@
           },
           "skyring": {
             "type": "string",
-            "description": "Skýring sviptingar.",
-            "nullable": true
+            "description": "Skýring sviptingar."
           }
         },
         "additionalProperties": false
@@ -551,7 +548,6 @@
       "Umsokn": {
         "required": [
           "skipaskrarnumer",
-          "umbedinGildistaka",
           "umsaekjandiKennitala",
           "utgerdKennitala",
           "veidileyfiKodi"
@@ -559,11 +555,13 @@
         "type": "object",
         "properties": {
           "umsaekjandiKennitala": {
+            "pattern": "^\\d{10}$",
             "type": "integer",
             "description": "Kennitala umsækjanda.",
             "format": "int32"
           },
           "utgerdKennitala": {
+            "pattern": "^\\d{10}$",
             "type": "integer",
             "description": "Kennitala útgerðaraðila.",
             "format": "int32"
@@ -576,7 +574,8 @@
           "umbedinGildistaka": {
             "type": "string",
             "description": "Upphafsdagur veiða.",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "veidileyfiKodi": {
             "type": "string",
@@ -585,23 +584,34 @@
         },
         "additionalProperties": false
       },
+      "UmsoknResponse": {
+        "type": "object",
+        "properties": {
+          "umsoknId": {
+            "type": "integer",
+            "description": "Umsóknarauðkenni.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "Veidileyfi": {
+        "required": ["kodi", "nafn"],
         "type": "object",
         "properties": {
           "kodi": {
             "type": "string",
-            "description": "Auðkenni veiðileyfis.",
-            "nullable": true
+            "description": "Auðkenni veiðileyfis."
           },
           "nafn": {
             "type": "string",
-            "description": "Nafn veiðileyfis.",
-            "nullable": true
+            "description": "Nafn veiðileyfis."
           }
         },
         "additionalProperties": false
       },
       "VeidileyfiIBodi": {
+        "required": ["astaedur"],
         "type": "object",
         "properties": {
           "veidileyfi": {
@@ -609,15 +619,14 @@
           },
           "svar": {
             "type": "boolean",
-            "description": "Hvort notandi geti sótt um veiðileyfi eða ekki."
+            "description": "Hvort notandi geti sótt um veiðileyfi eða ekki.\r\nDefault er að hann getur það."
           },
           "astaedur": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Astaeda"
             },
-            "description": "Listi af ástæðum af hverju notandi getur ekki sótt um veiðleyfi.",
-            "nullable": true
+            "description": "Listi af ástæðum af hverju notandi getur ekki sótt um veiðleyfi."
           },
           "forsendur": {
             "$ref": "#/components/schemas/Forsendur"
@@ -626,6 +635,7 @@
         "additionalProperties": false
       },
       "VeidileyfiListi": {
+        "required": ["veidileyfiIBodi"],
         "type": "object",
         "properties": {
           "veidileyfiIBodi": {
@@ -633,8 +643,7 @@
             "items": {
               "$ref": "#/components/schemas/VeidileyfiIBodi"
             },
-            "description": "Listi af veiðileyfum.",
-            "nullable": true
+            "description": "Listi af veiðileyfum."
           }
         },
         "additionalProperties": false

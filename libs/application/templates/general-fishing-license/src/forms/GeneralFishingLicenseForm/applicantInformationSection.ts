@@ -56,8 +56,10 @@ export const applicantInformationSection = buildSection({
           disabled: true,
           required: true,
           defaultValue: (application: GeneralFishingLicense) => {
-            return application.externalData?.nationalRegistry?.data?.address
-              ?.postalCode
+            return (
+              application.externalData?.nationalRegistry?.data?.address
+                ?.postalCode || '105'
+            )
           },
         }),
         buildTextField({
