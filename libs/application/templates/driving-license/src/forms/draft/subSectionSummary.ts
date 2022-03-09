@@ -59,8 +59,7 @@ export const subSectionSummary = buildSubSection({
         buildKeyValueField({
           label: m.overviewPhoneNumber,
           width: 'half',
-          value: ({ externalData: { userProfile } }) =>
-            (userProfile.data as UserProfile).mobilePhoneNumber as string,
+          value: ({ answers: { phone } }) => phone as string,
         }),
         buildKeyValueField({
           label: m.overviewStreetAddress,
@@ -86,8 +85,7 @@ export const subSectionSummary = buildSubSection({
         buildKeyValueField({
           label: m.overviewEmail,
           width: 'half',
-          value: ({ externalData: { userProfile } }) =>
-            (userProfile.data as UserProfile).email as string,
+          value: ({ answers: { email } }) => email as string,
         }),
         buildKeyValueField({
           label: m.overviewCity,
