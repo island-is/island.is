@@ -39,7 +39,7 @@ const Ruling = () => {
         }),
         workingCase,
       )
-      
+
       if (workingCase.demands) {
         autofill('prosecutorDemands', workingCase.demands, workingCase)
       }
