@@ -1,10 +1,11 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as kennitala from 'kennitala'
 import {
+  Application,
   ApplicationContext,
   getValueViaPath,
 } from '@island.is/application/core'
-import { ApproveOptions, CurrentApplication, FAApplication } from '..'
+import { ApproveOptions, CurrentApplication, FAApplication, Spouse } from '..'
 
 const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 export const isValidEmail = (value: string) => emailRegex.test(value)
@@ -14,15 +15,27 @@ export const isValidPhone = (value: string) => {
 }
 export const isValidNationalId = (value: string) => kennitala.isValid(value)
 
-export function hasSpouse(context: ApplicationContext) {
+export function hasSpouseCheck(context: ApplicationContext) {
   const {
     externalData,
     answers,
   } = (context.application as unknown) as FAApplication
+  return hasSpouse(answers, externalData)
+}
+
+export const hasSpouse = (
+  answers: FAApplication['answers'],
+  externalData: FAApplication['externalData'],
+) => {
+  const nationalRegistrySpouse =
+    externalData.nationalRegistry.data.applicant.spouse
+
+  const unregisteredCohabitation =
+    answers?.relationshipStatus?.unregisteredCohabitation
 
   return (
-    Boolean(externalData.nationalRegistry?.data?.applicant?.spouse) ||
-    answers.relationshipStatus.unregisteredCohabitation === ApproveOptions.Yes
+    Boolean(nationalRegistrySpouse) ||
+    unregisteredCohabitation === ApproveOptions.Yes
   )
 }
 

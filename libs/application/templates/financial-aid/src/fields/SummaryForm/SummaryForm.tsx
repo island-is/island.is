@@ -32,6 +32,7 @@ import useApplication from '../../lib/hooks/useApplication'
 
 import cn from 'classnames'
 import * as styles from './../Shared.css'
+import { hasSpouse } from '../../lib/utils'
 
 const SummaryForm = ({
   application,
@@ -48,21 +49,24 @@ const SummaryForm = ({
 
   const { createApplication } = useApplication()
 
-  setBeforeSubmitCallback &&
-    setBeforeSubmitCallback(async () => {
-      const createApp = await createApplication(application)
-        .then(() => {
-          return true
-        })
-        .catch(() => {
-          setFormError(true)
-          return false
-        })
-      if (createApp) {
-        return [true, null]
-      }
-      return [false, 'Failed to update application']
-    })
+  //TODO check in another PR
+  if (!hasSpouse(answers, externalData)) {
+    setBeforeSubmitCallback &&
+      setBeforeSubmitCallback(async () => {
+        const createApp = await createApplication(application)
+          .then(() => {
+            return true
+          })
+          .catch(() => {
+            setFormError(true)
+            return false
+          })
+        if (createApp) {
+          return [true, null]
+        }
+        return [false, 'Failed to create application']
+      })
+  }
 
   return (
     <>

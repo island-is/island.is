@@ -80,6 +80,7 @@ const useApplication = () => {
                 answers.relationshipStatus?.spouseEmail,
               spouseName:
                 externalData.nationalRegistry.data.applicant.spouse?.name,
+              // TODO not hardcoded
               familyStatus: FamilyStatus.COHABITATION,
               streetName:
                 externalData.nationalRegistry.data.applicant.address.streetName,

@@ -4,10 +4,11 @@ import { FAFieldBaseProps } from '../../lib/types'
 import { useIntl } from 'react-intl'
 import { confirmation, copyUrl } from '../../lib/messages'
 import { DescriptionText, ConfirmationSectionImage, CopyUrl } from '..'
+import { hasSpouse } from '../../lib/utils'
 
 const Confirmation = ({ application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
-  const { externalData } = application
+  const { answers, externalData } = application
   return (
     <>
       <Box marginTop={[4, 4, 5]}>
@@ -33,7 +34,7 @@ const Confirmation = ({ application }: FAFieldBaseProps) => {
         <DescriptionText text={confirmation.nextSteps.content} />
       </Box>
 
-      {externalData.nationalRegistry?.data?.applicant?.spouse && (
+      {hasSpouse(answers, externalData) && (
         <>
           <Text as="h3" variant="h3" marginTop={[4, 4, 5]}>
             {formatMessage(confirmation.sharedLink.title)}

@@ -14,7 +14,7 @@ import { Roles, ApplicationStates, ONE_DAY, ONE_MONTH } from './constants'
 
 import { application } from './messages'
 import { dataSchema } from './dataSchema'
-import { hasActiveCurrentApplication, hasSpouse } from './utils'
+import { hasActiveCurrentApplication, hasSpouseCheck } from './utils'
 import { FAApplication } from '..'
 
 type Events = { type: DefaultEvents.SUBMIT }
@@ -92,7 +92,7 @@ const FinancialAidTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: [
-            { target: ApplicationStates.SPOUSE, cond: hasSpouse },
+            { target: ApplicationStates.SPOUSE, cond: hasSpouseCheck },
             { target: ApplicationStates.SUBMITTED },
           ],
         },

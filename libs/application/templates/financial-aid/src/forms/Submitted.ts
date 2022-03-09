@@ -1,7 +1,7 @@
 import {
-  buildCustomField,
   buildForm,
   buildSection,
+  buildTextField,
   Form,
   FormModes,
 } from '@island.is/application/core'
@@ -14,13 +14,12 @@ export const Submitted: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'submitted',
-      title: m.section.received,
+      id: 'Stuff TODO',
+      title: 'TODO stuff',
       children: [
-        buildCustomField({
-          id: 'residenceChangeConfirmation',
-          title: m.confirmation.general.pageTitle,
-          component: 'Confirmation',
+        buildTextField({
+          id: 'Todo-text-field',
+          title: 'Submitted',
         }),
       ],
     }),
