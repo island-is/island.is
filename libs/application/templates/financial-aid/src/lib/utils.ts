@@ -34,7 +34,7 @@ export function isMuncipalityRegistered(context: ApplicationContext) {
     externalData,
     `nationalRegistry.data.municipality.`,
   ) as Municipality | null
-  return municipality !== null
+  return municipality != null
 }
 
 export const encodeFilenames = (filename: string) =>
