@@ -135,7 +135,7 @@ export const requestHandlers = [
   }),
 
   rest.post(
-    url('/v1/api/okuskirteini/applications/new/temporary'),
+    url('/v2/api/okuskirteini/applications/new/temporary'),
     (req, res, ctx) => {
       const body = req.body as any
       const canApply = body.kennitala !== MOCK_NATIONAL_ID_NO_ASSESSMENT

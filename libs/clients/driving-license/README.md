@@ -67,4 +67,4 @@ export class SomeService {
 
 ## Code owners and maintainers
 
-- [Kosmos & Kaos](https://github.com/orgs/island-is/teams/kosmos-og-kaos/members)
+- [Júní](https://github.com/orgs/island-is/teams/juni/members)
