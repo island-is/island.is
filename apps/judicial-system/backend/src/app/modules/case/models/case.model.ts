@@ -46,7 +46,7 @@ export class Case extends Model<Case> {
   id!: string
 
   /**********
-   * The date and time the case was created in the database
+   * The date and time the case was created in the Database
    **********/
   @CreatedAt
   @ApiProperty()
