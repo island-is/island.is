@@ -498,7 +498,7 @@ jobs:
         run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
 
       - name: Building Docker images Retry #This only exists until GHA starts supporting this
-        if: steps.gather.outcome == 'success' && steps.dockerbuld.outcome == 'failure'
+        if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
         run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
 
   helm-docker-build:
