@@ -1,5 +1,3 @@
-import type { CourtClientServiceOptions } from '@island.is/judicial-system/court-client'
-
 const devConfig = {
   production: false,
   auth: {
@@ -11,20 +9,6 @@ const devConfig = {
   },
   auditTrail: {
     useGenericLogger: true,
-  },
-  xRoad: {
-    basePathWithEnv: process.env.XROAD_TLS_BASE_PATH_WITH_ENV ?? '',
-    clientId: process.env.XROAD_CLIENT_ID ?? '',
-    clientCert: process.env.XROAD_CLIENT_CERT ?? '',
-    clientKey: process.env.XROAD_CLIENT_KEY ?? '',
-    clientCa: process.env.XROAD_CLIENT_PEM ?? '',
-  },
-  courtClientOptions: {
-    apiPath: process.env.XROAD_COURT_API_PATH ?? '',
-    memberCode: process.env.XROAD_COURT_MEMBER_CODE ?? '',
-    serviceOptions: JSON.parse(
-      process.env.XROAD_COURTS_CREDENTIALS ?? '{}',
-    ) as CourtClientServiceOptions,
   },
   backend: {
     url: 'http://localhost:3344',
@@ -50,35 +34,8 @@ if (process.env.NODE_ENV === 'production') {
   if (!process.env.AUDIT_TRAIL_REGION) {
     throw new Error('Missing AUDIT_TRAIL_REGION environment.')
   }
-  if (!process.env.XROAD_TLS_BASE_PATH_WITH_ENV) {
-    throw new Error('Missing XROAD_TLS_BASE_PATH_WITH_ENV environment.')
-  }
-  if (!process.env.XROAD_CLIENT_ID) {
-    throw new Error('Missing XROAD_CLIENT_ID environment.')
-  }
-  if (!process.env.XROAD_CLIENT_CERT) {
-    throw new Error('Missing XROAD_CLIENT_CERT environment.')
-  }
-  if (!process.env.XROAD_CLIENT_KEY) {
-    throw new Error('Missing XROAD_CLIENT_KEY environment.')
-  }
-  if (!process.env.XROAD_CLIENT_PEM) {
-    throw new Error('Missing XROAD_CLIENT_PEM environment.')
-  }
-  if (!process.env.XROAD_COURT_API_PATH) {
-    throw new Error('Missing XROAD_COURT_API_PATH environment.')
-  }
-  if (!process.env.XROAD_COURT_MEMBER_CODE) {
-    throw new Error('Missing XROAD_COURT_MEMBER_CODE environment.')
-  }
-  if (!process.env.XROAD_COURTS_CREDENTIALS) {
-    throw new Error('Missing COURTS_CREDENTIALS environment.')
-  }
   if (!process.env.BACKEND_URL) {
     throw new Error('Missing BACKEND_URL environment.')
-  }
-  if (!process.env.XROAD_COURTS_CREDENTIALS) {
-    throw new Error('Missing COURTS_CREDENTIALS environment.')
   }
 }
 
@@ -96,20 +53,6 @@ const prodConfig = {
     groupName: process.env.AUDIT_TRAIL_GROUP_NAME,
     serviceName: 'judicial-system-api',
     region: process.env.AUDIT_TRAIL_REGION,
-  },
-  xRoad: {
-    basePathWithEnv: process.env.XROAD_TLS_BASE_PATH_WITH_ENV ?? '',
-    clientId: process.env.XROAD_CLIENT_ID ?? '',
-    clientCert: process.env.XROAD_CLIENT_CERT ?? '',
-    clientKey: process.env.XROAD_CLIENT_KEY ?? '',
-    clientCa: process.env.XROAD_CLIENT_PEM ?? '',
-  },
-  courtClientOptions: {
-    apiPath: process.env.XROAD_COURT_API_PATH ?? '',
-    memberCode: process.env.XROAD_COURT_MEMBER_CODE ?? '',
-    serviceOptions: JSON.parse(
-      process.env.XROAD_COURTS_CREDENTIALS ?? '{}',
-    ) as CourtClientServiceOptions,
   },
   backend: {
     url: process.env.BACKEND_URL,

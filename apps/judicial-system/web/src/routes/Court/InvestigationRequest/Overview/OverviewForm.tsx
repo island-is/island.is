@@ -1,35 +1,37 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Accordion, Box, Button, Text } from '@island.is/island-ui/core'
 import {
+  Accordion,
+  AccordionItem,
+  Box,
+  Button,
+  Text,
+} from '@island.is/island-ui/core'
+import {
+  AccordionListItem,
+  CommentsAccordionItem,
   FormContentContainer,
   FormFooter,
   InfoCard,
   PdfButton,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  CaseState,
-  CaseTransition,
-  NotificationType,
-} from '@island.is/judicial-system/types'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
   capitalize,
   caseTypes,
   formatDate,
-  TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
-import { isOverviewStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import CaseFilesAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CaseFilesAccordionItem/CaseFilesAccordionItem'
+import {
+  UploadState,
+  useCourtUpload,
+} from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 import type { Case } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import * as Constants from '@island.is/judicial-system/consts'
 
 import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
-import CourtCaseNumber from '../../SharedComponents/CourtCaseNumber/CourtCaseNumber'
-import * as styles from './Overview.css'
 
 interface Props {
   workingCase: Case
@@ -40,49 +42,11 @@ interface Props {
 
 const OverviewForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading, isCaseUpToDate } = props
-  const [courtCaseNumberEM, setCourtCaseNumberEM] = useState<string>('')
-  const [createCourtCaseSuccess, setCreateCourtCaseSuccess] = useState<boolean>(
-    false,
-  )
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
 
   const { user } = useContext(UserContext)
-  const {
-    createCourtCase,
-    isCreatingCourtCase,
-    transitionCase,
-    isTransitioningCase,
-    sendNotification,
-  } = useCase()
   const { formatMessage } = useIntl()
-
-  const receiveCase = async (workingCase: Case, courtCaseNumber: string) => {
-    if (workingCase.state === CaseState.SUBMITTED && !isTransitioningCase) {
-      // Transition case from SUBMITTED to RECEIVED when courtCaseNumber is set
-      const received = await transitionCase(
-        { ...workingCase, courtCaseNumber },
-        CaseTransition.RECEIVE,
-        setWorkingCase,
-      )
-
-      if (received) {
-        sendNotification(workingCase.id, NotificationType.RECEIVED_BY_COURT)
-      }
-    }
-  }
-
-  const handleCreateCourtCase = async (workingCase: Case) => {
-    const courtCaseNumber = await createCourtCase(
-      workingCase,
-      setWorkingCase,
-      setCourtCaseNumberEM,
-    )
-
-    if (courtCaseNumber !== '') {
-      setCreateCourtCaseSuccess(true)
-      receiveCase(workingCase, courtCaseNumber)
-    }
-  }
+  const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
 
   return (
     <>
@@ -91,19 +55,6 @@ const OverviewForm: React.FC<Props> = (props) => {
           <Text as="h1" variant="h1">
             Yfirlit kröfu um rannsóknarheimild
           </Text>
-        </Box>
-        <Box component="section" marginBottom={6}>
-          <CourtCaseNumber
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-            courtCaseNumberEM={courtCaseNumberEM}
-            setCourtCaseNumberEM={setCourtCaseNumberEM}
-            createCourtCaseSuccess={createCourtCaseSuccess}
-            setCreateCourtCaseSuccess={setCreateCourtCaseSuccess}
-            handleCreateCourtCase={handleCreateCourtCase}
-            isCreatingCourtCase={isCreatingCourtCase}
-            receiveCase={receiveCase}
-          />
         </Box>
         <Box component="section" marginBottom={5}>
           <InfoCard
@@ -126,7 +77,7 @@ const OverviewForm: React.FC<Props> = (props) => {
                     '',
                 )} eftir kl. ${formatDate(
                   workingCase.requestedCourtDate,
-                  TIME_FORMAT,
+                  Constants.TIME_FORMAT,
                 )}`,
               },
               {
@@ -166,109 +117,56 @@ const OverviewForm: React.FC<Props> = (props) => {
             </Box>
             <Text>{workingCase.demands}</Text>
           </Box>
-          <Box className={styles.infoSection}>
-            <Box marginBottom={5}>
-              <Box marginBottom={2}>
-                <Text as="h3" variant="h3">
-                  Lagaákvæði sem brot varða við
-                </Text>
-              </Box>
-              <Text>{workingCase.lawsBroken}</Text>
-            </Box>
-            <Box marginBottom={5}>
-              <Box marginBottom={2}>
-                <Text as="h3" variant="h3">
-                  Lagaákvæði sem krafan er byggð á
-                </Text>
-              </Box>
-              <Text>{workingCase.legalBasis}</Text>
-            </Box>
-          </Box>
-          {(workingCase.caseFacts || workingCase.legalArguments) && (
-            <div className={styles.infoSection}>
-              <Box marginBottom={1}>
-                <Text variant="h3" as="h2">
-                  Greinargerð um málsatvik og lagarök
-                </Text>
-              </Box>
-              {workingCase.caseFacts && (
-                <Box marginBottom={2}>
-                  <Box marginBottom={2}>
-                    <Text variant="eyebrow" color="blue400">
-                      Málsatvik
-                    </Text>
-                  </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.caseFacts}
-                    </span>
-                  </Text>
-                </Box>
+          <Box marginBottom={5}>
+            <Accordion>
+              <AccordionItem
+                labelVariant="h3"
+                id="id_1"
+                label="Lagaákvæði sem brot varða við"
+              >
+                <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
+              </AccordionItem>
+              <AccordionItem
+                labelVariant="h3"
+                id="id_2"
+                label="Lagaákvæði sem krafan er byggð á"
+              >
+                <Text whiteSpace="breakSpaces">{workingCase.legalBasis}</Text>
+              </AccordionItem>
+              {(workingCase.caseFacts || workingCase.legalArguments) && (
+                <AccordionItem
+                  labelVariant="h3"
+                  id="id_4"
+                  label="Greinargerð um málsatvik og lagarök"
+                >
+                  {workingCase.caseFacts && (
+                    <AccordionListItem title="Málsatvik">
+                      <Text whiteSpace="breakSpaces">
+                        {workingCase.caseFacts}
+                      </Text>
+                    </AccordionListItem>
+                  )}
+                  {workingCase.legalArguments && (
+                    <AccordionListItem title="Lagarök">
+                      <Text whiteSpace="breakSpaces">
+                        {workingCase.legalArguments}
+                      </Text>
+                    </AccordionListItem>
+                  )}
+                </AccordionItem>
               )}
-              {workingCase.legalArguments && (
-                <Box marginBottom={2}>
-                  <Box marginBottom={2}>
-                    <Text variant="eyebrow" color="blue400">
-                      Lagarök
-                    </Text>
-                  </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.legalArguments}
-                    </span>
-                  </Text>
-                </Box>
+              {(workingCase.comments || workingCase.caseFilesComments) && (
+                <CommentsAccordionItem workingCase={workingCase} />
               )}
-            </div>
-          )}
-          {(workingCase.comments || workingCase.caseFilesComments) && (
-            <div className={styles.infoSection}>
-              <Box marginBottom={2}>
-                <Text variant="h3" as="h2">
-                  Athugasemdir
-                </Text>
-              </Box>
-              {workingCase.comments && (
-                <Box marginBottom={workingCase.caseFilesComments ? 3 : 0}>
-                  <Box marginBottom={1}>
-                    <Text variant="h4" as="h3" color="blue400">
-                      Athugasemdir vegna málsmeðferðar
-                    </Text>
-                  </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.comments}
-                    </span>
-                  </Text>
-                </Box>
-              )}
-              {workingCase.caseFilesComments && (
-                <>
-                  <Box marginBottom={1}>
-                    <Text variant="h4" as="h3" color="blue400">
-                      Athugasemdir vegna rannsóknargagna
-                    </Text>
-                  </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.caseFilesComments}
-                    </span>
-                  </Text>
-                </>
-              )}
-            </div>
-          )}
-          {user && (
-            <Box marginBottom={5}>
-              <Accordion>
+              {user && (
                 <CaseFilesAccordionItem
                   workingCase={workingCase}
                   setWorkingCase={setWorkingCase}
                   user={user}
                 />
-              </Accordion>
-            </Box>
-          )}
+              )}
+            </Accordion>
+          </Box>
           <Box marginBottom={10}>
             <Box marginBottom={3}>
               <PdfButton
@@ -297,10 +195,10 @@ const OverviewForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={Constants.REQUEST_LIST_ROUTE}
+          previousUrl={`${Constants.IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoading}
           nextUrl={`${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!isOverviewStepValidIC(workingCase)}
+          nextIsDisabled={uploadState === UploadState.UPLOADING}
         />
       </FormContentContainer>
     </>

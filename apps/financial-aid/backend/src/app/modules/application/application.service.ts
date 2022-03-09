@@ -21,6 +21,7 @@ import {
   FileType,
   getApplicantEmailDataFromEventType,
   firstDateOfMonth,
+  UserType,
 } from '@island.is/financial-aid/shared/lib'
 import { FileService } from '../file'
 import {
@@ -38,6 +39,8 @@ import { MunicipalityService } from '../municipality'
 import { logger } from '@island.is/logging'
 import { AmountModel, AmountService } from '../amount'
 import { DeductionFactorsModel } from '../deductionFactors'
+import { DirectTaxPaymentService } from '../directTaxPayment'
+import { DirectTaxPaymentModel } from '../directTaxPayment/models'
 
 interface Recipient {
   name: string
@@ -58,6 +61,7 @@ export class ApplicationService {
     private readonly applicationEventService: ApplicationEventService,
     private readonly emailService: EmailService,
     private readonly municipalityService: MunicipalityService,
+    private readonly directTaxPaymentService: DirectTaxPaymentService,
   ) {}
 
   async getSpouseInfo(spouseNationalId: string): Promise<SpouseResponse> {
@@ -191,6 +195,10 @@ export class ApplicationService {
           order: [['created', 'DESC']],
           limit: 1,
         },
+        {
+          model: DirectTaxPaymentModel,
+          as: 'directTaxPayments',
+        },
       ],
     })
 
@@ -260,13 +268,15 @@ export class ApplicationService {
       ...application,
     })
 
-    await this.applicationEventService.create({
-      applicationId: appModel.id,
-      eventType: ApplicationEventType[appModel.state.toUpperCase()],
-    })
-
-    if (application.files) {
-      const promises = application.files.map((f) => {
+    await Promise.all([
+      application.directTaxPayments.map((d) => {
+        return this.directTaxPaymentService.create({
+          applicationId: appModel.id,
+          userType: UserType.APPLICANT,
+          ...d,
+        })
+      }),
+      application.files?.map((f) => {
         return this.fileService.createFile({
           applicationId: appModel.id,
           name: f.name,
@@ -274,12 +284,13 @@ export class ApplicationService {
           size: f.size,
           type: f.type,
         })
-      })
-
-      await Promise.all(promises)
-    }
-
-    await this.createApplicationEmails(application, appModel)
+      }),
+      this.createApplicationEmails(application, appModel),
+      this.applicationEventService.create({
+        applicationId: appModel.id,
+        eventType: ApplicationEventType[appModel.state.toUpperCase()],
+      }),
+    ])
 
     return appModel
   }
@@ -382,10 +393,32 @@ export class ApplicationService {
         updatedApplication?.setDataValue('files', filesResolved)
       })
 
+    const directTaxPayments = this.directTaxPaymentService
+      .getByApplicationId(id)
+      .then((resolved) => {
+        updatedApplication?.setDataValue('directTaxPayments', resolved)
+      })
+
+    if (
+      update.event === ApplicationEventType.SPOUSEFILEUPLOAD &&
+      update.directTaxPayments
+    ) {
+      await Promise.all([
+        update.directTaxPayments.map((d) => {
+          return this.directTaxPaymentService.create({
+            applicationId: id,
+            userType: UserType.SPOUSE,
+            ...d,
+          })
+        }),
+      ])
+    }
+
     await Promise.all([
       events,
       files,
       this.sendApplicationUpdateEmail(update, updatedApplication),
+      directTaxPayments,
     ])
 
     return updatedApplication

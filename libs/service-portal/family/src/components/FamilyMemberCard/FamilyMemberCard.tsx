@@ -58,6 +58,7 @@ export const FamilyMemberCard: FC<Props> = ({
     <ActionCard
       avatar
       heading={title}
+      headingVariant="h4"
       text={
         nationalId &&
         `${formatMessage(m.natreg)}: ${formatNationalId(nationalId)}`
@@ -66,7 +67,7 @@ export const FamilyMemberCard: FC<Props> = ({
         familyRelation === undefined
           ? undefined
           : {
-              label: familyRelationLabel.defaultMessage,
+              label: formatMessage(familyRelationLabel),
               variant: 'purple',
             }
       }

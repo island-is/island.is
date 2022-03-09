@@ -20,6 +20,7 @@ import { ApplicationModel } from '../models/application.model'
 import { createTestingApplicationModule } from './createTestingApplicationModule'
 import type { User } from '@island.is/auth-nest-tools'
 import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
+import { DirectTaxPaymentService } from '../../directTaxPayment'
 
 interface Then {
   result: ApplicationModel
@@ -43,6 +44,7 @@ describe('ApplicationController - Update', () => {
   let mockApplicationEventService: ApplicationEventService
   let mockMunicipalityService: MunicipalityService
   let mockEmailService: EmailService
+  let mockDirectTaxPaymentService: DirectTaxPaymentService
 
   beforeEach(async () => {
     const {
@@ -54,6 +56,7 @@ describe('ApplicationController - Update', () => {
       applicationEventService,
       municipalityService,
       emailService,
+      directTaxPaymentService,
     } = await createTestingApplicationModule()
 
     mockApplicationModel = applicationModel
@@ -63,6 +66,7 @@ describe('ApplicationController - Update', () => {
     mockApplicationEventService = applicationEventService
     mockMunicipalityService = municipalityService
     mockEmailService = emailService
+    mockDirectTaxPaymentService = directTaxPaymentService
 
     givenWhenThen = async (
       id: string,
@@ -149,6 +153,8 @@ describe('ApplicationController - Update', () => {
       eventFindById.mockReturnValueOnce(Promise.resolve([]))
       const getApplicationFiles = mockFileService.getAllApplicationFiles as jest.Mock
       getApplicationFiles.mockReturnValueOnce(Promise.resolve([]))
+      const getDirectTaxPayment = mockDirectTaxPaymentService.getByApplicationId as jest.Mock
+      getDirectTaxPayment.mockReturnValueOnce(Promise.resolve([]))
 
       then = await givenWhenThen(id, applicationUpdate, user)
     })
@@ -161,16 +167,21 @@ describe('ApplicationController - Update', () => {
       expect(mockAmountService.create).not.toHaveBeenCalled()
     })
 
-    // it('should call applicationEventService with correct values', () => {
-    //   expect(mockApplicationEventService.create).toHaveBeenCalledWith({
-    //     applicationId: id,
-    //     eventType: applicationUpdate.event,
-    //     comment: undefined,
-    //     staffNationalId: '0000000000',
-    //     staffName: undefined,
-    //     staffNationalId: undefined,
-    //   })
-    // })
+    it('should call directTaxPaymentService', () => {
+      expect(
+        mockDirectTaxPaymentService.getByApplicationId,
+      ).toHaveBeenCalledWith(application.id)
+    })
+
+    it('should call applicationEventService with correct values', () => {
+      expect(mockApplicationEventService.create).toHaveBeenCalledWith({
+        applicationId: id,
+        eventType: applicationUpdate.event,
+        comment: undefined,
+        staffName: undefined,
+        staffNationalId: undefined,
+      })
+    })
 
     it('should have updated application staff as undefined', () => {
       expect(then.result.staff).toBeUndefined()
@@ -254,6 +265,8 @@ describe('ApplicationController - Update', () => {
       eventFindById.mockReturnValueOnce(Promise.resolve([]))
       const getApplicationFiles = mockFileService.getAllApplicationFiles as jest.Mock
       getApplicationFiles.mockReturnValueOnce(Promise.resolve([]))
+      const getDirectTaxPayment = mockDirectTaxPaymentService.getByApplicationId as jest.Mock
+      getDirectTaxPayment.mockReturnValueOnce(Promise.resolve([]))
     })
 
     describe('Allowed events', () => {
@@ -356,6 +369,8 @@ describe('ApplicationController - Update', () => {
       findByMunicipalityId.mockReturnValueOnce(Promise.resolve(municipality))
       const sendEmail = mockEmailService.sendEmail as jest.Mock
       sendEmail.mockReturnValueOnce(Promise.resolve())
+      const getDirectTaxPayment = mockDirectTaxPaymentService.getByApplicationId as jest.Mock
+      getDirectTaxPayment.mockReturnValueOnce(Promise.resolve([]))
     })
 
     describe('Forbidden events', () => {
@@ -465,6 +480,8 @@ describe('ApplicationController - Update', () => {
       findByMunicipalityId.mockReturnValueOnce(Promise.resolve(municipality))
       const sendEmail = mockEmailService.sendEmail as jest.Mock
       sendEmail.mockReturnValueOnce(Promise.resolve())
+      const getDirectTaxPayment = mockDirectTaxPaymentService.getByApplicationId as jest.Mock
+      getDirectTaxPayment.mockReturnValueOnce(Promise.resolve([]))
 
       then = await givenWhenThen(id, applicationUpdate, staff)
     })
@@ -490,6 +507,12 @@ describe('ApplicationController - Update', () => {
 
     it('should not call amountService', () => {
       expect(mockAmountService.create).not.toHaveBeenCalled()
+    })
+
+    it('should call directTaxPaymentService', () => {
+      expect(
+        mockDirectTaxPaymentService.getByApplicationId,
+      ).toHaveBeenCalledWith(application.id)
     })
 
     it('should call municipality service with correct value', () => {
