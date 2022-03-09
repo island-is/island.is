@@ -80,7 +80,7 @@ const ConclusionDraft: React.FC<Props> = (props) => {
       <RulingInput
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
-        isRequired={false}
+        isRequired
         rows={12}
       />
     </>
