@@ -139,5 +139,5 @@ by talking to the Advania FJS developers.
 
 ## Code owners and maintainers
 
-- [Júní](https://github.com/orgs/island-is/teams/kosmos-kaos/members)
+- [Júní](https://github.com/orgs/island-is/teams/juni/members)
 - [Aranja](https://github.com/orgs/island-is/teams/aranja/members)
