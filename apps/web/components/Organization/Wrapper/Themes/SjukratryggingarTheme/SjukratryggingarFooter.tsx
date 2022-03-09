@@ -76,7 +76,7 @@ export const SjukratryggingarFooter: React.FC<FooterProps> = ({
                 >
                   <img
                     src="/assets/sjukratryggingar_heilbrigdisraduneytid.png"
-                    alt=""
+                    alt="heilbrygdisraduneytid"
                   />
                 </GridColumn>
                 <GridColumn
