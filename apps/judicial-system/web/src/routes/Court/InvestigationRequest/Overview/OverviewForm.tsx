@@ -24,6 +24,10 @@ import {
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
 import CaseFilesAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CaseFilesAccordionItem/CaseFilesAccordionItem'
+import {
+  UploadState,
+  useCourtUpload,
+} from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 
@@ -42,6 +46,7 @@ const OverviewForm: React.FC<Props> = (props) => {
 
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
+  const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
 
   return (
     <>
@@ -194,6 +199,7 @@ const OverviewForm: React.FC<Props> = (props) => {
           previousUrl={`${Constants.IC_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoading}
           nextUrl={`${Constants.IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
+          nextIsDisabled={uploadState === UploadState.UPLOADING}
         />
       </FormContentContainer>
     </>
