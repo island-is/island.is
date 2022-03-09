@@ -14,6 +14,10 @@ import { FormContext } from '@island.is/judicial-system-web/src/components/FormP
 import * as Constants from '@island.is/judicial-system/consts'
 import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
 import OverviewForm from './OverviewForm'
+import {
+  UploadState,
+  useCourtUpload,
+} from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 
 export const JudgeOverview: React.FC = () => {
   const {
@@ -31,6 +35,8 @@ export const JudgeOverview: React.FC = () => {
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
+
+  const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
 
   return (
     <PageLayout
@@ -51,6 +57,7 @@ export const JudgeOverview: React.FC = () => {
         <FormFooter
           previousUrl={`${Constants.RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`}
           nextUrl={`${Constants.HEARING_ARRANGEMENTS_ROUTE}/${id}`}
+          nextIsDisabled={uploadState === UploadState.UPLOADING}
         />
       </FormContentContainer>
       <DraftConclusionModal

@@ -160,6 +160,9 @@
     "api-schema": {
       "tags": []
     },
+    "application-api-core": {
+      "tags": []
+    },
     "application-core": {
       "tags": []
     },
@@ -542,6 +545,9 @@
     "nest-audit": {
       "tags": []
     },
+    "nest-aws": {
+      "tags": []
+    },
     "nest-config": {
       "tags": []
     },
@@ -582,6 +588,9 @@
       "tags": []
     },
     "regulations": {
+      "tags": []
+    },
+    "residence-history": {
       "tags": []
     },
     "service-portal": {

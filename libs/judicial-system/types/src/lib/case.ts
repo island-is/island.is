@@ -19,6 +19,7 @@ export enum CaseType {
   INTERNET_USAGE = 'INTERNET_USAGE',
   RESTRAINING_ORDER = 'RESTRAINING_ORDER',
   ELECTRONIC_DATA_DISCOVERY_INVESTIGATION = 'ELECTRONIC_DATA_DISCOVERY_INVESTIGATION',
+  VIDEO_RECORDING_EQUIPMENT = 'VIDEO_RECORDING_EQUIPMENT',
   OTHER = 'OTHER',
 }
 
@@ -28,6 +29,7 @@ export const caseTypesWithMultipleDefendants = [
   CaseType.SOUND_RECORDING_EQUIPMENT,
   CaseType.PHONE_TAPPING,
   CaseType.TRACKING_EQUIPMENT,
+  CaseType.VIDEO_RECORDING_EQUIPMENT,
 ]
 
 export enum CaseState {
@@ -144,6 +146,7 @@ export interface Case {
   courtDocuments?: string[]
   sessionBookings?: string
   courtCaseFacts?: string
+  introduction?: string
   courtLegalArguments?: string
   ruling?: string
   decision?: CaseDecision
@@ -228,6 +231,7 @@ export interface UpdateCase {
   courtDocuments?: string[]
   sessionBookings?: string
   courtCaseFacts?: string
+  introduction?: string
   courtLegalArguments?: string
   ruling?: string
   decision?: CaseDecision
@@ -278,6 +282,7 @@ export const investigationCases = [
   CaseType.INTERNET_USAGE,
   CaseType.RESTRAINING_ORDER,
   CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
+  CaseType.VIDEO_RECORDING_EQUIPMENT,
   CaseType.OTHER,
 ]
 

@@ -7,7 +7,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   IC_COURT_HEARING_ARRANGEMENTS_ROUTE,
-  IC_COURT_RECORD_ROUTE,
+  IC_RULING_ROUTE,
 } from '@island.is/judicial-system/consts'
 
 import { intercept } from '../../../utils'
@@ -65,6 +65,6 @@ describe(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
     cy.getByTestid('continueButton').should('not.be.disabled')
     cy.getByTestid('continueButton').click()
     cy.getByTestid('modalSecondaryButton').click()
-    cy.url().should('include', IC_COURT_RECORD_ROUTE)
+    cy.url().should('include', IC_RULING_ROUTE)
   })
 })

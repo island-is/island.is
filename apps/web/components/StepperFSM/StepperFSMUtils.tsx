@@ -7,6 +7,14 @@ import {
 } from 'xstate'
 
 import { Step, Stepper } from '@island.is/api/schema'
+import {
+  GetNamespaceQuery,
+  QueryGetNamespaceArgs,
+} from '@island.is/web/graphql/schema'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
+
+const sourceNamespacesThatNeedToBeSorted = ['Countries']
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type StepperState = State<
@@ -275,7 +283,11 @@ const resolveStepType = (step: Step): string => {
 const getStepOptions = (
   step: Step,
   lang = 'en',
-  optionsFromNamespace: { slug: string; data: [] }[] = null,
+  optionsFromNamespace: {
+    slug: string
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data: Record<string, any>[]
+  }[] = null,
 ): StepOption[] => {
   if (!step || step.config === '') return []
   const stepConfig: StepConfig = JSON.parse(step.config) as StepConfig
@@ -285,7 +297,7 @@ const getStepOptions = (
       (value) => value.slug === step.slug,
     )
     if (!stepOptions || !stepOptions.data) return []
-    return stepOptions.data.map((o) => {
+    const parsedOptions = stepOptions.data.map((o) => {
       const {
         labelFieldEN,
         labelFieldIS,
@@ -323,6 +335,16 @@ const getStepOptions = (
         slug: o[optionSlugField],
       }
     })
+
+    if (
+      sourceNamespacesThatNeedToBeSorted.includes(
+        stepConfig.optionsFromSource?.sourceNamespace,
+      )
+    ) {
+      parsedOptions.sort((a, b) => a.label?.localeCompare(b.label))
+    }
+
+    return parsedOptions
   }
 
   if (!stepConfig.options) return []
@@ -357,10 +379,51 @@ const stepContainsQuestion = (step: Step) => {
 }
 
 const getStepQuestion = (step: Step): string => {
-  if (stepContainsQuestion(step)) {
+  if (stepContainsQuestion(step) && step.subtitle[0].__typename === 'Html') {
     return step.subtitle[0].document.content[0].content[0].value
   }
   return ''
+}
+
+const getStepOptionsFromUIConfiguration = async (
+  stepper: Stepper,
+  apolloClient: ApolloClient<NormalizedCacheObject>,
+) => {
+  const stepOptions: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data: Record<string, any>[]
+    slug: string
+  }[] = []
+
+  const queries = stepper.steps.map((step) => {
+    const stepOptionsNameSpace = getStepOptionsSourceNamespace(step as Step)
+    if (!stepOptionsNameSpace) return null
+    return apolloClient
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: stepOptionsNameSpace,
+            lang: 'is',
+          },
+        },
+      })
+      .then((content) => {
+        // map data here to reduce data processing in component
+        return JSON.parse(content.data.getNamespace.fields)
+      })
+  })
+
+  const dataArray = await Promise.all(queries)
+
+  for (let i = 0; i < dataArray.length; i += 1) {
+    stepOptions.push({
+      slug: stepper.steps[i].slug,
+      data: dataArray[i],
+    })
+  }
+
+  return stepOptions.filter(Boolean)
 }
 
 export { STEP_TYPES }
@@ -371,6 +434,7 @@ export {
   getStepperMachine,
   resolveStepType,
   getStepOptions,
+  getStepOptionsFromUIConfiguration,
   getStepQuestion,
   getStepOptionsSourceNamespace,
   getCurrentStepAndStepType,

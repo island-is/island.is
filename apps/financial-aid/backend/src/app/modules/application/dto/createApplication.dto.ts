@@ -5,6 +5,7 @@ import {
   IsBoolean,
   IsArray,
   IsNumber,
+  IsUUID,
 } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
@@ -143,7 +144,7 @@ export class CreateApplicationDto {
   @ApiProperty()
   readonly postalCode: string
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @ApiProperty()
   readonly municipalityCode: string
@@ -156,4 +157,9 @@ export class CreateApplicationDto {
   @IsArray()
   @ApiProperty()
   readonly directTaxPayments: DirectTaxPayment[]
+
+  @IsOptional()
+  @IsUUID()
+  @ApiProperty()
+  readonly applicationSystemId: string
 }

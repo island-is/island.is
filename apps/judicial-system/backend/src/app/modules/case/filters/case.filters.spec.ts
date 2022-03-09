@@ -12,6 +12,7 @@ import {
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 
+import { randomDate } from '../../../test'
 import { Case } from '../models/case.model'
 import { getCasesQueryFilter, isCaseBlockedFromUser } from './case.filters'
 
@@ -377,7 +378,7 @@ describe('isCaseBlockedFromUser', () => {
           state,
           courtId: 'Court',
           accusedAppealDecision: CaseAppealDecision.POSTPONE,
-          accusedPostponedAppealDate: new Date(),
+          accusedPostponedAppealDate: randomDate(),
         } as Case
         const user = {
           role,
@@ -399,7 +400,7 @@ describe('isCaseBlockedFromUser', () => {
           state,
           courtId: 'Court',
           prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
-          prosecutorPostponedAppealDate: new Date(),
+          prosecutorPostponedAppealDate: randomDate(),
         } as Case
         const user = {
           role,
@@ -467,6 +468,7 @@ describe('isCaseBlockedFromUser', () => {
     ${CaseType.INTERNET_USAGE}
     ${CaseType.RESTRAINING_ORDER}
     ${CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION}
+    ${CaseType.VIDEO_RECORDING_EQUIPMENT}
     ${CaseType.OTHER}
   `.describe('given an accepted $type case', ({ type }) => {
     each`
