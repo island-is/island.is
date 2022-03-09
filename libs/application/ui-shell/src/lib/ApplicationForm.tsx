@@ -35,7 +35,7 @@ const ApplicationLoader: FC<{
   slug: string
 }> = ({ applicationId, nationalRegistryId, slug }) => {
   const type = getTypeFromSlug(slug)
-  const [delegationsChecked, setDelegationsChecked] = useState(false)
+  const [delegationsChecked, setDelegationsChecked] = useState(type ? false : true)
 
   const { lang: locale } = useLocale()
   const { data, error, loading, refetch } = useQuery(APPLICATION_APPLICATION, {

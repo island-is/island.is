@@ -43,15 +43,13 @@ export const DelegationsScreen = ({
   // Check if template supports delegations
   useEffect(() => {
     async function checkDelegations() {
-      if (type) {
         const template = await getApplicationTemplateByTypeId(type)
         if (template.allowedDelegations) {
           setAllowedDelegations(template.allowedDelegations)
+        }else {
+          setDelegationsChecked(true)
         }
-      } else {
-        setDelegationsChecked(true)
       }
-    }
     checkDelegations()
   }, [type])
 
@@ -71,7 +69,6 @@ export const DelegationsScreen = ({
       skip: !applicationId,
     },
   )
-
   // Check if user has the delegations of the delegation types the application supports
   useEffect(() => {
     const foundError = findProblemInApolloError(delegationCheckError as any, [
@@ -127,6 +124,9 @@ export const DelegationsScreen = ({
         </GridContainer>
       </Page>
     )
+  }
+  if (!loading && applicant) {
+    return <ErrorShell />
   }
 
   return <LoadingShell />
