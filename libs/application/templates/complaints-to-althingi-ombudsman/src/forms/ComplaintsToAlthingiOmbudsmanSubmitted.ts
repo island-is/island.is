@@ -9,7 +9,7 @@ import { confirmation } from '../lib/messages'
 
 export const ComplaintsToAlthingiOmbudsmanSubmitted: Form = buildForm({
   id: 'ComplaintsToAlthingiOmbudsmanSubmitted',
-  title: 'title',
+  title: 'Kvörtun til umboðsmanns Alþingis',
   mode: FormModes.APPROVED,
   children: [
     buildSection({
