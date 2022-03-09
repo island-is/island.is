@@ -10,6 +10,7 @@ import {
   ApplicationModelHomeCircumstancesEnum,
   ApplicationModelStateEnum,
 } from '@island.is/clients/municipalities-financial-aid'
+import { DirectTaxPaymentModel } from './directTaxPayments.model'
 
 @ObjectType()
 export class ApplicationModel {
@@ -117,4 +118,10 @@ export class ApplicationModel {
 
   @Field({ nullable: true })
   readonly municipalityCode?: string
+
+  @Field(() => [DirectTaxPaymentModel])
+  readonly directTaxPayments!: DirectTaxPaymentModel[] | null
+
+  @Field({ nullable: true })
+  readonly applicationSystemId?: string
 }

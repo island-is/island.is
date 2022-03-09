@@ -9,6 +9,7 @@ import {
   FamilyStatus,
 } from '@island.is/financial-aid/shared/lib'
 import { CreateApplicationFileInput } from './createFile.input'
+import { DirectTaxPaymentInput } from './directTaxPayment.input'
 
 @InputType()
 export class CreateMunicipalitiesApplicationInput {
@@ -119,4 +120,12 @@ export class CreateMunicipalitiesApplicationInput {
   @Allow()
   @Field({ nullable: true })
   readonly postalCode!: string
+
+  @Allow()
+  @Field(() => [DirectTaxPaymentInput])
+  readonly directTaxPayments!: string[]
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly applicationSystemId!: string
 }

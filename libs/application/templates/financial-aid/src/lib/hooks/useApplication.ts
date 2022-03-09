@@ -40,7 +40,7 @@ const useApplication = () => {
 
   const createApplication = useMemo(
     () => async (application: FAApplication): Promise<string | undefined> => {
-      const { answers, externalData } = application
+      const { id, answers, externalData } = application
 
       if (isCreatingApplication === false) {
         const files = formatFiles(
@@ -89,6 +89,8 @@ const useApplication = () => {
               municipalityCode:
                 externalData.nationalRegistry.data.applicant.address
                   .municipalityCode,
+              directTaxPayments: [],
+              applicationSystemId: id,
             },
           },
         })
