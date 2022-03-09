@@ -248,9 +248,7 @@ export class SyslumennService {
 
       const exists = certificate.contentBase64.length !== 0
       const hasKMarking =
-        exists &&
-        certificate.contentBase64 !== 'Precondition Required' &&
-        certificate.contentBase64 === btoa(atob(certificate.contentBase64))
+        exists && certificate.contentBase64 !== 'Precondition Required'
 
       return {
         exists: exists,
