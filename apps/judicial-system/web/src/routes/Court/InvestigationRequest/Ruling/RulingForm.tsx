@@ -29,17 +29,15 @@ import { isRulingValidIC } from '@island.is/judicial-system-web/src/utils/valida
 import { core, icRuling as m } from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
-import { useRulingAutofill } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
 
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
-  isCaseUpToDate: boolean
 }
 
 const RulingForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading, isCaseUpToDate } = props
+  const { workingCase, setWorkingCase, isLoading } = props
   const { user } = useContext(UserContext)
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
@@ -49,8 +47,6 @@ const RulingForm: React.FC<Props> = (props) => {
   const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState<string>('')
   const [conclusionEM, setConclusionEM] = useState<string>('')
   const [introductionEM, setIntroductionEM] = useState<string>('')
-
-  useRulingAutofill(isCaseUpToDate, workingCase)
 
   return (
     <>

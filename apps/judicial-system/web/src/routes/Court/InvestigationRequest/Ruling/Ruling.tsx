@@ -11,6 +11,7 @@ import { FormContext } from '@island.is/judicial-system-web/src/components/FormP
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { icRuling as m } from '@island.is/judicial-system-web/messages'
+import { useRulingAutofill } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
 
 import RulingForm from './RulingForm'
 
@@ -29,6 +30,8 @@ const Ruling = () => {
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
+
+  useRulingAutofill(isCaseUpToDate, workingCase)
 
   useEffect(() => {
     if (isCaseUpToDate) {
@@ -74,7 +77,6 @@ const Ruling = () => {
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
         isLoading={isLoadingWorkingCase}
-        isCaseUpToDate={isCaseUpToDate}
       />
     </PageLayout>
   )
