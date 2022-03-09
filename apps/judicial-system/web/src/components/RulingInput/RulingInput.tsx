@@ -14,23 +14,16 @@ import {
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
-  isCaseUpToDate: boolean
   isRequired: boolean
   rows?: number
 }
 
-const RulingInput: React.FC<Props> = (props) => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isCaseUpToDate,
-    isRequired,
-    rows,
-  } = props
-  const { updateCase, autofill } = useCase()
+export const useRulingAutofill = (
+  isCaseUpToDate: boolean,
+  workingCase: Case,
+) => {
   const { formatMessage } = useIntl()
-  const [rulingErrorMessage, setRulingErrorMessage] = useState('')
-
+  const { autofill } = useCase()
   useEffect(() => {
     if (isCaseUpToDate) {
       if (!workingCase.parentCase) {
@@ -49,6 +42,13 @@ const RulingInput: React.FC<Props> = (props) => {
       }
     }
   }, [autofill, formatMessage, isCaseUpToDate, workingCase])
+}
+
+const RulingInput: React.FC<Props> = (props) => {
+  const { workingCase, setWorkingCase, isRequired, rows } = props
+  const { updateCase } = useCase()
+  const { formatMessage } = useIntl()
+  const [rulingErrorMessage, setRulingErrorMessage] = useState('')
 
   return (
     <Input

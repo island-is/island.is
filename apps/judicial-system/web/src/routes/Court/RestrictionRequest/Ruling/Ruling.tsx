@@ -482,7 +482,6 @@ export const Ruling: React.FC = () => {
           <RulingInput
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
-            isCaseUpToDate={isCaseUpToDate}
             isRequired
           />
         </Box>

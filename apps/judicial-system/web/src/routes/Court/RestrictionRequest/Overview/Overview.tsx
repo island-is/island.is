@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useRouter } from 'next/router'
 
 import {
@@ -12,7 +12,6 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import * as Constants from '@island.is/judicial-system/consts'
-import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
 import OverviewForm from './OverviewForm'
 import {
   UploadState,
@@ -27,7 +26,6 @@ export const JudgeOverview: React.FC = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
-  const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
 
   const router = useRouter()
   const id = router.query.id
@@ -51,7 +49,7 @@ export const JudgeOverview: React.FC = () => {
       <OverviewForm
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
-        setIsDraftingConclusion={setIsDraftingConclusion}
+        isCaseUpToDate={isCaseUpToDate}
       />
       <FormContentContainer isFooter>
         <FormFooter
@@ -60,13 +58,6 @@ export const JudgeOverview: React.FC = () => {
           nextIsDisabled={uploadState === UploadState.UPLOADING}
         />
       </FormContentContainer>
-      <DraftConclusionModal
-        workingCase={workingCase}
-        setWorkingCase={setWorkingCase}
-        isCaseUpToDate={isCaseUpToDate}
-        isDraftingConclusion={isDraftingConclusion}
-        setIsDraftingConclusion={setIsDraftingConclusion}
-      />
     </PageLayout>
   )
 }
