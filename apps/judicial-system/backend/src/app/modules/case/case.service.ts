@@ -318,7 +318,7 @@ export class CaseService {
 
   private sendEmailToCourt(
     theCase: Case,
-    rulingUploadedToCourt: boolean,
+    rulingUploadedToS3: boolean,
     rulingAttachment: { filename: string; content: string; encoding: string },
   ) {
     const recipients = [
@@ -342,7 +342,7 @@ export class CaseService {
         linkEnd: '</a>',
       }),
       theCase.courtCaseNumber,
-      rulingUploadedToCourt ? undefined : [rulingAttachment],
+      rulingUploadedToS3 ? undefined : [rulingAttachment],
     )
   }
 
@@ -444,7 +444,7 @@ export class CaseService {
 
     if (!rulingUploadedToCourt || !courtRecordUploadedToCourt) {
       emailPromises.push(
-        this.sendEmailToCourt(theCase, rulingUploadedToCourt, rulingAttachment),
+        this.sendEmailToCourt(theCase, rulingUploadedToS3, rulingAttachment),
       )
     }
 

@@ -6,6 +6,11 @@ export const ruling = {
     defaultMessage: 'Úrskurður',
     description: 'Notaður sem titill á úrskurði.',
   }),
+  missingIntroduction: defineMessage({
+    id: 'judicial.system.backend:pdf.ruling.missing_introduction',
+    defaultMessage: 'Aðfararorð hafa ekki verið skráð',
+    description: 'Notaður sem texti þegar aðfararorð hafa ekki verið skráð.',
+  }),
   missingCourt: defineMessage({
     id: 'judicial.system.backend:pdf.ruling.missing_court',
     defaultMessage: 'Dómstóll hefur ekki verið skráður',
