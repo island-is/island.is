@@ -114,6 +114,7 @@
 /libs/application/template-api-modules/src/lib/modules/templates/institution-collaboration/   @island-is/sendiradid
 /libs/application/templates/public-debt-payment-plan/                                         @island-is/sendiradid
 /libs/application/templates/complaints-to-althingi-ombudsman/                                 @island-is/sendiradid
+/libs/application/template-api-modules/src/lib/modules/templates/complaints-to-althingi-ombudsman/  @island-is/sendiradid
 /libs/application/templates/accident-notification/                                            @island-is/sendiradid
 /libs/application/template-api-modules/src/lib/modules/templates/accident-notification/       @island-is/sendiradid
 /libs/health-insurance/                                                                       @island-is/sendiradid
