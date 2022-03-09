@@ -36,20 +36,25 @@ const CollapsibleProfileUnit = ({
         })}
         onClick={() => setToggle((toggle) => !toggle)}
       >
-        <Box className={styles.toggleWrapper}>
+        <Box className={`${styles.toggleWrapper} `}>
           <Box
             background="purple100"
             display="flex"
             justifyContent="center"
             alignItems="center"
             className={cn({
-              [`${styles.iconContainer}`]: true,
+              [`${styles.iconContainer} `]: true,
               [`${styles.rotate}`]: toggle,
             })}
+            printHidden
           >
             <Icon icon={'chevronUp'} color="purple400" />
           </Box>
-          <Box display="flex" width="full" className={styles.headlineBorder}>
+          <Box
+            display="flex"
+            width="full"
+            className={`${styles.headlineBorder} hideOnPrintBorderBottom`}
+          >
             <Text as="h2" variant="h3" color="dark300" marginBottom={1}>
               {heading}
             </Text>

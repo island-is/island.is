@@ -182,19 +182,33 @@ input[type='number'] {
 }
 
 @media print {
+  @page {
+    margin-top: 32px;
+    margin-bottom: 32px;
+  }
+  body {
+    padding-top: 0px;
+    padding-bottom: 0px;
+  }
+
   .no-print,
   .no-print * {
     display: none !important;
   }
-}
 
-@media print {
-  @page {
-    margin-top: 0;
+  .hideOnPrintMarginBottom {
     margin-bottom: 0;
   }
-  body {
-    padding-top: 32px;
-    padding-bottom: 32px;
+
+  .marginBottomOnPrint {
+    margin-bottom: 24px;
+  }
+
+  .hideBorder {
+    margin-bottom: 0;
+  }
+
+  .hideOnPrintBorderBottom {
+    border-bottom: none;
   }
 }

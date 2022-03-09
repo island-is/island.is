@@ -20,6 +20,7 @@ import {
   GenerateName,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { useApplicationState } from '@island.is/financial-aid-web/veita/src/utils/useApplicationState'
+import { style } from '@vanilla-extract/css'
 
 interface ApplicantProps {
   application: Application
@@ -61,12 +62,13 @@ const ApplicationHeader = ({
   return (
     <Box className={`contentUp ${styles.widthAlmostFull} `}>
       <Box
-        paddingBottom={3}
+        marginBottom={3}
         display="flex"
         justifyContent="spaceBetween"
         alignItems="center"
         width="full"
-        className="no-print"
+        printHidden
+        className={` hideOnPrintMarginBottom`}
       >
         <Button
           colorScheme="default"
@@ -107,7 +109,7 @@ const ApplicationHeader = ({
           </Text>
         </Box>
 
-        <Box className="no-print">
+        <Box printHidden>
           <Button
             colorScheme="default"
             icon="pencil"
@@ -123,7 +125,7 @@ const ApplicationHeader = ({
         </Box>
       </Box>
 
-      <Box display="flex" marginBottom={8}>
+      <Box display="flex" marginBottom={8} className="marginBottomOnPrint">
         <Box display="flex" marginRight={1}>
           {application.staff?.name &&
             application.state !== ApplicationState.NEW && (
@@ -145,18 +147,18 @@ const ApplicationHeader = ({
             Sjá um
           </button>
 
-          <Box className="no-print">
+          <Box printHidden>
             {' '}
             <Text variant="small">·</Text>
           </Box>
         </Box>
 
-        <Box marginRight={1} className="no-print">
+        <Box marginRight={1} printHidden>
           <Text variant="small" fontWeight="semiBold" color="dark300">
             Aldur umsóknar
           </Text>
         </Box>
-        <Box className="no-print">
+        <Box printHidden>
           <Text variant="small">
             {calcDifferenceInDate(application.created)}
           </Text>
