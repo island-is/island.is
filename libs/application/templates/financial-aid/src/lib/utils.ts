@@ -28,7 +28,7 @@ export const hasSpouse = (
   externalData: FAApplication['externalData'],
 ) => {
   const nationalRegistrySpouse =
-    externalData.nationalRegistry.data.applicant.spouse
+    externalData.nationalRegistry?.data?.applicant?.spouse
 
   const unregisteredCohabitation =
     answers?.relationshipStatus?.unregisteredCohabitation
