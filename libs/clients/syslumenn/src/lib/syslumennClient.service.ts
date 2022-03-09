@@ -267,7 +267,7 @@ export class SyslumennService {
   async getPropertyDetails(propertyNumber: string): Promise<PropertyDetail> {
     const { id, api } = await this.createApi()
 
-    const res = await api.vedbokavottordRegluverkPost({
+    const res = await api.vedbokavottordRegluverkiPost({
       skilabod: {
         audkenni: id,
         fastanumer:
