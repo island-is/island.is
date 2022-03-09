@@ -81,7 +81,7 @@ const useApplication = () => {
               spouseName:
                 externalData.nationalRegistry.data.applicant.spouse?.name,
               // TODO not hardcoded
-              familyStatus: FamilyStatus.COHABITATION,
+              familyStatus: FamilyStatus.NOT_COHABITATION,
               streetName:
                 externalData.nationalRegistry.data.applicant.address.streetName,
               postalCode:
