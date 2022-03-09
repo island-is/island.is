@@ -10,7 +10,6 @@ The client can try again after delegating to correct delegation.
 
 A JSON object listing validation issues where delegatedUser is the nationalId of the user assigned to the resource that the actor is a and actor is the nationalId of the user trying to access the resource.
 
-
 ## Example
 
 ```

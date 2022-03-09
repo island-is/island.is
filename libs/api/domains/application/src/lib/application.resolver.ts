@@ -188,11 +188,9 @@ export class ApplicationResolver {
   }
   @Query(() => Application)
   delegationApplicantApplication(
-
     @Args('input') input: ApplicationApplicationInput,
     @CurrentUser() user: User,
-    ): Promise<Application> {
+  ): Promise<Application> {
     return this.applicationService.findDelegationApplicant(input.id, user)
   }
-
 }

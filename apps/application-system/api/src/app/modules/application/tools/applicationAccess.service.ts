@@ -109,14 +109,10 @@ export class ApplicationAccessService {
           type: delegation.type,
         }))
 
-  
-
       throw new ActorValidationFailed({
         delegatedUser: actorApplication.applicant,
         delegations: delegations,
       })
-
-     
     }
     throw new NotFoundException(
       `An application with the id ${id} does not exist other errrororrororo`,

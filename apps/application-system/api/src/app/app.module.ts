@@ -22,7 +22,12 @@ import { AuthPublicApiClientConfig } from '@island.is/clients/auth-public-api'
     ProblemModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [IdsClientConfig, SyslumennClientConfig, XRoadConfig, AuthPublicApiClientConfig],
+      load: [
+        IdsClientConfig,
+        SyslumennClientConfig,
+        XRoadConfig,
+        AuthPublicApiClientConfig,
+      ],
     }),
   ],
 })

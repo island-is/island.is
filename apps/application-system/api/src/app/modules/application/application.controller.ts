@@ -98,7 +98,6 @@ import { CurrentLocale } from './utils/currentLocale'
 import { Application } from './application.model'
 import { Documentation } from '@island.is/nest/swagger'
 
-
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('applications')
 @ApiHeader({
@@ -142,7 +141,6 @@ export class ApplicationController {
     return existingApplication
   }
 
-
   @Scopes(ApplicationScope.read)
   @Get('applications/delegated/:id')
   @ApiOkResponse({ type: ApplicationResponseDto })
@@ -152,12 +150,11 @@ export class ApplicationController {
   async findDelegatedApplicant(
     @Param('id', new ParseUUIDPipe()) id: string,
     @CurrentUser() user: User,
-    ): Promise<ApplicationResponseDto> {
+  ): Promise<ApplicationResponseDto> {
     return await this.applicationAccessService.findOneByIdAndDelegations(
       id,
       user,
     )
-
   }
 
   @Scopes(ApplicationScope.read)

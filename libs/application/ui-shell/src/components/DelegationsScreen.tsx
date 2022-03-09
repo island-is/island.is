@@ -21,8 +21,8 @@ import { ErrorShell } from './ErrorShell'
 
 type Delegation = {
   type: string
-    nationalId: string
-    name: string
+  nationalId: string
+  name: string
 }
 interface DelegationsScreenProps {
   type: ApplicationTypes
@@ -43,18 +43,18 @@ export const DelegationsScreen = ({
   // Check if template supports delegations
   useEffect(() => {
     async function checkDelegations() {
-        const template = await getApplicationTemplateByTypeId(type)
-        if (template.allowedDelegations) {
-          setAllowedDelegations(template.allowedDelegations)
-        }else {
-          setDelegationsChecked(true)
-        }
+      const template = await getApplicationTemplateByTypeId(type)
+      if (template.allowedDelegations) {
+        setAllowedDelegations(template.allowedDelegations)
+      } else {
+        setDelegationsChecked(true)
       }
+    }
     checkDelegations()
   }, [type])
 
   // Only check if user has delegations if the template supports delegations
-  const {  error: delegationCheckError, loading } = useQuery(
+  const { error: delegationCheckError, loading } = useQuery(
     APPLICANT_DELEGATIONS,
     {
       variables: {
@@ -84,9 +84,9 @@ export const DelegationsScreen = ({
       const found = problem.fields.delegations.find(
         (delegation: Delegation) =>
           delegation.nationalId === problem.fields.delegatedUser &&
-          (allowedDelegations.includes(delegation.type) || delegation.type === "ACTOR"), 
+          (allowedDelegations.includes(delegation.type) ||
+            delegation.type === 'ACTOR'),
       )
-
 
       if (!found) setDelegationsChecked(true)
       setApplicant(found)

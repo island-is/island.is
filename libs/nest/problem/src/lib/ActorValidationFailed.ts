@@ -1,4 +1,7 @@
-import { ProblemType, ActorValidationFailedFields } from '@island.is/shared/problem'
+import {
+  ProblemType,
+  ActorValidationFailedFields,
+} from '@island.is/shared/problem'
 import { ProblemError } from './ProblemError'
 
 export class ActorValidationFailed extends ProblemError {

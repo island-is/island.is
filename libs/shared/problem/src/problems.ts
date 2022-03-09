@@ -23,9 +23,9 @@ export interface ValidationFailedProblem extends BaseProblem {
 }
 
 export type Delegation = {
-name: string
- nationalId: string
- type: string
+  name: string
+  nationalId: string
+  type: string
 }
 
 export type ActorValidationFailedFields = {
