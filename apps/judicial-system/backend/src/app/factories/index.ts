@@ -1,1 +1,1 @@
-export { DATE_FACTORY, today } from './date.factory'
+export { now } from './date.factory'

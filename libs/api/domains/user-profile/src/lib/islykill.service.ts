@@ -90,6 +90,7 @@ export class IslykillService {
       ssn: nationalId,
       email,
       mobile,
+      canNudge: true, // When creating an account, the default value of canNudge should always be true.
     }
 
     const errorMsg = 'Unable to create islykill settings for user'

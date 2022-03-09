@@ -35,22 +35,10 @@ const Confirmation: React.FC<Props> = (props) => {
   return (
     <>
       <FormContentContainer>
-        <Box marginBottom={1}>
+        <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             Yfirlit úrskurðar
           </Text>
-        </Box>
-        <Box display="flex" marginBottom={7}>
-          <Box marginRight={2}>
-            <Text variant="small">{`Krafa stofnuð: ${formatDate(
-              workingCase.created,
-              'P',
-            )}`}</Text>
-          </Box>
-          <Text variant="small">{`Þinghald: ${formatDate(
-            workingCase.courtStartDate,
-            'P',
-          )}`}</Text>
         </Box>
         <Box component="section" marginBottom={7}>
           <CaseInfo workingCase={workingCase} userRole={user.role} />
@@ -98,7 +86,7 @@ const Confirmation: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.IC_RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
+          previousUrl={`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`}
           nextUrl={Constants.REQUEST_LIST_ROUTE}
           nextIsLoading={isLoading}
           nextButtonText={formatMessage(
