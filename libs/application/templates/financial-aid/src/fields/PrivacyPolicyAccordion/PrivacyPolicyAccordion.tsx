@@ -21,9 +21,7 @@ const PrivacyPolicyAccordion = ({ municipalityPageUrl }: Props) => {
           id={privacyPolicyAccordion.accordion.title.id}
           label={formatMessage(privacyPolicyAccordion.accordion.title)}
         >
-          <DescriptionText
-            text={privacyPolicyAccordion.accordion.about}
-          />
+          <DescriptionText text={privacyPolicyAccordion.accordion.about} />
           {municipalityPageUrl ? (
             <DescriptionText
               text={privacyPolicyAccordion.accordion.moreInfoHomepage}
@@ -32,9 +30,7 @@ const PrivacyPolicyAccordion = ({ municipalityPageUrl }: Props) => {
               }}
             />
           ) : (
-            <DescriptionText
-              text={privacyPolicyAccordion.accordion.moreInfo}
-            />
+            <DescriptionText text={privacyPolicyAccordion.accordion.moreInfo} />
           )}
         </AccordionItem>
       </Accordion>

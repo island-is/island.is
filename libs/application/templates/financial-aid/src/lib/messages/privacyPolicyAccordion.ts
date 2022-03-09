@@ -10,8 +10,7 @@ export const privacyPolicyAccordion = {
   }),
   accordion: defineMessages({
     title: {
-      id:
-        'fa.application:section.privacyPolicyAccordion.accordion.title',
+      id: 'fa.application:section.privacyPolicyAccordion.accordion.title',
       defaultMessage: 'Nánar um persónuverndarstefnu þíns sveitarfélags',
       description: 'Privacy policy accordion title',
     },
@@ -23,8 +22,7 @@ export const privacyPolicyAccordion = {
       description: 'Privacy policy accordion content',
     },
     moreInfo: {
-      id:
-        'fa.application:section.privacyPolicyAccordion.accordion.moreInfo',
+      id: 'fa.application:section.privacyPolicyAccordion.accordion.moreInfo',
       defaultMessage:
         'Frekari upplýsingar um vinnslu persónuupplýsinga hjá sveitarfélaginu má finna í persónuverndarstefnu þess sem aðgengileg er á vefsíðu sveitarfélagsins.',
       description: 'Privacy policy accordion more info text',

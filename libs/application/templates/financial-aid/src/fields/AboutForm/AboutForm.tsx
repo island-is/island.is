@@ -23,7 +23,8 @@ const AboutForm = ({ application }: FAFieldBaseProps) => {
 
       <PrivacyPolicyAccordion
         municipalityPageUrl={
-          application.externalData.nationalRegistry?.data?.municipality?.homepage
+          application.externalData.nationalRegistry?.data?.municipality
+            ?.homepage
         }
       />
     </>
