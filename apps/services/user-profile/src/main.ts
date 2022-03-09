@@ -7,6 +7,5 @@ bootstrap({
   appModule: AppModule,
   name: 'services-user-profile',
   openApi,
-  swaggerPath: '',
   port: environment.port,
 })
