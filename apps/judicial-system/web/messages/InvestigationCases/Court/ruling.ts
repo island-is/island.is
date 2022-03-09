@@ -31,7 +31,7 @@ export const icRuling = {
       },
       autofill: {
         id: 'judicial.system.investigation_cases:ruling.introduction.autofill',
-        defaultMessage: 'Mál þetta var tekið til úrskurðar {courtStartDate}.',
+        defaultMessage: 'Mál þetta var tekið til úrskurðar {date}.',
         description:
           'Notaður sem sjálfgefinn texti í "Aðfararorð" textabox á úrskurðar skrefi í rannsóknarheimildum.',
       },
