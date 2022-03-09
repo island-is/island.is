@@ -61,7 +61,7 @@ describe(`${IC_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
     cy.getByTestid('requestPDFButton').should('exist')
   })
 
-  it('should navigate to /krofur on successful confirmation', () => {
+  it.skip('should navigate to /krofur on successful confirmation', () => {
     cy.getByTestid('continueButton').click()
     cy.getByTestid('modalSecondaryButton').click()
     cy.url().should('contain', '/krofur')
