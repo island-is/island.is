@@ -48,13 +48,15 @@ export const UkraineProjectHeader = ({
           </GridColumn>
         </GridRow>
       </GridContainer>
-      <Hidden above="md">
-        <img
-          className={styles.handsMobile}
-          src="https://images.ctfassets.net/8k0h54kbe6bj/3KcHfnQ0XGnd3CZUgCMyev/4462bf6ae4d09e6ad5a960b66d98e1bb/image_3.png"
-          alt="hands"
-        ></img>
-      </Hidden>
+      <Box className={styles.handsMobileContainer}>
+        <Hidden above="md">
+          <img
+            className={styles.handsMobile}
+            src="https://images.ctfassets.net/8k0h54kbe6bj/3KcHfnQ0XGnd3CZUgCMyev/4462bf6ae4d09e6ad5a960b66d98e1bb/image_3.png"
+            alt="hands"
+          ></img>
+        </Hidden>
+      </Box>
     </Box>
   )
 }
