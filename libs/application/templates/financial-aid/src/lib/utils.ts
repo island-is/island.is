@@ -5,7 +5,12 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { ApproveOptions, FAApplication } from '..'
-import { Municipality } from '@island.is/financial-aid/shared/lib'
+import {
+  FamilyStatus,
+  MartialStatusType,
+  martialStatusTypeFromMartialCode,
+  Municipality,
+} from '@island.is/financial-aid/shared/lib'
 
 const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 export const isValidEmail = (value: string) => emailRegex.test(value)
@@ -39,3 +44,20 @@ export function isMuncipalityRegistered(context: ApplicationContext) {
 
 export const encodeFilenames = (filename: string) =>
   filename && encodeURI(filename.normalize().replace(/ +/g, '_'))
+
+export function findFamilyStatus(
+  answers: FAApplication['answers'],
+  externalData: FAApplication['externalData'],
+) {
+  switch (true) {
+    case martialStatusTypeFromMartialCode(
+      externalData.nationalRegistry?.data?.applicant?.spouse?.maritalStatus,
+    ) === MartialStatusType.MARRIED:
+      return FamilyStatus.MARRIED
+    case answers?.relationshipStatus?.unregisteredCohabitation ===
+      ApproveOptions.Yes:
+      return FamilyStatus.UNREGISTERED_COBAHITATION
+    default:
+      return FamilyStatus.NOT_COHABITATION
+  }
+}

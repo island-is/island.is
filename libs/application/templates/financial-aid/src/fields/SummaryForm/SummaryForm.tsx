@@ -18,7 +18,6 @@ import {
   aidCalculator,
   martialStatusTypeFromMartialCode,
   MartialStatusType,
-  FamilyStatus,
 } from '@island.is/financial-aid/shared/lib'
 
 import { Routes } from '../../lib/constants'
@@ -33,6 +32,7 @@ import {
   getMessageFamilyStatus,
 } from '../../lib/formatters'
 import AllFiles from './AllFiles'
+import { findFamilyStatus } from '../../lib/utils'
 
 const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -57,20 +57,6 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       )
     }
   }, [externalData.nationalRegistry?.data?.municipality])
-
-  const findFamilyStatus = () => {
-    switch (true) {
-      case martialStatusTypeFromMartialCode(
-        externalData.nationalRegistry?.data?.applicant?.spouse?.maritalStatus,
-      ) === MartialStatusType.MARRIED:
-        return FamilyStatus.MARRIED
-      case answers?.relationshipStatus?.unregisteredCohabitation ===
-        ApproveOptions.Yes:
-        return FamilyStatus.UNREGISTERED_COBAHITATION
-      default:
-        return FamilyStatus.NOT_COHABITATION
-    }
-  }
 
   return (
     <>
@@ -157,7 +143,11 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
           {formatMessage(m.inRelationship.general.sectionTitle)}
         </Text>
 
-        <Text>{formatMessage(getMessageFamilyStatus[findFamilyStatus()])}</Text>
+        <Text>
+          {formatMessage(
+            getMessageFamilyStatus[findFamilyStatus(answers, externalData)],
+          )}
+        </Text>
       </SummaryBlock>
 
       <SummaryBlock editAction={() => goToScreen?.(Routes.HOMECIRCUMSTANCES)}>
