@@ -94,10 +94,6 @@ const CourtRecord = () => {
         autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
       }
 
-      if (theCase.demands) {
-        autofill('prosecutorDemands', theCase.demands, theCase)
-      }
-
       if (theCase.type === CaseType.RESTRAINING_ORDER) {
         autofill(
           'sessionBookings',
