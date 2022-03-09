@@ -248,9 +248,7 @@ export class SyslumennService {
 
       const exists = certificate.contentBase64.length !== 0
       const hasKMarking =
-        exists &&
-        certificate.contentBase64 !== 'Precondition Required' &&
-        certificate.contentBase64 === btoa(atob(certificate.contentBase64))
+        exists && certificate.contentBase64 !== 'Precondition Required'
 
       return {
         exists: exists,
@@ -267,7 +265,7 @@ export class SyslumennService {
   async getPropertyDetails(propertyNumber: string): Promise<PropertyDetail> {
     const { id, api } = await this.createApi()
 
-    const res = await api.vedbokavottordRegluverkPost({
+    const res = await api.vedbokavottordRegluverkiPost({
       skilabod: {
         audkenni: id,
         fastanumer:
