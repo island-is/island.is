@@ -1,6 +1,5 @@
 import { BaseProblem } from './BaseProblem'
 import { ProblemType } from './ProblemType'
-import {DelegationDTO} from '@island.is/clients/auth-public-api'
 
 export interface HttpProblem extends BaseProblem {
   type:
@@ -23,10 +22,15 @@ export interface ValidationFailedProblem extends BaseProblem {
   fields: ValidationFailedFields
 }
 
+export type Delegation = {
+name: string
+ nationalId: string
+ type: string
+}
+
 export type ActorValidationFailedFields = {
   delegatedUser: string
-  delegations: DelegationDTO[]
-  actor?:{name: string, nationalId: string}
+  delegations: Delegation[]
 }
 
 export interface ActorValidationFailedProblem extends BaseProblem {

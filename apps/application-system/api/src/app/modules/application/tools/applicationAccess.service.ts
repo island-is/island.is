@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 
 import { Application } from '../application.model'
 import { ApplicationService } from '../application.service'
+
 import { ActorValidationFailed } from '@island.is/nest/problem'
 import {
   DelegationDTO,
@@ -13,6 +14,12 @@ interface Actor {
   name: string
   nationalId: string
 }
+interface Delegation {
+  name: string
+  nationalId: string
+  type: string
+}
+
 @Injectable()
 export class ApplicationAccessService {
   constructor(
@@ -45,15 +52,14 @@ export class ApplicationAccessService {
     ).actorDelegationsControllerFindAll({
       direction: ActorDelegationsControllerFindAllDirectionEnum.Incoming,
     })
-    console.log('ACTOR DEL', actorDelegations)
 
+    // Get all national ids user has access to, could enter already delegated so add actor national id
     const nationalIds: string[] = [
       ...actorDelegations.map(
         (delegation: DelegationDTO) => delegation.fromNationalId,
       ),
-      actorDelegations[0].toNationalId,
+      auth.actor?.nationalId || '',
     ]
-    console.log(nationalIds)
 
     const actorApplication = await this.applicationService.findDelegatedApplicant(
       id,
@@ -64,38 +70,56 @@ export class ApplicationAccessService {
       if (actorApplication.applicant === auth['nationalId']) {
         return actorApplication
       }
-      const isActor = actorApplication.applicant === auth.actor?.nationalId
 
-      const actorDelegation = isActor
-        ? actorDelegations.find(
-            (delegation: DelegationDTO) => {
-              if (delegation.toNationalId === actorApplication.applicant && delegation?.toName) {
-                return {
-                  name: delegation.toName,
-                  nationalId: delegation.toNationalId,
-                } as Actor
-              }
-            }
-              
+      // If applicant is actor for user
+      if (actorApplication.applicant === auth.actor?.nationalId) {
+        const delegation = actorDelegations.find(
+          (delegation) =>
+            delegation.toNationalId === actorApplication.applicant &&
+            delegation.toName,
+        )
+        // Need to return name to frontend
+        if (!delegation?.toName) {
+          throw new NotFoundException(
+            `An application with the id ${id} does not exist`,
           )
-        : undefined
-      const actor = isActor && actorDelegation?.toName && actorDelegation?.toNationalId ? {name: actorDelegation?.toName, nationalId: actorDelegation?.toNationalId} : undefined
+        }
 
-      const delegations = !isActor
-        ? actorDelegations.filter(
-            (delegation: DelegationDTO) =>
-              delegation.fromNationalId === actorApplication.applicant, 
-          )
-        : []
+        throw new ActorValidationFailed({
+          delegatedUser: actorApplication.applicant,
+          delegations: [
+            {
+              name: delegation.toName,
+              nationalId: delegation.toNationalId,
+              type: 'ACTOR',
+            },
+          ],
+        })
+      }
+
+      // Map delegations to a simpler form
+      const delegations = actorDelegations
+        .filter(
+          (delegation) =>
+            delegation.fromNationalId === actorApplication.applicant,
+        )
+        .map((delegation) => ({
+          name: delegation.fromName,
+          nationalId: delegation.fromNationalId,
+          type: delegation.type,
+        }))
+
+  
 
       throw new ActorValidationFailed({
         delegatedUser: actorApplication.applicant,
         delegations: delegations,
-        actor: actor,
       })
+
+     
     }
     throw new NotFoundException(
-      `An application with the id ${id} does not exist`,
+      `An application with the id ${id} does not exist other errrororrororo`,
     )
   }
 }

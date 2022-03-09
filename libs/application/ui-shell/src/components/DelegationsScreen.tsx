@@ -18,14 +18,11 @@ import {
   ProblemType,
 } from '@island.is/shared/problem'
 import { ErrorShell } from './ErrorShell'
-import {DelegationDTO} from '@island.is/clients/auth-public-api'
 
 type Delegation = {
   type: string
-  from: {
     nationalId: string
     name: string
-  }
 }
 interface DelegationsScreenProps {
   type: ApplicationTypes
@@ -39,7 +36,7 @@ export const DelegationsScreen = ({
   applicationId,
 }: DelegationsScreenProps) => {
   const [allowedDelegations, setAllowedDelegations] = useState<string[]>()
-  const [applicant, setApplicant] = useState<DelegationDTO>()
+  const [applicant, setApplicant] = useState<Delegation>()
 
   const { switchUser } = useAuth()
 
@@ -88,9 +85,9 @@ export const DelegationsScreen = ({
 
       // Does the actor have delegation for the applicant of the application
       const found = problem.fields.delegations.find(
-        (delegation: DelegationDTO) =>
-          delegation.fromNationalId === problem.fields.delegatedUser &&
-          allowedDelegations.includes(delegation.type), 
+        (delegation: Delegation) =>
+          delegation.nationalId === problem.fields.delegatedUser &&
+          (allowedDelegations.includes(delegation.type) || delegation.type === "ACTOR"), 
       )
 
 
@@ -110,7 +107,7 @@ export const DelegationsScreen = ({
           <Box>
             <Box marginTop={5} marginBottom={5}>
               <Text variant="h1">
-                Þessi umsókn var hafinn fyrir {applicant.fromName}
+                Þessi umsókn var hafinn fyrir {applicant.name}
               </Text>
             </Box>
 
@@ -119,10 +116,10 @@ export const DelegationsScreen = ({
               marginBottom={5}
               display="flex"
               justifyContent="flexEnd"
-              key={applicant.fromNationalId}
+              key={applicant.nationalId}
             >
-              <Text variant="h1">{applicant.fromName}</Text>
-              <Button onClick={() => handleClick(applicant.fromNationalId)}>
+              <Text variant="h1">{applicant.name}</Text>
+              <Button onClick={() => handleClick(applicant.nationalId)}>
                 Halda áfram
               </Button>
             </Box>

@@ -60,10 +60,7 @@ const ApplicationLoader: FC<{
   }
 
   if (!applicationId || error) {
-    if (applicationId &&
-      !delegationsChecked &&
-      type
-    ) {
+    if (applicationId && !delegationsChecked && type) {
       return (
         <DelegationsScreen
           type={type}
