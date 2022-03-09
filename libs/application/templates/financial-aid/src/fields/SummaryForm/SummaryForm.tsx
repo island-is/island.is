@@ -49,7 +49,6 @@ const SummaryForm = ({
 
   const { createApplication } = useApplication()
 
-  //TODO check in another PR
   if (!hasSpouse(answers, externalData)) {
     setBeforeSubmitCallback &&
       setBeforeSubmitCallback(async () => {
