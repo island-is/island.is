@@ -57,16 +57,30 @@ const StepThreeForm: React.FC<Props> = (props) => {
     () => {
       updateCase(workingCase.id, {
         lawsBroken: workingCase.lawsBroken,
+      })
+    },
+    2000,
+    [workingCase.lawsBroken],
+  )
+
+  useDebounce(
+    () => {
+      updateCase(workingCase.id, {
         legalBasis: workingCase.legalBasis,
+      })
+    },
+    2000,
+    [workingCase.legalBasis],
+  )
+
+  useDebounce(
+    () => {
+      updateCase(workingCase.id, {
         requestedOtherRestrictions: workingCase.requestedOtherRestrictions,
       })
     },
     2000,
-    [
-      workingCase.lawsBroken,
-      workingCase.legalBasis,
-      workingCase.requestedOtherRestrictions,
-    ],
+    [workingCase.requestedOtherRestrictions],
   )
 
   return (

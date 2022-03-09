@@ -76,12 +76,30 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
     () => {
       updateCase(workingCase.id, {
         demands: workingCase.demands,
+      })
+    },
+    2000,
+    [workingCase.demands],
+  )
+
+  useDebounce(
+    () => {
+      updateCase(workingCase.id, {
         lawsBroken: workingCase.lawsBroken,
+      })
+    },
+    2000,
+    [workingCase.lawsBroken],
+  )
+
+  useDebounce(
+    () => {
+      updateCase(workingCase.id, {
         legalBasis: workingCase.legalBasis,
       })
     },
     2000,
-    [workingCase.demands, workingCase.lawsBroken, workingCase.legalBasis],
+    [workingCase.legalBasis],
   )
 
   useEffect(() => {

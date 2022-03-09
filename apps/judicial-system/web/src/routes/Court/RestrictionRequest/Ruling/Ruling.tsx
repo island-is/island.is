@@ -90,18 +90,40 @@ export const Ruling: React.FC = () => {
     () => {
       updateCase(workingCase.id, {
         prosecutorDemands: workingCase.prosecutorDemands,
+      })
+    },
+    2000,
+    [workingCase.prosecutorDemands],
+  )
+
+  useDebounce(
+    () => {
+      updateCase(workingCase.id, {
         courtCaseFacts: workingCase.courtCaseFacts,
+      })
+    },
+    2000,
+    [workingCase.courtCaseFacts],
+  )
+
+  useDebounce(
+    () => {
+      updateCase(workingCase.id, {
         courtLegalArguments: workingCase.courtLegalArguments,
+      })
+    },
+    2000,
+    [workingCase.courtLegalArguments],
+  )
+
+  useDebounce(
+    () => {
+      updateCase(workingCase.id, {
         conclusion: workingCase.conclusion,
       })
     },
     2000,
-    [
-      workingCase.prosecutorDemands,
-      workingCase.courtCaseFacts,
-      workingCase.courtLegalArguments,
-      workingCase.conclusion,
-    ],
+    [workingCase.conclusion],
   )
 
   useEffect(() => {

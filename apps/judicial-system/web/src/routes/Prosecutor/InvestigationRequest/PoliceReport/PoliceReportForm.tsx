@@ -40,18 +40,40 @@ const PoliceReportForm: React.FC<Props> = (props) => {
     () => {
       updateCase(workingCase.id, {
         caseFacts: workingCase.caseFacts,
+      })
+    },
+    2000,
+    [workingCase.caseFacts],
+  )
+
+  useDebounce(
+    () => {
+      updateCase(workingCase.id, {
         legalArguments: workingCase.legalArguments,
+      })
+    },
+    2000,
+    [workingCase.legalArguments],
+  )
+
+  useDebounce(
+    () => {
+      updateCase(workingCase.id, {
         prosecutorOnlySessionRequest: workingCase.prosecutorOnlySessionRequest,
+      })
+    },
+    2000,
+    [workingCase.prosecutorOnlySessionRequest],
+  )
+
+  useDebounce(
+    () => {
+      updateCase(workingCase.id, {
         comments: workingCase.comments,
       })
     },
     2000,
-    [
-      workingCase.caseFacts,
-      workingCase.legalArguments,
-      workingCase.prosecutorOnlySessionRequest,
-      workingCase.comments,
-    ],
+    [workingCase.comments],
   )
 
   useEffect(() => {

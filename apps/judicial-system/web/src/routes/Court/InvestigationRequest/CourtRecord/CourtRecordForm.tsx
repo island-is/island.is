@@ -74,20 +74,50 @@ const CourtRecordForm: React.FC<Props> = (props) => {
     () => {
       updateCase(workingCase.id, {
         courtAttendees: workingCase.courtAttendees,
+      })
+    },
+    2000,
+    [workingCase.courtAttendees],
+  )
+
+  useDebounce(
+    () => {
+      updateCase(workingCase.id, {
         sessionBookings: workingCase.sessionBookings,
+      })
+    },
+    2000,
+    [workingCase.sessionBookings],
+  )
+
+  useDebounce(
+    () => {
+      updateCase(workingCase.id, {
         accusedAppealAnnouncement: workingCase.accusedAppealAnnouncement,
+      })
+    },
+    2000,
+    [workingCase.accusedAppealAnnouncement],
+  )
+
+  useDebounce(
+    () => {
+      updateCase(workingCase.id, {
         prosecutorAppealAnnouncement: workingCase.prosecutorAppealAnnouncement,
+      })
+    },
+    2000,
+    [workingCase.prosecutorAppealAnnouncement],
+  )
+
+  useDebounce(
+    () => {
+      updateCase(workingCase.id, {
         endOfSessionBookings: workingCase.endOfSessionBookings,
       })
     },
     2000,
-    [
-      workingCase.courtAttendees,
-      workingCase.sessionBookings,
-      workingCase.accusedAppealAnnouncement,
-      workingCase.prosecutorAppealAnnouncement,
-      workingCase.endOfSessionBookings,
-    ],
+    [workingCase.endOfSessionBookings],
   )
 
   return (

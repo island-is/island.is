@@ -58,18 +58,40 @@ export const StepFour: React.FC = () => {
     () => {
       updateCase(workingCase.id, {
         demands: workingCase.demands,
+      })
+    },
+    2000,
+    [workingCase.demands],
+  )
+
+  useDebounce(
+    () => {
+      updateCase(workingCase.id, {
         caseFacts: workingCase.caseFacts,
+      })
+    },
+    2000,
+    [workingCase.caseFacts],
+  )
+
+  useDebounce(
+    () => {
+      updateCase(workingCase.id, {
         legalArguments: workingCase.legalArguments,
+      })
+    },
+    2000,
+    [workingCase.legalArguments],
+  )
+
+  useDebounce(
+    () => {
+      updateCase(workingCase.id, {
         comments: workingCase.comments,
       })
     },
     2000,
-    [
-      workingCase.demands,
-      workingCase.caseFacts,
-      workingCase.legalArguments,
-      workingCase.comments,
-    ],
+    [workingCase.comments],
   )
 
   useEffect(() => {
