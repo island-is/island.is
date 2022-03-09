@@ -24,27 +24,14 @@ export const hands = style({
 })
 
 export const headerBg = style({
+  position: 'relative',
   background: 'linear-gradient(94.79deg, #0064AB 44.28%, #0376C7 94.91%)',
-  ...themeUtils.responsiveStyle({
-    xs: {
-      minHeight: 410,
-      height: 'max-content',
-    },
-    sm: {
-      height: 410,
-    },
-  }),
+  minHeight: 410,
 })
 
 export const textBox = style({
   minHeight: 410,
   ...themeUtils.responsiveStyle({
-    xs: {
-      marginBottom: 32,
-    },
-    md: {
-      marginBottom: 0,
-    },
     lg: {
       maxWidth: '400px',
     },
@@ -52,5 +39,15 @@ export const textBox = style({
       maxWidth: '100%',
     },
   }),
-  height: 'fit-content',
+  height: '100%',
+})
+
+export const handsMobile = style({
+  position: 'absolute',
+  bottom: 0,
+  left: '50%',
+  transform: 'translateX(-50%)',
+  pointerEvents: 'none',
+  margin: '0 auto',
+  maxHeight: '150px',
 })
