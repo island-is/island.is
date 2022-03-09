@@ -10,7 +10,7 @@ import { DescriptionText, PrivacyPolicyAccordion } from '..'
 import { FAFieldBaseProps } from '../../lib/types'
 
 const AboutSpouseForm = ({ application }: FAFieldBaseProps) => {
-  const { data } = application.externalData.nationalRegistry
+  const { nationalRegistry } = application.externalData
 
   return (
     <>
@@ -18,14 +18,14 @@ const AboutSpouseForm = ({ application }: FAFieldBaseProps) => {
         textProps={{ variant: 'h3', fontWeight: 'light', marginTop: 2 }}
         text={aboutSpouseForm.general.description}
         format={{
-          spouseName: data.applicant.fullName,
+          spouseName: nationalRegistry?.data?.applicant.fullName,
           currentMonth: currentMonth(),
           nextMonth: months[nextMonth()],
         }}
       />
       <Box marginTop={5}>
         <PrivacyPolicyAccordion
-          municipalityPageUrl={data.municipality.homepage || ''}
+          municipalityPageUrl={nationalRegistry?.data?.municipality.homepage}
         />
       </Box>
     </>

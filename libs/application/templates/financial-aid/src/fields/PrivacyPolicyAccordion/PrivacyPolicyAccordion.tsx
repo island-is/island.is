@@ -5,7 +5,7 @@ import { privacyPolicyAccordion } from '../../lib/messages'
 import { DescriptionText } from '..'
 
 interface Props {
-  municipalityPageUrl: string
+  municipalityPageUrl: string | undefined
 }
 
 const PrivacyPolicyAccordion = ({ municipalityPageUrl }: Props) => {
@@ -23,10 +23,19 @@ const PrivacyPolicyAccordion = ({ municipalityPageUrl }: Props) => {
         >
           <DescriptionText
             text={privacyPolicyAccordion.general.accordionAbout}
-            format={{
-              homePageNameUrl: municipalityPageUrl,
-            }}
           />
+          {municipalityPageUrl ? (
+            <DescriptionText
+              text={privacyPolicyAccordion.general.accordionMoreInfoHomepage}
+              format={{
+                homePageNameUrl: municipalityPageUrl,
+              }}
+            />
+          ) : (
+            <DescriptionText
+              text={privacyPolicyAccordion.general.accordionMoreInfo}
+            />
+          )}
         </AccordionItem>
       </Accordion>
     </>
