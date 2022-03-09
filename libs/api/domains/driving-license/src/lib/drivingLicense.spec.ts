@@ -6,12 +6,14 @@ import {
   MOCK_NATIONAL_ID_EXPIRED,
   MOCK_NATIONAL_ID_NO_ASSESSMENT,
   MOCK_NATIONAL_ID_TEACHER,
+  MOCK_USER,
   requestHandlers,
 } from './__mock-data__/requestHandlers'
 import { startMocking } from '@island.is/shared/mocking'
 import { createLogger } from 'winston'
-import { logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { Logger } from '@nestjs/common'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
+import RecsidenceHistory from '../lib/__mock-data__/residenceHistory.json'
 
 startMocking(requestHandlers)
 
@@ -42,6 +44,12 @@ describe('DrivingLicenseService', () => {
           useValue: {
             warn: () => undefined,
           },
+        },
+        {
+          provide: NationalRegistryXRoadService,
+          useClass: jest.fn(() => ({
+            getNationalRegistryResidenceHistory: () => RecsidenceHistory,
+          })),
         },
       ],
     }).compile()
@@ -176,6 +184,7 @@ describe('DrivingLicenseService', () => {
   describe('getApplicationEligibility', () => {
     it('all checks should pass for applicable students', async () => {
       const response = await service.getApplicationEligibility(
+        MOCK_USER,
         MOCK_NATIONAL_ID,
         'B-full',
       )
@@ -201,6 +210,7 @@ describe('DrivingLicenseService', () => {
 
     it('all checks should pass for applicable students for temporary license', async () => {
       const response = await service.getApplicationEligibility(
+        MOCK_USER,
         MOCK_NATIONAL_ID,
         'B-temp',
       )
@@ -222,6 +232,7 @@ describe('DrivingLicenseService', () => {
 
     it('checks should fail for non-applicable students', async () => {
       const response = await service.getApplicationEligibility(
+        MOCK_USER,
         MOCK_NATIONAL_ID_EXPIRED,
         'B-full',
       )
@@ -304,6 +315,8 @@ describe('DrivingLicenseService', () => {
           needsToPresentHealthCertificate: false,
           needsToPresentQualityPhoto: false,
           teacherNationalId: MOCK_NATIONAL_ID_TEACHER,
+          email: 'mock@email.com',
+          phone: '9999999',
         },
       )
 
@@ -322,6 +335,8 @@ describe('DrivingLicenseService', () => {
           needsToPresentHealthCertificate: false,
           needsToPresentQualityPhoto: true,
           teacherNationalId: MOCK_NATIONAL_ID_TEACHER,
+          email: 'mock@email.com',
+          phone: '9999999',
         })
         .catch((e) => expect(e).toBeTruthy())
     })
