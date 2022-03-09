@@ -280,7 +280,7 @@ describe(`${RULING_ROUTE}/:id`, () => {
     const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
-      courtStartDate: '2020-12-22T11:23:00.000Z',
+      courtDate: '2020-12-22T11:23:00.000Z',
     }
 
     cy.visit(`${RULING_ROUTE}/test_id_stadfest`)
