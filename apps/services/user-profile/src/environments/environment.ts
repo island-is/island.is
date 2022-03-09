@@ -6,7 +6,8 @@ const devConfig = {
     fromName: 'island.is',
     replyToEmail: 'noreply@island.is',
     replyToName: 'island.is',
-    servicePortalBaseUrl: 'http://localhost:4200',
+    servicePortalBaseUrl:
+      process.env.SERVICE_PORTAL_BASE_URL ?? 'http://localhost:4200',
   },
   smsOptions: {
     url: 'https://smsapi.devnova.is',
