@@ -282,6 +282,8 @@ jobs:
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
+        with:
+          image: public.ecr.aws/eks-distro-build-tooling/binfmt-misc:qemu-v6.1.0
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
@@ -494,6 +496,8 @@ jobs:
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
+        with:
+          image: public.ecr.aws/eks-distro-build-tooling/binfmt-misc:qemu-v6.1.0
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
