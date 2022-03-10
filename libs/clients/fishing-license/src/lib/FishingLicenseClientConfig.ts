@@ -17,7 +17,7 @@ export const FishingLicenseClientConfig = defineConfig<z.infer<typeof schema>>({
       ],
       xRoadServicePath: env.required(
         'FISHING_LICENSE_XROAD_PROVIDER_ID',
-        'IS-DEV/GOV/10012/Fiskistofa/veidileyfi-v1',
+        'IS-DEV/GOV/10012/Fiskistofa-Protected/veidileyfi-v1',
       ),
     }
   },
