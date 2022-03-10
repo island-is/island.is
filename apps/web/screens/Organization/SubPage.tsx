@@ -57,8 +57,6 @@ const SubPage: Screen<SubPageProps> = ({
     throw new CustomNextError(404, 'Not found')
   }
 
-  console.log(subpage)
-
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
