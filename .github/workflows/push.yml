@@ -19,6 +19,7 @@ on:
 
 env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
+  DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
   SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
   COMPOSE_HTTP_TIMEOUT: 180
   GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
@@ -283,7 +284,7 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
         with:
-          image: public.ecr.aws/eks-distro-build-tooling/binfmt-misc:qemu-v6.1.0
+          image: '${{ env.DOCKER_BASE_IMAGE_REGISTRY }}/eks-distro-build-tooling/binfmt-misc:qemu-v6.1.0'
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
@@ -497,7 +498,7 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
         with:
-          image: public.ecr.aws/eks-distro-build-tooling/binfmt-misc:qemu-v6.1.0
+          image: '${{ env.DOCKER_BASE_IMAGE_REGISTRY }}/eks-distro-build-tooling/binfmt-misc:qemu-v6.1.0'
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
@@ -506,10 +507,14 @@ jobs:
         id: dockerbuild
         if: steps.gather.outcome == 'success'
         run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
+        env:
+          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=$DOCKER_BASE_IMAGE_REGISTRY'
 
       - name: Building Docker images Retry #This only exists until GHA starts supporting this
         if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
         run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
+        env:
+          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=$DOCKER_BASE_IMAGE_REGISTRY'
 
   helm-docker-build:
     needs:
@@ -548,6 +553,7 @@ jobs:
           echo 'EOF' >> $GITHUB_ENV
         env:
           PUBLISH: 'true'
+          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=$DOCKER_BASE_IMAGE_REGISTRY'
 
       - name: Retag as latest
         if: env.GIT_BRANCH == 'main'
