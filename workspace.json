@@ -990,6 +990,16 @@
             "passWithNoTests": true
           },
           "outputs": ["coverage/libs/api/domains/driving-license"]
+        },
+        "dev": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn dev application-system-api",
+              "kubectl -n socat port-forward svc/socat-xroad 8081:80"
+            ],
+            "parallel": true
+          }
         }
       }
     },
@@ -1741,7 +1751,33 @@
             "cwd": "apps/application-system/api"
           }
         },
-        "docker-express": {}
+        "docker-express": {},
+        "dev/init": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn dev-services application-system-api",
+              "yarn nx run application-system-api:migrate",
+              "yarn nx schemas/build-openapi application-system-api",
+              "yarn nx schemas/openapi-generator api-domains-application",
+              "yarn nx schemas/build-graphql-schema api"
+            ],
+            "parallel": false
+          }
+        },
+        "dev": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn start api",
+              "yarn start application-system-api",
+              "yarn start application-system-form",
+              "kubectl port-forward svc/socat-soffia 8443:443 -n socat",
+              "kubectl port-forward svc/socat-xroad 8081:80 -n socat"
+            ],
+            "parallel": true
+          }
+        }
       }
     },
     "application-system-form": {
@@ -3217,6 +3253,16 @@
               "yarn openapi-generator -o libs/clients/driving-license/gen/fetch/v1 -i libs/clients/driving-license/src/v1/clientConfig.json",
               "yarn openapi-generator -o libs/clients/driving-license/gen/fetch/v2 -i libs/clients/driving-license/src/v2/clientConfig.json"
             ]
+          }
+        },
+        "dev": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn nx run clients-driving-license:update-openapi-document --apiVersion=v2",
+              "yarn nx run clients-driving-license:schemas/external-openapi-generator"
+            ],
+            "parallel": false
           }
         }
       }
