@@ -50,7 +50,7 @@ export const CompanySearchFormField: FC<Props> = ({ application, field }) => {
   }
 
   const debouncer = useMemo(() => {
-    return debounce(search, 0.5)
+    return debounce(search, 250)
   }, [search])
 
   // Validations
