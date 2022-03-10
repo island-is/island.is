@@ -20,6 +20,8 @@ export interface NewTemporaryDrivingLicenseInput {
   needsToPresentHealthCertificate: boolean
   needsToPresentQualityPhoto: boolean
   teacherNationalId: string
+  email: string
+  phone: string
 }
 
 export interface NewDrivingLicenseResult {

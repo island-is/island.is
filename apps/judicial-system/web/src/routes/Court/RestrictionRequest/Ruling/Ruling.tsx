@@ -64,6 +64,10 @@ export const Ruling: React.FC = () => {
   } = useContext(FormContext)
 
   const [
+    introductionErrorMessage,
+    setIntroductionErrorMessage,
+  ] = useState<string>('')
+  const [
     courtCaseFactsErrorMessage,
     setCourtCaseFactsErrorMessage,
   ] = useState<string>('')
@@ -139,6 +143,14 @@ export const Ruling: React.FC = () => {
       new Date(theCase.validToDate) > new Date(theCase.isolationToDate)
 
     if (isCaseUpToDate) {
+      autofill(
+        'introduction',
+        formatMessage(m.sections.introduction.autofill, {
+          date: formatDate(theCase.courtDate, 'PPP'),
+        }),
+        theCase,
+      )
+
       if (theCase.demands) {
         autofill('prosecutorDemands', theCase.demands, theCase)
       }
@@ -323,6 +335,47 @@ export const Ruling: React.FC = () => {
               />
             </AccordionItem>
           </Accordion>
+        </Box>
+        <Box component="section" marginBottom={5}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              {formatMessage(m.sections.introduction.title)}
+            </Text>
+          </Box>
+          <Input
+            data-testid="introduction"
+            name="introduction"
+            label={formatMessage(m.sections.introduction.label)}
+            value={workingCase.introduction || ''}
+            placeholder={formatMessage(m.sections.introduction.placeholder)}
+            onChange={(event) =>
+              removeTabsValidateAndSet(
+                'introduction',
+                event.target.value,
+                ['empty'],
+                workingCase,
+                setWorkingCase,
+                introductionErrorMessage,
+                setIntroductionErrorMessage,
+              )
+            }
+            onBlur={(event) =>
+              validateAndSendToServer(
+                'introduction',
+                event.target.value,
+                ['empty'],
+                workingCase,
+                updateCase,
+                setIntroductionErrorMessage,
+              )
+            }
+            errorMessage={introductionErrorMessage}
+            hasError={introductionErrorMessage !== ''}
+            textarea
+            rows={7}
+            autoExpand={{ on: true, maxHeight: 300 }}
+            required
+          />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
