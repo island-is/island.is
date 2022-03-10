@@ -6,7 +6,7 @@
 # there are references above each FROM statement to the source.
 #
 
-FROM buildpack-deps:focal as node-base
+FROM public.ecr.aws/docker/library/buildpack-deps:focal as node-base
 
 RUN apt-get update \
  && apt-get install -y nodejs npm \

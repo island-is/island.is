@@ -1,8 +1,8 @@
-FROM node:12-alpine3.12 as runner
+FROM public.ecr.aws/docker/library/node:12-alpine3.12 as runner
 
 RUN apk add postgresql-client bash
 
-FROM node:12-alpine3.12 as build
+FROM public.ecr.aws/docker/library/node:12-alpine3.12 as build
 
 ADD infra/package.json infra/yarn.lock /app/infra/
 WORKDIR /app/infra
