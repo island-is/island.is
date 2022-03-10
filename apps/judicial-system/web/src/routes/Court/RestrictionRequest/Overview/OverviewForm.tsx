@@ -33,23 +33,19 @@ import type {
   CaseLegalProvisions,
 } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
-import { useRulingAutofill } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
 
 import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
 
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
-  isCaseUpToDate: boolean
 }
 
 const OverviewForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isCaseUpToDate } = props
+  const { workingCase, setWorkingCase } = props
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-
-  useRulingAutofill(isCaseUpToDate, workingCase)
 
   return (
     <FormContentContainer>

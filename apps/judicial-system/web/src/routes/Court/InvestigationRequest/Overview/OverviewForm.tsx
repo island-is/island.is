@@ -30,7 +30,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
-import { useRulingAutofill } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
 
 import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
 
@@ -38,17 +37,14 @@ interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
-  isCaseUpToDate: boolean
 }
 
 const OverviewForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading, isCaseUpToDate } = props
+  const { workingCase, setWorkingCase, isLoading } = props
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
-
-  useRulingAutofill(isCaseUpToDate, workingCase)
 
   return (
     <>

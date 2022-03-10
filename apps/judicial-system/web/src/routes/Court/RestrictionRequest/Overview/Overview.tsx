@@ -17,6 +17,7 @@ import {
   UploadState,
   useCourtUpload,
 } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
+import { useRulingAutofill } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
 
 export const JudgeOverview: React.FC = () => {
   const {
@@ -34,6 +35,7 @@ export const JudgeOverview: React.FC = () => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
 
+  useRulingAutofill(isCaseUpToDate, workingCase)
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
 
   return (
@@ -46,11 +48,7 @@ export const JudgeOverview: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <OverviewForm
-        workingCase={workingCase}
-        setWorkingCase={setWorkingCase}
-        isCaseUpToDate={isCaseUpToDate}
-      />
+      <OverviewForm workingCase={workingCase} setWorkingCase={setWorkingCase} />
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${Constants.RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`}
