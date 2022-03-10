@@ -1,6 +1,5 @@
 import { SearchBar } from '@island.is/island-ui-native'
 import React from 'react'
-import { useIntl } from 'react-intl'
 import styled from 'styled-components/native'
 import { I18nProvider } from '../../contexts/i18n-provider'
 import { ThemeProvider } from '../../contexts/theme-provider'
@@ -22,10 +21,11 @@ const Container = styled.View`
 
 const SearchBarComponent = ({
   queryKey = 'inboxQuery',
+  placeholder = 'Leita...',
 }: {
   queryKey?: 'inboxQuery' | 'applicationQuery'
+  placeholder?: string
 } = {}) => {
-  const intl = useIntl()
   const ui = useUiStore()
   return (
     <Host>
@@ -34,7 +34,7 @@ const SearchBarComponent = ({
           value={ui[queryKey]}
           onChangeText={(text) => uiStore.setState({ [queryKey]: text } as any)}
           onCancelPress={() => uiStore.setState({ [queryKey]: '' } as any)}
-          placeholder={intl.formatMessage({ id: 'inbox.searchPlaceholder' })}
+          placeholder={placeholder}
           returnKeyType="search"
         />
       </Container>

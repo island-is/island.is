@@ -42,17 +42,33 @@ const {
   useNavigationOptions,
   getNavigationOptions,
 } = useThemedNavigationOptions(
-  (theme, intl, initialized) => ({
+  (theme, intl) => ({
     topBar: {
       title: {
         text: intl.formatMessage({ id: 'applications.title' }),
       },
       searchBar: {
-        placeholder: intl.formatMessage({ id: 'applications.searchPlaceholder' }),
+        placeholder: intl.formatMessage({
+          id: 'applications.searchPlaceholder',
+        }),
         tintColor: theme.color.blue400,
         backgroundColor: 'transparent',
       },
       rightButtons: [],
+      background: {
+        component:
+          Platform.OS === 'android'
+            ? {
+                name: ComponentRegistry.AndroidSearchBar,
+                passProps: {
+                  queryKey: 'applicationQuery',
+                  placeholder: intl.formatMessage({
+                    id: 'applications.searchPlaceholder',
+                  }),
+                },
+              }
+            : undefined,
+      },
     },
   }),
   {
@@ -64,15 +80,6 @@ const {
         hideTopBarOnFocus: true,
       },
       rightButtons: [],
-      background: {
-        component:
-          Platform.OS === 'android'
-            ? {
-                name: ComponentRegistry.AndroidSearchBar,
-                passProps: { queryKey: 'applicationQuery' },
-              }
-            : undefined,
-      },
     },
   },
 )
@@ -179,7 +186,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
     return (
       <TouchableOpacity
         key={item.id}
-        style={{paddingHorizontal: 16}}
+        style={{ paddingHorizontal: 16 }}
         onPress={() =>
           openBrowser(`http://island.is/${item.slug}`, componentId)
         }
@@ -305,7 +312,9 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
               loading={searchLoading}
               isAndroid={Platform.OS === 'android'}
             />
-          ) : <View />
+          ) : (
+            <View />
+          )
         }
         data={isLoading ? loadingItem : isEmptyView ? emptyItem : items}
         renderItem={renderItem}
@@ -314,7 +323,10 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         refreshing={res?.networkStatus === 4}
         onRefresh={() => res?.refetch()}
         ListFooterComponent={() =>
-          !isEmptyView && !isSearch && !isLoading && isLoadingMore && (
+          !isEmptyView &&
+          !isSearch &&
+          !isLoading &&
+          isLoadingMore && (
             <View style={{ paddingVertical: 20 }}>
               <ActivityIndicator size="large" color="#0061FF" />
             </View>

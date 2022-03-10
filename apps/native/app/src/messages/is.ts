@@ -83,7 +83,7 @@ export const is = {
 
   // user: personal info
   'user.natreg.infoBox': 'Þín skráning í Þjóðskrá Íslands',
-  'user.natreg.displayName': 'Birtingarnafn',
+  'user.natreg.displayName': 'Fullt nafn',
   'user.natreg.nationalId': 'Kennitala',
   'user.natreg.birthPlace': 'Fæðingarstaður',
   'user.natreg.legalResidence': 'Lögheimili',
