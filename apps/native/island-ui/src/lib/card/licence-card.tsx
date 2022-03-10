@@ -73,12 +73,15 @@ const ImgWrap = styled.View`
   justify-content: center;
 `
 
+type CardType = 'DriversLicense' | 'IDENTIDY_CARD' | 'PASSPORT' | 'FISHING_CARD' | 'WEAPON_LICENSE';
+type CardStatus = 'NOT_VALID' | 'VALID';
+
 interface LicenceCardProps {
   title: string
-  status: string
+  status: CardStatus
   date?: Date | string
   agencyLogo: ImageSourcePropType
-  type: string
+  type: CardType
   nativeID?: string
   style?: any
 }
@@ -104,6 +107,7 @@ const statusIcon: StatusStyles = {
   },
 }
 
+
 export function LicenceCard({
   title,
   type,
@@ -128,7 +132,7 @@ export function LicenceCard({
   let backgroundImage = null
   let logo = <Image source={agencyLogo} style={{ width: 68, height: 87 }} />
   switch (type) {
-    case 'DRIVERS_LICENSE':
+    case 'DriversLicense':
       titleString = 'Ökuskírteini (IS)'
       textColor = { dark: '#000000', light: '#000000' }
       backgroundColor = { dark: '#5F414E', light: '#f5e4ec' }
