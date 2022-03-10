@@ -58,7 +58,7 @@ export class FileService {
     applicationId: string,
   ): Promise<ApplicationFileModel[]> {
     this.logger.debug(`Getting all files for case ${applicationId}`)
-
+    //TODO
     return this.fileModel.findAll({
       where: { applicationId },
       order: [['created', 'DESC']],

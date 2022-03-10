@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, Box } from '@island.is/island-ui/core'
+import { Text, Box, Button } from '@island.is/island-ui/core'
 import {
   ApplicationFile,
   FileType,
@@ -17,6 +17,16 @@ const FilesListWithHeaderContainer = ({ applicationFiles }: Props) => {
   if (!applicationFiles || applicationFiles?.length <= 0) {
     return null
   }
+
+  const printAll = () => {
+    // var pages = applicationFiles
+    // for (var i = 0; i < pages.length; i++) {
+    //   var oWindow = window.open(pages[i].name, 'print')
+    //   oWindow?.print()
+    //   oWindow?.close()
+    // }
+  }
+
   return (
     <>
       <Box
@@ -44,11 +54,18 @@ const FilesListWithHeaderContainer = ({ applicationFiles }: Props) => {
                 <Text variant="eyebrow" marginBottom={2}>
                   {getFileTypeName[file]}
                 </Text>
-                <FileList files={filterFiles} />
+                <FileList files={filterFiles} className="" />
               </span>
             )
           }
         })}
+      </Box>
+      <Box
+        className={`contentUp delay-125 ${styles.widthFull}`}
+        marginBottom={[2, 2, 3]}
+        printHidden
+      >
+        <Button onClick={printAll}>helo</Button>
       </Box>
     </>
   )

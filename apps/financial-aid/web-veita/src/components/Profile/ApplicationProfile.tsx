@@ -151,7 +151,7 @@ const ApplicationProfile = ({
       <Box
         marginTop={10}
         marginBottom={15}
-        className={`${styles.applicantWrapper} hideOnPrintMarginBottom`}
+        className={`${styles.applicantWrapper} hideOnPrintMarginBottom hideOnPrintMarginTop`}
       >
         <ApplicationHeader
           application={application}

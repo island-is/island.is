@@ -35,7 +35,7 @@ const History = ({
   return (
     <>
       <Box
-        className={styles.historyHeadline}
+        className={`${styles.historyHeadline}`}
         marginBottom={[2, 2, 3]}
         borderBottomWidth="standard"
         borderColor="dark200"
@@ -46,7 +46,7 @@ const History = ({
       </Box>
       <Box
         className={cn({
-          [`${styles.historyContainer}`]: true,
+          [`${styles.historyContainer} printableSection`]: true,
           [`${className}`]: true,
         })}
       >

@@ -189,6 +189,7 @@ input[type='number'] {
   body {
     padding-top: 0px;
     padding-bottom: 0px;
+    -webkit-print-color-adjust: exact;
   }
 
   .no-print,
@@ -199,16 +200,26 @@ input[type='number'] {
   .hideOnPrintMarginBottom {
     margin-bottom: 0;
   }
+  .hideOnPrintMarginTop {
+    margin-top: 0;
+  }
 
   .marginBottomOnPrint {
     margin-bottom: 24px;
   }
 
-  .hideBorder {
-    margin-bottom: 0;
-  }
-
   .hideOnPrintBorderBottom {
     border-bottom: none;
+  }
+
+  .printRightColor {
+    -webkit-print-color-adjust: exact;
+  }
+
+  .printableSection {
+    display: block;
+    width: 100%;
+    height: 100%;
+    page-break-after: always;
   }
 }
