@@ -2114,7 +2114,7 @@
     },
     {
       "name": "Guðmundur Benediktsson",
-      "practice": "Lagarök lögmannsstofa.",
+      "practice": "",
       "email": "gudmundur.benediktsson@gmail.com",
       "phoneNr": "5881177"
     },
@@ -5585,6 +5585,12 @@
       "practice": "Lögmenn Árbæ",
       "email": "st@skadi.is",
       "phoneNr": "568-1245"
+    },
+    {
+      "name": "Steinlaug Högnadóttir",
+      "practice": "LOGOS",
+      "email": "steinlaug@logos.is",
+      "phoneNr": "5400300"
     },
     {
       "name": "Steinn S. Finnbogason",
