@@ -188,6 +188,10 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
+  readonly introduction?: string
+
+  @Allow()
+  @Field({ nullable: true })
   readonly courtLegalArguments?: string
 
   @Allow()

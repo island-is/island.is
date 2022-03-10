@@ -1,11 +1,11 @@
 import formatISO from 'date-fns/formatISO'
 
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 import type { CaseType, User } from '@island.is/judicial-system/types'
 
-import { DATE_FACTORY } from '../../factories'
+import { now } from '../../factories'
 import { EventService } from '../event'
 
 // Maps case types to sub types in the court system
@@ -47,7 +47,6 @@ export const subTypes = {
 @Injectable()
 export class CourtService {
   constructor(
-    @Inject(DATE_FACTORY) private readonly today: () => Date,
     private readonly courtClientService: CourtClientService,
     private readonly eventService: EventService,
   ) {}
@@ -237,7 +236,7 @@ export class CourtService {
         caseType: 'R - Rannsóknarmál',
         subtype: subType,
         status: 'Skráð',
-        receivalDate: formatISO(this.today(), { representation: 'date' }),
+        receivalDate: formatISO(now(), { representation: 'date' }),
         basedOn: 'Rannsóknarhagsmunir',
         sourceNumber: policeCaseNumber,
       })

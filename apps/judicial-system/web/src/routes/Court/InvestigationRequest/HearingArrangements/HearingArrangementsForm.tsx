@@ -54,7 +54,7 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
         (notification) => notification.type === NotificationType.COURT_DATE,
       )
     ) {
-      router.push(`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`)
+      router.push(`${Constants.IC_RULING_ROUTE}/${workingCase.id}`)
     } else {
       setModalVisible(true)
     }
@@ -273,15 +273,13 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
             )
 
             if (notificationSent) {
-              router.push(
-                `${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`,
-              )
+              router.push(`${Constants.IC_RULING_ROUTE}/${workingCase.id}`)
             }
           }}
           handleSecondaryButtonClick={() => {
             sendNotification(workingCase.id, NotificationType.COURT_DATE, true)
 
-            router.push(`${Constants.IC_COURT_RECORD_ROUTE}/${workingCase.id}`)
+            router.push(`${Constants.IC_RULING_ROUTE}/${workingCase.id}`)
           }}
           primaryButtonText={formatMessage(m.modal.primaryButtonText)}
           secondaryButtonText={formatMessage(m.modal.secondaryButtonText)}

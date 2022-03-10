@@ -58,6 +58,7 @@ const courtFields = [
   'courtDocuments',
   'sessionBookings',
   'courtCaseFacts',
+  'introduction',
   'courtLegalArguments',
   'ruling',
   'decision',
