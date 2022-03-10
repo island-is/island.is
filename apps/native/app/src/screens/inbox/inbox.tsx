@@ -7,6 +7,7 @@ import {
   TopLine,
 } from '@island.is/island-ui-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { GET_ORGANIZATIONS_QUERY } from '../../graphql/queries/get-organizations.query'
 import { useIntl } from 'react-intl'
 import {
   Animated,
@@ -164,7 +165,6 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   const [searchLoading, setSearchLoading] = useState(false)
   const [indexedItems, setIndexedItems] = useState<IndexedDocument[]>([])
   const [inboxItems, setInboxItems] = useState<IDocument[]>([])
-
   const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, {
     client,
     fetchPolicy: 'cache-and-network',

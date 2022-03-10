@@ -13,6 +13,7 @@
     "detox:test:ios": "yarn detox:test -c ios"
   },
   "dependencies": {
+    "@apollo/client": "3.5.10",
     "@datadog/mobile-react-native": "1.0.0-rc4",
     "@fidm/x509": "1.2.1",
     "@formatjs/intl-datetimeformat": "4.2.4",
