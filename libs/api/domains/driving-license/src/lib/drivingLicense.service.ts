@@ -295,10 +295,7 @@ export class DrivingLicenseService {
     })
     const qualityPhoto =
       image?.data && image?.data.length > 0
-        ? `data:image/jpeg;base64,${image?.data.substr(
-            1,
-            image.data.length - 2,
-          )}`
+        ? image?.data.substr(1, image.data.length - 2)
         : null
 
     return qualityPhoto
