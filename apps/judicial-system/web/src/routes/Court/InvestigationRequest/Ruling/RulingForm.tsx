@@ -47,6 +47,7 @@ const RulingForm: React.FC<Props> = (props) => {
   const [courtLegalArgumentsEM, setCourtLegalArgumentsEM] = useState<string>('')
   const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState<string>('')
   const [conclusionEM, setConclusionEM] = useState<string>('')
+  const [introductionEM, setIntroductionEM] = useState<string>('')
 
   return (
     <>
@@ -79,6 +80,47 @@ const RulingForm: React.FC<Props> = (props) => {
               />
             </AccordionItem>
           </Accordion>
+        </Box>
+        <Box component="section" marginBottom={5}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              {formatMessage(m.sections.introduction.title)}
+            </Text>
+          </Box>
+          <Input
+            data-testid="introduction"
+            name="introduction"
+            label={formatMessage(m.sections.introduction.label)}
+            value={workingCase.introduction || ''}
+            placeholder={formatMessage(m.sections.introduction.placeholder)}
+            onChange={(event) =>
+              removeTabsValidateAndSet(
+                'introduction',
+                event.target.value,
+                ['empty'],
+                workingCase,
+                setWorkingCase,
+                introductionEM,
+                setIntroductionEM,
+              )
+            }
+            onBlur={(event) =>
+              validateAndSendToServer(
+                'introduction',
+                event.target.value,
+                ['empty'],
+                workingCase,
+                updateCase,
+                setIntroductionEM,
+              )
+            }
+            errorMessage={introductionEM}
+            hasError={introductionEM !== ''}
+            textarea
+            rows={7}
+            autoExpand={{ on: true, maxHeight: 300 }}
+            required
+          />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
