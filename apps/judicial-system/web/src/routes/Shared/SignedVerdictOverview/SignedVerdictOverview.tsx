@@ -160,7 +160,7 @@ export const SignedVerdictOverview: React.FC = () => {
   })
 
   useEffect(() => {
-    document.title = 'Yfirlit staðfestrar kröfu - Réttarvörslugátt'
+    document.title = 'Yfirlit - Afgreitt mál - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {

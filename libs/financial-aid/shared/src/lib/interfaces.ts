@@ -213,7 +213,7 @@ export interface CreateApplication {
   streetName?: string
   postalCode?: string
   city?: string
-  municipalityCode?: string
+  municipalityCode: string
   applicationSystemId?: string
 }
 
@@ -292,7 +292,7 @@ export interface Application {
   streetName?: string
   postalCode?: string
   city?: string
-  municipalityCode?: string
+  municipalityCode: string
   directTaxPayments: DirectTaxPayment[]
   applicationSystemId?: string
 }
