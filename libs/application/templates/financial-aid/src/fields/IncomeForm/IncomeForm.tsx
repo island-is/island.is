@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, Text, GridRow, GridColumn } from '@island.is/island-ui/core'
-import { FAFieldBaseProps, ApproveOptions } from '../../lib/types'
+import { FAFieldBaseProps, ApproveOptions, OverrideAnswerSchema } from '../../lib/types'
 import { useIntl } from 'react-intl'
 import { incomeForm, approveOptions } from '../../lib/messages'
 import { RadioController } from '@island.is/shared/form-fields'
@@ -15,7 +15,7 @@ const IncomeForm = ({ field, errors, application }: FAFieldBaseProps) => {
       <Box marginTop={[2, 2, 3]}>
         <RadioController
           id={field.id}
-          defaultValue={answers?.income}
+          defaultValue={answers[field.id as keyof OverrideAnswerSchema]}
           options={[
             {
               value: ApproveOptions.No,

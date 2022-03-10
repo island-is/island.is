@@ -102,6 +102,9 @@ const FinancialAidTemplate: ApplicationTemplate<
                   Promise.resolve(module.Spouse),
                 ),
               read: 'all',
+              write: {
+                answers: ['spouseIncome'],
+              },
             },
             {
               id: Roles.APPLICANT,
