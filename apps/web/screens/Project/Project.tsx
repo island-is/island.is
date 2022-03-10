@@ -275,26 +275,28 @@ const ProjectPage: Screen<PageProps> = ({
           />
         }
       >
-        <Hidden above="sm">
-          <Box>
-            <Box marginY={2}>
-              <Navigation
-                isMenuDialog
-                baseId="pageNav"
-                items={navigationList}
-                activeItemTitle={activeNavigationItemTitle}
-                title={navigationTitle}
-                renderLink={(link, item) => {
-                  return item?.href ? (
-                    <NextLink href={item?.href}>{link}</NextLink>
-                  ) : (
-                    link
-                  )
-                }}
-              />
+        {projectPage.sidebar && (
+          <Hidden above="sm">
+            <Box>
+              <Box marginY={2}>
+                <Navigation
+                  isMenuDialog
+                  baseId="pageNav"
+                  items={navigationList}
+                  activeItemTitle={activeNavigationItemTitle}
+                  title={navigationTitle}
+                  renderLink={(link, item) => {
+                    return item?.href ? (
+                      <NextLink href={item?.href}>{link}</NextLink>
+                    ) : (
+                      link
+                    )
+                  }}
+                />
+              </Box>
             </Box>
-          </Box>
-        </Hidden>
+          </Hidden>
+        )}
         {!!subpage && (
           <Box marginBottom={1}>
             <Text as="h1" variant="h1">
