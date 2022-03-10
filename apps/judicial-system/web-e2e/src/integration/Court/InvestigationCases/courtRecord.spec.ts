@@ -126,7 +126,7 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
     cy.getByTestid('sessionBookings').should('not.match', ':empty')
   })
 
-  it.skip('should require a valid court location', () => {
+  it('should require a valid court location', () => {
     const caseData = makeInvestigationCase()
 
     const caseDataAddition: Case = {
@@ -140,15 +140,14 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
 
     intercept(caseDataAddition)
 
-    cy.clock()
-    cy.tick(1000)
+    cy.wait('@gqlCaseQuery')
     cy.getByTestid('courtLocation').clear().blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('courtLocation').type(faker.lorem.word())
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
-  it.skip('should require valid session bookings', () => {
+  it('should require valid session bookings', () => {
     const caseData = makeInvestigationCase()
 
     const caseDataAddition: Case = {
@@ -162,8 +161,7 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
 
     intercept(caseDataAddition)
 
-    cy.clock()
-    cy.tick(1000)
+    cy.wait('@gqlCaseQuery')
     cy.getByTestid('sessionBookings').clear().blur()
     cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
     cy.getByTestid('sessionBookings').type(faker.lorem.words(5))
