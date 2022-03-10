@@ -10,6 +10,18 @@ This project forms the base for all business applications belonging to island.is
 - [Staging](https://beta.staging01.devland.is/umsoknir/)
 - [Production](https://island.is/umsoknir/)
 
+
+## Quickstart
+Make sure you have docker installed and the daemon running, then run the following to set up:
+```bash
+yarn nx run application-system-api:dev/init
+```
+
+Then whenever you want to work on the application-system run this command:
+```bash
+yarn nx run application-system-api:dev
+```
+
 ## API
 
 ### Initial setup
