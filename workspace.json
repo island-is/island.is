@@ -5309,33 +5309,6 @@
         }
       }
     },
-    "infra-monitoring": {
-      "root": "libs/infra-monitoring",
-      "sourceRoot": "libs/infra-monitoring/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/infra-monitoring/tsconfig.lib.json",
-              "libs/infra-monitoring/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/infra-monitoring/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/infra-monitoring/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/infra-monitoring"]
-        }
-      }
-    },
     "infra-nest-server": {
       "root": "libs/infra-nest-server",
       "sourceRoot": "libs/infra-nest-server/src",
