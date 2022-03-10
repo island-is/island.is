@@ -281,6 +281,13 @@ jobs:
           HTML_URL: ${{ github.event.pull_request.html_url }}
           ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
 
+      - name: Docker login to ECR repo
+        if: steps.gather.outcome == 'success'
+        run: ./scripts/ci/docker-login-ecr.sh
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
         with:
