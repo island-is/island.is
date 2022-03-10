@@ -147,6 +147,6 @@ export class PSignSubmissionService {
       })
       .promise()
     const fileContent = file.Body as Buffer
-    return `data:image/jpeg;base64,${fileContent?.toString('base64')}` || ''
+    return fileContent?.toString('base64') || ''
   }
 }
