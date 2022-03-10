@@ -5,11 +5,9 @@ import { useIntl } from 'react-intl'
 
 import { currentMonth } from '@island.is/financial-aid/shared/lib'
 import { DescriptionText, PrivacyPolicyAccordion } from '..'
+import { FAFieldBaseProps } from '../../lib/types'
 
-const AboutForm = () => {
-  // TODO
-  // - send correct props to accordion
-
+const AboutForm = ({ application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
 
   return (
@@ -24,8 +22,10 @@ const AboutForm = () => {
       </Box>
 
       <PrivacyPolicyAccordion
-        municipalityPageName="reykjavik.is"
-        municipalityPageUrl="https://reykjavik.is/"
+        municipalityPageUrl={
+          application.externalData.nationalRegistry?.data?.municipality
+            ?.homepage
+        }
       />
     </>
   )

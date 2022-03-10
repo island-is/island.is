@@ -101,6 +101,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                 import('../forms/Spouse').then((module) =>
                   Promise.resolve(module.Spouse),
                 ),
+              read: 'all',
             },
             {
               id: Roles.APPLICANT,
