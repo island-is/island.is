@@ -995,7 +995,6 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "yarn dev application-system-api",
               "kubectl -n socat port-forward svc/socat-xroad 8081:80"
             ],
             "parallel": true
