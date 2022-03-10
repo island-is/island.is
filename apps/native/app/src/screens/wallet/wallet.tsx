@@ -133,13 +133,13 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   const theme = useTheme()
   const { dismiss, dismissed } = usePreferencesStore()
+
   const res = useQuery<ListGenericLicensesResponse>(
     LIST_GENERIC_LICENSES_QUERY,
     { client, fetchPolicy: 'network-only' },
   )
   const [licenseItems, setLicenseItems] = useState<any>([])
   const flatListRef = useRef<FlatList>(null)
-  const alertVisible = !dismissed.includes('howToUseCertificates')
   const [loading, setLoading] = useState(false)
   const isSkeleton = res.loading && !res.data
   const loadingTimeout = useRef<number>()
@@ -197,54 +197,59 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     }
   }, [])
 
-  const renderItem = useCallback(({ item }) => {
-    if (item.type === 'skeleton') {
-      return (
-        <View style={{ paddingHorizontal: 16 }}>
-          <Skeleton
-            active
-            backgroundColor={theme.color.blue100}
-            overlayColor={theme.color.blue200}
-            overlayOpacity={1}
-            height={111}
-            style={{
-              borderRadius: 16,
-              marginBottom: 16,
-            }}
-          />
-        </View>
-      )
-    }
+  const renderItem = useCallback(
+    ({ item }) => {
+      if (item.type === 'skeleton') {
+        return (
+          <View style={{ paddingHorizontal: 16 }}>
+            <Skeleton
+              active
+              backgroundColor={theme.color.blue100}
+              overlayColor={theme.color.blue200}
+              overlayOpacity={1}
+              height={111}
+              style={{
+                borderRadius: 16,
+                marginBottom: 16,
+              }}
+            />
+          </View>
+        )
+      }
 
-    if (item.type === 'empty') {
-      return (
-        <View style={{ marginTop: 80, paddingHorizontal: 16 }}>
-          <EmptyList
-            title={intl.formatMessage({ id: 'wallet.emptyListTitle' })}
-            description={intl.formatMessage({
-              id: 'wallet.emptyListDescription',
-            })}
-            image={<Image source={illustrationSrc} height={198} width={146} />}
-          />
-        </View>
-      )
-    }
+      if (item.type === 'empty') {
+        return (
+          <View style={{ marginTop: 80, paddingHorizontal: 16 }}>
+            <EmptyList
+              title={intl.formatMessage({ id: 'wallet.emptyListTitle' })}
+              description={intl.formatMessage({
+                id: 'wallet.emptyListDescription',
+              })}
+              image={
+                <Image source={illustrationSrc} height={198} width={146} />
+              }
+            />
+          </View>
+        )
+      }
 
-    if (item.type === 'alert') {
-      return Platform.OS === 'ios' ? (
-        <View style={{ marginBottom: 16 }}>
-          <Alert
-            visible={alertVisible}
-            type="info"
-            message={intl.formatMessage({ id: 'wallet.alertMessage' })}
-            onClose={() => dismiss('howToUseCertificates')}
-          />
-        </View>
-      ) : null
-    }
+      if (item.type === 'alert') {
+        return Platform.OS === 'ios' ? (
+          <View style={{ marginBottom: 16 }}>
+            <Alert
+              type="info"
+              visible={!dismissed.includes('howToUseLicence')}
+              message={intl.formatMessage({ id: 'wallet.alertMessage' })}
+              onClose={() => dismiss('howToUseLicence')}
+            />
+          </View>
+        ) : null
+      }
 
-    return <WalletItem item={item} />
-  }, [])
+      return <WalletItem item={item} />
+    },
+    [dismissed],
+  )
 
   const keyExtractor = useCallback(
     (item: any) => item?.license?.type ?? item?.id,

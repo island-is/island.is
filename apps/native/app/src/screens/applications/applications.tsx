@@ -42,7 +42,7 @@ const {
   useNavigationOptions,
   getNavigationOptions,
 } = useThemedNavigationOptions(
-  (theme, intl, initialized) => ({
+  (theme, intl) => ({
     topBar: {
       title: {
         text: intl.formatMessage({ id: 'applications.title' }),

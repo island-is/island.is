@@ -73,8 +73,13 @@ const ImgWrap = styled.View`
   justify-content: center;
 `
 
-type CardType = 'DriversLicense' | 'IDENTIDY_CARD' | 'PASSPORT' | 'FISHING_CARD' | 'WEAPON_LICENSE';
-type CardStatus = 'NOT_VALID' | 'VALID';
+type CardType =
+  | 'DriversLicense'
+  | 'IDENTIDY_CARD'
+  | 'PASSPORT'
+  | 'FISHING_CARD'
+  | 'WEAPON_LICENSE'
+type CardStatus = 'NOT_VALID' | 'VALID'
 
 interface LicenceCardProps {
   title: string
@@ -106,7 +111,6 @@ const statusIcon: StatusStyles = {
     icon: isVerifiedLogo,
   },
 }
-
 
 export function LicenceCard({
   title,
@@ -176,7 +180,8 @@ export function LicenceCard({
         )}
         {date && (
           <TimeStamp color={textColor}>
-            {intl.formatMessage({ id: 'walletPass.lastUpdate' })}{': '}
+            {intl.formatMessage({ id: 'walletPass.lastUpdate' })}
+            {': '}
             <FormattedDate dateStyle="short" timeStyle="short" value={date} />
           </TimeStamp>
         )}
