@@ -153,13 +153,11 @@ export const ProfileForm: FC<Props> = ({
   }
 
   const dropSideEffects = async () => {
-    console.log('DROP SIDE EFFECTS')
     try {
       if (setFormLoading) {
         setFormLoading(true)
         setInternalLoading(true)
       }
-      await new Promise((resolve) => setTimeout(resolve, 5000))
       if (emailDirty && telDirty) {
         await submitEmptyEmailAndTel()
       } else {

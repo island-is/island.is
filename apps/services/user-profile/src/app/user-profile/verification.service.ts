@@ -224,7 +224,7 @@ export class VerificationService {
             {
               component: 'Image',
               context: {
-                src: join(__dirname, `./assets/images/islandis.jpg`),
+                src: join(__dirname, `./images/islandis.jpg`),
                 alt: 'Ísland.is logo',
               },
             },
