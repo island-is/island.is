@@ -127,11 +127,14 @@ export const authStore = create<AuthStore>((set, get) => ({
   },
   async logout() {
     const tokenToRevoke = get().authorizeResult?.accessToken!
+    try {
     await revoke(appAuthConfig, {
       tokenToRevoke,
       includeBasicAuth: true,
       sendClientId: true,
-    })
+    })} catch(e) {
+      // NOOP
+    }
     await client.cache.reset()
     await Keychain.resetGenericPassword({ service: KEYCHAIN_AUTH_KEY })
     set(

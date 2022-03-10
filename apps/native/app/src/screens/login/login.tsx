@@ -61,7 +61,11 @@ function getChromeVersion(): Promise<number> {
     NativeModules.IslandModule.getAppVersion(
       'com.android.chrome',
       (version: string) => {
-        resolve(Number(version?.split('.')?.[0] || 0))
+        if (version) {
+          resolve(Number(version?.split('.')?.[0] || 0))
+        } else {
+          resolve(0)
+        }
       },
     )
   })
@@ -98,7 +102,6 @@ export const LoginScreen: NavigationFunctionComponent = ({ componentId }) => {
   const onLoginPress = async () => {
     if (Platform.OS === 'android') {
       const chromeVersion = await getChromeVersion()
-      console.log('valid', chromeVersion)
       if (chromeVersion < 55) {
         // Show dialog on how to update.
         Alert.alert(

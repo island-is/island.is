@@ -67,6 +67,19 @@ const {
         backgroundColor: 'transparent',
       },
       rightButtons: initialized ? getRightButtons({ theme } as any) : [],
+      background: {
+        component:
+          Platform.OS === 'android'
+            ? {
+                name: ComponentRegistry.AndroidSearchBar,
+                passProps: {
+                  placeholder: intl.formatMessage({
+                    id: 'inbox.searchPlaceholder',
+                  }),
+                },
+              }
+            : undefined,
+      },
     },
     bottomTab: {
       iconColor: theme.color.blue400,
@@ -89,14 +102,6 @@ const {
       scrollEdgeAppearance: {
         active: true,
         noBorder: true,
-      },
-      background: {
-        component:
-          Platform.OS === 'android'
-            ? {
-                name: ComponentRegistry.AndroidSearchBar,
-              }
-            : undefined,
       },
     },
     bottomTab: {
@@ -160,7 +165,10 @@ export const InboxScreen: NavigationFunctionComponent = ({ componentId }) => {
   const [indexedItems, setIndexedItems] = useState<IndexedDocument[]>([])
   const [inboxItems, setInboxItems] = useState<IDocument[]>([])
 
-  const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, { client, fetchPolicy: 'cache-and-network' })
+  const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, {
+    client,
+    fetchPolicy: 'cache-and-network',
+  })
 
   const isFirstLoad = !res.data
   const isSearch = ui.inboxQuery.length > 0
