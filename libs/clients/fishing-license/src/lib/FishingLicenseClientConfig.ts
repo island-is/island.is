@@ -4,6 +4,7 @@ import { FishingLicenseScope } from '@island.is/auth/scopes'
 
 const schema = z.object({
   scope: z.array(z.string()),
+  xRoadServicePath: z.string(),
 })
 
 export const FishingLicenseClientConfig = defineConfig<z.infer<typeof schema>>({
@@ -14,6 +15,10 @@ export const FishingLicenseClientConfig = defineConfig<z.infer<typeof schema>>({
       scope: env.optionalJSON('XROAD_FISHING_LICENSE_SCOPE') ?? [
         FishingLicenseScope.fishingLicense,
       ],
+      xRoadServicePath: env.required(
+        'FISHING_LICENSE_XROAD_PROVIDER_ID',
+        'IS-DEV/GOV/10012/Fiskistofa/veidileyfi-v1',
+      ),
     }
   },
 })
