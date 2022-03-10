@@ -12,7 +12,7 @@ const CommentsAccordionItem: React.FC<Props> = (props) => {
 
   return (
     <AccordionItem id="id_5" label="Athugasemdir" labelVariant="h3">
-      {Boolean(workingCase.comments) && (
+      {workingCase.comments && (
         <Box marginBottom={workingCase.caseFilesComments ? 3 : 0}>
           <Box marginBottom={1}>
             <Text variant="h4" as="h4">
@@ -22,7 +22,7 @@ const CommentsAccordionItem: React.FC<Props> = (props) => {
           <Text whiteSpace="breakSpaces">{workingCase.comments}</Text>
         </Box>
       )}
-      {Boolean(workingCase.caseFilesComments) && (
+      {workingCase.caseFilesComments && (
         <>
           <Box marginBottom={1}>
             <Text variant="h4" as="h4">
