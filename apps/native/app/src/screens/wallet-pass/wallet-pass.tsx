@@ -219,7 +219,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         reader.onloadend = () => {
           const passData = reader.result?.toString()!
           if (passData.includes('text/html')) {
-            throw new Error('Pass has expired');
+            throw new Error('Pass has expired')
           }
           addPass(passData.substr(41), 'com.snjallveskid')
           setAddingToWallet(false)
@@ -232,7 +232,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     } else {
       if (Platform.OS === 'android') {
         alert(
-          'You cannot add passes. Please make sure you have Snjallveskið installed on your device.',
+          'You cannot add passes. Please make sure you have Smartwallet installed on your device.',
         )
       } else {
         alert('You cannot add passes on this device')
@@ -242,7 +242,8 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 
   const fields = data?.payload?.data ?? []
   const hasPkpass = data?.license?.pkpass || false
-  const hasValidPkpass = data?.license?.pkpassStatus === GenericUserLicensePkPassStatus.Available;
+  const hasValidPkpass =
+    data?.license?.pkpassStatus === GenericUserLicensePkPassStatus.Available
 
   return (
     <View style={{ flex: 1 }}>

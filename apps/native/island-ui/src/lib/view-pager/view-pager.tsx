@@ -16,21 +16,21 @@ const DotContainer = styled(Animated.View)`
 const DotLeft = styled(Animated.View)`
   width: 8px;
   height: 8px;
-  background-color: ${props => props.theme.color.red400};
+  background-color: ${(props) => props.theme.color.red400};
   border-radius: 4px;
 `
 
 const DotCenter = styled(Animated.View)`
   width: 1px;
   height: 8px;
-  background-color: ${props => props.theme.color.red400};
+  background-color: ${(props) => props.theme.color.red400};
 `
 
 const DotRight = styled(Animated.View)`
   width: 8px;
   height: 8px;
   margin-left: -1px;
-  background-color: ${props => props.theme.color.red400};
+  background-color: ${(props) => props.theme.color.red400};
   border-radius: 4px;
 `
 
@@ -41,7 +41,7 @@ interface ViewPagerProps {
 
 export function ViewPager({ children, itemWidth }: ViewPagerProps) {
   const pages = React.Children.count(children)
-  const OFFSET_X = 16+16
+  const OFFSET_X = 16
   const OFFSET_CARD = itemWidth ?? 283
   const OFFSET = OFFSET_X + OFFSET_CARD
 
@@ -121,9 +121,7 @@ export function ViewPager({ children, itemWidth }: ViewPagerProps) {
               }),
             }}
           >
-            <DotLeft
-              style={{ transform: [{ translateX: 4 }] }}
-            />
+            <DotLeft style={{ transform: [{ translateX: 4 }] }} />
             <DotCenter
               style={{
                 transform: [
@@ -146,7 +144,7 @@ export function ViewPager({ children, itemWidth }: ViewPagerProps) {
                   {
                     translateX: x.interpolate({
                       inputRange: inputRange(i),
-                      outputRange: [-4, 24-4, -4],
+                      outputRange: [-4, 24 - 4, -4],
                       extrapolate: 'clamp',
                     }),
                   },

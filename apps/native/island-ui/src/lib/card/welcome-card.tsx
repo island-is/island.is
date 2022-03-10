@@ -1,13 +1,9 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import {
   DynamicColorIOS,
   ImageSourcePropType,
   Platform,
   Image,
-  Linking,
-  TouchableOpacity,
-  Text,
-  Alert,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import { dynamicColor } from '../../utils'
@@ -100,11 +96,7 @@ export function WelcomeCard({
       {imgSrc && <IllustrationImage source={imgSrc} resizeMode="cover" />}
       <Content>
         <Description>{description}</Description>
-        {link && (
-          <Link url={link.url}>
-            {link.title}
-          </Link>
-        )}
+        {link && <Link url={link.url}>{link.title}</Link>}
       </Content>
     </Host>
   )
