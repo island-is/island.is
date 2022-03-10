@@ -52,7 +52,7 @@ const Layout: FC = ({ children }) => {
         )}
         paddingBottom={7}
       >
-        <Box as="main">
+        <Box as="main" component="main">
           <GridContainer>
             <GridRow>
               <GridColumn span={'12/12'} className={styles.layoutGrid}>

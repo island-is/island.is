@@ -470,9 +470,6 @@
     "infra-metrics": {
       "tags": []
     },
-    "infra-monitoring": {
-      "tags": []
-    },
     "infra-nest-server": {
       "tags": []
     },
@@ -594,6 +591,9 @@
       "tags": []
     },
     "regulations": {
+      "tags": []
+    },
+    "residence-history": {
       "tags": []
     },
     "service-portal": {

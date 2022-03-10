@@ -160,7 +160,7 @@ const HearingArrangementsForms: React.FC<Props> = (props) => {
             }
             onBlur={(event) =>
               validateAndSendToServer(
-                'traslator',
+                'translator',
                 event.target.value,
                 [],
                 workingCase,
