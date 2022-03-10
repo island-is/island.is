@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react'
-import useScrollSpy from '../../hooks/useScrollSpy'
-import { Bullet } from '../Bullet/Bullet'
+import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
+import { Bullet } from '@island.is/web/components'
 import { Text, Box, FocusableBox, Stack } from '@island.is/island-ui/core'
 
 export interface AnchorNavigationProps {

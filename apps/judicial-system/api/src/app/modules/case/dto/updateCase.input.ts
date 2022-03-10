@@ -2,15 +2,14 @@ import { Allow } from 'class-validator'
 
 import { Field, InputType } from '@nestjs/graphql'
 
-import {
+import type {
   CaseAppealDecision,
-  CaseCustodyProvisions,
+  CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseDecision,
-  CaseGender,
-  AccusedPleaDecision,
   UpdateCase,
   CaseType,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
 
 @InputType()
@@ -33,22 +32,6 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly accusedNationalId?: string
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly accusedName?: string
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly accusedAddress?: string
-
-  @Allow()
-  @Field(() => String, { nullable: true })
-  readonly accusedGender?: CaseGender
-
-  @Allow()
-  @Field({ nullable: true })
   readonly defenderName?: string
 
   @Allow()
@@ -62,6 +45,14 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly sendRequestToDefender?: boolean
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly defenderIsSpokesperson?: boolean
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly isHeightenedSecurityLevel?: boolean
 
   @Allow()
   @Field({ nullable: true })
@@ -85,6 +76,10 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
+  readonly translator?: string
+
+  @Allow()
+  @Field({ nullable: true })
   readonly demands?: string
 
   @Allow()
@@ -97,7 +92,7 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field(() => [String], { nullable: true })
-  readonly custodyProvisions?: CaseCustodyProvisions[]
+  readonly legalProvisions?: CaseLegalProvisions[]
 
   @Allow()
   @Field(() => [String], { nullable: true })
@@ -144,8 +139,16 @@ export class UpdateCaseInput implements UpdateCase {
   readonly courtCaseNumber?: string
 
   @Allow()
+  @Field(() => String, { nullable: true })
+  readonly sessionArrangements?: SessionArrangements
+
+  @Allow()
   @Field({ nullable: true })
   readonly courtDate?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly courtLocation?: string
 
   @Allow()
   @Field({ nullable: true })
@@ -161,6 +164,10 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
+  readonly isClosedCourtHidden?: boolean
+
+  @Allow()
+  @Field({ nullable: true })
   readonly courtAttendees?: string
 
   @Allow()
@@ -173,23 +180,15 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly isAccusedAbsent?: boolean
-
-  @Allow()
-  @Field(() => String, { nullable: true })
-  readonly accusedPleaDecision?: AccusedPleaDecision
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly accusedPleaAnnouncement?: string
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly litigationPresentations?: string
+  readonly sessionBookings?: string
 
   @Allow()
   @Field({ nullable: true })
   readonly courtCaseFacts?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly introduction?: string
 
   @Allow()
   @Field({ nullable: true })
@@ -208,12 +207,8 @@ export class UpdateCaseInput implements UpdateCase {
   readonly validToDate?: string
 
   @Allow()
-  @Field(() => [String], { nullable: true })
-  readonly custodyRestrictions?: CaseCustodyRestrictions[]
-
-  @Allow()
   @Field({ nullable: true })
-  readonly otherRestrictions?: string
+  readonly isCustodyIsolation?: boolean
 
   @Allow()
   @Field({ nullable: true })
@@ -221,7 +216,11 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly additionToConclusion?: string
+  readonly conclusion?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly endOfSessionBookings?: string
 
   @Allow()
   @Field(() => String, { nullable: true })
@@ -254,4 +253,8 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly registrarId?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly caseModifiedExplanation?: string
 }

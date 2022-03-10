@@ -206,7 +206,7 @@ export class DirectorateOfLabourRepository {
         period: {
           from: '01-01-2020',
           to: '01-01-2020',
-          ratio: 0.8,
+          ratio: '0.8',
           approved: true,
           paid: true,
         },
@@ -246,7 +246,7 @@ export class DirectorateOfLabourRepository {
     }
   }
 
-  async getParentalLeavesPeriodsLength(
+  async getParentalLeavesPeriodLength(
     nationalId: string,
     startDate: Date,
     endDate: Date,

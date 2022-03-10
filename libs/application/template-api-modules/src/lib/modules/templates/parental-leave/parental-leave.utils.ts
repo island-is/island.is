@@ -1,3 +1,4 @@
+import { join } from 'path'
 import get from 'lodash/get'
 
 import {
@@ -18,7 +19,9 @@ import {
   Period as AnswerPeriod,
   getApplicationExternalData,
   getOtherParentId,
+  applicantIsMale,
 } from '@island.is/application/templates/parental-leave'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { apiConstants } from './constants'
 
@@ -167,20 +170,22 @@ export const getRightsCode = (application: Application): string => {
   const parentsAreInRegisteredCohabitation =
     selectedChild.primaryParentNationalRegistryId === spouse?.nationalId
 
+  const parentPrefix = applicantIsMale(application) ? 'F' : 'FO'
+
   if (parentsAreInRegisteredCohabitation) {
     // If this secondary parent is in registered cohabitation with primary parent
     // then they will automatically be granted custody
     if (isSelfEmployed) {
-      return 'FO-S-GR'
+      return `${parentPrefix}-S-GR`
     } else {
-      return 'FO-L-GR'
+      return `${parentPrefix}-L-GR`
     }
   }
 
   if (isSelfEmployed) {
-    return 'FO-FL-S-GR'
+    return `${parentPrefix}-FL-S-GR`
   } else {
-    return 'FO-FL-L-GR'
+    return `${parentPrefix}-FL-L-GR`
   }
 }
 
@@ -191,7 +196,7 @@ export const answerToPeriodsDTO = (answers: AnswerPeriod[]) => {
     periods = answers.map((period) => ({
       from: period.startDate,
       to: period.endDate,
-      ratio: Number(period.ratio),
+      ratio: period.ratio,
       approved: false,
       paid: false,
       rightsCodePeriod: null,
@@ -228,7 +233,7 @@ export const transformApplicationToParentalLeaveDTO = (
     expectedDateOfBirth: selectedChild.expectedDateOfBirth,
     // TODO: get true date of birth, not expected
     // will get it from a new Þjóðskrá API (returns children in custody of a national registry id)
-    dateOfBirth: selectedChild.expectedDateOfBirth,
+    dateOfBirth: '',
     email,
     phoneNumber,
     paymentInfo: {
@@ -236,7 +241,8 @@ export const transformApplicationToParentalLeaveDTO = (
       personalAllowance: getPersonalAllowance(application),
       personalAllowanceFromSpouse: getPersonalAllowance(application, true),
       union: {
-        id: union,
+        // If a union is not selected then use the default 'no union' value
+        id: union ?? apiConstants.unions.noUnion,
         name: '',
       } as Union,
       pensionFund: getPensionFund(application),
@@ -250,3 +256,20 @@ export const transformApplicationToParentalLeaveDTO = (
     attachments,
   }
 }
+
+export const pathToAsset = (file: string) => {
+  if (isRunningOnEnvironment('local')) {
+    return join(
+      __dirname,
+      `../../../../libs/application/template-api-modules/src/lib/modules/templates/parental-leave/emailGenerators/assets/${file}`,
+    )
+  }
+
+  return join(__dirname, `./parental-leave-assets/${file}`)
+}
+
+export const getRatio = (
+  ratio: string,
+  length: string,
+  shouldUseLength: boolean,
+) => (shouldUseLength ? `D${length}` : `${ratio}`)

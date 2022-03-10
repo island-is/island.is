@@ -1,178 +1,185 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import {
-  DrivingLicense,
-  DrivingLicenseType,
-  PenaltyPointStatus,
   TeachingRightsStatus,
   StudentInformation,
   Juristiction,
   NewDrivingLicenseInput,
   NewDrivingLicenseResult,
   NewDrivingAssessmentResult,
+  RequirementKey,
+  ApplicationEligibility,
+  DrivingLicenseCategory,
+  QualityPhotoResult,
+  DrivingLicenseApplicationType,
+  NewTemporaryDrivingLicenseInput,
+  ApplicationEligibilityRequirement,
 } from './drivingLicense.type'
-import { DrivingLicenseApi, DrivingLicenseResponse } from './client'
-import { DRIVING_ASSESSMENT_MAX_AGE } from './util/constants'
-import { RequirementKey } from './graphql/applicationEligibilityRequirement.model'
-import { ApplicationEligibility } from './graphql/applicationEligibility.model'
+import {
+  CanApplyErrorCodeBFull,
+  CanApplyErrorCodeBTemporary,
+  DriversLicense,
+  DrivingAssessment,
+  DrivingLicenseApi,
+  Teacher,
+} from '@island.is/clients/driving-license'
+import {
+  BLACKLISTED_JURISTICTION,
+  DRIVING_ASSESSMENT_MAX_AGE,
+} from './util/constants'
+import sortTeachers from './util/sortTeachers'
+import { StudentAssessment } from '..'
+import { FetchError } from '@island.is/clients/middlewares'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
+import { hasResidenceHistory } from './util/hasResidenceHistory'
+
+const LOGTAG = '[api-domains-driving-license]'
 
 @Injectable()
 export class DrivingLicenseService {
-  constructor(private readonly drivingLicenseApi: DrivingLicenseApi) {}
+  constructor(
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    private readonly drivingLicenseApi: DrivingLicenseApi,
+    private nationalRegistryXRoadService: NationalRegistryXRoadService,
+  ) {}
 
   async getDrivingLicense(
     nationalId: User['nationalId'],
-  ): Promise<DrivingLicense | null> {
-    const drivingLicenses = await this.drivingLicenseApi.getDrivingLicenses(
-      nationalId,
-    )
+  ): Promise<DriversLicense | null> {
+    try {
+      return await this.drivingLicenseApi.getCurrentLicense({
+        nationalId,
+      })
+    } catch (e) {
+      return this.handleGetLicenseError(e)
+    }
+  }
 
-    if (drivingLicenses.length <= 0) {
-      return null
+  private handleGetLicenseError(e: unknown) {
+    // The goal of this is to basically normalize the known semi-error responses
+    // so both those who are not found and those who have invalid/expired licenses will return nothing
+    if (e instanceof Error && e.name === 'FetchError') {
+      const err = (e as unknown) as FetchError
+
+      if ([400, 404].includes(err.status)) {
+        return null
+      }
     }
 
-    drivingLicenses.sort(
-      (a: DrivingLicenseResponse, b: DrivingLicenseResponse) =>
-        new Date(b.utgafuDagsetning).getTime() -
-        new Date(a.utgafuDagsetning).getTime(),
-    )
-    const activeDrivingLicense = {
-      ...drivingLicenses[0],
-    }
-
-    return {
-      id: activeDrivingLicense.id,
-      name: activeDrivingLicense.nafn,
-      issued: activeDrivingLicense.utgafuDagsetning,
-      expires: activeDrivingLicense.gildirTil,
-      isProvisional: activeDrivingLicense.erBradabirgda,
-      eligibilities: activeDrivingLicense.rettindi.map((eligibility) => ({
-        id: eligibility.nr.trim(),
-        issued: eligibility.utgafuDags,
-        expires: eligibility.gildirTil,
-        comment: eligibility.aths,
-      })),
-    }
+    throw e
   }
 
   async getStudentInformation(
     nationalId: string,
   ): Promise<StudentInformation | null> {
-    const drivingLicenses = await this.drivingLicenseApi.getDrivingLicenses(
-      nationalId,
-    )
-
-    if (drivingLicenses.length <= 0) {
-      return null
+    let licenses
+    try {
+      licenses = await this.drivingLicenseApi.getAllLicenses({ nationalId })
+    } catch (e) {
+      this.logger.error(`${LOGTAG} Error fetching student information`, e)
+      return this.handleGetLicenseError(e)
     }
 
-    drivingLicenses.sort(
-      (a: DrivingLicenseResponse, b: DrivingLicenseResponse) =>
-        new Date(b.utgafuDagsetning).getTime() -
-        new Date(a.utgafuDagsetning).getTime(),
-    )
+    const [drivingLicense] = licenses
 
-    const activeDrivingLicense = {
-      ...drivingLicenses[0],
-    }
-
-    const expiryDate = new Date(activeDrivingLicense.gildirTil)
-
-    if (!activeDrivingLicense.erBradabirgda || expiryDate < new Date()) {
+    if (!drivingLicense) {
       return null
     }
 
     return {
-      name: activeDrivingLicense.nafn,
+      name: drivingLicense.name,
     }
   }
 
-  async getDeprivationTypes(): Promise<DrivingLicenseType[]> {
-    const types = await this.drivingLicenseApi.getDeprivationTypes()
-    return types.map((type) => ({
-      id: type.id.toString(),
-      name: type.heiti,
-    }))
-  }
+  async getTeachers(): Promise<Teacher[]> {
+    const teachers = await this.drivingLicenseApi.getTeachers()
 
-  async getEntitlementTypes(): Promise<DrivingLicenseType[]> {
-    const types = await this.drivingLicenseApi.getEntitlementTypes()
-    return types.map((type) => ({
-      id: type.nr.trim(),
-      name: type.heiti || '',
-    }))
-  }
-
-  async getRemarkTypes(): Promise<DrivingLicenseType[]> {
-    const types = await this.drivingLicenseApi.getRemarkTypes()
-    return types.map((type) => ({
-      id: type.nr,
-      name: type.heiti,
-    }))
-  }
-
-  async getPenaltyPointStatus(
-    nationalId: User['nationalId'],
-  ): Promise<PenaltyPointStatus> {
-    const status = await this.drivingLicenseApi.getPenaltyPointStatus(
-      nationalId,
-    )
-    return {
-      nationalId,
-      isPenaltyPointsOk: status.iLagi,
-    }
+    return teachers.sort(sortTeachers)
   }
 
   async getTeachingRights(
     nationalId: User['nationalId'],
   ): Promise<TeachingRightsStatus> {
-    const status = await this.drivingLicenseApi.getTeachingRights(nationalId)
+    const hasTeachingRights = await this.drivingLicenseApi.getIsTeacher({
+      nationalId,
+    })
 
     return {
       nationalId,
-      hasTeachingRights: status.value > 0,
+      hasTeachingRights,
     }
   }
 
   async getListOfJuristictions(): Promise<Juristiction[]> {
     const embaetti = await this.drivingLicenseApi.getListOfJuristictions()
 
-    return embaetti.map(({ nr, postnumer, nafn }) => ({
-      id: nr,
-      zip: postnumer,
-      name: nafn,
-    }))
+    return embaetti.filter(({ id }) => id !== BLACKLISTED_JURISTICTION)
+  }
+
+  async getDrivingAssessmentResult(
+    nationalId: string,
+  ): Promise<DrivingAssessment | null> {
+    try {
+      return await this.drivingLicenseApi.getDrivingAssessment({
+        nationalId,
+      })
+    } catch (e) {
+      if ((e as { status: number })?.status === 404) {
+        return null
+      }
+
+      throw e
+    }
   }
 
   async getApplicationEligibility(
+    user: User,
     nationalId: string,
-    type: DrivingLicenseType['id'],
+    type: DrivingLicenseApplicationType,
   ): Promise<ApplicationEligibility> {
-    const assessmentResult = await this.drivingLicenseApi.getDrivingAssessment(
-      nationalId,
-    )
-    const hasFinishedSchoolResult = await this.drivingLicenseApi.hasFinishedSchool(
-      nationalId,
-    )
-    const canApplyResult = await this.drivingLicenseApi.canApplyFor(
-      nationalId,
-      type,
+    const assessmentResult = await this.getDrivingAssessmentResult(nationalId)
+    const hasFinishedSchool = await this.drivingLicenseApi.getHasFinishedOkugerdi(
+      {
+        nationalId,
+      },
     )
 
-    const requirements = [
+    const residenceHistory = await this.nationalRegistryXRoadService.getNationalRegistryResidenceHistory(
+      user,
+      nationalId,
+    )
+    const localRecidency = hasResidenceHistory(residenceHistory)
+
+    const canApply = await this.canApplyFor(nationalId, type)
+
+    const requirements: ApplicationEligibilityRequirement[] = [
+      ...(type === 'B-full'
+        ? [
+            {
+              key: RequirementKey.drivingAssessmentMissing,
+              requirementMet:
+                (assessmentResult?.created?.getTime() ?? 0) >
+                Date.now() - DRIVING_ASSESSMENT_MAX_AGE,
+            },
+            {
+              key: RequirementKey.drivingSchoolMissing,
+              requirementMet: hasFinishedSchool,
+            },
+          ]
+        : []),
+      ...(type === 'B-temp'
+        ? [
+            {
+              key: RequirementKey.localResidency,
+              requirementMet: localRecidency,
+            },
+          ]
+        : []),
       {
-        key: RequirementKey.drivingAssessmentMissing,
-        requirementMet:
-          (assessmentResult?.dagsetningMats ?? 0) >
-          Date.now() - DRIVING_ASSESSMENT_MAX_AGE,
-      },
-      {
-        key: RequirementKey.drivingSchoolMissing,
-        requirementMet: !!hasFinishedSchoolResult.hefurLokidOkugerdi,
-      },
-      {
-        key: RequirementKey.deniedByService,
-        requirementMet: !!canApplyResult.value,
+        key: this.canApplyErrorCodeToRequirementKey(canApply.errorCode),
+        requirementMet: canApply.result,
       },
     ]
 
@@ -187,14 +194,60 @@ export class DrivingLicenseService {
     }
   }
 
+  private canApplyErrorCodeToRequirementKey(
+    errorCode?: CanApplyErrorCodeBFull | CanApplyErrorCodeBTemporary,
+  ): RequirementKey {
+    if (errorCode === undefined) {
+      return RequirementKey.deniedByService
+    }
+
+    switch (errorCode) {
+      case 'HAS_DEPRIVATION':
+        return RequirementKey.hasDeprivation
+      case 'HAS_NO_PHOTO':
+        return RequirementKey.hasNoPhoto
+      case 'HAS_NO_SIGNATURE':
+        return RequirementKey.hasNoSignature
+      case 'HAS_POINTS':
+        return RequirementKey.hasPoints
+      case 'NO_LICENSE_FOUND':
+        return RequirementKey.noLicenseFound
+      case 'NO_TEMP_LICENSE':
+        return RequirementKey.noTempLicense
+      case 'PERSON_NOT_17_YEARS_OLD':
+        return RequirementKey.personNot17YearsOld
+      case 'PERSON_NOT_FOUND_IN_NATIONAL_REGISTRY':
+        return RequirementKey.personNotFoundInNationalRegistry
+      default:
+        this.logger.warn(`${LOGTAG} unhandled can apply error code`, errorCode)
+
+        return RequirementKey.deniedByService
+    }
+  }
+
+  async canApplyFor(nationalId: string, type: 'B-full' | 'B-temp') {
+    if (type === 'B-full') {
+      return this.drivingLicenseApi.getCanApplyForCategoryFull({
+        nationalId,
+        category: 'B',
+      })
+    } else if (type === 'B-temp') {
+      return this.drivingLicenseApi.getCanApplyForCategoryTemporary({
+        nationalId,
+      })
+    } else {
+      throw new Error('unhandled license type')
+    }
+  }
+
   async newDrivingAssessment(
-    studentNationalId: string,
-    teacherNationalId: User['nationalId'],
+    nationalIdStudent: string,
+    nationalIdTeacher: User['nationalId'],
   ): Promise<NewDrivingAssessmentResult> {
-    await this.drivingLicenseApi.newDrivingAssessment({
-      kennitala: studentNationalId,
-      kennitalaOkukennara: teacherNationalId,
-      dagsetningMats: new Date(),
+    await this.drivingLicenseApi.postCreateDrivingAssessment({
+      nationalIdStudent,
+      nationalIdTeacher,
+      dateOfAssessment: new Date(),
     })
 
     return {
@@ -203,27 +256,103 @@ export class DrivingLicenseService {
     }
   }
 
+  async newTemporaryDrivingLicense(
+    nationalId: User['nationalId'],
+    input: NewTemporaryDrivingLicenseInput,
+  ): Promise<NewDrivingLicenseResult> {
+    const success = await this.drivingLicenseApi.postCreateDrivingLicenseTemporary(
+      {
+        willBringHealthCertificate: input.needsToPresentHealthCertificate,
+        willBringQualityPhoto: input.needsToPresentQualityPhoto,
+        juristictionId: input.juristictionId,
+        nationalIdTeacher: input.teacherNationalId,
+        nationalIdApplicant: nationalId,
+        sendLicenseInMail: false,
+        email: input.email,
+        phone: input.phone,
+      },
+    )
+
+    return {
+      success,
+      errorMessage: null,
+    }
+  }
+
   async newDrivingLicense(
     nationalId: User['nationalId'],
     input: NewDrivingLicenseInput,
   ): Promise<NewDrivingLicenseResult> {
-    const response = await this.drivingLicenseApi.newDrivingLicense({
-      authorityNumber: input.juristictionId,
-      needsToPresentHealthCertificate: input.needsToPresentHealthCertificate
-        ? 1
-        : 0,
-      personIdNumber: nationalId,
+    const response = await this.drivingLicenseApi.postCreateDrivingLicenseFull({
+      category: DrivingLicenseCategory.B,
+      juristictionId: input.juristictionId,
+      willBringHealthCertificate: input.needsToPresentHealthCertificate,
+      nationalIdApplicant: nationalId,
+      willBringQualityPhoto: input.needsToPresentQualityPhoto,
+      sendLicenseInMail: false,
+      sendLicenseToAddress: '',
     })
 
-    // Service returns string on error, number on successful/not successful
-    const responseIsString = typeof response !== 'string'
-    const success = responseIsString && response === 1
+    return {
+      success: response,
+      errorMessage: null,
+    }
+  }
+
+  async getQualityPhotoUri(
+    nationalId: User['nationalId'],
+  ): Promise<string | null> {
+    const image = await this.drivingLicenseApi.getQualityPhoto({
+      nationalId,
+    })
+    const qualityPhoto =
+      image?.data && image?.data.length > 0
+        ? `data:image/jpeg;base64,${image?.data.substr(
+            1,
+            image.data.length - 2,
+          )}`
+        : null
+
+    return qualityPhoto
+  }
+
+  async getQualityPhoto(
+    nationalId: User['nationalId'],
+  ): Promise<QualityPhotoResult> {
+    const hasQualityPhoto = await this.drivingLicenseApi.getHasQualityPhoto({
+      nationalId,
+    })
 
     return {
-      success,
-      errorMessage: responseIsString
-        ? (response as string)
-        : 'Result not 1 when creating license',
+      hasQualityPhoto,
+    }
+  }
+
+  async getDrivingAssessment(
+    nationalId: string,
+  ): Promise<StudentAssessment | null> {
+    const assessment = await this.drivingLicenseApi.getDrivingAssessment({
+      nationalId,
+    })
+
+    if (!assessment) {
+      return null
+    }
+
+    let teacherName: string | null
+    if (assessment.nationalIdTeacher) {
+      const teacherLicense = await this.getDrivingLicense(
+        assessment.nationalIdTeacher,
+      )
+      teacherName = teacherLicense?.name || null
+    } else {
+      teacherName = null
+    }
+
+    return {
+      studentNationalId: assessment.nationalIdStudent,
+      teacherNationalId: assessment.nationalIdTeacher,
+      teacherName,
     }
   }
 }

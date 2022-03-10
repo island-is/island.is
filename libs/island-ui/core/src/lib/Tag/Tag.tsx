@@ -1,8 +1,11 @@
 import React, { FC, forwardRef, ReactNode } from 'react'
 import cn from 'classnames'
-import { Text } from '../Text/Text'
 
-import * as styles from './Tag.treat'
+import { Text } from '../Text/Text'
+import { Hyphen } from '../Hyphen/Hyphen'
+import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
+
+import * as styles from './Tag.css'
 
 export type TagVariant =
   | 'blue'
@@ -12,6 +15,8 @@ export type TagVariant =
   | 'red'
   | 'rose'
   | 'blueberry'
+  | 'dark'
+  | 'mint'
 
 export interface TagProps {
   onClick?: () => void
@@ -25,10 +30,10 @@ export interface TagProps {
   attention?: boolean
   children: string | ReactNode
   truncate?: boolean
+  hyphenate?: boolean
+  textLeft?: boolean
   CustomLink?: FC
 }
-
-const isLinkExternal = (href: string): boolean => href.indexOf('://') > 0
 
 export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
   (
@@ -42,6 +47,8 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       outlined,
       attention,
       truncate,
+      hyphenate,
+      textLeft,
       CustomLink,
       ...props
     }: TagProps,
@@ -52,9 +59,12 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       [styles.outlined]: outlined,
       [styles.attention]: attention,
       [styles.focusable]: !disabled,
+      [styles.truncate]: truncate,
+      [styles.hyphenate]: hyphenate,
+      [styles.textLeft]: textLeft,
     })
 
-    const isExternal = href && isLinkExternal(href)
+    const isExternal = href && shouldLinkOpenInNewWindow(href)
 
     const anchorProps = {
       ...(isExternal && { rel: 'noreferrer noopener' }),
@@ -65,9 +75,13 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       ref,
     }
 
+    const hyphenated = hyphenate && typeof children === 'string' && (
+      <Hyphen>{children}</Hyphen>
+    )
+
     const content = (
       <Text variant="eyebrow" as="span" truncate={truncate}>
-        {children}
+        {!truncate && hyphenate ? hyphenated : children}
       </Text>
     )
 

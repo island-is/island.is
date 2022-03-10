@@ -9,7 +9,7 @@ export class ApiScope {
   @Field(() => ID)
   name!: string
 
-  @Field((_) => ScopeType)
+  @Field(() => ScopeType)
   type!: ScopeType
 
   @Field(() => String)

@@ -1,5 +1,9 @@
-import type { User } from '@island.is/auth-nest-tools'
-import { CurrentUser } from '@island.is/auth-nest-tools'
+import {
+  BypassAuth,
+  CurrentUser,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import {
   Body,
@@ -10,6 +14,9 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Query,
+  UseInterceptors,
+  UseGuards,
 } from '@nestjs/common'
 import {
   ApiBody,
@@ -17,21 +24,34 @@ import {
   ApiNoContentResponse,
   ApiOAuth2,
   ApiOkResponse,
+  ApiOperation,
   ApiParam,
   ApiTags,
+  ApiExtraModels,
+  ApiResponse,
 } from '@nestjs/swagger'
 import { environment } from '../../../environments'
 import { EndorsementList } from '../endorsementList/endorsementList.model'
 import { EndorsementListByIdPipe } from '../endorsementList/pipes/endorsementListById.pipe'
-import { IsEndorsementListOwnerValidationPipe } from '../endorsementList/pipes/isEndorsementListOwnerValidation.pipe'
-import { BulkEndorsementDto } from './dto/bulkEndorsement.dto'
-import { Endorsement } from './endorsement.model'
+import { EndorsementDto } from './dto/endorsement.dto'
+import { Endorsement } from './models/endorsement.model'
 import { EndorsementService } from './endorsement.service'
+import { EndorsementsScope } from '@island.is/auth/scopes'
+import type { User } from '@island.is/auth-nest-tools'
+import { PaginationDto } from '@island.is/nest/pagination'
+import { PaginatedEndorsementDto } from './dto/paginatedEndorsement.dto'
+import { EndorsementInterceptor } from './interceptors/endorsement.interceptor'
+import { PaginatedEndorsementInterceptor } from './interceptors/paginatedEndorsement.interceptor'
+import { ExistsEndorsementResponse } from './dto/existsEndorsement.response'
 
 const auditNamespace = `${environment.audit.defaultNamespace}/endorsement`
-
+@Audit({
+  namespace: auditNamespace,
+})
 @ApiTags('endorsement')
 @ApiOAuth2([])
+@ApiExtraModels(PaginationDto, PaginatedEndorsementDto)
+@UseGuards(ScopesGuard)
 @Controller('endorsement-list/:listId/endorsement')
 export class EndorsementController {
   constructor(
@@ -39,17 +59,19 @@ export class EndorsementController {
     private readonly auditService: AuditService,
   ) {}
 
-  @ApiOkResponse({
-    description: 'Finds all endorsements in a given list',
-    type: [Endorsement],
-  })
+  @ApiOperation({ summary: 'Finds all endorsements in a given list' })
   @ApiParam({ name: 'listId', type: String })
+  @Scopes(EndorsementsScope.main)
   @Get()
-  @Audit<Endorsement[]>({
-    namespace: auditNamespace,
-    action: 'findAll',
-    resources: (endorsement) => endorsement.map((e) => e.id),
-    meta: (endorsement) => ({ count: endorsement.length }),
+  @Audit<PaginatedEndorsementDto>({
+    resources: ({ data: endorsement }) => endorsement.map((e) => e.id),
+    meta: ({ data: endorsement }) => ({ count: endorsement.length }),
+  })
+  @ApiOkResponse({ type: PaginatedEndorsementDto })
+  @UseInterceptors(PaginatedEndorsementInterceptor)
+  @ApiResponse({
+    status: 200,
+    description: 'The record has been successfully created.',
   })
   async findAll(
     @Param(
@@ -58,25 +80,54 @@ export class EndorsementController {
       EndorsementListByIdPipe,
     )
     endorsementList: EndorsementList,
-  ): Promise<Endorsement[]> {
-    return await this.endorsementService.findEndorsements({
-      listId: endorsementList.id,
-    })
+    @Query() query: PaginationDto,
+  ): Promise<PaginatedEndorsementDto> {
+    return await this.endorsementService.findEndorsements(
+      {
+        listId: endorsementList.id,
+      },
+      query,
+    )
   }
 
+  @ApiOperation({
+    summary: 'Finds all endorsements in a given general petition list',
+  })
+  @ApiParam({ name: 'listId', type: String })
+  @Get('/general-petition')
+  @ApiOkResponse({ type: PaginatedEndorsementDto })
+  @UseInterceptors(PaginatedEndorsementInterceptor)
+  @ApiResponse({ status: 200 })
+  @BypassAuth()
+  async find(
+    @Param(
+      'listId',
+      new ParseUUIDPipe({ version: '4' }),
+      EndorsementListByIdPipe,
+    )
+    endorsementList: EndorsementList,
+    @Query() query: PaginationDto,
+  ): Promise<PaginatedEndorsementDto> {
+    return await this.endorsementService.findEndorsementsGeneralPetition(
+      {
+        listId: endorsementList.id,
+      },
+      query,
+    )
+  }
+
+  @ApiOperation({
+    summary: 'Find any existing endorsement in a given list by national Id',
+  })
   @ApiOkResponse({
     description:
       'Uses current authenticated users national id to find any existing endorsement in a given list',
-    type: Endorsement,
+    type: ExistsEndorsementResponse,
   })
   @ApiParam({ name: 'listId', type: String })
+  @Scopes(EndorsementsScope.main)
   @Get('/exists')
-  @Audit<Endorsement>({
-    namespace: auditNamespace,
-    action: 'findByUser',
-    resources: (endorsement) => endorsement.id,
-  })
-  async findByUser(
+  async findByAuth(
     @Param(
       'listId',
       new ParseUUIDPipe({ version: '4' }),
@@ -84,23 +135,28 @@ export class EndorsementController {
     )
     endorsementList: EndorsementList,
     @CurrentUser() user: User,
-  ): Promise<Endorsement> {
+  ): Promise<ExistsEndorsementResponse> {
     return await this.endorsementService.findSingleUserEndorsement({
       listId: endorsementList.id,
       nationalId: user.nationalId,
     })
   }
 
+  @ApiOperation({
+    summary:
+      'Uses the authenticated users national id to create an endorsement',
+  })
   @ApiCreatedResponse({
     description:
       'Uses the authenticated users national id to create an endorsement',
     type: Endorsement,
   })
+  @UseInterceptors(EndorsementInterceptor)
   @ApiParam({ name: 'listId', type: String })
+  @ApiBody({ type: EndorsementDto })
+  @Scopes(EndorsementsScope.main)
   @Post()
   @Audit<Endorsement>({
-    namespace: auditNamespace,
-    action: 'create',
     resources: (endorsement) => endorsement.id,
   })
   async create(
@@ -110,50 +166,26 @@ export class EndorsementController {
       EndorsementListByIdPipe,
     )
     endorsementList: EndorsementList,
+    @Body() endorsement: EndorsementDto,
     @CurrentUser() user: User,
   ): Promise<Endorsement> {
     return await this.endorsementService.createEndorsementOnList({
       nationalId: user.nationalId,
       endorsementList,
+      showName: endorsement.showName,
     })
   }
 
-  @ApiCreatedResponse({
-    description: 'Creates multiple endorsements given an array of national ids',
-    type: [Endorsement],
+  @ApiOperation({
+    summary:
+      'Uses the authenticated users national id to remove endorsement form a given list',
   })
-  @ApiParam({ name: 'listId', type: String })
-  @ApiBody({
-    type: BulkEndorsementDto,
-  })
-  @Post('/bulk')
-  @Audit<Endorsement[]>({
-    namespace: auditNamespace,
-    action: 'bulkCreate',
-    resources: (endorsement) => endorsement.map((e) => e.id),
-    meta: (endorsement) => ({ count: endorsement.length }),
-  })
-  async bulkCreate(
-    @Param(
-      'listId',
-      new ParseUUIDPipe({ version: '4' }),
-      EndorsementListByIdPipe,
-      IsEndorsementListOwnerValidationPipe,
-    )
-    endorsementList: EndorsementList,
-    @Body() { nationalIds }: BulkEndorsementDto,
-  ): Promise<Endorsement[]> {
-    return await this.endorsementService.bulkCreateEndorsementOnList({
-      nationalIds,
-      endorsementList,
-    })
-  }
-
   @ApiNoContentResponse({
     description:
       'Uses the authenticated users national id to remove endorsement form a given list',
   })
   @ApiParam({ name: 'listId', type: String })
+  @Scopes(EndorsementsScope.main)
   @Delete()
   @HttpCode(204)
   async delete(
@@ -165,12 +197,12 @@ export class EndorsementController {
     endorsementList: EndorsementList,
     @CurrentUser() user: User,
   ): Promise<undefined> {
-    // we pass audit manually since we need a request parameter
+    // we pass audit manually since we need to use the request parameter since we don't return the endorsement list
     this.auditService.audit({
-      user,
+      auth: user,
+      resources: endorsementList.id,
       namespace: auditNamespace,
       action: 'delete',
-      resources: endorsementList.id,
     })
 
     await this.endorsementService.deleteFromListByNationalId({

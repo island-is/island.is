@@ -1,17 +1,17 @@
 import React from 'react'
-import * as s from './RegulationsSidebarBox.treat'
+import * as s from './RegulationsSidebarBox.css'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
-import { RegulationMaybeDiff } from './Regulations.types'
+import {
+  interpolate,
+  prettyName,
+  RegulationMaybeDiff,
+} from '@island.is/regulations'
 import {
   RegulationsSidebarBox,
   RegulationsSidebarLink,
 } from './RegulationsSidebarBox'
 import { RegulationPageTexts } from './RegulationTexts.types'
-import {
-  interpolate,
-  prettyName,
-  useRegulationLinkResolver,
-} from './regulationUtils'
+import { useRegulationLinkResolver } from './regulationUtils'
 
 export type RegulationEffectsBoxProps = {
   regulation: RegulationMaybeDiff
@@ -47,7 +47,7 @@ export const RegulationEffectsBox = (props: RegulationEffectsBoxProps) => {
             href={linkToRegulation(item.name)}
             aria-label={labelLong}
           >
-            <span className={s.smallText}>{label}</span>
+            {label}
           </RegulationsSidebarLink>
         )
       })}

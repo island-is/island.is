@@ -1,14 +1,13 @@
 import React from 'react'
-import { withDesign } from 'storybook-addon-designs'
+
 import { withFigma } from '../../utils/withFigma'
 import { Box } from '../Box/Box'
 import { Navigation } from './Navigation'
-import { categories, pages } from './mock'
+import { categories, pages, pagesWithAccordion } from './mock'
 
 export default {
   title: 'Navigation/Navigation',
   component: Navigation,
-  decorators: [withDesign],
   parameters: withFigma('Navigation'),
 }
 
@@ -44,4 +43,13 @@ DarkBlue.args = {
   activeItemTitle: 'Hér er virk undirsíða',
   colorScheme: 'darkBlue',
   items: pages,
+}
+
+export const UsingAccordion = Template.bind({})
+UsingAccordion.args = {
+  title: 'Titill á yfirsíðu',
+  titleLink: '/titill-a-yfirsidu',
+  activeItemTitle: 'Hér er virk undirsíða',
+  colorScheme: 'purple',
+  items: pagesWithAccordion,
 }

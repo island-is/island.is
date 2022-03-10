@@ -14,7 +14,7 @@ const EditOrganisation: ServicePortalModuleComponent = () => {
   return (
     <Box marginBottom={[2, 3, 5]}>
       <Box marginBottom={4}>
-        <Text variant="h1" as="h1">
+        <Text variant="h3" as="h1">
           {formatMessage(m.SettingsEditInstitutionTitle)}
         </Text>
       </Box>

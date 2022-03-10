@@ -11,7 +11,7 @@ import {
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
-import * as styles from './Modal.treat'
+import * as styles from './Modal.css'
 
 interface ModalProps {
   show?: boolean

@@ -1,6 +1,7 @@
 export enum ServicePortalPath {
   // Mínar síður
   MinarSidurRoot = '/',
+  MinarSidurPath = '/minarsidur',
   MinarSidurSignInOidc = '/signin-oidc',
   MinarSidurSilentSignInOidc = '/silent/signin-oidc',
 
@@ -13,47 +14,68 @@ export enum ServicePortalPath {
 
   // Settings
   SettingsRoot = '/stillingar',
+
   SettingsAccessControl = '/stillingar/adgangsstyring',
   SettingsAccessControlGrant = '/stillingar/adgangsstyring/veita',
-  SettingsAccessControlAccess = '/stillingar/adgangsstyring/:nationalId',
-  SettingsPersonalInformation = '/stillingar/personuupplysingar',
-  SettingsPersonalInformationEditPhoneNumber = '/stillingar/personuupplysingar/breyta-simanumeri',
-  SettingsPersonalInformationEditEmail = '/stillingar/personuupplysingar/breyta-netfangi',
-  SettingsPersonalInformationEditLanguage = '/stillingar/personuupplysingar/breyta-tungumali',
-  SettingsPersonalInformationEmailConfirmation = '/stillingar/personuupplysingar/stadfesta-netfang/:hash',
+  SettingsAccessControlAccess = '/stillingar/adgangsstyring/:delegationId',
+  SettingsPersonalInformation = '/stillingar/minar-stillingar',
+  SettingsPersonalInformationEditPhoneNumber = '/stillingar/minar-stillingar/breyta-simanumeri',
+  SettingsPersonalInformationEditEmail = '/stillingar/minar-stillingar/breyta-netfangi',
+  SettingsPersonalInformationEditLanguage = '/stillingar/minar-stillingar/breyta-tungumali',
+  SettingsPersonalInformationEditNudge = '/stillingar/minar-stillingar/breyta-hnippi',
+  SettingsPersonalInformationEditBankInfo = '/stillingar/minar-stillingar/reikningsnumer',
+  SettingsPersonalInformationEmailConfirmation = '/stillingar/minar-stillingar/stadfesta-netfang/:hash',
+  SettingsExternal = 'https://minarsidur.island.is/minar-sidur/minn-adgangur/stillingar/',
+  SettingsIslykill = '/stillingar/islykill',
 
   // Family
   FamilyRoot = '/min-gogn/fjolskyldan',
   FamilyMember = '/min-gogn/fjolskyldan/:nationalId',
+  Spouse = '/min-gogn/fjolskyldan/maki/:nationalId',
   MyInfoRoot = '/min-gogn',
   UserInfo = '/min-gogn/minar-upplysingar',
   Endorsements = '/min-gogn/medmaeli',
+
+  // General Petitions
+  Petitions = '/min-gogn/medmaeli',
+  PetitionsAdminView = '/min-gogn/medmaeli-admin',
+  PetitionList = '/min-gogn/medmaeli/:listId',
+  PetitionListAdmin = '/min-gogn/medmaeli-admin/:listId',
 
   RealEstateExternal = 'https://minarsidur.island.is/minar-sidur/min-gogn/fasteignir',
 
   // Fjarmal
   FinanceRoot = '/fjarmal',
+  FinanceStatus = '/fjarmal/stada',
+  FinanceTransactions = '/fjarmal/faerslur',
+  FinanceEmployeeClaims = '/fjarmal/laungreidendakrofur',
+  FinanceLocalTax = '/fjarmal/utsvar',
+  FinanceBills = '/fjarmal/greidslusedlar-og-greidslukvittanir',
   FinanceVehicles = 'https://mitt.samgongustofa.is/',
   FinancePayments = '/greidslur',
   FinanceExternal = 'https://minarsidur.island.is/minar-sidur/fjarmal/fjarmal-stada-vid-rikissjod-og-stofnanir/',
 
   // Electronic Documents
-  ElectronicDocumentsRoot = '/rafraen-skjol',
-  ElectronicDocumentsFileDownload = '/rafraen-skjol/:id',
+  ElectronicDocumentsRoot = '/postholf',
+  ElectronicDocumentsFileDownload = '/postholf/:id',
 
   // Heilsa
   HealthRoot = '/heilsa',
 
   // Education
   EducationRoot = '/menntun',
-  EducationLicense = '/menntun/leyfisbref',
   EducationDegree = '/menntun/profgradur',
   EducationCareer = '/menntun/namsferill',
-  EducationStudentAssessment = '/menntun/namsferill/:nationalId/samraemd-prof',
+  EducationStudentAssessment = '/menntun/namsferill/:familyIndex/samraemd-prof',
   EducationExternal = 'https://minarsidur.island.is/minar-sidur/menntun/namsferill/',
 
+  // Education License
+  EducationLicense = '/leyfisbref',
+
   // Assets
-  AssetsRoot = '/eignir',
+  AssetsRoot = '/fasteignir',
+  AssetsRealEstateDetail = '/fasteignir/:id',
+  AssetsVehicles = '/okutaeki',
 
   // Messages
   MessagesRoot = '/skilabod',
@@ -61,14 +83,14 @@ export enum ServicePortalPath {
   // My licenses
   MyLicensesRoot = '/min-rettindi',
   ParentalLeave = '/min-rettindi/faedingarorlof',
-  DrivingLicense = '/min-rettindi/okuskirteini',
 
   // Icelandic Names Registry
   IcelandicNamesRegistryRoot = '/mannanafnaskra',
 
   // Licenses service
-  LicensesRoot = '/min-gogn/skilriki',
-
+  LicensesRoot = '/skirteini',
+  LicensesDriving = '/skirteini/okuskirteini',
+  LicensesDrivingDetail = '/skirteini/okuskirteini/:id',
   // DocumentProvider
   // Temporary change to the value of DocumentProviderRoot; skjalaveita -> skjalaveitur. In the first
   // release there will only be a limited number of features and this change creates a better UX in

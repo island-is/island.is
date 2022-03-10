@@ -2,6 +2,7 @@ import React from 'react'
 import {
   InfoScreen,
   ServicePortalModuleComponent,
+  m,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import { useNamespaces } from '@island.is/localization'
@@ -11,19 +12,13 @@ export const Messages: ServicePortalModuleComponent = () => {
 
   return (
     <InfoScreen
-      title={defineMessage({
-        id: 'service.portal:messages',
-        defaultMessage: 'Skilaboð',
-      })}
+      title={m.messages}
       intro={defineMessage({
         id: 'sp.settings:messages-about',
         defaultMessage: `Hér eru upplýsingar um það sem kemur til með að koma inn undir skilaboð á næstunni`,
       })}
       list={{
-        title: defineMessage({
-          id: 'service.portal:incoming',
-          defaultMessage: 'Á döfinni',
-        }),
+        title: m.incoming,
         items: [
           defineMessage({
             id: 'sp.settings:messages-inc-1',
@@ -31,29 +26,11 @@ export const Messages: ServicePortalModuleComponent = () => {
           }),
         ],
       }}
-      institutionTitle={defineMessage({
-        id: 'service.portal:digital-iceland',
-        defaultMessage: 'Stafrænt Ísland',
-      })}
-      institutionSubtitle={defineMessage({
-        id: 'service.portal:incoming',
-        defaultMessage: 'Á döfinni',
-      })}
-      institutionDescription={defineMessage({
-        id: 'service.portal:vision-segment',
-        defaultMessage: `
-          Markmið ríkisstjórnarinnar er að stafræn samskipti
-          verði megin samskiptaleið fólks og fyrirtækja við hið opinbera.
-          Þannig má einfalda líf þeirra sem búa og starfa á Íslandi.
-          Stafrænt Ísland, sem heyrir undir fjármála- og efnahagsráðuneytið,
-          vinnur að þessum markmiðum þvert á ráðuneyti og stofnanir.
-        `,
-      })}
+      institutionTitle={m.digitalIceland}
+      institutionSubtitle={m.incoming}
+      institutionDescription={m.visionSegment}
       institutionHref="https://island.is/stafraent-island"
-      institutionLinkTitle={defineMessage({
-        id: 'service.portal:timeline-link-title',
-        defaultMessage: 'Sjá tímalínu',
-      })}
+      institutionLinkTitle={m.timelineLinkTitle}
       figure="/assets/images/bus.svg"
     />
   )

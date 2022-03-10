@@ -1,4 +1,6 @@
 import * as Sentry from '@sentry/node'
+import { TransformableInfo } from 'logform'
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const TransportStream = require('winston-transport')
 
@@ -7,7 +9,7 @@ export class SentryTransport extends TransportStream {
     super({ level: 'error' })
   }
 
-  log(info: any, callback: () => void) {
+  log(info: TransformableInfo, next: () => void) {
     // Checks whether sentry has been initialized
     // https://github.com/getsentry/sentry-go/issues/9
     if (Sentry.getCurrentHub()?.getClient()) {
@@ -20,6 +22,6 @@ export class SentryTransport extends TransportStream {
       Sentry.captureMessage(info.message)
     }
 
-    callback()
+    next()
   }
 }

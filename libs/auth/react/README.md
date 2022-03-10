@@ -23,8 +23,12 @@ configure({
   // You should usually configure these:
   authority: environment.identityServer.authority,
   client_id: 'island-is-1',
-  scope: `openid profile api_resource.scope @island.is/applications:read`,
-
+  scope: [
+    'openid',
+    'profile',
+    'api_resource.scope',
+    '@island.is/applications:read',
+  ],
   // These can be overridden to control callback urls.
   // These are the default values:
   baseUrl: `${window.location.origin}`,

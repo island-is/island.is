@@ -7,14 +7,14 @@ import {
   FocusableBox,
   Stack,
   Box,
-  Filter,
-  FilterInput,
-  FilterMultiChoice,
   GridColumn,
   GridContainer,
   GridRow,
   Select,
   Option,
+  Input,
+  Inline,
+  Tag,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -33,13 +33,13 @@ import {
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { lightThemes, OrganizationWrapper } from '@island.is/web/components'
+import { getThemeConfig, OrganizationWrapper } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import getConfig from 'next/config'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { useRouter } from 'next/router'
+import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -72,14 +72,21 @@ const ServicesPage: Screen<ServicesPageProps> = ({
 
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
-  const Router = useRouter()
+
   useContentfulId(organizationPage.id)
+  useLocalLinkTypeResolver()
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
-      active: primaryLink.url === `/s/${organizationPage.slug}/thjonusta`,
+      active:
+        primaryLink.url.includes(`${organizationPage.slug}/thjonusta`) ||
+        primaryLink.url.includes(`${organizationPage.slug}/services`),
+      items: childrenLinks.map(({ text, url }) => ({
+        title: text,
+        href: url,
+      })),
     }),
   )
 
@@ -114,6 +121,13 @@ const ServicesPage: Screen<ServicesPageProps> = ({
         parameters.groups.includes(x.group?.slug)),
   )
 
+  groups = groups.filter((x) =>
+    services
+      .filter((x) => parameters.categories.includes(x.category?.slug))
+      .map((x) => x.group.slug)
+      .includes(x.value),
+  )
+
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
 
@@ -124,65 +138,6 @@ const ServicesPage: Screen<ServicesPageProps> = ({
       pageFeaturedImage={organizationPage.featuredImage}
       fullWidthContent={false}
       stickySidebar={false}
-      sidebarContent={
-        <Box marginTop={[3, 3, 8]}>
-          <Filter
-            labelClear={n('filterClear', 'Hreinsa')}
-            labelOpen={'openFilterButton'}
-            labelClose={'closeFilter'}
-            labelResult={'mobileResult'}
-            labelTitle={'mobileTitle'}
-            resultCount={4}
-            onFilterClear={() =>
-              setParameters({ query: '', categories: [], groups: [] })
-            }
-          >
-            <FilterInput
-              placeholder={n('filterSearch', 'Leita')}
-              name="filterInput"
-              value={parameters.query}
-              onChange={(value) =>
-                setParameters({ ...parameters, query: value })
-              }
-            />
-            <Box
-              borderRadius="large"
-              borderColor="blue200"
-              borderWidth="standard"
-            >
-              <FilterMultiChoice
-                labelClear={n('filterClear', 'Hreinsa')}
-                onChange={({ categoryId, selected }) => {
-                  setParameters({
-                    ...parameters,
-                    [categoryId]: selected,
-                  })
-                }}
-                onClear={(categoryId) =>
-                  setParameters({
-                    ...parameters,
-                    [categoryId]: [],
-                  })
-                }
-                categories={[
-                  {
-                    id: 'categories',
-                    label: n('filterCategories', 'Þjónustuflokkar'),
-                    selected: parameters.categories,
-                    filters: categories,
-                  },
-                  {
-                    id: 'groups',
-                    label: n('filterGroups', 'Málefni'),
-                    selected: parameters.groups,
-                    filters: groups,
-                  },
-                ]}
-              />
-            </Box>
-          </Filter>
-        </Box>
-      }
       breadcrumbItems={[
         {
           title: 'Ísland.is',
@@ -205,24 +160,47 @@ const ServicesPage: Screen<ServicesPageProps> = ({
               {n('allServices', 'Öll þjónusta')}
             </Text>
           </GridColumn>
-          <GridColumn
-            span={['12/12', '12/12', '6/12', '6/12', '4/12']}
-            paddingBottom={[4, 4, 0]}
-          >
+        </GridRow>
+        <GridRow marginBottom={4}>
+          <GridColumn span="1/2">
+            <Input
+              placeholder={n('filterSearch', 'Leita')}
+              name="filterInput"
+              value={parameters.query}
+              icon={'search'}
+              size="md"
+              onChange={(e) =>
+                setParameters({ ...parameters, query: e.target.value })
+              }
+            />
+          </GridColumn>
+          <GridColumn span="1/2">
             <Select
               backgroundColor="white"
               icon="chevronDown"
+              label={n('services', 'Þjónustuflokkur')}
               isSearchable
-              label={n('order', 'Röðun')}
-              name="sort"
-              value={sortOptions.find((x) => x.value === sort)}
-              options={sortOptions}
+              name="category"
+              value={
+                categories.find(
+                  (x) => x.value === parameters.categories[0],
+                ) ?? {
+                  label: n('allServices', 'Allir þjónustuflokkar'),
+                  value: '',
+                }
+              }
+              options={[
+                {
+                  label: n('allServices', 'Allir þjónustuflokkar'),
+                  value: '',
+                },
+                ...categories,
+              ]}
               onChange={({ value }: Option) => {
-                Router.push({
-                  pathname: linkResolver('organizationservices', [
-                    organizationPage.slug,
-                  ]).href,
-                  query: { sort: value },
+                setParameters({
+                  ...parameters,
+                  categories: value ? [value] : [],
+                  groups: [],
                 })
               }}
               size="sm"
@@ -230,6 +208,29 @@ const ServicesPage: Screen<ServicesPageProps> = ({
           </GridColumn>
         </GridRow>
       </GridContainer>
+      {!!parameters.categories.length && groups.length > 1 && (
+        <Box marginY={4}>
+          <Inline space={2} alignY="center">
+            {groups.map((x) => (
+              <Tag
+                key={x.value}
+                variant="blue"
+                active={parameters.groups.includes(x.value)}
+                onClick={() =>
+                  setParameters({
+                    ...parameters,
+                    groups: parameters.groups.includes(x.value)
+                      ? []
+                      : [x.value],
+                  })
+                }
+              >
+                {x.label}
+              </Tag>
+            ))}
+          </Inline>
+        </Box>
+      )}
       <Stack space={2}>
         {matches.map((article) => {
           const url = linkResolver('Article' as LinkType, [article.slug])
@@ -330,8 +331,6 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     }
   }
 
-  const lightTheme = lightThemes.includes(getOrganizationPage.theme)
-
   return {
     organizationPage: getOrganizationPage,
     services: getArticles,
@@ -340,7 +339,7 @@ ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     groups,
     sort: (query.sort as string) ?? 'popular',
     showSearchInHeader: false,
-    ...(lightTheme ? {} : { darkTheme: true }),
+    ...getThemeConfig(getOrganizationPage.theme),
   }
 }
 

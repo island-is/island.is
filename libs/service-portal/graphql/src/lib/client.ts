@@ -15,7 +15,7 @@ const uri =
     : '/api/graphql'
 
 const httpLink = new HttpLink({
-  uri,
+  uri: ({ operationName }) => `${uri}?op=${operationName}`,
   fetch,
 })
 

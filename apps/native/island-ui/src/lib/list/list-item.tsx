@@ -1,4 +1,4 @@
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '../../utils/theme'
 import { impactAsync, ImpactFeedbackStyle, selectionAsync } from 'expo-haptics'
 import React, { useRef, useState } from 'react'
 import { FormattedDate } from 'react-intl'

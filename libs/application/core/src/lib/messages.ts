@@ -16,6 +16,11 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Senda',
     description: 'Submit',
   },
+  reviewButtonSubmit: {
+    id: 'application.system:reviewButton.submit',
+    defaultMessage: 'Vista',
+    description: 'Save',
+  },
   buttonApprove: {
     id: 'application.system:button.approve',
     defaultMessage: 'Samþykkja',
@@ -169,6 +174,12 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Nei',
     description: 'No option value',
   },
+  paymentPollingIndicator: {
+    id: 'application.system:core.payment.pollingIndicator',
+    defaultMessage: 'Bíð staðfestingar frá greiðsluveitu',
+    description:
+      'Text indicating we are waiting for confirmation from 3rd party payment gateway',
+  },
 })
 
 export const coreErrorMessages = defineMessages({
@@ -191,5 +202,53 @@ export const coreErrorMessages = defineMessages({
     id: 'application.system:core.error.file.remove',
     defaultMessage: 'Villa kom upp við að fjarlægja skrána.',
     description: 'Error message when deleting a file fails',
+  },
+  isMissingTokenErrorTitle: {
+    id: 'application.system:core.missing.token.error.title',
+    defaultMessage: 'Úps! Enginn tóki fannst',
+    description: 'Oops! No token found',
+  },
+  isMissingTokenErrorDescription: {
+    id: 'application.system:core.missing.token.error.description',
+    defaultMessage: 'Ekki er hægt að tengja umsókn án auðkenningartóka',
+    description: 'It is not possible to open an application without a token',
+  },
+  couldNotAssignApplicationErrorTitle: {
+    id: 'application.system:could.not.assign.application.error.title',
+    defaultMessage: 'Úps! Ekki tókst að tengjast umsókn',
+    description: 'Oops! Could not assign to the application',
+  },
+  couldNotAssignApplicationErrorDescription: {
+    id: 'application.system:could.not.assign.application.error.description',
+    defaultMessage:
+      'Villa koma upp við að tengjast umsókn og hefur hún verið skráð',
+    description:
+      'There are errors related to the application and it has been reported',
+  },
+  missingAnswer: {
+    id: 'application.system:missing.answer',
+    defaultMessage: 'Svar vantar',
+    description: 'Copy when answer is missing',
+  },
+  failedDataProvider: {
+    id: 'application.system:fetch.data.error',
+    defaultMessage: 'Villa kom upp við að sækja gögn',
+    description: 'Copy when there was an error in one or more data providers',
+  },
+
+  paymentSubmitFailed: {
+    id: 'application.system:core.payment.submitTitle',
+    defaultMessage: 'Sending umsóknar mistókst',
+    description: 'Message indicating submission after payment failed',
+  },
+  paymentSubmitRetryButtonCaption: {
+    id: 'application.system:core.payment.retryCaption',
+    defaultMessage: 'Reyna aftur',
+    description: 'Caption for the retry button',
+  },
+  paymentStatusError: {
+    id: 'application.system:core.payment.statusError',
+    defaultMessage: 'Tókst ekki að sækja stöðu greiðslu',
+    description: 'Message indicating failure to fetch payment status',
   },
 })

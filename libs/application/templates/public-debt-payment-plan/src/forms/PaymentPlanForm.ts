@@ -1,62 +1,66 @@
+import { PaymentScheduleDebts } from '@island.is/api/schema'
 import {
+  buildCustomField,
+  buildDataProviderItem,
+  buildDescriptionField,
+  buildExternalDataProvider,
   buildForm,
+  buildMultiField,
+  buildRadioField,
   buildSection,
+  buildSubmitField,
+  buildTextField,
+  CustomField,
+  DefaultEvents,
   Form,
   FormModes,
-  buildDescriptionField,
-  buildDataProviderItem,
-  buildExternalDataProvider,
-  buildCustomField,
-  buildMultiField,
-  buildTextField,
-  buildRadioField,
-  buildRepeater,
-  CustomField,
 } from '@island.is/application/core'
-import { Prerequisites } from '../dataProviders/tempAPITypes'
+import { Logo } from '../assets'
 import {
-  PaymentPlanExternalData,
-  paymentPlanIndexKeyMapper,
-  PublicDebtPaymentPlan,
-} from '../lib/dataSchema'
-import { section, application, employer } from '../lib/messages'
+  application,
+  conclusion,
+  employer,
+  info,
+  overview,
+  section,
+} from '../lib/messages'
 import { externalData } from '../lib/messages/externalData'
-import { info } from '../lib/messages/info'
 import { paymentPlan } from '../lib/messages/paymentPlan'
 import { prerequisitesFailed } from '../lib/paymentPlanUtils'
 import { NO, YES } from '../shared/constants'
+import {
+  PaymentPlanBuildIndex,
+  PaymentPlanExternalData,
+  paymentPlanIndexKeyMapper,
+  PublicDebtPaymentPlan,
+} from '../types'
+import { betaTestSection } from './BetaTestSection'
 
 // Builds a payment plan step that exists of two custom fields:
 // The overview step detailing a list of all payment plans and their status
 // The payment plan step where the user sets up this individual payment plan
-const buildPaymentPlanStep = (index: 0 | 1 | 2 | 3 | 4 | 5): CustomField[] => [
-  buildCustomField({
-    id: `payment-plan-list-${index}`,
-    title: paymentPlan.general.pageTitle,
-    component: 'PaymentPlanList',
-    condition: (_formValue, externalData) => {
-      return index < ((externalData.paymentPlanList?.data as any)?.length || 0)
-    },
-  }),
+const buildPaymentPlanStep = (index: PaymentPlanBuildIndex): CustomField =>
   buildCustomField({
     id: `paymentPlans.${paymentPlanIndexKeyMapper[index]}`,
     title: section.paymentPlan,
     component: 'PaymentPlan',
     defaultValue: index,
     condition: (_formValue, externalData) => {
-      return index < ((externalData.paymentPlanList?.data as any)?.length || 0)
+      return (
+        index <
+        (((externalData as PaymentPlanExternalData).paymentPlanPrerequisites
+          ?.data?.debts as PaymentScheduleDebts[])?.length || 0)
+      )
     },
-  }),
-]
+  })
 
-// Compose an array 6 predefined payment plan steps
+// Compose an array 10 predefined payment plan steps
 // Each step will only be rendered in if it's index corresponds to
 // an entry in the payment plan list received by the API
 const buildPaymentPlanSteps = (): CustomField[] =>
-  [...Array(6)].reduce((prev: CustomField[], _curr, index) => {
-    const step = buildPaymentPlanStep(index as 0 | 1 | 2 | 3 | 4 | 5)
-    return [...prev, step[0], step[1]] as CustomField[]
-  }, [] as CustomField[])
+  [...Array(10)].map((_key, index) =>
+    buildPaymentPlanStep(index as PaymentPlanBuildIndex),
+  )
 
 // TODO: Data providers are not called by default on every session start
 // We need to add custom validators to ensure that the application does not
@@ -65,7 +69,9 @@ export const PaymentPlanForm: Form = buildForm({
   id: 'PaymentPlanForm',
   title: application.name,
   mode: FormModes.APPLYING,
+  logo: Logo,
   children: [
+    betaTestSection,
     buildSection({
       id: 'externalData',
       title: section.externalData,
@@ -73,7 +79,7 @@ export const PaymentPlanForm: Form = buildForm({
         buildExternalDataProvider({
           id: 'approveExternalData',
           title: externalData.general.pageTitle,
-          description: '',
+          description: externalData.general.description,
           subTitle: externalData.general.subTitle,
           checkboxLabel: externalData.general.checkboxLabel,
           dataProviders: [
@@ -89,19 +95,18 @@ export const PaymentPlanForm: Form = buildForm({
               title: externalData.labels.userProfileTitle,
               subTitle: externalData.labels.userProfileSubTitle,
             }),
-            // TODO: we might have to define several external data points here
-            // since this data originates from more than one location
             buildDataProviderItem({
               id: 'paymentPlanPrerequisites',
               title: externalData.labels.paymentPlanTitle,
-              type: 'PaymentPlanPrerequisites',
+              type: 'PaymentPlanPrerequisitesProvider',
               subTitle: externalData.labels.paymentPlanSubtitle,
             }),
+
             buildDataProviderItem({
-              id: 'paymentPlanList',
-              title: 'Payment plan list',
-              type: 'PaymentPlanList',
-              subTitle: 'Payment plan list subtitle',
+              id: 'additionalDataProviderMessage',
+              type: '',
+              title: externalData.labels.paymentEmployerTitle,
+              subTitle: externalData.labels.paymentEmployerSubtitle,
             }),
           ],
         }),
@@ -118,6 +123,7 @@ export const PaymentPlanForm: Form = buildForm({
               id: 'prerequisitesErrorModal',
               component: 'PrerequisitesErrorModal',
               title: '',
+              doesNotRequireAnswer: true,
             }),
           ],
           condition: (_formValue, externalData) => {
@@ -138,7 +144,8 @@ export const PaymentPlanForm: Form = buildForm({
             buildTextField({
               id: 'applicant.name',
               title: info.labels.name,
-              backgroundColor: 'blue',
+              backgroundColor: 'white',
+              required: true,
               disabled: true,
               defaultValue: (application: any) => {
                 return (application.externalData as PaymentPlanExternalData)
@@ -150,7 +157,8 @@ export const PaymentPlanForm: Form = buildForm({
               title: info.labels.nationalId,
               format: '######-####',
               width: 'half',
-              backgroundColor: 'blue',
+              backgroundColor: 'white',
+              required: true,
               disabled: true,
               defaultValue: (application: any) =>
                 (application.externalData as PaymentPlanExternalData)
@@ -160,7 +168,8 @@ export const PaymentPlanForm: Form = buildForm({
               id: 'applicant.address',
               title: info.labels.address,
               width: 'half',
-              backgroundColor: 'blue',
+              backgroundColor: 'white',
+              required: true,
               disabled: true,
               defaultValue: (application: any) =>
                 (application.externalData as PaymentPlanExternalData)
@@ -170,7 +179,8 @@ export const PaymentPlanForm: Form = buildForm({
               id: 'applicant.postalCode',
               title: info.labels.postalCode,
               width: 'half',
-              backgroundColor: 'blue',
+              backgroundColor: 'white',
+              required: true,
               disabled: true,
               defaultValue: (application: any) =>
                 (application.externalData as PaymentPlanExternalData)
@@ -180,7 +190,8 @@ export const PaymentPlanForm: Form = buildForm({
               id: 'applicant.city',
               title: info.labels.city,
               width: 'half',
-              backgroundColor: 'blue',
+              backgroundColor: 'white',
+              required: true,
               disabled: true,
               defaultValue: (application: any) =>
                 (application.externalData as PaymentPlanExternalData)
@@ -192,6 +203,7 @@ export const PaymentPlanForm: Form = buildForm({
               width: 'half',
               variant: 'email',
               backgroundColor: 'blue',
+              required: true,
               defaultValue: (application: any) =>
                 (application.externalData as PaymentPlanExternalData)
                   ?.userProfile?.data?.email,
@@ -203,6 +215,7 @@ export const PaymentPlanForm: Form = buildForm({
               width: 'half',
               variant: 'tel',
               backgroundColor: 'blue',
+              required: true,
               defaultValue: (application: any) =>
                 (application.externalData as PaymentPlanExternalData)
                   ?.userProfile?.data?.mobilePhoneNumber,
@@ -214,25 +227,27 @@ export const PaymentPlanForm: Form = buildForm({
     buildSection({
       id: 'employer',
       title: section.employer,
-      condition: (_formValue, externalData) => {
-        const prerequisites = externalData.paymentPlanPrerequisites?.data as
-          | Prerequisites
-          | undefined
-        return prerequisites?.taxesOk || false
-      },
       children: [
         buildMultiField({
           id: 'employerMultiField',
           title: employer.general.pageTitle,
+          condition: (_formValue, externalData) => {
+            const debts = (externalData as PaymentPlanExternalData)
+              ?.paymentPlanPrerequisites?.data?.debts
+
+            return debts?.find((x) => x.type === 'Wagedection') !== undefined
+          },
           children: [
             buildCustomField({
               id: 'employerInfoDescription',
               title: '',
+              doesNotRequireAnswer: true,
               component: 'EmployerInfoDescription',
             }),
             buildCustomField({
               id: 'employerInfo',
               title: '',
+              doesNotRequireAnswer: true,
               component: 'EmployerInfo',
             }),
             buildRadioField({
@@ -245,36 +260,100 @@ export const PaymentPlanForm: Form = buildForm({
                 { label: employer.labels.employerIsNotCorrect, value: NO },
               ],
             }),
+          ],
+        }),
+        buildMultiField({
+          id: 'newEmployerMultiField',
+          title: employer.general.pageTitle,
+          condition: (_formValue, externalData) => {
+            const debts = (externalData as PaymentPlanExternalData)
+              ?.paymentPlanPrerequisites?.data?.debts
+
+            return (
+              debts?.find((x) => x.type === 'Wagedection') !== undefined &&
+              (_formValue as PublicDebtPaymentPlan).employer?.isCorrectInfo ===
+                NO
+            )
+          },
+          children: [
             buildCustomField({
-              id: 'employerCustomId',
+              id: 'employerInfoDescription',
+              title: '',
+              doesNotRequireAnswer: true,
+              component: 'EmployerInfoDescription',
+            }),
+            buildCustomField({
+              id: 'correctedEmployer',
               title: '',
               component: 'EmployerIdField',
-              condition: (data) =>
-                (data as PublicDebtPaymentPlan).employer?.isCorrectInfo === NO,
             }),
           ],
         }),
+      ],
+      condition: (_formValue, externalData) => {
+        const debts = (externalData as PaymentPlanExternalData)
+          ?.paymentPlanPrerequisites?.data?.debts
+
+        return debts?.find((x) => x.type === 'Wagedection') !== undefined
+      },
+    }),
+    buildSection({
+      id: 'disposableIncomeSection',
+      title: section.disposableIncome,
+      children: [
         buildCustomField({
           id: 'disposableIncome',
           title: employer.general.disposableIncomePageTitle,
           description: employer.general.disposableIncomePageDescription,
+          doesNotRequireAnswer: true,
           component: 'DisposableIncome',
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'deptOverview',
+      title: section.deptOverview,
+      children: [
+        buildCustomField({
+          id: `payment-plan-list`,
+          title: paymentPlan.general.pageTitle,
+          doesNotRequireAnswer: true,
+          component: 'PaymentPlanList',
         }),
       ],
     }),
     buildSection({
       id: 'paymentPlanSection',
       title: section.paymentPlan,
-      children: buildPaymentPlanSteps(),
+      children: [...buildPaymentPlanSteps()],
     }),
     buildSection({
       id: 'overview',
       title: section.overview,
       children: [
-        buildDescriptionField({
-          id: 'mockDescriptionField5',
-          title: application.name,
-          description: 'Umsókn',
+        buildMultiField({
+          id: 'overviewMultiField',
+          title: overview.title,
+          description: overview.description,
+          children: [
+            buildCustomField({
+              id: 'overviewScreen',
+              title: '',
+              doesNotRequireAnswer: true,
+              component: 'Overview',
+            }),
+            buildSubmitField({
+              id: 'overview.submit',
+              title: '',
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: overview.submitButton,
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
         }),
       ],
     }),
@@ -282,10 +361,10 @@ export const PaymentPlanForm: Form = buildForm({
       id: 'confirmation',
       title: section.confirmation,
       children: [
-        buildDescriptionField({
-          id: 'mockDescriptionField6',
-          title: application.name,
-          description: 'Umsókn',
+        buildCustomField({
+          id: 'conclusion',
+          title: conclusion.general.title,
+          component: 'FormConclusion',
         }),
       ],
     }),

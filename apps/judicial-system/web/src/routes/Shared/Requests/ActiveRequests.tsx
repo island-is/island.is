@@ -1,93 +1,123 @@
 import React, { useContext, useMemo, useState } from 'react'
+import { useIntl } from 'react-intl'
 import cn from 'classnames'
-import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
-
-import * as styles from './Requests.treat'
-import { mapCaseStateToTagVariant } from './utils'
-import {
-  Case,
-  CaseState,
-  ReadableCaseType,
-  UserRole,
-} from '@island.is/judicial-system/types'
-import { insertAt } from '@island.is/judicial-system-web/src/utils/formatters'
+import localeIS from 'date-fns/locale/is'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
-import { UserContext } from '@island.is/judicial-system-web/src/shared-components/UserProvider/UserProvider'
+
+import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
+import {
+  CaseState,
+  isInvestigationCase,
+  UserRole,
+} from '@island.is/judicial-system/types'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
   directionType,
+  sortableTableColumn,
   SortConfig,
 } from '@island.is/judicial-system-web/src/types'
-import localeIS from 'date-fns/locale/is'
-import { capitalize } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  caseTypes,
+  formatNationalId,
+} from '@island.is/judicial-system/formatters'
+import { core, requests } from '@island.is/judicial-system-web/messages'
+import type { Case } from '@island.is/judicial-system/types'
+
+import { mapCaseStateToTagVariant } from './utils'
+import * as styles from './Requests.css'
 
 interface Props {
   cases: Case[]
   onRowClick: (id: string) => void
+  isDeletingCase: boolean
   onDeleteCase?: (caseToDelete: Case) => Promise<void>
 }
 
 const ActiveRequests: React.FC<Props> = (props) => {
-  const { cases, onRowClick, onDeleteCase } = props
+  const { cases, onRowClick, isDeletingCase, onDeleteCase } = props
 
   const { user } = useContext(UserContext)
+  const { formatMessage } = useIntl()
   const isProsecutor = user?.role === UserRole.PROSECUTOR
   const isCourtRole =
     user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR
 
-  const [sortConfig, setSortConfig] = useState<SortConfig>()
+  const [sortConfig, setSortConfig] = useState<SortConfig>({
+    column: 'createdAt',
+    direction: 'descending',
+  })
+
   // The index of requset that's about to be removed
   const [requestToRemoveIndex, setRequestToRemoveIndex] = useState<number>()
 
   useMemo(() => {
-    const sortedCases = cases || []
-
-    if (sortConfig) {
-      sortedCases.sort((a: Case, b: Case) => {
+    if (cases && sortConfig) {
+      cases.sort((a: Case, b: Case) => {
         // Credit: https://stackoverflow.com/a/51169
         return sortConfig.direction === 'ascending'
-          ? ('' + a[sortConfig.key]).localeCompare(
-              b[sortConfig.key]?.toString() || '',
+          ? (sortConfig.column === 'defendant' &&
+            a.defendants &&
+            a.defendants.length > 0
+              ? a.defendants[0].name ?? ''
+              : b['courtDate'] + a['created']
+            ).localeCompare(
+              sortConfig.column === 'defendant' &&
+                b.defendants &&
+                b.defendants.length > 0
+                ? b.defendants[0].name ?? ''
+                : a['courtDate'] + b['created'],
             )
-          : ('' + b[sortConfig.key]).localeCompare(
-              a[sortConfig.key]?.toString() || '',
+          : (sortConfig.column === 'defendant' &&
+            b.defendants &&
+            b.defendants.length > 0
+              ? b.defendants[0].name ?? ''
+              : a['courtDate'] + b['created']
+            ).localeCompare(
+              sortConfig.column === 'defendant' &&
+                a.defendants &&
+                a.defendants.length > 0
+                ? a.defendants[0].name ?? ''
+                : b['courtDate'] + a['created'],
             )
       })
     }
-    return sortedCases
   }, [cases, sortConfig])
 
-  const requestSort = (key: keyof Case) => {
+  const requestSort = (column: sortableTableColumn) => {
     let d: directionType = 'ascending'
 
     if (
       sortConfig &&
-      sortConfig.key === key &&
+      sortConfig.column === column &&
       sortConfig.direction === 'ascending'
     ) {
       d = 'descending'
     }
-    setSortConfig({ key, direction: d })
+    setSortConfig({ column, direction: d })
   }
 
-  const getClassNamesFor = (name: keyof Case) => {
+  const getClassNamesFor = (name: sortableTableColumn) => {
     if (!sortConfig) {
       return
     }
-    return sortConfig.key === name ? sortConfig.direction : undefined
+    return sortConfig.column === name ? sortConfig.direction : undefined
   }
 
   return (
     <table
-      className={styles.activeRequestsTable}
-      data-testid="custody-request-table"
+      className={styles.table}
+      data-testid="activeCasesTable"
       aria-describedby="activeRequestsTableCaption"
     >
       <thead className={styles.thead}>
         <tr>
           <th className={styles.th}>
             <Text as="span" fontWeight="regular">
-              Málsnr.
+              {formatMessage(
+                requests.sections.activeRequests.table.headers.caseNumber,
+              )}
             </Text>
           </th>
           <th className={cn(styles.th, styles.largeColumn)}>
@@ -96,16 +126,18 @@ const ActiveRequests: React.FC<Props> = (props) => {
               display="flex"
               alignItems="center"
               className={styles.thButton}
-              onClick={() => requestSort('accusedName')}
+              onClick={() => requestSort('defendant')}
               data-testid="accusedNameSortButton"
             >
-              <Text fontWeight="regular">Sakborningur</Text>
+              <Text fontWeight="regular">
+                {capitalize(formatMessage(core.defendant, { suffix: 'i' }))}
+              </Text>
               <Box
                 className={cn(styles.sortIcon, {
                   [styles.sortAccusedNameAsc]:
-                    getClassNamesFor('accusedName') === 'ascending',
+                    getClassNamesFor('defendant') === 'ascending',
                   [styles.sortAccusedNameDes]:
-                    getClassNamesFor('accusedName') === 'descending',
+                    getClassNamesFor('defendant') === 'descending',
                 })}
                 marginLeft={1}
                 component="span"
@@ -118,12 +150,16 @@ const ActiveRequests: React.FC<Props> = (props) => {
           </th>
           <th className={styles.th}>
             <Text as="span" fontWeight="regular">
-              Tegund
+              {formatMessage(
+                requests.sections.activeRequests.table.headers.type,
+              )}
             </Text>
           </th>
           <th className={styles.th}>
             <Text as="span" fontWeight="regular">
-              Staða
+              {formatMessage(
+                requests.sections.activeRequests.table.headers.state,
+              )}
             </Text>
           </th>
           <th className={styles.th}>
@@ -132,15 +168,19 @@ const ActiveRequests: React.FC<Props> = (props) => {
               display="flex"
               alignItems="center"
               className={styles.thButton}
-              onClick={() => requestSort('created')}
+              onClick={() => requestSort('createdAt')}
             >
-              <Text fontWeight="regular">Krafa stofnuð</Text>
+              <Text fontWeight="regular">
+                {formatMessage(
+                  requests.sections.activeRequests.table.headers.date,
+                )}
+              </Text>
               <Box
                 className={cn(styles.sortIcon, {
                   [styles.sortCreatedAsc]:
-                    getClassNamesFor('created') === 'ascending',
+                    getClassNamesFor('createdAt') === 'ascending',
                   [styles.sortCreatedDes]:
-                    getClassNamesFor('created') === 'descending',
+                    getClassNamesFor('createdAt') === 'descending',
                 })}
                 marginLeft={1}
                 component="span"
@@ -170,28 +210,52 @@ const ActiveRequests: React.FC<Props> = (props) => {
             }}
           >
             <td className={styles.td}>
-              <Text as="span">{c.policeCaseNumber || '-'}</Text>
+              {c.courtCaseNumber ? (
+                <>
+                  <Box component="span" className={styles.blockColumn}>
+                    <Text as="span">{c.courtCaseNumber}</Text>
+                  </Box>
+                  <Text as="span" variant="small" color="dark400">
+                    {c.policeCaseNumber}
+                  </Text>
+                </>
+              ) : (
+                <Text as="span">{c.policeCaseNumber || '-'}</Text>
+              )}
             </td>
             <td className={cn(styles.td, styles.largeColumn)}>
-              <Text>
-                <Box component="span" className={styles.accusedName}>
-                  {c.accusedName || '-'}
-                </Box>
-              </Text>
-              <Text>
-                {c.accusedNationalId && (
-                  <Text as="span" variant="small" color="dark400">
-                    {`kt. ${
-                      insertAt(c.accusedNationalId.replace('-', ''), '-', 6) ||
-                      '-'
-                    }`}
+              {c.defendants && c.defendants.length > 0 ? (
+                <>
+                  <Text>
+                    <Box component="span" className={styles.blockColumn}>
+                      {c.defendants[0].name ?? '-'}
+                    </Box>
                   </Text>
-                )}
-              </Text>
+                  {c.defendants.length === 1 ? (
+                    <Text>
+                      <Text as="span" variant="small" color="dark400">
+                        {`${c.defendants[0].noNationalId ? 'fd.' : 'kt.'} ${
+                          c.defendants[0].nationalId
+                            ? c.defendants[0].noNationalId
+                              ? c.defendants[0].nationalId
+                              : formatNationalId(c.defendants[0].nationalId)
+                            : '-'
+                        }`}
+                      </Text>
+                    </Text>
+                  ) : (
+                    <Text as="span" variant="small" color="dark400">
+                      {`+ ${c.defendants.length - 1}`}
+                    </Text>
+                  )}
+                </>
+              ) : (
+                <Text>-</Text>
+              )}
             </td>
             <td className={styles.td}>
               <Box component="span" display="flex" flexDirection="column">
-                <Text as="span">{capitalize(ReadableCaseType[c.type])}</Text>
+                <Text as="span">{capitalize(caseTypes[c.type])}</Text>
                 {c.parentCase && (
                   <Text as="span" variant="small" color="dark400">
                     Framlenging
@@ -205,7 +269,9 @@ const ActiveRequests: React.FC<Props> = (props) => {
                   mapCaseStateToTagVariant(
                     c.state,
                     isCourtRole,
+                    isInvestigationCase(c.type),
                     c.isValidToDateInThePast,
+                    c.courtDate,
                   ).color
                 }
                 outlined
@@ -215,17 +281,36 @@ const ActiveRequests: React.FC<Props> = (props) => {
                   mapCaseStateToTagVariant(
                     c.state,
                     isCourtRole,
+                    isInvestigationCase(c.type),
                     c.isValidToDateInThePast,
+                    c.courtDate,
                   ).text
                 }
               </Tag>
             </td>
             <td className={styles.td}>
-              <Text as="span">
-                {format(parseISO(c.created), 'd.M.y', {
-                  locale: localeIS,
-                })}
-              </Text>
+              {c.courtDate ? (
+                <>
+                  <Text>
+                    <Box component="span" className={styles.blockColumn}>
+                      {capitalize(
+                        format(parseISO(c.courtDate), 'EEEE d. LLLL y', {
+                          locale: localeIS,
+                        }),
+                      ).replace('dagur', 'd.')}
+                    </Box>
+                  </Text>
+                  <Text as="span" variant="small">
+                    kl. {format(parseISO(c.courtDate), 'kk:mm')}
+                  </Text>
+                </>
+              ) : (
+                <Text as="span">
+                  {format(parseISO(c.created), 'd.M.y', {
+                    locale: localeIS,
+                  })}
+                </Text>
+              )}
             </td>
             <td className={cn(styles.td, 'secondLast')}>
               {isProsecutor &&
@@ -259,6 +344,7 @@ const ActiveRequests: React.FC<Props> = (props) => {
               <Button
                 colorScheme="destructive"
                 size="small"
+                loading={isDeletingCase}
                 onClick={(evt) => {
                   evt.stopPropagation()
                   setRequestToRemoveIndex(undefined)

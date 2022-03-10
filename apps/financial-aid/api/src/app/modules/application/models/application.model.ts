@@ -4,7 +4,15 @@ import {
   Application,
   HomeCircumstances,
   Employment,
-} from '@island.is/financial-aid/shared'
+  ApplicationState,
+  FamilyStatus,
+} from '@island.is/financial-aid/shared/lib'
+
+import { ApplicationFileModel } from '../../file'
+import { StaffModel } from '../../staff'
+import { ApplicationEventModel, ApplicationFiltersModel } from './index'
+import { AmountModel } from '../../amount'
+import { DirectTaxPaymentModel } from './directTaxPayments.model'
 
 @ObjectType()
 export class ApplicationModel implements Application {
@@ -23,8 +31,8 @@ export class ApplicationModel implements Application {
   @Field()
   readonly name!: string
 
-  @Field()
-  readonly phoneNumber!: string
+  @Field({ nullable: true })
+  readonly phoneNumber?: string
 
   @Field()
   readonly email!: string
@@ -64,4 +72,64 @@ export class ApplicationModel implements Application {
 
   @Field({ nullable: true })
   readonly interview?: boolean
+
+  @Field({ nullable: true })
+  readonly formComment?: string
+
+  @Field({ nullable: true })
+  readonly spouseFormComment?: string
+
+  @Field(() => String)
+  readonly state!: ApplicationState
+
+  @Field(() => [ApplicationFileModel], { nullable: true })
+  readonly files?: ApplicationFileModel[]
+
+  @Field({ nullable: true })
+  readonly rejection?: string
+
+  @Field({ nullable: true })
+  readonly staff?: StaffModel
+
+  @Field(() => [ApplicationEventModel], { nullable: true })
+  readonly applicationEvents?: ApplicationEventModel[]
+
+  @Field({ nullable: true })
+  readonly amount?: AmountModel
+
+  @Field(() => ApplicationFiltersModel, { nullable: true })
+  readonly filters?: ApplicationFiltersModel
+
+  @Field({ nullable: true })
+  readonly spouseName?: string
+
+  @Field({ nullable: true })
+  readonly spouseNationalId?: string
+
+  @Field({ nullable: true })
+  readonly spouseEmail?: string
+
+  @Field({ nullable: true })
+  readonly spousePhoneNumber?: string
+
+  @Field(() => String)
+  readonly familyStatus!: FamilyStatus
+
+  @Field({ nullable: true })
+  readonly streetName?: string
+
+  @Field({ nullable: true })
+  readonly postalCode?: string
+
+  @Field({ nullable: true })
+  readonly city?: string
+
+  @Field()
+  readonly municipalityCode!: string
+
+  @Field(() => [DirectTaxPaymentModel])
+  readonly directTaxPayments!: DirectTaxPaymentModel[]
+
+  @Field({ nullable: true })
+  readonly applicationSystemId?: string
 }

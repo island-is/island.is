@@ -9,7 +9,7 @@ import { useQuery } from '@apollo/client'
 import { getExpectedDateOfBirth } from '../../lib/parentalLeaveUtils'
 import { getEstimatedPayments } from './estimatedPaymentsQuery'
 
-import * as styles from './PaymentSchedule.treat'
+import * as styles from './PaymentSchedule.css'
 
 const PaymentSchedule: FC<FieldBaseProps> = ({ field, application }) => {
   const { description } = field

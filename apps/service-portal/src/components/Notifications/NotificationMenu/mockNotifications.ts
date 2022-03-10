@@ -1,5 +1,6 @@
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { defineMessage, MessageDescriptor } from 'react-intl'
+import { m } from '@island.is/service-portal/core'
 
 export interface NotificationCard {
   id: string
@@ -22,11 +23,6 @@ export interface NotificationsContainer {
   }[]
 }
 
-const continueMessage = defineMessage({
-  id: 'service.portal:continue',
-  defaultMessage: 'Halda áfram',
-})
-
 export const notifications: NotificationsContainer = {
   sections: [
     {
@@ -44,7 +40,7 @@ export const notifications: NotificationsContainer = {
               'Hér kemur þú til með að fá skilaboð frá öllum helstu stofnunum Íslands.',
           }),
           link: {
-            title: continueMessage,
+            title: m.continue,
             url: ServicePortalPath.MessagesRoot,
           },
           isRead: true,
@@ -62,7 +58,7 @@ export const notifications: NotificationsContainer = {
             defaultMessage: 'Dæmi um skilaboð sem koma hér inn í framtíðinni',
           }),
           link: {
-            title: continueMessage,
+            title: m.continue,
             url: ServicePortalPath.MessagesRoot,
           },
           isRead: true,

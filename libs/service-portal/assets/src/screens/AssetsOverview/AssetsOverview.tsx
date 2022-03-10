@@ -1,66 +1,126 @@
 import React from 'react'
-import {
-  InfoScreen,
-  ServicePortalModuleComponent,
-} from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
-import { useNamespaces } from '@island.is/localization'
+import { useNamespaces, useLocale } from '@island.is/localization'
+import { gql, useQuery } from '@apollo/client'
+import { Query } from '@island.is/api/schema'
+import { Box, AlertBanner } from '@island.is/island-ui/core'
+import {
+  ServicePortalModuleComponent,
+  IntroHeader,
+  m,
+  EmptyState,
+} from '@island.is/service-portal/core'
+import AssetListCards from '../../components/AssetListCards'
+import AssetDisclaimer from '../../components/AssetDisclaimer'
+import { AssetCardLoader } from '../../components/AssetCardLoader'
+import { DEFAULT_PAGING_ITEMS } from '../../utils/const'
+
+const GetRealEstateQuery = gql`
+  query GetRealEstateQuery($input: GetMultiPropertyInput!) {
+    assetsOverview(input: $input) {
+      properties {
+        propertyNumber
+        defaultAddress {
+          locationNumber
+          postNumber
+          municipality
+          propertyNumber
+          display
+          displayShort
+        }
+      }
+      paging {
+        page
+        pageSize
+        totalPages
+        offset
+        total
+        hasPreviousPage
+        hasNextPage
+      }
+    }
+  }
+`
 
 export const AssetsOverview: ServicePortalModuleComponent = () => {
-  useNamespaces(['service.portal', 'sp.assets'])
+  useNamespaces('sp.assets')
+  const { formatMessage } = useLocale()
+
+  const { loading, error, data, fetchMore } = useQuery<Query>(
+    GetRealEstateQuery,
+    {
+      variables: { input: { cursor: '1' } },
+    },
+  )
+  const assetData = data?.assetsOverview || {}
+
+  const paginate = () => {
+    const fasteignirArray = assetData?.properties || []
+    if (fetchMore && fasteignirArray.length > 0) {
+      fetchMore({
+        variables: {
+          input: {
+            cursor: Math.ceil(
+              fasteignirArray.length / DEFAULT_PAGING_ITEMS + 1,
+            ).toString(),
+          },
+        },
+        updateQuery: (prevResult, { fetchMoreResult }) => {
+          if (!fetchMoreResult) return prevResult
+
+          if (
+            fetchMoreResult?.assetsOverview?.properties &&
+            prevResult.assetsOverview?.properties
+          ) {
+            fetchMoreResult.assetsOverview.properties = [
+              ...prevResult.assetsOverview?.properties,
+              ...fetchMoreResult.assetsOverview?.properties,
+            ]
+          }
+          return fetchMoreResult
+        },
+      })
+    }
+  }
 
   return (
-    <InfoScreen
-      title={defineMessage({
-        id: 'sp.assets:title',
-        defaultMessage: 'Eignir',
-      })}
-      intro={defineMessage({
-        id: 'sp.assets:intro',
-        defaultMessage: `Hér eru upplýsingar um það sem kemur til með að koma inn undir
-        fjármál á næstunni.`,
-      })}
-      list={{
-        title: defineMessage({
-          id: 'service.portal:incoming',
-          defaultMessage: 'Á döfinni',
-        }),
-        items: [
-          defineMessage({
-            id: 'sp.assets:inc-1',
+    <>
+      <Box marginBottom={[3, 4, 5]}>
+        <IntroHeader
+          title={defineMessage({
+            id: 'sp.assets:title',
+            defaultMessage: 'Fasteignir',
+          })}
+          intro={defineMessage({
+            id: 'sp.assets:intro',
             defaultMessage:
-              'Yfirlit og hægt verður að greiða öll opinber gjöld',
-          }),
-          defineMessage({
-            id: 'sp.assets:inc-2',
-            defaultMessage: 'Ganga frá skattskýrsla og sjá eldi skattskýrslur',
-          }),
-          defineMessage({
-            id: 'sp.assets:inc-3',
-            defaultMessage: 'Sjá yfirlit og ráðstafa séreignarsparnaði',
-          }),
-        ],
-      }}
-      institutionTitle={defineMessage({
-        id: 'sp.assets:institution',
-        defaultMessage: 'Samgöngustofa',
-      })}
-      institutionDescription={defineMessage({
-        id: 'sp.assets:institution-description',
-        defaultMessage: `
-          Vinnumálastofnun heyrir undir félagsmálráðuneytið og fer m.a. með
-          yfirstjórn vinnumiðlunar í landinu og daglega afgreiðslu
-          Atvinnuleysistryggingasjóðs, Fæðingarorlofssjóðs, Ábyrgðarsjóðs
-          launa auk fjölmargra annara vinnumarkaðstengdra verkefna.
-        `,
-      })}
-      institutionHref="https://www.samgongustofa.is/"
-      institutionLinkTitle={defineMessage({
-        id: 'sp.assets:institution-link-title',
-        defaultMessage: 'Vefur samgöngustofu - www.samgongustofa.is/',
-      })}
-      figure="/assets/images/bedroom.jpg"
-    />
+              'Hér birtast upplýsingar úr fasteignaskrá Þjóðskrár um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
+          })}
+        />
+      </Box>
+      {loading && <AssetCardLoader />}
+      {data && (
+        <AssetListCards paginateCallback={paginate} assets={assetData} />
+      )}
+
+      {!loading &&
+        !error &&
+        assetData?.properties &&
+        assetData?.properties?.length === 0 && (
+          <Box marginTop={8}>
+            <EmptyState title={m.noDataFound} />
+          </Box>
+        )}
+
+      {error && (
+        <Box>
+          <AlertBanner
+            description={formatMessage(m.errorFetch)}
+            variant="error"
+          />
+        </Box>
+      )}
+    </>
   )
 }
 

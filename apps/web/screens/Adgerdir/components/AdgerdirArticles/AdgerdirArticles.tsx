@@ -15,7 +15,7 @@ import {
   Text,
   Inline,
   Icon,
-  LoadingIcon,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import { AdgerdirPage, AdgerdirTag } from '@island.is/api/schema'
 import { useNamespace } from '@island.is/web/hooks'
@@ -28,8 +28,8 @@ import {
   ADGERDIR_COMPANIES_TAG_ID,
 } from '@island.is/web/constants'
 
-import * as styles from './AdgerdirArticles.treat'
-import * as covidStyles from '../UI/styles/styles.treat'
+import * as styles from './AdgerdirArticles.css'
+import * as covidStyles from '../UI/styles/styles.css'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 const FILTER_TIMER = 300
@@ -263,7 +263,7 @@ export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
             <span className={styles.inputIcon}>
               {isLoading ? (
                 <span className={covidStyles.iconColor}>
-                  <LoadingIcon size={24} color="currentColor" />
+                  <LoadingDots />
                 </span>
               ) : (
                 <Icon

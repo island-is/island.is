@@ -1,13 +1,12 @@
+import { Test, TestingModule } from '@nestjs/testing'
 import { mock } from 'jest-mock-extended'
 
-import { Test, TestingModule } from '@nestjs/testing'
-
-import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { AUDIT_OPTIONS } from '@island.is/nest/audit'
+import type { Logger } from '@island.is/logging'
+import type { Auth, User } from '@island.is/auth-nest-tools'
 
 import { AuditService } from './audit.service'
-import { AUDIT_OPTIONS, AuditOptions } from '@island.is/nest/audit'
-import type { User } from '@island.is/auth-nest-tools'
 import SpyInstance = jest.SpyInstance
 
 jest.mock('@island.is/logging', () => {
@@ -19,33 +18,29 @@ jest.mock('@island.is/logging', () => {
 const auditLog = mock<Logger>()
 jest.mock('winston', () => {
   return {
-    default: {
-      createLogger: () => auditLog,
-    },
+    createLogger: () => auditLog,
   }
 })
 jest.mock('winston-cloudwatch', () => {
-  return {
-    default: class WinstonCloudWatch {},
-  }
+  return class WinstonCloudWatch {}
 })
 
 const defaultNamespace = '@test.is'
 
-const user: User = {
+const auth = {
   nationalId: '1234567890',
   actor: {
     nationalId: '2234567890',
-    scope: [],
   },
-  scope: [],
-  authorization: '',
   client: 'test-client',
   ip: '12.12.12.12',
   userAgent: 'Test agent',
-}
+} as User
+
+const appVersion = '101_main_4593096'
 
 describe('AuditService against Cloudwatch', () => {
+  const OLD_ENV = process.env
   const genericLogger = mock<Logger>()
   let service: AuditService
   let spy: SpyInstance<Logger> = jest.spyOn(auditLog, 'info')
@@ -71,6 +66,7 @@ describe('AuditService against Cloudwatch', () => {
 
     spy = jest.spyOn(auditLog, 'info')
     service = module.get<AuditService>(AuditService)
+    process.env = { ...OLD_ENV, APP_VERSION: appVersion }
   })
 
   // Cleanup
@@ -91,7 +87,7 @@ describe('AuditService against Cloudwatch', () => {
 
     // Act
     service.audit({
-      user,
+      auth,
       namespace,
       action,
       resources,
@@ -100,15 +96,42 @@ describe('AuditService against Cloudwatch', () => {
 
     // Assert
     expect(spy).toHaveBeenCalledWith({
-      actor: user.actor?.nationalId,
-      subject: user.nationalId,
-      client: [user.client],
+      actor: auth.actor?.nationalId,
+      subject: auth.nationalId,
+      client: [auth.client],
       action: `${namespace}#${action}`,
       resources,
       meta,
-      ip: user.ip,
-      userAgent: user.userAgent,
+      ip: auth.ip,
+      userAgent: auth.userAgent,
+      appVersion: appVersion,
     })
+  })
+
+  it('assembles client chain correctly', () => {
+    // Arrange
+    const action = 'viewDetails'
+
+    // Act
+    service.audit({
+      auth: {
+        ...auth,
+        act: {
+          client_id: 'test-client-3',
+          act: {
+            client_id: 'test-client-2',
+          },
+        },
+      },
+      action,
+    })
+
+    // Assert
+    expect(spy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        client: [auth.client, 'test-client-2', 'test-client-3'],
+      }),
+    )
   })
 
   it('supports default namespace', () => {
@@ -117,18 +140,19 @@ describe('AuditService against Cloudwatch', () => {
 
     // Act
     service.audit({
-      user,
+      auth,
       action,
     })
 
     // Assert
     expect(spy).toHaveBeenCalledWith({
-      actor: user.actor?.nationalId,
-      subject: user.nationalId,
-      client: [user.client],
+      actor: auth.actor?.nationalId,
+      subject: auth.nationalId,
+      client: [auth.client],
       action: `${defaultNamespace}#${action}`,
-      ip: user.ip,
-      userAgent: user.userAgent,
+      ip: auth.ip,
+      userAgent: auth.userAgent,
+      appVersion: appVersion,
     })
   })
 
@@ -139,11 +163,37 @@ describe('AuditService against Cloudwatch', () => {
     // Act and assert
     expect(() => {
       service.audit({
-        user,
+        auth,
         namespace: '',
         action,
       })
     }).toThrowError('Audit namespace is required')
+  })
+
+  it('supports auditing for auth without nationalId', () => {
+    // Arrange
+    const action = 'viewDetails'
+
+    const auth: Auth = {
+      scope: [],
+      authorization: '',
+      client: 'machine-client',
+      ip: '10.10.10.10',
+    }
+
+    // Act
+    service.audit({
+      auth,
+      action,
+    })
+
+    // Assert
+    expect(spy).toHaveBeenCalledWith({
+      client: [auth.client],
+      action: `${defaultNamespace}#${action}`,
+      ip: auth.ip,
+      appVersion: appVersion,
+    })
   })
 
   it('supports auditing promises with audit templates', async () => {
@@ -156,7 +206,7 @@ describe('AuditService against Cloudwatch', () => {
     // Act
     await service.auditPromise(
       {
-        user,
+        auth,
         action,
         resources: (result) => result,
         meta: (result) => ({
@@ -168,14 +218,15 @@ describe('AuditService against Cloudwatch', () => {
 
     // Assert
     expect(spy).toHaveBeenCalledWith({
-      actor: user.actor?.nationalId,
-      subject: user.nationalId,
-      client: [user.client],
+      actor: auth.actor?.nationalId,
+      subject: auth.nationalId,
+      client: [auth.client],
       action: `${defaultNamespace}#${action}`,
       resources,
       meta,
-      ip: user.ip,
-      userAgent: user.userAgent,
+      ip: auth.ip,
+      userAgent: auth.userAgent,
+      appVersion: appVersion,
     })
   })
 })
@@ -214,7 +265,7 @@ describe('AuditService in development', () => {
 
     // Act
     service.audit({
-      user,
+      auth,
       namespace,
       action,
       resources,
@@ -224,14 +275,15 @@ describe('AuditService in development', () => {
     // Assert
     expect(spy).toHaveBeenCalledWith({
       message: 'Audit record',
-      actor: user.actor?.nationalId,
-      subject: user.nationalId,
-      client: [user.client],
+      actor: auth.actor?.nationalId,
+      subject: auth.nationalId,
+      client: [auth.client],
       action: `${namespace}#${action}`,
       resources,
       meta,
-      ip: user.ip,
-      userAgent: user.userAgent,
+      ip: auth.ip,
+      userAgent: auth.userAgent,
+      appVersion: appVersion,
     })
   })
 })

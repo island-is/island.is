@@ -9,7 +9,7 @@ import {
   Link,
   TextProps,
 } from '@island.is/island-ui/core'
-import * as styles from './DescriptionText.treat'
+import * as styles from './DescriptionText.css'
 
 const BulletListBox = ({ children }: { children: ReactNode }) => {
   return (

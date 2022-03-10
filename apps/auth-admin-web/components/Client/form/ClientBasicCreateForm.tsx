@@ -22,7 +22,13 @@ interface FormOutput {
 }
 
 const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
-  const { register, handleSubmit, errors, formState } = useForm<FormOutput>()
+  const {
+    register,
+    handleSubmit,
+    errors,
+    formState,
+    clearErrors,
+  } = useForm<FormOutput>()
   const { isSubmitting } = formState
   const [available, setAvailable] = useState<boolean>(false)
   const [clientIdLength, setClientIdLength] = useState<number>(0)
@@ -39,6 +45,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
   const [clientIdHintVisible, setClientIdHintVisible] = useState<boolean>(false)
   const [clientIdIsValid, setClientIdIsValid] = useState<boolean | null>(null)
   const [clientIdHintMessage, setClientIdHintMessage] = useState<string>('')
+  const [baseUrlRequired, setBaseUrlRequired] = useState<boolean>(true)
 
   useEffect(() => {
     if (props.client && props.client.clientId) {
@@ -156,6 +163,18 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
     } else {
       setClientTypeInfo(getClientTypeHTML(''))
       setClientTypeSelected(false)
+    }
+    if (clientType === 'machine') {
+      manageBaseUrlValidation(false)
+    } else {
+      manageBaseUrlValidation(true)
+    }
+  }
+
+  const manageBaseUrlValidation = (shouldValidate: boolean) => {
+    setBaseUrlRequired(shouldValidate)
+    if (!shouldValidate) {
+      clearErrors('baseUrl')
     }
   }
 
@@ -390,7 +409,7 @@ const ClientBasicCreateForm: React.FC<Props> = (props: Props) => {
                         name="baseUrl"
                         type="text"
                         ref={register({
-                          required: true,
+                          required: baseUrlRequired,
                           validate: ValidationUtils.validateBaseUrl,
                         })}
                         defaultValue={client.clientUri ?? ''}

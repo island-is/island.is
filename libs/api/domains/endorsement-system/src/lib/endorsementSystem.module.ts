@@ -11,7 +11,6 @@ import {
 export interface Config {
   baseApiUrl: string
 }
-
 @Module({})
 export class EndorsementSystemModule {
   static register(config: Config): DynamicModule {

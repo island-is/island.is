@@ -1,15 +1,13 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
+import yargs from 'yargs'
 
-import { bootstrap } from '@island.is/infra-nest-server'
+const { argv } = yargs(process.argv.slice(2))
 
-import { AppModule } from './app/app.module'
-import { openApi } from './openApi'
-
-bootstrap({
-  appModule: AppModule,
-  name: 'application-system-api',
-  openApi,
-})
+if (argv.job === 'worker') {
+  import('./worker').then((app) => {
+    app.worker()
+  })
+} else {
+  import('./app').then((app) => {
+    app.bootstrapServer()
+  })
+}

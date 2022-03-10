@@ -4,7 +4,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { DescriptionText } from '@island.is/application/templates/family-matters-core/components'
 import { rejectContract } from '../../lib/messages'
 import { CRCFieldBaseProps } from '../../types'
-import * as style from '../Shared.treat'
+import * as style from '../Shared.css'
 
 const RejectContract = ({ application }: CRCFieldBaseProps) => {
   const { externalData } = application

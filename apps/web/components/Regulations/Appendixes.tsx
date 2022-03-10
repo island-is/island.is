@@ -1,25 +1,11 @@
-import * as s from './RegulationDisplay.treat'
+import * as s from './RegulationDisplay.css'
 
 import React, { memo } from 'react'
-import { HTMLText, PlainText, RegulationMaybeDiff } from './Regulations.types'
-import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
-import { useDomid } from './regulationUtils'
-import { HTMLDump } from './HTMLDump'
+import { HTMLText, RegulationMaybeDiff } from '@island.is/regulations'
+import { Accordion, AccordionItem, Box } from '@island.is/island-ui/core'
+import { HTMLBox } from './HTMLBox'
 
-const hasDiff = (text: string) => /<(del|ins)/.test(text)
-
-const getSafeTitle = (title: string) =>
-  hasDiff(title)
-    ? {
-        asPlainText: undefined,
-        asHtml: title as HTMLText,
-      }
-    : {
-        asPlainText: title
-          .replace(/&gt;/g, '>')
-          .replace(/&lt;/g, '<') as PlainText,
-        asHtml: undefined,
-      }
+const hasDiff = (text: string) => /<(?:del|ins)/.test(text)
 
 // ---------------------------------------------------------------------------
 
@@ -27,11 +13,11 @@ export type AppendixesProps = {
   legend: string
   genericTitle: string
   appendixes: ReadonlyArray<RegulationMaybeDiff['appendixes'][0]>
+  diffing?: boolean
 }
 
 export const Appendixes = memo((props: AppendixesProps) => {
-  const { appendixes } = props
-  const domid = useDomid()
+  const { appendixes, diffing } = props
 
   if (!appendixes.length) {
     return null
@@ -41,33 +27,33 @@ export const Appendixes = memo((props: AppendixesProps) => {
     <Box marginTop={[6, 10]} marginBottom={[6, 6]} aria-label={props.legend}>
       <Accordion singleExpand={false}>
         {appendixes.map((appendix, i) => {
-          const id = 'appendix' + i + domid
-          const title = getSafeTitle(appendix.title)
-
+          const id = `v${i + 1}`
           return (
             appendix.text && (
-              <AccordionItem
-                key={id}
-                id={id}
-                labelVariant="h3"
-                labelUse="h2"
-                label={title.asPlainText || ''}
-                visibleContent={
-                  title.asHtml && (
-                    // NOTE: This horrible hack is because AccordionItem's label can't be JSX.Element/ReactNode
-                    <Text variant="h3" as="h2">
-                      <HTMLDump
+              <div id={id} key={id}>
+                <AccordionItem
+                  id={id + '-internals'}
+                  labelVariant="h3"
+                  labelUse="h2"
+                  label={
+                    diffing ? (
+                      <HTMLBox
                         component="span"
-                        className={s.bodyText}
-                        html={title.asHtml}
+                        className={s.bodyText + ' ' + s.diffText}
+                        html={appendix.title as HTMLText}
                       />
-                    </Text>
-                  )
-                }
-                startExpanded={hasDiff(appendix.text)}
-              >
-                <HTMLDump className={s.bodyText} html={appendix.text} />
-              </AccordionItem>
+                    ) : (
+                      appendix.title
+                    )
+                  }
+                  startExpanded={hasDiff(appendix.text)}
+                >
+                  <HTMLBox
+                    className={s.bodyText + ' ' + s.diffText}
+                    html={appendix.text}
+                  />
+                </AccordionItem>
+              </div>
             )
           )
         })}

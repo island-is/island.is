@@ -6,9 +6,9 @@ This project forms the base for all business applications belonging to island.is
 
 ## URLs
 
-- [Dev](https://umsoknir.dev01.devland.is)
-- [Staging](https://umsoknir.staging01.devland.is)
-- Production: N/A
+- [Dev](https://beta.dev01.devland.is/umsoknir/)
+- [Staging](https://beta.staging01.devland.is/umsoknir/)
+- [Production](https://island.is/umsoknir/)
 
 ## API
 
@@ -99,6 +99,12 @@ yarn start api
 - [Follow the Reference Template](https://github.com/island-is/island.is/tree/main/libs/application/templates/reference-template)
 
 After following the Reference Template, repeat the steps from [OpenAPI and Swagger](https://github.com/island-is/island.is/tree/main/apps/application-system#openapi-and-swagger) or run `yarn install` to update schemas.
+
+### Adding a payment step
+
+If your application requires that the user pay a fee as part of the application process,
+that can be implemented by following the
+[adding a payment step](../../handbook/misc/application-payment-guide.md) guide
 
 ### Testing
 

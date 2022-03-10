@@ -9,6 +9,6 @@ describe('web', () => {
   })
   it('should navigate homepage', () => {
     cy.visit('/')
-    cy.get('h3').contains('Að eignast barn')
+    cy.contains('Að eignast barn')
   })
 })

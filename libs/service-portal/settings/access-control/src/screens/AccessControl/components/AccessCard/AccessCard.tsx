@@ -55,9 +55,8 @@ function AccessCard({
             {validTo
               ? format(new Date(validTo), 'dd.MM.yyyy')
               : formatMessage({
-                  id:
-                    'service.portal.settings.accessControl:home-view-undetermined',
-                  defaultMessage: 'Óákveðið',
+                  id: 'service.portal.settings.accessControl:home-view-varies',
+                  defaultMessage: 'Breytilegur',
                 })}
           </Text>
         </Inline>
@@ -66,7 +65,9 @@ function AccessCard({
         <Box display="flex" justifyContent="spaceBetween">
           <Inline alignY="bottom" space={1}>
             {tags.map((tag, index) => (
-              <Tag key={index}>{tag}</Tag>
+              <Tag disabled key={index}>
+                {tag}
+              </Tag>
             ))}
           </Inline>
           <Link to={href}>

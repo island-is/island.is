@@ -1,10 +1,6 @@
 {
   "extends": "../../../../tsconfig.base.json",
-  "compilerOptions": {
-    "types": ["node", "jest"],
-    "strictPropertyInitialization": false,
-    "strict": false
-  },
+  "compilerOptions": {},
   "files": [],
   "include": [],
   "references": [

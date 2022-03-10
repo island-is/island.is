@@ -52,6 +52,7 @@ import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
 import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
 import { CustomNextError } from '../units/errors'
+import useContentfulId from '../hooks/useContentfulId'
 
 const PERPAGE = 10
 
@@ -85,6 +86,7 @@ const NewsListNew: Screen<NewsListProps> = ({
   const { linkResolver } = useLinkResolver()
   const { format, getMonthByIndex } = useDateUtils()
   const n = useNamespace(namespace)
+  useContentfulId(newsItem?.id)
 
   const years = Object.keys(datesMap)
     .map((x) => parseInt(x, 10))
@@ -123,7 +125,7 @@ const NewsListNew: Screen<NewsListProps> = ({
 
   let selectedTag: GenericTag | undefined
 
-  for (let item of newsList) {
+  for (const item of newsList) {
     const tag = item.genericTags.find((t) => t.slug === selectedTagSlug)
 
     if (tag) {
@@ -145,7 +147,7 @@ const NewsListNew: Screen<NewsListProps> = ({
     },
   ]
 
-  const breadCrumbTags: BreadCrumbItem | BreadCrumbItem[] = !!newsItem
+  const breadCrumbTags: BreadCrumbItem | BreadCrumbItem[] = newsItem
     ?.genericTags?.length
     ? newsItem.genericTags
         .filter((t) => t.title && t.slug)
@@ -460,10 +462,10 @@ NewsListNew.getInitialProps = async ({ apolloClient, locale, query }) => {
   const newsList = getNewsResults?.data?.getNews?.items ?? []
   const total = getNewsResults?.data?.getNews?.total ?? 0
 
-  let selectedYear = newsItem?.date
+  const selectedYear = newsItem?.date
     ? parseInt(newsItem.date?.slice(0, 4), 10)
     : year
-  let selectedMonth = newsItem?.date
+  const selectedMonth = newsItem?.date
     ? parseInt(newsItem.date?.slice(5, 7), 10)
     : month
 
@@ -485,30 +487,19 @@ NewsListNew.getInitialProps = async ({ apolloClient, locale, query }) => {
 }
 
 const BackButton = ({ title, href }: { title: string; href: string }) => (
-  <LinkContext.Provider
-    value={{
-      linkRenderer: (href, children) => (
-        <Link href={href} skipTab>
-          {children}
-        </Link>
-      ),
-    }}
-  >
-    <Text truncate>
-      <a href={href}>
-        <Button
-          as="span"
-          preTextIcon="arrowBack"
-          preTextIconType="filled"
-          size="small"
-          type="button"
-          variant="text"
-        >
-          {title}
-        </Button>
-      </a>
-    </Text>
-  </LinkContext.Provider>
+  <Link href={href} skipTab>
+    <Button
+      as="span"
+      preTextIcon="arrowBack"
+      preTextIconType="filled"
+      size="small"
+      type="button"
+      variant="text"
+      truncate
+    >
+      {title}
+    </Button>
+  </Link>
 )
 
 export default withMainLayout(NewsListNew)

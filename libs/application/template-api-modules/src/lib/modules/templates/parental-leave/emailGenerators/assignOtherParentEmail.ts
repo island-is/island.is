@@ -1,12 +1,15 @@
-import { dedent } from 'ts-dedent'
 import get from 'lodash/get'
 
-import { EmailTemplateGenerator } from '../../../../types'
 import { ApplicationConfigurations } from '@island.is/application/core'
+import { Message } from '@island.is/email-service'
 
+import { EmailTemplateGenerator } from '../../../../types'
+import { pathToAsset } from '../parental-leave.utils'
+
+// TODO handle translations
 export const generateAssignOtherParentApplicationEmail: EmailTemplateGenerator = (
   props,
-) => {
+): Message => {
   const {
     application,
     options: { email, clientLocationOrigin },
@@ -18,17 +21,7 @@ export const generateAssignOtherParentApplicationEmail: EmailTemplateGenerator =
     throw new Error('Could not find other parent email')
   }
 
-  // TODO handle different locales
   const subject = 'Yfirferð á umsókn um fæðingarorlof'
-  const body = dedent(`Góðan dag.
-
-        Umsækjandi með kennitölu ${application.applicant} hefur skráð þig sem foreldri í umsókn sinni og er að óska eftir réttindum frá þér.
-    
-        Ef þú áttir von á þessum tölvupósti þá getur þú <a href="${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}" target="_blank">smellt hér til þess að fara yfir umsóknina</a>.
-    
-        Með kveðju,
-        Fæðingarorlofssjóðsjóður
-      `)
 
   return {
     from: {
@@ -42,9 +35,45 @@ export const generateAssignOtherParentApplicationEmail: EmailTemplateGenerator =
       },
     ],
     subject,
-    html: `<p>${body
-      .split('')
-      .map((c) => (c === '\n' ? `<br />\n` : c))
-      .join('')}</p>`,
+    template: {
+      title: subject,
+      body: [
+        {
+          component: 'Image',
+          context: {
+            src: pathToAsset('logo.jpg'),
+            alt: 'Vinnumálastofnun merki',
+          },
+        },
+        {
+          component: 'Image',
+          context: {
+            src: pathToAsset('child.jpg'),
+            alt: 'Barn myndskreyting',
+          },
+        },
+        { component: 'Heading', context: { copy: subject } },
+        { component: 'Copy', context: { copy: 'Góðan dag.' } },
+        {
+          component: 'Copy',
+          context: {
+            copy: `Umsækjandi með kennitölu ${application.applicant} hefur skráð þig sem foreldri í umsókn sinni og er að óska eftir réttindum frá þér.`,
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy: `Ef þú áttir von á þessum tölvupósti þá getur þú smellt á takkann hér fyrir neðan.`,
+          },
+        },
+        {
+          component: 'Button',
+          context: {
+            copy: 'Skoða umsókn',
+            href: `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`,
+          },
+        },
+      ],
+    },
   }
 }

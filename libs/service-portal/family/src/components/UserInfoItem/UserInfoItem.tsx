@@ -6,6 +6,7 @@ import {
   GridColumn,
   ArrowLink,
 } from '@island.is/island-ui/core'
+import { m } from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
@@ -42,12 +43,7 @@ const UserInfoOverviewItem: FC<UserInfoOverviewItemComponent> = ({
           <Text marginBottom={[3, 4]}>{formatMessage(subtext)}</Text>
           <Box>
             <Link to={link}>
-              <ArrowLink>
-                {formatMessage({
-                  id: 'service.portal:continue-button',
-                  defaultMessage: 'Halda áfram',
-                })}
-              </ArrowLink>
+              <ArrowLink>{formatMessage(m.continue)}</ArrowLink>
             </Link>
           </Box>
         </Box>
@@ -60,7 +56,7 @@ const UserInfoOverviewItem: FC<UserInfoOverviewItemComponent> = ({
           alignItems="center"
           marginBottom={[3, 3, 0]}
         >
-          <img src={image} alt="Skrautmynd" />
+          <img src={image} alt={`${formatMessage(m.altText)} ${heading}`} />
         </Box>
       </GridColumn>
     </GridRow>

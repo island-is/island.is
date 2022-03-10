@@ -7,7 +7,7 @@ const userSeeds = `[
     "name": "Áki Ákærandi",
     "title": "ákærandi",
     "mobile_number": "0000000",
-    "email": "aki@dmr.is",
+    "email": "aki@dummy.dd",
     "role": "PROSECUTOR",
     "institution_id": "53581d7b-0591-45e5-9cbe-c96b2f82da85"
   },
@@ -17,7 +17,7 @@ const userSeeds = `[
     "name": "Dalli Dómritari",
     "title": "dómritari",
     "mobile_number": "1111111",
-    "email": "dalli@dmr.is",
+    "email": "dalli@dummy.dd",
     "role": "REGISTRAR",
     "institution_id": "d1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf"
   },
@@ -27,9 +27,39 @@ const userSeeds = `[
     "name": "Dóra Dómari",
     "title": "dómari",
     "mobile_number": "2222222",
-    "email": "dora@dmr.is",
+    "email": "dora@dummy.dd",
     "role": "JUDGE",
     "institution_id": "d1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf"
+  },
+  {
+    "id": "4bbf247c-c14f-40b5-8f4c-dd3236e7f667",
+    "national_id": "0000003339",
+    "name": "Lalli Landsréttardómari",
+    "title": "landsréttardómari",
+    "mobile_number": "3333333",
+    "email": "lalli@dummy.dd",
+    "role": "JUDGE",
+    "institution_id": "4676f08b-aab4-4b4f-a366-697540788088"
+  },
+  {
+    "id": "1e08b81e-2aa4-11ec-8d3d-0242ac130003",
+    "national_id": "0000004449",
+    "name": "Pétur í FMST",
+    "title": "starfsmaður",
+    "mobile_number": "4444444",
+    "email": "petur@dummy.dd",
+    "role": "STAFF",
+    "institution_id": "c9b3b124-2a85-11ec-8d3d-0242ac130003"
+  },
+  {
+    "id": "1e08ba30-2aa4-11ec-8d3d-0242ac130003",
+    "national_id": "0000005559",
+    "name": "Valgarð á Hólmsheiði",
+    "title": "starfsmaður",
+    "mobile_number": "5555555",
+    "email": "valgard@dummy.dd",
+    "role": "STAFF",
+    "institution_id": "c9b3b3ae-2a85-11ec-8d3d-0242ac130003"
   }
 ]`
 

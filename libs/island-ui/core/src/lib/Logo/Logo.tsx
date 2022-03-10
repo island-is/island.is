@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react'
 
-import * as styles from './Logo.treat'
+import * as styles from './Logo.css'
 
 import cn from 'classnames'
 

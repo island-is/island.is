@@ -2,7 +2,7 @@ import { DynamicModule } from '@nestjs/common'
 import fetch from 'isomorphic-fetch'
 
 import { logger } from '@island.is/logging'
-import { isRunningOnEnvironment } from '@island.is/utils/shared'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import {
   Configuration,
@@ -24,7 +24,7 @@ export interface VMSTModuleConfig {
 export class VMSTModule {
   static register(config: VMSTModuleConfig): DynamicModule {
     if (!config.apiKey) {
-      logger.error('VMSTModule VMST_API_KEY not provided.')
+      logger.error('VMSTModule XROAD_VMST_API_KEY not provided.')
     }
 
     if (!config.xRoadClient) {

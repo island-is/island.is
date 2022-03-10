@@ -6,7 +6,6 @@ import {
   useWindowDimensions,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
-import { testIDs } from '../../../../app/src/utils/test-ids'
 import closeIcon from '../../assets/icons/close.png'
 import { dynamicColor } from '../../utils/dynamic-color'
 import { font } from '../../utils/font'
@@ -83,7 +82,7 @@ export function NavigationBarSheet({
           <HeaderTitle>{title}</HeaderTitle>
           <CloseButton
             onPress={onClosePress}
-            testID={testIDs.NAVBAR_SHEET_CLOSE_BUTTON}
+            testID="NAVBAR_SHEET_CLOSE_BUTTON"
             accessibilityLabel="Close"
           >
             <CloseIcon

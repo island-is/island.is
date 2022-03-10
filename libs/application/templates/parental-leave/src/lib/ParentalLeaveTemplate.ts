@@ -13,7 +13,7 @@ import {
   DefaultEvents,
   DefaultStateLifeCycle,
   ApplicationConfigurations,
-  getValueViaPath,
+  EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 
 import {
@@ -23,6 +23,7 @@ import {
   ParentalRelations,
   NO,
   MANUAL,
+  SPOUSE,
 } from '../constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
@@ -31,7 +32,11 @@ import {
   hasEmployer,
   needsOtherParentApproval,
 } from './parentalLeaveTemplateUtils'
-import { getOtherParentId, getSelectedChild } from '../lib/parentalLeaveUtils'
+import {
+  getApplicationAnswers,
+  getOtherParentId,
+  getSelectedChild,
+} from '../lib/parentalLeaveUtils'
 
 type Events =
   | { type: DefaultEvents.APPROVE }
@@ -69,11 +74,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         ],
         meta: {
           name: States.PREREQUISITES,
-          lifecycle: {
-            shouldBeListed: false,
-            shouldBePruned: true,
-            whenToPrune: 24 * 3600 * 1000,
-          },
+          lifecycle: EphemeralStateLifeCycle,
           progress: 0.25,
           roles: [
             {
@@ -98,6 +99,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
+        entry: 'clearAssignees',
+        exit: 'setOtherParentIdIfSelectedSpouse',
         meta: {
           name: States.DRAFT,
           actionCard: {
@@ -194,6 +197,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.VINNUMALASTOFNUN_APPROVAL,
             },
           ],
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
           [DefaultEvents.REJECT]: { target: States.OTHER_PARENT_ACTION },
         },
       },
@@ -227,7 +231,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN]: {
-        exit: 'setEmployerNationalRegistryId',
+        exit: 'setEmployerReviewerNationalRegistryId',
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN,
           actionCard: {
@@ -254,6 +258,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         on: {
           [DefaultEvents.ASSIGN]: { target: States.EMPLOYER_APPROVAL },
           [DefaultEvents.REJECT]: { target: States.EMPLOYER_ACTION },
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
       [States.EMPLOYER_APPROVAL]: {
@@ -273,8 +278,16 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   Promise.resolve(val.EmployerApproval),
                 ),
               read: {
-                answers: ['periods', 'selectedChild', 'payments'],
+                answers: [
+                  'periods',
+                  'selectedChild',
+                  'payments',
+                  'firstPeriodStart',
+                ],
                 externalData: ['children'],
+              },
+              write: {
+                answers: ['employerNationalRegistryId'],
               },
               actions: [
                 {
@@ -303,6 +316,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
           ],
           [DefaultEvents.REJECT]: { target: States.EMPLOYER_ACTION },
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
       [States.EMPLOYER_ACTION]: {
@@ -450,7 +464,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS]: {
-        exit: 'setEmployerNationalRegistryId',
+        exit: 'setEmployerReviewerNationalRegistryId',
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
           actionCard: {
@@ -646,6 +660,25 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
+      setOtherParentIdIfSelectedSpouse: assign((context) => {
+        const { application } = context
+
+        const answers = getApplicationAnswers(application.answers)
+
+        if (answers.otherParent === SPOUSE) {
+          // Specifically persist the national registry id of the spouse
+          // into answers.otherParentId since it is used when the other
+          // parent is applying for parental leave to see if there
+          // have already been any applications created by the primary parent
+          set(
+            application.answers,
+            'otherParentId',
+            getOtherParentId(application),
+          )
+        }
+
+        return context
+      }),
       assignToOtherParent: assign((context) => {
         const { application } = context
         const otherParentId = getOtherParentId(application)
@@ -660,7 +693,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
 
         return context
       }),
-      setEmployerNationalRegistryId: assign((context, event) => {
+      setEmployerReviewerNationalRegistryId: assign((context, event) => {
         // Only set if employer gets assigned
         if (event.type !== DefaultEvents.ASSIGN) {
           return context
@@ -669,7 +702,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { application } = context
         const { answers } = application
 
-        set(answers, 'employer.nationalRegistryId', application.assignees[0])
+        set(
+          answers,
+          'employerReviewerNationalRegistryId',
+          application.assignees[0],
+        )
 
         return context
       }),
@@ -756,12 +793,19 @@ const ParentalLeaveTemplate: ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
+    // If the applicant is its own employer, we need to give it the `ASSIGNEE` role to be able to continue the process
+    if (id === application.applicant && application.assignees.includes(id)) {
+      return Roles.ASSIGNEE
+    }
+
     if (id === application.applicant) {
       return Roles.APPLICANT
     }
+
     if (application.assignees.includes(id)) {
       return Roles.ASSIGNEE
     }
+
     return undefined
   },
   answerValidators,

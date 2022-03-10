@@ -4,6 +4,7 @@ import * as aws from './lib/aws'
 import * as dictionary from './lib/dictionary'
 import * as elastic from './lib/elastic'
 import * as indexManager from '@island.is/content-search-index-manager'
+import yargs from 'yargs'
 
 const { locales } = environment
 
@@ -134,5 +135,12 @@ export default async () => {
     logger.error('ERROR: ', error)
     // take down container on error to prevent this search indexer from going live
     throw error
+  })
+}
+
+const argv = yargs(process.argv.slice(2)).argv
+if (argv['run-migrations']) {
+  migrateBootstrap().catch((error) => {
+    logger.error('ERROR: ', error)
   })
 }

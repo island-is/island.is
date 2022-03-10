@@ -1,3 +1,5 @@
 export { NationalRegistryModule } from './lib/nationalRegistry.module'
+export { NationalRegistryService } from './lib/nationalRegistry.service'
+export { NationalRegistryUser } from './lib/graphql'
 export { User } from './lib/types/user.type'
 export { FamilyMember } from './lib/types/familyMember.type'

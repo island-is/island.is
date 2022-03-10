@@ -4,12 +4,9 @@ import { DelegationScopeInput } from './delegationScope.input'
 
 @InputType('CreateAuthDelegationInput')
 export class CreateDelegationInput {
-  @Field((_) => String)
+  @Field(() => String)
   toNationalId!: string
 
-  @Field((_) => String)
-  name!: string
-
-  @Field((_) => [DelegationScopeInput], { nullable: true })
+  @Field(() => [DelegationScopeInput], { nullable: true })
   scopes?: DelegationScopeInput[]
 }

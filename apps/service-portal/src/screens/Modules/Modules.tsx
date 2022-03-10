@@ -1,6 +1,10 @@
 import React, { FC, Suspense } from 'react'
 import { Route, Switch } from 'react-router-dom'
-import { ServicePortalRoute, NotFound } from '@island.is/service-portal/core'
+import {
+  ServicePortalRoute,
+  NotFound,
+  AccessDenied,
+} from '@island.is/service-portal/core'
 import { useStore } from '../../store/stateProvider'
 import ModuleErrorScreen, { ModuleErrorBoundary } from './ModuleErrorScreen'
 import { Box } from '@island.is/island-ui/core'
@@ -38,16 +42,24 @@ const RouteLoader: FC<{
   client: ApolloClient<NormalizedCacheObject>
 }> = React.memo(({ routes, userInfo, client }) => (
   <Switch>
-    {routes.map((route) => (
-      <Route
-        path={route.path}
-        exact
-        key={Array.isArray(route.path) ? route.path[0] : route.path}
-        render={() => (
-          <RouteComponent route={route} userInfo={userInfo} client={client} />
-        )}
-      />
-    ))}
+    {routes.map((route) =>
+      route.enabled === false ? (
+        <Route
+          key={Array.isArray(route.path) ? route.path[0] : route.path}
+          path={route.path}
+          component={AccessDenied}
+        />
+      ) : (
+        <Route
+          path={route.path}
+          exact
+          key={Array.isArray(route.path) ? route.path[0] : route.path}
+          render={() => (
+            <RouteComponent route={route} userInfo={userInfo} client={client} />
+          )}
+        />
+      ),
+    )}
     {routes.length > 0 && <Route component={NotFound} />}
   </Switch>
 ))

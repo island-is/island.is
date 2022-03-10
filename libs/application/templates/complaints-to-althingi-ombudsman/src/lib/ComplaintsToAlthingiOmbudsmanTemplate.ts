@@ -9,7 +9,7 @@ import {
   DefaultEvents,
   DefaultStateLifeCycle,
 } from '@island.is/application/core'
-import * as z from 'zod'
+import { ComplaintsToAlthingiOmbudsmanSchema } from './dataSchema'
 
 const States = {
   draft: 'draft',
@@ -20,7 +20,9 @@ type ComplaintsToAlthingiOmbudsmanEvent =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.SUBMIT }
 
-const dataSchema = z.object({})
+enum Roles {
+  APPLICANT = 'applicant',
+}
 
 const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -32,21 +34,23 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
   translationNamespaces: [
     ApplicationConfigurations.ComplaintsToAlthingiOmbudsman.translation,
   ],
-  dataSchema,
+  dataSchema: ComplaintsToAlthingiOmbudsmanSchema,
   stateMachineConfig: {
     initial: States.draft,
     states: {
       [States.draft]: {
         meta: {
-          name: 'hello',
-          progress: 0.33,
+          name: States.draft,
+          progress: 0.5,
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
-              id: 'applicant',
+              id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/TestApplication').then((val) =>
-                  Promise.resolve(val.TestApplication),
+                import(
+                  '../forms/ComplaintsToAlthingiOmbudsmanApplication'
+                ).then((val) =>
+                  Promise.resolve(val.ComplaintsToAlthingiOmbudsmanApplication),
                 ),
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
@@ -63,11 +67,14 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole(id: string, application: Application): ApplicationRole {
-    if (application.state === 'inReview') {
-      return 'reviewer'
+  mapUserToRole(
+    id: string,
+    application: Application,
+  ): ApplicationRole | undefined {
+    if (id === application.applicant) {
+      return Roles.APPLICANT
     }
-    return 'applicant'
+    return undefined
   },
 }
 

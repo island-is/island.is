@@ -1,20 +1,14 @@
 import { ServicePortalNavigationItem } from '@island.is/service-portal/core'
+import { m } from '../messages'
 import { ServicePortalPath } from './paths'
-import { defineMessage } from 'react-intl'
 
 export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
   {
-    name: defineMessage({
-      id: 'service.portal:info',
-      defaultMessage: 'Upplýsingar',
-    }),
+    name: m.info,
     children: [
       // Yfirlit
       {
-        name: defineMessage({
-          id: 'service.portal:overview',
-          defaultMessage: 'Yfirlit',
-        }),
+        name: m.overview,
         systemRoute: true,
         path: ServicePortalPath.MinarSidurRoot,
         icon: {
@@ -25,23 +19,18 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Rafraen skjol
       {
-        name: defineMessage({
-          id: 'service.portal:documents',
-          defaultMessage: 'Rafræn skjöl',
-        }),
+        name: m.documents,
         path: ServicePortalPath.ElectronicDocumentsRoot,
         icon: {
           type: 'outline',
           icon: 'reader',
         },
+        subscribesTo: 'documents',
       },
 
       // Umsoknir
       {
-        name: defineMessage({
-          id: 'service.portal:applications',
-          defaultMessage: 'Umsóknir',
-        }),
+        name: m.applications,
         path: ServicePortalPath.ApplicationRoot,
         icon: {
           type: 'outline',
@@ -51,72 +40,71 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Min Gogn
       {
-        name: defineMessage({
-          id: 'service.portal:user-info',
-          defaultMessage: 'Mínar upplýsingar',
-        }),
-        path: ServicePortalPath.UserInfo,
-        divider: true,
+        name: m.userInfo,
+        path: ServicePortalPath.MyInfoRoot,
         icon: {
           type: 'outline',
           icon: 'person',
         },
         children: [
-          // Medmaeli
           {
-            name: defineMessage({
-              id: 'service.portal:endorsements',
-              defaultMessage: 'Meðmæli',
-            }),
-            path: ServicePortalPath.Endorsements,
+            name: m.detailInfo,
+            navHide: true,
+            path: ServicePortalPath.UserInfo,
+          },
+          {
+            name: m.family,
+            navHide: true,
+            path: ServicePortalPath.FamilyRoot,
+          },
+          {
+            // Petitions
+            name: m.endorsements,
+            path: ServicePortalPath.Petitions,
+          },
+          {
+            // Petitions Admin
+            name: m.endorsementsAdmin,
+            path: ServicePortalPath.PetitionsAdminView,
           },
         ],
       },
+
+      // Starfsleyfi
       {
-        name: defineMessage({
-          id: 'service.portal:family',
-          defaultMessage: 'Fjölskyldan',
-        }),
-        path: ServicePortalPath.FamilyRoot,
+        name: m.educationLicense,
+        path: ServicePortalPath.EducationLicense,
         icon: {
           type: 'outline',
-          icon: 'people',
+          icon: 'receipt',
         },
       },
-
+      // Mín réttindi
+      {
+        name: m.delegation,
+        path: ServicePortalPath.MyLicensesRoot,
+        icon: {
+          type: 'outline',
+          icon: 'receipt',
+        },
+        children: [
+          {
+            name: m.parentalLeave,
+            path: ServicePortalPath.ParentalLeave,
+          },
+        ],
+      },
       // Menntun
       {
-        name: defineMessage({
-          id: 'service.portal:education',
-          defaultMessage: 'Menntun',
-        }),
+        name: m.education,
         path: ServicePortalPath.EducationRoot,
         icon: {
           type: 'outline',
           icon: 'school',
         },
-        children: [
-          {
-            name: defineMessage({
-              id: 'service.portal:educationLicense',
-              defaultMessage: 'Starfsleyfi',
-            }),
-            path: ServicePortalPath.EducationLicense,
-          },
-          {
-            name: defineMessage({
-              id: 'service.portal:educationCareer',
-              defaultMessage: 'Námsferill',
-            }),
-            path: ServicePortalPath.EducationCareer,
-          },
-        ],
       },
       {
-        name: defineMessage({
-          id: 'service.portal:document-provider',
-          defaultMessage: 'Skjalaveitur',
-        }),
+        name: m.documentProvider,
         path: ServicePortalPath.DocumentProviderRoot,
         icon: {
           type: 'outline',
@@ -165,10 +153,7 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
 
       // Mannanafnaskrá
       {
-        name: defineMessage({
-          id: 'service.portal:icelandic-names-registry',
-          defaultMessage: 'Mannanafnaskrá',
-        }),
+        name: m.icelandicNamesRegistry,
         path: ServicePortalPath.IcelandicNamesRegistryRoot,
         icon: {
           type: 'outline',
@@ -176,114 +161,111 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
       },
 
-      {
-        name: defineMessage({
-          id: 'service.portal:licenses',
-          defaultMessage: 'Skilríki',
-        }),
-        path: ServicePortalPath.LicensesRoot,
-        icon: {
-          type: 'outline',
-          icon: 'business',
-        },
-      },
-
-      // Stillingar
-      {
-        name: defineMessage({
-          id: 'service.portal:settings',
-          defaultMessage: 'Stillingar',
-        }),
-        path: ServicePortalPath.SettingsRoot,
-        icon: {
-          type: 'outline',
-          icon: 'settings',
-        },
-        children: [
-          {
-            name: defineMessage({
-              id: 'service.portal:personalInformation',
-              defaultMessage: 'Persónuupplýsingar',
-            }),
-            path: ServicePortalPath.SettingsPersonalInformation,
-          },
-          {
-            name: defineMessage({
-              id: 'service.portal:accessControl',
-              defaultMessage: 'Aðgangsstýring',
-            }),
-            path: ServicePortalPath.SettingsAccessControl,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    name: defineMessage({
-      id: 'service.portal:actions',
-      defaultMessage: 'Aðgerðir',
-      description: 'Title of the actions category',
-    }),
-    children: [
-      // Fjarmal
-      {
-        name: defineMessage({
-          id: 'service.portal:finance',
-          defaultMessage: 'Fjármál',
-        }),
-        heading: defineMessage({
-          id: 'service.portal:coming-soon',
-          defaultMessage: 'Væntanlegt',
-        }),
-        path: ServicePortalPath.FinanceExternal,
-        external: true,
-        systemRoute: true,
-        icon: {
-          type: 'outline',
-          icon: 'cellular',
-        },
-      },
-
       // Fasteignir
       {
-        name: defineMessage({
-          id: 'service.portal:real-estate',
-          defaultMessage: 'Fasteignir',
-        }),
-        path: ServicePortalPath.RealEstateExternal,
-        external: true,
-        systemRoute: true,
+        name: m.realEstate,
+        path: ServicePortalPath.AssetsRoot,
         icon: {
           type: 'outline',
           icon: 'home',
         },
       },
 
-      // Mín réttindi
+      // Fjarmal
       {
-        name: defineMessage({
-          id: 'service.portal:delegation',
-          defaultMessage: 'Mín réttindi',
-        }),
-        path: ServicePortalPath.MyLicensesRoot,
+        name: m.finance,
+        path: ServicePortalPath.FinanceRoot,
+        children: [
+          {
+            name: m.financeStatus,
+            path: ServicePortalPath.FinanceStatus,
+          },
+          {
+            name: m.financeTransactions,
+            path: ServicePortalPath.FinanceTransactions,
+          },
+          {
+            name: m.financeBills,
+            path: ServicePortalPath.FinanceBills,
+          },
+          {
+            name: m.financeEmployeeClaims,
+            path: ServicePortalPath.FinanceEmployeeClaims,
+          },
+          {
+            name: m.financeLocalTax,
+            path: ServicePortalPath.FinanceLocalTax,
+          },
+        ],
         icon: {
           type: 'outline',
-          icon: 'receipt',
+          icon: 'cellular',
+        },
+      },
+
+      // Ökutæki
+      {
+        name: m.vehicles,
+        path: ServicePortalPath.AssetsVehicles,
+        systemRoute: true,
+        icon: {
+          type: 'outline',
+          icon: 'car',
+        },
+      },
+      // Stillingar - hidden from nav
+      {
+        name: m.settings,
+        navHide: true,
+        children: [
+          {
+            name: m.accessControl,
+            path: ServicePortalPath.SettingsAccessControl,
+          },
+          {
+            name: m.accessControlGrant,
+            path: ServicePortalPath.SettingsAccessControlGrant,
+          },
+          {
+            name: m.accessControlAccess,
+            path: ServicePortalPath.SettingsAccessControlAccess,
+          },
+          {
+            name: m.mySettings,
+            path: ServicePortalPath.SettingsPersonalInformation,
+          },
+          {
+            name: m.email,
+            path: ServicePortalPath.SettingsPersonalInformationEditEmail,
+          },
+          {
+            name: m.phone,
+            path: ServicePortalPath.SettingsPersonalInformationEditPhoneNumber,
+          },
+          {
+            name: m.nudge,
+            path: ServicePortalPath.SettingsPersonalInformationEditNudge,
+          },
+          {
+            name: m.language,
+            path: ServicePortalPath.SettingsPersonalInformationEditLanguage,
+          },
+        ],
+      },
+      // Mín skírteini
+      {
+        name: m.licenses,
+        path: ServicePortalPath.LicensesRoot,
+
+        icon: {
+          type: 'outline',
+          icon: 'wallet',
         },
         children: [
           {
-            name: defineMessage({
-              id: 'service.portal:parentalLeave',
-              defaultMessage: 'Fæðingarorlof',
-            }),
-            path: ServicePortalPath.ParentalLeave,
-          },
-          {
-            name: defineMessage({
-              id: 'service.portal:drivingLicense',
-              defaultMessage: 'Ökuréttindi',
-            }),
-            path: ServicePortalPath.DrivingLicense,
+            navHide: true,
+            name: m.drivingLicense,
+            path: ServicePortalPath.LicensesDrivingDetail,
           },
         ],
       },

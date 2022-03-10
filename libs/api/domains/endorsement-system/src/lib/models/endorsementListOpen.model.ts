@@ -3,15 +3,24 @@ import { EndorsementListOpenTagsEnum } from '../enums/endorsementListOpenTagsEnu
 
 @ObjectType()
 export class EndorsementListOpen {
-  @Field(() => ID)
-  id!: string
+  @Field(() => ID, { nullable: true })
+  id?: string
 
   @Field()
   title!: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   description!: string | null
 
   @Field(() => [EndorsementListOpenTagsEnum], { nullable: true })
   tags?: EndorsementListOpenTagsEnum[]
+
+  @Field(() => Date)
+  closedDate!: Date
+
+  @Field(() => Date)
+  openedDate!: Date
+
+  @Field(() => Boolean)
+  adminLock!: boolean
 }

@@ -2,7 +2,7 @@ import React, { useCallback } from 'react'
 import jsbarcode from 'jsbarcode'
 import cn from 'classnames'
 
-import * as styles from './RenderBarcode.treat'
+import * as styles from './RenderBarcode.css'
 
 interface PropTypes {
   code: string

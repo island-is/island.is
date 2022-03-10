@@ -7,12 +7,13 @@ import {
 } from 'xstate'
 import { AnyEventObject, MachineOptions, StateMachine } from 'xstate/lib/types'
 
-import { Form, FormText, StaticText } from './Form'
+import { FormLoader, FormText, StaticText } from './Form'
 import { Application, ActionCardTag } from './Application'
 
 export type ApplicationRole = 'applicant' | 'assignee' | string
 
 export enum DefaultEvents {
+  PAYMENT = 'PAYMENT',
   APPROVE = 'APPROVE',
   ASSIGN = 'ASSIGN',
   REJECT = 'REJECT',
@@ -32,7 +33,7 @@ export interface RoleInState<T extends EventObject = AnyEventObject> {
   id: ApplicationRole
   read?: ReadWriteValues
   write?: ReadWriteValues
-  formLoader?: () => Promise<Form>
+  formLoader?: FormLoader
   actions?: CallToAction<T>[]
 }
 

@@ -1,15 +1,18 @@
 import {
   HTMLText,
   ISODate,
+  MinistrySlug,
   RegName,
   RegQueryName,
   Regulation,
-  RegulationMinistryList,
   RegulationRedirect,
+  MinistryList,
+  Year,
+} from '@island.is/regulations'
+import {
   RegulationSearchResults,
   RegulationYears,
-  Year,
-} from './regulations.types'
+} from '@island.is/regulations/web'
 
 // Regulation name, need to replace / with - before sending to the api
 export const demoRegName = '0244/2021'.replace('/', '-') as RegQueryName
@@ -19,18 +22,16 @@ export const demoRegulationsYears: RegulationYears = [
   2021 as Year,
 ]
 
-export const demoRegulationsMinistries: RegulationMinistryList = [
+export const demoRegulationsMinistries: MinistryList = [
   {
-    current: true,
     name: 'Forsætisráðuneyti',
     order: 1,
-    slug: 'fsrn',
+    slug: 'fsrn' as MinistrySlug,
   },
   {
-    current: true,
     name: 'Atvinnuvega- og nýsköpunarráðuneyti',
     order: 2,
-    slug: 'avnsrn',
+    slug: 'avnsrn' as MinistrySlug,
   },
 ]
 
@@ -44,11 +45,13 @@ export const demoRegulations: RegulationSearchResults = {
       name: '0244/2021' as RegName,
       title: 'Reglugerð fyrir hafnir Hafnasjóðs Dalvíkurbyggðar.',
       publishedDate: '2021-03-05' as ISODate,
+      ministry: demoRegulationsMinistries[0],
     },
     {
       name: '0245/2021' as RegName,
       title: 'Reglugerð um (1.) breytingu á reglugerð nr. 101/2021.',
       publishedDate: '2021-03-04' as ISODate,
+      ministry: demoRegulationsMinistries[1],
     },
   ],
 }
@@ -73,16 +76,20 @@ export const demoRegulation: Regulation = {
 
   ministry: {
     name: 'Samgöngu- og sveitarstjórnarráðuneyti',
-    slug: 'ssvrn',
-    current: false,
+    slug: 'ssvrn' as MinistrySlug,
   },
   lawChapters: [],
+  originalDoc: 'https://www.stjornartidindi.is/foobar.pdf',
+  pdfVersion: 'https://files.reglugerd.is/pdf/0244-2021/current',
+
+  repealed: false,
 
   // timelineDate: '2021-03-05' as ISODate,
   // showingDiff: {
   //   from: '2021-03-05' as ISODate,
   //   to: '2021-02-18' as ISODate,
   // },
+  // pdfVersion: 'https://files.reglugerd.is/pdf/0244-2021/d/2021-03-05/diff',
 }
 
 export const demoRegulationRedirect: RegulationRedirect = {

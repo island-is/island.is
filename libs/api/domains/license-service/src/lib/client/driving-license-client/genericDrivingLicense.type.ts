@@ -1,6 +1,3 @@
-// Copied from DrivingLicenseResponse and all fields set as optional,
-// since you never know with 3rd party APIs...
-// TODO move to a shared type?
 export interface GenericDrivingLicenseResponse {
   id?: number
   nafn?: string

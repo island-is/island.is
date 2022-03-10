@@ -1,7 +1,6 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useContext, useEffect } from 'react'
 import {
   Text,
-  Icon,
   Box,
   AlertMessage,
   BulletList,
@@ -10,50 +9,39 @@ import {
 } from '@island.is/island-ui/core'
 
 import {
-  FormContentContainer,
-  FormFooter,
-  FormLayout,
+  ContentContainer,
+  Footer,
 } from '@island.is/financial-aid-web/osk/src/components'
-import * as styles from './confirmation.treat'
 import { useRouter } from 'next/router'
 
-import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
-import { NavigationProps } from '@island.is/financial-aid/shared'
+import { getNextPeriod, Routes } from '@island.is/financial-aid/shared/lib'
+import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
+import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const Confirmation = () => {
   const router = useRouter()
+  const { form } = useContext(FormContext)
+  const { municipality, user } = useContext(AppContext)
 
-  const [accept, setAccept] = useState(false)
-  const [error, setError] = useState(false)
+  const applicationId = form.applicationId || user?.currentApplicationId
 
-  const navigation: NavigationProps = useFormNavigation(
-    router.pathname,
-  ) as NavigationProps
+  const logOut = useLogOut()
 
   const nextSteps = [
-    'Fjölskylduþjónusta Hafnarfjarðar vinnur úr umsókninni. Afgreiðsla umsóknarinnar tekur 1–3 virka daga.',
-    'Staðfesting verður send á þig í tölvupósti og í þitt pósthólf á Ísland.is',
-    'Ef þörf er á frekari upplýsingum eða gögnum mun fjölskylduþjónusta Hafnarfjarðar hafa samband.',
-  ]
-
-  const otherOptions = [
-    {
-      text: 'Upplýsingar um fjárhagsaðstoð',
-      url: '/',
-    },
-    {
-      text: 'Hafðu samband',
-      url: '/',
-    },
+    'Vinnsluaðili sveitarfélagsins vinnur úr umsókninni. Umsóknin verður afgreidd eins fljótt og auðið er.',
+    `Ef umsóknin er samþykkt getur þú reiknað með útgreiðslu í byrjun ${getNextPeriod.month}.`,
+    'Ef þörf er á frekari upplýsingum eða gögnum til að vinna úr umsókninni mun vinnsluaðili sveitarfélagsins hafa samband.',
   ]
 
   useEffect(() => {
+    window.scrollTo(0, 0)
     document.title = 'Umsókn um fjárhagsaðstoð'
   }, [])
 
   return (
-    <FormLayout activeSection={navigation?.activeSectionIndex}>
-      <FormContentContainer>
+    <>
+      <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 5]}>
           Staðfesting
         </Text>
@@ -61,7 +49,7 @@ const Confirmation = () => {
         <Box marginBottom={[4, 4, 5]}>
           <AlertMessage
             type="success"
-            title="Umsókn þín um fjárhagsaðstoð hjá Hafnarfirði er móttekin"
+            title="Umsókn þín um fjárhagsaðstoð er móttekin"
           />
         </Box>
 
@@ -80,37 +68,52 @@ const Confirmation = () => {
           Frekari aðgerðir í boði
         </Text>
         <Box marginBottom={[4, 4, 5]}>
-          <BulletList type={'ul'} space={2}>
-            {otherOptions.map((item, index) => {
-              return (
-                <Bullet key={'options-' + index}>
-                  <Button
-                    colorScheme="default"
-                    iconType="filled"
-                    onClick={() => router.push(item.url)}
-                    preTextIconType="filled"
-                    size="default"
-                    type="button"
-                    variant="text"
-                  >
-                    {item.text}
-                  </Button>
-                </Bullet>
-              )
-            })}
-          </BulletList>
-        </Box>
-      </FormContentContainer>
+          {applicationId && (
+            <Box marginBottom={3}>
+              <Button
+                icon="open"
+                colorScheme="default"
+                iconType="outline"
+                onClick={() =>
+                  router.push(Routes.statusPage(applicationId as string))
+                }
+                preTextIconType="filled"
+                size="small"
+                type="button"
+                variant="text"
+              >
+                Sjá stöðu umsóknar
+              </Button>
+            </Box>
+          )}
 
-      <FormFooter
+          {municipality?.rulesHomepage && (
+            <Box marginBottom={3}>
+              <Button
+                icon="open"
+                colorScheme="default"
+                iconType="outline"
+                preTextIconType="filled"
+                size="small"
+                onClick={() => {
+                  window.open(municipality.rulesHomepage, '_ blank')
+                }}
+                type="button"
+                variant="text"
+              >
+                Reglur um fjárhagsaðstoð
+              </Button>
+            </Box>
+          )}
+        </Box>
+      </ContentContainer>
+      <Footer
         hidePreviousButton={true}
-        nextButtonText="Sjá stöðu umsóknar"
-        nextButtonIcon="open"
-        onNextButtonClick={() => {
-          router.push(navigation?.nextUrl ?? '/umsokn')
-        }}
+        nextButtonText={'Loka'}
+        nextButtonIcon={'close'}
+        onNextButtonClick={() => logOut()}
       />
-    </FormLayout>
+    </>
   )
 }
 

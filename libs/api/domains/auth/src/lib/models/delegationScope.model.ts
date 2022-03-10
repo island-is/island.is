@@ -12,7 +12,7 @@ export class DelegationScope {
   @Field(() => String)
   name!: string
 
-  @Field((_) => ScopeType)
+  @Field(() => ScopeType)
   type!: ScopeType
 
   @Field(() => String)

@@ -1,12 +1,12 @@
 import { Test } from '@nestjs/testing'
 import { FileService } from './file.service'
 import { SigningModule, SigningService } from '@island.is/dokobit-signing'
-import { AwsService } from './aws.service'
+import { AwsService } from '@island.is/nest/aws'
 import * as pdf from './pdfGenerators'
-import { Application } from './../application.model'
+import { Application } from '@island.is/application/api/core'
 import { ApplicationTypes, PdfTypes } from '@island.is/application/core'
 import { LoggingModule } from '@island.is/logging'
-import { NotFoundException, BadRequestException } from '@nestjs/common'
+import { NotFoundException } from '@nestjs/common'
 import {
   APPLICATION_CONFIG,
   ApplicationConfig,
@@ -87,7 +87,7 @@ describe('FileService', () => {
         nationalRegistry: {
           data: { ...parentA },
           status: 'success',
-          date: new Date(),
+          date: new Date().toISOString(),
         },
       },
     } as unknown) as Application)
@@ -115,9 +115,11 @@ describe('FileService', () => {
       .spyOn(awsService, 'getFile')
       .mockImplementation(() => Promise.resolve({ Body: 'body' }))
 
+    jest.spyOn(awsService, 'fileExists').mockResolvedValue(false)
+
     jest
       .spyOn(awsService, 'uploadFile')
-      .mockImplementation(() => Promise.resolve())
+      .mockImplementation(() => Promise.resolve('url'))
 
     jest
       .spyOn(awsService, 'getPresignedUrl')
@@ -156,6 +158,11 @@ describe('FileService', () => {
       Buffer.from('buffer'),
       bucket,
       fileName,
+      {
+        ContentEncoding: 'base64',
+        ContentDisposition: 'inline',
+        ContentType: 'application/pdf',
+      },
     )
 
     expect(awsService.getPresignedUrl).toHaveBeenCalledWith(bucket, fileName)
@@ -192,34 +199,6 @@ describe('FileService', () => {
     )
   })
 
-  it('should throw error for request file signature since phone number is missing', async () => {
-    const application = createApplication({
-      useMocks: 'no',
-      selectedChildren: [child.nationalId],
-      parentA: {},
-      parentB: {
-        email: parentBWithContactInfo.email,
-        phoneNumber: parentBWithContactInfo.phoneNumber,
-      },
-      expiry: 'permanent',
-    })
-
-    const act = async () =>
-      await service.requestFileSignature(
-        application,
-        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
-      )
-
-    expect(act).rejects.toThrowError(NotFoundException)
-
-    expect(awsService.getFile).toHaveBeenCalledWith(
-      bucket,
-      `children-residence-change/${applicationId}.pdf`,
-    )
-
-    expect(signingService.requestSignature).not.toHaveBeenCalled()
-  })
-
   it('should throw error for request file signature since file content is missing', async () => {
     const application = createApplication()
 
@@ -233,7 +212,7 @@ describe('FileService', () => {
         PdfTypes.CHILDREN_RESIDENCE_CHANGE,
       )
 
-    expect(act).rejects.toThrowError(NotFoundException)
+    await expect(act).rejects.toThrowError(NotFoundException)
 
     expect(awsService.getFile).toHaveBeenCalledWith(
       bucket,
@@ -249,7 +228,9 @@ describe('FileService', () => {
     const act = async () =>
       await service.generatePdf(application, PdfTypes.CHILDREN_RESIDENCE_CHANGE)
 
-    expect(act).rejects.toEqual(BadRequestException)
+    await expect(act).rejects.toThrow(
+      'Application type is not supported in file service.',
+    )
   })
 
   it('should have an application type that is valid for generatePdf', async () => {
@@ -283,7 +264,9 @@ describe('FileService', () => {
         PdfTypes.CHILDREN_RESIDENCE_CHANGE,
       )
 
-    expect(act).rejects.toEqual(BadRequestException)
+    await expect(act).rejects.toThrow(
+      'Application type is not supported in file service.',
+    )
   })
 
   it('should have an application type that is valid for uploadSignedFile', async () => {
@@ -296,7 +279,7 @@ describe('FileService', () => {
         PdfTypes.CHILDREN_RESIDENCE_CHANGE,
       )
 
-    expect(act).not.toThrow()
+    await expect(act).resolves
   })
 
   it('should throw error for requestFileSignature since application type is not supported', async () => {
@@ -308,7 +291,9 @@ describe('FileService', () => {
         PdfTypes.CHILDREN_RESIDENCE_CHANGE,
       )
 
-    expect(act).rejects.toEqual(BadRequestException)
+    await expect(act).rejects.toThrow(
+      'Application type is not supported in file service.',
+    )
   })
 
   it('should have an application type that is valid for requestFileSignature', async () => {
@@ -320,7 +305,7 @@ describe('FileService', () => {
         PdfTypes.CHILDREN_RESIDENCE_CHANGE,
       )
 
-    expect(act).not.toThrow()
+    await expect(act).resolves
   })
 
   it('should throw error for getPresignedUrl since application type is not supported', async () => {
@@ -332,18 +317,8 @@ describe('FileService', () => {
         PdfTypes.CHILDREN_RESIDENCE_CHANGE,
       )
 
-    expect(act).rejects.toEqual(BadRequestException)
-  })
-
-  it('should have an application type that is valid for getPresignedUrl', async () => {
-    const application = createApplication()
-
-    const act = async () =>
-      await service.getPresignedUrl(
-        application,
-        PdfTypes.CHILDREN_RESIDENCE_CHANGE,
-      )
-
-    expect(act).rejects.toEqual(BadRequestException)
+    await expect(act).rejects.toThrow(
+      'Application type is not supported in file service.',
+    )
   })
 })

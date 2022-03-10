@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { withDesign } from 'storybook-addon-designs'
 
 import { withFigma } from '../../utils/withFigma'
 import { InputFileUpload, fileToObject, UploadFile } from './InputFileUpload'
@@ -9,7 +8,6 @@ import { ContentBlock } from '../ContentBlock/ContentBlock'
 export default {
   title: 'Form/InputFileUpload',
   component: InputFileUpload,
-  decorators: [withDesign],
   parameters: withFigma('InputFileUpload'),
 }
 
@@ -134,6 +132,24 @@ export const Default = () => {
           onChange={onChange}
           onRemove={remove}
           errorMessage={state.length > 0 ? error : undefined}
+        />
+      </Box>
+    </ContentBlock>
+  )
+}
+
+export const Disabled = () => {
+  return (
+    <ContentBlock>
+      <Box padding={[2, 2, 3]} background="blue100">
+        <InputFileUpload
+          fileList={[]}
+          header="Drag documents here to upload"
+          description="Documents accepted with extension: .pdf, .docx, .rtf"
+          buttonLabel="Select documents to upload"
+          onChange={() => {}}
+          onRemove={() => {}}
+          disabled
         />
       </Box>
     </ContentBlock>

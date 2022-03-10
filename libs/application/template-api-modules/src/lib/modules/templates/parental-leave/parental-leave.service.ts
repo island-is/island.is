@@ -14,6 +14,7 @@ import {
   getAvailableRightsInDays,
   getAvailablePersonalRightsInDays,
   YES,
+  StartDateOptions,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -23,14 +24,24 @@ import {
   generateAssignEmployerApplicationEmail,
   generateOtherParentRejected,
   generateApplicationApprovedByEmployerEmail,
+  generateApplicationApprovedByEmployerToEmployerEmail,
 } from './emailGenerators'
 import {
-  getEmployer,
   transformApplicationToParentalLeaveDTO,
+  getRatio,
 } from './parental-leave.utils'
 import { apiConstants } from './constants'
 
+interface VMSTError {
+  type: string
+  title: string
+  status: number
+  traceId: string
+  errors: Record<string, string[]>
+}
+
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
+const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
 const df = 'yyyy-MM-dd'
 
 @Injectable()
@@ -44,6 +55,16 @@ export class ParentalLeaveService {
     @Inject(APPLICATION_ATTACHMENT_BUCKET)
     private readonly attachmentBucket: string,
   ) {}
+
+  private parseErrors(e: Error | VMSTError) {
+    if (e instanceof Error) {
+      return e.message
+    }
+
+    return {
+      message: Object.entries(e.errors).map(([, values]) => values.join(', ')),
+    }
+  }
 
   async assignOtherParent({ application }: TemplateApiModuleActionProps) {
     await this.sharedTemplateAPIService.sendEmail(
@@ -65,6 +86,7 @@ export class ParentalLeaveService {
     await this.sharedTemplateAPIService.assignApplicationThroughEmail(
       generateAssignEmployerApplicationEmail,
       application,
+      SIX_MONTHS_IN_SECONDS_EXPIRES,
     )
   }
 
@@ -111,9 +133,11 @@ export class ParentalLeaveService {
     application: Application,
     nationalRegistryId: string,
   ): Promise<Period[]> {
-    const { periods: originalPeriods } = getApplicationAnswers(
-      application.answers,
-    )
+    const {
+      periods: originalPeriods,
+      firstPeriodStart,
+    } = getApplicationAnswers(application.answers)
+
     const answers = cloneDeep(originalPeriods).sort((a, b) => {
       const dateA = new Date(a.startDate)
       const dateB = new Date(b.startDate)
@@ -122,27 +146,44 @@ export class ParentalLeaveService {
     })
 
     const periods: Period[] = []
-
     const maximumDaysToSpend = getAvailableRightsInDays(application)
     const maximumPersonalDaysToSpend = getAvailablePersonalRightsInDays(
       application,
     )
+    const isActualDateOfBirth =
+      firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH
     let numberOfDaysAlreadySpent = 0
 
-    for (const period of answers) {
-      const startDate = new Date(period.startDate)
-      const endDate = new Date(period.endDate)
-      const getPeriodLength = await this.parentalLeaveApi.parentalLeaveGetPeriodLength(
-        { nationalRegistryId, startDate, endDate, percentage: period.ratio },
-      )
+    for (const [index, period] of answers.entries()) {
+      const isFirstPeriod = index === 0
+      const isUsingNumberOfDays = period.daysToUse !== undefined
 
-      if (getPeriodLength.periodLength === undefined) {
-        throw new Error(
-          `Could not calculate length of period from ${period.startDate} to ${period.endDate}`,
-        )
+      // If a period doesn't have both startDate or endDate we skip it
+      if (!isFirstPeriod && (!period.startDate || !period.endDate)) {
+        continue
       }
 
-      const periodLength = Number(getPeriodLength.periodLength ?? 0)
+      const startDate = new Date(period.startDate)
+      const endDate = new Date(period.endDate)
+
+      let periodLength = 0
+
+      if (isUsingNumberOfDays) {
+        periodLength = Number(period.daysToUse)
+      } else {
+        const getPeriodLength = await this.parentalLeaveApi.parentalLeaveGetPeriodLength(
+          { nationalRegistryId, startDate, endDate, percentage: period.ratio },
+        )
+
+        if (getPeriodLength.periodLength === undefined) {
+          throw new Error(
+            `Could not calculate length of period from ${period.startDate} to ${period.endDate}`,
+          )
+        }
+
+        periodLength = Number(getPeriodLength.periodLength ?? 0)
+      }
+
       const numberOfDaysSpentAfterPeriod =
         numberOfDaysAlreadySpent + periodLength
 
@@ -163,9 +204,16 @@ export class ParentalLeaveService {
       ) {
         // We know its a normal period and it will not exceed personal rights
         periods.push({
-          from: period.startDate,
+          from:
+            isFirstPeriod && isActualDateOfBirth
+              ? apiConstants.actualDateOfBirth
+              : period.startDate,
           to: period.endDate,
-          ratio: Number(period.ratio),
+          ratio: getRatio(
+            period.ratio,
+            periodLength.toString(),
+            isUsingNumberOfDays,
+          ),
           approved: false,
           paid: false,
           rightsCodePeriod: null,
@@ -173,9 +221,16 @@ export class ParentalLeaveService {
       } else if (isUsingTransferredRights) {
         // We know all of the period will be using transferred rights
         periods.push({
-          from: period.startDate,
+          from:
+            isFirstPeriod && isActualDateOfBirth
+              ? apiConstants.actualDateOfBirth
+              : period.startDate,
           to: period.endDate,
-          ratio: Number(period.ratio),
+          ratio: getRatio(
+            period.ratio,
+            periodLength.toString(),
+            isUsingNumberOfDays,
+          ),
           approved: false,
           paid: false,
           rightsCodePeriod: apiConstants.rights.receivingRightsId,
@@ -204,9 +259,16 @@ export class ParentalLeaveService {
 
         // Add the period using personal rights
         periods.push({
-          from: period.startDate,
+          from:
+            isFirstPeriod && isActualDateOfBirth
+              ? apiConstants.actualDateOfBirth
+              : period.startDate,
           to: format(getNormalPeriodEndDate.periodEndDate, df),
-          ratio: Number(period.ratio),
+          ratio: getRatio(
+            period.ratio,
+            daysLeftOfPersonalRights.toString(),
+            isUsingNumberOfDays,
+          ),
           approved: false,
           paid: false,
           rightsCodePeriod: null,
@@ -238,7 +300,11 @@ export class ParentalLeaveService {
         periods.push({
           from: format(transferredPeriodStartDate, df),
           to: format(getTransferredPeriodEndDate.periodEndDate, df),
-          ratio: Number(period.ratio),
+          ratio: getRatio(
+            period.ratio,
+            lengthOfPeriodUsingTransferredDays.toString(),
+            isUsingNumberOfDays,
+          ),
           approved: false,
           paid: false,
           rightsCodePeriod: apiConstants.rights.receivingRightsId,
@@ -253,6 +319,7 @@ export class ParentalLeaveService {
   }
 
   async sendApplication({ application }: TemplateApiModuleActionProps) {
+    const { isSelfEmployed } = getApplicationAnswers(application.answers)
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)
 
@@ -276,25 +343,32 @@ export class ParentalLeaveService {
       )
 
       if (!response.id) {
-        throw new Error(`Failed to send application: ${response.status}`)
+        throw new Error(
+          `Failed to send the parental leave application, no response.id from VMST API: ${response}`,
+        )
       }
 
-      const employer = getEmployer(application)
-      const isEmployed = employer.nationalRegistryId !== application.applicant
+      const selfEmployed = isSelfEmployed === YES
 
-      if (isEmployed) {
+      if (!selfEmployed) {
         // Only needs to send an email if being approved by employer
-        // If self employed applicant was aware of the approval
+        // Self employed applicant was aware of the approval
         await this.sharedTemplateAPIService.sendEmail(
           generateApplicationApprovedByEmployerEmail,
+          application,
+        )
+
+        // Also send confirmation to employer
+        await this.sharedTemplateAPIService.sendEmail(
+          generateApplicationApprovedByEmployerToEmployerEmail,
           application,
         )
       }
 
       return response
     } catch (e) {
-      this.logger.error('Failed to send application', e)
-      throw e
+      this.logger.error('Failed to send the parental leave application', e)
+      throw this.parseErrors(e)
     }
   }
 }

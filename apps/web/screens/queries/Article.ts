@@ -37,6 +37,9 @@ export const GET_ARTICLE_QUERY = gql`
           content {
             ...HtmlFields
           }
+          serviceWebContent {
+            ...HtmlFields
+          }
           link {
             text
             url
@@ -83,12 +86,33 @@ export const GET_ARTICLE_QUERY = gql`
         url
       }
       subArticles {
+        id
         title
         slug
         body {
           ...AllSlices
         }
         showTableOfContents
+        stepper {
+          id
+          title
+          steps {
+            id
+            title
+            slug
+            stepType
+            subtitle {
+              ...HtmlFields
+            }
+            text {
+              ...HtmlFields
+            }
+            isAnswer
+            options
+            config
+          }
+          config
+        }
       }
       featuredImage {
         url
@@ -104,7 +128,15 @@ export const GET_ARTICLE_QUERY = gql`
 export const GET_CONTENT_SLUG = gql`
   query GetContentSlug($input: GetContentSlugInput!) {
     getContentSlug(input: $input) {
-      slug
+      id
+      title {
+        en
+        is
+      }
+      slug {
+        en
+        is
+      }
       type
     }
   }

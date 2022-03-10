@@ -4,7 +4,7 @@ import { Request } from 'express'
 import { Injectable, Inject } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 
-import { User } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { Credentials } from './auth.types'
 import { cookieExtractor } from './cookieExtractor'

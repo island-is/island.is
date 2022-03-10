@@ -5,7 +5,7 @@ import { TagVariant } from '../Tag/Tag'
 import { Box } from '../Box/Box'
 import { Colors } from '@island.is/island-ui/theme'
 import cn from 'classnames'
-import * as styles from './Breadcrumbs.treat'
+import * as styles from './Breadcrumbs.css'
 
 export interface BreadCrumbItem {
   title: string

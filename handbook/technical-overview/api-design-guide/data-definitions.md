@@ -10,63 +10,6 @@ Primitive values MUST be serialized to JSON following the rules of [RFC8259](htt
 
 JSON can represent four primitive types _strings_, _numbers_, _booleans_, and _null_ and two structured types _objects_ and _arrays_. Concepts like [Date and Time](data-definitions.md#date-and-time) need to be represented using these types.
 
-## Data transfer objects
-
-Data transfer objects, or DTOs, are objects used to wrap resource definitions in request/response objects along with additional information.
-
-In a response body, you should return a JSON object, not an array, as a top level data structure to support future extensibility. This would allow you to extend your response and, for example, add a server side pagination attribute.
-
-**Bad response body**
-
-```text
-[
-  { "id": "1", "name": "Einar"   },
-  { "id": "2", "name": "Erlendur"},
-  { "id": "3", "name": "Valdimar"}
-]
-```
-
-**Good response body**
-
-```text
-{
-  "users":[
-    { "id": "1001", "name": "Einar"},
-    { "id": "1002", "name": "Erlendur"},
-    { "id": "1003", "name": "Valdimar"},
-  ]
-}
-
-// With pagination fields
-{
-  "users":[
-    { "id": "1001", "name": "Einar"},
-    { "id": "1002", "name": "Erlendur"},
-    { "id": "1003", "name": "Valdimar"},
-  ],
-  "nextCursor": "aWQ6MTAwNA==",
-}
-```
-
-## Pagination
-
-All services should support pagination from the start, even though the dataset is small. It is harder to add it later on as it would break the service interface for current users.
-
-Pagination should be implemented using _Cursor_. Cursor pagination solves the missing or duplication of data problems that the typical offset method has. Cursor pagination returns a cursor in the response, which is a pointer to a specific item in the dataset. This pointer needs to be a unique sequential field (or fields).
-
-When implementing cursor pagination a field called `nextCursor` is returned in the response object. This field is a Base64 encoded string. Having it encoded makes it uniform while providing flexibility to implement different cursor logic between different endpoints. In the example above the `nextCursor` field is a Base64 encoding the value `id:1004`, meaning the server is using the `id` field of the user object as a pointer to next item.
-
-To indicate there are no more results the value of `nextCursor` is set to the empty string: `"nextCursor": ""`.
-
-Optionally, an API can also provide the field `totalCount` to indicate to the client how many results are available.
-
-### Pagination query parameters
-
-For an API to support pagination it needs to support the following query parameters:
-
-- `cursor` - The client provides the value of `nextCursor` from the previous response to set the start of next page of results.
-- `limit` - Limits the number of results in a request. The server should have a default value for this field.
-
 ## National identifier
 
 Icelandic individuals are uniquely identified by a national identifier called `kennitala`. When referring to this identifier in URIs, requests, or responses, APIs should use the name `nationalId`. Its value is usually represented to users in the form `######-####` but APIs should use the form `##########` at all times.

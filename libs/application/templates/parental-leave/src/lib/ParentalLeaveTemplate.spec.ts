@@ -8,14 +8,34 @@ import {
   ApplicationStatus,
 } from '@island.is/application/core'
 import ParentalLeaveTemplate from './ParentalLeaveTemplate'
-import { States as ApplicationStates } from '../constants'
+import { SPOUSE, States as ApplicationStates, YES } from '../constants'
 
 function buildApplication(data: {
   answers?: FormValue
   externalData?: ExternalData
   state?: string
 }): Application {
-  const { answers = {}, externalData = {}, state = 'draft' } = data
+  const {
+    answers = {},
+    externalData = {
+      children: {
+        data: {
+          children: [
+            {
+              hasRights: true,
+              remainingDays: 180,
+              parentalRelation: 'primary',
+              expectedDateOfBirth: '2022-10-31',
+            },
+          ],
+          existingApplications: [],
+        },
+        date: new Date('2021-10-31'),
+        status: 'success',
+      },
+    },
+    state = 'draft',
+  } = data
 
   return {
     id: '12345',
@@ -43,6 +63,7 @@ describe('Parental Leave Application Template', () => {
               isRequestingRights: 'yes',
             },
             otherParentId,
+            selectedChild: '0',
           },
         }),
         ParentalLeaveTemplate,
@@ -84,6 +105,7 @@ describe('Parental Leave Application Template', () => {
       const otherParentId = '0987654321'
       const helper = new ApplicationTemplateHelper(
         buildApplication({
+          state: 'draft',
           answers: {
             requestRights: {
               isRequestingRights: 'yes',
@@ -92,6 +114,7 @@ describe('Parental Leave Application Template', () => {
             employer: {
               isSelfEmployed: 'no',
             },
+            selectedChild: '0',
           },
         }),
         ParentalLeaveTemplate,
@@ -131,6 +154,7 @@ describe('Parental Leave Application Template', () => {
             employer: {
               isSelfEmployed: 'yes',
             },
+            selectedChild: '0',
           },
         }),
         ParentalLeaveTemplate,
@@ -156,6 +180,44 @@ describe('Parental Leave Application Template', () => {
       expect(hasChangedAgain).toBe(true)
       expect(finalState).toBe('vinnumalastofnunApproval')
       expect(finalApplication.assignees).toEqual([])
+    })
+
+    describe('other parent', () => {
+      describe('when spouse is selected', () => {
+        it('should assign their national registry id from external data to answers.otherParentId when transitioning from draft', () => {
+          const otherParentId = '1234567890'
+          const helper = new ApplicationTemplateHelper(
+            buildApplication({
+              externalData: {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                person: {
+                  data: {
+                    spouse: {
+                      nationalId: otherParentId,
+                      name: 'Tester Testerson',
+                    },
+                  },
+                },
+              },
+              answers: {
+                otherParent: SPOUSE,
+                employer: {
+                  email: 'selfemployed@test.test',
+                  isSelfEmployed: YES,
+                },
+              },
+            }),
+            ParentalLeaveTemplate,
+          )
+          const [hasChanged, newState, newApplication] = helper.changeState({
+            type: DefaultEvents.SUBMIT,
+          })
+          expect(hasChanged).toBe(true)
+          expect(newState).toBe('vinnumalastofnunApproval')
+          expect(newApplication.answers.otherParentId).toEqual(otherParentId)
+        })
+      })
     })
   })
 

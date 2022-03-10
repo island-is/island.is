@@ -1,6 +1,5 @@
 import { useQuery } from '@apollo/client'
-import { dynamicColor, Header, Loader } from '@island.is/island-ui-native'
-import { theme } from '@island.is/island-ui/theme'
+import { theme, dynamicColor, Header, Loader } from '@island.is/island-ui-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
 import { Animated, Platform, StyleSheet, View } from 'react-native'

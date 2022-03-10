@@ -30,6 +30,10 @@ If you want to contribute to the repository, please make sure to follow [this gu
 - You have [Java](https://www.java.com/en/download/manual.jsp) `>= 1.8` installed (for schema generation).
 - Run `yarn` to install the dependencies.
 
+{% hint style="info" %}
+If you are running on Windows we recommend using [Docker and WSL2](https://docs.docker.com/desktop/windows/wsl/)
+{% endhint %}
+
 ### For fetching secrets
 
 - You have [AWS command line tools v2](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) installed.
@@ -133,11 +137,7 @@ To do so, you can run for example:
 ./scripts/run-db-proxy.sh
 ```
 
-It will try to get your AWS credentials from your environment variables and from your `~/.aws/credentials` file. We're currently not able to get AWS credentials from an AWS profile configured using AWS SSO. You will need to visit your AWS account and export the credentials manually or add them to your `~/.aws/credentials` file. You can find more instructions [here](handbook/repository/aws-secrets.md#using-aws-session).
-
-{% hint style="info" %}
-You will be able to find the credentials needed to open the development services on your AWS account.
-{% endhint %}
+It will try to get your AWS credentials from your environment variables and from your `~/.aws/credentials` file. You can find more instructions [here](handbook/repository/aws-secrets.md#using-aws-session).
 
 {% hint style="info" %}
 If you want to run your app against one of this service (e.g. `db`), you may need to edit your app environment or sequelize config to pass the proxy credentials.
@@ -152,7 +152,7 @@ The following services will run on the associated ports: `db:5432`, `es:9200`, `
 To be able to access environment variables in purely static projects, you need to do the following:
 
 1. In the index.html file, add `<!-- environment placeholder -->`.
-2. Use the `getStaticEnv` function from the `@island.is/utils/environment`
+2. Use the `getStaticEnv` function from the `@island.is/shared/utils`
    library to fetch your environment variables.
 3. Prefix your environment variables with `SI_PUBLIC_`, for example
    `SI_PUBLIC_MY_VARIABLE`.

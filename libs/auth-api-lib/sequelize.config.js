@@ -1,12 +1,12 @@
 /* eslint-env node */
 module.exports = {
   development: {
-    username: 'dev_db',
-    password: 'dev_db',
-    database: 'dev_db',
+    username: process.env.DB_USER ?? 'dev_db',
+    password: process.env.DB_PASS ?? 'dev_db',
+    database: process.env.DB_NAME ?? 'dev_db',
     host: 'localhost',
     dialect: 'postgres',
-    port: 5433,
+    port: process.env.DB_PORT ?? 5433,
     seederStorage: 'sequelize',
   },
   test: {
@@ -15,13 +15,26 @@ module.exports = {
     database: 'test_db',
     host: process.env.DB_HOST,
     dialect: 'postgres',
+    port: process.env.PORT,
     seederStorage: 'sequelize',
   },
   production: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST,
+    replication: {
+      read: [
+        {
+          host: process.env.DB_REPLICAS_HOST,
+          username: process.env.DB_USER,
+          password: process.env.DB_PASS,
+          database: process.env.DB_NAME,
+        },
+      ],
+      write: {
+        host: process.env.DB_HOST,
+        username: process.env.DB_USER,
+        password: process.env.DB_PASS,
+        database: process.env.DB_NAME,
+      },
+    },
     dialect: 'postgres',
     seederStorage: 'sequelize',
   },

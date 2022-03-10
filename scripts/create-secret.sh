@@ -9,13 +9,12 @@ GREEN=$'\e[1;32m'
 YELLOW=$'\e[1;33m'
 RESET=$'\x1b[0m'
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-
 # Parameter store prefix
 SSM_PREFIX="/k8s/"
 
 # Minimum length
-MIN_LENGTH="{6,128}"
+MIN_LENGTH="6"
+MAX_LENGTH="128"
 
 # Secret name can only be alphanumeric and dash
 ALPHANUMERIC_DASH="^[a-zA-Z0-9\//_-]"
@@ -33,11 +32,6 @@ HAS_SLASH_END="[^\/]"
 __error_exit () {
   # printf "${RED}[ERROR]: $*${NOSTYLE}" >&2; exit 1;
   printf "%s[ERROR]: $*%s" "$RED" "$RESET" >&2; exit 1;
-}
-
-die () {
-  printf >&2 "$@"
-  exit 1
 }
 
 error_empty () {
@@ -60,7 +54,7 @@ validate_whitespace () {
     error_empty
   fi
   # No whitespace
-  if [[ $1 = $ILLEGAL_CHARS ]]
+  if [[ $1 = "$ILLEGAL_CHARS" ]]
   then
     printf "%sWhitespaces are not allowed%s\n" "$RED" "$RESET"
     exit 0
@@ -89,12 +83,12 @@ validate_length () {
   fi
 
   # Validate minimum length
-  if [[ $1 =~ $ALPHANUMERIC_DASH$MIN_LENGTH ]]
+  if ((${#1} < MIN_LENGTH || ${#1} > MAX_LENGTH))
   then
-    printf "%sLength: Ok! %s\n" "$GREEN" "$RESET"
-  else
-    printf "%sTo short, should be 6-256 characters long.%s\n" "$RED" "$RESET"
+    printf "%sToo short, should be 6-256 characters long.%s\n" "$RED" "$RESET"
     exit 0
+  else
+    printf "%sLength: Ok! %s\n" "$GREEN" "$RESET"
   fi
 }
 

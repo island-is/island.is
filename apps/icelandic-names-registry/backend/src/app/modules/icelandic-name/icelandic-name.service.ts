@@ -53,7 +53,7 @@ export class IcelandicNameService {
     })
   }
 
-  getById(id: number): Promise<IcelandicName> {
+  getById(id: number): Promise<IcelandicName | null> {
     this.logger.debug(`Getting name by id: ${id}`)
 
     return this.icelandicNameModel.findOne({

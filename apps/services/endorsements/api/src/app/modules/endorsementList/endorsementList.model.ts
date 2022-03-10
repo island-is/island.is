@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, OmitType } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
@@ -8,10 +8,9 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { Endorsement } from '../endorsement/endorsement.model'
-import { EndorsementMetaField } from '../endorsementMetadata/types'
-import { ValidationRuleDto } from './dto/validationRule.dto'
+import { Endorsement } from '../endorsement/models/endorsement.model'
 import { EndorsementTag } from './constants'
+import { EndorsementMetadataDto } from './dto/endorsementMetadata.dto'
 
 @Table({
   tableName: 'endorsement_list',
@@ -24,6 +23,13 @@ export class EndorsementList extends Model<EndorsementList> {
     defaultValue: DataType.UUIDV4,
   })
   id!: string
+
+  @ApiProperty()
+  @Column({
+    type: DataType.NUMBER,
+    allowNull: true,
+  })
+  counter!: number
 
   @ApiProperty()
   @Column({
@@ -42,19 +48,29 @@ export class EndorsementList extends Model<EndorsementList> {
   description!: string | null
 
   @ApiProperty({
-    type: String,
-    nullable: true,
+    type: Date,
+    nullable: false,
   })
   @Column({
     type: DataType.DATE,
   })
-  closedDate!: Date | null
+  openedDate!: Date
 
-  @ApiProperty({ enum: EndorsementMetaField, isArray: true })
-  @Column({
-    type: DataType.ARRAY(DataType.STRING),
+  @ApiProperty({
+    type: Date,
+    nullable: false,
   })
-  endorsementMeta!: EndorsementMetaField[]
+  @Column({
+    type: DataType.DATE,
+  })
+  closedDate!: Date
+
+  @ApiProperty({ type: [EndorsementMetadataDto] })
+  @Column({
+    type: DataType.JSONB,
+    defaultValue: '[]',
+  })
+  endorsementMetadata!: EndorsementMetadataDto[]
 
   @ApiProperty({ enum: EndorsementTag, isArray: true })
   @Column({
@@ -62,19 +78,19 @@ export class EndorsementList extends Model<EndorsementList> {
   })
   tags!: EndorsementTag[]
 
-  @ApiProperty({ type: [ValidationRuleDto] })
-  @Column({
-    type: DataType.JSONB,
-    defaultValue: '[]',
-  })
-  validationRules!: ValidationRuleDto[]
-
   @ApiProperty()
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   owner!: string
+
+  @ApiProperty()
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  adminLock!: boolean
 
   @ApiProperty({ type: () => [Endorsement], required: false })
   @HasMany(() => Endorsement)

@@ -1,7 +1,7 @@
 import React, { ReactNode, useContext } from 'react'
 import { RadioButton, Box } from '@island.is/island-ui/core'
 import cn from 'classnames'
-import * as styles from './RadioButtonContainer.treat'
+import * as styles from './RadioButtonContainer.css'
 
 interface RadioContainerProps {
   className?: string
@@ -16,13 +16,13 @@ interface RadioContainerProps {
   isChecked?: any
 }
 
-const RadioButtonContainer: React.FC<RadioContainerProps> = ({
+const RadioButtonContainer = ({
   options,
   className,
   error,
   onChange,
   isChecked,
-}) => {
+}: RadioContainerProps) => {
   return options ? (
     <Box
       marginBottom={[1, 1, 2]}
@@ -49,7 +49,6 @@ const RadioButtonContainer: React.FC<RadioContainerProps> = ({
                 onChange(item.value)
               }}
               large
-              filled
             />
           </Box>
         )

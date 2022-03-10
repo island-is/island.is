@@ -10,7 +10,10 @@ import {
 import type { FundingGovernmentProjectsConfig } from './config/fundingFovernmentProjectsConfig'
 import { FUNDING_GOVERNMENT_PROJECTS_CONFIG } from './config/fundingFovernmentProjectsConfig'
 import { FileStorageService } from '@island.is/file-storage'
-import { Application, getValueViaPath } from '@island.is/application/core'
+import {
+  ApplicationWithAttachments as Application,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { FundingAttachment } from './types'
 
 @Injectable()
@@ -58,20 +61,20 @@ export class FundingGovernmentProjectsService {
       application.answers,
       'project.attachments',
     ) as Array<{ key: string; name: string }>
-    const hasattachments = attachments && attachments?.length > 0
-    if (!hasattachments) {
+    const hasAttachments = attachments && attachments?.length > 0
+
+    if (!hasAttachments) {
       return []
     }
 
-    return Promise.all(
+    return await Promise.all(
       attachments.map(async ({ key, name }) => {
         const url = (application.attachments as {
           [key: string]: string
         })[key]
-        const signedUrl = await this.fileStorageService.generateSignedUrl(
-          url,
-          key,
-        )
+
+        const signedUrl = await this.fileStorageService.generateSignedUrl(url)
+
         return { name, url: signedUrl }
       }),
     )

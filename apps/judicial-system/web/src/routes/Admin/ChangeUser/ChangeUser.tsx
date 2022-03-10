@@ -1,15 +1,16 @@
 import React, { useEffect } from 'react'
-
-import { PageLayout } from '@island.is/judicial-system-web/src/shared-components'
-import { User } from '@island.is/judicial-system/types'
 import { useMutation, useQuery } from '@apollo/client'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { useRouter } from 'next/router'
+
+import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import {
   UpdateUserMutation,
   UserQuery,
 } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
-import { useRouter } from 'next/router'
+import type { User } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system/consts'
+
 import UserForm from '../UserForm/UserForm'
 
 interface UserData {
@@ -34,8 +35,9 @@ export const ChangeUser: React.FC = () => {
   )
 
   const {
-    courts,
+    allCourts,
     prosecutorsOffices,
+    prisonInstitutions,
     loading: institutionLoading,
     loaded: institutionLoaded,
   } = useInstitution()
@@ -78,8 +80,9 @@ export const ChangeUser: React.FC = () => {
       {userData?.user && institutionLoaded && (
         <UserForm
           user={userData?.user}
-          courts={courts}
+          allCourts={allCourts}
           prosecutorsOffices={prosecutorsOffices}
+          prisonInstitutions={prisonInstitutions}
           onSave={saveUser}
           loading={saveLoading}
         />

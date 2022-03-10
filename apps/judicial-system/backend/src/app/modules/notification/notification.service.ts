@@ -1,23 +1,32 @@
-import { Inject, Injectable } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { ICalendar } from 'datebook'
 
-import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { SmsService } from '@island.is/nova-sms'
 import { EmailService } from '@island.is/email-service'
+import { IntegratedCourts } from '@island.is/judicial-system/consts'
 import {
   CaseCustodyRestrictions,
   CaseDecision,
-  CaseState,
   CaseType,
-  IntegratedCourts,
   NotificationType,
+  isRestrictionCase,
+  isInvestigationCase,
+  SessionArrangements,
+  User,
 } from '@island.is/judicial-system/types'
+import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { environment } from '../../../environments'
 import {
   formatProsecutorCourtDateEmailNotification,
-  formatCourtDateNotificationCondition,
   formatCourtHeadsUpSmsNotification,
   formatPrisonCourtDateEmailNotification,
   formatCourtReadyForCourtSmsNotification,
@@ -30,21 +39,27 @@ import {
   formatDefenderRevokedEmailNotification,
   getRequestPdfAsBuffer,
   getCustodyNoticePdfAsString,
+  formatProsecutorReceivedByCourtSmsNotification,
+  formatCourtResubmittedToCourtSmsNotification,
+  getCourtRecordPdfAsString,
 } from '../../formatters'
+import { notifications, core } from '../../messages'
 import { Case } from '../case'
 import { CourtService } from '../court'
-import { SendNotificationDto } from './dto'
-import { Notification, SendNotificationResponse } from './models'
+import { CaseEvent, EventService } from '../event'
+import { SendNotificationDto } from './dto/sendNotification.dto'
+import { Notification } from './models/notification.model'
+import { SendNotificationResponse } from './models/sendNotification.resopnse'
 
 interface Recipient {
-  address: string
+  address?: string
   success: boolean
 }
 
 interface Attachment {
   filename: string
   content: string
-  encoding: string
+  encoding?: string
 }
 
 @Injectable()
@@ -55,13 +70,28 @@ export class NotificationService {
     private readonly courtService: CourtService,
     private readonly smsService: SmsService,
     private readonly emailService: EmailService,
-    @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
+    private readonly eventService: EventService,
+    private readonly intlService: IntlService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+
+  private formatMessage: FormatMessage = () => {
+    throw new InternalServerErrorException('Format message not initialized')
+  }
+
+  private refreshFormatMessage: () => Promise<void> = async () =>
+    this.intlService
+      .useIntl(['judicial.system.backend'], 'is')
+      .then((res) => {
+        this.formatMessage = res.formatMessage
+      })
+      .catch((reason) => {
+        this.logger.error('Unable to refresh format messages', { reason })
+      })
 
   private async existsRevokableNotification(
     caseId: string,
-    recipientAddress: string,
+    recipientAddress?: string,
   ): Promise<boolean> {
     try {
       const notifications: Notification[] = await this.notificationModel.findAll(
@@ -89,21 +119,36 @@ export class NotificationService {
             recipient.address === recipientAddress && recipient.success,
         )
       })
-    } catch {
+    } catch (error) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Error while looking up revokable notifications for case ${caseId}`,
+        { error },
+      )
+
       return false
     }
   }
 
+  private getCourtMobileNumbers(courtId?: string) {
+    return (
+      (courtId && environment.notifications.courtsMobileNumbers[courtId]) ??
+      undefined
+    )
+  }
+
   private async sendSms(
-    mobileNumbers: string,
     smsText: string,
+    mobileNumbers?: string,
   ): Promise<Recipient> {
     // Production or local development with judge mobile number
     if (environment.production || mobileNumbers) {
       try {
-        await this.smsService.sendSms(mobileNumbers.split(','), smsText)
+        await this.smsService.sendSms(mobileNumbers?.split(',') ?? '', smsText)
       } catch (error) {
-        this.logger.error('Failed to send sms to court mobile number', error)
+        this.logger.error('Failed to send sms to court mobile numbers', {
+          error,
+        })
 
         return {
           address: mobileNumbers,
@@ -119,11 +164,11 @@ export class NotificationService {
   }
 
   private async sendEmail(
-    recipientName: string,
-    recipientEmail: string,
     subject: string,
     html: string,
-    attachments: Attachment[] = null,
+    recipientName?: string,
+    recipientEmail?: string,
+    attachments?: Attachment[],
   ): Promise<Recipient> {
     try {
       await this.emailService.sendEmail({
@@ -137,8 +182,8 @@ export class NotificationService {
         },
         to: [
           {
-            name: recipientName,
-            address: recipientEmail,
+            name: recipientName ?? '',
+            address: recipientEmail ?? '',
           },
         ],
         subject: subject,
@@ -147,7 +192,7 @@ export class NotificationService {
         attachments: attachments,
       })
     } catch (error) {
-      this.logger.error('Failed to send email', error)
+      this.logger.error('Failed to send email', { error })
 
       return {
         address: recipientEmail,
@@ -165,48 +210,101 @@ export class NotificationService {
     caseId: string,
     type: NotificationType,
     recipients: Recipient[],
-    condition: string = undefined,
   ): Promise<SendNotificationResponse> {
     const notification = await this.notificationModel.create({
       caseId,
       type,
-      condition,
       recipients: JSON.stringify(recipients),
     })
 
     return {
       notificationSent: recipients.reduce(
         (sent, recipient) => sent || recipient?.success,
-        false,
+        false as boolean,
       ),
       notification,
     }
   }
 
+  private async uploadRequestPdfToCourt(
+    theCase: Case,
+    user: User,
+  ): Promise<void> {
+    const requestPdf = await getRequestPdfAsBuffer(theCase, this.formatMessage)
+
+    try {
+      await this.courtService.createRequest(
+        user,
+        theCase.id,
+        theCase.courtId ?? '',
+        theCase.courtCaseNumber ?? '',
+        requestPdf,
+      )
+    } catch (error) {
+      this.logger.error('Failed to upload request pdf to court', { error })
+    }
+  }
+
+  private createICalAttachment(theCase: Case): Attachment | undefined {
+    if (theCase.courtDate) {
+      const eventOrganizer = {
+        name: theCase.registrar
+          ? theCase.registrar.name
+          : theCase.judge
+          ? theCase.judge.name
+          : '',
+        email: theCase.registrar
+          ? theCase.registrar.email
+          : theCase.judge
+          ? theCase.judge.email
+          : '',
+      }
+
+      const courtDate = new Date(theCase.courtDate.toString().split('.')[0])
+      const courtEnd = new Date(theCase.courtDate.getTime() + 30 * 60000)
+
+      const icalendar = new ICalendar({
+        title: `Fyrirtaka í máli ${theCase.courtCaseNumber} - ${theCase.prosecutor?.institution?.name} gegn X`,
+        location: `${theCase.court?.name} - ${
+          theCase.courtRoom
+            ? `Dómsalur ${theCase.courtRoom}`
+            : 'Dómsalur hefur ekki verið skráður.'
+        }`,
+        start: courtDate,
+        end: courtEnd,
+      })
+
+      return {
+        filename: 'court-date.ics',
+        content: icalendar
+          .addProperty(
+            `ORGANIZER;CN=${eventOrganizer.name}`,
+            `MAILTO:${eventOrganizer.email}`,
+          )
+          .render(),
+      }
+    }
+  }
+
   /* HEADS_UP notifications */
 
-  private async sendHeadsUpSmsNotificationToCourt(
-    existingCase: Case,
-  ): Promise<Recipient> {
+  private sendHeadsUpSmsNotificationToCourt(theCase: Case): Promise<Recipient> {
     const smsText = formatCourtHeadsUpSmsNotification(
-      existingCase.type,
-      existingCase.prosecutor?.name,
-      existingCase.arrestDate,
-      existingCase.requestedCourtDate,
+      theCase.type,
+      theCase.prosecutor?.name,
+      theCase.arrestDate,
+      theCase.requestedCourtDate,
     )
 
-    return await this.sendSms(
-      environment.notifications.courtsMobileNumbers[existingCase.courtId],
-      smsText,
-    )
+    return this.sendSms(smsText, this.getCourtMobileNumbers(theCase.courtId))
   }
 
   private async sendHeadsUpNotifications(
-    existingCase: Case,
+    theCase: Case,
   ): Promise<SendNotificationResponse> {
-    const recipient = await this.sendHeadsUpSmsNotificationToCourt(existingCase)
+    const recipient = await this.sendHeadsUpSmsNotificationToCourt(theCase)
 
-    return this.recordNotification(existingCase.id, NotificationType.HEADS_UP, [
+    return this.recordNotification(theCase.id, NotificationType.HEADS_UP, [
       recipient,
     ])
   }
@@ -214,419 +312,573 @@ export class NotificationService {
   /* READY_FOR_COURT notifications */
 
   private sendReadyForCourtSmsNotificationToCourt(
-    existingCase: Case,
+    theCase: Case,
   ): Promise<Recipient> {
     const smsText = formatCourtReadyForCourtSmsNotification(
-      existingCase.type,
-      existingCase.prosecutor?.name,
-      existingCase.court?.name,
+      theCase.type,
+      theCase.prosecutor?.name,
+      theCase.court?.name,
     )
 
-    return this.sendSms(
-      environment.notifications.courtsMobileNumbers[existingCase.courtId],
-      smsText,
+    return this.sendSms(smsText, this.getCourtMobileNumbers(theCase.courtId))
+  }
+
+  private sendResubmittedToCourtSmsNotificationToCourt(
+    theCase: Case,
+  ): Promise<Recipient> {
+    const smsText = formatCourtResubmittedToCourtSmsNotification(
+      theCase.courtCaseNumber,
     )
+
+    return this.sendSms(smsText, this.getCourtMobileNumbers(theCase.courtId))
   }
 
   private async sendReadyForCourtEmailNotificationToProsecutor(
-    existingCase: Case,
+    theCase: Case,
   ): Promise<Recipient> {
-    const pdf = await getRequestPdfAsString(existingCase)
+    const { type, court, policeCaseNumber } = theCase
 
-    const subject = `Krafa í máli ${existingCase.policeCaseNumber}`
-    const html = 'Sjá viðhengi'
-    const attachments = [
+    const subject = `Krafa í máli ${policeCaseNumber}`
+
+    const caseType =
+      type === CaseType.CUSTODY
+        ? this.formatMessage(core.caseType.custody)
+        : type === CaseType.TRAVEL_BAN
+        ? this.formatMessage(core.caseType.travelBan)
+        : this.formatMessage(core.caseType.investigate)
+
+    const html = this.formatMessage(
+      notifications.readyForCourt.prosecutorHtml,
       {
-        filename: `Krafa um ${
-          existingCase.type === CaseType.CUSTODY
-            ? 'gæsluvarðhald'
-            : existingCase.type === CaseType.TRAVEL_BAN
-            ? 'farbann'
-            : 'rannsóknarheimild'
-        } ${existingCase.policeCaseNumber}.pdf`,
-        content: pdf,
-        encoding: 'binary',
+        caseType,
+        courtName: court?.name,
+        policeCaseNumber,
+        linkStart: `<a href="${
+          isRestrictionCase(theCase.type)
+            ? environment.deepLinks.prosecutorRestrictionCaseOverviewUrl
+            : environment.deepLinks.prosecutorInvestigationCaseOverviewUrl
+        }${theCase.id}">`,
+        linkEnd: '</a>',
       },
-    ]
+    )
 
     return this.sendEmail(
-      existingCase.prosecutor?.name,
-      existingCase.prosecutor?.email,
       subject,
       html,
-      attachments,
+      theCase.prosecutor?.name,
+      theCase.prosecutor?.email,
     )
   }
 
-  private async uploadRequestPdfToCourt(existingCase: Case): Promise<void> {
-    const pdf = await getRequestPdfAsBuffer(existingCase)
-
-    try {
-      const streamId = await this.courtService.uploadStream(
-        existingCase.courtId,
-        pdf,
-      )
-      await this.courtService.createDocument(
-        existingCase.courtId,
-        existingCase.courtCaseNumber,
-        streamId,
-      )
-    } catch (error) {
-      this.logger.error('Failed to upload request to court', error)
-    }
-  }
-
   private async sendReadyForCourtNotifications(
-    existingCase: Case,
+    theCase: Case,
+    user: User,
   ): Promise<SendNotificationResponse> {
     // TODO: Ignore failed notifications
-    const notificaion = await this.notificationModel.findOne({
+    const notification = await this.notificationModel.findOne({
       where: {
-        caseId: existingCase.id,
+        caseId: theCase.id,
         type: NotificationType.READY_FOR_COURT,
       },
     })
 
     const promises: Promise<Recipient>[] = [
-      this.sendReadyForCourtEmailNotificationToProsecutor(existingCase),
+      this.sendReadyForCourtEmailNotificationToProsecutor(theCase),
     ]
 
     // TODO: Find a better place for this
     if (
-      IntegratedCourts.includes(existingCase.courtId) &&
-      existingCase.courtCaseNumber
+      theCase.courtId &&
+      IntegratedCourts.includes(theCase.courtId) &&
+      theCase.courtCaseNumber
     ) {
       // No need to wait
-      this.uploadRequestPdfToCourt(existingCase)
+      this.uploadRequestPdfToCourt(theCase, user)
     }
 
-    // Notify the court only once
-    if (!notificaion) {
-      promises.push(this.sendReadyForCourtSmsNotificationToCourt(existingCase))
+    if (notification) {
+      if (theCase.courtCaseNumber) {
+        promises.push(
+          this.sendResubmittedToCourtSmsNotificationToCourt(theCase),
+        )
+      }
+
+      this.eventService.postEvent(CaseEvent.RESUBMIT, theCase)
+    } else {
+      promises.push(this.sendReadyForCourtSmsNotificationToCourt(theCase))
     }
 
     const recipients = await Promise.all(promises)
 
     return this.recordNotification(
-      existingCase.id,
+      theCase.id,
       NotificationType.READY_FOR_COURT,
       recipients,
+    )
+  }
+
+  /* RECEIVED_BY_COURT notifications */
+
+  private sendReceivedByCourtSmsNotificationToProsecutor(
+    theCase: Case,
+  ): Promise<Recipient> {
+    const smsText = formatProsecutorReceivedByCourtSmsNotification(
+      theCase.type,
+      theCase.court?.name,
+      theCase.courtCaseNumber,
+    )
+
+    return this.sendSms(smsText, theCase.prosecutor?.mobileNumber)
+  }
+
+  private async sendReceivedByCourtNotifications(
+    theCase: Case,
+  ): Promise<SendNotificationResponse> {
+    const recipient = await this.sendReceivedByCourtSmsNotificationToProsecutor(
+      theCase,
+    )
+
+    return this.recordNotification(
+      theCase.id,
+      NotificationType.RECEIVED_BY_COURT,
+      [recipient],
     )
   }
 
   /* COURT_DATE notifications */
 
   private sendCourtDateEmailNotificationToProsecutor(
-    existingCase: Case,
+    theCase: Case,
   ): Promise<Recipient> {
-    const subject = `Fyrirtaka í máli ${existingCase.policeCaseNumber}`
+    const subject = `Fyrirtaka í máli ${theCase.policeCaseNumber}`
     const html = formatProsecutorCourtDateEmailNotification(
-      existingCase.type,
-      existingCase.court?.name,
-      existingCase.courtDate,
-      existingCase.courtRoom,
-      existingCase.defenderName,
+      theCase.type,
+      theCase.court?.name,
+      theCase.courtDate,
+      theCase.courtRoom,
+      theCase.judge?.name,
+      theCase.registrar?.name,
+      theCase.defenderName,
+      theCase.defenderIsSpokesperson,
+      theCase.sessionArrangements,
     )
+    const calendarInvite = this.createICalAttachment(theCase)
 
     return this.sendEmail(
-      existingCase.prosecutor?.name,
-      existingCase.prosecutor?.email,
       subject,
       html,
+      theCase.prosecutor?.name,
+      theCase.prosecutor?.email,
+      calendarInvite ? [calendarInvite] : undefined,
     )
   }
 
   private sendCourtDateEmailNotificationToPrison(
-    existingCase: Case,
+    theCase: Case,
   ): Promise<Recipient> {
     const subject = 'Krafa um gæsluvarðhald í vinnslu' // Always custody
+    // Assume there is at most one defendant
     const html = formatPrisonCourtDateEmailNotification(
-      existingCase.prosecutor?.institution?.name,
-      existingCase.court?.name,
-      existingCase.courtDate,
-      existingCase.accusedName,
-      existingCase.accusedGender,
-      existingCase.requestedValidToDate,
-      existingCase.requestedCustodyRestrictions?.includes(
+      theCase.creatingProsecutor?.institution?.name,
+      theCase.court?.name,
+      theCase.courtDate,
+      theCase.defendants && theCase.defendants.length > 0
+        ? theCase.defendants[0].name
+        : undefined,
+      theCase.defendants && theCase.defendants.length > 0
+        ? theCase.defendants[0].gender
+        : undefined,
+      theCase.requestedValidToDate,
+      theCase.requestedCustodyRestrictions?.includes(
         CaseCustodyRestrictions.ISOLATION,
       ),
-      existingCase.defenderName,
-      existingCase.parentCase &&
-        existingCase.parentCase?.decision === CaseDecision.ACCEPTING,
+      theCase.defenderName,
+      theCase.defenderIsSpokesperson,
+      Boolean(theCase.parentCase),
     )
 
     return this.sendEmail(
-      'Gæsluvarðhaldsfangelsi',
-      environment.notifications.prisonEmail,
       subject,
       html,
+      'Gæsluvarðhaldsfangelsi',
+      environment.notifications.prisonEmail,
     )
   }
 
   private async sendCourtDateEmailNotificationToDefender(
-    existingCase: Case,
+    theCase: Case,
   ): Promise<Recipient> {
-    if (!existingCase.defenderEmail) {
-      return
-    }
-
-    const subject = `Fyrirtaka í máli ${existingCase.courtCaseNumber}`
+    const subject = `Fyrirtaka í máli ${theCase.courtCaseNumber}`
     const html = formatDefenderCourtDateEmailNotification(
-      existingCase.court?.name,
-      existingCase.courtCaseNumber,
-      existingCase.courtDate,
-      existingCase.courtRoom,
+      theCase.court?.name,
+      theCase.courtCaseNumber,
+      theCase.courtDate,
+      theCase.courtRoom,
+      theCase.defenderIsSpokesperson,
+      theCase.judge?.name,
+      theCase.registrar?.name,
+      theCase.prosecutor?.name,
+      theCase.prosecutor?.institution?.name,
     )
+    const calendarInvite = this.createICalAttachment(theCase)
+    const attachments: Attachment[] = calendarInvite ? [calendarInvite] : []
 
-    let attachments: Attachment[]
+    if (theCase.sendRequestToDefender) {
+      const pdf = await getRequestPdfAsString(theCase, this.formatMessage)
 
-    if (existingCase.sendRequestToDefender) {
-      const pdf = await getRequestPdfAsString(existingCase)
-
-      attachments = [
-        {
-          filename: `${existingCase.policeCaseNumber}.pdf`,
-          content: pdf,
-          encoding: 'binary',
-        },
-      ]
+      attachments.push({
+        filename: `${theCase.policeCaseNumber}.pdf`,
+        content: pdf,
+        encoding: 'binary',
+      })
     }
 
     return this.sendEmail(
-      existingCase.defenderName,
-      existingCase.defenderEmail,
       subject,
       html,
+      theCase.defenderName,
+      theCase.defenderEmail,
       attachments,
     )
   }
 
   private async sendCourtDateNotifications(
-    existingCase: Case,
+    theCase: Case,
+    eventOnly?: boolean,
   ): Promise<SendNotificationResponse> {
-    const condition = formatCourtDateNotificationCondition(
-      existingCase.courtDate,
-      existingCase.defenderEmail,
-    )
+    this.eventService.postEvent(CaseEvent.SCHEDULE_COURT_DATE, theCase)
 
-    const notifications = await this.notificationModel.findAll({
-      where: {
-        caseId: existingCase.id,
-        type: NotificationType.COURT_DATE,
-      },
-      order: [['created', 'DESC']],
-    })
-
-    if (notifications?.length > 0 && notifications[0].condition === condition) {
-      return {
-        notificationSent: false,
-        notification: notifications[0],
-      }
+    if (eventOnly) {
+      return { notificationSent: false }
     }
 
     const promises: Promise<Recipient>[] = [
-      this.sendCourtDateEmailNotificationToProsecutor(existingCase),
-      this.sendCourtDateEmailNotificationToDefender(existingCase),
+      this.sendCourtDateEmailNotificationToProsecutor(theCase),
     ]
 
-    if (existingCase.type === CaseType.CUSTODY) {
-      promises.push(this.sendCourtDateEmailNotificationToPrison(existingCase))
+    if (
+      (isRestrictionCase(theCase.type) ||
+        theCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
+        (theCase.sessionArrangements ===
+          SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
+          theCase.defenderIsSpokesperson)) &&
+      theCase.defenderEmail
+    ) {
+      promises.push(this.sendCourtDateEmailNotificationToDefender(theCase))
+    }
+
+    if (theCase.type === CaseType.CUSTODY) {
+      promises.push(this.sendCourtDateEmailNotificationToPrison(theCase))
     }
 
     const recipients = await Promise.all(promises)
 
-    return this.recordNotification(
-      existingCase.id,
+    const result = await this.recordNotification(
+      theCase.id,
       NotificationType.COURT_DATE,
       recipients,
-      condition,
     )
+
+    return result
   }
 
   /* RULING notifications */
 
   private async sendRulingEmailNotificationToPrison(
-    existingCase: Case,
+    theCase: Case,
+    courtRecordPdf: string,
   ): Promise<Recipient> {
     const subject = 'Úrskurður um gæsluvarðhald' // Always custody
-    const html = formatPrisonRulingEmailNotification(
-      existingCase.accusedNationalId,
-      existingCase.accusedName,
-      existingCase.accusedGender,
-      existingCase.court?.name,
-      existingCase.prosecutor?.name,
-      existingCase.courtEndTime,
-      existingCase.defenderName,
-      existingCase.defenderEmail,
-      existingCase.decision,
-      existingCase.validToDate,
-      existingCase.custodyRestrictions,
-      existingCase.accusedAppealDecision,
-      existingCase.prosecutorAppealDecision,
-      existingCase.judge?.name,
-      existingCase.judge?.title,
-      existingCase.parentCase !== null,
-      existingCase.parentCase?.decision,
-      existingCase.additionToConclusion,
-      existingCase.isolationToDate,
+    const html = formatPrisonRulingEmailNotification(theCase.rulingDate)
+    const custodyNoticePdf = await getCustodyNoticePdfAsString(
+      theCase,
+      this.formatMessage,
     )
 
-    let attachments: Attachment[]
-
-    if (existingCase.state === CaseState.ACCEPTED) {
-      const pdf = await getCustodyNoticePdfAsString(existingCase)
-      attachments = [
-        {
-          filename: `Vistunarseðill ${existingCase.courtCaseNumber}.pdf`,
-          content: pdf,
-          encoding: 'binary',
-        },
-      ]
-    }
-
-    // TODO: Consider adding the prosecutor as cc to the prison email
-    await this.sendEmail(
-      existingCase.prosecutor?.name,
-      existingCase.prosecutor?.email,
-      subject,
-      html,
-      attachments,
-    )
+    const attachments = [
+      {
+        filename: `Vistunarseðill ${theCase.courtCaseNumber}.pdf`,
+        content: custodyNoticePdf,
+        encoding: 'binary',
+      },
+      {
+        filename: this.formatMessage(
+          notifications.signedRuling.courtRecordAttachment,
+          { courtCaseNumber: theCase.courtCaseNumber },
+        ),
+        content: courtRecordPdf,
+        encoding: 'binary',
+      },
+    ]
 
     return this.sendEmail(
-      'Gæsluvarðhaldsfangelsi',
-      environment.notifications.prisonEmail,
       subject,
       html,
+      'Gæsluvarðhaldsfangelsi',
+      environment.notifications.prisonEmail,
       attachments,
     )
   }
 
+  private async sendRulingEmailNotificationToPrisonAdministration(
+    theCase: Case,
+    courtRecordPdf: string,
+  ): Promise<Recipient> {
+    return this.sendEmail(
+      theCase.courtCaseNumber ?? '',
+      'Sjá viðhengi',
+      'Fangelsismálastofnun',
+      environment.notifications.prisonAdminEmail,
+      [
+        {
+          filename: this.formatMessage(
+            notifications.signedRuling.courtRecordAttachment,
+            { courtCaseNumber: theCase.courtCaseNumber },
+          ),
+          content: courtRecordPdf,
+          encoding: 'binary',
+        },
+      ],
+    )
+  }
+
   private async sendRulingNotifications(
-    existingCase: Case,
+    theCase: Case,
   ): Promise<SendNotificationResponse> {
-    if (existingCase.type !== CaseType.CUSTODY) {
+    if (isInvestigationCase(theCase.type)) {
       return {
         notificationSent: false,
       }
     }
 
-    const recipient = await this.sendRulingEmailNotificationToPrison(
-      existingCase,
+    const courtRecordPdf = await getCourtRecordPdfAsString(
+      theCase,
+      this.formatMessage,
     )
 
-    return this.recordNotification(existingCase.id, NotificationType.RULING, [
-      recipient,
-    ])
+    const recipients = [
+      await this.sendRulingEmailNotificationToPrisonAdministration(
+        theCase,
+        courtRecordPdf,
+      ),
+    ]
+
+    if (
+      theCase.type === CaseType.CUSTODY &&
+      (theCase.decision === CaseDecision.ACCEPTING ||
+        theCase.decision === CaseDecision.ACCEPTING_PARTIALLY)
+    ) {
+      recipients.concat(
+        await this.sendRulingEmailNotificationToPrison(theCase, courtRecordPdf),
+      )
+    }
+
+    return this.recordNotification(
+      theCase.id,
+      NotificationType.RULING,
+      recipients,
+    )
+  }
+
+  /* MODIFIED notifications */
+
+  private async sendModifiedNotifications(
+    theCase: Case,
+    user: User,
+  ): Promise<SendNotificationResponse> {
+    const subject = this.formatMessage(notifications.modified.subject, {
+      courtCaseNumber: theCase.courtCaseNumber,
+    })
+    const html = `${
+      theCase.isCustodyIsolation
+        ? this.formatMessage(notifications.modified.isolationHtml, {
+            actorInstitution: user.institution?.name,
+            actorName: user.name,
+            actorTitle: user.title,
+            courtCaseNumber: theCase.courtCaseNumber,
+            linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
+            linkEnd: '</a>',
+            validToDate: formatDate(theCase.validToDate, 'PPPp'),
+            isolationToDate: formatDate(theCase.isolationToDate, 'PPPp'),
+          })
+        : this.formatMessage(notifications.modified.html, {
+            actorInstitution: user.institution?.name,
+            actorName: user.name,
+            actorTitle: user.title,
+            courtCaseNumber: theCase.courtCaseNumber,
+            linkStart: `<a href="${environment.deepLinks.completedCaseOverviewUrl}${theCase.id}">`,
+            linkEnd: '</a>',
+            validToDate: formatDate(theCase.validToDate, 'PPPp'),
+          })
+    }`
+
+    const recipients = [
+      await this.sendEmail(
+        subject,
+        html,
+        'Fangelsismálastofnun',
+        environment.notifications.prisonAdminEmail,
+      ),
+      await this.sendEmail(
+        subject,
+        html,
+        'Gæsluvarðhaldsfangelsi',
+        environment.notifications.prisonEmail,
+      ),
+    ]
+
+    if (user.id !== theCase.prosecutorId) {
+      recipients.push(
+        await this.sendEmail(
+          subject,
+          html,
+          theCase.prosecutor?.name,
+          theCase.prosecutor?.email,
+        ),
+      )
+    }
+
+    if (user.id !== theCase.judgeId) {
+      recipients.push(
+        await this.sendEmail(
+          subject,
+          html,
+          theCase.judge?.name,
+          theCase.judge?.email,
+        ),
+      )
+    }
+
+    if (theCase.registrar && user.id !== theCase.registrarId) {
+      recipients.push(
+        await this.sendEmail(
+          subject,
+          html,
+          theCase.registrar.name,
+          theCase.registrar.email,
+        ),
+      )
+    }
+
+    return this.recordNotification(
+      theCase.id,
+      NotificationType.MODIFIED,
+      recipients,
+    )
   }
 
   /* REVOKED notifications */
 
-  private async sendRevokedSmsNotificationToCourt(
-    existingCase: Case,
-  ): Promise<Recipient> {
+  private sendRevokedSmsNotificationToCourt(theCase: Case): Promise<Recipient> {
     const smsText = formatCourtRevokedSmsNotification(
-      existingCase.type,
-      existingCase.prosecutor?.name,
-      existingCase.requestedCourtDate,
-      existingCase.courtDate,
+      theCase.type,
+      theCase.prosecutor?.name,
+      theCase.requestedCourtDate,
+      theCase.courtDate,
     )
 
-    return await this.sendSms(
-      environment.notifications.courtsMobileNumbers[existingCase.courtId],
-      smsText,
-    )
+    return this.sendSms(smsText, this.getCourtMobileNumbers(theCase.courtId))
   }
 
   private sendRevokedEmailNotificationToPrison(
-    existingCase: Case,
+    theCase: Case,
   ): Promise<Recipient> {
     const subject = 'Gæsluvarðhaldskrafa afturkölluð' // Always custody
+    // Assume there is at most one defendant
     const html = formatPrisonRevokedEmailNotification(
-      existingCase.prosecutor?.institution?.name,
-      existingCase.court?.name,
-      existingCase.courtDate,
-      existingCase.accusedName,
-      existingCase.defenderName,
-      existingCase.parentCase &&
-        existingCase.parentCase?.decision === CaseDecision.ACCEPTING,
+      theCase.creatingProsecutor?.institution?.name,
+      theCase.court?.name,
+      theCase.courtDate,
+      theCase.defendants && theCase.defendants.length > 0
+        ? theCase.defendants[0].name
+        : undefined,
+      theCase.defenderName,
+      Boolean(theCase.parentCase),
     )
 
     return this.sendEmail(
-      'Gæsluvarðhaldsfangelsi',
-      environment.notifications.prisonEmail,
       subject,
       html,
+      'Gæsluvarðhaldsfangelsi',
+      environment.notifications.prisonEmail,
     )
   }
 
   private sendRevokedEmailNotificationToDefender(
-    existingCase: Case,
+    theCase: Case,
   ): Promise<Recipient> {
-    if (!existingCase.defenderEmail) {
-      return
-    }
+    const caseType =
+      theCase.type === CaseType.CUSTODY
+        ? this.formatMessage(core.caseType.custody)
+        : theCase.type === CaseType.TRAVEL_BAN
+        ? this.formatMessage(core.caseType.travelBan)
+        : this.formatMessage(core.caseType.investigate)
 
-    const subject = `${
-      existingCase.type === CaseType.CUSTODY
-        ? 'Gæsluvarðhaldskrafa'
-        : 'Farbannskrafa'
-    } afturkölluð`
+    const subject = `Krafa um ${caseType} afturkölluð`
+
+    // Assume there is at most one defendant
     const html = formatDefenderRevokedEmailNotification(
-      existingCase.type,
-      existingCase.accusedNationalId,
-      existingCase.accusedName,
-      existingCase.court?.name,
-      existingCase.courtDate,
+      theCase.type,
+      theCase.defendants && theCase.defendants.length > 0
+        ? theCase.defendants[0].nationalId
+        : undefined,
+      theCase.defendants && theCase.defendants.length > 0
+        ? theCase.defendants[0].name
+        : undefined,
+      theCase.defendants && theCase.defendants.length > 0
+        ? theCase.defendants[0].noNationalId
+        : undefined,
+      theCase.court?.name,
+      theCase.courtDate,
     )
 
     return this.sendEmail(
-      existingCase.defenderName,
-      existingCase.defenderEmail,
       subject,
       html,
+      theCase.defenderName,
+      theCase.defenderEmail,
     )
   }
 
   private async sendRevokedNotifications(
-    existingCase: Case,
+    theCase: Case,
   ): Promise<SendNotificationResponse> {
     const promises: Promise<Recipient>[] = []
 
-    const courtWasBeenNotified = await this.existsRevokableNotification(
-      existingCase.id,
-      environment.notifications.courtsMobileNumbers[existingCase.courtId],
+    const courtWasNotified = await this.existsRevokableNotification(
+      theCase.id,
+      this.getCourtMobileNumbers(theCase.courtId),
     )
 
-    if (courtWasBeenNotified) {
-      promises.push(this.sendRevokedSmsNotificationToCourt(existingCase))
+    if (courtWasNotified) {
+      promises.push(this.sendRevokedSmsNotificationToCourt(theCase))
     }
 
     const prisonWasNotified =
-      existingCase.type === CaseType.CUSTODY &&
+      theCase.type === CaseType.CUSTODY &&
       (await this.existsRevokableNotification(
-        existingCase.id,
+        theCase.id,
         environment.notifications.prisonEmail,
       ))
 
     if (prisonWasNotified) {
-      promises.push(this.sendRevokedEmailNotificationToPrison(existingCase))
+      promises.push(this.sendRevokedEmailNotificationToPrison(theCase))
     }
 
     const defenderWasNotified = await this.existsRevokableNotification(
-      existingCase.id,
-      existingCase.defenderEmail,
+      theCase.id,
+      theCase.defenderEmail,
     )
 
-    if (defenderWasNotified) {
-      promises.push(this.sendRevokedEmailNotificationToDefender(existingCase))
+    if (defenderWasNotified && theCase.defenderEmail) {
+      promises.push(this.sendRevokedEmailNotificationToDefender(theCase))
     }
 
     const recipients = await Promise.all(promises)
 
     if (recipients.length > 0) {
       return this.recordNotification(
-        existingCase.id,
+        theCase.id,
         NotificationType.REVOKED,
         recipients,
       )
@@ -639,34 +891,35 @@ export class NotificationService {
 
   /* API */
 
-  getAllCaseNotifications(existingCase: Case): Promise<Notification[]> {
-    this.logger.debug(`Getting all notifications for case ${existingCase.id}`)
-
+  async getAllCaseNotifications(theCase: Case): Promise<Notification[]> {
     return this.notificationModel.findAll({
-      where: { caseId: existingCase.id },
+      where: { caseId: theCase.id },
       order: [['created', 'DESC']],
     })
   }
 
-  sendCaseNotification(
+  async sendCaseNotification(
     notification: SendNotificationDto,
-    existingCase: Case,
+    theCase: Case,
+    user: User,
   ): Promise<SendNotificationResponse> {
-    this.logger.debug(
-      `Sending ${notification.type} notification for case ${existingCase.id}`,
-    )
+    await this.refreshFormatMessage()
 
     switch (notification.type) {
       case NotificationType.HEADS_UP:
-        return this.sendHeadsUpNotifications(existingCase)
+        return this.sendHeadsUpNotifications(theCase)
       case NotificationType.READY_FOR_COURT:
-        return this.sendReadyForCourtNotifications(existingCase)
+        return this.sendReadyForCourtNotifications(theCase, user)
+      case NotificationType.RECEIVED_BY_COURT:
+        return this.sendReceivedByCourtNotifications(theCase)
       case NotificationType.COURT_DATE:
-        return this.sendCourtDateNotifications(existingCase)
+        return this.sendCourtDateNotifications(theCase, notification.eventOnly)
       case NotificationType.RULING:
-        return this.sendRulingNotifications(existingCase)
+        return this.sendRulingNotifications(theCase)
+      case NotificationType.MODIFIED:
+        return this.sendModifiedNotifications(theCase, user)
       case NotificationType.REVOKED:
-        return this.sendRevokedNotifications(existingCase)
+        return this.sendRevokedNotifications(theCase)
     }
   }
 }

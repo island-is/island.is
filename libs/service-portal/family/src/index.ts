@@ -1,41 +1,47 @@
+import { lazy } from 'react'
+
+import { ApiScope } from '@island.is/auth/scopes'
 import {
   ServicePortalModule,
   ServicePortalPath,
+  m,
 } from '@island.is/service-portal/core'
-import { lazy } from 'react'
-import { defineMessage } from 'react-intl'
 
 export const familyModule: ServicePortalModule = {
   name: 'Fjölskyldan',
   widgets: () => [],
-  routes: () => [
+  routes: ({ userInfo }) => [
     {
-      name: 'Mín gögn',
+      name: 'Mínar upplýsingar',
       path: ServicePortalPath.MyInfoRoot,
+      enabled: userInfo.scopes.includes(ApiScope.meDetails),
       render: () =>
         lazy(() => import('./screens/UserInfoOverview/UserInfoOverview')),
     },
     {
-      name: defineMessage({
-        id: 'service.portal:user-info',
-        defaultMessage: 'Mínar upplýsingar',
-      }),
+      name: m.userInfo,
       path: ServicePortalPath.UserInfo,
+      enabled: userInfo.scopes.includes(ApiScope.meDetails),
       render: () => lazy(() => import('./screens/UserInfo/UserInfo')),
     },
     {
-      name: defineMessage({
-        id: 'service.portal:family',
-        defaultMessage: 'Fjölskyldan',
-      }),
+      name: m.family,
       path: ServicePortalPath.FamilyRoot,
+      enabled: userInfo.scopes.includes(ApiScope.meDetails),
       render: () =>
         lazy(() => import('./screens/FamilyOverview/FamilyOverview')),
     },
     {
       name: 'Family Member',
       path: ServicePortalPath.FamilyMember,
+      enabled: userInfo.scopes.includes(ApiScope.meDetails),
       render: () => lazy(() => import('./screens/FamilyMember/FamilyMember')),
+    },
+    {
+      name: 'Spouse',
+      path: ServicePortalPath.Spouse,
+      enabled: userInfo.scopes.includes(ApiScope.meDetails),
+      render: () => lazy(() => import('./screens/Spouse/Spouse')),
     },
   ],
 }

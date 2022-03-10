@@ -9,7 +9,7 @@ import {
 export const SECRET_TOKEN = 'SECRET_TOKEN'
 
 @Injectable()
-export class TokenGuaard implements CanActivate {
+export class TokenGuard implements CanActivate {
   constructor(
     @Inject(SECRET_TOKEN)
     private secretToken: string,

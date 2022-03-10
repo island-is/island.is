@@ -13,10 +13,7 @@ import {
   GridColumn,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  ServicePortalModuleComponent,
-  ServicePortalPath,
-} from '@island.is/service-portal/core'
+import { ServicePortalPath, m } from '@island.is/service-portal/core'
 
 type Data = {
   heading: MessageDescriptor | string
@@ -27,10 +24,7 @@ type Data = {
 
 const data: Data[] = [
   {
-    heading: defineMessage({
-      id: 'service.portal:eligibility-parental-leave-heading',
-      defaultMessage: 'Fæðingarorlof',
-    }),
+    heading: m.parentalLeave,
     subtext: defineMessage({
       id: 'sp.eligibility:parental-leave-subtext',
       defaultMessage:
@@ -40,12 +34,9 @@ const data: Data[] = [
     image: '/assets/images/baby.jpg',
   },
   {
-    heading: defineMessage({
-      id: 'service.portal:eligibility-driving-license-heading',
-      defaultMessage: 'Ökuskírteini',
-    }),
+    heading: m.drivingLicense,
     subtext: defineMessage({
-      id: 'service.portal:eligibility-driving-license-subtext',
+      id: 'sp.eligibility:eligibility-driving-license-subtext',
       defaultMessage:
         'Hér er hægt að skoða stöðu núverandi ökuskírteinis, ásamt því að sækja um og eða endurnýja ökupróf í öllum flokkum.',
     }),
@@ -66,17 +57,14 @@ function Eligibility(): JSX.Element {
             <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
               <Stack space={2}>
                 <Inline space={1}>
-                  <Text variant="h1" as="h1">
+                  <Text variant="h3" as="h1">
                     {formatMessage({
                       id: 'sp.eligibility:title',
                       defaultMessage: 'Mín réttindi',
                     })}
                   </Text>
                   <Tag variant="blue" outlined>
-                    {formatMessage({
-                      id: 'service.portal:in-progress',
-                      defaultMessage: 'Í vinnslu',
-                    })}
+                    {formatMessage(m.inProgress)}
                   </Tag>
                 </Inline>
                 <Text as="p">
@@ -101,19 +89,14 @@ function Eligibility(): JSX.Element {
                 marginTop={[3, 3, 0]}
               >
                 <Box marginBottom={2}>
-                  <Text variant="h2" as="h2">
+                  <Text variant="h4" as="h2">
                     {formatMessage(item.heading)}
                   </Text>
                 </Box>
                 <Text marginBottom={[3, 4]}>{formatMessage(item.subtext)}</Text>
                 <Box>
                   <Link to={item.link}>
-                    <ArrowLink>
-                      {formatMessage({
-                        id: 'service.portal:continue-button',
-                        defaultMessage: 'Halda áfram',
-                      })}
-                    </ArrowLink>
+                    <ArrowLink>{formatMessage(m.continue)}</ArrowLink>
                   </Link>
                 </Box>
               </Box>
@@ -126,7 +109,10 @@ function Eligibility(): JSX.Element {
                 alignItems="center"
                 marginBottom={[3, 3, 0]}
               >
-                <img src={item.image} alt="Skrautmynd" />
+                <img
+                  src={item.image}
+                  alt={`${formatMessage(m.altText)} ${item.heading}`}
+                />
               </Box>
             </GridColumn>
           </GridRow>

@@ -1,8 +1,10 @@
+import * as RSBStyles from './RegulationsSidebarBox.css'
+import * as s from './RegulationInfoBox.css'
+
 import React, { useState } from 'react'
-import * as s from './RegulationsSidebarBox.treat'
-import { Button, Hidden, Text } from '@island.is/island-ui/core'
+import { Button, Hidden, Link, Text } from '@island.is/island-ui/core'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
-import { RegulationMaybeDiff } from './Regulations.types'
+import { RegulationMaybeDiff } from '@island.is/regulations'
 import {
   RegulationsSidebarBox,
   RegulationsSidebarLink,
@@ -20,35 +22,50 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
   const { ministry, lawChapters } = regulation
 
   const { linkToRegulationSearch } = useRegulationLinkResolver()
+
   const txt = useNamespace(texts)
   const { formatDate } = useDateUtils()
 
-  const [showCopyCheckmark, setShowCopyCheckmark] = useState(false)
-  const showCopyCheck = () => {
-    setShowCopyCheckmark(true)
+  const [showCopyCheckmark, setShowCopyCheckmark] = useState<
+    NodeJS.Timeout | false
+  >(false)
 
-    setTimeout(() => {
-      setShowCopyCheckmark(false)
-    }, 750)
+  const showCopyCheck = () => {
+    setShowCopyCheckmark((showCopyCheckmark) => {
+      if (showCopyCheckmark) {
+        clearTimeout(showCopyCheckmark)
+        setShowCopyCheckmark(false)
+        return setTimeout(showCopyCheck, 100)
+      }
+
+      return setTimeout(() => {
+        setShowCopyCheckmark(false)
+      }, 2000)
+    })
   }
 
+  const nonCurrent: true | undefined =
+    !!regulation.timelineDate || !!regulation.showingDiff || undefined
+
   return (
-    <RegulationsSidebarBox title={txt('infoboxTitle')} colorScheme="dark">
+    <RegulationsSidebarBox
+      title={txt('infoboxTitle')}
+      colorScheme="dark"
+      className={s.container}
+    >
       {ministry && (
         <Text marginBottom={2}>
           <strong>{txt('infoboxMinistry')}:</strong>
-          <ul>
-            <li>
-              <RegulationsSidebarLink
-                href={linkToRegulationSearch({ rn: ministry.slug })}
-              >
-                <span className={s.smallText}>{ministry.name}</span>
-              </RegulationsSidebarLink>
-            </li>
-          </ul>
+          <br />
+          <RegulationsSidebarLink
+            href={linkToRegulationSearch({ rn: ministry.slug })}
+          >
+            <span className={RSBStyles.smallText}>{ministry.name}</span>
+          </RegulationsSidebarLink>
         </Text>
       )}
 
+      {/*
       {lawChapters.length > 0 && (
         <Text marginBottom={2}>
           <strong>{txt('infoboxLawChapters')}:</strong>
@@ -58,38 +75,50 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
                 <RegulationsSidebarLink
                   href={linkToRegulationSearch({ ch: chapter.slug })}
                 >
-                  <span className={s.smallText}>{chapter.name}</span>
+                  <span className={RSBStyles.smallText}>{chapter.name}</span>
                 </RegulationsSidebarLink>
               </li>
             ))}
           </ul>
         </Text>
       )}
+      */}
 
       {regulation.effectiveDate && (
         <Text marginBottom={2}>
           <strong>{txt('infoboxEffectiveDate')}:</strong>
           <br />
-          <span className={s.smallText}>
+          <span className={RSBStyles.smallText}>
             {formatDate(regulation.effectiveDate)}
           </span>
         </Text>
       )}
+      <Text marginBottom={2}>
+        <strong>{txt('infoboxPublishedDate')}:</strong>
+        <br />
+        <span className={RSBStyles.smallText}>
+          {formatDate(regulation.publishedDate)}
+        </span>
+      </Text>
 
       {regulation.repealedDate ? (
         <Text marginBottom={3}>
           <strong>{txt('infoboxRepealed')}:</strong>
           <br />
-          <span className={s.smallText}>
+          <span className={RSBStyles.smallText}>
             {formatDate(regulation.repealedDate)}
           </span>
+        </Text>
+      ) : regulation.repealed ? (
+        <Text marginBottom={3}>
+          <strong>{txt('infoboxOgildWat')}</strong>
         </Text>
       ) : (
         regulation.lastAmendDate && (
           <Text marginBottom={3}>
             <strong>{txt('infoboxLastAmended')}:</strong>
             <br />
-            <span className={s.smallText}>
+            <span className={RSBStyles.smallText}>
               {formatDate(regulation.lastAmendDate)}
             </span>
           </Text>
@@ -99,25 +128,21 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
       <Hidden print={true}>
         <Text marginBottom={1}>
           <Button
-            // FIXME: enable this icon when design is ready and implemented
-            // icon="print"
-            // iconType="outline"
+            icon="document"
+            iconType="outline"
             size="small"
-            type="button"
             variant="text"
-            onClick={() => {
-              window.print()
-            }}
           >
-            {
-              // TODO: Incorporte this key into namespace once this part of the UI is final
-              txt('printThisVersion', 'Prenta þessa útgáfu')
-            }
+            <Link href={regulation.pdfVersion}>
+              <a rel={nonCurrent && 'nofollow'}>{txt('downloadPdf')}</a>
+            </Link>
           </Button>
         </Text>
 
         <Text marginBottom={2}>
           <Button
+            icon="arrowBack"
+            iconType="outline"
             size="small"
             type="button"
             variant="text"
@@ -126,13 +151,30 @@ export const RegulationInfoBox = (props: RegulationInfoBoxProps) => {
               navigator.clipboard.writeText(document.location.href)
             }}
           >
-            {
-              // TODO: Incorporte this key into namespace once this part of the UI is final
-              txt('copyLink', 'Afrita hlekk á reglugerð')
-            }
-          </Button>
-          {showCopyCheckmark && ' ✔'}
+            {txt('copyPermaLink')}
+          </Button>{' '}
+          {showCopyCheckmark && (
+            <span className={s.copiedIndicator} aria-hidden="true">
+              ✔
+            </span>
+          )}
         </Text>
+
+        {regulation.originalDoc && (
+          <Text marginBottom={1}>
+            <Button
+              icon="document"
+              iconType="outline"
+              size="small"
+              type="button"
+              variant="text"
+            >
+              <Link href={regulation.originalDoc}>
+                {txt('originalDocLink')}
+              </Link>
+            </Button>
+          </Text>
+        )}
       </Hidden>
     </RegulationsSidebarBox>
   )

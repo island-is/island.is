@@ -11,11 +11,6 @@ import { ApiProperty } from '@nestjs/swagger'
 
 @Table({
   tableName: 'grant_type',
-  indexes: [
-    {
-      fields: ['name'],
-    },
-  ],
   timestamps: false,
 })
 export class GrantType extends Model<GrantType> {

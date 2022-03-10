@@ -2,14 +2,17 @@
   "data": {
     "users": [
       {
-        "id": "1338",
+        "id": "9c0b4106-4213-43be-a6b2-ff324f4ba0c2",
         "name": "Dóra Dómari",
         "nationalId": "0000000000",
         "mobileNumber": "0000000",
         "role": "JUDGE",
         "title": "Aðaldómari",
         "email": "dora@explorer.is",
-        "institution": "Bráðabirgðadómari",
+        "institution": {
+          "id": "d1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf",
+          "name": "Bráðabirgðadómari"
+        },
         "active": true,
         "__typename": "User"
       },
@@ -21,7 +24,10 @@
         "role": "JUDGE",
         "title": "aðstoðardómari",
         "email": "skelli@bjalla.is",
-        "institution": "Dómarisamfélagið",
+        "institution": {
+          "id": "d1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf",
+          "name": "Dómarisamfélagið"
+        },
         "active": true,
         "__typename": "User"
       },
@@ -33,7 +39,10 @@
         "role": "REGISTRAR",
         "title": "aðstoðardómritarinn",
         "email": "skelli@bjallakallar.is",
-        "institution": "Dómritarafélagið",
+        "institution": {
+          "id": "d1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf",
+          "name": "Dómritarafélagið"
+        },
         "active": true,
         "__typename": "User"
       }

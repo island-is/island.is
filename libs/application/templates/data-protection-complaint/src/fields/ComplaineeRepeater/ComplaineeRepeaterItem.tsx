@@ -2,8 +2,8 @@ import {
   Application,
   formatText,
   FormValue,
-  getValueViaPath,
   getErrorViaPath,
+  getValueViaPath,
   RecordObject,
 } from '@island.is/application/core'
 import {
@@ -13,14 +13,14 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { InputController, RadioController } from '@island.is/shared/form-fields'
 import React, { FC, useState } from 'react'
-import { useLocale } from '@island.is/localization'
-import { complaint, sharedFields } from '../../lib/messages'
-import { YES, NO } from '../../shared'
 import { ArrayField } from 'react-hook-form'
-import * as styles from './ComplaineeRepeater.treat'
+import { complaint, sharedFields } from '../../lib/messages'
+import { NO, YES } from '../../shared'
 import { ComplaineeField } from './ComplaineeRepeater'
+import * as styles from './ComplaineeRepeater.css'
 
 interface Props {
   id: string
@@ -105,7 +105,6 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
             formatMessage,
           )}
           error={errors && getErrorViaPath(errors, nationalIdField)}
-          required
           backgroundColor="blue"
         />
       </Stack>
@@ -119,13 +118,13 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
         largeButtons
         options={[
           { value: YES, label: formatMessage(sharedFields.yes) },
-          { value: NO, label: formatMessage(sharedFields.no) },
+          { value: NO, label: formatMessage(sharedFields.noIdontKnow) },
         ]}
         split="1/2"
         onSelect={handleOnSelect}
       />
       {isOpen && (
-        <Box padding={3} background="blue100">
+        <Box padding={3} background="blue100" borderRadius="large">
           <Box marginBottom={2}>
             <InputController
               id={countryOfOperationField}
@@ -136,6 +135,7 @@ export const ComplaineeRepeaterItem: FC<Props> = ({
                 formatMessage,
               )}
               error={errors && getErrorViaPath(errors, countryOfOperationField)}
+              defaultValue=""
             />
           </Box>
           <AlertMessage

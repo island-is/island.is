@@ -3,9 +3,6 @@
   "compilerOptions": {
     "jsx": "react",
     "allowJs": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "types": ["node", "jest"],
     "strict": false
   },
   "files": [],

@@ -1,6 +1,7 @@
 import React, { FC, useCallback, useEffect, useMemo, useReducer } from 'react'
 import { Route, Switch, useHistory } from 'react-router-dom'
-import { User } from 'oidc-client'
+import type { History } from 'history'
+import type { User } from 'oidc-client'
 
 import OidcSignIn from './OidcSignIn'
 import OidcSilentSignIn from './OidcSilentSignIn'
@@ -8,6 +9,7 @@ import { getAuthSettings, getUserManager } from '../userManager'
 import { ActionType, initialState, reducer } from './Authenticator.state'
 import { AuthContext } from './AuthContext'
 import { CheckAuth } from './CheckAuth'
+import { AuthSettings } from '../AuthSettings'
 
 interface Props {
   /**
@@ -16,6 +18,14 @@ interface Props {
    * Default: true
    */
   autoLogin?: boolean
+}
+
+const getReturnUrl = (history: History, { redirectPath }: AuthSettings) => {
+  const returnUrl = history.location.pathname + history.location.search
+  if (redirectPath && returnUrl.startsWith(redirectPath)) {
+    return '/'
+  }
+  return returnUrl
 }
 
 export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
@@ -31,11 +41,11 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
         type: ActionType.SIGNIN_START,
       })
       return userManager.signinRedirect({
-        state: history.location.pathname + history.location.search,
+        state: getReturnUrl(history, authSettings),
       })
       // Nothing more happens here since browser will redirect to IDS.
     },
-    [dispatch, userManager, history],
+    [dispatch, userManager, authSettings, history],
   )
 
   const signInSilent = useCallback(
@@ -48,6 +58,7 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
         user = await userManager.signinSilent()
         dispatch({ type: ActionType.SIGNIN_SUCCESS, payload: user })
       } catch (error) {
+        console.error('Authenticator: Silent signin failed', error)
         dispatch({ type: ActionType.SIGNIN_FAILURE })
       }
 
@@ -62,6 +73,12 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
         nationalId !== undefined
           ? {
               login_hint: nationalId,
+              /**
+               * TODO: remove this.
+               * It is currently required to switch delegations, but we'd like
+               * the IDS to handle login_required and other potential road
+               * blocks. Now OidcSignIn is handling login_required.
+               */
               prompt: 'none',
             }
           : {
@@ -69,15 +86,17 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
             }
 
       dispatch({
-        type: ActionType.SIGNIN_START,
+        type: ActionType.SWITCH_USER,
       })
       return userManager.signinRedirect({
-        state: history.location.pathname + history.location.search,
+        state:
+          authSettings.switchUserRedirectUrl ??
+          getReturnUrl(history, authSettings),
         ...args,
       })
       // Nothing more happens here since browser will redirect to IDS.
     },
-    [userManager, dispatch],
+    [userManager, dispatch, history, authSettings],
   )
 
   const signOut = useCallback(
@@ -86,9 +105,6 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
         type: ActionType.LOGGING_OUT,
       })
       await userManager.signoutRedirect()
-      dispatch({
-        type: ActionType.LOGGED_OUT,
-      })
     },
     [userManager, dispatch],
   )
@@ -125,6 +141,12 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
   )
 
   useEffect(() => {
+    // Only add events when we have userInfo, to avoid race conditions with
+    // oidc hooks.
+    if (state.userInfo === null) {
+      return
+    }
+
     // This is raised when a new user state has been loaded with a silent login.
     const userLoaded = (user: User) => {
       dispatch({
@@ -134,10 +156,11 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
     }
 
     // This is raised when the user is signed out of the IDP.
-    const userSignedOut = () => {
+    const userSignedOut = async () => {
       dispatch({
         type: ActionType.LOGGED_OUT,
       })
+      await userManager.removeUser()
       if (autoLogin) {
         signIn()
       }
@@ -149,7 +172,7 @@ export const Authenticator: FC<Props> = ({ children, autoLogin = true }) => {
       userManager.events.removeUserLoaded(userLoaded)
       userManager.events.removeUserSignedOut(userSignedOut)
     }
-  }, [dispatch, userManager, signIn, autoLogin])
+  }, [dispatch, userManager, signIn, autoLogin, state.userInfo === null])
 
   const context = useMemo(
     () => ({

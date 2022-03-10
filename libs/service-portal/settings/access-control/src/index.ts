@@ -1,39 +1,34 @@
+import { AuthScope } from '@island.is/auth/scopes'
 import { lazy } from 'react'
-import { defineMessage } from 'react-intl'
 
 import {
   ServicePortalModule,
   ServicePortalPath,
   ServicePortalRoute,
+  m,
 } from '@island.is/service-portal/core'
 
 export const accessControlModule: ServicePortalModule = {
   name: 'Aðgangsstýring',
   widgets: () => [],
-  routes: () => {
+  routes: ({ userInfo }) => {
     const routes: ServicePortalRoute[] = [
       {
-        name: defineMessage({
-          id: 'service.portal.settings.accessControl:root-title',
-          defaultMessage: 'Aðgangsstýring',
-        }),
+        name: m.accessControl,
         path: ServicePortalPath.SettingsAccessControl,
+        enabled: userInfo.scopes.includes(AuthScope.writeDelegations),
         render: () => lazy(() => import('./screens/AccessControl')),
       },
       {
-        name: defineMessage({
-          id: 'service.portal.settings.accessControl:root-grant-ritle',
-          defaultMessage: 'Veita aðgang',
-        }),
+        name: m.accessControlGrant,
         path: ServicePortalPath.SettingsAccessControlGrant,
+        enabled: userInfo.scopes.includes(AuthScope.writeDelegations),
         render: () => lazy(() => import('./screens/GrantAccess')),
       },
       {
-        name: defineMessage({
-          id: 'service.portal.settings.accessControl:root-access-title',
-          defaultMessage: 'Aðgangur',
-        }),
+        name: m.accessControlAccess,
         path: ServicePortalPath.SettingsAccessControlAccess,
+        enabled: userInfo.scopes.includes(AuthScope.writeDelegations),
         render: () => lazy(() => import('./screens/Access')),
       },
     ]

@@ -1,18 +1,6 @@
 import { gql } from '@apollo/client'
 
-export const GetApplicationQuery = gql`
-  query GetApplicationQuery {
-    applications {
-      id
-      nationalId
-      name
-      phoneNumber
-      email
-    }
-  }
-`
-
-export const CreateApplicationQuery = gql`
+export const CreateApplicationMutation = gql`
   mutation createApplication($input: CreateApplicationInput!) {
     createApplication(input: $input) {
       id
@@ -20,32 +8,149 @@ export const CreateApplicationQuery = gql`
   }
 `
 
-export const GetMunicipalityQuery = gql`
-  query GetMunicipalityQuery($input: MunicipalityQueryInput!) {
-    municipality(input: $input) {
-      id
-      name
-      settings
+export const ApplicationFilesMutation = gql`
+  mutation createApplicationFiles($input: CreateApplicationFilesInput!) {
+    createApplicationFiles(input: $input) {
+      success
     }
   }
 `
 
-export const GetCurrentUserQuery = gql`
-  query currentUserQuery {
+export const CreateSignedUrlMutation = gql`
+  mutation getSignedUrl($input: GetSignedUrlInput!) {
+    getSignedUrl(input: $input) {
+      url
+      key
+    }
+  }
+`
+
+export const CurrentUserQuery = gql`
+  query CurrentUserQuery {
     currentUser {
+      nationalId
       name
+      phoneNumber
+      postalCode
+      spouse {
+        hasPartnerApplied
+        hasFiles
+        applicantName
+        applicantSpouseEmail
+      }
+      currentApplicationId
     }
   }
 `
 
-// export const GetApplicationQuery = gql`
-//   query GetApplicationQuery {
-//     applications {
-//       id
-//       nationalId
-//       name
-//       phoneNumber
-//       email
-//     }
-//   }
-// `
+export const ApplicationQuery = gql`
+  query GetApplicationQuery($input: ApplicationInput!) {
+    application(input: $input) {
+      id
+      homeCircumstances
+      usePersonalTaxCredit
+      state
+      amount {
+        aidAmount
+        income
+        personalTaxCredit
+        spousePersonalTaxCredit
+        tax
+        finalAmount
+        deductionFactors {
+          description
+          amount
+        }
+      }
+      rejection
+      created
+      modified
+      municipalityCode
+      spouseNationalId
+      applicationEvents {
+        id
+        applicationId
+        eventType
+        comment
+        created
+      }
+    }
+  }
+`
+
+export const ApplicationMutation = gql`
+  mutation UpdateApplicationMutation($input: UpdateApplicationInput!) {
+    updateApplication(input: $input) {
+      id
+      homeCircumstances
+      usePersonalTaxCredit
+      state
+      amount {
+        aidAmount
+        income
+        personalTaxCredit
+        spousePersonalTaxCredit
+        tax
+        finalAmount
+        deductionFactors {
+          description
+          amount
+        }
+      }
+      rejection
+      created
+      modified
+      municipalityCode
+      spouseNationalId
+      applicationEvents {
+        id
+        applicationId
+        eventType
+        comment
+        created
+      }
+    }
+  }
+`
+
+export const NationalRegistryUserQuery = gql`
+  query getNationalRegistryUserQuery {
+    municipalityNationalRegistryUserV2 {
+      nationalId
+      fullName
+      address {
+        streetName
+        postalCode
+        city
+        municipalityCode
+      }
+      spouse {
+        nationalId
+        maritalStatus
+        name
+      }
+    }
+  }
+`
+
+export const GatherTaxDataQuery = gql`
+  query gatherTaxDataQuery {
+    municipalitiesPersonalTaxReturn {
+      personalTaxReturn {
+        key
+        name
+        size
+      }
+    }
+    municipalitiesDirectTaxPayments {
+      directTaxPayments {
+        totalSalary
+        payerNationalId
+        personalAllowance
+        withheldAtSource
+        month
+        year
+      }
+    }
+  }
+`

@@ -1,25 +1,19 @@
 import {
-  BadRequestException,
   Inject,
   Injectable,
   MethodNotAllowedException,
   NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { isPerson } from 'kennitala'
-import { Endorsement } from './endorsement.model'
+import { Endorsement } from './models/endorsement.model'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { EndorsementList } from '../endorsementList/endorsementList.model'
-import { EndorsementMetadataService } from '../endorsementMetadata/endorsementMetadata.service'
-import {
-  EndorsementValidatorService,
-  ValidationRule,
-} from '../endorsementValidator/endorsementValidator.service'
-import { EndorsementMetadata } from '../endorsementMetadata/endorsementMetadata.model'
-import { Op, Sequelize, UniqueConstraintError } from 'sequelize'
-import { ValidationRuleDto } from '../endorsementList/dto/validationRule.dto'
+import { Op, UniqueConstraintError } from 'sequelize'
 import { EndorsementTag } from '../endorsementList/constants'
+import { paginate } from '@island.is/nest/pagination'
+import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
+import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 
 interface FindEndorsementInput {
   listId: string
@@ -29,29 +23,25 @@ interface FindEndorsementInput {
 interface EndorsementInput {
   endorsementList: EndorsementList
   nationalId: string
-}
-interface EndorsementListsInput {
-  endorsementList: EndorsementList
-  nationalIds: string[]
-}
-interface GetEndorsementMetadataForNationalIdInput {
-  endorsementList: EndorsementList
-  nationalId: string
-}
-interface ValidateEndorsementInput {
-  listId: string
-  validationRules: ValidationRuleDto[]
-  nationalId: string
-  metadata: EndorsementMetadata
+  showName: boolean
 }
 
+interface DeleteEndorsementInput {
+  endorsementList: EndorsementList
+  nationalId: string
+}
 interface FindEndorsementsInput {
   listId: string
 }
 
-interface InvalidateEndorsementsInput {
+interface FindUserEndorsementsByTagsInput {
   nationalId: string
   tags: EndorsementTag[]
+}
+
+export interface NationalIdError {
+  nationalId: string
+  message: string
 }
 
 @Injectable()
@@ -63,92 +53,38 @@ export class EndorsementService {
     private endorsementModel: typeof Endorsement,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private readonly metadataService: EndorsementMetadataService,
-    private readonly validatorService: EndorsementValidatorService,
+    private readonly nationalRegistryApi: NationalRegistryApi,
   ) {}
 
-  private getEndorsementMetadataForNationalId = async ({
-    nationalId,
-    endorsementList,
-  }: GetEndorsementMetadataForNationalIdInput) => {
-    // find all requested validation types
-    const requestedValidationRules = endorsementList.validationRules.map(
-      (validation) => validation.type,
-    )
-    // find all metadata fields required for these types of validations
-    const metadataFieldsRequiredByValidation = this.validatorService.getRequiredValidationMetadataFields(
-      requestedValidationRules,
-    )
-    // get all metadata required for this endorsement
-    return this.metadataService.getMetadata({
-      fields: [
-        ...endorsementList.endorsementMeta,
-        ...metadataFieldsRequiredByValidation,
-      ],
-      nationalId,
-    })
-  }
-
-  private validateEndorsement = ({
-    nationalId,
-    listId,
-    validationRules,
-    metadata,
-  }: ValidateEndorsementInput) => {
-    // we want this validation for all endorsements (in case request is made on behalf of a company)
-    if (!isPerson(nationalId)) {
-      throw new BadRequestException('National id must be a person')
-    }
-
-    // run requested validators with fetched metadata
-    const isValid = this.validatorService.validate({
-      validations: validationRules,
-      meta: { ...metadata, nationalId },
-    })
-
-    // throw error if not valid
-    if (!isValid) {
-      this.logger.debug('Failed validation rules', {
-        listId: listId,
-        nationalId,
-      })
-      throw new BadRequestException('Failed list validation rules')
-    }
-
-    return true
-  }
-
-  private invalidateEndorsementsIfExist = async (
-    input: InvalidateEndorsementsInput,
-  ) => {
-    const endorsementsToInvalidate = await this.findUserEndorsementsByTags(
-      input,
-    )
-
-    // we have no endorsements to invalidate, return false to indicate so
-    if (!endorsementsToInvalidate.length) {
-      return false
-    }
-
-    await Promise.all(
-      endorsementsToInvalidate.map((endorsement) => {
-        return endorsement.update({
-          meta: Sequelize.literal(
-            `meta || '${JSON.stringify({ invalidated: true })}'`, // || operator in postgres concatenates objects in jsonb fields
-          ),
-        })
-      }),
-    )
-
-    return true
-  }
-
-  async findEndorsements({ listId }: FindEndorsementsInput) {
+  async findEndorsements({ listId }: FindEndorsementsInput, query: any) {
     this.logger.debug(`Finding endorsements by list id "${listId}"`)
 
-    return await this.endorsementModel.findAll({
+    return await paginate({
+      Model: this.endorsementModel,
+      limit: query.limit || 10,
+      after: query.after,
+      before: query.before,
+      primaryKeyField: 'counter',
+      orderOption: [['counter', 'DESC']],
       where: { endorsementListId: listId },
     })
+  }
+
+  async findEndorsementsGeneralPetition(
+    { listId }: FindEndorsementsInput,
+    query: any,
+  ) {
+    // check if list exists and belongs to general petitions
+    const result = await this.endorsementListModel.findOne({
+      where: {
+        id: listId,
+        tags: { [Op.eq]: ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS },
+      },
+    })
+    if (!result) {
+      throw new NotFoundException(['Not found - not a General Petition List'])
+    }
+    return this.findEndorsements({ listId }, query)
   }
 
   async findSingleUserEndorsement({
@@ -164,16 +100,16 @@ export class EndorsementService {
     })
 
     if (!result) {
-      throw new NotFoundException(["This endorsement doesn't exist"])
+      return { hasEndorsed: false }
     }
 
-    return result
+    return { hasEndorsed: true }
   }
 
   async findUserEndorsementsByTags({
     nationalId,
     tags,
-  }: InvalidateEndorsementsInput) {
+  }: FindUserEndorsementsByTagsInput) {
     this.logger.debug(
       `Finding endorsements by tags "${tags.join(
         ', ',
@@ -188,134 +124,53 @@ export class EndorsementService {
     })
   }
 
+  // FIXME: Find a way to combine with create bulk endorsements
   async createEndorsementOnList({
     endorsementList,
     nationalId,
+    showName,
   }: EndorsementInput) {
     this.logger.debug(`Creating resource with nationalId - ${nationalId}`)
 
     // we don't allow endorsements on closed lists
-    if (endorsementList.closedDate) {
+    if (new Date() >= endorsementList.closedDate) {
       throw new MethodNotAllowedException(['Unable to endorse closed list'])
     }
-
-    // get all metadata required for this endorsement
-    const allEndorsementMetadata = await this.getEndorsementMetadataForNationalId(
-      { nationalId, endorsementList: endorsementList },
-    )
-
-    // run requested validators with fetched metadata
-    await this.validateEndorsement({
-      listId: endorsementList.id,
-      validationRules: endorsementList.validationRules,
-      metadata: allEndorsementMetadata,
-      nationalId,
-    })
-
-    return this.endorsementModel
-      .create({
-        endorser: nationalId,
-        endorsementListId: endorsementList.id,
-        // this removes validation fields fetched by meta service
-        meta: {
-          ...this.metadataService.pruneMetadataFields(
-            allEndorsementMetadata,
-            endorsementList.endorsementMeta,
-          ),
-          bulkEndorsement: false,
-          invalidated: false,
-        },
-      })
-      .catch((error) => {
-        // map meaningful sequelize errors to custom errors, else return error
-        switch (error.constructor) {
-          case UniqueConstraintError: {
-            throw new MethodNotAllowedException([
-              'Endorsement already exists in list',
-            ])
-          }
-          default: {
-            throw error
-          }
-        }
-      })
-  }
-
-  // TODO: Combine with create single endorsement if able
-  async bulkCreateEndorsementOnList({
-    nationalIds,
-    endorsementList,
-  }: EndorsementListsInput) {
-    this.logger.debug('Creating resource with nationalIds:', nationalIds)
-
-    // we don't allow endorsements on closed lists
-    if (endorsementList.closedDate) {
-      throw new MethodNotAllowedException(['Unable to endorse closed list'])
+    const fullName = showName ? await this.getEndorserInfo(nationalId) : ''
+    const endorsement = {
+      endorser: nationalId,
+      endorsementListId: endorsementList.id,
+      meta: {
+        fullName: fullName,
+        showName: showName,
+      },
     }
 
-    // create an endorsement document for each national id
-    const endorsements = await Promise.all(
-      nationalIds.map(async (nationalId) => {
-        // get metadata for this national id
-        const metadata = await this.getEndorsementMetadataForNationalId({
-          nationalId,
-          endorsementList,
-        })
-
-        // we remove unique within tag cause bulk imports invalidate existing signatures
-        const bulkValidationRules = endorsementList.validationRules.filter(
-          (rule) => rule.type !== ValidationRule.UNIQUE_WITHIN_TAGS,
-        )
-        // run all validations for this national id
-        await this.validateEndorsement({
-          listId: endorsementList.id,
-          validationRules: bulkValidationRules,
-          metadata,
-          nationalId,
-        })
-
-        /**
-         * Bulk imported endorsement might already exist.
-         * If we find an endorsement belonging to the same set of tags as the bulk imported endorsement
-         * all endorsements are invalidated as instructed by the Ministry of Justice
-         */
-        const invalidated = await this.invalidateEndorsementsIfExist({
-          nationalId,
-          tags: endorsementList.tags,
-        })
-
-        return {
-          endorser: nationalId,
-          endorsementListId: endorsementList.id,
-          // this removes validation fields fetched by meta service
-          meta: {
-            ...this.metadataService.pruneMetadataFields(
-              metadata,
-              endorsementList.endorsementMeta,
-            ),
-            bulkEndorsement: true,
-            invalidated,
-          },
+    return this.endorsementModel.create(endorsement).catch((error) => {
+      // map meaningful sequelize errors to custom errors, else return error
+      switch (error.constructor) {
+        case UniqueConstraintError: {
+          throw new MethodNotAllowedException([
+            'Endorsement already exists in list',
+          ])
         }
-      }),
-    )
-
-    return this.endorsementModel.bulkCreate(endorsements, {
-      ignoreDuplicates: true, // this ignores endorsements that would cause unique constraint errors when inserting into this list
-      returning: true,
+        default: {
+          throw error
+        }
+      }
     })
   }
 
   async deleteFromListByNationalId({
     nationalId,
     endorsementList,
-  }: EndorsementInput) {
+  }: DeleteEndorsementInput) {
     this.logger.debug(
       `Removing endorsement from list "${endorsementList.id}" by nationalId "${nationalId}"`,
     )
 
     // we don't allow endorsements on closed lists
-    if (endorsementList.closedDate) {
+    if (new Date() >= endorsementList.closedDate) {
       throw new MethodNotAllowedException([
         'Unable to remove endorsement form closed list',
       ])
@@ -334,6 +189,23 @@ export class EndorsementService {
         { listId: endorsementList.id },
       )
       throw new NotFoundException(["This endorsement doesn't exist"])
+    }
+  }
+
+  private async getEndorserInfo(nationalId: string) {
+    this.logger.debug(`Finding fullName of Endorser "${nationalId}" by id`)
+
+    try {
+      return (await this.nationalRegistryApi.getUser(nationalId)).Fulltnafn
+    } catch (e) {
+      if (e instanceof Error) {
+        this.logger.warn(
+          `Occured when fetching endorser name from NationalRegistryApi v1 ${e.message} \n${e.stack}`,
+        )
+        return ''
+      } else {
+        throw e
+      }
     }
   }
 }

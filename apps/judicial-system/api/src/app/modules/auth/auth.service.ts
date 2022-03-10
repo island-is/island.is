@@ -2,7 +2,7 @@ import fetch from 'isomorphic-fetch'
 
 import { Injectable } from '@nestjs/common'
 
-import { User } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 

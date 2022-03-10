@@ -1,17 +1,3 @@
-export interface DrivingLicense {
-  id: number
-  name: string
-  issued: string
-  expires: string
-  isProvisional: boolean
-  eligibilities: {
-    id: string
-    issued: string
-    expires: string
-    comment: string
-  }[]
-}
-
 export interface StudentInformation {
   name: string
 }
@@ -21,14 +7,21 @@ export interface DrivingLicenseType {
   name: string
 }
 
-export interface PenaltyPointStatus {
-  nationalId: string
-  isPenaltyPointsOk: boolean
-}
+export type DrivingLicenseApplicationType = 'B-full' | 'B-temp'
 
 export interface NewDrivingLicenseInput {
   juristictionId: number
   needsToPresentHealthCertificate: boolean
+  needsToPresentQualityPhoto: boolean
+}
+
+export interface NewTemporaryDrivingLicenseInput {
+  juristictionId: number
+  needsToPresentHealthCertificate: boolean
+  needsToPresentQualityPhoto: boolean
+  teacherNationalId: string
+  email: string
+  phone: string
 }
 
 export interface NewDrivingLicenseResult {
@@ -54,4 +47,56 @@ export interface Juristiction {
   id: number
   name: string
   zip: number
+}
+
+export enum RequirementKey {
+  drivingAssessmentMissing = 'DrivingAssessmentMissing',
+  drivingSchoolMissing = 'DrivingSchoolMissing',
+  deniedByService = 'DeniedByService',
+  localResidency = 'LocalResidency',
+  noTempLicense = 'NoTempLicense',
+  noLicenseFound = 'NoLicenseFound',
+  personNot17YearsOld = 'PersonNot17YearsOld',
+  hasNoPhoto = 'HasNoPhoto',
+  hasNoSignature = 'HasNoSignature',
+  personNotFoundInNationalRegistry = 'PersonNotFoundInNationalRegistry',
+  hasDeprivation = 'HasDeprivation',
+  hasPoints = 'HasPoints',
+}
+
+export interface ApplicationEligibilityRequirement {
+  key: RequirementKey
+  requirementMet: boolean
+}
+
+export interface ApplicationEligibility {
+  isEligible: boolean
+  requirements: ApplicationEligibilityRequirement[]
+}
+
+export enum DrivingLicenseCategory {
+  B = 'B',
+}
+
+export enum NeedsHealhCertificate {
+  TRUE = 1,
+  FALSE = 0,
+}
+
+export enum NeedsQualityPhoto {
+  TRUE = 1,
+  FALSE = 0,
+}
+export interface QualityPhotoResult {
+  hasQualityPhoto: boolean
+}
+
+export interface StudentAssessment {
+  studentNationalId: string | null
+  teacherNationalId: string | null
+  teacherName: string | null
+}
+
+export interface DrivingSchool {
+  hasFinishedSchool: boolean
 }

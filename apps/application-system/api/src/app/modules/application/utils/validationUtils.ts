@@ -7,16 +7,16 @@ import {
 } from '@island.is/application/core'
 import {
   BadRequestException,
-  HttpException,
+  ForbiddenException,
   UnauthorizedException,
 } from '@nestjs/common'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { Unwrap } from '@island.is/shared/types'
-import { NestIntl } from '@island.is/api/domains/translations'
+import { logger } from '@island.is/logging'
+import { ValidationFailed } from '@island.is/nest/problem'
 
 import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
 import { environment } from '../../../../environments'
-import { logger } from '@island.is/logging'
 
 const isRunningOnProductionEnvironment =
   environment.production === true &&
@@ -87,8 +87,7 @@ export async function validateApplicationSchema(
 
   if (schemaFormValidationError) {
     logger.error('Failed to validate schema', schemaFormValidationError)
-    // TODO improve error message
-    throw new HttpException(`Schema validation has failed`, 403)
+    throw new ValidationFailed(schemaFormValidationError)
   }
 }
 
@@ -127,9 +126,8 @@ export async function validateIncomingAnswers(
       (!writableAnswersAndExternalData ||
         !writableAnswersAndExternalData?.answers)
     ) {
-      throw new HttpException(
+      throw new ForbiddenException(
         `Current user is not permitted to update answers in this state: ${application.state}`,
-        403,
       )
     }
 
@@ -146,17 +144,23 @@ export async function validateIncomingAnswers(
     })
 
     if (isStrict && illegalAnswers.length > 0) {
-      throw new HttpException(
+      throw new ForbiddenException(
         `Current user is not permitted to update the following answers: ${illegalAnswers.toString()}`,
-        403,
       )
     }
   }
 
   try {
-    await helper.applyAnswerValidators(newAnswers, formatMessage)
+    const errorMap = await helper.applyAnswerValidators(
+      newAnswers,
+      formatMessage,
+    )
+    if (errorMap) {
+      throw new ValidationFailed(errorMap)
+    }
   } catch (error) {
-    throw new HttpException(error, 403)
+    logger.error('Failed to validate answers', error)
+    throw error
   }
 
   return trimmedAnswers

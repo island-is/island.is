@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import { defaultLanguage } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
-import { I18nContext } from '../../i18n/I18n'
+import { I18nContext, isLocale } from '../../i18n/I18n'
 
 export interface LinkResolverResponse {
   href: string
@@ -19,7 +19,7 @@ interface TypeResolverResponse {
   slug?: string[]
 }
 
-export type LinkType = keyof typeof routesTemplate | 'linkurl'
+export type LinkType = keyof typeof routesTemplate | 'linkurl' | 'link'
 
 /*
 The order here matters for type resolution, arrange overlapping types from most specific to least specific for correct type resolution
@@ -30,7 +30,7 @@ Keys in routesTemplate should ideally match lowercased __typename of graphql api
 */
 export const routesTemplate = {
   aboutsubpage: {
-    is: '/stafraent-island/[slug]',
+    is: '/s/stafraent-island/[slug]',
     en: '',
   },
   page: {
@@ -69,6 +69,14 @@ export const routesTemplate = {
     is: '/s/stafraent-island/vefthjonustur',
     en: '',
   },
+  organizationnews: {
+    is: '/s/[organization]/frett/[slug]',
+    en: '/en/o/[organization]/news/[slug]',
+  },
+  organizationnewsoverview: {
+    is: '/s/[organization]/frett',
+    en: '/en/o/[organization]/news',
+  },
   organizationsubpage: {
     is: '/s/[slug]/[subSlug]',
     en: '/en/o/[slug]/[subSlug]',
@@ -81,6 +89,22 @@ export const routesTemplate = {
     is: '/s',
     en: '/en/o',
   },
+  opendatapage: {
+    is: '/gagnatorg',
+    en: '/en/gagnatorg',
+  },
+  opendatasubpage: {
+    is: '/gagnatorg/[slug]',
+    en: '/en/gagnatorg/[slug]',
+  },
+  projectsubpage: {
+    is: '/v/[slug]/[subSlug]',
+    en: '/en/p/[slug]/[subSlug]',
+  },
+  projectpage: {
+    is: '/v/[slug]',
+    en: '/en/p/[slug]',
+  },
   lifeevents: {
     is: '/lifsvidburdir',
     en: '/en/life-events',
@@ -89,18 +113,7 @@ export const routesTemplate = {
     is: '/lifsvidburdir/[slug]',
     en: '/en/life-events/[slug]',
   },
-  organizationnews: {
-    is: '/s/[organization]/frett/[slug]',
-    en: '/en/o/[organization]/news/[slug]',
-  },
-  organizationnewsoverview: {
-    is: '/s/[organization]/frett',
-    en: '/en/o/[organization]/news',
-  },
-  auction: {
-    is: '/s/syslumenn/uppbod/[id]',
-    en: '',
-  },
+
   adgerdirpage: {
     is: '/covid-adgerdir/[slug]',
     en: '/en/covid-operations/[slug]',
@@ -116,6 +129,10 @@ export const routesTemplate = {
   regulationshome: {
     is: '/reglugerdir',
     en: '',
+  },
+  login: {
+    is: '/innskraning',
+    en: '/en/login',
   },
   webservicedetailpage: {
     is: '/throun/vefthjonustur/[slug]',
@@ -140,6 +157,22 @@ export const routesTemplate = {
   article: {
     is: '/[slug]',
     en: '/en/[slug]',
+  },
+  serviceweb: {
+    is: '/adstod',
+    en: '/en/help',
+  },
+  serviceweborganization: {
+    is: '/adstod/[slug]',
+    en: '/en/help/[slug]',
+  },
+  servicewebcategory: {
+    is: '/adstod/[organizationSlug]/[categorySlug]',
+    en: '/en/help/[organizationSlug]/[categorySlug]',
+  },
+  servicewebsearch: {
+    is: '/adstod/leit',
+    en: '/en/help/search',
   },
   homepage: {
     is: '/',
@@ -176,6 +209,20 @@ export const extractSlugsByRouteTemplate = (
   })
 }
 
+/** Check if path is of link type */
+export const pathIsRoute = (path: string, linkType: LinkType) => {
+  const segments = path.split('/').filter((x) => x)
+
+  const localeSegment = isLocale(segments[0]) ? segments[0] : ''
+  const firstSegment = (localeSegment ? segments[1] : segments[0]) ?? ''
+
+  const current = `/${
+    localeSegment ? localeSegment + '/' : ''
+  }${firstSegment}`.replace(/\/$/, '')
+
+  return current === linkResolver(linkType).href
+}
+
 /*
 Finds the correct path for a given type and locale.
 Returns /404 if no path is found
@@ -199,6 +246,13 @@ export const linkResolver = (
   if (type === 'linkurl') {
     return {
       href: variables[0],
+    }
+  }
+
+  // special case when link with slug is passed directly to the linkresolver
+  if (type === 'link') {
+    return {
+      href: variables.join('/'),
     }
   }
 

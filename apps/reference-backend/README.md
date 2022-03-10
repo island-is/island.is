@@ -18,7 +18,7 @@ If your service or app needs external services like Postgres, ActiveMQ, etc. you
 docker-compose
 ```
 
-Your local dev setup should be in a file named `docker-compose.dev.yml`. If you are using those services as part of an integration or end-to-end tests you need to provide a file named `docker-compose.ci.yml`. Optionally if you need to share service setup between local dev and CI run you can do so by extracting the common parts in a file named `docker-compose.base.yml`.
+Your local dev setup should be in a file named `docker-compose.yml`. If you are using those services as part of an integration or end-to-end tests you need to add them to the ci scripts.
 
 ### Running your tests
 

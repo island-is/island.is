@@ -1,111 +1,73 @@
-import { Case } from '../models'
+import each from 'jest-each'
+
+import { Case } from '../models/case.model'
 import { transformCase } from './case.transformer'
 
 describe('transformCase', () => {
-  describe('sendRequestToDefender', () => {
-    it('should set undefined to false', () => {
-      // Arrange
-      const theCase = {} as Case
+  each`
+    originalValue | transformedValue
+    ${null}       | ${false}
+    ${false}      | ${false}
+    ${true}       | ${true}
+  `.describe(
+    'when transforming boolean case attributes',
+    ({ originalValue, transformedValue }) => {
+      it(`should transform ${originalValue} sendRequestToDefender to ${transformedValue}`, () => {
+        // Arrange
+        const theCase = { sendRequestToDefender: originalValue } as Case
 
-      // Act
-      const res = transformCase(theCase)
+        // Act
+        const res = transformCase(theCase)
 
-      // Assert
-      expect(res.sendRequestToDefender).toBe(false)
-    })
+        // Assert
+        expect(res.sendRequestToDefender).toBe(transformedValue)
+      })
 
-    it('should leave false unchanged', () => {
-      // Arrange
-      const theCase = { sendRequestToDefender: false } as Case
+      it(`should transform ${originalValue} defenderIsSpokesperson to ${transformedValue}`, () => {
+        // Arrange
+        const theCase = { defenderIsSpokesperson: originalValue } as Case
 
-      // Act
-      const res = transformCase(theCase)
+        // Act
+        const res = transformCase(theCase)
 
-      // Assert
-      expect(res.sendRequestToDefender).toBe(false)
-    })
+        // Assert
+        expect(res.defenderIsSpokesperson).toBe(transformedValue)
+      })
 
-    it('should leave true unchanged', () => {
-      // Arrange
-      const theCase = { sendRequestToDefender: true } as Case
+      it(`should transform ${originalValue} requestProsecutorOnlySession to ${transformedValue}`, () => {
+        // Arrange
+        const theCase = { requestProsecutorOnlySession: originalValue } as Case
 
-      // Act
-      const res = transformCase(theCase)
+        // Act
+        const res = transformCase(theCase)
 
-      // Assert
-      expect(res.sendRequestToDefender).toBe(true)
-    })
-  })
+        // Assert
+        expect(res.requestProsecutorOnlySession).toBe(transformedValue)
+      })
 
-  describe('requestProsecutorOnlySession', () => {
-    it('should set undefined to false', () => {
-      // Arrange
-      const theCase = {} as Case
+      it(`should transform ${originalValue} isClosedCourtHidden to ${transformedValue}`, () => {
+        // Arrange
+        const theCase = { isClosedCourtHidden: originalValue } as Case
 
-      // Act
-      const res = transformCase(theCase)
+        // Act
+        const res = transformCase(theCase)
 
-      // Assert
-      expect(res.requestProsecutorOnlySession).toBe(false)
-    })
+        // Assert
+        expect(res.isClosedCourtHidden).toBe(transformedValue)
+      })
 
-    it('should leave false unchanged', () => {
-      // Arrange
-      const theCase = { requestProsecutorOnlySession: false } as Case
+      it(`should transform ${originalValue} isHightenedSecurityLevel to ${transformedValue}`, () => {
+        // Arrange
+        const theCase = { isHeightenedSecurityLevel: originalValue } as Case
 
-      // Act
-      const res = transformCase(theCase)
+        // Act
+        const res = transformCase(theCase)
 
-      // Assert
-      expect(res.requestProsecutorOnlySession).toBe(false)
-    })
-
-    it('should leave true unchanged', () => {
-      // Arrange
-      const theCase = { requestProsecutorOnlySession: true } as Case
-
-      // Act
-      const res = transformCase(theCase)
-
-      // Assert
-      expect(res.requestProsecutorOnlySession).toBe(true)
-    })
-  })
-
-  describe('isAccusedAbsent', () => {
-    it('should set undefined to false', () => {
-      // Arrange
-      const theCase = {} as Case
-
-      // Act
-      const res = transformCase(theCase)
-
-      // Assert
-      expect(res.isAccusedAbsent).toBe(false)
-    })
-
-    it('should leave false unchanged', () => {
-      // Arrange
-      const theCase = { isAccusedAbsent: false } as Case
-
-      // Act
-      const res = transformCase(theCase)
-
-      // Assert
-      expect(res.isAccusedAbsent).toBe(false)
-    })
-
-    it('should leave true unchanged', () => {
-      // Arrange
-      const theCase = { isAccusedAbsent: true } as Case
-
-      // Act
-      const res = transformCase(theCase)
-
-      // Assert
-      expect(res.isAccusedAbsent).toBe(true)
-    })
-  })
+        // Assert
+        expect(res.isHeightenedSecurityLevel).toBe(transformedValue)
+      })
+    },
+  )
 
   describe('isValidToDateInThePast', () => {
     it('should not set custody end date in the past if no custody end date', () => {

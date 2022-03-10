@@ -1,6 +1,7 @@
 import { UserManagerSettings, WebStorageStateStore } from 'oidc-client'
+import { storageFactory } from './storageFactory'
 
-export interface AuthSettings extends UserManagerSettings {
+export interface AuthSettings extends Omit<UserManagerSettings, 'scope'> {
   /**
    * Make client id required.
    */
@@ -11,12 +12,6 @@ export interface AuthSettings extends UserManagerSettings {
    * Default: window.location.origin
    */
   baseUrl?: string
-
-  /**
-   * Base path
-   * Default: Path from baseUrl.
-   */
-  basePath?: string
 
   /*
    * Used to bind React Router callback route and to build a default value for `redirect_uri` with baseUrl. Should be
@@ -36,6 +31,21 @@ export interface AuthSettings extends UserManagerSettings {
    * Prefix for storing user access tokens in session storage.
    */
   userStorePrefix?: string
+
+  /**
+   * Allow to pass the scope as an array.
+   */
+  scope?: string[]
+
+  /**
+   * Which URL to send the user to after switching users.
+   */
+  switchUserRedirectUrl?: string
+
+  /**
+   * Wich PATH on the AUTHORITY to use for checking the session expiry.
+   */
+  checkSessionPath?: string
 }
 
 export const mergeAuthSettings = (settings: AuthSettings) => {
@@ -52,15 +62,16 @@ export const mergeAuthSettings = (settings: AuthSettings) => {
     redirectPath,
     redirectPathSilent,
     authority: 'https://innskra.island.is',
+    checkSessionPath: '/connect/sessioninfo',
     silent_redirect_uri: `${baseUrl}${redirectPathSilent}`,
     redirect_uri: `${baseUrl}${redirectPath}`,
-    post_logout_redirect_uri: `${baseUrl}`,
+    post_logout_redirect_uri: baseUrl,
     response_type: 'code',
     revokeAccessTokenOnSignout: true,
     loadUserInfo: true,
     monitorSession: onIdsDomain,
     userStore: new WebStorageStateStore({
-      store: window.sessionStorage,
+      store: storageFactory(() => sessionStorage),
       prefix: settings.userStorePrefix,
     }),
     ...settings,

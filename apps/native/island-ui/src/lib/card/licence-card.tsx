@@ -2,10 +2,6 @@ import React from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
 import { Image, ImageSourcePropType } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
-import {
-  LicenseStatus,
-  LicenseType,
-} from '../../../../app/src/types/license-type'
 import danger from '../../assets/card/danger.png'
 import isVerifiedLogo from '../../assets/card/is-verified.png'
 import driverLicence from '../../assets/card/okuskirteini.png'
@@ -79,10 +75,10 @@ const ImgWrap = styled.View`
 
 interface LicenceCardProps {
   title: string
-  status: LicenseStatus
+  status: string
   date?: Date | string
   agencyLogo: ImageSourcePropType
-  type: LicenseType
+  type: string
   nativeID?: string
   style?: any
 }
@@ -93,7 +89,7 @@ type StatusStyle = {
 }
 
 type StatusStyles = {
-  [Type in LicenseStatus]: StatusStyle
+  [key: string]: StatusStyle
 }
 
 // Todo when we know the status type add to intl
@@ -132,25 +128,25 @@ export function LicenceCard({
   let backgroundImage = null
   let logo = <Image source={agencyLogo} style={{ width: 68, height: 87 }} />
   switch (type) {
-    case LicenseType.DRIVERS_LICENSE:
+    case 'DRIVERS_LICENSE':
       titleString = 'Ökuskírteini (IS)'
       textColor = { dark: '#000000', light: '#000000' }
       backgroundColor = { dark: '#5F414E', light: '#f5e4ec' }
       backgroundImage = driverLicence
       break
-    case LicenseType.IDENTIDY_CARD:
+    case 'IDENTIDY_CARD':
       backgroundColor = { dark: '#403E3B', light: '#fff7e7' }
       break
-    case LicenseType.PASSPORT:
+    case 'PASSPORT':
       backgroundColor = { dark: '#283139', light: '#ddefff' }
       break
-    case LicenseType.FISHING_CARD:
+    case 'FISHING_CARD':
       textColor = { dark: '#000000', light: '#000000' }
       backgroundColor = { dark: '#283139', light: '#ddefff' }
       backgroundImage = fishingCard
       logo = <Image source={ust} style={{ width: 58, height: 41 }} />
       break
-    case LicenseType.WEAPON_LICENSE:
+    case 'WEAPON_LICENSE':
       textColor = { dark: '#000000', light: '#000000' }
       backgroundColor = { dark: '#474421', light: '#fffce0' }
       backgroundImage = weaponLicense

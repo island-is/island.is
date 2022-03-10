@@ -1,6 +1,8 @@
-import { CmsHealthIndicator } from '@island.is/api/domains/cms'
 import { Controller, Get } from '@nestjs/common'
 import { HealthCheck, HealthCheckService } from '@nestjs/terminus'
+
+import { CmsHealthIndicator } from '@island.is/cms'
+
 @Controller('health')
 export class HealthController {
   constructor(

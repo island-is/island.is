@@ -3,25 +3,29 @@ import {
   IsString,
   IsOptional,
   IsBoolean,
-  IsEnum,
+  IsArray,
+  IsNumber,
+  IsUUID,
 } from 'class-validator'
 
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiProperty } from '@nestjs/swagger'
 
-import { HomeCircumstances, Employment } from '@island.is/financial-aid/shared'
+import {
+  HomeCircumstances,
+  Employment,
+  ApplicationState,
+  FamilyStatus,
+  CreateApplicationFile,
+  DirectTaxPayment,
+} from '@island.is/financial-aid/shared/lib'
 
 export class CreateApplicationDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  readonly nationalId: string
-
-  @IsNotEmpty()
-  @IsString()
-  @ApiProperty()
   readonly name: string
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @ApiProperty()
   readonly phoneNumber: string
@@ -90,4 +94,72 @@ export class CreateApplicationDto {
   @IsBoolean()
   @ApiProperty()
   readonly hasIncome: boolean
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly formComment: string
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  readonly state: ApplicationState
+
+  @IsArray()
+  @ApiProperty()
+  readonly files: CreateApplicationFile[]
+
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty()
+  readonly amount: number
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly spouseName: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly spouseNationalId: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly spouseEmail: string
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  readonly familyStatus: FamilyStatus
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly city: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly postalCode: string
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  readonly municipalityCode: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  readonly streetName: string
+
+  @IsArray()
+  @ApiProperty()
+  readonly directTaxPayments: DirectTaxPayment[]
+
+  @IsOptional()
+  @IsUUID()
+  @ApiProperty()
+  readonly applicationSystemId: string
 }

@@ -1,13 +1,15 @@
 import { Module, DynamicModule } from '@nestjs/common'
 
-import { MainResolver } from './graphql'
+import { MainResolver, QualityPhotoResolver } from './graphql'
 import { DrivingLicenseService } from './drivingLicense.service'
-import { DrivingLicenseApi } from './client'
+import {
+  DrivingLicenseApiModule,
+  DrivingLicenseApiConfig,
+} from '@island.is/clients/driving-license'
+import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 
 export interface Config {
-  xroadBaseUrl: string
-  xroadClientId: string
-  secret: string
+  clientConfig: DrivingLicenseApiConfig
 }
 
 @Module({})
@@ -15,19 +17,11 @@ export class DrivingLicenseModule {
   static register(config: Config): DynamicModule {
     return {
       module: DrivingLicenseModule,
-      providers: [
-        MainResolver,
-        DrivingLicenseService,
-        {
-          provide: DrivingLicenseApi,
-          useFactory: async () =>
-            new DrivingLicenseApi(
-              config.xroadBaseUrl,
-              config.xroadClientId,
-              config.secret,
-            ),
-        },
+      imports: [
+        NationalRegistryXRoadModule,
+        DrivingLicenseApiModule.register(config.clientConfig),
       ],
+      providers: [MainResolver, QualityPhotoResolver, DrivingLicenseService],
       exports: [DrivingLicenseService],
     }
   }

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import * as styles from './Input.treat'
+import * as styles from './Input.css'
 import { Icon as IconType, Type } from '../IconRC/iconMap'
 import { ResponsiveProp } from '../../utils/responsiveProp'
 
@@ -19,6 +19,7 @@ export interface InputComponentProps {
   className?: string
   disabled?: boolean
   required?: boolean
+  readOnly?: boolean
   placeholder?: string
   autoFocus?: boolean
   maxLength?: number
@@ -43,9 +44,14 @@ export interface InputComponentProps {
   icon?: IconType
   iconType?: Type
   /**
-   * While true hover state will not show and focus state will be allways on
+   * While true hover state will not show and focus state will be always on
    */
   fixedFocusState?: boolean
+  autoComplete?: 'on' | 'off'
+  autoExpand?: {
+    on: boolean
+    maxHeight?: number
+  }
 }
 
 export interface InputProps extends InputComponentProps {

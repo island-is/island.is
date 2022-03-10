@@ -12,25 +12,24 @@ import { ValueType } from 'react-select/src/types'
 import {
   FormContentContainer,
   FormFooter,
-} from '@island.is/judicial-system-web/src/shared-components'
-import {
-  Institution,
-  InstitutionType,
-  User,
-  UserRole,
-} from '@island.is/judicial-system/types'
-import { FormSettings } from '@island.is/judicial-system-web/src/utils/useFormHelper'
+} from '@island.is/judicial-system-web/src/components'
+import { InstitutionType, UserRole } from '@island.is/judicial-system/types'
+import type { Institution, User } from '@island.is/judicial-system/types'
 import { ReactSelectOption } from '../../../types'
-import { validate } from '../../../utils/validate'
-import * as styles from './UserForm.treat'
-import * as constants from '@island.is/judicial-system-web/src/utils/constants'
-
+import {
+  isAdminUserFormValid,
+  validate,
+  Validation,
+} from '../../../utils/validate'
+import * as styles from './UserForm.css'
+import * as constants from '@island.is/judicial-system/consts'
 type ExtendedOption = ReactSelectOption & { institution: Institution }
 
 interface Props {
   user: User
-  courts: Institution[]
+  allCourts: Institution[]
   prosecutorsOffices: Institution[]
+  prisonInstitutions: Institution[]
   onSave: (user: User) => void
   loading: boolean
 }
@@ -49,8 +48,10 @@ export const UserForm: React.FC<Props> = (props) => {
 
   const selectInstitutions = (user.role === UserRole.PROSECUTOR
     ? props.prosecutorsOffices
+    : user.role === UserRole.STAFF
+    ? props.prisonInstitutions
     : user.role === UserRole.REGISTRAR || user.role === UserRole.JUDGE
-    ? props.courts
+    ? props.allCourts
     : []
   ).map((institution) => ({
     label: institution.name,
@@ -62,87 +63,53 @@ export const UserForm: React.FC<Props> = (props) => {
     (institution) => institution.value === user.institution?.id,
   )
 
-  const validations: FormSettings = {
-    name: {
-      validations: ['empty'],
-      errorMessage: nameErrorMessage,
-      setErrorMessage: setNameErrorMessage,
-    },
-    nationalId: {
-      validations: ['empty', 'national-id'],
-      errorMessage: nationalIdErrorMessage,
-      setErrorMessage: setNationalIdErrorMessage,
-    },
-    institution: {
-      validations: ['empty'],
-    },
-    title: {
-      validations: ['empty'],
-      errorMessage: titleErrorMessage,
-      setErrorMessage: setTitleErrorMessage,
-    },
-    mobileNumber: {
-      validations: ['empty'],
-      errorMessage: mobileNumberErrorMessage,
-      setErrorMessage: setMobileNumberErrorMessage,
-    },
-    email: {
-      validations: ['empty', 'email-format'],
-      errorMessage: emailErrorMessage,
-      setErrorMessage: setEmailErrorMessage,
-    },
-  }
-
   const isValid = () => {
-    for (const fieldName in validations) {
-      const validation = validations[fieldName]
-
-      const value = user[fieldName as keyof User] as string
-
-      if (
-        validation.validations?.some(
-          (v) => validate(value, v).isValid === false,
-        )
-      ) {
-        return false
-      }
+    // TODO: Find a better way to validate the match between user role and institution type
+    if (!isAdminUserFormValid(user)) {
+      return false
     }
 
-    // TODO: Find a better way to validate the match between user role and institution type
     return user.role === UserRole.PROSECUTOR
       ? user.institution?.type === InstitutionType.PROSECUTORS_OFFICE
       : user.role === UserRole.REGISTRAR || user.role === UserRole.JUDGE
-      ? user.institution?.type === InstitutionType.COURT
+      ? user.institution?.type === InstitutionType.COURT ||
+        user.institution?.type === InstitutionType.HIGH_COURT
+      : user.role === UserRole.STAFF
+      ? user.institution?.type === InstitutionType.PRISON ||
+        user.institution?.type === InstitutionType.PRISON_ADMIN
       : false
   }
 
-  const storeAndRemoveErrorIfValid = (field: string, value: string) => {
+  const storeAndRemoveErrorIfValid = (
+    field: string,
+    value: string,
+    validations: Validation[],
+    setErrorMessage: (value: React.SetStateAction<string | undefined>) => void,
+  ) => {
     setUser({
       ...user,
       [field]: value,
     })
 
-    const fieldValidation = validations[field]
-
-    if (
-      !fieldValidation.validations?.some(
-        (v) => validate(value, v).isValid === false,
-      ) &&
-      fieldValidation.setErrorMessage
-    ) {
-      fieldValidation.setErrorMessage(undefined)
-    }
+    validations.forEach((validation) => {
+      if (validate(value, validation).isValid) {
+        setErrorMessage(undefined)
+      }
+    })
   }
 
-  const validateAndSetError = (field: string, value: string) => {
-    const fieldValidation = validations[field]
-
-    const error = fieldValidation.validations
-      ?.map((v) => validate(value, v))
+  const validateAndSetError = (
+    field: string,
+    value: string,
+    validations: Validation[],
+    setErrorMessage: (value: React.SetStateAction<string | undefined>) => void,
+  ) => {
+    const error = validations
+      .map((v) => validate(value, v))
       .find((v) => v.isValid === false)
 
-    if (error && fieldValidation.setErrorMessage) {
-      fieldValidation.setErrorMessage(error.errorMessage)
+    if (error) {
+      setErrorMessage(error.errorMessage)
     }
   }
 
@@ -159,11 +126,24 @@ export const UserForm: React.FC<Props> = (props) => {
             name="name"
             label="Nafn"
             placeholder="Fullt nafn"
-            defaultValue={user.name}
+            autoComplete="off"
+            value={user.name || ''}
             onChange={(event) =>
-              storeAndRemoveErrorIfValid('name', event.target.value)
+              storeAndRemoveErrorIfValid(
+                'name',
+                event.target.value,
+                ['empty'],
+                setNameErrorMessage,
+              )
             }
-            onBlur={(event) => validateAndSetError('name', event.target.value)}
+            onBlur={(event) =>
+              validateAndSetError(
+                'name',
+                event.target.value,
+                ['empty'],
+                setNameErrorMessage,
+              )
+            }
             hasError={nameErrorMessage !== undefined}
             errorMessage={nameErrorMessage}
             required
@@ -173,14 +153,22 @@ export const UserForm: React.FC<Props> = (props) => {
           <InputMask
             mask="999999-9999"
             maskPlaceholder={null}
+            value={user.nationalId || ''}
             onChange={(event) =>
               storeAndRemoveErrorIfValid(
                 'nationalId',
                 event.target.value.replace('-', ''),
+                ['empty', 'national-id'],
+                setNationalIdErrorMessage,
               )
             }
             onBlur={(event) =>
-              validateAndSetError('nationalId', event.target.value)
+              validateAndSetError(
+                'nationalId',
+                event.target.value.replace('-', ''),
+                ['empty', 'national-id'],
+                setNationalIdErrorMessage,
+              )
             }
             readOnly={user.id.length > 0 ? true : false}
           >
@@ -189,7 +177,7 @@ export const UserForm: React.FC<Props> = (props) => {
               name="nationalId"
               label="Kennitala"
               placeholder="Kennitala"
-              defaultValue={user.nationalId}
+              autoComplete="off"
               required
               hasError={nationalIdErrorMessage !== undefined}
               errorMessage={nationalIdErrorMessage}
@@ -229,12 +217,24 @@ export const UserForm: React.FC<Props> = (props) => {
               />
             </Box>
           </Box>
+          <Box marginBottom={2} className={styles.roleContainer}>
+            <Box className={styles.roleColumn}>
+              <RadioButton
+                name="role"
+                id="roleStaff"
+                label="Fangelsisyfirvöld"
+                checked={user.role === UserRole.STAFF}
+                onChange={() => setUser({ ...user, role: UserRole.STAFF })}
+                large
+              />
+            </Box>
+          </Box>
         </Box>
         <Box marginBottom={2}>
           <Select
             name="institution"
             label="Veldu stofnun"
-            defaultValue={usersInstitution}
+            value={usersInstitution}
             options={selectInstitutions}
             onChange={(selectedOption: ValueType<ReactSelectOption>) =>
               setUser({
@@ -249,11 +249,24 @@ export const UserForm: React.FC<Props> = (props) => {
           <Input
             name="title"
             label="Titill"
-            defaultValue={user.title}
+            autoComplete="off"
+            value={user.title || ''}
             onChange={(event) =>
-              storeAndRemoveErrorIfValid('title', event.target.value)
+              storeAndRemoveErrorIfValid(
+                'title',
+                event.target.value,
+                ['empty'],
+                setTitleErrorMessage,
+              )
             }
-            onBlur={(event) => validateAndSetError('title', event.target.value)}
+            onBlur={(event) =>
+              validateAndSetError(
+                'title',
+                event.target.value,
+                ['empty'],
+                setTitleErrorMessage,
+              )
+            }
             required
             hasError={titleErrorMessage !== undefined}
             errorMessage={titleErrorMessage}
@@ -263,14 +276,22 @@ export const UserForm: React.FC<Props> = (props) => {
           <InputMask
             mask="999-9999"
             maskPlaceholder={null}
+            value={user.mobileNumber || ''}
             onChange={(event) =>
               storeAndRemoveErrorIfValid(
                 'mobileNumber',
                 event.target.value.replace('-', ''),
+                ['empty'],
+                setMobileNumberErrorMessage,
               )
             }
             onBlur={(event) =>
-              validateAndSetError('mobileNumber', event.target.value)
+              validateAndSetError(
+                'mobileNumber',
+                event.target.value.replace('-', ''),
+                ['empty'],
+                setMobileNumberErrorMessage,
+              )
             }
           >
             <Input
@@ -278,7 +299,7 @@ export const UserForm: React.FC<Props> = (props) => {
               name="mobileNumber"
               label="Símanúmer"
               placeholder="Símanúmer"
-              defaultValue={user.mobileNumber}
+              autoComplete="off"
               required
               hasError={mobileNumberErrorMessage !== undefined}
               errorMessage={mobileNumberErrorMessage}
@@ -290,11 +311,24 @@ export const UserForm: React.FC<Props> = (props) => {
             name="email"
             label="Netfang"
             placeholder=""
-            defaultValue={user.email}
+            autoComplete="off"
+            value={user.email || ''}
             onChange={(event) =>
-              storeAndRemoveErrorIfValid('email', event.target.value)
+              storeAndRemoveErrorIfValid(
+                'email',
+                event.target.value,
+                ['empty', 'email-format'],
+                setEmailErrorMessage,
+              )
             }
-            onBlur={(event) => validateAndSetError('email', event.target.value)}
+            onBlur={(event) =>
+              validateAndSetError(
+                'email',
+                event.target.value,
+                ['empty', 'email-format'],
+                setEmailErrorMessage,
+              )
+            }
             required
             hasError={emailErrorMessage !== undefined}
             errorMessage={emailErrorMessage}

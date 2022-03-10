@@ -5,8 +5,6 @@ export const SPOUSE = 'spouse'
 
 export const FILE_SIZE_LIMIT = 10000000 // 10MB
 
-export const MILLISECONDS_IN_A_DAY = 24 * 3600 * 1000
-
 export enum ParentalRelations {
   primary = 'primary',
   secondary = 'secondary',
@@ -23,6 +21,12 @@ export enum StartDateOptions {
   ESTIMATED_DATE_OF_BIRTH = 'estimatedDateOfBirth',
   ACTUAL_DATE_OF_BIRTH = 'actualDateOfBirth',
   SPECIFIC_DATE = 'specificDate',
+}
+
+export enum TransferRightsOption {
+  NONE = 'NONE',
+  REQUEST = 'REQUEST',
+  GIVE = 'GIVE',
 }
 
 export enum States {
@@ -53,3 +57,5 @@ export enum States {
   VINNUMALASTOFNUN_APPROVE_EDITS = 'vinnumalastofnunApproveEdits',
   VINNUMALASTOFNUN_EDITS_ACTION = 'vinnumalastofnunRequiresActionOnEdits',
 }
+
+export const DATE_FORMAT = 'yyyy-MM-dd'

@@ -3,25 +3,34 @@ import {
   Logo,
   Text,
   Box,
-  Button,
   GridContainer,
+  DropdownMenu,
 } from '@island.is/island-ui/core'
-import { useRouter } from 'next/router'
 import Link from 'next/link'
 
-import * as styles from './Header.treat'
-import { api } from '@island.is/financial-aid-web/osk/src/services'
-import { UserContext } from '@island.is/financial-aid-web/osk/src/components/UserProvider/UserProvider'
+import * as styles from './Header.css'
 
-const Header: React.FC = () => {
-  const router = useRouter()
-  const { isAuthenticated, setUser, user } = useContext(UserContext)
+import { useLogOut } from '@island.is/financial-aid-web/osk/src/utils/hooks/useLogOut'
+import { Routes } from '@island.is/financial-aid/shared/lib'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
+
+const Header = () => {
+  const { isAuthenticated, user, municipality } = useContext(AppContext)
+
+  const logOut = useLogOut()
 
   return (
     <GridContainer>
       <header className={`${styles.header}`}>
         <Box display="flex" height="full" alignItems="center">
-          <Link href="/" data-testid="link-to-home">
+          <Link
+            href={
+              user?.currentApplicationId
+                ? Routes.statusPage(user?.currentApplicationId as string)
+                : Routes.application
+            }
+            data-testid="link-to-home"
+          >
             <Box
               display="flex"
               alignItems="center"
@@ -39,7 +48,6 @@ const Header: React.FC = () => {
           </Link>
 
           <Box
-            display="flex"
             height="full"
             flexDirection="column"
             justifyContent="center"
@@ -47,7 +55,7 @@ const Header: React.FC = () => {
             paddingLeft={[2, 2, 4]}
           >
             <Text fontWeight="semiBold" variant="small">
-              Hafnarfjörður
+              {municipality?.name ?? 'Samband íslenskra sveitarfélaga'}
             </Text>
 
             <span className={styles.desktopText}>
@@ -60,23 +68,24 @@ const Header: React.FC = () => {
           </Box>
         </Box>
 
-        <Box className={styles.userButton}>
+        <Box className={styles.dropdownMenuWrapper}>
           {isAuthenticated && (
-            <Button
+            <DropdownMenu
               icon="chevronDown"
-              iconType="filled"
-              onClick={() => {
-                api.logOut()
-                setUser && setUser(undefined)
-              }}
-              data-testid="logout-button"
-              preTextIconType="filled"
-              size="small"
-              type="button"
-              variant="utility"
-            >
-              {user?.name}
-            </Button>
+              items={[
+                {
+                  href: 'https://island.is/innskraning',
+                  title: 'Mínar síður',
+                },
+                {
+                  onClick: () => {
+                    logOut()
+                  },
+                  title: 'Útskráning',
+                },
+              ]}
+              title={user?.name}
+            />
           )}
         </Box>
       </header>

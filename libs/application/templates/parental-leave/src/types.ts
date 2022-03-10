@@ -1,12 +1,31 @@
 import { YES, NO } from './constants'
 
-export type Boolean = typeof NO | typeof YES
+export interface PersonInformation {
+  fullName: string
+  genderCode: string
+  children: {
+    nationalId: string
+    fullName: string
+    otherParent: {
+      nationalId: string
+    }
+  }[]
+  spouse?: {
+    nationalId?: string
+    name?: string
+  }
+}
+
+export type YesOrNo = typeof NO | typeof YES
 
 export interface Period {
   startDate: string
   endDate: string
   ratio: string
-  duration: string
+  firstPeriodStart?: string
+  useLength?: YesOrNo
+  daysToUse?: string
+  rawIndex?: number
 }
 
 export interface Payment {

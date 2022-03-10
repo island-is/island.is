@@ -1,0 +1,1 @@
+export { IsHealthInsuredInput } from './getIsHealthInsuredInput'

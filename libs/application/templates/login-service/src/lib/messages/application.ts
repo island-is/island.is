@@ -12,6 +12,11 @@ export const application = defineMessages({
     defaultMessage: 'Lýsing á umsókn um innskráningarþjónustu',
     description: 'Description of the Login Service application',
   },
+  institutionName: {
+    id: `ls.application:application.institutionName`,
+    defaultMessage: 'Stafrænt Ísland',
+    description: 'Name of the Login Service application institution',
+  },
 })
 
 // All sections in the application
@@ -28,13 +33,8 @@ export const section = defineMessages({
   },
   technicalContact: {
     id: `ls.application:section.technicalContact`,
-    defaultMessage: 'Tæknilegur tengiliður',
+    defaultMessage: 'Tæknilegar tilkynningar',
     description: 'Technical Contact Section Title',
-  },
-  technicalInfo: {
-    id: `ls.application:section.technicalInfo`,
-    defaultMessage: 'Tæknilegar upplýsingar',
-    description: 'Technical Info Section Title',
   },
   overview: {
     id: `ls.application:section.overview`,

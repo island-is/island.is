@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
-import * as styles from './Menu.treat'
+import * as styles from './Menu.css'
 import { Box, Icon } from '@island.is/island-ui/core'
 
 interface Props {

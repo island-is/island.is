@@ -4,11 +4,15 @@ import getConfig from 'next/config'
 import ApolloClient from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 import { ApolloProvider } from '@apollo/client'
+
 import { QueryGetTranslationsArgs, Query } from '@island.is/api/schema'
 import { LocaleProvider, GET_TRANSLATIONS } from '@island.is/localization'
-import { UserProvider, Header, FeatureProvider } from '../src/shared-components'
+import { ToastContainer } from '@island.is/island-ui/core'
+
 import { client } from '../graphql'
 import { withHealthchecks } from '../units/Healthchecks/withHealthchecks'
+import FormProvider from '../src/components/FormProvider/FormProvider'
+import { UserProvider, Header, FeatureProvider } from '../src/components'
 
 const getTranslationStrings = ({
   apolloClient,
@@ -23,7 +27,11 @@ const getTranslationStrings = ({
       query: GET_TRANSLATIONS,
       variables: {
         input: {
-          namespaces: ['judicial.system'],
+          namespaces: [
+            'judicial.system.core',
+            'judicial.system.restriction_cases',
+            'judicial.system.investigation_cases',
+          ],
           lang: 'is',
         },
       },
@@ -65,7 +73,10 @@ class JudicialSystemApplication extends App<Props> {
             <LocaleProvider locale="is" messages={translations || {}}>
               <>
                 <Header />
-                <Component {...pageProps} />
+                <FormProvider>
+                  <Component {...pageProps} />
+                  <ToastContainer useKeyframeStyles />
+                </FormProvider>
                 <style jsx global>{`
                   @font-face {
                     font-family: 'IBM Plex Sans';

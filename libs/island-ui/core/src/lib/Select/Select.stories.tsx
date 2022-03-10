@@ -1,12 +1,11 @@
 import React from 'react'
-import { withDesign } from 'storybook-addon-designs'
+
 import { withFigma } from '../../utils/withFigma'
 import { Select } from './Select'
 
 export default {
   title: 'Form/Select',
   component: Select,
-  decorators: [withDesign],
   parameters: withFigma('Select'),
 }
 
@@ -32,6 +31,52 @@ Default.args = {
     },
   ],
   noOptionsMessage: 'Enginn valmöguleiki',
+}
+
+export const WithLabelAbove = Template.bind({})
+WithLabelAbove.args = {
+  name: 'select2',
+  label: 'Tegund valmöguleiga',
+  placeholder: 'Veldu tegund',
+  options: [
+    {
+      label: 'Valmöguleiki 1',
+      value: '0',
+    },
+    {
+      label: 'Valmöguleiki 2',
+      value: '1',
+    },
+    {
+      label: 'Valmöguleiki 3',
+      value: '2',
+    },
+  ],
+  size: 'xs',
+  noOptionsMessage: 'Enginn valmöguleiki',
+}
+
+export const Disabled = Template.bind({})
+Disabled.args = {
+  name: 'select3',
+  label: 'Tegund fyrirtækis',
+  placeholder: 'Veldu tegund',
+  options: [
+    {
+      label: 'Valmöguleiki 1',
+      value: '0',
+    },
+    {
+      label: 'Valmöguleiki 2',
+      value: '1',
+    },
+    {
+      label: 'Valmöguleiki 3',
+      value: '2',
+    },
+  ],
+  noOptionsMessage: 'Enginn valmöguleiki',
+  disabled: true,
 }
 
 export const TempTest = () => (

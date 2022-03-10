@@ -1,38 +1,43 @@
-import React from 'react'
-import { FieldBaseProps } from '@island.is/application/core'
+import { PaymentScheduleDebts } from '@island.is/api/schema'
+import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import React from 'react'
 import { paymentPlan } from '../../lib/messages/paymentPlan'
-import {
-  PaymentPlanExternalData,
-  PublicDebtPaymentPlan,
-} from '../../lib/dataSchema'
-import { PaymentPlanCard } from './PaymentPlanCard/PaymentPlanCard'
 import { getPaymentPlanIds, getPaymentPlanKeyById } from '../../shared/utils'
+import { PaymentPlans } from '../../types'
+import { PaymentPlanCard } from './PaymentPlanCard/PaymentPlanCard'
 
 export const PaymentPlanList = ({
   application,
   goToScreen,
 }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
-  const paymentPlanList = (application.externalData as PaymentPlanExternalData)
-    .paymentPlanList
-  const answers = application.answers as PublicDebtPaymentPlan
+
+  const paymentScheduleDebts = getValueViaPath(
+    application.externalData,
+    'paymentPlanPrerequisites.data.debts',
+  ) as PaymentScheduleDebts[]
+
+  const paymentPlans = getValueViaPath(
+    application.answers,
+    'paymentPlans',
+  ) as PaymentPlans
 
   const handleEditPaymentPlan = (id: string) => {
-    const clickedPlanKey = getPaymentPlanKeyById(answers.paymentPlans, id)
+    const clickedPlanKey = getPaymentPlanKeyById(paymentPlans, id)
     if (clickedPlanKey && goToScreen)
       goToScreen(`paymentPlans.${clickedPlanKey}`)
   }
 
   return (
     <Box>
-      <Text marginBottom={3}>
+      <Text marginBottom={4} marginTop={1}>
         {formatMessage(paymentPlan.general.pageDescription)}
       </Text>
-      {paymentPlanList?.data.map((payment, index) => {
-        const isAnswered = getPaymentPlanIds(answers.paymentPlans).some(
-          (id) => id === payment.id,
+      {paymentScheduleDebts?.map((payment, index) => {
+        const isAnswered = getPaymentPlanIds(paymentPlans).some(
+          (id) => id === payment.type,
         )
 
         return (

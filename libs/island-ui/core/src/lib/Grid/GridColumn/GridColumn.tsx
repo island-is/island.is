@@ -8,7 +8,7 @@ import {
   resolveResponsiveProp,
   ResponsiveProp,
 } from '../../../utils/responsiveProp'
-import * as styles from './GridColumn.treat'
+import * as styles from './GridColumn.css'
 import { resolveResponsiveRangeProps } from '../../../utils/responsiveRangeProps'
 
 type Breakpoint = keyof typeof theme['breakpoints']

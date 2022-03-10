@@ -1,5 +1,3 @@
-import { CourtClientServiceOptions } from '@island.is/judicial-system/court-client'
-
 const devConfig = {
   production: false,
   auth: {
@@ -8,9 +6,9 @@ const devConfig = {
   },
   notifications: {
     prisonEmail: process.env.PRISON_EMAIL,
-    prisonAdminEmail: process.env.PRISON_ADMIN_EMAIL,
+    prisonAdminEmail: process.env.PRISON_ADMIN_EMAIL ?? '',
     courtsMobileNumbers: JSON.parse(
-      process.env.COURTS_MOBILE_NUMBERS || '{}',
+      process.env.COURTS_MOBILE_NUMBERS ?? '{}',
     ) as {
       [key: string]: string
     },
@@ -24,14 +22,17 @@ const devConfig = {
   smsOptions: {
     url: 'https://smsapi.devnova.is',
     username: 'IslandIs_User_Development',
-    password: process.env.NOVA_PASSWORD,
+    password: process.env.NOVA_PASSWORD ?? '',
   },
   signingOptions: {
     url: 'https://developers.dokobit.com',
-    accessToken: process.env.DOKOBIT_ACCESS_TOKEN,
+    accessToken: process.env.DOKOBIT_ACCESS_TOKEN ?? '',
   },
   emailOptions: {
-    useTestAccount: true,
+    useTestAccount: (process.env.EMAIL_USE_TEST_ACCOUNT ?? 'true') === 'true',
+    options: {
+      region: process.env.EMAIL_REGION ?? '',
+    },
   },
   admin: {
     users:
@@ -44,18 +45,26 @@ const devConfig = {
     timeToLiveGet: '5',
   },
   xRoad: {
-    basePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV || '',
-    clientId: process.env.XROAD_CLIENT_ID || '',
-    clientCert: process.env.XROAD_CLIENT_CERT || '',
-    clientKey: process.env.XROAD_CLIENT_KEY || '',
-    clientCa: process.env.XROAD_CLIENT_PEM || '',
+    basePathWithEnv: process.env.XROAD_TLS_BASE_PATH_WITH_ENV ?? '',
+    clientId: process.env.XROAD_CLIENT_ID ?? '',
+    clientCert: process.env.XROAD_CLIENT_CERT ?? '',
+    clientKey: process.env.XROAD_CLIENT_KEY ?? '',
+    clientCa: process.env.XROAD_CLIENT_PEM ?? '',
   },
-  courtClientOptions: {
-    apiPath: process.env.XROAD_COURT_API_PATH || '',
-    memberCode: process.env.XROAD_COURT_MEMBER_CODE || '',
-    serviceOptions: JSON.parse(
-      process.env.COURTS_CREDENTIALS || '{}',
-    ) as CourtClientServiceOptions,
+  policeServiceOptions: {
+    apiPath: process.env.XROAD_POLICE_API_PATH ?? '',
+    memberCode: process.env.XROAD_POLICE_MEMBER_CODE ?? '',
+  },
+  events: {
+    url: process.env.EVENT_URL,
+    errorUrl: process.env.ERROR_EVENT_URL,
+  },
+  deepLinks: {
+    completedCaseOverviewUrl: 'http://localhost:4200/krafa/yfirlit/',
+    prosecutorRestrictionCaseOverviewUrl:
+      'http://localhost:4200/krafa/stadfesta/',
+    prosecutorInvestigationCaseOverviewUrl:
+      'http://localhost:4200/krafa/rannsoknarheimild/stadfesta/',
   },
 }
 
@@ -120,8 +129,8 @@ if (process.env.NODE_ENV === 'production') {
   if (!process.env.S3_TIME_TO_LIVE_GET) {
     throw new Error('Missing S3_TIME_TO_LIVE_GET environment.')
   }
-  if (!process.env.XROAD_BASE_PATH_WITH_ENV) {
-    throw new Error('Missing XROAD_BASE_PATH_WITH_ENV environment.')
+  if (!process.env.XROAD_TLS_BASE_PATH_WITH_ENV) {
+    throw new Error('Missing XROAD_TLS_BASE_PATH_WITH_ENV environment.')
   }
   if (!process.env.XROAD_CLIENT_ID) {
     throw new Error('Missing XROAD_CLIENT_ID environment.')
@@ -135,75 +144,93 @@ if (process.env.NODE_ENV === 'production') {
   if (!process.env.XROAD_CLIENT_PEM) {
     throw new Error('Missing XROAD_CLIENT_PEM environment.')
   }
-  if (!process.env.XROAD_COURT_API_PATH) {
-    throw new Error('Missing XROAD_COURT_API_PATH environment.')
+  if (!process.env.XROAD_POLICE_API_PATH) {
+    throw new Error('Missing XROAD_POLICE_API_PATH environment.')
   }
-  if (!process.env.XROAD_COURT_MEMBER_CODE) {
-    throw new Error('Missing XROAD_COURT_MEMBER_CODE environment.')
+  if (!process.env.XROAD_POLICE_MEMBER_CODE) {
+    throw new Error('Missing XROAD_POLICE_MEMBER_CODE environment.')
   }
-  if (!process.env.COURTS_CREDENTIALS) {
-    throw new Error('Missing COURTS_CREDENTIALS environment.')
+  if (!process.env.COMPLETED_CASE_OVERVIEW_URL) {
+    throw new Error('Missing COMPLETED_CASE_OVERVIEW_URL environment.')
+  }
+  if (!process.env.PROSECUTOR_RESTRICTION_CASE_OVERVIEW_URL) {
+    throw new Error(
+      'Missing PROSECUTOR_RESTRICTION_CASE_OVERVIEW_URL environment.',
+    )
+  }
+  if (!process.env.PROSECUTOR_INVESTIGATION_CASE_OVERVIEW_URL) {
+    throw new Error(
+      'Missing PROSECUTOR_INVESTIGATION_CASE_OVERVIEW_URL environment.',
+    )
   }
 }
 
 const prodConfig = {
   production: true,
   auth: {
-    jwtSecret: process.env.AUTH_JWT_SECRET,
-    secretToken: process.env.SECRET_TOKEN,
+    jwtSecret: process.env.AUTH_JWT_SECRET ?? '',
+    secretToken: process.env.SECRET_TOKEN ?? '',
   },
   notifications: {
     courtsMobileNumbers: JSON.parse(
-      process.env.COURTS_MOBILE_NUMBERS || '{}',
+      process.env.COURTS_MOBILE_NUMBERS ?? '{}',
     ) as {
       [key: string]: string
     },
     prisonEmail: process.env.PRISON_EMAIL,
-    prisonAdminEmail: process.env.PRISON_ADMIN_EMAIL,
+    prisonAdminEmail: process.env.PRISON_ADMIN_EMAIL ?? '',
   },
   email: {
-    fromEmail: process.env.EMAIL_FROM,
-    fromName: process.env.EMAIL_FROM_NAME,
-    replyToEmail: process.env.EMAIL_REPLY_TO,
-    replyToName: process.env.EMAIL_REPLY_TO_NAME,
+    fromEmail: process.env.EMAIL_FROM ?? '',
+    fromName: process.env.EMAIL_FROM_NAME ?? '',
+    replyToEmail: process.env.EMAIL_REPLY_TO ?? '',
+    replyToName: process.env.EMAIL_REPLY_TO_NAME ?? '',
   },
   smsOptions: {
-    url: process.env.NOVA_URL,
-    username: process.env.NOVA_USERNAME,
-    password: process.env.NOVA_PASSWORD,
+    url: process.env.NOVA_URL ?? '',
+    username: process.env.NOVA_USERNAME ?? '',
+    password: process.env.NOVA_PASSWORD ?? '',
   },
   signingOptions: {
-    url: process.env.DOKOBIT_URL,
-    accessToken: process.env.DOKOBIT_ACCESS_TOKEN,
+    url: process.env.DOKOBIT_URL ?? '',
+    accessToken: process.env.DOKOBIT_ACCESS_TOKEN ?? '',
   },
   emailOptions: {
     useTestAccount: false,
     options: {
-      region: process.env.EMAIL_REGION,
+      region: process.env.EMAIL_REGION ?? '',
     },
   },
   admin: {
-    users: process.env.ADMIN_USERS,
+    users: process.env.ADMIN_USERS ?? '',
   },
   files: {
     region: process.env.S3_REGION,
-    bucket: process.env.S3_BUCKET,
-    timeToLivePost: process.env.S3_TIME_TO_LIVE_POST,
-    timeToLiveGet: process.env.S3_TIME_TO_LIVE_GET,
+    bucket: process.env.S3_BUCKET ?? '',
+    timeToLivePost: process.env.S3_TIME_TO_LIVE_POST ?? '',
+    timeToLiveGet: process.env.S3_TIME_TO_LIVE_GET ?? '',
   },
   xRoad: {
-    basePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV,
-    clientId: process.env.XROAD_CLIENT_ID,
-    clientCert: process.env.XROAD_CLIENT_CERT,
-    clientKey: process.env.XROAD_CLIENT_KEY,
-    clientCa: process.env.XROAD_CLIENT_PEM,
+    basePathWithEnv: process.env.XROAD_TLS_BASE_PATH_WITH_ENV ?? '',
+    clientId: process.env.XROAD_CLIENT_ID ?? '',
+    clientCert: process.env.XROAD_CLIENT_CERT ?? '',
+    clientKey: process.env.XROAD_CLIENT_KEY ?? '',
+    clientCa: process.env.XROAD_CLIENT_PEM ?? '',
   },
-  courtClientOptions: {
-    apiPath: process.env.XROAD_COURT_API_PATH,
-    memberCode: process.env.XROAD_COURT_MEMBER_CODE,
-    serviceOptions: JSON.parse(
-      process.env.COURTS_CREDENTIALS || '{}',
-    ) as CourtClientServiceOptions,
+  policeServiceOptions: {
+    apiPath: process.env.XROAD_POLICE_API_PATH ?? '',
+    memberCode: process.env.XROAD_POLICE_MEMBER_CODE ?? '',
+  },
+  events: {
+    url: process.env.EVENT_URL,
+    errorUrl: process.env.ERROR_EVENT_URL,
+  },
+  deepLinks: {
+    completedCaseOverviewUrl: process.env.COMPLETED_CASE_OVERVIEW_URL,
+    prosecutorRestrictionCaseOverviewUrl:
+      process.env.PROSECUTOR_RESTRICTION_CASE_OVERVIEW_URL,
+    prosecutorInvestigationCaseOverviewUrl:
+      process.env.PROSECUTOR_INVESTIGATION_CASE_OVERVIEW_URL,
   },
 }
 

@@ -30,6 +30,13 @@ const caseStateMachine: Map<CaseTransition, Rule> = new Map([
     },
   ],
   [
+    CaseTransition.DISMISS,
+    {
+      from: [CaseState.RECEIVED],
+      to: CaseState.DISMISSED,
+    },
+  ],
+  [
     CaseTransition.ACCEPT,
     {
       from: [CaseState.RECEIVED],
@@ -61,7 +68,7 @@ export const transitionCase = function (
   transition: CaseTransition,
   currentState: CaseState,
 ): CaseState {
-  const rule: Rule = caseStateMachine.get(transition)
+  const rule = caseStateMachine.get(transition)
 
   if (!rule?.from.includes(currentState)) {
     throw new ForbiddenException(

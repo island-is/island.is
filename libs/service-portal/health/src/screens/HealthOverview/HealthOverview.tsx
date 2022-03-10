@@ -2,6 +2,7 @@ import React from 'react'
 import {
   InfoScreen,
   ServicePortalModuleComponent,
+  m,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import { useNamespaces } from '@island.is/localization'
@@ -21,10 +22,7 @@ export const HealthOverview: ServicePortalModuleComponent = () => {
         heilsu á næstunni.`,
       })}
       list={{
-        title: defineMessage({
-          id: 'service.portal:incoming',
-          defaultMessage: 'Á döfinni',
-        }),
+        title: m.incoming,
         items: [
           defineMessage({
             id: 'sp.health:inc-1',
@@ -45,29 +43,11 @@ export const HealthOverview: ServicePortalModuleComponent = () => {
         id: 'sp.health:goto-heilsuvera',
         defaultMessage: 'Fara á heilsuveru',
       })}
-      institutionTitle={defineMessage({
-        id: 'service.portal:digital-iceland',
-        defaultMessage: 'Stafrænt Ísland',
-      })}
-      institutionSubtitle={defineMessage({
-        id: 'service.portal:incoming',
-        defaultMessage: 'Á döfinni',
-      })}
-      institutionDescription={defineMessage({
-        id: 'service.portal:vision-segment',
-        defaultMessage: `
-          Markmið ríkisstjórnarinnar er að stafræn samskipti
-          verði megin samskiptaleið fólks og fyrirtækja við hið opinbera.
-          Þannig má einfalda líf þeirra sem búa og starfa á Íslandi.
-          Stafrænt Ísland, sem heyrir undir fjármála- og efnahagsráðuneytið,
-          vinnur að þessum markmiðum þvert á ráðuneyti og stofnanir.
-        `,
-      })}
+      institutionTitle={m.digitalIceland}
+      institutionSubtitle={m.incoming}
+      institutionDescription={m.visionSegment}
       institutionHref="https://island.is/stafraent-island"
-      institutionLinkTitle={defineMessage({
-        id: 'service.portal:timeline-link-title',
-        defaultMessage: 'Sjá tímalínu',
-      })}
+      institutionLinkTitle={m.timelineLinkTitle}
       figure="/assets/images/bench.svg"
     />
   )

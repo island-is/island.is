@@ -1,10 +1,5 @@
 import { Grant } from '../entities/models/grants.model'
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { InjectModel } from '@nestjs/sequelize'
@@ -22,7 +17,7 @@ export class GrantsService {
 
   /** Get's all grants and count */
   async findAndCountAll(): Promise<{ rows: Grant[]; count: number } | null> {
-    return this.grantModel.findAndCountAll()
+    return this.grantModel.findAndCountAll({ useMaster: true })
   }
 
   /** Gets grants by provided parameters */
@@ -52,8 +47,9 @@ export class GrantsService {
 
     this.logger.debug(`Finding all grants with filter `, whereOptions)
 
-    return await this.grantModel.findAll({
+    return this.grantModel.findAll({
       where: whereOptions,
+      useMaster: true,
     })
   }
 
@@ -65,7 +61,7 @@ export class GrantsService {
       throw new BadRequestException('Key must be provided')
     }
 
-    return await this.grantModel.findByPk(key)
+    return this.grantModel.findByPk(key, { useMaster: true })
   }
 
   /** Removes a grant by subjectId and other properties if provided */
@@ -95,7 +91,7 @@ export class GrantsService {
 
     this.logger.debug(`Removing grants with filter `, whereOptions)
 
-    return await this.grantModel.destroy({
+    return this.grantModel.destroy({
       where: whereOptions,
     })
   }
@@ -108,7 +104,7 @@ export class GrantsService {
       throw new BadRequestException('Key must be provided')
     }
 
-    return await this.grantModel.destroy({
+    return this.grantModel.destroy({
       where: {
         key: key,
       },
@@ -125,12 +121,12 @@ export class GrantsService {
   async updateAsync(key: string, grant: GrantDto): Promise<Grant> {
     this.logger.debug(`Updating grant`)
 
-    const existing = await this.grantModel.findByPk(key)
+    const existing = await this.grantModel.findByPk(key, { useMaster: true })
 
     if (!existing) {
-      throw new NotFoundException('Grant not found')
+      return this.createAsync(grant)
     }
 
-    return await existing.update({ ...grant })
+    return existing.update({ ...grant })
   }
 }
