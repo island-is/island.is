@@ -303,11 +303,14 @@ export class DrivingLicenseService {
     nationalId: User['nationalId'],
   ): Promise<string | null> {
     const image = await this.drivingLicenseApi.getQualityPhoto({
-      nationalId,
+      nationalId: '1511982449',
     })
     const qualityPhoto =
       image?.data && image?.data.length > 0
-        ? image?.data.substr(1, image.data.length - 2)
+        ? `data:image/jpeg;base64,${image?.data.substr(
+            1,
+            image.data.length - 2,
+          )}`
         : null
 
     return qualityPhoto
@@ -317,7 +320,7 @@ export class DrivingLicenseService {
     nationalId: User['nationalId'],
   ): Promise<QualityPhotoResult> {
     const hasQualityPhoto = await this.drivingLicenseApi.getHasQualityPhoto({
-      nationalId,
+      nationalId: '1511982449',
     })
 
     return {

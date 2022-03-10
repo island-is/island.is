@@ -59,7 +59,9 @@ export class PSignSubmissionService {
                 QUALITY_PHOTO,
               )
               .then((response) => response.json())
-          ).data?.drivingLicenseQualityPhoto?.dataUri as string)
+          ).data?.drivingLicenseQualityPhoto?.dataUri?.split(
+            'base64,',
+          )[1] as string)
         : await this.getAttachments({
             application,
             auth,
