@@ -83,6 +83,7 @@ export const CaseQuery = gql`
       courtDocuments
       sessionBookings
       courtCaseFacts
+      introduction
       courtLegalArguments
       ruling
       decision
