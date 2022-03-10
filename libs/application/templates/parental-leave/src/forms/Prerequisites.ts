@@ -1,6 +1,7 @@
 import {
   buildCustomField,
   buildDataProviderItem,
+  buildDataProviderPermissionItem,
   buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
@@ -14,7 +15,7 @@ import {
   FormModes,
   getValueViaPath,
 } from '@island.is/application/core'
-import { isRunningOnEnvironment } from '@island.is/utils/shared'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { parentalLeaveFormMessages } from '../lib/messages'
 import Logo from '../assets/Logo'
@@ -246,8 +247,8 @@ export const PrerequisitesForm: Form = buildForm({
                       .userProfileInformationSubTitle,
                 }),
                 buildDataProviderItem({
-                  id: 'family',
-                  type: 'FamilyInformationProvider',
+                  id: 'person',
+                  type: 'PersonInformationProvider',
                   title:
                     parentalLeaveFormMessages.shared.familyInformationTitle,
                   subTitle:
@@ -261,6 +262,15 @@ export const PrerequisitesForm: Form = buildForm({
                   subTitle:
                     parentalLeaveFormMessages.shared
                       .childrenInformationSubTitle,
+                }),
+              ],
+              otherPermissions: [
+                buildDataProviderPermissionItem({
+                  id: 'salary',
+                  title:
+                    parentalLeaveFormMessages.shared.salaryInformationTitle,
+                  subTitle:
+                    parentalLeaveFormMessages.shared.salaryInformationSubTitle,
                 }),
               ],
             }),

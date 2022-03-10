@@ -1,8 +1,8 @@
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 
-import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CurrentGraphQlUser,
@@ -13,8 +13,10 @@ import {
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
 
-import { BackendAPI } from '../../../services'
-import { CreateUserInput, UpdateUserInput, UserQueryInput } from './dto'
+import { BackendApi } from '../../data-sources'
+import { CreateUserInput } from './dto/createUser.input'
+import { UpdateUserInput } from './dto/updateUser.input'
+import { UserQueryInput } from './dto/user.input'
 import { User } from './user.model'
 
 @UseGuards(JwtGraphQlAuthGuard)
@@ -29,7 +31,7 @@ export class UserResolver {
   @Query(() => [User], { nullable: true })
   users(
     @CurrentGraphQlUser() user: TUser,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<User[]> {
     this.logger.debug('Getting all users')
 
@@ -46,7 +48,7 @@ export class UserResolver {
     @Args('input', { type: () => UserQueryInput })
     input: UserQueryInput,
     @CurrentGraphQlUser() user: TUser,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<User | undefined> {
     this.logger.debug(`Getting user ${input.id}`)
 
@@ -72,7 +74,7 @@ export class UserResolver {
     @Args('input', { type: () => CreateUserInput })
     input: CreateUserInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<User> {
     this.logger.debug('Creating user')
 
@@ -89,7 +91,7 @@ export class UserResolver {
     @Args('input', { type: () => UpdateUserInput })
     input: UpdateUserInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<User> {
     const { id, ...updateUser } = input
 

@@ -1,4 +1,6 @@
-# Clients National Registry V2
+<!-- gitbook-navigation: "V2" -->
+
+# National Registry V2 Client
 
 This library implements a client to use Þjóðskrá APIs
 
@@ -28,17 +30,17 @@ Add the service to your module imports:
 import { NationalRegistryModule } from '@island.is/clients/national-registry-v2'
 
 @Module({
-    imports: [
-        NationalRegistryModule.register({
-            xRoadPath: createXRoadAPIPath(
-            config.xRoadBasePathWithEnv,
-            XRoadMemberClass.GovernmentInstitution,
-            config.xRoadTjodskraMemberCode,
-            config.xRoadTjodskraApiPath,
-            ),
-            xRoadClient: config.xRoadClientId,
-        }),
-    ],
+  imports: [
+    NationalRegistryModule.register({
+      xRoadPath: createXRoadAPIPath(
+        config.xRoadBasePathWithEnv,
+        XRoadMemberClass.GovernmentInstitution,
+        config.xRoadTjodskraMemberCode,
+        config.xRoadTjodskraApiPath,
+      ),
+      xRoadClient: config.xRoadClientId,
+    }),
+  ],
 })
 ```
 

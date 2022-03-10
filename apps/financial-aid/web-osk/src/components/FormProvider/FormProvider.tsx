@@ -1,8 +1,16 @@
-import React, { createContext, useEffect, useState } from 'react'
+import React, { createContext, ReactNode, useEffect, useState } from 'react'
 
-import { HomeCircumstances, Employment } from '@island.is/financial-aid/shared'
+import {
+  HomeCircumstances,
+  Employment,
+  FamilyStatus,
+  FormSpouse,
+  DirectTaxPayment,
+} from '@island.is/financial-aid/shared/lib'
+import { UploadFile } from '@island.is/island-ui/core'
 
 export interface Form {
+  applicationId?: string
   customAddress?: boolean
   customHomeAddress?: string
   customPostalCode?: number
@@ -13,7 +21,10 @@ export interface Form {
   employment?: Employment
   employmentCustom?: string
   hasIncome?: boolean
-  incomeFiles?: any
+  incomeFiles: UploadFile[]
+  taxReturnFiles: UploadFile[]
+  taxReturnFromRskFile: UploadFile[]
+  otherFiles: UploadFile[]
   usePersonalTaxCredit?: boolean
   bankNumber?: string
   ledger?: string
@@ -22,26 +33,36 @@ export interface Form {
   interview?: boolean
   submitted: boolean
   section?: Array<string>
+  formComment?: string
+  fileUploadComment?: string
+  familyStatus?: FamilyStatus
+  spouse?: FormSpouse
+  phoneNumber?: string
+  directTaxPayments: DirectTaxPayment[]
 }
 
-export const initialState = { submitted: false, incomeFiles: [] }
+export const initialState = {
+  submitted: false,
+  incomeFiles: [],
+  taxReturnFiles: [],
+  taxReturnFromRskFile: [],
+  otherFiles: [],
+  directTaxPayments: [],
+}
 
 interface FormProvider {
-  form?: Form
+  form: Form
   updateForm?: any
+  initializeFormProvider?: any
 }
 
-export const FormContext = createContext<FormProvider>({})
+interface Props {
+  children: ReactNode
+}
 
-const FormProvider: React.FC = ({ children }) => {
-  const getSessionStorageOrDefault = (key: any) => {
-    const stored = sessionStorage.getItem(key)
-    if (!stored) {
-      return initialState
-    }
-    return JSON.parse(stored)
-  }
+export const FormContext = createContext<FormProvider>({ form: initialState })
 
+const FormProvider = ({ children }: Props) => {
   const storageKey = 'formState'
 
   const [form, updateForm] = useState(initialState)
@@ -60,8 +81,19 @@ const FormProvider: React.FC = ({ children }) => {
     sessionStorage.setItem(storageKey, JSON.stringify(form))
   }, [form])
 
+  const initializeFormProvider = () => {
+    updateForm({
+      submitted: false,
+      incomeFiles: [],
+      taxReturnFiles: [],
+      otherFiles: [],
+      taxReturnFromRskFile: [],
+      directTaxPayments: [],
+    })
+  }
+
   return (
-    <FormContext.Provider value={{ form, updateForm }}>
+    <FormContext.Provider value={{ form, updateForm, initializeFormProvider }}>
       {children}
     </FormContext.Provider>
   )

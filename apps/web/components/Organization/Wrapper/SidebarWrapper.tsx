@@ -6,7 +6,7 @@ import {
   GridRow,
 } from '@island.is/island-ui/core'
 
-import * as styles from './SidebarWrapper.treat'
+import * as styles from './SidebarWrapper.css'
 
 interface SidebarWrapperProps {
   sidebarContent: ReactNode

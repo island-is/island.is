@@ -9,11 +9,13 @@ import {
   Stack,
   GridRow,
   GridColumn,
+  Divider,
 } from '@island.is/island-ui/core'
 import {
   formatNationalId,
   ServicePortalModuleComponent,
   UserInfoLine,
+  m,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -30,6 +32,10 @@ const NationalRegistryUserQuery = gql`
       legalResidence
       birthPlace
       gender
+      citizenship {
+        code
+        name
+      }
     }
   }
 `
@@ -50,14 +56,11 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
       <Box marginBottom={5}>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
-            <Stack space={2}>
-              <Text variant="h1" as="h1">
-                {formatMessage({
-                  id: 'service.portal:user-info',
-                  defaultMessage: 'Mínar upplýsingar',
-                })}
+            <Stack space={1}>
+              <Text variant="h3" as="h1" paddingTop={0}>
+                {userInfo.profile.name}
               </Text>
-              <Text as="p" variant="intro">
+              <Text as="p" variant="default">
                 {formatMessage({
                   id: 'sp.family:user-info-description',
                   defaultMessage:
@@ -70,10 +73,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
       </Box>
       <Stack space={1}>
         <UserInfoLine
-          label={defineMessage({
-            id: 'service.portal:display-name',
-            defaultMessage: 'Birtingarnafn',
-          })}
+          label={m.displayName}
           content={userInfo.profile.name}
           editLink={{
             external: true,
@@ -85,18 +85,15 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
               'https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=5c55d7a6-089b-11e6-943d-005056851dd2',
           }}
         />
+        <Divider />
         <UserInfoLine
-          label={defineMessage({
-            id: 'service.portal:natreg',
-            defaultMessage: 'Kennitala',
-          })}
+          label={m.natreg}
           content={formatNationalId(userInfo.profile.nationalId)}
         />
+        <Divider />
+
         <UserInfoLine
-          label={defineMessage({
-            id: 'service.portal:legal-residence',
-            defaultMessage: 'Lögheimili',
-          })}
+          label={m.legalResidence}
           content={
             error
               ? formatMessage(dataNotFoundMessage)
@@ -113,11 +110,10 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
               'https://www.skra.is/umsoknir/rafraen-skil/flutningstilkynning/',
           }}
         />
+        <Divider />
+
         <UserInfoLine
-          label={defineMessage({
-            id: 'service.portal:birth-place',
-            defaultMessage: 'Fæðingarstaður',
-          })}
+          label={m.birthPlace}
           content={
             error
               ? formatMessage(dataNotFoundMessage)
@@ -125,20 +121,21 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           }
           loading={loading}
         />
+        <Divider />
+
         <UserInfoLine
-          label={defineMessage({
-            id: 'service.portal:citizenship',
-            defaultMessage: 'Ríkisfang',
-          })}
+          label={m.citizenship}
           content={
-            userInfo.profile.nat === 'IS' ? 'Ísland' : userInfo.profile.nat
+            error
+              ? formatMessage(dataNotFoundMessage)
+              : nationalRegistryUser?.citizenship?.name || ''
           }
+          loading={loading}
         />
+        <Divider />
+
         <UserInfoLine
-          label={defineMessage({
-            id: 'service.portal:gender',
-            defaultMessage: 'Kyn',
-          })}
+          label={m.gender}
           content={
             error
               ? formatMessage(dataNotFoundMessage)
@@ -152,11 +149,10 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           }
           loading={loading}
         />
+        <Divider />
+
         <UserInfoLine
-          label={defineMessage({
-            id: 'service.portal:marital-status',
-            defaultMessage: 'Hjúskaparstaða',
-          })}
+          label={m.maritalStatus}
           content={
             error
               ? formatMessage(dataNotFoundMessage)
@@ -170,11 +166,10 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
           }
           loading={loading}
         />
+        <Divider />
+
         <UserInfoLine
-          label={defineMessage({
-            id: 'service.portal:religion',
-            defaultMessage: 'Trúfélag / lífsskoðunarfélag',
-          })}
+          label={defineMessage(m.religion)}
           content={
             error
               ? formatMessage(dataNotFoundMessage)
@@ -191,6 +186,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
               'https://www.skra.is/umsoknir/rafraen-skil/tru-og-lifsskodunarfelag',
           }}
         />
+        <Divider />
       </Stack>
     </>
   )

@@ -19,8 +19,8 @@ describe('CheckboxController', () => {
         <CheckboxController id="values" options={options} />
       </Wrapper>,
     )
-    expect(screen.getByText('some checkbox')).toBeInTheDocument()
-    expect(screen.getByText('another checkbox')).toBeInTheDocument()
+    expect(screen.getAllByText('some checkbox')[0]).toBeInTheDocument()
+    expect(screen.getAllByText('another checkbox')[0]).toBeInTheDocument()
   })
 
   it('should render an error message', () => {

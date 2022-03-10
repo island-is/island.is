@@ -1,4 +1,4 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ObjectType, ID, Int } from '@nestjs/graphql'
 
 @ObjectType('EducationExamFamilyOverview')
 export class ExamFamilyOverview {
@@ -19,4 +19,7 @@ export class ExamFamilyOverview {
 
   @Field(() => String)
   yearInterval!: string
+
+  @Field(() => Int)
+  familyIndex!: number
 }

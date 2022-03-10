@@ -1,3 +1,27 @@
+// Note: We use build-time styles and need to override global/box styles with component styles on the same DOM element.
+//       This means that the order of styles matters. Unfortunately, mini-css-extract-plugin does not guarantee the
+//       order of css but in practice, the order of imports in this file can affect style ordering. That's why
+//       overridden styles, like global and box, need to come first.
+
+// Global
+export * from './styles/global.css'
+export * from './utils/globalStyles'
+
+// Layout
+export * from './lib/Box/Box'
+export * from './lib/Box/useBoxStyles'
+export * from './lib/Inline/Inline'
+export * from './lib/Stack/Stack'
+export * from './lib/Hidden/Hidden'
+export * from './lib/Tiles/Tiles'
+export * from './lib/Grid/GridColumn/GridColumn'
+export * from './lib/Grid/GridContainer/GridContainer'
+export * from './lib/Grid/GridRow/GridRow'
+export * from './lib/Columns/Columns'
+export * from './lib/Column/Column'
+export * from './lib/ContentBlock/ContentBlock'
+export * from './lib/Divider/Divider'
+
 // Alerts
 export * from './lib/AlertMessage/AlertMessage'
 export * from './lib/AlertBanner/AlertBanner'
@@ -6,7 +30,6 @@ export * from './lib/Toast/Toast'
 // Components
 export * from './lib/AsyncSearch/AsyncSearch'
 export * from './lib/Logo/Logo'
-export * from './lib/LoadingIcon/LoadingIcon'
 export * from './lib/LoadingDots/LoadingDots'
 export * from './lib/Page/Page'
 export * from './lib/BulletList/BulletList'
@@ -22,12 +45,14 @@ export * from './lib/NewsletterSignup/NewsletterSignup'
 export * from './lib/Swiper/Swiper'
 export * from './lib/Header/Header'
 export * from './lib/Header/UserDropdown/UserDropdown'
+export * from './lib/UserAvatar/UserAvatar'
 export * from './lib/Footer/Footer'
 export * from './lib/DialogPrompt/DialogPrompt'
 export * from './lib/ModalBase/ModalBase'
 export * from './lib/Filter/Filter'
 export * from './lib/Filter/FilterMultiChoice/FilterMultiChoice'
 export * from './lib/Filter/FilterInput/FilterInput'
+export * from './lib/PdfViewer/PdfViewer'
 
 // Cards
 export * from './lib/LinkCard/LinkCard'
@@ -60,21 +85,6 @@ export * from './lib/InputFileUpload/InputFileUpload'
 export * from './lib/InputError/InputError'
 export * from './lib/ToggleSwitch'
 
-// Layout
-export * from './lib/Box/Box'
-export * from './lib/Box/useBoxStyles'
-export * from './lib/Inline/Inline'
-export * from './lib/Stack/Stack'
-export * from './lib/Hidden/Hidden'
-export * from './lib/Tiles/Tiles'
-export * from './lib/Grid/GridColumn/GridColumn'
-export * from './lib/Grid/GridContainer/GridContainer'
-export * from './lib/Grid/GridRow/GridRow'
-export * from './lib/Columns/Columns'
-export * from './lib/Column/Column'
-export * from './lib/ContentBlock/ContentBlock'
-export * from './lib/Divider/Divider'
-
 // Navigation
 export { BreadcrumbsDeprecated } from './lib/BreadcrumbsDeprecated/Breadcrumbs'
 export * from './lib/Breadcrumbs/Breadcrumbs'
@@ -90,10 +100,6 @@ export * from './lib/DropdownMenu/DropdownMenu'
 // Context
 export * from './lib/context'
 
-// Treat
-export * from './treat/global.treat'
-export * from './utils/globalStyles'
-
 // Type exports:
 export type { BoxProps } from './lib/Box/types'
 export type { InputBackgroundColor, InputProps } from './lib/Input/types'
@@ -102,4 +108,4 @@ export type {
   DatePickerProps,
 } from './lib/DatePicker/types'
 export type { ResponsiveProp } from './utils/responsiveProp'
-export type { GridColumns } from './lib/Grid/GridColumn/GridColumn.treat'
+export type { GridColumns } from './lib/Grid/GridColumn/GridColumn.css'

@@ -60,17 +60,15 @@ const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
     },
   })
 
-  const nationalId = getValueViaPath(
+  const nationalId = getValueViaPath<string>(
     application.answers,
     'applicant.nationalId',
-    undefined,
-  ) as string
+  )
 
-  const prodProviderId = getValueViaPath(
+  const prodProviderId = getValueViaPath<string>(
     application.answers,
     'prodProviderId',
-    undefined,
-  ) as string
+  )
 
   const onUpdateEndpoint = async (isValid: boolean) => {
     if (isValid) {

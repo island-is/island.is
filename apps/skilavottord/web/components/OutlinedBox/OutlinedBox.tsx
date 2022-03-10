@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
-import * as styles from './OutlinedBox.treat'
+import * as styles from './OutlinedBox.css'
 import { Box, ResponsiveSpace } from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
 

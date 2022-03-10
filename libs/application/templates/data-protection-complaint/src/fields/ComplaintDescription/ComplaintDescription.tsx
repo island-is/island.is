@@ -9,7 +9,8 @@ import { InputController } from '@island.is/shared/form-fields'
 import React, { ChangeEvent, FC, useState } from 'react'
 import { complaint, sharedFields } from '../../lib/messages'
 
-const calcWordCount = (value: string) => value.split(' ').length
+const calcWordCount = (value: string) =>
+  value.split(' ').filter((item) => item).length
 
 export const ComplaintDescription: FC<FieldBaseProps> = ({
   application,
@@ -47,8 +48,9 @@ export const ComplaintDescription: FC<FieldBaseProps> = ({
         placeholder={formatMessage(
           complaint.labels.complaintDescriptionPlaceholder,
         )}
+        label={formatMessage(complaint.labels.complaintDescription)}
         onChange={handleOnChange}
-        defaultValue={field.defaultValue as string}
+        defaultValue={(field.defaultValue as string) || ''}
         textarea
         rows={7}
         error={errors && getErrorViaPath(errors, `${field.id}`)}

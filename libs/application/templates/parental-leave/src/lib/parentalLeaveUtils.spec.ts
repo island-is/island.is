@@ -1,9 +1,9 @@
-import type { FamilyMember } from '@island.is/api/domains/national-registry'
+import set from 'lodash/set'
+import addDays from 'date-fns/addDays'
 import {
   Application,
   ApplicationStatus,
   ApplicationTypes,
-  buildTextField,
   ExternalData,
   FormValue,
 } from '@island.is/application/core'
@@ -11,14 +11,17 @@ import {
 import { NO, MANUAL, ParentalRelations } from '../constants'
 import { ChildInformation } from '../dataProviders/Children/types'
 import {
-  calculatePeriodPercentage,
   formatIsk,
   getAvailableRightsInMonths,
   getExpectedDateOfBirth,
   getSelectedChild,
   getTransferredDays,
   getOtherParentId,
+  calculateEndDateForPeriodWithStartAndLength,
+  calculatePeriodLengthInMonths,
+  applicantIsMale,
 } from './parentalLeaveUtils'
+import { PersonInformation } from '../types'
 
 function buildApplication(data?: {
   answers?: FormValue
@@ -237,123 +240,6 @@ describe('getSelectedChild', () => {
   })
 })
 
-describe('calculatePeriodPercentage', () => {
-  it('should return 100% when under the maximum amount of months', () => {
-    const application = buildApplication({
-      answers: {
-        selectedChild: 0,
-        periods: [
-          {
-            startDate: '2021-01-01',
-            endDate: '2021-04-01',
-          },
-        ],
-      },
-      externalData: {
-        children: {
-          data: {
-            children: [
-              {
-                hasRights: true,
-                remainingDays: 180,
-                parentalRelation: ParentalRelations.primary,
-                expectedDateOfBirth: '2021-05-17',
-              },
-            ],
-            existingApplications: [],
-          },
-          date: new Date(),
-          status: 'success',
-        },
-      },
-    })
-
-    const res = calculatePeriodPercentage(application, {
-      field: buildTextField({
-        id: 'periods[0].startDate',
-        title: '',
-      }),
-    })
-
-    expect(res).toEqual(100)
-  })
-
-  it('should return 74% when number of months used is above limit using default dates', () => {
-    const application = buildApplication({
-      answers: {
-        selectedChild: 0,
-        periods: [],
-      },
-      externalData: {
-        children: {
-          data: {
-            children: [
-              {
-                hasRights: true,
-                remainingDays: 180,
-                parentalRelation: ParentalRelations.primary,
-                expectedDateOfBirth: '2021-05-17',
-              },
-            ],
-            existingApplications: [],
-          },
-          date: new Date(),
-          status: 'success',
-        },
-      },
-    })
-
-    const res = calculatePeriodPercentage(application, {
-      dates: {
-        startDate: '2021-01-01',
-        endDate: '2021-09-01',
-      },
-    })
-
-    expect(res).toEqual(74)
-  })
-
-  it('should return 74% when number of months used is above limit', () => {
-    const application = buildApplication({
-      answers: {
-        selectedChild: 0,
-        periods: [
-          {
-            startDate: '2021-01-01',
-            endDate: '2021-09-01',
-          },
-        ],
-      },
-      externalData: {
-        children: {
-          data: {
-            children: [
-              {
-                hasRights: true,
-                remainingDays: 180,
-                parentalRelation: ParentalRelations.primary,
-                expectedDateOfBirth: '2021-05-17',
-              },
-            ],
-            existingApplications: [],
-          },
-          date: new Date(),
-          status: 'success',
-        },
-      },
-    })
-
-    const res = calculatePeriodPercentage(application, {
-      field: buildTextField({
-        id: 'periods[0].startDate',
-        title: '',
-      }),
-    })
-
-    expect(res).toEqual(74)
-  })
-})
-
 describe('getOtherParentId', () => {
   let id = 0
   const createApplicationBase = (): Application => ({
@@ -393,22 +279,154 @@ describe('getOtherParentId', () => {
   })
 
   it('should return spouse if spouse is selected', () => {
-    const expectedSpouse: Pick<
-      FamilyMember,
-      'fullName' | 'familyRelation' | 'nationalId'
-    > = {
-      familyRelation: 'spouse' as FamilyMember['familyRelation'],
-      fullName: 'Spouse Spouseson',
+    const expectedSpouse: PersonInformation['spouse'] = {
+      name: 'Spouse Spouseson',
       nationalId: '1234567890',
     }
 
-    application.externalData.family = {
-      data: [expectedSpouse],
+    application.externalData.person = {
+      data: {
+        spouse: expectedSpouse,
+      },
       date: new Date(),
       status: 'success',
     }
     application.answers.otherParent = 'spouse'
 
     expect(getOtherParentId(application)).toBe(expectedSpouse.nationalId)
+  })
+})
+
+describe('calculateEndDateForPeriodWithStartAndLength', () => {
+  it('should calculate month + n and day of month - 1 for whole months', () => {
+    expect(
+      calculateEndDateForPeriodWithStartAndLength('2021-01-01', 1),
+    ).toEqual(new Date(2021, 0, 31))
+
+    expect(
+      calculateEndDateForPeriodWithStartAndLength('2021-01-01', 2),
+    ).toEqual(new Date(2021, 1, 28))
+
+    expect(
+      calculateEndDateForPeriodWithStartAndLength('2021-01-01', 3),
+    ).toEqual(new Date(2021, 2, 31))
+
+    expect(
+      calculateEndDateForPeriodWithStartAndLength('2021-06-15', 1),
+    ).toEqual(new Date(2021, 6, 14))
+
+    expect(
+      calculateEndDateForPeriodWithStartAndLength('2021-01-31', 1),
+    ).toEqual(new Date(2021, 1, 27))
+
+    expect(
+      calculateEndDateForPeriodWithStartAndLength('2021-03-31', 1),
+    ).toEqual(new Date(2021, 3, 29))
+
+    expect(
+      calculateEndDateForPeriodWithStartAndLength('2021-02-28', 1),
+    ).toEqual(new Date(2021, 2, 27))
+  })
+
+  it('should calculate month + n and multiply remainder with 28', () => {
+    const addWholeMonthsPlusRemainder = (
+      startDate: string,
+      wholeMonths: number,
+      remainder: number,
+    ) => {
+      const whole = calculateEndDateForPeriodWithStartAndLength(
+        startDate,
+        wholeMonths,
+      )
+
+      return addDays(whole, remainder * 28)
+    }
+
+    expect(addWholeMonthsPlusRemainder('2021-01-01', 0, 0.5)).toEqual(
+      new Date(2021, 0, 0.5 * 28),
+    )
+
+    expect(addWholeMonthsPlusRemainder('2021-01-01', 1, 0.5)).toEqual(
+      new Date(2021, 1, 0.5 * 28),
+    )
+
+    expect(addWholeMonthsPlusRemainder('2021-01-01', 5, 0.5)).toEqual(
+      new Date(2021, 5, 0.5 * 28),
+    )
+
+    expect(addWholeMonthsPlusRemainder('2021-02-28', 0, 0.5)).toEqual(
+      new Date(2021, 2, 0.5 * 28 - 1),
+    )
+
+    expect(addWholeMonthsPlusRemainder('2021-03-01', 0, 0.5)).toEqual(
+      new Date(2021, 2, 0.5 * 28),
+    )
+  })
+})
+
+describe('calculatePeriodLengthInMonths', () => {
+  it('should calculate whole months correctly', () => {
+    expect(
+      calculatePeriodLengthInMonths(
+        '2021-01-01',
+        calculateEndDateForPeriodWithStartAndLength(
+          '2021-01-01',
+          1,
+        ).toISOString(),
+      ),
+    ).toBe(1)
+
+    expect(
+      calculatePeriodLengthInMonths(
+        '2021-01-31',
+        calculateEndDateForPeriodWithStartAndLength(
+          '2021-01-31',
+          1,
+        ).toISOString(),
+      ),
+    ).toBe(1)
+  })
+
+  it('should calculate half months correctly', () => {
+    expect(calculatePeriodLengthInMonths('2021-01-01', '2021-01-14')).toBe(0.5)
+    expect(calculatePeriodLengthInMonths('2021-01-14', '2021-01-28')).toBe(0.5)
+    expect(calculatePeriodLengthInMonths('2021-01-31', '2021-02-13')).toBe(0.5)
+    expect(calculatePeriodLengthInMonths('2021-02-28', '2021-03-13')).toBe(0.5)
+    expect(calculatePeriodLengthInMonths('2021-02-28', '2021-03-27')).toBe(1)
+    expect(calculatePeriodLengthInMonths('2021-02-28', '2021-04-13')).toBe(1.5)
+    expect(calculatePeriodLengthInMonths('2021-02-28', '2021-05-13')).toBe(2.5)
+    expect(calculatePeriodLengthInMonths('2021-02-28', '2021-07-13')).toBe(4.5)
+    expect(calculatePeriodLengthInMonths('2021-02-28', '2022-07-13')).toBe(16.5)
+    expect(calculatePeriodLengthInMonths('2021-03-27', '2021-04-11')).toBe(0.5)
+  })
+})
+
+describe('applicantIsMale', () => {
+  it('should return false if genderCode is missing', () => {
+    const application = buildApplication()
+
+    expect(applicantIsMale(application)).toBe(false)
+  })
+
+  it('should return false if genderCode is present and !== "1"', () => {
+    const application1 = buildApplication()
+    const application2 = buildApplication()
+    const application3 = buildApplication()
+
+    set(application1.externalData, 'person.data.genderCode', '0')
+    set(application2.externalData, 'person.data.genderCode', 'invalid')
+    set(application3.externalData, 'person.data.genderCode', '11')
+
+    expect(applicantIsMale(application1)).toBe(false)
+    expect(applicantIsMale(application2)).toBe(false)
+    expect(applicantIsMale(application3)).toBe(false)
+  })
+
+  it('should return true if genderCode is === "1"', () => {
+    const application = buildApplication()
+
+    set(application.externalData, 'person.data.genderCode', '1')
+
+    expect(applicantIsMale(application)).toBe(true)
   })
 })

@@ -58,9 +58,6 @@ export class Application {
   @Field(() => ActionCardMetaData, { nullable: true })
   actionCard?: ActionCardMetaData
 
-  @Field(() => graphqlTypeJson, { nullable: true })
-  attachments?: object
-
   @Field(() => ApplicationResponseDtoTypeIdEnum)
   typeId!: ApplicationResponseDtoTypeIdEnum
 
@@ -81,4 +78,13 @@ export class Application {
 
   @Field(() => ApplicationResponseDtoStatusEnum)
   status!: ApplicationResponseDtoStatusEnum
+}
+
+@ObjectType()
+export class ApplicationPayment {
+  @Field()
+  fulfilled!: boolean
+
+  @Field()
+  paymentUrl!: string
 }

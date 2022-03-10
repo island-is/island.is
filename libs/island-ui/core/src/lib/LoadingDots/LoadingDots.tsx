@@ -1,7 +1,7 @@
 import React from 'react'
 import cn from 'classnames'
 
-import * as styles from './LoadingDots.treat'
+import * as styles from './LoadingDots.css'
 
 interface LoadingDotsProps {
   single?: boolean

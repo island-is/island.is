@@ -1,9 +1,11 @@
-import { dedent } from 'ts-dedent'
 import get from 'lodash/get'
 
-import { EmailTemplateGenerator } from '../../../../types'
 import { ApplicationConfigurations } from '@island.is/application/core'
 
+import { EmailTemplateGenerator } from '../../../../types'
+import { pathToAsset } from '../parental-leave.utils'
+
+// TODO handle translations
 export const generateOtherParentRejected: EmailTemplateGenerator = (props) => {
   const {
     application,
@@ -13,20 +15,7 @@ export const generateOtherParentRejected: EmailTemplateGenerator = (props) => {
   const to =
     get(application.answers, 'applicant.email') ||
     get(application.externalData, 'userProfile.data.email')
-
-  // TODO handle different locales
-  const subject = `${
-    application.name ? `${application.name}: ` : ''
-  }Beiðni um tilfærslu réttinda hafnað`
-  const body = dedent(`Góðan dag.
-
-        Beiðni þinni um tilfærslu réttinda hefur verið hafnað af hinu foreldrinu.
-    
-        Til þess að skoða umsókn þína getur þú <a href="${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}" target="_blank">smellt hér</a>.
-    
-        Með kveðju,
-        Fæðingarorlofssjóðsjóður
-      `)
+  const subject = 'Beiðni um tilfærslu réttinda hafnað um fæðingarorlof'
 
   return {
     from: {
@@ -40,9 +29,47 @@ export const generateOtherParentRejected: EmailTemplateGenerator = (props) => {
       },
     ],
     subject,
-    html: `<p>${body
-      .split('')
-      .map((c) => (c === '\n' ? `<br />\n` : c))
-      .join('')}</p>`,
+    template: {
+      title: subject,
+      body: [
+        {
+          component: 'Image',
+          context: {
+            src: pathToAsset('logo.jpg'),
+            alt: 'Vinnumálastofnun merki',
+          },
+        },
+        {
+          component: 'Image',
+          context: {
+            src: pathToAsset('child.jpg'),
+            alt: 'Barn myndskreyting',
+          },
+        },
+        { component: 'Heading', context: { copy: subject } },
+        { component: 'Copy', context: { copy: 'Góðan dag.' } },
+        {
+          component: 'Copy',
+          context: {
+            copy:
+              'Beiðni þinni um tilfærslu réttinda hefur verið hafnað af hinu foreldrinu.',
+          },
+        },
+        {
+          component: 'Copy',
+          context: {
+            copy:
+              'Til þess að skoða umsókn þína getur þú smellt á takkann hér fyrir neðan.',
+          },
+        },
+        {
+          component: 'Button',
+          context: {
+            copy: 'Opna umsókn',
+            href: `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`,
+          },
+        },
+      ],
+    },
   }
 }

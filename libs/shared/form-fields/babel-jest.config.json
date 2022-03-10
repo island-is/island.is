@@ -10,5 +10,6 @@
     ],
     "@babel/preset-typescript",
     "@babel/preset-react"
-  ]
+  ],
+  "plugins": ["@vanilla-extract/babel-plugin"]
 }

@@ -7,12 +7,19 @@ import {
   mockCaseQueries,
   mockInstitutionsQuery,
   mockJudgeQuery,
+  mockPrisonUserQuery,
   mockProsecutorQuery,
   mockProsecutorWonderWomanQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
-import { UserProvider } from '@island.is/judicial-system-web/src/shared-components'
-import { formatDate, TIME_FORMAT } from '@island.is/judicial-system/formatters'
+import { UserProvider } from '@island.is/judicial-system-web/src/components'
+import { formatDate } from '@island.is/judicial-system/formatters'
+import { LocaleProvider } from '@island.is/localization'
+import FormProvider from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
+
 import { SignedVerdictOverview } from './SignedVerdictOverview'
+
+window.scrollTo = jest.fn()
 
 describe('Signed Verdict Overview route', () => {
   describe('Rejected case', () => {
@@ -20,6 +27,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_2' },
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -31,8 +39,12 @@ describe('Signed Verdict Overview route', () => {
           ]}
           addTypename={false}
         >
-          <UserProvider>
-            <SignedVerdictOverview />
+          <UserProvider authenticated>
+            <LocaleProvider locale="is" messages={{}}>
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -46,6 +58,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_4' },
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -57,8 +70,12 @@ describe('Signed Verdict Overview route', () => {
           ]}
           addTypename={false}
         >
-          <UserProvider>
-            <SignedVerdictOverview />
+          <UserProvider authenticated>
+            <LocaleProvider locale="is" messages={{}}>
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -72,6 +89,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_2' },
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -83,8 +101,12 @@ describe('Signed Verdict Overview route', () => {
           ]}
           addTypename={false}
         >
-          <UserProvider>
-            <SignedVerdictOverview />
+          <UserProvider authenticated>
+            <LocaleProvider locale="is" messages={{}}>
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -100,6 +122,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_2' },
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -111,8 +134,12 @@ describe('Signed Verdict Overview route', () => {
           ]}
           addTypename={false}
         >
-          <UserProvider authenticated={true}>
-            <SignedVerdictOverview />
+          <UserProvider authenticated>
+            <LocaleProvider locale="is" messages={{}}>
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -131,11 +158,12 @@ describe('Signed Verdict Overview route', () => {
     })
   })
 
-  describe('Accepted case with active custody', () => {
+  describe('Dismissed case', () => {
     test('should have the correct title', async () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
-        query: { id: 'test_id_5' },
+        query: { id: 'test_id_12' },
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -147,8 +175,148 @@ describe('Signed Verdict Overview route', () => {
           ]}
           addTypename={false}
         >
-          <UserProvider>
-            <SignedVerdictOverview />
+          <UserProvider authenticated>
+            <LocaleProvider locale="is" messages={{}}>
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
+            </LocaleProvider>
+          </UserProvider>
+        </MockedProvider>,
+      )
+
+      expect(
+        await screen.findByText('Kröfu vísað frá', { selector: 'h1' }),
+      ).toBeInTheDocument()
+    })
+
+    test('should have the correct subtitle', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id_12' },
+        pathname: '/krafa/test_id_2',
+      }))
+
+      render(
+        <MockedProvider
+          mocks={[
+            ...mockCaseQueries,
+            ...mockJudgeQuery,
+            ...mockInstitutionsQuery,
+          ]}
+          addTypename={false}
+        >
+          <UserProvider authenticated>
+            <LocaleProvider locale="is" messages={{}}>
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
+            </LocaleProvider>
+          </UserProvider>
+        </MockedProvider>,
+      )
+
+      expect(
+        await screen.findByText('Úrskurðað 16. september 2020 kl. 19:51'),
+      ).toBeInTheDocument()
+    })
+
+    test('should not show restrictions tag event though there are restrictions', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id_12' },
+        pathname: '/krafa/test_id_2',
+      }))
+
+      render(
+        <MockedProvider
+          mocks={[
+            ...mockCaseQueries,
+            ...mockJudgeQuery,
+            ...mockInstitutionsQuery,
+          ]}
+          addTypename={false}
+        >
+          <UserProvider authenticated>
+            <LocaleProvider locale="is" messages={{}}>
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
+            </LocaleProvider>
+          </UserProvider>
+        </MockedProvider>,
+      )
+
+      expect(
+        await waitFor(() =>
+          screen.queryByText('Heimsóknarbann', { selector: 'span' }),
+        ),
+      ).not.toBeInTheDocument()
+    })
+
+    test('should not show a button for extension', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id_12' },
+        pathname: '/krafa/test_id_2',
+      }))
+
+      render(
+        <MockedProvider
+          mocks={[
+            ...mockCaseQueries,
+            ...mockProsecutorQuery,
+            ...mockInstitutionsQuery,
+          ]}
+          addTypename={false}
+        >
+          <UserProvider authenticated>
+            <LocaleProvider locale="is" messages={{}}>
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
+            </LocaleProvider>
+          </UserProvider>
+        </MockedProvider>,
+      )
+
+      expect(
+        await waitFor(() =>
+          screen.queryByRole('button', { name: 'Framlengja gæslu' }),
+        ),
+      ).not.toBeInTheDocument()
+
+      expect(
+        await screen.findByText(
+          'Ekki hægt að framlengja gæsluvarðhald sem var vísað frá.',
+        ),
+      ).toBeInTheDocument()
+    })
+  })
+
+  describe('Accepted case with active custody', () => {
+    test('should have the correct title', async () => {
+      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+      useRouter.mockImplementation(() => ({
+        query: { id: 'test_id_5' },
+        pathname: '/krafa/test_id_2',
+      }))
+
+      render(
+        <MockedProvider
+          mocks={[
+            ...mockCaseQueries,
+            ...mockJudgeQuery,
+            ...mockInstitutionsQuery,
+          ]}
+          addTypename={false}
+        >
+          <UserProvider authenticated>
+            <LocaleProvider locale="is" messages={{}}>
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -159,10 +327,13 @@ describe('Signed Verdict Overview route', () => {
     })
 
     test('should have the correct subtitle', async () => {
-      const date = '2020-09-25T19:50:08.033Z'
+      const validToDate = '2020-09-25T19:50:08.033Z'
+      const courtEndTime = '2020-09-19T17:50:08.033Z'
+
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_5' },
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -174,16 +345,29 @@ describe('Signed Verdict Overview route', () => {
           ]}
           addTypename={false}
         >
-          <UserProvider>
-            <SignedVerdictOverview />
+          <UserProvider authenticated>
+            <LocaleProvider locale="is" messages={{}}>
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
 
       expect(
         await screen.findByText(
-          `Gæsla til ${formatDate(date, 'PPP')} kl. ${formatDate(
-            date,
+          `Úrskurðað ${formatDate(courtEndTime, 'PPP')} kl. ${formatDate(
+            courtEndTime,
+            TIME_FORMAT,
+          )}`,
+        ),
+      ).toBeInTheDocument()
+
+      expect(
+        await screen.findByText(
+          `Gæsla til ${formatDate(validToDate, 'PPP')} kl. ${formatDate(
+            validToDate,
             TIME_FORMAT,
           )}`,
         ),
@@ -194,6 +378,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -205,8 +390,12 @@ describe('Signed Verdict Overview route', () => {
           ]}
           addTypename={false}
         >
-          <UserProvider>
-            <SignedVerdictOverview />
+          <UserProvider authenticated>
+            <LocaleProvider locale="is" messages={{}}>
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -220,6 +409,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -231,8 +421,12 @@ describe('Signed Verdict Overview route', () => {
           ]}
           addTypename={false}
         >
-          <UserProvider>
-            <SignedVerdictOverview />
+          <UserProvider authenticated>
+            <LocaleProvider locale="is" messages={{}}>
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -248,6 +442,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -259,8 +454,12 @@ describe('Signed Verdict Overview route', () => {
           ]}
           addTypename={false}
         >
-          <UserProvider>
-            <SignedVerdictOverview />
+          <UserProvider authenticated>
+            <LocaleProvider locale="is" messages={{}}>
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -270,10 +469,11 @@ describe('Signed Verdict Overview route', () => {
       ).toBeInTheDocument()
     })
 
-    test('should show a button to open case files if you are a prosecutor that belongs to the prosecutors office that created the case', async () => {
+    test('should allow prosecutor that belongs to the prosecutors office that created the case to open case files', async () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -285,8 +485,12 @@ describe('Signed Verdict Overview route', () => {
           ]}
           addTypename={false}
         >
-          <UserProvider authenticated={true}>
-            <SignedVerdictOverview />
+          <UserProvider authenticated>
+            <LocaleProvider locale="is" messages={{}}>
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -296,14 +500,17 @@ describe('Signed Verdict Overview route', () => {
       )
 
       expect(
-        await screen.findAllByRole('button', { name: 'Opna' }),
-      ).toHaveLength(1)
+        await screen.findByLabelText(
+          'Opna Screen Recording 2021-04-09 at 14.39.51.mov',
+        ),
+      ).toBeInTheDocument()
     })
 
     test('should not allow judges to share case with another institution', async () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -315,8 +522,12 @@ describe('Signed Verdict Overview route', () => {
           ]}
           addTypename={false}
         >
-          <UserProvider>
-            <SignedVerdictOverview />
+          <UserProvider authenticated>
+            <LocaleProvider locale="is" messages={{}}>
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -330,6 +541,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -341,8 +553,12 @@ describe('Signed Verdict Overview route', () => {
           ]}
           addTypename={false}
         >
-          <UserProvider>
-            <SignedVerdictOverview />
+          <UserProvider authenticated>
+            <LocaleProvider locale="is" messages={{}}>
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -354,144 +570,251 @@ describe('Signed Verdict Overview route', () => {
   })
 
   describe('Accepted case with custody end time in the past', () => {
-    test('should have the correct title', async () => {
-      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
-      useRouter.mockImplementation(() => ({
-        query: { id: 'test_id_6' },
-      }))
+    describe('Court roles', () => {
+      test('should have the correct title', async () => {
+        const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+        useRouter.mockImplementation(() => ({
+          query: { id: 'test_id_6' },
+          pathname: '/krafa/test_id_2',
+        }))
 
-      render(
-        <MockedProvider
-          mocks={[
-            ...mockCaseQueries,
-            ...mockJudgeQuery,
-            ...mockInstitutionsQuery,
-          ]}
-          addTypename={false}
-        >
-          <UserProvider>
-            <SignedVerdictOverview />
-          </UserProvider>
-        </MockedProvider>,
-      )
+        render(
+          <MockedProvider
+            mocks={[
+              ...mockCaseQueries,
+              ...mockJudgeQuery,
+              ...mockInstitutionsQuery,
+            ]}
+            addTypename={false}
+          >
+            <UserProvider authenticated>
+              <LocaleProvider locale="is" messages={{}}>
+                <FormProvider>
+                  <SignedVerdictOverview />
+                </FormProvider>
+              </LocaleProvider>
+            </UserProvider>
+          </MockedProvider>,
+        )
 
-      expect(
-        await screen.findByText('Gæsluvarðhaldi lokið', { selector: 'h1' }),
-      ).toBeInTheDocument()
+        expect(
+          await screen.findByText('Gæsluvarðhaldi lokið', { selector: 'h1' }),
+        ).toBeInTheDocument()
+      })
+
+      test('should have the correct subtitle', async () => {
+        const dateInPast = '2020-09-24T19:50:08.033Z'
+        const courtEndTime = '2020-09-16T19:51:28.224Z'
+
+        const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+        useRouter.mockImplementation(() => ({
+          query: { id: 'test_id_6' },
+          pathname: '/krafa/test_id_2',
+        }))
+
+        render(
+          <MockedProvider
+            mocks={[
+              ...mockCaseQueries,
+              ...mockJudgeQuery,
+              ...mockInstitutionsQuery,
+            ]}
+            addTypename={false}
+          >
+            <UserProvider authenticated>
+              <LocaleProvider locale="is" messages={{}}>
+                <FormProvider>
+                  <SignedVerdictOverview />
+                </FormProvider>
+              </LocaleProvider>
+            </UserProvider>
+          </MockedProvider>,
+        )
+
+        expect(
+          await screen.findByText(
+            `Úrskurðað ${formatDate(courtEndTime, 'PPP')} kl. ${formatDate(
+              courtEndTime,
+              TIME_FORMAT,
+            )}`,
+          ),
+        ).toBeInTheDocument()
+
+        expect(
+          await screen.findByText(
+            `Gæsla rann út ${formatDate(dateInPast, 'PPP')} kl. ${formatDate(
+              dateInPast,
+              TIME_FORMAT,
+            )}`,
+          ),
+        ).toBeInTheDocument()
+      })
+
+      test('should display restriction tags if the prosecutor requested restrictions', async () => {
+        const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+        useRouter.mockImplementation(() => ({
+          query: { id: 'test_id_6' },
+          pathname: '/krafa/test_id_2',
+        }))
+
+        render(
+          <MockedProvider
+            mocks={[
+              ...mockCaseQueries,
+              ...mockJudgeQuery,
+              ...mockInstitutionsQuery,
+            ]}
+            addTypename={false}
+          >
+            <UserProvider authenticated>
+              <LocaleProvider locale="is" messages={{}}>
+                <FormProvider>
+                  <SignedVerdictOverview />
+                </FormProvider>
+              </LocaleProvider>
+            </UserProvider>
+          </MockedProvider>,
+        )
+
+        expect(
+          await screen.findByText('Heimsóknarbann', { selector: 'span' }),
+        ).toBeInTheDocument()
+      })
+
+      test('should not show a button for extension', async () => {
+        const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+        useRouter.mockImplementation(() => ({
+          query: { id: 'test_id' },
+          pathname: '/krafa/test_id_2',
+        }))
+
+        render(
+          <MockedProvider
+            mocks={[
+              ...mockCaseQueries,
+              ...mockJudgeQuery,
+              ...mockInstitutionsQuery,
+            ]}
+            addTypename={false}
+          >
+            <UserProvider authenticated>
+              <LocaleProvider locale="is" messages={{}}>
+                <FormProvider>
+                  <SignedVerdictOverview />
+                </FormProvider>
+              </LocaleProvider>
+            </UserProvider>
+          </MockedProvider>,
+        )
+
+        expect(
+          await waitFor(() =>
+            screen.queryByRole('button', { name: 'Framlengja gæslu' }),
+          ),
+        ).not.toBeInTheDocument()
+      })
     })
 
-    test('should have the correct subtitle', async () => {
-      const dateInPast = '2020-09-24T19:50:08.033Z'
-      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
-      useRouter.mockImplementation(() => ({
-        query: { id: 'test_id_6' },
-      }))
+    describe('Prosecutor role', () => {
+      test('should display an indicator that the case cannot be extended', async () => {
+        const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+        useRouter.mockImplementation(() => ({
+          query: { id: 'test_id_8' },
+          pathname: '/krafa/test_id_2',
+        }))
 
-      render(
-        <MockedProvider
-          mocks={[
-            ...mockCaseQueries,
-            ...mockJudgeQuery,
-            ...mockInstitutionsQuery,
-          ]}
-          addTypename={false}
-        >
-          <UserProvider>
-            <SignedVerdictOverview />
-          </UserProvider>
-        </MockedProvider>,
-      )
+        render(
+          <MockedProvider
+            mocks={[
+              ...mockCaseQueries,
+              ...mockProsecutorQuery,
+              ...mockInstitutionsQuery,
+            ]}
+            addTypename={false}
+          >
+            <UserProvider authenticated>
+              <LocaleProvider locale="is" messages={{}}>
+                <FormProvider>
+                  <SignedVerdictOverview />
+                </FormProvider>
+              </LocaleProvider>
+            </UserProvider>
+          </MockedProvider>,
+        )
 
-      expect(
-        await screen.findByText(
-          `Gæsla rann út ${formatDate(dateInPast, 'PPP')} kl. ${formatDate(
-            dateInPast,
-            TIME_FORMAT,
-          )}`,
-        ),
-      ).toBeInTheDocument()
+        expect(
+          await screen.findByText(
+            'Ekki hægt að framlengja kröfu þegar dómari hefur úrskurðað um annað en dómkröfur sögðu til um.',
+          ),
+        ).toBeInTheDocument()
+      })
     })
 
-    test('should display restriction tags if there are restrictions', async () => {
-      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
-      useRouter.mockImplementation(() => ({
-        query: { id: 'test_id_6' },
-      }))
+    describe('Staff role', () => {
+      test('should not show any accordion items', () => {
+        const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+        useRouter.mockImplementation(() => ({
+          query: { id: 'test_id_7' },
+          pathname: '/krafa/test_id_2',
+        }))
 
-      render(
-        <MockedProvider
-          mocks={[
-            ...mockCaseQueries,
-            ...mockJudgeQuery,
-            ...mockInstitutionsQuery,
-          ]}
-          addTypename={false}
-        >
-          <UserProvider>
-            <SignedVerdictOverview />
-          </UserProvider>
-        </MockedProvider>,
-      )
+        render(
+          <MockedProvider
+            mocks={[
+              ...mockCaseQueries,
+              ...mockPrisonUserQuery,
+              ...mockInstitutionsQuery,
+            ]}
+            addTypename={false}
+          >
+            <UserProvider authenticated>
+              <LocaleProvider locale="is" messages={{}}>
+                <FormProvider>
+                  <SignedVerdictOverview />
+                </FormProvider>
+              </LocaleProvider>
+            </UserProvider>
+          </MockedProvider>,
+        )
 
-      expect(
-        await screen.findByText('Heimsóknarbann', { selector: 'span' }),
-      ).toBeInTheDocument()
-    })
+        expect(screen.queryByTestId('accordionItems')).not.toBeInTheDocument()
+      })
 
-    test('should not show a button for extension because the user is a judge', async () => {
-      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
-      useRouter.mockImplementation(() => ({
-        query: { id: 'test_id' },
-      }))
+      test('should only have a button for the short version ruling and custody notice PDFs', async () => {
+        const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+        useRouter.mockImplementation(() => ({
+          query: { id: 'test_id' },
+          pathname: '/krafa/test_id_2',
+        }))
 
-      render(
-        <MockedProvider
-          mocks={[
-            ...mockCaseQueries,
-            ...mockJudgeQuery,
-            ...mockInstitutionsQuery,
-          ]}
-          addTypename={false}
-        >
-          <UserProvider>
-            <SignedVerdictOverview />
-          </UserProvider>
-        </MockedProvider>,
-      )
+        render(
+          <MockedProvider
+            mocks={[
+              ...mockCaseQueries,
+              ...mockPrisonUserQuery,
+              ...mockInstitutionsQuery,
+            ]}
+            addTypename={false}
+          >
+            <UserProvider authenticated>
+              <LocaleProvider locale="is" messages={{}}>
+                <FormProvider>
+                  <SignedVerdictOverview />
+                </FormProvider>
+              </LocaleProvider>
+            </UserProvider>
+          </MockedProvider>,
+        )
 
-      expect(
-        await waitFor(() =>
-          screen.queryByRole('button', { name: 'Framlengja gæslu' }),
-        ),
-      ).not.toBeInTheDocument()
-    })
-
-    test('should display an indicator that the case cannot be extended', async () => {
-      const useRouter = jest.spyOn(require('next/router'), 'useRouter')
-      useRouter.mockImplementation(() => ({
-        query: { id: 'test_id_8' },
-      }))
-
-      render(
-        <MockedProvider
-          mocks={[
-            ...mockCaseQueries,
-            ...mockProsecutorQuery,
-            ...mockInstitutionsQuery,
-          ]}
-          addTypename={false}
-        >
-          <UserProvider authenticated={true}>
-            <SignedVerdictOverview />
-          </UserProvider>
-        </MockedProvider>,
-      )
-
-      expect(
-        await screen.findByText(
-          'Ekki hægt að framlengja kröfu þegar dómari hefur úrskurðað um annað en dómkröfur sögðu til um.',
-        ),
-      ).toBeInTheDocument()
+        expect(screen.queryByTestId('requestPDFButton')).not.toBeInTheDocument()
+        expect(screen.queryByTestId('rulingPDFButton')).not.toBeInTheDocument()
+        expect(
+          await screen.findByTestId('courtRecordPDFButton'),
+        ).toBeInTheDocument()
+        expect(
+          await screen.findByTestId('custodyNoticePDFButton'),
+        ).toBeInTheDocument()
+      })
     })
   })
 
@@ -500,6 +823,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_7' },
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -511,8 +835,12 @@ describe('Signed Verdict Overview route', () => {
           ]}
           addTypename={false}
         >
-          <UserProvider>
-            <SignedVerdictOverview />
+          <UserProvider authenticated>
+            <LocaleProvider locale="is" messages={{}}>
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -526,8 +854,10 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_7' },
+        pathname: '/krafa/test_id_2',
       }))
       const date = '2020-09-25T19:50:08.033Z'
+      const courtEndTime = '2020-09-16T17:50:08.033Z'
 
       render(
         <MockedProvider
@@ -538,11 +868,24 @@ describe('Signed Verdict Overview route', () => {
           ]}
           addTypename={false}
         >
-          <UserProvider>
-            <SignedVerdictOverview />
+          <UserProvider authenticated>
+            <LocaleProvider locale="is" messages={{}}>
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
+
+      expect(
+        await screen.findByText(
+          `Úrskurðað ${formatDate(courtEndTime, 'PPP')} kl. ${formatDate(
+            courtEndTime,
+            TIME_FORMAT,
+          )}`,
+        ),
+      ).toBeInTheDocument()
 
       expect(
         await screen.findByText(
@@ -558,6 +901,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -569,8 +913,12 @@ describe('Signed Verdict Overview route', () => {
           ]}
           addTypename={false}
         >
-          <UserProvider>
-            <SignedVerdictOverview />
+          <UserProvider authenticated>
+            <LocaleProvider locale="is" messages={{}}>
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -586,6 +934,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_7' },
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -597,8 +946,12 @@ describe('Signed Verdict Overview route', () => {
           ]}
           addTypename={false}
         >
-          <UserProvider authenticated={true}>
-            <SignedVerdictOverview />
+          <UserProvider authenticated>
+            <LocaleProvider locale="is" messages={{}}>
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -616,6 +969,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_8' },
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -627,8 +981,12 @@ describe('Signed Verdict Overview route', () => {
           ]}
           addTypename={false}
         >
-          <UserProvider>
-            <SignedVerdictOverview />
+          <UserProvider authenticated>
+            <LocaleProvider locale="is" messages={{}}>
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
@@ -640,9 +998,11 @@ describe('Signed Verdict Overview route', () => {
 
     test('should have the correct subtitle', async () => {
       const dateInPast = '2020-09-24T19:50:08.033Z'
+      const courtEndTime = '2020-09-16T19:51:28.224Z'
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id_8' },
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -654,11 +1014,24 @@ describe('Signed Verdict Overview route', () => {
           ]}
           addTypename={false}
         >
-          <UserProvider>
-            <SignedVerdictOverview />
+          <UserProvider authenticated>
+            <LocaleProvider locale="is" messages={{}}>
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
+
+      expect(
+        await screen.findByText(
+          `Úrskurðað ${formatDate(courtEndTime, 'PPP')} kl. ${formatDate(
+            courtEndTime,
+            TIME_FORMAT,
+          )}`,
+        ),
+      ).toBeInTheDocument()
 
       expect(
         await screen.findByText(
@@ -674,6 +1047,7 @@ describe('Signed Verdict Overview route', () => {
       const useRouter = jest.spyOn(require('next/router'), 'useRouter')
       useRouter.mockImplementation(() => ({
         query: { id: 'test_id' },
+        pathname: '/krafa/test_id_2',
       }))
 
       render(
@@ -685,8 +1059,12 @@ describe('Signed Verdict Overview route', () => {
           ]}
           addTypename={false}
         >
-          <UserProvider authenticated={true}>
-            <SignedVerdictOverview />
+          <UserProvider authenticated>
+            <LocaleProvider locale="is" messages={{}}>
+              <FormProvider>
+                <SignedVerdictOverview />
+              </FormProvider>
+            </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )

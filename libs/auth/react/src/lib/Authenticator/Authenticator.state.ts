@@ -1,31 +1,17 @@
-import { IDTokenClaims, User as OidcUser } from 'oidc-client'
 import { Dispatch } from 'react'
+import { User } from '@island.is/shared/types'
 
-interface IdsAuthClaims {
-  nationalId: string
-  name: string
-  nat: string
-  idp: string
-  act?: {
-    nationalId: string
-    name: string
-  }
-}
-
-export type User = Omit<OidcUser, 'profile'> & {
-  profile: IDTokenClaims & IdsAuthClaims
-}
-
-export type UserInfoState =
-  | 'passive'
-  | 'pending'
-  | 'fulfilled'
+export type AuthState =
+  | 'logged-out'
+  | 'loading'
+  | 'logged-in'
   | 'failed'
+  | 'switching'
   | 'logging-out'
 
 export interface AuthReducerState {
   userInfo: User | null
-  userInfoState: UserInfoState
+  authState: AuthState
   isAuthenticated: boolean
 }
 
@@ -36,6 +22,7 @@ export enum ActionType {
   LOGGING_OUT = 'LOGGING_OUT',
   LOGGED_OUT = 'LOGGED_OUT',
   USER_LOADED = 'USER_LOADED',
+  SWITCH_USER = 'SWITCH_USER',
 }
 
 interface Action {
@@ -46,7 +33,7 @@ interface Action {
 
 export const initialState: AuthReducerState = {
   userInfo: null,
-  userInfoState: 'passive',
+  authState: 'logged-out',
   isAuthenticated: false,
 }
 
@@ -60,13 +47,13 @@ export const reducer = (
     case ActionType.SIGNIN_START:
       return {
         ...state,
-        userInfoState: 'pending',
+        authState: 'loading',
       }
     case ActionType.SIGNIN_SUCCESS:
       return {
         ...state,
         userInfo: action.payload,
-        userInfoState: 'fulfilled',
+        authState: 'logged-in',
         isAuthenticated: true,
       }
     case ActionType.USER_LOADED:
@@ -79,12 +66,17 @@ export const reducer = (
     case ActionType.SIGNIN_FAILURE:
       return {
         ...state,
-        userInfoState: 'failed',
+        authState: 'failed',
       }
     case ActionType.LOGGING_OUT:
       return {
         ...state,
-        userInfoState: 'logging-out',
+        authState: 'logging-out',
+      }
+    case ActionType.SWITCH_USER:
+      return {
+        ...state,
+        authState: 'switching',
       }
     case ActionType.LOGGED_OUT:
       return {

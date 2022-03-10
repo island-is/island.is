@@ -6,12 +6,6 @@ const markdown = (name = 'this component') => {
   return `See *${name}* in the [@islandis](https://www.figma.com/@islandis) community Figma. [Desktop](https://www.figma.com/community/file/901454156629060149) — [Mobile](https://www.figma.com/community/file/901454279005592118)`
 }
 
-export const withFigma = (name: string) => {
-  return {
-    docs: { description: { component: markdown(name) } },
-  }
-}
-
 // Based on internal storybook <P/> and <A/> components
 const P = styled.p(() => ({
   fontFamily: 'inherit',
@@ -54,3 +48,9 @@ export const DescriptionFigma: FC<{ name: string }> = ({ name }) => (
     </Markdown>
   </P>
 )
+
+export const withFigma = (name: string) => {
+  return {
+    docs: { description: { component: markdown(name) } },
+  }
+}

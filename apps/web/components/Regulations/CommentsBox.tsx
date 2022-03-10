@@ -1,9 +1,9 @@
-import * as s from './RegulationDisplay.treat'
+import * as s from './RegulationDisplay.css'
 
 import { AlertMessage, Box } from '@island.is/island-ui/core'
 import React from 'react'
-import { HTMLDump } from './HTMLDump'
-import { RegulationMaybeDiff } from './Regulations.types'
+import { HTMLBox } from './HTMLBox'
+import { RegulationMaybeDiff } from '@island.is/regulations'
 
 export type CommentsBoxProps = {
   title: string
@@ -11,14 +11,14 @@ export type CommentsBoxProps = {
 }
 
 export const CommentsBox = (props: CommentsBoxProps) =>
-  props.content && (
+  props.content ? (
     <Box marginTop={[6, 10]} id="aths_ritstjora">
       <AlertMessage
         type="info"
         title={props.title}
         message={
-          <HTMLDump className={s.bodyText} html={props.content} marginTop={1} />
+          <HTMLBox className={s.bodyText} html={props.content} marginTop={1} />
         }
       />
     </Box>
-  )
+  ) : null

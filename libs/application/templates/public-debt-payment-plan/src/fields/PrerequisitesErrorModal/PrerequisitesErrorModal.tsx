@@ -1,20 +1,173 @@
-import { FieldBaseProps } from '@island.is/application/core'
-import React from 'react'
+import { useMutation } from '@apollo/client'
 import {
-  Button,
+  PaymentScheduleConditions,
+  PaymentScheduleDebts,
+} from '@island.is/api/schema'
+import {
+  ApplicationConfigurations,
+  DefaultEvents,
+  FieldBaseProps,
+  getValueViaPath,
+} from '@island.is/application/core'
+import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
+import {
   Box,
+  Button,
+  Icon,
+  Link,
   ModalBase,
-  Text,
   Stack,
-  GridRow,
-  GridColumn,
+  Text,
 } from '@island.is/island-ui/core'
-import * as styles from './PrerequisitesErrorModal.treat'
-import { Prerequisites } from '../../dataProviders/tempAPITypes'
+import { useLocale } from '@island.is/localization'
+import * as Sentry from '@sentry/react'
+import React from 'react'
+import { useHistory } from 'react-router-dom'
+import { errorModal } from '../../lib/messages'
+import * as styles from './PrerequisitesErrorModal.css'
+
+interface ErrorMessageProps {
+  title: string
+  summary: string
+  linkOne: string
+  linkOneName: string
+  linkTwo?: string
+  linkTwoName?: string
+}
+
+const ErrorMessage = ({
+  title,
+  summary,
+  linkOne,
+  linkOneName,
+  linkTwo,
+  linkTwoName,
+}: ErrorMessageProps) => {
+  return (
+    <Box marginBottom={7}>
+      <Text variant="h1" marginBottom={2}>
+        {title}
+      </Text>
+      <Text variant="intro" marginBottom={3}>
+        {summary}
+      </Text>
+      <Stack space={2}>
+        <Link href={linkOne} newTab={true}>
+          <Button variant="text" icon="open" iconType="outline">
+            {linkOneName}
+          </Button>
+        </Link>
+        {linkTwo && (
+          <Link href={linkTwo} newTab={true}>
+            <Button variant="text" icon="open" iconType="outline">
+              {linkTwoName}
+            </Button>
+          </Link>
+        )}
+      </Stack>
+    </Box>
+  )
+}
 
 export const PrerequisitesErrorModal = ({ application }: FieldBaseProps) => {
-  const prerequisites = application.externalData.paymentPlanPrerequisites
-    .data as Prerequisites
+  const { formatMessage } = useLocale()
+  const history = useHistory()
+
+  const [submitApplication, { loading: loadingSubmit }] = useMutation(
+    SUBMIT_APPLICATION,
+    {
+      onError: (e) => {
+        throw Sentry.captureException(e.message)
+      },
+    },
+  )
+
+  const submitAndMoveToApplicationScreen = async () => {
+    const res = await submitApplication({
+      variables: {
+        input: {
+          id: application.id,
+          event: DefaultEvents.ABORT,
+        },
+      },
+    })
+
+    if (res?.data) {
+      history.push(`/${ApplicationConfigurations.PublicDebtPaymentPlan.slug}`)
+    }
+  }
+
+  const prerequisites = getValueViaPath(
+    application.externalData,
+    'paymentPlanPrerequisites.data.conditions',
+  ) as PaymentScheduleConditions
+
+  const debts = getValueViaPath(
+    application.externalData,
+    'paymentPlanPrerequisites.data.debts',
+  ) as PaymentScheduleDebts[]
+
+  const ShowErrorMessage = () => {
+    if (prerequisites.maxDebt)
+      return (
+        <ErrorMessage
+          title={formatMessage(errorModal.maxDebtModal.title)}
+          summary={formatMessage(errorModal.maxDebtModal.summary)}
+          linkOne={formatMessage(errorModal.maxDebtModal.linkOne)}
+          linkOneName={formatMessage(errorModal.maxDebtModal.linkOneName)}
+          linkTwo={formatMessage(errorModal.maxDebtModal.linkTwo)}
+          linkTwoName={formatMessage(errorModal.maxDebtModal.linkTwoName)}
+        />
+      )
+    if (
+      !prerequisites.taxReturns ||
+      !prerequisites.vatReturns ||
+      !prerequisites.citReturns ||
+      !prerequisites.accommodationTaxReturns ||
+      !prerequisites.withholdingTaxReturns ||
+      !prerequisites.wageReturns
+    )
+      return (
+        <ErrorMessage
+          title={formatMessage(errorModal.estimationOfReturns.title)}
+          summary={formatMessage(errorModal.estimationOfReturns.summary)}
+          linkOne={formatMessage(errorModal.estimationOfReturns.linkOne)}
+          linkOneName={formatMessage(
+            errorModal.estimationOfReturns.linkOneName,
+          )}
+          linkTwo={formatMessage(errorModal.estimationOfReturns.linkTwo)}
+          linkTwoName={formatMessage(
+            errorModal.estimationOfReturns.linkTwoName,
+          )}
+        />
+      )
+
+    if (debts?.length === 0)
+      return (
+        <ErrorMessage
+          title={formatMessage(errorModal.noDebts.title)}
+          summary={formatMessage(errorModal.noDebts.summary)}
+          linkOne={formatMessage(errorModal.noDebts.linkOne)}
+          linkOneName={formatMessage(errorModal.noDebts.linkOneName)}
+        />
+      )
+    // This happens if prerequisites.collectionActions || !prerequisites.doNotOwe
+    // or by some magic the user gets through with other error
+    return (
+      <ErrorMessage
+        title={formatMessage(errorModal.defaultPaymentCollection.title)}
+        summary={formatMessage(errorModal.defaultPaymentCollection.summary)}
+        linkOne={formatMessage(errorModal.defaultPaymentCollection.linkOne)}
+        linkOneName={formatMessage(
+          errorModal.defaultPaymentCollection.linkOneName,
+        )}
+        linkTwo={formatMessage(errorModal.defaultPaymentCollection.linkTwo)}
+        linkTwoName={formatMessage(
+          errorModal.defaultPaymentCollection.linkTwoName,
+        )}
+      />
+    )
+  }
 
   return (
     <ModalBase
@@ -24,20 +177,25 @@ export const PrerequisitesErrorModal = ({ application }: FieldBaseProps) => {
       modalLabel="Error prompt"
       hideOnClickOutside={false}
     >
-      <Box background="white" padding={5}>
-        <Text variant="h2">
-          {!prerequisites.maxDebtOk ? prerequisites.maxDebtText : ''}
-          {!prerequisites.taxReturnsOk ? prerequisites.taxReturnsText : ''}
-          {!prerequisites.vatOk ? prerequisites.vatText : ''}
-          {!prerequisites.citOk ? prerequisites.citText : ''}
-          {!prerequisites.accommodationTaxOk
-            ? prerequisites.accommodationTaxText
-            : ''}
-          {!prerequisites.withholdingTaxOk
-            ? prerequisites.withholdingTaxText
-            : ''}
-          {!prerequisites.wageReturnsOk ? prerequisites.wageReturnsText : ''}
-        </Text>
+      <Box
+        className={styles.close}
+        onClick={() => submitAndMoveToApplicationScreen()}
+        role="button"
+        aria-label="close button"
+      >
+        <Icon icon="close" size="large" color="blue400" />
+      </Box>
+      <Box background="white" padding={10}>
+        {<ShowErrorMessage />}
+        <Box display="flex" justifyContent="flexStart">
+          <Button
+            variant="ghost"
+            loading={loadingSubmit}
+            onClick={() => submitAndMoveToApplicationScreen()}
+          >
+            {formatMessage(errorModal.labels.closeModal)}
+          </Button>
+        </Box>
       </Box>
     </ModalBase>
   )

@@ -1,7 +1,8 @@
 import { Global, LoggerService, Module } from '@nestjs/common'
 export type { Logger } from 'winston'
-import { logger } from '../logging'
 import { WinstonLogger } from 'nest-winston'
+
+import { logger } from '../logging'
 
 export const LOGGER_PROVIDER = 'Logger'
 

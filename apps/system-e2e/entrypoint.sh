@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-cat cypress.json | jq --arg testFiles $TEST_FILES '. + {testFiles: ($testFiles | split(",") | map(. + ".spec.ts"))}' > cypress.json.tmp
+jq --arg testFiles "$TEST_FILES" '. + {testFiles: ($testFiles | split(",") | map(. + ".spec.ts"))}' < cypress.json > cypress.json.tmp
 mv cypress.json.tmp cypress.json
 
 echo "Using this configuration:"

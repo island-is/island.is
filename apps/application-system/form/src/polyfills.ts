@@ -5,4 +5,5 @@
  */
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'
+import '@island.is/application/core/polyfills'
 ;(window as any).global = window

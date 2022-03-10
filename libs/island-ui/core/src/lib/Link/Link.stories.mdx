@@ -1,23 +1,15 @@
-import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs/blocks'
-import { withDesign } from 'storybook-addon-designs'
+import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs'
 
-import { withFigma, DescriptionFigma } from '../../utils/withFigma'
+import { DescriptionFigma } from '../../utils/withFigma'
 import { Box } from '../Box/Box'
 import { Link } from './Link'
 import { ArrowLink } from './ArrowLink/ArrowLink'
 
-<Meta
-  title="Core/Link"
-  component={Link}
-  decorators={[withDesign]}
-  parameters={withFigma('Link')}
-/>
+<Meta title="Core/Link" component={Link} />
 
 # Link
 
 <DescriptionFigma name="Link" />
-
-<br />
 
 ### Default
 

@@ -175,14 +175,16 @@ const Category: Screen<CategoryProps> = ({
     }
   }, [])
 
-  const sidebarCategoryLinks = categories.map(({ __typename, title, slug }) => {
-    return {
-      title,
-      typename: __typename,
-      active: slug === Router.query.slug,
-      slug: [slug],
-    }
-  })
+  const sidebarCategoryLinks = categories.map(
+    ({ __typename: typename, title, slug }) => {
+      return {
+        title,
+        typename,
+        active: slug === Router.query.slug,
+        slug: [slug],
+      }
+    },
+  )
 
   const groupArticlesBySubgroup = (articles: Articles, groupSlug?: string) => {
     const bySubgroup = articles.reduce((result, item) => {
@@ -237,7 +239,9 @@ const Category: Screen<CategoryProps> = ({
     const sortedArticles = articles.sort((a, b) =>
       a.importance > b.importance
         ? -1
-        : a.importance === b.importance && a.title.localeCompare(b.title),
+        : a.importance === b.importance
+        ? a.title.localeCompare(b.title)
+        : 1,
     )
 
     // If it's sorted alphabetically we need to be able to communicate that.
@@ -267,8 +271,9 @@ const Category: Screen<CategoryProps> = ({
       if (foundA && foundB) {
         return foundA.importance > foundB.importance
           ? -1
-          : foundA.importance === foundB.importance &&
-              foundA.title.localeCompare(foundB.title)
+          : foundA.importance === foundB.importance
+          ? foundA.title.localeCompare(foundB.title)
+          : 1
       }
 
       // Fall back to alphabet
@@ -421,9 +426,9 @@ const Category: Screen<CategoryProps> = ({
                   label={title}
                   labelUse="h2"
                   labelVariant="h3"
-                  startExpanded={expanded}
+                  expanded={expanded}
                   visibleContent={description}
-                  onClick={() => {
+                  onToggle={() => {
                     handleAccordionClick(groupSlug)
                   }}
                 >
@@ -464,13 +469,18 @@ const Category: Screen<CategoryProps> = ({
                           )}
                           <Stack space={2}>
                             {sortedArticles.map(
-                              ({ __typename, title, slug, processEntry }) => {
+                              ({
+                                __typename: typename,
+                                title,
+                                slug,
+                                processEntry,
+                              }) => {
                                 return (
                                   <FocusableBox key={slug} borderRadius="large">
                                     <TopicCard
                                       href={
                                         linkResolver(
-                                          __typename.toLowerCase() as LinkType,
+                                          typename.toLowerCase() as LinkType,
                                           [slug],
                                         ).href
                                       }
@@ -495,11 +505,14 @@ const Category: Screen<CategoryProps> = ({
             )
           })}
           {lifeEvents.map(
-            ({ __typename, title, slug, intro, thumbnail, image }, index) => {
+            (
+              { __typename: typename, title, slug, intro, thumbnail, image },
+              index,
+            ) => {
               return (
                 <Card
                   key={index}
-                  link={linkResolver(__typename as LinkType, [slug])}
+                  link={linkResolver(typename as LinkType, [slug])}
                   description={intro}
                   title={title}
                   image={(thumbnail || image) as Image}
@@ -512,16 +525,18 @@ const Category: Screen<CategoryProps> = ({
               )
             },
           )}
-          {cards.map(({ __typename, title, content, slug }, index) => {
-            return (
-              <Card
-                key={index}
-                title={title}
-                description={content}
-                link={linkResolver(__typename as LinkType, [slug])}
-              />
-            )
-          })}
+          {cards.map(
+            ({ __typename: typename, title, content, slug }, index) => {
+              return (
+                <Card
+                  key={index}
+                  title={title}
+                  description={content}
+                  link={linkResolver(typename as LinkType, [slug])}
+                />
+              )
+            },
+          )}
         </Stack>
       </SidebarLayout>
     </>

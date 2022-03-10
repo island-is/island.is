@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Box, Icon, IconProps, Text } from '@island.is/island-ui/core'
-import * as styles from './IconButton.treat'
+import * as styles from './IconButton.css'
 import { Link } from 'react-router-dom'
 
 interface Props {

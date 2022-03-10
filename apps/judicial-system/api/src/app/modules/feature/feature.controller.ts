@@ -1,6 +1,6 @@
 import { Controller, Get, Param } from '@nestjs/common'
 
-import { Feature } from '@island.is/judicial-system/types'
+import type { Feature } from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 

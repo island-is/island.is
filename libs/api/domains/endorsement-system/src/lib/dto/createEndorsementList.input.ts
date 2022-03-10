@@ -1,16 +1,16 @@
 import { Field, InputType, registerEnumType } from '@nestjs/graphql'
-import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator'
+import {
+  IsEnum,
+  IsOptional,
+  IsString,
+  ValidateNested,
+  IsBoolean,
+  IsDate,
+} from 'class-validator'
 import { Type } from 'class-transformer'
 import graphqlTypeJson from 'graphql-type-json'
-import {
-  EndorsementListDtoEndorsementMetaEnum,
-  EndorsementListDtoTagsEnum,
-} from '../../../gen/fetch'
-import { ValidationRuleInput } from './validationRule.input'
-
-registerEnumType(EndorsementListDtoEndorsementMetaEnum, {
-  name: 'EndorsementListDtoEndorsementMetaEnum',
-})
+import { EndorsementListDtoTagsEnum } from '../../../gen/fetch'
+import { MetadataInput } from './metadata.input'
 
 registerEnumType(EndorsementListDtoTagsEnum, {
   name: 'EndorsementListDtoTagsEnum',
@@ -25,22 +25,28 @@ export class CreateEndorsementListDto {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  description!: string | null
+  description?: string
 
-  @Field(() => [EndorsementListDtoEndorsementMetaEnum])
-  @IsEnum(EndorsementListDtoEndorsementMetaEnum, { each: true })
-  endorsementMeta!: EndorsementListDtoEndorsementMetaEnum[]
+  @Field(() => [MetadataInput])
+  @ValidateNested({ each: true })
+  @Type(() => MetadataInput)
+  endorsementMetadata!: MetadataInput[]
 
   @Field(() => [EndorsementListDtoTagsEnum])
   @IsEnum(EndorsementListDtoTagsEnum, { each: true })
   tags!: EndorsementListDtoTagsEnum[]
 
-  @Field(() => [ValidationRuleInput])
-  @ValidateNested({ each: true })
-  @Type(() => ValidationRuleInput)
-  validationRules!: ValidationRuleInput[]
-
   @Field(() => graphqlTypeJson, { nullable: true })
   @IsOptional()
   meta!: object | null
+
+  @Field(() => Date)
+  closedDate!: Date
+
+  @Field(() => Date)
+  openedDate!: Date
+
+  @Field()
+  @IsBoolean()
+  adminLock!: boolean
 }

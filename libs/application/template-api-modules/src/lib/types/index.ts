@@ -1,7 +1,16 @@
-import { SendMailOptions } from 'nodemailer'
-
-import { Application } from '@island.is/application/core'
+import {
+  Application,
+  ApplicationWithAttachments,
+} from '@island.is/application/core'
 import { Config as DrivingLicenseApiConfig } from '@island.is/api/domains/driving-license'
+import { Config as CriminalRecordConfig } from '@island.is/api/domains/criminal-record'
+import { PaymentServiceOptions } from '@island.is/clients/payment'
+import { Message } from '@island.is/email-service'
+import { User } from '@island.is/auth-nest-tools'
+import { PaymentScheduleServiceOptions } from '@island.is/clients/payment-schedule'
+import { HealthInsuranceV2Options } from '@island.is/clients/health-insurance-v2'
+import { DataProtectionComplaintClientConfig } from '@island.is/clients/data-protection-complaint'
+import { Injectable, Type } from '@nestjs/common'
 
 export interface BaseTemplateAPIModuleConfig {
   xRoadBasePathWithEnv: string
@@ -9,16 +18,12 @@ export interface BaseTemplateAPIModuleConfig {
   clientLocationOrigin: string
   emailOptions: {
     useTestAccount: boolean
+    useNodemailerApp?: boolean
     options?: {
       region: string
     }
   }
   baseApiUrl: string
-  syslumenn: {
-    url: string
-    username: string
-    password: string
-  }
   email: {
     sender: string
     address: string
@@ -29,20 +34,29 @@ export interface BaseTemplateAPIModuleConfig {
     password: string
   }
   drivingLicense: DrivingLicenseApiConfig
+  criminalRecord: CriminalRecordConfig
   attachmentBucket: string
   presignBucket: string
+  paymentOptions: PaymentServiceOptions
+  generalPetition: {
+    endorsementsApiBasePath: string
+  }
+  paymentScheduleConfig: PaymentScheduleServiceOptions
+  healthInsuranceV2: HealthInsuranceV2Options
+  dataProtectionComplaint: DataProtectionComplaintClientConfig
+  applicationService: Type<BaseTemplateApiApplicationService>
 }
 
 export interface TemplateApiModuleActionProps {
-  application: Application
-  authorization: string
+  application: ApplicationWithAttachments
+  auth: User
 }
 
 export interface EmailTemplateGeneratorProps {
   application: Application
   options: {
     clientLocationOrigin: string
-    locale: string // TODO union / enum
+    locale: string
     email: { sender: string; address: string }
   }
 }
@@ -50,14 +64,28 @@ export interface EmailTemplateGeneratorProps {
 export type AssignmentEmailTemplateGenerator = (
   props: EmailTemplateGeneratorProps,
   assignLink: string,
-) => SendMailOptions
+) => Message
 
 export type EmailTemplateGenerator = (
   props: EmailTemplateGeneratorProps,
-) => SendMailOptions
+) => Message
 
 export type AttachmentEmailTemplateGenerator = (
   props: EmailTemplateGeneratorProps,
   fileContent: string,
   email: string,
-) => SendMailOptions
+) => Message
+
+@Injectable()
+export abstract class BaseTemplateApiApplicationService {
+  abstract saveAttachmentToApplicaton(
+    application: ApplicationWithAttachments,
+    fileName: string,
+    buffer: Buffer,
+    uploadParameters?: {
+      ContentType?: string
+      ContentDisposition?: string
+      ContentEncoding?: string
+    },
+  ): Promise<string>
+}

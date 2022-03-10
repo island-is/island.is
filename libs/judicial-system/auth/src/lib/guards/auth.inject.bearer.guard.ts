@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 
-import { User } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { cookieExtractor } from '../cookieExtractor'
 
@@ -35,7 +35,7 @@ export class JwtInjectBearerAuthGuard extends AuthGuard('jwt') {
 
   handleRequest<TUser extends User>(err: Error, user: TUser): TUser {
     if (err || !user) {
-      throw new UnauthorizedException((err && err.message) || 'Unauthorized')
+      throw new UnauthorizedException(err?.message ?? 'Unauthorized')
     }
 
     return user

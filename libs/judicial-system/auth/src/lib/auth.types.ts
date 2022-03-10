@@ -1,4 +1,4 @@
-import { User, UserRole } from '@island.is/judicial-system/types'
+import type { UserRole, User } from '@island.is/judicial-system/types'
 
 export type Credentials = {
   user: User
@@ -12,15 +12,15 @@ export enum RulesType {
 
 export type RolesFieldRule = {
   role: UserRole
-  type: RulesType
+  type: RulesType.FIELD
   dtoFields: string[]
 }
 
 export type RolesFieldValuesRule = {
   role: UserRole
-  type: RulesType
+  type: RulesType.FIELD_VALUES
   dtoField: string
   dtoFieldValues: string[]
 }
 
-export type RolesRule = UserRole & RolesFieldRule & RolesFieldValuesRule
+export type RolesRule = UserRole | RolesFieldRule | RolesFieldValuesRule

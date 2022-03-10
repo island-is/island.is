@@ -1,8 +1,8 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
-import {
-  Institution as TInstitution,
+import type {
   InstitutionType,
+  Institution as TInstitution,
 } from '@island.is/judicial-system/types'
 
 @ObjectType()

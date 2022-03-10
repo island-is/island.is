@@ -7,7 +7,7 @@ import {
 import { Application } from '../../types'
 
 export const application = factory<Application>({
-  id: () => faker.random.uuid(),
+  id: () => faker.datatype.uuid(),
   created: () => faker.date.past().toISOString(),
   modified: () => faker.date.past().toISOString(),
   applicant: () => faker.random.alphaNumeric(10),

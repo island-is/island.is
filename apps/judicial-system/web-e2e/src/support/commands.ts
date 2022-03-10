@@ -12,38 +12,7 @@ import { CyHttpMessages } from 'cypress/types/net-stubbing'
 
 const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
   if (graphqlRequest.body.hasOwnProperty('query')) {
-    if (graphqlRequest.body.query.includes('CasesQuery')) {
-      return {
-        fixture: 'cases',
-      }
-    } else if (
-      graphqlRequest.body.hasOwnProperty('variables') &&
-      graphqlRequest.body.query.includes('CaseQuery')
-    ) {
-      if (graphqlRequest.body.variables.input.id === 'test_id') {
-        return {
-          fixture: 'case',
-        }
-      } else if (
-        graphqlRequest.body.variables.input.id === 'test_id_stadfesta'
-      ) {
-        return {
-          fixture: 'confirmCase',
-        }
-      } else if (
-        graphqlRequest.body.variables.input.id === 'test_id_stadfest'
-      ) {
-        return {
-          fixture: 'confirmedCaseJudge',
-        }
-      } else if (
-        graphqlRequest.body.variables.input.id === 'test_id_stadfesting'
-      ) {
-        return {
-          fixture: 'confirmingCaseJudge',
-        }
-      }
-    } else if (graphqlRequest.body.query.includes('TransitionCaseMutation')) {
+    if (graphqlRequest.body.query.includes('TransitionCaseMutation')) {
       return {
         fixture: 'transitionCaseMutationResponse',
       }
@@ -71,16 +40,18 @@ const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
       graphqlRequest.alias = 'gqlUpdateCaseMutatation'
 
       return { fixture: 'updateCaseMutationResponse' }
-    } else if (graphqlRequest.body.query.includes('RequestSignatureMutation')) {
+    } else if (
+      graphqlRequest.body.query.includes('RequestRulingSignatureMutation')
+    ) {
       graphqlRequest.alias = 'gqlRequsestSignatureMutation'
 
-      return { fixture: 'requestSignatureMutationResponse' }
+      return { fixture: 'requestRulingSignatureMutationResponse' }
     } else if (
-      graphqlRequest.body.query.includes('SignatureConfirmationQuery')
+      graphqlRequest.body.query.includes('RulingSignatureConfirmationQuery')
     ) {
       graphqlRequest.alias = 'gqlSignatureConfirmationResponse'
 
-      return { fixture: 'signatureConfirmationResponse' }
+      return { fixture: 'rulingSignatureConfirmationResponse' }
     } else if (graphqlRequest.body.query.includes('InstitutionsQuery')) {
       graphqlRequest.alias = 'gqlInstitutionsQuery'
 
@@ -90,9 +61,29 @@ const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
 }
 
 Cypress.Commands.add('stubAPIResponses', () => {
+  cy.intercept(
+    'GET',
+    '**/api/nationalRegistry/getBusinessesByNationalId**',
+    (req) => {
+      req.reply({ fixture: 'nationalRegistryBusinessesResponse' })
+    },
+  ).as('getBusinessesByNationalId')
+
+  cy.intercept(
+    'GET',
+    '**/api/nationalRegistry/getPersonByNationalId**',
+    (req) => {
+      req.reply({ fixture: 'nationalRegistryPersonResponse' })
+    },
+  ).as('getPersonByNationalId')
+
   cy.intercept('POST', '**/api/graphql', (req) => {
     req.reply(getFixtureFor(req))
   })
+})
+
+Cypress.Commands.add('login', () => {
+  cy.setCookie('judicial-system.csrf', 'test-csrf-token')
 })
 
 Cypress.Commands.add('getByTestid', (selector) => {

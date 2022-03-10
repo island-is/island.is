@@ -4,6 +4,7 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   HasOne,
   Model,
   Table,
@@ -14,17 +15,18 @@ import { ApiProperty } from '@nestjs/swagger'
 
 import {
   CaseState,
-  CaseCustodyProvisions,
+  CaseLegalProvisions,
   CaseAppealDecision,
   CaseCustodyRestrictions,
-  CaseGender,
   CaseDecision,
   CaseType,
-  AccusedPleaDecision,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
 
+import { CaseFile } from '../../file'
 import { Institution } from '../../institution'
 import { User } from '../../user'
+import { Defendant } from '../../defendant'
 
 @Table({
   tableName: 'case',
@@ -41,21 +43,21 @@ export class Case extends Model<Case> {
     defaultValue: DataType.UUIDV4,
   })
   @ApiProperty()
-  id: string
+  id!: string
 
   /**********
-   * The date and time the case was created in the database
+   * The date and time the case was created in the Database
    **********/
   @CreatedAt
   @ApiProperty()
-  created: Date
+  created!: Date
 
   /**********
    * The date and time the case was last updated in the database
    **********/
   @UpdatedAt
   @ApiProperty()
-  modified: Date
+  modified!: Date
 
   /**********
    * The case type - example: CUSTODY
@@ -65,7 +67,7 @@ export class Case extends Model<Case> {
     allowNull: false,
     values: Object.values(CaseType),
   })
-  type: CaseType
+  type!: CaseType
 
   /**********
    * A further description of the case type - optional
@@ -75,7 +77,7 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  description: string
+  description?: string
 
   /**********
    * The case state - example: DRAFT
@@ -87,7 +89,7 @@ export class Case extends Model<Case> {
     defaultValue: CaseState.NEW,
   })
   @ApiProperty({ enum: CaseState })
-  state: CaseState
+  state!: CaseState
 
   /**********
    * A case number in LÖKE (police information system) connected to the case
@@ -97,47 +99,14 @@ export class Case extends Model<Case> {
     allowNull: false,
   })
   @ApiProperty()
-  policeCaseNumber: string
+  policeCaseNumber!: string
 
   /**********
-   * The national id of the accused
+   * The case's defendants
    **********/
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ApiProperty()
-  accusedNationalId: string
-
-  /**********
-   * The name of the accused
-   **********/
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  accusedName: string
-
-  /**********
-   * The address of the accused
-   **********/
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  accusedAddress: string
-
-  /**********
-   * The gender of the accused
-   **********/
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(CaseGender),
-  })
-  accusedGender: CaseGender
+  @HasMany(() => Defendant, 'caseId')
+  @ApiProperty({ type: Defendant, isArray: true })
+  defendants?: Defendant[]
 
   /**********
    * The name of the accused's defender - optional
@@ -147,7 +116,7 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  defenderName: string
+  defenderName?: string
 
   /**********
    * The email address of the accused's defender - optional
@@ -157,7 +126,7 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  defenderEmail: string
+  defenderEmail?: string
 
   /**********
    * The phone number of the accused's defender - optional
@@ -167,7 +136,7 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  defenderPhoneNumber: string
+  defenderPhoneNumber?: string
 
   /**********
    * Indicates whether the prosecutor's request should be sent to the accused's defender
@@ -178,24 +147,46 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  sendRequestToDefender: boolean
+  sendRequestToDefender?: boolean
+
+  /**********
+   * Indicates whether the accused was assigned a spokesperson rather than a defender -
+   * optional
+   **********/
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  defenderIsSpokesperson?: boolean
+
+  /**********
+   * Indicates whether the secutity level of the case has been heightened -
+   * optional
+   **********/
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  isHeightenedSecurityLevel?: boolean
 
   /**********
    * The surrogate key of the court assigned to the case
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.UUID,
     allowNull: true,
   })
   @ApiProperty()
-  courtId: string
+  courtId?: string
 
   /**********
    * The court assigned to the case
    **********/
   @BelongsTo(() => Institution, 'courtId')
   @ApiProperty({ type: Institution })
-  court: Institution
+  court?: Institution
 
   /**********
    * The lead investigator assigned to the case - usually name and title -
@@ -206,7 +197,7 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  leadInvestigator: string
+  leadInvestigator?: string
 
   /**********
    * The date and time the accused was arrested - optional
@@ -216,7 +207,7 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  arrestDate: Date
+  arrestDate?: Date
 
   /**********
    * The prosecutor's requested court date and time
@@ -226,7 +217,17 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  requestedCourtDate: Date
+  requestedCourtDate?: Date
+
+  /**********
+   * The translator assigned to the case
+   **********/
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  translator?: string
 
   /**********
    * The prosecutor's requested ruling expiration date and time - example: the end of custody
@@ -237,38 +238,39 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  requestedValidToDate: Date
+  requestedValidToDate?: Date
 
   /**********
    * The prosecutor's demands - in some cases they are auto generated from the requested ruling
    * expiration date - can be modified even when auto generated
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
-  demands: string
+  demands?: string
 
   /**********
    * The laws broken by the accused
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
-  lawsBroken: string
+  lawsBroken?: string
 
   /**********
-   * The laws on which the demands are based - not used for custody and travel ban cases
+   * The laws on which the demands are based. Used as additional legal
+   * provisions in custody and travel ban cases.
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
-  legalBasis: string
+  legalBasis?: string
 
   /**********
    * The laws on which the demands are based - from a predetermined list - example: _95_1_A -
@@ -277,10 +279,10 @@ export class Case extends Model<Case> {
   @Column({
     type: DataType.ARRAY(DataType.ENUM),
     allowNull: true,
-    values: Object.values(CaseCustodyProvisions),
+    values: Object.values(CaseLegalProvisions),
   })
-  @ApiProperty({ enum: CaseCustodyProvisions, isArray: true })
-  custodyProvisions: CaseCustodyProvisions[]
+  @ApiProperty({ enum: CaseLegalProvisions, isArray: true })
+  legalProvisions?: CaseLegalProvisions[]
 
   /**********
    * Restrictions requested by the prosecutor - from a predetermined list - example: ISOLATION -
@@ -292,38 +294,38 @@ export class Case extends Model<Case> {
     values: Object.values(CaseCustodyRestrictions),
   })
   @ApiProperty({ enum: CaseCustodyRestrictions, isArray: true })
-  requestedCustodyRestrictions: CaseCustodyRestrictions[]
+  requestedCustodyRestrictions?: CaseCustodyRestrictions[]
 
   /**********
    * Additional restrictions requested by the prosecutor - only used for travel ban cases -
    * optional
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
-  requestedOtherRestrictions: string
+  requestedOtherRestrictions?: string
 
   /**********
    * The facts of the case as seen by the prosecutor
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
-  caseFacts: string
+  caseFacts?: string
 
   /**********
    * The prosecutor's legal arguments
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
-  legalArguments: string
+  legalArguments?: string
 
   /**********
    * Indicates whether the prosecutor is requesting a court session in which the counter party
@@ -334,38 +336,56 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  requestProsecutorOnlySession: boolean
+  requestProsecutorOnlySession?: boolean
 
   /**********
    * The prosecutor's request for a court session in which the counter party is not represented -
    * not used for custody and travel ban cases - optional
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
-  prosecutorOnlySessionRequest: string
+  prosecutorOnlySessionRequest?: string
 
   /**********
    * Comments from the prosecutor to the court - optional
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
-  comments: string
+  comments?: string
 
   /**********
    * Comments from the prosecutor to the court regarding the accompanying case files - optional
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
-  caseFilesComments: string
+  caseFilesComments?: string
+
+  /**********
+   * The surrogate key of the prosecutor that created the case
+   **********/
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  creatingProsecutorId?: string
+
+  /**********
+   * The prosecutor that created the case
+   **********/
+  @BelongsTo(() => User, 'creatingProsecutorId')
+  @ApiProperty({ type: User })
+  creatingProsecutor?: User
 
   /**********
    * The surrogate key of the prosecutor assigned to the case
@@ -376,14 +396,14 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  prosecutorId: string
+  prosecutorId?: string
 
   /**********
    * The prosecutor assigned to the case
    **********/
   @BelongsTo(() => User, 'prosecutorId')
   @ApiProperty({ type: User })
-  prosecutor: User
+  prosecutor?: User
 
   /**********
    * The surrogate key of the prosecutor's office the case has been shared with - optional
@@ -394,14 +414,14 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  sharedWithProsecutorsOfficeId: string
+  sharedWithProsecutorsOfficeId?: string
 
   /**********
    * The prosecutor's office the case has been shared with - optional
    **********/
   @BelongsTo(() => Institution, 'sharedWithProsecutorsOfficeId')
   @ApiProperty({ type: Institution })
-  sharedWithProsecutorsOffice: Institution
+  sharedWithProsecutorsOffice?: Institution
 
   /**********
    * The case number assigned in Auður (court information system)
@@ -411,7 +431,18 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  courtCaseNumber: string
+  courtCaseNumber?: string
+
+  /**********
+   * The session arrangements - example: ALL_PRESENT
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(SessionArrangements),
+  })
+  @ApiProperty({ enum: SessionArrangements })
+  sessionArrangements?: SessionArrangements
 
   /**********
    * The scheduled date and time of the case's court session
@@ -421,7 +452,17 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  courtDate: Date
+  courtDate?: Date
+
+  /**********
+   * The location of the court session
+   **********/
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  courtLocation?: string
 
   /**********
    * The assigned court room for the court session
@@ -431,7 +472,7 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  courtRoom: string
+  courtRoom?: string
 
   /**********
    * The date and time the court session started
@@ -441,7 +482,7 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  courtStartDate: Date
+  courtStartDate?: Date
 
   /**********
    * The date and time the court session ended
@@ -451,27 +492,37 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  courtEndTime: Date
+  courtEndTime?: Date
+
+  /**********
+   * Indicates whether the closed court announcement is hidden from the court record - optional
+   **********/
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  isClosedCourtHidden?: boolean
 
   /**********
    * The court attendees
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
-  courtAttendees: string
+  courtAttendees?: string
 
   /**********
    * The prosecutor's demands - autofilled from demands - possibly modified by the court
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
-  prosecutorDemands: string
+  prosecutorDemands?: string
 
   /**********
    * A list of additional court documents - optional
@@ -481,80 +532,59 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  courtDocuments: string[]
+  courtDocuments?: string[]
 
   /**********
-   * Indicates whether the accused was present during the court session - optional
+   * Bookings during court session
    **********/
   @Column({
-    type: DataType.BOOLEAN,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
-  isAccusedAbsent: boolean
-
-  /**********
-   * The accused's plea decision - example: REJECT
-   **********/
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(AccusedPleaDecision),
-  })
-  @ApiProperty({ enum: AccusedPleaDecision })
-  accusedPleaDecision: AccusedPleaDecision
-
-  /**********
-   * The accused's plea
-   **********/
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  accusedPleaAnnouncement: string
-
-  /**********
-   * The presentations for both parties
-   **********/
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  litigationPresentations: string
+  sessionBookings?: string
 
   /**********
    * The case facts as seen by the prosecutor - autofilled from caseFacts - possibly modified
    * by the court
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
-  courtCaseFacts: string
+  courtCaseFacts?: string
+
+  /**********
+   * Introduction to the case
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiProperty()
+  introduction?: string
 
   /**********
    * The legal arguments presented by the prosecutor - autofilled from legalArguments -
    * possibly modified by the court
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
-  courtLegalArguments: string
+  courtLegalArguments?: string
 
   /**********
    * The judge's ruling
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
-  ruling: string
+  ruling?: string
 
   /**********
    * The judge's pending decision - example: ACCEPTING
@@ -565,7 +595,7 @@ export class Case extends Model<Case> {
     values: Object.values(CaseDecision),
   })
   @ApiProperty({ enum: CaseDecision })
-  decision: CaseDecision
+  decision?: CaseDecision
 
   /**********
    * The ruling expiration date and time - example: the end of custody in custody cases -
@@ -577,30 +607,18 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  validToDate: Date
+  validToDate?: Date
 
   /**********
-   * Restrictions imposed by the judge - from a predetermined list - example: ISOLATION -
-   * only used for custody and travel ban cases - optional
+   * Indicates whether the judge imposes isolation - prefilled from
+   * requestedCustodyRestrictions - only used for custody cases
    **********/
   @Column({
-    type: DataType.ARRAY(DataType.ENUM),
-    allowNull: true,
-    values: Object.values(CaseCustodyRestrictions),
-  })
-  @ApiProperty({ enum: CaseCustodyRestrictions, isArray: true })
-  custodyRestrictions: CaseCustodyRestrictions[]
-
-  /**********
-   * Additional restrictions imposed by the judge - prefilled from requestedOtherRestrictions -
-   * only used for travel ban cases - optional
-   **********/
-  @Column({
-    type: DataType.STRING,
+    type: DataType.BOOLEAN,
     allowNull: true,
   })
   @ApiProperty()
-  otherRestrictions: string
+  isCustodyIsolation?: boolean
 
   /**********
    * Expiration date and time for isolation - prefilled from requestedValidToDate - only used
@@ -611,17 +629,29 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  isolationToDate: Date
+  isolationToDate?: Date
 
   /**********
-   * The judge's additions to the auto generated text of the case's conclusion - optional
+   * The case conclusion - optional for custody and travel ban cases as the core conclusions
+   * are auto generated
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
-  additionToConclusion: string
+  conclusion?: string
+
+  /**********
+   * Bookings at the end of the court session - prefilled from requestedCustodyRestrictions
+   * in custody and travel ban cases - optional
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiProperty()
+  endOfSessionBookings?: string
 
   /**********
    * The accused's appeal decision - example: APPEAL
@@ -632,17 +662,17 @@ export class Case extends Model<Case> {
     values: Object.values(CaseAppealDecision),
   })
   @ApiProperty({ enum: CaseAppealDecision })
-  accusedAppealDecision: CaseAppealDecision
+  accusedAppealDecision?: CaseAppealDecision
 
   /**********
    * The accused's appeal announcement - only used if the accused appeals in court
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
-  accusedAppealAnnouncement: string
+  accusedAppealAnnouncement?: string
 
   /**********
    * The prosecutor's appeal decision - example: POSTPONE
@@ -653,17 +683,17 @@ export class Case extends Model<Case> {
     values: Object.values(CaseAppealDecision),
   })
   @ApiProperty({ enum: CaseAppealDecision })
-  prosecutorAppealDecision: CaseAppealDecision
+  prosecutorAppealDecision?: CaseAppealDecision
 
   /**********
    * The prosecutor's appeal announcement - only used if the prosecutor appeals in court
    **********/
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
-  prosecutorAppealAnnouncement: string
+  prosecutorAppealAnnouncement?: string
 
   /**********
    * The date and time of the accused's postponed appeal - only used if the accused postponed
@@ -674,7 +704,7 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  accusedPostponedAppealDate: Date
+  accusedPostponedAppealDate?: Date
 
   /**********
    * The date and time of the prosecutor's postponed appeal - only used if the prosecutor
@@ -685,7 +715,7 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  prosecutorPostponedAppealDate: Date
+  prosecutorPostponedAppealDate?: Date
 
   /**********
    * The date and time of the judge's ruling signature
@@ -695,7 +725,17 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  rulingDate: Date
+  rulingDate?: Date
+
+  /**********
+   * The date and time of the judge's inital ruling signature - used for extended cases
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  initialRulingDate?: Date
 
   /**********
    * The surrogate key of the registrar assigned to the case
@@ -706,14 +746,14 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  registrarId: string
+  registrarId?: string
 
   /**********
    * The registrar assigned to the case
    **********/
   @BelongsTo(() => User, 'registrarId')
   @ApiProperty({ type: User })
-  registrar: User
+  registrar?: User
 
   /**********
    * The surrogate key of the judge assigned to the case
@@ -724,14 +764,42 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  judgeId: string
+  judgeId?: string
 
   /**********
    * The judge assigned to the case
    **********/
   @BelongsTo(() => User, 'judgeId')
   @ApiProperty({ type: User })
-  judge: User
+  judge?: User
+
+  /**********
+   * The surrogate key of the user that signed the court record of the case
+   **********/
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiProperty()
+  courtRecordSignatoryId?: string
+
+  /**********
+   * The user that signed the court record of the case
+   **********/
+  @BelongsTo(() => User, 'courtRecordSignatoryId')
+  @ApiProperty({ type: User })
+  courtRecordSignatory?: User
+
+  /**********
+   * The court record signature date
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  courtRecordSignatureDate?: Date
 
   /**********
    * The surrogate key of the case's parent case - only used if the case is an extension
@@ -742,19 +810,36 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  parentCaseId: string
+  parentCaseId?: string
 
   /**********
    * The case's parent case - only used if the case is an extension
    **********/
   @BelongsTo(() => Case, 'parentCaseId')
   @ApiProperty({ type: Case })
-  parentCase: Case
+  parentCase?: Case
 
   /**********
    * The case's child case - only used if the case has been extended
    **********/
   @HasOne(() => Case, 'parentCaseId')
   @ApiProperty({ type: Case })
-  childCase: Case
+  childCase?: Case
+
+  /**********
+   * The case's files
+   **********/
+  @HasMany(() => CaseFile, 'caseId')
+  @ApiProperty({ type: CaseFile, isArray: true })
+  caseFiles?: CaseFile[]
+
+  /**********
+   * The explanation given for a modification of a case's validTo or isolationTo dates
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiProperty()
+  caseModifiedExplanation?: string
 }

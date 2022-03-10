@@ -16,7 +16,7 @@ import Logo from '../assets/Logo'
 import { YES } from '../constants'
 import { otherParentApprovalFormMessages } from '../lib/messages'
 import { getApplicationAnswers } from '../lib/parentalLeaveUtils'
-import { Boolean } from '../types'
+import { YesOrNo } from '../types'
 
 export const OtherParentApproval: Form = buildForm({
   id: 'OtherParentApprovalForParentalLeave',
@@ -34,11 +34,11 @@ export const OtherParentApproval: Form = buildForm({
             const isRequestingRights = getValueViaPath(
               application.answers,
               'requestRights.isRequestingRights',
-            ) as Boolean
+            ) as YesOrNo
             const usePersonalAllowanceFromSpouse = getValueViaPath(
               application.answers,
               'usePersonalAllowanceFromSpouse',
-            ) as Boolean
+            ) as YesOrNo
 
             if (
               isRequestingRights === YES &&
@@ -57,11 +57,11 @@ export const OtherParentApproval: Form = buildForm({
             const isRequestingRights = getValueViaPath(
               application.answers,
               'requestRights.isRequestingRights',
-            ) as Boolean
+            ) as YesOrNo
             const usePersonalAllowanceFromSpouse = getValueViaPath(
               application.answers,
               'usePersonalAllowanceFromSpouse',
-            ) as Boolean
+            ) as YesOrNo
 
             if (
               isRequestingRights === YES &&
@@ -82,9 +82,10 @@ export const OtherParentApproval: Form = buildForm({
               width: 'half',
               condition: (answers) =>
                 getApplicationAnswers(answers).isRequestingRights === YES,
-              // TODO: update when requested days are no longer a binary choice
-              // defaultValue: (application: Application) => getApplicationAnswers(application.answers).requestDays
-              value: '45',
+              value: (application: Application) =>
+                getApplicationAnswers(
+                  application.answers,
+                ).requestDays.toString(),
             }),
             buildKeyValueField({
               label: otherParentApprovalFormMessages.labelPersonalDiscount,

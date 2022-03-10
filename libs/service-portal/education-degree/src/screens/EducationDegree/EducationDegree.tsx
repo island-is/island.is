@@ -13,11 +13,11 @@ function EducationDegree(): JSX.Element {
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
         title={defineMessage({
-          id: 'service.portal:education-degree-title',
+          id: 'sp.education-degree:education-degree-title',
           defaultMessage: 'Prófskírteini',
         })}
         intro={defineMessage({
-          id: 'service.portal:education-degree-intro',
+          id: 'sp.education-degree:education-degree-intro',
           defaultMessage:
             'Hér getur þú fundið yfirlit yfir prófskírteini og lokapróf á öllum námsstigum.',
         })}

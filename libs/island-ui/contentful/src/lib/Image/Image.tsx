@@ -1,6 +1,6 @@
 import React, { FC, useState, useEffect, useRef } from 'react'
 import cn from 'classnames'
-import * as styles from './Image.treat'
+import * as styles from './Image.css'
 import { useMountedState } from 'react-use'
 
 export interface ImageProps {

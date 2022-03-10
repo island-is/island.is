@@ -5,7 +5,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { Type, ValidationPipe } from '@nestjs/common'
 import { InfraModule } from './infra/infra.module'
-import { Test } from '@nestjs/testing'
+import { Test, TestingModule } from '@nestjs/testing'
 import { TestingModuleBuilder } from '@nestjs/testing/testing-module.builder'
 
 export type TestServerOptions = {
@@ -18,15 +18,22 @@ export type TestServerOptions = {
   /**
    * Hook to override providers.
    */
-  override?: (builder: TestingModuleBuilder) => void
+  override?: (builder: TestingModuleBuilder) => TestingModuleBuilder
 }
 
-export const testServer = async (options: TestServerOptions) => {
-  const builder = Test.createTestingModule({
-    imports: [InfraModule.forRoot(options.appModule)],
+export const testServer = async ({
+  appModule,
+  override,
+}: TestServerOptions) => {
+  let builder = Test.createTestingModule({
+    imports: [
+      InfraModule.forRoot({
+        appModule,
+      }),
+    ],
   })
-  if (options.override) {
-    options.override(builder)
+  if (override) {
+    builder = override(builder)
   }
 
   const moduleRef = await builder.compile()
@@ -39,11 +46,15 @@ export const testServer = async (options: TestServerOptions) => {
 }
 
 // Sets up a test environment that ignores various Guards on controllers
-export const testServerActivateAuthGuards = async (
-  options: TestServerOptions,
-) => {
+export const testServerActivateAuthGuards = async ({
+  appModule,
+}: TestServerOptions) => {
   const moduleFixture = await Test.createTestingModule({
-    imports: [InfraModule.forRoot(options.appModule)],
+    imports: [
+      InfraModule.forRoot({
+        appModule,
+      }),
+    ],
   })
     .overrideGuard(IdsAuthGuard)
     .useValue({ canActivate: () => true })

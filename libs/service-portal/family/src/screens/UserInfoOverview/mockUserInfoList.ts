@@ -1,4 +1,4 @@
-import { ServicePortalPath } from '@island.is/service-portal/core'
+import { ServicePortalPath, m } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import { MessageDescriptor } from 'react-intl'
 
@@ -11,10 +11,7 @@ export type UserInfoItem = {
 
 export const mockUserInfoList: UserInfoItem[] = [
   {
-    heading: defineMessage({
-      id: 'service.portal:user-info',
-      defaultMessage: 'Mínar upplýsingar',
-    }),
+    heading: m.userInfo,
     subtext: defineMessage({
       id: 'sp.family:user-info-card-description',
       defaultMessage:
@@ -24,15 +21,9 @@ export const mockUserInfoList: UserInfoItem[] = [
     image: '/assets/images/individualsGrid.svg',
   },
   {
-    heading: defineMessage({
-      id: 'service.portal:my-info-family',
-      defaultMessage: 'Fjölskyldan',
-    }),
-    subtext: defineMessage({
-      id: 'service.portal:my-info-family-subtext',
-      defaultMessage:
-        'Hönnunarkerfi Ísland.is auðveldar okkur að setja nýja þjónustu í loftið á stuttum tíma, og einfaldar rekstur og viðhald stafrænnar þjónustu hins opinbera til.',
-    }),
+    heading: m.family,
+    subtext:
+      'Hönnunarkerfi Ísland.is auðveldar okkur að setja nýja þjónustu í loftið á stuttum tíma, og einfaldar rekstur og viðhald stafrænnar þjónustu hins opinbera til.',
     link: ServicePortalPath.FamilyRoot,
     image: '/assets/images/familyGrid.svg',
   },

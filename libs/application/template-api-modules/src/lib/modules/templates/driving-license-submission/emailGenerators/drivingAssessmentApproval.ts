@@ -22,15 +22,15 @@ export const generateDrivingAssessmentApprovalEmail: EmailTemplateGenerator = (
     locale === 'is'
       ? dedent(`<h1>Akstursmat staðist</h1>
 
-        <p>Ökukennarinn þinn hefur staðfest að þú hafir staðist akstursmat.
+        <p>Ökukennarinn þinn hefur staðfest að akstursmat hafi farið fram.
         Smelltu hér til að hefja umsókn um fullnaðarskírteini</p>
 
         <p><a href="https://island.is/umsoknir/okuskirteini/">Hefja umsókn</a></p>
       `)
       : dedent(`<h1>Driving assessment confirmed</h1>
 
-        <p>Your teacher has confirmed that you have finished the driving assessment. Click
-        here to start your application</p>
+        <p>Your teacher has confirmed that the driving assessment has taken place.
+        Click here to start your application</p>
 
         <p><a href="https://island.is/umsoknir/okuskirteini">Start application</a></p>
       `)

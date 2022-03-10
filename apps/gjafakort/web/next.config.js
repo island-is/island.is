@@ -1,4 +1,5 @@
-const withTreat = require('next-treat')()
+const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
+const withVanillaExtract = createVanillaExtractPlugin()
 const withSourceMaps = require('@zeit/next-source-maps')
 // const SentryWebpackPlugin = require('@sentry/webpack-plugin')
 
@@ -11,7 +12,7 @@ const {
 } = process.env
 
 module.exports = withSourceMaps(
-  withTreat({
+  withVanillaExtract({
     redirects() {
       return [
         {

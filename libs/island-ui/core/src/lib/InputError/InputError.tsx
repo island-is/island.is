@@ -1,6 +1,6 @@
 import React from 'react'
 
-import * as styles from './InputError.treat'
+import * as styles from './InputError.css'
 
 export interface InputErrorProps {
   id?: string

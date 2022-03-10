@@ -16,7 +16,7 @@ import {
   RadioController,
 } from '@island.is/shared/form-fields'
 import TextWithTooltip from '../TextWithTooltip/TextWithTooltip'
-import { YES, NO, FILE_SIZE_LIMIT } from '../../constants'
+import { YES, NO, FILE_SIZE_LIMIT } from '../../shared'
 import { m } from '../../forms/messages'
 import {
   FormerInsurance as FormerInsuranceType,

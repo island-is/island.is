@@ -1,4 +1,5 @@
-import { getDefaultValues } from '@apollo/client/utilities'
+import get from 'lodash/get'
+import isArray from 'lodash/isArray'
 import {
   ExternalData,
   ExternalDataProvider,
@@ -7,6 +8,7 @@ import {
   findSubSectionIndex,
   Form,
   FormItemTypes,
+  FieldTypes,
   FormLeaf,
   FormNode,
   FormValue,
@@ -28,54 +30,125 @@ import {
   MultiFieldScreen,
   RepeaterScreen,
 } from '../types'
+import { answerIsMissing } from '../utils'
+
+export const screenRequiresAnswer = (screen: FormScreen) => {
+  if (!screen.isNavigable) {
+    return false
+  }
+
+  if (screen.type === FormItemTypes.REPEATER) {
+    return true
+  } else if (screen.type === FormItemTypes.MULTI_FIELD) {
+    let screensThatRequireAnswer = 0
+
+    for (const subScreen of screen.children) {
+      if (screenRequiresAnswer(subScreen)) {
+        screensThatRequireAnswer += 1
+      }
+    }
+
+    return screensThatRequireAnswer > 0
+  }
+
+  const doesNotRequireAnswer = get(screen, 'doesNotRequireAnswer') === true
+  return !doesNotRequireAnswer
+}
+
+export const screenHasBeenAnswered = (
+  screen: FormScreen,
+  answers: FormValue,
+  checkIfPartlyAnswered = false,
+) => {
+  if (!screenRequiresAnswer(screen)) {
+    return true
+  }
+
+  if (!screen.id) {
+    return false
+  }
+
+  const answer = getValueViaPath(answers, screen.id)
+  const answerHasValue = !answerIsMissing(answer)
+
+  if (screen.type === FormItemTypes.REPEATER) {
+    // We do not need to check all individual screens here like we do
+    // with multi field since the screens are rendered individually
+    // and will be checked individually
+    return isArray(answer) && answer.length > 0
+  } else if (screen.type === FormItemTypes.MULTI_FIELD) {
+    let numberOfAnswers = 0
+    let numberOfRequiredAnswers = 0
+
+    for (const subScreen of screen.children) {
+      const requiresAnswer = screenRequiresAnswer(subScreen)
+      const hasBeenAnswered = screenHasBeenAnswered(subScreen, answers)
+
+      if (requiresAnswer) {
+        numberOfRequiredAnswers += 1
+
+        // Only count answers where they are required
+        if (hasBeenAnswered) {
+          numberOfAnswers += 1
+        }
+      }
+    }
+
+    if (checkIfPartlyAnswered) {
+      return numberOfAnswers > 0
+    }
+
+    return numberOfAnswers === numberOfRequiredAnswers
+  } else if (
+    screen.type === FieldTypes.CUSTOM &&
+    screen.childInputIds &&
+    screen.childInputIds.length > 0
+  ) {
+    const hasAnyMissingAnswer = screen.childInputIds.some((childInputId) => {
+      const childAnswer = getValueViaPath(answers, childInputId)
+      const missingChildAnswer = answerIsMissing(childAnswer)
+
+      return missingChildAnswer
+    })
+
+    return !hasAnyMissingAnswer
+  }
+
+  return answerHasValue
+}
 
 export const findCurrentScreen = (
   screens: FormScreen[],
   answers: FormValue,
 ): number => {
-  let currentScreen = 0
-  let missingAnswerBeforeCurrentIndex = false
-  let currentAnswerIndex = 0
+  let lastAnswerIndex = -1
+  let index = 0
 
-  screens.forEach((screen, index) => {
-    if (screen.type === FormItemTypes.MULTI_FIELD) {
-      let numberOfAnsweredQuestionsInScreen = 0
+  while (index < screens.length) {
+    const screen = screens[index]
 
-      screen.children.forEach((field) => {
-        if (getValueViaPath(answers, field.id) !== undefined) {
-          numberOfAnsweredQuestionsInScreen++
-        }
-      })
-
-      if (numberOfAnsweredQuestionsInScreen === screen.children.length) {
-        currentScreen = index + 1
-      } else if (numberOfAnsweredQuestionsInScreen > 0) {
-        currentScreen = index
-      }
-    } else if (screen.type === FormItemTypes.REPEATER) {
-      if (getValueViaPath(answers, screen.id) !== undefined) {
-        currentScreen = index
-      }
-    } else if (screen.id) {
-      if (
-        getValueViaPath(answers, screen.id) === undefined &&
-        index > currentAnswerIndex
-      ) {
-        missingAnswerBeforeCurrentIndex = true
-        currentAnswerIndex = index
-      }
-
-      if (
-        !missingAnswerBeforeCurrentIndex &&
-        getValueViaPath(answers, screen.id) !== undefined
-      ) {
-        currentScreen = index + 1
-        currentAnswerIndex = index
-      }
+    if (!screenRequiresAnswer(screen)) {
+      index += 1
+      continue
     }
-  })
 
-  return Math.min(currentScreen, screens.length - 1)
+    // If we reach here we know that this screen requires an answer
+    const hasBeenAnswered = screenHasBeenAnswered(screen, answers)
+    const hasBeenPartlyAnswered = screenHasBeenAnswered(screen, answers, true)
+
+    if (hasBeenAnswered) {
+      lastAnswerIndex = index
+    } else if (hasBeenPartlyAnswered) {
+      lastAnswerIndex = index
+      break
+    } else {
+      break
+    }
+
+    index += 1
+  }
+
+  return Math.max(Math.min(index, lastAnswerIndex + 1, screens.length - 1), 0)
 }
 
 export const moveToScreen = (
@@ -344,12 +417,14 @@ function convertFormNodeToScreens(
             : findSubSectionIndex(subSections, child as SubSection)
       }
 
+      const shouldBeVisible = shouldShowFormItem(child, answers, externalData)
+
       newScreens = convertFormNodeToScreens(
         child,
         answers,
         externalData,
         form,
-        isParentNavigable && shouldShowFormItem(child, answers, externalData),
+        isParentNavigable && shouldBeVisible,
         sectionIndex,
         subSectionIndex,
       )

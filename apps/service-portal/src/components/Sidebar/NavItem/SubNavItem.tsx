@@ -1,22 +1,25 @@
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Icon, Text } from '@island.is/island-ui/core'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import React, { FC } from 'react'
 import { Link } from 'react-router-dom'
-import * as styles from './NavItem.treat'
-
+import * as styles from '../NavItem/NavItem.css'
 interface Props {
   path?: ServicePortalPath
   active: boolean
+  enabled?: boolean
+  collapsed?: boolean
   external?: boolean
-  variant?: 'blue' | 'blueberry'
   onClick?: () => void
+  first?: boolean
 }
 
 const SubNavItemContent: FC<Props> = ({
   active,
   onClick,
-  variant = 'blue',
+  enabled,
+  collapsed,
   children,
+  first,
 }) => (
   <Box
     display="flex"
@@ -24,23 +27,38 @@ const SubNavItemContent: FC<Props> = ({
     cursor="pointer"
     position="relative"
     onClick={onClick}
+    justifyContent="spaceBetween"
+    paddingRight={2}
+    paddingTop={first ? 0 : 3}
+    className={active ? styles.subLinkActive : styles.subLink}
   >
-    <Text
-      fontWeight={active ? 'semiBold' : 'regular'}
-      color={variant === 'blue' ? 'blue600' : 'blueberry600'}
-    >
-      <span className={styles.subNavItem}>{children}</span>
-    </Text>
+    <span>{children}</span>
+    {!enabled && (
+      <Icon
+        type="filled"
+        icon="lockClosed"
+        size="small"
+        className={collapsed ? styles.subLockCollapsed : styles.subLock}
+      />
+    )}
   </Box>
 )
 
 const SubNavItem: FC<Props> = (props) => {
   return props.external ? (
-    <a href={props.path} target="_blank" rel="noreferrer noopener">
+    <a
+      href={props.path}
+      target="_blank"
+      rel="noreferrer noopener"
+      className={props.active ? styles.subLinkActive : styles.subLink}
+    >
       <SubNavItemContent {...props} />
     </a>
   ) : props.path ? (
-    <Link to={props.path}>
+    <Link
+      to={props.path}
+      className={props.active ? styles.subLinkActive : styles.subLink}
+    >
       <SubNavItemContent {...props} />
     </Link>
   ) : (

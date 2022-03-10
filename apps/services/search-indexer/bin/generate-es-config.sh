@@ -49,11 +49,11 @@ replace_full() {
 }
 
 main() {
-	local lang="$1"
+	# local lang="$1"
 	local type="$2"
 	local func="replace_$type"
 
-	cat $TEMPLATE | jq '.settings, .mappings' | $func
+	jq '.settings, .mappings' < "$TEMPLATE" | $func
 
 }
 

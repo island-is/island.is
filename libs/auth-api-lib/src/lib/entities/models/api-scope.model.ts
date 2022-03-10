@@ -15,7 +15,7 @@ import { ApiScopeUserClaim } from './api-scope-user-claim.model'
 import { ApiScopeGroup } from './api-scope-group.model'
 import { ApiScopesDTO } from '../dto/api-scopes.dto'
 import { DelegationScope } from './delegation-scope.model'
-
+import { PersonalRepresentativeScopePermission } from '../../personal-representative/entities/models/personal-representative-scope-permission.model'
 @Table({
   tableName: 'api_scope',
 })
@@ -35,9 +35,7 @@ export class ApiScope extends Model<ApiScope> {
     allowNull: false,
     defaultValue: true,
   })
-  @ApiProperty({
-    example: true,
-  })
+  @ApiProperty()
   enabled!: boolean
 
   @Column({
@@ -59,17 +57,15 @@ export class ApiScope extends Model<ApiScope> {
     allowNull: true,
   })
   @ForeignKey(() => ApiScopeGroup)
-  @ApiProperty()
-  groupId?: string
+  @ApiPropertyOptional({ nullable: true })
+  groupId?: string | null
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
     defaultValue: true,
   })
-  @ApiProperty({
-    example: true,
-  })
+  @ApiProperty()
   showInDiscoveryDocument!: boolean
 
   @Column({
@@ -77,9 +73,7 @@ export class ApiScope extends Model<ApiScope> {
     allowNull: false,
     defaultValue: false,
   })
-  @ApiProperty({
-    example: true,
-  })
+  @ApiProperty()
   grantToLegalGuardians!: boolean
 
   @Column({
@@ -87,9 +81,7 @@ export class ApiScope extends Model<ApiScope> {
     allowNull: false,
     defaultValue: false,
   })
-  @ApiProperty({
-    example: true,
-  })
+  @ApiProperty()
   grantToProcuringHolders!: boolean
 
   @Column({
@@ -97,9 +89,15 @@ export class ApiScope extends Model<ApiScope> {
     allowNull: false,
     defaultValue: false,
   })
-  @ApiProperty({
-    example: true,
+  @ApiProperty()
+  grantToPersonalRepresentatives!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
   })
+  @ApiProperty()
   allowExplicitDelegationGrant!: boolean
 
   @Column({
@@ -107,9 +105,7 @@ export class ApiScope extends Model<ApiScope> {
     allowNull: false,
     defaultValue: false,
   })
-  @ApiProperty({
-    example: true,
-  })
+  @ApiProperty()
   automaticDelegationGrant!: boolean
 
   @Column({
@@ -117,23 +113,18 @@ export class ApiScope extends Model<ApiScope> {
     allowNull: false,
     defaultValue: false,
   })
-  @ApiProperty({
-    example: true,
-  })
+  @ApiProperty()
   alsoForDelegatedUser!: boolean
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: true,
-    defaultValue: false,
   })
-  @ApiProperty({
-    example: true,
-  })
-  isAccessControlled?: boolean
+  @ApiPropertyOptional({ nullable: true })
+  isAccessControlled?: boolean | null
 
   @HasMany(() => ApiScopeUserClaim)
-  @ApiProperty()
+  @ApiPropertyOptional({ nullable: true })
   userClaims?: ApiScopeUserClaim[]
 
   // Common properties end
@@ -142,9 +133,7 @@ export class ApiScope extends Model<ApiScope> {
     allowNull: false,
     defaultValue: false,
   })
-  @ApiProperty({
-    example: false,
-  })
+  @ApiProperty()
   required!: boolean
 
   @Column({
@@ -152,9 +141,7 @@ export class ApiScope extends Model<ApiScope> {
     allowNull: false,
     defaultValue: false,
   })
-  @ApiProperty({
-    example: false,
-  })
+  @ApiProperty()
   emphasize!: boolean
 
   @Column({
@@ -162,25 +149,26 @@ export class ApiScope extends Model<ApiScope> {
     allowNull: true,
     defaultValue: null,
   })
-  @ApiProperty({
-    example: null,
-  })
-  archived!: Date
+  @ApiProperty({ nullable: true })
+  archived!: Date | null
 
   @CreatedAt
   @ApiProperty()
   readonly created!: Date
 
   @UpdatedAt
-  @ApiProperty()
-  readonly modified?: Date
+  @ApiPropertyOptional({ nullable: true })
+  readonly modified?: Date | null
 
-  @ApiPropertyOptional()
   @BelongsTo(() => ApiScopeGroup)
+  @ApiPropertyOptional()
   group?: ApiScopeGroup
 
   @HasMany(() => DelegationScope)
   delegationScopes?: DelegationScope[]
+
+  @HasMany(() => PersonalRepresentativeScopePermission)
+  personalRepresentativeScopePermissions?: PersonalRepresentativeScopePermission[]
 
   toDTO(): ApiScopesDTO {
     return {
@@ -191,6 +179,7 @@ export class ApiScope extends Model<ApiScope> {
       showInDiscoveryDocument: this.showInDiscoveryDocument,
       grantToLegalGuardians: this.grantToLegalGuardians,
       grantToProcuringHolders: this.grantToProcuringHolders,
+      grantToPersonalRepresentatives: this.grantToPersonalRepresentatives,
       allowExplicitDelegationGrant: this.allowExplicitDelegationGrant,
       automaticDelegationGrant: this.automaticDelegationGrant,
       alsoForDelegatedUser: this.alsoForDelegatedUser,

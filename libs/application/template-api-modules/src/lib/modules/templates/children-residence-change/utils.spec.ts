@@ -34,7 +34,7 @@ describe('ChildrenResidenceChangeService utils', () => {
     })
 
     it('should return Nordurland Vestra email address for Nordurland Vestra prefix postal code', () => {
-      const email = 'nordurlandvestra.fjolskylda@syslumenn.is'
+      const email = 'nordurlandvestra@syslumenn.is'
 
       expect(syslumennDataFromPostalCode('500').email).toBe(email)
     })
@@ -58,7 +58,7 @@ describe('ChildrenResidenceChangeService utils', () => {
     })
 
     it('should return Vestmannaeyjar email address for Vestmannaeyjar prefix postal code', () => {
-      const email = 'vestmannaeyjar.fjolskylda@syslumenn.is'
+      const email = 'arndis@syslumenn.is'
 
       expect(syslumennDataFromPostalCode('900').email).toBe(email)
     })

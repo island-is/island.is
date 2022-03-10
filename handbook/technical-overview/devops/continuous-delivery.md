@@ -51,4 +51,4 @@ The [Helm](https://helm.sh) chart stored in our [Chartmuseum](https://chartmuseu
 
 The CI process triggers the pipelines upon a successful build, which automatically deploys to our `Dev` environment. After manual approval, it is possible to deploy to `Staging` and then `Prod` as well.
 
-Our Spinnaker is accessible [here](https://spinnaker.shared.devland.is).
+Our Spinnaker is accessible [here](https://spinnaker.shared.devland.is). Note that to be able to log in, your membership to the island-is github organization must be set to public. You can change that [here](https://github.com/orgs/island-is/people).

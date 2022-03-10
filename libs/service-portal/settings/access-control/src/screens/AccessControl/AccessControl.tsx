@@ -2,7 +2,7 @@ import React from 'react'
 import { defineMessage } from 'react-intl'
 
 import { Box } from '@island.is/island-ui/core'
-import { IntroHeader } from '@island.is/service-portal/core'
+import { IntroHeader, m } from '@island.is/service-portal/core'
 
 import { Accesses } from './components'
 
@@ -10,10 +10,7 @@ function AccessControl(): JSX.Element {
   return (
     <Box>
       <IntroHeader
-        title={defineMessage({
-          id: 'service.portal.settings.accessControl:home-title',
-          defaultMessage: 'Aðgangsstýring',
-        })}
+        title={m.accessControl}
         intro={defineMessage({
           id: 'service.portal.settings.accessControl:home-intro',
           defaultMessage:

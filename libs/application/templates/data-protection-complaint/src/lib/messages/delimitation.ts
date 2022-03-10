@@ -31,8 +31,15 @@ export const delimitation = {
     concernsLibel: {
       id: 'dpac.application:section.delimitation.labels.concernsLibel',
       defaultMessage:
-        'Ertu að kvarta yfir einhverju sem var sagt eða skrifað um þig í fjölmiðlum, á netinu eða á öðrum opinberum vettvangi?',
+        'Ertu að kvarta yfir einhverju sem var sagt eða skrifað um þig á netinu eða á öðrum opinberum vettvangi?',
       description: 'Label for concernsLibel field',
+    },
+    concernsPersonalDataConflict: {
+      id:
+        'dpac.application:section.delimitation.labels.concernsPersonalDataConflict',
+      defaultMessage:
+        'Ertu að kvarta yfir því að hafa ekki fengið aðgang að persónuupplýsingum um þig, eða að þær hafi ekki verið leiðréttar eða þeim eytt?',
+      description: 'Label for concernsPersonalDataConflict field',
     },
     concernsPersonalLettersOrSocialMedia: {
       id:
@@ -44,55 +51,228 @@ export const delimitation = {
     agreementDescriptionBulletOne: {
       id:
         'dpac.application:section.delimitation.labels.agreementDescriptionBulletOne',
-      defaultMessage: `
-        Vinsamlegast athugið að þegar kvörtun er
-        tekin til meðferðar er gagnaðila tilkynnt
-        um að borist hafi kvörtun frá tilteknum
-        nafngreindum aðila og honum gefinn kostur
-        á að koma áframfæri andmælum sínum.
-        Kvartanda er einnig gefið færi á að koma
-        að athugasemdum við andmæli þess sem kvartað er yfir.
-        Svarfrestur málsaðila er að jafnaði þrjár vikur.
-        `,
+      defaultMessage:
+        'Þegar kvörtun er tekin til meðferðar er gagnaðila (þ.e. þeim sem kvartað er yfir) tilkynnt um kvörtunina og sent afrit af henni og fylgiskjölum með henni. Honum er gefinn kostur á að koma andmælum sínum á framfæri.',
       description: 'Agreement description bullet one',
+    },
+    agreementDescriptionBulletOneLink: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletOneLink',
+      defaultMessage: 'https://www.personuvernd.is/upplysingar-um-thig/',
+      description: 'Agreement description link for bullet one',
+    },
+    agreementDescriptionBulletOneLinkName: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletOneLinkName',
+      defaultMessage: 'persónuverndarstefnu stofnunarinnar',
+      description: 'Agreement description link name for bullet one',
     },
     agreementDescriptionBulletTwo: {
       id:
         'dpac.application:section.delimitation.labels.agreementDescriptionBulletTwo',
-      defaultMessage: `
-        Telji Persónuvernd að upplýsa þurfi málið betur getur stofnunin
-        óskað eftir frekari upplýsingumeða gögnum frá öllum aðilum.
-        Aðilum máls er sent afrit allra bréfa. Hafi allir þættir
-        málsins verið upplýstir og málið ekki til lykta leitt með
-        öðrum hætti úrskurðarPersónuvernd um lögmæti þeirrar
-        vinnslu sem kvartað er yfir.
-        `,
+      defaultMessage:
+        'Ef Persónuvernd telur nauðsynlegt að upplýsa málið betur getur stofnunin óskað eftir frekari gögnum eða upplýsingum frá öllum aðilum, eftir því sem við á hverju sinni.',
       description: 'Agreement description bullet Two',
+    },
+    agreementDescriptionBulletTwoLink: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletTwoLink',
+      defaultMessage: 'https://www.personuvernd.is/upplysingar-um-thig/',
+      description: 'Agreement description link for bullet two',
+    },
+    agreementDescriptionBulletTwoLinkName: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletTwoLinkName',
+      defaultMessage: 'persónuverndarstefnu stofnunarinnar',
+      description: 'Agreement description link name for bullet two',
     },
     agreementDescriptionBulletThree: {
       id:
         'dpac.application:section.delimitation.labels.agreementDescriptionBulletThree',
-      defaultMessage: `
-       Vakin er athygli á því að erindi sem berast stofnuninni og öll
-       gögn sem viðkomandi málvarða eru geymd í skjalageymslu
-       stofnunarinnar undir málsnúmeri uns þau verða afhent Þjóðskjalasafni
-       Íslands til varðveislu í samræmi við ákvæði laga nr. 77/2014, um opinberskjalasöfn.
-        `,
+      defaultMessage:
+        'Málsgögn eru almennt aðgengileg öllum málsaðilum á grundvelli ákvæða stjórnsýslulaga, nr. 37/1993, að teknu tilliti til undantekninga samkvæmt þeim lögum. Þá geta þau eftir atvikum verið aðgengileg öðrum á grundvelli annarra laga, svo sem upplýsingalaga nr. 140/2012 eða laga um persónuvernd og vinnslu persónuupplýsinga nr. 90/2018.',
       description: 'Agreement description bullet Three',
+    },
+    agreementDescriptionBulletThreeLink: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletThreeLink',
+      defaultMessage: 'https://www.personuvernd.is/upplysingar-um-thig/',
+      description: 'Agreement description link for bullet three',
+    },
+    agreementDescriptionBulletThreeLinkName: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletThreeLinkName',
+      defaultMessage: 'persónuverndarstefnu stofnunarinnar',
+      description: 'Agreement description link name for bullet three',
     },
     agreementDescriptionBulletFour: {
       id:
         'dpac.application:section.delimitation.labels.agreementDescriptionBulletFour',
-      defaultMessage: `
-        Öll mál sem berast Persónuvernd eru sett í viðeigandi farveg
-        og er málsaðilum tilkynnt um það, þó svo að á því geti orðið
-        tafir í ljósi mikilla anna hjá Persónuvernd. Almennt má
-        áætlaað afgreiðsla kvartana geti tekið um 9-15  mánuði, en
-        afgreiðslutími getur þó lengst ennfrekar ef mál eru flókin
-        eða mikil að umfangi. Úrlausnir Persónuverndar eru  birtar
-        á vefsíðu stofnunarinnar, nöfn einstaklinga eru þó ávallt afmáð.
-        `,
+      defaultMessage:
+        'Öll mál sem berast Persónuvernd eru sett í viðeigandi farveg eins fljótt og unnt er og málsaðilum tilkynnt um það, þó svo að á því geti orðið tafir í ljósi mikilla anna hjá Persónuvernd.',
       description: 'Agreement description bullet Four',
+    },
+    agreementDescriptionBulletFourLink: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletFourLink',
+      defaultMessage: 'https://www.personuvernd.is/upplysingar-um-thig/',
+      description: 'Agreement description link for bullet four',
+    },
+    agreementDescriptionBulletFourLinkName: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletFourLinkName',
+      defaultMessage: 'persónuverndarstefnu stofnunarinnar',
+      description: 'Agreement description link name for bullet four',
+    },
+    agreementDescriptionBulletFive: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletFive',
+      defaultMessage:
+        'Upplýsingar um áætlaðan afgreiðslutíma kvartana má nálgast í {link}.',
+      description: 'Agreement description bullet Five',
+    },
+    agreementDescriptionBulletFiveLink: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletFiveLink',
+      defaultMessage:
+        'https://www.personuvernd.is/efst-a-baugi/malsmedferdartimi-hja-personuvernd',
+      description: 'Agreement description link for bullet five',
+    },
+    agreementDescriptionBulletFiveLinkName: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletFiveLinkName',
+      defaultMessage: 'tilkynningu á vefsíðu Persónuverndar',
+      description: 'Agreement description link name for bullet five',
+    },
+    agreementDescriptionBulletSix: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletSix',
+      defaultMessage:
+        'Úrskurðir Persónuverndar í kvörtunarmálum eru almennt birtir á vefsíðu stofnunarinnar. Nöfn einstaklinga eru þó afmáð áður, sem og aðrar upplýsingar sem gera kleift að persónugreina kvartendur.',
+      description: 'Agreement description bullet Six',
+    },
+    agreementDescriptionBulletSixLink: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletSixLink',
+      defaultMessage: 'https://www.personuvernd.is/upplysingar-um-thig/',
+      description: 'Agreement description link for bullet six',
+    },
+    agreementDescriptionBulletSixLinkName: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletSixLinkName',
+      defaultMessage: 'persónuverndarstefnu stofnunarinnar',
+      description: 'Agreement description link name for bullet six',
+    },
+    agreementDescriptionBulletSeven: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletSeven',
+      defaultMessage:
+        'Ítarlegri upplýsingar um málsmeðferð hjá Persónuvernd má nálgast í {link}.',
+      description: 'Agreement description bullet Seven',
+    },
+    agreementDescriptionBulletSevenLink: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletSevenLink',
+      defaultMessage:
+        'https://www.personuvernd.is/log-og-reglur/reglur-og-reglugerdir/reglur-um-malsmedferd-personuverndar',
+      description: 'Agreement description link for bullet seven',
+    },
+    agreementDescriptionBulletSevenLinkName: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletSevenLinkName',
+      defaultMessage: 'málsmeðferðarreglum stofnunarinnar',
+      description: 'Agreement description link name for bullet seven',
+    },
+    agreementDescriptionBulletEight: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletEight',
+      defaultMessage:
+        'Ítarlegri upplýsingar um vinnslu persónuupplýsinga hjá Persónuvernd má nálgast í {link}.',
+      description: 'Agreement description bullet Eight',
+    },
+    agreementDescriptionBulletEightLink: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletEightLink',
+      defaultMessage: 'https://www.personuvernd.is/upplysingar-um-thig/',
+      description: 'Agreement description link for bullet ight',
+    },
+    agreementDescriptionBulletEightLinkName: {
+      id:
+        'dpac.application:section.delimitation.labels.agreementDescriptionBulletEightLinkName',
+      defaultMessage: 'persónuverndarstefnu stofnunarinnar',
+      description: 'Agreement description link name for bullet eight',
+    },
+  }),
+  links: defineMessages({
+    inCourtProceedingsTitle: {
+      id: 'dpac.application:section.delimitation.links.inCourtProceedingsTitle',
+      defaultMessage: 'Frekari upplýsingar',
+      description: 'In court proceedings url title',
+    },
+    inCourtProceedingsUrl: {
+      id: 'dpac.application:section.delimitation.links.inCourtProceedingsUrl',
+      defaultMessage:
+        'https://www.personuvernd.is/einstaklingar/spurt-og-svarad/allar-spurningar-og-svor/hvad-getur-personuvernd-ekki-gert',
+      description: 'In court proceedings url',
+    },
+    concernsMediaCoverageFirstTitle: {
+      id:
+        'dpac.application:section.delimitation.links.concernsMediaCoverageFirstTitle',
+      defaultMessage: 'Fjölmiðlanefnd',
+      description: 'Concerns media coverage first url title',
+    },
+    concernsMediaCoverageFirstUrl: {
+      id:
+        'dpac.application:section.delimitation.links.concernsMediaCoverageFirstUrl',
+      defaultMessage: 'https://fjolmidlanefnd.is/',
+      description: 'Concerns media coverage first url',
+    },
+    concernsMediaCoverageSecondTitle: {
+      id:
+        'dpac.application:section.delimitation.links.concernsMediaCoverageSecondTitle',
+      defaultMessage: 'Siðanefnd Blaðamannafélags Íslands',
+      description: 'Concerns media coverage second url title',
+    },
+    concernsMediaCoverageSecondUrl: {
+      id:
+        'dpac.application:section.delimitation.links.concernsMediaCoverageSecondUrl',
+      defaultMessage: 'https://www.press.is/is/faglegt/sidavefur/sidanefnd',
+      description: 'Concerns media coverage second url',
+    },
+    concernsBanMarkingFirstTitle: {
+      id:
+        'dpac.application:section.delimitation.links.concernsBanMarkingFirstTitle',
+      defaultMessage: 'Fjarskiptastofa',
+      description: 'Concerns ban marking first url title',
+    },
+    concernsBanMarkingFirstUrl: {
+      id:
+        'dpac.application:section.delimitation.links.concernsBanMarkingFirstUrl',
+      defaultMessage: 'https://fjarskiptastofa.is/',
+      description: 'Concerns ban marking first url',
+    },
+    concernsBanMarkingSecondTitle: {
+      id:
+        'dpac.application:section.delimitation.links.concernsBanMarkingSecondTitle',
+      defaultMessage: 'Þjóðskrá Íslands',
+      description: 'Concerns ban marking second url title',
+    },
+    concernsBanMarkingSecondUrl: {
+      id:
+        'dpac.application:section.delimitation.links.concernsBanMarkingSecondUrl',
+      defaultMessage: 'https://island.is/kvortun-vegna-skraningar-i-bannskra',
+      description: 'Concerns ban marking second url',
+    },
+    concernsLibelTitle: {
+      id: 'dpac.application:section.delimitation.links.concernsLibelTitle',
+      defaultMessage: 'Nánari uppýsingar',
+      description: 'Concerns libel url title',
+    },
+    concernsLibelUrl: {
+      id: 'dpac.application:section.delimitation.links.iconcernsLibelUrl',
+      defaultMessage:
+        'https://www.personuvernd.is/einstaklingar/spurt-og-svarad/allar-spurningar-og-svor/hvad-getur-personuvernd-ekki-gert',
+      description: 'Concerns libel url',
     },
   }),
 }

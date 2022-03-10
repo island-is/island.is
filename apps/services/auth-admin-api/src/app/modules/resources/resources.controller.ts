@@ -67,6 +67,7 @@ export class ResourcesController {
   @Get('identity-resources')
   @ApiQuery({ name: 'page', required: true })
   @ApiQuery({ name: 'count', required: true })
+  @ApiQuery({ name: 'includeArchived', required: false })
   @ApiOkResponse({
     schema: {
       allOf: [
@@ -91,8 +92,13 @@ export class ResourcesController {
   async findAndCountAllIdentityResources(
     @Query('page') page: number,
     @Query('count') count: number,
+    @Query('includeArchived') includeArchived = false,
   ): Promise<PagedRowsDto<IdentityResource>> {
-    return this.resourcesService.findAndCountAllIdentityResources(page, count)
+    return this.resourcesService.findAndCountAllIdentityResources(
+      page,
+      count,
+      includeArchived,
+    )
   }
 
   /** Gets all Api Scopes and count of rows */
@@ -100,6 +106,7 @@ export class ResourcesController {
   @Get('api-scopes')
   @ApiQuery({ name: 'page', required: true })
   @ApiQuery({ name: 'count', required: true })
+  @ApiQuery({ name: 'includeArchived', required: false })
   @ApiOkResponse({
     schema: {
       allOf: [
@@ -124,8 +131,13 @@ export class ResourcesController {
   async findAndCountAllApiScopes(
     @Query('page') page: number,
     @Query('count') count: number,
+    @Query('includeArchived') includeArchived = false,
   ): Promise<PagedRowsDto<ApiScope>> {
-    return this.resourcesService.findAndCountAllApiScopes(page, count)
+    return this.resourcesService.findAndCountAllApiScopes(
+      page,
+      count,
+      includeArchived,
+    )
   }
 
   /** Finds all access controlled scopes */
@@ -145,6 +157,7 @@ export class ResourcesController {
   @ApiQuery({ name: 'searchString', required: false })
   @ApiQuery({ name: 'page', required: true })
   @ApiQuery({ name: 'count', required: true })
+  @ApiQuery({ name: 'includeArchived', required: false })
   @ApiOkResponse({
     schema: {
       allOf: [
@@ -170,12 +183,22 @@ export class ResourcesController {
     @Query('searchString') searchString: string,
     @Query('page') page: number,
     @Query('count') count: number,
+    @Query('includeArchived') includeArchived = false,
   ): Promise<PagedRowsDto<ApiResource>> {
     if (searchString) {
-      return this.resourcesService.findApiResources(searchString, page, count)
+      return this.resourcesService.findApiResources(
+        searchString,
+        page,
+        count,
+        includeArchived,
+      )
     }
 
-    return this.resourcesService.findAndCountAllApiResources(page, count)
+    return this.resourcesService.findAndCountAllApiResources(
+      page,
+      count,
+      includeArchived,
+    )
   }
 
   /** Get's all Api resources and total count of rows */
@@ -290,7 +313,7 @@ export class ResourcesController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'updateIdentityResource',
         namespace,
         resources: name,
@@ -313,7 +336,7 @@ export class ResourcesController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'deleteIdentityResource',
         namespace,
         resources: name,
@@ -436,7 +459,7 @@ export class ResourcesController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'updateApiScope',
         namespace,
         resources: name,
@@ -461,7 +484,7 @@ export class ResourcesController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'updateApiResource',
         namespace,
         resources: name,
@@ -485,7 +508,7 @@ export class ResourcesController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'deleteApiScope',
         namespace,
         resources: name,
@@ -508,7 +531,7 @@ export class ResourcesController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'deleteApiResource',
         namespace,
         resources: name,
@@ -541,7 +564,7 @@ export class ResourcesController {
   ): Promise<number> {
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'removeResourceUserClaim',
         namespace,
         resources: `${identityResourceName}/${claimName}`,
@@ -575,7 +598,7 @@ export class ResourcesController {
   ): Promise<number> {
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'removeApiScopeUserClaim',
         namespace,
         resources: `${apiScopeName}/${claimName}`,
@@ -644,7 +667,7 @@ export class ResourcesController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'removeApiResourceUserClaim',
         namespace,
         resources: `${apiResourceName}/${claimName}`,
@@ -688,7 +711,7 @@ export class ResourcesController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'removeApiResourceSecret',
         namespace,
         resources: apiSecret.apiResourceName,
@@ -735,7 +758,7 @@ export class ResourcesController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'removeApiResourceAllowedScope',
         namespace,
         resources: `${apiResourceName}/${scopeName}`,
@@ -776,7 +799,7 @@ export class ResourcesController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         action: 'removeApiScopeFromApiResourceScope',
         namespace,
         resources: scopeName,
@@ -840,7 +863,7 @@ export class ResourcesController {
   ): Promise<[number, ApiScopeGroup[]]> {
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'updateApiScopeGroup',
         resources: id,
@@ -862,7 +885,7 @@ export class ResourcesController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'deleteApiScopeGroup',
         resources: id,
@@ -922,7 +945,7 @@ export class ResourcesController {
   ): Promise<[number, Domain[]]> {
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'updateDomain',
         resources: name,
@@ -945,7 +968,7 @@ export class ResourcesController {
 
     return this.auditService.auditPromise(
       {
-        user,
+        auth: user,
         namespace,
         action: 'deleteDomain',
         resources: name,

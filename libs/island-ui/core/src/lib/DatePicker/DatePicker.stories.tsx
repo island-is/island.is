@@ -1,5 +1,4 @@
 import React from 'react'
-import { withDesign } from 'storybook-addon-designs'
 
 import { withFigma } from '../../utils/withFigma'
 import { DatePicker } from './DatePicker'
@@ -8,13 +7,13 @@ import { Text } from '../Text/Text'
 export default {
   title: 'Form/DatePicker',
   component: DatePicker,
-  decorators: [withDesign],
   parameters: withFigma('DatePicker'),
 }
+
 const Template = (args) => <DatePicker {...args} />
 
-export const Primary = Template.bind({})
-Primary.args = {
+export const Default = Template.bind({})
+Default.args = {
   label: 'Dagsetning',
   placeholderText: 'Veldu dagsetningu',
   locale: 'is',
@@ -127,6 +126,19 @@ export const SizeSmall = () => {
   )
 }
 
+export const SizeExtraSmall = () => {
+  return (
+    <div style={{ height: 600 }}>
+      <DatePicker
+        label="Extra small"
+        placeholderText="Pick a date"
+        size="xs"
+        handleChange={(date: Date) => console.log(date)}
+      />
+    </div>
+  )
+}
+
 export const WithErrors = () => (
   <>
     <Wrap>
@@ -140,4 +152,41 @@ export const WithErrors = () => (
       />
     </Wrap>
   </>
+)
+
+export const Disabled = () => (
+  <>
+    <Wrap>
+      <DatePicker
+        label="Date"
+        placeholderText="Pick a date"
+        selected={new Date()}
+        handleChange={(date: Date) => console.log(date)}
+        disabled
+      />
+    </Wrap>
+  </>
+)
+
+export const WithoutLabel = () => (
+  <Wrap>
+    <DatePicker
+      label=""
+      placeholderText="Pick a date"
+      selected={new Date()}
+      handleChange={(date: Date) => console.log(date)}
+    />
+  </Wrap>
+)
+
+export const SmallWithoutLabel = () => (
+  <Wrap>
+    <DatePicker
+      label=""
+      size="sm"
+      placeholderText="Pick a date"
+      selected={new Date()}
+      handleChange={(date: Date) => console.log(date)}
+    />
+  </Wrap>
 )

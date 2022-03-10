@@ -1,4 +1,4 @@
-import { paymentPlanEntryKeys, PublicDebtPaymentPlan } from '../lib/dataSchema'
+import { paymentPlanEntryKeys, PublicDebtPaymentPlan } from '../types'
 
 export const getPaymentPlanIds = (
   paymentPlans: PublicDebtPaymentPlan['paymentPlans'] | undefined,

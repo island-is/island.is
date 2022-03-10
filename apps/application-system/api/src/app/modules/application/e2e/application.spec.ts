@@ -1,5 +1,6 @@
 import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
+
 import { EmailService } from '@island.is/email-service'
 import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import { ApplicationScope } from '@island.is/auth/scopes'
@@ -7,11 +8,12 @@ import {
   ApplicationStatus,
   ApplicationTypes,
 } from '@island.is/application/core'
-import { ContentfulRepository } from '@island.is/api/domains/cms'
+import { ContentfulRepository } from '@island.is/cms'
 
 import { setup } from '../../../../../test/setup'
 import { environment } from '../../../../environments'
 import { FileService } from '../files/file.service'
+import { AppModule } from '../../../app.module'
 
 let app: INestApplication
 
@@ -54,8 +56,8 @@ const nationalId = '1234564321'
 let server: request.SuperTest<request.Test>
 
 beforeAll(async () => {
-  app = await setup({
-    override: (builder) => {
+  app = await setup(AppModule, {
+    override: (builder) =>
       builder
         .overrideProvider(ContentfulRepository)
         .useClass(MockContentfulRepository)
@@ -67,9 +69,7 @@ beforeAll(async () => {
             nationalId,
             scope: [ApplicationScope.read, ApplicationScope.write],
           }),
-        )
-        .compile()
-    },
+        ),
   })
 
   server = request(app.getHttpServer())
@@ -142,10 +142,25 @@ describe('Application system API', () => {
           careerHistoryCompanies: ['this', 'is', 'not', 'allowed'],
         },
       })
-      .expect(403)
+      .expect(400)
 
     // Assert
-    expect(putResponse.body.message).toBe('Schema validation has failed')
+    expect(putResponse.body).toMatchInlineSnapshot(`
+      Object {
+        "detail": "Found issues in these fields: careerHistoryCompanies",
+        "fields": Object {
+          "careerHistoryCompanies": Array [
+            "Ógilt gildi",
+            "Ógilt gildi",
+            "Ógilt gildi",
+            "Ógilt gildi",
+          ],
+        },
+        "status": 400,
+        "title": "Validation Failed",
+        "type": "https://docs.devland.is/reference/problems/validation-failed",
+      }
+    `)
   })
 
   it('should fail when PUT-ing answers on an application where it is in a state where it is not permitted', async () => {
@@ -188,7 +203,7 @@ describe('Application system API', () => {
       })
       .expect(403)
 
-    expect(failedResponse.body.message).toBe(
+    expect(failedResponse.body.detail).toBe(
       'Current user is not permitted to update the following answers: dreamJob',
     )
   })
@@ -283,6 +298,39 @@ describe('Application system API', () => {
     })
   })
 
+  it('should fail when PUT-ing anything else than answers', async () => {
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.EXAMPLE,
+      })
+      .expect(201)
+
+    const response = await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
+        applicant: '1111',
+        assignees: ['1234'],
+        attachments: {
+          someAttachment: 'asdf',
+        },
+      })
+      .expect(400)
+
+    expect(response.body).toMatchInlineSnapshot(`
+      Object {
+        "detail": Array [
+          "property applicant should not exist",
+          "property assignees should not exist",
+          "property attachments should not exist",
+        ],
+        "status": 400,
+        "title": "Bad Request",
+        "type": "https://httpstatuses.com/400",
+      }
+    `)
+  })
+
   it('should fail when PUT-ing externalData on an application where it is in a state where it is not permitted', async () => {
     const creationResponse = await server
       .post('/applications')
@@ -320,7 +368,7 @@ describe('Application system API', () => {
       })
       .expect(400)
 
-    expect(failedResponse.body.message).toBe(
+    expect(failedResponse.body.detail).toBe(
       'Current user is not permitted to update external data in this state: inReview',
     )
   })
@@ -336,10 +384,11 @@ describe('Application system API', () => {
       .expect(404)
 
     // Assert
-    expect(response.body.error).toBe('Not Found')
-    expect(response.body.message).toBe(
-      'An application with the id 98e83b8a-fd75-44b5-a922-0f76c99bdcae does not exist',
-    )
+    expect(response.body).toMatchObject({
+      title: 'Not Found',
+      detail:
+        'An application with the id 98e83b8a-fd75-44b5-a922-0f76c99bdcae does not exist',
+    })
   })
 
   it('should successfully PUT answers to an existing application if said answers comply to the schema', async () => {
@@ -403,7 +452,7 @@ describe('Application system API', () => {
       .expect(400)
 
     // Assert
-    expect(putResponse.body.error).toBe('Bad Request')
+    expect(putResponse.body.title).toBe('Bad Request')
   })
 
   it('GET /users/:nationalId/applications should not return applications that are in an unlisted state', async () => {

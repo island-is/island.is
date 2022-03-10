@@ -1,29 +1,24 @@
 #!/bin/bash
 set -euo pipefail
 
+ROOT=$(git rev-parse --show-toplevel)
+
 function main {
   echo "Fetching secret environment variables for $1"
   dir="${0%/*}"
   env_secret_file="$dir/../.env.secret"
-  touch $env_secret_file
+  touch "$env_secret_file"
 
   if [ "${2-}" == "--reset" ]; then
-    > $env_secret_file
+    : > "$env_secret_file"
   fi
 
-  secrets=$(aws ssm --region eu-west-1 get-parameters-by-path \
-    --path "/k8s/$1/" --with-decryption --recursive \
-    --parameter-filters Key=Label,Option=Equals,Values=dev \
-    | npx jq -r '.Parameters | map(.Name |= split("/")) | .[] | [.Name[-1], .Value] | join("=")')
-
-  for secret in $secrets; do
-    echo "export $secret" >> $env_secret_file
-  done
+  ts-node --dir "$ROOT"/infra "$ROOT"/infra/src/cli/cli render-secrets --service="$1" >> "$env_secret_file"
 
   echo "Done"
 }
 
-if [ -z ${1-} ]; then
+if [ -z "${1-}" ]; then
   echo "Usage:"
   echo "  yarn get-secrets <project> [--reset]"
   echo ""
@@ -35,5 +30,5 @@ if [ -z ${1-} ]; then
   echo ""
   exit 1
 else
-  main $*
+  main "$*"
 fi

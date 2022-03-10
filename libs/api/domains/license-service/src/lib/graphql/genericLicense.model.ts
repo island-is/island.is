@@ -7,8 +7,8 @@ import {
   GenericUserLicenseStatus,
   GenericUserLicenseFetchStatus,
   GenericLicenseProviderId,
+  GenericUserLicensePkPassStatus,
 } from '../licenceService.type'
-import { IsOptional } from 'class-validator'
 
 registerEnumType(GenericLicenseType, {
   name: 'GenericLicenseType',
@@ -28,6 +28,11 @@ registerEnumType(GenericUserLicenseStatus, {
 registerEnumType(GenericUserLicenseFetchStatus, {
   name: 'GenericUserLicenseFetchStatus',
   description: 'Possible license fetch statuses',
+})
+
+registerEnumType(GenericUserLicensePkPassStatus, {
+  name: 'GenericUserLicensePkPassStatus',
+  description: 'Possible license pkpass statuses',
 })
 
 @ObjectType()
@@ -53,6 +58,9 @@ export class GenericLicense {
   @Field({ description: 'Does the license support pkpass?' })
   pkpass!: boolean
 
+  @Field({ description: 'Does the license support verification of pkpass?' })
+  pkpassVerify!: boolean
+
   @Field({
     description:
       'How long the data about the license should be treated as fresh',
@@ -61,6 +69,11 @@ export class GenericLicense {
 
   @Field(() => GenericUserLicenseStatus, { description: 'Status of license' })
   status!: GenericUserLicenseStatus
+
+  @Field(() => GenericUserLicensePkPassStatus, {
+    description: 'Status of pkpass availablity of license',
+  })
+  pkpassStatus!: GenericUserLicensePkPassStatus
 }
 
 @ObjectType()
@@ -85,15 +98,58 @@ export class GenericUserLicense {
   @Field(() => GenericLicenseFetch, { description: 'Info about license fetch' })
   fetch!: GenericLicenseFetch
 
-  @Field({
-    nullable: true,
-    description: 'Possible URL of pkpass version of license',
-  })
-  pkpassUrl?: string
-
   @Field(() => Payload, {
     nullable: true,
     description: 'Potential payload of license, both parsed and raw',
   })
   payload?: Payload
+}
+
+@ObjectType()
+export class GenericPkPass {
+  @Field(() => String)
+  pkpassUrl!: string
+  @Field(() => String)
+  pkpassQRCode!: string
+}
+
+@ObjectType()
+export class GenericPkPassVerificationError {
+  @Field(() => String, {
+    nullable: true,
+    description:
+      'pkpass verification error code, depandant on origination service, "0" for unknown error',
+  })
+  status?: string
+
+  @Field(() => String, {
+    nullable: true,
+    description:
+      'pkpass verification error message, depandant on origination service',
+  })
+  message?: string
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'Optional data related to the error',
+  })
+  data?: string
+}
+
+@ObjectType()
+export class GenericPkPassVerification {
+  @Field(() => String, {
+    nullable: true,
+    description: 'Optional data related to the pkpass verification',
+  })
+  data?: string
+
+  @Field(() => GenericPkPassVerificationError, {
+    nullable: true,
+    description: 'Optional error related to the pkpass verification',
+  })
+  error?: GenericPkPassVerificationError
+
+  @Field({ description: 'Is the pkpass valid?' })
+  valid!: boolean
 }

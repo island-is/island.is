@@ -4,6 +4,6 @@
     "outDir": "../../../dist/out-tsc",
     "types": ["node"]
   },
-  "exclude": ["**/*.spec.ts", "test/**"],
+  "exclude": ["**/*.spec.ts", "**/test/**"],
   "include": ["**/*.ts"]
 }

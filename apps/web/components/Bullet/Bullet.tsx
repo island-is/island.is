@@ -1,6 +1,6 @@
 import React from 'react'
 import cn from 'classnames'
-import * as styles from './Bullet.treat'
+import * as styles from './Bullet.css'
 
 interface BulletProps {
   align?: 'left' | 'right'

@@ -12,7 +12,7 @@ import {
 } from '@island.is/island-ui/core'
 import { signatureModal } from '../../../lib/messages'
 import { FileSignatureStatus, ReducerState } from '../fileSignatureReducer'
-import * as styles from './Modal.treat'
+import * as styles from './Modal.css'
 
 interface SignatureModalProps {
   fileSignatureState: ReducerState

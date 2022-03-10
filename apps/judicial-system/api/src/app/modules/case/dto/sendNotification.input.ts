@@ -2,7 +2,7 @@ import { Allow } from 'class-validator'
 
 import { Field, InputType } from '@nestjs/graphql'
 
-import {
+import type {
   NotificationType,
   SendNotification,
 } from '@island.is/judicial-system/types'
@@ -16,4 +16,8 @@ export class SendNotificationInput implements SendNotification {
   @Allow()
   @Field(() => String)
   readonly type!: NotificationType
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly eventOnly?: boolean
 }

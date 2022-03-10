@@ -54,11 +54,11 @@ export class S3Service {
 
     return promise
       .then((result) => {
-        const fiveSeconds = 5
+        const oneMinutePlus = 65 // leave extra 5 seconds for network delay
         return this.s3.getSignedUrlPromise('getObject', {
           Bucket: s3Location.bucket,
           Key: result.Key,
-          Expires: fiveSeconds,
+          Expires: oneMinutePlus,
         })
       })
       .catch((err) => {

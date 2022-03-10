@@ -2,7 +2,7 @@ import React, { CSSProperties, FC, useRef, useState, useEffect } from 'react'
 import useComponentSize from '@rehooks/component-size'
 import { useDrag } from '../utils'
 
-import * as styles from './Slider.treat'
+import * as styles from './Slider.css'
 import { Box, Text } from '@island.is/island-ui/core'
 
 interface TooltipProps {
@@ -111,6 +111,7 @@ const Slider = ({
   const thumbStyle = {
     transform: `translateX(${dragX.current == null ? x : dragX.current}px)`,
     transition: isDragging ? 'none' : '',
+    touchAction: 'none',
   }
 
   const remainderStyle = {

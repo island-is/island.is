@@ -15,8 +15,7 @@ import {
   Domain,
   ResourcesService,
 } from '@island.is/auth-api-lib'
-import { ApiScopeController } from './api-scope.controller'
-import { IdentityResourcesController } from './identity-resources.controller'
+import { ScopesController } from './scopes.controller'
 
 @Module({
   imports: [
@@ -35,7 +34,7 @@ import { IdentityResourcesController } from './identity-resources.controller'
       Domain,
     ]),
   ],
-  controllers: [ApiScopeController, IdentityResourcesController],
+  controllers: [ScopesController],
   providers: [ResourcesService],
 })
 export class ResourcesModule {}

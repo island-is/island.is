@@ -1,12 +1,15 @@
 import React, { FC } from 'react'
-import { Input, InputBackgroundColor } from '@island.is/island-ui/core'
-import { Controller } from 'react-hook-form'
+import { Input, Icon, InputBackgroundColor } from '@island.is/island-ui/core'
+import { Controller, Control, ValidationRules } from 'react-hook-form'
 import NumberFormat, { FormatInputValueFunction } from 'react-number-format'
 
 interface Props {
   autoFocus?: boolean
   defaultValue?: string
   disabled?: boolean
+  control?: Control
+  icon?: React.ComponentProps<typeof Icon>['icon']
+  rules?: ValidationRules
   error?: string
   id: string
   label?: string
@@ -23,6 +26,9 @@ interface Props {
   rows?: number
   format?: string | FormatInputValueFunction
   required?: boolean
+  readOnly?: boolean
+  maxLength?: number
+  size?: 'xs' | 'sm' | 'md'
 }
 
 interface ChildParams {
@@ -38,9 +44,12 @@ export const InputController: FC<Props> = ({
   disabled = false,
   error,
   id,
+  icon,
   label,
   name = id,
   placeholder,
+  control,
+  rules,
   backgroundColor,
   textarea,
   currency,
@@ -50,6 +59,9 @@ export const InputController: FC<Props> = ({
   suffix,
   rows,
   required,
+  readOnly,
+  maxLength,
+  size = 'md',
 }) => {
   function renderChildInput(c: ChildParams) {
     const { value, onChange, ...props } = c
@@ -58,7 +70,9 @@ export const InputController: FC<Props> = ({
         <NumberFormat
           customInput={Input}
           id={id}
+          icon={icon}
           disabled={disabled}
+          readOnly={readOnly}
           placeholder={placeholder}
           label={label}
           type="text"
@@ -68,7 +82,10 @@ export const InputController: FC<Props> = ({
           suffix=" kr."
           value={value}
           format={format}
-          onChange={(e) => {
+          maxLength={maxLength}
+          onChange={(
+            e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+          ) => {
             if (onInputChange) {
               onInputChange(e)
             }
@@ -85,16 +102,22 @@ export const InputController: FC<Props> = ({
     } else if (type === 'number' && suffix) {
       return (
         <NumberFormat
+          size={size}
           customInput={Input}
           id={id}
+          icon={icon}
           disabled={disabled}
+          readOnly={readOnly}
           backgroundColor={backgroundColor}
           placeholder={placeholder}
           label={label}
           suffix={suffix}
           value={value}
           format={format}
-          onChange={(e) => {
+          maxLength={maxLength}
+          onChange={(
+            e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+          ) => {
             if (onInputChange) {
               onInputChange(e)
             }
@@ -111,16 +134,22 @@ export const InputController: FC<Props> = ({
     } else if (format && ['text', 'tel'].includes(type)) {
       return (
         <NumberFormat
+          size={size}
           customInput={Input}
+          icon={icon}
           id={id}
           disabled={disabled}
+          readOnly={readOnly}
           backgroundColor={backgroundColor}
           placeholder={placeholder}
           label={label}
           type={type as 'text' | 'tel'}
           value={value}
           format={format}
-          onChange={(e) => {
+          maxLength={maxLength}
+          onChange={(
+            e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+          ) => {
             if (onInputChange) {
               onInputChange(e)
             }
@@ -140,6 +169,8 @@ export const InputController: FC<Props> = ({
           id={id}
           value={value}
           disabled={disabled}
+          readOnly={readOnly}
+          icon={icon}
           placeholder={placeholder}
           label={label}
           backgroundColor={backgroundColor}
@@ -149,6 +180,7 @@ export const InputController: FC<Props> = ({
           required={required}
           textarea={textarea}
           type={type}
+          maxLength={maxLength}
           onChange={(e) => {
             onChange(e.target.value)
             if (onInputChange) {
@@ -156,6 +188,7 @@ export const InputController: FC<Props> = ({
             }
           }}
           rows={rows}
+          size={size}
           {...props}
         />
       )
@@ -165,6 +198,8 @@ export const InputController: FC<Props> = ({
   return (
     <Controller
       name={name}
+      control={control}
+      rules={rules}
       {...(defaultValue !== undefined && { defaultValue })}
       render={renderChildInput}
     />

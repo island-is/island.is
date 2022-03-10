@@ -5,16 +5,16 @@ ARGS=$(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 $(eval $(ARGS):;@:)
 
 db:
-	docker-compose -f application/docker-compose.base.yml -f application/docker-compose.dev.yml up -d db_gjafakort_application ${ARGS}
+	docker-compose -f application/docker-compose.yml up -d db_gjafakort_application ${ARGS}
 
 redis:
-	docker-compose -f application/docker-compose.base.yml -f application/docker-compose.dev.yml up -d redis_cluster ${ARGS}
+	docker-compose -f application/docker-compose.yml up -d redis_cluster ${ARGS}
 
 localstack:
-	docker-compose -f application/docker-compose.base.yml -f application/docker-compose.dev.yml up -d localstack ${ARGS}
+	docker-compose -f application/docker-compose.yml up -d localstack ${ARGS}
 
 docker:
-	docker-compose -f application/docker-compose.base.yml -f application/docker-compose.dev.yml up
+	docker-compose -f application/docker-compose.yml up
 
 application:
 	./${CWD}scripts/ci/_wait-for.sh localhost:5432  # postgresql

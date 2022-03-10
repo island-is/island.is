@@ -1,2 +1,7 @@
-export { default as Congratulations } from './Congratulations'
+export { Declined, Congratulations } from './Done'
 export { default as HealthDeclaration } from './HealthDeclaration'
+export { EligibilitySummary } from './EligibilitySummary'
+export { SubmitAndDecline } from './SubmitAndDecline'
+export { LinkExistingApplication } from './LinkExistingApplication'
+export { PaymentPending } from './PaymentPending'
+export { QualityPhoto, Bullets } from './QualityPhoto'

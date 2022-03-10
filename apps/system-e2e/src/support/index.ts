@@ -14,5 +14,10 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
+Cypress.Cookies.debug(true)
+Cypress.Cookies.defaults({
+  preserve: /_oauth2_/,
+})
+
 import './commands'
 import './uncaughtExceptions'

@@ -2,6 +2,7 @@ import React from 'react'
 import {
   NavigationScreen,
   ServicePortalModuleComponent,
+  m,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import { navScreenItems } from './navItems'
@@ -11,14 +12,7 @@ const SettingsNavScreen: ServicePortalModuleComponent = () => {
   useNamespaces('sp.settings')
 
   return (
-    <NavigationScreen
-      title={defineMessage({
-        id: 'service.portal:settings',
-        defaultMessage: 'Stillingar',
-      })}
-      items={navScreenItems}
-      inProgress
-    />
+    <NavigationScreen title={m.settings} items={navScreenItems} inProgress />
   )
 }
 

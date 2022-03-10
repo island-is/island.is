@@ -1,135 +1,180 @@
-import React, { useState } from 'react'
-import { Case, Institution } from '@island.is/judicial-system/types'
+import React from 'react'
+import { useIntl } from 'react-intl'
+import { ValueType } from 'react-select'
+
 import {
-  DateTime,
+  BlueBox,
+  CaseInfo,
   FormContentContainer,
   FormFooter,
-} from '@island.is/judicial-system-web/src/shared-components'
-import { Box, Text, Tooltip } from '@island.is/island-ui/core'
-import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
+} from '@island.is/judicial-system-web/src/components'
+import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
 import {
-  FormSettings,
-  useCaseFormHelper,
-} from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import { newSetAndSendDateToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+  removeTabsValidateAndSet,
+  setAndSendDateToServer,
+  setAndSendToServer,
+  validateAndSendToServer,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
+import { icRequestedHearingArrangements as m } from '@island.is/judicial-system-web/messages'
+import { isHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import type {
+  Case,
+  Institution,
+  UpdateCase,
+  User,
+} from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system/consts'
+import SelectProsecutor from '../../SharedComponents/SelectProsecutor/SelectProsecutor'
+import SelectCourt from '../../SharedComponents/SelectCourt/SelectCourt'
+import RequestCourtDate from '../../SharedComponents/RequestCourtDate/RequestCourtDate'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  user: User
   prosecutors: ReactSelectOption[]
   courts: Institution[]
   isLoading: boolean
-  handleNextButtonClick: () => Promise<void>
+  onNextButtonClick: () => Promise<void>
+  onProsecutorChange: (selectedOption: ValueType<ReactSelectOption>) => boolean
+  onCourtChange: (courtId: string) => boolean
+  updateCase: (id: string, updateCase: UpdateCase) => Promise<Case | undefined>
 }
 
 const HearingArrangementsForms: React.FC<Props> = (props) => {
   const {
     workingCase,
     setWorkingCase,
+    user,
     prosecutors,
     courts,
     isLoading,
-    handleNextButtonClick,
+    onNextButtonClick,
+    onProsecutorChange,
+    onCourtChange,
+    updateCase,
   } = props
 
-  const validations: FormSettings = {
-    requestedCourtDate: {
-      validations: ['empty'],
-    },
-    prosecutor: {
-      validations: ['empty'],
-    },
-    court: {
-      validations: ['empty'],
-    },
-  }
-  const [, setRequestedCourtDateIsValid] = useState<boolean>(
-    workingCase.requestedCourtDate !== null,
-  )
-  const { isValid } = useCaseFormHelper(
-    workingCase,
-    setWorkingCase,
-    validations,
-  )
-
-  const { updateCase } = useCase()
+  const { formatMessage } = useIntl()
 
   return (
     <>
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            Óskir um fyrirtöku
+            {formatMessage(m.heading)}
           </Text>
+        </Box>
+        <Box component="section" marginBottom={7}>
+          <CaseInfo workingCase={workingCase} userRole={user.role} />
         </Box>
         {prosecutors && (
           <Box component="section" marginBottom={5}>
-            <SelectProsecutor
-              workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
-              prosecutors={prosecutors}
-            />
+            <BlueBox>
+              <Box marginBottom={2}>
+                <SelectProsecutor
+                  workingCase={workingCase}
+                  prosecutors={prosecutors}
+                  onChange={onProsecutorChange}
+                />
+              </Box>
+              <Checkbox
+                name="isHeightenedSecurityLevel"
+                label={formatMessage(
+                  m.sections.prosecutor.heightenSecurityLevelLabel,
+                )}
+                tooltip={formatMessage(
+                  m.sections.prosecutor.heightenSecurityLevelInfo,
+                )}
+                disabled={
+                  user.id !== workingCase.creatingProsecutor?.id &&
+                  user.id !==
+                    (((workingCase as unknown) as { prosecutorId: string })
+                      .prosecutorId === undefined
+                      ? workingCase.prosecutor?.id
+                      : ((workingCase as unknown) as { prosecutorId: string })
+                          .prosecutorId)
+                }
+                checked={workingCase.isHeightenedSecurityLevel}
+                onChange={(event) =>
+                  setAndSendToServer(
+                    'isHeightenedSecurityLevel',
+                    event.target.checked,
+                    workingCase,
+                    setWorkingCase,
+                    updateCase,
+                  )
+                }
+                large
+                filled
+              />
+            </BlueBox>
           </Box>
         )}
         {courts && (
           <Box component="section" marginBottom={5}>
             <SelectCourt
               workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
               courts={courts}
+              onChange={onCourtChange}
             />
           </Box>
         )}
-        <Box component="section" marginBottom={10}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              Ósk um fyrirtökudag og tíma{' '}
-              <Box data-testid="requested-court-date-tooltip" component="span">
-                <Tooltip text="Dómstóll hefur þennan tíma til hliðsjónar þegar fyrirtökutíma er úthlutað og mun leitast við að taka málið fyrir í tæka tíð en ekki fyrir þennan tíma." />
-              </Box>
-            </Text>
-          </Box>
-          <DateTime
-            name="reqCourtDate"
-            selectedDate={
-              workingCase.requestedCourtDate
-                ? new Date(workingCase.requestedCourtDate)
-                : undefined
-            }
+        <Box component="section" marginBottom={5}>
+          <RequestCourtDate
+            workingCase={workingCase}
             onChange={(date: Date | undefined, valid: boolean) =>
-              newSetAndSendDateToServer(
+              setAndSendDateToServer(
                 'requestedCourtDate',
                 date,
                 valid,
                 workingCase,
                 setWorkingCase,
-                setRequestedCourtDateIsValid,
                 updateCase,
               )
             }
-            timeLabel="Ósk um tíma (kk:mm)"
-            locked={workingCase.courtDate !== null}
-            minDate={new Date()}
-            required
           />
-          {workingCase.courtDate && (
-            <Box marginTop={1}>
-              <Text variant="eyebrow">
-                Fyrirtökudegi og tíma hefur verið úthlutað
-              </Text>
-            </Box>
-          )}
+        </Box>
+        <Box component="section" marginBottom={10}>
+          <Box marginBottom={3}>
+            <Text as="h3" variant="h3">
+              {formatMessage(m.sections.translator.heading)}
+            </Text>
+          </Box>
+          <Input
+            data-testid="translator"
+            name="translator"
+            autoComplete="off"
+            label={formatMessage(m.sections.translator.label)}
+            placeholder={formatMessage(m.sections.translator.placeholder)}
+            value={workingCase.translator || ''}
+            onChange={(event) =>
+              removeTabsValidateAndSet(
+                'translator',
+                event.target.value,
+                [],
+                workingCase,
+                setWorkingCase,
+              )
+            }
+            onBlur={(event) =>
+              validateAndSendToServer(
+                'translator',
+                event.target.value,
+                [],
+                workingCase,
+                updateCase,
+              )
+            }
+          />
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.R_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={async () => await handleNextButtonClick()}
-          nextIsDisabled={!isValid}
+          previousUrl={`${Constants.IC_DEFENDANT_ROUTE}/${workingCase.id}`}
+          onNextButtonClick={async () => await onNextButtonClick()}
+          nextIsDisabled={!isHearingArrangementsStepValidIC(workingCase)}
           nextIsLoading={isLoading}
         />
       </FormContentContainer>

@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import cn from 'classnames'
 
 import { Box } from '../../Box/Box'
-import * as styles from './SectionNumberColumn.treat'
+import * as styles from './SectionNumberColumn.css'
 
 interface SectionNumberColumnProps {
   children?: React.ReactNode

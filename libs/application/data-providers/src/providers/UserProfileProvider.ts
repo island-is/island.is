@@ -4,6 +4,8 @@ import {
   SuccessfulDataProviderResult,
 } from '@island.is/application/core'
 
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
+
 /** This data provider fetches email and phone number information from user profile service and resolves even though the user has not set it up in my pages **/
 export class UserProfileProvider extends BasicDataProvider {
   readonly type = 'UserProfile'
@@ -21,8 +23,12 @@ export class UserProfileProvider extends BasicDataProvider {
       .then(async (res: Response) => {
         const response = await res.json()
         if (response.errors) {
+          console.error(
+            `graphql error in ${this.type}: ${response.errors[0].message}`,
+          )
           return this.handleError()
         }
+
         const responseObj = response.data.getUserProfile
         if (
           !responseObj?.mobilePhoneNumber ||
@@ -32,6 +38,7 @@ export class UserProfileProvider extends BasicDataProvider {
         ) {
           return this.handleError()
         }
+
         return Promise.resolve(responseObj)
       })
       .catch(() => {
@@ -39,12 +46,13 @@ export class UserProfileProvider extends BasicDataProvider {
       })
   }
   handleError() {
-    if (process.env.NODE_ENV === 'development') {
+    if (isRunningOnEnvironment('local')) {
       return Promise.resolve({
         email: 'mockEmail@island.is',
         mobilePhoneNumber: '9999999',
       })
     }
+
     return Promise.resolve({})
   }
   onProvideError(result: string): FailedDataProviderResult {

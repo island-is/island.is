@@ -5,7 +5,7 @@ ARGS=$(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 $(eval $(ARGS):;@:)
 
 docker:
-	docker-compose -f ./backend/docker-compose.base.yml -f ./backend/docker-compose.dev.yml up
+	docker-compose -f ./backend/docker-compose.yml up
 
 backend:
 	./${CWD}scripts/_wait-for.sh localhost:5432  # postgresql

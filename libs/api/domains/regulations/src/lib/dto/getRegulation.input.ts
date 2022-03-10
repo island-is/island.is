@@ -1,5 +1,8 @@
-import type { ISODate, RegQueryName } from '@island.is/clients/regulations'
-import { RegulationViewTypes } from '@island.is/clients/regulations'
+import type { ISODate, RegQueryName } from '@island.is/regulations'
+import {
+  RegulationViewTypes,
+  RegulationOriginalDates,
+} from '@island.is/regulations/web'
 import { Field, InputType, registerEnumType } from '@nestjs/graphql'
 import {
   IsBoolean,
@@ -41,5 +44,7 @@ export class GetRegulationInput {
   @IsOptional()
   @Length(10, 10) // Disallow shorter or longer ISODate variants.
   @IsISO8601({ strict: true })
-  earlierDate?: ISODate | 'original'
+  earlierDate?: ISODate | RegulationOriginalDates.gqlHack // magic date as alias for "original"
+  // FIXME: Ideally we'd like to pass an ISODate **or** the string token "original"
+  // earlierDate?: ISODate | 'original'
 }

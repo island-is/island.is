@@ -1,29 +1,24 @@
-import { dedent } from 'ts-dedent'
 import get from 'lodash/get'
 
-import { EmailTemplateGenerator } from '../../../../types'
+import { Message } from '@island.is/email-service'
 
+import { EmailTemplateGenerator } from '../../../../types'
+import { pathToAsset } from '../parental-leave.utils'
+
+// TODO handle translations
 export const generateApplicationApprovedByEmployerEmail: EmailTemplateGenerator = (
   props,
-) => {
+): Message => {
   const {
     application,
-    options: { email, locale },
+    options: { email },
   } = props
 
   const applicantEmail =
     get(application.answers, 'applicant.email') ||
     get(application.externalData, 'userProfile.data.email')
 
-  // TODO translate using locale
   const subject = 'Umsókn um fæðingarorlof samþykkt af atvinnuveitanda'
-  const body = dedent(`Góðan dag.
-
-    Atvinnuveitandi hefur samþykkt umsókn þína og hefur hún nú verið send áfram til úrvinnslu.
-
-    Með kveðju,
-    Fæðingarorlofssjóðsjóður
-  `)
 
   return {
     from: {
@@ -37,9 +32,35 @@ export const generateApplicationApprovedByEmployerEmail: EmailTemplateGenerator 
       },
     ],
     subject,
-    html: `<p>${body
-      .split('')
-      .map((c) => (c === '\n' ? `<br />\n` : c))
-      .join('')}</p>`,
+    template: {
+      title: subject,
+      body: [
+        {
+          component: 'Image',
+          context: {
+            src: pathToAsset('logo.jpg'),
+            alt: 'Vinnumálastofnun merki',
+          },
+        },
+        {
+          component: 'Image',
+          context: {
+            src: pathToAsset('child.jpg'),
+            alt: 'Barn myndskreyting',
+          },
+        },
+        { component: 'Heading', context: { copy: subject } },
+        { component: 'Copy', context: { copy: 'Góðan dag.' } },
+        {
+          component: 'Copy',
+          context: {
+            copy:
+              'Atvinnuveitandi hefur samþykkt umsókn þína og hefur hún nú verið send áfram til úrvinnslu.',
+          },
+        },
+        { component: 'Copy', context: { copy: 'Með kveðju,' } },
+        { component: 'Copy', context: { copy: 'Fæðingarorlofssjóður' } },
+      ],
+    },
   }
 }

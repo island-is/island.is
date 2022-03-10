@@ -10,8 +10,7 @@ import {
   Box,
 } from '@island.is/island-ui/core'
 import Hyperlink from '../Hyperlink/Hyperlink'
-
-import * as styles from './RichText.treat'
+import * as styles from './RichText.css'
 
 const defaultHeaderMargins: {
   marginBottom: ResponsiveSpace
@@ -152,4 +151,46 @@ export const defaultRenderNode: RenderNode = {
       <Hyperlink href={asset.fields.file.url}>{children}</Hyperlink>
     ) : null
   },
+  [INLINES.ENTRY_HYPERLINK]: (node, children) => {
+    const entry = node.data.target
+    const type = entry?.sys?.contentType?.sys?.id
+    switch (type) {
+      case 'article':
+        return entry.fields.slug ? (
+          <Hyperlink href={`/${entry.fields.slug}`}>{children}</Hyperlink>
+        ) : null
+      case 'subArticle':
+        return entry.fields.url ? (
+          <Hyperlink href={entry.fields.url}>{children}</Hyperlink>
+        ) : null
+      case 'organizationPage': {
+        const prefix = getOrganizationPrefix(entry.sys?.locale)
+        return entry.fields.slug ? (
+          <Hyperlink href={`/${prefix}/${entry.fields.slug}`}>
+            {children}
+          </Hyperlink>
+        ) : null
+      }
+      case 'organizationSubpage': {
+        const prefix = getOrganizationPrefix(entry.sys?.locale)
+        return entry.fields.slug &&
+          entry.fields.organizationPage?.fields?.slug ? (
+          <Hyperlink
+            href={`/${prefix}/${entry.fields.organizationPage.fields.slug}/${entry.fields.slug}`}
+          >
+            {children}
+          </Hyperlink>
+        ) : null
+      }
+      default:
+        return null
+    }
+  },
+}
+
+const getOrganizationPrefix = (locale: string) => {
+  if (locale && !locale.includes('is')) {
+    return 'o'
+  }
+  return 's'
 }

@@ -1,5 +1,5 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
-import { IsObject, IsOptional } from 'class-validator'
+import { IsObject } from 'class-validator'
 import { GenericLicenseDataFieldType } from '../licenceService.type'
 import graphqlTypeJson from 'graphql-type-json'
 
@@ -9,7 +9,6 @@ registerEnumType(GenericLicenseDataFieldType, {
 })
 
 @ObjectType()
-// TODO(osk) document this since the difference between name, label and value is very vague
 export class GenericLicenseDataField {
   @Field(() => GenericLicenseDataFieldType, {
     description: 'Type of data field',
@@ -44,5 +43,6 @@ export class Payload {
     description: 'Raw JSON data',
   })
   @IsObject()
+  // eslint-disable-next-line @typescript-eslint/ban-types
   rawData?: object
 }

@@ -1,15 +1,16 @@
-import { AlertMessage, Button, Inline, Link } from '@island.is/island-ui/core'
-import React, { FC } from 'react'
-import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, formatText } from '@island.is/application/core'
-import { Box } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import React, { FC } from 'react'
+import { MessageDescriptor } from 'react-intl'
 
 type FieldAlertMessageProps = {
   field: {
     props: {
       links: {
-        title: string
-        url: string
+        title: MessageDescriptor | string
+        url: MessageDescriptor | string
+        isExternal: boolean
       }[]
     }
   }
@@ -30,24 +31,31 @@ export const FieldAlertMessage: FC<FieldBaseProps & FieldAlertMessageProps> = ({
         message={
           <>
             <Box component="span" display="block">
-              {description
-                ? formatText(description, application, formatMessage)
-                : undefined}
+              <Text variant="small">
+                {description
+                  ? formatText(description, application, formatMessage)
+                  : undefined}
+              </Text>
             </Box>
             {props.links && (
-              <Box component="span" display="flex" marginTop={2}>
+              <Box display="flex" flexWrap="wrap" marginTop={2}>
                 {props.links.map((link, index) => (
                   <Box component="span" marginRight={2} key={index}>
-                    <Link href={link.url}>
+                    <a
+                      href={formatMessage(link.url)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       <Button
                         variant="text"
-                        icon="open"
-                        iconType="outline"
+                        icon={link.isExternal ? 'open' : undefined}
+                        iconType={link.isExternal ? 'outline' : undefined}
                         size="small"
+                        as="span"
                       >
-                        {link.title}
+                        {formatMessage(link.title)}
                       </Button>
-                    </Link>
+                    </a>
                   </Box>
                 ))}
               </Box>

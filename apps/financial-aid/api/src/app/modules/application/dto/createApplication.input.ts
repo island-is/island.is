@@ -6,21 +6,22 @@ import {
   CreateApplication,
   HomeCircumstances,
   Employment,
-} from '@island.is/financial-aid/shared'
+  ApplicationState,
+  FamilyStatus,
+} from '@island.is/financial-aid/shared/lib'
+
+import { CreateApplicationFileInput } from '../../file/dto'
+import { DirectTaxPaymentInput } from './directTaxPayment.input'
 
 @InputType()
 export class CreateApplicationInput implements CreateApplication {
   @Allow()
   @Field()
-  readonly nationalId!: string
-
-  @Allow()
-  @Field()
   readonly name!: string
 
   @Allow()
-  @Field()
-  readonly phoneNumber!: string
+  @Field({ nullable: true })
+  readonly phoneNumber?: string
 
   @Allow()
   @Field()
@@ -73,4 +74,60 @@ export class CreateApplicationInput implements CreateApplication {
   @Allow()
   @Field({ nullable: true })
   readonly interview?: boolean
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly formComment?: string
+
+  @Allow()
+  @Field(() => String)
+  readonly state!: ApplicationState
+
+  @Allow()
+  @Field(() => [CreateApplicationFileInput])
+  readonly files!: CreateApplicationFileInput[]
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly amount?: number
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly spouseName?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly spouseNationalId?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly spouseEmail?: string
+
+  @Allow()
+  @Field(() => String)
+  readonly familyStatus!: FamilyStatus
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly city?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly streetName?: string
+
+  @Allow()
+  @Field()
+  readonly municipalityCode!: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly postalCode?: string
+
+  @Allow()
+  @Field(() => [DirectTaxPaymentInput])
+  readonly directTaxPayments!: DirectTaxPaymentInput[]
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly applicationSystemId?: string
 }

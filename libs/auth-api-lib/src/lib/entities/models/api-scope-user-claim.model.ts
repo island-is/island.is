@@ -13,11 +13,6 @@ import { ApiScope } from './api-scope.model'
 
 @Table({
   tableName: 'api_scope_user_claim',
-  indexes: [
-    {
-      fields: ['api_scope_id', 'claim_name'],
-    },
-  ],
 })
 export class ApiScopeUserClaim extends Model<ApiScopeUserClaim> {
   @PrimaryKey

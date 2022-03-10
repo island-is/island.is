@@ -13,11 +13,6 @@ import { ApiResource } from './api-resource.model'
 
 @Table({
   tableName: 'api_resource_secret',
-  indexes: [
-    {
-      fields: ['api_resource_id', 'value'],
-    },
-  ],
 })
 export class ApiResourceSecret extends Model<ApiResourceSecret> {
   @PrimaryKey

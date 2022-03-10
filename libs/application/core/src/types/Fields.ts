@@ -37,11 +37,13 @@ export interface Option {
   subLabel?: string
   tooltip?: FormText
   excludeOthers?: boolean
+  illustration?: React.FC
+  disabled?: boolean
 }
 
-interface SelectOption {
+export interface SelectOption<T = string | number> {
   label: string
-  value: string | number
+  value: T
 }
 
 export interface BaseField extends FormItem {
@@ -55,6 +57,7 @@ export interface BaseField extends FormItem {
   condition?: Condition
   isPartOfRepeater?: boolean
   defaultValue?: MaybeWithApplicationAndField<unknown>
+  doesNotRequireAnswer?: boolean
   // TODO use something like this for non-schema validation?
   // validate?: (formValue: FormValue, context?: object) => boolean
 }
@@ -73,6 +76,7 @@ export enum FieldTypes {
   DIVIDER = 'DIVIDER',
   KEY_VALUE = 'KEY_VALUE',
   ASYNC_SELECT = 'ASYNC_SELECT',
+  PAYMENT_PENDING = 'PAYMENT_PENDING',
 }
 
 export enum FieldComponents {
@@ -87,6 +91,7 @@ export enum FieldComponents {
   KEY_VALUE = 'KeyValueFormField',
   SUBMIT = 'SubmitFormField',
   ASYNC_SELECT = 'AsyncSelectFormField',
+  PAYMENT_PENDING = 'PaymentPendingField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -96,6 +101,7 @@ export interface CheckboxField extends BaseField {
   large?: boolean
   strong?: boolean
   backgroundColor?: InputBackgroundColor
+  onSelect?: ((s: string[]) => void) | undefined
 }
 
 export interface DateField extends BaseField {
@@ -106,6 +112,8 @@ export interface DateField extends BaseField {
   minDate?: MaybeWithApplicationAndField<Date>
   excludeDates?: MaybeWithApplicationAndField<Date[]>
   backgroundColor?: DatePickerBackgroundColor
+  onChange?(date: string): void
+  required?: boolean
 }
 
 export interface DescriptionField extends BaseField {
@@ -144,12 +152,14 @@ export interface AsyncSelectField extends BaseField {
   onSelect?(s: SelectOption, cb: (t: unknown) => void): void
   loadingError?: FormText
   backgroundColor?: InputBackgroundColor
+  isSearchable?: boolean
 }
 
 export interface TextField extends BaseField {
   readonly type: FieldTypes.TEXT
   component: FieldComponents.TEXT
   disabled?: boolean
+  readOnly?: boolean
   minLength?: number
   maxLength?: number
   placeholder?: FormText
@@ -159,6 +169,7 @@ export interface TextField extends BaseField {
   suffix?: string
   rows?: number
   required?: boolean
+  onChange?: (...event: any[]) => void
 }
 
 export interface FileUploadField extends BaseField {
@@ -171,6 +182,7 @@ export interface FileUploadField extends BaseField {
   readonly uploadMultiple?: boolean
   readonly uploadAccept?: string
   readonly maxSize?: number
+  readonly forImageUpload?: boolean
 }
 
 export interface SubmitField extends BaseField {
@@ -197,7 +209,7 @@ export interface KeyValueField extends BaseField {
 export interface CustomField extends BaseField {
   readonly type: FieldTypes.CUSTOM
   readonly component: string
-  props?: object
+  props?: RecordObject
   childInputIds?: string[]
 }
 

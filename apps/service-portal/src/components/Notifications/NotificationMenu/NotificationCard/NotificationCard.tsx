@@ -2,9 +2,10 @@ import React, { FC } from 'react'
 import { NotificationCard as Card } from '../mockNotifications'
 import { Box, Stack, Button, Tag, Text } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
-import * as styles from './Notificationcard.treat'
+import * as styles from './Notificationcard.css'
 import cn from 'classnames'
 import { useLocale } from '@island.is/localization'
+import { m } from '@island.is/service-portal/core'
 
 interface Props {
   card: Card
@@ -45,10 +46,7 @@ const NotificationCard: FC<Props> = ({ card, onClick }) => {
           </Text>
           {card.wip && (
             <Tag variant="purple" outlined>
-              {formatMessage({
-                id: 'service.portal:in-progress',
-                defaultMessage: 'Í vinnslu',
-              })}
+              {formatMessage(m.inProgress)}
             </Tag>
           )}
         </Box>

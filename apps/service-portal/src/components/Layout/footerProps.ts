@@ -1,4 +1,5 @@
 import { ServicePortalFooterContent } from '@island.is/service-portal/graphql'
+import { m } from '@island.is/service-portal/core'
 import { MessageDescriptor } from 'react-intl'
 
 type FormatMessage = (
@@ -25,29 +26,20 @@ export const getFooterProps = (
       href: convertUrl(link.url),
     })) || [],
   showMiddleLinks: true,
-  middleLinksTitle: formatMessage({
-    id: 'service.portal:footer-middle-links-title',
-    defaultMessage: 'Þjónustuflokkar',
-  }),
+  middleLinksTitle: formatMessage(m.middleLinksTitle),
   middleLinks:
     data.middle?.links.map((link) => ({
       title: link.text,
       href: convertUrl(link.url),
     })) || [],
   showTagLinks: true,
-  tagLinksTitle: formatMessage({
-    id: 'service.portal:footer-tag-links-title',
-    defaultMessage: 'Flýtileiðir',
-  }),
+  tagLinksTitle: formatMessage(m.tagLinksTitle),
   tagLinks:
     data.tags?.links.map((link) => ({
       title: link.text,
       href: convertUrl(link.url),
     })) || [],
-  bottomLinksTitle: formatMessage({
-    id: 'service.portal:footer-bottom-links-title',
-    defaultMessage: 'Aðrir opinberir vefir',
-  }),
+  bottomLinksTitle: formatMessage(m.bottomLinksTitle),
   bottomLinks:
     data.lower?.links.map((link) => ({
       title: link.text,

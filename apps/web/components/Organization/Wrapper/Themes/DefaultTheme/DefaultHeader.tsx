@@ -1,7 +1,7 @@
 import { OrganizationPage } from '@island.is/web/graphql/schema'
 import React from 'react'
 import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
-import * as styles from './DefaultHeader.treat'
+import * as styles from './DefaultHeader.css'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
@@ -42,27 +42,29 @@ export const DefaultHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
             )
           }
         >
-          <Hidden above="sm">
-            <Link
-              href={
-                linkResolver('organizationpage', [organizationPage.slug]).href
-              }
-            >
-              {!!organizationPage.organization.logo && (
-                <Box
-                  borderRadius="circle"
-                  className={styles.iconCircle}
-                  background="white"
-                >
-                  <img
-                    src={organizationPage.organization.logo.url}
-                    className={styles.headerLogo}
-                    alt=""
-                  />
-                </Box>
-              )}
-            </Link>
-          </Hidden>
+          {!!organizationPage.organization.logo && (
+            <Hidden above="sm">
+              <Link
+                href={
+                  linkResolver('organizationpage', [organizationPage.slug]).href
+                }
+              >
+                {!!organizationPage.organization.logo && (
+                  <Box
+                    borderRadius="circle"
+                    className={styles.iconCircle}
+                    background="white"
+                  >
+                    <img
+                      src={organizationPage.organization.logo.url}
+                      className={styles.headerLogo}
+                      alt=""
+                    />
+                  </Box>
+                )}
+              </Link>
+            </Hidden>
+          )}
           <Box marginTop={[2, 2, 6]} textAlign={['center', 'center', 'right']}>
             <Text variant="h1" color="white">
               {organizationPage.title}

@@ -73,5 +73,5 @@ creating subpages for the web.
 
 ## Code owners and maintainers
 
-- [Kosmos & Kaos](https://github.com/orgs/island-is/teams/kosmos-kaos/members)
+- [Júní](https://github.com/orgs/island-is/teams/juni/members)
 - [Aranja](https://github.com/orgs/island-is/teams/aranja/members)

@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, matchPath } from 'react-router-dom'
 import {
   BreadcrumbsDeprecated as Breadcrumbs,
   Box,
@@ -30,8 +30,12 @@ const ContentBreadcrumbs: FC<{}> = () => {
   const { formatMessage } = useLocale()
   const items: ServicePortalNavigationItem[] = reduce(
     (acc, n) => {
-      if (n.path && location.pathname.includes(n.path)) return [...acc, n]
-      else return acc
+      const isPathActive = matchPath(location.pathname, n.path || '')
+      if (isPathActive) {
+        return [...acc, n]
+      } else {
+        return acc
+      }
     },
     {
       name: 'root',
@@ -44,11 +48,11 @@ const ContentBreadcrumbs: FC<{}> = () => {
 
   return (
     <Box paddingTop={[0, 3]} paddingBottom={[2, 3]}>
-      <Breadcrumbs color="purple400" separatorColor="purple400">
+      <Breadcrumbs color="blue400" separatorColor="blue400">
         {items.map((item, index) =>
           item.path !== undefined ? (
             index === items.length - 1 ? (
-              <Tag key={index} variant="purple" outlined>
+              <Tag key={index} variant="blue" disabled outlined>
                 {formatMessage(item.name)}
               </Tag>
             ) : (

@@ -1,27 +1,31 @@
-import React, { useEffect, useState, useCallback, useContext } from 'react'
-import { Text, RadioButton, Input, Box } from '@island.is/island-ui/core'
+import React, { useState, useContext } from 'react'
+import { Text, Input } from '@island.is/island-ui/core'
 
 import {
-  FormContentContainer,
-  FormFooter,
-  FormLayout,
+  ContentContainer,
+  Footer,
   RadioButtonContainer,
 } from '@island.is/financial-aid-web/osk/src/components'
 
 import { FormContext } from '@island.is/financial-aid-web/osk/src/components/FormProvider/FormProvider'
 
-import * as styles from './addressForm.treat'
+import * as styles from './addressForm.css'
 import cn from 'classnames'
 
 import { useRouter } from 'next/router'
-import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/useFormNavigation'
+import useFormNavigation from '@island.is/financial-aid-web/osk/src/utils/hooks/useFormNavigation'
 
-import { NavigationProps } from '@island.is/financial-aid/shared'
+import {
+  formatHomeAddress,
+  NavigationProps,
+} from '@island.is/financial-aid/shared/lib'
+import { AppContext } from '@island.is/financial-aid-web/osk/src/components/AppProvider/AppProvider'
 
 const AddressForm = () => {
   const router = useRouter()
 
   const { form, updateForm } = useContext(FormContext)
+  const { nationalRegistryData } = useContext(AppContext)
   const [error, setError] = useState(false)
 
   const navigation: NavigationProps = useFormNavigation(
@@ -30,7 +34,7 @@ const AddressForm = () => {
 
   const addressOptions = [
     {
-      label: 'Aðalstræti 1, 220 Hafnarfjörður',
+      label: formatHomeAddress(nationalRegistryData) ?? 'Óskráð heimilisfang',
       sublabel: 'Heimilisfang samkvæmt Þjóðskrá',
       value: 0,
     },
@@ -41,11 +45,8 @@ const AddressForm = () => {
   ]
 
   return (
-    <FormLayout
-      activeSection={navigation?.activeSectionIndex}
-      activeSubSection={navigation?.activeSubSectionIndex}
-    >
-      <FormContentContainer>
+    <>
+      <ContentContainer>
         <Text as="h1" variant="h2" marginBottom={[3, 3, 4]}>
           Hvar býrðu?
         </Text>
@@ -111,9 +112,9 @@ const AddressForm = () => {
             />
           </div>
         </div>
-      </FormContentContainer>
+      </ContentContainer>
 
-      <FormFooter
+      <Footer
         previousUrl={navigation?.prevUrl ?? '/'}
         onNextButtonClick={() => {
           if (form?.customAddress !== undefined) {
@@ -140,7 +141,7 @@ const AddressForm = () => {
           }
         }}
       />
-    </FormLayout>
+    </>
   )
 }
 

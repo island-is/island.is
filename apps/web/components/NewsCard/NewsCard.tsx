@@ -11,7 +11,7 @@ import { BackgroundImage } from '@island.is/web/components'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { Image } from '@island.is/web/graphql/schema'
 
-import * as styles from './NewsCard.treat'
+import * as styles from './NewsCard.css'
 
 interface NewsCardProps {
   title: string
@@ -44,7 +44,6 @@ export const NewsCard: React.FC<NewsCardProps> = ({
   if (mini) {
     return (
       <FocusableBox
-        ref={ref}
         href={href}
         paddingX={[0, 2, 5]}
         paddingY={[2, 2, 3]}
@@ -71,7 +70,6 @@ export const NewsCard: React.FC<NewsCardProps> = ({
 
   return (
     <FocusableBox
-      ref={ref}
       href={href}
       paddingX={[2, 2, 5, 5]}
       paddingY={[3, 3, 5, 5]}
@@ -109,7 +107,7 @@ export const NewsCard: React.FC<NewsCardProps> = ({
               iconType="filled"
               variant="text"
               as="span"
-              disabled
+              unfocusable
             >
               {readMoreText}
             </Button>

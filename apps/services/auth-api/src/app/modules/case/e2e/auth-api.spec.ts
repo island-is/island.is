@@ -7,7 +7,7 @@ describe('Dummy', () => {
 // import { GrantDto, UserIdentityDto } from '@island.is/auth-api-lib'
 // import { INestApplication } from '@nestjs/common'
 // import { setup } from '../../../../../test/setup'
-// import * as request from 'supertest'
+// import request from 'supertest'
 
 // let app: INestApplication
 

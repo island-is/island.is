@@ -19,12 +19,20 @@ export const buildOpenApi = async ({
   try {
     logger.info('Creating openapi.yaml file ...', { path })
 
-    const app = await NestFactory.create(InfraModule.forRoot(appModule), {
+    const app = await NestFactory.create(InfraModule.forRoot({ appModule }), {
       logger: LoggingModule.createLogger(),
     })
     const document = SwaggerModule.createDocument(app, openApi)
 
-    return writeFileSync(path, yaml.safeDump(document, { noRefs: true }))
+    writeFileSync(path, yaml.dump(document, { noRefs: true }))
+
+    // Shut down everything so the process ends.
+    await app.close()
+
+    // Unfortunately, the above is not enough sometimes because of this bug:
+    // https://github.com/configcat/common-js/issues/36
+    // TODO: Remove this when it's been fixed.
+    process.exit(0)
   } catch (e) {
     logger.error('Error while creating openapi.yaml', { message: e.message })
   }

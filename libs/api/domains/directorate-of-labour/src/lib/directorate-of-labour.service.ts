@@ -8,7 +8,7 @@ import { ParentalLeavePeriod } from '../models/parentalLeavePeriod.model'
 import { ParentalLeaveEntitlement } from '../models/parentalLeaveEntitlement.model'
 import { ParentalLeavePaymentPlan } from '../models/parentalLeavePaymentPlan.model'
 import { PregnancyStatus } from '../models/pregnancyStatus.model'
-import { ParentalLeave } from '../models/parentalLeaves.model'
+import { ParentalLeave } from '../models/parentalLeave.model'
 import { DirectorateOfLabourRepository } from './directorate-of-labour.repository'
 
 @Injectable()
@@ -100,14 +100,14 @@ export class DirectorateOfLabourService {
       .catch(this.handleError.bind(this))
   }
 
-  async getParentalLeavesPeriodsLength(
+  async getParentalLeavesPeriodLength(
     nationalId: string,
     startDate: string,
     endDate: string,
     percentage: string,
   ) {
     return await this.directorateOfLabourRepository
-      .getParentalLeavesPeriodsLength(
+      .getParentalLeavesPeriodLength(
         nationalId,
         new Date(startDate),
         new Date(endDate),

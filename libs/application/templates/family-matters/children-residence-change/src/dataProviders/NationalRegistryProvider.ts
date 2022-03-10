@@ -54,7 +54,7 @@ export class NationalRegistryProvider extends BasicDataProvider {
       })
   }
   handleError(error: Error | unknown) {
-    console.error('Provider.ParentalLeave.Children:', error)
+    console.error('Provider.ChildrenResidenceChange.Children:', error)
     return Promise.reject('Failed to fetch children')
   }
   onProvideError(result: { message: string }): FailedDataProviderResult {

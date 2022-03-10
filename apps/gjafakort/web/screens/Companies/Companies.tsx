@@ -52,12 +52,7 @@ function Companies() {
               </Typography>
               <BulletList>
                 {t.notes.items.map((item, index) => (
-                  <Bullet
-                    typographyLinks
-                    key={`companies.notes.items-${index}`}
-                  >
-                    {item}
-                  </Bullet>
+                  <Bullet key={`companies.notes.items-${index}`}>{item}</Bullet>
                 ))}
               </BulletList>
               <Typography variant="p">
@@ -87,9 +82,7 @@ function Companies() {
                     Array.isArray(content) ? (
                       <BulletList type="ol" key={index}>
                         {content.map((item) => (
-                          <Bullet typographyLinks key={item}>
-                            {HtmlParser(item)}
-                          </Bullet>
+                          <Bullet key={item}>{HtmlParser(item)}</Bullet>
                         ))}
                       </BulletList>
                     ) : (

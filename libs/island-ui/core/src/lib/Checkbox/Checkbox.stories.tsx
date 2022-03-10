@@ -1,5 +1,4 @@
 import React from 'react'
-import { withDesign } from 'storybook-addon-designs'
 
 import { withFigma } from '../../utils/withFigma'
 import { Checkbox } from './Checkbox'
@@ -7,17 +6,22 @@ import { Checkbox } from './Checkbox'
 export default {
   title: 'Form/Checkbox',
   component: Checkbox,
-  decorators: [withDesign],
   parameters: withFigma('Checkbox'),
 }
 
 const Template = (args) => <Checkbox {...args} />
 
-export const Primary = Template.bind({})
-Primary.args = { label: 'My label', large: false }
+export const Default = Template.bind({})
+Default.args = { label: 'My label', large: false }
+
+export const Disabled = Template.bind({})
+Disabled.args = { label: 'Disabled', large: false, disabled: true }
 
 export const Large = Template.bind({})
 Large.args = { label: 'Large version', large: true }
+
+export const LargeDisabled = Template.bind({})
+LargeDisabled.args = { label: 'Large disabled', large: true, disabled: true }
 
 export const WithSubLabel = Template.bind({})
 WithSubLabel.args = {

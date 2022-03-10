@@ -1,64 +1,68 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
+
 import { Box, Checkbox, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   BlueBox,
+  CaseInfo,
   FormContentContainer,
   FormFooter,
-} from '@island.is/judicial-system-web/src/shared-components'
-import { Case } from '@island.is/judicial-system/types'
+} from '@island.is/judicial-system-web/src/components'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  FormSettings,
-  useCaseFormHelper,
-} from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { icReportForm } from '@island.is/judicial-system-web/messages'
+import { isPoliceReportStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import type { Case } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system/consts'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
 }
 
 const PoliceReportForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading } = props
-  const validations: FormSettings = {
-    caseFacts: {
-      validations: ['empty'],
-    },
-    legalArguments: {
-      validations: ['empty'],
-    },
-  }
+
+  const { formatMessage } = useIntl()
   const { updateCase, autofill } = useCase()
+  const { user } = useContext(UserContext)
+
   const [caseFactsEM, setCaseFactsEM] = useState<string>('')
   const [legalArgumentsEM, setLegalArgumentsEM] = useState<string>('')
-  const { isValid } = useCaseFormHelper(
-    workingCase,
-    setWorkingCase,
-    validations,
-  )
 
   useEffect(() => {
+    const defaultProsecutorOnlySessionRequest = formatMessage(
+      icReportForm.prosecutorOnly.input.defaultValue,
+    )
+
     if (workingCase.requestProsecutorOnlySession) {
       autofill(
         'prosecutorOnlySessionRequest',
-        'Beðið er um að krafan verði tekin fyrir án þess að þeir sem hún beinist að verði kvaddir á dómþingið.',
+        defaultProsecutorOnlySessionRequest,
         workingCase,
       )
     }
-  }, [autofill, workingCase.requestProsecutorOnlySession])
+  }, [autofill, formatMessage, workingCase])
 
   return (
     <>
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            Greinargerð
+            {formatMessage(icReportForm.heading)}
           </Text>
+        </Box>
+        <Box component="section" marginBottom={7}>
+          <CaseInfo
+            workingCase={workingCase}
+            userRole={user?.role}
+            showAdditionalInfo
+          />
         </Box>
         <Box marginBottom={5}>
           <BlueBox>
@@ -68,26 +72,26 @@ const PoliceReportForm: React.FC<Props> = (props) => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Greinargerð um málsatvik{' '}
+              {formatMessage(icReportForm.caseFacts.heading)}{' '}
               <Tooltip
                 placement="right"
                 as="span"
-                text="Málsatvik, hvernig meðferð þessa máls hófst, skal skrá hér ásamt framburðum vitna og sakborninga ef til eru. Einnig er gott að taka fram stöðu rannsóknar og næstu skref."
+                text={formatMessage(icReportForm.caseFacts.tooltip)}
               />
             </Text>
           </Box>
           <Input
             data-testid="caseFacts"
             name="caseFacts"
-            label="Málsatvik"
-            placeholder="Hvað hefur átt sér stað hingað til? Hver er framburður sakborninga og vitna? Hver er staða rannsóknar og næstu skref?"
+            label={formatMessage(icReportForm.caseFacts.label)}
+            placeholder={formatMessage(icReportForm.caseFacts.placeholder)}
             errorMessage={caseFactsEM}
             hasError={caseFactsEM !== ''}
-            defaultValue={workingCase?.caseFacts}
+            value={workingCase.caseFacts || ''}
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'caseFacts',
-                event,
+                event.target.value,
                 ['empty'],
                 workingCase,
                 setWorkingCase,
@@ -107,17 +111,18 @@ const PoliceReportForm: React.FC<Props> = (props) => {
             }
             required
             rows={14}
+            autoExpand={{ on: true, maxHeight: 600 }}
             textarea
           />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Greinargerð um lagarök{' '}
+              {formatMessage(icReportForm.legalArguments.heading)}{' '}
               <Tooltip
                 placement="right"
                 as="span"
-                text="Lagarök og lagaákvæði sem eiga við brotið og kröfuna skal taka fram hér."
+                text={formatMessage(icReportForm.legalArguments.tooltip)}
               />
             </Text>
           </Box>
@@ -125,15 +130,17 @@ const PoliceReportForm: React.FC<Props> = (props) => {
             <Input
               data-testid="legalArguments"
               name="legalArguments"
-              label="Lagarök"
-              placeholder="Hver eru lagarökin fyrir kröfu um gæsluvarðhald?"
-              defaultValue={workingCase?.legalArguments}
+              label={formatMessage(icReportForm.legalArguments.label)}
+              placeholder={formatMessage(
+                icReportForm.legalArguments.placeholder,
+              )}
+              value={workingCase.legalArguments || ''}
               errorMessage={legalArgumentsEM}
               hasError={legalArgumentsEM !== ''}
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'legalArguments',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -154,6 +161,7 @@ const PoliceReportForm: React.FC<Props> = (props) => {
               required
               textarea
               rows={14}
+              autoExpand={{ on: true, maxHeight: 600 }}
             />
           </Box>
           <Box component="section" marginBottom={5}>
@@ -161,8 +169,12 @@ const PoliceReportForm: React.FC<Props> = (props) => {
               <Box marginBottom={2}>
                 <Checkbox
                   name="request-prosecutor-only-session"
-                  label="Beiðni um dómþing að varnaraðila fjarstöddum"
-                  tooltip="Hér er hægt að setja fram kröfu um að dómþing fari fram að varnaraðila fjarstöddum sé það nauðsynlegt vegna rannsóknarhagsmuna. Með því að haka í reitinn birtist krafan neðst í skjalinu."
+                  label={formatMessage(
+                    icReportForm.prosecutorOnly.checkbox.label,
+                  )}
+                  tooltip={formatMessage(
+                    icReportForm.prosecutorOnly.checkbox.tooltip,
+                  )}
                   checked={workingCase.requestProsecutorOnlySession}
                   onChange={(evt) => {
                     setWorkingCase({
@@ -179,14 +191,16 @@ const PoliceReportForm: React.FC<Props> = (props) => {
               </Box>
               <Input
                 name="prosecutor-only-session-request"
-                label="Beiðni"
-                placeholder="Er þess óskað að varnaraðili sé ekki viðstaddur dómþing?"
+                label={formatMessage(icReportForm.prosecutorOnly.input.label)}
+                placeholder={formatMessage(
+                  icReportForm.prosecutorOnly.input.placeholder,
+                )}
                 disabled={workingCase.requestProsecutorOnlySession === false}
-                defaultValue={workingCase.prosecutorOnlySessionRequest}
+                value={workingCase.prosecutorOnlySessionRequest || ''}
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'prosecutorOnlySessionRequest',
-                    event,
+                    event.target.value,
                     [],
                     workingCase,
                     setWorkingCase,
@@ -203,29 +217,30 @@ const PoliceReportForm: React.FC<Props> = (props) => {
                 }
                 textarea
                 rows={7}
+                autoExpand={{ on: true, maxHeight: 300 }}
               />
             </BlueBox>
           </Box>
           <Box component="section" marginBottom={10}>
             <Box marginBottom={2}>
               <Text as="h3" variant="h3">
-                Athugasemdir vegna málsmeðferðar{' '}
+                {formatMessage(icReportForm.comments.heading)}{' '}
                 <Tooltip
                   placement="right"
                   as="span"
-                  text="Hér er hægt að skrá athugasemdir til dómara og dómritara um hagnýt atriði sem tengjast fyrirtökunni eða málsmeðferðinni, og eru ekki hluti af sjálfri kröfunni."
+                  text={formatMessage(icReportForm.comments.tooltip)}
                 />
               </Text>
             </Box>
             <Input
               name="comments"
-              label="Athugasemdir"
-              placeholder="Er eitthvað sem þú vilt koma á framfæri við dómstólinn varðandi fyrirtökuna eða málsmeðferðina?"
-              defaultValue={workingCase?.comments}
+              label={formatMessage(icReportForm.comments.label)}
+              placeholder={formatMessage(icReportForm.comments.placeholder)}
+              value={workingCase.comments || ''}
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'comments',
-                  event,
+                  event.target.value,
                   [],
                   workingCase,
                   setWorkingCase,
@@ -242,15 +257,16 @@ const PoliceReportForm: React.FC<Props> = (props) => {
               }
               textarea
               rows={7}
+              autoExpand={{ on: true, maxHeight: 300 }}
             />
           </Box>
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.R_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
-          nextUrl={`${Constants.R_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!isValid}
+          previousUrl={`${Constants.IC_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
+          nextUrl={`${Constants.IC_CASE_FILES_ROUTE}/${workingCase.id}`}
+          nextIsDisabled={!isPoliceReportStepValidIC(workingCase)}
           nextIsLoading={isLoading}
         />
       </FormContentContainer>

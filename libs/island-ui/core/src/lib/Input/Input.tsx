@@ -1,7 +1,7 @@
-import React, { useState, useRef, forwardRef } from 'react'
+import React, { useState, useRef, forwardRef, useLayoutEffect } from 'react'
 import cn from 'classnames'
 
-import * as styles from './Input.treat'
+import * as styles from './Input.css'
 import { Box } from '../Box/Box'
 import { Tooltip } from '../Tooltip/Tooltip'
 import { Icon } from '../IconRC/Icon'
@@ -69,6 +69,7 @@ export const Input = forwardRef(
       backgroundColor = 'white',
       onFocus,
       onBlur,
+      readOnly,
       onClick,
       onKeyDown,
       textarea,
@@ -77,6 +78,7 @@ export const Input = forwardRef(
       iconType = 'filled',
       size = 'md',
       fixedFocusState,
+      autoExpand,
       ...inputProps
     } = props
     const [hasFocus, setHasFocus] = useState(false)
@@ -97,8 +99,54 @@ export const Input = forwardRef(
       ? backgroundColor.map(mapBlue)
       : mapBlue(backgroundColor as InputBackgroundColor)
 
+    useLayoutEffect(() => {
+      const input = inputRef.current
+
+      if (autoExpand?.on && input) {
+        const handler = () => {
+          input.style.height = 'auto'
+          // The +1 here prevents a scrollbar from appearing in the textarea
+          input.style.height = `${input.scrollHeight + 1}px`
+          input.style.maxHeight = autoExpand.maxHeight
+            ? `${autoExpand.maxHeight}px`
+            : `${window.innerHeight - 50}px`
+        }
+
+        handler()
+
+        input.addEventListener('input', handler, false)
+
+        return function cleanup() {
+          input.removeEventListener('input', handler)
+        }
+      }
+    }, [autoExpand?.maxHeight, autoExpand?.on, inputRef])
+
     return (
       <div>
+        {/* If size is xs then the label is above the input box */}
+        {size === 'xs' && (
+          <label
+            htmlFor={id}
+            className={cn(styles.label, styles.labelSizes[size], {
+              [styles.labelDisabledEmptyInput]:
+                disabled && !value && !defaultValue,
+            })}
+          >
+            {label}
+            {required && (
+              <span aria-hidden="true" className={styles.isRequiredStar}>
+                {' '}
+                *
+              </span>
+            )}
+            {tooltip && (
+              <Box marginLeft={1} display="inlineBlock">
+                <Tooltip text={tooltip} />
+              </Box>
+            )}
+          </label>
+        )}
         <Box
           display="flex"
           alignItems="center"
@@ -108,6 +156,8 @@ export const Input = forwardRef(
             [styles.hasFocus]: hasFocus,
             [styles.fixedFocusState]: fixedFocusState,
             [styles.noLabel]: !label,
+            [styles.containerDisabled]: disabled,
+            [styles.readOnly]: readOnly,
           })}
           onClick={(e) => {
             e.preventDefault()
@@ -117,26 +167,28 @@ export const Input = forwardRef(
           }}
         >
           <Box flexGrow={1}>
-            <label
-              htmlFor={id}
-              className={cn(styles.label, styles.labelSizes[size], {
-                [styles.labelDisabledEmptyInput]:
-                  disabled && !value && !defaultValue,
-              })}
-            >
-              {label}
-              {required && (
-                <span aria-hidden="true" className={styles.isRequiredStar}>
-                  {' '}
-                  *
-                </span>
-              )}
-              {tooltip && (
-                <Box marginLeft={1} display="inlineBlock">
-                  <Tooltip text={tooltip} />
-                </Box>
-              )}
-            </label>
+            {size !== 'xs' && (
+              <label
+                htmlFor={id}
+                className={cn(styles.label, styles.labelSizes[size], {
+                  [styles.labelDisabledEmptyInput]:
+                    disabled && !value && !defaultValue,
+                })}
+              >
+                {label}
+                {required && (
+                  <span aria-hidden="true" className={styles.isRequiredStar}>
+                    {' '}
+                    *
+                  </span>
+                )}
+                {tooltip && (
+                  <Box marginLeft={1} display="inlineBlock">
+                    <Tooltip text={tooltip} />
+                  </Box>
+                )}
+              </label>
+            )}
             <InputComponent
               className={cn(
                 styles.input,
@@ -183,6 +235,7 @@ export const Input = forwardRef(
                   onBlur(e)
                 }
               }}
+              readOnly={readOnly}
               type={type}
               {...(ariaError as AriaError)}
               {...inputProps}
@@ -204,6 +257,7 @@ export const Input = forwardRef(
               skipPlaceholderSize
               className={cn(styles.icon, {
                 [styles.iconError]: hasError,
+                [styles.iconExtraSmall]: size === 'xs',
               })}
               ariaHidden
             />

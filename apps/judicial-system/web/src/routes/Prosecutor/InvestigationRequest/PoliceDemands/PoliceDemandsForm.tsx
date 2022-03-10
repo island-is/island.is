@@ -1,28 +1,24 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
+
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import {
-  DateTime,
+  CaseInfo,
   FormContentContainer,
   FormFooter,
-} from '@island.is/judicial-system-web/src/shared-components'
-import { Case, CaseType } from '@island.is/judicial-system/types'
+} from '@island.is/judicial-system-web/src/components'
+import { CaseType } from '@island.is/judicial-system/types'
+import type { Case } from '@island.is/judicial-system/types'
+import { formatNationalId } from '@island.is/judicial-system/formatters'
 import {
-  newSetAndSendDateToServer,
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  FormSettings,
-  useCaseFormHelper,
-} from '@island.is/judicial-system-web/src/utils/useFormHelper'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-import {
-  formatAccusedByGender,
-  NounCases,
-} from '@island.is/judicial-system/formatters'
-import { policeDemandsForm } from '@island.is/judicial-system-web/messages'
+import { isPoliceDemandsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import { icDemands } from '@island.is/judicial-system-web/messages'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import * as Constants from '@island.is/judicial-system/consts'
 
 const courtClaimPrefill: Partial<
   Record<
@@ -37,134 +33,113 @@ const courtClaimPrefill: Partial<
   >
 > = {
   [CaseType.SEARCH_WARRANT]: {
-    text: policeDemandsForm.courtClaim.prefill.searchWarrant,
+    text: icDemands.sections.demands.prefill.searchWarrant,
     format: { accusedName: true, address: true },
   },
   [CaseType.BANKING_SECRECY_WAIVER]: {
-    text: policeDemandsForm.courtClaim.prefill.bankingSecrecyWaiver,
+    text: icDemands.sections.demands.prefill.bankingSecrecyWaiver,
   },
   [CaseType.PHONE_TAPPING]: {
-    text: policeDemandsForm.courtClaim.prefill.phoneTapping,
+    text: icDemands.sections.demands.prefill.phoneTapping,
     format: { accusedName: true },
   },
   [CaseType.TELECOMMUNICATIONS]: {
-    text: policeDemandsForm.courtClaim.prefill.teleCommunications,
+    text: icDemands.sections.demands.prefill.teleCommunications,
     format: { accusedName: true },
   },
   [CaseType.TRACKING_EQUIPMENT]: {
-    text: policeDemandsForm.courtClaim.prefill.trackingEquipment,
+    text: icDemands.sections.demands.prefill.trackingEquipment,
     format: { accusedName: true },
   },
 }
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case | undefined>>
+  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
+  isCaseUpToDate: boolean
 }
 
 const PoliceDemandsForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading } = props
-  const validations: FormSettings = {
-    demands: {
-      validations: ['empty'],
-    },
-    lawsBroken: {
-      validations: ['empty'],
-    },
-    legalBasis: {
-      validations: ['empty'],
-    },
-  }
+  const { workingCase, setWorkingCase, isLoading, isCaseUpToDate } = props
+
   const { formatMessage } = useIntl()
   const { updateCase, autofill } = useCase()
-  const [, setRequestedValidToDateIsValid] = useState<boolean>(true)
+  const { user } = useContext(UserContext)
+
   const [demandsEM, setDemandsEM] = useState<string>('')
   const [lawsBrokenEM, setLawsBrokenEM] = useState<string>('')
   const [legalBasisEM, setLegalBasisEM] = useState<string>('')
-  const { isValid } = useCaseFormHelper(
-    workingCase,
-    setWorkingCase,
-    validations,
-  )
 
   useEffect(() => {
-    if (workingCase) {
-      const courtClaim = courtClaimPrefill[workingCase.type]
-      const courtClaimText = courtClaim
-        ? formatMessage(courtClaim.text, {
-            ...(courtClaim.format?.accusedName && {
-              accusedName: workingCase.accusedName,
-            }),
-            ...(courtClaim.format?.address && {
-              address: workingCase.accusedAddress,
-            }),
-          })
-        : ''
-      autofill('demands', courtClaimText, workingCase)
-      setWorkingCase(workingCase)
+    if (isCaseUpToDate) {
+      if (
+        workingCase &&
+        workingCase.defendants &&
+        workingCase.defendants.length > 0
+      ) {
+        const courtClaim = courtClaimPrefill[workingCase.type]
+        const courtClaimText = courtClaim
+          ? formatMessage(courtClaim.text, {
+              ...(courtClaim.format?.accusedName && {
+                accusedName: workingCase.defendants
+                  .map(
+                    (defendant) =>
+                      `${defendant.name} ${
+                        defendant.noNationalId ? 'fd.' : 'kt.'
+                      } ${
+                        defendant.noNationalId
+                          ? defendant.nationalId
+                          : formatNationalId(defendant.nationalId ?? '')
+                      }`,
+                  )
+                  .toString()
+                  .replace(/,/g, ', '),
+              }),
+              ...(courtClaim.format?.address && {
+                address: workingCase.defendants[0].address,
+              }),
+            })
+          : ''
+        autofill('demands', courtClaimText, workingCase)
+        setWorkingCase(workingCase)
+      }
     }
-  }, [workingCase, setWorkingCase, autofill])
+  }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])
 
   return (
     <>
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
-            {formatMessage(policeDemandsForm.general.heading)}
+            {formatMessage(icDemands.heading)}
           </Text>
         </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(policeDemandsForm.requestToDate.heading)}
-            </Text>
-          </Box>
-          <DateTime
-            name="reqValidToDate"
-            datepickerLabel={formatMessage(
-              policeDemandsForm.requestToDate.dateLabel,
-            )}
-            minDate={new Date()}
-            selectedDate={
-              workingCase.requestedValidToDate
-                ? new Date(workingCase.requestedValidToDate)
-                : undefined
-            }
-            onChange={(date: Date | undefined, valid: boolean) => {
-              newSetAndSendDateToServer(
-                'requestedValidToDate',
-                date,
-                valid,
-                workingCase,
-                setWorkingCase,
-                setRequestedValidToDateIsValid,
-                updateCase,
-              )
-            }}
+        <Box component="section" marginBottom={7}>
+          <CaseInfo
+            workingCase={workingCase}
+            userRole={user?.role}
+            showAdditionalInfo
           />
         </Box>
-
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {formatMessage(policeDemandsForm.courtClaim.heading)}
+              {formatMessage(icDemands.sections.demands.heading)}
             </Text>
           </Box>
           <Input
             data-testid="demands"
             name="demands"
-            label={formatMessage(policeDemandsForm.courtClaim.label)}
-            placeholder={formatMessage(
-              policeDemandsForm.courtClaim.placeholder,
-            )}
-            defaultValue={workingCase.demands}
+            label={formatMessage(icDemands.sections.demands.label)}
+            placeholder={formatMessage(icDemands.sections.demands.placeholder)}
+            value={workingCase.demands || ''}
             errorMessage={demandsEM}
             hasError={demandsEM !== ''}
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'demands',
-                event,
+                event.target.value,
                 ['empty'],
                 workingCase,
                 setWorkingCase,
@@ -185,33 +160,31 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             required
             textarea
             rows={7}
+            autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {formatMessage(policeDemandsForm.lawsBroken.heading)}
+              {formatMessage(icDemands.sections.lawsBroken.heading)}
             </Text>
           </Box>
           <Input
             data-testid="lawsBroken"
             name="lawsBroken"
-            label={formatMessage(policeDemandsForm.lawsBroken.label, {
-              defendant: formatAccusedByGender(
-                workingCase.accusedGender,
-                NounCases.GENITIVE,
-              ),
+            label={formatMessage(icDemands.sections.lawsBroken.label, {
+              defendant: 'varnaraðila',
             })}
             placeholder={formatMessage(
-              policeDemandsForm.lawsBroken.placeholder,
+              icDemands.sections.lawsBroken.placeholder,
             )}
-            defaultValue={workingCase.lawsBroken}
+            value={workingCase.lawsBroken || ''}
             errorMessage={lawsBrokenEM}
             hasError={lawsBrokenEM !== ''}
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'lawsBroken',
-                event,
+                event.target.value,
                 ['empty'],
                 workingCase,
                 setWorkingCase,
@@ -232,28 +205,29 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             required
             textarea
             rows={7}
+            autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
-        <Box component="section" marginBottom={5}>
+        <Box component="section" marginBottom={10}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {formatMessage(policeDemandsForm.legalBasis.heading)}
+              {formatMessage(icDemands.sections.legalBasis.heading)}
             </Text>
           </Box>
           <Input
-            data-testid="legal-basis"
-            name="legal-basis"
-            label={formatMessage(policeDemandsForm.legalBasis.label)}
+            data-testid="legalBasis"
+            name="legalBasis"
+            label={formatMessage(icDemands.sections.legalBasis.label)}
             placeholder={formatMessage(
-              policeDemandsForm.legalBasis.placeholder,
+              icDemands.sections.legalBasis.placeholder,
             )}
-            defaultValue={workingCase.legalBasis}
+            value={workingCase.legalBasis || ''}
             errorMessage={legalBasisEM}
             hasError={legalBasisEM !== ''}
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'legalBasis',
-                event,
+                event.target.value,
                 ['empty'],
                 workingCase,
                 setWorkingCase,
@@ -274,14 +248,15 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             required
             textarea
             rows={7}
+            autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.R_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
-          nextUrl={`${Constants.R_CASE_POLICE_REPORT_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!isValid}
+          previousUrl={`${Constants.IC_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
+          nextUrl={`${Constants.IC_POLICE_REPORT_ROUTE}/${workingCase.id}`}
+          nextIsDisabled={!isPoliceDemandsStepValidIC(workingCase)}
           nextIsLoading={isLoading}
         />
       </FormContentContainer>

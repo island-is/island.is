@@ -2,11 +2,8 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
-  ApplicationRole,
   ApplicationStateSchema,
-  Application,
   DefaultEvents,
-  DefaultStateLifeCycle,
   ApplicationConfigurations,
 } from '@island.is/application/core'
 import * as z from 'zod'
@@ -49,6 +46,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL,
   name: m.name,
+  readyForProduction: true,
   translationNamespaces: [
     ApplicationConfigurations[ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]
       .translation,
@@ -62,7 +60,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           name: 'Skilyrði',
           progress: 0.2,
           lifecycle: {
-            shouldBeListed: true,
+            shouldBeListed: false,
             shouldBePruned: true,
             // Applications that stay in this state for 24 hours will be pruned automatically
             whenToPrune: 24 * 3600 * 1000,
@@ -91,7 +89,12 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
         meta: {
           name: 'Samþykkt akstursmat',
           progress: 1.0,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            // Applications that stay in this state for 24 hours will be pruned automatically
+            whenToPrune: 24 * 3600 * 1000,
+          },
           onEntry: {
             apiModuleAction: ApiActions.submitAssessmentConfirmation,
           },
@@ -110,7 +113,11 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
       },
     },
   },
-  mapUserToRole: () => Roles.TEACHER,
+  mapUserToRole: (nationalId, application) => {
+    if (nationalId === application.applicant) {
+      return Roles.TEACHER
+    }
+  },
 }
 
 export default ReferenceApplicationTemplate

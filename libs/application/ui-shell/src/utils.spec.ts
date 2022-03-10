@@ -61,9 +61,15 @@ describe('ui-shell-utils', () => {
       })
 
       it('when the current screen is an external data provider', () => {
+        const screenId = 'approveExternalData'
+
+        const answers = {
+          [screenId]: true,
+        }
+
         const externalDataProvider = buildExternalDataProvider({
-          id: 'arrayField',
-          title: 'Repeater',
+          id: screenId,
+          title: 'External Data Provider',
           dataProviders: [],
         })
 
@@ -73,9 +79,9 @@ describe('ui-shell-utils', () => {
           ...externalDataProvider,
         }
 
-        expect(
-          extractAnswersToSubmitFromScreen(currentAnswers, screen),
-        ).toEqual({})
+        expect(extractAnswersToSubmitFromScreen(answers, screen)).toEqual(
+          answers,
+        )
       })
 
       it('when the current screen includes a question that is not part of the passed in form value', () => {

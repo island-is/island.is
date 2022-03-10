@@ -7,16 +7,16 @@ import { dateFormat } from '@island.is/shared/constants'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
+import { handleServerError } from '@island.is/application/ui-components'
 
 import ReviewSection, { ReviewSectionState } from './ReviewSection'
-import Review from '../Review'
+import { Review } from '../Review/Review'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
   getExpectedDateOfBirth,
   otherParentApprovalDescription,
   requiresOtherParentApproval,
 } from '../../lib/parentalLeaveUtils'
-import { handleSubmitError } from '../../lib/parentalLeaveClientUtils'
 import { NO, States as ApplicationStates } from '../../constants'
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 
@@ -60,7 +60,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
-      onError: (e) => handleSubmitError(e.message, formatMessage),
+      onError: (e) => handleServerError(e, formatMessage),
     },
   )
 
@@ -91,7 +91,9 @@ const InReviewSteps: FC<FieldBaseProps> = ({
     })
   }
 
-  if (requiresOtherParentApproval(application.answers)) {
+  if (
+    requiresOtherParentApproval(application.answers, application.externalData)
+  ) {
     steps.unshift({
       state: statesMap['otherParent'][application.state],
       title: formatMessage(
@@ -106,6 +108,12 @@ const InReviewSteps: FC<FieldBaseProps> = ({
 
   const dob = getExpectedDateOfBirth(application)
   const dobDate = dob ? new Date(dob) : null
+
+  const canBeEdited =
+    application.state === ApplicationStates.OTHER_PARENT_APPROVAL ||
+    application.state === ApplicationStates.EMPLOYER_WAITING_TO_ASSIGN ||
+    application.state === ApplicationStates.EMPLOYER_APPROVAL ||
+    application.state === ApplicationStates.APPROVED
 
   return (
     <Box marginBottom={10}>
@@ -151,7 +159,7 @@ const InReviewSteps: FC<FieldBaseProps> = ({
                 )}
             </Button>
           </Box>
-          {application.state === ApplicationStates.APPROVED && (
+          {canBeEdited && (
             <Box display="inlineBlock">
               <Button
                 colorScheme="default"

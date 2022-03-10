@@ -1,6 +1,6 @@
 import { FieldBaseProps, FormText } from '@island.is/application/core'
 import { NationalRegistryUser, UserProfile } from '@island.is/api/schema'
-import { StatusTypes } from './constants'
+import { StatusTypes } from './shared'
 
 export interface Status {
   type: StatusTypes
@@ -55,17 +55,6 @@ export interface ContentType {
   description: FormText | (() => void)
   buttonText: FormText
   buttonAction: () => void
-}
-
-export type CountryDataResult = {
-  status?: number
-  name: string
-  alpha2Code: string
-  regionalBlocs: CountryReginalBlocs[]
-}
-
-type CountryReginalBlocs = {
-  acronym: string
 }
 
 export interface ExternalDataNationalRegistry {

@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from 'react'
+import { GraphQLError } from 'graphql'
 import { ZodObject } from 'zod'
 import { MessageDescriptor } from 'react-intl'
 
@@ -8,14 +10,19 @@ import { Condition } from './Condition'
 import { Application } from './Application'
 
 export type BeforeSubmitCallback = () => Promise<[true, null] | [false, string]>
+
 export type SetBeforeSubmitCallback = (
   callback: BeforeSubmitCallback | null,
 ) => void
 
+export type SetFieldLoadingState = Dispatch<SetStateAction<boolean>>
+
 export type StaticTextObject = MessageDescriptor & {
   values?: RecordObject<any>
 }
+
 export type StaticText = StaticTextObject | string
+
 export type FormatMessage = (
   descriptor: StaticText,
   values?: RecordObject<any>,
@@ -24,6 +31,7 @@ export type FormatMessage = (
 export type FormText =
   | StaticText
   | ((application: Application) => StaticText | null | undefined)
+
 export type FormTextArray =
   | StaticText[]
   | ((application: Application) => (StaticText | null | undefined)[])
@@ -50,15 +58,22 @@ export enum FormModes {
 }
 
 export interface Form {
-  id: string
-  title: StaticText
-  logo?: React.FC
-  type: FormItemTypes.FORM
-  mode?: FormModes
-  renderLastScreenButton?: boolean
-  icon?: string
   children: FormChildren[]
+  icon?: string
+  id: string
+  logo?: React.FC
+  mode?: FormModes
+  renderLastScreenBackButton?: boolean
+  renderLastScreenButton?: boolean
+  title: StaticText
+  type: FormItemTypes.FORM
 }
+
+export interface FormLoaderArgs {
+  featureFlagClient: unknown
+}
+
+export type FormLoader = (args: FormLoaderArgs) => Promise<Form>
 
 export type FormLeaf = MultiField | Field | Repeater | ExternalDataProvider
 export type FormNode = Form | Section | SubSection | FormLeaf
@@ -104,6 +119,7 @@ export interface ExternalDataProvider extends FormItem {
   readonly children: undefined
   isPartOfRepeater?: boolean
   dataProviders: DataProviderItem[]
+  otherPermissions?: DataProviderPermissionItem[]
   checkboxLabel?: StaticText
   subTitle?: StaticText
   description?: StaticText
@@ -115,8 +131,13 @@ export interface DataProviderItem {
   readonly title: StaticText
   readonly subTitle?: StaticText
   readonly source?: string
+  readonly parameters?: any
 }
 
+export type DataProviderPermissionItem = Omit<
+  DataProviderItem,
+  'type' | 'source' | 'parameters'
+>
 export interface FieldBaseProps {
   autoFocus?: boolean
   error?: string
@@ -127,6 +148,7 @@ export interface FieldBaseProps {
   goToScreen?: (id: string) => void
   refetch?: () => void
   setBeforeSubmitCallback?: SetBeforeSubmitCallback
+  setFieldLoadingState?: SetFieldLoadingState
 }
 
 export type RepeaterProps = {
@@ -135,4 +157,11 @@ export type RepeaterProps = {
   error?: string
   repeater: Repeater
   removeRepeaterItem: (index: number) => void
+  setRepeaterItems: (
+    items: unknown[],
+  ) => Promise<{ errors?: ReadonlyArray<GraphQLError> }>
+  setBeforeSubmitCallback?: SetBeforeSubmitCallback
+  setFieldLoadingState?: SetFieldLoadingState
 }
+
+export type ValidationRecord = { [key: string]: string | ValidationRecord }

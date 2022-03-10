@@ -1,10 +1,12 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
+import { ApiScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsAuthGuard,
   IdsUserGuard,
   ScopesGuard,
+  Scopes,
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 
@@ -13,7 +15,7 @@ import { PensionFund } from '../models/pensionFund.model'
 import { ParentalLeaveEntitlement } from '../models/parentalLeaveEntitlement.model'
 import { ParentalLeavePaymentPlan } from '../models/parentalLeavePaymentPlan.model'
 import { PregnancyStatus } from '../models/pregnancyStatus.model'
-import { ParentalLeave } from '../models/parentalLeaves.model'
+import { ParentalLeave } from '../models/parentalLeave.model'
 import { ParentalLeavePeriodEndDate } from '../models/parentalLeavePeriodEndDate.model'
 import { ParentalLeavePeriodLength } from '../models/parentalLeavePeriodLength.model'
 import { GetParentalLeavesEntitlementsInput } from '../dto/getParentalLeavesEntitlements.input'
@@ -24,6 +26,7 @@ import { GetParentalLeavesPeriodLengthInput } from '../dto/getParentalLeavesPeri
 import { DirectorateOfLabourService } from './directorate-of-labour.service'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
+@Scopes(ApiScope.internal)
 @Resolver()
 export class DirectorateOfLabourResolver {
   constructor(private directorateOfLabourService: DirectorateOfLabourService) {}
@@ -84,11 +87,11 @@ export class DirectorateOfLabourResolver {
   }
 
   @Query(() => ParentalLeavePeriodLength)
-  async getParentalLeavesPeriodsLength(
+  async getParentalLeavesPeriodLength(
     @Args('input') input: GetParentalLeavesPeriodLengthInput,
     @CurrentUser() user: User,
   ) {
-    return this.directorateOfLabourService.getParentalLeavesPeriodsLength(
+    return this.directorateOfLabourService.getParentalLeavesPeriodLength(
       user.nationalId,
       input.startDate,
       input.endDate,
