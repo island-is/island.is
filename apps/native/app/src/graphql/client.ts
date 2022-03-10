@@ -4,7 +4,7 @@ import {
   fromPromise,
   HttpLink,
   InMemoryCache,
-} from '@apollo/client'
+} from '@apollo/client/index'
 import { setContext } from '@apollo/client/link/context'
 import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'

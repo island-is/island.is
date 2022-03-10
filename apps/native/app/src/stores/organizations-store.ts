@@ -50,7 +50,6 @@ export const organizationsStore = create<OrganizationsStore>(
         if (size === 64 && forName === 'Stafrænt Ísland') {
           return islandLogoSrc;
         }
-
         let c = logoCache.get(forName)
         if (!c) {
           const qs = lowerCase(String(forName).trim())
@@ -70,20 +69,32 @@ export const organizationsStore = create<OrganizationsStore>(
         return { uri };
       },
       actions: {
-        updateOriganizations() {
-          client.query({ query: GET_ORGANIZATIONS_QUERY }).then((res) => {
-            set({
-              organizations: processItems(res.data.getOrganizations.items),
-            })
+        updateOriganizations: async () => {
+          const querySub = client.watchQuery({ query: GET_ORGANIZATIONS_QUERY })
+          .subscribe(({data}) => {
+            set({ organizations: processItems(data.getOrganizations.items) })
+            querySub.unsubscribe();
           })
         },
       },
     }),
     {
-      name: 'organizations_01',
+      name: 'organizations_02',
       getStorage: () => AsyncStorage,
+      serialize({ state, version }) {
+        const res: any = { ...state }
+        return JSON.stringify({ state: res, version })
+      },
+      deserialize(str: string) {
+        const { state, version } = JSON.parse(str)
+        // actions
+        delete state.actions
+        return { state, version }
+      },
     },
   ),
 )
 
 export const useOrganizationsStore = createUse(organizationsStore)
+
+organizationsStore.getState().actions.updateOriganizations()

@@ -20,7 +20,8 @@ module.exports = (async () => {
         extraNodeModules: {
           ...require('node-libs-react-native'),
           net: require.resolve('node-libs-react-native/mock/net'),
-        }
+        },
+        sourceExts: ['jsx', 'js', 'ts', 'tsx', 'cjs', 'json'],
       }
     },
     {
