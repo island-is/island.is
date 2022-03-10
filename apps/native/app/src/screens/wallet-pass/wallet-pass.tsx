@@ -218,6 +218,9 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         reader.readAsDataURL(blob)
         reader.onloadend = () => {
           const passData = reader.result?.toString()!
+          if (passData.includes('text/html')) {
+            throw new Error('Pass has expired');
+          }
           addPass(passData.substr(41), 'com.snjallveskid')
           setAddingToWallet(false)
         }

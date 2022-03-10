@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "705830237764",
+    "project_id": "mobile-app---dev-51524",
+    "storage_bucket": "mobile-app---dev-51524.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:705830237764:android:286f0fbdd46a587c02ee11",
+        "android_client_info": {
+          "package_name": "is.island.app.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "705830237764-t8h02aaoi5ogegudnrbo9aldqeil7uo6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmzWklaQUd8ha5gleK_75qVk7hjuxxvQE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "705830237764-t8h02aaoi5ogegudnrbo9aldqeil7uo6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "705830237764-bupcb9q6hnulvve6j61deu3an72trnnq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "is.island.app.dev"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
