@@ -21,6 +21,7 @@ import {
   ISubArticle,
   IVidspyrnaFrontpage,
   IVidspyrnaPage,
+  IProjectPage,
 } from '../generated/contentfulTypes'
 import { ApolloError } from 'apollo-server-express'
 import { mapNews, News } from '../models/news.model'
@@ -40,6 +41,7 @@ export type PageTypes =
   | IArticleCategory
   | IOrganizationPage
   | IOrganizationSubpage
+  | IProjectPage
 
 export const PageUnion = createUnionType({
   name: 'Page',
