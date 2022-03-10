@@ -79,6 +79,9 @@ export const en: TranslatedMessages = {
   'settings.about.versionLabel': 'Version',
   'settings.about.logoutLabel': 'Logout',
   'settings.about.logoutDescription': 'You will have to login again',
+  'settings.about.codePushLabel': 'Updates',
+  'settings.about.codePushLoading': 'Loading...',
+  'settings.about.codePushUpToDate': 'The app is up to date',
 
   // user: personal info
   'user.natreg.infoBox': 'Your registration at Registers Iceland',

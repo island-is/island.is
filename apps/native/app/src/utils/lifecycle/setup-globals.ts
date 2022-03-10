@@ -86,7 +86,7 @@ LogBox.ignoreLogs([
 ])
 
 // set default timezone
-if (!!(global as any).HermesInternal) {
+if ((global as any).HermesInternal) {
   if ('__setDefaultTimeZone' in Intl.DateTimeFormat) {
     ;(Intl.DateTimeFormat as any).__setDefaultTimeZone('Atlantic/Reykjavik')
   }

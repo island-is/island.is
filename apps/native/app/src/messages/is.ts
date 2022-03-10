@@ -77,6 +77,9 @@ export const is = {
   'settings.about.versionLabel': 'Útgáfa',
   'settings.about.logoutLabel': 'Útskrá',
   'settings.about.logoutDescription': 'Þú þarft að skrá þig inn aftur',
+  'settings.about.codePushLabel': 'Uppfærsla',
+  'settings.about.codePushLoading': 'Hleð...',
+  'settings.about.codePushUpToDate': 'Appið er uppfært',
 
   // user: personal info
   'user.natreg.infoBox': 'Þín skráning í Þjóðskrá Íslands',

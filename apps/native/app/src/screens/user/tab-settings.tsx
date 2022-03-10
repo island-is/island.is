@@ -447,23 +447,22 @@ export function TabSettings() {
           } ${config.constants.debugMode ? '(debug)' : ''}`}
         />
         <TableViewCell
-          title="Codepush"
+          title={intl.formatMessage({ id: 'settings.about.codePushLabel' })}
           subtitle={
             loadingCP
-              ? 'Loading...'
+              ? intl.formatMessage({ id: 'settings.about.codePushLoading'})
               : !localPackage
-              ? 'N/A: Using native bundle'
+              ? intl.formatMessage({ id: 'settings.about.codePushUpToDate'})
               : `${localPackage?.label}: ${localPackage.packageHash}`
           }
         />
-        <PressableHighlight
+        {/* <PressableHighlight
           onPress={() => {
             console.log(pushToken)
-            RNAlert.prompt('token', 'yup', undefined, undefined, pushToken)
           }}
         >
           <TableViewCell title="Push Token" subtitle={pushToken} />
-        </PressableHighlight>
+        </PressableHighlight> */}
         <PressableHighlight
           onPress={onLogoutPress}
           testID={testIDs.USER_SETTINGS_LOGOUT_BUTTON}
