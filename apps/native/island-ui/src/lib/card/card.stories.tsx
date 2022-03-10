@@ -1,10 +1,8 @@
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '../../utils/theme'
 import { boolean, number, text, withKnobs, select } from '@storybook/addon-knobs'
 import { storiesOf } from '@storybook/react-native'
 import React from 'react'
-import { FormattedDateTimeRange } from 'react-intl'
 import { ImageSourcePropType, View } from 'react-native'
-import { LicenseStatus, LicenseType } from '../../../../app/src/types/license-type'
 import agencyLogo from '../../assets/card/agency-logo.png'
 import logo from '../../assets/card/logo-64w.png'
 import illustrationSrc from '../../assets/illustrations/digital-services-m3.png'
@@ -47,8 +45,8 @@ storiesOf('Cards', module)
     )
   })
   .add('Licence Card', () => {
-    const type = select('Licence Card Type', LicenseType, LicenseType.DRIVERS_LICENSE);
-    const status = select('Licence Card Status', LicenseStatus, LicenseStatus.VALID);
+    const type = select('Licence Card Type', ['DRIVERS_LICENSE', 'IDENTIDY_CARD', 'PASSPORT', 'FISHING_CARD', 'WEAPON_LICENSE'], 'DRIVERS_LICENSE');
+    const status = select('Licence Card Status', ['VALID', 'NOT_VALID'], 'VALID');
     const title = text('Licence Card Title', 'Ökuskýrteini')
     return (
       <LicenceCard

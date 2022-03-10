@@ -1,4 +1,4 @@
-import { theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui-native'
 import { Appearance, ColorSchemeName } from 'react-native'
 import { AppearanceMode, ThemeMode } from '../stores/preferences-store'
 
