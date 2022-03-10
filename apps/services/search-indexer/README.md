@@ -22,5 +22,5 @@ The indexer server currently has two endpoints:
 ## Code owners and maintainers
 
 - [Stefna](https://github.com/orgs/island-is/teams/stefna/members)
-- [Kosmos & Kaos](https://github.com/orgs/island-is/teams/kosmos-kaos/members)
+- [Júní](https://github.com/orgs/island-is/teams/juni/members)
 - [Aranja](https://github.com/orgs/island-is/teams/aranja/members)
