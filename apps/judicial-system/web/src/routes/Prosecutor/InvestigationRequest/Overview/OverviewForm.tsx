@@ -209,8 +209,7 @@ const OverviewForm: React.FC<Props> = (props) => {
                 />
               </Box>
             </AccordionItem>
-            {(Boolean(workingCase.comments) ||
-              Boolean(workingCase.caseFilesComments)) && (
+            {(workingCase.comments || workingCase.caseFilesComments) && (
               <CommentsAccordionItem workingCase={workingCase} />
             )}
           </Accordion>
