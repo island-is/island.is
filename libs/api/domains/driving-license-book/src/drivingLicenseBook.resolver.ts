@@ -13,11 +13,11 @@ import { PracticalDrivingLessonsInput } from './dto/getPracticalDrivingLessons.i
 import { PracticalDrivingLesson } from './models/practicalDrivingLesson.response'
 import { StudentInput } from './dto/student.input'
 import { DrivingBookStudentOverview } from './models/drivingBookStudentOverview.response'
-import { CreatePracticalDrivingLesson } from './dto/createPracticalDrivingLesson.input'
+import { CreatePracticalDrivingLessonInput } from './dto/createPracticalDrivingLesson.input'
 import { SuccessResponse } from './models/success.response'
 import { UpdatePracticalDrivingLessonInput } from './dto/updatePracticalDrivingLesson.input'
 import { DeletePracticalDrivingLessonInput } from './dto/deletePracticalDrivingLesson.input'
-import { StudentListTeacherNationalIdResponse } from './models/studentsTeacherNationalId.response'
+import { Student } from './models/studentsTeacherNationalId.response'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -31,7 +31,7 @@ export class DrivinLicenseBookResolver {
     return this.drivingLicenseBookService.getStudentList(input)
   }
 
-  @Query(() => StudentListTeacherNationalIdResponse)
+  @Query(() => [Student])
   drivingBookStudentListByTeacherNationalId(@CurrentUser() user: User) {
     return this.drivingLicenseBookService.getStudentListTeacherNationalId(user)
   }
@@ -50,7 +50,7 @@ export class DrivinLicenseBookResolver {
 
   @Mutation(() => PracticalDrivingLesson, { nullable: true })
   drivingBookCreatePracticalDrivingLesson(
-    @Args('input') input: CreatePracticalDrivingLesson,
+    @Args('input') input: CreatePracticalDrivingLessonInput,
   ) {
     return this.drivingLicenseBookService.createPracticalDrivingLesson(input)
   }

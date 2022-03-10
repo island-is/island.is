@@ -103,6 +103,7 @@ export const serviceSetup = (services: {
       XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000',
       XROAD_PROPERTIES_TIMEOUT: '20000',
       SYSLUMENN_TIMEOUT: '30000',
+      XROAD_DRIVING_LICENSE_BOOK_TIMEOUT: '20000',
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
@@ -155,6 +156,9 @@ export const serviceSetup = (services: {
       ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
       ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
+      DRIVING_LICNESE_BOOK_XROAD_PATH: '/k8s/api/DRIVING_LICNESE_BOOK_XROAD_PATH',
+      DRIVING_LICNESE_BOOK_USERNAME: '/k8s/api/DRIVING_LICNESE_BOOK_USERNAME',
+      DRIVING_LICNESE_BOOK_PASSWORD: '/k8s/api/DRIVING_LICNESE_BOOK_PASSWORD',
     })
     .xroad(
       Base,

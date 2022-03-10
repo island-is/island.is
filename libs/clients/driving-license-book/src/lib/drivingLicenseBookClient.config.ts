@@ -16,7 +16,7 @@ export const DrivingLicenseBookClientConfig = defineConfig({
   load(env) {
     return {
       xRoadServicePath: env.required(
-        'XROAD_DRIVING_LICENSE_BOOK_SERVICE_PATH',
+        'DRIVING_LICENSE_BOOK_XROAD_PATH',
         'IS-DEV/GOV/10017/Samgongustofa-Protected/Okunamsbok-V1',
       ),
       fetch: {

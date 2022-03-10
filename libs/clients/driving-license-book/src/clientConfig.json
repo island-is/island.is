@@ -438,6 +438,16 @@
           }
         ],
         "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
           "200": {
             "description": "Success"
           },
@@ -813,77 +823,6 @@
         }
       }
     },
-    "/api/Student/CreateLicenseBook": {
-      "post": {
-        "tags": ["DrivingLicenseBook"],
-        "summary": "Registeres new driving license book",
-        "requestBody": {
-          "description": "Information in book to register",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DigitalBookCreateRequestBody"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DigitalBookCreateRequestBody"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/DigitalBookCreateRequestBody"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DigitalBookCreateResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        }
-      }
-    },
     "/api/Student/UpdateLicenseBook/{id}": {
       "put": {
         "tags": ["DrivingLicenseBook"],
@@ -1084,6 +1023,182 @@
           },
           "404": {
             "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
+    "/api/Teacher/GetStudentOverviewForTeacher/{teacherSsn}": {
+      "get": {
+        "tags": ["DrivingLicenseBook"],
+        "summary": "Fetches an overview of all students assigned to teacher.",
+        "parameters": [
+          {
+            "name": "teacherSsn",
+            "in": "path",
+            "description": "SSN of teacher",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "licenseCategory",
+            "in": "query",
+            "description": "Type of driving license",
+            "schema": {
+              "type": "string",
+              "default": "B"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "description": "Position to start from (if applicable), else empty",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Max records to return from results",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetStudentOverviewForTeacherResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
+    "/api/Teacher/GetStudentsForTeacher/{teacherSsn}": {
+      "get": {
+        "tags": ["DrivingLicenseBook"],
+        "summary": "Fetches list of all students assigned to teacher",
+        "parameters": [
+          {
+            "name": "teacherSsn",
+            "in": "path",
+            "description": "SSN of teacher",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "licenseCategory",
+            "in": "query",
+            "description": "Type of driving license",
+            "schema": {
+              "type": "string",
+              "default": "B"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "description": "Position to start from (if applicable), else empty",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Max records to return from results",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetStudentsForTeacherResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
             "content": {
               "application/json": {
                 "schema": {
@@ -2110,6 +2225,162 @@
           }
         }
       }
+    },
+    "/api/TestCenter/NewApplications": {
+      "get": {
+        "tags": ["DrivingLicenseBook"],
+        "summary": "Returns new Digital books or books in process \r\ncreated today. If date range is supplied then \r\nbooks for those dates are fetched.",
+        "parameters": [
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "If not supplied, today is used",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "If not supplied, today is used",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "licenseCategory",
+            "in": "query",
+            "description": "Category B is default",
+            "schema": {
+              "type": "string",
+              "default": "B"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewApplicationsResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success"
+          },
+          "204": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
+    "/api/TestCenter/ConfirmPracticalTestAndUpdateLicence": {
+      "post": {
+        "tags": ["DrivingLicenseBook"],
+        "summary": "Confirm practical driving license test",
+        "parameters": [
+          {
+            "name": "ssn",
+            "in": "query",
+            "description": "Social security number",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "drivingLicenseNumber",
+            "in": "query",
+            "description": "Driving license number",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "description": "Date of passed test",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "hasFinishedDrivingSchoolThree",
+            "in": "query",
+            "description": "If true, has finished driving school three",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2177,10 +2448,56 @@
               "type": "string"
             },
             "nullable": true
+          },
+          "applicationTime": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false,
         "description": ""
+      },
+      "Application": {
+        "type": "object",
+        "properties": {
+          "studentSSN": {
+            "type": "string",
+            "description": "Social security number of student",
+            "nullable": true
+          },
+          "dateOfApplication": {
+            "type": "string",
+            "description": "Registration date",
+            "format": "date-time"
+          },
+          "licenseCategory": {
+            "type": "string",
+            "description": "License category",
+            "nullable": true
+          },
+          "postCode": {
+            "type": "integer",
+            "description": "Students postcode",
+            "format": "int32"
+          },
+          "teacherSSS": {
+            "type": "string",
+            "description": "Teachers social security number",
+            "nullable": true
+          },
+          "schoolSSN": {
+            "type": "string",
+            "description": "Schools social security number",
+            "nullable": true
+          },
+          "licenseNumber": {
+            "type": "integer",
+            "description": "Driver license number",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "AuthenticateModel": {
         "required": ["password", "username"],
@@ -2403,6 +2720,12 @@
             "type": "boolean",
             "description": "Whether driving license book is digital or not (else on paper)",
             "example": true
+          },
+          "licenseNumber": {
+            "type": "integer",
+            "description": "License number",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -2411,10 +2734,9 @@
       "DigitalBookCreateRequestBody": {
         "required": [
           "createdOn",
+          "drivingLicenseNumber",
           "isDigital",
           "licenseCategory",
-          "studentEmail",
-          "studentPrimaryPhoneNumber",
           "studentSsn",
           "teacherSsn"
         ],
@@ -2429,6 +2751,11 @@
             "type": "string",
             "description": "Date registered (yyyy-MM-dd)",
             "example": "2020-01-01"
+          },
+          "drivingLicenseNumber": {
+            "type": "integer",
+            "description": "Student's driving license number",
+            "format": "int32"
           },
           "studentSsn": {
             "type": "string",
@@ -2449,11 +2776,13 @@
           "studentEmail": {
             "type": "string",
             "description": "Student email",
+            "nullable": true,
             "example": "nafn@postur.is"
           },
           "studentPrimaryPhoneNumber": {
             "type": "string",
             "description": "Student primary phone number",
+            "nullable": true,
             "example": "8888888"
           },
           "studentSecondaryPhoneNumber": {
@@ -2972,6 +3301,46 @@
         "additionalProperties": false,
         "description": ""
       },
+      "GetStudentOverviewForTeacherResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StudentShortOverview"
+            },
+            "description": "",
+            "nullable": true
+          },
+          "nextCursor": {
+            "type": "string",
+            "description": "Cursor for the next item that should be fetched",
+            "nullable": true,
+            "example": "aWQ6MTAwNA=="
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetStudentsForTeacherResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DigitalBook"
+            },
+            "description": "",
+            "nullable": true
+          },
+          "nextCursor": {
+            "type": "string",
+            "description": "Cursor for the next item that should be fetched",
+            "nullable": true,
+            "example": "aWQ6MTAwNA=="
+          }
+        },
+        "additionalProperties": false
+      },
       "Lesson": {
         "type": "object",
         "properties": {
@@ -3012,6 +3381,19 @@
         },
         "additionalProperties": false,
         "description": ""
+      },
+      "NewApplicationsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Application"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "PracticalDrivingLesson": {
         "type": "object",
@@ -3553,6 +3935,10 @@
             },
             "nullable": true
           },
+          "applicationTime": {
+            "type": "string",
+            "format": "date-time"
+          },
           "books": {
             "type": "array",
             "items": {
@@ -3574,6 +3960,28 @@
         },
         "additionalProperties": false,
         "description": ""
+      },
+      "StudentShortOverview": {
+        "type": "object",
+        "properties": {
+          "studentId": {
+            "type": "string",
+            "nullable": true
+          },
+          "ssn": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "totalLessonCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
       },
       "TestExamRights": {
         "type": "object",
