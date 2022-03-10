@@ -282,7 +282,6 @@ jobs:
           ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
 
       - name: Docker login to ECR repo
-        if: steps.gather.outcome == 'success'
         run: ./scripts/ci/docker-login-ecr.sh
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
