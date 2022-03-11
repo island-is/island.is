@@ -271,4 +271,11 @@ export const rcCourtRecord = {
       },
     }),
   },
+  nextButtonInfo: {
+    id: 'judicial.system.restriction_cases:court_record.next_button_info',
+    defaultMessage:
+      'Ekki er hægt að halda áfram fyrr en búið er að setja lyktir máls og úrskurðarorð',
+    description:
+      'Notaður sem texti í info panel sem kemur í staðinn fyrir Áfram takk þegar ekki er búið að setja lyktir máls eða úrskurðarorð',
+  },
 }
