@@ -11,4 +11,10 @@ export const EphemeralStateLifeCycle: StateLifeCycle = {
   whenToPrune: 24 * 3600 * 1000,
 } as const
 
+export const DraftStateLifeCycle: StateLifeCycle = {
+  shouldBeListed: true,
+  shouldBePruned: true,
+  whenToPrune: 30 * 24 * 3600 * 1000,
+} as const
+
 export const NO_ANSWER = null
