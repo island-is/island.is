@@ -1,7 +1,8 @@
 import { EmailTemplateGenerator } from '../../../../types'
 import { NationalRegistry } from '../types'
+import { getValueViaPath } from '@island.is/application/core'
 
-export const generateSyslumennNotificationEmail: EmailTemplateGenerator = (
+export const generateSyslumennNotifyErrorEmail: EmailTemplateGenerator = (
   props,
 ) => {
   const {
@@ -14,10 +15,16 @@ export const generateSyslumennNotificationEmail: EmailTemplateGenerator = (
   const nationalRegistryData = application.externalData.nationalRegistry
     ?.data as NationalRegistry
 
-  const subject = 'Umsókn um sakavottorð'
+  const selectedProperty = getValueViaPath(
+    application.answers,
+    'selectProperty.property',
+  ) as { propertyNumber: string }
+
+  const subject = 'Umsókn um veðbókarvottorð'
   const body = `
-      Villa hefur komið upp í samskiptum milli island.is og sýslumanna, vegna kaupa á sakavottorði fyrir ${nationalRegistryData.nationalId}.
-      `
+      Villa hefur komið upp í samskiptum milli island.is og sýslumanna,
+      vegna kaupa á veðbókarvottorði fyrir ${nationalRegistryData.nationalId},
+      fasteignanúmer ${selectedProperty.propertyNumber}.`
 
   return {
     from: {
