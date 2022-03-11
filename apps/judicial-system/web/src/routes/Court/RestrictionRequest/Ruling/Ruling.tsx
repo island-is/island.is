@@ -486,10 +486,7 @@ export const Ruling: React.FC = () => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {`${formatMessage(m.sections.decision.title)} `}
-              <Text as="span" fontWeight="semiBold" color="red600">
-                *
-              </Text>
+              {formatMessage(m.sections.decision.title)}
             </Text>
           </Box>
           <Box marginBottom={5}>
