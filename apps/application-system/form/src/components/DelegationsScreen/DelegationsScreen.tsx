@@ -6,13 +6,15 @@ import { useHistory } from 'react-router-dom'
 import {
   Text,
   Box,
-  Page,
-  Button,
   GridContainer,
+  ActionCard,
+  Stack,
+  Page,
 } from '@island.is/island-ui/core'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { ApplicationTypes } from '@island.is/application/core'
 import { ApplicationLoading } from '../ApplicationsLoading/ApplicationLoading'
+import { format as formatKennitala } from 'kennitala'
 
 type Delegation = {
   type: string
@@ -34,10 +36,9 @@ export const DelegationsScreen = ({
 }: DelegationsScreenProps) => {
   const [allowedDelegations, setAllowedDelegations] = useState<string[]>()
   const history = useHistory()
-
   const { switchUser, userInfo: user } = useAuth()
 
-  // Check if template supports delegations
+  // Check if application supports delegations
   useEffect(() => {
     async function checkDelegations() {
       if (type) {
@@ -53,19 +54,17 @@ export const DelegationsScreen = ({
     checkDelegations()
   }, [type])
 
-  // Only check if user has delegations if the template supports delegations
+  // Check for user delegations if application supports delegations
   const { data: delegations } = useQuery(ACTOR_DELEGATIONS, {
     skip: !allowedDelegations,
   })
 
-  // Check if user has the delegations of the delegation types the application supports
+  // Check for user delegation types supported by the application
   useEffect(() => {
     if (delegations && allowedDelegations) {
       const authActorDelegations: Delegation[] = delegations.authActorDelegations.map(
         (delegation: Delegation) => {
-          if (allowedDelegations.includes(delegation.type)) {
-            return delegation
-          }
+          return allowedDelegations.includes(delegation.type) ?? delegation
         },
       )
       if (authActorDelegations.length <= 0) setDelegationsChecked(true)
@@ -78,70 +77,73 @@ export const DelegationsScreen = ({
     else setDelegationsChecked(true)
   }
 
-  if (delegations && user) {
-    return (
-      <Page>
-        <GridContainer>
-          <Box>
-            <Box marginTop={5} marginBottom={5}>
-              <Text variant="h1">Þessi umsókn styður umboð.</Text>
-            </Box>
-            <Box
-              marginTop={5}
-              marginBottom={5}
-              display="flex"
-              justifyContent="flexEnd"
-            >
-              <Text variant="h1">
-                {user.profile.actor
-                  ? user.profile.actor.name
-                  : user.profile.name}
-              </Text>
-              <Button
-                onClick={() =>
-                  handleClick(
-                    user.profile.actor
-                      ? user.profile.actor.nationalId
-                      : undefined,
-                  )
-                }
-              >
-                Skipta um notenda
-              </Button>
-            </Box>
-            {delegations.authActorDelegations.map((delegation: Delegation) => {
-              if (
-                allowedDelegations &&
-                allowedDelegations.includes(delegation.type)
-              ) {
-                return (
-                  <Box
-                    marginTop={5}
-                    marginBottom={5}
-                    display="flex"
-                    justifyContent="flexEnd"
-                    key={delegation.from.nationalId}
-                  >
-                    <Text variant="h1">{delegation.from.name}</Text>
-                    <Button
-                      onClick={() =>
-                        handleClick(
-                          user.profile.nationalId != delegation.from.nationalId
-                            ? delegation.from.nationalId
-                            : undefined,
-                        )
-                      }
-                    >
-                      Skipta um notenda
-                    </Button>
-                  </Box>
-                )
-              }
-            })}
-          </Box>
-        </GridContainer>
-      </Page>
-    )
-  }
-  return <ApplicationLoading />
+  return delegations && user ? (
+    <Page>
+      <GridContainer>
+        <Box marginTop={5} marginBottom={5}>
+          <Text marginBottom={2} variant="h1">
+            Veldu notanda
+          </Text>
+          <Text>
+            Þessi umsókn styður... lorem ipsum dolor sit amet, consectetur
+            adipiscing elit. Eget eget diam eget rutrum vestibulum, amet, lacus.
+            Ornare volutpat massa ac gravida pellentesque.
+          </Text>
+        </Box>
+        <Stack space={2}>
+          <ActionCard
+            avatar
+            heading={
+              user.profile.actor ? user.profile.actor?.name : user.profile.name
+            }
+            text={
+              'Kennitala: ' +
+              (user.profile.actor
+                ? formatKennitala(user.profile.actor?.nationalId)
+                : formatKennitala(user.profile.nationalId))
+            }
+            cta={{
+              label: 'Hefja umsókn',
+              variant: 'text',
+              size: 'medium',
+              onClick: () =>
+                handleClick(
+                  user.profile.actor
+                    ? user.profile.actor.nationalId
+                    : undefined,
+                ),
+            }}
+          />
+          {delegations.authActorDelegations.map((delegation: Delegation) => {
+            return (
+              allowedDelegations &&
+              allowedDelegations.includes(delegation.type) && (
+                <ActionCard
+                  key={delegation.from.nationalId}
+                  avatar
+                  heading={delegation.from.name}
+                  text={
+                    'Kennitala: ' + formatKennitala(delegation.from.nationalId)
+                  }
+                  cta={{
+                    label: 'Hefja umsókn',
+                    variant: 'text',
+                    size: 'medium',
+                    onClick: () =>
+                      handleClick(
+                        user.profile.nationalId !== delegation.from.nationalId
+                          ? delegation.from.nationalId
+                          : undefined,
+                      ),
+                  }}
+                />
+              )
+            )
+          })}
+        </Stack>
+      </GridContainer>
+    </Page>
+  ) : (
+    <ApplicationLoading />
+  )
 }
