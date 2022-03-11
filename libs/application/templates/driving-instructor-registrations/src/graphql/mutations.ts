@@ -5,9 +5,7 @@ export const RegisterDrivingLesson = gql`
     $input: CreatePracticalDrivingLessonInput!
   ) {
     drivingBookCreatePracticalDrivingLesson(input: $input) {
-      data {
-        id
-      }
+      id
     }
   }
 `

@@ -20,7 +20,10 @@ import cn from 'classnames'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useQuery, useMutation } from '@apollo/client'
-import { StudentOverView, Lesson } from '../../types/schema'
+import {
+  DrivingBookStudentOverview,
+  PracticalDrivingLesson,
+} from '../../types/schema'
 import { ViewSingleStudentQuery } from '../../graphql/queries'
 import {
   RegisterDrivingLesson,
@@ -32,11 +35,15 @@ import { Application } from '@island.is/application/core'
 
 interface Props {
   application: Application
-  studentSsn: string
+  studentNationalId: string
   setShowTable: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
+const ViewStudent = ({
+  application,
+  studentNationalId,
+  setShowTable,
+}: Props) => {
   const { formatMessage } = useLocale()
 
   const {
@@ -46,7 +53,7 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
   } = useQuery(ViewSingleStudentQuery, {
     variables: {
       input: {
-        ssn: studentSsn,
+        nationalId: studentNationalId,
       },
     },
     notifyOnNetworkStatusChange: true,
@@ -66,23 +73,23 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
   const [date, setDate] = useState<string>('')
   const [newRegId, setNewRegId] = useState<undefined | string>(undefined)
   const [editingRegistration, setEditingRegistration] = useState<
-    undefined | Lesson
+    undefined | PracticalDrivingLesson
   >(undefined)
   const [dateError, setDateError] = useState(false)
-  const [student, setStudent] = useState<undefined | StudentOverView>(
-    studentDataResponse ? studentDataResponse.drivingBookStudent.data : {},
-  )
+  const [student, setStudent] = useState<
+    undefined | DrivingBookStudentOverview
+  >(studentDataResponse ? studentDataResponse.drivingBookStudent : {})
 
   const userNationalId = (application.externalData.nationalRegistry?.data as {
     nationalId?: string
   })?.nationalId
 
   const studentRegistrations = student?.book
-    ?.teachersAndLessons as Array<Lesson>
+    ?.teachersAndLessons as Array<PracticalDrivingLesson>
 
   useEffect(() => {
     setStudent(
-      studentDataResponse ? studentDataResponse.drivingBookStudent.data : {},
+      studentDataResponse ? studentDataResponse.drivingBookStudent : {},
     )
   }, [studentDataResponse])
 
@@ -108,13 +115,11 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
     const res = await registerLesson({
       variables: {
         input: {
-          practicalDrivingLessonCreateRequestBody: {
-            createdOn: date,
-            teacherSsn: userNationalId,
-            minutes: minutes,
-            bookId: student?.book?.id,
-            comments: '',
-          },
+          createdOn: date,
+          teacherNationalId: userNationalId,
+          minutes: minutes,
+          bookId: student?.book?.id,
+          comments: '',
         },
       },
     }).catch(() => {
@@ -123,7 +128,7 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
 
     if (res) {
       setNewRegId(
-        res.data.drivingBookCreatePracticalDrivingLesson.data.id.toUpperCase(),
+        res.data.drivingBookCreatePracticalDrivingLesson.id.toUpperCase(),
       )
       resetFields()
     }
@@ -134,11 +139,9 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
       variables: {
         input: {
           id: editingRegistration?.id?.toLowerCase(),
-          practicalDrivingLessonUpdateRequestBody: {
-            minutes: minutes,
-            createdOn: date,
-            comments: '',
-          },
+          minutes: minutes,
+          createdOn: date,
+          comments: '',
         },
       },
     }).catch(() => {
@@ -179,7 +182,7 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
             </GridColumn>
             <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
               <Text variant="h4">{formatMessage(m.viewStudentNationalId)}</Text>
-              <Text variant="default">{student.ssn}</Text>
+              <Text variant="default">{student.nationalId}</Text>
             </GridColumn>
             <GridColumn span={['12/12', '4/12']} paddingBottom={[3, 0]}>
               <Text variant="h4">
@@ -380,7 +383,7 @@ const ViewStudent = ({ application, studentSsn, setShowTable }: Props) => {
                               {entry.lessonTime}
                             </T.Data>
                             <T.Data box={{ className: bgr }}>
-                              {entry.teacherSsn === userNationalId && (
+                              {entry.teacherNationalId === userNationalId && (
                                 <Box display={'flex'}>
                                   <Button
                                     variant="text"

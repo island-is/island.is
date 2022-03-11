@@ -24,7 +24,7 @@ interface Data {
 interface Student {
   id: string
   name: string
-  ssn: string
+  nationalId: string
   totalLessonCount: number
 }
 
@@ -35,10 +35,9 @@ const StudentsOverview = ({ application }: Data) => {
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
   const { data, loading } = useQuery(InstructorsStudentsQuery)
-
   const [pageStudents, setPageStudents] = useState(
     data
-      ? (data.drivingBookStudentListByTeacherSsn.data as Array<Student>)
+      ? (data.drivingBookStudentListByTeacherNationalId as Array<Student>)
       : [],
   )
 
@@ -57,21 +56,21 @@ const StudentsOverview = ({ application }: Data) => {
 
   const filter = (searchTerm: string) => {
     if (searchTerm.length) {
-      const filteredList = data.drivingBookStudentListByTeacherSsn.data?.filter(
+      const filteredList = data.drivingBookStudentListByTeacherNationalId?.filter(
         (student: Student) =>
           student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          student.ssn.includes(searchTerm),
+          student.nationalId.includes(searchTerm),
       )
 
       handlePagination(1, filteredList)
     } else {
-      handlePagination(1, data?.drivingBookStudentListByTeacherSsn.data)
+      handlePagination(1, data?.drivingBookStudentListByTeacherNationalId)
     }
   }
 
   useEffect(() => {
     filter(searchTerm)
-  }, [data?.drivingBookStudentListByTeacherSsn?.data, searchTerm])
+  }, [data?.drivingBookStudentListByTeacherNationalId, searchTerm])
 
   return (
     <Box marginBottom={10}>
@@ -119,7 +118,7 @@ const StudentsOverview = ({ application }: Data) => {
                   return (
                     <T.Row key={key}>
                       <T.Data>{student.name}</T.Data>
-                      <T.Data>{student.ssn}</T.Data>
+                      <T.Data>{student.nationalId}</T.Data>
                       <T.Data box={{ textAlign: 'center' }}>
                         {student.totalLessonCount}
                       </T.Data>
@@ -128,7 +127,7 @@ const StudentsOverview = ({ application }: Data) => {
                           variant="text"
                           size="small"
                           onClick={() => {
-                            setStudentId(student.ssn)
+                            setStudentId(student.nationalId)
                             setShowTable(false)
                           }}
                         >
@@ -171,7 +170,7 @@ const StudentsOverview = ({ application }: Data) => {
       ) : (
         <ViewStudent
           application={application}
-          studentSsn={studentId}
+          studentNationalId={studentId}
           setShowTable={setShowTable}
         />
       )}

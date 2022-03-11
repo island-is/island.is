@@ -108,7 +108,7 @@ export class DrivingLicenseBookService {
     const {
       data,
     } = await api.apiTeacherGetStudentOverviewForTeacherTeacherSsnGet({
-      teacherSsn: '1003602259', //user.nationalId,
+      teacherSsn: user.nationalId,
     })
     if (!data) {
       return null

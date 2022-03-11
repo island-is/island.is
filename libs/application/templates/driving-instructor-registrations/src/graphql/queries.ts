@@ -3,31 +3,29 @@ import gql from 'graphql-tag'
 export const ViewSingleStudentQuery = gql`
   query drivingBookStudent($input: StudentInput!) {
     drivingBookStudent(input: $input) {
-      data {
+      id
+      name
+      nationalId
+      book {
         id
-        name
-        ssn
-        book {
+        isDigital
+        totalLessonTime
+        totalLessonCount
+        testResults {
+          hasPassed
+        }
+        teachersAndLessons {
           id
-          isDigital
-          totalLessonTime
-          totalLessonCount
-          testResults {
-            hasPassed
-          }
-          teachersAndLessons {
-            id
-            registerDate
-            lessonTime
-            teacherSsn
-            teacherName
-          }
-          drivingSchoolExams {
-            schoolTypeName
-          }
-          testResults {
-            testTypeName
-          }
+          registerDate
+          lessonTime
+          teacherNationalId
+          teacherName
+        }
+        drivingSchoolExams {
+          schoolTypeName
+        }
+        testResults {
+          testTypeName
         }
       }
     }
@@ -35,14 +33,12 @@ export const ViewSingleStudentQuery = gql`
 `
 
 export const InstructorsStudentsQuery = gql`
-  query drivingBookStudentListByTeacherSsn {
-    drivingBookStudentListByTeacherSsn {
-      data {
-        id
-        name
-        ssn
-        totalLessonCount
-      }
+  query drivingBookStudentListByTeacherNationalId {
+    drivingBookStudentListByTeacherNationalId {
+      id
+      name
+      nationalId
+      totalLessonCount
     }
   }
 `
@@ -50,11 +46,9 @@ export const InstructorsStudentsQuery = gql`
 export const FindStudentQuery = gql`
   query drivingBookStudentList($input: StudentListInput!) {
     drivingBookStudentList(input: $input) {
-      data {
-        id
-        name
-        ssn
-      }
+      id
+      name
+      nationalId
     }
   }
 `

@@ -19,7 +19,7 @@ const FindStudentModal = ({
 }: FindStudentsModalProps) => {
   const { formatMessage } = useLocale()
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [studentSsn, setStudentSsn] = useState('')
+  const [studentNationalId, setStudentNationalId] = useState('')
   const [studentNotFoundError, setStudentNotFoundError] = useState(false)
   const [isSearching, setIsSearching] = useState(false)
 
@@ -28,7 +28,7 @@ const FindStudentModal = ({
     {
       variables: {
         input: {
-          key: studentSsn,
+          key: studentNationalId,
         },
       },
       notifyOnNetworkStatusChange: true,
@@ -47,8 +47,8 @@ const FindStudentModal = ({
 
   useEffect(() => {
     if (isSearching && findStudent) {
-      if (findStudent.drivingBookStudentList.data.length) {
-        viewStudent(studentSsn)
+      if (findStudent.drivingBookStudentList.length) {
+        viewStudent(studentNationalId)
         setIsModalOpen(false)
       } else {
         setStudentNotFoundError(true)
@@ -101,7 +101,7 @@ const FindStudentModal = ({
                 hasError={studentNotFoundError}
                 errorMessage="Enginn nemandi skráður á eftirfarandi kennitölu"
                 onChange={(v) => {
-                  setStudentSsn(v.target.value)
+                  setStudentNationalId(v.target.value)
                 }}
               />
             </Box>
