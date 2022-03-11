@@ -1769,7 +1769,7 @@
               "yarn start api",
               "yarn start application-system-api",
               "yarn start application-system-form",
-              "kubectl port-forward svc/socat-soffia 8443:443 -n socat",
+              "scripts/run-soffia-proxy.sh",
               "scripts/run-xroad-proxy.sh"
             ],
             "parallel": true
