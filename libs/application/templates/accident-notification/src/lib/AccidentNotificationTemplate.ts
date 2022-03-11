@@ -2,6 +2,7 @@ import {
   Application,
   ApplicationConfigurations,
   ApplicationContext,
+  ApplicationFeatures,
   ApplicationRole,
   ApplicationStateSchema,
   ApplicationTemplate,
@@ -41,6 +42,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
   name: application.general.name,
   institution: application.general.institutionName,
   readyForProduction: true,
+  featureFlag: ApplicationFeatures.accidentNotification,
   translationNamespaces: [
     ApplicationConfigurations.AccidentNotification.translation,
   ],

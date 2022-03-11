@@ -132,6 +132,7 @@ export class ApplicationController {
 
     await this.validationService.validateThatApplicationIsReady(
       existingApplication as BaseApplication,
+      user,
     )
 
     return existingApplication
@@ -199,7 +200,7 @@ export class ApplicationController {
         application.typeId,
       )
 
-      if (this.validationService.isTemplateReady(applicationTemplate)) {
+      if (this.validationService.isTemplateReady(user, applicationTemplate)) {
         templateTypeToIsReady[application.typeId] = true
         filteredApplications.push(application)
       } else {
@@ -340,7 +341,7 @@ export class ApplicationController {
       )
     }
 
-    this.validationService.validateThatTemplateIsReady(template)
+    this.validationService.validateThatTemplateIsReady(user, template)
 
     const assignees = [user.nationalId]
 
@@ -411,6 +412,7 @@ export class ApplicationController {
       existingApplication,
       newAnswers,
       intl.formatMessage,
+      user,
     )
 
     const mergedAnswers = mergeAnswers(existingApplication.answers, newAnswers)
@@ -546,6 +548,7 @@ export class ApplicationController {
       existingApplication as BaseApplication,
       permittedAnswers,
       intl.formatMessage,
+      user,
     )
 
     const mergedAnswers = mergeAnswers(

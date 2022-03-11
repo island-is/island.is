@@ -2,12 +2,13 @@ import { Injectable, Inject } from '@nestjs/common'
 import { ValidationFailed } from '@island.is/nest/problem'
 import {
   Application,
+  ApplicationFeatures,
   ApplicationTemplateHelper,
   FormatMessage,
   FormValue,
   validateAnswers,
 } from '@island.is/application/core'
-import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import {
   BadRequestException,
   ForbiddenException,
@@ -19,6 +20,7 @@ import { environment } from '../../../../environments'
 import { PopulateExternalDataDto } from '../dto/populateExternalData.dto'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { User } from '@island.is/auth-nest-tools'
 
 const isRunningOnProductionEnvironment =
   environment.production === true &&
@@ -36,6 +38,7 @@ export class ApplicationValidationService {
 
   async validateThatApplicationIsReady(
     application: Application,
+    user: User,
   ): Promise<void> {
     const applicationTemplate = await getApplicationTemplateByTypeId(
       application.typeId,
@@ -47,24 +50,42 @@ export class ApplicationValidationService {
       )
     }
 
-    this.validateThatTemplateIsReady(applicationTemplate)
+    this.validateThatTemplateIsReady(user, applicationTemplate)
   }
 
-  async isTemplateFeatureFlaggedReady(featureFlag) {
-    return (await this.featureFlagService.getValue(
+  async isTemplateFeatureFlaggedReady(
+    featureFlag: ApplicationFeatures,
+    user: User,
+  ) {
+    const feature = await this.featureFlagService.getValue(
       featureFlag,
       false,
-    )) as boolean
+      user,
+    )
+    if (!feature) {
+      return false
+    }
+    return feature
   }
 
-  isTemplateReady(
+  // If configcat flag is present use the return from that to determine if the template is ready
+  // if configcat flag is not present, use the readyforprod flag
+  // possibly we will remove the readyforprod flag right away
+  async isTemplateReady(
+    user: User,
     template: Pick<
       Unwrap<typeof getApplicationTemplateByTypeId>,
       'readyForProduction' | 'featureFlag'
     >,
-  ): boolean {
-    if (template.featureFlag) {
-      return this.isTemplateFeatureFlaggedReady(template.featureFlag)
+  ): Promise<boolean> {
+    if (isRunningOnProductionEnvironment && template && template.featureFlag) {
+      const feature = this.isTemplateFeatureFlaggedReady(
+        template.featureFlag,
+        user,
+      )
+      if (!feature) {
+        return false
+      }
     }
 
     if (isRunningOnProductionEnvironment && !template.readyForProduction) {
@@ -75,9 +96,10 @@ export class ApplicationValidationService {
   }
 
   validateThatTemplateIsReady(
+    user: User,
     template: Unwrap<typeof getApplicationTemplateByTypeId>,
   ): void {
-    if (!this.isTemplateReady(template)) {
+    if (!this.isTemplateReady(user, template)) {
       throw new BadRequestException(
         `Template ${template.type} is not ready for production`,
       )
@@ -88,6 +110,7 @@ export class ApplicationValidationService {
     application: Pick<Application, 'typeId'>,
     newAnswers: FormValue,
     formatMessage: FormatMessage,
+    user: User,
   ): Promise<void> {
     const applicationTemplate = await getApplicationTemplateByTypeId(
       application.typeId,
@@ -99,7 +122,7 @@ export class ApplicationValidationService {
       )
     }
 
-    this.validateThatTemplateIsReady(applicationTemplate)
+    this.validateThatTemplateIsReady(user, applicationTemplate)
 
     const schemaFormValidationError = validateAnswers({
       dataSchema: applicationTemplate.dataSchema,

@@ -26,6 +26,7 @@ import { ApplicationLifeCycleService } from './lifecycle/application-lifecycle.s
 import { LoggingModule } from '@island.is/logging'
 import { TemplateApiApplicationService } from './template-api.service'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
+import { ApplicationValidationService } from './tools/applicationTemplateValidation.service'
 
 let BullModule: DynamicModule
 
@@ -79,6 +80,7 @@ if (process.env.INIT_SCHEMA === 'true') {
     },
     AwsService,
     ApplicationAccessService,
+    ApplicationValidationService,
     ApplicationLifeCycleService,
   ],
   exports: [ApplicationService, APPLICATION_CONFIG, AwsService],
