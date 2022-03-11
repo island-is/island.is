@@ -14,6 +14,7 @@ Run the following and start developing:
 ```sh
 yarn nx run clients-driving-license:dev
 ```
+This command bundles updating the api definition and regenerating the client.
 
 ## Usage
 
