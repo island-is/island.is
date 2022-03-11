@@ -18,6 +18,7 @@ import {
   DataProtectionComplaintService,
   PSignSubmissionService,
   ExamplePaymentActionsService,
+  ComplaintsToAlthingiOmbudsmanTemplateService,
   MortgageCertificateSubmissionService,
 } from './templates'
 
@@ -56,6 +57,7 @@ export class TemplateAPIService {
     private readonly dataProtectionComplaintService: DataProtectionComplaintService,
     private readonly pSignSubmissionService: PSignSubmissionService,
     private readonly examplePaymentActionsService: ExamplePaymentActionsService,
+    private readonly complaintsToAlthingiOmbudsman: ComplaintsToAlthingiOmbudsmanTemplateService,
     private readonly mortgageCertificateSubmissionService: MortgageCertificateSubmissionService,
   ) {}
 
@@ -77,6 +79,7 @@ export class TemplateAPIService {
       | DataProtectionComplaintService
       | PSignSubmissionService
       | ExamplePaymentActionsService
+      | ComplaintsToAlthingiOmbudsmanTemplateService
       | MortgageCertificateSubmissionService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
@@ -189,6 +192,11 @@ export class TemplateAPIService {
       case ApplicationTypes.EXAMPLE_PAYMENT:
         return this.tryRunningActionOnService(
           this.examplePaymentActionsService,
+          action,
+        )
+      case ApplicationTypes.COMPLAINTS_TO_ALTHINGI_OMBUDSMAN:
+        return this.tryRunningActionOnService(
+          this.complaintsToAlthingiOmbudsman,
           action,
         )
       case ApplicationTypes.MORTGAGE_CERTIFICATE:
