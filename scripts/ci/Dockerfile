@@ -1,5 +1,5 @@
 # This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
-FROM node:14.17.0-alpine3.13 as deps
+FROM public.ecr.aws/docker/library/node:14.19.0-alpine as deps
 
 RUN apk add -U git
 
@@ -23,7 +23,7 @@ ENV NODE_OPTIONS="--max-old-space-size=4096"
 
 RUN yarn run build ${APP} --prod
 
-FROM node:14.17.0-alpine3.13 as output-base
+FROM public.ecr.aws/docker/library/node:14.19.0-alpine as output-base
 # this is base image for containers that are to be deployed
 ARG GIT_BRANCH
 ARG GIT_SHA
@@ -68,7 +68,7 @@ COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ENTRYPOINT [ "node", "main.js" ]
 
-FROM nginx:1.21.0-alpine as output-static
+FROM public.ecr.aws/nginx/nginx:1.21.0-alpine as output-static
 
 ARG APP
 ARG APP_DIST_HOME
