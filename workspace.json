@@ -995,7 +995,7 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-              "kubectl -n socat port-forward svc/socat-xroad 8081:80"
+              "scripts/run-xroad-proxy.sh"
             ],
             "parallel": true
           }
@@ -1772,7 +1772,7 @@
               "yarn start application-system-api",
               "yarn start application-system-form",
               "kubectl port-forward svc/socat-soffia 8443:443 -n socat",
-              "kubectl port-forward svc/socat-xroad 8081:80 -n socat"
+              "scripts/run-xroad-proxy.sh"
             ],
             "parallel": true
           }
