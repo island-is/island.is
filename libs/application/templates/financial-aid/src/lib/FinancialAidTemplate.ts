@@ -103,7 +103,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: {
-                answers: ['spouseIncome'],
+                answers: ['spouseIncome', 'spouseIncomeFiles'],
               },
             },
             {

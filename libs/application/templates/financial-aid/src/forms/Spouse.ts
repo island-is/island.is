@@ -43,7 +43,7 @@ export const Spouse: Form = buildForm({
       title: m.incomeFilesForm.general.sectionTitle,
       children: [
         buildCustomField({
-          id: Routes.INCOMEFILES,
+          id: Routes.SPOUSEINCOMEFILES,
           title: m.incomeFilesForm.general.pageTitle,
           component: 'IncomeFilesForm',
         }),
