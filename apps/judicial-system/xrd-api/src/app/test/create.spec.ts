@@ -89,7 +89,7 @@ describe('AppController - Greate', () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 400,
-        message: 'Some message',
+        json: jest.fn().mockResolvedValueOnce({ detail: 'Some detail' }),
       })
 
       then = await givenWhenThen(caseToCreate)
@@ -97,7 +97,7 @@ describe('AppController - Greate', () => {
 
     it('should throw BadRequestException', () => {
       expect(then.error).toBeInstanceOf(BadRequestException)
-      expect(then.error.message).toBe('Failed to create a new case')
+      expect(then.error.message).toBe('Some detail')
     })
   })
 
@@ -109,6 +109,7 @@ describe('AppController - Greate', () => {
       const mockFetch = fetch as jest.Mock
       mockFetch.mockResolvedValueOnce({
         ok: false,
+        json: jest.fn().mockResolvedValueOnce({ detail: 'Some detail' }),
       })
 
       then = await givenWhenThen(caseToCreate)
