@@ -114,10 +114,14 @@ const FormProvider = ({ children }: Props) => {
   }, [getCase, id, state])
 
   useEffect(() => {
+    let timeout: undefined | NodeJS.Timeout
     if (state === 'up-to-date') {
       // The case may change on the server so we only stay up to date for a short time
       // The time needs to be long enough to let hooks take appropriate actions, for instance auto fill
-      setTimeout(() => setState('ready'), 1000)
+      timeout = setTimeout(() => setState('ready'), 1000)
+    }
+    return () => {
+      timeout && clearInterval(timeout)
     }
   }, [state])
 
