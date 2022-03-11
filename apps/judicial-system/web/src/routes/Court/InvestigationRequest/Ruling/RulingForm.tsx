@@ -34,11 +34,10 @@ interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
-  isCaseUpToDate: boolean
 }
 
 const RulingForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading, isCaseUpToDate } = props
+  const { workingCase, setWorkingCase, isLoading } = props
   const { user } = useContext(UserContext)
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
@@ -267,7 +266,6 @@ const RulingForm: React.FC<Props> = (props) => {
           <RulingInput
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
-            isCaseUpToDate={isCaseUpToDate}
             isRequired
           />
         </Box>

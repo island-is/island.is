@@ -52,6 +52,7 @@ import {
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
 import * as Constants from '@island.is/judicial-system/consts'
+import { autofillRuling } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
 
 export const Ruling: React.FC = () => {
   const {
@@ -139,6 +140,8 @@ export const Ruling: React.FC = () => {
       if (theCase.legalArguments) {
         autofill('courtLegalArguments', theCase.legalArguments, theCase)
       }
+
+      autofillRuling(workingCase, autofill, formatMessage)
     }
 
     if (
@@ -479,7 +482,6 @@ export const Ruling: React.FC = () => {
           <RulingInput
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
-            isCaseUpToDate={isCaseUpToDate}
             isRequired
           />
         </Box>
