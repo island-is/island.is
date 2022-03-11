@@ -36,7 +36,7 @@ const CollapsibleProfileUnit = ({
         })}
         onClick={() => setToggle((toggle) => !toggle)}
       >
-        <Box className={`${styles.toggleWrapper} `}>
+        <Box className={styles.toggleWrapper}>
           <Box
             background="purple100"
             display="flex"

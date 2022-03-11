@@ -20,7 +20,6 @@ import {
   GenerateName,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { useApplicationState } from '@island.is/financial-aid-web/veita/src/utils/useApplicationState'
-import { style } from '@vanilla-extract/css'
 
 interface ApplicantProps {
   application: Application
@@ -148,7 +147,6 @@ const ApplicationHeader = ({
           </button>
 
           <Box printHidden>
-            {' '}
             <Text variant="small">·</Text>
           </Box>
         </Box>
