@@ -15,6 +15,7 @@ import { environment } from '../../../../environments'
 import { FileService } from '../files/file.service'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import type { User } from '@island.is/auth-nest-tools'
+import { AppModule } from '../../../app.module'
 
 let app: INestApplication
 
@@ -71,16 +72,16 @@ const nationalIdExcemptForConfigCat = '1234567890'
 let server: request.SuperTest<request.Test>
 
 beforeAll(async () => {
-  app = await setup({
+  app = await setup(AppModule, {
     override: (builder) =>
       builder
-        .overrideProvider(FeatureFlagService)
-        .useClass(MockFeatureFlagService)
         .overrideProvider(ContentfulRepository)
         .useClass(MockContentfulRepository)
         .overrideProvider(EmailService)
         .useClass(MockEmailService)
         .overrideGuard(IdsUserGuard)
+        .overrideProvider(FeatureFlagService)
+        .useClass(MockFeatureFlagService)
         .useValue(
           new MockAuthGuard({
             nationalId,

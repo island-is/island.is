@@ -4,9 +4,9 @@ export const notifications = {
   readyForCourt: defineMessages({
     prosecutorHtml: {
       id:
-        'judicial.system.backend:notifications.ready_for_court.prosecutor_html',
+        'judicial.system.backend:notifications.ready_for_court.prosecutor_html_v1',
       defaultMessage:
-        'Þú hefur sent kröfu um {caseType} á {courtName} vegna LÖKE máls {policeCaseNumber}. Skjalið er aðgengilegt undir málinu í Réttarvörslugátt.',
+        'Þú hefur sent kröfu um {caseType} á {courtName} vegna LÖKE máls {policeCaseNumber}. Skjalið er aðgengilegt undir {linkStart}málinu í Réttarvörslugátt{linkEnd}.',
       description:
         'Notaður sem texti í pósti til ákæranda varðandi kröfu sem hefur verið send á héraðsdómara',
     },
@@ -48,12 +48,12 @@ export const notifications = {
       description:
         'Notaður sem texti í pósti til sækjanda vegna undirritunar úrskúrðar ef ekki tókst að vista úrskurð í AWS S3',
     },
-    courtBodyAttachment: {
-      id:
-        'judicial.system.backend:notifications.signed_ruling.court_body_attachment',
-      defaultMessage: 'Ekki tókst að vista meðfylgjandi skjal í Auði.',
+    courtBody: {
+      id: 'judicial.system.backend:notifications.signed_ruling.court_body',
+      defaultMessage:
+        'Ekki tókst að vista þingbók og/eða úrskurð í máli {courtCaseNumber} í Auði.<br /><br />Skjöl málsins eru aðengileg á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}.',
       description:
-        'Notaður sem texti í pósti til dómara og dómritara vegna undirritunar úrskúrðar ef ekki tókst að vista úrskurð í Auði',
+        'Notaður sem texti í pósti til dómara og dómritara vegna undirritunar úrskúrðar ef ekki tókst að vista þingbók eða úrskurð í Auði',
     },
     defenderBodyAttachment: {
       id:

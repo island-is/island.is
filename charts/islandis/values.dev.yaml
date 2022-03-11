@@ -52,7 +52,6 @@ air-discount-scheme-api:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/air-discount-scheme/api/CONTENTFUL_ACCESS_TOKEN'
     DEVELOPERS: '/k8s/air-discount-scheme/api/DEVELOPERS'
-    SENTRY_DSN: '/k8s/air-discount-scheme-api/SENTRY_DSN'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -152,7 +151,6 @@ air-discount-scheme-backend:
     NATIONAL_REGISTRY_URL: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_URL'
     NATIONAL_REGISTRY_USERNAME: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_USERNAME'
     NORLANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/NORLANDAIR_API_KEY'
-    SENTRY_DSN: '/k8s/air-discount-scheme-backend/SENTRY_DSN'
     VEGAGERDIN_IDS_CLIENTS_SECRET: '/k8s/air-discount-scheme-backend/VEGAGERDIN_IDS_CLIENTS_ADS_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
@@ -1185,7 +1183,7 @@ service-portal:
   enabled: true
   env:
     BASEPATH: '/minarsidur'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   grantNamespaces:
@@ -1215,15 +1213,15 @@ service-portal:
   namespace: 'service-portal'
   replicaCount:
     default: 2
-    max: 3
+    max: 20
     min: 2
   resources:
     limits:
+      cpu: '400m'
+      memory: '512Mi'
+    requests:
       cpu: '200m'
       memory: '256Mi'
-    requests:
-      cpu: '100m'
-      memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -1239,7 +1237,7 @@ service-portal-api:
     DB_USER: 'service_portal_api'
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
-    NODE_OPTIONS: '--max-old-space-size=464'
+    NODE_OPTIONS: '--max-old-space-size=976'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_PORTAL_BASE_URL: 'https://beta.dev01.devland.is/minarsidur'
   grantNamespaces:
@@ -1285,15 +1283,15 @@ service-portal-api:
     fsGroup: 65534
   replicaCount:
     default: 2
-    max: 3
+    max: 30
     min: 2
   resources:
     limits:
+      cpu: '800m'
+      memory: '1024Mi'
+    requests:
       cpu: '400m'
       memory: '512Mi'
-    requests:
-      cpu: '100m'
-      memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
@@ -1304,7 +1302,6 @@ service-portal-api:
     NOVA_PASSWORD: '/k8s/gjafakort/NOVA_PASSWORD'
     NOVA_URL: '/k8s/service-portal-api/NOVA_URL'
     NOVA_USERNAME: '/k8s/gjafakort/NOVA_USERNAME'
-    SENTRY_DSN: '/k8s/service-portal/SENTRY_DSN'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1575,6 +1572,7 @@ user-notification-worker:
     - 'node'
   enabled: true
   env:
+    CONTENTFUL_HOST: 'preview.contentful.com'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     IDENTITY_SERVER_PATH: 'https://identity-server.dev01.devland.is'
     MAIN_QUEUE_NAME: 'user-notification'

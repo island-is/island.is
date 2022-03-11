@@ -1,39 +1,25 @@
 import format from 'date-fns/format'
+import differenceInMonths from 'date-fns/differenceInMonths'
+import differenceInDays from 'date-fns/differenceInDays'
+import differenceInYears from 'date-fns/differenceInYears'
+import isAfter from 'date-fns/isAfter'
+
 import { dateFormat } from '@island.is/shared/constants'
-
-const MS_PER_DAY = 24 * 60 * 60 * 1000
-
-export function daysInMonth(month: number, year: number) {
-  return new Date(year, month, 0).getDate()
-}
 
 export const toDate = (seconds: string) => {
   const t = new Date(+seconds)
   return format(t, dateFormat.is)
 }
 
-export const getDaysBetween = (currentDate: Date, date: Date) => {
-  return (date.getTime() - currentDate.getTime()) / MS_PER_DAY
-}
-
-export const getMonthsBetween = (currentDate: Date, date: Date) => {
-  let months
-  months = (date.getFullYear() - currentDate.getFullYear()) * 12
-  months -= currentDate.getMonth()
-  months += date.getMonth()
-  return months <= 0 ? 0 : months
-}
-
-export const getYearsBetween = (currentDate: Date, date: Date) => {
-  return date.getFullYear() - currentDate.getFullYear()
-}
-
 export const getExpiresIn = (currentDate: Date, date: Date) => {
-  const years = getYearsBetween(currentDate, date)
+  const years = differenceInYears(date, currentDate)
   if (years < 1) {
-    const months = getMonthsBetween(currentDate, date)
+    const months = differenceInMonths(date, currentDate)
     if (months < 1) {
-      return { key: 'days', value: getDaysBetween(currentDate, date) }
+      return {
+        key: 'days',
+        value: differenceInDays(date, currentDate),
+      }
     } else if (months <= 6) {
       return { key: 'months', value: months }
     } else {
@@ -44,5 +30,5 @@ export const getExpiresIn = (currentDate: Date, date: Date) => {
 }
 
 export const isExpired = (currentDate: Date, date: Date) => {
-  return date.getTime() <= currentDate.getTime()
+  return !isAfter(date, currentDate)
 }

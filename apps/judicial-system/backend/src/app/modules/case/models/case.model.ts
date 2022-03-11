@@ -46,7 +46,7 @@ export class Case extends Model<Case> {
   id!: string
 
   /**********
-   * The date and time the case was created in the database
+   * The date and time the case was created in the Database
    **********/
   @CreatedAt
   @ApiProperty()
@@ -535,24 +535,14 @@ export class Case extends Model<Case> {
   courtDocuments?: string[]
 
   /**********
-   * Bookings about the accused
+   * Bookings during court session
    **********/
   @Column({
     type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
-  accusedBookings?: string
-
-  /**********
-   * The presentations for both parties
-   **********/
-  @Column({
-    type: DataType.TEXT,
-    allowNull: true,
-  })
-  @ApiProperty()
-  litigationPresentations?: string
+  sessionBookings?: string
 
   /**********
    * The case facts as seen by the prosecutor - autofilled from caseFacts - possibly modified
@@ -564,6 +554,16 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   courtCaseFacts?: string
+
+  /**********
+   * Introduction to the case
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiProperty()
+  introduction?: string
 
   /**********
    * The legal arguments presented by the prosecutor - autofilled from legalArguments -

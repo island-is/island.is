@@ -12,6 +12,7 @@ import { ProblemModule } from '@island.is/nest/problem'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ApplicationModule } from './modules/application/application.module'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
+import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
         SyslumennClientConfig,
         XRoadConfig,
         FeatureFlagConfig,
+        NationalRegistryClientConfig,
       ],
     }),
   ],

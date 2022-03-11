@@ -158,13 +158,13 @@ export class Case implements TCase {
   readonly courtDocuments?: string[]
 
   @Field({ nullable: true })
-  readonly accusedBookings?: string
-
-  @Field({ nullable: true })
-  readonly litigationPresentations?: string
+  readonly sessionBookings?: string
 
   @Field({ nullable: true })
   readonly courtCaseFacts?: string
+
+  @Field({ nullable: true })
+  readonly introduction?: string
 
   @Field({ nullable: true })
   readonly courtLegalArguments?: string

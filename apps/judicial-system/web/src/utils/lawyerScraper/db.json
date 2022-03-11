@@ -1405,12 +1405,6 @@
       "phoneNr": "4604500"
     },
     {
-      "name": "Einar Karl Hallvarðsson",
-      "practice": "Embætti ríkislögmanns",
-      "email": "einarkarl@rlm.is",
-      "phoneNr": "5458490"
-    },
-    {
       "name": "Einar Kristján Jónsson",
       "practice": "Landsbankinn hf.",
       "email": "einarkj@landsbanki.is",
@@ -1448,8 +1442,8 @@
     },
     {
       "name": "Einar Örn Davíðsson",
-      "practice": "",
-      "email": "einarorndavidsson@gmail.com",
+      "practice": "Davíðsson lögfræðistofa ehf.",
+      "email": "einarorn@dlf.is",
       "phoneNr": "7771100"
     },
     {
@@ -2120,7 +2114,7 @@
     },
     {
       "name": "Guðmundur Benediktsson",
-      "practice": "Lagarök lögmannsstofa.",
+      "practice": "",
       "email": "gudmundur.benediktsson@gmail.com",
       "phoneNr": "5881177"
     },
@@ -3471,7 +3465,7 @@
     {
       "name": "Jóhann Örn Helgason",
       "practice": "JH lögmannsstofa",
-      "email": "jhlogmannsstofa@gmail.com",
+      "email": "johann@jhlegal.is",
       "phoneNr": "6638765"
     },
     {
@@ -4179,7 +4173,7 @@
     {
       "name": "Leifur Valentín Gunnarsson",
       "practice": "LMG lögmenn",
-      "email": "leifur1992@gmail.com",
+      "email": "leifur@lmg.is",
       "phoneNr": "5111190"
     },
     {
@@ -5593,6 +5587,12 @@
       "phoneNr": "568-1245"
     },
     {
+      "name": "Steinlaug Högnadóttir",
+      "practice": "LOGOS",
+      "email": "steinlaug@logos.is",
+      "phoneNr": "5400300"
+    },
+    {
       "name": "Steinn S. Finnbogason",
       "practice": "Traust services slf.",
       "email": "steinn@traustlegal.is",
@@ -6129,7 +6129,7 @@
     {
       "name": "Þorsteinn Yngvason",
       "practice": "",
-      "email": "thorsteinn@fastlind.is",
+      "email": "thorsteinn@remax.is",
       "phoneNr": "6960226"
     },
     {

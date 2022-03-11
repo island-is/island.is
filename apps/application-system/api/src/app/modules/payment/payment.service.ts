@@ -12,7 +12,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import { CreateChargeResult } from './payment.type'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
-import { Application as ApplicationModel } from '../application/application.model'
+import { Application as ApplicationModel } from '@island.is/application/api/core'
 
 const handleError = async (error: any) => {
   logger.error(JSON.stringify(error))

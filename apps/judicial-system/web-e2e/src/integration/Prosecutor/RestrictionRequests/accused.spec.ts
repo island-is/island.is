@@ -1,7 +1,9 @@
-describe('/krafa/ny/gaesluvardhald', () => {
+import { STEP_ONE_CUSTODY_REQUEST_ROUTE } from '@island.is/judicial-system/consts'
+
+describe(STEP_ONE_CUSTODY_REQUEST_ROUTE, () => {
   beforeEach(() => {
     cy.stubAPIResponses()
-    cy.visit('/krafa/ny/gaesluvardhald')
+    cy.visit(STEP_ONE_CUSTODY_REQUEST_ROUTE)
   })
 
   it('should require a valid police case number', () => {

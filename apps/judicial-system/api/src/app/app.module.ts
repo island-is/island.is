@@ -14,11 +14,10 @@ import {
   CaseModule,
   FileModule,
   InstitutionModule,
-  CourtModule,
   FeatureModule,
   PoliceModule,
   DefendantModule,
-} from './modules/'
+} from './modules'
 
 const debug = !environment.production
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -44,14 +43,13 @@ const autoSchemaFile = environment.production
     AuthModule,
     UserModule,
     CaseModule,
+    DefendantModule,
     FileModule,
     InstitutionModule,
-    CourtModule,
     FeatureModule,
     CmsTranslationsModule,
     PoliceModule,
     ProblemModule.forRoot({ logAllErrors: true }),
-    DefendantModule,
   ],
 })
 export class AppModule {}
