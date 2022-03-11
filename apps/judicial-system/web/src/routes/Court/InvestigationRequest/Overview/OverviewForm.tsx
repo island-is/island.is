@@ -37,13 +37,11 @@ interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
-  isCaseUpToDate: boolean
 }
 
 const OverviewForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading, isCaseUpToDate } = props
+  const { workingCase, setWorkingCase, isLoading } = props
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
-
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
@@ -176,6 +174,7 @@ const OverviewForm: React.FC<Props> = (props) => {
               />
             </Box>
             <Button
+              data-testId="draftConclusionButton"
               variant="ghost"
               icon="pencil"
               size="small"
@@ -187,7 +186,6 @@ const OverviewForm: React.FC<Props> = (props) => {
           <DraftConclusionModal
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
-            isCaseUpToDate={isCaseUpToDate}
             isDraftingConclusion={isDraftingConclusion}
             setIsDraftingConclusion={setIsDraftingConclusion}
           />
