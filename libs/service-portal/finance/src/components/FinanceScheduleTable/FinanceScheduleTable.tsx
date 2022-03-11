@@ -55,6 +55,12 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
             },
             {
               value: formatMessage({
+                id: 'sp.finance-schedule:type',
+                defaultMessage: 'Tegund',
+              }),
+            },
+            {
+              value: formatMessage({
                 id: 'sp.finance-schedule:total-amount',
                 defaultMessage: 'Heildarupphæð',
               }),
