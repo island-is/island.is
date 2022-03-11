@@ -3,10 +3,13 @@
 # API Domains Driving License
 
 ## Quickstart
+
 Run the following and start developing:
+
 ```bash
 yarn nx run api-domains-driving-license:dev
 ```
+
 This is currently just an alias for the xroad-proxy script below.
 
 ## How to connect to xroad

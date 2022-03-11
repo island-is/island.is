@@ -5,16 +5,21 @@
 This project forms the base for all business applications belonging to island.is.
 
 ## Quickstart
+
 Ensure docker is running, then run the following to set up:
+
 ```bash
 yarn nx run application-system-api:dev/init
 ```
+
 This command runs all _initial setup_ in the sections [API](#API) and [Form](#Form) below.
 
 Then whenever you want to work on the application-system run this command:
+
 ```bash
 yarn nx run application-system-api:dev
 ```
+
 This command runs all _running locally_ in the sections [API](#API), [Form](#Form) and [graphql](#graphql) below.
 
 ## URLs
@@ -22,7 +27,6 @@ This command runs all _running locally_ in the sections [API](#API), [Form](#For
 - [Dev](https://beta.dev01.devland.is/umsoknir/)
 - [Staging](https://beta.staging01.devland.is/umsoknir/)
 - [Production](https://island.is/umsoknir/)
-
 
 ## API
 

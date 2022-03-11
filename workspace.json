@@ -994,9 +994,7 @@
         "dev": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": [
-              "scripts/run-xroad-proxy.sh"
-            ],
+            "commands": ["scripts/run-xroad-proxy.sh"],
             "parallel": true
           }
         }
