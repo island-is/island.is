@@ -5,6 +5,7 @@ import Select, {
   ControlProps,
   IndicatorProps,
   MenuProps,
+  OptionProps,
   PlaceholderProps,
   ValueContainerProps,
 } from 'react-select'
@@ -56,6 +57,7 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
     selectedCourtDocuments,
   )
   const [nextDocumentToUpload, setNextDocumentToUpload] = useState<string>('')
+  const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false)
   const additionalCourtDocumentRef = useRef<HTMLInputElement>(null)
 
   const handleAddDocument = () => {
@@ -99,7 +101,9 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
   const Control = (props: ControlProps<ReactSelectOption>) => {
     return (
       <components.Control
-        className={cn(styles.container, styles.control)}
+        className={cn(styles.control, {
+          [styles.menuIsOpen]: menuIsOpen,
+        })}
         {...props}
       >
         {props.children}
@@ -117,13 +121,21 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
 
   const ValueContainer = (props: ValueContainerProps<ReactSelectOption>) => (
     <components.ValueContainer {...props}>
-      <Text>{props.children}</Text>
+      <Text fontWeight="light">{props.children}</Text>
     </components.ValueContainer>
   )
 
   const Menu = (props: MenuProps<ReactSelectOption>) => (
     <components.Menu className={styles.menu} {...props} />
   )
+
+  const Option = (props: OptionProps<ReactSelectOption>) => {
+    return (
+      <components.Option className={cn(styles.option)} {...props}>
+        <Text>{props.children}</Text>
+      </components.Option>
+    )
+  }
 
   // Add document on enter press
   useKey('Enter', handleAddDocument, undefined, [nextDocumentToUpload])
@@ -172,9 +184,9 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
             <Box display="flex" flexGrow={1} justifyContent="flexEnd">
               <div className={styles.dropdownContainer}>
                 <Select
+                  classNamePrefix="court-documents-select"
                   options={whoFiledOptions}
                   placeholder="Hver lagði fram"
-                  menuIsOpen
                   components={{
                     DropdownIndicator,
                     IndicatorSeparator: null,
@@ -182,7 +194,15 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
                     Placeholder,
                     ValueContainer,
                     Menu,
+                    Option,
                   }}
+                  onMenuOpen={() => {
+                    setMenuIsOpen(true)
+                  }}
+                  onMenuClose={() => {
+                    setMenuIsOpen(false)
+                  }}
+                  isSearchable={false}
                 />
               </div>
               <Box display="flex" alignItems="center">
