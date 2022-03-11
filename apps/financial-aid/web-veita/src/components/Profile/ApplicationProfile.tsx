@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useContext } from 'react'
+import React, { useState, useMemo, useContext, useEffect } from 'react'
 import { Box } from '@island.is/island-ui/core'
 
 import * as styles from './Profile.css'
@@ -13,6 +13,7 @@ import {
   AmountModal,
   getAidAmountModalInfo,
   UserType,
+  ApplicationFile,
 } from '@island.is/financial-aid/shared/lib'
 
 import format from 'date-fns/format'
@@ -146,6 +147,32 @@ const ApplicationProfile = ({
       (d) => d.userType === UserType.SPOUSE,
     ) ?? []
 
+  function isImage(filename: string): boolean {
+    const imagesFileExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp']
+
+    const extension = filename.split('.').pop()?.toLowerCase() || ''
+
+    return imagesFileExtensions.includes(extension)
+  }
+
+  // const [allImages, setImages] = useState([])
+
+  const [allImages, setallImages] = useState<string[]>([])
+
+  useEffect(() => {
+    if (application.files) {
+      application.files?.map((el) => {
+        console.log('ferdu hingad?', el.name)
+
+        if (isImage(el.name)) {
+          console.log('ferdu hingad?', el.name)
+          setallImages([...allImages, el.name])
+        }
+      })
+    }
+  }, [application?.files])
+  console.log(allImages)
+
   return (
     <>
       <Box
@@ -228,6 +255,14 @@ const ApplicationProfile = ({
           applicationEvents={application.applicationEvents}
           spouseName={application.spouseName ?? ''}
         />
+
+        <Box>
+          {application.files?.map((el) => {
+            if (isImage(el.name)) {
+              return <img />
+            }
+          })}
+        </Box>
       </Box>
       {application.state && (
         <StateModal

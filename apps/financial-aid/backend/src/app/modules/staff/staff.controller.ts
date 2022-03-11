@@ -43,6 +43,7 @@ export class StaffController {
   async getStaffByNationalId(
     @CurrentStaff() staff: StaffModel,
   ): Promise<StaffModel> {
+    console.log(staff)
     if (!staff || staff.active === false) {
       throw new ForbiddenException('Staff not found or is not active')
     }
