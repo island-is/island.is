@@ -16,7 +16,9 @@ const IncomeFilesForm = ({ field, application }: FAFieldBaseProps) => {
       </Text>
       <Files
         fileKey={field.id as UploadFileType}
-        uploadFiles={answers[field.id as keyof OverrideAnswerSchema] as UploadFile[]}
+        uploadFiles={
+          answers[field.id as keyof OverrideAnswerSchema] as UploadFile[]
+        }
         folderId={id}
       />
     </>

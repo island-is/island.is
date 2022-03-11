@@ -117,9 +117,11 @@ export const dataSchema = z.object({
       params: error.validation.phone,
     }),
   }),
-  spouseIncome: z.enum([ApproveOptions.Yes, ApproveOptions.No]).refine((v) => v, {
-    params: error.validation.radioErrorMessage,
-  }),
+  spouseIncome: z
+    .enum([ApproveOptions.Yes, ApproveOptions.No])
+    .refine((v) => v, {
+      params: error.validation.radioErrorMessage,
+    }),
 })
 
 export type answersSchema = z.infer<typeof dataSchema>
