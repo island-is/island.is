@@ -156,7 +156,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             Til baka
           </Button>
         </Box>
-        <Box display="flex" justifyContent="spaceBetween" marginBottom={5}>
+        <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
           <Box>
             <Box marginBottom={1}>
               <Text as="h1" variant="h1">
@@ -165,21 +165,22 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             </Box>
           </Box>
           <Box display="flex" flexDirection="column">
-            {workingCase.isCustodyIsolation && (
-              <Box marginBottom={1}>
-                <Tag
-                  variant={getRestrictionTagVariant(
-                    CaseCustodyRestrictions.ISOLATION,
-                  )}
-                  outlined
-                  disabled
-                >
-                  {getShortRestrictionByValue(
-                    CaseCustodyRestrictions.ISOLATION,
-                  )}
-                </Tag>
-              </Box>
-            )}
+            {workingCase.type === CaseType.CUSTODY &&
+              workingCase.isCustodyIsolation && (
+                <Box marginBottom={1}>
+                  <Tag
+                    variant={getRestrictionTagVariant(
+                      CaseCustodyRestrictions.ISOLATION,
+                    )}
+                    outlined
+                    disabled
+                  >
+                    {getShortRestrictionByValue(
+                      CaseCustodyRestrictions.ISOLATION,
+                    )}
+                  </Tag>
+                </Box>
+              )}
             {
               // Custody restrictions
               isAcceptingCaseDecision(workingCase.decision) &&

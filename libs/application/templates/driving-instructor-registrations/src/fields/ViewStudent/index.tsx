@@ -13,7 +13,7 @@ import {
   GridColumn,
 } from '@island.is/island-ui/core'
 import { Table as T } from '@island.is/island-ui/core'
-import { minutesOfDriving } from '../../shared/constants'
+import { minutesOfDriving } from '../../lib/constants'
 import format from 'date-fns/format'
 import * as styles from '../style.css'
 import cn from 'classnames'

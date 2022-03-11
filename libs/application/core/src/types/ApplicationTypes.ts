@@ -18,6 +18,7 @@ export enum ApplicationTypes {
   P_SIGN = 'PSign',
   CRIMINAL_RECORD = 'CriminalRecord',
   DRIVING_INSTRUCTOR_REGISTRATIONS = 'DrivingInstructorRegistrations',
+  EXAMPLE_PAYMENT = 'ExamplePayment',
 }
 
 export const ApplicationConfigurations = {
@@ -96,5 +97,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.DRIVING_INSTRUCTOR_REGISTRATIONS]: {
     slug: 'okutimar',
     translation: 'dir.application',
+  },
+  [ApplicationTypes.EXAMPLE_PAYMENT]: {
+    slug: 'greida',
+    translation: 'ep.application',
   },
 }

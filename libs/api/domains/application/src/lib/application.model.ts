@@ -84,4 +84,7 @@ export class Application {
 export class ApplicationPayment {
   @Field()
   fulfilled!: boolean
+
+  @Field()
+  paymentUrl!: string
 }

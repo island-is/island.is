@@ -99,7 +99,9 @@ const FindStudentModal = ({
                 backgroundColor="blue"
                 size="sm"
                 hasError={studentNotFoundError}
-                errorMessage="Enginn nemandi skráður á eftirfarandi kennitölu"
+                errorMessage={formatMessage(
+                  m.studentsOverviewNoStudentFoundInModal,
+                )}
                 onChange={(v) => {
                   setStudentNationalId(v.target.value)
                 }}

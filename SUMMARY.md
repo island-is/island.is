@@ -124,6 +124,7 @@
   - [Template API Modules](libs/application/template-api-modules/README.md)
   - [Template Loader](libs/application/template-loader/README.md)
   - [Templates](libs/application/templates/README.md)
+    - [Application Templates Example Payment](libs/application/templates/example-payment/README.md)
     - [Reference Template](libs/application/templates/reference-template/README.md)
   - [UI Fields](libs/application/ui-fields/README.md)
   - [UI Shell](libs/application/ui-shell/README.md)

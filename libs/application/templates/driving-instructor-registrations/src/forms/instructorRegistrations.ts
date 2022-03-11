@@ -45,11 +45,11 @@ export const getInstructorRegistrations = (): Form => {
       }),
       buildSection({
         id: 'students',
-        title: 'Skráningar',
+        title: m.studentsOverviewSideTitle,
         children: [
           buildMultiField({
             id: 'students',
-            title: 'Mínir ökunemar',
+            title: m.studentsOverviewTitle,
             children: [
               buildCustomField({
                 title: '',

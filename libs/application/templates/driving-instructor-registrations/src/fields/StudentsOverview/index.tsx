@@ -34,7 +34,8 @@ const StudentsOverview = ({ application }: Data) => {
   /* table pagination */
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
-  const { data, loading } = useQuery(InstructorsStudentsQuery)
+  const { data } = useQuery(InstructorsStudentsQuery)
+
   const [pageStudents, setPageStudents] = useState(
     data
       ? (data.drivingBookStudentListByTeacherNationalId as Array<Student>)
@@ -114,9 +115,9 @@ const StudentsOverview = ({ application }: Data) => {
             </T.Head>
             <T.Body>
               {pageStudents && pageStudents.length ? (
-                pageStudents.map((student, key) => {
+                pageStudents.map((student) => {
                   return (
-                    <T.Row key={key}>
+                    <T.Row key={student.id}>
                       <T.Data>{student.name}</T.Data>
                       <T.Data>{student.nationalId}</T.Data>
                       <T.Data box={{ textAlign: 'center' }}>
@@ -149,7 +150,7 @@ const StudentsOverview = ({ application }: Data) => {
               )}
             </T.Body>
           </T.Table>
-          {pageStudents && !!pageStudents.length && (
+          {pageStudents && pageStudents.length > 0 && (
             <Pagination
               page={page}
               totalPages={totalPages}

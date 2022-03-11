@@ -48,7 +48,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 import { CaseQuery } from '@island.is/judicial-system-web/graphql'
-import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
+import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
@@ -188,8 +188,8 @@ export const SignedVerdictOverview: React.FC = () => {
     }
 
     // Request court record signature to get control code
-    requestCourtRecordSignature(workingCase.id)
-      .then((requestCourtRecordSignatureResponse) => {
+    requestCourtRecordSignature(workingCase.id).then(
+      (requestCourtRecordSignatureResponse) => {
         setRequestCourtRecordSignatureResponse(
           requestCourtRecordSignatureResponse,
         )
@@ -201,11 +201,8 @@ export const SignedVerdictOverview: React.FC = () => {
             },
           },
         })
-      })
-      .catch((reason) => {
-        // TODO: Handle error
-        console.log(reason)
-      })
+      },
+    )
   }
 
   const handleCaseExtension = async () => {
@@ -219,22 +216,15 @@ export const SignedVerdictOverview: React.FC = () => {
           )
         }
       } else {
-        await extendCase(workingCase.id)
-          .then((extendedCase) => {
-            if (extendedCase) {
-              if (isRestrictionCase(extendedCase.type)) {
-                router.push(`${Constants.STEP_ONE_ROUTE}/${extendedCase.id}`)
-              } else {
-                router.push(
-                  `${Constants.IC_DEFENDANT_ROUTE}/${extendedCase.id}`,
-                )
-              }
+        await extendCase(workingCase.id).then((extendedCase) => {
+          if (extendedCase) {
+            if (isRestrictionCase(extendedCase.type)) {
+              router.push(`${Constants.STEP_ONE_ROUTE}/${extendedCase.id}`)
+            } else {
+              router.push(`${Constants.IC_DEFENDANT_ROUTE}/${extendedCase.id}`)
             }
-          })
-          .catch((reason) => {
-            // TODO: Handle error
-            console.log(reason)
-          })
+          }
+        })
       }
     }
   }
@@ -429,6 +419,9 @@ export const SignedVerdictOverview: React.FC = () => {
             created: new Date().toString(),
             modified: new Date().toString(),
           },
+          isHeightenedSecurityLevel: workingCase.isHeightenedSecurityLevel
+            ? false
+            : workingCase.isHeightenedSecurityLevel,
         })
 
         updateCase(
