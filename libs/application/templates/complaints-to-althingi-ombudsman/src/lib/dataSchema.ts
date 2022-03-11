@@ -1,5 +1,4 @@
 import * as kennitala from 'kennitala'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as z from 'zod'
 import {
   ComplainedForTypes,
@@ -30,15 +29,9 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
       .refine((val) => (val ? val.length > 0 : false), {
         params: error.required,
       }),
-    phone: z.string().refine(
-      (p) => {
-        const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-        return phoneNumber && phoneNumber.isValid()
-      },
-      {
-        params: error.required,
-      },
-    ),
+    phone: z.string().refine((p) => p, {
+      params: error.required,
+    }),
   }),
   complainedFor: z.object({
     decision: z.enum([
@@ -55,15 +48,17 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
   ]),
   appeals: z.enum([YES, NO]),
   complainedForInformation: z.object({
-    name: z.string(),
-    ssn: z.string(),
-    address: z.string(),
-    postcode: z.string(),
-    city: z.string(),
-    email: z.string(),
-    phone: z.string(),
-    connection: z.string(),
-    powerOfAttorney: z.array(FileSchema).optional(),
+    name: z.string().refine((v) => v, { params: error.required }),
+    ssn: z.string().refine((v) => v, { params: error.required }),
+    address: z.string().refine((v) => v, { params: error.required }),
+    postcode: z.string().refine((v) => v, { params: error.required }),
+    city: z.string().refine((v) => v, { params: error.required }),
+    email: z.string().refine((v) => v, { params: error.required }),
+    phone: z.string().refine((v) => v, { params: error.required }),
+    connection: z.string().refine((v) => v, { params: error.required }),
+    powerOfAttorney: z
+      .array(FileSchema)
+      .refine((v) => v && v.length > 0, { params: error.document }),
   }),
   complaintDescription: z.object({
     decisionDate: z.string().optional(),
