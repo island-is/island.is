@@ -36,17 +36,17 @@ export class AppService {
       body: JSON.stringify(caseToCreate),
     })
       .then(async (res) => {
-        if (res.ok) {
-          return res.json().then((newCase: TCase) => ({ id: newCase.id }))
-        }
+        const response = await res.json()
 
-        const reason = await res.json()
+        if (res.ok) {
+          return { id: response?.id }
+        }
 
         if (res.status < 500) {
-          throw new BadRequestException(reason?.detail)
+          throw new BadRequestException(response?.detail)
         }
 
-        throw reason
+        throw response
       })
       .catch((reason) => {
         if (reason instanceof BadRequestException) {
@@ -54,7 +54,7 @@ export class AppService {
         }
 
         throw new BadGatewayException({
-          reason,
+          ...reason,
           message: 'Failed to create a new case',
         })
       })
