@@ -18,7 +18,7 @@ type CreateChargeData = {
 }
 
 export const Payment: Form = buildForm({
-  id: 'DrivingLicenseApplicationPaymentForm',
+  id: 'CriminalRecordApplicationPaymentForm',
   title: '',
   mode: FormModes.APPLYING,
   renderLastScreenButton: false,
