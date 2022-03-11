@@ -50,7 +50,7 @@ runs:
       shell: bash
 
     - name: Retry Install codecov uploader
-      if: steps.codecov.failure == 'failure'
+      if: steps.codecov.outcome == 'failure'
       run: |
         # Importing pgp keys
         curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --no-default-keyring --keyring trustedkeys.gpg --import
@@ -70,7 +70,7 @@ runs:
         mv codecov "$HOME/.local/bin"
         echo "$HOME/.local/bin" >> $GITHUB_PATH
       shell: bash
-    
+
 
     - name: Upload coverage reports
       run: ./scripts/ci/run-in-parallel.sh 50_upload-coverage || true # If for some reason codecov is down, we can still build. This is not a perfect solution though.

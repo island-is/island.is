@@ -48,6 +48,7 @@ import {
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
 import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
+import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
@@ -242,6 +243,7 @@ const autoSchemaFile = environment.production
         xroadPath: environment.criminalRecord.xroadPath!,
       },
     }),
+    MortgageCertificateModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
