@@ -347,6 +347,8 @@ jobs:
           if [[ $CHUNKS != "[]" ]]; then
             echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
           fi
+        env:
+          SKIP_TESTS_ON_BRANCH: ${{ secrets.SKIP_TESTS_ON_BRANCH }}
 
       - name: Prepare docker build targets
         id: build_map
@@ -427,7 +429,7 @@ jobs:
     needs:
       - pre-checks
       - prepare
-    runs-on: self-hosted
+    runs-on: ubuntu-20.04
     timeout-minutes: 35
     if: needs.prepare.outputs.BUILD_CHUNKS
     env:
