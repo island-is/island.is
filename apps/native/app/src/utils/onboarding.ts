@@ -65,6 +65,10 @@ export async function getOnboardingScreens() {
     if (!hasOnboardedBiometrics) {
       return screens
     }
+  } else {
+    preferencesStore.setState({
+      hasOnboardedBiometrics: true
+    })
   }
 
   // Android needs upfront Notifications permissions

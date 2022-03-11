@@ -1,6 +1,9 @@
 import { dynamicColor, font } from '@island.is/island-ui-native'
 import { selectionAsync } from 'expo-haptics'
-import { authenticateAsync, AuthenticationType, supportedAuthenticationTypesAsync } from 'expo-local-authentication'
+import {
+  authenticateAsync,
+  AuthenticationType,
+} from 'expo-local-authentication'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Animated, Image, SafeAreaView, View } from 'react-native'
@@ -13,7 +16,7 @@ import {
   useNavigationComponentDidAppear,
   useNavigationComponentDidDisappear,
 } from 'react-native-navigation-hooks/dist'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 import logo from '../../assets/logo/logo-64w.png'
 import { PinKeypad } from '../../components/pin-keypad/pin-keypad'
 import { VisualizedPinCode } from '../../components/visualized-pin-code/visualized-pin-code'
@@ -56,7 +59,7 @@ const Center = styled.View`
 `
 
 function useBiometricType() {
-  const { authenticationTypes } = useUiStore();
+  const { authenticationTypes } = useUiStore()
   if (authenticationTypes.includes(AuthenticationType.FACIAL_RECOGNITION)) {
     return 'faceid'
   } else if (authenticationTypes.includes(AuthenticationType.FINGERPRINT)) {
@@ -77,7 +80,7 @@ export const AppLockScreen: NavigationFunctionComponent<{
   const [invalidCode, setInvalidCode] = useState(false)
   const [attempts, setAttempts] = useState(0)
   const { useBiometrics } = usePreferencesStore()
-  const biometricType = useBiometricType();
+  const biometricType = useBiometricType()
   const intl = useIntl()
 
   const resetLockScreen = useCallback(() => {
@@ -232,7 +235,9 @@ export const AppLockScreen: NavigationFunctionComponent<{
             onBackPress={onBackPress}
             onFaceIdPress={onFaceIdPress}
             back={code.length > 0}
-            biometricType={useBiometrics ? biometricType ?? 'faceid' : undefined}
+            biometricType={
+              useBiometrics ? biometricType ?? 'faceid' : undefined
+            }
           />
           <View style={{ height: 64 }} />
         </Center>

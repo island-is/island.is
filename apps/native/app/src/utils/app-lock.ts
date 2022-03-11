@@ -10,8 +10,10 @@ export function skipAppLock() {
   const { authorizeResult } = authStore.getState()
   const { dev__useLockScreen } = preferencesStore.getState()
 
-  const skip =
-    !authorizeResult || !isOnboarded() || dev__useLockScreen === false
+  const isNotOnboarded = !isOnboarded();
+  const isNotAuthorized = !authorizeResult;
+  const isDisabledByDev = dev__useLockScreen === false;
+  const skip = isNotOnboarded || isNotAuthorized || isDisabledByDev
 
   if (skip) {
     uiStore.setState({ initializedApp: true })

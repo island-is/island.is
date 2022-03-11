@@ -174,6 +174,7 @@ export const LoginScreen: NavigationFunctionComponent = ({ componentId }) => {
             alignItems: 'center',
             justifyContent: 'center',
             paddingTop: 32,
+            zIndex: 3,
           }}
         >
           <Image
