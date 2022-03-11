@@ -18,10 +18,19 @@ export const PropertiesManager: FC<FieldBaseProps> = ({
       properties: [PropertyDetail]
     })?.properties || []
 
-  const selectedPropertyNumber = getValueViaPath(
+  let selectedPropertyNumber = getValueViaPath(
     application.answers,
     'selectProperty.propertyNumber',
   ) as string
+
+  //TODOx temp fix to save selected own property if error from syslumenn
+  const validationData = (externalData.validateMortgageCertificate?.data as {
+    validation: { propertyNumber: string }
+  })?.validation
+
+  if (!selectedPropertyNumber && validationData?.propertyNumber) {
+    selectedPropertyNumber = validationData?.propertyNumber
+  }
 
   const defaultProperty = myProperties[0]
 

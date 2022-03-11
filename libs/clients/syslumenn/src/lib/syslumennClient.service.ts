@@ -246,16 +246,17 @@ export class SyslumennService {
       // Note: this function will throw an error if something goes wrong
       const certificate = await this.getMortgageCertificate(propertyNumber)
 
-      const exists = certificate.contentBase64.length !== 0
-      const hasKMarking =
-        exists && certificate.contentBase64 !== 'Precondition Required'
+      const exists = false //TODOx certificate.contentBase64.length !== 0
+      const hasKMarking = false //exists && certificate.contentBase64 !== 'Precondition Required'
 
       return {
+        propertyNumber: propertyNumber,
         exists: exists,
         hasKMarking: hasKMarking,
       }
     } catch (exception) {
       return {
+        propertyNumber: propertyNumber,
         exists: false,
         hasKMarking: false,
       }

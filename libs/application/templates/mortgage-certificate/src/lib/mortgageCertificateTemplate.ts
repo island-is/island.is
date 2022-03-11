@@ -96,6 +96,42 @@ const template: ApplicationTemplate<
           ],
         },
       },
+      // [States.PENDING]: {
+      //   meta: {
+      //     name: 'Umsókn um veðbókarvottorð',
+      //     actionCard: {
+      //       tag: {
+      //         label: m.actionCardDraft,
+      //         variant: 'blue',
+      //       },
+      //     },
+      //     progress: 0.25,
+      //     lifecycle: {
+      //       shouldBeListed: false,
+      //       shouldBePruned: true,
+      //       // Applications that stay in this state for 24 hours will be pruned automatically
+      //       whenToPrune: 24 * 3600 * 1000,
+      //     },
+      //     roles: [
+      //       {
+      //         id: Roles.APPLICANT,
+      //         formLoader: () =>
+      //           import('../forms/Pending').then((val) => val.Pending),
+      //         actions: [
+      //           {
+      //             event: DefaultEvents.SUBMIT,
+      //             name: 'Staðfesta',
+      //             type: 'primary',
+      //           },
+      //         ],
+      //         write: 'all',
+      //       },
+      //     ],
+      //   },
+      //   on: {
+      //     [DefaultEvents.SUBMIT]: { target: States.DRAFT },
+      //   },
+      // },
       [States.PENDING_REJECTED]: {
         meta: {
           name: 'Beiðni um vinnslu',
