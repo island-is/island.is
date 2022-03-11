@@ -34,11 +34,10 @@ interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
-  isCaseUpToDate: boolean
 }
 
 const RulingForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading, isCaseUpToDate } = props
+  const { workingCase, setWorkingCase, isLoading } = props
   const { user } = useContext(UserContext)
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
@@ -46,7 +45,6 @@ const RulingForm: React.FC<Props> = (props) => {
   const [courtCaseFactsEM, setCourtCaseFactsEM] = useState<string>('')
   const [courtLegalArgumentsEM, setCourtLegalArgumentsEM] = useState<string>('')
   const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState<string>('')
-  const [conclusionEM, setConclusionEM] = useState<string>('')
   const [introductionEM, setIntroductionEM] = useState<string>('')
 
   return (
@@ -268,17 +266,13 @@ const RulingForm: React.FC<Props> = (props) => {
           <RulingInput
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
-            isCaseUpToDate={isCaseUpToDate}
             isRequired
           />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {`${formatMessage(m.sections.decision.title)} `}
-              <Text as="span" fontWeight="semiBold" color="red600">
-                *
-              </Text>
+              {formatMessage(m.sections.decision.title)}
             </Text>
           </Box>
           <Box marginBottom={5}>
@@ -309,29 +303,23 @@ const RulingForm: React.FC<Props> = (props) => {
               removeTabsValidateAndSet(
                 'conclusion',
                 event.target.value,
-                ['empty'],
+                [],
                 workingCase,
                 setWorkingCase,
-                conclusionEM,
-                setConclusionEM,
               )
             }
             onBlur={(event) =>
               validateAndSendToServer(
                 'conclusion',
                 event.target.value,
-                ['empty'],
+                [],
                 workingCase,
                 updateCase,
-                setConclusionEM,
               )
             }
-            hasError={conclusionEM !== ''}
-            errorMessage={conclusionEM}
             rows={7}
             autoExpand={{ on: true, maxHeight: 300 }}
             textarea
-            required
           />
         </Box>
         <Box marginBottom={10}>
