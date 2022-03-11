@@ -16,9 +16,9 @@ import {
   NationalRegistry,
   UserProfile,
   SubmitRequestToSyslumennResult,
+  ValidateMortgageCertificateResult,
 } from './types'
 import { ChargeItemCode } from '@island.is/shared/constants'
-import { PropertyDetail } from '@island.is/api/domains/assets'
 
 @Injectable()
 export class MortgageCertificateSubmissionService {
@@ -72,13 +72,21 @@ export class MortgageCertificateSubmissionService {
     }
   }
 
-  async getPropertyDetails({
+  async validateMortgageCertificate({
     application,
-  }: TemplateApiModuleActionProps): Promise<PropertyDetail> {
+  }: TemplateApiModuleActionProps): Promise<ValidateMortgageCertificateResult> {
     const propertyNumber = (application.answers.selectProperty as {
       propertyNumber: string
     }).propertyNumber
-    return await this.syslumennService.getPropertyDetails(propertyNumber)
+
+    return {
+      validation: await this.mortgageCertificateService.validateMortgageCertificate(
+        propertyNumber,
+      ),
+      propertyDetails: await this.syslumennService.getPropertyDetails(
+        propertyNumber,
+      ),
+    }
   }
 
   async getMortgageCertificate({

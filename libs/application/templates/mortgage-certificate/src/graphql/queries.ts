@@ -37,12 +37,3 @@ export const SEARCH_PROPERTIES_QUERY = `
       }
     }
   `
-
-export const VALIDATE_MORTGAGE_CERTIFICATE_QUERY = `
-    query ValidateMortgageCertificateQuery($input: ValidateMortgageCertificateInput!) {
-      validateMortgageCertificate(input: $input) {
-        exists
-        hasKMarking
-      }
-    }
-  `

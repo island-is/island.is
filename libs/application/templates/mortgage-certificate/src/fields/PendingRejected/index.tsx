@@ -48,8 +48,9 @@ export const PendingRejected: FC<FieldBaseProps> = ({ application, field }) => {
     handleStateChange(MCEvents.PENDING_REJECTED_TRY_AGAIN)
   }
 
-  const selectedProperty = externalData.getPropertyDetails
-    ?.data as PropertyDetail
+  const selectedProperty = (externalData.validateMortgageCertificate?.data as {
+    propertyDetails: PropertyDetail
+  })?.propertyDetails
 
   return (
     <Box>

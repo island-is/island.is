@@ -31,6 +31,7 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
   selectedPropertyNumber,
 }) => {
   const { formatMessage } = useLocale()
+  const { externalData } = application
   const [hasInitialized, setHasInitialized] = useState<boolean>(false)
   const [showSearchError, setShowSearchError] = useState<boolean>(false)
   const [searchStr, setSearchStr] = useState('')
@@ -56,13 +57,17 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
   const selectProperty = getValueViaPath(
     application.answers,
     'selectProperty',
-  ) as { property: PropertyDetail; isFromSearch: boolean }
+  ) as { propertyNumber: string; isFromSearch: boolean }
+
+  const propertyDetails = (externalData.validateMortgageCertificate?.data as {
+    propertyDetails: PropertyDetail
+  })?.propertyDetails
 
   // initialize search box and search result
   if (!hasInitialized && selectProperty?.isFromSearch) {
     setHasInitialized(true)
-    setSearchStr(selectProperty?.property?.propertyNumber || '')
-    setFoundProperty(selectProperty?.property || undefined)
+    setSearchStr(selectProperty?.propertyNumber || '')
+    setFoundProperty(propertyDetails || undefined)
   }
 
   return (
@@ -71,14 +76,14 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
         <Text paddingY={2} variant={'h4'}>
           Hér að neðan getur þú einnig leitað í fasteignanúmerum annarra eigna
         </Text>
-        <Text>
+        {/* <Text>
           Hér getur þú nálgast
           <Box display="inlineBlock" marginLeft="smallGutter">
             <ArrowLink href="https://skra.is/default.aspx?pageid=d5db1b6d-0650-11e6-943c-005056851dd2">
               nánari uppýsingar um eignina á skrá
             </ArrowLink>
           </Box>
-        </Text>
+        </Text> */}
       </Box>
 
       <Box display="flex" flexDirection="row">
