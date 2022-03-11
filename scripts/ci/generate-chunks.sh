@@ -7,7 +7,8 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source "$DIR"/_common.sh
 
 BRANCH=${BRANCH:-$GITHUB_HEAD_REF}
-if [[ -n "$BRANCH" && -n "$SKIP_TESTS_ON_BRANCH" && "$SKIP_TESTS_ON_BRANCH" == "7913-$BRANCH" ]]
+SKIP_TESTS_ON_BRANCH=${SKIP_TESTS_ON_BRANCH:-}
+if [[ "$SKIP_TESTS_ON_BRANCH" == "7913-$BRANCH" ]]
 then
   #Skipping tests
   echo "[]"
