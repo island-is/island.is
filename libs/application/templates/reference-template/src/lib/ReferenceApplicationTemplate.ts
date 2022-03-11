@@ -8,6 +8,7 @@ import {
   DefaultEvents,
   DefaultStateLifeCycle,
   ApplicationConfigurations,
+  ApplicationFeatures,
 } from '@island.is/application/core'
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
@@ -84,6 +85,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   institution: m.institutionName,
   translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
   dataSchema: ExampleSchema,
+  featureFlag: ApplicationFeatures.exampleApplication,
   stateMachineConfig: {
     initial: States.prerequisites,
     states: {

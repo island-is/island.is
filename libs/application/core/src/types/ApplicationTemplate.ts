@@ -10,6 +10,7 @@ import {
 import { ApplicationTypes } from './ApplicationTypes'
 import { Schema, StaticText } from './Form'
 import { AnswerValidator } from '../validation/AnswerValidator'
+import { ApplicationFeatures } from './ApplicationFeatureFlags'
 
 export interface ApplicationTemplate<
   TContext extends ApplicationContext,
@@ -17,7 +18,7 @@ export interface ApplicationTemplate<
   TEvents extends EventObject
 > {
   readonly readyForProduction?: boolean
-  readonly featureFlag?: string
+  readonly featureFlag?: ApplicationFeatures
   readonly type: ApplicationTypes
   readonly name: StaticText
   readonly institution?: StaticText
