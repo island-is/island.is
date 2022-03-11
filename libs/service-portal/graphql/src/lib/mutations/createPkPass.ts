@@ -8,3 +8,11 @@ export const CREATE_PK_PASS = gql`
     }
   }
 `
+
+export const CREATE_PK_PASS_QR_CODE = gql`
+  mutation generatePkPassQrCode($input: GeneratePkPassInput!) {
+    generatePkPassQrCode(input: $input) {
+      pkpassQRCode
+    }
+  }
+`
