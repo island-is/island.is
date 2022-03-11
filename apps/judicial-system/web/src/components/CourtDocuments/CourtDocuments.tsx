@@ -1,3 +1,15 @@
+import React, { useState, useRef } from 'react'
+import cn from 'classnames'
+import Select, {
+  components,
+  ControlProps,
+  IndicatorProps,
+  MenuProps,
+  PlaceholderProps,
+  ValueContainerProps,
+} from 'react-select'
+import { useKey } from 'react-use'
+
 import {
   Box,
   Button,
@@ -7,12 +19,13 @@ import {
   TagVariant,
   Text,
 } from '@island.is/island-ui/core'
-import React, { useState, useRef } from 'react'
-import { useKey } from 'react-use'
 import type { Case } from '@island.is/judicial-system/types'
 import { parseArray } from '@island.is/judicial-system-web/src/utils/formatters'
+
 import BlueBox from '../BlueBox/BlueBox'
+import { ReactSelectOption } from '../../types'
 import * as styles from './CourtDocuments.css'
+
 interface CourtDocumentsProps {
   title: string
   text: string
@@ -70,6 +83,48 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
     setCourtDocuments(updatedCourtDocuments)
   }
 
+  const whoFiledOptions = [
+    { value: 'prosecutor', label: 'Ákærandi lagði fram' },
+    { value: 'court', label: 'Dómari lagði fram' },
+  ]
+
+  const DropdownIndicator = (props: IndicatorProps<ReactSelectOption>) => {
+    return (
+      <components.DropdownIndicator {...props}>
+        <Icon icon="chevronDown" size="small" color="blue400" />
+      </components.DropdownIndicator>
+    )
+  }
+
+  const Control = (props: ControlProps<ReactSelectOption>) => {
+    return (
+      <components.Control
+        className={cn(styles.container, styles.control)}
+        {...props}
+      >
+        {props.children}
+      </components.Control>
+    )
+  }
+
+  const Placeholder = (props: PlaceholderProps<ReactSelectOption>) => {
+    return (
+      <components.Placeholder {...props}>
+        <Text color="dark300">{props.children}</Text>
+      </components.Placeholder>
+    )
+  }
+
+  const ValueContainer = (props: ValueContainerProps<ReactSelectOption>) => (
+    <components.ValueContainer {...props}>
+      <Text>{props.children}</Text>
+    </components.ValueContainer>
+  )
+
+  const Menu = (props: MenuProps<ReactSelectOption>) => (
+    <components.Menu className={styles.menu} {...props} />
+  )
+
   // Add document on enter press
   useKey('Enter', handleAddDocument, undefined, [nextDocumentToUpload])
 
@@ -114,16 +169,33 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
         return (
           <div className={styles.additionalCourtDocumentContainer} key={index}>
             <Text variant="h4">{courtDocument}</Text>
-            <Box display="flex" alignItems="center">
-              <Box marginRight={2}>
-                <Tag variant={tagVariant} outlined disabled>{`Þingmerkt nr. ${
-                  // +2 because index is zero based and "Krafa um ..." is number 1
-                  index + 2
-                }`}</Tag>
+            <Box display="flex" flexGrow={1} justifyContent="flexEnd">
+              <div className={styles.dropdownContainer}>
+                <Select
+                  options={whoFiledOptions}
+                  placeholder="Hver lagði fram"
+                  menuIsOpen
+                  components={{
+                    DropdownIndicator,
+                    IndicatorSeparator: null,
+                    Control,
+                    Placeholder,
+                    ValueContainer,
+                    Menu,
+                  }}
+                />
+              </div>
+              <Box display="flex" alignItems="center">
+                <Box marginRight={2}>
+                  <Tag variant={tagVariant} outlined disabled>{`Þingmerkt nr. ${
+                    // +2 because index is zero based and "Krafa um ..." is number 1
+                    index + 2
+                  }`}</Tag>
+                </Box>
+                <button onClick={() => handleRemoveDocument(index)}>
+                  <Icon icon="close" color="blue400" size="small" />
+                </button>
               </Box>
-              <button onClick={() => handleRemoveDocument(index)}>
-                <Icon icon="close" color="blue400" size="small" />
-              </button>
             </Box>
           </div>
         )
