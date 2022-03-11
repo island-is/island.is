@@ -836,6 +836,7 @@ export class CaseService {
                   name: defendant.name,
                   gender: defendant.gender,
                   address: defendant.address,
+                  citizenship: defendant.citizenship,
                 },
                 transaction,
               ),
