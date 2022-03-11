@@ -69,7 +69,8 @@ const FinanceScheduleTableRow: FC<Props> = ({ paymentSchedule }) => {
       data={[
         { value: paymentSchedule.approvalDate },
         { value: amountFormat(paymentSchedule.totalAmount) },
-        { value: paymentSchedule.paymentCount },
+        { value: amountFormat(paymentSchedule.totalAmount) },
+        { value: `0 af ${paymentSchedule.paymentCount}` },
         { value: getType(paymentSchedule.scheduleStatus) },
         {
           value: (

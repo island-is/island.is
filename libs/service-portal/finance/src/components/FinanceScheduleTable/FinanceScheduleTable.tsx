@@ -61,8 +61,14 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
             },
             {
               value: formatMessage({
-                id: 'sp.finance-schedule:payment-dates',
-                defaultMessage: 'Gjalddagar',
+                id: 'sp.finance-schedule:amount-left-without-interest',
+                defaultMessage: 'Eftirstöðvar án vaxta',
+              }),
+            },
+            {
+              value: formatMessage({
+                id: 'sp.finance-schedule:payment-remaining',
+                defaultMessage: 'Greiðslur eftir',
               }),
             },
             {

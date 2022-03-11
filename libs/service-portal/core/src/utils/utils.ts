@@ -23,8 +23,7 @@ export const formatNationalId = (nationalId: string): string => {
 }
 
 export const tableStyles = {
-  paddingTop: '16px',
-  paddingBottom: '16px',
+  padding: '16px',
 }
 type DrivingLicenseSuspended = {
   /* ANY because response was null */

@@ -12,6 +12,11 @@ export const alignTd = style({
   marginLeft: 'auto',
 })
 
+export const alignCenter = style({
+  marginLeft: 'auto',
+  marginRight: 'auto',
+})
+
 export const buttonTd = style({
   width: 'max-content',
   display: 'flex',
