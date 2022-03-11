@@ -2,17 +2,33 @@ import { rest } from 'msw'
 import ValidLicense from './validLicense.json'
 import ExpiredLicense from './expiredLicense.json'
 import Juristictions from './juristictions.json'
-import DrivingAssessment from './drivingAssessment.json'
+import DrivingAssessment from './drivingAssessment'
 import FinishedSchool from './finishedSchool.json'
 import NotFinishedSchool from './notFinishedSchool.json'
 import CanApplyWithResultSuccess from './canApplyWithResultSuccess.json'
 import CanApplyWithResultFail from './canApplyWithResultFail.json'
 import Teachers from './teachers.json'
+import RecsidenceHistory from './residenceHistory.json'
+import type { User } from '@island.is/auth-nest-tools'
 
 export const MOCK_NATIONAL_ID = '0'
 export const MOCK_NATIONAL_ID_EXPIRED = '1'
 export const MOCK_NATIONAL_ID_TEACHER = '2'
 export const MOCK_NATIONAL_ID_NO_ASSESSMENT = '9'
+export const MOCK_USER = {
+  nationalId: '0',
+  scope: ['test-scope-1'],
+  client_id: 'test-client',
+  actor: {
+    nationalId: '1',
+    delegationType: 'Custom',
+    scope: ['test-scope-2'],
+  },
+  authorization: '',
+  client: '',
+  ip: '',
+  userAgent: '',
+} as User
 
 const url = (path: string) => {
   return new URL(path, 'http://localhost').toString()
@@ -119,7 +135,7 @@ export const requestHandlers = [
   }),
 
   rest.post(
-    url('/v1/api/okuskirteini/applications/new/temporary'),
+    url('/v2/api/okuskirteini/applications/new/temporary'),
     (req, res, ctx) => {
       const body = req.body as any
       const canApply = body.kennitala !== MOCK_NATIONAL_ID_NO_ASSESSMENT
@@ -139,6 +155,14 @@ export const requestHandlers = [
       ctx.json(
         isExpired ? { message: 'Ökuskírteini er ekki í gildi' } : ValidLicense,
       ),
+    )
+  }),
+
+  rest.get(url('/api/v1/einstaklingar/:nationalId/buseta'), (req, res, ctx) => {
+    const isExpired = req.params.nationalId === MOCK_NATIONAL_ID_EXPIRED
+    return res(
+      ctx.status(isExpired ? 400 : 200),
+      ctx.json(isExpired ? undefined : RecsidenceHistory),
     )
   }),
 ]

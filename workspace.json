@@ -1235,6 +1235,29 @@
         }
       }
     },
+    "api-domains-mortgage-certificate": {
+      "root": "libs/api/domains/mortgage-certificate",
+      "sourceRoot": "libs/api/domains/mortgage-certificate/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/api/domains/mortgage-certificate/**/*.ts"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/domains/mortgage-certificate"],
+          "options": {
+            "jestConfig": "libs/api/domains/mortgage-certificate/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-domains-national-registry": {
       "root": "libs/api/domains/national-registry",
       "sourceRoot": "libs/api/domains/national-registry/src",
@@ -1489,6 +1512,27 @@
             "linter": "eslint",
             "tsConfig": ["libs/api/schema/tsconfig.lib.json"],
             "exclude": ["**/node_modules/**", "!libs/api/schema/**/*"]
+          }
+        }
+      }
+    },
+    "application-api-core": {
+      "root": "libs/application/api/core",
+      "sourceRoot": "libs/application/api/core/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/application/api/core/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/application/api/core"],
+          "options": {
+            "jestConfig": "libs/application/api/core/jest.config.js",
+            "passWithNoTests": true
           }
         }
       }
@@ -1994,6 +2038,12 @@
               "!libs/application/templates/complaints-to-althingi-ombudsman/**/*"
             ]
           }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/complaints-to-althingi-ombudsman/src/lib/messages/*.ts'"
+          }
         }
       }
     },
@@ -2467,6 +2517,49 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/login-service/src/**/*.{js,ts,tsx}'"
+          }
+        }
+      }
+    },
+    "application-templates-mortgage-certificate": {
+      "root": "libs/application/templates/mortgage-certificate",
+      "sourceRoot": "libs/application/templates/mortgage-certificate/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/application/templates/mortgage-certificate/tsconfig.lib.json",
+              "libs/application/templates/mortgage-certificate/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/templates/mortgage-certificate/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/libs/application/templates/mortgage-certificate"
+          ],
+          "options": {
+            "jestConfig": "libs/application/templates/mortgage-certificate/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "schemas/codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "graphql-codegen --config libs/application/templates/mortgage-certificate/codegen.yml"
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/mortgage-certificate/src/**/*.{js,ts,tsx}'"
           }
         }
       }
@@ -4087,7 +4180,7 @@
           }
         },
         "generate-html": {
-          "executor": "@nrwl/workspace:run-commands",
+          "builder": "@nrwl/workspace:run-commands",
           "options": {
             "command": "cross-env NODE_ENV=development yarn ts-node -P libs/email-service/tsconfig.json libs/email-service/src/tools/generate-html/generate-html.ts"
           }
@@ -5282,33 +5375,6 @@
         }
       }
     },
-    "infra-monitoring": {
-      "root": "libs/infra-monitoring",
-      "sourceRoot": "libs/infra-monitoring/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "tsConfig": [
-              "libs/infra-monitoring/tsconfig.lib.json",
-              "libs/infra-monitoring/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/infra-monitoring/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/infra-monitoring/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/libs/infra-monitoring"]
-        }
-      }
-    },
     "infra-nest-server": {
       "root": "libs/infra-nest-server",
       "sourceRoot": "libs/infra-nest-server/src",
@@ -6236,6 +6302,27 @@
         }
       }
     },
+    "nest-aws": {
+      "root": "libs/nest/aws",
+      "sourceRoot": "libs/nest/aws/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/nest/aws/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/nest/aws"],
+          "options": {
+            "jestConfig": "libs/nest/aws/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "nest-config": {
       "root": "libs/nest/config",
       "sourceRoot": "libs/nest/config/src",
@@ -6688,6 +6775,27 @@
           "outputs": ["coverage/libs/regulations"],
           "options": {
             "jestConfig": "libs/regulations/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "residence-history": {
+      "root": "libs/residence-history",
+      "sourceRoot": "libs/residence-history/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/residence-history/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/residence-history"],
+          "options": {
+            "jestConfig": "libs/residence-history/jest.config.js",
             "passWithNoTests": true
           }
         }
@@ -7476,6 +7584,12 @@
           "options": {
             "jestConfig": "libs/service-portal/licenses/jest.config.js",
             "passWithNoTests": true
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/licenses/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
           }
         }
       }
