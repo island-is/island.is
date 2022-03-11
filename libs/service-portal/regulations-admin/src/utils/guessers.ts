@@ -152,7 +152,7 @@ export const findRegulationType = (
     return
   }
   const amendingTitleRe = /^Reglugerð um (?:\(?\d+\.\)? )?breyting(?:u|ar) á .*reglugerð(?:um)?(?: |$)/i
-  const repealingTitleRe = /^Reglugerð um (að fella úr gildi|brottfelling(?:u|ar)?) reglugerð(?:ir|a|ar)?/i
+  const repealingTitleRe = /^Reglugerð um (að fella úr gildi|brottfelling(?:u|ar)( ýmissa)?) .*reglugerð(?:ir|a|ar)?/i
   return amendingTitleRe.test(title) || repealingTitleRe.test(title)
     ? 'amending'
     : 'base'

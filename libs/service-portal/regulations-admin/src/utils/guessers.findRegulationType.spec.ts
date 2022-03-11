@@ -162,7 +162,7 @@ describe('findRegulationType', () => {
     ).toEqual('amending')
     expect(
       findRegulationType(
-        'Reglugerð um að fella úr gildi Byggingaregðugerð nr. 112 frá árinu 2012',
+        'Reglugerð um að fella úr gildi Byggingareglugerð nr. 112 frá árinu 2012',
       ),
     ).toEqual('amending')
 
