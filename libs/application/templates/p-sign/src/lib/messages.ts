@@ -124,7 +124,7 @@ export const m = defineMessages({
 
   /* Quality Photo Section */
   qualityPhotoTitle: {
-    id: 'ps.application:qualityPhotoTitle',
+    id: 'ps.application:qualityPhotoSectionTitle',
     defaultMessage: 'Mynd í stæðiskort',
     description: 'Title for quality photo section',
   },
@@ -277,7 +277,7 @@ export const m = defineMessages({
     description: 'Title for overview section',
   },
   overviewSectionTitle: {
-    id: 'ps.application:overviewSectionTitle',
+    id: 'ps.application:overviewTitle',
     defaultMessage: 'Yfirlit',
     description: 'Title for overview section',
   },
