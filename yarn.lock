@@ -5491,10 +5491,10 @@
     xml2js "^0.4.23"
     xmldom "^0.3.0"
 
-"@island.is/regulations-tools@0.7.5":
-  version "0.7.5"
-  resolved "https://registry.yarnpkg.com/@island.is/regulations-tools/-/regulations-tools-0.7.5.tgz#52f224bddc3148c7235d35ca0c4d831b5155d6dd"
-  integrity sha512-1n056thoZ40IizeRAtIMDL+7UlqlskEUEEt3DVpeeyH0iIf55p53sgiBF3WGh0pG8UXjUuyBp6mLq5IlCL/Vhw==
+"@island.is/regulations-tools@0.7.7":
+  version "0.7.7"
+  resolved "https://registry.yarnpkg.com/@island.is/regulations-tools/-/regulations-tools-0.7.7.tgz#f7134af280f19913e5e28fe4a39a930332ab161b"
+  integrity sha512-bJ94tIt5GA9oynTwfTFR7FL2004Ub5O/Dozd5IWg2+UU9v7CT0QpkHqMEBClLY6YAwDTCfCF86VSlsb74+9/jQ==
   dependencies:
     "@hugsmidjan/qj" "^4.7.0"
     "@hugsmidjan/react" "^0.4.4"

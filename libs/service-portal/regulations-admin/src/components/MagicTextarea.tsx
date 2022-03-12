@@ -30,6 +30,7 @@ export type MagicTextareaProps = {
   rows?: number
   required?: boolean
   readOnly?: boolean
+  disabled?: boolean
 }
 
 export const MagicTextarea = (props: MagicTextareaProps) => {
@@ -45,6 +46,7 @@ export const MagicTextarea = (props: MagicTextareaProps) => {
     rows,
     required,
     readOnly,
+    disabled,
   } = props
 
   const elmRef = useRef<HTMLTextAreaElement>(null)
@@ -78,6 +80,7 @@ export const MagicTextarea = (props: MagicTextareaProps) => {
       ref={elmRef}
       backgroundColor="blue"
       readOnly={readOnly}
+      disabled={disabled}
     />
   )
 }

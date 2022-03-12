@@ -9,7 +9,7 @@ import {
   diffStyling,
   regulationContentStyling,
 } from '@island.is/regulations/styling'
-import { hasFocus } from './EditorInput.css'
+import { hasFocus, containerDisabled, readOnly } from './EditorInput.css'
 
 const { color, typography, border } = theme
 
@@ -62,13 +62,15 @@ const addWarning = ($legend: Parameters<typeof addLegened>[0]) =>
 
 // ===========================================================================
 
+const wrapper = style({
+  position: 'relative',
+  zIndex: 0,
+  display: 'flex',
+  flexFlow: 'row nowrap',
+})
+
 export const classes: EditorClasses = {
-  wrapper: style({
-    position: 'relative',
-    zIndex: 0,
-    display: 'flex',
-    flexFlow: 'row nowrap',
-  }),
+  wrapper,
 
   editingpane: style({
     display: 'flex',
@@ -82,8 +84,8 @@ export const classes: EditorClasses = {
 
   toolbar: style({
     position: 'sticky',
-    top: 0,
-    zIndex: 0,
+    top: SERVICE_PORTAL_HEADER_HEIGHT_SM - 1,
+    zIndex: 1,
 
     margin: 0,
     padding: '0 3px',
@@ -91,9 +93,30 @@ export const classes: EditorClasses = {
 
     ...themeUtils.responsiveStyle({
       md: {
-        top: 0,
+        top: SERVICE_PORTAL_HEADER_HEIGHT_LG - 1,
       },
     }),
+
+    selectors: {
+      [`.${readOnly} &`]: {
+        display: 'none',
+      },
+      // /* Alternative take: */
+      // [`${readOnly} &::before`]: {
+      //   content: '""',
+      //   background: '#f4f4f4cc',
+      //   position: 'absolute',
+      //   top: 0,
+      //   bottom: 0,
+      //   left: '1px',
+      //   right: '1px',
+      //   zIndex: 2,
+      // },
+
+      [`${containerDisabled} &`]: {
+        display: 'none',
+      },
+    },
   }),
 
   editor: style({
@@ -106,20 +129,51 @@ export const classes: EditorClasses = {
     ':focus': {
       outline: 'none',
     },
+    selectors: {
+      [`${containerDisabled} &`]: {
+        cursor: 'default',
+      },
+    },
   }),
 
   comparisonpane: style({
     display: 'flex',
     flexFlow: 'column',
-    position: 'relative',
+    position: 'absolute',
     zIndex: 999,
-    pointerEvents: 'none',
     width: '100%',
-    marginRight: '-80%',
+    transform: 'translateX(calc(50vw - 10%))',
+    left: '50%',
+    backgroundColor: theme.color.white,
+    overflow: 'hidden',
+    borderRadius: theme.border.radius.standard,
+    border: `1px solid ${theme.color.blue200}`,
+    transition: 'all 300ms 200ms ease-in-out',
+    transitionProperty: 'transform',
+    boxShadow: '0 0 5rem transparent',
+    opacity: 0,
+    // visibility: 'hidden',
+
+    selectors: {
+      '&:hover': {
+        boxShadow: '0 0 5rem rgba(0, 0, 0, .15)', // give this a try for mo' better contrast
+        transform: 'translateX(calc(50vw - 105%))',
+      },
+      [`${wrapper}:hover &`]: {
+        opacity: 1,
+        // visibility: 'visible',
+      },
+      [`${hasFocus} &`]: {
+        opacity: 1,
+        // visibility: 'visible',
+      },
+    },
   }),
 
   comparisonpaneContainer: style({
-    // …
+    padding: theme.spacing[3],
+    paddingTop: theme.spacing[2],
+    pointerEvents: 'none',
   }),
 
   // comparison pane headline
@@ -227,10 +281,14 @@ export const classes: EditorClasses = {
   }),
 
   result_diff: style({
-    // …
+    paddingLeft: spacing[1],
+    paddingRight: spacing[1],
+    opacity: 0.67,
   }),
   result_base: style({
-    // …
+    paddingLeft: spacing[1],
+    paddingRight: spacing[1],
+    opacity: 0.67,
   }),
   //result_dirty: style({
   // …
@@ -331,89 +389,6 @@ export const classes: EditorClasses = {
     opacity: 0.67,
   }),
 }
-
-const impactWrapper = style({
-  zIndex: 0,
-  display: 'flex',
-  flexFlow: 'row nowrap',
-})
-
-export const impactClasses: EditorClasses = Object.assign(classes, {
-  result_diff: {
-    paddingLeft: spacing[1],
-    paddingRight: spacing[1],
-    opacity: 0.67,
-  },
-  result_base: {
-    paddingLeft: spacing[1],
-    paddingRight: spacing[1],
-    opacity: 0.67,
-  },
-
-  wrapper: impactWrapper,
-
-  editingpane: style({
-    display: 'flex',
-    flexFlow: 'column',
-    width: '100%',
-  }),
-
-  comparisonpane: style({
-    display: 'flex',
-    flexFlow: 'column',
-    position: 'absolute',
-    zIndex: 999,
-    width: '100%',
-    transform: 'translateX(calc(50vw - 10%))',
-    left: '50%',
-    backgroundColor: theme.color.white,
-    overflow: 'hidden',
-    borderRadius: theme.border.radius.standard,
-    border: `1px solid ${theme.color.blue200}`,
-    transition: 'all 300ms 200ms ease-in-out',
-    transitionProperty: 'transform',
-    boxShadow: '0 0 5rem transparent',
-    opacity: 0,
-    // visibility: 'hidden',
-
-    selectors: {
-      '&:hover': {
-        boxShadow: '0 0 5rem rgba(0, 0, 0, .15)', // give this a try for mo' better contrast
-        transform: 'translateX(calc(50vw - 105%))',
-      },
-      [`${impactWrapper}:hover &`]: {
-        opacity: 1,
-        // visibility: 'visible',
-      },
-      [`${hasFocus} &`]: {
-        opacity: 1,
-        // visibility: 'visible',
-      },
-    },
-  }),
-
-  comparisonpaneContainer: style({
-    padding: theme.spacing[3],
-    paddingTop: theme.spacing[2],
-    pointerEvents: 'none',
-  }),
-
-  toolbar: style({
-    position: 'sticky',
-    top: 0,
-    zIndex: 1,
-
-    margin: 0,
-    padding: '0 3px',
-    boxShadow: '0 10px 10px -10px rgba(0,0,0, 0.25)',
-
-    ...themeUtils.responsiveStyle({
-      md: {
-        top: 0,
-      },
-    }),
-  }),
-})
 
 // ---------------------------------------------------------------------------
 

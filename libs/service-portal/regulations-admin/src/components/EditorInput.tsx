@@ -1,5 +1,5 @@
 import * as s from './EditorInput.css'
-import { classes, impactClasses } from './Editor.css'
+import { classes } from './Editor.css'
 
 import React, { useMemo, useRef, useState } from 'react'
 import { Box } from '@island.is/island-ui/core'
@@ -39,7 +39,6 @@ export type EditorInputProps = Omit<
   draftId: RegulationDraftId
   /** Called on editor blur */
   onChange: (newValue: HTMLText) => void
-  readOnly?: boolean
 }
 
 export const EditorInput = (props: EditorInputProps) => {
@@ -53,7 +52,6 @@ export const EditorInput = (props: EditorInputProps) => {
     required,
     baseText,
     isImpact,
-    readOnly,
     ...editorProps
   } = props
 
@@ -81,6 +79,8 @@ export const EditorInput = (props: EditorInputProps) => {
           s.container,
           hasError && s.hasError,
           hasFocus && s.hasFocus,
+          editorProps.disabled && s.containerDisabled,
+          editorProps.readOnly && s.readOnly,
         )}
       >
         <h4 className={cn(s.label + srOnlyClass)} id={labelId}>
@@ -90,7 +90,7 @@ export const EditorInput = (props: EditorInputProps) => {
         <RegulationsEditor
           {...editorProps}
           valueRef={valueRef}
-          classes={isImpact ? impactClasses : classes}
+          classes={classes}
           fileUploader={fileUploader}
           baseText={baseText}
           onFocus={() => {

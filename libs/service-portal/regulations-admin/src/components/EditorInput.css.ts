@@ -4,11 +4,20 @@ import { theme, helperStyles } from '@island.is/island-ui/theme'
 import * as mixins from './EditorInput.mixins'
 import omit from 'lodash/omit'
 
-export const containerDisabled = style({})
+export const containerDisabled = style({
+  opacity: 0.5,
+  backgroundColor: 'transparent',
+})
+
+export const readOnly = style({
+  backgroundColor: 'transparent',
+})
+
 export const srOnly = helperStyles.srOnly
 
 export const container = style({
   ...omit(mixins.container, 'backgroundColor'),
+  cursor: 'auto',
   boxSizing: 'border-box',
   selectors: {
     [`&:hover:not(${containerDisabled})`]: mixins.containerHover,
