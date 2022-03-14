@@ -37,6 +37,7 @@ interface WrapperProps {
   smallBackground?: boolean
   searchPlaceholder?: string
   searchTags?: Tag[]
+  showLogoTitle?: boolean
 }
 
 export const Wrapper: FC<WrapperProps> = ({
@@ -50,6 +51,7 @@ export const Wrapper: FC<WrapperProps> = ({
   smallBackground,
   searchPlaceholder,
   searchTags,
+  showLogoTitle,
   children,
 }) => {
   const [options, setOptions] = useState<Options>({
@@ -93,7 +95,7 @@ export const Wrapper: FC<WrapperProps> = ({
         {!!showSearchSection && (
           <Box className={styles.searchSection}>
             <ServiceWebSearchSection
-              logoTitle={organizationTitle}
+              logoTitle={showLogoTitle ? organizationTitle : undefined}
               logoUrl={logoUrl}
               title={searchTitle}
               textMode={textMode}

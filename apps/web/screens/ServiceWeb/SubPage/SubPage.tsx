@@ -40,6 +40,7 @@ import { getSlugPart } from '../utils'
 import ContactBanner from '../ContactBanner/ContactBanner'
 import groupBy from 'lodash/groupBy'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
+import OrganizationContactBanner from '../ContactBanner/OrganizationContactBanner'
 
 export interface Dictionary<T> {
   [index: string]: T
@@ -130,7 +131,7 @@ const SubPage: Screen<SubPageProps> = ({
       pageTitle={pageTitle}
       headerTitle={
         institutionSlugBelongsToMannaudstorg
-          ? 'Aðstoð fyrir mannauðstorg'
+          ? organizationTitle
           : n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')
       }
       institutionSlug={institutionSlug}
@@ -138,9 +139,7 @@ const SubPage: Screen<SubPageProps> = ({
       organizationTitle={organizationTitle}
       smallBackground
       searchPlaceholder={
-        institutionSlugBelongsToMannaudstorg
-          ? 'Leita á mannauðstorgi'
-          : undefined
+        institutionSlugBelongsToMannaudstorg ? 'Leitaðu á torginu' : undefined
       }
     >
       <Box marginY={[3, 3, 10]}>
@@ -218,10 +217,43 @@ const SubPage: Screen<SubPageProps> = ({
                         <Text variant="h2" as="h2">
                           {question.title}
                         </Text>
-
                         <Box>
                           {richText(question.answer as SliceType[], undefined)}
                         </Box>
+                        {institutionSlugBelongsToMannaudstorg && (
+                          <>
+                            <Box
+                              background="purple100"
+                              borderRadius="large"
+                              padding={4}
+                              marginTop={6}
+                              marginBottom={2}
+                            >
+                              <Text fontWeight="semiBold">Tengt efni</Text>
+                              <GridColumn>
+                                {[
+                                  'Réttindi vegna veikinda',
+                                  'Réttindi starfsmanns í fæðingarorlofi',
+                                ].map((item, index) => (
+                                  <GridRow marginTop={2}>
+                                    <Link
+                                      underline="small"
+                                      underlineVisibility="hover"
+                                      href="#"
+                                      key={index}
+                                    >
+                                      {item}
+                                    </Link>
+                                  </GridRow>
+                                ))}
+                              </GridColumn>
+                            </Box>
+                            <OrganizationContactBanner
+                              organizationLogoUrl={organization.logo?.url}
+                              contactLink="https://gatt.fjs.is/plugins/servlet/desk/portal/11/create/127"
+                            />
+                          </>
+                        )}
                       </>
                     )}
 

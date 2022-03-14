@@ -62,13 +62,13 @@ const Home: Screen<HomeProps> = ({
     'mannaudstorg',
   )
 
-  const headerTitle = institutionSlugBelongsToMannaudstorg
-    ? 'Aðstoð fyrir mannauðstorg'
-    : n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
+  const headerTitle = institutionSlugBelongsToMannaudstorg
+    ? organizationTitle
+    : n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')
   const logoUrl = organization?.logo?.url ?? ''
   const searchTitle = institutionSlugBelongsToMannaudstorg
-    ? 'Velkomin á mannauðstorg'
+    ? organizationTitle
     : n('canWeAssist', 'Getum við aðstoðað?')
   const pageTitle = `${
     institutionSlug && organization && organization.title
@@ -94,11 +94,10 @@ const Home: Screen<HomeProps> = ({
       organizationTitle={organizationTitle}
       searchTitle={searchTitle}
       searchPlaceholder={
-        institutionSlugBelongsToMannaudstorg
-          ? 'Leita á mannauðstorgi'
-          : undefined
+        institutionSlugBelongsToMannaudstorg ? 'Leitaðu á torginu' : undefined
       }
       searchTags={searchTags}
+      showLogoTitle={!institutionSlugBelongsToMannaudstorg}
     >
       {hasContent && (
         <ServiceWebContext.Consumer>
@@ -106,13 +105,19 @@ const Home: Screen<HomeProps> = ({
             <>
               <Box className={styles.categories}>
                 <GridContainer>
-                  <GridRow>
+                  <GridRow
+                    {...(!institutionSlugBelongsToMannaudstorg
+                      ? {}
+                      : { direction: 'column', alignItems: 'center' })}
+                  >
                     <GridColumn span="12/12" paddingBottom={[2, 2, 3]}>
                       <Text
                         variant="h3"
                         {...(textMode === 'dark' ? {} : { color: 'white' })}
                       >
-                        {n('answersByCategory', 'Svör eftir flokkum')}
+                        {institutionSlugBelongsToMannaudstorg
+                          ? 'Upplýsingar fyrir stjórnendur og mannauðsfólk hjá opinberum aðilum'
+                          : n('answersByCategory', 'Svör eftir flokkum')}
                       </Text>
                     </GridColumn>
                   </GridRow>
