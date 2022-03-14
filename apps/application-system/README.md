@@ -20,7 +20,7 @@ Then whenever you want to work on the application-system run this command:
 yarn nx run application-system-api:dev
 ```
 
-This command runs all _running locally_ in the sections [API](#API), [Form](#Form) and [graphql](#graphql) below.
+This command runs all _running locally_ in the sections [API](#API), [Form](#Form) and [graphql](#graphql) below, as well as starting x-road and soffia proxies.
 
 ## URLs
 
