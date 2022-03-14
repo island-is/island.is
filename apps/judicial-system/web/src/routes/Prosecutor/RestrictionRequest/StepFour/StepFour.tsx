@@ -30,8 +30,10 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
+
 export const StepFour: React.FC = () => {
   const {
     workingCase,
@@ -51,6 +53,11 @@ export const StepFour: React.FC = () => {
   const { formatMessage } = useIntl()
 
   const { updateCase, autofill } = useCase()
+
+  useDeb(workingCase, 'demands')
+  useDeb(workingCase, 'caseFacts')
+  useDeb(workingCase, 'legalArguments')
+  useDeb(workingCase, 'comments')
 
   useEffect(() => {
     document.title = 'Greinargerð - Réttarvörslugátt'
