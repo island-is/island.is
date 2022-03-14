@@ -222,32 +222,34 @@ const SubPage: Screen<SubPageProps> = ({
                         </Box>
                         {institutionSlugBelongsToMannaudstorg && (
                           <>
-                            <Box
-                              background="purple100"
-                              borderRadius="large"
-                              padding={4}
-                              marginTop={6}
-                              marginBottom={2}
-                            >
-                              <Text fontWeight="semiBold">Tengt efni</Text>
-                              <GridColumn>
-                                {[
-                                  'Réttindi vegna veikinda',
-                                  'Réttindi starfsmanns í fæðingarorlofi',
-                                ].map((item, index) => (
-                                  <GridRow marginTop={2}>
-                                    <Link
-                                      underline="small"
-                                      underlineVisibility="hover"
-                                      href="#"
-                                      key={index}
-                                    >
-                                      {item}
-                                    </Link>
-                                  </GridRow>
-                                ))}
-                              </GridColumn>
-                            </Box>
+                            {question.relatedLinks?.length > 0 && (
+                              <Box
+                                background="purple100"
+                                borderRadius="large"
+                                padding={4}
+                                marginTop={6}
+                                marginBottom={2}
+                              >
+                                <Text fontWeight="semiBold">Tengt efni</Text>
+                                <GridColumn>
+                                  {(question.relatedLinks ?? []).map(
+                                    ({ text, url }, index) => (
+                                      <GridRow marginTop={2}>
+                                        <Link
+                                          underline="small"
+                                          underlineVisibility="hover"
+                                          href={url}
+                                          key={index}
+                                        >
+                                          {text}
+                                        </Link>
+                                      </GridRow>
+                                    ),
+                                  )}
+                                </GridColumn>
+                              </Box>
+                            )}
+
                             <OrganizationContactBanner
                               organizationLogoUrl={organization.logo?.url}
                               contactLink="https://gatt.fjs.is/plugins/servlet/desk/portal/11/create/127"

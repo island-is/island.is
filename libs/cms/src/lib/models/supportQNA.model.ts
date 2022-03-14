@@ -2,6 +2,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 import { ISupportQna } from '../generated/contentfulTypes'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
+import { Link, mapLink } from './link.model'
 
 import { mapOrganization, Organization } from './organization.model'
 import { mapSupportCategory, SupportCategory } from './supportCategory.model'
@@ -35,6 +36,9 @@ export class SupportQNA {
 
   @Field()
   importance!: number
+
+  @Field(() => [Link])
+  relatedLinks?: Link[]
 }
 
 export const mapSupportQNA = ({ fields, sys }: ISupportQna): SupportQNA => ({
@@ -50,4 +54,7 @@ export const mapSupportQNA = ({ fields, sys }: ISupportQna): SupportQNA => ({
     ? mapSupportSubCategory(fields.subCategory)
     : null,
   importance: fields.importance ?? 0,
+  relatedLinks: fields.relatedLinks
+    ? fields.relatedLinks.map((link) => mapLink(link))
+    : [],
 })

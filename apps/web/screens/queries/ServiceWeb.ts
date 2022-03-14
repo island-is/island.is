@@ -51,6 +51,10 @@ export const GET_SUPPORT_QNAS_IN_CATEGORY = gql`
       answer {
         ...AllSlices
       }
+      relatedLinks {
+        url
+        text
+      }
     }
   }
   ${slices}
