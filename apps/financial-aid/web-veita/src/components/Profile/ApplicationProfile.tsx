@@ -14,6 +14,7 @@ import {
   getAidAmountModalInfo,
   UserType,
   ApplicationFile,
+  isImage,
 } from '@island.is/financial-aid/shared/lib'
 
 import format from 'date-fns/format'
@@ -37,8 +38,6 @@ import {
   getNationalRegistryInfo,
 } from '@island.is/financial-aid-web/veita/src/utils/applicationHelper'
 import { TaxBreakdown } from '@island.is/financial-aid/shared/components'
-import { gql, useLazyQuery, useMutation } from '@apollo/client'
-import { CreateSignedUrlMutation } from '@island.is/financial-aid-web/osk/graphql'
 import PrintableImages from './PrintableImages'
 
 interface ApplicationProps {
@@ -150,95 +149,6 @@ const ApplicationProfile = ({
       (d) => d.userType === UserType.SPOUSE,
     ) ?? []
 
-  function isImage(filename: string): boolean {
-    const imagesFileExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp']
-
-    const extension = filename.split('.').pop()?.toLowerCase() || ''
-
-    return imagesFileExtensions.includes(extension)
-  }
-
-  // const [allImages, setImages] = useState([])
-  // const [createSignedUrlMutation] = useMutation(CreateSignedUrlMutation)
-
-  // const [allImages, setallImages] = useState<any[]>([])
-
-  // const [openFile] = useLazyQuery(GetSignedUrlQuery, {
-  //   fetchPolicy: 'no-cache',
-  //   onCompleted: (data: { getSignedUrlForId: { url: string } }) => {
-  //     return data.getSignedUrlForId.url
-  //   },
-  //   onError: (error) => {
-  //     // TODO: What should happen here?
-  //     console.log(error)
-  //   },
-  // })
-
-  // useEffect(() => {
-  //   async function fetchMyAPI() {
-  //     if (application?.files) {
-  //       await application?.files.map(async (img) => {
-  //         const blaa = await Promise.all([
-  //           openFile({ variables: { input: { id: img.id } } }),
-  //         ])
-  //         return blaa
-  //       })
-  //     }
-  //   }
-  //   console.log(fetchMyAPI())
-
-  // const bla =
-  //    application.files
-  //     .map(async (img) => {
-  //       const blaa = await Promise.all( [openFile({ variables: { input: { id: img.id } } })] )
-  //       return blaa
-  //     })
-  //     console.log(await bla)
-
-  // const asyncRes = await Promise.all(arr.map(async (i) => {
-  //   await sleep(10);
-  //   return i + 1;
-  // }));
-
-  // const asyncRes = await Promise.all(arr.map(async (i) => {
-  //   await sleep(10);
-  //   return i + 1;
-  // }));
-
-  // console.log(asyncRes);
-
-  // setallImages( Promise.all([async () => {
-  //     application.files
-  //     ?.filter((el) => {
-  //       if (isImage(el.name)) {
-  //         return el.name
-  //       }
-  //     })
-  //     .map((image) => () => {
-  //       return await openFile({ variables: { input: { id: image.id } } })
-  //     }),
-  // }]))
-  // async function fetchMyAPI() {
-  //   await application.files
-  //     ?.filter((el) => {
-  //       if (isImage(el.name)) {
-  //         return el.name
-  //       }
-  //     })
-  //     .map((image) => () => {
-  //       return openFile({ variables: { input: { id: image.id } } })
-  //     })
-  // }
-  //   // console.log(Promise.all([fetchMyAPI()]))
-  // }, [application?.files])
-
-  // useEffect(() => {
-  //   window.onbeforeprint = (event) => {
-  //     console.log('Before print')
-  //   }
-  // }, [])
-  // console.log(allImages)
-
   return (
     <>
       <Box
@@ -323,11 +233,16 @@ const ApplicationProfile = ({
         />
 
         {application?.files && (
-          <Box className={` ${styles.widthFull} `}>
-            <PrintableImages
-              images={application?.files.filter((el) => isImage(el.name))}
-            />
-          </Box>
+          <>
+            <Box
+              className={` ${styles.widthFull} show-in-print`}
+              display="none"
+            >
+              <PrintableImages
+                images={application?.files.filter((el) => isImage(el.name))}
+              />
+            </Box>
+          </>
         )}
       </Box>
       {application.state && (

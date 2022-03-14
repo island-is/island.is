@@ -1,5 +1,4 @@
 import React from 'react'
-import { Box } from '@island.is/island-ui/core'
 import { ApplicationFile } from '@island.is/financial-aid/shared/lib'
 import { gql, useQuery } from '@apollo/client'
 interface Props {
@@ -16,30 +15,30 @@ export const GetSignedUrlQuery = gql`
 `
 
 const PrintableImages = ({ images }: Props) => {
-  console.log(images)
+  const allImages: string[] = []
 
   images.map((el) => {
-    const { data, loading: loadingUser } = useQuery(GetSignedUrlQuery, {
+    const { data } = useQuery(GetSignedUrlQuery, {
       variables: { input: { id: el.id } },
       fetchPolicy: 'no-cache',
       errorPolicy: 'all',
     })
-    console.log(data)
+    if (data?.getSignedUrlForId) {
+      allImages.push(data.getSignedUrlForId.url)
+    }
   })
-
-  // const [data] = useQuery(GetSignedUrlQuery, {
-  //   fetchPolicy: 'no-cache',
-  //   onCompleted: (data: { getSignedUrlForId: { url: string } }) => {
-  //     return data.getSignedUrlForId.url
-  //   },
-  //   onError: (error) => {
-  //     // TODO: What should happen here?
-  //     console.log(error)
-  //   },
-  // })
   return (
     <>
-      <Box>jasjdja</Box>
+      {allImages.map((el, index) => {
+        return (
+          <img
+            key={`printable-image-${index}`}
+            src={el}
+            loading="lazy"
+            className="printableImages"
+          />
+        )
+      })}
     </>
   )
 }

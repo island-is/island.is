@@ -46,7 +46,7 @@ const History = ({
       </Box>
       <Box
         className={cn({
-          [`${styles.historyContainer} printableSection`]: true,
+          [`${styles.historyContainer}`]: true,
           [`${className}`]: true,
         })}
       >
