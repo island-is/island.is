@@ -11,7 +11,6 @@ import { StudentListInput } from './dto/studentList.input'
 import { User } from '@island.is/auth-nest-tools'
 import { Student } from './models/studentsTeacherNationalId.response'
 import { DrivingBookStudentOverview } from './models/drivingBookStudentOverview.response'
-import { DrivingLicenseBook } from './models/drivingLicenseBook.response'
 import { LICENSE_CATEGORY } from './drivinLicenceBook.type'
 import { DrivingBookStudent } from './models/drivingBookStudent.response'
 import { PracticalDrivingLesson } from './models/practicalDrivingLesson.response'
@@ -80,13 +79,13 @@ export class DrivingLicenseBookService {
     }
   }
 
-  async getStudentList(
-    input: StudentListInput,
-  ): Promise<DrivingBookStudent[] | null> {
+  async getStudentList(input: StudentListInput): Promise<DrivingBookStudent[]> {
     const api = await this.apiWithAuth()
     const { data } = await api.apiStudentGetStudentListGet(input)
     if (!data) {
-      return null
+      throw new NotFoundException(
+        `Student list in drivingLicenseBook not found`,
+      )
     }
     return data.map((student) => ({
       id: student.id || undefined,
@@ -102,7 +101,7 @@ export class DrivingLicenseBookService {
     }))
   }
 
-  async getStudentListTeacherNationalId(user: User): Promise<Student[] | null> {
+  async getStudentListTeacherNationalId(user: User): Promise<Student[]> {
     const api = await this.apiWithAuth()
     const {
       data,
@@ -110,7 +109,9 @@ export class DrivingLicenseBookService {
       teacherSsn: user.nationalId,
     })
     if (!data) {
-      return null
+      throw new NotFoundException(
+        `Students for teacher with nationalId ${user.nationalId} not found`,
+      )
     }
     return data.map((student) => ({
       id: student?.studentId || undefined,
@@ -122,7 +123,7 @@ export class DrivingLicenseBookService {
 
   async getStudent({
     nationalId,
-  }: StudentInput): Promise<DrivingBookStudentOverview | null> {
+  }: StudentInput): Promise<DrivingBookStudentOverview> {
     const api = await this.apiWithAuth()
     const { data } = await api.apiStudentGetStudentOverviewSsnGet({
       ssn: nationalId,
@@ -132,13 +133,26 @@ export class DrivingLicenseBookService {
         ssn: data?.ssn,
         licenseCategory: LICENSE_CATEGORY,
       })
-      const book = data?.books.filter(
-        (b) => b.id === activeBook,
-      )[0] as DrivingLicenseBook
-      return { ...data, book } as DrivingBookStudentOverview
+      const book = data?.books.filter((b) => b.id === activeBook && !!b.id)[0]
+      return {
+        ...data,
+        nationalId: data.ssn,
+        teacherNationalId: book.teacherSsn,
+        book: {
+          ...book,
+          id: book.id || undefined,
+          teacherNationalId: book.teacherSsn || undefined,
+          teachersAndLessons: book?.teachersAndLessons?.map((lesson) => ({
+            ...lesson,
+            teacherNationalId: lesson.teacherSsn,
+          })),
+        },
+      } as DrivingBookStudentOverview
     }
 
-    return null
+    throw new NotFoundException(
+      `Student for nationalId ${nationalId} not found`,
+    )
   }
 
   async getPracticalDrivingLessons(
@@ -148,10 +162,23 @@ export class DrivingLicenseBookService {
     const { data } = await api.apiTeacherGetPracticalDrivingLessonsBookIdGet(
       input,
     )
-    if (data) {
-      return data as PracticalDrivingLesson[]
+    if (!data) {
+      throw new NotFoundException(
+        `Practical driving lesson for id ${input.id} not found`,
+      )
     }
-    throw new NotFoundException()
+    return data.map((practical) => ({
+      bookId: practical.bookId || undefined,
+      id: practical.id || undefined,
+      studentNationalId: practical.studentSsn || undefined,
+      studentName: practical.studentName || undefined,
+      licenseCategory: practical.licenseCategory || undefined,
+      teacherNationalId: practical.teacherSsn || undefined,
+      teacherName: practical.teacherName || undefined,
+      minutes: practical.minutes,
+      createdOn: practical.createdOn || undefined,
+      comments: practical.comments || undefined,
+    }))
   }
 
   private async getActiveBookId(
