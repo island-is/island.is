@@ -21,7 +21,7 @@ import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useQuery, useMutation } from '@apollo/client'
 import {
-  DrivingBookStudentOverview,
+  DrivingLicenseBookStudentOverview,
   PracticalDrivingLesson,
 } from '../../types/schema'
 import { ViewSingleStudentQuery } from '../../graphql/queries'
@@ -77,8 +77,8 @@ const ViewStudent = ({
   >(undefined)
   const [dateError, setDateError] = useState(false)
   const [student, setStudent] = useState<
-    undefined | DrivingBookStudentOverview
-  >(studentDataResponse ? studentDataResponse.drivingBookStudent : {})
+    undefined | DrivingLicenseBookStudentOverview
+  >(studentDataResponse ? studentDataResponse.drivingLicenseBookStudent : {})
 
   const userNationalId = (application.externalData.nationalRegistry?.data as {
     nationalId?: string
@@ -89,7 +89,7 @@ const ViewStudent = ({
 
   useEffect(() => {
     setStudent(
-      studentDataResponse ? studentDataResponse.drivingBookStudent : {},
+      studentDataResponse ? studentDataResponse.drivingLicenseBookStudent : {},
     )
   }, [studentDataResponse])
 
@@ -128,7 +128,7 @@ const ViewStudent = ({
 
     if (res) {
       setNewRegId(
-        res.data.drivingBookCreatePracticalDrivingLesson.id.toUpperCase(),
+        res.data.drivingLicenseBookCreatePracticalDrivingLesson.id.toUpperCase(),
       )
       resetFields()
     }
@@ -139,6 +139,7 @@ const ViewStudent = ({
       variables: {
         input: {
           id: editingRegistration?.id?.toLowerCase(),
+          bookId: student?.book?.id,
           minutes: minutes,
           createdOn: date,
           comments: '',
@@ -148,7 +149,10 @@ const ViewStudent = ({
       toast.error(formatMessage(m.errorOnEditLesson))
     })
 
-    if (res && res.data.drivingBookUpdatePracticalDrivingLesson.success) {
+    if (
+      res &&
+      res.data.drivingLicenseBookUpdatePracticalDrivingLesson.success
+    ) {
       setNewRegId(editingRegistration?.id?.toUpperCase())
       resetFields('edit')
     }
@@ -159,6 +163,7 @@ const ViewStudent = ({
       variables: {
         input: {
           id: regId,
+          bookId: student?.book?.id,
           reason: '',
         },
       },
@@ -166,7 +171,10 @@ const ViewStudent = ({
       toast.success(formatMessage(m.errorOnDeleteLesson))
     })
 
-    if (res && res.data.drivingBookDeletePracticalDrivingLesson.success) {
+    if (
+      res &&
+      res.data.drivingLicenseBookDeletePracticalDrivingLesson.success
+    ) {
       resetFields('delete')
     }
   }

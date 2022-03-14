@@ -10,7 +10,7 @@ import { DrivingLicenseBookClientService } from '@island.is/clients/driving-lice
 import { DrivingLicenseBookStudentsInput } from './dto/students.input'
 import { User } from '@island.is/auth-nest-tools'
 import { DrivingLicenseBookStudentForTeacher } from './models/studentsTeacherNationalId.response'
-import { DrivingBookStudentOverview } from './models/drivingBookStudentOverview.response'
+import { DrivingLicenseBookStudentOverview } from './models/drivingBookStudentOverview.response'
 import { LICENSE_CATEGORY } from './drivinLicenceBook.type'
 import { DrivingLicenseBookStudent } from './models/drivingLicenseBookStudent.response'
 import { PracticalDrivingLesson } from './models/practicalDrivingLesson.response'
@@ -103,13 +103,13 @@ export class DrivingLicenseBookService {
     )
   }
 
-  async findStudent(input: DrivingLicenseBookStudentsInput): Promise<DrivingLicenseBookStudent[]> {
+  async findStudent(
+    input: DrivingLicenseBookStudentsInput,
+  ): Promise<DrivingLicenseBookStudent[]> {
     const api = await this.apiWithAuth()
     const { data } = await api.apiStudentGetStudentListGet(input)
     if (!data) {
-      throw new NotFoundException(
-        `Student not found drivingLicenseBook`,
-      )
+      throw new NotFoundException(`Student not found drivingLicenseBook`)
     }
     return data.map((student) => ({
       id: student.id || undefined,
@@ -125,7 +125,9 @@ export class DrivingLicenseBookService {
     }))
   }
 
-  async getStudentsForTeacher(user: User): Promise<DrivingLicenseBookStudentForTeacher[]> {
+  async getStudentsForTeacher(
+    user: User,
+  ): Promise<DrivingLicenseBookStudentForTeacher[]> {
     const api = await this.apiWithAuth()
     const {
       data,
@@ -147,7 +149,7 @@ export class DrivingLicenseBookService {
 
   async getStudent({
     nationalId,
-  }: DrivingLicenseBookStudentInput): Promise<DrivingBookStudentOverview> {
+  }: DrivingLicenseBookStudentInput): Promise<DrivingLicenseBookStudentOverview> {
     const api = await this.apiWithAuth()
     const { data } = await api.apiStudentGetStudentOverviewSsnGet({
       ssn: nationalId,
@@ -168,7 +170,7 @@ export class DrivingLicenseBookService {
             teacherNationalId: lesson.teacherSsn,
           })),
         },
-      } as DrivingBookStudentOverview
+      } as DrivingLicenseBookStudentOverview
     }
 
     throw new NotFoundException(

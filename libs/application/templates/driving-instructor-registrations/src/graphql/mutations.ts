@@ -1,29 +1,29 @@
 import gql from 'graphql-tag'
 
 export const RegisterDrivingLesson = gql`
-  mutation drivingBookCreatePracticalDrivingLesson(
+  mutation drivingLicenseBookCreatePracticalDrivingLesson(
     $input: CreatePracticalDrivingLessonInput!
   ) {
-    drivingBookCreatePracticalDrivingLesson(input: $input) {
+    drivingLicenseBookCreatePracticalDrivingLesson(input: $input) {
       id
     }
   }
 `
 export const DeleteDrivingLesson = gql`
-  mutation drivingBookDeletePracticalDrivingLesson(
+  mutation drivingLicenseBookDeletePracticalDrivingLesson(
     $input: DeletePracticalDrivingLessonInput!
   ) {
-    drivingBookDeletePracticalDrivingLesson(input: $input) {
+    drivingLicenseBookDeletePracticalDrivingLesson(input: $input) {
       success
     }
   }
 `
 
 export const EditDrivingLesson = gql`
-  mutation drivingBookUpdatePracticalDrivingLesson(
+  mutation drivingLicenseBookUpdatePracticalDrivingLesson(
     $input: UpdatePracticalDrivingLessonInput!
   ) {
-    drivingBookUpdatePracticalDrivingLesson(input: $input) {
+    drivingLicenseBookUpdatePracticalDrivingLesson(input: $input) {
       success
     }
   }

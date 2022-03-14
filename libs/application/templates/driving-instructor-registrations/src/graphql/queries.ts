@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 export const ViewSingleStudentQuery = gql`
-  query drivingBookStudent($input: StudentInput!) {
-    drivingBookStudent(input: $input) {
+  query drivingLicenseBookStudent($input: DrivingLicenseBookStudentInput!) {
+    drivingLicenseBookStudent(input: $input) {
       id
       name
       nationalId
@@ -33,8 +33,8 @@ export const ViewSingleStudentQuery = gql`
 `
 
 export const InstructorsStudentsQuery = gql`
-  query drivingBookStudentListByTeacherNationalId {
-    drivingBookStudentListByTeacherNationalId {
+  query drivingLicenseBookStudentsForTeacher {
+    drivingLicenseBookStudentsForTeacher {
       id
       name
       nationalId
@@ -44,8 +44,10 @@ export const InstructorsStudentsQuery = gql`
 `
 
 export const FindStudentQuery = gql`
-  query drivingBookStudentList($input: StudentListInput!) {
-    drivingBookStudentList(input: $input) {
+  query drivingLicenseBookFindStudent(
+    $input: DrivingLicenseBookStudentsInput!
+  ) {
+    drivingLicenseBookFindStudent(input: $input) {
       id
       name
       nationalId

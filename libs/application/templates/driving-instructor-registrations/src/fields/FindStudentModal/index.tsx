@@ -47,7 +47,7 @@ const FindStudentModal = ({
 
   useEffect(() => {
     if (isSearching && findStudent) {
-      if (findStudent.drivingBookStudentList.length) {
+      if (findStudent.drivingLicenseBookFindStudent.length) {
         viewStudent(studentNationalId)
         setIsModalOpen(false)
       } else {

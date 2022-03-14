@@ -12,7 +12,7 @@ import { DrivingLicenseBookStudent } from './models/drivingLicenseBookStudent.re
 import { PracticalDrivingLessonsInput } from './dto/getPracticalDrivingLessons.input'
 import { PracticalDrivingLesson } from './models/practicalDrivingLesson.response'
 import { DrivingLicenseBookStudentInput } from './dto/student.input'
-import { DrivingBookStudentOverview } from './models/drivingBookStudentOverview.response'
+import { DrivingLicenseBookStudentOverview } from './models/drivingBookStudentOverview.response'
 import { CreatePracticalDrivingLessonInput } from './dto/createPracticalDrivingLesson.input'
 import { Success } from './models/success.response'
 import { UpdatePracticalDrivingLessonInput } from './dto/updatePracticalDrivingLesson.input'
@@ -27,17 +27,21 @@ export class DrivinLicenseBookResolver {
   ) {}
 
   @Query(() => [DrivingLicenseBookStudent])
-  drivingLicneseBookFindStudent(@Args('input') input: DrivingLicenseBookStudentsInput) {
+  drivingLicenseBookFindStudent(
+    @Args('input') input: DrivingLicenseBookStudentsInput,
+  ) {
     return this.drivingLicenseBookService.findStudent(input)
   }
 
   @Query(() => [DrivingLicenseBookStudentForTeacher])
-  drivingLicenseBookStudentListByTeacherNationalId(@CurrentUser() user: User) {
+  drivingLicenseBookStudentsForTeacher(@CurrentUser() user: User) {
     return this.drivingLicenseBookService.getStudentsForTeacher(user)
   }
 
-  @Query(() => DrivingBookStudentOverview)
-  drivingLicenseBookStudent(@Args('input') input: DrivingLicenseBookStudentInput) {
+  @Query(() => DrivingLicenseBookStudentOverview)
+  drivingLicenseBookStudent(
+    @Args('input') input: DrivingLicenseBookStudentInput,
+  ) {
     return this.drivingLicenseBookService.getStudent(input)
   }
 
@@ -58,16 +62,22 @@ export class DrivinLicenseBookResolver {
   @Mutation(() => Success)
   drivingLicenseBookUpdatePracticalDrivingLesson(
     @Args('input') input: UpdatePracticalDrivingLessonInput,
-    @CurrentUser() user: User
+    @CurrentUser() user: User,
   ) {
-    return this.drivingLicenseBookService.updatePracticalDrivingLesson(input, user)
+    return this.drivingLicenseBookService.updatePracticalDrivingLesson(
+      input,
+      user,
+    )
   }
 
   @Mutation(() => Success)
   drivingLicenseBookDeletePracticalDrivingLesson(
     @Args('input') input: DeletePracticalDrivingLessonInput,
-    @CurrentUser() user: User
+    @CurrentUser() user: User,
   ) {
-    return this.drivingLicenseBookService.deletePracticalDrivingLesson(input, user)
+    return this.drivingLicenseBookService.deletePracticalDrivingLesson(
+      input,
+      user,
+    )
   }
 }

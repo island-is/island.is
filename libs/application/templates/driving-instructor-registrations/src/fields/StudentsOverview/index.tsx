@@ -37,9 +37,7 @@ const StudentsOverview = ({ application }: Data) => {
   const { data } = useQuery(InstructorsStudentsQuery)
 
   const [pageStudents, setPageStudents] = useState(
-    data
-      ? (data.drivingBookStudentListByTeacherNationalId as Array<Student>)
-      : [],
+    data ? (data.drivingLicenseBookStudentsForTeacher as Array<Student>) : [],
   )
 
   /* table view */
@@ -57,7 +55,7 @@ const StudentsOverview = ({ application }: Data) => {
 
   const filter = (searchTerm: string) => {
     if (searchTerm.length) {
-      const filteredList = data.drivingBookStudentListByTeacherNationalId?.filter(
+      const filteredList = data.drivingLicenseBookStudentsForTeacher?.filter(
         (student: Student) =>
           student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           student.nationalId.includes(searchTerm),
@@ -65,13 +63,13 @@ const StudentsOverview = ({ application }: Data) => {
 
       handlePagination(1, filteredList)
     } else {
-      handlePagination(1, data?.drivingBookStudentListByTeacherNationalId)
+      handlePagination(1, data?.drivingLicenseBookStudentsForTeacher)
     }
   }
 
   useEffect(() => {
     filter(searchTerm)
-  }, [data?.drivingBookStudentListByTeacherNationalId, searchTerm])
+  }, [data?.drivingLicenseBookStudentsForTeacher, searchTerm])
 
   return (
     <Box marginBottom={10}>
