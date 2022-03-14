@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useDebounce } from 'react-use'
 
 import { Box, Checkbox, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import {
@@ -17,6 +16,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { icReportForm } from '@island.is/judicial-system-web/messages'
 import { isPoliceReportStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 
@@ -36,45 +36,10 @@ const PoliceReportForm: React.FC<Props> = (props) => {
   const [caseFactsEM, setCaseFactsEM] = useState<string>('')
   const [legalArgumentsEM, setLegalArgumentsEM] = useState<string>('')
 
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        caseFacts: workingCase.caseFacts,
-      })
-    },
-    2000,
-    [workingCase.caseFacts],
-  )
-
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        legalArguments: workingCase.legalArguments,
-      })
-    },
-    2000,
-    [workingCase.legalArguments],
-  )
-
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        prosecutorOnlySessionRequest: workingCase.prosecutorOnlySessionRequest,
-      })
-    },
-    2000,
-    [workingCase.prosecutorOnlySessionRequest],
-  )
-
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        comments: workingCase.comments,
-      })
-    },
-    2000,
-    [workingCase.comments],
-  )
+  useDeb(workingCase, 'caseFacts')
+  useDeb(workingCase, 'legalArguments')
+  useDeb(workingCase, 'prosecutorOnlySessionRequest')
+  useDeb(workingCase, 'comments')
 
   useEffect(() => {
     const defaultProsecutorOnlySessionRequest = formatMessage(

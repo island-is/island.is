@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { Input } from '@island.is/island-ui/core'
-import { useDebounce } from 'react-use'
 import { IntlFormatters, useIntl } from 'react-intl'
 
 import { Case, isAcceptingCaseDecision } from '@island.is/judicial-system/types'
@@ -11,6 +10,7 @@ import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '../../utils/formHelper'
+import useDeb from '../../utils/hooks/useDeb'
 
 interface Props {
   workingCase: Case
@@ -60,13 +60,7 @@ const RulingInput: React.FC<Props> = (props) => {
   const { formatMessage } = useIntl()
   const [rulingErrorMessage, setRulingErrorMessage] = useState('')
 
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, { ruling: workingCase.ruling })
-    },
-    2000,
-    [workingCase.ruling],
-  )
+  useDeb(workingCase, 'ruling')
 
   return (
     <Input

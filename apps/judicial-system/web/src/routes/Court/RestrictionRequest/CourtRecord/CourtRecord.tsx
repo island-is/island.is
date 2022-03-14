@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import { useDebounce } from 'react-use'
 
 import {
   Box,
@@ -61,6 +60,7 @@ import {
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 
@@ -94,55 +94,11 @@ export const CourtRecord: React.FC = () => {
 
   const id = router.query.id
 
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        courtAttendees: workingCase.courtAttendees,
-      })
-    },
-    2000,
-    [workingCase.courtAttendees],
-  )
-
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        sessionBookings: workingCase.sessionBookings,
-      })
-    },
-    2000,
-    [workingCase.sessionBookings],
-  )
-
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        accusedAppealAnnouncement: workingCase.accusedAppealAnnouncement,
-      })
-    },
-    2000,
-    [workingCase.accusedAppealAnnouncement],
-  )
-
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        prosecutorAppealAnnouncement: workingCase.prosecutorAppealAnnouncement,
-      })
-    },
-    2000,
-    [workingCase.prosecutorAppealAnnouncement],
-  )
-
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        endOfSessionBookings: workingCase.endOfSessionBookings,
-      })
-    },
-    2000,
-    [workingCase.endOfSessionBookings],
-  )
+  useDeb(workingCase, 'courtAttendees')
+  useDeb(workingCase, 'sessionBookings')
+  useDeb(workingCase, 'accusedAppealAnnouncement')
+  useDeb(workingCase, 'prosecutorAppealAnnouncement')
+  useDeb(workingCase, 'endOfSessionBookings')
 
   useEffect(() => {
     document.title = 'Þingbók - Réttarvörslugátt'

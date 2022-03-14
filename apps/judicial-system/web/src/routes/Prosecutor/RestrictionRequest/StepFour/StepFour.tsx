@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useDebounce } from 'react-use'
 
 import { Text, Box, Input, Tooltip } from '@island.is/island-ui/core'
 import {
@@ -31,6 +30,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 
@@ -54,45 +54,10 @@ export const StepFour: React.FC = () => {
 
   const { updateCase, autofill } = useCase()
 
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        demands: workingCase.demands,
-      })
-    },
-    2000,
-    [workingCase.demands],
-  )
-
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        caseFacts: workingCase.caseFacts,
-      })
-    },
-    2000,
-    [workingCase.caseFacts],
-  )
-
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        legalArguments: workingCase.legalArguments,
-      })
-    },
-    2000,
-    [workingCase.legalArguments],
-  )
-
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        comments: workingCase.comments,
-      })
-    },
-    2000,
-    [workingCase.comments],
-  )
+  useDeb(workingCase, 'demands')
+  useDeb(workingCase, 'caseFacts')
+  useDeb(workingCase, 'legalArguments')
+  useDeb(workingCase, 'comments')
 
   useEffect(() => {
     document.title = 'Greinargerð - Réttarvörslugátt'

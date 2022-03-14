@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
-import { useDebounce } from 'react-use'
 
 import {
   Text,
@@ -34,6 +33,7 @@ import {
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
+import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import {
   errors,
   rcCaseFiles as m,
@@ -78,15 +78,7 @@ export const StepFiveForm: React.FC<Props> = (props) => {
   } = useS3Upload(workingCase)
   const { updateCase } = useCase()
 
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        caseFilesComments: workingCase.caseFilesComments,
-      })
-    },
-    2000,
-    [workingCase.caseFilesComments],
-  )
+  useDeb(workingCase, 'caseFilesComments')
 
   useEffect(() => {
     if (policeCaseFiles) {

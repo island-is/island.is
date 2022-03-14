@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from 'react'
 import cn from 'classnames'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
-import { useDebounce } from 'react-use'
 
 import {
   Text,
@@ -30,6 +29,7 @@ import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/uti
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
+import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import {
   errors,
   icCaseFiles as m,
@@ -76,15 +76,7 @@ const CaseFilesForm: React.FC<Props> = (props) => {
   const { updateCase } = useCase()
   const { user } = useContext(UserContext)
 
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        caseFilesComments: workingCase.caseFilesComments,
-      })
-    },
-    2000,
-    [workingCase.caseFilesComments],
-  )
+  useDeb(workingCase, 'caseFilesComments')
 
   useEffect(() => {
     if (policeCaseFiles) {

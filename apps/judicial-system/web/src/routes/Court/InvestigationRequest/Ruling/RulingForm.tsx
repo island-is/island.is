@@ -1,6 +1,5 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useDebounce } from 'react-use'
 
 import {
   CaseFileList,
@@ -28,6 +27,7 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isRulingValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { core, icRuling as m } from '@island.is/judicial-system-web/messages'
+import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 
@@ -48,45 +48,10 @@ const RulingForm: React.FC<Props> = (props) => {
   const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState<string>('')
   const [introductionEM, setIntroductionEM] = useState<string>('')
 
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        prosecutorDemands: workingCase.prosecutorDemands,
-      })
-    },
-    2000,
-    [workingCase.prosecutorDemands],
-  )
-
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        courtCaseFacts: workingCase.courtCaseFacts,
-      })
-    },
-    2000,
-    [workingCase.courtCaseFacts],
-  )
-
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        courtLegalArguments: workingCase.courtLegalArguments,
-      })
-    },
-    2000,
-    [workingCase.courtLegalArguments],
-  )
-
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        conclusion: workingCase.conclusion,
-      })
-    },
-    2000,
-    [workingCase.conclusion],
-  )
+  useDeb(workingCase, 'prosecutorDemands')
+  useDeb(workingCase, 'courtCaseFacts')
+  useDeb(workingCase, 'courtLegalArguments')
+  useDeb(workingCase, 'conclusion')
 
   return (
     <>

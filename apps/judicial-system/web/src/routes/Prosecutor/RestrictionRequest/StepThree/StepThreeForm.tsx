@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useDebounce } from 'react-use'
 
 import { Box, Text, Input, Checkbox } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -36,6 +35,7 @@ import {
 import { isPoliceDemandsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import { rcDemands } from '@island.is/judicial-system-web/messages/RestrictionCases/Prosecutor/demandsForm'
 import { core } from '@island.is/judicial-system-web/messages'
+import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 interface Props {
@@ -53,35 +53,9 @@ const StepThreeForm: React.FC<Props> = (props) => {
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
 
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        lawsBroken: workingCase.lawsBroken,
-      })
-    },
-    2000,
-    [workingCase.lawsBroken],
-  )
-
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        legalBasis: workingCase.legalBasis,
-      })
-    },
-    2000,
-    [workingCase.legalBasis],
-  )
-
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        requestedOtherRestrictions: workingCase.requestedOtherRestrictions,
-      })
-    },
-    2000,
-    [workingCase.requestedOtherRestrictions],
-  )
+  useDeb(workingCase, 'lawsBroken')
+  useDeb(workingCase, 'legalBasis')
+  useDeb(workingCase, 'requestedOtherRestrictions')
 
   return (
     <>

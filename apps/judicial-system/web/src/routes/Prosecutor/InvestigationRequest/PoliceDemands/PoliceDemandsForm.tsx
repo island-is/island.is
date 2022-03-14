@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
-import { useDebounce } from 'react-use'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import {
@@ -18,6 +17,7 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isPoliceDemandsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { icDemands } from '@island.is/judicial-system-web/messages'
+import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import * as Constants from '@island.is/judicial-system/consts'
 
@@ -72,35 +72,9 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
   const [lawsBrokenEM, setLawsBrokenEM] = useState<string>('')
   const [legalBasisEM, setLegalBasisEM] = useState<string>('')
 
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        demands: workingCase.demands,
-      })
-    },
-    2000,
-    [workingCase.demands],
-  )
-
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        lawsBroken: workingCase.lawsBroken,
-      })
-    },
-    2000,
-    [workingCase.lawsBroken],
-  )
-
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        legalBasis: workingCase.legalBasis,
-      })
-    },
-    2000,
-    [workingCase.legalBasis],
-  )
+  useDeb(workingCase, 'demands')
+  useDeb(workingCase, 'lawsBroken')
+  useDeb(workingCase, 'legalBasis')
 
   useEffect(() => {
     if (isCaseUpToDate) {

@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import { useDebounce } from 'react-use'
 
 import {
   Accordion,
@@ -52,6 +51,7 @@ import {
   formatDate,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
+import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import * as Constants from '@island.is/judicial-system/consts'
 import { autofillRuling } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
 
@@ -88,45 +88,10 @@ export const Ruling: React.FC = () => {
   const { updateCase, autofill, autofillBoolean } = useCase()
   const { formatMessage } = useIntl()
 
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        prosecutorDemands: workingCase.prosecutorDemands,
-      })
-    },
-    2000,
-    [workingCase.prosecutorDemands],
-  )
-
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        courtCaseFacts: workingCase.courtCaseFacts,
-      })
-    },
-    2000,
-    [workingCase.courtCaseFacts],
-  )
-
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        courtLegalArguments: workingCase.courtLegalArguments,
-      })
-    },
-    2000,
-    [workingCase.courtLegalArguments],
-  )
-
-  useDebounce(
-    () => {
-      updateCase(workingCase.id, {
-        conclusion: workingCase.conclusion,
-      })
-    },
-    2000,
-    [workingCase.conclusion],
-  )
+  useDeb(workingCase, 'prosecutorDemands')
+  useDeb(workingCase, 'courtCaseFacts')
+  useDeb(workingCase, 'courtLegalArguments')
+  useDeb(workingCase, 'conclusion')
 
   useEffect(() => {
     document.title = 'Úrskurður - Réttarvörslugátt'
