@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useMemo, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import {
   AsyncSearch,
@@ -9,42 +9,98 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { coreErrorMessages } from '@island.is/application/core'
+import { gql, useLazyQuery } from '@apollo/client'
+import debounce from 'lodash/debounce'
+import kennitala from 'kennitala'
+import { CompanySearchItem } from './CompanySearchItem'
+import { debounceTime } from '@island.is/shared/constants'
+
+export const COMPANY_REGISTRY_COMPANIES = gql`
+  query SearchCompanies($input: RskCompanyInfoSearchInput!) {
+    companyRegistryCompanies(input: $input) {
+      data {
+        name
+        nationalId
+      }
+    }
+  }
+`
 
 interface Props {
-  invalidNationalIdError?: boolean
-  noResultsFound?: boolean
   id: string
   defaultValue?: unknown
   name?: string
   label: string
-  loading?: boolean
-  options?: AsyncSearchOption[]
   placeholder?: string
   initialInputValue?: string
   inputValue?: string
   colored?: boolean
-  onInputChange: (inputValue: string) => void
   setLabelToDataSchema?: boolean
 }
 
 export const CompanySearchController: FC<Props> = ({
-  invalidNationalIdError,
-  noResultsFound,
   defaultValue,
   id,
   name = id,
   label,
-  loading = false,
-  options = [],
   placeholder,
   initialInputValue = '',
   inputValue = '',
   colored = true,
-  onInputChange,
   setLabelToDataSchema = true,
 }) => {
   const { clearErrors, setValue } = useFormContext()
   const { formatMessage } = useLocale()
+
+  const [searchQuery, setSearchQuery] = useState('')
+
+  const [search, { loading, data }] = useLazyQuery(COMPANY_REGISTRY_COMPANIES)
+
+  const debouncer = useMemo(() => {
+    return debounce(search, debounceTime.search)
+  }, [search])
+
+  // Validations
+  const noResultsFound =
+    data?.companyRegistryCompanies?.data?.length === 0 &&
+    !loading &&
+    searchQuery.trim().length > 0
+  const invalidNationalId =
+    !kennitala.isValid(searchQuery) && !loading && searchQuery.length === 10
+
+  const onInputChange = (inputValue: string) => {
+    setSearchQuery(inputValue)
+    debouncer({
+      variables: {
+        input: {
+          searchTerm: inputValue,
+          first: 40,
+        },
+      },
+    })
+  }
+
+  const getSearchOptions = (
+    query: string,
+    response: { data: { name: string; nationalId: string }[] } = { data: [] },
+  ) => {
+    const { data } = response
+    const options = data?.map(({ name, nationalId }) => ({
+      label: name,
+      value: nationalId,
+      component: (props: any) => (
+        <CompanySearchItem
+          {...props}
+          key={`${name}-${nationalId}`}
+          name={name}
+          nationalId={nationalId}
+          query={query}
+        />
+      ),
+    }))
+    return options || []
+  }
+
   return (
     <>
       <Controller
@@ -55,7 +111,10 @@ export const CompanySearchController: FC<Props> = ({
             <AsyncSearch
               label={label}
               loading={loading}
-              options={options}
+              options={getSearchOptions(
+                searchQuery,
+                data?.companyRegistryCompanies,
+              )}
               size="large"
               placeholder={placeholder}
               initialInputValue={initialInputValue}
@@ -87,12 +146,12 @@ export const CompanySearchController: FC<Props> = ({
           )
         }}
       />
-      {invalidNationalIdError && (
+      {invalidNationalId && (
         <InputError
           errorMessage={formatMessage(coreErrorMessages.invalidNationalId)}
         />
       )}
-      {noResultsFound && (
+      {noResultsFound && !invalidNationalId && (
         <Box marginTop={[2, 2]}>
           <AlertMessage
             type="error"

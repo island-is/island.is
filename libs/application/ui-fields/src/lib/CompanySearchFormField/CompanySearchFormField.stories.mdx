@@ -7,6 +7,7 @@ import {
   Source,
 } from '@storybook/addon-docs'
 import { dedent } from 'ts-dedent'
+import { gql } from '@apollo/client'
 
 import { CompanySearchFormField } from './CompanySearchFormField'
 
@@ -22,6 +23,17 @@ export const createMockApplication = (data = {}) => ({
   answers: data.answers || {},
   externalData: data.externalData || {},
 })
+
+export const COMPANY_REGISTRY_COMPANIES = gql`
+  query SearchCompanies($input: RskCompanyInfoSearchInput!) {
+    companyRegistryCompanies(input: $input) {
+      data {
+        name
+        nationalId
+      }
+    }
+  }
+`
 
 <Meta
   title="Application System/CompanySearchFormField"
@@ -42,14 +54,55 @@ You can create a CompanySearchFormField using the following function `buildCompa
       title: 'Field title',
       placeholder: 'Field placeholder',
       setLabelToDataSchema: true,
-      useMockOptions: true,
     })`)}
 />
 
+For this instance you have to search for "pru" to get an example of how it works.
 The previous configuration object will result in the following component:
 
 <Canvas>
-  <Story name="Default" height="400px">
+  <Story
+    name="Default"
+    height="400px"
+    parameters={{
+      apolloClient: {
+        addTypename: false,
+        mocks: [
+          {
+            request: {
+              query: COMPANY_REGISTRY_COMPANIES,
+              variables: {
+                input: {
+                  searchTerm: 'pru',
+                  first: 100,
+                },
+              },
+            },
+            result: {
+              data: {
+                companyRegistryCompanies: {
+                  data: [
+                    {
+                      name: 'Prufu fyrirtæki 1',
+                      nationalId: '1111111111',
+                    },
+                    {
+                      name: 'Prufu fyrirtæki 2',
+                      nationalId: '2222222222',
+                    },
+                    {
+                      name: 'Prufu fyrirtæki 3',
+                      nationalId: '3333333333',
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        ],
+      },
+    }}
+  >
     <CompanySearchFormField
       application={createMockApplication()}
       field={{
@@ -57,7 +110,6 @@ The previous configuration object will result in the following component:
         title: 'Field title',
         placeholder: 'Field placeholder',
         setLabelToDataSchema: true,
-        useMockOptions: true,
       }}
     />
   </Story>
