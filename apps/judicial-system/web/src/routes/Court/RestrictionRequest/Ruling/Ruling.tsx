@@ -51,6 +51,7 @@ import {
   formatDate,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
+import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import * as Constants from '@island.is/judicial-system/consts'
 import { autofillRuling } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
 
@@ -86,6 +87,11 @@ export const Ruling: React.FC = () => {
   const { user } = useContext(UserContext)
   const { updateCase, autofill, autofillBoolean } = useCase()
   const { formatMessage } = useIntl()
+
+  useDeb(workingCase, 'prosecutorDemands')
+  useDeb(workingCase, 'courtCaseFacts')
+  useDeb(workingCase, 'courtLegalArguments')
+  useDeb(workingCase, 'conclusion')
 
   useEffect(() => {
     document.title = 'Úrskurður - Réttarvörslugátt'
