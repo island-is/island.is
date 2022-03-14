@@ -793,6 +793,12 @@ const CourtRecordForm: React.FC<Props> = (props) => {
           nextIsLoading={isLoading}
           nextUrl={`${Constants.IC_CONFIRMATION_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isCourtRecordStepValidIC(workingCase)}
+          hideNextButton={!workingCase.decision || !workingCase.conclusion}
+          infoBoxText={
+            !workingCase.decision || !workingCase.conclusion
+              ? formatMessage(m.nextButtonInfo)
+              : ''
+          }
         />
       </FormContentContainer>
     </>
