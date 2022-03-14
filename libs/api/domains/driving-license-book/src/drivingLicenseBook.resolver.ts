@@ -58,14 +58,16 @@ export class DrivinLicenseBookResolver {
   @Mutation(() => SuccessResponse)
   drivingBookUpdatePracticalDrivingLesson(
     @Args('input') input: UpdatePracticalDrivingLessonInput,
+    @CurrentUser() user: User
   ) {
-    return this.drivingLicenseBookService.updatePracticalDrivingLesson(input)
+    return this.drivingLicenseBookService.updatePracticalDrivingLesson(input, user)
   }
 
   @Mutation(() => SuccessResponse)
   drivingBookDeletePracticalDrivingLesson(
     @Args('input') input: DeletePracticalDrivingLessonInput,
+    @CurrentUser() user: User
   ) {
-    return this.drivingLicenseBookService.deletePracticalDrivingLesson(input)
+    return this.drivingLicenseBookService.deletePracticalDrivingLesson(input, user)
   }
 }

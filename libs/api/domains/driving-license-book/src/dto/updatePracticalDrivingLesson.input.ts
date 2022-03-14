@@ -7,6 +7,9 @@ export class UpdatePracticalDrivingLessonInput {
   id!: string
 
   @Field()
+  bookId!: string
+
+  @Field()
   minutes!: number
 
   @Field()

@@ -6,5 +6,8 @@ export class DeletePracticalDrivingLessonInput {
   id!: string
 
   @Field()
+  bookId!: string
+
+  @Field()
   reason?: string
 }

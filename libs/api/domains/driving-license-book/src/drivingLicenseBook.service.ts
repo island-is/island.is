@@ -1,11 +1,13 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import {
   DrivingLicenseBookClientService,
-  ApiTeacherGetPracticalDrivingLessonsBookIdGetRequest,
-  ApiTeacherDeleteExemptionIdDeleteRequest,
-  ApiStudentGetStudentActiveBookIdSsnGetRequest,
 } from '@island.is/clients/driving-license-book'
 import { StudentListInput } from './dto/studentList.input'
 import { User } from '@island.is/auth-nest-tools'
@@ -17,6 +19,8 @@ import { PracticalDrivingLesson } from './models/practicalDrivingLesson.response
 import { StudentInput } from './dto/student.input'
 import { CreatePracticalDrivingLessonInput } from './dto/createPracticalDrivingLesson.input'
 import { UpdatePracticalDrivingLessonInput } from './dto/updatePracticalDrivingLesson.input'
+import { DeletePracticalDrivingLessonInput } from './dto/deletePracticalDrivingLesson.input'
+import { PracticalDrivingLessonsInput } from './dto/getPracticalDrivingLessons.input'
 
 @Injectable()
 export class DrivingLicenseBookService {
@@ -29,6 +33,7 @@ export class DrivingLicenseBookService {
   async apiWithAuth() {
     return await this.drivingLicenseBookClientService.api()
   }
+
   async createPracticalDrivingLesson(
     input: CreatePracticalDrivingLessonInput,
   ): Promise<PracticalDrivingLesson | null> {
@@ -45,38 +50,59 @@ export class DrivingLicenseBookService {
     return null
   }
 
-  async updatePracticalDrivingLesson({
-    id,
-    minutes,
-    createdOn,
-    comments,
-  }: UpdatePracticalDrivingLessonInput): Promise<{ success: boolean }> {
-    try {
-      const api = await this.apiWithAuth()
-      await api.apiTeacherUpdatePracticalDrivingLessonIdPut({
-        id: id,
-        practicalDrivingLessonUpdateRequestBody: {
-          minutes: minutes,
-          createdOn: createdOn,
-          comments: comments,
-        },
-      })
-      return { success: true }
-    } catch (e) {
-      return { success: false }
+  async updatePracticalDrivingLesson(
+    {
+      bookId,
+      id,
+      minutes,
+      createdOn,
+      comments,
+    }: UpdatePracticalDrivingLessonInput,
+    user: User,
+  ): Promise<{ success: boolean }> {
+    const api = await this.apiWithAuth()
+    const lesson: PracticalDrivingLesson[] = await this.getPracticalDrivingLessons(
+      { bookId, id },
+    )
+    if (lesson[0].teacherNationalId === user.nationalId) {
+      try {
+        await api.apiTeacherUpdatePracticalDrivingLessonIdPut({
+          id: id,
+          practicalDrivingLessonUpdateRequestBody: {
+            minutes: minutes,
+            createdOn: createdOn,
+            comments: comments,
+          },
+        })
+        return { success: true }
+      } catch (e) {
+        return { success: false }
+      }
     }
+    throw new ForbiddenException(
+      `User ${user.nationalId} can not update practical driving lesson ${id}`,
+    )
   }
 
   async deletePracticalDrivingLesson(
-    input: ApiTeacherDeleteExemptionIdDeleteRequest,
+    { bookId, id, reason }: DeletePracticalDrivingLessonInput,
+    user: User,
   ) {
-    try {
-      const api = await this.apiWithAuth()
-      await api.apiTeacherDeletePracticalDrivingLessonIdDelete(input)
-      return { success: true }
-    } catch (e) {
-      return { success: false }
+    const api = await this.apiWithAuth()
+    const lesson: PracticalDrivingLesson[] = await this.getPracticalDrivingLessons(
+      { bookId, id },
+    )
+    if (lesson[0].teacherNationalId === user.nationalId) {
+      try {
+        await api.apiTeacherDeletePracticalDrivingLessonIdDelete({ id, reason })
+        return { success: true }
+      } catch (e) {
+        return { success: false }
+      }
     }
+    throw new ForbiddenException(
+      `User ${user.nationalId} can not delete practical driving lesson ${id}`,
+    )
   }
 
   async getStudentList(input: StudentListInput): Promise<DrivingBookStudent[]> {
@@ -129,10 +155,7 @@ export class DrivingLicenseBookService {
       ssn: nationalId,
     })
     if (data?.books && data?.ssn) {
-      const activeBook = await this.getActiveBookId({
-        ssn: data?.ssn,
-        licenseCategory: LICENSE_CATEGORY,
-      })
+      const activeBook = await this.getActiveBookId(data?.ssn)
       const book = data?.books.filter((b) => b.id === activeBook && !!b.id)[0]
       return {
         ...data,
@@ -156,7 +179,7 @@ export class DrivingLicenseBookService {
   }
 
   async getPracticalDrivingLessons(
-    input: ApiTeacherGetPracticalDrivingLessonsBookIdGetRequest,
+    input: PracticalDrivingLessonsInput,
   ): Promise<PracticalDrivingLesson[]> {
     const api = await this.apiWithAuth()
     const { data } = await api.apiTeacherGetPracticalDrivingLessonsBookIdGet(
@@ -182,10 +205,10 @@ export class DrivingLicenseBookService {
   }
 
   private async getActiveBookId(
-    input: ApiStudentGetStudentActiveBookIdSsnGetRequest,
+    nationalId: string,
   ): Promise<string | null> {
     const api = await this.apiWithAuth()
-    const { data } = await api.apiStudentGetStudentActiveBookIdSsnGet(input)
+        const { data } = await api.apiStudentGetStudentActiveBookIdSsnGet({ssn: nationalId,licenseCategory: LICENSE_CATEGORY })
     return data?.bookId || null
   }
 }
