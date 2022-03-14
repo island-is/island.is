@@ -48,7 +48,7 @@ export const icDemands = {
           id:
             'judicial.system.investigation_cases:police_demands.demands.prefill.phone_tapping',
           defaultMessage:
-            'Þess er krafist að Héraðsdómur Reykjavíkur úrskurði að lögreglustjóranum á höfuðborgarsvæðinu sé heimilt að hlusta og hljóðrita símtöl úr og í símanúmerin [###-####] auk annara símanúmera sem {accusedName}, hefur í notkun og umráð yfir, frá og með [DD.MM.ÁÁ] til og með [DD.MM.ÁÁ], og jafnframt sé heimilt að nema sms sendingar, þar með taldar sms sendingar á lesanlegu formi, sem sendar eru eða mótteknar með símanúmerunum á sama tíma og hlusta og hljóðrita samtöl við talhólf greindra númera og símtækja á sama tíma.',
+            'Þess er krafist að {court} úrskurði að {insitution} sé heimilt að hlusta og hljóðrita símtöl úr og í símanúmerin [###-####] auk annara símanúmera sem {accused}, hefur í notkun og umráð yfir, frá og með [DD.MM.ÁÁ] til og með [DD.MM.ÁÁ], og jafnframt sé heimilt að nema sms sendingar, þar með taldar sms sendingar á lesanlegu formi, sem sendar eru eða mótteknar með símanúmerunum á sama tíma og hlusta og hljóðrita samtöl við talhólf greindra númera og símtækja á sama tíma.',
           description: 'Sjálfgefinn dómkröfutexti fyrir símhlerun',
         },
         teleCommunications: {

@@ -51,7 +51,7 @@ const courtClaimPrefill: Partial<
   },
   [CaseType.PHONE_TAPPING]: {
     text: icDemands.sections.demands.prefill.phoneTapping,
-    format: { accused: true },
+    format: { court: true, institution: true, accused: true },
   },
   [CaseType.TELECOMMUNICATIONS]: {
     text: icDemands.sections.demands.prefill.teleCommunications,
