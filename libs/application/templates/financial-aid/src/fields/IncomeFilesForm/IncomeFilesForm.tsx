@@ -1,11 +1,11 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { Text } from '@island.is/island-ui/core'
+import { Text, UploadFile } from '@island.is/island-ui/core'
 import { incomeFilesForm } from '../../lib/messages'
-import { FAFieldBaseProps } from '../..'
+import { FAFieldBaseProps, OverrideAnswerSchema, UploadFileType } from '../..'
 import { Files } from '..'
 
-const IncomeFilesForm = ({ application }: FAFieldBaseProps) => {
+const IncomeFilesForm = ({ field, application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { id, answers } = application
 
@@ -15,8 +15,10 @@ const IncomeFilesForm = ({ application }: FAFieldBaseProps) => {
         {formatMessage(incomeFilesForm.general.description)}
       </Text>
       <Files
-        fileKey="incomeFiles"
-        uploadFiles={answers.incomeFiles}
+        fileKey={field.id as UploadFileType}
+        uploadFiles={
+          answers[field.id as keyof OverrideAnswerSchema] as UploadFile[]
+        }
         folderId={id}
       />
     </>
