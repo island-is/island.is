@@ -26,6 +26,7 @@ export const Spouse: Form = buildForm({
         }),
       ],
     }),
+    // TODO: check if reusing components will work for the summary page
     buildSection({
       id: 'incomeForm',
       title: m.incomeForm.general.sectionTitle,
