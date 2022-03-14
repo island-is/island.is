@@ -3,6 +3,7 @@ import type { Institution } from './institution'
 import type { Notification } from './notification'
 import type { CaseFile } from './file'
 import type { User } from './user'
+import type { CourtDocument } from './courtDocument'
 
 export enum CaseType {
   CUSTODY = 'CUSTODY',
@@ -143,7 +144,7 @@ export interface Case {
   isClosedCourtHidden?: boolean
   courtAttendees?: string
   prosecutorDemands?: string
-  courtDocuments?: string[]
+  courtDocuments?: CourtDocument[]
   sessionBookings?: string
   courtCaseFacts?: string
   introduction?: string
@@ -226,9 +227,10 @@ export interface UpdateCase {
   courtRoom?: string
   courtStartDate?: string
   courtEndTime?: string
+  isClosedCourtHidden?: boolean
   courtAttendees?: string
   prosecutorDemands?: string
-  courtDocuments?: string[]
+  courtDocuments?: CourtDocument[]
   sessionBookings?: string
   courtCaseFacts?: string
   introduction?: string

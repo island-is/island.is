@@ -8,7 +8,9 @@ import { validate } from './validate'
 
 export const parseArray = (property: string, array: string[]) => {
   try {
+    // TODO: fix - need to escape/stringify ${a}
     const json = JSON.parse(`{"${property}": [${array.map((a) => `"${a}"`)}]}`)
+
     return json
   } catch (e) {
     return null

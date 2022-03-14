@@ -23,7 +23,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { courtDocuments as m } from '@island.is/judicial-system-web/messages'
-import type { Case } from '@island.is/judicial-system/types'
+import type { Case, CourtDocument } from '@island.is/judicial-system/types'
 import { parseArray } from '@island.is/judicial-system-web/src/utils/formatters'
 import { theme } from '@island.is/island-ui/theme'
 
@@ -37,10 +37,10 @@ interface CourtDocumentsProps {
   tagText: string
   tagVariant: TagVariant
   caseId: string
-  selectedCourtDocuments: Array<string>
+  selectedCourtDocuments: Array<CourtDocument>
   onUpdateCase: (
     id: string,
-    updatedCase: { courtDocuments: Array<string> },
+    updatedCase: { courtDocuments: Array<CourtDocument> },
   ) => void
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   workingCase: Case
@@ -58,7 +58,7 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
   workingCase,
 }: CourtDocumentsProps) => {
   const { formatMessage } = useIntl()
-  const [courtDocuments, setCourtDocuments] = useState<Array<string>>(
+  const [courtDocuments, setCourtDocuments] = useState<Array<CourtDocument>>(
     selectedCourtDocuments,
   )
   const [nextDocumentToUpload, setNextDocumentToUpload] = useState<string>('')
@@ -70,9 +70,12 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
 
   const handleAddDocument = () => {
     if (nextDocumentToUpload) {
-      const updatedCourtDocuments = [...courtDocuments, nextDocumentToUpload]
+      const updatedCourtDocuments = [
+        ...courtDocuments,
+        { name: nextDocumentToUpload },
+      ]
 
-      onUpdateCase(caseId, parseArray('courtDocuments', updatedCourtDocuments))
+      onUpdateCase(caseId, { courtDocuments: updatedCourtDocuments })
 
       setWorkingCase({ ...workingCase, courtDocuments: updatedCourtDocuments })
       setCourtDocuments(updatedCourtDocuments)
@@ -89,7 +92,7 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
       (_, documentIndex) => documentIndex !== index,
     )
 
-    onUpdateCase(caseId, parseArray('courtDocuments', updatedCourtDocuments))
+    onUpdateCase(caseId, { courtDocuments: updatedCourtDocuments })
     setCourtDocuments(updatedCourtDocuments)
   }
 
@@ -196,7 +199,7 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
       {courtDocuments.map((courtDocument, index) => {
         return (
           <div className={styles.additionalCourtDocumentContainer} key={index}>
-            <Text variant="h4">{courtDocument}</Text>
+            <Text variant="h4">{courtDocument.name}</Text>
             <Box display="flex" flexGrow={1} justifyContent="flexEnd">
               <div
                 className={styles.dropdownContainer}
