@@ -17,7 +17,6 @@ import {
   IdentityType,
 } from '@island.is/api/domains/identity'
 import type { DelegationDTO } from '@island.is/clients/auth-public-api'
-import { formatNationalId } from '@island.is/shared/utils'
 
 import {
   CreateDelegationInput,
@@ -138,7 +137,7 @@ export class DelegationResolver {
   ): Identity {
     return {
       nationalId: nationalId,
-      name: name ?? formatNationalId(nationalId),
+      name: name ?? kennitala.format(nationalId),
       type: kennitala.isCompany(nationalId)
         ? IdentityType.Company
         : IdentityType.Person,
