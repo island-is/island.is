@@ -55,11 +55,11 @@ const courtClaimPrefill: Partial<
   },
   [CaseType.TELECOMMUNICATIONS]: {
     text: icDemands.sections.demands.prefill.teleCommunications,
-    format: { accused: true },
+    format: { court: true, institution: true, accused: true },
   },
   [CaseType.TRACKING_EQUIPMENT]: {
     text: icDemands.sections.demands.prefill.trackingEquipment,
-    format: { accused: true },
+    format: { court: true, institution: true, accused: true },
   },
 }
 
