@@ -6,6 +6,7 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { useRulingAutofill } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
 
 import OverviewForm from './OverviewForm'
 
@@ -22,6 +23,8 @@ const Overview = () => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
 
+  useRulingAutofill(isCaseUpToDate, workingCase)
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -36,7 +39,6 @@ const Overview = () => {
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
         isLoading={isLoadingWorkingCase}
-        isCaseUpToDate={isCaseUpToDate}
       />
     </PageLayout>
   )

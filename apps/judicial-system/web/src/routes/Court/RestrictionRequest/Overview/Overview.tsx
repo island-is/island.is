@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useRouter } from 'next/router'
 
 import {
@@ -12,12 +12,12 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import * as Constants from '@island.is/judicial-system/consts'
-import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
 import OverviewForm from './OverviewForm'
 import {
   UploadState,
   useCourtUpload,
 } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
+import { useRulingAutofill } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
 
 export const JudgeOverview: React.FC = () => {
   const {
@@ -27,7 +27,6 @@ export const JudgeOverview: React.FC = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
-  const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
 
   const router = useRouter()
   const id = router.query.id
@@ -36,6 +35,7 @@ export const JudgeOverview: React.FC = () => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
 
+  useRulingAutofill(isCaseUpToDate, workingCase)
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
 
   return (
@@ -48,11 +48,7 @@ export const JudgeOverview: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <OverviewForm
-        workingCase={workingCase}
-        setWorkingCase={setWorkingCase}
-        setIsDraftingConclusion={setIsDraftingConclusion}
-      />
+      <OverviewForm workingCase={workingCase} setWorkingCase={setWorkingCase} />
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${Constants.RECEPTION_AND_ASSIGNMENT_ROUTE}/${id}`}
@@ -60,13 +56,6 @@ export const JudgeOverview: React.FC = () => {
           nextIsDisabled={uploadState === UploadState.UPLOADING}
         />
       </FormContentContainer>
-      <DraftConclusionModal
-        workingCase={workingCase}
-        setWorkingCase={setWorkingCase}
-        isCaseUpToDate={isCaseUpToDate}
-        isDraftingConclusion={isDraftingConclusion}
-        setIsDraftingConclusion={setIsDraftingConclusion}
-      />
     </PageLayout>
   )
 }
