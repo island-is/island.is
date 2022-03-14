@@ -1,12 +1,14 @@
 import {
+  buildCustomField,
   buildForm,
   buildSection,
-  buildTextField,
   Form,
   FormModes,
 } from '@island.is/application/core'
 
 import * as m from '../lib/messages'
+import { ApproveOptions } from '../lib/types'
+import { Routes } from '../lib/constants'
 
 export const Spouse: Form = buildForm({
   id: 'FinancialAidApplication',
@@ -14,12 +16,37 @@ export const Spouse: Form = buildForm({
   mode: FormModes.APPLYING,
   children: [
     buildSection({
-      id: 'Stuff TODO',
-      title: 'TODO stuff',
+      id: 'aboutSpouseForm',
+      title: m.aboutSpouseForm.general.sectionTitle,
       children: [
-        buildTextField({
-          id: 'Todo-text-field',
-          title: 'Spouse',
+        buildCustomField({
+          id: 'aboutSpouseForm',
+          title: m.aboutSpouseForm.general.pageTitle,
+          component: 'AboutSpouseForm',
+        }),
+      ],
+    }),
+    // TODO: check if reusing components will work for the summary page
+    buildSection({
+      id: 'incomeForm',
+      title: m.incomeForm.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: Routes.SPOUSEINCOME,
+          title: m.incomeForm.general.pageTitle,
+          component: 'IncomeForm',
+        }),
+      ],
+    }),
+    buildSection({
+      condition: (answers) => answers.spouseIncome === ApproveOptions.Yes,
+      id: 'incomeFilesForm',
+      title: m.incomeFilesForm.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: Routes.SPOUSEINCOMEFILES,
+          title: m.incomeFilesForm.general.pageTitle,
+          component: 'IncomeFilesForm',
         }),
       ],
     }),

@@ -5,13 +5,14 @@
 # instead of debian. The cypress docker image logic has been duplicated here and
 # there are references above each FROM statement to the source.
 #
+ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
 
-FROM buildpack-deps:focal as node-base
+FROM $DOCKER_IMAGE_REGISTRY/docker/library/buildpack-deps:focal as node-base
 
 RUN apt-get update \
- && apt-get install -y nodejs npm \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
+  && apt-get install -y nodejs npm \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
 RUN npm install -g n yarn
 RUN n install 14.17.0
 

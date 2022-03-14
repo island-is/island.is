@@ -2,6 +2,7 @@ import faker from 'faker'
 
 import {
   Case,
+  CaseDecision,
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
@@ -168,6 +169,42 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
     cy.getByTestid('inputErrorMessage').should('not.exist')
   })
 
+  it('should not allow users to continue if conclusion is not set', () => {
+    const caseData = makeInvestigationCase()
+
+    const caseDataAddition: Case = {
+      ...caseData,
+      prosecutor: makeProsecutor(),
+      courtDate: '2021-12-16T10:50:04.033Z',
+      decision: CaseDecision.ACCEPTING,
+    }
+
+    cy.stubAPIResponses()
+    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
+
+    intercept(caseDataAddition)
+
+    cy.getByTestid('continueButton').should('not.exist')
+  })
+
+  it('should not allow users to continue if decision is not set', () => {
+    const caseData = makeInvestigationCase()
+
+    const caseDataAddition: Case = {
+      ...caseData,
+      prosecutor: makeProsecutor(),
+      courtDate: '2021-12-16T10:50:04.033Z',
+      conclusion: faker.lorem.words(5),
+    }
+
+    cy.stubAPIResponses()
+    cy.visit(`${IC_COURT_RECORD_ROUTE}/test_id_stadfest`)
+
+    intercept(caseDataAddition)
+
+    cy.getByTestid('continueButton').should('not.exist')
+  })
+
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
     const caseData = makeInvestigationCase()
 
@@ -175,6 +212,8 @@ describe(`${IC_COURT_RECORD_ROUTE}/:id`, () => {
       ...caseData,
       prosecutor: makeProsecutor(),
       courtDate: '2021-12-16T10:50:04.033Z',
+      decision: CaseDecision.ACCEPTING,
+      conclusion: faker.lorem.words(5),
     }
 
     cy.stubAPIResponses()

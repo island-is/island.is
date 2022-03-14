@@ -40,6 +40,7 @@ export type NestedType<T> = {
 export interface OverrideAnswerSchema extends answersSchema {
   incomeFiles: UploadFile[]
   taxReturnFiles: UploadFile[]
+  spouseIncomeFiles: UploadFile[]
 }
 
 export type FAApplication = Override<
@@ -81,4 +82,8 @@ export interface InputTypes {
   error?: string
 }
 
-export type UploadFileType = 'otherFiles' | 'incomeFiles' | 'taxReturnFiles'
+export type UploadFileType =
+  | 'otherFiles'
+  | 'incomeFiles'
+  | 'taxReturnFiles'
+  | 'spouseIncomeFiles'

@@ -51,7 +51,9 @@ import {
   formatDate,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
+import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import * as Constants from '@island.is/judicial-system/consts'
+import { autofillRuling } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
 
 export const Ruling: React.FC = () => {
   const {
@@ -78,9 +80,6 @@ export const Ruling: React.FC = () => {
     prosecutorDemandsErrorMessage,
     setProsecutorDemandsMessage,
   ] = useState<string>('')
-  const [conclusionErrorMessage, setConclusionErrorMessage] = useState<string>(
-    '',
-  )
 
   const router = useRouter()
   const id = router.query.id
@@ -88,6 +87,11 @@ export const Ruling: React.FC = () => {
   const { user } = useContext(UserContext)
   const { updateCase, autofill, autofillBoolean } = useCase()
   const { formatMessage } = useIntl()
+
+  useDeb(workingCase, 'prosecutorDemands')
+  useDeb(workingCase, 'courtCaseFacts')
+  useDeb(workingCase, 'courtLegalArguments')
+  useDeb(workingCase, 'conclusion')
 
   useEffect(() => {
     document.title = 'Úrskurður - Réttarvörslugátt'
@@ -142,6 +146,8 @@ export const Ruling: React.FC = () => {
       if (theCase.legalArguments) {
         autofill('courtLegalArguments', theCase.legalArguments, theCase)
       }
+
+      autofillRuling(workingCase, autofill, formatMessage)
     }
 
     if (
@@ -482,17 +488,13 @@ export const Ruling: React.FC = () => {
           <RulingInput
             workingCase={workingCase}
             setWorkingCase={setWorkingCase}
-            isCaseUpToDate={isCaseUpToDate}
             isRequired
           />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {`${formatMessage(m.sections.decision.title)} `}
-              <Text as="span" fontWeight="semiBold" color="red600">
-                *
-              </Text>
+              {formatMessage(m.sections.decision.title)}
             </Text>
           </Box>
           <Box marginBottom={5}>
@@ -665,27 +667,21 @@ export const Ruling: React.FC = () => {
               removeTabsValidateAndSet(
                 'conclusion',
                 event.target.value,
-                ['empty'],
+                [],
                 workingCase,
                 setWorkingCase,
-                conclusionErrorMessage,
-                setConclusionErrorMessage,
               )
             }
             onBlur={(event) =>
               validateAndSendToServer(
                 'conclusion',
                 event.target.value,
-                ['empty'],
+                [],
                 workingCase,
                 updateCase,
-                setConclusionErrorMessage,
               )
             }
-            hasError={conclusionErrorMessage !== ''}
-            errorMessage={conclusionErrorMessage}
             textarea
-            required
             rows={7}
             autoExpand={{ on: true, maxHeight: 300 }}
           />

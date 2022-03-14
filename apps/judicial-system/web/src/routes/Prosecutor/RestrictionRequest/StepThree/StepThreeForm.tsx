@@ -35,6 +35,7 @@ import {
 import { isPoliceDemandsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import { rcDemands } from '@island.is/judicial-system-web/messages/RestrictionCases/Prosecutor/demandsForm'
 import { core } from '@island.is/judicial-system-web/messages'
+import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 interface Props {
@@ -51,6 +52,10 @@ const StepThreeForm: React.FC<Props> = (props) => {
 
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
+
+  useDeb(workingCase, 'lawsBroken')
+  useDeb(workingCase, 'legalBasis')
+  useDeb(workingCase, 'requestedOtherRestrictions')
 
   return (
     <>
