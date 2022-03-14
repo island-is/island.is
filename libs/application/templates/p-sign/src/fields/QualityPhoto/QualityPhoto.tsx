@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 
-import { Box, ContentBlock, AlertMessage } from '@island.is/island-ui/core'
+import { Box, SkeletonLoader } from '@island.is/island-ui/core'
 import {
   Application,
   FieldBaseProps,
@@ -36,35 +36,15 @@ const Photo: FC<QualityPhotoData> = ({
 }
 
 const QualityPhoto: FC<FieldBaseProps> = ({ application }) => {
-  const { qualityPhoto, loading, error } = useQualityPhoto(application)
-  // TODO: skeleton load when image is loading
-  const { formatMessage } = useLocale()
+  const { qualityPhoto } = useQualityPhoto(application)
   const img = Photo({ qualityPhoto, application })
   return (
-    <Box marginBottom={3}>
-      {qualityPhoto ? (
-        <Box marginTop={4} style={{ width: '191px', height: '242px' }}>
-          {img}
-        </Box>
-      ) : (
-        <Box marginTop={2}>
-          <ContentBlock>
-            <AlertMessage
-              type="warning"
-              title={formatText(
-                m.qualityPhotoWarningTitle,
-                application,
-                formatMessage,
-              )}
-              message={formatText(
-                m.qualityPhotoWarningDescription,
-                application,
-                formatMessage,
-              )}
-            />
-          </ContentBlock>
-        </Box>
-      )}
+    <Box
+      marginTop={4}
+      marginBottom={3}
+      style={{ width: '191px', height: '242px' }}
+    >
+      {qualityPhoto ? img : <SkeletonLoader height={242} width={191} />}
     </Box>
   )
 }

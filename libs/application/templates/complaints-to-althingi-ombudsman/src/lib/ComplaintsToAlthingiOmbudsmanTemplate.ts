@@ -9,6 +9,7 @@ import {
   DefaultEvents,
   DefaultStateLifeCycle,
 } from '@island.is/application/core'
+import { ApiActions } from '../shared'
 import { ComplaintsToAlthingiOmbudsmanSchema } from './dataSchema'
 
 const States = {
@@ -63,6 +64,27 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
           SUBMIT: {
             target: States.submitted,
           },
+        },
+      },
+      [States.submitted]: {
+        meta: {
+          name: States.submitted,
+          progress: 1,
+          lifecycle: DefaultStateLifeCycle,
+          onEntry: {
+            apiModuleAction: ApiActions.submitApplication,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import(
+                  '../forms/ComplaintsToAlthingiOmbudsmanSubmitted'
+                ).then((val) =>
+                  Promise.resolve(val.ComplaintsToAlthingiOmbudsmanSubmitted),
+                ),
+            },
+          ],
         },
       },
     },
