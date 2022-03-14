@@ -11,6 +11,7 @@ import { FormContext } from '@island.is/judicial-system-web/src/components/FormP
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { icRuling as m } from '@island.is/judicial-system-web/messages'
+import { autofillRuling } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
 
 import RulingForm from './RulingForm'
 
@@ -51,6 +52,8 @@ const Ruling = () => {
       if (workingCase.legalArguments) {
         autofill('courtLegalArguments', workingCase.legalArguments, workingCase)
       }
+
+      autofillRuling(workingCase, autofill, formatMessage)
     }
 
     if (isAcceptingCaseDecision(workingCase.decision) && workingCase.demands) {
@@ -58,7 +61,7 @@ const Ruling = () => {
     }
 
     setWorkingCase(workingCase)
-  }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])
+  }, [isCaseUpToDate, autofill, workingCase, formatMessage, setWorkingCase])
 
   return (
     <PageLayout
@@ -74,7 +77,6 @@ const Ruling = () => {
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
         isLoading={isLoadingWorkingCase}
-        isCaseUpToDate={isCaseUpToDate}
       />
     </PageLayout>
   )
