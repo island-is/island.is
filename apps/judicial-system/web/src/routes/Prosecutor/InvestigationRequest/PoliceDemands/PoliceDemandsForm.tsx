@@ -32,6 +32,7 @@ const courtClaimPrefill: Partial<
         accused?: boolean
         address?: boolean
         institution?: boolean
+        year?: boolean
       }
     }
   >
@@ -60,6 +61,11 @@ const courtClaimPrefill: Partial<
   [CaseType.TRACKING_EQUIPMENT]: {
     text: icDemands.sections.demands.prefill.trackingEquipment,
     format: { court: true, institution: true, accused: true },
+  },
+  [CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION]: {
+    text:
+      icDemands.sections.demands.prefill.electronicDataDiscoveryInvestigation,
+    format: { court: true, institution: true, address: true, year: true },
   },
 }
 
@@ -133,6 +139,9 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
                 institution: formatInstitutionName(
                   workingCase.prosecutor?.institution?.name,
                 ),
+              }),
+              ...(courtClaim.format?.year && {
+                institution: new Date().getFullYear(),
               }),
             })
           : ''

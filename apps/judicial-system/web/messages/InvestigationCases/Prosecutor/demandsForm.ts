@@ -66,6 +66,14 @@ export const icDemands = {
             'Þess er krafist að Héraðsdómur Reykjavíkur úrskurði um að lögreglustjóranum á höfuðborgarsvæðinu sé heimilt að koma fyrir eftirfararbúnaði á eða í bifreiðunum [#] svo og öðrum þeim bifreiðum sem {accusedName}, kann að hafa umráð yfir á úrskurðartímanum, og fylgjast með staðsetningum/ferðum bifreiðanna án þess að eigandi hennar, ökumaður, farþegar og aðrir hlutaðeigandi viti af því, frá og með [DD.MM.ÁÁ] til og með [DD.MM.ÁÁ]',
           description: 'Sjálfgefinn dómkröfutexti fyrir eftirfararbúnaður',
         },
+        electronicDataDiscoveryInvestigation: {
+          id:
+            'judicial.system.investigation_cases:police_demands.demands.prefill.electronic_data_discovery_investigation',
+          defaultMessage:
+            '​​Þess krafist að {institution} verði með úrskurði {court} heimiluð rannsókn á rafrænu efnisinnihaldi eftirfarandi muna: x snjallsíma, munur í munaskrá lögreglu nr. xxxx, og snjallsíma af gerðinni y, munur í munaskrá lögreglu nr. xxxxxxx, sem lögregla fann í fórum {accused}, á heimili hans að {} og haldlagði við húsleit á heimili hans/hennar/háns þann x.x.{year}. Þess er krafist að heimildin nái til leitar, skoðunar og afritunar á þeim rafrænu gögnum sem hinir haldlögðu munir kunna að geyma og þeim skýjaþjónustum sem hafa verið notaðar með símanum hvort sem um er að ræða samfélagsmiðla, samskiptaforrit, tölvupósta eða gagnageymslur.',
+          description:
+            'Sjálfgefinn dómkröfutexti fyrir rannsókn á rafrænum gögnum',
+        },
       }),
     },
     lawsBroken: defineMessages({
