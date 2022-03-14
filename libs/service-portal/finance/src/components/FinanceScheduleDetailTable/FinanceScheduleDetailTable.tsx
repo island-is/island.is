@@ -31,22 +31,25 @@ const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
     if (!payments || payments.length < 2) return
 
     return payments.map((payment, i) => {
+      const isLast = i === payments.length - 1
+      console.log(payment)
+      console.log(isLast)
       return (
         <T.Row>
           <T.Data
-            borderColor="transparent"
-            box={{ background: 'dark100', paddingX: 2 }}
+            borderColor={isLast ? 'blue200' : 'transparent'}
+            box={{ paddingX: 2 }}
             style={tableStyles}
           ></T.Data>
           <T.Data
-            borderColor="transparent"
-            box={{ background: 'dark100', paddingX: 2 }}
+            borderColor={isLast ? 'blue200' : 'transparent'}
+            box={{ paddingX: 2 }}
             style={tableStyles}
           ></T.Data>
           {payment.payExplanation && payment.payExplanation !== 'Greiðsla' ? (
             <T.Data
-              borderColor="transparent"
-              box={{ background: 'dark100', paddingX: 2 }}
+              borderColor={isLast ? 'blue200' : 'transparent'}
+              box={{ paddingX: 2 }}
               style={tableStyles}
             >
               <Text variant="medium" fontWeight="semiBold">
@@ -56,21 +59,21 @@ const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
             </T.Data>
           ) : (
             <T.Data
-              borderColor="transparent"
-              box={{ background: 'dark100', paddingX: 2 }}
+              borderColor={isLast ? 'blue200' : 'transparent'}
+              box={{ paddingX: 2 }}
               style={tableStyles}
             ></T.Data>
           )}
           <T.Data
-            borderColor="transparent"
-            box={{ background: 'dark100', paddingX: 2 }}
+            borderColor={isLast ? 'blue200' : 'transparent'}
+            box={{ paddingX: 2 }}
             style={tableStyles}
           >
             <Text variant="medium">{amountFormat(payment.payAmount)}</Text>
           </T.Data>
           <T.Data
-            borderColor="transparent"
-            box={{ background: 'dark100', paddingX: 2 }}
+            borderColor={isLast ? 'blue200' : 'transparent'}
+            box={{ paddingX: 2 }}
             style={tableStyles}
           >
             <Text variant="medium">
@@ -78,8 +81,8 @@ const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
             </Text>
           </T.Data>
           <T.Data
-            borderColor="transparent"
-            box={{ background: 'dark100', paddingX: 2 }}
+            borderColor={isLast ? 'blue200' : 'transparent'}
+            box={{ paddingX: 2 }}
             style={tableStyles}
           ></T.Data>
         </T.Row>
@@ -134,7 +137,7 @@ const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
     {
       value: formatMessage({
         id: 'sp.finance-schedule:is-paid',
-        defaultMessage: 'Afborgun lokið',
+        defaultMessage: 'Greiðslu lokið',
       }),
       align: 'center',
     },
@@ -172,13 +175,19 @@ const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
                   {
                     value: format(dateParse(row.plannedDate), dateFormat.is),
                     align: 'left',
+                    border: !row.paidDate.includes('*'),
                   },
-                  { value: amountFormat(row.plannedAmount), align: 'left' },
-                  { value: '' },
+                  {
+                    value: amountFormat(row.plannedAmount),
+                    align: 'left',
+                    border: !row.paidDate.includes('*'),
+                  },
+                  { value: '', border: !row.paidDate.includes('*') },
                   {
                     value:
                       row.paidAmount === 0 ? '' : amountFormat(row.paidAmount),
                     align: 'left',
+                    border: !row.paidDate.includes('*'),
                   },
                   {
                     value: row.paidDate.includes('*')
@@ -187,6 +196,7 @@ const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
                       ? ''
                       : format(dateParse(row.paidDate), dateFormat.is),
                     align: 'left',
+                    border: !row.paidDate.includes('*'),
                   },
                   {
                     value: row.paid ? (
@@ -207,12 +217,14 @@ const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
                       ''
                     ),
                     align: 'center',
+                    border: !row.paidDate.includes('*'),
                   },
                 ].map((item, ii) => (
                   <T.Data
                     box={{ paddingRight: 2, paddingLeft: 2 }}
                     key={ii}
                     style={tableStyles}
+                    borderColor={item.border ? 'blue200' : 'transparent'}
                   >
                     <div
                       className={cn(styles.td, {
