@@ -80,7 +80,7 @@ export const Requests: React.FC = () => {
   const resCases = data?.cases
 
   useEffect(() => {
-    document.title = 'Allar kröfur - Réttarvörslugátt'
+    document.title = 'Öll mál - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {

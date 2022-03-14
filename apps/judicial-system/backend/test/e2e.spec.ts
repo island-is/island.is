@@ -419,6 +419,7 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   )
   expect(caseOne.sessionBookings ?? null).toBe(caseTwo.sessionBookings ?? null)
   expect(caseOne.courtCaseFacts ?? null).toBe(caseTwo.courtCaseFacts ?? null)
+  expect(caseOne.introduction ?? null).toBe(caseTwo.introduction ?? null)
   expect(caseOne.courtLegalArguments ?? null).toBe(
     caseTwo.courtLegalArguments ?? null,
   )
