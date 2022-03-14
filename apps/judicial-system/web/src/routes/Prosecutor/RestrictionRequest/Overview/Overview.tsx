@@ -1,8 +1,15 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
+import { AnimatePresence, motion } from 'framer-motion'
 
-import { Box, Text, Accordion, AccordionItem } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  Accordion,
+  AccordionItem,
+  Input,
+} from '@island.is/island-ui/core'
 import {
   NotificationType,
   CaseState,
@@ -80,6 +87,7 @@ export const Overview: React.FC = () => {
       setModalText(formatMessage(rcOverview.sections.modal.notificationNotSent))
     }
 
+    setExtendCaseModalVisible(false)
     setModalVisible(true)
   }
 
@@ -348,12 +356,44 @@ export const Overview: React.FC = () => {
           }
         />
       </FormContentContainer>
-      {extendCaseModalVisible && (
-        <Modal
-          title={formatMessage(rcOverview.sections.extendCaseModal.heading)}
-          text={'asd'}
-        />
-      )}
+
+      <AnimatePresence>
+        {extendCaseModalVisible && (
+          <Modal
+            title={formatMessage(rcOverview.sections.extendCaseModal.heading)}
+            text={formatMessage(rcOverview.sections.extendCaseModal.text)}
+            handleClose={() => setExtendCaseModalVisible(false)}
+            primaryButtonText={formatMessage(
+              rcOverview.sections.extendCaseModal.primaryButtonText,
+            )}
+            secondaryButtonText={formatMessage(
+              rcOverview.sections.extendCaseModal.secondaryButtonText,
+            )}
+            handleSecondaryButtonClick={() => {
+              setExtendCaseModalVisible(false)
+            }}
+            handlePrimaryButtonClick={() => {
+              handleNextButtonClick()
+            }}
+            isPrimaryButtonLoading={isSendingNotification}
+          >
+            <Box marginBottom={10}>
+              <Input
+                name="extensionExplination"
+                label={formatMessage(
+                  rcOverview.sections.extendCaseModal.input.label,
+                )}
+                placeholder={formatMessage(
+                  rcOverview.sections.extendCaseModal.input.placeholder,
+                )}
+                // value={workingCase.extensionExplination} TODO
+                textarea
+                rows={7}
+              />
+            </Box>
+          </Modal>
+        )}
+      </AnimatePresence>
       {modalVisible && (
         <Modal
           title={formatMessage(rcOverview.sections.modal.heading, {
