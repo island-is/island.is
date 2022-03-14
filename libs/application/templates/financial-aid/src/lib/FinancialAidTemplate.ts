@@ -104,6 +104,10 @@ const FinancialAidTemplate: ApplicationTemplate<
                 import('../forms/Spouse').then((module) =>
                   Promise.resolve(module.Spouse),
                 ),
+              read: 'all',
+              write: {
+                answers: ['spouseIncome', 'spouseIncomeFiles'],
+              },
             },
             {
               id: Roles.APPLICANT,

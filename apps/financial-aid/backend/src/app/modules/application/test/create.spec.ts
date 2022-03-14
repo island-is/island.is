@@ -502,8 +502,6 @@ describe('ApplicationController - Create', () => {
     const user: User = {
       nationalId: '0000000000',
       name: 'The User',
-      folder: uuid(),
-      service: RolesRule.OSK,
     }
 
     const appModel = {

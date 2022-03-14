@@ -1,23 +1,9 @@
 import React from 'react'
-import {
-  ModalBase,
-  Text,
-  Box,
-  Button,
-  Divider,
-} from '@island.is/island-ui/core'
+import { ModalBase, Text, Box, Button } from '@island.is/island-ui/core'
 
 import * as styles from './DirectTaxPaymentModal.css'
-import {
-  TaxBreakdownItem,
-  TaxBreakdownHeaders,
-  TaxBreakdown,
-} from '@island.is/financial-aid/shared/components'
-import {
-  DirectTaxPayment,
-  formatNationalId,
-  getMonth,
-} from '@island.is/financial-aid/shared/lib'
+import { TaxBreakdown } from '@island.is/financial-aid/shared/components'
+import { DirectTaxPayment } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   isVisible: boolean

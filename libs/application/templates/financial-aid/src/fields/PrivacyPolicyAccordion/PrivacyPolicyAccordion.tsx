@@ -5,14 +5,10 @@ import { privacyPolicyAccordion } from '../../lib/messages'
 import { DescriptionText } from '..'
 
 interface Props {
-  municipalityPageName: string
-  municipalityPageUrl: string
+  municipalityPageUrl?: string
 }
 
-const PrivacyPolicyAccordion = ({
-  municipalityPageName,
-  municipalityPageUrl,
-}: Props) => {
+const PrivacyPolicyAccordion = ({ municipalityPageUrl }: Props) => {
   const { formatMessage } = useIntl()
 
   return (
@@ -22,16 +18,20 @@ const PrivacyPolicyAccordion = ({
       </Text>
       <Accordion singleExpand>
         <AccordionItem
-          id={privacyPolicyAccordion.general.accordionTitle.id}
-          label={formatMessage(privacyPolicyAccordion.general.accordionTitle)}
+          id={privacyPolicyAccordion.accordion.title.id}
+          label={formatMessage(privacyPolicyAccordion.accordion.title)}
         >
-          <DescriptionText
-            text={privacyPolicyAccordion.general.accordionAbout}
-            format={{
-              homePageName: municipalityPageName,
-              homePageNameUrl: municipalityPageUrl,
-            }}
-          />
+          <DescriptionText text={privacyPolicyAccordion.accordion.about} />
+          {municipalityPageUrl ? (
+            <DescriptionText
+              text={privacyPolicyAccordion.accordion.moreInfoHomepage}
+              format={{
+                homePageNameUrl: municipalityPageUrl,
+              }}
+            />
+          ) : (
+            <DescriptionText text={privacyPolicyAccordion.accordion.moreInfo} />
+          )}
         </AccordionItem>
       </Accordion>
     </>

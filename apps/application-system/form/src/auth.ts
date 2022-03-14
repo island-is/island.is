@@ -38,6 +38,7 @@ if (userMocked) {
       MunicipalitiesFinancialAidScope.read,
       MunicipalitiesFinancialAidScope.write,
       MunicipalitiesFinancialAidScope.applicant,
+      ApiScope.assets,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'as.',
