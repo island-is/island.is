@@ -18,15 +18,6 @@ const FilesListWithHeaderContainer = ({ applicationFiles }: Props) => {
     return null
   }
 
-  const printAll = () => {
-    // var pages = applicationFiles
-    // for (var i = 0; i < pages.length; i++) {
-    //   var oWindow = window.open(pages[i].name, 'print')
-    //   oWindow?.print()
-    //   oWindow?.close()
-    // }
-  }
-
   return (
     <>
       <Box
@@ -54,19 +45,12 @@ const FilesListWithHeaderContainer = ({ applicationFiles }: Props) => {
                 <Text variant="eyebrow" marginBottom={2}>
                   {getFileTypeName[file]}
                 </Text>
-                <FileList files={filterFiles} className="" />
+                <FileList files={filterFiles} />
               </span>
             )
           }
         })}
       </Box>
-      {/* <Box
-        className={`contentUp delay-125 ${styles.widthFull}`}
-        marginBottom={[2, 2, 3]}
-        printHidden
-      >
-        <Button onClick={printAll}>helo</Button>
-      </Box> */}
     </>
   )
 }
