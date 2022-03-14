@@ -23,6 +23,8 @@ import {
   PdfRow,
   PoliceRequestAccordionItem,
   RulingAccordionItem,
+  CommentsAccordionItem,
+  CaseFilesAccordionItem,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealDecision,
@@ -41,20 +43,20 @@ import { getRestrictionTagVariant } from '@island.is/judicial-system-web/src/uti
 import {
   capitalize,
   caseTypes,
+  formatDate,
   getShortRestrictionByValue,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { core } from '@island.is/judicial-system-web/messages'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import CaseFilesAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CaseFilesAccordionItem/CaseFilesAccordionItem'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages/Core/signedVerdictOverview'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-
+import * as Constants from '@island.is/judicial-system/consts'
 import AppealSection from './Components/AppealSection/AppealSection'
 import { SignedDocument } from './Components/SignedDocument'
 import CaseDates from './Components/CaseDates/CaseDates'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 
 interface Props {
   workingCase: Case
@@ -161,6 +163,16 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             <Box marginBottom={1}>
               <Text as="h1" variant="h1">
                 {titleForCase(workingCase)}
+              </Text>
+            </Box>
+            <Box>
+              <Text variant="h5">
+                {formatMessage(m.rulingDateLabel, {
+                  courtEndTime: `${formatDate(
+                    workingCase.courtEndTime,
+                    'PPP',
+                  )} kl. ${formatDate(workingCase.courtEndTime, TIME_FORMAT)}`,
+                })}
               </Text>
             </Box>
           </Box>
@@ -347,12 +359,15 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                   user={user}
                 />
               )}
+              {(workingCase.comments || workingCase.caseFilesComments) && (
+                <CommentsAccordionItem workingCase={workingCase} />
+              )}
             </Accordion>
           </Box>
           <Box marginBottom={7}>
             <BlueBox>
               <Box marginBottom={2} textAlign="center">
-                <Text as="h2" variant="h3">
+                <Text as="h3" variant="h3">
                   {formatMessage(m.conclusionTitle)}
                 </Text>
               </Box>
@@ -371,7 +386,7 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
         </>
       )}
       <Box marginBottom={10}>
-        <Text as="h2" variant="h3" marginBottom={5}>
+        <Text as="h3" variant="h3" marginBottom={5}>
           {formatMessage(m.caseDocuments)}
         </Text>
         <Box marginBottom={2}>
@@ -439,8 +454,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
           <Box marginBottom={9}>
             <Box marginBottom={3}>
               <Text variant="h3">
-                Opna mál fyrir öðru embætti{' '}
-                <Tooltip text="Hægt er að gefa öðru embætti aðgang að málinu. Viðkomandi embætti getur skoðað málið og farið fram á framlengingu." />
+                {formatMessage(m.sections.shareCase.title)}{' '}
+                <Tooltip text={formatMessage(m.sections.shareCase.info)} />
               </Text>
             </Box>
             <BlueBox>
@@ -448,8 +463,10 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                 <Box flexGrow={1} marginRight={2}>
                   <Select
                     name="sharedWithProsecutorsOfficeId"
-                    label="Veldu embætti"
-                    placeholder="Velja embætti sem tekur við málinu"
+                    label={formatMessage(m.sections.shareCase.label)}
+                    placeholder={formatMessage(
+                      m.sections.shareCase.placeholder,
+                    )}
                     size="sm"
                     icon={
                       workingCase.sharedWithProsecutorsOffice
@@ -496,8 +513,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                   }
                 >
                   {workingCase.sharedWithProsecutorsOffice
-                    ? 'Loka aðgangi'
-                    : 'Opna mál'}
+                    ? formatMessage(m.sections.shareCase.close)
+                    : formatMessage(m.sections.shareCase.open)}
                 </Button>
               </Box>
             </BlueBox>

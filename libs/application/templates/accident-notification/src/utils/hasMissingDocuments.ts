@@ -95,7 +95,10 @@ export const hasReceivedAllDocuments = (answers: FormValue) => {
         hasReceivedInjuryCertificate(answers)
       )
     } else {
-      hasReceivedProxyDocument(answers) && hasReceivedInjuryCertificate(answers)
+      return (
+        hasReceivedProxyDocument(answers) &&
+        hasReceivedInjuryCertificate(answers)
+      )
     }
   }
 }

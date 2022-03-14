@@ -136,6 +136,9 @@
     "api-domains-license-service": {
       "tags": []
     },
+    "api-domains-mortgage-certificate": {
+      "tags": []
+    },
     "api-domains-national-registry": {
       "tags": []
     },
@@ -161,6 +164,9 @@
       "tags": []
     },
     "api-schema": {
+      "tags": []
+    },
+    "application-api-core": {
       "tags": []
     },
     "application-core": {
@@ -234,6 +240,9 @@
       "tags": []
     },
     "application-templates-login-service": {
+      "tags": []
+    },
+    "application-templates-mortgage-certificate": {
       "tags": []
     },
     "application-templates-p-sign": {
@@ -470,9 +479,6 @@
     "infra-metrics": {
       "tags": []
     },
-    "infra-monitoring": {
-      "tags": []
-    },
     "infra-nest-server": {
       "tags": []
     },
@@ -551,6 +557,9 @@
     "nest-audit": {
       "tags": []
     },
+    "nest-aws": {
+      "tags": []
+    },
     "nest-config": {
       "tags": []
     },
@@ -591,6 +600,9 @@
       "tags": []
     },
     "regulations": {
+      "tags": []
+    },
+    "residence-history": {
       "tags": []
     },
     "service-portal": {

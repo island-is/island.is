@@ -199,15 +199,20 @@ export class DrivingLicenseApi {
     willBringQualityPhoto: boolean
     juristictionId: number
     sendLicenseInMail: boolean
+    email: string
+    phone: string
   }) {
-    const response = await this.v1.apiOkuskirteiniApplicationsNewTemporaryPost({
-      postTemporaryLicense: {
+    const response = await this.v2.apiOkuskirteiniApplicationsNewTemporaryPost({
+      apiVersion: v2.DRIVING_LICENSE_API_VERSION_V2,
+      postTemporaryLicenseV2: {
         kemurMedLaeknisvottord: params.willBringHealthCertificate,
         kennitala: params.nationalIdApplicant,
         kemurMedNyjaMynd: params.willBringQualityPhoto,
         embaetti: params.juristictionId,
         kennitalaOkukennara: params.nationalIdTeacher,
         sendaSkirteiniIPosti: params.sendLicenseInMail,
+        netfang: params.email,
+        farsimaNumer: params.phone,
       },
     })
 

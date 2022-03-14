@@ -32,7 +32,6 @@ type autofillProperties = Pick<
   | 'demands'
   | 'courtAttendees'
   | 'prosecutorDemands'
-  | 'litigationPresentations'
   | 'courtStartDate'
   | 'courtCaseFacts'
   | 'courtLegalArguments'
@@ -42,14 +41,21 @@ type autofillProperties = Pick<
   | 'conclusion'
   | 'courtDate'
   | 'courtLocation'
-  | 'accusedBookings'
+  | 'sessionBookings'
   | 'ruling'
   | 'endOfSessionBookings'
+  | 'introduction'
 >
 
 type autofillSessionArrangementProperties = Pick<Case, 'sessionArrangements'>
 
 type autofillBooleanProperties = Pick<Case, 'isCustodyIsolation'>
+
+export type autofillFunc = (
+  key: keyof autofillProperties,
+  value: string,
+  workingCase: Case,
+) => void
 
 interface CreateCaseMutationResponse {
   createCase: Case
@@ -164,15 +170,7 @@ const useCase = () => {
       try {
         if (isCreatingCourtCase === false) {
           const { data, errors } = await createCourtCaseMutation({
-            variables: {
-              input: {
-                caseId: workingCase.id,
-                courtId: workingCase.court?.id,
-                type: workingCase.type,
-                policeCaseNumber: workingCase.policeCaseNumber,
-                isExtension: Boolean(workingCase.parentCase?.id),
-              },
-            },
+            variables: { input: { caseId: workingCase.id } },
           })
 
           if (data?.createCourtCase?.courtCaseNumber && !errors) {
@@ -258,6 +256,7 @@ const useCase = () => {
     () => async (
       id: string,
       notificationType: NotificationType,
+      eventOnly?: boolean,
     ): Promise<boolean> => {
       try {
         const { data } = await sendNotificationMutation({
@@ -265,6 +264,7 @@ const useCase = () => {
             input: {
               caseId: id,
               type: notificationType,
+              eventOnly,
             },
           },
         })
@@ -323,9 +323,9 @@ const useCase = () => {
     [extendCaseMutation, formatMessage],
   )
 
-  const autofill = useMemo(
-    () => (key: keyof autofillProperties, value: string, workingCase: Case) => {
-      if (!workingCase[key]) {
+  const autofill: autofillFunc = useMemo(
+    () => (key, value, workingCase) => {
+      if (workingCase[key] === undefined || workingCase[key] === null) {
         workingCase[key] = value
 
         if (workingCase[key]) {

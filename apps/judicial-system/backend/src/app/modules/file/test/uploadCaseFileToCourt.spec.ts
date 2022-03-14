@@ -2,7 +2,7 @@ import { uuid } from 'uuidv4'
 
 import { BadRequestException, NotFoundException } from '@nestjs/common'
 
-import { CaseFileState } from '@island.is/judicial-system/types'
+import { CaseFileState, User } from '@island.is/judicial-system/types'
 
 import { CourtService } from '../../court'
 import { Case } from '../../case'
@@ -19,6 +19,7 @@ interface Then {
 type GivenWhenThen = (
   caseId: string,
   fileId: string,
+  user: User,
   theCase: Case,
   caseFile: CaseFile,
 ) => Promise<Then>
@@ -44,13 +45,14 @@ describe('FileController - Upload case file to court', () => {
     givenWhenThen = async (
       caseId: string,
       fileId: string,
+      user: User,
       theCase: Case,
       caseFile: CaseFile,
     ): Promise<Then> => {
       const then = {} as Then
 
       await fileController
-        .uploadCaseFileToCourt(caseId, fileId, theCase, caseFile)
+        .uploadCaseFileToCourt(caseId, fileId, user, theCase, caseFile)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -59,6 +61,7 @@ describe('FileController - Upload case file to court', () => {
   })
 
   describe('AWS S3 existance check', () => {
+    const user = {} as User
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
@@ -73,7 +76,7 @@ describe('FileController - Upload case file to court', () => {
     beforeEach(async () => {
       mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
 
-      await givenWhenThen(caseId, fileId, theCase, caseFile)
+      await givenWhenThen(caseId, fileId, user, theCase, caseFile)
     })
 
     it('should check if the file exists in AWS S3', () => {
@@ -82,6 +85,7 @@ describe('FileController - Upload case file to court', () => {
   })
 
   describe('AWS S3 get file', () => {
+    const user = {} as User
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
@@ -98,7 +102,7 @@ describe('FileController - Upload case file to court', () => {
       const mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
       mockObjectExists.mockResolvedValueOnce(true)
 
-      await givenWhenThen(caseId, fileId, theCase, caseFile)
+      await givenWhenThen(caseId, fileId, user, theCase, caseFile)
     })
 
     it('should get the file from AWS S3', () => {
@@ -107,6 +111,7 @@ describe('FileController - Upload case file to court', () => {
   })
 
   describe('file upload to court', () => {
+    const user = { id: uuid() } as User
     const caseId = uuid()
     const courtId = uuid()
     const courtCaseNumber = 'R-999/2021'
@@ -130,11 +135,13 @@ describe('FileController - Upload case file to court', () => {
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
       mockGetObject.mockResolvedValueOnce(content)
 
-      await givenWhenThen(caseId, fileId, theCase, caseFile)
+      await givenWhenThen(caseId, fileId, user, theCase, caseFile)
     })
 
     it('should upload the file to court', () => {
       expect(mockCreateDocument).toHaveBeenCalledWith(
+        user,
+        caseId,
         courtId,
         courtCaseNumber,
         fileName,
@@ -146,6 +153,7 @@ describe('FileController - Upload case file to court', () => {
   })
 
   describe('case file state update', () => {
+    const user = {} as User
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
@@ -166,7 +174,7 @@ describe('FileController - Upload case file to court', () => {
       const mockCreateDocument = mockCourtService.createDocument as jest.Mock
       mockCreateDocument.mockResolvedValueOnce(documentId)
 
-      await givenWhenThen(caseId, fileId, theCase, caseFile)
+      await givenWhenThen(caseId, fileId, user, theCase, caseFile)
     })
 
     it('should update case file state', () => {
@@ -178,6 +186,7 @@ describe('FileController - Upload case file to court', () => {
   })
 
   describe('AWS S3 delete file', () => {
+    const user = {} as User
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
@@ -199,7 +208,7 @@ describe('FileController - Upload case file to court', () => {
       const mockUpdate = mockFileModel.update as jest.Mock
       mockUpdate.mockResolvedValueOnce([1])
 
-      await givenWhenThen(caseId, fileId, theCase, caseFile)
+      await givenWhenThen(caseId, fileId, user, theCase, caseFile)
     })
 
     it('should attempt to delete the file from AWS S3', () => {
@@ -208,6 +217,7 @@ describe('FileController - Upload case file to court', () => {
   })
 
   describe('case file uploaded to court', () => {
+    const user = {} as User
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
@@ -228,7 +238,7 @@ describe('FileController - Upload case file to court', () => {
       const mockDeleteObject = mockAwsS3Service.deleteObject as jest.Mock
       mockDeleteObject.mockResolvedValueOnce(true)
 
-      then = await givenWhenThen(caseId, fileId, theCase, caseFile)
+      then = await givenWhenThen(caseId, fileId, user, theCase, caseFile)
     })
 
     it('should return success', () => {
@@ -237,6 +247,7 @@ describe('FileController - Upload case file to court', () => {
   })
 
   describe('case file state not updated', () => {
+    const user = {} as User
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
@@ -255,7 +266,7 @@ describe('FileController - Upload case file to court', () => {
       const mockUpdate = mockFileModel.update as jest.Mock
       mockUpdate.mockResolvedValueOnce([0])
 
-      then = await givenWhenThen(caseId, fileId, theCase, caseFile)
+      then = await givenWhenThen(caseId, fileId, user, theCase, caseFile)
     })
 
     it('should return success', () => {
@@ -264,6 +275,7 @@ describe('FileController - Upload case file to court', () => {
   })
 
   describe('case file already uploaded to court', () => {
+    const user = {} as User
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
@@ -274,7 +286,7 @@ describe('FileController - Upload case file to court', () => {
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(caseId, fileId, theCase, caseFile)
+      then = await givenWhenThen(caseId, fileId, user, theCase, caseFile)
     })
 
     it('should throw bad request exception', () => {
@@ -286,6 +298,7 @@ describe('FileController - Upload case file to court', () => {
   })
 
   describe('case file not stored in RVG', () => {
+    const user = {} as User
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
@@ -295,7 +308,7 @@ describe('FileController - Upload case file to court', () => {
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(caseId, fileId, theCase, caseFile)
+      then = await givenWhenThen(caseId, fileId, user, theCase, caseFile)
     })
 
     it('should throw not found exception', () => {
@@ -307,6 +320,7 @@ describe('FileController - Upload case file to court', () => {
   })
 
   describe('file not found in AWS S3', () => {
+    const user = {} as User
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
@@ -322,7 +336,7 @@ describe('FileController - Upload case file to court', () => {
       const mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
       mockObjectExists.mockResolvedValueOnce(false)
 
-      then = await givenWhenThen(caseId, fileId, theCase, caseFile)
+      then = await givenWhenThen(caseId, fileId, user, theCase, caseFile)
     })
 
     it('should set as broken link', () => {
@@ -341,6 +355,7 @@ describe('FileController - Upload case file to court', () => {
   })
 
   describe('AWS S3 existence check fails', () => {
+    const user = {} as User
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
@@ -354,7 +369,7 @@ describe('FileController - Upload case file to court', () => {
       const mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
       mockObjectExists.mockRejectedValueOnce(new Error('Some error'))
 
-      then = await givenWhenThen(caseId, fileId, theCase, caseFile)
+      then = await givenWhenThen(caseId, fileId, user, theCase, caseFile)
     })
 
     it('should throw error', () => {
@@ -364,6 +379,7 @@ describe('FileController - Upload case file to court', () => {
   })
 
   describe('AWS S3 get file fails', () => {
+    const user = {} as User
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
@@ -379,7 +395,7 @@ describe('FileController - Upload case file to court', () => {
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
       mockGetObject.mockRejectedValueOnce(new Error('Some error'))
 
-      then = await givenWhenThen(caseId, fileId, theCase, caseFile)
+      then = await givenWhenThen(caseId, fileId, user, theCase, caseFile)
     })
 
     it('should throw error', () => {
@@ -389,6 +405,7 @@ describe('FileController - Upload case file to court', () => {
   })
 
   describe('file upload to court fails', () => {
+    const user = {} as User
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
@@ -407,7 +424,7 @@ describe('FileController - Upload case file to court', () => {
       const mockCreateDocument = mockCourtService.createDocument as jest.Mock
       mockCreateDocument.mockRejectedValueOnce(new Error('Some error'))
 
-      then = await givenWhenThen(caseId, fileId, theCase, caseFile)
+      then = await givenWhenThen(caseId, fileId, user, theCase, caseFile)
     })
 
     it('should throw error', () => {
@@ -417,6 +434,7 @@ describe('FileController - Upload case file to court', () => {
   })
 
   describe('case file state updated fails', () => {
+    const user = {} as User
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
@@ -435,7 +453,7 @@ describe('FileController - Upload case file to court', () => {
       const mockUpdate = mockFileModel.update as jest.Mock
       mockUpdate.mockRejectedValueOnce(new Error('Some error'))
 
-      then = await givenWhenThen(caseId, fileId, theCase, caseFile)
+      then = await givenWhenThen(caseId, fileId, user, theCase, caseFile)
     })
 
     it('should throw error', () => {
