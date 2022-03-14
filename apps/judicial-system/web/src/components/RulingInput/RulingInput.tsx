@@ -68,7 +68,6 @@ const RulingInput: React.FC<Props> = (props) => {
     [workingCase.ruling],
   )
 
-
   return (
     <Input
       data-testid="ruling"
