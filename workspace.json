@@ -8445,7 +8445,6 @@
             "main": "apps/services/user-profile/src/main.ts",
             "tsConfig": "apps/services/user-profile/tsconfig.app.json",
             "assets": [
-              "apps/services/user-profile/src/assets",
               {
                 "glob": "*",
                 "input": "apps/services/user-profile/migrations",
