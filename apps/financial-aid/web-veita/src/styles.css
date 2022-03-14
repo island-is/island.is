@@ -181,6 +181,10 @@ input[type='number'] {
   opacity: 1;
 }
 
+.printableImages {
+  display: none;
+}
+
 @media print {
   @page {
     margin-top: 32px;
@@ -195,6 +199,11 @@ input[type='number'] {
   .no-print,
   .no-print * {
     display: none !important;
+  }
+
+  .show-in-print,
+  .show-in-print * {
+    display: block !important;
   }
 
   .hideOnPrintMarginBottom {

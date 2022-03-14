@@ -60,13 +60,13 @@ const FilesListWithHeaderContainer = ({ applicationFiles }: Props) => {
           }
         })}
       </Box>
-      <Box
+      {/* <Box
         className={`contentUp delay-125 ${styles.widthFull}`}
         marginBottom={[2, 2, 3]}
         printHidden
       >
         <Button onClick={printAll}>helo</Button>
-      </Box>
+      </Box> */}
     </>
   )
 }

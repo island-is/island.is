@@ -37,7 +37,17 @@ import {
   getNationalRegistryInfo,
 } from '@island.is/financial-aid-web/veita/src/utils/applicationHelper'
 import { TaxBreakdown } from '@island.is/financial-aid/shared/components'
+import { gql, useLazyQuery, useMutation } from '@apollo/client'
+import { CreateSignedUrlMutation } from '@island.is/financial-aid-web/osk/graphql'
 
+export const GetSignedUrlQuery = gql`
+  query GetSignedUrlQuery($input: GetSignedUrlForIdInput!) {
+    getSignedUrlForId(input: $input) {
+      url
+      key
+    }
+  }
+`
 interface ApplicationProps {
   application: Application
   setApplication: React.Dispatch<React.SetStateAction<Application | undefined>>
@@ -156,21 +166,84 @@ const ApplicationProfile = ({
   }
 
   // const [allImages, setImages] = useState([])
+  const [createSignedUrlMutation] = useMutation(CreateSignedUrlMutation)
 
-  const [allImages, setallImages] = useState<string[]>([])
+  const [allImages, setallImages] = useState<any[]>([])
+
+  const [openFile] = useLazyQuery(GetSignedUrlQuery, {
+    fetchPolicy: 'no-cache',
+    onCompleted: (data: { getSignedUrlForId: { url: string } }) => {
+      return data.getSignedUrlForId.url
+    },
+    onError: (error) => {
+      // TODO: What should happen here?
+      console.log(error)
+    },
+  })
 
   useEffect(() => {
-    if (application.files) {
-      application.files?.map((el) => {
-        console.log('ferdu hingad?', el.name)
-
-        if (isImage(el.name)) {
-          console.log('ferdu hingad?', el.name)
-          setallImages([...allImages, el.name])
-        }
-      })
+    async function fetchMyAPI() {
+      if (application?.files) {
+        await application?.files.map(async (img) => {
+          const blaa = await Promise.all([
+            openFile({ variables: { input: { id: img.id } } }),
+          ])
+          return blaa
+        })
+      }
     }
+    console.log(fetchMyAPI())
+
+    // const bla =
+    //    application.files
+    //     .map(async (img) => {
+    //       const blaa = await Promise.all( [openFile({ variables: { input: { id: img.id } } })] )
+    //       return blaa
+    //     })
+    //     console.log(await bla)
+
+    // const asyncRes = await Promise.all(arr.map(async (i) => {
+    //   await sleep(10);
+    //   return i + 1;
+    // }));
+
+    // const asyncRes = await Promise.all(arr.map(async (i) => {
+    //   await sleep(10);
+    //   return i + 1;
+    // }));
+
+    // console.log(asyncRes);
+
+    // setallImages( Promise.all([async () => {
+    //     application.files
+    //     ?.filter((el) => {
+    //       if (isImage(el.name)) {
+    //         return el.name
+    //       }
+    //     })
+    //     .map((image) => () => {
+    //       return await openFile({ variables: { input: { id: image.id } } })
+    //     }),
+    // }]))
+    // async function fetchMyAPI() {
+    //   await application.files
+    //     ?.filter((el) => {
+    //       if (isImage(el.name)) {
+    //         return el.name
+    //       }
+    //     })
+    //     .map((image) => () => {
+    //       return openFile({ variables: { input: { id: image.id } } })
+    //     })
+    // }
+    // console.log(Promise.all([fetchMyAPI()]))
   }, [application?.files])
+
+  useEffect(() => {
+    window.onbeforeprint = (event) => {
+      console.log('Before print')
+    }
+  }, [])
   console.log(allImages)
 
   return (
@@ -256,12 +329,16 @@ const ApplicationProfile = ({
           spouseName={application.spouseName ?? ''}
         />
 
-        <Box>
-          {application.files?.map((el) => {
+        <Box className={` ${styles.widthFull} show-in-print`} display="none">
+          {/* <img
+            src="https://fjarhagsadstod.dev.sveitarfelog.net/files/8af72f08-1cfa-4155-a9ab-e67cdb8ab68b/austin-powers-sex-yes-please.jpeg?Expires=1647256842&Key-Pair-Id=K2DUN2ISOH197V&Signature=ibo54sXoFP~yncxpIada2jMokVl3yf6t-gL5XNz5UA1TtxlXS2R5jUaWKGVdhUnL6t1ledO-~P2mkQz7hOCr54y7mhQ3sDRl7FydL0Ksgtqp4tyDLddwQdlgHcWmgFk6fl2mDUR6YW4-riM1RSwOORDZvywtniLbwcjUS9Ot-3pT3-JE6u62ktQ3hh57NVc-eC~hcN9oGjVTAUI33cvmXHqr~eFvKFGD94Zio~QRfrFOu0-l0fotOKPxsjIcYkb~G3LG3gq18888Bt~x~fG5X~sNfD54IdQCzx0rqX6NXJZzvEJzjXCYhoN5lCoyptAFwi1jRuuLthiQcx8T6sBvDA__"
+            className="printableImages"
+          /> */}
+          {/* {application.files?.map((el) => {
             if (isImage(el.name)) {
               return <img />
             }
-          })}
+          })} */}
         </Box>
       </Box>
       {application.state && (
