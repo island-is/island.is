@@ -47,6 +47,7 @@ const courtClaimPrefill: Partial<
   },
   [CaseType.BANKING_SECRECY_WAIVER]: {
     text: icDemands.sections.demands.prefill.bankingSecrecyWaiver,
+    format: { court: true, accused: true },
   },
   [CaseType.PHONE_TAPPING]: {
     text: icDemands.sections.demands.prefill.phoneTapping,

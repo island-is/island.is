@@ -41,7 +41,7 @@ export const icDemands = {
           id:
             'judicial.system.investigation_cases:police_demands.demands.prefill.banking_secrecy_waiver',
           defaultMessage:
-            'Þess er krafist að [fjármálafyrirtæki - aðrir sem hafa uppl.], verði með úrskurði Héraðsdóms Reykjavíkur gert skylt að láta lögreglu í hendur allar upplýsingar sem þessi fyrirtæki kunna að hafa um banka og fjármálaviðskipti, þ.á.m. bankareikninga, verðbréfa- og afleiðuviðskipti, lánaviðskipti og greiðslukortaviðskipti, gjaldeyriskaup, peningasendingar og bankahólf er varða [aðili, kt.], vegna tímabilsins frá [DD.MM.ÁÁ]',
+            'Þess er krafist að [fjármálafyrirtæki - aðrir sem hafa uppl.], verði með úrskurði {court} gert skylt að láta lögreglu í hendur allar upplýsingar sem þessi fyrirtæki kunna að hafa um banka og fjármálaviðskipti, þ.á.m. bankareikninga, verðbréfa- og afleiðuviðskipti, lánaviðskipti og greiðslukortaviðskipti, gjaldeyriskaup, peningasendingar og bankahólf er varða {accused}, vegna tímabilsins frá [DD.MM.ÁÁ]',
           description: 'Sjálfgefinn dómkröfutexti fyrir rof bankaleyndar',
         },
         phoneTapping: {
