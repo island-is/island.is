@@ -44,11 +44,18 @@ type autofillProperties = Pick<
   | 'sessionBookings'
   | 'ruling'
   | 'endOfSessionBookings'
+  | 'introduction'
 >
 
 type autofillSessionArrangementProperties = Pick<Case, 'sessionArrangements'>
 
 type autofillBooleanProperties = Pick<Case, 'isCustodyIsolation'>
+
+export type autofillFunc = (
+  key: keyof autofillProperties,
+  value: string,
+  workingCase: Case,
+) => void
 
 interface CreateCaseMutationResponse {
   createCase: Case
@@ -316,8 +323,8 @@ const useCase = () => {
     [extendCaseMutation, formatMessage],
   )
 
-  const autofill = useMemo(
-    () => (key: keyof autofillProperties, value: string, workingCase: Case) => {
+  const autofill: autofillFunc = useMemo(
+    () => (key, value, workingCase) => {
       if (workingCase[key] === undefined || workingCase[key] === null) {
         workingCase[key] = value
 

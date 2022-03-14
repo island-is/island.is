@@ -1,5 +1,5 @@
 import { FieldBaseProps } from '@island.is/application/core'
-import { Box, GridRow, GridColumn } from '@island.is/island-ui/core'
+import { Box, GridRow, GridColumn, Text } from '@island.is/island-ui/core'
 import { ReviewGroup } from '@island.is/application/ui-components'
 import React, { FC } from 'react'
 import { ComplaintsToAlthingiOmbudsman } from '../../lib/dataSchema'
@@ -13,6 +13,9 @@ import { ComplainedFor } from './ComplainedFor'
 import { ComplaintInformation } from './ComplaintInformation'
 import { yesNoMessageMapper } from '../../utils'
 import { OmbudsmanComplaintTypeEnum } from '../../shared'
+import upperCase from 'lodash/upperCase'
+import { DocumentCard } from '../components'
+import { useLocale } from '@island.is/localization'
 
 type Props = FieldBaseProps & { field: { props: { isEditable: boolean } } }
 
@@ -21,6 +24,7 @@ export const ComplaintOverview: FC<Props> = ({
   goToScreen,
   field,
 }) => {
+  const { formatMessage } = useLocale()
   const answers = application.answers as ComplaintsToAlthingiOmbudsman
   const { isEditable } = field.props
   const {
@@ -45,18 +49,15 @@ export const ComplaintOverview: FC<Props> = ({
 
   return (
     <Box component="section" paddingTop={6}>
-      <ReviewGroup>
+      <ReviewGroup
+        isEditable={isEditable}
+        editAction={() => changeScreens('approveExternalData')}
+      >
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/12']}>
+          <GridColumn span="9/12">
             <ValueLine
-              value={complaintOverview.labels.nationalRegistryText}
-              label={complaintOverview.labels.nationalRegistry}
-            />
-          </GridColumn>
-          <GridColumn span={['12/12', '12/12', '6/12']}>
-            <ValueLine
-              value={complaintOverview.labels.notificationConsentText}
-              label={complaintOverview.labels.notificationConsentTitle}
+              value={complaintOverview.labels.externalDataText}
+              label={complaintOverview.labels.externalDataTitle}
             />
           </GridColumn>
         </GridRow>
@@ -66,27 +67,27 @@ export const ComplaintOverview: FC<Props> = ({
         editAction={() => changeScreens('information.aboutTheComplainer')}
       >
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/12']}>
+          <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
             <ValueLine
-              value={name ?? ''}
+              value={name}
               label={information.aboutTheComplainer.name}
             />
           </GridColumn>
-          <GridColumn span={['12/12', '12/12', '6/12']}>
+          <GridColumn span={['9/12', '9/12', '9/12', '4/12']}>
             <ValueLine
-              value={address ?? ''}
+              value={address}
               label={information.aboutTheComplainer.address}
             />
           </GridColumn>
         </GridRow>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/12']}>
+          <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
             <ValueLine
               value={phone}
               label={information.aboutTheComplainer.phone}
             />
           </GridColumn>
-          <GridColumn span={['12/12', '12/12', '6/12']}>
+          <GridColumn span={['9/12', '9/12', '9/12', '4/12']}>
             <ValueLine
               value={email}
               label={information.aboutTheComplainer.email}
@@ -106,7 +107,7 @@ export const ComplaintOverview: FC<Props> = ({
         editAction={() => changeScreens('complainee')}
       >
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/12']}>
+          <GridColumn span={['9/12', '9/12', '9/12', '9/12', '5/12']}>
             <ValueLine
               value={
                 complaintIsAboutDecision
@@ -117,7 +118,7 @@ export const ComplaintOverview: FC<Props> = ({
             />
           </GridColumn>
           {complaintIsAboutDecision && decisionDate && (
-            <GridColumn span={['12/12', '12/12', '6/12']}>
+            <GridColumn span={['9/12', '9/12', '9/12', '9/12', '4/12']}>
               <ValueLine
                 label={complaintOverview.labels.decisionDate}
                 value={decisionDate}
@@ -138,7 +139,7 @@ export const ComplaintOverview: FC<Props> = ({
         editAction={() => changeScreens('appeals')}
       >
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '6/12']}>
+          <GridColumn span="9/12">
             <ValueLine
               value={yesNoMessageMapper[appeals]}
               label={complaintInformation.appealsHeader}
@@ -148,22 +149,60 @@ export const ComplaintOverview: FC<Props> = ({
       </ReviewGroup>
       <ReviewGroup
         isEditable={isEditable}
+        editAction={() => changeScreens('preexistingComplaint.multifield')}
+      >
+        <GridRow>
+          <GridColumn span="9/12">
+            <ValueLine
+              label={complaintOverview.labels.courtAction}
+              value={yesNoMessageMapper[answers.preexistingComplaint]}
+            />
+          </GridColumn>
+        </GridRow>
+      </ReviewGroup>
+      <ReviewGroup
+        isEditable={isEditable}
         editAction={() => changeScreens('courtAction.question')}
       >
-        <ValueLine
-          label={complaintOverview.labels.courtAction}
-          value={yesNoMessageMapper[answers.courtActionAnswer]}
-        />
+        <GridRow>
+          <GridColumn span="9/12">
+            <ValueLine
+              label={complaintOverview.labels.courtActionSecond}
+              value={yesNoMessageMapper[answers.courtActionAnswer]}
+            />
+          </GridColumn>
+        </GridRow>
       </ReviewGroup>
       <ReviewGroup
         isLast
         isEditable={isEditable}
         editAction={() => changeScreens('attachments.documents')}
       >
-        <ValueLine
-          label={complaintOverview.labels.attachments}
-          value={attachmentsText}
-        />
+        <GridRow>
+          <GridColumn span="9/12">
+            <ValueLine label={complaintOverview.labels.attachments} value="" />
+          </GridColumn>
+          <GridColumn span="12/12" paddingTop={2}>
+            {documents && documents.length > 0 ? (
+              documents.map((document, index) => {
+                const [fileType] = document.name.split('.').slice(-1)
+                return (
+                  <DocumentCard
+                    fileType={fileType}
+                    text={formatMessage(
+                      complaintOverview.labels.complaintDocument,
+                    )}
+                    key={`${index}-${document.name}`}
+                  />
+                )
+              })
+            ) : (
+              <Text>
+                {formatMessage(complaintOverview.labels.complaintNoDocuments)}
+              </Text>
+            )}
+          </GridColumn>
+        </GridRow>
       </ReviewGroup>
     </Box>
   )

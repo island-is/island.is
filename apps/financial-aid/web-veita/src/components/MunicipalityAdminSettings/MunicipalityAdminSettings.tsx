@@ -69,8 +69,8 @@ const MunicipalityAdminSettings = ({ municipality }: Props) => {
     await updateMunicipalityMutation({
       variables: {
         input: {
-          individualAid: state.individualAid,
-          cohabitationAid: state.cohabitationAid,
+          individualAid: omit(state.individualAid, ['__typename']),
+          cohabitationAid: omit(state.cohabitationAid, ['__typename']),
           homepage: state.homepage,
           rulesHomepage: state.rulesHomepage,
           email: state.email,

@@ -85,6 +85,8 @@ describe('DrivingLicenseSubmissionService', () => {
           certificate: 'yes',
           willBringQualityPhoto: 'yes',
           picture: 'yes',
+          email: 'mock@email.com',
+          phone: '9999999',
         },
         typeId: ApplicationTypes.DRIVING_LICENSE,
         status: ApplicationStatus.IN_PROGRESS,

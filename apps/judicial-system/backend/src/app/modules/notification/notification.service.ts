@@ -141,26 +141,24 @@ export class NotificationService {
     smsText: string,
     mobileNumbers?: string,
   ): Promise<Recipient> {
-    // Production or local development with judge mobile number
-    if (environment.production || mobileNumbers) {
-      try {
-        await this.smsService.sendSms(mobileNumbers?.split(',') ?? '', smsText)
-      } catch (error) {
-        this.logger.error('Failed to send sms to court mobile numbers', {
-          error,
-        })
-
-        return {
-          address: mobileNumbers,
-          success: false,
-        }
-      }
+    if (!environment.production && !mobileNumbers) {
+      return { address: mobileNumbers, success: true }
     }
 
-    return {
-      address: mobileNumbers,
-      success: true,
-    }
+    return this.smsService
+      .sendSms(mobileNumbers?.split(',') ?? '', smsText)
+      .then(() => ({ address: mobileNumbers, success: true }))
+      .catch((reason) => {
+        this.logger.error('Failed to send sms', { error: reason })
+
+        this.eventService.postErrorEvent(
+          'Failed to send sms',
+          { mobileNumbers },
+          reason,
+        )
+
+        return { address: mobileNumbers, success: false }
+      })
   }
 
   private async sendEmail(
@@ -230,9 +228,12 @@ export class NotificationService {
     theCase: Case,
     user: User,
   ): Promise<void> {
-    const requestPdf = await getRequestPdfAsBuffer(theCase, this.formatMessage)
-
     try {
+      const requestPdf = await getRequestPdfAsBuffer(
+        theCase,
+        this.formatMessage,
+      )
+
       await this.courtService.createRequest(
         user,
         theCase.id,
