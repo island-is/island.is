@@ -176,17 +176,6 @@ export class CaseController {
       caseToUpdate,
     )) as Case
 
-    if (
-      theCase.courtId &&
-      IntegratedCourts.includes(theCase.courtId) &&
-      Boolean(caseToUpdate.courtCaseNumber) &&
-      caseToUpdate.courtCaseNumber !== theCase.courtCaseNumber
-    ) {
-      // TODO: Find a better place for this
-      // No need to wait for the upload
-      this.caseService.uploadRequestPdfToCourt(updatedCase, user)
-    }
-
     return updatedCase
   }
 
