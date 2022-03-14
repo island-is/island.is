@@ -17,6 +17,7 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isPoliceDemandsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { icDemands } from '@island.is/judicial-system-web/messages'
+import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import * as Constants from '@island.is/judicial-system/consts'
 
@@ -70,6 +71,10 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
   const [demandsEM, setDemandsEM] = useState<string>('')
   const [lawsBrokenEM, setLawsBrokenEM] = useState<string>('')
   const [legalBasisEM, setLegalBasisEM] = useState<string>('')
+
+  useDeb(workingCase, 'demands')
+  useDeb(workingCase, 'lawsBroken')
+  useDeb(workingCase, 'legalBasis')
 
   useEffect(() => {
     if (isCaseUpToDate) {
