@@ -336,28 +336,6 @@ const ApplicationProfile = ({
             <PrintableImages
               images={application?.files.filter((el) => isImage(el.name))}
             />
-            {/* {application?.files &&
-            application?.files
-              .filter((el) => isImage(el.name))
-              .map((img) => {
-                return (
-                  <div>{img.name}</div>
-                  // <img
-                  //   // src={openFile({ variables: { input: { id: img.id } } })}
-                  //   className=""
-                  //   loading="lazy"
-                  // />
-                )
-              })} */}
-            {/* <img
-            src="https://fjarhagsadstod.dev.sveitarfelog.net/files/8af72f08-1cfa-4155-a9ab-e67cdb8ab68b/austin-powers-sex-yes-please.jpeg?Expires=1647256842&Key-Pair-Id=K2DUN2ISOH197V&Signature=ibo54sXoFP~yncxpIada2jMokVl3yf6t-gL5XNz5UA1TtxlXS2R5jUaWKGVdhUnL6t1ledO-~P2mkQz7hOCr54y7mhQ3sDRl7FydL0Ksgtqp4tyDLddwQdlgHcWmgFk6fl2mDUR6YW4-riM1RSwOORDZvywtniLbwcjUS9Ot-3pT3-JE6u62ktQ3hh57NVc-eC~hcN9oGjVTAUI33cvmXHqr~eFvKFGD94Zio~QRfrFOu0-l0fotOKPxsjIcYkb~G3LG3gq18888Bt~x~fG5X~sNfD54IdQCzx0rqX6NXJZzvEJzjXCYhoN5lCoyptAFwi1jRuuLthiQcx8T6sBvDA__"
-            className="printableImages"
-          /> */}
-            {/* {application.files?.map((el) => {
-            if (isImage(el.name)) {
-              return <img />
-            }
-          })} */}
           </Box>
         )}
       </Box>

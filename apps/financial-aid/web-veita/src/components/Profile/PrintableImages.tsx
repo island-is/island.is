@@ -7,6 +7,7 @@ interface Props {
 }
 
 const PrintableImages = ({ images }: Props) => {
+  console.log(images)
   return (
     <>
       <Box>jasjdja</Box>
