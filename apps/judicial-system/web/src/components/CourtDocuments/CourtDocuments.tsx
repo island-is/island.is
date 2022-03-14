@@ -1,4 +1,6 @@
 import React, { useState, useRef } from 'react'
+import { useKey } from 'react-use'
+import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import Select, {
   components,
@@ -10,7 +12,6 @@ import Select, {
   ValueContainerProps,
   ValueType,
 } from 'react-select'
-import { useKey } from 'react-use'
 
 import {
   Box,
@@ -21,6 +22,7 @@ import {
   TagVariant,
   Text,
 } from '@island.is/island-ui/core'
+import { courtDocuments as m } from '@island.is/judicial-system-web/messages'
 import type { Case } from '@island.is/judicial-system/types'
 import { parseArray } from '@island.is/judicial-system-web/src/utils/formatters'
 import { theme } from '@island.is/island-ui/theme'
@@ -55,6 +57,7 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
   setWorkingCase,
   workingCase,
 }: CourtDocumentsProps) => {
+  const { formatMessage } = useIntl()
   const [courtDocuments, setCourtDocuments] = useState<Array<string>>(
     selectedCourtDocuments,
   )
@@ -91,8 +94,8 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
   }
 
   const whoFiledOptions = [
-    { value: 'prosecutor', label: 'Ákærandi lagði fram' },
-    { value: 'court', label: 'Dómari lagði fram' },
+    { value: 'prosecutor', label: formatMessage(m.whoFiled.prosecutor) },
+    { value: 'court', label: formatMessage(m.whoFiled.defendant) },
   ]
 
   const DropdownIndicator = (props: IndicatorProps<ReactSelectOption>) => {
@@ -158,8 +161,8 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
       <div className={styles.addCourtDocumentContainer}>
         <Input
           name="add-court-document"
-          label="Heiti dómskjals"
-          placeholder="Skrá inn heiti á skjali hér"
+          label={formatMessage(m.add.label)}
+          placeholder={formatMessage(m.add.placeholder)}
           size="sm"
           autoComplete="off"
           value={nextDocumentToUpload}
@@ -173,7 +176,7 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
           onClick={() => handleAddDocument()}
           fluid
         >
-          Bæta við skjali
+          {formatMessage(m.add.buttonText)}
         </Button>
       </div>
       <Box marginBottom={1}>
@@ -199,17 +202,14 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
                 className={styles.dropdownContainer}
                 style={{
                   width: selectedOption
-                    ? `${
-                        8 * (selectedOption as ReactSelectOption).label.length +
-                        100
-                      }px`
-                    : `${theme.spacing[23]}px`,
+                    ? `${theme.spacing[31]}px`
+                    : `${theme.spacing[25]}px`,
                 }}
               >
                 <Select
                   classNamePrefix="court-documents-select"
                   options={whoFiledOptions}
-                  placeholder="Hver lagði fram"
+                  placeholder={formatMessage(m.whoFiled.placeholder)}
                   components={{
                     DropdownIndicator,
                     IndicatorSeparator: null,
@@ -235,10 +235,12 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
               </div>
               <Box display="flex" alignItems="center">
                 <Box marginRight={2}>
-                  <Tag variant={tagVariant} outlined disabled>{`Þingmerkt nr. ${
-                    // +2 because index is zero based and "Krafa um ..." is number 1
-                    index + 2
-                  }`}</Tag>
+                  <Tag variant={tagVariant} outlined disabled>
+                    {
+                      // +2 because index is zero based and "Krafa um ..." is number 1
+                      formatMessage(m.tag, { index: index + 2 })
+                    }
+                  </Tag>
                 </Box>
                 <button onClick={() => handleRemoveDocument(index)}>
                   <Icon icon="close" color="blue400" size="small" />
