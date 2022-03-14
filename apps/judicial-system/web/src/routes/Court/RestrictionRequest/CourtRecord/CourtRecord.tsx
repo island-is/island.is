@@ -60,6 +60,7 @@ import {
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 
@@ -92,6 +93,12 @@ export const CourtRecord: React.FC = () => {
   const { formatMessage } = useIntl()
 
   const id = router.query.id
+
+  useDeb(workingCase, 'courtAttendees')
+  useDeb(workingCase, 'sessionBookings')
+  useDeb(workingCase, 'accusedAppealAnnouncement')
+  useDeb(workingCase, 'prosecutorAppealAnnouncement')
+  useDeb(workingCase, 'endOfSessionBookings')
 
   useEffect(() => {
     document.title = 'Þingbók - Réttarvörslugátt'
@@ -984,6 +991,12 @@ export const CourtRecord: React.FC = () => {
           previousUrl={`${Constants.RULING_ROUTE}/${workingCase.id}`}
           nextUrl={`${Constants.CONFIRMATION_ROUTE}/${id}`}
           nextIsDisabled={!isCourtRecordStepValidRC(workingCase)}
+          hideNextButton={!workingCase.decision || !workingCase.conclusion}
+          infoBoxText={
+            !workingCase.decision || !workingCase.conclusion
+              ? formatMessage(m.nextButtonInfo)
+              : ''
+          }
         />
       </FormContentContainer>
     </PageLayout>
