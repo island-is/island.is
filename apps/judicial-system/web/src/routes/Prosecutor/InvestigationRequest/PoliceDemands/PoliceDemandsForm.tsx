@@ -33,6 +33,7 @@ const courtClaimPrefill: Partial<
         address?: boolean
         institution?: boolean
         year?: boolean
+        live?: boolean
       }
     }
   >
@@ -44,6 +45,7 @@ const courtClaimPrefill: Partial<
       accused: true,
       address: true,
       institution: true,
+      live: true,
     },
   },
   [CaseType.BANKING_SECRECY_WAIVER]: {
@@ -140,11 +142,15 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
                   workingCase.prosecutor?.institution?.name,
                 ),
               }),
+              ...(courtClaim.format?.live && {
+                live: workingCase.defendants.length,
+              }),
               ...(courtClaim.format?.year && {
                 institution: new Date().getFullYear(),
               }),
             })
           : ''
+
         autofill('demands', courtClaimText, workingCase)
         setWorkingCase(workingCase)
       }
