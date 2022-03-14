@@ -48,5 +48,5 @@ export function hasActiveCurrentApplication(context: ApplicationContext) {
     externalData,
     'veita.data',
   ) as CurrentApplication
-  return !Boolean(dataProvider.currentApplicationId)
+  return !dataProvider.currentApplicationId
 }
