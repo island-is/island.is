@@ -28,9 +28,13 @@ export class DiscountResolver {
     @CurrentUser() user: AuthUser,
     @Context('dataSources') { backendApi },
   ): Promise<DiscountWithTUser[]> {
-    const relations: TUser[] = await backendApi.getUserRelations(
-      user.nationalId,
+    let relations: TUser[] = await backendApi.getUserRelations(user.nationalId)
+
+    // Should not generate discountcodes for users who do not meet requirements
+    relations = relations.filter(
+      (user) => user.fund.credit === user.fund.total - user.fund.used,
     )
+
     return relations.reduce(
       (promise: Promise<DiscountWithTUser[]>, relation: TUser) => {
         return promise.then(async (acc) => {
