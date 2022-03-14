@@ -28,8 +28,8 @@ const isTokenError = (e: firebaseAdmin.FirebaseError): boolean => {
   // ideal since technically it might change at any time without notice.
   return (
     (e.code === 'messaging/invalid-argument' &&
-      Boolean(e.message.match(/invalid.+token/gi))) ||
-    e.code === 'messaging/unregistered'
+      e.message.includes('not a valid FCM registration token')) ||
+    e.code === 'messaging/registration-token-not-registered'
   )
 }
 
