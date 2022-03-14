@@ -133,6 +133,9 @@
     "api-domains-license-service": {
       "tags": []
     },
+    "api-domains-mortgage-certificate": {
+      "tags": []
+    },
     "api-domains-national-registry": {
       "tags": []
     },
@@ -231,6 +234,9 @@
       "tags": []
     },
     "application-templates-login-service": {
+      "tags": []
+    },
+    "application-templates-mortgage-certificate": {
       "tags": []
     },
     "application-templates-p-sign": {
@@ -462,9 +468,6 @@
       "tags": []
     },
     "infra-metrics": {
-      "tags": []
-    },
-    "infra-monitoring": {
       "tags": []
     },
     "infra-nest-server": {

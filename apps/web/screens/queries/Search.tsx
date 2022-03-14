@@ -95,6 +95,12 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
             }
           }
         }
+
+        ... on ProjectPage {
+          id
+          title
+          slug
+        }
       }
       processEntryCount
     }
@@ -277,6 +283,13 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
               title
             }
           }
+        }
+
+        ... on ProjectPage {
+          id
+          title
+          slug
+          subtitle
         }
 
         ... on Link {
