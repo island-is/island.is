@@ -4,7 +4,7 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const addCourtDocumentContainer = style({
   display: 'grid',
-  gridTemplateColumns: '1fr 208px',
+  gridTemplateColumns: '1fr 240px',
   columnGap: theme.spacing[2],
   marginBottom: theme.spacing[3],
 })
@@ -17,8 +17,6 @@ export const additionalCourtDocumentContainer = style({
 })
 
 export const dropdownContainer = style({
-  width: '100%',
-  maxWidth: '208px',
   marginRight: `${theme.spacing[2]}px`,
 })
 

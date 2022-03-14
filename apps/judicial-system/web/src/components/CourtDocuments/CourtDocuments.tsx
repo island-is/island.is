@@ -8,6 +8,7 @@ import Select, {
   OptionProps,
   PlaceholderProps,
   ValueContainerProps,
+  ValueType,
 } from 'react-select'
 import { useKey } from 'react-use'
 
@@ -22,6 +23,7 @@ import {
 } from '@island.is/island-ui/core'
 import type { Case } from '@island.is/judicial-system/types'
 import { parseArray } from '@island.is/judicial-system-web/src/utils/formatters'
+import { theme } from '@island.is/island-ui/theme'
 
 import BlueBox from '../BlueBox/BlueBox'
 import { ReactSelectOption } from '../../types'
@@ -58,6 +60,9 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
   )
   const [nextDocumentToUpload, setNextDocumentToUpload] = useState<string>('')
   const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false)
+  const [selectedOption, setSelectedOption] = useState<
+    ValueType<ReactSelectOption>
+  >()
   const additionalCourtDocumentRef = useRef<HTMLInputElement>(null)
 
   const handleAddDocument = () => {
@@ -137,6 +142,14 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
     )
   }
 
+  const ClearIndicator = (props: IndicatorProps<ReactSelectOption>) => {
+    return (
+      <components.ClearIndicator {...props}>
+        <Icon icon="close" size="small" color="blue400" />
+      </components.ClearIndicator>
+    )
+  }
+
   // Add document on enter press
   useKey('Enter', handleAddDocument, undefined, [nextDocumentToUpload])
 
@@ -182,7 +195,17 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
           <div className={styles.additionalCourtDocumentContainer} key={index}>
             <Text variant="h4">{courtDocument}</Text>
             <Box display="flex" flexGrow={1} justifyContent="flexEnd">
-              <div className={styles.dropdownContainer}>
+              <div
+                className={styles.dropdownContainer}
+                style={{
+                  width: selectedOption
+                    ? `${
+                        8 * (selectedOption as ReactSelectOption).label.length +
+                        100
+                      }px`
+                    : `${theme.spacing[23]}px`,
+                }}
+              >
                 <Select
                   classNamePrefix="court-documents-select"
                   options={whoFiledOptions}
@@ -195,6 +218,10 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
                     ValueContainer,
                     Menu,
                     Option,
+                    ClearIndicator,
+                  }}
+                  onChange={(option) => {
+                    setSelectedOption(option)
                   }}
                   onMenuOpen={() => {
                     setMenuIsOpen(true)
@@ -203,6 +230,7 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
                     setMenuIsOpen(false)
                   }}
                   isSearchable={false}
+                  isClearable
                 />
               </div>
               <Box display="flex" alignItems="center">
