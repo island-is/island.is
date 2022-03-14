@@ -217,42 +217,6 @@ export class PublicFlightController {
       )
     }
 
-    let meetsADSRequirements = this.flightService.isADSPostalCode(
-      user.postalcode,
-    )
-
-    // TODO: this is a quickly made temporary hotfix and should be rewritten
-    // along when the nationalregistry module is rewritten for the client V2 completely
-    if (
-      !meetsADSRequirements &&
-      kennitala.info(discount.nationalId).age < MAX_AGE_LIMIT
-    ) {
-      const userCustodiansCacheKey = `userService_${discount.nationalId}_custodians`
-      const cacheValue = await this.cacheManager.get(userCustodiansCacheKey)
-
-      if (cacheValue) {
-        const custodians = cacheValue.custodians
-
-        for (const custodian of custodians) {
-          const custodianInfo = await this.nationalRegistryService.getUser(
-            custodian,
-          )
-
-          if (
-            custodianInfo &&
-            this.flightService.isADSPostalCode(custodianInfo.postalcode)
-          ) {
-            meetsADSRequirements = true
-            break
-          }
-        }
-      }
-    }
-
-    if (!meetsADSRequirements) {
-      throw new ForbiddenException('User postalcode does not meet conditions')
-    }
-
     let connectingFlight = false
     let isConnectable = true
     let connectingId = undefined
