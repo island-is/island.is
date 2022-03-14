@@ -43,6 +43,7 @@ import * as styles from './Overview.css'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
+  const [extendCaseModalVisible, setExtendCaseModalVisible] = useState(false)
   const [modalText, setModalText] = useState('')
   const {
     workingCase,
@@ -338,9 +339,21 @@ export const Overview: React.FC = () => {
               : 'Endursenda kröfu á héraðsdóm'
           }
           nextIsLoading={isSendingNotification}
-          onNextButtonClick={handleNextButtonClick}
+          onNextButtonClick={
+            workingCase.state === CaseState.RECEIVED
+              ? () => {
+                  setExtendCaseModalVisible(true)
+                }
+              : handleNextButtonClick
+          }
         />
       </FormContentContainer>
+      {extendCaseModalVisible && (
+        <Modal
+          title={formatMessage(rcOverview.sections.extendCaseModal.heading)}
+          text={'asd'}
+        />
+      )}
       {modalVisible && (
         <Modal
           title={formatMessage(rcOverview.sections.modal.heading, {

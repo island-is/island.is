@@ -31,5 +31,14 @@ export const rcOverview = {
           'Notaður sem texti í modal þegar ekki tókst að senda tilkynningu til dómara og dómritara á vakt',
       },
     }),
+    extendCaseModal: {
+      heading: defineMessage({
+        id:
+          'judicial.system.restriction_cases:overview.extend_case_modal.heading',
+        defaultMessage: 'Hverju var breytt?',
+        description:
+          'Notaður sem titill á modal sem birtist þegar móttekin krafa er endursend',
+      }),
+    },
   },
 }
