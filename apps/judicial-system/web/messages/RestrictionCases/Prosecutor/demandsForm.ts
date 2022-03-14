@@ -107,6 +107,14 @@ export const rcDemands = {
         description:
           'Notaður sem skýritexti í "takmarkanir og tilhögun gæslu/farbann" textaboxi í farbannsmálum.',
       },
+      requestedOtherRestrictionsAutofill: {
+        id:
+          'judicial.system.restriction_cases:police_demands.custody_restrictions.requested_other_restrictions_autofill',
+        defaultMessage:
+          'Sækjandi tekur fram að farbannið verði með takmörkunum, að {genderedDefendant} verði gert að tilkynna sig.',
+        description:
+          'Notaður sem sjálfgefið gildi þegar valið er Tilkynningarskylda.',
+      },
     }),
   },
 }

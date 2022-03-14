@@ -1,4 +1,5 @@
 import React, { useContext, useEffect } from 'react'
+import { useIntl } from 'react-intl'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import {
@@ -7,8 +8,15 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { rcDemands } from '@island.is/judicial-system-web/messages/RestrictionCases/Prosecutor/demandsForm'
+import {
+  CaseCustodyRestrictions,
+  Gender,
+} from '@island.is/judicial-system/types'
 
 import StepThreeForm from './StepThreeForm'
+import { restrictions } from '@island.is/judicial-system-web/src/utils/Restrictions'
 
 export const StepThree: React.FC = () => {
   const {
@@ -18,10 +26,37 @@ export const StepThree: React.FC = () => {
     caseNotFound,
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
+  const { autofill } = useCase()
+  const { formatMessage } = useIntl()
 
   useEffect(() => {
     document.title = 'Dómkröfur og lagagrundvöllur - Réttarvörslugátt'
   }, [])
+
+  useEffect(() => {
+    if (
+      workingCase.requestedCustodyRestrictions &&
+      workingCase.requestedCustodyRestrictions.indexOf(
+        CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
+      ) > -1
+    ) {
+      autofill(
+        'requestedOtherRestrictions',
+        formatMessage(
+          rcDemands.sections.custodyRestrictions
+            .requestedOtherRestrictionsAutofill,
+          {
+            genderedDefendant:
+              workingCase.defendants &&
+              workingCase.defendants[0].gender === Gender.MALE
+                ? 'kærða'
+                : 'kærðu',
+          },
+        ),
+        workingCase,
+      )
+    }
+  }, [autofill, formatMessage, workingCase])
 
   return (
     <PageLayout
