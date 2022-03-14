@@ -39,17 +39,8 @@ import {
 import { TaxBreakdown } from '@island.is/financial-aid/shared/components'
 import { gql, useLazyQuery, useMutation } from '@apollo/client'
 import { CreateSignedUrlMutation } from '@island.is/financial-aid-web/osk/graphql'
-import { item } from 'libs/island-ui/core/src/lib/AsyncSearch/shared/Item/Item.css'
 import PrintableImages from './PrintableImages'
 
-export const GetSignedUrlQuery = gql`
-  query GetSignedUrlQuery($input: GetSignedUrlForIdInput!) {
-    getSignedUrlForId(input: $input) {
-      url
-      key
-    }
-  }
-`
 interface ApplicationProps {
   application: Application
   setApplication: React.Dispatch<React.SetStateAction<Application | undefined>>
@@ -168,20 +159,20 @@ const ApplicationProfile = ({
   }
 
   // const [allImages, setImages] = useState([])
-  const [createSignedUrlMutation] = useMutation(CreateSignedUrlMutation)
+  // const [createSignedUrlMutation] = useMutation(CreateSignedUrlMutation)
 
-  const [allImages, setallImages] = useState<any[]>([])
+  // const [allImages, setallImages] = useState<any[]>([])
 
-  const [openFile] = useLazyQuery(GetSignedUrlQuery, {
-    fetchPolicy: 'no-cache',
-    onCompleted: (data: { getSignedUrlForId: { url: string } }) => {
-      return data.getSignedUrlForId.url
-    },
-    onError: (error) => {
-      // TODO: What should happen here?
-      console.log(error)
-    },
-  })
+  // const [openFile] = useLazyQuery(GetSignedUrlQuery, {
+  //   fetchPolicy: 'no-cache',
+  //   onCompleted: (data: { getSignedUrlForId: { url: string } }) => {
+  //     return data.getSignedUrlForId.url
+  //   },
+  //   onError: (error) => {
+  //     // TODO: What should happen here?
+  //     console.log(error)
+  //   },
+  // })
 
   // useEffect(() => {
   //   async function fetchMyAPI() {
