@@ -213,9 +213,7 @@ export const isRulingValidRC = (workingCase: Case) => {
     validate(workingCase.prosecutorDemands || '', 'empty').isValid &&
     validate(workingCase.courtCaseFacts || '', 'empty').isValid &&
     validate(workingCase.courtLegalArguments || '', 'empty').isValid &&
-    validate(workingCase.decision || '', 'empty').isValid &&
-    validate(workingCase.ruling || '', 'empty').isValid &&
-    validate(workingCase.conclusion || '', 'empty').isValid
+    validate(workingCase.ruling || '', 'empty').isValid
   )
 }
 
@@ -224,9 +222,7 @@ export const isRulingValidIC = (workingCase: Case) => {
     validate(workingCase.prosecutorDemands || '', 'empty').isValid &&
     validate(workingCase.courtCaseFacts || '', 'empty').isValid &&
     validate(workingCase.courtLegalArguments || '', 'empty').isValid &&
-    validate(workingCase.decision || '', 'empty').isValid &&
-    validate(workingCase.ruling || '', 'empty').isValid &&
-    validate(workingCase.conclusion || '', 'empty').isValid
+    validate(workingCase.ruling || '', 'empty').isValid
   )
 }
 
@@ -238,7 +234,9 @@ export const isCourtRecordStepValidRC = (workingCase: Case) => {
     workingCase.accusedAppealDecision &&
     workingCase.prosecutorAppealDecision &&
     validate(workingCase.courtEndTime || '', 'empty').isValid &&
-    validate(workingCase.courtEndTime || '', 'date-format').isValid
+    validate(workingCase.courtEndTime || '', 'date-format').isValid &&
+    validate(workingCase.decision || '', 'empty').isValid &&
+    validate(workingCase.conclusion || '', 'empty').isValid
   )
 }
 
@@ -250,7 +248,9 @@ export const isCourtRecordStepValidIC = (workingCase: Case) => {
     workingCase.accusedAppealDecision &&
     workingCase.prosecutorAppealDecision &&
     validate(workingCase.courtEndTime || '', 'empty').isValid &&
-    validate(workingCase.courtEndTime || '', 'date-format').isValid
+    validate(workingCase.courtEndTime || '', 'date-format').isValid &&
+    validate(workingCase.decision || '', 'empty').isValid &&
+    validate(workingCase.conclusion || '', 'empty').isValid
   )
 }
 

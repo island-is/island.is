@@ -50,6 +50,7 @@ import { ProblemModule } from '@island.is/nest/problem'
 import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
 import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municipalities-financial-aid'
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
+import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
@@ -245,6 +246,7 @@ const autoSchemaFile = environment.production
       },
     }),
     MunicipalitiesFinancialAidModule,
+    MortgageCertificateModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
