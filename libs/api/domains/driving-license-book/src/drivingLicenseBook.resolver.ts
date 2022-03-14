@@ -7,17 +7,17 @@ import {
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { DrivingLicenseBookService } from './drivingLicenseBook.service'
-import { StudentListInput } from './dto/studentList.input'
-import { DrivingBookStudent } from './models/drivingBookStudent.response'
+import { DrivingLicenseBookStudentsInput } from './dto/students.input'
+import { DrivingLicenseBookStudent } from './models/drivingLicenseBookStudent.response'
 import { PracticalDrivingLessonsInput } from './dto/getPracticalDrivingLessons.input'
 import { PracticalDrivingLesson } from './models/practicalDrivingLesson.response'
-import { StudentInput } from './dto/student.input'
+import { DrivingLicenseBookStudentInput } from './dto/student.input'
 import { DrivingBookStudentOverview } from './models/drivingBookStudentOverview.response'
 import { CreatePracticalDrivingLessonInput } from './dto/createPracticalDrivingLesson.input'
-import { SuccessResponse } from './models/success.response'
+import { Success } from './models/success.response'
 import { UpdatePracticalDrivingLessonInput } from './dto/updatePracticalDrivingLesson.input'
 import { DeletePracticalDrivingLessonInput } from './dto/deletePracticalDrivingLesson.input'
-import { Student } from './models/studentsTeacherNationalId.response'
+import { DrivingLicenseBookStudentForTeacher } from './models/studentsTeacherNationalId.response'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -26,45 +26,45 @@ export class DrivinLicenseBookResolver {
     private readonly drivingLicenseBookService: DrivingLicenseBookService,
   ) {}
 
-  @Query(() => [DrivingBookStudent], { nullable: true })
-  drivingBookStudentList(@Args('input') input: StudentListInput) {
-    return this.drivingLicenseBookService.getStudentList(input)
+  @Query(() => [DrivingLicenseBookStudent])
+  drivingLicneseBookFindStudent(@Args('input') input: DrivingLicenseBookStudentsInput) {
+    return this.drivingLicenseBookService.findStudent(input)
   }
 
-  @Query(() => [Student])
-  drivingBookStudentListByTeacherNationalId(@CurrentUser() user: User) {
-    return this.drivingLicenseBookService.getStudentListTeacherNationalId(user)
+  @Query(() => [DrivingLicenseBookStudentForTeacher])
+  drivingLicenseBookStudentListByTeacherNationalId(@CurrentUser() user: User) {
+    return this.drivingLicenseBookService.getStudentsForTeacher(user)
   }
 
   @Query(() => DrivingBookStudentOverview)
-  drivingBookStudent(@Args('input') input: StudentInput) {
+  drivingLicenseBookStudent(@Args('input') input: DrivingLicenseBookStudentInput) {
     return this.drivingLicenseBookService.getStudent(input)
   }
 
   @Query(() => [PracticalDrivingLesson])
-  drivingBookPracticalDrivingLessons(
+  drivingLicenseBookPracticalDrivingLessons(
     @Args('input') input: PracticalDrivingLessonsInput,
   ) {
     return this.drivingLicenseBookService.getPracticalDrivingLessons(input)
   }
 
   @Mutation(() => PracticalDrivingLesson, { nullable: true })
-  drivingBookCreatePracticalDrivingLesson(
+  drivingLicenseBookCreatePracticalDrivingLesson(
     @Args('input') input: CreatePracticalDrivingLessonInput,
   ) {
     return this.drivingLicenseBookService.createPracticalDrivingLesson(input)
   }
 
-  @Mutation(() => SuccessResponse)
-  drivingBookUpdatePracticalDrivingLesson(
+  @Mutation(() => Success)
+  drivingLicenseBookUpdatePracticalDrivingLesson(
     @Args('input') input: UpdatePracticalDrivingLessonInput,
     @CurrentUser() user: User
   ) {
     return this.drivingLicenseBookService.updatePracticalDrivingLesson(input, user)
   }
 
-  @Mutation(() => SuccessResponse)
-  drivingBookDeletePracticalDrivingLesson(
+  @Mutation(() => Success)
+  drivingLicenseBookDeletePracticalDrivingLesson(
     @Args('input') input: DeletePracticalDrivingLessonInput,
     @CurrentUser() user: User
   ) {

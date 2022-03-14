@@ -6,17 +6,15 @@ import {
 } from '@nestjs/common'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import {
-  DrivingLicenseBookClientService,
-} from '@island.is/clients/driving-license-book'
-import { StudentListInput } from './dto/studentList.input'
+import { DrivingLicenseBookClientService } from '@island.is/clients/driving-license-book'
+import { DrivingLicenseBookStudentsInput } from './dto/students.input'
 import { User } from '@island.is/auth-nest-tools'
-import { Student } from './models/studentsTeacherNationalId.response'
+import { DrivingLicenseBookStudentForTeacher } from './models/studentsTeacherNationalId.response'
 import { DrivingBookStudentOverview } from './models/drivingBookStudentOverview.response'
 import { LICENSE_CATEGORY } from './drivinLicenceBook.type'
-import { DrivingBookStudent } from './models/drivingBookStudent.response'
+import { DrivingLicenseBookStudent } from './models/drivingLicenseBookStudent.response'
 import { PracticalDrivingLesson } from './models/practicalDrivingLesson.response'
-import { StudentInput } from './dto/student.input'
+import { DrivingLicenseBookStudentInput } from './dto/student.input'
 import { CreatePracticalDrivingLessonInput } from './dto/createPracticalDrivingLesson.input'
 import { UpdatePracticalDrivingLessonInput } from './dto/updatePracticalDrivingLesson.input'
 import { DeletePracticalDrivingLessonInput } from './dto/deletePracticalDrivingLesson.input'
@@ -105,12 +103,12 @@ export class DrivingLicenseBookService {
     )
   }
 
-  async getStudentList(input: StudentListInput): Promise<DrivingBookStudent[]> {
+  async findStudent(input: DrivingLicenseBookStudentsInput): Promise<DrivingLicenseBookStudent[]> {
     const api = await this.apiWithAuth()
     const { data } = await api.apiStudentGetStudentListGet(input)
     if (!data) {
       throw new NotFoundException(
-        `Student list in drivingLicenseBook not found`,
+        `Student not found drivingLicenseBook`,
       )
     }
     return data.map((student) => ({
@@ -127,7 +125,7 @@ export class DrivingLicenseBookService {
     }))
   }
 
-  async getStudentListTeacherNationalId(user: User): Promise<Student[]> {
+  async getStudentsForTeacher(user: User): Promise<DrivingLicenseBookStudentForTeacher[]> {
     const api = await this.apiWithAuth()
     const {
       data,
@@ -149,7 +147,7 @@ export class DrivingLicenseBookService {
 
   async getStudent({
     nationalId,
-  }: StudentInput): Promise<DrivingBookStudentOverview> {
+  }: DrivingLicenseBookStudentInput): Promise<DrivingBookStudentOverview> {
     const api = await this.apiWithAuth()
     const { data } = await api.apiStudentGetStudentOverviewSsnGet({
       ssn: nationalId,
@@ -204,11 +202,12 @@ export class DrivingLicenseBookService {
     }))
   }
 
-  private async getActiveBookId(
-    nationalId: string,
-  ): Promise<string | null> {
+  private async getActiveBookId(nationalId: string): Promise<string | null> {
     const api = await this.apiWithAuth()
-        const { data } = await api.apiStudentGetStudentActiveBookIdSsnGet({ssn: nationalId,licenseCategory: LICENSE_CATEGORY })
+    const { data } = await api.apiStudentGetStudentActiveBookIdSsnGet({
+      ssn: nationalId,
+      licenseCategory: LICENSE_CATEGORY,
+    })
     return data?.bookId || null
   }
 }

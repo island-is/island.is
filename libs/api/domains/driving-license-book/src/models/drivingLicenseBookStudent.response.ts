@@ -2,7 +2,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { DrivingLicenseBook } from './drivingLicenseBook.response'
 
 @ObjectType()
-export class DrivingBookStudent {
+export class DrivingLicenseBookStudent {
   @Field(() => ID, { nullable: true })
   id?: string
 

@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 
 @InputType()
-export class StudentListInput {
+export class DrivingLicenseBookStudentsInput {
   @Field({ nullable: true })
   key?: string
 
