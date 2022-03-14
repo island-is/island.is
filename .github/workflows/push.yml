@@ -27,7 +27,7 @@ env:
 jobs:
   pre-checks:
     name: Check if job should run
-    runs-on: self-hosted
+    runs-on: kubernetes-runner
     env:
       CREATE_PATTERNS: ^release/
     outputs:
@@ -103,7 +103,7 @@ jobs:
           echo "::set-output name=PRE_CHECK::push"
 
   prepare:
-    runs-on: self-hosted
+    runs-on: kubernetes-runner
     timeout-minutes: 90
 
     if: needs.pre-checks.outputs.PRE_CHECK
@@ -379,7 +379,7 @@ jobs:
     needs:
       - prepare
     if: needs.prepare.outputs.TEST_CHUNKS
-    runs-on: self-hosted
+    runs-on: kubernetes-runner
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -529,7 +529,7 @@ jobs:
       - prepare
       - pre-checks
     if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
-    runs-on: self-hosted
+    runs-on: kubernetes-runner
     timeout-minutes: 5
     env:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
@@ -586,7 +586,7 @@ jobs:
             })
 
   retag-unaffected:
-    runs-on: self-hosted
+    runs-on: kubernetes-runner
     timeout-minutes: 5
     if: always() && needs.pre-checks.result == 'success' && needs.prepare.result != 'skipped'
     needs:
@@ -616,7 +616,7 @@ jobs:
         run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
 
   deploy:
-    runs-on: self-hosted
+    runs-on: kubernetes-runner
     if: always() && needs.retag-unaffected.result == 'success' && needs.helm-docker-build.result != 'failure'
     needs:
       - retag-unaffected
@@ -655,7 +655,7 @@ jobs:
           BODY
 
   push-success:
-    runs-on: self-hosted
+    runs-on: kubernetes-runner
     if: always()
     needs:
       - pre-checks
@@ -677,7 +677,7 @@ jobs:
         run: echo "Build was skipped"
 
   failure-notification:
-    runs-on: self-hosted
+    runs-on: kubernetes-runner
     if: failure() && needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK != 'feature-deploy'
     needs:
       - pre-checks
