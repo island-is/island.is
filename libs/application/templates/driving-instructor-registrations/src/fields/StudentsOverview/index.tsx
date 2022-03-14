@@ -15,6 +15,7 @@ import { useLocale } from '@island.is/localization'
 import FindStudentModal from '../FindStudentModal/index'
 import { useQuery } from '@apollo/client'
 import { InstructorsStudentsQuery } from '../../graphql/queries'
+import Skeleton from './Skeleton'
 import * as styles from '../style.css'
 
 interface Data {
@@ -34,7 +35,7 @@ const StudentsOverview = ({ application }: Data) => {
   /* table pagination */
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
-  const { data } = useQuery(InstructorsStudentsQuery)
+  const { data, loading } = useQuery(InstructorsStudentsQuery)
 
   const [pageStudents, setPageStudents] = useState(
     data
@@ -113,42 +114,48 @@ const StudentsOverview = ({ application }: Data) => {
                 <T.HeadData></T.HeadData>
               </T.Row>
             </T.Head>
-            <T.Body>
-              {pageStudents && pageStudents.length ? (
-                pageStudents.map((student) => {
-                  return (
-                    <T.Row key={student.id}>
-                      <T.Data>{student.name}</T.Data>
-                      <T.Data>{student.nationalId}</T.Data>
-                      <T.Data box={{ textAlign: 'center' }}>
-                        {student.totalLessonCount}
-                      </T.Data>
-                      <T.Data>
-                        <Button
-                          variant="text"
-                          size="small"
-                          onClick={() => {
-                            setStudentId(student.nationalId)
-                            setShowTable(false)
-                          }}
-                        >
-                          {formatMessage(m.studentsOverviewRegisterHoursButton)}
-                        </Button>
-                      </T.Data>
-                    </T.Row>
-                  )
-                })
-              ) : (
-                <T.Row>
-                  <T.Data>
-                    {formatMessage(m.studentsOverviewNoStudentFound)}
-                  </T.Data>
-                  <T.Data></T.Data>
-                  <T.Data></T.Data>
-                  <T.Data></T.Data>
-                </T.Row>
-              )}
-            </T.Body>
+            {loading ? (
+              <Skeleton />
+            ) : (
+              <T.Body>
+                {pageStudents && pageStudents.length ? (
+                  pageStudents.map((student) => {
+                    return (
+                      <T.Row key={student.id}>
+                        <T.Data>{student.name}</T.Data>
+                        <T.Data>{student.nationalId}</T.Data>
+                        <T.Data box={{ textAlign: 'center' }}>
+                          {student.totalLessonCount ?? 0}
+                        </T.Data>
+                        <T.Data>
+                          <Button
+                            variant="text"
+                            size="small"
+                            onClick={() => {
+                              setStudentId(student.nationalId)
+                              setShowTable(false)
+                            }}
+                          >
+                            {formatMessage(
+                              m.studentsOverviewRegisterHoursButton,
+                            )}
+                          </Button>
+                        </T.Data>
+                      </T.Row>
+                    )
+                  })
+                ) : (
+                  <T.Row>
+                    <T.Data>
+                      {formatMessage(m.studentsOverviewNoStudentFound)}
+                    </T.Data>
+                    <T.Data></T.Data>
+                    <T.Data></T.Data>
+                    <T.Data></T.Data>
+                  </T.Row>
+                )}
+              </T.Body>
+            )}
           </T.Table>
           {pageStudents && pageStudents.length > 0 && (
             <Pagination
