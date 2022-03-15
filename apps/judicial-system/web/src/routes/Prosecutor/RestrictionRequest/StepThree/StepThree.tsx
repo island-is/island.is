@@ -10,13 +10,9 @@ import { FormContext } from '@island.is/judicial-system-web/src/components/FormP
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { rcDemands } from '@island.is/judicial-system-web/messages/RestrictionCases/Prosecutor/demandsForm'
-import {
-  CaseCustodyRestrictions,
-  Gender,
-} from '@island.is/judicial-system/types'
+import { CaseCustodyRestrictions } from '@island.is/judicial-system/types'
 
 import StepThreeForm from './StepThreeForm'
-import { core } from '@island.is/judicial-system-web/messages'
 
 export const StepThree: React.FC = () => {
   const {
@@ -46,12 +42,7 @@ export const StepThree: React.FC = () => {
         formatMessage(
           rcDemands.sections.custodyRestrictions
             .requestedOtherRestrictionsAutofill,
-          {
-            genderedDefendant: formatMessage(core.accused, {
-              suffix:
-                workingCase.defendants[0].gender === Gender.MALE ? 'a' : 'u',
-            }),
-          },
+          { gender: workingCase.defendants[0].gender },
         ),
         workingCase,
       )

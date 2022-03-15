@@ -111,7 +111,7 @@ export const rcDemands = {
         id:
           'judicial.system.restriction_cases:police_demands.custody_restrictions.requested_other_restrictions_autofill',
         defaultMessage:
-          'Sækjandi tekur fram að farbannið verði með takmörkunum, að {genderedDefendant} verði gert að tilkynna sig.',
+          'Sækjandi tekur fram að farbannið verði með takmörkunum, að {gender, select, MALE {kærða} FEMALE {kærðu} OTHER {kærðu}} verði gert að tilkynna sig.',
         description:
           'Notaður sem sjálfgefið gildi þegar valið er Tilkynningarskylda.',
       },
