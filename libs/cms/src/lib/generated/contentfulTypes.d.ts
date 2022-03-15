@@ -574,6 +574,9 @@ export interface IFaqListFields {
 
   /** Questions */
   questions?: IQuestionAndAnswer[] | undefined
+
+  /** Show title */
+  showTitle?: boolean | undefined
 }
 
 export interface IFaqList extends Entry<IFaqListFields> {
@@ -2156,7 +2159,7 @@ export interface IProjectPageFields {
   slug?: string | undefined
 
   /** Theme */
-  theme: 'default' | 'traveling-to-iceland' | 'election'
+  theme: 'default' | 'traveling-to-iceland' | 'election' | 'ukraine'
 
   /** Sidebar */
   sidebar: boolean
@@ -3195,11 +3198,11 @@ export interface IUrlFields {
 
   /** Page */
   page?:
-    | IAboutSubPage
     | IArticle
     | IArticleCategory
     | ILifeEventPage
     | INews
+    | IProjectPage
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
     | undefined
