@@ -13,10 +13,21 @@ export const serviceCenter = {
       description: 'Service center page title',
     },
     description: {
-      id: 'fa.application:section.serviceCenter.general.description',
+      id: 'fa.application:section.serviceCenter.general.description#markdown',
       defaultMessage:
-        'Þú ert að sækja um fjárhagsaðstoð hjá þínu sveitarfélagi fyrir {currentMonth} mánuð. Áður en þú heldur áfram er gott að hafa eftirfarandi í huga:',
-      description: 'About form page description',
+        'Samkvæmt **Þjóðskrá** ert þú með lögheimili í **{applicantsServiceCenter}**',
+      description: 'Service center description',
+    },
+    notRegistered: {
+      id: 'fa.application:section.serviceCenter.general.notRegistered',
+      defaultMessage:
+        'Þitt sveitarfélag er ekki komið inn í þetta umsóknarferli. Kynntu þér málið eða sæktu um fjárhagsaðstoð á heimasíðu þíns sveitarfélags eða þess sveitarfélags sem sér um fjárhagsaðstoð hjá þínu sveitarfélagi.',
+      description: 'When service center is not regisitered',
+    },
+    linkToServiceCenter: {
+      id: 'fa.application:section.serviceCenter.general.linkToServiceCenter',
+      defaultMessage: 'Fjárhagsaðstoð {applicantsServiceCenter}',
+      description: 'Service center page title',
     },
   }),
 }

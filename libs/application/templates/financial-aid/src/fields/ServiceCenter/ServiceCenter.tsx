@@ -1,13 +1,18 @@
 import React from 'react'
-import { Text, Button } from '@island.is/island-ui/core'
+import { useIntl } from 'react-intl'
+import { Button, Box } from '@island.is/island-ui/core'
 
 import { serviceCenters } from '@island.is/financial-aid/shared/data'
 import { FAFieldBaseProps } from '../../lib/types'
+import { serviceCenter } from '../../lib/messages'
+import { DescriptionText } from '..'
 
 const ServiceCenter = ({ application }: FAFieldBaseProps) => {
+  const { formatMessage } = useIntl()
+
   const { externalData } = application
 
-  const serviceCenter = serviceCenters.find(
+  const applicantsCenter = serviceCenters.find(
     (serviceCenter) =>
       serviceCenter.number ===
       Number(
@@ -17,27 +22,31 @@ const ServiceCenter = ({ application }: FAFieldBaseProps) => {
   )
   return (
     <>
-      <Text marginBottom={[1, 1, 2]} marginTop={2}>
-        Samkvæmt <b>Þjóðskrá</b> ert þú með lögheimili í{' '}
-        <b>{serviceCenter?.name}</b>.
-      </Text>
+      <Box marginBottom={[1, 1, 2]} marginTop={2}>
+        <DescriptionText
+          text={serviceCenter.general.description}
+          format={{
+            applicantsServiceCenter: applicantsCenter?.name ?? '',
+          }}
+        />
+      </Box>
 
-      <Text marginBottom={[2, 2, 4]}>
-        Þitt sveitarfélag er ekki komið inn í þetta umsóknarferli. Kynntu þér
-        málið eða sæktu um fjárhagsaðstoð á heimasíðu þíns sveitarfélags eða
-        þess sveitarfélags sem sér um fjárhagsaðstoð hjá þínu sveitarfélagi.
-      </Text>
+      <Box marginBottom={[2, 2, 4]}>
+        <DescriptionText text={serviceCenter.general.notRegistered} />
+      </Box>
 
-      {serviceCenter?.link && (
+      {applicantsCenter?.link && (
         <Button
           variant="ghost"
           icon="open"
           iconType="outline"
           onClick={() => {
-            window.open(serviceCenter?.link, '_ blank')
+            window.open(applicantsCenter?.link, '_ blank')
           }}
         >
-          Fjárhagsaðstoð {serviceCenter?.name}
+          {formatMessage(serviceCenter.general.linkToServiceCenter, {
+            applicantsServiceCenter: applicantsCenter?.name ?? '',
+          })}
         </Button>
       )}
     </>

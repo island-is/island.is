@@ -150,11 +150,9 @@ const FinancialAidTemplate: ApplicationTemplate<
                   Promise.resolve(module.MuncipalityNotRegistered),
                 ),
               write: {
-                answers: ['approveExternalData'],
                 externalData: ['nationalRegistry'],
               },
               read: {
-                answers: ['approveExternalData'],
                 externalData: ['nationalRegistry'],
               },
             },
