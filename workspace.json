@@ -8367,6 +8367,11 @@
                 "glob": "sequelize.config.js",
                 "input": "apps/services/user-profile",
                 "output": "./"
+              },
+              {
+                "glob": "*",
+                "input": "libs/email-service/src/tools/design",
+                "output": "./email-service-assets"
               }
             ],
             "maxWorkers": 2
