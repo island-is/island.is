@@ -49,8 +49,6 @@ import { Discount, DiscountService } from '../discount'
 import { AuthGuard } from '../common'
 import { NationalRegistryService } from '../nationalRegistry'
 import type { HttpRequest } from '../../app.types'
-import * as kennitala from 'kennitala'
-import { MAX_AGE_LIMIT } from '../nationalRegistry/nationalRegistry.service'
 
 @ApiTags('Flights')
 @Controller('api/public')
@@ -203,9 +201,8 @@ export class PublicFlightController {
       throw new BadRequestException('Discount code is invalid')
     }
 
-    const user = await this.nationalRegistryService.getUser(discount.nationalId)
-    if (!user) {
-      throw new NotFoundException(`User not found`)
+    if (!discount.user) {
+      throw new BadRequestException('No user associated with discount code')
     }
 
     if (
@@ -269,7 +266,7 @@ export class PublicFlightController {
 
     const newFlight = await this.flightService.create(
       flight,
-      user,
+      discount.user,
       request.airline,
       isConnectable,
       connectingId,

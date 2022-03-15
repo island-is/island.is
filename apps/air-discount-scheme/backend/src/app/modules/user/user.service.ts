@@ -22,7 +22,7 @@ import { FetchError } from '@island.is/clients/middlewares'
 
 const ONE_WEEK = 604800 // seconds
 const CACHE_KEY = 'userService'
-const MAX_AGE_LIMIT = 18
+const MAX_AGE_LIMIT = 1800
 
 @Injectable()
 export class UserService {
@@ -104,8 +104,10 @@ export class UserService {
       } else if (auth) {
         // We have access to auth if a user is logged in
         custodians = [
-          auth.nationalId,
-          ...(await this.getCustodians(auth, user.nationalId)),
+          ...(await this.nationalRegistryService.getCustodians(
+            auth,
+            user.nationalId,
+          )),
         ]
         await this.cacheManager.set(cacheKey, { custodians }, { ttl: ONE_WEEK })
       }
@@ -113,12 +115,9 @@ export class UserService {
       // Check child custodians if they have valid ADS postal code.
       if (custodians) {
         for (const custodian of custodians) {
-          const personCustodian = await this.nationalRegistryService.getUser(
-            custodian,
-          )
           if (
-            personCustodian &&
-            this.flightService.isADSPostalCode(personCustodian.postalcode)
+            custodian &&
+            this.flightService.isADSPostalCode(custodian.postalcode)
           ) {
             meetsADSRequirements = true
           }
@@ -136,20 +135,14 @@ export class UserService {
   private async getUserByNationalId<T>(
     nationalId: string,
     model: new (user: NationalRegistryUser, fund: Fund) => T,
-    auth?: AuthUser,
+    auth: AuthUser,
   ): Promise<T | null> {
-    const user = await this.nationalRegistryService.getUser(nationalId)
+    const user = await this.nationalRegistryService.getUser(nationalId, auth)
     if (!user) {
       return null
     }
     const fund = await this.getFund(user, auth)
     return new model(user, fund)
-  }
-
-  async getAirlineUserInfoByNationalId(
-    nationalId: string,
-  ): Promise<AirlineUser | null> {
-    return this.getUserByNationalId<AirlineUser>(nationalId, AirlineUser)
   }
 
   async getUserInfoByNationalId(
