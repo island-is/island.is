@@ -34,6 +34,7 @@ if (userMocked) {
       EndorsementsScope.main,
       ApiScope.internal,
       ApiScope.meDetails,
+      ApiScope.assets,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'as.',

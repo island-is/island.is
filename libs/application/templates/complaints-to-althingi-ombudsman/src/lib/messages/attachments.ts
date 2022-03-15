@@ -15,7 +15,8 @@ export const attachments = defineMessages({
   },
   uploadDescription: {
     id: 'ctao.application:section.attachments.uploadDescription',
-    defaultMessage: 'Tekið er við skjölum með endingunum: .pdf, .docx, .rtf',
+    defaultMessage:
+      'Tekið er við skjölum með endingunum: .pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic',
     description: 'Definition of upload description',
   },
   uploadHeader: {

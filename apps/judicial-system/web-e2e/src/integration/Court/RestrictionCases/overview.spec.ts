@@ -76,6 +76,18 @@ describe(`${OVERVIEW_ROUTE}/:id`, () => {
     cy.contains('button', 'Krafa - PDF')
   })
 
+  it('should include button to draft conclusion in modal', () => {
+    cy.getByTestid('draftConclusionButton').click()
+    cy.getByTestid('modal')
+      .getByTestid('ruling')
+      .contains('héraðsdómari kveður upp úrskurð þennan.')
+      .clear()
+    cy.clickOutside()
+    cy.getByTestid('inputErrorMessage').contains('Reitur má ekki vera tómur')
+    cy.getByTestid('ruling').type('lorem')
+    cy.getByTestid('inputErrorMessage').should('not.exist')
+  })
+
   it('should navigate to the next step when all input data is valid and the continue button is clicked', () => {
     cy.getByTestid('continueButton').click()
     cy.url().should('include', HEARING_ARRANGEMENTS_ROUTE)

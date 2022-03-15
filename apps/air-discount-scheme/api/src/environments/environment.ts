@@ -8,9 +8,6 @@ if (isProd) {
 
 const devConfig = {
   production: false,
-  sentry: {
-    dsn: process.env.SENTRY_DSN,
-  },
   accessGroups: {
     developers: process.env.DEVELOPERS,
     admins: process.env.ADMINS,
@@ -29,9 +26,6 @@ const devConfig = {
 
 const prodConfig = {
   production: true,
-  sentry: {
-    dsn: process.env.SENTRY_DSN,
-  },
   accessGroups: {
     developers: process.env.DEVELOPERS,
     admins: process.env.ADMINS,

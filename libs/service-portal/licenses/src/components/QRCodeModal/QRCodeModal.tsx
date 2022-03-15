@@ -9,10 +9,14 @@ import {
   SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useUserProfile } from '@island.is/service-portal/graphql'
+import {
+  CREATE_PK_PASS_QR_CODE,
+  CREATE_PK_PASS,
+  useUserProfile,
+} from '@island.is/service-portal/graphql'
 import { Locale } from '@island.is/shared/types'
 import { useMutation } from '@apollo/client'
-import { CREATE_PK_PASS } from '@island.is/service-portal/graphql'
+
 import { m } from '../../lib/messages'
 interface Props {
   id: string
@@ -29,17 +33,24 @@ const PkPass = ({ licenseType }: PkPassProps) => {
   const [pkpassQRCode, setPkpassQRCode] = useState<string | null>(null)
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
-  const [generatePkPass, { loading }] = useMutation(CREATE_PK_PASS)
+  // Might be used later if mobile users gets urls instead of qr code
+  const [generatePkPass, { loading: urlLoading }] = useMutation(CREATE_PK_PASS)
+  const [generatePkPassQrCode, { loading: QRCodeLoading }] = useMutation(
+    CREATE_PK_PASS_QR_CODE,
+  )
+
   const { formatMessage } = useLocale()
 
   useEffect(() => {
     const getCode = async () => {
-      const response = await generatePkPass({
+      const response = await generatePkPassQrCode({
         variables: { locale, input: { licenseType } },
       })
 
       if (!response.errors) {
-        setPkpassQRCode(response?.data?.generatePkPass?.pkpassQRCode ?? null)
+        setPkpassQRCode(
+          response?.data?.generatePkPassQrCode?.pkpassQRCode ?? null,
+        )
       }
     }
     getCode()
@@ -47,7 +58,7 @@ const PkPass = ({ licenseType }: PkPassProps) => {
 
   return (
     <>
-      {loading && <SkeletonLoader width="100%" height={158} />}
+      {QRCodeLoading && <SkeletonLoader width="100%" height={158} />}
       {pkpassQRCode && (
         <Box>
           <img
@@ -60,6 +71,7 @@ const PkPass = ({ licenseType }: PkPassProps) => {
     </>
   )
 }
+
 export const QRCodeModal: FC<Props> = ({
   id,
   toggleClose,
@@ -98,6 +110,7 @@ export const QRCodeModal: FC<Props> = ({
         <Box marginRight={7} marginY={2}>
           <Tag disabled>
             {formatMessage(m.validUntil)}
+            {'\xa0'}
             {expires}
           </Tag>
           <Box marginY={1}>
