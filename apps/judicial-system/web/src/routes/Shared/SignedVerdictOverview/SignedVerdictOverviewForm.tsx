@@ -228,7 +228,6 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                   ?.filter((restriction) =>
                     [
                       CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
-                      CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
                     ].includes(restriction),
                   )
                   ?.map((custodyRestriction, index) => (
