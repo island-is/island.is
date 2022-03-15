@@ -5,14 +5,11 @@ import { RegisteredProperties } from '../RegisteredProperties'
 import { SearchProperties } from '../SearchProperties'
 import { PropertyDetail } from '../../../types/schema'
 
-interface PropertiesManagerProps {
-  onClearErrorMsg: () => void
-}
+interface PropertiesManagerProps {}
 
 export const PropertiesManager: FC<FieldBaseProps & PropertiesManagerProps> = ({
   application,
   field,
-  onClearErrorMsg,
 }) => {
   const { externalData } = application
   const { id } = field
@@ -29,11 +26,12 @@ export const PropertiesManager: FC<FieldBaseProps & PropertiesManagerProps> = ({
 
   // check if hidden field has a selected property
   if (!selectedPropertyNumber) {
-    const { validation } = externalData.validateMortgageCertificate?.data as {
-      validation: {
-        propertyNumber: string
-      }
-    }
+    const { validation } =
+      (externalData.validateMortgageCertificate?.data as {
+        validation: {
+          propertyNumber: string
+        }
+      }) || {}
 
     if (validation?.propertyNumber) {
       selectedPropertyNumber = validation.propertyNumber
@@ -76,7 +74,6 @@ export const PropertiesManager: FC<FieldBaseProps & PropertiesManagerProps> = ({
                 onSelectProperty(p?.propertyNumber, true)
               }}
               selectedPropertyNumber={value}
-              onClearErrorMsg={onClearErrorMsg}
             />
           </>
         )
