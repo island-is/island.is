@@ -23,8 +23,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { courtDocuments as m } from '@island.is/judicial-system-web/messages'
-import type { Case, CourtDocument } from '@island.is/judicial-system/types'
-import { parseArray } from '@island.is/judicial-system-web/src/utils/formatters'
+import { Case, CourtDocument, UserRole } from '@island.is/judicial-system/types'
 import { theme } from '@island.is/island-ui/theme'
 
 import BlueBox from '../BlueBox/BlueBox'
@@ -63,16 +62,13 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
   )
   const [nextDocumentToUpload, setNextDocumentToUpload] = useState<string>('')
   const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false)
-  const [selectedOption, setSelectedOption] = useState<
-    ValueType<ReactSelectOption>
-  >()
   const additionalCourtDocumentRef = useRef<HTMLInputElement>(null)
 
   const handleAddDocument = () => {
     if (nextDocumentToUpload) {
       const updatedCourtDocuments = [
         ...courtDocuments,
-        { name: nextDocumentToUpload },
+        { name: nextDocumentToUpload } as CourtDocument,
       ]
 
       onUpdateCase(caseId, { courtDocuments: updatedCourtDocuments })
@@ -87,6 +83,17 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
     }
   }
 
+  const handleSubmittedBy = (index: number, submittedBy: UserRole) => {
+    const updatedCourtDocuments = courtDocuments.map((doc, idx) =>
+      idx === index ? ({ name: doc.name, submittedBy } as CourtDocument) : doc,
+    )
+
+    onUpdateCase(caseId, { courtDocuments: updatedCourtDocuments })
+
+    setWorkingCase({ ...workingCase, courtDocuments: updatedCourtDocuments })
+    setCourtDocuments(updatedCourtDocuments)
+  }
+
   const handleRemoveDocument = async (index: number) => {
     const updatedCourtDocuments = courtDocuments.filter(
       (_, documentIndex) => documentIndex !== index,
@@ -97,8 +104,8 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
   }
 
   const whoFiledOptions = [
-    { value: 'prosecutor', label: formatMessage(m.whoFiled.prosecutor) },
-    { value: 'court', label: formatMessage(m.whoFiled.defendant) },
+    { value: UserRole.PROSECUTOR, label: formatMessage(m.whoFiled.prosecutor) },
+    { value: UserRole.DEFENDER, label: formatMessage(m.whoFiled.defendant) },
   ]
 
   const DropdownIndicator = (props: IndicatorProps<ReactSelectOption>) => {
@@ -204,7 +211,7 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
               <div
                 className={styles.dropdownContainer}
                 style={{
-                  width: selectedOption
+                  width: courtDocument.submittedBy
                     ? `${theme.spacing[31]}px`
                     : `${theme.spacing[25]}px`,
                 }}
@@ -223,8 +230,14 @@ const CourtDocuments: React.FC<CourtDocumentsProps> = ({
                     Option,
                     ClearIndicator,
                   }}
+                  value={whoFiledOptions.find(
+                    (option) => option.value === courtDocument.submittedBy,
+                  )}
                   onChange={(option) => {
-                    setSelectedOption(option)
+                    handleSubmittedBy(
+                      index,
+                      (option as ReactSelectOption)?.value as UserRole,
+                    )
                   }}
                   onMenuOpen={() => {
                     setMenuIsOpen(true)
