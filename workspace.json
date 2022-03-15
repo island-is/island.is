@@ -8462,7 +8462,7 @@
               },
               {
                 "glob": "*",
-                "input": "apps/services/user-profile/src/app/user-profile/images",
+                "input": "libs/service-portal/settings/personal-information/src/assets",
                 "output": "./images"
               }
             ],
