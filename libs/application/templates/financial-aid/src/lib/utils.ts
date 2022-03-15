@@ -5,6 +5,14 @@ import {
   ApplicationContext,
   getValueViaPath,
 } from '@island.is/application/core'
+
+import {
+  FamilyStatus,
+  MartialStatusType,
+  martialStatusTypeFromMartialCode,
+  Municipality,
+} from '@island.is/financial-aid/shared/lib'
+
 import { ApproveOptions, CurrentApplication, FAApplication, Spouse } from '..'
 
 const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
@@ -39,8 +47,35 @@ export const hasSpouse = (
   )
 }
 
+export function isMuncipalityRegistered(context: ApplicationContext) {
+  const { externalData } = context.application
+
+  const municipality = getValueViaPath(
+    externalData,
+    `nationalRegistry.data.municipality.`,
+  ) as Municipality | null
+  return municipality != null
+}
+
 export const encodeFilenames = (filename: string) =>
   filename && encodeURI(filename.normalize().replace(/ +/g, '_'))
+
+export function findFamilyStatus(
+  answers: FAApplication['answers'],
+  externalData: FAApplication['externalData'],
+) {
+  switch (true) {
+    case martialStatusTypeFromMartialCode(
+      externalData.nationalRegistry?.data?.applicant?.spouse?.maritalStatus,
+    ) === MartialStatusType.MARRIED:
+      return FamilyStatus.MARRIED
+    case answers?.relationshipStatus?.unregisteredCohabitation ===
+      ApproveOptions.Yes:
+      return FamilyStatus.UNREGISTERED_COBAHITATION
+    default:
+      return FamilyStatus.NOT_COHABITATION
+  }
+}
 
 export function hasActiveCurrentApplication(context: ApplicationContext) {
   const { externalData } = context.application

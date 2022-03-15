@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import {
   Text,
   Box,
@@ -15,6 +15,9 @@ import {
   getNextPeriod,
   HomeCircumstances,
   estimatedBreakDown,
+  aidCalculator,
+  martialStatusTypeFromMartialCode,
+  MartialStatusType,
 } from '@island.is/financial-aid/shared/lib'
 
 import { Routes } from '../../lib/constants'
@@ -26,8 +29,10 @@ import {
   getMessageApproveOptionsForIncome,
   getMessageEmploymentStatus,
   getMessageHomeCircumstances,
+  getMessageFamilyStatus,
 } from '../../lib/formatters'
 import AllFiles from './AllFiles'
+import { findFamilyStatus } from '../../lib/utils'
 import useApplication from '../../lib/hooks/useApplication'
 
 import cn from 'classnames'
@@ -46,6 +51,22 @@ const SummaryForm = ({
   const { setValue } = useFormContext()
 
   const formCommentId = 'formComment'
+
+  const aidAmount = useMemo(() => {
+    if (
+      externalData.nationalRegistry?.data?.municipality &&
+      answers.homeCircumstances
+    ) {
+      return aidCalculator(
+        answers.homeCircumstances.type,
+        martialStatusTypeFromMartialCode(
+          externalData.nationalRegistry?.data?.applicant?.spouse?.maritalStatus,
+        ) === MartialStatusType.SINGLE
+          ? externalData.nationalRegistry?.data?.municipality?.individualAid
+          : externalData.nationalRegistry?.data?.municipality?.cohabitationAid,
+      )
+    }
+  }, [externalData.nationalRegistry?.data?.municipality])
 
   const { createApplication } = useApplication()
 
@@ -92,10 +113,14 @@ const SummaryForm = ({
         <DescriptionText text={m.summaryForm.general.description} />
       </Box>
 
-      {externalData.nationalRegistry && (
+      {aidAmount && (
         <Box marginTop={[4, 4, 5]}>
-          {/* TODO get aid amount */}
-          <Breakdown calculations={estimatedBreakDown(10, true)} />
+          <Breakdown
+            calculations={estimatedBreakDown(
+              aidAmount,
+              answers.personalTaxCredit === ApproveOptions.Yes,
+            )}
+          />
         </Box>
       )}
 
@@ -148,8 +173,11 @@ const SummaryForm = ({
           {formatMessage(m.inRelationship.general.sectionTitle)}
         </Text>
 
-        {/* TODO  relationship status  */}
-        <Text>TODO</Text>
+        <Text>
+          {formatMessage(
+            getMessageFamilyStatus[findFamilyStatus(answers, externalData)],
+          )}
+        </Text>
       </SummaryBlock>
 
       <SummaryBlock editAction={() => goToScreen?.(Routes.HOMECIRCUMSTANCES)}>

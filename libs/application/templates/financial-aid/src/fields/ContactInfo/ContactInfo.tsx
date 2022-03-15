@@ -1,16 +1,25 @@
 import React from 'react'
 import { Text, Box } from '@island.is/island-ui/core'
-import { FAFieldBaseProps } from '../../lib/types'
+import { FAFieldBaseProps, InputTypes } from '../../lib/types'
 import { useIntl } from 'react-intl'
 import { contactInfo } from '../../lib/messages'
 import { InputController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 
-const ContactInfo = ({ field, errors, application }: FAFieldBaseProps) => {
+const ContactInfo = ({ errors, application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { answers } = application
-  const { id } = field
   const { clearErrors } = useFormContext()
+
+  const emailInput = {
+    id: 'contactInfo.email',
+    error: errors?.contactInfo?.email,
+  } as InputTypes
+
+  const phoneInput = {
+    id: 'contactInfo.phone',
+    error: errors?.contactInfo?.phone,
+  } as InputTypes
 
   return (
     <>
@@ -19,31 +28,31 @@ const ContactInfo = ({ field, errors, application }: FAFieldBaseProps) => {
       </Text>
       <Box marginTop={[2, 2, 4]}>
         <InputController
-          id={`${id}.email`}
-          name={`${id}.email`}
+          id={emailInput.id}
+          name={emailInput.id}
           backgroundColor="blue"
           type="email"
           label={formatMessage(contactInfo.emailInput.label)}
           placeholder={formatMessage(contactInfo.emailInput.placeholder)}
-          error={errors?.contactInfo?.email}
+          error={emailInput.error}
           defaultValue={answers?.contactInfo?.email}
           onChange={() => {
-            clearErrors(`${id}.email`)
+            clearErrors(emailInput.error)
           }}
         />
       </Box>
       <Box marginTop={[2, 2, 3]}>
         <InputController
-          id={`${id}.phonen`}
-          name={`${id}.phone`}
+          id={phoneInput.id}
+          name={phoneInput.id}
           backgroundColor="blue"
           type="tel"
           label={formatMessage(contactInfo.phoneInput.label)}
           placeholder={formatMessage(contactInfo.phoneInput.placeholder)}
-          error={errors?.contactInfo?.phone}
+          error={phoneInput.error}
           defaultValue={answers?.contactInfo?.phone}
           onChange={() => {
-            clearErrors(`${id}.phone`)
+            clearErrors(phoneInput.id)
           }}
         />
       </Box>
