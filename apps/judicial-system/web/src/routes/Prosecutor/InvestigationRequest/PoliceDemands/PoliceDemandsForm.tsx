@@ -16,9 +16,11 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isPoliceDemandsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-import { icDemands } from '@island.is/judicial-system-web/messages'
+import { icDemands, core } from '@island.is/judicial-system-web/messages'
+import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import * as Constants from '@island.is/judicial-system/consts'
+import { enumerate } from '@island.is/judicial-system-web/src/utils/formatters'
 
 const courtClaimPrefill: Partial<
   Record<
@@ -26,31 +28,60 @@ const courtClaimPrefill: Partial<
     {
       text: MessageDescriptor
       format?: {
-        accusedName?: boolean
+        court?: boolean
+        accused?: boolean
         address?: boolean
+        institution?: boolean
+        year?: boolean
+        live?: boolean
       }
     }
   >
 > = {
   [CaseType.SEARCH_WARRANT]: {
     text: icDemands.sections.demands.prefill.searchWarrant,
-    format: { accusedName: true, address: true },
+    format: {
+      court: true,
+      accused: true,
+      address: true,
+      institution: true,
+      live: true,
+    },
   },
   [CaseType.BANKING_SECRECY_WAIVER]: {
     text: icDemands.sections.demands.prefill.bankingSecrecyWaiver,
+    format: { court: true, accused: true },
   },
   [CaseType.PHONE_TAPPING]: {
     text: icDemands.sections.demands.prefill.phoneTapping,
-    format: { accusedName: true },
+    format: { court: true, institution: true, accused: true },
   },
   [CaseType.TELECOMMUNICATIONS]: {
     text: icDemands.sections.demands.prefill.teleCommunications,
-    format: { accusedName: true },
+    format: { court: true, institution: true, accused: true },
   },
   [CaseType.TRACKING_EQUIPMENT]: {
     text: icDemands.sections.demands.prefill.trackingEquipment,
-    format: { accusedName: true },
+    format: { court: true, institution: true, accused: true },
   },
+  [CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION]: {
+    text:
+      icDemands.sections.demands.prefill.electronicDataDiscoveryInvestigation,
+    format: { court: true, institution: true, address: true, year: true },
+  },
+}
+
+export const formatInstitutionName = (name: string | undefined) => {
+  if (!name) return ''
+
+  if (name.startsWith('Lögreglustjórinn')) {
+    return name.replace('Lögreglustjórinn', 'lögreglustjóranum')
+  }
+  if (name.endsWith('saksóknari')) {
+    return name.toLocaleLowerCase().replace('saksóknari', 'saksóknara')
+  }
+
+  return ''
 }
 
 interface Props {
@@ -71,6 +102,10 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
   const [lawsBrokenEM, setLawsBrokenEM] = useState<string>('')
   const [legalBasisEM, setLegalBasisEM] = useState<string>('')
 
+  useDeb(workingCase, 'demands')
+  useDeb(workingCase, 'lawsBroken')
+  useDeb(workingCase, 'legalBasis')
+
   useEffect(() => {
     if (isCaseUpToDate) {
       if (
@@ -81,9 +116,9 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
         const courtClaim = courtClaimPrefill[workingCase.type]
         const courtClaimText = courtClaim
           ? formatMessage(courtClaim.text, {
-              ...(courtClaim.format?.accusedName && {
-                accusedName: workingCase.defendants
-                  .map(
+              ...(courtClaim.format?.accused && {
+                accused: enumerate(
+                  workingCase.defendants.map(
                     (defendant) =>
                       `${defendant.name} ${
                         defendant.noNationalId ? 'fd.' : 'kt.'
@@ -92,15 +127,30 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
                           ? defendant.nationalId
                           : formatNationalId(defendant.nationalId ?? '')
                       }`,
-                  )
-                  .toString()
-                  .replace(/,/g, ', '),
+                  ),
+                  formatMessage(core.and),
+                ),
               }),
               ...(courtClaim.format?.address && {
-                address: workingCase.defendants[0].address,
+                address: workingCase.defendants.find((x) => x.address)?.address,
+              }),
+              ...(courtClaim.format?.court && {
+                court: workingCase.court?.name,
+              }),
+              ...(courtClaim.format?.institution && {
+                institution: formatInstitutionName(
+                  workingCase.prosecutor?.institution?.name,
+                ),
+              }),
+              ...(courtClaim.format?.live && {
+                live: workingCase.defendants.length,
+              }),
+              ...(courtClaim.format?.year && {
+                institution: new Date().getFullYear(),
               }),
             })
           : ''
+
         autofill('demands', courtClaimText, workingCase)
         setWorkingCase(workingCase)
       }
