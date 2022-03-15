@@ -7,7 +7,7 @@ import React, {
   MutableRefObject,
 } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
-import { Box, AlertMessage, BoxProps } from '@island.is/island-ui/core'
+import { Box, AlertMessage, SkeletonLoader } from '@island.is/island-ui/core'
 import { PropertiesManager } from './PropertiesManager'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -28,6 +28,7 @@ export const SelectProperty: FC<FieldBaseProps> = ({
   const [showErrorMsg, setShowErrorMsg] = useState<boolean>(false)
   const { formatMessage } = useLocale()
   const errorMessage = useRef<HTMLDivElement>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const { validation: oldValidation } =
     (externalData.validateMortgageCertificate?.data as {
@@ -42,7 +43,7 @@ export const SelectProperty: FC<FieldBaseProps> = ({
   // But we will also use condition guard on "next" button to validate again
   // to control if user can continue
   if (oldValidation?.propertyNumber) {
-    const { data, error } = useQuery(validateCertificateQuery, {
+    const { data, error, loading } = useQuery(validateCertificateQuery, {
       variables: {
         input: {
           propertyNumber: oldValidation?.propertyNumber,
@@ -57,6 +58,10 @@ export const SelectProperty: FC<FieldBaseProps> = ({
       exists: boolean
       hasKMarking: boolean
     }
+
+    useEffect(() => {
+      setIsLoading(loading)
+    }, [loading])
 
     useEffect(() => {
       if (!validationData?.propertyNumber) {
@@ -80,11 +85,17 @@ export const SelectProperty: FC<FieldBaseProps> = ({
     if (errorMessage && errorMessage.current) {
       errorMessage.current.scrollIntoView({ behavior: 'smooth' })
     }
-  }, [errorMessage, externalData])
+  }, [showErrorMsg])
 
   return (
     <>
-      <PropertiesManager application={application} field={field} />
+      {isLoading ? (
+        <Box paddingY={4}>
+          <SkeletonLoader repeat={6} space={2} />
+        </Box>
+      ) : (
+        <PropertiesManager application={application} field={field} />
+      )}
 
       {showErrorMsg ? (
         <Box ref={errorMessage} paddingTop={5} paddingBottom={5}>
