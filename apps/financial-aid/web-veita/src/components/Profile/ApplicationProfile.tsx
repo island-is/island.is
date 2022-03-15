@@ -1,8 +1,5 @@
 import React, { useState, useMemo, useContext, useEffect } from 'react'
 import { Box } from '@island.is/island-ui/core'
-
-import * as styles from './Profile.css'
-
 import {
   Application,
   ApplicationState,
@@ -13,8 +10,6 @@ import {
   AmountModal,
   getAidAmountModalInfo,
   UserType,
-  ApplicationFile,
-  isImage,
 } from '@island.is/financial-aid/shared/lib'
 
 import format from 'date-fns/format'
@@ -38,12 +33,14 @@ import {
   getNationalRegistryInfo,
 } from '@island.is/financial-aid-web/veita/src/utils/applicationHelper'
 import { TaxBreakdown } from '@island.is/financial-aid/shared/components'
-import PrintableImages from './PrintableImages'
+
+import * as styles from './Profile.css'
 
 interface ApplicationProps {
   application: Application
   setApplication: React.Dispatch<React.SetStateAction<Application | undefined>>
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+  isPrint?: boolean
 }
 
 interface CalculationsModal {
@@ -55,6 +52,7 @@ const ApplicationProfile = ({
   application,
   setApplication,
   setIsLoading,
+  isPrint = false,
 }: ApplicationProps) => {
   const [isStateModalVisible, setStateModalVisible] = useState(false)
 
@@ -148,13 +146,13 @@ const ApplicationProfile = ({
     application.directTaxPayments.filter(
       (d) => d.userType === UserType.SPOUSE,
     ) ?? []
-
+  console.log(isPrint)
   return (
     <>
       <Box
-        marginTop={10}
-        marginBottom={15}
-        className={`${styles.applicantWrapper} hideOnPrintMarginBottom hideOnPrintMarginTop`}
+        marginTop={isPrint ? 1 : 10}
+        marginBottom={isPrint ? 4 : 15}
+        className={`${styles.applicantWrapper}`}
       >
         <ApplicationHeader
           application={application}
@@ -163,6 +161,7 @@ const ApplicationProfile = ({
           }}
           setApplication={setApplication}
           setIsLoading={setIsLoading}
+          isPrint={isPrint}
         />
 
         <ProfileUnit
@@ -182,6 +181,7 @@ const ApplicationProfile = ({
             heading="Upplýsingar um staðgreiðslu"
             info={getDirectTaxPayments(applicantDirectPayments)}
             className={`contentUp delay-75`}
+            isPrint={isPrint}
           >
             <TaxBreakdown items={applicantDirectPayments} />
           </CollapsibleProfileUnit>
@@ -192,6 +192,7 @@ const ApplicationProfile = ({
             heading="Maki"
             info={applicantSpouse}
             className={`contentUp delay-100`}
+            isPrint={isPrint}
           />
         )}
 
@@ -200,6 +201,7 @@ const ApplicationProfile = ({
             heading="Upplýsingar um staðgreiðslu maka"
             info={getDirectTaxPayments(spouseDirectPayments)}
             className={`contentUp delay-125`}
+            isPrint={isPrint}
           >
             <TaxBreakdown items={spouseDirectPayments} />
           </CollapsibleProfileUnit>
@@ -209,41 +211,32 @@ const ApplicationProfile = ({
           heading="Umsóknarferli"
           info={applicantMoreInfo}
           className={`contentUp delay-125`}
+          isPrint={isPrint}
         />
 
         <CollapsibleProfileUnit
           heading="Þjóðskrá"
           info={nationalRegistryInfo}
           className={`contentUp delay-125`}
+          isPrint={isPrint}
         />
 
         {application.files && (
           <FilesListWithHeaderContainer applicationFiles={application.files} />
         )}
 
-        <CommentSection
-          className={`contentUp delay-125 ${styles.widthAlmostFull}`}
-          setApplication={setApplication}
-        />
+        {!isPrint && (
+          <CommentSection
+            className={`contentUp delay-125 ${styles.widthAlmostFull}`}
+            setApplication={setApplication}
+          />
+        )}
 
         <History
           applicantName={application.name}
           applicationEvents={application.applicationEvents}
           spouseName={application.spouseName ?? ''}
         />
-
-        {application?.files && (
-          <>
-            <Box
-              className={` ${styles.widthFull} show-in-print`}
-              display="none"
-            >
-              <PrintableImages
-                images={application?.files.filter((el) => isImage(el.name))}
-              />
-            </Box>
-          </>
-        )}
       </Box>
       {application.state && (
         <StateModal

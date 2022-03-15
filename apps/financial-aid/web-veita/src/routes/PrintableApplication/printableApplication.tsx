@@ -5,7 +5,11 @@ import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 import { ApplicationQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
-import { Application } from '@island.is/financial-aid/shared/lib'
+import {
+  Application,
+  getFileType,
+  isImage,
+} from '@island.is/financial-aid/shared/lib'
 
 import {
   ApplicationSkeleton,
@@ -13,12 +17,14 @@ import {
   ProfileNotFound,
   ApplicationProfile,
 } from '@island.is/financial-aid-web/veita/src/components'
+import PrintableImages from '../../components/Profile/PrintableImages'
+import PrintablePdf from '../../components/Profile/PrintablePdf'
 
 interface ApplicantData {
   application: Application
 }
 
-const PrintableApplication = () => {
+const UserApplication = () => {
   const router = useRouter()
 
   const [isLoading, setIsLoading] = useState(false)
@@ -43,11 +49,28 @@ const PrintableApplication = () => {
       loader={<ApplicationSkeleton />}
     >
       {application ? (
-        <ApplicationProfile
-          application={application}
-          setApplication={setApplication}
-          setIsLoading={setIsLoading}
-        />
+        <>
+          <ApplicationProfile
+            application={application}
+            setApplication={setApplication}
+            setIsLoading={setIsLoading}
+            isPrint={true}
+          />
+          {application?.files && (
+            <>
+              <div>
+                <PrintableImages
+                  images={application?.files.filter((el) => isImage(el.name))}
+                />
+                <PrintablePdf
+                  pdfFiles={application?.files.filter(
+                    (el) => getFileType(el.name) === 'pdf',
+                  )}
+                />
+              </div>
+            </>
+          )}
+        </>
       ) : (
         <ProfileNotFound backButtonHref="/nymal" />
       )}
@@ -55,4 +78,4 @@ const PrintableApplication = () => {
   )
 }
 
-export default PrintableApplication
+export default UserApplication

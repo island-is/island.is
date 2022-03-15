@@ -1,6 +1,9 @@
 import React from 'react'
 import { ApplicationFile } from '@island.is/financial-aid/shared/lib'
 import { gql, useQuery } from '@apollo/client'
+
+import * as styles from './Profile.css'
+
 interface Props {
   images: ApplicationFile[]
 }
@@ -27,6 +30,7 @@ const PrintableImages = ({ images }: Props) => {
       allImages.push(data.getSignedUrlForId.url)
     }
   })
+
   return (
     <>
       {allImages.map((el, index) => {
@@ -35,7 +39,7 @@ const PrintableImages = ({ images }: Props) => {
             key={`printable-image-${index}`}
             src={el}
             loading="lazy"
-            className="printableImages"
+            className={styles.printableImages}
           />
         )
       })}

@@ -34,20 +34,29 @@ const AdminLayout = ({ children, className }: PageProps) => {
     }
   }, [showNavMobile])
 
+  const printPage = router.pathname.includes('print')
+
   if (isAuthenticated === false || admin === undefined) {
     return null
   }
-
   return (
     <>
-      <Nav showInMobile={showNavMobile} />
-      <div className={` wrapper ${styles.gridWrapper} `}>
-        <MobileMenuButton
-          showNav={showNavMobile}
-          onClick={() => {
-            setShowNavMobile((showNavMobile) => !showNavMobile)
-          }}
-        />
+      {!printPage && <Nav showInMobile={showNavMobile} />}
+
+      <div
+        className={cn({
+          [`${styles.gridWrapper} wrapper`]: !printPage,
+          [`printwrapper`]: printPage,
+        })}
+      >
+        {!printPage && (
+          <MobileMenuButton
+            showNav={showNavMobile}
+            onClick={() => {
+              setShowNavMobile((showNavMobile) => !showNavMobile)
+            }}
+          />
+        )}
 
         <div
           className={cn({

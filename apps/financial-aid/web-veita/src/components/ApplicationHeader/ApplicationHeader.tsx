@@ -3,6 +3,7 @@ import {
   ApplicationEventType,
   ApplicationState,
   getState,
+  Routes,
 } from '@island.is/financial-aid/shared/lib'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import React from 'react'
@@ -20,12 +21,14 @@ import {
   GenerateName,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { useApplicationState } from '@island.is/financial-aid-web/veita/src/utils/useApplicationState'
+import Link from 'next/link'
 
 interface ApplicantProps {
   application: Application
   onClickApplicationState: () => void
   setApplication: React.Dispatch<React.SetStateAction<Application | undefined>>
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+  isPrint?: boolean
 }
 
 const ApplicationHeader = ({
@@ -33,6 +36,7 @@ const ApplicationHeader = ({
   onClickApplicationState,
   setIsLoading,
   setApplication,
+  isPrint = false,
 }: ApplicantProps) => {
   const router = useRouter()
 
@@ -61,13 +65,11 @@ const ApplicationHeader = ({
   return (
     <Box className={`contentUp ${styles.widthAlmostFull} `}>
       <Box
-        marginBottom={3}
-        display="flex"
+        marginBottom={isPrint ? 0 : 3}
+        display={isPrint ? 'none' : 'flex'}
         justifyContent="spaceBetween"
         alignItems="center"
         width="full"
-        printHidden
-        className={` hideOnPrintMarginBottom`}
       >
         <Button
           colorScheme="default"
@@ -99,7 +101,7 @@ const ApplicationHeader = ({
         paddingY={3}
       >
         <Box display="flex" alignItems="center">
-          <Box marginRight={2}>
+          <Box marginRight={2} display="flex">
             <GeneratedProfile size={48} nationalId={application.nationalId} />
           </Box>
 
@@ -108,7 +110,13 @@ const ApplicationHeader = ({
           </Text>
         </Box>
 
-        <Box printHidden>
+        {application.state && isPrint && (
+          <div className={`tags ${getTagByState(application.state)}`}>
+            {getState[application.state]}
+          </div>
+        )}
+
+        <Box display={isPrint ? 'none' : 'block'}>
           <Button
             colorScheme="default"
             icon="pencil"
@@ -124,8 +132,8 @@ const ApplicationHeader = ({
         </Box>
       </Box>
 
-      <Box display="flex" marginBottom={8} className="marginBottomOnPrint">
-        <Box display="flex" marginRight={1}>
+      <Box display="flex" marginBottom={isPrint ? 4 : 8}>
+        <Box display={isPrint ? 'none' : 'flex'} marginRight={1}>
           {application.staff?.name &&
             application.state !== ApplicationState.NEW && (
               <>
@@ -139,12 +147,16 @@ const ApplicationHeader = ({
                 </Box>
               </>
             )}
-          <button
-            onClick={assignEmployee}
-            className={`${styles.button} no-print`}
-          >
+          <button onClick={assignEmployee} className={styles.button}>
             Sjá um
           </button>
+          <Link
+            href={Routes.printApplicationProfile(router.query.id as string)}
+          >
+            <a target="_blank" className={styles.button}>
+              prenta
+            </a>
+          </Link>
 
           <Box printHidden>
             <Text variant="small">·</Text>
@@ -167,3 +179,8 @@ const ApplicationHeader = ({
 }
 
 export default ApplicationHeader
+function printApplicationProfile(
+  id: string | string[] | undefined,
+): string | import('url').UrlObject {
+  throw new Error('Function not implemented.')
+}

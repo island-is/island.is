@@ -5,6 +5,7 @@ import * as styles from './ProfileUnit.css'
 import cn from 'classnames'
 import AnimateHeight from 'react-animate-height'
 import Unit from './Unit'
+import ProfileUnit from './ProfileUnit'
 
 interface Props {
   heading: string
@@ -17,6 +18,7 @@ interface Props {
   }[]
   className?: string
   children?: ReactNode
+  isPrint?: boolean
 }
 
 const CollapsibleProfileUnit = ({
@@ -24,8 +26,17 @@ const CollapsibleProfileUnit = ({
   info,
   className,
   children,
+  isPrint = false,
 }: Props) => {
   const [toggle, setToggle] = useState<boolean>(true)
+
+  if (isPrint) {
+    return (
+      <ProfileUnit heading={heading} info={info} className={`${className}`}>
+        {children}
+      </ProfileUnit>
+    )
+  }
 
   return (
     <>
@@ -46,15 +57,10 @@ const CollapsibleProfileUnit = ({
               [`${styles.iconContainer} `]: true,
               [`${styles.rotate}`]: toggle,
             })}
-            printHidden
           >
             <Icon icon={'chevronUp'} color="purple400" />
           </Box>
-          <Box
-            display="flex"
-            width="full"
-            className={`${styles.headlineBorder} hideOnPrintBorderBottom`}
-          >
+          <Box display="flex" width="full" className={styles.headlineBorder}>
             <Text as="h2" variant="h3" color="dark300" marginBottom={1}>
               {heading}
             </Text>

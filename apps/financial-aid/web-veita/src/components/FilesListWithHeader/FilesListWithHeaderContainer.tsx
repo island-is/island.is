@@ -32,7 +32,7 @@ const FilesListWithHeaderContainer = ({ applicationFiles }: Props) => {
       </Box>
       <Box
         className={cn({
-          [`contentUp delay-125 ${styles.widthAlmostFull}`]: true,
+          [`contentUp delay-125 ${styles.widthAlmostFull} printableSection`]: true,
         })}
         marginBottom={[5, 5, 7]}
       >

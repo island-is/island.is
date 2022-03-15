@@ -12,7 +12,7 @@ const MobileMenuButton = ({ showNav, onClick }: PageProps) => {
   return (
     <button
       className={cn({
-        [`${styles.burgerMenu} burgerMenu no-print`]: true,
+        [`${styles.burgerMenu} burgerMenu`]: true,
         [`openBurgerMenu`]: showNav,
       })}
       onClick={onClick}
