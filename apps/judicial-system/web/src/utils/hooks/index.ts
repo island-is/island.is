@@ -1,3 +1,4 @@
+export type { autofillFunc } from './useCase'
 export { default as useCase } from './useCase'
 export { default as useDateTime } from './useDateTime'
 export { default as useFileList } from './useFileList'

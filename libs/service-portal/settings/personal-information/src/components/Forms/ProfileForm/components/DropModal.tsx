@@ -15,9 +15,10 @@ interface Props {
   onClose: () => void
   onDrop: () => void
   type: 'tel' | 'mail' | 'all'
+  loading?: boolean
 }
 
-export const DropModal: FC<Props> = ({ onClose, onDrop, type }) => {
+export const DropModal: FC<Props> = ({ onClose, onDrop, type, loading }) => {
   const [closeModal, setCloseModal] = useState(false)
   const { formatMessage } = useLocale()
   useNamespaces('sp.settings')
@@ -36,13 +37,13 @@ export const DropModal: FC<Props> = ({ onClose, onDrop, type }) => {
       <GridRow align="flexStart" alignItems="flexStart">
         <GridColumn span={['7/8', '5/8']}>
           <Text variant="h4" as="h2" marginBottom={1}>
-            {type === 'mail' && formatMessage(msg.dropModalTelTitle)}
-            {type === 'tel' && formatMessage(msg.dropModalEmailTitle)}
+            {type === 'tel' && formatMessage(msg.dropModalTelTitle)}
+            {type === 'mail' && formatMessage(msg.dropModalEmailTitle)}
             {type === 'all' && formatMessage(msg.dropModalAllTitle)}
           </Text>
           <Text>
-            {type === 'mail' && formatMessage(msg.dropModalTelText)}
-            {type === 'tel' && formatMessage(msg.dropModalEmailText)}
+            {type === 'tel' && formatMessage(msg.dropModalTelText)}
+            {type === 'mail' && formatMessage(msg.dropModalEmailText)}
             {type === 'all' && formatMessage(msg.dropModalAllText)}
           </Text>
         </GridColumn>
@@ -75,7 +76,12 @@ export const DropModal: FC<Props> = ({ onClose, onDrop, type }) => {
               </Button>
             </Box>
             <Box>
-              <Button onClick={onDrop} variant="ghost" size="small">
+              <Button
+                loading={loading}
+                onClick={onDrop}
+                variant="ghost"
+                size="small"
+              >
                 {formatMessage(msg.dropModalDrop)}
               </Button>
             </Box>

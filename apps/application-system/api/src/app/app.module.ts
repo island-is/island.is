@@ -12,6 +12,7 @@ import { ProblemModule } from '@island.is/nest/problem'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ApplicationModule } from './modules/application/application.module'
 import { AuthPublicApiClientConfig } from '@island.is/clients/auth-public-api'
+import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { AuthPublicApiClientConfig } from '@island.is/clients/auth-public-api'
         SyslumennClientConfig,
         XRoadConfig,
         AuthPublicApiClientConfig,
+        NationalRegistryClientConfig,
       ],
     }),
   ],

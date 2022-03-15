@@ -15,7 +15,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  JudgeSubsections,
+  CourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
@@ -31,8 +31,7 @@ import {
   core,
   rcConfirmation as m,
 } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-
+import * as Constants from '@island.is/judicial-system/consts'
 export const Confirmation: React.FC = () => {
   const {
     workingCase,
@@ -66,17 +65,13 @@ export const Confirmation: React.FC = () => {
     }
 
     // Request ruling signature to get control code
-    try {
-      const requestRulingSignatureResponse = await requestRulingSignature(
-        workingCase.id,
-      )
-      if (requestRulingSignatureResponse) {
-        setRequestRulingSignatureResponse(requestRulingSignatureResponse)
-        setModalVisible(true)
-      } else {
-        // TODO: Handle error
-      }
-    } catch (e) {
+    const requestRulingSignatureResponse = await requestRulingSignature(
+      workingCase.id,
+    )
+    if (requestRulingSignatureResponse) {
+      setRequestRulingSignatureResponse(requestRulingSignatureResponse)
+      setModalVisible(true)
+    } else {
       // TODO: Handle error
     }
   }
@@ -87,27 +82,15 @@ export const Confirmation: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={JudgeSubsections.CONFIRMATION}
+      activeSubSection={CourtSubsections.CONFIRMATION}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
       <FormContentContainer>
-        <Box marginBottom={1}>
+        <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             Yfirlit úrskurðar
           </Text>
-        </Box>
-        <Box display="flex" marginBottom={7}>
-          <Box marginRight={2}>
-            <Text variant="small">{`Krafa stofnuð: ${formatDate(
-              workingCase.created,
-              'P',
-            )}`}</Text>
-          </Box>
-          <Text variant="small">{`Þinghald: ${formatDate(
-            workingCase.courtStartDate,
-            'P',
-          )}`}</Text>
         </Box>
         <Box component="section" marginBottom={7}>
           <CaseInfo workingCase={workingCase} userRole={user?.role} />
@@ -155,7 +138,7 @@ export const Confirmation: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
+          previousUrl={`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`}
           nextUrl={Constants.REQUEST_LIST_ROUTE}
           nextButtonText={formatMessage(
             workingCase.decision === CaseDecision.ACCEPTING

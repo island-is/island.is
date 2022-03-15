@@ -76,6 +76,8 @@ export enum FieldTypes {
   DIVIDER = 'DIVIDER',
   KEY_VALUE = 'KEY_VALUE',
   ASYNC_SELECT = 'ASYNC_SELECT',
+  PAYMENT_PENDING = 'PAYMENT_PENDING',
+  COMPANY_SEARCH = 'COMPANY_SEARCH',
 }
 
 export enum FieldComponents {
@@ -90,6 +92,8 @@ export enum FieldComponents {
   KEY_VALUE = 'KeyValueFormField',
   SUBMIT = 'SubmitFormField',
   ASYNC_SELECT = 'AsyncSelectFormField',
+  PAYMENT_PENDING = 'PaymentPendingField',
+  COMPANY_SEARCH = 'CompanySearchFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -142,6 +146,13 @@ export interface SelectField extends BaseField {
   backgroundColor?: InputBackgroundColor
 }
 
+export interface CompanySearchField extends BaseField {
+  readonly type: FieldTypes.COMPANY_SEARCH
+  component: FieldComponents.COMPANY_SEARCH
+  placeholder?: FormText
+  setLabelToDataSchema?: boolean
+}
+
 export interface AsyncSelectField extends BaseField {
   readonly type: FieldTypes.ASYNC_SELECT
   component: FieldComponents.ASYNC_SELECT
@@ -157,6 +168,7 @@ export interface TextField extends BaseField {
   readonly type: FieldTypes.TEXT
   component: FieldComponents.TEXT
   disabled?: boolean
+  readOnly?: boolean
   minLength?: number
   maxLength?: number
   placeholder?: FormText
@@ -223,3 +235,4 @@ export type Field =
   | DividerField
   | SubmitField
   | AsyncSelectField
+  | CompanySearchField

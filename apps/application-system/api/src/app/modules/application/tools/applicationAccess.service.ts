@@ -1,7 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 
-import { Application } from '../application.model'
-import { ApplicationService } from '../application.service'
 
 import { ActorValidationFailed } from '@island.is/nest/problem'
 import {
@@ -20,6 +18,10 @@ interface Delegation {
   type: string
 }
 
+import {
+  Application,
+  ApplicationService,
+} from '@island.is/application/api/core'
 @Injectable()
 export class ApplicationAccessService {
   constructor(

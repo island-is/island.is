@@ -17,8 +17,9 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isPoliceDemandsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { icDemands } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import * as Constants from '@island.is/judicial-system/consts'
 
 const courtClaimPrefill: Partial<
   Record<
@@ -70,6 +71,10 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
   const [demandsEM, setDemandsEM] = useState<string>('')
   const [lawsBrokenEM, setLawsBrokenEM] = useState<string>('')
   const [legalBasisEM, setLegalBasisEM] = useState<string>('')
+
+  useDeb(workingCase, 'demands')
+  useDeb(workingCase, 'lawsBroken')
+  useDeb(workingCase, 'legalBasis')
 
   useEffect(() => {
     if (isCaseUpToDate) {
@@ -160,6 +165,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             required
             textarea
             rows={7}
+            autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -204,6 +210,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             required
             textarea
             rows={7}
+            autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
         <Box component="section" marginBottom={10}>
@@ -246,6 +253,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             required
             textarea
             rows={7}
+            autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
       </FormContentContainer>

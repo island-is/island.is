@@ -1,1 +1,7 @@
-export * from './rolesRules'
+export {
+  prosecutorRule,
+  judgeRule,
+  registrarRule,
+  staffRule,
+  adminRule,
+} from './rolesRules'

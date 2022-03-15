@@ -18,8 +18,7 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { icOverview as m } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
-
+import * as Constants from '@island.is/judicial-system/consts'
 import OverviewForm from './OverviewForm'
 
 export const Overview: React.FC = () => {
@@ -46,35 +45,24 @@ export const Overview: React.FC = () => {
       return
     }
 
-    try {
-      const shouldSubmitCase = workingCase.state === CaseState.DRAFT
+    const shouldSubmitCase = workingCase.state === CaseState.DRAFT
 
-      const caseSubmitted = shouldSubmitCase
-        ? await transitionCase(
-            workingCase,
-            CaseTransition.SUBMIT,
-            setWorkingCase,
-          )
-        : workingCase.state !== CaseState.NEW
+    const caseSubmitted = shouldSubmitCase
+      ? await transitionCase(workingCase, CaseTransition.SUBMIT, setWorkingCase)
+      : workingCase.state !== CaseState.NEW
 
-      const notificationSent = caseSubmitted
-        ? await sendNotification(
-            workingCase.id,
-            NotificationType.READY_FOR_COURT,
-          )
-        : false
+    const notificationSent = caseSubmitted
+      ? await sendNotification(workingCase.id, NotificationType.READY_FOR_COURT)
+      : false
 
-      // An SMS should have been sent
-      if (notificationSent) {
-        setModalText(formatMessage(m.sections.modal.notificationSent))
-      } else {
-        setModalText(formatMessage(m.sections.modal.notificationNotSent))
-      }
-
-      setModalVisible(true)
-    } catch (e) {
-      // TODO: Handle error
+    // An SMS should have been sent
+    if (notificationSent) {
+      setModalText(formatMessage(m.sections.modal.notificationSent))
+    } else {
+      setModalText(formatMessage(m.sections.modal.notificationNotSent))
     }
+
+    setModalVisible(true)
   }
 
   return (

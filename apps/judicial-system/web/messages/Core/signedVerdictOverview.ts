@@ -2,6 +2,11 @@ import { defineMessage, defineMessages } from 'react-intl'
 
 // Strings on signed verdict overview screen
 export const signedVerdictOverview = {
+  rulingDateLabel: defineMessage({
+    id: 'judicial.system.core:signed_verdict_overview.ruling_date_label',
+    defaultMessage: 'Úrskurðað {courtEndTime}',
+    description: 'Notaður sem label fyrir hvenær úrskurðurinn var.',
+  }),
   accusedAppealed: defineMessage({
     id: 'judicial.system.core:signed_verdict_overview.accused_appealed',
     defaultMessage:
@@ -15,42 +20,6 @@ export const signedVerdictOverview = {
       'Sækjandi hefur kært úrskurðinn í þinghaldi sem lauk {courtEndTime}',
     description:
       'Notaður sem upplýsingatexti sem útskýrir að sækjandi kærði úrskurðinn í þinghaldi á yfirlitsskjá afgreiddra mála.',
-  }),
-  allFilesUploadedToCourtText: defineMessage({
-    id:
-      'judicial.system.core:signed_verdict_overview.all_files_uploaded_to_court_text',
-    defaultMessage: 'Gögn hafa verið vistuð í Auði',
-    description:
-      'Notaður sem upplýsingatexti sem útskýrir að tekist hafi að vista öll gögn í Auði á yfirlitsskjá afgreiddra mála.',
-  }),
-  someFilesUploadedToCourtText: defineMessage({
-    id:
-      'judicial.system.core:signed_verdict_overview.some_files_uploaded_to_court_text',
-    defaultMessage: 'Ekki tókst að vista öll gögn í Auði',
-    description:
-      'Notaður sem upplýsingatexti sem útskýrir að ekki hafi tekist að vista öll gögn í Auði á yfirlitsskjá afgreiddra mála.',
-  }),
-  uploadToCourtButtonText: defineMessage({
-    id:
-      'judicial.system.core:signed_verdict_overview.upload_to_court_button_text',
-    defaultMessage: 'Vista gögn í Auði',
-    description:
-      'Notaður sem texti í "Hlaða upp gögnum í Auði" takkanum á yfirlitsskjá afgreiddra mála.',
-  }),
-  retryUploadToCourtButtonText: defineMessage({
-    id:
-      'judicial.system.core:signed_verdict_overview.retry_upload_to_court_button_text',
-    defaultMessage: 'Reyna aftur',
-    description:
-      'Notaður sem texti í "Hlaða upp gögnum í Auði" takkanum á yfirlitsskjá afgreiddra mála ef ekki tókst að hlaða upp öllum skjölunum.',
-  }),
-  uploadToCourtAllBrokenText: defineMessage({
-    id:
-      'judicial.system.core:signed_verdict_overview.upload_to_court_all_broken_text',
-    defaultMessage:
-      'Ofangreind rannsóknargögn eru ekki lengur aðgengileg í Réttarvörslugátt.',
-    description:
-      'Notaður sem upplýsingatexti sem útskýrir að rannsóknargögn eru ekki aðgengileg í Réttarvörslugátt.',
   }),
   dismissedTitle: defineMessage({
     id: 'judicial.system.core:signed_verdict_overview.dismissed_title',
@@ -252,6 +221,80 @@ export const signedVerdictOverview = {
         defaultMessage: 'Lengd gæslu uppfærð',
         description:
           'Notaður sem titill í upplýsingaboxi um uppfærða lengd gæslu á yfirlitsskjá afgreiddra mála.',
+      },
+    }),
+    shareCase: defineMessages({
+      title: {
+        id: 'judicial.system.core:signed_verdict_overview.share_case.title',
+        defaultMessage: 'Opna mál fyrir öðru embætti',
+        description: 'Notaður sem titill í "deila með öðru embætti" kafla',
+      },
+      info: {
+        id: 'judicial.system.core:signed_verdict_overview.share_case.info',
+        defaultMessage:
+          'Hægt er að gefa öðru embætti aðgang að málinu. Viðkomandi embætti getur skoðað málið og farið fram á framlengingu. Sé málið opnað fyrir öðru embætti er slökkt á hækkuðu öryggisstigi.',
+        description: 'Notaður sem upplýsingatexti í info búbblu',
+      },
+      label: {
+        id: 'judicial.system.core:signed_verdict_overview.share_case.label',
+        defaultMessage: 'Veldu embætti',
+        description: 'Notaður sem label í embætti drop-down',
+      },
+      placeholder: {
+        id:
+          'judicial.system.core:signed_verdict_overview.share_case.placeholder',
+        defaultMessage: 'Velja embætti sem tekur við málinu',
+        description: 'Notaður sem placeholder í embætti drop-down',
+      },
+      open: {
+        id: 'judicial.system.core:signed_verdict_overview.share_case.open',
+        defaultMessage: 'Opna mál',
+        description: 'Notaður sem label á opna takka',
+      },
+      close: {
+        id: 'judicial.system.core:signed_verdict_overview.share_case.close',
+        defaultMessage: 'Loka aðgangi',
+        description: 'Notaður sem label á loka takka',
+      },
+    }),
+    shareCaseModal: defineMessages({
+      openTitle: {
+        id:
+          'judicial.system.core:signed_verdict_overview.share_case_modal.open_title',
+        defaultMessage:
+          'Mál {courtCaseNumber} hefur verið opnað fyrir öðru embætti',
+        description:
+          'Notaður sem titill í modal glugga þegar mál hefur verið opnað fyrir öðru embætti',
+      },
+      closeTitle: {
+        id:
+          'judicial.system.core:signed_verdict_overview.share_case_modal.close_title',
+        defaultMessage:
+          'Mál {courtCaseNumber} er nú lokað öðrum en upprunalegu embætti',
+        description:
+          'Notaður sem titill í modal glugga þegar máli hefur verið lokað fyrir öðru embætti',
+      },
+      openText: {
+        id:
+          'judicial.system.core:signed_verdict_overview.share_case_modal.open_text#markdown',
+        defaultMessage:
+          '**{prosecutorsOffice}** hefur nú fengið aðgang að málinu. Hafi málið verið með hækkuðu öryggisstigi hefur nú verið slökkt á því.',
+        description:
+          'Notaður sem texti í modal glugga þegar mál hefur verið opnað fyrir öðru embætti',
+      },
+      closeText: {
+        id:
+          'judicial.system.core:signed_verdict_overview.share_case_modal.close_text#markdown',
+        defaultMessage:
+          '**{prosecutorsOffice}** hefur ekki lengur aðgang að málinu.',
+        description:
+          'Notaður sem texti í modal glugga þegar máli hefur verið lokað fyrir öðru embætti',
+      },
+      buttonClose: {
+        id:
+          'judicial.system.core:signed_verdict_overview.share_case_modal.button_close',
+        defaultMessage: 'Loka glugga',
+        description: 'Notaður sem label á loka takka í modal glugga',
       },
     }),
   },

@@ -60,6 +60,7 @@ export class ApplicationResolver {
     )
     return {
       fulfilled: status.fulfilled,
+      paymentUrl: status.paymentUrl,
     }
   }
 
