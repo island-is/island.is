@@ -849,14 +849,15 @@ export class CaseService {
       .then((caseId) => this.findById(caseId))
   }
 
-  async uploadRequestPdfToCourt(theCase: Case, user: TUser): Promise<void> {
-    this.logger.debug(`Uploading request pdf to court for case ${theCase.id}`)
-
-    await this.refreshFormatMessage()
-
-    const pdf = await getRequestPdfAsBuffer(theCase, this.formatMessage)
-
+  private async uploadRequestPdfToCourt(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
     try {
+      await this.refreshFormatMessage()
+
+      const pdf = await getRequestPdfAsBuffer(theCase, this.formatMessage)
+
       await this.courtService.createRequest(
         user,
         theCase.id,
@@ -883,6 +884,17 @@ export class CaseService {
       Boolean(theCase.parentCaseId),
     )
 
-    return this.update(theCase.id, { courtCaseNumber }, true) as Promise<Case>
+    const updatedCase = (await this.update(
+      theCase.id,
+      { courtCaseNumber },
+      true,
+    )) as Case
+
+    if (theCase.courtId && IntegratedCourts.includes(theCase.courtId)) {
+      // No need to wait
+      this.uploadRequestPdfToCourt(updatedCase, user)
+    }
+
+    return updatedCase
   }
 }

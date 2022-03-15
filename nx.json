@@ -500,7 +500,7 @@
     },
     "island-ui-storybook": {
       "tags": [],
-      "implicitDependencies": ["island-ui-core"]
+      "implicitDependencies": ["island-ui-core", "application-ui-fields"]
     },
     "island-ui-theme": {
       "tags": []

@@ -42,6 +42,11 @@ export const section = defineMessages({
     defaultMessage: 'Fjármál',
     description: 'Finance section',
   },
+  received: {
+    id: 'fa.application:section.received',
+    defaultMessage: 'Staðfesting',
+    description: 'Application Received',
+  },
 })
 
 export const approveOptions = defineMessages({

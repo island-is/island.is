@@ -4,9 +4,9 @@ import { InputFileUpload, UploadFile } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 import { filesText } from '../../lib/messages'
 import { FileUploadContainer } from '..'
-import { useFileUpload } from '../../lib/useFileUpload'
 import { UploadFileType } from '../../lib/types'
 import { useFormContext } from 'react-hook-form'
+import { useFileUpload } from '../../lib/hooks/useFileUpload'
 
 interface Props {
   uploadFiles: UploadFile[]

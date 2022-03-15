@@ -256,8 +256,8 @@ describe('ApplicationController - Create', () => {
       expect(mockEmailService.sendEmail).toBeCalledTimes(1)
     })
 
-    it('should return application', () => {
-      expect(then.result).toEqual(appModel)
+    it('should not return application, since we have to wait for spouse', () => {
+      expect(then.result).toEqual(undefined)
     })
   })
 

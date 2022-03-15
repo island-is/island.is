@@ -158,6 +158,7 @@ export const slices = gql`
     __typename
     id
     title
+    showTitle
     questions {
       id
       question
