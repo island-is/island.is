@@ -388,11 +388,7 @@ export class NotificationService {
     ]
 
     // TODO: Find a better place for this
-    if (
-      theCase.courtId &&
-      IntegratedCourts.includes(theCase.courtId) &&
-      theCase.courtCaseNumber
-    ) {
+    if (theCase.courtId && theCase.courtCaseNumber) {
       // No need to wait
       this.uploadRequestPdfToCourt(theCase, user)
     }
