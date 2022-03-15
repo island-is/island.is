@@ -52,6 +52,7 @@ import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certi
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
+import { RskProcuringClientConfig } from '@island.is/clients/rsk/procuring'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -258,6 +259,7 @@ const autoSchemaFile = environment.production
         FeatureFlagConfig,
         XRoadConfig,
         CompanyRegistryConfig,
+        RskProcuringClientConfig,
       ],
     }),
   ],

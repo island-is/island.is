@@ -58,6 +58,10 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             path: ServicePortalPath.FamilyRoot,
           },
           {
+            name: 'Fyrirtæki',
+            path: ServicePortalPath.Companies,
+          },
+          {
             // Petitions
             name: m.endorsements,
             path: ServicePortalPath.Petitions,

@@ -16,6 +16,9 @@ import { NationalRegistryXRoadService } from './nationalRegistryXRoad.service'
 import { NationalRegistryResidence } from '../models/nationalRegistryResidence.model'
 import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
 
+import { ResponseSimple } from '@island.is/clients/rsk/procuring'
+import { ProcuraSimple } from '../models/procuraSimple.model'
+
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)
 @Resolver(() => NationalRegistryPerson)
@@ -75,5 +78,15 @@ export class NationalRegistryXRoadResolver {
       user,
       person.nationalId,
     )
+  }
+
+  @Query(() => ProcuraSimple)
+  @Audit()
+  async getProcuringCompanies(
+    @CurrentUser() user: User,
+  ): Promise<ResponseSimple | null> {
+    const res = this.nationalRegistryXRoadService.getProcuringCompanies(user)
+    if (!res) return null
+    return res
   }
 }

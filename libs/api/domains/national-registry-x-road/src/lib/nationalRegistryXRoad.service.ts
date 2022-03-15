@@ -8,11 +8,15 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
 import { NationalRegistryResidence } from '../models/nationalRegistryResidence.model'
 import { NationalRegistrySpouse } from '../models/nationalRegistrySpouse.model'
-
+import {
+  RskProcuringClient,
+  ResponseSimple,
+} from '@island.is/clients/rsk/procuring'
 @Injectable()
 export class NationalRegistryXRoadService {
   constructor(
     private nationalRegistryApi: EinstaklingarApi,
+    private procurinClient: RskProcuringClient,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -145,5 +149,10 @@ export class NationalRegistryXRoadService {
         maritalStatus: spouse.hjuskaparkodi,
       }
     )
+  }
+
+  async getProcuringCompanies(user: User): Promise<ResponseSimple | null> {
+    const res = await this.procurinClient.getSimple(user)
+    return res
   }
 }
