@@ -17,7 +17,7 @@ on:
 jobs:
   analyze:
     name: Analyze
-    runs-on: ubuntu-latest
+    uns-on: ec2-runners
 
     strategy:
       fail-fast: false
