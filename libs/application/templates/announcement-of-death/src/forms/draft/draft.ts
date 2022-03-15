@@ -47,12 +47,17 @@ export const draft = (): Form => {
               buildKeyValueField({
                 label: m.deceasedName,
                 value: 'Jóna Jónsdóttir',
-                width: 'half',
+                colSpan: ['1/2', '1/2', '1/3'],
               }),
               buildKeyValueField({
                 label: m.deceasedNationalId,
                 value: '112233-4455',
-                width: 'half',
+                colSpan: ['1/2', '1/2', '1/3'],
+              }),
+              buildKeyValueField({
+                label: m.deceasedDate,
+                value: '05.02.2022',
+                colSpan: ['1/1', '1/1', '1/3'],
               }),
               buildDescriptionField({
                 title: '',

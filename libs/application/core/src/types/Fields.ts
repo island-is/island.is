@@ -3,6 +3,7 @@ import type {
   DatePickerBackgroundColor,
   InputBackgroundColor,
   BoxProps,
+  SpanType,
 } from '@island.is/island-ui/core/types'
 import { ApolloClient } from '@apollo/client'
 import { FormText, FormTextArray, FormItem } from './Form'
@@ -54,6 +55,7 @@ export interface BaseField extends FormItem {
   readonly children: undefined
   disabled?: boolean
   width?: FieldWidth
+  colSpan?: SpanType
   condition?: Condition
   isPartOfRepeater?: boolean
   defaultValue?: MaybeWithApplicationAndField<unknown>

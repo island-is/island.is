@@ -82,8 +82,12 @@ export const ProfileCard: FC<ProfileCardProps> = ({
           </Text>
         )}
         <Stack space={0}>
-          {strings.map((x) => {
-            return <Text variant={size}>{x}</Text>
+          {strings.map((x, idx) => {
+            return (
+              <Text variant={size} key={idx}>
+                {x}
+              </Text>
+            )
           })}
         </Stack>
         {link && (

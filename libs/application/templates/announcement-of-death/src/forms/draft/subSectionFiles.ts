@@ -27,6 +27,7 @@ export const subSectionFiles = buildSubSection({
               'Heimild veitt til erfingja svo hann geti aflað sér upplýsinga um fjárhagsstöðu dánarbúsins',
             id: 'EstateProxy',
             component: 'FilesRecipientCard',
+            defaultValue: 'Allir erfingjar',
           },
           {
             noOptions: true,

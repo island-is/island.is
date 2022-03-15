@@ -16,8 +16,8 @@ type position = 'relative' | 'fixed' | 'absolute' | 'static'
 
 export type SpanType = ResponsiveProp<styles.GridColumns>
 export interface GridColumnProps {
-  span?: ResponsiveProp<styles.GridColumns>
-  offset?: ResponsiveProp<styles.GridColumns>
+  span?: SpanType
+  offset?: SpanType
   order?: ResponsiveProp<styles.Order>
   paddingBottom?: ResponsiveSpace
   paddingTop?: ResponsiveSpace

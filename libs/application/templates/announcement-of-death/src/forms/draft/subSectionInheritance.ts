@@ -19,13 +19,6 @@ export const subSectionInheritance = buildSubSection({
         'Erfðaréttur byggist á frændsemi, ættleiðingu, hjúskap og erfðaskrá hins látna. Eignir hins látna renna til ríkissjóðs ef engir erfingjar eru til staðar.',
       space: 1,
       children: [
-        buildDescriptionField({
-          id: 'knowledgeOfWillsTitle',
-          title: 'Vitneskja um erfðir',
-          titleVariant: 'h3',
-          titleTooltip:
-            'Ef fleiri en ein erfðaskrá eru til staðar og allar teljast gildar samkvæmt lögum er það sú yngsta sem fara skal eftir, ef þær stangast á.',
-        }),
         buildKeyValueField({
           label: 'Erfðaskrá í vörslu sýslumanns',
           value: 'Já',

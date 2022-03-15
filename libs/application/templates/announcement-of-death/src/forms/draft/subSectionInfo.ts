@@ -9,77 +9,18 @@ import { m } from '../../lib/messages'
 
 export const subSectionInfo = buildSubSection({
   id: 'infoStep',
-  title: 'Tilkynning',
+  title: 'Tilkynnandi',
   children: [
     buildMultiField({
       id: 'announcement',
-      title: 'Upplýsingar',
+      title: 'Tilkynnandi',
       description:
         'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
       space: 1,
       children: [
-        buildDescriptionField({
-          id: 'hinnLatniTitle',
-          title: 'Hinn látni',
-          titleVariant: 'h4',
-        }),
-        buildTextField({
-          id: 'deceasedName',
-          title: 'Nafn',
-          placeholder: '',
-          backgroundColor: 'white',
-          width: 'half',
-          readOnly: true,
-        }),
-        buildTextField({
-          id: 'deceasedNationalId',
-          title: 'Kennitala',
-          placeholder: '',
-          backgroundColor: 'white',
-          width: 'half',
-          readOnly: true,
-        }),
-        buildTextField({
-          id: 'deceasedDateAnnouned',
-          title: 'Tilkynnt dags',
-          placeholder: '',
-          backgroundColor: 'white',
-          width: 'half',
-          readOnly: true,
-        }),
-        buildTextField({
-          id: 'deceasedMaritalStatus',
-          title: 'Hjúskaparstaða',
-          placeholder: '',
-          backgroundColor: 'white',
-          width: 'half',
-          readOnly: true,
-        }),
-        buildDescriptionField({
-          id: 'tilkynnandiTitle',
-          title: 'Tilkynnandi',
-          space: 5,
-          titleVariant: 'h4',
-        }),
         buildTextField({
           id: 'applicantName',
           title: 'Nafn',
-          placeholder: '',
-          backgroundColor: 'white',
-          width: 'half',
-          readOnly: true,
-        }),
-        buildTextField({
-          id: 'applicantNationalId',
-          title: 'Kennitala',
-          placeholder: '',
-          backgroundColor: 'white',
-          width: 'half',
-          readOnly: true,
-        }),
-        buildTextField({
-          id: 'applicantAnnouncementDate',
-          title: 'Tilkynnt dags',
           placeholder: '',
           backgroundColor: 'white',
           width: 'half',

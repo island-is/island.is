@@ -73,6 +73,11 @@ export const m = defineMessages({
     defaultMessage: 'Kennitala',
     description: 'National id of the deceased person',
   },
+  deceasedDate: {
+    id: 'aod.application:deceasedDate',
+    defaultMessage: 'Dánardagur',
+    description: 'Date of death',
+  },
 
   /* Confirmation of role as manager or choose another person for the role */
   roleConfirmationHeading: {
