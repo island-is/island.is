@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 
 import {
   Box,
@@ -50,7 +50,8 @@ import * as styles from './Overview.css'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
-  const [extendCaseModalVisible, setExtendCaseModalVisible] = useState(false)
+  const [resendCaseModalVisible, setResendCaseModalVisible] = useState(false)
+  const [caseResentExplanation, setCaseResentExplanation] = useState('')
   const [modalText, setModalText] = useState('')
   const {
     workingCase,
@@ -60,8 +61,12 @@ export const Overview: React.FC = () => {
   } = useContext(FormContext)
 
   const router = useRouter()
-
-  const { transitionCase, sendNotification, isSendingNotification } = useCase()
+  const {
+    transitionCase,
+    sendNotification,
+    isSendingNotification,
+    updateCase,
+  } = useCase()
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
@@ -87,13 +92,27 @@ export const Overview: React.FC = () => {
       setModalText(formatMessage(rcOverview.sections.modal.notificationNotSent))
     }
 
-    setExtendCaseModalVisible(false)
+    updateCase(workingCase.id, {
+      caseResentExplanation: createCaseResentExplanation(caseResentExplanation),
+    })
+
+    setResendCaseModalVisible(false)
     setModalVisible(true)
   }
 
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
+
+  const createCaseResentExplanation = (explanation?: string) => {
+    const now = new Date()
+
+    return `${
+      workingCase.caseResentExplanation
+        ? `${workingCase.caseResentExplanation}<br/><br/>`
+        : ''
+    }Krafa endursend ${formatDate(now, 'PPPp')} - ${explanation}`
+  }
 
   return (
     <PageLayout
@@ -350,19 +369,18 @@ export const Overview: React.FC = () => {
           onNextButtonClick={
             workingCase.state === CaseState.RECEIVED
               ? () => {
-                  setExtendCaseModalVisible(true)
+                  setResendCaseModalVisible(true)
                 }
               : handleNextButtonClick
           }
         />
       </FormContentContainer>
-
       <AnimatePresence>
-        {extendCaseModalVisible && (
+        {resendCaseModalVisible && (
           <Modal
             title={formatMessage(rcOverview.sections.extendCaseModal.heading)}
             text={formatMessage(rcOverview.sections.extendCaseModal.text)}
-            handleClose={() => setExtendCaseModalVisible(false)}
+            handleClose={() => setResendCaseModalVisible(false)}
             primaryButtonText={formatMessage(
               rcOverview.sections.extendCaseModal.primaryButtonText,
             )}
@@ -370,7 +388,7 @@ export const Overview: React.FC = () => {
               rcOverview.sections.extendCaseModal.secondaryButtonText,
             )}
             handleSecondaryButtonClick={() => {
-              setExtendCaseModalVisible(false)
+              setResendCaseModalVisible(false)
             }}
             handlePrimaryButtonClick={() => {
               handleNextButtonClick()
@@ -386,7 +404,7 @@ export const Overview: React.FC = () => {
                 placeholder={formatMessage(
                   rcOverview.sections.extendCaseModal.input.placeholder,
                 )}
-                // value={workingCase.extensionExplination} TODO
+                onBlur={(evt) => setCaseResentExplanation(evt.target.value)}
                 textarea
                 rows={7}
               />
