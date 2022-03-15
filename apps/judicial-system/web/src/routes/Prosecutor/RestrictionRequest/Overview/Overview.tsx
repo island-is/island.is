@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence, AnimateSharedLayout } from 'framer-motion'
 
 import {
   Box,
@@ -47,6 +47,7 @@ import type { CaseLegalProvisions } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 
 import * as styles from './Overview.css'
+import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
@@ -93,7 +94,10 @@ export const Overview: React.FC = () => {
     }
 
     updateCase(workingCase.id, {
-      caseResentExplanation: createCaseResentExplanation(caseResentExplanation),
+      caseResentExplanation: createCaseResentExplanation(
+        workingCase,
+        caseResentExplanation,
+      ),
     })
 
     setResendCaseModalVisible(false)
@@ -103,16 +107,6 @@ export const Overview: React.FC = () => {
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
   }, [])
-
-  const createCaseResentExplanation = (explanation?: string) => {
-    const now = new Date()
-
-    return `${
-      workingCase.caseResentExplanation
-        ? `${workingCase.caseResentExplanation}<br/><br/>`
-        : ''
-    }Krafa endursend ${formatDate(now, 'PPPp')} - ${explanation}`
-  }
 
   return (
     <PageLayout
@@ -365,7 +359,9 @@ export const Overview: React.FC = () => {
               ? 'Senda kröfu á héraðsdóm'
               : 'Endursenda kröfu á héraðsdóm'
           }
-          nextIsLoading={isSendingNotification}
+          nextIsLoading={
+            workingCase.state !== CaseState.RECEIVED && isSendingNotification
+          }
           onNextButtonClick={
             workingCase.state === CaseState.RECEIVED
               ? () => {
@@ -394,6 +390,7 @@ export const Overview: React.FC = () => {
               handleNextButtonClick()
             }}
             isPrimaryButtonLoading={isSendingNotification}
+            isPrimaryButtonDisabled={!caseResentExplanation}
           >
             <Box marginBottom={10}>
               <Input
@@ -404,7 +401,7 @@ export const Overview: React.FC = () => {
                 placeholder={formatMessage(
                   rcOverview.sections.extendCaseModal.input.placeholder,
                 )}
-                onBlur={(evt) => setCaseResentExplanation(evt.target.value)}
+                onChange={(evt) => setCaseResentExplanation(evt.target.value)}
                 textarea
                 rows={7}
               />
@@ -412,27 +409,29 @@ export const Overview: React.FC = () => {
           </Modal>
         )}
       </AnimatePresence>
-      {modalVisible && (
-        <Modal
-          title={formatMessage(rcOverview.sections.modal.heading, {
-            caseType:
-              workingCase.type === CaseType.CUSTODY
-                ? 'gæsluvarðhald'
-                : 'farbann',
-          })}
-          text={modalText}
-          handleClose={() => router.push(Constants.REQUEST_LIST_ROUTE)}
-          handlePrimaryButtonClick={() => {
-            window.open(Constants.FEEDBACK_FORM_URL, '_blank')
-            router.push(Constants.REQUEST_LIST_ROUTE)
-          }}
-          handleSecondaryButtonClick={() => {
-            router.push(Constants.REQUEST_LIST_ROUTE)
-          }}
-          primaryButtonText="Senda ábendingu"
-          secondaryButtonText="Loka glugga"
-        />
-      )}
+      <AnimatePresence>
+        {modalVisible && (
+          <Modal
+            title={formatMessage(rcOverview.sections.modal.heading, {
+              caseType:
+                workingCase.type === CaseType.CUSTODY
+                  ? 'gæsluvarðhald'
+                  : 'farbann',
+            })}
+            text={modalText}
+            handleClose={() => router.push(Constants.REQUEST_LIST_ROUTE)}
+            handlePrimaryButtonClick={() => {
+              window.open(Constants.FEEDBACK_FORM_URL, '_blank')
+              router.push(Constants.REQUEST_LIST_ROUTE)
+            }}
+            handleSecondaryButtonClick={() => {
+              router.push(Constants.REQUEST_LIST_ROUTE)
+            }}
+            primaryButtonText="Senda ábendingu"
+            secondaryButtonText="Loka glugga"
+          />
+        )}
+      </AnimatePresence>
     </PageLayout>
   )
 }

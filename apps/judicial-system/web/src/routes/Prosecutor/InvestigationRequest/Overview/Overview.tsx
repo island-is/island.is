@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
+import { AnimatePresence } from 'framer-motion'
 
+import { Box, Input } from '@island.is/island-ui/core'
 import {
   NotificationType,
   CaseState,
@@ -17,8 +19,13 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { icOverview as m } from '@island.is/judicial-system-web/messages'
+import {
+  icOverview,
+  icOverview as m,
+} from '@island.is/judicial-system-web/messages'
+import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as Constants from '@island.is/judicial-system/consts'
+
 import OverviewForm from './OverviewForm'
 
 export const Overview: React.FC = () => {
@@ -26,13 +33,20 @@ export const Overview: React.FC = () => {
 
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [modalText, setModalText] = useState('')
+  const [resendCaseModalVisible, setResendCaseModalVisible] = useState(false)
+  const [caseResentExplanation, setCaseResentExplanation] = useState('')
   const {
     workingCase,
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const { transitionCase, sendNotification, isSendingNotification } = useCase()
+  const {
+    transitionCase,
+    sendNotification,
+    isSendingNotification,
+    updateCase,
+  } = useCase()
 
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
@@ -62,6 +76,14 @@ export const Overview: React.FC = () => {
       setModalText(formatMessage(m.sections.modal.notificationNotSent))
     }
 
+    updateCase(workingCase.id, {
+      caseResentExplanation: createCaseResentExplanation(
+        workingCase,
+        caseResentExplanation,
+      ),
+    })
+
+    setResendCaseModalVisible(false)
     setModalVisible(true)
   }
 
@@ -77,25 +99,74 @@ export const Overview: React.FC = () => {
     >
       <OverviewForm
         workingCase={workingCase}
-        handleNextButtonClick={handleNextButtonClick}
-        isLoading={isLoadingWorkingCase || isSendingNotification}
+        handleNextButtonClick={
+          workingCase.state === CaseState.RECEIVED
+            ? () => {
+                setResendCaseModalVisible(true)
+              }
+            : handleNextButtonClick
+        }
+        isLoading={
+          workingCase.state !== CaseState.RECEIVED &&
+          (isLoadingWorkingCase || isSendingNotification)
+        }
       />
-      {modalVisible && (
-        <Modal
-          title={formatMessage(m.sections.modal.heading)}
-          text={modalText}
-          handleClose={() => router.push(Constants.REQUEST_LIST_ROUTE)}
-          handlePrimaryButtonClick={() => {
-            window.open(Constants.FEEDBACK_FORM_URL, '_blank')
-            router.push(Constants.REQUEST_LIST_ROUTE)
-          }}
-          handleSecondaryButtonClick={() => {
-            router.push(Constants.REQUEST_LIST_ROUTE)
-          }}
-          primaryButtonText="Senda ábendingu"
-          secondaryButtonText="Loka glugga"
-        />
-      )}
+      <AnimatePresence>
+        {resendCaseModalVisible && (
+          <Modal
+            title={formatMessage(icOverview.sections.extendCaseModal.heading)}
+            text={formatMessage(icOverview.sections.extendCaseModal.text)}
+            handleClose={() => setResendCaseModalVisible(false)}
+            primaryButtonText={formatMessage(
+              icOverview.sections.extendCaseModal.primaryButtonText,
+            )}
+            secondaryButtonText={formatMessage(
+              icOverview.sections.extendCaseModal.secondaryButtonText,
+            )}
+            handleSecondaryButtonClick={() => {
+              setResendCaseModalVisible(false)
+            }}
+            handlePrimaryButtonClick={() => {
+              handleNextButtonClick()
+            }}
+            isPrimaryButtonLoading={isSendingNotification}
+            isPrimaryButtonDisabled={!caseResentExplanation}
+          >
+            <Box marginBottom={10}>
+              <Input
+                name="extensionExplination"
+                label={formatMessage(
+                  icOverview.sections.extendCaseModal.input.label,
+                )}
+                placeholder={formatMessage(
+                  icOverview.sections.extendCaseModal.input.placeholder,
+                )}
+                onChange={(evt) => setCaseResentExplanation(evt.target.value)}
+                textarea
+                rows={7}
+              />
+            </Box>
+          </Modal>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {modalVisible && (
+          <Modal
+            title={formatMessage(m.sections.modal.heading)}
+            text={modalText}
+            handleClose={() => router.push(Constants.REQUEST_LIST_ROUTE)}
+            handlePrimaryButtonClick={() => {
+              window.open(Constants.FEEDBACK_FORM_URL, '_blank')
+              router.push(Constants.REQUEST_LIST_ROUTE)
+            }}
+            handleSecondaryButtonClick={() => {
+              router.push(Constants.REQUEST_LIST_ROUTE)
+            }}
+            primaryButtonText="Senda ábendingu"
+            secondaryButtonText="Loka glugga"
+          />
+        )}
+      </AnimatePresence>
     </PageLayout>
   )
 }
