@@ -16,7 +16,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import StepThreeForm from './StepThreeForm'
-import { restrictions } from '@island.is/judicial-system-web/src/utils/Restrictions'
+import { core } from '@island.is/judicial-system-web/messages'
 
 export const StepThree: React.FC = () => {
   const {
@@ -38,7 +38,8 @@ export const StepThree: React.FC = () => {
       workingCase.requestedCustodyRestrictions &&
       workingCase.requestedCustodyRestrictions.indexOf(
         CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
-      ) > -1
+      ) > -1 &&
+      workingCase.defendants
     ) {
       autofill(
         'requestedOtherRestrictions',
@@ -46,11 +47,10 @@ export const StepThree: React.FC = () => {
           rcDemands.sections.custodyRestrictions
             .requestedOtherRestrictionsAutofill,
           {
-            genderedDefendant:
-              workingCase.defendants &&
-              workingCase.defendants[0].gender === Gender.MALE
-                ? 'kærða'
-                : 'kærðu',
+            genderedDefendant: formatMessage(core.accused, {
+              suffix:
+                workingCase.defendants[0].gender === Gender.MALE ? 'a' : 'u',
+            }),
           },
         ),
         workingCase,
