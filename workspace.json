@@ -8445,6 +8445,7 @@
             "main": "apps/services/user-profile/src/main.ts",
             "tsConfig": "apps/services/user-profile/tsconfig.app.json",
             "assets": [
+              "apps/services/user-profile/src/assets",
               {
                 "glob": "*",
                 "input": "apps/services/user-profile/migrations",
@@ -8459,16 +8460,6 @@
                 "glob": "sequelize.config.js",
                 "input": "apps/services/user-profile",
                 "output": "./"
-              },
-              {
-                "glob": "*",
-                "input": "apps/services/user-profile/src/assets/images",
-                "output": "./images"
-              },
-              {
-                "glob": "*",
-                "input": "libs/email-service/src/tools/design",
-                "output": "./email-service-assets"
               }
             ],
             "maxWorkers": 2
