@@ -40,7 +40,7 @@ const DotOver = styled(Animated.View)`
   width: 1px;
   height: 8px;
   background-color: white;
-`;
+`
 
 interface ViewPagerProps {
   itemWidth?: number
@@ -91,10 +91,7 @@ export function ViewPager({ children, itemWidth }: ViewPagerProps) {
           ],
           { useNativeDriver: true },
         )}
-        contentInset={{
-          left: 0,
-          right: 16,
-        }}
+        contentContainerStyle={{ paddingRight: 16 }}
         onContentSizeChange={setContentWidth}
         horizontal={true}
         snapToInterval={OFFSET}
