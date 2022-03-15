@@ -115,6 +115,7 @@ const FinancialAidTemplate: ApplicationTemplate<
                   'spouseIncome',
                   'spouseIncomeFiles',
                   'spouseTaxReturnFiles',
+                  'spouseContactInfo',
                 ],
               },
             },

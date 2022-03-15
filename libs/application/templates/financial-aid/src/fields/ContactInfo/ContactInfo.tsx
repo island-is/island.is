@@ -5,12 +5,16 @@ import { useIntl } from 'react-intl'
 import { contactInfo } from '../../lib/messages'
 import { InputController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
+import { getValueViaPath } from '@island.is/application/core'
 
 const ContactInfo = ({ field, errors, application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { answers } = application
   const { id } = field
   const { clearErrors } = useFormContext()
+
+  const emailPath = `${id}.email`
+  const phonePath = `${id}.phone`
 
   return (
     <>
@@ -19,31 +23,31 @@ const ContactInfo = ({ field, errors, application }: FAFieldBaseProps) => {
       </Text>
       <Box marginTop={[2, 2, 4]}>
         <InputController
-          id={`${id}.email`}
-          name={`${id}.email`}
+          id={emailPath}
+          name={emailPath}
           backgroundColor="blue"
           type="email"
           label={formatMessage(contactInfo.emailInput.label)}
           placeholder={formatMessage(contactInfo.emailInput.placeholder)}
-          error={errors?.contactInfo?.email}
-          defaultValue={answers?.contactInfo?.email}
+          error={getValueViaPath(errors, emailPath)}
+          defaultValue={getValueViaPath(answers as any, emailPath)}
           onChange={() => {
-            clearErrors(`${id}.email`)
+            clearErrors(emailPath)
           }}
         />
       </Box>
       <Box marginTop={[2, 2, 3]}>
         <InputController
-          id={`${id}.phonen`}
-          name={`${id}.phone`}
+          id={phonePath}
+          name={phonePath}
           backgroundColor="blue"
           type="tel"
           label={formatMessage(contactInfo.phoneInput.label)}
           placeholder={formatMessage(contactInfo.phoneInput.placeholder)}
-          error={errors?.contactInfo?.phone}
-          defaultValue={answers?.contactInfo?.phone}
+          error={getValueViaPath(errors, phonePath)}
+          defaultValue={getValueViaPath(answers as any, phonePath)}
           onChange={() => {
-            clearErrors(`${id}.phone`)
+            clearErrors(phonePath)
           }}
         />
       </Box>

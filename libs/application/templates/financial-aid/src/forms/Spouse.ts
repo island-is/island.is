@@ -61,5 +61,16 @@ export const Spouse: Form = buildForm({
         }),
       ],
     }),
+    buildSection({
+      id: 'contactInfoForm',
+      title: m.contactInfo.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: Routes.SPOUSECONTACTINFO,
+          title: m.contactInfo.general.pageTitle,
+          component: 'ContactInfo',
+        }),
+      ],
+    }),
   ],
 })
