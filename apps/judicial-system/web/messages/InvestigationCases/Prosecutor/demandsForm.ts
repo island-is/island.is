@@ -34,7 +34,7 @@ export const icDemands = {
           id:
             'judicial.system.investigation_cases:police_demands.demands.prefill.search_warrant',
           defaultMessage:
-            'Í þágu rannsóknar sakamáls er þess krafist að {court} veiti {institution} heimild til leitar í {address}, þar sem {accused} {live, plural, one {býr} other {búa}}, í því skyni að handtaka hann og hafa uppi á munum sem hald skal leggja á. Þess er krafist að heimildin nái til leitar í læstum hirslum og í geymslum tilheyrandi framangreindu húsnæðið. svo og til rannsóknar á efnisinnihaldi raftækja, svo sem símum, tölvum og öðrum rafrænum gagnavörslumunum, sem þar er að finna.',
+            'Í þágu rannsóknar sakamáls er þess krafist að {court} veiti {institution} heimild til leitar í {address}, þar sem {accused} {live, plural, one {býr} other {búa}}, í því skyni að handtaka hann og hafa uppi á munum sem hald skal leggja á. Þess er krafist að heimildin nái til leitar í læstum hirslum og í geymslum tilheyrandi framangreindu húsnæði. svo og til rannsóknar á efnisinnihaldi raftækja, svo sem símum, tölvum og öðrum rafrænum gagnavörslumunum, sem þar er að finna.',
           description: 'Sjálfgefinn dómkröfutexti fyrir húsleit',
         },
         bankingSecrecyWaiver: {
