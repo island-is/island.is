@@ -100,20 +100,18 @@ const SubPage: Screen<SubPageProps> = ({
     'mannaudstorg',
   )
 
-  const getBreadcrumbItems = () => {
-    const breadcrumbItems: BreadCrumbItem[] = []
-    if (!institutionSlugBelongsToMannaudstorg)
-      breadcrumbItems.push({
-        title: n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
-        typename: 'serviceweb',
-        href: linkResolver('serviceweb').href,
-      })
-    breadcrumbItems.push({
+  const breadcrumbItems = [
+    {
+      title: n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
+      typename: 'serviceweb',
+      href: linkResolver('serviceweb').href,
+    },
+    {
       title: organization.title,
       typename: 'serviceweb',
       href: `${linkResolver('serviceweb').href}/${organizationSlug}`,
-    })
-    breadcrumbItems.push({
+    },
+    {
       title: `${categoryTitle}`,
       typename: 'serviceweb',
       isTag: true,
@@ -122,9 +120,8 @@ const SubPage: Screen<SubPageProps> = ({
           linkResolver('serviceweb').href
         }/${organizationSlug}/${categorySlug}`,
       }),
-    })
-    return breadcrumbItems
-  }
+    },
+  ]
 
   return (
     <ServiceWebWrapper
@@ -154,7 +151,9 @@ const SubPage: Screen<SubPageProps> = ({
                   <GridColumn span="12/12" paddingBottom={[2, 2, 4]}>
                     <Box display={['none', 'none', 'block']} printHidden>
                       <Breadcrumbs
-                        items={getBreadcrumbItems()}
+                        items={breadcrumbItems.slice(
+                          institutionSlugBelongsToMannaudstorg ? 1 : 0,
+                        )}
                         renderLink={(link, { href }) => {
                           return (
                             <NextLink href={href} passHref>
@@ -220,42 +219,47 @@ const SubPage: Screen<SubPageProps> = ({
                         <Box>
                           {richText(question.answer as SliceType[], undefined)}
                         </Box>
-                        {institutionSlugBelongsToMannaudstorg && (
-                          <>
-                            {question.relatedLinks?.length > 0 && (
-                              <Box
-                                background="purple100"
-                                borderRadius="large"
-                                padding={4}
-                                marginTop={6}
-                                marginBottom={2}
-                              >
-                                <Text fontWeight="semiBold">Tengt efni</Text>
-                                <GridColumn>
-                                  {(question.relatedLinks ?? []).map(
-                                    ({ text, url }, index) => (
-                                      <GridRow marginTop={2}>
-                                        <Link
-                                          underline="small"
-                                          underlineVisibility="hover"
-                                          href={url}
-                                          key={index}
-                                        >
-                                          {text}
-                                        </Link>
-                                      </GridRow>
-                                    ),
-                                  )}
-                                </GridColumn>
-                              </Box>
-                            )}
-
-                            <OrganizationContactBanner
-                              organizationLogoUrl={organization.logo?.url}
-                              contactLink="https://gatt.fjs.is/plugins/servlet/desk/portal/11/create/127"
-                            />
-                          </>
-                        )}
+                        <>
+                          {question.relatedLinks?.length > 0 && (
+                            <Box
+                              background="purple100"
+                              borderRadius="large"
+                              padding={4}
+                              marginTop={6}
+                              marginBottom={2}
+                            >
+                              <Text fontWeight="semiBold">Tengt efni</Text>
+                              <GridColumn>
+                                {(question.relatedLinks ?? []).map(
+                                  ({ text, url }, index) => (
+                                    <GridRow marginTop={2}>
+                                      <Link
+                                        underline="small"
+                                        underlineVisibility="hover"
+                                        href={url}
+                                        key={index}
+                                      >
+                                        {text}
+                                      </Link>
+                                    </GridRow>
+                                  ),
+                                )}
+                              </GridColumn>
+                            </Box>
+                          )}
+                          {institutionSlugBelongsToMannaudstorg && (
+                            <Box
+                              marginTop={
+                                question.relatedLinks?.length > 0 ? 0 : 4
+                              }
+                            >
+                              <OrganizationContactBanner
+                                organizationLogoUrl={organization.logo?.url}
+                                contactLink="https://gatt.fjs.is/plugins/servlet/desk/portal/11/create/127"
+                              />
+                            </Box>
+                          )}
+                        </>
                       </>
                     )}
 

@@ -2774,7 +2774,7 @@ export interface ISupportQnaFields {
   importance?: number | undefined
 
   /** Related links */
-  relatedLinks?: ILink[] | undefined
+  relatedLinks?: (ILink | ISupportQna)[] | undefined
 }
 
 /** Helpdesk support questions and answer */

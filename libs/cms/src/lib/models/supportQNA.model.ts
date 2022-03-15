@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
-import { ISupportQna } from '../generated/contentfulTypes'
+import { ILink, ISupportQna } from '../generated/contentfulTypes'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
 import { Link, mapLink } from './link.model'
 
@@ -55,6 +55,33 @@ export const mapSupportQNA = ({ fields, sys }: ISupportQna): SupportQNA => ({
     : null,
   importance: fields.importance ?? 0,
   relatedLinks: fields.relatedLinks
-    ? fields.relatedLinks.map((link) => mapLink(link))
+    ? fields.relatedLinks.map((link) => {
+        if (link.sys?.contentType?.sys?.id === 'link') {
+          return mapLink(link as ILink)
+        }
+        const supportQnA = link as ISupportQna
+        return mapLink(convertSupportQnAToLink(supportQnA))
+      })
     : [],
 })
+
+const convertSupportQnAToLink = (supportQnA: ISupportQna) => {
+  return {
+    sys: {
+      ...supportQnA.sys,
+      contentType: {
+        sys: {
+          id: 'link',
+          linkType: 'ContentType',
+          type: 'Link',
+        },
+      },
+    },
+    fields: {
+      text: supportQnA.fields.question,
+      url: `/adstod/${supportQnA.fields.organization?.fields?.slug ?? ''}/${
+        supportQnA.fields.category?.fields?.slug ?? ''
+      }?q=${supportQnA.fields?.slug ?? ''}`,
+    },
+  } as ILink
+}
