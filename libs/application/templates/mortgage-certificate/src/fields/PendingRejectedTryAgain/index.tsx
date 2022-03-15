@@ -59,8 +59,10 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
     }
   }
 
-  // Note: we will validate on load here to display error message
-  // but will also use condition guard on button to validate again
+  // Note: we will validate on load here to display the error message,
+  // because we cant trust that externalData.validateMortgageCertificate is recent enough.
+  // But we will also use condition guard on "next" button to validate again
+  // to control if user can continue
   const { data, error, loading } = useQuery(validateCertificateQuery, {
     variables: {
       input: {

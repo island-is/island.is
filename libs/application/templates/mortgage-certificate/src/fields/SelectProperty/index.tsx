@@ -22,36 +22,51 @@ export const SelectProperty: FC<FieldBaseProps> = ({
 
   const { formatMessage } = useLocale()
 
-  //TODOx, dont look at externalData
-  // const { validation } = externalData.validateMortgageCertificate?.data as {
-  //   validation: {
-  //     propertyNumber: string
-  //     exists: boolean
-  //     hasKMarking: boolean
-  //   }
-  // }
+  const { validation: oldValidation } =
+    (externalData.validateMortgageCertificate?.data as {
+      validation: {
+        propertyNumber: string
+      }
+    }) || {}
 
-  // Note: we will validate on load here to display error message
-  // (we cant trust that externalData.validateMortgageCertificate is recent enough)
-  // but will also use condition guard on button to validate again
-  const { data, error, loading } = useQuery(validateCertificateQuery, {
-    variables: {
-      input: {
-        propertyNumber: '', //propertyDetails?.propertyNumber,
+  // Note: we will validate on load here to display the error message
+  // (only if we have validated before, by pressing the "next" button),
+  // because we cant trust that externalData.validateMortgageCertificate is recent enough.
+  // But we will also use condition guard on "next" button to validate again
+  // to control if user can continue
+  if (oldValidation?.propertyNumber) {
+    const { data, error } = useQuery(validateCertificateQuery, {
+      variables: {
+        input: {
+          propertyNumber: oldValidation?.propertyNumber,
+        },
       },
-    },
-    skip: !continuePolling,
-    fetchPolicy: 'no-cache',
-  })
+      skip: !continuePolling,
+      fetchPolicy: 'no-cache',
+    })
 
-  const validation = data?.validateMortgageCertificate as {
-    propertyNumber: string
-    exists: boolean
-    hasKMarking: boolean
-  }
+    const validationData = data?.validateMortgageCertificate as {
+      propertyNumber: string
+      exists: boolean
+      hasKMarking: boolean
+    }
 
-  if (!showErrorMsg && validation?.propertyNumber && !validation?.exists) {
-    setShowErrorMsg(true)
+    useEffect(() => {
+      if (!validationData?.propertyNumber) {
+        return
+      }
+
+      setShowErrorMsg(false)
+      setContinuePolling(false)
+
+      if (!validationData.exists) {
+        setShowErrorMsg(true)
+      }
+    }, [validationData])
+
+    if (error) {
+      setShowErrorMsg(true)
+    }
   }
 
   // const scrollTo = (ref: any) => {

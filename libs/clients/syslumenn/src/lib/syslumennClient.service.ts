@@ -248,8 +248,11 @@ export class SyslumennService {
       // Note: this function will throw an error if something goes wrong
       const certificate = await this.getMortgageCertificate(propertyNumber)
 
-      const exists = false //TODOx certificate.contentBase64.length !== 0
-      const hasKMarking = false //exists && certificate.contentBase64 !== 'Precondition Required' && certificate.apiMessage !== 'Ekki hægt að afgreiða vedbokarvottord'
+      const exists = certificate.contentBase64.length !== 0
+      const hasKMarking =
+        exists && certificate.contentBase64 !== 'Precondition Required'
+      //TODOx
+      //&& certificate.apiMessage !== 'Ekki hægt að afgreiða vedbokarvottord'
 
       // Note: we are saving propertyNumber and isFromSearch also in externalData,
       // since it is not saved in answers if we go from state DRAFT -> DRAFT
