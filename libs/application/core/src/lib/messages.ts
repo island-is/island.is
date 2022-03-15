@@ -251,4 +251,19 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Tókst ekki að sækja stöðu greiðslu',
     description: 'Message indicating failure to fetch payment status',
   },
+  invalidNationalId: {
+    id: 'application.system:core.payment.invalidNationalId',
+    defaultMessage: 'Ógild kennitala',
+    description: 'Message indicating national id is invalid',
+  },
+  noCompanySearchResultsFoundTitle: {
+    id: 'application.system:core.payment.noCompanySearchResultsFoundTitle',
+    defaultMessage: 'Engar niðurstöður fundust hjá fyrirtækjaskrá',
+    description: 'Title error message when no company search result is found',
+  },
+  noCompanySearchResultsFoundMessage: {
+    id: 'application.system:core.payment.noCompanySearchResultsFoundMessage',
+    defaultMessage: 'Vinsamlegast athugaðu hvort að rétt var slegið inn.',
+    description: 'Error Message when no company search result is found',
+  },
 })
