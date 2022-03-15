@@ -31,9 +31,6 @@ export const PropertyTable: FC<
   return (
     <>
       <Box paddingY={2}>
-        <Text paddingY={2} variant={'h4'}>
-          {propertyInfo?.defaultAddress?.display}
-        </Text>
         <T.Table>
           <T.Head>
             <T.Row>
@@ -41,19 +38,22 @@ export const PropertyTable: FC<
               <T.HeadData>
                 <TableHeadText text={formatMessage(m.propertyNumber)} />
               </T.HeadData>
-              <T.HeadData>
+              {/* <T.HeadData>
                 <TableHeadText text={formatMessage(m.propertyMarking)} />
-              </T.HeadData>
+              </T.HeadData> */}
               <T.HeadData>
                 <TableHeadText text={formatMessage(m.propertyDescription)} />
               </T.HeadData>
-              <T.HeadData>
+              {/* <T.HeadData>
                 <TableHeadText
                   text={formatMessage(m.propertyConstructionYear)}
                 />
-              </T.HeadData>
-              <T.HeadData>
+              </T.HeadData> */}
+              {/* <T.HeadData>
                 <TableHeadText text={formatMessage(m.propertyShownSize)} />
+              </T.HeadData> */}
+              <T.HeadData>
+                <TableHeadText text={formatMessage(m.propertyAddress)} />
               </T.HeadData>
             </T.Row>
           </T.Head>
@@ -70,12 +70,13 @@ export const PropertyTable: FC<
                 />
               </T.Data>
               <T.Data>{propertyNumber}</T.Data>
-              <T.Data>{unitOfUse?.marking}</T.Data>
+              {/* <T.Data>{unitOfUse?.marking}</T.Data> */}
               <T.Data>{unitOfUse?.explanation}</T.Data>
-              <T.Data>{unitOfUse?.buildYearDisplay}</T.Data>
-              <T.Data>
+              {/* <T.Data>{unitOfUse?.buildYearDisplay}</T.Data> */}
+              {/* <T.Data>
                 {unitOfUse?.displaySize ? unitOfUse.displaySize + 'm2' : ''}
-              </T.Data>
+              </T.Data> */}
+              <T.Data>{propertyInfo?.defaultAddress?.display}</T.Data>
             </T.Row>
           </T.Body>
         </T.Table>

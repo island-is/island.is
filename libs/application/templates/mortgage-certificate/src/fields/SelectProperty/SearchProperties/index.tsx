@@ -93,7 +93,7 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
 
   return (
     <>
-      <Box paddingY={2}>
+      <Box paddingY={4}>
         <Text paddingY={2} variant={'h4'}>
           Hér að neðan getur þú einnig leitað í fasteignanúmerum annarra eigna
         </Text>
@@ -105,7 +105,7 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
         </Box>
       </Box>
 
-      <Box display="flex" flexDirection="row">
+      <Box display="flex" flexDirection="row" paddingBottom={2}>
         <Box width="full" marginRight={2}>
           <Input
             size="sm"
