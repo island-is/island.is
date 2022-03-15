@@ -1,10 +1,10 @@
 import { ApplicationContext } from '@island.is/application/core'
 
 export function existsAndKMarking(context: ApplicationContext): boolean {
-  const validation = (context.application.externalData
+  const { validation } = context.application.externalData
     .validateMortgageCertificate.data as {
     validation: { exists: boolean; hasKMarking: boolean }
-  })?.validation
+  }
 
   const exists = validation?.exists
   const hasKMarking = validation?.hasKMarking
@@ -13,10 +13,10 @@ export function existsAndKMarking(context: ApplicationContext): boolean {
 }
 
 export function exists(context: ApplicationContext): boolean {
-  const validation = (context.application.externalData
+  const { validation } = context.application.externalData
     .validateMortgageCertificate.data as {
     validation: { exists: boolean }
-  })?.validation
+  }
 
   const exists = validation?.exists
 

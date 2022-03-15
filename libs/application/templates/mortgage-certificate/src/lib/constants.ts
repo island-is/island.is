@@ -15,7 +15,6 @@ export type Events =
 
 export enum States {
   DRAFT = 'draft',
-  PENDING = 'pending',
   PENDING_REJECTED = 'pending_rejected',
   PENDING_REJECTED_TRY_AGAIN = 'pending_rejected_try_again',
   PAYMENT_INFO = 'payment_info',

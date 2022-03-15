@@ -75,13 +75,16 @@ export class MortgageCertificateSubmissionService {
   async validateMortgageCertificate({
     application,
   }: TemplateApiModuleActionProps): Promise<ValidateMortgageCertificateResult> {
-    const propertyNumber = (application.answers.selectProperty as {
+    const { propertyNumber, isFromSearch } = application.answers
+      .selectProperty as {
       propertyNumber: string
-    }).propertyNumber
+      isFromSearch: boolean
+    }
 
     return {
       validation: await this.mortgageCertificateService.validateMortgageCertificate(
         propertyNumber,
+        isFromSearch,
       ),
       propertyDetails: await this.syslumennService.getPropertyDetails(
         propertyNumber,

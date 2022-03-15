@@ -5,34 +5,52 @@ import { RegisteredProperties } from '../RegisteredProperties'
 import { SearchProperties } from '../SearchProperties'
 import { PropertyDetail } from '../../../types/schema'
 
-export const PropertiesManager: FC<FieldBaseProps> = ({
+interface PropertiesManagerProps {
+  onClearErrorMsg: () => void
+}
+
+export const PropertiesManager: FC<FieldBaseProps & PropertiesManagerProps> = ({
   application,
   field,
+  onClearErrorMsg,
 }) => {
   const { externalData } = application
   const { id } = field
   const { setValue } = useFormContext()
 
-  const myProperties =
-    (externalData.nationalRegistryRealEstate?.data as {
-      properties: [PropertyDetail]
-    })?.properties || []
+  const { properties } = externalData.nationalRegistryRealEstate?.data as {
+    properties: [PropertyDetail]
+  }
 
   let selectedPropertyNumber = getValueViaPath(
     application.answers,
     'selectProperty.propertyNumber',
-  ) as string
+  ) as string | undefined
 
-  //TODOx temp fix to save selected own property if error from syslumenn
-  const validationData = (externalData.validateMortgageCertificate?.data as {
-    validation: { propertyNumber: string }
-  })?.validation
+  // check if hidden field has a selected property
+  if (!selectedPropertyNumber) {
+    const { validation } = externalData.validateMortgageCertificate?.data as {
+      validation: {
+        propertyNumber: string
+      }
+    }
 
-  if (!selectedPropertyNumber && validationData?.propertyNumber) {
-    selectedPropertyNumber = validationData?.propertyNumber
+    if (validation?.propertyNumber) {
+      selectedPropertyNumber = validation.propertyNumber
+    }
   }
 
-  const defaultProperty = myProperties[0]
+  const defaultProperty = properties ? properties[0] : undefined
+
+  const onSelectProperty = (
+    propertyNumber: string | undefined | null,
+    isFromSearch: boolean,
+  ) => {
+    setValue(id, {
+      propertyNumber: propertyNumber,
+      isFromSearch: isFromSearch,
+    })
+  }
 
   return (
     <Controller
@@ -46,10 +64,7 @@ export const PropertiesManager: FC<FieldBaseProps> = ({
               field={field}
               selectHandler={(p: PropertyDetail | undefined) => {
                 onChange(p?.propertyNumber)
-                setValue(id, {
-                  propertyNumber: p?.propertyNumber,
-                  isFromSearch: false,
-                })
+                onSelectProperty(p?.propertyNumber, false)
               }}
               selectedPropertyNumber={value}
             />
@@ -58,12 +73,10 @@ export const PropertiesManager: FC<FieldBaseProps> = ({
               field={field}
               selectHandler={(p: PropertyDetail | undefined) => {
                 onChange(p?.propertyNumber)
-                setValue(id, {
-                  propertyNumber: p?.propertyNumber,
-                  isFromSearch: true,
-                })
+                onSelectProperty(p?.propertyNumber, true)
               }}
               selectedPropertyNumber={value}
+              onClearErrorMsg={onClearErrorMsg}
             />
           </>
         )

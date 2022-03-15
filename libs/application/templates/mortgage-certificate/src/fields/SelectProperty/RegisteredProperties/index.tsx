@@ -13,10 +13,9 @@ export const RegisteredProperties: FC<
 > = ({ application, field, selectHandler, selectedPropertyNumber }) => {
   const { externalData } = application
 
-  const myProperties =
-    (externalData.nationalRegistryRealEstate?.data as {
-      properties: [PropertyDetail]
-    })?.properties || []
+  const { properties } = externalData.nationalRegistryRealEstate?.data as {
+    properties: [PropertyDetail]
+  }
 
   // remove this comment
 
@@ -24,7 +23,7 @@ export const RegisteredProperties: FC<
     <PropertyTable
       application={application}
       field={field}
-      myProperties={myProperties}
+      myProperties={properties}
       selectHandler={selectHandler}
       selectedPropertyNumber={selectedPropertyNumber}
     />
