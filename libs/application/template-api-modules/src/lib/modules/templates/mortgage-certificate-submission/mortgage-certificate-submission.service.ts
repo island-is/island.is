@@ -16,9 +16,9 @@ import {
   NationalRegistry,
   UserProfile,
   SubmitRequestToSyslumennResult,
+  ValidateMortgageCertificateResult,
 } from './types'
 import { ChargeItemCode } from '@island.is/shared/constants'
-import { PropertyDetail } from '@island.is/api/domains/assets'
 
 @Injectable()
 export class MortgageCertificateSubmissionService {
@@ -72,37 +72,50 @@ export class MortgageCertificateSubmissionService {
     }
   }
 
-  async getPropertyDetails({
+  async validateMortgageCertificate({
     application,
-  }: TemplateApiModuleActionProps): Promise<PropertyDetail> {
-    const propertyNumber = (application.answers.selectProperty as {
+  }: TemplateApiModuleActionProps): Promise<ValidateMortgageCertificateResult> {
+    const { propertyNumber, isFromSearch } = application.answers
+      .selectProperty as {
       propertyNumber: string
-    }).propertyNumber
-    return await this.syslumennService.getPropertyDetails(propertyNumber)
+      isFromSearch: boolean
+    }
+
+    return {
+      validation: await this.mortgageCertificateService.validateMortgageCertificate(
+        propertyNumber,
+        isFromSearch,
+      ),
+      propertyDetails: await this.syslumennService.getPropertyDetails(
+        propertyNumber,
+      ),
+    }
   }
 
   async getMortgageCertificate({
     application,
   }: TemplateApiModuleActionProps): Promise<MortgageCertificate> {
-    const propertyNumber = (application.answers.selectProperty as {
-      propertyNumer: string
-    }).propertyNumer
+    const { propertyNumber } = application.answers.selectProperty as {
+      propertyNumber: string
+    }
     const document = await this.mortgageCertificateService.getMortgageCertificate(
       propertyNumber,
     )
 
+    //TODOx
     // Call sýslumaður to get the document sealed before handing it over to the user
-    const sealedDocumentResponse = await this.syslumennService.sealDocument(
-      document.contentBase64,
-    )
+    // const sealedDocumentResponse = await this.syslumennService.sealDocument(
+    //   document.contentBase64,
+    // )
 
-    if (!sealedDocumentResponse?.skjal) {
-      throw new Error('Eitthvað fór úrskeiðis.')
-    }
+    // if (!sealedDocumentResponse?.skjal) {
+    //   throw new Error('Eitthvað fór úrskeiðis.')
+    // }
 
-    const sealedDocument: MortgageCertificate = {
-      contentBase64: sealedDocumentResponse.skjal,
-    }
+    // const sealedDocument: MortgageCertificate = {
+    //   contentBase64: sealedDocumentResponse.skjal,
+    // }
+    const sealedDocument = { contentBase64: document.contentBase64 }
 
     // Notify Sýslumaður that person has received the mortgage certificate
     await this.notifySyslumenn(application, sealedDocument)

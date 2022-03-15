@@ -20,7 +20,7 @@ interface SearchPropertiesProps {
   selectedPropertyNumber: string | undefined
 }
 
-export const searchPropertiesMutation = gql`
+export const searchPropertiesQuery = gql`
   ${SEARCH_PROPERTIES_QUERY}
 `
 
@@ -31,6 +31,7 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
   selectedPropertyNumber,
 }) => {
   const { formatMessage } = useLocale()
+  const { externalData } = application
   const [hasInitialized, setHasInitialized] = useState<boolean>(false)
   const [showSearchError, setShowSearchError] = useState<boolean>(false)
   const [searchStr, setSearchStr] = useState('')
@@ -38,7 +39,7 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
     PropertyDetail | undefined
   >(undefined)
 
-  const [runQuery, { loading }] = useLazyQuery(searchPropertiesMutation, {
+  const [runQuery, { loading }] = useLazyQuery(searchPropertiesQuery, {
     onCompleted(result) {
       setShowSearchError(false)
       setFoundProperty(result.searchForProperty)
@@ -53,16 +54,41 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
     runQuery({ variables: { input: { propertyNumber: searchStr } } })
   }
 
-  const selectProperty = getValueViaPath(
+  let selectProperty = getValueViaPath(
     application.answers,
     'selectProperty',
-  ) as { property: PropertyDetail; isFromSearch: boolean }
+  ) as { propertyNumber: string; isFromSearch: boolean }
+
+  const { propertyDetails, validation } =
+    (externalData.validateMortgageCertificate?.data as {
+      propertyDetails: PropertyDetail
+      validation: {
+        propertyNumber: string
+        isFromSearch: boolean | undefined
+      }
+    }) || {}
+
+  // check if validation data has a selected property
+  if (!selectProperty?.propertyNumber) {
+    if (validation?.propertyNumber) {
+      selectProperty = {
+        propertyNumber: validation.propertyNumber,
+        isFromSearch: validation.isFromSearch || false,
+      }
+    }
+  }
 
   // initialize search box and search result
   if (!hasInitialized && selectProperty?.isFromSearch) {
     setHasInitialized(true)
-    setSearchStr(selectProperty?.property?.propertyNumber || '')
-    setFoundProperty(selectProperty?.property || undefined)
+
+    if (
+      selectProperty?.isFromSearch &&
+      selectProperty?.propertyNumber === propertyDetails?.propertyNumber
+    ) {
+      setSearchStr(selectProperty?.propertyNumber || '')
+      setFoundProperty(propertyDetails || undefined)
+    }
   }
 
   return (
@@ -71,14 +97,12 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
         <Text paddingY={2} variant={'h4'}>
           Hér að neðan getur þú einnig leitað í fasteignanúmerum annarra eigna
         </Text>
-        <Text>
-          Hér getur þú nálgast
-          <Box display="inlineBlock" marginLeft="smallGutter">
-            <ArrowLink href="https://skra.is/default.aspx?pageid=d5db1b6d-0650-11e6-943c-005056851dd2">
-              nánari uppýsingar um eignina á skrá
-            </ArrowLink>
-          </Box>
-        </Text>
+
+        <Box display="inlineBlock" marginLeft="smallGutter">
+          <ArrowLink href="https://skra.is/default.aspx?pageid=d5db1b6d-0650-11e6-943c-005056851dd2">
+            Hér getur þú nálgast nánari uppýsingar um eignina á skrá
+          </ArrowLink>
+        </Box>
       </Box>
 
       <Box display="flex" flexDirection="row">
