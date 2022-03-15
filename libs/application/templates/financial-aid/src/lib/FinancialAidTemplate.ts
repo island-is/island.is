@@ -14,7 +14,12 @@ import { Roles, ApplicationStates, ONE_DAY, ONE_MONTH } from './constants'
 
 import { application } from './messages'
 import { dataSchema } from './dataSchema'
-import { hasSpouse, isMuncipalityRegistered } from './utils'
+import {
+  hasSpouse,
+  isMuncipalityRegistered,
+  hasActiveCurrentApplication,
+  hasSpouseCheck,
+} from './utils'
 import { FAApplication } from '..'
 
 type Events = { type: DefaultEvents.SUBMIT }
@@ -64,6 +69,13 @@ const FinancialAidTemplate: ApplicationTemplate<
           SUBMIT: [
             { target: ApplicationStates.DRAFT, cond: isMuncipalityRegistered },
             { target: ApplicationStates.MUNCIPALITYNOTREGISTERED },
+            {
+              target: ApplicationStates.DRAFT,
+              cond: hasActiveCurrentApplication,
+            },
+            {
+              target: ApplicationStates.SUBMITTED,
+            },
           ],
           // TODO: Add other states here depending on data received from Veita and þjóðskrá
         },
@@ -87,7 +99,7 @@ const FinancialAidTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: [
-            { target: ApplicationStates.SPOUSE, cond: hasSpouse },
+            { target: ApplicationStates.SPOUSE, cond: hasSpouseCheck },
             { target: ApplicationStates.SUBMITTED },
           ],
         },
@@ -106,7 +118,11 @@ const FinancialAidTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: {
-                answers: ['spouseIncome', 'spouseIncomeFiles'],
+                answers: [
+                  'spouseIncome',
+                  'spouseIncomeFiles',
+                  'spouseTaxReturnFiles',
+                ],
               },
             },
             {
@@ -130,6 +146,8 @@ const FinancialAidTemplate: ApplicationTemplate<
                 import('../forms/Submitted').then((module) =>
                   Promise.resolve(module.Submitted),
                 ),
+              // TODO: Limit this
+              read: 'all',
             },
           ],
         },

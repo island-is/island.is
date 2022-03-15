@@ -2,8 +2,8 @@ import React from 'react'
 import { UploadFile, Box, Icon, Text } from '@island.is/island-ui/core'
 
 import { useMutation } from '@apollo/client'
-import { CreateSignedUrlMutation } from '../../lib/useFileUpload'
 import { encodeFilenames } from '../../lib/utils'
+import { CreateSignedUrlMutation } from '../../lib/hooks/useFileUpload'
 
 import * as styles from '../Shared.css'
 

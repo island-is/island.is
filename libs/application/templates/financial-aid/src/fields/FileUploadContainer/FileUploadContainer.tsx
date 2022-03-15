@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { Text, Box, GridRow, GridColumn } from '@island.is/island-ui/core'
 import { filesText } from '../../lib/messages'
 import cn from 'classnames'
-import * as styles from './FileUploadContainer.css'
+import * as styles from './../Shared.css'
 interface Props {
   children: ReactNode
   hasError?: boolean

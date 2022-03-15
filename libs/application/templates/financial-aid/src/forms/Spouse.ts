@@ -50,5 +50,16 @@ export const Spouse: Form = buildForm({
         }),
       ],
     }),
+    buildSection({
+      id: 'taxReturnFilesForm',
+      title: m.taxReturnForm.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: Routes.SPOUSETAXRETURNFILES,
+          title: m.taxReturnForm.general.pageTitle,
+          component: 'TaxReturnFilesForm',
+        }),
+      ],
+    }),
   ],
 })

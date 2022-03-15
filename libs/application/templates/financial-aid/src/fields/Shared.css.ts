@@ -47,3 +47,12 @@ export const confirmationIllustration = style({
     },
   },
 })
+
+export const errorMessage = style({
+  overflow: 'hidden',
+  maxHeight: '0',
+  transition: 'max-height 250ms ease',
+})
+export const showErrorMessage = style({
+  maxHeight: theme.spacing[5],
+})

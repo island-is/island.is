@@ -292,6 +292,17 @@ export class ApplicationService {
       }),
     ])
 
+    //For application system to map to json
+    if (appModel.getDataValue('files') === undefined) {
+      appModel.setDataValue('files', [])
+    }
+    if (appModel.getDataValue('applicationEvents') === undefined) {
+      appModel.setDataValue('applicationEvents', [])
+    }
+    if (appModel.getDataValue('directTaxPayments') === undefined) {
+      appModel.setDataValue('directTaxPayments', [])
+    }
+
     return appModel
   }
 

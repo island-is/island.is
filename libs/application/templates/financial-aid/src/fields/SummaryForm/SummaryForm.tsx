@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useState, useMemo } from 'react'
 import {
   Text,
   Box,
@@ -33,10 +33,20 @@ import {
 } from '../../lib/formatters'
 import AllFiles from './AllFiles'
 import { findFamilyStatus } from '../../lib/utils'
+import useApplication from '../../lib/hooks/useApplication'
 
-const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
+import cn from 'classnames'
+import * as styles from './../Shared.css'
+import { hasSpouse } from '../../lib/utils'
+
+const SummaryForm = ({
+  application,
+  goToScreen,
+  setBeforeSubmitCallback,
+}: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { id, answers, externalData } = application
+  const [formError, setFormError] = useState(false)
 
   const { setValue } = useFormContext()
 
@@ -57,6 +67,26 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       )
     }
   }, [externalData.nationalRegistry?.data?.municipality])
+
+  const { createApplication } = useApplication()
+
+  if (!hasSpouse(answers, externalData)) {
+    setBeforeSubmitCallback &&
+      setBeforeSubmitCallback(async () => {
+        const createApp = await createApplication(application)
+          .then(() => {
+            return true
+          })
+          .catch(() => {
+            setFormError(true)
+            return false
+          })
+        if (createApp) {
+          return [true, null]
+        }
+        return [false, 'Failed to create application']
+      })
+  }
 
   return (
     <>
@@ -266,7 +296,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         {formatMessage(m.summaryForm.formInfo.formCommentLabel)}
       </Text>
 
-      <Box marginTop={[3, 3, 4]}>
+      <Box marginTop={[3, 3, 4]} marginBottom={4}>
         <Controller
           name={formCommentId}
           defaultValue={answers?.formComment}
@@ -291,6 +321,15 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
             )
           }}
         />
+      </Box>
+      <Box
+        className={cn(styles.errorMessage, {
+          [`${styles.showErrorMessage}`]: formError,
+        })}
+      >
+        <Text color="red600" fontWeight="semiBold" variant="small">
+          {formatMessage(m.summaryForm.general.errorMessage)}
+        </Text>
       </Box>
     </>
   )
