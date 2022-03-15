@@ -1,4 +1,11 @@
-import React, { FC, RefAttributes, useEffect, useState } from 'react'
+import React, {
+  FC,
+  RefAttributes,
+  useEffect,
+  useState,
+  useRef,
+  MutableRefObject,
+} from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, AlertMessage, BoxProps } from '@island.is/island-ui/core'
 import { PropertiesManager } from './PropertiesManager'
@@ -13,8 +20,8 @@ export const SelectProperty: FC<FieldBaseProps> = ({
   const { externalData, answers } = application
   const [showErrorMsg, setShowErrorMsg] = useState<boolean>(false)
   const [forceHideErrorMsg, setForceHideErrorMsg] = useState<boolean>(false)
-
   const { formatMessage } = useLocale()
+  const errorMessage = useRef<HTMLDivElement>(null)
 
   //TODOx, dont look at externalData
   const { validation } = externalData.validateMortgageCertificate?.data as {
@@ -29,11 +36,11 @@ export const SelectProperty: FC<FieldBaseProps> = ({
     setShowErrorMsg(true)
   }
 
-  // const scrollTo = (ref: any) => {
-  //   if (ref) {
-  //     ref.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  //   }
-  // }
+  useEffect(() => {
+    if (errorMessage && errorMessage.current) {
+      errorMessage.current.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [errorMessage, externalData])
 
   return (
     <>
@@ -44,8 +51,9 @@ export const SelectProperty: FC<FieldBaseProps> = ({
           setForceHideErrorMsg(true)
         }}
       />
+
       {showErrorMsg && !forceHideErrorMsg ? (
-        <Box /*ref={scrollTo}*/ paddingTop={5} paddingBottom={5}>
+        <Box ref={errorMessage} paddingTop={5} paddingBottom={5}>
           <AlertMessage
             type="error"
             title={formatMessage(m.errorSheriffApiTitle)}
