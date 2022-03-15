@@ -885,10 +885,8 @@ export class CaseService {
       true,
     )) as Case
 
-    if (theCase.courtId) {
-      // No need to wait
-      this.uploadRequestPdfToCourt(updatedCase, user)
-    }
+    // No need to wait
+    this.uploadRequestPdfToCourt(updatedCase, user)
 
     return updatedCase
   }
