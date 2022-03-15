@@ -72,21 +72,16 @@ export class AdapterService {
       body.map(async (item) => {
         try {
           const component = item.component.toLowerCase()
-          this.logger.info('email component lowercase')
 
           if (!this.cachedComponents?.[component]) {
             throw new Error(`This component doesn't exist ${component}`)
           }
-          this.logger.info('email component does exist')
 
           if (component === 'image') {
-            this.logger.info('email component image')
             const image = item as ImageComponent
             const path = image.context.src
-            this.logger.info('email basename path', path)
             const filename = basename(path)
             const base64 = await this.convertImageToBase64(path)
-            this.logger.info('email base64 pass')
 
             attachments.push({
               filename,
@@ -94,7 +89,6 @@ export class AdapterService {
               encoding: 'base64',
               cid: filename,
             })
-            this.logger.info('email attachment push')
 
             item.context = {
               ...item.context,
@@ -102,7 +96,6 @@ export class AdapterService {
             }
           }
 
-          this.logger.info('email return cache components')
           return this.cachedComponents[component](item.context, {
             partials: this.cachedComponents,
           })

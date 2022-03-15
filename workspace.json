@@ -8462,8 +8462,13 @@
               },
               {
                 "glob": "*",
-                "input": "libs/service-portal/settings/personal-information/src/assets",
+                "input": "apps/services/user-profile/src/assets/images",
                 "output": "./images"
+              },
+              {
+                "glob": "*",
+                "input": "libs/email-service/src/tools/design",
+                "output": "./email-service-assets"
               }
             ],
             "maxWorkers": 2
