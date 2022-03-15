@@ -36,9 +36,4 @@ export const alternativeTravelBanRestrictions = [
     info:
       m[CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION],
   },
-  {
-    title: 'Afhending vegabréfs',
-    id: CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
-    info: m[CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT],
-  },
 ]

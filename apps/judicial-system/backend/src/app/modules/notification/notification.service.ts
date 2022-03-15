@@ -228,9 +228,12 @@ export class NotificationService {
     theCase: Case,
     user: User,
   ): Promise<void> {
-    const requestPdf = await getRequestPdfAsBuffer(theCase, this.formatMessage)
-
     try {
+      const requestPdf = await getRequestPdfAsBuffer(
+        theCase,
+        this.formatMessage,
+      )
+
       await this.courtService.createRequest(
         user,
         theCase.id,

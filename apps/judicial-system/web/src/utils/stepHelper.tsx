@@ -37,8 +37,7 @@ export const getRestrictionTagVariant = (
   restriction: CaseCustodyRestrictions,
 ): TagVariant => {
   switch (restriction) {
-    case CaseCustodyRestrictions.COMMUNICATION:
-    case CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT: {
+    case CaseCustodyRestrictions.COMMUNICATION: {
       return 'rose'
     }
     case CaseCustodyRestrictions.ISOLATION: {
