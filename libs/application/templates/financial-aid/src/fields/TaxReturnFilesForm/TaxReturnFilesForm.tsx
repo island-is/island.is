@@ -3,11 +3,11 @@ import { useIntl } from 'react-intl'
 import { Text, UploadFile, Box } from '@island.is/island-ui/core'
 import { taxReturnForm } from '../../lib/messages'
 
-import { FAFieldBaseProps } from '../..'
+import { FAFieldBaseProps, OverrideAnswerSchema, UploadFileType } from '../..'
 
 import { DescriptionText, Files } from '..'
 
-const TaxReturnFilesForm = ({ application }: FAFieldBaseProps) => {
+const TaxReturnFilesForm = ({ field, application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { id, answers } = application
 
@@ -19,8 +19,10 @@ const TaxReturnFilesForm = ({ application }: FAFieldBaseProps) => {
       </Box>
 
       <Files
-        fileKey="taxReturnFiles"
-        uploadFiles={answers.taxReturnFiles}
+        fileKey={field.id as UploadFileType}
+        uploadFiles={
+          answers[field.id as keyof OverrideAnswerSchema] as UploadFile[]
+        }
         folderId={id}
       />
       <Text as="h2" variant="h3" marginBottom={2}>

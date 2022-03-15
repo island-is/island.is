@@ -2,6 +2,7 @@ import {
   Employment,
   HomeCircumstances,
   KeyMapping,
+  FamilyStatus,
 } from '@island.is/financial-aid/shared/lib'
 
 import { MessageDescriptor } from 'react-intl'
@@ -30,6 +31,17 @@ export const getMessageEmploymentStatus: KeyMapping<
   Unemployed: m.employmentForm.employment.unemployed,
   CannotWork: m.employmentForm.employment.cannotWork,
   Other: m.employmentForm.employment.other,
+}
+
+export const getMessageFamilyStatus: KeyMapping<
+  FamilyStatus,
+  MessageDescriptor
+> = {
+  Cohabitation: m.familystatus.cohabitation,
+  Married: m.familystatus.married,
+  MarriedNotLivingTogether: m.familystatus.marriedNotLivingTogether,
+  UnregisteredCohabitation: m.familystatus.unregisteredCohabitation,
+  NotCohabitation: m.familystatus.notCohabitation,
 }
 
 export const getMessageApproveOptions: KeyMapping<

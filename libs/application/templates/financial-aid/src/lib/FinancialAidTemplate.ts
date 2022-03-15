@@ -14,7 +14,12 @@ import { Roles, ApplicationStates, ONE_DAY, ONE_MONTH } from './constants'
 
 import { application } from './messages'
 import { dataSchema } from './dataSchema'
-import { hasActiveCurrentApplication, hasSpouseCheck } from './utils'
+import {
+  hasSpouse,
+  isMuncipalityRegistered,
+  hasActiveCurrentApplication,
+  hasSpouseCheck,
+} from './utils'
 import { FAApplication } from '..'
 
 type Events = { type: DefaultEvents.SUBMIT }
@@ -62,6 +67,9 @@ const FinancialAidTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: [
+            //TODO check if works when national registry works
+            { target: ApplicationStates.DRAFT, cond: isMuncipalityRegistered },
+            { target: ApplicationStates.MUNCIPALITYNOTREGISTERED },
             {
               target: ApplicationStates.DRAFT,
               cond: hasActiveCurrentApplication,
@@ -111,7 +119,11 @@ const FinancialAidTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: {
-                answers: ['spouseIncome', 'spouseIncomeFiles'],
+                answers: [
+                  'spouseIncome',
+                  'spouseIncomeFiles',
+                  'spouseTaxReturnFiles',
+                ],
               },
             },
             {
@@ -137,6 +149,31 @@ const FinancialAidTemplate: ApplicationTemplate<
                 ),
               // TODO: Limit this
               read: 'all',
+            },
+          ],
+        },
+      },
+      [ApplicationStates.MUNCIPALITYNOTREGISTERED]: {
+        meta: {
+          name: application.name.defaultMessage,
+          lifecycle: {
+            shouldBeListed: false,
+            shouldBePruned: true,
+            whenToPrune: ONE_DAY,
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/MuncipalityNotRegistered').then((module) =>
+                  Promise.resolve(module.MuncipalityNotRegistered),
+                ),
+              write: {
+                externalData: ['nationalRegistry'],
+              },
+              read: {
+                externalData: ['nationalRegistry'],
+              },
             },
           ],
         },

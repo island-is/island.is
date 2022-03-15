@@ -3,6 +3,7 @@ export enum ApplicationStates {
   DRAFT = 'draft',
   SUBMITTED = 'submitted',
   SPOUSE = 'spouse',
+  MUNCIPALITYNOTREGISTERED = 'muncipalityNotRegistered',
 }
 
 export enum Roles {
@@ -26,4 +27,5 @@ export enum Routes {
   INCOMEFILES = 'incomeFiles',
   SPOUSEINCOME = 'spouseIncome',
   SPOUSEINCOMEFILES = 'spouseIncomeFiles',
+  SPOUSETAXRETURNFILES = 'spouseTaxReturnFiles',
 }
