@@ -387,12 +387,14 @@ export class NotificationService {
     ]
 
     // TODO: Find a better place for this
-    if (theCase.courtId && theCase.courtCaseNumber) {
+    // TODO: Check state instead of court case number
+    if (theCase.courtCaseNumber) {
       // No need to wait
       this.uploadRequestPdfToCourt(theCase, user)
     }
 
     if (notification) {
+      // TODO: Check state instead of court case number
       if (theCase.courtCaseNumber) {
         promises.push(
           this.sendResubmittedToCourtSmsNotificationToCourt(theCase),
