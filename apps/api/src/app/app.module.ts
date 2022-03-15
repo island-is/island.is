@@ -95,6 +95,17 @@ const autoSchemaFile = environment.production
         xroadPathV2: environment.drivingLicense.v2.xroadPath!,
       },
     }),
+    // DrivingLicenseBook has drivingIstructorGuard that uses drivingLicenseService
+    // DrivingLicenseBookModule needs to register DrivingLicenseModule and uses the same config to do so
+    DrivingLicenseBookModule.register({
+      clientConfig: {
+        xroadBaseUrl: environment.xroad.baseUrl!,
+        xroadClientId: environment.xroad.clientId!,
+        secret: environment.drivingLicense.secret!,
+        xroadPathV1: environment.drivingLicense.v1.xroadPath!,
+        xroadPathV2: environment.drivingLicense.v2.xroadPath!,
+      },
+    }),
     EducationModule.register({
       xroad: {
         baseUrl: environment.xroad.baseUrl!,
@@ -184,7 +195,6 @@ const autoSchemaFile = environment.production
     IdentityModule,
     AuthModule.register(environment.auth as AuthConfig),
     SyslumennModule,
-    DrivingLicenseBookModule,
     CompanyRegistryModule.register({
       password: environment.rskDomain.password!,
       url: environment.rskDomain.url!,

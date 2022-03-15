@@ -18,6 +18,7 @@ import { Success } from './models/success.response'
 import { UpdatePracticalDrivingLessonInput } from './dto/updatePracticalDrivingLesson.input'
 import { DeletePracticalDrivingLessonInput } from './dto/deletePracticalDrivingLesson.input'
 import { DrivingLicenseBookStudentForTeacher } from './models/studentsTeacherNationalId.response'
+import { DrivingInstructorGuard } from './guards/drivingInstructor.guard'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -26,18 +27,20 @@ export class DrivinLicenseBookResolver {
     private readonly drivingLicenseBookService: DrivingLicenseBookService,
   ) {}
 
+  @UseGuards(DrivingInstructorGuard)
   @Query(() => [DrivingLicenseBookStudent])
   drivingLicenseBookFindStudent(
     @Args('input') input: DrivingLicenseBookStudentsInput,
   ) {
     return this.drivingLicenseBookService.findStudent(input)
   }
-
+  @UseGuards(DrivingInstructorGuard)
   @Query(() => [DrivingLicenseBookStudentForTeacher])
   drivingLicenseBookStudentsForTeacher(@CurrentUser() user: User) {
     return this.drivingLicenseBookService.getStudentsForTeacher(user)
   }
 
+  @UseGuards(DrivingInstructorGuard)
   @Query(() => DrivingLicenseBookStudentOverview)
   drivingLicenseBookStudent(
     @Args('input') input: DrivingLicenseBookStudentInput,
@@ -45,6 +48,7 @@ export class DrivinLicenseBookResolver {
     return this.drivingLicenseBookService.getStudent(input)
   }
 
+  @UseGuards(DrivingInstructorGuard)
   @Query(() => [PracticalDrivingLesson])
   drivingLicenseBookPracticalDrivingLessons(
     @Args('input') input: PracticalDrivingLessonsInput,
@@ -52,6 +56,7 @@ export class DrivinLicenseBookResolver {
     return this.drivingLicenseBookService.getPracticalDrivingLessons(input)
   }
 
+  @UseGuards(DrivingInstructorGuard)
   @Mutation(() => PracticalDrivingLesson, { nullable: true })
   drivingLicenseBookCreatePracticalDrivingLesson(
     @Args('input') input: CreatePracticalDrivingLessonInput,
@@ -59,6 +64,7 @@ export class DrivinLicenseBookResolver {
     return this.drivingLicenseBookService.createPracticalDrivingLesson(input)
   }
 
+  @UseGuards(DrivingInstructorGuard)
   @Mutation(() => Success)
   drivingLicenseBookUpdatePracticalDrivingLesson(
     @Args('input') input: UpdatePracticalDrivingLessonInput,
@@ -70,6 +76,7 @@ export class DrivinLicenseBookResolver {
     )
   }
 
+  @UseGuards(DrivingInstructorGuard)
   @Mutation(() => Success)
   drivingLicenseBookDeletePracticalDrivingLesson(
     @Args('input') input: DeletePracticalDrivingLessonInput,

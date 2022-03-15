@@ -1,10 +1,22 @@
-import { Module } from '@nestjs/common'
+import { DynamicModule, Module } from '@nestjs/common'
 import { DrivingLicenseBookClientModule } from '@island.is/clients/driving-license-book'
 import { DrivinLicenseBookResolver } from './drivingLicenseBook.resolver'
 import { DrivingLicenseBookService } from './drivingLicenseBook.service'
+import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
+import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
 
+export interface Config {
+  clientConfig: DrivingLicenseApiConfig
+}
 @Module({
   imports: [DrivingLicenseBookClientModule],
   providers: [DrivinLicenseBookResolver, DrivingLicenseBookService],
 })
-export class DrivingLicenseBookModule {}
+export class DrivingLicenseBookModule {
+  static register(baseConfig: Config): DynamicModule {
+    return {
+      module: DrivingLicenseBookModule,
+      imports: [DrivingLicenseModule.register(baseConfig)],
+    }
+  }
+}
