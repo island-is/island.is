@@ -46,11 +46,4 @@ export const restrictions = defineMessages({
       'Sé sakborningi gert að tilkynna sig reglulega á meðan á farbanni stendur er hægt að haka hér í þennan reit og skrifa nánari upplýsingar um tilkynningarskyldu í textareitinn fyrir neðan.',
     description: 'Tilkynningarskylda',
   },
-  [CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT]: {
-    id:
-      'judicial.system.core:restrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT',
-    defaultMessage:
-      'Sé krafist þess að sakborningur afhendi vegabréf sitt, er hægt að haka í þennan reit og skrifa nánari upplýsingar um hvenær og hvert sakborningur skal afhenda vegabréfið í textareitinn fyrir neðan.',
-    description: 'Afhending vegabréfs',
-  },
 })
