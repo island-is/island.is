@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import { FieldBaseProps, DefaultEvents } from '@island.is/application/core'
 import {
   Box,
@@ -32,6 +32,10 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
   const [submitApplication] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => console.error(e.message),
   })
+
+  useEffect(() => {
+    document.title = 'Í bið'
+  }, [])
 
   const selectedProperty = externalData.getPropertyDetails
     ?.data as PropertyDetail
