@@ -11,6 +11,7 @@ const Dots = styled.View`
 `
 const DotContainer = styled(Animated.View)`
   flex-direction: row;
+  position: relative;
 `
 
 const DotLeft = styled(Animated.View)`
@@ -33,6 +34,13 @@ const DotRight = styled(Animated.View)`
   background-color: ${(props) => props.theme.color.red400};
   border-radius: 4px;
 `
+
+const DotOver = styled(Animated.View)`
+  position: absolute;
+  width: 1px;
+  height: 8px;
+  background-color: white;
+`;
 
 interface ViewPagerProps {
   itemWidth?: number
@@ -114,11 +122,6 @@ export function ViewPager({ children, itemWidth }: ViewPagerProps) {
                 },
                 { translateX: 16 * 0.5 },
               ],
-              opacity: x.interpolate({
-                inputRange: inputRange(i),
-                outputRange: [0.25, 1, 0.25],
-                extrapolate: 'clamp',
-              }),
             }}
           >
             <DotLeft style={{ transform: [{ translateX: 4 }] }} />
@@ -150,6 +153,26 @@ export function ViewPager({ children, itemWidth }: ViewPagerProps) {
                   },
                   { translateX: 8 * 0.5 },
                 ],
+              }}
+            />
+            <DotOver
+              style={{
+                transform: [
+                  { translateX: 2 },
+                  {
+                    scaleX: x.interpolate({
+                      inputRange: inputRange(i),
+                      outputRange: [16, 32, 16],
+                      extrapolate: 'clamp',
+                    }),
+                  },
+                  { translateX: 0.5 },
+                ],
+                opacity: x.interpolate({
+                  inputRange: inputRange(i),
+                  outputRange: [0.75, 0, 0.75],
+                  extrapolate: 'clamp',
+                }),
               }}
             />
           </DotContainer>
