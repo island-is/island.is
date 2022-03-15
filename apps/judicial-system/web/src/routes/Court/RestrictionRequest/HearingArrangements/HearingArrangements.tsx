@@ -29,6 +29,7 @@ import DefenderInfo from '@island.is/judicial-system-web/src/components/Defender
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { rcHearingArrangements as m } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system/consts'
+
 export const HearingArrangements: React.FC = () => {
   const {
     workingCase,
@@ -74,7 +75,7 @@ export const HearingArrangements: React.FC = () => {
         (notification) => notification.type === NotificationType.COURT_DATE,
       )
     ) {
-      router.push(`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`)
+      router.push(`${Constants.RULING_ROUTE}/${workingCase.id}`)
     } else {
       setModalVisible(true)
     }
@@ -194,7 +195,7 @@ export const HearingArrangements: React.FC = () => {
           handleSecondaryButtonClick={() => {
             sendNotification(workingCase.id, NotificationType.COURT_DATE, true)
 
-            router.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
+            router.push(`${Constants.RULING_ROUTE}/${id}`)
           }}
           handlePrimaryButtonClick={async () => {
             const notificationSent = await sendNotification(
@@ -203,7 +204,7 @@ export const HearingArrangements: React.FC = () => {
             )
 
             if (notificationSent) {
-              router.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
+              router.push(`${Constants.RULING_ROUTE}/${id}`)
             }
           }}
           primaryButtonText={formatMessage(m.modal.shared.primaryButtonText)}

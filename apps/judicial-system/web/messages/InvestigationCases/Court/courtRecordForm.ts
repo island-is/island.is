@@ -58,7 +58,7 @@ export const icCourtRecord = {
       },
       autofillAllPresent: {
         id:
-          'judicial.system.investigation_cases:court_record.session_bookings.autofill_all_present',
+          'judicial.system.investigation_cases:court_record.session_bookings.autofill_all_present#markdown',
         defaultMessage:
           'Sækjanda og verjanda varnaraðila er gefinn kostur á að tjá sig um kröfuna. Verjandi krefst þess að kröfunni verði hafnað.\n\nMálið er tekið til úrskurðar.\n\nÍ málinu er kveðinn upp úrskurður.',
         description:
@@ -82,7 +82,7 @@ export const icCourtRecord = {
       },
       autofillSpokeperson: {
         id:
-          'judicial.system.investigation_cases:court_record.session_bookings.autofill_spokeperson',
+          'judicial.system.investigation_cases:court_record.session_bookings.autofill_spokeperson#markdown',
         defaultMessage:
           'Dómari hefur fallist á að krafan hljóti meðferð fyrir dómi án þess að varnaraðili verði kvaddur/kvödd á dómþing, sbr. 1. mgr. 104. gr. laga nr. 88/2008.\n\nSækjanda og talsmanni varnaraðila er gefinn kostur á að tjá sig um kröfuna. Talsmaður varnaraðila mótmælir kröfunni og krefst þess að kröfunni verði hafnað en til vara að aðgerðinni verði markaður skemmri tími. Þá krefst talsmaður þóknunar fyrir sín störf.\n\nMálið er tekið til úrskurðar.\n\nÍ málinu er kveðinn upp úrskurður.',
         description:
@@ -90,7 +90,7 @@ export const icCourtRecord = {
       },
       autofillProsecutor: {
         id:
-          'judicial.system.investigation_cases:court_record.session_bookings.autofill_prosecutor',
+          'judicial.system.investigation_cases:court_record.session_bookings.autofill_prosecutor#markdown',
         defaultMessage:
           'Dómari hefur fallist á að krafan hljóti meðferð fyrir dómi án þess að varnaraðili verði kvaddur/kvödd á dómþing, sbr. 1. mgr. 104. gr. laga nr. 88/2008.\n\nSækjanda er gefinn kostur á að tjá sig um kröfuna.',
         description:
@@ -98,7 +98,7 @@ export const icCourtRecord = {
       },
       autofillRestrainingOrder: {
         id:
-          'judicial.system.investigation_cases:court_record.session_bookings.autofill_restraining_order',
+          'judicial.system.investigation_cases:court_record.session_bookings.autofill_restraining_order#markdown',
         defaultMessage:
           'Sækjanda, réttargæslumanni og verjanda varnaraðila  er gefinn kostur á að tjá sig um kröfuna. Verjandi krefst þess að kröfunni verði hafnað en til vara að nálgunnarbanni verði markaður skemmri tími. Þá krefjast verjandi og réttargæslumaður þóknunar sér til handa.\n\nMálið er tekið til úrskurðar.\n\nÍ málinu er kveðinn upp úrskurður.',
         description:
@@ -106,7 +106,7 @@ export const icCourtRecord = {
       },
       autofillAutopsy: {
         id:
-          'judicial.system.investigation_cases:court_record.session_bookings.autofill_autopsy',
+          'judicial.system.investigation_cases:court_record.session_bookings.autofill_autopsy#markdown',
         defaultMessage:
           'Ekki er sótt þing af hálfu varnaraðila.\n\nSækjanda er gefinn kostur á að tjá sig um kröfuna.\n\nMálið er tekið til úrskurðar.\n\nÍ málinu er kveðinn upp úrskurður.',
         description:
@@ -336,5 +336,12 @@ export const icCourtRecord = {
           'Notaður sem placeholder fyrir "Tilhögun gæslu og aðrar bókanir" innsláttarsvæði á þingbókar skrefi í rannsóknarheimildum.',
       },
     }),
+  },
+  nextButtonInfo: {
+    id: 'judicial.system.investigation_cases:court_record.next_button_info',
+    defaultMessage:
+      'Til að halda áfram þarf að skrá lyktir máls og skrifa úrskurðarorð á skjánum Úrskurður.',
+    description:
+      'Notaður sem texti í info panel sem kemur í staðinn fyrir Áfram takk þegar ekki er búið að setja lyktir máls eða úrskurðarorð',
   },
 }

@@ -19,7 +19,6 @@ export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
       },
     })
     .secrets({
-      SENTRY_DSN: '/k8s/service-portal/SENTRY_DSN',
       NOVA_URL: '/k8s/service-portal-api/NOVA_URL',
       NOVA_PASSWORD: '/k8s/gjafakort/NOVA_PASSWORD',
       NOVA_USERNAME: '/k8s/gjafakort/NOVA_USERNAME',

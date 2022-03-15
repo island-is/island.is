@@ -179,7 +179,8 @@ interface StepperHelperProps {
   currentState?: StepperState
   currentStep?: Step
   stepperMachine?: StepperMachine
-  optionsFromNamespace: { slug: string; data: [] }[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  optionsFromNamespace: { slug: string; data: Record<string, any>[] }[]
 }
 
 export const StepperHelper: React.FC<StepperHelperProps> = ({

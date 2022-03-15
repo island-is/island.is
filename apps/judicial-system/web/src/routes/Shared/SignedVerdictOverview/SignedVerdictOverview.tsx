@@ -160,7 +160,7 @@ export const SignedVerdictOverview: React.FC = () => {
   })
 
   useEffect(() => {
-    document.title = 'Yfirlit staðfestrar kröfu - Réttarvörslugátt'
+    document.title = 'Yfirlit - Afgreitt mál - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
@@ -440,7 +440,11 @@ export const SignedVerdictOverview: React.FC = () => {
     value: Date | undefined,
     valid: boolean,
   ) => {
-    if (value && workingCase.isolationToDate) {
+    if (
+      value &&
+      workingCase.isCustodyIsolation &&
+      workingCase.isolationToDate
+    ) {
       const validToDateIsBeforeIsolationToDate =
         compareAsc(value, new Date(workingCase.isolationToDate)) === -1
 
