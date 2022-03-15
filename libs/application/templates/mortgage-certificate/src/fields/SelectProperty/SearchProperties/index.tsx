@@ -18,7 +18,6 @@ import { useLocale } from '@island.is/localization'
 interface SearchPropertiesProps {
   selectHandler: (property: PropertyDetail | undefined) => void
   selectedPropertyNumber: string | undefined
-  onClearErrorMsg: () => void
 }
 
 export const searchPropertiesQuery = gql`
@@ -60,14 +59,14 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
     'selectProperty',
   ) as { propertyNumber: string; isFromSearch: boolean }
 
-  const { propertyDetails, validation } = externalData
-    .validateMortgageCertificate?.data as {
-    propertyDetails: PropertyDetail
-    validation: {
-      propertyNumber: string
-      isFromSearch: boolean | undefined
-    }
-  }
+  const { propertyDetails, validation } =
+    (externalData.validateMortgageCertificate?.data as {
+      propertyDetails: PropertyDetail
+      validation: {
+        propertyNumber: string
+        isFromSearch: boolean | undefined
+      }
+    }) || {}
 
   // check if validation data has a selected property
   if (!selectProperty?.propertyNumber) {

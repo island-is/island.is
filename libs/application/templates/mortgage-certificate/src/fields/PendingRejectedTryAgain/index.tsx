@@ -40,8 +40,6 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
       setHasChangedState(true)
 
       // Go to States.PAYMENT_INFO
-      // Note: we will validate on load here to display error message
-      // but will also use condition guard on button to validate again
       submitApplication({
         variables: {
           input: {
@@ -61,6 +59,8 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
     }
   }
 
+  // Note: we will validate on load here to display error message
+  // but will also use condition guard on button to validate again
   const { data, error, loading } = useQuery(validateCertificateQuery, {
     variables: {
       input: {
