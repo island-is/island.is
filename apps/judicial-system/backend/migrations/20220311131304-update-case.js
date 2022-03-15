@@ -29,7 +29,7 @@ module.exports = {
           return res
         })
         .then((res) =>
-          Promise.all([
+          Promise.all(
             res[0].map((c) =>
               queryInterface.sequelize.query(
                 `UPDATE "case" SET court_documents = '{${c.court_documents.reduce(
@@ -45,7 +45,7 @@ module.exports = {
                 { transaction: t },
               ),
             ),
-          ]),
+          ),
         ),
     )
   },
@@ -77,21 +77,21 @@ module.exports = {
           return res
         })
         .then((res) =>
-          Promise.all([
+          Promise.all(
             res[0].map((c) =>
               queryInterface.sequelize.query(
                 `UPDATE "case" SET court_documents = '{${c.court_documents.reduce(
                   (acc, d, i) =>
                     acc +
                     (i === 0 ? '"' : ',"') +
-                    d.name?.replace(/\\/g, '\\\\').replace(/"/g, '\\"') +
+                    d.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"') +
                     '"',
                   '',
                 )}}' WHERE id = '${c.id}'`,
                 { transaction: t },
               ),
             ),
-          ]),
+          ),
         ),
     )
   },
