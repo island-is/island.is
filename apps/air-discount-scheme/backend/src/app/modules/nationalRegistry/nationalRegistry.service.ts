@@ -20,7 +20,7 @@ import {
 import {
   AuthMiddleware,
   AuthMiddlewareOptions,
-  User,
+  User as AuthUser,
 } from '@island.is/auth-nest-tools'
 import { FetchError } from '@island.is/clients/middlewares'
 
@@ -239,7 +239,7 @@ export class NationalRegistryService {
     private nationalRegistryIndividualsApi: EinstaklingarApi,
   ) {}
 
-  personApiWithAuth(authUser: User) {
+  personApiWithAuth(authUser: AuthUser) {
     return this.nationalRegistryIndividualsApi.withMiddleware(
       new AuthMiddleware(
         authUser,
@@ -249,7 +249,7 @@ export class NationalRegistryService {
     )
   }
 
-  // Þjóðskrá API kynlyklar
+  // Þjóðskrá API gender keys
   private mapGender(genderId: string): 'kk' | 'kvk' | 'hvk' | 'óvíst' {
     if (['1', '3'].includes(genderId)) {
       return 'kk'
@@ -283,7 +283,7 @@ export class NationalRegistryService {
     }
   }
 
-  async getRelations(authUser: User): Promise<Array<string>> {
+  async getRelations(authUser: AuthUser): Promise<Array<string>> {
     const response = await this.personApiWithAuth(authUser)
       .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{
         id: authUser.nationalId,
@@ -297,7 +297,7 @@ export class NationalRegistryService {
   }
 
   async getCustodians(
-    auth: User,
+    auth: AuthUser,
     childNationalId: string,
   ): Promise<Array<NationalRegistryUser | null>> {
     const response = await this.personApiWithAuth(auth)
@@ -321,7 +321,7 @@ export class NationalRegistryService {
 
   async getUser(
     nationalId: string,
-    auth: User,
+    auth: AuthUser,
   ): Promise<NationalRegistryUser | null> {
     if (environment.environment !== 'prod') {
       const testUser = TEST_USERS.find(

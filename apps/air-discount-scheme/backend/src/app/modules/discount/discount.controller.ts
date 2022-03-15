@@ -23,7 +23,13 @@ import {
 } from './dto'
 import { DiscountService } from './discount.service'
 import { FlightService } from '../flight'
-import { CurrentUser, User as AuthUser } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+  User as AuthUser,
+} from '@island.is/auth-nest-tools'
 import { UserService } from '../user/user.service'
 import { AuthGuard } from '../common'
 import { GetUserByDiscountCodeParams } from '../user/dto'
@@ -76,6 +82,8 @@ export class PrivateDiscountController {
     return this.discountService.getDiscountByNationalId(params.nationalId)
   }
 
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @Scopes('@vegagerdin.is/air-discount-scheme-scope')
   @Post('users/:nationalId/discounts')
   @ApiExcludeEndpoint()
   async createDiscountCode(
