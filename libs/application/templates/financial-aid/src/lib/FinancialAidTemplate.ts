@@ -111,7 +111,11 @@ const FinancialAidTemplate: ApplicationTemplate<
                 ),
               read: 'all',
               write: {
-                answers: ['spouseIncome', 'spouseIncomeFiles'],
+                answers: [
+                  'spouseIncome',
+                  'spouseIncomeFiles',
+                  'spouseTaxReturnFiles',
+                ],
               },
             },
             {
