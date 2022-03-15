@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { Animated } from 'react-native'
 import styled from 'styled-components/native'
+import { dynamicColor } from '../../utils'
 
 const Dots = styled.View`
   flex-direction: row;
@@ -39,7 +40,7 @@ const DotOver = styled(Animated.View)`
   position: absolute;
   width: 1px;
   height: 8px;
-  background-color: white;
+  background-color: ${dynamicColor('background')};
 `
 
 interface ViewPagerProps {
@@ -91,7 +92,9 @@ export function ViewPager({ children, itemWidth }: ViewPagerProps) {
           ],
           { useNativeDriver: true },
         )}
-        contentContainerStyle={{ paddingRight: 16 }}
+        contentContainerStyle={{
+          paddingRight: 16,
+        }}
         onContentSizeChange={setContentWidth}
         horizontal={true}
         snapToInterval={OFFSET}
