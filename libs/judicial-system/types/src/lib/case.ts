@@ -175,6 +175,7 @@ export interface Case {
   notifications?: Notification[]
   caseFiles?: CaseFile[]
   caseModifiedExplanation?: string
+  caseResentExplanation?: string
 }
 
 export interface CreateCase {
@@ -249,6 +250,7 @@ export interface UpdateCase {
   registrarId?: string
   judgeId?: string
   caseModifiedExplanation?: string
+  caseResentExplanation?: string
 }
 
 export interface TransitionCase {
