@@ -842,4 +842,14 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   caseModifiedExplanation?: string
+
+  /**********
+   * The explanation given for the extension of a case
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiProperty()
+  caseResentExplanation?: string
 }
