@@ -396,7 +396,7 @@ export const Overview: React.FC = () => {
           >
             <Box marginBottom={10}>
               <Input
-                name="extensionExplination"
+                name="caseResentExplanation"
                 label={formatMessage(
                   rcOverview.sections.caseResentModal.input.label,
                 )}
