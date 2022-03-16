@@ -27,9 +27,7 @@ env:
 jobs:
   pre-checks:
     name: Check if job should run
-    runs-on: ec2-runners
-    container: 
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    runs-on: ubuntu-20.04
     env:
       CREATE_PATTERNS: ^release/
     outputs:
@@ -105,7 +103,9 @@ jobs:
           echo "::set-output name=PRE_CHECK::push"
 
   prepare:
-    runs-on: ubuntu-20.04
+    runs-on: ec2-runners
+    container: 
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 90
 
     if: needs.pre-checks.outputs.PRE_CHECK
