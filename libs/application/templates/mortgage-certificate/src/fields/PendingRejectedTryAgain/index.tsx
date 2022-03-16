@@ -11,7 +11,8 @@ import { useMutation, useQuery } from '@apollo/client'
 import { PropertyDetail } from '../../types/schema'
 import { gql } from '@apollo/client'
 import { VALIDATE_MORTGAGE_CERTIFICATE_QUERY } from '../../graphql/queries'
-
+import { m } from '../../lib/messages'
+import { useLocale } from '@island.is/localization'
 export const validateCertificateQuery = gql`
   ${VALIDATE_MORTGAGE_CERTIFICATE_QUERY}
 `
@@ -21,7 +22,7 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
   refetch,
 }) => {
   const { externalData } = application
-
+  const { formatMessage } = useLocale()
   const [showErrorMsg, setShowErrorMsg] = useState<boolean>(false)
   const [hasChangedState, setHasChangedState] = useState<boolean>(false)
   const [continuePolling, setContinuePolling] = useState(true)
@@ -116,8 +117,8 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
         <Box paddingBottom={3}>
           <AlertMessage
             type="error"
-            title="Ekki gekk að sækja vottorð fyrir þessa eign"
-            message="Vinsamlega hafðu samband við sýslumann, það er búið að senda inn beiðni um leiðréttingu"
+            title={formatMessage(m.propertyCertificateError)}
+            message={formatMessage(m.propertyCertificateErrorContactSheriff)}
           />
         </Box>
       ) : (
