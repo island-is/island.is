@@ -32,6 +32,7 @@ import { OrganizationWrapper } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import getConfig from 'next/config'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -55,22 +56,24 @@ const Homestay: Screen<HomestayProps> = ({
   }
   */
 
+  useContentfulId(organizationPage.id, subpage.id)
+
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
-  const pageUrl = `/s/syslumenn/heimagisting`
+  const pageUrl = `${organizationPage.slug}/${subpage.slug}`
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
       active:
-        primaryLink.url === pageUrl ||
-        childrenLinks.some((link) => link.url === pageUrl),
+        primaryLink.url.includes(pageUrl) ||
+        childrenLinks.some((link) => link.url.includes(pageUrl)),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
-        active: url === pageUrl,
+        active: url.includes(pageUrl),
       })),
     }),
   )
@@ -198,7 +201,13 @@ const Homestay: Screen<HomestayProps> = ({
   )
 }
 
-Homestay.getInitialProps = async ({ apolloClient, locale, query }) => {
+Homestay.getInitialProps = async ({ apolloClient, locale, pathname }) => {
+  const slug = pathname.split('/')?.[locale !== 'is' ? 3 : 2] ?? 'syslumenn'
+  const subSlug =
+    pathname.split('/')?.[locale !== 'is' ? 4 : 3] ?? 'heimagisting'
+
+  console.log(slug, subSlug)
+
   const [
     {
       data: { getOrganizationPage },
@@ -215,7 +224,7 @@ Homestay.getInitialProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: 'syslumenn',
+          slug: slug,
           lang: locale as ContentLanguage,
         },
       },
@@ -224,8 +233,8 @@ Homestay.getInitialProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_SUBPAGE_QUERY,
       variables: {
         input: {
-          organizationSlug: 'syslumenn',
-          slug: 'heimagisting',
+          organizationSlug: slug,
+          slug: subSlug,
           lang: locale as ContentLanguage,
         },
       },
