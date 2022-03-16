@@ -10,11 +10,15 @@ import {
 interface OrganizationContactBannerProps {
   organizationLogoUrl?: string
   contactLink: string
+  headerText?: string
+  linkText?: string
 }
 
 const OrganizationContactBanner = ({
   organizationLogoUrl,
   contactLink,
+  headerText = 'Finnurðu ekki það sem þig vantar?',
+  linkText = 'Hafa samband',
 }: OrganizationContactBannerProps) => {
   return (
     <Box background="purple100" borderRadius="large" padding={4}>
@@ -31,10 +35,10 @@ const OrganizationContactBanner = ({
         </GridColumn>
         <GridColumn>
           <Text color="purple600" fontWeight="semiBold">
-            Finnurðu ekki það sem þig vantar?
+            {headerText}
           </Text>
           <ArrowLink href={contactLink} arrowHeight={10}>
-            Hafa samband
+            {linkText}
           </ArrowLink>
         </GridColumn>
       </GridRow>

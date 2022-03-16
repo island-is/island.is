@@ -1840,6 +1840,9 @@ export interface IOrganizationFields {
 
   /** Birta á þjónustuvef */
   serviceWebEnabled?: boolean | undefined
+
+  /** Namespace */
+  namespace?: IUiConfiguration | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {

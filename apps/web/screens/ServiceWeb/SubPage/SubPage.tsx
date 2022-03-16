@@ -31,7 +31,6 @@ import {
   Link,
   LinkContext,
   Button,
-  BreadCrumbItem,
 } from '@island.is/island-ui/core'
 import { ServiceWebWrapper } from '@island.is/web/components'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
@@ -51,6 +50,7 @@ interface SubPageProps {
   namespace: Query['getNamespace']
   supportQNAs: Query['getSupportQNAsInCategory']
   questionSlug: string
+  organizationNamespace: Record<string, string>
 }
 
 const SubPage: Screen<SubPageProps> = ({
@@ -58,9 +58,11 @@ const SubPage: Screen<SubPageProps> = ({
   supportQNAs,
   questionSlug,
   namespace,
+  organizationNamespace,
 }) => {
   const Router = useRouter()
   const n = useNamespace(namespace)
+  const o = useNamespace(organizationNamespace)
   const { linkResolver } = useLinkResolver()
   const organizationSlug = organization.slug
   const question = supportQNAs.find(
@@ -126,18 +128,18 @@ const SubPage: Screen<SubPageProps> = ({
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
-      headerTitle={
-        institutionSlugBelongsToMannaudstorg
-          ? organizationTitle
-          : n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')
-      }
+      headerTitle={o(
+        'serviceWebHeaderTitle',
+        n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
+      )}
       institutionSlug={institutionSlug}
       organization={organization}
       organizationTitle={organizationTitle}
       smallBackground
-      searchPlaceholder={
-        institutionSlugBelongsToMannaudstorg ? 'Leitaðu á torginu' : undefined
-      }
+      searchPlaceholder={o(
+        'serviceWebSearchPlaceholder',
+        'Leitaðu á þjónustuvefnum',
+      )}
     >
       <Box marginY={[3, 3, 10]}>
         <GridContainer>
@@ -228,7 +230,12 @@ const SubPage: Screen<SubPageProps> = ({
                               marginTop={6}
                               marginBottom={2}
                             >
-                              <Text fontWeight="semiBold">Tengt efni</Text>
+                              <Text fontWeight="semiBold">
+                                {o(
+                                  'serviceWebRelatedMaterialHeaderTitle',
+                                  'Tengt efni',
+                                )}
+                              </Text>
                               <GridColumn>
                                 {(question.relatedLinks ?? []).map(
                                   ({ text, url }, index) => (
@@ -256,6 +263,14 @@ const SubPage: Screen<SubPageProps> = ({
                               <OrganizationContactBanner
                                 organizationLogoUrl={organization.logo?.url}
                                 contactLink="https://gatt.fjs.is/plugins/servlet/desk/portal/11/create/127"
+                                headerText={o(
+                                  'serviceWebOrganizationContactBannerHeaderTitle',
+                                  'Finnurðu ekki það sem þig vantar?',
+                                )}
+                                linkText={o(
+                                  'serviceWebOrganizationContactBannerLinkTitle',
+                                  'Hafa samband',
+                                )}
                               />
                             </Box>
                           )}
@@ -370,8 +385,13 @@ SubPage.getInitialProps = async ({ apolloClient, locale, query }) => {
       }),
   ])
 
+  const organizationNamespace = JSON.parse(
+    organization?.data?.getOrganization?.namespace?.fields ?? '{}',
+  )
+
   return {
     namespace,
+    organizationNamespace,
     organization: organization?.data?.getOrganization,
     supportQNAs: supportQNAs?.data?.getSupportQNAsInCategory,
     questionSlug,

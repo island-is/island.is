@@ -13,25 +13,29 @@ import {
   Inline,
   Hyphen,
 } from '@island.is/island-ui/core'
-import { Locale } from '@island.is/shared/types'
+import { useI18n } from '@island.is/web/i18n'
 
 import * as styles from './MannaudstorgFooter.css'
 
 interface Props {
   title: string
-  locale?: Locale
   logoSrc?: string
   contactLink?: string
   phone?: string
+  headerText?: string
+  linkText?: string
 }
 
 export const MannaudstorgFooter: FC<Props> = ({
   title,
-  locale = 'is',
   logoSrc,
   contactLink,
   phone,
+  headerText = 'Ertu með ábendingu eða spurningu?',
+  linkText = 'Sendu okkur línu',
 }) => {
+  const { activeLocale } = useI18n()
+
   return (
     <Hidden print={true}>
       <Box as="footer" position="relative" className={styles.container}>
@@ -57,7 +61,7 @@ export const MannaudstorgFooter: FC<Props> = ({
                       )}
                     </Box>
                     <Text color="white" variant="h2" marginTop={[4, 4, 0]}>
-                      <Hyphen locale={locale}>{title}</Hyphen>
+                      <Hyphen locale={activeLocale}>{title}</Hyphen>
                     </Text>
                   </Box>
                 </GridColumn>
@@ -71,15 +75,15 @@ export const MannaudstorgFooter: FC<Props> = ({
                     <Stack space={2}>
                       {contactLink && (
                         <>
-                          <Text variant="h4">
-                            Ertu með ábendingu eða spurningu?
+                          <Text variant="h4" color="white">
+                            {headerText}
                           </Text>
                           <LinkContext.Provider
                             value={{
                               linkRenderer: (href, children) => (
                                 <Link
                                   href={href}
-                                  color="blue600"
+                                  color="white"
                                   underline="normal"
                                   underlineVisibility="always"
                                 >
@@ -89,7 +93,7 @@ export const MannaudstorgFooter: FC<Props> = ({
                             }}
                           >
                             <Text color={'blue600'}>
-                              <a href={contactLink}>Sendu okkur línu</a>
+                              <a href={contactLink}>{linkText}</a>
                             </Text>
                           </LinkContext.Provider>
                         </>
@@ -100,7 +104,7 @@ export const MannaudstorgFooter: FC<Props> = ({
                             linkRenderer: (href, children) => (
                               <Link
                                 href={href}
-                                color="blue600"
+                                color="white"
                                 underline="normal"
                                 underlineVisibility="always"
                               >
@@ -110,8 +114,10 @@ export const MannaudstorgFooter: FC<Props> = ({
                           }}
                         >
                           <Inline space={1}>
-                            <Text>Sími:</Text>
-                            <Text color="blue600">
+                            <Text color="white">
+                              {activeLocale === 'is' ? 'Sími:' : 'Telephone:'}
+                            </Text>
+                            <Text>
                               <a href={`tel:${phone}`}>{phone}</a>
                             </Text>
                           </Inline>

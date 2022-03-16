@@ -193,6 +193,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
           title={organization.title}
           logoSrc={organization.logo?.url}
           phone={organization.phone}
+          contactLink={organization.link}
         />
       )
   }

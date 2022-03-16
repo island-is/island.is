@@ -77,6 +77,9 @@ export const GET_SUPPORT_CATEGORIES = gql`
       slug
       organization {
         slug
+        namespace {
+          fields
+        }
       }
       importance
     }
@@ -165,6 +168,9 @@ export const GET_SERVICE_WEB_ORGANIZATION = gql`
       email
       serviceWebTitle
       serviceWebEnabled
+      namespace {
+        fields
+      }
     }
   }
 `

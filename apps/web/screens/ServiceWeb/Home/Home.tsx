@@ -44,6 +44,7 @@ import * as styles from './Home.css'
 interface HomeProps {
   organization?: Organization
   namespace: Query['getNamespace']
+  organizationNamespace: Record<string, string>
   supportCategories:
     | Query['getSupportCategories']
     | Query['getSupportCategoriesInOrganization']
@@ -53,9 +54,12 @@ const Home: Screen<HomeProps> = ({
   organization,
   supportCategories,
   namespace,
+  organizationNamespace,
 }) => {
   const Router = useRouter()
   const n = useNamespace(namespace)
+  const o = useNamespace(organizationNamespace)
+
   const institutionSlug = getSlugPart(Router.asPath, 2)
 
   const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
@@ -63,18 +67,21 @@ const Home: Screen<HomeProps> = ({
   )
 
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
-  const headerTitle = institutionSlugBelongsToMannaudstorg
-    ? organizationTitle
-    : n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is')
+  const headerTitle = o(
+    'serviceWebHeaderTitle',
+    n('assistanceForIslandIs', 'Aðstoð fyrir Ísland.is'),
+  )
   const logoUrl = organization?.logo?.url ?? ''
-  const searchTitle = institutionSlugBelongsToMannaudstorg
-    ? organizationTitle
-    : n('canWeAssist', 'Getum við aðstoðað?')
+  const searchTitle = o(
+    'serviceWebSearchTitle',
+    n('canWeAssist', 'Getum við aðstoðað?'),
+  )
+
   const pageTitle = `${
     institutionSlug && organization && organization.title
       ? organization.title + ' | '
       : ''
-  }${headerTitle}`
+  }${o('serviceWebPageTitle', headerTitle)}`
 
   const hasContent = !!supportCategories?.length
 
@@ -93,9 +100,10 @@ const Home: Screen<HomeProps> = ({
       organization={organization}
       organizationTitle={organizationTitle}
       searchTitle={searchTitle}
-      searchPlaceholder={
-        institutionSlugBelongsToMannaudstorg ? 'Leitaðu á torginu' : undefined
-      }
+      searchPlaceholder={o(
+        'serviceWebSearchPlaceholder',
+        'Leitaðu á þjónustuvefnum',
+      )}
       searchTags={searchTags}
       showLogoTitle={!institutionSlugBelongsToMannaudstorg}
     >
@@ -115,9 +123,10 @@ const Home: Screen<HomeProps> = ({
                         variant="h3"
                         {...(textMode === 'dark' ? {} : { color: 'white' })}
                       >
-                        {institutionSlugBelongsToMannaudstorg
-                          ? 'Upplýsingar fyrir stjórnendur og mannauðsfólk hjá opinberum aðilum'
-                          : n('answersByCategory', 'Svör eftir flokkum')}
+                        {o(
+                          'serviceWebCategoryTitle',
+                          n('answersByCategory', 'Svör eftir flokkum'),
+                        )}
                       </Text>
                     </GridColumn>
                   </GridRow>
@@ -236,9 +245,14 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
     )
   }
 
+  const organizationNamespace = JSON.parse(
+    organization?.data?.getOrganization?.namespace?.fields ?? '{}',
+  )
+
   return {
     organization: organization?.data?.getOrganization,
     namespace,
+    organizationNamespace,
     supportCategories: processedCategories,
   }
 }
