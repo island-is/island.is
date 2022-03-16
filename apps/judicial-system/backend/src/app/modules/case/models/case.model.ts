@@ -21,6 +21,7 @@ import {
   CaseDecision,
   CaseType,
   SessionArrangements,
+  CourtDocument,
 } from '@island.is/judicial-system/types'
 
 import { CaseFile } from '../../file'
@@ -532,7 +533,7 @@ export class Case extends Model<Case> {
     allowNull: true,
   })
   @ApiProperty()
-  courtDocuments?: string[]
+  courtDocuments?: CourtDocument[]
 
   /**********
    * Bookings during court session
