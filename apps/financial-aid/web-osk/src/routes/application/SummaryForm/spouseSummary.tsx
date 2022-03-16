@@ -93,7 +93,9 @@ const SpouseSummary = () => {
         }
       })
       .catch((e) => {
-        errorHandling('Obbobbob eitthvað fór úrskeiðis')
+        errorHandling(
+          'Ekki tókst að senda inn umsókn. Vinsamlegast reyndu aftur síðar eða hafðu samband við þitt sveitafélag',
+        )
       })
   }
 
