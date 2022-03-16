@@ -40,7 +40,7 @@ const Rejected = ({
           )}
 
           <Box marginBottom={[3, 3, 5]}>
-            {municipality?.rulesHomepage && (
+            {municipality?.rulesHomepage ? (
               <Button
                 variant="text"
                 icon="open"
@@ -51,6 +51,21 @@ const Rejected = ({
               >
                 Sjá reglur um fjárhagsaðstoð
               </Button>
+            ) : (
+              <>
+                {municipality?.homepage && (
+                  <Button
+                    variant="text"
+                    icon="open"
+                    iconType="outline"
+                    onClick={() => {
+                      window.open(municipality?.homepage, '_ blank')
+                    }}
+                  >
+                    {municipality.homepage}
+                  </Button>
+                )}
+              </>
             )}
           </Box>
 
