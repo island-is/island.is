@@ -445,8 +445,37 @@ export class NotificationService {
 
   /* COURT_DATE notifications */
 
-  private sendCourtDateEmailNotificationToProsecutor(
+  private async uploadEmailToCourt(
     theCase: Case,
+    user: User,
+    subject: string,
+    body: string,
+    recipients?: string,
+  ): Promise<void> {
+    try {
+      await this.courtService.createEmail(
+        user,
+        theCase.id,
+        theCase.courtId ?? '',
+        theCase.courtCaseNumber ?? '',
+        subject,
+        body,
+        recipients ?? '',
+        environment.email.fromEmail,
+        environment.email.fromName,
+      )
+    } catch (error) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Failed to upload email to court for case ${theCase.id}`,
+        { error },
+      )
+    }
+  }
+
+  private async sendCourtDateEmailNotificationToProsecutor(
+    theCase: Case,
+    user: User,
   ): Promise<Recipient> {
     const subject = `Fyrirtaka í máli ${theCase.policeCaseNumber}`
     const html = formatProsecutorCourtDateEmailNotification(
@@ -462,17 +491,31 @@ export class NotificationService {
     )
     const calendarInvite = this.createICalAttachment(theCase)
 
-    return this.sendEmail(
+    const recipient = await this.sendEmail(
       subject,
       html,
       theCase.prosecutor?.name,
       theCase.prosecutor?.email,
       calendarInvite ? [calendarInvite] : undefined,
     )
+
+    if (recipient.success) {
+      // No need to wait
+      this.uploadEmailToCourt(
+        theCase,
+        user,
+        subject,
+        html,
+        theCase.prosecutor?.email,
+      )
+    }
+
+    return recipient
   }
 
-  private sendCourtDateEmailNotificationToPrison(
+  private async sendCourtDateEmailNotificationToPrison(
     theCase: Case,
+    user: User,
   ): Promise<Recipient> {
     const subject = 'Krafa um gæsluvarðhald í vinnslu' // Always custody
     // Assume there is at most one defendant
@@ -495,16 +538,30 @@ export class NotificationService {
       Boolean(theCase.parentCase),
     )
 
-    return this.sendEmail(
+    const recipient = await this.sendEmail(
       subject,
       html,
       'Gæsluvarðhaldsfangelsi',
       environment.notifications.prisonEmail,
     )
+
+    if (recipient.success) {
+      // No need to wait
+      this.uploadEmailToCourt(
+        theCase,
+        user,
+        subject,
+        html,
+        environment.notifications.prisonEmail,
+      )
+    }
+
+    return recipient
   }
 
   private async sendCourtDateEmailNotificationToDefender(
     theCase: Case,
+    user: User,
   ): Promise<Recipient> {
     const subject = `Fyrirtaka í máli ${theCase.courtCaseNumber}`
     const html = formatDefenderCourtDateEmailNotification(
@@ -531,17 +588,31 @@ export class NotificationService {
       })
     }
 
-    return this.sendEmail(
+    const recipient = await this.sendEmail(
       subject,
       html,
       theCase.defenderName,
       theCase.defenderEmail,
       attachments,
     )
+
+    if (recipient.success) {
+      // No need to wait
+      this.uploadEmailToCourt(
+        theCase,
+        user,
+        subject,
+        html,
+        theCase.defenderEmail,
+      )
+    }
+
+    return recipient
   }
 
   private async sendCourtDateNotifications(
     theCase: Case,
+    user: User,
     eventOnly?: boolean,
   ): Promise<SendNotificationResponse> {
     this.eventService.postEvent(CaseEvent.SCHEDULE_COURT_DATE, theCase)
@@ -551,7 +622,7 @@ export class NotificationService {
     }
 
     const promises: Promise<Recipient>[] = [
-      this.sendCourtDateEmailNotificationToProsecutor(theCase),
+      this.sendCourtDateEmailNotificationToProsecutor(theCase, user),
     ]
 
     if (
@@ -562,11 +633,13 @@ export class NotificationService {
           theCase.defenderIsSpokesperson)) &&
       theCase.defenderEmail
     ) {
-      promises.push(this.sendCourtDateEmailNotificationToDefender(theCase))
+      promises.push(
+        this.sendCourtDateEmailNotificationToDefender(theCase, user),
+      )
     }
 
     if (theCase.type === CaseType.CUSTODY) {
-      promises.push(this.sendCourtDateEmailNotificationToPrison(theCase))
+      promises.push(this.sendCourtDateEmailNotificationToPrison(theCase, user))
     }
 
     const recipients = await Promise.all(promises)
@@ -911,7 +984,11 @@ export class NotificationService {
       case NotificationType.RECEIVED_BY_COURT:
         return this.sendReceivedByCourtNotifications(theCase)
       case NotificationType.COURT_DATE:
-        return this.sendCourtDateNotifications(theCase, notification.eventOnly)
+        return this.sendCourtDateNotifications(
+          theCase,
+          user,
+          notification.eventOnly,
+        )
       case NotificationType.RULING:
         return this.sendRulingNotifications(theCase)
       case NotificationType.MODIFIED:
