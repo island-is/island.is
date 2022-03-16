@@ -5,6 +5,7 @@ const schema = z.object({
   xRoadServicePath: z.string(),
   fetch: z.object({
     timeout: z.number().int(),
+    logErrorResponseBody: z.boolean(),
   }),
   redis: z.object({
     nodes: z.array(z.string()),
@@ -23,6 +24,8 @@ export const NationalRegistryClientConfig = defineConfig({
       ),
       fetch: {
         timeout: env.optionalJSON('XROAD_NATIONAL_REGISTRY_TIMEOUT') ?? 10000,
+        logErrorResponseBody:
+          env.optionalJSON('XROAD_NATIONAL_REGISTRY_LOG_ERRORS') ?? false,
       },
       redis: {
         nodes: env.optionalJSON('XROAD_NATIONAL_REGISTRY_REDIS_NODES') ?? [],
