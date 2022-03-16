@@ -1,13 +1,6 @@
-import { defineMessages } from '@formatjs/intl'
-import { defineMessage } from 'react-intl'
+import { defineMessages } from 'react-intl'
 
 export const rcCourtOverview = {
-  title: defineMessage({
-    id: 'judicial.system.restriction_cases:reception_and_assignment.title',
-    defaultMessage: 'Móttaka og úthlutun',
-    description:
-      'Notaður sem titill á Móttaka og úthlutun skrefi í gæsluvarðhalds- og farbannsmálum.',
-  }),
   sections: {
     caseResentExplanation: defineMessages({
       title: {
