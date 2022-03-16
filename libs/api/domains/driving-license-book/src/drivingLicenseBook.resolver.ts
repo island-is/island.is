@@ -22,7 +22,7 @@ import { DrivingInstructorGuard } from './guards/drivingInstructor.guard'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
-export class DrivinLicenseBookResolver {
+export class DrivingLicenseBookResolver {
   constructor(
     private readonly drivingLicenseBookService: DrivingLicenseBookService,
   ) {}
