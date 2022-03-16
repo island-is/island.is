@@ -76,6 +76,7 @@ const Homestay: Screen<HomestayProps> = ({
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
+        active: url === pageUrl,
       })),
     }),
   )
