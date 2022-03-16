@@ -187,8 +187,10 @@ export const SearchInput = ({
       initialInputValue={initialInputValue}
       inputValue={searchTerms}
       onInputValueChange={(value) => {
-        setIsLoading(true)
-        setSearchTerms(value)
+        setSearchTerms((prevValue) => {
+          setIsLoading(value !== prevValue)
+          return value
+        })
       }}
       closeMenuOnSubmit
       onSubmit={(value, selectedOption) => {
