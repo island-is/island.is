@@ -2,6 +2,7 @@ import { DynamicModule } from '@nestjs/common'
 import { ZodType } from 'zod'
 
 import { ServerSideFeatureNames } from '@island.is/feature-flags'
+import { DynamicModule } from '@nestjs/common'
 
 export interface EnvLoader {
   required(envVariable: string, devFallback?: string): string
