@@ -550,11 +550,9 @@ OperatingLicenses.getInitialProps = async ({
   locale,
   pathname,
 }) => {
-  const slug = getOrganizationPageSlugFromPathname(pathname, 'syslumenn')
-  const subSlug = getOrganizationSubpageSlugFromPathname(
-    pathname,
-    'rekstrarleyfi',
-  )
+  const path = pathname?.split('/') ?? []
+  const slug = path?.[path.length - 2] ?? 'syslumenn'
+  const subSlug = path.pop() ?? 'rekstrarleyfi'
 
   const [
     {
