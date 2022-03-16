@@ -23,14 +23,17 @@ import {
   formatDate,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
-import { core, requestCourtDate } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  icCourtOverview,
+  requestCourtDate,
+} from '@island.is/judicial-system-web/messages'
 import CaseFilesAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CaseFilesAccordionItem/CaseFilesAccordionItem'
 import {
   UploadState,
   useCourtUpload,
 } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
-import { icCourtOverview } from '@island.is/judicial-system-web/messages/InvestigationCases/Court/overview'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 
