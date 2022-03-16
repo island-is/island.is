@@ -209,14 +209,9 @@ const Homestay: Screen<HomestayProps> = ({
 }
 
 Homestay.getInitialProps = async ({ apolloClient, locale, pathname }) => {
-  const slug = getOrganizationPageSlugFromPathname(
-    pathname,
-    locale,
-    'syslumenn',
-  )
+  const slug = getOrganizationPageSlugFromPathname(pathname, 'syslumenn')
   const subSlug = getOrganizationSubpageSlugFromPathname(
     pathname,
-    locale,
     'heimagisting',
   )
 
