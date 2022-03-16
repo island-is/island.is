@@ -92,21 +92,15 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         <Text>
           Rannsóknargögn málsins liggja frammi.
           <br />
-          <br />
           {workingCase.courtDocuments?.map((courtDocument, index) => {
             return (
               <>
-                {formatMessage(m.sections.courtDocuments.text, {
+                {`${formatMessage(m.sections.courtDocuments.text, {
                   documentName: capitalize(courtDocument.name),
                   documentNumber: index + 2,
                   submittedBy: courtDocument.submittedBy,
-                })}
-                {index <= (workingCase.courtDocuments ?? []).length && (
-                  <>
-                    <br />
-                    <br />
-                  </>
-                )}
+                })}`}
+                <br />
               </>
             )
           })}
