@@ -113,3 +113,12 @@ export const padTimeWithZero = (time: string): string => {
   const threeDigitRegex = new RegExp(/^([0-9])(:[0-5]\d)/)
   return threeDigitRegex.test(time) ? time.padStart(5, '0') : time
 }
+/**
+ * Enumerates a list of string, f.x
+ * enumerate(['alice', 'bob', 'paul'], 'and'), returns "alice, bob and paul"
+ * @param values list of strings to enumerate
+ * @param endWord the word before last value is enumerated
+ */
+export const enumerate = (values: string[], endWord: string): string => {
+  return values.join(', ').replace(/, ([^,]*)$/, ` ${endWord} $1`)
+}
