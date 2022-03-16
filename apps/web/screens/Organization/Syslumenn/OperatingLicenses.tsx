@@ -36,6 +36,10 @@ import { useRouter } from 'next/router'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
+import {
+  getOrganizationPageSlugFromPathname,
+  getOrganizationSubpageSlugFromPathname,
+} from '@island.is/web/utils/organizationUtils'
 
 const DEBOUNCE_TIMER = 400
 const PAGE_SIZE = 10
@@ -546,9 +550,16 @@ OperatingLicenses.getInitialProps = async ({
   locale,
   pathname,
 }) => {
-  const slug = pathname.split('/')?.[locale !== 'is' ? 3 : 2] ?? 'syslumenn'
-  const subSlug =
-    pathname.split('/')?.[locale !== 'is' ? 4 : 3] ?? 'rekstrarleyfi'
+  const slug = getOrganizationPageSlugFromPathname(
+    pathname,
+    locale,
+    'syslumenn',
+  )
+  const subSlug = getOrganizationSubpageSlugFromPathname(
+    pathname,
+    locale,
+    'rekstrarleyfi',
+  )
 
   const [
     {

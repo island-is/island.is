@@ -34,6 +34,10 @@ import getConfig from 'next/config'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useRouter } from 'next/router'
+import {
+  getOrganizationPageSlugFromPathname,
+  getOrganizationSubpageSlugFromPathname,
+} from '@island.is/web/utils/organizationUtils'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -205,9 +209,16 @@ const Homestay: Screen<HomestayProps> = ({
 }
 
 Homestay.getInitialProps = async ({ apolloClient, locale, pathname }) => {
-  const slug = pathname.split('/')?.[locale !== 'is' ? 3 : 2] ?? 'syslumenn'
-  const subSlug =
-    pathname.split('/')?.[locale !== 'is' ? 4 : 3] ?? 'heimagisting'
+  const slug = getOrganizationPageSlugFromPathname(
+    pathname,
+    locale,
+    'syslumenn',
+  )
+  const subSlug = getOrganizationSubpageSlugFromPathname(
+    pathname,
+    locale,
+    'heimagisting',
+  )
 
   const [
     {
