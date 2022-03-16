@@ -12,10 +12,7 @@ jobs:
   prepare:
     runs-on: ec2-runners
     container: 
-      image: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/actions-runner:latest
-      credentials:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 25
 
     env:
@@ -200,10 +197,7 @@ jobs:
     if: needs.prepare.outputs.TEST_CHUNKS
     runs-on: ec2-runners
     container: 
-      image: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/actions-runner:latest
-      credentials:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -255,10 +249,7 @@ jobs:
     if: needs.prepare.outputs.E2E_CHUNKS
     runs-on: ec2-runners
     container: 
-      image: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/actions-runner:latest
-      credentials:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 25
     env:
       AFFECTED_PROJECT: ${{ matrix.projects }}
@@ -320,10 +311,7 @@ jobs:
       - prepare
     runs-on: ec2-runners
     container: 
-      image: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/actions-runner:latest
-      credentials:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
@@ -349,10 +337,7 @@ jobs:
       - prepare
     runs-on: ec2-runners
     container: 
-      image: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/actions-runner:latest
-      credentials:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v2
@@ -373,10 +358,7 @@ jobs:
       - prepare
     runs-on: ec2-runners
     container: 
-      image: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/actions-runner:latest
-      credentials:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 25
     if: needs.prepare.outputs.LINT_CHUNKS
     env:
@@ -422,10 +404,7 @@ jobs:
       - prepare
     runs-on: ec2-runners
     container: 
-      image: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/actions-runner:latest
-      credentials:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -468,10 +447,7 @@ jobs:
   success:
     runs-on: ec2-runners
     container: 
-      image: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/actions-runner:latest
-      credentials:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     if: always()
     needs:
       - prepare

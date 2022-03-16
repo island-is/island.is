@@ -11,10 +11,7 @@ jobs:
   lint:
     runs-on: ec2-runners
     container: 
-      image: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/actions-runner:latest
-      credentials:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     steps:
       - uses: amannn/action-semantic-pull-request@v4.2.0
         with:
