@@ -1,15 +1,8 @@
 import React, { useState, useMemo } from 'react'
-import {
-  Text,
-  Box,
-  GridColumn,
-  GridRow,
-  Input,
-} from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
-import { Controller, useFormContext } from 'react-hook-form'
-import * as m from '../../lib/messages'
-import { ApproveOptions, FAFieldBaseProps } from '../../lib/types'
+import cn from 'classnames'
+
+import { Text, Box } from '@island.is/island-ui/core'
 import {
   Employment,
   getNextPeriod,
@@ -20,8 +13,11 @@ import {
   MartialStatusType,
 } from '@island.is/financial-aid/shared/lib'
 
+import * as m from '../../lib/messages'
+import { ApproveOptions, FAFieldBaseProps } from '../../lib/types'
+
 import { Routes } from '../../lib/constants'
-import { SummaryBlock, DescriptionText, Breakdown } from '../index'
+import { DescriptionText, Breakdown } from '../index'
 import {
   formatAddress,
   formatBankInfo,
@@ -32,16 +28,14 @@ import {
   getMessageFamilyStatus,
 } from '../../lib/formatters'
 import { findFamilyStatus } from '../../lib/utils'
-import AllFiles from './Files'
 import useApplication from '../../lib/hooks/useApplication'
-
-import cn from 'classnames'
 import * as styles from './../Shared.css'
 import { hasSpouse } from '../../lib/utils'
-import SummaryInfo from './SummaryInfo'
+import FormInfo from './FormInfo'
 import ContactInfo from './ContactInfo'
 import UserInfo from './UserInfo'
 import Comment from './Comment'
+import Files from './Files'
 
 const SummaryForm = ({
   application,
@@ -49,12 +43,9 @@ const SummaryForm = ({
   setBeforeSubmitCallback,
 }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
+  const { createApplication } = useApplication()
   const { id, answers, externalData } = application
   const [formError, setFormError] = useState(false)
-
-  const { setValue } = useFormContext()
-
-  const formCommentId = 'formComment'
 
   const aidAmount = useMemo(() => {
     if (
@@ -71,8 +62,6 @@ const SummaryForm = ({
       )
     }
   }, [externalData.nationalRegistry?.data?.municipality])
-
-  const { createApplication } = useApplication()
 
   if (!hasSpouse(answers, externalData)) {
     setBeforeSubmitCallback &&
@@ -92,31 +81,36 @@ const SummaryForm = ({
       })
   }
 
-  const summaryItems = [
+  const formItems = [
     {
       route: Routes.INRELATIONSHIP,
       label: m.inRelationship.general.sectionTitle,
-      info: m.inRelationship.general.sectionTitle,
+      info: getMessageFamilyStatus[findFamilyStatus(answers, externalData)],
     },
     {
       route: Routes.HOMECIRCUMSTANCES,
       label: m.homeCircumstancesForm.general.sectionTitle,
-      info: answers?.homeCircumstances.type === HomeCircumstances.OTHER
-        ? answers?.homeCircumstances?.custom
-        : getMessageHomeCircumstances[answers?.homeCircumstances?.type],
+      info:
+        answers?.homeCircumstances.type === HomeCircumstances.OTHER
+          ? answers?.homeCircumstances?.custom
+          : getMessageHomeCircumstances[answers?.homeCircumstances?.type],
     },
     {
       route: Routes.STUDENT,
       label: m.studentForm.general.sectionTitle,
       info: getMessageApproveOptions[answers?.student?.isStudent],
-      comment: answers?.student?.isStudent === ApproveOptions.Yes ? answers?.student?.custom : undefined
+      comment:
+        answers?.student?.isStudent === ApproveOptions.Yes
+          ? answers?.student?.custom
+          : undefined,
     },
     {
       route: Routes.EMPLOYMENT,
       label: m.employmentForm.general.sectionTitle,
-      info: answers?.employment.type === Employment.OTHER
-        ? answers?.employment.custom
-        : getMessageEmploymentStatus[answers.employment?.type],
+      info:
+        answers?.employment.type === Employment.OTHER
+          ? answers?.employment.custom
+          : getMessageEmploymentStatus[answers.employment?.type],
     },
     {
       route: Routes.INCOME,
@@ -171,35 +165,34 @@ const SummaryForm = ({
         </Box>
       )}
 
-      <SummaryBlock editAction={() => goToScreen?.(Routes.INRELATIONSHIP)}>
-        <Text fontWeight="semiBold">
-          {formatMessage(m.inRelationship.general.sectionTitle)}
-        </Text>
+      <UserInfo
+        name={externalData?.nationalRegistry?.data?.applicant?.fullName}
+        nationalId={externalData?.nationalRegistry?.data?.applicant?.nationalId}
+        address={formatAddress(externalData?.nationalRegistry?.data?.applicant) ?? ''}
+      />
 
-        <Text>
-          {formatMessage(
-            getMessageFamilyStatus[findFamilyStatus(answers, externalData)],
-          )}
-        </Text>
-      </SummaryBlock>
-      
-      <UserInfo name={externalData?.nationalRegistry?.data?.applicant?.fullName} nationalId={externalData?.nationalRegistry?.data?.applicant?.nationalId} address={formatAddress(externalData.nationalRegistry?.data?.applicant)} />
+      <FormInfo items={formItems} goToScreen={goToScreen} />
 
-      <SummaryInfo items={summaryItems} goToScreen={goToScreen} />
+      <ContactInfo
+        route={Routes.CONTACTINFO}
+        email={answers?.contactInfo?.email}
+        phone={answers?.contactInfo?.phone}
+        goToScreen={goToScreen}
+      />
 
-      <ContactInfo route={Routes.CONTACTINFO} email={answers?.contactInfo?.email} phone={answers?.contactInfo?.phone} goToScreen={goToScreen} />
-
-      <AllFiles
-        route={answers.income === ApproveOptions.Yes
-          ? Routes.INCOMEFILES
-          : Routes.TAXRETURNFILES}
+      <Files
+        route={
+          answers.income === ApproveOptions.Yes
+            ? Routes.INCOMEFILES
+            : Routes.TAXRETURNFILES
+        }
         goToScreen={goToScreen}
         taxFiles={answers.taxReturnFiles}
         incomeFiles={answers.incomeFiles}
         applicationId={id}
       />
 
-      <Comment commentId={formCommentId} comment={answers?.formComment} />
+      <Comment commentId="formComment" comment={answers?.formComment ?? ''} />
 
       <Box
         className={cn(styles.errorMessage, {

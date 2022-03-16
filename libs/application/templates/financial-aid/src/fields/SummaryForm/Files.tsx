@@ -1,0 +1,81 @@
+import React from 'react'
+import { UploadFile, Box, Icon, Text } from '@island.is/island-ui/core'
+
+import { useMutation } from '@apollo/client'
+import { encodeFilenames } from '../../lib/utils'
+import { CreateSignedUrlMutation } from '../../lib/hooks/useFileUpload'
+
+import * as styles from '../Shared.css'
+import SummaryBlock from './SummaryBlock'
+import { Routes } from '../../lib/constants'
+
+interface Props {
+  goToScreen?: (id: string) => void
+  route: Routes
+  taxFiles: UploadFile[]
+  incomeFiles: UploadFile[]
+  applicationId: string
+}
+
+const Files = ({
+  route,
+  goToScreen,
+  taxFiles,
+  incomeFiles,
+  applicationId,
+}: Props) => {
+  const allFiles = taxFiles.concat(incomeFiles)
+
+  const [createSignedUrlMutation] = useMutation(CreateSignedUrlMutation)
+
+  return (
+    <SummaryBlock editAction={() => goToScreen?.(route)}>
+      <Text fontWeight="semiBold">Gögn</Text>{' '}
+      {allFiles &&
+        allFiles.map((file: UploadFile, index: number) => {
+          if (file) {
+            return (
+              <a
+                onClick={() => {
+                  createSignedUrlMutation({
+                    variables: {
+                      input: {
+                        fileName: encodeFilenames(file.name),
+                        folder: applicationId,
+                      },
+                    },
+                  }).then((response) => {
+                    window.open(response.data?.getSignedUrl.url)
+                  })
+                }}
+                key={`file-` + index}
+                target="_blank"
+                download
+                rel="noreferrer noopener"
+                className={styles.filesButtons}
+              >
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  marginBottom="smallGutter"
+                >
+                  <Box marginRight={1} display="flex" alignItems="center">
+                    <Icon
+                      color="blue400"
+                      icon="document"
+                      size="small"
+                      type="outline"
+                    />
+                  </Box>
+
+                  <Text>{file.name}</Text>
+                </Box>
+              </a>
+            )
+          }
+        })}
+    </SummaryBlock>
+  )
+}
+
+export default Files
