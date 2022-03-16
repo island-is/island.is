@@ -29,11 +29,9 @@ import {
   caseTypes,
   formatCustodyRestrictions,
   formatDate,
-  formatTravelBanRestrictions,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
-  CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
   Gender,
@@ -214,21 +212,13 @@ export const CourtRecord: React.FC = () => {
             'endOfSessionBookings',
             `${
               isAcceptingCaseDecision(theCase.decision)
-                ? formatCustodyRestrictions(
+                ? `${formatCustodyRestrictions(
                     theCase.requestedCustodyRestrictions,
                     theCase.isCustodyIsolation,
                     true,
-                  )
-                : formatTravelBanRestrictions(
-                    theCase.defendants && theCase.defendants.length > 0
-                      ? theCase.defendants[0].gender
-                      : undefined,
-                    [
-                      CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
-                      CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
-                    ],
-                  )
-            }\n\n${formatMessage(m.sections.custodyRestrictions.disclaimer, {
+                  )}\n\n`
+                : ''
+            }${formatMessage(m.sections.custodyRestrictions.disclaimer, {
               caseType:
                 theCase.decision ===
                 CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
@@ -244,18 +234,11 @@ export const CourtRecord: React.FC = () => {
         )}`
 
         if (isAcceptingCaseDecision(theCase.decision)) {
-          const travelBanRestrictions = formatTravelBanRestrictions(
-            theCase.defendants && theCase.defendants.length > 0
-              ? theCase.defendants[0].gender
-              : undefined,
-            theCase.requestedCustodyRestrictions,
-            theCase.requestedOtherRestrictions,
-          )
-
           autofill(
             'endOfSessionBookings',
             `${
-              travelBanRestrictions && `${travelBanRestrictions}\n\n`
+              workingCase.requestedOtherRestrictions &&
+              `${workingCase.requestedOtherRestrictions}\n\n`
             }${formatMessage(m.sections.custodyRestrictions.disclaimer, {
               caseType: 'farbannsins',
             })}`,
