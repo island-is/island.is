@@ -33,6 +33,7 @@ import { CustomNextError } from '@island.is/web/units/errors'
 import getConfig from 'next/config'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { useRouter } from 'next/router'
 
 const { publicRuntimeConfig } = getConfig()
 
@@ -61,19 +62,20 @@ const Homestay: Screen<HomestayProps> = ({
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
-  const pageUrl = `${organizationPage.slug}/${subpage.slug}`
+  const Router = useRouter()
+
+  const pageUrl = Router.pathname
 
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink.text,
       href: primaryLink.url,
       active:
-        primaryLink.url.includes(pageUrl) ||
-        childrenLinks.some((link) => link.url.includes(pageUrl)),
+        primaryLink.url === pageUrl ||
+        childrenLinks.some((link) => link.url === pageUrl),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
-        active: url.includes(pageUrl),
       })),
     }),
   )
@@ -205,8 +207,6 @@ Homestay.getInitialProps = async ({ apolloClient, locale, pathname }) => {
   const slug = pathname.split('/')?.[locale !== 'is' ? 3 : 2] ?? 'syslumenn'
   const subSlug =
     pathname.split('/')?.[locale !== 'is' ? 4 : 3] ?? 'heimagisting'
-
-  console.log(slug, subSlug)
 
   const [
     {
