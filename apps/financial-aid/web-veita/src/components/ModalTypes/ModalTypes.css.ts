@@ -51,13 +51,16 @@ export const rejectionEditable = style({
     display: 'block',
     width: 'calc(100% - 8px)',
     position: 'absolute',
-    bottom: '2px',
+    bottom: '0.5px',
     backgroundColor: theme.color.blue300,
     height: '2px',
   },
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       fontSize: theme.spacing[3],
+      '::before': {
+        bottom: '2px',
+      },
     },
   },
 })
