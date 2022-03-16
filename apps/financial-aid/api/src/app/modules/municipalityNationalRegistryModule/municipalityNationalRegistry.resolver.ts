@@ -42,9 +42,13 @@ export class MunicipalityNationalRegistryResolver {
     @Context('req') { user }: { user: User },
     @Parent() person: Person,
   ): Promise<UserSpouse | undefined> {
-    return await this.nationalRegistryXRoadService.getSpouse(
-      user,
-      person.nationalId,
-    )
+    return await this.nationalRegistryXRoadService
+      .getSpouse(user, person.nationalId)
+      .then((res) => {
+        return res
+      })
+      .catch((err) => {
+        return undefined
+      })
   }
 }
