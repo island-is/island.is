@@ -263,6 +263,14 @@ export const UpdateApplicationMutation = gql`
       interview
       employmentCustom
       homeCircumstancesCustom
+      familyStatus
+      spouseNationalId
+      spouseName
+      spouseEmail
+      spousePhoneNumber
+      city
+      streetName
+      postalCode
       files {
         id
         applicationId
@@ -273,8 +281,8 @@ export const UpdateApplicationMutation = gql`
       }
       state
       formComment
+      spouseFormComment
       studentCustom
-      spouseNationalId
       rejection
       applicationEvents {
         id
@@ -282,12 +290,13 @@ export const UpdateApplicationMutation = gql`
         eventType
         comment
         created
-        staffNationalId
         staffName
+        staffNationalId
       }
       staff {
         name
         municipalityId
+        nationalId
       }
       directTaxPayments {
         totalSalary
