@@ -1,13 +1,14 @@
+import { Module } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import * as z from 'zod'
+
 import {
   ServerSideFeatureClient,
   ServerSideFeatureNames,
 } from '@island.is/feature-flags'
 import { logger } from '@island.is/logging'
 
-import { defineConfig, ConfigModule, ConfigType, ConfigFactory } from '../..'
-import { Module } from '@nestjs/common'
+import { ConfigFactory, ConfigModule, ConfigType, defineConfig } from '../..'
 
 async function testInjection<T extends ConfigFactory>(config: T) {
   const moduleRef = await Test.createTestingModule({
