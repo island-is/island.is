@@ -1,26 +1,15 @@
 import React from 'react'
 
 import { Box } from '@island.is/island-ui/core'
-import {
-  Employment,
-  HomeCircumstances,
-} from '@island.is/financial-aid/shared/lib'
 
 import * as m from '../../lib/messages'
 import { ApproveOptions, FAFieldBaseProps } from '../../lib/types'
-
 import { Routes } from '../../lib/constants'
 import { DescriptionText } from '../index'
 import {
   formatAddress,
-  formatBankInfo,
-  getMessageApproveOptions,
   getMessageApproveOptionsForIncome,
-  getMessageEmploymentStatus,
-  getMessageHomeCircumstances,
-  getMessageFamilyStatus,
 } from '../../lib/formatters'
-import { findFamilyStatus } from '../../lib/utils'
 import FormInfo from './FormInfo'
 import ContactInfo from './ContactInfo'
 import UserInfo from './UserInfo'
@@ -32,7 +21,6 @@ const SummaryForm = ({
   goToScreen,
 }: FAFieldBaseProps) => {
   const { id, answers, externalData } = application
-
   const formItems = [
     {
       route: Routes.SPOUSEINCOME,
@@ -55,12 +43,12 @@ const SummaryForm = ({
 
       <FormInfo items={formItems} goToScreen={goToScreen} />
 
-      {/* <ContactInfo
-        route={Routes.CONTACTINFO}
-        email={answers?.contactInfo?.email}
-        phone={answers?.contactInfo?.phone}
+      <ContactInfo
+        route={Routes.SPOUSECONTACTINFO}
+        email={answers?.spouseContactInfo?.email}
+        phone={answers?.spouseContactInfo?.phone}
         goToScreen={goToScreen}
-      /> */}
+      />
 
       <Files
         route={
