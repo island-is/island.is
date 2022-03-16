@@ -95,12 +95,12 @@ export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
     <>
       <Box paddingY={4}>
         <Text paddingY={2} variant={'h4'}>
-          Hér að neðan getur þú einnig leitað í fasteignanúmerum annarra eigna
+          {formatMessage(m.propertySearchInfoMessage)}
         </Text>
 
         <Box display="inlineBlock" marginLeft="smallGutter">
           <ArrowLink href="https://skra.is/default.aspx?pageid=d5db1b6d-0650-11e6-943c-005056851dd2">
-            Hér getur þú nálgast nánari uppýsingar um eignina á skrá
+            {formatMessage(m.propertySearchInfoLink)}
           </ArrowLink>
         </Box>
       </Box>

@@ -366,6 +366,18 @@ export const m = defineMessages({
     description:
       'You will be notified by email [email address] after the review and can then try again and complete your application.',
   },
+  propertySearchInfoMessage: {
+    id: 'property.searchInfoMessage',
+    defaultMessage:
+      'Hér að neðan getur þú einnig leitað í fasteignanúmerum annarra eigna',
+    description:
+      'Below you can also search the real estate numbers of other properties',
+  },
+  propertySearchInfoLink: {
+    id: 'property.searchInfoLink',
+    defaultMessage: 'Hér getur þú nálgast nánari uppýsingar um eignina á skrá',
+    description: 'Here you can get more information about the property on file',
+  },
   mysites: {
     id: 'mc.mysites',
     defaultMessage: 'Mínar síður',

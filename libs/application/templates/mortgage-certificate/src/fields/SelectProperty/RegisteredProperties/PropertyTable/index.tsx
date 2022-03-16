@@ -45,20 +45,17 @@ export const PropertyTable: FC<
             </T.Row>
           </T.Head>
           <T.Body>
-            {myProperties
-              ? myProperties.map((p: PropertyDetail) => {
-                  return (
-                    <PropertyTableRow
-                      application={application}
-                      field={field}
-                      key={p.propertyNumber}
-                      selectHandler={selectHandler}
-                      propertyInfo={p}
-                      selectedPropertyNumber={selectedPropertyNumber}
-                    />
-                  )
-                })
-              : undefined}
+            {myProperties &&
+              myProperties.map((p: PropertyDetail) => (
+                <PropertyTableRow
+                  application={application}
+                  field={field}
+                  key={p.propertyNumber}
+                  selectHandler={selectHandler}
+                  propertyInfo={p}
+                  selectedPropertyNumber={selectedPropertyNumber}
+                />
+              ))}
           </T.Body>
         </T.Table>
       </Box>
