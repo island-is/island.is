@@ -271,13 +271,13 @@ export const coreErrorMessages = defineMessages({
 export const coreDelegationsMessages = defineMessages({
   delegationScreenTitle: {
     id: 'application.system:core.delegations.delegationScreenTitle',
-    defaultMessage: 'Veldu notanda',
+    defaultMessage: 'Umsóknaraðili',
     description: 'Delegations screen title',
   },
   delegationScreenSubtitle: {
     id: 'application.system:core.delegations.delegationScreenSubtitle',
     defaultMessage:
-      'Hér getur þú valið fyrir hvaða einstakling þú vilt hefja umsókn um P-kort.',
+      'Hér getur þú valið fyrir hvaða einstakling þú vilt hefja umsókn um stæðiskort.',
     description: 'Delegations screen subtitle for new application',
   },
   delegationActionCardText: {
@@ -293,7 +293,7 @@ export const coreDelegationsMessages = defineMessages({
   delegationScreenTitleForOngoingApplication: {
     id:
       'application.system:core.delegations.delegationScreenTitleForOngoingApplication',
-    defaultMessage: 'Halda áfram',
+    defaultMessage: 'Umsókn um stæðiskort',
     description: 'Delegations screen title for ongoing application',
   },
   delegationScreenSubtitleForOngoingApplication: {
