@@ -358,7 +358,9 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                   user={user}
                 />
               )}
-              {(workingCase.comments || workingCase.caseFilesComments) && (
+              {(workingCase.comments ||
+                workingCase.caseFilesComments ||
+                workingCase.caseResentExplanation) && (
                 <CommentsAccordionItem workingCase={workingCase} />
               )}
             </Accordion>
