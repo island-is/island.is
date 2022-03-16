@@ -122,6 +122,14 @@ export const dataSchema = z.object({
     .refine((v) => v, {
       params: error.validation.radioErrorMessage,
     }),
+  spouseContactInfo: z.object({
+    email: z.string().refine((v) => isValidEmail(v), {
+      params: error.validation.email,
+    }),
+    phone: z.string().refine((v) => isValidPhone(v), {
+      params: error.validation.phone,
+    }),
+  }),
 })
 
 export type answersSchema = z.infer<typeof dataSchema>
