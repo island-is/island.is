@@ -21,3 +21,4 @@ export { default as TaxReturnFilesForm } from './TaxReturnFilesForm/TaxReturnFil
 export { default as Breakdown } from './Breakdown/Breakdown'
 export { default as AboutSpouseForm } from './AboutSpouseForm/AboutSpouseForm'
 export { default as PrivacyPolicyAccordion } from './PrivacyPolicyAccordion/PrivacyPolicyAccordion'
+export { default as ServiceCenter } from './ServiceCenter/ServiceCenter'
