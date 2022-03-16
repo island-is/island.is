@@ -45,6 +45,7 @@ type autofillProperties = Pick<
   | 'ruling'
   | 'endOfSessionBookings'
   | 'introduction'
+  | 'requestedOtherRestrictions'
 >
 
 type autofillSessionArrangementProperties = Pick<Case, 'sessionArrangements'>
