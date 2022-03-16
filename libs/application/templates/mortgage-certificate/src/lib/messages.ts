@@ -378,7 +378,7 @@ export const m = defineMessages({
     defaultMessage: 'Hér getur þú nálgast nánari uppýsingar um eignina á skrá',
     description: 'Here you can get more information about the property on file',
   },
-  
+
   propertyCertificateError: {
     id: 'property.searchInfoLink',
     defaultMessage: 'Ekki gekk að sækja vottorð fyrir þessa eign',
@@ -386,8 +386,10 @@ export const m = defineMessages({
   },
   propertyCertificateErrorContactSheriff: {
     id: 'property.searchInfoLink',
-    defaultMessage: 'Vinsamlega hafðu samband við sýslumann, það er búið að senda inn beiðni um leiðréttingu',
-    description: 'Please contact the sheriff, a request for correction has been submitted',
+    defaultMessage:
+      'Vinsamlega hafðu samband við sýslumann, það er búið að senda inn beiðni um leiðréttingu',
+    description:
+      'Please contact the sheriff, a request for correction has been submitted',
   },
   mysites: {
     id: 'mc.mysites',
