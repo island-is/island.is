@@ -114,14 +114,14 @@ export const Overview: React.FC = () => {
       <AnimatePresence>
         {resendCaseModalVisible && (
           <Modal
-            title={formatMessage(icOverview.sections.extendCaseModal.heading)}
-            text={formatMessage(icOverview.sections.extendCaseModal.text)}
+            title={formatMessage(icOverview.sections.caseResentModal.heading)}
+            text={formatMessage(icOverview.sections.caseResentModal.text)}
             handleClose={() => setResendCaseModalVisible(false)}
             primaryButtonText={formatMessage(
-              icOverview.sections.extendCaseModal.primaryButtonText,
+              icOverview.sections.caseResentModal.primaryButtonText,
             )}
             secondaryButtonText={formatMessage(
-              icOverview.sections.extendCaseModal.secondaryButtonText,
+              icOverview.sections.caseResentModal.secondaryButtonText,
             )}
             handleSecondaryButtonClick={() => {
               setResendCaseModalVisible(false)
@@ -136,10 +136,10 @@ export const Overview: React.FC = () => {
               <Input
                 name="extensionExplination"
                 label={formatMessage(
-                  icOverview.sections.extendCaseModal.input.label,
+                  icOverview.sections.caseResentModal.input.label,
                 )}
                 placeholder={formatMessage(
-                  icOverview.sections.extendCaseModal.input.placeholder,
+                  icOverview.sections.caseResentModal.input.placeholder,
                 )}
                 onChange={(evt) => setCaseResentExplanation(evt.target.value)}
                 textarea
