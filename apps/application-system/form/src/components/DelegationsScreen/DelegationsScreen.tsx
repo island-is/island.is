@@ -12,9 +12,13 @@ import {
   Page,
 } from '@island.is/island-ui/core'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
-import { ApplicationTypes } from '@island.is/application/core'
+import {
+  ApplicationTypes,
+  coreDelegationsMessages,
+} from '@island.is/application/core'
 import { ApplicationLoading } from '../ApplicationsLoading/ApplicationLoading'
 import { format as formatKennitala } from 'kennitala'
+import { useLocale } from '@island.is/localization'
 
 type Delegation = {
   type: string
@@ -37,6 +41,7 @@ export const DelegationsScreen = ({
   const [allowedDelegations, setAllowedDelegations] = useState<string[]>()
   const history = useHistory()
   const { switchUser, userInfo: user } = useAuth()
+  const { formatMessage } = useLocale()
 
   // Check if application supports delegations
   useEffect(() => {
@@ -82,12 +87,10 @@ export const DelegationsScreen = ({
       <GridContainer>
         <Box marginTop={5} marginBottom={5}>
           <Text marginBottom={2} variant="h1">
-            Veldu notanda
+            {formatMessage(coreDelegationsMessages.delegationScreenTitle)}
           </Text>
           <Text>
-            Þessi umsókn styður... lorem ipsum dolor sit amet, consectetur
-            adipiscing elit. Eget eget diam eget rutrum vestibulum, amet, lacus.
-            Ornare volutpat massa ac gravida pellentesque.
+            {formatMessage(coreDelegationsMessages.delegationScreenSubtitle)}
           </Text>
         </Box>
         <Stack space={2}>
@@ -97,13 +100,15 @@ export const DelegationsScreen = ({
               user.profile.actor ? user.profile.actor?.name : user.profile.name
             }
             text={
-              'Kennitala: ' +
+              formatMessage(coreDelegationsMessages.delegationActionCardText) +
               (user.profile.actor
                 ? formatKennitala(user.profile.actor?.nationalId)
                 : formatKennitala(user.profile.nationalId))
             }
             cta={{
-              label: 'Hefja umsókn',
+              label: formatMessage(
+                coreDelegationsMessages.delegationActionCardButton,
+              ),
               variant: 'text',
               size: 'medium',
               onClick: () =>
@@ -123,10 +128,14 @@ export const DelegationsScreen = ({
                   avatar
                   heading={delegation.from.name}
                   text={
-                    'Kennitala: ' + formatKennitala(delegation.from.nationalId)
+                    formatMessage(
+                      coreDelegationsMessages.delegationActionCardText,
+                    ) + formatKennitala(delegation.from.nationalId)
                   }
                   cta={{
-                    label: 'Hefja umsókn',
+                    label: formatMessage(
+                      coreDelegationsMessages.delegationActionCardButton,
+                    ),
                     variant: 'text',
                     size: 'medium',
                     onClick: () =>

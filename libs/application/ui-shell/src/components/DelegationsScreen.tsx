@@ -6,9 +6,10 @@ import {
   Text,
   Box,
   Page,
-  Button,
+  ActionCard,
   GridContainer,
 } from '@island.is/island-ui/core'
+import { coreDelegationsMessages } from '@island.is/application/core'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { ApplicationTypes } from '@island.is/application/core'
 import { LoadingShell } from './LoadingShell'
@@ -18,6 +19,8 @@ import {
   ProblemType,
 } from '@island.is/shared/problem'
 import { ErrorShell } from './ErrorShell'
+import { format as formatKennitala } from 'kennitala'
+import { useLocale } from '@island.is/localization'
 
 type Delegation = {
   type: string
@@ -37,6 +40,7 @@ export const DelegationsScreen = ({
 }: DelegationsScreenProps) => {
   const [allowedDelegations, setAllowedDelegations] = useState<string[]>()
   const [applicant, setApplicant] = useState<Delegation>()
+  const { formatMessage } = useLocale()
 
   const { switchUser } = useAuth()
 
@@ -103,23 +107,29 @@ export const DelegationsScreen = ({
         <GridContainer>
           <Box>
             <Box marginTop={5} marginBottom={5}>
-              <Text variant="h1">
-                Þessi umsókn var hafinn fyrir {applicant.name}
+              <Text marginBottom={2} variant="h1">
+                {formatMessage(
+                  coreDelegationsMessages.delegationScreenTitleForOngoingApplication,
+                )}
+              </Text>
+              <Text>
+                {formatMessage(
+                  coreDelegationsMessages.delegationScreenSubtitleForOngoingApplication,
+                )}
               </Text>
             </Box>
 
-            <Box
-              marginTop={5}
-              marginBottom={5}
-              display="flex"
-              justifyContent="flexEnd"
-              key={applicant.nationalId}
-            >
-              <Text variant="h1">{applicant.name}</Text>
-              <Button onClick={() => handleClick(applicant.nationalId)}>
-                Halda áfram
-              </Button>
-            </Box>
+            <ActionCard
+              avatar
+              heading={applicant.name}
+              text={'Kennitala: ' + formatKennitala(applicant.nationalId)}
+              cta={{
+                label: 'Halda áfram',
+                variant: 'text',
+                size: 'medium',
+                onClick: () => handleClick(applicant.nationalId),
+              }}
+            />
           </Box>
         </GridContainer>
       </Page>
