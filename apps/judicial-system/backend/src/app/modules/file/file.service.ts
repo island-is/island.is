@@ -221,20 +221,12 @@ export class FileService {
     )
 
     const documentId = await this.throttle
-
-    const s3Key = file.key
-
     const [nrOfRowsUpdated] = await this.fileModel.update(
       { state: CaseFileState.STORED_IN_COURT, key: documentId },
       { where: { id: file.id } },
     )
 
     const success = nrOfRowsUpdated > 0
-
-    if (success) {
-      // Fire and forget, no need to wait for the result
-      this.tryDeleteFileFromS3(s3Key)
-    }
 
     return { success }
   }
