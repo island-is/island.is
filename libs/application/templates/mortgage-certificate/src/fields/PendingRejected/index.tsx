@@ -14,7 +14,7 @@ import { PropertyDetail } from '../../types/schema'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 
-export const PendingRejected: FC<FieldBaseProps> = ({ application, field }) => {
+export const PendingRejected: FC<FieldBaseProps> = ({ application }) => {
   const { externalData } = application
   const { formatMessage } = useLocale()
 

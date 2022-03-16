@@ -13,15 +13,7 @@ interface PropertyTableProps {
 
 export const PropertyTable: FC<
   FieldBaseProps & PropertyTableProps & PropertyDetail
-> = ({
-  application,
-  field,
-  selectHandler,
-  propertyInfo,
-  selectedPropertyNumber,
-}) => {
-  const { id } = field
-
+> = ({ selectHandler, propertyInfo, selectedPropertyNumber }) => {
   const unitOfUse = (propertyInfo?.unitsOfUse?.unitsOfUse || [])[0]
 
   const propertyNumber = propertyInfo?.propertyNumber || ''

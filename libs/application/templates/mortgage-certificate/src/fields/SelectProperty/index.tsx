@@ -1,11 +1,4 @@
-import React, {
-  FC,
-  RefAttributes,
-  useEffect,
-  useState,
-  useRef,
-  MutableRefObject,
-} from 'react'
+import React, { FC, useEffect, useState, useRef } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import { Box, AlertMessage, SkeletonLoader } from '@island.is/island-ui/core'
 import { PropertiesManager } from './PropertiesManager'
@@ -18,12 +11,8 @@ export const validateCertificateQuery = gql`
   ${VALIDATE_MORTGAGE_CERTIFICATE_QUERY}
 `
 
-export const SelectProperty: FC<FieldBaseProps> = ({
-  application,
-  field,
-  refetch,
-}) => {
-  const { externalData, answers } = application
+export const SelectProperty: FC<FieldBaseProps> = ({ application, field }) => {
+  const { externalData } = application
   const [continuePolling, setContinuePolling] = useState(true)
   const [showErrorMsg, setShowErrorMsg] = useState<boolean>(false)
   const { formatMessage } = useLocale()

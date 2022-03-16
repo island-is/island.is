@@ -5,9 +5,7 @@ import { RegisteredProperties } from '../RegisteredProperties'
 import { SearchProperties } from '../SearchProperties'
 import { PropertyDetail } from '../../../types/schema'
 
-interface PropertiesManagerProps {}
-
-export const PropertiesManager: FC<FieldBaseProps & PropertiesManagerProps> = ({
+export const PropertiesManager: FC<FieldBaseProps> = ({
   application,
   field,
 }) => {

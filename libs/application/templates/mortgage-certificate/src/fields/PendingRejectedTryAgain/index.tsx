@@ -18,7 +18,6 @@ export const validateCertificateQuery = gql`
 
 export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
   application,
-  field,
   refetch,
 }) => {
   const { externalData } = application
