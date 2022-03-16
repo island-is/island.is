@@ -15,44 +15,39 @@ const UserInfo = ({ name, nationalId, address }: Props) => {
   const { formatMessage } = useIntl()
 
   return (
-    <>
-      <Box marginTop={[4, 4, 5]}>
-        <DescriptionText text={m.summaryForm.general.calculationsOverview} />
-      </Box>
-      <Box
-        paddingY={[4, 4, 5]}
-        marginTop={4}
-        borderTopWidth="standard"
-        borderColor="blue300"
-      >
-        <GridRow marginBottom={3}>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-            <Box>
-              <Text fontWeight="semiBold">
-                {formatMessage(m.summaryForm.userInfo.name)}
-              </Text>
-              <Text>{name}</Text>
-            </Box>
-          </GridColumn>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-            <Box marginTop={[3, 3, 3, 0]}>
-              <Text fontWeight="semiBold">
-                {formatMessage(m.summaryForm.userInfo.nationalId)}
-              </Text>
-              <Text>{nationalId}</Text>
-            </Box>
-          </GridColumn>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-            <Box marginTop={3}>
-              <Text fontWeight="semiBold">
-                {formatMessage(m.summaryForm.userInfo.address)}
-              </Text>
-              <Text>{address}</Text>
-            </Box>
-          </GridColumn>
-        </GridRow>
-      </Box>
-    </>
+    <Box
+      paddingY={[4, 4, 5]}
+      marginTop={4}
+      borderTopWidth="standard"
+      borderColor="blue300"
+    >
+      <GridRow marginBottom={3}>
+        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+          <Box>
+            <Text fontWeight="semiBold">
+              {formatMessage(m.summaryForm.userInfo.name)}
+            </Text>
+            <Text>{name}</Text>
+          </Box>
+        </GridColumn>
+        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+          <Box marginTop={[3, 3, 3, 0]}>
+            <Text fontWeight="semiBold">
+              {formatMessage(m.summaryForm.userInfo.nationalId)}
+            </Text>
+            <Text>{nationalId}</Text>
+          </Box>
+        </GridColumn>
+        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+          <Box marginTop={3}>
+            <Text fontWeight="semiBold">
+              {formatMessage(m.summaryForm.userInfo.address)}
+            </Text>
+            <Text>{address}</Text>
+          </Box>
+        </GridColumn>
+      </GridRow>
+    </Box>
   )
 }
 

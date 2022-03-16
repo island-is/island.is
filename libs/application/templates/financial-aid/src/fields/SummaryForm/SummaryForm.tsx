@@ -165,6 +165,10 @@ const SummaryForm = ({
         </Box>
       )}
 
+      <Box marginTop={[4, 4, 5]}>
+        <DescriptionText text={m.summaryForm.general.calculationsOverview} />
+      </Box>
+
       <UserInfo
         name={externalData?.nationalRegistry?.data?.applicant?.fullName}
         nationalId={externalData?.nationalRegistry?.data?.applicant?.nationalId}
