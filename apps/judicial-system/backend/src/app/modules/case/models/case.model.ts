@@ -529,7 +529,7 @@ export class Case extends Model<Case> {
    * A list of additional court documents - optional
    **********/
   @Column({
-    type: DataType.ARRAY(DataType.STRING),
+    type: DataType.ARRAY(DataType.JSON),
     allowNull: true,
   })
   @ApiProperty()
