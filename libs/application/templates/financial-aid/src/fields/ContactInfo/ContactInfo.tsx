@@ -1,25 +1,21 @@
 import React from 'react'
 import { Text, Box } from '@island.is/island-ui/core'
-import { FAFieldBaseProps, InputTypes } from '../../lib/types'
+import { FAFieldBaseProps } from '../../lib/types'
 import { useIntl } from 'react-intl'
 import { contactInfo } from '../../lib/messages'
 import { InputController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
+import { getValueViaPath } from '@island.is/application/core'
+import { answersSchema } from '../../lib/dataSchema'
 
-const ContactInfo = ({ errors, application }: FAFieldBaseProps) => {
+const ContactInfo = ({ field, errors, application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { answers } = application
+  const { id } = field
   const { clearErrors } = useFormContext()
 
-  const emailInput = {
-    id: 'contactInfo.email',
-    error: errors?.contactInfo?.email,
-  } as InputTypes
-
-  const phoneInput = {
-    id: 'contactInfo.phone',
-    error: errors?.contactInfo?.phone,
-  } as InputTypes
+  const emailPath = `${id}.email`
+  const phonePath = `${id}.phone`
 
   return (
     <>
@@ -28,31 +24,31 @@ const ContactInfo = ({ errors, application }: FAFieldBaseProps) => {
       </Text>
       <Box marginTop={[2, 2, 4]}>
         <InputController
-          id={emailInput.id}
-          name={emailInput.id}
+          id={emailPath}
+          name={emailPath}
           backgroundColor="blue"
           type="email"
           label={formatMessage(contactInfo.emailInput.label)}
           placeholder={formatMessage(contactInfo.emailInput.placeholder)}
-          error={emailInput.error}
-          defaultValue={answers?.contactInfo?.email}
+          error={getValueViaPath(errors, emailPath)}
+          defaultValue={getValueViaPath(answers as answersSchema, emailPath)}
           onChange={() => {
-            clearErrors(emailInput.error)
+            clearErrors(emailPath)
           }}
         />
       </Box>
       <Box marginTop={[2, 2, 3]}>
         <InputController
-          id={phoneInput.id}
-          name={phoneInput.id}
+          id={phonePath}
+          name={phonePath}
           backgroundColor="blue"
           type="tel"
           label={formatMessage(contactInfo.phoneInput.label)}
           placeholder={formatMessage(contactInfo.phoneInput.placeholder)}
-          error={phoneInput.error}
-          defaultValue={answers?.contactInfo?.phone}
+          error={getValueViaPath(errors, phonePath)}
+          defaultValue={getValueViaPath(answers as answersSchema, phonePath)}
           onChange={() => {
-            clearErrors(phoneInput.id)
+            clearErrors(phonePath)
           }}
         />
       </Box>
