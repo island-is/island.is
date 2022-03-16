@@ -39,7 +39,7 @@ const courtClaimPrefill: Partial<
   >
 > = {
   [CaseType.SEARCH_WARRANT]: {
-    text: icDemands.sections.demands.prefill.searchWarrant,
+    text: icDemands.sections.demands.prefill.searchWarrant2,
     format: {
       court: true,
       accused: true,
@@ -49,19 +49,19 @@ const courtClaimPrefill: Partial<
     },
   },
   [CaseType.BANKING_SECRECY_WAIVER]: {
-    text: icDemands.sections.demands.prefill.bankingSecrecyWaiver,
+    text: icDemands.sections.demands.prefill.bankingSecrecyWaiver2,
     format: { court: true, accused: true },
   },
   [CaseType.PHONE_TAPPING]: {
-    text: icDemands.sections.demands.prefill.phoneTapping,
+    text: icDemands.sections.demands.prefill.phoneTapping2,
     format: { court: true, institution: true, accused: true },
   },
   [CaseType.TELECOMMUNICATIONS]: {
-    text: icDemands.sections.demands.prefill.teleCommunications,
+    text: icDemands.sections.demands.prefill.teleCommunications2,
     format: { court: true, institution: true, accused: true },
   },
   [CaseType.TRACKING_EQUIPMENT]: {
-    text: icDemands.sections.demands.prefill.trackingEquipment,
+    text: icDemands.sections.demands.prefill.trackingEquipment2,
     format: { court: true, institution: true, accused: true },
   },
   [CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION]: {
