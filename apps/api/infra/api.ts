@@ -13,6 +13,7 @@ import {
   PaymentSchedule,
   CriminalRecord,
   RskCompanyInfo,
+  DrivingLicenseBook,
 } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
 
@@ -156,10 +157,6 @@ export const serviceSetup = (services: {
       ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
       ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
-      DRIVING_LICNESE_BOOK_XROAD_PATH:
-        '/k8s/api/DRIVING_LICNESE_BOOK_XROAD_PATH',
-      DRIVING_LICNESE_BOOK_USERNAME: '/k8s/api/DRIVING_LICNESE_BOOK_USERNAME',
-      DRIVING_LICNESE_BOOK_PASSWORD: '/k8s/api/DRIVING_LICNESE_BOOK_PASSWORD',
     })
     .xroad(
       Base,
@@ -175,6 +172,7 @@ export const serviceSetup = (services: {
       PaymentSchedule,
       CriminalRecord,
       RskCompanyInfo,
+	  DrivingLicenseBook,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
