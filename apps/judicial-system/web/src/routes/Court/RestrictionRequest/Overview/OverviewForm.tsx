@@ -215,7 +215,9 @@ const OverviewForm: React.FC<Props> = (props) => {
                 )}
               </AccordionItem>
             )}
-            {(workingCase.comments || workingCase.caseFilesComments) && (
+            {(workingCase.comments ||
+              workingCase.caseFilesComments ||
+              workingCase.caseResentExplanation) && (
               <CommentsAccordionItem workingCase={workingCase} />
             )}
             {user && (

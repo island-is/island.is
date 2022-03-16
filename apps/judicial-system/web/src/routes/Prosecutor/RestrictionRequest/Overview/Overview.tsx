@@ -330,7 +330,9 @@ export const Overview: React.FC = () => {
                 />
               </Box>
             </AccordionItem>
-            {(workingCase.comments || workingCase.caseFilesComments) && (
+            {(workingCase.comments ||
+              workingCase.caseFilesComments ||
+              workingCase.caseResentExplanation) && (
               <CommentsAccordionItem workingCase={workingCase} />
             )}
           </Accordion>
