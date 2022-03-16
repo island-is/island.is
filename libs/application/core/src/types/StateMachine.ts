@@ -78,7 +78,6 @@ export type StateLifeCycle =
 export interface ApplicationStateMeta<T extends EventObject = AnyEventObject> {
   name: string
   lifecycle: StateLifeCycle
-  canDelete?: boolean
   actionCard?: {
     title?: StaticText
     description?: StaticText

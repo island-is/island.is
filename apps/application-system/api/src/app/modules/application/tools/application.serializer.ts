@@ -63,6 +63,10 @@ export class ApplicationSerializer
     const namespaces = await getApplicationTranslationNamespaces(application)
     const intl = await this.intlService.useIntl(namespaces, locale)
 
+    const userRole = template.mapUserToRole(nationalId, application) ?? ''
+    //TODO now fix
+    const role = helper.getRoleInState(userRole)
+
     const dto = plainToInstance(ApplicationResponseDto, {
       ...application,
       ...helper.getReadableAnswersAndExternalData(
@@ -82,7 +86,7 @@ export class ApplicationSerializer
             : null,
         },
         cta: {
-          delete: true,
+          delete: role?.delete,
         },
       },
       name: intl.formatMessage(template.name),

@@ -15,6 +15,9 @@ export const ApplicationFragment = gql`
         label
         variant
       }
+      cta {
+        delete
+      }
     }
     typeId
     answers

@@ -14,6 +14,7 @@ import {
   UseGuards,
   UnauthorizedException,
   Delete,
+  ForbiddenException,
 } from '@nestjs/common'
 import omit from 'lodash/omit'
 import { InjectQueue } from '@nestjs/bull'
@@ -1067,10 +1068,24 @@ export class ApplicationController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @CurrentUser() user: User,
   ) {
-    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
+    const existingApplication = (await this.applicationAccessService.findOneByIdAndNationalId(
       id,
       user.nationalId,
-    )
-    console.log('DELETE APPLICATION', existingApplication.id)
+    )) as BaseApplication
+
+    const templateId = existingApplication.typeId as ApplicationTypes
+    const template = await getApplicationTemplateByTypeId(templateId)
+    const helper = new ApplicationTemplateHelper(existingApplication, template)
+
+    const userRole = template.mapUserToRole(id, existingApplication) ?? ''
+    const role = helper.getRoleInState(userRole)
+
+    if (role?.delete) {
+      this.applicationService.delete(existingApplication.id)
+    } else {
+      throw new ForbiddenException(
+        'Users role does not have permission to delete this application in this state',
+      )
+    }
   }
 }
