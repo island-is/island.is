@@ -102,20 +102,18 @@ export class MortgageCertificateSubmissionService {
       propertyNumber,
     )
 
-    //TODOx
     // Call sýslumaður to get the document sealed before handing it over to the user
-    // const sealedDocumentResponse = await this.syslumennService.sealDocument(
-    //   document.contentBase64,
-    // )
+    const sealedDocumentResponse = await this.syslumennService.sealDocument(
+      document.contentBase64,
+    )
 
-    // if (!sealedDocumentResponse?.skjal) {
-    //   throw new Error('Eitthvað fór úrskeiðis.')
-    // }
+    if (!sealedDocumentResponse?.skjal) {
+      throw new Error('Eitthvað fór úrskeiðis.')
+    }
 
-    // const sealedDocument: MortgageCertificate = {
-    //   contentBase64: sealedDocumentResponse.skjal,
-    // }
-    const sealedDocument = { contentBase64: document.contentBase64 }
+    const sealedDocument: MortgageCertificate = {
+      contentBase64: sealedDocumentResponse.skjal,
+    }
 
     // Notify Sýslumaður that person has received the mortgage certificate
     await this.notifySyslumenn(application, sealedDocument)
