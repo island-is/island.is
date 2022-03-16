@@ -70,7 +70,7 @@ export const summaryForm = {
     },
     formCommentTitle: {
       id: 'fa.application:section.summaryForm.formInfo.formCommentTitle',
-      defaultMessage: 'Athugasemd',
+      defaultMessage: 'Útskýring umsóknar',
       description: 'Summary form input label for form comment',
     },
     formCommentPlaceholder: {
@@ -80,7 +80,7 @@ export const summaryForm = {
     },
     formCommentLabel: {
       id: 'fa.application:section.summaryForm.formInfo.formCommentLabel',
-      defaultMessage: 'Annað sem þú vilt koma á framfæri?',
+      defaultMessage: 'Frekari útskýring á umsókn',
       description: 'Summary form label above the form comment section',
     },
   }),

@@ -2,7 +2,6 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
-import { DescriptionText } from '..'
 import * as m from '../../lib/messages'
 
 interface Props {
