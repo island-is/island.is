@@ -3,7 +3,7 @@ import { MessageDescriptor, useIntl } from 'react-intl'
 
 import { Text } from '@island.is/island-ui/core'
 import { Routes } from '../../lib/constants'
-import { SummaryBlock } from '..'
+import SummaryBlock from './SummaryBlock'
 
 interface Props {
   goToScreen?: (id: string) => void
@@ -20,8 +20,8 @@ const FormInfo = ({ items, goToScreen }: Props) => {
 
   return (
     <>
-      {items.map((item) => (
-        <SummaryBlock editAction={() => goToScreen?.(item.route)}>
+      {items.map((item, i) => (
+        <SummaryBlock editAction={() => goToScreen?.(item.route)} key={i}>
           <Text fontWeight="semiBold">{formatMessage(item.label)}</Text>
 
           <Text>

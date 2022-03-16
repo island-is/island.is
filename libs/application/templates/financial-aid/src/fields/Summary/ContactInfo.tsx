@@ -3,8 +3,8 @@ import { useIntl } from 'react-intl'
 
 import { GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { Routes } from '../../lib/constants'
-import { SummaryBlock } from '..'
 import * as m from '../../lib/messages'
+import SummaryBlock from './SummaryBlock'
 
 interface Props {
   goToScreen?: (id: string) => void

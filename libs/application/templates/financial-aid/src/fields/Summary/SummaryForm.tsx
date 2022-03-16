@@ -29,7 +29,7 @@ import {
 } from '../../lib/formatters'
 import { findFamilyStatus } from '../../lib/utils'
 import useApplication from '../../lib/hooks/useApplication'
-import * as styles from './../Shared.css'
+import * as styles from '../Shared.css'
 import { hasSpouse } from '../../lib/utils'
 import FormInfo from './FormInfo'
 import ContactInfo from './ContactInfo'

@@ -27,6 +27,7 @@ const Files = ({
   const allFiles = taxFiles.concat(incomeFiles)
 
   const [createSignedUrlMutation] = useMutation(CreateSignedUrlMutation)
+  console.log(route)
 
   return (
     <SummaryBlock editAction={() => goToScreen?.(route)}>

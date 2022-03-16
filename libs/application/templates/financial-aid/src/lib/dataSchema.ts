@@ -34,11 +34,11 @@ export const dataSchema = z.object({
       (v) =>
         v.unregisteredCohabitation === ApproveOptions.Yes
           ? v.spouseEmail &&
-            isValidEmail(v.spouseEmail) &&
-            v.spouseNationalId &&
-            isValidNationalId(v.spouseNationalId) &&
-            v.spouseApproveTerms &&
-            v.spouseApproveTerms.length === 1
+          isValidEmail(v.spouseEmail) &&
+          v.spouseNationalId &&
+          isValidNationalId(v.spouseNationalId) &&
+          v.spouseApproveTerms &&
+          v.spouseApproveTerms.length === 1
           : true,
       {
         //More detailed error messages are in the UnknownRelationshipForm component
@@ -130,6 +130,7 @@ export const dataSchema = z.object({
       params: error.validation.phone,
     }),
   }),
+  spouseFormComment: z.string().optional(),
 })
 
 export type answersSchema = z.infer<typeof dataSchema>
