@@ -6,6 +6,7 @@ import { contactInfo } from '../../lib/messages'
 import { InputController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
+import { answersSchema } from '../../lib/dataSchema'
 
 const ContactInfo = ({ field, errors, application }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -30,7 +31,7 @@ const ContactInfo = ({ field, errors, application }: FAFieldBaseProps) => {
           label={formatMessage(contactInfo.emailInput.label)}
           placeholder={formatMessage(contactInfo.emailInput.placeholder)}
           error={getValueViaPath(errors, emailPath)}
-          defaultValue={getValueViaPath(answers as any, emailPath)}
+          defaultValue={getValueViaPath(answers as answersSchema, emailPath)}
           onChange={() => {
             clearErrors(emailPath)
           }}
@@ -45,7 +46,7 @@ const ContactInfo = ({ field, errors, application }: FAFieldBaseProps) => {
           label={formatMessage(contactInfo.phoneInput.label)}
           placeholder={formatMessage(contactInfo.phoneInput.placeholder)}
           error={getValueViaPath(errors, phonePath)}
-          defaultValue={getValueViaPath(answers as any, phonePath)}
+          defaultValue={getValueViaPath(answers as answersSchema, phonePath)}
           onChange={() => {
             clearErrors(phonePath)
           }}
