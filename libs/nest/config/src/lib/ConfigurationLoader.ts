@@ -47,6 +47,12 @@ export class ConfigurationLoader<T> implements EnvLoader {
       throw new ConfigurationError(this.formatConfigurationError())
     }
 
+    if (this.issues.hasMissingIssue && this.definition.optional) {
+      return new InvalidConfiguration(
+        this.formatConfigurationError(),
+      ) as Configuration<T>
+    }
+
     // Only throw missing issue in production
     if (this.issues.hasMissingIssue && !this.allowDevFallback) {
       throw new ConfigurationError(this.formatConfigurationError())
