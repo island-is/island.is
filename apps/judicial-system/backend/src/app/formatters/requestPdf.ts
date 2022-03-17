@@ -123,7 +123,7 @@ function constructRestrictionRequestPdf(
     formatMessage(m.baseInfo.defender, {
       defenderName:
         theCase.defenderName &&
-        theCase.sessionArrangements ===
+        theCase.sessionArrangements !==
           SessionArrangements.ALL_PRESENT_SPOKESPERSON
           ? theCase.defenderName
           : formatMessage(m.baseInfo.noDefender),
