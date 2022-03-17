@@ -34,9 +34,10 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
     document.title = 'Beiðni um vinnslu'
   }, [])
 
-  const { propertyDetails } = externalData.validateMortgageCertificate
-    ?.data as {
+  const { propertyDetails, validation } = externalData
+    .validateMortgageCertificate?.data as {
     propertyDetails: PropertyDetail
+    validation: { propertyNumber: string; isFromSearch: boolean }
   }
 
   const handleStateChangeAndRefetch = () => {
@@ -70,7 +71,8 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
   const { data, error, loading } = useQuery(validateCertificateQuery, {
     variables: {
       input: {
-        propertyNumber: propertyDetails?.propertyNumber,
+        propertyNumber: validation?.propertyNumber,
+        isFromSearch: validation?.isFromSearch,
       },
     },
     skip: !continuePolling,
