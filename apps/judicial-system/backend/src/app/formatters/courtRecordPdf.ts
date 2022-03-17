@@ -158,12 +158,13 @@ function constructRestrictionCourtRecordPdf(
     formatMessage(courtRecord.courtDocuments.announcement),
   )
 
-  theCase.courtDocuments?.forEach((courttDocument, index) =>
+  theCase.courtDocuments?.forEach((courtDocument, index) =>
     addNormalJustifiedText(
       doc,
       formatMessage(courtRecord.courtDocuments.other, {
-        documentName: courttDocument,
+        documentName: courtDocument.name,
         documentNumber: index + 2,
+        submittedBy: courtDocument.submittedBy,
       }),
     ),
   )
@@ -402,12 +403,13 @@ function constructInvestigationCourtRecordPdf(
     formatMessage(courtRecord.courtDocuments.announcement),
   )
 
-  theCase.courtDocuments?.forEach((courttDocument, index) =>
+  theCase.courtDocuments?.forEach((courtDocument, index) =>
     addNormalJustifiedText(
       doc,
       formatMessage(courtRecord.courtDocuments.other, {
-        documentName: courttDocument,
+        documentName: courtDocument.name,
         documentNumber: index + 2,
+        submittedBy: courtDocument.submittedBy,
       }),
     ),
   )
