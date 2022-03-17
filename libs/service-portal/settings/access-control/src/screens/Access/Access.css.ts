@@ -32,6 +32,6 @@ export const closeButton = style({
 export const datePickerFix = style({})
 
 globalStyle(`${datePickerFix} > div`, {
-  marginBottom: theme.spacing['10'],
-  overflow: 'auto',
+  // marginBottom: theme.spacing['10'],
+  // overflow: 'visible',
 })

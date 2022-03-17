@@ -155,7 +155,7 @@ function GrantAccess() {
               })}
             </Text>
           </GridColumn>
-          <GridColumn span={['12/12', '12/12', '8/12']}>
+          <GridColumn span={['12/12', '12/12', '6/12']}>
             <div className={styles.inputWrapper}>
               {name && (
                 <Input
@@ -237,7 +237,7 @@ function GrantAccess() {
               ) : null}
             </div>
           </GridColumn>
-          <GridColumn span={['12/12', '12/12', '4/12']}>
+          <GridColumn span={['12/12', '12/12', '2/12']}>
             <Button
               size="large"
               fluid

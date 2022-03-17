@@ -2,7 +2,13 @@ import React, { useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import cs from 'classnames'
 
-import { Table as T, Text, Box } from '@island.is/island-ui/core'
+import {
+  Table as T,
+  Text,
+  Box,
+  GridRow,
+  GridColumn,
+} from '@island.is/island-ui/core'
 import { AuthCustomDelegation } from '@island.is/api/schema'
 import {
   CheckboxController,
@@ -89,8 +95,8 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
         const isFirstItem = index === 0
         const tdStyling: TableDataProps['box'] = {
           borderBottomWidth: isLastItem ? 'standard' : undefined,
-          paddingBottom: isLastItem ? 'p5' : 'p1',
-          paddingTop: isFirstItem ? 'p5' : 'p1',
+          paddingBottom: isLastItem ? 'p3' : 'p1',
+          paddingTop: isFirstItem ? 'p3' : 'p1',
         }
 
         const existingScope = isApiScopeGroup(item)
@@ -112,54 +118,68 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
             : checkboxValue.length > 0
 
         return (
-          <T.Row key={index}>
-            <T.Data
-              box={{
-                ...tdStyling,
-                paddingLeft: isFirstItem ? 3 : 8,
-              }}
-            >
-              <CheckboxController
-                id={`${item.model}.name`}
-                spacing={0}
-                labelVariant={isFirstItem ? 'default' : 'medium'}
-                defaultValue={existingScope ? [existingScope.name] : []}
-                options={[
-                  {
-                    label: item.displayName,
-                    value: item.name,
-                  },
-                ]}
-                onSelect={(value) => onSelect(item, value)}
-              />
-            </T.Data>
-            <T.Data box={tdStyling}>
-              <Text variant={isFirstItem ? 'default' : 'medium'}>
-                {item.description}
-              </Text>
-            </T.Data>
-            <T.Data box={tdStyling}>
-              <div className={cs(isSelected ? undefined : styles.hidden)}>
-                <DatePickerController
-                  id={`${item.model}.validTo`}
-                  size="sm"
-                  label={formatMessage({
-                    id:
-                      'service.portal.settings.accessControl:access-item-datepicker-label',
-                    defaultMessage: 'Dagsetning til',
-                  })}
-                  backgroundColor="blue"
-                  minDate={new Date()}
-                  defaultValue={
-                    existingScope?.name ? existingScope?.validTo : undefined
-                  }
-                  locale={lang}
-                  placeholder="-"
-                  onChange={(value) => onChange(item, value)}
+          <GridRow key={index} className={styles.bottomBorder}>
+            <GridColumn span={['12/12', '12/12', '3/12']}>
+              <Box
+                paddingBottom={isLastItem ? 'p3' : 'p1'}
+                paddingTop={isFirstItem ? 'p3' : 'p1'}
+                paddingLeft={isFirstItem ? 0 : [0, 0, 4]}
+                borderBottomWidth="standard"
+                borderColor="blue100"
+              >
+                <CheckboxController
+                  id={`${item.model}.name`}
+                  spacing={0}
+                  labelVariant={isFirstItem ? 'default' : 'medium'}
+                  defaultValue={existingScope ? [existingScope.name] : []}
+                  options={[
+                    {
+                      label: item.displayName,
+                      value: item.name,
+                    },
+                  ]}
+                  onSelect={(value) => onSelect(item, value)}
                 />
-              </div>
-            </T.Data>
-          </T.Row>
+              </Box>
+            </GridColumn>
+
+            <GridColumn span={['12/12', '12/12', '4/12', '5/12']}>
+              <Box
+                paddingBottom={isLastItem ? 'p3' : 'p1'}
+                paddingTop={isFirstItem ? 'p3' : 'p1'}
+              >
+                <Text variant={isFirstItem ? 'default' : 'medium'}>
+                  {item.description}
+                </Text>
+              </Box>
+            </GridColumn>
+            <GridColumn span={['8/12', '8/12', '5/12', '4/12']}>
+              <Box
+                paddingBottom={isLastItem ? 'p3' : 'p1'}
+                paddingTop={isFirstItem ? 'p3' : 'p1'}
+              >
+                <div className={cs(isSelected ? undefined : styles.hidden)}>
+                  <DatePickerController
+                    id={`${item.model}.validTo`}
+                    size="sm"
+                    label={formatMessage({
+                      id:
+                        'service.portal.settings.accessControl:access-item-datepicker-label',
+                      defaultMessage: 'Dagsetning til',
+                    })}
+                    backgroundColor="blue"
+                    minDate={new Date()}
+                    defaultValue={
+                      existingScope?.name ? existingScope?.validTo : undefined
+                    }
+                    locale={lang}
+                    placeholder="-"
+                    onChange={(value) => onChange(item, value)}
+                  />
+                </div>
+              </Box>
+            </GridColumn>
+          </GridRow>
         )
       })}
     </>
