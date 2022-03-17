@@ -5,6 +5,7 @@ import type { Document, Page, Outline, pdfjs } from 'react-pdf'
 import { Box, Button } from '@island.is/island-ui/core'
 
 import * as styles from './Printable.css'
+import { loading } from 'libs/island-ui/core/src/lib/Button/Button.css'
 
 interface Props {
   pdfFiles: ApplicationFile[]
@@ -36,6 +37,7 @@ const PrintablePdf = ({ pdfFiles }: Props) => {
   const [numPages, setNumPages] = useState(0)
 
   const onDocumentLoadSuccess = ({ numPages }: PdfProps) => {
+    console.log(numPages, 'numpages')
     setNumPages(numPages)
   }
 
@@ -72,23 +74,28 @@ const PrintablePdf = ({ pdfFiles }: Props) => {
     return (
       <>
         {allIPdfs.map((file, index) => {
-          return (
-            <Box key={`file-${index}`} marginBottom={10}>
-              <pdfLib.Document
-                file={file}
-                renderMode="canvas"
-                onLoadSuccess={onDocumentLoadSuccess}
-                className={styles.printablePdf}
-              >
-                {Array.from(new Array(numPages), (el, index) => (
-                  <pdfLib.Page
-                    key={`page_${index + 1}`}
-                    pageNumber={index + 1}
-                  />
-                ))}
-              </pdfLib.Document>
-            </Box>
-          )
+          if (file) {
+            return (
+              <Box key={`file-${index}`} marginBottom={10}>
+                <pdfLib.Document
+                  file={file}
+                  renderMode="canvas"
+                  onLoadSuccess={onDocumentLoadSuccess}
+                  className={styles.printablePdf}
+                >
+                  {Array.from(new Array(numPages), (el, index) => {
+                    console.log(index + 1, 'pagenumber')
+                    return (
+                      <pdfLib.Page
+                        key={`page_${index + 1}`}
+                        pageNumber={index + 1}
+                      />
+                    )
+                  })}
+                </pdfLib.Document>
+              </Box>
+            )
+          }
         })}
       </>
     )
