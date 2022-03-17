@@ -25,7 +25,6 @@ export class InvalidConfiguration {
   constructor(errorMessage: string) {
     return new Proxy(this, {
       get(target, prop) {
-        console.log(`Getting ${String(prop)}`, target)
         if (
           prop in target ||
           InvalidConfiguration.allowedMembers.includes(String(prop))
