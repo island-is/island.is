@@ -68,7 +68,8 @@ export const PendingRejected: FC<FieldBaseProps> = ({ application }) => {
       >
         <Text fontWeight="semiBold">Valin fasteign</Text>
         <Text>
-          {propertyDetails?.propertyNumber}{' '}
+          {propertyDetails?.propertyNumber}
+          {' - '}
           {propertyDetails?.defaultAddress?.display}
         </Text>
       </Box>
