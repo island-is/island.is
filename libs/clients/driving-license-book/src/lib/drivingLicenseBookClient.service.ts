@@ -8,7 +8,7 @@ import { Injectable, Inject } from '@nestjs/common'
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 
 @Injectable()
-export class DrivingLicenseBookClientService {
+export class DrivingLicenseBookClientApiFactory {
   constructor(
     @Inject(DrivingLicenseBookClientConfig.KEY)
     private clientConfig: ConfigType<typeof DrivingLicenseBookClientConfig>,
@@ -16,7 +16,7 @@ export class DrivingLicenseBookClientService {
     private xroadConfig: ConfigType<typeof XRoadConfig>,
   ) {}
 
-  async api() {
+  async create() {
     const api = new DrivingLicenseBookApi(
       new Configuration({
         fetchApi: createEnhancedFetch({

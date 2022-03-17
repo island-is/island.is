@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common'
-import { DrivingLicenseBookClientService } from './drivingLicenseBookClient.service'
+import { DrivingLicenseBookClientApiFactory } from './drivingLicenseBookClient.service'
 
 @Module({
-  providers: [DrivingLicenseBookClientService],
-  exports: [DrivingLicenseBookClientService],
+  providers: [DrivingLicenseBookClientApiFactory],
+  exports: [DrivingLicenseBookClientApiFactory],
 })
 export class DrivingLicenseBookClientModule {}

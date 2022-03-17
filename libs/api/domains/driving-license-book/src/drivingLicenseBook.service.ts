@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { DrivingLicenseBookClientService } from '@island.is/clients/driving-license-book'
+import { DrivingLicenseBookClientApiFactory } from '@island.is/clients/driving-license-book'
 import { DrivingLicenseBookStudentsInput } from './dto/students.input'
 import { User } from '@island.is/auth-nest-tools'
 import { DrivingLicenseBookStudentForTeacher } from './models/studentsTeacherNationalId.response'
@@ -24,12 +24,12 @@ import { PracticalDrivingLessonsInput } from './dto/getPracticalDrivingLessons.i
 export class DrivingLicenseBookService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    @Inject(DrivingLicenseBookClientService)
-    private drivingLicenseBookClientService: DrivingLicenseBookClientService,
+    @Inject(DrivingLicenseBookClientApiFactory)
+    private drivingLicenseBookClientApiFactory: DrivingLicenseBookClientApiFactory,
   ) {}
 
   async apiWithAuth() {
-    return await this.drivingLicenseBookClientService.api()
+    return await this.drivingLicenseBookClientApiFactory.create()
   }
 
   async createPracticalDrivingLesson(
