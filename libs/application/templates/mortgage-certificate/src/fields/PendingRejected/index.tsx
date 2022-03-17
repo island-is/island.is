@@ -14,7 +14,7 @@ import { PropertyDetail } from '../../types/schema'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 
-export const PendingRejected: FC<FieldBaseProps> = ({ application, field }) => {
+export const PendingRejected: FC<FieldBaseProps> = ({ application }) => {
   const { externalData } = application
   const { formatMessage } = useLocale()
 
@@ -40,16 +40,18 @@ export const PendingRejected: FC<FieldBaseProps> = ({ application, field }) => {
     }
   }
 
-  const hasSentRequest = (externalData.submitRequestToSyslumenn?.data as {
+  const { hasSentRequest } = externalData.submitRequestToSyslumenn?.data as {
     hasSentRequest: boolean
-  })?.hasSentRequest
+  }
 
   if (hasSentRequest) {
     handleStateChange(MCEvents.PENDING_REJECTED_TRY_AGAIN)
   }
 
-  const selectedProperty = externalData.getPropertyDetails
-    ?.data as PropertyDetail
+  const { propertyDetails } = externalData.validateMortgageCertificate
+    ?.data as {
+    propertyDetails: PropertyDetail
+  }
 
   return (
     <Box>
@@ -66,8 +68,8 @@ export const PendingRejected: FC<FieldBaseProps> = ({ application, field }) => {
       >
         <Text fontWeight="semiBold">Valin fasteign</Text>
         <Text>
-          {selectedProperty?.propertyNumber}{' '}
-          {selectedProperty?.defaultAddress?.display}
+          {propertyDetails?.propertyNumber}{' '}
+          {propertyDetails?.defaultAddress?.display}
         </Text>
       </Box>
       <Box marginBottom={5}>
