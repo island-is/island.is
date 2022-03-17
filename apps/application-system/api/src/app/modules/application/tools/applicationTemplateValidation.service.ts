@@ -22,11 +22,14 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
 
-const isRunningOnProductionEnvironment =
-  environment.production === true &&
-  environment.name !== 'local' &&
-  environment.name !== 'dev' &&
-  environment.name !== 'staging'
+const isRunningOnProductionEnvironment = () => {
+  return (
+    environment.production === true &&
+    environment.name !== 'local' &&
+    environment.name !== 'dev' &&
+    environment.name !== 'staging'
+  )
+}
 
 @Injectable()
 export class ApplicationValidationService {
@@ -50,7 +53,7 @@ export class ApplicationValidationService {
       )
     }
 
-    this.validateThatTemplateIsReady(user, applicationTemplate)
+    await this.validateThatTemplateIsReady(user, applicationTemplate)
   }
 
   async isTemplateFeatureFlaggedReady(
@@ -68,9 +71,9 @@ export class ApplicationValidationService {
     return feature
   }
 
-  // If configcat flag is present use the return from that to determine if the template is ready
-  // if configcat flag is not present, use the readyforprod flag
-  // possibly we will remove the readyforprod flag right away
+  // If configcat flag is present use that flag to determine if the template is ready
+  // If configcat flag is not present, use the readyForProduction flag
+  // Possible future TODO: Remove the readyForProduction flag
   async isTemplateReady(
     user: User,
     template: Pick<
@@ -78,28 +81,31 @@ export class ApplicationValidationService {
       'readyForProduction' | 'featureFlag'
     >,
   ): Promise<boolean> {
-    if (isRunningOnProductionEnvironment && template && template.featureFlag) {
-      const feature = this.isTemplateFeatureFlaggedReady(
-        template.featureFlag,
-        user,
-      )
-      if (!feature) {
+    if (isRunningOnProductionEnvironment()) {
+      if (template.featureFlag) {
+        const results = await this.isTemplateFeatureFlaggedReady(
+          template.featureFlag,
+          user,
+        )
+        if (!results) {
+          return false
+        }
+        return true
+      }
+      if (!template.readyForProduction) {
         return false
       }
     }
-
-    if (isRunningOnProductionEnvironment && !template.readyForProduction) {
-      return false
-    }
-
     return true
   }
 
-  validateThatTemplateIsReady(
+  // Just used to call the async function and throwing an error, might need to remove?
+  async validateThatTemplateIsReady(
     user: User,
     template: Unwrap<typeof getApplicationTemplateByTypeId>,
-  ): void {
-    if (!this.isTemplateReady(user, template)) {
+  ): Promise<void> {
+    const results = await this.isTemplateReady(user, template)
+    if (!results) {
       throw new BadRequestException(
         `Template ${template.type} is not ready for production`,
       )
@@ -122,7 +128,7 @@ export class ApplicationValidationService {
       )
     }
 
-    this.validateThatTemplateIsReady(user, applicationTemplate)
+    await this.validateThatTemplateIsReady(user, applicationTemplate)
 
     const schemaFormValidationError = validateAnswers({
       dataSchema: applicationTemplate.dataSchema,
