@@ -187,7 +187,7 @@ function remainingJudgeCaseData() {
     isClosedCourtHidden: true,
     courtAttendees: 'Court Attendees',
     prosecutorDemands: 'Police Demands',
-    courtDocuments: ['Þingskjal 1', 'Þingskjal 2'],
+    courtDocuments: [{ name: 'Þingskjal 1' }, { name: 'Þingskjal 2' }],
     sessionBookings: 'Session Bookings',
     courtCaseFacts: 'Court Case Facts',
     courtLegalArguments: 'Court Legal Arguments',

@@ -42,6 +42,11 @@ export const courtRecordAccordion = {
         description:
           'Notaður sem titill í "Lagt er fram" svæði í þingbókarfellilistanum.',
       },
+      text: {
+        id: 'judicial.system.core:court_record_accordion.court_documents.text',
+        defaultMessage:
+          '{documentName} þingmerkt nr. {documentNumber}{submittedBy, select, DEFENDER { lagt fram af varnaraðila} PROSECUTOR { lagt fram af sækjanda} other {}}.',
+      },
     }),
     conclusion: defineMessages({
       disclaimer: {
