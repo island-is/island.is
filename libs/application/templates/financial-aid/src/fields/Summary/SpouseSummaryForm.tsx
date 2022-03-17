@@ -79,3 +79,4 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 }
 
 export default SummaryForm
+
