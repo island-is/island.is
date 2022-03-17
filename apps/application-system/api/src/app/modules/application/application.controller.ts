@@ -230,7 +230,16 @@ export class ApplicationController {
       )
     }
 
-    // TODO: verify template is ready from https://github.com/island-is/island.is/pull/3297
+    const isValidTemplate = await this.validationService.isTemplateReady(
+      user,
+      template,
+    )
+
+    if (!isValidTemplate) {
+      throw new BadRequestException(
+        `Template ${template.type} is not ready for production`,
+      )
+    }
 
     // TODO: initial state should be required
     const initialState =
@@ -341,7 +350,7 @@ export class ApplicationController {
       )
     }
 
-    this.validationService.validateThatTemplateIsReady(user, template)
+    await this.validationService.validateThatTemplateIsReady(user, template)
 
     const assignees = [user.nationalId]
 
