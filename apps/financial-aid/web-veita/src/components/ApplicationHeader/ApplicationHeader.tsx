@@ -5,7 +5,7 @@ import {
   getState,
   Routes,
 } from '@island.is/financial-aid/shared/lib'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
 import React from 'react'
 
 import * as styles from './ApplicationHeader.css'
@@ -150,29 +150,40 @@ const ApplicationHeader = ({
           <button onClick={assignEmployee} className={styles.button}>
             Sjá um
           </button>
-          <Link
-            href={Routes.printApplicationProfile(router.query.id as string)}
-          >
-            <a target="_blank" className={styles.button}>
-              prenta
-            </a>
-          </Link>
 
-          <Box printHidden>
+          <Box>
             <Text variant="small">·</Text>
           </Box>
         </Box>
 
-        <Box marginRight={1} printHidden>
+        <Box marginRight={1}>
           <Text variant="small" fontWeight="semiBold" color="dark300">
             Aldur umsóknar
           </Text>
         </Box>
-        <Box printHidden>
+        <Box>
           <Text variant="small">
             {calcDifferenceInDate(application.created)}
           </Text>
         </Box>
+        {!isPrint && (
+          <>
+            <Box marginX={1}>
+              <Text variant="small">·</Text>
+            </Box>
+            <Link
+              href={Routes.printApplicationProfile(router.query.id as string)}
+            >
+              <a target="_blank" className={styles.button}>
+                <Box marginRight={1} display="flex" alignItems="center">
+                  <Icon icon="print" type="outline" size="small" />
+                </Box>
+
+                <span>Prenta umsókn </span>
+              </a>
+            </Link>
+          </>
+        )}
       </Box>
     </Box>
   )
