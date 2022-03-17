@@ -104,43 +104,6 @@ export const CourtRecord: React.FC = () => {
 
   useEffect(() => {
     if (isCaseUpToDate) {
-      const defaultCourtAttendees = (wc: Case): string => {
-        let attendees = ''
-
-        if (wc.prosecutor) {
-          attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}`
-        }
-
-        if (wc.defenderName) {
-          attendees += `\n${wc.defenderName} skipaður verjandi ${formatMessage(
-            core.accused,
-            {
-              suffix:
-                wc.defendants &&
-                wc.defendants.length > 0 &&
-                wc.defendants[0].gender === Gender.FEMALE
-                  ? 'u'
-                  : 'a',
-            },
-          )}`
-        }
-
-        if (wc.translator) {
-          attendees += `\n${wc.translator} túlkur`
-        }
-
-        if (wc.defendants && wc.defendants.length > 0) {
-          attendees += `\n${wc.defendants[0].name} ${formatMessage(
-            core.accused,
-            {
-              suffix: wc.defendants[0].gender === Gender.MALE ? 'i' : 'a',
-            },
-          )}`
-        }
-
-        return attendees
-      }
-
       const theCase = workingCase
 
       if (theCase.courtDate) {
@@ -160,7 +123,39 @@ export const CourtRecord: React.FC = () => {
       }
 
       if (theCase.courtAttendees !== '') {
-        autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
+        let autofillAttendees = ''
+
+        if (theCase.prosecutor) {
+          autofillAttendees += `${theCase.prosecutor.name} ${theCase.prosecutor.title}`
+        }
+
+        if (theCase.defenderName) {
+          autofillAttendees += `\n${
+            theCase.defenderName
+          } skipaður verjandi ${formatMessage(core.accused, {
+            suffix:
+              theCase.defendants &&
+              theCase.defendants.length > 0 &&
+              theCase.defendants[0].gender === Gender.FEMALE
+                ? 'u'
+                : 'a',
+          })}`
+        }
+
+        if (theCase.translator) {
+          autofillAttendees += `\n${theCase.translator} túlkur`
+        }
+
+        if (theCase.defendants && theCase.defendants.length > 0) {
+          autofillAttendees += `\n${theCase.defendants[0].name} ${formatMessage(
+            core.accused,
+            {
+              suffix: theCase.defendants[0].gender === Gender.MALE ? 'i' : 'a',
+            },
+          )}`
+        }
+
+        autofill('courtAttendees', autofillAttendees, theCase)
       }
 
       let autofillSessionBookings = ''
