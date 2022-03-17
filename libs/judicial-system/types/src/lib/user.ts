@@ -4,8 +4,9 @@ export enum UserRole {
   PROSECUTOR = 'PROSECUTOR',
   REGISTRAR = 'REGISTRAR',
   JUDGE = 'JUDGE',
-  ADMIN = 'ADMIN',
+  ADMIN = 'ADMIN', // Does not exist in the database
   STAFF = 'STAFF',
+  DEFENDER = 'DEFENDER', // Does not exist in the database
 }
 
 export interface User {
