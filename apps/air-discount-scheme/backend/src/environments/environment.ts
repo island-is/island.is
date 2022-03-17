@@ -11,13 +11,6 @@ const devConfig = {
     password: process.env.NATIONAL_REGISTRY_PASSWORD,
     authMiddlewareOptions: {
       forwardUserInfo: false,
-      tokenExchangeOptions: {
-        issuer: 'https://identity-server.dev01.devland.is',
-        clientId: '@vegagerdin.is/clients/air-discount-scheme',
-        clientSecret: process.env.VEGAGERDIN_IDS_CLIENTS_SECRET,
-        scope: 'openid profile @skra.is/individuals',
-        requestActorToken: false,
-      },
     },
   },
   airlineApiKeys: {
@@ -58,13 +51,6 @@ const prodConfig = {
     password: process.env.NATIONAL_REGISTRY_PASSWORD,
     authMiddlewareOptions: {
       forwardUserInfo: false,
-      tokenExchangeOptions: {
-        issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
-        clientId: '@vegagerdin.is/clients/air-discount-scheme',
-        clientSecret: process.env.VEGAGERDIN_IDS_CLIENTS_SECRET,
-        scope: 'openid profile @skra.is/individuals',
-        requestActorToken: false,
-      },
     },
   },
   airlineApiKeys: {
