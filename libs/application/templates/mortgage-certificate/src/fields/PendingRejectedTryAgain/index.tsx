@@ -30,6 +30,10 @@ export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
     onError: (e) => console.error(e.message),
   })
 
+  useEffect(() => {
+    document.title = 'Beiðni um vinnslu'
+  }, [])
+
   const { propertyDetails } = externalData.validateMortgageCertificate
     ?.data as {
     propertyDetails: PropertyDetail

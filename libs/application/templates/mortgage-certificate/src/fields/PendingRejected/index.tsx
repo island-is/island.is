@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useState, useEffect } from 'react'
 import { FieldBaseProps } from '@island.is/application/core'
 import {
   Box,
@@ -23,6 +23,10 @@ export const PendingRejected: FC<FieldBaseProps> = ({ application }) => {
   const [submitApplication] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => console.error(e.message),
   })
+
+  useEffect(() => {
+    document.title = 'Beiðni um vinnslu'
+  }, [])
 
   const handleStateChange = (newRunEvent: string) => {
     if (runEvent !== newRunEvent) {
