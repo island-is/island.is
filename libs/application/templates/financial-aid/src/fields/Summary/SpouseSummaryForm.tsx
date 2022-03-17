@@ -16,10 +16,7 @@ import UserInfo from './UserInfo'
 import Comment from './Comment'
 import Files from './Files'
 
-const SummaryForm = ({
-  application,
-  goToScreen,
-}: FAFieldBaseProps) => {
+const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { id, answers, externalData } = application
   const formItems = [
     {
@@ -36,9 +33,16 @@ const SummaryForm = ({
       </Box>
 
       <UserInfo
-        name={externalData?.nationalRegistry?.data?.applicant?.spouse?.name ?? ''}
-        nationalId={externalData?.nationalRegistry?.data?.applicant?.spouse?.nationalId ?? ''}
-        address={formatAddress(externalData?.nationalRegistry?.data?.applicant) ?? ''}
+        name={
+          externalData?.nationalRegistry?.data?.applicant?.spouse?.name ?? ''
+        }
+        nationalId={
+          externalData?.nationalRegistry?.data?.applicant?.spouse?.nationalId ??
+          ''
+        }
+        address={
+          formatAddress(externalData?.nationalRegistry?.data?.applicant) ?? ''
+        }
       />
 
       <FormInfo items={formItems} goToScreen={goToScreen} />
@@ -62,7 +66,10 @@ const SummaryForm = ({
         applicationId={id}
       />
 
-      <Comment commentId="spouseFormComment" comment={answers?.spouseFormComment ?? ''} />
+      <Comment
+        commentId="spouseFormComment"
+        comment={answers?.spouseFormComment ?? ''}
+      />
     </>
   )
 }
