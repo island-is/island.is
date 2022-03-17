@@ -3,7 +3,11 @@ import React from 'react'
 import { Box } from '@island.is/island-ui/core'
 
 import * as m from '../../lib/messages'
-import { ApproveOptions, FAFieldBaseProps } from '../../lib/types'
+import {
+  ApproveOptions,
+  FAFieldBaseProps,
+  SummaryComment,
+} from '../../lib/types'
 import { Routes } from '../../lib/constants'
 import { DescriptionText } from '../index'
 import {
@@ -67,7 +71,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       />
 
       <Comment
-        commentId="spouseFormComment"
+        commentId={SummaryComment.SPOUSEFORMCOMMENT}
         comment={answers?.spouseFormComment}
       />
     </>

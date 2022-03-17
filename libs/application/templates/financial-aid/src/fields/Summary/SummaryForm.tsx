@@ -14,7 +14,11 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 
 import * as m from '../../lib/messages'
-import { ApproveOptions, FAFieldBaseProps } from '../../lib/types'
+import {
+  ApproveOptions,
+  FAFieldBaseProps,
+  SummaryComment,
+} from '../../lib/types'
 import { Routes } from '../../lib/constants'
 import { DescriptionText, Breakdown } from '../index'
 import {
@@ -197,7 +201,10 @@ const SummaryForm = ({
         applicationId={id}
       />
 
-      <Comment commentId="formComment" comment={answers?.formComment} />
+      <Comment
+        commentId={SummaryComment.FORMCOMMENT}
+        comment={answers?.formComment}
+      />
 
       <Box
         className={cn(styles.errorMessage, {
