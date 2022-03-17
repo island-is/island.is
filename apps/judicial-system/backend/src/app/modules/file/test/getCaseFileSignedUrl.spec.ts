@@ -100,9 +100,10 @@ describe('FileController - Get case file signed url', () => {
   describe('signed url created', () => {
     const caseId = uuid()
     const fileId = uuid()
+    const key = `uploads/${uuid()}/${uuid()}/test.txt`
     const caseFile = {
       id: fileId,
-      state: CaseFileState.STORED_IN_RVG,
+      key,
     } as CaseFile
     const signedUrl = {} as SignedUrl
     let then: Then
@@ -142,9 +143,10 @@ describe('FileController - Get case file signed url', () => {
   describe('file not found in AWS S3', () => {
     const caseId = uuid()
     const fileId = uuid()
+    const key = `uploads/${uuid()}/${uuid()}/test.txt`
     const caseFile = {
       id: fileId,
-      state: CaseFileState.STORED_IN_RVG,
+      key,
     } as CaseFile
     let mockUpdate: jest.Mock
     let then: Then
@@ -157,9 +159,9 @@ describe('FileController - Get case file signed url', () => {
       then = await givenWhenThen(caseId, fileId, caseFile)
     })
 
-    it('should set as broken link', () => {
+    it('should remove the key', () => {
       expect(mockUpdate).toHaveBeenCalledWith(
-        { state: CaseFileState.BOKEN_LINK },
+        { key: null },
         { where: { id: fileId } },
       )
     })
@@ -175,9 +177,10 @@ describe('FileController - Get case file signed url', () => {
   describe('remote existance check fails', () => {
     const caseId = uuid()
     const fileId = uuid()
+    const key = `uploads/${uuid()}/${uuid()}/test.txt`
     const caseFile = {
       id: fileId,
-      state: CaseFileState.STORED_IN_RVG,
+      key,
     } as CaseFile
     let then: Then
 
@@ -194,12 +197,13 @@ describe('FileController - Get case file signed url', () => {
     })
   })
 
-  describe('remote existance check fails', () => {
+  describe('signed url creation fails', () => {
     const caseId = uuid()
     const fileId = uuid()
+    const key = `uploads/${uuid()}/${uuid()}/test.txt`
     const caseFile = {
       id: fileId,
-      state: CaseFileState.STORED_IN_RVG,
+      key,
     } as CaseFile
     let then: Then
 

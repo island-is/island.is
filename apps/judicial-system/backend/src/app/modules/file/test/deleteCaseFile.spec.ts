@@ -63,7 +63,7 @@ describe('FileController - Delete case file', () => {
 
     it('should update the case file status in the database', () => {
       expect(mockUpdate).toHaveBeenCalledWith(
-        { state: CaseFileState.DELETED },
+        { state: CaseFileState.DELETED, key: null },
         { where: { id: fileId } },
       )
     })
@@ -75,7 +75,6 @@ describe('FileController - Delete case file', () => {
     const key = `uploads/${uuid()}/${uuid()}/test.txt`
     const caseFile = {
       id: fileId,
-      state: CaseFileState.STORED_IN_RVG,
       key,
     } as CaseFile
     let mockDeleteObject: jest.Mock
@@ -90,6 +89,27 @@ describe('FileController - Delete case file', () => {
 
     it('should attempt to remove from AWS S3', () => {
       expect(mockDeleteObject).toHaveBeenCalledWith(key)
+    })
+  })
+
+  describe('AWS S3 removal skipped', () => {
+    const caseId = uuid()
+    const fileId = uuid()
+    const caseFile = {
+      id: fileId,
+    } as CaseFile
+    let mockDeleteObject: jest.Mock
+
+    beforeEach(async () => {
+      mockDeleteObject = mockAwsS3Service.deleteObject as jest.Mock
+      const mockUpdate = mockFileModel.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce([1])
+
+      await givenWhenThen(caseId, fileId, caseFile)
+    })
+
+    it('should not attempt to remove from AWS S3', () => {
+      expect(mockDeleteObject).not.toHaveBeenCalled()
     })
   })
 
