@@ -47,7 +47,7 @@ export class MunicipalityNationalRegistryResolver {
       .then((res) => {
         return res
       })
-      .catch((err) => {
+      .catch(() => {
         return undefined
       })
   }
