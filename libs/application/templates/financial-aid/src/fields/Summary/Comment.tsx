@@ -1,9 +1,9 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
+import { Controller, useFormContext } from 'react-hook-form'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import { summaryForm } from '../../lib/messages'
-import { Controller, useFormContext } from 'react-hook-form'
 
 interface Props {
   commentId: string
