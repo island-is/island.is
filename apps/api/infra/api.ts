@@ -172,7 +172,7 @@ export const serviceSetup = (services: {
       PaymentSchedule,
       CriminalRecord,
       RskCompanyInfo,
-	  DrivingLicenseBook,
+      DrivingLicenseBook,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

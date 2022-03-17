@@ -34,6 +34,7 @@ export class DrivingLicenseBookResolver {
   ) {
     return this.drivingLicenseBookService.findStudent(input)
   }
+
   @UseGuards(DrivingInstructorGuard)
   @Query(() => [DrivingLicenseBookStudentForTeacher])
   drivingLicenseBookStudentsForTeacher(@CurrentUser() user: User) {
