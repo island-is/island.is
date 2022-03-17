@@ -12,6 +12,7 @@ import {
 import {
   Accordion,
   AccordionItem,
+  AlertMessage,
   Box,
   Button,
   Text,
@@ -27,7 +28,9 @@ import {
   core,
   laws,
   requestCourtDate,
+  rcCourtOverview,
 } from '@island.is/judicial-system-web/messages'
+import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import type {
   Case,
   CaseLegalProvisions,
@@ -49,6 +52,22 @@ const OverviewForm: React.FC<Props> = (props) => {
 
   return (
     <FormContentContainer>
+      {workingCase.caseResentExplanation && (
+        <Box marginBottom={5}>
+          <AlertMessage
+            title={formatMessage(
+              rcCourtOverview.sections.caseResentExplanation.title,
+            )}
+            message={
+              <MarkdownWrapper
+                text={workingCase.caseResentExplanation}
+                textProps={{ variant: 'small' }}
+              />
+            }
+            type="warning"
+          />
+        </Box>
+      )}
       <Box marginBottom={7}>
         <Text as="h1" variant="h1">
           {`Yfirlit ${
@@ -196,7 +215,9 @@ const OverviewForm: React.FC<Props> = (props) => {
                 )}
               </AccordionItem>
             )}
-            {(workingCase.comments || workingCase.caseFilesComments) && (
+            {(workingCase.comments ||
+              workingCase.caseFilesComments ||
+              workingCase.caseResentExplanation) && (
               <CommentsAccordionItem workingCase={workingCase} />
             )}
             {user && (
