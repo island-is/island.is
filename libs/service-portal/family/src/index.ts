@@ -12,7 +12,7 @@ export const familyModule: ServicePortalModule = {
   widgets: () => [],
   routes: ({ userInfo }) => [
     {
-      name: 'Mínar upplýsingar',
+      name: m.userInfo,
       path: ServicePortalPath.MyInfoRoot,
       enabled: userInfo.scopes.includes(ApiScope.meDetails),
       render: () =>
@@ -46,7 +46,7 @@ export const familyModule: ServicePortalModule = {
     {
       name: 'Fyrirtæki',
       path: ServicePortalPath.Companies,
-      enabled: true, //userInfo.scopes.includes(ApiScope.meDetails),
+      enabled: userInfo.scopes.includes(ApiScope.meDetails),
       render: () => lazy(() => import('./screens/Companies/Companies')),
     },
   ],

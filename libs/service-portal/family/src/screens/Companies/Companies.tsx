@@ -9,31 +9,41 @@ import {
   Text,
   GridColumn,
   GridRow,
+  ActionCard,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { ServicePortalModuleComponent, m } from '@island.is/service-portal/core'
-import { FamilyMemberCard } from '../../components/FamilyMemberCard/FamilyMemberCard'
+import {
+  ServicePortalModuleComponent,
+  m,
+  ServicePortalPath,
+  formatNationalId,
+} from '@island.is/service-portal/core'
 import { FamilyMemberCardLoader } from '../../components/FamilyMemberCard/FamilyMemberCardLoader'
-import { NATIONAL_REGISTRY_CHILDREN } from '../../lib/queries/getNationalChildren'
+import { useHistory } from 'react-router-dom'
 
 const CompaniesSimple = gql`
   query GetProcuringCompaniesQuery {
-    getProcuringCompanies
+    getProcuringCompanies {
+      nationalId
+      companies {
+        nationalId
+        name
+      }
+    }
   }
 `
-// nationalId
-// name
-// companies {
-//   nationalId
-//   name
-// }
 
-const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
+const Companies: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
 
-  const { data, loading, error, called } = useQuery<Query>(CompaniesSimple)
+  const { data, loading, error } = useQuery<Query>(CompaniesSimple)
   console.log(data)
+  const companies = data?.getProcuringCompanies?.companies || []
+
+  const history = useHistory()
+
+  const handleClick = () => history.push(ServicePortalPath.CompanyInfo)
   return (
     <>
       <Box marginBottom={[2, 3, 5]}>
@@ -45,9 +55,8 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
               </Text>
               <Text as="p" variant="default">
                 {formatMessage({
-                  id: 'sp.family:user-info-description',
-                  defaultMessage:
-                    'Hér eru gögn um þig og fjölskyldu þína sem sótt eru til Þjóðskrár. Með því að smella á skoða nánar er hægt að óska eftir breytingum á þeim upplýsingum.',
+                  id: 'sp.family:company-info-description',
+                  defaultMessage: 'Hér eru gögn um þín fyrirtæki.',
                 })}
               </Text>
             </Stack>
@@ -55,37 +64,32 @@ const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
         </GridRow>
       </Box>
       <Stack space={2}>
-        {/* {called && !loading && !error && !nationalRegistryUser && (
+        {!loading && !error && companies?.length <= 0 && (
           <AlertMessage type="info" title={formatMessage(m.noDataPresent)} />
         )}
-        <FamilyMemberCard
-          title={userInfo.profile.name || ''}
-          nationalId={userInfo.profile.nationalId}
-          currentUser
-        />
+
         {loading && <FamilyMemberCardLoader />}
-        {spouseData && (
-          <FamilyMemberCard
-            key={nationalRegistryUser?.spouse?.nationalId}
-            title={nationalRegistryUser?.spouse?.name || ''}
-            nationalId={nationalRegistryUser?.spouse?.nationalId || ''}
-            familyRelation="spouse"
+
+        {companies?.map((item) => (
+          <ActionCard
+            key={item.nationalId}
+            heading={item.name || ''}
+            cta={{
+              label: formatMessage({
+                id: 'sp.family:see-company-info',
+                defaultMessage: 'Skoða upplýsingar',
+              }),
+              variant: 'text',
+              onClick: handleClick,
+            }}
+            text={
+              item.nationalId &&
+              `${formatMessage(m.natreg)}: ${formatNationalId(item.nationalId)}`
+            }
           />
-        )}
-        {childrenLoading &&
-          [...Array(2)].map((_key, index) => (
-            <FamilyMemberCardLoader key={index} />
-          ))}
-        {nationalRegistryChildren?.map((familyMember) => (
-          <FamilyMemberCard
-            key={familyMember.nationalId}
-            title={familyMember.fullName || familyMember.displayName || ''}
-            nationalId={familyMember.nationalId}
-            familyRelation="child"
-          />
-        ))} */}
+        ))}
       </Stack>
     </>
   )
 }
-export default UserInfoOverview
+export default Companies

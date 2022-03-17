@@ -81,14 +81,14 @@ export class NationalRegistryXRoadResolver {
     )
   }
 
-  @Query(() => graphqlTypeJson)
+  @Query(() => ProcuraSimple)
   @Audit()
-  async getProcuringCompanies(@CurrentUser() user: User): Promise<any | null> {
+  async getProcuringCompanies(
+    @CurrentUser() user: User,
+  ): Promise<ResponseSimple | Record<string, unknown>> {
     const res = await this.nationalRegistryXRoadService.getProcuringCompanies(
       user,
     )
-    console.log('getProcuring - resolver', res)
-    if (!res) return null
     return res
   }
 }

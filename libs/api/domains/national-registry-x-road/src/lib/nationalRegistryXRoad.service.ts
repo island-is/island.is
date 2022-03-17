@@ -156,9 +156,11 @@ export class NationalRegistryXRoadService {
     )
   }
 
-  async getProcuringCompanies(user: User): Promise<any | null> {
+  async getProcuringCompanies(
+    user: User,
+  ): Promise<ResponseSimple | Record<string, unknown>> {
     const res = await this.procurinClient.getSimple(user)
-    console.log('getProcuring - service', res)
+    if (res === null) return {}
     return res
   }
 }

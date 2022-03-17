@@ -54,11 +54,10 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           },
           {
             name: m.family,
-            navHide: true,
             path: ServicePortalPath.FamilyRoot,
           },
           {
-            name: 'Fyrirtæki',
+            name: m.company,
             path: ServicePortalPath.Companies,
           },
           {

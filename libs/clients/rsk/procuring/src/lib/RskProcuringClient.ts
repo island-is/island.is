@@ -50,7 +50,7 @@ export class RskProcuringClient {
 
   getSimple(user: User): Promise<ResponseSimple | null> {
     const res = this.simpleApiWithAuth(user)
-      .simple({ nationalId: '1801912409' }) // 0101302129
+      .simple({ nationalId: user.nationalId }) // 0101302129
       .catch((err) => {
         console.log('cathing error')
         return this.handle404(err)

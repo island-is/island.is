@@ -321,6 +321,10 @@ export const m = defineMessages({
     id: 'service.portal:user-info',
     defaultMessage: 'Mínar upplýsingar',
   },
+  company: {
+    id: 'service.portal:company-info',
+    defaultMessage: 'Fyrirtæki',
+  },
   detailInfo: {
     id: 'service.portal:detail-info',
     defaultMessage: 'Nánari upplýsingar',
@@ -333,7 +337,6 @@ export const m = defineMessages({
     id: 'service.portal:base-info',
     defaultMessage: 'Grunnupplýsingar',
   },
-
   family: {
     id: 'service.portal:family',
     defaultMessage: 'Fjölskyldan',
