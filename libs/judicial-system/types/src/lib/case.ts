@@ -3,6 +3,7 @@ import type { Institution } from './institution'
 import type { Notification } from './notification'
 import type { CaseFile } from './file'
 import type { User } from './user'
+import type { CourtDocument } from './courtDocument'
 
 export enum CaseType {
   CUSTODY = 'CUSTODY',
@@ -72,7 +73,6 @@ export enum CaseCustodyRestrictions {
   COMMUNICATION = 'COMMUNICATION',
   MEDIA = 'MEDIA',
   ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION = 'ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION',
-  ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT = 'ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT',
   WORKBAN = 'WORKBAN',
 }
 
@@ -143,7 +143,7 @@ export interface Case {
   isClosedCourtHidden?: boolean
   courtAttendees?: string
   prosecutorDemands?: string
-  courtDocuments?: string[]
+  courtDocuments?: CourtDocument[]
   sessionBookings?: string
   courtCaseFacts?: string
   introduction?: string
@@ -175,6 +175,7 @@ export interface Case {
   notifications?: Notification[]
   caseFiles?: CaseFile[]
   caseModifiedExplanation?: string
+  caseResentExplanation?: string
 }
 
 export interface CreateCase {
@@ -226,9 +227,10 @@ export interface UpdateCase {
   courtRoom?: string
   courtStartDate?: string
   courtEndTime?: string
+  isClosedCourtHidden?: boolean
   courtAttendees?: string
   prosecutorDemands?: string
-  courtDocuments?: string[]
+  courtDocuments?: CourtDocument[]
   sessionBookings?: string
   courtCaseFacts?: string
   introduction?: string
@@ -249,6 +251,7 @@ export interface UpdateCase {
   registrarId?: string
   judgeId?: string
   caseModifiedExplanation?: string
+  caseResentExplanation?: string
 }
 
 export interface TransitionCase {

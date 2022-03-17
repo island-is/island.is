@@ -103,3 +103,8 @@ export const DATA_UPLOAD: Skilabod = {
   audkenni: 'string',
   malsnumer: 'string',
 }
+
+export const MORTGAGE_CERTIFICATE_CONTENT_OK = 'c29tZWNvbnRlbnQ='
+export const MORTGAGE_CERTIFICATE_CONTENT_NO_KMARKING = 'Precondition Required'
+export const MORTGAGE_CERTIFICATE_MESSAGE_NO_KMARKING =
+  'Ekki hægt að afgreiða vedbokarvottord'
