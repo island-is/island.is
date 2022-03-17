@@ -8,6 +8,8 @@ import { AlertMessage } from '../AlertMessage/AlertMessage'
 
 export interface PdfViewerProps {
   file: string
+  renderMode?: 'svg' | 'canvas'
+  showAllPages?: boolean
 }
 interface PdfProps {
   numPages: number
@@ -21,7 +23,11 @@ interface IPdfLib {
   Outline: typeof Outline
 }
 
-export const PdfViewer: FC<PdfViewerProps> = ({ file }) => {
+export const PdfViewer: FC<PdfViewerProps> = ({
+  file,
+  renderMode = 'svg',
+  showAllPages = false,
+}) => {
   const [numPages, setNumPages] = useState(0)
   const [pageNumber, setPageNumber] = useState(1)
   const [pdfLib, setPdfLib] = useState<IPdfLib>()
@@ -65,27 +71,37 @@ export const PdfViewer: FC<PdfViewerProps> = ({ file }) => {
         <pdfLib.Document
           file={file}
           onLoadSuccess={onDocumentLoadSuccess}
-          renderMode="svg"
+          renderMode={renderMode}
           className={styles.pdfViewer}
           loading={() => loadingView()}
         >
-          <pdfLib.Page pageNumber={pageNumber} />
+          {showAllPages ? (
+            <>
+              {Array.from(new Array(numPages), (el, index) => (
+                <pdfLib.Page key={`page_${index + 1}`} pageNumber={index + 1} />
+              ))}
+            </>
+          ) : (
+            <pdfLib.Page pageNumber={pageNumber} />
+          )}
         </pdfLib.Document>
-        <Box marginTop={2} marginBottom={4}>
-          <Pagination
-            page={pageNumber}
-            renderLink={(page, className, children) => (
-              <Box
-                cursor="pointer"
-                className={className}
-                onClick={() => setPageNumber(page)}
-              >
-                {children}
-              </Box>
-            )}
-            totalPages={numPages}
-          />
-        </Box>
+        {!showAllPages && (
+          <Box marginTop={2} marginBottom={4}>
+            <Pagination
+              page={pageNumber}
+              renderLink={(page, className, children) => (
+                <Box
+                  cursor="pointer"
+                  className={className}
+                  onClick={() => setPageNumber(page)}
+                >
+                  {children}
+                </Box>
+              )}
+              totalPages={numPages}
+            />
+          </Box>
+        )}
       </>
     )
   }

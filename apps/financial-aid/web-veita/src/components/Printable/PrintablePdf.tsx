@@ -1,11 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { ApplicationFile } from '@island.is/financial-aid/shared/lib'
 import { gql, useQuery } from '@apollo/client'
-import type { Document, Page, Outline, pdfjs } from 'react-pdf'
-import { Box, Button } from '@island.is/island-ui/core'
-
-import * as styles from './Printable.css'
-import { loading } from 'libs/island-ui/core/src/lib/Button/Button.css'
+import { Box, Button, PdfViewer } from '@island.is/island-ui/core'
 
 interface Props {
   pdfFiles: ApplicationFile[]
@@ -20,26 +16,8 @@ export const GetSignedUrlQuery = gql`
   }
 `
 
-interface IPdfLib {
-  default: any
-  pdfjs: typeof pdfjs
-  Document: typeof Document
-  Page: typeof Page
-  Outline: typeof Outline
-}
-interface PdfProps {
-  numPages: number
-}
-
 const PrintablePdf = ({ pdfFiles }: Props) => {
   const allIPdfs: string[] = []
-  const [pdfLib, setPdfLib] = useState<IPdfLib>()
-  const [numPages, setNumPages] = useState(0)
-
-  const onDocumentLoadSuccess = ({ numPages }: PdfProps) => {
-    console.log(numPages, 'numpages')
-    setNumPages(numPages)
-  }
 
   pdfFiles.map((el) => {
     const { data } = useQuery(GetSignedUrlQuery, {
@@ -52,47 +30,20 @@ const PrintablePdf = ({ pdfFiles }: Props) => {
     }
   })
 
-  useEffect(() => {
-    import('react-pdf')
-      .then((pdf) => {
-        pdf.pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdf.pdfjs.version}/pdf.worker.min.js`
-        setPdfLib(pdf)
-      })
-      .catch((e) => {})
-  }, [])
-
-  useEffect(() => {
-    window.onbeforeprint = () => {
-      var oHiddFrame = document.getElementById('iframepdf')
-      if (oHiddFrame) {
-        document.body.appendChild(oHiddFrame)
-      }
-    }
-  }, [])
-
-  if (pdfLib && allIPdfs.length > 0) {
+  if (allIPdfs.length === pdfFiles.length) {
     return (
       <>
         {allIPdfs.map((file, index) => {
           if (file) {
+            console.log('hvað ferdu oft hér í gegn?')
+
             return (
               <Box key={`file-${index}`} marginBottom={10}>
-                <pdfLib.Document
+                <PdfViewer
                   file={file}
                   renderMode="canvas"
-                  onLoadSuccess={onDocumentLoadSuccess}
-                  className={styles.printablePdf}
-                >
-                  {Array.from(new Array(numPages), (el, index) => {
-                    console.log(index + 1, 'pagenumber')
-                    return (
-                      <pdfLib.Page
-                        key={`page_${index + 1}`}
-                        pageNumber={index + 1}
-                      />
-                    )
-                  })}
-                </pdfLib.Document>
+                  showAllPages={true}
+                />
               </Box>
             )
           }
