@@ -187,7 +187,7 @@ function remainingJudgeCaseData() {
     isClosedCourtHidden: true,
     courtAttendees: 'Court Attendees',
     prosecutorDemands: 'Police Demands',
-    courtDocuments: ['Þingskjal 1', 'Þingskjal 2'],
+    courtDocuments: [{ name: 'Þingskjal 1' }, { name: 'Þingskjal 2' }],
     sessionBookings: 'Session Bookings',
     courtCaseFacts: 'Court Case Facts',
     courtLegalArguments: 'Court Legal Arguments',
@@ -454,6 +454,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.parentCaseId ?? null).toBe(caseTwo.parentCaseId ?? null)
   expect(caseOne.caseModifiedExplanation ?? null).toBe(
     caseTwo.caseModifiedExplanation ?? null,
+  )
+  expect(caseOne.caseResentExplanation ?? null).toBe(
+    caseTwo.caseResentExplanation ?? null,
   )
   if (caseOne.parentCase || caseTwo.parentCase) {
     expectCasesToMatch(caseOne.parentCase, caseTwo.parentCase)

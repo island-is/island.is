@@ -37,6 +37,7 @@ export const prosecutorUpdateRule = {
     'sharedWithProsecutorsOfficeId',
     'caseModifiedExplanation',
     'isolationToDate',
+    'caseResentExplanation',
   ],
 } as RolesRule
 

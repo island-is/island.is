@@ -58,11 +58,16 @@ export class NationalRegistryXRoadService {
     user: User,
     nationalId: string,
   ): Promise<NationalRegistryPerson | undefined> {
-    const person:
-      | NationalRegistryClientPerson
-      | undefined = await this.nationalRegistryApiWithAuth(user)
-      .einstaklingarGetEinstaklingur({ id: nationalId })
+    const response = await this.nationalRegistryApiWithAuth(user)
+      .einstaklingarGetEinstaklingurRaw({ id: nationalId })
       .catch(this.handle404)
+
+    // 2022-03-08: For some reason, the API now returns "204 No Content" when nationalId doesn't exist.
+    // Should remove this after they've fixed their API to return "404 Not Found".
+    const person =
+      response === undefined || response.raw.status === 204
+        ? undefined
+        : await response.value()
 
     return (
       person && {
