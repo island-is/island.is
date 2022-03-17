@@ -2,7 +2,7 @@ import React from 'react'
 import { ApplicationFile } from '@island.is/financial-aid/shared/lib'
 import { gql, useQuery } from '@apollo/client'
 
-import * as styles from './Profile.css'
+import * as styles from './Printable.css'
 
 interface Props {
   images: ApplicationFile[]

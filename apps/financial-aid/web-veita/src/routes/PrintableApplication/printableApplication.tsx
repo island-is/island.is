@@ -16,9 +16,9 @@ import {
   LoadingContainer,
   ProfileNotFound,
   ApplicationProfile,
+  PrintableImages,
+  PrintablePdf,
 } from '@island.is/financial-aid-web/veita/src/components'
-import PrintableImages from '../../components/Profile/PrintableImages'
-import PrintablePdf from '../../components/Profile/PrintablePdf'
 
 interface ApplicantData {
   application: Application

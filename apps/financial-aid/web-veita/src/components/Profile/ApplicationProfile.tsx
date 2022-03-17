@@ -146,7 +146,7 @@ const ApplicationProfile = ({
     application.directTaxPayments.filter(
       (d) => d.userType === UserType.SPOUSE,
     ) ?? []
-  console.log(isPrint)
+
   return (
     <>
       <Box
