@@ -29,13 +29,13 @@ export class CompanyRegistryResolver {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private rskCompanyInfoService: RskCompanyInfoService,
-    private RSKService: RSKService,
+    private rskService: RSKService,
   ) {}
 
   @Query(() => [CurrentUserCompanies])
   @Audit()
   async rskCurrentUserCompanies(@CurrentUser() user: User) {
-    return this.RSKService.getCompaniesByNationalId(user.nationalId)
+    return this.rskService.getCompaniesByNationalId(user.nationalId)
   }
 
   @Query(() => RskCompany, {

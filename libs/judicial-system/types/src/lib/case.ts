@@ -72,7 +72,6 @@ export enum CaseCustodyRestrictions {
   COMMUNICATION = 'COMMUNICATION',
   MEDIA = 'MEDIA',
   ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION = 'ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION',
-  ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT = 'ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT',
   WORKBAN = 'WORKBAN',
 }
 
@@ -175,6 +174,7 @@ export interface Case {
   notifications?: Notification[]
   caseFiles?: CaseFile[]
   caseModifiedExplanation?: string
+  caseResentExplanation?: string
 }
 
 export interface CreateCase {
@@ -249,6 +249,7 @@ export interface UpdateCase {
   registrarId?: string
   judgeId?: string
   caseModifiedExplanation?: string
+  caseResentExplanation?: string
 }
 
 export interface TransitionCase {
