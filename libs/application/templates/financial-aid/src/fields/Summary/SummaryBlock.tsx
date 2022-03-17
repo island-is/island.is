@@ -1,8 +1,8 @@
 import React, { ReactNode } from 'react'
-import { Text, Box, Button } from '@island.is/island-ui/core'
-
-import { summaryForm } from '../../lib/messages'
 import { useIntl } from 'react-intl'
+
+import { Box, Button } from '@island.is/island-ui/core'
+import { summaryForm } from '../../lib/messages'
 import * as styles from '../Shared.css'
 
 interface Props {

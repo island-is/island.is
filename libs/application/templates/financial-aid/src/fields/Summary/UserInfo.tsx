@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
-import * as m from '../../lib/messages'
+import { summaryForm } from '../../lib/messages'
 
 interface Props {
   name: string
@@ -24,7 +24,7 @@ const UserInfo = ({ name, nationalId, address }: Props) => {
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <Box>
             <Text fontWeight="semiBold">
-              {formatMessage(m.summaryForm.userInfo.name)}
+              {formatMessage(summaryForm.userInfo.name)}
             </Text>
             <Text>{name}</Text>
           </Box>
@@ -32,7 +32,7 @@ const UserInfo = ({ name, nationalId, address }: Props) => {
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <Box marginTop={[3, 3, 3, 0]}>
             <Text fontWeight="semiBold">
-              {formatMessage(m.summaryForm.userInfo.nationalId)}
+              {formatMessage(summaryForm.userInfo.nationalId)}
             </Text>
             <Text>{nationalId}</Text>
           </Box>
@@ -40,7 +40,7 @@ const UserInfo = ({ name, nationalId, address }: Props) => {
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <Box marginTop={3}>
             <Text fontWeight="semiBold">
-              {formatMessage(m.summaryForm.userInfo.address)}
+              {formatMessage(summaryForm.userInfo.address)}
             </Text>
             <Text>{address}</Text>
           </Box>

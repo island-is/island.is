@@ -83,6 +83,11 @@ export const summaryForm = {
       defaultMessage: 'Frekari útskýring á umsókn',
       description: 'Summary form label above the form comment section',
     },
+    formFilesLabel: {
+      id: 'fa.application:section.summaryForm.formInfo.formFilesLabel',
+      defaultMessage: 'Gögn',
+      description: 'Summary form label above the form files section',
+    },
   }),
   block: defineMessages({
     buttonLabel: {

@@ -15,7 +15,6 @@ import {
 
 import * as m from '../../lib/messages'
 import { ApproveOptions, FAFieldBaseProps } from '../../lib/types'
-
 import { Routes } from '../../lib/constants'
 import { DescriptionText, Breakdown } from '../index'
 import {
@@ -44,8 +43,8 @@ const SummaryForm = ({
 }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
   const { createApplication } = useApplication()
-  const { id, answers, externalData } = application
   const [formError, setFormError] = useState(false)
+  const { id, answers, externalData } = application
 
   const aidAmount = useMemo(() => {
     if (
@@ -91,7 +90,7 @@ const SummaryForm = ({
       route: Routes.HOMECIRCUMSTANCES,
       label: m.homeCircumstancesForm.general.sectionTitle,
       info:
-        answers?.homeCircumstances.type === HomeCircumstances.OTHER
+        answers?.homeCircumstances?.type === HomeCircumstances.OTHER
           ? answers?.homeCircumstances?.custom
           : getMessageHomeCircumstances[answers?.homeCircumstances?.type],
     },
@@ -108,9 +107,9 @@ const SummaryForm = ({
       route: Routes.EMPLOYMENT,
       label: m.employmentForm.general.sectionTitle,
       info:
-        answers?.employment.type === Employment.OTHER
+        answers?.employment?.type === Employment.OTHER
           ? answers?.employment.custom
-          : getMessageEmploymentStatus[answers.employment?.type],
+          : getMessageEmploymentStatus[answers?.employment?.type],
     },
     {
       route: Routes.INCOME,
@@ -198,7 +197,7 @@ const SummaryForm = ({
         applicationId={id}
       />
 
-      <Comment commentId="formComment" comment={answers?.formComment ?? ''} />
+      <Comment commentId="formComment" comment={answers?.formComment} />
 
       <Box
         className={cn(styles.errorMessage, {

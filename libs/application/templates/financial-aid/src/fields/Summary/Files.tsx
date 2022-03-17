@@ -1,13 +1,14 @@
 import React from 'react'
-import { UploadFile, Box, Icon, Text } from '@island.is/island-ui/core'
-
+import { useIntl } from 'react-intl'
 import { useMutation } from '@apollo/client'
+
+import { UploadFile, Box, Icon, Text } from '@island.is/island-ui/core'
 import { encodeFilenames } from '../../lib/utils'
 import { CreateSignedUrlMutation } from '../../lib/hooks/useFileUpload'
-
 import * as styles from '../Shared.css'
 import SummaryBlock from './SummaryBlock'
 import { Routes } from '../../lib/constants'
+import { summaryForm } from '../../lib/messages'
 
 interface Props {
   goToScreen?: (id: string) => void
@@ -24,14 +25,15 @@ const Files = ({
   incomeFiles,
   applicationId,
 }: Props) => {
-  const allFiles = taxFiles.concat(incomeFiles)
-
+  const { formatMessage } = useIntl()
   const [createSignedUrlMutation] = useMutation(CreateSignedUrlMutation)
-  console.log(route)
+  const allFiles = taxFiles.concat(incomeFiles)
 
   return (
     <SummaryBlock editAction={() => goToScreen?.(route)}>
-      <Text fontWeight="semiBold">Gögn</Text>{' '}
+      <Text fontWeight="semiBold">
+        {formatMessage(summaryForm.formInfo.formFilesLabel)}
+      </Text>
       {allFiles &&
         allFiles.map((file: UploadFile, index: number) => {
           if (file) {

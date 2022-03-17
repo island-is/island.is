@@ -2,22 +2,22 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
-import * as m from '../../lib/messages'
+import { summaryForm } from '../../lib/messages'
 import { Controller, useFormContext } from 'react-hook-form'
 
 interface Props {
   commentId: string
-  comment: string
+  comment?: string
 }
 
-const ContactInfo = ({ commentId, comment }: Props) => {
+const Comment = ({ commentId, comment }: Props) => {
   const { formatMessage } = useIntl()
   const { setValue } = useFormContext()
 
   return (
     <>
       <Text as="h3" variant="h3">
-        {formatMessage(m.summaryForm.formInfo.formCommentLabel)}
+        {formatMessage(summaryForm.formInfo.formCommentLabel)}
       </Text>
       <Box marginTop={[3, 3, 4]} marginBottom={4}>
         <Controller
@@ -28,9 +28,9 @@ const ContactInfo = ({ commentId, comment }: Props) => {
               <Input
                 id={commentId}
                 name={commentId}
-                label={formatMessage(m.summaryForm.formInfo.formCommentTitle)}
+                label={formatMessage(summaryForm.formInfo.formCommentTitle)}
                 placeholder={formatMessage(
-                  m.summaryForm.formInfo.formCommentPlaceholder,
+                  summaryForm.formInfo.formCommentPlaceholder,
                 )}
                 value={value}
                 textarea={true}
@@ -49,4 +49,4 @@ const ContactInfo = ({ commentId, comment }: Props) => {
   )
 }
 
-export default ContactInfo
+export default Comment

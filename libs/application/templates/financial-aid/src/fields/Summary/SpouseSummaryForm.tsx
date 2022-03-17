@@ -68,7 +68,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 
       <Comment
         commentId="spouseFormComment"
-        comment={answers?.spouseFormComment ?? ''}
+        comment={answers?.spouseFormComment}
       />
     </>
   )

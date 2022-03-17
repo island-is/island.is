@@ -1,10 +1,7 @@
 import {
   buildCustomField,
   buildForm,
-  buildMultiField,
   buildSection,
-  buildSubmitField,
-  DefaultEvents,
   Form,
   FormModes,
 } from '@island.is/application/core'
@@ -81,7 +78,7 @@ export const Spouse: Form = buildForm({
       title: m.summaryForm.general.sectionTitle,
       children: [
         buildCustomField({
-          id: 'summaryForm',
+          id: 'spouseSummaryForm',
           title: m.summaryForm.general.pageTitle,
           component: 'SpouseSummaryForm',
         }),

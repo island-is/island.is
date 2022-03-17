@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { Routes } from '../../lib/constants'
-import * as m from '../../lib/messages'
+import { contactInfo } from '../../lib/messages'
 import SummaryBlock from './SummaryBlock'
 
 interface Props {
@@ -21,13 +21,13 @@ const ContactInfo = ({ route, email, phone, goToScreen }: Props) => {
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Text fontWeight="semiBold">
-            {formatMessage(m.contactInfo.emailInput.label)}
+            {formatMessage(contactInfo.emailInput.label)}
           </Text>
           <Text marginBottom={[3, 3, 3, 0]}>{email}</Text>
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Text fontWeight="semiBold">
-            {formatMessage(m.contactInfo.phoneInput.label)}
+            {formatMessage(contactInfo.phoneInput.label)}
           </Text>
           <Text>{phone}</Text>
         </GridColumn>
