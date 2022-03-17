@@ -1,5 +1,5 @@
 import React, { FC, ReactElement } from 'react'
-import { Icon, Table as T } from '@island.is/island-ui/core'
+import { Icon, Table as T, Tooltip } from '@island.is/island-ui/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
@@ -20,7 +20,7 @@ interface Props {
 type DetailData = Array<
   DetailedSchedule & {
     paid: boolean
-    paymentsElement: ReactElement | undefined | null
+    paymentsElement: ReactElement[] | undefined | null
   }
 >
 
@@ -31,24 +31,22 @@ const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
     if (!payments || payments.length < 2) return
 
     return payments.map((payment, i) => {
-      const isLast = i === payments.length - 1
-      console.log(payment)
-      console.log(isLast)
+      const borderColor = i === payments.length - 1 ? 'blue200' : 'transparent'
       return (
-        <T.Row>
+        <T.Row key={i + payment.payDate}>
           <T.Data
-            borderColor={isLast ? 'blue200' : 'transparent'}
+            borderColor={borderColor}
             box={{ paddingX: 2 }}
             style={tableStyles}
           ></T.Data>
           <T.Data
-            borderColor={isLast ? 'blue200' : 'transparent'}
+            borderColor={borderColor}
             box={{ paddingX: 2 }}
             style={tableStyles}
           ></T.Data>
           {payment.payExplanation && payment.payExplanation !== 'Greiðsla' ? (
             <T.Data
-              borderColor={isLast ? 'blue200' : 'transparent'}
+              borderColor={borderColor}
               box={{ paddingX: 2 }}
               style={tableStyles}
             >
@@ -59,20 +57,20 @@ const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
             </T.Data>
           ) : (
             <T.Data
-              borderColor={isLast ? 'blue200' : 'transparent'}
+              borderColor={borderColor}
               box={{ paddingX: 2 }}
               style={tableStyles}
             ></T.Data>
           )}
           <T.Data
-            borderColor={isLast ? 'blue200' : 'transparent'}
+            borderColor={borderColor}
             box={{ paddingX: 2 }}
             style={tableStyles}
           >
             <Text variant="medium">{amountFormat(payment.payAmount)}</Text>
           </T.Data>
           <T.Data
-            borderColor={isLast ? 'blue200' : 'transparent'}
+            borderColor={borderColor}
             box={{ paddingX: 2 }}
             style={tableStyles}
           >
@@ -81,7 +79,7 @@ const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
             </Text>
           </T.Data>
           <T.Data
-            borderColor={isLast ? 'blue200' : 'transparent'}
+            borderColor={borderColor}
             box={{ paddingX: 2 }}
             style={tableStyles}
           ></T.Data>
@@ -143,7 +141,6 @@ const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
     },
   ]
 
-  console.log('data from detail table', data)
   return (
     <Box className={styles.wrapper} background="white">
       <T.Table>
@@ -156,7 +153,7 @@ const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
                   paddingRight: 2,
                   paddingLeft: 2,
                 }}
-                key={i}
+                key={i + item.value}
                 text={{ truncate: true }}
                 style={tableStyles}
               >
@@ -170,7 +167,7 @@ const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
         <T.Body>
           {arr?.map((row, i) => (
             <>
-              <T.Row key={i}>
+              <T.Row key={i + row.paymentNumber}>
                 {[
                   {
                     value: format(dateParse(row.plannedDate), dateFormat.is),
@@ -178,7 +175,22 @@ const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
                     border: !row.paidDate.includes('*'),
                   },
                   {
-                    value: amountFormat(row.plannedAmount),
+                    value: (
+                      <Box display="flex">
+                        {amountFormat(row.plannedAmount)}
+                        {i === arr.length - 1 ? (
+                          <Tooltip
+                            placement="bottom"
+                            text={formatMessage({
+                              id: 'sp.finance-schedule:last-payment-info',
+                              defaultMessage:
+                                'Síðasta greiðslan mun safna á sig vöxtum.',
+                            })}
+                          />
+                        ) : null}
+                      </Box>
+                    ),
+                    element: true,
                     align: 'left',
                     border: !row.paidDate.includes('*'),
                   },
@@ -216,13 +228,14 @@ const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
                     ) : (
                       ''
                     ),
+                    element: true,
                     align: 'center',
                     border: !row.paidDate.includes('*'),
                   },
                 ].map((item, ii) => (
                   <T.Data
                     box={{ paddingRight: 2, paddingLeft: 2 }}
-                    key={ii}
+                    key={ii.toString() + item.value}
                     style={tableStyles}
                     borderColor={item.border ? 'blue200' : 'transparent'}
                   >
@@ -232,7 +245,9 @@ const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
                         [styles.alignCenter]: item.align === 'center',
                       })}
                     >
-                      <Text variant="medium">{item.value}</Text>
+                      <Text variant="medium" as={item.element ? 'span' : 'p'}>
+                        {item.value}
+                      </Text>
                     </div>
                   </T.Data>
                 ))}

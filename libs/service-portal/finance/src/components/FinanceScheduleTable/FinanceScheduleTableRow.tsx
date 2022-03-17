@@ -59,6 +59,7 @@ const FinanceScheduleTableRow: FC<Props> = ({ paymentSchedule }) => {
 
   return (
     <ExpandRow
+      key={paymentSchedule.scheduleNumber}
       onExpandCallback={() =>
         getPaymentScheduleById({
           variables: {
@@ -87,6 +88,7 @@ const FinanceScheduleTableRow: FC<Props> = ({ paymentSchedule }) => {
               </Button>
             </Box>
           ),
+          element: true,
           align: 'right',
         },
       ]}

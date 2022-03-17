@@ -41,19 +41,9 @@ export const GET_FINANCE_PAYMENT_SCHEDULES = gql`
   }
 `
 
-const ALL_CHARGE_TYPES = 'ALL_CHARGE_TYPES'
-
 const FinanceSchedule: ServicePortalModuleComponent = () => {
   useNamespaces('sp.finance-schedule')
   const { formatMessage } = useLocale()
-
-  const allChargeTypes = {
-    label: formatMessage({
-      id: 'sp.finance-schedule:all-selection',
-      defaultMessage: 'Allir gjaldflokkar',
-    }),
-    value: ALL_CHARGE_TYPES,
-  }
 
   // const {
   //   data: debtStatusData,
@@ -68,8 +58,6 @@ const FinanceSchedule: ServicePortalModuleComponent = () => {
   } = useQuery<Query>(GET_FINANCE_PAYMENT_SCHEDULES)
 
   const { loading: tabLoading } = useQuery<Query>(GET_TAPS_QUERY)
-
-  console.log('paymentStatus:', paymentSchedulesData)
 
   const recordsData: Array<PaymentSchedule> =
     paymentSchedulesData?.getPaymentSchedule?.myPaymentSchedule

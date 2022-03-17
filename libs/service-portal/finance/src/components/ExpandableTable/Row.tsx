@@ -18,6 +18,7 @@ interface Props {
   data: Array<{
     value: string | number | React.ReactElement
     align?: 'left' | 'right'
+    element?: boolean
   }>
   last?: boolean
   loading?: boolean

@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react'
 import format from 'date-fns/format'
-import { Table as T, Box, Pagination } from '@island.is/island-ui/core'
+import { Table as T, Box, Pagination, Tooltip } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
 import { ExpandHeader } from '../../components/ExpandableTable'
@@ -66,10 +66,23 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
               }),
             },
             {
-              value: formatMessage({
-                id: 'sp.finance-schedule:amount-left-without-interest',
-                defaultMessage: 'Eftirstöðvar án vaxta',
-              }),
+              value: (
+                <Box display="flex">
+                  {formatMessage({
+                    id: 'sp.finance-schedule:amount-left-without-interest',
+                    defaultMessage: 'Eftirstöðvar án vaxta',
+                  })}
+                  <Tooltip
+                    placement="top"
+                    text={formatMessage({
+                      id:
+                        'sp.finance-schedule:amount-left-without-interest-info',
+                      defaultMessage: 'Upplýsingar um eftirstöðvar án vaxta',
+                    })}
+                  />
+                </Box>
+              ),
+              element: true,
             },
             {
               value: formatMessage({
