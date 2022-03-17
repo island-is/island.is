@@ -317,4 +317,9 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly caseModifiedExplanation?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly caseResentExplanation?: string
 }

@@ -136,6 +136,56 @@ ipsum`
       expect(spy).not.toBeCalled()
     })
   })
+
+  describe('enumerate', () => {
+    test('should enumerate list with three values', () => {
+      // Arrange
+      const values = ['alice', 'bob', 'paul']
+      const endWord = 'and'
+
+      // Act
+      const result = formatters.enumerate(values, endWord)
+
+      //Assert
+      expect(result).toBe('alice, bob and paul')
+    })
+
+    test('should enumerate list with two values', () => {
+      // Arrange
+      const values = ['alice', 'bob']
+      const endWord = 'or'
+
+      // Act
+      const result = formatters.enumerate(values, endWord)
+
+      //Assert
+      expect(result).toBe('alice or bob')
+    })
+
+    test('should enumerate list with one value', () => {
+      // Arrange
+      const values = ['alice']
+      const endWord = 'and'
+
+      // Act
+      const result = formatters.enumerate(values, endWord)
+
+      //Assert
+      expect(result).toBe('alice')
+    })
+
+    test('should handle empty list', () => {
+      // Arrange
+      const values: string[] = []
+      const endWord = 'and'
+
+      // Act
+      const result = formatters.enumerate(values, endWord)
+
+      //Assert
+      expect(result).toBe('')
+    })
+  })
 })
 
 describe('Validation', () => {
