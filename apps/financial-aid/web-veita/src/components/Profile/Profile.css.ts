@@ -68,7 +68,3 @@ export const statusOptions = style({
 export const activeState = style({
   color: theme.color.blue400,
 })
-
-export const printableImages = style({
-  marginBottom: theme.spacing[8],
-})

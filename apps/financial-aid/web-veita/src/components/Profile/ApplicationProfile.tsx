@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useContext, useEffect } from 'react'
+import React, { useState, useMemo, useContext } from 'react'
 import { Box } from '@island.is/island-ui/core'
 import {
   Application,

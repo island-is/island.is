@@ -179,8 +179,3 @@ const ApplicationHeader = ({
 }
 
 export default ApplicationHeader
-function printApplicationProfile(
-  id: string | string[] | undefined,
-): string | import('url').UrlObject {
-  throw new Error('Function not implemented.')
-}

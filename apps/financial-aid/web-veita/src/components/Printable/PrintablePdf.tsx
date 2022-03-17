@@ -35,8 +35,6 @@ const PrintablePdf = ({ pdfFiles }: Props) => {
       <>
         {allIPdfs.map((file, index) => {
           if (file) {
-            console.log('hvað ferdu oft hér í gegn?')
-
             return (
               <Box key={`file-${index}`} marginBottom={10}>
                 <PdfViewer

@@ -32,7 +32,13 @@ const CollapsibleProfileUnit = ({
 
   if (isPrint) {
     return (
-      <ProfileUnit heading={heading} info={info} className={`${className}`}>
+      <ProfileUnit
+        heading={heading}
+        info={info}
+        className={cn({
+          [`${className}`]: className,
+        })}
+      >
         {children}
       </ProfileUnit>
     )

@@ -53,7 +53,7 @@ const CommentSection = ({ className, setApplication }: Props) => {
   }
 
   return (
-    <Box marginBottom={3} className={`${className} `} printHidden>
+    <Box marginBottom={3} className={`${className} `}>
       <Box marginBottom={3}>
         <Button
           icon={showInput ? 'close' : 'open'}
