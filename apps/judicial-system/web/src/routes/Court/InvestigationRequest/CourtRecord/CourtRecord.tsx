@@ -12,7 +12,6 @@ import {
   core,
   icCourtRecord as m,
 } from '@island.is/judicial-system-web/messages'
-import type { Case } from '@island.is/judicial-system/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 
@@ -36,42 +35,6 @@ const CourtRecord = () => {
 
   useEffect(() => {
     if (isCaseUpToDate) {
-      const defaultCourtAttendees = (wc: Case): string => {
-        let attendees = ''
-
-        if (wc.prosecutor) {
-          attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}`
-        }
-
-        if (
-          wc.defenderName &&
-          wc.sessionArrangements !== SessionArrangements.PROSECUTOR_PRESENT
-        ) {
-          attendees += `\n${wc.defenderName} skipaður ${
-            wc.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
-          } ${formatMessage(core.defendant, { suffix: 'a' })}`
-        }
-
-        if (wc.translator) {
-          attendees += `\n${wc.translator} túlkur`
-        }
-
-        if (wc.defendants && wc.defendants.length > 0) {
-          if (wc.sessionArrangements === SessionArrangements.ALL_PRESENT) {
-            wc.defendants.forEach((defendant) => {
-              attendees += `\n${defendant.name} ${formatMessage(
-                core.defendant,
-                {
-                  suffix: 'i',
-                },
-              )}`
-            })
-          }
-        }
-
-        return attendees
-      }
-
       const theCase = workingCase
 
       if (theCase.courtDate) {
@@ -91,7 +54,39 @@ const CourtRecord = () => {
       }
 
       if (theCase.courtAttendees !== '') {
-        autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
+        let autofillAttendees = ''
+
+        if (theCase.prosecutor) {
+          autofillAttendees += `${theCase.prosecutor.name} ${theCase.prosecutor.title}`
+        }
+
+        if (
+          theCase.defenderName &&
+          theCase.sessionArrangements !== SessionArrangements.PROSECUTOR_PRESENT
+        ) {
+          autofillAttendees += `\n${theCase.defenderName} skipaður ${
+            theCase.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
+          } ${formatMessage(core.defendant, { suffix: 'a' })}`
+        }
+
+        if (theCase.translator) {
+          autofillAttendees += `\n${theCase.translator} túlkur`
+        }
+
+        if (theCase.defendants && theCase.defendants.length > 0) {
+          if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+            theCase.defendants.forEach((defendant) => {
+              autofillAttendees += `\n${defendant.name} ${formatMessage(
+                core.defendant,
+                {
+                  suffix: 'i',
+                },
+              )}`
+            })
+          }
+        }
+
+        autofill('courtAttendees', autofillAttendees, theCase)
       }
 
       if (theCase.type === CaseType.RESTRAINING_ORDER) {
@@ -158,7 +153,7 @@ const CourtRecord = () => {
         )
       }
 
-      setWorkingCase(workingCase)
+      setWorkingCase(theCase)
     }
   }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])
 
