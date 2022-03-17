@@ -37,16 +37,11 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       </Box>
 
       <UserInfo
-        name={
-          externalData?.nationalRegistry?.data?.applicant?.spouse?.name ?? ''
-        }
+        name={externalData?.nationalRegistry?.data?.applicant?.spouse?.name}
         nationalId={
-          externalData?.nationalRegistry?.data?.applicant?.spouse?.nationalId ??
-          ''
+          externalData?.nationalRegistry?.data?.applicant?.spouse?.nationalId
         }
-        address={
-          formatAddress(externalData?.nationalRegistry?.data?.applicant) ?? ''
-        }
+        address={formatAddress(externalData?.nationalRegistry?.data?.applicant)}
       />
 
       <FormInfo items={formItems} goToScreen={goToScreen} />

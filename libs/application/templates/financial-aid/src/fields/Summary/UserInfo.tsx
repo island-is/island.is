@@ -5,9 +5,9 @@ import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { summaryForm } from '../../lib/messages'
 
 interface Props {
-  name: string
-  nationalId: string
-  address: string
+  name?: string
+  nationalId?: string
+  address?: string
 }
 
 const UserInfo = ({ name, nationalId, address }: Props) => {
