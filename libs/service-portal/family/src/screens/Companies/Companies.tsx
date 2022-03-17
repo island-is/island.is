@@ -18,16 +18,15 @@ import { NATIONAL_REGISTRY_CHILDREN } from '../../lib/queries/getNationalChildre
 
 const CompaniesSimple = gql`
   query GetProcuringCompaniesQuery {
-    getProcuringCompanies {
-      nationalId
-      name
-      companies {
-        nationalId
-        name
-      }
-    }
+    getProcuringCompanies
   }
 `
+// nationalId
+// name
+// companies {
+//   nationalId
+//   name
+// }
 
 const UserInfoOverview: ServicePortalModuleComponent = ({ userInfo }) => {
   useNamespaces('sp.family')

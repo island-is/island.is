@@ -10,6 +10,7 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
+import graphqlTypeJson from 'graphql-type-json'
 
 import { NationalRegistryPerson } from '../models/nationalRegistryPerson.model'
 import { NationalRegistryXRoadService } from './nationalRegistryXRoad.service'
@@ -80,12 +81,13 @@ export class NationalRegistryXRoadResolver {
     )
   }
 
-  @Query(() => ProcuraSimple)
+  @Query(() => graphqlTypeJson)
   @Audit()
-  async getProcuringCompanies(
-    @CurrentUser() user: User,
-  ): Promise<ResponseSimple | null> {
-    const res = this.nationalRegistryXRoadService.getProcuringCompanies(user)
+  async getProcuringCompanies(@CurrentUser() user: User): Promise<any | null> {
+    const res = await this.nationalRegistryXRoadService.getProcuringCompanies(
+      user,
+    )
+    console.log('getProcuring - resolver', res)
     if (!res) return null
     return res
   }

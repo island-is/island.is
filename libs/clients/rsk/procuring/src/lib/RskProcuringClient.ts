@@ -49,9 +49,13 @@ export class RskProcuringClient {
   }
 
   getSimple(user: User): Promise<ResponseSimple | null> {
-    return this.simpleApiWithAuth(user)
-      .simple({ nationalId: user.nationalId })
-      .catch(this.handle404)
+    const res = this.simpleApiWithAuth(user)
+      .simple({ nationalId: '1801912409' }) // 0101302129
+      .catch((err) => {
+        console.log('cathing error')
+        return this.handle404(err)
+      })
+    return res
   }
 
   getDetailed(user: User): Promise<ResponseDetailed | null> {
@@ -61,6 +65,7 @@ export class RskProcuringClient {
   }
 
   private handle404(error: FetchError): null {
+    console.log('handle404 err', error)
     if (error.name === 'FetchError' && error.status === 404) {
       return null
     }

@@ -43,6 +43,12 @@ export const familyModule: ServicePortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.meDetails),
       render: () => lazy(() => import('./screens/Spouse/Spouse')),
     },
+    {
+      name: 'Fyrirtæki',
+      path: ServicePortalPath.Companies,
+      enabled: true, //userInfo.scopes.includes(ApiScope.meDetails),
+      render: () => lazy(() => import('./screens/Companies/Companies')),
+    },
   ],
 }
 
