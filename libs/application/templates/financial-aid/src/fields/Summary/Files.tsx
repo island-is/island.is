@@ -31,7 +31,7 @@ const Files = ({
 
   return (
     <SummaryBlock editAction={() => goToScreen?.(route)}>
-      <Text fontWeight="semiBold">
+      <Text fontWeight="semiBold" marginBottom={1}>
         {formatMessage(summaryForm.formInfo.filesTitle)}
       </Text>
       {allFiles &&
