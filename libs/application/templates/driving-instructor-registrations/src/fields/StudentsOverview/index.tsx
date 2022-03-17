@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useDebounce } from 'react-use'
 import {
   Button,
   Box,
@@ -55,6 +56,7 @@ const StudentsOverview = ({ application }: Data) => {
   }
 
   const filter = (searchTerm: string) => {
+  console.log("########## Filter search ###############")
     if (searchTerm.length) {
       const filteredList = data.drivingLicenseBookStudentsForTeacher?.filter(
         (student: Student) =>
@@ -68,9 +70,13 @@ const StudentsOverview = ({ application }: Data) => {
     }
   }
 
-  useEffect(() => {
-    filter(searchTerm)
-  }, [data?.drivingLicenseBookStudentsForTeacher, searchTerm])
+  useDebounce(
+    () => {
+      filter(searchTerm)
+    },
+    500,
+    [data?.drivingLicenseBookStudentsForTeacher, searchTerm],
+  )
 
   return (
     <Box marginBottom={10}>
