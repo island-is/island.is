@@ -38,7 +38,7 @@ export class ConfigurationLoader<T> implements EnvLoader {
       return this.handleResult(result)
     } catch (err) {
       // Loader crashed. If there are reported issues, throw those instead.
-      return this.handleResult(undefined, err)
+      return this.handleResult(undefined, err as Error)
     }
   }
 
