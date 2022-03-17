@@ -32,7 +32,7 @@ const Files = ({
   return (
     <SummaryBlock editAction={() => goToScreen?.(route)}>
       <Text fontWeight="semiBold">
-        {formatMessage(summaryForm.formInfo.formFilesLabel)}
+        {formatMessage(summaryForm.formInfo.filesTitle)}
       </Text>
       {allFiles &&
         allFiles.map((file: UploadFile, index: number) => {

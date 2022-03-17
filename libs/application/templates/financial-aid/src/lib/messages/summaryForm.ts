@@ -68,6 +68,11 @@ export const summaryForm = {
       defaultMessage: 'Nýta persónuafslátt?',
       description: 'Summary form personalTaxCredit title',
     },
+    filesTitle: {
+      id: 'fa.application:section.summaryForm.formInfo.filesTitle',
+      defaultMessage: 'Gögn',
+      description: 'Summary form files title',
+    },
     formCommentTitle: {
       id: 'fa.application:section.summaryForm.formInfo.formCommentTitle',
       defaultMessage: 'Útskýring umsóknar',
@@ -82,11 +87,6 @@ export const summaryForm = {
       id: 'fa.application:section.summaryForm.formInfo.formCommentLabel',
       defaultMessage: 'Frekari útskýring á umsókn',
       description: 'Summary form label above the form comment section',
-    },
-    formFilesLabel: {
-      id: 'fa.application:section.summaryForm.formInfo.formFilesLabel',
-      defaultMessage: 'Gögn',
-      description: 'Summary form label above the form files section',
     },
   }),
   block: defineMessages({
