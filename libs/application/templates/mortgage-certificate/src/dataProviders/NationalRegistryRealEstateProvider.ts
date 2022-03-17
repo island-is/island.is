@@ -27,7 +27,7 @@ export class NationalRegistryRealEstateProvider extends BasicDataProvider {
           ...response.data.assetsOverviewWithDetail,
         })
       })
-      .catch((error) => {
+      .catch(() => {
         return this.handleError()
       })
   }
