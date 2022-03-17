@@ -24,10 +24,11 @@ interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
+  isCaseUpToDate: boolean
 }
 
 const PoliceReportForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading } = props
+  const { workingCase, setWorkingCase, isLoading, isCaseUpToDate } = props
 
   const { formatMessage } = useIntl()
   const { updateCase, autofill } = useCase()
@@ -42,18 +43,16 @@ const PoliceReportForm: React.FC<Props> = (props) => {
   useDeb(workingCase, 'comments')
 
   useEffect(() => {
-    const defaultProsecutorOnlySessionRequest = formatMessage(
-      icReportForm.prosecutorOnly.input.defaultValue,
-    )
-
-    if (workingCase.requestProsecutorOnlySession) {
-      autofill(
-        'prosecutorOnlySessionRequest',
-        defaultProsecutorOnlySessionRequest,
-        workingCase,
-      )
+    if (isCaseUpToDate) {
+      if (workingCase.requestProsecutorOnlySession) {
+        autofill(
+          'prosecutorOnlySessionRequest',
+          formatMessage(icReportForm.prosecutorOnly.input.defaultValue),
+          workingCase,
+        )
+      }
     }
-  }, [autofill, formatMessage, workingCase])
+  }, [autofill, formatMessage, isCaseUpToDate, workingCase])
 
   return (
     <>
