@@ -286,9 +286,9 @@ export const m = defineMessages({
   },
   errorSheriffApiTitle: {
     id: 'mc.application.errorSherrifApi.title',
-    defaultMessage: 'Villa hefur komið upp á milli ísland.is og sýslumanna',
+    defaultMessage: 'Villa hefur komið upp á milli Ísland.is og sýslumanna',
     description:
-      "An error has occurred between ísland.is and the sheriff's office",
+      "An error has occurred between Ísland.is and the sheriff's office",
   },
   errorSheriffApiMessage: {
     id: 'mc.application.errorSherrifApi.message',
@@ -348,7 +348,7 @@ export const m = defineMessages({
   propertyErrorCertificateMessage: {
     id: 'property.certificateErrorMessage',
     defaultMessage:
-      'Því miður getum við ekki sótt rafrænt veðbókarvottorð fyrir valda eign þar skráning á viðkomandi eign þarnast uppfærslu. Sýslumanni í því umdæmi sem eignin er í verður send beiðni um lagfæringu, þú munt fá tilkynningu (á netfang) að yfirferð lokinni og getur þá reynt aftur.',
+      'Því miður getum við ekki sótt rafrænt veðbókarvottorð fyrir valda eign þar sem skráning á viðkomandi eign þarnast uppfærslu. Sýslumanni í því umdæmi sem eignin er í verður send beiðni um lagfæringu, þú munt fá tilkynningu (á netfang) að yfirferð lokinni og getur þá reynt aftur.',
     description:
       'Sorry, we are unable to download an electronic mortgage certificate for the selected property as the listing of the property in question needs updating. The district commissioner of the property in which the property is located will be sent a request for repairs, you will be notified (by email) after the inspection and can then try again.',
   },

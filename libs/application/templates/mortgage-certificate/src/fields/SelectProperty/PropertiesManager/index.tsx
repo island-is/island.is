@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { FieldBaseProps, getValueViaPath } from '@island.is/application/core'
 import { RegisteredProperties } from '../RegisteredProperties'
@@ -23,18 +23,25 @@ export const PropertiesManager: FC<FieldBaseProps> = ({
   ) as string | undefined
 
   // check if hidden field has a selected property
-  if (!selectedPropertyNumber) {
-    const { validation } =
-      (externalData.validateMortgageCertificate?.data as {
-        validation: {
-          propertyNumber: string
-        }
-      }) || {}
+  useEffect(() => {
+    if (!selectedPropertyNumber) {
+      const { validation } =
+        (externalData.validateMortgageCertificate?.data as {
+          validation: {
+            propertyNumber: string
+            isFromSearch: boolean
+          }
+        }) || {}
 
-    if (validation?.propertyNumber) {
-      selectedPropertyNumber = validation.propertyNumber
+      if (validation?.propertyNumber) {
+        selectedPropertyNumber = validation.propertyNumber
+        setValue(id, {
+          propertyNumber: validation.propertyNumber,
+          isFromSearch: validation.isFromSearch,
+        })
+      }
     }
-  }
+  }, [])
 
   const defaultProperty = properties ? properties[0] : undefined
 
