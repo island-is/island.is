@@ -509,3 +509,12 @@ export const GetSignedUrlQuery = gql`
     }
   }
 `
+
+export const GetAllSignedUrlQuery = gql`
+  query GetAllSignedUrlQuery($input: GetSignedUrlForIdInput!) {
+    getSignedUrlForAllFilesId(input: $input) {
+      url
+      key
+    }
+  }
+`

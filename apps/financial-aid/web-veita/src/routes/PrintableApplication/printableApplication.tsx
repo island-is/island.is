@@ -57,17 +57,7 @@ const UserApplication = () => {
           />
           {application?.files && (
             <>
-              <div>
-                <PrintableFiles
-                  files={application?.files.filter((el) => isImage(el.name))}
-                  isImages={true}
-                />
-                <PrintableFiles
-                  files={application?.files.filter(
-                    (el) => getFileType(el.name) === 'pdf',
-                  )}
-                />
-              </div>
+              <PrintableFiles applicationId={router.query.id as string} />
             </>
           )}
         </>

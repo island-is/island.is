@@ -1,51 +1,50 @@
 import React from 'react'
-import { ApplicationFile } from '@island.is/financial-aid/shared/lib'
+import {
+  getFileType,
+  GetSignedUrlForAllFiles,
+  isImage,
+} from '@island.is/financial-aid/shared/lib'
 import { useQuery } from '@apollo/client'
 import { Box, Button, PdfViewer } from '@island.is/island-ui/core'
-import { GetSignedUrlQuery } from '@island.is/financial-aid-web/veita/graphql'
+import { GetAllSignedUrlQuery } from '@island.is/financial-aid-web/veita/graphql'
 
 interface Props {
-  files: ApplicationFile[]
-  isImages?: boolean
+  applicationId: string
 }
 
-const PrintableFiles = ({ files, isImages = false }: Props) => {
-  const allIPdfs: string[] = []
-
-  files.map((el) => {
-    const { data } = useQuery(GetSignedUrlQuery, {
-      variables: { input: { id: el.id } },
+const PrintableFiles = ({ applicationId }: Props) => {
+  const { data, loading } = useQuery<GetSignedUrlForAllFiles>(
+    GetAllSignedUrlQuery,
+    {
+      variables: { input: { id: applicationId } },
       fetchPolicy: 'no-cache',
       errorPolicy: 'all',
-    })
-    if (data?.getSignedUrlForId) {
-      allIPdfs.push(data.getSignedUrlForId.url)
-    }
-  })
+    },
+  )
 
-  if (allIPdfs.length === files.length) {
+  if (data?.getSignedUrlForAllFilesId && !loading) {
     return (
       <>
-        {allIPdfs.map((file, index) => {
-          if (file) {
-            return (
-              <Box key={`file-${index}`} marginBottom={10}>
-                {isImages ? (
-                  <img
-                    key={`printable-image-${index}`}
-                    src={file}
-                    loading="lazy"
-                  />
-                ) : (
-                  <PdfViewer
-                    file={file}
-                    renderMode="canvas"
-                    showAllPages={true}
-                  />
-                )}
-              </Box>
-            )
-          }
+        {data.getSignedUrlForAllFilesId.map((file, index) => {
+          return (
+            <Box key={`file-${index}`} marginBottom={10}>
+              {isImage(file.key) && (
+                <img
+                  key={`printable-image-${index}`}
+                  src={file.url}
+                  loading="lazy"
+                />
+              )}
+
+              {getFileType(file.key) === 'pdf' && (
+                <PdfViewer
+                  file={file.url}
+                  renderMode="canvas"
+                  showAllPages={true}
+                />
+              )}
+            </Box>
+          )
         })}
       </>
     )
