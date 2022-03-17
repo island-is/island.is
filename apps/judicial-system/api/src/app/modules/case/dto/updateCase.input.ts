@@ -257,4 +257,8 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly caseModifiedExplanation?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly caseResentExplanation?: string
 }
