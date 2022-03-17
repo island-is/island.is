@@ -500,3 +500,12 @@ export const SupervisorsQuery = gql`
     }
   }
 `
+
+export const GetSignedUrlQuery = gql`
+  query GetSignedUrlQuery($input: GetSignedUrlForIdInput!) {
+    getSignedUrlForId(input: $input) {
+      url
+      key
+    }
+  }
+`

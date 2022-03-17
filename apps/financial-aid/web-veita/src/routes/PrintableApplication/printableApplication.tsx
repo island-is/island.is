@@ -16,8 +16,7 @@ import {
   LoadingContainer,
   ProfileNotFound,
   ApplicationProfile,
-  PrintableImages,
-  PrintablePdf,
+  PrintableFiles,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 interface ApplicantData {
@@ -59,11 +58,12 @@ const UserApplication = () => {
           {application?.files && (
             <>
               <div>
-                <PrintableImages
-                  images={application?.files.filter((el) => isImage(el.name))}
+                <PrintableFiles
+                  files={application?.files.filter((el) => isImage(el.name))}
+                  isImages={true}
                 />
-                <PrintablePdf
-                  pdfFiles={application?.files.filter(
+                <PrintableFiles
+                  files={application?.files.filter(
                     (el) => getFileType(el.name) === 'pdf',
                   )}
                 />

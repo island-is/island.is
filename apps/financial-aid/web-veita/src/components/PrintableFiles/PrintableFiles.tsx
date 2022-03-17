@@ -1,25 +1,18 @@
 import React from 'react'
 import { ApplicationFile } from '@island.is/financial-aid/shared/lib'
-import { gql, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import { Box, Button, PdfViewer } from '@island.is/island-ui/core'
+import { GetSignedUrlQuery } from '@island.is/financial-aid-web/veita/graphql'
 
 interface Props {
-  pdfFiles: ApplicationFile[]
+  files: ApplicationFile[]
+  isImages?: boolean
 }
 
-export const GetSignedUrlQuery = gql`
-  query GetSignedUrlQuery($input: GetSignedUrlForIdInput!) {
-    getSignedUrlForId(input: $input) {
-      url
-      key
-    }
-  }
-`
-
-const PrintablePdf = ({ pdfFiles }: Props) => {
+const PrintableFiles = ({ files, isImages = false }: Props) => {
   const allIPdfs: string[] = []
 
-  pdfFiles.map((el) => {
+  files.map((el) => {
     const { data } = useQuery(GetSignedUrlQuery, {
       variables: { input: { id: el.id } },
       fetchPolicy: 'no-cache',
@@ -30,18 +23,26 @@ const PrintablePdf = ({ pdfFiles }: Props) => {
     }
   })
 
-  if (allIPdfs.length === pdfFiles.length) {
+  if (allIPdfs.length === files.length) {
     return (
       <>
         {allIPdfs.map((file, index) => {
           if (file) {
             return (
               <Box key={`file-${index}`} marginBottom={10}>
-                <PdfViewer
-                  file={file}
-                  renderMode="canvas"
-                  showAllPages={true}
-                />
+                {isImages ? (
+                  <img
+                    key={`printable-image-${index}`}
+                    src={file}
+                    loading="lazy"
+                  />
+                ) : (
+                  <PdfViewer
+                    file={file}
+                    renderMode="canvas"
+                    showAllPages={true}
+                  />
+                )}
               </Box>
             )
           }
@@ -51,7 +52,7 @@ const PrintablePdf = ({ pdfFiles }: Props) => {
   }
   return (
     <div>
-      Ekki tókst að hlaða upp pdf prófaðu að{' '}
+      Ekki tókst að hlaða upp prófaðu að{' '}
       <Button
         variant="text"
         size="large"
@@ -65,4 +66,4 @@ const PrintablePdf = ({ pdfFiles }: Props) => {
   )
 }
 
-export default PrintablePdf
+export default PrintableFiles
