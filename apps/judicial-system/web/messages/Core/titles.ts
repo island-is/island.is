@@ -98,39 +98,39 @@ export const titles = {
           'judicial.system.core:titles.court.investigation_cases.reception_and_assignment',
         defaultMessage: 'Móttaka - Réttarvörslugátt',
         description:
-          'Notaður sem titill fyrir Móttaka skjá hjá saksóknara í rannsóknarheimildum',
+          'Notaður sem titill fyrir Móttaka skjá hjá dómstólum í rannsóknarheimildum',
       }),
       overview: defineMessage({
         id: 'judicial.system.core:titles.court.investigation_cases.overview',
         defaultMessage: 'Yfirlit kröfu - Réttarvörslugátt',
         description:
-          'Notaður sem titill fyrir Yfirlit kröfu skjá hjá saksóknara í rannsóknarheimildum',
+          'Notaður sem titill fyrir Yfirlit kröfu skjá hjá dómstólum í rannsóknarheimildum',
       }),
       hearingArrangements: defineMessage({
         id:
           'judicial.system.core:titles.court.investigation_cases.hearing_arrangements',
         defaultMessage: 'Fyrirtaka - Réttarvörslugátt',
         description:
-          'Notaður sem titill fyrir Fyrirtaka skjá hjá saksóknara í rannsóknarheimildum',
+          'Notaður sem titill fyrir Fyrirtaka skjá hjá dómstólum í rannsóknarheimildum',
       }),
       ruling: defineMessage({
         id: 'judicial.system.core:titles.court.investigation_cases.ruling',
         defaultMessage: 'Úrskurður - Réttarvörslugátt',
         description:
-          'Notaður sem titill fyrir Úrskurður skjá hjá saksóknara í rannsóknarheimildum',
+          'Notaður sem titill fyrir Úrskurður skjá hjá dómstólum í rannsóknarheimildum',
       }),
       courtRecord: defineMessage({
         id:
           'judicial.system.core:titles.court.investigation_cases.court_record',
         defaultMessage: 'Þingbók - Réttarvörslugátt',
         description:
-          'Notaður sem titill fyrir Þingbók skjá hjá saksóknara í rannsóknarheimildum',
+          'Notaður sem titill fyrir Þingbók skjá hjá dómstólum í rannsóknarheimildum',
       }),
       conclusion: defineMessage({
         id: 'judicial.system.core:titles.court.investigation_cases.conclusion',
         defaultMessage: 'Yfirlit úrskurðar - Réttarvörslugátt',
         description:
-          'Notaður sem titill fyrir Yfirlit úrskurðar skjá hjá saksóknara í rannsóknarheimildum',
+          'Notaður sem titill fyrir Yfirlit úrskurðar skjá hjá dómstólum í rannsóknarheimildum',
       }),
     },
     restrictionCases: {
@@ -139,38 +139,38 @@ export const titles = {
           'judicial.system.core:titles.court.restriction_cases.reception_and_assignment',
         defaultMessage: 'Móttaka - Réttarvörslugátt',
         description:
-          'Notaður sem titill fyrir Móttaka skjá hjá saksóknara í gæslu- og farbannsmálum',
+          'Notaður sem titill fyrir Móttaka skjá hjá dómstólum í gæslu- og farbannsmálum',
       }),
       overview: defineMessage({
         id: 'judicial.system.core:titles.court.restriction_cases.overview',
         defaultMessage: 'Yfirlit kröfu - Réttarvörslugátt',
         description:
-          'Notaður sem titill fyrir Yfirlit kröfu skjá hjá saksóknara í gæslu- og farbannsmálum',
+          'Notaður sem titill fyrir Yfirlit kröfu skjá hjá dómstólum í gæslu- og farbannsmálum',
       }),
       hearingArrangements: defineMessage({
         id:
           'judicial.system.core:titles.court.restriction_cases.hearing_arrangements',
         defaultMessage: 'Fyrirtaka - Réttarvörslugátt',
         description:
-          'Notaður sem titill fyrir Fyrirtaka skjá hjá saksóknara í gæslu- og farbannsmálum',
+          'Notaður sem titill fyrir Fyrirtaka skjá hjá dómstólum í gæslu- og farbannsmálum',
       }),
       ruling: defineMessage({
         id: 'judicial.system.core:titles.court.restriction_cases.ruling',
         defaultMessage: 'Úrskurður - Réttarvörslugátt',
         description:
-          'Notaður sem titill fyrir Úrskurður skjá hjá saksóknara í gæslu- og farbannsmálum',
+          'Notaður sem titill fyrir Úrskurður skjá hjá dómstólum í gæslu- og farbannsmálum',
       }),
       courtRecord: defineMessage({
         id: 'judicial.system.core:titles.court.restriction_cases.court_record',
         defaultMessage: 'Þingbók - Réttarvörslugátt',
         description:
-          'Notaður sem titill fyrir Þingbók skjá hjá saksóknara í gæslu- og farbannsmálum',
+          'Notaður sem titill fyrir Þingbók skjá hjá dómstólum í gæslu- og farbannsmálum',
       }),
       conclusion: defineMessage({
         id: 'judicial.system.core:titles.court.restriction_cases.conclusion',
         defaultMessage: 'Yfirlit úrskurðar - Réttarvörslugátt',
         description:
-          'Notaður sem titill fyrir Yfirlit úrskurðar skjá hjá saksóknara í gæslu- og farbannsmálum',
+          'Notaður sem titill fyrir Yfirlit úrskurðar skjá hjá dómstólum í gæslu- og farbannsmálum',
       }),
     },
   },
