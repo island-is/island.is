@@ -3,7 +3,6 @@ import { Asset } from 'contentful'
 import { IEnhancedAsset } from '../generated/contentfulTypes'
 import { GenericTag, mapGenericTag } from './genericTag.model'
 
-
 @ObjectType()
 export class EnhancedAsset {
   @Field(() => ID)
@@ -19,9 +18,12 @@ export class EnhancedAsset {
   genericTags!: GenericTag[]
 }
 
-export const mapEnhancedAsset = ({ sys, fields }: IEnhancedAsset): EnhancedAsset => ({
+export const mapEnhancedAsset = ({
+  sys,
+  fields,
+}: IEnhancedAsset): EnhancedAsset => ({
   id: sys.id,
   title: fields.title ?? '',
   file: fields.file ?? '',
-  genericTags: fields.genericTags ? fields.genericTags.map(mapGenericTag) : []
+  genericTags: fields.genericTags ? fields.genericTags.map(mapGenericTag) : [],
 })

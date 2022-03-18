@@ -13,7 +13,7 @@ export class GenericTag {
   @Field()
   slug!: string
 
-  @Field(() => GenericTagGroup, {nullable: true})
+  @Field(() => GenericTagGroup, { nullable: true })
   genericTagGroup!: GenericTagGroup | null
 }
 
@@ -21,5 +21,7 @@ export const mapGenericTag = ({ sys, fields }: IGenericTag): GenericTag => ({
   id: sys.id,
   title: fields.title ?? '',
   slug: fields.slug ?? '',
-  genericTagGroup: fields.genericTagGroup ? mapGenericTagGroup(fields.genericTagGroup) : null
+  genericTagGroup: fields.genericTagGroup
+    ? mapGenericTagGroup(fields.genericTagGroup)
+    : null,
 })

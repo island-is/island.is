@@ -13,7 +13,10 @@ export class GenericTagGroup {
   slug!: string
 }
 
-export const mapGenericTagGroup = ({ sys, fields }: IGenericTagGroup): GenericTagGroup => ({
+export const mapGenericTagGroup = ({
+  sys,
+  fields,
+}: IGenericTagGroup): GenericTagGroup => ({
   id: sys.id,
   title: fields.title ?? '',
   slug: fields.slug ?? '',
