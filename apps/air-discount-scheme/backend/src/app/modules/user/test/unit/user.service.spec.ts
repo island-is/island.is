@@ -10,6 +10,7 @@ import {
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import { CACHE_MANAGER } from '@nestjs/common'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 const user: User = {
   nationalId: '1326487905',
@@ -62,6 +63,12 @@ describe('UserService', () => {
           useClass: jest.fn(() => ({
             get: () => ({}),
             set: () => ({}),
+          })),
+        },
+        {
+          provide: LOGGER_PROVIDER,
+          useClass: jest.fn(() => ({
+            error: () => ({}),
           })),
         },
       ],
