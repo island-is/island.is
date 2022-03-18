@@ -147,7 +147,6 @@ export function formatProsecutorCourtDateEmailNotification(
   judgeName?: string,
   registrarName?: string,
   defenderName?: string,
-  defenderIsSpokesperson?: boolean,
   sessionArrangements?: SessionArrangements,
 ): string {
   const scheduledCaseText =
@@ -173,10 +172,14 @@ export function formatProsecutorCourtDateEmailNotification(
       ? ''
       : defenderName
       ? `<br /><br />${
-          defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'
+          sessionArrangements === SessionArrangements.ALL_PRESENT_SPOKESPERSON
+            ? 'Talsmaður'
+            : 'Verjandi'
         } sakbornings: ${defenderName}.`
       : `<br /><br />${
-          defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'
+          sessionArrangements === SessionArrangements.ALL_PRESENT_SPOKESPERSON
+            ? 'Talsmaður'
+            : 'Verjandi'
         } sakbornings hefur ekki verið skráður.`
 
   return `${court} hefur staðfest fyrirtökutíma fyrir ${scheduledCaseText}.<br /><br />Fyrirtaka mun fara fram ${courtDateText}.<br /><br />${courtRoomText}.<br /><br />${judgeText}.${registrarText}${defenderText}`
@@ -191,8 +194,8 @@ export function formatPrisonCourtDateEmailNotification(
   requestedValidToDate?: Date,
   isolation?: boolean,
   defenderName?: string,
-  defenderIsSpokesperson?: boolean,
   isExtension?: boolean,
+  sessionArrangements?: SessionArrangements,
 ): string {
   const courtText = court?.replace('dómur', 'dóms') ?? 'ótilgreinds dómstóls'
   const courtDateText =
@@ -213,10 +216,14 @@ export function formatPrisonCourtDateEmailNotification(
     : 'Ekki er farið fram á einangrun.'
   const defenderText = defenderName
     ? `${
-        defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'
+        sessionArrangements === SessionArrangements.ALL_PRESENT_SPOKESPERSON
+          ? 'Talsmaður'
+          : 'Verjandi'
       } sakbornings: ${defenderName}`
     : `${
-        defenderIsSpokesperson ? 'Talsmaður' : 'Verjandi'
+        sessionArrangements === SessionArrangements.ALL_PRESENT_SPOKESPERSON
+          ? 'Talsmaður'
+          : 'Verjandi'
       } sakbornings hefur ekki verið skráður`
 
   return `${prosecutorOffice ?? 'Ótilgreindur sækjandi'} hefur sent kröfu um ${
@@ -229,14 +236,16 @@ export function formatDefenderCourtDateEmailNotification(
   courtCaseNumber?: string,
   courtDate?: Date,
   courtRoom?: string,
-  defenderIsSpokesperson = false,
   judgeName?: string,
   registrarName?: string,
   prosecutorName?: string,
   prosecutorInstitution?: string,
+  sessionArrangements?: SessionArrangements,
 ): string {
   return `${court} hefur boðað þig í fyrirtöku sem ${
-    defenderIsSpokesperson ? 'talsmann' : 'verjanda'
+    sessionArrangements === SessionArrangements.ALL_PRESENT_SPOKESPERSON
+      ? 'talsmann'
+      : 'verjanda'
   } sakbornings.<br /><br />Fyrirtaka mun fara fram ${formatDate(
     courtDate,
     'PPPPp',
