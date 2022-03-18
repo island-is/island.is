@@ -111,6 +111,7 @@ worker()
 ```
 
 ## System Flow Sequence Diagram
+
 ```mermaid
 sequenceDiagram
     autonumber

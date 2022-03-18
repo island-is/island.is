@@ -17,6 +17,7 @@ sequenceDiagram
     User-Notification-Worker->>Firebase Cloud Messaging: sends notification
     Firebase Cloud Messaging->>island.is app:sends notification
 ```
+
 ## About
 
 This service manages queueing up messages to send push notifications / sms / emails.
