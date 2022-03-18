@@ -250,7 +250,6 @@ const SubPage: Screen<SubPageProps> = ({
                                         underline="small"
                                         underlineVisibility="hover"
                                         href={url}
-                                       
                                       >
                                         {text}
                                       </Link>

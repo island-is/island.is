@@ -66,7 +66,7 @@ export const mapSupportQNA = ({ fields, sys }: ISupportQna): SupportQNA => ({
         return mapLink(convertSupportQnAToLink(supportQnA))
       })
     : [],
-  contactLink: fields.contactLink ?? ''
+  contactLink: fields.contactLink ?? '',
 })
 
 const convertSupportQnAToLink = (supportQnA: ISupportQna) => {
