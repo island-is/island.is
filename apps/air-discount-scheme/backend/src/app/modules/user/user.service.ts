@@ -20,6 +20,9 @@ import environment from '../../../environments/environment'
 import * as kennitala from 'kennitala'
 import { FetchError } from '@island.is/clients/middlewares'
 
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 const ONE_WEEK = 604800 // seconds
 const CACHE_KEY = 'userService'
 const MAX_AGE_LIMIT = 18
@@ -31,6 +34,7 @@ export class UserService {
     private readonly nationalRegistryService: NationalRegistryService,
     private readonly nationalRegistryIndividualsApi: EinstaklingarApi,
     @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
   private getCacheKey(nationalId: string, suffix: 'custodians'): string {
@@ -52,7 +56,7 @@ export class UserService {
       .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{
         id: authUser.nationalId,
       })
-      .catch(this.handle404)
+      .catch(this.temporaryHandle500)
 
     if (response === undefined) {
       return []
@@ -69,7 +73,7 @@ export class UserService {
         id: auth.nationalId,
         barn: childNationalId,
       })
-      .catch(this.handle404)
+      .catch(this.temporaryHandle500)
 
     if (response === undefined) {
       return []
@@ -180,6 +184,14 @@ export class UserService {
 
   private handle404(error: FetchError) {
     if (error.status === 404) {
+      return undefined
+    }
+    throw error
+  }
+
+  private temporaryHandle500(error: FetchError) {
+    if (error.status === 404 || error.status === 500) {
+      this.logger.info(`Temporary mitigation reporting ${error.status}`)
       return undefined
     }
     throw error
