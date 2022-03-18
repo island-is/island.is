@@ -122,7 +122,7 @@ sequenceDiagram
     User-Notification-Worker->>AWS SQS:requests 10 notifications
     AWS SQS->>User-Notification-Worker:responds with 0-10 notifications
     end
-    loop tries to get notification settings 3x times - 10 minute interval
+    loop if worker throws an unexpected error, it will try 2 more times with 10 minute interval
     User-Notification-Worker->>User-Profile-Service:requests notification settings
     User-Profile-Service->>User-Notification-Worker:returns user settings and tokens
     end
