@@ -18,6 +18,7 @@ import {
   CaseType,
   isInvestigationCase,
   isRestrictionCase,
+  SessionArrangements,
   UserRole,
 } from '@island.is/judicial-system/types'
 import { accused } from '@island.is/judicial-system-web/messages'
@@ -175,9 +176,11 @@ const DefenderInfo: React.FC<Props> = (props) => {
       return (
         <Tooltip
           text={formatMessage(icHearingArrangements.sections.defender.tooltip, {
-            defenderType: workingCase.defenderIsSpokesperson
-              ? 'talsmaður'
-              : 'verjandi',
+            defenderType:
+              workingCase.sessionArrangements ===
+              SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                ? 'talsmaður'
+                : 'verjandi',
           })}
         />
       )
@@ -196,9 +199,11 @@ const DefenderInfo: React.FC<Props> = (props) => {
       >
         <Text as="h3" variant="h3">
           {`${formatMessage(getTranslations().title, {
-            defenderType: workingCase.defenderIsSpokesperson
-              ? 'Talsmaður'
-              : 'Verjandi',
+            defenderType:
+              workingCase.sessionArrangements ===
+              SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                ? 'Talsmaður'
+                : 'Verjandi',
           })} `}
           {renderTooltip()}
         </Text>
@@ -215,9 +220,11 @@ const DefenderInfo: React.FC<Props> = (props) => {
               }
             })}
             label={formatMessage(getTranslations().defenderName.label, {
-              defenderType: workingCase.defenderIsSpokesperson
-                ? 'talsmanns'
-                : 'verjanda',
+              defenderType:
+                workingCase.sessionArrangements ===
+                SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                  ? 'talsmanns'
+                  : 'verjanda',
             })}
             placeholder={formatMessage(
               getTranslations().defenderName.placeholder,
@@ -241,9 +248,11 @@ const DefenderInfo: React.FC<Props> = (props) => {
             name="defenderEmail"
             autoComplete="off"
             label={formatMessage(getTranslations().defenderEmail.label, {
-              defenderType: workingCase.defenderIsSpokesperson
-                ? 'talsmanns'
-                : 'verjanda',
+              defenderType:
+                workingCase.sessionArrangements ===
+                SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                  ? 'talsmanns'
+                  : 'verjanda',
             })}
             placeholder={formatMessage(
               getTranslations().defenderEmail.placeholder,
@@ -308,9 +317,11 @@ const DefenderInfo: React.FC<Props> = (props) => {
               label={formatMessage(
                 getTranslations().defenderPhoneNumber.label,
                 {
-                  defenderType: workingCase.defenderIsSpokesperson
-                    ? 'talsmanns'
-                    : 'verjanda',
+                  defenderType:
+                    workingCase.sessionArrangements ===
+                    SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                      ? 'talsmanns'
+                      : 'verjanda',
                 },
               )}
               placeholder={formatMessage(

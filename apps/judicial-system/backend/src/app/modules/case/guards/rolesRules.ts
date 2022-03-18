@@ -45,7 +45,6 @@ const courtFields = [
   'defenderName',
   'defenderEmail',
   'defenderPhoneNumber',
-  'defenderIsSpokesperson',
   'courtCaseNumber',
   'sessionArrangements',
   'courtDate',
