@@ -39,6 +39,9 @@ export class SupportQNA {
 
   @Field(() => [Link])
   relatedLinks?: Link[]
+
+  @Field()
+  contactLink?: string
 }
 
 export const mapSupportQNA = ({ fields, sys }: ISupportQna): SupportQNA => ({
@@ -63,6 +66,7 @@ export const mapSupportQNA = ({ fields, sys }: ISupportQna): SupportQNA => ({
         return mapLink(convertSupportQnAToLink(supportQnA))
       })
     : [],
+  contactLink: fields.contactLink ?? ''
 })
 
 const convertSupportQnAToLink = (supportQnA: ISupportQna) => {

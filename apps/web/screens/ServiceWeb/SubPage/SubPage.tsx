@@ -245,12 +245,12 @@ const SubPage: Screen<SubPageProps> = ({
                               <GridColumn>
                                 {(question.relatedLinks ?? []).map(
                                   ({ text, url }, index) => (
-                                    <GridRow marginTop={2}>
+                                    <GridRow marginTop={2} key={index}>
                                       <Link
                                         underline="small"
                                         underlineVisibility="hover"
                                         href={url}
-                                        key={index}
+                                       
                                       >
                                         {text}
                                       </Link>
@@ -260,7 +260,7 @@ const SubPage: Screen<SubPageProps> = ({
                               </GridColumn>
                             </Box>
                           )}
-                          {institutionSlugBelongsToMannaudstorg && (
+                          {question.contactLink && (
                             <Box
                               marginTop={
                                 question.relatedLinks?.length > 0 ? 0 : 4
@@ -268,7 +268,7 @@ const SubPage: Screen<SubPageProps> = ({
                             >
                               <OrganizationContactBanner
                                 organizationLogoUrl={organization.logo?.url}
-                                contactLink="https://gatt.fjs.is/plugins/servlet/desk/portal/11/create/127"
+                                contactLink={question.contactLink}
                                 headerText={o(
                                   'serviceWebOrganizationContactBannerHeaderTitle',
                                   'Finnurðu ekki það sem þig vantar?',
