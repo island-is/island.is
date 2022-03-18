@@ -191,7 +191,10 @@ export class UserService {
 
   private temporaryHandle500(error: FetchError) {
     if (error.status === 404 || error.status === 500) {
-      this.logger.info(`Temporary mitigation reporting ${error.status}`)
+      this.logger.info(`Temporary mitigation reporting status: ${error.status}`)
+      this.logger.info(
+        `Temporary mitigation reportin message: ${error.message}`,
+      )
       return undefined
     }
     throw error
