@@ -428,6 +428,7 @@ application-system-api:
         - host: 'application-payment-callback-xrd.internal.island.is'
           paths:
             - '/application-payment'
+            - '/applications'
   initContainer:
     containers:
       - args:

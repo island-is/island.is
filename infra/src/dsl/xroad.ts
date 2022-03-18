@@ -72,7 +72,7 @@ export const JudicialSystem = new XroadConf({
       staging: '5309672079',
       prod: '5309672079',
     },
-    XROAD_COURT_API_PATH: '/Domstolasyslan-Private/JusticePortal-v1',
+    XROAD_COURT_API_PATH: '/Domstolasyslan/JusticePortal-v1',
     XROAD_POLICE_API_PATH: '/Logreglan-Private/loke-api-v1',
   },
   secrets: {

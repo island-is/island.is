@@ -29,11 +29,9 @@ import {
   caseTypes,
   formatCustodyRestrictions,
   formatDate,
-  formatTravelBanRestrictions,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
-  CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
   Gender,
@@ -54,6 +52,7 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   rcCourtRecord as m,
+  courtDocuments,
   closedCourt,
   core,
 } from '@island.is/judicial-system-web/messages'
@@ -106,43 +105,6 @@ export const CourtRecord: React.FC = () => {
 
   useEffect(() => {
     if (isCaseUpToDate) {
-      const defaultCourtAttendees = (wc: Case): string => {
-        let attendees = ''
-
-        if (wc.prosecutor) {
-          attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}`
-        }
-
-        if (wc.defenderName) {
-          attendees += `\n${wc.defenderName} skipaður verjandi ${formatMessage(
-            core.accused,
-            {
-              suffix:
-                wc.defendants &&
-                wc.defendants.length > 0 &&
-                wc.defendants[0].gender === Gender.FEMALE
-                  ? 'u'
-                  : 'a',
-            },
-          )}`
-        }
-
-        if (wc.translator) {
-          attendees += `\n${wc.translator} túlkur`
-        }
-
-        if (wc.defendants && wc.defendants.length > 0) {
-          attendees += `\n${wc.defendants[0].name} ${formatMessage(
-            core.accused,
-            {
-              suffix: wc.defendants[0].gender === Gender.MALE ? 'i' : 'a',
-            },
-          )}`
-        }
-
-        return attendees
-      }
-
       const theCase = workingCase
 
       if (theCase.courtDate) {
@@ -162,7 +124,39 @@ export const CourtRecord: React.FC = () => {
       }
 
       if (theCase.courtAttendees !== '') {
-        autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
+        let autofillAttendees = ''
+
+        if (theCase.prosecutor) {
+          autofillAttendees += `${theCase.prosecutor.name} ${theCase.prosecutor.title}`
+        }
+
+        if (theCase.defenderName) {
+          autofillAttendees += `\n${
+            theCase.defenderName
+          } skipaður verjandi ${formatMessage(core.accused, {
+            suffix:
+              theCase.defendants &&
+              theCase.defendants.length > 0 &&
+              theCase.defendants[0].gender === Gender.FEMALE
+                ? 'u'
+                : 'a',
+          })}`
+        }
+
+        if (theCase.translator) {
+          autofillAttendees += `\n${theCase.translator} túlkur`
+        }
+
+        if (theCase.defendants && theCase.defendants.length > 0) {
+          autofillAttendees += `\n${theCase.defendants[0].name} ${formatMessage(
+            core.accused,
+            {
+              suffix: theCase.defendants[0].gender === Gender.MALE ? 'i' : 'a',
+            },
+          )}`
+        }
+
+        autofill('courtAttendees', autofillAttendees, theCase)
       }
 
       let autofillSessionBookings = ''
@@ -214,21 +208,13 @@ export const CourtRecord: React.FC = () => {
             'endOfSessionBookings',
             `${
               isAcceptingCaseDecision(theCase.decision)
-                ? formatCustodyRestrictions(
+                ? `${formatCustodyRestrictions(
                     theCase.requestedCustodyRestrictions,
                     theCase.isCustodyIsolation,
                     true,
-                  )
-                : formatTravelBanRestrictions(
-                    theCase.defendants && theCase.defendants.length > 0
-                      ? theCase.defendants[0].gender
-                      : undefined,
-                    [
-                      CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
-                      CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
-                    ],
-                  )
-            }\n\n${formatMessage(m.sections.custodyRestrictions.disclaimer, {
+                  )}\n\n`
+                : ''
+            }${formatMessage(m.sections.custodyRestrictions.disclaimer, {
               caseType:
                 theCase.decision ===
                 CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
@@ -244,18 +230,11 @@ export const CourtRecord: React.FC = () => {
         )}`
 
         if (isAcceptingCaseDecision(theCase.decision)) {
-          const travelBanRestrictions = formatTravelBanRestrictions(
-            theCase.defendants && theCase.defendants.length > 0
-              ? theCase.defendants[0].gender
-              : undefined,
-            theCase.requestedCustodyRestrictions,
-            theCase.requestedOtherRestrictions,
-          )
-
           autofill(
             'endOfSessionBookings',
             `${
-              travelBanRestrictions && `${travelBanRestrictions}\n\n`
+              workingCase.requestedOtherRestrictions &&
+              `${workingCase.requestedOtherRestrictions}\n\n`
             }${formatMessage(m.sections.custodyRestrictions.disclaimer, {
               caseType: 'farbannsins',
             })}`,
@@ -393,14 +372,19 @@ export const CourtRecord: React.FC = () => {
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Dómskjöl
+              {formatMessage(m.sections.courtDocuments.title)}
             </Text>
           </Box>
           <CourtDocuments
-            title={`Krafa um ${caseTypes[workingCase.type]}`}
-            tagText="Þingmerkt nr. 1"
+            title={formatMessage(
+              m.sections.courtDocuments.firstDocument.title,
+              {
+                caseType: caseTypes[workingCase.type],
+              },
+            )}
+            tagText={formatMessage(courtDocuments.tag, { index: 1 })}
             tagVariant="darkerBlue"
-            text="Rannsóknargögn málsins liggja frammi."
+            text={formatMessage(m.sections.courtDocuments.firstDocument.label)}
             caseId={workingCase.id}
             selectedCourtDocuments={workingCase.courtDocuments ?? []}
             onUpdateCase={updateCase}
