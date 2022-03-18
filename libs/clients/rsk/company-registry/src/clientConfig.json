@@ -207,6 +207,14 @@
     "schemas": {
       "companyType": {
         "type": "object",
+        "required": ["gerd", "heiti"],
+        "properties": {
+          "gerd": { "type": "string" },
+          "heiti": { "type": "string" }
+        }
+      },
+      "companyTypeForm": {
+        "type": "object",
         "required": ["tegund", "heiti"],
         "properties": {
           "tegund": { "type": "string" },
@@ -225,13 +233,12 @@
       },
       "vatInfo": {
         "type": "object",
-        "required": ["vsk_numer", "skrad", "stada", "afskraning"],
+        "required": ["vsk_numer", "skrad"],
         "properties": {
           "vsk_numer": { "type": "string" },
           "skrad": { "type": "string" },
-          "stada": { "type": "string" },
           "afskraning": { "type": "string" },
-          "categoryInfo": {
+          "flokkun": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/categoryInfo" }
           }
@@ -239,21 +246,14 @@
       },
       "addressInfo": {
         "type": "object",
-        "required": [
-          "heimilisfang1",
-          "heimilisfang2",
-          "postnumer",
-          "sveitarfelag",
-          "sveitarfelagsnumer",
-          "land"
-        ],
+        "required": ["gerd", "heimilisfang", "postnumer", "stadur", "land"],
         "properties": {
-          "heimilisfang1": { "type": "string" },
-          "heimilisfang2": { "type": "string" },
+          "gerd": { "type": "string" },
+          "heimilisfang": { "type": "string" },
           "postnumer": { "type": "string" },
-          "sveitarfelag": { "type": "string" },
-          "sveitarfelagsnumer": { "type": "string" },
-          "land": { "type": "string" }
+          "stadur": { "type": "string" },
+          "land": { "type": "string" },
+          "sveitarfelagsnumer": { "type": "string" }
         }
       },
       "personInfo": {
@@ -318,7 +318,11 @@
           "nafn": { "type": "string" },
           "skrad": { "type": "string" },
           "stada": { "type": "string" },
-          "companyType": {
+          "rekstrarform": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/companyTypeForm" }
+          },
+          "flokkun": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/companyType" }
           },
@@ -326,16 +330,12 @@
             "type": "array",
             "items": { "$ref": "#/components/schemas/vatInfo" }
           },
-          "responseAddress": {
+          "heimilisfang": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/addressInfo" }
           },
-          "tengdir_adilar": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/personInfo" }
-          },
           "sidast_uppfaert": { "type": "string" },
-          "link": {
+          "links": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/link" }
           }

@@ -36,7 +36,7 @@ export enum ServicePortalPath {
   UserInfo = '/min-gogn/minar-upplysingar',
   Endorsements = '/min-gogn/medmaeli',
   Companies = '/min-gogn/fyrirtaeki',
-  CompanyInfo = '/min-gogn/:nationalId',
+  CompanyInfo = '/min-gogn/fyrirtaeki/:nationalId',
 
   // General Petitions
   Petitions = '/min-gogn/medmaeli',

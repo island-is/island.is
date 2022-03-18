@@ -43,7 +43,10 @@ const Companies: ServicePortalModuleComponent = ({ userInfo }) => {
 
   const history = useHistory()
 
-  const handleClick = () => history.push(ServicePortalPath.CompanyInfo)
+  const handleClick = (nationalId: string) =>
+    history.push(
+      ServicePortalPath.CompanyInfo.replace(':nationalId', nationalId),
+    )
   return (
     <>
       <Box marginBottom={[2, 3, 5]}>
@@ -80,7 +83,7 @@ const Companies: ServicePortalModuleComponent = ({ userInfo }) => {
                 defaultMessage: 'Skoða upplýsingar',
               }),
               variant: 'text',
-              onClick: handleClick,
+              onClick: () => handleClick(item.nationalId),
             }}
             text={
               item.nationalId &&

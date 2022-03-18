@@ -22,18 +22,33 @@ import {
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
-const dataNotFoundMessage = defineMessage({
-  id: 'sp.family:data-not-found',
-  defaultMessage: 'Gögn fundust ekki',
-})
-
 const CompaniesDetail = gql`
-  query GetProcuringCompaniesQuery {
-    getProcuringCompanies {
+  query GetCompanyInformationQuery($input: RskCompanyInfoInput!) {
+    companyRegistryCompany(input: $input) {
       nationalId
-      companies {
-        nationalId
-        name
+      name
+      dateOfRegistration
+      status
+      lastUpdated
+      companyInfo {
+        formOfOperation {
+          type
+          name
+        }
+        vat {
+          vatNumber
+        }
+        address {
+          streetAddress
+          type
+          postalCode
+          city
+          country
+        }
+        type {
+          type
+          name
+        }
       }
     }
   }
@@ -41,26 +56,28 @@ const CompaniesDetail = gql`
 
 const CompanyInfo: ServicePortalModuleComponent = () => {
   useNamespaces('sp.family')
-  const { formatMessage } = useLocale()
 
   PlausiblePageviewDetail(
-    ServicePortalPath.FamilyMember.replace(':nationalId', 'child'),
+    ServicePortalPath.CompanyInfo.replace(':nationalId', 'detail'),
   )
-
-  const { data, loading, error } = useQuery<Query>(CompaniesDetail)
-  const { nationalRegistryChildren } = data || {}
-
   const { nationalId }: { nationalId: string | undefined } = useParams()
 
-  const person =
-    nationalRegistryChildren?.find((x) => x.nationalId === nationalId) || null
+  const { data, loading, error } = useQuery<Query>(CompaniesDetail, {
+    variables: {
+      input: {
+        nationalId: nationalId, //'4710032980', // TODO: Skipta í raun gögn
+      },
+    },
+  })
 
-  if (!nationalId || error || (!loading && !person))
+  const { companyRegistryCompany: company } = data || {}
+
+  if (!nationalId || error || (!loading && !data))
     return (
       <NotFound
         title={defineMessage({
-          id: 'sp.family:family-member-not-found',
-          defaultMessage: 'Fjölskyldumeðlimur fannst ekki',
+          id: 'sp.family:company-not-found',
+          defaultMessage: 'Fyrirtæki fannst ekki',
         })}
       />
     )
@@ -72,7 +89,7 @@ const CompanyInfo: ServicePortalModuleComponent = () => {
           <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
             <Stack space={2}>
               <Text variant="h3" as="h1">
-                {person?.fullName || ''}
+                {company?.name || '...'}
               </Text>
             </Stack>
           </GridColumn>
@@ -80,65 +97,50 @@ const CompanyInfo: ServicePortalModuleComponent = () => {
       </Box>
       <Stack space={1}>
         <UserInfoLine
-          title={'Mín skráning'}
           label={defineMessage(m.fullName)}
-          content={person?.fullName || '...'}
+          content={company?.name || '...'}
           loading={loading}
         />
         <Divider />
         <UserInfoLine
           label={defineMessage(m.natreg)}
-          content={formatNationalId(nationalId)}
+          content={formatNationalId(company?.nationalId || '...')}
           loading={loading}
         />
         <Divider />
         <UserInfoLine
-          label={defineMessage(m.legalResidence)}
-          content={person?.homeAddress || '...'}
-          loading={loading}
-        />
-        <Divider />
-        <Box marginY={3} />
-
-        <UserInfoLine
-          title={formatMessage(m.baseInfo)}
-          label={formatMessage({
-            id: 'sp.family:birthplace',
-            defaultMessage: 'Fæðingarstaður',
-          })}
+          label={defineMessage(m.address)}
           content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : person?.birthplace || ''
+            company?.companyInfo?.address[0]?.streetAddress +
+            ', ' +
+            company?.companyInfo?.address[0]?.postalCode +
+            ' ' +
+            company?.companyInfo?.address[0]?.city
           }
           loading={loading}
         />
         <Divider />
         <UserInfoLine
-          label={defineMessage(m.religion)}
-          content={
-            error ? formatMessage(dataNotFoundMessage) : person?.religion || ''
-          }
+          label={defineMessage(m.registrationDate)}
+          content={company?.dateOfRegistration || '...'}
           loading={loading}
         />
         <Divider />
         <UserInfoLine
-          label={defineMessage(m.gender)}
-          content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : person?.genderDisplay || ''
-          }
+          label={defineMessage(m.vsk)}
+          content={company?.companyInfo?.vat[0]?.vatNumber || '...'}
           loading={loading}
         />
         <Divider />
         <UserInfoLine
-          label={formatMessage(m.citizenship)}
-          content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : person?.nationality || ''
-          }
+          label={defineMessage(m.companyType)}
+          content={company?.companyInfo?.type[0]?.name || '...'}
+          loading={loading}
+        />
+        <Divider />
+        <UserInfoLine
+          label={defineMessage(m.companyCategory)}
+          content={company?.companyInfo?.formOfOperation[0]?.name || '...'}
           loading={loading}
         />
         <Divider />

@@ -6,7 +6,7 @@ export class RskCompanyAddress {
   streetAddress?: string
 
   @Field(() => String, { nullable: true })
-  streetAddress2?: string
+  type?: string
 
   @Field(() => String, { nullable: true })
   postalCode?: string

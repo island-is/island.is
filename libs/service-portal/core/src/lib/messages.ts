@@ -325,6 +325,22 @@ export const m = defineMessages({
     id: 'service.portal:company-info',
     defaultMessage: 'Fyrirtæki',
   },
+  vsk: {
+    id: 'service.portal:company-vsk-number',
+    defaultMessage: 'VAT númer',
+  },
+  registrationDate: {
+    id: 'service.portal:company-registration-date',
+    defaultMessage: 'Skráningardagsetning',
+  },
+  companyType: {
+    id: 'service.portal:company-type',
+    defaultMessage: 'Rekstrarform',
+  },
+  companyCategory: {
+    id: 'service.portal:company-category',
+    defaultMessage: 'Flokkur',
+  },
   detailInfo: {
     id: 'service.portal:detail-info',
     defaultMessage: 'Nánari upplýsingar',

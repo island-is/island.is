@@ -1,13 +1,16 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { RskCompany } from './models/rskCompany.model'
 import {
+  AddressInfo,
+  CategoryInfo,
+  CompanyType,
   GetCompanyApi,
   SearchCompanyRegistryApi,
+  VatInfo,
 } from '@island.is/clients/rsk/company-registry'
 import { RskCompanyFormOfOperation } from './models/rskCompanyFormOfOperation.model'
 import { RskCompanyVat } from './models/rskCompanyVat.model'
 import { RskCompanyAddress } from './models/rskCompanyAddress.model'
-import { RskCompanyRelatedParty } from './models/rskCompanyRelatedParty.model'
 import { RskCompanyClassification } from './models/rskCompanyClassification.model'
 import { RskCompanySearchItems } from './models/rskCompanySearchItems.model'
 import { decodeBase64, toBase64 } from './rsk-company-info.utils'
@@ -38,41 +41,33 @@ export class RskCompanyInfoService {
       status: company.stada,
       companyInfo: {
         formOfOperation:
-          company.companyType?.map((item) => {
+          company.flokkun?.map((item) => {
             return {
-              type: item.tegund,
+              type: item.gerd,
               name: item.heiti,
             } as RskCompanyFormOfOperation
           }) ?? [],
         address:
-          company.responseAddress?.map((item) => {
+          company.heimilisfang?.map((item) => {
             return {
-              streetAddress: item.heimilisfang1,
-              streetAddress2: item.heimilisfang2,
+              streetAddress: item.heimilisfang,
+              type: item.gerd,
               postalCode: item.postnumer,
-              city: item.sveitarfelag,
+              city: item.stadur,
               cityNumber: item.sveitarfelagsnumer,
               country: item.land,
             } as RskCompanyAddress
-          }) ?? [],
-        relatedParty:
-          company.tengdirAdilar?.map((item) => {
-            return {
-              type: item.tegund,
-              nationalId: item.kennitala,
-              name: item.nafn,
-            } as RskCompanyRelatedParty
           }) ?? [],
         vat:
           company.virdisaukaskattur?.map((item) => {
             return {
               vatNumber: item.vskNumer,
               dateOfRegistration: new Date(item.skrad),
-              status: item.stada,
+              deRegistration: item.afskraning,
               dateOfDeregistration: item.afskraning
                 ? new Date(item.afskraning)
                 : undefined,
-              classification: item.categoryInfo?.map(
+              classification: item.flokkun?.map(
                 (classification) =>
                   ({
                     type: classification.gerd,
@@ -82,6 +77,13 @@ export class RskCompanyInfoService {
                   } as RskCompanyClassification),
               ),
             } as RskCompanyVat
+          }) ?? [],
+        type:
+          company.rekstrarform?.map((item) => {
+            return {
+              type: item.tegund,
+              name: item.heiti,
+            } as RskCompanyFormOfOperation
           }) ?? [],
       },
       lastUpdated: company.sidastUppfaert
