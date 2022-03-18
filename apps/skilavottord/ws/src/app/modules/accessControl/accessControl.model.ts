@@ -34,6 +34,13 @@ export class AccessControlModel extends Model<AccessControlModel> {
     allowNull: false,
   })
   name!: string
+  
+  @Field()
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  email!: string
 
   @Field(() => AccessControlRole)
   @Column({

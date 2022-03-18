@@ -10,12 +10,14 @@ module.exports = {
           name: 'Finnur Finnsson',
           role: 'developer',
           partner_id: '9999999999',
+          email: 'finnurfinns@island.is',
         },
         {
           national_id: '7777777777',
           name: 'Gunnar Gunnarsson',
           role: 'recyclingCompany',
           partner_id: '8888888888',
+          email: 'gunnargunnars@island.is'
         },
       ],
       {},
