@@ -21,6 +21,7 @@ import {
   CaseDecision,
   CaseType,
   SessionArrangements,
+  CourtDocument,
 } from '@island.is/judicial-system/types'
 
 import { CaseFile } from '../../file'
@@ -528,11 +529,11 @@ export class Case extends Model<Case> {
    * A list of additional court documents - optional
    **********/
   @Column({
-    type: DataType.ARRAY(DataType.STRING),
+    type: DataType.ARRAY(DataType.JSON),
     allowNull: true,
   })
   @ApiProperty()
-  courtDocuments?: string[]
+  courtDocuments?: CourtDocument[]
 
   /**********
    * Bookings during court session
@@ -842,4 +843,14 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   caseModifiedExplanation?: string
+
+  /**********
+   * The explanation given for the extension of a case
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiProperty()
+  caseResentExplanation?: string
 }
