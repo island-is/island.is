@@ -30,7 +30,8 @@ describe('ApplicationTemplateValidation', () => {
               if (feature === ApplicationFeatures.accidentNotification) {
                 if (user?.nationalId === '1234567890') {
                   return true
-                } else return false
+                }
+                return false
               }
               return defaultValue
             },
@@ -44,7 +45,7 @@ describe('ApplicationTemplateValidation', () => {
     )
   })
 
-  it('Should return false when featureFlag is set and the featureFlag is disabled', async () => {
+  it('Should not be ready when the supplied featureFlag is disabled and the readyForProd is false on prod', async () => {
     const mockUser = {
       nationalId: '1234567891',
       scope: [],
@@ -69,7 +70,7 @@ describe('ApplicationTemplateValidation', () => {
     environment.name = envNameBefore
   })
 
-  it('Should return true when featureFlag is set and the featureFlag is enabled', async () => {
+  it('Should be ready when when the supplied featureFlag is enabled and the readyForProd is false on prod', async () => {
     const mockUser = {
       nationalId: '1234567891',
       scope: [],
@@ -94,7 +95,7 @@ describe('ApplicationTemplateValidation', () => {
     environment.name = envNameBefore
   })
 
-  it('Should return true when featureFlag is disabled but allows a certain user to access it', async () => {
+  it('Should be ready when the supplied featureFlag is disabled and readyForProd is false and the users nationalId is whitelisted on prod', async () => {
     const mockUser = {
       nationalId: '1234567890',
       scope: [],
@@ -119,7 +120,7 @@ describe('ApplicationTemplateValidation', () => {
     environment.name = envNameBefore
   })
 
-  it('Should return true when no featureFlag is supplied but readyForProduction is true', async () => {
+  it('Should be ready when no featureFlag is supplied but readyForProduction is true on prod', async () => {
     const mockUser = {
       nationalId: '1234567890',
       scope: [],
@@ -143,7 +144,7 @@ describe('ApplicationTemplateValidation', () => {
     environment.name = envNameBefore
   })
 
-  it('Should return false when no featureFlag is supplied and readyForProduction is false', async () => {
+  it('Should not be ready when no featureFlag is supplied and readyForProduction is false on prod', async () => {
     const mockUser = {
       nationalId: '1234567890',
       scope: [],
@@ -167,7 +168,7 @@ describe('ApplicationTemplateValidation', () => {
     environment.name = envNameBefore
   })
 
-  it('Should return true when not running on production', async () => {
+  it('Should be ready regardless when not running on production', async () => {
     const mockUser = {
       nationalId: '1234567890',
       scope: [],

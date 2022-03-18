@@ -13,8 +13,6 @@ import { ContentfulRepository } from '@island.is/cms'
 import { setup } from '../../../../../test/setup'
 import { environment } from '../../../../environments'
 import { FileService } from '../files/file.service'
-import { FeatureFlagService } from '@island.is/nest/feature-flags'
-import type { User } from '@island.is/auth-nest-tools'
 import { AppModule } from '../../../app.module'
 
 let app: INestApplication
@@ -54,21 +52,7 @@ class MockContentfulRepository {
   }
 }
 
-class MockFeatureFlagService {
-  async getValue(feature: string, defaultValue: boolean | string, user?: User) {
-    if (feature === 'unabledApplication') return false
-    if (feature === 'exampleApplication') {
-      return user?.nationalId === '1234567890'
-    }
-    if (feature === 'testApplicationOpenForAll') {
-      return true
-    }
-    return defaultValue
-  }
-}
-
 const nationalId = '1234564321'
-const nationalIdExcemptForConfigCat = '1234567890'
 let server: request.SuperTest<request.Test>
 
 beforeAll(async () => {
@@ -80,8 +64,6 @@ beforeAll(async () => {
         .overrideProvider(EmailService)
         .useClass(MockEmailService)
         .overrideGuard(IdsUserGuard)
-        .overrideProvider(FeatureFlagService)
-        .useClass(MockFeatureFlagService)
         .useValue(
           new MockAuthGuard({
             nationalId,
@@ -107,8 +89,8 @@ describe('Application system API', () => {
     expect(response.body.id).toBeTruthy()
   })
 
-  // This template does not have an enabled configflag in configcat
-  it.skip('should fail when POST-ing an application whose template is not enabled by configcat, on production environment', async () => {
+  // This template does not have readyForProduction: false
+  it.skip('should fail when POST-ing an application whose template is not ready for production, on production environment', async () => {
     const envBefore = environment.environment
     environment.environment = 'production'
 
@@ -116,33 +98,6 @@ describe('Application system API', () => {
       .post('/applications')
       .send({
         applicant: nationalId,
-        state: 'draft',
-        attachments: {},
-        typeId: ApplicationTypes.EXAMPLE,
-        assignees: [nationalId],
-        answers: {
-          careerHistoryCompanies: ['government'],
-          dreamJob: 'pilot',
-        },
-        status: ApplicationStatus.IN_PROGRESS,
-      })
-      .expect(400)
-
-    expect(failedResponse.body.message).toBe(
-      'Template ExampleForm is not ready for production',
-    )
-
-    environment.environment = envBefore
-  })
-
-  it('should pass when POST-ing an application whose template is not enabled by configcat but has a user that has a national id that passes, on production environment  ', async () => {
-    const envBefore = environment.environment
-    environment.environment = 'production'
-
-    const failedResponse = await server
-      .post('/applications')
-      .send({
-        applicant: nationalIdExcemptForConfigCat,
         state: 'draft',
         attachments: {},
         typeId: ApplicationTypes.EXAMPLE,
