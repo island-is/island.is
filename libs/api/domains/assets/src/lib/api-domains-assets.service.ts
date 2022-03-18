@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
+import { FetchError } from '@island.is/clients/middlewares'
 import { FasteignirApi } from '@island.is/clients/assets'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
@@ -24,6 +25,13 @@ export class AssetsXRoadService {
       'Failed to resolve request',
       error?.message ?? error?.response?.message,
     )
+  }
+
+  private handle403(error: FetchError) {
+    if (error.status === 403) {
+      return null
+    }
+    this.handleError(error)
   }
 
   private getRealEstatesWithAuth(auth: Auth) {
@@ -60,8 +68,9 @@ export class AssetsXRoadService {
           })),
         }
       }
+      return null
     } catch (e) {
-      this.handleError(e)
+      this.handle403(e)
     }
   }
 
@@ -160,8 +169,9 @@ export class AssetsXRoadService {
           },
         }
       }
+      return null
     } catch (e) {
-      this.handleError(e)
+      this.handle403(e)
     }
   }
 
@@ -194,8 +204,9 @@ export class AssetsXRoadService {
           ),
         }
       }
+      return null
     } catch (e) {
-      this.handleError(e)
+      this.handle403(e)
     }
   }
 
@@ -249,6 +260,7 @@ export class AssetsXRoadService {
           })),
         }
       }
+      return null
     } catch (e) {
       this.handleError(e)
     }
@@ -272,8 +284,9 @@ export class AssetsXRoadService {
           ),
         }
       }
+      return null
     } catch (e) {
-      this.handleError(e)
+      this.handle403(e)
     }
   }
 }
