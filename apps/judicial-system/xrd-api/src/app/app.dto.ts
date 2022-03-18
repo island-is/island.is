@@ -7,7 +7,7 @@ import { Gender, CaseType } from '@island.is/judicial-system/types'
 export class CreateCaseDto {
   @IsNotEmpty()
   @IsString()
-  @ApiPropertyOptional({ enum: CaseType })
+  @ApiProperty({ enum: CaseType })
   readonly type!: CaseType
 
   @IsNotEmpty()
@@ -18,7 +18,7 @@ export class CreateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly prosecutorNationalId!: string
+  readonly prosecutorNationalId?: string
 
   @IsNotEmpty()
   @IsString()

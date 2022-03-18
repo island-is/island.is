@@ -311,8 +311,8 @@ const AcceptModal = ({
           variant="text"
         >
           {state.showSecondPersonalTaxCredit
-            ? 'Fjarlægðu skattkorti'
-            : 'Bættu við skattkorti'}
+            ? 'Fjarlægja persónuafslátt'
+            : 'Nýta persónuafslátt maka'}
         </Button>
       </Box>
 

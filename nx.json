@@ -136,6 +136,9 @@
     "api-domains-license-service": {
       "tags": []
     },
+    "api-domains-mortgage-certificate": {
+      "tags": []
+    },
     "api-domains-national-registry": {
       "tags": []
     },
@@ -237,6 +240,9 @@
       "tags": []
     },
     "application-templates-login-service": {
+      "tags": []
+    },
+    "application-templates-mortgage-certificate": {
       "tags": []
     },
     "application-templates-p-sign": {
@@ -494,7 +500,7 @@
     },
     "island-ui-storybook": {
       "tags": [],
-      "implicitDependencies": ["island-ui-core"]
+      "implicitDependencies": ["island-ui-core", "application-ui-fields"]
     },
     "island-ui-theme": {
       "tags": []

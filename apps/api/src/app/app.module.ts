@@ -48,6 +48,7 @@ import {
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
 import { CriminalRecordModule } from '@island.is/api/domains/criminal-record'
+import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
@@ -245,6 +246,7 @@ const autoSchemaFile = environment.production
       },
     }),
     FishingLicenseModule,
+    MortgageCertificateModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [

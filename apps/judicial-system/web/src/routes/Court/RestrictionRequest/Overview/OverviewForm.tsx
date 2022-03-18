@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { CaseType } from '@island.is/judicial-system/types'
@@ -12,6 +12,7 @@ import {
 import {
   Accordion,
   AccordionItem,
+  AlertMessage,
   Box,
   Button,
   Text,
@@ -27,28 +28,46 @@ import {
   core,
   laws,
   requestCourtDate,
+  rcCourtOverview,
 } from '@island.is/judicial-system-web/messages'
+import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
 import type {
   Case,
   CaseLegalProvisions,
 } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
+import DraftConclusionModal from '../../SharedComponents/DraftConclusionModal/DraftConclusionModal'
+
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
-  setIsDraftingConclusion: React.Dispatch<
-    React.SetStateAction<boolean | undefined>
-  >
 }
 
 const OverviewForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, setIsDraftingConclusion } = props
+  const { workingCase, setWorkingCase } = props
+  const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
   return (
     <FormContentContainer>
+      {workingCase.caseResentExplanation && (
+        <Box marginBottom={5}>
+          <AlertMessage
+            title={formatMessage(
+              rcCourtOverview.sections.caseResentExplanation.title,
+            )}
+            message={
+              <MarkdownWrapper
+                text={workingCase.caseResentExplanation}
+                textProps={{ variant: 'small' }}
+              />
+            }
+            type="warning"
+          />
+        </Box>
+      )}
       <Box marginBottom={7}>
         <Text as="h1" variant="h1">
           {`Yfirlit ${
@@ -196,7 +215,9 @@ const OverviewForm: React.FC<Props> = (props) => {
                 )}
               </AccordionItem>
             )}
-            {(workingCase.comments || workingCase.caseFilesComments) && (
+            {(workingCase.comments ||
+              workingCase.caseFilesComments ||
+              workingCase.caseResentExplanation) && (
               <CommentsAccordionItem workingCase={workingCase} />
             )}
             {user && (
@@ -216,6 +237,7 @@ const OverviewForm: React.FC<Props> = (props) => {
           />
         </Box>
         <Button
+          data-testId="draftConclusionButton"
           variant="ghost"
           icon="pencil"
           size="small"
@@ -224,6 +246,12 @@ const OverviewForm: React.FC<Props> = (props) => {
           Skrifa drög að niðurstöðu
         </Button>
       </Box>
+      <DraftConclusionModal
+        workingCase={workingCase}
+        setWorkingCase={setWorkingCase}
+        isDraftingConclusion={isDraftingConclusion}
+        setIsDraftingConclusion={setIsDraftingConclusion}
+      />
     </FormContentContainer>
   )
 }

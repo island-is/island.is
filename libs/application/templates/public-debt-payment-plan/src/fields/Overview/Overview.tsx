@@ -186,7 +186,7 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
             <GridColumn span={['6/12', '5/12']}>
               <Box>
                 <Label>{formatMessage(overview.employer)}</Label>
-                <Text>{correctedEmployer?.name || employerInfo.name}</Text>
+                <Text>{correctedEmployer?.label || employerInfo.name}</Text>
               </Box>
             </GridColumn>
             <GridColumn span={['6/12', '5/12']}>

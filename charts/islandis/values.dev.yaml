@@ -432,6 +432,7 @@ application-system-api:
         - host: 'application-payment-callback-xrd.internal.dev01.devland.is'
           paths:
             - '/application-payment'
+            - '/applications'
   initContainer:
     containers:
       - args:

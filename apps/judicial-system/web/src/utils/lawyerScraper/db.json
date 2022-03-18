@@ -2114,7 +2114,7 @@
     },
     {
       "name": "Guðmundur Benediktsson",
-      "practice": "Lagarök lögmannsstofa.",
+      "practice": "",
       "email": "gudmundur.benediktsson@gmail.com",
       "phoneNr": "5881177"
     },
@@ -2582,9 +2582,9 @@
     },
     {
       "name": "Hallgrímur Jónsson",
-      "practice": "Pacta lögmenn",
-      "email": "hallgrimur@pacta.is",
-      "phoneNr": "4407969"
+      "practice": "",
+      "email": "",
+      "phoneNr": ""
     },
     {
       "name": "Hallmundur Albertsson",
@@ -2891,12 +2891,6 @@
       "practice": "NBI hf.",
       "email": "hildur.njardvik@landsbanki.is",
       "phoneNr": "4107741"
-    },
-    {
-      "name": "Hildur Sif Haraldsdóttir",
-      "practice": "Vátryggingafélag Íslands hf.",
-      "email": "hildurs@vis.is",
-      "phoneNr": "5605328"
     },
     {
       "name": "Hildur Sólveig Pétursdóttir",
@@ -5587,6 +5581,12 @@
       "phoneNr": "568-1245"
     },
     {
+      "name": "Steinlaug Högnadóttir",
+      "practice": "LOGOS",
+      "email": "steinlaug@logos.is",
+      "phoneNr": "5400300"
+    },
+    {
       "name": "Steinn S. Finnbogason",
       "practice": "Traust services slf.",
       "email": "steinn@traustlegal.is",
@@ -5973,7 +5973,7 @@
     {
       "name": "Valgerður Erla Árnadóttir",
       "practice": "Juvo lögmenn",
-      "email": "info@valaarna.com",
+      "email": "vala@logmenn.juvo.is",
       "phoneNr": "7800380"
     },
     {
