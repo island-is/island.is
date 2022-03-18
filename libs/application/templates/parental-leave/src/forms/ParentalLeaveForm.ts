@@ -204,7 +204,26 @@ export const ParentalLeaveForm: Form = buildForm({
                     )
                   },
                 }),
+                buildRadioField({
+                  id: 'useUnion',
+                  title: parentalLeaveFormMessages.shared.unionName,
+                  description:
+                    parentalLeaveFormMessages.shared.unionDescription,
+                  width: 'half',
+                  space: 4,
+                  options: [
+                    {
+                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
+                      value: YES,
+                    },
+                    {
+                      label: parentalLeaveFormMessages.shared.noOptionLabel,
+                      value: NO,
+                    },
+                  ],
+                }),
                 buildAsyncSelectField({
+                  condition: (answers) => answers.useUnion === YES,
                   title: parentalLeaveFormMessages.shared.union,
                   id: 'payments.union',
                   loadingError: parentalLeaveFormMessages.errors.loading,

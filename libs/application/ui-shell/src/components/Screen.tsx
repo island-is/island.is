@@ -78,6 +78,9 @@ const getServerValidationErrors = (error: ApolloError | undefined) => {
   return null
 }
 
+const NO = 'no'
+const YES = 'yes'
+
 const Screen: FC<ScreenProps> = ({
   activeScreenIndex,
   addExternalData,
@@ -129,7 +132,21 @@ const Screen: FC<ScreenProps> = ({
       onError: (e) => handleServerError(e, formatMessage),
     },
   )
-  const { handleSubmit, errors: formErrors, reset } = hookFormData
+  const {
+    handleSubmit,
+    errors: formErrors,
+    reset,
+    setValue,
+    watch,
+  } = hookFormData
+  const watchUseUnion = watch('useUnion')
+  const watchUnion = watch('payments.union')
+  const watchUsePrivatePensionFund = watch('usePrivatePensionFund')
+  const watchPrivatePensionFund = watch('payments.privatePensionFund')
+  const watchPrivatePensionFundPercentage = watch(
+    'payments.privatePensionFundPercentage',
+  )
+
   const submitField = useMemo(() => findSubmitField(screen), [screen])
 
   const [beforeSubmitError, setBeforeSubmitError] = useState({})
@@ -254,6 +271,70 @@ const Screen: FC<ScreenProps> = ({
       setBeforeSubmitCallback(null)
     }
   }, [activeScreenIndex, isMobile, setBeforeSubmitCallback])
+
+  useEffect(() => {
+    const resetValues = async () => {
+      const shouldReset = watchUseUnion === NO
+      if (shouldReset) {
+        setValue('payments.union', '')
+      }
+      const newData = await updateApplication({
+        variables: {
+          input: {
+            id: applicationId,
+            answers: {
+              ...formValue,
+              payments: {
+                ...(formValue as any).payments,
+                union: shouldReset ? '' : watchUnion,
+              },
+              useUnion: shouldReset ? NO : YES,
+            },
+          },
+          locale,
+        },
+      })
+      answerQuestions(newData.data.updateApplication.answers)
+    }
+    resetValues()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watchUseUnion, watchUnion])
+
+  useEffect(() => {
+    const resetValues = async () => {
+      const shouldReset = watchUsePrivatePensionFund === NO
+      if (shouldReset) {
+        setValue('payments.privatePensionFund', '')
+        setValue('payments.privatePensionFundPercentage', '')
+      }
+      const newData = await updateApplication({
+        variables: {
+          input: {
+            id: applicationId,
+            answers: {
+              ...formValue,
+              payments: {
+                ...(formValue as any).payments,
+                privatePensionFund: shouldReset ? '' : watchPrivatePensionFund,
+                privatePensionFundPercentage: shouldReset
+                  ? ''
+                  : watchPrivatePensionFundPercentage,
+              },
+              usePrivatePensionFund: shouldReset ? NO : YES,
+            },
+          },
+          locale,
+        },
+      })
+      answerQuestions(newData.data.updateApplication.answers)
+    }
+    resetValues()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    watchUsePrivatePensionFund,
+    watchPrivatePensionFund,
+    watchPrivatePensionFundPercentage,
+  ])
 
   const onUpdateRepeater = async (newRepeaterItems: unknown[]) => {
     if (!screen.id) {
