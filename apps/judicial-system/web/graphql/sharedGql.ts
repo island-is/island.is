@@ -83,6 +83,7 @@ export const CaseQuery = gql`
       courtDocuments
       sessionBookings
       courtCaseFacts
+      introduction
       courtLegalArguments
       ruling
       decision
@@ -139,6 +140,7 @@ export const CaseQuery = gql`
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
       caseModifiedExplanation
+      caseResentExplanation
     }
   }
 `

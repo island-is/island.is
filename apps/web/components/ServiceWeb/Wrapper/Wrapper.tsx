@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState, createContext } from 'react'
 import Head from 'next/head'
 import { Box } from '@island.is/island-ui/core'
 
-import { Organization } from '@island.is/web/graphql/schema'
+import { Organization, Tag } from '@island.is/web/graphql/schema'
 import {
   ServiceWebSearchSection,
   ServiceWebHeader,
@@ -35,6 +35,9 @@ interface WrapperProps {
   searchTitle?: string
   organizationTitle?: string
   smallBackground?: boolean
+  searchPlaceholder?: string
+  searchTags?: Tag[]
+  showLogoTitle?: boolean
 }
 
 export const Wrapper: FC<WrapperProps> = ({
@@ -46,6 +49,9 @@ export const Wrapper: FC<WrapperProps> = ({
   searchTitle,
   organizationTitle,
   smallBackground,
+  searchPlaceholder,
+  searchTags,
+  showLogoTitle,
   children,
 }) => {
   const [options, setOptions] = useState<Options>({
@@ -75,6 +81,8 @@ export const Wrapper: FC<WrapperProps> = ({
           hideSearch={!smallBackground}
           title={headerTitle}
           textMode={textMode}
+          searchPlaceholder={searchPlaceholder}
+          searchTags={searchTags}
         />
         <ServiceWebBackground
           variation={
@@ -87,10 +95,12 @@ export const Wrapper: FC<WrapperProps> = ({
         {!!showSearchSection && (
           <Box className={styles.searchSection}>
             <ServiceWebSearchSection
-              logoTitle={organizationTitle}
+              logoTitle={showLogoTitle ? organizationTitle : undefined}
               logoUrl={logoUrl}
               title={searchTitle}
               textMode={textMode}
+              searchPlaceholder={searchPlaceholder}
+              searchTags={searchTags}
             />
           </Box>
         )}

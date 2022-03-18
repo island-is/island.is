@@ -6,7 +6,6 @@ import router from 'next/router'
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import {
   DropdownMenu,
-  Loading,
   Logo,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -80,7 +79,7 @@ export const Requests: React.FC = () => {
   const resCases = data?.cases
 
   useEffect(() => {
-    document.title = 'Allar kröfur - Réttarvörslugátt'
+    document.title = 'Öll mál - Réttarvörslugátt'
   }, [])
 
   useEffect(() => {
@@ -335,10 +334,6 @@ export const Requests: React.FC = () => {
             type="error"
           />
         </div>
-      ) : loading ? (
-        <Box className={styles.table}>
-          <Loading />
-        </Box>
       ) : null}
     </div>
   )

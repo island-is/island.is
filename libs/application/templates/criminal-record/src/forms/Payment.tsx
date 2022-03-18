@@ -18,7 +18,7 @@ type CreateChargeData = {
 }
 
 export const Payment: Form = buildForm({
-  id: 'DrivingLicenseApplicationPaymentForm',
+  id: 'CriminalRecordApplicationPaymentForm',
   title: '',
   mode: FormModes.APPLYING,
   renderLastScreenButton: false,
@@ -95,7 +95,6 @@ export const Payment: Form = buildForm({
           component: 'PaymentPendingField',
           title: m.confirmation,
           condition: () => {
-            console.log(!!window.document.location.href.match(/\?done$/))
             return !!window.document.location.href.match(/\?done$/)
           },
         }),

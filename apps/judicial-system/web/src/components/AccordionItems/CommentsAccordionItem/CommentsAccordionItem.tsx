@@ -1,7 +1,11 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
 
 import { AccordionItem, Box, Text } from '@island.is/island-ui/core'
 import { Case } from '@island.is/judicial-system/types'
+import { commentsAccordion } from '@island.is/judicial-system-web/messages/Core/commentsAccordion'
+
+import MarkdownWrapper from '../../MarkdownWrapper/MarkdownWrapper'
 
 interface Props {
   workingCase: Case
@@ -9,27 +13,40 @@ interface Props {
 
 const CommentsAccordionItem: React.FC<Props> = (props) => {
   const { workingCase } = props
+  const { formatMessage } = useIntl()
 
   return (
     <AccordionItem id="id_5" label="Athugasemdir" labelVariant="h3">
-      {Boolean(workingCase.comments) && (
+      {workingCase.comments && (
         <Box marginBottom={workingCase.caseFilesComments ? 3 : 0}>
           <Box marginBottom={1}>
             <Text variant="h4" as="h4">
-              Athugasemdir vegna málsmeðferðar
+              {formatMessage(commentsAccordion.comments)}
             </Text>
           </Box>
           <Text whiteSpace="breakSpaces">{workingCase.comments}</Text>
         </Box>
       )}
-      {Boolean(workingCase.caseFilesComments) && (
+      {workingCase.caseFilesComments && (
         <>
           <Box marginBottom={1}>
             <Text variant="h4" as="h4">
-              Athugasemdir vegna rannsóknargagna
+              {formatMessage(commentsAccordion.caseFilesComments)}
             </Text>
           </Box>
           <Text whiteSpace="breakSpaces">{workingCase.caseFilesComments}</Text>
+        </>
+      )}
+      {workingCase.caseResentExplanation && (
+        <>
+          <Box marginBottom={1}>
+            <Text variant="h4" as="h4">
+              {formatMessage(commentsAccordion.caseResentExplanation)}
+            </Text>
+          </Box>
+          <Text whiteSpace="breakSpaces">
+            <MarkdownWrapper text={workingCase.caseResentExplanation} />
+          </Text>
         </>
       )}
     </AccordionItem>

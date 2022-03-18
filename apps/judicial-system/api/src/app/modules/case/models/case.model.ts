@@ -1,3 +1,5 @@
+import { GraphQLJSONObject } from 'graphql-type-json'
+
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 import type {
@@ -9,6 +11,7 @@ import type {
   CaseState,
   CaseType,
   SessionArrangements,
+  CourtDocument,
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
@@ -154,14 +157,17 @@ export class Case implements TCase {
   @Field({ nullable: true })
   readonly prosecutorDemands?: string
 
-  @Field(() => [String], { nullable: true })
-  readonly courtDocuments?: string[]
+  @Field(() => [GraphQLJSONObject], { nullable: true })
+  readonly courtDocuments?: CourtDocument[]
 
   @Field({ nullable: true })
   readonly sessionBookings?: string
 
   @Field({ nullable: true })
   readonly courtCaseFacts?: string
+
+  @Field({ nullable: true })
+  readonly introduction?: string
 
   @Field({ nullable: true })
   readonly courtLegalArguments?: string
@@ -246,4 +252,7 @@ export class Case implements TCase {
 
   @Field({ nullable: true })
   readonly caseModifiedExplanation?: string
+
+  @Field({ nullable: true })
+  readonly caseResentExplanation?: string
 }
