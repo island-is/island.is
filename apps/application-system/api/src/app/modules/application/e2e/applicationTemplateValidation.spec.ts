@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 import type { User } from '@island.is/auth-nest-tools'
 import { ApplicationValidationService } from '../tools/applicationTemplateValidation.service'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
