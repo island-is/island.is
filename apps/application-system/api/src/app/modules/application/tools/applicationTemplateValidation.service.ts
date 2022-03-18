@@ -99,7 +99,6 @@ export class ApplicationValidationService {
     return true
   }
 
-  // Just used to call the async function and throwing an error, might need to remove?
   async validateThatTemplateIsReady(
     user: User,
     template: Unwrap<typeof getApplicationTemplateByTypeId>,
