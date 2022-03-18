@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useMutation, useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 
@@ -8,6 +8,8 @@ import {
   UserQuery,
 } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import type { User } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 
@@ -46,10 +48,6 @@ export const ChangeUser: React.FC = () => {
     UpdateUserMutation,
   )
 
-  useEffect(() => {
-    document.title = 'Breyta notanda - Réttarvörslugátt'
-  }, [])
-
   const saveUser = async (user: User) => {
     if (saveLoading === false && user) {
       await updateUserMutation({
@@ -77,6 +75,7 @@ export const ChangeUser: React.FC = () => {
       isLoading={userLoading || institutionLoading}
       notFound={!userData?.user || !institutionLoaded}
     >
+      <PageHeader title={titles.admin.changeUser} />
       {userData?.user && institutionLoaded && (
         <UserForm
           user={userData?.user}

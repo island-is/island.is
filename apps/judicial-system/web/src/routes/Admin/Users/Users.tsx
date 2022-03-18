@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import cn from 'classnames'
 import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
@@ -19,6 +19,8 @@ import {
 } from '@island.is/judicial-system-web/src/utils/mutations'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import type { User } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 
@@ -48,10 +50,6 @@ export const Users: React.FC = () => {
     errorPolicy: 'all',
   })
 
-  useEffect(() => {
-    document.title = 'Notendur - Réttarvörslugátt'
-  }, [])
-
   const users = data?.users.filter((u) => {
     return selectedInstitution
       ? u.institution?.id === selectedInstitution
@@ -77,6 +75,7 @@ export const Users: React.FC = () => {
 
   return (
     <div className={styles.userControlContainer}>
+      <PageHeader title={titles.admin.users} />
       <div className={styles.logoContainer}>
         <Button
           icon="add"

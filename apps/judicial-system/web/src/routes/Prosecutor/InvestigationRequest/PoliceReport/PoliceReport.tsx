@@ -1,10 +1,12 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import {
   ProsecutorSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 
 import PoliceReportForm from './PoliceReportForm'
@@ -18,10 +20,6 @@ const PoliceReport = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
 
-  useEffect(() => {
-    document.title = 'Greinargerð - Réttarvörslugátt'
-  }, [])
-
   return (
     <PageLayout
       workingCase={workingCase}
@@ -32,6 +30,7 @@ const PoliceReport = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
+      <PageHeader title={titles.prosecutor.investigationCases.policeReport} />
       <PoliceReportForm
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}

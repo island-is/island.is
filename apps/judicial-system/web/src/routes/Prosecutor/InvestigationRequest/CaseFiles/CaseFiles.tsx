@@ -10,6 +10,8 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 
 import CaseFilesForm from './CaseFilesForm'
 
@@ -39,10 +41,6 @@ export const CaseFiles: React.FC = () => {
     variables: { input: { caseId: id } },
     fetchPolicy: 'no-cache',
   })
-
-  useEffect(() => {
-    document.title = 'Rannsóknargögn - Réttarvörslugátt'
-  }, [])
 
   useEffect(() => {
     if (policeData && policeData.policeCaseFiles) {
@@ -77,6 +75,7 @@ export const CaseFiles: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
+      <PageHeader title={titles.prosecutor.investigationCases.caseFiles} />
       <CaseFilesForm
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}

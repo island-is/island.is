@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 
@@ -22,6 +22,8 @@ import {
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isReceptionAndAssignmentStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import * as Constants from '@island.is/judicial-system/consts'
 
 import ReceptionAndAssignmentForm from './ReceptionAndAssignmentForm'
@@ -49,10 +51,6 @@ const ReceptionAndAssignment = () => {
     isTransitioningCase,
     sendNotification,
   } = useCase()
-
-  useEffect(() => {
-    document.title = 'Móttaka - Réttarvörslugátt'
-  }, [])
 
   const { data: userData, loading: userLoading } = useQuery<UserData>(
     UsersQuery,
@@ -100,6 +98,9 @@ const ReceptionAndAssignment = () => {
       isLoading={isLoadingWorkingCase || userLoading}
       notFound={caseNotFound}
     >
+      <PageHeader
+        title={titles.court.restrictionCases.receptionAndAssignment}
+      />
       <ReceptionAndAssignmentForm
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}

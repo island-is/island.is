@@ -12,6 +12,8 @@ import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { icRuling as m } from '@island.is/judicial-system-web/messages'
 import { autofillRuling } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 
 import RulingForm from './RulingForm'
 
@@ -26,10 +28,6 @@ const Ruling = () => {
 
   const { autofill } = useCase()
   const { formatMessage } = useIntl()
-
-  useEffect(() => {
-    document.title = 'Yfirlit kröfu - Réttarvörslugátt'
-  }, [])
 
   useEffect(() => {
     if (isCaseUpToDate) {
@@ -73,6 +71,7 @@ const Ruling = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
+      <PageHeader title={titles.court.investigationCases.ruling} />
       <RulingForm
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
 import { useRouter } from 'next/router'
 
 import {
@@ -11,13 +11,16 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import * as Constants from '@island.is/judicial-system/consts'
-import OverviewForm from './OverviewForm'
 import {
   UploadState,
   useCourtUpload,
 } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
 import { useRulingAutofill } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
+import * as Constants from '@island.is/judicial-system/consts'
+
+import OverviewForm from './OverviewForm'
 
 export const JudgeOverview: React.FC = () => {
   const {
@@ -30,10 +33,6 @@ export const JudgeOverview: React.FC = () => {
 
   const router = useRouter()
   const id = router.query.id
-
-  useEffect(() => {
-    document.title = 'Yfirlit kröfu - Réttarvörslugátt'
-  }, [])
 
   useRulingAutofill(isCaseUpToDate, workingCase)
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
@@ -48,6 +47,7 @@ export const JudgeOverview: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
+      <PageHeader title={titles.court.restrictionCases.overview} />
       <OverviewForm workingCase={workingCase} setWorkingCase={setWorkingCase} />
       <FormContentContainer isFooter>
         <FormFooter

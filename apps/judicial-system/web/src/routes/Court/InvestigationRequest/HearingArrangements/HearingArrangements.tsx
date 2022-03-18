@@ -9,6 +9,8 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 
 import HearingArrangementsForm from './HearingArrangementsForm'
 
@@ -23,10 +25,6 @@ const HearingArrangements = () => {
   const { user } = useContext(UserContext)
 
   const { autofill, autofillSessionArrangements } = useCase()
-
-  useEffect(() => {
-    document.title = 'Fyrirtaka - Réttarvörslugátt'
-  }, [])
 
   useEffect(() => {
     if (isCaseUpToDate) {
@@ -64,6 +62,7 @@ const HearingArrangements = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
+      <PageHeader title={titles.court.investigationCases.hearingArrangements} />
       {user && (
         <HearingArrangementsForm
           workingCase={workingCase}

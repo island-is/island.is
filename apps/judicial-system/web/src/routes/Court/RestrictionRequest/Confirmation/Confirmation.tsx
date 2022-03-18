@@ -13,7 +13,6 @@ import {
   RulingAccordionItem,
   BlueBox,
 } from '@island.is/judicial-system-web/src/components'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CourtSubsections,
   Sections,
@@ -27,11 +26,14 @@ import { UserContext } from '@island.is/judicial-system-web/src/components/UserP
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import SigningModal from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import {
   core,
   rcConfirmation as m,
 } from '@island.is/judicial-system-web/messages'
 import * as Constants from '@island.is/judicial-system/consts'
+
 export const Confirmation: React.FC = () => {
   const {
     workingCase,
@@ -48,10 +50,6 @@ export const Confirmation: React.FC = () => {
   const { requestRulingSignature, isRequestingRulingSignature } = useCase()
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-
-  useEffect(() => {
-    document.title = 'Yfirlit úrskurðar - Réttarvörslugátt'
-  }, [])
 
   useEffect(() => {
     if (!modalVisible) {
@@ -86,6 +84,7 @@ export const Confirmation: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
+      <PageHeader title={titles.court.restrictionCases.conclusion} />
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">

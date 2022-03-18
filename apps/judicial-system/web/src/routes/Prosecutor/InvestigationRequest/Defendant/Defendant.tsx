@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
 import { useRouter } from 'next/router'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
@@ -9,8 +9,11 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import type { Case } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
+
 import DefendantForm from './DefendantForm'
 
 const Defendant = () => {
@@ -24,10 +27,6 @@ const Defendant = () => {
     caseNotFound,
   } = useContext(FormContext)
   const { createCase, isCreatingCase } = useCase()
-
-  useEffect(() => {
-    document.title = 'Rannsóknarheimild - Réttarvörslugátt'
-  }, [])
 
   const handleNextButtonClick = async (theCase: Case) => {
     if (!theCase.id) {
@@ -86,6 +85,7 @@ const Defendant = () => {
       notFound={caseNotFound}
       isExtension={workingCase?.parentCase && true}
     >
+      <PageHeader title={titles.prosecutor.investigationCases.defendant} />
       <DefendantForm
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}

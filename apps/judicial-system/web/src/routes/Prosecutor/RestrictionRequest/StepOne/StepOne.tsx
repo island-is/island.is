@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from 'react'
+import React, { useContext } from 'react'
 import { useRouter } from 'next/router'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
@@ -12,8 +12,11 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import type { Case, UpdateDefendant } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
+
 import { StepOneForm } from './StepOneForm'
 
 export const StepOne: React.FC = () => {
@@ -76,10 +79,6 @@ export const StepOne: React.FC = () => {
     }
   }
 
-  useEffect(() => {
-    document.title = 'Sakborningur - Réttarvörslugátt'
-  }, [])
-
   return (
     <PageLayout
       workingCase={workingCase}
@@ -91,6 +90,7 @@ export const StepOne: React.FC = () => {
       notFound={caseNotFound}
       isExtension={workingCase?.parentCase && true}
     >
+      <PageHeader title={titles.prosecutor.restrictionCases.defendant} />
       {!institutionLoading && (
         <StepOneForm
           workingCase={workingCase}

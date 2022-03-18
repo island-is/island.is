@@ -11,6 +11,8 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 
 import { StepFiveForm } from './StepFiveForm'
 
@@ -42,10 +44,6 @@ export const StepFive: React.FC = () => {
     variables: { input: { caseId: id } },
     fetchPolicy: 'no-cache',
   })
-
-  useEffect(() => {
-    document.title = 'Rannsóknargögn - Réttarvörslugátt'
-  }, [])
 
   useEffect(() => {
     if (policeData && policeData.policeCaseFiles) {
@@ -80,6 +78,7 @@ export const StepFive: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
+      <PageHeader title={titles.prosecutor.restrictionCases.caseFiles} />
       <StepFiveForm
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}

@@ -24,6 +24,8 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseData } from '@island.is/judicial-system-web/src/types'
 import { requests as m } from '@island.is/judicial-system-web/messages/Core/requests'
 import useSections from '@island.is/judicial-system-web/src/utils/hooks/useSections'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 
@@ -77,10 +79,6 @@ export const Requests: React.FC = () => {
   const { formatMessage } = useIntl()
 
   const resCases = data?.cases
-
-  useEffect(() => {
-    document.title = 'Öll mál - Réttarvörslugátt'
-  }, [])
 
   useEffect(() => {
     if (resCases && !activeCases) {
@@ -182,6 +180,7 @@ export const Requests: React.FC = () => {
 
   return (
     <div className={styles.requestsContainer}>
+      <PageHeader title={titles.shared.cases} />
       {loading ? (
         <TableSkeleton />
       ) : (
