@@ -4,6 +4,7 @@ import cn from 'classnames'
 import localeIS from 'date-fns/locale/is'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
+import { motion, useAnimation } from 'framer-motion'
 
 import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
 import {
@@ -33,10 +34,25 @@ interface Props {
   onRowClick: (id: string) => void
   isDeletingCase: boolean
   onDeleteCase?: (caseToDelete: Case) => Promise<void>
+  setActiveCases?: React.Dispatch<React.SetStateAction<Case[] | undefined>>
 }
 
 const ActiveRequests: React.FC<Props> = (props) => {
-  const { cases, onRowClick, isDeletingCase, onDeleteCase } = props
+  const {
+    cases,
+    onRowClick,
+    isDeletingCase,
+    onDeleteCase,
+    setActiveCases,
+  } = props
+
+  const controls = useAnimation()
+
+  const variants = {
+    isDeleting: (custom: number) =>
+      custom === requestToRemoveIndex ? { x: '-150px' } : { x: '0px' },
+    isNotDeleting: { x: 0 },
+  }
 
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
@@ -196,12 +212,12 @@ const ActiveRequests: React.FC<Props> = (props) => {
       </thead>
       <tbody>
         {cases.map((c, i) => (
-          <tr
+          <motion.tr
             key={i}
-            className={cn(
-              styles.tableRowContainer,
-              requestToRemoveIndex === i && 'isDeleting',
-            )}
+            animate={controls}
+            variants={variants}
+            custom={i}
+            className={styles.tableRowContainer}
             data-testid="custody-requests-table-row"
             role="button"
             aria-label="Opna kröfu"
@@ -323,32 +339,46 @@ const ActiveRequests: React.FC<Props> = (props) => {
                     component="button"
                     aria-label="Viltu afturkalla kröfu?"
                     className={styles.deleteButton}
-                    onClick={(evt) => {
+                    onClick={async (evt) => {
                       evt.stopPropagation()
-                      setRequestToRemoveIndex(
-                        requestToRemoveIndex === i ? undefined : i,
-                      )
+
+                      await new Promise((resolve) => {
+                        setRequestToRemoveIndex(
+                          requestToRemoveIndex === i ? undefined : i,
+                        )
+
+                        resolve(true)
+                      })
+
+                      await controls.start('isDeleting')
                     }}
                   >
                     <Icon icon="close" color="blue400" />
                   </Box>
                 )}
             </td>
-            <td
-              className={cn(
-                styles.deleteButtonContainer,
-                styles.td,
-                requestToRemoveIndex === i && 'open',
-              )}
-            >
+            <td className={cn(styles.deleteButtonContainer, styles.td)}>
               <Button
                 colorScheme="destructive"
                 size="small"
                 loading={isDeletingCase}
-                onClick={(evt) => {
-                  evt.stopPropagation()
-                  setRequestToRemoveIndex(undefined)
-                  onDeleteCase && onDeleteCase(cases[i])
+                onClick={async (evt) => {
+                  if (onDeleteCase && setActiveCases) {
+                    evt.stopPropagation()
+
+                    await onDeleteCase(cases[i])
+
+                    controls
+                      .start('isNotDeleting')
+                      .then(() => {
+                        setRequestToRemoveIndex(undefined)
+                      })
+                      .then(() => {
+                        setActiveCases(
+                          cases.filter((c: Case) => c !== cases[i]),
+                        )
+                      })
+                  }
                 }}
               >
                 <Box as="span" className={styles.deleteButtonText}>
@@ -356,7 +386,7 @@ const ActiveRequests: React.FC<Props> = (props) => {
                 </Box>
               </Button>
             </td>
-          </tr>
+          </motion.tr>
         ))}
       </tbody>
     </table>
