@@ -56,7 +56,6 @@ const StudentsOverview = ({ application }: Data) => {
   }
 
   const filter = (searchTerm: string) => {
-  console.log("########## Filter search ###############")
     if (searchTerm.length) {
       const filteredList = data.drivingLicenseBookStudentsForTeacher?.filter(
         (student: Student) =>
