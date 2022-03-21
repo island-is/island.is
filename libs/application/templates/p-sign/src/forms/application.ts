@@ -94,6 +94,7 @@ export const getApplication = (): Form => {
           buildMultiField({
             id: 'list',
             title: m.informationTitle,
+            description: m.informationSubtitle,
             children: [
               buildTextField({
                 id: 'name',
