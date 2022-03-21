@@ -43,43 +43,30 @@ describe('ApplicationTemplateValidation', () => {
     )
   })
 
-  it('Should not be ready when the supplied featureFlag is disabled and the readyForProd is false on prod', async () => {
+  it('Should not be ready when the supplied featureFlag is disabled', async () => {
     const mockUser = {
       nationalId: '1234567891',
       scope: [],
       authorization: faker.random.word(),
       client: faker.random.word(),
     }
-
-    const envBefore = environment.production
-    environment.production = true
-    const envNameBefore = environment.name
-    environment.name = 'production'
     const results = await applicationValidationService.isTemplateReady(
       mockUser,
       {
-        readyForProduction: false,
+        readyForProduction: true,
         featureFlag: Features.accidentNotification,
       },
     )
-
     expect(results).toBe(false)
-    environment.production = envBefore
-    environment.name = envNameBefore
   })
 
-  it('Should be ready when when the supplied featureFlag is enabled and the readyForProd is false on prod', async () => {
+  it('Should be ready when when the supplied featureFlag is enabled and the readyForProd is false', async () => {
     const mockUser = {
       nationalId: '1234567891',
       scope: [],
       authorization: faker.random.word(),
       client: faker.random.word(),
     }
-
-    const envBefore = environment.production
-    environment.production = true
-    const envNameBefore = environment.name
-    environment.name = 'production'
 
     const results = await applicationValidationService.isTemplateReady(
       mockUser,
@@ -89,22 +76,15 @@ describe('ApplicationTemplateValidation', () => {
       },
     )
     expect(results).toBe(true)
-    environment.production = envBefore
-    environment.name = envNameBefore
   })
 
-  it('Should be ready when the supplied featureFlag is disabled and readyForProd is false and the users nationalId is whitelisted on prod', async () => {
+  it('Should be ready when the supplied featureFlag is disabled and readyForProd is false and the users nationalId is whitelisted', async () => {
     const mockUser = {
       nationalId: '1234567890',
       scope: [],
       authorization: faker.random.word(),
       client: faker.random.word(),
     }
-
-    const envBefore = environment.production
-    environment.production = true
-    const envNameBefore = environment.name
-    environment.name = 'production'
 
     const results = await applicationValidationService.isTemplateReady(
       mockUser,
@@ -114,8 +94,6 @@ describe('ApplicationTemplateValidation', () => {
       },
     )
     expect(results).toBe(true)
-    environment.production = envBefore
-    environment.name = envNameBefore
   })
 
   it('Should be ready when no featureFlag is supplied but readyForProduction is true on prod', async () => {
@@ -166,7 +144,7 @@ describe('ApplicationTemplateValidation', () => {
     environment.name = envNameBefore
   })
 
-  it('Should be ready regardless when not running on production', async () => {
+  it('Should be ready when not running on production without a featureFlag and regardless of readyForProduction flag on localhost', async () => {
     const mockUser = {
       nationalId: '1234567890',
       scope: [],

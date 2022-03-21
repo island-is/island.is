@@ -69,7 +69,7 @@ export class ApplicationValidationService {
 
   // If configcat flag is present use that flag to determine if the template is ready
   // If configcat flag is not present, use the readyForProduction flag
-  // Possible future TODO: Remove the readyForProduction flag
+  // TODO: Remove the readyForProduction flag
   async isTemplateReady(
     user: User,
     template: Pick<
@@ -77,18 +77,19 @@ export class ApplicationValidationService {
       'readyForProduction' | 'featureFlag'
     >,
   ): Promise<boolean> {
-    if (isRunningOnProductionEnvironment()) {
-      if (template.featureFlag) {
-        const results = await this.isTemplateFeatureFlaggedReady(
-          template.featureFlag,
-          user,
-        )
-        if (!results) {
-          return false
-        }
-        return true
+    if (template.featureFlag) {
+      const results = await this.isTemplateFeatureFlaggedReady(
+        template.featureFlag,
+        user,
+      )
+      if (!results) {
+        return false
       }
-      if (!template.readyForProduction) {
+      return true
+    }
+    // TODO: Remove this when readyForProduction is removed
+    if (isRunningOnProductionEnvironment() && !template.readyForProduction) {
+      {
         return false
       }
     }
