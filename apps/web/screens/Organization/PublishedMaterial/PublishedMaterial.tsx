@@ -153,10 +153,20 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
 
   const isMobile = width < theme.breakpoints.md
 
+  const isAnyFilterSelected = !Object.keys(parameters).every(
+    (key) => parameters[key]?.length === 0,
+  )
+
   const filteredItems = publishedMaterial.filter(
     (item) =>
       item.file?.url &&
-      item.title.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1,
+      item.title.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1 &&
+      (!isAnyFilterSelected ||
+        item.genericTags.some((tag) =>
+          filterCategories.some((category) =>
+            category.selected.includes(tag.slug),
+          ),
+        )),
   )
 
   return (
