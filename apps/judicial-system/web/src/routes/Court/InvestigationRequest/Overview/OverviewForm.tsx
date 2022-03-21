@@ -114,8 +114,8 @@ const OverviewForm: React.FC<Props> = (props) => {
               name: workingCase.defenderName ?? '',
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
-              defenderIsSpokesperson: workingCase.defenderIsSpokesperson,
             }}
+            sessionArrangement={workingCase.sessionArrangements}
           />
         </Box>
         <>
