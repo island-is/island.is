@@ -236,7 +236,7 @@ const Access: FC = () => {
       )}
       <FormProvider {...hookFormData}>
         <form onSubmit={onSubmit}>
-          <Box marginBottom={8} display="flex" justifyContent="flexEnd">
+          <Box marginBottom={[3, 3, 8]} display="flex" justifyContent="flexEnd">
             <Inline space={3}>
               {authDelegation?.scopes.length > 0 && (
                 <>

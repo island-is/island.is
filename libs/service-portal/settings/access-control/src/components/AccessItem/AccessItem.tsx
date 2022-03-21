@@ -19,6 +19,8 @@ import * as styles from './AccessItem.css'
 import add from 'date-fns/add'
 import format from 'date-fns/format'
 import { Scope } from '../../utils/types'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 interface PropTypes {
   apiScopes: Scope[]
@@ -28,6 +30,8 @@ interface PropTypes {
 function AccessItem({ apiScopes, authDelegation }: PropTypes) {
   const { lang, formatMessage } = useLocale()
   const { setValue, getValues } = useFormContext()
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
 
   const isApiScopeGroup = (item: Scope): boolean =>
     item.__typename === 'AuthApiScopeGroup'
@@ -122,7 +126,7 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
                 <Box
                   paddingBottom={isLastItem ? 'p3' : 'p1'}
                   paddingTop={isFirstItem ? 'p3' : 'p1'}
-                  paddingLeft={isFirstItem ? 0 : [0, 0, 4]}
+                  paddingLeft={isFirstItem ? 0 : [3, 3, 4]}
                   display="flex"
                   alignItems="center"
                 >
@@ -148,28 +152,36 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
                 <Box
                   paddingBottom={isLastItem ? 'p3' : 'p1'}
                   paddingTop={isFirstItem ? 'p3' : 'p1'}
-                  paddingLeft={[0, 0, 3]}
+                  paddingLeft={isFirstItem ? [0, 0, 3] : [3, 3, 3]}
                 >
                   <Text variant={isFirstItem ? 'default' : 'medium'}>
                     {item.description}
                   </Text>
                 </Box>
               </GridColumn>
-              <GridColumn span={['8/12', '8/12', '5/12', '4/12']}>
-                <Box
-                  paddingBottom={isLastItem ? 'p3' : 'p1'}
-                  paddingTop={isFirstItem ? 'p3' : 'p1'}
-                  paddingLeft={[0, 0, 3]}
-                >
-                  <div className={cs(isSelected ? undefined : styles.hidden)}>
+              <GridColumn span={['12/12', '8/12', '5/12', '4/12']}>
+                <div className={cs(isSelected ? undefined : styles.hidden)}>
+                  <Box
+                    paddingBottom={isLastItem ? 'p3' : 'p1'}
+                    paddingTop={isFirstItem ? 'p3' : 'p1'}
+                    paddingLeft={isFirstItem ? [0, 0, 3] : [3, 3, 3]}
+                  >
                     <DatePickerController
                       id={`${item.model}.validTo`}
                       size="sm"
-                      label={formatMessage({
-                        id:
-                          'sp.settings-access-control:access-item-datepicker-label',
-                        defaultMessage: 'Dagsetning til',
-                      })}
+                      label={
+                        isMobile
+                          ? formatMessage({
+                              id:
+                                'sp.settings-access-control:access-item-datepicker-label-mobile',
+                              defaultMessage: 'Í gildi til',
+                            })
+                          : formatMessage({
+                              id:
+                                'sp.settings-access-control:access-item-datepicker-label',
+                              defaultMessage: 'Dagsetning til',
+                            })
+                      }
                       backgroundColor="blue"
                       minDate={new Date()}
                       defaultValue={
@@ -182,11 +194,11 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
                       onChange={(value) => onChange(item, value)}
                       required
                     />
-                  </div>
-                </Box>
+                  </Box>
+                </div>
               </GridColumn>
             </GridRow>
-            <Box paddingY={1}>
+            <Box paddingY={1} paddingLeft={isFirstItem ? 0 : [3, 3, 0]}>
               <Divider />
             </Box>
           </>
