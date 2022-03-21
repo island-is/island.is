@@ -28,7 +28,7 @@ interface Props {
 }
 
 const PoliceReportForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading, isCaseUpToDate } = props
+  const { workingCase, setWorkingCase, isLoading } = props
 
   const { formatMessage } = useIntl()
   const { updateCase, autofill } = useCase()
@@ -43,16 +43,14 @@ const PoliceReportForm: React.FC<Props> = (props) => {
   useDeb(workingCase, 'comments')
 
   useEffect(() => {
-    if (isCaseUpToDate) {
-      if (workingCase.requestProsecutorOnlySession) {
-        autofill(
-          'prosecutorOnlySessionRequest',
-          formatMessage(icReportForm.prosecutorOnly.input.defaultValue),
-          workingCase,
-        )
-      }
+    if (workingCase.requestProsecutorOnlySession) {
+      autofill(
+        'prosecutorOnlySessionRequest',
+        formatMessage(icReportForm.prosecutorOnly.input.defaultValue),
+        workingCase,
+      )
     }
-  }, [autofill, formatMessage, isCaseUpToDate, workingCase])
+  }, [autofill, formatMessage, workingCase])
 
   return (
     <>
