@@ -10,13 +10,6 @@ import {
   Hidden,
   Tag,
 } from '@island.is/island-ui/core'
-import {
-  IntroHeader,
-  m as coreMessages,
-  NotFound,
-  ServicePortalPath,
-} from '@island.is/service-portal/core'
-import { AuthDelegationScope } from '@island.is/api/schema'
 
 interface Props {
   onClose: () => void
@@ -29,10 +22,10 @@ interface Props {
   title: string
   text: string
   img?: string
-  scopes?: AuthDelegationScope[]
+  scopes?: any
 }
 
-export const AccessModal: FC<Props> = ({
+const AccessModal: FC<Props> = ({
   onClose,
   onSubmit,
   onCloseButtonText,
@@ -68,11 +61,17 @@ export const AccessModal: FC<Props> = ({
           <Text paddingTop={2} paddingBottom={scopes && 3}>
             {text}
           </Text>
-          {scopes &&
-            scopes.map((scope) => {
-              console.log(scope)
-              return <Tag>{scope.displayName}</Tag>
-            })}
+          {scopes && (
+            <Box display="flex" flexDirection="row" flexWrap="wrap">
+              {scopes.map((scope: any) => {
+                return scope?.displayName ? (
+                  <Box padding={1} key={scope?.displayName}>
+                    <Tag>{scope.displayName}</Tag>
+                  </Box>
+                ) : null
+              })}
+            </Box>
+          )}
         </GridColumn>
         <GridColumn span={['1/8', '3/8']}>
           <Hidden below="sm">
@@ -86,7 +85,6 @@ export const AccessModal: FC<Props> = ({
             />
           </Hidden>
         </GridColumn>
-        {/* <GridColumn span={['7/8', '5/8']}></GridColumn> */}
         <GridColumn span="7/8">
           <Box marginTop={4} display="flex" flexDirection="row">
             <Box paddingRight={2}>
@@ -117,3 +115,5 @@ export const AccessModal: FC<Props> = ({
     </Modal>
   )
 }
+
+export default AccessModal

@@ -29,9 +29,14 @@ export const closeButton = style({
   zIndex: 2,
 })
 
-export const datePickerFix = style({})
-
-globalStyle(`${datePickerFix} > div`, {
-  // marginBottom: theme.spacing['10'],
-  // overflow: 'visible',
+export const row = style({
+  background: theme.color.blue100,
+  display: 'flex',
+  alignItems: 'center',
+  borderBottom: `1px solid ${theme.color.blue200}`,
 })
+
+export const column = style({
+  paddingLeft: theme.spacing[3],
+})
+export const datePickerFix = style({})
