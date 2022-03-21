@@ -1840,6 +1840,9 @@ export interface IOrganizationFields {
 
   /** Birta á þjónustuvef */
   serviceWebEnabled?: boolean | undefined
+
+  /** Namespace */
+  namespace?: IUiConfiguration | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -2120,6 +2123,7 @@ export interface IProcessEntryFields {
     | 'Digital w/login'
     | 'Not digital w/login'
     | 'No type'
+    | 'Application system'
 
   /** Process title */
   processTitle: string
@@ -2771,6 +2775,12 @@ export interface ISupportQnaFields {
 
   /** Importance */
   importance?: number | undefined
+
+  /** Related links */
+  relatedLinks?: (ILink | ISupportQna)[] | undefined
+
+  /** Contact Link */
+  contactLink?: string | undefined
 }
 
 /** Helpdesk support questions and answer */

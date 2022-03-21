@@ -244,6 +244,7 @@ export const Overview: React.FC = () => {
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
             }}
+            sessionArrangement={workingCase.sessionArrangements}
           />
         </Box>
         <Box component="section" marginBottom={5} data-testid="demands">

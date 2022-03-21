@@ -23,6 +23,7 @@ export const SelectProperty: FC<FieldBaseProps> = ({ application, field }) => {
     (externalData.validateMortgageCertificate?.data as {
       validation: {
         propertyNumber: string
+        isFromSearch: boolean
       }
     }) || {}
 
@@ -36,6 +37,7 @@ export const SelectProperty: FC<FieldBaseProps> = ({ application, field }) => {
       variables: {
         input: {
           propertyNumber: oldValidation?.propertyNumber,
+          isFromSearch: oldValidation?.isFromSearch,
         },
       },
       skip: !continuePolling,
