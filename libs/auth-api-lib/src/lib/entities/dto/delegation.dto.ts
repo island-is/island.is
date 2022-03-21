@@ -48,8 +48,8 @@ export class DelegationDTO {
   toName?: string | null
 
   @IsDateString()
-  @ApiPropertyOptional({ nullable: true })
-  validTo?: Date | null
+  @ApiProperty()
+  validTo!: Date
 
   @ApiProperty({ enum: DelegationType, enumName: 'DelegationType' })
   type!: DelegationType
