@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { useIntl } from 'react-int'
+import { useIntl } from 'react-intl'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import {
