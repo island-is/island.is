@@ -10,5 +10,5 @@ EXISTING_TAG=$(aws ecr batch-get-image --repository-name "$IMAGE" --image-ids im
 if [[ "$EXISTING_TAG" != "2" ]]; then
   aws ecr put-image --repository-name "$IMAGE" --image-tag "$DOCKER_TAG" --image-manifest "$MANIFEST"
 else
-  echo "Tag $DOCKER_TAG already existed for image $IAMGE. Hopefully this is a re-run in which case it should be ok."
+  echo "Tag $DOCKER_TAG already existed for image $IMAGE. Hopefully this is a re-run in which case it should be ok."
 fi

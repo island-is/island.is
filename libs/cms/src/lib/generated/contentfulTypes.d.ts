@@ -2778,6 +2778,9 @@ export interface ISupportQnaFields {
 
   /** Related links */
   relatedLinks?: (ILink | ISupportQna)[] | undefined
+
+  /** Contact Link */
+  contactLink?: string | undefined
 }
 
 /** Helpdesk support questions and answer */
