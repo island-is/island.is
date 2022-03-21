@@ -2,6 +2,7 @@
   "extends": "../../../tsconfig.base.json",
   "files": [],
   "include": [],
+  "experimentalDecorators": true,
   "references": [
     {
       "path": "./tsconfig.lib.json"
