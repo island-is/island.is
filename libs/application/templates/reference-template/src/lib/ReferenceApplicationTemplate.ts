@@ -8,11 +8,11 @@ import {
   DefaultEvents,
   DefaultStateLifeCycle,
   ApplicationConfigurations,
-  ApplicationFeatures,
 } from '@island.is/application/core'
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import { Features } from '@island.is/nest/feature-flags'
 
 import { ApiActions } from '../shared'
 import { m } from './messages'
@@ -85,7 +85,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
   institution: m.institutionName,
   translationNamespaces: [ApplicationConfigurations.ExampleForm.translation],
   dataSchema: ExampleSchema,
-  featureFlag: ApplicationFeatures.exampleApplication,
+  featureFlag: Features.exampleApplication,
   stateMachineConfig: {
     initial: States.prerequisites,
     states: {

@@ -1,9 +1,8 @@
 import type { User } from '@island.is/auth-nest-tools'
 import { ApplicationValidationService } from '../tools/applicationTemplateValidation.service'
-import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { Test } from '@nestjs/testing'
 import * as faker from 'faker'
-import { ApplicationFeatures } from '@island.is/application/core'
 import { LoggingModule } from '@island.is/logging'
 import { environment } from '../../../../environments'
 
@@ -19,14 +18,14 @@ describe('ApplicationTemplateValidation', () => {
           provide: FeatureFlagService,
           useClass: jest.fn(() => ({
             getValue(
-              feature: ApplicationFeatures,
+              feature: Features,
               defaultValue: boolean | string,
               user?: User,
             ) {
-              if (feature === ApplicationFeatures.exampleApplication) {
+              if (feature === Features.exampleApplication) {
                 return true
               }
-              if (feature === ApplicationFeatures.accidentNotification) {
+              if (feature === Features.accidentNotification) {
                 if (user?.nationalId === '1234567890') {
                   return true
                 }
@@ -60,7 +59,7 @@ describe('ApplicationTemplateValidation', () => {
       mockUser,
       {
         readyForProduction: false,
-        featureFlag: ApplicationFeatures.accidentNotification,
+        featureFlag: Features.accidentNotification,
       },
     )
 
@@ -86,7 +85,7 @@ describe('ApplicationTemplateValidation', () => {
       mockUser,
       {
         readyForProduction: false,
-        featureFlag: ApplicationFeatures.exampleApplication,
+        featureFlag: Features.exampleApplication,
       },
     )
     expect(results).toBe(true)
@@ -111,7 +110,7 @@ describe('ApplicationTemplateValidation', () => {
       mockUser,
       {
         readyForProduction: false,
-        featureFlag: ApplicationFeatures.accidentNotification,
+        featureFlag: Features.accidentNotification,
       },
     )
     expect(results).toBe(true)

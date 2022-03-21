@@ -1,8 +1,6 @@
 import { Inject } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
-import { Features } from '@island.is/feature-flags'
-import type { FeatureFlagClient } from '@island.is/feature-flags'
-import type { ApplicationFeatures } from '@island.is/application/core'
+import type { FeatureFlagClient, Features } from '@island.is/feature-flags'
 
 import { FEATURE_FLAG_CLIENT } from './feature-flag.client'
 
@@ -13,7 +11,7 @@ export class FeatureFlagService {
   ) {}
 
   async getValue(
-    feature: Features | ApplicationFeatures,
+    feature: Features,
     defaultValue: boolean | string,
     user?: User,
   ) {

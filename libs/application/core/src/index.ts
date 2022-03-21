@@ -9,7 +9,6 @@ export * from './types/ApplicationTemplate'
 export * from './types/StateMachine'
 export * from './types/PaymentType'
 export * from './types/PdfTypes'
-export * from './types/ApplicationFeatureFlags'
 export * from './types/ApplicationLifecycle'
 
 export * from './lib/conditionUtils'

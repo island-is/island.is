@@ -8,4 +8,8 @@ export enum Features {
   legalGuardianDelegations = 'identityserverLegalGuardianDelegations',
   personalRepresentativeDelegations = 'identityserverPersonalRepresentative',
   personalInformation = 'isServicePortalPersonalInformationModuleEnabled',
+
+  // Application visibility flags
+  exampleApplication = 'isExampleApplicationEnable',
+  accidentNotification = 'isAccidentNotificationEnabled',
 }
