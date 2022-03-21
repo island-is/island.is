@@ -1,6 +1,7 @@
 import { Inject } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
-import type { FeatureFlagClient, Features } from '@island.is/feature-flags'
+import { Features } from '@island.is/feature-flags'
+import type { FeatureFlagClient } from '@island.is/feature-flags'
 
 import { FEATURE_FLAG_CLIENT } from './feature-flag.client'
 
