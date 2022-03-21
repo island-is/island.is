@@ -252,36 +252,32 @@ const Access: FC = () => {
                       defaultMessage: 'Eyða umboði',
                     })}
                   </Button>
-                  {closeModalOpen && (
-                    <AccessModal
-                      id="access-delete-modal"
-                      title={formatMessage({
-                        id:
-                          'sp.settings-access-control:access-remove-modal-content',
-                        defaultMessage:
-                          'Ertu viss um að þú viljir eyða þessum aðgangi?',
-                      })}
-                      //
-                      text={
-                        `${authDelegation?.to?.name} mun missa umboð fyrir eftirfarandi:` ||
-                        ''
-                      }
-                      scopes={scopes as ScopeTag[]}
-                      onClose={() => setCloseModalOpen(false)}
-                      onCloseButtonText={formatMessage({
-                        id:
-                          'sp.settings-access-control:access-remove-modal-cancel',
-                        defaultMessage: 'Hætta við',
-                      })}
-                      onSubmitColor="red"
-                      onSubmit={() => onDelete()}
-                      onSubmitButtonText={formatMessage({
-                        id:
-                          'sp.settings-access-control:access-remove-modal-confirm',
-                        defaultMessage: 'Já, ég vil eyða umboði',
-                      })}
-                    />
-                  )}
+
+                  <AccessModal
+                    id="access-delete-modal"
+                    isVisible={closeModalOpen}
+                    title={formatMessage({
+                      id:
+                        'sp.settings-access-control:access-remove-modal-content',
+                      defaultMessage:
+                        'Ertu viss um að þú viljir eyða þessum aðgangi?',
+                    })}
+                    text={`${authDelegation?.to?.name} mun missa umboð fyrir eftirfarandi:`}
+                    scopes={scopes as ScopeTag[]}
+                    onClose={() => setCloseModalOpen(false)}
+                    onCloseButtonText={formatMessage({
+                      id:
+                        'sp.settings-access-control:access-remove-modal-cancel',
+                      defaultMessage: 'Hætta við',
+                    })}
+                    onSubmitColor="red"
+                    onSubmit={() => onDelete()}
+                    onSubmitButtonText={formatMessage({
+                      id:
+                        'sp.settings-access-control:access-remove-modal-confirm',
+                      defaultMessage: 'Já, ég vil eyða umboði',
+                    })}
+                  />
                 </>
               )}
               <Button
@@ -296,100 +292,93 @@ const Access: FC = () => {
                   defaultMessage: 'Vista aðgang',
                 })}
               </Button>
-              {saveModalOpen && (
-                <AccessModal
-                  id="access-save-modal"
-                  title={formatMessage({
-                    id: 'sp.settings-access-control:access-save-modal-content',
-                    defaultMessage: 'Ertu viss um að þú viljir veita umboðið?',
-                  })}
-                  //
-                  text={
-                    `${authDelegation?.to?.name}  mun fá umboð fyrir eftirfarandi:` ||
-                    ''
-                  }
-                  scopes={scopes as ScopeTag[]}
-                  onClose={() => setSaveModalOpen(false)}
-                  onCloseButtonText={formatMessage({
-                    id: 'sp.settings-access-control:access-save-modal-cancel',
-                    defaultMessage: 'Hætta við',
-                  })}
-                  onSubmitColor="blue"
-                  onSubmit={() => onSubmit()}
-                  onSubmitButtonText={formatMessage({
-                    id: 'sp.settings-access-control:access-save-modal-confirm',
-                    defaultMessage: 'Já, ég vil vista umboðið',
-                  })}
-                />
-              )}
+              <AccessModal
+                id="access-save-modal"
+                isVisible={saveModalOpen}
+                title={formatMessage({
+                  id: 'sp.settings-access-control:access-save-modal-content',
+                  defaultMessage: 'Ertu viss um að þú viljir veita umboðið?',
+                })}
+                //
+                text={`${authDelegation?.to?.name}  mun fá umboð fyrir eftirfarandi:`}
+                scopes={scopes as ScopeTag[]}
+                onClose={() => setSaveModalOpen(false)}
+                onCloseButtonText={formatMessage({
+                  id: 'sp.settings-access-control:access-save-modal-cancel',
+                  defaultMessage: 'Hætta við',
+                })}
+                onSubmitColor="blue"
+                onSubmit={() => onSubmit()}
+                onSubmitButtonText={formatMessage({
+                  id: 'sp.settings-access-control:access-save-modal-confirm',
+                  defaultMessage: 'Já, ég vil vista umboðið',
+                })}
+              />
             </Inline>
           </Box>
-
-          <div className={styles.datePickerFix}>
+          <Box>
+            <Hidden below="md">
+              <GridRow className={styles.row}>
+                <GridColumn
+                  span={['12/12', '12/12', '3/12']}
+                  paddingBottom={2}
+                  paddingTop={2}
+                  className={styles.column}
+                >
+                  <Text variant="medium" fontWeight="semiBold">
+                    {formatMessage({
+                      id: 'sp.settings-access-control:access-access',
+                      defaultMessage: 'Aðgangur',
+                    })}
+                  </Text>
+                </GridColumn>
+                <GridColumn
+                  span={['12/12', '12/12', '4/12', '5/12']}
+                  className={styles.column}
+                >
+                  <Text variant="medium" fontWeight="semiBold">
+                    {formatMessage({
+                      id: 'sp.settings-access-control:access-explanation',
+                      defaultMessage: 'Útskýring',
+                    })}
+                  </Text>
+                </GridColumn>
+                <GridColumn
+                  span={['12/12', '12/12', '5/12', '4/12']}
+                  className={styles.column}
+                >
+                  <Text variant="medium" fontWeight="semiBold">
+                    {formatMessage({
+                      id: 'sp.settings-access-control:access-valid-to',
+                      defaultMessage: 'Í gildi til',
+                    })}
+                  </Text>
+                </GridColumn>
+              </GridRow>
+            </Hidden>
             <Box>
-              <Hidden below="md">
-                <GridRow className={styles.row}>
-                  <GridColumn
-                    span={['12/12', '12/12', '3/12']}
-                    paddingBottom={2}
-                    paddingTop={2}
-                    className={styles.column}
-                  >
-                    <Text variant="medium" fontWeight="semiBold">
-                      {formatMessage({
-                        id: 'sp.settings-access-control:access-access',
-                        defaultMessage: 'Aðgangur',
-                      })}
-                    </Text>
-                  </GridColumn>
-                  <GridColumn
-                    span={['12/12', '12/12', '4/12', '5/12']}
-                    className={styles.column}
-                  >
-                    <Text variant="medium" fontWeight="semiBold">
-                      {formatMessage({
-                        id: 'sp.settings-access-control:access-explanation',
-                        defaultMessage: 'Útskýring',
-                      })}
-                    </Text>
-                  </GridColumn>
-                  <GridColumn
-                    span={['12/12', '12/12', '5/12', '4/12']}
-                    className={styles.column}
-                  >
-                    <Text variant="medium" fontWeight="semiBold">
-                      {formatMessage({
-                        id: 'sp.settings-access-control:access-valid-to',
-                        defaultMessage: 'Í gildi til',
-                      })}
-                    </Text>
-                  </GridColumn>
-                </GridRow>
-              </Hidden>
-              <Box>
-                {!loading &&
-                  Object.keys(groupedApiScopes).map((key, index) => {
-                    const apiScopes = groupedApiScopes[key]
-                    const accessItems: Scope[] = key.startsWith(GROUP_PREFIX)
-                      ? [
-                          {
-                            ...apiScopes[0].group,
-                            model: `${GROUP_PREFIX}.${index}`,
-                          } as ApiScopeGroup,
-                          ...apiScopes,
-                        ]
-                      : apiScopes
-                    return (
-                      <AccessItem
-                        apiScopes={accessItems}
-                        authDelegation={authDelegation}
-                        key={index}
-                      />
-                    )
-                  })}
-              </Box>
+              {!loading &&
+                Object.keys(groupedApiScopes).map((key, index) => {
+                  const apiScopes = groupedApiScopes[key]
+                  const accessItems: Scope[] = key.startsWith(GROUP_PREFIX)
+                    ? [
+                        {
+                          ...apiScopes[0].group,
+                          model: `${GROUP_PREFIX}.${index}`,
+                        } as ApiScopeGroup,
+                        ...apiScopes,
+                      ]
+                    : apiScopes
+                  return (
+                    <AccessItem
+                      apiScopes={accessItems}
+                      authDelegation={authDelegation}
+                      key={index}
+                    />
+                  )
+                })}
             </Box>
-          </div>
+          </Box>
           {loading && (
             <Box marginTop={3}>
               <Stack space={3}>

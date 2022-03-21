@@ -1,5 +1,4 @@
-import { style, globalStyle } from '@vanilla-extract/css'
-
+import { style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const modal = style({
@@ -27,15 +26,4 @@ export const closeButton = style({
   top: theme.spacing['1'],
   right: theme.spacing['1'],
   zIndex: 2,
-})
-
-export const row = style({
-  background: theme.color.blue100,
-  display: 'flex',
-  alignItems: 'center',
-  borderBottom: `1px solid ${theme.color.blue200}`,
-})
-
-export const column = style({
-  paddingLeft: theme.spacing[3],
 })
