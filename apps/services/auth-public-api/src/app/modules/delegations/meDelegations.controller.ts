@@ -23,7 +23,6 @@ import {
   UpdateDelegationDTO,
 } from '@island.is/auth-api-lib'
 import {
-  AuthMiddlewareOptions,
   CurrentUser,
   IdsUserGuard,
   Scopes,
@@ -37,8 +36,6 @@ import {
   Features,
   FeatureFlag,
 } from '@island.is/nest/feature-flags'
-
-import { environment } from '../../../environments'
 
 const namespace = '@island.is/auth-public-api/delegations'
 
@@ -149,12 +146,7 @@ export class MeDelegationsController {
     @CurrentUser() user: User,
     @Body() delegation: CreateDelegationDTO,
   ): Promise<DelegationDTO | null> {
-    return this.delegationsService.create(
-      user,
-      delegation,
-      environment.nationalRegistry
-        .authMiddlewareOptions as AuthMiddlewareOptions,
-    )
+    return this.delegationsService.create(user, delegation)
   }
 
   @Scopes(AuthScope.writeDelegations)
