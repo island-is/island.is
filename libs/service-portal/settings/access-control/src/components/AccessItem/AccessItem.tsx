@@ -186,7 +186,9 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
                 </Box>
               </GridColumn>
             </GridRow>
-            <Divider />
+            <Box paddingY={1}>
+              <Divider />
+            </Box>
           </>
         )
       })}
