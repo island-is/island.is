@@ -1,4 +1,6 @@
 import React, { FC, useMemo } from 'react'
+import { useFormContext } from 'react-hook-form'
+import { useMutation } from '@apollo/client'
 import get from 'lodash/get'
 import has from 'lodash/has'
 
@@ -8,7 +10,7 @@ import {
   RecordObject,
   Field,
 } from '@island.is/application/core'
-import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
 import {
   InputController,
   RadioController,
@@ -17,10 +19,16 @@ import {
 import { useLocale } from '@island.is/localization'
 import {
   DataValue,
+  handleServerError,
   Label,
   RadioValue,
   ReviewGroup,
 } from '@island.is/application/ui-components'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
+import {
+  findProblemInApolloError,
+  ProblemType,
+} from '@island.is/shared/problem'
 
 import {
   getOtherParentOptions,
@@ -64,7 +72,7 @@ export const Review: FC<ReviewScreenProps> = ({
   const pensionFundOptions = usePensionFundOptions()
   const privatePensionFundOptions = usePrivatePensionFundOptions()
   const unionOptions = useUnionOptions()
-  const { formatMessage } = useLocale()
+  const { locale, formatMessage } = useLocale()
   const [
     {
       applicantEmail,
@@ -89,6 +97,20 @@ export const Review: FC<ReviewScreenProps> = ({
     },
     setStateful,
   ] = useStatefulAnswers(application)
+  const { getValues, setValue } = useFormContext()
+
+  const [updateApplication] = useMutation(UPDATE_APPLICATION, {
+    onError: (e) => {
+      // We handle validation problems separately.
+      const problem = findProblemInApolloError(e)
+      if (problem?.type === ProblemType.VALIDATION_FAILED) {
+        return
+      }
+
+      return handleServerError(e, formatMessage)
+    },
+  })
+
 
   const otherParentName = getOtherParentName(application)
   const otherParentId = getOtherParentId(application)
@@ -118,6 +140,21 @@ export const Review: FC<ReviewScreenProps> = ({
   const groupHasNoErrors = (ids: string[]) =>
     ids.every((id) => !has(errors, id))
 
+  const saveApplication = async () => {
+    await updateApplication({
+      variables: {
+        input: {
+          id: application.id,
+          answers: {
+            ...application.answers,
+            ...getValues(),
+          },
+        },
+        locale,
+      },
+    })
+  }
+
   return (
     <>
       <ReviewGroup
@@ -127,45 +164,51 @@ export const Review: FC<ReviewScreenProps> = ({
           'applicant.phoneNumber',
         ])}
         editChildren={
-          <GridRow>
-            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-              <InputController
-                id="applicant.email"
-                name="applicant.email"
-                defaultValue={applicantEmail}
-                type="email"
-                label={formatMessage(parentalLeaveFormMessages.applicant.email)}
-                onChange={(e) =>
-                  setStateful((prev) => ({
-                    ...prev,
-                    applicantEmail: e.target.value,
-                  }))
-                }
-                error={hasError('applicant.email')}
-              />
-            </GridColumn>
-
-            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-              <InputController
-                id="applicant.phoneNumber"
-                name="applicant.phoneNumber"
-                defaultValue={applicantPhoneNumber}
-                type="tel"
-                format="###-####"
-                placeholder="000-0000"
-                label={formatMessage(
-                  parentalLeaveFormMessages.applicant.phoneNumber,
-                )}
-                onChange={(e) =>
-                  setStateful((prev) => ({
-                    ...prev,
-                    applicantPhoneNumber: e.target.value,
-                  }))
-                }
-                error={hasError('applicant.phoneNumber')}
-              />
-            </GridColumn>
-          </GridRow>
+          <Box marginTop={[8, 8, 8, 0]}>
+            <GridRow>
+              <GridColumn
+                span={['12/12', '12/12', '12/12', '6/12']}
+                paddingBottom={3}
+              >
+                <InputController
+                  id="applicant.email"
+                  name="applicant.email"
+                  defaultValue={applicantEmail}
+                  type="email"
+                  label={formatMessage(
+                    parentalLeaveFormMessages.applicant.email,
+                  )}
+                  onChange={(e) =>
+                    setStateful((prev) => ({
+                      ...prev,
+                      applicantEmail: e.target.value,
+                    }))
+                  }
+                  error={hasError('applicant.email')}
+                />
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+                <InputController
+                  id="applicant.phoneNumber"
+                  name="applicant.phoneNumber"
+                  defaultValue={applicantPhoneNumber}
+                  type="tel"
+                  format="###-####"
+                  placeholder="000-0000"
+                  label={formatMessage(
+                    parentalLeaveFormMessages.applicant.phoneNumber,
+                  )}
+                  onChange={(e) =>
+                    setStateful((prev) => ({
+                      ...prev,
+                      applicantPhoneNumber: e.target.value,
+                    }))
+                  }
+                  error={hasError('applicant.phoneNumber')}
+                />
+              </GridColumn>
+            </GridRow>
+          </Box>
         }
         triggerValidation
       >
@@ -289,6 +332,7 @@ export const Review: FC<ReviewScreenProps> = ({
       </ReviewGroup>
 
       <ReviewGroup
+        saveAction={saveApplication}
         isEditable={editable}
         canCloseEdit={groupHasNoErrors([
           'payments.bank',
@@ -363,11 +407,15 @@ export const Review: FC<ReviewScreenProps> = ({
                   },
                 ]}
                 onSelect={(s: string) => {
-                  setStateful((prev) => ({
-                    ...prev,
-                    union: s === NO ? '' : prev.union,
-                    useUnion: s as YesOrNo,
-                  }))
+                  setStateful((prev) => {
+                    const union = s === NO ? '' : prev.union
+                    setValue('payments.union', union)
+                    return {
+                      ...prev,
+                      union,
+                      useUnion: s as YesOrNo,
+                    }
+                  })
                 }}
                 error={hasError('useUnion')}
               />
@@ -416,13 +464,23 @@ export const Review: FC<ReviewScreenProps> = ({
                   },
                 ]}
                 onSelect={(s: string) => {
-                  setStateful((prev) => ({
-                    ...prev,
-                    privatePensionFund: s === NO ? '' : prev.privatePensionFund,
-                    privatePensionFundPercentage:
-                      s === NO ? '' : prev.privatePensionFundPercentage,
-                    usePrivatePensionFund: s as YesOrNo,
-                  }))
+                  setStateful((prev) => {
+                    const privatePensionFund =
+                      s === NO ? '' : prev.privatePensionFund
+                    const privatePensionFundPercentage =
+                      s === NO ? '' : prev.privatePensionFundPercentage
+                    setValue('payments.privatePensionFund', privatePensionFund)
+                    setValue(
+                      'payments.privatePensionFundPercentage',
+                      privatePensionFundPercentage,
+                    )
+                    return {
+                      ...prev,
+                      privatePensionFund,
+                      privatePensionFundPercentage,
+                      usePrivatePensionFund: s as YesOrNo,
+                    }
+                  })
                 }}
                 error={hasError('usePrivatePensionFund')}
               />
@@ -573,7 +631,7 @@ export const Review: FC<ReviewScreenProps> = ({
           ])}
           editChildren={
             <>
-              <Label marginBottom={2}>
+              <Label marginBottom={4}>
                 {formatMessage(
                   parentalLeaveFormMessages.personalAllowance.title,
                 )}
