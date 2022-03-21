@@ -1,5 +1,5 @@
 import { style, styleVariants, globalStyle } from '@vanilla-extract/css'
-import { theme, themeUtils, yellow100 } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 import * as mixins from '../Input/Input.mixins'
 
 export const root = style({
@@ -140,7 +140,6 @@ export const popper = style({
   right: '0',
   width: '100%',
   top: '65px !important',
-  // transform: 'none !important',
   margin: '0 !important',
   ...themeUtils.responsiveStyle({
     md: {

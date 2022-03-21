@@ -42,6 +42,8 @@ const SCOPE_PREFIX = 'scope'
 
 type ApiScope = AuthApiScope & { model: string }
 type ApiScopeGroup = AuthApiScopeGroup & { model: string }
+type ScopeTag = { displayName: string; validTo: string }
+
 export type Scope = ApiScope | ApiScopeGroup
 interface GroupedApiScopes {
   [_: string]: ApiScope[]
@@ -261,7 +263,7 @@ const Access: FC = () => {
                         `${authDelegation?.to?.name} mun missa umboð fyrir eftirfarandi:` ||
                         ''
                       }
-                      scopes={scopes}
+                      scopes={scopes as ScopeTag[]}
                       onClose={() => setCloseModalOpen(false)}
                       onCloseButtonText={formatMessage({
                         id:
@@ -303,7 +305,7 @@ const Access: FC = () => {
                     `${authDelegation?.to?.name}  mun fá umboð fyrir eftirfarandi:` ||
                     ''
                   }
-                  scopes={scopes}
+                  scopes={scopes as ScopeTag[]}
                   onClose={() => setSaveModalOpen(false)}
                   onCloseButtonText={formatMessage({
                     id: 'sp.settings-access-control:access-save-modal-cancel',

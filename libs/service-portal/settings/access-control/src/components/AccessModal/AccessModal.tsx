@@ -22,7 +22,7 @@ interface Props {
   title: string
   text: string
   img?: string
-  scopes?: any
+  scopes?: { displayName?: string; validTo?: string }[]
 }
 
 const AccessModal: FC<Props> = ({
@@ -38,21 +38,8 @@ const AccessModal: FC<Props> = ({
   scopes,
   loading,
 }) => {
-  const [closeModal, setCloseModal] = useState(false)
-  const { formatMessage } = useLocale()
-  useNamespaces('sp.settings')
-
-  const onCloseSideEffect = () => {
-    onClose()
-    setCloseModal(true)
-  }
-
   return (
-    <Modal
-      id={`access-modal-${id}`}
-      onCloseModal={onClose}
-      toggleClose={closeModal}
-    >
+    <Modal id={`access-modal-${id}`} onCloseModal={onClose}>
       <GridRow align="flexStart" alignItems="flexStart">
         <GridColumn span={['7/8', '5/8']}>
           <Text variant="h2" as="h2" marginBottom={1}>
@@ -63,9 +50,13 @@ const AccessModal: FC<Props> = ({
           </Text>
           {scopes && (
             <Box display="flex" flexDirection="row" flexWrap="wrap">
-              {scopes.map((scope: any) => {
+              {scopes.map((scope, index) => {
                 return scope?.displayName ? (
-                  <Box padding={1} key={scope?.displayName}>
+                  <Box
+                    padding={1}
+                    paddingLeft={index === 0 ? 0 : 1}
+                    key={scope?.displayName}
+                  >
                     <Tag>{scope.displayName}</Tag>
                   </Box>
                 ) : null
