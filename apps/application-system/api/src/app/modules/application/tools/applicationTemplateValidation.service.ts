@@ -2,13 +2,12 @@ import { Injectable, Inject } from '@nestjs/common'
 import { ValidationFailed } from '@island.is/nest/problem'
 import {
   Application,
-  ApplicationFeatures,
   ApplicationTemplateHelper,
   FormatMessage,
   FormValue,
   validateAnswers,
 } from '@island.is/application/core'
-import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
   BadRequestException,
   ForbiddenException,
@@ -56,10 +55,7 @@ export class ApplicationValidationService {
     await this.validateThatTemplateIsReady(user, applicationTemplate)
   }
 
-  async isTemplateFeatureFlaggedReady(
-    featureFlag: ApplicationFeatures,
-    user: User,
-  ) {
+  async isTemplateFeatureFlaggedReady(featureFlag: Features, user: User) {
     const feature = await this.featureFlagService.getValue(
       featureFlag,
       false,
