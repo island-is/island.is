@@ -14,7 +14,7 @@ import { PracticalDrivingLesson } from './models/practicalDrivingLesson.response
 import { DrivingLicenseBookStudentInput } from './dto/student.input'
 import { DrivingLicenseBookStudentOverview } from './models/drivingBookStudentOverview.response'
 import { CreatePracticalDrivingLessonInput } from './dto/createPracticalDrivingLesson.input'
-import { Success } from './models/success.response'
+import { DrivingLicenseBookSuccess } from './models/success.response'
 import { UpdatePracticalDrivingLessonInput } from './dto/updatePracticalDrivingLesson.input'
 import { DeletePracticalDrivingLessonInput } from './dto/deletePracticalDrivingLesson.input'
 import { DrivingLicenseBookStudentForTeacher } from './models/studentsTeacherNationalId.response'
@@ -66,7 +66,7 @@ export class DrivingLicenseBookResolver {
   }
 
   @UseGuards(DrivingInstructorGuard)
-  @Mutation(() => Success)
+  @Mutation(() => DrivingLicenseBookSuccess)
   drivingLicenseBookUpdatePracticalDrivingLesson(
     @Args('input') input: UpdatePracticalDrivingLessonInput,
     @CurrentUser() user: User,
@@ -78,7 +78,7 @@ export class DrivingLicenseBookResolver {
   }
 
   @UseGuards(DrivingInstructorGuard)
-  @Mutation(() => Success)
+  @Mutation(() => DrivingLicenseBookSuccess)
   drivingLicenseBookDeletePracticalDrivingLesson(
     @Args('input') input: DeletePracticalDrivingLessonInput,
     @CurrentUser() user: User,
