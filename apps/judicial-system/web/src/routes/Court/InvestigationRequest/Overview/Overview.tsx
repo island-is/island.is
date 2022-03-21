@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import { useIntl } from 'react-intl'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import {
@@ -20,6 +21,7 @@ const Overview = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
+  const { formatMessage } = useIntl()
 
   useRulingAutofill(isCaseUpToDate, workingCase)
 
@@ -33,7 +35,9 @@ const Overview = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader title={titles.court.investigationCases.overview} />
+      <PageHeader
+        title={formatMessage(titles.court.investigationCases.overview)}
+      />
       <OverviewForm
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}

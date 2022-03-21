@@ -71,7 +71,9 @@ const Ruling = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader title={titles.court.investigationCases.ruling} />
+      <PageHeader
+        title={formatMessage(titles.court.investigationCases.ruling)}
+      />
       <RulingForm
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}

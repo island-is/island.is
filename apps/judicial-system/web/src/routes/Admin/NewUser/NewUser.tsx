@@ -1,4 +1,6 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
+
 import { useMutation } from '@apollo/client'
 import { useRouter } from 'next/router'
 
@@ -37,6 +39,7 @@ export const NewUser: React.FC = () => {
     loading: institutionLoading,
     loaded: institutionLoaded,
   } = useInstitution()
+  const { formatMessage } = useIntl()
 
   const [createUserMutation, { loading: createLoading }] = useMutation(
     CreateUserMutation,
@@ -69,7 +72,7 @@ export const NewUser: React.FC = () => {
       isLoading={institutionLoading}
       notFound={false}
     >
-      <PageHeader title={titles.admin.newUser} />
+      <PageHeader title={formatMessage(titles.admin.newUser)} />
       {institutionLoaded && (
         <UserForm
           user={user}

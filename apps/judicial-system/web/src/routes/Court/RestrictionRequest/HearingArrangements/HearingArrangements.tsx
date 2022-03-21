@@ -89,7 +89,9 @@ export const HearingArrangements: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader title={titles.court.restrictionCases.hearingArrangements} />
+      <PageHeader
+        title={formatMessage(titles.court.restrictionCases.hearingArrangements)}
+      />
       <FormContentContainer>
         {workingCase.comments && (
           <Box marginBottom={5}>

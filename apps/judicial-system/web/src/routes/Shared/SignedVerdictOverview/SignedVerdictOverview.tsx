@@ -582,7 +582,7 @@ export const SignedVerdictOverview: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader title={titles.shared.signedVerdictOverview} />
+      <PageHeader title={formatMessage(titles.shared.signedVerdictOverview)} />
       <SignedVerdictOverviewForm
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}

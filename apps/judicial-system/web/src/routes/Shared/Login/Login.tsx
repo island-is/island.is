@@ -49,7 +49,7 @@ const Login = () => {
 
   return (
     <>
-      <PageHeader title={titles.shared.login} />
+      <PageHeader title={formatMessage(titles.shared.login)} />
       <div className={styles.loginContainer}>
         {router.query.villa && (
           <div className={styles.errorMessage}>

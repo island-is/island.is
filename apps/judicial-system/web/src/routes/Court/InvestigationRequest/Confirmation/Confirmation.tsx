@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import {
@@ -22,7 +23,7 @@ const Confirmation = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-
+  const { formatMessage } = useIntl()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [
     requestRulingSignatureResponse,
@@ -65,7 +66,9 @@ const Confirmation = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader title={titles.court.investigationCases.conclusion} />
+      <PageHeader
+        title={formatMessage(titles.court.investigationCases.conclusion)}
+      />
       {user && (
         <>
           <ConfirmationForm

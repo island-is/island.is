@@ -84,7 +84,9 @@ export const Confirmation: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader title={titles.court.restrictionCases.conclusion} />
+      <PageHeader
+        title={formatMessage(titles.court.restrictionCases.conclusion)}
+      />
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">

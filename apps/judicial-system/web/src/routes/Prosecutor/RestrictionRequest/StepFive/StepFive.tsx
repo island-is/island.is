@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
+import { useIntl } from 'react-intl'
 
 import { PoliceCaseFile } from '@island.is/judicial-system/types'
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
@@ -32,6 +33,7 @@ export const StepFive: React.FC = () => {
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
+  const { formatMessage } = useIntl()
 
   const router = useRouter()
   const id = router.query.id
@@ -78,7 +80,9 @@ export const StepFive: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader title={titles.prosecutor.restrictionCases.caseFiles} />
+      <PageHeader
+        title={formatMessage(titles.prosecutor.restrictionCases.caseFiles)}
+      />
       <StepFiveForm
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}

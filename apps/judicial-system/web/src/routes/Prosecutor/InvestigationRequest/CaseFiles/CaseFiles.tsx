@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
+import { useIntl } from 'react-intl'
 
 import { PoliceCaseFile } from '@island.is/judicial-system/types'
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
@@ -32,6 +33,7 @@ export const CaseFiles: React.FC = () => {
     caseNotFound,
   } = useContext(FormContext)
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
+  const { formatMessage } = useIntl()
 
   const {
     data: policeData,
@@ -75,7 +77,9 @@ export const CaseFiles: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader title={titles.prosecutor.investigationCases.caseFiles} />
+      <PageHeader
+        title={formatMessage(titles.prosecutor.investigationCases.caseFiles)}
+      />
       <CaseFilesForm
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}

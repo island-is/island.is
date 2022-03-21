@@ -115,7 +115,9 @@ export const StepFour: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader title={titles.prosecutor.restrictionCases.policeReport} />
+      <PageHeader
+        title={formatMessage(titles.prosecutor.restrictionCases.policeReport)}
+      />
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">

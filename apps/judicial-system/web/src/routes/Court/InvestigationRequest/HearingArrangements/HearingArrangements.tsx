@@ -1,4 +1,5 @@
 import React, { useContext, useEffect } from 'react'
+import { useIntl } from 'react-intl'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import { SessionArrangements } from '@island.is/judicial-system/types'
@@ -13,7 +14,6 @@ import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader
 import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 
 import HearingArrangementsForm from './HearingArrangementsForm'
-
 const HearingArrangements = () => {
   const {
     workingCase,
@@ -23,6 +23,7 @@ const HearingArrangements = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
+  const { formatMessage } = useIntl()
 
   const { autofill, autofillSessionArrangements } = useCase()
 
@@ -62,7 +63,11 @@ const HearingArrangements = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader title={titles.court.investigationCases.hearingArrangements} />
+      <PageHeader
+        title={formatMessage(
+          titles.court.investigationCases.hearingArrangements,
+        )}
+      />
       {user && (
         <HearingArrangementsForm
           workingCase={workingCase}

@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 
@@ -31,7 +32,7 @@ import ReceptionAndAssignmentForm from './ReceptionAndAssignmentForm'
 const ReceptionAndAssignment = () => {
   const router = useRouter()
   const id = router.query.id
-
+  const { formatMessage } = useIntl()
   const [courtCaseNumberEM, setCourtCaseNumberEM] = useState('')
   const [createCourtCaseSuccess, setCreateCourtCaseSuccess] = useState<boolean>(
     false,
@@ -99,7 +100,9 @@ const ReceptionAndAssignment = () => {
       notFound={caseNotFound}
     >
       <PageHeader
-        title={titles.court.investigationCases.receptionAndAssignment}
+        title={formatMessage(
+          titles.court.investigationCases.receptionAndAssignment,
+        )}
       />
       <ReceptionAndAssignmentForm
         workingCase={workingCase}

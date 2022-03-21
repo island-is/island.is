@@ -164,7 +164,9 @@ const CourtRecord = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader title={titles.court.investigationCases.courtRecord} />
+      <PageHeader
+        title={formatMessage(titles.court.investigationCases.courtRecord)}
+      />
       <CourtRecordForm
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}

@@ -256,7 +256,9 @@ export const CourtRecord: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader title={titles.court.restrictionCases.courtRecord} />
+      <PageHeader
+        title={formatMessage(titles.court.restrictionCases.courtRecord)}
+      />
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">

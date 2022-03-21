@@ -98,7 +98,9 @@ export const Overview: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader title={titles.prosecutor.investigationCases.overview} />
+      <PageHeader
+        title={formatMessage(titles.prosecutor.investigationCases.overview)}
+      />
       <OverviewForm
         workingCase={workingCase}
         handleNextButtonClick={

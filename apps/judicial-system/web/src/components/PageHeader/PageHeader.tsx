@@ -1,18 +1,16 @@
 import React from 'react'
-import { MessageDescriptor, useIntl } from 'react-intl'
 import Head from 'next/head'
 
 interface Props {
-  title: MessageDescriptor
+  title: string
 }
 
 const PageHeader: React.FC<Props> = (props) => {
   const { title } = props
-  const { formatMessage } = useIntl()
 
   return (
     <Head>
-      <title>{formatMessage(title)}</title>
+      <title>{title}</title>
     </Head>
   )
 }

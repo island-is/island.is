@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
 import { useRouter } from 'next/router'
+import { useIntl } from 'react-intl'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
@@ -27,6 +28,7 @@ const Defendant = () => {
     caseNotFound,
   } = useContext(FormContext)
   const { createCase, isCreatingCase } = useCase()
+  const { formatMessage } = useIntl()
 
   const handleNextButtonClick = async (theCase: Case) => {
     if (!theCase.id) {
@@ -85,7 +87,9 @@ const Defendant = () => {
       notFound={caseNotFound}
       isExtension={workingCase?.parentCase && true}
     >
-      <PageHeader title={titles.prosecutor.investigationCases.defendant} />
+      <PageHeader
+        title={formatMessage(titles.prosecutor.investigationCases.defendant)}
+      />
       <DefendantForm
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}

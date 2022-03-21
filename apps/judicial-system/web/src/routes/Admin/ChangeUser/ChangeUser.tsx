@@ -1,4 +1,6 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
+
 import { useMutation, useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 
@@ -26,7 +28,7 @@ interface SaveData {
 export const ChangeUser: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
-
+  const { formatMessage } = useIntl()
   const { data: userData, loading: userLoading } = useQuery<UserData>(
     UserQuery,
     {
@@ -75,7 +77,7 @@ export const ChangeUser: React.FC = () => {
       isLoading={userLoading || institutionLoading}
       notFound={!userData?.user || !institutionLoaded}
     >
-      <PageHeader title={titles.admin.changeUser} />
+      <PageHeader title={formatMessage(titles.admin.changeUser)} />
       {userData?.user && institutionLoaded && (
         <UserForm
           user={userData?.user}

@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
@@ -36,7 +37,7 @@ interface InstitutionData {
 export const Users: React.FC = () => {
   const router = useRouter()
   const [selectedInstitution, setSelectedInstitution] = useState<string>()
-
+  const { formatMessage } = useIntl()
   const { data, error, loading } = useQuery<UserData>(UsersQuery, {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
@@ -75,7 +76,7 @@ export const Users: React.FC = () => {
 
   return (
     <div className={styles.userControlContainer}>
-      <PageHeader title={titles.admin.users} />
+      <PageHeader title={formatMessage(titles.admin.users)} />
       <div className={styles.logoContainer}>
         <Button
           icon="add"

@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
@@ -31,6 +32,7 @@ export const StepOne: React.FC = () => {
   const { createCase, isCreatingCase } = useCase()
   const { updateDefendant } = useDefendants()
   const { loading: institutionLoading } = useInstitution()
+  const { formatMessage } = useIntl()
 
   const handleNextButtonClick = async (theCase: Case) => {
     if (!theCase.id) {
@@ -90,7 +92,9 @@ export const StepOne: React.FC = () => {
       notFound={caseNotFound}
       isExtension={workingCase?.parentCase && true}
     >
-      <PageHeader title={titles.prosecutor.restrictionCases.defendant} />
+      <PageHeader
+        title={formatMessage(titles.prosecutor.restrictionCases.defendant)}
+      />
       {!institutionLoading && (
         <StepOneForm
           workingCase={workingCase}

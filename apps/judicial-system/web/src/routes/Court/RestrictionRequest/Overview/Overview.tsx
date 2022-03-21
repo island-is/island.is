@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
@@ -30,7 +31,7 @@ export const JudgeOverview: React.FC = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
-
+  const { formatMessage } = useIntl()
   const router = useRouter()
   const id = router.query.id
 
@@ -47,7 +48,9 @@ export const JudgeOverview: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader title={titles.court.restrictionCases.overview} />
+      <PageHeader
+        title={formatMessage(titles.court.restrictionCases.overview)}
+      />
       <OverviewForm workingCase={workingCase} setWorkingCase={setWorkingCase} />
       <FormContentContainer isFooter>
         <FormFooter

@@ -168,7 +168,9 @@ export const StepTwo: React.FC = () => {
       notFound={caseNotFound}
     >
       <PageHeader
-        title={titles.prosecutor.restrictionCases.hearingArrangements}
+        title={formatMessage(
+          titles.prosecutor.restrictionCases.hearingArrangements,
+        )}
       />
       {prosecutors && !institutionLoading ? (
         <>

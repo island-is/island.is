@@ -57,7 +57,9 @@ export const StepThree: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader title={titles.prosecutor.restrictionCases.policeDemands} />
+      <PageHeader
+        title={formatMessage(titles.prosecutor.restrictionCases.policeDemands)}
+      />
       <StepThreeForm
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}

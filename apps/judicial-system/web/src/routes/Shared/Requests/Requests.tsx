@@ -180,7 +180,7 @@ export const Requests: React.FC = () => {
 
   return (
     <div className={styles.requestsContainer}>
-      <PageHeader title={titles.shared.cases} />
+      <PageHeader title={formatMessage(titles.shared.cases)} />
       {loading ? (
         <TableSkeleton />
       ) : (

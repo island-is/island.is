@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import { useIntl } from 'react-int'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import {
@@ -19,7 +20,7 @@ const PoliceDemands: React.FC = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
-
+  const { formatMessage } = useIntl()
   return (
     <PageLayout
       workingCase={workingCase}
@@ -31,7 +32,11 @@ const PoliceDemands: React.FC = () => {
       notFound={caseNotFound}
       isExtension={workingCase?.parentCase && true}
     >
-      <PageHeader title={titles.prosecutor.investigationCases.policeDemands} />
+      <PageHeader
+        title={formatMessage(
+          titles.prosecutor.investigationCases.policeDemands,
+        )}
+      />
       <PoliceDemandsForm
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}

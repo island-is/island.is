@@ -269,7 +269,7 @@ export const Ruling: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader title={titles.court.restrictionCases.ruling} />
+      <PageHeader title={formatMessage(titles.court.restrictionCases.ruling)} />
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">

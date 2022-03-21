@@ -182,7 +182,9 @@ const HearingArrangements = () => {
       isExtension={workingCase?.parentCase && true}
     >
       <PageHeader
-        title={titles.prosecutor.investigationCases.hearingArrangements}
+        title={formatMessage(
+          titles.prosecutor.investigationCases.hearingArrangements,
+        )}
       />
       {user && prosecutors && courts && (
         <>

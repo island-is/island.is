@@ -119,7 +119,9 @@ export const Overview: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader title={titles.prosecutor.restrictionCases.overview} />
+      <PageHeader
+        title={formatMessage(titles.prosecutor.restrictionCases.overview)}
+      />
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
