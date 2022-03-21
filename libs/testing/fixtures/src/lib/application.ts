@@ -90,7 +90,7 @@ enum ApplicationStatus {
 
 export const createApplication = (
   overrides?: Partial<ApplicationWithAttachments>,
-): Application => ({
+): ApplicationWithAttachments => ({
   applicant: faker.helpers.replaceSymbolWithNumber('##########'),
   answers: {},
   assignees: [],
