@@ -59,9 +59,6 @@ export class Case implements TCase {
   readonly sendRequestToDefender?: boolean
 
   @Field({ nullable: true })
-  readonly defenderIsSpokesperson?: boolean
-
-  @Field({ nullable: true })
   isHeightenedSecurityLevel?: boolean
 
   @Field(() => Institution, { nullable: true })

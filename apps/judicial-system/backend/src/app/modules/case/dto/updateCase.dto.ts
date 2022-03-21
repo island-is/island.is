@@ -58,11 +58,6 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional()
-  readonly defenderIsSpokesperson?: boolean
-
-  @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional()
   readonly isHeightenedSecurityLevel?: boolean
 
   @IsOptional()

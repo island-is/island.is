@@ -23,7 +23,6 @@ export const CaseQuery = gql`
       defenderEmail
       defenderPhoneNumber
       sendRequestToDefender
-      defenderIsSpokesperson
       isHeightenedSecurityLevel
       court {
         id

@@ -135,8 +135,7 @@ const CourtRecord = () => {
         autofill('sessionBookings', autofillSessionBookings, theCase)
       } else if (
         theCase.sessionArrangements ===
-          SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
-        theCase.defenderIsSpokesperson
+        SessionArrangements.ALL_PRESENT_SPOKESPERSON
       ) {
         autofill(
           'sessionBookings',
