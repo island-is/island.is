@@ -12,7 +12,6 @@ import {
   Application,
   DefaultEvents,
   DefaultStateLifeCycle,
-  DraftStateLifeCycle,
   ApplicationConfigurations,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
@@ -107,7 +106,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.draftDescription,
           },
-          lifecycle: DraftStateLifeCycle,
+          lifecycle: 30 * 24 * 3600 * 1000,
           progress: 0.25,
           roles: [
             {
