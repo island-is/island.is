@@ -52,6 +52,7 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   rcCourtRecord as m,
+  courtDocuments,
   closedCourt,
   core,
 } from '@island.is/judicial-system-web/messages'
@@ -371,14 +372,19 @@ export const CourtRecord: React.FC = () => {
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              Dómskjöl
+              {formatMessage(m.sections.courtDocuments.title)}
             </Text>
           </Box>
           <CourtDocuments
-            title={`Krafa um ${caseTypes[workingCase.type]}`}
-            tagText="Þingmerkt nr. 1"
+            title={formatMessage(
+              m.sections.courtDocuments.firstDocument.title,
+              {
+                caseType: caseTypes[workingCase.type],
+              },
+            )}
+            tagText={formatMessage(courtDocuments.tag, { index: 1 })}
             tagVariant="darkerBlue"
-            text="Rannsóknargögn málsins liggja frammi."
+            text={formatMessage(m.sections.courtDocuments.firstDocument.label)}
             caseId={workingCase.id}
             selectedCourtDocuments={workingCase.courtDocuments ?? []}
             onUpdateCase={updateCase}
