@@ -37,5 +37,5 @@ export const row = style({
 })
 
 export const column = style({
-  paddingLeft: theme.spacing[3],
+  paddingLeft: theme.spacing[4],
 })
