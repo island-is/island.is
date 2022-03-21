@@ -6,8 +6,8 @@ import {
   getFileTypeName,
 } from '@island.is/financial-aid/shared/lib'
 import * as styles from './FilesListWithHeader.css'
-import cn from 'classnames'
 import { FileList } from '@island.is/financial-aid/shared/components'
+import CollapsibleProfileUnit from '../ProfileUnit/CollapsibleProfileUnit'
 
 interface Props {
   applicationFiles?: ApplicationFile[]
@@ -19,37 +19,28 @@ const FilesListWithHeaderContainer = ({ applicationFiles }: Props) => {
   }
   return (
     <>
-      <Box
-        marginBottom={[2, 2, 3]}
+      <CollapsibleProfileUnit
+        heading="Gögn frá umsækjanda"
+        info={[]}
         className={`contentUp delay-125 ${styles.widthFull}`}
-        borderBottomWidth="standard"
-        borderColor="dark200"
       >
-        <Text as="h2" variant="h3" color="dark300" marginBottom={1}>
-          Gögn frá umsækjanda
-        </Text>
-      </Box>
-      <Box
-        className={cn({
-          [`contentUp delay-125 ${styles.widthAlmostFull}`]: true,
-        })}
-        marginBottom={[5, 5, 7]}
-      >
-        {Object.values(FileType).map((file, index) => {
-          const filterFiles = applicationFiles.filter((f) => f.type === file)
+        <Box marginBottom={[5, 5, 7]}>
+          {Object.values(FileType).map((file, index) => {
+            const filterFiles = applicationFiles.filter((f) => f.type === file)
 
-          if (filterFiles.length !== 0) {
-            return (
-              <span key={'fileList-' + index}>
-                <Text variant="eyebrow" marginBottom={2}>
-                  {getFileTypeName[file]}
-                </Text>
-                <FileList files={filterFiles} />
-              </span>
-            )
-          }
-        })}
-      </Box>
+            if (filterFiles.length !== 0) {
+              return (
+                <span key={'fileList-' + index}>
+                  <Text variant="eyebrow" marginBottom={2}>
+                    {getFileTypeName[file]}
+                  </Text>
+                  <FileList files={filterFiles} />
+                </span>
+              )
+            }
+          })}
+        </Box>
+      </CollapsibleProfileUnit>
     </>
   )
 }
