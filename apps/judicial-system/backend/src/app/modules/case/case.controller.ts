@@ -24,7 +24,6 @@ import {
   DokobitError,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
-import { IntegratedCourts } from '@island.is/judicial-system/consts'
 import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import {
@@ -175,17 +174,6 @@ export class CaseController {
       caseId,
       caseToUpdate,
     )) as Case
-
-    if (
-      theCase.courtId &&
-      IntegratedCourts.includes(theCase.courtId) &&
-      Boolean(caseToUpdate.courtCaseNumber) &&
-      caseToUpdate.courtCaseNumber !== theCase.courtCaseNumber
-    ) {
-      // TODO: Find a better place for this
-      // No need to wait for the upload
-      this.caseService.uploadRequestPdfToCourt(updatedCase, user)
-    }
 
     return updatedCase
   }

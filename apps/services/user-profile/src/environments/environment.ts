@@ -16,6 +16,7 @@ const devConfig = {
   },
   emailOptions: {
     useTestAccount: true,
+    useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
   },
   audit: {
     defaultNamespace: '@island.is/user-profile',

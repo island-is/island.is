@@ -574,6 +574,9 @@ export interface IFaqListFields {
 
   /** Questions */
   questions?: IQuestionAndAnswer[] | undefined
+
+  /** Show title */
+  showTitle?: boolean | undefined
 }
 
 export interface IFaqList extends Entry<IFaqListFields> {
@@ -1837,6 +1840,9 @@ export interface IOrganizationFields {
 
   /** Birta á þjónustuvef */
   serviceWebEnabled?: boolean | undefined
+
+  /** Namespace */
+  namespace?: IUiConfiguration | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -2117,6 +2123,7 @@ export interface IProcessEntryFields {
     | 'Digital w/login'
     | 'Not digital w/login'
     | 'No type'
+    | 'Application system'
 
   /** Process title */
   processTitle: string
@@ -2156,7 +2163,7 @@ export interface IProjectPageFields {
   slug?: string | undefined
 
   /** Theme */
-  theme: 'default' | 'traveling-to-iceland' | 'election'
+  theme: 'default' | 'traveling-to-iceland' | 'election' | 'ukraine'
 
   /** Sidebar */
   sidebar: boolean
@@ -2768,6 +2775,12 @@ export interface ISupportQnaFields {
 
   /** Importance */
   importance?: number | undefined
+
+  /** Related links */
+  relatedLinks?: (ILink | ISupportQna)[] | undefined
+
+  /** Contact Link */
+  contactLink?: string | undefined
 }
 
 /** Helpdesk support questions and answer */
@@ -3195,11 +3208,11 @@ export interface IUrlFields {
 
   /** Page */
   page?:
-    | IAboutSubPage
     | IArticle
     | IArticleCategory
     | ILifeEventPage
     | INews
+    | IProjectPage
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
     | undefined

@@ -16,6 +16,9 @@ export class FaqList {
 
   @Field(() => [QuestionAndAnswer])
   questions?: QuestionAndAnswer[]
+
+  @Field(() => Boolean, { nullable: true })
+  showTitle?: boolean
 }
 
 export const mapFaqList = ({
@@ -26,4 +29,5 @@ export const mapFaqList = ({
   id: sys.id,
   title: fields.title ?? '',
   questions: (fields.questions ?? []).map(mapQuestionAndAnswer),
+  showTitle: fields.showTitle ?? true,
 })

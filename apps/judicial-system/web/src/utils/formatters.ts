@@ -8,7 +8,9 @@ import { validate } from './validate'
 
 export const parseArray = (property: string, array: string[]) => {
   try {
+    // TODO: fix - need to escape/stringify ${a}
     const json = JSON.parse(`{"${property}": [${array.map((a) => `"${a}"`)}]}`)
+
     return json
   } catch (e) {
     return null
@@ -112,4 +114,13 @@ export const replaceTabsOnChange = (
 export const padTimeWithZero = (time: string): string => {
   const threeDigitRegex = new RegExp(/^([0-9])(:[0-5]\d)/)
   return threeDigitRegex.test(time) ? time.padStart(5, '0') : time
+}
+/**
+ * Enumerates a list of string, f.x
+ * enumerate(['alice', 'bob', 'paul'], 'and'), returns "alice, bob and paul"
+ * @param values list of strings to enumerate
+ * @param endWord the word before last value is enumerated
+ */
+export const enumerate = (values: string[], endWord: string): string => {
+  return values.join(', ').replace(/, ([^,]*)$/, ` ${endWord} $1`)
 }

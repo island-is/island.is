@@ -29,6 +29,7 @@ import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/uti
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
+import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import {
   errors,
   icCaseFiles as m,
@@ -74,6 +75,8 @@ const CaseFilesForm: React.FC<Props> = (props) => {
   const { formatMessage } = useIntl()
   const { updateCase } = useCase()
   const { user } = useContext(UserContext)
+
+  useDeb(workingCase, 'caseFilesComments')
 
   useEffect(() => {
     if (policeCaseFiles) {

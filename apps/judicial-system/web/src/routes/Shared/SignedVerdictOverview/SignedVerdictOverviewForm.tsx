@@ -228,7 +228,6 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                   ?.filter((restriction) =>
                     [
                       CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
-                      CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
                     ].includes(restriction),
                   )
                   ?.map((custodyRestriction, index) => (
@@ -325,8 +324,8 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
             name: workingCase.defenderName ?? '',
             email: workingCase.defenderEmail,
             phoneNumber: workingCase.defenderPhoneNumber,
-            defenderIsSpokesperson: workingCase.defenderIsSpokesperson,
           }}
+          sessionArrangement={workingCase.sessionArrangements}
         />
       </Box>
       {(workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
@@ -359,7 +358,9 @@ const SignedVerdictOverviewForm: React.FC<Props> = (props) => {
                   user={user}
                 />
               )}
-              {(workingCase.comments || workingCase.caseFilesComments) && (
+              {(workingCase.comments ||
+                workingCase.caseFilesComments ||
+                workingCase.caseResentExplanation) && (
                 <CommentsAccordionItem workingCase={workingCase} />
               )}
             </Accordion>

@@ -13,6 +13,7 @@ module.exports = {
     '@storybook/addon-a11y',
     '@storybook/addon-essentials',
     'storybook-addon-designs',
+    'storybook-addon-apollo-client',
   ],
   webpackFinal: (config) => {
     config.plugins.push(new VanillaExtractPlugin())
