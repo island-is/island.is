@@ -389,14 +389,10 @@ function constructInvestigationCourtRecordPdf(
   addEmptyLines(doc)
   addNormalJustifiedText(
     doc,
-    formatMessage(courtRecord.courtDocuments.request, {
+    `${formatMessage(courtRecord.courtDocuments.request, {
       caseTypes: formatRequestCaseType(theCase.type),
-    }),
+    })} ${formatMessage(courtRecord.courtDocuments.announcement)}`,
     'Times-Roman',
-  )
-  addNormalJustifiedText(
-    doc,
-    formatMessage(courtRecord.courtDocuments.announcement),
   )
 
   theCase.courtDocuments?.forEach((courtDocument, index) =>
