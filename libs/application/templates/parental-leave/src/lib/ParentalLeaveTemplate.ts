@@ -106,7 +106,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.draftDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
+          },
           progress: 0.25,
           roles: [
             {
