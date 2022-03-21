@@ -54,6 +54,7 @@ class MockContentfulRepository {
   }
 }
 
+// eslint-disable-next-line local-rules/disallow-kennitalas
 const nationalId = '1234564321'
 let server: request.SuperTest<request.Test>
 
