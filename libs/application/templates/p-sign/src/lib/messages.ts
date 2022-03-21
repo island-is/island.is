@@ -75,8 +75,7 @@ export const m = defineMessages({
   /* Information Section */
   informationTitle: {
     id: 'ps.application:informationSectionTitle',
-    defaultMessage:
-      'Umsækjandi',
+    defaultMessage: 'Umsækjandi',
     description: 'Information section title',
   },
   informationSubtitle: {
