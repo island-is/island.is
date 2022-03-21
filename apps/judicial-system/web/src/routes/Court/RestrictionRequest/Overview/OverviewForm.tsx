@@ -135,6 +135,7 @@ const OverviewForm: React.FC<Props> = (props) => {
             email: workingCase.defenderEmail,
             phoneNumber: workingCase.defenderPhoneNumber,
           }}
+          sessionArrangement={workingCase.sessionArrangements}
         />
       </Box>
       <Box marginBottom={5}>
