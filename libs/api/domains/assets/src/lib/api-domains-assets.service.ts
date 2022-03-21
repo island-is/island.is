@@ -27,8 +27,8 @@ export class AssetsXRoadService {
     )
   }
 
-  private handle403(error: FetchError) {
-    if (error.status === 403) {
+  private handle4xx(error: FetchError) {
+    if (error.status === 403 || error.status === 404) {
       return null
     }
     this.handleError(error)
@@ -70,7 +70,7 @@ export class AssetsXRoadService {
       }
       return null
     } catch (e) {
-      this.handle403(e)
+      this.handle4xx(e)
     }
   }
 
@@ -171,7 +171,7 @@ export class AssetsXRoadService {
       }
       return null
     } catch (e) {
-      this.handle403(e)
+      this.handle4xx(e)
     }
   }
 
@@ -206,7 +206,7 @@ export class AssetsXRoadService {
       }
       return null
     } catch (e) {
-      this.handle403(e)
+      this.handle4xx(e)
     }
   }
 
@@ -286,7 +286,7 @@ export class AssetsXRoadService {
       }
       return null
     } catch (e) {
-      this.handle403(e)
+      this.handle4xx(e)
     }
   }
 }
