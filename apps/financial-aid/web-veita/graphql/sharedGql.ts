@@ -501,15 +501,6 @@ export const SupervisorsQuery = gql`
   }
 `
 
-export const GetSignedUrlQuery = gql`
-  query GetSignedUrlQuery($input: GetSignedUrlForIdInput!) {
-    getSignedUrlForId(input: $input) {
-      url
-      key
-    }
-  }
-`
-
 export const GetAllSignedUrlQuery = gql`
   query GetAllSignedUrlQuery($input: GetSignedUrlForIdInput!) {
     getSignedUrlForAllFilesId(input: $input) {

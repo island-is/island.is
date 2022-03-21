@@ -22,7 +22,6 @@ const PrintableFiles = ({ applicationId }: Props) => {
     GetAllSignedUrlQuery,
     {
       variables: { input: { id: applicationId } },
-      fetchPolicy: 'no-cache',
       errorPolicy: 'all',
     },
   )

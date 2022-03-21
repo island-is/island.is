@@ -108,12 +108,12 @@ export class FileService {
   async createSignedUrlForAllFilesId(
     applicationId: string,
   ): Promise<SignedUrlModel[]> {
-    const files = await this.fileModel.findAll({
+    const allFiles = await this.fileModel.findAll({
       where: { applicationId },
     })
 
     return await Promise.all(
-      files.map((file) => {
+      allFiles.map((file) => {
         const fileUrl = `${environment.files.fileBaseUrl}/${file.key}`
         const signedUrl = this.cloudFrontService.createPresignedPost(fileUrl)
         return {
