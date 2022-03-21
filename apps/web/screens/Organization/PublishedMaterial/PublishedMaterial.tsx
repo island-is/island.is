@@ -14,65 +14,39 @@ import { theme } from '@island.is/island-ui/theme'
 import { getThemeConfig, OrganizationWrapper } from '@island.is/web/components'
 import {
   ContentLanguage,
+  GetNamespaceQuery,
   Query,
+  QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
+  QueryGetPublishedMaterialArgs,
 } from '@island.is/web/graphql/schema'
-import { linkResolver } from '@island.is/web/hooks'
+import { linkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
-import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import { Screen } from '../../../types'
-import { GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
-
-interface Item {
-  id: number
-  href: string
-  name: string
-}
-
-const items: Item[] = [
-  {
-    id: 1,
-    href:
-      'https://www.landlaeknir.is/servlet/file/store93/item41986/Lei%C3%B0beiningar%20til%20hj%C3%BAkrunarheimila_21.02.2022.pdf',
-    name: 'Leiðbeiningar til starfsmanna hjúkrunarheimila og dagdvala',
-  },
-  {
-    id: 2,
-    href:
-      'https://www.landlaeknir.is/servlet/file/store93/item32543/Skurdstofustarfsemi%20vidmid.pdf',
-    name: 'Skurðstofustarfsemi - viðmið',
-  },
-  {
-    id: 3,
-    href:
-      'https://www.landlaeknir.is/servlet/file/store93/item46999/Lei%C3%B0beiningar%20fyrir%20sundlaugar.pdf',
-    name: 'Leiðbeiningar fyrir sund- og baðstaði og baðstaði í náttúrunni',
-  },
-  {
-    id: 4,
-    href:
-      'https://www.landlaeknir.is/servlet/file/store93/item48630/Talnabrunnur_jan%C3%BAar_2022.pdf',
-    name: 'Talnabrunnur. Janúar 2022.',
-  },
-]
+import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
+import { GET_PUBLISHED_MATERIAL_QUERY } from '../../queries/PublishedMaterial'
 
 interface PublishedMaterialProps {
   organizationPage: Query['getOrganizationPage']
+  publishedMaterial: Query['getPublishedMaterial']
+  namespace: Record<string, string>
 }
 
 const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   organizationPage,
+  publishedMaterial,
+  namespace,
 }) => {
-  const { activeLocale } = useI18n()
   const router = useRouter()
   const { width } = useWindowSize()
   const [searchValue, setSearchValue] = useState('')
+  const n = useNamespace(namespace)
 
   useContentfulId(organizationPage.id)
   useLocalLinkTypeResolver()
@@ -120,13 +94,13 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     },
   ]
 
-  const pageTitle =
-    activeLocale === 'en' ? 'Published material' : 'Útgefið efni'
+  const pageTitle = n('pageTitle', 'Útgefið efni')
 
   const isMobile = width < theme.breakpoints.md
 
-  const filteredItems = items.filter(
-    (item) => item.name.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1,
+  const filteredItems = publishedMaterial.filter(
+    (item) =>
+      item.title.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1,
   )
 
   return (
@@ -144,7 +118,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
         },
       ]}
       navigationData={{
-        title: activeLocale === 'en' ? 'Menu' : 'Efnisyfirlit',
+        title: n('sidebarTitle', 'Efnisyfirlit'),
         items: navList,
       }}
     >
@@ -160,25 +134,18 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
           <Filter
             variant={isMobile ? 'dialog' : 'popover'}
             align="right"
-            labelClear={activeLocale === 'en' ? 'Clear' : 'Hreinsa síu'}
-            labelClearAll={
-              activeLocale === 'en' ? 'Clear all' : 'Hreinsa allar síur'
-            }
-            labelOpen={activeLocale === 'en' ? 'Open filter' : 'Opna síu'}
-            labelClose={activeLocale === 'en' ? 'Close filter' : 'Loka síu'}
-            labelResult={
-              activeLocale === 'en' ? 'View results' : 'Skoða niðurstöður'
-            }
-            labelTitle={
-              activeLocale === 'en'
-                ? 'Filter published material'
-                : 'Sía útgefið efni'
-            }
+            labelClear={n('clearFilter', 'Hreinsa síu')}
+            labelClearAll={n('clearAllFilters', 'Hreinsa allar síu')}
+            labelOpen={n('openFilter', 'Opna síu')}
+            labelClose={n('closeFilter', 'Loka síu')}
+            labelResult={n('viewResults', 'Skoða niðurstöður')}
+            labelTitle={n('filterMenuTitle', 'Sía útgefið efni')}
             filterInput={
               <FilterInput
-                placeholder={
-                  activeLocale === 'en' ? 'Search' : 'Sía eftir leitarorði'
-                }
+                placeholder={n(
+                  'filterSearchPlaceholder',
+                  'Sía eftir leitarorði',
+                )}
                 name="filterInput"
                 value={searchValue}
                 onChange={setSearchValue}
@@ -194,9 +161,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
             }}
           >
             <FilterMultiChoice
-              labelClear={
-                activeLocale === 'en' ? 'Clear selection' : 'Hreinsa val'
-              }
+              labelClear={n('clearSelection', 'Hreinsa val')}
               onChange={({ categoryId, selected }) =>
                 setParameters((prevParameters) => ({
                   ...prevParameters,
@@ -224,16 +189,16 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
               >
                 <FocusableBox
                   width="full"
-                  href={item.href}
+                  href={item.file?.url}
                   border="standard"
                   borderRadius="large"
                 >
                   <LinkCard
                     color="black"
                     background="white"
-                    tag={item.href.split('.').pop().toUpperCase()}
+                    tag={item.file?.url.split('.').pop().toUpperCase()}
                   >
-                    {item.name}
+                    {item.title}
                   </LinkCard>
                 </FocusableBox>
               </GridRow>
@@ -250,6 +215,10 @@ PublishedMaterial.getInitialProps = async ({ apolloClient, locale, query }) => {
     {
       data: { getOrganizationPage },
     },
+    {
+      data: { getPublishedMaterial },
+    },
+    namespace,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
@@ -260,6 +229,29 @@ PublishedMaterial.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       },
     }),
+    apolloClient.query<Query, QueryGetPublishedMaterialArgs>({
+      query: GET_PUBLISHED_MATERIAL_QUERY,
+      variables: {
+        input: {
+          lang: locale as ContentLanguage,
+          organizationSlug: query.slug as string,
+        },
+      },
+    }),
+    apolloClient
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            lang: locale as ContentLanguage,
+            namespace: 'OrganizationPublishedMaterial',
+          },
+        },
+      })
+      .then((variables) => {
+        // map data here to reduce data processing in component
+        return JSON.parse(variables?.data?.getNamespace?.fields ?? '{}')
+      }),
   ])
 
   if (!getOrganizationPage) {
@@ -268,6 +260,8 @@ PublishedMaterial.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   return {
     organizationPage: getOrganizationPage,
+    publishedMaterial: getPublishedMaterial ?? [],
+    namespace,
     ...getThemeConfig(getOrganizationPage.theme),
   }
 }

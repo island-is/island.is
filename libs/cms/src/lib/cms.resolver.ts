@@ -83,6 +83,8 @@ import { GetSupportCategoryInput } from './dto/getSupportCategory.input'
 import { GetSupportQNAsInCategoryInput } from './dto/getSupportQNAsInCategory.input'
 import { GetSupportCategoriesInput } from './dto/getSupportCategories.input'
 import { GetSupportCategoriesInOrganizationInput } from './dto/getSupportCategoriesInOrganization.input'
+import { EnhancedAsset } from './models/enhancedAsset.model'
+import { GetPublishedMaterialInput } from './dto/getPublishedMaterial.input'
 
 const { cacheTime } = environment
 
@@ -458,6 +460,14 @@ export class CmsResolver {
     @Args('input') input: GetSupportCategoriesInOrganizationInput,
   ): Promise<SupportCategory[]> {
     return this.cmsContentfulService.getSupportCategoriesInOrganization(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [EnhancedAsset])
+  getPublishedMaterial(
+    @Args('input') input: GetPublishedMaterialInput,
+  ): Promise<EnhancedAsset[]> {
+    return this.cmsContentfulService.getPublishedMaterial(input)
   }
 }
 

@@ -1,7 +1,8 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-import { Asset } from 'contentful'
 import { IEnhancedAsset } from '../generated/contentfulTypes'
+import { Asset, mapAsset } from './asset.model'
 import { GenericTag, mapGenericTag } from './genericTag.model'
+import { mapOrganization, Organization } from './organization.model'
 
 @ObjectType()
 export class EnhancedAsset {
@@ -11,11 +12,17 @@ export class EnhancedAsset {
   @Field()
   title!: string
 
-  @Field()
-  file!: Asset
+  @Field(() => Asset, { nullable: true })
+  file!: Asset | null
 
   @Field(() => [GenericTag])
   genericTags!: GenericTag[]
+
+  @Field()
+  releaseDate?: string
+
+  @Field(() => Organization)
+  organization!: Organization | null
 }
 
 export const mapEnhancedAsset = ({
@@ -24,6 +31,10 @@ export const mapEnhancedAsset = ({
 }: IEnhancedAsset): EnhancedAsset => ({
   id: sys.id,
   title: fields.title ?? '',
-  file: fields.file ?? '',
+  file: fields.file ? mapAsset(fields.file) : null,
   genericTags: fields.genericTags ? fields.genericTags.map(mapGenericTag) : [],
+  releaseDate: fields.releaseDate ?? '',
+  organization: fields.organization
+    ? mapOrganization(fields.organization)
+    : null,
 })

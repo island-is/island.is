@@ -70,6 +70,8 @@ import {
 import { GetSupportQNAsInCategoryInput } from './dto/getSupportQNAsInCategory.input'
 import { GetSupportCategoriesInput } from './dto/getSupportCategories.input'
 import { GetSupportCategoriesInOrganizationInput } from './dto/getSupportCategoriesInOrganization.input'
+import { GetPublishedMaterialInput } from './dto/getPublishedMaterial.input'
+import { EnhancedAsset, mapEnhancedAsset } from './models/enhancedAsset.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -732,5 +734,21 @@ export class CmsContentfulService {
       (result.items as types.IOpenDataSubpage[]).map(mapOpenDataSubpage)[0] ??
       null
     )
+  }
+
+  async getPublishedMaterial({
+    lang,
+    organizationSlug,
+  }: GetPublishedMaterialInput): Promise<EnhancedAsset[]> {
+    const params = {
+      ['content_type']: 'enhancedAsset',
+      'fields.organization.sys.contentType.sys.id': 'organization',
+      'fields.organization.fields.slug': organizationSlug,
+    }
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IEnhancedAssetFields>(lang, params)
+      .catch(errorHandler('getPublishedMaterial'))
+
+    return (result.items as types.IEnhancedAsset[]).map(mapEnhancedAsset)
   }
 }

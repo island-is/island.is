@@ -515,6 +515,12 @@ export interface IEnhancedAssetFields {
 
   /** Generic Tags */
   genericTags?: IGenericTag[] | undefined
+
+  /** Release Date */
+  releaseDate?: string | undefined
+
+  /** Organization */
+  organization?: IOrganization | undefined
 }
 
 /** An Asset that can be tagged with generic tags */
@@ -2838,6 +2844,9 @@ export interface ISupportQnaFields {
 
   /** Related links */
   relatedLinks?: (ILink | ISupportQna)[] | undefined
+
+  /** Contact Link */
+  contactLink?: string | undefined
 }
 
 /** Helpdesk support questions and answer */
