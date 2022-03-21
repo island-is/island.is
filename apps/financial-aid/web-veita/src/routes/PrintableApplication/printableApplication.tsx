@@ -5,11 +5,7 @@ import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
 import { ApplicationQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 
-import {
-  Application,
-  getFileType,
-  isImage,
-} from '@island.is/financial-aid/shared/lib'
+import { Application } from '@island.is/financial-aid/shared/lib'
 
 import {
   ApplicationSkeleton,
@@ -23,10 +19,8 @@ interface ApplicantData {
   application: Application
 }
 
-const UserApplication = () => {
+const PrintableApplication = () => {
   const router = useRouter()
-
-  const [isLoading, setIsLoading] = useState(false)
 
   const { data, loading } = useQuery<ApplicantData>(ApplicationQuery, {
     variables: { input: { id: router.query.id } },
@@ -43,21 +37,18 @@ const UserApplication = () => {
   }, [data])
 
   return (
-    <LoadingContainer
-      isLoading={loading || isLoading}
-      loader={<ApplicationSkeleton />}
-    >
+    <LoadingContainer isLoading={loading} loader={<ApplicationSkeleton />}>
       {application ? (
         <>
           <ApplicationProfile
             application={application}
             setApplication={setApplication}
-            setIsLoading={setIsLoading}
+            setIsLoading={() => false}
             isPrint={true}
           />
           {application?.files && (
             <>
-              <PrintableFiles applicationId={router.query.id as string} />
+              <PrintableFiles applicationId={application.id} />
             </>
           )}
         </>
@@ -68,4 +59,4 @@ const UserApplication = () => {
   )
 }
 
-export default UserApplication
+export default PrintableApplication

@@ -5,7 +5,12 @@ import {
   isImage,
 } from '@island.is/financial-aid/shared/lib'
 import { useQuery } from '@apollo/client'
-import { Box, Button, PdfViewer } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  SkeletonLoader,
+  PdfViewer,
+} from '@island.is/island-ui/core'
 import { GetAllSignedUrlQuery } from '@island.is/financial-aid-web/veita/graphql'
 
 interface Props {
@@ -47,6 +52,13 @@ const PrintableFiles = ({ applicationId }: Props) => {
           )
         })}
       </>
+    )
+  }
+  if (loading) {
+    return (
+      <Box padding={5} marginTop={10}>
+        <SkeletonLoader repeat={2} space={2} height={400} width={800} />
+      </Box>
     )
   }
   return (

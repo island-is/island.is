@@ -18,7 +18,7 @@ interface ApplicantData {
   application: Application
 }
 
-const PrintableApplication = () => {
+const UserApplication = () => {
   const router = useRouter()
 
   const [isLoading, setIsLoading] = useState(false)
@@ -55,4 +55,4 @@ const PrintableApplication = () => {
   )
 }
 
-export default PrintableApplication
+export default UserApplication

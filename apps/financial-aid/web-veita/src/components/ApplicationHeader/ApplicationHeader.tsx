@@ -40,6 +40,8 @@ const ApplicationHeader = ({
 }: ApplicantProps) => {
   const router = useRouter()
 
+  console.log(application)
+
   const changeApplicationState = useApplicationState()
 
   const assignEmployee = async () => {
@@ -171,9 +173,7 @@ const ApplicationHeader = ({
             <Box marginX={1}>
               <Text variant="small">·</Text>
             </Box>
-            <Link
-              href={Routes.printApplicationProfile(router.query.id as string)}
-            >
+            <Link href={Routes.printApplicationProfile(application.id)}>
               <a target="_blank" className={styles.button}>
                 <Box marginRight={1} display="flex" alignItems="center">
                   <Icon icon="print" type="outline" size="small" />

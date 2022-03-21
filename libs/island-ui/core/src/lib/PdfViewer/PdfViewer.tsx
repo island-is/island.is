@@ -5,6 +5,7 @@ import * as styles from './PdfViewer.css'
 import { Pagination } from '../Pagination/Pagination'
 import { LoadingDots } from '../LoadingDots/LoadingDots'
 import { AlertMessage } from '../AlertMessage/AlertMessage'
+import cn from 'classnames'
 
 export interface PdfViewerProps {
   file: string
@@ -76,32 +77,34 @@ export const PdfViewer: FC<PdfViewerProps> = ({
           loading={() => loadingView()}
         >
           {showAllPages ? (
-            <>
-              {Array.from(new Array(numPages), (el, index) => (
-                <pdfLib.Page key={`page_${index + 1}`} pageNumber={index + 1} />
-              ))}
-            </>
+            Array.from(new Array(numPages), (el, index) => (
+              <pdfLib.Page key={`page_${index + 1}`} pageNumber={index + 1} />
+            ))
           ) : (
             <pdfLib.Page pageNumber={pageNumber} />
           )}
         </pdfLib.Document>
-        {!showAllPages && (
-          <Box marginTop={2} marginBottom={4}>
-            <Pagination
-              page={pageNumber}
-              renderLink={(page, className, children) => (
-                <Box
-                  cursor="pointer"
-                  className={className}
-                  onClick={() => setPageNumber(page)}
-                >
-                  {children}
-                </Box>
-              )}
-              totalPages={numPages}
-            />
-          </Box>
-        )}
+        <Box
+          marginTop={2}
+          marginBottom={4}
+          className={cn({
+            [`${styles.displayNone}`]: showAllPages,
+          })}
+        >
+          <Pagination
+            page={pageNumber}
+            renderLink={(page, className, children) => (
+              <Box
+                cursor="pointer"
+                className={className}
+                onClick={() => setPageNumber(page)}
+              >
+                {children}
+              </Box>
+            )}
+            totalPages={numPages}
+          />
+        </Box>
       </>
     )
   }

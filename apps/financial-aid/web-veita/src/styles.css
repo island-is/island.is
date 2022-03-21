@@ -185,8 +185,9 @@ input[type='number'] {
   opacity: 1;
 }
 
-.printableImages {
-  display: none;
+.no-print,
+.no-print * {
+  display: none !important;
 }
 
 @media print {
