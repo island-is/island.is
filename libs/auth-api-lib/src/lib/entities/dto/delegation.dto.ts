@@ -6,7 +6,6 @@ import {
   IsArray,
   IsDateString,
   ValidateNested,
-  IsDefined,
 } from 'class-validator'
 import {
   DelegationScopeDTO,
