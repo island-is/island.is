@@ -486,7 +486,6 @@ export class NotificationService {
       theCase.judge?.name,
       theCase.registrar?.name,
       theCase.defenderName,
-      theCase.defenderIsSpokesperson,
       theCase.sessionArrangements,
     )
     const calendarInvite = this.createICalAttachment(theCase)
@@ -534,8 +533,8 @@ export class NotificationService {
         CaseCustodyRestrictions.ISOLATION,
       ),
       theCase.defenderName,
-      theCase.defenderIsSpokesperson,
       Boolean(theCase.parentCase),
+      theCase.sessionArrangements,
     )
 
     const recipient = await this.sendEmail(
@@ -569,7 +568,6 @@ export class NotificationService {
       theCase.courtCaseNumber,
       theCase.courtDate,
       theCase.courtRoom,
-      theCase.defenderIsSpokesperson,
       theCase.judge?.name,
       theCase.registrar?.name,
       theCase.prosecutor?.name,
@@ -628,9 +626,8 @@ export class NotificationService {
     if (
       (isRestrictionCase(theCase.type) ||
         theCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
-        (theCase.sessionArrangements ===
-          SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
-          theCase.defenderIsSpokesperson)) &&
+        theCase.sessionArrangements ===
+          SessionArrangements.ALL_PRESENT_SPOKESPERSON) &&
       theCase.defenderEmail
     ) {
       promises.push(
