@@ -111,7 +111,6 @@ export const Review: FC<ReviewScreenProps> = ({
     },
   })
 
-
   const otherParentName = getOtherParentName(application)
   const otherParentId = getOtherParentId(application)
 
