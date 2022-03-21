@@ -1,4 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  ClipboardEventHandler,
+} from 'react'
 
 import { InputModal } from '@island.is/financial-aid-web/veita/src/components'
 import { Text, Box } from '@island.is/island-ui/core'
@@ -41,6 +46,15 @@ const EmailFormatInputModal = ({
     }
   }, [hasError])
 
+  const onPaste = (event: any) => {
+    document.execCommand(
+      'insertText',
+      false,
+      event?.clipboardData?.getData('text/plain'),
+    )
+    event?.preventDefault()
+  }
+
   return (
     <InputModal
       headline={headline}
@@ -64,6 +78,7 @@ const EmailFormatInputModal = ({
           <span
             ref={ref}
             contentEditable="true"
+            onPaste={onPaste}
             className={styles.rejectionEditable}
           />
           .{` `}
