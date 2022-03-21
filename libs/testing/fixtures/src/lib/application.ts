@@ -10,6 +10,7 @@ type StaticTextObject = MessageDescriptor & {
 type StaticText = StaticTextObject | string
 
 type ActionCardTag = 'red' | 'blueberry' | 'blue'
+
 interface ActionCardMetaData {
   title?: string
   description?: string
@@ -20,6 +21,7 @@ interface ActionCardMetaData {
 }
 
 type Answer = string | number | boolean | Answer[] | FormValue
+
 interface FormValue {
   [key: string]: Answer
 }
@@ -31,6 +33,7 @@ interface DataProviderResult {
   status: 'failure' | 'success'
   statusCode?: number
 }
+
 interface ExternalData {
   [key: string]: DataProviderResult
 }
@@ -38,6 +41,7 @@ interface ExternalData {
 interface ApplicationWithAttachments extends Application {
   attachments: object
 }
+
 interface Application {
   id: string
   state: string
