@@ -1,5 +1,9 @@
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { ConfigType, XRoadConfig } from '@island.is/nest/config'
+import {
+  ConfigType,
+  IdsClientConfig,
+  XRoadConfig,
+} from '@island.is/nest/config'
 
 import { Configuration } from '../../gen/fetch'
 import { NationalRegistryClientConfig } from './nationalRegistryClient.config'
@@ -8,14 +12,27 @@ import { getCache } from './cache'
 export const ApiConfiguration = {
   provide: 'NationalRegistryClientApiConfiguration',
   useFactory: (
-    xroadConfig: ConfigType<typeof XRoadConfig>,
     config: ConfigType<typeof NationalRegistryClientConfig>,
+    xroadConfig: ConfigType<typeof XRoadConfig>,
+    idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) => {
     return new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-national-registry-v2',
         cache: getCache(config),
-        ...config.fetch,
+        timeout: config.fetchTimeout,
+        autoAuth: idsClientConfig.isConfigured
+          ? {
+              mode: 'auto',
+              issuer: idsClientConfig.issuer,
+              clientId: idsClientConfig.clientId,
+              clientSecret: idsClientConfig.clientSecret,
+              scope: config.tokenExchangeScope,
+              tokenExchange: {
+                requestActorToken: config.requestActorToken,
+              },
+            }
+          : undefined,
       }),
       basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
       headers: {
@@ -23,5 +40,9 @@ export const ApiConfiguration = {
       },
     })
   },
-  inject: [XRoadConfig.KEY, NationalRegistryClientConfig.KEY],
+  inject: [
+    NationalRegistryClientConfig.KEY,
+    XRoadConfig.KEY,
+    IdsClientConfig.KEY,
+  ],
 }
