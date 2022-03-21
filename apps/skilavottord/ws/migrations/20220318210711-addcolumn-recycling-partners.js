@@ -13,7 +13,7 @@ module.exports = {
   down: (queryInterface) => {
     return queryInterface.sequelize.query(`
       ALTER TABLE recycling_partner DROP COLUMN email;
-      ALTER TABLE recycling_partner ADD COLUMN national_id VARCHAR;
+      ALTER TABLE recycling_partner DROP COLUMN national_id;
     `)
   },
 }
