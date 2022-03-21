@@ -8,24 +8,21 @@ import {
 import { ApiTags } from '@nestjs/swagger'
 
 import {
-  ActorScopes,
-  AuthMiddlewareOptions,
-  CurrentActor,
-  IdsUserGuard,
-  ScopesGuard,
-} from '@island.is/auth-nest-tools'
-import type { User } from '@island.is/auth-nest-tools'
-import { Audit } from '@island.is/nest/audit'
-import {
   DelegationDirection,
   DelegationDTO,
   DelegationsService,
 } from '@island.is/auth-api-lib'
+import {
+  ActorScopes,
+  CurrentActor,
+  IdsUserGuard,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 import { AuthScope } from '@island.is/auth/scopes'
-
-import { environment } from '../../../environments'
+import { Audit } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
 
+import type { User } from '@island.is/auth-nest-tools'
 const namespace = '@island.is/auth-public-api/actor/delegations'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -67,10 +64,6 @@ export class ActorDelegationsController {
       )
     }
 
-    return this.delegationsService.findAllIncoming(
-      actor,
-      environment.nationalRegistry
-        .authMiddlewareOptions as AuthMiddlewareOptions,
-    )
+    return this.delegationsService.findAllIncoming(actor)
   }
 }
