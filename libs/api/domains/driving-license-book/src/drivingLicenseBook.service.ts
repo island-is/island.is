@@ -34,12 +34,13 @@ export class DrivingLicenseBookService {
 
   async createPracticalDrivingLesson(
     input: CreatePracticalDrivingLessonInput,
+    user: User,
   ): Promise<PracticalDrivingLesson | null> {
     const api = await this.apiWithAuth()
     const { data } = await api.apiTeacherCreatePracticalDrivingLessonPost({
       practicalDrivingLessonCreateRequestBody: {
         ...input,
-        teacherSsn: input.teacherNationalId,
+        teacherSsn: user.nationalId,
       },
     })
     if (data && data.id) {

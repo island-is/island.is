@@ -6,9 +6,6 @@ export class CreatePracticalDrivingLessonInput {
   bookId!: string
 
   @Field()
-  teacherNationalId!: string
-
-  @Field()
   minutes!: number
 
   @Field()

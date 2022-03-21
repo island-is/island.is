@@ -61,8 +61,12 @@ export class DrivingLicenseBookResolver {
   @Mutation(() => PracticalDrivingLesson, { nullable: true })
   drivingLicenseBookCreatePracticalDrivingLesson(
     @Args('input') input: CreatePracticalDrivingLessonInput,
+    @CurrentUser() user: User,
   ) {
-    return this.drivingLicenseBookService.createPracticalDrivingLesson(input)
+    return this.drivingLicenseBookService.createPracticalDrivingLesson(
+      input,
+      user,
+    )
   }
 
   @UseGuards(DrivingInstructorGuard)
