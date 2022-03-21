@@ -15,11 +15,10 @@ import {
   DatePickerController,
 } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-
-import type { Scope } from '../../screens/Access/Access'
 import * as styles from './AccessItem.css'
 import add from 'date-fns/add'
 import format from 'date-fns/format'
+import { Scope } from '../../utils/types'
 
 interface PropTypes {
   apiScopes: Scope[]
@@ -181,6 +180,7 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
                       locale={lang}
                       placeholder={undefined}
                       onChange={(value) => onChange(item, value)}
+                      required
                     />
                   </div>
                 </Box>

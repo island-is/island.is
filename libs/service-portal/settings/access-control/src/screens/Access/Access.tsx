@@ -1,7 +1,7 @@
 import React, { FC, useState } from 'react'
 import { gql, useQuery, useMutation } from '@apollo/client'
 import { useParams, useHistory } from 'react-router-dom'
-import { useForm, FormProvider, useFormContext } from 'react-hook-form'
+import { useForm, FormProvider } from 'react-hook-form'
 import { defineMessage } from 'react-intl'
 
 import {
@@ -16,14 +16,9 @@ import {
   GridRow,
   GridColumn,
   Hidden,
+  AlertBanner,
 } from '@island.is/island-ui/core'
-import {
-  Query,
-  Mutation,
-  AuthCustomDelegation,
-  AuthApiScope,
-  AuthApiScopeGroup,
-} from '@island.is/api/schema'
+import { Query, Mutation, AuthCustomDelegation } from '@island.is/api/schema'
 import {
   IntroHeader,
   m as coreMessages,
@@ -36,27 +31,15 @@ import { AuthDelegationsQuery } from '../AccessControl'
 import { AccessItem, AccessModal } from '../../components'
 
 import * as styles from './Access.css'
-
-const GROUP_PREFIX = 'group'
-const SCOPE_PREFIX = 'scope'
-
-type ApiScope = AuthApiScope & { model: string }
-type ApiScopeGroup = AuthApiScopeGroup & { model: string }
-type ScopeTag = { displayName: string; validTo: string }
-
-export type Scope = ApiScope | ApiScopeGroup
-interface GroupedApiScopes {
-  [_: string]: ApiScope[]
-}
-
-type AccessForm = {
-  [SCOPE_PREFIX]: {
-    name: string[]
-    validTo?: string
-    type: string
-    displayName?: string
-  }[]
-}
+import {
+  AccessForm,
+  ApiScopeGroup,
+  GroupedApiScopes,
+  GROUP_PREFIX,
+  Scope,
+  ScopeTag,
+  SCOPE_PREFIX,
+} from '../../utils/types'
 
 const AuthApiScopesQuery = gql`
   query AuthApiScopesQuery {
@@ -162,6 +145,7 @@ const Access: FC = () => {
   const authDelegation = (delegationData || {})
     .authDelegation as AuthCustomDelegation
   const loading = apiScopeLoading || delegationLoading
+  const [formError, setFormError] = useState<boolean>(false)
 
   const onSubmit = handleSubmit(async (model: AccessForm) => {
     const scopes = model[SCOPE_PREFIX].filter(
@@ -173,10 +157,17 @@ const Access: FC = () => {
       name: scope.name[0],
       displayName: scope.displayName,
     }))
+
+    const err = getValues()?.[SCOPE_PREFIX]?.find((x) => x.name && !x.validTo)
+    if (err) {
+      setSaveModalOpen(false)
+      setFormError(true)
+    }
+
     const { data, errors } = await updateDelegation({
       variables: { input: { delegationId, scopes } },
     })
-    if (data && !errors) {
+    if (data && !errors && !err) {
       history.push(ServicePortalPath.SettingsAccessControl)
     }
   })
@@ -231,6 +222,18 @@ const Access: FC = () => {
             'Hér velur þú hvaða aðgangur er veittur með þessu umboði og hversu lengi. Reyndu að lágmarka þau réttindi sem þú vilt veita viðkomandi eins mikið og mögulegt er.',
         })}
       />
+      {formError && (
+        <Box paddingBottom={3}>
+          <AlertBanner
+            description={formatMessage({
+              id: 'sp.settings-access-control:date-error',
+              defaultMessage:
+                'Nauðsynlegt er að velja dagsetningu fyrir hvert umboð',
+            })}
+            variant="error"
+          />
+        </Box>
+      )}
       <FormProvider {...hookFormData}>
         <form onSubmit={onSubmit}>
           <Box marginBottom={8} display="flex" justifyContent="flexEnd">
