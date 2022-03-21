@@ -118,11 +118,9 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                   setWorkingCase({
                     ...workingCase,
                     sessionArrangements: SessionArrangements.ALL_PRESENT,
-                    defenderIsSpokesperson: false,
                   })
                   updateCase(workingCase.id, {
                     sessionArrangements: SessionArrangements.ALL_PRESENT,
-                    defenderIsSpokesperson: false,
                   })
                 }}
                 large
@@ -145,12 +143,10 @@ const HearingArrangementsForm: React.FC<Props> = (props) => {
                     ...workingCase,
                     sessionArrangements:
                       SessionArrangements.ALL_PRESENT_SPOKESPERSON,
-                    defenderIsSpokesperson: true,
                   })
                   updateCase(workingCase.id, {
                     sessionArrangements:
                       SessionArrangements.ALL_PRESENT_SPOKESPERSON,
-                    defenderIsSpokesperson: true,
                   })
                 }}
                 large
