@@ -16,6 +16,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { icReportForm } from '@island.is/judicial-system-web/messages'
 import { isPoliceReportStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 
@@ -23,10 +24,11 @@ interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
   isLoading: boolean
+  isCaseUpToDate: boolean
 }
 
 const PoliceReportForm: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, isLoading } = props
+  const { workingCase, setWorkingCase, isLoading, isCaseUpToDate } = props
 
   const { formatMessage } = useIntl()
   const { updateCase, autofill } = useCase()
@@ -35,19 +37,22 @@ const PoliceReportForm: React.FC<Props> = (props) => {
   const [caseFactsEM, setCaseFactsEM] = useState<string>('')
   const [legalArgumentsEM, setLegalArgumentsEM] = useState<string>('')
 
-  useEffect(() => {
-    const defaultProsecutorOnlySessionRequest = formatMessage(
-      icReportForm.prosecutorOnly.input.defaultValue,
-    )
+  useDeb(workingCase, 'caseFacts')
+  useDeb(workingCase, 'legalArguments')
+  useDeb(workingCase, 'prosecutorOnlySessionRequest')
+  useDeb(workingCase, 'comments')
 
-    if (workingCase.requestProsecutorOnlySession) {
-      autofill(
-        'prosecutorOnlySessionRequest',
-        defaultProsecutorOnlySessionRequest,
-        workingCase,
-      )
+  useEffect(() => {
+    if (isCaseUpToDate) {
+      if (workingCase.requestProsecutorOnlySession) {
+        autofill(
+          'prosecutorOnlySessionRequest',
+          formatMessage(icReportForm.prosecutorOnly.input.defaultValue),
+          workingCase,
+        )
+      }
     }
-  }, [autofill, formatMessage, workingCase])
+  }, [autofill, formatMessage, isCaseUpToDate, workingCase])
 
   return (
     <>

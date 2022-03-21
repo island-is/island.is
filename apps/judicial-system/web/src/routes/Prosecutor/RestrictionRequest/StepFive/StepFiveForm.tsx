@@ -33,6 +33,7 @@ import {
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
+import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import {
   errors,
   rcCaseFiles as m,
@@ -76,6 +77,8 @@ export const StepFiveForm: React.FC<Props> = (props) => {
     files,
   } = useS3Upload(workingCase)
   const { updateCase } = useCase()
+
+  useDeb(workingCase, 'caseFilesComments')
 
   useEffect(() => {
     if (policeCaseFiles) {

@@ -21,6 +21,13 @@ const StafraentIsland = dynamic(
   },
 )
 
+const Mannaudstorg = dynamic(
+  () => import('./Variations/Mannaudstorg/Mannaudstorg'),
+  {
+    ssr: false,
+  },
+)
+
 export const Background = ({ variation, small }: BackgroundProps) => {
   const [component, setComponent] = useState<ReactNode | null>(null)
 
@@ -31,6 +38,9 @@ export const Background = ({ variation, small }: BackgroundProps) => {
         break
       case 'stafraent-island':
         setComponent(<StafraentIsland small={small} />)
+        break
+      case 'mannaudstorg':
+        setComponent(<Mannaudstorg />)
         break
       case 'default':
       default:
