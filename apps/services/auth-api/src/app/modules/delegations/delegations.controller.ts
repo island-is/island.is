@@ -13,8 +13,8 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-
 import type { User } from '@island.is/auth-nest-tools'
+
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('delegations')
 @Controller('delegations')

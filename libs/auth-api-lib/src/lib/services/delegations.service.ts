@@ -405,7 +405,7 @@ export class DelegationsService {
 
       const response = await this.personApi
         .withMiddleware(new AuthMiddleware(user))
-        .einstaklingarGetForsja(<EinstaklingarGetForsjaRequest>{
+        .einstaklingarGetForsja({
           id: user.nationalId,
         })
 
@@ -414,9 +414,7 @@ export class DelegationsService {
       )
 
       const resultPromises = distinct.map(async (nationalId) =>
-        this.personApi.einstaklingarGetEinstaklingur(<
-          EinstaklingarGetEinstaklingurRequest
-        >{
+        this.personApi.einstaklingarGetEinstaklingur({
           id: nationalId,
         }),
       )
@@ -513,7 +511,7 @@ export class DelegationsService {
 
       const resultPromises = rp.map(async (representative) =>
         this.personApi
-          .einstaklingarGetEinstaklingur(<EinstaklingarGetEinstaklingurRequest>{
+          .einstaklingarGetEinstaklingur({
             id: representative.nationalIdRepresentedPerson,
           })
           .then(
