@@ -1,3 +1,4 @@
+import { GenericTagGroup } from '@island.is/api/schema'
 import {
   Filter,
   FilterInput,
@@ -14,6 +15,8 @@ import { theme } from '@island.is/island-ui/theme'
 import { getThemeConfig, OrganizationWrapper } from '@island.is/web/components'
 import {
   ContentLanguage,
+  EnhancedAsset,
+  GenericTag,
   GetNamespaceQuery,
   Query,
   QueryGetNamespaceArgs,
@@ -27,10 +30,65 @@ import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Screen } from '../../../types'
 import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
 import { GET_PUBLISHED_MATERIAL_QUERY } from '../../queries/PublishedMaterial'
+
+interface FilterCategory {
+  id: string
+  label: string
+  selected: string[]
+  filters: {
+    value: string
+    label: string
+  }[]
+}
+
+const getAllGenericTags = (publishedMaterial: EnhancedAsset[]) => {
+  const genericTagObject: Record<string, GenericTag> = {}
+  publishedMaterial.forEach(({ genericTags }) =>
+    genericTags.forEach((tag) => (genericTagObject[tag.id] = tag)),
+  )
+  return Object.keys(genericTagObject).map((key) => genericTagObject[key])
+}
+
+const getAllGenericTagGroups = (publishedMaterial: EnhancedAsset[]) => {
+  const genericTagGroupObject: Record<string, GenericTagGroup> = {}
+  publishedMaterial.forEach(({ genericTags }) =>
+    genericTags.forEach(
+      (tag) =>
+        (genericTagGroupObject[tag.genericTagGroup.id] = tag.genericTagGroup),
+    ),
+  )
+  return Object.keys(genericTagGroupObject).map(
+    (key) => genericTagGroupObject[key],
+  )
+}
+
+const getFilterCategories = (
+  publishedMaterial: EnhancedAsset[],
+): FilterCategory[] => {
+  const tagGroups = getAllGenericTagGroups(publishedMaterial)
+  const tags = getAllGenericTags(publishedMaterial)
+
+  return tagGroups.map((tagGroup) => {
+    return {
+      id: tagGroup.slug,
+      label: tagGroup.title,
+      selected: [],
+      filters: tags
+        .filter((tag) => tag.genericTagGroup?.id === tagGroup.id)
+        .map((tag) => ({ value: tag.slug, label: tag.title })),
+    }
+  })
+}
+
+const getInitialParameters = (filterCategories: FilterCategory[]) => {
+  const parameters: Record<string, string[]> = {}
+  filterCategories.forEach(({ id }) => (parameters[id] = []))
+  return parameters
+}
 
 interface PublishedMaterialProps {
   organizationPage: Query['getOrganizationPage']
@@ -68,31 +126,28 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     }),
   )
 
-  const [parameters, setParameters] = useState({
-    tegundutgafu: [],
-  })
+  const initialFilterCategories = useMemo(
+    () => getFilterCategories(publishedMaterial),
+    [publishedMaterial],
+  )
 
-  const filterCategories = [
-    {
-      id: 'tegundutgafu',
-      label: 'Tegund útgáfu',
-      selected: parameters.tegundutgafu,
-      filters: [
-        {
-          value: 'arsskyrslur',
-          label: 'Ársskýrslur',
-        },
-        {
-          value: 'skyrslur',
-          label: 'Skýrslur',
-        },
-        {
-          value: 'greinar',
-          label: 'Greinar',
-        },
-      ],
-    },
-  ]
+  const [filterCategories, setFilterCategories] = useState<FilterCategory[]>(
+    initialFilterCategories,
+  )
+  const [parameters, setParameters] = useState<Record<string, string[]>>({})
+
+  useEffect(() => {
+    setParameters(getInitialParameters(initialFilterCategories))
+  }, [initialFilterCategories])
+
+  useEffect(() => {
+    setFilterCategories((prev) =>
+      prev.map((category) => ({
+        ...category,
+        selected: parameters[category.id] ?? category.selected,
+      })),
+    )
+  }, [parameters])
 
   const pageTitle = n('pageTitle', 'Útgefið efni')
 
@@ -100,6 +155,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
 
   const filteredItems = publishedMaterial.filter(
     (item) =>
+      item.file?.url &&
       item.title.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1,
   )
 
@@ -152,11 +208,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
               />
             }
             onFilterClear={() => {
-              setParameters((prevParameters) => {
-                const newParameters = { ...prevParameters }
-                for (const key in newParameters) newParameters[key] = []
-                return newParameters
-              })
+              setParameters(getInitialParameters(filterCategories))
               setSearchValue('')
             }}
           >
@@ -189,7 +241,11 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
               >
                 <FocusableBox
                   width="full"
-                  href={item.file?.url}
+                  href={
+                    item.file.url.startsWith('//')
+                      ? `https:${item.file.url}`
+                      : item.file.url
+                  }
                   border="standard"
                   borderRadius="large"
                 >
