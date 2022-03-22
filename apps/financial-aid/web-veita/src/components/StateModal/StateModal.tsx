@@ -154,6 +154,7 @@ const StateModal = ({
           <EmailFormatInputModal
             onCancel={onClickCancel}
             isModalVisable={selected === ApplicationState.DATANEEDED}
+            state={ApplicationState.DATANEEDED}
             onSaveApplication={(comment?: string) => {
               if (!selected) {
                 return
@@ -190,6 +191,7 @@ const StateModal = ({
           <EmailFormatInputModal
             onCancel={onClickCancel}
             isModalVisable={selected === ApplicationState.REJECTED}
+            state={ApplicationState.REJECTED}
             onSaveApplication={(reasonForRejection?: string) => {
               if (!selected) {
                 return
