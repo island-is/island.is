@@ -4,7 +4,9 @@ module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction((t) =>
       Promise.all([
-        queryInterface.removeColumn('staff', 'municipality_homepage', { transaction: t }),
+        queryInterface.removeColumn('staff', 'municipality_homepage', {
+          transaction: t,
+        }),
       ]),
     )
   },
