@@ -27,6 +27,7 @@ import {
   CaseCustodyRestrictions,
   CaseDecision,
   CaseType,
+  completedCaseStates,
   Gender,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
@@ -297,6 +298,9 @@ export const Ruling: React.FC = () => {
                   (workingCase.registrar !== null &&
                     workingCase.registrar?.id === user?.id)
                 }
+                isCaseCompleted={completedCaseStates.includes(
+                  workingCase.state,
+                )}
               />
             </AccordionItem>
           </Accordion>

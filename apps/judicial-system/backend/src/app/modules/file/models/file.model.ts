@@ -69,10 +69,10 @@ export class CaseFile extends Model<CaseFile> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   @ApiProperty()
-  key!: string
+  key?: string
 
   @Column({
     type: DataType.INTEGER,

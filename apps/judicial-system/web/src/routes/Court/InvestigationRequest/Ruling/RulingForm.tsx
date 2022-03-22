@@ -28,7 +28,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isRulingValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { core, icRuling as m } from '@island.is/judicial-system-web/messages'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
-import type { Case } from '@island.is/judicial-system/types'
+import { Case, completedCaseStates } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 
 interface Props {
@@ -81,6 +81,9 @@ const RulingForm: React.FC<Props> = (props) => {
                   (workingCase.registrar !== null &&
                     workingCase.registrar?.id === user?.id)
                 }
+                isCaseCompleted={completedCaseStates.includes(
+                  workingCase.state,
+                )}
               />
             </AccordionItem>
           </Accordion>

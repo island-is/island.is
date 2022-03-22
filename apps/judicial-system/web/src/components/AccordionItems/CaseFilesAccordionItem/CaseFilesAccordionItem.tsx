@@ -49,18 +49,8 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
         ...completedCaseStates,
       ].includes(workingCase.state)
 
-    const isStoredInCourt =
-      [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED].includes(
-        workingCase.state,
-      ) &&
-      workingCase.caseFiles?.every(
-        (file) => file.state === CaseFileState.STORED_IN_COURT,
-      )
-
     return (
-      !isAppealGracePeriodExpired &&
-      !isStoredInCourt &&
-      (canProsecutorOpen || canCourtRoleOpen)
+      !isAppealGracePeriodExpired && (canProsecutorOpen || canCourtRoleOpen)
     )
   }
 
@@ -119,6 +109,7 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
             ],
           ])
         }
+        isCaseCompleted={completedCaseStates.includes(workingCase.state)}
       />
       {canCaseFilesBeUploaded() && (
         <Box display="flex" justifyContent="flexEnd">

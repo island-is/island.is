@@ -15,6 +15,7 @@ import {
   CaseState,
   CaseType,
   CaseTransition,
+  completedCaseStates,
 } from '@island.is/judicial-system/types'
 import { formatDate, capitalize } from '@island.is/judicial-system/formatters'
 import {
@@ -331,6 +332,9 @@ export const Overview: React.FC = () => {
                 <CaseFileList
                   caseId={workingCase.id}
                   files={workingCase.caseFiles ?? []}
+                  isCaseCompleted={completedCaseStates.includes(
+                    workingCase.state,
+                  )}
                 />
               </Box>
             </AccordionItem>
