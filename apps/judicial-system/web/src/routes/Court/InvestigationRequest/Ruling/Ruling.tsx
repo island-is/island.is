@@ -1,4 +1,5 @@
 import React, { useContext, useEffect } from 'react'
+import { useIntl } from 'react-intl'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import {
@@ -8,6 +9,9 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
+import { formatDate } from '@island.is/judicial-system/formatters'
+import { icRuling as m } from '@island.is/judicial-system-web/messages'
+import { autofillRuling } from '@island.is/judicial-system-web/src/components/RulingInput/RulingInput'
 
 import RulingForm from './RulingForm'
 
@@ -21,6 +25,7 @@ const Ruling = () => {
   } = useContext(FormContext)
 
   const { autofill } = useCase()
+  const { formatMessage } = useIntl()
 
   useEffect(() => {
     document.title = 'Yfirlit kröfu - Réttarvörslugátt'
@@ -28,6 +33,18 @@ const Ruling = () => {
 
   useEffect(() => {
     if (isCaseUpToDate) {
+      autofill(
+        'introduction',
+        formatMessage(m.sections.introduction.autofill, {
+          date: formatDate(workingCase.courtDate, 'PPP'),
+        }),
+        workingCase,
+      )
+
+      if (workingCase.demands) {
+        autofill('prosecutorDemands', workingCase.demands, workingCase)
+      }
+
       if (workingCase.caseFacts) {
         autofill('courtCaseFacts', workingCase.caseFacts, workingCase)
       }
@@ -35,6 +52,8 @@ const Ruling = () => {
       if (workingCase.legalArguments) {
         autofill('courtLegalArguments', workingCase.legalArguments, workingCase)
       }
+
+      autofillRuling(workingCase, autofill, formatMessage)
     }
 
     if (isAcceptingCaseDecision(workingCase.decision) && workingCase.demands) {
@@ -42,7 +61,7 @@ const Ruling = () => {
     }
 
     setWorkingCase(workingCase)
-  }, [autofill, isCaseUpToDate, setWorkingCase, workingCase])
+  }, [isCaseUpToDate, autofill, workingCase, formatMessage, setWorkingCase])
 
   return (
     <PageLayout
@@ -58,7 +77,6 @@ const Ruling = () => {
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
         isLoading={isLoadingWorkingCase}
-        isCaseUpToDate={isCaseUpToDate}
       />
     </PageLayout>
   )

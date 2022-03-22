@@ -1,7 +1,6 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 
-import { IntegratedCourts } from '@island.is/judicial-system/consts'
 import { CaseState } from '@island.is/judicial-system/types'
 import type { Case, UpdateCase } from '@island.is/judicial-system/types'
 import { Box, Button, Input, Text } from '@island.is/island-ui/core'
@@ -67,24 +66,21 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
       <BlueBox>
         <div className={styles.createCourtCaseContainer}>
           <Box display="flex">
-            {workingCase.court &&
-              IntegratedCourts.includes(workingCase.court.id) && (
-                <div className={styles.createCourtCaseButton}>
-                  <Button
-                    size="small"
-                    onClick={() => handleCreateCourtCase(workingCase)}
-                    loading={isCreatingCourtCase}
-                    disabled={Boolean(
-                      (workingCase.state !== CaseState.SUBMITTED &&
-                        workingCase.state !== CaseState.RECEIVED) ||
-                        workingCase.courtCaseNumber,
-                    )}
-                    fluid
-                  >
-                    Stofna nýtt mál
-                  </Button>
-                </div>
-              )}
+            <div className={styles.createCourtCaseButton}>
+              <Button
+                size="small"
+                onClick={() => handleCreateCourtCase(workingCase)}
+                loading={isCreatingCourtCase}
+                disabled={Boolean(
+                  (workingCase.state !== CaseState.SUBMITTED &&
+                    workingCase.state !== CaseState.RECEIVED) ||
+                    workingCase.courtCaseNumber,
+                )}
+                fluid
+              >
+                Stofna nýtt mál
+              </Button>
+            </div>
             <div className={styles.createCourtCaseInput}>
               <Input
                 data-testid="courtCaseNumber"

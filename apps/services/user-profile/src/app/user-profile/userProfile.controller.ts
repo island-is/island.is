@@ -1,4 +1,5 @@
 import { UserProfileScope } from '@island.is/auth/scopes'
+import omit from 'lodash/omit'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
@@ -180,14 +181,18 @@ export class UserProfileController {
     @CurrentUser()
     user: User,
   ): Promise<UserProfile> {
+    if (nationalId != user.nationalId) {
+      throw new ForbiddenException()
+    }
+
     // findOneByNationalId must be first as it implictly checks if the
     // route param matches the authenticated user.
     const profile = await this.findOneByNationalId(nationalId, user)
     const updatedFields = Object.keys(userProfileToUpdate)
     userProfileToUpdate = {
       ...userProfileToUpdate,
-      mobileStatus: DataStatus.NOT_VERIFIED,
-      emailStatus: DataStatus.NOT_VERIFIED,
+      mobileStatus: profile.mobileStatus as DataStatus,
+      emailStatus: profile.emailStatus as DataStatus,
     }
 
     if (userProfileToUpdate.mobilePhoneNumber) {
@@ -202,6 +207,8 @@ export class UserProfileController {
           mobileStatus: DataStatus.VERIFIED,
           mobilePhoneNumberVerified: phoneVerified.confirmed,
         }
+      } else {
+        throw new ForbiddenException()
       }
     }
 
@@ -217,6 +224,8 @@ export class UserProfileController {
           emailStatus: DataStatus.VERIFIED,
           emailVerified: emailVerified.confirmed,
         }
+      } else {
+        throw new ForbiddenException()
       }
     }
 
