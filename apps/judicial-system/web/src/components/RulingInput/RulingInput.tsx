@@ -10,6 +10,7 @@ import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '../../utils/formHelper'
+import useDeb from '../../utils/hooks/useDeb'
 
 interface Props {
   workingCase: Case
@@ -45,6 +46,7 @@ export const useRulingAutofill = (
 ) => {
   const { formatMessage } = useIntl()
   const { autofill } = useCase()
+
   useEffect(() => {
     if (isCaseUpToDate) {
       autofillRuling(workingCase, autofill, formatMessage)
@@ -57,6 +59,8 @@ const RulingInput: React.FC<Props> = (props) => {
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
   const [rulingErrorMessage, setRulingErrorMessage] = useState('')
+
+  useDeb(workingCase, 'ruling')
 
   return (
     <Input

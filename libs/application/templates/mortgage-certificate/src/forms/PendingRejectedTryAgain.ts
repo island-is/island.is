@@ -48,13 +48,18 @@ export const PendingRejectedTryAgain: Form = buildForm({
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
-                  event: DefaultEvents.PAYMENT,
+                  event: DefaultEvents.SUBMIT,
                   name: m.continue,
                   type: 'primary',
                 },
               ],
             }),
           ],
+        }),
+        buildDescriptionField({
+          id: 'final',
+          title: 'Takk',
+          description: '',
         }),
       ],
     }),

@@ -76,8 +76,9 @@ export const courtRecord = {
         'Notaður sem tilkynning um að rannsóknargögn málsins liggi frammi.',
     },
     other: {
-      id: 'judicial.system.backend:pdf.court_record.court_documents.other',
-      defaultMessage: '{documentName} þingmerkt nr. {documentNumber}.',
+      id: 'judicial.system.backend:pdf.court_record.court_documents.other_v1',
+      defaultMessage:
+        '{documentName} þingmerkt nr. {documentNumber}{submittedBy, select, DEFENDER { lagt fram af varnaraðila} PROSECUTOR { lagt fram af sækjanda} other {}}.',
       description:
         'Notaður sem heiti á öðrum þingmerktum skjölum þar sem {documentName} er nafn skjals og {documentNumber} er númer skjals og er sjálfkrafa bætt við í kóða.',
     },

@@ -6,7 +6,6 @@ import router from 'next/router'
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import {
   DropdownMenu,
-  Loading,
   Logo,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -126,12 +125,6 @@ export const Requests: React.FC = () => {
     ) {
       await sendNotification(caseToDelete.id, NotificationType.REVOKED)
       await transitionCase(caseToDelete, CaseTransition.DELETE)
-
-      setActiveCases(
-        activeCases?.filter((c: Case) => {
-          return c !== caseToDelete
-        }),
-      )
     }
   }
 
@@ -256,6 +249,7 @@ export const Requests: React.FC = () => {
                         isTransitioningCase || isSendingNotification
                       }
                       onDeleteCase={deleteCase}
+                      setActiveCases={setActiveCases}
                     />
                   )
                 ) : (
@@ -335,10 +329,6 @@ export const Requests: React.FC = () => {
             type="error"
           />
         </div>
-      ) : loading ? (
-        <Box className={styles.table}>
-          <Loading />
-        </Box>
       ) : null}
     </div>
   )

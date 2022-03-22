@@ -234,7 +234,6 @@ export const CurrentUserQuery = gql`
         roles
         active
         nickname
-        municipalityHomepage
         email
         usePseudoName
       }
@@ -263,6 +262,14 @@ export const UpdateApplicationMutation = gql`
       interview
       employmentCustom
       homeCircumstancesCustom
+      familyStatus
+      spouseNationalId
+      spouseName
+      spouseEmail
+      spousePhoneNumber
+      city
+      streetName
+      postalCode
       files {
         id
         applicationId
@@ -273,8 +280,8 @@ export const UpdateApplicationMutation = gql`
       }
       state
       formComment
+      spouseFormComment
       studentCustom
-      spouseNationalId
       rejection
       applicationEvents {
         id
@@ -282,12 +289,13 @@ export const UpdateApplicationMutation = gql`
         eventType
         comment
         created
-        staffNationalId
         staffName
+        staffNationalId
       }
       staff {
         name
         municipalityId
+        nationalId
       }
       directTaxPayments {
         totalSalary
@@ -407,7 +415,6 @@ export const UpdateStaffMutation = gql`
       roles
       active
       nickname
-      municipalityHomepage
       email
       usePseudoName
     }
@@ -488,6 +495,15 @@ export const SupervisorsQuery = gql`
       name
       roles
       active
+    }
+  }
+`
+
+export const GetAllSignedUrlQuery = gql`
+  query GetAllSignedUrlQuery($input: GetSignedUrlForIdInput!) {
+    getSignedUrlForAllFilesId(input: $input) {
+      url
+      key
     }
   }
 `

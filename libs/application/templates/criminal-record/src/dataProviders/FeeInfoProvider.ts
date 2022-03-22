@@ -30,7 +30,9 @@ export class FeeInfoProvider extends PaymentCatalogProvider {
     }
   }
 
-  onProvideSuccess(result: object): SuccessfulDataProviderResult {
+  onProvideSuccess(
+    result: Record<string, unknown>,
+  ): SuccessfulDataProviderResult {
     return { date: new Date(), status: 'success', data: result }
   }
 }

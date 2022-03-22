@@ -20,7 +20,6 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import { EmailService } from '@island.is/email-service'
-import { IntegratedCourts } from '@island.is/judicial-system/consts'
 import {
   isRestrictionCase,
   SessionArrangements,
@@ -395,11 +394,7 @@ export class CaseService {
 
     let courtRecordPdf = undefined
 
-    if (
-      theCase.courtId &&
-      theCase.courtCaseNumber &&
-      IntegratedCourts.includes(theCase.courtId)
-    ) {
+    if (theCase.courtId && theCase.courtCaseNumber) {
       uploadPromises.push(
         this.uploadSignedRulingPdfToCourt(theCase, user, signedRulingPdf).then(
           (res) => {
@@ -452,9 +447,8 @@ export class CaseService {
       theCase.defenderEmail &&
       (isRestrictionCase(theCase.type) ||
         theCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
-        (theCase.sessionArrangements ===
-          SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
-          theCase.defenderIsSpokesperson))
+        theCase.sessionArrangements ===
+          SessionArrangements.ALL_PRESENT_SPOKESPERSON)
     ) {
       emailPromises.push(
         this.sendEmailToDefender(courtRecordPdf, theCase, rulingAttachment),
@@ -849,14 +843,15 @@ export class CaseService {
       .then((caseId) => this.findById(caseId))
   }
 
-  async uploadRequestPdfToCourt(theCase: Case, user: TUser): Promise<void> {
-    this.logger.debug(`Uploading request pdf to court for case ${theCase.id}`)
-
-    await this.refreshFormatMessage()
-
-    const pdf = await getRequestPdfAsBuffer(theCase, this.formatMessage)
-
+  private async uploadRequestPdfToCourt(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
     try {
+      await this.refreshFormatMessage()
+
+      const pdf = await getRequestPdfAsBuffer(theCase, this.formatMessage)
+
       await this.courtService.createRequest(
         user,
         theCase.id,
@@ -883,6 +878,15 @@ export class CaseService {
       Boolean(theCase.parentCaseId),
     )
 
-    return this.update(theCase.id, { courtCaseNumber }, true) as Promise<Case>
+    const updatedCase = (await this.update(
+      theCase.id,
+      { courtCaseNumber },
+      true,
+    )) as Case
+
+    // No need to wait
+    this.uploadRequestPdfToCourt(updatedCase, user)
+
+    return updatedCase
   }
 }

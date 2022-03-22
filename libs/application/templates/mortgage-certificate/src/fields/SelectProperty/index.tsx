@@ -1,127 +1,102 @@
-import React, { FC, useEffect, useState } from 'react'
-import { useMutation } from '@apollo/client'
-import { useFormContext } from 'react-hook-form'
-import { FieldBaseProps, DefaultEvents } from '@island.is/application/core'
-import { Box, AlertMessage, Divider, Button } from '@island.is/island-ui/core'
-import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
-import { MCEvents } from '../../lib/constants'
+import React, { FC, useEffect, useState, useRef } from 'react'
+import { FieldBaseProps } from '@island.is/application/core'
+import { Box, AlertMessage, SkeletonLoader } from '@island.is/island-ui/core'
 import { PropertiesManager } from './PropertiesManager'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { gql, useLazyQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import { VALIDATE_MORTGAGE_CERTIFICATE_QUERY } from '../../graphql/queries'
 
-export const validateCertificateMutation = gql`
+export const validateCertificateQuery = gql`
   ${VALIDATE_MORTGAGE_CERTIFICATE_QUERY}
 `
 
-export const SelectProperty: FC<FieldBaseProps> = ({
-  application,
-  field,
-  refetch,
-}) => {
+export const SelectProperty: FC<FieldBaseProps> = ({ application, field }) => {
+  const { externalData } = application
+  const [continuePolling, setContinuePolling] = useState(true)
   const [showErrorMsg, setShowErrorMsg] = useState<boolean>(false)
-  const [runEvent, setRunEvent] = useState<string | undefined>(undefined)
-
   const { formatMessage } = useLocale()
-  const { getValues } = useFormContext()
+  const errorMessage = useRef<HTMLDivElement>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  const [submitApplication] = useMutation(SUBMIT_APPLICATION, {
-    onError: (e) => console.error(e.message),
-  })
+  const { validation: oldValidation } =
+    (externalData.validateMortgageCertificate?.data as {
+      validation: {
+        propertyNumber: string
+        isFromSearch: boolean
+      }
+    }) || {}
 
-  const handleStateChangeAndRefetch = (newRunEvent: string) => {
-    if (runEvent !== newRunEvent) {
-      setRunEvent(newRunEvent)
-
-      // save newly added values to answers
-      const updatedAnswers = { ...application.answers, ...getValues() }
-
-      submitApplication({
-        variables: {
-          input: {
-            id: application.id,
-            event: newRunEvent,
-            answers: updatedAnswers,
-          },
+  // Note: we will validate on load here to display the error message
+  // (only if we have validated before, by pressing the "next" button),
+  // because we cant trust that externalData.validateMortgageCertificate is recent enough.
+  // But we will also use condition guard on "next" button to validate again
+  // to control if user can continue
+  if (oldValidation?.propertyNumber) {
+    const { data, error, loading } = useQuery(validateCertificateQuery, {
+      variables: {
+        input: {
+          propertyNumber: oldValidation?.propertyNumber,
+          isFromSearch: oldValidation?.isFromSearch,
         },
-      }).then(({ data, errors } = {}) => {
-        if (data && !errors?.length) {
-          // Takes them to the next state (which loads the relevant form)
-          refetch?.()
-        } else {
-          return Promise.reject()
-        }
-      })
+      },
+      skip: !continuePolling,
+      fetchPolicy: 'no-cache',
+    })
+
+    const validationData = data?.validateMortgageCertificate as {
+      propertyNumber: string
+      exists: boolean
+      hasKMarking: boolean
+    }
+
+    useEffect(() => {
+      setIsLoading(loading)
+    }, [loading])
+
+    useEffect(() => {
+      if (!validationData?.propertyNumber) {
+        return
+      }
+
+      setShowErrorMsg(false)
+      setContinuePolling(false)
+
+      if (!validationData.exists) {
+        setShowErrorMsg(true)
+      }
+    }, [validationData])
+
+    if (error) {
+      setShowErrorMsg(true)
     }
   }
 
-  const [runQuery, { loading }] = useLazyQuery(validateCertificateMutation, {
-    onCompleted(result) {
-      setShowErrorMsg(false)
-
-      const { exists, hasKMarking } = result.validateMortgageCertificate as {
-        exists: boolean
-        hasKMarking: boolean
-      }
-
-      // no certificate found, we stay in draft
-      if (!exists) {
-        setShowErrorMsg(true)
-      }
-      // certificate found, but no k marking found, we send to error state
-      else if (exists && !hasKMarking) {
-        handleStateChangeAndRefetch(MCEvents.PENDING_REJECTED)
-      }
-      // otherwise if all is good, we send him to payment state
-      else if (exists && hasKMarking) {
-        handleStateChangeAndRefetch(DefaultEvents.PAYMENT)
-      }
-    },
-    onError() {
-      setShowErrorMsg(true)
-    },
-    fetchPolicy: 'no-cache',
-  })
-
-  const handleNext: any = () => {
-    const updatedAnswers = { ...application.answers, ...getValues() }
-    const selectedPropertyNumber = (updatedAnswers.selectProperty as {
-      propertyNumber: string
-    })?.propertyNumber
-
-    runQuery({
-      variables: { input: { propertyNumber: selectedPropertyNumber } },
-    })
-  }
+  useEffect(() => {
+    if (errorMessage && errorMessage.current) {
+      errorMessage.current.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [showErrorMsg])
 
   return (
     <>
-      <PropertiesManager application={application} field={field} />
-      <Box paddingBottom={5}>
-        {!loading && showErrorMsg && (
+      {isLoading ? (
+        <Box paddingY={4}>
+          <SkeletonLoader repeat={6} space={2} />
+        </Box>
+      ) : (
+        <PropertiesManager application={application} field={field} />
+      )}
+
+      {showErrorMsg ? (
+        <Box ref={errorMessage} paddingTop={5} paddingBottom={5}>
           <AlertMessage
             type="error"
             title={formatMessage(m.errorSheriffApiTitle)}
             message={formatMessage(m.errorSheriffApiMessage)}
           />
-        )}
-      </Box>
-      <Divider />
-      <Box
-        paddingTop={5}
-        paddingBottom={5}
-        justifyContent="flexEnd"
-        display="flex"
-      >
-        <Button
-          onClick={(e: any) => handleNext(e)}
-          icon="arrowForward"
-          disabled={loading}
-        >
-          {formatMessage(m.continue)}
-        </Button>
-      </Box>
+        </Box>
+      ) : null}
     </>
   )
 }
