@@ -26,6 +26,7 @@ export const downloadCSV = (flightLegs: FlightLeg[], filters: FilterInput) => {
       'FlugLeggjaID',
       'Kyn',
       'Aldur',
+      'Póstnúmer',
     ]
     const data = getFilteredFlightLegs(airline, flightLegs).map((flightLeg) => [
       flightLeg.travel,
@@ -42,6 +43,7 @@ export const downloadCSV = (flightLegs: FlightLeg[], filters: FilterInput) => {
       flightLeg.id,
       flightLeg.flight.userInfo.gender,
       flightLeg.flight.userInfo.age,
+      flightLeg.flight.userInfo.postalCode,
     ])
     data.unshift(header)
 
