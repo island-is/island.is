@@ -40,8 +40,6 @@ const ApplicationHeader = ({
 }: ApplicantProps) => {
   const router = useRouter()
 
-  console.log(application)
-
   const changeApplicationState = useApplicationState()
 
   const assignEmployee = async () => {

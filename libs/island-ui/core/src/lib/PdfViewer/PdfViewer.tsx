@@ -77,13 +77,14 @@ export const PdfViewer: FC<PdfViewerProps> = ({
           loading={() => loadingView()}
         >
           {showAllPages ? (
-            Array.from(new Array(numPages), (el, index) => (
-              <pdfLib.Page key={`page_${index + 1}`} pageNumber={index + 1} />
+            [...Array(numPages)].map((x, page) => (
+              <pdfLib.Page key={`page_${page + 1}`} pageNumber={page + 1} />
             ))
           ) : (
             <pdfLib.Page pageNumber={pageNumber} />
           )}
         </pdfLib.Document>
+
         <Box
           marginTop={2}
           marginBottom={4}
