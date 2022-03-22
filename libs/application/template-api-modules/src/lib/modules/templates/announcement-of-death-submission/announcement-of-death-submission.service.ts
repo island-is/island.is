@@ -13,7 +13,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { SharedTemplateApiService } from '../../shared'
-
+import { generateTestEmail } from './emailGenerators'
 
 @Injectable()
 export class AnnouncementOfDeathSubmissionService {
@@ -23,7 +23,10 @@ export class AnnouncementOfDeathSubmissionService {
   ) {}
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {
-    return { success: true}
+    await this.sharedTemplateAPIService.sendEmail(
+      generateTestEmail,
+      application,
+    )
+    return { success: true }
   }
-
 }

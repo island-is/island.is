@@ -76,7 +76,7 @@ export class TemplateAPIService {
       | CriminalRecordSubmissionService
       | DataProtectionComplaintService
       | PSignSubmissionService
-      |AnnouncementOfDeathSubmissionService
+      | AnnouncementOfDeathSubmissionService
       | ExamplePaymentActionsService,
     action: ApplicationApiAction,
   ): Promise<PerformActionResult> {
