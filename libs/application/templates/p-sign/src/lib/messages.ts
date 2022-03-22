@@ -20,7 +20,7 @@ export const m = defineMessages({
   dataCollectionDescription: {
     id: 'ps.application:dataCollectionDescription',
     defaultMessage:
-      'Svo hægt sé að afgreiða umsókn þína um stæðiskort, þarf að sækja eftirfarandi gögn með þínu samþykki.',
+      'Til þess að geta hafið umsókn þína fyrir stæðiskort þarf að sækja eftirfarandi gögn með þínu samþykki.',
     description: 'Description for data collection section',
   },
   dataCollectionCheckboxLabel: {
@@ -36,12 +36,12 @@ export const m = defineMessages({
   dataCollectionDoctorsNoteSubtitle: {
     id: 'ps.application:dataCollectionDoctorsNoteLabel',
     defaultMessage:
-      'Rafrænt læknisvottorð frá heimilislækni, þar sem tilgreindur er gildistími stæðiskorts.',
+      'Rafrænt læknisvottorð frá heimilislækni þar sem tilgreindur er gildistími stæðiskorts.',
     description: 'Doctors note subtitle',
   },
   dataCollectionNationalRegistryTitle: {
     id: 'ps.application:dataCollectionNationalRegistryTitle',
-    defaultMessage: 'Uppfletting í Þjóðskrá',
+    defaultMessage: 'Persónuupplýsingar',
     description: 'National registry title',
   },
   dataCollectionNationalRegistrySubtitle: {
@@ -51,12 +51,12 @@ export const m = defineMessages({
   },
   dataCollectionQualityPhotoTitle: {
     id: 'ps.application:dataCollectionQualityPhotoTitle',
-    defaultMessage: 'Upplýsingar úr ökuskírteinaskrá (ef við á)',
+    defaultMessage: 'Ökuskírteini (ef til staðar)',
     description: 'Info from drivers license',
   },
   dataCollectionQualityPhotoSubtitle: {
     id: 'ps.application:dataCollectionQualityPhotoSubtitle',
-    defaultMessage: 'Mynd er sótt úr ökuskírteinakerfi.',
+    defaultMessage: 'Mynd úr ökuskírteinakerfi hjá Samgöngustofu.',
     description: 'National registry subtitle',
   },
   dataCollectionUserProfileTitle: {
@@ -67,7 +67,7 @@ export const m = defineMessages({
   dataCollectionUserProfileSubtitle: {
     id: 'ps.application:dataCollectionUserProfileSubtitle',
     defaultMessage:
-      'Ef þú ert með skráaðar upplýsingar um síma og netfang á Mínum Síðum inná Ísland.is kemur það sjálfkrafa í umsókn þína.',
+      'Ef þú ert með skráðar upplýsingar um síma og netfang inni á Mínar síður á Ísland.is þá verða þær sjálfkrafa settar inn í umsóknina.',
     description:
       'In order to apply for this application we need your email and phone number',
   },
@@ -75,8 +75,13 @@ export const m = defineMessages({
   /* Information Section */
   informationTitle: {
     id: 'ps.application:informationSectionTitle',
+    defaultMessage: 'Umsækjandi',
+    description: 'Information section title',
+  },
+  informationSubtitle: {
+    id: 'ps.application:informationSectionSubtitle',
     defaultMessage:
-      'Persónuupplýsingar umsækjanda, vegna umsóknar um stæðiskort',
+      'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
     description: 'Information section title',
   },
   informationSectionTitle: {
@@ -125,7 +130,7 @@ export const m = defineMessages({
   /* Quality Photo Section */
   qualityPhotoTitle: {
     id: 'ps.application:qualityPhotoSectionTitle',
-    defaultMessage: 'Mynd í stæðiskort',
+    defaultMessage: 'Mynd',
     description: 'Title for quality photo section',
   },
   qualityPhotoSectionTitle: {
@@ -175,27 +180,6 @@ export const m = defineMessages({
     defaultMessage: 'Þín mynd skv. ökuskírteinaskrá',
     description: `Alt text for the user's quality photo`,
   },
-  qualityPhotoWarningTitle: {
-    id: 'ps.application:qualityPhotoWarningTitle',
-    defaultMessage: 'Ljósmynd í ökuskírteinaskrá ekki gæðamerkt',
-    description: 'title for quality photo warning',
-  },
-  qualityPhotoWarningDescription: {
-    id: 'ps.application:qualityPhotoWarningDescription',
-    defaultMessage:
-      'Núverandi ljósmynd þín í ökuskírteinaskrá stenst ekki gæðakröfur og þarf því að koma með nýja ljósmynd.',
-    description: 'Description for quality photo warning',
-  },
-  qualityPhotoInstructions: {
-    id: 'ps.application:qualityPhoto.instructions',
-    defaultMessage: `
-    Ljósmynd af umsækjanda þarf að vera tekin beint að framan, hún þarf að sýna höfuð (án höfuðfats)
-    og herðar þar sem lýsing andlits er jöfn. Athuga þarf að ekki glampi á gleraugu og skyggi
-    á augu. Bakgrunnur þarf að vera ljós og ekki virka truflandi á myndefni.
-    Ljósmyndin þarf að vera prentuð á ljósmyndapappír og 35x45mm að stærð.
-    `,
-    description: 'Description of photo requirements',
-  },
   qualityPhotoInstructionsBulletOne: {
     id: 'ps.application:qualityPhoto.instructionsbulletone',
     defaultMessage: `
@@ -220,14 +204,14 @@ export const m = defineMessages({
   qualityPhotoInstructionsBulletFour: {
     id: 'ps.application:qualityPhoto.instructionsbulletfour',
     defaultMessage: `
-    Athuga þarf að ekki glampi á gleraugu og skyggi á augu.
+    Hvorki má glampa á gleraugu né skyggja á augu.
     `,
     description: 'Description of photo requirements',
   },
   qualityPhotoInstructionsBulletFive: {
     id: 'ps.application:qualityPhoto.instructionsbulletfive',
     defaultMessage: `
-    Bakgrunnur þarf að vera ljós og ekki virka truflandi á myndefni.
+    Bakgrunnur þarf að vera einfaldur og ljós á litinn.
     `,
     description: 'Description of photo requirements',
   },
@@ -246,12 +230,12 @@ export const m = defineMessages({
   deliveryMethodDescription: {
     id: 'ps.application:deliveryMethodDescription',
     defaultMessage:
-      'Stæðiskort er sjálfkrafa sent með pósti á lögheimili eftir 3-5 virka daga frá umsóknardegi. Umsækjandi getur einnig valið að sækja stæðiskort á hvaða sýslumannsembætti sem er á landinu.',
+      'Þú getur valið að fá stæðiskortið sent með pósti á lögheimili þitt eftir 3 til 5 virka daga eða sótt það hjá næsta sýslumannsembætti.',
     description: 'Description for delivery method section',
   },
   deliveryMethodHomeDelivery: {
     id: 'ps.application:deliveryMethodHomeDelivery',
-    defaultMessage: 'Fá sent heim í pósti',
+    defaultMessage: 'Fá sent í pósti',
     description: 'Checkbox label for home delivery method',
   },
   deliveryMethodPickUp: {
@@ -273,7 +257,7 @@ export const m = defineMessages({
   /* Overview Section */
   overviewTitle: {
     id: 'ps.application:overviewTitle',
-    defaultMessage: 'Yfirlit umsóknar',
+    defaultMessage: 'Yfirlit',
     description: 'Title for overview section',
   },
   overviewSectionTitle: {
@@ -284,7 +268,7 @@ export const m = defineMessages({
   overviewSectionDescription: {
     id: 'ps.application:overviewSectionDescription',
     defaultMessage:
-      'Vinsamlegast staðfestu að neðangreindar upplýsingar séu réttar.,',
+      'Vinsamlegast lestu yfir umsóknina og vertu viss um að allar upplýsingar séu rétt uppgefnar. Að loknum yfirlestri getur þú sent inn umsóknina.',
     description: 'Description for overview section',
   },
   overviewSelfPickupText: {
@@ -302,7 +286,7 @@ export const m = defineMessages({
   congratulationsTitleSuccess: {
     id: 'ps.application:congratulationsTitleSuccess',
     defaultMessage:
-      'Umsókn þín um stæðiskort hefur verið móttekin. Þú færð stæðiskortið afhent á uppgefið heimilisfang/afhendingarstað eftir 3-5 virka daga.',
+      'Umsókn þín um stæðiskort hefur verið móttekin. Þú færð stæðiskortið afhent eftir 3-5 virka daga.',
     description: 'Your application for P-sign was successful.',
   },
   congratulationsTitle: {
