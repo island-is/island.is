@@ -4,16 +4,11 @@ import { Text, Box } from '@island.is/island-ui/core'
 import * as styles from './ProfileUnit.css'
 import cn from 'classnames'
 import Unit from './Unit'
+import { ApplicationProfileInfo } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   heading: string
-  info: {
-    title: string
-    content?: string
-    link?: string
-    onclick?: () => void
-    other?: string
-  }[]
+  info: ApplicationProfileInfo[]
   className?: string
   children?: ReactNode
 }

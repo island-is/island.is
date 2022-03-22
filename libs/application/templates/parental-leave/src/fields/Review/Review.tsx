@@ -1,15 +1,16 @@
 import React, { FC, useMemo } from 'react'
+import { useFormContext } from 'react-hook-form'
+import { useMutation } from '@apollo/client'
 import get from 'lodash/get'
 import has from 'lodash/has'
 
 import {
   Application,
-  formatAndParseAsHTML,
   buildFieldOptions,
   RecordObject,
   Field,
 } from '@island.is/application/core'
-import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
 import {
   InputController,
   RadioController,
@@ -18,10 +19,16 @@ import {
 import { useLocale } from '@island.is/localization'
 import {
   DataValue,
+  handleServerError,
   Label,
   RadioValue,
   ReviewGroup,
 } from '@island.is/application/ui-components'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
+import {
+  findProblemInApolloError,
+  ProblemType,
+} from '@island.is/shared/problem'
 
 import {
   getOtherParentOptions,
@@ -65,7 +72,7 @@ export const Review: FC<ReviewScreenProps> = ({
   const pensionFundOptions = usePensionFundOptions()
   const privatePensionFundOptions = usePrivatePensionFundOptions()
   const unionOptions = useUnionOptions()
-  const { formatMessage } = useLocale()
+  const { locale, formatMessage } = useLocale()
   const [
     {
       applicantEmail,
@@ -73,6 +80,7 @@ export const Review: FC<ReviewScreenProps> = ({
       otherParent,
       otherParentEmail,
       pensionFund,
+      useUnion,
       union,
       usePrivatePensionFund,
       privatePensionFund,
@@ -89,6 +97,19 @@ export const Review: FC<ReviewScreenProps> = ({
     },
     setStateful,
   ] = useStatefulAnswers(application)
+  const { getValues, setValue } = useFormContext()
+
+  const [updateApplication] = useMutation(UPDATE_APPLICATION, {
+    onError: (e) => {
+      // We handle validation problems separately.
+      const problem = findProblemInApolloError(e)
+      if (problem?.type === ProblemType.VALIDATION_FAILED) {
+        return
+      }
+
+      return handleServerError(e, formatMessage)
+    },
+  })
 
   const otherParentName = getOtherParentName(application)
   const otherParentId = getOtherParentId(application)
@@ -118,6 +139,21 @@ export const Review: FC<ReviewScreenProps> = ({
   const groupHasNoErrors = (ids: string[]) =>
     ids.every((id) => !has(errors, id))
 
+  const saveApplication = async () => {
+    await updateApplication({
+      variables: {
+        input: {
+          id: application.id,
+          answers: {
+            ...application.answers,
+            ...getValues(),
+          },
+        },
+        locale,
+      },
+    })
+  }
+
   return (
     <>
       <ReviewGroup
@@ -127,45 +163,51 @@ export const Review: FC<ReviewScreenProps> = ({
           'applicant.phoneNumber',
         ])}
         editChildren={
-          <GridRow>
-            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-              <InputController
-                id="applicant.email"
-                name="applicant.email"
-                defaultValue={applicantEmail}
-                type="email"
-                label={formatMessage(parentalLeaveFormMessages.applicant.email)}
-                onChange={(e) =>
-                  setStateful((prev) => ({
-                    ...prev,
-                    applicantEmail: e.target.value,
-                  }))
-                }
-                error={hasError('applicant.email')}
-              />
-            </GridColumn>
-
-            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-              <InputController
-                id="applicant.phoneNumber"
-                name="applicant.phoneNumber"
-                defaultValue={applicantPhoneNumber}
-                type="tel"
-                format="###-####"
-                placeholder="000-0000"
-                label={formatMessage(
-                  parentalLeaveFormMessages.applicant.phoneNumber,
-                )}
-                onChange={(e) =>
-                  setStateful((prev) => ({
-                    ...prev,
-                    applicantPhoneNumber: e.target.value,
-                  }))
-                }
-                error={hasError('applicant.phoneNumber')}
-              />
-            </GridColumn>
-          </GridRow>
+          <Box marginTop={[8, 8, 8, 0]}>
+            <GridRow>
+              <GridColumn
+                span={['12/12', '12/12', '12/12', '6/12']}
+                paddingBottom={3}
+              >
+                <InputController
+                  id="applicant.email"
+                  name="applicant.email"
+                  defaultValue={applicantEmail}
+                  type="email"
+                  label={formatMessage(
+                    parentalLeaveFormMessages.applicant.email,
+                  )}
+                  onChange={(e) =>
+                    setStateful((prev) => ({
+                      ...prev,
+                      applicantEmail: e.target.value,
+                    }))
+                  }
+                  error={hasError('applicant.email')}
+                />
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+                <InputController
+                  id="applicant.phoneNumber"
+                  name="applicant.phoneNumber"
+                  defaultValue={applicantPhoneNumber}
+                  type="tel"
+                  format="###-####"
+                  placeholder="000-0000"
+                  label={formatMessage(
+                    parentalLeaveFormMessages.applicant.phoneNumber,
+                  )}
+                  onChange={(e) =>
+                    setStateful((prev) => ({
+                      ...prev,
+                      applicantPhoneNumber: e.target.value,
+                    }))
+                  }
+                  error={hasError('applicant.phoneNumber')}
+                />
+              </GridColumn>
+            </GridRow>
+          </Box>
         }
         triggerValidation
       >
@@ -289,17 +331,19 @@ export const Review: FC<ReviewScreenProps> = ({
       </ReviewGroup>
 
       <ReviewGroup
+        saveAction={saveApplication}
         isEditable={editable}
         canCloseEdit={groupHasNoErrors([
           'payments.bank',
           'payments.pensionFund',
+          'useUnion',
           'payments.union',
           'usePrivatePensionFund',
           'payments.privatePensionFund',
         ])}
         editChildren={
-          <>
-            <Label marginBottom={3}>
+          <Stack space={3}>
+            <Label>
               {formatMessage(
                 parentalLeaveFormMessages.shared.paymentInformationSubSection,
               )}
@@ -320,30 +364,62 @@ export const Review: FC<ReviewScreenProps> = ({
               error={hasError('payments.bank')}
             />
 
-            <GridRow marginTop={3} marginBottom={3}>
-              <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-                <SelectController
-                  label={formatMessage(
-                    parentalLeaveFormMessages.shared.salaryLabelPensionFund,
-                  )}
-                  name="payments.pensionFund"
-                  id="payments.pensionFund"
-                  options={pensionFundOptions}
-                  defaultValue={pensionFund}
-                  onSelect={(s) =>
-                    setStateful((prev) => ({
-                      ...prev,
-                      pensionFund: s.value as string,
-                    }))
-                  }
-                  error={hasError('payments.pensionFund')}
-                />
-              </GridColumn>
+            <SelectController
+              label={formatMessage(
+                parentalLeaveFormMessages.shared.salaryLabelPensionFund,
+              )}
+              name="payments.pensionFund"
+              id="payments.pensionFund"
+              options={pensionFundOptions}
+              defaultValue={pensionFund}
+              onSelect={(s) =>
+                setStateful((prev) => ({
+                  ...prev,
+                  pensionFund: s.value as string,
+                }))
+              }
+              error={hasError('payments.pensionFund')}
+            />
 
-              <GridColumn
-                paddingTop={[2, 2, 2, 0]}
-                span={['12/12', '12/12', '12/12', '6/12']}
-              >
+            <Label>
+              {formatMessage(parentalLeaveFormMessages.shared.unionName)}
+            </Label>
+
+            <Stack space={1}>
+              <RadioController
+                id="useUnion"
+                name="useUnion"
+                defaultValue={useUnion}
+                split="1/2"
+                options={[
+                  {
+                    label: formatMessage(
+                      parentalLeaveFormMessages.shared.yesOptionLabel,
+                    ),
+                    value: YES,
+                  },
+                  {
+                    label: formatMessage(
+                      parentalLeaveFormMessages.shared.noOptionLabel,
+                    ),
+                    value: NO,
+                  },
+                ]}
+                onSelect={(s: string) => {
+                  setStateful((prev) => {
+                    const union = s === NO ? '' : prev.union
+                    setValue('payments.union', union)
+                    return {
+                      ...prev,
+                      union,
+                      useUnion: s as YesOrNo,
+                    }
+                  })
+                }}
+                error={hasError('useUnion')}
+              />
+
+              {useUnion === YES && (
                 <SelectController
                   label={formatMessage(parentalLeaveFormMessages.shared.union)}
                   name="payments.union"
@@ -358,161 +434,190 @@ export const Review: FC<ReviewScreenProps> = ({
                   }}
                   error={hasError('payments.union')}
                 />
-              </GridColumn>
-            </GridRow>
+              )}
+            </Stack>
 
-            <Label marginBottom={3}>
+            <Label>
               {formatMessage(
                 parentalLeaveFormMessages.shared.privatePensionFundName,
               )}
             </Label>
-
-            <RadioController
-              id="usePrivatePensionFund"
-              name="usePrivatePensionFund"
-              defaultValue={usePrivatePensionFund}
-              split="1/2"
-              options={[
-                {
-                  label: formatMessage(
-                    parentalLeaveFormMessages.shared.yesOptionLabel,
-                  ),
-                  value: YES,
-                },
-                {
-                  label: formatMessage(
-                    parentalLeaveFormMessages.shared.noOptionLabel,
-                  ),
-                  value: NO,
-                },
-              ]}
-              onSelect={(s: string) => {
-                setStateful((prev) => ({
-                  ...prev,
-                  usePrivatePensionFund: s as YesOrNo,
-                }))
-              }}
-              error={hasError('usePrivatePensionFund')}
-            />
-
-            {usePrivatePensionFund === YES && (
-              <GridRow marginTop={1}>
-                <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-                  <SelectController
-                    label={formatMessage(
-                      parentalLeaveFormMessages.shared.privatePensionFund,
-                    )}
-                    name="payments.privatePensionFund"
-                    id="payments.privatePensionFund"
-                    options={privatePensionFundOptions}
-                    defaultValue={privatePensionFund}
-                    onSelect={(s) =>
-                      setStateful((prev) => ({
-                        ...prev,
-                        privatePensionFund: s.value as string,
-                      }))
+            <Stack space={1}>
+              <RadioController
+                id="usePrivatePensionFund"
+                name="usePrivatePensionFund"
+                defaultValue={usePrivatePensionFund}
+                split="1/2"
+                options={[
+                  {
+                    label: formatMessage(
+                      parentalLeaveFormMessages.shared.yesOptionLabel,
+                    ),
+                    value: YES,
+                  },
+                  {
+                    label: formatMessage(
+                      parentalLeaveFormMessages.shared.noOptionLabel,
+                    ),
+                    value: NO,
+                  },
+                ]}
+                onSelect={(s: string) => {
+                  setStateful((prev) => {
+                    const privatePensionFund =
+                      s === NO ? '' : prev.privatePensionFund
+                    const privatePensionFundPercentage =
+                      s === NO ? '' : prev.privatePensionFundPercentage
+                    setValue('payments.privatePensionFund', privatePensionFund)
+                    setValue(
+                      'payments.privatePensionFundPercentage',
+                      privatePensionFundPercentage,
+                    )
+                    return {
+                      ...prev,
+                      privatePensionFund,
+                      privatePensionFundPercentage,
+                      usePrivatePensionFund: s as YesOrNo,
                     }
-                    error={hasError('payments.privatePensionFund')}
-                  />
-                </GridColumn>
+                  })
+                }}
+                error={hasError('usePrivatePensionFund')}
+              />
 
-                <GridColumn
-                  paddingTop={[2, 2, 2, 0]}
-                  span={['12/12', '12/12', '12/12', '6/12']}
-                >
-                  <SelectController
-                    label={formatMessage(
-                      parentalLeaveFormMessages.shared.privatePensionFundRatio,
-                    )}
-                    name="payments.union"
-                    id="payments.union"
-                    defaultValue={privatePensionFundPercentage}
-                    options={[
-                      { label: '2%', value: '2' },
-                      { label: '4%', value: '4' },
-                    ]}
-                    onSelect={(s) =>
-                      setStateful((prev) => ({
-                        ...prev,
-                        privatePensionFundPercentage: s.value as string,
-                      }))
-                    }
-                    error={hasError('payments.union')}
-                  />
-                </GridColumn>
-              </GridRow>
-            )}
-          </>
+              {usePrivatePensionFund === YES && (
+                <GridRow>
+                  <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+                    <SelectController
+                      label={formatMessage(
+                        parentalLeaveFormMessages.shared.privatePensionFund,
+                      )}
+                      name="payments.privatePensionFund"
+                      id="payments.privatePensionFund"
+                      options={privatePensionFundOptions}
+                      defaultValue={privatePensionFund}
+                      onSelect={(s) =>
+                        setStateful((prev) => ({
+                          ...prev,
+                          privatePensionFund: s.value as string,
+                        }))
+                      }
+                      error={hasError('payments.privatePensionFund')}
+                    />
+                  </GridColumn>
+
+                  <GridColumn
+                    paddingTop={[2, 2, 2, 0]}
+                    span={['12/12', '12/12', '12/12', '6/12']}
+                  >
+                    <SelectController
+                      label={formatMessage(
+                        parentalLeaveFormMessages.shared
+                          .privatePensionFundRatio,
+                      )}
+                      name="payments.privatePensionFundPercentage"
+                      id="payments.privatePensionFundPercentage"
+                      defaultValue={privatePensionFundPercentage}
+                      options={[
+                        { label: '2%', value: '2' },
+                        { label: '4%', value: '4' },
+                      ]}
+                      onSelect={(s) =>
+                        setStateful((prev) => ({
+                          ...prev,
+                          privatePensionFundPercentage: s.value as string,
+                        }))
+                      }
+                      error={hasError('payments.privatePensionFundPercentage')}
+                    />
+                  </GridColumn>
+                </GridRow>
+              )}
+            </Stack>
+          </Stack>
         }
         triggerValidation
       >
-        <GridRow marginBottom={2}>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-            <DataValue
-              label={formatMessage(
-                parentalLeaveFormMessages.shared.paymentInformationBank,
-              )}
-              value={bank}
-            />
-          </GridColumn>
-        </GridRow>
-
-        <GridRow marginBottom={2}>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-            <DataValue
-              label={formatMessage(
-                parentalLeaveFormMessages.shared.salaryLabelPensionFund,
-              )}
-              value={getSelectOptionLabel(pensionFundOptions, pensionFund)}
-            />
-          </GridColumn>
-
-          <GridColumn
-            paddingTop={[2, 2, 2, 0]}
-            span={['12/12', '12/12', '12/12', '5/12']}
-          >
-            <DataValue
-              label={formatMessage(parentalLeaveFormMessages.shared.union)}
-              value={getSelectOptionLabel(unionOptions, union)}
-            />
-          </GridColumn>
-        </GridRow>
-
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-            <RadioValue
-              label={formatMessage(
-                parentalLeaveFormMessages.shared.privatePensionFundName,
-              )}
-              value={usePrivatePensionFund}
-            />
-          </GridColumn>
-        </GridRow>
-
-        {usePrivatePensionFund === YES && (
-          <GridRow marginTop={2}>
+        <Stack space={2}>
+          <GridRow>
             <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
               <DataValue
                 label={formatMessage(
-                  parentalLeaveFormMessages.shared.privatePensionFund,
+                  parentalLeaveFormMessages.shared.paymentInformationBank,
                 )}
-                value={getSelectOptionLabel(
-                  privatePensionFundOptions,
-                  privatePensionFund,
-                )}
-              />
-            </GridColumn>
-
-            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-              <DataValue
-                label={formatMessage(
-                  parentalLeaveFormMessages.shared.privatePensionFundRatio,
-                )}
-                value={privatePensionFundPercentage}
+                value={bank}
               />
             </GridColumn>
           </GridRow>
-        )}
+
+          <GridRow>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <DataValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.shared.salaryLabelPensionFund,
+                )}
+                value={getSelectOptionLabel(pensionFundOptions, pensionFund)}
+              />
+            </GridColumn>
+          </GridRow>
+
+          <GridRow>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <RadioValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.shared.unionName,
+                )}
+                value={useUnion}
+              />
+            </GridColumn>
+          </GridRow>
+
+          {useUnion === YES && (
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(parentalLeaveFormMessages.shared.union)}
+                  value={getSelectOptionLabel(unionOptions, union)}
+                />
+              </GridColumn>
+            </GridRow>
+          )}
+
+          <GridRow>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <RadioValue
+                label={formatMessage(
+                  parentalLeaveFormMessages.shared.privatePensionFundName,
+                )}
+                value={usePrivatePensionFund}
+              />
+            </GridColumn>
+          </GridRow>
+
+          {usePrivatePensionFund === YES && (
+            <GridRow>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(
+                    parentalLeaveFormMessages.shared.privatePensionFund,
+                  )}
+                  value={getSelectOptionLabel(
+                    privatePensionFundOptions,
+                    privatePensionFund,
+                  )}
+                />
+              </GridColumn>
+
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(
+                    parentalLeaveFormMessages.shared.privatePensionFundRatio,
+                  )}
+                  value={privatePensionFundPercentage}
+                />
+              </GridColumn>
+            </GridRow>
+          )}
+        </Stack>
       </ReviewGroup>
 
       {isPrimaryParent && (
@@ -525,7 +630,7 @@ export const Review: FC<ReviewScreenProps> = ({
           ])}
           editChildren={
             <>
-              <Label marginBottom={2}>
+              <Label marginBottom={4}>
                 {formatMessage(
                   parentalLeaveFormMessages.personalAllowance.title,
                 )}

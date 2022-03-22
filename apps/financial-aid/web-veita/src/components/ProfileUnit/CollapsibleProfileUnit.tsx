@@ -6,16 +6,11 @@ import cn from 'classnames'
 import AnimateHeight from 'react-animate-height'
 import Unit from './Unit'
 import ProfileUnit from './ProfileUnit'
+import { ApplicationProfileInfo } from '@island.is/financial-aid/shared/lib'
 
 interface Props {
   heading: string
-  info: {
-    title: string
-    content?: string
-    link?: string
-    onclick?: () => void
-    other?: string
-  }[]
+  info: ApplicationProfileInfo[]
   className?: string
   children?: ReactNode
   isPrint?: boolean

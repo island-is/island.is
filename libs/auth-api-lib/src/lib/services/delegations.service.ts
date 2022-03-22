@@ -635,7 +635,7 @@ export class DelegationsService {
     )
   }
 
-  private getClientDelegationInfo(
+  private async getClientDelegationInfo(
     user: User,
   ): Promise<ClientDelegationInfo | null> {
     return this.clientModel.findByPk(user.client, {
@@ -723,9 +723,9 @@ export class DelegationsService {
     }
 
     const startOfToday = startOfDay(new Date())
-    // validTo can be null or undefined or it needs to be the current day or in the future
+    // validTo needs to be the current day or in the future
     return scopes.every(
-      (scope) => !scope.validTo || new Date(scope.validTo) >= startOfToday,
+      (scope) => scope.validTo && new Date(scope.validTo) >= startOfToday,
     )
   }
 }

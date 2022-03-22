@@ -16,6 +16,7 @@ import * as styles from './ReviewGroup.css'
 interface ReviewGroupProps {
   editChildren?: ReactNode
   editAction?(): void
+  saveAction?(): void
   isEditable?: boolean
   isLast?: boolean
   canCloseEdit?: boolean
@@ -26,6 +27,7 @@ export const ReviewGroup: FC<ReviewGroupProps> = ({
   children,
   editChildren,
   editAction,
+  saveAction,
   isEditable = true,
   isLast,
   canCloseEdit = true,
@@ -43,6 +45,9 @@ export const ReviewGroup: FC<ReviewGroupProps> = ({
       editAction()
     } else {
       setEditable(!editable)
+      if (editable && saveAction) {
+        saveAction()
+      }
     }
   }
 
