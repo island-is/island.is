@@ -68,7 +68,7 @@ export const UserInfoLine: FC<Props> = ({
       paddingRight={4}
     >
       {title && (
-        <Text variant="eyebrow" paddingBottom={titlePadding}>
+        <Text variant="eyebrow" color="purple400" paddingBottom={titlePadding}>
           {title}
         </Text>
       )}

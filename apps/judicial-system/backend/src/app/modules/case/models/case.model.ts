@@ -151,17 +151,6 @@ export class Case extends Model<Case> {
   sendRequestToDefender?: boolean
 
   /**********
-   * Indicates whether the accused was assigned a spokesperson rather than a defender -
-   * optional
-   **********/
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: true,
-  })
-  @ApiProperty()
-  defenderIsSpokesperson?: boolean
-
-  /**********
    * Indicates whether the secutity level of the case has been heightened -
    * optional
    **********/

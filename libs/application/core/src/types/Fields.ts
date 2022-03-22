@@ -144,6 +144,7 @@ export interface SelectField extends BaseField {
   onSelect?(s: SelectOption, cb: (t: unknown) => void): void
   placeholder?: FormText
   backgroundColor?: InputBackgroundColor
+  required?: boolean
 }
 
 export interface CompanySearchField extends BaseField {
@@ -162,6 +163,7 @@ export interface AsyncSelectField extends BaseField {
   loadingError?: FormText
   backgroundColor?: InputBackgroundColor
   isSearchable?: boolean
+  required?: boolean
 }
 
 export interface TextField extends BaseField {
