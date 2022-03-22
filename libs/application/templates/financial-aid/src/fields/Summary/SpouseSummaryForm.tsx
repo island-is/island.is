@@ -14,11 +14,7 @@ import {
   formatAddress,
   getMessageApproveOptionsForIncome,
 } from '../../lib/formatters'
-import FormInfo from './FormInfo'
-import ContactInfo from './ContactInfo'
-import UserInfo from './UserInfo'
-import SummaryComment from './SummaryComment'
-import Files from './Files'
+import { FormInfo, SummaryComment, UserInfo, ContactInfo, Files } from './index'
 
 const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { id, answers, externalData } = application

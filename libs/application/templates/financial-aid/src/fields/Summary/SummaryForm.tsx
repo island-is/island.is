@@ -34,11 +34,7 @@ import { findFamilyStatus } from '../../lib/utils'
 import useApplication from '../../lib/hooks/useApplication'
 import * as styles from '../Shared.css'
 import { hasSpouse } from '../../lib/utils'
-import FormInfo from './FormInfo'
-import ContactInfo from './ContactInfo'
-import UserInfo from './UserInfo'
-import SummaryComment from './SummaryComment'
-import Files from './Files'
+import { FormInfo, SummaryComment, UserInfo, ContactInfo, Files } from './index'
 
 const SummaryForm = ({
   application,
