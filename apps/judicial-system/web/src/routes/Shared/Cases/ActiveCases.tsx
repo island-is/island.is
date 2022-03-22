@@ -224,7 +224,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                 custom={i}
                 className={cn(styles.tableRowContainer)}
                 layout
-                data-testid="custody-requests-table-row"
+                data-testid="custody-cases-table-row"
                 role="button"
                 aria-label="Opna kröfu"
                 onClick={() => {

@@ -19,7 +19,7 @@ import { UserProvider } from '@island.is/judicial-system-web/src/components'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { LocaleProvider } from '@island.is/localization'
 
-import Requests from './Requests'
+import Cases from './Cases'
 
 const mockCasesQuery = [
   {
@@ -216,9 +216,9 @@ const mockPrisonUserCasesQuery = [
   },
 ]
 
-describe('Requests', () => {
+describe('Cases', () => {
   describe('Prosecutor users', () => {
-    test('should not display a button to delete a request that do not have a NEW or DRAFT or SUBMITTED or RECEIVED state', async () => {
+    test('should not display a button to delete a case that do not have a NEW or DRAFT or SUBMITTED or RECEIVED state', async () => {
       render(
         <MockedProvider
           mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
@@ -226,7 +226,7 @@ describe('Requests', () => {
         >
           <UserProvider authenticated={true}>
             <LocaleProvider locale="is" messages={{}}>
-              <Requests />
+              <Cases />
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -239,7 +239,7 @@ describe('Requests', () => {
       ).toEqual(5)
     })
 
-    test('should not show deleted or past requests', async () => {
+    test('should not show deleted or past cases', async () => {
       render(
         <MockedProvider
           mocks={[...mockCasesQuery, ...mockProsecutorQuery]}
@@ -247,7 +247,7 @@ describe('Requests', () => {
         >
           <UserProvider authenticated={true}>
             <LocaleProvider locale="is" messages={{}}>
-              <Requests />
+              <Cases />
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -255,7 +255,7 @@ describe('Requests', () => {
 
       expect(
         await waitFor(
-          () => screen.getAllByTestId('custody-requests-table-row').length,
+          () => screen.getAllByTestId('custody-cases-table-row').length,
         ),
       ).toEqual(5)
     })
@@ -268,7 +268,7 @@ describe('Requests', () => {
         >
           <UserProvider authenticated={true}>
             <LocaleProvider locale="is" messages={{}}>
-              <Requests />
+              <Cases />
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -287,14 +287,14 @@ describe('Requests', () => {
         >
           <UserProvider authenticated={true}>
             <LocaleProvider locale="is" messages={{}}>
-              <Requests />
+              <Cases />
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
       )
 
       expect(
-        (await screen.findAllByTestId('custody-requests-table-row')).length,
+        (await screen.findAllByTestId('custody-cases-table-row')).length,
       ).toEqual(5)
     })
   })
@@ -308,7 +308,7 @@ describe('Requests', () => {
         >
           <UserProvider authenticated={true}>
             <LocaleProvider locale="is" messages={{}}>
-              <Requests />
+              <Cases />
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -316,7 +316,7 @@ describe('Requests', () => {
 
       expect(
         await waitFor(
-          () => screen.getAllByTestId('custody-requests-table-row').length,
+          () => screen.getAllByTestId('custody-cases-table-row').length,
         ),
       ).toEqual(4)
     })
@@ -329,7 +329,7 @@ describe('Requests', () => {
         >
           <UserProvider authenticated={true}>
             <LocaleProvider locale="is" messages={{}}>
-              <Requests />
+              <Cases />
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -340,7 +340,7 @@ describe('Requests', () => {
       ).toBeInTheDocument()
     })
 
-    test('should not display a button to create a request', async () => {
+    test('should not display a button to create a cases', async () => {
       render(
         <MockedProvider
           mocks={[...mockCourtCasesQuery, ...mockJudgeQuery]}
@@ -348,7 +348,7 @@ describe('Requests', () => {
         >
           <UserProvider>
             <LocaleProvider locale="is" messages={{}}>
-              <Requests />
+              <Cases />
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -361,7 +361,7 @@ describe('Requests', () => {
       ).not.toBeInTheDocument()
     })
 
-    test('should not display a button to delete a request', async () => {
+    test('should not display a button to delete a cases', async () => {
       render(
         <MockedProvider
           mocks={[...mockCourtCasesQuery, ...mockJudgeQuery]}
@@ -369,7 +369,7 @@ describe('Requests', () => {
         >
           <UserProvider>
             <LocaleProvider locale="is" messages={{}}>
-              <Requests />
+              <Cases />
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -390,7 +390,7 @@ describe('Requests', () => {
         >
           <UserProvider authenticated={true}>
             <LocaleProvider locale="is" messages={{}}>
-              <Requests />
+              <Cases />
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -411,7 +411,7 @@ describe('Requests', () => {
         >
           <UserProvider authenticated={true}>
             <LocaleProvider locale="is" messages={{}}>
-              <Requests />
+              <Cases />
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -432,7 +432,7 @@ describe('Requests', () => {
         >
           <UserProvider authenticated={true}>
             <LocaleProvider locale="is" messages={{}}>
-              <Requests />
+              <Cases />
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -440,9 +440,7 @@ describe('Requests', () => {
 
       userEvent.click(await screen.findByTestId('accusedNameSortButton'))
 
-      const tableRows = await screen.findAllByTestId(
-        'custody-requests-table-row',
-      )
+      const tableRows = await screen.findAllByTestId('custody-cases-table-row')
 
       expect(tableRows[0]).toHaveTextContent('D. M. Kil')
       expect(tableRows[1]).toHaveTextContent('Erlingur L Kristinsson')
@@ -459,7 +457,7 @@ describe('Requests', () => {
         >
           <UserProvider authenticated={true}>
             <LocaleProvider locale="is" messages={{}}>
-              <Requests />
+              <Cases />
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -467,9 +465,7 @@ describe('Requests', () => {
 
       userEvent.dblClick(await screen.findByTestId('accusedNameSortButton'))
 
-      const tableRows = await screen.findAllByTestId(
-        'custody-requests-table-row',
-      )
+      const tableRows = await screen.findAllByTestId('custody-cases-table-row')
 
       expect(tableRows[4]).toHaveTextContent('D. M. Kil')
       expect(tableRows[3]).toHaveTextContent('Erlingur L Kristinsson')
@@ -486,7 +482,7 @@ describe('Requests', () => {
         >
           <UserProvider authenticated={true}>
             <LocaleProvider locale="is" messages={{}}>
-              <Requests />
+              <Cases />
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -494,9 +490,7 @@ describe('Requests', () => {
 
       userEvent.click(await screen.findByText('Stofnað/Fyrirtaka'))
 
-      const tableRows = await screen.findAllByTestId(
-        'custody-requests-table-row',
-      )
+      const tableRows = await screen.findAllByTestId('custody-cases-table-row')
 
       expect(tableRows[0]).toHaveTextContent('Erlingur L Kristinsson')
       expect(tableRows[1]).toHaveTextContent('Jon Harring Sr.')
@@ -513,7 +507,7 @@ describe('Requests', () => {
         >
           <UserProvider authenticated={true}>
             <LocaleProvider locale="is" messages={{}}>
-              <Requests />
+              <Cases />
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,
@@ -521,9 +515,7 @@ describe('Requests', () => {
 
       userEvent.dblClick(await screen.findByText('Stofnað/Fyrirtaka'))
 
-      const tableRows = await screen.findAllByTestId(
-        'custody-requests-table-row',
-      )
+      const tableRows = await screen.findAllByTestId('custody-cases-table-row')
 
       expect(tableRows[4]).toHaveTextContent('Erlingur L Kristinsson')
       expect(tableRows[3]).toHaveTextContent('Jon Harring Sr.')
@@ -550,7 +542,7 @@ describe('Requests', () => {
         >
           <UserProvider>
             <LocaleProvider locale="is" messages={{}}>
-              <Requests />
+              <Cases />
             </LocaleProvider>
           </UserProvider>
         </MockedProvider>,

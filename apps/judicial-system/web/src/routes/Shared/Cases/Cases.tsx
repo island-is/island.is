@@ -32,10 +32,10 @@ import * as Constants from '@island.is/judicial-system/consts'
 import ActiveCases from './ActiveCases'
 import PastCases from './PastCases'
 import TableSkeleton from './TableSkeleton'
-import * as styles from './Requests.css'
+import * as styles from './Cases.css'
 
 // Credit for sorting solution: https://www.smashingmagazine.com/2020/03/sortable-tables-react/
-export const Requests: React.FC = () => {
+export const Cases: React.FC = () => {
   const [activeCases, setActiveCases] = useState<Case[]>()
   const [pastCases, setPastCases] = useState<Case[]>()
 
@@ -179,7 +179,7 @@ export const Requests: React.FC = () => {
   }
 
   return (
-    <div className={styles.requestsContainer}>
+    <div className={styles.casesContainer}>
       <PageHeader title={formatMessage(titles.shared.cases)} />
       {loading ? (
         <TableSkeleton />
@@ -333,4 +333,4 @@ export const Requests: React.FC = () => {
   )
 }
 
-export default Requests
+export default Cases

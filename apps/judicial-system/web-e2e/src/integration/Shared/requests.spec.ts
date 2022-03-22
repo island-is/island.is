@@ -7,14 +7,14 @@ describe(REQUEST_LIST_ROUTE, () => {
   })
 
   it.skip('should have a table with one row that is a button', () => {
-    cy.getByTestid('custody-requests-table-row').should(
+    cy.getByTestid('custody-cases-table-row').should(
       'have.attr',
       'role',
       'button',
     )
   })
 
-  it.skip('should have a button that allows me to create a custody and travel ban requests', () => {
+  it.skip('should have a button that allows me to create a custody and travel ban cases', () => {
     cy.contains('Stofna nýja kröfu').click()
     cy.contains('a', 'Gæsluvarðhald')
     cy.contains('a', 'Farbann')
