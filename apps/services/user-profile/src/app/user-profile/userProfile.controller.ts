@@ -1,5 +1,4 @@
 import { UserProfileScope } from '@island.is/auth/scopes'
-import omit from 'lodash/omit'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
