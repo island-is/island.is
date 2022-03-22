@@ -69,7 +69,23 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           },
         ],
       },
+      // Mín skírteini
+      {
+        name: m.licenses,
+        path: ServicePortalPath.LicensesRoot,
 
+        icon: {
+          type: 'outline',
+          icon: 'wallet',
+        },
+        children: [
+          {
+            navHide: true,
+            name: m.drivingLicense,
+            path: ServicePortalPath.LicensesDrivingDetail,
+          },
+        ],
+      },
       // Starfsleyfi
       {
         name: m.educationLicense,
@@ -249,23 +265,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
           {
             name: m.language,
             path: ServicePortalPath.SettingsPersonalInformationEditLanguage,
-          },
-        ],
-      },
-      // Mín skírteini
-      {
-        name: m.licenses,
-        path: ServicePortalPath.LicensesRoot,
-
-        icon: {
-          type: 'outline',
-          icon: 'wallet',
-        },
-        children: [
-          {
-            navHide: true,
-            name: m.drivingLicense,
-            path: ServicePortalPath.LicensesDrivingDetail,
           },
         ],
       },
