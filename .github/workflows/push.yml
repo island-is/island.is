@@ -103,9 +103,6 @@ jobs:
           echo "::set-output name=PRE_CHECK::push"
 
   prepare:
-    defaults:
-      run:
-        shell: bash
     runs-on: ec2-runners
     container: 
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
@@ -381,9 +378,6 @@ jobs:
           echo "::set-output name=UNAFFECTED::$UNAFFECTED"
 
   tests:
-    defaults:
-      run:
-        shell: bash
     needs:
       - prepare
     if: needs.prepare.outputs.TEST_CHUNKS
