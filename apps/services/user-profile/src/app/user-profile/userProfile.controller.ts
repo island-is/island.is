@@ -11,7 +11,6 @@ import {
   Body,
   Controller,
   Get,
-  Put,
   NotFoundException,
   Param,
   Post,
@@ -162,7 +161,10 @@ export class UserProfileController {
     return userProfile
   }
 
-
+  @Scopes(UserProfileScope.write)
+  @ApiSecurity('oauth2', [UserProfileScope.write])
+  @Get('stuff/:nationalId')
+  @ApiOkResponse({ type: UserProfile })
   async findOrCreateUserProfile(
     @Param('nationalId') nationalId: string,
     @CurrentUser() user: User,
@@ -426,8 +428,8 @@ export class UserProfileController {
     if (nationalId != user.nationalId) {
       throw new BadRequestException()
     } else {
-      // findOrCreateUserProfile
-      const profile = await this.findOrCreateUserProfile(nationalId, user)
+      // findOrCreateUserProfile for edge cases - fragmented onboarding
+      await this.findOrCreateUserProfile(nationalId, user)
       return await this.userProfileService.addDeviceToken(body, user)
     }
   }
@@ -450,7 +452,7 @@ export class UserProfileController {
       throw new BadRequestException()
     } else {
       // findOrCreateUserProfile for edge cases - fragmented onboarding
-      const profile = await this.findOrCreateUserProfile(nationalId, user)
+      await this.findOrCreateUserProfile(nationalId, user)
       return await this.userProfileService.deleteDeviceToken(body, user)
     }
   }
