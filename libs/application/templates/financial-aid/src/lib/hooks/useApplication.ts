@@ -1,12 +1,12 @@
-import { useContext, useMemo } from 'react'
+import { useMemo } from 'react'
 import { gql, useMutation } from '@apollo/client'
 import { ApproveOptions, FAApplication } from '../types'
 import {
   ApplicationState,
-  FamilyStatus,
   FileType,
 } from '@island.is/financial-aid/shared/lib'
 import { UploadFile } from '@island.is/island-ui/core'
+import { findFamilyStatus } from '../utils'
 
 export const CreateApplicationMutation = gql`
   mutation createMunicipalitiesApplication(
@@ -80,8 +80,7 @@ const useApplication = () => {
                 answers.relationshipStatus?.spouseEmail,
               spouseName:
                 externalData.nationalRegistry.data.applicant.spouse?.name,
-              // TODO not hardcoded
-              familyStatus: FamilyStatus.NOT_COHABITATION,
+              familyStatus: findFamilyStatus(answers, externalData),
               streetName:
                 externalData.nationalRegistry.data.applicant.address.streetName,
               postalCode:
