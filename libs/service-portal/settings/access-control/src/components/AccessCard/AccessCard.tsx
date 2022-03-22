@@ -55,7 +55,7 @@ function AccessCard({
             {validTo
               ? format(new Date(validTo), 'dd.MM.yyyy')
               : formatMessage({
-                  id: 'service.portal.settings.accessControl:home-view-varies',
+                  id: 'sp.settings-access-control:home-view-varies',
                   defaultMessage: 'Breytilegur',
                 })}
           </Text>
@@ -73,7 +73,7 @@ function AccessCard({
           <Link to={href}>
             <ArrowLink>
               {formatMessage({
-                id: 'service.portal.settings.accessControl:home-view-access',
+                id: 'sp.settings-access-control:home-view-access',
                 defaultMessage: 'Skoða aðgang',
               })}
             </ArrowLink>
