@@ -32,7 +32,7 @@ interface Props {
   isHighCourtUser: boolean
 }
 
-const PastRequests: React.FC<Props> = (props) => {
+const PastCases: React.FC<Props> = (props) => {
   const { cases, onRowClick, isHighCourtUser } = props
 
   const { user } = useContext(UserContext)
@@ -247,7 +247,7 @@ const PastRequests: React.FC<Props> = (props) => {
     },
   }
 
-  const pastRequestsColumns = useMemo(
+  const pastCasesColumns = useMemo(
     () =>
       isHighCourtUser
         ? [...prColumns.slice(0, -1), { ...highCourtPrColumns }]
@@ -255,7 +255,7 @@ const PastRequests: React.FC<Props> = (props) => {
     [isCourtRole, isHighCourtUser, highCourtPrColumns, prColumns],
   )
 
-  const pastRequestsData = useMemo(
+  const pastCasesData = useMemo(
     () =>
       cases.sort((a: Case, b: Case) =>
         b['created'].localeCompare(a['created']),
@@ -266,8 +266,8 @@ const PastRequests: React.FC<Props> = (props) => {
   return (
     <Table
       testid="pastCasesTable"
-      columns={pastRequestsColumns}
-      data={pastRequestsData ?? []}
+      columns={pastCasesColumns}
+      data={pastCasesData ?? []}
       handleRowClick={onRowClick}
       className={styles.table}
       sortableColumnIds={sortableColumnIds}
@@ -275,4 +275,4 @@ const PastRequests: React.FC<Props> = (props) => {
   )
 }
 
-export default PastRequests
+export default PastCases

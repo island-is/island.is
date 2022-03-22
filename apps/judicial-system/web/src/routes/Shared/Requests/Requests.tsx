@@ -30,7 +30,7 @@ import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 
 import ActiveRequests from './ActiveRequests'
-import PastRequests from './PastRequests'
+import PastCases from './PastCases'
 import TableSkeleton from './TableSkeleton'
 import * as styles from './Requests.css'
 
@@ -235,7 +235,7 @@ export const Requests: React.FC = () => {
               <Box marginBottom={15}>
                 {activeCases && activeCases.length > 0 ? (
                   isPrisonUser || isPrisonAdminUser ? (
-                    <PastRequests
+                    <PastCases
                       cases={activeCases}
                       onRowClick={handleRowClick}
                       isHighCourtUser={false}
@@ -292,7 +292,7 @@ export const Requests: React.FC = () => {
             </Text>
           </Box>
           {pastCases && pastCases.length > 0 ? (
-            <PastRequests
+            <PastCases
               cases={pastCases}
               onRowClick={handleRowClick}
               isHighCourtUser={isHighCourtUser}
