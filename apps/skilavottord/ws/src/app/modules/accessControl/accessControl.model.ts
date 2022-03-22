@@ -40,6 +40,29 @@ export class AccessControlModel extends Model<AccessControlModel> {
     type: DataType.STRING,
   })
   role!: AccessControlRoleType
+  
+//////////////
+
+  @Field()
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  email!: string
+
+  @Field()
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  phone!: string
+
+  @Field()
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  partner_national_id!: string
 
   @ForeignKey(() => RecyclingPartnerModel)
   @Column({
