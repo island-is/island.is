@@ -29,7 +29,7 @@ import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import type { Case } from '@island.is/judicial-system/types'
 import * as Constants from '@island.is/judicial-system/consts'
 
-import ActiveRequests from './ActiveRequests'
+import ActiveCases from './ActiveCases'
 import PastCases from './PastCases'
 import TableSkeleton from './TableSkeleton'
 import * as styles from './Requests.css'
@@ -241,7 +241,7 @@ export const Requests: React.FC = () => {
                       isHighCourtUser={false}
                     />
                   ) : (
-                    <ActiveRequests
+                    <ActiveCases
                       cases={activeCases}
                       onRowClick={handleRowClick}
                       isDeletingCase={

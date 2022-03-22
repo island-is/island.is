@@ -42,7 +42,7 @@ interface Props {
   setActiveCases?: React.Dispatch<React.SetStateAction<Case[] | undefined>>
 }
 
-const ActiveRequests: React.FC<Props> = (props) => {
+const ActiveCases: React.FC<Props> = (props) => {
   const {
     cases,
     onRowClick,
@@ -128,11 +128,7 @@ const ActiveRequests: React.FC<Props> = (props) => {
   }
 
   return (
-    <table
-      className={styles.table}
-      data-testid="activeCasesTable"
-      aria-describedby="activeRequestsTableCaption"
-    >
+    <table className={styles.table} data-testid="activeCasesTable">
       <thead className={styles.thead}>
         <tr>
           <th className={styles.th}>
@@ -405,4 +401,4 @@ const ActiveRequests: React.FC<Props> = (props) => {
   )
 }
 
-export default ActiveRequests
+export default ActiveCases
