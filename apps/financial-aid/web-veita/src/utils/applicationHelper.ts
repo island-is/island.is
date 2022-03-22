@@ -48,6 +48,7 @@ export const getApplicant = (application: Application) => {
     },
     {
       title: 'Athugasemd',
+      content: application.formComment ? '' : 'Engin athugasemd',
       other: application.formComment,
     },
   ]

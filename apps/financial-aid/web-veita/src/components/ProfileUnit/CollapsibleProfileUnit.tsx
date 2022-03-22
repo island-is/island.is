@@ -59,7 +59,7 @@ const CollapsibleProfileUnit = ({
           [`${className}`]: className,
         })}
       >
-        <Unit info={info} />
+        {info.length > 0 && <Unit info={info} />}
         {children && children}
       </AnimateHeight>
       <Box
