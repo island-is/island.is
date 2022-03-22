@@ -12,7 +12,12 @@ module.exports = {
   down: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction((t) =>
       Promise.all([
-        queryInterface.addColumn('staff', 'municipality_homepage', {
+        queryInterface.addColumn('staff', 'municipality_homepage', 
+        {
+          type: Sequelize.TEXT,
+          allowNull: true,
+        },
+        {
           transaction: t,
         }),
       ]),
