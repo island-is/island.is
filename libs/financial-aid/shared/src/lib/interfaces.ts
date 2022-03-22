@@ -16,6 +16,10 @@ export interface GetSignedUrl {
   fileName: string
 }
 
+export interface GetSignedUrlForAllFiles {
+  getSignedUrlForAllFilesId: SignedUrl[]
+}
+
 export interface SignedUrl {
   url: string
   key: string
