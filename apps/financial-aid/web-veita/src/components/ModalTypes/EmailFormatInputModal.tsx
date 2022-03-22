@@ -93,8 +93,8 @@ const EmailFormatInputModal = ({
         {state === ApplicationState.REJECTED && (
           <>
             <Text
-              marginTop={6}
-              marginBottom={2}
+              marginTop={3}
+              marginBottom={3}
               fontWeight="semiBold"
               variant="intro"
             >
