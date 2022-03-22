@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, Box } from '@island.is/island-ui/core'
+import { Text, Box, Button } from '@island.is/island-ui/core'
 import {
   ApplicationFile,
   FileType,
@@ -17,6 +17,7 @@ const FilesListWithHeaderContainer = ({ applicationFiles }: Props) => {
   if (!applicationFiles || applicationFiles?.length <= 0) {
     return null
   }
+
   return (
     <>
       <CollapsibleProfileUnit
