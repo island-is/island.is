@@ -8,7 +8,14 @@ import {
 import { MessageDescriptor } from 'react-intl'
 
 import * as m from './messages'
-import { Applicant, ApproveOptions } from './types'
+import { Routes } from './constants'
+import {
+  Applicant,
+  ApproveOptions,
+  ExternalData,
+  OverrideAnswerSchema,
+} from './types'
+import { findFamilyStatus } from './utils'
 
 export const getMessageHomeCircumstances: KeyMapping<
   HomeCircumstances,
@@ -77,3 +84,62 @@ export const formatBankInfo = (bankInfo: {
       '-' +
       bankInfo?.accountNumber
     : ''
+
+export const formItems = (
+  answers: OverrideAnswerSchema,
+  externalData: ExternalData,
+) => [
+  {
+    route: Routes.INRELATIONSHIP,
+    label: m.inRelationship.general.sectionTitle,
+    info: getMessageFamilyStatus[findFamilyStatus(answers, externalData)],
+  },
+  {
+    route: Routes.HOMECIRCUMSTANCES,
+    label: m.homeCircumstancesForm.general.sectionTitle,
+    info:
+      answers?.homeCircumstances?.type === HomeCircumstances.OTHER
+        ? answers?.homeCircumstances?.custom
+        : getMessageHomeCircumstances[answers?.homeCircumstances?.type],
+  },
+  {
+    route: Routes.STUDENT,
+    label: m.studentForm.general.sectionTitle,
+    info: getMessageApproveOptions[answers?.student?.isStudent],
+    comment:
+      answers?.student?.isStudent === ApproveOptions.Yes
+        ? answers?.student?.custom
+        : undefined,
+  },
+  {
+    route: Routes.EMPLOYMENT,
+    label: m.employmentForm.general.sectionTitle,
+    info:
+      answers?.employment?.type === Employment.OTHER
+        ? answers?.employment.custom
+        : getMessageEmploymentStatus[answers?.employment?.type],
+  },
+  {
+    route: Routes.INCOME,
+    label: m.incomeForm.general.sectionTitle,
+    info: getMessageApproveOptionsForIncome[answers?.income],
+  },
+  {
+    route: Routes.PERSONALTAXCREDIT,
+    label: m.summaryForm.formInfo.personalTaxCreditTitle,
+    info: getMessageApproveOptions[answers?.personalTaxCredit],
+  },
+  {
+    route: Routes.BANKINFO,
+    label: m.bankInfoForm.general.sectionTitle,
+    info: formatBankInfo(answers?.bankInfo),
+  },
+]
+
+export const spouseFormItems = (answers: OverrideAnswerSchema) => [
+  {
+    route: Routes.SPOUSEINCOME,
+    label: m.incomeForm.general.sectionTitle,
+    info: getMessageApproveOptionsForIncome[answers?.spouseIncome],
+  },
+]

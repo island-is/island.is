@@ -1,25 +1,39 @@
 import React from 'react'
-import { UploadFile, Box, Icon, Text } from '@island.is/island-ui/core'
-
+import { useIntl } from 'react-intl'
 import { useMutation } from '@apollo/client'
+
+import { UploadFile, Box, Icon, Text } from '@island.is/island-ui/core'
 import { encodeFilenames } from '../../lib/utils'
 import { CreateSignedUrlMutation } from '../../lib/hooks/useFileUpload'
-
 import * as styles from '../Shared.css'
+import SummaryBlock from './SummaryBlock'
+import { Routes } from '../../lib/constants'
+import { summaryForm } from '../../lib/messages'
 
 interface Props {
+  goToScreen?: (id: string) => void
+  route: Routes
   taxFiles: UploadFile[]
   incomeFiles: UploadFile[]
   applicationId: string
 }
 
-const AllFiles = ({ taxFiles, incomeFiles, applicationId }: Props) => {
+const Files = ({
+  route,
+  goToScreen,
+  taxFiles,
+  incomeFiles,
+  applicationId,
+}: Props) => {
+  const { formatMessage } = useIntl()
+  const [createSignedUrlMutation] = useMutation(CreateSignedUrlMutation)
   const allFiles = taxFiles.concat(incomeFiles)
 
-  const [createSignedUrlMutation] = useMutation(CreateSignedUrlMutation)
-
   return (
-    <>
+    <SummaryBlock editAction={() => goToScreen?.(route)}>
+      <Text fontWeight="semiBold" marginBottom={1}>
+        {formatMessage(summaryForm.formInfo.filesTitle)}
+      </Text>
       {allFiles &&
         allFiles.map((file: UploadFile, index: number) => {
           if (file) {
@@ -63,8 +77,8 @@ const AllFiles = ({ taxFiles, incomeFiles, applicationId }: Props) => {
             )
           }
         })}
-    </>
+    </SummaryBlock>
   )
 }
 
-export default AllFiles
+export default Files

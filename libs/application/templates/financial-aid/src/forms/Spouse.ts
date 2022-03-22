@@ -72,5 +72,17 @@ export const Spouse: Form = buildForm({
         }),
       ],
     }),
+    // TODO: implement submit spouse application
+    buildSection({
+      id: 'summaryForm',
+      title: m.summaryForm.general.sectionTitle,
+      children: [
+        buildCustomField({
+          id: 'spouseSummaryForm',
+          title: m.summaryForm.general.pageTitle,
+          component: 'SpouseSummaryForm',
+        }),
+      ],
+    }),
   ],
 })

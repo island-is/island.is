@@ -130,6 +130,7 @@ export const dataSchema = z.object({
       params: error.validation.phone,
     }),
   }),
+  spouseFormComment: z.string().optional(),
 })
 
 export type answersSchema = z.infer<typeof dataSchema>
