@@ -50,6 +50,7 @@ export const dataSchema = z.object({
     union: z.string().optional(),
   }),
   shareInformationWithOtherParent: z.enum([YES, NO]),
+  useUnion: z.enum([YES, NO]),
   usePrivatePensionFund: z.enum([YES, NO]),
   employerNationalRegistryId: z
     .string()
