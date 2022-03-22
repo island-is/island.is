@@ -13,6 +13,7 @@ import {
   AmountModal,
   getAidAmountModalInfo,
   UserType,
+  ApplicationProfileInfo,
 } from '@island.is/financial-aid/shared/lib'
 
 import format from 'date-fns/format'
@@ -75,7 +76,7 @@ const ApplicationProfile = ({
     }
   }, [application, municipality])
 
-  const applicationInfo = [
+  const applicationInfo: ApplicationProfileInfo[] = [
     {
       title: 'Tímabil',
       content:
@@ -118,6 +119,7 @@ const ApplicationProfile = ({
       content: application?.rejection
         ? application?.rejection
         : 'enginn ástæða gefin',
+      fullWidth: true,
     })
   }
 
