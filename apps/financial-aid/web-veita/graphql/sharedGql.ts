@@ -234,7 +234,6 @@ export const CurrentUserQuery = gql`
         roles
         active
         nickname
-        municipalityHomepage
         email
         usePseudoName
       }
@@ -416,7 +415,6 @@ export const UpdateStaffMutation = gql`
       roles
       active
       nickname
-      municipalityHomepage
       email
       usePseudoName
     }
