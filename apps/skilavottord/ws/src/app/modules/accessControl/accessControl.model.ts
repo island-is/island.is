@@ -43,21 +43,21 @@ export class AccessControlModel extends Model<AccessControlModel> {
   
 //////////////
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   email!: string
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   phone!: string
 
-  @Field()
+  @Field({ nullable: true })
   @Column({
     type: DataType.STRING,
     allowNull: false,
