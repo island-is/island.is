@@ -73,10 +73,7 @@ describe('FileController - Delete case file', () => {
     const caseId = uuid()
     const fileId = uuid()
     const key = `uploads/${uuid()}/${uuid()}/test.txt`
-    const caseFile = {
-      id: fileId,
-      key,
-    } as CaseFile
+    const caseFile = { id: fileId, key } as CaseFile
     let mockDeleteObject: jest.Mock
 
     beforeEach(async () => {
@@ -95,9 +92,7 @@ describe('FileController - Delete case file', () => {
   describe('AWS S3 removal skipped', () => {
     const caseId = uuid()
     const fileId = uuid()
-    const caseFile = {
-      id: fileId,
-    } as CaseFile
+    const caseFile = { id: fileId } as CaseFile
     let mockDeleteObject: jest.Mock
 
     beforeEach(async () => {

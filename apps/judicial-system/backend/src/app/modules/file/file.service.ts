@@ -140,6 +140,7 @@ export class FileService {
 
     return this.fileModel.create({
       ...createFile,
+      state: CaseFileState.STORED_IN_RVG,
       caseId,
       name: createFile.key.slice(NAME_BEGINS_INDEX),
     })

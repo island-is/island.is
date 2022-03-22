@@ -44,14 +44,11 @@ const CaseFileList: React.FC<Props> = (props) => {
               file={file as TCaseFile}
               showFileSize={true}
               defaultBackgroundColor={
-                file.state === CaseFileState.BOKEN_LINK ? 'dark100' : 'blue100'
+                file.status === 'broken' ? 'dark100' : 'blue100'
               }
               doneIcon="checkmark"
               hideIcons={
-                hideIcons ||
-                file.state === CaseFileState.BOKEN_LINK ||
-                (file.state === CaseFileState.STORED_IN_RVG &&
-                  file.status !== 'error')
+                hideIcons || file.status === 'broken' || file.status !== 'error'
               }
               onOpenFile={
                 canOpenFiles && file.state === CaseFileState.STORED_IN_RVG

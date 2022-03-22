@@ -2,8 +2,6 @@ import { uuid } from 'uuidv4'
 
 import { NotFoundException } from '@nestjs/common'
 
-import { CaseFileState } from '@island.is/judicial-system/types'
-
 import { AwsS3Service } from '../../aws-s3'
 import { CaseFile } from '../models/file.model'
 import { SignedUrl } from '../models/signedUrl.model'
@@ -55,11 +53,7 @@ describe('FileController - Get case file signed url', () => {
     const caseId = uuid()
     const fileId = uuid()
     const key = `uploads/${uuid()}/${uuid()}/test.txt`
-    const caseFile = {
-      id: fileId,
-      state: CaseFileState.STORED_IN_RVG,
-      key,
-    } as CaseFile
+    const caseFile = { id: fileId, key } as CaseFile
     let mockObjectExists: jest.Mock
 
     beforeEach(async () => {
@@ -77,11 +71,7 @@ describe('FileController - Get case file signed url', () => {
     const caseId = uuid()
     const fileId = uuid()
     const key = `uploads/${uuid()}/${uuid()}/test.txt`
-    const caseFile = {
-      id: fileId,
-      state: CaseFileState.STORED_IN_RVG,
-      key,
-    } as CaseFile
+    const caseFile = { id: fileId, key } as CaseFile
     let mockGetSignedUrl: jest.Mock
 
     beforeEach(async () => {
@@ -101,10 +91,7 @@ describe('FileController - Get case file signed url', () => {
     const caseId = uuid()
     const fileId = uuid()
     const key = `uploads/${uuid()}/${uuid()}/test.txt`
-    const caseFile = {
-      id: fileId,
-      key,
-    } as CaseFile
+    const caseFile = { id: fileId, key } as CaseFile
     const signedUrl = {} as SignedUrl
     let then: Then
 
@@ -144,10 +131,7 @@ describe('FileController - Get case file signed url', () => {
     const caseId = uuid()
     const fileId = uuid()
     const key = `uploads/${uuid()}/${uuid()}/test.txt`
-    const caseFile = {
-      id: fileId,
-      key,
-    } as CaseFile
+    const caseFile = { id: fileId, key } as CaseFile
     let mockUpdate: jest.Mock
     let then: Then
 
@@ -178,10 +162,7 @@ describe('FileController - Get case file signed url', () => {
     const caseId = uuid()
     const fileId = uuid()
     const key = `uploads/${uuid()}/${uuid()}/test.txt`
-    const caseFile = {
-      id: fileId,
-      key,
-    } as CaseFile
+    const caseFile = { id: fileId, key } as CaseFile
     let then: Then
 
     beforeEach(async () => {
@@ -201,10 +182,7 @@ describe('FileController - Get case file signed url', () => {
     const caseId = uuid()
     const fileId = uuid()
     const key = `uploads/${uuid()}/${uuid()}/test.txt`
-    const caseFile = {
-      id: fileId,
-      key,
-    } as CaseFile
+    const caseFile = { id: fileId, key } as CaseFile
     let then: Then
 
     beforeEach(async () => {
