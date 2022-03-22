@@ -125,12 +125,6 @@ export const Requests: React.FC = () => {
     ) {
       await sendNotification(caseToDelete.id, NotificationType.REVOKED)
       await transitionCase(caseToDelete, CaseTransition.DELETE)
-
-      setActiveCases(
-        activeCases?.filter((c: Case) => {
-          return c !== caseToDelete
-        }),
-      )
     }
   }
 
@@ -255,6 +249,7 @@ export const Requests: React.FC = () => {
                         isTransitioningCase || isSendingNotification
                       }
                       onDeleteCase={deleteCase}
+                      setActiveCases={setActiveCases}
                     />
                   )
                 ) : (

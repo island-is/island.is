@@ -14,6 +14,7 @@ interface Props {
   onSelect?: (s: Option, onChange: (t: unknown) => void) => void
   backgroundColor?: InputBackgroundColor
   isSearchable?: boolean
+  required?: boolean
 }
 
 export const SelectController: FC<Props> = ({
@@ -28,6 +29,7 @@ export const SelectController: FC<Props> = ({
   onSelect,
   backgroundColor,
   isSearchable,
+  required = false,
 }) => {
   const { clearErrors } = useFormContext()
   return (
@@ -36,6 +38,7 @@ export const SelectController: FC<Props> = ({
       name={name}
       render={({ onChange, value }) => (
         <Select
+          required={required}
           backgroundColor={backgroundColor}
           hasError={error !== undefined}
           disabled={disabled}

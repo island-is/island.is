@@ -55,6 +55,7 @@ export const GET_SUPPORT_QNAS_IN_CATEGORY = gql`
         url
         text
       }
+      contactLink
     }
   }
   ${slices}
