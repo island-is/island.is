@@ -162,6 +162,22 @@ export class UserProfileController {
     return userProfile
   }
 
+
+  async findOrCreateUserProfile(
+    @Param('nationalId') nationalId: string,
+    @CurrentUser() user: User,
+  ): Promise<UserProfile> {
+    if (nationalId != user.nationalId) {
+      throw new ForbiddenException()
+    }
+    try {
+      return await this.findOneByNationalId(nationalId, user)
+    } catch (error) {
+      return await this.create({ nationalId }, user)
+    }
+  }
+
+
   @Scopes(UserProfileScope.write)
   @ApiSecurity('oauth2', [UserProfileScope.write])
   @Put('userProfile/:nationalId')
@@ -187,7 +203,11 @@ export class UserProfileController {
 
     // findOneByNationalId must be first as it implictly checks if the
     // route param matches the authenticated user.
-    const profile = await this.findOneByNationalId(nationalId, user)
+
+    // findOrCreateUserProfile for edge cases - fragmented onboarding
+    const profile = await this.findOrCreateUserProfile(nationalId, user)
+
+    
     const updatedFields = Object.keys(userProfileToUpdate)
     userProfileToUpdate = {
       ...userProfileToUpdate,
@@ -407,6 +427,8 @@ export class UserProfileController {
     if (nationalId != user.nationalId) {
       throw new BadRequestException()
     } else {
+      // findOrCreateUserProfile
+      const profile = await this.findOrCreateUserProfile(nationalId, user)
       return await this.userProfileService.addDeviceToken(body, user)
     }
   }
@@ -428,7 +450,11 @@ export class UserProfileController {
     if (nationalId != user.nationalId) {
       throw new BadRequestException()
     } else {
+      // findOrCreateUserProfile for edge cases - fragmented onboarding
+      const profile = await this.findOrCreateUserProfile(nationalId, user)
       return await this.userProfileService.deleteDeviceToken(body, user)
     }
   }
+
+  
 }
