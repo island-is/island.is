@@ -61,8 +61,9 @@ runs:
 
         # Adding codecov uploader to PATH
         mkdir -p "$HOME/.local/bin"
-        ln -s codeconv "$HOME/.local/bin/codeconv"
+        ln -s codecov "$HOME/.local/bin/codecov"
         echo "$HOME/.local/bin" >> $GITHUB_PATH
+        $HOME/.local/bin/codecov --version
       shell: bash
 
     - name: Upload coverage reports
