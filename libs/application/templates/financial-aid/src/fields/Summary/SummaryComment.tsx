@@ -4,14 +4,14 @@ import { Controller, useFormContext } from 'react-hook-form'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import { summaryForm } from '../../lib/messages'
-import { SummaryComment } from '../../lib/types'
+import { SummaryComment as SummaryCommentType } from '../../lib/types'
 
 interface Props {
-  commentId: SummaryComment
+  commentId: SummaryCommentType
   comment?: string
 }
 
-const Comment = ({ commentId, comment }: Props) => {
+const SummaryComment = ({ commentId, comment }: Props) => {
   const { formatMessage } = useIntl()
   const { setValue } = useFormContext()
 
@@ -50,4 +50,4 @@ const Comment = ({ commentId, comment }: Props) => {
   )
 }
 
-export default Comment
+export default SummaryComment

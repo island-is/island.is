@@ -6,7 +6,7 @@ import * as m from '../../lib/messages'
 import {
   ApproveOptions,
   FAFieldBaseProps,
-  SummaryComment,
+  SummaryComment as SummaryCommentType,
 } from '../../lib/types'
 import { Routes } from '../../lib/constants'
 import { DescriptionText } from '../index'
@@ -17,7 +17,7 @@ import {
 import FormInfo from './FormInfo'
 import ContactInfo from './ContactInfo'
 import UserInfo from './UserInfo'
-import Comment from './Comment'
+import SummaryComment from './SummaryComment'
 import Files from './Files'
 
 const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
@@ -65,8 +65,8 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         applicationId={id}
       />
 
-      <Comment
-        commentId={SummaryComment.SPOUSEFORMCOMMENT}
+      <SummaryComment
+        commentId={SummaryCommentType.SPOUSEFORMCOMMENT}
         comment={answers?.spouseFormComment}
       />
     </>
