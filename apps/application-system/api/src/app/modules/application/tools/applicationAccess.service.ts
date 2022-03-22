@@ -116,7 +116,7 @@ export class ApplicationAccessService {
       })
     }
     throw new NotFoundException(
-      `An application with the id ${id} does not exist other errrororrororo`,
+      `An application with the id ${id} does not exist`,
     )
   }
 }

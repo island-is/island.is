@@ -1,14 +1,15 @@
 # 400 Actor Validation Failed
 
 The server will not process the request due to validation issues around actor delegations.
-
-The client can try again after delegating to correct delegation.
-
-## Extra metadata
+This error should be thrown when user (actor) tries to access a resource that they do not have access to but someone they have delegation rights for (subject) has access to.
+The error should contain the national id of the subject that is assigned to the resource and the types of delegations the actor has for the subject.
+Handeling this error could then involve allowing the user to delegate to the subject assigned to the resource so that they can access it as an actor.
 
 ### `fields`
 
-A JSON object listing validation issues where delegatedUser is the nationalId of the user assigned to the resource that the actor is a and actor is the nationalId of the user trying to access the resource.
+A JSON object where delegatedUser is the national id of the subject that is assigned to the resource that the actor is trying to access.
+The delegations array contains delegations that the actor has for the subject assigned to the resource.
+The delegation object contain the name of the subject, the subjects national id as well as the type of delegation the actor has for the subject.
 
 ## Example
 
@@ -23,7 +24,18 @@ Content-Type: application/problem+json
   "detail": "Resource forbidden. User has not delegated to correct user",
   "fields": {
     delegatedUser: "000000-0000",
-    actor: "111111-1111"
+    delegations: [
+      {
+        name: "Gervimaður",
+        nationalId: "000000-0000",
+        type: "LegalGuardian",
+      },
+      {
+        name: "Gervimaður",
+        nationalId: "000000-0000",
+        type: "Custom",
+      },
+    ],
   }
 }
 ```
