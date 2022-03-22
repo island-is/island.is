@@ -136,19 +136,6 @@ const FamilyMember: ServicePortalModuleComponent = ({ userInfo }) => {
           loading={loading}
         />
         <Divider />
-        {/* <UserInfoLine
-          label={formatMessage(m.familyNumber)}
-          content={
-            error ? formatMessage(dataNotFoundMessage) : person?.postal || ''
-          }
-          loading={loading}
-          tooltip={formatMessage({
-            id: 'sp.family:family-number-tooltip',
-            defaultMessage:
-              'Fjölskyldunúmer er samtenging á milli einstaklinga á lögheimili, en veitir ekki upplýsingar um hverjir eru foreldrar barns eða forsjáraðilar.',
-          })}
-        />
-        <Divider /> */}
         <UserInfoLine
           label={formatMessage(m.religion)}
           content={
