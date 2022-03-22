@@ -63,7 +63,6 @@ runs:
         mkdir -p "$HOME/.local/bin"
         cp codecov "$HOME/.local/bin/codecov"
         echo "$HOME/.local/bin" >> $GITHUB_PATH
-        $HOME/.local/bin/codecov --version
       shell: bash
 
     - name: Upload coverage reports
