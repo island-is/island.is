@@ -4,9 +4,7 @@ import cn from 'classnames'
 
 import { Text, Box } from '@island.is/island-ui/core'
 import {
-  Employment,
   getNextPeriod,
-  HomeCircumstances,
   estimatedBreakDown,
   aidCalculator,
   martialStatusTypeFromMartialCode,
@@ -21,16 +19,7 @@ import {
 } from '../../lib/types'
 import { Routes } from '../../lib/constants'
 import { DescriptionText, Breakdown } from '../index'
-import {
-  formatAddress,
-  formatBankInfo,
-  getMessageApproveOptions,
-  getMessageApproveOptionsForIncome,
-  getMessageEmploymentStatus,
-  getMessageHomeCircumstances,
-  getMessageFamilyStatus,
-} from '../../lib/formatters'
-import { findFamilyStatus } from '../../lib/utils'
+import { formatAddress, formItems } from '../../lib/formatters'
 import useApplication from '../../lib/hooks/useApplication'
 import * as styles from '../Shared.css'
 import { hasSpouse } from '../../lib/utils'
@@ -80,54 +69,6 @@ const SummaryForm = ({
       })
   }
 
-  const formItems = [
-    {
-      route: Routes.INRELATIONSHIP,
-      label: m.inRelationship.general.sectionTitle,
-      info: getMessageFamilyStatus[findFamilyStatus(answers, externalData)],
-    },
-    {
-      route: Routes.HOMECIRCUMSTANCES,
-      label: m.homeCircumstancesForm.general.sectionTitle,
-      info:
-        answers?.homeCircumstances?.type === HomeCircumstances.OTHER
-          ? answers?.homeCircumstances?.custom
-          : getMessageHomeCircumstances[answers?.homeCircumstances?.type],
-    },
-    {
-      route: Routes.STUDENT,
-      label: m.studentForm.general.sectionTitle,
-      info: getMessageApproveOptions[answers?.student?.isStudent],
-      comment:
-        answers?.student?.isStudent === ApproveOptions.Yes
-          ? answers?.student?.custom
-          : undefined,
-    },
-    {
-      route: Routes.EMPLOYMENT,
-      label: m.employmentForm.general.sectionTitle,
-      info:
-        answers?.employment?.type === Employment.OTHER
-          ? answers?.employment.custom
-          : getMessageEmploymentStatus[answers?.employment?.type],
-    },
-    {
-      route: Routes.INCOME,
-      label: m.incomeForm.general.sectionTitle,
-      info: getMessageApproveOptionsForIncome[answers?.income],
-    },
-    {
-      route: Routes.PERSONALTAXCREDIT,
-      label: m.summaryForm.formInfo.personalTaxCreditTitle,
-      info: getMessageApproveOptions[answers?.personalTaxCredit],
-    },
-    {
-      route: Routes.BANKINFO,
-      label: m.bankInfoForm.general.sectionTitle,
-      info: formatBankInfo(answers?.bankInfo),
-    },
-  ]
-
   return (
     <>
       <Box
@@ -174,7 +115,10 @@ const SummaryForm = ({
         address={formatAddress(externalData?.nationalRegistry?.data?.applicant)}
       />
 
-      <FormInfo items={formItems} goToScreen={goToScreen} />
+      <FormInfo
+        items={formItems(answers, externalData)}
+        goToScreen={goToScreen}
+      />
 
       <ContactInfo
         route={Routes.CONTACTINFO}

@@ -10,21 +10,11 @@ import {
 } from '../../lib/types'
 import { Routes } from '../../lib/constants'
 import { DescriptionText } from '../index'
-import {
-  formatAddress,
-  getMessageApproveOptionsForIncome,
-} from '../../lib/formatters'
+import { formatAddress, spouseFormItems } from '../../lib/formatters'
 import { FormInfo, SummaryComment, UserInfo, ContactInfo, Files } from './index'
 
 const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { id, answers, externalData } = application
-  const formItems = [
-    {
-      route: Routes.SPOUSEINCOME,
-      label: m.incomeForm.general.sectionTitle,
-      info: getMessageApproveOptionsForIncome[answers?.spouseIncome],
-    },
-  ]
 
   return (
     <>
@@ -40,7 +30,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         address={formatAddress(externalData?.nationalRegistry?.data?.applicant)}
       />
 
-      <FormInfo items={formItems} goToScreen={goToScreen} />
+      <FormInfo items={spouseFormItems(answers)} goToScreen={goToScreen} />
 
       <ContactInfo
         route={Routes.SPOUSECONTACTINFO}
