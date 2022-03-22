@@ -22,6 +22,7 @@ import {
   BadRequestException,
   HttpCode,
   Delete,
+  Patch,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
@@ -180,7 +181,7 @@ export class UserProfileController {
 
   @Scopes(UserProfileScope.write)
   @ApiSecurity('oauth2', [UserProfileScope.write])
-  @Put('userProfile/:nationalId')
+  @Patch('userProfile/:nationalId')
   @ApiOkResponse({ type: UserProfile })
   @ApiParam({
     name: 'nationalId',
@@ -207,7 +208,6 @@ export class UserProfileController {
     // findOrCreateUserProfile for edge cases - fragmented onboarding
     const profile = await this.findOrCreateUserProfile(nationalId, user)
 
-    
     const updatedFields = Object.keys(userProfileToUpdate)
     userProfileToUpdate = {
       ...userProfileToUpdate,
