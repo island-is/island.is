@@ -204,7 +204,15 @@ export const ParentalLeaveForm: Form = buildForm({
                     )
                   },
                 }),
+                buildCustomField({
+                  component: 'UseUnion',
+                  id: 'useUnion',
+                  title: parentalLeaveFormMessages.shared.unionName,
+                  description:
+                    parentalLeaveFormMessages.shared.unionDescription,
+                }),
                 buildAsyncSelectField({
+                  condition: (answers) => answers.useUnion === YES,
                   title: parentalLeaveFormMessages.shared.union,
                   id: 'payments.union',
                   loadingError: parentalLeaveFormMessages.errors.loading,
@@ -224,25 +232,14 @@ export const ParentalLeaveForm: Form = buildForm({
                     )
                   },
                 }),
-                buildRadioField({
+                buildCustomField({
+                  component: 'UsePrivatePensionFund',
                   id: 'usePrivatePensionFund',
                   title:
                     parentalLeaveFormMessages.shared.privatePensionFundName,
                   description:
                     parentalLeaveFormMessages.shared
                       .privatePensionFundDescription,
-                  width: 'half',
-                  space: 4,
-                  options: [
-                    {
-                      label: parentalLeaveFormMessages.shared.yesOptionLabel,
-                      value: YES,
-                    },
-                    {
-                      label: parentalLeaveFormMessages.shared.noOptionLabel,
-                      value: NO,
-                    },
-                  ],
                 }),
                 buildAsyncSelectField({
                   condition: (answers) => answers.usePrivatePensionFund === YES,

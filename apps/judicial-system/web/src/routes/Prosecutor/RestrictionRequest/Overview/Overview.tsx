@@ -93,14 +93,17 @@ export const Overview: React.FC = () => {
       setModalText(formatMessage(rcOverview.sections.modal.notificationNotSent))
     }
 
-    updateCase(workingCase.id, {
-      caseResentExplanation: createCaseResentExplanation(
-        workingCase,
-        caseResentExplanation,
-      ),
-    })
+    if (workingCase.state === CaseState.RECEIVED) {
+      updateCase(workingCase.id, {
+        caseResentExplanation: createCaseResentExplanation(
+          workingCase,
+          caseResentExplanation,
+        ),
+      })
 
-    setResendCaseModalVisible(false)
+      setResendCaseModalVisible(false)
+    }
+
     setModalVisible(true)
   }
 
@@ -241,6 +244,7 @@ export const Overview: React.FC = () => {
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
             }}
+            sessionArrangement={workingCase.sessionArrangements}
           />
         </Box>
         <Box component="section" marginBottom={5} data-testid="demands">

@@ -24,6 +24,7 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { IslykillService } from './islykill.service'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 import { DataStatus } from './types/dataStatus.enum'
+import { FetchError } from '@island.is/clients/middlewares'
 
 export const MAX_OUT_OF_DATE_MONTHS = 6
 
@@ -270,9 +271,27 @@ export class UserProfileService {
       user,
     )
 
-    const updatedUserProfile = await this.userProfileApiWithAuth(user)
-      .userProfileControllerUpdate(request)
-      .catch(handleError)
+    let updatedUserProfile: UserProfile
+    try {
+      updatedUserProfile = await this.userProfileApiWithAuth(
+        user,
+      ).userProfileControllerUpdate(request)
+    } catch (error) {
+      // Poor man's fix to allow update to be createOrUpdate.
+      // TODO: update the user profile API to support createOrUpdate
+      if (error instanceof FetchError && error.status === 404) {
+        updatedUserProfile = await this.userProfileApiWithAuth(
+          user,
+        ).userProfileControllerCreate({
+          createUserProfileDto: {
+            nationalId: user.nationalId,
+            ...updateUserDto,
+          },
+        })
+      } else {
+        return handleError(error)
+      }
+    }
 
     if (feature) {
       const islyklarData = await this.islyklarService.getIslykillSettings(

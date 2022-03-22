@@ -29,6 +29,7 @@ export const SelectFormField: FC<Props> = ({ application, error, field }) => {
     disabled,
     onSelect,
     backgroundColor,
+    required = false,
   } = field
   const { formatMessage } = useLocale()
 
@@ -47,6 +48,7 @@ export const SelectFormField: FC<Props> = ({ application, error, field }) => {
 
       <Box paddingTop={2}>
         <SelectController
+          required={required}
           defaultValue={getDefaultValue(field, application)}
           label={formatText(title, application, formatMessage)}
           name={id}
