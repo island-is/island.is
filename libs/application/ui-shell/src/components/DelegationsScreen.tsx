@@ -135,7 +135,7 @@ export const DelegationsScreen = ({
       </Page>
     )
   }
-  if (!loading && applicant) {
+  if (!loading && !applicant) {
     return <ErrorShell />
   }
 

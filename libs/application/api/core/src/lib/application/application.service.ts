@@ -202,7 +202,10 @@ export class ApplicationService {
   async update(
     id: string,
     application: Partial<
-      Pick<Application, 'attachments' | 'answers' | 'externalData' | 'pruned'>
+      Pick<
+        Application,
+        'attachments' | 'answers' | 'externalData' | 'pruned' | 'actors'
+      >
     >,
   ) {
     const [
