@@ -36,10 +36,6 @@ import { useRouter } from 'next/router'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { richText, SliceType } from '@island.is/island-ui/contentful'
-import {
-  getOrganizationPageSlugFromPathname,
-  getOrganizationSubpageSlugFromPathname,
-} from '@island.is/web/utils/organizationUtils'
 
 const DEBOUNCE_TIMER = 400
 const PAGE_SIZE = 10

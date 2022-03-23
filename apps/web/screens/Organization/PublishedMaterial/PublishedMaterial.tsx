@@ -1,5 +1,6 @@
 import { GenericTagGroup } from '@island.is/api/schema'
 import {
+  Box,
   Filter,
   FilterInput,
   FilterMultiChoice,
@@ -7,8 +8,8 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  LinkCard,
   NavigationItem,
+  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -88,6 +89,36 @@ const getInitialParameters = (filterCategories: FilterCategory[]) => {
   const parameters: Record<string, string[]> = {}
   filterCategories.forEach(({ id }) => (parameters[id] = []))
   return parameters
+}
+
+const PublishedMaterialItem = ({ item }: { item: EnhancedAsset }) => {
+  const fileEnding = item.file?.url.split('.').pop().toUpperCase()
+  return (
+    <FocusableBox
+      width="full"
+      padding={[2, 2, 3]}
+      href={
+        item.file.url.startsWith('//')
+          ? `https:${item.file.url}`
+          : item.file.url
+      }
+      border="standard"
+      borderRadius="large"
+    >
+      <Box borderRadius="large" position="relative" display="flex" width="full">
+        <Text variant="h4" as="span" color="blue400">
+          {item.title}
+        </Text>
+        {fileEnding && (
+          <Box marginLeft="auto" paddingLeft={2}>
+            <Tag disabled={true} outlined={true}>
+              {fileEnding}
+            </Tag>
+          </Box>
+        )}
+      </Box>
+    </FocusableBox>
+  )
 }
 
 interface PublishedMaterialProps {
@@ -249,24 +280,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
                 marginTop={index === 0 ? 6 : 2}
                 marginBottom={2}
               >
-                <FocusableBox
-                  width="full"
-                  href={
-                    item.file.url.startsWith('//')
-                      ? `https:${item.file.url}`
-                      : item.file.url
-                  }
-                  border="standard"
-                  borderRadius="large"
-                >
-                  <LinkCard
-                    color="black"
-                    background="white"
-                    tag={item.file?.url.split('.').pop().toUpperCase()}
-                  >
-                    {item.title}
-                  </LinkCard>
-                </FocusableBox>
+                <PublishedMaterialItem item={item} />
               </GridRow>
             )
           })}
