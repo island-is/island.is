@@ -91,8 +91,9 @@ export const Wrapper: FC<WrapperProps> = ({
           imageContentType={pageFeaturedImage?.contentType}
           imageWidth={pageFeaturedImage?.width?.toString()}
           imageHeight={pageFeaturedImage?.height?.toString()}
-          allowSearchEngineIndexing={false}
-        />
+        >
+          <meta name="robots" content="noindex, nofollow" />
+        </HeadWithSocialSharing>
       )}
       <ServiceWebContext.Provider value={{ textMode, institutionSlug }}>
         <ServiceWebHeader
