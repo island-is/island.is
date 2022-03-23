@@ -10,8 +10,10 @@ export const AssetLink: FC<AssetLinkProps> = ({ title, url, children }) => {
   const parts = url.split('.')
   const extension = parts[parts.length - 1].toUpperCase()
 
+  const secureUrl = `${url.startsWith('//') ? 'https:' : ''}${url}`
+
   return (
-    <FocusableBox href={url} border="standard" borderRadius="large">
+    <FocusableBox href={secureUrl} border="standard" borderRadius="large">
       <LinkCard background="white" tag={extension}>
         {title || children}
       </LinkCard>

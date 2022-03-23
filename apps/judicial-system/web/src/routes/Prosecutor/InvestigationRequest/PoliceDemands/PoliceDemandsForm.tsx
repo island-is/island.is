@@ -67,7 +67,13 @@ const courtClaimPrefill: Partial<
   [CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION]: {
     text:
       icDemands.sections.demands.prefill.electronicDataDiscoveryInvestigation,
-    format: { court: true, institution: true, address: true, year: true },
+    format: {
+      court: true,
+      institution: true,
+      accused: true,
+      address: true,
+      year: true,
+    },
   },
 }
 
@@ -146,7 +152,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
                 live: workingCase.defendants.length,
               }),
               ...(courtClaim.format?.year && {
-                institution: new Date().getFullYear(),
+                year: new Date().getFullYear(),
               }),
             })
           : ''

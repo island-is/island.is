@@ -20,7 +20,6 @@ export const StepThree: React.FC = () => {
     setWorkingCase,
     isLoadingWorkingCase,
     caseNotFound,
-    isCaseUpToDate,
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { autofill } = useCase()
@@ -31,26 +30,24 @@ export const StepThree: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    if (isCaseUpToDate) {
-      if (
-        workingCase.requestedCustodyRestrictions &&
-        workingCase.requestedCustodyRestrictions.indexOf(
-          CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
-        ) > -1 &&
-        workingCase.defendants
-      ) {
-        autofill(
-          'requestedOtherRestrictions',
-          formatMessage(
-            rcDemands.sections.custodyRestrictions
-              .requestedOtherRestrictionsAutofill,
-            { gender: workingCase.defendants[0].gender },
-          ),
-          workingCase,
-        )
-      }
+    if (
+      workingCase.requestedCustodyRestrictions &&
+      workingCase.requestedCustodyRestrictions.indexOf(
+        CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
+      ) > -1 &&
+      workingCase.defendants
+    ) {
+      autofill(
+        'requestedOtherRestrictions',
+        formatMessage(
+          rcDemands.sections.custodyRestrictions
+            .requestedOtherRestrictionsAutofill,
+          { gender: workingCase.defendants[0].gender },
+        ),
+        workingCase,
+      )
     }
-  }, [autofill, formatMessage, isCaseUpToDate, workingCase])
+  }, [autofill, formatMessage, workingCase])
 
   return (
     <PageLayout

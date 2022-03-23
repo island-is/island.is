@@ -447,9 +447,8 @@ export class CaseService {
       theCase.defenderEmail &&
       (isRestrictionCase(theCase.type) ||
         theCase.sessionArrangements === SessionArrangements.ALL_PRESENT ||
-        (theCase.sessionArrangements ===
-          SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
-          theCase.defenderIsSpokesperson))
+        theCase.sessionArrangements ===
+          SessionArrangements.ALL_PRESENT_SPOKESPERSON)
     ) {
       emailPromises.push(
         this.sendEmailToDefender(courtRecordPdf, theCase, rulingAttachment),
