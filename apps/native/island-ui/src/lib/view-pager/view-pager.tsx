@@ -41,7 +41,7 @@ const DotOver = styled(Animated.View)`
   width: 1px;
   height: 8px;
   background-color: ${dynamicColor('background')};
-`;
+`
 
 interface ViewPagerProps {
   itemWidth?: number
