@@ -139,7 +139,10 @@ function GrantAccess() {
   return (
     <Box>
       <IntroHeader
-        title={m.accessControlGrant}
+        title={defineMessage({
+          id: 'sp.settings-access-control:grant-intro-title',
+          defaultMessage: 'Veita aðgang',
+        })}
         intro={defineMessage({
           id: 'sp.settings-access-control:grant-intro',
           defaultMessage:

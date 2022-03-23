@@ -226,7 +226,7 @@ const Access: FC = () => {
         intro={defineMessage({
           id: 'sp.settings-access-control:access-intro',
           defaultMessage:
-            'Hér velur þú hvaða aðgangur er veittur með þessu umboði og hversu lengi. Reyndu að lágmarka þau réttindi sem þú vilt veita viðkomandi eins mikið og mögulegt er.',
+            'Reyndu að lágmarka þau réttindi sem þú vilt veita viðkomandi eins mikið og mögulegt er.',
         })}
       />
       {formError && (
