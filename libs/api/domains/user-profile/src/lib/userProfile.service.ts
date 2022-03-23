@@ -271,11 +271,9 @@ export class UserProfileService {
       user,
     )
 
-
     const updatedUserProfile = await this.userProfileApiWithAuth(user)
       .userProfileControllerUpdate(request)
       .catch(handleError)
-
 
     if (feature) {
       const islyklarData = await this.islyklarService.getIslykillSettings(

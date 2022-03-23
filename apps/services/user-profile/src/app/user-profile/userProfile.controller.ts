@@ -176,11 +176,10 @@ export class UserProfileController {
     } catch (error) {
       console.log(222222222)
       const ret = await this.create({ nationalId }, user)
-      console.log("*************************",ret)
+      console.log('*************************', ret)
       return ret
     }
   }
-
 
   @Scopes(UserProfileScope.write)
   @ApiSecurity('oauth2', [UserProfileScope.write])
@@ -458,6 +457,4 @@ export class UserProfileController {
       return await this.userProfileService.deleteDeviceToken(body, user)
     }
   }
-
-  
 }
