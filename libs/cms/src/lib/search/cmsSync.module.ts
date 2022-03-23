@@ -16,7 +16,7 @@ import { SubArticleSyncService } from './importers/subArticle.service'
 import { SupportQNASyncService } from './importers/supportQNA.service'
 import { LinkSyncService } from './importers/link.service'
 import { ProjectPageSyncService } from './importers/projectPage.service'
-import { EnhancedAssetSyncService } from './importers/enchancedAsset.service'
+import { EnhancedAssetSyncService } from './importers/enhancedAsset.service'
 
 @Module({
   providers: [

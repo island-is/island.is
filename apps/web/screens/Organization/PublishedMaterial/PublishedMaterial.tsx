@@ -36,6 +36,8 @@ import { Screen } from '../../../types'
 import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../../queries'
 import { GET_PUBLISHED_MATERIAL_QUERY } from '../../queries/PublishedMaterial'
 
+const ASSETS_PER_PAGE = 30
+
 interface FilterCategory {
   id: string
   label: string
@@ -158,7 +160,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   )
 
   const initialFilterCategories = useMemo(
-    () => getFilterCategories(publishedMaterial),
+    () => getFilterCategories(publishedMaterial.items),
     [publishedMaterial],
   )
 
@@ -188,7 +190,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     (key) => parameters[key]?.length === 0,
   )
 
-  const filteredItems = publishedMaterial.filter(
+  const filteredItems = publishedMaterial.items.filter(
     (item) =>
       item.file?.url &&
       item.title.toLowerCase().indexOf(searchValue.toLowerCase()) !== -1 &&
@@ -199,6 +201,8 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
           ),
         )),
   )
+
+  console.log(publishedMaterial)
 
   return (
     <OrganizationWrapper
@@ -317,7 +321,7 @@ PublishedMaterial.getInitialProps = async ({ apolloClient, locale, query }) => {
           organizationSlug: query.slug as string,
           page: 1,
           size: 10,
-          searchString: 'bla',
+          searchString: 'a',
         },
       },
     }),
@@ -343,7 +347,7 @@ PublishedMaterial.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   return {
     organizationPage: getOrganizationPage,
-    publishedMaterial: getPublishedMaterial ?? [],
+    publishedMaterial: getPublishedMaterial,
     namespace,
     ...getThemeConfig(getOrganizationPage.theme),
   }

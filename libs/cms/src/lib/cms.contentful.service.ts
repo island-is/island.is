@@ -735,23 +735,4 @@ export class CmsContentfulService {
       null
     )
   }
-
-  async getPublishedMaterial({
-    lang,
-    organizationSlug,
-  }: GetPublishedMaterialInput): Promise<EnhancedAsset[]> {
-    const params = {
-      ['content_type']: 'enhancedAsset',
-      'fields.organization.sys.contentType.sys.id': 'organization',
-      'fields.organization.fields.slug': organizationSlug,
-      limit: 1000,
-      order: '-fields.releaseDate',
-    }
-
-    const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IEnhancedAssetFields>(lang, params)
-      .catch(errorHandler('getPublishedMaterial'))
-
-    return (result.items as types.IEnhancedAsset[]).map(mapEnhancedAsset)
-  }
 }

@@ -20,7 +20,7 @@ import { GetSingleMenuInput } from './dto/getSingleMenu.input'
 import { GetOrganizationSubpageInput } from './dto/getOrganizationSubpage.input'
 import { OrganizationSubpage } from './models/organizationSubpage.model'
 import { GetPublishedMaterialInput } from './dto/getPublishedMaterial.input'
-import { EnhancedAsset } from './models/enhancedAsset.model'
+import { EnhancedAssetSearchResult } from './models/enhancedAssetSearchResult.model'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -232,7 +232,7 @@ export class CmsElasticsearchService {
   async getPublishedMaterial(
     index: string,
     { organizationSlug, searchString, page, size }: GetPublishedMaterialInput,
-  ): Promise<EnhancedAsset[]> {
+  ): Promise<EnhancedAssetSearchResult> {
     const query = {
       types: ['webEnhancedAsset'],
       tags: organizationSlug
@@ -243,10 +243,26 @@ export class CmsElasticsearchService {
       size,
     }
 
+    if (!searchString) {
+      const enhancedAssetResponse = await this.elasticService.getDocumentsByMetaData(
+        index,
+        query,
+      )
+      return {
+        total: enhancedAssetResponse.hits.total.value,
+        items: enhancedAssetResponse.hits.hits.map((item) =>
+          JSON.parse(item._source.response ?? '{}'),
+        ),
+      }
+    }
+
     const enhancedAssetResponse = await this.elasticService.search(index, query)
 
-    return enhancedAssetResponse.body.hits.hits.map((item) =>
-      JSON.parse(item._source.response ?? '{}'),
-    )
+    return {
+      total: enhancedAssetResponse.body.hits.total.value,
+      items: enhancedAssetResponse.body.hits.hits.map((item) =>
+        JSON.parse(item._source.response ?? '{}'),
+      ),
+    }
   }
 }

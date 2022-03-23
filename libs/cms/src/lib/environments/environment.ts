@@ -18,6 +18,7 @@ export default {
     'supportQNA',
     'link',
     'frontpage',
+    'enhancedAsset',
   ],
   nestedContentTypes: [
     'alertBanner',

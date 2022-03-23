@@ -85,6 +85,7 @@ import { GetSupportCategoriesInput } from './dto/getSupportCategories.input'
 import { GetSupportCategoriesInOrganizationInput } from './dto/getSupportCategoriesInOrganization.input'
 import { EnhancedAsset } from './models/enhancedAsset.model'
 import { GetPublishedMaterialInput } from './dto/getPublishedMaterial.input'
+import { EnhancedAssetSearchResult } from './models/enhancedAssetSearchResult.model'
 
 const { cacheTime } = environment
 
@@ -463,10 +464,10 @@ export class CmsResolver {
   }
 
   @Directive(cacheControlDirective())
-  @Query(() => [EnhancedAsset])
+  @Query(() => EnhancedAssetSearchResult)
   getPublishedMaterial(
     @Args('input') input: GetPublishedMaterialInput,
-  ): Promise<EnhancedAsset[]> {
+  ): Promise<EnhancedAssetSearchResult> {
     return this.cmsElasticsearchService.getPublishedMaterial(
       getElasticsearchIndex(input.lang),
       input,
