@@ -49,7 +49,7 @@
   - [System Manual Introduction](handbook/technical-overview/auth/system-manual/README.md)
     - [Service Provider’s Role](handbook/technical-overview/auth/system-manual/service-provider-role.md)
   - [Third Party's Development Manual](handbook/technical-overview/auth/third-party-manual/README.md)
-    - [Test Client With Postman](handbook/technical-overview/auth/third-party-manual/postman-test.md)
+    - [Test Client With Postman](handbook/technical-overview/auth/postman-test.md)
 - [Code Reviews](handbook/technical-overview/code-reviews.md)
 - [Code Standards](handbook/technical-overview/code-standards.md)
 - [Devops](handbook/technical-overview/devops/README.md)
