@@ -28,7 +28,7 @@ export class CaseFile implements TCaseFile {
   @Field(() => String)
   readonly state!: CaseFileState
 
-  @Field()
+  @Field({ nullable: true })
   readonly key?: string
 
   @Field()
