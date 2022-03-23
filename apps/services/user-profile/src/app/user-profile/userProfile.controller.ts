@@ -446,8 +446,6 @@ export class UserProfileController {
     if (nationalId != user.nationalId) {
       throw new BadRequestException()
     } else {
-      // findOrCreateUserProfile for edge cases - fragmented onboarding
-      await this.findOrCreateUserProfile(nationalId, user)
       return await this.userProfileService.deleteDeviceToken(body, user)
     }
   }
