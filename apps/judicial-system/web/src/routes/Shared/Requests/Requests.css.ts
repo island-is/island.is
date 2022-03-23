@@ -34,15 +34,7 @@ export const thead = style({
 export const deleteButtonContainer = style({
   maxWidth: '0',
   height: '100%',
-  visibility: 'hidden',
-  transition: 'all .5s ease-in-out',
   padding: 0,
-
-  selectors: {
-    '&.open': {
-      visibility: 'visible',
-    },
-  },
 })
 
 export const thButton = style({
@@ -56,13 +48,6 @@ export const thButton = style({
 export const tableRowContainer = style({
   borderBottom: `1px solid ${theme.color.blue200}`,
   cursor: 'pointer',
-  transition: 'all .5s ease-in-out',
-
-  selectors: {
-    '&.isDeleting': {
-      transform: 'translateX(-150px)',
-    },
-  },
 })
 
 export const largeColumn = style({

@@ -46,6 +46,7 @@ import {
   icCourtRecord as m,
   core,
 } from '@island.is/judicial-system-web/messages'
+import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
 import { isCourtRecordStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import * as Constants from '@island.is/judicial-system/consts'
@@ -68,6 +69,12 @@ const CourtRecordForm: React.FC<Props> = (props) => {
 
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
+
+  useDeb(workingCase, 'courtAttendees')
+  useDeb(workingCase, 'sessionBookings')
+  useDeb(workingCase, 'accusedAppealAnnouncement')
+  useDeb(workingCase, 'prosecutorAppealAnnouncement')
+  useDeb(workingCase, 'endOfSessionBookings')
 
   return (
     <>
@@ -742,6 +749,12 @@ const CourtRecordForm: React.FC<Props> = (props) => {
           nextIsLoading={isLoading}
           nextUrl={`${Constants.IC_CONFIRMATION_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!isCourtRecordStepValidIC(workingCase)}
+          hideNextButton={!workingCase.decision || !workingCase.conclusion}
+          infoBoxText={
+            !workingCase.decision || !workingCase.conclusion
+              ? formatMessage(m.nextButtonInfo)
+              : ''
+          }
         />
       </FormContentContainer>
     </>

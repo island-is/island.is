@@ -2,6 +2,29 @@ import { defineMessages } from 'react-intl'
 
 export const rcCourtRecord = {
   sections: {
+    courtDocuments: {
+      title: {
+        id:
+          'judicial.system.restriction_cases:court_record.court_documents.title',
+        defaultMessage: 'Dómskjöl',
+        description: 'Notaður sem titill fyrir "Dómskjöl" hlutan',
+      },
+      firstDocument: {
+        title: {
+          id:
+            'judicial.system.restriction_cases:court_record.court_documents.firstDocument.title',
+          defaultMessage: 'Krafa um {caseType}',
+          description:
+            'Notaður sem titill fyrir fyrsta dómskjal í dómskjala hlutaunum',
+        },
+        label: {
+          id:
+            'judicial.system.restriction_cases.court_record.court_documents.firstDocument.label',
+          defaultMessage: 'Rannsóknargögn málsins liggja frammi.',
+          description: 'Notaður sem text fyrir afan fyrsta þingskjal',
+        },
+      },
+    },
     sessionBookings: defineMessages({
       title: {
         id:
@@ -270,5 +293,12 @@ export const rcCourtRecord = {
           'Notaður sem placeholder fyrir "Tilhögun gæslu og aðrar bókanir" innsláttarsvæði á þingbókar skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
     }),
+  },
+  nextButtonInfo: {
+    id: 'judicial.system.restriction_cases:court_record.next_button_info',
+    defaultMessage:
+      'Til að halda áfram þarf að skrá lyktir máls og skrifa úrskurðarorð á skjánum Úrskurður.',
+    description:
+      'Notaður sem texti í info panel sem kemur í staðinn fyrir Áfram takk þegar ekki er búið að setja lyktir máls eða úrskurðarorð',
   },
 }

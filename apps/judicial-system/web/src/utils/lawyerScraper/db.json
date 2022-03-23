@@ -650,9 +650,9 @@
     },
     {
       "name": "Áslaug Björk Björnsdóttir",
-      "practice": "Lög og innheimta ehf.",
-      "email": "aslaug@loi.is",
-      "phoneNr": "4164000"
+      "practice": "LML lögmenn ehf.",
+      "email": "aslaug@lml.is",
+      "phoneNr": "8965463"
     },
     {
       "name": "Áslaug Gunnlaugsdóttir",
@@ -2114,7 +2114,7 @@
     },
     {
       "name": "Guðmundur Benediktsson",
-      "practice": "Lagarök lögmannsstofa.",
+      "practice": "",
       "email": "gudmundur.benediktsson@gmail.com",
       "phoneNr": "5881177"
     },
@@ -2582,9 +2582,9 @@
     },
     {
       "name": "Hallgrímur Jónsson",
-      "practice": "Pacta lögmenn",
-      "email": "hallgrimur@pacta.is",
-      "phoneNr": "4407969"
+      "practice": "",
+      "email": "",
+      "phoneNr": ""
     },
     {
       "name": "Hallmundur Albertsson",
@@ -2891,12 +2891,6 @@
       "practice": "NBI hf.",
       "email": "hildur.njardvik@landsbanki.is",
       "phoneNr": "4107741"
-    },
-    {
-      "name": "Hildur Sif Haraldsdóttir",
-      "practice": "Vátryggingafélag Íslands hf.",
-      "email": "hildurs@vis.is",
-      "phoneNr": "5605328"
     },
     {
       "name": "Hildur Sólveig Pétursdóttir",
@@ -5587,6 +5581,12 @@
       "phoneNr": "568-1245"
     },
     {
+      "name": "Steinlaug Högnadóttir",
+      "practice": "LOGOS",
+      "email": "steinlaug@logos.is",
+      "phoneNr": "5400300"
+    },
+    {
       "name": "Steinn S. Finnbogason",
       "practice": "Traust services slf.",
       "email": "steinn@traustlegal.is",
@@ -5765,12 +5765,6 @@
       "practice": "BBA Fjeldco",
       "email": "solvi@bbafjeldco.is",
       "phoneNr": "5500530"
-    },
-    {
-      "name": "Teitur Björn Einarsson",
-      "practice": "Íslenska lögfræðistofan",
-      "email": "teitur@il.is",
-      "phoneNr": "4122800"
     },
     {
       "name": "Thelma Christel Kristjánsdóttir",
@@ -5973,14 +5967,8 @@
     {
       "name": "Valgerður Erla Árnadóttir",
       "practice": "Juvo lögmenn",
-      "email": "info@valaarna.com",
+      "email": "vala@logmenn.juvo.is",
       "phoneNr": "7800380"
-    },
-    {
-      "name": "Valur Árnason",
-      "practice": "Icelandic Water holdings hf.",
-      "email": "valur@iwh.is",
-      "phoneNr": "8256760"
     },
     {
       "name": "Viðar Lúðvíksson",

@@ -1,3 +1,5 @@
+import faker from 'faker'
+
 import { Case, Defendant } from '@island.is/judicial-system/types'
 import {
   makeCustodyCase,
@@ -9,6 +11,9 @@ import { STEP_SIX_ROUTE } from '@island.is/judicial-system/consts'
 import { intercept } from '../../../utils'
 
 describe(`${STEP_SIX_ROUTE}/:id`, () => {
+  const defenderName = faker.name.findName()
+  const defenderEmail = faker.internet.email()
+  const defenderPhoneNumber = faker.phone.phoneNumber()
   beforeEach(() => {
     const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
@@ -27,6 +32,9 @@ describe(`${STEP_SIX_ROUTE}/:id`, () => {
       court: makeCourt(),
       creatingProsecutor: makeProsecutor(),
       prosecutor: makeProsecutor(),
+      defenderName,
+      defenderEmail,
+      defenderPhoneNumber,
     }
 
     cy.stubAPIResponses()
@@ -38,6 +46,9 @@ describe(`${STEP_SIX_ROUTE}/:id`, () => {
   it('should have an overview of the current case', () => {
     cy.getByTestid('infoCard').contains(
       'Donald Duck, kt. 000000-0000, Batcave 1337',
+    )
+    cy.getByTestid('infoCard').contains(
+      `${defenderName}, ${defenderEmail}, s. ${defenderPhoneNumber}`,
     )
     cy.getByTestid('infoCardDataContainer1').contains('Héraðsdómur Reykjavíkur')
     cy.getByTestid('infoCardDataContainer2').contains(
