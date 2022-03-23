@@ -32,7 +32,10 @@ module.exports = withVanillaExtract(
                 frameSrc: "'none'",
                 baseURI: "'self'",
                 styleSrc: ["'self' 'unsafe-inline'"],
-                scriptSrc: ["'self'"],
+                scriptSrc:
+                  process.env.NODE_ENV === 'production'
+                    ? ["'self'"]
+                    : ["'self' 'unsafe-eval'"],
                 connectSrc: ["'self'"],
               },
             },
