@@ -9,11 +9,10 @@ import type { Logger } from '@island.is/logging'
 import { DrivingLicenseBookClientApiFactory } from '@island.is/clients/driving-license-book'
 import { DrivingLicenseBookStudentsInput } from './dto/students.input'
 import { User } from '@island.is/auth-nest-tools'
-import { DrivingLicenseBookStudentForTeacher } from './models/studentsTeacherNationalId.response'
 import { DrivingLicenseBookStudentOverview } from './models/drivingBookStudentOverview.response'
 import {
   LICENSE_CATEGORY,
-  DrivingLicenseBookStudentForTeacherResponse,
+  DrivingLicenseBookStudentForTeacher,
 } from './drivinLicenceBook.type'
 import { DrivingLicenseBookStudent } from './models/drivingLicenseBookStudent.response'
 import { PracticalDrivingLesson } from './models/practicalDrivingLesson.response'
