@@ -9,18 +9,18 @@ import type { Logger } from '@island.is/logging'
 import { DrivingLicenseBookClientApiFactory } from '@island.is/clients/driving-license-book'
 import { DrivingLicenseBookStudentsInput } from './dto/students.input'
 import { User } from '@island.is/auth-nest-tools'
-import { DrivingLicenseBookStudentOverview } from './models/drivingBookStudentOverview.response'
-import {
-  LICENSE_CATEGORY,
-  DrivingLicenseBookStudentForTeacher,
-  DrivingLicenseBookStudent,
-} from './drivinLicenceBook.type'
-import { PracticalDrivingLesson } from './models/practicalDrivingLesson.response'
 import { DrivingLicenseBookStudentInput } from './dto/student.input'
 import { CreatePracticalDrivingLessonInput } from './dto/createPracticalDrivingLesson.input'
 import { UpdatePracticalDrivingLessonInput } from './dto/updatePracticalDrivingLesson.input'
 import { DeletePracticalDrivingLessonInput } from './dto/deletePracticalDrivingLesson.input'
 import { PracticalDrivingLessonsInput } from './dto/getPracticalDrivingLessons.input'
+import {
+  LICENSE_CATEGORY,
+  DrivingLicenseBookStudentForTeacher,
+  DrivingLicenseBookStudent,
+  PracticalDrivingLesson,
+  DrivingLicenseBookStudentOverview
+} from './drivinLicenceBook.type'
 
 @Injectable()
 export class DrivingLicenseBookService {
@@ -46,7 +46,18 @@ export class DrivingLicenseBookService {
       },
     })
     if (data && data.id) {
-      return { id: data?.id }
+      return {
+          bookId: '',
+          id: data.id,
+          studentNationalId: '',
+          studentName: '',
+          licenseCategory: '',
+          teacherNationalId: '',
+          teacherName: '',
+          minutes: -1,
+          createdOn: '',
+          comments: '',
+      }
     }
     return null
   }
