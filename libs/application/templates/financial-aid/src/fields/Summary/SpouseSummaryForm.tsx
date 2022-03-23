@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import cn from 'classnames'
 import { useIntl } from 'react-intl'
+import { useFormContext } from 'react-hook-form'
 
 import { Box, Text } from '@island.is/island-ui/core'
 
@@ -23,12 +24,15 @@ const SpouseSummaryForm = ({
   setBeforeSubmitCallback,
 }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
+  const { getValues } = useFormContext()
   const { createApplication } = useApplication()
   const [formError, setFormError] = useState(false)
   const { id, answers, externalData } = application
+  const summaryCommentType = SummaryCommentType.SPOUSEFORMCOMMENT
 
   if (setBeforeSubmitCallback) {
     setBeforeSubmitCallback(async () => {
+      application.answers.spouseFormComment = getValues(summaryCommentType)
       const createApp = await createApplication(application)
         .then(() => {
           return true
@@ -80,7 +84,7 @@ const SpouseSummaryForm = ({
       />
 
       <SummaryComment
-        commentId={SummaryCommentType.SPOUSEFORMCOMMENT}
+        commentId={summaryCommentType}
         comment={answers?.spouseFormComment}
       />
 

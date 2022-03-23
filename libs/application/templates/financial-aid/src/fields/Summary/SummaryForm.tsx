@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
+import { useFormContext } from 'react-hook-form'
 
 import { Text, Box } from '@island.is/island-ui/core'
 import {
@@ -31,9 +32,11 @@ const SummaryForm = ({
   setBeforeSubmitCallback,
 }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
+  const { getValues } = useFormContext()
   const { createApplication } = useApplication()
   const [formError, setFormError] = useState(false)
   const { id, answers, externalData } = application
+  const summaryCommentType = SummaryCommentType.FORMCOMMENT
 
   const aidAmount = useMemo(() => {
     if (
@@ -54,6 +57,7 @@ const SummaryForm = ({
   if (!hasSpouse(answers, externalData)) {
     setBeforeSubmitCallback &&
       setBeforeSubmitCallback(async () => {
+        application.answers.formComment = getValues(summaryCommentType)
         const createApp = await createApplication(application)
           .then(() => {
             return true
