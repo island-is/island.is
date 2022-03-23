@@ -152,7 +152,7 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
               >
                 <Box
                   paddingBottom={2}
-                  paddingTop={2}
+                  paddingTop={isFirstItem ? 3 : 2}
                   paddingLeft={isFirstItem ? 0 : [2, 2, 0]}
                 >
                   <Text
@@ -167,7 +167,7 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
                 <div className={cs(isSelected ? undefined : styles.hidden)}>
                   <Box
                     paddingBottom={2}
-                    paddingTop={2}
+                    paddingTop={isFirstItem ? 3 : 2}
                     paddingLeft={isFirstItem ? 0 : [2, 2, 0]}
                   >
                     <DatePickerController
