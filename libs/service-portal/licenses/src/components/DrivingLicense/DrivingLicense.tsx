@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Button, Hidden, Tag, Text } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
 import * as styles from './DrivingLicense.css'
 import { getExpiresIn, toDate } from '../../utils/dateUtils'
 import { ServicePortalPath } from '@island.is/service-portal/core'
-import QRCodeModal from '../../components/QRCodeModal/QRCodeModal'
 import { m } from '../../lib/messages'
-import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
 import { PkPass } from '../QRCodeModal/PkPass'
 
 export const DrivingLicense = ({
