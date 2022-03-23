@@ -128,7 +128,7 @@ export class DrivingLicenseBookService {
     return data
       .filter(
         (student) =>
-          (student ?? false) && !!student && student.ssn && !!student.id,
+          !!student && !!student.ssn && !!student.id,
       )
       .map((student) => ({
         id: student.id ?? '',
@@ -163,7 +163,7 @@ export class DrivingLicenseBookService {
     return data
       .filter(
         (student) =>
-          (student ?? false) && !!student && student.ssn && !!student.studentId,
+          !!student && !!student.ssn && !!student.studentId,
       )
       .map((student) => ({
         id: student.studentId ?? '-1',
@@ -205,7 +205,7 @@ export class DrivingLicenseBookService {
           isDigital: book.isDigital ?? false,
           totalLessonTime: book.totalLessonTime ?? -1,
           totalLessonCount: book.totalLessonCount ?? -1,
-          drivingSchoolExams: (book.drivingSchoolExams??true)? [] : book.drivingSchoolExams!.map((exam) => ({
+          drivingSchoolExams: (!book.drivingSchoolExams)? [] : book.drivingSchoolExams.map((exam) => ({
             id: book.id ?? '',
             examDate: exam.examDate ?? '',
             schoolNationalId: exam.schoolSsn ?? '',
@@ -217,7 +217,7 @@ export class DrivingLicenseBookService {
             schoolTypeCode: exam.schoolTypeCode ?? '',
             comments: exam.comments ?? '',
           })),
-          testResults: (book.testResults??true)? [] : book.testResults!.map((testResult) => ({
+          testResults: (!book.testResults)? [] : book.testResults.map((testResult) => ({
             id: testResult.id ?? '',
             examDate: testResult.examDate ?? '',
             score: testResult.score ?? -1,
@@ -233,7 +233,7 @@ export class DrivingLicenseBookService {
             testTypeCode: testResult.testTypeCode ?? '',
             comments: testResult.comments ?? '',
           })),
-          teachersAndLessons: (book.teachersAndLessons??true)? [] : book!.teachersAndLessons!.map((lesson) => ({
+          teachersAndLessons: (!book.teachersAndLessons)? [] : book.teachersAndLessons.map((lesson) => ({
             id: lesson.id ?? '',
             registerDate: lesson.registerDate ?? '',
             lessonTime: lesson.lessonTime ?? -1,
@@ -262,18 +262,23 @@ export class DrivingLicenseBookService {
         `Practical driving lesson for id ${input.id} not found`,
       )
     }
-    return data.map((practical) => ({
-      bookId: practical.bookId || undefined,
-      id: practical.id || undefined,
-      studentNationalId: practical.studentSsn || undefined,
-      studentName: practical.studentName || undefined,
-      licenseCategory: practical.licenseCategory || undefined,
-      teacherNationalId: practical.teacherSsn || undefined,
-      teacherName: practical.teacherName || undefined,
-      minutes: practical.minutes,
-      createdOn: practical.createdOn || undefined,
-      comments: practical.comments || undefined,
-    }))
+    return data
+      .filter(
+        (practical) =>
+          !!practical && !!practical.bookId && !!practical.id,
+      )
+      .map((practical) => ({
+        bookId: practical.bookId ?? '',
+        id: practical.id ?? '',
+        studentNationalId: practical.studentSsn ?? '',
+        studentName: practical.studentName ?? '',
+        licenseCategory: practical.licenseCategory ?? '',
+        teacherNationalId: practical.teacherSsn ?? '',
+        teacherName: practical.teacherName ?? '',
+        minutes: practical.minutes ?? -1,
+        createdOn: practical.createdOn ?? '',
+        comments: practical.comments ?? '',
+      }))
   }
 
   private async getActiveBookId(nationalId: string): Promise<string | null> {
