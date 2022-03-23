@@ -224,7 +224,7 @@ export const m = defineMessages({
   mortgageCertificateInboxText: {
     id: 'mc.application:mortgageCertificateInboxText',
     defaultMessage:
-      'Veðbókarvottorðið geturðu einnig fundið í pósthólfinu þínu',
+      'Þú getur einning fundið veðbókarvottorðið í pósthólfinu þínu',
     description: 'You can also find the mortgage certificate in your inbox',
   },
   mortgageCertificateInboxLink: {
