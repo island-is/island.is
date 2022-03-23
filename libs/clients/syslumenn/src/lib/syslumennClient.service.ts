@@ -251,8 +251,6 @@ export class SyslumennService {
       const exists = certificate.contentBase64.length !== 0
       const hasKMarking =
         exists && certificate.contentBase64 !== 'Precondition Required'
-      // const exists = true
-      // const hasKMarking = false
 
       // Note: we are saving propertyNumber and isFromSearch also in externalData,
       // since it is not saved in answers if we go from state DRAFT -> DRAFT
