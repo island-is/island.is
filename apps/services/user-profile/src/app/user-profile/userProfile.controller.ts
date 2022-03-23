@@ -24,6 +24,7 @@ import {
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
+  ApiExcludeEndpoint,
   ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
@@ -161,10 +162,7 @@ export class UserProfileController {
     return userProfile
   }
 
-  @Scopes(UserProfileScope.write)
-  @ApiSecurity('oauth2', [UserProfileScope.write])
-  @Get('stuff/:nationalId')
-  @ApiOkResponse({ type: UserProfile })
+  @ApiExcludeEndpoint()
   async findOrCreateUserProfile(
     @Param('nationalId') nationalId: string,
     @CurrentUser() user: User,
@@ -173,9 +171,13 @@ export class UserProfileController {
       throw new ForbiddenException()
     }
     try {
+      console.log(111111111)
       return await this.findOneByNationalId(nationalId, user)
     } catch (error) {
-      return await this.create({ nationalId }, user)
+      console.log(222222222)
+      const ret = await this.create({ nationalId }, user)
+      console.log("*************************",ret)
+      return ret
     }
   }
 
