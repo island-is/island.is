@@ -60,7 +60,7 @@ export class AccessControlModel extends Model<AccessControlModel> {
   @Field({ nullable: true })
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   partner_national_id!: string
 
