@@ -1,6 +1,5 @@
 import { UseGuards } from '@nestjs/common'
 import { Query, Args } from '@nestjs/graphql'
-import graphqlTypeJson from 'graphql-type-json'
 import type { User } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import {
