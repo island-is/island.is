@@ -60,7 +60,8 @@ import { parseString } from '@island.is/judicial-system-web/src/utils/formatters
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
-import type { Case } from '@island.is/judicial-system/types'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import * as Constants from '@island.is/judicial-system/consts'
 
 import { isCourtRecordStepValidRC } from '../../../../utils/validate'
@@ -98,10 +99,6 @@ export const CourtRecord: React.FC = () => {
   useDeb(workingCase, 'accusedAppealAnnouncement')
   useDeb(workingCase, 'prosecutorAppealAnnouncement')
   useDeb(workingCase, 'endOfSessionBookings')
-
-  useEffect(() => {
-    document.title = 'Þingbók - Réttarvörslugátt'
-  }, [])
 
   useEffect(() => {
     if (isCaseUpToDate) {
@@ -259,6 +256,9 @@ export const CourtRecord: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
+      <PageHeader
+        title={formatMessage(titles.court.restrictionCases.courtRecord)}
+      />
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
