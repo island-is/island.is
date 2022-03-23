@@ -5,8 +5,11 @@ import { Box } from '@island.is/island-ui/core'
 import { IntroHeader, m } from '@island.is/service-portal/core'
 
 import { Accesses } from '../../components'
+import { useNamespaces } from '@island.is/localization'
 
 function AccessControl(): JSX.Element {
+  useNamespaces('sp.settings-access-control')
+
   return (
     <Box>
       <IntroHeader

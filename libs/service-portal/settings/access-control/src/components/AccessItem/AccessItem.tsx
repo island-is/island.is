@@ -14,7 +14,7 @@ import {
   CheckboxController,
   DatePickerController,
 } from '@island.is/shared/form-fields'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import * as styles from './AccessItem.css'
 import add from 'date-fns/add'
 import format from 'date-fns/format'
@@ -28,6 +28,7 @@ interface PropTypes {
 }
 
 function AccessItem({ apiScopes, authDelegation }: PropTypes) {
+  useNamespaces('sp.settings-access-control')
   const { lang, formatMessage } = useLocale()
   const { setValue, getValues } = useFormContext()
   const { width } = useWindowSize()

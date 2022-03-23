@@ -76,13 +76,9 @@ const AccessModal: FC<Props> = ({
               )}
               {scopes && (
                 <Box display="flex" flexDirection="row" flexWrap="wrap">
-                  {scopes.map((scope, index) => {
+                  {scopes.map((scope) => {
                     return scope?.displayName ? (
-                      <Box
-                        padding={1}
-                        paddingLeft={index === 0 ? 0 : 1}
-                        key={scope?.displayName}
-                      >
+                      <Box paddingRight={2} key={scope?.displayName}>
                         <Tag>{scope.displayName}</Tag>
                       </Box>
                     ) : null

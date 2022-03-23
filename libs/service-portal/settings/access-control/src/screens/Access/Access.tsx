@@ -25,7 +25,7 @@ import {
   NotFound,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { AuthDelegationsQuery } from '../AccessControl'
 import { AccessItem, AccessModal } from '../../components'
@@ -40,6 +40,7 @@ import {
   ScopeTag,
   SCOPE_PREFIX,
 } from '../../utils/types'
+import { servicePortalSaveAccessControl } from '@island.is/plausible'
 
 const AuthApiScopesQuery = gql`
   query AuthApiScopesQuery {
@@ -108,6 +109,8 @@ const DeleteAuthDelegationMutation = gql`
 `
 
 const Access: FC = () => {
+  useNamespaces('sp.settings-access-control')
+
   const { formatMessage } = useLocale()
   const { delegationId }: { delegationId: string } = useParams()
   const history = useHistory()
@@ -169,6 +172,9 @@ const Access: FC = () => {
     })
     if (data && !errors && !err) {
       history.push(ServicePortalPath.SettingsAccessControl)
+      servicePortalSaveAccessControl(
+        ServicePortalPath.SettingsAccessControlGrant,
+      )
     }
   })
 
