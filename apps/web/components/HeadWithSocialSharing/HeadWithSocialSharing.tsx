@@ -8,6 +8,7 @@ interface HeadWithSocialSharingProps {
   imageWidth?: string
   imageHeight?: string
   imageContentType?: string
+  allowSearchEngineIndexing?: boolean
 }
 
 const usableContentTypes = ['image/jpeg', 'image/gif', 'image/png', undefined]
@@ -19,6 +20,7 @@ export const HeadWithSocialSharing: FC<HeadWithSocialSharingProps> = ({
   imageWidth,
   imageHeight,
   imageContentType,
+  allowSearchEngineIndexing = true,
   children,
 }) => {
   const isSvg = imageUrl
@@ -77,6 +79,10 @@ export const HeadWithSocialSharing: FC<HeadWithSocialSharingProps> = ({
           />
         </>
       ) : null}
+
+      {!allowSearchEngineIndexing && (
+        <meta name="robots" content="noindex, nofollow" />
+      )}
 
       {children}
     </Head>
