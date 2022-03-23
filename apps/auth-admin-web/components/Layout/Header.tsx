@@ -14,7 +14,7 @@ const Header: React.FC = () => {
   )
 
   useEffect(() => {
-    if (!isLoggedIn((session as unknown) as SessionInfo, loading)) {
+    if (!loading && !isLoggedIn((session as unknown) as SessionInfo, loading)) {
       if (router) {
         router.push('/')
       }
