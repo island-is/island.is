@@ -144,7 +144,7 @@ const SummaryForm = ({
       />
 
       <SummaryComment
-        commentId={SummaryCommentType.FORMCOMMENT}
+        commentId={summaryCommentType}
         comment={answers?.formComment}
       />
 
