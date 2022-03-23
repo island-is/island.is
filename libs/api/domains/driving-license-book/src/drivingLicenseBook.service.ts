@@ -13,8 +13,8 @@ import { DrivingLicenseBookStudentOverview } from './models/drivingBookStudentOv
 import {
   LICENSE_CATEGORY,
   DrivingLicenseBookStudentForTeacher,
+  DrivingLicenseBookStudent,
 } from './drivinLicenceBook.type'
-import { DrivingLicenseBookStudent } from './models/drivingLicenseBookStudent.response'
 import { PracticalDrivingLesson } from './models/practicalDrivingLesson.response'
 import { DrivingLicenseBookStudentInput } from './dto/student.input'
 import { CreatePracticalDrivingLessonInput } from './dto/createPracticalDrivingLesson.input'
@@ -114,18 +114,23 @@ export class DrivingLicenseBookService {
     if (!data) {
       throw new NotFoundException(`Student not found drivingLicenseBook`)
     }
-    return data.map((student) => ({
-      id: student.id || undefined,
-      nationalId: student.ssn || undefined,
-      name: student.name || undefined,
-      zipCode: student.zipCode || undefined,
-      address: student.address || undefined,
-      email: student.email || undefined,
-      primaryPhoneNumber: student.primaryPhoneNumber || undefined,
-      secondaryPhoneNumber: student.secondaryPhoneNumber || undefined,
-      active: student.active || undefined,
-      bookLicenseCategories: student.bookLicenseCategories || undefined,
-    }))
+    return data
+      .filter(
+        (student) =>
+          (student ?? false) && !!student && student.ssn && !!student.id,
+      )
+      .map((student) => ({
+        id: student.id ?? '',
+        nationalId: student.ssn ?? '',
+        name: student.name ?? '',
+        zipCode: student.zipCode ?? -1,
+        address: student.address ?? '',
+        email: student.email ?? '',
+        primaryPhoneNumber: student.primaryPhoneNumber ?? '',
+        secondaryPhoneNumber: student.secondaryPhoneNumber ?? '',
+        active: student.active ?? false,
+        bookLicenseCategories: student.bookLicenseCategories ?? [''],
+      }))
   }
 
   async getStudentsForTeacher(

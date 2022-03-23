@@ -3,33 +3,33 @@ import { DrivingLicenseBook } from './drivingLicenseBook.response'
 
 @ObjectType()
 export class DrivingLicenseBookStudent {
-  @Field(() => ID, { nullable: true })
-  id?: string
+  @Field(() => ID)
+  id!: string
 
-  @Field({ nullable: true })
-  nationalId?: string
+  @Field()
+  nationalId!: string
 
-  @Field({ nullable: true })
-  name?: string
+  @Field()
+  name!: string
 
-  @Field({ nullable: true })
-  zipCode?: number
+  @Field()
+  zipCode!: number
 
-  @Field({ nullable: true })
-  address?: string
+  @Field()
+  address!: string
 
-  @Field({ nullable: true })
-  email?: string
+  @Field()
+  email!: string
 
-  @Field({ nullable: true })
-  primaryPhoneNumber?: string
+  @Field()
+  primaryPhoneNumber!: string
 
-  @Field({ nullable: true })
-  secondaryPhoneNumber?: string
+  @Field()
+  secondaryPhoneNumber!: string
 
-  @Field({ nullable: true })
-  active?: boolean
+  @Field()
+  active!: boolean
 
-  @Field(() => [String], { nullable: true })
-  bookLicenseCategories?: string[]
+  @Field(() => [String])
+  bookLicenseCategories!: string[]
 }
