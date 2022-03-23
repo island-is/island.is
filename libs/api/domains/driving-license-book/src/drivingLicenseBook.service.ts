@@ -169,7 +169,7 @@ export class DrivingLicenseBookService {
         id: student.studentId ?? '-1',
         nationalId: student.ssn ?? '',
         name: student.name ?? '',
-        totalLessonCount: student.totalLessonCount ?? 0,
+        totalLessonCount: student.totalLessonCount ?? -1,
       }))
   }
 
@@ -182,21 +182,67 @@ export class DrivingLicenseBookService {
     })
     if (data?.books && data?.ssn) {
       const activeBook = await this.getActiveBookId(data?.ssn)
-      const book = data?.books.filter((b) => b.id === activeBook && !!b.id)[0]
+      const book = data.books.filter((b) => b.id === activeBook && !!b.id)[0]
       return {
-        ...data,
         nationalId: data.ssn,
-        teacherNationalId: book.teacherSsn,
+        id: data.id ?? '',
+        name: data.name ?? '',
+        zipCode: data.zipCode ?? -1,
+        address: data.address ?? '',
+        email: data.email ?? '',
+        primaryPhoneNumber: data.primaryPhoneNumber ?? '',
+        secondaryPhoneNumber: data.secondaryPhoneNumber ?? '',
+        active: data.active ?? false,
+        bookLicenseCategories: data.bookLicenseCategories ?? [],
         book: {
-          ...book,
-          id: book.id || undefined,
-          teacherNationalId: book.teacherSsn || undefined,
-          teachersAndLessons: book?.teachersAndLessons?.map((lesson) => ({
-            ...lesson,
-            teacherNationalId: lesson.teacherSsn,
+          id: book.id ?? '',
+          teacherNationalId: book.teacherSsn ?? '',
+          licenseCategory: book.licenseCategory ?? '',
+          createdOn: book.createdOn ?? '',
+          teacherName: book.teacherName ?? '',
+          schoolNationalId: book.schoolSsn ?? '',
+          schoolName: book.schoolName ?? '',
+          isDigital: book.isDigital ?? false,
+          totalLessonTime: book.totalLessonTime ?? -1,
+          totalLessonCount: book.totalLessonCount ?? -1,
+          drivingSchoolExams: (book.drivingSchoolExams??true)? [] : book.drivingSchoolExams!.map((exam) => ({
+            id: book.id ?? '',
+            examDate: exam.examDate ?? '',
+            schoolNationalId: exam.schoolSsn ?? '',
+            schoolName: exam.schoolName ?? '',
+            schoolEmployeeNationalId: exam.schoolEmployeeSsn ?? '',
+            schoolEmployeeName: exam.schoolEmployeeName ?? '',
+            schoolTypeId: exam.schoolTypeId ?? -1,
+            schoolTypeName: exam.schoolTypeName ?? '',
+            schoolTypeCode: exam.schoolTypeCode ?? '',
+            comments: exam.comments ?? '',
+          })),
+          testResults: (book.testResults??true)? [] : book.testResults!.map((testResult) => ({
+            id: testResult.id ?? '',
+            examDate: testResult.examDate ?? '',
+            score: testResult.score ?? -1,
+            scorePart1: testResult.scorePart1 ?? -1,
+            scorePart2: testResult.scorePart2 ?? -1,
+            hasPassed: testResult.hasPassed ?? false,
+            testCenterNationalId: testResult.testCenterSsn ?? '',
+            testCenterName: testResult.testCenterName ?? '',
+            testExaminerNationalId: testResult.testExaminerSsn ?? '',
+            testExaminerName: testResult.testExaminerName ?? '',
+            testTypeId: testResult.testTypeId ?? -1,
+            testTypeName: testResult.testTypeName ?? '',
+            testTypeCode: testResult.testTypeCode ?? '',
+            comments: testResult.comments ?? '',
+          })),
+          teachersAndLessons: (book.teachersAndLessons??true)? [] : book!.teachersAndLessons!.map((lesson) => ({
+            id: lesson.id ?? '',
+            registerDate: lesson.registerDate ?? '',
+            lessonTime: lesson.lessonTime ?? -1,
+            teacherNationalId: lesson.teacherSsn ?? '',
+            teacherName: lesson.teacherName ?? '',
+            comments: lesson.comments ?? '',
           })),
         },
-      } as DrivingLicenseBookStudentOverview
+      }
     }
 
     throw new NotFoundException(
