@@ -1,4 +1,4 @@
-# Integration options
+# Integration Options
 
 There are many ways to integrate your application with IAS, depending on your needs.
 

@@ -1,4 +1,4 @@
-# Session lifecycle
+# Session Lifecycle
 
 When users sign into applications there are up to 3 sessions to be aware of. These sessions are independent but this chapter explains some ways to keep them in sync.
 

@@ -1,4 +1,4 @@
-# Tools and examples
+# Tools and Examples
 
 Authentication is a security critical part of applications, SPs SHOULD implement it with high-quality OIDC libraries rather than implementing OIDC from scratch.
 

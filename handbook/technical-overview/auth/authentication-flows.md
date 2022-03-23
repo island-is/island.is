@@ -1,4 +1,4 @@
-# Authentication flows
+# Authentication Flows
 
 Now that we’ve reviewed some of the ways you can integrate IAS, let’s dive into the supported authentication flows.
 

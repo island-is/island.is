@@ -1,4 +1,4 @@
-# Authorising API endpoints
+# Authorising API Endpoints
 
 Tokens issued by IAS are [JSON Web Tokens (JWT)](https://datatracker.ietf.org/doc/html/rfc7519) which are cryptographically signed to prevent tampering.
 

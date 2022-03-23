@@ -1,4 +1,4 @@
-# Scopes and tokens
+# Scopes and Tokens
 
 ## IAS Scopes
 
