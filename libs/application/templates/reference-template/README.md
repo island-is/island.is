@@ -77,9 +77,9 @@ Should your template require custom API actions, like calling an external API or
 
 ## Applications that support delegations
 
-Applications do not support user delegations by default, however it is quite simple to add this feature to your application. 
+Applications do not support user delegations by default, however it is simple to add this feature to your application type.
 
-If an application should support user delegations of a specific type then a user with actor delegations of the corresponding delegation type will be prompted to choose what user they are applying for before creating a new application. They can choose to switch to a subject from their actor delegations and the subject will be the applicant for a new application and the actor's national id will be stored in the actors field for on the application.
+When an application supports user delegations of a specific type then a user with actor delegations of the corresponding delegation type will be prompted to choose what user they are applying for before creating a new application. They can choose to switch to a subject from their actor delegations and the subject will be the applicant for a new application and the actor's national id will be stored in the actors field for on the application.
 
 If a user should open up a drafted application where the applicant is a user they have correct delegation for the user will be prompted to switch to the correct subject.
 
@@ -107,6 +107,4 @@ To access the list of national ids for actors that have come in contact with the
 
 ```ts
 const actors = application.actors
-
 ```
- 
