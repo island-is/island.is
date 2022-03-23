@@ -1,15 +1,24 @@
 import { Airlines } from '@island.is/air-discount-scheme/consts'
 
+const isProd = process.env.NODE_ENV === 'production'
+
 const devConfig = {
   production: false,
   environment: 'local',
-  sentry: {
-    dsn: process.env.SENTRY_DSN,
-  },
   nationalRegistry: {
     url: process.env.NATIONAL_REGISTRY_URL,
     username: process.env.NATIONAL_REGISTRY_USERNAME,
     password: process.env.NATIONAL_REGISTRY_PASSWORD,
+    authMiddlewareOptions: {
+      forwardUserInfo: false,
+      tokenExchangeOptions: {
+        issuer: 'https://identity-server.dev01.devland.is',
+        clientId: '@vegagerdin.is/clients/air-discount-scheme',
+        clientSecret: process.env.VEGAGERDIN_IDS_CLIENTS_SECRET,
+        scope: 'openid profile @skra.is/individuals',
+        requestActorToken: false,
+      },
+    },
   },
   airlineApiKeys: {
     [Airlines.icelandair]: Airlines.icelandair,
@@ -26,9 +35,15 @@ const devConfig = {
       'localhost:7005',
     ],
   },
+  baseUrl: process.env.BASE_URL ?? 'http://localhost:4200',
+  identityServerAuth: {
+    issuer: 'https://identity-server.dev01.devland.is',
+    audience: '@vegagerdin.is',
+  },
+  idsTokenCookieName: 'next-auth.session-token',
 }
 
-if (process.env.NODE_ENV === 'production') {
+if (isProd) {
   if (!process.env.REDIS_URL_NODE_01) {
     throw new Error('Missing REDIS_URL_NODE_01 environment.')
   }
@@ -37,13 +52,20 @@ if (process.env.NODE_ENV === 'production') {
 const prodConfig = {
   production: true,
   environment: process.env.ENVIRONMENT,
-  sentry: {
-    dsn: process.env.SENTRY_DSN,
-  },
   nationalRegistry: {
     url: process.env.NATIONAL_REGISTRY_URL,
     username: process.env.NATIONAL_REGISTRY_USERNAME,
     password: process.env.NATIONAL_REGISTRY_PASSWORD,
+    authMiddlewareOptions: {
+      forwardUserInfo: false,
+      tokenExchangeOptions: {
+        issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
+        clientId: '@vegagerdin.is/clients/air-discount-scheme',
+        clientSecret: process.env.VEGAGERDIN_IDS_CLIENTS_SECRET,
+        scope: 'openid profile @skra.is/individuals',
+        requestActorToken: false,
+      },
+    },
   },
   airlineApiKeys: {
     [Airlines.icelandair]: process.env.ICELANDAIR_API_KEY,
@@ -53,6 +75,12 @@ const prodConfig = {
   redis: {
     urls: [process.env.REDIS_URL_NODE_01!],
   },
+  baseUrl: process.env.BASE_URL,
+  identityServerAuth: {
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL as string,
+    audience: '@vegagerdin.is',
+  },
+  idsTokenCookieName: '__Secure-next-auth.session-token',
 }
 
-export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig
+export default isProd ? prodConfig : devConfig

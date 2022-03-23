@@ -2,8 +2,9 @@ import { uuid } from 'uuidv4'
 
 import { BadRequestException } from '@nestjs/common'
 
-import { CreateFileDto } from '../dto'
-import { CaseFile } from '../models'
+import { randomDate } from '../../../test'
+import { CreateFileDto } from '../dto/createFile.dto'
+import { CaseFile } from '../models/file.model'
 import { createTestingFileModule } from './createTestingFileModule'
 
 interface Then {
@@ -76,7 +77,7 @@ describe('FileController - Create case file', () => {
       size: 99,
     }
     const fileId = uuid()
-    const timeStamp = new Date()
+    const timeStamp = randomDate()
     const caseFile = {
       type: 'text/plain',
       key: `uploads/${caseId}/${uuId}/test.txt`,

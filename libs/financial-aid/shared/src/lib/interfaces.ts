@@ -9,10 +9,15 @@ import {
   ApplicationStateUrl,
   FamilyStatus,
   AidType,
+  UserType,
 } from './enums'
 
 export interface GetSignedUrl {
   fileName: string
+}
+
+export interface GetSignedUrlForAllFiles {
+  getSignedUrlForAllFilesId: SignedUrl[]
 }
 
 export interface SignedUrl {
@@ -186,7 +191,6 @@ export interface CreateApplicationFile {
 }
 
 export interface CreateApplication {
-  nationalId: string
   name: string
   phoneNumber?: string
   email: string
@@ -213,7 +217,8 @@ export interface CreateApplication {
   streetName?: string
   postalCode?: string
   city?: string
-  municipalityCode?: string
+  municipalityCode: string
+  applicationSystemId?: string
 }
 
 export interface ApplicantEmailData {
@@ -226,6 +231,7 @@ export interface ApplicantEmailData {
   applicationLink: string
   applicantEmail: string
   municipality: Municipality
+  applicationLinkText: string
 }
 
 export interface ApplicationFilters {
@@ -235,6 +241,22 @@ export interface ApplicationFilters {
   Rejected: number
   Approved: number
   MyCases: number
+}
+
+export interface PersonalTaxReturn {
+  key: string
+  name: string
+  size: number
+}
+
+export interface DirectTaxPayment {
+  totalSalary: number
+  payerNationalId: string
+  personalAllowance: number
+  withheldAtSource: number
+  month: number
+  year: number
+  userType?: UserType
 }
 
 export interface Application {
@@ -274,7 +296,9 @@ export interface Application {
   streetName?: string
   postalCode?: string
   city?: string
-  municipalityCode?: string
+  municipalityCode: string
+  directTaxPayments: DirectTaxPayment[]
+  applicationSystemId?: string
 }
 
 export interface GetSignedUrlForId {
@@ -284,7 +308,8 @@ export interface GetSignedUrlForId {
 export interface Spouse {
   hasPartnerApplied: boolean
   hasFiles: boolean
-  spouseName?: string
+  applicantName: string
+  applicantSpouseEmail: string
 }
 
 export interface UpdateApplicationTableResponseType {
@@ -347,4 +372,13 @@ export interface CreateStaffMunicipality {
 export interface Calculations {
   title: string
   calculation: string
+}
+
+export interface ApplicationProfileInfo {
+  title: string
+  content?: string
+  link?: string
+  onclick?: () => void
+  other?: string
+  fullWidth?: boolean
 }

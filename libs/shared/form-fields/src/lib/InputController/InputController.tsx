@@ -26,6 +26,7 @@ interface Props {
   rows?: number
   format?: string | FormatInputValueFunction
   required?: boolean
+  readOnly?: boolean
   maxLength?: number
   size?: 'xs' | 'sm' | 'md'
 }
@@ -58,6 +59,7 @@ export const InputController: FC<Props> = ({
   suffix,
   rows,
   required,
+  readOnly,
   maxLength,
   size = 'md',
 }) => {
@@ -70,6 +72,7 @@ export const InputController: FC<Props> = ({
           id={id}
           icon={icon}
           disabled={disabled}
+          readOnly={readOnly}
           placeholder={placeholder}
           label={label}
           type="text"
@@ -99,10 +102,12 @@ export const InputController: FC<Props> = ({
     } else if (type === 'number' && suffix) {
       return (
         <NumberFormat
+          size={size}
           customInput={Input}
           id={id}
           icon={icon}
           disabled={disabled}
+          readOnly={readOnly}
           backgroundColor={backgroundColor}
           placeholder={placeholder}
           label={label}
@@ -129,10 +134,12 @@ export const InputController: FC<Props> = ({
     } else if (format && ['text', 'tel'].includes(type)) {
       return (
         <NumberFormat
+          size={size}
           customInput={Input}
           icon={icon}
           id={id}
           disabled={disabled}
+          readOnly={readOnly}
           backgroundColor={backgroundColor}
           placeholder={placeholder}
           label={label}
@@ -162,6 +169,7 @@ export const InputController: FC<Props> = ({
           id={id}
           value={value}
           disabled={disabled}
+          readOnly={readOnly}
           icon={icon}
           placeholder={placeholder}
           label={label}

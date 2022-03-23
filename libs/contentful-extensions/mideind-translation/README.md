@@ -1,3 +1,5 @@
+<!-- gitbook-navigation: "Miðeind" -->
+
 # Contentful Extension for Miðeind Machine Translations
 
 This is the Contentful extension responsible for automatic translations of articles from Icelandic to English.

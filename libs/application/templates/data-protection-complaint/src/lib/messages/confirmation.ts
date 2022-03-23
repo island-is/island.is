@@ -9,30 +9,26 @@ export const confirmation = {
     },
   }),
   labels: defineMessage({
-    bulletOne: {
-      id: 'dpac.application:section.overview.labels.bulletOne',
+    description: {
+      id: 'dpac.application:section.overview.labels.description',
       defaultMessage: `
-      Almennt er áætlað að afgreiðsla kvartana geti tekið um 9-15
-      mánuði en afgreiðslutími getur þó lengst enn frekar ef mál
-      eru sérstaklega flókin eða umfangsmikil. Forgangsmál geta
-      tekið skemmri tíma. Öll mál eru afgreidd eins hratt og mögulegt
-      er og er þeim forgangsraðað eftir tilefni og getu hverju sinni. `,
+      Upplýsingar um áætlaðan afgreiðslutíma kvartana má finna á {link}`,
       description: 'The first bullet',
     },
-    bulletTwo: {
-      id: 'dpac.application:section.overview.labels.bulletTwo',
-      defaultMessage: `
-      Telji Persónuvernd að upplýsa þurfi málið betur getur stofnunin
-      óskað eftir frekari upplýsingumeða gögnum frá öllum aðilum.
-      Aðilum máls er sent afrit allra bréfa. Hafi allir þættir málsins
-      verið upplýstir og málið ekki til lykta leitt með öðrum hætti
-      úrskurðar Persónuvernd um lögmæti þeirrar vinnslu sem kvartað er yfir.`,
-      description: 'The second bullet',
+    linkName: {
+      id: 'dpac.application:section.overview.labels.linkName',
+      defaultMessage: `vefsíðu Persónuverndar`,
+      description: 'Link name inside description',
     },
-    pdfButton: {
-      id: 'dpac.application:section.overview.labels.pdfButton',
-      defaultMessage: `Skoða kvörtun í PDF skjali`,
-      description: 'Open the application on a PDF format',
+    link: {
+      id: 'dpac.application:section.overview.labels.link',
+      defaultMessage: `https://www.personuvernd.is/efst-a-baugi/malsmedferdartimi-hja-personuvernd`,
+      description: 'Link inside description',
+    },
+    pdfLink: {
+      id: 'dpac.application:section.overview.labels.pdfLink',
+      defaultMessage: `Hlaða niður kvörtun á PDF`,
+      description: 'Link inside description',
     },
   }),
 }

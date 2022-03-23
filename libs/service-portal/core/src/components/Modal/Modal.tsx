@@ -4,7 +4,7 @@ import { Box, ModalBase, Button } from '@island.is/island-ui/core'
 
 interface Props {
   id: string
-  onCloseModal: () => void
+  onCloseModal?: () => void
   toggleClose?: boolean
 }
 
@@ -18,36 +18,30 @@ export const Modal: FC<Props> = ({
     !isVisible && onCloseModal && onCloseModal()
   }
   return (
-    <>
-      <ModalBase
-        baseId={id}
-        initialVisibility={true}
-        className={styles.modal}
-        toggleClose={toggleClose}
-        onVisibilityChange={handleOnVisibilityChange}
-      >
-        {({ closeModal }: { closeModal: () => void }) => (
-          <Box
-            background="white"
-            paddingY={[3, 6, 12]}
-            paddingX={[3, 6, 12, 15]}
-          >
-            <Box className={styles.closeButton}>
-              <Button
-                circle
-                colorScheme="negative"
-                icon="close"
-                onClick={() => {
-                  closeModal()
-                }}
-                size="large"
-              />
-            </Box>
-            {children}
+    <ModalBase
+      baseId={id}
+      initialVisibility={true}
+      className={styles.modal}
+      toggleClose={toggleClose}
+      onVisibilityChange={handleOnVisibilityChange}
+    >
+      {({ closeModal }: { closeModal: () => void }) => (
+        <Box background="white" paddingY={[3, 6, 12]} paddingX={[3, 6, 12, 15]}>
+          <Box className={styles.closeButton}>
+            <Button
+              circle
+              colorScheme="negative"
+              icon="close"
+              onClick={() => {
+                closeModal()
+              }}
+              size="large"
+            />
           </Box>
-        )}
-      </ModalBase>
-    </>
+          {children}
+        </Box>
+      )}
+    </ModalBase>
   )
 }
 

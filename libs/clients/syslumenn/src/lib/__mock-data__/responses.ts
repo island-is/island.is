@@ -4,6 +4,7 @@ import {
   VirkLeyfi,
   Skilabod,
 } from '../../../gen/fetch'
+import { SyslumennApiPaginationInfo } from '../syslumennClient.types'
 
 export const VHSUCCESS = [
   {
@@ -66,6 +67,16 @@ export const OPERATING_LICENSE = [
   },
 ] as VirkLeyfi[]
 
+export const OPERATING_LICENSE_PAGINATION_INFO_SERVICE_RES = {
+  PageSize: 10,
+  PageNumber: 1,
+  TotalCount: 50,
+  TotalPages: 5,
+  CurrentPage: 1,
+  HasNext: true,
+  HasPrevious: false,
+} as SyslumennApiPaginationInfo
+
 export const OPERATING_LICENSE_SERVICE_RES = [
   {
     rowNum: 0,
@@ -92,3 +103,8 @@ export const DATA_UPLOAD: Skilabod = {
   audkenni: 'string',
   malsnumer: 'string',
 }
+
+export const MORTGAGE_CERTIFICATE_CONTENT_OK = 'c29tZWNvbnRlbnQ='
+export const MORTGAGE_CERTIFICATE_CONTENT_NO_KMARKING = 'Precondition Required'
+export const MORTGAGE_CERTIFICATE_MESSAGE_NO_KMARKING =
+  'Ekki hægt að afgreiða vedbokarvottord'

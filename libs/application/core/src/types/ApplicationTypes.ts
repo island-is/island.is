@@ -17,6 +17,8 @@ export enum ApplicationTypes {
   GENERAL_PETITION = 'GeneralPetitionService',
   P_SIGN = 'PSign',
   CRIMINAL_RECORD = 'CriminalRecord',
+  EXAMPLE_PAYMENT = 'ExamplePayment',
+  MORTGAGE_CERTIFICATE = 'MortgageCertificate',
 }
 
 export const ApplicationConfigurations = {
@@ -69,7 +71,7 @@ export const ApplicationConfigurations = {
     translation: 'affgp.application',
   },
   [ApplicationTypes.PUBLIC_DEBT_PAYMENT_PLAN]: {
-    slug: 'greidsludreifing-skulda',
+    slug: 'greidsluaaetlun',
     translation: 'pdpp.application',
   },
   [ApplicationTypes.COMPLAINTS_TO_ALTHINGI_OMBUDSMAN]: {
@@ -91,5 +93,13 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.CRIMINAL_RECORD]: {
     slug: 'sakavottord',
     translation: 'cr.application',
+  },
+  [ApplicationTypes.EXAMPLE_PAYMENT]: {
+    slug: 'greida',
+    translation: 'ep.application',
+  },
+  [ApplicationTypes.MORTGAGE_CERTIFICATE]: {
+    slug: 'vedbokarvottord',
+    translation: 'mc.application',
   },
 }

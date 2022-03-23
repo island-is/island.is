@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import cn from 'classnames'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
@@ -21,14 +21,20 @@ import {
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
+  CaseInfo,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { parseString } from '@island.is/judicial-system-web/src/utils/formatters'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import MarkdownWrapper from '@island.is/judicial-system-web/src/components/MarkdownWrapper/MarkdownWrapper'
-import { icCaseFiles as m } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
+import {
+  errors,
+  icCaseFiles as m,
+} from '@island.is/judicial-system-web/messages'
+import * as Constants from '@island.is/judicial-system/consts'
 
 import { PoliceCaseFilesMessageBox } from '../../SharedComponents/PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
 import { PoliceCaseFilesData } from './CaseFiles'
@@ -49,11 +55,13 @@ interface PoliceCaseFile {
 
 const CaseFilesForm: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase, isLoading, policeCaseFiles } = props
+
   const [policeCaseFileList, setPoliceCaseFileList] = useState<
     PoliceCaseFile[]
   >([])
   const [checkAllChecked, setCheckAllChecked] = useState<boolean>(false)
   const [isUploading, setIsUploading] = useState<boolean>(false)
+
   const {
     files,
     uploadErrorMessage,
@@ -66,6 +74,9 @@ const CaseFilesForm: React.FC<Props> = (props) => {
   } = useS3Upload(workingCase)
   const { formatMessage } = useIntl()
   const { updateCase } = useCase()
+  const { user } = useContext(UserContext)
+
+  useDeb(workingCase, 'caseFilesComments')
 
   useEffect(() => {
     if (policeCaseFiles) {
@@ -160,6 +171,13 @@ const CaseFilesForm: React.FC<Props> = (props) => {
             {formatMessage(m.heading)}
           </Text>
         </Box>
+        <Box component="section" marginBottom={7}>
+          <CaseInfo
+            workingCase={workingCase}
+            userRole={user?.role}
+            showAdditionalInfo
+          />
+        </Box>
         <Box marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
@@ -222,9 +240,7 @@ const CaseFilesForm: React.FC<Props> = (props) => {
                     <PoliceCaseFilesMessageBox
                       icon="close"
                       iconColor="red400"
-                      message={formatMessage(
-                        m.sections.policeCaseFiles.errorMessage,
-                      )}
+                      message={formatMessage(errors.general)}
                     />
                   )
                 ) : policeCaseFiles?.files.length === 0 ? (
@@ -279,9 +295,7 @@ const CaseFilesForm: React.FC<Props> = (props) => {
                   <PoliceCaseFilesMessageBox
                     icon="checkmark"
                     iconColor="blue400"
-                    message={formatMessage(
-                      m.sections.policeCaseFiles.allFilesUploadedMessage,
-                    )}
+                    message={formatMessage(errors.general)}
                   />
                 )}
               </motion.ul>
@@ -336,7 +350,7 @@ const CaseFilesForm: React.FC<Props> = (props) => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'caseFilesComments',
-                  event,
+                  event.target.value,
                   [],
                   workingCase,
                   setWorkingCase,
@@ -350,6 +364,7 @@ const CaseFilesForm: React.FC<Props> = (props) => {
               }
               textarea
               rows={7}
+              autoExpand={{ on: true, maxHeight: 300 }}
             />
           </Box>
         </Box>

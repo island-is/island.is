@@ -8,9 +8,8 @@ import {
   CallHandler,
 } from '@nestjs/common'
 
-import { Case } from '../models'
+import { Case } from '../models/case.model'
 import { transformCase } from './case.transformer'
-import { maskCase } from './case.mask'
 
 @Injectable()
 export class CasesInterceptor implements NestInterceptor {
@@ -18,7 +17,7 @@ export class CasesInterceptor implements NestInterceptor {
     return next.handle().pipe(
       map((cases: Case[]) => {
         return cases.map((retCase) => {
-          return maskCase(transformCase(retCase))
+          return transformCase(retCase)
         })
       }),
     )

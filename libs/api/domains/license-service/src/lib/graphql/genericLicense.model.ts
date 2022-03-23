@@ -112,6 +112,12 @@ export class GenericPkPass {
 }
 
 @ObjectType()
+export class GenericPkPassQrCode {
+  @Field(() => String)
+  pkpassQRCode!: string
+}
+
+@ObjectType()
 export class GenericPkPassVerificationError {
   @Field(() => String, {
     nullable: true,

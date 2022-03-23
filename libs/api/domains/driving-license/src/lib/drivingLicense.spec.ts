@@ -6,10 +6,14 @@ import {
   MOCK_NATIONAL_ID_EXPIRED,
   MOCK_NATIONAL_ID_NO_ASSESSMENT,
   MOCK_NATIONAL_ID_TEACHER,
+  MOCK_USER,
   requestHandlers,
 } from './__mock-data__/requestHandlers'
 import { startMocking } from '@island.is/shared/mocking'
 import { createLogger } from 'winston'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
+import RecsidenceHistory from '../lib/__mock-data__/residenceHistory.json'
 
 startMocking(requestHandlers)
 
@@ -32,7 +36,22 @@ describe('DrivingLicenseService', () => {
           },
         }),
       ],
-      providers: [DrivingLicenseService, { provide: 'CONFIG', useValue: {} }],
+      providers: [
+        DrivingLicenseService,
+        { provide: 'CONFIG', useValue: {} },
+        {
+          provide: LOGGER_PROVIDER,
+          useValue: {
+            warn: () => undefined,
+          },
+        },
+        {
+          provide: NationalRegistryXRoadService,
+          useClass: jest.fn(() => ({
+            getNationalRegistryResidenceHistory: () => RecsidenceHistory,
+          })),
+        },
+      ],
     }).compile()
 
     service = module.get(DrivingLicenseService)
@@ -55,15 +74,10 @@ describe('DrivingLicenseService', () => {
       })
     })
 
-    it('should return an expired license', async () => {
+    it('should not return an expired license', async () => {
       const response = await service.getDrivingLicense(MOCK_NATIONAL_ID_EXPIRED)
 
-      expect(response).toMatchObject({
-        name: 'Expired Halldórsson',
-        expires: new Date('1997-05-25T06:43:15.327Z'),
-      })
-
-      expect(response?.expires?.getTime()).toBeLessThan(Date.now())
+      expect(response).toBeNull()
     })
   })
 
@@ -76,12 +90,15 @@ describe('DrivingLicenseService', () => {
       })
     })
 
-    it("should return a student's license despite expiry", async () => {
+    it("_should_ return a student's license when expired", async () => {
+      // Reason:
+      // It is allowed to look up stundents and mark them as having finished
+      // the driving assessment even though their license is expired.
       const response = await service.getStudentInformation(
         MOCK_NATIONAL_ID_EXPIRED,
       )
 
-      expect(response).toMatchObject({
+      expect(response).toStrictEqual({
         name: 'Expired Halldórsson',
       })
     })
@@ -167,6 +184,7 @@ describe('DrivingLicenseService', () => {
   describe('getApplicationEligibility', () => {
     it('all checks should pass for applicable students', async () => {
       const response = await service.getApplicationEligibility(
+        MOCK_USER,
         MOCK_NATIONAL_ID,
         'B-full',
       )
@@ -192,6 +210,7 @@ describe('DrivingLicenseService', () => {
 
     it('all checks should pass for applicable students for temporary license', async () => {
       const response = await service.getApplicationEligibility(
+        MOCK_USER,
         MOCK_NATIONAL_ID,
         'B-temp',
       )
@@ -213,6 +232,7 @@ describe('DrivingLicenseService', () => {
 
     it('checks should fail for non-applicable students', async () => {
       const response = await service.getApplicationEligibility(
+        MOCK_USER,
         MOCK_NATIONAL_ID_EXPIRED,
         'B-full',
       )
@@ -295,6 +315,8 @@ describe('DrivingLicenseService', () => {
           needsToPresentHealthCertificate: false,
           needsToPresentQualityPhoto: false,
           teacherNationalId: MOCK_NATIONAL_ID_TEACHER,
+          email: 'mock@email.com',
+          phone: '9999999',
         },
       )
 
@@ -313,6 +335,8 @@ describe('DrivingLicenseService', () => {
           needsToPresentHealthCertificate: false,
           needsToPresentQualityPhoto: true,
           teacherNationalId: MOCK_NATIONAL_ID_TEACHER,
+          email: 'mock@email.com',
+          phone: '9999999',
         })
         .catch((e) => expect(e).toBeTruthy())
     })

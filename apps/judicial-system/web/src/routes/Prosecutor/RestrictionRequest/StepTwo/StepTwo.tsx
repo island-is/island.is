@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
 import { useQuery } from '@apollo/client'
@@ -30,7 +30,9 @@ import { rcRequestedHearingArrangements } from '@island.is/judicial-system-web/m
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import type { User } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import * as Constants from '@island.is/judicial-system/consts'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 
 import StepTwoForm from './StepTwoForm'
 
@@ -65,10 +67,6 @@ export const StepTwo: React.FC = () => {
   })
 
   const { courts, loading: institutionLoading } = useInstitution()
-
-  useEffect(() => {
-    document.title = 'Óskir um fyrirtöku - Réttarvörslugátt'
-  }, [])
 
   const prosecutors = userData?.users
     .filter(
@@ -169,6 +167,11 @@ export const StepTwo: React.FC = () => {
       isLoading={isLoadingWorkingCase || userLoading || institutionLoading}
       notFound={caseNotFound}
     >
+      <PageHeader
+        title={formatMessage(
+          titles.prosecutor.restrictionCases.hearingArrangements,
+        )}
+      />
       {prosecutors && !institutionLoading ? (
         <>
           <StepTwoForm

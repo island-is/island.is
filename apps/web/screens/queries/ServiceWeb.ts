@@ -36,10 +36,12 @@ export const GET_SUPPORT_QNAS_IN_CATEGORY = gql`
       id
       title
       slug
+      importance
       subCategory {
         title
         description
         slug
+        importance
       }
       category {
         title
@@ -49,6 +51,11 @@ export const GET_SUPPORT_QNAS_IN_CATEGORY = gql`
       answer {
         ...AllSlices
       }
+      relatedLinks {
+        url
+        text
+      }
+      contactLink
     }
   }
   ${slices}
@@ -71,7 +78,11 @@ export const GET_SUPPORT_CATEGORIES = gql`
       slug
       organization {
         slug
+        namespace {
+          fields
+        }
       }
+      importance
     }
   }
 `
@@ -88,6 +99,7 @@ export const GET_SUPPORT_CATEGORIES_IN_ORGANIZATION = gql`
       organization {
         slug
       }
+      importance
     }
   }
 `
@@ -145,6 +157,9 @@ export const GET_SERVICE_WEB_ORGANIZATION = gql`
         content {
           ...HtmlFields
         }
+        serviceWebContent {
+          ...HtmlFields
+        }
         link {
           text
           url
@@ -154,6 +169,9 @@ export const GET_SERVICE_WEB_ORGANIZATION = gql`
       email
       serviceWebTitle
       serviceWebEnabled
+      namespace {
+        fields
+      }
     }
   }
 `

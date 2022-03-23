@@ -1,16 +1,20 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import {
-  JudgeSubsections,
+  CourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
-import ConfirmationForm from './ConfirmationForm'
 import SigningModal from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import type { RequestSignatureResponse } from '@island.is/judicial-system/types'
+
+import ConfirmationForm from './ConfirmationForm'
 
 const Confirmation = () => {
   const {
@@ -19,7 +23,7 @@ const Confirmation = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-
+  const { formatMessage } = useIntl()
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [
     requestRulingSignatureResponse,
@@ -28,10 +32,6 @@ const Confirmation = () => {
 
   const { user } = useContext(UserContext)
   const { requestRulingSignature, isRequestingRulingSignature } = useCase()
-
-  useEffect(() => {
-    document.title = 'Yfirlit úrskurðar - Réttarvörslugátt'
-  }, [])
 
   useEffect(() => {
     if (!modalVisible) {
@@ -45,17 +45,13 @@ const Confirmation = () => {
     }
 
     // Request ruling signature to get control code
-    try {
-      const requestRulingSignatureResponse = await requestRulingSignature(
-        workingCase.id,
-      )
-      if (requestRulingSignatureResponse) {
-        setRequestRulingSignatureResponse(requestRulingSignatureResponse)
-        setModalVisible(true)
-      } else {
-        // TODO: Handle error
-      }
-    } catch (e) {
+    const requestRulingSignatureResponse = await requestRulingSignature(
+      workingCase.id,
+    )
+    if (requestRulingSignatureResponse) {
+      setRequestRulingSignatureResponse(requestRulingSignatureResponse)
+      setModalVisible(true)
+    } else {
       // TODO: Handle error
     }
   }
@@ -66,10 +62,13 @@ const Confirmation = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={JudgeSubsections.CONFIRMATION}
+      activeSubSection={CourtSubsections.CONFIRMATION}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
+      <PageHeader
+        title={formatMessage(titles.court.investigationCases.conclusion)}
+      />
       {user && (
         <>
           <ConfirmationForm

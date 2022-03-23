@@ -23,11 +23,13 @@ import {
   Query,
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
+  QueryGetOrganizationSubpageArgs,
   SyslumennAuction,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
+  GET_ORGANIZATION_SUBPAGE_QUERY,
   GET_SYSLUMENN_AUCTIONS_QUERY,
 } from '../../queries'
 import { Screen } from '../../../types'
@@ -40,11 +42,13 @@ import { useQuery } from '@apollo/client'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { useRouter } from 'next/router'
 import { theme } from '@island.is/island-ui/theme'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
 
 const { publicRuntimeConfig } = getConfig()
 
 interface AuctionsProps {
   organizationPage: Query['getOrganizationPage']
+  subpage: Query['getOrganizationSubpage']
   syslumennAuctions: Query['getSyslumennAuctions']
   namespace: Query['getNamespace']
 }
@@ -381,10 +385,21 @@ const LOT_TYPES_OPTIONS: LotTypeOption[] = [
   },
 ]
 
+const sameDay = (d1: Date, d2: Date) => {
+  if (!d1 && !d2) return true
+  if (!d1 || !d2) return false
+  return (
+    d1.getDate() === d2.getDate() &&
+    d1.getFullYear() === d2.getFullYear() &&
+    d1.getMonth() === d2.getMonth()
+  )
+}
+
 const Auctions: Screen<AuctionsProps> = ({
   organizationPage,
   syslumennAuctions,
   namespace,
+  subpage,
 }) => {
   const { disableSyslumennPage: disablePage } = publicRuntimeConfig
   if (disablePage === 'true') {
@@ -396,6 +411,8 @@ const Auctions: Screen<AuctionsProps> = ({
   const { format } = useDateUtils()
   const Router = useRouter()
   const auctionDataFetched = new Date()
+
+  useContentfulId(organizationPage.id, subpage.id)
 
   const pageUrl = Router.pathname
 
@@ -468,6 +485,9 @@ const Auctions: Screen<AuctionsProps> = ({
   }, [Router, setOfficeLocation])
 
   const filteredAuctions = syslumennAuctions.filter((auction) => {
+    const auctionDate = auction.auctionDate
+      ? new Date(auction.auctionDate)
+      : null
     return (
       // Filter by office
       (officeLocation.office
@@ -491,9 +511,7 @@ const Auctions: Screen<AuctionsProps> = ({
         ? auction.auctionType !== lotTypeOption.excludeAuctionType
         : true) &&
       // Filter by Date
-      (date
-        ? auction.auctionDate.startsWith(format(date, 'yyyy-MM-dd'))
-        : true) &&
+      (date ? sameDay(date, auctionDate) : true) &&
       // Filter by search query
       (auction.lotName?.toLowerCase().includes(query) ||
         auction.lotId?.toLowerCase().includes(query) ||
@@ -520,7 +538,7 @@ const Auctions: Screen<AuctionsProps> = ({
   const capitalAreaOffice = n(
     'auctionCapitalAreaOffice',
     'Sýslumaðurinn á höfuðborgarsvæðinu',
-  )
+  ) as string
   const auctionContainsVakaKeyword = (auction: SyslumennAuction) => {
     return vakaAuctionKeywords.some((keyword) => {
       return (
@@ -538,16 +556,19 @@ const Auctions: Screen<AuctionsProps> = ({
         auctionContainsVakaKeyword(auction))
     )
   }
-  const getAuctionTakesPlaceAtAndExtraInfo = (auction: SyslumennAuction) => {
+  const renderWhereAuctionTakesPlaceAndExtraInfo = (
+    auction: SyslumennAuction,
+  ) => {
     if (auctionAtVaka(auction)) {
       return (
         <div>
           <Text paddingBottom={1}>
             {n('auctionTakesPlaceAt', 'Staðsetning uppboðs')}:{' '}
-            {n(
-              'auctionTakesPlaceAtVaka',
-              'Uppboð verður haldið í aðstöðu Vöku hf., Héðinsgötu 1 - 3.',
-            )}
+            {auction.auctionTakesPlaceAt ??
+              n(
+                'auctionTakesPlaceAtVaka',
+                'Uppboð verður haldið í aðstöðu Vöku hf., Héðinsgötu 1 - 3.',
+              )}
           </Text>
           <Text variant="small">
             {n(
@@ -579,12 +600,52 @@ const Auctions: Screen<AuctionsProps> = ({
           )}
         </Text>
       )
+    } else {
+      return (
+        auction.auctionTakesPlaceAt && (
+          <Text paddingBottom={1}>
+            {n('auctionTakesPlaceAt', 'Staðsetning uppboðs')}:{' '}
+            {auction.auctionTakesPlaceAt}
+          </Text>
+        )
+      )
     }
+  }
+
+  const renderRespondents = (
+    auction: SyslumennAuction,
+    auctionRespondents: string[],
+  ) => {
+    if (!auctionRespondents) return null
+
+    if (auction.lotType === LOT_TYPES.REAL_ESTATE) {
+      return (
+        <Text paddingTop={2} paddingBottom={1}>
+          {auctionRespondents.length > 1
+            ? n('auctionRealEstateRespondentsPlural', 'Þinglýstir eigendur')
+            : n('auctionRealEstateRespondentsSingle', 'Þinglýstur eigandi')}
+          : {auctionRespondents.join(', ')}
+        </Text>
+      )
+    }
+
+    if (auction.lotType === LOT_TYPES.SHIP) {
+      return (
+        <Text paddingTop={2} paddingBottom={1}>
+          {auctionRespondents.length > 1
+            ? n('auctionShipRespondentsPlural', 'Gerðarþolar')
+            : n('auctionShipRespondentsSingle', 'Gerðarþoli')}
+          : {auctionRespondents.join(', ')}
+        </Text>
+      )
+    }
+
+    return null
   }
 
   return (
     <OrganizationWrapper
-      pageTitle={n('auctions', 'Uppboð')}
+      pageTitle={subpage?.title ?? n('auctions', 'Uppboð')}
       organizationPage={organizationPage}
       breadcrumbItems={[
         {
@@ -603,7 +664,7 @@ const Auctions: Screen<AuctionsProps> = ({
     >
       <Box marginBottom={6}>
         <Text variant="h1" as="h2">
-          {n('auction', 'Uppboð')}
+          {subpage?.title ?? n('auctions', 'Uppboð')}
         </Text>
       </Box>
       <GridContainer>
@@ -801,23 +862,16 @@ const Auctions: Screen<AuctionsProps> = ({
                     />
                   )}
 
-                  {/* Auction takes place at & auction extra info */}
-                  {getAuctionTakesPlaceAtAndExtraInfo(auction)}
+                  {/* Auction extra info */}
+                  {renderWhereAuctionTakesPlaceAndExtraInfo(auction)}
 
                   {/* Respondents */}
-                  {auctionRespondents &&
-                    auction.lotType === LOT_TYPES.REAL_ESTATE && (
-                      <Text paddingTop={2} paddingBottom={1}>
-                        {auctionRespondents.length > 1
-                          ? n('auctionRespondentsPlural', 'Þinglýstir eigendur')
-                          : n('auctionRespondentsSingle', 'Þinglýstur eigandi')}
-                        : {auctionRespondents.join(', ')}
-                      </Text>
-                    )}
+                  {renderRespondents(auction, auctionRespondents)}
 
                   {/* Petitioners */}
                   {auctionPetitioners &&
-                    auction.lotType === LOT_TYPES.REAL_ESTATE && (
+                    (auction.lotType === LOT_TYPES.REAL_ESTATE ||
+                      auction.lotType === LOT_TYPES.SHIP) && (
                       <Text paddingBottom={1}>
                         {auctionPetitioners.length > 1
                           ? n('auctionPetitionersPlural', 'Gerðarbeiðendur')
@@ -912,10 +966,17 @@ const LotLink = ({
   </LinkContext.Provider>
 )
 
-Auctions.getInitialProps = async ({ apolloClient, locale, query }) => {
+Auctions.getInitialProps = async ({ apolloClient, locale, pathname }) => {
+  const path = pathname?.split('/') ?? []
+  const slug = path?.[path.length - 2] ?? 'syslumenn'
+  const subSlug = path.pop() ?? 'uppbod'
+
   const [
     {
       data: { getOrganizationPage },
+    },
+    {
+      data: { getOrganizationSubpage },
     },
     {
       data: { getSyslumennAuctions },
@@ -926,7 +987,17 @@ Auctions.getInitialProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_PAGE_QUERY,
       variables: {
         input: {
-          slug: 'syslumenn',
+          slug: slug,
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryGetOrganizationSubpageArgs>({
+      query: GET_ORGANIZATION_SUBPAGE_QUERY,
+      variables: {
+        input: {
+          organizationSlug: slug,
+          slug: subSlug,
           lang: locale as ContentLanguage,
         },
       },
@@ -953,6 +1024,7 @@ Auctions.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   return {
     organizationPage: getOrganizationPage,
+    subpage: getOrganizationSubpage,
     syslumennAuctions: getSyslumennAuctions,
     namespace,
     showSearchInHeader: false,

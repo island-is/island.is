@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState, createContext } from 'react'
 import Head from 'next/head'
 import { Box } from '@island.is/island-ui/core'
 
-import { Organization } from '@island.is/web/graphql/schema'
+import { Organization, Tag } from '@island.is/web/graphql/schema'
 import {
   ServiceWebSearchSection,
   ServiceWebHeader,
@@ -35,6 +35,9 @@ interface WrapperProps {
   searchTitle?: string
   organizationTitle?: string
   smallBackground?: boolean
+  searchPlaceholder?: string
+  searchTags?: Tag[]
+  showLogoTitle?: boolean
 }
 
 export const Wrapper: FC<WrapperProps> = ({
@@ -46,13 +49,16 @@ export const Wrapper: FC<WrapperProps> = ({
   searchTitle,
   organizationTitle,
   smallBackground,
+  searchPlaceholder,
+  searchTags,
+  showLogoTitle,
   children,
 }) => {
   const [options, setOptions] = useState<Options>({
     textMode: 'dark',
   })
   const [textMode, setTextMode] = useState<TextModes>('light')
-  const showSearchSection = searchTitle && logoUrl && organizationTitle
+  const showSearchSection = searchTitle && organizationTitle
 
   useEffect(() => {
     if (institutionSlug in config) {
@@ -68,12 +74,15 @@ export const Wrapper: FC<WrapperProps> = ({
     <>
       <Head>
         <title>{pageTitle}</title>
+        <meta name="robots" content="noindex, nofollow" />
       </Head>
       <ServiceWebContext.Provider value={{ textMode, institutionSlug }}>
         <ServiceWebHeader
           hideSearch={!smallBackground}
           title={headerTitle}
           textMode={textMode}
+          searchPlaceholder={searchPlaceholder}
+          searchTags={searchTags}
         />
         <ServiceWebBackground
           variation={
@@ -86,10 +95,12 @@ export const Wrapper: FC<WrapperProps> = ({
         {!!showSearchSection && (
           <Box className={styles.searchSection}>
             <ServiceWebSearchSection
-              logoTitle={organizationTitle}
+              logoTitle={showLogoTitle ? organizationTitle : undefined}
               logoUrl={logoUrl}
               title={searchTitle}
               textMode={textMode}
+              searchPlaceholder={searchPlaceholder}
+              searchTags={searchTags}
             />
           </Box>
         )}

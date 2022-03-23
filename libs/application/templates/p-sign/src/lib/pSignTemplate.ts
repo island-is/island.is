@@ -19,7 +19,7 @@ const PSignTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.P_SIGN,
-  name: 'P-Merki',
+  name: 'Stæðiskort',
   dataSchema: dataSchema,
   readyForProduction: true,
   stateMachineConfig: {
@@ -32,7 +32,11 @@ const PSignTemplate: ApplicationTemplate<
             title: m.applicationTitle,
           },
           progress: 0.33,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: false,
+            shouldBePruned: true,
+            whenToPrune: 24 * 3600 * 1000,
+          },
           onExit: {
             apiModuleAction: ApiActions.submitApplication,
             shouldPersistToExternalData: true,

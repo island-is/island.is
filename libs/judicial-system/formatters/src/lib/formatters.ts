@@ -5,7 +5,7 @@ import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-import
 import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
-  CaseGender,
+  Gender,
   CaseType,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
@@ -90,6 +90,7 @@ export const caseTypes = {
   INTERNET_USAGE: 'upplýsingar um vefnotkun',
   RESTRAINING_ORDER: 'nálgunarbann',
   ELECTRONIC_DATA_DISCOVERY_INVESTIGATION: 'rannsókn á rafrænum gögnum',
+  VIDEO_RECORDING_EQUIPMENT: 'myndupptökubúnaði komið fyrir',
   OTHER: 'annað',
 }
 
@@ -105,8 +106,6 @@ const getRestrictionByValue = (value: CaseCustodyRestrictions) => {
       return 'C - Heimsóknarbann'
     case CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION:
       return 'Tilkynningaskylda'
-    case CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT:
-      return 'Afhending vegabréfs'
     case CaseCustodyRestrictions.NECESSITIES:
       return 'A - Eigin nauðsynjar'
     case CaseCustodyRestrictions.WORKBAN:
@@ -126,39 +125,10 @@ export const getShortRestrictionByValue = (value: CaseCustodyRestrictions) => {
       return 'Heimsóknarbann'
     case CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION:
       return 'Tilkynningarskylda'
-    case CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT:
-      return 'Afhending vegabréfs'
     case CaseCustodyRestrictions.NECESSITIES:
       return 'Eigin nauðsynjar'
     case CaseCustodyRestrictions.WORKBAN:
       return 'Vinnubann'
-  }
-}
-
-export enum NounCases {
-  NOMINATIVE, // Nefnifall
-  ACCUSATIVE, // Þolfall
-  DATIVE, // Þágufall
-  GENITIVE, // Eignarfall
-}
-
-export function formatAccusedByGender(
-  accusedGender?: CaseGender,
-  nounCase: NounCases = NounCases.NOMINATIVE,
-  isInvestigationCase?: boolean,
-) {
-  if (isInvestigationCase) {
-    return nounCase === NounCases.NOMINATIVE ? 'varnaraðili' : 'varnaraðila'
-  } else {
-    switch (accusedGender) {
-      case CaseGender.MALE:
-        return nounCase === NounCases.NOMINATIVE ? 'kærði' : 'kærða'
-      case CaseGender.FEMALE:
-        return nounCase === NounCases.NOMINATIVE ? 'kærða' : 'kærðu'
-      case CaseGender.OTHER:
-      default:
-        return 'kærða'
-    }
   }
 }
 
@@ -246,58 +216,6 @@ export function formatCustodyRestrictions(
     : `Sækjandi tekur fram að gæsluvarðhaldið verði með ${filteredCustodyRestrictionsAsString}skv. 99. gr. laga nr. 88/2008.`
 }
 
-// Fromats the prefilled restrictions for travel ban
-export const formatTravelBanRestrictions = (
-  accusedGender?: CaseGender,
-  requestedCustodyRestrictions?: CaseCustodyRestrictions[],
-  otherRestrictions?: string,
-): string => {
-  const relevantCustodyRestrictions = requestedCustodyRestrictions?.filter(
-    (restriction) =>
-      [
-        CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
-        CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
-      ].includes(restriction),
-  )
-
-  const hasTravelBanRestrictions =
-    relevantCustodyRestrictions && relevantCustodyRestrictions?.length > 0
-  const hasOtherRestrictions = otherRestrictions && otherRestrictions.length > 0
-
-  // No restrictions
-  if (!hasTravelBanRestrictions && !hasOtherRestrictions) {
-    return ''
-  }
-
-  const accusedGenderText = formatAccusedByGender(
-    accusedGender,
-    NounCases.DATIVE,
-  )
-
-  const travelBanRestrictionsText = hasTravelBanRestrictions
-    ? `Sækjandi tekur fram að farbannið verði með takmörkunum.${
-        relevantCustodyRestrictions?.includes(
-          CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
-        )
-          ? ` Að ${accusedGenderText} verði gert að tilkynna sig.`
-          : ''
-      }${
-        relevantCustodyRestrictions?.includes(
-          CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_CONFISCATE_PASSPORT,
-        )
-          ? ` Að ${accusedGenderText} verði gert að afhenda vegabréfið sitt.`
-          : ''
-      }`
-    : ''
-
-  const paragraphBreak =
-    hasTravelBanRestrictions && hasOtherRestrictions ? '\n' : ''
-
-  const otherRestrictionsText = hasOtherRestrictions ? otherRestrictions : ''
-
-  return `${travelBanRestrictionsText}${paragraphBreak}${otherRestrictionsText}`
-}
-
 // Formats the requested restrictions from the prosecutor
 export const formatRequestedCustodyRestrictions = (
   type: CaseType,
@@ -335,44 +253,41 @@ export const formatRequestedCustodyRestrictions = (
   return `${requestedCustodyRestrictionsText}${paragraphBreak}${requestedOtherRestrictionsText}`
 }
 
-export function formatGender(gender?: CaseGender): string {
+export function formatGender(gender?: Gender): string {
   switch (gender) {
-    case CaseGender.MALE:
+    case Gender.MALE:
       return 'Karl'
-    case CaseGender.FEMALE:
+    case Gender.FEMALE:
       return 'Kona'
-    case CaseGender.OTHER:
+    case Gender.OTHER:
     default:
       return 'Kynsegin/Annað'
-  }
-}
-
-export function formatGenderPronouns(gender?: CaseGender): string {
-  switch (gender) {
-    case CaseGender.MALE:
-      return 'hann'
-    case CaseGender.FEMALE:
-      return 'hún'
-    case CaseGender.OTHER:
-    default:
-      return 'hán'
   }
 }
 
 export function formatAppeal(
   appealDecision: CaseAppealDecision | undefined,
   stakeholder: string,
-  stakeholderGender: CaseGender = CaseGender.MALE,
 ): string {
-  const stakeholderGenderText = formatGenderPronouns(stakeholderGender)
+  const isMultipleDefendants = stakeholder.slice(-2) === 'ar'
 
   switch (appealDecision) {
     case CaseAppealDecision.APPEAL:
-      return `${stakeholder} lýsir því yfir að ${stakeholderGenderText} kæri úrskurðinn til Landsréttar.`
+      return `${stakeholder} ${
+        isMultipleDefendants ? 'lýsa' : 'lýsir'
+      } því yfir að ${
+        isMultipleDefendants ? 'þeir' : 'hann'
+      } kæri úrskurðinn til Landsréttar.`
     case CaseAppealDecision.ACCEPT:
-      return `${stakeholder} unir úrskurðinum.`
+      return `${stakeholder} ${
+        isMultipleDefendants ? 'una' : 'unir'
+      } úrskurðinum.`
     case CaseAppealDecision.POSTPONE:
-      return `${stakeholder} lýsir því yfir að ${stakeholderGenderText} taki sér lögbundinn kærufrest.`
+      return `${stakeholder} ${
+        isMultipleDefendants ? 'lýsa' : 'lýsir'
+      } því yfir að ${
+        isMultipleDefendants ? 'þeir' : 'hann'
+      } taki sér lögbundinn kærufrest.`
     default:
       return ''
   }

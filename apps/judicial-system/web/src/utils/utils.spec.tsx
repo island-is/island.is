@@ -2,7 +2,7 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { CaseTransition, CaseGender } from '@island.is/judicial-system/types'
+import { CaseTransition, Gender } from '@island.is/judicial-system/types'
 import { getShortGender, isDirty } from './stepHelper'
 import { validate } from './validate'
 
@@ -134,6 +134,56 @@ ipsum`
 
       // Assert
       expect(spy).not.toBeCalled()
+    })
+  })
+
+  describe('enumerate', () => {
+    test('should enumerate list with three values', () => {
+      // Arrange
+      const values = ['alice', 'bob', 'paul']
+      const endWord = 'and'
+
+      // Act
+      const result = formatters.enumerate(values, endWord)
+
+      //Assert
+      expect(result).toBe('alice, bob and paul')
+    })
+
+    test('should enumerate list with two values', () => {
+      // Arrange
+      const values = ['alice', 'bob']
+      const endWord = 'or'
+
+      // Act
+      const result = formatters.enumerate(values, endWord)
+
+      //Assert
+      expect(result).toBe('alice or bob')
+    })
+
+    test('should enumerate list with one value', () => {
+      // Arrange
+      const values = ['alice']
+      const endWord = 'and'
+
+      // Act
+      const result = formatters.enumerate(values, endWord)
+
+      //Assert
+      expect(result).toBe('alice')
+    })
+
+    test('should handle empty list', () => {
+      // Arrange
+      const values: string[] = []
+      const endWord = 'and'
+
+      // Act
+      const result = formatters.enumerate(values, endWord)
+
+      //Assert
+      expect(result).toBe('')
     })
   })
 })
@@ -448,9 +498,9 @@ describe('Step helper', () => {
   describe('getShortGender', () => {
     test('should return short genders given a valid gender', () => {
       // Arrange
-      const male = CaseGender.MALE
-      const female = CaseGender.FEMALE
-      const other = CaseGender.OTHER
+      const male = Gender.MALE
+      const female = Gender.FEMALE
+      const other = Gender.OTHER
 
       // Act
       const resultM = getShortGender(male)

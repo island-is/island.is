@@ -1,24 +1,23 @@
 import React from 'react'
 import { Text, Box, AccordionItem } from '@island.is/island-ui/core'
+import { useIntl } from 'react-intl'
 
 import {
   capitalize,
-  formatAccusedByGender,
   formatAppeal,
   formatDate,
-  NounCases,
-  TIME_FORMAT,
   formatRequestCaseType,
 } from '@island.is/judicial-system/formatters'
 import {
   isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
-import type { Case } from '@island.is/judicial-system/types'
-import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 import { closedCourt, core } from '@island.is/judicial-system-web/messages'
-import { useIntl } from 'react-intl'
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { courtRecordAccordion as m } from '@island.is/judicial-system-web/messages/Core/courtRecordAccordion'
+import type { Case } from '@island.is/judicial-system/types'
+
+import AccordionListItem from '../../AccordionListItem/AccordionListItem'
 
 interface Props {
   workingCase: Case
@@ -34,16 +33,22 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
 
   const accusedAppeal = formatAppeal(
     workingCase.accusedAppealDecision,
-    isRestrictionCase(workingCase.type)
-      ? capitalize(formatAccusedByGender(workingCase.accusedGender))
-      : 'Varnaraðili',
-    isRestrictionCase(workingCase.type) ? workingCase.accusedGender : undefined,
+    capitalize(
+      formatMessage(core.defendant, {
+        suffix:
+          workingCase.defendants && workingCase.defendants?.length > 1
+            ? 'ar'
+            : 'i',
+      }),
+    ),
   )
+
   return (
     <AccordionItem
       id="courtRecordAccordionItem"
-      label="Þingbók"
+      label={formatMessage(m.title)}
       labelVariant="h3"
+      labelUse="h3"
     >
       <AccordionListItem
         title={formatMessage(m.sections.timeAndLocation.title)}
@@ -81,45 +86,28 @@ const CourtRecordAccordionItem: React.FC<Props> = ({ workingCase }: Props) => {
         </AccordionListItem>
       )}
       <AccordionListItem title={formatMessage(m.sections.courtDocuments.title)}>
-        <Text>{`${formatMessage(core.requestCaseType, {
-          caseType: formatRequestCaseType(workingCase.type),
-        })} þingmerkt nr. 1.`}</Text>
         <Text>
-          Rannsóknargögn málsins liggja frammi.
-          <br />
-          <br />
-          {workingCase.courtDocuments?.map((courtDocument, index) => {
-            return (
-              <>
-                {`${capitalize(courtDocument)} þingmerkt nr. ${index + 2}.`}
-                {index <= (workingCase.courtDocuments ?? []).length && (
-                  <>
-                    <br />
-                    <br />
-                  </>
-                )}
-              </>
-            )
+          {formatMessage(m.sections.firstCourtDocument, {
+            caseType: formatRequestCaseType(workingCase.type),
           })}
         </Text>
+        {workingCase.courtDocuments?.map((courtDocument, index) => {
+          return (
+            <Text key={`${index}${courtDocument.name}`}>
+              {formatMessage(m.sections.courtDocuments.text, {
+                documentName: capitalize(courtDocument.name),
+                documentNumber: index + 2,
+                submittedBy: courtDocument.submittedBy,
+              })}
+            </Text>
+          )
+        })}
       </AccordionListItem>
-      {workingCase.accusedBookings?.trim() && (
-        <AccordionListItem
-          title={formatMessage(m.sections.accusedBookings.title, {
-            accusedType: isRestrictionCase(workingCase.type)
-              ? formatAccusedByGender(
-                  workingCase.accusedGender,
-                  NounCases.ACCUSATIVE,
-                )
-              : 'varnaraðila',
-          })}
-          breakSpaces
-        >
-          <Text>{workingCase.accusedBookings.trim()}</Text>
-        </AccordionListItem>
-      )}
-      <AccordionListItem title="Málflutningur" breakSpaces>
-        <Text>{workingCase.litigationPresentations}</Text>
+      <AccordionListItem
+        title={formatMessage(m.sections.sessionBookings.title)}
+        breakSpaces
+      >
+        <Text>{workingCase.sessionBookings}</Text>
       </AccordionListItem>
       {isRestrictionCase(workingCase.type) && (
         <Box marginBottom={3}>

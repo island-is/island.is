@@ -399,6 +399,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const pensionFund = getValueViaPath(answers, 'payments.pensionFund') as string
 
+  const useUnion = getValueViaPath(answers, 'useUnion') as YesOrNo
+
   const union = getValueViaPath(answers, 'payments.union') as string
 
   const usePrivatePensionFund = getValueViaPath(
@@ -526,6 +528,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     otherParent,
     otherParentRightOfAccess,
     pensionFund,
+    useUnion,
     union,
     usePrivatePensionFund,
     privatePensionFund,
@@ -710,7 +713,9 @@ export const calculateDaysUsedByPeriods = (periods: Period[]) =>
       const end = parseISO(period.endDate)
       const percentage = Number(period.ratio) / 100
 
-      const calculatedLength = calculatePeriodLength(start, end, percentage)
+      const calculatedLength = period.daysToUse
+        ? Number(period.daysToUse)
+        : calculatePeriodLength(start, end, percentage)
 
       return total + calculatedLength
     }, 0),

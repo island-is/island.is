@@ -1,8 +1,15 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
+import { AnimatePresence } from 'framer-motion'
 
-import { Box, Text, Accordion, AccordionItem } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  Accordion,
+  AccordionItem,
+  Input,
+} from '@island.is/island-ui/core'
 import {
   NotificationType,
   CaseState,
@@ -18,11 +25,10 @@ import {
   PdfButton,
   FormContentContainer,
   CaseFileList,
+  CaseInfo,
+  AccordionListItem,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  TIME_FORMAT,
-  formatRequestedCustodyRestrictions,
-} from '@island.is/judicial-system/formatters'
+import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system/formatters'
 import {
   ProsecutorSubsections,
   Sections,
@@ -36,13 +42,19 @@ import {
   requestCourtDate,
 } from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import CommentsAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
+import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import type { CaseLegalProvisions } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import * as Constants from '@island.is/judicial-system/consts'
 
 import * as styles from './Overview.css'
 
 export const Overview: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
+  const [resendCaseModalVisible, setResendCaseModalVisible] = useState(false)
+  const [caseResentExplanation, setCaseResentExplanation] = useState('')
   const [modalText, setModalText] = useState('')
   const {
     workingCase,
@@ -52,8 +64,12 @@ export const Overview: React.FC = () => {
   } = useContext(FormContext)
 
   const router = useRouter()
-
-  const { transitionCase, sendNotification, isSendingNotification } = useCase()
+  const {
+    transitionCase,
+    sendNotification,
+    isSendingNotification,
+    updateCase,
+  } = useCase()
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
@@ -62,42 +78,36 @@ export const Overview: React.FC = () => {
       return
     }
 
-    try {
-      const shouldSubmitCase = workingCase.state === CaseState.DRAFT
+    const shouldSubmitCase = workingCase.state === CaseState.DRAFT
 
-      const caseSubmitted = shouldSubmitCase
-        ? await transitionCase(
-            workingCase,
-            CaseTransition.SUBMIT,
-            setWorkingCase,
-          )
-        : workingCase.state !== CaseState.NEW
+    const caseSubmitted = shouldSubmitCase
+      ? await transitionCase(workingCase, CaseTransition.SUBMIT, setWorkingCase)
+      : workingCase.state !== CaseState.NEW
 
-      const notificationSent = caseSubmitted
-        ? await sendNotification(
-            workingCase.id,
-            NotificationType.READY_FOR_COURT,
-          )
-        : false
+    const notificationSent = caseSubmitted
+      ? await sendNotification(workingCase.id, NotificationType.READY_FOR_COURT)
+      : false
 
-      // An SMS should have been sent
-      if (notificationSent) {
-        setModalText(formatMessage(rcOverview.sections.modal.notificationSent))
-      } else {
-        setModalText(
-          formatMessage(rcOverview.sections.modal.notificationNotSent),
-        )
-      }
-
-      setModalVisible(true)
-    } catch (e) {
-      // TODO: Handle error
+    // An SMS should have been sent
+    if (notificationSent) {
+      setModalText(formatMessage(rcOverview.sections.modal.notificationSent))
+    } else {
+      setModalText(formatMessage(rcOverview.sections.modal.notificationNotSent))
     }
-  }
 
-  useEffect(() => {
-    document.title = 'Yfirlit kröfu - Réttarvörslugátt'
-  }, [])
+    if (workingCase.state === CaseState.RECEIVED) {
+      updateCase(workingCase.id, {
+        caseResentExplanation: createCaseResentExplanation(
+          workingCase,
+          caseResentExplanation,
+        ),
+      })
+
+      setResendCaseModalVisible(false)
+    }
+
+    setModalVisible(true)
+  }
 
   return (
     <PageLayout
@@ -109,8 +119,11 @@ export const Overview: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
+      <PageHeader
+        title={formatMessage(titles.prosecutor.restrictionCases.overview)}
+      />
       <FormContentContainer>
-        <Box marginBottom={10}>
+        <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(rcOverview.heading, {
               caseType: `${workingCase.parentCase ? 'framlengingu á ' : ''}${
@@ -121,24 +134,47 @@ export const Overview: React.FC = () => {
             })}
           </Text>
         </Box>
+        <Box component="section" marginBottom={7}>
+          <CaseInfo
+            workingCase={workingCase}
+            userRole={user?.role}
+            showAdditionalInfo
+          />
+        </Box>
         <Box component="section" marginBottom={5}>
           <InfoCard
             data={[
               {
-                title: 'LÖKE málsnúmer',
+                title: formatMessage(core.policeCaseNumber),
                 value: workingCase.policeCaseNumber,
               },
+              ...(workingCase.courtCaseNumber
+                ? [
+                    {
+                      title: formatMessage(core.courtCaseNumber),
+                      value: workingCase.courtCaseNumber,
+                    },
+                  ]
+                : []),
               {
-                title: 'Dómstóll',
+                title: formatMessage(core.court),
                 value: workingCase.court?.name,
               },
               {
-                title: 'Embætti',
+                title: formatMessage(core.prosecutor),
                 value: `${
                   workingCase.creatingProsecutor?.institution?.name ??
                   'Ekki skráð'
                 }`,
               },
+              ...(workingCase.judge
+                ? [
+                    {
+                      title: formatMessage(core.judge),
+                      value: workingCase.judge.name,
+                    },
+                  ]
+                : []),
               {
                 title: formatMessage(requestCourtDate.heading),
                 value: `${capitalize(
@@ -146,18 +182,29 @@ export const Overview: React.FC = () => {
                     '',
                 )} eftir kl. ${formatDate(
                   workingCase.requestedCourtDate,
-                  TIME_FORMAT,
+                  Constants.TIME_FORMAT,
                 )}`,
               },
-              { title: 'Ákærandi', value: workingCase.prosecutor?.name },
+              ...(workingCase.registrar
+                ? [
+                    {
+                      title: formatMessage(core.registrar),
+                      value: workingCase.registrar.name,
+                    },
+                  ]
+                : []),
+              {
+                title: formatMessage(core.prosecutorPerson),
+                value: workingCase.prosecutor?.name,
+              },
               {
                 title: workingCase.parentCase
                   ? `${
                       workingCase.type === CaseType.CUSTODY
-                        ? 'Fyrri gæsla'
-                        : 'Fyrra farbann'
+                        ? formatMessage(core.pastCustody)
+                        : formatMessage(core.pastTravelBan)
                     }`
-                  : 'Tími handtöku',
+                  : formatMessage(core.arrestDate),
                 value: workingCase.parentCase
                   ? `${capitalize(
                       formatDate(
@@ -167,23 +214,38 @@ export const Overview: React.FC = () => {
                       ) ?? '',
                     )} kl. ${formatDate(
                       workingCase.parentCase.validToDate,
-                      TIME_FORMAT,
+                      Constants.TIME_FORMAT,
                     )}`
                   : workingCase.arrestDate
                   ? `${capitalize(
                       formatDate(workingCase.arrestDate, 'PPPP', true) ?? '',
-                    )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`
+                    )} kl. ${formatDate(
+                      workingCase.arrestDate,
+                      Constants.TIME_FORMAT,
+                    )}`
                   : 'Var ekki skráður',
               },
+              ...(workingCase.courtDate
+                ? [
+                    {
+                      title: formatMessage(core.confirmedCourtDate),
+                      value: `${capitalize(
+                        formatDate(workingCase.courtDate, 'PPPP', true) ?? '',
+                      )} kl. ${formatDate(
+                        workingCase.courtDate,
+                        Constants.TIME_FORMAT,
+                      )}`,
+                    },
+                  ]
+                : []),
             ]}
-            accusedName={workingCase.accusedName}
-            accusedNationalId={workingCase.accusedNationalId}
-            accusedAddress={workingCase.accusedAddress}
+            defendants={workingCase.defendants ?? []}
             defender={{
               name: workingCase.defenderName ?? '',
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
             }}
+            sessionArrangement={workingCase.sessionArrangements}
           />
         </Box>
         <Box component="section" marginBottom={5} data-testid="demands">
@@ -201,11 +263,7 @@ export const Overview: React.FC = () => {
               id="id_1"
               label="Lagaákvæði sem brot varða við"
             >
-              <Text>
-                <span className={styles.breakSpaces}>
-                  {workingCase.lawsBroken}
-                </span>
-              </Text>
+              <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
             </AccordionItem>
             <AccordionItem
               labelVariant="h3"
@@ -251,61 +309,18 @@ export const Overview: React.FC = () => {
               label="Greinargerð um málsatvik og lagarök"
             >
               {workingCase.caseFacts && (
-                <Box marginBottom={2}>
-                  <Box marginBottom={2}>
-                    <Text variant="h5">Málsatvik</Text>
-                  </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.caseFacts}
-                    </span>
-                  </Text>
-                </Box>
+                <AccordionListItem title="Málsatvik">
+                  <Text whiteSpace="breakSpaces">{workingCase.caseFacts}</Text>
+                </AccordionListItem>
               )}
               {workingCase.legalArguments && (
-                <Box marginBottom={2}>
-                  <Box marginBottom={2}>
-                    <Text variant="h5">Lagarök</Text>
-                  </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.legalArguments}
-                    </span>
+                <AccordionListItem title="Lagarök">
+                  <Text whiteSpace="breakSpaces">
+                    {workingCase.legalArguments}
                   </Text>
-                </Box>
+                </AccordionListItem>
               )}
             </AccordionItem>
-            {(Boolean(workingCase.comments) ||
-              Boolean(workingCase.caseFilesComments)) && (
-              <AccordionItem id="id_5" label="Athugasemdir" labelVariant="h3">
-                {Boolean(workingCase.comments) && (
-                  <Box marginBottom={workingCase.caseFilesComments ? 3 : 0}>
-                    <Box marginBottom={1}>
-                      <Text variant="h4" as="h4">
-                        Athugasemdir vegna málsmeðferðar
-                      </Text>
-                    </Box>
-                    <Text>
-                      <span className={styles.breakSpaces}>
-                        {workingCase.comments}
-                      </span>
-                    </Text>
-                  </Box>
-                )}
-                {Boolean(workingCase.caseFilesComments) && (
-                  <>
-                    <Text variant="h4" as="h4">
-                      Athugasemdir vegna rannsóknargagna
-                    </Text>
-                    <Text>
-                      <span className={styles.breakSpaces}>
-                        {workingCase.caseFilesComments}
-                      </span>
-                    </Text>
-                  </>
-                )}
-              </AccordionItem>
-            )}
             <AccordionItem
               id="id_6"
               label={`Rannsóknargögn ${`(${
@@ -320,6 +335,11 @@ export const Overview: React.FC = () => {
                 />
               </Box>
             </AccordionItem>
+            {(workingCase.comments ||
+              workingCase.caseFilesComments ||
+              workingCase.caseResentExplanation) && (
+              <CommentsAccordionItem workingCase={workingCase} />
+            )}
           </Accordion>
         </Box>
         <Box className={styles.prosecutorContainer}>
@@ -346,31 +366,79 @@ export const Overview: React.FC = () => {
               ? 'Senda kröfu á héraðsdóm'
               : 'Endursenda kröfu á héraðsdóm'
           }
-          nextIsLoading={isSendingNotification}
-          onNextButtonClick={handleNextButtonClick}
+          nextIsLoading={
+            workingCase.state !== CaseState.RECEIVED && isSendingNotification
+          }
+          onNextButtonClick={
+            workingCase.state === CaseState.RECEIVED
+              ? () => {
+                  setResendCaseModalVisible(true)
+                }
+              : handleNextButtonClick
+          }
         />
       </FormContentContainer>
-      {modalVisible && (
-        <Modal
-          title={formatMessage(rcOverview.sections.modal.heading, {
-            caseType:
-              workingCase.type === CaseType.CUSTODY
-                ? 'gæsluvarðhald'
-                : 'farbann',
-          })}
-          text={modalText}
-          handleClose={() => router.push(Constants.REQUEST_LIST_ROUTE)}
-          handlePrimaryButtonClick={() => {
-            window.open(Constants.FEEDBACK_FORM_URL, '_blank')
-            router.push(Constants.REQUEST_LIST_ROUTE)
-          }}
-          handleSecondaryButtonClick={() => {
-            router.push(Constants.REQUEST_LIST_ROUTE)
-          }}
-          primaryButtonText="Senda ábendingu"
-          secondaryButtonText="Loka glugga"
-        />
-      )}
+      <AnimatePresence>
+        {resendCaseModalVisible && (
+          <Modal
+            title={formatMessage(rcOverview.sections.caseResentModal.heading)}
+            text={formatMessage(rcOverview.sections.caseResentModal.text)}
+            handleClose={() => setResendCaseModalVisible(false)}
+            primaryButtonText={formatMessage(
+              rcOverview.sections.caseResentModal.primaryButtonText,
+            )}
+            secondaryButtonText={formatMessage(
+              rcOverview.sections.caseResentModal.secondaryButtonText,
+            )}
+            handleSecondaryButtonClick={() => {
+              setResendCaseModalVisible(false)
+            }}
+            handlePrimaryButtonClick={() => {
+              handleNextButtonClick()
+            }}
+            isPrimaryButtonLoading={isSendingNotification}
+            isPrimaryButtonDisabled={!caseResentExplanation}
+          >
+            <Box marginBottom={10}>
+              <Input
+                name="caseResentExplanation"
+                label={formatMessage(
+                  rcOverview.sections.caseResentModal.input.label,
+                )}
+                placeholder={formatMessage(
+                  rcOverview.sections.caseResentModal.input.placeholder,
+                )}
+                onChange={(evt) => setCaseResentExplanation(evt.target.value)}
+                textarea
+                rows={7}
+              />
+            </Box>
+          </Modal>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {modalVisible && (
+          <Modal
+            title={formatMessage(rcOverview.sections.modal.heading, {
+              caseType:
+                workingCase.type === CaseType.CUSTODY
+                  ? 'gæsluvarðhald'
+                  : 'farbann',
+            })}
+            text={modalText}
+            handleClose={() => router.push(Constants.REQUEST_LIST_ROUTE)}
+            handlePrimaryButtonClick={() => {
+              window.open(Constants.FEEDBACK_FORM_URL, '_blank')
+              router.push(Constants.REQUEST_LIST_ROUTE)
+            }}
+            handleSecondaryButtonClick={() => {
+              router.push(Constants.REQUEST_LIST_ROUTE)
+            }}
+            primaryButtonText="Senda ábendingu"
+            secondaryButtonText="Loka glugga"
+          />
+        )}
+      </AnimatePresence>
     </PageLayout>
   )
 }

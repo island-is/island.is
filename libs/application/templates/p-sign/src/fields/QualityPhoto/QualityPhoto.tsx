@@ -1,23 +1,25 @@
 import React, { FC } from 'react'
 
-import { Box, ContentBlock, AlertMessage } from '@island.is/island-ui/core'
-import { FieldBaseProps, formatText } from '@island.is/application/core'
+import { Box, SkeletonLoader } from '@island.is/island-ui/core'
+import {
+  Application,
+  FieldBaseProps,
+  formatText,
+} from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
+import { useQualityPhoto } from './hooks/useQualityPhoto'
 
-interface QualityPhotoData extends FieldBaseProps {
-  data: {
-    qualityPhoto: string
-    success: boolean
-  }
+interface QualityPhotoData {
+  qualityPhoto: string | null
+  application: Application
 }
 
 const Photo: FC<QualityPhotoData> = ({
-  data,
+  qualityPhoto,
   application,
 }: QualityPhotoData) => {
   const { formatMessage } = useLocale()
-  const { qualityPhoto } = data
 
   if (!qualityPhoto) {
     return null
@@ -34,35 +36,15 @@ const Photo: FC<QualityPhotoData> = ({
 }
 
 const QualityPhoto: FC<FieldBaseProps> = ({ application }) => {
-  const { qualityPhoto } = application.externalData
-  const { formatMessage } = useLocale()
-  const photo = (qualityPhoto as unknown) as QualityPhotoData
-  const img = Photo(photo)
+  const { qualityPhoto } = useQualityPhoto(application)
+  const img = Photo({ qualityPhoto, application })
   return (
-    <Box marginBottom={3}>
-      {photo.data.success ? (
-        <Box marginTop={4} style={{ width: '191px', height: '242px' }}>
-          {img}
-        </Box>
-      ) : (
-        <Box marginTop={2}>
-          <ContentBlock>
-            <AlertMessage
-              type="warning"
-              title={formatText(
-                m.qualityPhotoWarningTitle,
-                application,
-                formatMessage,
-              )}
-              message={formatText(
-                m.qualityPhotoWarningDescription,
-                application,
-                formatMessage,
-              )}
-            />
-          </ContentBlock>
-        </Box>
-      )}
+    <Box
+      marginTop={4}
+      marginBottom={3}
+      style={{ width: '191px', height: '242px' }}
+    >
+      {qualityPhoto ? img : <SkeletonLoader height={242} width={191} />}
     </Box>
   )
 }

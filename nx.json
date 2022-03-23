@@ -88,6 +88,9 @@
     "api-domains-communications": {
       "tags": []
     },
+    "api-domains-company-registry": {
+      "tags": []
+    },
     "api-domains-content-search": {
       "tags": []
     },
@@ -127,10 +130,10 @@
     "api-domains-identity": {
       "tags": []
     },
-    "api-domains-islykill": {
+    "api-domains-license-service": {
       "tags": []
     },
-    "api-domains-license-service": {
+    "api-domains-mortgage-certificate": {
       "tags": []
     },
     "api-domains-national-registry": {
@@ -148,9 +151,6 @@
     "api-domains-regulations": {
       "tags": []
     },
-    "api-domains-rsk": {
-      "tags": []
-    },
     "api-domains-syslumenn": {
       "tags": []
     },
@@ -161,6 +161,9 @@
       "tags": []
     },
     "api-schema": {
+      "tags": []
+    },
+    "application-api-core": {
       "tags": []
     },
     "application-core": {
@@ -212,6 +215,9 @@
     "application-templates-driving-license": {
       "tags": []
     },
+    "application-templates-example-payment": {
+      "tags": []
+    },
     "application-templates-family-matters-core": {
       "tags": []
     },
@@ -228,6 +234,9 @@
       "tags": []
     },
     "application-templates-login-service": {
+      "tags": []
+    },
+    "application-templates-mortgage-certificate": {
       "tags": []
     },
     "application-templates-p-sign": {
@@ -328,10 +337,16 @@
     "clients-regulations": {
       "tags": []
     },
-    "clients-rsk-v1": {
+    "clients-rsk-company-registry": {
       "tags": []
     },
-    "clients-rsk-v2": {
+    "clients-rsk-personal-tax-return": {
+      "tags": []
+    },
+    "clients-rsk-procuring": {
+      "tags": []
+    },
+    "clients-rsk-v1": {
       "tags": []
     },
     "clients-syslumenn": {
@@ -455,9 +470,6 @@
     "infra-metrics": {
       "tags": []
     },
-    "infra-monitoring": {
-      "tags": []
-    },
     "infra-nest-server": {
       "tags": []
     },
@@ -479,7 +491,7 @@
     },
     "island-ui-storybook": {
       "tags": [],
-      "implicitDependencies": ["island-ui-core"]
+      "implicitDependencies": ["island-ui-core", "application-ui-fields"]
     },
     "island-ui-theme": {
       "tags": []
@@ -536,6 +548,9 @@
     "nest-audit": {
       "tags": []
     },
+    "nest-aws": {
+      "tags": []
+    },
     "nest-config": {
       "tags": []
     },
@@ -546,6 +561,9 @@
       "tags": []
     },
     "nest-problem": {
+      "tags": []
+    },
+    "nest-sequelize": {
       "tags": []
     },
     "nest-swagger": {
@@ -575,6 +593,9 @@
     "regulations": {
       "tags": []
     },
+    "residence-history": {
+      "tags": []
+    },
     "service-portal": {
       "tags": []
     },
@@ -594,9 +615,6 @@
       "tags": []
     },
     "service-portal-documents": {
-      "tags": []
-    },
-    "service-portal-driving-license": {
       "tags": []
     },
     "service-portal-e2e": {
@@ -645,9 +663,6 @@
     "service-portal-settings-access-control": {
       "tags": []
     },
-    "service-portal-settings-islykill": {
-      "tags": []
-    },
     "service-portal-settings-personal-information": {
       "tags": []
     },
@@ -670,6 +685,9 @@
       "tags": []
     },
     "services-personal-representative": {
+      "tags": []
+    },
+    "services-personal-representative-public": {
       "tags": []
     },
     "services-search-indexer": {

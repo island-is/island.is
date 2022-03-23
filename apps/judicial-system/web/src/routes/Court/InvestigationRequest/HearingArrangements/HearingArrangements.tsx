@@ -1,20 +1,19 @@
 import React, { useContext, useEffect } from 'react'
-import { useQuery } from '@apollo/client'
+import { useIntl } from 'react-intl'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
 import { SessionArrangements } from '@island.is/judicial-system/types'
 import {
-  JudgeSubsections,
+  CourtSubsections,
   Sections,
-  UserData,
 } from '@island.is/judicial-system-web/src/types'
-import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 
 import HearingArrangementsForm from './HearingArrangementsForm'
-
 const HearingArrangements = () => {
   const {
     workingCase,
@@ -24,17 +23,9 @@ const HearingArrangements = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
+  const { formatMessage } = useIntl()
 
-  const { autofill } = useCase()
-
-  const { data: users, loading: userLoading } = useQuery<UserData>(UsersQuery, {
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
-
-  useEffect(() => {
-    document.title = 'Fyrirtaka - Réttarvörslugátt'
-  }, [])
+  const { autofill, autofillSessionArrangements } = useCase()
 
   useEffect(() => {
     if (isCaseUpToDate) {
@@ -45,7 +36,7 @@ const HearingArrangements = () => {
       }
 
       if (theCase.defenderName) {
-        autofill(
+        autofillSessionArrangements(
           'sessionArrangements',
           SessionArrangements.ALL_PRESENT,
           theCase,
@@ -54,7 +45,13 @@ const HearingArrangements = () => {
 
       setWorkingCase(theCase)
     }
-  }, [autofill, isCaseUpToDate, setWorkingCase, workingCase])
+  }, [
+    autofill,
+    autofillSessionArrangements,
+    isCaseUpToDate,
+    setWorkingCase,
+    workingCase,
+  ])
 
   return (
     <PageLayout
@@ -62,16 +59,19 @@ const HearingArrangements = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={JudgeSubsections.HEARING_ARRANGEMENTS}
+      activeSubSection={CourtSubsections.HEARING_ARRANGEMENTS}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      {user && users && (
+      <PageHeader
+        title={formatMessage(
+          titles.court.investigationCases.hearingArrangements,
+        )}
+      />
+      {user && (
         <HearingArrangementsForm
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
-          isLoading={userLoading}
-          users={users}
           user={user}
         />
       )}

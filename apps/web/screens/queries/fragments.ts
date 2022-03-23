@@ -158,6 +158,7 @@ export const slices = gql`
     __typename
     id
     title
+    showTitle
     questions {
       id
       question
@@ -498,5 +499,14 @@ export const slices = gql`
   fragment AllSlices on Slice {
     ...BaseSlices
     ...FaqListFields
+  }
+`
+
+export const nestedOneColumnTextFields = gql`
+  fragment NestedOneColumnTextFields on OneColumnText {
+    ...OneColumnTextFields
+    content {
+      ...AllSlices
+    }
   }
 `

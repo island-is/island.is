@@ -1,3 +1,5 @@
+<!-- gitbook-navigation: "Config" -->
+
 # Nest Config
 
 Wraps Nest's [Configuration](https://docs.nestjs.com/techniques/configuration) functionality with the following functionality:
@@ -142,6 +144,51 @@ SomeModule is not configured. Validation failed with the following errors:
 ```
 
 ## Advanced functionality
+
+### Optional config
+
+If you have module that can depend on a config optionally it can use the `isConfigured` property to check if the config is provided. Then in the module's imports you import the config definition with `registerOptional()`. This allows for a complete config to be optional, but if some property is provided all of the required properties need to be provided.
+
+{% hint style="warning" %}
+Only optional configs should be imported in the module itself. Required config should be loaded in the root module using the `ConfigModule.forRoot(...)`
+{% endhint %}
+
+Checking if config is provided:
+
+```ts
+import { Inject } from '@nestjs/common'
+import { ConfigType, OtherConfig } from '@island.is/nest/config'
+import { SomeModuleConfig } from './someModule.config'
+
+export class SomeClientService {
+  constructor(
+    @Inject(SomeModuleConfig.Key)
+    private config: ConfigType<typeof SomeModuleConfig>,
+    @Inject(OtherConfig.Key)
+    private otherConfig: ConfigType<typeof OtherConfig>,
+  ) {
+    this.someProp = otherConfig.isConfigured
+      ? otherConfig.someProp
+      : 'Some default behaviour'
+  }
+}
+```
+
+Add the config as optional in the module.
+
+```ts
+import { ConfigModule } from '@island.is/nest/config'
+import { SomeModuleConfig } from './someModule.config'
+import { SomeClientService } from './someClient.service'
+
+@Module({
+  // SomeModuleConfig is imported in the root module
+  imports: [OtherConfig.registerOptional()],
+  provides: [SomeClientService],
+  exports: [SomeClientService],
+})
+export class SomeClientModule {}
+```
 
 ### Server side features
 

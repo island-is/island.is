@@ -7,10 +7,11 @@ import {
   makeProsecutor,
 } from '@island.is/judicial-system/formatters'
 import { Case } from '@island.is/judicial-system/types'
+import { IC_POLICE_CONFIRMATION_ROUTE } from '@island.is/judicial-system/consts'
 
 import { intercept } from '../../../utils'
 
-describe('/krafa/rannsoknarheimild/stadfesta/:id', () => {
+describe(`${IC_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
   const demands = faker.lorem.paragraph()
   const defenderName = faker.name.findName()
   const defenderEmail = faker.internet.email()
@@ -30,7 +31,7 @@ describe('/krafa/rannsoknarheimild/stadfesta/:id', () => {
     }
 
     cy.stubAPIResponses()
-    cy.visit('/krafa/rannsoknarheimild/stadfesta/test_id')
+    cy.visit(`${IC_POLICE_CONFIRMATION_ROUTE}/test_id`)
 
     intercept(caseDataAddition)
   })
@@ -43,12 +44,12 @@ describe('/krafa/rannsoknarheimild/stadfesta/:id', () => {
       `${defenderName}, ${defenderEmail}, s. ${defenderPhoneNumber}`,
     )
     cy.getByTestid('infoCard').contains('007-2021-202000') // Police case number
-    cy.getByTestid('infoCard').contains('16.09.2020') // Created
     cy.getByTestid('infoCard').contains('Lögreglan á Höfuðborgarsvæðinu') // Institution
+    cy.getByTestid('infoCard').contains('Héraðsdómur Reykjavíkur') // Court
     cy.getByTestid('infoCard').contains(
       'Sunnud. 20. september 2020 eftir kl. 19:50',
     ) // Requested court date
-    cy.getByTestid('infoCard').contains('Áki Ákærandi aðstoðarsaksóknari') // Prosecutor
+    cy.getByTestid('infoCard').contains('Áki Ákærandi') // Prosecutor
     cy.getByTestid('infoCard').contains('Upplýsingar um vefnotkun') // Type
   })
 
@@ -60,7 +61,7 @@ describe('/krafa/rannsoknarheimild/stadfesta/:id', () => {
     cy.getByTestid('requestPDFButton').should('exist')
   })
 
-  it('should navigate to /krofur on successful confirmation', () => {
+  it.skip('should navigate to /krofur on successful confirmation', () => {
     cy.getByTestid('continueButton').click()
     cy.getByTestid('modalSecondaryButton').click()
     cy.url().should('contain', '/krofur')

@@ -1,3 +1,5 @@
+import { GraphQLJSONObject } from 'graphql-type-json'
+
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 import type {
@@ -6,12 +8,13 @@ import type {
   CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseDecision,
-  CaseGender,
   CaseState,
   CaseType,
   SessionArrangements,
+  CourtDocument,
 } from '@island.is/judicial-system/types'
 
+import { Defendant } from '../../defendant'
 import { Institution } from '../../institution'
 import { User } from '../../user'
 import { CaseFile } from '../../file'
@@ -40,17 +43,8 @@ export class Case implements TCase {
   @Field()
   readonly policeCaseNumber!: string
 
-  @Field()
-  readonly accusedNationalId!: string
-
-  @Field({ nullable: true })
-  readonly accusedName?: string
-
-  @Field({ nullable: true })
-  readonly accusedAddress?: string
-
-  @Field(() => String, { nullable: true })
-  readonly accusedGender?: CaseGender
+  @Field(() => [Defendant], { nullable: true })
+  readonly defendants?: Defendant[]
 
   @Field({ nullable: true })
   readonly defenderName?: string
@@ -63,9 +57,6 @@ export class Case implements TCase {
 
   @Field({ nullable: true })
   readonly sendRequestToDefender?: boolean
-
-  @Field({ nullable: true })
-  readonly defenderIsSpokesperson?: boolean
 
   @Field({ nullable: true })
   isHeightenedSecurityLevel?: boolean
@@ -163,17 +154,17 @@ export class Case implements TCase {
   @Field({ nullable: true })
   readonly prosecutorDemands?: string
 
-  @Field(() => [String], { nullable: true })
-  readonly courtDocuments?: string[]
+  @Field(() => [GraphQLJSONObject], { nullable: true })
+  readonly courtDocuments?: CourtDocument[]
 
   @Field({ nullable: true })
-  readonly accusedBookings?: string
-
-  @Field({ nullable: true })
-  readonly litigationPresentations?: string
+  readonly sessionBookings?: string
 
   @Field({ nullable: true })
   readonly courtCaseFacts?: string
+
+  @Field({ nullable: true })
+  readonly introduction?: string
 
   @Field({ nullable: true })
   readonly courtLegalArguments?: string
@@ -257,5 +248,8 @@ export class Case implements TCase {
   readonly caseFiles?: CaseFile[]
 
   @Field({ nullable: true })
-  readonly isMasked?: boolean
+  readonly caseModifiedExplanation?: string
+
+  @Field({ nullable: true })
+  readonly caseResentExplanation?: string
 }

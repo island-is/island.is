@@ -4,6 +4,7 @@ export const ApplicationQuery = gql`
   query GetApplicationQuery($input: ApplicationInput!) {
     application(input: $input) {
       id
+      applicationSystemId
       nationalId
       created
       modified
@@ -67,6 +68,15 @@ export const ApplicationQuery = gql`
           description
           amount
         }
+      }
+      directTaxPayments {
+        totalSalary
+        payerNationalId
+        personalAllowance
+        withheldAtSource
+        month
+        year
+        userType
       }
     }
   }
@@ -196,6 +206,15 @@ export const ApplicationEventMutation = gql`
         staffNationalId
         staffName
       }
+      directTaxPayments {
+        totalSalary
+        payerNationalId
+        personalAllowance
+        withheldAtSource
+        month
+        year
+        userType
+      }
     }
   }
 `
@@ -215,7 +234,6 @@ export const CurrentUserQuery = gql`
         roles
         active
         nickname
-        municipalityHomepage
         email
         usePseudoName
       }
@@ -244,6 +262,14 @@ export const UpdateApplicationMutation = gql`
       interview
       employmentCustom
       homeCircumstancesCustom
+      familyStatus
+      spouseNationalId
+      spouseName
+      spouseEmail
+      spousePhoneNumber
+      city
+      streetName
+      postalCode
       files {
         id
         applicationId
@@ -254,6 +280,7 @@ export const UpdateApplicationMutation = gql`
       }
       state
       formComment
+      spouseFormComment
       studentCustom
       rejection
       applicationEvents {
@@ -262,12 +289,22 @@ export const UpdateApplicationMutation = gql`
         eventType
         comment
         created
-        staffNationalId
         staffName
+        staffNationalId
       }
       staff {
         name
         municipalityId
+        nationalId
+      }
+      directTaxPayments {
+        totalSalary
+        payerNationalId
+        personalAllowance
+        withheldAtSource
+        month
+        year
+        userType
       }
       amount {
         aidAmount
@@ -378,7 +415,6 @@ export const UpdateStaffMutation = gql`
       roles
       active
       nickname
-      municipalityHomepage
       email
       usePseudoName
     }
@@ -459,6 +495,15 @@ export const SupervisorsQuery = gql`
       name
       roles
       active
+    }
+  }
+`
+
+export const GetAllSignedUrlQuery = gql`
+  query GetAllSignedUrlQuery($input: GetSignedUrlForIdInput!) {
+    getSignedUrlForAllFilesId(input: $input) {
+      url
+      key
     }
   }
 `

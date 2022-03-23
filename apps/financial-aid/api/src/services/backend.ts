@@ -20,18 +20,17 @@ import {
   Staff,
   CreateStaff,
   CreateMunicipality,
-  Amount,
 } from '@island.is/financial-aid/shared/lib'
 
 import { environment } from '../environments'
 import { CreateApplicationFilesInput } from '../app/modules/file/dto'
 import { CreateStaffInput } from '../app/modules/staff'
 import { SpouseModel } from '../app/modules/user'
+import { UpdateMunicipalityInput } from '../app/modules/municipality/dto'
 import {
-  CreateMunicipalityInput,
-  UpdateMunicipalityInput,
-} from '../app/modules/municipality/dto'
-import { CreateAmountInput } from '../app/modules/amount/dto'
+  DirectTaxPaymentsResponse,
+  PersonalTaxReturnResponse,
+} from '../app/modules/personalTaxReturn/models'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
@@ -118,6 +117,10 @@ class BackendAPI extends RESTDataSource {
     return this.get(`file/url/${id}`)
   }
 
+  getSignedUrlForAllFiles(applicationId: string): Promise<SignedUrl[]> {
+    return this.get(`file/${applicationId}`)
+  }
+
   createApplicationEvent(
     createApplicationEvent: CreateApplicationEvent,
   ): Promise<Application> {
@@ -130,16 +133,16 @@ class BackendAPI extends RESTDataSource {
     return this.post('file', createApplicationFiles)
   }
 
-  getCurrentApplicationId(nationalId: string): Promise<string | undefined> {
-    return this.get(`application/nationalId/${nationalId}`)
+  getCurrentApplicationId(): Promise<string | undefined> {
+    return this.get('application/nationalId')
   }
 
-  getSpouse(spouseNationalId: string): Promise<SpouseModel> {
-    return this.get(`application/spouse/${spouseNationalId}`)
+  getSpouse(): Promise<SpouseModel> {
+    return this.get('application/spouse')
   }
 
-  getStaff(nationalId: string): Promise<Staff> {
-    return this.get(`staff/nationalId/${nationalId}`)
+  getStaff(): Promise<Staff> {
+    return this.get('staff/nationalId')
   }
 
   getStaffById(id: string): Promise<Staff> {
@@ -168,6 +171,14 @@ class BackendAPI extends RESTDataSource {
 
   getNumberOfStaffForMunicipality(municipalityId: string): Promise<number> {
     return this.get(`staff/municipality/${municipalityId}`)
+  }
+
+  getPersonalTaxReturn(): Promise<PersonalTaxReturnResponse> {
+    return this.get('personalTaxReturn')
+  }
+
+  getDirectTaxPayments(): Promise<DirectTaxPaymentsResponse> {
+    return this.get('personalTaxReturn/directTaxPayments')
   }
 }
 

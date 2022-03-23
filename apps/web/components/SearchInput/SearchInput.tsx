@@ -117,6 +117,7 @@ const useSearch = (
               types: [
                 SearchableContentTypes['WebArticle'],
                 SearchableContentTypes['WebSubArticle'],
+                SearchableContentTypes['WebProjectPage'],
               ],
             },
           },
@@ -253,6 +254,10 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         id={id}
         initialInputValue={initialInputValue}
         onChange={(item) => {
+          if (!item?.string) {
+            return false
+          }
+
           if (item?.type === 'query') {
             return onSubmit({
               ...item,
@@ -312,6 +317,10 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             }}
             buttonProps={{
               onClick: () => {
+                if (!inputValue) {
+                  return false
+                }
+
                 closeMenu()
                 onSubmit({
                   type: 'query',
@@ -335,6 +344,10 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
               colored,
               onKeyDown: (e) => {
                 const v = e.currentTarget.value
+
+                if (!v) {
+                  return false
+                }
 
                 if (e.key === 'Enter' && highlightedIndex == null) {
                   e.currentTarget.blur()

@@ -1,7 +1,8 @@
 import React from 'react'
 import { Text, Box, UploadFile } from '@island.is/island-ui/core'
-import * as styles from './FileList.css'
+
 import cn from 'classnames'
+import format from 'date-fns/format'
 import {
   ApplicationFile,
   getFileSizeInKilo,
@@ -18,6 +19,8 @@ export const GetSignedUrlQuery = gql`
     }
   }
 `
+
+import * as styles from './FileList.css'
 
 interface Props {
   className?: string
@@ -43,11 +46,11 @@ const FileList = ({ className, files }: Props) => {
   return (
     <Box className={cn({ [`${className}`]: true })} marginBottom={2}>
       <>
-        {files.map((item, index) => {
+        {files.map((item, index: number) => {
           return (
             <button
               className={cn({
-                [styles.filesLink]: true,
+                [`${styles.filesLink}`]: true,
                 [styles.hoverState]: item.id,
               })}
               key={'file-' + index}
@@ -71,7 +74,11 @@ const FileList = ({ className, files }: Props) => {
                   item,
                 )} KB`}</Text>
                 {'created' in item && (
-                  <Text variant="small"> {`${item.created}`}</Text>
+                  <div className={styles.date}>
+                    <Text variant="small">
+                      {format(new Date(item.created), 'dd.MM.y  · kk:mm')}
+                    </Text>
+                  </div>
                 )}
               </div>
             </button>

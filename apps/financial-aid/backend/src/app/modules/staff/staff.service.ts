@@ -3,14 +3,14 @@ import {
   Staff,
   StaffRole,
 } from '@island.is/financial-aid/shared/lib'
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { UpdateStaffDto, CreateStaffDto } from './dto'
 import { Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 import { environment } from '../../../environments'
 
-import { StaffModel } from './models'
+import { StaffModel } from './models/staff.model'
 import { EmailService } from '@island.is/email-service'
 import { logger } from '@island.is/logging'
 import {
@@ -139,25 +139,31 @@ export class StaffService {
     t?: Transaction,
     isFirstStaffForMunicipality: boolean = false,
   ): Promise<StaffModel> {
+    const staff = await this.staffModel
+      .create(
+        {
+          nationalId: input.nationalId,
+          name: input.name,
+          municipalityId: municipality.municipalityId,
+          email: input.email,
+          roles: input.roles,
+          active: true,
+          municipalityName: municipality.municipalityName,
+        },
+        { transaction: t },
+      )
+      .catch(() => {
+        throw new BadRequestException('Cannot create staff')
+      })
+
     await this.sendEmail(
       input,
       municipality.municipalityName,
       user,
       isFirstStaffForMunicipality,
     )
-    return await this.staffModel.create(
-      {
-        nationalId: input.nationalId,
-        name: input.name,
-        municipalityId: municipality.municipalityId,
-        email: input.email,
-        roles: input.roles,
-        active: true,
-        municipalityName: municipality.municipalityName,
-        municipalityHomepage: municipality.municipalityHomepage,
-      },
-      { transaction: t },
-    )
+
+    return staff
   }
 
   async numberOfUsersForMunicipality(municipalityId: string): Promise<number> {

@@ -1,28 +1,37 @@
 import {
   SyslumennAuction,
   Homestay,
-  OperatingLicense,
+  PaginatedOperatingLicenses,
   CertificateInfoResponse,
   DistrictCommissionerAgencies,
   DataUploadResponse,
   Person,
   Attachment,
+  MortgageCertificate,
+  MortgageCertificateValidation,
 } from './syslumennClient.types'
 import {
   mapSyslumennAuction,
   mapHomestay,
-  mapOperatingLicense,
+  mapPaginatedOperatingLicenses,
   mapCertificateInfo,
   mapDistrictCommissionersAgenciesResponse,
   mapDataUploadResponse,
   constructUploadDataObject,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
-import { SyslumennApi, SvarSkeyti, Configuration } from '../../gen/fetch'
+import {
+  SyslumennApi,
+  SvarSkeyti,
+  Configuration,
+  VirkLeyfiGetRequest,
+  TegundAndlags,
+} from '../../gen/fetch'
 import { SyslumennClientConfig } from './syslumennClient.config'
 import type { ConfigType } from '@island.is/nest/config'
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { PropertyDetail } from '@island.is/api/domains/assets'
 
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -92,30 +101,66 @@ export class SyslumennService {
     return (syslumennAuctions ?? []).map(mapSyslumennAuction)
   }
 
-  async getOperatingLicenses(): Promise<OperatingLicense[]> {
+  async getOperatingLicenses(
+    searchQuery?: string,
+    pageNumber?: number,
+    pageSize?: number,
+  ): Promise<PaginatedOperatingLicenses> {
+    // Prepare client request
     const { id, api } = await this.createApi()
-    const operatingLicenses = await api.virkLeyfiGet({
-      audkenni: id,
-    })
+    const params: VirkLeyfiGetRequest = { audkenni: id }
+    if (searchQuery) {
+      params.searchBy = searchQuery
+    }
+    if (pageNumber) {
+      params.pageNumber = pageNumber
+    }
+    if (pageSize) {
+      params.pageSize = pageSize
+    }
 
-    return (operatingLicenses ?? []).map(mapOperatingLicense)
+    // Do the client request.
+    const virkLeyfiApiResponse = await api.virkLeyfiGetRaw(params)
+
+    // Custom response header for Pagination Info
+    const HEADER_KEY_PAGINATION_INFO = 'x-pagination'
+    const paginationInfo = virkLeyfiApiResponse.raw.headers.get(
+      HEADER_KEY_PAGINATION_INFO,
+    )
+    if (!paginationInfo) {
+      throw new Error(
+        'Syslumenn API did not return pagination info for operating licences.',
+      )
+    }
+
+    // Custom response header for Searcy By
+    const HEADER_KEY_SEARCH_BY = 'x-searchby'
+    const searchBy = decodeURIComponent(
+      virkLeyfiApiResponse.raw.headers.get(HEADER_KEY_SEARCH_BY) ?? '',
+    )
+
+    return mapPaginatedOperatingLicenses(
+      searchBy,
+      paginationInfo,
+      await virkLeyfiApiResponse.value(),
+    )
   }
 
-  async sealCriminalRecord(criminalRecord: string): Promise<SvarSkeyti> {
+  async sealDocument(document: string): Promise<SvarSkeyti> {
     const { id, api } = await this.createApi()
     const explination = 'Rafrænt undirritað vottorð'
     return await api.innsiglunPost({
       skeyti: {
         audkenni: id,
         skyring: explination,
-        skjal: criminalRecord,
+        skjal: document,
       },
     })
   }
 
   async uploadData(
     persons: Person[],
-    attachment: Attachment,
+    attachment: Attachment | undefined,
     extraData: { [key: string]: string },
     uploadDataName: string,
     uploadDataId?: string,
@@ -168,5 +213,93 @@ export class SyslumennService {
     const { api } = await this.createApi()
     const response = await api.embaettiOgStarfsstodvarGetEmbaetti()
     return response.map(mapDistrictCommissionersAgenciesResponse)
+  }
+
+  async getMortgageCertificate(
+    propertyNumber: string,
+  ): Promise<MortgageCertificate> {
+    const { id, api } = await this.createApi()
+
+    const res = await api.vedbokarvottordPost({
+      skilabod: {
+        audkenni: id,
+        fastanumer:
+          propertyNumber[0] == 'F'
+            ? propertyNumber.substring(1, propertyNumber.length)
+            : propertyNumber,
+        tegundAndlags: TegundAndlags.NUMBER_0, // 0 = Real estate
+      },
+    })
+    const contentBase64 = res.vedbandayfirlitPDFSkra || ''
+
+    const certificate: MortgageCertificate = {
+      contentBase64: contentBase64,
+      apiMessage: res.skilabod,
+    }
+
+    return certificate
+  }
+
+  async validateMortgageCertificate(
+    propertyNumber: string,
+    isFromSearch: boolean | undefined,
+  ): Promise<MortgageCertificateValidation> {
+    try {
+      // Note: this function will throw an error if something goes wrong
+      const certificate = await this.getMortgageCertificate(propertyNumber)
+
+      const exists = certificate.contentBase64.length !== 0
+      const hasKMarking =
+        exists && certificate.contentBase64 !== 'Precondition Required'
+
+      // Note: we are saving propertyNumber and isFromSearch also in externalData,
+      // since it is not saved in answers if we go from state DRAFT -> DRAFT
+      return {
+        propertyNumber: propertyNumber,
+        isFromSearch: isFromSearch,
+        exists: exists,
+        hasKMarking: hasKMarking,
+      }
+    } catch (exception) {
+      return {
+        propertyNumber: propertyNumber,
+        isFromSearch: isFromSearch,
+        exists: false,
+        hasKMarking: false,
+      }
+    }
+  }
+
+  async getPropertyDetails(propertyNumber: string): Promise<PropertyDetail> {
+    const { id, api } = await this.createApi()
+
+    const res = await api.vedbokavottordRegluverkiPost({
+      skilabod: {
+        audkenni: id,
+        fastanumer:
+          propertyNumber[0] == 'F'
+            ? propertyNumber.substring(1, propertyNumber.length)
+            : propertyNumber,
+        tegundAndlags: TegundAndlags.NUMBER_0, // 0 = Real estate
+      },
+    })
+
+    if (res.length > 0) {
+      return {
+        propertyNumber: propertyNumber,
+        defaultAddress: {
+          display: res[0].heiti,
+        },
+        unitsOfUse: {
+          unitsOfUse: [
+            {
+              explanation: res[0].notkun,
+            },
+          ],
+        },
+      }
+    } else {
+      throw new Error()
+    }
   }
 }

@@ -1,15 +1,20 @@
-import React, { useEffect } from 'react'
+import React from 'react'
+import { useIntl } from 'react-intl'
+
+import { useMutation, useQuery } from '@apollo/client'
+import { useRouter } from 'next/router'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
-import type { User } from '@island.is/judicial-system/types'
-import { useMutation, useQuery } from '@apollo/client'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import {
   UpdateUserMutation,
   UserQuery,
 } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
-import { useRouter } from 'next/router'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import type { User } from '@island.is/judicial-system/types'
+import * as Constants from '@island.is/judicial-system/consts'
+
 import UserForm from '../UserForm/UserForm'
 
 interface UserData {
@@ -23,7 +28,7 @@ interface SaveData {
 export const ChangeUser: React.FC = () => {
   const router = useRouter()
   const id = router.query.id
-
+  const { formatMessage } = useIntl()
   const { data: userData, loading: userLoading } = useQuery<UserData>(
     UserQuery,
     {
@@ -44,10 +49,6 @@ export const ChangeUser: React.FC = () => {
   const [updateUserMutation, { loading: saveLoading }] = useMutation<SaveData>(
     UpdateUserMutation,
   )
-
-  useEffect(() => {
-    document.title = 'Breyta notanda - Réttarvörslugátt'
-  }, [])
 
   const saveUser = async (user: User) => {
     if (saveLoading === false && user) {
@@ -76,6 +77,7 @@ export const ChangeUser: React.FC = () => {
       isLoading={userLoading || institutionLoading}
       notFound={!userData?.user || !institutionLoaded}
     >
+      <PageHeader title={formatMessage(titles.admin.changeUser)} />
       {userData?.user && institutionLoaded && (
         <UserForm
           user={userData?.user}

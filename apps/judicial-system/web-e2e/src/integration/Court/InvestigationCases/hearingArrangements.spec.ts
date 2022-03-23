@@ -1,28 +1,23 @@
 import faker from 'faker'
 
-import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
+import { Case, CaseState } from '@island.is/judicial-system/types'
 import {
   makeInvestigationCase,
   makeCourt,
-  makeJudge,
 } from '@island.is/judicial-system/formatters'
+import {
+  IC_COURT_HEARING_ARRANGEMENTS_ROUTE,
+  IC_RULING_ROUTE,
+} from '@island.is/judicial-system/consts'
 
 import { intercept } from '../../../utils'
 
-describe('/domur/rannsoknarheimild/fyrirtaka/:id', () => {
+describe(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   beforeEach(() => {
     cy.login()
-    const caseData = makeInvestigationCase()
-    const caseDataAddition: Case = {
-      ...caseData,
-      court: makeCourt(),
-      requestedCourtDate: '2020-09-16T19:50:08.033Z',
-      state: CaseState.RECEIVED,
-    }
 
     cy.stubAPIResponses()
-
-    intercept(caseDataAddition)
+    cy.visit(`${IC_COURT_HEARING_ARRANGEMENTS_ROUTE}/test_id_stadfest`)
   })
 
   it('should display case comments', () => {
@@ -33,29 +28,49 @@ describe('/domur/rannsoknarheimild/fyrirtaka/:id', () => {
       comments: comment,
     }
 
-    cy.visit('/domur/rannsoknarheimild/fyrirtaka/test_id_stadfest')
     intercept(caseDataAddition)
 
     cy.contains(comment)
+  })
+
+  it('should ask for defender info depending on selected session arrangement', () => {
+    const caseData = makeInvestigationCase()
+    const caseDataAddition: Case = {
+      ...caseData,
+      court: makeCourt(),
+      requestedCourtDate: '2020-09-16T19:50:08.033Z',
+      state: CaseState.RECEIVED,
+    }
+
+    intercept(caseDataAddition)
+
+    cy.get('[name="session-arrangements-all-present"]').click()
+    cy.get('[name="defenderName"]').should('exist')
+    cy.get('[name="defenderEmail"]').should('exist')
+    cy.get('[name="defenderPhoneNumber"]').should('exist')
+
+    cy.get('[name="session-arrangements-all-present_spokesperson"]').click()
+    cy.get('[name="defenderName"]').should('exist')
+    cy.get('[name="defenderEmail"]').should('exist')
+    cy.get('[name="defenderPhoneNumber"]').should('exist')
+
+    cy.get('[name="session-arrangements-prosecutor-present"]').click()
+    cy.get('[name="defenderName"]').should('not.exist')
+    cy.get('[name="defenderEmail"]').should('not.exist')
+    cy.get('[name="defenderPhoneNumber"]').should('not.exist')
   })
 
   it('should allow users to choose if they send COURT_DATE notification', () => {
     const caseData = makeInvestigationCase()
     const caseDataAddition: Case = {
       ...caseData,
-      // judge: makeJudge(),
       court: makeCourt(),
       requestedCourtDate: '2020-09-16T19:50:08.033Z',
       state: CaseState.RECEIVED,
     }
 
-    cy.visit('/domur/rannsoknarheimild/fyrirtaka/test_id_stadfest')
     intercept(caseDataAddition)
 
-    cy.getByTestid('select-judge').click()
-    cy.get('#react-select-judge-option-0').click()
-    cy.getByTestid('select-registrar').click()
-    cy.get('#react-select-registrar-option-0').click()
     cy.get('[name="session-arrangements-all-present"]').click()
     cy.getByTestid('courtroom').type('1337')
     cy.getByTestid('continueButton').click()
@@ -71,32 +86,12 @@ describe('/domur/rannsoknarheimild/fyrirtaka/:id', () => {
       state: CaseState.RECEIVED,
     }
 
-    cy.visit('/domur/rannsoknarheimild/fyrirtaka/test_id_stadfest')
     intercept(caseDataAddition)
 
-    cy.getByTestid('select-judge').click()
-    cy.get('#react-select-judge-option-0').click()
     cy.get('[name="session-arrangements-all-present"]').click()
     cy.getByTestid('continueButton').should('not.be.disabled')
     cy.getByTestid('continueButton').click()
     cy.getByTestid('modalSecondaryButton').click()
-    cy.url().should('include', '/domur/rannsoknarheimild/thingbok')
-  })
-
-  it('should hide the next button and show a info panel instead if the current user does not have access to continue', () => {
-    const caseData = makeInvestigationCase()
-    const caseDataAddition: Case = {
-      ...caseData,
-      court: makeCourt(),
-      state: CaseState.RECEIVED,
-      type: CaseType.INTERNET_USAGE,
-      isMasked: true,
-    }
-
-    cy.visit('/domur/rannsoknarheimild/fyrirtaka/test_id_stadfest')
-    intercept(caseDataAddition)
-
-    cy.getByTestid('infobox').should('exist')
-    cy.getByTestid('continueButton').should('not.exist')
+    cy.url().should('include', IC_RULING_ROUTE)
   })
 })

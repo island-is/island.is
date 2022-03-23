@@ -13,6 +13,7 @@ import {
   DefaultEvents,
   DefaultStateLifeCycle,
   ApplicationConfigurations,
+  EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 
 import {
@@ -73,11 +74,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         ],
         meta: {
           name: States.PREREQUISITES,
-          lifecycle: {
-            shouldBeListed: false,
-            shouldBePruned: true,
-            whenToPrune: 24 * 3600 * 1000,
-          },
+          lifecycle: EphemeralStateLifeCycle,
           progress: 0.25,
           roles: [
             {
@@ -102,13 +99,18 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
+        entry: 'clearAssignees',
         exit: 'setOtherParentIdIfSelectedSpouse',
         meta: {
           name: States.DRAFT,
           actionCard: {
             description: statesMessages.draftDescription,
           },
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 30 * 24 * 3600 * 1000, // 30 days
+          },
           progress: 0.25,
           roles: [
             {
@@ -199,6 +201,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.VINNUMALASTOFNUN_APPROVAL,
             },
           ],
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
           [DefaultEvents.REJECT]: { target: States.OTHER_PARENT_ACTION },
         },
       },
@@ -317,6 +320,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
           ],
           [DefaultEvents.REJECT]: { target: States.EMPLOYER_ACTION },
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
       [States.EMPLOYER_ACTION]: {

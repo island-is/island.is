@@ -25,8 +25,9 @@ describe('JwtStrategy#validate', () => {
       nationalId: '1234567890',
       scope: ['test-scope-1'],
       client_id: 'test-client',
-      act: {
+      actor: {
         nationalId: '1234564321',
+        delegationType: 'Custom',
         scope: ['test-scope-2'],
       },
     }
@@ -37,8 +38,8 @@ describe('JwtStrategy#validate', () => {
     const payload = {
       ...fakePayload,
       scope: ['scope1', 'scope2'],
-      act: {
-        ...fakePayload.act!,
+      actor: {
+        ...fakePayload.actor!,
         scope: ['act1', 'act2'],
       },
     }
@@ -56,8 +57,8 @@ describe('JwtStrategy#validate', () => {
     const payload = {
       ...fakePayload,
       scope: 'scope1 scope2',
-      act: {
-        ...fakePayload.act!,
+      actor: {
+        ...fakePayload.actor!,
         scope: 'act1 act2',
       },
     }
@@ -76,9 +77,16 @@ describe('JwtStrategy#validate', () => {
       nationalId: '1234567890',
       scope: ['test-scope-1'],
       client_id: 'test-client',
-      act: {
+      actor: {
         nationalId: '1234565555',
+        delegationType: 'Custom',
         scope: ['test-scope-2'],
+      },
+      act: {
+        client_id: 'test-client-2',
+        act: {
+          client_id: 'test-client-3',
+        },
       },
     }
     const request = ({
@@ -100,8 +108,9 @@ describe('JwtStrategy#validate', () => {
     expect(user.authorization).toEqual(request.headers.authorization)
     expect(user.ip).toEqual(request.headers['x-forwarded-for'])
     expect(user.userAgent).toEqual(request.headers['user-agent'])
-    expect(user.actor!.nationalId).toEqual(payload.act!.nationalId)
-    expect(user.actor!.scope).toEqual(payload.act!.scope)
+    expect(user.actor!.nationalId).toEqual(payload.actor!.nationalId)
+    expect(user.actor!.scope).toEqual(payload.actor!.scope)
+    expect(user.act).toEqual(payload.act)
   })
 
   it('supports actor claim', async () => {
@@ -112,6 +121,7 @@ describe('JwtStrategy#validate', () => {
       client_id: 'test-client',
       actor: {
         nationalId: '1234564321',
+        delegationType: 'Custom',
         scope: ['test-scope-2'],
       },
     }
@@ -122,5 +132,39 @@ describe('JwtStrategy#validate', () => {
     // Assert
     expect(user.actor!.nationalId).toEqual(payload.actor!.nationalId)
     expect(user.actor!.scope).toEqual(payload.actor!.scope)
+  })
+
+  it('picks up client_nationalId', async () => {
+    const jwtStrategywithClientNationalId = new JwtStrategy({
+      issuer: 'issuer',
+      audience: 'audience',
+      allowClientNationalId: true,
+    })
+    // Arrange
+    const payload: JwtPayload = {
+      scope: ['test-scope-1'],
+      client_id: 'test-client',
+      client_nationalId: '1234565555',
+    }
+
+    const personPayload: JwtPayload = {
+      scope: ['test-scope-1'],
+      client_id: 'test-client',
+      nationalId: '1234567890',
+    }
+
+    // Act
+    const user = await jwtStrategywithClientNationalId.validate(
+      fakeRequest,
+      payload,
+    )
+
+    const personUser = await jwtStrategywithClientNationalId.validate(
+      fakeRequest,
+      personPayload,
+    )
+    // Assert
+    expect(user.nationalId).toEqual(payload.client_nationalId)
+    expect(personUser.nationalId).toEqual('1234567890')
   })
 })

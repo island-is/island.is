@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
+import { useIntl } from 'react-intl'
 
 import { PoliceCaseFile } from '@island.is/judicial-system/types'
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
@@ -10,6 +11,9 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 
 import { StepFiveForm } from './StepFiveForm'
 
@@ -27,7 +31,9 @@ export const StepFive: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
+  const { user } = useContext(UserContext)
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
+  const { formatMessage } = useIntl()
 
   const router = useRouter()
   const id = router.query.id
@@ -40,10 +46,6 @@ export const StepFive: React.FC = () => {
     variables: { input: { caseId: id } },
     fetchPolicy: 'no-cache',
   })
-
-  useEffect(() => {
-    document.title = 'Rannsóknargögn - Réttarvörslugátt'
-  }, [])
 
   useEffect(() => {
     if (policeData && policeData.policeCaseFiles) {
@@ -78,10 +80,14 @@ export const StepFive: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
+      <PageHeader
+        title={formatMessage(titles.prosecutor.restrictionCases.caseFiles)}
+      />
       <StepFiveForm
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
         policeCaseFiles={policeCaseFiles}
+        user={user}
       />
     </PageLayout>
   )

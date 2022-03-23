@@ -12,7 +12,6 @@ import {
   CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseAppealDecision,
-  CaseGender,
   CaseDecision,
   NotificationType,
   CaseType,
@@ -28,14 +27,14 @@ import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
 
 import { environment } from '../src/environments'
-import { AppModule } from '../src/app'
+import { AppModule } from '../src/app/app.module'
 import { Institution } from '../src/app/modules/institution'
 import { User } from '../src/app/modules/user'
 import { Case } from '../src/app/modules/case'
 import {
   Notification,
   SendNotificationResponse,
-} from '../src/app/modules/notification/models'
+} from '../src/app/modules/notification'
 
 interface CUser extends TUser {
   institutionId: string
@@ -137,15 +136,11 @@ afterAll(async () => {
 
 const minimalCaseData = {
   policeCaseNumber: 'Case Number',
-  accusedNationalId: '0101010000',
 }
 
 function remainingCreateCaseData() {
   return {
     description: 'Description',
-    accusedName: 'Accused Name',
-    accusedAddress: 'Accused Address',
-    accusedGender: CaseGender.OTHER,
     defenderName: 'Defender Name',
     defenderEmail: 'Defender Email',
     defenderPhoneNumber: '555-5555',
@@ -186,15 +181,13 @@ function remainingJudgeCaseData() {
     sessionArrangements: SessionArrangements.PROSECUTOR_PRESENT,
     courtDate: '2020-09-29T13:00:00.000Z',
     courtRoom: '201',
-    defenderIsSpokesperson: true,
     courtStartDate: '2020-09-29T13:00:00.000Z',
     courtEndTime: '2020-09-29T14:00:00.000Z',
     isClosedCourtHidden: true,
     courtAttendees: 'Court Attendees',
     prosecutorDemands: 'Police Demands',
-    courtDocuments: ['Þingskjal 1', 'Þingskjal 2'],
-    accusedBookings: 'Accused Plea',
-    litigationPresentations: 'Litigation Presentations',
+    courtDocuments: [{ name: 'Þingskjal 1' }, { name: 'Þingskjal 2' }],
+    sessionBookings: 'Session Bookings',
     courtCaseFacts: 'Court Case Facts',
     courtLegalArguments: 'Court Legal Arguments',
     ruling: 'Ruling',
@@ -344,10 +337,6 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.description ?? null).toBe(caseTwo.description ?? null)
   expect(caseOne.state).toBe(caseTwo.state)
   expect(caseOne.policeCaseNumber).toBe(caseTwo.policeCaseNumber)
-  expect(caseOne.accusedNationalId).toBe(caseTwo.accusedNationalId)
-  expect(caseOne.accusedName ?? null).toBe(caseTwo.accusedName ?? null)
-  expect(caseOne.accusedAddress ?? null).toBe(caseTwo.accusedAddress ?? null)
-  expect(caseOne.accusedGender ?? null).toBe(caseTwo.accusedGender ?? null)
   expect(caseOne.defenderName ?? null).toBe(caseTwo.defenderName ?? null)
   expect(caseOne.defenderEmail ?? null).toBe(caseTwo.defenderEmail ?? null)
   expect(caseOne.defenderPhoneNumber ?? null).toBe(
@@ -355,9 +344,6 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   )
   expect(caseOne.sendRequestToDefender ?? null).toBe(
     caseTwo.sendRequestToDefender ?? null,
-  )
-  expect(caseOne.defenderIsSpokesperson ?? null).toBe(
-    caseTwo.defenderIsSpokesperson ?? null,
   )
   expect(caseOne.isHeightenedSecurityLevel ?? null).toBe(
     caseTwo.isHeightenedSecurityLevel ?? null,
@@ -427,11 +413,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.courtDocuments ?? null).toStrictEqual(
     caseTwo.courtDocuments ?? null,
   )
-  expect(caseOne.accusedBookings ?? null).toBe(caseTwo.accusedBookings ?? null)
-  expect(caseOne.litigationPresentations ?? null).toBe(
-    caseTwo.litigationPresentations ?? null,
-  )
+  expect(caseOne.sessionBookings ?? null).toBe(caseTwo.sessionBookings ?? null)
   expect(caseOne.courtCaseFacts ?? null).toBe(caseTwo.courtCaseFacts ?? null)
+  expect(caseOne.introduction ?? null).toBe(caseTwo.introduction ?? null)
   expect(caseOne.courtLegalArguments ?? null).toBe(
     caseTwo.courtLegalArguments ?? null,
   )
@@ -464,6 +448,12 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.registrarId ?? null).toBe(caseTwo.registrarId ?? null)
   expectUsersToMatch(caseOne.registrar, caseTwo.registrar)
   expect(caseOne.parentCaseId ?? null).toBe(caseTwo.parentCaseId ?? null)
+  expect(caseOne.caseModifiedExplanation ?? null).toBe(
+    caseTwo.caseModifiedExplanation ?? null,
+  )
+  expect(caseOne.caseResentExplanation ?? null).toBe(
+    caseTwo.caseResentExplanation ?? null,
+  )
   if (caseOne.parentCase || caseTwo.parentCase) {
     expectCasesToMatch(caseOne.parentCase, caseTwo.parentCase)
   }
@@ -505,7 +495,7 @@ describe('Institution', () => {
       .send()
       .expect(200)
       .then((response) => {
-        expect(response.body.length).toBe(8)
+        expect(response.body.length).toBe(14)
       })
   })
 })
@@ -666,69 +656,6 @@ describe('User', () => {
 })
 
 describe('Case', () => {
-  it('POST /api/case should create a case', async () => {
-    const data = getCaseData(true, true)
-    let apiCase: CCase
-
-    await request(app.getHttpServer())
-      .post('/api/case')
-      .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
-      .send(data)
-      .expect(201)
-      .then((response) => {
-        apiCase = response.body
-
-        // Check the response
-        expectCasesToMatch(apiCase, {
-          ...data,
-          id: apiCase.id ?? 'FAILURE',
-          created: apiCase.created ?? 'FAILURE',
-          modified: apiCase.modified ?? 'FAILURE',
-          state: CaseState.NEW,
-          prosecutorId: prosecutor.id,
-          prosecutor,
-          court,
-        })
-
-        // Check the data in the database
-        return getCase(apiCase.id)
-      })
-      .then((value) => {
-        expectCasesToMatch(caseToCCase(value), apiCase)
-      })
-  })
-
-  it('POST /api/case with required fields should create a case', async () => {
-    const data = getCaseData()
-    let apiCase: CCase
-
-    await request(app.getHttpServer())
-      .post('/api/case')
-      .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
-      .send(data)
-      .expect(201)
-      .then((response) => {
-        apiCase = response.body
-
-        // Check the response
-        expectCasesToMatch(apiCase, {
-          ...data,
-          id: apiCase.id ?? 'FAILURE',
-          created: apiCase.created ?? 'FAILURE',
-          modified: apiCase.modified ?? 'FAILURE',
-          state: CaseState.NEW,
-          prosecutorId: prosecutor.id,
-          prosecutor,
-        })
-
-        // Check the data in the database
-        return getCase(apiCase.id)
-      })
-      .then((value) => {
-        expectCasesToMatch(caseToCCase(value), apiCase)
-      })
-  })
-
   it('PUT /api/case/:id should update prosecutor fields of a case by id', async () => {
     const data = getCaseData(true, true, true)
     let dbCase: CCase
@@ -877,59 +804,6 @@ describe('Case', () => {
         expect(response.body.length).toBeGreaterThanOrEqual(2)
       })
   })
-
-  it('POST /api/case/:id/extend should extend case', async () => {
-    let dbCase: CCase
-
-    await Case.create(getCaseData(true, true, true, true))
-      .then((value) => {
-        dbCase = caseToCCase(value)
-
-        return request(app.getHttpServer())
-          .post(`/api/case/${dbCase.id}/extend`)
-          .set('Cookie', `${ACCESS_TOKEN_COOKIE_NAME}=${prosecutorAuthCookie}`)
-          .expect(201)
-      })
-      .then(async (response) => {
-        // Check the response
-        const apiCase = response.body
-
-        // Check the response
-        expectCasesToMatch(apiCase, {
-          id: apiCase.id ?? 'FAILURE',
-          created: apiCase.created ?? 'FAILURE',
-          modified: apiCase.modified ?? 'FAILURE',
-          type: dbCase.type,
-          description: dbCase.description,
-          state: CaseState.NEW,
-          policeCaseNumber: dbCase.policeCaseNumber,
-          accusedNationalId: dbCase.accusedNationalId,
-          accusedName: dbCase.accusedName,
-          accusedAddress: dbCase.accusedAddress,
-          accusedGender: dbCase.accusedGender,
-          defenderName: dbCase.defenderName,
-          defenderEmail: dbCase.defenderEmail,
-          defenderPhoneNumber: dbCase.defenderPhoneNumber,
-          leadInvestigator: dbCase.leadInvestigator,
-          courtId: dbCase.courtId,
-          court,
-          translator: dbCase.translator,
-          lawsBroken: dbCase.lawsBroken,
-          legalBasis: dbCase.legalBasis,
-          legalProvisions: dbCase.legalProvisions,
-          requestedCustodyRestrictions: dbCase.requestedCustodyRestrictions,
-          caseFacts: dbCase.caseFacts,
-          legalArguments: dbCase.legalArguments,
-          requestProsecutorOnlySession: dbCase.requestProsecutorOnlySession,
-          prosecutorOnlySessionRequest: dbCase.prosecutorOnlySessionRequest,
-          prosecutorId: prosecutor.id,
-          prosecutor,
-          parentCaseId: dbCase.id,
-          parentCase: dbCase,
-          initialRulingDate: dbCase.initialRulingDate ?? dbCase.rulingDate,
-        } as CCase)
-      })
-  })
 })
 
 function dbNotificationToNotification(dbNotification: Notification) {
@@ -949,7 +823,6 @@ describe('Notification', () => {
     await Case.create({
       type: CaseType.CUSTODY,
       policeCaseNumber: 'Case Number',
-      accusedNationalId: '0101010000',
     })
       .then((value) => {
         dbCase = value
@@ -999,7 +872,6 @@ describe('Notification', () => {
     await Case.create({
       type: CaseType.CUSTODY,
       policeCaseNumber: 'Case Number',
-      accusedNationalId: '0101010000',
     })
       .then((value) => {
         dbCase = value

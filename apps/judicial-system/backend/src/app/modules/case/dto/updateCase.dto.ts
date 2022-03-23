@@ -4,6 +4,7 @@ import {
   IsEnum,
   IsUUID,
   IsBoolean,
+  IsObject,
 } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
@@ -12,10 +13,10 @@ import {
   CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseAppealDecision,
-  CaseGender,
   CaseDecision,
   CaseType,
   SessionArrangements,
+  CourtDocument,
 } from '@island.is/judicial-system/types'
 
 export class UpdateCaseDto {
@@ -37,26 +38,6 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly accusedNationalId?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly accusedName?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly accusedAddress?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ enum: CaseGender })
-  readonly accusedGender?: CaseGender
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
   readonly defenderName?: string
 
   @IsOptional()
@@ -73,11 +54,6 @@ export class UpdateCaseDto {
   @IsBoolean()
   @ApiPropertyOptional()
   readonly sendRequestToDefender?: boolean
-
-  @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional()
-  readonly defenderIsSpokesperson?: boolean
 
   @IsOptional()
   @IsBoolean()
@@ -235,24 +211,24 @@ export class UpdateCaseDto {
   readonly prosecutorDemands?: string
 
   @IsOptional()
-  @IsString({ each: true })
+  @IsObject({ each: true })
   @ApiPropertyOptional({ isArray: true })
-  readonly courtDocuments?: string
+  readonly courtDocuments?: CourtDocument[]
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly accusedBookings?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly litigationPresentations?: string
+  readonly sessionBookings?: string
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
   readonly courtCaseFacts?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly introduction?: string
 
   @IsOptional()
   @IsString()
@@ -333,4 +309,14 @@ export class UpdateCaseDto {
   @IsUUID()
   @ApiPropertyOptional()
   readonly registrarId?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly caseModifiedExplanation?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly caseResentExplanation?: string
 }

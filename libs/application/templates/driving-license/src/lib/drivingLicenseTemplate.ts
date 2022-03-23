@@ -5,10 +5,11 @@ import {
   ApplicationStateSchema,
   DefaultStateLifeCycle,
   DefaultEvents,
+  EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
-import { Events, States, Roles, EphemeralStateLifeCycle } from './constants'
+import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import {
   getApplicationFeatureFlags,
@@ -76,8 +77,7 @@ const template: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
-              formLoader: async () =>
-                (await import('../forms/application')).application,
+              formLoader: async () => (await import('../forms/draft')).draft,
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,

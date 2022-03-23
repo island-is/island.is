@@ -1,21 +1,26 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import {
+  CaseInfo,
   FormContentContainer,
   FormFooter,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseType } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
+import { formatNationalId } from '@island.is/judicial-system/formatters'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isPoliceDemandsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-import { icDemands } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import { icDemands, core } from '@island.is/judicial-system-web/messages'
+import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import * as Constants from '@island.is/judicial-system/consts'
+import { enumerate } from '@island.is/judicial-system-web/src/utils/formatters'
 
 const courtClaimPrefill: Partial<
   Record<
@@ -23,31 +28,66 @@ const courtClaimPrefill: Partial<
     {
       text: MessageDescriptor
       format?: {
-        accusedName?: boolean
+        court?: boolean
+        accused?: boolean
         address?: boolean
+        institution?: boolean
+        year?: boolean
+        live?: boolean
       }
     }
   >
 > = {
   [CaseType.SEARCH_WARRANT]: {
-    text: icDemands.sections.demands.prefill.searchWarrant,
-    format: { accusedName: true, address: true },
+    text: icDemands.sections.demands.prefill.searchWarrant2,
+    format: {
+      court: true,
+      accused: true,
+      address: true,
+      institution: true,
+      live: true,
+    },
   },
   [CaseType.BANKING_SECRECY_WAIVER]: {
-    text: icDemands.sections.demands.prefill.bankingSecrecyWaiver,
+    text: icDemands.sections.demands.prefill.bankingSecrecyWaiver2,
+    format: { court: true, accused: true },
   },
   [CaseType.PHONE_TAPPING]: {
-    text: icDemands.sections.demands.prefill.phoneTapping,
-    format: { accusedName: true },
+    text: icDemands.sections.demands.prefill.phoneTapping2,
+    format: { court: true, institution: true, accused: true },
   },
   [CaseType.TELECOMMUNICATIONS]: {
-    text: icDemands.sections.demands.prefill.teleCommunications,
-    format: { accusedName: true },
+    text: icDemands.sections.demands.prefill.teleCommunications2,
+    format: { court: true, institution: true, accused: true },
   },
   [CaseType.TRACKING_EQUIPMENT]: {
-    text: icDemands.sections.demands.prefill.trackingEquipment,
-    format: { accusedName: true },
+    text: icDemands.sections.demands.prefill.trackingEquipment2,
+    format: { court: true, institution: true, accused: true },
   },
+  [CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION]: {
+    text:
+      icDemands.sections.demands.prefill.electronicDataDiscoveryInvestigation,
+    format: {
+      court: true,
+      institution: true,
+      accused: true,
+      address: true,
+      year: true,
+    },
+  },
+}
+
+export const formatInstitutionName = (name: string | undefined) => {
+  if (!name) return ''
+
+  if (name.startsWith('Lögreglustjórinn')) {
+    return name.replace('Lögreglustjórinn', 'lögreglustjóranum')
+  }
+  if (name.endsWith('saksóknari')) {
+    return name.toLocaleLowerCase().replace('saksóknari', 'saksóknara')
+  }
+
+  return ''
 }
 
 interface Props {
@@ -62,26 +102,63 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
 
   const { formatMessage } = useIntl()
   const { updateCase, autofill } = useCase()
+  const { user } = useContext(UserContext)
 
   const [demandsEM, setDemandsEM] = useState<string>('')
   const [lawsBrokenEM, setLawsBrokenEM] = useState<string>('')
   const [legalBasisEM, setLegalBasisEM] = useState<string>('')
 
+  useDeb(workingCase, 'demands')
+  useDeb(workingCase, 'lawsBroken')
+  useDeb(workingCase, 'legalBasis')
+
   useEffect(() => {
     if (isCaseUpToDate) {
-      if (workingCase) {
+      if (
+        workingCase &&
+        workingCase.defendants &&
+        workingCase.defendants.length > 0
+      ) {
         const courtClaim = courtClaimPrefill[workingCase.type]
         const courtClaimText = courtClaim
           ? formatMessage(courtClaim.text, {
-              ...(courtClaim.format?.accusedName && {
-                accusedName: workingCase.accusedName,
+              ...(courtClaim.format?.accused && {
+                accused: enumerate(
+                  workingCase.defendants.map(
+                    (defendant) =>
+                      `${defendant.name} ${
+                        defendant.noNationalId ? 'fd.' : 'kt.'
+                      } ${
+                        defendant.noNationalId
+                          ? defendant.nationalId
+                          : formatNationalId(defendant.nationalId ?? '')
+                      }`,
+                  ),
+                  formatMessage(core.and),
+                ),
               }),
               ...(courtClaim.format?.address && {
-                address: workingCase.accusedAddress,
+                address: workingCase.defendants.find((x) => x.address)?.address,
+              }),
+              ...(courtClaim.format?.court && {
+                court: workingCase.court?.name,
+              }),
+              ...(courtClaim.format?.institution && {
+                institution: formatInstitutionName(
+                  workingCase.prosecutor?.institution?.name,
+                ),
+              }),
+              ...(courtClaim.format?.live && {
+                live: workingCase.defendants.length,
+              }),
+              ...(courtClaim.format?.year && {
+                year: new Date().getFullYear(),
               }),
             })
           : ''
+
         autofill('demands', courtClaimText, workingCase)
+
         setWorkingCase(workingCase)
       }
     }
@@ -94,6 +171,13 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
           <Text as="h1" variant="h1">
             {formatMessage(icDemands.heading)}
           </Text>
+        </Box>
+        <Box component="section" marginBottom={7}>
+          <CaseInfo
+            workingCase={workingCase}
+            userRole={user?.role}
+            showAdditionalInfo
+          />
         </Box>
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
@@ -112,7 +196,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'demands',
-                event,
+                event.target.value,
                 ['empty'],
                 workingCase,
                 setWorkingCase,
@@ -133,6 +217,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             required
             textarea
             rows={7}
+            autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -156,7 +241,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'lawsBroken',
-                event,
+                event.target.value,
                 ['empty'],
                 workingCase,
                 setWorkingCase,
@@ -177,6 +262,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             required
             textarea
             rows={7}
+            autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
         <Box component="section" marginBottom={10}>
@@ -198,7 +284,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'legalBasis',
-                event,
+                event.target.value,
                 ['empty'],
                 workingCase,
                 setWorkingCase,
@@ -219,6 +305,7 @@ const PoliceDemandsForm: React.FC<Props> = (props) => {
             required
             textarea
             rows={7}
+            autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
       </FormContentContainer>

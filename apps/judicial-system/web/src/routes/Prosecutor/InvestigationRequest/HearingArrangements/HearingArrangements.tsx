@@ -28,8 +28,10 @@ import {
 import { setAndSendToServer } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { icRequestedHearingArrangements as m } from '@island.is/judicial-system-web/messages'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import type { User } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import * as Constants from '@island.is/judicial-system/consts'
 
 import HearingArrangementsForms from './HearingArrangementsForm'
 
@@ -69,11 +71,7 @@ const HearingArrangements = () => {
   const [substituteProsecutorId, setSubstituteProsecutorId] = useState<string>()
 
   useEffect(() => {
-    document.title = 'Óskir um fyrirtöku - Réttarvörslugátt'
-  }, [])
-
-  useEffect(() => {
-    if (userData && workingCase) {
+    if (userData?.users && workingCase) {
       setProsecutors(
         userData.users
           .filter(
@@ -183,6 +181,11 @@ const HearingArrangements = () => {
       notFound={caseNotFound}
       isExtension={workingCase?.parentCase && true}
     >
+      <PageHeader
+        title={formatMessage(
+          titles.prosecutor.investigationCases.hearingArrangements,
+        )}
+      />
       {user && prosecutors && courts && (
         <>
           <HearingArrangementsForms

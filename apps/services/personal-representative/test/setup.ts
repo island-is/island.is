@@ -40,7 +40,7 @@ export const setupWithAuth = async ({
   user,
 }: SetupOptions): Promise<TestApp> => {
   user.nationalId
-  const app = await testServer<AppModule>({
+  const app = await testServer({
     appModule: AppModule,
     override: (builder) =>
       builder.overrideProvider(IdsUserGuard).useValue(
@@ -58,14 +58,23 @@ export const setupWithAuth = async ({
   return app
 }
 
-export const setupWithoutAuth = async (): Promise<TestApp> => {
+export const setupWithoutScope = async (): Promise<TestApp> => {
   const user = createCurrentUser()
-  const app = await testServer<AppModule>({
+  const app = await testServer({
     appModule: AppModule,
     hooks: [
       useAuth({ auth: user }),
       useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
     ],
+  })
+
+  return app
+}
+
+export const setupWithoutAuth = async (): Promise<TestApp> => {
+  const app = await testServer({
+    appModule: AppModule,
+    hooks: [useDatabase({ type: 'sqlite', provider: SequelizeConfigService })],
   })
 
   return app

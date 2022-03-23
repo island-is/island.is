@@ -7,15 +7,14 @@ import {
   PoliceRequestAccordionItem,
   CourtRecordAccordionItem,
   PdfButton,
-  CaseNumbers,
+  CaseInfo,
   PageLayout,
   FormContentContainer,
   RulingAccordionItem,
   BlueBox,
 } from '@island.is/judicial-system-web/src/components'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  JudgeSubsections,
+  CourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import {
@@ -27,11 +26,13 @@ import { UserContext } from '@island.is/judicial-system-web/src/components/UserP
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import SigningModal from '@island.is/judicial-system-web/src/components/SigningModal/SigningModal'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import {
   core,
   rcConfirmation as m,
 } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import * as Constants from '@island.is/judicial-system/consts'
 
 export const Confirmation: React.FC = () => {
   const {
@@ -51,10 +52,6 @@ export const Confirmation: React.FC = () => {
   const { formatMessage } = useIntl()
 
   useEffect(() => {
-    document.title = 'Yfirlit úrskurðar - Réttarvörslugátt'
-  }, [])
-
-  useEffect(() => {
     if (!modalVisible) {
       setRequestRulingSignatureResponse(undefined)
     }
@@ -66,17 +63,13 @@ export const Confirmation: React.FC = () => {
     }
 
     // Request ruling signature to get control code
-    try {
-      const requestRulingSignatureResponse = await requestRulingSignature(
-        workingCase.id,
-      )
-      if (requestRulingSignatureResponse) {
-        setRequestRulingSignatureResponse(requestRulingSignatureResponse)
-        setModalVisible(true)
-      } else {
-        // TODO: Handle error
-      }
-    } catch (e) {
+    const requestRulingSignatureResponse = await requestRulingSignature(
+      workingCase.id,
+    )
+    if (requestRulingSignatureResponse) {
+      setRequestRulingSignatureResponse(requestRulingSignatureResponse)
+      setModalVisible(true)
+    } else {
       // TODO: Handle error
     }
   }
@@ -87,30 +80,21 @@ export const Confirmation: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={JudgeSubsections.CONFIRMATION}
+      activeSubSection={CourtSubsections.CONFIRMATION}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
+      <PageHeader
+        title={formatMessage(titles.court.restrictionCases.conclusion)}
+      />
       <FormContentContainer>
-        <Box marginBottom={1}>
+        <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             Yfirlit úrskurðar
           </Text>
         </Box>
-        <Box display="flex" marginBottom={10}>
-          <Box marginRight={2}>
-            <Text variant="small">{`Krafa stofnuð: ${formatDate(
-              workingCase.created,
-              'P',
-            )}`}</Text>
-          </Box>
-          <Text variant="small">{`Þinghald: ${formatDate(
-            workingCase.courtStartDate,
-            'P',
-          )}`}</Text>
-        </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers workingCase={workingCase} />
+          <CaseInfo workingCase={workingCase} userRole={user?.role} />
         </Box>
         <Box marginBottom={9}>
           <Accordion>
@@ -155,7 +139,7 @@ export const Confirmation: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.RULING_STEP_TWO_ROUTE}/${workingCase.id}`}
+          previousUrl={`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`}
           nextUrl={Constants.REQUEST_LIST_ROUTE}
           nextButtonText={formatMessage(
             workingCase.decision === CaseDecision.ACCEPTING

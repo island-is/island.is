@@ -1,11 +1,12 @@
 import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
-  CaseGender,
+  Gender,
   CaseType,
 } from '@island.is/judicial-system/types'
 
-import * as Constants from './constants'
+import * as Constants from '@island.is/judicial-system/consts'
+
 import {
   formatDate,
   formatRequestedCustodyRestrictions,
@@ -275,7 +276,7 @@ describe('capitalize', () => {
 describe('formatGender', () => {
   test('should format male', () => {
     // Arrange
-    const gender = CaseGender.MALE
+    const gender = Gender.MALE
 
     // Act
     const r = formatGender(gender)
@@ -286,7 +287,7 @@ describe('formatGender', () => {
 
   test('should format female', () => {
     // Arrange
-    const gender = CaseGender.FEMALE
+    const gender = Gender.FEMALE
 
     // Act
     const r = formatGender(gender)
@@ -297,7 +298,7 @@ describe('formatGender', () => {
 
   test('should format other', () => {
     // Arrange
-    const gender = CaseGender.OTHER
+    const gender = Gender.OTHER
 
     // Act
     const r = formatGender(gender)
@@ -337,29 +338,14 @@ describe('formatAppeal', () => {
   test('should format postponement', () => {
     // Arrange
     const appealDecision = CaseAppealDecision.POSTPONE
-    const stakeholder = 'Aðili'
+    const stakeholder = 'Aðilar'
 
     // Act
     const res = formatAppeal(appealDecision, stakeholder)
 
     // Assert
     expect(res).toBe(
-      'Aðili lýsir því yfir að hann taki sér lögbundinn kærufrest.',
-    )
-  })
-
-  test('should format gender pronouns if gender is set', () => {
-    // Arrange
-    const appealDecision = CaseAppealDecision.POSTPONE
-    const stakeholder = 'Kærða'
-    const stakeholderGender = CaseGender.FEMALE
-
-    // Act
-    const res = formatAppeal(appealDecision, stakeholder, stakeholderGender)
-
-    // Assert
-    expect(res).toBe(
-      'Kærða lýsir því yfir að hún taki sér lögbundinn kærufrest.',
+      'Aðilar lýsa því yfir að þeir taki sér lögbundinn kærufrest.',
     )
   })
 })

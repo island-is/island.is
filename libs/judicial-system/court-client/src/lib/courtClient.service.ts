@@ -1,3 +1,6 @@
+import https, { Agent } from 'https'
+import fetch from 'isomorphic-fetch'
+
 import {
   BadGatewayException,
   Inject,
@@ -7,8 +10,16 @@ import {
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
+import {
+  createXRoadAPIPath,
+  XRoadMemberClass,
+} from '@island.is/shared/utils/server'
 
 import {
+  Configuration,
+  FetchParams,
+  RequestContext,
   AuthenticateApi,
   AuthenticateRequest,
   CreateCaseApi,
@@ -17,8 +28,19 @@ import {
   CreateDocumentData,
   CreateThingbokApi,
   CreateThingbokRequest,
+  CreateEmailApi,
+  CreateEmailData,
 } from '../../gen/fetch'
 import { UploadStreamApi } from './uploadStreamApi'
+import { courtClientModuleConfig } from './courtClient.config'
+
+function injectAgentMiddleware(agent: Agent) {
+  return async (context: RequestContext): Promise<FetchParams> => {
+    const { url, init } = context
+
+    return { url, init: { ...init, agent } } as FetchParams
+  }
+}
 
 function stripResult(str: string): string {
   if (str[0] !== '"') {
@@ -34,9 +56,9 @@ type CreateDocumentArgs = Omit<CreateDocumentData, 'authenticationToken'>
 
 type CreateThingbokArgs = Omit<CreateThingbokRequest, 'authenticationToken'>
 
-export const COURT_CLIENT_SERVICE_OPTIONS = 'COURT_CLIENT_SERVICE_OPTIONS'
+type CreateEmailArgs = Omit<CreateEmailData, 'authenticationToken'>
 
-export interface CourtClientServiceOptions {
+interface CourtClientServiceOptions {
   [key: string]: AuthenticateRequest
 }
 
@@ -44,19 +66,52 @@ const MAX_ERRORS_BEFORE_RELOGIN = 5
 
 @Injectable()
 export class CourtClientService {
+  private readonly authenticateApi: AuthenticateApi
+  private readonly createCaseApi: CreateCaseApi
+  private readonly createDocumentApi: CreateDocumentApi
+  private readonly createThingbokApi: CreateThingbokApi
+  private readonly createEmailApi: CreateEmailApi
+  private readonly uploadStreamApi: UploadStreamApi
+
+  private readonly options: CourtClientServiceOptions
   private readonly authenticationToken: { [key: string]: string } = {}
 
   constructor(
-    private readonly authenticateApi: AuthenticateApi,
-    private readonly createCaseApi: CreateCaseApi,
-    private readonly createDocumentApi: CreateDocumentApi,
-    private readonly createThingbokApi: CreateThingbokApi,
-    private readonly uploadStreamApi: UploadStreamApi,
-    @Inject(COURT_CLIENT_SERVICE_OPTIONS)
-    private readonly options: CourtClientServiceOptions,
+    @Inject(courtClientModuleConfig.KEY)
+    config: ConfigType<typeof courtClientModuleConfig>,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
-  ) {}
+  ) {
+    // Some packages are not available in unit tests
+    const agent = new https.Agent({
+      cert: config.clientCert,
+      key: config.clientKey,
+      ca: config.clientPem,
+      rejectUnauthorized: false,
+    })
+    const middleware = agent ? [{ pre: injectAgentMiddleware(agent) }] : []
+    const defaultHeaders = { 'X-Road-Client': config.clientId }
+    const basePath = createXRoadAPIPath(
+      config.tlsBasePathWithEnv,
+      XRoadMemberClass.GovernmentInstitution,
+      config.courtMemberCode,
+      config.courtApiPath,
+    )
+    const providerConfiguration = new Configuration({
+      fetchApi: fetch,
+      basePath,
+      headers: defaultHeaders,
+      middleware,
+    })
+
+    this.authenticateApi = new AuthenticateApi(providerConfiguration)
+    this.createCaseApi = new CreateCaseApi(providerConfiguration)
+    this.createDocumentApi = new CreateDocumentApi(providerConfiguration)
+    this.createThingbokApi = new CreateThingbokApi(providerConfiguration)
+    this.createEmailApi = new CreateEmailApi(providerConfiguration)
+    this.uploadStreamApi = new UploadStreamApi(basePath, defaultHeaders, agent)
+    this.options = config.courtsCredentials
+  }
 
   // The service has a 'logged in' state and at most one in progress
   // login operation should be ongoing at any given time.
@@ -174,10 +229,7 @@ export class CourtClientService {
   createCase(clientId: string, args: CreateCaseArgs): Promise<string> {
     return this.authenticatedRequest(clientId, (authenticationToken) =>
       this.createCaseApi.createCase({
-        createCaseData: {
-          ...args,
-          authenticationToken,
-        },
+        createCaseData: { ...args, authenticationToken },
       }),
     )
   }
@@ -185,19 +237,21 @@ export class CourtClientService {
   createDocument(clientId: string, args: CreateDocumentArgs): Promise<string> {
     return this.authenticatedRequest(clientId, (authenticationToken) =>
       this.createDocumentApi.createDocument({
-        createDocumentData: {
-          ...args,
-          authenticationToken,
-        },
+        createDocumentData: { ...args, authenticationToken },
       }),
     )
   }
 
   createThingbok(clientId: string, args: CreateThingbokArgs): Promise<string> {
     return this.authenticatedRequest(clientId, (authenticationToken) =>
-      this.createThingbokApi.createThingbok({
-        ...args,
-        authenticationToken,
+      this.createThingbokApi.createThingbok({ ...args, authenticationToken }),
+    )
+  }
+
+  createEmail(clientId: string, args: CreateEmailArgs): Promise<string> {
+    return this.authenticatedRequest(clientId, (authenticationToken) =>
+      this.createEmailApi.createEmail({
+        createEmailData: { ...args, authenticationToken },
       }),
     )
   }
@@ -206,10 +260,7 @@ export class CourtClientService {
     clientId: string,
     file: {
       value: Buffer
-      options?: {
-        filename?: string
-        contentType?: string
-      }
+      options?: { filename?: string; contentType?: string }
     },
   ): Promise<string> {
     return this.authenticatedRequest(clientId, (authenticationToken) =>

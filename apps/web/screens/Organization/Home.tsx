@@ -12,7 +12,7 @@ import { GET_NAMESPACE_QUERY, GET_ORGANIZATION_PAGE_QUERY } from '../queries'
 import { Screen } from '../../types'
 import { useNamespace } from '@island.is/web/hooks'
 import {
-  lightThemes,
+  getThemeConfig,
   OrganizationSlice,
   OrganizationWrapper,
   SearchBox,
@@ -83,6 +83,7 @@ const Home: Screen<HomeProps> = ({ organizationPage, namespace }) => {
       sidebarContent={
         WITH_SEARCH.includes(organizationPage.slug) && (
           <SearchBox
+            id="sidebar"
             organizationPage={organizationPage}
             placeholder={n('searchServices', 'Leitaðu að þjónustu')}
             noResultsText={n(
@@ -147,13 +148,11 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Organization not found')
   }
 
-  const lightTheme = lightThemes.includes(getOrganizationPage.theme)
-
   return {
     organizationPage: getOrganizationPage,
     namespace,
     showSearchInHeader: false,
-    ...(lightTheme ? {} : { darkTheme: true }),
+    ...getThemeConfig(getOrganizationPage.theme),
   }
 }
 

@@ -6,13 +6,15 @@ import { AuditModule } from '@island.is/nest/audit'
 
 import {
   ApplicationModule,
-  MunicipalityModule,
-  ApplicationEventModule,
   FileModule,
   StaffModule,
+  MunicipalityModule,
+  ApplicationEventModule,
   AidModule,
   AmountModule,
   DeductionFactorsModule,
+  PersonalTaxReturnModule,
+  DirectTaxPaymentModule,
 } from './modules'
 
 import { SequelizeConfigService } from './sequelizeConfig.service'
@@ -25,12 +27,14 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     AuthModule.register(environment.identityServerAuth),
     AmountModule,
     DeductionFactorsModule,
+    DirectTaxPaymentModule,
     StaffModule,
     ApplicationModule,
     MunicipalityModule,
     FileModule,
     ApplicationEventModule,
     AidModule,
+    PersonalTaxReturnModule,
     AuditModule.forRoot(environment.audit),
   ],
 })

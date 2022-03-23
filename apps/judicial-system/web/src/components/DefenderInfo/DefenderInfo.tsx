@@ -7,7 +7,6 @@ import {
   Box,
   Checkbox,
   Input,
-  RadioButton,
   Select,
   Text,
   Tooltip,
@@ -19,6 +18,7 @@ import {
   CaseType,
   isInvestigationCase,
   isRestrictionCase,
+  SessionArrangements,
   UserRole,
 } from '@island.is/judicial-system/types'
 import { accused } from '@island.is/judicial-system-web/messages'
@@ -31,20 +31,17 @@ import { useCase } from '../../utils/hooks'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
-  setAndSendToServer as setAndSendDefenderTypeToServer,
+  setAndSendToServer,
 } from '../../utils/formHelper'
 import { UserContext } from '../UserProvider/UserProvider'
-
-import * as styles from './DefenderInfo.css'
 
 interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
-  setAndSendToServer?: (element: HTMLInputElement) => Promise<void>
 }
 
 const DefenderInfo: React.FC<Props> = (props) => {
-  const { workingCase, setWorkingCase, setAndSendToServer } = props
+  const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
   const { updateCase } = useCase()
   const { user } = useContext(UserContext)
@@ -179,9 +176,11 @@ const DefenderInfo: React.FC<Props> = (props) => {
       return (
         <Tooltip
           text={formatMessage(icHearingArrangements.sections.defender.tooltip, {
-            defenderType: workingCase.defenderIsSpokesperson
-              ? 'talsmaður'
-              : 'verjandi',
+            defenderType:
+              workingCase.sessionArrangements ===
+              SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                ? 'talsmaður'
+                : 'verjandi',
           })}
         />
       )
@@ -199,50 +198,17 @@ const DefenderInfo: React.FC<Props> = (props) => {
         marginBottom={2}
       >
         <Text as="h3" variant="h3">
-          {`${formatMessage(getTranslations().title)} `}
+          {`${formatMessage(getTranslations().title, {
+            defenderType:
+              workingCase.sessionArrangements ===
+              SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                ? 'Talsmaður'
+                : 'Verjandi',
+          })} `}
           {renderTooltip()}
         </Text>
       </Box>
       <BlueBox>
-        {(user?.role === UserRole.JUDGE || user?.role === UserRole.REGISTRAR) &&
-          isInvestigationCase(workingCase.type) && (
-            <div className={styles.defenderOptions}>
-              <RadioButton
-                name="defender-type-defender"
-                id="defender-type-defender"
-                label="Verjandi"
-                checked={workingCase.defenderIsSpokesperson === false}
-                onChange={() => {
-                  setAndSendDefenderTypeToServer(
-                    'defenderIsSpokesperson',
-                    false,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
-                }}
-                large
-                backgroundColor="white"
-              />
-              <RadioButton
-                name="defender-type-spokesperson"
-                id="defender-type-spokesperson"
-                label="Talsmaður"
-                checked={workingCase.defenderIsSpokesperson === true}
-                onChange={() => {
-                  setAndSendDefenderTypeToServer(
-                    'defenderIsSpokesperson',
-                    true,
-                    workingCase,
-                    setWorkingCase,
-                    updateCase,
-                  )
-                }}
-                large
-                backgroundColor="white"
-              />
-            </div>
-          )}
         <Box marginBottom={2}>
           <Select
             name="defenderName"
@@ -254,9 +220,11 @@ const DefenderInfo: React.FC<Props> = (props) => {
               }
             })}
             label={formatMessage(getTranslations().defenderName.label, {
-              defenderType: workingCase.defenderIsSpokesperson
-                ? 'talsmanns'
-                : 'verjanda',
+              defenderType:
+                workingCase.sessionArrangements ===
+                SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                  ? 'talsmanns'
+                  : 'verjanda',
             })}
             placeholder={formatMessage(
               getTranslations().defenderName.placeholder,
@@ -280,9 +248,11 @@ const DefenderInfo: React.FC<Props> = (props) => {
             name="defenderEmail"
             autoComplete="off"
             label={formatMessage(getTranslations().defenderEmail.label, {
-              defenderType: workingCase.defenderIsSpokesperson
-                ? 'talsmanns'
-                : 'verjanda',
+              defenderType:
+                workingCase.sessionArrangements ===
+                SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                  ? 'talsmanns'
+                  : 'verjanda',
             })}
             placeholder={formatMessage(
               getTranslations().defenderEmail.placeholder,
@@ -293,7 +263,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'defenderEmail',
-                event,
+                event.target.value,
                 ['email-format'],
                 workingCase,
                 setWorkingCase,
@@ -321,7 +291,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'defenderPhoneNumber',
-                event,
+                event.target.value,
                 ['phonenumber'],
                 workingCase,
                 setWorkingCase,
@@ -347,9 +317,11 @@ const DefenderInfo: React.FC<Props> = (props) => {
               label={formatMessage(
                 getTranslations().defenderPhoneNumber.label,
                 {
-                  defenderType: workingCase.defenderIsSpokesperson
-                    ? 'talsmanns'
-                    : 'verjanda',
+                  defenderType:
+                    workingCase.sessionArrangements ===
+                    SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                      ? 'talsmanns'
+                      : 'verjanda',
                 },
               )}
               placeholder={formatMessage(
@@ -360,7 +332,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
             />
           </InputMask>
         </Box>
-        {user?.role === UserRole.PROSECUTOR && setAndSendToServer && (
+        {user?.role === UserRole.PROSECUTOR && (
           <Checkbox
             name="sendRequestToDefender"
             label={formatMessage(
@@ -384,7 +356,15 @@ const DefenderInfo: React.FC<Props> = (props) => {
                   )
             }
             checked={workingCase.sendRequestToDefender}
-            onChange={(event) => setAndSendToServer(event.target)}
+            onChange={(event) => {
+              setAndSendToServer(
+                'sendRequestToDefender',
+                event.target.checked,
+                workingCase,
+                setWorkingCase,
+                updateCase,
+              )
+            }}
             large
             filled
           />

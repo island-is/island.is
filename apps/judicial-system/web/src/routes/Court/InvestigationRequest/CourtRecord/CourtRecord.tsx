@@ -2,15 +2,20 @@ import React, { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
-import { SessionArrangements } from '@island.is/judicial-system/types'
+import { CaseType, SessionArrangements } from '@island.is/judicial-system/types'
 import {
-  JudgeSubsections,
+  CourtSubsections,
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { icCourtRecord as m } from '@island.is/judicial-system-web/messages'
-import type { Case } from '@island.is/judicial-system/types'
+import {
+  core,
+  icCourtRecord as m,
+} from '@island.is/judicial-system-web/messages'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 
 import CourtRecordForm from './CourtRecordForm'
 
@@ -24,46 +29,10 @@ const CourtRecord = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
-
-  useEffect(() => {
-    document.title = 'Þingbók - Réttarvörslugátt'
-  }, [])
+  const { user } = useContext(UserContext)
 
   useEffect(() => {
     if (isCaseUpToDate) {
-      const defaultCourtAttendees = (wc: Case): string => {
-        let attendees = ''
-
-        if (wc.prosecutor) {
-          attendees += `${wc.prosecutor.name} ${wc.prosecutor.title}\n`
-        }
-
-        if (wc.sessionArrangements === SessionArrangements.ALL_PRESENT) {
-          if (wc.accusedName) {
-            attendees += `${wc.accusedName} varnaraðili`
-          }
-        } else {
-          attendees += formatMessage(
-            m.sections.courtAttendees.defendantNotPresentAutofill,
-          )
-        }
-
-        if (
-          wc.defenderName &&
-          wc.sessionArrangements !== SessionArrangements.PROSECUTOR_PRESENT
-        ) {
-          attendees += `\n${wc.defenderName} skipaður ${
-            wc.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
-          } varnaraðila`
-        }
-
-        if (wc.translator) {
-          attendees += `\n${wc.translator} túlkur`
-        }
-
-        return attendees
-      }
-
       const theCase = workingCase
 
       if (theCase.courtDate) {
@@ -83,19 +52,61 @@ const CourtRecord = () => {
       }
 
       if (theCase.courtAttendees !== '') {
-        autofill('courtAttendees', defaultCourtAttendees(theCase), theCase)
+        let autofillAttendees = ''
+
+        if (theCase.prosecutor) {
+          autofillAttendees += `${theCase.prosecutor.name} ${theCase.prosecutor.title}`
+        }
+
+        if (
+          theCase.defenderName &&
+          theCase.sessionArrangements !== SessionArrangements.PROSECUTOR_PRESENT
+        ) {
+          autofillAttendees += `\n${theCase.defenderName} skipaður ${
+            theCase.defenderIsSpokesperson ? 'talsmaður' : 'verjandi'
+          } ${formatMessage(core.defendant, { suffix: 'a' })}`
+        }
+
+        if (theCase.translator) {
+          autofillAttendees += `\n${theCase.translator} túlkur`
+        }
+
+        if (theCase.defendants && theCase.defendants.length > 0) {
+          if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
+            theCase.defendants.forEach((defendant) => {
+              autofillAttendees += `\n${defendant.name} ${formatMessage(
+                core.defendant,
+                {
+                  suffix: 'i',
+                },
+              )}`
+            })
+          }
+        }
+
+        autofill('courtAttendees', autofillAttendees, theCase)
       }
 
-      if (theCase.demands) {
-        autofill('prosecutorDemands', theCase.demands, theCase)
-      }
-
-      if (theCase.sessionArrangements === SessionArrangements.ALL_PRESENT) {
-        let autofillAccusedBookings = ''
+      if (theCase.type === CaseType.RESTRAINING_ORDER) {
+        autofill(
+          'sessionBookings',
+          formatMessage(m.sections.sessionBookings.autofillRestrainingOrder),
+          theCase,
+        )
+      } else if (theCase.type === CaseType.AUTOPSY) {
+        autofill(
+          'sessionBookings',
+          formatMessage(m.sections.sessionBookings.autofillAutopsy),
+          theCase,
+        )
+      } else if (
+        theCase.sessionArrangements === SessionArrangements.ALL_PRESENT
+      ) {
+        let autofillSessionBookings = ''
 
         if (theCase.defenderName) {
-          autofillAccusedBookings += `${formatMessage(
-            m.sections.accusedBookings.autofillDefender,
+          autofillSessionBookings += `${formatMessage(
+            m.sections.sessionBookings.autofillDefender,
             {
               defender: theCase.defenderName,
             },
@@ -103,39 +114,43 @@ const CourtRecord = () => {
         }
 
         if (theCase.translator) {
-          autofillAccusedBookings += `${formatMessage(
-            m.sections.accusedBookings.autofillTranslator,
+          autofillSessionBookings += `${formatMessage(
+            m.sections.sessionBookings.autofillTranslator,
             {
               translator: theCase.translator,
             },
           )}\n\n`
         }
 
-        autofillAccusedBookings += `${formatMessage(
-          m.sections.accusedBookings.autofillRightToRemainSilent,
+        autofillSessionBookings += `${formatMessage(
+          m.sections.sessionBookings.autofillRightToRemainSilent,
         )}\n\n${formatMessage(
-          m.sections.accusedBookings.autofillCourtDocumentOne,
-        )}\n\n${formatMessage(m.sections.accusedBookings.autofillAccusedPlea)}`
+          m.sections.sessionBookings.autofillCourtDocumentOne,
+        )}\n\n${formatMessage(
+          m.sections.sessionBookings.autofillAccusedPlea,
+        )}\n\n${formatMessage(m.sections.sessionBookings.autofillAllPresent)}`
 
-        autofill('accusedBookings', autofillAccusedBookings, theCase)
-      }
-
-      if (
+        autofill('sessionBookings', autofillSessionBookings, theCase)
+      } else if (
         theCase.sessionArrangements ===
-          SessionArrangements.ALL_PRESENT_SPOKESPERSON &&
-        theCase.defenderIsSpokesperson &&
-        theCase.defenderName
+        SessionArrangements.ALL_PRESENT_SPOKESPERSON
       ) {
         autofill(
-          'accusedBookings',
-          formatMessage(m.sections.accusedBookings.autofillSpokeperson, {
-            spokesperson: theCase.defenderName,
-          }),
+          'sessionBookings',
+          formatMessage(m.sections.sessionBookings.autofillSpokeperson),
+          theCase,
+        )
+      } else if (
+        theCase.sessionArrangements === SessionArrangements.PROSECUTOR_PRESENT
+      ) {
+        autofill(
+          'sessionBookings',
+          formatMessage(m.sections.sessionBookings.autofillProsecutor),
           theCase,
         )
       }
 
-      setWorkingCase(workingCase)
+      setWorkingCase(theCase)
     }
   }, [autofill, formatMessage, isCaseUpToDate, setWorkingCase, workingCase])
 
@@ -145,14 +160,18 @@ const CourtRecord = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={JudgeSubsections.COURT_RECORD}
+      activeSubSection={CourtSubsections.COURT_RECORD}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
+      <PageHeader
+        title={formatMessage(titles.court.investigationCases.courtRecord)}
+      />
       <CourtRecordForm
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
         isLoading={isLoadingWorkingCase}
+        user={user}
       />
     </PageLayout>
   )

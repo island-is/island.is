@@ -574,6 +574,9 @@ export interface IFaqListFields {
 
   /** Questions */
   questions?: IQuestionAndAnswer[] | undefined
+
+  /** Show title */
+  showTitle?: boolean | undefined
 }
 
 export interface IFaqList extends Entry<IFaqListFields> {
@@ -676,6 +679,9 @@ export interface IFooterItemFields {
 
   /** Content */
   content?: Document | undefined
+
+  /** Service web content */
+  serviceWebContent?: Document | undefined
 }
 
 export interface IFooterItem extends Entry<IFooterItemFields> {
@@ -1278,6 +1284,40 @@ export interface ILinkUrl extends Entry<ILinkUrlFields> {
   }
 }
 
+export interface ILocationFields {
+  /** Title */
+  title: string
+
+  /** subTitle */
+  subTitle?: string | undefined
+
+  /** Address */
+  address?: string | undefined
+
+  /** Link */
+  link?: ILink | undefined
+
+  /** Background */
+  background: Asset
+}
+
+export interface ILocation extends Entry<ILocationFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'location'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ILogoListSliceFields {
   /** Title */
   title?: string | undefined
@@ -1800,6 +1840,9 @@ export interface IOrganizationFields {
 
   /** Birta á þjónustuvef */
   serviceWebEnabled?: boolean | undefined
+
+  /** Namespace */
+  namespace?: IUiConfiguration | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -1899,6 +1942,9 @@ export interface IOrganizationPageFields {
 
   /** External Links */
   externalLinks?: ILink[] | undefined
+
+  /** Alert Banner */
+  alertBanner?: IAlertBanner | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
@@ -2077,6 +2123,7 @@ export interface IProcessEntryFields {
     | 'Digital w/login'
     | 'Not digital w/login'
     | 'No type'
+    | 'Application system'
 
   /** Process title */
   processTitle: string
@@ -2116,7 +2163,7 @@ export interface IProjectPageFields {
   slug?: string | undefined
 
   /** Theme */
-  theme: 'default' | 'traveling-to-iceland' | 'election'
+  theme: 'default' | 'traveling-to-iceland' | 'election' | 'ukraine'
 
   /** Sidebar */
   sidebar: boolean
@@ -2450,6 +2497,9 @@ export interface IStepFields {
   /** Slug */
   slug: string
 
+  /** Step Type */
+  stepType?: 'Question - Radio' | 'Question - Dropdown' | 'Answer' | undefined
+
   /** Subtitle */
   subtitle?: Document | undefined
 
@@ -2461,6 +2511,9 @@ export interface IStepFields {
 
   /** Options */
   options?: Record<string, any> | undefined
+
+  /** Config */
+  config?: Record<string, any> | undefined
 }
 
 /** Step for stepper */
@@ -2677,6 +2730,9 @@ export interface ISupportCategoryFields {
 
   /** Organization */
   organization: IOrganization
+
+  /** Importance */
+  importance?: number | undefined
 }
 
 /** Category for the helpdesk questions, used for grouping QNAs */
@@ -2716,6 +2772,15 @@ export interface ISupportQnaFields {
 
   /** Organization */
   organization: IOrganization
+
+  /** Importance */
+  importance?: number | undefined
+
+  /** Related links */
+  relatedLinks?: (ILink | ISupportQna)[] | undefined
+
+  /** Contact Link */
+  contactLink?: string | undefined
 }
 
 /** Helpdesk support questions and answer */
@@ -2746,6 +2811,9 @@ export interface ISupportSubCategoryFields {
 
   /** slug */
   slug: string
+
+  /** Importance */
+  importance?: number | undefined
 }
 
 export interface ISupportSubCategory extends Entry<ISupportSubCategoryFields> {
@@ -3140,11 +3208,11 @@ export interface IUrlFields {
 
   /** Page */
   page?:
-    | IAboutSubPage
     | IArticle
     | IArticleCategory
     | ILifeEventPage
     | INews
+    | IProjectPage
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
     | undefined
@@ -3391,6 +3459,7 @@ export type CONTENT_TYPE =
   | 'linkGroup'
   | 'linkList'
   | 'linkUrl'
+  | 'location'
   | 'logoListSlice'
   | 'mailingListSignup'
   | 'menu'

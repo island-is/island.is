@@ -72,6 +72,8 @@ describe('ApplicationController - Create event', () => {
       usePersonalTaxCredit: false,
       state: ApplicationState.NEW,
       familyStatus: FamilyStatus.COHABITATION,
+      directTaxPayments: [],
+      municipalityCode: '',
     }
     const applicationEvent: CreateApplicationEventDto = {
       applicationId: id,

@@ -76,6 +76,8 @@ export enum FieldTypes {
   DIVIDER = 'DIVIDER',
   KEY_VALUE = 'KEY_VALUE',
   ASYNC_SELECT = 'ASYNC_SELECT',
+  PAYMENT_PENDING = 'PAYMENT_PENDING',
+  COMPANY_SEARCH = 'COMPANY_SEARCH',
 }
 
 export enum FieldComponents {
@@ -90,6 +92,8 @@ export enum FieldComponents {
   KEY_VALUE = 'KeyValueFormField',
   SUBMIT = 'SubmitFormField',
   ASYNC_SELECT = 'AsyncSelectFormField',
+  PAYMENT_PENDING = 'PaymentPendingField',
+  COMPANY_SEARCH = 'CompanySearchFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -99,6 +103,7 @@ export interface CheckboxField extends BaseField {
   large?: boolean
   strong?: boolean
   backgroundColor?: InputBackgroundColor
+  onSelect?: ((s: string[]) => void) | undefined
 }
 
 export interface DateField extends BaseField {
@@ -139,6 +144,14 @@ export interface SelectField extends BaseField {
   onSelect?(s: SelectOption, cb: (t: unknown) => void): void
   placeholder?: FormText
   backgroundColor?: InputBackgroundColor
+  required?: boolean
+}
+
+export interface CompanySearchField extends BaseField {
+  readonly type: FieldTypes.COMPANY_SEARCH
+  component: FieldComponents.COMPANY_SEARCH
+  placeholder?: FormText
+  setLabelToDataSchema?: boolean
 }
 
 export interface AsyncSelectField extends BaseField {
@@ -150,12 +163,14 @@ export interface AsyncSelectField extends BaseField {
   loadingError?: FormText
   backgroundColor?: InputBackgroundColor
   isSearchable?: boolean
+  required?: boolean
 }
 
 export interface TextField extends BaseField {
   readonly type: FieldTypes.TEXT
   component: FieldComponents.TEXT
   disabled?: boolean
+  readOnly?: boolean
   minLength?: number
   maxLength?: number
   placeholder?: FormText
@@ -165,6 +180,7 @@ export interface TextField extends BaseField {
   suffix?: string
   rows?: number
   required?: boolean
+  onChange?: (...event: any[]) => void
 }
 
 export interface FileUploadField extends BaseField {
@@ -177,6 +193,7 @@ export interface FileUploadField extends BaseField {
   readonly uploadMultiple?: boolean
   readonly uploadAccept?: string
   readonly maxSize?: number
+  readonly forImageUpload?: boolean
 }
 
 export interface SubmitField extends BaseField {
@@ -220,3 +237,4 @@ export type Field =
   | DividerField
   | SubmitField
   | AsyncSelectField
+  | CompanySearchField

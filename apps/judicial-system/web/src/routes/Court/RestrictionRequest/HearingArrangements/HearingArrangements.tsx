@@ -1,52 +1,36 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
-import { ValueType } from 'react-select/src/types'
 
-import {
-  Box,
-  Input,
-  Select,
-  Text,
-  Option,
-  Tooltip,
-  AlertMessage,
-} from '@island.is/island-ui/core'
+import { Box, Input, Text, AlertMessage } from '@island.is/island-ui/core'
 import {
   FormFooter,
   PageLayout,
-  CaseNumbers,
+  CaseInfo,
   BlueBox,
   FormContentContainer,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
 import { isCourtHearingArrangemenstStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
+import { CaseType, NotificationType } from '@island.is/judicial-system/types'
 import {
-  CaseType,
-  NotificationType,
-  UserRole,
-} from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
-import {
-  JudgeSubsections,
-  ReactSelectOption,
+  CourtSubsections,
   Sections,
-  UserData,
 } from '@island.is/judicial-system-web/src/types'
 import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
-  setAndSendToServer,
-  newSetAndSendDateToServer,
+  setAndSendDateToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import DefenderInfo from '@island.is/judicial-system-web/src/components/DefenderInfo/DefenderInfo'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { rcHearingArrangements as m } from '@island.is/judicial-system-web/messages'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
+import * as Constants from '@island.is/judicial-system/consts'
 
 export const HearingArrangements: React.FC = () => {
   const {
@@ -56,6 +40,8 @@ export const HearingArrangements: React.FC = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
+  const { user } = useContext(UserContext)
+
   const [modalVisible, setModalVisible] = useState(false)
 
   const router = useRouter()
@@ -69,46 +55,6 @@ export const HearingArrangements: React.FC = () => {
   } = useCase()
   const { formatMessage } = useIntl()
 
-  const { data: userData, loading: userLoading } = useQuery<UserData>(
-    UsersQuery,
-    {
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
-  )
-
-  const judges = (userData?.users ?? [])
-    .filter(
-      (user: User) =>
-        user.role === UserRole.JUDGE &&
-        user.institution?.id === workingCase?.court?.id,
-    )
-    .map((judge: User) => {
-      return { label: judge.name, value: judge.id }
-    })
-
-  const registrars = (userData?.users ?? [])
-    .filter(
-      (user: User) =>
-        user.role === UserRole.REGISTRAR &&
-        user.institution?.id === workingCase?.court?.id,
-    )
-    .map((registrar: User) => {
-      return { label: registrar.name, value: registrar.id }
-    })
-
-  const defaultJudge = judges?.find(
-    (judge: Option) => judge.value === workingCase?.judge?.id,
-  )
-
-  const defaultRegistrar = registrars?.find(
-    (registrar: Option) => registrar.value === workingCase?.registrar?.id,
-  )
-
-  useEffect(() => {
-    document.title = 'Fyrirtaka - Réttarvörslugátt'
-  }, [])
-
   useEffect(() => {
     if (isCaseUpToDate) {
       const theCase = workingCase
@@ -121,39 +67,13 @@ export const HearingArrangements: React.FC = () => {
     }
   }, [autofill, isCaseUpToDate, setWorkingCase, workingCase])
 
-  const setJudge = (id: string) => {
-    if (workingCase) {
-      setAndSendToServer('judgeId', id, workingCase, setWorkingCase, updateCase)
-
-      const judge = userData?.users.find((j) => j.id === id)
-
-      setWorkingCase({ ...workingCase, judge: judge })
-    }
-  }
-
-  const setRegistrar = (id?: string) => {
-    if (workingCase) {
-      setAndSendToServer(
-        'registrarId',
-        id,
-        workingCase,
-        setWorkingCase,
-        updateCase,
-      )
-
-      const registrar = userData?.users.find((r) => r.id === id)
-
-      setWorkingCase({ ...workingCase, registrar })
-    }
-  }
-
   const handleNextButtonClick = () => {
     if (
       workingCase?.notifications?.find(
         (notification) => notification.type === NotificationType.COURT_DATE,
       )
     ) {
-      router.push(`${Constants.COURT_RECORD_ROUTE}/${workingCase.id}`)
+      router.push(`${Constants.RULING_ROUTE}/${workingCase.id}`)
     } else {
       setModalVisible(true)
     }
@@ -165,10 +85,13 @@ export const HearingArrangements: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
       }
-      activeSubSection={JudgeSubsections.HEARING_ARRANGEMENTS}
-      isLoading={isLoadingWorkingCase || userLoading}
+      activeSubSection={CourtSubsections.HEARING_ARRANGEMENTS}
+      isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
+      <PageHeader
+        title={formatMessage(titles.court.restrictionCases.hearingArrangements)}
+      />
       <FormContentContainer>
         {workingCase.comments && (
           <Box marginBottom={5}>
@@ -185,51 +108,7 @@ export const HearingArrangements: React.FC = () => {
           </Text>
         </Box>
         <Box component="section" marginBottom={7}>
-          <CaseNumbers workingCase={workingCase} />
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {`${formatMessage(m.sections.setJudge.title)} `}
-              <Tooltip text={formatMessage(m.sections.setJudge.tooltip)} />
-            </Text>
-          </Box>
-          <Select
-            name="judge"
-            label="Veldu dómara"
-            placeholder="Velja héraðsdómara"
-            value={defaultJudge}
-            options={judges}
-            onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-              setJudge((selectedOption as ReactSelectOption).value.toString())
-            }
-            required
-          />
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {`${formatMessage(m.sections.setRegistrar.title)} `}
-              <Tooltip text={formatMessage(m.sections.setRegistrar.tooltip)} />
-            </Text>
-          </Box>
-          <Select
-            name="registrar"
-            label="Veldu dómritara"
-            placeholder="Velja dómritara"
-            value={defaultRegistrar}
-            options={registrars}
-            onChange={(selectedOption: ValueType<ReactSelectOption>) => {
-              if (selectedOption) {
-                setRegistrar(
-                  (selectedOption as ReactSelectOption).value.toString(),
-                )
-              } else {
-                setRegistrar(undefined)
-              }
-            }}
-            isClearable
-          />
+          <CaseInfo workingCase={workingCase} userRole={user?.role} />
         </Box>
         <Box component="section" marginBottom={8}>
           <Box marginBottom={2}>
@@ -245,7 +124,7 @@ export const HearingArrangements: React.FC = () => {
                   selectedDate={workingCase.courtDate}
                   minDate={new Date()}
                   onChange={(date: Date | undefined, valid: boolean) => {
-                    newSetAndSendDateToServer(
+                    setAndSendDateToServer(
                       'courtDate',
                       date,
                       valid,
@@ -268,7 +147,7 @@ export const HearingArrangements: React.FC = () => {
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'courtRoom',
-                    event,
+                    event.target.value,
                     [],
                     workingCase,
                     setWorkingCase,
@@ -296,7 +175,7 @@ export const HearingArrangements: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${Constants.COURT_SINGLE_REQUEST_BASE_ROUTE}/${workingCase.id}`}
+          previousUrl={`${Constants.OVERVIEW_ROUTE}/${workingCase.id}`}
           onNextButtonClick={handleNextButtonClick}
           nextIsDisabled={!isCourtHearingArrangemenstStepValidRC(workingCase)}
         />
@@ -315,7 +194,9 @@ export const HearingArrangements: React.FC = () => {
           )}
           isPrimaryButtonLoading={isSendingNotification}
           handleSecondaryButtonClick={() => {
-            router.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
+            sendNotification(workingCase.id, NotificationType.COURT_DATE, true)
+
+            router.push(`${Constants.RULING_ROUTE}/${id}`)
           }}
           handlePrimaryButtonClick={async () => {
             const notificationSent = await sendNotification(
@@ -324,7 +205,7 @@ export const HearingArrangements: React.FC = () => {
             )
 
             if (notificationSent) {
-              router.push(`${Constants.COURT_RECORD_ROUTE}/${id}`)
+              router.push(`${Constants.RULING_ROUTE}/${id}`)
             }
           }}
           primaryButtonText={formatMessage(m.modal.shared.primaryButtonText)}

@@ -17,6 +17,7 @@ import {
   GetSupportSearchResultsQueryVariables,
   SearchableContentTypes,
   SupportQna,
+  Tag,
 } from '@island.is/web/graphql/schema'
 
 interface SearchInputProps {
@@ -27,6 +28,7 @@ interface SearchInputProps {
   colored?: boolean
   initialInputValue?: string
   placeholder?: string
+  tags?: Tag[]
 }
 
 const unused = ['.', '?', ':', ',', ';', '!', '-', '_', '#', '~', '|']
@@ -49,6 +51,7 @@ export const SearchInput = ({
   size = 'large',
   initialInputValue = '',
   placeholder = 'Leitaðu á þjónustuvefnum',
+  tags,
 }: SearchInputProps) => {
   const [searchTerms, setSearchTerms] = useState<string>('')
   const [activeItem, setActiveItem] = useState<SupportQna>()
@@ -80,6 +83,7 @@ export const SearchInput = ({
               query: {
                 queryString,
                 types: [SearchableContentTypes['WebQna']],
+                tags,
               },
             },
           })
@@ -110,7 +114,7 @@ export const SearchInput = ({
     if (organizationSlug && categorySlug) {
       Router.push({
         pathname: `${
-          linkResolver('helpdesk').href
+          linkResolver('serviceweb').href
         }/${organizationSlug}/${categorySlug}`,
         query: { q: slug },
       })
@@ -176,15 +180,17 @@ export const SearchInput = ({
     <AsyncSearch
       size={size}
       colored={colored}
-      key="island-helpdesk"
+      key="island-serviceweb"
       placeholder={placeholder}
       options={options}
       loading={busy}
       initialInputValue={initialInputValue}
       inputValue={searchTerms}
       onInputValueChange={(value) => {
-        setIsLoading(true)
-        setSearchTerms(value)
+        setSearchTerms((prevValue) => {
+          setIsLoading(value !== prevValue)
+          return value
+        })
       }}
       closeMenuOnSubmit
       onSubmit={(value, selectedOption) => {
@@ -195,7 +201,7 @@ export const SearchInput = ({
         }
 
         Router.push({
-          pathname: linkResolver('helpdesksearch').href,
+          pathname: linkResolver('servicewebsearch').href,
           query: { q: value },
         })
       }}

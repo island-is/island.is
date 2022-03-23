@@ -1,4 +1,4 @@
-import { Application } from '@island.is/application/core'
+import { ApplicationWithAttachments as Application } from '@island.is/application/core'
 
 export interface DecodedAssignmentToken {
   applicationId: string
@@ -16,9 +16,4 @@ export interface TemplateAPIModuleActionResult {
   updatedApplication: Application
   hasError: boolean
   error?: string
-}
-
-export interface ApplicationLifecycle {
-  isListed: boolean
-  pruneAt: Date | null
 }

@@ -18,15 +18,16 @@ import {
   CaseLegalProvisions,
   CaseAppealDecision,
   CaseCustodyRestrictions,
-  CaseGender,
   CaseDecision,
   CaseType,
   SessionArrangements,
+  CourtDocument,
 } from '@island.is/judicial-system/types'
 
-import { CaseFile } from '../../file/models/file.model'
+import { CaseFile } from '../../file'
 import { Institution } from '../../institution'
 import { User } from '../../user'
+import { Defendant } from '../../defendant'
 
 @Table({
   tableName: 'case',
@@ -46,7 +47,7 @@ export class Case extends Model<Case> {
   id!: string
 
   /**********
-   * The date and time the case was created in the database
+   * The date and time the case was created in the Database
    **********/
   @CreatedAt
   @ApiProperty()
@@ -102,44 +103,11 @@ export class Case extends Model<Case> {
   policeCaseNumber!: string
 
   /**********
-   * The national id of the accused
+   * The case's defendants
    **********/
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ApiProperty()
-  accusedNationalId!: string
-
-  /**********
-   * The name of the accused
-   **********/
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  accusedName?: string
-
-  /**********
-   * The address of the accused
-   **********/
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  accusedAddress?: string
-
-  /**********
-   * The gender of the accused
-   **********/
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(CaseGender),
-  })
-  accusedGender?: CaseGender
+  @HasMany(() => Defendant, 'caseId')
+  @ApiProperty({ type: Defendant, isArray: true })
+  defendants?: Defendant[]
 
   /**********
    * The name of the accused's defender - optional
@@ -181,17 +149,6 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   sendRequestToDefender?: boolean
-
-  /**********
-   * Indicates whether the accused was assigned a spokesperson rather than a defender -
-   * optional
-   **********/
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: true,
-  })
-  @ApiProperty()
-  defenderIsSpokesperson?: boolean
 
   /**********
    * Indicates whether the secutity level of the case has been heightened -
@@ -561,31 +518,21 @@ export class Case extends Model<Case> {
    * A list of additional court documents - optional
    **********/
   @Column({
-    type: DataType.ARRAY(DataType.STRING),
+    type: DataType.ARRAY(DataType.JSON),
     allowNull: true,
   })
   @ApiProperty()
-  courtDocuments?: string[]
+  courtDocuments?: CourtDocument[]
 
   /**********
-   * Bookings about the accused
+   * Bookings during court session
    **********/
   @Column({
     type: DataType.TEXT,
     allowNull: true,
   })
   @ApiProperty()
-  accusedBookings?: string
-
-  /**********
-   * The presentations for both parties
-   **********/
-  @Column({
-    type: DataType.TEXT,
-    allowNull: true,
-  })
-  @ApiProperty()
-  litigationPresentations?: string
+  sessionBookings?: string
 
   /**********
    * The case facts as seen by the prosecutor - autofilled from caseFacts - possibly modified
@@ -597,6 +544,16 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   courtCaseFacts?: string
+
+  /**********
+   * Introduction to the case
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiProperty()
+  introduction?: string
 
   /**********
    * The legal arguments presented by the prosecutor - autofilled from legalArguments -
@@ -865,4 +822,24 @@ export class Case extends Model<Case> {
   @HasMany(() => CaseFile, 'caseId')
   @ApiProperty({ type: CaseFile, isArray: true })
   caseFiles?: CaseFile[]
+
+  /**********
+   * The explanation given for a modification of a case's validTo or isolationTo dates
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiProperty()
+  caseModifiedExplanation?: string
+
+  /**********
+   * The explanation given for the extension of a case
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiProperty()
+  caseResentExplanation?: string
 }

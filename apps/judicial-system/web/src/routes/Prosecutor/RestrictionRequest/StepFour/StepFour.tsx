@@ -12,6 +12,7 @@ import {
   FormFooter,
   PageLayout,
   FormContentContainer,
+  CaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import {
   ProsecutorSubsections,
@@ -27,9 +28,13 @@ import {
   formatDate,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
+import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 import type { Case } from '@island.is/judicial-system/types'
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
+import * as Constants from '@island.is/judicial-system/consts'
 
 export const StepFour: React.FC = () => {
   const {
@@ -39,6 +44,7 @@ export const StepFour: React.FC = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
+  const { user } = useContext(UserContext)
   const [demandsErrorMessage, setDemandsErrorMessage] = useState<string>('')
   const [caseFactsErrorMessage, setCaseFactsErrorMessage] = useState<string>('')
   const [
@@ -50,43 +56,50 @@ export const StepFour: React.FC = () => {
 
   const { updateCase, autofill } = useCase()
 
-  useEffect(() => {
-    document.title = 'Greinargerð - Réttarvörslugátt'
-  }, [])
+  useDeb(workingCase, 'demands')
+  useDeb(workingCase, 'caseFacts')
+  useDeb(workingCase, 'legalArguments')
+  useDeb(workingCase, 'comments')
 
   useEffect(() => {
     if (isCaseUpToDate) {
       const theCase: Case = workingCase
 
-      autofill(
-        'demands',
-        `${formatMessage(rcReportForm.sections.demands.autofill, {
-          accusedName: theCase.accusedName,
-          accusedNationalId: formatNationalId(theCase.accusedNationalId),
-          extensionSuffix:
-            theCase.parentCase &&
-            isAcceptingCaseDecision(theCase.parentCase.decision)
-              ? ' áframhaldandi'
-              : '',
-          caseType:
-            theCase.type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni',
-          court: theCase.court?.name.replace('Héraðsdómur', 'Héraðsdóms'),
-          requestedValidToDate: formatDate(
-            theCase.requestedValidToDate,
-            'PPPPp',
-          )
-            ?.replace('dagur,', 'dagsins')
-            ?.replace(' kl.', ', kl.'),
-          isolationSuffix:
-            theCase.type === CaseType.CUSTODY &&
-            theCase.requestedCustodyRestrictions?.includes(
-              CaseCustodyRestrictions.ISOLATION,
+      if (theCase.defendants && theCase.defendants.length > 0) {
+        autofill(
+          'demands',
+          `${formatMessage(rcReportForm.sections.demands.autofill, {
+            accusedName: theCase.defendants[0].name,
+            accusedNationalId: theCase.defendants[0].noNationalId
+              ? ' '
+              : `, kt. ${formatNationalId(
+                  theCase.defendants[0].nationalId ?? '',
+                )}, `,
+            extensionSuffix:
+              theCase.parentCase &&
+              isAcceptingCaseDecision(theCase.parentCase.decision)
+                ? ' áframhaldandi'
+                : '',
+            caseType:
+              theCase.type === CaseType.CUSTODY ? 'gæsluvarðhaldi' : 'farbanni',
+            court: theCase.court?.name.replace('Héraðsdómur', 'Héraðsdóms'),
+            requestedValidToDate: formatDate(
+              theCase.requestedValidToDate,
+              'PPPPp',
             )
-              ? ', og verði gert að sæta einangrun á meðan á varðhaldi stendur'
-              : '',
-        })}`,
-        theCase,
-      )
+              ?.replace('dagur,', 'dagsins')
+              ?.replace(' kl.', ', kl.'),
+            isolationSuffix:
+              theCase.type === CaseType.CUSTODY &&
+              theCase.requestedCustodyRestrictions?.includes(
+                CaseCustodyRestrictions.ISOLATION,
+              )
+                ? ', og verði gert að sæta einangrun á meðan á varðhaldi stendur'
+                : '',
+          })}`,
+          theCase,
+        )
+      }
 
       setWorkingCase(theCase)
     }
@@ -102,11 +115,21 @@ export const StepFour: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
+      <PageHeader
+        title={formatMessage(titles.prosecutor.restrictionCases.policeReport)}
+      />
       <FormContentContainer>
-        <Box marginBottom={10}>
+        <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(rcReportForm.heading)}
           </Text>
+        </Box>
+        <Box marginBottom={7}>
+          <CaseInfo
+            workingCase={workingCase}
+            userRole={user?.role}
+            showAdditionalInfo
+          />
         </Box>
         <Box component="section" marginBottom={7}>
           <Box marginBottom={4}>
@@ -130,7 +153,7 @@ export const StepFour: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'demands',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -149,6 +172,7 @@ export const StepFour: React.FC = () => {
                 )
               }
               rows={7}
+              autoExpand={{ on: true, maxHeight: 300 }}
               textarea
               required
             />
@@ -179,7 +203,7 @@ export const StepFour: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'caseFacts',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -199,6 +223,7 @@ export const StepFour: React.FC = () => {
               }
               required
               rows={14}
+              autoExpand={{ on: true, maxHeight: 600 }}
               textarea
             />
           </Box>
@@ -230,7 +255,7 @@ export const StepFour: React.FC = () => {
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'legalArguments',
-                  event,
+                  event.target.value,
                   ['empty'],
                   workingCase,
                   setWorkingCase,
@@ -251,6 +276,7 @@ export const StepFour: React.FC = () => {
               required
               textarea
               rows={14}
+              autoExpand={{ on: true, maxHeight: 600 }}
             />
           </Box>
           <Box component="section" marginBottom={7}>
@@ -275,7 +301,7 @@ export const StepFour: React.FC = () => {
                 onChange={(event) =>
                   removeTabsValidateAndSet(
                     'comments',
-                    event,
+                    event.target.value,
                     [],
                     workingCase,
                     setWorkingCase,
@@ -292,6 +318,7 @@ export const StepFour: React.FC = () => {
                 }
                 textarea
                 rows={7}
+                autoExpand={{ on: true, maxHeight: 300 }}
               />
             </Box>
           </Box>

@@ -1,11 +1,13 @@
 import {
-  PaginatedPersonalRepresentativeRightTypeDto,
-  PersonalRepresentativeRightType,
-  PersonalRepresentativeRightTypeService,
   PersonalRepresentativeScopePermission,
   PersonalRepresentativeScopePermissionDTO,
   PersonalRepresentativeScopePermissionService,
-} from '@island.is/auth-api-lib'
+} from '@island.is/auth-api-lib/personal-representative'
+import {
+  PaginatedPersonalRepresentativeRightTypeDto,
+  PersonalRepresentativeRightType,
+  PersonalRepresentativeRightTypeService,
+} from '@island.is/auth-api-lib/personal-representative'
 import {
   BadRequestException,
   Body,
@@ -46,7 +48,6 @@ const namespace = `${environment.audit.defaultNamespace}/personal-representative
 @Audit({ namespace })
 export class PersonalRepresentativeController {
   constructor(
-    @Inject(PersonalRepresentativeRightTypeService)
     private readonly rightTypesService: PersonalRepresentativeRightTypeService,
     @Inject(forwardRef(() => PersonalRepresentativeScopePermissionService))
     private readonly scopePermissionService: PersonalRepresentativeScopePermissionService,

@@ -5,7 +5,9 @@ import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
 import { CaseState } from '@island.is/judicial-system/types'
 import type { Case } from '@island.is/judicial-system/types'
 import {
+  AccordionListItem,
   CaseFileList,
+  CaseInfo,
   FormContentContainer,
   FormFooter,
   InfoCard,
@@ -15,7 +17,6 @@ import {
   capitalize,
   caseTypes,
   formatDate,
-  TIME_FORMAT,
 } from '@island.is/judicial-system/formatters'
 import { UserContext } from '@island.is/judicial-system-web/src/components/UserProvider/UserProvider'
 import {
@@ -23,8 +24,9 @@ import {
   requestCourtDate,
   icOverview,
 } from '@island.is/judicial-system-web/messages'
+import CommentsAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
+import * as Constants from '@island.is/judicial-system/consts'
 
-import * as Constants from '@island.is/judicial-system-web/src/utils/constants'
 import * as styles from './Overview.css'
 
 interface Props {
@@ -46,24 +48,47 @@ const OverviewForm: React.FC<Props> = (props) => {
             {formatMessage(icOverview.heading)}
           </Text>
         </Box>
+        <Box component="section" marginBottom={7}>
+          <CaseInfo
+            workingCase={workingCase}
+            userRole={user?.role}
+            showAdditionalInfo
+          />
+        </Box>
         <Box component="section" marginBottom={5}>
           <InfoCard
             data={[
               {
-                title: 'LÖKE málsnúmer',
+                title: formatMessage(core.policeCaseNumber),
                 value: workingCase.policeCaseNumber,
               },
+              ...(workingCase.courtCaseNumber
+                ? [
+                    {
+                      title: 'Málsnúmer héraðsdóms',
+                      value: workingCase.courtCaseNumber,
+                    },
+                  ]
+                : []),
               {
-                title: 'Krafa stofnuð',
-                value: formatDate(workingCase.created, 'P'),
+                title: formatMessage(core.court),
+                value: workingCase.court?.name,
               },
               {
-                title: 'Embætti',
+                title: formatMessage(core.prosecutor),
                 value: `${
                   workingCase.creatingProsecutor?.institution?.name ??
                   'Ekki skráð'
                 }`,
               },
+              ...(workingCase.judge
+                ? [
+                    {
+                      title: formatMessage(core.judge),
+                      value: workingCase.judge.name,
+                    },
+                  ]
+                : []),
               {
                 title: formatMessage(requestCourtDate.heading),
                 value: `${capitalize(
@@ -71,27 +96,46 @@ const OverviewForm: React.FC<Props> = (props) => {
                     '',
                 )} eftir kl. ${formatDate(
                   workingCase.requestedCourtDate,
-                  TIME_FORMAT,
+                  Constants.TIME_FORMAT,
                 )}`,
               },
+              ...(workingCase.registrar
+                ? [
+                    {
+                      title: formatMessage(core.registrar),
+                      value: workingCase.registrar.name,
+                    },
+                  ]
+                : []),
               {
-                title: 'Ákærandi',
-                value: `${workingCase.prosecutor?.name} ${workingCase.prosecutor?.title}`,
+                title: formatMessage(core.prosecutorPerson),
+                value: workingCase.prosecutor?.name,
               },
               {
-                title: 'Tegund kröfu',
+                title: formatMessage(core.caseType),
                 value: capitalize(caseTypes[workingCase.type]),
               },
+              ...(workingCase.courtDate
+                ? [
+                    {
+                      title: formatMessage(core.confirmedCourtDate),
+                      value: `${capitalize(
+                        formatDate(workingCase.courtDate, 'PPPP', true) ?? '',
+                      )} kl. ${formatDate(
+                        workingCase.courtDate,
+                        Constants.TIME_FORMAT,
+                      )}`,
+                    },
+                  ]
+                : []),
             ]}
-            accusedName={workingCase.accusedName}
-            accusedNationalId={workingCase.accusedNationalId}
-            accusedAddress={workingCase.accusedAddress}
+            defendants={workingCase.defendants ?? []}
             defender={{
               name: workingCase.defenderName ?? '',
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
-              defenderIsSpokesperson: workingCase.defenderIsSpokesperson,
             }}
+            sessionArrangement={workingCase.sessionArrangements}
           />
         </Box>
         {workingCase.description && (
@@ -119,11 +163,7 @@ const OverviewForm: React.FC<Props> = (props) => {
               id="id_1"
               label="Lagaákvæði sem brot varða við"
             >
-              <Text>
-                <span className={styles.breakSpaces}>
-                  {workingCase.lawsBroken}
-                </span>
-              </Text>
+              <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
             </AccordionItem>
             <AccordionItem
               labelVariant="h3"
@@ -138,71 +178,23 @@ const OverviewForm: React.FC<Props> = (props) => {
               label="Greinargerð um málsatvik og lagarök"
             >
               {workingCase.caseFacts && (
-                <Box marginBottom={2}>
-                  <Box marginBottom={2}>
-                    <Text variant="h5">Málsatvik</Text>
-                  </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.caseFacts}
-                    </span>
-                  </Text>
-                </Box>
+                <AccordionListItem title="Málsatvik">
+                  <Text whiteSpace="breakSpaces">{workingCase.caseFacts}</Text>
+                </AccordionListItem>
               )}
               {workingCase.legalArguments && (
-                <Box marginBottom={2}>
-                  <Box marginBottom={2}>
-                    <Text variant="h5">Lagarök</Text>
-                  </Box>
-                  <Text>
-                    <span className={styles.breakSpaces}>
-                      {workingCase.legalArguments}
-                    </span>
+                <AccordionListItem title="Lagarök">
+                  <Text whiteSpace="breakSpaces">
+                    {workingCase.legalArguments}
                   </Text>
-                </Box>
+                </AccordionListItem>
               )}
               {workingCase.requestProsecutorOnlySession && (
-                <Box marginBottom={2}>
-                  <Box marginBottom={2}>
-                    <Text variant="h5" as="h5">
-                      Beiðni um dómþing að varnaraðila fjarstöddum
-                    </Text>
-                  </Box>
+                <AccordionListItem title="Beiðni um dómþing að varnaraðila fjarstöddum">
                   <Text>{workingCase.prosecutorOnlySessionRequest}</Text>
-                </Box>
+                </AccordionListItem>
               )}
             </AccordionItem>
-            {(Boolean(workingCase.comments) ||
-              Boolean(workingCase.caseFilesComments)) && (
-              <AccordionItem id="id_5" label="Athugasemdir" labelVariant="h3">
-                {Boolean(workingCase.comments) && (
-                  <Box marginBottom={workingCase.caseFilesComments ? 3 : 0}>
-                    <Box marginBottom={1}>
-                      <Text variant="h4" as="h4">
-                        Athugasemdir vegna málsmeðferðar
-                      </Text>
-                    </Box>
-                    <Text>
-                      <span className={styles.breakSpaces}>
-                        {workingCase.comments}
-                      </span>
-                    </Text>
-                  </Box>
-                )}
-                {Boolean(workingCase.caseFilesComments) && (
-                  <>
-                    <Text variant="h4" as="h4">
-                      Athugasemdir vegna rannsóknargagna
-                    </Text>
-                    <Text>
-                      <span className={styles.breakSpaces}>
-                        {workingCase.caseFilesComments}
-                      </span>
-                    </Text>
-                  </>
-                )}
-              </AccordionItem>
-            )}
             <AccordionItem
               id="id_6"
               label={`Rannsóknargögn ${`(${
@@ -217,6 +209,11 @@ const OverviewForm: React.FC<Props> = (props) => {
                 />
               </Box>
             </AccordionItem>
+            {(workingCase.comments ||
+              workingCase.caseFilesComments ||
+              workingCase.caseResentExplanation) && (
+              <CommentsAccordionItem workingCase={workingCase} />
+            )}
           </Accordion>
         </Box>
         <Box className={styles.prosecutorContainer}>

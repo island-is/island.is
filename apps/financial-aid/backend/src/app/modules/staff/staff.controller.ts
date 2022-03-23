@@ -28,23 +28,22 @@ import { StaffGuard } from '../../guards/staff.guard'
 import { StaffRolesRules } from '../../decorators/staffRole.decorator'
 import { UpdateStaffDto, CreateStaffDto } from './dto'
 
-@UseGuards(IdsUserGuard, RolesGuard)
+@UseGuards(IdsUserGuard, RolesGuard, StaffGuard)
 @RolesRules(RolesRule.VEITA)
 @Controller(`${apiBasePath}/staff`)
 @ApiTags('staff')
 export class StaffController {
   constructor(private readonly staffService: StaffService) {}
 
-  @Get('nationalId/:nationalId')
+  @Get('nationalId')
   @ApiOkResponse({
     type: StaffModel,
     description: 'Gets staff by nationalId',
   })
   async getStaffByNationalId(
-    @Param('nationalId') nationalId: string,
+    @CurrentStaff() staff: StaffModel,
   ): Promise<StaffModel> {
-    const staff = await this.staffService.findByNationalId(nationalId)
-    if (staff === null || staff.active === false) {
+    if (!staff || staff.active === false) {
       throw new ForbiddenException('Staff not found or is not active')
     }
     return staff
@@ -63,7 +62,6 @@ export class StaffController {
     return staff
   }
 
-  @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.ADMIN)
   @Get('municipality')
   @ApiOkResponse({
@@ -97,7 +95,6 @@ export class StaffController {
     return updatedStaff
   }
 
-  @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.ADMIN)
   @Post('')
   @ApiOkResponse({
@@ -114,13 +111,11 @@ export class StaffController {
         municipalityId: createStaffInput.municipalityId ?? staff.municipalityId,
         municipalityName:
           createStaffInput.municipalityName ?? staff.municipalityName,
-        municipalityHomepage: staff.municipalityHomepage,
       },
       staff,
     )
   }
 
-  @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.SUPERADMIN)
   @Get('municipality/:municipalityId')
   @ApiOkResponse({
@@ -133,7 +128,6 @@ export class StaffController {
     return await this.staffService.numberOfUsersForMunicipality(municipalityId)
   }
 
-  @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.SUPERADMIN)
   @Get('users/:municipalityId')
   @ApiOkResponse({
@@ -146,7 +140,6 @@ export class StaffController {
     return this.staffService.getUsers(municipalityId)
   }
 
-  @UseGuards(StaffGuard)
   @StaffRolesRules(StaffRole.SUPERADMIN)
   @Get('supervisors')
   @ApiOkResponse({

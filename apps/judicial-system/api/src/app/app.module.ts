@@ -7,17 +7,17 @@ import { SharedAuthModule } from '@island.is/judicial-system/auth'
 import { AuditTrailModule } from '@island.is/judicial-system/audit-trail'
 
 import { environment } from '../environments'
-import { BackendAPI } from '../services'
+import { BackendApi } from './data-sources/backend'
 import {
   AuthModule,
   UserModule,
   CaseModule,
   FileModule,
   InstitutionModule,
-  CourtModule,
   FeatureModule,
   PoliceModule,
-} from './modules/'
+  DefendantModule,
+} from './modules'
 
 const debug = !environment.production
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -33,7 +33,7 @@ const autoSchemaFile = environment.production
       autoSchemaFile,
       path: '/api/graphql',
       context: ({ req }) => ({ req }),
-      dataSources: () => ({ backendApi: new BackendAPI() }),
+      dataSources: () => ({ backendApi: new BackendApi() }),
     }),
     SharedAuthModule.register({
       jwtSecret: environment.auth.jwtSecret,
@@ -43,9 +43,9 @@ const autoSchemaFile = environment.production
     AuthModule,
     UserModule,
     CaseModule,
+    DefendantModule,
     FileModule,
     InstitutionModule,
-    CourtModule,
     FeatureModule,
     CmsTranslationsModule,
     PoliceModule,

@@ -5,36 +5,24 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common'
-import {
-  ApiBadRequestResponse,
-  ApiForbiddenResponse,
-  ApiInternalServerErrorResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiQuery,
-  ApiTags,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 
-import {
-  ActorScopes,
-  AuthMiddlewareOptions,
-  CurrentActor,
-  IdsUserGuard,
-  ScopesGuard,
-} from '@island.is/auth-nest-tools'
-import type { User } from '@island.is/auth-nest-tools'
-import { Audit } from '@island.is/nest/audit'
 import {
   DelegationDirection,
   DelegationDTO,
   DelegationsService,
 } from '@island.is/auth-api-lib'
+import {
+  ActorScopes,
+  CurrentActor,
+  IdsUserGuard,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 import { AuthScope } from '@island.is/auth/scopes'
-import { HttpProblemResponse } from '@island.is/nest/problem'
+import { Audit } from '@island.is/nest/audit'
+import { Documentation } from '@island.is/nest/swagger'
 
-import { environment } from '../../../environments'
-
+import type { User } from '@island.is/auth-nest-tools'
 const namespace = '@island.is/auth-public-api/actor/delegations'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -46,21 +34,20 @@ export class ActorDelegationsController {
 
   @ActorScopes(AuthScope.actorDelegations)
   @Get()
-  @ApiOkResponse({ type: [DelegationDTO] })
-  @ApiBadRequestResponse({ type: HttpProblemResponse })
-  @ApiForbiddenResponse({ type: HttpProblemResponse })
-  @ApiUnauthorizedResponse({ type: HttpProblemResponse })
-  @ApiInternalServerErrorResponse()
-  @ApiOperation({
+  @Documentation({
     description: `Finds all incoming delegations for the signed in user or actor.
 			Including the custom delegations as well as natural delegations from NationalRegistry and CompanyRegistry.`,
-  })
-  @ApiQuery({
-    name: 'direction',
-    required: true,
-    schema: {
-      enum: ['incoming'],
-      default: 'incoming',
+    response: { status: 200, type: [DelegationDTO] },
+    request: {
+      query: {
+        direction: {
+          required: true,
+          schema: {
+            enum: ['incoming'],
+            default: 'incoming',
+          },
+        },
+      },
     },
   })
   @Audit<DelegationDTO[]>({
@@ -77,10 +64,6 @@ export class ActorDelegationsController {
       )
     }
 
-    return this.delegationsService.findAllIncoming(
-      actor,
-      environment.nationalRegistry
-        .authMiddlewareOptions as AuthMiddlewareOptions,
-    )
+    return this.delegationsService.findAllIncoming(actor)
   }
 }

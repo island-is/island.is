@@ -15,19 +15,6 @@ export const rcDemands = {
         description:
           'Notaður sem titill fyrir "dómkröfur" hlutann á lagagrundvöllur og dómkröfur skrefi í gæsluvarðhalds- og farbannsmálum.',
       }),
-      label: defineMessage({
-        id: 'judicial.system.restriction_cases:police_demands.demands.label',
-        defaultMessage: 'Krafa lögreglu',
-        description:
-          'Notaður sem titill í "dómkröfur" textaboxi á lagagrundvöllur og dómkröfur skrefi í gæsluvarðhalds- og farbannsmálum.',
-      }),
-      placeholder: defineMessage({
-        id:
-          'judicial.system.restriction_cases:police_demands.demands.placeholder',
-        defaultMessage: 'Krafa ákæranda',
-        description:
-          'Notaður sem skýritexti í "dómkröfur" textaboxi á lagagrundvöllur og dómkröfur skrefi í gæsluvarðhalds- og farbannsmálum.',
-      }),
       isolation: defineMessage({
         id:
           'judicial.system.restriction_cases:police_demands.demands.isolation',
@@ -119,6 +106,14 @@ export const rcDemands = {
         defaultMessage: 'Til dæmis hvernig tilkynningarskyldu sé háttað...',
         description:
           'Notaður sem skýritexti í "takmarkanir og tilhögun gæslu/farbann" textaboxi í farbannsmálum.',
+      },
+      requestedOtherRestrictionsAutofill: {
+        id:
+          'judicial.system.restriction_cases:police_demands.custody_restrictions.requested_other_restrictions_autofill',
+        defaultMessage:
+          'Sækjandi tekur fram að farbannið verði með takmörkunum, að {gender, select, MALE {kærða} OTHER {kærðu}} verði gert að tilkynna sig.',
+        description:
+          'Notaður sem sjálfgefið gildi þegar valið er Tilkynningarskylda.',
       },
     }),
   },

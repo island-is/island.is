@@ -1,4 +1,6 @@
-# Clients Driving License V1 / V2
+<!-- gitbook-navigation: "Driving License" -->
+
+# Driving License Client
 
 ## About
 
@@ -6,6 +8,16 @@ This library implements a client to use Ríkislögreglustjóri's
 Driver's license API v1 and v2 through x-road
 
 The client is generated from a copy of the openApi document provided in x-road.
+
+## Quickstart
+
+Run the following and start developing:
+
+```sh
+yarn nx run clients-driving-license:dev
+```
+
+This command bundles updating the api definition and regenerating the client.
 
 ## Usage
 
@@ -65,4 +77,4 @@ export class SomeService {
 
 ## Code owners and maintainers
 
-- [Kosmos & Kaos](https://github.com/orgs/island-is/teams/kosmos-og-kaos/members)
+- [Júní](https://github.com/orgs/island-is/teams/juni/members)

@@ -16,7 +16,6 @@ import {
   StudentInformationResult,
   ApplicationEligibility,
   Juristiction,
-  QualityPhoto,
   StudentAssessment,
   ApplicationEligibilityInput,
   Teacher,
@@ -34,7 +33,7 @@ export class MainResolver {
     private readonly auditService: AuditService,
   ) {}
 
-  @Query(() => DrivingLicense)
+  @Query(() => DrivingLicense, { nullable: true })
   drivingLicense(@CurrentUser() user: User) {
     return this.auditService.auditPromise(
       {
@@ -92,6 +91,7 @@ export class MainResolver {
     @Args('input') input: ApplicationEligibilityInput,
   ) {
     return this.drivingLicenseService.getApplicationEligibility(
+      user,
       user.nationalId,
       input.applicationFor,
     )
@@ -102,12 +102,7 @@ export class MainResolver {
     return this.drivingLicenseService.getListOfJuristictions()
   }
 
-  @Query(() => QualityPhoto)
-  qualityPhoto(@CurrentUser() user: User) {
-    return this.drivingLicenseService.getQualityPhoto(user.nationalId)
-  }
-
-  @Query(() => StudentAssessment)
+  @Query(() => StudentAssessment, { nullable: true })
   drivingLicenseStudentAssessment(@CurrentUser() user: User) {
     return this.drivingLicenseService.getDrivingAssessment(user.nationalId)
   }

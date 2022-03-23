@@ -11,23 +11,7 @@ import {
 import { logger } from '@island.is/logging'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { TokenMiddleware } from './data-protection-complaint-client.middleware'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { CLIENT_CONFIG, DataProtectionComplaintClientConfig } from './config'
-
-const useXroad = !isRunningOnEnvironment('local')
-
-const createProviderConfig = (
-  config: DataProtectionComplaintClientConfig,
-  middleware?: TokenMiddleware,
-): Configuration => {
-  return new Configuration({
-    fetchApi: createEnhancedFetch({
-      name: 'data-protection-complaint-client',
-    }),
-    basePath: useXroad ? config.xRoadBaseUrl : undefined,
-    middleware: middleware ? [middleware] : [],
-  })
-}
 
 export class ClientsDataProtectionComplaintModule {
   static register(config: DataProtectionComplaintClientConfig): DynamicModule {
@@ -47,6 +31,7 @@ export class ClientsDataProtectionComplaintModule {
       logger.error('DataProtectionClient XRoadProviderId not provided.')
     }
 
+    const basePath = `${config.xRoadBaseUrl}/r1/${config.XRoadProviderId}`
     const exportedApis = [
       DocumentApi,
       CaseApi,
@@ -54,7 +39,6 @@ export class ClientsDataProtectionComplaintModule {
       MemoApi,
       ClientsApi,
     ]
-
     return {
       module: ClientsDataProtectionComplaintModule,
       providers: [
@@ -65,7 +49,20 @@ export class ClientsDataProtectionComplaintModule {
         {
           provide: SecurityApi,
           useFactory: () => {
-            return new SecurityApi(createProviderConfig(config))
+            return new SecurityApi(
+              new Configuration({
+                fetchApi: createEnhancedFetch({
+                  name: 'data-protection-complaint-client',
+                  logErrorResponseBody: true,
+                  timeout: 20000,
+                }),
+                basePath: basePath,
+                headers: {
+                  'X-Road-Client': config.xRoadClientId,
+                  Accept: 'application/json',
+                },
+              }),
+            )
           },
         },
         TokenMiddleware,
@@ -76,8 +73,14 @@ export class ClientsDataProtectionComplaintModule {
               new Configuration({
                 fetchApi: createEnhancedFetch({
                   name: 'data-protection-complaint-client',
+                  logErrorResponseBody: true,
+                  timeout: 20000,
                 }),
-                basePath: useXroad ? config.xRoadBaseUrl : undefined,
+                basePath: basePath,
+                headers: {
+                  'X-Road-Client': config.xRoadClientId,
+                  Accept: 'application/json',
+                },
               }),
             )
           },

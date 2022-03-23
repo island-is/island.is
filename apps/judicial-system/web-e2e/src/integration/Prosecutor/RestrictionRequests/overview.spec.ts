@@ -1,18 +1,30 @@
-import { Case } from '@island.is/judicial-system/types'
+import faker from 'faker'
+
+import { Case, Defendant } from '@island.is/judicial-system/types'
 import {
   makeCustodyCase,
   makeCourt,
   makeProsecutor,
 } from '@island.is/judicial-system/formatters'
+import { STEP_SIX_ROUTE } from '@island.is/judicial-system/consts'
+
 import { intercept } from '../../../utils'
 
-describe('/krafa/stadfesta/:id', () => {
+describe(`${STEP_SIX_ROUTE}/:id`, () => {
+  const defenderName = faker.name.findName()
+  const defenderEmail = faker.internet.email()
+  const defenderPhoneNumber = faker.phone.phoneNumber()
   beforeEach(() => {
     const caseData = makeCustodyCase()
     const caseDataAddition: Case = {
       ...caseData,
-      accusedName: 'Donald Duck',
-      accusedAddress: 'Batcave 1337',
+      defendants: [
+        {
+          name: 'Donald Duck',
+          address: 'Batcave 1337',
+          nationalId: '000000-0000',
+        } as Defendant,
+      ],
       requestedCourtDate: '2020-09-16T19:50:08.033Z',
       arrestDate: '2020-09-16T19:50:08.033Z',
       demands:
@@ -20,10 +32,13 @@ describe('/krafa/stadfesta/:id', () => {
       court: makeCourt(),
       creatingProsecutor: makeProsecutor(),
       prosecutor: makeProsecutor(),
+      defenderName,
+      defenderEmail,
+      defenderPhoneNumber,
     }
 
     cy.stubAPIResponses()
-    cy.visit('/krafa/stadfesta/test_id_stadfesta')
+    cy.visit(`${STEP_SIX_ROUTE}/test_id_stadfesta`)
 
     intercept(caseDataAddition)
   })
@@ -31,6 +46,9 @@ describe('/krafa/stadfesta/:id', () => {
   it('should have an overview of the current case', () => {
     cy.getByTestid('infoCard').contains(
       'Donald Duck, kt. 000000-0000, Batcave 1337',
+    )
+    cy.getByTestid('infoCard').contains(
+      `${defenderName}, ${defenderEmail}, s. ${defenderPhoneNumber}`,
     )
     cy.getByTestid('infoCardDataContainer1').contains('Héraðsdómur Reykjavíkur')
     cy.getByTestid('infoCardDataContainer2').contains(
