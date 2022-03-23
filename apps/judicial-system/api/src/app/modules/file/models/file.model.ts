@@ -29,7 +29,7 @@ export class CaseFile implements TCaseFile {
   readonly state!: CaseFileState
 
   @Field()
-  readonly key!: string
+  readonly key?: string
 
   @Field()
   readonly size!: number
