@@ -24,7 +24,7 @@ Delegations are reflected in the ID and Access Tokens, where the chosen identity
 
 Example Access Token for a delegation (trimmed):
 
-![Delegation Token Example](assets/delegation_token.png)
+<img src="assets/delegation_token.png" width="500">
 
 This design reduces the information shared with the client. The client only sees the delegations which the user chooses.
 
