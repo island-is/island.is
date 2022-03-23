@@ -171,12 +171,9 @@ export class UserProfileController {
       throw new ForbiddenException()
     }
     try {
-      console.log(111111111)
       return await this.findOneByNationalId(nationalId, user)
     } catch (error) {
-      console.log(222222222)
       const ret = await this.create({ nationalId }, user)
-      console.log('*************************', ret)
       return ret
     }
   }
@@ -203,9 +200,6 @@ export class UserProfileController {
     if (nationalId != user.nationalId) {
       throw new ForbiddenException()
     }
-
-    // findOneByNationalId must be first as it implictly checks if the
-    // route param matches the authenticated user.
 
     // findOrCreateUserProfile for edge cases - fragmented onboarding
     const profile = await this.findOrCreateUserProfile(nationalId, user)
