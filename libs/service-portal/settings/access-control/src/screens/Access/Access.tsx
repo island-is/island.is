@@ -151,6 +151,7 @@ const Access: FC = () => {
   const [formError, setFormError] = useState<boolean>(false)
 
   const onSubmit = handleSubmit(async (model: AccessForm) => {
+    formError && setFormError(false)
     const scopes = model[SCOPE_PREFIX].filter(
       (scope) => scope.name?.length > 0,
     ).map((scope) => ({

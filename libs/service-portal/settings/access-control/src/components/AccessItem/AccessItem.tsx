@@ -125,9 +125,9 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
                 className={styles.item}
               >
                 <Box
-                  paddingBottom={isLastItem ? 'p3' : 'p1'}
-                  paddingTop={isFirstItem ? 'p3' : 'p1'}
-                  paddingLeft={isFirstItem ? 0 : [3, 3, 4]}
+                  paddingBottom={2}
+                  paddingTop={isFirstItem ? 3 : 2}
+                  paddingLeft={isFirstItem ? 0 : [2, 2, 4]}
                   display="flex"
                   alignItems="center"
                 >
@@ -151,9 +151,9 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
                 className={styles.item}
               >
                 <Box
-                  paddingBottom={isLastItem ? 'p3' : 'p1'}
-                  paddingTop={isFirstItem ? 'p3' : 'p1'}
-                  paddingLeft={isFirstItem ? [0, 0, 3] : [3, 3, 3]}
+                  paddingBottom={2}
+                  paddingTop={2}
+                  paddingLeft={isFirstItem ? 0 : [2, 2, 0]}
                 >
                   <Text variant={isFirstItem ? 'default' : 'medium'}>
                     {item.description}
@@ -163,9 +163,9 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
               <GridColumn span={['12/12', '8/12', '5/12', '4/12']}>
                 <div className={cs(isSelected ? undefined : styles.hidden)}>
                   <Box
-                    paddingBottom={isLastItem ? 'p3' : 'p1'}
-                    paddingTop={isFirstItem ? 'p3' : 'p1'}
-                    paddingLeft={isFirstItem ? [0, 0, 3] : [3, 3, 3]}
+                    paddingBottom={2}
+                    paddingTop={2}
+                    paddingLeft={isFirstItem ? 0 : [2, 2, 0]}
                   >
                     <DatePickerController
                       id={`${item.model}.validTo`}

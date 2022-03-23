@@ -78,7 +78,11 @@ const AccessModal: FC<Props> = ({
                 <Box display="flex" flexDirection="row" flexWrap="wrap">
                   {scopes.map((scope) => {
                     return scope?.displayName ? (
-                      <Box paddingRight={2} key={scope?.displayName}>
+                      <Box
+                        paddingRight={2}
+                        paddingY={1}
+                        key={scope?.displayName}
+                      >
                         <Tag>{scope.displayName}</Tag>
                       </Box>
                     ) : null
