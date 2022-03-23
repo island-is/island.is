@@ -11,7 +11,7 @@ interface LogoProps {
 }
 
 const LogoMunicipality = ({ className }: LogoProps) => {
-  const { admin } = useContext(AdminContext)
+  const { admin, municipality } = useContext(AdminContext)
 
   const logoSize = 48
 
@@ -26,7 +26,7 @@ const LogoMunicipality = ({ className }: LogoProps) => {
     >
       {admin && (
         <a
-          href={admin.staff?.municipalityHomepage}
+          href={municipality?.homepage}
           target="_blank"
           rel="noopener noreferrer"
           className={cn({ [`${className}`]: true })}
