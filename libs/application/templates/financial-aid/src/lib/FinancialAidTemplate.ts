@@ -138,7 +138,7 @@ const FinancialAidTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: [{ target: ApplicationStates.SUBMITTED }],
+          SUBMIT: { target: ApplicationStates.SUBMITTED },
         },
       },
       [ApplicationStates.SUBMITTED]: {
