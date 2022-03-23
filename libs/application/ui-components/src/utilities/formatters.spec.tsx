@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom'
 
-import {formatBankInfo} from './formatters'
+import { formatBankInfo } from './formatters'
 
 describe('formatters', () => {
   describe('formatBankInfo', () => {
