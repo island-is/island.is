@@ -2,15 +2,15 @@ import { Field, InputType } from '@nestjs/graphql'
 
 @InputType()
 export class DrivingLicenseBookStudentsInput {
-  @Field({ nullable: true })
-  key?: string
+  @Field()
+  key!: string
 
-  @Field({ nullable: true })
-  licenseCategory?: string
+  @Field()
+  licenseCategory!: string
 
-  @Field({ nullable: true })
-  cursor?: string
+  @Field()
+  cursor!: string
 
-  @Field({ nullable: true })
-  limit?: number
+  @Field()
+  limit!: number
 }

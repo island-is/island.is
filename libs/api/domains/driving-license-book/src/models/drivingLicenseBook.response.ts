@@ -5,42 +5,42 @@ import { DrivingLicenceTestResult } from './drivingLicenseTestResult.response'
 
 @ObjectType()
 export class DrivingLicenseBook {
-  @Field({ nullable: true })
-  id?: string
+  @Field()
+  id!: string
 
-  @Field({ nullable: true })
-  licenseCategory?: string
+  @Field()
+  licenseCategory!: string
 
-  @Field({ nullable: true })
-  createdOn?: string
+  @Field()
+  createdOn!: string
 
-  @Field({ nullable: true })
-  teacherNationalId?: string
+  @Field()
+  teacherNationalId!: string
 
-  @Field({ nullable: true })
-  teacherName?: string
+  @Field()
+  teacherName!: string
 
-  @Field({ nullable: true })
-  schoolNationalId?: string
+  @Field()
+  schoolNationalId!: string
 
-  @Field({ nullable: true })
-  schoolName?: string
+  @Field()
+  schoolName!: string
 
-  @Field({ nullable: true })
-  isDigital?: boolean
+  @Field()
+  isDigital!: boolean
 
-  @Field({ nullable: true })
-  totalLessonTime?: number
+  @Field()
+  totalLessonTime!: number
 
-  @Field({ nullable: true })
-  totalLessonCount?: number
+  @Field()
+  totalLessonCount!: number
 
-  @Field(() => [DrivingBookLesson], { nullable: true })
-  teachersAndLessons?: DrivingBookLesson[]
+  @Field(() => [DrivingBookLesson])
+  teachersAndLessons!: DrivingBookLesson[]
 
-  @Field(() => [DrivingSchoolExam], { nullable: true })
-  drivingSchoolExams?: DrivingSchoolExam[]
+  @Field(() => [DrivingSchoolExam])
+  drivingSchoolExams!: DrivingSchoolExam[]
 
-  @Field(() => [DrivingLicenceTestResult], { nullable: true })
-  testResults?: DrivingLicenceTestResult[]
+  @Field(() => [DrivingLicenceTestResult])
+  testResults!: DrivingLicenceTestResult[]
 }

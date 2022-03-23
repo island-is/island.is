@@ -4,6 +4,6 @@ import { DrivingLicenseBookStudent } from './drivingLicenseBookStudent.response'
 
 @ObjectType()
 export class DrivingLicenseBookStudentOverview extends DrivingLicenseBookStudent {
-  @Field(() => DrivingLicenseBook, { nullable: true })
-  book?: DrivingLicenseBook
+  @Field(() => DrivingLicenseBook)
+  book!: DrivingLicenseBook
 }

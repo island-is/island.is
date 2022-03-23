@@ -2,6 +2,6 @@ import { Field, InputType } from '@nestjs/graphql'
 
 @InputType()
 export class DrivingLicenseBookStudentInput {
-  @Field({ nullable: true })
+  @Field()
   nationalId!: string
 }

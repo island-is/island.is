@@ -58,7 +58,7 @@ export class DrivingLicenseBookResolver {
   }
 
   @UseGuards(DrivingInstructorGuard)
-  @Mutation(() => PracticalDrivingLesson, { nullable: true })
+  @Mutation(() => PracticalDrivingLesson)
   drivingLicenseBookCreatePracticalDrivingLesson(
     @Args('input') input: CreatePracticalDrivingLessonInput,
     @CurrentUser() user: User,

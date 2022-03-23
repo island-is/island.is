@@ -15,6 +15,6 @@ export class UpdatePracticalDrivingLessonInput {
   @Field()
   createdOn!: string
 
-  @Field({ nullable: true })
-  comments?: string
+  @Field()
+  comments!: string
 }
