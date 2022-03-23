@@ -795,6 +795,7 @@ export class CaseService {
       .transaction(async (transaction) => {
         const caseId = await this.createCase(
           {
+            origin: theCase.origin,
             type: theCase.type,
             description: theCase.description,
             policeCaseNumber: theCase.policeCaseNumber,

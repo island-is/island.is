@@ -24,7 +24,12 @@ import {
   DokobitError,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
-import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
+import {
+  CaseOrigin,
+  CaseState,
+  CaseType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentHttpUser,
@@ -101,7 +106,10 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug('Creating a new case')
 
-    const createdCase = await this.caseService.internalCreate(caseToCreate)
+    const createdCase = await this.caseService.internalCreate({
+      ...caseToCreate,
+      origin: CaseOrigin.LOKE,
+    } as InternalCreateCaseDto)
 
     this.eventService.postEvent(CaseEvent.CREATE_XRD, createdCase as Case)
 
@@ -118,7 +126,10 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug('Creating a new case')
 
-    const createdCase = await this.caseService.create(caseToCreate, user.id)
+    const createdCase = await this.caseService.create(
+      { ...caseToCreate, origin: CaseOrigin.RVG } as CreateCaseDto,
+      user.id,
+    )
 
     this.eventService.postEvent(CaseEvent.CREATE, createdCase as Case)
 
