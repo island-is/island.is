@@ -75,7 +75,8 @@ export interface DrivingLicenseBook {
   testResults: DrivingLicenceTestResult[]
 }
 
-export interface DrivingLicenseBookStudentOverview extends DrivingLicenseBookStudent {
+export interface DrivingLicenseBookStudentOverview
+  extends DrivingLicenseBookStudent {
   book: DrivingLicenseBook
 }
 
