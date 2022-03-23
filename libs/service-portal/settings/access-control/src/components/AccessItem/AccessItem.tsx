@@ -155,7 +155,10 @@ function AccessItem({ apiScopes, authDelegation }: PropTypes) {
                   paddingTop={2}
                   paddingLeft={isFirstItem ? 0 : [2, 2, 0]}
                 >
-                  <Text variant={isFirstItem ? 'default' : 'medium'}>
+                  <Text
+                    variant={isFirstItem ? 'default' : 'medium'}
+                    fontWeight="light"
+                  >
                     {item.description}
                   </Text>
                 </Box>
