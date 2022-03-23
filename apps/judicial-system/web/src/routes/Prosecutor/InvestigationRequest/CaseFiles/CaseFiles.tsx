@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
+import { useIntl } from 'react-intl'
 
 import { PoliceCaseFile } from '@island.is/judicial-system/types'
 import { PageLayout } from '@island.is/judicial-system-web/src/components'
@@ -10,6 +11,8 @@ import {
   Sections,
 } from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { titles } from '@island.is/judicial-system-web/messages/Core/titles'
 
 import CaseFilesForm from './CaseFilesForm'
 
@@ -30,6 +33,7 @@ export const CaseFiles: React.FC = () => {
     caseNotFound,
   } = useContext(FormContext)
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
+  const { formatMessage } = useIntl()
 
   const {
     data: policeData,
@@ -39,10 +43,6 @@ export const CaseFiles: React.FC = () => {
     variables: { input: { caseId: id } },
     fetchPolicy: 'no-cache',
   })
-
-  useEffect(() => {
-    document.title = 'Rannsóknargögn - Réttarvörslugátt'
-  }, [])
 
   useEffect(() => {
     if (policeData && policeData.policeCaseFiles) {
@@ -77,6 +77,9 @@ export const CaseFiles: React.FC = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
+      <PageHeader
+        title={formatMessage(titles.prosecutor.investigationCases.caseFiles)}
+      />
       <CaseFilesForm
         workingCase={workingCase}
         setWorkingCase={setWorkingCase}
