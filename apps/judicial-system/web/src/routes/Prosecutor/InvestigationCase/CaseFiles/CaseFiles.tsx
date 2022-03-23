@@ -73,7 +73,7 @@ export const CaseFiles: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_FIVE}
+      activeSubSection={ProsecutorSubsections.STEP_FIVE}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >

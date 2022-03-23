@@ -28,7 +28,7 @@ const PoliceReport = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_FOUR}
+      activeSubSection={ProsecutorSubsections.STEP_FOUR}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >

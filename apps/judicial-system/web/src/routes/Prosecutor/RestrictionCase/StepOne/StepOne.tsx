@@ -87,7 +87,7 @@ export const StepOne: React.FC = () => {
       activeSection={
         workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
       }
-      activeSubSection={ProsecutorSubsections.CUSTODY_REQUEST_STEP_ONE}
+      activeSubSection={ProsecutorSubsections.STEP_ONE}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isExtension={workingCase?.parentCase && true}
