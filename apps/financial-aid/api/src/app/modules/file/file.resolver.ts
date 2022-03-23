@@ -50,4 +50,13 @@ export class FileResolver {
     this.logger.debug('Creating signed url for file id')
     return backendApi.getSignedUrlForId(input.id)
   }
+
+  @Query(() => [SignedUrlModel])
+  getSignedUrlForAllFilesId(
+    @Args('input', { type: () => GetSignedUrlForIdInput })
+    input: GetSignedUrlForIdInput,
+    @Context('dataSources') { backendApi }: { backendApi: BackendAPI },
+  ): Promise<SignedUrlModel[]> {
+    return backendApi.getSignedUrlForAllFiles(input.id)
+  }
 }

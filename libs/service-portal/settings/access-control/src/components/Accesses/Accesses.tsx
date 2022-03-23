@@ -55,7 +55,7 @@ function Accesses(): JSX.Element {
           <Box display="flex" justifyContent="flexEnd">
             <Button onClick={() => history.push(`${pathname}/veita`)}>
               {formatMessage({
-                id: 'service.portal.settings.accessControl:home-grant-access',
+                id: 'sp.settings-access-control:home-grant-access',
                 defaultMessage: 'Veita aðgang',
               })}
             </Button>
